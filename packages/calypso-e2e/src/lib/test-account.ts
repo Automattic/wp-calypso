@@ -3,18 +3,21 @@ import path from 'path';
 import chalk from 'chalk';
 import { BrowserContext, Page } from 'playwright';
 import { TestAccountName } from '..';
-import { getAccountCredential, getAccountSiteURL, getCalypsoURL } from '../data-helper';
+import { getAccountSiteURL, getCalypsoURL } from '../data-helper';
+import { EmailClient } from '../email-client';
 import envVariables from '../env-variables';
+import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
-import type { AccountCredentials } from '../types/data-helper.types';
+// import type { AccountCredentials } from '../types/data-helper.types';
+import type { TestAccountCredentials } from '../secrets';
 
 /**
  * Represents the WPCOM test account.
  */
 export class TestAccount {
 	readonly accountName: TestAccountName;
-	readonly credentials: AccountCredentials;
+	readonly credentials: TestAccountCredentials;
 
 	/**
 	 * Constructs an instance of the TestAccount for the given account name.
@@ -22,7 +25,7 @@ export class TestAccount {
 	 */
 	constructor( accountName: TestAccountName ) {
 		this.accountName = accountName;
-		this.credentials = getAccountCredential( accountName );
+		this.credentials = SecretsManager.secrets.testAccounts[ accountName ];
 	}
 
 	/**
@@ -55,9 +58,12 @@ export class TestAccount {
 		await loginPage.visit();
 		await loginPage.logInWithCredentials( this.credentials.username, this.credentials.password );
 
-		const verificationCode = this.getTOTP();
-		if ( verificationCode ) {
-			await loginPage.submitVerificationCode( verificationCode );
+		// Handle possible 2FA.
+		if ( this.credentials.totpKey ) {
+			await loginPage.submitVerificationCode( this.getTOTP() );
+		}
+		if ( this.credentials.smsNumber ) {
+			await loginPage.submitVerificationCode( await this.getSMSOTP() );
 		}
 	}
 
@@ -81,14 +87,39 @@ export class TestAccount {
 	/**
 	 * Retrieves the Time-based One-Time Password (a.k.a. verification code) from
 	 * the secret file if defined for the current account.
+	 *
+	 * @returns {string} Generated TOTP value.
+	 * @throws {Error} If TOTP secrets are missing for the user.
 	 */
-	getTOTP(): string | undefined {
+	getTOTP(): string {
 		if ( ! this.credentials.totpKey ) {
-			return undefined;
+			throw new Error(
+				`Unable to generate TOTP verification code for user ${ this.credentials.username } due to missing TOTP key.`
+			);
 		}
 
 		const totpClient = new TOTPClient( this.credentials.totpKey );
 		return totpClient.getToken();
+	}
+
+	/**
+	 * Retrives the SMS-based One-Time Password from Mailosaur.
+	 *
+	 * @returns {string} SMS 2FA value.
+	 * @throws {Error} If EmailClient is unable to obtain the 2FA code.
+	 */
+	async getSMSOTP(): Promise< string > {
+		if ( ! this.credentials.smsNumber ) {
+			throw new Error( `User ${ this.credentials.username } has no SMS 2FA.` );
+		}
+
+		const emailClient = new EmailClient();
+		const message = await emailClient.getLastMatchingMessage( {
+			inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
+			sentTo: this.credentials.smsNumber.number,
+			body: 'WordPress.com verification code',
+		} );
+		return emailClient.get2FACodeFromMessage( message );
 	}
 
 	/**

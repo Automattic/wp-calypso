@@ -3,6 +3,18 @@ import { TEST_ACCOUNT_NAMES } from '.';
 type OtherTestSiteName = 'notifications';
 export type TestAccountName = typeof TEST_ACCOUNT_NAMES[ number ];
 
+export interface TestAccountCredentials {
+	username: string;
+	password: string;
+	primarySite?: string;
+	otherSites?: string[];
+	totpKey?: string;
+	smsNumber?: {
+		number: string;
+		code: string;
+	};
+}
+
 export interface Secrets {
 	passwordForNewTestSignUps: string;
 	storeSandboxCookieValue: string;
@@ -21,17 +33,10 @@ export interface Secrets {
 		signupInboxId: string;
 		domainsInboxId: string;
 		defaultUserInboxId: string;
+		totpUserInboxId: string;
 	};
 	testAccounts: {
-		[ key in TestAccountName ]: {
-			username: string;
-			password: string;
-			primarySite?: string;
-			otherSites?: string[];
-			totpKey?: string;
-			userID?: number;
-			email?: string;
-		};
+		[ key in TestAccountName ]: TestAccountCredentials;
 	};
 	otherTestSites: {
 		[ key in OtherTestSiteName ]: string;

@@ -7,59 +7,65 @@ import type { Message, Link } from 'mailosaur/lib/models';
  */
 export class EmailClient {
 	private client;
+	private startTimestamp: Date;
 
 	/**
 	 * Construct and instance of the EmailClient.
 	 */
 	constructor() {
 		this.client = new MailosaurClient( SecretsManager.secrets.mailosaur.apiKey );
+		this.startTimestamp = new Date();
 	}
 
 	/**
-	 * Given an inbox and email address, retrieves the latest email.
+	 * Given an inbox ID and sentTo (phone/email), retrieves the latest message.
 	 *
 	 * @param param0 Keyed parameter object.
 	 * @param {string} param0.inboxId ID of the inbox to look into. Also known as serverId in Mailosaur parlance.
-	 * @param {string} param0.emailAddress Email address of the recipient.
-	 * @param {string} param0.subject Subject of the email.
+	 * @param {string} param0.sentTo Recipient email or phone number.
+	 * @param {string} param0.subject Subject of the message.
+	 * @param {string} param0.body Body of the message.
 	 * @returns {Message} Message object returned by Mailosaur client.
 	 */
-	async getLastEmail( {
+	async getLastMatchingMessage( {
 		inboxId,
-		emailAddress,
+		sentTo,
 		subject,
+		body,
 	}: {
 		inboxId: string;
-		emailAddress: string;
+		sentTo: string;
 		subject?: string;
+		body?: string;
 	} ): Promise< Message > {
 		const searchCriteria = {
-			sentTo: emailAddress,
+			sentTo: sentTo,
 			subject: subject !== undefined ? subject : '',
+			body: body !== undefined ? body : '',
 		};
 
-		// Get messages sent within the last 30 seconds.
+		// Get messages sent since the client was initialized.
 		const message = await this.client.messages.get( inboxId, searchCriteria, {
-			receivedAfter: new Date( Date.now() - 30 * 1000 ),
+			receivedAfter: this.startTimestamp,
 		} );
 		return message;
 	}
 
 	/**
-	 * Extracts and returns all links from an email message.
+	 * Extracts and returns all links from a message.
 	 *
-	 * @param {Message} message Representing the email message.
-	 * @returns {Promise<string[]} Array of links contained in the email message.
-	 * @throws {Error} If the email did not contain a body or no links were found.
+	 * @param {Message} message Representing the message.
+	 * @returns {Promise<string[]} Array of links contained in the message.
+	 * @throws {Error} If the message did not contain a body or no links were found.
 	 */
 	async getLinksFromMessage( message: Message ): Promise< string[] > {
 		if ( ! message.html ) {
-			throw new Error( 'Email did not contain a body.' );
+			throw new Error( 'Message did not contain a body.' );
 		}
 
 		const links = message.html.links as Link[];
 		if ( ! links || links.length === 0 ) {
-			throw new Error( 'Email did not contain any links.' );
+			throw new Error( 'Message did not contain any links.' );
 		}
 
 		const results = new Set< string >();
@@ -69,6 +75,30 @@ export class EmailClient {
 			}
 		}
 		return Array.from( results );
+	}
+
+	/**
+	 * Extracts and returns a 2FA code from the message.
+	 *
+	 * @param {Message} message Instance of a Mailosaur message.
+	 * @returns {string} 2FA code.
+	 * @throws {Error} If the message did not contain a 2FA code.
+	 */
+	get2FACodeFromMessage( message: Message ): string {
+		if ( ! message.text ) {
+			throw new Error( 'Message is not defined.' );
+		}
+
+		if ( ! message.text.body ) {
+			throw new Error( 'Message has no body.' );
+		}
+
+		const body = message.text.body;
+		const match = body.match( /\d{7}/ );
+		if ( ! match ) {
+			throw new Error( 'Failed to parse 2FA code from message.' );
+		}
+		return match[ 0 ];
 	}
 
 	/**
