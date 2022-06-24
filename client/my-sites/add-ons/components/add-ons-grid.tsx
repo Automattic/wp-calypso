@@ -10,10 +10,11 @@ interface Props extends Omit< CardProps, 'addOnMeta' > {
 const Container = styled.div`
 	display: grid;
 	grid-template-columns: repeat( 1, 1fr );
-	gap: 1.5em;
+	gap: 1em;
 
 	@media screen and ( min-width: 1080px ) {
 		grid-template-columns: repeat( 2, 1fr );
+		gap: 1.5em;
 	}
 `;
 

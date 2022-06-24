@@ -32,7 +32,15 @@ const HeaderSpacer = styled.div`
 `;
 
 const Content = styled.div`
-	margin-top: 30px;
+	margin-top: 1em;
+	padding: 1em;
+
+	// Match Layout query
+	// Mobile (Full Width)
+	@media screen and ( min-width: 660px ) {
+		padding: 0;
+		margin-top: 2em;
+	}
 `;
 
 const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement => {
