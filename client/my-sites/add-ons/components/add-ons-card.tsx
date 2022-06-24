@@ -51,13 +51,19 @@ const Container = styled.div`
 
 		.add-ons-card__name-and-billing {
 			.add-ons-card__billing {
-				color: var( --studio-gray-40 );
+				color: var( --studio-gray-60 );
+				font-weight: 500;
 			}
 
 			.add-ons-card__name-tag {
 				display: flex;
 				align-items: center;
 				gap: 10px;
+
+				.add-ons-card__name {
+					font-size: 1rem;
+					font-weight: 500;
+				}
 
 				.add-ons-card__featured-badge {
 					border-radius: 4px;
@@ -106,7 +112,7 @@ const AddOnCard = ( {
 					</div>
 					<div className="add-ons-card__name-and-billing">
 						<div className="add-ons-card__name-tag">
-							<div>{ addOnMeta.name }</div>
+							<div className="add-ons-card__name">{ addOnMeta.name }</div>
 							{ highlightFeatured && addOnMeta.featured && (
 								<Badge key="popular" type="info-green" className="add-ons-card__featured-badge">
 									{ translate( 'Popular' ) }

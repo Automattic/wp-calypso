@@ -33,8 +33,14 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 	// list add-ons to show in UI here
 	const addOnsActive = [
 		{
-			productSlug: WPCOM_FEATURES_NO_ADVERTS,
+			productSlug: WPCOM_FEATURES_UNLIMITED_THEMES,
 			featured: true,
+			icon: unlimitedThemesIcon,
+			overrides: null,
+		},
+		{
+			productSlug: WPCOM_FEATURES_NO_ADVERTS,
+			featured: false,
 			icon: noAdsIcon,
 			overrides: {
 				// override API-fetched metadata
@@ -45,12 +51,6 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 			productSlug: WPCOM_FEATURES_CUSTOM_DESIGN,
 			featured: false,
 			icon: customDesignIcon,
-			overrides: null,
-		},
-		{
-			productSlug: WPCOM_FEATURES_UNLIMITED_THEMES,
-			featured: false,
-			icon: unlimitedThemesIcon,
 			overrides: null,
 		},
 	] as const;
