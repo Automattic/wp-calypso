@@ -1,6 +1,7 @@
 import languages from '@automattic/languages';
 import { find } from 'lodash';
 import { stringify as stringifyQs } from 'qs';
+import { RequestError } from './request-error';
 
 /**
  * Constants
@@ -32,7 +33,8 @@ async function getRequest( url, query ) {
 	if ( response.ok ) {
 		return await response.json();
 	}
-	throw new Error( await response.body );
+
+	throw new RequestError( await response.body, response );
 }
 
 /**
