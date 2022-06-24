@@ -33,7 +33,9 @@ class GoogleLoginButton extends Component {
 	};
 
 	static defaultProps = {
-		scope: 'https://www.googleapis.com/auth/userinfo.profile',
+		scope: config.isEnabled( 'migration/sign-in-with-google' )
+			? 'openid profile email'
+			: 'https://www.googleapis.com/auth/userinfo.profile',
 		fetchBasicProfile: true,
 		onClick: noop,
 	};
@@ -197,6 +199,11 @@ class GoogleLoginButton extends Component {
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
+			return;
+		}
+
+		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
+			this.client.requestCode();
 			return;
 		}
 
