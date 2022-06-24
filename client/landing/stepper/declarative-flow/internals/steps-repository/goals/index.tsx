@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -116,25 +117,29 @@ const GoalsStep: Step = ( { navigation } ) => {
 	}, [ refParameter, refGoals ] );
 
 	return (
-		<StepContainer
-			stepName={ 'goals-step' }
-			goNext={ navigation.goNext }
-			skipLabelText={ translate( 'Skip to dashboard' ) }
-			skipButtonAlign={ 'top' }
-			hideBack={ true }
-			isHorizontalLayout={ true }
-			headerImageUrl={ intentImageUrl }
-			className={ 'goals__container' }
-			formattedHeader={
-				<FormattedHeader
-					id={ 'goals-header' }
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-				/>
-			}
-			stepContent={ stepContent }
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			<DocumentHead title={ translate( 'What are your goals?' ) } />
+
+			<StepContainer
+				stepName={ 'goals-step' }
+				goNext={ navigation.goNext }
+				skipLabelText={ translate( 'Skip to dashboard' ) }
+				skipButtonAlign={ 'top' }
+				hideBack={ true }
+				isHorizontalLayout={ true }
+				headerImageUrl={ intentImageUrl }
+				className={ 'goals__container' }
+				formattedHeader={
+					<FormattedHeader
+						id={ 'goals-header' }
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+					/>
+				}
+				stepContent={ stepContent }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
 	);
 };
 
