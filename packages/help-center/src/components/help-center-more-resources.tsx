@@ -12,7 +12,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NewReleases from '../icons/new-releases';
 
 const circle = (
@@ -24,6 +24,7 @@ const circle = (
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
 	const [ showWhatsNewDot, setShowWhatsNewDot ] = useState( false );
+	const sectionName = useSelector( getSectionName );
 
 	const { isBusinessOrEcomPlanUser, siteId, isSimpleSite } = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
@@ -53,12 +54,16 @@ export const HelpCenterMoreResources = () => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 			resource: resource,
+			location: 'help-center',
+			section: sectionName,
 		} );
 	};
 
 	const trackWebinairsButtonClick = () => {
 		recordTracksEvent( 'calypso_help_courses_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
+			location: 'help-center',
+			section: sectionName,
 		} );
 		trackMoreResourcesButtonClick( 'webinairs' );
 	};

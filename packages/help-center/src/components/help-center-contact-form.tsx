@@ -18,7 +18,7 @@ import { Icon, info } from '@wordpress/icons';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
@@ -119,6 +119,7 @@ type Mode = 'CHAT' | 'EMAIL' | 'DIRECTLY' | 'FORUM';
 
 export const HelpCenterContactForm = () => {
 	const { search } = useLocation();
+	const sectionName = useSelector( getSectionName );
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const history = useHistory();
@@ -163,8 +164,10 @@ export const HelpCenterContactForm = () => {
 		const supportVariation = getSupportVariationFromMode( mode );
 		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
 			support_variation: supportVariation,
+			location: 'help-center',
+			section: sectionName,
 		} );
-	}, [ mode ] );
+	}, [ mode, sectionName ] );
 
 	// record the resolved site
 	useEffect( () => {
@@ -202,11 +205,15 @@ export const HelpCenterContactForm = () => {
 				if ( supportSite ) {
 					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 						support_variation: 'happychat',
+						location: 'help-center',
+						section: sectionName,
 					} );
 
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
 						site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
 						is_automated_transfer: supportSite ? supportSite.options.is_automated_transfer : null,
+						location: 'help-center',
+						section: sectionName,
 					} );
 					history.push( '/inline-chat' );
 					break;
@@ -234,6 +241,8 @@ export const HelpCenterContactForm = () => {
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 								support_variation: 'kayako',
+								location: 'help-center',
+								section: sectionName,
 							} );
 							history.push( '/success' );
 							resetStore();
@@ -257,6 +266,8 @@ export const HelpCenterContactForm = () => {
 					.then( ( response ) => {
 						recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 							support_variation: 'forums',
+							location: 'help-center',
+							section: sectionName,
 						} );
 						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
 						resetStore();
@@ -270,6 +281,8 @@ export const HelpCenterContactForm = () => {
 				askDirectlyQuestion( message ?? '', userData?.display_name ?? '', userData?.email ?? '' );
 				recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 					support_variation: 'directly',
+					location: 'help-center',
+					section: sectionName,
 				} );
 				setShowHelpCenter( false );
 				break;
