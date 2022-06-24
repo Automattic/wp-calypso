@@ -375,9 +375,14 @@ export default withCurrentRoute(
 		const locale = getCurrentLocaleSlug( state );
 		const isEditor = getSectionName( state ) === 'gutenberg-editor';
 		const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
+		const isSimpleSite = window.location.host.endsWith( '.wordpress.com' );
 
 		const disableFAB =
-			isHelpCenterEnabled && locale === 'en' && isEditor && userSegment < currentSegment;
+			isSimpleSite &&
+			isHelpCenterEnabled &&
+			locale === 'en' &&
+			isEditor &&
+			userSegment < currentSegment;
 
 		return {
 			masterbarIsHidden,
