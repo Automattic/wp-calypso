@@ -153,7 +153,7 @@ describe( 'DateRange', () => {
 
 			await userEvent.click( applyBtnEl );
 
-			const rangeText = screen.getByLabelText( 'Data range' ).textContent;
+			const rangeText = screen.getByLabelText( 'Date range' ).textContent;
 
 			expect( rangeText ).toEqual( '04/01/2018 - 04/29/2018' );
 		} );
@@ -567,7 +567,7 @@ describe( 'DateRange', () => {
 		test( 'should persist date selection when user clicks the "Apply" button', async () => {
 			render( <DateRange translate={ translate } moment={ moment } /> );
 
-			const originalRangeText = screen.getByLabelText( 'Data range' ).textContent;
+			const originalRangeText = screen.getByLabelText( 'Date range' ).textContent;
 
 			await userEvent.click( screen.getByLabelText( 'Select date range' ) );
 			await userEvent.click( screen.getByLabelText( 'From' ) );
