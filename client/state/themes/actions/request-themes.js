@@ -24,9 +24,10 @@ import 'calypso/state/themes/init';
  * @param  {number}        query.number  How many themes to return per page
  * @param  {number}        query.offset  At which item to start the set of returned themes
  * @param  {number}        query.page    Which page of matching themes to return
+ * @param  {string}        locale        Locale slug
  * @returns {Function}                    Action thunk
  */
-export function requestThemes( siteId, query = {} ) {
+export function requestThemes( siteId, query = {}, locale ) {
 	return ( dispatch, getState ) => {
 		const startTime = new Date().getTime();
 
@@ -41,7 +42,11 @@ export function requestThemes( siteId, query = {} ) {
 		if ( siteId === 'wporg' ) {
 			request = () => fetchWporgThemesList( query );
 		} else if ( siteId === 'wpcom' ) {
-			request = () => wpcom.req.get( '/themes', { ...query, apiVersion: '1.2' } );
+			request = () =>
+				wpcom.req.get(
+					'/themes',
+					Object.assign( { ...query, apiVersion: '1.2' }, locale ? { locale } : null )
+				);
 		} else {
 			request = () => wpcom.req.get( `/sites/${ siteId }/themes`, { ...query, apiVersion: '1' } );
 		}
