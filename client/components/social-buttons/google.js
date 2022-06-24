@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { loadScript } from '@automattic/load-script';
@@ -56,7 +57,45 @@ class GoogleLoginButton extends Component {
 	}
 
 	componentDidMount() {
+		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
+			this.initializeGoogleSignIn();
+			return;
+		}
+
 		this.initialize();
+	}
+
+	async initializeGoogleSignIn() {
+		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
+
+		this.client = googleSignIn.initCodeClient( {
+			client_id: this.props.clientId,
+			scope: this.props.scope,
+			ux_mode: this.props.uxMode,
+			redirect_uri: this.props.redirectUri,
+			callback: ( response ) => {
+				if ( response.error ) {
+					this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+						social_account_type: 'google',
+						error_code: response.error,
+					} );
+
+					return;
+				}
+
+				this.handleAuthorizationCode( response.code );
+			},
+		} );
+
+		this.setState( { isDisabled: false } );
+	}
+
+	async loadGoogleIdentityServicesAPI() {
+		if ( ! window.google?.accounts.oauth2 ) {
+			await loadScript( 'https://accounts.google.com/gsi/client' );
+		}
+
+		return window.google.accounts.oauth2;
 	}
 
 	async loadDependency() {
