@@ -667,8 +667,8 @@ describe( 'DateRange', () => {
 			await userEvent.click( toInputEl );
 			await userEvent.clear( toInputEl );
 			await userEvent.keyboard( '05/13/2018' );
-			// force a blur out of `toEl`
-			await userEvent.click( fromInputEl );
+			// Blurs out of `toInputEl`
+			await userEvent.tab();
 
 			expect( screen.getByLabelText( 'Fri, Apr 13, 2018 12:00 PM' ) ).toHaveAttribute(
 				'aria-selected',
