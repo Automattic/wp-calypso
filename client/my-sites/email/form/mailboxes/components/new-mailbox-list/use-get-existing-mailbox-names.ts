@@ -20,7 +20,8 @@ const getEmailAccountTypes = ( provider: EmailProvider ): string[] =>
 
 const useGetExistingMailboxNames = (
 	provider: EmailProvider,
-	selectedDomainName: string
+	selectedDomainName: string,
+	isInitialMailboxPurchase = true
 ): string[] => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const {
@@ -28,7 +29,7 @@ const useGetExistingMailboxNames = (
 		error,
 		isLoading,
 	} = useGetEmailAccountsQuery( selectedSiteId as number, selectedDomainName, {
-		notifyOnChangeProps: [ 'data' ],
+		enabled: ! isInitialMailboxPurchase,
 	} );
 
 	if ( error || isLoading || ! emailAccounts.length ) {
