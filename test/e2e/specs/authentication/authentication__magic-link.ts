@@ -9,14 +9,6 @@ import type { Message } from 'mailosaur/lib/models';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function () {
-	// This method of obtaining the userEmail address of the test user is temporary.
-	// The encrypted configuration file needs a revamp and have the format standardized
-	// and when that is copmlete, this can be replaced with an appropriate query method
-	// to extract the userEmail address of the test user.
-	// See https://github.com/Automattic/wp-calypso/issues/55694.
-	const emailInboxId = SecretsManager.secrets.mailosaur.defaultUserInboxId;
-	const userEmail = `main.${ emailInboxId }@mailosaur.io`;
-
 	let page: Page;
 	let loginPage: LoginPage;
 	let emailClient: EmailClient;
@@ -27,24 +19,26 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 		page = await browser.newPage();
 	} );
 
-	it( 'Navigate to Login page', async function () {
+	it( 'Navigate to Magic Link screen from /login', async function () {
 		loginPage = new LoginPage( page );
 		await loginPage.visit();
+		await loginPage.clickSendMagicLink();
 	} );
 
 	it( 'Request magic link', async function () {
-		await loginPage.clickSendMagicLink();
-		await loginPage.fillUsername( userEmail );
+		const credentials = SecretsManager.secrets.testAccounts.defaultUser;
+
+		await loginPage.fillUsername( credentials.email );
 		await loginPage.clickSubmit();
 
 		emailClient = new EmailClient();
 		magicLinkEmail = await emailClient.getLastEmail( {
-			inboxId: emailInboxId,
-			emailAddress: userEmail,
+			inboxId: SecretsManager.secrets.mailosaur.defaultUserInboxId,
+			emailAddress: credentials.email,
 			subject: 'Log in to WordPress.com',
 		} );
 		const links = await emailClient.getLinksFromMessage( magicLinkEmail );
-		magicLinkURL = links.find( ( link ) => link.includes( 'wpcom_email_click' ) ) as string;
+		magicLinkURL = links.find( ( link: string ) => link.includes( 'wpcom_email_click' ) );
 
 		expect( magicLinkURL ).toBeDefined();
 	} );
@@ -54,11 +48,12 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	} );
 
 	it( 'Click the "Continue to WordPress.com" button', async () => {
-		await page.click( 'text=Continue to WordPress.com' );
-	} );
-
-	it( 'Ensure user is logged in', async () => {
-		await page.waitForSelector( 'text="My Home"' );
+		// Page object for this screen is not implemented, and because it's a
+		// single-purpose screen, there really is no need to.
+		await Promise.all( [
+			page.waitForNavigation( { url: /\/home\// } ),
+			page.click( 'text=Continue to WordPress.com' ),
+		] );
 	} );
 
 	afterAll( async () => {
