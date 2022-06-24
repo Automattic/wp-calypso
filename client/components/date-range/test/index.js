@@ -58,9 +58,8 @@ describe( 'DateRange', () => {
 			);
 
 			const [ actualStartDate, actualEndDate ] = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' )
-				.innerHTML.split( '-' )
+				.getByLabelText( 'Date range' )
+				.textContent.split( '-' )
 				.map( ( s ) => s.trim() );
 
 			const isStartBeforeEnd = moment( actualStartDate, 'MM-DD-YYYY' ).isBefore(
@@ -90,9 +89,8 @@ describe( 'DateRange', () => {
 			const expectedEndDate = dateToLocaleString( firstSelectableDate );
 
 			let [ actualStartDate, actualEndDate ] = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' )
-				.innerHTML.split( '-' )
+				.getByLabelText( 'Date range' )
+				.textContent.split( '-' )
 				.map( ( s ) => s.trim() );
 
 			actualStartDate = dateToLocaleString( moment( actualStartDate, 'MM-DD-YYYY' ) );
@@ -119,9 +117,8 @@ describe( 'DateRange', () => {
 			);
 
 			let [ actualStartDate, actualEndDate ] = screen
-				.getByLabelText( 'Select date range' )
-				.querySelector( 'span' )
-				.innerHTML.split( '-' )
+				.getByLabelText( 'Date range' )
+				.textContent.split( '-' )
 				.map( ( s ) => s.trim() );
 
 			const expectedStartDate = dateToLocaleString( lastSelectableDate );

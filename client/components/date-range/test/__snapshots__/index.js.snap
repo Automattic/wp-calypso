@@ -27,6 +27,7 @@ exports[`DateRange should render 1`] = `
         />
       </svg>
       <span
+        aria-label="Date range"
         class="date-range__trigger-btn-text"
       >
         MM/DD/YYYY - MM/DD/YYYY
