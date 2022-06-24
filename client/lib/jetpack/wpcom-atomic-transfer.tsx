@@ -5,7 +5,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Context } from './types';
 import type { ComponentType } from 'react';
 
-export default function upsellSwitch(
+export default function wpcomAtomicTransfer(
 	UpsellComponent: ComponentType
 ): ( context: Context, next: () => void ) => void {
 	return ( context, next ) => {
