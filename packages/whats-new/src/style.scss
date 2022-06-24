@@ -155,6 +155,30 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		li {
 			vertical-align: middle;
 			margin-bottom: 0;
+
+			button {
+				padding: 4px;
+				min-width: 14px;
+			}
+
+			svg {
+				width: 6px;
+				height: 6px;
+
+				circle {
+					cx: 3;
+					cy: 3;
+					r: 3;
+
+					&[fill='#419ECD'] {
+						fill: var( --studio-gray-80 );
+					}
+
+					&[fill='#E1E3E6'] {
+						fill: var( --studio-gray-10 );
+					}
+				}
+			}
 		}
 	}
 }
