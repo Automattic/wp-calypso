@@ -104,10 +104,8 @@ Now it's time to configure our section. Open `client/sections.js` and add the fo
 
 ```javascript
 const sections = [
-	//.....
-	// lots of existing sections here
-	//...
-	//new section:
+	// ** lots of sections here **
+	// add new section:
 	{
 		name: 'hello-world',
 		paths: [ '/hello-world' ],
