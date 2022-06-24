@@ -657,7 +657,6 @@ export class DateRange extends Component {
 
 		const calendarInitialDate =
 			this.props.firstSelectableDate ||
-			this.props.firstSelectableDate ||
 			( this.props.lastSelectableDate &&
 				moment( this.props.lastSelectableDate ).subtract( 1, 'month' ) ) ||
 			this.state.startDate;
