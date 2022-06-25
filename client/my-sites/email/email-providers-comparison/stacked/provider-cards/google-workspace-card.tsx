@@ -23,16 +23,16 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getGoogleAppLogos } from 'calypso/my-sites/email/email-provider-features/list';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import GoogleWorkspacePrice from 'calypso/my-sites/email/email-providers-comparison/price/google-workspace';
-import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import getOnSubmitNewMailboxesHandler from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-on-submit-new-mailboxes-handler';
+import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-comparison/stacked/email-provider-stacked-card';
+import getOnSubmitNewMailboxesHandler from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/get-on-submit-new-mailboxes-handler';
 import {
 	EmailProvidersStackedCardProps,
 	ProviderCardProps,
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
+} from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/provider-card-props';
 import {
 	addToCartAndCheckout,
 	recordTracksEventAddToCartClick,
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+} from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/utils';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';

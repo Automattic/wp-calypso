@@ -4,7 +4,7 @@ import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'caly
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
-import { recordTracksEventAddToCartClick } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+import { recordTracksEventAddToCartClick } from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/utils';
 import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-cart-items';
 import { getEmailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';

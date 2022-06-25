@@ -27,12 +27,12 @@ import {
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
-import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import getOnSubmitNewMailboxesHandler from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-on-submit-new-mailboxes-handler';
+import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-comparison/stacked/email-provider-stacked-card';
+import getOnSubmitNewMailboxesHandler from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/get-on-submit-new-mailboxes-handler';
 import {
 	addToCartAndCheckout,
 	recordTracksEventAddToCartClick,
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
+} from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/utils';
 import {
 	HiddenFieldNames,
 	NewMailBoxList,

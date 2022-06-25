@@ -10,7 +10,7 @@ import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-providers-comparison/in-depth';
 import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-comparison/stacked';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';

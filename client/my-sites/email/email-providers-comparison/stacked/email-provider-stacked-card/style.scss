@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import '../../../../../../node_modules/@automattic/typography/styles/variables';
+@import '../../../../../../node_modules/@wordpress/base-styles/breakpoints';
+@import '../../../../../../node_modules/@wordpress/base-styles/mixins';
 
 $width-right-panel-card:  calc( 45% - 110px );
 $width-right-panel-card-expanded:  45%;

@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import '../../../../../node_modules/@automattic/typography/styles/variables';
+@import '../../../../../node_modules/@wordpress/base-styles/breakpoints';
+@import '../../../../../node_modules/@wordpress/base-styles/mixins';
 
 .email-providers-stacked-comparison__header,
 .email-providers-stacked-comparison__sub-header {
