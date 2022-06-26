@@ -148,8 +148,8 @@
 		font-size: 0.875rem;
 		position: fixed;
 		z-index: 30;
-		left: 0;
-		right: 0;
+		inset-inline-start: 0;
+		inset-inline-end: 0;
 		bottom: 0;
 		padding: 0 20px;
 		margin: 0;
@@ -209,8 +209,8 @@
 		@include break-small {
 			position: absolute;
 			top: 0;
-			left: 72px;
-			right: 24px;
+			inset-inline-start: 72px;
+			inset-inline-end: 24px;
 			// Align with wordpress logo in signup-header
 			padding: 1px 0 0;
 			background-color: transparent;
@@ -219,10 +219,10 @@
 
 			&.should-sticky-nav-buttons {
 				position: fixed;
-				left: 0;
-				right: 0;
-				padding-left: 24px;
-				padding-right: 24px;
+				inset-inline-start: 0;
+				inset-inline-end: 0;
+				padding-inline-start: 24px;
+				padding-inline-end: 24px;
 				background-color: $white;
 			}
 

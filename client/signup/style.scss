@@ -338,15 +338,15 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.signup-header {
 		.wordpress-logo {
 			position: absolute;
-			left: 20px;
-			top: 20px;
+			inset-inline-start: 20px;
+			inset-block-start: 20px;
 			fill: var( --color-text );
 			stroke: var( --color-text );
 			transform-origin: 0 0;
 		}
 		.signup-header__right {
-			top: 22px;
-			right: 20px;
+			inset-block-start: 22px;
+			inset-inline-end: 20px;
 
 			.flow-progress-indicator {
 				font-weight: 500; /* stylelint-disable-line */
@@ -357,11 +357,11 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 		@include break-small {
 			.wordpress-logo {
-				left: 24px;
+				inset-inline-start: 24px;
 			}
 
 			.signup-header__right {
-				right: 24px;
+				inset-inline-end: 24px;
 			}
 		}
 	}
@@ -388,8 +388,8 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 
 		@include break-small {
-			left: 72px;
-			right: 24px;
+			inset-inline-start: 72px;
+			inset-inline-end: 24px;
 		}
 	}
 
@@ -516,7 +516,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 
 		.social-buttons__button {
-			text-align: left;
+			text-align: start;
 			padding-left: 0;
 			padding-bottom: 0;
 			border: 0;
@@ -680,18 +680,18 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				&::before {
 					position: absolute;
 					content: '';
-					border-left: 0;
-					border-top: $separator-style;
-					top: 50%;
-					left: 0;
+					border-inline-start: 0;
+					border-block-start: $separator-style;
+					inset-block-start: 50%;
+					inset-inline-start: 0;
 					height: 0;
 					width: 100%;
 
 					@include break-medium {
-						border-left: $separator-style;
-						border-top: 0;
-						top: 0;
-						left: 50%;
+						border-inline-start: $separator-style;
+						border-block-start: 0;
+						inset-block-start: 0;
+						inset-inline-start: 50%;
 						height: 100%;
 					}
 				}
@@ -712,13 +712,13 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			}
 
 			.social-buttons__service-name {
-				margin-left: 12px;
+				margin-inline-start: 12px;
 			}
 
 			p.signup-form__social-buttons-tos {
 				font-size: 0.75rem;
-				text-align: left;
-				padding-left: 0;
+				text-align: start;
+				padding-inline-start: 0;
 				margin-top: 19px;
 
 				@include break-small {
@@ -726,7 +726,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				}
 
 				@include break-medium {
-					text-align: left;
+					text-align: start;
 				}
 			}
 		}
