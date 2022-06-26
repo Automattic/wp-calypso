@@ -183,11 +183,12 @@ const ProfessionalEmailUpsell = ( {
 				<div className="professional-email-upsell__form">
 					<NewMailBoxList
 						cancelActionText={ 'Skip for now' }
-						hiddenFieldNames={ [ FIELD_NAME, FIELD_ALTERNATIVE_EMAIL ] }
 						fieldLabelTexts={ {
 							[ FIELD_MAILBOX ]: translate( 'Enter email address' ),
 							[ FIELD_PASSWORD ]: translate( 'Set password' ),
 						} }
+						hiddenFieldNames={ [ FIELD_NAME, FIELD_ALTERNATIVE_EMAIL ] }
+						isInitialMailboxPurchase
 						onCancel={ handleClickDecline }
 						onSubmit={ onSubmit }
 						provider={ EmailProvider.Titan }
