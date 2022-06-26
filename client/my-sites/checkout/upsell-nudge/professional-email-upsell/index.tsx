@@ -1,6 +1,7 @@
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { TitanProductUser } from '@automattic/shopping-cart';
 import { MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
@@ -9,25 +10,23 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import Badge from 'calypso/components/badge';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormPasswordInput from 'calypso/components/forms/form-password-input';
-import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
-import {
-	areAllMailboxesValid,
-	buildNewTitanMailbox,
-	transformMailboxForCart,
-	validateMailboxes,
-} from 'calypso/lib/titan/new-mailbox';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
+import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
+import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
+import {
+	FIELD_ALTERNATIVE_EMAIL,
+	FIELD_MAILBOX,
+	FIELD_NAME,
+	FIELD_PASSWORD,
+} from 'calypso/my-sites/email/form/mailboxes/constants';
+import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductCost } from 'calypso/state/products-list/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { TitanProductProps } from 'calypso/lib/cart-values/cart-items';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ChangeEvent } from 'react';
 
 import './style.scss';
 
@@ -38,6 +37,27 @@ const ProfessionalEmailFeature = ( { children }: { children: TranslateResult } )
 			<span>{ children }</span>
 		</li>
 	);
+};
+
+const getCartItems = (
+	mailboxes: MailboxForm< EmailProvider >[],
+	selectedIntervalLength: IntervalLength
+) => {
+	const email_users = mailboxes.map( ( mailbox ) =>
+		mailbox.getAsCartItem()
+	) as unknown as TitanProductUser[];
+
+	const cartItemFunction =
+		selectedIntervalLength === IntervalLength.MONTHLY ? titanMailMonthly : titanMailYearly;
+
+	return cartItemFunction( {
+		domain: mailboxes[ 0 ].formFields.domain.value,
+		quantity: email_users.length,
+		extra: {
+			email_users,
+			new_quantity: email_users.length,
+		},
+	} );
 };
 
 type ProfessionalEmailUpsellProps = {
@@ -70,23 +90,6 @@ const ProfessionalEmailUpsell = ( {
 	} );
 
 	const isMobileView = useBreakpoint( MOBILE_BREAKPOINT );
-
-	const [ mailboxData, setMailboxData ] = useState( buildNewTitanMailbox( domainName, false ) );
-	const [ showAllErrors, setShowAllErrors ] = useState( false );
-
-	const [ mailboxFieldTouched, setMailboxFieldTouched ] = useState( false );
-	const [ passwordFieldTouched, setPasswordFieldTouched ] = useState( false );
-
-	const hasMailboxError =
-		( mailboxFieldTouched || showAllErrors ) && null !== mailboxData.mailbox.error;
-	const hasPasswordError =
-		( passwordFieldTouched || showAllErrors ) && null !== mailboxData.password.error;
-
-	const hasBeenValidated = [ mailboxData.mailbox, mailboxData.password ].some(
-		( { error, value } ) => null !== error || '' !== value
-	);
-
-	const optionalMailboxFields = [ 'alternativeEmail', 'name' ];
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		setSelectedIntervalLength( newIntervalLength );
@@ -126,52 +129,14 @@ const ProfessionalEmailUpsell = ( {
 		productCost ?? 0
 	);
 
-	const onMailboxValueChange = ( fieldName: string, fieldValue: string | null ) => {
-		const updatedMailboxData = {
-			...mailboxData,
-			[ fieldName ]: { value: fieldValue, error: null },
-		};
-		const validatedMailboxData = validateMailboxes(
-			[ updatedMailboxData ],
-			optionalMailboxFields
-		).pop();
-
-		if ( validatedMailboxData ) {
-			setMailboxData( validatedMailboxData );
-		}
-	};
-
-	const handleAddEmail = () => {
-		setShowAllErrors( true );
-
-		const validatedTitanMailboxes = validateMailboxes( [ mailboxData ], optionalMailboxFields );
-
-		const mailboxesAreValid = areAllMailboxesValid(
-			validatedTitanMailboxes,
-			optionalMailboxFields
-		);
-
-		setMailboxData( validatedTitanMailboxes[ 0 ] );
-
-		if ( ! mailboxesAreValid ) {
+	const onSubmit = async ( mailboxOperations: MailboxOperations ) => {
+		if ( ! ( await mailboxOperations.validateAndCheck( false ) ) ) {
 			return;
 		}
 
-		const cartItemArgs: TitanProductProps = {
-			domain: domainName,
-			quantity: validatedTitanMailboxes.length,
-			extra: {
-				email_users: validatedTitanMailboxes.map( transformMailboxForCart ),
-				new_quantity: validatedTitanMailboxes.length,
-			},
-		};
-
-		const cartItem =
-			selectedIntervalLength === IntervalLength.MONTHLY
-				? titanMailMonthly( cartItemArgs )
-				: titanMailYearly( cartItemArgs );
-
-		setCartItem( cartItem, () => handleClickAccept( 'accept' ) );
+		setCartItem( getCartItems( mailboxOperations.mailboxes, selectedIntervalLength ), () =>
+			handleClickAccept( 'accept' )
+		);
 	};
 
 	const pricingComponent = (
@@ -216,52 +181,20 @@ const ProfessionalEmailUpsell = ( {
 			<div className="professional-email-upsell__content">
 				{ isMobileView && pricingComponent }
 				<div className="professional-email-upsell__form">
-					<FormFieldset>
-						<FormLabel>
-							{ translate( 'Enter email address' ) }
-							<FormTextInputWithAffixes
-								value={ mailboxData.mailbox.value }
-								isError={ hasMailboxError }
-								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onMailboxValueChange( 'mailbox', event.target.value.toLowerCase() );
-								} }
-								onBlur={ () => {
-									setMailboxFieldTouched( hasBeenValidated );
-								} }
-								suffix={ `@${ domainName }` }
-							/>
-						</FormLabel>
-						{ hasMailboxError && (
-							<FormInputValidation text={ mailboxData.mailbox.error } isError />
-						) }
-					</FormFieldset>
-					<FormFieldset>
-						<FormLabel>
-							{ translate( 'Set password' ) }
-							<FormPasswordInput
-								autoCapitalize="off"
-								autoCorrect="off"
-								value={ mailboxData.password.value }
-								maxLength={ 100 }
-								isError={ hasPasswordError }
-								onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
-									onMailboxValueChange( 'password', event.target.value );
-								} }
-								onBlur={ () => {
-									setPasswordFieldTouched( hasBeenValidated );
-								} }
-							/>
-						</FormLabel>
-						{ hasPasswordError && (
-							<FormInputValidation text={ mailboxData.password.error } isError />
-						) }
-					</FormFieldset>
-					<div className="professional-email-upsell__form-buttons">
-						<Button onClick={ handleClickDecline }>{ translate( 'Skip for now' ) }</Button>
-						<Button primary={ true } onClick={ handleAddEmail }>
-							{ translate( 'Add Professional Email' ) }
-						</Button>
-					</div>
+					<NewMailBoxList
+						cancelActionText={ 'Skip for now' }
+						hiddenFieldNames={ [ FIELD_NAME, FIELD_ALTERNATIVE_EMAIL ] }
+						fieldLabelTexts={ {
+							[ FIELD_MAILBOX ]: translate( 'Enter email address' ),
+							[ FIELD_PASSWORD ]: translate( 'Set password' ),
+						} }
+						onCancel={ handleClickDecline }
+						onSubmit={ onSubmit }
+						provider={ EmailProvider.Titan }
+						selectedDomainName={ domainName }
+						showCancelButton
+						submitActionText={ translate( 'Add Professional Email' ) }
+					/>
 				</div>
 				<div className="professional-email-upsell__features">
 					{ ! isMobileView && pricingComponent }
