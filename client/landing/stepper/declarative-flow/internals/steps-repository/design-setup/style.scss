@@ -270,6 +270,22 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 		}
 	}
+
+	.step-container__header .formatted-header {
+		h1.formatted-header__title {
+			font-family: $sans;
+			font-weight: 500;
+			font-size: $font-body;
+		}
+	}
+
+	.design-setup__info-popover {
+		background-color: var( --studio-gray-100 );
+		padding: 8px 8px 3px;
+		border-radius: 2px;
+		margin-right: 10px;
+		cursor: pointer;
+	}
 }
 
 /* Hide categories from the sell intent */
