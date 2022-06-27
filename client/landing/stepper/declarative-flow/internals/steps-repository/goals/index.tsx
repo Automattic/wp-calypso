@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -36,11 +37,13 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
  */
 const GoalsStep: Step = ( { navigation } ) => {
 	const translate = useTranslate();
-	const headerText = translate( 'Welcome!{{br/}}What are your goals?', {
-		components: {
-			br: <br />,
-		},
-	} );
+	const welcomeText = translate( 'Welcome!' );
+	const whatAreYourGoalsText = translate( 'What are your goals?' );
+	const headerText = (
+		<>
+			{ welcomeText } <br /> { whatAreYourGoalsText }
+		</>
+	);
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
@@ -116,25 +119,29 @@ const GoalsStep: Step = ( { navigation } ) => {
 	}, [ refParameter, refGoals ] );
 
 	return (
-		<StepContainer
-			stepName={ 'goals-step' }
-			goNext={ navigation.goNext }
-			skipLabelText={ translate( 'Skip to dashboard' ) }
-			skipButtonAlign={ 'top' }
-			hideBack={ true }
-			isHorizontalLayout={ true }
-			headerImageUrl={ intentImageUrl }
-			className={ 'goals__container' }
-			formattedHeader={
-				<FormattedHeader
-					id={ 'goals-header' }
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-				/>
-			}
-			stepContent={ stepContent }
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			<DocumentHead title={ whatAreYourGoalsText } />
+
+			<StepContainer
+				stepName={ 'goals-step' }
+				goNext={ navigation.goNext }
+				skipLabelText={ translate( 'Skip to dashboard' ) }
+				skipButtonAlign={ 'top' }
+				hideBack={ true }
+				isHorizontalLayout={ true }
+				headerImageUrl={ intentImageUrl }
+				className={ 'goals__container' }
+				formattedHeader={
+					<FormattedHeader
+						id={ 'goals-header' }
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+					/>
+				}
+				stepContent={ stepContent }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
 	);
 };
 
