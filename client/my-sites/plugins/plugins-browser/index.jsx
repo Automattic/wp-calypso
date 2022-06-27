@@ -3,12 +3,15 @@ import {
 	findFirstSimilarPlanKey,
 	TYPE_BUSINESS,
 } from '@automattic/calypso-products';
-import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products/src';
+import {
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	WPCOM_FEATURES_MANAGE_PLUGINS,
+} from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
@@ -89,6 +92,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
 		category: 'paid',
 	} );
+
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
 			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
@@ -106,8 +111,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
-	const hasManagePlugins = useSelector(
-		( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ) || jetpackNonAtomic
+	const hasInstallPurchasedPlugins = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
+	const hasManagePlugins = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS )
 	);
 
 	const {
@@ -145,6 +153,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	const translate = useTranslate();
 
 	const isMobile = useBreakpoint( '<960px' );
+
+	const shouldShowManageButton = useMemo( () => {
+		return jetpackNonAtomic || ( isJetpack && ( hasInstallPurchasedPlugins || hasManagePlugins ) );
+	}, [ jetpackNonAtomic, isJetpack, hasInstallPurchasedPlugins, hasManagePlugins ] );
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
@@ -243,10 +255,10 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 				>
 					<div className="plugins-browser__main-buttons">
 						<ManageButton
+							shouldShowManageButton={ shouldShowManageButton }
 							siteAdminUrl={ siteAdminUrl }
 							siteSlug={ siteSlug }
 							jetpackNonAtomic={ jetpackNonAtomic }
-							hasManagePlugins={ hasManagePlugins }
 						/>
 
 						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
@@ -641,10 +653,10 @@ const UploadPluginButton = ( { isMobile, siteSlug } ) => {
 	);
 };
 
-const ManageButton = ( { siteAdminUrl, siteSlug, jetpackNonAtomic, hasManagePlugins } ) => {
+const ManageButton = ( { shouldShowManageButton, siteAdminUrl, siteSlug, jetpackNonAtomic } ) => {
 	const translate = useTranslate();
 
-	if ( ! hasManagePlugins ) {
+	if ( ! shouldShowManageButton ) {
 		return null;
 	}
 

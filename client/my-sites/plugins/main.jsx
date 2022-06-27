@@ -1,3 +1,8 @@
+import {
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	WPCOM_FEATURES_MANAGE_PLUGINS,
+	WPCOM_FEATURES_UPLOAD_PLUGINS,
+} from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
@@ -27,6 +32,8 @@ import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-use
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getUpdateableJetpackSites from 'calypso/state/selectors/get-updateable-jetpack-sites';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	canJetpackSiteUpdateFiles,
 	isJetpackSite,
@@ -56,6 +63,8 @@ export class PluginsMain extends Component {
 			hasJetpackSites: hasJpSites,
 			selectedSiteIsJetpack,
 			selectedSiteSlug,
+			hasInstallPurchasedPlugins,
+			hasManagePlugins,
 		} = this.props;
 
 		currentPlugins.map( ( plugin ) => {
@@ -67,7 +76,10 @@ export class PluginsMain extends Component {
 
 		if ( prevProps.isRequestingSites && ! this.props.isRequestingSites ) {
 			// Selected site is not a Jetpack site
-			if ( selectedSiteSlug && ! selectedSiteIsJetpack ) {
+			if (
+				selectedSiteSlug &&
+				( ! selectedSiteIsJetpack || ! hasInstallPurchasedPlugins || ! hasManagePlugins )
+			) {
 				page.redirect( `/plugins/${ selectedSiteSlug }` );
 				return;
 			}
@@ -343,8 +355,12 @@ export class PluginsMain extends Component {
 	};
 
 	renderUploadPluginButton( isMobile ) {
-		const { selectedSiteSlug, translate } = this.props;
+		const { selectedSiteSlug, translate, hasUploadPlugins } = this.props;
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+
+		if ( ! hasUploadPlugins ) {
+			return null;
+		}
 
 		return (
 			<Button
@@ -452,6 +468,15 @@ export default flow(
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			const jetpackNonAtomic =
+				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
+			const hasManagePlugins =
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_MANAGE_PLUGINS ) || jetpackNonAtomic;
+			const hasUploadPlugins =
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic;
+			const hasInstallPurchasedPlugins =
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ||
+				jetpackNonAtomic;
 
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
@@ -473,6 +498,9 @@ export default flow(
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )
 					: canCurrentUserManagePlugins( state ),
+				hasManagePlugins: hasManagePlugins,
+				hasUploadPlugins: hasUploadPlugins,
+				hasInstallPurchasedPlugins: hasInstallPurchasedPlugins,
 			};
 		},
 		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }
