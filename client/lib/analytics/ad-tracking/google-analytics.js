@@ -9,7 +9,6 @@ import { setupGtag } from './setup-gtag';
 import './setup';
 
 export function setupGoogleAnalyticsGtag( options ) {
-	setupGtag();
 	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, options );
 }
 
