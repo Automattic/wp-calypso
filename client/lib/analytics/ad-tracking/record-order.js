@@ -5,6 +5,7 @@ import {
 	isAdTrackingAllowed,
 	refreshCountryCodeCookieGdpr,
 } from 'calypso/lib/analytics/utils';
+import { jetpackCartToGaPurchase } from '../utils/jetpack-cart-to-ga-purchase';
 import {
 	debug,
 	isCriteoEnabled,
@@ -34,6 +35,7 @@ import {
 } from './constants';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
+import { GA4 } from './google-analytics-4';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
@@ -534,6 +536,10 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
  */
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		GA4.fireJetpackEcommercePurchase(
+			jetpackCartToGaPurchase( orderId, cart, wpcomJetpackCartInfo )
+		);
+
 		const jetpackParams = [
 			'event',
 			'purchase',
