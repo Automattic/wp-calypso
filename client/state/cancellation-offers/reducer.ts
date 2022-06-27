@@ -30,7 +30,7 @@ const mapResponseObject = ( {
 	rawPrice: raw_price,
 } );
 
-const createIntroOfferMap = ( payload: CancellationOfferAPIResponse[] ) => {
+const createCancellationOfferMap = ( payload: CancellationOfferAPIResponse[] ) => {
 	return payload.map( mapResponseObject );
 };
 
@@ -58,7 +58,7 @@ const error = ( state = {}, action: AnyAction ) => {
 export const offers = ( state = [], action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_RECEIVE:
-			return createIntroOfferMap( action.offers );
+			return createCancellationOfferMap( action.offers );
 	}
 
 	return state;
