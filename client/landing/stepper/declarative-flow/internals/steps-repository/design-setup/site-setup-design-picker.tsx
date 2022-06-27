@@ -378,6 +378,8 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		/>
 	);
 
+	const newDesignEnabled = isEnabled( 'signup/theme-preview-screen' );
+
 	const stepContent = showGeneratedDesigns ? (
 		<GeneratedDesignPicker
 			selectedDesign={ selectedGeneratedDesign }
@@ -445,6 +447,8 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			recommendedCategorySlug={ categorizationOptions.defaultSelection }
 			categoriesHeading={ heading }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
+			previewOnly={ newDesignEnabled }
+			hasDesignOptionHeader={ ! newDesignEnabled }
 		/>
 	);
 
@@ -455,7 +459,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				'design-picker__is-generated': showGeneratedDesigns,
 				'design-picker__is-generated-previewing': isPreviewingGeneratedDesign,
 				'design-picker__has-categories': showDesignPickerCategories,
-				'design-picker__sell-intent': 'sell' === intent,
+				'design-picker__sell-intent': ! newDesignEnabled && 'sell' === intent,
 			} ) }
 			shouldStickyNavButtons={ showGeneratedDesigns }
 			hasStickyNavButtonsPadding={ isSticky }
