@@ -33,6 +33,7 @@ import {
 } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -139,6 +140,7 @@ export class UserStep extends Component {
 			sectionName,
 			from,
 			locale,
+			isPartnerSignup,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
@@ -354,12 +356,20 @@ export class UserStep extends Component {
 	}
 
 	getHeaderText() {
-		const { flowName, oauth2Client, translate, headerText, wccomFrom } = this.props;
+		const { flowName, oauth2Client, translate, headerText, wccomFrom, isPartnerSignup } =
+			this.props;
 
 		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 			return translate( 'Sign up for Crowdsignal' );
 		}
 
+		// if ( isWooOAuth2Client( oauth2Client ) && isPartnerSignup ) {
+		// 	return (
+		// 		<div className={ classNames( 'signup-form__woocommerce-heading' ) }>
+		// 			{ translate( 'Create a WordPress.com account' ) }
+		// 		</div>
+		// 	);
+		// }
 		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			return (
 				<Fragment>
@@ -394,7 +404,7 @@ export class UserStep extends Component {
 			);
 		}
 
-		if ( flowName === 'wpcc' && oauth2Client ) {
+		if ( flowName === 'wpcc' && oauth2Client && ! isPartnerSignup ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
 				comment:
@@ -424,7 +434,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, wccomFrom, isReskinned } = this.props;
+		const { oauth2Client, wccomFrom, isReskinned, isPartnerSignup } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -438,7 +448,7 @@ export class UserStep extends Component {
 			}
 		}
 
-		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+		if ( isWooOAuth2Client( oauth2Client ) && ( wccomFrom || isPartnerSignup ) ) {
 			isSocialSignupEnabled = true;
 		}
 
@@ -459,8 +469,8 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					horizontal={ isReskinned }
-					isReskinned={ isReskinned }
+					horizontal={ isReskinned || isPartnerSignup }
+					isReskinned={ isReskinned || isPartnerSignup }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -522,6 +532,7 @@ export default connect(
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
 		userLoggedIn: isUserLoggedIn( state ),
+		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
 		errorNotice,

@@ -49,6 +49,7 @@ import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { createSocialUserFailed } from 'calypso/state/login/actions';
+import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -447,7 +448,7 @@ class SignupForm extends Component {
 			locale: this.props.locale,
 			oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 			wccomFrom: this.props.wccomFrom,
-			isWhiteLogin: this.props.isReskinned,
+			isWhiteLogin: this.props.isReskinned || this.props.isPartnerSignup,
 			signupUrl: window.location.pathname + window.location.search,
 		} );
 	}
@@ -1059,7 +1060,7 @@ class SignupForm extends Component {
 							handleResponse={ this.props.handleSocialResponse }
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
-							isReskinned={ this.props.isReskinned }
+							isReskinned={ this.props.isReskinned || this.props.isPartnerSignup }
 						/>
 					) }
 					{ this.props.footerLink || this.footerLink() }
@@ -1097,7 +1098,7 @@ class SignupForm extends Component {
 						handleResponse={ this.props.handleSocialResponse }
 						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
-						isReskinned={ this.props.isReskinned }
+						isReskinned={ this.props.isReskinned || this.props.isPartnerSignup }
 					/>
 				) }
 
@@ -1127,6 +1128,7 @@ export default connect(
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 		isP2Flow:
 			isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
+		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
