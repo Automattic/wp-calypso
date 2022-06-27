@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
-import { isProvisioningRegisteredDomain } from 'calypso/lib/domains/utils/is-provisioning-registered-domain';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import {
 	hasGoogleAccountTOSWarning,
 	hasUnusedMailboxWarning,
@@ -130,7 +130,7 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 		// in the email management until the domain provisioning has finished. To avoid confusion,
 		// we display a warning under these conditions.
 		if (
-			isProvisioningRegisteredDomain( domain, 45 ) &&
+			isRecentlyRegistered( domain, 45 ) &&
 			getGSuiteSubscriptionStatus( domain ) === 'unknown'
 		) {
 			return {
