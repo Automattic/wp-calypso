@@ -9,7 +9,7 @@ $wpcom-modal-breakpoint: 660px;
 
 $wpcom-modal-content-spacing: 32px;
 $wpcom-modal-content-min-height: 400px;
-$wpcom-modal-inner-content-width: 290px;
+$wpcom-modal-inner-content-width: 372px;
 $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 
 // Core modal style overrides
@@ -30,7 +30,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 		}
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
-			width: 720px;
+			width: $wpcom-modal-inner-content-width * 2;
 			height: $wpcom-modal-content-min-height;
 			top: calc( 50% - #{$wpcom-modal-footer-height * 0.5} );
 		}
