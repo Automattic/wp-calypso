@@ -134,11 +134,17 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			! domain.hasWpcomNameservers &&
 			getGSuiteSubscriptionStatus( domain ) === 'unknown'
 		) {
-			return {
-				statusClass: 'warning',
-				icon: 'info',
-				text: translate( 'Configuring domain…' ),
-			};
+			const registeredTimestamp = Date.parse( domain.registrationDate );
+			const timeSinceRegistration = Date.now() - registeredTimestamp;
+
+			// The 45 minutes time window is arbitrary.
+			if ( timeSinceRegistration < 45 * 60 * 1000 ) {
+				return {
+					statusClass: 'warning',
+					icon: 'info',
+					text: translate( 'Configuring Google Workspace…' ),
+				};
+			}
 		}
 
 		return activeStatus;
