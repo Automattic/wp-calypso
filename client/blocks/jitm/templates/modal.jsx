@@ -1,23 +1,47 @@
 import { Button, Guide } from '@wordpress/components';
 import { useState } from 'react';
 import './modal-style.scss';
+import Inbox from './inbox.svg';
 import Visual from './plans-visual.svg';
 
 export default function ModalTemplate( {
-	featureClass,
 	CTA,
-	trackImpression,
-	message,
 	description,
+	disclaimer,
+	featureClass,
+	icon,
+	message,
 	onClick,
 	onDismiss,
 	title,
-	disclaimer,
+	trackImpression,
 } ) {
 	trackImpression && trackImpression();
 
 	// technically, non-dismissable jitms are authorable, however, that doesn't make any sense as a modal.
 	const [ isDismissed, setDismissed ] = useState( [] );
+
+	const getModalImage = () => {
+		switch ( icon ) {
+			case 'mailbox':
+				return Inbox;
+			default:
+				return Visual;
+		}
+	};
+
+	const getModalAltText = () => {
+		switch ( icon ) {
+			case 'mailbox':
+				return 'Embedded inbox';
+			default:
+				return 'list of available plans — premium, business, and ecommerce plans';
+		}
+	};
+
+	const modalImage = (
+		<img className={ icon || 'plans' } src={ getModalImage() } alt={ getModalAltText() } />
+	);
 
 	return isDismissed.includes( featureClass ) ? null : (
 		<Guide
@@ -53,12 +77,7 @@ export default function ModalTemplate( {
 									<p className="modal__disclaimer">{ line }</p>
 								) ) }
 							</div>
-							<div className="modal__sidebar">
-								<img
-									src={ Visual }
-									alt="list of available plans — premium, business, and ecommerce plans"
-								/>
-							</div>
+							<div className="modal__sidebar">{ modalImage }</div>
 						</>
 					),
 				},
