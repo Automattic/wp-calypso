@@ -3,13 +3,13 @@ import type { AppState } from 'calypso/types';
 /**
  * @param  {object}  state       Global state tree
  * @param  {number}  productId   The productId to check for intro offers
- * @param  {number}  siteId      The ID of the site we're querying
+ * @param  {number|'none'|undefined}  siteId      The ID of the site we're querying
  * @returns {boolean}            True if the offer is eligible for an intro offer
  */
 export default function getIntroOfferIsEligible(
 	state: AppState,
 	productId: number,
-	siteId: number | 'none'
+	siteId: number | 'none' | undefined
 ): boolean {
 	const siteIdKey = siteId && typeof siteId === 'number' && siteId > 0 ? siteId : 'none';
 

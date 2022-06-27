@@ -76,7 +76,7 @@ export function useGetProductVariants(
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return siteId ? computeProductsWithPrices( state, siteId, variantProductSlugs ) : [];
+		return computeProductsWithPrices( state, siteId, variantProductSlugs );
 	} );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );
