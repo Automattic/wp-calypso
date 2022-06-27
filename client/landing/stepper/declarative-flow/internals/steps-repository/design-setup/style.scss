@@ -276,12 +276,12 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
 				Cantarell, 'Helvetica Neue', sans-serif;
 			font-weight: 500;
-			font-size: 1rem;
+			font-size: $font-body;
 		}
 	}
 
 	.design-setup__info-popover {
-		background-color: #000000;
+		background-color: var( --studio-gray-100 );
 		padding: 8px 8px 3px;
 		border-radius: 2px;
 		margin-right: 10px;
