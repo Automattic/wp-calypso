@@ -100,6 +100,7 @@
 		"signup/anchor-fm": true,
 		"signup/professional-email-step": false,
 		"signup/reskin": true,
+		"signup/seller-upgrade-modal": false,
 		"signup/social": true,
 		"signup/design-picker-categories": true,
 		"signup/design-picker-use-featured-picks-buttons": true,
