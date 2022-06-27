@@ -11,8 +11,6 @@ import googleDriveIcon from 'calypso/assets/images/email-providers/google-worksp
 import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/gmail.svg';
 import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/sheets.svg';
 import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/slides.svg';
-import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/flat/calendar.svg';
-import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/flat/contacts.svg';
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -38,8 +36,6 @@ import {
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import {
-	getTitanCalendarUrl,
-	getTitanContactsUrl,
 	getTitanEmailUrl,
 	hasTitanMailWithUs,
 	useTitanAppsUrlPrefix,
@@ -97,26 +93,6 @@ const getTitanMenuItems = ( {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'webmail' ),
-		},
-		{
-			href: getTitanCalendarUrl( titanAppsUrlPrefix, email ),
-			image: titanCalendarIcon,
-			imageAltText: translate( 'Titan Calendar icon' ),
-			isInternalLink: true,
-			title: translate( 'View Calendar', {
-				comment: 'View the Calendar application for Titan',
-			} ),
-			onClick: getTitanClickHandler( 'calendar' ),
-		},
-		{
-			href: getTitanContactsUrl( titanAppsUrlPrefix, email ),
-			image: titanContactsIcon,
-			imageAltText: translate( 'Titan Contacts icon' ),
-			isInternalLink: true,
-			title: translate( 'View Contacts', {
-				comment: 'View the Contacts application for Titan',
-			} ),
-			onClick: getTitanClickHandler( 'contacts' ),
 		},
 		...( canCurrentUserAddEmail( domain )
 			? [
