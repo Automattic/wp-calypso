@@ -27,18 +27,16 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 
 	return (
 		<Dialog
-			className="seller-upgrade-modal"
+			className="upgrade-modal"
 			isVisible={ isOpen }
 			onClose={ () => closeModal() }
 			isFullScreen
 		>
-			<div className="seller-upgrade-modal__col">
-				<div className="seller-upgrade-modal__star-box">
+			<div className="upgrade-modal__col">
+				<div className="upgrade-modal__star-box">
 					<Gridicon icon="star" size={ 24 } />
 				</div>
-				<h1 className="seller-upgrade-modal__heading">
-					{ translate( 'Unlock this premium theme' ) }
-				</h1>
+				<h1 className="upgrade-modal__heading">{ translate( 'Unlock this premium theme' ) }</h1>
 				<p>
 					{ /* Translators: planName is the name of the plan, planPrice is the plan price in the user's currency */ }
 					{ translate(
@@ -51,17 +49,17 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 						}
 					) }
 				</p>
-				<div className="seller-upgrade-modal__actions">
-					<Button className="seller-upgrade-modal__cancel" onClick={ () => closeModal() }>
+				<div className="upgrade-modal__actions">
+					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
 						{ translate( 'Cancel' ) }
 					</Button>
-					<Button className="seller-upgrade-modal__upgrade" primary onClick={ () => checkout() }>
+					<Button className="upgrade-modal__upgrade" primary onClick={ () => checkout() }>
 						{ translate( 'Upgrade plan' ) }
 					</Button>
 				</div>
 			</div>
-			<div className="seller-upgrade-modal__col">
-				<div className="seller-upgrade-modal__included">
+			<div className="upgrade-modal__col">
+				<div className="upgrade-modal__included">
 					<h2>
 						{ /* Translators: planName is the name of the plan */ }
 						{ translate( 'Included with %(planName)s', {
@@ -71,19 +69,19 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 						} ) }
 					</h2>
 					<ul>
-						<li className="seller-upgrade-modal__included-item">
+						<li className="upgrade-modal__included-item">
 							<Gridicon icon="checkmark" size={ 16 } />
 							{ translate( 'Best-in-class hosting' ) }
 						</li>
-						<li className="seller-upgrade-modal__included-item">
+						<li className="upgrade-modal__included-item">
 							<Gridicon icon="checkmark" size={ 16 } />
 							{ translate( 'Access to premium themes' ) }
 						</li>
-						<li className="seller-upgrade-modal__included-item">
+						<li className="upgrade-modal__included-item">
 							<Gridicon icon="checkmark" size={ 16 } />
 							{ translate( "Access to 1000's of plugins" ) }
 						</li>
-						<li className="seller-upgrade-modal__included-item">
+						<li className="upgrade-modal__included-item">
 							<Gridicon icon="checkmark" size={ 16 } />
 							{ translate( 'Unlimited support' ) }
 						</li>
@@ -91,7 +89,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 				</div>
 				<ThemeFeatures features={ features } heading={ featuresHeading } />
 			</div>
-			<Button className="seller-upgrade-modal__close" borderless onClick={ () => closeModal() }>
+			<Button className="upgrade-modal__close" borderless onClick={ () => closeModal() }>
 				<Gridicon icon="cross" size={ 12 } />
 				<ScreenReaderText>{ translate( 'Close modal' ) }</ScreenReaderText>
 			</Button>
