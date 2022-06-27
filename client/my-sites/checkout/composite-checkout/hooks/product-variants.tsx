@@ -24,7 +24,6 @@ import { computeProductsWithPrices } from 'calypso/state/products-list/selectors
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { Plan, Product } from '@automattic/calypso-products';
-import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -39,7 +38,11 @@ function myFormatCurrency( price: number, code: string, options = {} ) {
 export interface AvailableProductVariant {
 	planSlug: string;
 	plan: Plan | Product;
-	product: ProductListItem;
+	product: {
+		product_id: number;
+		product_slug: string;
+		currency_code: string;
+	};
 	priceFull: number;
 	priceFinal: number;
 	introductoryOfferPrice: number | null;
@@ -78,7 +81,7 @@ export function useGetProductVariants(
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return siteId ? computeProductsWithPrices( state, siteId, variantProductSlugs ) : [];
+		return computeProductsWithPrices( state, siteId, variantProductSlugs );
 	} );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );

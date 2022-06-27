@@ -1,8 +1,4 @@
-import {
-	getPriceTierForUnits,
-	GROUP_WPCOM,
-	JETPACK_SEARCH_PRODUCTS,
-} from '@automattic/calypso-products';
+import { GROUP_WPCOM, JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getAllPostCounts } from 'calypso/state/posts/counts/selectors';
 import getIntroOfferIsEligible from 'calypso/state/selectors/get-intro-offer-is-eligible';
@@ -12,38 +8,21 @@ import { getProductCost } from './get-product-cost';
 import { getProductPriceTierList } from './get-product-price-tiers';
 import { getProductSaleCouponCost } from './get-product-sale-coupon-cost';
 import { getProductSaleCouponDiscount } from './get-product-sale-coupon-discount';
-import type { Plan, PlanSlug, ProductSlug } from '@automattic/calypso-products';
-import type { AppState } from 'calypso/types';
-
-export interface FullAndMonthlyPrices {
-	priceFull: number | null;
-	priceFinal: number | null;
-	introductoryOfferPrice: number | null;
-}
-
-type PlanOrProductSlug = PlanSlug | ProductSlug;
-type Optional< T, K extends keyof T > = Pick< Partial< T >, K > & Omit< T, K >;
-type PlanObject = Optional< Pick< Plan, 'group' | 'getProductId' >, 'group' > & {
-	getStoreSlug: () => PlanOrProductSlug;
-};
 
 /**
- * Computes a full and monthly price for a given plan, based on its slug/constant
+ * Computes a full and monthly price for a given plan, based on it's slug/constant
  *
- * planObject is the plan object returned by getPlan() from @automattic/calypso-products
+ * @param {object} state Current redux state
+ * @param {number} siteId Site ID to consider
+ * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
+ * @returns {object} Object with a full and monthly price
  */
-export const computeFullAndMonthlyPricesForPlan = (
-	state: AppState,
-	siteId: number,
-	planObject: PlanObject
-): FullAndMonthlyPrices => {
+export const computeFullAndMonthlyPricesForPlan = ( state, siteId, planObject ) => {
 	if ( planObject.group === GROUP_WPCOM ) {
 		return computePricesForWpComPlan( state, siteId, planObject );
 	}
 
-	const isJetpackSearchProduct = ( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes(
-		planObject.getStoreSlug()
-	);
+	const isJetpackSearchProduct = JETPACK_SEARCH_PRODUCTS.includes( planObject.getStoreSlug() );
 
 	// eslint-disable-next-line no-nested-ternary
 	const planOrProductPrice = ! getPlanPrice( state, siteId, planObject, false )
@@ -57,7 +36,7 @@ export const computeFullAndMonthlyPricesForPlan = (
 		? getIntroOfferPrice( state, planObject.getProductId(), siteId )
 		: null;
 	const saleCouponCost = isJetpackSearchProduct
-		? calculateSaleCouponCostForJetpackProduct( planOrProductPrice, saleCouponDiscount )
+		? Math.floor( planOrProductPrice * ( 1 - saleCouponDiscount ) * 100 ) / 100
 		: getProductSaleCouponCost( state, planObject.getStoreSlug() );
 
 	return {
@@ -68,26 +47,14 @@ export const computeFullAndMonthlyPricesForPlan = (
 	};
 };
 
-function calculateSaleCouponCostForJetpackProduct(
-	price: number | null,
-	saleCouponDiscount: number
-): number | null {
-	if ( ! price ) {
-		return null;
-	}
-	return Math.floor( price * ( 1 - saleCouponDiscount ) * 100 ) / 100;
-}
-
 /**
  * Compute a full and monthly price for a given wpcom plan.
  *
- * planObject is the plan object returned by getPlan() from @automattic/calypso-products
+ * @param {object} state Current redux state
+ * @param {number} siteId Site ID to consider
+ * @param {object} planObject Plan object returned by getPlan() from @automattic/calypso-products
  */
-function computePricesForWpComPlan(
-	state: AppState,
-	siteId: number,
-	planObject: PlanObject
-): FullAndMonthlyPrices {
+function computePricesForWpComPlan( state, siteId, planObject ) {
 	const priceFull = getPlanRawPrice( state, planObject.getProductId(), false ) || 0;
 	const introductoryOfferPrice = getIntroOfferPrice( state, planObject.getProductId(), siteId );
 
@@ -99,21 +66,21 @@ function computePricesForWpComPlan(
 }
 
 /**
- * Compute the Jetpack Search product tiered price based on the site's number of published posts.
+ * Compute the Jetpack Search product tiered price based on the site's number of posts.
+ *
+ * @param {object} state Current redux state
+ * @param {number} siteId Site ID to consider
+ * @param {object} productSlug The product slug
+ * @returns {number} The tiered price (given the site's number of published posts)
  */
-function getSearchProductTierPrice(
-	state: AppState,
-	siteId: number,
-	productSlug: string
-): number | null {
+function getSearchProductTierPrice( state, siteId, productSlug ) {
 	const postsCounts = getAllPostCounts( state, siteId, 'post' );
 	const postsCount = postsCounts?.publish || 0;
 	const priceTierList = getProductPriceTierList( state, productSlug );
-	const tier = getPriceTierForUnits( priceTierList, postsCount );
-	if ( ! tier ) {
-		return null;
-	}
-	const minPrice = tier.minimum_price.toString(); // is missing decimal, ie- $9.95 is returned as 995
+	const tier = priceTierList.filter(
+		( tierItem ) => postsCount >= tierItem.minimum_units && postsCount <= tierItem.maximum_units
+	);
+	const minPrice = tier[ 0 ].minimum_price.toString(); // is missing decimal, ie- $9.95 is returned as 995
 	return (
 		// Inject decimal point into 100ths position.
 		Number(
