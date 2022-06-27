@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	findFirstSimilarPlanKey,
@@ -603,7 +604,7 @@ const PluginBrowserContent = ( props ) => {
 			{ ! props.jetpackNonAtomic && (
 				<>
 					<div className="plugins-browser__upgrade-banner">
-						{ eligibleForProPlan && ! isLegacyPlan ? (
+						{ isEnabled( 'marketplace-starter-plan' ) && eligibleForProPlan && ! isLegacyPlan ? (
 							<UpgradeNudgePaid { ...props } />
 						) : (
 							<UpgradeNudge { ...props } />
@@ -612,7 +613,9 @@ const PluginBrowserContent = ( props ) => {
 					<PluginSingleListView { ...props } category="paid" />
 				</>
 			) }
-			{ eligibleForProPlan && ! isLegacyPlan && <UpgradeNudge { ...props } /> }
+			{ isEnabled( 'marketplace-starter-plan' ) && eligibleForProPlan && ! isLegacyPlan && (
+				<UpgradeNudge { ...props } />
+			) }
 			<PluginSingleListView { ...props } category="featured" />
 			<PluginSingleListView { ...props } category="popular" />
 		</>
