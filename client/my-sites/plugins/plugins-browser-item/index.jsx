@@ -3,7 +3,7 @@ import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -69,6 +69,24 @@ const PluginsBrowserListElement = ( props ) => {
 		}
 		return url;
 	}, [ plugin, site ] );
+
+	useEffect(
+		function trackPluginItemRender() {
+			if ( plugin.railcar ) {
+				recordTracksEvent( 'calypso_marketplace_search_traintracks_render', {
+					site: site,
+					plugin: plugin.slug,
+					list_name: props.listName,
+					blog_id: selectedSite?.ID,
+					ui_algo: 'grid', // maybe list?
+					ui_position: props.gridPosition,
+					// fetch_algo: 'marketplace/1',
+					// fetch_position: 1,
+				} );
+			}
+		},
+		[ plugin.railcar ]
+	);
 
 	const trackPluginLinkClick = useCallback( () => {
 		recordTracksEvent( 'calypso_plugin_browser_item_click', {
