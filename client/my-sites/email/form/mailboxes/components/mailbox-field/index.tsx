@@ -103,7 +103,9 @@ const MailboxField = ( {
 		if ( ! field.isTouched ) {
 			field.isTouched = field.hasValidValue();
 		}
-		onRequestFieldValidation( field );
+		if ( field.isTouched ) {
+			onRequestFieldValidation( field );
+		}
 		field.dispatchState();
 	};
 
