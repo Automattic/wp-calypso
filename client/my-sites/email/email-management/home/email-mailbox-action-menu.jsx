@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -87,38 +86,33 @@ const getTitanMenuItems = ( {
 	translate,
 } ) => {
 	const email = getEmailAddress( mailbox );
-	const isEmbeddedInboxTestingEnabled = isEnabled( 'emails/embedded-inbox-testing' );
-
-	const mailboxPrefixUrl = isEmbeddedInboxTestingEnabled
-		? 'https://webmail-alpha.riva.co'
-		: titanAppsUrlPrefix;
 
 	return [
 		{
-			href: getTitanEmailUrl( mailboxPrefixUrl, email, false, window.location.href ),
+			href: getTitanEmailUrl( titanAppsUrlPrefix, email, false, window.location.href ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
-			isInternalLink: isEmbeddedInboxTestingEnabled,
+			isInternalLink: true,
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'webmail' ),
 		},
 		{
-			href: getTitanCalendarUrl( mailboxPrefixUrl, email ),
+			href: getTitanCalendarUrl( titanAppsUrlPrefix, email ),
 			image: titanCalendarIcon,
 			imageAltText: translate( 'Titan Calendar icon' ),
-			isInternalLink: isEmbeddedInboxTestingEnabled,
+			isInternalLink: true,
 			title: translate( 'View Calendar', {
 				comment: 'View the Calendar application for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'calendar' ),
 		},
 		{
-			href: getTitanContactsUrl( mailboxPrefixUrl, email ),
+			href: getTitanContactsUrl( titanAppsUrlPrefix, email ),
 			image: titanContactsIcon,
 			imageAltText: translate( 'Titan Contacts icon' ),
-			isInternalLink: isEmbeddedInboxTestingEnabled,
+			isInternalLink: true,
 			title: translate( 'View Contacts', {
 				comment: 'View the Contacts application for Titan',
 			} ),

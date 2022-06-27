@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -42,12 +41,6 @@ const TitanSetUpThankYou = ( {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 	const translate = useTranslate();
 
-	const isEmbeddedInboxTestingEnabled = isEnabled( 'emails/embedded-inbox-testing' );
-
-	const mailboxPrefixUrl = isEmbeddedInboxTestingEnabled
-		? 'https://webmail-alpha.riva.co'
-		: titanAppsUrlPrefix;
-
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
 
 	const thankYouImage = {
@@ -75,7 +68,7 @@ const TitanSetUpThankYou = ( {
 				stepCta: (
 					<FullWidthButton
 						href={ getTitanEmailUrl(
-							mailboxPrefixUrl,
+							titanAppsUrlPrefix,
 							emailAddress,
 							true,
 							`${ window.location.protocol }//${ window.location.host }/${ emailManagementPath }`

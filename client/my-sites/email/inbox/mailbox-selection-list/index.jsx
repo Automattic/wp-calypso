@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -41,15 +40,11 @@ import './style.scss';
 
 const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-		const isEmbeddedInboxTestingEnabled = isEnabled( 'emails/embedded-inbox-testing' );
 
-		const mailboxPrefixUrl = isEmbeddedInboxTestingEnabled
-			? 'https://webmail-alpha.riva.co'
-			: titanAppsUrlPrefix;
 		return getTitanEmailUrl(
-			mailboxPrefixUrl,
+			titanAppsUrlPrefix,
 			getEmailAddress( mailbox ),
-			! mailboxPrefixUrl,
+			! titanAppsUrlPrefix,
 			window.location.href
 		);
 	}
