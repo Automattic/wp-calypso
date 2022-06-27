@@ -53,7 +53,6 @@ import { getPlugins, isEqualSlugOrId } from 'calypso/state/plugins/installed/sel
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
-import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -107,7 +106,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		getSiteConnectionStatus( state, selectedSite?.ID )
 	);
 	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
-	const hasJetpack = useSelector( hasJetpackSites );
 	const isRequestingSitesData = useSelector( isRequestingSites );
 	const noPermissionsError = useSelector(
 		( state ) =>
@@ -117,11 +115,14 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+	const hasInstallPurchasedPlugins = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
+	const hasManagePlugins = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
 	const hasUploadPlugins = useSelector(
 		( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic
-	);
-	const hasManagePlugins = useSelector(
-		( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ) || jetpackNonAtomic
 	);
 
 	const {
@@ -161,11 +162,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	const isMobile = useBreakpoint( '<960px' );
 
 	const shouldShowManageButton = useMemo( () => {
-		if ( isJetpack ) {
-			return true;
-		}
-		return ! selectedSite?.ID && hasJetpack;
-	}, [ isJetpack, selectedSite, hasJetpack ] );
+		return jetpackNonAtomic || ( isJetpack && ( hasInstallPurchasedPlugins || hasManagePlugins ) );
+	}, [ jetpackNonAtomic, isJetpack, hasInstallPurchasedPlugins, hasManagePlugins ] );
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
@@ -268,7 +266,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 							siteAdminUrl={ siteAdminUrl }
 							siteSlug={ siteSlug }
 							jetpackNonAtomic={ jetpackNonAtomic }
-							hasManagePlugins={ hasManagePlugins }
 						/>
 
 						<UploadPluginButton
@@ -701,16 +698,10 @@ const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	);
 };
 
-const ManageButton = ( {
-	shouldShowManageButton,
-	siteAdminUrl,
-	siteSlug,
-	jetpackNonAtomic,
-	hasManagePlugins,
-} ) => {
+const ManageButton = ( { shouldShowManageButton, siteAdminUrl, siteSlug, jetpackNonAtomic } ) => {
 	const translate = useTranslate();
 
-	if ( ! shouldShowManageButton || ! hasManagePlugins ) {
+	if ( ! shouldShowManageButton ) {
 		return null;
 	}
 

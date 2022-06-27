@@ -1,4 +1,5 @@
 import {
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products/src';
@@ -62,6 +63,7 @@ export class PluginsMain extends Component {
 			hasJetpackSites: hasJpSites,
 			selectedSiteIsJetpack,
 			selectedSiteSlug,
+			hasInstallPurchasedPlugins,
 			hasManagePlugins,
 		} = this.props;
 
@@ -74,7 +76,10 @@ export class PluginsMain extends Component {
 
 		if ( prevProps.isRequestingSites && ! this.props.isRequestingSites ) {
 			// Selected site is not a Jetpack site
-			if ( selectedSiteSlug && ! selectedSiteIsJetpack ) {
+			if (
+				selectedSiteSlug &&
+				( ! selectedSiteIsJetpack || ! ( hasInstallPurchasedPlugins || hasManagePlugins ) )
+			) {
 				page.redirect( `/plugins/${ selectedSiteSlug }` );
 				return;
 			}
@@ -83,10 +88,6 @@ export class PluginsMain extends Component {
 			if ( ! selectedSiteSlug && ! hasJpSites ) {
 				page.redirect( '/plugins' );
 				return;
-			}
-
-			if ( ! hasManagePlugins ) {
-				page( `/plugins/${ this.props.selectedSiteSlug }` );
 			}
 		}
 	}
@@ -473,6 +474,9 @@ export default flow(
 				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_MANAGE_PLUGINS ) || jetpackNonAtomic;
 			const hasUploadPlugins =
 				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic;
+			const hasInstallPurchasedPlugins =
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ||
+				jetpackNonAtomic;
 
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
@@ -496,6 +500,7 @@ export default flow(
 					: canCurrentUserManagePlugins( state ),
 				hasManagePlugins: hasManagePlugins,
 				hasUploadPlugins: hasUploadPlugins,
+				hasInstallPurchasedPlugins: hasInstallPurchasedPlugins,
 			};
 		},
 		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }
