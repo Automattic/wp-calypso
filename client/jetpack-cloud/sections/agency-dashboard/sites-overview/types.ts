@@ -14,7 +14,7 @@ export type AllowedStatusTypes =
 	| 'success'
 	| 'disabled';
 
-export interface SiteObj {
+export interface Site {
 	blog_id: number;
 	url: string;
 	url_with_scheme: string;
@@ -28,7 +28,7 @@ export interface SiteObj {
 	awaiting_plugin_updates: Array< string >;
 }
 export interface SiteNode {
-	value: SiteObj;
+	value: Site;
 	error: boolean;
 	type: AllowedTypes;
 	status: AllowedStatusTypes | string;
@@ -70,7 +70,7 @@ export interface SiteData {
 
 export interface RowMetaData {
 	row: {
-		value: SiteObj | any;
+		value: Site | any;
 		status: AllowedStatusTypes | string;
 		error?: boolean;
 	};

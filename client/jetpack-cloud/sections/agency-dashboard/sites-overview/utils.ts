@@ -2,7 +2,7 @@ import { translate } from 'i18n-calypso';
 import type {
 	AllowedTypes,
 	SiteData,
-	SiteObj,
+	Site,
 	StatusEventNames,
 	ActionEventNames,
 	AllowedStatusTypes,
@@ -284,7 +284,7 @@ export const getRowMetaData = (
 	};
 };
 
-const formatBackupData = ( site: SiteObj ) => {
+const formatBackupData = ( site: Site ) => {
 	const backup: BackupNode = {
 		value: '',
 		status: '',
@@ -318,7 +318,7 @@ const formatBackupData = ( site: SiteObj ) => {
 	return backup;
 };
 
-const formatScanData = ( site: SiteObj ) => {
+const formatScanData = ( site: Site ) => {
 	const scan: ScanNode = {
 		value: '',
 		status: '',
@@ -347,7 +347,7 @@ const formatScanData = ( site: SiteObj ) => {
 	return scan;
 };
 
-const formatMonitorData = ( site: SiteObj ) => {
+const formatMonitorData = ( site: Site ) => {
 	const monitor: MonitorNode = {
 		value: '',
 		status: '',
@@ -369,7 +369,7 @@ const formatMonitorData = ( site: SiteObj ) => {
 /**
  * Returns formatted sites
  */
-export const formatSites = ( sites: Array< SiteObj > = [] ): Array< SiteData > | [] => {
+export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | [] => {
 	return sites.map( ( site ) => {
 		const pluginUpdates = site.awaiting_plugin_updates;
 		return {
