@@ -202,7 +202,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	};
 
 	const closeUpgradeModal = () => {
-		recordTracksEvent( 'calypso_signup_design_seller_upgrade_modal_close_button_click', {
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_close_button_click', {
 			theme: selectedDesign?.slug,
 		} );
 		setShowUpgradeModal( false );
@@ -253,7 +253,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			return goToCheckout();
 		}
 
-		recordTracksEvent( 'calypso_signup_design_seller_upgrade_modal_show', {
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
 			theme: selectedDesign?.slug,
 		} );
 		setShowUpgradeModal( true );
@@ -265,7 +265,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		}
 
 		if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
-			recordTracksEvent( 'calypso_signup_design_seller_upgrade_modal_checkout_button_click', {
+			recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
 				theme: selectedDesign?.slug,
 			} );
 		}
