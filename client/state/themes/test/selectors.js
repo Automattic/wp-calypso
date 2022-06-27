@@ -1559,7 +1559,7 @@ describe( 'themes selectors', () => {
 
 	describe( '#getThemeForumUrl', () => {
 		describe( 'on a WP.com site', () => {
-			test( 'given a free theme, should return the general themes forum URL', () => {
+			test( 'given a free theme, should return the general support forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1576,10 +1576,10 @@ describe( 'themes selectors', () => {
 					'twentysixteen'
 				);
 
-				expect( forumUrl ).toEqual( '//en.forums.wordpress.com/forum/themes' );
+				expect( forumUrl ).toEqual( '//en.forums.wordpress.com/' );
 			} );
 
-			test( 'given a premium theme, should return the general themes forum URL', () => {
+			test( 'given a premium theme, should return the general support forum URL', () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1596,7 +1596,7 @@ describe( 'themes selectors', () => {
 					'mood'
 				);
 
-				expect( forumUrl ).toEqual( '//en.forums.wordpress.com/forum/themes' );
+				expect( forumUrl ).toEqual( '//en.forums.wordpress.com/' );
 			} );
 		} );
 
@@ -1624,7 +1624,7 @@ describe( 'themes selectors', () => {
 				expect( forumUrl ).toBeNull();
 			} );
 
-			test( "given a theme that's found on WP.com, should return the generic WP.com themes support forum URL", () => {
+			test( "given a theme that's found on WP.com, should return the generic WP.com support forum URL", () => {
 				const forumUrl = getThemeForumUrl(
 					{
 						sites: {
@@ -1648,7 +1648,7 @@ describe( 'themes selectors', () => {
 					77203074
 				);
 
-				expect( forumUrl ).toEqual( '//en.forums.wordpress.com/forum/themes' );
+				expect( forumUrl ).toEqual( '//en.forums.wordpress.com/' );
 			} );
 
 			test( "given a theme that's found on WP.org, should return the correspoding WP.org theme forum URL", () => {
