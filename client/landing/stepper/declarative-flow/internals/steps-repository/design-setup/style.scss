@@ -273,8 +273,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 	.step-container__header .formatted-header {
 		h1.formatted-header__title {
-			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu,
-				Cantarell, 'Helvetica Neue', sans-serif;
+			font-family: $sans;
 			font-weight: 500;
 			font-size: $font-body;
 		}
