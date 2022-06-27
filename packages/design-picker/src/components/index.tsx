@@ -6,6 +6,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { noop } from 'lodash';
 import { useMemo } from 'react';
 import {
 	getAvailableDesigns,
@@ -219,7 +220,11 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 					onUpgrade={ onUpgrade }
 				/>
 			) }
-			<DesignButton { ...props } disabled={ ! isBlankCanvas } />
+			<DesignButton
+				{ ...props }
+				onSelect={ previewOnly ? onPreview : noop }
+				disabled={ ! isBlankCanvas && ! previewOnly }
+			/>
 		</div>
 	);
 };

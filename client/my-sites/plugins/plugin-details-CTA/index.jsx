@@ -294,6 +294,7 @@ const CTAButton = ( {
 			>
 				<EligibilityWarnings
 					currentContext={ 'plugin-details' }
+					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
 					onProceed={ () =>
 						onClickInstallPlugin( {
@@ -404,7 +405,8 @@ function onClickInstallPlugin( {
 				`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 					selectedSite?.plan,
 					billingPeriod,
-					eligibleForProPlan
+					eligibleForProPlan,
+					true
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
 				}`

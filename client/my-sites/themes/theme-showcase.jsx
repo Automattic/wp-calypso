@@ -293,7 +293,7 @@ class ThemeShowcase extends Component {
 			isMultisite,
 			locale,
 		} = this.props;
-		const tier = '';
+		const tier = this.props.tier || '';
 
 		const canonicalUrl = 'https://wordpress.com' + pathName;
 

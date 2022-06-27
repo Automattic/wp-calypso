@@ -89,7 +89,7 @@ cd test/e2e
 10. [decrypt](docs/test_environment.md) the secrets file.
 
 ```
-export E2E_SECRETS_KEY='<secret key from the Automattic secret store>'
+export E2E_SECRETS_KEY='Calypso E2E Config decode key from the Automattic secret store>'
 yarn decrypt-secrets
 ```
 

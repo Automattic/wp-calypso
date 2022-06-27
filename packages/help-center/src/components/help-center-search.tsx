@@ -37,13 +37,19 @@ export const HelpCenterSearch = () => {
 
 	return (
 		<div className="inline-help__search">
-			<InlineHelpSearchCard searchQuery={ searchQuery } onSearch={ setSearchQuery } isVisible />
+			<InlineHelpSearchCard
+				searchQuery={ searchQuery }
+				onSearch={ setSearchQuery }
+				location="help-center"
+				isVisible
+			/>
 			{ searchQuery && (
 				<InlineHelpSearchResults
 					onSelect={ redirectToArticle }
 					searchQuery={ searchQuery }
 					openAdminInNewTab
 					placeholderLines={ 4 }
+					location="help-center"
 				/>
 			) }
 			{ ! searchQuery && <SibylArticles message="" supportSite={ undefined } /> }
