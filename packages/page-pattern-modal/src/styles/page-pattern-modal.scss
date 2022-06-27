@@ -102,8 +102,6 @@ $sidebar-width-desktop: 324px;
 .page-pattern-modal__inner {
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		padding: 0 20px;
-		max-height: 100%;
-		display: flex;
 	}
 }
 
@@ -218,11 +216,11 @@ $sidebar-width-desktop: 324px;
 		position: fixed;
 		width: $sidebar-width;
 		padding-right: 22px;
-		max-height: calc( 100% - 60px - 24px - 3px );
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
-
+		top: 63px;
+		bottom: 33px;
 		// Manually choosing when to enable/disable pointer events so that
 		// the scroll wheel behaviour feels natural when the mouse is over
 		// the sidebar. The sidebar is fixed position so it doesn't move when
