@@ -1,8 +1,9 @@
 import { PLAN_ANNUAL_PERIOD, PLAN_MONTHLY_PERIOD } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
-import { useMemo, useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
@@ -13,30 +14,43 @@ interface Props {
 	purchase: Purchase;
 	siteId: number;
 	offer: CancellationOffer;
+	percentDiscount: number;
 }
 
 const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
-	const { offer, purchase } = props;
+	const { offer, purchase, percentDiscount } = props;
 	const translate = useTranslate();
 
-	const interval = useMemo( () => {
+	const { interval, singularInterval } = useMemo( () => {
 		const periods = offer.discountedPeriods;
 		const billingInterval = purchase.billPeriodDays;
+		let interval;
+		let singularInterval;
 
 		switch ( billingInterval ) {
 			case PLAN_MONTHLY_PERIOD:
-				return translate( '%(count) months', { args: { count: periods } } );
+				interval = translate( '%(count) months', { args: { count: periods } } );
+				singularInterval = translate( 'month' );
+				break;
+
 			case PLAN_ANNUAL_PERIOD:
 				if ( periods > 1 ) {
-					return translate( '%(count) years', { args: { count: periods } } );
+					interval = translate( '%(count) years', { args: { count: periods } } );
 				}
-				return translate( 'year' );
+				interval = translate( 'year' );
+				singularInterval = translate( 'year' );
+				break;
+
 			default:
 				if ( periods > 1 ) {
-					return translate( '%(count) renewals', { args: { count: periods } } );
+					interval = translate( '%(count) renewals', { args: { count: periods } } );
 				}
-				return translate( 'renewal' );
+				interval = translate( 'renewal' );
+				singularInterval = translate( 'renewal' );
+				break;
 		}
+
+		return { interval, singularInterval };
 	}, [ purchase, offer ] );
 
 	const onClickAccept = useCallback( () => {
@@ -59,7 +73,7 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 				<p className="jetpack-cancellation-offer__headline">
 					{ translate( 'Get %(discount)d%% off %(name)s for the next %(interval)s.', {
 						args: {
-							discount: offer.discountPercentage,
+							discount: percentDiscount,
 							name: purchase.productName,
 							interval: interval,
 						},
@@ -68,11 +82,24 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 				<p>
 					{ translate( '%(discount)d%% discount will be applied next time you are billed.', {
 						args: {
-							discount: offer.discountPercentage,
+							discount: percentDiscount,
 						},
 					} ) }
+					<br />
+					<small>
+						{ translate(
+							'Your subscription will renew at %(renewalPrice)s for the next %(interval)s. It will then renew at %(fullPrice)s each following %(singularInterval)s.',
+							{
+								args: {
+									renewalPrice: formatCurrency( offer.rawPrice, offer.currencyCode ),
+									interval: interval,
+									fullPrice: formatCurrency( offer.originalPrice, offer.currencyCode ),
+									singularInterval: singularInterval,
+								},
+							}
+						) }
+					</small>
 				</p>
-				<p></p>
 				<Button
 					className="jetpack-cancellation-offer__accept-cta"
 					primary

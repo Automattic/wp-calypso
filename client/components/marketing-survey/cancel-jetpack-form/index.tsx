@@ -79,9 +79,20 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 		return null;
 	} );
+
 	const fetchingCancellationOffers = useSelector( ( state ) =>
 		isFetchingCancellationOffers( state )
 	);
+
+	const isOfferPriceSameOrLowerThanPurchasePrice = useMemo( () => {
+		return cancellationOffer ? purchase.amount >= cancellationOffer.originalPrice : false;
+	}, [ cancellationOffer, purchase ] );
+
+	const offerDiscountBasedFromPurchasePrice = useMemo( () => {
+		return cancellationOffer
+			? Math.floor( ( 1 - cancellationOffer.rawPrice / purchase.amount ) * 100 )
+			: 0;
+	}, [ cancellationOffer, purchase ] );
 
 	/**
 	 * Set the cancellation flow back to the beginning
@@ -132,7 +143,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			availableSteps.push( steps.CANCELLATION_REASON_STEP );
 
 			// During the cancellation decision, potentially show an offer
-			if ( provideCancellationOffer && cancellationOffer ) {
+			if (
+				provideCancellationOffer &&
+				cancellationOffer &&
+				isOfferPriceSameOrLowerThanPurchasePrice
+			) {
 				availableSteps.push( steps.CANCELLATION_OFFER_STEP );
 			}
 		}
@@ -319,6 +334,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 					siteId={ purchase.siteId }
 					purchase={ purchase }
 					offer={ cancellationOffer }
+					percentDiscount={ offerDiscountBasedFromPurchasePrice }
 				/>
 			);
 		}
