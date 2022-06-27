@@ -1,4 +1,5 @@
 import { Button, Guide } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import './modal-style.scss';
 import Inbox from './inbox.svg';
@@ -20,10 +21,11 @@ export default function ModalTemplate( {
 
 	// technically, non-dismissable jitms are authorable, however, that doesn't make any sense as a modal.
 	const [ isDismissed, setDismissed ] = useState( [] );
+	const translate = useTranslate();
 
 	const getModalImage = () => {
 		switch ( icon ) {
-			case 'mailbox':
+			case 'embedded-inbox':
 				return Inbox;
 			default:
 				return Visual;
@@ -32,15 +34,26 @@ export default function ModalTemplate( {
 
 	const getModalAltText = () => {
 		switch ( icon ) {
-			case 'mailbox':
-				return 'Embedded inbox';
+			case 'embedded-inbox':
+				return translate( 'Embedded inbox', { textOnly: true } );
 			default:
-				return 'list of available plans — premium, business, and ecommerce plans';
+				return translate( 'list of available plans — premium, business, and ecommerce plans', {
+					textOnly: true,
+				} );
+		}
+	};
+
+	const getClassName = () => {
+		switch ( icon ) {
+			case 'embedded-inbox':
+				return 'modal__embedded-inbox';
+			default:
+				return 'modal__plans';
 		}
 	};
 
 	const modalImage = (
-		<img className={ icon || 'plans' } src={ getModalImage() } alt={ getModalAltText() } />
+		<img className={ getClassName() } src={ getModalImage() } alt={ getModalAltText() } />
 	);
 
 	return isDismissed.includes( featureClass ) ? null : (

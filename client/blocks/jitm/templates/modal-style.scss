@@ -204,13 +204,13 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		position: absolute;
 	}
 
-	img.plans {
+	img.modal__plans {
 		top: 50%;
 		left: 50%;
 		transform: translate( -50%, -50% );
 	}
 
-	img.mailbox {
+	img.modal__embedded-inbox {
 		left: 50%;
 		width: 100%;
 		bottom: 0;
