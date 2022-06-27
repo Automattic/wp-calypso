@@ -1,7 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { shallow } from 'enzyme';
+
+import { screen } from '@testing-library/react';
+import siteSettingsReducer from 'calypso/state/site-settings/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 
 jest.mock( 'calypso/post-editor/media-modal/detail/detail-fields', () =>
@@ -10,6 +14,15 @@ jest.mock( 'calypso/post-editor/media-modal/detail/detail-fields', () =>
 jest.mock( 'calypso/post-editor/media-modal/detail/detail-file-info', () =>
 	require( 'calypso/components/empty-component' )
 );
+
+function renderWithRedux( ui ) {
+	return renderWithProvider( ui, {
+		reducers: {
+			ui: uiReducer,
+			siteSettings: siteSettingsReducer,
+		},
+	} );
+}
 
 /**
  * Module variables
@@ -43,7 +56,7 @@ describe( 'EditorMediaModalDetailItem', () => {
 	const isVideoPressEnabled = jest.fn( () => true );
 
 	test( 'should display at least one edit button for a VideoPress video on a public site', () => {
-		const tree = shallow(
+		renderWithRedux(
 			<DetailItem
 				item={ DUMMY_VIDEO_MEDIA }
 				isVideoPressEnabled={ isVideoPressEnabled }
@@ -51,13 +64,11 @@ describe( 'EditorMediaModalDetailItem', () => {
 			/>
 		);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
-
-		expect( editButton.length ).toBeGreaterThanOrEqual( 1 );
+		expect( screen.queryAllByRole( 'button' ).length ).toBeGreaterThanOrEqual( 1 );
 	} );
 
 	test( 'should display at least one edit button for a VideoPress video on a private site', () => {
-		const tree = shallow(
+		renderWithRedux(
 			<DetailItem
 				item={ DUMMY_VIDEO_MEDIA }
 				isVideoPressEnabled={ isVideoPressEnabled }
@@ -66,26 +77,20 @@ describe( 'EditorMediaModalDetailItem', () => {
 			/>
 		);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
-
-		expect( editButton.length ).toBeGreaterThanOrEqual( 1 );
+		expect( screen.queryAllByRole( 'button' ).length ).toBeGreaterThanOrEqual( 1 );
 	} );
 
 	test( 'should display at least one edit button for an image on a public site', () => {
-		const tree = shallow( <DetailItem item={ DUMMY_IMAGE_MEDIA } { ...SHARED_PROPS } /> );
+		renderWithRedux( <DetailItem item={ DUMMY_IMAGE_MEDIA } { ...SHARED_PROPS } /> );
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
-
-		expect( editButton.length ).toBeGreaterThanOrEqual( 1 );
+		expect( screen.queryAllByRole( 'button' ).length ).toBeGreaterThanOrEqual( 1 );
 	} );
 
 	test( 'should not display edit button for an image on a private site', () => {
-		const tree = shallow(
+		renderWithRedux(
 			<DetailItem item={ DUMMY_IMAGE_MEDIA } isSitePrivate={ true } { ...SHARED_PROPS } />
 		);
 
-		const editButton = tree.find( '.editor-media-modal-detail__edit' );
-
-		expect( editButton ).toHaveLength( 0 );
+		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
 } );
