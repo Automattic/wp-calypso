@@ -87,7 +87,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 						</li>
 					</ul>
 				</div>
-				<ThemeFeatures features={ features } heading={ featuresHeading } />
+				{ features && <ThemeFeatures features={ features } heading={ featuresHeading } /> }
 			</div>
 			<Button className="upgrade-modal__close" borderless onClick={ () => closeModal() }>
 				<Gridicon icon="cross" size={ 12 } />
