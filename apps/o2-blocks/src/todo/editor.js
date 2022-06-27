@@ -198,7 +198,7 @@ const edit = class extends Component {
 						);
 					} ) }
 				</ul>
-				<div class="add-new-todo-item-form">
+				<div className="add-new-todo-item-form">
 					<Button onClick={ this.addNewItem }>
 						<Dashicon icon="plus" /> Add new item
 					</Button>

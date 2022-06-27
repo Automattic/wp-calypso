@@ -33,13 +33,13 @@ export default function OptionContent( {
 
 	return isPlaceholder ? (
 		<div className="option-content is-placeholder">
-			<div className="option-content__illustration" height={ 100 } width={ 150 }></div>
+			<div className="option-content__illustration" height={ 100 } width={ 150 } />
 			<div className="option-content__main">
 				<div className="option-content__header">
 					<h2> </h2>
 				</div>
-				<div className="option-content__top-text"></div>
-				<div className="option-content__learn-more"></div>
+				<div className="option-content__top-text" />
+				<div className="option-content__learn-more" />
 			</div>
 		</div>
 	) : (

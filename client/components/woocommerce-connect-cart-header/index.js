@@ -22,7 +22,7 @@ const WooCommercConnectCartHeader = ( { translate } ) => {
 							>
 								<mask
 									id="mask0"
-									mask-type="alpha"
+									maskType="alpha"
 									maskUnits="userSpaceOnUse"
 									x="2"
 									y="3"

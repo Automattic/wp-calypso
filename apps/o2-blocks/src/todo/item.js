@@ -48,7 +48,7 @@ export const ItemEditor = class extends Component {
 		return (
 			<li className={ classNames }>
 				{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */ }
-				<span className="item-status" onClick={ this.toggleDone } role="button" tabindex="0">
+				<span className="item-status" onClick={ this.toggleDone } role="button" tabIndex="0">
 					{ done && <Dashicon icon="yes" /> }
 				</span>
 				{ /* { 0 < item.level && <Button onClick={ moveLeft }>&lt;</Button> }

@@ -51,7 +51,7 @@ describe( 'FormattedBlock', () => {
 
 	test( 'displays the correct block with correct props if the content type is supported', () => {
 		const MockBlockMapping = FormattedBlockRenderer( {
-			myBlock: ( props ) => <div type="myfakeblock" { ...props }></div>,
+			myBlock: ( props ) => <div type="myfakeblock" { ...props } />,
 		} );
 
 		const onClick = jest.fn();
