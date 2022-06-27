@@ -48,10 +48,10 @@ if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 
 Within `@automattic/calypso-e2e/src/secrets` is an encrypted file that holds various sensitive secrets, such as API keys and test account information. This must be decrypted prior to use.
 
-To decrypt the secrets, set the environment variable `E2E_SECRETS_KEY` to the secret from the Automattic secret store.
+To decrypt the secrets, set the environment variable `E2E_SECRETS_KEY` to the "Calypso E2E Config decode key" from the Automattic secret store.
 
 ```
-export E2E_SECRETS_KEY='<secret key from the secret store>'
+export E2E_SECRETS_KEY='<Calypso E2E Config decode key from the secret store>'
 ```
 
 Then, either here or in the `@automattic/calypso-e2e` workspace, run `yarn decrypt-secrets`.
