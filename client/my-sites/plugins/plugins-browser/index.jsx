@@ -1,6 +1,9 @@
 import {
 	FEATURE_INSTALL_PLUGINS,
 	findFirstSimilarPlanKey,
+	isBlogger,
+	isPersonal,
+	isPremium,
 	TYPE_BUSINESS,
 	TYPE_STARTER,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
@@ -584,6 +587,9 @@ const PluginBrowserContent = ( props ) => {
 		isEligibleForProPlan( state, props.selectedSite?.ID )
 	);
 
+	const isLegacyPlan =
+		isBlogger( props.sitePlan ) || isPersonal( props.sitePlan ) || isPremium( props.sitePlan );
+
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
 	}
@@ -596,7 +602,7 @@ const PluginBrowserContent = ( props ) => {
 			{ ! props.jetpackNonAtomic && (
 				<>
 					<div className="plugins-browser__upgrade-banner">
-						{ eligibleForProPlan ? (
+						{ eligibleForProPlan && ! isLegacyPlan ? (
 							<UpgradeNudgePaid { ...props } />
 						) : (
 							<UpgradeNudge { ...props } />
@@ -605,7 +611,7 @@ const PluginBrowserContent = ( props ) => {
 					<PluginSingleListView { ...props } category="paid" />
 				</>
 			) }
-			{ eligibleForProPlan && <UpgradeNudge { ...props } /> }
+			{ eligibleForProPlan && ! isLegacyPlan && <UpgradeNudge { ...props } /> }
 			<PluginSingleListView { ...props } category="featured" />
 			<PluginSingleListView { ...props } category="popular" />
 		</>
@@ -621,16 +627,17 @@ const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSl
 	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
 		return null;
 	}
-
-	const checkoutPlan = eligibleForProPlan ? 'pro' : 'business';
+	const isLegacyPlan = isBlogger( sitePlan ) || isPersonal( sitePlan ) || isPremium( sitePlan );
+	const checkoutPlan = eligibleForProPlan && ! isLegacyPlan ? 'pro' : 'business';
 	const bannerURL = `/checkout/${ siteSlug }/${ checkoutPlan }`;
 	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
 		type: TYPE_BUSINESS,
 	} );
 
-	const title = eligibleForProPlan
-		? translate( 'Upgrade to the Pro plan to install plugins.' )
-		: translate( 'Upgrade to the Business plan to install plugins.' );
+	const title =
+		eligibleForProPlan && ! isLegacyPlan
+			? translate( 'Upgrade to the Pro plan to install plugins.' )
+			: translate( 'Upgrade to the Business plan to install plugins.' );
 
 	return (
 		<UpsellNudge
