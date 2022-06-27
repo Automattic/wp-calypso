@@ -43,12 +43,14 @@ export default function SiteContent( {
 		addPageArgs( pageNumber );
 	};
 
+	const showLoader = isFetching && ! sites.length;
+
 	return (
 		<>
-			<SiteTable isFetching={ isFetching } columns={ siteColumns } items={ sites } />
+			<SiteTable isFetching={ showLoader } columns={ siteColumns } items={ sites } />
 			<div className="site-content__mobile-view">
 				<>
-					{ isFetching ? (
+					{ showLoader ? (
 						<Card>
 							<TextPlaceholder />
 						</Card>

@@ -44,7 +44,7 @@ const useFetchDashboardSites = (
 					perPage: data.per_page,
 				};
 			},
-			refetchOnWindowFocus: false,
+			refetchOnWindowFocus: true,
 			onError: () =>
 				dispatch(
 					errorNotice( translate( 'Failed to retrieve your sites. Please try again later.' ) )
