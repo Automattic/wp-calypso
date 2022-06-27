@@ -6,6 +6,7 @@ const defaults = {
 	term: '',
 	limit: 10,
 	skip_synonyms: false,
+	expand_root: true,
 };
 
 const useSiteVerticalsQuery = (

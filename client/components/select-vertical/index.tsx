@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 import FormLabel from 'calypso/components/forms/form-label';
 import {
@@ -39,6 +39,22 @@ const SelectVertical: React.FC< Props > = ( {
 		skip_synonyms: isSkipSynonyms,
 	} );
 
+	const suggestionsWithRoots = useMemo( () => {
+		const rootsAdded = {};
+		return suggestions?.reduce(
+			( suggestionsList: SiteVerticalsResponse[], vertical: SiteVerticalsResponse ) => {
+				if ( ! rootsAdded[ vertical.id ] ) {
+					rootsAdded[ vertical.id ] = vertical.root;
+					suggestionsList.push( vertical.root );
+				}
+				suggestionsList.push( vertical );
+
+				return suggestionsList;
+			},
+			[]
+		);
+	}, [ suggestions ] );
+
 	const { data: featured } = useSiteVerticalsFeatured();
 
 	const mapOneSiteVerticalsResponseToVertical = ( vertical: SiteVerticalsResponse ): Vertical => ( {
@@ -71,7 +87,7 @@ const SelectVertical: React.FC< Props > = ( {
 				suggestions={
 					! isDebouncing
 						? mapManySiteVerticalsResponseToVertical(
-								( ! hasUserInput ? featured : suggestions ) || []
+								( ! hasUserInput ? featured : suggestionsWithRoots ) || []
 						  )
 						: []
 				}
