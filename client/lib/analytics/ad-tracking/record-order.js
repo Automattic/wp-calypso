@@ -513,7 +513,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 			value: parseFloat( totalCostUSD ),
 			currency: 'USD',
 			tax: parseFloat( cart.total_tax ?? 0 ),
-			coupon: cart.coupon_code?.toString() ?? '',
+			coupon: cart.coupon?.toString() ?? '',
 			affiliation: brand,
 			items,
 		},
@@ -542,7 +542,7 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 				value: wpcomJetpackCartInfo.jetpackCostUSD,
 				currency: 'USD',
 				transaction_id: orderId,
-				coupon: cart.coupon_code?.toString() ?? '',
+				coupon: cart.coupon?.toString() ?? '',
 				items: wpcomJetpackCartInfo.jetpackProducts.map(
 					( { product_id, product_name_en, cost, volume } ) => ( {
 						id: product_id.toString(),

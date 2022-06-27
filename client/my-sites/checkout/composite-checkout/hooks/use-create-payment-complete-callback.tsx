@@ -386,14 +386,7 @@ function recordPaymentCompleteAnalytics( {
 		} )
 	);
 	recordPurchase( {
-		cart: {
-			total_cost: responseCart.total_cost,
-			currency: responseCart.currency,
-			is_signup: responseCart.is_signup,
-			products: responseCart.products,
-			coupon_code: responseCart.coupon,
-			total_tax: responseCart.total_tax,
-		},
+		cart: responseCart,
 		orderId: transactionResult?.receipt_id,
 	} );
 
