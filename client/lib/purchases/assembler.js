@@ -7,6 +7,7 @@ function createPurchaseObject( purchase ) {
 		amount: Number( purchase.amount ),
 		attachedToPurchaseId: Number( purchase.attached_to_purchase_id ),
 		billPeriodDays: Number( purchase.bill_period_days ),
+		billPeriodLabel: purchase.bill_period_label,
 		mostRecentRenewDate: purchase.most_recent_renew_date,
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canReenableAutoRenewal: Boolean( purchase.can_reenable_auto_renewal ),
