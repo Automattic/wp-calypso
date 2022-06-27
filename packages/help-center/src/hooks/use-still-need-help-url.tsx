@@ -13,7 +13,7 @@ export function useStillNeedHelpURL() {
 	const isFreeUser = ! supportAvailability?.is_user_eligible_for_tickets;
 
 	if ( ! isSimpleSite ) {
-		return '/help/contact';
+		return 'https://wordpress.com/help/contact';
 	}
 
 	if ( ! isFreeUser ) {

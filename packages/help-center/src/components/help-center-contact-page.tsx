@@ -106,7 +106,7 @@ export const HelpCenterContactButton: React.FC = () => {
 	const { __ } = useI18n();
 	const url = useStillNeedHelpURL();
 	const sectionName = useSelector( getSectionName );
-	const redirectToWpcom = url === '/help/contact';
+	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
 	const trackContactButtonClicked = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
