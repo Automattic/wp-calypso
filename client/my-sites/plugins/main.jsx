@@ -78,7 +78,7 @@ export class PluginsMain extends Component {
 			// Selected site is not a Jetpack site
 			if (
 				selectedSiteSlug &&
-				( ! selectedSiteIsJetpack || ! hasInstallPurchasedPlugins || ! hasManagePlugins )
+				( ! selectedSiteIsJetpack || ! ( hasInstallPurchasedPlugins || hasManagePlugins ) )
 			) {
 				page.redirect( `/plugins/${ selectedSiteSlug }` );
 				return;
