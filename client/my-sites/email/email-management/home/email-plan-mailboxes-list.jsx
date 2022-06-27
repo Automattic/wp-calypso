@@ -80,7 +80,9 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 		isRecentlyRegistered( domain.registrationDate, 45 ) &&
 		getGSuiteSubscriptionStatus( domain ) === 'unknown'
 	) {
-		emptyText = translate( 'Configuring mailboxes' );
+		emptyText = translate(
+			'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
+		);
 	}
 
 	if ( isLoadingEmails ) {
