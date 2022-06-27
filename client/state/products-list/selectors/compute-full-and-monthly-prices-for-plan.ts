@@ -34,7 +34,7 @@ type PlanObject = Optional< Pick< Plan, 'group' | 'getProductId' >, 'group' > & 
  */
 export const computeFullAndMonthlyPricesForPlan = (
 	state: AppState,
-	siteId: number,
+	siteId: number | undefined,
 	planObject: PlanObject
 ): FullAndMonthlyPrices => {
 	if ( planObject.group === GROUP_WPCOM ) {
@@ -85,7 +85,7 @@ function calculateSaleCouponCostForJetpackProduct(
  */
 function computePricesForWpComPlan(
 	state: AppState,
-	siteId: number,
+	siteId: number | undefined,
 	planObject: PlanObject
 ): FullAndMonthlyPrices {
 	const priceFull = getPlanRawPrice( state, planObject.getProductId(), false ) || 0;
@@ -103,7 +103,7 @@ function computePricesForWpComPlan(
  */
 function getSearchProductTierPrice(
 	state: AppState,
-	siteId: number,
+	siteId: number | undefined,
 	productSlug: string
 ): number | null {
 	const postsCounts = getAllPostCounts( state, siteId, 'post' );

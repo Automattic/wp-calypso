@@ -19,7 +19,7 @@ export function isRequestingPostCounts( state, siteId, postType ) {
  * Returns post counts for all users on a site, filtered by post type.
  *
  * @param  {object} state    Global state tree
- * @param  {number} siteId   Site ID
+ * @param  {number|undefined} siteId   Site ID
  * @param  {string} postType Post type
  * @returns {Object.<string, number>}          Post counts, keyed by status
  */

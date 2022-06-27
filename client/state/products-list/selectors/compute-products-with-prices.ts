@@ -19,7 +19,7 @@ interface NonNullablePlanAndProduct extends PlanAndProduct {
  */
 export const computeProductsWithPrices = (
 	state: AppState,
-	siteId: number,
+	siteId: number | undefined,
 	planSlugs: string[]
 ): AvailableProductVariant[] => {
 	const products = getProductsList( state );
