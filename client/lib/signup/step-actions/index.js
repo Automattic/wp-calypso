@@ -176,7 +176,6 @@ function getNewSiteParams( {
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
-			enable_fse: true,
 		},
 		validate: false,
 	};
@@ -280,11 +279,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		saveToLocalStorageAndProceed( state, domainItem, themeItem, newSiteParams, callback );
 		return;
 	}
-
-	recordTracksEvent( 'calypso_fse_enrolled', {
-		flow: flowToCheck,
-		site_enrolled: !! newSiteParams.options.enable_fse,
-	} );
 
 	const locale = getLocaleSlug();
 
