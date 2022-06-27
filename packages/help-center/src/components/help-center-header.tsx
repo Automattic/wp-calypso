@@ -8,6 +8,20 @@ import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import type { Header, WindowState } from '../types';
 import type { ReactElement } from 'react';
 
+const HELP_TAB_NAME = 'help';
+const NEXT_STEPS_TAB_NAME = 'next-steps-tutorials';
+
+function getInitialTabName( pathname = '' ): string {
+	const tabNameMap = {
+		'/': HELP_TAB_NAME,
+		'/next-steps-tutorials': NEXT_STEPS_TAB_NAME,
+	};
+
+	if ( pathname in tabNameMap ) return tabNameMap[ pathname ];
+
+	return '/';
+}
+
 export function ArticleTitle() {
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
@@ -55,6 +69,9 @@ const HelpCenterHeader: React.FC< Header > = ( {
 	const [ chatWindowStatus, setChatWindowStatus ] = useState< WindowState >( 'closed' );
 	const [ unreadCount, setUnreadCount ] = useState< number >( 0 );
 	const history = useHistory();
+	const { pathname } = useLocation();
+
+	const initialTabName = getInitialTabName( pathname );
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
 	function requestMaximize() {
@@ -125,23 +142,23 @@ const HelpCenterHeader: React.FC< Header > = ( {
 			{ ! isMinimized && (
 				<TabPanel
 					className="help-center-header__tab-panel"
-					initialTabName="help"
+					initialTabName={ initialTabName }
 					tabs={ [
 						{
-							name: 'nextSteps',
+							name: NEXT_STEPS_TAB_NAME,
 							title: 'Next Steps',
 							className: 'help-center-container__next-steps-tab',
 						},
 						{
-							name: 'help',
+							name: HELP_TAB_NAME,
 							title: 'Help',
 							className: 'help-center-container__help-tab',
 						},
 					] }
 					onSelect={ ( tab ) => {
-						if ( tab === 'nextSteps' ) {
+						if ( tab === NEXT_STEPS_TAB_NAME ) {
 							history.push( '/next-steps-tutorials' );
-						} else if ( tab === 'help' ) {
+						} else if ( tab === HELP_TAB_NAME ) {
 							history.push( '/' );
 						}
 					} }
