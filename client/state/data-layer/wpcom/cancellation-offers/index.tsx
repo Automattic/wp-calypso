@@ -2,6 +2,9 @@ import {
 	PURCHASE_CANCELLATION_OFFER_REQUEST,
 	PURCHASE_CANCELLATION_OFFER_RECEIVE,
 	PURCHASE_CANCELLATION_OFFER_REQUEST_FAILURE,
+	PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS,
+	PURCHASE_CANCELLATION_OFFER_APPLY_FAILURE,
+	PURCHASE_CANCELLATION_OFFER_APPLY,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -43,12 +46,55 @@ const onFetchError = ( action: { purchaseId: number }, error: unknown ) => {
 	];
 };
 
+const applyCancellationOffer = ( action: { siteId: number; purchaseId: number } ) => {
+	// placeholder for apply api call
+	return http(
+		{
+			method: 'GET',
+			path: `/cancellation-offers`,
+			apiNamespace: 'wpcom/v2',
+			query: {
+				site: action.siteId,
+				purchase: action.purchaseId,
+			},
+		},
+		action
+	);
+};
+
+const onApplySuccess = ( action: { purchaseId: number }, response: unknown ) => {
+	return [
+		{
+			type: PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS,
+			purchaseId: action.purchaseId,
+			success: response,
+		},
+	];
+};
+
+const onApplyFailure = ( action: { purchaseId: number }, error: unknown ) => {
+	return [
+		{
+			type: PURCHASE_CANCELLATION_OFFER_APPLY_FAILURE,
+			purchaseId: action.purchaseId,
+			error,
+		},
+	];
+};
+
 registerHandlers( 'state/data-layer/wpcom/cancellation-offers/index.js', {
 	[ PURCHASE_CANCELLATION_OFFER_REQUEST ]: [
 		dispatchRequest( {
 			fetch: fetchCancellationOffers,
 			onSuccess: onFetchSuccess,
 			onError: onFetchError,
+		} ),
+	],
+	[ PURCHASE_CANCELLATION_OFFER_APPLY ]: [
+		dispatchRequest( {
+			fetch: applyCancellationOffer,
+			onSuccess: onApplySuccess,
+			onError: onApplyFailure,
 		} ),
 	],
 } );

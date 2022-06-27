@@ -3,6 +3,9 @@ import {
 	PURCHASE_CANCELLATION_OFFER_REQUEST,
 	PURCHASE_CANCELLATION_OFFER_RECEIVE,
 	PURCHASE_CANCELLATION_OFFER_REQUEST_FAILURE,
+	PURCHASE_CANCELLATION_OFFER_APPLY,
+	PURCHASE_CANCELLATION_OFFER_APPLY_FAILURE,
+	PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS,
 } from 'calypso/state/action-types';
 import {
 	CancellationOffer,
@@ -64,10 +67,43 @@ export const offers = ( state = [], action: AnyAction ) => {
 	return state;
 };
 
+export const isApplying = ( state = {}, action: AnyAction ) => {
+	switch ( action.type ) {
+		case PURCHASE_CANCELLATION_OFFER_APPLY:
+			return true;
+		case PURCHASE_CANCELLATION_OFFER_APPLY_FAILURE:
+		case PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS:
+			return false;
+	}
+
+	return state;
+};
+
+export const applyError = ( state = {}, action: AnyAction ) => {
+	switch ( action.type ) {
+		case PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS:
+			return action.error;
+	}
+
+	return state;
+};
+
+export const applySuccess = ( state = {}, action: AnyAction ) => {
+	switch ( action.type ) {
+		case PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS:
+			return action.success;
+	}
+
+	return state;
+};
+
 const cancellationOffersReducer = combineReducers( {
 	isFetching,
 	error,
 	offers,
+	isApplying,
+	applyError,
+	applySuccess,
 } );
 
 const reducer = keyedReducer( 'purchaseId', cancellationOffersReducer );
