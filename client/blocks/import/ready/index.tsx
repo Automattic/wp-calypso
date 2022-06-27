@@ -263,9 +263,21 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 		} );
 	};
 
+	const recordStartBuildingEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'start-building',
+		} );
+	};
+
 	const onBackBtnClick = () => {
 		recordBackToStartEvent();
 		goToStep( 'capture' );
+	};
+
+	const onStartBuildingBtnClick = () => {
+		recordStartBuildingEvent();
+		goToStep( 'intent', '', 'setup-site' );
 	};
 
 	useEffect( recordReadyScreenEvent, [] );
@@ -291,9 +303,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ () => goToStep( 'intent', '', 'setup-site' ) }>
-							{ __( 'Start building' ) }
-						</NextButton>
+						<NextButton onClick={ onStartBuildingBtnClick }>{ __( 'Start building' ) }</NextButton>
 						<div>
 							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
