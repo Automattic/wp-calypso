@@ -4,6 +4,9 @@ import {
 	PLAN_BUSINESS,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_STARTER,
+	isBlogger,
+	isPersonal,
+	isPremium,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
@@ -63,11 +66,17 @@ const USPS: React.FC< Props > = ( {
 			return '';
 		}
 
-		if ( isMarketplaceProduct && isEnabled( 'marketplace-starter-plan' ) ) {
+		const plan = selectedSite?.plan;
+		let isLegacyPlan = false;
+		if ( typeof plan !== 'undefined' ) {
+			isLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
+		}
+
+		if ( ! isLegacyPlan && isMarketplaceProduct && isEnabled( 'marketplace-starter-plan' ) ) {
 			return PLAN_WPCOM_STARTER;
 		}
 
-		if ( isEligibleForProPlan( state, selectedSite?.ID ) ) {
+		if ( ! isLegacyPlan && isEligibleForProPlan( state, selectedSite?.ID ) ) {
 			return PLAN_WPCOM_PRO;
 		}
 

@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { isBlogger, isPersonal, isPremium } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -21,16 +22,17 @@ function getHoldMessages(
 	translate: LocalizeProps[ 'translate' ],
 	eligibleForProPlan: boolean,
 	billingPeriod?: string,
-	isMarketplace?: boolean
+	isMarketplace?: boolean,
+	isLegacyPlan?: boolean
 ) {
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
-				if ( isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
+				if ( ! isLegacyPlan && isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
 					return translate( 'Upgrade to a Starter plan' );
 				}
 
-				if ( eligibleForProPlan ) {
+				if ( ! isLegacyPlan && eligibleForProPlan ) {
 					return translate( 'Upgrade to a Pro plan' );
 				}
 
@@ -220,6 +222,13 @@ export const HardBlockingNotice = ( {
 
 export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+
+	const plan = selectedSite?.plan;
+	let isLegacyPlan = false;
+	if ( typeof plan !== 'undefined' ) {
+		isLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
+	}
+
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
@@ -229,7 +238,8 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		translate,
 		eligibleForProPlan,
 		billingPeriod,
-		isMarketplace
+		isMarketplace,
+		isLegacyPlan
 	);
 	const blockingMessages = getBlockingMessages( translate );
 
