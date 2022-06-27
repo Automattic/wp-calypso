@@ -1,7 +1,6 @@
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { TitanProductUser } from '@automattic/shopping-cart';
 import { MOBILE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
@@ -43,9 +42,7 @@ const getCartItems = (
 	mailboxes: MailboxForm< EmailProvider >[],
 	selectedIntervalLength: IntervalLength
 ) => {
-	const email_users = mailboxes.map( ( mailbox ) =>
-		mailbox.getAsCartItem()
-	) as unknown as TitanProductUser[];
+	const email_users = mailboxes.map( ( mailbox ) => mailbox.getAsCartItem() );
 
 	const cartItemFunction =
 		selectedIntervalLength === IntervalLength.MONTHLY ? titanMailMonthly : titanMailYearly;

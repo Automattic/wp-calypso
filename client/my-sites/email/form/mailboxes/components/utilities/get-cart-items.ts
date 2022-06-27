@@ -1,5 +1,4 @@
 import { isGSuiteProductSlug } from '@automattic/calypso-products';
-import { TitanProductUser } from '@automattic/shopping-cart';
 import {
 	googleApps,
 	googleAppsExtraLicenses,
@@ -18,9 +17,7 @@ const getTitanCartItems = (
 ) => {
 	const { emailProduct, newQuantity, quantity } = mailProperties;
 
-	const email_users = mailboxes.map( ( mailbox ) =>
-		mailbox.getAsCartItem()
-	) as unknown as TitanProductUser[];
+	const email_users = mailboxes.map( ( mailbox ) => mailbox.getAsCartItem() );
 
 	const cartItemFunction = isTitanMonthlyProduct( emailProduct )
 		? titanMailMonthly
@@ -42,9 +39,7 @@ const getGSuiteCartItems = (
 ) => {
 	const { isAdditionalMailboxesPurchase, emailProduct, newQuantity, quantity } = mailProperties;
 
-	const users = mailboxes.map( ( mailbox ) =>
-		mailbox.getAsCartItem()
-	) as unknown as GSuiteProductUser[];
+	const users = mailboxes.map( ( mailbox ) => <GSuiteProductUser>mailbox.getAsCartItem() );
 
 	const domain = mailboxes[ 0 ].formFields.domain.value;
 
