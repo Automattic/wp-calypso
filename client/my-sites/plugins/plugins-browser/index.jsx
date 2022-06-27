@@ -6,6 +6,7 @@ import {
 import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
+	WPCOM_FEATURES_UPLOAD_PLUGINS,
 } from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -116,6 +117,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	);
 	const hasManagePlugins = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
+	const hasUploadPlugins = useSelector(
+		( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic
 	);
 
 	const {
@@ -261,7 +265,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 							jetpackNonAtomic={ jetpackNonAtomic }
 						/>
 
-						<UploadPluginButton isMobile={ isMobile } siteSlug={ siteSlug } />
+						<UploadPluginButton
+							isMobile={ isMobile }
+							siteSlug={ siteSlug }
+							hasUploadPlugins={ hasUploadPlugins }
+						/>
 					</div>
 				</FixedNavigationHeader>
 			) }
@@ -629,9 +637,13 @@ const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSl
 	);
 };
 
-const UploadPluginButton = ( { isMobile, siteSlug } ) => {
+const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	if ( ! hasUploadPlugins ) {
+		return null;
+	}
 
 	const uploadUrl = '/plugins/upload' + ( siteSlug ? '/' + siteSlug : '' );
 	const handleUploadPluginButtonClick = () => {

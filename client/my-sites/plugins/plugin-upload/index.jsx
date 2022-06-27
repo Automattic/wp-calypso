@@ -96,8 +96,12 @@ class PluginUpload extends Component {
 	}
 
 	render() {
-		const { translate, isJetpackMultisite, siteId, siteSlug } = this.props;
+		const { translate, isJetpackMultisite, siteId, siteSlug, hasUploadPlugins } = this.props;
 		const { showEligibility } = this.state;
+
+		if ( ! hasUploadPlugins ) {
+			page( `/plugins/${ siteSlug }` );
+		}
 
 		return (
 			<Main>
@@ -144,9 +148,9 @@ const mapStateToProps = ( state ) => {
 		error,
 		isJetpackMultisite,
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
-		showEligibility:
-			( ! isJetpack || ! hasUploadPlugins ) && ( hasEligibilityMessages || ! isEligible ),
+		showEligibility: ! isJetpack && ( hasEligibilityMessages || ! isEligible ),
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
+		hasUploadPlugins,
 	};
 };
 
