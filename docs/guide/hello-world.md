@@ -103,18 +103,9 @@ You can read more about ES6 modules from Axel Rauschmayer's "[_ECMAScript 6 modu
 Now it's time to configure our section. Open `client/sections.js` and add the following code to the end of the `sections` array:
 
 ```javascript
-	{
-		name: 'hello-world',
-		paths: [ '/hello-world' ],
-		module: 'calypso/my-sites/hello-world',
-	},
-```
-
-The array should look something like:
-```
 const sections = [
-	// All of the other sections are here
-	// ...
+	// ** lots of sections here **
+	// add new section:
 	{
 		name: 'hello-world',
 		paths: [ '/hello-world' ],
