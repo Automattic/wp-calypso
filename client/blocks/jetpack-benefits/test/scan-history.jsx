@@ -24,54 +24,41 @@ describe( 'Scan History Jetpack Benefit Block', () => {
 	} );
 
 	test( 'When the scan state is actively scanning, show a scanning message', () => {
-		const scanState = { state: 'scanning' };
-		getSiteScanState.mockReturnValue( scanState );
-
+		getSiteScanState.mockReturnValue( { state: 'scanning' } );
 		render( <JetpackBenefitsScanHistory /> );
-		const card = screen.getByTestId( 'scanning' );
 
-		expect( card ).toBeInTheDocument();
+		expect( screen.getByText( /in progress$/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'When the scan state is provisioning, show a preparing message', () => {
-		const scanState = { state: 'provisioning' };
-		getSiteScanState.mockReturnValue( scanState );
-
+		getSiteScanState.mockReturnValue( { state: 'provisioning' } );
 		render( <JetpackBenefitsScanHistory /> );
-		const card = screen.getByTestId( 'provisioning' );
 
-		expect( card ).toBeInTheDocument();
+		expect( screen.getByText( /preparing$/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'When the scan state is still loading, show a loading placeholder', () => {
 		getSiteScanState.mockReturnValue( null );
 		isRequestingJetpackScan.mockReturnValue( true );
-
 		render( <JetpackBenefitsScanHistory /> );
-		const card = screen.getByTestId( 'loading' );
 
-		expect( card ).toBeInTheDocument();
+		expect( screen.getByText( /loading/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'When the scan state is not present and not loading, show an error', () => {
 		getSiteScanState.mockReturnValue( null );
 		isRequestingJetpackScan.mockReturnValue( false );
-
 		render( <JetpackBenefitsScanHistory /> );
-		const card = screen.getByTestId( 'error' );
 
-		expect( card ).toBeInTheDocument();
+		expect( screen.getByText( /trouble scanning your site/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'When the scan state is idle, but there is not a recent scan, indicate that a scan is scheduled', () => {
-		const scanState = { state: 'idle' };
-		getSiteScanState.mockReturnValue( scanState );
+		getSiteScanState.mockReturnValue( { state: 'idle' } );
 		isRequestingJetpackScan.mockReturnValue( false );
-
 		render( <JetpackBenefitsScanHistory /> );
-		const card = screen.getByTestId( 'scheduled' );
 
-		expect( card ).toBeInTheDocument();
+		expect( screen.getByText( /scheduled/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'If product is standalone scan, the expanded standalone card is rendered', () => {

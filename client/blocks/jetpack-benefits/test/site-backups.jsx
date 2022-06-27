@@ -19,38 +19,30 @@ describe( 'Jetpack Benefits site backups card', () => {
 	} );
 
 	test( 'If backups are still loading, show a placeholder output', () => {
-		const backupsReceived = null;
-		getRewindBackups.mockReturnValue( backupsReceived );
-
+		getRewindBackups.mockReturnValue( null );
 		render( <JetpackBenefitsSiteBackups /> );
-		const card = screen.getByTestId( 'loading-backups' );
-		expect( card ).toBeInTheDocument();
+
+		expect( screen.getByText( /loading backup data/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'If no backups are found, show a no-backups output', () => {
-		const backupsReceived = [];
-		getRewindBackups.mockReturnValue( backupsReceived );
-
+		getRewindBackups.mockReturnValue( [] );
 		render( <JetpackBenefitsSiteBackups /> );
-		const card = screen.getByTestId( 'no-backups' );
-		expect( card ).toBeInTheDocument();
+
+		expect( screen.getByText( /will back up your site soon/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'If last backup was an error, show an error message', () => {
-		const backupsReceived = [ { status: 'error-will-retry' } ];
-		getRewindBackups.mockReturnValue( backupsReceived );
-
+		getRewindBackups.mockReturnValue( [ { status: 'error-will-retry' } ] );
 		render( <JetpackBenefitsSiteBackups /> );
-		const card = screen.getByTestId( 'recent-backup-error' );
-		expect( card ).toBeInTheDocument();
+
+		expect( screen.getByText( /error/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'If last backup is good, show default backup card output', () => {
-		const backupsReceived = [ { status: 'finished' } ];
-		getRewindBackups.mockReturnValue( backupsReceived );
-
+		getRewindBackups.mockReturnValue( [ { status: 'finished' } ] );
 		render( <JetpackBenefitsSiteBackups /> );
-		const card = screen.getByTestId( 'default-backup-output' );
-		expect( card ).toBeInTheDocument();
+
+		expect( screen.getByText( /your latest site backup/i ) ).toBeInTheDocument();
 	} );
 } );
