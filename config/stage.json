@@ -106,6 +106,7 @@
 		"signup/design-picker-use-featured-picks-buttons": true,
 		"signup/design-picker-premium-themes-checkout": true,
 		"signup/design-picker-generated-designs": true,
+		"signup/goals-step": true,
 		"signup/inline-help": false,
 		"signup/hero-flow-non-en": true,
 		"signup/starting-point-courses": true,
