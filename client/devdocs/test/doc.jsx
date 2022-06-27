@@ -30,7 +30,7 @@ describe( 'SingleDoc', () => {
 			expect( mark.tagName ).toBe( 'MARK' );
 
 			const doc = screen.getByText( 'something' );
-			expect( doc.textContent ).toEqual( text );
+			expect( doc ).toHaveTextContent( text );
 		} );
 
 		test( 'should render Error component', () => {
