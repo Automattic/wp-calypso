@@ -30,8 +30,8 @@ import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
-import SellerUpgradeModal from './seller-upgrade-modal';
 import StickyPositioner from './sticky-positioner';
+import UpgradeModal from './upgrade-modal';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
@@ -343,7 +343,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 
 		const stepContent = (
 			<>
-				<SellerUpgradeModal
+				<UpgradeModal
 					slug={ selectedDesign.slug }
 					isOpen={ showUpgradeModal }
 					closeModal={ closeUpgradeModal }

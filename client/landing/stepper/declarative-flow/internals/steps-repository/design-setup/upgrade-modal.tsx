@@ -4,9 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
 import { PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
 import ThemeFeatures from './theme-features';
-import './seller-upgrade-modal.scss';
+import './upgrade-modal.scss';
 
-interface SellerUpgradeModalProps {
+interface UpgradeModalProps {
 	/* Theme slug */
 	slug: string;
 	isOpen: boolean;
@@ -14,7 +14,7 @@ interface SellerUpgradeModalProps {
 	checkout: () => void;
 }
 
-const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgradeModalProps ) => {
+const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps ) => {
 	const translate = useTranslate();
 	const theme = useThemeDetails( slug );
 	const features = theme.data && theme.data.taxonomies.features;
@@ -99,4 +99,4 @@ const SellerUpgradeModal = ( { slug, isOpen, closeModal, checkout }: SellerUpgra
 	);
 };
 
-export default SellerUpgradeModal;
+export default UpgradeModal;
