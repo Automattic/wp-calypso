@@ -58,6 +58,7 @@
 		"marketplace-jetpack-plugin-search": false,
 		"me/account-close": true,
 		"me/vat-details": true,
+		"migration/sign-in-with-google": false,
 		"network-connection": true,
 		"plans/starter-plan": true,
 		"plans/personal-plan": true,
