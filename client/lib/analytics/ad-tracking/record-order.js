@@ -1,11 +1,11 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import {
 	costToUSD,
 	isAdTrackingAllowed,
 	refreshCountryCodeCookieGdpr,
 } from 'calypso/lib/analytics/utils';
 import { jetpackCartToGaPurchase } from '../utils/jetpack-cart-to-ga-purchase';
+import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
 import {
 	debug,
 	isCriteoEnabled,
@@ -169,33 +169,6 @@ export async function recordOrder( cart, orderId ) {
 	// event we redirect the user to wordpress.com which causes a domain change preventing the expanding and inspection
 	// of any object in the JS console since they are no longer available.
 	debug( 'recordOrder: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
-}
-
-function splitWpcomJetpackCartInfo( cart ) {
-	const jetpackCost = cart.products
-		.map( ( product ) =>
-			isJetpackPlan( product ) || isJetpackProduct( product ) ? product.cost : 0
-		)
-		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
-	const wpcomCost = cart.total_cost - jetpackCost;
-	const wpcomProducts = cart.products.filter(
-		( product ) => ! isJetpackPlan( product ) && ! isJetpackProduct( product )
-	);
-	const jetpackProducts = cart.products.filter(
-		( product ) => isJetpackPlan( product ) || isJetpackProduct( product )
-	);
-
-	return {
-		wpcomProducts: wpcomProducts,
-		jetpackProducts: jetpackProducts,
-		containsWpcomProducts: 0 !== wpcomProducts.length,
-		containsJetpackProducts: 0 !== jetpackProducts.length,
-		jetpackCost: jetpackCost,
-		wpcomCost: wpcomCost,
-		jetpackCostUSD: costToUSD( jetpackCost, cart.currency ),
-		wpcomCostUSD: costToUSD( wpcomCost, cart.currency ),
-		totalCostUSD: costToUSD( cart.total_cost, cart.currency ),
-	};
 }
 
 /**
