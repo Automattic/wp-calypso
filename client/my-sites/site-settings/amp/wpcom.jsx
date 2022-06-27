@@ -51,32 +51,26 @@ class AmpWpcom extends Component {
 
 	renderUpgradeNotice() {
 		const { hasSftpFeature, siteSlug, translate } = this.props;
+		let tracksProps;
 
-		if ( hasSftpFeature ) {
-			return (
-				<UpsellNudge
-					title={ translate( 'Install AMP plugin.' ) }
-					description={ translate( 'Install AMP plugin to use AMP features.' ) }
-					plan={ PLAN_WPCOM_PRO }
-					href={ `/plugins/amp/${ siteSlug }` }
-					forceHref={ true }
-					showIcon={ true }
-					forceDisplay
-				/>
-			);
+		if ( ! hasSftpFeature ) {
+			tracksProps = {
+				tracksImpressionName: 'calypso_settings_amp_upsell_impression',
+				tracksClickName: 'calypso_settings_amp_upsell_click',
+				event: 'calypso_settings_amp_upsell',
+			};
 		}
 
 		return (
 			<UpsellNudge
-				title={ translate( 'Available on the Pro plan' ) }
-				description={ translate( 'Upgrade to the Pro plan to install AMP plugin.' ) }
+				title={ translate( 'Install AMP plugin.' ) }
+				description={ translate( 'Install AMP plugin to use AMP features.' ) }
 				plan={ PLAN_WPCOM_PRO }
-				href={ `/checkout/${ siteSlug }/pro` }
+				href={ `/plugins/amp/${ siteSlug }` }
+				forceHref={ true }
 				showIcon={ true }
 				forceDisplay
-				tracksImpressionName="calypso_settings_amp_upsell_impression"
-				tracksClickName="calypso_settings_amp_upsell_click"
-				event="calypso_settings_amp_upsell"
+				{ ...tracksProps }
 			/>
 		);
 	}
