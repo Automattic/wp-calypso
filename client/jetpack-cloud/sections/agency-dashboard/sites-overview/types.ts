@@ -65,6 +65,7 @@ export interface SiteData {
 	scan: ScanNode;
 	plugin: PluginNode;
 	monitor: MonitorNode;
+	[ key: string ]: any;
 }
 
 export interface RowMetaData {
