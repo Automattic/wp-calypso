@@ -1,12 +1,16 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	findFirstSimilarPlanKey,
+	isBlogger,
+	isPersonal,
+	isPremium,
 	TYPE_BUSINESS,
-} from '@automattic/calypso-products';
-import {
+	TYPE_STARTER,
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_UPLOAD_PLUGINS,
-} from '@automattic/calypso-products/src';
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
@@ -293,13 +297,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 					</NoticeAction>
 				</Notice>
 			) }
-			<UpgradeNudge
-				selectedSite={ selectedSite }
-				sitePlan={ sitePlan }
-				isVip={ isVip }
-				jetpackNonAtomic={ jetpackNonAtomic }
-				siteSlug={ siteSlug }
-			/>
 
 			<SearchBoxHeader
 				searchRef={ searchRef }
@@ -334,6 +331,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 					siteSlug={ siteSlug }
 					siteId={ siteId }
 					jetpackNonAtomic={ jetpackNonAtomic }
+					selectedSite={ selectedSite }
+					sitePlan={ sitePlan }
+					isVip={ isVip }
 				/>
 			</div>
 			{ ! category && ! search && <EducationFooter /> }
@@ -584,6 +584,14 @@ const PluginSingleListView = ( {
 };
 
 const PluginBrowserContent = ( props ) => {
+	const eligibleForProPlan = useSelector( ( state ) =>
+		isEligibleForProPlan( state, props.selectedSite?.ID )
+	);
+
+	const isLegacyPlan =
+		props.sitePlan &&
+		( isBlogger( props.sitePlan ) || isPersonal( props.sitePlan ) || isPremium( props.sitePlan ) );
+
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
 	}
@@ -593,15 +601,22 @@ const PluginBrowserContent = ( props ) => {
 
 	return (
 		<>
-			{ ! props.jetpackNonAtomic ? (
+			{ ! props.jetpackNonAtomic && (
 				<>
+					<div className="plugins-browser__upgrade-banner">
+						{ isEnabled( 'marketplace-starter-plan' ) && eligibleForProPlan && ! isLegacyPlan ? (
+							<UpgradeNudgePaid { ...props } />
+						) : (
+							<UpgradeNudge { ...props } />
+						) }
+					</div>
 					<PluginSingleListView { ...props } category="paid" />
-					<PluginSingleListView { ...props } category="featured" />
 				</>
-			) : (
-				<PluginSingleListView { ...props } category="featured" />
 			) }
-
+			{ isEnabled( 'marketplace-starter-plan' ) && eligibleForProPlan && ! isLegacyPlan && (
+				<UpgradeNudge { ...props } />
+			) }
+			<PluginSingleListView { ...props } category="featured" />
 			<PluginSingleListView { ...props } category="popular" />
 		</>
 	);
@@ -616,16 +631,17 @@ const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSl
 	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
 		return null;
 	}
-
-	const checkoutPlan = eligibleForProPlan ? 'pro' : 'business';
+	const isLegacyPlan = isBlogger( sitePlan ) || isPersonal( sitePlan ) || isPremium( sitePlan );
+	const checkoutPlan = eligibleForProPlan && ! isLegacyPlan ? 'pro' : 'business';
 	const bannerURL = `/checkout/${ siteSlug }/${ checkoutPlan }`;
 	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
 		type: TYPE_BUSINESS,
 	} );
 
-	const title = eligibleForProPlan
-		? translate( 'Upgrade to the Pro plan to install plugins.' )
-		: translate( 'Upgrade to the Business plan to install plugins.' );
+	const title =
+		eligibleForProPlan && ! isLegacyPlan
+			? translate( 'Upgrade to the Pro plan to install plugins.' )
+			: translate( 'Upgrade to the Business plan to install plugins.' );
 
 	return (
 		<UpsellNudge
@@ -635,6 +651,24 @@ const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSl
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ title }
+		/>
+	);
+};
+
+const UpgradeNudgePaid = ( props ) => {
+	const translate = useTranslate();
+	const plan = findFirstSimilarPlanKey( props.sitePlan.product_slug, {
+		type: TYPE_STARTER,
+	} );
+
+	return (
+		<UpsellNudge
+			event="calypso_plugins_browser_upgrade_nudge"
+			showIcon={ true }
+			href={ `/checkout/${ props.siteSlug }/starter` }
+			feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
+			plan={ plan }
+			title={ translate( 'Upgrade to the Starter plan to install paid plugins.' ) }
 		/>
 	);
 };
