@@ -665,7 +665,7 @@ const UpgradeNudgePaid = ( props ) => {
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
 			showIcon={ true }
-			//		href={ `/checkout/${ props.siteSlug }/starter` }
+			href={ `/checkout/${ props.siteSlug }/starter` }
 			feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
 			plan={ plan }
 			title={ translate( 'Upgrade to the Starter plan to install paid plugins.' ) }
