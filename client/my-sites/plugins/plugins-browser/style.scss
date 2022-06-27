@@ -57,4 +57,8 @@
 .plugins-browser__upgrade-banner {
 	display: table;
 	width: 100%;
+
+	.banner.card {
+		margin: 48px 0 0;
+	}
 }
