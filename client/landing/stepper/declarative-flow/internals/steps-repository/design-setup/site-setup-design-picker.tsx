@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useStarterDesignsGeneratedQuery } from '@automattic/data-stores';
 import DesignPicker, {
 	GeneratedDesignPicker,
@@ -335,12 +335,43 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			/>
 		);
 
+		const newDesignEnabled = isEnabled( 'signup/theme-preview-screen' );
+		let actionButtons = (
+			<>
+				{ shouldUpgrade ? (
+					<Button primary borderless={ false } onClick={ upgradePlan }>
+						{ translate( 'Upgrade Plan' ) }
+					</Button>
+				) : undefined }
+			</>
+		);
+
+		if ( newDesignEnabled ) {
+			actionButtons = (
+				<div>
+					<button type="button" className={ 'design-setup__info-popover' }>
+						<Gridicon fill={ 'white' } icon={ 'info-outline' } size={ 24 } />
+					</button>
+
+					{ shouldUpgrade ? (
+						<Button primary borderless={ false } onClick={ upgradePlan }>
+							{ translate( 'Upgrade Plan' ) }
+						</Button>
+					) : (
+						<Button primary borderless={ false } onClick={ () => pickDesign() }>
+							{ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
+						</Button>
+					) }
+				</div>
+			);
+		}
+
 		return (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				hideNext={ shouldUpgrade }
+				hideNext={ newDesignEnabled || shouldUpgrade }
 				className={ 'design-setup__preview' }
 				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
 				goBack={ handleBackClick }
@@ -352,15 +383,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 						align={ isMobile ? 'left' : 'center' }
 					/>
 				}
-				customizedActionButtons={
-					<>
-						{ shouldUpgrade ? (
-							<Button primary borderless={ false } onClick={ upgradePlan }>
-								{ translate( 'Upgrade Plan' ) }
-							</Button>
-						) : undefined }
-					</>
-				}
+				customizedActionButtons={ actionButtons }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		);
