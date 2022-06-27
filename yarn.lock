@@ -6724,6 +6724,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/gtag.js@npm:^0.0.10":
+  version: 0.0.10
+  resolution: "@types/gtag.js@npm:0.0.10"
+  checksum: e8a6bd42ec1287150ca455f300c7abf69ba73ade4ae80bc3f9705460f4124e73bdb56284dd9150be176ba7b716ed104a54501ac9519cc99abb3bda27ec0e4af2
+  languageName: node
+  linkType: hard
+
 "@types/hast@npm:^2.0.0":
   version: 2.3.1
   resolution: "@types/hast@npm:2.3.1"
@@ -35849,6 +35856,7 @@ swiper@4.5.1:
     "@types/debug": ^4.1.7
     "@types/enzyme": ^3.10.11
     "@types/fast-json-stable-stringify": ^2.0.0
+    "@types/gtag.js": ^0.0.10
     "@types/lodash": ^4.14.179
     "@types/node": ^16.11.26
     "@types/page": ^1.11.5
