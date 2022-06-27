@@ -238,7 +238,8 @@ const NewMailBoxList = (
 
 				<div
 					className={ classNames( 'new-mailbox-list__supplied-actions', {
-						'not-show-add-new-mailbox': ! showAddNewMailboxButton,
+						'new-mailbox-list__supplied-actions--disable-additional-mailboxes':
+							! showAddNewMailboxButton,
 					} ) }
 				>
 					{ showAddNewMailboxButton && (
