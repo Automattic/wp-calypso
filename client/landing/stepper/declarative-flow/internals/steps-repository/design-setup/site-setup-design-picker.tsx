@@ -31,6 +31,7 @@ import { STEP_NAME } from './constants';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
+import UpgradeModal from './upgrade-modal';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
@@ -45,6 +46,7 @@ const STICKY_OPTIONS = {
  */
 const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const [ isForceStaticDesigns, setIsForceStaticDesigns ] = useState( false );
+	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 	const { goBack, submit, exitFlow } = navigation;
@@ -199,6 +201,13 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		submit?.( providedDependencies );
 	};
 
+	const closeUpgradeModal = () => {
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_close_button_click', {
+			theme: selectedDesign?.slug,
+		} );
+		setShowUpgradeModal( false );
+	};
+
 	function pickDesign(
 		_selectedDesign: Design | undefined = selectedDesign,
 		buttonLocation?: string
@@ -240,12 +249,25 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	}
 
 	function upgradePlan() {
-		goToCheckout();
+		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
+			return goToCheckout();
+		}
+
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
+			theme: selectedDesign?.slug,
+		} );
+		setShowUpgradeModal( true );
 	}
 
 	function goToCheckout() {
 		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
 			return null;
+		}
+
+		if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
+			recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
+				theme: selectedDesign?.slug,
+			} );
 		}
 
 		const plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
@@ -320,22 +342,33 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		} );
 
 		const stepContent = (
-			<WebPreview
-				showPreview
-				showClose={ false }
-				showEdit={ false }
-				externalUrl={ siteSlug }
-				showExternal={ true }
-				previewUrl={ previewUrl }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
-				toolbarComponent={ PreviewToolbar }
-				siteId={ site?.ID }
-				url={ site?.URL }
-				translate={ translate }
-				recordTracksEvent={ recordTracksEvent }
-			/>
+			<>
+				<UpgradeModal
+					slug={ selectedDesign.slug }
+					isOpen={ showUpgradeModal }
+					closeModal={ closeUpgradeModal }
+					checkout={ goToCheckout }
+				/>
+				<WebPreview
+					showPreview
+					showClose={ false }
+					showEdit={ false }
+					externalUrl={ siteSlug }
+					showExternal={ true }
+					previewUrl={ previewUrl }
+					loadingMessage={ translate(
+						'{{strong}}One moment, please…{{/strong}} loading your site.',
+						{
+							components: { strong: <strong /> },
+						}
+					) }
+					toolbarComponent={ PreviewToolbar }
+					siteId={ site?.ID }
+					url={ site?.URL }
+					translate={ translate }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			</>
 		);
 
 		const newDesignEnabled = isEnabled( 'signup/theme-preview-screen' );
@@ -358,7 +391,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 
 					{ shouldUpgrade ? (
 						<Button primary borderless={ false } onClick={ upgradePlan }>
-							{ translate( 'Upgrade Plan' ) }
+							{ translate( 'Unlock theme' ) }
 						</Button>
 					) : (
 						<Button primary borderless={ false } onClick={ () => pickDesign() }>
