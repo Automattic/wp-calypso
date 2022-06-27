@@ -11,7 +11,7 @@ import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
-import { postLoginRequest } from 'calypso/state/login/utils';
+import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 
 let auth2InitDone = false;
 
@@ -182,12 +182,31 @@ class GoogleLoginButton extends Component {
 	}
 
 	async handleAuthorizationCode( auth_code ) {
-		const response = await postLoginRequest( 'exchange-social-auth-code', {
-			service: 'google',
-			auth_code,
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-		} );
+		let response;
+
+		try {
+			response = await postLoginRequest( 'exchange-social-auth-code', {
+				service: 'google',
+				auth_code,
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
+			} );
+		} catch ( httpError ) {
+			const { code: error_code } = getErrorFromHTTPError( httpError );
+
+			if ( error_code ) {
+				this.props.recordTracksEvent( 'calypso_login_auth_code_exchange_failure', {
+					social_account_type: 'google',
+					error_code,
+				} );
+			}
+
+			this.setState( {
+				error: this.props.translate( 'An error has occurred. Please try again.' ),
+			} );
+
+			return;
+		}
 
 		const { access_token, id_token } = response.body.data;
 
