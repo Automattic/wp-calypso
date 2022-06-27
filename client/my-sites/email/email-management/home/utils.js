@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isRegisteredDomain } from 'calypso/lib/domains';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { isProvisioningRegisteredDomain } from 'calypso/lib/domains/utils/is-provisioning-registered-domain';
 import {
 	hasGoogleAccountTOSWarning,
 	hasUnusedMailboxWarning,
@@ -130,21 +130,14 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 		// in the email management until the domain provisioning has finished. To avoid confusion,
 		// we display a warning under these conditions.
 		if (
-			isRegisteredDomain( domain ) &&
-			! domain.hasWpcomNameservers &&
+			isProvisioningRegisteredDomain( domain, 45 ) &&
 			getGSuiteSubscriptionStatus( domain ) === 'unknown'
 		) {
-			const registeredTimestamp = Date.parse( domain.registrationDate );
-			const timeSinceRegistration = Date.now() - registeredTimestamp;
-
-			// The 45 minutes time window is arbitrary.
-			if ( timeSinceRegistration < 45 * 60 * 1000 ) {
-				return {
-					statusClass: 'warning',
-					icon: 'info',
-					text: translate( 'Configuring Google Workspace…' ),
-				};
-			}
+			return {
+				statusClass: 'warning',
+				icon: 'info',
+				text: translate( 'Configuring mailboxes' ),
+			};
 		}
 
 		return activeStatus;
