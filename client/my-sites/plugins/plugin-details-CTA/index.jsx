@@ -293,7 +293,8 @@ const CTAButton = ( {
 				onClose={ () => setShowEligibility( false ) }
 			>
 				<EligibilityWarnings
-					currentContext={ isMarketplaceProduct ? 'marketplace-product' : 'plugin-details' }
+					currentContext={ 'plugin-details' }
+					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
 					onProceed={ () =>
 						onClickInstallPlugin( {

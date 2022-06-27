@@ -27,7 +27,7 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 		{ map( warnings, ( { name, description, supportUrl }, index ) => (
 			<div className="eligibility-warnings__warning" key={ index }>
 				<div className="eligibility-warnings__message">
-					{ context !== 'plugin-details' && context !== 'marketplace-product' && (
+					{ context !== 'plugin-details' && (
 						<Fragment>
 							<span className="eligibility-warnings__message-title">{ name }</span>:&nbsp;
 						</Fragment>
@@ -74,7 +74,6 @@ function getWarningDescription(
 	switch ( context ) {
 		case 'plugin-details':
 		case 'plugins':
-		case 'marketplace-product':
 			return translate(
 				'By installing a plugin the following change will be made to the site:',
 				'By installing a plugin the following changes will be made to the site:',

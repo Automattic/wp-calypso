@@ -45,6 +45,7 @@ interface ExternalProps {
 	className?: string;
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
+	isMarketplace?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -56,6 +57,7 @@ export const EligibilityWarnings = ( {
 	feature,
 	eligibilityData,
 	isEligible,
+	isMarketplace,
 	isPlaceholder,
 	onProceed,
 	standaloneProceed,
@@ -123,7 +125,12 @@ export const EligibilityWarnings = ( {
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<CompactCard>
-					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
+					<HoldList
+						context={ context }
+						holds={ listHolds }
+						isMarketplace={ isMarketplace }
+						isPlaceholder={ isPlaceholder }
+					/>
 				</CompactCard>
 			) }
 
@@ -259,15 +266,11 @@ function mergeProps(
 	let context: string | null = null;
 	let feature = '';
 	let ctaName = '';
-	if (
-		ownProps.currentContext === 'plugin-details' ||
-		ownProps.currentContext === 'marketplace-product'
-	) {
+	if ( ownProps.currentContext === 'plugin-details' ) {
 		context = ownProps.currentContext;
-		feature =
-			ownProps.currentContext === 'plugin-details'
-				? FEATURE_INSTALL_PLUGINS
-				: WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS;
+		feature = ownProps.isMarketplace
+			? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
+			: FEATURE_INSTALL_PLUGINS;
 		ctaName = 'calypso-plugin-details-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
 		context = 'plugins';

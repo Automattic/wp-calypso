@@ -20,12 +20,13 @@ function getHoldMessages(
 	context: string | null,
 	translate: LocalizeProps[ 'translate' ],
 	eligibleForProPlan: boolean,
-	billingPeriod?: string
+	billingPeriod?: string,
+	isMarketplace?: boolean
 ) {
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
-				if ( context === 'marketplace-product' && isEnabled( 'marketplace-starter-plan' ) ) {
+				if ( isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
 					return translate( 'Upgrade to a Starter plan' );
 				}
 
@@ -42,7 +43,7 @@ function getHoldMessages(
 					);
 				}
 
-				if ( context === 'marketplace-product' && isEnabled( 'marketplace-starter-plan' ) ) {
+				if ( isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
 					return translate( "You'll also get to collect payments and have more storage." );
 				}
 
@@ -173,6 +174,7 @@ export function getBlockingMessages(
 interface ExternalProps {
 	context: string | null;
 	holds: string[];
+	isMarketplace?: boolean;
 	isPlaceholder: boolean;
 }
 
@@ -216,13 +218,19 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
+export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
 	const billingPeriod = useSelector( getBillingInterval );
-	const holdMessages = getHoldMessages( context, translate, eligibleForProPlan, billingPeriod );
+	const holdMessages = getHoldMessages(
+		context,
+		translate,
+		eligibleForProPlan,
+		billingPeriod,
+		isMarketplace
+	);
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );

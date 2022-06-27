@@ -338,16 +338,16 @@ export function getPluginAuthorProfileKeyword( plugin ) {
  * @param currentPlan
  * @param pluginBillingPeriod
  * @param eligibleForProPlan
- * @param isMarketplaceProduct
+ * @param isMarketplace
  * @returns the correct business plan slug depending on current plan and pluginBillingPeriod
  */
 export function businessPlanToAdd(
 	currentPlan,
 	pluginBillingPeriod,
 	eligibleForProPlan,
-	isMarketplaceProduct = false
+	isMarketplace = false
 ) {
-	if ( isMarketplaceProduct && isEnabled( 'marketplace-starter-plan' ) ) {
+	if ( isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
 		return PLAN_WPCOM_STARTER;
 	}
 	if ( eligibleForProPlan ) {
