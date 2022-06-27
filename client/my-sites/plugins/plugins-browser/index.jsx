@@ -588,7 +588,8 @@ const PluginBrowserContent = ( props ) => {
 	);
 
 	const isLegacyPlan =
-		isBlogger( props.sitePlan ) || isPersonal( props.sitePlan ) || isPremium( props.sitePlan );
+		props.sitePlan &&
+		( isBlogger( props.sitePlan ) || isPersonal( props.sitePlan ) || isPremium( props.sitePlan ) );
 
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
