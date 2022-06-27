@@ -35,11 +35,7 @@ import {
 	getGoogleSlidesUrl,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
-import {
-	getTitanEmailUrl,
-	hasTitanMailWithUs,
-	useTitanAppsUrlPrefix,
-} from 'calypso/lib/titan';
+import { getTitanEmailUrl, hasTitanMailWithUs, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
