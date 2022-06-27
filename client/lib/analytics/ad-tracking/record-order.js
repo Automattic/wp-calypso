@@ -62,11 +62,6 @@ export async function recordOrder( cart, orderId ) {
 		return;
 	}
 
-	if ( cart.total_cost < 0.01 ) {
-		debug( 'recordOrder: [Skipping] total cart cost is less than 0.01' );
-		return;
-	}
-
 	const usdTotalCost = costToUSD( cart.total_cost, cart.currency );
 
 	// Purchase tracking happens in one of three ways:
