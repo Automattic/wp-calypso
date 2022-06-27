@@ -246,4 +246,3 @@ export const WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE = 'videopress-unlimited
 export const WPCOM_FEATURES_VIDEO_HOSTING = 'video-hosting';
 export const WPCOM_FEATURES_WORDADS = 'wordads';
 export const WPCOM_FEATURES_CUSTOM_DESIGN = 'custom-design';
-export const WPCOM_FEATURES_UNLIMITED_THEMES = 'unlimited_themes';

@@ -1,7 +1,7 @@
 import {
-	WPCOM_FEATURES_NO_ADVERTS,
-	WPCOM_FEATURES_CUSTOM_DESIGN,
-	WPCOM_FEATURES_UNLIMITED_THEMES,
+	PRODUCT_NO_ADS,
+	PRODUCT_WPCOM_CUSTOM_DESIGN,
+	PRODUCT_WPCOM_UNLIMITED_THEMES,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -33,13 +33,13 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 	// list add-ons to show in UI here
 	const addOnsActive = [
 		{
-			productSlug: WPCOM_FEATURES_UNLIMITED_THEMES,
+			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
 			featured: true,
 			icon: unlimitedThemesIcon,
 			overrides: null,
 		},
 		{
-			productSlug: WPCOM_FEATURES_NO_ADVERTS,
+			productSlug: PRODUCT_NO_ADS,
 			featured: false,
 			icon: noAdsIcon,
 			overrides: {
@@ -48,7 +48,7 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 			},
 		},
 		{
-			productSlug: WPCOM_FEATURES_CUSTOM_DESIGN,
+			productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
 			featured: false,
 			icon: customDesignIcon,
 			overrides: null,
