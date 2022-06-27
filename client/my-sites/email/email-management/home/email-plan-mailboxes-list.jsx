@@ -5,8 +5,10 @@ import PropTypes from 'prop-types';
 import Badge from 'calypso/components/badge';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { getEmailForwardAddress, isEmailForward, isEmailUserAdmin } from 'calypso/lib/emails';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
+import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
 import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
 import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
 
@@ -72,6 +74,15 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
+	let emptyText = translate( 'No mailboxes' );
+
+	if (
+		isRecentlyRegistered( domain.registrationDate, 45 ) &&
+		getGSuiteSubscriptionStatus( domain ) === 'unknown'
+	) {
+		emptyText = translate( 'Configuring mailboxes' );
+	}
+
 	if ( isLoadingEmails ) {
 		return (
 			<MailboxListHeader isPlaceholder accountType={ accountType }>
@@ -87,7 +98,7 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 		return (
 			<MailboxListHeader accountType={ accountType }>
 				<MailboxListItem hasNoEmails>
-					<span>{ translate( 'No mailboxes' ) }</span>
+					<span>{ emptyText }</span>
 				</MailboxListItem>
 			</MailboxListHeader>
 		);
