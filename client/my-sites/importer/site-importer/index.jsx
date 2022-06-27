@@ -108,6 +108,7 @@ class SiteImporter extends PureComponent {
 						importerStatus={ importerStatus }
 						onStartImport={ this.validateSite }
 						isEnabled={ isEnabled }
+						targetPlatform="wix"
 					/>
 				) }
 			</Card>

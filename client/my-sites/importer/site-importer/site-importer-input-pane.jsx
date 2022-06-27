@@ -172,7 +172,7 @@ class SiteImporterInputPane extends Component {
 			},
 			site: this.props.site,
 			targetSiteUrl: urlForImport,
-			targetPlatform: 'wix',
+			targetPlatform: this.props.targetPlatform,
 		} );
 	};
 
