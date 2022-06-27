@@ -182,7 +182,7 @@ const ProfessionalEmailUpsell = ( {
 				{ isMobileView && pricingComponent }
 				<div className="professional-email-upsell__form">
 					<NewMailBoxList
-						cancelActionText={ 'Skip for now' }
+						cancelActionText={ translate( 'Skip for now' ) }
 						fieldLabelTexts={ {
 							[ FIELD_MAILBOX ]: translate( 'Enter email address' ),
 							[ FIELD_PASSWORD ]: translate( 'Set password' ),
