@@ -43,6 +43,7 @@ const WhatsNewGuide = ( { onClose } ) => {
 					heading={ page.heading }
 					imageSrc={ page.imageSrc }
 					link={ page.link }
+					onClose={ onClose }
 				/>
 			) ) }
 		</Guide>

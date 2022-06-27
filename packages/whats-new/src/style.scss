@@ -42,10 +42,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 
 	.components-modal__header {
 		height: 0;
-
-		@media ( min-width: $wpcom-modal-breakpoint ) {
-			display: none;
-		}
+		visibility: hidden;
 
 		.components-button {
 			color: var( --studio-white );
@@ -244,7 +241,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 }
 .whats-new-page__visual {
 	height: 50%;
-	padding: 48px 24px 0;
+	padding: 52px 52px 0;
 	background: var( --studio-blue-50 );
 	text-align: center;
 	display: flex;
@@ -254,6 +251,17 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		height: auto;
 		width: $wpcom-modal-inner-content-width;
+	}
+}
+
+.whats-new-page__close {
+	color: var( --studio-white );
+	position: absolute;
+	top: 10px;
+	right: 10px;
+
+	&:hover {
+		color: var( --studio-white );
 	}
 }
 

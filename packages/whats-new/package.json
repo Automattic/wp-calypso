@@ -40,6 +40,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/components": "^19.11.0",
+		"@wordpress/icons": "^9.0.0",
 		"@wordpress/react-i18n": "^3.7.0",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
