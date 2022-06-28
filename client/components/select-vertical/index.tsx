@@ -43,8 +43,8 @@ const SelectVertical: React.FC< Props > = ( {
 		const rootsAdded = {};
 		return suggestions?.reduce(
 			( suggestionsList: SiteVerticalsResponse[], vertical: SiteVerticalsResponse ) => {
-				if ( ! rootsAdded[ vertical.id ] ) {
-					rootsAdded[ vertical.id ] = vertical.root;
+				if ( ! rootsAdded[ vertical.root.id ] ) {
+					rootsAdded[ vertical.root.id ] = vertical.root;
 					suggestionsList.push( vertical.root );
 				}
 				suggestionsList.push( vertical );
