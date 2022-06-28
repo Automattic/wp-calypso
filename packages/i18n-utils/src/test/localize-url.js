@@ -425,4 +425,31 @@ describe( '#localizeUrl', () => {
 			'https://wordpress.com/support/contact/'
 		);
 	} );
+
+	test( 'apps', () => {
+		expect( localizeUrl( 'https://apps.wordpress.com', 'de' ) ).toEqual(
+			'https://apps.wordpress.com/de/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com', 'es' ) ).toEqual(
+			'https://apps.wordpress.com/es/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/support/desktop/', 'de' ) ).toEqual(
+			'https://apps.wordpress.com/de/support/desktop/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/support/desktop/', 'es' ) ).toEqual(
+			'https://apps.wordpress.com/es/support/desktop/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/d/osx/?ref=getapps', 'de' ) ).toEqual(
+			'https://apps.wordpress.com/de/d/osx/?ref=getapps'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/d/osx/?ref=getapps', 'es' ) ).toEqual(
+			'https://apps.wordpress.com/es/d/osx/?ref=getapps'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com', 'en' ) ).toEqual(
+			'https://apps.wordpress.com/'
+		);
+		expect( localizeUrl( 'https://apps.wordpress.com/support/desktop/', 'en' ) ).toEqual(
+			'https://apps.wordpress.com/support/desktop/'
+		);
+	} );
 } );
