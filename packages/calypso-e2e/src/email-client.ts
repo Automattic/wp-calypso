@@ -89,14 +89,10 @@ export class EmailClient {
 			throw new Error( 'Message is not defined.' );
 		}
 
-		if ( ! message.text.body ) {
-			throw new Error( 'Message has no body.' );
-		}
-
-		if ( ! message.text.codes ) {
+		if ( message.text.codes?.length === 0 ) {
 			throw new Error( 'Message has no OTP code.' );
 		}
-		return message.text.codes.at( 0 )?.value as string;
+		return message.text.codes?.at( 0 )?.value as string;
 	}
 
 	/**
