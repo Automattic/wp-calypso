@@ -6,6 +6,7 @@ import {
 	User,
 	AutomatedTransferEligibility,
 	StepperInternal,
+	Analyzer,
 } from '@automattic/data-stores';
 
 export const ONBOARD_STORE = Onboard.register();
@@ -24,3 +25,5 @@ export const USER_STORE = User.register( {
 } );
 
 export const AUTOMATED_ELIGIBILITY_STORE = AutomatedTransferEligibility.register();
+
+export const ANALYZER_STORE = Analyzer.register();
