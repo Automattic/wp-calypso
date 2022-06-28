@@ -94,10 +94,12 @@ const PluginsBrowserListElement = ( props ) => {
 			grid_position: props.gridPosition,
 			blog_id: selectedSite?.ID,
 		} );
-		recordTracksEvent( 'calypso_marketplace_search_traintracks_interact', {
-			railcar: plugin.railcar.railcar,
-			action: 'product_opened',
-		} );
+		if ( plugin.railcar ) {
+			recordTracksEvent( 'calypso_marketplace_search_traintracks_interact', {
+				railcar: plugin.railcar.railcar,
+				action: 'product_opened',
+			} );
+		}
 	}, [ site, plugin, selectedSite, props.listName ] );
 
 	const isWpcomPreinstalled = useMemo( () => {
