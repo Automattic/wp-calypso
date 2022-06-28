@@ -40,7 +40,6 @@ import './style.scss';
 
 const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-
 		return getTitanEmailUrl(
 			titanAppsUrlPrefix,
 			getEmailAddress( mailbox ),
