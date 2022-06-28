@@ -40,7 +40,12 @@ import './style.scss';
 
 const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-		return getTitanEmailUrl( titanAppsUrlPrefix, getEmailAddress( mailbox ), true );
+		return getTitanEmailUrl(
+			titanAppsUrlPrefix,
+			getEmailAddress( mailbox ),
+			! titanAppsUrlPrefix,
+			window.location.href
+		);
 	}
 
 	if ( isGoogleEmailAccount( mailbox ) ) {
@@ -109,7 +114,7 @@ const MailboxItem = ( { mailbox } ) => {
 			}
 			className="mailbox-selection-list__item"
 			href={ getExternalUrl( mailbox, titanAppsUrlPrefix ) }
-			target="external"
+			target={ isTitanMailAccount( mailbox ) ? null : 'external' }
 		>
 			<span className="mailbox-selection-list__icon">
 				<MailboxItemIcon mailbox={ mailbox } />
