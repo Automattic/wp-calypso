@@ -277,8 +277,10 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			const params = new URLSearchParams();
 			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
+			// The theme upsell link does not work with siteId and requires a siteSlug.
+			// See https://github.com/Automattic/wp-calypso/pull/64899
 			window.location.href = `/checkout/${ encodeURIComponent(
-				siteSlug || urlToSlug( site?.URL || '' )
+				siteSlug || urlToSlug( site?.URL ) || ''
 			) }/${ plan }?${ params.toString() }`;
 		}
 	}
