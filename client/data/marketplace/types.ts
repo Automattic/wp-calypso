@@ -24,6 +24,7 @@ export type Plugin = {
 	short_description?: string;
 	download_link?: string;
 	icons?: Record< string, string >;
+	railcar: Railcar;
 };
 
 export type ESIndexResult = {
@@ -54,7 +55,9 @@ export type ESIndexResult = {
 	'plugin.active_installs'?: number;
 };
 
-export type ESHits = Array< { fields: ESIndexResult } >;
+export type Railcar = Record< string, string | number >;
+
+export type ESHits = Array< { fields: ESIndexResult; railcar: Railcar } >;
 
 export type ESResponse = { data: { results: ESHits; total: number; page_handle: string } };
 

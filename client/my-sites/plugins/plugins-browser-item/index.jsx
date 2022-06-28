@@ -76,12 +76,10 @@ const PluginsBrowserListElement = ( props ) => {
 				recordTracksEvent( 'calypso_marketplace_search_traintracks_render', {
 					site: site,
 					plugin: plugin.slug,
-					list_name: props.listName,
 					blog_id: selectedSite?.ID,
 					ui_algo: 'grid', // maybe list?
 					ui_position: props.gridPosition,
-					// fetch_algo: 'marketplace/1',
-					// fetch_position: 1,
+					...plugin.railcar,
 				} );
 			}
 		},
@@ -95,6 +93,10 @@ const PluginsBrowserListElement = ( props ) => {
 			list_name: props.listName,
 			grid_position: props.gridPosition,
 			blog_id: selectedSite?.ID,
+		} );
+		recordTracksEvent( 'calypso_marketplace_search_traintracks_interact', {
+			railcar: plugin.railcar.railcar,
+			action: 'product_opened',
 		} );
 	}, [ site, plugin, selectedSite, props.listName ] );
 
