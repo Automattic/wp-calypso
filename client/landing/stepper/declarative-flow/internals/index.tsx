@@ -29,7 +29,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	const stepPaths = flow.useSteps();
 	const location = useLocation();
-	const currentRoute = location.pathname.substring( 1 ) as StepPath;
+	const currentRoute = location.pathname.substring( 1 ).replace( /\/+$/, '' ) as StepPath;
 	const history = useHistory();
 	const { search } = useLocation();
 	const stepNavigation = flow.useStepNavigation( currentRoute, ( path ) => {
