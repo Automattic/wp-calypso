@@ -2,7 +2,11 @@ export interface SiteVerticalsResponse {
 	id: string;
 	name: string;
 	title: string;
-	root: object;
+	root?: {
+		id: string;
+		name: string;
+		title: string;
+	};
 }
 
 export interface SiteVerticalQueryByIdParams {

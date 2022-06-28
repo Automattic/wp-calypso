@@ -40,10 +40,10 @@ const SelectVertical: React.FC< Props > = ( {
 	} );
 
 	const suggestionsWithRoots = useMemo( () => {
-		const rootsAdded = {};
+		const rootsAdded: { [ index: string ]: SiteVerticalsResponse } = {};
 		return suggestions?.reduce(
 			( suggestionsList: SiteVerticalsResponse[], vertical: SiteVerticalsResponse ) => {
-				if ( ! rootsAdded[ vertical.root.id ] ) {
+				if ( vertical.root && ! rootsAdded[ vertical.root.id ] ) {
 					rootsAdded[ vertical.root.id ] = vertical.root;
 					suggestionsList.push( vertical.root );
 				}
