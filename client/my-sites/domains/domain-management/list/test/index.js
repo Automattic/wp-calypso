@@ -79,43 +79,41 @@ describe( 'index', () => {
 		translate: ( string ) => string,
 	} );
 
-	function renderWithProps( props = defaultProps ) {
-		const store = createReduxStore(
-			{
-				purchases: {},
-				ui: {
-					selectedSiteId: 1,
-					section: 'section',
-				},
-				documentHead: {},
-				sites: {
-					plans: [],
-					domains: {
-						items: [],
-					},
-				},
-				currentUser: {
-					capabilities: {},
-				},
-				productsList: {},
-			},
-			( state ) => {
-				return state;
-			}
-		);
-		const cartManagerClient = createShoppingCartManagerClient( { getCart, setCart } );
-		return render( <SiteDomains { ...props } />, {
-			wrapper: ( { children } ) => (
-				<TestProvider store={ store } cartManagerClient={ cartManagerClient }>
-					{ children }
-				</TestProvider>
-			),
-		} );
-	}
-
 	describe( 'regular cases', () => {
 		test( 'should list two domains', () => {
-			renderWithProps();
+			const store = createReduxStore(
+				{
+					purchases: {},
+					ui: {
+						selectedSiteId: 1,
+						section: 'section',
+					},
+					documentHead: {},
+					sites: {
+						plans: [],
+						domains: {
+							items: [],
+						},
+					},
+					currentUser: {
+						capabilities: {},
+					},
+					productsList: {},
+				},
+				( state ) => {
+					return state;
+				}
+			);
+			const cartManagerClient = createShoppingCartManagerClient( { getCart, setCart } );
+
+			render( <SiteDomains { ...defaultProps } />, {
+				wrapper: ( { children } ) => (
+					<TestProvider store={ store } cartManagerClient={ cartManagerClient }>
+						{ children }
+					</TestProvider>
+				),
+			} );
+
 			expect( screen.getAllByTestId( 'domain-row' ) ).toHaveLength( 2 );
 		} );
 	} );
