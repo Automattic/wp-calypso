@@ -16,5 +16,7 @@ export function useCanUserManageOptions() {
 		canCurrentUser( state, siteId as number, 'manage_options' )
 	);
 
-	return isRequesting ? 'requesting' : hasManageOptionsCap ?? false;
+	if ( siteId ) {
+		return isRequesting ? 'requesting' : hasManageOptionsCap ?? false;
+	}
 }
