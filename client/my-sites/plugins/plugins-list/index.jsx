@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -28,6 +29,7 @@ import {
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -516,13 +518,14 @@ export class PluginsList extends Component {
 	}
 
 	getAllowedPluginActions( plugin ) {
+		const { hasManagePlugins } = this.props;
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
 		const hiddenForAutomatedTransfer =
 			this.props.isSiteAutomatedTransfer && includes( autoManagedPlugins, plugin.slug );
 
 		return {
-			autoupdate: ! hiddenForAutomatedTransfer,
-			activation: ! hiddenForAutomatedTransfer,
+			autoupdate: ! hiddenForAutomatedTransfer && hasManagePlugins,
+			activation: ! hiddenForAutomatedTransfer && hasManagePlugins,
 		};
 	}
 
@@ -581,6 +584,7 @@ export default connect(
 			pluginsOnSites: getPluginsOnSites( state, plugins ),
 			selectedSite,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			hasManagePlugins: siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS ),
 			inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
