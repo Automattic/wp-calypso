@@ -654,6 +654,11 @@ const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSl
 
 const UpgradeNudgePaid = ( props ) => {
 	const translate = useTranslate();
+
+	if ( ! props.sitePlan ) {
+		return null;
+	}
+
 	const plan = findFirstSimilarPlanKey( props.sitePlan.product_slug, {
 		type: TYPE_STARTER,
 	} );
