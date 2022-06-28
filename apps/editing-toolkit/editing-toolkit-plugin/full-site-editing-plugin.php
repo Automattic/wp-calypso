@@ -435,4 +435,5 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_block_description_links' );
 function load_tutorials() {
 	require_once __DIR__ . '/tutorials/tutorials.php';
 }
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tutorials' );
+// Commented out to simplify non-atomc wpcom deployment, nothing depends on this yet.
+// add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tutorials' );.
