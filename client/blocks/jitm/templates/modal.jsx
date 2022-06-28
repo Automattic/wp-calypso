@@ -37,13 +37,13 @@ export default function ModalTemplate( {
 			case 'embedded-inbox':
 				return translate( 'Embedded inbox', { textOnly: true } );
 			default:
-				return translate( 'list of available plans — premium, business, and ecommerce plans', {
+				return translate( 'List of available WordPress.com plans', {
 					textOnly: true,
 				} );
 		}
 	};
 
-	const getClassName = () => {
+	const getModalClassName = () => {
 		switch ( icon ) {
 			case 'embedded-inbox':
 				return 'modal__embedded-inbox';
@@ -51,10 +51,6 @@ export default function ModalTemplate( {
 				return 'modal__plans';
 		}
 	};
-
-	const modalImage = (
-		<img className={ getClassName() } src={ getModalImage() } alt={ getModalAltText() } />
-	);
 
 	return isDismissed.includes( featureClass ) ? null : (
 		<Guide
@@ -90,7 +86,13 @@ export default function ModalTemplate( {
 									<p className="modal__disclaimer">{ line }</p>
 								) ) }
 							</div>
-							<div className="modal__sidebar">{ modalImage }</div>
+							<div className="modal__sidebar">
+								<img
+									className={ getModalClassName() }
+									src={ getModalImage() }
+									alt={ getModalAltText() }
+								/>
+							</div>
 						</>
 					),
 				},
