@@ -2,7 +2,7 @@ import { Button, Guide } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import './modal-style.scss';
-import Inbox from './inbox.svg';
+import Inbox from './embedded-inbox.svg';
 import Visual from './plans-visual.svg';
 
 export default function ModalTemplate( {
