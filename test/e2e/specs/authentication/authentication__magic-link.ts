@@ -33,7 +33,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 		await loginPage.clickSubmit();
 
 		emailClient = new EmailClient();
-		magicLinkEmail = await emailClient.getLastEmail( {
+		magicLinkEmail = await emailClient.getLastMatchingMessage( {
 			inboxId: SecretsManager.secrets.mailosaur.defaultUserInboxId,
 			emailAddress: credentials.email as string,
 			subject: 'Log in to WordPress.com',
