@@ -67,11 +67,13 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	}
 
 	async function resendVerificationEmail() {
-		const response = await sendEmailVerification();
-		if ( response.success ) {
+		try {
+			await sendEmailVerification();
 			dispatch( successNotice( __( 'The verification email has been sent.' ) ) );
-		} else {
-			dispatch( errorNotice( __( 'There was an error processing your request.' ) ) );
+		} catch ( Error ) {
+			dispatch(
+				errorNotice( __( 'An error has occurred, please check your connection and retry.' ) )
+			);
 		}
 	}
 
@@ -140,7 +142,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	let finalCTAHandler = onCTAClickHandler;
 	let displayData: DisplayData | null;
 
-	if ( ! isEmailVerified ) {
+	if ( ! false ) {
 		secondaryAction = (
 			<Button
 				className="landing-page__secondary empty-content__action"

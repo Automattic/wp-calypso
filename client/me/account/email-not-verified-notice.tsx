@@ -4,15 +4,15 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { useSendEmailVerification } from '../../landing/stepper/hooks/use-send-email-verification';
-import { isEmailVerified } from '../../state/selectors/is-email-verified';
 import './email-not-verified-notice.scss';
+import { isCurrentUserEmailVerified } from '../../state/current-user/selectors';
 
 const resendEmailNotice = 'resend-verification-email';
 
 const EmailNotVerifiedNotice = () => {
 	const dispatch = useDispatch();
 	const resendEmail = useSendEmailVerification();
-	const isVerified = useSelector( isEmailVerified );
+	const isVerified = useSelector( isCurrentUserEmailVerified );
 
 	if ( isVerified ) {
 		return null;
@@ -32,7 +32,7 @@ const EmailNotVerifiedNotice = () => {
 			}
 		} catch ( Error ) {}
 		dispatch(
-			errorNotice( __( 'There was an error processing your request.' ), {
+			errorNotice( __( 'An error has occurred, please check your connection and retry.' ), {
 				id: resendEmailNotice,
 			} )
 		);

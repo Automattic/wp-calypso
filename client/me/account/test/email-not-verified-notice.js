@@ -82,7 +82,7 @@ describe( 'EmailNotVerifiedNotice', () => {
 		await waitFor( () => {
 			expect(
 				dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(
-					'There was an error processing your request.'
+					'An error has occurred, please check your connection and retry.'
 				)
 			).toBeTruthy();
 		} );
