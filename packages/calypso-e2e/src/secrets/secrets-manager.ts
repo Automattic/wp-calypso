@@ -19,6 +19,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'calypsoPreReleaseUser',
 	'i18nUser',
 	'p2User',
+	'totpUser',
 	'jetpackUser',
 	'jetpackUserPREMIUM',
 	'jetpackUserJN',
@@ -161,8 +162,9 @@ export class SecretsManager {
 				martechTosUser: { ...fakeAccount },
 				calypsoPreReleaseUser: { ...fakeAccount },
 				i18nUser: { ...fakeAccount },
-				// This one needs a totpKey
+				// The following two needs a totpKey
 				p2User: { ...fakeAccount, totpKey: 'FAKE_VALUE' },
+				totpUser: { ...fakeAccount, totpKey: 'FAKE_VALUE' },
 				jetpackUser: { ...fakeAccount },
 				jetpackUserPREMIUM: { ...fakeAccount },
 				jetpackUserJN: { ...fakeAccount },
