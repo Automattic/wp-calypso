@@ -9,6 +9,7 @@ export interface TestAccountCredentials {
 	primarySite?: string;
 	otherSites?: string[];
 	totpKey?: string;
+	email?: string;
 	smsNumber?: {
 		number: string;
 		code: string;
