@@ -12,7 +12,7 @@ export interface ColorsData {
 	background: Color[];
 }
 
-interface PreferredPalettes {
+export interface PreferredPalettes {
 	preferred_palettes: ColorsData[];
 }
 
