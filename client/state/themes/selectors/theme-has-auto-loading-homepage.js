@@ -25,7 +25,7 @@ export function themeHasAutoLoadingHomepage( state, themeId, siteId ) {
 		return atomicAutoLoading;
 	}
 
-	//If not, or if not Atomic, fall back to the full `wpcom` library
+	//Fall back to the full `wpcom` library
 	return includes(
 		getThemeTaxonomySlugs( getTheme( state, 'wpcom', themeId ), 'theme_feature' ),
 		'auto-loading-homepage'
