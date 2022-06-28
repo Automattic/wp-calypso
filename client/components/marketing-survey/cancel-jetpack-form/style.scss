@@ -96,8 +96,8 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 	&__card {
 		background: var( --studio-white );
 		padding: 2rem;
-		box-shadow: 0 0 40px 0 var( --studio-gray-0 );
-		border: 1px solid var( --studio-gray-50 );
+		box-shadow: 0 10px 40px rgb( 0 0 0 / 8% );
+		border-radius: 4px;
 	}
 
 	&__logo {
@@ -128,6 +128,19 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 			box-shadow: none !important;
 			outline: solid 2px var( --studio-gray-100 );
 			outline-offset: 2px;
+		}
+	}
+
+	&__tos {
+		a {
+			font-weight: 600;
+			text-decoration: underline;
+			color: var( --studio-gray-100 );
+
+			&:hover,
+			&:focus {
+				text-decoration-thickness: 3px;
+			}
 		}
 	}
 }

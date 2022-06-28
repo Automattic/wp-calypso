@@ -146,13 +146,22 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			if (
 				provideCancellationOffer &&
 				cancellationOffer &&
-				isOfferPriceSameOrLowerThanPurchasePrice
+				isOfferPriceSameOrLowerThanPurchasePrice &&
+				offerDiscountBasedFromPurchasePrice >= 10
 			) {
 				availableSteps.push( steps.CANCELLATION_OFFER_STEP );
 			}
 		}
 		return availableSteps;
-	}, [ flowType, steps, purchase, cancellationOffer, provideCancellationOffer ] );
+	}, [
+		flowType,
+		steps,
+		purchase,
+		cancellationOffer,
+		provideCancellationOffer,
+		isOfferPriceSameOrLowerThanPurchasePrice,
+		offerDiscountBasedFromPurchasePrice,
+	] );
 
 	const { firstStep, lastStep } = useMemo( () => {
 		return {

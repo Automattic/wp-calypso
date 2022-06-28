@@ -1,12 +1,13 @@
 import { PLAN_ANNUAL_PERIOD, PLAN_MONTHLY_PERIOD } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import TosText from 'calypso/me/purchases/manage-purchase/payment-method-selector/tos-text';
 import { CancellationOffer } from 'calypso/state/cancellation-offers/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -60,7 +61,7 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 	return (
 		<>
 			<FormattedHeader
-				headerText={ translate( 'Thanks for your feedback.' ) }
+				headerText={ translate( 'Thanks for your feedback' ) }
 				subHeaderText={ translate(
 					'We’d love to help make Jetpack work for you. Would the special offer below interest you?'
 				) }
@@ -71,7 +72,7 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 			<div className="jetpack-cancellation-offer__card">
 				<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
 				<p className="jetpack-cancellation-offer__headline">
-					{ translate( 'Get %(discount)d%% off %(name)s for the next %(interval)s.', {
+					{ translate( 'Get %(discount)d%% off %(name)s for the next %(interval)s', {
 						args: {
 							discount: percentDiscount,
 							name: purchase.productName,
@@ -86,32 +87,47 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 						},
 					} ) }
 					<br />
-					<small>
-						{ translate(
-							'Your subscription will renew at %(renewalPrice)s for the next %(interval)s. It will then renew at %(fullPrice)s each following %(singularInterval)s.',
-							{
-								args: {
-									renewalPrice: formatCurrency( offer.rawPrice, offer.currencyCode ),
-									interval: interval,
-									fullPrice: formatCurrency( offer.originalPrice, offer.currencyCode ),
-									singularInterval: singularInterval,
-								},
-							}
-						) }
-					</small>
+					{ translate(
+						'Your subscription will renew at %(renewalPrice)s for the next %(interval)s. It will then renew at %(fullPrice)s each following %(singularInterval)s.',
+						{
+							args: {
+								renewalPrice: formatCurrency( offer.rawPrice, offer.currencyCode ),
+								interval: interval,
+								fullPrice: formatCurrency( offer.originalPrice, offer.currencyCode ),
+								singularInterval: singularInterval,
+							},
+						}
+					) }
+				</p>
+				<p className="jetpack-cancellation-offer__tos">
+					{ translate(
+						'Getting this discount means you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',
+						{
+							components: {
+								tosLink: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+								autoRenewalSupportPage: (
+									<InlineSupportLink supportContext="autorenewal" showIcon={ false } />
+								),
+								faqCancellingSupportPage: (
+									<InlineSupportLink supportContext="cancel_purchase" showIcon={ false } />
+								),
+							},
+						}
+					) }
 				</p>
 				<Button
 					className="jetpack-cancellation-offer__accept-cta"
 					primary
 					onClick={ onClickAccept }
 				>
-					{ translate( 'Get discount*' ) }
+					{ translate( 'Get discount' ) }
 				</Button>
-				<p>
-					<small>
-						*<TosText />
-					</small>
-				</p>
 			</div>
 		</>
 	);
