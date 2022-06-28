@@ -5,6 +5,7 @@ import { get, includes, isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import SectionHeader from 'calypso/components/section-header';
 import acceptDialog from 'calypso/lib/accept';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
@@ -480,6 +481,7 @@ export class PluginsList extends Component {
 
 		return (
 			<div className="plugins-list">
+				<QueryProductsList />
 				<PluginNotices sites={ this.getPluginsSites() } plugins={ this.props.plugins } />
 				<PluginsListHeader
 					label={ this.props.header }
