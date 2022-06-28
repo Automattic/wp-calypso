@@ -63,7 +63,7 @@ class AmpWpcom extends Component {
 
 		return (
 			<UpsellNudge
-				title={ translate( 'Install AMP plugin' ) }
+				title={ translate( 'Install the AMP plugin' ) }
 				description={ translate(
 					'AMP enables the creation of websites and ads that load near instantly, ' +
 						'giving site visitors a smooth, more engaging experience on mobile and desktop.'
