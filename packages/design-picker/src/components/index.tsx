@@ -104,17 +104,18 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				shouldUpgrade
 					? sprintf(
 							/* translators: %(price)s - the price of the theme */
-							__( '%(price)s per year or <a>included in the Pro plan</a>' ),
+							__( '%(price)s per year or <button>included in the Pro plan</button>' ),
 							{
 								price: design.price,
 							}
 					  )
 					: __( 'Included in the Pro plan' ),
 				{
-					a: (
-						<a
-							href="javascript:void(0)"
-							onClick={ ( e ) => {
+					button: (
+						<Button
+							isLink={ true }
+							className="design-picker__button-link"
+							onClick={ ( e: any ) => {
 								e.stopPropagation();
 								onCheckout?.();
 							} }

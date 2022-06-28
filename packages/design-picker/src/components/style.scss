@@ -222,12 +222,17 @@
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 		margin-top: -0.1em;
 	}
-	
+
 	.design-picker__pricing-description {
 		text-align: left;
 		color: #50575e;
 		z-index: 1;
 		position: absolute;
+	}
+
+
+	.design-picker__button-link.components-button.is-link {
+		text-decoration: none;
 	}
 }
 
