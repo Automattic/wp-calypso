@@ -11,7 +11,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerce-install';
 import { useCountries } from '../../../../hooks/use-countries';
@@ -53,6 +53,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	const settings = useSelect(
 		( select ) => ( site?.ID && select( SITE_STORE ).getSiteSettings( site.ID ) ) || {}
 	);
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() || null );
 	const { data: countries } = useCountries();
 	const { __ } = useI18n();
 	const [ errors, setErrors ] = useState( {} as Record< FormFields, string > );
@@ -123,9 +124,14 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 		errors[ 'store_country' ] = ! getSettingsValue( 'store_country' )
 			? __( 'Please select a country / region' )
 			: '';
-		errors[ 'store_email' ] = ! emailValidator.validate( getSettingsValue( 'store_email' ) )
-			? __( 'Please add a valid email address' )
-			: '';
+
+		// Only validate the store email if a value has been provided.
+		const storeEmail = getSettingsValue( 'store_email' );
+		if ( storeEmail ) {
+			errors[ 'store_email' ] = ! emailValidator.validate( storeEmail )
+				? __( 'Please add a valid email address' )
+				: '';
+		}
 
 		setErrors( errors );
 
@@ -249,7 +255,10 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 					</FormFieldset>
 
 					<FormFieldset>
-						<FormLabel htmlFor="store_email">{ __( 'Email address' ) }</FormLabel>
+						<FormLabel htmlFor="store_email">
+							{ __( 'Get WooCommerce tips straight to your inbox (optional)' ) }
+							<br />
+						</FormLabel>
 						<FormInput
 							value={ getSettingsValue( 'store_email' ) }
 							name="store_email"
@@ -257,6 +266,18 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 							onChange={ elementChange }
 							className={ errors[ 'store_email' ] ? 'is-error' : '' }
 						/>
+						{ currentUser && (
+							<button
+								onClick={ ( e ) => {
+									e.preventDefault();
+
+									onChange( 'store_email', currentUser.email );
+								} }
+								className="store-address__set-store-email"
+							>
+								({ __( 'Use my WordPress.com email' ) } )
+							</button>
+						) }
 						<ControlError error={ errors[ 'store_email' ] } />
 					</FormFieldset>
 

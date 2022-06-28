@@ -17,4 +17,10 @@
 			padding-left: 40px;
 		}
 	}
+
+	.store-address__set-store-email {
+		color: var( --wp-admin-theme-color-darker-10 );
+		text-decoration: underline;
+		cursor: pointer;
+	}
 }
