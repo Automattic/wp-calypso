@@ -93,12 +93,10 @@ export class EmailClient {
 			throw new Error( 'Message has no body.' );
 		}
 
-		const body = message.text.body;
-		const match = body.match( /\d{7}/ );
-		if ( ! match ) {
-			throw new Error( 'Failed to parse 2FA code from message.' );
+		if ( ! message.text.codes ) {
+			throw new Error( 'Message has no OTP code.' );
 		}
-		return match[ 0 ];
+		return message.text.codes.at( 0 )?.value as string;
 	}
 
 	/**
