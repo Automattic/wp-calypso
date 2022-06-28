@@ -97,6 +97,9 @@ const HelpCenterHeader: React.FC< Header > = ( {
 								<Route path="/" exact>
 									{ __( 'Help Center', __i18n_text_domain__ ) }
 								</Route>
+								<Route path="/next-steps-tutorials" exact>
+									{ __( 'Help Center', __i18n_text_domain__ ) }
+								</Route>
 								<Route path="/contact-options">
 									{ __( 'Contact Options', __i18n_text_domain__ ) }
 								</Route>
