@@ -101,7 +101,7 @@ const MailboxField = ( {
 
 	const onBlur = () => {
 		if ( ! field.isTouched ) {
-			field.isTouched = field.hasValidValue();
+			field.isTouched = field.value?.length > 0;
 		}
 		if ( field.isTouched ) {
 			onRequestFieldValidation( field );
