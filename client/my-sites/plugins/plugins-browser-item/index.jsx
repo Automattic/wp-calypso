@@ -77,7 +77,7 @@ const PluginsBrowserListElement = ( props ) => {
 					site: site,
 					plugin: plugin.slug,
 					blog_id: selectedSite?.ID,
-					ui_algo: 'grid', // maybe list?
+					ui_algo: props.listName, // this can also be used to test different layouts eg. list/grid
 					ui_position: props.gridPosition,
 					...plugin.railcar,
 				} );
