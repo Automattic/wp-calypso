@@ -36,7 +36,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, loca
 
 	return (
 		<MShotsImage
-			url={ getDesignPreviewUrl( design, { language: locale } ) }
+			url={ getDesignPreviewUrl( design, { language: locale, use_screenshot_overrides: true } ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
 			options={ getMShotOptions( { scrollable, highRes, isMobile } ) }
