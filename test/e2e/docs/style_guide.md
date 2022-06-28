@@ -240,7 +240,7 @@ await this.page.fill( 'input[placeholder="New Text"]' );
 
 ### Convert repetitive variations to dynamic selector
 
-Combine similar or repetitive selectors into a dynamic selector
+Combine similar or repetitive selectors into a dynamic selector.
 Dynamic selector is also useful when the target selector depends on a known conditional (eg. mobile/desktop, language).
 
 **Avoid**:
