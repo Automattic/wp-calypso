@@ -1,9 +1,9 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { Guide } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
 import wpcom from 'wpcom';
 import proxyRequest from 'wpcom-proxy-request';
+import Guide from './components/guide';
 import WhatsNewPage from './whats-new-page';
 import './style.scss';
 
@@ -32,6 +32,7 @@ const WhatsNewGuide = ( { onClose } ) => {
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			className="whats-new-guide__main"
 			contentLabel={ __( "What's New at WordPress.com", __i18n_text_domain__ ) }
+			previousButtonText={ __( 'Back', __i18n_text_domain__ ) }
 			finishButtonText={ __( 'Done', __i18n_text_domain__ ) }
 			onFinish={ onClose }
 		>
@@ -43,7 +44,6 @@ const WhatsNewGuide = ( { onClose } ) => {
 					heading={ page.heading }
 					imageSrc={ page.imageSrc }
 					link={ page.link }
-					onClose={ onClose }
 				/>
 			) ) }
 		</Guide>

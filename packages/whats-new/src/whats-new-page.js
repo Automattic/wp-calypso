@@ -1,10 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, GuidePage } from '@wordpress/components';
-import { closeSmall } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 
-function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageNumber, onClose } ) {
+function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageNumber } ) {
 	const __ = useI18n().__;
 
 	useEffect( () => {
@@ -15,7 +14,7 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageN
 	}, [ isLastPage, pageNumber ] );
 
 	return (
-		<GuidePage className="whats-new-page__container">
+		<div className="whats-new-page__container">
 			<div className="whats-new-page__text">
 				{ heading && <h1 className="whats-new-page__heading">{ heading }</h1> }
 				<div className="whats-new-page__description">
@@ -34,7 +33,6 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageN
 				</div>
 			</div>
 			<div className="whats-new-page__visual">
-				<Button className="whats-new-page__close" onClick={ onClose } icon={ closeSmall } />
 				{ imageSrc && (
 					<img
 						src={ imageSrc }
@@ -44,7 +42,7 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageN
 					/>
 				) }
 			</div>
-		</GuidePage>
+		</div>
 	);
 }
 
