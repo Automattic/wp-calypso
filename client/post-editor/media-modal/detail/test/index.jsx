@@ -11,9 +11,6 @@ import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 jest.mock( 'calypso/post-editor/media-modal/detail/detail-fields', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/post-editor/media-modal/detail/detail-file-info', () =>
-	require( 'calypso/components/empty-component' )
-);
 
 function renderWithRedux( ui ) {
 	return renderWithProvider( ui, {
@@ -64,7 +61,9 @@ describe( 'EditorMediaModalDetailItem', () => {
 			/>
 		);
 
-		expect( screen.queryAllByRole( 'button' ).length ).toBeGreaterThanOrEqual( 1 );
+		expect( screen.queryAllByRole( 'button', { name: /edit/i } ).length ).toBeGreaterThanOrEqual(
+			1
+		);
 	} );
 
 	test( 'should display at least one edit button for a VideoPress video on a private site', () => {
@@ -77,13 +76,17 @@ describe( 'EditorMediaModalDetailItem', () => {
 			/>
 		);
 
-		expect( screen.queryAllByRole( 'button' ).length ).toBeGreaterThanOrEqual( 1 );
+		expect( screen.queryAllByRole( 'button', { name: /edit/i } ).length ).toBeGreaterThanOrEqual(
+			1
+		);
 	} );
 
 	test( 'should display at least one edit button for an image on a public site', () => {
 		renderWithRedux( <DetailItem item={ DUMMY_IMAGE_MEDIA } { ...SHARED_PROPS } /> );
 
-		expect( screen.queryAllByRole( 'button' ).length ).toBeGreaterThanOrEqual( 1 );
+		expect( screen.queryAllByRole( 'button', { name: /edit/i } ).length ).toBeGreaterThanOrEqual(
+			1
+		);
 	} );
 
 	test( 'should not display edit button for an image on a private site', () => {
@@ -91,6 +94,6 @@ describe( 'EditorMediaModalDetailItem', () => {
 			<DetailItem item={ DUMMY_IMAGE_MEDIA } isSitePrivate={ true } { ...SHARED_PROPS } />
 		);
 
-		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /edit/i } ) ).not.toBeInTheDocument();
 	} );
 } );
