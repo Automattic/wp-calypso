@@ -63,8 +63,11 @@ class AmpWpcom extends Component {
 
 		return (
 			<UpsellNudge
-				title={ translate( 'Install AMP plugin.' ) }
-				description={ translate( 'Install AMP plugin to use AMP features.' ) }
+				title={ translate( 'Install AMP plugin' ) }
+				description={ translate(
+					'AMP enables the creation of websites and ads that load near instantly, ' +
+						'giving site visitors a smooth, more engaging experience on mobile and desktop.'
+				) }
 				plan={ PLAN_WPCOM_PRO }
 				href={ `/plugins/amp/${ siteSlug }` }
 				forceHref={ true }
