@@ -7,23 +7,25 @@ interface Color {
 }
 
 export interface ColorsData {
-	logo: Color[];
-	links: Color[];
-	favicon: Color[];
-	body?: Color;
-	theme_color?: Color;
+	link: Color[];
+	text: Color[];
+	background: Color[];
+}
+
+interface PreferredPalettes {
+	preferred_palettes: ColorsData[];
 }
 
 export interface AnalyzeColorsResponse {
 	url: string;
 	status: string;
-	colors: ColorsData;
+	colors: ColorsData & PreferredPalettes;
 }
 
 type SiteUrl = string;
 export type ColorsState = {
 	analyzing?: boolean;
-	colors?: { [ key: SiteUrl ]: ColorsData };
+	colors?: { [ key: SiteUrl ]: ColorsData & PreferredPalettes };
 };
 
 export interface Dispatch {

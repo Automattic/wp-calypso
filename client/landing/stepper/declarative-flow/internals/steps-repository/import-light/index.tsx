@@ -49,7 +49,7 @@ const ImportLight: Step = function ImportStep( props ) {
 			case 'colors':
 				return (
 					<Colors
-						colors={ colorsData?.logo || [] }
+						colors={ colorsData?.link || [] }
 						onColorAnimationFinish={ onColorAnimationFinish }
 					/>
 				);

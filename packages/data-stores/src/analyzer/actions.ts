@@ -7,9 +7,9 @@ export function createActions() {
 		url,
 	} );
 
-	const colorsAnalyzeSuccess = ( data: AnalyzeColorsResponse ) => ( {
+	const colorsAnalyzeSuccess = ( url: string, data: AnalyzeColorsResponse ) => ( {
 		type: 'COLORS_ANALYZE_SUCCESS' as const,
-		data,
+		data: { url, colors: data.colors },
 	} );
 
 	const colorsAnalyzeFailed = ( url: string ) => ( {
@@ -27,7 +27,7 @@ export function createActions() {
 				apiVersion: '2',
 			} );
 
-			yield colorsAnalyzeSuccess( data );
+			yield colorsAnalyzeSuccess( url, data );
 		} catch ( err ) {
 			yield colorsAnalyzeFailed( url );
 		}
