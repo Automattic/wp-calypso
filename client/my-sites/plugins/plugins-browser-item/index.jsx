@@ -1,3 +1,7 @@
+import {
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	WPCOM_FEATURES_MANAGE_PLUGINS,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
@@ -112,9 +116,16 @@ const PluginsBrowserListElement = ( props ) => {
 		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
 	} );
 
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
+	const shouldUpgradeToInstallPurchasedPlugins = useSelector( ( state ) =>
+		shouldUpgradeCheck( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
+
+	const shouldUpgradeToManagePlugins = useSelector( ( state ) =>
+		shouldUpgradeCheck( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
 
 	if ( isPlaceholder ) {
+		// eslint-disable-next-line no-use-before-define
 		return <Placeholder iconSize={ iconSize } />;
 	}
 
@@ -180,11 +191,13 @@ const PluginsBrowserListElement = ( props ) => {
 				) }
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
+						// eslint-disable-next-line no-use-before-define
 						<InstalledInOrPricing
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
-							shouldUpgrade={ shouldUpgrade }
+							shouldUpgradeToInstallPurchasedPlugins={ shouldUpgradeToInstallPurchasedPlugins }
+							shouldUpgradeToManagePlugins={ shouldUpgradeToManagePlugins }
 							currentSites={ currentSites }
 						/>
 					) }
@@ -219,7 +232,8 @@ const InstalledInOrPricing = ( {
 	sitesWithPlugin,
 	isWpcomPreinstalled,
 	plugin,
-	shouldUpgrade,
+	shouldUpgradeToInstallPurchasedPlugins,
+	shouldUpgradeToManagePlugins,
 	currentSites,
 } ) => {
 	const translate = useTranslate();
@@ -271,11 +285,16 @@ const InstalledInOrPricing = ( {
 								<>
 									{ price + ' ' }
 									<span className="plugins-browser-item__period">{ period }</span>
+									{ shouldUpgradeToInstallPurchasedPlugins && (
+										<div className="plugins-browser-item__period">
+											{ translate( 'Requires a plan upgrade' ) }
+										</div>
+									) }
 								</>
 							) : (
 								<>
 									{ translate( 'Free' ) }
-									{ shouldUpgrade && (
+									{ shouldUpgradeToManagePlugins && (
 										<span className="plugins-browser-item__requires-plan-upgrade">
 											{ translate( 'Requires a plan upgrade' ) }
 										</span>

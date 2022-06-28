@@ -1,4 +1,5 @@
 // File used only for development and testing.
+import { WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS } from '@automattic/calypso-products';
 import { Button, Card, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -67,7 +68,9 @@ export default function MarketplaceTest() {
 	// eslint-disable-next-line no-console
 	console.log( { dataSearch, isFetchingSearch } );
 
-	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSiteId ) );
+	const shouldUpgrade = useSelector( ( state ) =>
+		shouldUpgradeCheck( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
 
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
