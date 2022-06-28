@@ -27,19 +27,33 @@ const globalOverrides = css`
 	}
 `;
 
-const HeaderSpacer = styled.div`
-	height: 58px;
-`;
+/**
+ * Match Layout query:
+ * Mobile (Full Width)
+ */
+const mobileBreakpoint = 660;
 
-const Content = styled.div`
-	margin-top: 1em;
-	padding: 1em;
+const ContainerMain = styled( Main )`
+	.add-ons__formatted-header {
+		text-align: center;
+		margin-top: 100px;
+		margin-bottom: 40px;
 
-	// Match Layout query
-	// Mobile (Full Width)
-	@media screen and ( min-width: 660px ) {
-		padding: 0;
-		margin-top: 2em;
+		@media screen and ( min-width: ${ mobileBreakpoint }px ) {
+			margin-top: 80px;
+			margin-bottom: 60px;
+		}
+
+		.formatted-header__title {
+			font-size: 2rem;
+		}
+	}
+
+	.add-ons__main-content {
+		padding: 1em;
+		@media screen and ( min-width: ${ mobileBreakpoint }px ) {
+			padding: 0;
+		}
 	}
 `;
 
@@ -54,27 +68,29 @@ const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement =>
 			href: `/add-ons/${ selectedSite?.slug }`,
 			helpBubble: (
 				<span>
-					{ translate( 'Your home base for accessing, setting up, and managing your add-ons.' ) }
+					{ translate(
+						'Expand the functionality of your WordPress.com site by enabling any of the following features.'
+					) }
 				</span>
 			),
 		},
 	];
 
 	return (
-		<Main wideLayout>
+		<ContainerMain wideLayout>
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ navigationItems } />
 			<DocumentHead title={ translate( 'Add-Ons' ) } />
-			<HeaderSpacer />
 			<FormattedHeader
+				className="add-ons__formatted-header"
 				brandFont
 				headerText={ translate( 'Boost your plan with add-ons' ) }
 				subHeaderText={ translate(
-					'Your home base for accessing, setting up, and managing your add-ons.'
+					'Expand the functionality of your WordPress.com site by enabling any of the following features.'
 				) }
 				align="left"
 			/>
-			<Content>{ props.children }</Content>
-		</Main>
+			<div className="add-ons__main-content">{ props.children }</div>
+		</ContainerMain>
 	);
 };
 
