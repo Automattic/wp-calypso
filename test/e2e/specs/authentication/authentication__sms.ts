@@ -2,12 +2,7 @@
  * @group calypso-release
  */
 
-import {
-	DataHelper,
-	MeSidebarComponent,
-	NavbarComponent,
-	TestAccount,
-} from '@automattic/calypso-e2e';
+import { DataHelper, TestAccount } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
@@ -25,13 +20,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: SMS 2FA' ), function () 
 		await testAccount.authenticate( page );
 	} );
 
-	it( 'Navigate to /me', async function () {
-		const navbarComponent = new NavbarComponent( page );
-		await navbarComponent.clickMe();
-	} );
-
-	it( 'Log out', async function () {
-		const meSidebarComponent = new MeSidebarComponent( page );
-		await meSidebarComponent.clickLogout();
+	it( 'User lands in /home', async function () {
+		await page.waitForURL( /.*\/home\/.*/ );
 	} );
 } );
