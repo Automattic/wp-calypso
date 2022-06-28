@@ -433,9 +433,21 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 		return;
 	}
 
+	/**
+	 * Enhanced conversion tracking by supplying hashed email to gtag.
+	 * It's hashed locally before reaching Google.
+	 */
+
+	const current_user = getCurrentUser();
+	const user_email = current_user.email ?? '';
+
 	// MCC-level event.
 	// @TODO Separate WPCOM from Jetpack events.
 	if ( isWpcomGoogleAdsGtagEnabled ) {
+		window.gtag( 'set', 'user_data', {
+			email: user_email,
+		} );
+
 		const params = [
 			'event',
 			'conversion',
