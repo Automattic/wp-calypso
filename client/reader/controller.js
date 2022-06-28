@@ -260,26 +260,7 @@ export function readA8C( context, next ) {
 	setPageTitle( context, 'Automattic' );
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
-	context.primary = (
-		<AsyncLoad
-			require="calypso/reader/a8c/main"
-			key="read-a8c"
-			className="is-a8c"
-			listName="Automattic"
-			streamKey={ streamKey }
-			startDate={ startDate }
-			trackScrollPage={ trackScrollPage.bind(
-				null,
-				basePath,
-				fullAnalyticsPageTitle,
-				analyticsPageTitle,
-				mcKey
-			) }
-			showPrimaryFollowButtonOnCards={ false }
-			onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-			placeholder={ null }
-		/>
-	);
+	context.primary = <div>Whatever</div>;
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 	next();
 }
