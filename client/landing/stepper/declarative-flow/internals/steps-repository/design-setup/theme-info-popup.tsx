@@ -7,10 +7,6 @@ interface ThemeInfoPopupProps {
 	slug: string;
 }
 
-interface PluginListProps {
-	plugins: Plugin[];
-}
-
 interface DescriptionProps {
 	author: string;
 	author_uri: string;
