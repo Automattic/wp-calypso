@@ -325,7 +325,7 @@ it( 'Start new post' );
 
 ### Prefer smaller steps
 
-Use more of smaller steps over monolithic step.
+Break large steps into smaller pieces for clarity and ease of debugging.
 
 **Avoid**:
 
