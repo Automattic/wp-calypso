@@ -9,6 +9,7 @@ import type { Message } from 'mailosaur/lib/models';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function () {
+	const credentials = SecretsManager.secrets.testAccounts.defaultUser;
 	let page: Page;
 	let loginPage: LoginPage;
 	let emailClient: EmailClient;
@@ -26,19 +27,19 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 	} );
 
 	it( 'Request magic link', async function () {
-		const credentials = SecretsManager.secrets.testAccounts.defaultUser;
-
-		await loginPage.fillUsername( credentials.email );
+		// It is safe to add type assertion here, since the email
+		// field is defined for `defaultUser`.
+		await loginPage.fillUsername( credentials.email as string );
 		await loginPage.clickSubmit();
 
 		emailClient = new EmailClient();
 		magicLinkEmail = await emailClient.getLastEmail( {
 			inboxId: SecretsManager.secrets.mailosaur.defaultUserInboxId,
-			emailAddress: credentials.email,
+			emailAddress: credentials.email as string,
 			subject: 'Log in to WordPress.com',
 		} );
 		const links = await emailClient.getLinksFromMessage( magicLinkEmail );
-		magicLinkURL = links.find( ( link: string ) => link.includes( 'wpcom_email_click' ) );
+		magicLinkURL = links.find( ( link: string ) => link.includes( 'wpcom_email_click' ) ) as string;
 
 		expect( magicLinkURL ).toBeDefined();
 	} );
