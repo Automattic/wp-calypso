@@ -10,13 +10,15 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { bulb } from 'calypso/signup/icons';
+import type { OnInputEnter } from './types';
 import type { FunctionComponent } from 'react';
 
 interface Props {
 	translate: typeof translate;
+	onInputEnter: OnInputEnter;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
-	const { translate } = props;
+	const { translate, onInputEnter } = props;
 
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( true );
@@ -71,7 +73,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<NextButton size={ 0 }>{ translate( 'Continue' ) }</NextButton>
+			<NextButton size={ 0 } disabled={ ! isValid } onClick={ () => onInputEnter( urlValue ) }>
+				{ translate( 'Continue' ) }
+			</NextButton>
 		</div>
 	);
 };

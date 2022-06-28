@@ -3,6 +3,7 @@ import React from 'react';
 import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import CaptureInput from './capture-input';
+import type { OnInputEnter } from './types';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
@@ -11,9 +12,10 @@ import './style.scss';
 
 interface Props {
 	translate: typeof translate;
+	onInputEnter: OnInputEnter;
 }
 const Capture: FunctionComponent< Props > = ( props ) => {
-	const { translate } = props;
+	const { translate, onInputEnter } = props;
 
 	return (
 		<div className={ 'import-layout__center' }>
@@ -33,7 +35,7 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 					</div>
 				</div>
 				<div className={ 'import-layout__column' }>
-					<CaptureInput />
+					<CaptureInput onInputEnter={ onInputEnter } />
 				</div>
 			</div>
 		</div>

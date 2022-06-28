@@ -15,9 +15,11 @@ interface Color {
 
 interface Props {
 	colors: Color[];
+	onColorAnimationFinish: () => void;
 }
 const Colors: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
+	const { onColorAnimationFinish } = props;
 
 	const [ colors ] = useState( props.colors );
 	const [ displayedColors, setDisplayedColors ] = useState< Color[] >( [] );
@@ -38,7 +40,7 @@ const Colors: React.FunctionComponent< Props > = ( props ) => {
 	}, [ colors ] );
 
 	function onColorsDisplay() {
-		// redirect to the next step/screen
+		onColorAnimationFinish?.();
 	}
 
 	return (
