@@ -57,6 +57,7 @@ interface DesignButtonProps {
 	hideDesignTitle?: boolean;
 	hasDesignOptionHeader?: boolean;
 	isPremiumThemeAvailable?: boolean;
+	onCheckout?: any;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -69,6 +70,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hideDesignTitle,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable = false,
+	onCheckout = undefined,
 } ) => {
 	const { __ } = useI18n();
 
@@ -77,6 +79,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const defaultTitle = design.title;
 	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
+	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
 
 	function getPricingDescription() {
 		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
@@ -87,20 +90,22 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 		if ( design.is_premium ) {
 			text = createInterpolateElement(
-				sprintf(
-					/* translators: %(price)s - the price of the theme */
-					__( '%(price)s per year or <a>included in the Pro plan</a>' ),
-					{
-						price: design.price,
-					}
-				),
+				shouldUpgrade
+					? sprintf(
+							/* translators: %(price)s - the price of the theme */
+							__( '%(price)s per year or <a>included in the Pro plan</a>' ),
+							{
+								price: design.price,
+							}
+					  )
+					: __( 'Included in the Pro plan' ),
 				{
 					a: (
 						<a
-							href="https://google.com"
-							target="__blank"
+							href="javascript:void(0)"
 							onClick={ ( e ) => {
 								e.stopPropagation();
+								onCheckout?.();
 							} }
 						/>
 					),
@@ -265,7 +270,11 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 					onUpgrade={ onUpgrade }
 				/>
 			) }
-			<DesignButton { ...props } disabled={ ! isBlankCanvas } />
+			<DesignButton
+				{ ...props }
+				isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				disabled={ ! isBlankCanvas }
+			/>
 		</div>
 	);
 };
@@ -291,6 +300,7 @@ export interface DesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
+	onCheckout?: any;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -316,6 +326,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
+	onCheckout = undefined,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -360,6 +371,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 						previewOnly={ previewOnly }
 						hasDesignOptionHeader={ hasDesignOptionHeader }
+						onCheckout={ onCheckout }
 					/>
 				) ) }
 			</div>
