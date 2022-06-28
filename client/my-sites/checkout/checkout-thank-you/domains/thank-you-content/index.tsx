@@ -34,7 +34,6 @@ const StepCTA = ( { email, primary, domainType }: StepCTAProps ) => {
 	return (
 		<FullWidthButton
 			href={ getTitanEmailUrl( titanAppsUrlPrefix, email, true ) }
-			target="_blank"
 			primary={ primary }
 			onClick={ () => {
 				recordEmailAppLaunchEvent( {
