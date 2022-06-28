@@ -225,14 +225,14 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	cart_key: CartKey;
 	products: P[];
 	/**
-	 * @deprecated Use total_tax_integer or total_tax_display
+	 * @deprecated This is a float and is unreliable. Use total_tax_integer or total_tax_display.
 	 */
 	total_tax: string;
 	total_tax_integer: number;
 	total_tax_display: string;
 	total_tax_breakdown: TaxBreakdownItem[];
 	/**
-	 * @deprecated Use total_cost_integer or total_cost_display
+	 * @deprecated This is a float and is unreliable. Use total_cost_integer or total_cost_display.
 	 */
 	total_cost: number;
 	total_cost_integer: number;
@@ -329,12 +329,17 @@ export interface ResponseCartProduct {
 	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	uuid: string;
+	/**
+	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer or item_subtotal_display.
+	 */
 	cost: number;
 	cost_before_coupon?: number;
+	/**
+	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer or coupon_savings_display.
+	 */
 	coupon_savings?: number;
 	coupon_savings_display?: string;
 	coupon_savings_integer?: number;
-	price: number;
 	item_tax: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
