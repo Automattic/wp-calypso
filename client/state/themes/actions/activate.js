@@ -1,4 +1,3 @@
-import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
@@ -37,9 +36,7 @@ export function activate(
 		 * allowing cancel it if it's desired.
 		 */
 		if (
-			themeHasAutoLoadingHomepage( getState(), themeId ) &&
-			! isJetpackSite( getState(), siteId ) &&
-			! isSiteAtomic( getState(), siteId ) &&
+			themeHasAutoLoadingHomepage( getState(), themeId, siteId ) &&
 			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
