@@ -132,6 +132,10 @@ echo "done"
 echo -n "phpcbf: "
 ../../vendor/bin/phpcbf -q $TARGET | grep "A TOTAL OF" || PHPCBF_ERRORED=1
 
+if [ "$PHPCBF_ERRORED" = 1 ] ; then
+	echo '!! There was an error executing phpcbf!'
+fi
+
 if [ "$MODE" = "npm" ] ; then
 	# Finds and prints the version of newspack from package.json
 	NEW_VERSION=v`sed -En 's|.*"@automattic/newspack-blocks": "\^#?(.*)".*|\1|p' package.json`
