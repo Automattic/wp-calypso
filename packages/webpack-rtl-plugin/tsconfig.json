@@ -2,5 +2,6 @@
 	"extends": "@automattic/calypso-typescript-config/js-package.json",
 	"compilerOptions": {
 		"types": [ "node" ]
-	}
+	},
+	"include": [ "src/", "index.js" ]
 }
