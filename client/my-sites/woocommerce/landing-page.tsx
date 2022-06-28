@@ -142,7 +142,7 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	let finalCTAHandler = onCTAClickHandler;
 	let displayData: DisplayData | null;
 
-	if ( ! false ) {
+	if ( ! isEmailVerified ) {
 		secondaryAction = (
 			<Button
 				className="landing-page__secondary empty-content__action"
