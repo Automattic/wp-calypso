@@ -1,3 +1,5 @@
+// should update this whole package instead of just one block
+// eslint-disable-next-line no-restricted-imports
 import { Button, Dashicon } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';

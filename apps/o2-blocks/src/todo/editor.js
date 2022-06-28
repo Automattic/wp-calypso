@@ -1,5 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { Button, Dashicon } from '@wordpress/components';
+// should update this whole package instead of just one block
+// eslint-disable-next-line no-restricted-imports
+import { Dashicon, Button } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
