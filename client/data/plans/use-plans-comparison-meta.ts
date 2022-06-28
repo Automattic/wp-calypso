@@ -5,8 +5,6 @@ export type PlansComparisonMetaData = {
 	currency: string;
 	bottom_theme_price: number;
 	bottom_theme_price_display: string;
-	no_ads_monthly_cost: number;
-	no_ads_monthly_cost_display: string;
 };
 
 export default function usePlansComparisonMeta( currency: string ) {

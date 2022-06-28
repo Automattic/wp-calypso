@@ -1,13 +1,20 @@
-import { TYPE_FREE, TYPE_FLEXIBLE, TYPE_PRO } from '@automattic/calypso-products';
+import {
+	TYPE_FREE,
+	TYPE_FLEXIBLE,
+	TYPE_PRO,
+	WPCOM_FEATURES_NO_ADVERTS,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css, Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import usePlansComparisonMeta from 'calypso/data/plans/use-plans-comparison-meta';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
@@ -449,6 +456,8 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	const prices = usePlanPrices( plans );
 	const translate = useTranslate();
 
+	const noAdsMonthlyCost = useSelector( getProductsList )?.[ WPCOM_FEATURES_NO_ADVERTS ]?.cost / 12;
+
 	const toggleCollapsibleRows = useCallback( () => {
 		setShowCollapsibleRows( ! showCollapsibleRows );
 	}, [ showCollapsibleRows ] );
@@ -468,6 +477,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	return (
 		<>
 			<Global styles={ globalOverrides } />
+			<QueryProductsList />
 			<ComparisonTable
 				firstColWidth={ 31 }
 				planCount={ plans.length }
@@ -510,7 +520,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 							feature={ feature }
 							plans={ plans }
 							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
-							meta={ data }
+							meta={ { ...data, no_ads_monthly_cost: noAdsMonthlyCost } }
 							key={ feature.features[ 0 ] }
 						/>
 					) ) }
@@ -521,7 +531,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 							feature={ feature }
 							plans={ plans }
 							isLegacySiteWithHigherLimits={ legacySiteWithHigherLimits }
-							meta={ data }
+							meta={ { ...data, no_ads_monthly_cost: noAdsMonthlyCost } }
 							key={ feature.features[ 0 ] }
 						/>
 					) ) }

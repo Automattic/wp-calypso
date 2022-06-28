@@ -30,6 +30,10 @@ import isStarterPlanEnabled from './is-starter-plan-enabled';
 import type { PlansComparisonMetaData } from 'calypso/data/plans/use-plans-comparison-meta';
 import type { TranslateResult } from 'i18n-calypso';
 
+type FeatureExtraArgs = PlansComparisonMetaData & {
+	no_ads_monthly_cost?: number;
+};
+
 export interface PlanComparisonFeature {
 	/**
 	 * Row header
@@ -458,7 +462,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 		features: [ FEATURE_PREMIUM_THEMES ],
 		getCellText: ( feature, isMobile = false, _, extraArgs: unknown ) => {
-			const meta = extraArgs as PlansComparisonMetaData;
+			const meta = extraArgs as FeatureExtraArgs;
 
 			let cellText = feature ? (
 				<>
@@ -586,25 +590,26 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 		},
 		features: [ FEATURE_NO_ADS ],
 		getCellText: ( feature, isMobile = false, _, extraArgs: unknown ) => {
-			const meta = extraArgs as PlansComparisonMetaData;
+			const meta = extraArgs as FeatureExtraArgs;
 
-			let cellText = feature ? (
-				<>
-					<Gridicon icon="checkmark" />
-					{ translate( 'Included' ) }
-				</>
-			) : (
-				<>
-					{ translate( 'Available for +%(price)s/month', {
-						args: {
-							price: formatCurrency( meta.no_ads_monthly_cost, meta.currency, {
-								stripZeros: true,
-							} ),
-						},
-						comment: 'Translators: The no-ads feature costs additional $2/month.',
-					} ) }
-				</>
-			);
+			let cellText =
+				feature || ! meta.no_ads_monthly_cost ? (
+					<>
+						<Gridicon icon="checkmark" />
+						{ translate( 'Included' ) }
+					</>
+				) : (
+					<>
+						{ translate( 'Available for +%(price)s/month', {
+							args: {
+								price: formatCurrency( meta.no_ads_monthly_cost, meta.currency, {
+									stripZeros: true,
+								} ),
+							},
+							comment: 'Translators: The no-ads feature costs additional $2/month.',
+						} ) }
+					</>
+				);
 
 			if ( isMobile ) {
 				cellText = feature ? (
