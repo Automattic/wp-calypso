@@ -68,9 +68,22 @@ $head-foot-height: 50px;
 			border-bottom: 1px solid rgba( 0, 0, 0, 0.1 );
 		}
 
-		.components-tab-panel__tabs-item.is-active {
-			box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) transparent,
-				inset 0 -3px 0 0 var( --color-accent );
+		.components-tab-panel__tabs-item {
+			&.is-active:focus {
+				box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color ),
+					inset 0 -#{$border-width-tab * 2} 0 0 var( --wp-admin-theme-color );
+			}
+
+			&:focus {
+				box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color );
+			}
+
+			&.is-active {
+				// The transparent shadow ensures no jumpiness when focus animates on an active tab.
+				box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) transparent,
+					inset 0 -3px 0 0 var( --color-accent );
+				position: relative;
+			}
 		}
 	}
 
