@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -17,6 +18,7 @@ import {
 	sortDesigns,
 	excludeFseDesigns,
 } from '../utils';
+import BadgeContainer from './badge-container';
 import { DesignPickerCategoryFilter } from './design-picker-category-filter';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
@@ -55,6 +57,7 @@ interface DesignButtonProps {
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
 	hasDesignOptionHeader?: boolean;
+	isPremiumThemeAvailable?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -66,6 +69,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	disabled,
 	hideDesignTitle,
 	hasDesignOptionHeader = true,
+	isPremiumThemeAvailable = false,
 } ) => {
 	const { __ } = useI18n();
 
@@ -74,6 +78,14 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const defaultTitle = design.title;
 	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
 	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
+
+	const badgeType = design.is_premium ? 'premium' : 'none';
+
+	const badgeContainer = ! isEnabled( 'signup/theme-preview-screen' ) ? (
+		design.is_premium && premiumBadge
+	) : (
+		<BadgeContainer badgeType={ badgeType } isPremiumThemeAvailable={ isPremiumThemeAvailable } />
+	);
 
 	return (
 		<button
@@ -119,7 +131,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					{ ! hideDesignTitle && (
 						<span className="design-picker__option-name">{ designTitle }</span>
 					) }
-					{ design.is_premium && premiumBadge }
+					{ badgeContainer }
 				</span>
 			</span>
 		</button>
