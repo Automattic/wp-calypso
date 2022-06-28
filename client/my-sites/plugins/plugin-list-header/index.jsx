@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -12,6 +13,8 @@ import SectionHeader from 'calypso/components/section-header';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import getSites from 'calypso/state/selectors/get-sites';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -109,10 +112,15 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	renderCurrentActionButtons() {
-		const { translate } = this.props;
+		const { hasManagePluginsFeature, translate } = this.props;
+		const buttons = [];
+
+		if ( ! hasManagePluginsFeature ) {
+			return buttons;
+		}
+
 		const isJetpackSelected = this.isJetpackSelected();
 		const needsRemoveButton = this.needsRemoveButton();
-		const buttons = [];
 		const rightSideButtons = [];
 		const leftSideButtons = [];
 		const autoupdateButtons = [];
@@ -368,4 +376,9 @@ export class PluginsListHeader extends PureComponent {
 
 export default connect( ( state ) => ( {
 	allSites: getSites( state ),
+	hasManagePluginsFeature: siteHasFeature(
+		state,
+		getSelectedSiteId( state ),
+		WPCOM_FEATURES_MANAGE_PLUGINS
+	),
 } ) )( localize( PluginsListHeader ) );
