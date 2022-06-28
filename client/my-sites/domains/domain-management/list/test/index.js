@@ -7,8 +7,8 @@ import {
 	getEmptyResponseCart,
 	createShoppingCartManagerClient,
 } from '@automattic/shopping-cart';
+import { render, screen } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
-import { shallow, mount } from 'enzyme';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { SiteDomains } from '../site-domains';
@@ -20,6 +20,10 @@ jest.mock( 'calypso/lib/wp', () => ( {
 		get: () => Promise.reject( new Error( '.get() not implemented in mock' ) ),
 	},
 } ) );
+
+jest.mock( 'calypso/my-sites/domains/domain-management/list/domain-row', () => () => (
+	<div data-testid="domain-row" />
+) );
 
 const emptyResponseCart = getEmptyResponseCart();
 
@@ -45,8 +49,6 @@ function TestProvider( { store, cartManagerClient, children } ) {
 }
 
 describe( 'index', () => {
-	let component;
-
 	const selectedSite = deepFreeze( {
 		slug: 'example.com',
 		ID: 1,
@@ -77,44 +79,42 @@ describe( 'index', () => {
 		translate: ( string ) => string,
 	} );
 
-	function renderWithProps( props = defaultProps ) {
-		const store = createReduxStore(
-			{
-				purchases: {},
-				ui: {
-					selectedSiteId: 1,
-					section: 'section',
-				},
-				documentHead: {},
-				sites: {
-					plans: [],
-					domains: {
-						items: [],
-					},
-				},
-				currentUser: {
-					capabilities: {},
-				},
-				productsList: {},
-			},
-			( state ) => {
-				return state;
-			}
-		);
-		const cartManagerClient = createShoppingCartManagerClient( { getCart, setCart } );
-		return mount( <SiteDomains { ...props } />, {
-			wrappingComponent: TestProvider,
-			wrappingComponentProps: { store, cartManagerClient },
-		} );
-	}
-
 	describe( 'regular cases', () => {
-		beforeEach( () => {
-			component = renderWithProps();
-		} );
-
 		test( 'should list two domains', () => {
-			expect( component.find( 'DomainRow' ) ).toHaveLength( 2 );
+			const store = createReduxStore(
+				{
+					purchases: {},
+					ui: {
+						selectedSiteId: 1,
+						section: 'section',
+					},
+					documentHead: {},
+					sites: {
+						plans: [],
+						domains: {
+							items: [],
+						},
+					},
+					currentUser: {
+						capabilities: {},
+					},
+					productsList: {},
+				},
+				( state ) => {
+					return state;
+				}
+			);
+			const cartManagerClient = createShoppingCartManagerClient( { getCart, setCart } );
+
+			render( <SiteDomains { ...defaultProps } />, {
+				wrapper: ( { children } ) => (
+					<TestProvider store={ store } cartManagerClient={ cartManagerClient }>
+						{ children }
+					</TestProvider>
+				),
+			} );
+
+			expect( screen.getAllByTestId( 'domain-row' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -125,9 +125,9 @@ describe( 'index', () => {
 				userCanManageOptions: false,
 			} );
 
-			const wrapper = shallow( <SiteDomains { ...props } /> );
+			render( <SiteDomains { ...props } /> );
 
-			expect( wrapper.find( 'EmptyContent' ) ).toHaveLength( 1 );
+			expect( screen.queryByText( /not authorized to view this page/i ) ).toBeInTheDocument();
 		} );
 	} );
 } );
