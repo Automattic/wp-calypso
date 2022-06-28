@@ -28,7 +28,7 @@ import {
 	recordInboxNewMailboxUpsellClickEvent,
 } from 'calypso/my-sites/email/email-management/home/utils';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
-import { emailManagement, emailManagementInbox } from 'calypso/my-sites/email/paths';
+import { emailManagementEdit, emailManagementInbox } from 'calypso/my-sites/email/paths';
 import { recordPageView } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
@@ -131,14 +131,16 @@ MailboxItem.propType = {
 	key: PropTypes.string,
 };
 
-const NewMailboxUpsell = () => {
+const NewMailboxUpsell = ( { domain } ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug;
 
 	const handleCreateNewMailboxClick = useCallback( () => {
 		recordInboxNewMailboxUpsellClickEvent();
-		page( emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } ) );
+		page(
+			emailManagementEdit( selectedSiteSlug, domain, 'titan/new', null, { source: INBOX_SOURCE } )
+		);
 	}, [ selectedSiteSlug ] );
 
 	return (
@@ -156,7 +158,7 @@ const NewMailboxUpsell = () => {
 	);
 };
 
-const MailboxItems = ( { mailboxes } ) => {
+const MailboxItems = ( { mailboxes, domain } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -173,7 +175,7 @@ const MailboxItems = ( { mailboxes } ) => {
 				<MailboxItem mailbox={ mailbox } key={ index } />
 			) ) }
 
-			<NewMailboxUpsell />
+			<NewMailboxUpsell domain={ domain } />
 		</>
 	);
 };
@@ -275,7 +277,7 @@ const MailboxSelectionList = () => {
 		<div className="mailbox-selection-list__container">
 			<div className="mailbox-selection-list">
 				{ mailboxes.length > 0 ? (
-					<MailboxItems mailboxes={ mailboxes } />
+					<MailboxItems mailboxes={ mailboxes } domain={ mailboxes[ 0 ]?.domain } />
 				) : (
 					<MailboxListStatus statusMessage={ translate( 'You have no mailboxes yet.' ) } />
 				) }
