@@ -61,11 +61,11 @@ export class Filterbar extends Component {
 	};
 
 	toggleIssueTypesSelector = () => {
-		this.setState( {
+		this.setState( ( prevState ) => ( {
 			showActivityTypes: false,
 			showActivityDates: false,
-			showIssueTypes: ! this.state.showIssueTypes,
-		} );
+			showIssueTypes: ! prevState.showIssueTypes,
+		} ) );
 	};
 
 	closeIssueTypes = () => {
