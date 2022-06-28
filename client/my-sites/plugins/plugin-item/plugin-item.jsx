@@ -22,6 +22,7 @@ import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-t
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 
 import './style.scss';
 
@@ -228,6 +229,7 @@ class PluginItem extends Component {
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
 						wporg={ !! this.props.plugin.wporg }
+						isMarketplaceProduct={ this.props.isMarketplaceProduct }
 					/>
 				) }
 			</div>
@@ -319,5 +321,6 @@ export default connect( ( state, { plugin, sites } ) => {
 
 	return {
 		pluginsOnSites: getPluginOnSites( state, siteIds, plugin?.slug ),
+		isMarketplaceProduct: isMarketplaceProduct( state, plugin?.slug ),
 	};
 } )( localize( withLocalizedMoment( PluginItem ) ) );
