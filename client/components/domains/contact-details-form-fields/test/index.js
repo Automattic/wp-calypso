@@ -2,20 +2,30 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
 import update from 'immutability-helper';
 import { omit } from 'lodash';
+import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ContactDetailsFormFields } from '../';
-import FormButton from '../../../../components/forms/form-button';
+
+const render = ( el, options ) => renderWithProvider( el, { ...options } );
 
 const noop = () => {};
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
+jest.mock( '../custom-form-fieldsets/region-address-fieldsets', () => () => (
+	<div data-testid="region-address-fieldsets" />
+) );
+
+jest.mock( 'calypso/components/forms/form-phone-media-input', () =>
+	jest.fn( () => <div data-testid="form-phone-media-input" /> )
+);
 
 describe( 'ContactDetailsFormFields', () => {
+	afterEach( () => {
+		FormPhoneMediaInput.mockClear();
+	} );
+
 	const defaultProps = {
 		contactDetails: {
 			firstName: 'Osso',
@@ -51,159 +61,178 @@ describe( 'ContactDetailsFormFields', () => {
 
 	describe( 'default fields', () => {
 		test( 'should render', () => {
-			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
-
-			expect( wrapper ).toMatchSnapshot();
+			const { container } = render( <ContactDetailsFormFields { ...defaultProps } /> );
+			expect( container.firstChild ).toMatchSnapshot();
 		} );
 
 		test( 'should render fields when contact details contains no values', () => {
 			const newProps = { ...defaultProps, contactDetails: {} };
 
-			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( wrapper.find( '[name="first-name"]' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '[name="last-name"]' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '[name="phone"]' ) ).toHaveLength( 1 );
+			expect( screen.queryByRole( 'textbox', { name: /first name/i } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'textbox', { name: /last name/i } ) ).toBeInTheDocument();
+			expect( screen.queryByTestId( 'form-phone-media-input' ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'onSubmit prop is undefined', () => {
 		test( 'should not render Submit button', () => {
 			const newProps = { ...defaultProps, onSubmit: undefined };
-			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
-			expect( wrapper.find( FormButton ) ).toHaveLength( 0 );
+			render( <ContactDetailsFormFields { ...newProps } /> );
+			expect( screen.queryByRole( 'button', { name: /submit/i } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'should render a Submit button', () => {
+			const newProps = { ...defaultProps };
+			render( <ContactDetailsFormFields { ...newProps } /> );
+			expect( screen.queryByRole( 'button', { name: /submit/i } ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Google Apps Form UI state', () => {
 		test( 'should not render GAppsFieldset in place of the default contact fields by default', () => {
-			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
+			const { container } = render( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__row.g-apps-fieldset' ) ).toHaveLength(
-				0
-			);
-			expect( wrapper.find( 'RegionAddressFieldsets' ) ).toHaveLength( 1 );
+			const [ gapps ] = container.getElementsByClassName( 'g-apps-fieldset' );
+
+			expect( gapps ).toBeUndefined();
+			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).toBeInTheDocument();
 		} );
 
 		test( 'should render GAppsFieldset in place of default contact fields when required', () => {
-			const wrapper = shallow(
+			const { container } = render(
 				<ContactDetailsFormFields { ...defaultProps } needsOnlyGoogleAppsDetails={ true } />
 			);
 
-			expect( wrapper.find( '.contact-details-form-fields__row.g-apps-fieldset' ) ).toHaveLength(
-				1
-			);
-			expect( wrapper.find( 'RegionAddressFieldsets' ) ).toHaveLength( 0 );
+			const [ gapps ] = container.getElementsByClassName( 'g-apps-fieldset' );
+
+			expect( gapps ).toBeInTheDocument();
+			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Country selection', () => {
 		test( 'should not render address fieldset when no country code is available', () => {
 			const newProps = omit( defaultProps, 'contactDetails.countryCode' );
+			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
-
-			expect( wrapper.find( 'RegionAddressFieldsets' ) ).toHaveLength( 0 );
+			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'should not render address fieldset when no country selected', () => {
 			const newProps = update( defaultProps, { contactDetails: { countryCode: { $set: '' } } } );
+			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
-
-			expect( wrapper.find( 'RegionAddressFieldsets' ) ).toHaveLength( 0 );
+			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'should render address fieldset when a valid countryCode is selected', () => {
-			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
+			render( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( wrapper.find( 'RegionAddressFieldsets' ) ).toHaveLength( 1 );
+			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Fax field', () => {
 		test( 'should not render fax field by default', () => {
-			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
+			render( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( wrapper.find( '[name="fax"]' ) ).toHaveLength( 0 );
+			expect( screen.queryByRole( 'textbox', { name: /fax/i } ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'should render fax field when fax required', () => {
-			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } needsFax={ true } /> );
+			render( <ContactDetailsFormFields { ...defaultProps } needsFax={ true } /> );
 
-			expect( wrapper.find( '[name="fax"]' ) ).toHaveLength( 1 );
+			expect( screen.queryByRole( 'textbox', { name: /fax/i } ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'label text', () => {
 		test( 'should render submit button text', () => {
-			const wrapper = shallow(
+			const buttonLabel = 'Click it yo!';
+			render(
 				<ContactDetailsFormFields
 					{ ...defaultProps }
-					labelTexts={ { submitButton: 'Click it yo!' } }
+					labelTexts={ { submitButton: buttonLabel } }
 				/>
 			);
 
-			expect(
-				wrapper.find( '.contact-details-form-fields__submit-button' ).render().text()
-			).toEqual( 'Click it yo!' );
+			expect( screen.queryByRole( 'button', { name: buttonLabel } ) ).toBeInTheDocument();
 		} );
 
 		test( 'should render organization text', () => {
-			const wrapper = shallow(
+			const { organization, ...contactDetails } = defaultProps.contactDetails;
+			render(
 				<ContactDetailsFormFields
 					{ ...defaultProps }
+					contactDetails={ contactDetails }
 					labelTexts={ { organization: 'Nice Guys Inc' } }
 				/>
 			);
 
-			expect( wrapper.find( 'HiddenInput' ).props().text ).toEqual( 'Nice Guys Inc' );
+			expect( screen.getByRole( 'link', { name: 'Nice Guys Inc' } ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'onCancel', () => {
 		test( 'should not render cancel button by default', () => {
-			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } /> );
+			render( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__cancel-button' ) ).toHaveLength( 0 );
+			expect( screen.queryByRole( 'button', { name: /cancel/i } ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'should render cancel button when `onCancel` method prop passed', () => {
-			const wrapper = shallow( <ContactDetailsFormFields { ...defaultProps } onCancel={ noop } /> );
+			render( <ContactDetailsFormFields { ...defaultProps } onCancel={ noop } /> );
 
-			expect( wrapper.find( '.contact-details-form-fields__cancel-button' ) ).toHaveLength( 1 );
+			expect( screen.queryByRole( 'button', { name: /cancel/i } ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Addresses with no province/state', () => {
-		test( 'should return province/state value when the country has states', () => {
+		test( 'should return province/state value when the country has states', async () => {
 			const onContactDetailsChange = jest.fn();
 
-			const wrapper = shallow(
+			const { rerender } = render(
 				<ContactDetailsFormFields
 					{ ...defaultProps }
 					onContactDetailsChange={ onContactDetailsChange }
 				/>
 			);
-			wrapper.setProps( { hasCountryStates: true } );
 
-			expect( wrapper.instance().getMainFieldValues().state ).toEqual(
-				defaultProps.contactDetails.state
+			rerender(
+				<ContactDetailsFormFields
+					{ ...defaultProps }
+					onContactDetailsChange={ onContactDetailsChange }
+					hasCountryStates
+				/>
+			);
+
+			expect( onContactDetailsChange ).toBeCalledWith(
+				expect.objectContaining( { state: defaultProps.contactDetails.state } )
 			);
 		} );
+
 		test( 'should return province/state value when the country does not have states', () => {
 			const onContactDetailsChange = jest.fn();
 
-			const wrapper = shallow(
+			const { rerender } = render(
 				<ContactDetailsFormFields
 					{ ...defaultProps }
 					onContactDetailsChange={ onContactDetailsChange }
 				/>
 			);
-			wrapper.setProps( { hasCountryStates: false } );
 
-			expect( wrapper.instance().getMainFieldValues().state ).toEqual(
-				defaultProps.contactDetails.state
+			rerender(
+				<ContactDetailsFormFields
+					{ ...defaultProps }
+					onContactDetailsChange={ onContactDetailsChange }
+					hasCountryStates={ false }
+				/>
+			);
+
+			expect( onContactDetailsChange ).toBeCalledWith(
+				expect.objectContaining( { state: defaultProps.contactDetails.state } )
 			);
 		} );
 	} );
@@ -216,9 +245,11 @@ describe( 'ContactDetailsFormFields', () => {
 				userCountryCode: 'NZ',
 			};
 
-			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( wrapper.find( 'FormPhoneMediaInput' ).props().countryCode ).toEqual( 'JP' );
+			expect( FormPhoneMediaInput.mock.calls[ 0 ][ 0 ] ).toEqual(
+				expect.objectContaining( { countryCode: 'JP' } )
+			);
 		} );
 
 		test( 'should set phone country using geo location when country code not available in contact details', () => {
@@ -227,17 +258,21 @@ describe( 'ContactDetailsFormFields', () => {
 				userCountryCode: 'FR',
 			};
 
-			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( wrapper.find( 'FormPhoneMediaInput' ).props().countryCode ).toEqual( 'FR' );
+			expect( FormPhoneMediaInput.mock.calls[ 0 ][ 0 ] ).toEqual(
+				expect.objectContaining( { countryCode: 'FR' } )
+			);
 		} );
 
 		test( 'should use US as fallback', () => {
 			const newProps = update( defaultProps, { contactDetails: { countryCode: { $set: '' } } } );
 
-			const wrapper = shallow( <ContactDetailsFormFields { ...newProps } /> );
+			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( wrapper.find( 'FormPhoneMediaInput' ).props().countryCode ).toEqual( 'US' );
+			expect( FormPhoneMediaInput.mock.calls[ 0 ][ 0 ] ).toEqual(
+				expect.objectContaining( { countryCode: 'US' } )
+			);
 		} );
 	} );
 } );
