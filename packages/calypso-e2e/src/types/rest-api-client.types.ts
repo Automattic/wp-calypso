@@ -64,15 +64,12 @@ export interface NewUserResponse {
 	};
 }
 export interface NewSiteResponse {
-	code: number;
-	body: {
-		success: boolean;
-		blog_details: {
-			url: string;
-			blogid: string;
-			blogname: string;
-			site_slug: string;
-		};
+	success: boolean;
+	blog_details: {
+		url: string;
+		blogid: string;
+		blogname: string;
+		site_slug: string;
 	};
 }
 export interface SiteDeletionResponse {

@@ -11,6 +11,7 @@ import {
 	TestAccount,
 	RestAPIClient,
 	BrowserManager,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import type { NewSiteResponse } from '@automattic/calypso-e2e';
@@ -28,15 +29,40 @@ describe(
 		let restAPIClient: RestAPIClient;
 		let page: Page;
 
-		beforeAll( async function () {
+		// beforeAll( async function () {
+		// 	// Set up the test site programmatically.
+		// 	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
+		// 	restAPIClient = new RestAPIClient( credentials );
+
+		// 	const response = await restAPIClient.createSite( {
+		// 		name: blogName,
+		// 		title: blogName,
+		// 	} );
+
+		// 	if ( ! response.body.success ) {
+		// 		throw new Error( `Failed to create new site via REST API.\nHTTP response: ${ response }` );
+		// 	}
+		// 	newSite = response;
+		// 	siteCreatedFlag = response.body.success;
+
+		// 	// Authenticate as user.
+		// 	page = await browser.newPage();
+
+		// 	const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+		// 	await testAccount.authenticate( page );
+		// } );
+
+		test( 'step', async function () {
 			// Set up the test site programmatically.
-			const credentials = DataHelper.getAccountCredential( 'simpleSiteFreePlanUser' );
+			const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 			restAPIClient = new RestAPIClient( credentials );
 
 			const response = await restAPIClient.createSite( {
 				name: blogName,
 				title: blogName,
 			} );
+
+			console.log( response );
 
 			if ( ! response.body.success ) {
 				throw new Error( `Failed to create new site via REST API.\nHTTP response: ${ response }` );

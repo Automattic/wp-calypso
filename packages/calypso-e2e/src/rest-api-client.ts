@@ -106,7 +106,8 @@ export class RestAPIClient {
 	 */
 	private async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
 		if ( scheme === 'bearer' ) {
-			return `Bearer ${ this.bearerToken }`;
+			const bearerToken = await this.getBearerToken();
+			return `Bearer ${ bearerToken }`;
 		}
 
 		throw new Error( 'Unsupported authorization scheme specified.' );
