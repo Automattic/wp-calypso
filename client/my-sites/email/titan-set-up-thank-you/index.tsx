@@ -70,7 +70,7 @@ const TitanSetUpThankYou = ( {
 						href={ getTitanEmailUrl(
 							titanAppsUrlPrefix,
 							emailAddress,
-							true,
+							false,
 							`${ window.location.protocol }//${ window.location.host }/${ emailManagementPath }`
 						) }
 						primary
