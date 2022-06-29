@@ -15,6 +15,9 @@ $font-body-small: 14px !default;
 			top: 5px;
 			margin-right: 2px;
 			fill: #101517;
+			.rtl & {
+				transform: scaleX( -1 );
+			}
 		}
 	}
 
