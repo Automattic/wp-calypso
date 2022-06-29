@@ -65,6 +65,7 @@ export interface DesignPreviewOptions {
 	siteTitle?: string;
 	viewport_width?: number;
 	viewport_height?: number;
+	use_screenshot_overrides?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */
