@@ -119,9 +119,7 @@ const AddOnCard = ( {
 								</Badge>
 							) }
 						</div>
-						<div className="add-ons-card__billing">
-							{ addOnMeta.displayCost } / { addOnMeta.term }
-						</div>
+						<div className="add-ons-card__billing">{ addOnMeta.displayCost }</div>
 					</div>
 				</CardHeader>
 				<CardBody className="add-ons-card__body">{ addOnMeta.description }</CardBody>

@@ -3,18 +3,16 @@ import {
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 } from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import {
 	getProductBySlug,
 	getProductDescription,
-	getProductDisplayCost,
 	getProductName,
-	getProductTerm,
 } from 'calypso/state/products-list/selectors';
 import customDesignIcon from '../icons/custom-design';
 import noAdsIcon from '../icons/no-ads';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
+import useAddOnDisplayCost from './use-add-on-display-cost';
 
 export interface AddOnMeta {
 	productSlug: string;
@@ -23,35 +21,31 @@ export interface AddOnMeta {
 	name: string | React.ReactChild | null;
 	description: string | React.ReactChild | null;
 	displayCost: string | React.ReactChild | null;
-	term?: string | React.ReactChild | null; // year, month, etc.
 }
 
 // memoize on products list
 const useAddOns = (): ( AddOnMeta | null )[] => {
-	const translate = useTranslate();
-
-	// list add-ons to show in UI here
 	const addOnsActive = [
 		{
 			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
 			featured: true,
 			icon: unlimitedThemesIcon,
 			overrides: null,
+			displayCost: useAddOnDisplayCost( PRODUCT_WPCOM_UNLIMITED_THEMES ),
 		},
 		{
 			productSlug: PRODUCT_NO_ADS,
 			featured: false,
 			icon: noAdsIcon,
-			overrides: {
-				// override API-fetched metadata
-				name: translate( 'Remove Ads' ),
-			},
+			overrides: null,
+			displayCost: useAddOnDisplayCost( PRODUCT_NO_ADS ),
 		},
 		{
 			productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
 			featured: false,
 			icon: customDesignIcon,
 			overrides: null,
+			displayCost: useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN ),
 		},
 	] as const;
 
@@ -60,24 +54,17 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 			const product = getProductBySlug( state, addOn.productSlug );
 			const name = getProductName( state, addOn.productSlug );
 			const description = getProductDescription( state, addOn.productSlug );
-			const displayCost = getProductDisplayCost( state, addOn.productSlug );
-			const term = getProductTerm( state, addOn.productSlug );
 
 			if ( ! product ) {
 				// will not render anything if product not fetched from API
-				// - can remove and update `adOnsActive` with description, name, etc. to still render
-				// - probably need some sort of placeholder in the add-ons page instead
+				// probably need some sort of placeholder in the add-ons page instead
 				return null;
 			}
 
 			return {
-				productSlug: addOn.productSlug,
-				featured: addOn.featured,
-				icon: addOn.icon,
-				name: addOn?.overrides?.name ?? name,
+				...addOn,
+				name,
 				description,
-				displayCost,
-				term,
 			};
 		} );
 	} );
