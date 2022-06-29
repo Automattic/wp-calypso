@@ -1525,7 +1525,7 @@ __metadata:
     "@babel/core": ^7.17.5
     "@emotion/react": ^11.4.1
     "@popperjs/core": ^2.10.2
-    "@sentry/browser": ^7.1.1
+    "@sentry/browser": ^7.3.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@types/node": ^15.0.2
@@ -4803,15 +4803,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/browser@npm:7.1.1, @sentry/browser@npm:^7.1.1":
-  version: 7.1.1
-  resolution: "@sentry/browser@npm:7.1.1"
+"@sentry/browser@npm:7.3.1, @sentry/browser@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/browser@npm:7.3.1"
   dependencies:
-    "@sentry/core": 7.1.1
-    "@sentry/types": 7.1.1
-    "@sentry/utils": 7.1.1
+    "@sentry/core": 7.3.1
+    "@sentry/types": 7.3.1
+    "@sentry/utils": 7.3.1
     tslib: ^1.9.3
-  checksum: 3b98a7826e01e8b6a20a69655a78c820c75e3c0bc8e1c35b841c68bcaf975f739e43fd46f2e359a74c0dddaeaeefbd7845c6cdabd3c4b8846727782997442b7f
+  checksum: 333d74b6960f89562af335e5ebf217e36f74c56271e700f17ba39a56829bbc31ee07a4ecdcf4fa499ec75c450209369a3e52759572d08a450fe7e405cc3fecb2
   languageName: node
   linkType: hard
 
@@ -4832,58 +4832,58 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:7.1.1":
-  version: 7.1.1
-  resolution: "@sentry/core@npm:7.1.1"
+"@sentry/core@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/core@npm:7.3.1"
   dependencies:
-    "@sentry/hub": 7.1.1
-    "@sentry/types": 7.1.1
-    "@sentry/utils": 7.1.1
+    "@sentry/hub": 7.3.1
+    "@sentry/types": 7.3.1
+    "@sentry/utils": 7.3.1
     tslib: ^1.9.3
-  checksum: cfad6a2172bc53e4827024c6632c70125d65d8668a3fd19b6d0087372675cfb4da8f9af16d7f7594c92f758252b025aa6d339916df62e8417473b9be34554ce2
+  checksum: e8b44b68046227c465908f6f075de7c31369d55ad35c9e71a1a27df5f84b36f57fc84f1f383fbd0873e0fef8c545cefb63472258e2593c860b8a110e1efd619a
   languageName: node
   linkType: hard
 
-"@sentry/hub@npm:7.1.1":
-  version: 7.1.1
-  resolution: "@sentry/hub@npm:7.1.1"
+"@sentry/hub@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/hub@npm:7.3.1"
   dependencies:
-    "@sentry/types": 7.1.1
-    "@sentry/utils": 7.1.1
+    "@sentry/types": 7.3.1
+    "@sentry/utils": 7.3.1
     tslib: ^1.9.3
-  checksum: 374a2dc3398f45328ea2dcca8bc8c7e2ba4a20912afd5ebeb9ddaf7e37f4c73cc13318509558d4482685e742c0b1c356fcd031605f3432b4ff8d29daf327656f
+  checksum: 5ce3c68f694d2c18848b0e677bdbbe4ec8213750fa2fdeca43391c8d60ed7058d955528fbaf78f045284a78db0478e7d2e2f5e740b61e14248946c0a8085a045
   languageName: node
   linkType: hard
 
-"@sentry/react@npm:^7.1.1":
-  version: 7.1.1
-  resolution: "@sentry/react@npm:7.1.1"
+"@sentry/react@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/react@npm:7.3.1"
   dependencies:
-    "@sentry/browser": 7.1.1
-    "@sentry/types": 7.1.1
-    "@sentry/utils": 7.1.1
+    "@sentry/browser": 7.3.1
+    "@sentry/types": 7.3.1
+    "@sentry/utils": 7.3.1
     hoist-non-react-statics: ^3.3.2
     tslib: ^1.9.3
   peerDependencies:
     react: 15.x || 16.x || 17.x || 18.x
-  checksum: 5c8dec361f7501ca5fde03d50eda5e6b6f983379e72c818de3038c23d024c2def092375ee04d2aac31eb935d88b943c1f64105ed837488307df4b4417e32f26b
+  checksum: a7390ce78069407b6cabee6c4049725bff5b5cbd9494f809e6567bc7926e91f3cca685b4481b82c5676639dbb2f5ccfa4eb1d195202fd6600af54a20621c2578
   languageName: node
   linkType: hard
 
-"@sentry/types@npm:7.1.1":
-  version: 7.1.1
-  resolution: "@sentry/types@npm:7.1.1"
-  checksum: 70d44abac63b9f37842780a3298b92837db34ae949574a2246887a956deaca342e3430886b23ecd14492bc9078923a999e8378666c6704c9bfcc757e3858cbff
+"@sentry/types@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/types@npm:7.3.1"
+  checksum: 94d17eab574945b3ccd11cba5d63c55337e530067532a3e620de4ddb10b9977e9144ece00aee1b60c4edc9140ebf3be9f7943d0ed089407c9e1dd2abf6c206b6
   languageName: node
   linkType: hard
 
-"@sentry/utils@npm:7.1.1":
-  version: 7.1.1
-  resolution: "@sentry/utils@npm:7.1.1"
+"@sentry/utils@npm:7.3.1":
+  version: 7.3.1
+  resolution: "@sentry/utils@npm:7.3.1"
   dependencies:
-    "@sentry/types": 7.1.1
+    "@sentry/types": 7.3.1
     tslib: ^1.9.3
-  checksum: 229b98f7d0ccb3faa29b3da4bc6d4b53fe412b3e960383e2168d0973538a5f46a2729f2156357497505a134c15479f9e4154f423ee0dfd5606af898c66f7683c
+  checksum: 899cadf323c6b53c528392b5897477b9f0423b9f637900572abff1efda467a2bde2c2eeaae41df3b1275a9af9b109321ad6a0aab8e150814bd6de5875d387d8d
   languageName: node
   linkType: hard
 
@@ -12429,7 +12429,7 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@emotion/styled": ^11.3.0
     "@github/webauthn-json": ^0.4.1
-    "@sentry/react": ^7.1.1
+    "@sentry/react": ^7.3.1
     "@sentry/webpack-plugin": ^1.18.8
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": ^1.17.1
