@@ -1,6 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import {
 	hasGoogleAccountTOSWarning,
 	hasUnusedMailboxWarning,
@@ -9,6 +10,7 @@ import {
 import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
+	getGSuiteSubscriptionStatus,
 	hasGSuiteWithUs,
 	isPendingGSuiteTOSAcceptance,
 } from 'calypso/lib/gsuite';
@@ -20,8 +22,10 @@ import {
 	hasTitanMailWithUs,
 } from 'calypso/lib/titan';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import type { EmailAccount } from 'calypso/data/emails/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-export function getNumberOfMailboxesText( domain ) {
+export function getNumberOfMailboxesText( domain: ResponseDomain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
 		const count = getGSuiteMailboxCount( domain );
 
@@ -61,11 +65,11 @@ export function getNumberOfMailboxesText( domain ) {
 /**
  * Retrieves the email purchase associated to the specified domain.
  *
- * @param {object} state - global state
- * @param {object} domain - domain object
- * @returns {object|null} the corresponding email purchase, or null if not found
+ * @param state - global Redux state
+ * @param domain - domain object
+ * @returns the corresponding email purchase, or null if not found
  */
-export function getEmailPurchaseByDomain( state, domain ) {
+export function getEmailPurchaseByDomain( state: any, domain: ResponseDomain ) {
 	const subscriptionId = getEmailSubscriptionIdByDomain( domain );
 
 	return subscriptionId ? getByPurchaseId( state, subscriptionId ) : null;
@@ -74,10 +78,10 @@ export function getEmailPurchaseByDomain( state, domain ) {
 /**
  * Retrieves the identifier of the email subscription for the specified domain.
  *
- * @param {object} domain - domain object
- * @returns {number|null} the corresponding subscription id, or null if not found
+ * @param domain - domain object
+ * @returns the corresponding subscription id, or null if not found
  */
-function getEmailSubscriptionIdByDomain( domain ) {
+function getEmailSubscriptionIdByDomain( domain: ResponseDomain ) {
 	let subscriptionId = null;
 
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -92,16 +96,24 @@ function getEmailSubscriptionIdByDomain( domain ) {
 /**
  * Determines whether an email subscription exists for the specified domain.
  *
- * @param {object} domain - domain object
- * @returns {boolean} true if an email subscription exists, false otherwise
+ * @param domain - domain object
+ * @returns true if an email subscription exists, false otherwise
  */
-export function hasEmailSubscription( domain ) {
+export function hasEmailSubscription( domain: ResponseDomain ) {
 	const subscriptionId = getEmailSubscriptionIdByDomain( domain );
 
 	return !! subscriptionId;
 }
 
-export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) {
+/**
+ * Returns a class name, an icon and a text for signaling the status of an email subscription to
+ * the user.
+ */
+export function resolveEmailPlanStatus(
+	domain: ResponseDomain,
+	emailAccount: EmailAccount,
+	isLoadingEmails: boolean
+) {
 	const activeStatus = {
 		statusClass: 'success',
 		icon: isLoadingEmails ? 'cached' : 'check_circle',
@@ -121,6 +133,21 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 			( emailAccount && hasGoogleAccountTOSWarning( emailAccount ) )
 		) {
 			return errorStatus;
+		}
+
+		// When users have registered a domain with us, we let them purchase Google Workspace
+		// before the domain provisioning has finished. However, the user won't see any mailboxes
+		// in the email management until the domain provisioning has finished. To avoid confusion,
+		// we display a warning under these conditions.
+		if (
+			isRecentlyRegistered( domain.registrationDate, 45 ) &&
+			getGSuiteSubscriptionStatus( domain ) === 'unknown'
+		) {
+			return {
+				statusClass: 'warning',
+				icon: 'info',
+				text: translate( 'Configuring mailboxes' ),
+			};
 		}
 
 		return activeStatus;
@@ -166,10 +193,16 @@ export function resolveEmailPlanStatus( domain, emailAccount, isLoadingEmails ) 
 
 /**
  * Tracks an event for the key 'calypso_email_app_launch'.
- *
- * @param {app, context, provider} - app/context/provider should be string and must be provided.
  */
-export function recordEmailAppLaunchEvent( { app, context, provider } ) {
+export function recordEmailAppLaunchEvent( {
+	app,
+	context,
+	provider,
+}: {
+	app: string;
+	context: string;
+	provider: string;
+} ) {
 	recordTracksEvent( 'calypso_email_app_launch', {
 		app,
 		context,
@@ -190,7 +223,7 @@ export function recordInboxNewMailboxUpsellClickEvent() {
  *
  * @param context context, where this event was logged.
  */
-export function recordInboxUpsellTracksEvent( context = null ) {
+export function recordInboxUpsellTracksEvent( context: string | null = null ) {
 	recordTracksEvent( 'calypso_inbox_upsell', {
 		context,
 	} );
