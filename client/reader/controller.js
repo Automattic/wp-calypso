@@ -318,3 +318,29 @@ export function readFollowingP2( context, next ) {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 	next();
 }
+
+export async function blogDiscoveryByFeedId( context, next ) {
+	const { blog, feed_id } = context.params;
+
+	// If we have already had blog or we don't have feed_id, call `next()` immediately
+	if ( blog || ! feed_id ) {
+		next();
+		return;
+	}
+
+	// Query the site by feed_id and inject to the context params so that calypso can get correct site
+	// after redirecting the user to log-in page
+	context.queryClient
+		.fetchQuery(
+			[ '/read/feed/', feed_id ],
+			() => wpcom.req.get( `/read/feed/${ feed_id }` ).then( ( res ) => res.blog_ID ),
+			{ meta: { persist: false } }
+		)
+		.then( ( blog_id ) => {
+			context.params.blog = blog_id;
+			next();
+		} )
+		.catch( () => {
+			renderFeedError( context, next );
+		} );
+}
