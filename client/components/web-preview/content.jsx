@@ -13,11 +13,14 @@ import Toolbar from './toolbar';
 
 import './style.scss';
 
+const loadingTimeout = 3000;
 const debug = debugModule( 'calypso:web-preview' );
 const noop = () => {};
 
 export default class WebPreviewContent extends Component {
 	previewId = uuid();
+
+	loadingTimeoutTimer = null;
 
 	state = {
 		iframeUrl: null,
@@ -269,14 +272,28 @@ export default class WebPreviewContent extends Component {
 			debug( 'preview loaded for url:', this.state.iframeUrl );
 		}
 		if ( this.checkForIframeLoadFailure( caller ) ) {
-			if ( this.props.showClose ) {
-				window.open( this.state.iframeUrl, '_blank' );
-				this.props.onClose();
-			} else {
-				window.location.replace( this.state.iframeUrl );
-			}
+			debug( `preview not loaded yet, waiting ${ loadingTimeout }ms` );
+			clearTimeout( this.loadingTimeoutTimer );
+
+			// To prevent iframe firing the onload event before the embedded page sends the
+			// partially-loaded message, we add a waiting period here.
+			this.loadingTimeoutTimer = setTimeout( () => {
+				debug( 'preview loading timeout' );
+
+				if ( this.props.showClose ) {
+					window.open( this.state.iframeUrl, '_blank' );
+					this.props.onClose();
+				} else {
+					window.location.replace( this.state.iframeUrl );
+				}
+			}, loadingTimeout );
 		} else {
 			this.setState( { loaded: true, isLoadingSubpage: false } );
+
+			if ( this.loadingTimeoutTimer ) {
+				debug( 'preview loaded before timeout' );
+				clearTimeout( this.loadingTimeoutTimer );
+			}
 		}
 
 		this.focusIfNeeded();
