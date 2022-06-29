@@ -2,9 +2,9 @@
 // the signup flow.
 .signup-header {
 	position: absolute;
-	top: 0;
-	right: 0;
-	left: 0;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	inset-inline-end: 0;
 	z-index: -1;
 	color: var( --color-text-inverted );
 
@@ -32,13 +32,13 @@
 
 	.signup-header__left {
 		position: absolute;
-		top: 12px;
-		left: 16px;
+		inset-block-start: 12px;
+		inset-inline-start: 16px;
 	}
 
 	.signup-header__right {
 		position: absolute;
-		top: 12px;
-		right: 16px;
+		inset-block-start: 12px;
+		inset-inline-end: 16px;
 	}
 }
