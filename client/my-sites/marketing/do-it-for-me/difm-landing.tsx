@@ -33,7 +33,7 @@ const FAQExpander = styled( Button )`
 	width: 500px;
 	height: 48px;
 	text-align: center;
-	&& {
+	&&& {
 		justify-content: center;
 	}
 `;
@@ -48,10 +48,6 @@ const FAQSection = styled.div`
 	display: flex;
 	flex-direction: column;
 	margin: 3rem 0;
-
-	${ FAQExpander } {
-		text-align: center;
-	}
 `;
 
 const FoldableFAQ = styled( FoldableFAQComponent )`
@@ -92,7 +88,6 @@ const CTASectionWrapper = styled.div`
 `;
 
 const SkipButton = styled( Button )`
-	/* Gray / Gray 100 */
 	&& {
 		color: var( --studio-gray-100 );
 		text-decoration: underline;
@@ -103,13 +98,15 @@ const SkipButton = styled( Button )`
 const Wrapper = styled.div`
 	display: flex;
 	align-items: flex-start;
-	gap: 120px;
+	gap: 96px;
+	padding: 12px;
 `;
 
 const ContentSection = styled.div`
 	flex: 1;
-	flex-basis: 15%;
+	flex-basis: 20%;
 `;
+
 const ImageSection = styled.div`
 	flex: 1;
 	@media ( max-width: 660px ) {
@@ -135,7 +132,7 @@ const ProgressLine = styled.div`
 const VerticalStepProgress = styled.div`
 	display: flex;
 	flex-direction: column;
-	margin: 48px 0 12px 0;
+	margin: 24px 0 12px 0;
 	${ StepContainer }:last-child {
 		${ ProgressLine } {
 			display: none;
@@ -166,7 +163,7 @@ const Title = styled.div`
 `;
 const Description = styled.div`
 	color: var( --studio-gray-60 );
-	padding-bottom: 30px;
+	padding-bottom: 16px;
 `;
 
 const Step = ( {
@@ -238,14 +235,6 @@ export default function DIFMLanding( {
 							}
 						) }
 					/>
-					<CTASectionWrapper>
-						<NextButton onClick={ onSubmit } isPrimary={ true }>
-							{ translate( 'Hire a Professional' ) }
-						</NextButton>
-						{ isInOnboarding && (
-							<SkipButton isLink={ true }>{ translate( 'Skip for now' ) }</SkipButton>
-						) }
-					</CTASectionWrapper>
 					<VerticalStepProgress>
 						<Step
 							index={ translate( '1' ) }
@@ -273,6 +262,14 @@ export default function DIFMLanding( {
 							) }
 						/>
 					</VerticalStepProgress>
+					<CTASectionWrapper>
+						<NextButton onClick={ onSubmit } isPrimary={ true }>
+							{ translate( 'Hire a Professional' ) }
+						</NextButton>
+						{ isInOnboarding && (
+							<SkipButton isLink={ true }>{ translate( 'Skip for now' ) }</SkipButton>
+						) }
+					</CTASectionWrapper>
 				</ContentSection>
 				<ImageSection>
 					<img
