@@ -94,7 +94,7 @@ class SiteSettingsPerformance extends Component {
 
 				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
 
-				{ ( siteIsJetpackNonAtomic || hasManagePluginsFeature ) && (
+				{ ( siteIsJetpackNonAtomic || ( siteIsAtomic && hasManagePluginsFeature ) ) && (
 					<Fragment>
 						<QueryJetpackModules siteId={ siteId } />
 
@@ -134,7 +134,7 @@ class SiteSettingsPerformance extends Component {
 					</Fragment>
 				) }
 
-				{ siteIsJetpackNonAtomic || hasManagePluginsFeature ? (
+				{ siteIsJetpackNonAtomic || ( siteIsAtomic && hasManagePluginsFeature ) ? (
 					<AmpJetpack />
 				) : (
 					<AmpWpcom
