@@ -1,4 +1,3 @@
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { GaPurchase } from '../utils/jetpack-cart-to-ga-purchase';
 import { GaItem } from '../utils/jetpack-product-to-ga-item';
 import { TRACKING_IDS } from './constants';
@@ -26,8 +25,8 @@ function fireJetpackEcommerceAddToCart( item: GaItem ) {
 	} );
 }
 
-function firePageView( title: string, location: string ) {
-	if ( isJetpackCloud() ) {
+function firePageView( title: string, location: string, shouldSendToJetpack = false ) {
+	if ( shouldSendToJetpack ) {
 		window.gtag( 'event', 'page_view', {
 			send_to: TRACKING_IDS.jetpackGoogleGA4Gtag,
 			page_title: title,

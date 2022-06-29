@@ -72,7 +72,7 @@ export function fireGoogleAnalyticsPageView(
 	pageTitle,
 	useJetpackGoogleAnalytics = false
 ) {
-	GA4.firePageView( pageTitle, urlPath );
+	GA4.firePageView( pageTitle, urlPath, useJetpackGoogleAnalytics );
 
 	const params = {
 		...getGoogleAnalyticsDefaultConfig(),
