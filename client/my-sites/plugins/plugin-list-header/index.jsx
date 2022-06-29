@@ -13,6 +13,7 @@ import SectionHeader from 'calypso/components/section-header';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import getSites from 'calypso/state/selectors/get-sites';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -33,7 +34,9 @@ export class PluginsListHeader extends PureComponent {
 
 	static propTypes = {
 		label: PropTypes.string,
+		hasManagePluginsFeature: PropTypes.bool,
 		isBulkManagementActive: PropTypes.bool,
+		isWpComAtomic: PropTypes.bool,
 		toggleBulkManagement: PropTypes.func.isRequired,
 		updateAllPlugins: PropTypes.func.isRequired,
 		updateSelected: PropTypes.func.isRequired,
@@ -112,10 +115,10 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	renderCurrentActionButtons() {
-		const { hasManagePluginsFeature, translate } = this.props;
+		const { hasManagePluginsFeature, isWpComAtomic, translate } = this.props;
 		const buttons = [];
 
-		if ( ! hasManagePluginsFeature ) {
+		if ( isWpComAtomic && ! hasManagePluginsFeature ) {
 			return buttons;
 		}
 
@@ -374,11 +377,12 @@ export class PluginsListHeader extends PureComponent {
 	}
 }
 
-export default connect( ( state ) => ( {
-	allSites: getSites( state ),
-	hasManagePluginsFeature: siteHasFeature(
-		state,
-		getSelectedSiteId( state ),
-		WPCOM_FEATURES_MANAGE_PLUGINS
-	),
-} ) )( localize( PluginsListHeader ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		allSites: getSites( state ),
+		hasManagePluginsFeature: siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ),
+		isWpComAtomic: isSiteWpcomAtomic( state, siteId ),
+	};
+} )( localize( PluginsListHeader ) );
