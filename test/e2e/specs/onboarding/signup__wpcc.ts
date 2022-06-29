@@ -18,6 +18,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'wpcc',
 	} );
+	const emailClient = new EmailClient();
 
 	let page: Page;
 
@@ -46,7 +47,6 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 		} );
 
 		it( 'Get activation link', async function () {
-			const emailClient = new EmailClient();
 			const message = await emailClient.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,
 				sentTo: testUser.email,
