@@ -12,9 +12,10 @@ import {
 	RestAPIClient,
 	BrowserManager,
 	SecretsManager,
+	NewSiteResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import type { NewSiteResponse } from '@automattic/calypso-e2e';
+import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
@@ -29,46 +30,20 @@ describe(
 		let restAPIClient: RestAPIClient;
 		let page: Page;
 
-		// beforeAll( async function () {
-		// 	// Set up the test site programmatically.
-		// 	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
-		// 	restAPIClient = new RestAPIClient( credentials );
-
-		// 	const response = await restAPIClient.createSite( {
-		// 		name: blogName,
-		// 		title: blogName,
-		// 	} );
-
-		// 	if ( ! response.body.success ) {
-		// 		throw new Error( `Failed to create new site via REST API.\nHTTP response: ${ response }` );
-		// 	}
-		// 	newSite = response;
-		// 	siteCreatedFlag = response.body.success;
-
-		// 	// Authenticate as user.
-		// 	page = await browser.newPage();
-
-		// 	const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
-		// 	await testAccount.authenticate( page );
-		// } );
-
-		test( 'step', async function () {
+		beforeAll( async function () {
 			// Set up the test site programmatically.
 			const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 			restAPIClient = new RestAPIClient( credentials );
 
-			const response = await restAPIClient.createSite( {
+			newSite = await restAPIClient.createSite( {
 				name: blogName,
 				title: blogName,
 			} );
 
-			console.log( response );
-
-			if ( ! response.body.success ) {
-				throw new Error( `Failed to create new site via REST API.\nHTTP response: ${ response }` );
+			if ( ! newSite ) {
+				throw new Error( `Failed to create new site via REST API.\nHTTP response: ${ newSite }` );
 			}
-			newSite = response;
-			siteCreatedFlag = response.body.success;
+			siteCreatedFlag = true;
 
 			// Authenticate as user.
 			page = await browser.newPage();
@@ -86,9 +61,7 @@ describe(
 			} );
 
 			it( 'Navigate to Upgrades > Plans', async function () {
-				await page.goto(
-					DataHelper.getCalypsoURL( `/plans/${ newSite.body.blog_details.site_slug }` )
-				);
+				await page.goto( DataHelper.getCalypsoURL( `/plans/${ newSite.blog_details.site_slug }` ) );
 			} );
 
 			it( 'View available plans', async function () {
@@ -107,10 +80,6 @@ describe(
 
 			it( 'Make purchase', async function () {
 				await cartCheckoutPage.purchase();
-			} );
-
-			it( 'Enter billing and payment details', async function () {
-				await cartCheckoutPage.selectSavedCard( 'End to End Testing' );
 			} );
 
 			it( 'View new features', async function () {
@@ -144,25 +113,11 @@ describe(
 				return;
 			}
 
-			const response = await restAPIClient.deleteSite( {
-				url: newSite.body.blog_details.url,
-				id: newSite.body.blog_details.blogid,
-				name: newSite.body.blog_details.blogname,
+			await apiDeleteSite( restAPIClient, {
+				url: newSite.blog_details.url,
+				id: newSite.blog_details.blogid,
+				name: newSite.blog_details.blogname,
 			} );
-
-			// If the response is `null` then no action has been
-			// performed.
-			if ( response ) {
-				// The only correct response is the string
-				// "deleted".
-				if ( response.status !== 'deleted' ) {
-					console.warn(
-						`Failed to delete siteID ${ newSite.body.blog_details.blogid }.\nExpected: "deleted", Got: ${ response.status }`
-					);
-				} else {
-					console.log( `Successfully deleted siteID ${ newSite.body.blog_details.blogid }.` );
-				}
-			}
 		} );
 	}
 );
