@@ -12,6 +12,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
 let auth2InitDone = false;
 
@@ -61,7 +62,16 @@ class GoogleLoginButton extends Component {
 
 	componentDidMount() {
 		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
+			if ( this.props.authCodeFromRedirect ) {
+				this.handleAuthorizationCode( {
+					auth_code: this.props.authCodeFromRedirect,
+					redirect_uri: this.props.redirectUri,
+				} );
+				return;
+			}
+
 			this.initializeGoogleSignIn();
+
 			return;
 		}
 
@@ -86,7 +96,7 @@ class GoogleLoginButton extends Component {
 					return;
 				}
 
-				this.handleAuthorizationCode( response.code );
+				this.handleAuthorizationCode( { auth_code: response.code } );
 			},
 		} );
 
@@ -181,13 +191,14 @@ class GoogleLoginButton extends Component {
 		return this.initialized;
 	}
 
-	async handleAuthorizationCode( auth_code ) {
+	async handleAuthorizationCode( { auth_code, redirect_uri } ) {
 		let response;
 
 		try {
 			response = await postLoginRequest( 'exchange-social-auth-code', {
 				service: 'google',
 				auth_code,
+				redirect_uri,
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
 			} );
@@ -338,6 +349,7 @@ class GoogleLoginButton extends Component {
 export default connect(
 	( state ) => ( {
 		isFormDisabled: isFormDisabled( state ),
+		authCodeFromRedirect: getInitialQueryArguments( state ).code,
 	} ),
 	{
 		recordTracksEvent,
