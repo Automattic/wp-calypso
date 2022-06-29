@@ -102,7 +102,7 @@ describe( 'MapDomain component', () => {
 
 	test( 'does not render a notice by default', () => {
 		render( <MapDomain { ...defaultProps } /> );
-		expect( screen.queryByLabelText( 'Notice' ) ).toBeNull();
+		expect( screen.queryByLabelText( 'Notice' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'render a notice by when there is an errorMessage in the state', async () => {
