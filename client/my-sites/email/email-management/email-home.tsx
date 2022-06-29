@@ -79,7 +79,7 @@ interface EmailManagementHomeProps {
 const domainHasEmail = ( domain: ResponseDomain ) =>
 	hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
 
-const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
+const EmailHome = ( props: EmailManagementHomeProps ) => {
 	const {
 		emailListInactiveHeader,
 		selectedEmailProviderSlug,
@@ -148,6 +148,10 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 			<ContentWithHeader>
 				<EmailPlan
 					domain={ selectedDomain }
+					// When users have a single domain with email, they are auto-redirected from the
+					// `/email/:site_slug` page to `/email/:domain/manage/:site_slug`. That's why
+					// we also hide the back button, to avoid scenarios where clicking "Back"
+					// redirects users to the same page as they are currently on.
 					hideHeaderCake={ isSingleDomainThatHasEmail }
 					selectedSite={ selectedSite }
 					source={ source }
@@ -182,9 +186,10 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 			domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
 		) {
 			page( emailManagementTitanSetUpMailbox( selectedSite?.slug, selectedSite?.domain ) );
-		} else {
-			page( emailManagement( selectedSite?.slug, selectedSite.domain ) );
+			return null;
 		}
+
+		page( emailManagement( selectedSite?.slug, selectedSite.domain ) );
 	}
 
 	return (
