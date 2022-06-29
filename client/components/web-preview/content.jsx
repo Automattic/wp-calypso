@@ -13,11 +13,14 @@ import Toolbar from './toolbar';
 
 import './style.scss';
 
+const loadingTimeout = 5000;
 const debug = debugModule( 'calypso:web-preview' );
 const noop = () => {};
 
 export default class WebPreviewContent extends Component {
 	previewId = uuid();
+
+	loadingTimeoutTimer = null;
 
 	state = {
 		iframeUrl: null,
@@ -273,10 +276,21 @@ export default class WebPreviewContent extends Component {
 				window.open( this.state.iframeUrl, '_blank' );
 				this.props.onClose();
 			} else {
-				window.location.replace( this.state.iframeUrl );
+				// To prevent iframe firing the onload event before the embedded page sends the
+				// partially-loaded message, we add a waiting period here.
+				debug( `preview not loaded yet, waiting ${ loadingTimeout }ms` );
+				this.loadingTimeoutTimer = setTimeout( () => {
+					debug( 'preview loading timeout' );
+					window.location.replace( this.state.iframeUrl );
+				}, loadingTimeout );
 			}
 		} else {
 			this.setState( { loaded: true, isLoadingSubpage: false } );
+
+			if ( this.loadingTimeoutTimer ) {
+				debug( 'preview loaded before timeout' );
+				clearTimeout( this.loadingTimeoutTimer );
+			}
 		}
 
 		this.focusIfNeeded();
