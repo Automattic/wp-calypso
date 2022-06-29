@@ -82,8 +82,9 @@ export function registerTimelineItemBlock() {
 								title={ __( 'Color Settings', 'full-site-editing' ) }
 								colorSettings={ [
 									{
-										value: attributes.background,
-										onChange: ( background ) => setAttributes( { background } ),
+										value: attributes.background !== 'transparent' ? attributes.background : '',
+										onChange: ( background ) =>
+											setAttributes( { background: background ? background : 'transparent' } ),
 										label: __( 'Background Color', 'full-site-editing' ),
 									},
 								] }
