@@ -31,6 +31,7 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 				! isDestinationSetupSiteFlow && { title: __( 'Building your site' ) },
 				hasPaidDomain && { title: __( 'Getting your domain' ) },
 				! isDestinationSetupSiteFlow && { title: __( 'Applying design' ) },
+				{ title: __( 'Turning on the lights' ) },
 			];
 	}
 
