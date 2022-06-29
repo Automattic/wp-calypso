@@ -15,7 +15,7 @@ export interface Props {
 		text: string | React.ReactChild;
 		handler: ( productSlug: string ) => void;
 	};
-	useAddOnAvailabilityStatus?: ( productSlug: string ) => {
+	useAddOnAvailabilityStatus?: ( addOnMeta: AddOnMeta ) => {
 		available: boolean;
 		text?: string | React.ReactChild;
 	};
@@ -79,6 +79,7 @@ const Container = styled.div`
 		.add-ons-card__selected-tag {
 			display: flex;
 			align-items: center;
+			gap: 0.5em;
 
 			.add-ons-card__checkmark {
 				color: var( --studio-green-30 );
@@ -95,7 +96,7 @@ const AddOnCard = ( {
 	highlightFeatured,
 }: Props ) => {
 	const translate = useTranslate();
-	const availabilityStatus = useAddOnAvailabilityStatus?.( addOnMeta.productSlug );
+	const availabilityStatus = useAddOnAvailabilityStatus?.( addOnMeta );
 	const onActionPrimary = () => {
 		actionPrimary?.handler( addOnMeta.productSlug );
 	};

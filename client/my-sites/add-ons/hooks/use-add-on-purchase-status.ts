@@ -3,23 +3,22 @@ import { useSelector } from 'react-redux';
 import { getSitePurchases } from 'calypso/state/purchases/selectors/get-site-purchases';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
+import type { AddOnMeta } from './use-add-ons';
 
 /**
  * Returns whether add-on product has been purchased or included in site plan.
  */
-const useAddOnPurchaseStatus = ( addOnProductSlug: string ) => {
+const useAddOnPurchaseStatus = ( { productSlug, featureSlugs }: AddOnMeta ) => {
 	const translate = useTranslate();
-	const addOnFeatureSlugs = useAddOnFeatureSlugs( addOnProductSlug );
 
 	const { purchased, isSiteFeature } = useSelector( ( state ) => {
 		const selectedSite = getSelectedSite( state );
 		const sitePurchases = getSitePurchases( state, selectedSite?.ID );
 		return {
-			purchased: sitePurchases.find( ( product ) => product.productSlug === addOnProductSlug ),
+			purchased: sitePurchases.find( ( product ) => product.productSlug === productSlug ),
 			isSiteFeature:
 				selectedSite &&
-				addOnFeatureSlugs?.find( ( slug ) => siteHasFeature( state, selectedSite?.ID, slug ) ),
+				featureSlugs?.find( ( slug ) => siteHasFeature( state, selectedSite?.ID, slug ) ),
 		};
 	} );
 

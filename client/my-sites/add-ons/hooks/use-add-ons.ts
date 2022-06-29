@@ -3,6 +3,7 @@ import {
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	PRODUCT_WPCOM_UNLIMITED_THEMES,
 } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import {
 	getProductBySlug,
@@ -13,39 +14,48 @@ import customDesignIcon from '../icons/custom-design';
 import noAdsIcon from '../icons/no-ads';
 import unlimitedThemesIcon from '../icons/unlimited-themes';
 import useAddOnDisplayCost from './use-add-on-display-cost';
+import useAddOnFeatureSlugs from './use-add-on-feature-slugs';
 
 export interface AddOnMeta {
 	productSlug: string;
-	featured?: boolean;
+	featureSlugs?: string[] | null;
 	icon: JSX.Element;
+	featured?: boolean; // irrelevant to "featureSlugs"
 	name: string | React.ReactChild | null;
 	description: string | React.ReactChild | null;
 	displayCost: string | React.ReactChild | null;
 }
 
-// memoize on products list
+// some memoization. executes far too many times
 const useAddOns = (): ( AddOnMeta | null )[] => {
+	const translate = useTranslate();
 	const addOnsActive = [
 		{
 			productSlug: PRODUCT_WPCOM_UNLIMITED_THEMES,
-			featured: true,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_WPCOM_UNLIMITED_THEMES ),
 			icon: unlimitedThemesIcon,
 			overrides: null,
 			displayCost: useAddOnDisplayCost( PRODUCT_WPCOM_UNLIMITED_THEMES ),
+			featured: true,
 		},
 		{
 			productSlug: PRODUCT_NO_ADS,
-			featured: false,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_NO_ADS ),
 			icon: noAdsIcon,
-			overrides: null,
+			overrides: {
+				// override API-fetched metadata
+				name: translate( 'Remove Ads' ),
+			},
 			displayCost: useAddOnDisplayCost( PRODUCT_NO_ADS ),
+			featured: false,
 		},
 		{
 			productSlug: PRODUCT_WPCOM_CUSTOM_DESIGN,
-			featured: false,
+			featureSlugs: useAddOnFeatureSlugs( PRODUCT_WPCOM_CUSTOM_DESIGN ),
 			icon: customDesignIcon,
 			overrides: null,
 			displayCost: useAddOnDisplayCost( PRODUCT_WPCOM_CUSTOM_DESIGN ),
+			featured: false,
 		},
 	] as const;
 
@@ -63,7 +73,7 @@ const useAddOns = (): ( AddOnMeta | null )[] => {
 
 			return {
 				...addOn,
-				name,
+				name: addOn.overrides?.name ?? name,
 				description,
 			};
 		} );
