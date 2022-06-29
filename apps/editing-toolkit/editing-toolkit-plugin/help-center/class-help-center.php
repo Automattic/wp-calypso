@@ -23,6 +23,7 @@ class Help_Center {
 	 */
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
+		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
 	}
 
 	/**
@@ -90,6 +91,15 @@ class Help_Center {
 		);
 
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
+	}
+
+	/**
+	 * Register the WPCOM Block Editor NUX endpoints.
+	 */
+	public function register_rest_api() {
+		require_once __DIR__ . '/class-wp-rest-help-center-support-availability.php';
+		$controller = new WP_REST_Help_Center_Support_Availability();
+		$controller->register_rest_route();
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Help_Center', 'init' ) );
