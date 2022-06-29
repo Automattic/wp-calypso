@@ -12,6 +12,8 @@ function overrideCoreDocumentationLinksToWpcom( translation: string, text: strin
 			return 'https://wordpress.com/support/site-editor/';
 		case 'https://wordpress.org/support/article/block-based-widgets-editor/':
 			return 'https://wordpress.com/support/widgets/';
+		case 'https://wordpress.org/plugins/classic-widgets/':
+			return 'https://wordpress.com/plugins/classic-widgets';
 	}
 
 	return translation;
