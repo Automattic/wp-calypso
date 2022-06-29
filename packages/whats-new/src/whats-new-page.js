@@ -34,12 +34,14 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageN
 			</div>
 			<div className="whats-new-page__visual">
 				{ imageSrc && (
-					<img
-						src={ imageSrc }
-						alt={ description }
-						aria-hidden="true"
-						className={ 'whats-new-page__image' }
-					/>
+					<div className="whats-new-page__image-container">
+						<img
+							src={ imageSrc }
+							alt={ description }
+							aria-hidden="true"
+							className={ 'whats-new-page__image' }
+						/>
+					</div>
 				) }
 			</div>
 		</div>

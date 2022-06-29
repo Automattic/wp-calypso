@@ -6,6 +6,7 @@
 @import '@automattic/calypso-color-schemes';
 
 $wpcom-modal-breakpoint: 660px;
+$wpcom-modal-breakpoint-small: 480px;
 
 $wpcom-modal-content-spacing: 32px;
 $wpcom-modal-content-min-height: 400px;
@@ -206,31 +207,47 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 }
 
 .whats-new-page__text {
-	padding: 16px;
+	padding: 16px 16px 0;
 	min-height: 222px;
 	height: fit-content;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		overflow: auto;
-		padding: $wpcom-modal-content-spacing;
+		padding: $wpcom-modal-content-spacing $wpcom-modal-content-spacing 0;
 		margin-bottom: $wpcom-modal-footer-height;
 	}
 }
 .whats-new-page__visual {
 	height: 50%;
 	max-height: 230px;
-	padding: 52px 52px 0;
+	padding: 32px 52px 0;
 	background: var( --studio-blue-50 );
 	text-align: center;
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	overflow: hidden;
+	position: relative;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		height: auto;
 		max-height: initial;
 		width: $wpcom-modal-inner-content-width;
+
+		.whats-new-page__image-container {
+			position: absolute;
+			top: 74px;
+			left: 52px;
+			right: 52px;
+		}
+	}
+
+	@media ( max-width: $wpcom-modal-breakpoint ) {
+		max-height: calc( 100vh / 3 );
+	}
+
+	@media ( max-height: $wpcom-modal-breakpoint-small ) {
+		max-height: calc( 100vh / 4 );
 	}
 }
 
