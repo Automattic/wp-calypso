@@ -32,6 +32,7 @@ describe( 'PluginsList', () => {
 				},
 				allSites: sites,
 				hasManagePlugins: true,
+				siteIsAtomic: true,
 			};
 		} );
 
