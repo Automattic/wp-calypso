@@ -19,7 +19,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	}
 
 	&.components-modal__frame {
-		height: 65vh;
 		top: calc( 17.5vh - #{$wpcom-modal-footer-height * 0.5} );
 		border-radius: 4px;
 		overflow: hidden;
@@ -29,8 +28,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 			min-width: 90vw;
 			left: 5vw;
 			right: 5vw;
-			max-height: 500px;
-			overflow: visible;
+			height: 520px;
 		}
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
@@ -54,10 +52,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 
 	.guide__container {
 		margin-top: 0;
-
-		@media ( max-width: $wpcom-modal-breakpoint ) {
-			height: 100%;
-		}
 	}
 
 	.guide__footer {
@@ -80,8 +74,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 		}
 
 		@media ( max-width: $wpcom-modal-breakpoint ) {
-			min-height: $wpcom-modal-footer-height;
-			padding: 25px;
+			padding: 16px;
 		}
 
 		.guide__buttons {
@@ -199,12 +192,12 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	justify-content: flex-end;
 	background: var( --studio-white );
 	width: 100%;
-	height: 100%;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		flex-direction: row;
 		justify-content: flex-start;
 		position: absolute;
+		height: 100%;
 		min-height: $wpcom-modal-content-min-height;
 		bottom: 0;
 	}
@@ -221,8 +214,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 }
 
 .whats-new-page__text {
-	padding: 25px;
-	height: 50%;
+	padding: 16px;
+	height: 222px;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		height: auto;
@@ -233,15 +226,18 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 }
 .whats-new-page__visual {
 	height: 50%;
+	max-height: 230px;
 	padding: 52px 52px 0;
 	background: var( --studio-blue-50 );
 	text-align: center;
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+	overflow: hidden;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		height: auto;
+		max-height: initial;
 		width: $wpcom-modal-inner-content-width;
 	}
 }
@@ -270,24 +266,33 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 }
 
 .whats-new-page__description p {
-	font-size: $font-body;
+	font-size: $font-body-small;
 	line-height: 22px;
-	margin: 10px 0;
-
+	margin: 10px 0 0;
 	/* Gray / Gray 80 */
 	color: var( --studio-gray-80 );
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
+		margin: 10px 0;
 		font-size: $font-body;
 		line-height: 24px;
 	}
 }
 
 .whats-new-page__link {
-	font-size: $font-body;
+	font-size: $font-body-small;
 
-	&.is-tertiary {
+	&.is-tertiary:not( :disabled ) {
 		color: var( --studio-blue-50 );
+
+		&:hover {
+			box-shadow: none;
+		}
+	}
+
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		font-size: $font-body;
+		line-height: 24px;
 	}
 }
 
