@@ -74,17 +74,6 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
-	let emptyText = translate( 'No mailboxes' );
-
-	if (
-		isRecentlyRegistered( domain.registrationDate, 45 ) &&
-		getGSuiteSubscriptionStatus( domain ) === 'unknown'
-	) {
-		emptyText = translate(
-			'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
-		);
-	}
-
 	if ( isLoadingEmails ) {
 		return (
 			<MailboxListHeader isPlaceholder accountType={ accountType }>
@@ -97,10 +86,21 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 	}
 
 	if ( ! mailboxes || mailboxes.length < 1 ) {
+		let missingMailboxesText = translate( 'No mailboxes' );
+
+		if (
+			isRecentlyRegistered( domain.registrationDate, 45 ) &&
+			getGSuiteSubscriptionStatus( domain ) === 'unknown'
+		) {
+			missingMailboxesText = translate(
+				'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
+			);
+		}
+
 		return (
 			<MailboxListHeader accountType={ accountType }>
 				<MailboxListItem hasNoEmails>
-					<span>{ emptyText }</span>
+					<span>{ missingMailboxesText }</span>
 				</MailboxListItem>
 			</MailboxListHeader>
 		);
