@@ -12,6 +12,11 @@ export interface SiteDetails {
 	name: string;
 }
 
+export interface NewSiteParams {
+	name: string;
+	title: string;
+}
+
 /* Response Interfaces */
 
 export interface BearerTokenResponse {
