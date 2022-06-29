@@ -55,7 +55,7 @@ const googleWorkspaceCardInformation: ProviderCardProps = {
 	features: getGoogleFeatures(),
 };
 
-const GoogleWorkspaceCardNew = ( props: EmailProvidersStackedCardProps ): ReactElement => {
+const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElement => {
 	const {
 		detailsExpanded,
 		intervalLength,
@@ -130,4 +130,4 @@ const GoogleWorkspaceCardNew = ( props: EmailProvidersStackedCardProps ): ReactE
 	return <EmailProvidersStackedCard { ...googleWorkspace } />;
 };
 
-export default GoogleWorkspaceCardNew;
+export default GoogleWorkspaceCard;
