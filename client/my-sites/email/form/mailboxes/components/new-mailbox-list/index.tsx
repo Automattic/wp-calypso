@@ -64,6 +64,8 @@ const setFieldsVisibilities = (
 
 interface MailboxListProps {
 	areButtonsBusy?: boolean;
+	cancelActionText?: TranslateResult;
+	fieldLabelTexts?: Partial< Record< MutableFormFieldNames, TranslateResult > >;
 	isAutoFocusEnabled?: boolean;
 	hiddenFieldNames?: HiddenFieldNames[];
 	initialFieldValues?: Partial< Record< HiddenFieldNames, string | boolean > >;
@@ -84,6 +86,8 @@ const NewMailBoxList = (
 
 	const {
 		areButtonsBusy = false,
+		cancelActionText = translate( 'Cancel' ),
+		fieldLabelTexts = {},
 		isAutoFocusEnabled = false,
 		children,
 		hiddenFieldNames = [],
@@ -208,6 +212,7 @@ const NewMailBoxList = (
 								</CardHeading>
 							) }
 							<MailboxFormWrapper
+								fieldLabelTexts={ fieldLabelTexts }
 								mailbox={ mailbox }
 								onFieldValueChanged={ onFieldValueChanged }
 								index={ index }
@@ -233,7 +238,8 @@ const NewMailBoxList = (
 
 				<div
 					className={ classNames( 'new-mailbox-list__supplied-actions', {
-						'not-show-add-new-mailbox': ! showAddNewMailboxButton,
+						'new-mailbox-list__supplied-actions--disable-additional-mailboxes':
+							! showAddNewMailboxButton,
 					} ) }
 				>
 					{ showAddNewMailboxButton && (
@@ -246,7 +252,7 @@ const NewMailBoxList = (
 					<div className="new-mailbox-list__main-actions">
 						{ showCancelButton && (
 							<Button onClick={ handleCancel } disabled={ areButtonsBusy }>
-								<span>{ translate( 'Cancel' ) }</span>
+								<span>{ cancelActionText }</span>
 							</Button>
 						) }
 						<Button busy={ areButtonsBusy } primary type="submit">

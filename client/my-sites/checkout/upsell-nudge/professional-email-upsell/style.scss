@@ -163,25 +163,21 @@
 	.form-text-input-with-affixes {
 		margin-top: 5px;
 	}
-}
 
-.professional-email-upsell__form-buttons {
-	display: flex;
-	flex-direction: column-reverse;
-	justify-content: space-between;
-
-	@include break-mobile {
-		flex-direction: row;
+	.new-mailbox-list__separator {
+		display: none;
 	}
 
-	.button:not( :first-of-type ) {
-		/* Note that we use margin-bottom because we're using column-reverse */
-		margin-bottom: 1em;
+	.new-mailbox-list__supplied-actions--disable-additional-mailboxes {
+		display: unset;
+	}
 
-		@include break-mobile {
-			margin-bottom: 0;
-			margin-left: 0.5em;
-		}
+	.new-mailbox-list__main-actions {
+		justify-content: space-between;
+	}
+
+	.new-mailbox-list__main-actions .button:first-of-type {
+		margin-left: 0;
 	}
 }
 

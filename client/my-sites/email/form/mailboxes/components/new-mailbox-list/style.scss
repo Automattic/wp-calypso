@@ -31,10 +31,6 @@
 	flex-direction: column;
 	justify-content: space-between;
 
-	&.not-show-add-new-mailbox {
-		flex-direction: row-reverse;
-	}
-
 	@include break-mobile {
 		flex-direction: row;
 	}
@@ -47,6 +43,10 @@
 			margin-left: 1.5em;
 		}
 	}
+}
+
+.new-mailbox-list__supplied-actions--disable-additional-mailboxes {
+	flex-direction: row-reverse;
 }
 
 .new-mailbox-list__main-actions {

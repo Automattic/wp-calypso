@@ -68,11 +68,22 @@ describe( '<MailboxField /> suite', () => {
 		expect( defaultProps.field.error ).toBeNull();
 	} );
 
-	it( 'Input value should be validated when the element looses focus', () => {
+	it( 'Input value should be valid when the element is not touched and looses focus', () => {
+		const { defaultProps, element } = setup( FIELD_FIRSTNAME );
+
+		// A blur with no previous change
+		fireEvent.blur( element );
+
+		const error = defaultProps.field.error;
+
+		expect( error ).toBeNull();
+	} );
+
+	it( 'Input value should not be valid when the element is touched and looses focus with invalid value', () => {
 		const { defaultProps, element } = setup( FIELD_FIRSTNAME );
 
 		// Clear the field so that we can trigger a 'required' error
-		fireEvent.change( element, { target: { value: '' } } );
+		fireEvent.change( element, { target: { value: '  ' } } );
 		fireEvent.blur( element );
 
 		const error = defaultProps.field.error;
@@ -84,7 +95,7 @@ describe( '<MailboxField /> suite', () => {
 	it( 'Input element should fire off validation after an onblur event, or if an error is already displayed', () => {
 		const { defaultProps, element } = setup( FIELD_FIRSTNAME );
 
-		fireEvent.change( element, { target: { value: '' } } ); // Invalid value at first
+		fireEvent.change( element, { target: { value: '  ' } } ); // Invalid value at first
 		fireEvent.blur( element );
 
 		expect( defaultProps.field.error ).toBeTruthy(); // An error exists
