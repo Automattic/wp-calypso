@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
@@ -22,7 +21,6 @@ interface Props {
 
 export default function ChooseServiceStep( props: Props ): React.ReactNode {
 	const dispatch = useDispatch();
-	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
@@ -31,11 +29,6 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 		const step = goalsCaptureStepEnabled ? 'goals' : 'intent';
 		return `/setup/${ step }?siteSlug=${ siteSlug }`;
 	};
-
-	const headerText = translate( 'Hire a professional to set up your site.' );
-	const subHeaderText = translate( 'Try risk free with a %(days)d-day money back guarantee', {
-		args: { days: 14 },
-	} );
 
 	useEffect( () => {
 		if ( ! props.queryObject.siteSlug && ! props.queryObject.siteId ) {
@@ -62,11 +55,11 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 
 	return (
 		<StepWrapper
-			headerText={ headerText }
-			fallbackHeaderText={ headerText }
-			subHeaderText={ subHeaderText }
-			fallbackSubHeaderText={ subHeaderText }
-			stepContent={ <DIFMLanding onSubmit={ onSelect } /> }
+			headerText={ '' }
+			fallbackHeaderText={ '' }
+			subHeaderText={ '' }
+			fallbackSubHeaderText={ '' }
+			stepContent={ <DIFMLanding onSubmit={ onSelect } isInOnboarding={ true } /> }
 			backUrl={ getBackUrl( props.queryObject.siteSlug ) }
 			hideBack={ false }
 			allowBackFirstStep={ true }
