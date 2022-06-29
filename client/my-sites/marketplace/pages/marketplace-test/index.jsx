@@ -21,13 +21,14 @@ import {
 	requestEligibility,
 } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransfer, getEligibility } from 'calypso/state/automated-transfer/selectors';
-import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
+import siteIsMarketplaceAddonCompatible from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
 	getPlugins,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -68,9 +69,14 @@ export default function MarketplaceTest() {
 	// eslint-disable-next-line no-console
 	console.log( { dataSearch, isFetchingSearch } );
 
-	const shouldUpgrade = useSelector( ( state ) =>
-		shouldUpgradeCheck( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	const isMarketplaceAddonCompatible = useSelector( ( state ) =>
+		siteIsMarketplaceAddonCompatible( state, selectedSite?.ID )
 	);
+
+	const canInstallPurchasedPlugins =
+		useSelector( ( state ) =>
+			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+		) && isMarketplaceAddonCompatible;
 
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
@@ -93,7 +99,7 @@ export default function MarketplaceTest() {
 		{
 			name: 'Pay & Install Woocommerce Subscription',
 			path: `/checkout/${ selectedSiteSlug }/woocommerce_subscriptions_monthly${
-				shouldUpgrade ? ',business' : '' // or business-monthly if user has selected monthly pricing
+				! canInstallPurchasedPlugins ? ',business' : '' // or business-monthly if user has selected monthly pricing
 			}?redirect_to=/marketplace/thank-you/woocommerce-subscriptions/${ selectedSiteSlug }#step2`,
 		},
 		{
