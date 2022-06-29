@@ -20,7 +20,7 @@ export function jetpackCartToGaPurchase(
 		transaction_id: orderId,
 		coupon: cart.coupon,
 		currency: 'USD', // we track all prices in USD
-		value: cartInfo.jetpackCost,
+		value: cartInfo.jetpackCostUSD,
 		items: cartInfo.jetpackProducts.map( ( product ) =>
 			jetpackProductToGaItem( product, cart.currency )
 		),
