@@ -1,28 +1,23 @@
 import { useCallback } from 'react';
-import { getFileUploader } from 'calypso/lib/media/utils';
+import { getFileUploader, canUseVideoPress } from 'calypso/lib/media/utils';
 import { isFileList } from 'calypso/state/media/utils/is-file-list';
 import { useUploadMediaMutation } from './use-upload-media-mutation';
 
 export const useAddMedia = () => {
 	const { uploadMediaAsync } = useUploadMediaMutation();
 	const addVideopressStatusToFile = ( file, site ) => {
-		const isSiteJetpack = !! site.jetpack;
-		const isVideoPressEnabled = site.options && site.options.videopress_enabled;
-		const isVideoPressModuleActive =
-			! isSiteJetpack ||
-			( site.options.active_modules && site.options.active_modules.includes( 'videopress' ) );
-		const canUseVideopress = isVideoPressEnabled || isVideoPressModuleActive;
+		const siteCanUseVideoPress = canUseVideoPress( site );
 
-		const fileCallback = ( fileObject ) => {
-			fileObject.canUseVideopress = canUseVideopress;
+		const addVideoPressStatusToFileObject = ( fileObject ) => {
+			fileObject.canUseVideoPress = siteCanUseVideoPress;
 		};
 
 		if ( isFileList( file ) ) {
-			Array.from( file ).forEach( fileCallback );
+			Array.from( file ).forEach( addVideoPressStatusToFileObject );
 		} else if ( Array.isArray( file ) ) {
-			file.forEach( fileCallback );
+			file.forEach( addVideoPressStatusToFileObject );
 		} else if ( 'object' === typeof file ) {
-			fileCallback( file );
+			addVideoPressStatusToFileObject( file );
 		}
 
 		return file;
