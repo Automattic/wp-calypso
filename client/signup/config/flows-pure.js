@@ -403,16 +403,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'website-design-services',
-			steps: [
-				'choose-service',
-				'difm-options',
-				'social-profiles',
-				'difm-design-setup-site',
-				'difm-page-picker',
-			],
+			steps: [ 'difm-options', 'social-profiles', 'difm-design-setup-site', 'difm-page-picker' ],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
+			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2022-05-02',
 		},
 

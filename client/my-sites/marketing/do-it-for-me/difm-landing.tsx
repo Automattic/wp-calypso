@@ -10,11 +10,12 @@ import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
@@ -24,6 +25,28 @@ import type { TranslateResult } from 'i18n-calypso';
 import './difm-landing.scss';
 
 const Placeholder = () => <span className="difm-landing__price-placeholder">&nbsp;</span>;
+
+const Wrapper = styled.div`
+	display: flex;
+	align-items: flex-start;
+	gap: 96px;
+	padding: 12px;
+	width: 100%;
+`;
+
+const ContentSection = styled.div`
+	flex: 1;
+`;
+
+const ImageSection = styled.div`
+	width: 540px;
+	img {
+		width: 100%;
+	}
+	@media ( max-width: 660px ) {
+		display: none;
+	}
+`;
 
 const FAQExpander = styled( Button )`
 	align-self: center;
@@ -47,7 +70,6 @@ const FAQHeader = styled.h1`
 const FAQSection = styled.div`
 	display: flex;
 	flex-direction: column;
-	margin: 3rem 0;
 `;
 
 const FoldableFAQ = styled( FoldableFAQComponent )`
@@ -74,6 +96,12 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 			rgba( 6, 117, 196, 0.2 ) -44.3%,
 			rgba( 255, 255, 255, 0 ) 100%
 		);
+		.foldable-faq__answer {
+			margin: 0 16px 24px 0;
+			ul {
+				margin: 0 0 0 16px;
+			}
+		}
 	}
 	.foldable-faq__answer {
 		padding: 0 16px 0 24px;
@@ -92,25 +120,7 @@ const SkipButton = styled( Button )`
 		color: var( --studio-gray-100 );
 		text-decoration: underline;
 		font-size: 0.875rem;
-	}
-`;
-
-const Wrapper = styled.div`
-	display: flex;
-	align-items: flex-start;
-	gap: 96px;
-	padding: 12px;
-`;
-
-const ContentSection = styled.div`
-	flex: 1;
-	flex-basis: 20%;
-`;
-
-const ImageSection = styled.div`
-	flex: 1;
-	@media ( max-width: 660px ) {
-		display: none;
+		font-weight: 500;
 	}
 `;
 
@@ -191,16 +201,32 @@ const Step = ( {
 
 export default function DIFMLanding( {
 	onSubmit,
+	onSkip,
 	isInOnboarding = true,
 }: {
 	onSubmit: () => void;
+	onSkip?: () => void;
 	isInOnboarding: boolean;
 } ) {
 	const translate = useTranslate();
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
 	const isLoading = useSelector( isProductsListFetching );
+	const faqHeader = useRef( null );
 
 	const [ isFAQSectionOpen, setIsFAQSectionOpen ] = useState( false );
+
+	const onFAQButtonClick = () => {
+		setIsFAQSectionOpen( ! isFAQSectionOpen );
+	};
+
+	useEffect( () => {
+		if ( isFAQSectionOpen && faqHeader.current ) {
+			scrollIntoViewport( faqHeader.current, {
+				behavior: 'smooth',
+				scrollMode: 'if-needed',
+			} );
+		}
+	}, [ isFAQSectionOpen ] );
 
 	const planTitle = isEnabled( 'plans/pro-plan' )
 		? getPlan( PLAN_WPCOM_PRO )?.getTitle()
@@ -267,7 +293,9 @@ export default function DIFMLanding( {
 							{ translate( 'Hire a Professional' ) }
 						</NextButton>
 						{ isInOnboarding && (
-							<SkipButton isLink={ true }>{ translate( 'Skip for now' ) }</SkipButton>
+							<SkipButton isLink={ true } onClick={ onSkip }>
+								{ translate( 'Skip for now' ) }
+							</SkipButton>
 						) }
 					</CTASectionWrapper>
 				</ContentSection>
@@ -281,7 +309,8 @@ export default function DIFMLanding( {
 
 			<FAQSection>
 				<FAQExpander
-					onClick={ () => setIsFAQSectionOpen( ! isFAQSectionOpen ) }
+					ref={ faqHeader }
+					onClick={ onFAQButtonClick }
 					icon={ <Gridicon icon={ isFAQSectionOpen ? 'chevron-up' : 'chevron-down' } /> }
 				>
 					{ isFAQSectionOpen
@@ -432,7 +461,6 @@ export default function DIFMLanding( {
 					</>
 				) }
 			</FAQSection>
-			{ /* <CTASection />  */ }
 		</>
 	);
 }

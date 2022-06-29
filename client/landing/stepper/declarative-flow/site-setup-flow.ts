@@ -25,6 +25,7 @@ import type { StepPath } from './internals/steps-repository';
 
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
+const { goalsToIntent } = Onboard.utils;
 
 export const siteSetupFlow: Flow = {
 	name: 'site-setup',
@@ -64,6 +65,7 @@ export const siteSetupFlow: Flow = {
 			'wooConfirm',
 			'editEmail',
 			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
+			'difmStartingPoint',
 		] as StepPath[];
 	},
 	useSideEffect() {
@@ -223,7 +225,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					if ( intent === SiteIntent.DIFM ) {
-						return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+						return navigate( 'difmStartingPoint' );
 					}
 
 					if ( verticalsStepEnabled ) {
@@ -369,6 +371,10 @@ export const siteSetupFlow: Flow = {
 
 					return navigate( providedDependencies?.url as StepPath );
 				}
+
+				case 'difmStartingPoint': {
+					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+				}
 			}
 		}
 
@@ -402,6 +408,8 @@ export const siteSetupFlow: Flow = {
 					} else if ( intent === 'write' ) {
 						// this means we came from write => blogger staring point => choose a design
 						return navigate( 'bloggerStartingPoint' );
+					} else if ( intent === 'difm' ) {
+						return navigate( 'difmStartingPoint' );
 					}
 
 					if ( goalsStepEnabled ) {
@@ -457,6 +465,11 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'goals' );
 					}
 
+				case 'difmStartingPoint':
+					if ( goalsStepEnabled ) {
+						return navigate( 'goals' );
+					}
+
 				default:
 					return navigate( 'intent' );
 			}
@@ -482,6 +495,24 @@ export const siteSetupFlow: Flow = {
 
 				case 'import':
 					return navigate( 'importList' );
+
+				case 'difmStartingPoint': {
+					const intent = goalsToIntent( goals.filter( ( goal ) => goal !== SiteGoal.DIFM ) );
+					setIntent( intent );
+
+					if ( verticalsStepEnabled ) {
+						return navigate( 'vertical' );
+					}
+
+					switch ( intent ) {
+						case SiteIntent.Write:
+						case SiteIntent.Sell:
+							return navigate( 'options' );
+						case SiteIntent.Build:
+						default:
+							return navigate( 'designSetup' );
+					}
+				}
 
 				default:
 					return navigate( 'intent' );
