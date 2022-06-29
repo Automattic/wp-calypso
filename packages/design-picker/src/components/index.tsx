@@ -4,6 +4,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -58,6 +59,7 @@ interface DesignButtonProps {
 	hideDesignTitle?: boolean;
 	hasDesignOptionHeader?: boolean;
 	isPremiumThemeAvailable?: boolean;
+	onCheckout?: any;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -70,6 +72,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hideDesignTitle,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable = false,
+	onCheckout = undefined,
 } ) => {
 	const { __ } = useI18n();
 
@@ -86,6 +89,44 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	) : (
 		<BadgeContainer badgeType={ badgeType } isPremiumThemeAvailable={ isPremiumThemeAvailable } />
 	);
+
+	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
+
+	function getPricingDescription() {
+		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
+			return null;
+		}
+
+		let text: any = __( 'Free' );
+
+		if ( design.is_premium ) {
+			text = createInterpolateElement(
+				shouldUpgrade
+					? sprintf(
+							/* translators: %(price)s - the price of the theme */
+							__( '%(price)s per year or <button>included in the Pro plan</button>' ),
+							{
+								price: design.price,
+							}
+					  )
+					: __( 'Included in the Pro plan' ),
+				{
+					button: (
+						<Button
+							isLink={ true }
+							className="design-picker__button-link"
+							onClick={ ( e: any ) => {
+								e.stopPropagation();
+								onCheckout?.();
+							} }
+						/>
+					),
+				}
+			);
+		}
+
+		return <div className="design-picker__pricing-description">{ text }</div>;
+	}
 
 	return (
 		<button
@@ -133,6 +174,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					) }
 					{ badgeContainer }
 				</span>
+				{ getPricingDescription() }
 			</span>
 		</button>
 	);
@@ -234,6 +276,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 			) }
 			<DesignButton
 				{ ...props }
+				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				onSelect={ previewOnly ? onPreview : noop }
 				disabled={ ! isBlankCanvas && ! previewOnly }
 			/>
@@ -262,6 +305,7 @@ export interface DesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
+	onCheckout?: any;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -287,6 +331,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
+	onCheckout = undefined,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -331,6 +376,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 						previewOnly={ previewOnly }
 						hasDesignOptionHeader={ hasDesignOptionHeader }
+						onCheckout={ onCheckout }
 					/>
 				) ) }
 			</div>

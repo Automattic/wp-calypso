@@ -42,6 +42,7 @@ export interface Design {
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
 	preview?: 'static';
 	design_type?: DesignType;
+	price?: string;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;

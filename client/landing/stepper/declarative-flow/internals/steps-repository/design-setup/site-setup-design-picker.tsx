@@ -538,6 +538,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			onSelect={ pickDesign }
 			onPreview={ previewDesign }
 			onUpgrade={ upgradePlan }
+			onCheckout={ goToCheckout }
 			className={ classnames( {
 				'design-setup__has-categories': showDesignPickerCategories,
 			} ) }
