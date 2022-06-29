@@ -2,18 +2,29 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import pageSpy from 'page';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
-import HeaderCake from 'calypso/components/header-cake';
+import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import productsList from 'calypso/state/products-list/reducer';
+import { reducer as ui } from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { MapDomain } from '..';
+
+const render = ( el, options ) =>
+	renderWithProvider( el, { ...options, reducers: { ui, productsList } } );
 
 jest.mock( 'page', () => {
 	const pageMock = jest.fn();
 	pageMock.redirect = jest.fn();
 	return pageMock;
 } );
+
+jest.mock( 'calypso/components/domains/map-domain-step', () =>
+	jest.fn( () => <div data-testid="map-domain-step" /> )
+);
 
 describe( 'MapDomain component', () => {
 	const defaultProps = {
@@ -22,6 +33,7 @@ describe( 'MapDomain component', () => {
 		domainsWithPlansOnly: false,
 		translate: ( string ) => string,
 		isSiteUpgradeable: true,
+		isSiteOnPaidPlan: false,
 		selectedSite: {
 			ID: 500,
 			slug: 'domain.com',
@@ -31,65 +43,81 @@ describe( 'MapDomain component', () => {
 	};
 
 	test( 'does not blow up with default props', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } /> );
-		expect( wrapper ).toHaveLength( 1 );
+		render( <MapDomain { ...defaultProps } /> );
+		expect( screen.queryByText( /map a domain/i ) ).toBeInTheDocument();
 	} );
 
 	test( 'redirects if site cannot be upgraded at mounting', () => {
-		shallow( <MapDomain { ...defaultProps } isSiteUpgradeable={ false } /> );
+		render( <MapDomain { ...defaultProps } isSiteUpgradeable={ false } /> );
 		expect( pageSpy.redirect ).toBeCalledWith( '/domains/add/mapping' );
 	} );
 
 	test( 'redirects if site cannot be upgraded at new props', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } isSiteUpgradeable={ true } /> );
-		wrapper.setProps( { selectedSiteId: 501, isSiteUpgradeable: false } );
+		const { rerender } = render( <MapDomain { ...defaultProps } isSiteUpgradeable={ true } /> );
+		rerender(
+			<MapDomain { ...defaultProps } isSiteUpgradeable={ false } selectedSiteId={ 501 } />
+		);
 		expect( pageSpy.redirect ).toBeCalledWith( '/domains/add/mapping' );
 	} );
 
 	test( 'renders a MapDomainStep', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } /> );
-		expect( wrapper.find( MapDomainStep ) ).toHaveLength( 1 );
+		render( <MapDomain { ...defaultProps } /> );
+		expect( screen.queryByTestId( 'map-domain-step' ) ).toBeInTheDocument();
 	} );
 
-	test( "goes back when HeaderCake's onClick is fired", () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } /> );
-		expect( wrapper.find( HeaderCake ).prop( 'onClick' ) ).toEqual( wrapper.instance().goBack );
+	test( "goes back when HeaderCake's onClick is fired", async () => {
+		render( <MapDomain { ...defaultProps } /> );
+		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
+		await userEvent.click( backBtn );
+		expect( pageSpy ).toHaveBeenCalledWith( `/domains/add/${ defaultProps.selectedSiteSlug }` );
 	} );
 
-	test( 'goes back to /domains/add if no selected site', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } selectedSite={ null } /> );
-		wrapper.instance().goBack();
+	test( 'goes back to /domains/add if no selected site', async () => {
+		render( <MapDomain { ...defaultProps } selectedSite={ null } /> );
+		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
+		await userEvent.click( backBtn );
 		expect( pageSpy ).toBeCalledWith( '/domains/add' );
 	} );
 
-	test( 'goes back to domain management for VIP sites', () => {
-		const wrapper = shallow(
+	test( 'goes back to domain management for VIP sites', async () => {
+		render(
 			<MapDomain
 				{ ...defaultProps }
 				selectedSiteSlug="baba"
 				selectedSite={ { ...defaultProps.selectedSite, is_vip: true } }
 			/>
 		);
-		wrapper.instance().goBack();
+		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
+		await userEvent.click( backBtn );
 		expect( pageSpy ).toBeCalledWith( domainManagementList( 'baba' ) );
 	} );
 
-	test( 'goes back to domain add page if non-VIP site', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } selectedSiteSlug="baba" /> );
-		wrapper.instance().goBack();
+	test( 'goes back to domain add page if non-VIP site', async () => {
+		render( <MapDomain { ...defaultProps } selectedSiteSlug="baba" /> );
+		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
+		await userEvent.click( backBtn );
 		expect( pageSpy ).toBeCalledWith( '/domains/add/baba' );
 	} );
 
 	test( 'does not render a notice by default', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } /> );
-		// we match the notice by props, because enzyme isn't matching the Notice type for some reason
-		expect( wrapper.find( { status: 'is-error' } ) ).toHaveLength( 0 );
+		render( <MapDomain { ...defaultProps } /> );
+		expect( screen.queryByLabelText( 'Notice' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'render a notice by when there is an errorMessage in the state', () => {
-		const wrapper = shallow( <MapDomain { ...defaultProps } /> );
-		// we match the notice by props, because enzyme isn't matching the Notice type for some reason
-		wrapper.setState( { errorMessage: 'baba' } );
-		expect( wrapper.find( { status: 'is-error' } ) ).toHaveLength( 1 );
+	test( 'render a notice by when there is an errorMessage in the state', async () => {
+		MapDomainStep.mockImplementationOnce( ( { onMapDomain } ) => (
+			<button onClick={ onMapDomain } data-testid="map-domain-step" />
+		) );
+		render( <MapDomain { ...defaultProps } isSiteOnPaidPlan /> );
+
+		const mapDomainBtn = screen.getByTestId( 'map-domain-step' );
+
+		jest
+			.spyOn( wpcom.req, 'post' )
+			.mockImplementationOnce( () => Promise.reject( new Error( 'arbitrary failure' ) ) );
+
+		await userEvent.click( mapDomainBtn );
+
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'arbitrary failure' );
 	} );
 } );
