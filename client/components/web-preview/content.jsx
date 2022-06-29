@@ -273,6 +273,7 @@ export default class WebPreviewContent extends Component {
 		}
 		if ( this.checkForIframeLoadFailure( caller ) ) {
 			debug( `preview not loaded yet, waiting ${ loadingTimeout }ms` );
+			clearTimeout( this.loadingTimeoutTimer );
 
 			// To prevent iframe firing the onload event before the embedded page sends the
 			// partially-loaded message, we add a waiting period here.
