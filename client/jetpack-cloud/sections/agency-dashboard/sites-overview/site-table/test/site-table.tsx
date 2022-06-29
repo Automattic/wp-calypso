@@ -72,7 +72,7 @@ describe( '<SiteTable>', () => {
 	];
 	const props = {
 		items,
-		isFetching: false,
+		isLoading: false,
 		columns: siteColumns,
 	};
 	const initialState = {};

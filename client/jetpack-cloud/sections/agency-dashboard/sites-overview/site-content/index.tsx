@@ -20,14 +20,14 @@ const addPageArgs = ( pageNumber: number ) => {
 interface Props {
 	data: { sites: Array< any >; total: number; perPage: number } | undefined;
 	isError: boolean;
-	isFetching: boolean;
+	isLoading: boolean;
 	currentPage: number;
 }
 
 export default function SiteContent( {
 	data,
 	isError,
-	isFetching,
+	isLoading,
 	currentPage,
 }: Props ): ReactElement {
 	const translate = useTranslate();
@@ -35,7 +35,7 @@ export default function SiteContent( {
 
 	const sites = formatSites( data?.sites );
 
-	if ( ! isFetching && ! isError && ! sites.length ) {
+	if ( ! isLoading && ! isError && ! sites.length ) {
 		return <div className="site-content__no-sites">{ translate( 'No active sites' ) }</div>;
 	}
 
@@ -43,14 +43,12 @@ export default function SiteContent( {
 		addPageArgs( pageNumber );
 	};
 
-	const showLoader = isFetching && ! sites.length;
-
 	return (
 		<>
-			<SiteTable isFetching={ showLoader } columns={ siteColumns } items={ sites } />
+			<SiteTable isLoading={ isLoading } columns={ siteColumns } items={ sites } />
 			<div className="site-content__mobile-view">
 				<>
-					{ showLoader ? (
+					{ isLoading ? (
 						<Card>
 							<TextPlaceholder />
 						</Card>
