@@ -32,6 +32,7 @@ import { STEP_NAME } from './constants';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
+import ThemeInfoPopup from './theme-info-popup';
 import UpgradeModal from './upgrade-modal';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
@@ -72,6 +73,33 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const isEligibleForProPlan = useSelect(
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
+	const [ showInfoPopup, setShowInfoPopup ] = useState( false );
+
+	// Setup a click handler to close the info popup when the user clicks anywhere outside the popup.
+	useEffect( () => {
+		const closeInfoPopup = ( e: any ) => {
+			const infoPopup = document.querySelector( '.site-setup.design-setup .theme-info-popup' );
+			const isInfoPopupButton = e.target.classList.contains( 'design-setup__info-popover' );
+			const isInfoPopupButtonParent = e.target.parentNode.classList.contains(
+				'design-setup__info-popover'
+			);
+			const isInfoPopup = e.target === infoPopup;
+			const isChildOfInfoPopup = infoPopup?.contains( e.target );
+
+			// Don't use this close handler if the info button or popup or anything inside the popup is clicked.
+			if ( isInfoPopupButton || isInfoPopupButtonParent || isInfoPopup || isChildOfInfoPopup ) {
+				return;
+			}
+
+			setShowInfoPopup( false );
+		};
+
+		document.body.addEventListener( 'click', closeInfoPopup );
+
+		return function cleanup() {
+			window.removeEventListener( 'click', closeInfoPopup );
+		};
+	}, [] );
 
 	const siteVerticalId = useSelect(
 		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site.ID ) ) || ''
@@ -388,7 +416,15 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		if ( newDesignEnabled ) {
 			actionButtons = (
 				<div>
-					<button type="button" className={ 'design-setup__info-popover' }>
+					<button
+						type="button"
+						className={ 'design-setup__info-popover' }
+						onClick={ ( e ) => {
+							e.preventDefault();
+
+							setShowInfoPopup( ! showInfoPopup );
+						} }
+					>
 						<Gridicon fill={ 'white' } icon={ 'info-outline' } size={ 24 } />
 					</button>
 
@@ -406,25 +442,28 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		}
 
 		return (
-			<StepContainer
-				stepName={ STEP_NAME }
-				stepContent={ stepContent }
-				hideSkip
-				hideNext={ newDesignEnabled || shouldUpgrade }
-				className={ 'design-setup__preview' }
-				nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
-				goBack={ handleBackClick }
-				goNext={ () => pickDesign() }
-				formattedHeader={
-					<FormattedHeader
-						id={ 'design-setup-header' }
-						headerText={ designTitle }
-						align={ isMobile ? 'left' : 'center' }
-					/>
-				}
-				customizedActionButtons={ actionButtons }
-				recordTracksEvent={ recordStepContainerTracksEvent }
-			/>
+			<>
+				{ showInfoPopup && selectedDesign && <ThemeInfoPopup slug={ selectedDesign.slug } /> }
+				<StepContainer
+					stepName={ STEP_NAME }
+					stepContent={ stepContent }
+					hideSkip
+					hideNext={ newDesignEnabled || shouldUpgrade }
+					className={ 'design-setup__preview' }
+					nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
+					goBack={ handleBackClick }
+					goNext={ () => pickDesign() }
+					formattedHeader={
+						<FormattedHeader
+							id={ 'design-setup-header' }
+							headerText={ designTitle }
+							align={ isMobile ? 'left' : 'center' }
+						/>
+					}
+					customizedActionButtons={ actionButtons }
+					recordTracksEvent={ recordStepContainerTracksEvent }
+				/>
+			</>
 		);
 	}
 
@@ -440,55 +479,57 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const newDesignEnabled = isEnabled( 'signup/theme-preview-screen' );
 
 	const stepContent = showGeneratedDesigns ? (
-		<GeneratedDesignPicker
-			selectedDesign={ selectedGeneratedDesign }
-			designs={ generatedDesigns }
-			verticalId={ siteVerticalId }
-			locale={ locale }
-			previews={ generatedDesigns.map( ( design ) => (
-				<GeneratedDesignPickerWebPreview
-					key={ design.slug }
-					site={ site }
-					design={ design }
-					locale={ locale }
-					verticalId={ siteVerticalId }
-					isSelected={ design.slug === selectedGeneratedDesign?.slug }
-					isStickyToolbar={ ! isMobile && isSticky }
-					recordTracksEvent={ recordTracksEvent }
-				/>
-			) ) }
-			heading={
-				<>
-					<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
-						{ heading }
-						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'top' ) }>
-							{ translate( 'Continue' ) }
-						</Button>
+		<>
+			<GeneratedDesignPicker
+				selectedDesign={ selectedGeneratedDesign }
+				designs={ generatedDesigns }
+				verticalId={ siteVerticalId }
+				locale={ locale }
+				previews={ generatedDesigns.map( ( design ) => (
+					<GeneratedDesignPickerWebPreview
+						key={ design.slug }
+						site={ site }
+						design={ design }
+						locale={ locale }
+						verticalId={ siteVerticalId }
+						isSelected={ design.slug === selectedGeneratedDesign?.slug }
+						isStickyToolbar={ ! isMobile && isSticky }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) ) }
+				heading={
+					<>
+						<div className={ classnames( 'step-container__header', 'design-setup__header' ) }>
+							{ heading }
+							<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'top' ) }>
+								{ translate( 'Continue' ) }
+							</Button>
+						</div>
+						{ ! isMobile && (
+							<StickyPositioner
+								stickyOptions={ STICKY_OPTIONS }
+								onShouldStickyChange={ handleShouldStickyChange }
+							/>
+						) }
+					</>
+				}
+				footer={
+					<div
+						className={ classnames( 'step-container__footer', 'design-setup__footer', {
+							'is-visible': isSticky,
+						} ) }
+					>
+						<div className="design-setup__footer-content">
+							<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
+								{ translate( 'Continue' ) }
+							</Button>
+						</div>
 					</div>
-					{ ! isMobile && (
-						<StickyPositioner
-							stickyOptions={ STICKY_OPTIONS }
-							onShouldStickyChange={ handleShouldStickyChange }
-						/>
-					) }
-				</>
-			}
-			footer={
-				<div
-					className={ classnames( 'step-container__footer', 'design-setup__footer', {
-						'is-visible': isSticky,
-					} ) }
-				>
-					<div className="design-setup__footer-content">
-						<Button primary onClick={ () => pickDesign( selectedGeneratedDesign, 'bottom' ) }>
-							{ translate( 'Continue' ) }
-						</Button>
-					</div>
-				</div>
-			}
-			onPreview={ previewDesign }
-			onViewMore={ viewMoreDesigns }
-		/>
+				}
+				onPreview={ previewDesign }
+				onViewMore={ viewMoreDesigns }
+			/>
+		</>
 	) : (
 		<DesignPicker
 			designs={ shuffledStaticDesigns }
