@@ -37,6 +37,20 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	.components-modal__header {
 		display: flex;
 		position: absolute;
+
+		button.components-button {
+			span {
+				.components-popover.components-tooltip {
+					left: unset!important;
+					right: -48px;
+
+					.components-popover__content {
+						overflow: visible!important;
+						max-width: unset!important;
+					}
+				}
+			}
+		}
 	}
 
 	.components-guide__container {
