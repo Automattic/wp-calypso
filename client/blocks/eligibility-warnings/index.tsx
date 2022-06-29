@@ -23,6 +23,7 @@ import {
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
 import getRequest from 'calypso/state/selectors/get-request';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
@@ -223,12 +224,58 @@ EligibilityWarnings.defaultProps = {
 	onProceed: noop,
 };
 
+/**
+ * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the
+ * INSTALL_PURCHASED_PLUGINS feature is present.
+ *
+ * Starter plans do not have the ATOMIC feature, but they have the
+ * INSTALL_PURCHASED_PLUGINS feature which allows them to buy marketplace
+ * addons (which do have the ATOMIC feature).
+ *
+ * This means a starter plan about to purchase a marketplace addon might get a
+ * 'NO_BUSINESS_PLAN' hold on atomic transfer; however, if we're about to buy a
+ * marketplace addon which provides the ATOMIC feature, then we can ignore this
+ * hold.
+ */
+const processMarketplaceExceptions = (
+	state: Record< string, unknown >,
+	eligibilityData: EligibilityData,
+	isEligible: boolean
+) => {
+	// If no eligibilityHolds are defined, skip.
+	if ( typeof eligibilityData.eligibilityHolds === 'undefined' ) {
+		return { eligibilityData, isEligible };
+	}
+
+	// If missing INSTALL_PURCHASED_PLUGINS feature, skip.
+	const siteId = getSelectedSiteId( state );
+	if ( ! siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ) {
+		return { eligibilityData, isEligible };
+	}
+
+	// Remove "NO_BUSINESS_PLAN" holds, because we are about to purchase a
+	// marketplace addon which will provide us the atomic feature.
+	eligibilityData.eligibilityHolds = eligibilityData.eligibilityHolds.filter(
+		( hold ) => hold !== 'NO_BUSINESS_PLAN'
+	);
+	isEligible = eligibilityData.eligibilityHolds.length > 0;
+	return { eligibilityData, isEligible };
+};
+
 const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
-	const eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );
-	const isEligible = ownProps.isEligible || isEligibleForAutomatedTransfer( state, siteId );
+	let eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );
+	let isEligible = ownProps.isEligible || isEligibleForAutomatedTransfer( state, siteId );
 	const dataLoaded = ownProps.eligibilityData || !! eligibilityData.lastUpdate;
+
+	if ( ownProps.isMarketplace ) {
+		( { eligibilityData, isEligible } = processMarketplaceExceptions(
+			state,
+			eligibilityData,
+			isEligible
+		) );
+	}
 
 	return {
 		eligibilityData,
