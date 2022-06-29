@@ -1,4 +1,4 @@
-import { useRtl } from 'i18n-calypso';
+import { TranslateResult, useRtl } from 'i18n-calypso';
 import { PropsWithChildren } from 'react';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { MailboxField } from 'calypso/my-sites/email/form/mailboxes/components/mailbox-field';
@@ -7,10 +7,12 @@ import {
 	GoogleMailboxFormFields,
 	MailboxFormFieldBase,
 	MailboxFormFields,
+	MutableFormFieldNames,
 	TitanMailboxFormFields,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 
 interface MailboxFormWrapperProps {
+	fieldLabelTexts: Partial< Record< MutableFormFieldNames, TranslateResult > >;
 	index: number;
 	isAutoFocusEnabled: boolean;
 	mailbox: MailboxForm< EmailProvider >;
@@ -21,6 +23,7 @@ type FieldValueChangedHandler = ( field: MailboxFormFieldBase< string > ) => voi
 
 interface CommonFieldProps {
 	field: MailboxFormFieldBase< string >;
+	fieldLabelText?: TranslateResult;
 	isFirstVisibleField: boolean;
 	onFieldValueChanged: FieldValueChangedHandler;
 	onRequestFieldValidation: () => void;
@@ -36,7 +39,11 @@ type MailboxFormWrapperWithCommonProps = MailboxFormWrapperProps & {
 	formFields: MailboxFormFields;
 };
 
-const createCommonFieldPropsHandler = ( formIndex: number, isAutoFocusEnabled: boolean ) => {
+const createCommonFieldPropsHandler = (
+	formIndex: number,
+	isAutoFocusEnabled: boolean,
+	fieldLabelTexts: Partial< Record< MutableFormFieldNames, TranslateResult > >
+) => {
 	let renderPosition = 0;
 
 	return (
@@ -50,6 +57,7 @@ const createCommonFieldPropsHandler = ( formIndex: number, isAutoFocusEnabled: b
 
 		return {
 			field,
+			fieldLabelText: fieldLabelTexts?.[ field.fieldName as MutableFormFieldNames ],
 			onFieldValueChanged,
 			onRequestFieldValidation: () => mailbox.validateField( field.fieldName ),
 			isAutoFocusEnabled,
@@ -140,8 +148,12 @@ const TitanFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 };
 
 const MailboxFormWrapper = ( props: PropsWithChildren< MailboxFormWrapperProps > ): JSX.Element => {
-	const { children, index, isAutoFocusEnabled, mailbox } = props;
-	const getCommonFieldProps = createCommonFieldPropsHandler( index, isAutoFocusEnabled );
+	const { children, fieldLabelTexts, index, isAutoFocusEnabled, mailbox } = props;
+	const getCommonFieldProps = createCommonFieldPropsHandler(
+		index,
+		isAutoFocusEnabled,
+		fieldLabelTexts
+	);
 	const formFields = mailbox.formFields;
 	const commonProps = { ...props, formFields, getCommonFieldProps };
 
