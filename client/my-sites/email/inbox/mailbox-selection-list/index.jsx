@@ -1,8 +1,7 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
@@ -23,12 +22,9 @@ import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import {
-	recordEmailAppLaunchEvent,
-	recordInboxNewMailboxUpsellClickEvent,
-} from 'calypso/my-sites/email/email-management/home/utils';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
-import { emailManagementEdit, emailManagementInbox } from 'calypso/my-sites/email/paths';
+import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import NewMailboxUpsell from 'calypso/my-sites/email/inbox/new-mailbox-upsell';
+import { emailManagementInbox } from 'calypso/my-sites/email/paths';
 import { recordPageView } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
@@ -131,34 +127,7 @@ MailboxItem.propType = {
 	key: PropTypes.string,
 };
 
-const NewMailboxUpsell = ( { domain } ) => {
-	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const selectedSiteSlug = selectedSite?.slug;
-
-	const handleCreateNewMailboxClick = useCallback( () => {
-		recordInboxNewMailboxUpsellClickEvent();
-		page(
-			emailManagementEdit( selectedSiteSlug, domain, 'titan/new', null, { source: INBOX_SOURCE } )
-		);
-	}, [ selectedSiteSlug ] );
-
-	return (
-		<div className="mailbox-selection-list__new-mailbox-upsell-container">
-			<div className="mailbox-selection-list__new-mailbox-upsell-messages">
-				<h2>{ translate( 'Need another mailbox?' ) }</h2>
-				<div>{ translate( 'Create new and activate immediately' ) }</div>
-			</div>
-			<div className="mailbox-selection-list__new-mailbox-upsell-cta">
-				<Button onClick={ handleCreateNewMailboxClick }>
-					{ translate( 'Create a new mailbox' ) }
-				</Button>
-			</div>
-		</div>
-	);
-};
-
-const MailboxItems = ( { mailboxes, domain } ) => {
+const MailboxItems = ( { mailboxes } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -174,8 +143,6 @@ const MailboxItems = ( { mailboxes, domain } ) => {
 			{ mailboxes.map( ( mailbox, index ) => (
 				<MailboxItem mailbox={ mailbox } key={ index } />
 			) ) }
-
-			<NewMailboxUpsell domain={ domain } />
 		</>
 	);
 };
@@ -239,7 +206,7 @@ MailboxLoaderError.propType = {
 	siteId: PropTypes.number.isRequired,
 };
 
-const MailboxSelectionList = () => {
+const MailboxSelectionList = ( { domains } ) => {
 	const dispatch = useDispatch();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID ?? null;
@@ -277,7 +244,10 @@ const MailboxSelectionList = () => {
 		<div className="mailbox-selection-list__container">
 			<div className="mailbox-selection-list">
 				{ mailboxes.length > 0 ? (
-					<MailboxItems mailboxes={ mailboxes } domain={ mailboxes[ 0 ]?.domain } />
+					<>
+						<MailboxItems mailboxes={ mailboxes } />
+						<NewMailboxUpsell domains={ domains } />
+					</>
 				) : (
 					<MailboxListStatus statusMessage={ translate( 'You have no mailboxes yet.' ) } />
 				) }
