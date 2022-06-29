@@ -118,9 +118,7 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const domainsWithNoEmail = nonWpcomDomains.filter( ( domain ) => ! domainHasEmail( domain ) );
 
 	const isSingleDomainThatHasEmail =
-		domainsWithEmail.length === 1 &&
-		domainsWithNoEmail.length === 0 &&
-		domainsWithEmail[ 0 ].domain === selectedSite?.domain;
+		domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
 		return <LoadingPlaceholder />;
