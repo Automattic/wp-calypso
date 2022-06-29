@@ -2,7 +2,7 @@ import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, includes, isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
+import { includes, isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -30,6 +30,7 @@ import { removePluginStatuses } from 'calypso/state/plugins/installed/status/act
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -57,11 +58,14 @@ export class PluginsList extends Component {
 				name: PropTypes.string,
 			} )
 		).isRequired,
+		hasManagePlugins: PropTypes.bool,
 		header: PropTypes.string.isRequired,
+		isPlaceholder: PropTypes.bool.isRequired,
+		pluginUpdateCount: PropTypes.number,
 		selectedSite: PropTypes.object,
 		selectedSiteSlug: PropTypes.string,
-		pluginUpdateCount: PropTypes.number,
-		isPlaceholder: PropTypes.bool.isRequired,
+		siteIsAtomic: PropTypes.bool,
+		siteIsJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -518,14 +522,15 @@ export class PluginsList extends Component {
 	}
 
 	getAllowedPluginActions( plugin ) {
-		const { hasManagePlugins } = this.props;
+		const { hasManagePlugins, siteIsAtomic, siteIsJetpack } = this.props;
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
-		const hiddenForAutomatedTransfer =
-			this.props.isSiteAutomatedTransfer && includes( autoManagedPlugins, plugin.slug );
+		const isManagedPlugin = siteIsAtomic && includes( autoManagedPlugins, plugin.slug );
+		const canManagePlugins =
+			( siteIsJetpack && ! siteIsAtomic ) || ( siteIsAtomic && hasManagePlugins );
 
 		return {
-			autoupdate: ! hiddenForAutomatedTransfer && hasManagePlugins,
-			activation: ! hiddenForAutomatedTransfer && hasManagePlugins,
+			autoupdate: ! isManagedPlugin && canManagePlugins,
+			activation: ! isManagedPlugin && canManagePlugins,
 		};
 	}
 
@@ -586,7 +591,8 @@ export default connect(
 			selectedSiteSlug: getSelectedSiteSlug( state ),
 			hasManagePlugins: siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS ),
 			inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
+			siteIsAtomic: isSiteAutomatedTransfer( state, selectedSite?.ID ),
+			siteIsJetpack: isJetpackSite( state, selectedSite?.ID ),
 		};
 	},
 	{
