@@ -19,3 +19,6 @@ results/
 
 # Cookie files
 cookies/
+
+/*.png
+/*.zip
