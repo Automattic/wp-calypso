@@ -67,7 +67,6 @@ describe( 'MapDomain component', () => {
 
 	test( "goes back when HeaderCake's onClick is fired", async () => {
 		render( <MapDomain { ...defaultProps } /> );
-		// @TODO be more specific maybe to omit the `getALLByRole`
 		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
 		await userEvent.click( backBtn );
 		expect( pageSpy ).toHaveBeenCalledWith( `/domains/add/${ defaultProps.selectedSiteSlug }` );
