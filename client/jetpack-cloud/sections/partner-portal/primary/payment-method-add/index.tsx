@@ -18,6 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
@@ -30,7 +31,6 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { hasValidPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
-import AssignLicenseStepProgress from '../../assign-license-step-progress';
 
 import './style.scss';
 
@@ -127,7 +127,7 @@ function PaymentMethodAdd(): ReactElement {
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 
-			{ returnQueryArg && <AssignLicenseStepProgress currentStep={ 2 } /> }
+			{ returnQueryArg && <AssignLicenseStepProgress currentStep="addPaymentMethod" /> }
 
 			<div className="payment-method-add__header">
 				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
