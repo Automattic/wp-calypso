@@ -337,7 +337,7 @@ export async function blogDiscoveryByFeedId( context, next ) {
 			{ meta: { persist: false } }
 		)
 		.then( ( blog_id ) => {
-			context.params.blog = blog_id;
+			context.params.blog_id = blog_id;
 			next();
 		} )
 		.catch( () => {
