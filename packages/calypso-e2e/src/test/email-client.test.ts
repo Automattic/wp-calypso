@@ -1,5 +1,22 @@
-import { describe, expect, test } from '@jest/globals';
+import { describe, expect, test, jest } from '@jest/globals';
 import { EmailClient } from '../email-client';
+import { SecretsManager, Secrets } from '../secrets';
+
+const fakeSecrets = {
+	testAccounts: {
+		basicUser: {
+			username: 'wpcomuser2',
+			password: 'hunter2',
+			primarySite: 'wpcomuser.wordpress.com/',
+		},
+	},
+	mailosaur: {
+		apiKey: 'fake_key',
+		defaultUserInboxId: 'fake_id',
+	},
+} as unknown as Secrets;
+
+jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 describe( 'EmailClient: get2FACodeFromMessage', function () {
 	const baseSMSMessage = {
