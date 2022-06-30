@@ -1,4 +1,5 @@
 import { describe, expect, test, jest } from '@jest/globals';
+import { Message } from 'mailosaur/lib/models';
 import { EmailClient } from '../email-client';
 import { SecretsManager, Secrets } from '../secrets';
 
@@ -19,42 +20,44 @@ const fakeSecrets = {
 jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 describe( 'EmailClient: get2FACodeFromMessage', function () {
-	const baseSMSMessage = {
-		id: 'fake_id',
-		server: 'fake_server',
-		from: [
-			{
-				phone: '18888888888',
-			},
-		],
-		to: [
-			{
-				phone: '18887776666',
-			},
-		],
-		received: new Date( Date.now() - 3600000 ),
-		subject: 'SMS',
-		text: {
-			codes: [
+	const createBaseSMSMessage = (): Partial< Message > => {
+		return {
+			id: 'fake_id',
+			server: 'fake_server',
+			from: [
 				{
-					value: '0123456',
+					phone: '18888888888',
 				},
 			],
-			body: 'WordPress.com verification code: 0123456',
-		},
+			to: [
+				{
+					phone: '18887776666',
+				},
+			],
+			received: new Date( Date.now() - 3600000 ),
+			subject: 'SMS',
+			text: {
+				codes: [
+					{
+						value: '0123456',
+					},
+				],
+				body: 'WordPress.com verification code: 0123456',
+			},
+		};
 	};
 
 	test( 'One code in message', function () {
 		const emailClient = new EmailClient();
 
-		const code = emailClient.get2FACodeFromMessage( baseSMSMessage );
+		const code = emailClient.get2FACodeFromMessage( createBaseSMSMessage() );
 		expect( code ).toBe( '0123456' );
 	} );
 
 	test( 'Two codes in message', function () {
-		const message = JSON.parse( JSON.stringify( baseSMSMessage ) );
+		const message = createBaseSMSMessage();
 
-		message.text.codes.push( {
+		message.text?.codes?.push( {
 			value: '4567890',
 		} );
 
@@ -65,9 +68,9 @@ describe( 'EmailClient: get2FACodeFromMessage', function () {
 	} );
 
 	test( 'No codes in message', function () {
-		const message = JSON.parse( JSON.stringify( baseSMSMessage ) );
+		const message = createBaseSMSMessage();
 
-		message.text.codes.pop();
+		message.text?.codes?.pop();
 
 		const emailClient = new EmailClient();
 
@@ -77,9 +80,9 @@ describe( 'EmailClient: get2FACodeFromMessage', function () {
 	} );
 
 	test( 'No text in message', function () {
-		const message = JSON.parse( JSON.stringify( baseSMSMessage ) );
+		const message = createBaseSMSMessage();
 
-		delete message[ 'text' ];
+		delete message.text;
 
 		const emailClient = new EmailClient();
 

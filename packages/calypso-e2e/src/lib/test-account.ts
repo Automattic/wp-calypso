@@ -9,7 +9,6 @@ import envVariables from '../env-variables';
 import { SecretsManager } from '../secrets';
 import { TOTPClient } from '../totp-client';
 import { LoginPage } from './pages/login-page';
-// import type { AccountCredentials } from '../types/data-helper.types';
 import type { TestAccountCredentials } from '../secrets';
 
 /**
@@ -60,10 +59,10 @@ export class TestAccount {
 
 		// Handle possible 2FA.
 		if ( this.credentials.totpKey ) {
-			await loginPage.submitVerificationCode( this.getTOTP() );
+			return await loginPage.submitVerificationCode( this.getTOTP() );
 		}
 		if ( this.credentials.smsNumber ) {
-			await loginPage.submitVerificationCode( await this.getSMSOTP() );
+			return await loginPage.submitVerificationCode( await this.getSMSOTP() );
 		}
 	}
 
