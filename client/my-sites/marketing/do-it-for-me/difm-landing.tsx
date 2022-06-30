@@ -43,7 +43,7 @@ const ImageSection = styled.div`
 	img {
 		width: 100%;
 	}
-	@media ( max-width: 660px ) {
+	@media ( max-width: 960px ) {
 		display: none;
 	}
 `;
