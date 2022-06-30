@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	hasValidPaymentMethod,
@@ -72,9 +73,8 @@ export default function AssignLicenseStepProgress( { currentStep }: Props ): Rea
 	return (
 		<div className="assign-license-step-progress">
 			{ steps.map( ( { key, label }, index ) => (
-				<>
+				<Fragment key={ key }>
 					<div
-						key={ key }
 						className={ `assign-license-step-progress__step ${ getStepClassName(
 							currentStepIndex,
 							index
@@ -87,7 +87,7 @@ export default function AssignLicenseStepProgress( { currentStep }: Props ): Rea
 					{ index < steps.length - 1 && (
 						<div className="assign-license-step-progress__step-separator" />
 					) }
-				</>
+				</Fragment>
 			) ) }
 		</div>
 	);
