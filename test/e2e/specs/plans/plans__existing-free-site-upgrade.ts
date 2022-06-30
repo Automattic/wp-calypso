@@ -91,12 +91,6 @@ describe(
 		describe( 'Validate WordPress.com Pro functionality', function () {
 			let sidebarComponent: SidebarComponent;
 
-			it( 'Sidebar states user is on WordPress.com Pro plan', async function () {
-				sidebarComponent = new SidebarComponent( page );
-				const plan = await sidebarComponent.getCurrentPlanName();
-				expect( plan ).toBe( 'Pro' );
-			} );
-
 			it( 'Navigate to Upgrades > Plans', async function () {
 				sidebarComponent = new SidebarComponent( page );
 				await sidebarComponent.navigate( 'Upgrades', 'Plans' );
