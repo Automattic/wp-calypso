@@ -14,8 +14,8 @@ let initialized = false;
 function initialize() {
 	if ( ! initialized ) {
 		const params = {
-			...getGoogleAnalyticsDefaultConfig(),
 			send_page_view: false,
+			...getGoogleAnalyticsDefaultConfig(),
 		};
 
 		gaDebug( 'parameters:', params );
