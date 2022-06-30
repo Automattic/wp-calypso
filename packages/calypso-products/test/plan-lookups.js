@@ -911,6 +911,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_WPCOM_STARTER,
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
+			PLAN_WPCOM_PRO_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).toEqual( [
 			PLAN_JETPACK_FREE,
