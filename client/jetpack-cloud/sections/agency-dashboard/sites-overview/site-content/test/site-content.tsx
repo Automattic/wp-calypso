@@ -17,7 +17,7 @@ describe( '<SiteContent>', () => {
 	let props = {
 		data: { sites, total: 1, perPage: 10 },
 		isError: false,
-		isFetching: false,
+		isLoading: false,
 		currentPage: 1,
 	};
 	const initialState = {};
@@ -51,7 +51,7 @@ describe( '<SiteContent>', () => {
 	test( 'should render correctly and show loading indicator', () => {
 		props = {
 			...props,
-			isFetching: true,
+			isLoading: true,
 		};
 		const { container } = render(
 			<Provider store={ store }>
