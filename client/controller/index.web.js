@@ -105,7 +105,8 @@ export function redirectLoggedOut( context, next ) {
 	const userLoggedOut = ! isUserLoggedIn( state );
 
 	if ( userLoggedOut ) {
-		const siteFragment = context.params.site || getSiteFragment( context.path );
+		const { site, blog, blog_id } = context.params;
+		const siteFragment = site || blog || blog_id || getSiteFragment( context.path );
 
 		const loginParameters = {
 			redirectTo: context.path,
