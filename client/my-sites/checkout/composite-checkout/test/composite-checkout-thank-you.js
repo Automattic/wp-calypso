@@ -1067,6 +1067,31 @@ describe( 'getThankYouPageUrl', () => {
 			expect( url ).toBe( '/checkout/thank-you/foo.bar/1234abcd' );
 		} );
 
+		it( 'Is not displayed if Professional Email is in the cart and email query parameter is present', () => {
+			const cart = {
+				products: [
+					{
+						product_slug: TITAN_MAIL_MONTHLY_SLUG,
+						extra: { email_users: [ { email: 'purchased_mailbox@foo.bar' } ] },
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart,
+				domains,
+				receiptId: '1234abcd',
+				siteSlug: 'foo.bar',
+			} );
+
+			expect( url ).toBe(
+				`/checkout/thank-you/foo.bar/1234abcd?email=${ encodeURIComponent(
+					'purchased_mailbox@foo.bar'
+				) }`
+			);
+		} );
+
 		it( 'Is not displayed if Premium plan is in the cart; we show the business upgrade instead', () => {
 			const cart = {
 				products: [

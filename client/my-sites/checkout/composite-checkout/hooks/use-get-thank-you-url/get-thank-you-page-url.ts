@@ -8,6 +8,7 @@ import {
 	getPlan,
 	isPlan,
 	isWpComPremiumPlan,
+	isTitanMail,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -376,10 +377,24 @@ function getFallbackDestination( {
 			return `/plans/my-plan/${ siteSlug }?thank-you=true&install=all`;
 		}
 
+		const getSimpleThankYouUrl = (): string => {
+			debug( 'attempt to add extra information as url query string' );
+			const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
+
+			if ( titanProducts && titanProducts.length > 0 ) {
+				const emails = titanProducts[ 0 ].extra?.email_users;
+
+				if ( emails && emails.length > 0 ) {
+					return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }?email=${ emails[ 0 ].email }`;
+				}
+			}
+			return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
+		};
+
 		const siteWithReceiptOrCartUrl =
 			feature && isValidFeatureKey( feature )
 				? `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`
-				: `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
+				: getSimpleThankYouUrl();
 		debug( 'site with receipt or cart; feature is', feature );
 
 		return siteWithReceiptOrCartUrl;
