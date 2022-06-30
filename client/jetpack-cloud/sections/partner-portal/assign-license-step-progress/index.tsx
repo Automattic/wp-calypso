@@ -27,7 +27,7 @@ function CheckMarkOrNumber( {
 	if ( currentStep > step ) {
 		return (
 			<span className="assign-license-step-progress__step-circle">
-				<Gridicon icon="checkmark" />
+				<Gridicon icon="checkmark" size={ 16 } />
 			</span>
 		);
 	}
