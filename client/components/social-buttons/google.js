@@ -203,7 +203,9 @@ class GoogleLoginButton extends Component {
 			}
 
 			this.props.showErrorNotice(
-				this.props.translate( 'An error has occurred. Please try again.' )
+				this.props.translate(
+					'Something went wrong when trying to connect with Google. Please try again.'
+				)
 			);
 
 			return;
