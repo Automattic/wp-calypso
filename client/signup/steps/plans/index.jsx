@@ -3,6 +3,9 @@ import {
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
 	PLAN_FREE,
+	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_PRO_MONTHLY,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -25,6 +28,7 @@ import PlansComparison, {
 	isStarterPlanEnabled,
 } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { IntervalTypeToggle } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -174,11 +178,22 @@ export class PlansStep extends Component {
 		if ( eligibleForProPlan ) {
 			const selectedDomainConnection =
 				this.props.progress?.domains?.domainItem?.product_slug === 'domain_map';
+			const intervalType = this.getIntervalType();
+			const planSlugs = [ PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ];
 			return (
 				<div>
 					{ errorDisplay }
+					{ intervalType && (
+						<IntervalTypeToggle
+							intervalType={ intervalType }
+							isInSignup={ true }
+							plans={ planSlugs }
+							eligibleForWpcomMonthlyPlans={ true }
+						/>
+					) }
 					<PlansComparison
 						isInSignup={ true }
+						intervalType={ intervalType }
 						onSelectPlan={ this.onSelectPlan }
 						selectedSiteId={ selectedSite?.ID || undefined }
 						selectedDomainConnection={ selectedDomainConnection }

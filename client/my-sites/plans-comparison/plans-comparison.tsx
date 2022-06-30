@@ -244,6 +244,7 @@ export const globalOverrides = css`
 const ComparisonTable = styled.table< TableProps >`
 	border-collapse: collapse;
 	max-width: ${ ( { hideFreePlan } ) => ( hideFreePlan ? 728 : 980 ) }px;
+	margin-top: 20px;
 
 	.is-section-plans & {
 		html[dir='ltr'] & {
@@ -411,9 +412,9 @@ const PlansComparisonToggle = styled.tbody`
 		}
 	}
 `;
-
 interface Props {
 	isInSignup?: boolean;
+	intervalType?: string;
 	selectedSiteId?: number;
 	selectedSiteSlug?: string;
 	selectedDomainConnection?: boolean;
@@ -437,6 +438,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	isInSignup = false,
 	selectedSiteId,
 	selectedSiteSlug,
+	intervalType,
 	selectedDomainConnection,
 	purchaseId,
 	hideFreePlan,
@@ -452,7 +454,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	 * @todo clk Use of `hideFreePlan` will cause breakage if we are not showing the free plan at all.
 	 * Potentially remove `hideFreePlan` logic alltogether when plans are finalised.
 	 */
-	const plans = usePlans( hideFreePlan );
+	const plans = usePlans( hideFreePlan, intervalType );
 	const prices = usePlanPrices( plans );
 	const translate = useTranslate();
 
