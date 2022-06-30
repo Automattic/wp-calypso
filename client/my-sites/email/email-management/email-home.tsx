@@ -185,11 +185,11 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 			( domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount ?? 0 ) > 0 &&
 			domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
 		) {
-			page( emailManagementTitanSetUpMailbox( selectedSite?.slug, selectedSite?.domain ) );
+			page( emailManagementTitanSetUpMailbox( selectedSite.slug, domainsWithEmail[ 0 ].domain ) );
 			return null;
 		}
 
-		page( emailManagement( selectedSite?.slug, selectedSite.domain ) );
+		page( emailManagement( selectedSite.slug, domainsWithEmail[ 0 ].domain ) );
 	}
 
 	return (
