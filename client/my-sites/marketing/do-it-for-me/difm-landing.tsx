@@ -31,7 +31,6 @@ const Wrapper = styled.div`
 	align-items: flex-start;
 	gap: 96px;
 	padding: 12px;
-	width: 100%;
 `;
 
 const ContentSection = styled.div`
