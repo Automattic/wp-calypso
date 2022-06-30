@@ -63,7 +63,7 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 		$endpoint = 'help/eligibility/mine/all';
 		if ( $this->is_wpcom ) {
 			require_lib( 'wpcom-api-direct' );
-			$request          = array(
+			$request  = array(
 				'url'    => sprintf(
 					'%s/%s/v%s/%s',
 					Constants::get_constant( 'JETPACK__WPCOM_JSON_API_BASE' ),
@@ -73,14 +73,20 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 				),
 				'method' => 'GET',
 			);
-			$get_availability = \WPCOM_API_Direct::do_request( $request, null );
+			$response = \WPCOM_API_Direct::do_request( $request, null );
 		} else {
-			$get_availability = Client::wpcom_json_api_request_as_user( $endpoint );
+			$response = Client::wpcom_json_api_request_as_user( $endpoint );
 		}
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$body = json_decode( wp_remote_retrieve_body( $response ) );
 
 		return rest_ensure_response(
 			array(
-				'get_availability' => $get_availability,
+				'get_availability' => $body,
 			)
 		);
 	}

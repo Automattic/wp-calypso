@@ -5,7 +5,6 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
-import apiFetch from '@wordpress/api-fetch';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
@@ -22,10 +21,6 @@ import { SITE_STORE } from './help-center-contact-form';
 import HelpCenterContainer from './help-center-container';
 
 import '../styles.scss';
-
-apiFetch( { path: '/wpcom/v2/help-center/support-availability' } ).then( ( result ) =>
-	console.log( result )
-);
 
 const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
