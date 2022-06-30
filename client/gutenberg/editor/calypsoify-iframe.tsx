@@ -845,6 +845,14 @@ const mapStateToProps = (
 		queryArgs.postId = blockEditorSettings.home_template.postId;
 	}
 
+	const noticePattern = /[&?]notice=([\w_-]+)/;
+	const match = noticePattern.exec( document.location.search );
+	const notice = match && match[ 1 ];
+
+	if ( notice ) {
+		queryArgs.notice = notice;
+	}
+
 	const siteAdminUrl =
 		editorType === 'site'
 			? getSiteAdminUrl( state, siteId, 'themes.php?page=gutenberg-edit-site' )
