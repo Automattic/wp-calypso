@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -12,6 +13,9 @@ import SectionHeader from 'calypso/components/section-header';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import getSites from 'calypso/state/selectors/get-sites';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -30,7 +34,9 @@ export class PluginsListHeader extends PureComponent {
 
 	static propTypes = {
 		label: PropTypes.string,
+		hasManagePluginsFeature: PropTypes.bool,
 		isBulkManagementActive: PropTypes.bool,
+		isWpComAtomic: PropTypes.bool,
 		toggleBulkManagement: PropTypes.func.isRequired,
 		updateAllPlugins: PropTypes.func.isRequired,
 		updateSelected: PropTypes.func.isRequired,
@@ -109,10 +115,15 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	renderCurrentActionButtons() {
-		const { translate } = this.props;
+		const { hasManagePluginsFeature, isWpComAtomic, translate } = this.props;
+		const buttons = [];
+
+		if ( isWpComAtomic && ! hasManagePluginsFeature ) {
+			return buttons;
+		}
+
 		const isJetpackSelected = this.isJetpackSelected();
 		const needsRemoveButton = this.needsRemoveButton();
-		const buttons = [];
 		const rightSideButtons = [];
 		const leftSideButtons = [];
 		const autoupdateButtons = [];
@@ -366,6 +377,12 @@ export class PluginsListHeader extends PureComponent {
 	}
 }
 
-export default connect( ( state ) => ( {
-	allSites: getSites( state ),
-} ) )( localize( PluginsListHeader ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		allSites: getSites( state ),
+		hasManagePluginsFeature: siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ),
+		isWpComAtomic: isSiteWpcomAtomic( state, siteId ),
+	};
+} )( localize( PluginsListHeader ) );
