@@ -70,7 +70,6 @@ export default function ModalTemplate( {
 								<h1 className="modal__heading">{ message }</h1>
 								<p className="modal__text">
 									{ description }
-									<br />
 									<Button
 										href={ CTA.link }
 										isPrimary={ true }
@@ -78,6 +77,7 @@ export default function ModalTemplate( {
 											onClick();
 											setDismissed( isDismissed.concat( [ featureClass ] ) );
 										} }
+										tabindex={ -2 }
 									>
 										{ CTA.message }
 									</Button>
