@@ -81,7 +81,7 @@ $head-foot-height: 50px;
 			&.is-active {
 				// The transparent shadow ensures no jumpiness when focus animates on an active tab.
 				box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) transparent,
-					inset 0 -3px 0 0 var( --color-accent );
+					inset 0 -3px 0 0 var( --wp-admin-theme-color );
 				position: relative;
 			}
 		}
