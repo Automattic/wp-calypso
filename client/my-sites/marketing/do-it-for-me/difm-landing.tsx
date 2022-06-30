@@ -144,7 +144,7 @@ const ProgressLine = styled.div`
 const VerticalStepProgress = styled.div`
 	display: flex;
 	flex-direction: column;
-	margin: 24px 0 12px 0;
+	margin: 36px 0 12px 0;
 	${ StepContainer }:last-child {
 		${ ProgressLine } {
 			display: none;
@@ -169,7 +169,7 @@ const Index = styled.div`
 	color: var( --studio-gray-30 );
 `;
 const Title = styled.div`
-	margin-bottom: 10px;
+	margin-bottom: 4px;
 	color: var( --studio-gray-100 );
 	font-weight: 500;
 `;
