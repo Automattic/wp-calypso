@@ -78,8 +78,12 @@ function wpcom_get_registered_tutorial_ids() {
  * Callback for registering the Tutorials endpoint.
  */
 function wpcom_register_tutorials_endpoints() {
-	require_once __DIR__ . '/class-wpcom-tutorials-endpoint.php';
-	$tutorials_endpoint = new WPCom_Tutorials_Endpoint();
-	$tutorials_endpoint->register_rest_routes();
+	$endpoint_file = __DIR__ . '/class-wpcom-tutorials-endpoint.php';
+	if ( file_exists( $endpoint_file ) ) {
+		require_once $endpoint_file;
+		$tutorials_endpoint = new WPCom_Tutorials_Endpoint();
+		$tutorials_endpoint->register_rest_routes();
+	}
+
 }
 add_action( 'rest_api_init', 'wpcom_register_tutorials_endpoints' );
