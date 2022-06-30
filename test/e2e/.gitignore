@@ -20,5 +20,6 @@ results/
 # Cookie files
 cookies/
 
+# test outputs
 /*.png
 /*.zip
