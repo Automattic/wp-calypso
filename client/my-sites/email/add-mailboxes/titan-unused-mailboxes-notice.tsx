@@ -1,10 +1,20 @@
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { getConfiguredTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-const TitanUnusedMailboxesNotice = ( { domain, maxTitanMailboxCount, onFinishSetupClick } ) => {
+interface TitanUnusedMailboxesNoticeProps {
+	domain: ResponseDomain;
+	maxTitanMailboxCount: number;
+	onFinishSetupClick: () => void;
+}
+
+const TitanUnusedMailboxesNotice = ( {
+	domain,
+	maxTitanMailboxCount,
+	onFinishSetupClick,
+}: TitanUnusedMailboxesNoticeProps ) => {
 	const translate = useTranslate();
 
 	if ( ! hasTitanMailWithUs( domain ) ) {
@@ -34,12 +44,6 @@ const TitanUnusedMailboxesNotice = ( { domain, maxTitanMailboxCount, onFinishSet
 			<NoticeAction onClick={ onFinishSetupClick }>{ translate( 'Set up mailbox' ) }</NoticeAction>
 		</Notice>
 	);
-};
-
-TitanUnusedMailboxesNotice.propTypes = {
-	domain: PropTypes.object.isRequired,
-	maxTitanMailboxCount: PropTypes.number.isRequired,
-	onFinishSetupClick: PropTypes.func.isRequired,
 };
 
 export default TitanUnusedMailboxesNotice;

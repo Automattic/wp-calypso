@@ -26,6 +26,7 @@ import {
 	EVENT_CONTINUE_BUTTON_CLICK,
 	getTracksEventName,
 } from 'calypso/my-sites/email/add-mailboxes/get-tracks-event-name';
+import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/add-mailboxes/titan-unused-mailboxes-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import getMailProductForProvider from 'calypso/my-sites/email/form/mailboxes/components/selectors/get-mail-product-for-provider';
@@ -34,7 +35,6 @@ import { getEmailProductProperties } from 'calypso/my-sites/email/form/mailboxes
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { emailManagement, emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
-import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {

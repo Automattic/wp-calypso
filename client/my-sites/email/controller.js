@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -12,10 +11,8 @@ import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-provid
 import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
 import InboxManagement from 'calypso/my-sites/email/inbox';
 import * as paths from 'calypso/my-sites/email/paths';
-import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
@@ -39,10 +36,6 @@ export default {
 	},
 
 	emailManagementAddGSuiteUsers( pageContext, next ) {
-		const unifyMailboxForms = isEnabled( 'unify-mailbox-forms' );
-		const AddMailboxesComponent = unifyMailboxForms ? AddMailboxes : GSuiteAddUsers;
-		const extraProps = unifyMailboxForms ? { provider: EmailProvider.Google } : {};
-
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
@@ -50,10 +43,10 @@ export default {
 					title="Email Management > Add Google Users"
 				/>
 
-				<AddMailboxesComponent
-					source={ pageContext.query.source }
+				<AddMailboxes
+					provider={ EmailProvider.Google }
 					selectedDomainName={ pageContext.params.domain }
-					{ ...extraProps }
+					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -98,9 +91,6 @@ export default {
 	},
 
 	emailManagementNewTitanAccount( pageContext, next ) {
-		const TitanAddMailboxesComponent = isEnabled( 'unify-mailbox-forms' )
-			? AddMailboxes
-			: TitanAddMailboxes;
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
@@ -108,9 +98,10 @@ export default {
 					title="Email Management > Add Titan Mailboxes"
 				/>
 
-				<TitanAddMailboxesComponent
-					source={ pageContext.query.source }
+				<AddMailboxes
+					provider={ EmailProvider.Titan }
 					selectedDomainName={ pageContext.params.domain }
+					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
