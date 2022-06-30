@@ -11,7 +11,7 @@
 		top: 0;
 		left: 0;
 		background-color: rgba( var( --color-neutral-70-rgb ), 0.5 );
-		border-radius: 50%;
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		height: 150px;
 		width: 150px;
 	}
@@ -72,7 +72,7 @@
 	top: 0;
 	width: 150px;
 	height: 150px;
-	border-radius: 50%;
+	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	background: rgba( var( --color-neutral-70-rgb ), 0.5 );
 	color: #fff;
 	text-align: center;
@@ -140,7 +140,7 @@
 }
 
 .edit-gravatar .drop-zone {
-	border-radius: 50%;
+	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	width: 150px;
 	height: 150px;
 	border: 0;
