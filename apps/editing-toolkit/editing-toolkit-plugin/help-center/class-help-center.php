@@ -38,6 +38,18 @@ class Help_Center {
 	}
 
 	/**
+	 * Acts as a feature flag, returning a boolean for whether we should show the next steps tutorial UI.
+	 *
+	 * @return boolean
+	 */
+	public static function is_next_steps_tutorial_enabled() {
+		return apply_filters(
+			'help_center_should_enable_next_steps_tutorial',
+			false
+		);
+	}
+
+	/**
 	 * Enqueue block editor assets.
 	 */
 	public function enqueue_script() {
@@ -65,6 +77,12 @@ class Help_Center {
 			'helpCenterLocale',
 			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
 		);
+
+		// Adds feature flags for development
+		wp_add_inline_script( 'help-center-script', 'const helpCenterFeatureFlags = ' . json_encode( array(
+			'loadNextStepsTutorial' => self::is_next_steps_tutorial_enabled(),
+		) ), 'before' );
+
 
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
 	}
