@@ -6,6 +6,12 @@ type ResponseType< T extends 'CHAT' | 'OTHER' > = T extends 'CHAT'
 	? HappyChatAvailability
 	: OtherSupportAvailability;
 
+interface Response {
+	get_availability: {
+		body: string;
+	};
+}
+
 export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	supportType: SUPPORT_TYPE,
 	enabled = true
@@ -13,10 +19,14 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >(
 		supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability',
 		async () =>
-			await wpcomRequest( {
-				path: supportType === 'OTHER' ? '/help/tickets/all/mine' : '/help/olark/mine',
-				apiVersion: '1.1',
-			} ),
+			await wpcomRequest< Response >( {
+				path:
+					supportType === 'OTHER'
+						? 'help-center/support-availability'
+						: 'help-center/chat-availability',
+				apiNamespace: 'wpcom/v2/',
+				apiVersion: '2',
+			} ).then( ( response ) => JSON.parse( response.get_availability.body ) ),
 		{
 			enabled,
 			refetchOnWindowFocus: false,

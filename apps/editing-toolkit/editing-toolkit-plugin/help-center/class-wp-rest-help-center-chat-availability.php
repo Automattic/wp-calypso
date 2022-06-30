@@ -1,6 +1,6 @@
 <?php
 /**
- * WP_REST_Help_Center_Support_Availability file.
+ * WP_REST_Help_Center_Chat_Availability file.
  *
  * @package A8C\FSE
  */
@@ -11,16 +11,17 @@ use Automattic\Jetpack\Connection\Client;
 use Automattic\Jetpack\Constants;
 
 /**
- * Class WP_REST_Help_Center_Support_Availability.
+ * Class WP_REST_Help_Center_Chat_Availability.
  */
-class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
+class WP_REST_Help_Center_Chat_Availability extends \WP_REST_Controller {
 	/**
 	 * WP_REST_Help_Center_Support_Availability constructor.
 	 */
 	public function __construct() {
 		$this->namespace                       = 'wpcom/v2';
-		$this->rest_base                       = 'help-center/support-availability';
+		$this->rest_base                       = 'help-center/chat-availability';
 		$this->wpcom_is_site_specific_endpoint = false;
+		$this->wpcom_is_wpcom_only_endpoint    = false;
 		$this->is_wpcom                        = false;
 
 		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
@@ -38,7 +39,7 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_support_availability' ),
+					'callback'            => array( $this, 'get_chat_availability' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 				),
 			)
@@ -55,12 +56,12 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Should return the support availability
+	 * Should return the chat availability
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_support_availability() {
-		$endpoint = 'help/eligibility/mine/all';
+	public function get_chat_availability() {
+		$endpoint = 'help/eligibility/mine/chat';
 		if ( $this->is_wpcom ) {
 			require_lib( 'wpcom-api-direct' );
 			$request          = array(
