@@ -1,7 +1,7 @@
 import { registerBlockType } from '@wordpress/blocks';
-// should update this whole package instead of just one block
+// this block is deprecated and not worth the trouble to fix.
 // eslint-disable-next-line no-restricted-imports
-import { Dashicon, Button } from '@wordpress/components';
+import { Button, Dashicon } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -200,7 +200,7 @@ const edit = class extends Component {
 						);
 					} ) }
 				</ul>
-				<div className="add-new-todo-item-form">
+				<div class="add-new-todo-item-form">
 					<Button onClick={ this.addNewItem }>
 						<Dashicon icon="plus" /> Add new item
 					</Button>

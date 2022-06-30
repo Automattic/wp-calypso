@@ -1,4 +1,4 @@
-// should update this whole package instead of just one block
+// this block is deprecated and not worth the trouble to fix.
 // eslint-disable-next-line no-restricted-imports
 import { Button, Dashicon } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
@@ -50,7 +50,7 @@ export const ItemEditor = class extends Component {
 		return (
 			<li className={ classNames }>
 				{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */ }
-				<span className="item-status" onClick={ this.toggleDone } role="button" tabIndex="0">
+				<span className="item-status" onClick={ this.toggleDone } role="button" tabindex="0">
 					{ done && <Dashicon icon="yes" /> }
 				</span>
 				{ /* { 0 < item.level && <Button onClick={ moveLeft }>&lt;</Button> }
