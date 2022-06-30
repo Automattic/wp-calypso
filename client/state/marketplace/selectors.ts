@@ -12,20 +12,24 @@ import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /*
- * siteIsMarketplaceAddonCompatible:
- * Returns TRUE for Simple and Atomic sites and FALSE for Jetpack (non-Atomic) and VIP sites.
+ * shouldUpgradeCheck:
+ * Does the selected blog need an upgrade before installing marketplace addons?
+ * If it's missing the WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS, shouldUpgradeCheck returns true,
+ * except standalone jetpack and VIP sites always return false.
  */
-const siteIsMarketplaceAddonCompatible = (
-	state: IAppState,
-	siteId: number | null
-): boolean | null => {
+const shouldUpgradeCheck = ( state: IAppState, siteId: number | null ): boolean | null => {
 	if ( ! siteId ) {
 		return null;
 	}
+	const canInstallPurchasedPlugins = siteHasFeature(
+		state,
+		siteId,
+		WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
+	);
 	const isStandaloneJetpack =
 		isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId );
 	const isVip = isVipSite( state, siteId );
-	return ! isStandaloneJetpack && ! isVip;
+	return ! canInstallPurchasedPlugins && ! isStandaloneJetpack && ! isVip;
 };
 
 /*
@@ -40,13 +44,7 @@ export const hasOrIntendsToBuyLiveSupport = ( state: IAppState ): boolean => {
 	const siteId = getSelectedSiteId( state );
 
 	const hasLiveSupport = siteHasFeature( state, siteId, WPCOM_FEATURES_LIVE_SUPPORT );
-	const hasInstallPurchasePlugins = siteHasFeature(
-		state,
-		siteId,
-		WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
-	);
-	const needsUpgrade =
-		siteIsMarketplaceAddonCompatible( state, siteId ) && ! hasInstallPurchasePlugins;
+	const needsUpgrade = shouldUpgradeCheck( state, siteId );
 
 	if ( needsUpgrade ) {
 		/**
@@ -69,4 +67,4 @@ export const hasOrIntendsToBuyLiveSupport = ( state: IAppState ): boolean => {
 	return hasLiveSupport;
 };
 
-export default siteIsMarketplaceAddonCompatible;
+export default shouldUpgradeCheck;

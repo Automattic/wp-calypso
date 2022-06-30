@@ -1,5 +1,4 @@
 // File used only for development and testing.
-import { WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS } from '@automattic/calypso-products';
 import { Button, Card, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -21,14 +20,13 @@ import {
 	requestEligibility,
 } from 'calypso/state/automated-transfer/actions';
 import { getAutomatedTransfer, getEligibility } from 'calypso/state/automated-transfer/selectors';
-import siteIsMarketplaceAddonCompatible from 'calypso/state/marketplace/selectors';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import {
 	getPluginOnSite,
 	getPlugins,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -69,14 +67,7 @@ export default function MarketplaceTest() {
 	// eslint-disable-next-line no-console
 	console.log( { dataSearch, isFetchingSearch } );
 
-	const isMarketplaceAddonCompatible = useSelector( ( state ) =>
-		siteIsMarketplaceAddonCompatible( state, selectedSite?.ID )
-	);
-
-	const canInstallPurchasedPlugins =
-		useSelector( ( state ) =>
-			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-		) && isMarketplaceAddonCompatible;
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSiteId ) );
 
 	const isRequestingForSite = useSelector( ( state ) =>
 		isRequestingForSites( state, [ selectedSiteId ] )
@@ -99,7 +90,7 @@ export default function MarketplaceTest() {
 		{
 			name: 'Pay & Install Woocommerce Subscription',
 			path: `/checkout/${ selectedSiteSlug }/woocommerce_subscriptions_monthly${
-				! canInstallPurchasedPlugins ? ',business' : '' // or business-monthly if user has selected monthly pricing
+				shouldUpgrade ? ',business' : '' // or business-monthly if user has selected monthly pricing
 			}?redirect_to=/marketplace/thank-you/woocommerce-subscriptions/${ selectedSiteSlug }#step2`,
 		},
 		{

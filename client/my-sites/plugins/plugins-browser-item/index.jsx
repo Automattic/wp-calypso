@@ -1,7 +1,4 @@
-import {
-	WPCOM_FEATURES_INSTALL_PLUGINS,
-	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
-} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
@@ -20,7 +17,7 @@ import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import siteIsMarketplaceAddonCompatible from 'calypso/state/marketplace/selectors';
+import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -117,19 +114,12 @@ const PluginsBrowserListElement = ( props ) => {
 		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
 	} );
 
-	const isMarketplaceAddonCompatible = useSelector( ( state ) =>
-		siteIsMarketplaceAddonCompatible( state, selectedSite?.ID )
-	);
-
-	const canInstallPurchasedPlugins =
-		useSelector( ( state ) =>
-			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-		) && isMarketplaceAddonCompatible;
+	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
 
 	const canInstallPlugins =
 		useSelector( ( state ) =>
 			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PLUGINS )
-		) && isMarketplaceAddonCompatible;
+		) || jetpackNonAtomic;
 
 	if ( isPlaceholder ) {
 		// eslint-disable-next-line no-use-before-define
@@ -203,7 +193,7 @@ const PluginsBrowserListElement = ( props ) => {
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
-							canInstallPurchasedPlugins={ canInstallPurchasedPlugins }
+							shouldUpgrade={ shouldUpgrade }
 							canInstallPlugins={ canInstallPlugins }
 							currentSites={ currentSites }
 						/>
@@ -239,7 +229,7 @@ const InstalledInOrPricing = ( {
 	sitesWithPlugin,
 	isWpcomPreinstalled,
 	plugin,
-	canInstallPurchasedPlugins,
+	shouldUpgrade,
 	canInstallPlugins,
 	currentSites,
 } ) => {
@@ -292,7 +282,7 @@ const InstalledInOrPricing = ( {
 								<>
 									{ price + ' ' }
 									<span className="plugins-browser-item__period">{ period }</span>
-									{ ! canInstallPurchasedPlugins && (
+									{ shouldUpgrade && (
 										<div className="plugins-browser-item__period">
 											{ translate( 'Requires a plan upgrade' ) }
 										</div>
