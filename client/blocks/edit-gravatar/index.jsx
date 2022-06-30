@@ -22,6 +22,7 @@ import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/acti
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
 import { isCurrentUserUploadingGravatar } from 'calypso/state/gravatar-status/selectors';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 
@@ -154,13 +155,33 @@ export class EditGravatar extends Component {
 	};
 
 	render() {
-		const { isUploading, translate, user, additionalUploadHtml, userSettings } = this.props;
+		const {
+			isGravatarProfileHidden,
+			isUploading,
+			translate,
+			user,
+			additionalUploadHtml,
+			userSettings,
+		} = this.props;
 		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
 
-		if ( userSettings.gravatar_profile_hidden ) {
+		if ( ! Object.keys( userSettings ).length ) {
+			return (
+				<div className="edit-gravatar edit_gravatar__is-loading">
+					<div className="edit-gravatar__image-container">
+						<div className="edit-gravatar__gravatar-placeholder"></div>
+					</div>
+					<div>
+						<p className="edit-gravatar__explanation edit-gravatar__explanation-placeholder"></p>
+					</div>
+				</div>
+			);
+		}
+
+		if ( isGravatarProfileHidden ) {
 			return (
 				<div className="edit-gravatar">
 					<div className="edit-gravatar__image-container">
@@ -301,6 +322,7 @@ export default connect(
 	( state ) => ( {
 		user: getCurrentUser( state ) || {},
 		userSettings: getUserSettings( state ),
+		isGravatarProfileHidden: getUserSetting( state, 'gravatar_profile_hidden' ),
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),
 	{

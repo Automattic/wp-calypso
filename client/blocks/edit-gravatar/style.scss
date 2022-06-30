@@ -25,6 +25,23 @@
 	cursor: auto;
 }
 
+.edit_gravatar__is-loading {
+	.edit-gravatar__gravatar-placeholder,
+	.edit-gravatar__explanation-placeholder {
+		@include placeholder();
+	}
+	.edit-gravatar__gravatar-placeholder {
+		display: block;
+		width: 150px;
+		height: 150px;
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	}
+	.edit-gravatar__explanation-placeholder {
+		height: 24px;
+		width: 80%;
+	}
+}
+
 .edit-gravatar__image-container .gravatar.is-missing {
 	display: block;
 	width: 150px;

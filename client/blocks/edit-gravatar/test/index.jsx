@@ -68,12 +68,15 @@ describe( 'EditGravatar', () => {
 				<EditGravatar
 					translate={ noop }
 					user={ user }
+					isGravatarProfileHidden={ true }
 					userSettings={ {
 						gravatar_profile_hidden: true,
 					} }
 				/>
 			);
-			expect( wrapper.find( '.edit-gravatar .gravatar-is-hidden' ) ).toHaveLength( 1 );
+			expect( wrapper.find( '.edit-gravatar .edit-gravatar__gravatar-is-hidden' ) ).toHaveLength(
+				1
+			);
 		} );
 
 		describe( 'drag and drop', () => {
