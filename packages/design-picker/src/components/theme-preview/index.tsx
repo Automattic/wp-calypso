@@ -75,6 +75,7 @@ const ThemePreview = ( { url, viewportWidth }: Props ) => {
 				} }
 				src={ addQueryArgs( url, { calypso_token } ) }
 				scrolling="no"
+				tabIndex={ -1 }
 			/>
 		</div>
 	);
