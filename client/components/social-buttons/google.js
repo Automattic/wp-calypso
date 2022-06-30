@@ -12,6 +12,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 let auth2InitDone = false;
 
@@ -201,9 +202,9 @@ class GoogleLoginButton extends Component {
 				} );
 			}
 
-			this.setState( {
-				error: this.props.translate( 'An error has occurred. Please try again.' ),
-			} );
+			this.props.showErrorNotice(
+				this.props.translate( 'An error has occurred. Please try again.' )
+			);
 
 			return;
 		}
@@ -341,5 +342,6 @@ export default connect(
 	} ),
 	{
 		recordTracksEvent,
+		showErrorNotice: errorNotice,
 	}
 )( localize( GoogleLoginButton ) );
