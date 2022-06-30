@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { loadScript } from '@automattic/load-script';
@@ -10,6 +11,8 @@ import GoogleIcon from 'calypso/components/social-icons/google';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
+import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 let auth2InitDone = false;
 
@@ -32,7 +35,9 @@ class GoogleLoginButton extends Component {
 	};
 
 	static defaultProps = {
-		scope: 'https://www.googleapis.com/auth/userinfo.profile',
+		scope: config.isEnabled( 'migration/sign-in-with-google' )
+			? 'openid profile email'
+			: 'https://www.googleapis.com/auth/userinfo.profile',
 		fetchBasicProfile: true,
 		onClick: noop,
 	};
@@ -56,7 +61,45 @@ class GoogleLoginButton extends Component {
 	}
 
 	componentDidMount() {
+		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
+			this.initializeGoogleSignIn();
+			return;
+		}
+
 		this.initialize();
+	}
+
+	async initializeGoogleSignIn() {
+		const googleSignIn = await this.loadGoogleIdentityServicesAPI();
+
+		this.client = googleSignIn.initCodeClient( {
+			client_id: this.props.clientId,
+			scope: this.props.scope,
+			ux_mode: this.props.uxMode,
+			redirect_uri: this.props.redirectUri,
+			callback: ( response ) => {
+				if ( response.error ) {
+					this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+						social_account_type: 'google',
+						error_code: response.error,
+					} );
+
+					return;
+				}
+
+				this.handleAuthorizationCode( response.code );
+			},
+		} );
+
+		this.setState( { isDisabled: false } );
+	}
+
+	async loadGoogleIdentityServicesAPI() {
+		if ( ! window.google?.accounts.oauth2 ) {
+			await loadScript( 'https://accounts.google.com/gsi/client' );
+		}
+
+		return window.google.accounts.oauth2;
 	}
 
 	async loadDependency() {
@@ -139,6 +182,40 @@ class GoogleLoginButton extends Component {
 		return this.initialized;
 	}
 
+	async handleAuthorizationCode( auth_code ) {
+		let response;
+
+		try {
+			response = await postLoginRequest( 'exchange-social-auth-code', {
+				service: 'google',
+				auth_code,
+				client_id: config( 'wpcom_signup_id' ),
+				client_secret: config( 'wpcom_signup_key' ),
+			} );
+		} catch ( httpError ) {
+			const { code: error_code } = getErrorFromHTTPError( httpError );
+
+			if ( error_code ) {
+				this.props.recordTracksEvent( 'calypso_login_auth_code_exchange_failure', {
+					social_account_type: 'google',
+					error_code,
+				} );
+			}
+
+			this.props.showErrorNotice(
+				this.props.translate(
+					'Something went wrong when trying to connect with Google. Please try again.'
+				)
+			);
+
+			return;
+		}
+
+		const { access_token, id_token } = response.body.data;
+
+		this.props.responseHandler( { access_token, id_token } );
+	}
+
 	handleClick( event ) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -158,6 +235,11 @@ class GoogleLoginButton extends Component {
 		this.props.onClick( event );
 
 		if ( this.state.error ) {
+			return;
+		}
+
+		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
+			this.client.requestCode();
 			return;
 		}
 
@@ -262,5 +344,6 @@ export default connect(
 	} ),
 	{
 		recordTracksEvent,
+		showErrorNotice: errorNotice,
 	}
 )( localize( GoogleLoginButton ) );
