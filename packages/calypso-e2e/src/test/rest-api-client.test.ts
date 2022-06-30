@@ -139,15 +139,12 @@ describe( 'RestAPIClient: createSite', function () {
 
 	test( 'Site metadata is returned on successful request', async function () {
 		const testResponse = {
-			code: 200,
-			body: {
-				success: true,
-				blog_details: {
-					url: 'https://fakeblog.blog.com',
-					blogid: '420',
-					blogname: 'fake_blog_name',
-					site_slug: 'fakeblog.blog.com',
-				},
+			success: true,
+			blog_details: {
+				url: 'https://fakeblog.blog.com',
+				blogid: '420',
+				blogname: 'fake_blog_name',
+				site_slug: 'fakeblog.blog.com',
 			},
 		};
 
