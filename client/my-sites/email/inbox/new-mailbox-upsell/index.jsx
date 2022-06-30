@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { recordInboxNewMailboxUpsellClickEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagement, emailManagementEdit } from 'calypso/my-sites/email/paths';
@@ -18,17 +18,18 @@ const NewMailboxUpsell = ( { domains } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug;
 
-	let upsellURL = '';
-	if ( 1 === domains.length ) {
-		// User has one single domain, determine subscribed email provider.
-		if ( 'active' === domains[ 0 ]?.titanMailSubscription?.status ) {
-			upsellURL = emailManagementEdit( selectedSiteSlug, domains[ 0 ]?.domain, 'titan/new', null, {
+	let upsellURL = emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } );
+
+	// User has one single domain, determine subscribed email provider.
+	if ( domains.length === 1 ) {
+		if ( hasTitanMailWithUs( domains[ 0 ] ) ) {
+			upsellURL = emailManagementEdit( selectedSiteSlug, domains[ 0 ].domain, 'titan/new', null, {
 				source: INBOX_SOURCE,
 			} );
-		} else if ( 'active' === domains[ 0 ]?.googleAppsSubscription?.status ) {
+		} else if ( hasGSuiteWithUs( domains[ 0 ] ) ) {
 			upsellURL = emailManagementEdit(
 				selectedSiteSlug,
-				domains[ 0 ]?.domain,
+				domains[ 0 ].domain,
 				'google-workspace/add-users',
 				null,
 				{ source: INBOX_SOURCE }
@@ -36,25 +37,15 @@ const NewMailboxUpsell = ( { domains } ) => {
 		}
 	}
 
-	// Upsell URL not determined because user has multiple domains or none of the domains has email service subscription.
-	if ( '' === upsellURL ) {
-		upsellURL = emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } );
-	}
-
-	const handleCreateNewMailboxClick = useCallback( () => {
-		recordInboxNewMailboxUpsellClickEvent();
-		page( upsellURL );
-	}, [ selectedSiteSlug ] );
-
 	return (
 		<div className="new-mailbox-upsell__container">
 			<div className="new-mailbox-upsell">
 				<div className="new-mailbox-upsell__messages">
 					<h2>{ translate( 'Need another mailbox?' ) }</h2>
-					<div>{ translate( 'Create new and activate immediately' ) }</div>
+					<div>{ translate( 'Create a new one and activate it immediately.' ) }</div>
 				</div>
 				<div className="new-mailbox-upsell__cta">
-					<Button onClick={ handleCreateNewMailboxClick }>
+					<Button onClick={ recordInboxNewMailboxUpsellClickEvent } href={ upsellURL }>
 						{ translate( 'Create a new mailbox' ) }
 					</Button>
 				</div>
