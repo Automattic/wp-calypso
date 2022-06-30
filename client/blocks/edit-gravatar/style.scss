@@ -17,6 +17,14 @@
 	}
 }
 
+.edit-gravatar__image-container .gravatar-is-hidden {
+	display: block;
+	width: 150px;
+	height: 150px;
+	position: relative;
+	cursor: auto;
+}
+
 .edit-gravatar__image-container .gravatar.is-missing {
 	display: block;
 	width: 150px;
@@ -73,6 +81,14 @@
 		display: block;
 		margin: 2em auto 0;
 	}
+}
+
+.gravatar-is-hidden .gridicon {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
 }
 
 .edit-gravatar__label {

@@ -18,6 +18,7 @@ import {
 	composeAnalytics,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
@@ -153,11 +154,53 @@ export class EditGravatar extends Component {
 	};
 
 	render() {
-		const { isUploading, translate, user, additionalUploadHtml } = this.props;
+		const { isUploading, translate, user, additionalUploadHtml, userSettings } = this.props;
 		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
+
+		if ( userSettings.gravatar_profile_hidden ) {
+			return (
+				<div className="edit-gravatar">
+					<div className="edit-gravatar__image-container">
+						<div className="gravatar-is-hidden">
+							<div className="edit-gravatar__label-container">
+								<Gridicon icon="user" size={ 96 } />
+							</div>
+						</div>
+					</div>
+					<div>
+						<p className="edit-gravatar__explanation">
+							{ translate( 'Your profile photo is hidden.' ) }
+						</p>
+						<InfoPopover className="edit-gravatar__pop-over" position="left">
+							{ translate(
+								'{{p}}The avatar you use on WordPress.com comes ' +
+									'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
+									'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
+									'{{p}}However, your photo and Gravatar profile are hidden, preventing' +
+									' them from appearing on any site.{{/p}}',
+								{
+									components: {
+										ExternalLink: (
+											<ExternalLink
+												href={ gravatarLink }
+												target="_blank"
+												rel="noopener noreferrer"
+												icon={ true }
+											/>
+										),
+										p: <p />,
+									},
+								}
+							) }
+						</InfoPopover>
+					</div>
+				</div>
+			);
+		}
+
 		const icon = user.email_verified ? 'cloud-upload' : 'notice';
 		const buttonText = user.email_verified
 			? translate( 'Click to change photo' )
@@ -254,6 +297,7 @@ const recordReceiveImageEvent = () => recordTracksEvent( 'calypso_edit_gravatar_
 export default connect(
 	( state ) => ( {
 		user: getCurrentUser( state ) || {},
+		userSettings: getUserSettings( state ),
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),
 	{
