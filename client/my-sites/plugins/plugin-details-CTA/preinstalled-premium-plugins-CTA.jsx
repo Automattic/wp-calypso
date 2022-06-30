@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -11,6 +12,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PREMIUM_PLUGINS } from '../constants';
+import { getPeriodVariationValue, PluginPrice } from '../plugin-price';
 import CTAButton from './CTA-button';
 
 export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
@@ -29,8 +31,14 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	const isSiteConnected = useSelector( ( state ) =>
 		getSiteConnectionStatus( state, selectedSiteId )
 	);
+
+	const billingPeriod = useSelector( getBillingInterval );
+	const { feature: pluginFeature, products: pluginProducts } =
+		PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ];
+	const pluginProduct = pluginProducts[ getPeriodVariationValue( billingPeriod ) ];
+
 	const hasFeature = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSiteId, PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].feature )
+		siteHasFeature( state, selectedSiteId, pluginFeature )
 	);
 
 	const managedPluginMessage = (
@@ -38,12 +46,27 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 			{ translate( '%s is automatically managed for you.', { args: plugin.name } ) }
 		</span>
 	);
+	const pluginPrice = (
+		<div className="plugin-details-CTA__price">
+			<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+				{ ( { isFetching, price, period } ) =>
+					isFetching ? (
+						<div className="plugin-details-CTA__price-placeholder">...</div>
+					) : (
+						<>
+							{ price + ' ' }
+							<span className="plugin-details-CTA__period">{ period }</span>
+						</>
+					)
+				}
+			</PluginPrice>
+		</div>
+	);
+
 	const upgradeButton = (
 		<Button
 			className="plugin-details-CTA__install-button"
-			href={ `/checkout/${ selectedSiteSlug }/${
-				PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].product
-			}` }
+			href={ `/checkout/${ selectedSiteSlug }/${ pluginProduct }` }
 			primary
 		>
 			{ translate( 'Upgrade %s', { args: plugin.name } ) }
@@ -51,9 +74,9 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	);
 	const activateButton = (
 		<CTAButton
+			billingPeriod={ billingPeriod }
 			isJetpackSelfHosted={ isJetpackSelfHosted }
 			isSiteConnected={ isSiteConnected }
-			isPreinstalledPremiumPlugin
 			plugin={ plugin }
 			selectedSite={ selectedSite }
 		/>
@@ -65,6 +88,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	if ( isSimple && ! hasFeature ) {
 		return (
 			<>
+				{ pluginPrice }
 				{ managedPluginMessage }
 				{ upgradeButton }
 			</>
@@ -72,11 +96,21 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	}
 
 	if ( ! isSimple && ! isPluginInstalledOnsite ) {
-		return activateButton;
+		return (
+			<>
+				{ pluginPrice }
+				{ activateButton }
+			</>
+		);
 	}
 
 	if ( ! isSimple && isPluginInstalledOnsite && ! hasFeature ) {
-		return upgradeButton;
+		return (
+			<>
+				{ pluginPrice }
+				{ upgradeButton }
+			</>
+		);
 	}
 
 	return null;

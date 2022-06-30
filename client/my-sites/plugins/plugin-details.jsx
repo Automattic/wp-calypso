@@ -65,6 +65,7 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { PREINSTALLED_PREMIUM_PLUGINS } from './constants';
 import NoPermissionsError from './no-permissions-error';
 
 function PluginDetails( props ) {
@@ -206,6 +207,14 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
+	const isUpgradeablePreinstalledPremiumPlugin = useSelector( ( state ) => {
+		const preinstalledPremiumPlugin = PREINSTALLED_PREMIUM_PLUGINS[ fullPlugin.slug ];
+		return (
+			!! preinstalledPremiumPlugin &&
+			! siteHasFeature( state, selectedSite?.ID, preinstalledPremiumPlugin.feature )
+		);
+	} );
+
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
 			dispatch(
@@ -270,6 +279,7 @@ function PluginDetails( props ) {
 				showPlaceholder={ showPlaceholder }
 				isJetpackSelfHosted={ isJetpackSelfHosted }
 				isWpcom={ isWpcom }
+				isUpgradeablePreinstalledPremiumPlugin={ isUpgradeablePreinstalledPremiumPlugin }
 				{ ...props }
 			/>
 		);
@@ -388,10 +398,15 @@ function LegacyPluginDetails( props ) {
 		showPlaceholder,
 		isJetpackSelfHosted,
 		isWpcom,
+		isUpgradeablePreinstalledPremiumPlugin,
 	} = props;
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const showBillingIntervalSwitcher =
+		isUpgradeablePreinstalledPremiumPlugin ||
+		( isMarketplaceProduct && ! requestingPluginsForSites && ! isPluginInstalledOnsite );
 
 	return (
 		<MainComponent wideLayout>
@@ -402,7 +417,7 @@ function LegacyPluginDetails( props ) {
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs }>
-				{ isMarketplaceProduct && ! requestingPluginsForSites && ! isPluginInstalledOnsite && (
+				{ showBillingIntervalSwitcher && (
 					<BillingIntervalSwitcher
 						billingPeriod={ billingPeriod }
 						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }

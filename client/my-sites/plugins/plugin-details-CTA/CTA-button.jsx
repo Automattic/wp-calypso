@@ -228,8 +228,9 @@ function onClickInstallPlugin( {
 	}
 
 	if ( isPreinstalledPremiumPlugin ) {
+		const variationPeriod = getPeriodVariationValue( billingPeriod );
 		const checkoutUrl = `/checkout/${ selectedSite.slug }/${
-			PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].product
+			PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products[ variationPeriod ]
 		}`;
 		const installUrl = `/marketplace/${ plugin.slug }/install/${ selectedSite.slug }`;
 		return page( `${ checkoutUrl }?redirect_to=${ installUrl }#step2` );
