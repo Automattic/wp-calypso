@@ -129,7 +129,6 @@ export function registerTimelineItemBlock() {
 			},
 			background: {
 				type: 'string',
-				default: '#eeeeee',
 			},
 		},
 	} );

@@ -6,10 +6,10 @@
 $timeline-width: 36px;
 $timeline-gutter: 24px;
 $timeline-border-width: 4px;
+$timeline-default-background: #eeeeee;
 
 // Styles shared between editor and frontend.
 .wp-block-jetpack-timeline {
-
 	// This padding needs extra specificity.
 	&.wp-block-jetpack-timeline {
 		padding: 0;
@@ -26,16 +26,23 @@ $timeline-border-width: 4px;
 		// Make room for the timeline.
 		margin-left: $timeline-width;
 
+		// This may be overridden by an inline style
+		background-color: $timeline-default-background;
+
 		// Draw the line connecting to the timeline.
 		.timeline-item__bubble {
 			display: block;
 			width: $timeline-width;
 			height: $timeline-border-width;
-			background-color: currentColor;
 			position: absolute;
 			top: 50%;
 			transform: translateY( -( $timeline-border-width * 0.5 ) );
 			left: -$timeline-width;
+			border-color: currentColor;
+		}
+
+		.timeline-item__dot {
+			background-color: $timeline-default-background;
 		}
 
 		// Draw the vertical timeline line.
@@ -53,22 +60,21 @@ $timeline-border-width: 4px;
 
 	// Add special timeline starting point and end point.
 	[data-type='jetpack/timeline-item']:first-child .timeline-item::after, // Editor
-	& > li.wp-block-jetpack-timeline-item:first-child .timeline-item::after { // Frontend
+	& > li.wp-block-jetpack-timeline-item:first-child .timeline-item::after {
+		// Frontend
 		top: 50%;
 	}
 
 	[data-type='jetpack/timeline-item']:nth-last-child( 2 )  .timeline-item::after, // Editor, is the 2nd last child here
-	& > li.wp-block-jetpack-timeline-item:last-child .timeline-item::after { // Frontend
+	& > li.wp-block-jetpack-timeline-item:last-child .timeline-item::after {
+		// Frontend
 		bottom: 50%;
 	}
-
 }
-
 
 /**
  * Alternating Bubbles
  */
-
 
 @media only screen and ( min-width: 640px ) {
 	ul.wp-block-jetpack-timeline.is-alternating {
@@ -77,14 +83,15 @@ $timeline-border-width: 4px;
 
 		// Bubbles.
 		.wp-block-jetpack-timeline-item {
-			width: calc( 50% - #{ $timeline-width } + #{ $timeline-border-width * 0.5 } );
+			width: calc( 50% - #{$timeline-width} + #{$timeline-border-width * 0.5} );
 			box-sizing: border-box;
 		}
 
 		// Left aligned.
 		.wp-block-jetpack-timeline-item.is-left.is-left.is-left, // Both, explicitly set. Needs specificity.
 		[data-type='jetpack/timeline-item']:nth-child( odd ) .wp-block-jetpack-timeline-item:not( .is-right ), // Editor
-		& > .wp-block-jetpack-timeline-item:nth-child( odd ):not( .is-right ) { // Frontend
+		& > .wp-block-jetpack-timeline-item:nth-child( odd ):not( .is-right ) {
+			// Frontend
 			margin-left: 0;
 			margin-right: auto;
 
@@ -104,7 +111,8 @@ $timeline-border-width: 4px;
 		// Right aligned.
 		.wp-block-jetpack-timeline-item.is-right.is-right.is-right, // Both, explicitly set. Needs specificity.
 		[data-type='jetpack/timeline-item']:nth-child( even ) .wp-block-jetpack-timeline-item:not( .is-left ), // Editor
-		.wp-block-jetpack-timeline-item:nth-child( even ):not( .is-left ) { // Frontend
+		.wp-block-jetpack-timeline-item:nth-child( even ):not( .is-left ) {
+			// Frontend
 			margin-left: auto;
 			margin-right: 0;
 		}
