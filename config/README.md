@@ -39,6 +39,8 @@ For development of Jetpack, this looks something like:
 
 As we enable a feature through these progressions, left to right, the feature should most likely be enabled on environments to the left. For example, if a WordPress.com feature is currently enabled in horizon, it should likely also be enabled in development and wpcalypso.
 
+Lastly, once you ship to production, you should consider cleaning up your flag checks to leave a tidy development environment.
+
 ### Testing Feature Flags Locally
 
 If you want to temporarily enable/disable some feature flags for a given build, you can do so by setting the `ENABLE_FEATURES` and/or `DISABLE_FEATURES` environment variables. Set them to a comma separated list of features you want to enable/disable, respectively:
