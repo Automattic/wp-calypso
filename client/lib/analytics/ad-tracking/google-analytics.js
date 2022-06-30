@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import { isPiiUrl, mayWeTrackCurrentUserGdpr } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isGoogleAnalyticsEnabled, TRACKING_IDS } from './constants';
-import { GA4 } from './google-analytics-4';
+import * as GA4 from './google-analytics-4';
 
 // Ensure setup has run.
 import './setup';

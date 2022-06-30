@@ -35,7 +35,7 @@ import {
 } from './constants';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
-import { GA4 } from './google-analytics-4';
+import { fireJetpackEcommercePurchase as fireJetpackEcommercePurchaseGA4 } from './google-analytics-4';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
@@ -504,7 +504,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
  */
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		GA4.fireJetpackEcommercePurchase(
+		fireJetpackEcommercePurchaseGA4(
 			jetpackCartToGaPurchase( orderId, cart, wpcomJetpackCartInfo )
 		);
 

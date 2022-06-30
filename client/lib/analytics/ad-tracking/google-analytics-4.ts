@@ -5,18 +5,18 @@ import { TRACKING_IDS } from './constants';
 // Ensure setup has run.
 import './setup';
 
-function setup( params: Gtag.ConfigParams ) {
+export function setup( params: Gtag.ConfigParams ) {
 	window.gtag( 'config', TRACKING_IDS.jetpackGoogleGA4Gtag, params );
 }
 
-function fireJetpackEcommercePurchase( purchase: GaPurchase ) {
+export function fireJetpackEcommercePurchase( purchase: GaPurchase ) {
 	window.gtag( 'event', 'purchase', {
 		send_to: TRACKING_IDS.jetpackGoogleGA4Gtag,
 		...purchase,
 	} );
 }
 
-function fireJetpackEcommerceAddToCart( item: GaItem ) {
+export function fireJetpackEcommerceAddToCart( item: GaItem ) {
 	window.gtag( 'event', 'add_to_cart', {
 		send_to: TRACKING_IDS.jetpackGoogleGA4Gtag,
 		value: item.price,
@@ -25,7 +25,7 @@ function fireJetpackEcommerceAddToCart( item: GaItem ) {
 	} );
 }
 
-function firePageView( title: string, location: string, shouldSendToJetpack = false ) {
+export function firePageView( title: string, location: string, shouldSendToJetpack = false ) {
 	if ( shouldSendToJetpack ) {
 		window.gtag( 'event', 'page_view', {
 			send_to: TRACKING_IDS.jetpackGoogleGA4Gtag,
@@ -34,10 +34,3 @@ function firePageView( title: string, location: string, shouldSendToJetpack = fa
 		} );
 	}
 }
-
-export const GA4 = {
-	setup,
-	fireJetpackEcommercePurchase,
-	fireJetpackEcommerceAddToCart,
-	firePageView,
-};
