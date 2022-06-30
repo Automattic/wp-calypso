@@ -253,7 +253,7 @@ export default function DIFMLanding( {
 						align={ 'left' }
 						headerText={ headerText }
 						subHeaderText={ translate(
-							'One time fee, plus a one year subscription of the %(plan)s plan. It only takes 4 simple steps.',
+							'One time fee, plus a one year subscription of the %(plan)s plan. It only takes 4 simple steps. A WordPress.com professional will create layouts for up to 5 pages of your site. It only takes 4 simple steps:',
 							{
 								args: {
 									plan: planTitle,
@@ -277,7 +277,12 @@ export default function DIFMLanding( {
 						<Step
 							index={ translate( '3' ) }
 							title={ translate( 'Complete the purchase' ) }
-							description={ translate( 'Try risk free with a 14-day money back guarantee.' ) }
+							description={ translate( 'Try risk free with a %(days)d-day money back guarantee.', {
+								args: {
+									days: 14,
+								},
+								comment: 'the arg is the refund period in days',
+							} ) }
 						/>
 
 						<Step
@@ -288,6 +293,16 @@ export default function DIFMLanding( {
 							) }
 						/>
 					</VerticalStepProgress>
+					<p>
+						{ translate(
+							'Share your finished site with the world in %(days)d business days or less!',
+							{
+								args: {
+									days: 4,
+								},
+							}
+						) }
+					</p>
 					<CTASectionWrapper>
 						<NextButton onClick={ onSubmit } isPrimary={ true }>
 							{ translate( 'Hire a Professional' ) }
