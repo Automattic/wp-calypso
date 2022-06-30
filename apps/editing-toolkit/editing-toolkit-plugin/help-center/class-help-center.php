@@ -94,11 +94,15 @@ class Help_Center {
 	}
 
 	/**
-	 * Register the WPCOM Block Editor NUX endpoints.
+	 * Register the Help Center endpoints.
 	 */
 	public function register_rest_api() {
 		require_once __DIR__ . '/class-wp-rest-help-center-support-availability.php';
 		$controller = new WP_REST_Help_Center_Support_Availability();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-chat-availability.php';
+		$controller = new WP_REST_Help_Center_Chat_Availability();
 		$controller->register_rest_route();
 	}
 }
