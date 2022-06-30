@@ -41,12 +41,12 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		button.components-button {
 			span {
 				.components-popover.components-tooltip {
-					left: unset!important;
+					left: unset !important;
 					right: -48px;
 
 					.components-popover__content {
-						overflow: visible!important;
-						max-width: unset!important;
+						overflow: visible !important;
+						max-width: unset !important;
 					}
 				}
 			}
