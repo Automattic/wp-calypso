@@ -69,7 +69,7 @@ describe(
 				await domainSearchComponent.selectDomain( '.wordpress.com' );
 			} );
 
-			it( 'Select WordPress.com Pro plan', async function () {
+			it( 'Select WordPress.com Starter plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
 				await signupPickPlanPage.selectPlan( 'Starter' );
 
@@ -144,7 +144,7 @@ describe(
 				password: testUser.password,
 			} );
 
-			apiCloseAccount( restAPIClient, {
+			await apiCloseAccount( restAPIClient, {
 				userID: userDetails.body.user_id,
 				username: testUser.username,
 				email: testUser.email,
