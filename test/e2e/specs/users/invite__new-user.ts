@@ -68,9 +68,9 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 	describe( 'Accept invite', function () {
 		it( `Invite email was received for test user`, async function () {
 			const emailClient = new EmailClient();
-			const message = await emailClient.getLastEmail( {
+			const message = await emailClient.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,
-				emailAddress: testUser.email,
+				sentTo: testUser.email,
 			} );
 			const links = await emailClient.getLinksFromMessage( message );
 			const acceptInviteLink = links.find( ( link: string ) =>
