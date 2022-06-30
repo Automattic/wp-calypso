@@ -68,7 +68,6 @@ class GoogleLoginButton extends Component {
 					auth_code: this.props.authCodeFromRedirect,
 					redirect_uri: this.props.redirectUri,
 				} );
-				return;
 			}
 
 			this.initializeGoogleSignIn();
