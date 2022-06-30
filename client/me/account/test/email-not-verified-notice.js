@@ -52,7 +52,9 @@ describe( 'EmailNotVerifiedNotice', () => {
 		expect( useSendEmailVerification ).toHaveBeenCalled();
 		await waitFor( () => {
 			expect(
-				dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes( 'The verification email has been sent' )
+				dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(
+					'Verification email resent. Please check your inbox.'
+				)
 			).toBeTruthy();
 		} );
 	} );
@@ -82,7 +84,7 @@ describe( 'EmailNotVerifiedNotice', () => {
 		await waitFor( () => {
 			expect(
 				dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(
-					'An error has occurred, please check your connection and retry.'
+					"Couldn't resend verification email. Please try again."
 				)
 			).toBeTruthy();
 		} );
