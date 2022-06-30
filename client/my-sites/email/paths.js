@@ -281,9 +281,9 @@ export function emailManagementEdit(
 }
 
 /**
- * Retrieves the url of the Inbox page
+ * Retrieves the url of the Inbox page:
  *
- * https://wordpress.com/inbox/:siteName
+ *   https://wordpress.com/inbox/:siteName
  *
  * @param {string|null|undefined} siteName - slug of the current site
  * @returns {string} the corresponding url
