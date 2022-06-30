@@ -15,10 +15,7 @@ import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/u
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
-import {
-	hasValidPaymentMethod,
-	isAgencyUser,
-} from 'calypso/state/partner-portal/partner/selectors';
+import { isPaymentMethodRequired } from 'calypso/state/partner-portal/partner/selectors';
 import './style.scss';
 
 interface Props {
@@ -48,8 +45,7 @@ export default function LicensePreview( {
 	const dispatch = useDispatch();
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
 	const [ isOpen, setOpen ] = useState( isHighlighted );
-	const validPaymentMethod = useSelector( hasValidPaymentMethod );
-	const isAgency = useSelector( isAgencyUser );
+	const paymentMethodRequired = useSelector( isPaymentMethodRequired );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 	const showDomain =
@@ -73,7 +69,7 @@ export default function LicensePreview( {
 
 	const assign = useCallback( () => {
 		const redirectUrl = addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' );
-		if ( isAgency && ! validPaymentMethod ) {
+		if ( paymentMethodRequired ) {
 			const noticeLinkHref = addQueryArgs(
 				{
 					return: redirectUrl,
@@ -96,7 +92,7 @@ export default function LicensePreview( {
 		}
 
 		page.redirect( redirectUrl );
-	}, [ isAgency, validPaymentMethod, translate, dispatch, errorNotice, licenseKey ] );
+	}, [ paymentMethodRequired, translate, dispatch, errorNotice, licenseKey ] );
 
 	useEffect( () => {
 		if ( isHighlighted ) {

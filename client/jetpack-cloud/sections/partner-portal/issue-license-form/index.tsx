@@ -4,8 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import sortBy from 'lodash/sortBy';
 import page from 'page';
 import { ReactElement, useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
+import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -13,13 +14,15 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { isPaymentMethodRequired } from 'calypso/state/partner-portal/partner/selectors';
 import {
 	APIError,
 	APIProductFamily,
 	APIProductFamilyProduct,
 } from 'calypso/state/partner-portal/types';
+import getSites from 'calypso/state/selectors/get-sites';
 import { AssignLicenceProps } from '../types';
-import { getProductTitle } from '../utils';
+import { ensurePartnerPortalReturnUrl, getProductTitle } from '../utils';
 
 import './style.scss';
 
@@ -39,6 +42,8 @@ export default function IssueLicenseForm( {
 }: AssignLicenceProps ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const sites = useSelector( getSites ).length;
+	const paymentMethodRequired = useSelector( isPaymentMethodRequired );
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );
@@ -67,12 +72,14 @@ export default function IssueLicenseForm( {
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
 			setIsSubmitting( false );
+
 			if ( fromDashboard ) {
 				handleRedirectToDashboard( license.license_key );
 				return;
 			}
+
 			page.redirect(
-				addQueryArgs( { highlight: license.license_key }, '/partner-portal/licenses' )
+				addQueryArgs( { highlight: license.license_key }, partnerPortalBasePath( '/licenses' ) )
 			);
 		},
 		onError: ( error: Error ) => {
@@ -85,14 +92,35 @@ export default function IssueLicenseForm( {
 		onSuccess: ( license ) => {
 			const licenseKey = license.license_key;
 			const selectedSiteId = selectedSite?.ID;
+
 			if ( selectedSiteId ) {
 				setIsSubmitting( true );
 				assignLicense.mutate( { licenseKey, selectedSite: selectedSiteId } );
-			} else {
-				page.redirect(
-					addQueryArgs( { key: license.license_key }, '/partner-portal/assign-license' )
+				return;
+			}
+
+			let nextStep = addQueryArgs(
+				{ highlight: license.license_key },
+				partnerPortalBasePath( '/licenses' )
+			);
+
+			if ( sites > 0 ) {
+				nextStep = addQueryArgs(
+					{ key: license.license_key },
+					partnerPortalBasePath( '/assign-license' )
 				);
 			}
+
+			if ( paymentMethodRequired ) {
+				nextStep = addQueryArgs(
+					{
+						return: ensurePartnerPortalReturnUrl( nextStep ),
+					},
+					partnerPortalBasePath( '/payment-methods/add' )
+				);
+			}
+
+			page.redirect( nextStep );
 		},
 		onError: ( error: APIError ) => {
 			let errorMessage;
