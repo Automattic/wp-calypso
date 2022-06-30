@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -21,6 +22,7 @@ import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import UpdatedGravatarString from './updated-gravatar-string';
 
 import './style.scss';
@@ -40,6 +42,8 @@ class Profile extends Component {
 
 	render() {
 		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
+
+		const isUserSettingsLoading = Object.keys( this.props.userSettings ).length === 0;
 
 		return (
 			<Main className="profile">
@@ -116,8 +120,13 @@ class Profile extends Component {
 							/>
 						</FormFieldset>
 
-						<FormFieldset>
+						<FormFieldset
+							className={ classnames( {
+								'profile__gravatar-fieldset-is-loading': isUserSettingsLoading,
+							} ) }
+						>
 							<ToggleControl
+								disabled={ isUserSettingsLoading }
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
@@ -144,7 +153,12 @@ class Profile extends Component {
 }
 
 export default compose(
-	connect( null, { recordGoogleEvent } ),
+	connect(
+		( state ) => ( {
+			userSettings: getUserSettings( state ),
+		} ),
+		{ recordGoogleEvent }
+	),
 	protectForm,
 	localize,
 	withFormBase
