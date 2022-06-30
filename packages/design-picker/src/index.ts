@@ -18,6 +18,7 @@ export {
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
+	STICKY_OFFSET_TOP,
 } from './constants';
 export type { FontPair, Design, Category } from './types';
 export { useCategorization } from './hooks/use-categorization';

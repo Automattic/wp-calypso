@@ -11,6 +11,7 @@ import {
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
+	STICKY_OFFSET_TOP,
 } from '../constants';
 import { getDesignPreviewUrl, getMShotOptions } from '../utils';
 import type { Design } from '../types';
@@ -103,7 +104,10 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 				return;
 			}
 
-			const offsetTop = wrapperRef.current.offsetTop - window.pageYOffset;
+			const offsetTop = Math.max(
+				wrapperRef.current.offsetTop - window.pageYOffset,
+				STICKY_OFFSET_TOP
+			);
 			wrapperRef.current.style.setProperty( 'height', `calc( 100vh - ${ offsetTop }px` );
 		};
 
