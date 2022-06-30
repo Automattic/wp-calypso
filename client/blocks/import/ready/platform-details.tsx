@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Modal } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, close, check } from '@wordpress/icons';
@@ -40,7 +41,7 @@ const platformFeatureList: { [ key: string ]: { [ key: string ]: FeatureName[] }
 const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) => {
 	const { __ } = useI18n();
 	const { platform, onClose } = data;
-	const learnMoreHref = 'https://wordpress.com/support/import';
+	const learnMoreHref = localizeUrl( 'https://wordpress.com/support/import' );
 
 	const translatedFeatureList: FeatureList = {
 		tags: __( 'Tags' ),
