@@ -16,7 +16,7 @@ const getEmailProductProperties = (
 	provider: EmailProvider,
 	domain: ResponseDomain,
 	emailProduct: ProductListItem,
-	newItemsCount = 1
+	newMailboxesCount = 1
 ): EmailProperties => {
 	const isTitanProvider = provider === EmailProvider.Titan;
 	const isAdditionalMailboxesPurchase = isTitanProvider
@@ -28,15 +28,14 @@ const getEmailProductProperties = (
 		: getGSuiteMailboxCount( domain );
 
 	const quantity = isAdditionalMailboxesPurchase
-		? existingItemsCount + newItemsCount
-		: newItemsCount;
-	const newQuantity = isAdditionalMailboxesPurchase ? newItemsCount : undefined;
+		? existingItemsCount + newMailboxesCount
+		: newMailboxesCount;
 
 	return {
 		existingItemsCount,
 		isAdditionalMailboxesPurchase,
 		emailProduct,
-		newQuantity,
+		newQuantity: newMailboxesCount,
 		quantity,
 	};
 };
