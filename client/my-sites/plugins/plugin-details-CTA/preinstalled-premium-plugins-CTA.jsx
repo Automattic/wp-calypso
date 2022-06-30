@@ -72,7 +72,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	}
 
 	if ( ! isSimple && ! isPluginInstalledOnsite ) {
-		return { activateButton };
+		return activateButton;
 	}
 
 	if ( ! isSimple && isPluginInstalledOnsite && ! hasFeature ) {
