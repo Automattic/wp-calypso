@@ -92,7 +92,7 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetGoals, resetIntent } =
+		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
@@ -144,6 +144,7 @@ export const siteSetupFlow: Flow = {
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
 			resetGoals();
 			resetIntent();
+			resetSelectedDesign();
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
