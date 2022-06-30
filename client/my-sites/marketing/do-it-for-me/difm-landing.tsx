@@ -59,6 +59,9 @@ const FAQExpander = styled( Button )`
 	&&& {
 		justify-content: center;
 	}
+	@media ( max-width: 660px ) {
+		width: 90vw;
+	}
 `;
 
 const FAQHeader = styled.h1`
