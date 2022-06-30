@@ -238,15 +238,16 @@ export function checkoutThankYou( context, next ) {
 			<CheckoutThankYouDocumentTitle />
 
 			<CheckoutThankYouComponent
-				receiptId={ receiptId }
-				gsuiteReceiptId={ gsuiteReceiptId }
-				domainOnlySiteFlow={ isEmpty( context.params.site ) }
-				selectedFeature={ context.params.feature }
-				redirectTo={ context.query.redirect_to }
-				upgradeIntent={ context.query.intent }
-				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
-				selectedSite={ selectedSite }
 				displayMode={ displayMode }
+				domainOnlySiteFlow={ isEmpty( context.params.site ) }
+				email={ context.query.email }
+				gsuiteReceiptId={ gsuiteReceiptId }
+				receiptId={ receiptId }
+				redirectTo={ context.query.redirect_to }
+				selectedFeature={ context.params.feature }
+				selectedSite={ selectedSite }
+				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
+				upgradeIntent={ context.query.intent }
 			/>
 		</>
 	);
