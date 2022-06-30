@@ -1,0 +1,142 @@
+@import '@wordpress/base-styles/colors';
+
+$color-accent-green: #31843f;
+$color-move-button-icon: #555d66; // dark-gray-500
+$color-add-button-text: #555d66; // dark-gray-500
+$color-add-button-border: #ccd0d4; // light-gray-700
+$color-add-button-icon: #7e8993; // dark-gray-200
+
+.wp-block-a8c-todo {
+	margin-bottom: 20px;
+
+	// This would be ideal but it's being overridden.
+	.wp-block-a8c-todo__list {
+		list-style-type: none;
+		margin-bottom: 20px;
+	}
+
+	// Individual to-do list item.
+	.wp-block-a8c-todo__item {
+		border-bottom: 1px solid $gray-200;
+		display: flex;
+		justify-content: space-between;
+		padding: 4px 0;
+	}
+
+	// Status.
+	.item-status {
+		display: inline-block;
+		content: '';
+		border: 1px solid $gray-200;
+		border-radius: 50%;
+		margin: 7px 8px 0 0;
+		height: 16px;
+		width: 18px;
+	}
+
+	// Set width of title to 100% so it doesn't end up centered.
+	.item-title {
+		width: 100%;
+	}
+
+	// Completed checklist item.
+	.wp-block-a8c-todo__item--done {
+		color: $color-accent-green;
+
+		.item-status {
+			background: $color-accent-green;
+			border: 0;
+			position: relative;
+		}
+
+		.item-status .dashicon {
+			fill: var( --color-text-inverted );
+			position: absolute;
+			top: -2px;
+			left: -2px;
+		}
+	}
+
+	// Up and down buttons.
+	.move-buttons {
+		width: 78px;
+		text-align: right;
+	}
+
+	.move-buttons .components-button {
+		padding: 0;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		box-shadow: none;
+		background: none;
+		color: $gray-200;
+
+		.dashicon {
+			fill: $gray-200;
+		}
+
+		&:hover {
+			border-color: $gray-100;
+
+			.dashicon {
+				fill: $color-move-button-icon;
+			}
+		}
+	}
+
+	// Add new item form
+	.add-new-todo-item-form {
+		align-items: center;
+
+		.components-button {
+			font-size: 13px !important; // yep, I'm a monster.
+			color: $color-add-button-text;
+			border: 1px solid $color-add-button-border;
+			background: $gray-100;
+			box-shadow: 0 1px 0 $color-add-button-border;
+			margin: 0;
+			height: 33px;
+			line-height: 32px;
+			border-radius: 3px;
+			padding: 0 12px 2px;
+			white-space: nowrap;
+
+			.dashicon {
+				fill: $gray-600;
+				vertical-align: middle;
+				display: inline;
+			}
+		}
+	}
+}
+
+// We need to be super-specific here to be sure we're overwriting the default UL styling.
+.edit-post-visual-editor .wp-block-a8c-todo .wp-block-a8c-todo__list {
+	list-style-type: none;
+}
+
+// Same for the "add item" input.
+.block-editor-block-list__block .wp-block-a8c-todo .add-new-item {
+	width: 100%;
+	margin-right: 6px;
+	padding: 7.5px 8px;
+}
+
+// P2-specific styling.
+body:not( .wp-admin ) .gutenberg {
+	.wp-block-a8c-todo .wp-block-a8c-todo__item {
+		padding: 10px 0 4px;
+	}
+}
+
+// Only show the "add new" form when it's strictly needed.
+.wp-block-a8c-todo .add-new-todo-item-form {
+	display: none;
+}
+
+.block-editor-block-list__block.is-selected,
+.block-editor-block-list__block.is-typing {
+	.wp-block-a8c-todo .add-new-todo-item-form {
+		display: flex;
+	}
+}
