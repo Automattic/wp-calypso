@@ -12,6 +12,8 @@ import type {
 	CalypsoPreferencesResponse,
 	ErrorResponse,
 	AccountCredentials,
+	NewSiteResponse,
+	NewSiteParams,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -104,7 +106,8 @@ export class RestAPIClient {
 	 */
 	private async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
 		if ( scheme === 'bearer' ) {
-			return `Bearer ${ this.bearerToken }`;
+			const bearerToken = await this.getBearerToken();
+			return `Bearer ${ bearerToken }`;
 		}
 
 		throw new Error( 'Unsupported authorization scheme specified.' );
@@ -171,6 +174,41 @@ export class RestAPIClient {
 		};
 
 		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Given parameters, create a new site.
+	 *
+	 * @param {NewSiteParams} newSiteParams Details for the new site.
+	 * @returns {Promise<NewSiteResponse>} Confirmation details for the new site.
+	 * @throws {ErrorResponse} If API responded with an error.
+	 */
+	async createSite( newSiteParams: NewSiteParams ): Promise< NewSiteResponse > {
+		const body = {
+			client_id: SecretsManager.secrets.calypsoOauthApplication.client_id,
+			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
+			blog_name: newSiteParams.name,
+			blog_title: newSiteParams.title,
+		};
+
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( body ),
+		};
+
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
