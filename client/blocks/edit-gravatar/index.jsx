@@ -18,11 +18,11 @@ import {
 	composeAnalytics,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/actions';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
 import { isCurrentUserUploadingGravatar } from 'calypso/state/gravatar-status/selectors';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 
 import './style.scss';
@@ -164,9 +164,12 @@ export class EditGravatar extends Component {
 			return (
 				<div className="edit-gravatar">
 					<div className="edit-gravatar__image-container">
-						<div className="gravatar-is-hidden">
+						<div className="edit-gravatar__gravatar-is-hidden">
 							<div className="edit-gravatar__label-container">
-								<Gridicon icon="user" size={ 96 } />
+								<Gridicon
+									icon="user"
+									size={ 96 } /* eslint-disable-line wpcalypso/jsx-gridicon-size */
+								/>
 							</div>
 						</div>
 					</div>

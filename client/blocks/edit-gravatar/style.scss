@@ -17,7 +17,7 @@
 	}
 }
 
-.edit-gravatar__image-container .gravatar-is-hidden {
+.edit-gravatar__image-container .edit-gravatar__gravatar-is-hidden {
 	display: block;
 	width: 150px;
 	height: 150px;
@@ -83,7 +83,7 @@
 	}
 }
 
-.gravatar-is-hidden .gridicon {
+.edit-gravatar__gravatar-is-hidden .gridicon {
 	margin: 0;
 	position: absolute;
 	top: 50%;
