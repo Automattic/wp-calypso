@@ -122,7 +122,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
-	const popupIsVisible = intervalType === 'monthly' && isInSignup;
+	const popupIsVisible = intervalType === 'monthly' && isInSignup && props.plans.length;
 	const maxDiscount = useMaxDiscount( props.plans );
 
 	if ( ! eligibleForWpcomMonthlyPlans ) {

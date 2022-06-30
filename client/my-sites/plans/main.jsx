@@ -185,7 +185,6 @@ class Plans extends Component {
 			].includes( currentPlan?.productSlug )
 		) {
 			const intervalType = this.props.intervalType;
-			const planSlugs = [ PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ];
 
 			return (
 				<>
@@ -193,7 +192,7 @@ class Plans extends Component {
 						<IntervalTypeToggle
 							intervalType={ intervalType }
 							isInSignup={ false }
-							plans={ planSlugs }
+							plans={ [] }
 							siteSlug={ selectedSite.slug }
 							eligibleForWpcomMonthlyPlans={ true }
 						/>

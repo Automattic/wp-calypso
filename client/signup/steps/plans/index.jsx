@@ -3,9 +3,6 @@ import {
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
 	PLAN_FREE,
-	PLAN_WPCOM_PRO,
-	PLAN_WPCOM_PRO_MONTHLY,
-	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -179,7 +176,6 @@ export class PlansStep extends Component {
 			const selectedDomainConnection =
 				this.props.progress?.domains?.domainItem?.product_slug === 'domain_map';
 			const intervalType = this.getIntervalType();
-			const planSlugs = [ PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ];
 			return (
 				<div>
 					{ errorDisplay }
@@ -187,7 +183,7 @@ export class PlansStep extends Component {
 						<IntervalTypeToggle
 							intervalType={ intervalType }
 							isInSignup={ true }
-							plans={ planSlugs }
+							plans={ [] }
 							eligibleForWpcomMonthlyPlans={ true }
 						/>
 					) }
