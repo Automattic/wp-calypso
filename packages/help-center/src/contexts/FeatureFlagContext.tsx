@@ -16,5 +16,11 @@ export const FeatureFlagProvider: React.FC< FeatureFlags > = function ( { childr
 
 export function useFeatureFlags() {
 	const featureFlags = useContext( FeatureFlagContext );
+
+	// Trying to call hook outside of component that renders FeatureFlagProvider
+	if ( featureFlags === undefined ) {
+		throw new Error( 'useFeatureFlags must be used within a FeatureFlagProvider' );
+	}
+
 	return featureFlags;
 }
