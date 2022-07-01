@@ -17,10 +17,10 @@ class UpdatedGravatarString extends Component {
 		};
 		return englishLocales.includes( locale ) ||
 			i18n.hasTranslation(
-				'{{spanLead}}Hide my photo and Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your {{profileLink}}Gravatar profile{{/profileLink}} and photo from appearing on any site. It may take some time for the changes to take effect. Gravatar profiles can be deleted at {{deleteLink}}Gravatar.com{{/deleteLink}}.{{/spanExtra}}'
+				'{{spanLead}}Hide my photo and Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your photo and {{profileLink}}Gravatar profile{{/profileLink}} from appearing on any site. It may take some time for the changes to take effect. Gravatar profiles can be deleted at {{deleteLink}}Gravatar.com{{/deleteLink}}.{{/spanExtra}}'
 			)
 			? translate(
-					'{{spanLead}}Hide my photo and Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your {{profileLink}}Gravatar profile{{/profileLink}} and photo from appearing on any site. It may take some time for the changes to take effect. Gravatar profiles can be deleted at {{deleteLink}}Gravatar.com{{/deleteLink}}.{{/spanExtra}}',
+					'{{spanLead}}Hide my photo and Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your photo and {{profileLink}}Gravatar profile{{/profileLink}} from appearing on any site. It may take some time for the changes to take effect. Gravatar profiles can be deleted at {{deleteLink}}Gravatar.com{{/deleteLink}}.{{/spanExtra}}',
 					stringParts
 			  )
 			: translate(
