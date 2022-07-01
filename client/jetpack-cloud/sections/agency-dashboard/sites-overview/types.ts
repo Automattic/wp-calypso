@@ -26,6 +26,7 @@ export interface Site {
 	latest_backup_status: string;
 	is_connection_healthy: boolean;
 	awaiting_plugin_updates: Array< string >;
+	is_favorite: boolean;
 }
 export interface SiteNode {
 	value: Site;
@@ -65,6 +66,7 @@ export interface SiteData {
 	scan: ScanNode;
 	plugin: PluginNode;
 	monitor: MonitorNode;
+	isFavorite?: boolean;
 	[ key: string ]: any;
 }
 
@@ -106,7 +108,7 @@ export type ActionEventNames = {
 export interface SitesOverviewContextInterface {
 	search: string;
 	currentPage: number;
-	filter: { issueTypes: Array< string > };
+	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
 }
 
 export type AgencyDashboardFilterOption =
@@ -118,9 +120,24 @@ export type AgencyDashboardFilterOption =
 
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption | string >;
+	showOnlyFavorites: boolean;
 };
 
 export type PurchasedProduct = {
 	selectedSite: string;
 	selectedProduct: { name: string; key: string };
 };
+
+export interface APIError {
+	status: number;
+	code: string | null;
+	message: string;
+	data?: any;
+}
+
+export interface APISetFavorite {
+	[ key: string ]: any;
+}
+export interface APIRemoveFavorite {
+	[ key: string ]: any;
+}

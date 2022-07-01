@@ -3,6 +3,7 @@
  */
 
 import { render } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import SiteContent from '../index';
@@ -23,11 +24,14 @@ describe( '<SiteContent>', () => {
 	const initialState = {};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
+	const queryClient = new QueryClient();
 
 	test( 'should render correctly and show table', () => {
 		const { container } = render(
 			<Provider store={ store }>
-				<SiteContent { ...props } />
+				<QueryClientProvider client={ queryClient }>
+					<SiteContent { ...props } />
+				</QueryClientProvider>
 			</Provider>
 		);
 		const [ tableContent ] = container.getElementsByClassName( 'site-table__table' );
@@ -43,7 +47,9 @@ describe( '<SiteContent>', () => {
 		};
 		const { getByText } = render(
 			<Provider store={ store }>
-				<SiteContent { ...props } />
+				<QueryClientProvider client={ queryClient }>
+					<SiteContent { ...props } />
+				</QueryClientProvider>
 			</Provider>
 		);
 		expect( getByText( 'No active sites' ) ).toBeInTheDocument();
@@ -55,7 +61,9 @@ describe( '<SiteContent>', () => {
 		};
 		const { container } = render(
 			<Provider store={ store }>
-				<SiteContent { ...props } />
+				<QueryClientProvider client={ queryClient }>
+					<SiteContent { ...props } />
+				</QueryClientProvider>
 			</Provider>
 		);
 		const [ loadinContent ] = container.getElementsByClassName( 'partner-portal-text-placeholder' );

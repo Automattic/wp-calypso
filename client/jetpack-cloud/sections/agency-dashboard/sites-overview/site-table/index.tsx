@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { ReactElement, Fragment } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -19,8 +20,15 @@ export default function SiteTable( { isLoading, columns, items }: Props ): React
 		<table className="site-table__table">
 			<thead>
 				<tr>
-					{ columns.map( ( column ) => (
-						<th key={ column.key }>{ column.title }</th>
+					{ columns.map( ( column, index ) => (
+						<th key={ column.key }>
+							{ index === 0 && (
+								<Gridicon className="site-table__favorite-icon" size={ 18 } icon="star" />
+							) }
+							<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
+								{ column.title }
+							</span>
+						</th>
 					) ) }
 					<th></th>
 				</tr>
@@ -42,6 +50,7 @@ export default function SiteTable( { isLoading, columns, items }: Props ): React
 						const site = item.site;
 						const blogId = site.value.blog_id;
 						const siteError = site.error || item.monitor.error;
+						const isFavorite = item.isFavorite;
 						return (
 							<Fragment key={ `table-row-${ blogId }` }>
 								<tr className="site-table__table-row">
@@ -53,7 +62,12 @@ export default function SiteTable( { isLoading, columns, items }: Props ): React
 													className={ classNames( site.error && 'site-table__td-with-error' ) }
 													key={ `table-data-${ row.type }-${ blogId }` }
 												>
-													<SiteStatusContent rows={ item } type={ row.type } isLargeScreen />
+													<SiteStatusContent
+														rows={ item }
+														type={ row.type }
+														isLargeScreen
+														isFavorite={ isFavorite }
+													/>
 												</td>
 											);
 										}

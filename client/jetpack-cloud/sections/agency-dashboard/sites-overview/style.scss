@@ -26,12 +26,11 @@
 .sites-overview__page-title {
 	color: var( --studio-gray-80 );
 	font-weight: 400;
-
 }
 .sites-overview__page-subtitle {
 	font-size: 0.875rem;
 	color: var( --studio-gray-60 );
-	margin-bottom: 1.5rem;
+	margin-bottom: 8px;
 }
 .sites-overview__status-add-new {
 	display: inline-flex;
@@ -82,14 +81,14 @@
 	vertical-align: middle;
 	color: var( --studio-gray-100 );
 	@include break-zoomed-in {
-		width: calc( 100% - 100px );
-		margin-left: 24px;
+		width: calc( 100% - 90px );
+		margin-left: 8px;
 		margin-right: 5px;
 		font-size: 1rem;
 	}
 	@include break-large() {
-		width: 100%;
-		margin-left: 0;
+		width: calc( 100% - 55px );
+		margin-left: 32px;
 		font-size: 0.875rem;
 	}
 }
@@ -100,7 +99,7 @@
 	width: 20px;
 	background: linear-gradient( to right, rgba( 255, 255, 255, 0.8 ) 30%, rgba( 255, 255, 255, 1 ) 100% );
 	top: 0;
-	right: 70px;
+	right: 48px;
 	@include break-large() {
 		right: 0;
 	}
@@ -217,4 +216,66 @@
 }
 .sites-overview__status-warning {
 	border-color:  var( --studio-yellow-20 );;
+}
+.sites-overview__section-nav.section-nav {
+	.is-selected.section-nav-tab .section-nav-tab__link .count {
+		color: var( --color-primary );
+	}
+	.section-nav__mobile-header {
+		.count {
+			margin-left: 8px;
+		}
+		.gridicon {
+			margin-left: auto;
+		}
+	}
+	.count {
+		background: var( --color-primary-5 );
+		border-radius: 3px; // stylelint-disable-line scales/radii
+		border: none;
+		font-weight: normal;
+	}
+	margin-bottom: 8px;
+	@include break-large() {
+		background: unset;
+		box-shadow: none;
+		border-bottom: 1px solid var( --color-primary-5 );
+		margin-left: -75px;
+    	padding-left: 75px;
+    	width: 100vw;
+		margin-bottom: 16px;
+	}
+}
+@keyframes highlight-tab-animation {
+	0% {
+		background: var( --color-neutral-70 );
+	}
+	100% {
+		background: unset;
+	}
+}
+@keyframes highlight-tab-animation-count {
+	0% {
+		color: var( --color-text-inverted );
+	}
+	100% {
+		color: unset;
+	}
+}
+@keyframes highlight-tab-animation-icon {
+	0% {
+		fill: var( --color-text-inverted );
+	}
+	100% {
+		fill: unset;
+	}
+}
+.site-overview__highlight-tab.section-nav {
+	animation: highlight-tab-animation 0.4s linear;
+	.section-nav__mobile-header-text {
+		animation: highlight-tab-animation-count 0.4s linear;
+	}
+	.section-nav__mobile-header .gridicon {
+		animation: highlight-tab-animation-icon 0.4s linear;
+	}
 }

@@ -6,6 +6,7 @@ export function agencyDashboardContext( context: PageJS.Context, next: () => voi
 	const { s: search, page, issue_types } = context.query;
 	const filter = {
 		issueTypes: issue_types?.split( ',' ),
+		showOnlyFavorites: context.params.filter === 'favorites',
 	};
 	const currentPage = parseInt( page ) || 1;
 	context.header = <Header />;
