@@ -5,9 +5,7 @@ import { FeatureFlags } from '../types';
 // Lets typescript know about the feature flags global added through the help-center-script
 declare const helpCenterFeatureFlags: FeatureFlags;
 
-const FeatureFlagContext = React.createContext( {
-	loadNextStepsTutorial: false,
-} );
+const FeatureFlagContext = React.createContext< FeatureFlags | undefined >( undefined );
 
 export const FeatureFlagProvider: React.FC< { children: JSX.Element } > = function ( {
 	children,
