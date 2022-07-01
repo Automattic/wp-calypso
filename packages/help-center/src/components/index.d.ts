@@ -55,10 +55,36 @@ declare module 'calypso/state/selectors/has-cancelable-user-purchases' {
 }
 
 declare module 'calypso/state/inline-help/selectors/get-admin-help-results' {
-	const getAdminHelpResults: ( state: unknown ) => unknown[];
+	const getAdminHelpResults: (
+		state: unknown,
+		searchQuery: string,
+		limit: number
+	) => {
+		title: string;
+		description: string;
+		link: string;
+		synonyms: string[];
+		icon: string;
+	}[];
 	export default getAdminHelpResults;
 }
 
-declare module '@automattic/state-utils' {
-	export const createSelector = unknown;
+declare module 'calypso/lib/formatting' {
+	export const decodeEntities: ( text: string | React.ReactChild ) => string;
+	export const preventWidows: ( text: string, wordsToKeep?: number ) => string;
+}
+
+declare module 'calypso/state/analytics/actions' {
+	export const recordTracksEvent: (
+		name: string,
+		properties: unknown
+	) => {
+		type: string;
+		meta: {
+			analytics: {
+				type: string;
+				payload: unknown;
+			}[];
+		};
+	};
 }

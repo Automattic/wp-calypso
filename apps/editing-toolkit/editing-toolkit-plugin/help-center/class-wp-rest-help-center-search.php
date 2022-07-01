@@ -1,6 +1,6 @@
 <?php
 /**
- * WP_REST_Help_Center_Chat_Availability file.
+ * WP_REST_Help_Center_Search file.
  *
  * @package A8C\FSE
  */
@@ -11,15 +11,15 @@ use Automattic\Jetpack\Connection\Client;
 use Automattic\Jetpack\Constants;
 
 /**
- * Class WP_REST_Help_Center_Chat_Availability.
+ * Class WP_REST_Help_Center_Search.
  */
-class WP_REST_Help_Center_Chat_Availability extends \WP_REST_Controller {
+class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 	/**
-	 * WP_REST_Help_Center_Support_Availability constructor.
+	 * WP_REST_Help_Center_Search constructor.
 	 */
 	public function __construct() {
 		$this->namespace                       = 'wpcom/v2';
-		$this->rest_base                       = 'help-center/chat-availability';
+		$this->rest_base                       = 'help-center/search';
 		$this->wpcom_is_site_specific_endpoint = false;
 		$this->is_wpcom                        = false;
 
@@ -38,7 +38,7 @@ class WP_REST_Help_Center_Chat_Availability extends \WP_REST_Controller {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_chat_availability' ),
+					'callback'            => array( $this, 'get_search_results' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 				),
 			)
@@ -55,38 +55,28 @@ class WP_REST_Help_Center_Chat_Availability extends \WP_REST_Controller {
 	}
 
 	/**
-	 * Should return the chat availability
+	 * Should return the search results
 	 *
+	 * @param \WP_REST_Request $request    The request sent to the API.
+	 * 
 	 * @return WP_REST_Response
 	 */
-	public function get_chat_availability() {
-		$endpoint = 'help/eligibility/mine/chat';
+	public function get_search_results( \WP_REST_Request $request) {
+		$query = $request->get_param( 'query' );
+
 		if ( $this->is_wpcom ) {
-			require_lib( 'wpcom-api-direct' );
-			$request  = array(
-				'url'    => sprintf(
-					'%s/%s/v%s/%s',
-					Constants::get_constant( 'JETPACK__WPCOM_JSON_API_BASE' ),
-					'wpcom',
-					'2',
-					$endpoint
-				),
-				'method' => 'GET',
-			);
-			$response = \WPCOM_API_Direct::do_request( $request, null );
+			$response = \WPCOM_Help_Search::get_search_results( $query );
 		} else {
-			$response = Client::wpcom_json_api_request_as_user( $endpoint );
+			$body = Client::wpcom_json_api_request_as_user( 'help/search/' . $query );
+			if ( is_wp_error( $body ) ) {
+				return $body;
+			}
+			$response = json_decode( wp_remote_retrieve_body( $body ) );
 		}
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$body = json_decode( wp_remote_retrieve_body( $response ) );
 
 		return rest_ensure_response(
 			array(
-				'get_availability' => $body,
+				'search_results' => $response,
 			)
 		);
 	}

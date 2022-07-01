@@ -101,8 +101,8 @@ class Help_Center {
 		$controller = new WP_REST_Help_Center_Support_Availability();
 		$controller->register_rest_route();
 
-		require_once __DIR__ . '/class-wp-rest-help-center-chat-availability.php';
-		$controller = new WP_REST_Help_Center_Chat_Availability();
+		require_once __DIR__ . '/class-wp-rest-help-center-search.php';
+		$controller = new WP_REST_Help_Center_Search();
 		$controller->register_rest_route();
 	}
 }
