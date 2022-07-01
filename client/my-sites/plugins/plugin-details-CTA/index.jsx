@@ -15,8 +15,9 @@ import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors'
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { PREINSTALLED_PLUGINS, PREINSTALLED_PREMIUM_PLUGINS } from '../constants';
+import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginPrice } from '../plugin-price';
+import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import CTAButton from './CTA-button';
 import PluginDetailsCTAPreinstalledPremiumPlugins from './preinstalled-premium-plugins-CTA';
 import USPS from './usps';
@@ -61,6 +62,8 @@ const PluginDetailsCTA = ( {
 	);
 	const hasEligibilityMessages =
 		! isAtomic && ! isJetpack && ( eligibilityHolds?.length || eligibilityWarnings?.length );
+
+	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsCTAPlaceholder />;
@@ -107,7 +110,7 @@ const PluginDetailsCTA = ( {
 
 	// Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
 	// but require a paid upgrade to function.
-	if ( PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] ) {
+	if ( isPreinstalledPremiumPlugin ) {
 		return (
 			<div className="plugin-details-CTA__container">
 				<PluginDetailsCTAPreinstalledPremiumPlugins

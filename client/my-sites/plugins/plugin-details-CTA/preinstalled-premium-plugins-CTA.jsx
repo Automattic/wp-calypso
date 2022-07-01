@@ -7,15 +7,14 @@ import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/a
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { PREINSTALLED_PREMIUM_PLUGINS } from '../constants';
-import { getPeriodVariationValue, PluginPrice } from '../plugin-price';
+import { PluginPrice } from '../plugin-price';
+import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import CTAButton from './CTA-button';
 
 export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
@@ -38,13 +37,8 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	);
 
 	const billingPeriod = useSelector( getBillingInterval );
-	const { feature: pluginFeature, products: pluginProducts } =
-		PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ];
-	const pluginProduct = pluginProducts[ getPeriodVariationValue( billingPeriod ) ];
-
-	const hasFeature = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSiteId, pluginFeature )
-	);
+	const { isPreinstalledPremiumPluginUpgraded, preinstalledPremiumPluginProduct } =
+		usePreinstalledPremiumPlugin( plugin.slug );
 
 	const managedPluginMessage = (
 		<span className="plugin-details-CTA__preinstalled">
@@ -81,7 +75,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		<div className="plugin-details-CTA__install">
 			<Button
 				className="plugin-details-CTA__install-button"
-				href={ `/checkout/${ selectedSiteSlug }/${ pluginProduct }` }
+				href={ `/checkout/${ selectedSiteSlug }/${ preinstalledPremiumPluginProduct }` }
 				primary
 			>
 				{ translate( 'Upgrade %s', { args: plugin.name } ) }
@@ -100,10 +94,10 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		</div>
 	);
 
-	if ( isSimple && hasFeature ) {
+	if ( isSimple && isPreinstalledPremiumPluginUpgraded ) {
 		return managedPluginMessage;
 	}
-	if ( isSimple && ! hasFeature ) {
+	if ( isSimple && ! isPreinstalledPremiumPluginUpgraded ) {
 		return (
 			<>
 				{ pluginPrice }
@@ -122,7 +116,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		);
 	}
 
-	if ( ! isSimple && isPluginInstalledOnsite && ! hasFeature ) {
+	if ( ! isSimple && isPluginInstalledOnsite && ! isPreinstalledPremiumPluginUpgraded ) {
 		return (
 			<>
 				{ pluginPrice }

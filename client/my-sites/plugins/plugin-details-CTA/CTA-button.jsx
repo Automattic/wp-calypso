@@ -15,9 +15,9 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { PREINSTALLED_PREMIUM_PLUGINS } from '../constants';
 import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
+import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
 export default function CTAButton( {
 	plugin,
@@ -68,7 +68,8 @@ export default function CTAButton( {
 		[ dispatch, keepMeUpdatedPreferenceId, userId ]
 	);
 
-	const isPreinstalledPremiumPlugin = !! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ];
+	const { isPreinstalledPremiumPlugin, preinstalledPremiumPluginProduct } =
+		usePreinstalledPremiumPlugin( plugin.slug );
 
 	return (
 		<>
@@ -135,6 +136,7 @@ export default function CTAButton( {
 						billingPeriod,
 						eligibleForProPlan,
 						isPreinstalledPremiumPlugin,
+						preinstalledPremiumPluginProduct,
 					} );
 				} }
 				disabled={ ( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false }
@@ -179,6 +181,7 @@ function onClickInstallPlugin( {
 	billingPeriod,
 	eligibleForProPlan,
 	isPreinstalledPremiumPlugin,
+	preinstalledPremiumPluginProduct,
 } ) {
 	dispatch( removePluginStatuses( 'completed', 'error' ) );
 
@@ -228,10 +231,7 @@ function onClickInstallPlugin( {
 	}
 
 	if ( isPreinstalledPremiumPlugin ) {
-		const variationPeriod = getPeriodVariationValue( billingPeriod );
-		const checkoutUrl = `/checkout/${ selectedSite.slug }/${
-			PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products[ variationPeriod ]
-		}`;
+		const checkoutUrl = `/checkout/${ selectedSite.slug }/${ preinstalledPremiumPluginProduct }`;
 		const installUrl = `/marketplace/${ plugin.slug }/install/${ selectedSite.slug }`;
 		return page( `${ checkoutUrl }?redirect_to=${ installUrl }#step2` );
 	}

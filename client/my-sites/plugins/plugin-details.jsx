@@ -65,8 +65,8 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { PREINSTALLED_PREMIUM_PLUGINS } from './constants';
 import NoPermissionsError from './no-permissions-error';
+import usePreinstalledPremiumPlugin from './use-preinstalled-premium-plugin';
 
 function PluginDetails( props ) {
 	const dispatch = useDispatch();
@@ -207,13 +207,7 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
-	const isUpgradeablePreinstalledPremiumPlugin = useSelector( ( state ) => {
-		const preinstalledPremiumPlugin = PREINSTALLED_PREMIUM_PLUGINS[ fullPlugin.slug ];
-		return (
-			!! preinstalledPremiumPlugin &&
-			! siteHasFeature( state, selectedSite?.ID, preinstalledPremiumPlugin.feature )
-		);
-	} );
+	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
@@ -279,7 +273,7 @@ function PluginDetails( props ) {
 				showPlaceholder={ showPlaceholder }
 				isJetpackSelfHosted={ isJetpackSelfHosted }
 				isWpcom={ isWpcom }
-				isUpgradeablePreinstalledPremiumPlugin={ isUpgradeablePreinstalledPremiumPlugin }
+				isPreinstalledPremiumPluginUpgraded={ isPreinstalledPremiumPluginUpgraded }
 				{ ...props }
 			/>
 		);
@@ -398,14 +392,14 @@ function LegacyPluginDetails( props ) {
 		showPlaceholder,
 		isJetpackSelfHosted,
 		isWpcom,
-		isUpgradeablePreinstalledPremiumPlugin,
+		isPreinstalledPremiumPluginUpgraded,
 	} = props;
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const showBillingIntervalSwitcher =
-		isUpgradeablePreinstalledPremiumPlugin ||
+		! isPreinstalledPremiumPluginUpgraded ||
 		( isMarketplaceProduct && ! requestingPluginsForSites && ! isPluginInstalledOnsite );
 
 	return (
