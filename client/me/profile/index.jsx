@@ -22,7 +22,7 @@ import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import UpdatedGravatarString from './updated-gravatar-string';
 
 import './style.scss';
@@ -42,8 +42,6 @@ class Profile extends Component {
 
 	render() {
 		const gravatarProfileLink = 'https://gravatar.com/' + this.props.getSetting( 'user_login' );
-
-		const isUserSettingsLoading = Object.keys( this.props.userSettings ).length === 0;
 
 		return (
 			<Main className="profile">
@@ -122,11 +120,11 @@ class Profile extends Component {
 
 						<FormFieldset
 							className={ classnames( {
-								'profile__gravatar-fieldset-is-loading': isUserSettingsLoading,
+								'profile__gravatar-fieldset-is-loading': this.props.isFetchingUserSettings,
 							} ) }
 						>
 							<ToggleControl
-								disabled={ isUserSettingsLoading }
+								disabled={ this.props.isFetchingUserSettings }
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
 								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
@@ -155,7 +153,7 @@ class Profile extends Component {
 export default compose(
 	connect(
 		( state ) => ( {
-			userSettings: getUserSettings( state ),
+			isFetchingUserSettings: isFetchingUserSettings( state ),
 		} ),
 		{ recordGoogleEvent }
 	),

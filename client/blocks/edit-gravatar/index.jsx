@@ -23,7 +23,7 @@ import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
 import { isCurrentUserUploadingGravatar } from 'calypso/state/gravatar-status/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
 
 import './style.scss';
@@ -155,20 +155,14 @@ export class EditGravatar extends Component {
 	};
 
 	render() {
-		const {
-			isGravatarProfileHidden,
-			isUploading,
-			translate,
-			user,
-			additionalUploadHtml,
-			userSettings,
-		} = this.props;
+		const { isGravatarProfileHidden, isUploading, translate, user, additionalUploadHtml } =
+			this.props;
 		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
 
-		if ( ! Object.keys( userSettings ).length ) {
+		if ( this.props.isFetchingUserSettings ) {
 			return (
 				<div className="edit-gravatar edit_gravatar__is-loading">
 					<div className="edit-gravatar__image-container">
@@ -321,7 +315,7 @@ const recordReceiveImageEvent = () => recordTracksEvent( 'calypso_edit_gravatar_
 export default connect(
 	( state ) => ( {
 		user: getCurrentUser( state ) || {},
-		userSettings: getUserSettings( state ),
+		isFetchingUserSettings: isFetchingUserSettings( state ),
 		isGravatarProfileHidden: getUserSetting( state, 'gravatar_profile_hidden' ),
 		isUploading: isCurrentUserUploadingGravatar( state ),
 	} ),
