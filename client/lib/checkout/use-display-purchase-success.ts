@@ -3,6 +3,11 @@ import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { successNotice } from 'calypso/state/notices/actions';
 
+/**
+ * Display a purchase success notice if the URL query string includes `notice=purchase-success`.
+ *
+ * This is intended to be used by post-checkout pages.
+ */
 export function useDisplayPurchaseSuccess( areNoticesAllowed = true ): void {
 	const queryParams = new URLSearchParams( window?.location?.search );
 	const noticeType = queryParams.get( 'notice' ) ?? undefined;
