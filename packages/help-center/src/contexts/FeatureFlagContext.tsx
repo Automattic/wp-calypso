@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useContext } from 'react';
 import { FeatureFlags } from '../types';
 
