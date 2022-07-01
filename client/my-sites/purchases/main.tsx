@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -11,12 +11,14 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { addQueryArgs } from 'calypso/lib/url';
 import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
 import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getPurchaseListUrlFor,
@@ -89,13 +91,34 @@ export function Purchases() {
 export function PurchaseDetails( {
 	purchaseId,
 	siteSlug,
+	noticeType,
 }: {
 	purchaseId: number;
 	siteSlug: string;
+	noticeType?: string;
 } ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase details load error' );
 	const redirectTo = getManagePurchaseUrlFor( siteSlug, purchaseId );
+	const redirectToWithSuccess = addQueryArgs( { notice: 'purchase-success' }, redirectTo );
+
+	const reduxDispatch = useDispatch();
+	const shouldShowNotice = Boolean( noticeType );
+	const lastShownNotice = useRef< string | undefined >();
+	useEffect( () => {
+		if ( ! shouldShowNotice || lastShownNotice.current === noticeType ) {
+			return;
+		}
+
+		if ( noticeType === 'purchase-success' ) {
+			lastShownNotice.current = noticeType;
+			const successMessage = translate( 'Your purchase has been completed!' );
+			reduxDispatch( successNotice( successMessage ) );
+			return;
+		}
+
+		return;
+	}, [ shouldShowNotice, translate, reduxDispatch, noticeType ] );
 
 	return (
 		<Main wideLayout className="purchases manage-purchase">
@@ -124,7 +147,9 @@ export function PurchaseDetails( {
 					siteSlug={ siteSlug }
 					showHeader={ false }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					redirectTo={ isJetpackCloud() ? `https://cloud.jetpack.com${ redirectTo }` : redirectTo }
+					redirectTo={
+						isJetpackCloud() ? `https://cloud.jetpack.com${ redirectTo }` : redirectToWithSuccess
+					}
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 					getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
