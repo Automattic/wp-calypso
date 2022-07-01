@@ -276,7 +276,7 @@ export default function DIFMLanding( {
 
 	return (
 		<>
-			{ ! displayCost && <QueryProductsList persist /> }
+			{ ! productCost && <QueryProductsList persist /> }
 			<Wrapper>
 				<ContentSection>
 					<Header
