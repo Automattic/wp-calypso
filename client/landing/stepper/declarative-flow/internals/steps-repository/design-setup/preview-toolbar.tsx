@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
 import { computer, tablet, phone } from 'calypso/signup/icons';
+import type { GlobalStyles } from '@automattic/data-stores';
 import './preview-toolbar.scss';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ] as const;
@@ -22,6 +23,7 @@ type PreviewToolbarProps = {
 	isSticky?: boolean;
 	// Called when a device button is clicked
 	setDeviceViewport: ( device: Device ) => void;
+	globalStyles: GlobalStyles;
 	translate: ( word: string ) => string;
 };
 
@@ -34,6 +36,7 @@ const DesignPickerPreviewToolbar = ( {
 	showDeviceSwitcher,
 	isSticky,
 	setDeviceViewport,
+	globalStyles,
 	translate,
 }: PreviewToolbarProps ) => {
 	const devices = React.useRef( {

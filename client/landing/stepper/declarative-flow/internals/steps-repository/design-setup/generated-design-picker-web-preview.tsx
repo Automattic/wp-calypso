@@ -5,11 +5,14 @@ import {
 	MOBILE_VIEWPORT_WIDTH,
 } from '@automattic/design-picker';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import WebPreview from 'calypso/components/web-preview/content';
+import { SITE_STORE } from '../../../../stores';
 import PreviewToolbar from './preview-toolbar';
-import type { SiteDetails } from '@automattic/data-stores';
+import type { GlobalStyles, SiteDetails } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker';
 
 interface GeneratedDesignPickerWebPreviewProps {
@@ -35,6 +38,14 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 } ) => {
 	const translate = useTranslate();
 	const isMobile = ! useViewportMatch( 'small' );
+	const { getGlobalStyles } = useDispatch( SITE_STORE );
+	const globalStyles: GlobalStyles = useSelect( ( select ) =>
+		select( SITE_STORE ).getSiteGlobalStyles( site?.ID as number )
+	);
+
+	useEffect( () => {
+		site?.ID && design?.recipe?.stylesheet && getGlobalStyles( site?.ID, design.recipe.stylesheet );
+	}, [ site?.ID, design?.recipe?.stylesheet ] );
 
 	return (
 		<WebPreview
@@ -53,6 +64,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 				components: { strong: <strong /> },
 			} ) }
 			toolbarComponent={ PreviewToolbar }
+			globalStyles={ globalStyles }
 			fetchPriority={ isSelected ? 'high' : 'low' }
 			autoHeight
 			siteId={ site?.ID }
