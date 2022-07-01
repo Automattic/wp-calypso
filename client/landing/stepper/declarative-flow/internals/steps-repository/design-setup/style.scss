@@ -303,6 +303,18 @@ $design-button-primary-color: rgb( 17, 122, 201 );
  * Generated Design Picker
  */
 .design-picker__is-generated {
+
+	// Design preview work different between mobile and desktop views.
+	// In mobile, design preview only shows up when in preview mode.
+	// In desktop, design preview is always present next to the thumbnail.
+	// See: https://github.com/Automattic/wp-calypso/issues/65116
+	@mixin generated-design-picker-show-preview {
+		opacity: 1;
+		pointer-events: auto;
+		position: relative;
+		z-index: 1;
+	}
+
 	&.step-container {
 		max-width: none;
 
@@ -340,10 +352,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 			.web-preview__inner {
 				&.is-selected {
-					opacity: 1;
-					pointer-events: auto;
-					position: relative;
-					z-index: 1;
+					@include generated-design-picker-show-preview;
 				}
 			}
 		}
@@ -505,10 +514,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 			@include break-small {
 				&.is-selected {
-					opacity: 1;
-					pointer-events: auto;
-					position: relative;
-					z-index: 1;
+					@include generated-design-picker-show-preview;
 				}
 			}
 
