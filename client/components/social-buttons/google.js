@@ -14,6 +14,7 @@ import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import withExperimentGoogleAuthMigration from 'calypso/with-experiment-google-auth-migration';
 
 let auth2InitDone = false;
 
@@ -33,10 +34,11 @@ class GoogleLoginButton extends Component {
 		scope: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		uxMode: PropTypes.string,
+		isActiveGoogleAuthMigration: PropTypes.bool,
 	};
 
 	static defaultProps = {
-		scope: config.isEnabled( 'migration/sign-in-with-google' )
+		scope: this.props.isActiveGoogleAuthMigration
 			? 'openid profile email'
 			: 'https://www.googleapis.com/auth/userinfo.profile',
 		fetchBasicProfile: true,
@@ -62,7 +64,7 @@ class GoogleLoginButton extends Component {
 	}
 
 	componentDidMount() {
-		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
+		if ( this.props.isActiveGoogleAuthMigration ) {
 			if ( this.props.authCodeFromRedirect ) {
 				this.handleAuthorizationCode( {
 					auth_code: this.props.authCodeFromRedirect,
@@ -248,7 +250,7 @@ class GoogleLoginButton extends Component {
 			return;
 		}
 
-		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
+		if ( this.props.isActiveGoogleAuthMigration ) {
 			this.client.requestCode();
 			return;
 		}
@@ -357,4 +359,4 @@ export default connect(
 		recordTracksEvent,
 		showErrorNotice: errorNotice,
 	}
-)( localize( GoogleLoginButton ) );
+)( withExperimentGoogleAuthMigration( localize( GoogleLoginButton ) ) );

@@ -9,6 +9,7 @@ import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
 import { isRequesting } from 'calypso/state/login/selectors';
+import withExperimentGoogleAuthMigration from 'calypso/with-experiment-google-auth-migration';
 
 class SocialLoginActionButton extends Component {
 	static propTypes = {
@@ -20,6 +21,7 @@ class SocialLoginActionButton extends Component {
 		disconnectSocialUser: PropTypes.func.isRequired,
 		socialServiceResponse: PropTypes.object,
 		redirectUri: PropTypes.string,
+		isActiveGoogleAuthMigration: PropTypes.bool,
 	};
 
 	state = {
@@ -42,7 +44,7 @@ class SocialLoginActionButton extends Component {
 		};
 
 		if ( service === 'google' ) {
-			const tokens = config.isEnabled( 'migration/sign-in-with-google' )
+			const tokens = this.props.isActiveGoogleAuthMigration
 				? response // The `response` object itself holds the tokens, no need for any other method calls.
 				: response.getAuthResponse?.();
 
@@ -143,4 +145,4 @@ export default connect(
 		disconnectSocialUser,
 		fetchCurrentUser,
 	}
-)( localize( SocialLoginActionButton ) );
+)( withExperimentGoogleAuthMigration( localize( SocialLoginActionButton ) ) );

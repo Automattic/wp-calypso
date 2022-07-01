@@ -8,6 +8,7 @@ import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import withExperimentGoogleAuthMigration from 'calypso/with-experiment-google-auth-migration';
 import SocialSignupToS from './social-signup-tos';
 
 class SocialSignupForm extends Component {
@@ -18,6 +19,7 @@ class SocialSignupForm extends Component {
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
 		disableTosText: PropTypes.bool,
+		isActiveGoogleAuthMigration: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -38,7 +40,7 @@ class SocialSignupForm extends Component {
 	};
 
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
-		const tokens = config.isEnabled( 'migration/sign-in-with-google' )
+		const tokens = this.props.isActiveGoogleAuthMigration
 			? response // The `response` object itself holds the tokens, no need for any other method calls.
 			: response.getAuthResponse?.();
 
@@ -130,4 +132,4 @@ export default connect(
 		currentRoute: getCurrentRoute( state ),
 	} ),
 	{ recordTracksEvent }
-)( localize( SocialSignupForm ) );
+)( withExperimentGoogleAuthMigration( localize( SocialSignupForm ) ) );
