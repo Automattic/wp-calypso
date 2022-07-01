@@ -1,12 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
-	FEATURE_INSTALL_PLUGINS,
-	findFirstSimilarPlanKey,
-	isBlogger,
-	isPersonal,
-	isPremium,
-	TYPE_BUSINESS,
-	TYPE_STARTER,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_UPLOAD_PLUGINS,
@@ -19,7 +11,6 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -32,7 +23,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import NoResults from 'calypso/my-sites/no-results';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
@@ -318,62 +308,6 @@ const PluginSingleListView = ( {
 	);
 };
 
-const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSlug } ) => {
-	const translate = useTranslate();
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
-
-	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
-		return null;
-	}
-	const isLegacyPlan = isBlogger( sitePlan ) || isPersonal( sitePlan ) || isPremium( sitePlan );
-	const checkoutPlan = eligibleForProPlan && ! isLegacyPlan ? 'pro' : 'business';
-	const bannerURL = `/checkout/${ siteSlug }/${ checkoutPlan }`;
-	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
-		type: TYPE_BUSINESS,
-	} );
-
-	const title =
-		eligibleForProPlan && ! isLegacyPlan
-			? translate( 'Upgrade to the Pro plan to install plugins.' )
-			: translate( 'Upgrade to the Business plan to install plugins.' );
-
-	return (
-		<UpsellNudge
-			event="calypso_plugins_browser_upgrade_nudge"
-			showIcon={ true }
-			href={ bannerURL }
-			feature={ FEATURE_INSTALL_PLUGINS }
-			plan={ plan }
-			title={ title }
-		/>
-	);
-};
-
-const UpgradeNudgePaid = ( props ) => {
-	const translate = useTranslate();
-
-	if ( ! props.sitePlan ) {
-		return null;
-	}
-
-	const plan = findFirstSimilarPlanKey( props.sitePlan.product_slug, {
-		type: TYPE_STARTER,
-	} );
-
-	return (
-		<UpsellNudge
-			event="calypso_plugins_browser_upgrade_nudge"
-			showIcon={ true }
-			href={ `/checkout/${ props.siteSlug }/starter` }
-			feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
-			plan={ plan }
-			title={ translate( 'Upgrade to the Starter plan to install paid plugins.' ) }
-		/>
-	);
-};
-
 const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -483,14 +417,6 @@ function isNotInstalled( plugin, installedPlugins ) {
 }
 
 const PluginBrowserContent = ( props ) => {
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, props.selectedSite?.ID )
-	);
-
-	const isLegacyPlan =
-		props.sitePlan &&
-		( isBlogger( props.sitePlan ) || isPersonal( props.sitePlan ) || isPremium( props.sitePlan ) );
-
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
 	}
@@ -500,21 +426,7 @@ const PluginBrowserContent = ( props ) => {
 
 	return (
 		<>
-			{ ! props.jetpackNonAtomic && (
-				<>
-					<div className="plugins-browser__upgrade-banner">
-						{ isEnabled( 'marketplace-starter-plan' ) && eligibleForProPlan && ! isLegacyPlan ? (
-							<UpgradeNudgePaid { ...props } />
-						) : (
-							<UpgradeNudge { ...props } />
-						) }
-					</div>
-					<PluginSingleListView { ...props } category="paid" />
-				</>
-			) }
-			{ isEnabled( 'marketplace-starter-plan' ) && eligibleForProPlan && ! isLegacyPlan && (
-				<UpgradeNudge { ...props } />
-			) }
+			{ ! props.jetpackNonAtomic && <PluginSingleListView { ...props } category="paid" /> }
 			<PluginSingleListView { ...props } category="featured" />
 			<PluginSingleListView { ...props } category="popular" />
 		</>
