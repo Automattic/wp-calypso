@@ -104,8 +104,10 @@ export const buildUpsellURL = (
 
 	// If upsell exists
 	if ( product in PURCHASE_FLOW_UPSELLS_MATRIX ) {
-		if ( ! urlQueryArgs.checkoutBackUrl ) {
+		if ( isJetpackCloud() && ! urlQueryArgs.checkoutBackUrl ) {
 			urlQueryArgs.checkoutBackUrl = window.location.href;
+		} else if ( ! urlQueryArgs.cancel_to ) {
+			urlQueryArgs.cancel_to = `${ rootUrl.replace( /\/$/, '' ) }/${ siteSlug || '' }`;
 		}
 
 		return addQueryArgs(
