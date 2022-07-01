@@ -47,7 +47,7 @@
 		"layout/support-article-dialog": false,
 		"marketplace-test": false,
 		"marketplace-domain-bundle": false,
-		"migration/sign-in-with-google": false,
+		"migration/sign-in-with-google": true,
 		"oauth": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,
