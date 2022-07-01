@@ -14,8 +14,7 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 	const isPreinstalledPremiumPluginUpgraded = useSelector(
 		( state ) =>
 			!! preinstalledPremiumPlugin &&
-			siteHasFeature( state, selectedSiteId, preinstalledPremiumPlugin.feature ),
-		[ pluginSlug, selectedSiteId ]
+			siteHasFeature( state, selectedSiteId, preinstalledPremiumPlugin.feature )
 	);
 
 	const preinstalledPremiumPluginFeature = preinstalledPremiumPlugin?.feature;
