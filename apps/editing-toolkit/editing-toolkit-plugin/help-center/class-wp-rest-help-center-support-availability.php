@@ -8,7 +8,6 @@
 namespace A8C\FSE;
 
 use Automattic\Jetpack\Connection\Client;
-use Automattic\Jetpack\Constants;
 
 /**
  * Class WP_REST_Help_Center_Support_Availability.
@@ -34,7 +33,7 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 	public function register_rest_route() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base,
+			$this->rest_base . '/(?P<system>\w+)',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
@@ -57,36 +56,26 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 	/**
 	 * Should return the support availability
 	 *
+	 * @param \WP_REST_Request $request    The request sent to the API.
+	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_support_availability() {
-		$endpoint = 'help/eligibility/mine/all';
+	public function get_support_availability( \WP_REST_Request $request ) {
+		$support_system_name = $request->get_param( 'system' );
+
 		if ( $this->is_wpcom ) {
-			require_lib( 'wpcom-api-direct' );
-			$request  = array(
-				'url'    => sprintf(
-					'%s/%s/v%s/%s',
-					Constants::get_constant( 'JETPACK__WPCOM_JSON_API_BASE' ),
-					'wpcom',
-					'2',
-					$endpoint
-				),
-				'method' => 'GET',
-			);
-			$response = \WPCOM_API_Direct::do_request( $request, null );
+			$response = \WPCOM_Help_Eligibility::check_support_eligibility( $support_system_name );
 		} else {
-			$response = Client::wpcom_json_api_request_as_user( $endpoint );
+			$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/mine/' . $support_system_name );
+			if ( is_wp_error( $body ) ) {
+				return $body;
+			}
+			$response = json_decode( wp_remote_retrieve_body( $body ) );
 		}
-
-		if ( is_wp_error( $response ) ) {
-			return $response;
-		}
-
-		$body = json_decode( wp_remote_retrieve_body( $response ) );
 
 		return rest_ensure_response(
 			array(
-				'get_availability' => $body,
+				'get_availability' => $response,
 			)
 		);
 	}
