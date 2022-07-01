@@ -135,9 +135,6 @@ export interface APIError {
 	data?: any;
 }
 
-export interface APISetFavorite {
-	[ key: string ]: any;
-}
-export interface APIRemoveFavorite {
+export interface APIToggleFavorite {
 	[ key: string ]: any;
 }

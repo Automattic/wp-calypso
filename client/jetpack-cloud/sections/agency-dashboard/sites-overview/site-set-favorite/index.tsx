@@ -2,11 +2,10 @@ import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { ReactElement, useContext, useState } from 'react';
+import { ReactElement, useContext } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
-import useRemoveFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-remove-favourite-site-mutation';
-import useSetFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-set-favourite-site-mutation';
+import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from '../context';
@@ -25,8 +24,6 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
-
 	const { filter, search, currentPage } = useContext( SitesOverviewContext );
 	const { showOnlyFavorites } = filter;
 	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
@@ -39,7 +36,6 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	};
 
 	const handleOnChangeFavoriteSuccess = () => {
-		setIsSubmitting( false );
 		const text = (
 			<span>
 				{ ! isFavorite
@@ -103,9 +99,8 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 			onSuccess: () => {
 				handleOnChangeFavoriteSuccess();
 			},
-			onError: ( error: APIError, _siteId: number, context: any ) => {
+			onError: ( error: APIError, options: any, context: any ) => {
 				queryClient.setQueryData( queryKey, context?.previousSites );
-				setIsSubmitting( false );
 				const errorMessage = error.message;
 				dispatch( errorNotice( errorMessage ) );
 			},
@@ -115,13 +110,10 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		};
 	};
 
-	const setFavorite = useSetFavoriteSiteMutation( handleMutation() );
-
-	const removeFavorite = useRemoveFavoriteSiteMutation( handleMutation() );
+	const { isLoading, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
 
 	const handleFavoriteChange = () => {
-		setIsSubmitting( true );
-		isFavorite ? removeFavorite.mutate( siteId ) : setFavorite.mutate( siteId );
+		mutate( { siteId, isFavorite } );
 		dispatch(
 			recordTracksEvent(
 				isFavorite
@@ -136,7 +128,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 			<Button
 				borderless
 				compact
-				disabled={ isSubmitting }
+				disabled={ isLoading }
 				onClick={ handleFavoriteChange }
 				className={ classNames(
 					'site-set-favorite__favorite-icon',
