@@ -94,7 +94,7 @@ const CheckoutMasterbar = ( {
 				{ isJetpack && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
-			<Item className="masterbar__item-title">{ title }</Item>
+			{ title && <Item className="masterbar__item-title">{ title }</Item> }
 			{ showHelpCenter && (
 				<Item
 					onClick={ () => setIsHelpCenterVisible( ! isHelpCenterVisible ) }
@@ -102,7 +102,9 @@ const CheckoutMasterbar = ( {
 						'is-active': isHelpCenterVisible,
 					} ) }
 					icon={ <HelpIcon newItems={ newItems } /> }
-				/>
+				>
+					{ translate( 'Help' ) }
+				</Item>
 			) }
 			<CheckoutModal
 				title={ modalTitleText }
