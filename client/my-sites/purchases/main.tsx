@@ -1,14 +1,15 @@
 import config from '@automattic/calypso-config';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useDisplayPurchaseSuccess } from 'calypso/lib/checkout/use-display-purchase-success';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -18,7 +19,6 @@ import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getPurchaseListUrlFor,
@@ -102,23 +102,7 @@ export function PurchaseDetails( {
 	const redirectTo = getManagePurchaseUrlFor( siteSlug, purchaseId );
 	const redirectToWithSuccess = addQueryArgs( { notice: 'purchase-success' }, redirectTo );
 
-	const reduxDispatch = useDispatch();
-	const shouldShowNotice = Boolean( noticeType );
-	const lastShownNotice = useRef< string | undefined >();
-	useEffect( () => {
-		if ( ! shouldShowNotice || lastShownNotice.current === noticeType ) {
-			return;
-		}
-
-		if ( noticeType === 'purchase-success' ) {
-			lastShownNotice.current = noticeType;
-			const successMessage = translate( 'Your purchase has been completed!' );
-			reduxDispatch( successNotice( successMessage ) );
-			return;
-		}
-
-		return;
-	}, [ shouldShowNotice, translate, reduxDispatch, noticeType ] );
+	useDisplayPurchaseSuccess( noticeType );
 
 	return (
 		<Main wideLayout className="purchases manage-purchase">
