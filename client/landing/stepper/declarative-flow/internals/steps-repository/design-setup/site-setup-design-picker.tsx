@@ -582,7 +582,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			hideNext={ ! isPreviewingGeneratedDesign }
 			skipButtonAlign={ 'top' }
 			hideFormattedHeader
-			backLabelText={ isPreviewingGeneratedDesign ? 'Pick another' : 'Back' }
+			backLabelText={
+				isPreviewingGeneratedDesign ? translate( 'Pick another' ) : translate( 'Back' )
+			}
 			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
