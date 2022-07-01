@@ -21,9 +21,24 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getProductCost, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
-import './difm-landing.scss';
-
-const Placeholder = () => <span className="difm-landing__price-placeholder">&nbsp;</span>;
+const Placeholder = styled.span`
+	padding: 0 60px;
+	animation: loading-fade 800ms ease-in-out infinite;
+	background-color: var( --color-neutral-10 );
+	color: transparent;
+	min-height: 20px;
+	@keyframes loading-fade {
+		0% {
+			opacity: 0.5;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0.5;
+		}
+	}
+`;
 
 const Wrapper = styled.div`
 	display: flex;
