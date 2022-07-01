@@ -6,6 +6,7 @@ import {
 	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -16,10 +17,8 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import {
-	getProductDisplayCost,
-	isProductsListFetching,
-} from 'calypso/state/products-list/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getProductCost, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
 import './difm-landing.scss';
@@ -83,11 +82,11 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		flex-direction: row-reverse;
 		width: 100%;
 		svg {
-			margin-right: 0;
-			margin-left: auto;
+			margin-inline-end: 0;
+			margin-inline-start: auto;
 		}
 		.foldable-faq__question-text {
-			padding-left: 0;
+			padding-inline-start: 0;
 			font-size: 1.125rem;
 		}
 	}
@@ -159,14 +158,15 @@ const IndexContainer = styled.div`
 `;
 
 const Index = styled.div`
-	border: 1px solid var( --studio-gray-5 );
 	border-radius: 50%;
-	padding: 10px;
+	border: 1px solid var( --studio-gray-5 );
+	color: var( --studio-gray-30 );
+	font-size: 1.125rem;
 	height: 20px;
 	line-height: 20px;
-	width: 20px;
+	padding: 10px;
 	text-align: center;
-	color: var( --studio-gray-30 );
+	width: 20px;
 `;
 const Title = styled.div`
 	margin-bottom: 4px;
@@ -175,7 +175,7 @@ const Title = styled.div`
 `;
 const Description = styled.div`
 	color: var( --studio-gray-60 );
-	padding-bottom: 16px;
+	font-size: 0.875rem;
 `;
 
 const Step = ( {
@@ -211,7 +211,12 @@ export default function DIFMLanding( {
 	isInOnboarding: boolean;
 } ) {
 	const translate = useTranslate();
-	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
+	const productCost = useSelector( ( state ) => getProductCost( state, WPCOM_DIFM_LITE ) );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const displayCost =
+		productCost && currencyCode
+			? formatCurrency( productCost, currencyCode, { stripZeros: true } )
+			: '';
 	const isLoading = useSelector( isProductsListFetching );
 	const faqHeader = useRef( null );
 
@@ -235,10 +240,11 @@ export default function DIFMLanding( {
 		: getPlan( PLAN_PREMIUM )?.getTitle();
 
 	const headerText = translate(
-		'Hire a professional to set up your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}',
+		'Hire a professional to set up your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
 		{
 			components: {
 				PriceWrapper: isLoading ? <Placeholder /> : <span />,
+				sup: <sup />,
 			},
 			args: {
 				displayCost,
@@ -255,10 +261,13 @@ export default function DIFMLanding( {
 						align={ 'left' }
 						headerText={ headerText }
 						subHeaderText={ translate(
-							'One time fee, plus a one year subscription of the %(plan)s plan. It only takes 4 simple steps. A WordPress.com professional will create layouts for up to 5 pages of your site. It only takes 4 simple steps:',
+							'{{sup}}*{{/sup}}One time fee, plus a one year subscription of the %(plan)s plan. A WordPress.com professional will create layouts for up to 5 pages of your site. It only takes 4 simple steps:',
 							{
 								args: {
 									plan: planTitle,
+								},
+								components: {
+									sup: <sup />,
 								},
 							}
 						) }
@@ -290,9 +299,7 @@ export default function DIFMLanding( {
 						<Step
 							index={ translate( '4' ) }
 							title={ translate( 'Submit content for your new website' ) }
-							description={ translate(
-								'All content can be edited later with the help of WordPress.com support.'
-							) }
+							description={ translate( 'Content can be edited later with the help of support.' ) }
 						/>
 					</VerticalStepProgress>
 					<p>
