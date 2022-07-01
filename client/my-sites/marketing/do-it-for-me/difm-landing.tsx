@@ -11,7 +11,7 @@ import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
@@ -244,9 +244,9 @@ export default function DIFMLanding( {
 
 	const [ isFAQSectionOpen, setIsFAQSectionOpen ] = useState( false );
 
-	const onFAQButtonClick = () => {
-		setIsFAQSectionOpen( ! isFAQSectionOpen );
-	};
+	const onFAQButtonClick = useCallback( () => {
+		setIsFAQSectionOpen( ( isFAQSectionOpen ) => ! isFAQSectionOpen );
+	}, [ setIsFAQSectionOpen ] );
 
 	useEffect( () => {
 		if ( isFAQSectionOpen && faqHeader.current ) {
