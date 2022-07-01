@@ -37,7 +37,6 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
-	noticeType,
 	sitePlanSlug,
 	isNew7DUser,
 } ) => {
@@ -46,7 +45,7 @@ const Home = ( {
 	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
 
 	const shouldShowNotice = Boolean( canUserUseCustomerHome && layout );
-	useDisplayPurchaseSuccess( shouldShowNotice ? noticeType : undefined );
+	useDisplayPurchaseSuccess( shouldShowNotice );
 
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	useEffect( () => {

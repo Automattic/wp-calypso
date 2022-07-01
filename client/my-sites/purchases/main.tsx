@@ -91,18 +91,16 @@ export function Purchases() {
 export function PurchaseDetails( {
 	purchaseId,
 	siteSlug,
-	noticeType,
 }: {
 	purchaseId: number;
 	siteSlug: string;
-	noticeType?: string;
 } ) {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase details load error' );
 	const redirectTo = getManagePurchaseUrlFor( siteSlug, purchaseId );
 	const redirectToWithSuccess = addQueryArgs( { notice: 'purchase-success' }, redirectTo );
 
-	useDisplayPurchaseSuccess( noticeType );
+	useDisplayPurchaseSuccess();
 
 	return (
 		<Main wideLayout className="purchases manage-purchase">

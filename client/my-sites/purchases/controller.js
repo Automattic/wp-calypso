@@ -28,12 +28,10 @@ export const purchases = ( context, next ) => {
 };
 
 export const purchaseDetails = ( context, next ) => {
-	const noticeType = context.query.notice;
 	context.primary = (
 		<PurchaseDetails
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			noticeType={ noticeType }
 		/>
 	);
 	next();
