@@ -398,3 +398,21 @@ export interface AtomicSoftwareInstallError {
 	message: string;
 	code: string;
 }
+
+interface PaletteColor {
+	slug: string;
+	color: string;
+	name: string;
+	default: string;
+}
+
+export interface GlobalStyles {
+	settings: {
+		color: {
+			palette: {
+				default: PaletteColor[];
+				theme: PaletteColor[];
+			};
+		};
+	};
+}
