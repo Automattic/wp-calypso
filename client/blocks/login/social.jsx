@@ -16,6 +16,7 @@ import {
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
 } from 'calypso/state/login/selectors';
+import withExperimentGoogleAuthMigration from 'calypso/with-experiment-google-auth-migration';
 
 import './social.scss';
 
@@ -30,6 +31,7 @@ class SocialLoginForm extends Component {
 		linkingSocialService: PropTypes.string,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+		isActiveGoogleAuthMigration: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -40,7 +42,7 @@ class SocialLoginForm extends Component {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
 
-		const tokens = config.isEnabled( 'migration/sign-in-with-google' )
+		const tokens = this.props.isActiveGoogleAuthMigration
 			? response // The `response` object itself holds the tokens, no need for any other method calls.
 			: response.getAuthResponse?.();
 
@@ -259,4 +261,4 @@ export default connect(
 		createSocialUserFailed,
 		recordTracksEvent,
 	}
-)( localize( SocialLoginForm ) );
+)( withExperimentGoogleAuthMigration( localize( SocialLoginForm ) ) );
