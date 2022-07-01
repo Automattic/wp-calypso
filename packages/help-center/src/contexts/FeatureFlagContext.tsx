@@ -2,12 +2,14 @@ import * as React from 'react';
 import { useContext } from 'react';
 import { FeatureFlags } from '../types';
 
+// Lets typescript know about the feature flags global added through the help-center-script
+declare const helpCenterFeatureFlags: FeatureFlags;
+
 const FeatureFlagContext = React.createContext( {
 	loadNextStepsTutorial: false,
 } );
 
 export const FeatureFlagProvider: React.FC< FeatureFlags > = function ( { children } ) {
-	// The helpCenterFeatureFlags value is added as a global through the help-center-script
 	return (
 		<FeatureFlagContext.Provider value={ helpCenterFeatureFlags }>
 			{ children }
