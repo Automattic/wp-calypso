@@ -46,6 +46,12 @@ const ImageSection = styled.div`
 	}
 `;
 
+const Header = styled( FormattedHeader )`
+	.formatted-header__title {
+		line-height: 3rem;
+	}
+`;
+
 const FAQExpander = styled( Button )`
 	align-self: center;
 	background: var( --studio-gray-0 );
@@ -257,7 +263,7 @@ export default function DIFMLanding( {
 			{ ! displayCost && <QueryProductsList persist /> }
 			<Wrapper>
 				<ContentSection>
-					<FormattedHeader
+					<Header
 						align={ 'left' }
 						headerText={ headerText }
 						subHeaderText={ translate(
