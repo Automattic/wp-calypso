@@ -14,7 +14,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { isPaymentMethodRequired } from 'calypso/state/partner-portal/partner/selectors';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import {
 	APIError,
 	APIProductFamily,
@@ -43,7 +43,7 @@ export default function IssueLicenseForm( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites ).length;
-	const paymentMethodRequired = useSelector( isPaymentMethodRequired );
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );

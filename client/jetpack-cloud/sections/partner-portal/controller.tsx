@@ -27,7 +27,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import {
 	getCurrentPartner,
 	hasActivePartnerKey,
-	isPaymentMethodRequired,
+	doesPartnerRequireAPaymentMethod,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -241,7 +241,7 @@ export function requireSelectedPartnerKeyContext(
  */
 export function requireValidPaymentMethod( context: PageJS.Context, next: () => void ) {
 	const state = context.store.getState();
-	const paymentMethodRequired = isPaymentMethodRequired( state );
+	const paymentMethodRequired = doesPartnerRequireAPaymentMethod( state );
 	const { pathname, search } = window.location;
 
 	if ( paymentMethodRequired ) {

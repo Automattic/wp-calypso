@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import { isPaymentMethodRequired } from 'calypso/state/partner-portal/partner/selectors';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import type { ReactChild, ReactElement } from 'react';
 import './style.scss';
@@ -51,7 +51,7 @@ interface Props {
 
 export default function AssignLicenseStepProgress( { currentStep }: Props ): ReactElement | null {
 	const translate = useTranslate();
-	const paymentMethodRequired = useSelector( isPaymentMethodRequired );
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const sites = useSelector( getSites ).length;
 
 	const steps: Step[] = [ { key: 'issueLicense', label: translate( 'Issue new license' ) } ];

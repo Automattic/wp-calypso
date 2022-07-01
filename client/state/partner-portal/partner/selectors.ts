@@ -64,7 +64,7 @@ export function hasValidPaymentMethod( state: PartnerPortalStore ): boolean {
 	return partner?.has_valid_payment_method || false;
 }
 
-export function isPaymentMethodRequired( state: PartnerPortalStore ): boolean {
+export function doesPartnerRequireAPaymentMethod( state: PartnerPortalStore ): boolean {
 	const isAgency = isAgencyUser( state );
 	const hasPaymentMethod = hasValidPaymentMethod( state );
 

@@ -15,7 +15,7 @@ import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/u
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
-import { isPaymentMethodRequired } from 'calypso/state/partner-portal/partner/selectors';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import './style.scss';
 
 interface Props {
@@ -45,7 +45,7 @@ export default function LicensePreview( {
 	const dispatch = useDispatch();
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
 	const [ isOpen, setOpen ] = useState( isHighlighted );
-	const paymentMethodRequired = useSelector( isPaymentMethodRequired );
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
 	const showDomain =
