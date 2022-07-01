@@ -144,10 +144,19 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const showGeneratedDesigns =
 		enabledGeneratedDesigns && generatedDesigns.length > 0 && ! isForceStaticDesigns;
 
-	const selectedGeneratedDesign = useMemo(
-		() => selectedDesign ?? ( ! isMobile ? generatedDesigns[ 0 ] : undefined ),
-		[ selectedDesign, generatedDesigns, isMobile ]
-	);
+	const selectedGeneratedDesign = useMemo( () => {
+		const defaultDesign = ! isMobile ? generatedDesigns[ 0 ] : undefined;
+
+		// Check if the selected design is a generated design, if not then select the default design.
+		if (
+			selectedDesign &&
+			! generatedDesigns.find( ( _design ) => _design.slug === selectedDesign.slug )
+		) {
+			return defaultDesign;
+		}
+
+		return selectedDesign ?? defaultDesign;
+	}, [ selectedDesign, generatedDesigns, isMobile ] );
 
 	const isPreviewingGeneratedDesign = isMobile && showGeneratedDesigns && !! selectedDesign;
 
