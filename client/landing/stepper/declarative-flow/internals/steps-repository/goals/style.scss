@@ -5,22 +5,55 @@
 .goals__container {
 	padding: 0 20px;
 
-	.step-container__header {
-		.formatted-header {
-			// i2: padding-top: 44px;
-			// i2: text-align: left;
-			text-align: left;
+	&.two-columns {
+		.step-container__header {
+			margin-bottom: 64px;
 
-			.formatted-header__subtitle,
-			.formatted-header__title {
+			.formatted-header {
+				padding-top: 44px;
+
+				.formatted-header__subtitle,
+				.formatted-header__title {
+					@include break-mobile {
+						text-align: center;
+					}
+				}
+
 				@include break-mobile {
-					// i2: text-align: center;
+					padding-top: 72px;
 				}
 			}
+		}
 
-			@include break-mobile {
-				// i2: padding-top: 72px;
+		.select-goals__cards-hint {
+			font-weight: 400;
+			line-height: 24px;
+			color: #787c82;
+		}
+
+		.select-goals__cards-container {
+			padding-top: 16px;
+
+			@include break-small {
+				grid-template-columns: repeat( 2, 1fr );
 			}
+		}
+
+		.select-goals__actions-container {
+			padding-top: 32px;
+			padding-bottom: 60px + 48px; // height of sticky footer + height of bottom whitespace
+
+			@include break-small {
+				padding-top: 48px;
+				padding-bottom: 48px;
+				justify-content: center;
+			}
+		}
+	}
+
+	.step-container__header {
+		.formatted-header {
+			text-align: left;
 		}
 	}
 
@@ -46,7 +79,6 @@
 		}
 
 		@include break-small {
-			// i2: grid-template-columns: repeat( 2, 1fr );
 			grid-template-columns: repeat( 1, 1fr );
 		}
 	}
