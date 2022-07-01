@@ -8,7 +8,6 @@
 namespace A8C\FSE;
 
 use Automattic\Jetpack\Connection\Client;
-use Automattic\Jetpack\Constants;
 
 /**
  * Class WP_REST_Help_Center_Search.
@@ -58,16 +57,17 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 	 * Should return the search results
 	 *
 	 * @param \WP_REST_Request $request    The request sent to the API.
-	 * 
+	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_search_results( \WP_REST_Request $request) {
-		$query = $request->get_param( 'query' );
+	public function get_search_results( \WP_REST_Request $request ) {
+		$query      = $request->get_param( 'query' );
+		$query_args = $request->get_params();
 
 		if ( $this->is_wpcom ) {
-			$response = \WPCOM_Help_Search::get_search_results( $query );
+			$response = \WPCOM_Help_Search::get_search_results( $query, $query_args );
 		} else {
-			$body = Client::wpcom_json_api_request_as_user( 'help/search/' . $query );
+			$body = Client::wpcom_json_api_request_as_user( 'help/search?query=' . $query );
 			if ( is_wp_error( $body ) ) {
 				return $body;
 			}
