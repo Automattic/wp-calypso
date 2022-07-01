@@ -20,7 +20,7 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 	const preinstalledPremiumPluginFeature = preinstalledPremiumPlugin?.feature;
 
 	const preinstalledPremiumPluginProduct =
-		preinstalledPremiumPlugin?.product?.[ getPeriodVariationValue( billingPeriod ) ];
+		preinstalledPremiumPlugin?.products?.[ getPeriodVariationValue( billingPeriod ) ];
 
 	return {
 		isPreinstalledPremiumPlugin: !! preinstalledPremiumPlugin,

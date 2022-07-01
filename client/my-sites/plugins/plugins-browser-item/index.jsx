@@ -228,12 +228,13 @@ const InstalledInOrPricing = ( {
 	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
-	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( plugin.slug );
+	const { isPreinstalledPremiumPlugin, isPreinstalledPremiumPluginUpgraded } =
+		usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
 
 	let checkmarkColorClass = 'checkmark--active';
 
-	if ( isPreinstalledPremiumPluginUpgraded && selectedSiteId ) {
+	if ( isPreinstalledPremiumPluginUpgraded ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
@@ -242,14 +243,19 @@ const InstalledInOrPricing = ( {
 					{ translate( 'Installed' ) }
 				</div>
 				<div className="plugins-browser-item__active">
-					<Badge type="success">{ translate( 'Active' ) }</Badge>
+					<Badge type={ active ? 'success' : 'info' }>
+						{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
+					</Badge>
 				</div>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
 
-	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
+	if (
+		( ! isPreinstalledPremiumPlugin && sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
+		isWpcomPreinstalled
+	) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
 			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
