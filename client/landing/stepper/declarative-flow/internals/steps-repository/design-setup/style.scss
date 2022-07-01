@@ -337,6 +337,15 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		.generated-design-picker__previews {
 			min-height: calc( 100vh - 172px );
 			margin-bottom: 84px;
+
+			.web-preview__inner {
+				&.is-selected {
+					opacity: 1;
+					pointer-events: auto;
+					position: relative;
+					z-index: 1;
+				}
+			}
 		}
 	}
 
@@ -494,11 +503,13 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			top: 0;
 			transition: opacity 0.15s ease-in-out;
 
-			&.is-selected {
-				opacity: 1;
-				pointer-events: auto;
-				position: relative;
-				z-index: 1;
+			@include break-small {
+				&.is-selected {
+					opacity: 1;
+					pointer-events: auto;
+					position: relative;
+					z-index: 1;
+				}
 			}
 
 			.preview-toolbar__browser-header {
