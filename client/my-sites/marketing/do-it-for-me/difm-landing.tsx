@@ -175,12 +175,13 @@ const Index = styled.div`
 	width: 20px;
 `;
 const Title = styled.div`
-	margin-bottom: 4px;
+	margin-bottom: 6px;
 	color: var( --studio-gray-100 );
 	font-weight: 500;
 `;
 const Description = styled.div`
 	color: var( --studio-gray-60 );
+	padding-bottom: 18px;
 	font-size: 0.875rem;
 `;
 
@@ -267,10 +268,11 @@ export default function DIFMLanding( {
 						align={ 'left' }
 						headerText={ headerText }
 						subHeaderText={ translate(
-							'{{sup}}*{{/sup}}One time fee, plus a one year subscription of the %(plan)s plan. A WordPress.com professional will create layouts for up to 5 pages of your site. It only takes 4 simple steps:',
+							'{{sup}}*{{/sup}}One time fee, plus a one year subscription of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
 							{
 								args: {
 									plan: planTitle,
+									freePages: 5,
 								},
 								components: {
 									sup: <sup />,
