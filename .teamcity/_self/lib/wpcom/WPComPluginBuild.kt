@@ -177,7 +177,7 @@ open class WPComPluginBuild(
 						echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
 
 						echo "DIFF: Start"
-						diff -r ./editing-toolkit-plugin/ ./release-archive/
+						diff -r $archiveDir ./release-archive/
 						echo "DIFF: End"
 
 						tag_response=`curl -s -X POST -H "Content-Type: text/plain" --data "$releaseTag" -u "%system.teamcity.auth.userId%:%system.teamcity.auth.password%" %teamcity.serverUrl%/httpAuth/app/rest/builds/id:%teamcity.build.id%/tags/`
