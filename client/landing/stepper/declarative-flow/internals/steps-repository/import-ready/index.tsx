@@ -54,6 +54,7 @@ const ImportReady: Step = function ImportStep( props ) {
 				platform={ urlData?.platform }
 				goToImporterPage={ goToImporterPage }
 				recordTracksEvent={ recordTracksEvent }
+				fromSite={ urlData?.url }
 			/>
 		</ImportWrapper>
 	);
