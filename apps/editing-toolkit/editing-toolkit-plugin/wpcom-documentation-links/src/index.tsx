@@ -1,4 +1,12 @@
 import { addFilter } from '@wordpress/hooks';
+import './style.css';
+
+declare global {
+	interface Window {
+		_currentSiteId: number;
+		_currentSiteType: string;
+	}
+}
 
 function overrideCoreDocumentationLinksToWpcom( translation: string, text: string ) {
 	switch ( text ) {
@@ -19,8 +27,31 @@ function overrideCoreDocumentationLinksToWpcom( translation: string, text: strin
 	return translation;
 }
 
+function hideSimpleSiteTranslations( translation: string, text: string ) {
+	switch ( text ) {
+		case 'https://wordpress.org/plugins/classic-widgets/':
+			return '';
+		case 'Want to stick with the old widgets?':
+			return '';
+		case 'Get the Classic Widgets plugin.':
+			return '';
+	}
+
+	return translation;
+}
+
 addFilter(
 	'i18n.gettext_default',
 	'full-site-editing/override-core-docs-to-wpcom',
-	overrideCoreDocumentationLinksToWpcom
+	overrideCoreDocumentationLinksToWpcom,
+	9
 );
+
+if ( window?._currentSiteType === 'simple' ) {
+	addFilter(
+		'i18n.gettext_default',
+		'full-site-editing/override-core-docs-to-wpcom',
+		hideSimpleSiteTranslations,
+		10
+	);
+}

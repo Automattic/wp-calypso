@@ -53,6 +53,13 @@ class WPCOM_Documentation_Links {
 			true
 		);
 
+		wp_enqueue_style(
+			'wpcom-documentation-links-styles',
+			plugins_url( '/dist/wpcom-documentation-links.css', __FILE__ ),
+			array(),
+			$version
+		);
+
 		wp_localize_script(
 			'wpcom-documentation-links-script',
 			'wpcomDocumentationLinksAssetsUrl',
