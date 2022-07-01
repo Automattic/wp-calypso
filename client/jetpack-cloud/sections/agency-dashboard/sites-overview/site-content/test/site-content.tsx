@@ -26,14 +26,16 @@ describe( '<SiteContent>', () => {
 	const store = mockStore( initialState );
 	const queryClient = new QueryClient();
 
+	const Wrapper = ( { props } ) => (
+		<Provider store={ store }>
+			<QueryClientProvider client={ queryClient }>
+				<SiteContent { ...props } />
+			</QueryClientProvider>
+		</Provider>
+	);
+
 	test( 'should render correctly and show table', () => {
-		const { container } = render(
-			<Provider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<SiteContent { ...props } />
-				</QueryClientProvider>
-			</Provider>
-		);
+		const { container } = render( <Wrapper props={ props } /> );
 		const [ tableContent ] = container.getElementsByClassName( 'site-table__table' );
 		expect( tableContent ).toBeInTheDocument();
 	} );
@@ -45,13 +47,7 @@ describe( '<SiteContent>', () => {
 				sites: [],
 			},
 		};
-		const { getByText } = render(
-			<Provider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<SiteContent { ...props } />
-				</QueryClientProvider>
-			</Provider>
-		);
+		const { getByText } = render( <Wrapper props={ props } /> );
 		expect( getByText( 'No active sites' ) ).toBeInTheDocument();
 	} );
 	test( 'should render correctly and show loading indicator', () => {
@@ -59,13 +55,7 @@ describe( '<SiteContent>', () => {
 			...props,
 			isLoading: true,
 		};
-		const { container } = render(
-			<Provider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<SiteContent { ...props } />
-				</QueryClientProvider>
-			</Provider>
-		);
+		const { container } = render( <Wrapper props={ props } /> );
 		const [ loadinContent ] = container.getElementsByClassName( 'partner-portal-text-placeholder' );
 		expect( loadinContent ).toBeInTheDocument();
 	} );
