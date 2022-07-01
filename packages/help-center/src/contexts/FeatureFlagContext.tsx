@@ -9,7 +9,9 @@ const FeatureFlagContext = React.createContext( {
 	loadNextStepsTutorial: false,
 } );
 
-export const FeatureFlagProvider: React.FC< FeatureFlags > = function ( { children } ) {
+export const FeatureFlagProvider: React.FC< { children: JSX.Element } > = function ( {
+	children,
+} ) {
 	return (
 		<FeatureFlagContext.Provider value={ helpCenterFeatureFlags }>
 			{ children }
