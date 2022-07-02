@@ -55,6 +55,21 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
 
+/**
+ * Determine where to send the user after checkout is complete.
+ *
+ * This logic is complex and in many cases quite old. To keep it functional and
+ * comprehensible and to prevent regressions, all possible outputs are covered
+ * by unit tests in
+ * `client/my-sites/checkout/composite-checkout/test/composite-checkout-thank-you`.
+ *
+ * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
+ *
+ * Note that this function must be called BEFORE checkout is complete because
+ * redirect payment methods like PayPal send the user to the URL returned by
+ * this function directly, so the URL must be generated and passed to PayPal
+ * before the transaction begins.
+ */
 export default function getThankYouPageUrl( {
 	siteSlug,
 	adminUrl,
