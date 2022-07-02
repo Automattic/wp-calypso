@@ -10,7 +10,13 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
+import {
+	SUCCESS,
+	ERROR,
+	FAILURE,
+	UNKNOWN,
+	ASYNC_PENDING,
+} from 'calypso/state/order-transactions/constants';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 
@@ -55,12 +61,12 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 		if ( transaction ) {
 			const { processingStatus } = transaction;
 
-			if ( ORDER_TRANSACTION_STATUS.SUCCESS === processingStatus ) {
+			if ( SUCCESS === processingStatus ) {
 				const { receiptId } = transaction;
 
 				didRedirect.current = true;
 				if ( redirectUrl.startsWith( '/' ) ) {
-					const redirectPath = redirectUrl.replace( 'pending', receiptId );
+					const redirectPath = redirectUrl.replace( 'pending', String( receiptId ) );
 					page( redirectPath );
 				} else {
 					window.location.href = redirectUrl;
@@ -69,7 +75,7 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 				return;
 			}
 
-			if ( ORDER_TRANSACTION_STATUS.ASYNC_PENDING === transaction.processingStatus ) {
+			if ( ASYNC_PENDING === transaction.processingStatus ) {
 				didRedirect.current = true;
 				page( '/me/purchases/pending' );
 				return;
@@ -78,17 +84,14 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 			// If the processing status indicates that there was something wrong, it
 			// could be because the user has cancelled the payment, or because the
 			// payment failed after being authorized.
-			if (
-				ORDER_TRANSACTION_STATUS.ERROR === processingStatus ||
-				ORDER_TRANSACTION_STATUS.FAILURE === processingStatus
-			) {
+			if ( ERROR === processingStatus || FAILURE === processingStatus ) {
 				// redirect users back to the checkout page so they can try again.
 				retryOnError();
 				return;
 			}
 
 			// The API has responded a status string that we don't expect somehow.
-			if ( ORDER_TRANSACTION_STATUS.UNKNOWN === processingStatus ) {
+			if ( UNKNOWN === processingStatus ) {
 				didRedirect.current = true;
 				// Redirect users back to the plan page so that they won't be stuck here.
 				page( planRoute );
