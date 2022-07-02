@@ -50,8 +50,6 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 		// as empty.
 		reloadCart();
 
-		const redirectUrl = redirectTo || `/checkout/thank-you/${ siteSlug }/pending`;
-
 		const retryOnError = () => {
 			didRedirect.current = true;
 			page( `/checkout/${ siteSlug }` );
@@ -72,13 +70,12 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 				const { receiptId } = transaction;
 
 				didRedirect.current = true;
+				const redirectUrl = redirectTo || `/checkout/thank-you/${ siteSlug }/${ receiptId }`;
 				if ( redirectUrl.startsWith( '/' ) ) {
-					const redirectPath = redirectUrl.replace( 'pending', String( receiptId ) );
-					page( redirectPath );
-				} else {
-					window.location.href = redirectUrl;
+					page( redirectUrl );
+					return;
 				}
-
+				window.location.href = redirectUrl;
 				return;
 			}
 
