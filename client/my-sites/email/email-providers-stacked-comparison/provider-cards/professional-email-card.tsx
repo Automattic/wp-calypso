@@ -11,6 +11,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import getOnSubmitNewMailboxesHandler from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-on-submit-new-mailboxes-handler';
+import getUpsellProps from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-upsell-props';
 import {
 	HiddenFieldNames,
 	NewMailBoxList,
@@ -165,6 +166,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 			selectedDomainName={ selectedDomainName }
 			showAddNewMailboxButton
 			submitActionText={ translate( 'Purchase' ) }
+			{ ...getUpsellProps( { isDomainInCart, selectedSiteSlug: siteSlug } ) }
 		>
 			<PasswordResetTipField
 				hiddenFieldNames={ hiddenFieldNames }
