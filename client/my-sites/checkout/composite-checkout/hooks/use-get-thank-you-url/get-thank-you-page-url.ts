@@ -60,6 +60,7 @@ export default function getThankYouPageUrl( {
 	adminUrl,
 	redirectTo,
 	receiptId,
+	noPurchaseMade,
 	orderId,
 	purchaseId,
 	feature,
@@ -80,6 +81,7 @@ export default function getThankYouPageUrl( {
 	adminUrl?: string;
 	redirectTo?: string;
 	receiptId?: number;
+	noPurchaseMade?: boolean;
 	orderId?: number;
 	purchaseId?: number;
 	feature?: string;
@@ -166,7 +168,7 @@ export default function getThankYouPageUrl( {
 		const thankYouUrl = `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`;
 
 		const isValidReceiptId =
-			! isNaN( parseInt( pendingOrReceiptId ) ) || pendingOrReceiptId === ':receiptId';
+			! isNaN( parseInt( String( pendingOrReceiptId ) ) ) || pendingOrReceiptId === ':receiptId';
 		return addQueryArgs(
 			{
 				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
@@ -178,6 +180,7 @@ export default function getThankYouPageUrl( {
 
 	const fallbackUrl = getFallbackDestination( {
 		pendingOrReceiptId,
+		noPurchaseMade,
 		siteSlug,
 		adminUrl,
 		feature,
@@ -189,11 +192,12 @@ export default function getThankYouPageUrl( {
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
 
-	// If receipt ID is 'noPreviousPurchase', then send the user to a generic page (not post-purchase related).
-	// For example, this case arises when a Skip button is clicked on a concierge upsell
-	// nudge opened by a direct link to /checkout/offer-support-session.
-	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
-		debug( 'receipt ID is "noPreviousPurchase", so returning: ', fallbackUrl );
+	// If there is no purchase, then send the user to a generic page (not
+	// post-purchase related). For example, this case arises when a Skip button
+	// is clicked on a concierge upsell nudge opened by a direct link to
+	// /checkout/offer-support-session.
+	if ( noPurchaseMade ) {
+		debug( 'there was no purchase, so returning: ', fallbackUrl );
 		return fallbackUrl;
 	}
 
@@ -281,25 +285,30 @@ export default function getThankYouPageUrl( {
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
 }
 
+type OrderId = number;
+type PurchaseId = number;
+type ReceiptId = number;
+type PendingOrReceiptId = `pending/${ OrderId }` | ':receiptId' | PurchaseId | ReceiptId;
 function getPendingOrReceiptId(
 	receiptId: number | undefined,
 	orderId: number | undefined,
 	purchaseId: number | undefined
-): string {
+): PendingOrReceiptId {
 	if ( receiptId ) {
-		return String( receiptId );
+		return receiptId;
 	}
 	if ( orderId ) {
 		return `pending/${ orderId }`;
 	}
 	if ( purchaseId ) {
-		return String( purchaseId );
+		return purchaseId;
 	}
 	return ':receiptId';
 }
 
 function getFallbackDestination( {
 	pendingOrReceiptId,
+	noPurchaseMade,
 	siteSlug,
 	adminUrl,
 	feature,
@@ -309,7 +318,8 @@ function getFallbackDestination( {
 	adminPageRedirect,
 	redirectTo,
 }: {
-	pendingOrReceiptId: string;
+	pendingOrReceiptId: PendingOrReceiptId;
+	noPurchaseMade?: boolean;
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
 	feature: string | undefined;
@@ -322,7 +332,7 @@ function getFallbackDestination( {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
 
-	if ( 'noPreviousPurchase' === pendingOrReceiptId ) {
+	if ( noPurchaseMade ) {
 		debug( 'fallback is just root' );
 		return '/';
 	}
@@ -438,7 +448,7 @@ function getPlanUpgradeUpsellUrl( {
 	siteSlug,
 	orderId,
 }: {
-	pendingOrReceiptId: string;
+	pendingOrReceiptId: PendingOrReceiptId;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
@@ -466,7 +476,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	hideUpsell,
 	domains,
 }: {
-	pendingOrReceiptId: string;
+	pendingOrReceiptId: PendingOrReceiptId;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
@@ -521,7 +531,7 @@ function getProfessionalEmailUpsellUrl( {
 	orderId,
 	domains,
 }: {
-	pendingOrReceiptId: string;
+	pendingOrReceiptId: PendingOrReceiptId;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
@@ -663,7 +673,7 @@ function getThankYouPageUrlForTrafficGuide( {
 }: {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	pendingOrReceiptId: string;
+	pendingOrReceiptId: PendingOrReceiptId;
 } ) {
 	if ( ! cart ) return;
 	if ( hasTrafficGuide( cart ) ) {
