@@ -260,9 +260,9 @@ const emailUpsellForDomainRegistration = ( context, next ) => {
 				} ) }
 			/>
 			<EmailProvidersUpsell
-				domain={ context.params.domain }
-				interval={ context.query.interval }
-				provider={ context.query.provider }
+				selectedDomainName={ context.params.domain }
+				selectedIntervalLength={ context.query.interval }
+				selectedEmailProviderSlug={ context.query.provider }
 			/>
 		</Main>
 	);

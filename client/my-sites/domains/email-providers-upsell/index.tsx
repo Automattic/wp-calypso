@@ -3,19 +3,23 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
 
 interface EmailProvidersUpsellProps {
-	domain: string;
-	interval?: IntervalLength;
-	provider: string;
+	selectedDomainName: string;
+	selectedEmailProviderSlug: string;
+	selectedIntervalLength?: IntervalLength;
 }
 
-const EmailProvidersUpsell = ( { domain, interval, provider }: EmailProvidersUpsellProps ) => (
+const EmailProvidersUpsell = ( {
+	selectedDomainName,
+	selectedEmailProviderSlug,
+	selectedIntervalLength,
+}: EmailProvidersUpsellProps ) => (
 	<CalypsoShoppingCartProvider>
 		<EmailProvidersStackedComparison
 			comparisonContext="domain-upsell"
 			isDomainInCart={ true }
-			selectedDomainName={ domain }
-			selectedEmailProviderSlug={ provider }
-			selectedIntervalLength={ interval }
+			selectedDomainName={ selectedDomainName }
+			selectedEmailProviderSlug={ selectedEmailProviderSlug }
+			selectedIntervalLength={ selectedIntervalLength }
 			source="domain-upsell"
 		/>
 	</CalypsoShoppingCartProvider>
