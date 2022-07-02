@@ -65,10 +65,10 @@ type GetUrlFromCookie = () => string | undefined;
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  *
- * Note that this function must be called BEFORE checkout is complete because
- * redirect payment methods like PayPal send the user to the URL returned by
- * this function directly, so the URL must be generated and passed to PayPal
- * before the transaction begins.
+ * IMPORTANT NOTE: this function must be called BEFORE checkout is complete
+ * because redirect payment methods like PayPal send the user to the URL
+ * returned by this function directly, so the URL must be generated and passed
+ * to PayPal before the transaction begins.
  */
 export default function getThankYouPageUrl( {
 	siteSlug,
