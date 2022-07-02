@@ -24,6 +24,7 @@ import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existin
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
@@ -194,6 +195,7 @@ const EmailProvidersStackedComparison = ( {
 			<QueryProductsList />
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
+			{ isDomainInCart && <EmailUpsellNavigation siteSlug={ selectedSite?.slug ?? '' } /> }
 
 			<h1 className="email-providers-stacked-comparison__header">
 				{ translate( 'Pick an email solution' ) }
