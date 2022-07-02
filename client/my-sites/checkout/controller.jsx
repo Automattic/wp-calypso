@@ -34,7 +34,7 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
-import CheckoutPendingComponent from './checkout-thank-you/pending';
+import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
@@ -208,7 +208,7 @@ export function checkoutPending( context, next ) {
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
-		<CheckoutPendingComponent
+		<CheckoutPending
 			orderId={ orderId }
 			siteSlug={ siteSlug }
 			redirectTo={ context.query.redirectTo }
