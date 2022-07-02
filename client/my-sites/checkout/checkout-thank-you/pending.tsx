@@ -26,6 +26,10 @@ interface CheckoutPendingProps {
 	redirectTo?: string;
 }
 
+/**
+ * A page that polls the orders endpoint for a processing transaction and
+ * redirects when done.
+ */
 function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProps ) {
 	const translate = useTranslate();
 	const transaction = useSelector( ( state ) => getOrderTransaction( state, orderId ) );
@@ -40,7 +44,10 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 			return;
 		}
 
-		// Make sure the cart is always fresh if anything changes.
+		// Make sure the cart is always fresh if anything changes. This way, once
+		// the order completes and the server empties the cart, the front-end will
+		// get an updated cached cart and future pages will show the cart correctly
+		// as empty.
 		reloadCart();
 
 		const redirectUrl = redirectTo || `/checkout/thank-you/${ siteSlug }/pending`;
