@@ -658,6 +658,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	handleCheckoutSuccess = () => {
 		if ( this.checkoutPort ) {
 			this.checkoutPort.postMessage( 'checkout complete' );
