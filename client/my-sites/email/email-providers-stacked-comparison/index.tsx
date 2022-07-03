@@ -191,6 +191,21 @@ const EmailProvidersStackedComparison = ( {
 		/>,
 	];
 
+	const comparisonComponents = {
+		a: (
+			<a
+				href={ emailManagementInDepthComparison(
+					selectedSite?.slug ?? '',
+					selectedDomainName,
+					currentRoute,
+					source,
+					selectedIntervalLength
+				) }
+				onClick={ handleCompareClick }
+			/>
+		),
+	};
+
 	return (
 		<Main
 			className={ classnames( {
@@ -204,27 +219,25 @@ const EmailProvidersStackedComparison = ( {
 			{ isDomainInCart && <EmailUpsellNavigation siteSlug={ selectedSite?.slug ?? '' } /> }
 
 			<h1 className="email-providers-stacked-comparison__header">
-				{ translate( 'Pick an email solution' ) }
+				{ isDomainInCart
+					? translate( 'Add a professional email address to %(domainName)s', {
+							args: { domainName: selectedDomainName },
+					  } )
+					: translate( 'Pick an email solution' ) }
 			</h1>
 
 			{ selectedSite && (
 				<div className="email-providers-stacked-comparison__sub-header">
-					{ translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
-						components: {
-							a: (
-								<a
-									href={ emailManagementInDepthComparison(
-										selectedSite.slug,
-										selectedDomainName,
-										currentRoute,
-										source,
-										selectedIntervalLength
-									) }
-									onClick={ handleCompareClick }
-								/>
-							),
-						},
-					} ) }
+					{ isDomainInCart
+						? translate(
+								'Build an online presence and build your brand with one of these options ({{a}}see how they compare{{/a}}).',
+								{
+									components: comparisonComponents,
+								}
+						  )
+						: translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
+								components: comparisonComponents,
+						  } ) }
 				</div>
 			) }
 
