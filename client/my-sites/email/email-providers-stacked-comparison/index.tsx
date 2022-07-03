@@ -2,6 +2,7 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
@@ -191,7 +192,12 @@ const EmailProvidersStackedComparison = ( {
 	];
 
 	return (
-		<Main wideLayout>
+		<Main
+			className={ classnames( {
+				'email-providers-stacked-comparison__main--domain-upsell': isDomainInCart,
+			} ) }
+			wideLayout
+		>
 			<QueryProductsList />
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
