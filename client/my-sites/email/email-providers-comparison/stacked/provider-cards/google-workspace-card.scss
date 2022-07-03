@@ -1,5 +1,5 @@
-@import '../../../../../../node_modules/@wordpress/base-styles/breakpoints';
-@import '../../../../../../node_modules/@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .google-workspace-card__logo {
 	color: var( --color-wordpress-com );
