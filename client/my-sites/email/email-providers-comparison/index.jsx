@@ -1,3 +1,4 @@
+/*
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -949,3 +950,4 @@ export default connect(
 		};
 	}
 )( withCartKey( withShoppingCart( localize( EmailProvidersComparison ) ) ) );
+*/
