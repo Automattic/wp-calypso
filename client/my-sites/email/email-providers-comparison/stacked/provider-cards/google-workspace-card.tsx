@@ -8,14 +8,14 @@ import { hasGSuiteSupportedDomain, getGoogleMailServiceFamily } from 'calypso/li
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getGoogleAppLogos } from 'calypso/my-sites/email/email-provider-features/list';
 import GoogleWorkspacePrice from 'calypso/my-sites/email/email-providers-comparison/price/google-workspace';
-import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
-import getOnSubmitNewMailboxesHandler from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-on-submit-new-mailboxes-handler';
-import getUpsellProps from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-upsell-props';
+import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-comparison/stacked/email-provider-stacked-card';
+import getOnSubmitNewMailboxesHandler from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/get-on-submit-new-mailboxes-handler';
+import getUpsellProps from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/get-upsell-props';
 import {
 	EmailProvidersStackedCardProps,
 	ProviderCardProps,
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
-import { getProductByProviderAndInterval } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/selectors/get-product-by-provider-and-interval';
+} from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/provider-card-props';
+import { getProductByProviderAndInterval } from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/selectors/get-product-by-provider-and-interval';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
