@@ -182,16 +182,27 @@ export default function getThankYouPageUrl( {
 	// Note: this function is called early on for redirect payment methods like
 	// PayPal, when the receipt isn't set yet.
 	//
-	// For PayPal, the `:receiptId` string in the resulting URL is filled in by
-	// the "API endpoint" backend page that is visited directly after the PayPal
-	// checkout. That page then 302 redirects to the updated URL.
+	// For redirect payment methods like Bancontact or PayPal, the `return_url`
+	// submitted to the payment partner (Stripe or PayPal) actually redirects to
+	// a pseudo-endpoint (`/me/transactions/source-payment` or
+	// `/me/transactions/paypal-express`) on `public-api.wordpress.com`.
 	//
-	// For non-PayPal redirect payment methods, `getPendingOrReceiptId()`
-	// hopefully never returns `:receiptId` (because that would result in an
-	// invalid URL) and instead returns a `/pending/:orderId` URL. That URL will
-	// poll the orders endpoint until we know if the purchase is successful
-	// before redirecting to the final URL which is optionally encoded in the
-	// `?successUrl=...` query param.
+	// That pseudo-endpoint performs various duties and then uses a 302 redirect
+	// to send the browser to the `success_url` originally sent by checkout to
+	// start the transaction (to either the `/me/transactions` or
+	// `/me/paypal-express-url` endpoint). That URL sometimes is for the calypso
+	// "pending" page (`/checkout/thank-you/:site/pending/:orderId`) which
+	// requires an order ID and its own `redirectTo` query param.
+	//
+	// The pseudo-endpoint modifies the `success_url` to add that order ID and to
+	// replace the `:receiptId` placeholder with the actual receipt ID for the
+	// transaction. The pending page (the `CheckoutPending` component in calypso)
+	// then redirects the browser to the receipt page.
+	//
+	// If the receipt does not yet exist, then the pending page polls the orders
+	// endpoint (`/me/transactions/order/:orderId`) for the transaction data,
+	// then replaces the `:receiptId` placeholder itself and redirects to the
+	// receipt page.
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
 	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
 
