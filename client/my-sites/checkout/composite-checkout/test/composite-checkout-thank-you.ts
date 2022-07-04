@@ -94,8 +94,10 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	// Note: This just verifies the existing behavior; this URL is invalid unless
-	// placed after a `redirectTo` query string; see the redirect payment
-	// processor
+	// the `:receiptId` is replaced with a valid receipt ID by the PayPal
+	// transaction flow. When returning from PayPal, the user is redirected
+	// briefly to a backend page that replaces `:receiptId` and 302 redirects to
+	// the updated URL.
 	it( 'redirects to the business plan bump offer page with a placeholder receipt id when a site but no orderId is set and the cart contains the premium plan', () => {
 		const cart = {
 			...getEmptyResponseCart(),
@@ -147,16 +149,14 @@ describe( 'getThankYouPageUrl', () => {
 		);
 	} );
 
-	it( 'redirects to the thank-you pending page with a feature when a site, an order id, and a valid feature is set', () => {
+	it( 'redirects to the thank-you feature page with a feature when a site, an order id, and a valid feature is set', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
 			orderId: samplePurchaseId,
 		} );
-		expect( url ).toBe(
-			`/checkout/thank-you/features/all-free-features/foo.bar/pending/${ samplePurchaseId }`
-		);
+		expect( url ).toBe( `/checkout/thank-you/features/all-free-features/foo.bar` );
 	} );
 
 	it( 'redirects to the thank-you page with a feature when a site and a valid feature is set with no receipt but the cart is not empty', () => {
