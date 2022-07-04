@@ -7,9 +7,9 @@ import { Icon, external } from '@wordpress/icons';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
-import ArticleContent from 'calypso/blocks/support-article-dialog/dialog-content';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from './back-button';
+import ArticleContent from './help-center-article-content';
 
 export const HelpCenterEmbedResult: React.FC = () => {
 	const { search } = useLocation();
@@ -60,7 +60,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 					</Button>
 				</FlexItem>
 			</Flex>
-			<ArticleContent postId={ postId } blogId={ blogId } articleUrl={ null } />
+			{ postId && <ArticleContent postId={ +postId } blogId={ blogId } /> }
 		</div>
 	);
 };
