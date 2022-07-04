@@ -15,7 +15,7 @@ import {
 	EmailProvidersStackedCardProps,
 	ProviderCardProps,
 } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
-import { getProductByInterval } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/selectors/get-product-by-interval';
+import { getProductByProviderAndInterval } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/selectors/get-product-by-provider-and-interval';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -73,7 +73,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 
 	const provider = EmailProvider.Google;
 	const gSuiteProduct = useSelector( ( state ) =>
-		getProductByInterval( state, provider, intervalLength )
+		getProductByProviderAndInterval( state, provider, intervalLength )
 	);
 
 	const canPurchaseGSuite = useSelector( canUserPurchaseGSuite );

@@ -12,7 +12,7 @@ import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-compa
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import getOnSubmitNewMailboxesHandler from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-on-submit-new-mailboxes-handler';
 import getUpsellProps from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-upsell-props';
-import { getProductByInterval } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/selectors/get-product-by-interval';
+import { getProductByProviderAndInterval } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/selectors/get-product-by-provider-and-interval';
 import {
 	HiddenFieldNames,
 	NewMailBoxList,
@@ -117,7 +117,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 
 	const provider = EmailProvider.Titan;
 	const emailProduct = useSelector( ( state ) =>
-		getProductByInterval( state, provider, intervalLength )
+		getProductByProviderAndInterval( state, provider, intervalLength )
 	);
 
 	const cartKey = useCartKey();

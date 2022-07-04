@@ -14,7 +14,10 @@ import type { AppState } from 'calypso/types';
 /**
  * Returns the correct product slug for the specified provider and interval using a map.
  */
-const getProductSlugForInterval = ( provider: EmailProvider, intervalLength: IntervalLength ) =>
+const getProductSlugForProviderAndInterval = (
+	provider: EmailProvider,
+	intervalLength: IntervalLength
+) =>
 	( {
 		[ EmailProvider.Titan ]: {
 			[ IntervalLength.MONTHLY ]: TITAN_MAIL_MONTHLY_SLUG,
@@ -29,11 +32,11 @@ const getProductSlugForInterval = ( provider: EmailProvider, intervalLength: Int
 /**
  * Retrieves the product for the specified provider and interval.
  */
-const getProductByInterval = (
+const getProductByProviderAndInterval = (
 	state: AppState,
 	provider: EmailProvider,
 	intervalLength: IntervalLength
 ): ProductListItem | null =>
-	getProductBySlug( state, getProductSlugForInterval( provider, intervalLength ) );
+	getProductBySlug( state, getProductSlugForProviderAndInterval( provider, intervalLength ) );
 
-export { getProductByInterval };
+export { getProductByProviderAndInterval };
