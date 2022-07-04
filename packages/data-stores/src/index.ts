@@ -22,6 +22,7 @@ export { useSiteAnalysis } from './queries/use-site-analysis';
 export type { AnalysisReport } from './queries/use-site-analysis';
 export { useHasSeenWhatsNewModalQuery } from './queries/use-has-seen-whats-new-modal-query';
 export { useSiteIntent } from './queries/use-site-intent';
+export { useSiteGoals } from './queries/use-site-goals';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
