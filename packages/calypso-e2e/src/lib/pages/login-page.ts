@@ -89,11 +89,12 @@ export class LoginPage {
 	/**
 	 * Clicks the "Continue with Google" link.
 	 */
-	async clickLoginWithGoogle(): Promise< Locator > {
+	async clickLoginWithGoogle(): Promise< Page > {
 		const locator = await this.page.locator( ':text-is("Continue with Google")' );
-		await locator.click();
+		const [ page ] = await Promise.all( [ this.page.waitForEvent( 'popup' ), locator.click() ] );
 
-		return locator;
+		// return locator;
+		return page;
 	}
 
 	/**
