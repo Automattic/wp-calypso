@@ -2,4 +2,11 @@
 .email-upsell-navigation {
 	display: flex;
 	justify-content: space-between;
+
+	.button.is-borderless .gridicon {
+		height: 18px;
+		width: 18px;
+		top: 4px;
+	}
 }
+

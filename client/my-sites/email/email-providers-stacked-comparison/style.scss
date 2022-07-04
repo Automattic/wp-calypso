@@ -38,7 +38,9 @@
 	}
 
 	.email-providers-stacked-comparison__header {
-		padding-top: 18px;
+		margin-top: 18px;
+		padding-top: 0;
+		font-size: $font-title-medium;
 	}
 
 	.billing-interval-toggle {
