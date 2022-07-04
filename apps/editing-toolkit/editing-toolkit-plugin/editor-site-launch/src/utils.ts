@@ -31,9 +31,13 @@ export const redirectToWpcomPath = ( url: string ): void => {
  * Otherwise, as a fallback, the user is redirected to the /checkout page or the /home page
  * (in this case, `siteSlug` and `isEcommerce` params are used to construct the redirect url)
  *
+ * IMPORTANT NOTE: onSuccessCallback will not be called for redirect payment
+ * methods like PayPal. They will redirect directly to the post-checkout page
+ * decided by `getThankYouUrl`.
+ *
  * @param siteSlug The slug (id) of the current site.
  * @param isEcommerce True if the eCommerce plan is going to be in the checkout.
- * @param onSuccessCallback Called when the checkout opens as a modal and is completed successfully
+ * @param onSuccessCallback Called when the checkout opens as a modal and is completed successfully. Not called for redirect payment methods.
  */
 export const openCheckout = (
 	siteSlug = window._currentSiteId.toString(),

@@ -50,6 +50,9 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 			: cartData.products.map( ( product ) => product.product_slug );
 	const commaSeparatedProductSlugs = productSlugs?.join( ',' );
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	const handleAfterPaymentComplete = () => {
 		checkoutOnSuccessCallback?.();
 	};
@@ -87,6 +90,9 @@ const EditorCheckoutModal: React.FunctionComponent< Props > = ( props ) => {
 interface Props {
 	onClose: () => void;
 	isOpen: boolean;
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	checkoutOnSuccessCallback?: () => void;
 	isFocusedLaunch?: boolean;
 	cartData?: RequestCart;
