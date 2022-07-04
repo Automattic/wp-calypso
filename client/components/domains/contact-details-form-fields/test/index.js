@@ -247,8 +247,9 @@ describe( 'ContactDetailsFormFields', () => {
 
 			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( FormPhoneMediaInput.mock.calls[ 0 ][ 0 ] ).toEqual(
-				expect.objectContaining( { countryCode: 'JP' } )
+			expect( FormPhoneMediaInput ).toHaveBeenCalledWith(
+				expect.objectContaining( { countryCode: 'JP' } ),
+				expect.anything()
 			);
 		} );
 
@@ -260,8 +261,9 @@ describe( 'ContactDetailsFormFields', () => {
 
 			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( FormPhoneMediaInput.mock.calls[ 0 ][ 0 ] ).toEqual(
-				expect.objectContaining( { countryCode: 'FR' } )
+			expect( FormPhoneMediaInput ).toHaveBeenCalledWith(
+				expect.objectContaining( { countryCode: 'FR' } ),
+				expect.anything()
 			);
 		} );
 
@@ -270,8 +272,9 @@ describe( 'ContactDetailsFormFields', () => {
 
 			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( FormPhoneMediaInput.mock.calls[ 0 ][ 0 ] ).toEqual(
-				expect.objectContaining( { countryCode: 'US' } )
+			expect( FormPhoneMediaInput ).toHaveBeenCalledWith(
+				expect.objectContaining( { countryCode: 'US' } ),
+				expect.anything()
 			);
 		} );
 	} );
