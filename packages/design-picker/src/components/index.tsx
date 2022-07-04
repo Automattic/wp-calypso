@@ -102,13 +102,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		if ( design.is_premium ) {
 			text = createInterpolateElement(
 				shouldUpgrade
-					? sprintf(
-							/* translators: %(price)s - the price of the theme */
-							__( '%(price)s per year or <button>included in the Pro plan</button>' ),
-							{
-								price: design.price,
-							}
-					  )
+					? __( '<button>Included in the Pro plan</button>' )
 					: __( 'Included in the Pro plan' ),
 				{
 					button: (
