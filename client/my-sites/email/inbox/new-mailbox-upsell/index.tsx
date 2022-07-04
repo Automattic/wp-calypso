@@ -14,7 +14,7 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
  */
 import './style.scss';
 
-const NewMailboxUpsell = ( { domains }: { domains: Array< ResponseDomain > } ) => {
+const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug;
@@ -22,15 +22,15 @@ const NewMailboxUpsell = ( { domains }: { domains: Array< ResponseDomain > } ) =
 	// By default, upsell CTA links to the email management landing page.
 	let upsellURL = emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } );
 
-	// User has one single domain, determine \ email addition page URL based on subscribed email provider.
+	// User has one single domain, determine / email addition page URL based on subscribed email provider.
 	if ( domains.length === 1 ) {
 		const domainItem = domains[ 0 ];
 
-		let slug = null;
+		let slug = '';
 		if ( hasTitanMailWithUs( domains[ 0 ] ) ) {
 			slug = 'titan/new';
 		} else if ( hasGSuiteWithUs( domains[ 0 ] ) ) {
-			upsellURL = 'google-workspace/add-users';
+			slug = 'google-workspace/add-users';
 		}
 
 		if ( slug ) {
