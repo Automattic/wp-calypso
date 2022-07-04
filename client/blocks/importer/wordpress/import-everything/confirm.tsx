@@ -150,7 +150,14 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 			{ isModalDetailsOpen && (
 				<ConfirmModal
 					siteSlug={ targetSiteSlug }
-					onConfirm={ startImport }
+					onConfirm={ () => {
+						recordTracksEvent( 'calypso_signup_step_start', {
+							flow: 'importer',
+							step: 'importerWordpress',
+							action: 'importAndReplace',
+						} );
+						startImport();
+					} }
 					onClose={ () => {
 						setIsModalDetailsOpen( false );
 						recordTracksEvent( 'calypso_signup_previous_step_button_click', {
