@@ -130,7 +130,16 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 						) }
 
 						{ isTargetSitePlanCompatible && (
-							<NextButton onClick={ () => setIsModalDetailsOpen( true ) }>
+							<NextButton
+								onClick={ () => {
+									recordTracksEvent( 'calypso_signup_step_start', {
+										flow: 'importer',
+										step: 'importerWordpress',
+										action: 'startImport',
+									} );
+									setIsModalDetailsOpen( true );
+								} }
+							>
 								{ __( 'Start import' ) }
 							</NextButton>
 						) }
