@@ -96,6 +96,7 @@
 		"signup/design-picker-generated-designs": true,
 		"signup/inline-help": false,
 		"signup/goals-step": true,
+		"signup/goals-step-2": false,
 		"signup/hero-flow-non-en": true,
 		"signup/starting-point-courses": true,
 		"signup/site-vertical-step": true,
