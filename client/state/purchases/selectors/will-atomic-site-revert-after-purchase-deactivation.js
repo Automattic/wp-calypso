@@ -1,4 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getByPurchaseId } from './get-by-purchase-id';
 import { getSitePurchases } from './get-site-purchases';
@@ -22,8 +24,13 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = ( state, purchaseId
 
 	const purchase = getByPurchaseId( state, purchaseId );
 
-	const isAtomicSupportedProduct = ( productSlug ) =>
-		planHasFeature( productSlug, WPCOM_FEATURES_ATOMIC );
+	const isAtomicSupportedProduct = ( productSlug ) => {
+		if ( isEnabled( 'marketplace-starter-plan' ) && isMarketplaceProduct( state, productSlug ) ) {
+			return true;
+		}
+
+		return planHasFeature( productSlug, WPCOM_FEATURES_ATOMIC );
+	};
 
 	if (
 		! purchase ||
