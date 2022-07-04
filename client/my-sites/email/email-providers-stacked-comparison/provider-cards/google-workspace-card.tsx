@@ -115,7 +115,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 			selectedDomainName={ selectedDomainName }
 			showAddNewMailboxButton
 			submitActionText={ translate( 'Purchase' ) }
-			{ ...getUpsellProps( { isDomainInCart, selectedSiteSlug: siteSlug } ) }
+			{ ...getUpsellProps( { isDomainInCart, siteSlug } ) }
 		/>
 	);
 

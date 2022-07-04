@@ -167,7 +167,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 			selectedDomainName={ selectedDomainName }
 			showAddNewMailboxButton
 			submitActionText={ translate( 'Purchase' ) }
-			{ ...getUpsellProps( { isDomainInCart, selectedSiteSlug: siteSlug } ) }
+			{ ...getUpsellProps( { isDomainInCart, siteSlug } ) }
 		>
 			<PasswordResetTipField
 				hiddenFieldNames={ hiddenFieldNames }

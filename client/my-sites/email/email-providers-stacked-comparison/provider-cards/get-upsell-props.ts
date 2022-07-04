@@ -3,17 +3,17 @@ import page from 'page';
 import type { MailboxListProps } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 
 const getUpsellProps = ( {
-	isDomainInCart = false,
-	selectedSiteSlug,
+	isDomainInCart,
+	siteSlug,
 }: {
 	isDomainInCart: boolean;
-	selectedSiteSlug: string;
+	siteSlug: string;
 } ): Partial< MailboxListProps > =>
 	! isDomainInCart
 		? {}
 		: {
 				cancelActionText: translate( 'Skip' ),
-				onCancel: () => page( `/checkout/${ selectedSiteSlug }` ),
+				onCancel: () => page( `/checkout/${ siteSlug }` ),
 				showCancelButton: true,
 		  };
 
