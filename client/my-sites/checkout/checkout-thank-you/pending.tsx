@@ -70,12 +70,13 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 				const { receiptId } = transaction;
 
 				didRedirect.current = true;
-				const redirectUrl = redirectTo || `/checkout/thank-you/${ siteSlug }/${ receiptId }`;
-				if ( redirectUrl.startsWith( '/' ) ) {
-					page( redirectUrl );
+
+				if ( redirectTo ) {
+					performRedirect( redirectTo.replace( ':receiptId', String( receiptId ) ) );
 					return;
 				}
-				window.location.href = redirectUrl;
+
+				performRedirect( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
 				return;
 			}
 
@@ -134,6 +135,14 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 			/>
 		</Main>
 	);
+}
+
+function performRedirect( url: string ): void {
+	if ( url.startsWith( '/' ) ) {
+		page( url );
+		return;
+	}
+	window.location.href = url;
 }
 
 export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {
