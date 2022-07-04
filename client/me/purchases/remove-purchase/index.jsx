@@ -22,7 +22,7 @@ import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-pur
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getIncludedDomain, getName, hasIncludedDomain, isRemovable } from 'calypso/lib/purchases';
+import { getName, isRemovable } from 'calypso/lib/purchases';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -230,41 +230,12 @@ class RemovePurchase extends Component {
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
-				defaultContent={ this.renderDomainMappingDialogText() }
 				purchase={ purchase }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
 				flowType={ CANCEL_FLOW_TYPE.REMOVE }
 			/>
-		);
-	}
-
-	renderDomainMappingDialogText() {
-		const { purchase, translate } = this.props;
-		const domainName = getName( purchase );
-		const domainProductName = purchase.productName;
-
-		return (
-			<div>
-				<p>
-					{
-						/* translators: "domainName" is the URL of the Domain Connection being removed (example: "mygroovysite.com"). "domainProductName" is a product name (in this case, Domain Connection).  */
-						translate( 'Are you sure you want to remove %(domainName)s from {{site/}}?', {
-							args: { domainName },
-							components: { site: <em>{ purchase.domain }</em> },
-							/* translators:  ^ "site" is the internal WPcom domain i.e. example.wordpress.com */
-						} )
-					}{ ' ' }
-					{ translate(
-						'You will not be able to reuse it again without starting a new %(domainProductName)s subscription.',
-						{
-							args: { domainProductName },
-							comment: "'domainProductName' refers to Domain Mapping in this case.",
-						}
-					) }
-				</p>
-			</div>
 		);
 	}
 
@@ -274,54 +245,12 @@ class RemovePurchase extends Component {
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
-				defaultContent={ this.renderPlanDialogText() }
 				purchase={ purchase }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
 				flowType={ CANCEL_FLOW_TYPE.REMOVE }
 			/>
-		);
-	}
-
-	renderPlanDialogText() {
-		const { purchase, translate } = this.props;
-		const productName = getName( purchase );
-		const includedDomainText = (
-			<p>
-				{ translate(
-					'The domain associated with this plan, {{domain/}}, will not be removed. ' +
-						'It will remain active on your site, unless also removed.',
-					{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-				) }
-			</p>
-		);
-
-		return (
-			<div>
-				<p>
-					{
-						/* translators: productName is a product name, like Jetpack.
-					 domain is something like example.wordpress.com */
-						translate( 'Are you sure you want to remove %(productName)s from {{domain/}}?', {
-							args: { productName },
-							components: { domain: <em>{ purchase.domain }</em> },
-							// ^ is the internal WPcom domain i.e. example.wordpress.com
-							// if we want to use the purchased domain we can swap with the below line
-							//{ components: { domain: <em>{ getIncludedDomain( purchase ) }</em> } }
-						} )
-					}{ ' ' }
-					{ isDomainRegistration &&
-						translate(
-							'You will not be able to reuse it again without starting a new subscription.',
-							{
-								comment: "'it' refers to a product purchased by a user",
-							}
-						) }
-				</p>
-
-				{ isPlan( purchase ) && hasIncludedDomain( purchase ) && includedDomainText }
-			</div>
 		);
 	}
 

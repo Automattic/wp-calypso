@@ -40,11 +40,9 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import HappychatButton from 'calypso/components/happychat/button';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getName, isRefundable } from 'calypso/lib/purchases';
+import { isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -72,7 +70,6 @@ import {
 	nextAdventureOptionsForPurchase,
 } from './options-for-product';
 import PrecancellationChatButton from './precancellation-chat-button';
-import previousStep from './previous-step';
 import BusinessATStep from './step-components/business-at-step';
 import DowngradeStep from './step-components/downgrade-step';
 import FreeMonthOfferStep from './step-components/free-month-offer-step';
@@ -83,11 +80,9 @@ import './style.scss';
 
 class CancelPurchaseForm extends Component {
 	static propTypes = {
-		defaultContent: PropTypes.node.isRequired,
 		disableButtons: PropTypes.bool,
 		purchase: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
-		onInputChange: PropTypes.func.isRequired,
 		onClose: PropTypes.func.isRequired,
 		onClickFinalConfirm: PropTypes.func.isRequired,
 		flowType: PropTypes.string.isRequired,
@@ -97,8 +92,6 @@ class CancelPurchaseForm extends Component {
 	};
 
 	static defaultProps = {
-		defaultContent: '',
-		onInputChange: () => {},
 		isVisible: false,
 	};
 
@@ -137,9 +130,8 @@ class CancelPurchaseForm extends Component {
 			questionOneText: '',
 			questionOneOrder,
 			questionTwoText: '',
-			questionTwoOrder: questionTwoOrder,
+			questionTwoOrder,
 			questionThreeText: '',
-			importQuestionText: '',
 			isSubmitting: false,
 			upsell: '',
 			atomicRevertCheckOne: false,
@@ -233,7 +225,6 @@ class CancelPurchaseForm extends Component {
 			upsell: '',
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onTextOneChange = ( eventOrValue ) => {
@@ -243,7 +234,6 @@ class CancelPurchaseForm extends Component {
 			questionOneText: value,
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onSelectOneChange = ( optionOrValue ) => {
@@ -254,7 +244,6 @@ class CancelPurchaseForm extends Component {
 			upsell: this.getUpsellType( value ) || '',
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onRadioTwoChange = ( eventOrValue ) => {
@@ -267,7 +256,6 @@ class CancelPurchaseForm extends Component {
 			questionTwoText: '',
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onTextTwoChange = ( eventOrValue ) => {
@@ -277,7 +265,6 @@ class CancelPurchaseForm extends Component {
 			questionTwoText: value,
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onTextThreeChange = ( eventOrValue ) => {
@@ -287,7 +274,6 @@ class CancelPurchaseForm extends Component {
 			questionThreeText: value,
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onImportRadioChange = ( eventOrValue ) => {
@@ -297,20 +283,8 @@ class CancelPurchaseForm extends Component {
 		const newState = {
 			...this.state,
 			importQuestionRadio: value,
-			importQuestionText: '',
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
-	};
-
-	onImportTextChange = ( eventOrValue ) => {
-		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
-		const newState = {
-			...this.state,
-			importQuestionText: value,
-		};
-		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	// Because of the legacy reason, we can't just use `flowType` here.
@@ -676,33 +650,6 @@ class CancelPurchaseForm extends Component {
 		);
 	};
 
-	onChatInitiated = () => {
-		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
-		this.closeDialog();
-	};
-
-	renderLiveChat = () => {
-		const { purchase, translate } = this.props;
-		const productName = getName( purchase );
-		return (
-			<FormFieldset>
-				<p>
-					{ translate(
-						'As a %(productName)s user, you have instant access to our team of Happiness ' +
-							'Engineers who can answer your questions and get your site up and running ' +
-							'just as you like! Click the button below to start a chat now.',
-						{
-							args: { productName },
-						}
-					) }
-				</p>
-				<HappychatButton primary borderless={ false } onClick={ this.onChatInitiated }>
-					{ translate( 'Start a Live chat' ) }
-				</HappychatButton>
-			</FormFieldset>
-		);
-	};
-
 	getRefundAmount = () => {
 		const { purchase } = this.props;
 		const { refundOptions, currencyCode } = purchase;
@@ -868,10 +815,6 @@ class CancelPurchaseForm extends Component {
 
 	clickNext = () => {
 		this.changeSurveyStep( nextStep );
-	};
-
-	clickPrevious = () => {
-		this.changeSurveyStep( previousStep );
 	};
 
 	getStepButtons = () => {
