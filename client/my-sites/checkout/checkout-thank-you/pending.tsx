@@ -22,13 +22,27 @@ import getOrderTransactionError from 'calypso/state/selectors/get-order-transact
 
 interface CheckoutPendingProps {
 	orderId: number;
-	siteSlug: string;
+	siteSlug?: string;
 	redirectTo?: string;
 }
 
 /**
  * A page that polls the orders endpoint for a processing transaction and
  * redirects when done.
+ *
+ * There are two possible URLs that will render this page:
+ *
+ * - `/checkout/thank-you/:site/pending/:orderId`
+ * - `/checkout/thank-you/no-site/pending/:orderId`
+ *
+ * The `orderId` prop comes from the last part of the URL and the `siteSlug`
+ * prop comes from the `:site` part of the URL and will be empty if there is no
+ * site.
+ *
+ * The `redirectTo` prop comes from the query string parameter of the same
+ * name. It may include a literal `:receiptId` as part of the URL; if that's
+ * the case, that string will be replaced by the receipt ID when the
+ * transaction completes.
  */
 function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProps ) {
 	const translate = useTranslate();
@@ -52,16 +66,22 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 
 		const retryOnError = () => {
 			didRedirect.current = true;
-			page( `/checkout/${ siteSlug }` );
+			const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
+			const failRedirectUrl = defaultFailUrl;
 
 			reduxDispatch(
 				errorNotice(
-					translate( "Sorry, we couldn't process your payment. Please try again later." )
+					translate( "Sorry, we couldn't process your payment. Please try again later." ),
+					{
+						isPersistent: true,
+					}
 				)
 			);
+
+			page( failRedirectUrl );
 		};
 
-		const planRoute = `/plans/my-plan/${ siteSlug }`;
+		const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
 
 		if ( transaction ) {
 			const { processingStatus } = transaction;
@@ -76,7 +96,10 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 					return;
 				}
 
-				performRedirect( `/checkout/thank-you/${ siteSlug }/${ receiptId }` );
+				const defaultSuccessUrl = siteSlug
+					? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
+					: '/checkout/thank-you/no-site';
+				performRedirect( defaultSuccessUrl );
 				return;
 			}
 
@@ -98,13 +121,15 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 			// The API has responded a status string that we don't expect somehow.
 			if ( UNKNOWN === processingStatus ) {
 				didRedirect.current = true;
-				// Redirect users back to the plan page so that they won't be stuck here.
-				page( planRoute );
 
 				reduxDispatch(
-					errorNotice( translate( 'Oops! Something went wrong. Please try again later.' ) )
+					errorNotice( translate( 'Oops! Something went wrong. Please try again later.' ), {
+						isPersistent: true,
+					} )
 				);
 
+				// Redirect users back to the plan page so that they won't be stuck here.
+				page( planRoute );
 				return;
 			}
 		}
