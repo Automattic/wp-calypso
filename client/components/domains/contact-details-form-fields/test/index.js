@@ -70,9 +70,9 @@ describe( 'ContactDetailsFormFields', () => {
 
 			render( <ContactDetailsFormFields { ...newProps } /> );
 
-			expect( screen.queryByRole( 'textbox', { name: /first name/i } ) ).toBeInTheDocument();
-			expect( screen.queryByRole( 'textbox', { name: /last name/i } ) ).toBeInTheDocument();
-			expect( screen.queryByTestId( 'form-phone-media-input' ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'textbox', { name: /first name/i } ) ).toBeVisible();
+			expect( screen.queryByRole( 'textbox', { name: /last name/i } ) ).toBeVisible();
+			expect( screen.queryByTestId( 'form-phone-media-input' ) ).toBeVisible();
 		} );
 	} );
 
@@ -86,7 +86,7 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should render a Submit button', () => {
 			const newProps = { ...defaultProps };
 			render( <ContactDetailsFormFields { ...newProps } /> );
-			expect( screen.queryByRole( 'button', { name: /submit/i } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: /submit/i } ) ).toBeVisible();
 		} );
 	} );
 
@@ -97,7 +97,7 @@ describe( 'ContactDetailsFormFields', () => {
 			const [ gapps ] = container.getElementsByClassName( 'g-apps-fieldset' );
 
 			expect( gapps ).toBeUndefined();
-			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).toBeInTheDocument();
+			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).toBeVisible();
 		} );
 
 		test( 'should render GAppsFieldset in place of default contact fields when required', () => {
@@ -107,7 +107,7 @@ describe( 'ContactDetailsFormFields', () => {
 
 			const [ gapps ] = container.getElementsByClassName( 'g-apps-fieldset' );
 
-			expect( gapps ).toBeInTheDocument();
+			expect( gapps ).toBeVisible();
 			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).not.toBeInTheDocument();
 		} );
 	} );
@@ -130,7 +130,7 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should render address fieldset when a valid countryCode is selected', () => {
 			render( <ContactDetailsFormFields { ...defaultProps } /> );
 
-			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).toBeInTheDocument();
+			expect( screen.queryByTestId( 'region-address-fieldsets' ) ).toBeVisible();
 		} );
 	} );
 
@@ -144,7 +144,7 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should render fax field when fax required', () => {
 			render( <ContactDetailsFormFields { ...defaultProps } needsFax={ true } /> );
 
-			expect( screen.queryByRole( 'textbox', { name: /fax/i } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'textbox', { name: /fax/i } ) ).toBeVisible();
 		} );
 	} );
 
@@ -158,7 +158,7 @@ describe( 'ContactDetailsFormFields', () => {
 				/>
 			);
 
-			expect( screen.queryByRole( 'button', { name: buttonLabel } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: buttonLabel } ) ).toBeVisible();
 		} );
 
 		test( 'should render organization text', () => {
@@ -171,7 +171,7 @@ describe( 'ContactDetailsFormFields', () => {
 				/>
 			);
 
-			expect( screen.getByRole( 'link', { name: 'Nice Guys Inc' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Nice Guys Inc' } ) ).toBeVisible();
 		} );
 	} );
 
@@ -185,7 +185,7 @@ describe( 'ContactDetailsFormFields', () => {
 		test( 'should render cancel button when `onCancel` method prop passed', () => {
 			render( <ContactDetailsFormFields { ...defaultProps } onCancel={ noop } /> );
 
-			expect( screen.queryByRole( 'button', { name: /cancel/i } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: /cancel/i } ) ).toBeVisible();
 		} );
 	} );
 
