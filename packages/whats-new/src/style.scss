@@ -92,21 +92,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 				padding: 6px 16px;
 				text-decoration: none;
 				vertical-align: top;
-
-				&:active,
-				&.is-active {
-					border-width: 1px;
-				}
-
-				&:hover {
-					border-color: var( --color-neutral-20 );
-					color: var( --color-neutral-70 );
-				}
-
-				.accessible-focus &:focus {
-					border-color: var( --color-primary );
-					box-shadow: 0 0 0 2px var( --color-primary-light );
-				}
 			}
 
 			.guide__forward-button {
@@ -116,15 +101,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 				color: var( --color-text-inverted );
 				font-size: $font-body-small;
 
-				&:hover,
 				&:focus {
-					background-color: var( --color-accent-60 );
-					border-color: var( --color-accent-60 );
-					color: var( --color-text-inverted );
-				}
-
-				.accessible-focus &:focus {
-					box-shadow: 0 0 0 2px var( --color-accent-light );
+					border: none;
 				}
 			}
 
@@ -140,39 +118,14 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 		overflow: auto;
 	}
 
-	.components__page-control {
-		margin: 0;
-
-		&::before {
-			display: inline-block;
-			content: '';
-			vertical-align: middle;
-		}
-
+	.pagination-control {
 		li {
-			vertical-align: middle;
-			margin-bottom: 0;
-			display: inline;
 
 			button {
-				padding: 4px;
-				min-width: 14px;
-			}
+				background-color: var( --studio-gray-10 );
 
-			svg {
-				width: 6px;
-				height: 6px;
-
-				circle {
-					cx: 3;
-					cy: 3;
-					r: 3;
-					fill: var( --studio-gray-10 );
-
-					&.is-selected {
-						fill: var( --studio-gray-80 );
-					}
-
+				&.is-current {
+					background-color: var( --studio-gray-80 );
 				}
 			}
 		}

@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+import { PaginationControl } from '@automattic/components';
 import { Modal, Button } from '@wordpress/components';
 import { useState, Children } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -12,17 +13,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import PageControl from './page-control';
 
-export default function Guide( {
-	children,
-	className,
-	contentLabel,
-	previousButtonText,
-	nextButtonText,
-	finishButtonText,
-	onFinish,
-} ) {
+export default function Guide( { children, className, contentLabel, onFinish } ) {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const pages = Children.map( children, ( child ) => ( { content: child } ) );
 
@@ -67,27 +59,28 @@ export default function Guide( {
 
 				<div className="guide__footer">
 					{ pages.length > 1 && (
-						<PageControl
-							currentPage={ currentPage }
+						<PaginationControl
+							activePageIndex={ currentPage }
 							numberOfPages={ pages.length }
-							setCurrentPage={ setCurrentPage }
-						/>
-					) }
-
-					<div className="guide__buttons">
-						{ canGoBack && (
-							<Button className="guide__back-button" onClick={ goBack }>
-								{ previousButtonText || __( 'Previous' ) }
-							</Button>
-						) }
-						<Button
-							className="guide__forward-button"
-							autoFocus={ currentPage === 0 } // eslint-disable-line jsx-a11y/no-autofocus
-							onClick={ goForward }
+							onChange={ setCurrentPage }
 						>
-							{ canGoForward ? nextButtonText || __( 'Next' ) : finishButtonText || __( 'Finish' ) }
-						</Button>
-					</div>
+							<div className="guide__buttons">
+								{ currentPage > 0 && (
+									<Button className="guide__back-button" isTertiary onClick={ goBack }>
+										{ __( 'Back', __i18n_text_domain__ ) }
+									</Button>
+								) }
+								<Button
+									className="guide__forward-button"
+									autoFocus={ currentPage === 0 } // eslint-disable-line jsx-a11y/no-autofocus
+									isPrimary
+									onClick={ goForward }
+								>
+									{ canGoForward ? __( 'Next' ) : __( 'Done' ) }
+								</Button>
+							</div>
+						</PaginationControl>
+					) }
 				</div>
 			</div>
 		</Modal>
