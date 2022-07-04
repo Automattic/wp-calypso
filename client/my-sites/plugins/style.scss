@@ -125,7 +125,8 @@ body.is-section-plugins.theme-default.color-scheme {
 	}
 
 	@include display-grid;
-	@include grid-template-columns( 3, 80px, 1fr );
+	grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr ) minmax( 300px, 1fr );
+	grid-column-gap: 60px;
 	grid-template-areas: 'header header actions'
 						'content content actions';
 
@@ -301,6 +302,8 @@ body.is-section-plugins header .select-dropdown__item {
 	}
 
 	.plugin-details__layout {
+		@include grid-template-columns( 3, 80px, 1fr );
+
 		padding-top: 0;
 		grid-template-areas: none;
 		grid-template-columns: initial;
