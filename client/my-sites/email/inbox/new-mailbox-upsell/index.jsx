@@ -18,22 +18,24 @@ const NewMailboxUpsell = ( { domains } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug;
 
+	// By default, upsell CTA links to the email management landing page.
 	let upsellURL = emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } );
 
-	// User has one single domain, determine subscribed email provider.
+	// User has one single domain, determine \ email addition page URL based on subscribed email provider.
 	if ( domains.length === 1 ) {
+		const domainItem = domains[ 0 ];
+
+		let slug = null;
 		if ( hasTitanMailWithUs( domains[ 0 ] ) ) {
-			upsellURL = emailManagementEdit( selectedSiteSlug, domains[ 0 ].domain, 'titan/new', null, {
+			slug = 'titan/new';
+		} else if ( hasGSuiteWithUs( domains[ 0 ] ) ) {
+			upsellURL = 'google-workspace/add-users';
+		}
+
+		if ( slug ) {
+			upsellURL = emailManagementEdit( selectedSiteSlug, domainItem.domain, slug, null, {
 				source: INBOX_SOURCE,
 			} );
-		} else if ( hasGSuiteWithUs( domains[ 0 ] ) ) {
-			upsellURL = emailManagementEdit(
-				selectedSiteSlug,
-				domains[ 0 ].domain,
-				'google-workspace/add-users',
-				null,
-				{ source: INBOX_SOURCE }
-			);
 		}
 	}
 
