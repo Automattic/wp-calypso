@@ -1,9 +1,10 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Title, SubTitle, NextButton, Notice } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -40,6 +41,13 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	} = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 	const [ showUpgradePlanScreen, setShowUpgradePlanScreen ] = useState( false );
+
+	/**
+	 ↓ Effects
+	 */
+	useEffect( () => {
+		recordTracksEvent( 'calypso_site_importer_migration_confirmation' );
+	}, [] );
 
 	return (
 		<>
