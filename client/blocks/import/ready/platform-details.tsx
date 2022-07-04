@@ -3,13 +3,14 @@ import { Modal } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, close, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { FeatureName, FeatureList, ImporterPlatform } from '../types';
+import { FeatureName, FeatureList, ImporterPlatform, UrlData } from '../types';
 import type * as React from 'react';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface DetailsProps {
 	platform: ImporterPlatform;
+	fromSite: UrlData[ 'url' ];
 	onClose: () => void;
 }
 
@@ -40,7 +41,7 @@ const platformFeatureList: { [ key: string ]: { [ key: string ]: FeatureName[] }
 
 const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) => {
 	const { __ } = useI18n();
-	const { platform, onClose } = data;
+	const { platform, onClose, fromSite } = data;
 	const learnMoreHref = localizeUrl( 'https://wordpress.com/support/import' );
 
 	const translatedFeatureList: FeatureList = {
@@ -78,7 +79,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 		}
 	};
 
-	const getInfo = ( _platform: ImporterPlatform ): string => {
+	const getInfo = ( _platform: ImporterPlatform, _fromSite: UrlData[ 'url' ] ): string => {
 		switch ( _platform ) {
 			case 'wix':
 				return __(
@@ -93,8 +94,13 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 					"Our Blogger content importer is the quickest way to move your content. Simply export the contents from Blogger as a XML file, then click 'Import your content' and upload it to our importer."
 				);
 			case 'wordpress':
+				if ( _fromSite ) {
+					return __(
+						"Our Self-Hosted WordPress content importer is the quickest way to move your content. After clicking 'Import your content', you will have two options:"
+					);
+				}
 				return __(
-					"Our Self-Hosted WordPress content importer is the quickest way to move your content. After clicking 'Import your content', you will have two options:"
+					'Our Self-Hosted WordPress content importer is the quickest way to move your content.'
 				);
 			case 'medium':
 				return __(
@@ -112,7 +118,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 			onRequestClose={ onClose }
 		>
 			<div className="import__details-modal-content">
-				<p>{ getInfo( platform ) }</p>
+				<p>{ getInfo( platform, fromSite ) }</p>
 
 				<a
 					className="import__details-learn-more"
@@ -170,25 +176,28 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 								</li>
 							) ) }
 						</ul>
-
-						<p>
-							{ createInterpolateElement( __( 'Import <strong>Everything*</strong>:' ), {
-								strong: createElement( 'strong' ),
-							} ) }
-						</p>
-						<ul className={ 'import__details-list' }>
-							{ platformFeatureList[ platform ].supported
-								.concat( platformFeatureList[ platform ].unsupported )
-								.map( ( key ) => (
-									<li key={ key }>
-										<Icon size={ 20 } icon={ check } />{ ' ' }
-										{ translatedFeatureList[ key as FeatureName ] }
-									</li>
-								) ) }
-						</ul>
-						<div className={ 'import__details-footer' }>
-							<i>*{ __( 'Requires a Pro plan.' ) }</i>
-						</div>
+						{ fromSite && (
+							<>
+								<p>
+									{ createInterpolateElement( __( 'Import <strong>Everything*</strong>:' ), {
+										strong: createElement( 'strong' ),
+									} ) }
+								</p>
+								<ul className={ 'import__details-list' }>
+									{ platformFeatureList[ platform ].supported
+										.concat( platformFeatureList[ platform ].unsupported )
+										.map( ( key ) => (
+											<li key={ key }>
+												<Icon size={ 20 } icon={ check } />{ ' ' }
+												{ translatedFeatureList[ key as FeatureName ] }
+											</li>
+										) ) }
+								</ul>
+								<div className={ 'import__details-footer' }>
+									<i>*{ __( 'Requires a Pro plan.' ) }</i>
+								</div>
+							</>
+						) }
 					</div>
 				) }
 			</div>
