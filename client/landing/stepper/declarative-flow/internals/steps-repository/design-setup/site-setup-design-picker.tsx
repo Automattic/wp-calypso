@@ -22,6 +22,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -65,6 +66,8 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
+	const paletteParam = useQuery().get( 'palette' );
+	const customPalette = paletteParam ? JSON.parse( decodeURIComponent( paletteParam ) ) : {};
 	useEffect( () => {
 		if ( isAtomic ) {
 			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
@@ -490,6 +493,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 						key={ design.slug }
 						site={ site }
 						design={ design }
+						customPalette={ customPalette }
 						locale={ locale }
 						verticalId={ siteVerticalId }
 						isSelected={ design.slug === selectedGeneratedDesign?.slug }

@@ -56,6 +56,24 @@ const ImportLight: Step = function ImportStep( props ) {
 		navigation.goToStep?.( `importList?siteSlug=${ siteSlug }&backToStep=importLight` );
 	}
 
+	function gotToDesignPickerStep() {
+		const preferredPalette = colorsData?.preferred_palettes[ 0 ];
+		const palette = {
+			text: { color: preferredPalette?.text.hex, name: preferredPalette?.text.name },
+			link: { color: preferredPalette?.link.hex, name: preferredPalette?.link.name },
+			background: {
+				color: preferredPalette?.background.hex,
+				name: preferredPalette?.background.name,
+			},
+		};
+
+		navigation.goToStep?.(
+			`designSetup?siteSlug=${ siteSlug }&palette=${ encodeURIComponent(
+				JSON.stringify( palette )
+			) }`
+		);
+	}
+
 	function onColorAnimationFinish() {
 		makeProgress( 'import-colors-complete', 100, 2000 );
 		makeProgress( 'summary', 100, 3500 );
@@ -105,12 +123,7 @@ const ImportLight: Step = function ImportStep( props ) {
 				);
 
 			case 'summary':
-				return (
-					<Summary
-						colorsNum={ colors.length }
-						onContinueClick={ () => navigation.goToStep?.( 'designSetup' ) }
-					/>
-				);
+				return <Summary colorsNum={ colors.length } onContinueClick={ gotToDesignPickerStep } />;
 
 			case 'capture':
 			default:
