@@ -40,9 +40,9 @@ interface CheckoutPendingProps {
  * site.
  *
  * The `redirectTo` prop comes from the query string parameter of the same
- * name. It may include a literal `:receiptId` as part of the URL; if that's
- * the case, that string will be replaced by the receipt ID when the
- * transaction completes.
+ * name. It may include a literal `/pending` as part of the URL; if that's the
+ * case, that string will be replaced by the receipt ID when the transaction
+ * completes.
  */
 function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProps ) {
 	const translate = useTranslate();
@@ -91,8 +91,16 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 
 				didRedirect.current = true;
 
+				// Only treat `/pending` as a placeholder if it's the end of the URL
+				// pathname, but preserve query strings or hashes.
+				const receiptPlaceholderRegexp = /\/pending([?#]|$)/;
+				if ( redirectTo && receiptPlaceholderRegexp.test( redirectTo ) ) {
+					performRedirect( redirectTo.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` ) );
+					return;
+				}
+
 				if ( redirectTo ) {
-					performRedirect( redirectTo.replace( ':receiptId', String( receiptId ) ) );
+					performRedirect( redirectTo );
 					return;
 				}
 
