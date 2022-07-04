@@ -14,6 +14,13 @@ interface Props {
 	translate: typeof translate;
 }
 
+const PlanWrapper = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	height: 100%;
+`;
+
 const PlanTitle = styled.h2`
 	font-size: 1.125rem;
 	margin-bottom: 10px;
@@ -67,6 +74,7 @@ const PriceContainer = styled.div`
 	flex-direction: row;
 	font-family: Recoleta;
 	font-weight: 500;
+	margin-top: auto;
 
 	.plan-price {
 		font-size: 2.75rem;
@@ -93,63 +101,64 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 
 	return (
 		<th scope="col">
-			<PlanTitle>{ plan.getTitle() }</PlanTitle>
-
-			<PlanDescription>
-				{ plan.type === TYPE_STARTER ? (
-					<>
-						<p>{ translate( 'Great for blogs and simple sites:' ) }</p>
-						<ul>
-							<li>{ translate( 'Custom domain name.' ) }</li>
-							<li>{ translate( 'Collect payments and donations.' ) }</li>
-							<li>{ translate( '6GB of storage for images.' ) }</li>
-							<li>{ translate( 'Automatic WordPress updates' ) }.</li>
-							<li>{ translate( 'A la carte upgrades available.' ) }</li>
-						</ul>
-					</>
-				) : (
-					<>
-						<p>{ translate( 'Great for business and custom sites:' ) }</p>
-						<ul>
-							<li>{ translate( 'Unlock 50k+ plugins and themes.' ) }</li>
-							<li>{ translate( 'Advanced ecommerce tools.' ) }</li>
-							<li>{ translate( 'Premium website themes.' ) }</li>
-							<li>{ translate( '50GB of media storage.' ) }</li>
-							<li>{ translate( '24-hour live chat support.' ) }</li>
-						</ul>
-					</>
-				) }
-			</PlanDescription>
-			<PriceContainer>
-				{ isDiscounted && (
-					<>
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ originalPrice }
-							displayFlatPrice={ true }
-							translate={ translate }
-							original
-						/>
+			<PlanWrapper>
+				<PlanTitle>{ plan.getTitle() }</PlanTitle>
+				<PlanDescription>
+					{ plan.type === TYPE_STARTER ? (
+						<>
+							<p>{ translate( 'Great for blogs and simple sites:' ) }</p>
+							<ul>
+								<li>{ translate( 'Custom domain name.' ) }</li>
+								<li>{ translate( 'Collect payments and donations.' ) }</li>
+								<li>{ translate( '6GB of storage for images.' ) }</li>
+								<li>{ translate( 'Automatic WordPress updates' ) }.</li>
+								<li>{ translate( 'A la carte upgrades available.' ) }</li>
+							</ul>
+						</>
+					) : (
+						<>
+							<p>{ translate( 'Great for business and custom sites:' ) }</p>
+							<ul>
+								<li>{ translate( 'Unlock 50k+ plugins and themes.' ) }</li>
+								<li>{ translate( 'Advanced ecommerce tools.' ) }</li>
+								<li>{ translate( 'Premium website themes.' ) }</li>
+								<li>{ translate( '50GB of media storage.' ) }</li>
+								<li>{ translate( '24-hour live chat support.' ) }</li>
+							</ul>
+						</>
+					) }
+				</PlanDescription>
+				<PriceContainer>
+					{ isDiscounted && (
+						<>
+							<PlanPrice
+								currencyCode={ currencyCode }
+								rawPrice={ originalPrice }
+								displayFlatPrice={ true }
+								translate={ translate }
+								original
+							/>
+							<PlanPrice
+								currencyCode={ currencyCode }
+								displayFlatPrice={ true }
+								rawPrice={ price }
+								translate={ translate }
+								discounted
+							/>
+						</>
+					) }
+					{ ! isDiscounted && (
 						<PlanPrice
 							currencyCode={ currencyCode }
 							displayFlatPrice={ true }
 							rawPrice={ price }
 							translate={ translate }
-							discounted
 						/>
-					</>
-				) }
-				{ ! isDiscounted && (
-					<PlanPrice
-						currencyCode={ currencyCode }
-						displayFlatPrice={ true }
-						rawPrice={ price }
-						translate={ translate }
-					/>
-				) }
-			</PriceContainer>
-			<BillingTimeFrame>{ plan.getBillingTimeFrame() }</BillingTimeFrame>
-			{ children }
+					) }
+				</PriceContainer>
+				<BillingTimeFrame>{ plan.getBillingTimeFrame() }</BillingTimeFrame>
+				{ children }
+			</PlanWrapper>
 		</th>
 	);
 };
