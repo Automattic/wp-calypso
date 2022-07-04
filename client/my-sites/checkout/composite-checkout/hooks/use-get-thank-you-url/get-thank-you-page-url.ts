@@ -55,6 +55,22 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
 
+type OrderId = number;
+type PurchaseId = number;
+type ReceiptId = number;
+type ReceiptIdPlaceholder = ':receiptId';
+type PendingOrderPathFragment = `pending/${ OrderId }`;
+type PendingOrReceiptId = PendingOrderPathFragment | ReceiptIdPlaceholder | PurchaseId | ReceiptId;
+
+function isReceiptIdOrPlaceholder(
+	receiptId: PendingOrReceiptId
+): receiptId is ReceiptId | ReceiptIdPlaceholder {
+	if ( Number.isInteger( receiptId ) || receiptId === ':receiptId' ) {
+		return true;
+	}
+	return false;
+}
+
 /**
  * Determine where to send the user after checkout is complete.
  *
@@ -163,8 +179,19 @@ export default function getThankYouPageUrl( {
 		return urlFromCart;
 	}
 
-	// Note: this function is called early on for redirect-type payment methods, when the receipt isn't set yet.
-	// The `:receiptId` string is filled in by our pending page after the PayPal checkout
+	// Note: this function is called early on for redirect payment methods like
+	// PayPal, when the receipt isn't set yet.
+	//
+	// For PayPal, the `:receiptId` string in the resulting URL is filled in by
+	// the "API endpoint" backend page that is visited directly after the PayPal
+	// checkout. That page then 302 redirects to the updated URL.
+	//
+	// For non-PayPal redirect payment methods, `getPendingOrReceiptId()`
+	// hopefully never returns `:receiptId` (because that would result in an
+	// invalid URL) and instead returns a `/pending/:orderId` URL. That URL will
+	// poll the orders endpoint until we know if the purchase is successful
+	// before redirecting to the final URL which is optionally encoded in the
+	// `?successUrl=...` query param.
 	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
 	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
 
@@ -182,11 +209,11 @@ export default function getThankYouPageUrl( {
 		debug( 'redirecting to siteless jetpack thank you' );
 		const thankYouUrl = `/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }`;
 
-		const isValidReceiptId =
-			! isNaN( parseInt( String( pendingOrReceiptId ) ) ) || pendingOrReceiptId === ':receiptId';
 		return addQueryArgs(
 			{
-				receiptId: isValidReceiptId ? pendingOrReceiptId : undefined,
+				receiptId: Number.isInteger( pendingOrReceiptId )
+					? Number( pendingOrReceiptId )
+					: undefined,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
 			thankYouUrl
@@ -259,22 +286,24 @@ export default function getThankYouPageUrl( {
 		}
 	}
 
-	const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
-		pendingOrReceiptId,
-		orderId,
-		cart,
-		siteSlug,
-		hideUpsell: Boolean( hideNudge ),
-		domains,
-	} );
+	if ( isReceiptIdOrPlaceholder( pendingOrReceiptId ) ) {
+		const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
+			receiptId: pendingOrReceiptId,
+			orderId,
+			cart,
+			siteSlug,
+			hideUpsell: Boolean( hideNudge ),
+			domains,
+		} );
 
-	if ( redirectUrlForPostCheckoutUpsell ) {
-		debug(
-			'redirect for post-checkout upsell exists, so returning',
-			redirectUrlForPostCheckoutUpsell
-		);
+		if ( redirectUrlForPostCheckoutUpsell ) {
+			debug(
+				'redirect for post-checkout upsell exists, so returning',
+				redirectUrlForPostCheckoutUpsell
+			);
 
-		return redirectUrlForPostCheckoutUpsell;
+			return redirectUrlForPostCheckoutUpsell;
+		}
 	}
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
@@ -300,10 +329,6 @@ export default function getThankYouPageUrl( {
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
 }
 
-type OrderId = number;
-type PurchaseId = number;
-type ReceiptId = number;
-type PendingOrReceiptId = `pending/${ OrderId }` | ':receiptId' | PurchaseId | ReceiptId;
 function getPendingOrReceiptId(
 	receiptId: number | undefined,
 	orderId: number | undefined,
@@ -353,7 +378,7 @@ function getFallbackDestination( {
 	}
 
 	// We will show the Thank You page if there's a site slug and either one of the following is true:
-	// - has a receipt number
+	// - has a receipt number (or a pending order)
 	// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
 	if ( siteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
 		// If we just purchased a Jetpack product or a Jetpack plan (either Jetpack Security or Jetpack Complete),
@@ -416,13 +441,14 @@ function getFallbackDestination( {
 			return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
 		};
 
-		const siteWithReceiptOrCartUrl =
-			feature && isValidFeatureKey( feature )
-				? `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`
-				: getSimpleThankYouUrl();
-		debug( 'site with receipt or cart; feature is', feature );
-
-		return siteWithReceiptOrCartUrl;
+		if ( feature && isValidFeatureKey( feature ) ) {
+			debug( 'site with receipt or cart; feature is', feature );
+			if ( isReceiptIdOrPlaceholder( pendingOrReceiptId ) ) {
+				return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`;
+			}
+			return `/checkout/thank-you/features/${ feature }/${ siteSlug }`;
+		}
+		return getSimpleThankYouUrl();
 	}
 
 	if ( siteSlug ) {
@@ -458,12 +484,12 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 }
 
 function getPlanUpgradeUpsellUrl( {
-	pendingOrReceiptId,
+	receiptId,
 	cart,
 	siteSlug,
 	orderId,
 }: {
-	pendingOrReceiptId: PendingOrReceiptId;
+	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
@@ -476,7 +502,7 @@ function getPlanUpgradeUpsellUrl( {
 		const upgradeItem = getNextHigherPlanSlug( cart );
 
 		if ( upgradeItem ) {
-			return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
+			return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ receiptId }`;
 		}
 	}
 
@@ -484,14 +510,14 @@ function getPlanUpgradeUpsellUrl( {
 }
 
 function getRedirectUrlForPostCheckoutUpsell( {
-	pendingOrReceiptId,
+	receiptId,
 	orderId,
 	cart,
 	siteSlug,
 	hideUpsell,
 	domains,
 }: {
-	pendingOrReceiptId: PendingOrReceiptId;
+	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
@@ -502,7 +528,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		return;
 	}
 	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {
-		pendingOrReceiptId,
+		receiptId,
 		cart,
 		orderId,
 		siteSlug,
@@ -525,7 +551,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		// A user just purchased one of the qualifying plans
 
 		const planUpgradeUpsellUrl = getPlanUpgradeUpsellUrl( {
-			pendingOrReceiptId,
+			receiptId,
 			cart,
 			orderId,
 			siteSlug,
@@ -535,18 +561,16 @@ function getRedirectUrlForPostCheckoutUpsell( {
 			return planUpgradeUpsellUrl;
 		}
 	}
-
-	return;
 }
 
 function getProfessionalEmailUpsellUrl( {
-	pendingOrReceiptId,
+	receiptId,
 	cart,
 	siteSlug,
 	orderId,
 	domains,
 }: {
-	pendingOrReceiptId: PendingOrReceiptId;
+	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	orderId: number | undefined;
@@ -593,7 +617,7 @@ function getProfessionalEmailUpsellUrl( {
 		return;
 	}
 
-	return `/checkout/offer-professional-email/${ domainName }/${ pendingOrReceiptId }/${ siteSlug }`;
+	return `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteSlug }`;
 }
 
 function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {
