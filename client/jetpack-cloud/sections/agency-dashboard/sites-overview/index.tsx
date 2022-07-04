@@ -83,7 +83,7 @@ export default function SitesOverview(): ReactElement {
 			...navItem,
 			count: ( isFavorite ? data?.totalFavorites : data?.total ) || 0,
 			selected: isFavorite ? filter.showOnlyFavorites : ! filter.showOnlyFavorites,
-			path: `${ basePath }${ isFavorite ? '/favorites' : '' }`,
+			path: `${ basePath }${ isFavorite ? '/favorites' : '' }${ search ? '?s=' + search : '' }`,
 			onClick: () => {
 				setHightLightTab( false );
 				dispatch(
