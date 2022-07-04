@@ -1,8 +1,19 @@
+import { Global, css } from '@emotion/react';
 import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from 'page';
-import './sites-dashboard.scss';
+
+const globalStyles = css`
+	body.is-group-sites-dashboard {
+		background: #fdfdfd;
+	}
+`;
 
 export function sitesDashboard( context: PageJSContext, next: () => void ) {
-	context.primary = <SitesDashboard />;
+	context.primary = (
+		<>
+			<Global styles={ globalStyles } />
+			<SitesDashboard />
+		</>
+	);
 	next();
 }
