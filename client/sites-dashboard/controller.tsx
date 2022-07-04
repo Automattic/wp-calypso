@@ -5,6 +5,11 @@ import type { Context as PageJSContext } from 'page';
 const globalStyles = css`
 	body.is-group-sites-dashboard {
 		background: #fdfdfd;
+
+		.layout__content {
+			// The page header background extends all the way to the edge of the screen
+			padding: 32px 0;
+		}
 	}
 `;
 
