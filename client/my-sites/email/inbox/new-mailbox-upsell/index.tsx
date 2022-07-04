@@ -27,9 +27,9 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 		const domainItem = domains[ 0 ];
 
 		let slug = '';
-		if ( hasTitanMailWithUs( domains[ 0 ] ) ) {
+		if ( hasTitanMailWithUs( domainItem ) ) {
 			slug = 'titan/new';
-		} else if ( hasGSuiteWithUs( domains[ 0 ] ) ) {
+		} else if ( hasGSuiteWithUs( domainItem ) ) {
 			slug = 'google-workspace/add-users';
 		}
 
