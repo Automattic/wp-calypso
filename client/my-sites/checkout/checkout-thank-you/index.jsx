@@ -112,6 +112,7 @@ function findPurchaseAndDomain( purchases, predicate ) {
 export class CheckoutThankYou extends Component {
 	static propTypes = {
 		domainOnlySiteFlow: PropTypes.bool.isRequired,
+		email: PropTypes.string,
 		failedPurchases: PropTypes.array,
 		isSimplified: PropTypes.bool,
 		receiptId: PropTypes.number,
@@ -371,7 +372,7 @@ export class CheckoutThankYou extends Component {
 	};
 
 	render() {
-		const { translate, isHappychatEligible } = this.props;
+		const { translate, isHappychatEligible, email } = this.props;
 		let purchases = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
@@ -475,12 +476,12 @@ export class CheckoutThankYou extends Component {
 				purchases
 			);
 
+			const emailFallback = email ? email : this.props.user?.email;
+
 			return (
 				<DomainThankYou
 					domain={ domainName }
-					email={
-						professionalEmailPurchase ? professionalEmailPurchase.meta : this.props.user?.email
-					}
+					email={ professionalEmailPurchase ? professionalEmailPurchase.meta : emailFallback }
 					hasProfessionalEmail={ wasTitanEmailProduct }
 					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
@@ -491,6 +492,7 @@ export class CheckoutThankYou extends Component {
 			return (
 				<TitanSetUpThankYou
 					domainName={ purchases[ 0 ].meta }
+					emailAddress={ email }
 					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
 					title={ translate( 'Congratulations on your purchase!' ) }
 				/>

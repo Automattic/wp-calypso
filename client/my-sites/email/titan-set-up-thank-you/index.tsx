@@ -9,6 +9,7 @@ import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/co
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
+	emailManagementInbox,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -42,6 +43,7 @@ const TitanSetUpThankYou = ( {
 	const translate = useTranslate();
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
+	const inboxPath = emailManagementInbox( selectedSiteSlug );
 
 	const thankYouImage = {
 		alt: translate( 'Thank you' ),
@@ -70,8 +72,8 @@ const TitanSetUpThankYou = ( {
 						href={ getTitanEmailUrl(
 							titanAppsUrlPrefix,
 							emailAddress,
-							true,
-							`${ window.location.protocol }//${ window.location.host }/${ emailManagementPath }`
+							false,
+							`${ window.location.protocol }//${ window.location.host }${ inboxPath }`
 						) }
 						primary
 						onClick={ () => {

@@ -36,6 +36,6 @@ export const socialBasePath = () => '/jetpack-social';
 export const socialPath = ( siteSlug?: string ): string =>
 	siteSlug ? `${ socialBasePath() }/${ siteSlug }` : socialBasePath();
 
-export const partnerPortalBasePath = () => '/partner-portal';
+export const partnerPortalBasePath = ( path = '' ) => `/partner-portal${ path }`;
 
 export const agencySignupBasePath = () => '/agency/signup';

@@ -18,6 +18,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
@@ -57,6 +58,11 @@ function PaymentMethodAdd(): ReactElement {
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
 
+	const returnQueryArg = useMemo(
+		() => getQueryArg( window.location.href, 'return' ),
+		[ window.location.href, getQueryArg ]
+	);
+
 	useReturnUrl( hasPaymentMethod );
 
 	const onGoToPaymentMethods = () => {
@@ -90,7 +96,7 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const successCallback = useCallback( () => {
-		if ( getQueryArg( window.location.href, 'return' ) ) {
+		if ( returnQueryArg ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -120,6 +126,8 @@ function PaymentMethodAdd(): ReactElement {
 		<Main wideLayout className="payment-method-add">
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
+
+			{ returnQueryArg && <AssignLicenseStepProgress currentStep="addPaymentMethod" /> }
 
 			<div className="payment-method-add__header">
 				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>

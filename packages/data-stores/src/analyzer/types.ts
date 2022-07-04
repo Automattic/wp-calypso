@@ -13,7 +13,11 @@ export interface ColorsData {
 }
 
 export interface PreferredPalettes {
-	preferred_palettes: ColorsData[];
+	preferred_palettes: {
+		link: Color;
+		text: Color;
+		background: Color;
+	}[];
 }
 
 export interface AnalyzeColorsResponse {

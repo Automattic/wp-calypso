@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryResult } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
 type Theme = {
@@ -11,21 +11,14 @@ type Theme = {
 	taxonomies: Record< string, [] >;
 };
 
-export function useThemeDetails(
-	slug: string,
-	queryOptions: UseQueryOptions< any, unknown, Theme > = {}
-): UseQueryResult< Theme > {
-	return useQuery< any, unknown, Theme >(
+export function useThemeDetails( slug: string ): UseQueryResult< Theme > {
+	return useQuery< Theme >(
 		'theme-details',
 		() => wpcom.req.get( `/themes/${ slug }`, { apiVersion: '1.1' } ),
 		{
 			staleTime: Infinity,
 			refetchOnWindowFocus: false,
 			refetchOnReconnect: false,
-			...queryOptions,
-			meta: {
-				...queryOptions.meta,
-			},
 		}
 	);
 }

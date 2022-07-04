@@ -4,6 +4,7 @@ import { useDesignsBySite } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useFSEStatus } from '../hooks/use-fse-status';
@@ -77,6 +78,7 @@ export const siteSetupFlow: Flow = {
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
 		const isEnglishLocale = useIsEnglishLocale();
+		const urlQueryParams = useQuery();
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -92,7 +94,7 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetGoals, resetIntent } =
+		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 		const { FSEActive } = useFSEStatus();
@@ -144,6 +146,7 @@ export const siteSetupFlow: Flow = {
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
 			resetGoals();
 			resetIntent();
+			resetSelectedDesign();
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -407,6 +410,15 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'wooVerifyEmail' );
 
 				case 'importList':
+					// eslint-disable-next-line no-case-declarations
+					const backToStep = urlQueryParams.get( 'backToStep' );
+
+					if ( backToStep ) {
+						return navigate( `${ backToStep as StepPath }?siteSlug=${ siteSlug }` );
+					}
+
+					return navigate( 'import' );
+
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':

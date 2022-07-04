@@ -42,11 +42,9 @@ class SocialLoginActionButton extends Component {
 		};
 
 		if ( service === 'google' ) {
-			if ( ! response.getAuthResponse ) {
-				return;
-			}
-
-			const tokens = response.getAuthResponse();
+			const tokens = config.isEnabled( 'migration/sign-in-with-google' )
+				? response // The `response` object itself holds the tokens, no need for any other method calls.
+				: response.getAuthResponse?.();
 
 			if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
 				return;

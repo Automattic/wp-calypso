@@ -42,17 +42,6 @@ jest.mock( '@automattic/languages', () => [
 	},
 ] );
 
-import {
-	PLAN_FREE,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_BLOGGER,
-	PLAN_BLOGGER_2_YEARS,
-} from '@automattic/calypso-products';
 import { mount } from 'enzyme';
 import { merge } from 'lodash';
 import { Provider } from 'react-redux';
@@ -78,7 +67,7 @@ const initialReduxState = {
 	},
 	ui: { selectedSiteId: 1 },
 	sites: {
-		items: { 1: { ID: 1, title: 'Test Site', plan: { productSlug: PLAN_FREE } } },
+		items: { 1: { ID: 1, title: 'Test Site' } },
 		connection: { items: { 1: true } },
 	},
 	currentUser: { capabilities: { 1: { manage_options: true } } },
@@ -125,79 +114,10 @@ describe( 'Search view', () => {
 	} );
 } );
 
-describe( 'Upsell Nudge should get appropriate plan constant', () => {
-	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( product_slug ) => {
-		test( `Business 1 year for (${ product_slug })`, () => {
-			const comp = mountWithRedux( <PluginsBrowser />, {
-				sites: { items: { 1: { jetpack: false, plan: { product_slug } } } },
-			} );
-			expect(
-				comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
-			).toBe( 1 );
-			expect(
-				comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).props().plan
-			).toBe( PLAN_BUSINESS );
-		} );
-	} );
-
-	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach(
-		( product_slug ) => {
-			test( `Business 2 year for (${ product_slug })`, () => {
-				const comp = mountWithRedux( <PluginsBrowser />, {
-					sites: { items: { 1: { jetpack: false, plan: { product_slug } } } },
-				} );
-				expect(
-					comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
-				).toBe( 1 );
-				expect(
-					comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).props().plan
-				).toBe( PLAN_BUSINESS_2_YEARS );
-			} );
-		}
-	);
-} );
-
 describe( 'PluginsBrowser basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		const comp = mountWithRedux( <PluginsBrowser /> );
 		expect( comp.find( 'main' ).length ).toBe( 1 );
-	} );
-	test( 'should show upsell nudge when appropriate', () => {
-		const comp = mountWithRedux( <PluginsBrowser /> );
-		expect(
-			comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
-		).toBe( 1 );
-	} );
-	test( 'should not show upsell nudge if no site is selected', () => {
-		const comp = mountWithRedux( <PluginsBrowser />, { ui: { selectedSiteId: null } } );
-		expect(
-			comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
-		).toBe( 0 );
-	} );
-	test( 'should not show upsell nudge if no sitePlan', () => {
-		const comp = mountWithRedux( <PluginsBrowser />, {
-			ui: { selectedSiteId: 10 },
-			sites: { items: { 10: { ID: 10, plan: null } } },
-		} );
-		expect(
-			comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
-		).toBe( 0 );
-	} );
-	test( 'should not show upsell nudge if non-atomic jetpack site', () => {
-		const comp = mountWithRedux( <PluginsBrowser />, {
-			sites: { items: { 1: { jetpack: true } } },
-		} );
-		expect(
-			comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
-		).toBe( 0 );
-	} );
-	test( 'should not show upsell nudge has business plan', () => {
-		const comp = mountWithRedux( <PluginsBrowser />, {
-			sites: { items: { 1: { jetpack: true, plan: { productSlug: PLAN_PREMIUM } } } },
-		} );
-		expect(
-			comp.find( 'upsell-nudge[event="calypso_plugins_browser_upgrade_nudge"]' ).length
-		).toBe( 0 );
 	} );
 	test( 'should show notice if site is not connected to wpcom', () => {
 		const comp = mountWithRedux( <PluginsBrowser />, {

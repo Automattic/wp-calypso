@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isFreePlanProduct,
 	FEATURE_INSTALL_PLUGINS,
@@ -12,11 +13,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { businessPlanToAdd } from 'calypso/lib/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
+import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
@@ -45,6 +48,9 @@ const PluginDetailsCTA = ( {
 } ) => {
 	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	const requestingPluginsForSites = useSelector( ( state ) =>
 		isRequestingForSites( state, siteIds )
@@ -157,6 +163,13 @@ const PluginDetailsCTA = ( {
 					}
 				</PluginPrice>
 			</div>
+			{ ! legacyVersion && (
+				<BillingIntervalSwitcher
+					billingPeriod={ billingPeriod }
+					onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
+					plugin={ plugin }
+				/>
+			) }
 			<div className="plugin-details-CTA__install">
 				<CTAButton
 					plugin={ plugin }
@@ -204,7 +217,7 @@ const PluginDetailsCTA = ( {
 	);
 };
 
-const PluginDetailsCTAPlaceholder = () => {
+function PluginDetailsCTAPlaceholder() {
 	return (
 		<div className="plugin-details-CTA__container is-placeholder">
 			<div className="plugin-details-CTA__price">...</div>
@@ -212,9 +225,9 @@ const PluginDetailsCTAPlaceholder = () => {
 			<div className="plugin-details-CTA__t-and-c">...</div>
 		</div>
 	);
-};
+}
 
-const CTAButton = ( {
+function CTAButton( {
 	plugin,
 	selectedSite,
 	shouldUpgrade,
@@ -223,7 +236,7 @@ const CTAButton = ( {
 	billingPeriod,
 	isJetpackSelfHosted,
 	isSiteConnected,
-} ) => {
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
@@ -360,7 +373,7 @@ const CTAButton = ( {
 			) }
 		</>
 	);
-};
+}
 
 function onClickInstallPlugin( {
 	dispatch,

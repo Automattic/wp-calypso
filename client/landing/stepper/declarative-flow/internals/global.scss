@@ -81,16 +81,16 @@ button {
 	.signup-header {
 		.wordpress-logo {
 			position: absolute;
-			left: 20px;
-			top: 20px;
+			inset-inline-start: 20px;
+			inset-block-start: 20px;
 			fill: var( --color-text );
 			stroke: var( --color-text );
 			transform-origin: 0 0;
 		}
 
 		.signup-header__right {
-			top: 22px;
-			right: 20px;
+			inset-block-start: 22px;
+			inset-inline-start: 20px;
 
 			.flow-progress-indicator {
 				font-weight: 500;
@@ -102,11 +102,11 @@ button {
 
 		@include break-small {
 			.wordpress-logo {
-				left: 24px;
+				inset-inline-start: 24px;
 			}
 
 			.signup-header__right {
-				right: 24px;
+				inset-inline-end: 24px;
 			}
 		}
 	}

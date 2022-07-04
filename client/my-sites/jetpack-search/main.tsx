@@ -1,3 +1,4 @@
+import { ProductIcon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
@@ -18,7 +19,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import JetpackSearchContent from './content';
 import JetpackSearchFooter from './footer';
-import JetpackSearchLogo from './logo';
 
 import './style.scss';
 
@@ -68,7 +68,7 @@ export default function SearchMain(): ReactElement {
 				buttonLink={ settingsUrl }
 				buttonText={ translate( 'Settings' ) }
 				onClick={ onSettingsClick }
-				iconComponent={ <JetpackSearchLogo /> }
+				iconComponent={ <ProductIcon slug={ 'jetpack_search' } /> }
 			/>
 
 			<JetpackSearchFooter />

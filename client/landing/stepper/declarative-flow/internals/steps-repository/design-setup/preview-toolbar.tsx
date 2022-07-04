@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { STICKY_OFFSET_TOP } from '@automattic/design-picker';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -61,7 +62,7 @@ const DesignPickerPreviewToolbar = ( {
 			setStickyStyle( {
 				position: 'fixed',
 				// Align with the sticky thumbnails
-				top: '109px',
+				top: `${ STICKY_OFFSET_TOP }px`,
 				left: `${ left }px`,
 				height: `${ headerRef.current.offsetHeight }px`,
 				width: `${ headerRef.current.offsetWidth }px`,

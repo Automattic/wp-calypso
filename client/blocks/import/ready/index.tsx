@@ -95,6 +95,7 @@ const ReadyPreviewStep: React.FunctionComponent< ReadyPreviewProps > = ( {
 			{ isModalDetailsOpen && (
 				<ImportPlatformDetails
 					platform={ urlData.platform }
+					fromSite={ urlData?.url }
 					onClose={ setIsModalDetailsOpen.bind( this, false ) }
 				/>
 			) }
@@ -163,10 +164,11 @@ interface ReadyProps {
 	platform: ImporterPlatform;
 	goToImporterPage: ( platform: ImporterPlatform ) => void;
 	recordTracksEvent: RecordTracksEvent;
+	fromSite: UrlData[ 'url' ];
 }
 
 const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
-	const { platform, goToImporterPage, recordTracksEvent } = props;
+	const { platform, goToImporterPage, recordTracksEvent, fromSite } = props;
 	const { __ } = useI18n();
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = React.useState( false );
 
@@ -214,6 +216,7 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 			{ isModalDetailsOpen && (
 				<ImportPlatformDetails
 					platform={ platform }
+					fromSite={ fromSite }
 					onClose={ setIsModalDetailsOpen.bind( this, false ) }
 				/>
 			) }

@@ -1,6 +1,8 @@
 import { Card, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import QRCode from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import phoneValidation from 'calypso/lib/phone-validation';
@@ -191,12 +193,11 @@ class MobileDownloadCard extends Component {
 							{ translate( 'Scan the code using your mobile phone to download the app.' ) }
 						</p>
 
-						<img
-							src="/calypso/images/me/qrcode-calypso.svg"
-							alt="QR code https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps"
-							scale="0"
-							width="180"
-							height="180"
+						<QRCode
+							value={ localizeUrl(
+								'https://apps.wordpress.com/mobile/?campaign=calypso-qrcode-apps'
+							) }
+							size={ 180 }
 						/>
 					</div>
 				) }

@@ -292,6 +292,7 @@ const sections = [
 		paths: [ '/read' ],
 		module: 'calypso/reader',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -305,6 +306,7 @@ const sections = [
 		],
 		module: 'calypso/reader',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -312,6 +314,7 @@ const sections = [
 		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 		module: 'calypso/reader/full-post',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{

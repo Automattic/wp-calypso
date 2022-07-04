@@ -109,7 +109,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 			{ ( () => {
 				if ( isNotAtomicJetpack() ) {
 					return <LoadingEllipsis />;
-				} else if ( undefined === option ) {
+				} else if ( undefined === option && fromSite ) {
 					return (
 						<ContentChooser
 							onJetpackSelection={ installJetpack }

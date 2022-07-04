@@ -6,10 +6,10 @@ import type { ReactElement } from 'react';
 
 export default function SiteFilters( {
 	filter,
-	isFetching,
+	isLoading,
 }: {
 	filter: AgencyDashboardFilter;
-	isFetching: boolean;
+	isLoading: boolean;
 } ): ReactElement {
 	const dispatch = useDispatch();
 	const selectIssueTypes = ( types: AgencyDashboardFilterOption[] ) => {
@@ -23,7 +23,7 @@ export default function SiteFilters( {
 		<Filterbar
 			selectorTypes={ { issueType: true } }
 			filter={ filter }
-			isLoading={ isFetching }
+			isLoading={ isLoading }
 			isVisible={ true }
 			selectActionType={ selectIssueTypes }
 			resetFilters={ resetIssueTypes }

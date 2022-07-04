@@ -119,7 +119,7 @@ class WPCom_Tutorials {
 		}
 		$tutorial = $this->registry[ $id ];
 
-		// Populating status at runtime so that any invalidations happen within the Options API.
+		// Populating status at runtime so that any cache invalidations happen within the User meta/attributes API.
 		$tutorial['tasks'] = $this->get_tasks( $tutorial );
 		return $tutorial;
 	}
