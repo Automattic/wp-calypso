@@ -7,13 +7,14 @@ import { recordInboxNewMailboxUpsellClickEvent } from 'calypso/my-sites/email/em
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagement, emailManagementEdit } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 /**
  * Import styles
  */
 import './style.scss';
 
-const NewMailboxUpsell = ( { domains } ) => {
+const NewMailboxUpsell = ( { domains }: { domains: Array< ResponseDomain > } ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug;
