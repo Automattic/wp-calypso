@@ -41,7 +41,7 @@ function filterSites( sites: SiteData[], filterType: string ): SiteData[] {
 			case 'private':
 				return site.is_private && ! isComingSoon;
 			case 'coming-soon':
-				return site.is_private && isComingSoon;
+				return isComingSoon;
 			default:
 				// Treat unknown filters the same as 'all'
 				return site;
