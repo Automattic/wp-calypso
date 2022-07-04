@@ -1613,7 +1613,7 @@ describe( 'getThankYouPageUrl', () => {
 				isJetpackCheckout: true,
 			} );
 			expect( url ).toBe(
-				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily'
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=%3AreceiptId'
 			);
 		} );
 

@@ -222,9 +222,7 @@ export default function getThankYouPageUrl( {
 
 		return addQueryArgs(
 			{
-				receiptId: Number.isInteger( pendingOrReceiptId )
-					? Number( pendingOrReceiptId )
-					: undefined,
+				receiptId: isReceiptIdOrPlaceholder( pendingOrReceiptId ) ? pendingOrReceiptId : undefined,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
 			thankYouUrl
