@@ -9,5 +9,13 @@
  * @returns {boolean}      Site allowed file types are accurate
  */
 export function isSiteAllowedFileTypesToBeTrusted( site ) {
-	return ! site || ! site.jetpack;
+	if ( ! site ) {
+		return false;
+	}
+
+	if ( site.jetpack && ! site.is_wpcom_atomic ) {
+		return false;
+	}
+
+	return true;
 }
