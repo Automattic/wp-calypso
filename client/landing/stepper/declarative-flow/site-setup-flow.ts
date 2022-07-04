@@ -93,8 +93,7 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
-			useDispatch( ONBOARD_STORE );
+		const { setPendingAction, setStepProgress, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale;
@@ -142,9 +141,7 @@ export const siteSetupFlow: Flow = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetGoals();
-			resetIntent();
-			resetSelectedDesign();
+			resetOnboardStore();
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -178,7 +175,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					// End of woo flow
-					if ( storeType === 'power' ) {
+					if ( intent === 'sell' && storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
 						if (
@@ -295,7 +292,7 @@ export const siteSetupFlow: Flow = {
 					const [ checkoutUrl ] = params;
 
 					if ( checkoutUrl ) {
-						return exitFlow( checkoutUrl.toString() );
+						window.location.replace( checkoutUrl.toString() );
 					}
 
 					return navigate( 'wooTransfer' );
