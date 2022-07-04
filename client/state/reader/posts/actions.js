@@ -1,5 +1,6 @@
 import { filter, forEach, compact, partition, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
+import wpcomRequest from 'wpcom-proxy-request';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -24,7 +25,7 @@ function trackRailcarRender( post ) {
 	tracks.recordTracksEvent( 'calypso_traintracks_render', post.railcar );
 }
 
-function fetchForKey( postKey ) {
+function fetchForKey( postKey, isHelpCenter ) {
 	const query = {};
 
 	const contentWidth = readerContentWidth();
@@ -33,7 +34,19 @@ function fetchForKey( postKey ) {
 	}
 
 	if ( postKey.blogId ) {
-		return wpcom.req.get( `/read/sites/${ postKey.blogId }/posts/${ postKey.postId }`, query );
+		const params = new URLSearchParams( {
+			blog_id: postKey.blogId,
+			post_id: postKey.postId,
+		} );
+
+		return isHelpCenter
+			? wpcomRequest( {
+					path: `help-center/fetch-post`,
+					query: params.toString(),
+					apiNamespace: 'wpcom/v2/',
+					apiVersion: '2',
+			  } )
+			: wpcom.req.get( `/read/sites/${ postKey.blogId }/posts/${ postKey.postId }`, query );
 	}
 	const { postId, feedId, ...params } = postKey;
 	return wpcom.req.get(
@@ -101,16 +114,17 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 };
 
 const requestsInFlight = new Set();
-export const fetchPost = ( postKey ) => ( dispatch ) => {
+export const fetchPost = ( postKey, isHelpCenter ) => ( dispatch ) => {
 	const requestKey = keyToString( postKey );
 	if ( requestsInFlight.has( requestKey ) ) {
 		return;
 	}
+
 	requestsInFlight.add( requestKey );
 	function removeKey() {
 		requestsInFlight.delete( requestKey );
 	}
-	return fetchForKey( postKey )
+	return fetchForKey( postKey, isHelpCenter )
 		.then( ( data ) => {
 			removeKey();
 			return dispatch( receivePosts( [ data ] ) );

@@ -1,7 +1,12 @@
-declare module 'calypso/blocks/support-article-dialog/dialog-content' {
-	const ArticleContent: FC< { postId: number; blogId: number | null; articleUrl: string | null } >;
-	export = ArticleContent;
+declare module 'calypso/blocks/support-article-dialog/header' {
+	const SupportArticleHeader: FC< {
+		postId: number;
+		blogId: number | null;
+		articleUrl: string | null;
+	} >;
+	export default ArticleContent;
 }
+
 declare module 'calypso/components/search-card' {
 	const SearchCard: FC;
 	export = SearchCard;
@@ -21,6 +26,34 @@ declare module 'calypso/components/data/query-user-purchases' {
 	export const purchases: void;
 	export = QueryUserPurchases;
 }
+
+declare module 'calypso/components/data/query-reader-post' {
+	const QueryReaderPost: FC;
+	export default QueryReaderPost;
+}
+
+declare module 'calypso/components/data/query-reader-site' {
+	const QueryReaderSite: FC;
+	export default QueryReaderSite;
+}
+
+declare module 'calypso/components/embed-container' {
+	const EmbedContainer: FC;
+	export default EmbedContainer;
+}
+
+declare module 'calypso/data/support-article-alternates/use-support-article-alternates-query' {
+	const useSupportArticleAlternatesQuery: (
+		blogId: number,
+		postId: number
+	) => { isLoading: boolean; data?: { blog_id: number; page_id: number } };
+	export default useSupportArticleAlternatesQuery;
+}
+
+declare module 'calypso/state/reader/posts/selectors' {
+	export const getPostByKey;
+}
+
 declare module 'calypso/state/purchases/selectors' {
 	export const getUserPurchases: ( state: unknown ) => { productSlug: string }[];
 }
