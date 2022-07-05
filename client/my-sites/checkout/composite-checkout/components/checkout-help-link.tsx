@@ -54,22 +54,31 @@ const HappychatButton = styled( HappychatButtonUnstyled )`
 	}
 `;
 
-export function PaymentChatButton( { plan }: { plan: string | undefined } ) {
+export function PaymentChatButton( {
+	plan,
+	openHelpCenter,
+}: {
+	plan: string | undefined;
+	openHelpCenter: boolean;
+} ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const supportLevel = useSelector( getSupportLevel );
+	const section = useSelector( getSectionName );
 
 	const chatButtonClicked = () => {
 		reduxDispatch(
 			recordTracksEvent( 'calypso_presales_chat_click', {
 				plan,
 				support_level: supportLevel,
+				location: openHelpCenter ? 'help-center' : 'inline-help-popover',
+				section,
 			} )
 		);
 	};
 
 	return (
-		<HappychatButton onClick={ chatButtonClicked }>
+		<HappychatButton onClick={ chatButtonClicked } openHelpCenter={ openHelpCenter }>
 			<Gridicon icon="chat" />
 			{ translate( 'Need help? Chat with us.' ) }
 		</HappychatButton>
@@ -138,37 +147,41 @@ export default function CheckoutHelpLink() {
 	const { responseCart } = useShoppingCart( cartKey );
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 
-	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
-	const supportVariation = useSelector( getSupportVariation );
-
-	const happyChatAvailable = useSelector( isHappychatAvailable );
-	const presalesChatAvailable = useSelector( isPresalesChatAvailable );
+	const {
+		happyChatAvailable,
+		presalesChatAvailable,
+		section,
+		locale,
+		userId,
+		supportVariationDetermined,
+		supportVariation,
+	} = useSelector( ( state ) => {
+		return {
+			happyChatAvailable: isHappychatAvailable( state ),
+			presalesChatAvailable: isPresalesChatAvailable( state ),
+			section: getSectionName( state ),
+			locale: getCurrentLocaleSlug( state ),
+			userId: getCurrentUserId( state ),
+			supportVariationDetermined: isSupportVariationDetermined( state ),
+			supportVariation: getSupportVariation( state ),
+		};
+	} );
 	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
 	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
-	const section = useSelector( getSectionName );
-	const locale = useSelector( getCurrentLocaleSlug );
-	const userId = useSelector( getCurrentUserId );
-	const userAllowedToHelpCenter =
-		config.isEnabled( 'checkout/help-center' ) &&
+
+	const userAllowedToHelpCenter = !! (
 		userId &&
-		shouldShowHelpCenterToUser( userId, locale );
+		config.isEnabled( 'checkout/help-center' ) &&
+		shouldShowHelpCenterToUser( userId, locale )
+	);
 
 	const handleHelpButtonClicked = () => {
-		if ( userAllowedToHelpCenter ) {
-			reduxDispatch( setHelpCenterVisible( true ) );
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_composite_summary_help_click', {
-					location: 'help-center',
-					section,
-				} )
-			);
-			return;
-		}
-
-		reduxDispatch( showInlineHelpPopover() );
+		reduxDispatch(
+			userAllowedToHelpCenter ? setHelpCenterVisible( true ) : showInlineHelpPopover()
+		);
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_composite_summary_help_click', {
-				location: 'inline-help-popover',
+				location: userAllowedToHelpCenter ? 'help-center' : 'inline-help-popover',
 				section,
 			} )
 		);
@@ -187,7 +200,10 @@ export default function CheckoutHelpLink() {
 			<QuerySupportTypes />
 			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
 			{ shouldRenderPaymentChatButton ? (
-				<PaymentChatButton plan={ presalesEligiblePlanLabel } />
+				<PaymentChatButton
+					plan={ presalesEligiblePlanLabel }
+					openHelpCenter={ userAllowedToHelpCenter }
+				/>
 			) : (
 				supportVariationDetermined && (
 					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
