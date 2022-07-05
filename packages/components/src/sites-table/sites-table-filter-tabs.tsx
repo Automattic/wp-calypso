@@ -27,6 +27,7 @@ const TabPanel = styled( WPTabPanel )`
 		margin-right: 24px;
 		font-size: 16px;
 	}
+	.components-tab-panel__tabs-item:hover,
 	.components-tab-panel__tabs-item.is-active,
 	.components-tab-panel__tabs-item.is-active:focus,
 	.components-tab-panel__tabs-item:focus:not( :disabled ) {
