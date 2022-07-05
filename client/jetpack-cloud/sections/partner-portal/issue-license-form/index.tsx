@@ -128,13 +128,33 @@ export default function IssueLicenseForm( {
 
 			switch ( error.code ) {
 				case 'missing_valid_payment_method':
-					page.redirect(
-						addQueryArgs(
-							{
-								return: addQueryArgs( { product }, partnerPortalBasePath( '/issue-license' ) ),
+					if ( paymentMethodRequired ) {
+						page.redirect(
+							addQueryArgs(
+								{
+									return: addQueryArgs( { product }, partnerPortalBasePath( '/issue-license' ) ),
+								},
+								partnerPortalBasePath( '/payment-methods/add' )
+							)
+						);
+						return;
+					}
+
+					errorMessage = translate(
+						'We could not find a valid payment method.{{br/}} ' +
+							'{{a}}Try adding a new payment method{{/a}} or contact support.',
+						{
+							components: {
+								a: (
+									<a
+										href={
+											'/partner-portal/payment-methods/add?return=/partner-portal/issue-license'
+										}
+									/>
+								),
+								br: <br />,
 							},
-							partnerPortalBasePath( '/payment-methods/add' )
-						)
+						}
 					);
 					break;
 
