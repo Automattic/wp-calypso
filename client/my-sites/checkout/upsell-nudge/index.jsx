@@ -354,7 +354,8 @@ export class UpsellNudge extends Component {
 	getThankYouPageUrlForIncomingCart = ( shouldHideUpsellNudges = true ) => {
 		const getThankYouPageUrlArguments = {
 			siteSlug: this.props.siteSlug,
-			receiptId: this.props.receiptId || 'noPreviousPurchase',
+			receiptId: this.props.receiptId,
+			noPurchaseMade: ! this.props.receiptId,
 			cart: this.props.cart,
 			hideNudge: shouldHideUpsellNudges,
 			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
