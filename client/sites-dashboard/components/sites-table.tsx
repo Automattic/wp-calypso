@@ -72,7 +72,7 @@ export function SitesTable( { buildSiteUrl, className, sites }: SitesTableProps 
 					<Row key={ site.ID }>
 						<td>
 							<div style={ { display: 'flex' } }>
-								<SiteIcon site={ site } size={ 50 } />
+								<SiteIcon siteId={ site.ID } size={ 50 } />
 								<div style={ { marginLeft: '20px' } }>
 									<SiteName>
 										<a href={ buildSiteUrl ? buildSiteUrl( site ) : site.URL }>
