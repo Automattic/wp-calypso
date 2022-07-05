@@ -10,7 +10,7 @@
  */
 export function isSiteAllowedFileTypesToBeTrusted( site ) {
 	if ( ! site ) {
-		return false;
+		return true;
 	}
 
 	if ( site.jetpack && ! site.is_wpcom_atomic ) {
