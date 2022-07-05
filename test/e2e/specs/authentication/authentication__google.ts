@@ -1,6 +1,7 @@
 /**
  * @group authentication
  * @group calypso-pr
+ * @browser firefox
  */
 
 import { DataHelper, LoginPage, SecretsManager, GoogleLoginPage } from '@automattic/calypso-e2e';

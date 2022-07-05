@@ -19,6 +19,7 @@
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
 		"@types/totp-generator": "^0.0.3",
+		"jest-docblock": "^27",
 		"mailosaur": "^8.4.0",
 		"nock": "^12.0.3",
 		"playwright": "^1.22.2",
