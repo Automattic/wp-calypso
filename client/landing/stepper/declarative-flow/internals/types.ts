@@ -53,7 +53,7 @@ export type Flow = {
 
 export type StepProps = {
 	navigation: NavigationControls;
-	stepName: string | null;
+	stepName?: string | null;
 	flow: string | null;
 };
 
