@@ -66,7 +66,7 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 		if ( $this->is_wpcom ) {
 			$response = \WPCOM_Help_Eligibility::check_support_eligibility( $support_system_name );
 		} else {
-			$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/mine/' . $support_system_name );
+			$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/' . $support_system_name . '/mine' );
 			if ( is_wp_error( $body ) ) {
 				return $body;
 			}
