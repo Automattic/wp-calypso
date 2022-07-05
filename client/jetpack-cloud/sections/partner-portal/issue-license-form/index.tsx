@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
-import { getQueryArg } from '@wordpress/url';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import sortBy from 'lodash/sortBy';
 import page from 'page';
-import { ReactElement, useCallback, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
@@ -49,9 +49,10 @@ export default function IssueLicenseForm( {
 	} );
 
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+	const defaultProduct = ( getQueryArg( window.location.href, 'product' ) || '' ).toString();
 
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
-	const [ product, setProduct ] = useState( '' );
+	const [ product, setProduct ] = useState( defaultProduct );
 
 	const handleRedirectToDashboard = ( licenseKey: string ) => {
 		const selectedProduct = products?.data?.find( ( p ) => p.slug === product );
@@ -127,6 +128,18 @@ export default function IssueLicenseForm( {
 
 			switch ( error.code ) {
 				case 'missing_valid_payment_method':
+					if ( paymentMethodRequired ) {
+						page.redirect(
+							addQueryArgs(
+								{
+									return: addQueryArgs( { product }, partnerPortalBasePath( '/issue-license' ) ),
+								},
+								partnerPortalBasePath( '/payment-methods/add' )
+							)
+						);
+						return;
+					}
+
 					errorMessage = translate(
 						'We could not find a valid payment method.{{br/}} ' +
 							'{{a}}Try adding a new payment method{{/a}} or contact support.',
@@ -151,6 +164,17 @@ export default function IssueLicenseForm( {
 			}
 
 			dispatch( errorNotice( errorMessage ) );
+		},
+		retry: ( errorCount, error ) => {
+			// If the user has just added their payment method it's likely that there's a slight delay before the API
+			// is made aware of this and allows the creation of the license.
+			// In order to make this a smoother experience for the user, we retry a couple of times silently if the
+			// error is missing_valid_payment_method but our local state shows that the user has a payment method.
+			if ( ! paymentMethodRequired && error?.code === 'missing_valid_payment_method' ) {
+				return errorCount < 5;
+			}
+
+			return false;
 		},
 	} );
 
@@ -185,6 +209,18 @@ export default function IssueLicenseForm( {
 	}, [ dispatch, product, issueLicense.mutate ] );
 
 	const selectedSiteDomian = selectedSite?.domain;
+
+	// If a product is passed down from the query we want to instantly try and create a license for it
+	// and we only want to try that once hence why we pass no dependencies to useEffect().
+	// This is a short-term solution as we shouldn't be executing such actions with a GET request without a nonce.
+	useEffect( () => {
+		if ( defaultProduct !== '' ) {
+			page.redirect(
+				removeQueryArgs( window.location.pathname + window.location.search, 'product' )
+			);
+			issueLicense.mutate( { product: defaultProduct } );
+		}
+	}, [] );
 
 	return (
 		<div className="issue-license-form">
