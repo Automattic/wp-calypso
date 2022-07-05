@@ -853,20 +853,13 @@ class CancelPurchaseForm extends Component {
 
 		if ( isLastStep ) {
 			let actionText;
-			if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
-				if ( isCancelling ) {
-					actionText = translate( 'Removing…' );
-				} else if ( isPlan( purchase ) ) {
-					actionText = translate( 'Remove plan' );
-				} else {
-					actionText = translate( 'Remove product' );
-				}
-			} else if ( isCancelling ) {
-				actionText = translate( 'Cancelling…' );
+			const isRemoveFlow = flowType === CANCEL_FLOW_TYPE.REMOVE;
+			if ( isCancelling ) {
+				actionText = isRemoveFlow ? translate( 'Removing…' ) : translate( 'Cancelling…' );
 			} else if ( isPlan( purchase ) ) {
-				actionText = translate( 'Cancel plan' );
+				actionText = isRemoveFlow ? translate( 'Remove plan' ) : translate( 'Cancel plan' );
 			} else {
-				actionText = translate( 'Cancel product' );
+				actionText = isRemoveFlow ? translate( 'Remove product' ) : translate( 'Cancel product' );
 			}
 			buttons.push(
 				<GutenbergButton
