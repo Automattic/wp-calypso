@@ -171,7 +171,7 @@ export default function IssueLicenseForm( {
 			// In order to make this a smoother experience for the user, we retry a couple of times silently if the
 			// error is missing_valid_payment_method but our local state shows that the user has a payment method.
 			if ( ! paymentMethodRequired && error?.code === 'missing_valid_payment_method' ) {
-				return errorCount < 3;
+				return errorCount < 5;
 			}
 
 			return false;
