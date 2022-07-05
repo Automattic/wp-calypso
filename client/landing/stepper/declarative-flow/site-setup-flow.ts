@@ -4,6 +4,7 @@ import { useDesignsBySite } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
+import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -340,7 +341,17 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'intent' );
 				}
 
-				case 'importReady':
+				case 'importReady': {
+					if (
+						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
+							providedDependencies?.platform as ImporterMainPlatform
+						) !== -1
+					) {
+						return exitFlow( providedDependencies?.url as string );
+					}
+
+					return navigate( providedDependencies?.url as StepPath );
+				}
 				case 'importReadyPreview': {
 					return navigate( providedDependencies?.url as StepPath );
 				}
