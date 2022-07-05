@@ -52,6 +52,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } 
 		},
 		onAnimationEnd: toggleVisible,
 	};
+
 	return (
 		<MemoryRouter>
 			<FeatureFlagProvider>
