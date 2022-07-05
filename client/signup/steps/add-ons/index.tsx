@@ -24,8 +24,8 @@ interface AddOnsProps {
 	selectedAddOns: string[];
 	addOns: ( AddOnMeta | null )[];
 	onToggleAllAddOns: () => void;
-	onAddAddon: ( addonSlug: string ) => void;
-	onRemoveAddon: ( addonSlug: string ) => void;
+	onAddAddOn: ( addOnSlug: string ) => void;
+	onRemoveAddOn: ( addOnSlug: string ) => void;
 }
 
 const ToggleButton = styled.button`
@@ -43,8 +43,8 @@ const AddOnsContainer = styled.div`
 
 const AddOns = ( {
 	onToggleAllAddOns,
-	onAddAddon,
-	onRemoveAddon,
+	onAddAddOn,
+	onRemoveAddOn,
 	selectedAddOns,
 	addOns,
 }: AddOnsProps ) => {
@@ -69,10 +69,10 @@ const AddOns = ( {
 		<AddOnsContainer>
 			<ToggleButton onClick={ onToggleAllAddOns }>{ toggleText }</ToggleButton>
 			<AddOnsGrid
-				actionPrimary={ { text: translate( 'Add to my plan' ), handler: onAddAddon } }
+				actionPrimary={ { text: translate( 'Add to my plan' ), handler: onAddAddOn } }
 				actionSecondary={ {
 					text: translate( 'Remove add-on' ),
-					handler: onRemoveAddon,
+					handler: onRemoveAddOn,
 				} }
 				useAddOnAvailabilityStatus={ getAddOnSelectedStatus }
 				addOns={ addOns }
@@ -89,16 +89,16 @@ export default function AddOnsStep( props: Props ): React.ReactElement {
 
 	const [ selectedAddOns, setSelectedAddOns ] = useState< string[] >( [] );
 
-	const onAddAddon = useCallback(
-		( addonSlug: string ) => {
-			setSelectedAddOns( [ ...selectedAddOns, addonSlug ] );
+	const onAddAddOn = useCallback(
+		( addOnSlug: string ) => {
+			setSelectedAddOns( [ ...selectedAddOns, addOnSlug ] );
 		},
 		[ selectedAddOns ]
 	);
 
-	const onRemoveAddon = useCallback(
-		( addonSlug: string ) => {
-			setSelectedAddOns( selectedAddOns.filter( ( addon ) => addon !== addonSlug ) );
+	const onRemoveAddOn = useCallback(
+		( addOnSlug: string ) => {
+			setSelectedAddOns( selectedAddOns.filter( ( addOn ) => addOn !== addOnSlug ) );
 		},
 		[ selectedAddOns ]
 	);
@@ -109,8 +109,8 @@ export default function AddOnsStep( props: Props ): React.ReactElement {
 		} else {
 			setSelectedAddOns(
 				addOns
-					.filter( ( addon ) => null !== addon )
-					.map( ( addon ) => ( addon as AddOnMeta ).productSlug )
+					.filter( ( addOn ) => null !== addOn )
+					.map( ( addOn ) => ( addOn as AddOnMeta ).productSlug )
 			);
 		}
 	}, [ addOns, selectedAddOns ] );
@@ -126,8 +126,8 @@ export default function AddOnsStep( props: Props ): React.ReactElement {
 	const submitAddOns = useCallback( () => {
 		// We need to send out undefined to avoid checking out an empty cart.
 		const addOnProducts: MinimalRequestCartProduct[] | undefined = selectedAddOns.length
-			? selectedAddOns.map( ( addonSlug ) => ( {
-					product_slug: addonSlug,
+			? selectedAddOns.map( ( addOnSlug ) => ( {
+					product_slug: addOnSlug,
 			  } ) )
 			: undefined;
 
@@ -154,8 +154,8 @@ export default function AddOnsStep( props: Props ): React.ReactElement {
 			stepContent={
 				<AddOns
 					onToggleAllAddOns={ onToggleAllAddOns }
-					onAddAddon={ onAddAddon }
-					onRemoveAddon={ onRemoveAddon }
+					onAddAddOn={ onAddAddOn }
+					onRemoveAddOn={ onRemoveAddOn }
 					selectedAddOns={ selectedAddOns }
 					addOns={ addOns }
 				/>
