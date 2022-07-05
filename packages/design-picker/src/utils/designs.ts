@@ -22,6 +22,7 @@ export const getDesignPreviewUrl = (
 		viewport_height: options.viewport_height || DEFAULT_VIEWPORT_HEIGHT,
 		source_site: 'patternboilerplates.wordpress.com',
 		use_screenshot_overrides: options.use_screenshot_overrides,
+		colors: options.colors,
 	} );
 
 	const siteTitle = options.siteTitle || design.title;
@@ -33,6 +34,8 @@ export const getDesignPreviewUrl = (
 			'&site_title=' +
 			encodeURIComponent( siteTitle ).replace( /\(/g, '%28' ).replace( /\)/g, '%29' );
 	}
+
+	console.log( 'getDesignPreviewUrl', url );
 
 	return url;
 };

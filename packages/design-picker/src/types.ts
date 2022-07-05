@@ -67,6 +67,7 @@ export interface DesignPreviewOptions {
 	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
+	colors?: string;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

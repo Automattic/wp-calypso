@@ -1,11 +1,13 @@
 import { Button } from '@automattic/components';
 import { STICKY_OFFSET_TOP } from '@automattic/design-picker';
 import { Icon } from '@wordpress/icons';
+// import { ColorPalette } from '@wordpress/components';
+import { ColorPalette } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import React, { useEffect, useRef, useState } from 'react';
+import { findIndex } from 'lodash';
 import { computer, tablet, phone } from 'calypso/signup/icons';
-import type { GlobalStyles } from '@automattic/data-stores';
 import './preview-toolbar.scss';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ] as const;
@@ -23,7 +25,8 @@ type PreviewToolbarProps = {
 	isSticky?: boolean;
 	// Called when a device button is clicked
 	setDeviceViewport: ( device: Device ) => void;
-	globalStyles: GlobalStyles;
+	palettes: ColorPalette.Color[];
+	onPaletteChange: ( color: string | undefined, index: number ) => void;
 	translate: ( word: string ) => string;
 };
 
@@ -36,18 +39,20 @@ const DesignPickerPreviewToolbar = ( {
 	showDeviceSwitcher,
 	isSticky,
 	setDeviceViewport,
-	globalStyles,
 	translate,
+	palettes,
+	onPaletteChange,
 }: PreviewToolbarProps ) => {
 	const devices = React.useRef( {
 		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
 		tablet: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
 		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
 	} );
-
 	const [ stickyStyle, setStickyStyle ] = useState( {} );
 	const headerRef = useRef< HTMLDivElement >( null );
 	const headerContentRef = useRef< HTMLDivElement >( null );
+
+	console.log( 'DesignPickerPreviewToolbar', palettes );
 
 	useEffect( () => {
 		if ( ! isSticky ) {
@@ -117,6 +122,19 @@ const DesignPickerPreviewToolbar = ( {
 						</g>
 					</svg>
 					{ externalUrl && <span className="preview-toolbar__browser-url">{ externalUrl }</span> }
+					<div>
+						<ColorPalette name={ 'Proba' } />
+						{ /*<ColorPalette
+							clearable={ false }
+							disableCustomColors={ true }
+							colors={ palettes }
+							value={ '' }
+							onChange={ ( color ) => {
+								const index = findIndex( palettes, ( o ) => o.color === color )
+								onPaletteChange( color, index );
+							} }
+						/>*/ }
+					</div>
 				</div>
 			</div>
 		</div>
