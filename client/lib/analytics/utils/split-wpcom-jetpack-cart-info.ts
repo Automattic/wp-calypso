@@ -35,8 +35,8 @@ export function splitWpcomJetpackCartInfo( cart: ResponseCart ): WpcomJetpackCar
 		containsJetpackProducts: 0 !== jetpackProducts.length,
 		jetpackCost: jetpackCost,
 		wpcomCost: wpcomCost,
-		jetpackCostUSD: costToUSD( jetpackCost, cart.currency ),
-		wpcomCostUSD: costToUSD( wpcomCost, cart.currency ),
-		totalCostUSD: costToUSD( cart.total_cost_integer / 100, cart.currency ),
+		jetpackCostUSD: costToUSD( jetpackCost, cart.currency ) ?? 0,
+		wpcomCostUSD: costToUSD( wpcomCost, cart.currency ) ?? 0,
+		totalCostUSD: costToUSD( cart.total_cost_integer / 100, cart.currency ) ?? 0,
 	};
 }
