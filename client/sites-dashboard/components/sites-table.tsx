@@ -76,7 +76,7 @@ export function SitesTable( { buildSiteUrl, className, sites }: SitesTableProps 
 								<div style={ { marginLeft: '20px' } }>
 									<SiteName>
 										<a href={ buildSiteUrl ? buildSiteUrl( site ) : site.URL }>
-											{ site.name ? site.name : __( '(No Site Title)', __i18n_text_domain__ ) }
+											{ site.name ? site.name : __( '(No Site Title)' ) }
 										</a>
 									</SiteName>
 									<SiteUrl href={ site.URL } target="_blank" rel="noreferrer">
