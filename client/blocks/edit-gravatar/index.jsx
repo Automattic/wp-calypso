@@ -154,6 +154,63 @@ export class EditGravatar extends Component {
 		} );
 	};
 
+	renderEditGravatarIsLoading = () => {
+		return (
+			<div className="edit-gravatar edit_gravatar__is-loading">
+				<div className="edit-gravatar__image-container">
+					<div className="edit-gravatar__gravatar-placeholder"></div>
+				</div>
+				<div>
+					<p className="edit-gravatar__explanation edit-gravatar__explanation-placeholder"></p>
+				</div>
+			</div>
+		);
+	};
+
+	renderGravatarProfileHidden = ( { gravatarLink, translate } ) => {
+		return (
+			<div className="edit-gravatar">
+				<div className="edit-gravatar__image-container">
+					<div className="edit-gravatar__gravatar-is-hidden">
+						<div className="edit-gravatar__label-container">
+							<Gridicon
+								icon="user"
+								size={ 96 } /* eslint-disable-line wpcalypso/jsx-gridicon-size */
+							/>
+						</div>
+					</div>
+				</div>
+				<div>
+					<p className="edit-gravatar__explanation">
+						{ translate( 'Your profile photo is hidden.' ) }
+					</p>
+					<InfoPopover className="edit-gravatar__pop-over" position="left">
+						{ translate(
+							'{{p}}The avatar you use on WordPress.com comes ' +
+								'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
+								'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
+								'{{p}}However, your photo and Gravatar profile are hidden, preventing' +
+								' them from appearing on any site.{{/p}}',
+							{
+								components: {
+									ExternalLink: (
+										<ExternalLink
+											href={ gravatarLink }
+											target="_blank"
+											rel="noopener noreferrer"
+											icon={ true }
+										/>
+									),
+									p: <p />,
+								},
+							}
+						) }
+					</InfoPopover>
+				</div>
+			</div>
+		);
+	};
+
 	render() {
 		const { isGravatarProfileHidden, isUploading, translate, user, additionalUploadHtml } =
 			this.props;
@@ -163,60 +220,11 @@ export class EditGravatar extends Component {
 		const GRAVATAR_IMG_SIZE = 400;
 
 		if ( this.props.isFetchingUserSettings ) {
-			return (
-				<div className="edit-gravatar edit_gravatar__is-loading">
-					<div className="edit-gravatar__image-container">
-						<div className="edit-gravatar__gravatar-placeholder"></div>
-					</div>
-					<div>
-						<p className="edit-gravatar__explanation edit-gravatar__explanation-placeholder"></p>
-					</div>
-				</div>
-			);
+			return this.renderEditGravatarIsLoading();
 		}
 
 		if ( isGravatarProfileHidden ) {
-			return (
-				<div className="edit-gravatar">
-					<div className="edit-gravatar__image-container">
-						<div className="edit-gravatar__gravatar-is-hidden">
-							<div className="edit-gravatar__label-container">
-								<Gridicon
-									icon="user"
-									size={ 96 } /* eslint-disable-line wpcalypso/jsx-gridicon-size */
-								/>
-							</div>
-						</div>
-					</div>
-					<div>
-						<p className="edit-gravatar__explanation">
-							{ translate( 'Your profile photo is hidden.' ) }
-						</p>
-						<InfoPopover className="edit-gravatar__pop-over" position="left">
-							{ translate(
-								'{{p}}The avatar you use on WordPress.com comes ' +
-									'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
-									'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
-									'{{p}}However, your photo and Gravatar profile are hidden, preventing' +
-									' them from appearing on any site.{{/p}}',
-								{
-									components: {
-										ExternalLink: (
-											<ExternalLink
-												href={ gravatarLink }
-												target="_blank"
-												rel="noopener noreferrer"
-												icon={ true }
-											/>
-										),
-										p: <p />,
-									},
-								}
-							) }
-						</InfoPopover>
-					</div>
-				</div>
-			);
+			return this.renderGravatarProfileHidden( { gravatarLink, translate } );
 		}
 
 		const icon = user.email_verified ? 'cloud-upload' : 'notice';
