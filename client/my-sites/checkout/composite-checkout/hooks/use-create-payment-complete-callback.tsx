@@ -3,7 +3,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -41,6 +40,7 @@ import {
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
+import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
 import type {
@@ -219,7 +219,11 @@ export default function useCreatePaymentCompleteCallback( {
 						domainName,
 						() => {
 							reloadCart();
-							performRedirect( url );
+							redirectThroughPending( url, {
+								siteSlug,
+								orderId: transactionResult.order_id,
+								receiptId: transactionResult.receipt_id,
+							} );
 						},
 						reduxStore
 					);
@@ -245,14 +249,23 @@ export default function useCreatePaymentCompleteCallback( {
 					debug( 'error while clearing localStorage cart' );
 				}
 
-				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
-				// Using page.redirect() will take to the log in page which we don't want.
-				window.location.href = url;
+				// We use window.location instead of page() so that the cookies are
+				// detected on fresh page load. Using page(url) will take us to the
+				// log-in page which we don't want.
+				absoluteRedirectThroughPending( url, {
+					siteSlug,
+					orderId: transactionResult.order_id,
+					receiptId: transactionResult.receipt_id,
+				} );
 				return;
 			}
 
 			reloadCart();
-			performRedirect( url );
+			redirectThroughPending( url, {
+				siteSlug,
+				orderId: transactionResult.order_id,
+				receiptId: transactionResult.receipt_id,
+			} );
 		},
 		[
 			reloadCart,
@@ -281,15 +294,6 @@ export default function useCreatePaymentCompleteCallback( {
 			domains,
 		]
 	);
-}
-
-function performRedirect( url: string ): void {
-	try {
-		window.scrollTo( 0, 0 );
-		page( url );
-	} catch ( err ) {
-		window.location.href = url;
-	}
 }
 
 function displayRenewalSuccessNotice(
