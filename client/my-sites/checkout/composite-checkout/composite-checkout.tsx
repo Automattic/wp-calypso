@@ -112,6 +112,9 @@ export default function CompositeCheckout( {
 	isNoSiteCart?: boolean;
 	isInModal?: boolean;
 	infoMessage?: JSX.Element;
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	onAfterPaymentComplete?: () => void;
 	disabledThankYouPage?: boolean;
 	isJetpackCheckout?: boolean;
@@ -223,6 +226,10 @@ export default function CompositeCheckout( {
 
 	const domains = useSiteDomains( siteId );
 
+	// IMPORTANT NOTE: This will be called BEFORE checkout completes because of
+	// redirect payment methods like PayPal. They will redirect directly to the
+	// post-checkout page decided by `getThankYouUrl` and therefore must be
+	// passed the post-checkout URL before the transaction begins.
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug: updatedSiteSlug,
 		redirectTo,
@@ -554,6 +561,9 @@ export default function CompositeCheckout( {
 		[ reduxDispatch ]
 	);
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
 		createUserAndSiteBeforeTransaction,
 		productAliasFromUrl,
@@ -610,6 +620,9 @@ export default function CompositeCheckout( {
 		[ reduxDispatch ]
 	);
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	const handlePaymentComplete = useCallback(
 		( args ) => {
 			onPaymentComplete?.( args );

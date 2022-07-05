@@ -24,9 +24,15 @@ import {
 	FEATURE_MANAGED_HOSTING,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { translate, numberFormat } from 'i18n-calypso';
 import isStarterPlanEnabled from './is-starter-plan-enabled';
+import type { PlansComparisonMetaData } from 'calypso/data/plans/use-plans-comparison-meta';
 import type { TranslateResult } from 'i18n-calypso';
+
+type FeatureExtraArgs = PlansComparisonMetaData & {
+	no_ads_monthly_cost?: number;
+};
 
 export interface PlanComparisonFeature {
 	/**
@@ -55,14 +61,12 @@ export interface PlanComparisonFeature {
 	 * @param {string} feature The feature constant. e.g. FEATURE_UNLIMITED_ADMINS
 	 * @param {boolean} isMobile Whether the text is displayed on mobile.
 	 * @param {boolean} isLegacySiteWithHigherLimits Whether the feature is being displayed in the context of a legacy site that is entitled to higher free plan limits.
-	 * @param {boolean} isExperiment Whether to show data associated with Explat experiment.
 	 * @returns {TranslateResult|TranslateResult[]} Array of text if there is an additional description.
 	 */
 	getCellText: (
 		feature: string | undefined,
 		isMobile: boolean,
 		isLegacySiteWithHigherLimits?: boolean,
-		isExperiment?: boolean,
 		extraArgs?: unknown
 	) => TranslateResult | [ TranslateResult, TranslateResult ];
 }
@@ -457,25 +461,25 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_PREMIUM_THEMES ],
-		getCellText: (
-			feature,
-			isMobile = false,
-			isLegacySiteWithHigherLimits = false,
-			isExperiment = false
-		) => {
-			let cellText;
-			if ( isExperiment && ! isLegacySiteWithHigherLimits ) {
-				cellText = feature ? (
-					<>
-						<Gridicon icon="checkmark" />
-						{ translate( 'Included' ) }
-					</>
-				) : (
-					<>{ translate( 'Available for $50+ each' ) }</>
-				);
-			} else {
-				cellText = defaultGetCellText( translate( 'Premium themes' ) )( feature, isMobile );
-			}
+		getCellText: ( feature, isMobile = false, _, extraArgs: unknown ) => {
+			const meta = extraArgs as FeatureExtraArgs;
+
+			let cellText = feature ? (
+				<>
+					<Gridicon icon="checkmark" />
+					{ translate( 'Included' ) }
+				</>
+			) : (
+				<>
+					{ translate( 'Available for %(price)s+ each', {
+						args: {
+							price: formatCurrency( meta.bottom_theme_price, meta.currency, { stripZeros: true } ),
+						},
+						comment: 'Translators: theme costs start from the _price_',
+					} ) }
+				</>
+			);
+
 			if ( isMobile ) {
 				cellText = feature ? (
 					<>{ translate( 'Premium themes are included' ) }</>
@@ -487,6 +491,7 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 					</>
 				);
 			}
+
 			return cellText;
 		},
 	},
@@ -584,25 +589,28 @@ export const planComparisonFeatures: PlanComparisonFeature[] = [
 			);
 		},
 		features: [ FEATURE_NO_ADS ],
-		getCellText: (
-			feature,
-			isMobile = false,
-			isLegacySiteWithHigherLimits = false,
-			isExperiment = false
-		) => {
-			let cellText;
-			if ( isExperiment && ! isLegacySiteWithHigherLimits ) {
-				cellText = feature ? (
+		getCellText: ( feature, isMobile = false, _, extraArgs: unknown ) => {
+			const meta = extraArgs as FeatureExtraArgs;
+
+			let cellText =
+				feature || ! meta.no_ads_monthly_cost ? (
 					<>
 						<Gridicon icon="checkmark" />
 						{ translate( 'Included' ) }
 					</>
 				) : (
-					<>{ translate( 'Available for +$2/month' ) }</>
+					<>
+						{ translate( 'Available for +%(price)s/month', {
+							args: {
+								price: formatCurrency( meta.no_ads_monthly_cost, meta.currency, {
+									stripZeros: true,
+								} ),
+							},
+							comment: 'Translators: The no-ads feature costs additional $2/month.',
+						} ) }
+					</>
 				);
-			} else {
-				cellText = defaultGetCellText( translate( 'Remove ads' ) )( feature, isMobile );
-			}
+
 			if ( isMobile ) {
 				cellText = feature ? (
 					<>{ translate( 'Remove ads is included' ) }</>

@@ -3,10 +3,8 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import {
-	hasValidPaymentMethod,
-	isAgencyUser,
-} from 'calypso/state/partner-portal/partner/selectors';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
 import type { ReactChild, ReactElement } from 'react';
 import './style.scss';
 
@@ -51,19 +49,25 @@ interface Props {
 	currentStep: StepKey;
 }
 
-export default function AssignLicenseStepProgress( { currentStep }: Props ): ReactElement {
+export default function AssignLicenseStepProgress( { currentStep }: Props ): ReactElement | null {
 	const translate = useTranslate();
-	const isAgency = useSelector( isAgencyUser );
-	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
-	const paymentMethodRequired = isAgency && ! hasPaymentMethod;
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
+	const sites = useSelector( getSites ).length;
 
-	const steps: Step[] = [
-		{ key: 'issueLicense', label: translate( 'Issue new license' ) },
-		...( paymentMethodRequired
-			? [ { key: 'addPaymentMethod', label: translate( 'Add Payment Method' ) } as Step ]
-			: [] ),
-		{ key: 'assignLicense', label: translate( 'Assign license' ) },
-	];
+	const steps: Step[] = [ { key: 'issueLicense', label: translate( 'Issue new license' ) } ];
+
+	if ( paymentMethodRequired ) {
+		steps.push( { key: 'addPaymentMethod', label: translate( 'Add Payment Method' ) } );
+	}
+
+	if ( sites > 0 ) {
+		steps.push( { key: 'assignLicense', label: translate( 'Assign license' ) } );
+	}
+
+	// Don't show the breadcrumbs if we have less than 2 as they are not very informative in this case.
+	if ( steps.length < 2 ) {
+		return null;
+	}
 
 	const currentStepIndex = Math.max(
 		steps.findIndex( ( step ) => step.key === currentStep ),
