@@ -252,11 +252,21 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	renderCheckout() {
-		const { isCheckoutPending, previousPath, siteSlug, isJetpackNotAtomic, title, user, locale } =
-			this.props;
+		const {
+			isCheckoutPending,
+			previousPath,
+			siteSlug,
+			isJetpackNotAtomic,
+			title,
+			user,
+			locale,
+			isSimpleSite,
+		} = this.props;
 
 		const userAllowedToHelpCenter =
-			config.isEnabled( 'checkout/help-center' ) && shouldShowHelpCenterToUser( user.ID, locale );
+			config.isEnabled( 'checkout/help-center' ) &&
+			shouldShowHelpCenterToUser( user.ID, locale ) &&
+			isSimpleSite;
 
 		return (
 			<AsyncLoad
