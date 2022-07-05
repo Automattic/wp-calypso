@@ -262,11 +262,15 @@ const InstalledInOrPricing = ( {
 	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
-	const { isPreinstalledPremiumPlugin, isPreinstalledPremiumPluginUpgraded } =
-		usePreinstalledPremiumPlugin( plugin.slug );
-	const active = isWpcomPreinstalled || isPluginActive;
+	const {
+		isPreinstalledPremiumPlugin,
+		isPreinstalledPremiumPluginActive,
+		isPreinstalledPremiumPluginUpgraded,
+	} = usePreinstalledPremiumPlugin( plugin.slug );
+	const active = isWpcomPreinstalled || isPluginActive || isPreinstalledPremiumPluginActive;
 
-	let checkmarkColorClass = 'checkmark--active';
+	const checkmarkColorClass =
+		selectedSiteId && active ? 'checkmark--active' : 'checkmark--inactive';
 
 	if ( isPreinstalledPremiumPluginUpgraded ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
@@ -291,9 +295,6 @@ const InstalledInOrPricing = ( {
 		isWpcomPreinstalled
 	) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
-		if ( selectedSiteId ) {
-			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
-		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
