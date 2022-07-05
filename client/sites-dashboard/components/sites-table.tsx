@@ -1,9 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-// eslint-disable-next-line no-restricted-imports
 import SiteIcon from 'calypso/blocks/site-icon';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data'; // eslint-disable-line no-restricted-imports
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 interface SitesTableProps {
 	buildSiteUrl?: ( site: SiteData ) => string;
@@ -62,9 +61,9 @@ export function SitesTable( { buildSiteUrl, className, sites }: SitesTableProps 
 		<Table className={ className }>
 			<thead className="sites-table__mobile-hidden">
 				<Row>
-					<th>{ __( 'Site', __i18n_text_domain__ ) }</th>
-					<th>{ __( 'Plan', __i18n_text_domain__ ) }</th>
-					<th>{ __( 'Last Publish', __i18n_text_domain__ ) }</th>
+					<th>{ __( 'Site' ) }</th>
+					<th>{ __( 'Plan' ) }</th>
+					<th>{ __( 'Last Publish' ) }</th>
 					<th style={ { width: '20px' } }></th>
 				</Row>
 			</thead>
@@ -73,11 +72,11 @@ export function SitesTable( { buildSiteUrl, className, sites }: SitesTableProps 
 					<Row key={ site.ID }>
 						<td>
 							<div style={ { display: 'flex' } }>
-								<SiteIcon site={ site } size={ 50 } />
+								<SiteIcon siteId={ site.ID } size={ 50 } />
 								<div style={ { marginLeft: '20px' } }>
 									<SiteName>
 										<a href={ buildSiteUrl ? buildSiteUrl( site ) : site.URL }>
-											{ site.name ? site.name : __( '(No Site Title)', __i18n_text_domain__ ) }
+											{ site.name ? site.name : __( '(No Site Title)' ) }
 										</a>
 									</SiteName>
 									<SiteUrl href={ site.URL } target="_blank" rel="noreferrer">
