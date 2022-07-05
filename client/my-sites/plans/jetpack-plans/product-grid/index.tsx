@@ -17,7 +17,10 @@ import { useSelector } from 'react-redux';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { PLAN_COMPARISON_PAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import {
+	PLAN_COMPARISON_PAGE,
+	AGENCIES_PAGE,
+} from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -274,11 +277,18 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					} ) }
 				>
 					<h3 className="product-grid__more-headline">{ translate( 'Need more info?' ) }</h3>
-					<MoreInfoBox
-						buttonLabel={ translate( 'Compare all product bundles' ) }
-						buttonLink={ PLAN_COMPARISON_PAGE }
-						track="calypso_plans_comparison_table_link_click"
-					/>
+					<div className="product-grid__more-buttons">
+						<MoreInfoBox
+							buttonLabel={ translate( 'Compare all product bundles' ) }
+							buttonLink={ PLAN_COMPARISON_PAGE }
+							track="calypso_plans_comparison_table_link_click"
+						/>
+						<MoreInfoBox
+							buttonLabel={ translate( 'Explore Jetpack for Agencies' ) }
+							buttonLink={ AGENCIES_PAGE }
+							track=""
+						/>
+					</div>
 				</div>
 			</ProductGridSection>
 			<div className={ classNames( { 'product-grid__fullwidth-wrapper': showFourColumnGrid } ) }>

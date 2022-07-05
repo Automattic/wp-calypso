@@ -5,7 +5,8 @@
 	display: inline-flex;
 	align-items: center;
 
-	margin: 0 auto;
+	padding-left: 16px;
+	padding-right: 14px;
 
 	border: solid 2px currentColor;
 	border-radius: 4px;
@@ -17,7 +18,7 @@
 .more-info-box__icon.gridicon {
 	top: 2px;
 
-	margin-left: 8px;
+	margin-left: 10px;
 }
 
 .is-section-jetpack-cloud-pricing {

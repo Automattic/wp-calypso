@@ -145,6 +145,18 @@
 	line-height: inherit;
 }
 
+.product-grid__more-buttons {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+
+	@include break-medium {
+		justify-content: center;
+		flex-direction: row;
+	}
+}
+
 .product-grid__category-filter {
 	display: flex;
 	justify-content: center;
