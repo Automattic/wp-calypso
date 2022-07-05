@@ -240,12 +240,13 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanDialog() {
-		const { purchase } = this.props;
+		const { purchase, activeSubscriptions } = this.props;
 
 		return (
 			<CancelPurchaseForm
 				disableButtons={ this.state.isRemoving }
 				purchase={ purchase }
+				linkedPurchases={ activeSubscriptions }
 				isVisible={ this.state.isDialogVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }

@@ -13,16 +13,30 @@ import 'calypso/state/purchases/init';
  * revert_atomic_site_on_subscription_removal() and deactivate_product().
  * This is a helper for UI elements only, it does not control actual revert decisions.
  *
- * @param   {object} state       global state
- * @param   {number} purchaseId  the purchase id
+ * @param   {object} state           global state
+ * @param   {number} purchaseId      the purchase id
+ * @param   {Array}  linkedPurchases List of purchases that will be also deactivated because they are
+ *                                   linked to the given purchase
  * @returns {boolean} True if the Atomic revert will happen, false otherwise.
  */
-export const willAtomicSiteRevertAfterPurchaseDeactivation = ( state, purchaseId ) => {
+export const willAtomicSiteRevertAfterPurchaseDeactivation = (
+	state,
+	purchaseId,
+	linkedPurchases
+) => {
 	if ( ! purchaseId ) {
 		return false;
 	}
 
 	const purchase = getByPurchaseId( state, purchaseId );
+	if ( ! purchase ) {
+		return false;
+	}
+
+	// Bail if the site not Atomic.
+	if ( ! isSiteAutomatedTransfer( state, purchase.siteId ) ) {
+		return false;
+	}
 
 	const isAtomicSupportedProduct = ( productSlug ) => {
 		if ( isEnabled( 'marketplace-starter-plan' ) && isMarketplaceProduct( state, productSlug ) ) {
@@ -32,19 +46,28 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = ( state, purchaseId
 		return planHasFeature( productSlug, WPCOM_FEATURES_ATOMIC );
 	};
 
+	if ( ! Array.isArray( linkedPurchases ) ) {
+		linkedPurchases = [];
+	}
+
+	// Bail if none of the purchases to deactivate supports Atomic.
 	if (
-		! purchase ||
-		! isSiteAutomatedTransfer( state, purchase.siteId ) ||
-		! isAtomicSupportedProduct( purchase.productSlug )
+		! isAtomicSupportedProduct( purchase.productSlug ) &&
+		linkedPurchases.every(
+			( linkedPurchase ) => ! isAtomicSupportedProduct( linkedPurchase.productSlug )
+		)
 	) {
 		return false;
 	}
 
-	// Retrieves all Atomic supported purchases for the site.
-	// If there is at least one active subscription except the given one,
-	// the site will be kept in the Atomic infra.
-	return ! getSitePurchases( state, purchase.siteId ).some(
+	const remainingPurchases = getSitePurchases( state, purchase.siteId ).filter(
 		( sitePurchase ) =>
-			sitePurchase.id !== purchaseId && isAtomicSupportedProduct( sitePurchase.productSlug )
+			sitePurchase.id !== purchaseId &&
+			linkedPurchases.every( ( linkedPurchase ) => sitePurchase.id !== linkedPurchase.id )
+	);
+
+	// If there is at least one remaining Atomic supported purchase, the site will be kept in the Atomic infra.
+	return ! remainingPurchases.some( ( sitePurchase ) =>
+		isAtomicSupportedProduct( sitePurchase.productSlug )
 	);
 };
