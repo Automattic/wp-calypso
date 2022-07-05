@@ -43,7 +43,11 @@ const ThemeInfoPopup = ( { slug }: ThemeInfoPopupProps ) => {
 	};
 
 	if ( ! theme ) {
-		return <LoadingEllipsis />;
+		return (
+			<div className="theme-info-popup loading">
+				<LoadingEllipsis />
+			</div>
+		);
 	}
 
 	const { author, author_uri, description } = theme;
