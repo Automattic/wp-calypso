@@ -57,6 +57,15 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
+	it( 'redirects to the thank-you page with a receipt id when a site and receiptId is set as a string', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			receiptId: String( samplePurchaseId ),
+		} );
+		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+	} );
+
 	it( 'redirects to the thank-you page with a receipt id when a site and receiptId is set', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
@@ -1633,6 +1642,28 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				isJetpackCheckout: true,
 				receiptId: 80023,
+			} );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023'
+			);
+		} );
+
+		it( 'redirects with receiptId query param when a valid receipt ID is provided as a string', () => {
+			const cart = {
+				...getEmptyResponseCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				isJetpackCheckout: true,
+				receiptId: '80023',
 			} );
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023'
