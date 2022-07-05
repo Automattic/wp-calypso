@@ -23,10 +23,6 @@ describe( 'EditGravatar', () => {
 		email_verified: false,
 	};
 
-	const userSettings = {
-		gravatar_profile_hidden: false,
-	};
-
 	beforeAll( () => {
 		originalUrl = global.URL;
 		global.URL = {
@@ -41,38 +37,25 @@ describe( 'EditGravatar', () => {
 
 	describe( 'component rendering', () => {
 		test( 'displays a Gravatar', () => {
-			const wrapper = shallow(
-				<EditGravatar translate={ noop } user={ user } userSettings={ userSettings } />
-			);
+			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			expect( wrapper.find( Gravatar ).length ).toEqual( 1 );
 		} );
 
 		test( 'contains a file picker that accepts images', () => {
-			const wrapper = shallow(
-				<EditGravatar translate={ noop } user={ user } userSettings={ userSettings } />
-			);
+			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			const filePicker = wrapper.find( FilePicker );
 			expect( filePicker.length ).toEqual( 1 );
 			expect( filePicker.prop( 'accept' ) ).toEqual( 'image/*' );
 		} );
 
 		test( 'does not display the image editor by default', () => {
-			const wrapper = shallow(
-				<EditGravatar translate={ noop } user={ user } userSettings={ userSettings } />
-			);
+			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
 			expect( wrapper.find( ImageEditor ).length ).toEqual( 0 );
 		} );
 
 		test( 'indicates when Gravatar is hidden', () => {
 			const wrapper = shallow(
-				<EditGravatar
-					translate={ noop }
-					user={ user }
-					isGravatarProfileHidden={ true }
-					userSettings={ {
-						gravatar_profile_hidden: true,
-					} }
-				/>
+				<EditGravatar translate={ noop } user={ user } isGravatarProfileHidden={ true } />
 			);
 			expect( wrapper.find( '.edit-gravatar .edit-gravatar__gravatar-is-hidden' ) ).toHaveLength(
 				1
@@ -87,7 +70,6 @@ describe( 'EditGravatar', () => {
 						user={ {
 							email_verified: false,
 						} }
-						userSettings={ userSettings }
 					/>
 				);
 				expect( wrapper.find( DropZone ) ).toHaveLength( 0 );
@@ -100,7 +82,6 @@ describe( 'EditGravatar', () => {
 						user={ {
 							email_verified: true,
 						} }
-						userSettings={ userSettings }
 					/>
 				);
 				expect( wrapper.find( DropZone ) ).toHaveLength( 1 );
@@ -112,12 +93,7 @@ describe( 'EditGravatar', () => {
 		describe( 'accepted file type', () => {
 			test( 'displays the image editor with square allowed aspect ratio', () => {
 				const wrapper = shallow(
-					<EditGravatar
-						translate={ noop }
-						user={ user }
-						userSettings={ userSettings }
-						recordReceiveImageEvent={ noop }
-					/>
+					<EditGravatar translate={ noop } user={ user } recordReceiveImageEvent={ noop } />
 				);
 				const files = [
 					{
@@ -143,7 +119,6 @@ describe( 'EditGravatar', () => {
 						receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
 						translate={ noop }
 						user={ user }
-						userSettings={ userSettings }
 						recordReceiveImageEvent={ noop }
 					/>
 				);
@@ -181,7 +156,6 @@ describe( 'EditGravatar', () => {
 					translate={ noop }
 					uploadGravatar={ uploadGravatarSpy }
 					user={ user }
-					userSettings={ userSettings }
 					recordReceiveImageEvent={ noop }
 				/>
 			);
@@ -205,7 +179,6 @@ describe( 'EditGravatar', () => {
 					translate={ noop }
 					uploadGravatar={ uploadGravatarSpy }
 					user={ user }
-					userSettings={ userSettings }
 					recordReceiveImageEvent={ noop }
 				/>
 			);
@@ -222,12 +195,7 @@ describe( 'EditGravatar', () => {
 	describe( 'unverified user', () => {
 		test( 'shows email verification dialog when clicked', () => {
 			const wrapper = shallow(
-				<EditGravatar
-					translate={ noop }
-					user={ user }
-					userSettings={ userSettings }
-					recordClickButtonEvent={ noop }
-				/>
+				<EditGravatar translate={ noop } user={ user } recordClickButtonEvent={ noop } />
 			);
 			// Enzyme requires simulate() to be called directly on the element with the click handler
 			const clickableWrapper = wrapper.find( '.edit-gravatar > div' ).first();
