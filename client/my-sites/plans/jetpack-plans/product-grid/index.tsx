@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { PLAN_COMPARISON_PAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -172,15 +173,6 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 
 	const showFreeCard = useSelector( getShowFreeCard );
 
-	const bundleComparisonRef = useRef< null | HTMLElement >( null );
-	const scrollToComparison = () => {
-		if ( bundleComparisonRef.current ) {
-			bundleComparisonRef.current?.scrollIntoView( {
-				behavior: 'smooth',
-			} );
-		}
-	};
-
 	const filterBar = useMemo(
 		() =>
 			showAnnualPlansOnly ? null : (
@@ -277,14 +269,15 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 					} ) }
 				</ul>
 				<div
-					className={ classNames( 'product-grid__more', {
+					className={ classNames( 'product-grid__more', 'product-grid__more-container', {
 						'is-detached': shouldWrapGrid,
 					} ) }
 				>
+					<h3 className="product-grid__more-headline">{ translate( 'Need more info?' ) }</h3>
 					<MoreInfoBox
-						headline={ translate( 'Need more info?' ) }
 						buttonLabel={ translate( 'Compare all product bundles' ) }
-						onButtonClick={ scrollToComparison }
+						buttonLink={ PLAN_COMPARISON_PAGE }
+						track="calypso_plans_comparison_table_link_click"
 					/>
 				</div>
 			</ProductGridSection>
