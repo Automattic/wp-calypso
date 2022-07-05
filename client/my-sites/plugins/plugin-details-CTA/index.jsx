@@ -57,9 +57,27 @@ const PluginDetailsCTA = ( {
 		! isJetpackSelfHosted;
 
 	// Eligibilities for Simple Sites.
-	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
+	// eslint-disable-next-line prefer-const
+	let { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
 		getEligibility( state, selectedSite?.ID )
 	);
+
+	/*
+	 * Remove 'NO_BUSINESS_PLAN' holds if the INSTALL_PURCHASED_PLUGINS feature is present.
+	 *
+	 * Starter plans do not have the ATOMIC feature, but they have the
+	 * INSTALL_PURCHASED_PLUGINS feature which allows them to buy marketplace
+	 * addons (which do have the ATOMIC feature).
+	 *
+	 * This means a Starter plan about to purchase a marketplace addon might get a
+	 * 'NO_BUSINESS_PLAN' hold on atomic transfer; however, if we're about to buy a
+	 * marketplace addon which provides the ATOMIC feature, then we can ignore this
+	 * hold.
+	 */
+	if ( typeof eligibilityHolds !== 'undefined' && isMarketplaceProduct && ! shouldUpgrade ) {
+		eligibilityHolds = eligibilityHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
+	}
+
 	const hasEligibilityMessages =
 		! isAtomic && ! isJetpack && ( eligibilityHolds?.length || eligibilityWarnings?.length );
 
