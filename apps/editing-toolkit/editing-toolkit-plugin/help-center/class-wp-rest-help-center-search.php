@@ -61,13 +61,14 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_search_results( \WP_REST_Request $request ) {
-		$query      = $request->get_param( 'query' );
-		$query_args = $request->get_params();
+		$query           = $request->get_param( 'query' );
+		$locale          = $request->get_param( 'locale' );
+		$include_post_id = $request->get_param( 'include_post_id' );
 
 		if ( $this->is_wpcom ) {
-			$response = \WPCOM_Help_Search::get_search_results( $query, $query_args );
+			$response = \WPCOM_Help_Search::search_wpcom_support( $query, $locale, $include_post_id );
 		} else {
-			$body = Client::wpcom_json_api_request_as_user( 'help/search?query=' . $query );
+			$body = Client::wpcom_json_api_request_as_user( 'help/search?query=' . $query . '&locale=' . $locale . '&include_post_id=' . $include_post_id );
 			if ( is_wp_error( $body ) ) {
 				return $body;
 			}
@@ -76,7 +77,7 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 
 		return rest_ensure_response(
 			array(
-				'search_results' => $response,
+				'wordpress_support_links' => $response,
 			)
 		);
 	}
