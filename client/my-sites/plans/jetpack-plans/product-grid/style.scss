@@ -107,7 +107,15 @@
 }
 
 .product-grid__pricing-banner {
-	height: 54px;
+	height: 120px;
+
+	margin-bottom: 20px;
+
+	@include break-large {
+		height: 54px;
+
+		margin-bottom: 0;
+	}
 }
 
 .product-grid__more.is-detached {

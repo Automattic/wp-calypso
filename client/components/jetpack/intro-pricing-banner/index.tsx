@@ -14,6 +14,7 @@ import getBestIntroOfferDiscount from 'calypso/state/selectors/get-best-intro-of
 import getIsRequestingIntroOffers from 'calypso/state/selectors/get-is-requesting-into-offers';
 import './style.scss';
 import guaranteeBadge from './14-day-badge.svg';
+import people from './people.svg';
 import rocket from './rocket.svg';
 
 interface Props {
@@ -94,6 +95,12 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 									} )
 								) }
 							</span>
+						</div>
+						<div className="intro-pricing-banner__agencies">
+							<img src={ people } alt="" />
+							<a href="https://jetpack.com/for/agencies/" target="_blank" rel="noreferrer">
+								{ preventWidows( translate( 'Explore Jetpack for Agencies' ) ) }
+							</a>
 						</div>
 					</>
 				) }
