@@ -1,5 +1,6 @@
 import { WPCOM_DIFM_EXTRA_PAGE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -24,12 +25,14 @@ import {
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { Dependencies } from 'calypso/signup/types';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
-import './style.scss';
 import useCartForDIFM from './use-cart-for-difm';
+
+import './style.scss';
 
 const PageGrid = styled.div`
 	display: grid;
@@ -227,9 +230,10 @@ function DIFMPagePicker( props: StepProps ) {
 		CONTACT_PAGE,
 	] );
 	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
-	const extraPageProductCost = useSelector( ( state ) =>
-		getProductDisplayCost( state, WPCOM_DIFM_EXTRA_PAGE )
+	const extraPageProduct = useSelector( ( state ) =>
+		getProductBySlug( state, WPCOM_DIFM_EXTRA_PAGE )
 	);
 	const { replaceProductsInCart } = useShoppingCart( cartKey ?? undefined );
 	useEffect( () => {
@@ -258,7 +262,10 @@ function DIFMPagePicker( props: StepProps ) {
 			components: { br: <br /> },
 			args: {
 				freePageCount: 5,
-				extraPagePrice: extraPageProductCost,
+				extraPagePrice:
+					extraPageProduct && currencyCode
+						? formatCurrency( extraPageProduct.cost, currencyCode, { precision: 0 } )
+						: ' ',
 			},
 		}
 	);

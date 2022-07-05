@@ -48,6 +48,14 @@ const Cart = styled.div`
 		width: 100%;
 		border-top: 1px solid #dcdcde;
 	}
+	.disclaimer {
+		color: #646970;
+		font-size: 12px;
+
+		@media ( max-width: 600px ) {
+			padding: 5px 0;
+		}
+	}
 `;
 const DummyLineItemContainer = styled.div`
 	display: flex;
@@ -71,8 +79,6 @@ const DummyLineItemContainer = styled.div`
 		font-weight: 500;
 	}
 	.page-picker__meta {
-		color: #646970;
-		font-size: 12px;
 		width: 100%;
 		display: flex;
 		flex-direction: row;
@@ -98,7 +104,8 @@ const DummyLineItemContainer = styled.div`
 
 const LineItemsWrapper = styled.div`
 	box-sizing: border-box;
-	margin: 20px 0;
+	margin-top: 20px;
+	margin-bottom: 5px;
 	padding: 0;
 	overflow-y: auto;
 	max-height: 75vh;
@@ -134,9 +141,9 @@ const Total = styled.div`
 	@media ( max-width: 600px ) {
 		font-size: 16px;
 		margin-top: 6px;
-		padding: 0;
-		padding-top: 6px;
+		padding: 5px 0px;
 		border-top: 1px solid #eee;
+		border-bottom: 1px solid #eee;
 	}
 `;
 
@@ -199,9 +206,10 @@ export default function ShoppingCartForDIFM( { selectedPages }: { selectedPages:
 
 					<Total>
 						<div>{ translate( 'Total' ) }</div>
-						<div className="page-picker__value">{ total }</div>
+						<div className="page-picker__value">{ total }*</div>
 					</Total>
 				</LineItemsWrapper>
+				<div className="page-picker__disclaimer">*Final price will be calculated at checkout.</div>
 			</Cart>
 		</CartContainer>
 	);

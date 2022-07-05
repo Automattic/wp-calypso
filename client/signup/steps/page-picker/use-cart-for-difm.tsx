@@ -44,7 +44,6 @@ type DummyCartParams = {
 	difmLiteProduct: ProductListItem | null;
 	extraPageProduct: ProductListItem | null;
 	translate: LocalizeProps[ 'translate' ];
-	formatCurrency: ( original: number, currrency: string ) => string | null;
 };
 
 function getDummyCartProducts( {
@@ -54,7 +53,6 @@ function getDummyCartProducts( {
 	difmLiteProduct,
 	extraPageProduct,
 	translate,
-	formatCurrency,
 }: DummyCartParams ): CartItem[] {
 	const extraPageCount = Math.max( 0, selectedPages.length - FREE_PAGES );
 	let displayedCartItems: CartItem[] = [];
@@ -69,7 +67,9 @@ function getDummyCartProducts( {
 			{
 				product: activePlanScheme,
 				meta: translate( 'Plan Subscription: %(planPrice)s per year', {
-					args: { planPrice: formatCurrency( activePlanScheme.cost, currencyCode ) },
+					args: {
+						planPrice: formatCurrency( activePlanScheme.cost, currencyCode, { precision: 0 } ),
+					},
 				} ),
 				lineCost: activePlanScheme.cost,
 			},
@@ -81,7 +81,7 @@ function getDummyCartProducts( {
 				product: extraPageProduct,
 				meta: translate( '%(perPageCost)s Per Page', {
 					args: {
-						perPageCost: extraPageProduct.cost_display,
+						perPageCost: formatCurrency( extraPageProduct.cost, currencyCode, { precision: 0 } ),
 					},
 				} ),
 				lineCost: extraPageProduct.cost * extraPageCount,
