@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -17,6 +18,7 @@ import {
 	isPluginActionInProgress,
 } from 'calypso/state/plugins/installed/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 
 import './style.scss';
 
@@ -42,6 +44,9 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 				( variation ) => variation.product_slug === purchase.productSlug
 			)
 		);
+	const hasManagePluginsFeature = useSelector( ( state ) =>
+		siteHasFeature( state, site.ID, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
 
 	useEffect( () => {
 		if ( isWithinBreakpoint( '<1040px' ) ) {
@@ -98,6 +103,7 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 						site={ site }
 						plugin={ pluginOnSite }
 						hideLabel={ ! isMobileLayout }
+						disabled={ plugin.isMarketplaceProduct && ! hasManagePluginsFeature }
 					/>
 				) }
 				{ canToggleAutoupdate && (
