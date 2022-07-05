@@ -78,7 +78,9 @@ export const HelpCenterMoreResources = () => {
 
 	return (
 		<>
-			<h3 className="help-center__section-title">{ __( 'More Resources' ) }</h3>
+			<h3 className="help-center__section-title">
+				{ __( 'More Resources', __i18n_text_domain__ ) }
+			</h3>
 			<ul className="inline-help__more-resources" aria-labelledby="inline-help__more-resources">
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
@@ -90,7 +92,7 @@ export const HelpCenterMoreResources = () => {
 							onClick={ () => trackMoreResourcesButtonClick( 'video' ) }
 						>
 							<Icon icon={ video } size={ 24 } />
-							<span>{ __( 'Video tutorials' ) }</span>
+							<span>{ __( 'Video tutorials', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -105,7 +107,7 @@ export const HelpCenterMoreResources = () => {
 							className="inline-help__capture-video"
 						>
 							<Icon icon={ captureVideo } size={ 24 } />
-							<span>{ __( 'Webinars' ) }</span>
+							<span>{ __( 'Webinars', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -120,7 +122,7 @@ export const HelpCenterMoreResources = () => {
 							onClick={ () => trackMoreResourcesButtonClick( 'courses' ) }
 						>
 							<Icon icon={ desktop } size={ 24 } />
-							<span>{ __( 'Courses' ) }</span>
+							<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -135,7 +137,7 @@ export const HelpCenterMoreResources = () => {
 							onClick={ () => trackMoreResourcesButtonClick( 'guides' ) }
 						>
 							<Icon icon={ formatListNumbered } size={ 24 } />
-							<span>{ __( 'Step-by-step guides' ) }</span>
+							<span>{ __( 'Step-by-step guides', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -149,7 +151,7 @@ export const HelpCenterMoreResources = () => {
 								className="inline-help__new-releases"
 							>
 								<Icon icon={ <NewReleases /> } size={ 24 } />
-								<span>{ __( "What's new" ) }</span>
+								<span>{ __( "What's new", __i18n_text_domain__ ) }</span>
 								{ showWhatsNewDot && (
 									<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
 								) }
