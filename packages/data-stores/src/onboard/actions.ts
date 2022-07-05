@@ -273,6 +273,10 @@ export const resetIntent = () => ( {
 	type: 'RESET_INTENT' as const,
 } );
 
+export const resetSelectedDesign = () => ( {
+	type: 'RESET_SELECTED_DESIGN' as const,
+} );
+
 export const setEditEmail = ( email: string ) => ( {
 	type: 'SET_EDIT_EMAIL' as const,
 	email,
@@ -314,5 +318,6 @@ export type OnboardAction = ReturnType<
 	| typeof clearDIFMGoal
 	| typeof resetGoals
 	| typeof resetIntent
+	| typeof resetSelectedDesign
 	| typeof setEditEmail
 >;

@@ -14,7 +14,7 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick }
 			<div className="tools__header-image-wrapper">
 				<img
 					className="tools__header-image"
-					src="/calypso/images/illustrations/illustration-404.svg"
+					src="/calypso/images/illustrations/illustration-marketing-tools.svg"
 					alt={ String( translate( 'Marketing Tools' ) ) }
 				/>
 			</div>

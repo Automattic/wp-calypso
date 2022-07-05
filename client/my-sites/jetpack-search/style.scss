@@ -49,14 +49,11 @@
 }
 
 .jetpack-search__header {
-	color: var( --studio-black );
-	font-size: $font-title-medium;
-	font-weight: 600;
-	line-height: 1;
+	font-size: $font-title-small;
 	margin: 16px 0;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		font-size: $font-headline-small;
+		font-size: $font-title-medium;
 		margin: 20px 0 24px;
 	}
 }
@@ -76,7 +73,7 @@
 }
 
 .jetpack-search__button {
-	margin: 16px 0;
+	margin-top: 16px;
 	width: 100%;
 	text-align: center;
 

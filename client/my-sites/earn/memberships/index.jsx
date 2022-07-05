@@ -32,7 +32,7 @@ import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { userCan } from 'calypso/lib/site/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEarningsWithDefaultsForSiteId } from 'calypso/state/memberships/earnings/selectors';
-import { requestDisconnectStripeAccount } from 'calypso/state/memberships/settings/actions';
+import { requestDisconnectSiteStripeAccount } from 'calypso/state/memberships/settings/actions';
 import {
 	getConnectedAccountIdForSiteId,
 	getConnectedAccountDescriptionForSiteId,
@@ -147,7 +147,7 @@ class MembershipsSection extends Component {
 
 	onCloseDisconnectStripeAccount = ( reason ) => {
 		if ( reason === 'disconnect' ) {
-			this.props.requestDisconnectStripeAccount(
+			this.props.requestDisconnectSiteStripeAccount(
 				this.props.siteId,
 				this.props.connectedAccountId,
 				this.props.translate( 'Please wait, disconnecting Stripe\u2026' ),
@@ -380,13 +380,7 @@ class MembershipsSection extends Component {
 					</p>
 					<Notice
 						text={ this.props.translate(
-							'Once you disconnect Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.{{br/}}{{strong}}Disconnecting your Stripe account here will remove it from all your WordPress.com and Jetpack sites.{{/strong}}',
-							{
-								components: {
-									br: <br />,
-									strong: <strong />,
-								},
-							}
+							'Once you disconnect Payments from Stripe, new subscribers won’t be able to sign up and existing subscriptions will stop working.'
 						) }
 						showDismiss={ false }
 					/>
@@ -692,6 +686,6 @@ const mapStateToProps = ( state ) => {
 export default connect( mapStateToProps, {
 	recordTracksEvent,
 	requestSubscribers,
-	requestDisconnectStripeAccount,
+	requestDisconnectSiteStripeAccount,
 	requestSubscriptionStop,
 } )( localize( withLocalizedMoment( MembershipsSection ) ) );
