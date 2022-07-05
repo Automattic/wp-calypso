@@ -2,7 +2,7 @@
  * @group authentication
  *
  * One real problem with this spec is that SMS OTP can only be requested once every 5 minutes as per the backend code.
- * What this means is that in rare cases where Pre-Release Tests are lined up one after another in the queue, it may result in an unexpected failure of this spec, which would appear to be a flaky test failure to the developer.
+ * This is why the spec is isolated in its own build, to bypass the situation where Pre-Release Tests are lined up one after another (eg. when two PRs are merged together).
  *
  * It may be necessary to keep a close eye on this test and immediately pull the test from rotation if we find the flakiness exceeds an acceptable level.
  */
