@@ -54,13 +54,17 @@
 		.components-text-control__input,
 		.components-textarea-control__input {
 			background-color: var( --studio-white );
-			padding: 1rem;
+			padding: 0 1rem;
 			box-sizing: border-box;
 		}
 
 		.components-select-control__input,
 		.components-text-control__input {
 			height: 2.5rem;
+		}
+
+		.components-textarea-control__input {
+			padding: 1rem;
 		}
 	}
 
