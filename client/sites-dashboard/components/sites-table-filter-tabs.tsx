@@ -19,10 +19,10 @@ export function SitesTableFilterTabs( {
 		<TabPanel
 			className={ className }
 			tabs={ [
-				{ name: 'all', title: __( 'All', __i18n_text_domain__ ) },
-				{ name: 'launched', title: __( 'Launched', __i18n_text_domain__ ) },
-				{ name: 'private', title: __( 'Private', __i18n_text_domain__ ) },
-				{ name: 'coming-soon', title: __( 'Coming soon', __i18n_text_domain__ ) },
+				{ name: 'all', title: __( 'All' ) },
+				{ name: 'launched', title: __( 'Launched' ) },
+				{ name: 'private', title: __( 'Private' ) },
+				{ name: 'coming-soon', title: __( 'Coming soon' ) },
 			] }
 		>
 			{ ( tab ) => renderContents( filterSites( allSites, tab.name ) ) }
