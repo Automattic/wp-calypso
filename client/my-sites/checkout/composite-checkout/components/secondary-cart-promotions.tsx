@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isPro, isStarter } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { FunctionComponent, useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -94,7 +95,15 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 		);
 	}
 
-	if ( config.isEnabled( 'checkout_sellup_box' ) ) {
+	const isStarterPlan = responseCart.products.some( ( product ) => {
+		return isStarter( product );
+	} );
+
+	const isProPlan = responseCart.products.some( ( product ) => {
+		return isPro( product );
+	} );
+
+	if ( ! isStarterPlan && ! isProPlan ) {
 		return (
 			<UpsellWrapper>
 				<CartFreeUserPlanUpsell

@@ -122,8 +122,7 @@
 		"wpcom-user-bootstrap": true,
 		"wordpress-action-search": false,
 		"redirect-fallback-browsers": true,
-		"woop": false,
-		"checkout_sellup_box": true
+		"woop": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

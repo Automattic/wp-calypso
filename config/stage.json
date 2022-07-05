@@ -120,8 +120,7 @@
 		"use-translation-chunks": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true,
-		"checkout_sellup_box": true
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

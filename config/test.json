@@ -85,7 +85,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
 		"wordpress-action-search": false,
-		"redirect-fallback-browsers": true,
-		"checkout_sellup_box": true
+		"redirect-fallback-browsers": true
 	}
 }
