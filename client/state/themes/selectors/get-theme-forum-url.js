@@ -13,7 +13,7 @@ import 'calypso/state/themes/init';
  */
 export function getThemeForumUrl( state, themeId ) {
 	if ( isWpcomTheme( state, themeId ) ) {
-		return '//en.forums.wordpress.com/';
+		return '//wordpress.com/forums/';
 	}
 	if ( isWporgTheme( state, themeId ) ) {
 		return '//wordpress.org/support/theme/' + themeId;
