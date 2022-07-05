@@ -111,10 +111,10 @@ export default function getThankYouPageUrl( {
 	siteSlug?: string;
 	adminUrl?: string;
 	redirectTo?: string;
-	receiptId?: number;
+	receiptId?: number | string;
 	noPurchaseMade?: boolean;
-	orderId?: number;
-	purchaseId?: number;
+	orderId?: number | string;
+	purchaseId?: number | string;
 	feature?: string;
 	cart?: ResponseCart;
 	isJetpackNotAtomic?: boolean;
@@ -298,7 +298,7 @@ export default function getThankYouPageUrl( {
 	if ( isReceiptIdOrPlaceholder( pendingOrReceiptId ) ) {
 		const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
 			receiptId: pendingOrReceiptId,
-			orderId,
+			orderId: orderId ? Number( orderId ) : undefined,
 			cart,
 			siteSlug,
 			hideUpsell: Boolean( hideNudge ),
@@ -339,18 +339,18 @@ export default function getThankYouPageUrl( {
 }
 
 function getPendingOrReceiptId(
-	receiptId: number | undefined,
-	orderId: number | undefined,
-	purchaseId: number | undefined
+	receiptId: string | number | undefined,
+	orderId: string | number | undefined,
+	purchaseId: string | number | undefined
 ): PendingOrReceiptId {
 	if ( receiptId ) {
-		return receiptId;
+		return Number( receiptId );
 	}
 	if ( orderId ) {
-		return `pending/${ orderId }`;
+		return `pending/${ Number( orderId ) }`;
 	}
 	if ( purchaseId ) {
-		return purchaseId;
+		return Number( purchaseId );
 	}
 	return ':receiptId';
 }
