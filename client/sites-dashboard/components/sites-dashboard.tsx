@@ -1,10 +1,11 @@
-import { Button, SitesTable, Gridicon, SitesTableFilterTabs } from '@automattic/components';
+import { Button, SitesTable, Gridicon } from '@automattic/components';
 import { css, ClassNames } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import getSites from 'calypso/state/selectors/get-sites';
 import { notNullish } from '../util';
+import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
 const MAX_PAGE_WIDTH = '1184px';
 
