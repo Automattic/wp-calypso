@@ -11,21 +11,32 @@ import type { SiteData } from '../../types';
 
 describe( '<SiteCard>', () => {
 	test( 'should render correctly and expand card on click', () => {
+		const siteObj = {
+			blog_id: 1234,
+			url: 'test.jurassic.ninja',
+			url_with_scheme: 'https://test.jurassic.ninja/',
+			monitor_active: false,
+			monitor_site_status: false,
+			has_scan: true,
+			has_backup: false,
+			latest_scan_threats_found: [],
+			latest_backup_status: '',
+			is_connection_healthy: true,
+			awaiting_plugin_updates: [],
+		};
 		const rows: SiteData = {
 			site: {
-				value: {
-					blog_id: 1234,
-					url: 'test.jurassic.ninja',
-					url_with_scheme: 'https://test.jurassic.ninja/',
-				},
+				value: siteObj,
 				error: true,
 				type: 'site',
 				status: '',
 			},
 			backup: {
 				type: 'backup',
+				status: '',
+				value: '',
 			},
-			monitor: { error: '', type: 'monitor', status: '' },
+			monitor: { error: false, type: 'monitor', status: '', value: '' },
 			scan: { threats: 3, type: 'scan', status: 'failed', value: '3 Threats' },
 			plugin: { updates: 3, type: 'plugin', status: 'warning', value: '3 Available' },
 		};

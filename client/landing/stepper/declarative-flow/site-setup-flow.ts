@@ -4,9 +4,10 @@ import { useDesignsBySite } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
+import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
@@ -77,6 +78,7 @@ export const siteSetupFlow: Flow = {
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
 		const isEnglishLocale = useIsEnglishLocale();
+		const urlQueryParams = useQuery();
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -92,10 +94,9 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetGoals, resetIntent } =
+		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
-		const { FSEActive } = useFSEStatus();
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale;
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
@@ -144,6 +145,7 @@ export const siteSetupFlow: Flow = {
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
 			resetGoals();
 			resetIntent();
+			resetSelectedDesign();
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -188,10 +190,6 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'wooVerifyEmail' );
 						}
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
-					}
-
-					if ( FSEActive && intent !== 'write' ) {
-						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
 					return exitFlow( `/home/${ siteSlug }` );
@@ -343,7 +341,17 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'intent' );
 				}
 
-				case 'importReady':
+				case 'importReady': {
+					if (
+						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
+							providedDependencies?.platform as ImporterMainPlatform
+						) !== -1
+					) {
+						return exitFlow( providedDependencies?.url as string );
+					}
+
+					return navigate( providedDependencies?.url as StepPath );
+				}
 				case 'importReadyPreview': {
 					return navigate( providedDependencies?.url as StepPath );
 				}
@@ -407,6 +415,15 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'wooVerifyEmail' );
 
 				case 'importList':
+					// eslint-disable-next-line no-case-declarations
+					const backToStep = urlQueryParams.get( 'backToStep' );
+
+					if ( backToStep ) {
+						return navigate( `${ backToStep as StepPath }?siteSlug=${ siteSlug }` );
+					}
+
+					return navigate( 'import' );
+
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':

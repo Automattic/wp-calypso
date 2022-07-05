@@ -55,9 +55,9 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 
 	it( 'Invite email was received for test user', async function () {
 		const emailClient = new EmailClient();
-		const message = await emailClient.getLastEmail( {
+		const message = await emailClient.getLastMatchingMessage( {
 			inboxId: inboxId,
-			emailAddress: testEmailAddress,
+			sentTo: testEmailAddress,
 		} );
 		const links = await emailClient.getLinksFromMessage( message );
 		const acceptInviteLink = links.find( ( link: string ) =>

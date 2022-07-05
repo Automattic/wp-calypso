@@ -1,4 +1,4 @@
-import { TYPE_PRO, TYPE_STARTER } from '@automattic/calypso-products';
+import { TYPE_STARTER } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
@@ -10,7 +10,6 @@ interface Props {
 	plan: Plan;
 	price?: number;
 	originalPrice?: number;
-	isExperiment?: boolean;
 	onClick?: ( productSlug: string ) => void;
 	translate: typeof translate;
 }
@@ -89,7 +88,6 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	originalPrice,
 	children,
 	translate,
-	isExperiment,
 } ) => {
 	const isDiscounted = typeof originalPrice === 'number';
 
@@ -98,7 +96,7 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 			<PlanTitle>{ plan.getTitle() }</PlanTitle>
 
 			<PlanDescription>
-				{ plan.type === TYPE_STARTER && isExperiment && (
+				{ plan.type === TYPE_STARTER ? (
 					<>
 						<p>{ translate( 'Great for blogs and simple sites:' ) }</p>
 						<ul>
@@ -109,9 +107,7 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 							<li>{ translate( 'A la carte upgrades available.' ) }</li>
 						</ul>
 					</>
-				) }
-
-				{ plan.type === TYPE_PRO && isExperiment && (
+				) : (
 					<>
 						<p>{ translate( 'Great for business and custom sites:' ) }</p>
 						<ul>
@@ -123,8 +119,6 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 						</ul>
 					</>
 				) }
-
-				{ ! isExperiment && plan.getDescription() }
 			</PlanDescription>
 			<PriceContainer>
 				{ isDiscounted && (

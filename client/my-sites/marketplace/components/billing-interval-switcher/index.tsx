@@ -1,6 +1,9 @@
+import config from '@automattic/calypso-config';
 import { PlansIntervalToggle } from '@automattic/plans-grid/src';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { PluginAnnualSaving } from 'calypso/my-sites/plugins/plugin-saving';
 import { IntervalLength } from './constants';
@@ -31,6 +34,23 @@ const PluginAnnualSavingLabelDesktop = styled.span`
 	color: var( --studio-green-60 );
 `;
 
+const BillingIntervalSwitcherContainer = styled.div`
+	display: flex;
+	justify-content: space-between;
+	margin-top: -4px;
+	margin-bottom: 16px;
+`;
+
+const RadioButton = styled( FormRadio )`
+	&:checked:before {
+		background-color: var( --studio-gray-80 );
+	}
+`;
+
+const RadioButtonLabel = styled( FormLabel )`
+	color: var( --studio-gray-60 );
+`;
+
 type Props = {
 	onChange: ( selectedValue: 'MONTHLY' | 'ANNUALLY' ) => void;
 	billingPeriod: IntervalLength;
@@ -40,12 +60,55 @@ type Props = {
 	};
 };
 
-const BillingIntervalSwitcher: FunctionComponent< Props > = ( {
-	billingPeriod,
-	onChange,
-	compact,
-	plugin,
-} ) => {
+const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => {
+	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
+
+	const { billingPeriod, onChange, plugin } = props;
+
+	const translate = useTranslate();
+	const monthlyLabel = translate( 'Monthly' );
+	const annualLabel = translate( 'Annually' );
+
+	if ( legacyVersion ) {
+		return <LegacyBillingIntervalSwitcher { ...props } />;
+	}
+
+	return (
+		<BillingIntervalSwitcherContainer>
+			<RadioButtonLabel>
+				<RadioButton
+					className="billing-interval-switcher__monthly-option"
+					checked={ billingPeriod === IntervalLength.MONTHLY }
+					onChange={ () => onChange( IntervalLength.MONTHLY ) }
+					label={ monthlyLabel }
+				/>
+			</RadioButtonLabel>
+			<RadioButtonLabel>
+				<RadioButton
+					className="billing-interval-switcher__yearly-option"
+					checked={ billingPeriod === IntervalLength.ANNUALLY }
+					onChange={ () => onChange( IntervalLength.ANNUALLY ) }
+					label={
+						<>
+							{ annualLabel }
+							<PluginAnnualSaving plugin={ plugin }>
+								{ ( annualSaving: { saving: string | null } ) =>
+									annualSaving.saving && (
+										<PluginAnnualSavingLabelMobile isSelected={ false }>
+											&nbsp;(-{ annualSaving.saving })
+										</PluginAnnualSavingLabelMobile>
+									)
+								}
+							</PluginAnnualSaving>
+						</>
+					}
+				/>
+			</RadioButtonLabel>
+		</BillingIntervalSwitcherContainer>
+	);
+};
+
+function LegacyBillingIntervalSwitcher( { billingPeriod, onChange, compact, plugin }: Props ) {
 	const translate = useTranslate();
 	const monthlyLabel = translate( 'Monthly price' );
 	const annualLabel = translate( 'Annual price' );
@@ -108,5 +171,5 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( {
 			</PlansIntervalToggle>
 		</Container>
 	);
-};
+}
 export default BillingIntervalSwitcher;

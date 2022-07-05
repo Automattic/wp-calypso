@@ -26,6 +26,7 @@ import {
 	EVENT_CONTINUE_BUTTON_CLICK,
 	getTracksEventName,
 } from 'calypso/my-sites/email/add-mailboxes/get-tracks-event-name';
+import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/add-mailboxes/titan-unused-mailboxes-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import getMailProductForProvider from 'calypso/my-sites/email/form/mailboxes/components/selectors/get-mail-product-for-provider';
@@ -33,8 +34,12 @@ import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utili
 import { getEmailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import { emailManagement, emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
-import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/titan-add-mailboxes/titan-unused-mailbox-notice';
+import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
+import {
+	emailManagement,
+	emailManagementInbox,
+	emailManagementTitanSetUpMailbox,
+} from 'calypso/my-sites/email/paths';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -320,14 +325,18 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		: getGoogleMailServiceFamily( emailProduct?.product_slug );
 
 	const goToEmail = (): void => {
-		page(
-			emailManagement(
-				selectedSite.slug,
-				isSelectedDomainNameValid ? selectedDomainName : null,
-				currentRoute,
-				{ source }
-			)
+		let url = emailManagement(
+			selectedSite.slug,
+			isSelectedDomainNameValid ? selectedDomainName : null,
+			currentRoute,
+			{ source }
 		);
+
+		if ( source === INBOX_SOURCE ) {
+			url = emailManagementInbox( selectedSite.slug );
+		}
+
+		page( url );
 	};
 
 	if ( ! isLoadingDomains && ! isSelectedDomainNameValid ) {

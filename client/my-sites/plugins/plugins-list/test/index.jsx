@@ -31,6 +31,8 @@ describe( 'PluginsList', () => {
 					jetpack: plugins[ 1 ],
 				},
 				allSites: sites,
+				hasManagePlugins: true,
+				siteIsAtomic: true,
 			};
 		} );
 

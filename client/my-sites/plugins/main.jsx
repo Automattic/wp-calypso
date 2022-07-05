@@ -13,6 +13,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
@@ -425,6 +426,7 @@ export class PluginsMain extends Component {
 			<Main wideLayout>
 				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				<QueryJetpackPlugins siteIds={ this.props.siteIds } />
+				<QuerySiteFeatures siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
 				<FixedNavigationHeader
 					className="plugins__page-heading"

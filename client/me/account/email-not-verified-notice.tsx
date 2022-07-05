@@ -23,7 +23,7 @@ const EmailNotVerifiedNotice = () => {
 			const result = await resendEmail();
 			if ( result.success ) {
 				dispatch(
-					successNotice( __( 'The verification email has been sent.' ), {
+					successNotice( __( 'Verification email resent. Please check your inbox.' ), {
 						id: resendEmailNotice,
 						duration: 4000,
 					} )
@@ -32,7 +32,7 @@ const EmailNotVerifiedNotice = () => {
 			}
 		} catch ( Error ) {}
 		dispatch(
-			errorNotice( __( 'An error has occurred, please check your connection and retry.' ), {
+			errorNotice( __( "Couldn't resend verification email. Please try again." ), {
 				id: resendEmailNotice,
 			} )
 		);

@@ -47,6 +47,7 @@ const STICKY_OPTIONS = {
  * The site setup design picker
  */
 const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
+	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 	const [ isForceStaticDesigns, setIsForceStaticDesigns ] = useState( false );
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
@@ -144,12 +145,22 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const showGeneratedDesigns =
 		enabledGeneratedDesigns && generatedDesigns.length > 0 && ! isForceStaticDesigns;
 
-	const selectedGeneratedDesign = useMemo(
-		() => selectedDesign ?? ( ! isMobile ? generatedDesigns[ 0 ] : undefined ),
-		[ selectedDesign, generatedDesigns, isMobile ]
-	);
+	const selectedGeneratedDesign = useMemo( () => {
+		const defaultDesign = ! isMobile ? generatedDesigns[ 0 ] : undefined;
 
-	const isPreviewingGeneratedDesign = isMobile && showGeneratedDesigns && !! selectedDesign;
+		// Check if the selected design is a generated design, if not then select the default design.
+		if (
+			selectedDesign &&
+			! generatedDesigns.find( ( _design ) => _design.slug === selectedDesign.slug )
+		) {
+			return defaultDesign;
+		}
+
+		return selectedDesign ?? defaultDesign;
+	}, [ selectedDesign, generatedDesigns, isMobile ] );
+
+	const isPreviewingGeneratedDesign =
+		isMobile && showGeneratedDesigns && selectedDesign && isPreviewingDesign;
 
 	const [ isSticky, setIsSticky ] = useState( false );
 
@@ -268,12 +279,14 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		} );
 
 		setSelectedDesign( _selectedDesign );
+		setIsPreviewingDesign( true );
 	}
 
 	function viewMoreDesigns() {
 		recordTracksEvent( 'calypso_signup_design_view_more_select' );
 
 		setSelectedDesign( undefined );
+		setIsPreviewingDesign( false );
 		setIsForceStaticDesigns( true );
 	}
 
@@ -319,7 +332,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			intent: intent,
 		};
 
-		if ( ! selectedDesign && isForceStaticDesigns ) {
+		if ( ! isPreviewingDesign && isForceStaticDesigns ) {
 			recordTracksEvent( 'calypso_signup_back_to_generated_design_step' );
 		}
 
@@ -327,8 +340,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	}
 
 	const handleBackClick = () => {
-		if ( selectedDesign && ( ! showGeneratedDesigns || isMobile ) ) {
+		if ( isPreviewingDesign && ( ! showGeneratedDesigns || isMobile ) ) {
 			setSelectedDesign( undefined );
+			setIsPreviewingDesign( false );
 			return;
 		}
 
@@ -345,7 +359,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	};
 
 	// Track scroll event to make sure people are scrolling on mobile.
-	useTrackScrollPageFromTop( isMobile && ! selectedDesign, flow || '', STEP_NAME, {
+	useTrackScrollPageFromTop( isMobile && ! isPreviewingDesign, flow || '', STEP_NAME, {
 		is_generated_designs: showGeneratedDesigns,
 	} );
 
@@ -354,7 +368,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	// 2. Entering/leaving preview mode.
 	useEffect( () => {
 		window.scrollTo( { top: 0 } );
-	}, [ isForceStaticDesigns, !! selectedDesign ] );
+	}, [ isForceStaticDesigns, isPreviewingDesign ] );
 
 	// When the intent is build, we can potentially show the generated design picker.
 	// Don't render until we've fetched the generated designs from the backend.
@@ -362,7 +376,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		return null;
 	}
 
-	if ( selectedDesign && ! showGeneratedDesigns ) {
+	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;

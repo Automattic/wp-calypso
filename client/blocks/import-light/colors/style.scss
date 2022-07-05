@@ -1,9 +1,7 @@
 $indicatorCircleSize: 28px;
 
-.import-light__colors {
-	.colors-container {
-		min-height: 2.25em;
-	}
+.colors-container {
+	min-height: 2.25em;
 
 	.component-color-indicator {
 		width: $indicatorCircleSize;

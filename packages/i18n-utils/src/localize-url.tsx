@@ -120,6 +120,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', jetpackComLocales ),
 	'en.support.wordpress.com': setLocalizedWpComPath( '/support', supportSiteLocales ),
 	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
+	'apps.wordpress.com': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'en.forums.wordpress.com': setLocalizedWpComPath( '/forums', forumLocales ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),

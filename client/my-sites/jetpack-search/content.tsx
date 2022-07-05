@@ -1,7 +1,9 @@
 import { Button, Card } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent, ReactNode, Fragment } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 interface Props {
 	bodyText: TranslateResult | ReactNode;
@@ -24,16 +26,24 @@ const JetpackSearchContent: FunctionComponent< Props > = ( {
 
 	return (
 		<Fragment>
-			<FormattedHeader
-				headerText={ translate( 'Jetpack Search' ) }
-				id="jetpack-search-header"
-				align="left"
-				brandFont
-			/>
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					headerText={ translate( 'Jetpack Search' ) }
+					id="jetpack-search-header"
+					align="left"
+					brandFont
+				/>
+			) }
 			<Card>
 				<div className="jetpack-search__content">
-					{ iconComponent }
-					{ headerText && <h1 className="jetpack-search__header">{ headerText }</h1> }
+					<div className="jetpack-search__logo">{ iconComponent }</div>
+					<h2
+						className={ classNames( 'jetpack-search__header', {
+							'wp-brand-font': ! isJetpackCloud(),
+						} ) }
+					>
+						{ headerText }
+					</h2>
 					<p>{ bodyText }</p>
 					<Button
 						primary

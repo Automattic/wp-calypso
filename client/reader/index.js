@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
 import { addMiddleware } from 'redux-dynamic-middlewares';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
 import {
 	blogListing,
 	feedDiscovery,
@@ -14,6 +14,7 @@ import {
 	readFollowingP2,
 	sidebar,
 	updateLastRoute,
+	blogDiscoveryByFeedId,
 } from './controller';
 
 import './style.scss';
@@ -37,7 +38,15 @@ export default async function () {
 	await lazyLoadDependencies();
 
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/read', updateLastRoute, sidebar, following, makeLayout, clientRender );
+		page(
+			'/read',
+			redirectLoggedOut,
+			updateLastRoute,
+			sidebar,
+			following,
+			makeLayout,
+			clientRender
+		);
 
 		// Old and incomplete paths that should be redirected to /
 		page( '/read/following', '/read' );
@@ -52,6 +61,8 @@ export default async function () {
 		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/feeds/:feed_id',
+			blogDiscoveryByFeedId,
+			redirectLoggedOut,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
@@ -66,6 +77,7 @@ export default async function () {
 		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/blogs/:blog_id',
+			redirectLoggedOut,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
@@ -83,8 +95,25 @@ export default async function () {
 	}
 
 	// Automattic Employee Posts
-	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C, makeLayout, clientRender );
+	page(
+		'/read/a8c',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		forceTeamA8C,
+		readA8C,
+		makeLayout,
+		clientRender
+	);
 
 	// new P2 Posts
-	page( '/read/p2', updateLastRoute, sidebar, readFollowingP2, makeLayout, clientRender );
+	page(
+		'/read/p2',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		readFollowingP2,
+		makeLayout,
+		clientRender
+	);
 }

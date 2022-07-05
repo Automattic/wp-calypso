@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { addQueryArgs } from '@wordpress/url';
 import { camelCase } from 'lodash';
 import { ImporterPlatform } from 'calypso/blocks/import/types';
 import {
@@ -6,6 +7,7 @@ import {
 	getWpComOnboardingUrl,
 	getWpOrgImporterUrl,
 } from 'calypso/blocks/import/util';
+import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { BASE_ROUTE } from './config';
 import type { StepPath } from '../../steps-repository';
 
@@ -23,11 +25,18 @@ export function getFinalImporterUrl(
 	if ( isAtomicSite && platform !== 'wordpress' ) {
 		importerUrl = getWpOrgImporterUrl( targetSlug, platform );
 	} else if (
-		[ 'blogger', 'medium', 'squarespace', 'wix', 'wordpress' ].some( ( platform ) =>
-			isEnabled( `onboarding/import-from-${ platform }` )
-		)
+		[ 'blogger', 'medium', 'squarespace', 'wix', 'wordpress' ].some( ( targetPlatform ) => {
+			return (
+				platform === targetPlatform && isEnabled( `onboarding/import-from-${ targetPlatform }` )
+			);
+		} )
 	) {
 		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite, framework );
+		if ( platform === 'wordpress' && ! fromSite ) {
+			importerUrl = addQueryArgs( importerUrl, {
+				option: WPImportOption.CONTENT_ONLY,
+			} );
+		}
 	} else {
 		importerUrl = getImporterUrl( targetSlug, platform, fromSite );
 	}

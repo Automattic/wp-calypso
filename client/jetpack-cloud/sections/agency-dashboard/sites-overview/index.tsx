@@ -27,7 +27,7 @@ export default function SitesOverview(): ReactElement {
 
 	const { search, currentPage, filter } = useContext( SitesOverviewContext );
 
-	const { data, isError, isFetching, refetch } = useFetchDashboardSites(
+	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
 		search,
 		currentPage,
@@ -65,12 +65,12 @@ export default function SitesOverview(): ReactElement {
 					searchQuery={ search }
 					currentPage={ currentPage }
 					filter={ filter }
-					isFetching={ isFetching }
+					isLoading={ isLoading }
 				/>
 				<SiteContent
 					data={ data }
 					isError={ isError }
-					isFetching={ isFetching }
+					isLoading={ isLoading }
 					currentPage={ currentPage }
 				/>
 			</div>

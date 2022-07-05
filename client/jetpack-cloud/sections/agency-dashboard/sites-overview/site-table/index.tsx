@@ -9,12 +9,12 @@ import type { SiteData, SiteColumns } from '../types';
 import './style.scss';
 
 interface Props {
-	isFetching: boolean;
+	isLoading: boolean;
 	columns: SiteColumns;
 	items: Array< SiteData >;
 }
 
-export default function SiteTable( { isFetching, columns, items }: Props ): ReactElement {
+export default function SiteTable( { isLoading, columns, items }: Props ): ReactElement {
 	return (
 		<table className="site-table__table">
 			<thead>
@@ -26,7 +26,7 @@ export default function SiteTable( { isFetching, columns, items }: Props ): Reac
 				</tr>
 			</thead>
 			<tbody>
-				{ isFetching ? (
+				{ isLoading ? (
 					<tr>
 						{ columns.map( ( column ) => (
 							<td key={ column.key }>

@@ -10,12 +10,21 @@ import type { SiteNode } from '../../types';
 
 describe( '<SiteActions>', () => {
 	test( 'should render correctly and have href for all the actions', () => {
+		const siteObj = {
+			blog_id: 1234,
+			url: 'test.jurassic.ninja',
+			url_with_scheme: 'https://test.jurassic.ninja/',
+			monitor_active: false,
+			monitor_site_status: false,
+			has_scan: true,
+			has_backup: false,
+			latest_scan_threats_found: [],
+			latest_backup_status: '',
+			is_connection_healthy: true,
+			awaiting_plugin_updates: [],
+		};
 		const site: SiteNode = {
-			value: {
-				blog_id: 1234,
-				url: 'test.jurassic.ninja',
-				url_with_scheme: 'https://test.jurassic.ninja/',
-			},
+			value: siteObj,
 			error: false,
 			type: 'site',
 			status: '',

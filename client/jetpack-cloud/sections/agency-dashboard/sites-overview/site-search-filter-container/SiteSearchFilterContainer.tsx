@@ -9,14 +9,14 @@ interface Props {
 	searchQuery: string | null;
 	currentPage: number;
 	filter: AgencyDashboardFilter;
-	isFetching: boolean;
+	isLoading: boolean;
 }
 
 export default function SiteSearchFilterContainer( {
 	searchQuery,
 	currentPage,
 	filter,
-	isFetching,
+	isLoading,
 }: Props ): ReactElement {
 	return (
 		<div className="site-search-filter-container">
@@ -24,7 +24,7 @@ export default function SiteSearchFilterContainer( {
 				<SiteSearch searchQuery={ searchQuery } currentPage={ currentPage } />
 			</div>
 			<div className="site-search-filter-container__filter-bar">
-				<SiteFilters filter={ filter } isFetching={ isFetching } />
+				<SiteFilters filter={ filter } isLoading={ isLoading } />
 			</div>
 		</div>
 	);
