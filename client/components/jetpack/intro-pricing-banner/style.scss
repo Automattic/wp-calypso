@@ -6,7 +6,6 @@
 .intro-pricing-banner__loading {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
 
 	align-items: center;
 	justify-content: center;
@@ -41,6 +40,8 @@
 	height: 120px;
 	margin-bottom: 32px;
 
+	gap: 20px;
+
 	@include break-large {
 		height: 54px;
 	}
@@ -69,8 +70,16 @@
 	z-index: 2;
 	height: 74px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	.intro-pricing-banner__agencies {
+		display: none;
+	}
+
+	@include break-large {
 		height: 52px;
+
+		.intro-pricing-banner__agencies {
+			display: flex;
+		}
 	}
 }
 .is-section-jetpack-connect,
