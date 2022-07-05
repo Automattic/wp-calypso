@@ -27,6 +27,7 @@ type TracksGoalsSelectEventProperties = {
 const SiteGoal = Onboard.SiteGoal;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
+const displayAllGoals = isEnabled( 'signup/goals-step-2' );
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
 	'create-blog-lp': [ SiteGoal.Write ],
 };
@@ -39,7 +40,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const welcomeText = translate( 'Welcome!' );
 	const whatAreYourGoalsText = translate( 'What are your goals?' );
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
-	const displayAllGoals = isEnabled( 'signup/goals-step-2' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal, resetIntent } =
