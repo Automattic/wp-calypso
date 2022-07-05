@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
 import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
+import { useFeatureFlags } from '../contexts/FeatureFlagContext';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import type { Header, WindowState } from '../types';
 import type { ReactElement } from 'react';
@@ -70,6 +71,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 	const [ unreadCount, setUnreadCount ] = useState< number >( 0 );
 	const history = useHistory();
 	const { pathname } = useLocation();
+	const { loadNextStepsTutorial } = useFeatureFlags();
 
 	const initialTabName = getInitialTabName( pathname );
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
@@ -142,7 +144,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 					</div>
 				</Flex>
 			</CardHeader>
-			{ ! isMinimized && (
+			{ ! isMinimized && loadNextStepsTutorial && (
 				<TabPanel
 					className="help-center-header__tab-panel"
 					initialTabName={ initialTabName }
