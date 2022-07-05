@@ -17,4 +17,3 @@ export { HappinessEngineersTray } from './happiness-engineers-tray';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
 export { default as WordPressLogo } from './wordpress-logo';
-export { SitesTable } from './sites-table';
