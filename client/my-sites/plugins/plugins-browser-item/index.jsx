@@ -25,6 +25,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
+import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
@@ -235,14 +236,37 @@ const InstalledInOrPricing = ( {
 } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const isPluginAtive = useSelector( ( state ) =>
+	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
-	const active = isWpcomPreinstalled || isPluginAtive;
+	const { isPreinstalledPremiumPlugin, isPreinstalledPremiumPluginUpgraded } =
+		usePreinstalledPremiumPlugin( plugin.slug );
+	const active = isWpcomPreinstalled || isPluginActive;
 
 	let checkmarkColorClass = 'checkmark--active';
 
-	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
+	if ( isPreinstalledPremiumPluginUpgraded ) {
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
+		return (
+			<div className="plugins-browser-item__installed-and-active-container">
+				<div className="plugins-browser-item__installed ">
+					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
+					{ translate( 'Installed' ) }
+				</div>
+				<div className="plugins-browser-item__active">
+					<Badge type={ active ? 'success' : 'info' }>
+						{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
+					</Badge>
+				</div>
+			</div>
+		);
+		/* eslint-enable wpcalypso/jsx-gridicon-size */
+	}
+
+	if (
+		( ! isPreinstalledPremiumPlugin && sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
+		isWpcomPreinstalled
+	) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
 			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';

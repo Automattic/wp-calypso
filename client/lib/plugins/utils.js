@@ -15,6 +15,7 @@ import {
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { PREINSTALLED_PREMIUM_PLUGINS } from 'calypso/my-sites/plugins/constants';
 import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
@@ -182,6 +183,16 @@ export function normalizeCompatibilityList( compatibilityList ) {
 
 export function normalizePluginData( plugin, pluginData ) {
 	plugin = getAllowedPluginData( { ...plugin, ...pluginData } );
+
+	// Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
+	// but require a paid upgrade to function.
+	if ( !! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] && ! plugin.variations ) {
+		const { monthly, yearly } = PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products;
+		plugin.variations = {
+			monthly: { product_slug: monthly },
+			yearly: { product_slug: yearly },
+		};
+	}
 
 	return Object.entries( plugin ).reduce( ( returnData, [ key, item ] ) => {
 		switch ( key ) {
