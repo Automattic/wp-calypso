@@ -181,7 +181,12 @@ export class ImportEverything extends SectionMigrate {
 					<SubTitle>
 						{ translate( 'Congratulations. Your content was successfully imported.' ) }
 					</SubTitle>
-					<DoneButton onSiteViewClick={ stepNavigator?.goToSiteViewPage } />
+					<DoneButton
+						onSiteViewClick={ () => {
+							recordTracksEvent( 'calypso_site_importer_view_site' );
+							stepNavigator?.goToSiteViewPage?.();
+						} }
+					/>
 				</Hooray>
 				<GettingStartedVideo />
 			</>
