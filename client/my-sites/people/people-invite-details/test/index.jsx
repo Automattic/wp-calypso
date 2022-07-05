@@ -77,7 +77,7 @@ describe( 'PeopleInviteDetails', () => {
 	} );
 
 	it( 'should trigger deletion upon clicking Revoke Invite (pending invite)', async () => {
-		userEvent.setup();
+		const user = userEvent.setup();
 		const mockDeleteInvite = jest.fn();
 
 		render(
@@ -99,7 +99,7 @@ describe( 'PeopleInviteDetails', () => {
 		expect( revokeInviteButton ).toBeVisible();
 
 		expect( mockDeleteInvite ).not.toHaveBeenCalled();
-		await userEvent.click( revokeInviteButton );
+		await user.click( revokeInviteButton );
 		expect( mockDeleteInvite ).toHaveBeenCalledTimes( 1 );
 		expect( mockDeleteInvite ).toHaveBeenCalledWith( siteObject.ID, pendingInviteObject.key );
 	} );
