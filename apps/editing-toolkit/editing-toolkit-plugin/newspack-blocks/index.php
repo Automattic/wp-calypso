@@ -66,7 +66,7 @@ function newspack_blocks_block_args( $args, $name ) {
 			array(
 				'posts_rest_url'          => rest_url( 'newspack-blocks/v1/newspack-blocks-posts' ),
 				'specific_posts_rest_url' => rest_url( 'newspack-blocks/v1/newspack-blocks-specific-posts' ),
-				// define URL to core one to make autocomplete working for newspack-blocks installed via ETK
+				// Define URL to core one to make autocomplete working for newspack-blocks installed via ETK.
 				'authors_rest_url'        => rest_url() . 'wp/v2/users',
 			)
 		);
