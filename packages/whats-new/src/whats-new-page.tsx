@@ -1,9 +1,25 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
+import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect } from 'react';
 
-function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageNumber } ) {
+interface Props {
+	heading: string;
+	description: string;
+	imageSrc: string;
+	link: string;
+	pageNumber: number;
+	isLastPage: boolean;
+}
+
+const WhatsNewPage: React.FC< Props > = ( {
+	heading,
+	description,
+	imageSrc,
+	isLastPage,
+	link,
+	pageNumber,
+} ) => {
 	const __ = useI18n().__;
 
 	useEffect( () => {
@@ -46,6 +62,6 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageN
 			</div>
 		</div>
 	);
-}
+};
 
 export default WhatsNewPage;

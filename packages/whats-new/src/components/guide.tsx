@@ -10,16 +10,20 @@ import { LEFT, RIGHT } from '@wordpress/keycodes';
  * External dependencies
  */
 import classnames from 'classnames';
-/**
- * Internal dependencies
- */
+import * as React from 'react';
 
-export default function Guide( { children, className, contentLabel, onFinish } ) {
+interface Props {
+	className: string;
+	children: React.ReactElement[];
+	onFinish: () => void;
+}
+
+const Guide: React.FC< Props > = ( { children, className, onFinish } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 0 );
-	const pages = Children.map( children, ( child ) => ( { content: child } ) );
+	const pages = Children.map( children, ( child ) => ( { content: child } ) ) || [];
 
 	const canGoBack = currentPage > 0;
-	const canGoForward = currentPage < pages.length - 1;
+	const canGoForward = currentPage < pages?.length - 1;
 
 	const goBack = () => {
 		if ( canGoBack ) {
@@ -43,7 +47,6 @@ export default function Guide( { children, className, contentLabel, onFinish } )
 		<Modal
 			className={ classnames( 'components-guide', className ) }
 			overlayClassName={ classnames( 'components-guide-overlay', className ) }
-			contentLabel={ contentLabel }
 			onRequestClose={ onFinish }
 			onKeyDown={ ( event ) => {
 				if ( event.keyCode === LEFT ) {
@@ -85,4 +88,6 @@ export default function Guide( { children, className, contentLabel, onFinish } )
 			</div>
 		</Modal>
 	);
-}
+};
+
+export default Guide;

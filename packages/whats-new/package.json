@@ -4,7 +4,7 @@
 	"description": "A WordPress Guide component that highlights recently-added WordPress.com features.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.tsx",
 	"types": "./types.d.ts",
 	"sideEffects": [
 		"*.css",
