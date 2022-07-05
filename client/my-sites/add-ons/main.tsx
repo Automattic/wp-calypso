@@ -33,26 +33,28 @@ const globalOverrides = css`
  */
 const mobileBreakpoint = 660;
 
-const ContainerMain = styled( Main )`
-	.add-ons__formatted-header {
-		text-align: center;
-		margin-top: 100px;
-		margin-bottom: 40px;
+const ContainerMain = styled.div`
+	.add-ons__main {
+		.add-ons__formatted-header {
+			text-align: center;
+			margin-top: 100px;
+			margin-bottom: 40px;
 
-		@media screen and ( min-width: ${ mobileBreakpoint }px ) {
-			margin-top: 80px;
-			margin-bottom: 60px;
+			@media screen and ( min-width: ${ mobileBreakpoint }px ) {
+				margin-top: 80px;
+				margin-bottom: 60px;
+			}
+
+			.formatted-header__title {
+				font-size: 2rem;
+			}
 		}
 
-		.formatted-header__title {
-			font-size: 2rem;
-		}
-	}
-
-	.add-ons__main-content {
-		padding: 1em;
-		@media screen and ( min-width: ${ mobileBreakpoint }px ) {
-			padding: 0;
+		.add-ons__main-content {
+			padding: 1em;
+			@media screen and ( min-width: ${ mobileBreakpoint }px ) {
+				padding: 0;
+			}
 		}
 	}
 `;
@@ -77,19 +79,21 @@ const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement =>
 	];
 
 	return (
-		<ContainerMain wideLayout>
-			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ navigationItems } />
-			<DocumentHead title={ translate( 'Add-Ons' ) } />
-			<FormattedHeader
-				className="add-ons__formatted-header"
-				brandFont
-				headerText={ translate( 'Boost your plan with add-ons' ) }
-				subHeaderText={ translate(
-					'Expand the functionality of your WordPress.com site by enabling any of the following features.'
-				) }
-				align="left"
-			/>
-			<div className="add-ons__main-content">{ props.children }</div>
+		<ContainerMain>
+			<Main className="add-ons__main" wideLayout>
+				<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ navigationItems } />
+				<DocumentHead title={ translate( 'Add-Ons' ) } />
+				<FormattedHeader
+					className="add-ons__formatted-header"
+					brandFont
+					headerText={ translate( 'Boost your plan with add-ons' ) }
+					subHeaderText={ translate(
+						'Expand the functionality of your WordPress.com site by enabling any of the following features.'
+					) }
+					align="left"
+				/>
+				<div className="add-ons__main-content">{ props.children }</div>
+			</Main>
 		</ContainerMain>
 	);
 };
