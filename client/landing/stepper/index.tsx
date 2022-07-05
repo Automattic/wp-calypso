@@ -14,6 +14,8 @@ import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
@@ -76,6 +78,8 @@ window.AppBoot = async () => {
 	// until after the user has completed the flow.
 	// This also saves us from having to pull in lib/user/user and it's dependencies.
 	initializeAnalytics( undefined, generateGetSuperProps() );
+	addHotJarScript();
+	retargetFullStory();
 	// Add accessible-focus listener.
 	accessibleFocus();
 
