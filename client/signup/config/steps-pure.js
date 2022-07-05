@@ -549,6 +549,11 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
+		'confirm-email': {
+			stepName: 'confirm-email',
+			fulfilledStepCallback: excludeStepIfEmailVerified,
+		},
+
 		/* Imports */
 		'from-url': {
 			stepName: 'from-url',
