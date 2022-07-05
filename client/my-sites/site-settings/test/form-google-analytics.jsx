@@ -46,12 +46,12 @@ const props = {
 
 describe( 'GoogleAnalyticsForm basic tests', () => {
 	test( 'simple form should not blow up and have proper CSS class', () => {
-		const { container } = render( <GoogleAnalyticsSimpleForm { ...props } /> );
-		expect( container.querySelectorAll( '#analytics' ) ).toHaveLength( 1 );
+		render( <GoogleAnalyticsSimpleForm { ...props } /> );
+		expect( screen.queryByRole( 'form', { name: /analytics/i } ) ).toBeVisible();
 	} );
 	test( 'jetpack form should not blow up and have proper CSS class', () => {
-		const { container } = render( <GoogleAnalyticsJetpackForm { ...props } /> );
-		expect( container.querySelectorAll( '#analytics' ) ).toHaveLength( 1 );
+		render( <GoogleAnalyticsJetpackForm { ...props } /> );
+		expect( screen.queryByRole( 'form', { name: /analytics/i } ) ).toBeVisible();
 	} );
 	test( 'simple form should not show upgrade nudge if disabled', () => {
 		render( <GoogleAnalyticsSimpleForm { ...props } showUpgradeNudge={ false } /> );
