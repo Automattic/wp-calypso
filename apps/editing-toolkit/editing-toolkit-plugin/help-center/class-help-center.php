@@ -78,11 +78,16 @@ class Help_Center {
 			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
 		);
 
-		// Adds feature flags for development
-		wp_add_inline_script( 'help-center-script', 'const helpCenterFeatureFlags = ' . json_encode( array(
-			'loadNextStepsTutorial' => self::is_next_steps_tutorial_enabled(),
-		) ), 'before' );
-
+		// Adds feature flags for development.
+		wp_add_inline_script(
+			'help-center-script',
+			'const helpCenterFeatureFlags = ' . wp_json_encode(
+				array(
+					'loadNextStepsTutorial' => self::is_next_steps_tutorial_enabled(),
+				)
+			),
+			'before'
+		);
 
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
 	}
