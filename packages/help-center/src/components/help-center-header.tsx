@@ -9,10 +9,15 @@ import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import type { Header, WindowState } from '../types';
 import type { ReactElement } from 'react';
 
+interface TabNameMap {
+	'/': string;
+	'/next-steps-tutorials': string;
+}
+
 const HELP_TAB_NAME = 'help';
 const NEXT_STEPS_TAB_NAME = 'next-steps-tutorials';
 
-function getInitialTabName( pathname = '' ): string {
+function getInitialTabName( pathname: keyof TabNameMap = '/' ): string {
 	const tabNameMap = {
 		'/': HELP_TAB_NAME,
 		'/next-steps-tutorials': NEXT_STEPS_TAB_NAME,
