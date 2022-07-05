@@ -38,6 +38,7 @@ class SiteImporter extends PureComponent {
 			icon: PropTypes.string.isRequired,
 			description: PropTypes.node.isRequired,
 			uploadDescription: PropTypes.node,
+			engine: PropTypes.string.isRequired,
 		} ).isRequired,
 		importerStatus: PropTypes.shape( {
 			errorData: PropTypes.shape( {
@@ -71,7 +72,7 @@ class SiteImporter extends PureComponent {
 	};
 
 	render() {
-		const { title, icon, description, uploadDescription } = this.props.importerData;
+		const { title, icon, description, uploadDescription, engine } = this.props.importerData;
 		const { importerStatus } = this.props;
 		const isEnabled = appStates.DISABLED !== importerStatus.importerState;
 		const showStart = includes( compactStates, importerStatus.importerState );
@@ -108,7 +109,7 @@ class SiteImporter extends PureComponent {
 						importerStatus={ importerStatus }
 						onStartImport={ this.validateSite }
 						isEnabled={ isEnabled }
-						targetPlatform="wix"
+						targetPlatform={ engine }
 					/>
 				) }
 			</Card>
