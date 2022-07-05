@@ -38,7 +38,7 @@ const ToggleButton = styled.button`
 `;
 
 const AddOnsContainer = styled.div`
-	padding: 0 20px;
+	padding: 0 20px 20px;
 `;
 
 const AddOns = ( {
