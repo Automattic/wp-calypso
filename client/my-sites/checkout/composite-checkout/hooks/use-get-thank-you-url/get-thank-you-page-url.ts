@@ -57,21 +57,10 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
 
-type OrderId = number;
 type PurchaseId = number;
 type ReceiptId = number;
 type ReceiptIdPlaceholder = ':receiptId';
-type PendingOrderPathFragment = `pending/${ OrderId }`;
-type PendingOrReceiptId = PendingOrderPathFragment | ReceiptIdPlaceholder | PurchaseId | ReceiptId;
-
-function isReceiptIdOrPlaceholder(
-	receiptId: PendingOrReceiptId
-): receiptId is ReceiptId | ReceiptIdPlaceholder {
-	if ( Number.isInteger( receiptId ) || receiptId === ':receiptId' ) {
-		return true;
-	}
-	return false;
-}
+type ReceiptIdOrPlaceholder = ReceiptIdPlaceholder | PurchaseId | ReceiptId;
 
 /**
  * Determine where to send the user after checkout is complete.
@@ -94,7 +83,6 @@ export default function getThankYouPageUrl( {
 	redirectTo,
 	receiptId,
 	noPurchaseMade,
-	orderId,
 	purchaseId,
 	feature,
 	cart,
@@ -205,8 +193,8 @@ export default function getThankYouPageUrl( {
 	// endpoint (`/me/transactions/order/:orderId`) for the transaction data,
 	// then replaces the `:receiptId` placeholder itself and redirects to the
 	// receipt page.
-	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
-	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
+	const receiptIdOrPlaceholder = getPendingOrReceiptId( receiptId, purchaseId );
+	debug( 'receiptIdOrPlaceholder is', receiptIdOrPlaceholder );
 
 	// jetpack userless & siteless checkout uses a special thank you page
 	if ( isJetpackCheckout ) {
@@ -224,7 +212,7 @@ export default function getThankYouPageUrl( {
 
 		return addQueryArgs(
 			{
-				receiptId: isReceiptIdOrPlaceholder( pendingOrReceiptId ) ? pendingOrReceiptId : undefined,
+				receiptId: receiptIdOrPlaceholder,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
 			thankYouUrl
@@ -232,7 +220,7 @@ export default function getThankYouPageUrl( {
 	}
 
 	const fallbackUrl = getFallbackDestination( {
-		pendingOrReceiptId,
+		receiptIdOrPlaceholder,
 		noPurchaseMade,
 		siteSlug,
 		adminUrl,
@@ -290,7 +278,7 @@ export default function getThankYouPageUrl( {
 	if ( ( cart?.create_new_blog || signupFlowName === 'domain' ) && ! isDomainOnly ) {
 		clearSignupCompleteFlowName();
 		const newBlogReceiptUrl = urlFromCookie
-			? `${ urlFromCookie }/${ pendingOrReceiptId }`
+			? `${ urlFromCookie }/${ receiptIdOrPlaceholder }`
 			: fallbackUrl;
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
 		// Skip composed url if we have to redirect to intent flow
@@ -299,24 +287,22 @@ export default function getThankYouPageUrl( {
 		}
 	}
 
-	if ( isReceiptIdOrPlaceholder( pendingOrReceiptId ) ) {
-		const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
-			receiptId: pendingOrReceiptId,
-			cart,
-			siteSlug,
-			hideUpsell: Boolean( hideNudge ),
-			domains,
-			isDomainOnly,
-		} );
+	const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
+		receiptId: receiptIdOrPlaceholder,
+		cart,
+		siteSlug,
+		hideUpsell: Boolean( hideNudge ),
+		domains,
+		isDomainOnly,
+	} );
 
-		if ( redirectUrlForPostCheckoutUpsell ) {
-			debug(
-				'redirect for post-checkout upsell exists, so returning',
-				redirectUrlForPostCheckoutUpsell
-			);
+	if ( redirectUrlForPostCheckoutUpsell ) {
+		debug(
+			'redirect for post-checkout upsell exists, so returning',
+			redirectUrlForPostCheckoutUpsell
+		);
 
-			return redirectUrlForPostCheckoutUpsell;
-		}
+		return redirectUrlForPostCheckoutUpsell;
 	}
 
 	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
@@ -326,7 +312,7 @@ export default function getThankYouPageUrl( {
 	const thankYouPageUrlForTrafficGuide = getThankYouPageUrlForTrafficGuide( {
 		cart,
 		siteSlug,
-		pendingOrReceiptId,
+		receiptIdOrPlaceholder,
 	} );
 	if ( thankYouPageUrlForTrafficGuide ) {
 		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, displayModeParam );
@@ -344,14 +330,10 @@ export default function getThankYouPageUrl( {
 
 function getPendingOrReceiptId(
 	receiptId: string | number | undefined,
-	orderId: string | number | undefined,
 	purchaseId: string | number | undefined
-): PendingOrReceiptId {
+): ReceiptIdOrPlaceholder {
 	if ( receiptId ) {
 		return Number( receiptId );
-	}
-	if ( orderId ) {
-		return `pending/${ Number( orderId ) }`;
 	}
 	if ( purchaseId ) {
 		return Number( purchaseId );
@@ -360,7 +342,7 @@ function getPendingOrReceiptId(
 }
 
 function getFallbackDestination( {
-	pendingOrReceiptId,
+	receiptIdOrPlaceholder,
 	noPurchaseMade,
 	siteSlug,
 	adminUrl,
@@ -371,7 +353,7 @@ function getFallbackDestination( {
 	adminPageRedirect,
 	redirectTo,
 }: {
-	pendingOrReceiptId: PendingOrReceiptId;
+	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder;
 	noPurchaseMade?: boolean;
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -383,7 +365,7 @@ function getFallbackDestination( {
 	redirectTo?: string;
 } ): string {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
-	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
+	const isReceiptEmpty = ':receiptId' === receiptIdOrPlaceholder;
 
 	if ( noPurchaseMade ) {
 		debug( 'fallback is just root' );
@@ -448,18 +430,15 @@ function getFallbackDestination( {
 				const emails = titanProducts[ 0 ].extra?.email_users;
 
 				if ( emails && emails.length > 0 ) {
-					return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }?email=${ emails[ 0 ].email }`;
+					return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
 				}
 			}
-			return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
+			return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 		};
 
 		if ( feature && isValidFeatureKey( feature ) ) {
 			debug( 'site with receipt or cart; feature is', feature );
-			if ( isReceiptIdOrPlaceholder( pendingOrReceiptId ) ) {
-				return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`;
-			}
-			return `/checkout/thank-you/features/${ feature }/${ siteSlug }`;
+			return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 		}
 		return getSimpleThankYouUrl();
 	}
@@ -716,15 +695,15 @@ function modifyCookieUrlIfAtomic(
 function getThankYouPageUrlForTrafficGuide( {
 	cart,
 	siteSlug,
-	pendingOrReceiptId,
+	receiptIdOrPlaceholder,
 }: {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	pendingOrReceiptId: PendingOrReceiptId;
+	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder;
 } ) {
 	if ( ! cart ) return;
 	if ( hasTrafficGuide( cart ) ) {
-		return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
+		return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 	}
 }
 
