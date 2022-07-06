@@ -250,7 +250,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				<div className="marketplace-plugin-install__root">
 					<MarketplaceProgressBar
 						steps={ steps }
-						currentStep={ currentStep }
+						currentStep={ currentStep - 1 }
 						additionalSteps={ additionalSteps }
 					/>
 				</div>
