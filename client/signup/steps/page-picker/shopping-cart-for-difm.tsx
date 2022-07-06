@@ -48,7 +48,7 @@ const Cart = styled.div`
 		width: 100%;
 		border-top: 1px solid #dcdcde;
 	}
-	.disclaimer {
+	.page-picker__disclaimer {
 		color: #646970;
 		font-size: 12px;
 
@@ -79,6 +79,8 @@ const DummyLineItemContainer = styled.div`
 		font-weight: 500;
 	}
 	.page-picker__meta {
+		color: #646970;
+		font-size: 12px;
 		width: 100%;
 		display: flex;
 		flex-direction: row;
