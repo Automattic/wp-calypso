@@ -6,6 +6,7 @@ import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
 import { recordTransactionBeginAnalytics } from '../lib/analytics';
 import getDomainDetails from '../lib/get-domain-details';
+import { addUrlToPendingPageRedirect } from '../lib/pending-page';
 import { createTransactionEndpointCartFromResponseCart } from '../lib/translate-cart';
 import { createWpcomAccountBeforeTransaction } from './create-wpcom-account-before-transaction';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
@@ -43,16 +44,12 @@ export default async function payPalProcessor(
 	// endpoints. Otherwise we may end up with an incorrect URL like
 	// 'http://wordpress.com/checkout?cart=no-user#step2?paypal=ABCDEFG'.
 	currentUrl.hash = '';
-	// The successUrl must always be absolute but getThankYouUrl can return
-	// relative paths, so we must check.
-	const successUrl = thankYouUrl.startsWith( 'http' )
-		? thankYouUrl
-		: currentUrl.origin + thankYouUrl;
 	if ( createUserAndSiteBeforeTransaction ) {
 		// It's not clear if this is still required but it may be.
 		currentUrl.searchParams.set( 'cart', 'no-user' );
 	}
 	const cancelUrl = currentUrl.toString();
+	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, siteSlug, undefined, 'absolute' );
 
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,
