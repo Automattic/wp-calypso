@@ -26,12 +26,14 @@ const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
 	}
 
 	// Transform Icon response for easier handling
-	const iconByResolution = Object.entries( iconsObject ).reduce( ( icon, iconByResolution ) => {
-		const [ , currentIcon ] = iconByResolution;
-		const newKey = currentIcon.resolution;
-		icon[ newKey ] = currentIcon;
-		return icon;
-	}, {} as Record< string, Icon > );
+	const iconByResolution = Object.values( iconsObject ).reduce(
+		( iconByResolution, currentIcon ) => {
+			const newKey = currentIcon.resolution;
+			iconByResolution[ newKey ] = currentIcon;
+			return iconByResolution;
+		},
+		{} as Record< string, Icon >
+	);
 
 	const icon =
 		iconByResolution[ '256x256' ] ||
