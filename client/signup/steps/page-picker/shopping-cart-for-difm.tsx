@@ -211,7 +211,9 @@ export default function ShoppingCartForDIFM( { selectedPages }: { selectedPages:
 						<div className="page-picker__value">{ total }*</div>
 					</Total>
 				</LineItemsWrapper>
-				<div className="page-picker__disclaimer">*Final price will be calculated at checkout.</div>
+				<div className="page-picker__disclaimer">
+					{ '*' + translate( 'Final price will be calculated at checkout.' ) }
+				</div>
 			</Cart>
 		</CartContainer>
 	);
