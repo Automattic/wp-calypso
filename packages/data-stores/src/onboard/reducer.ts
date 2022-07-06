@@ -11,7 +11,7 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'domain' ) ) {
 		return undefined;
 	}
 	return state;
@@ -21,7 +21,7 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'domainSearch' ) ) {
 		return '';
 	}
 	return state;
@@ -31,7 +31,7 @@ const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, ac
 	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
 		return action.domainCategory;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'domainCategory' ) ) {
 		return undefined;
 	}
 	return state;
@@ -41,7 +41,10 @@ const hasUsedDomainsStep: Reducer< boolean, OnboardAction > = ( state = false, a
 	if ( action.type === 'SET_HAS_USED_DOMAINS_STEP' ) {
 		return action.hasUsedDomainsStep;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		! action.skipFlags.includes( 'hasUsedDomainsStep' )
+	) {
 		return false;
 	}
 	return state;
@@ -51,7 +54,10 @@ const hasUsedPlansStep: Reducer< boolean, OnboardAction > = ( state = false, act
 	if ( action.type === 'SET_HAS_USED_PLANS_STEP' ) {
 		return action.hasUsedPlansStep;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		! action.skipFlags.includes( 'hasUsedPlansStep' )
+	) {
 		return false;
 	}
 	return state;
@@ -70,7 +76,7 @@ const planProductId: Reducer< number | undefined, OnboardAction > = ( state, act
 	if ( action.type === 'SET_PLAN_PRODUCT_ID' ) {
 		return action.planProductId;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'planProductId' ) ) {
 		return undefined;
 	}
 	return state;
@@ -83,7 +89,10 @@ const randomizedDesigns: Reducer< { featured: Design[] }, OnboardAction > = (
 	if ( action.type === 'SET_RANDOMIZED_DESIGNS' ) {
 		return action.randomizedDesigns;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		! action.skipFlags.includes( 'randomizedDesigns' )
+	) {
 		return { featured: [] };
 	}
 	return state;
@@ -96,7 +105,12 @@ const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
 	if ( action.type === 'SET_FONTS' ) {
 		return action.fonts;
 	}
-	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
+
+	if ( action.type === 'RESET_FONTS' ) {
+		return undefined;
+	}
+
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'selectedFonts' ) ) {
 		return undefined;
 	}
 	return state;
@@ -106,7 +120,12 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
 	}
-	if ( [ 'RESET_SELECTED_DESIGN', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+
+	if ( action.type === 'RESET_SELECTED_DESIGN' ) {
+		return undefined;
+	}
+
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'selectedDesign' ) ) {
 		return undefined;
 	}
 	return state;
@@ -132,7 +151,10 @@ const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 		return state.filter( ( id ) => id !== action.featureId );
 	}
 
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		! action.skipFlags.includes( 'selectedFeatures' )
+	) {
 		return [];
 	}
 
@@ -146,7 +168,7 @@ const selectedSite: Reducer< number | undefined, OnboardAction > = (
 	if ( action.type === 'SET_SELECTED_SITE' ) {
 		return action.selectedSite;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'selectedSite' ) ) {
 		return undefined;
 	}
 	return state;
@@ -156,7 +178,10 @@ const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, act
 	if ( action.type === 'SET_SHOW_SIGNUP_DIALOG' ) {
 		return action.showSignup;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		! action.skipFlags.includes( 'showSignupDialog' )
+	) {
 		return false;
 	}
 	return state;
@@ -166,7 +191,7 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_TITLE' ) {
 		return action.siteTitle;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'siteTitle' ) ) {
 		return '';
 	}
 	return state;
@@ -176,7 +201,7 @@ const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', a
 	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
 		return action.anchorPodcastId;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'anchorPodcastId' ) ) {
 		return '';
 	}
 	return state;
@@ -186,7 +211,7 @@ const anchorEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', a
 	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
 		return action.anchorEpisodeId;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'anchorEpisodeId' ) ) {
 		return '';
 	}
 	return state;
@@ -196,7 +221,10 @@ const anchorSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', 
 	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
 		return action.anchorSpotifyUrl;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		! action.skipFlags.includes( 'anchorSpotifyUrl' )
+	) {
 		return '';
 	}
 	return state;
@@ -206,7 +234,10 @@ const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false,
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		! action.skipFlags.includes( 'hasOnboardingStarted' )
+	) {
 		return false;
 	}
 	return state;
@@ -216,7 +247,7 @@ const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) =>
 	if ( action.type === 'SET_LAST_LOCATION' ) {
 		return action.path;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'lastLocation' ) ) {
 		return '';
 	}
 	return state;
@@ -226,7 +257,12 @@ const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
 	}
-	if ( [ 'RESET_INTENT', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+
+	if ( action.type === 'RESET_INTENT' ) {
+		return '';
+	}
+
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'intent' ) ) {
 		return '';
 	}
 	return state;
@@ -236,7 +272,7 @@ const startingPoint: Reducer< string, OnboardAction > = ( state = '', action ) =
 	if ( action.type === 'SET_STARTING_POINT' ) {
 		return action.startingPoint;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'startingPoint' ) ) {
 		return '';
 	}
 	return state;
@@ -246,7 +282,7 @@ const storeType: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_STORE_TYPE' ) {
 		return action.storeType;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'storeType' ) ) {
 		return '';
 	}
 	return state;
@@ -259,7 +295,7 @@ const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardActio
 	if ( action.type === 'SET_PENDING_ACTION' ) {
 		return action.pendingAction;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'pendingAction' ) ) {
 		return undefined;
 	}
 	return state;
@@ -269,7 +305,7 @@ const progress: Reducer< number, OnboardAction > = ( state = -1, action ) => {
 	if ( action.type === 'SET_PROGRESS' ) {
 		return action.progress;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'progress' ) ) {
 		return -1;
 	}
 	return state;
@@ -279,7 +315,7 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	if ( action.type === 'SET_PROGRESS_TITLE' ) {
 		return action.progressTitle;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'progressTitle' ) ) {
 		return undefined;
 	}
 	return state;
@@ -305,9 +341,13 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'CLEAR_DIFM_GOAL' ) {
 		return state.filter( ( goal ) => goal !== SiteGoal.DIFM );
 	}
-	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+	if ( action.type === 'RESET_GOALS' ) {
 		return [];
 	}
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'goals' ) ) {
+		return [];
+	}
+
 	return state;
 };
 
@@ -315,7 +355,7 @@ const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_EDIT_EMAIL' ) {
 		return action.email;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_ONBOARD_STORE' && ! action.skipFlags.includes( 'editEmail' ) ) {
 		return '';
 	}
 	return state;
