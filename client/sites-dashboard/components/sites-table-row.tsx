@@ -15,9 +15,9 @@ interface Site {
 	slug: string;
 	URL: string;
 	plan: SitePlan;
-	launch_status: string;
-	is_coming_soon: boolean;
-	is_private: boolean;
+	launch_status?: string;
+	is_coming_soon?: boolean;
+	is_private?: boolean;
 }
 
 interface SitePlan {
