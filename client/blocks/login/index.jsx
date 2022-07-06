@@ -137,9 +137,9 @@ class Login extends Component {
 		if ( this.props.onTwoFactorRequested ) {
 			this.props.onTwoFactorRequested( authType );
 		} else {
-			const currentURLQueryParameters = Object.fromEntries(
-				new URL( this.props.redirectTo ).searchParams.entries()
-			);
+			const currentURLQueryParameters = this.props?.redirectTo
+				? Object.fromEntries( new URL( this.props.redirectTo ).searchParams.entries() )
+				: '';
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
