@@ -191,7 +191,7 @@ function isSupportedCurrency( currency ) {
  *
  * @param {number} cost - The cost of the cart or product
  * @param {string} currency - The currency such as `USD`, `JPY`, etc
- * @returns {string} Or null if the currency is not supported
+ * @returns {number|null} Or null if the currency is not supported
  */
 export default function costToUSD( cost, currency ) {
 	if ( ! isSupportedCurrency( currency ) ) {
