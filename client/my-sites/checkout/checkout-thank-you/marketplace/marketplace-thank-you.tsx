@@ -43,6 +43,7 @@ const ThankYouContainer = styled.div`
 	}
 `;
 
+const AtomicTransferActive = 'active';
 const AtomicTransferProvisioned = 'provisioned';
 const AtomicTransferRelocating = 'relocating_switcheroo';
 const AtomicTransferComplete = 'completed';
@@ -121,21 +122,18 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite
 	useEffect( () => {
-		if ( ! transfer ) {
-			setCurrentStep( 0 );
-		} else if ( transfer?.status === AtomicTransferComplete && pluginOnSite ) {
-			// Everything done: Step 0
-			setCurrentStep( 0 );
-		} else if ( transfer?.status === AtomicTransferComplete ) {
+		if ( transfer && transfer.status === AtomicTransferComplete && ! pluginOnSite ) {
 			// Transfer is complete, but need to install plugin
 			setCurrentStep( 4 );
-		} else if ( transfer?.status === AtomicTransferRelocating ) {
+		} else if ( transfer && transfer.status === AtomicTransferRelocating ) {
 			setCurrentStep( 3 );
-		} else if ( transfer?.status === AtomicTransferProvisioned ) {
+		} else if ( transfer && transfer.status === AtomicTransferProvisioned ) {
 			setCurrentStep( 2 );
-		} else {
-			// Need to do entire atomic transfer and install plugin
+		} else if ( transfer && transfer.status === AtomicTransferActive ) {
 			setCurrentStep( 1 );
+		} else {
+			// Everything is complete or status unknown
+			setCurrentStep( 0 );
 		}
 	}, [ transfer, pluginOnSite ] );
 
