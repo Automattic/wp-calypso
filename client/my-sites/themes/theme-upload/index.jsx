@@ -265,13 +265,14 @@ class Upload extends Component {
 			failed,
 			inProgress,
 			isJetpack,
+			isStandaloneJetpack,
 			isAtomic,
 			selectedSite,
 			uploadedTheme,
 		} = this.props;
 
 		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
-		const isDisabled = ! canUploadThemesOrPlugins && ! isJetpack;
+		const isDisabled = ! isStandaloneJetpack && ( ! canUploadThemesOrPlugins || ! isAtomic );
 
 		const WrapperComponent = isDisabled ? FeatureExample : Fragment;
 
