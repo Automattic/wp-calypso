@@ -42,9 +42,11 @@ const googleWorkspaceCardInformation: ProviderCardProps = {
 	className: 'google-workspace-card',
 	expandButtonLabel: translate( 'Select' ),
 	providerKey: 'google',
-	description: translate(
-		'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
-	),
+	get description() {
+		return translate(
+			'Business email with Gmail. Includes other collaboration and productivity tools from Google.'
+		);
+	},
 	logo: { path: googleWorkspaceIcon, className: 'google-workspace-icon' },
 	appLogos: getGoogleAppLogos(),
 	productName: getGoogleMailServiceFamily(),
