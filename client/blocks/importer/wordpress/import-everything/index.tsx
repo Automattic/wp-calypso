@@ -40,34 +40,7 @@ interface State {
 export class ImportEverything extends SectionMigrate {
 	componentDidUpdate( prevProps: any, prevState: State ) {
 		super.componentDidUpdate( prevProps, prevState );
-
-		if (
-			prevState.migrationStatus !== MigrationStatus.BACKING_UP &&
-			this.state.migrationStatus === MigrationStatus.BACKING_UP
-		) {
-			recordTracksEvent( 'calypso_site_importer_import_progress_backing_up' );
-		}
-
-		if (
-			prevState.migrationStatus !== MigrationStatus.RESTORING &&
-			this.state.migrationStatus === MigrationStatus.RESTORING
-		) {
-			recordTracksEvent( 'calypso_site_importer_import_progress_restoring' );
-		}
-
-		if (
-			prevState.migrationStatus !== MigrationStatus.ERROR &&
-			this.state.migrationStatus === MigrationStatus.ERROR
-		) {
-			recordTracksEvent( 'calypso_site_importer_import_failure' );
-		}
-
-		if (
-			prevState.migrationStatus !== MigrationStatus.DONE &&
-			this.state.migrationStatus === MigrationStatus.DONE
-		) {
-			recordTracksEvent( 'calypso_site_importer_import_success' );
-		}
+		this.recordMigrationStatusChange( prevState );
 	}
 
 	goToCart = () => {
@@ -105,6 +78,36 @@ export class ImportEverything extends SectionMigrate {
 		this.props.requestSite( targetSiteId );
 
 		this.requestMigrationReset( targetSiteId );
+	};
+
+	recordMigrationStatusChange = ( prevState: State ) => {
+		if (
+			prevState.migrationStatus !== MigrationStatus.BACKING_UP &&
+			this.state.migrationStatus === MigrationStatus.BACKING_UP
+		) {
+			recordTracksEvent( 'calypso_site_importer_import_progress_backing_up' );
+		}
+
+		if (
+			prevState.migrationStatus !== MigrationStatus.RESTORING &&
+			this.state.migrationStatus === MigrationStatus.RESTORING
+		) {
+			recordTracksEvent( 'calypso_site_importer_import_progress_restoring' );
+		}
+
+		if (
+			prevState.migrationStatus !== MigrationStatus.ERROR &&
+			this.state.migrationStatus === MigrationStatus.ERROR
+		) {
+			recordTracksEvent( 'calypso_site_importer_import_failure' );
+		}
+
+		if (
+			prevState.migrationStatus !== MigrationStatus.DONE &&
+			this.state.migrationStatus === MigrationStatus.DONE
+		) {
+			recordTracksEvent( 'calypso_site_importer_import_success' );
+		}
 	};
 
 	renderLoading() {
