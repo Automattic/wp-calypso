@@ -67,19 +67,15 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 		l( 'ciao' );
 
 		if ( $this->is_wpcom ) {
-			$response = \WPCOM_Help_Search::get_search_results( $blog_id, $post_id );
+			$response = \WPCOM_Reader_Site_Post::get_site_post( $blog_id, $post_id );
 		} else {
-			$body = Client::wpcom_json_api_request_as_user( 'help/search?blogId=' . $blog_id );
+			$body = Client::wpcom_json_api_request_as_user( 'help/support/article/' . $blog_id . '/' . $post_id );
 			if ( is_wp_error( $body ) ) {
 				return $body;
 			}
 			$response = json_decode( wp_remote_retrieve_body( $body ) );
 		}
 
-		return rest_ensure_response(
-			array(
-				'post' => $response,
-			)
-		);
+		return rest_ensure_response( $response );
 	}
 }
