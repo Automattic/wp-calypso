@@ -2,7 +2,7 @@ import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
+import { isEmpty, isEqual, range, reduce, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -524,7 +524,7 @@ export class PluginsList extends Component {
 	getAllowedPluginActions( plugin ) {
 		const { hasManagePlugins, siteIsAtomic, siteIsJetpack } = this.props;
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
-		const isManagedPlugin = siteIsAtomic && includes( autoManagedPlugins, plugin.slug );
+		const isManagedPlugin = siteIsAtomic && autoManagedPlugins.includes( plugin.slug );
 		const canManagePlugins =
 			( siteIsJetpack && ! siteIsAtomic ) || ( siteIsAtomic && hasManagePlugins );
 
