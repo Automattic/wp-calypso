@@ -10,14 +10,13 @@ const GOAL_TO_INTENT_MAP: { [ key in IntentDecidingGoal ]: SiteIntent } = {
 };
 
 export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
-	// For Plan B, clicking on Import link supercedes everything.
-	if ( goals.includes( SiteGoal.Import ) ) {
-		return SiteIntent.Import;
-	}
-
-	// Including DIFM goal overwrites any other goal selection made
+	// When DIFM and Import goals are selected together, DIFM Intent will have the priority and will be set.
 	if ( goals.includes( SiteGoal.DIFM ) ) {
 		return SiteIntent.DIFM;
+	}
+
+	if ( goals.includes( SiteGoal.Import ) ) {
+		return SiteIntent.Import;
 	}
 
 	const intentDecidingGoal = ( goals as IntentDecidingGoal[] ).find( ( goal ) =>
