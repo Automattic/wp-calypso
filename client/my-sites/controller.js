@@ -457,14 +457,13 @@ export function siteSelection( context, next ) {
 		return;
 	}
 
-	const siteId = getSiteId( getState(), siteFragment );
-
-	// If we can't figure out the siteId, set all sites to visible.
-	if ( null === siteId ) {
+	// If the path fragment does not resemble a site, set all sites to visible
+	if ( ! ( typeof siteFragment === 'string' && siteFragment.length ) ) {
 		dispatch( setAllSitesSelected() );
 		return next();
 	}
 
+	const siteId = getSiteId( getState(), siteFragment );
 	if ( siteId ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
