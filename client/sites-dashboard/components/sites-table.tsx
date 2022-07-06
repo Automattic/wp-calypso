@@ -71,15 +71,29 @@ export function SitesTable( { buildSiteUrl, className, sites }: SitesTableProps 
 				{ sites.map( ( site ) => (
 					<Row key={ site.ID }>
 						<td>
-							<div style={ { display: 'flex' } }>
-								<SiteIcon siteId={ site.ID } size={ 50 } />
+							<div style={ { display: 'flex', alignItems: 'center' } }>
+								<a
+									style={ { display: 'block' } }
+									href={ buildSiteUrl ? buildSiteUrl( site ) : site.URL }
+									title={ __( 'Visit Dashboard' ) }
+								>
+									<SiteIcon siteId={ site.ID } size={ 50 } />
+								</a>
 								<div style={ { marginLeft: '20px' } }>
 									<SiteName>
-										<a href={ buildSiteUrl ? buildSiteUrl( site ) : site.URL }>
+										<a
+											href={ buildSiteUrl ? buildSiteUrl( site ) : site.URL }
+											title={ __( 'Visit Dashboard' ) }
+										>
 											{ site.name ? site.name : __( '(No Site Title)' ) }
 										</a>
 									</SiteName>
-									<SiteUrl href={ site.URL } target="_blank" rel="noreferrer">
+									<SiteUrl
+										href={ site.URL }
+										target="_blank"
+										rel="noreferrer"
+										title={ __( 'Visit Site' ) }
+									>
 										{ displaySiteUrl( site.URL ) }
 									</SiteUrl>
 								</div>
