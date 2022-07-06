@@ -12,11 +12,11 @@ const Wrapper = styled.span`
 	line-height: 20px;
 `;
 
-interface SitesBadgePrpos {
+interface SitesBadgeProps {
 	children: ReactNode;
 }
 
-function SitesBadge( { children }: SitesBadgePrpos ) {
+function SitesBadge( { children }: SitesBadgeProps ) {
 	return <Wrapper>{ children }</Wrapper>;
 }
 
