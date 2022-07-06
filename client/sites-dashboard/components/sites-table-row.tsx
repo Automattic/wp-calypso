@@ -1,5 +1,5 @@
-import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { Icon, globe, lock, tool } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import SiteIcon from 'calypso/blocks/site-icon';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -91,11 +91,11 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 
 	const isComingSoon =
 		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
-	let icon = 'globe';
+	let icon = globe;
 	if ( site.is_private && ! isComingSoon ) {
-		icon = 'lock';
+		icon = lock;
 	} else if ( isComingSoon ) {
-		icon = 'customize';
+		icon = tool;
 	}
 
 	return (
@@ -121,7 +121,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							rel="noreferrer"
 							title={ __( 'Visit Site' ) }
 						>
-							<Gridicon size={ 12 } icon={ icon }></Gridicon>
+							<Icon size={ 16 } icon={ icon }></Icon>
 							<span>{ displaySiteUrl( site.URL ) }</span>
 						</SiteUrl>
 					</div>
