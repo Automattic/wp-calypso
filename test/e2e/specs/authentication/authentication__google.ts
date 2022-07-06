@@ -1,6 +1,11 @@
 /**
  * @group authentication
  * @group calypso-pr
+ *
+ * Google blocks Chrome-based browsers that are controlled via automation
+ * from performing login to their services.
+ * The workaround is to use a non-Google browser, such as Firefox.
+ * See: https://stackoverflow.com/questions/66209119/automation-google-login-with-python-and-selenium-shows-this-browser-or-app-may
  * @browser firefox
  */
 

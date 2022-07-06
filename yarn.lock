@@ -21721,12 +21721,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-runner-browser@workspace:packages/jest-runner-browser":
-  version: 0.0.0-use.local
-  resolution: "jest-runner-browser@workspace:packages/jest-runner-browser"
-  languageName: unknown
-  linkType: soft
-
 "jest-runner-groups@npm:2.2.0":
   version: 2.2.0
   resolution: "jest-runner-groups@npm:2.2.0"
