@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, starFilled } from '@wordpress/icons';
 import classNames from 'classnames';
 import { ReactElement, Fragment } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -23,7 +23,7 @@ export default function SiteTable( { isLoading, columns, items }: Props ): React
 					{ columns.map( ( column, index ) => (
 						<th key={ column.key }>
 							{ index === 0 && (
-								<Gridicon className="site-table__favorite-icon" size={ 18 } icon="star" />
+								<Icon className="site-table__favorite-icon" size={ 24 } icon={ starFilled } />
 							) }
 							<span className={ classNames( index === 0 && 'site-table-site-title' ) }>
 								{ column.title }

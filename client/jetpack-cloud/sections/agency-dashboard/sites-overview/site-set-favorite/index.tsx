@@ -1,4 +1,5 @@
-import { Gridicon, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { Icon, starFilled, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -98,7 +99,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 					};
 				} );
 
-				// Optimistically update the favorites count of the current query and the sibling query.
+				// Optimistically update the favorites count of the current query and the sibling query
 				const updateTotalFavorites = ( oldSites: any ) => {
 					return {
 						...oldSites,
@@ -150,7 +151,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 					isFavorite && 'site-set-favorite__favorite-icon-active'
 				) }
 			>
-				<Gridicon size={ 18 } icon={ isFavorite ? 'star' : 'star-outline' } />
+				<Icon size={ 24 } icon={ isFavorite ? starFilled : starEmpty } />
 			</Button>
 		</>
 	);
