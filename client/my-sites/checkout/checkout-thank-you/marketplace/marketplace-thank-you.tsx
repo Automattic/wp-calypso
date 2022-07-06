@@ -1,6 +1,7 @@
 import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
@@ -10,6 +11,7 @@ import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { updateAdminMenuAfterPluginInstallation } from 'calypso/state/admin-menu/actions';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
@@ -103,6 +105,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId, transfer ] );
 
+	// Update the menu after the site been transferred to Atomic or after the plugin has
+	// been installed, since that might change some menu items
+	useEffect( () => {
+		dispatch( updateAdminMenuAfterPluginInstallation( siteId, productSlug ) );
+
+		// Use an empty array of dependencies since we want to run this effect only once.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
 	const thankYouImage = {
 		alt: '',
 		src: pluginIcon,
@@ -165,12 +176,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					'Take your site to the next level. We have all the solutions to help you grow and thrive.'
 				),
 				stepCta: (
-					<FullWidthButton
-						onClick={ () =>
-							// Force reload the page.
-							( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
-						}
-					>
+					<FullWidthButton href={ `/plugins/${ siteSlug }` }>
 						{ translate( 'Explore plugins' ) }
 					</FullWidthButton>
 				),
@@ -193,9 +199,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				` }
 			/>
 			<MasterbarStyled
-				onClick={ () =>
-					( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
-				}
+				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
 			/>
 			<ThankYouContainer>

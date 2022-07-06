@@ -1,4 +1,5 @@
 import page from 'page';
+import LicenseSelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/license-select-partner-key';
 import AssignLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/assign-license';
 import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/billing-dashboard';
 import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
@@ -9,7 +10,6 @@ import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/lice
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
 import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
-import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
 import PartnerPortalSidebar from 'calypso/jetpack-cloud/sections/partner-portal/sidebar';
 import {
@@ -48,7 +48,7 @@ export function termsOfServiceContext( context: PageJS.Context, next: () => void
 
 export function partnerKeyContext( context: PageJS.Context, next: () => void ): void {
 	context.header = <Header />;
-	context.primary = <SelectPartnerKey />;
+	context.primary = <LicenseSelectPartnerKey />;
 	next();
 }
 

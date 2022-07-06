@@ -10,10 +10,16 @@ const FeatureFlagContext = React.createContext< FeatureFlags | undefined >( unde
 export const FeatureFlagProvider: React.FC< { children: JSX.Element } > = function ( {
 	children,
 } ) {
+	let featureFlags;
+
+	// If the Editing Toolkit Plugin is not loaded
+	if ( typeof helpCenterFeatureFlags === 'undefined' ) {
+		featureFlags = undefined;
+	} else {
+		featureFlags = helpCenterFeatureFlags;
+	}
 	return (
-		<FeatureFlagContext.Provider value={ helpCenterFeatureFlags }>
-			{ children }
-		</FeatureFlagContext.Provider>
+		<FeatureFlagContext.Provider value={ featureFlags }>{ children }</FeatureFlagContext.Provider>
 	);
 };
 
