@@ -1,4 +1,5 @@
 import { PLAN_JETPACK_COMPLETE, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
@@ -16,6 +17,7 @@ import 'calypso/state/themes/init';
 export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 	if (
 		isJetpackSite( state, siteId ) &&
+		! isSiteWpcomAtomic( state, siteId ) &&
 		isThemePremium( state, themeId ) &&
 		! siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES )
 	) {
