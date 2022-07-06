@@ -79,6 +79,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	// Setup a click handler to close the info popup when the user clicks anywhere outside the popup.
 	useEffect( () => {
 		const closeInfoPopup = ( e: any ) => {
+			if ( ! e.isTrusted ) {
+				return;
+			}
 			const infoPopup = document.querySelector( '.site-setup.design-setup .theme-info-popup' );
 			const isInfoPopupButton = e.target.classList.contains( 'design-setup__info-popover' );
 			const isInfoPopupButtonParent = e.target.parentNode.classList.contains(
