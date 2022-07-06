@@ -6,7 +6,10 @@ import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { recordTracksEventAddToCartClick } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/utils';
 import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-cart-items';
-import { getEmailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
+import {
+	EmailProperties,
+	getEmailProductProperties,
+} from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -24,6 +27,17 @@ export type GetOnSubmitNewMailboxesHandlerProps = {
 	siteSlug: string;
 	source: string;
 };
+
+const getEmailProductPropertiesForUpsell = (
+	emailProduct: ProductListItem | null,
+	newMailboxesCount: number
+): EmailProperties => ( {
+	existingItemsCount: 0,
+	isAdditionalMailboxesPurchase: false,
+	emailProduct: emailProduct as ProductListItem,
+	newQuantity: newMailboxesCount,
+	quantity: newMailboxesCount,
+} );
 
 const getOnSubmitNewMailboxesHandler =
 	( {
@@ -68,12 +82,16 @@ const getOnSubmitNewMailboxesHandler =
 			return;
 		}
 
-		const emailProperties = getEmailProductProperties(
-			provider,
-			domain,
-			emailProduct as ProductListItem,
-			mailboxOperations.mailboxes.length
-		);
+		const numberOfMailboxes = mailboxOperations.mailboxes.length;
+
+		const emailProperties = ! isDomainInCart
+			? getEmailProductProperties(
+					provider,
+					domain,
+					emailProduct as ProductListItem,
+					numberOfMailboxes
+			  )
+			: getEmailProductPropertiesForUpsell( emailProduct, numberOfMailboxes );
 
 		shoppingCartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, emailProperties ) ] )

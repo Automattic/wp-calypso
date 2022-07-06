@@ -2,6 +2,7 @@ import {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 } from '@automattic/calypso-products';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
@@ -24,6 +25,7 @@ import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existin
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
+import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/professional-email-card';
 import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
@@ -172,6 +174,7 @@ const EmailProvidersStackedComparison = ( {
 			detailsExpanded={ detailsExpanded.titan }
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
+			key="ProfessionalEmailCard"
 			onExpandedChange={ changeExpandedState }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
@@ -181,40 +184,60 @@ const EmailProvidersStackedComparison = ( {
 			detailsExpanded={ detailsExpanded.google }
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
+			key="GoogleWorkspaceCard"
 			onExpandedChange={ changeExpandedState }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
 	];
 
+	const comparisonComponents = {
+		a: (
+			<a
+				href={ emailManagementInDepthComparison(
+					selectedSite?.slug ?? '',
+					selectedDomainName,
+					currentRoute,
+					source,
+					selectedIntervalLength
+				) }
+				onClick={ handleCompareClick }
+			/>
+		),
+	};
+
 	return (
-		<Main wideLayout>
+		<Main
+			className={ classnames( {
+				'email-providers-stacked-comparison__main--domain-upsell': isDomainInCart,
+			} ) }
+			wideLayout
+		>
 			<QueryProductsList />
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
+			{ isDomainInCart && <EmailUpsellNavigation siteSlug={ selectedSite?.slug ?? '' } /> }
 
 			<h1 className="email-providers-stacked-comparison__header">
-				{ translate( 'Pick an email solution' ) }
+				{ isDomainInCart
+					? translate( 'Add a professional email address to %(domainName)s', {
+							args: { domainName: selectedDomainName },
+					  } )
+					: translate( 'Pick an email solution' ) }
 			</h1>
 
 			{ selectedSite && (
 				<div className="email-providers-stacked-comparison__sub-header">
-					{ translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
-						components: {
-							a: (
-								<a
-									href={ emailManagementInDepthComparison(
-										selectedSite.slug,
-										selectedDomainName,
-										currentRoute,
-										source,
-										selectedIntervalLength
-									) }
-									onClick={ handleCompareClick }
-								/>
-							),
-						},
-					} ) }
+					{ isDomainInCart
+						? translate(
+								'Build an online presence and build your brand with one of these options ({{a}}see how they compare{{/a}}).',
+								{
+									components: comparisonComponents,
+								}
+						  )
+						: translate( 'Not sure where to start? {{a}}See how they compare{{/a}}.', {
+								components: comparisonComponents,
+						  } ) }
 				</div>
 			) }
 
