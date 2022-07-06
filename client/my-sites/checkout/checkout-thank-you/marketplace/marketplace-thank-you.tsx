@@ -11,7 +11,7 @@ import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
-import { updateAdminMenuAfterMarketplaceInstallation } from 'calypso/state/admin-menu/actions';
+import { updateAdminMenuAfterPluginInstallation } from 'calypso/state/admin-menu/actions';
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
@@ -108,7 +108,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Update the menu after the site been transferred to Atomic or after the plugin has
 	// been installed, since that might change some menu items
 	useEffect( () => {
-		dispatch( updateAdminMenuAfterMarketplaceInstallation( siteId, productSlug ) );
+		dispatch( updateAdminMenuAfterPluginInstallation( siteId, productSlug ) );
 
 		// Use an empty array of dependencies since we want to run this effect only once.
 		// eslint-disable-next-line react-hooks/exhaustive-deps

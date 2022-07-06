@@ -21,7 +21,7 @@ export const receiveAdminMenu = function receiveAdminMenu( siteId, menu ) {
 	};
 };
 
-export const updateAdminMenuAfterMarketplaceInstallation =
+export const updateAdminMenuAfterPluginInstallation =
 	( siteId, productSlug ) => ( dispatch, getState ) => {
 		const { transfer } = getLatestAtomicTransfer( getState(), siteId );
 		const pluginOnSite = getPluginOnSite( getState(), siteId, productSlug );
@@ -31,18 +31,18 @@ export const updateAdminMenuAfterMarketplaceInstallation =
 			// Check again after 2s.
 			dispatch( requestLatestAtomicTransfer( siteId ) );
 			setTimeout(
-				() => dispatch( updateAdminMenuAfterMarketplaceInstallation( siteId, productSlug ) ),
+				() => dispatch( updateAdminMenuAfterPluginInstallation( siteId, productSlug ) ),
 				2000
 			);
 			return;
 		}
 
-		// ...And for the plugin to be activated.
+		// ...and for the plugin to be installed.
 		if ( ! pluginOnSite ) {
 			// Check again after 2s.
 			dispatch( fetchSitePlugins( siteId ) );
 			setTimeout(
-				() => dispatch( updateAdminMenuAfterMarketplaceInstallation( siteId, productSlug ) ),
+				() => dispatch( updateAdminMenuAfterPluginInstallation( siteId, productSlug ) ),
 				2000
 			);
 			return;
