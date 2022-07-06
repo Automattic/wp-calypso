@@ -122,20 +122,26 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite
 	useEffect( () => {
-		if ( transfer && transfer.status === AtomicTransferComplete && ! pluginOnSite ) {
+		if ( ! transfer || ( isRequestingPlugins && ! pluginOnSite ) ) {
+			// Status unknown
+			setCurrentStep( 0 );
+		} else if ( transfer?.status === AtomicTransferComplete && pluginOnSite ) {
+			// Everything done: Step 0
+			setCurrentStep( 0 );
+		} else if ( transfer?.status === AtomicTransferComplete ) {
 			// Transfer is complete, but need to install plugin
 			setCurrentStep( 4 );
-		} else if ( transfer && transfer.status === AtomicTransferRelocating ) {
+		} else if ( transfer?.status === AtomicTransferRelocating ) {
 			setCurrentStep( 3 );
-		} else if ( transfer && transfer.status === AtomicTransferProvisioned ) {
+		} else if ( transfer?.status === AtomicTransferProvisioned ) {
 			setCurrentStep( 2 );
-		} else if ( transfer && transfer.status === AtomicTransferActive ) {
+		} else if ( transfer?.status === AtomicTransferActive ) {
+			// Need to do entire atomic transfer and install plugin
 			setCurrentStep( 1 );
 		} else {
-			// Everything is complete or status unknown
 			setCurrentStep( 0 );
 		}
-	}, [ transfer, pluginOnSite ] );
+	}, [ transfer, pluginOnSite, isRequestingPlugins ] );
 
 	const steps = useMemo(
 		() => [
