@@ -80,7 +80,7 @@ const VisitDashboardItem = ( site: Site ) => {
 export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	return (
-		<Row key={ site.ID }>
+		<Row>
 			<td>
 				<div style={ { display: 'flex', alignItems: 'center' } }>
 					<a
