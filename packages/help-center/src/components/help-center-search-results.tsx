@@ -280,8 +280,7 @@ function HelpSearchResults( {
 				{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 					<p className="help-center-search-results__empty-results">
 						{ translate(
-							'Sorry, there were no matches. Here are some of the most searched for help pages for this section:',
-							__i18n_text_domain__
+							'Sorry, there were no matches. Here are some of the most searched for help pages for this section:'
 						) }
 					</p>
 				) : null }
