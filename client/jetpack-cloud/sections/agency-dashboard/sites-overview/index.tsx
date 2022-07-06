@@ -103,50 +103,58 @@ export default function SitesOverview(): ReactElement {
 			<DocumentHead title={ pageTitle } />
 			<SidebarNavigation sectionTitle={ pageTitle } />
 			<div className="sites-overview__container">
-				<SiteWelcomeBanner isDashboardView />
-				{ purchasedLicense && data?.sites && (
-					<SiteAddLicenseNotification purchasedLicense={ purchasedLicense } />
-				) }
-				<div className="sites-overview__page-title-container">
-					<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-					<div className="sites-overview__page-subtitle">
-						{ translate( 'Manage all your Jetpack sites from one location' ) }
+				<div className="sites-overview__tabs">
+					<div className="sites-overview__content-wrapper">
+						<SiteWelcomeBanner isDashboardView />
+						{ purchasedLicense && data?.sites && (
+							<SiteAddLicenseNotification purchasedLicense={ purchasedLicense } />
+						) }
+						<div className="sites-overview__page-title-container">
+							<h2 className="sites-overview__page-title">{ pageTitle }</h2>
+							<div className="sites-overview__page-subtitle">
+								{ translate( 'Manage all your Jetpack sites from one location' ) }
+							</div>
+						</div>
+						<SectionNav
+							selectedText={
+								<span>
+									{ selectedItem.label }
+									<Count count={ selectedItem.count } compact={ true } />
+								</span>
+							}
+							selectedCount={ selectedItem.count }
+							className={ classNames(
+								'sites-overview__section-nav',
+								isMobile &&
+									hightLightTab &&
+									selectedItem.key === 'favorites' &&
+									'site-overview__highlight-tab'
+							) }
+						>
+							<NavTabs selectedText={ selectedItem.label } selectedCount={ selectedItem.count }>
+								{ navItems.map( ( props ) => (
+									<NavItem { ...props } compactCount={ true } />
+								) ) }
+							</NavTabs>
+						</SectionNav>
 					</div>
 				</div>
-				<SectionNav
-					selectedText={
-						<span>
-							{ selectedItem.label }
-							<Count count={ selectedItem.count } compact={ true } />
-						</span>
-					}
-					selectedCount={ selectedItem.count }
-					className={ classNames(
-						'sites-overview__section-nav',
-						isMobile &&
-							hightLightTab &&
-							selectedItem.key === 'favorites' &&
-							'site-overview__highlight-tab'
-					) }
-				>
-					<NavTabs selectedText={ selectedItem.label } selectedCount={ selectedItem.count }>
-						{ navItems.map( ( props ) => (
-							<NavItem { ...props } compactCount={ true } />
-						) ) }
-					</NavTabs>
-				</SectionNav>
-				<SiteSearchFilterContainer
-					searchQuery={ search }
-					currentPage={ currentPage }
-					filter={ filter }
-					isLoading={ isLoading }
-				/>
-				<SiteContent
-					data={ data }
-					isError={ isError }
-					isLoading={ isLoading }
-					currentPage={ currentPage }
-				/>
+				<div className="sites-overview__content">
+					<div className="sites-overview__content-wrapper">
+						<SiteSearchFilterContainer
+							searchQuery={ search }
+							currentPage={ currentPage }
+							filter={ filter }
+							isLoading={ isLoading }
+						/>
+						<SiteContent
+							data={ data }
+							isError={ isError }
+							isLoading={ isLoading }
+							currentPage={ currentPage }
+						/>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

@@ -6,15 +6,48 @@
 		padding: 0 16px;
 	}
 }
+
 .sites-overview__container {
-	padding: 16px;
+	padding: 16px 0;
+
+	@include break-large() {
+		padding: 6px 0;
+	}
+}
+
+.sites-overview__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
+
 	@include break-large() {
 		padding: 0;
 	}
-	@include break-wide() {
-		padding: 6px 16px;
+}
+.sites-overview__tabs {
+	// We need these negative margin values because we want to make the container full-width,
+	// but our element is inside a limited-width parent.
+	margin: 0 -32px;
+
+	padding: 0 48px;
+
+	@include break-large() {
+		border-bottom: 1px solid var( --color-primary-5 );
+	}
+}
+.sites-overview__content {
+	// We need these negative margin values because we want to make the container full-width,
+	// but our element is inside a limited-width parent.
+	margin: 0 -32px -32px;
+
+	padding: 8px 48px;
+	min-height: 100vh;
+
+	@include break-medium() {
+		padding: 16px 48px;
+	}
+
+	@include break-large() {
+		background: rgba( 255, 255, 255, 0.5 );
 	}
 }
 .sites-overview__page-title-container {
@@ -97,7 +130,11 @@
 	position: absolute;
 	height: 49px;
 	width: 20px;
-	background: linear-gradient( to right, rgba( 255, 255, 255, 0.8 ) 30%, rgba( 255, 255, 255, 1 ) 100% );
+	background: linear-gradient(
+		to right,
+		rgba( 255, 255, 255, 0.8 ) 30%,
+		rgba( 255, 255, 255, 1 ) 100%
+	);
 	top: 0;
 	right: 48px;
 	@include break-large() {
@@ -132,7 +169,7 @@
 .sites-overview__error-message {
 	font-size: 0.75rem;
 	color: var( --studio-white );
-	padding:0.5em;
+	padding: 0.5em;
 	margin: auto 0;
 }
 .sites-overview__error-message-large-screen {
@@ -197,7 +234,7 @@
 	right: 42px;
 	top: 50%;
 	transform: translateY( -50% );
-	border-radius: 50%;  /* stylelint-disable-line */
+	border-radius: 50%; /* stylelint-disable-line */
 	border-width: 2px;
 	border-style: solid;
 	width: 24px;
@@ -215,7 +252,7 @@
 	color: var( --studio-red-50 );
 }
 .sites-overview__status-warning {
-	border-color:  var( --studio-yellow-20 );;
+	border-color: var( --studio-yellow-20 );
 }
 .sites-overview__section-nav.section-nav {
 	.is-selected.section-nav-tab .section-nav-tab__link .count {
@@ -235,12 +272,10 @@
 		border: none;
 		font-weight: normal;
 	}
-	margin-bottom: 8px;
+	margin-bottom: 0;
 	@include break-large() {
 		background: unset;
 		box-shadow: none;
-		border-bottom: 1px solid var( --color-primary-5 );
-		margin-bottom: 16px;
 	}
 }
 @keyframes highlight-tab-animation {
