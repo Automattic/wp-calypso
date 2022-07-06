@@ -130,7 +130,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const enabledGeneratedDesigns =
 		verticalsStepEnabled &&
 		isEnabled( 'signup/design-picker-generated-designs' ) &&
-		intent === 'build';
+		( intent === 'build' || intent === 'write' );
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
 		useStarterDesignsGeneratedQuery(
@@ -370,7 +370,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		window.scrollTo( { top: 0 } );
 	}, [ isForceStaticDesigns, isPreviewingDesign ] );
 
-	// When the intent is build, we can potentially show the generated design picker.
+	// When the intent is build or write, we can potentially show the generated design picker.
 	// Don't render until we've fetched the generated designs from the backend.
 	if ( ! site || isLoadingGeneratedDesigns ) {
 		return null;
