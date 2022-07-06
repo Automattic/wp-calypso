@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
 
-const Wrapper = styled.span`
+const SitesBadge = styled.span`
 	font-size: 12px;
 	font-weight: 500;
 	color: var( --studio-gray-80 );
@@ -11,13 +10,5 @@ const Wrapper = styled.span`
 	border-radius: 4px;
 	line-height: 20px;
 `;
-
-interface SitesBadgeProps {
-	children: ReactNode;
-}
-
-function SitesBadge( { children }: SitesBadgeProps ) {
-	return <Wrapper>{ children }</Wrapper>;
-}
 
 export default SitesBadge;
