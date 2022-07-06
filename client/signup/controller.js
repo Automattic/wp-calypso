@@ -64,6 +64,14 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
+export const addVideoPressSignupClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'is-videopress-signup' );
+};
+
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -82,8 +90,10 @@ export const removeP2SignupClassName = function () {
 
 export default {
 	redirectTests( context, next ) {
+		console.log( context );
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
+		console.log( currentFlowName );
 		if ( isReskinnedFlow( currentFlowName ) ) {
 			next();
 		} else if (
@@ -101,6 +111,11 @@ export default {
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
 			addP2SignupClassName();
+			removeWhiteBackground();
+			next();
+		} else if ( context.pathname.includes( 'videopress' ) ) {
+			console.log( 'Includes videopress' );
+			addVideoPressSignupClassName();
 			removeWhiteBackground();
 			next();
 		} else {

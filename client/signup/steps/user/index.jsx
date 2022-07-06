@@ -30,7 +30,9 @@ import {
 	getPreviousStepName,
 	getStepUrl,
 	isP2Flow,
+	isVideoPressFlow,
 } from 'calypso/signup/utils';
+import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -467,6 +469,31 @@ export class UserStep extends Component {
 		);
 	}
 
+	renderVideoPressSignupStep() {
+		return (
+			<VideoPressStepWrapper
+				flowName={ this.props.flowName }
+				stepName={ this.props.stepName }
+				positionInFlow={ this.props.positionInFlow }
+				headerText={ this.props.translate( 'Sign up' ) }
+				subHeaderText={ this.props.translate(
+					"First, let's create your account. We recommend you use the {{strong}}same email address you use at work.{{/strong}}",
+					{
+						components: { strong: <strong /> },
+					}
+				) }
+				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
+					args: {
+						currentStep: 1,
+						totalSteps: 3,
+					},
+				} ) }
+			>
+				{ this.renderSignupForm() }
+			</VideoPressStepWrapper>
+		);
+	}
+
 	renderP2SignupStep() {
 		return (
 			<P2StepWrapper
@@ -495,6 +522,10 @@ export class UserStep extends Component {
 	render() {
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
+		}
+
+		if ( isVideoPressFlow( this.props.flowName ) ) {
+			return this.renderVideoPressSignupStep();
 		}
 
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
