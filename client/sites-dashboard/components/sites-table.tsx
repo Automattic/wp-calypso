@@ -24,9 +24,13 @@ const Row = styled.tr`
 	line-height: 2em;
 	border-bottom: 1px solid #eee;
 	td {
-		padding-top: 5px;
-		padding-bottom: 5px;
+		padding-top: 12px;
+		padding-bottom: 12px;
 		vertical-align: middle;
+		font-size: 14px;
+		line-height: 20px;
+		letter-spacing: -0.24px;
+		color: var( --studio-gray-60 );
 	}
 `;
 
@@ -35,6 +39,7 @@ const SiteName = styled.h2`
 	font-size: 16px;
 	letter-spacing: -0.4px;
 	color: var( --studio-gray-100 );
+	margin-bottom: 8px;
 	a {
 		color: inherit;
 		&:hover {
@@ -44,10 +49,10 @@ const SiteName = styled.h2`
 `;
 
 const SiteUrl = styled.a`
-	font-size: 14px;
-	line-height: 20px;
-	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
+	&:visited {
+		color: var( --studio-gray-60 );
+	}
 `;
 
 const displaySiteUrl = ( siteUrl: string ) => {
