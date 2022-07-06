@@ -160,10 +160,6 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		alt: '',
 		src: pluginIcon,
 	};
-	const blankImage = {
-		alt: '',
-		src: '',
-	};
 
 	// Cast pluginOnSite's type because the return type of getPluginOnSite is
 	// wrong and I don't know how to fix it. Remove this cast if the return type
@@ -259,16 +255,18 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				</div>
 			) }
 			<ThankYouContainer>
-				<ThankYou
-					containerClassName="marketplace-thank-you"
-					sections={ [ setupSection ] }
-					showSupportSection={ true }
-					thankYouImage={ transfer ? thankYouImage : blankImage }
-					thankYouTitle={ transfer && translate( 'All ready to go!' ) }
-					thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
-					headerBackgroundColor="#fff"
-					headerTextColor="#000"
-				/>
+				{ transfer && (
+					<ThankYou
+						containerClassName="marketplace-thank-you"
+						sections={ [ setupSection ] }
+						showSupportSection={ true }
+						thankYouImage={ thankYouImage }
+						thankYouTitle={ translate( 'All ready to go!' ) }
+						thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
+						headerBackgroundColor="#fff"
+						headerTextColor="#000"
+					/>
+				) }
 			</ThankYouContainer>
 		</ThemeProvider>
 	);
