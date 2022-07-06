@@ -7,21 +7,23 @@ import { search } from './search-api';
 import { getPluginsListKey } from './utils';
 import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './types';
 
-// /**
-//  *
-//  * @param pluginSlug
-//  * @param iconsObject
-//  * @returns A string containing an icon url
-// 		or undefined if icons is empty or it is not JSON or it does not contain a valid resolution
-//  */
+/**
+ *
+ * @param pluginSlug
+ * @param icons
+ * @returns A string containing an icon url or
+ * 	undefined if the icons param is falsy or
+ * 	a default generated url Icon if icons param is not JSON or it does not contain a valid resolution
+ */
 const createIconUrl = ( pluginSlug: string, icons?: string ): string | undefined => {
-	if ( ! icons ) return;
+	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
+	if ( ! icons ) return defaultIconUrl;
 
 	let iconsObject: Record< string, Icon > = {};
 	try {
 		iconsObject = JSON.parse( icons );
 	} catch ( error ) {
-		return;
+		return defaultIconUrl;
 	}
 
 	// Transform Icon response for easier handling
@@ -40,7 +42,7 @@ const createIconUrl = ( pluginSlug: string, icons?: string ): string | undefined
 		iconByResolution.svg ||
 		iconByResolution.default;
 
-	if ( ! icon ) return;
+	if ( ! icon ) return defaultIconUrl;
 
 	return buildIconUrl( pluginSlug, icon.location, icon.filename, icon.revision );
 };
@@ -49,8 +51,9 @@ function buildIconUrl( pluginSlug: string, location: string, filename: string, r
 	return `https://ps.w.org/${ pluginSlug }/${ location }/${ filename }?rev=${ revision }`;
 }
 
-// const createAuthorUrl = ( headerAuthor: string, headerAuthorUri: string ) =>
-// 	`<a href="${ headerAuthorUri }">${ headerAuthor }</a>`;
+function buildDefaultIconUrl( pluginSlug: string ) {
+	return `https://s.w.org/plugins/geopattern-icon/${ pluginSlug }.svg`;
+}
 
 const mapStarRatingToPercent = ( starRating?: number ) => ( starRating ?? 0 / 5 ) * 100;
 
