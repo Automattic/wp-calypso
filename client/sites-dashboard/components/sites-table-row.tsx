@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -14,6 +15,9 @@ interface Site {
 	slug: string;
 	URL: string;
 	plan: SitePlan;
+	launch_status: string;
+	is_coming_soon: boolean;
+	is_private: boolean;
 }
 
 interface SitePlan {
@@ -54,9 +58,14 @@ const SiteName = styled.h2`
 `;
 
 const SiteUrl = styled.a`
+	display: flex;
+	align-items: center;
 	color: var( --studio-gray-60 );
 	&:visited {
 		color: var( --studio-gray-60 );
+	}
+	span {
+		margin-left: 4px;
 	}
 `;
 
@@ -79,6 +88,16 @@ const VisitDashboardItem = ( site: Site ) => {
 
 export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
+
+	const isComingSoon =
+		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
+	let icon = 'globe';
+	if ( site.is_private && ! isComingSoon ) {
+		icon = 'lock';
+	} else if ( isComingSoon ) {
+		icon = 'customize';
+	}
+
 	return (
 		<Row>
 			<td>
@@ -102,7 +121,8 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							rel="noreferrer"
 							title={ __( 'Visit Site' ) }
 						>
-							{ displaySiteUrl( site.URL ) }
+							<Gridicon size={ 12 } icon={ icon }></Gridicon>
+							<span>{ displaySiteUrl( site.URL ) }</span>
 						</SiteUrl>
 					</div>
 				</div>
