@@ -27,7 +27,12 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	const { filter, search, currentPage } = useContext( SitesOverviewContext );
 	const { showOnlyFavorites } = filter;
 	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
-
+	const siblingQueryKey = [
+		'jetpack-agency-dashboard-sites',
+		search,
+		currentPage,
+		{ ...filter, showOnlyFavorites: ! showOnlyFavorites },
+	];
 	const successNoticeId = 'success-notice';
 
 	const handleViewFavorites = () => {
@@ -70,7 +75,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 
 	const handleMutation = () => {
 		return {
-			onMutate: async () => {
+			onMutate: async ( { siteId, isFavorite }: { siteId: number; isFavorite: boolean } ) => {
 				// Cancel any current refetches, so they don't overwrite our optimistic update
 				await queryClient.cancelQueries( queryKey );
 
@@ -85,13 +90,23 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 							if ( site.blog_id === siteId ) {
 								return {
 									...site,
-									is_favorite: ! site.is_favorite,
+									is_favorite: ! isFavorite,
 								};
 							}
 							return site;
 						} ),
 					};
 				} );
+
+				// Optimistically update the favorites count of the current query and the sibling query.
+				const updateTotalFavorites = ( oldSites: any ) => {
+					return {
+						...oldSites,
+						total_favorites: oldSites.total_favorites + ( isFavorite ? -1 : 1 ),
+					};
+				};
+				queryClient.setQueryData( queryKey, updateTotalFavorites );
+				queryClient.setQueryData( siblingQueryKey, updateTotalFavorites );
 
 				// Store previous settings in case of failure
 				return { previousSites };
