@@ -3,7 +3,9 @@ import page from 'page';
 import { ReactElement, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
 import {
+	hasActivePartnerKey,
 	hasFetchedPartner,
 	isFetchingPartner,
 	isAgencyUser,
@@ -21,6 +23,7 @@ export default function DashboardOverview( {
 }: SitesOverviewContextInterface ): ReactElement {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
+	const hasActiveKey = useSelector( hasActivePartnerKey );
 	const isAgency = useSelector( isAgencyUser );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
 
@@ -33,7 +36,11 @@ export default function DashboardOverview( {
 		}
 	}, [ hasFetched, isAgency, isAgencyEnabled ] );
 
-	if ( isAgencyEnabled && hasFetched && isAgency ) {
+	if ( hasFetched && ! hasActiveKey ) {
+		return <SelectPartnerKey />;
+	}
+
+	if ( hasFetched ) {
 		const context = {
 			search,
 			currentPage,
