@@ -22,7 +22,6 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -593,7 +592,6 @@ export default connect(
 			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
 			isUserNewerThanNewNavigation:
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
-			locale: getCurrentLocaleSlug( state ),
 		};
 	},
 	{

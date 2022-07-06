@@ -31,7 +31,6 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
