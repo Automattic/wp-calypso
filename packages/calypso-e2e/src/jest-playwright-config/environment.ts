@@ -2,9 +2,17 @@ import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import { Context } from 'vm';
-import { parse } from 'jest-docblock';
+import { parse as parseDocBlock } from 'jest-docblock';
 import JestEnvironmentNode from 'jest-environment-node';
-import { Browser, BrowserContext, BrowserContextOptions, chromium, Page } from 'playwright';
+import {
+	Browser,
+	BrowserContext,
+	BrowserContextOptions,
+	BrowserType,
+	Page,
+	firefox,
+	chromium,
+} from 'playwright';
 import env from '../env-variables';
 import config from './playwright-config';
 import type { Config, Circus } from '@jest/types';
@@ -12,6 +20,7 @@ import type { Config, Circus } from '@jest/types';
 const sanitizeString = ( text: string ) => {
 	return text.replace( /[^a-z0-9]/gi, '-' ).toLowerCase();
 };
+const supportedBrowsers = [ chromium, firefox ];
 
 /**
  * This is the place where we make Playwright work with Jest (jest-circus): From
@@ -22,6 +31,7 @@ const sanitizeString = ( text: string ) => {
  */
 class JestEnvironmentPlaywright extends JestEnvironmentNode {
 	private testFilename: string;
+	private testFilePath: string;
 	private testArtifactsPath: string;
 	private failure?: {
 		type: 'hook' | 'test';
@@ -34,8 +44,54 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 	constructor( config: Config.ProjectConfig, context: Context ) {
 		super( config );
 
+		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
 		this.testArtifactsPath = '';
+	}
+
+	/**
+	 * Determine the browser to be used for the spec.
+	 *
+	 * By default, the browser used is defined in the BROWSER_NAME
+	 * environment variable, but at times it may be required to
+	 * run tests in a different browser.
+	 *
+	 * To specify a different browser than default,
+	 * use the @browser tag in the docblock.
+	 *
+	 * Example:
+	 *
+	 * 	`@browser firefox`
+	 */
+	async determineBrowser(): Promise< BrowserType > {
+		const parsed = parseDocBlock( await fs.readFile( this.testFilePath, 'utf8' ) );
+		const defaultBrowser = env.BROWSER_NAME;
+
+		// Parsed docblock can return any one of the following:
+		// 	- undefined: if a tag was not found.
+		// 	- single string: if only one instance of a tag was found.
+		//	- string array: if multiple instances of the tag was found.
+		// In this case, we only want to throw if the tag has been defined
+		// multiple times.
+		if ( parsed.browser && typeof parsed.browser !== 'string' ) {
+			throw new Error( 'Multiple browsers defined in docblock.' );
+		}
+
+		// If the browser tag was found in the docblock, look for the
+		// matches in the supported browsers list.
+		// If the browser tag was **not** found, then match based on
+		// the default broswser specified in the BROWSER_NAME
+		// environment variable.
+		const match = supportedBrowsers.find( ( browser ) => {
+			return parsed.browser === undefined
+				? browser.name() === defaultBrowser.toLowerCase()
+				: browser.name() === parsed.browser;
+		} );
+
+		if ( ! match ) {
+			throw new Error( 'Unsupported browser defined in docblock.' );
+		}
+		return match;
 	}
 
 	/**
@@ -44,16 +100,18 @@ class JestEnvironmentPlaywright extends JestEnvironmentNode {
 	async setup() {
 		await super.setup();
 
-		// Create folders for test artefacts.
+		// Determine the browser that should be used for the spec.
+		const browserType: BrowserType = await this.determineBrowser();
+
+		// Create folders for test artifacts.
 		await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
 		this.testArtifactsPath = await fs.mkdtemp(
 			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ Date.now() }-` )
 		);
-
 		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
 
 		// Start the browser.
-		const browser = await chromium.launch( {
+		const browser = await browserType.launch( {
 			...config.launchOptions,
 			logger: {
 				log: async ( name: string, severity: string, message: string ) => {
