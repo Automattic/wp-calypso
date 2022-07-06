@@ -43,6 +43,8 @@ const ThankYouContainer = styled.div`
 	}
 `;
 
+const AtomicTransferProvisioned = 'provisioned';
+const AtomicTransferRelocating = 'relocating_switcheroo';
 const AtomicTransferComplete = 'completed';
 
 const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
@@ -124,17 +126,23 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			setCurrentStep( 0 );
 		} else if ( transfer?.status === AtomicTransferComplete ) {
 			// Transfer is complete, but need to install plugin
+			setCurrentStep( 4 );
+		} else if ( transfer?.status === AtomicTransferRelocating ) {
+			setCurrentStep( 3 );
+		} else if ( transfer?.status === AtomicTransferProvisioned ) {
 			setCurrentStep( 2 );
 		} else {
-			// Need to transfer and install plugin
+			// Need to do entire atomic transfer and install plugin
 			setCurrentStep( 1 );
 		}
 	}, [ transfer, pluginOnSite ] );
 
 	const steps = useMemo(
 		() => [
+			translate( 'Activating the plugin feature' ), // Transferring to Atomic
 			translate( 'Setting up plugin installation' ), // Transferring to Atomic
-			translate( 'Installing plugin' ),
+			translate( 'Installing plugin' ), // Transferring to Atomic
+			translate( 'Activating plugin' ),
 		],
 		[ translate ]
 	);
