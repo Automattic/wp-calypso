@@ -83,6 +83,7 @@ export default function getThankYouPageUrl( {
 	redirectTo,
 	receiptId,
 	noPurchaseMade,
+	orderId,
 	purchaseId,
 	feature,
 	cart,
@@ -221,6 +222,7 @@ export default function getThankYouPageUrl( {
 
 	const fallbackUrl = getFallbackDestination( {
 		receiptIdOrPlaceholder,
+		orderId,
 		noPurchaseMade,
 		siteSlug,
 		adminUrl,
@@ -277,9 +279,11 @@ export default function getThankYouPageUrl( {
 	// Domain only flow
 	if ( ( cart?.create_new_blog || signupFlowName === 'domain' ) && ! isDomainOnly ) {
 		clearSignupCompleteFlowName();
-		const newBlogReceiptUrl = urlFromCookie
-			? `${ urlFromCookie }/${ receiptIdOrPlaceholder }`
-			: fallbackUrl;
+		const newBlogReceiptUrl = getNewBlogReceiptUrl(
+			urlFromCookie,
+			receiptIdOrPlaceholder,
+			fallbackUrl
+		);
 		debug( 'new blog created, so returning', newBlogReceiptUrl );
 		// Skip composed url if we have to redirect to intent flow
 		if ( ! newBlogReceiptUrl.includes( '/start/setup-site' ) ) {
@@ -287,14 +291,16 @@ export default function getThankYouPageUrl( {
 		}
 	}
 
-	const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
-		receiptId: receiptIdOrPlaceholder,
-		cart,
-		siteSlug,
-		hideUpsell: Boolean( hideNudge ),
-		domains,
-		isDomainOnly,
-	} );
+	const redirectUrlForPostCheckoutUpsell = receiptIdOrPlaceholder
+		? getRedirectUrlForPostCheckoutUpsell( {
+				receiptId: receiptIdOrPlaceholder,
+				cart,
+				siteSlug,
+				hideUpsell: Boolean( hideNudge ),
+				domains,
+				isDomainOnly,
+		  } )
+		: undefined;
 
 	if ( redirectUrlForPostCheckoutUpsell ) {
 		debug(
@@ -309,11 +315,13 @@ export default function getThankYouPageUrl( {
 	// when purchasing a concierge session or when purchasing the Ultimate Traffic Guide
 	const displayModeParam = getDisplayModeParamFromCart( cart );
 
-	const thankYouPageUrlForTrafficGuide = getThankYouPageUrlForTrafficGuide( {
-		cart,
-		siteSlug,
-		receiptIdOrPlaceholder,
-	} );
+	const thankYouPageUrlForTrafficGuide = receiptIdOrPlaceholder
+		? getThankYouPageUrlForTrafficGuide( {
+				cart,
+				siteSlug,
+				receiptIdOrPlaceholder,
+		  } )
+		: undefined;
 	if ( thankYouPageUrlForTrafficGuide ) {
 		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, displayModeParam );
 	}
@@ -328,21 +336,38 @@ export default function getThankYouPageUrl( {
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
 }
 
+function getNewBlogReceiptUrl(
+	urlFromCookie: string | undefined,
+	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined,
+	fallbackUrl: string
+): string {
+	return urlFromCookie && receiptIdOrPlaceholder
+		? `${ urlFromCookie }/${ receiptIdOrPlaceholder }`
+		: fallbackUrl;
+}
+
 function getPendingOrReceiptId(
 	receiptId: string | number | undefined,
 	purchaseId: string | number | undefined
-): ReceiptIdOrPlaceholder {
-	if ( receiptId ) {
+): ReceiptIdOrPlaceholder | undefined {
+	if ( receiptId && Number.isInteger( Number( receiptId ) ) ) {
 		return Number( receiptId );
 	}
-	if ( purchaseId ) {
+	if ( receiptId && ! Number.isInteger( Number( receiptId ) ) ) {
+		return undefined;
+	}
+	if ( purchaseId && Number.isInteger( Number( purchaseId ) ) ) {
 		return Number( purchaseId );
+	}
+	if ( purchaseId && ! Number.isInteger( Number( purchaseId ) ) ) {
+		return undefined;
 	}
 	return ':receiptId';
 }
 
 function getFallbackDestination( {
 	receiptIdOrPlaceholder,
+	orderId,
 	noPurchaseMade,
 	siteSlug,
 	adminUrl,
@@ -353,7 +378,8 @@ function getFallbackDestination( {
 	adminPageRedirect,
 	redirectTo,
 }: {
-	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder;
+	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined;
+	orderId?: string | number;
 	noPurchaseMade?: boolean;
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -365,7 +391,8 @@ function getFallbackDestination( {
 	redirectTo?: string;
 } ): string {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
-	const isReceiptEmpty = ':receiptId' === receiptIdOrPlaceholder;
+	const isReceiptEmpty =
+		':receiptId' === receiptIdOrPlaceholder || receiptIdOrPlaceholder === undefined;
 
 	if ( noPurchaseMade ) {
 		debug( 'fallback is just root' );
@@ -373,9 +400,10 @@ function getFallbackDestination( {
 	}
 
 	// We will show the Thank You page if there's a site slug and either one of the following is true:
-	// - has a receipt number (or a pending order)
-	// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
-	if ( siteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
+	// - has a receipt number (or a pending order).
+	// - does not have a receipt number but has an item in cart (as in the case of paying with a redirect payment method).
+	// - has an orderId (as in the case of paying with a redirect payment method).
+	if ( siteSlug && ( ! isReceiptEmpty || ! isCartEmpty || orderId ) ) {
 		// If we just purchased a Jetpack product or a Jetpack plan (either Jetpack Security or Jetpack Complete),
 		// redirect to the my plans page. The product being purchased can come from the `product` prop or from the
 		// cart so we need to check both places.
