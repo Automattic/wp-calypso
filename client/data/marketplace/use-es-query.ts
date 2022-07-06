@@ -12,10 +12,9 @@ import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './typ
  * @param pluginSlug
  * @param icons
  * @returns A string containing an icon url or
- * 	undefined if the icons param is falsy or
- * 	a default generated url Icon if icons param is not JSON or it does not contain a valid resolution
+ * 	a default generated url Icon if icons param is falsy, it is not JSON or it does not contain a valid resolution
  */
-const createIconUrl = ( pluginSlug: string, icons?: string ): string | undefined => {
+const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
 	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
 	if ( ! icons ) return defaultIconUrl;
 
