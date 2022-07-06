@@ -205,7 +205,6 @@ export function useCartForDIFM( selectedPages: string[] ): {
 		displayedCartItems = getDummyCartProducts( {
 			selectedPages,
 			currencyCode: currencyCode ?? 'USD',
-			formatCurrency,
 			translate,
 			activePlanScheme: activePremiumPlanScheme,
 			difmLiteProduct,
