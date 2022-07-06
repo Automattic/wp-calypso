@@ -29,3 +29,29 @@
 .email-providers-stacked-comparison__sub-header {
 	font-size: $font-body-small;
 }
+
+.email-providers-stacked-comparison__main--domain-upsell {
+
+	.email-providers-stacked-comparison__header,
+	.email-providers-stacked-comparison__sub-header {
+		text-align: unset;
+	}
+
+	.email-providers-stacked-comparison__header {
+		margin-top: 0;
+		padding-top: 0;
+		font-size: $font-title-medium;
+	}
+
+	.billing-interval-toggle {
+		margin: 15px auto;
+		padding: 10px 0;
+		box-sizing: border-box;
+		background: var( --color-surface );
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+	}
+
+	.billing-interval-toggle > .segmented-control.is-compact {
+		margin: 10px auto;
+	}
+}

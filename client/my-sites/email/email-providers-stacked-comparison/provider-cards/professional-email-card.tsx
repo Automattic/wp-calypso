@@ -6,11 +6,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { getTitanProductName, getTitanProductSlug } from 'calypso/lib/titan';
+import { getTitanProductName } from 'calypso/lib/titan';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-comparison/price/professional-email';
 import EmailProvidersStackedCard from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card';
 import getOnSubmitNewMailboxesHandler from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-on-submit-new-mailboxes-handler';
+import getUpsellProps from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/get-upsell-props';
+import { getProductByProviderAndInterval } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/selectors/get-product-by-provider-and-interval';
 import {
 	HiddenFieldNames,
 	NewMailBoxList,
@@ -21,7 +23,6 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCardProps } from './provider-card-props';
@@ -113,10 +114,11 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 		domains,
 		selectedDomainName: selectedDomainName,
 	} );
-	const emailProduct = useSelector( ( state ) =>
-		getProductBySlug( state, getTitanProductSlug( domain ) as string )
-	);
+
 	const provider = EmailProvider.Titan;
+	const emailProduct = useSelector( ( state ) =>
+		getProductByProviderAndInterval( state, provider, intervalLength )
+	);
 
 	const cartKey = useCartKey();
 	const dispatch = useDispatch();
@@ -165,6 +167,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 			selectedDomainName={ selectedDomainName }
 			showAddNewMailboxButton
 			submitActionText={ translate( 'Purchase' ) }
+			{ ...getUpsellProps( { isDomainInCart, siteSlug } ) }
 		>
 			<PasswordResetTipField
 				hiddenFieldNames={ hiddenFieldNames }
