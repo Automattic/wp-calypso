@@ -33,7 +33,7 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 	public function register_rest_route() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base,
+			'/' . $this->rest_base,
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
@@ -61,16 +61,16 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_post( \WP_REST_Request $request ) {
-		$blog_id = $request->get_param( 'blog_id' );
-		$post_id = $request->get_param( 'post_id' );
-
-		l( 'ciao' );
+		$blog_id = $request['blog_id'];
+		$post_id = $request['post_id'];
 
 		if ( $this->is_wpcom ) {
 			require_once WP_CONTENT_DIR . '/lib/reader-site-post/class.wpcom-reader-site-post.php';
 			$response = \WPCOM_Reader_Site_Post::get_site_post( $blog_id, $post_id );
 		} else {
-			$body = Client::wpcom_json_api_request_as_user( 'help/support/article/' . $blog_id . '/' . $post_id );
+			$body = Client::wpcom_json_api_request_as_user(
+				'/help/support/article/' . $blog_id . '/' . $post_id
+			);
 			if ( is_wp_error( $body ) ) {
 				return $body;
 			}

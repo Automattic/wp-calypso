@@ -5,7 +5,7 @@ import { Spinner } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import classnames from 'classnames';
-import { useState, FC } from 'react';
+import { useState, useRef, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 import { MemoryRouter } from 'react-router-dom';
 /**
@@ -53,15 +53,20 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } 
 		onAnimationEnd: toggleVisible,
 	};
 
+	// This is a workaround for an issue with Draggable in StrictMode
+	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
+	const nodeRef = useRef( null );
+
 	return (
 		<MemoryRouter>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile }
+					nodeRef={ nodeRef }
 					handle=".help-center__container-header"
 					bounds="body"
 				>
-					<Card className={ classNames } { ...animationProps }>
+					<Card className={ classNames } { ...animationProps } ref={ nodeRef }>
 						<HelpCenterHeader
 							isMinimized={ isMinimized }
 							onMinimize={ () => setIsMinimized( true ) }

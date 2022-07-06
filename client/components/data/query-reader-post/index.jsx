@@ -8,7 +8,7 @@ import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 class QueryReaderPost extends Component {
 	static propTypes = {
 		postKey: PropTypes.object.isRequired,
-		isHelpCenter: PropTypes.boolean,
+		isHelpCenter: PropTypes.bool,
 	};
 
 	componentDidMount() {

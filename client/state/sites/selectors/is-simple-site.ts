@@ -10,6 +10,7 @@ import { AppState } from 'calypso/types';
  * @returns {?boolean}               Whether the current site is a simple site or not
  */
 export default createSelector(
-	( state: AppState, siteId = getSelectedSiteId( state ) ) => ! isJetpackSite( state, siteId ),
+	( state: AppState, siteId = getSelectedSiteId( state ) ) =>
+		siteId ? ! isJetpackSite( state, siteId ) : false,
 	( state: AppState, siteId = getSelectedSiteId( state ) ) => [ isJetpackSite( state, siteId ) ]
 );
