@@ -57,7 +57,9 @@ const professionalEmailCardInformation: ProviderCardProps = {
 		);
 	},
 	logo,
-	productName: getTitanProductName(),
+	get productName() {
+		return getTitanProductName();
+	},
 	footerBadge: badge,
 	get features() {
 		return getTitanFeatures();
