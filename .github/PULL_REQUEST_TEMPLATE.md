@@ -30,5 +30,4 @@ Both the PR author and reviewer are responsible for ensuring the checklist is co
 - [ ] Are we memoizing when appropriate (for expensive computations)? More info in [Our Approach to Data](https://github.com/Automattic/wp-calypso/blob/trunk/docs/our-approach-to-data.md) and [Memoizing with create-selector](https://github.com/Automattic/wp-calypso/blob/trunk/packages/state-utils/src/create-selector/README.md) and [Using memoizing selectors](https://react-redux.js.org/api/hooks#using-memoizing-selectors)
 - [ ] Have we sent any new strings [for translation](https://wp.me/PCYsg-1vr-p2) ASAP?
 
-
 Related to #
