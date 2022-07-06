@@ -52,7 +52,7 @@
 		"onboarding/import-from-squarespace": true,
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
-		"onboarding/import-light": true,
+		"onboarding/import-light": false,
 		"happychat": true,
 		"help": true,
 		"home/layout-dev": true,

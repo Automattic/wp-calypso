@@ -7,6 +7,7 @@ import {
 	LatestAtomicTransferError,
 	AtomicSoftwareStatusError,
 	AtomicSoftwareInstallError,
+	GlobalStyles,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
@@ -187,6 +188,23 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			body: cartData,
 		} );
 		return success;
+	}
+
+	const receiveSiteGlobalStyles = ( siteId: number, globalStyles: GlobalStyles ) => ( {
+		type: 'RECEIVE_SITE_GLOBAL_STYLES' as const,
+		siteId,
+		globalStyles,
+	} );
+
+	function* getGlobalStyles( siteId: number, stylesheet: string ) {
+		const globalStyles: GlobalStyles = yield wpcomRequest( {
+			path: `/sites/${ siteId }/global-styles/themes/${ stylesheet }`,
+			apiNamespace: 'wp/v2',
+		} );
+
+		yield receiveSiteGlobalStyles( siteId, globalStyles );
+
+		return globalStyles;
 	}
 
 	function* saveSiteSettings(
@@ -493,6 +511,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		launchSiteFailure,
 		getCart,
 		setCart,
+		getGlobalStyles,
+		receiveSiteGlobalStyles,
 		setSiteSetupError,
 		clearSiteSetupError,
 		initiateAtomicTransfer,
@@ -530,6 +550,7 @@ export type Action =
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'updateSiteSettings' ]
+			| ActionCreators[ 'receiveSiteGlobalStyles' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
 			| ActionCreators[ 'launchSiteStart' ]
