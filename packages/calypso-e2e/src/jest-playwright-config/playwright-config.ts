@@ -31,15 +31,9 @@ const getTargetDeviceOptions = () => {
 
 const targetDeviceOptions = getTargetDeviceOptions();
 
-// Only Chromium supports this CLI argument.
-const getWindowPositionArg = () => {
-	return envVariables.BROWSER_NAME !== 'chromium' ? '' : '--window-position=0,0';
-};
-
 // Options for the BrowserType.
 // https://playwright.dev/docs/api/class-browsertype
 const launchOptions: LaunchOptions = {
-	args: [ getWindowPositionArg() ],
 	headless: envVariables.HEADLESS,
 	slowMo: envVariables.SLOW_MO,
 };

@@ -54,6 +54,9 @@ export class GoogleLoginPage {
 	async enterPassword( password: string ): Promise< void > {
 		const locator = this.page.locator( selectors.passwordInput );
 		await locator.waitFor( { state: 'visible' } );
+		const elementHandle = await locator.elementHandle();
+		await elementHandle?.waitForElementState( 'stable' );
+
 		await locator.type( password );
 	}
 
