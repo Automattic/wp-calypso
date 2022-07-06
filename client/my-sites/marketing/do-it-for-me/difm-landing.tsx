@@ -233,17 +233,17 @@ export default function DIFMLanding( {
 	isInOnboarding: boolean;
 } ) {
 	const translate = useTranslate();
+
 	const productCost = useSelector( ( state ) => getProductCost( state, WPCOM_DIFM_LITE ) );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const displayCost =
-		productCost && currencyCode
-			? formatCurrency( productCost, currencyCode, { stripZeros: true } )
-			: '';
+	const hasPriceDataLoaded = productCost && currencyCode;
 	const isLoading = useSelector( isProductsListFetching );
+	const displayCost = hasPriceDataLoaded
+		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
+		: '';
+
 	const faqHeader = useRef( null );
-
 	const [ isFAQSectionOpen, setIsFAQSectionOpen ] = useState( false );
-
 	const onFAQButtonClick = useCallback( () => {
 		setIsFAQSectionOpen( ( isFAQSectionOpen ) => ! isFAQSectionOpen );
 	}, [ setIsFAQSectionOpen ] );
@@ -276,7 +276,7 @@ export default function DIFMLanding( {
 
 	return (
 		<>
-			{ ! productCost && <QueryProductsList persist /> }
+			{ ! hasPriceDataLoaded && <QueryProductsList persist /> }
 			<Wrapper>
 				<ContentSection>
 					<Header
