@@ -2,13 +2,14 @@ import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
+import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { updateAdminMenuAfterPluginInstallation } from 'calypso/state/admin-menu/actions';
@@ -55,6 +56,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
+	const [ currentStep, setCurrentStep ] = useState( 0 );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -113,6 +115,47 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		// Use an empty array of dependencies since we want to run this effect only once.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
+	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite
+	useEffect( () => {
+		if ( transfer?.status === AtomicTransferComplete && pluginOnSite ) {
+			// Everything done: Step 0
+			setCurrentStep( 0 );
+		} else if ( transfer?.status === AtomicTransferComplete ) {
+			// Transfer is complete, but need to install plugin
+			setCurrentStep( 2 );
+		} else {
+			// Need to transfer and install plugin
+			setCurrentStep( 1 );
+		}
+	}, [ transfer, pluginOnSite ] );
+
+	const steps = useMemo(
+		() => [
+			translate( 'Setting up plugin installation' ), // Transferring to Atomic
+			translate( 'Installing plugin' ),
+		],
+		[ translate ]
+	);
+
+	// Duplicate of marketplace-plugin-install/index.tsx, extract if this works
+	const additionalSteps = useMemo(
+		() => [
+			translate( 'Connecting the dots' ),
+			translate( 'Still working' ),
+			translate( 'Wheels are in motion' ),
+			translate( 'Working magic' ),
+			translate( 'Putting the pieces together' ),
+			translate( 'Assembling the parts' ),
+			translate( 'Stacking the building blocks' ),
+			translate( 'Getting our ducks in a row' ),
+			translate( 'Initiating countdown' ),
+			translate( 'Flipping the switches' ),
+			translate( 'Unlocking potential' ),
+			translate( 'Gears are turning' ),
+		],
+		[ translate ]
+	);
 
 	const thankYouImage = {
 		alt: '',
@@ -202,6 +245,16 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
 			/>
+			{ currentStep > 0 && (
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+				<div className="marketplace-plugin-install__root">
+					<MarketplaceProgressBar
+						steps={ steps }
+						currentStep={ currentStep }
+						additionalSteps={ additionalSteps }
+					/>
+				</div>
+			) }
 			<ThankYouContainer>
 				<ThankYou
 					containerClassName="marketplace-thank-you"
