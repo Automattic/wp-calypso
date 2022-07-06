@@ -386,12 +386,12 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  * At the moment we're showing only to 10% of the users. And to all proxied requests.
  */
 function load_help_center() {
-	if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
-		return;
-	}
-
 	// enable help center for all proxied users.
 	$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
+
+	if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC && ! $is_proxied ) {
+		return;
+	}
 
 	// only shipping to en locale for now.
 	$current_locale = get_locale();

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
@@ -32,7 +33,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isSimpleSite as getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -369,20 +370,18 @@ export default withCurrentRoute(
 		const sidebarIsHidden = ! secondary || isWcMobileApp();
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
-		const userId = getCurrentUserId( state );
-		const currentSegment = 10; //percentage of users that will not see the FAB, but the Help Center
-		const userSegment = userId % 100;
-		const locale = getCurrentLocaleSlug( state );
 		const isEditor = getSectionName( state ) === 'gutenberg-editor';
-		const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
-		const isSimpleSite = window.location.host.endsWith( '.wordpress.com' );
+		const isSimpleSite = getIsSimpleSite( state );
+		const userAllowedToHelpCenter = shouldShowHelpCenterToUser(
+			getCurrentUserId( state ),
+			getCurrentLocaleSlug( state )
+		);
 
 		const disableFAB =
 			isSimpleSite &&
-			isHelpCenterEnabled &&
-			locale === 'en' &&
 			isEditor &&
-			userSegment < currentSegment;
+			config.isEnabled( 'editor/help-center' ) &&
+			userAllowedToHelpCenter;
 
 		return {
 			masterbarIsHidden,

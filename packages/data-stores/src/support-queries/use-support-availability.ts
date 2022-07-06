@@ -7,9 +7,9 @@ type ResponseType< T extends 'CHAT' | 'OTHER' > = T extends 'CHAT'
 	: OtherSupportAvailability;
 
 export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
-	supportType: SUPPORT_TYPE
+	supportType: SUPPORT_TYPE,
+	enabled = true
 ) {
-	const isSimpleSite = window.location.host.endsWith( '.wordpress.com' );
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >(
 		supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability',
 		async () =>
@@ -18,7 +18,7 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 				apiVersion: '1.1',
 			} ),
 		{
-			enabled: isSimpleSite,
+			enabled,
 			refetchOnWindowFocus: false,
 			keepPreviousData: true,
 		}
