@@ -121,7 +121,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							rel="noreferrer"
 							title={ __( 'Visit Site' ) }
 						>
-							<Icon size={ 16 } icon={ icon }></Icon>
+							<Icon size={ 16 } icon={ icon } />
 							<span>{ displaySiteUrl( site.URL ) }</span>
 						</SiteUrl>
 					</div>
