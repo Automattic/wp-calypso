@@ -1,7 +1,8 @@
-import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import SiteIcon from 'calypso/blocks/site-icon';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
 interface SiteTableRowProps {
 	site: Site;
@@ -67,6 +68,15 @@ const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
 };
 
+const VisitDashboardItem = ( site: Site ) => {
+	const { __ } = useI18n();
+	return (
+		<PopoverMenuItem href={ getDashboardUrl( site.slug ) }>
+			{ __( 'Visit Dashboard' ) }
+		</PopoverMenuItem>
+	);
+};
+
 export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	return (
@@ -100,9 +110,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 			<td className="sites-table-row__mobile-hidden">{ site.plan.product_name_short }</td>
 			<td className="sites-table-row__mobile-hidden"></td>
 			<td style={ { width: '20px' } }>
-				<button type="button">
-					<Gridicon icon="ellipsis" />
-				</button>
+				<EllipsisMenu>{ VisitDashboardItem( site ) }</EllipsisMenu>
 			</td>
 		</Row>
 	);
