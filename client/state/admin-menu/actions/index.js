@@ -48,8 +48,5 @@ export const updateAdminMenuAfterPluginInstallation =
 			return;
 		}
 
-		// Wait for another 2s before updating the menu to allow the plugin to finish any potential setup.
-		setTimeout( () => {
-			dispatch( requestAdminMenu( siteId ) );
-		}, 2000 );
+		dispatch( requestAdminMenu( siteId ) );
 	};
