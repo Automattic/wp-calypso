@@ -121,7 +121,9 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite
 	useEffect( () => {
-		if ( transfer?.status === AtomicTransferComplete && pluginOnSite ) {
+		if ( ! transfer ) {
+			setCurrentStep( 0 );
+		} else if ( transfer?.status === AtomicTransferComplete && pluginOnSite ) {
 			// Everything done: Step 0
 			setCurrentStep( 0 );
 		} else if ( transfer?.status === AtomicTransferComplete ) {
