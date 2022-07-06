@@ -121,7 +121,9 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite
+	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite.
+	// Step 0 hides the progress bar. It means "complete" or "still loading transfer status".
+	// Steps 1-4 advance through the bar.
 	useEffect( () => {
 		if ( ! transfer ) {
 			setCurrentStep( 0 );
@@ -132,6 +134,13 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} else if ( transfer?.status === AtomicTransferRelocating ) {
 			setCurrentStep( 3 );
 		} else if ( transfer?.status === AtomicTransferComplete ) {
+			/*
+			 * When we're done transferring, we want to see pluginOnSite to advance
+			 * to step 0 (complete).
+			 * Even after pluginOnSite exists, subsequent requests temporarily set
+			 * pluginOnSite = undefined when there are outstanding network requests.
+			 * Workaround: After seeing pluginOnSite once, we cannot go back to step 4.
+			 */
 			if ( ! pluginOnSite && ! sawPluginOnce ) {
 				setCurrentStep( 4 );
 			} else if ( pluginOnSite && ! sawPluginOnce ) {
