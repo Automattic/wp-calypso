@@ -41,12 +41,14 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 		goToStep( `ready` );
 	};
 
+	const recordImportList = () => {
+		recordTracksEvent( trackEventName, trackEventParams );
+	};
+
 	/**
 	 ↓ Effects
 	 */
-	useEffect( () => {
-		recordTracksEvent( trackEventName, trackEventParams );
-	}, [] );
+	useEffect( recordImportList, [] );
 
 	return (
 		<>

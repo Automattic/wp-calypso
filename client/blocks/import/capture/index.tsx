@@ -81,6 +81,10 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 		} );
 	};
 
+	const recordCaptureScreen = () => {
+		recordTracksEvent( trackEventName, trackEventParams );
+	};
+
 	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {
 		resetError();
 		setUrlValue( e.target.value );
@@ -99,9 +103,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	 */
 	useEffect( recordScanningEvent, [ isAnalyzing ] );
 	useEffect( recordScanningErrorEvent, [ analyzerError ] );
-	useEffect( () => {
-		recordTracksEvent( trackEventName, trackEventParams );
-	}, [] );
+	useEffect( recordCaptureScreen, [] );
 
 	return (
 		<>
