@@ -49,7 +49,8 @@ describe( 'payPalExpressProcessor', () => {
 		country: '',
 		domain_details: null,
 		postal_code: '',
-		success_url: 'https://example.com/thank-you',
+		success_url:
+			'https://example.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you',
 		tos: {
 			locale: 'en',
 			path: '/',
@@ -112,6 +113,8 @@ describe( 'payPalExpressProcessor', () => {
 		).resolves.toStrictEqual( expected );
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
+			success_url:
+				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: '1234567',
@@ -148,6 +151,8 @@ describe( 'payPalExpressProcessor', () => {
 		).resolves.toStrictEqual( expected );
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
+			success_url:
+				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: '1234567',
@@ -176,6 +181,8 @@ describe( 'payPalExpressProcessor', () => {
 		).resolves.toStrictEqual( expected );
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
+			success_url:
+				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: '1234567',
@@ -265,7 +272,8 @@ describe( 'payPalExpressProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
 			cancel_url: 'https://wordpress.com/checkout/no-site?signup=1&isDomainOnly=1',
-			success_url: 'https://wordpress.com/thank-you',
+			success_url:
+				'https://wordpress.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: '0',
@@ -298,7 +306,8 @@ describe( 'payPalExpressProcessor', () => {
 		expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 			...basicExpectedRequest,
 			cancel_url: 'https://wordpress.com/checkout/no-site?signup=1&isDomainOnly=1',
-			success_url: 'https://wordpress.com/thank-you',
+			success_url:
+				'https://wordpress.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you',
 			cart: {
 				...basicExpectedRequest.cart,
 				blog_id: '0',
