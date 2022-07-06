@@ -511,9 +511,7 @@ class MasterbarLoggedIn extends Component {
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending ) {
-			return this.renderCheckout(
-				config.isEnabled( 'checkout/help-center' ) && shouldShowHelpCenterToUser( user.ID, locale )
-			);
+			return this.renderCheckout();
 		}
 		if ( isMobile ) {
 			if (
