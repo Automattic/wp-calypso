@@ -7,6 +7,7 @@ import ImportLink from './import-link';
 import SelectCard from './select-card';
 
 type SelectGoalsProps = {
+	displayAllGoals: boolean;
 	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	onSubmit: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	selectedGoals: Onboard.SiteGoal[];
@@ -14,9 +15,14 @@ type SelectGoalsProps = {
 
 const SiteGoal = Onboard.SiteGoal;
 
-export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsProps ) => {
+export const SelectGoals = ( {
+	displayAllGoals,
+	onChange,
+	onSubmit,
+	selectedGoals,
+}: SelectGoalsProps ) => {
 	const translate = useTranslate();
-	const goalOptions = useGoals();
+	const goalOptions = useGoals( displayAllGoals );
 
 	const addGoal = ( goal: Onboard.SiteGoal ) => {
 		const goalSet = new Set( selectedGoals );
@@ -51,6 +57,10 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 
 	return (
 		<>
+			{ displayAllGoals && (
+				<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
+			) }
+
 			<div className="select-goals__cards-container">
 				{ goalOptions.map( ( { key, title, isPremium } ) => (
 					<SelectCard
@@ -72,10 +82,13 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
-			<div className="select-goals__links-container">
-				<ImportLink onClick={ handleImportLinkClick } />
-				<DIFMLink onClick={ handleDIFMLinkClick } />
-			</div>
+
+			{ ! displayAllGoals && (
+				<div className="select-goals__links-container">
+					<ImportLink onClick={ handleImportLinkClick } />
+					<DIFMLink onClick={ handleDIFMLinkClick } />
+				</div>
+			) }
 		</>
 	);
 };
