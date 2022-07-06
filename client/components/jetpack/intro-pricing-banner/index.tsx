@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import {
@@ -31,6 +32,10 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 	);
 	const highestDiscount = useSelector( ( state ) =>
 		getBestIntroOfferDiscount( state, productSlugs, siteId )
+	);
+	const onAgenciesLinkClick = useTrackCallback(
+		undefined,
+		'calypso_jpcom_agencies_page_intro_banner_link_click'
 	);
 
 	const CALYPSO_MASTERBAR_HEIGHT = 47;
@@ -98,7 +103,12 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 						</div>
 						<div className="intro-pricing-banner__agencies">
 							<img src={ people } alt="" />
-							<a href="https://jetpack.com/for/agencies/" target="_blank" rel="noreferrer">
+							<a
+								onClick={ onAgenciesLinkClick }
+								href="https://jetpack.com/for/agencies/"
+								target="_blank"
+								rel="noreferrer"
+							>
 								{ preventWidows( translate( 'Explore Jetpack for Agencies' ) ) }
 							</a>
 						</div>

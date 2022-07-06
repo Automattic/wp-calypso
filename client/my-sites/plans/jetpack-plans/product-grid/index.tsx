@@ -286,7 +286,7 @@ const ProductGrid: React.FC< ProductsGridProps > = ( {
 						<MoreInfoBox
 							buttonLabel={ translate( 'Explore Jetpack for Agencies' ) }
 							buttonLink={ AGENCIES_PAGE }
-							track=""
+							track="calypso_jpcom_agencies_page_more_info_button_link_click"
 						/>
 					</div>
 				</div>
