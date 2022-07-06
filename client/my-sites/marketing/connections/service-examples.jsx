@@ -4,6 +4,7 @@ import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import GooglePlusDeprication from './google-plus-deprecation';
 import ServiceExample from './service-example';
@@ -97,38 +98,49 @@ class SharingServiceExamples extends Component {
 	}
 
 	facebook() {
-		return [
+		const label = this.props.translate(
+			'{{strong}}Connect{{/strong}} to automatically share posts on your Facebook page.',
 			{
-				image: {
-					src: '/calypso/images/sharing/connections-facebook.png',
-					alt: this.props.translate( 'Share posts to your Facebook page', {
-						textOnly: true,
-					} ),
+				components: {
+					strong: <strong />,
 				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts on your Facebook page.',
+			}
+		);
+		const image = {
+			src: '/calypso/images/sharing/connections-facebook.png',
+			alt: this.props.translate( 'Share posts to your Facebook page', {
+				textOnly: true,
+			} ),
+		};
+		return isJetpackCloud()
+			? [
 					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/connections-button-facebook.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their friends.',
+						label,
+					},
 					{
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
+						image,
+					},
+			  ]
+			: [
+					{
+						image,
+						label,
+					},
+					{
+						image: {
+							src: '/calypso/images/sharing/connections-button-facebook.png',
+							alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
 						},
-					}
-				),
-			},
-		];
+						label: this.props.translate(
+							'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their friends.',
+							{
+								components: {
+									link: <a href={ this.getSharingButtonsLink() } />,
+								},
+							}
+						),
+					},
+			  ];
 	}
 
 	google_my_business() {
@@ -177,71 +189,93 @@ class SharingServiceExamples extends Component {
 	}
 
 	linkedin() {
-		return [
+		const label = this.props.translate(
+			'{{strong}}Connect{{/strong}} to automatically share posts with your LinkedIn connections.',
 			{
-				image: {
-					src: '/calypso/images/sharing/connections-linkedin.png',
-					alt: this.props.translate( 'Share posts with your LinkedIn connections', {
-						textOnly: true,
-					} ),
+				components: {
+					strong: <strong />,
 				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts with your LinkedIn connections.',
+			}
+		);
+		const image = {
+			src: '/calypso/images/sharing/connections-linkedin.png',
+			alt: this.props.translate( 'Share posts with your LinkedIn connections', {
+				textOnly: true,
+			} ),
+		};
+		return isJetpackCloud()
+			? [
 					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/connections-button-linkedin.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their connections.',
+						label,
+					},
 					{
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
+						image,
+					},
+			  ]
+			: [
+					{
+						image,
+						label,
+					},
+					{
+						image: {
+							src: '/calypso/images/sharing/connections-button-linkedin.png',
+							alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
 						},
-					}
-				),
-			},
-		];
+						label: this.props.translate(
+							'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their connections.',
+							{
+								components: {
+									link: <a href={ this.getSharingButtonsLink() } />,
+								},
+							}
+						),
+					},
+			  ];
 	}
 
 	tumblr() {
-		return [
+		const label = this.props.translate(
+			'{{strong}}Connect{{/strong}} to automatically share posts to your Tumblr blog.',
 			{
-				image: {
-					src: '/calypso/images/sharing/connections-tumblr.png',
-					alt: this.props.translate( 'Share posts to your Tumblr blog', { textOnly: true } ),
+				components: {
+					strong: <strong />,
 				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts to your Tumblr blog.',
+			}
+		);
+		const image = {
+			src: '/calypso/images/sharing/connections-tumblr.png',
+			alt: this.props.translate( 'Share posts to your Tumblr blog', { textOnly: true } ),
+		};
+		return isJetpackCloud()
+			? [
 					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/connections-button-tumblr.png',
-					alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their followers.',
+						label,
+					},
 					{
-						components: {
-							link: <a href={ this.getSharingButtonsLink() } />,
+						image,
+					},
+			  ]
+			: [
+					{
+						image,
+						label,
+					},
+					{
+						image: {
+							src: '/calypso/images/sharing/connections-button-tumblr.png',
+							alt: this.props.translate( 'Add a sharing button', { textOnly: true } ),
 						},
-					}
-				),
-			},
-		];
+						label: this.props.translate(
+							'Add a {{link}}sharing button{{/link}} to your posts so readers can share your story with their followers.',
+							{
+								components: {
+									link: <a href={ this.getSharingButtonsLink() } />,
+								},
+							}
+						),
+					},
+			  ];
 	}
 
 	twitter() {
