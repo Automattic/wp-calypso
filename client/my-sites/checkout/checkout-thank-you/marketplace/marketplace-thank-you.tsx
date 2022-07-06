@@ -10,6 +10,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
+import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { updateAdminMenuAfterPluginInstallation } from 'calypso/state/admin-menu/actions';
@@ -137,25 +138,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		],
 		[ translate ]
 	);
-
-	// Duplicate of marketplace-plugin-install/index.tsx, extract if this works
-	const additionalSteps = useMemo(
-		() => [
-			translate( 'Connecting the dots' ),
-			translate( 'Still working' ),
-			translate( 'Wheels are in motion' ),
-			translate( 'Working magic' ),
-			translate( 'Putting the pieces together' ),
-			translate( 'Assembling the parts' ),
-			translate( 'Stacking the building blocks' ),
-			translate( 'Getting our ducks in a row' ),
-			translate( 'Initiating countdown' ),
-			translate( 'Flipping the switches' ),
-			translate( 'Unlocking potential' ),
-			translate( 'Gears are turning' ),
-		],
-		[ translate ]
-	);
+	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const thankYouImage = {
 		alt: '',
