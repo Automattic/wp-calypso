@@ -78,13 +78,13 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to the thank-you pending page with a order id when a site and orderId is set', () => {
+	it( 'redirects to the receipt page with a placeholder id when a site and orderId is set', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			orderId: sampleOrderId,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/pending/${ sampleOrderId }` );
+		expect( url ).toBe( `/checkout/thank-you/foo.bar/:receiptId` );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
@@ -169,7 +169,7 @@ describe( 'getThankYouPageUrl', () => {
 			feature: 'all-free-features',
 			orderId: sampleOrderId,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/features/all-free-features/foo.bar` );
+		expect( url ).toBe( `/checkout/thank-you/features/all-free-features/foo.bar/:receiptId` );
 	} );
 
 	it( 'redirects to the thank-you page with a feature when a site and a valid feature is set with no receipt but the cart is not empty', () => {
@@ -816,7 +816,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/cookie/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to url from cookie followed by pending order id if create_new_blog is set', () => {
+	it( 'redirects to url from cookie followed by receipt id placeholder if create_new_blog is set', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			...getEmptyResponseCart(),
@@ -835,7 +835,7 @@ describe( 'getThankYouPageUrl', () => {
 			orderId: sampleOrderId,
 			getUrlFromCookie,
 		} );
-		expect( url ).toBe( `/cookie/pending/${ sampleOrderId }` );
+		expect( url ).toBe( `/cookie/:receiptId` );
 	} );
 
 	it( 'redirects to url from cookie followed by placeholder receiptId if create_new_blog is set and there is no receipt', () => {
@@ -1034,7 +1034,7 @@ describe( 'getThankYouPageUrl', () => {
 		);
 	} );
 
-	it( 'redirects to the thank-you pending page with an order id when the business upgrade nudge would normally be included', () => {
+	it( 'redirects to the receipt page with when the business upgrade nudge would normally be included', () => {
 		const cart = {
 			...getEmptyResponseCart(),
 			products: [
@@ -1050,7 +1050,7 @@ describe( 'getThankYouPageUrl', () => {
 			orderId: sampleOrderId,
 			cart,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/pending/${ sampleOrderId }` );
+		expect( url ).toBe( `/checkout/thank-you/foo.bar/:receiptId` );
 	} );
 
 	it( 'redirects to the thank you page if jetpack is not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
