@@ -122,13 +122,17 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite
 	useEffect( () => {
-		if ( ! transfer || ( isRequestingPlugins && ! pluginOnSite ) ) {
+		if (
+			typeof transfer === 'undefined' &&
+			typeof pluginOnSite === 'undefined' &&
+			isRequestingPlugins === false
+		) {
 			// Status unknown
-			setCurrentStep( 0 );
+			setCurrentStep( 1 );
 		} else if ( transfer?.status === AtomicTransferComplete && pluginOnSite ) {
 			// Everything done: Step 0
 			setCurrentStep( 0 );
-		} else if ( transfer?.status === AtomicTransferComplete ) {
+		} else if ( transfer?.status === AtomicTransferComplete && ! pluginOnSite ) {
 			// Transfer is complete, but need to install plugin
 			setCurrentStep( 4 );
 		} else if ( transfer?.status === AtomicTransferRelocating ) {
