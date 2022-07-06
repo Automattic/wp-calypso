@@ -125,9 +125,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Step 0 hides the progress bar. It means "complete" or "still loading transfer status".
 	// Steps 1-4 advance through the bar.
 	useEffect( () => {
-		if ( ! transfer ) {
-			setCurrentStep( 0 );
-		} else if ( transfer?.status === AtomicTransferActive ) {
+		if ( transfer?.status === AtomicTransferActive ) {
 			setCurrentStep( 1 );
 		} else if ( transfer?.status === AtomicTransferProvisioned ) {
 			setCurrentStep( 2 );
