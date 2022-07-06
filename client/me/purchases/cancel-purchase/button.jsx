@@ -6,7 +6,6 @@ import {
 	isJetpackProduct,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { getCurrencyDefaults } from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -32,7 +31,6 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { cancellationEffectDetail, cancellationEffectHeadline } from './cancellation-effect';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
@@ -244,29 +242,6 @@ class CancelPurchaseButton extends Component {
 		}
 	};
 
-	renderCancellationEffect = () => {
-		const { purchase, translate, includedDomainPurchase, cancelBundledDomain } = this.props;
-		const overrides = {};
-
-		if (
-			cancelBundledDomain &&
-			includedDomainPurchase &&
-			isDomainRegistration( includedDomainPurchase )
-		) {
-			const { precision } = getCurrencyDefaults( purchase.currencyCode );
-			overrides.refundText =
-				purchase.currencySymbol +
-				parseFloat( purchase.refundAmount + includedDomainPurchase.amount ).toFixed( precision );
-		}
-
-		return (
-			<p>
-				{ cancellationEffectHeadline( purchase, translate ) }
-				{ cancellationEffectDetail( purchase, translate, overrides ) }
-			</p>
-		);
-	};
-
 	render() {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
 		let text;
@@ -316,7 +291,6 @@ class CancelPurchaseButton extends Component {
 				{ ! isJetpack && (
 					<CancelPurchaseForm
 						disableButtons={ disableButtons }
-						defaultContent={ this.renderCancellationEffect() }
 						purchase={ purchase }
 						isVisible={ this.state.showDialog }
 						onClose={ this.closeDialog }
