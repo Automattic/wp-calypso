@@ -61,6 +61,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
 	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ sawPluginOnce, setSawPluginOnce ] = useState( false );
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -122,30 +123,27 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite
 	useEffect( () => {
-		if (
-			typeof transfer === 'undefined' &&
-			typeof pluginOnSite === 'undefined' &&
-			isRequestingPlugins === false
-		) {
-			// Status unknown
-			setCurrentStep( 1 );
-		} else if ( transfer?.status === AtomicTransferComplete && pluginOnSite ) {
-			// Everything done: Step 0
+		if ( ! transfer ) {
 			setCurrentStep( 0 );
-		} else if ( transfer?.status === AtomicTransferComplete && ! pluginOnSite ) {
-			// Transfer is complete, but need to install plugin
-			setCurrentStep( 4 );
-		} else if ( transfer?.status === AtomicTransferRelocating ) {
-			setCurrentStep( 3 );
+		} else if ( transfer?.status === AtomicTransferActive ) {
+			setCurrentStep( 1 );
 		} else if ( transfer?.status === AtomicTransferProvisioned ) {
 			setCurrentStep( 2 );
-		} else if ( transfer?.status === AtomicTransferActive ) {
-			// Need to do entire atomic transfer and install plugin
-			setCurrentStep( 1 );
+		} else if ( transfer?.status === AtomicTransferRelocating ) {
+			setCurrentStep( 3 );
+		} else if ( transfer?.status === AtomicTransferComplete ) {
+			if ( ! pluginOnSite && ! sawPluginOnce ) {
+				setCurrentStep( 4 );
+			} else if ( pluginOnSite && ! sawPluginOnce ) {
+				setCurrentStep( 0 );
+				setSawPluginOnce( true );
+			} else {
+				setCurrentStep( 0 );
+			}
 		} else {
 			setCurrentStep( 0 );
 		}
-	}, [ transfer, pluginOnSite, isRequestingPlugins ] );
+	}, [ transfer, pluginOnSite, sawPluginOnce ] );
 
 	const steps = useMemo(
 		() => [
@@ -257,16 +255,18 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				</div>
 			) }
 			<ThankYouContainer>
-				<ThankYou
-					containerClassName="marketplace-thank-you"
-					sections={ [ setupSection ] }
-					showSupportSection={ true }
-					thankYouImage={ thankYouImage }
-					thankYouTitle={ translate( 'All ready to go!' ) }
-					thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
-					headerBackgroundColor="#fff"
-					headerTextColor="#000"
-				/>
+				{ transfer && (
+					<ThankYou
+						containerClassName="marketplace-thank-you"
+						sections={ [ setupSection ] }
+						showSupportSection={ true }
+						thankYouImage={ thankYouImage }
+						thankYouTitle={ translate( 'All ready to go!' ) }
+						thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
+						headerBackgroundColor="#fff"
+						headerTextColor="#000"
+					/>
+				) }
 			</ThankYouContainer>
 		</ThemeProvider>
 	);
