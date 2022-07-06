@@ -36,7 +36,7 @@ const getEmailProductPropertiesForUpsell = (
 	isAdditionalMailboxesPurchase: false,
 	emailProduct: emailProduct as ProductListItem,
 	newQuantity: newMailboxesCount,
-	quantity: 0,
+	quantity: newMailboxesCount,
 } );
 
 const getOnSubmitNewMailboxesHandler =
