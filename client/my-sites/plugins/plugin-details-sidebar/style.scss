@@ -25,6 +25,10 @@
 		}
 	}
 
+	.card {
+		background: transparent;
+	}
+
 	@media screen and ( max-width: 1040px ) {
 		display: flex;
 		justify-content: space-between;

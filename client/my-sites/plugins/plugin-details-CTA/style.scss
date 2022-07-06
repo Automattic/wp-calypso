@@ -86,6 +86,20 @@
 	}
 }
 
+.plugin-details-CTA__upgrade-required {
+	display: flex;
+
+	.plugin-details-CTA__upgrade-required-icon {
+		color: var( --studio-orange-40 );
+	}
+
+	.plugin-details-CTA__upgrade-required-text {
+		color: var( --studio-gray-80 );
+		font-size: $font-body-small;
+		margin-left: 16px;
+	}
+}
+
 .is-placeholder {
 	.plugin-details-CTA__price,
 	.plugin-details-CTA__install,

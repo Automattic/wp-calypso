@@ -4,6 +4,7 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { userCan } from 'calypso/lib/site/utils';
@@ -173,7 +174,7 @@ const PluginDetailsCTA = ( {
 								) : (
 									translate( 'Free' )
 								) }
-								{ shouldUpgrade && (
+								{ legacyVersion && shouldUpgrade && (
 									<span className="plugin-details-CTA__uprade-required">
 										{ translate( 'Plan upgrade required' ) }
 									</span>
@@ -203,6 +204,18 @@ const PluginDetailsCTA = ( {
 					isSiteConnected={ isSiteConnected }
 				/>
 			</div>
+			{ ! legacyVersion && shouldUpgrade && (
+				<div className="plugin-details-CTA__upgrade-required">
+					<span className="plugin-details-CTA__upgrade-required-icon">
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						<Gridicon icon="notice-outline" size={ 20 } />
+						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+					</span>
+					<span className="plugin-details-CTA__upgrade-required-text">
+						{ translate( 'You need to upgrade your plan to install plugins.' ) }
+					</span>
+				</div>
+			) }
 			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-CTA__t-and-c">
 					{ translate(
