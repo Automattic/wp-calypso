@@ -20,6 +20,7 @@ import { getSitePlan } from 'calypso/state/sites/selectors';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import isStarterPlanEnabled from './is-starter-plan-enabled';
 import { PlansComparisonAction } from './plans-comparison-action';
+import { PlansComparisonColCTA } from './plans-comparison-col-cta';
 import { PlansComparisonColHeader } from './plans-comparison-col-header';
 import { planComparisonFeatures } from './plans-comparison-features';
 import { PlansComparisonRow, DesktopContent, MobileContent } from './plans-comparison-row';
@@ -488,8 +489,20 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 						<td className={ `is-first` }>
 							<br />
 						</td>
-						{ plans.map( ( plan, index ) => (
+						{ plans.map( ( plan ) => (
 							<PlansComparisonColHeader
+								key={ plan.getProductId() }
+								plan={ plan }
+								translate={ translate }
+							/>
+						) ) }
+					</tr>
+					<tr>
+						<td className={ `is-first` }>
+							<br />
+						</td>
+						{ plans.map( ( plan, index ) => (
+							<PlansComparisonColCTA
 								key={ plan.getProductId() }
 								plan={ plan }
 								currencyCode={ currencyCode }
@@ -510,7 +523,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 									}
 									onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
 								/>
-							</PlansComparisonColHeader>
+							</PlansComparisonColCTA>
 						) ) }
 					</tr>
 				</THead>
