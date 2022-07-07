@@ -14,7 +14,7 @@ import {
 	LoginPage,
 	SecretsManager,
 	GoogleLoginPage,
-	EmailClient,
+	TOTPClient,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipItIf } from '../../jest-helpers';
@@ -27,12 +27,9 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Google' ), function () {
 	let googlePopupPage: Page;
 	let loginPage: LoginPage;
 	let googleLoginPage: GoogleLoginPage;
-	let emailClient: EmailClient;
 	let challenge = false;
 
 	beforeAll( async () => {
-		emailClient = new EmailClient();
-
 		page = await browser.newPage();
 	} );
 
@@ -66,25 +63,27 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Google' ), function () {
 	} );
 
 	describe( 'Complete 2FA', function () {
-		skipItIf( ! challenge )( 'Enter 2FA phone number', async function () {
-			expect( await googleLoginPage.isChallengeShown() ).toBe( true );
+		// skipItIf( ! challenge )( 'Enter 2FA phone number', async function () {
+		// 	expect( await googleLoginPage.isChallengeShown() ).toBe( true );
 
-			await googleLoginPage.enter2FAPhoneNumber( credentials.smsNumber?.number as string );
-			await googleLoginPage.clickButton( 'Next' );
-		} );
+		// 	await googleLoginPage.enter2FAPhoneNumber( credentials.smsNumber?.number as string );
+		// 	await googleLoginPage.clickButton( 'Next' );
+		// } );
 
 		skipItIf( ! challenge )( 'Enter 2FA code', async function () {
-			const message = await emailClient.getLastMatchingMessage( {
-				inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
-				sentFrom: '18339020110',
-			} );
-			const rawCode = emailClient.get2FACodeFromMessage( message );
-			const code = rawCode.match( /[\d]{6}$/ );
-			if ( ! code ) {
-				throw new Error( 'Failed to extract Google 2FA code.' );
-			}
+			// const message = await emailClient.getLastMatchingMessage( {
+			// 	inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
+			// 	sentFrom: '18339020110',
+			// } );
+			// const rawCode = emailClient.get2FACodeFromMessage( message );
+			// const code = rawCode.match( /[\d]{6}$/ );
+			// if ( ! code ) {
+			// 	throw new Error( 'Failed to extract Google 2FA code.' );
+			// }
+			const totpClient = new TOTPClient( credentials.totpKey as string );
+			const code = totpClient.getToken();
 
-			await googleLoginPage.enter2FACode( code[ 0 ] );
+			await googleLoginPage.enter2FACode( code );
 		} );
 	} );
 

@@ -177,6 +177,7 @@ export class SecretsManager {
 				googleLoginUser: {
 					...fakeAccount,
 					smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' },
+					totpKey: 'FAKE_VALUE',
 				},
 			},
 			otherTestSites: {

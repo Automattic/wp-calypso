@@ -11,29 +11,38 @@ const selectors = {
 };
 
 /**
- *
+ * Represents the login screens shown by Google.
  */
 export class GoogleLoginPage {
 	/**
+	 * Construct and instance of the EmailClient.
 	 *
-	 * @param page
+	 * @param {Page} page Handler for instance of the Google login page.
 	 */
 	constructor( private page: Page ) {}
 
 	/**
+	 * Fills the username field.
 	 *
-	 * @param email
+	 * Note that to avoid bot detection where possible, the
+	 * method used is `type`, not `fill`.
+	 *
+	 * @param {string} email Email address of the user.
 	 */
 	async enterUsername( email: string ): Promise< void > {
 		const locator = this.page.locator( selectors.emailInput );
 		await locator.waitFor( { state: 'visible' } );
 
-		await locator.type( email );
+		await locator.type( email, { delay: 50 } );
 	}
 
 	/**
+	 * Fills the password field.
 	 *
-	 * @param password
+	 * Note that to avoid bot detection where possible, the
+	 * method used is `type`, not `fill`.
+	 *
+	 * @param {string} password Password of the user.
 	 */
 	async enterPassword( password: string ): Promise< void > {
 		const locator = this.page.locator( selectors.passwordInput );
@@ -44,11 +53,13 @@ export class GoogleLoginPage {
 			elementHandle?.waitForElementState( 'stable' ),
 		] );
 
-		await locator.type( password );
+		await locator.type( password, { delay: 50 } );
 	}
 
 	/**
+	 * Determines if a 2FA challenge is shown.
 	 *
+	 * @returns {boolean} True if the 2FA input is shown. False otherwise.
 	 */
 	async isChallengeShown(): Promise< boolean > {
 		const locator = this.page.locator( selectors.phoneInput );
@@ -57,7 +68,9 @@ export class GoogleLoginPage {
 	}
 
 	/**
+	 * Fills the phone number field for the 2FA.
 	 *
+	 * @param {string} phoneNumber Phone number of the user.
 	 */
 	async enter2FAPhoneNumber( phoneNumber: string ): Promise< void > {
 		const locator = this.page.locator( selectors.phoneInput );
@@ -72,8 +85,9 @@ export class GoogleLoginPage {
 	}
 
 	/**
+	 * Fills the 2FA code.
 	 *
-	 * @param code
+	 * @param {string} code 2FA code for the user, either TOTP or SMS OTP.
 	 */
 	async enter2FACode( code: string ): Promise< void > {
 		const locator = this.page.locator( selectors.otpInput );
@@ -88,8 +102,9 @@ export class GoogleLoginPage {
 	}
 
 	/**
+	 * Given text, clicks the button with matching text.
 	 *
-	 * @param text
+	 * @param {string} text Text on button to click.
 	 */
 	async clickButton( text: string ): Promise< void > {
 		const locator = this.page.locator( selectors.button( text ) );
