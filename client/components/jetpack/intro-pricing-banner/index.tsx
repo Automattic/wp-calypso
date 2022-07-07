@@ -1,10 +1,10 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import {
@@ -32,10 +32,6 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 	);
 	const highestDiscount = useSelector( ( state ) =>
 		getBestIntroOfferDiscount( state, productSlugs, siteId )
-	);
-	const onAgenciesLinkClick = useTrackCallback(
-		undefined,
-		'calypso_jpcom_agencies_page_intro_banner_link_click'
 	);
 
 	const CALYPSO_MASTERBAR_HEIGHT = 47;
@@ -104,7 +100,9 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 						<div className="intro-pricing-banner__agencies">
 							<img src={ people } alt="" />
 							<a
-								onClick={ onAgenciesLinkClick }
+								onClick={ () =>
+									recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' )
+								}
 								href="https://jetpack.com/for/agencies/"
 								target="_blank"
 								rel="noreferrer"
