@@ -90,10 +90,8 @@ export const removeP2SignupClassName = function () {
 
 export default {
 	redirectTests( context, next ) {
-		console.log( context );
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		console.log( currentFlowName );
 		if ( isReskinnedFlow( currentFlowName ) ) {
 			next();
 		} else if (
@@ -114,7 +112,6 @@ export default {
 			removeWhiteBackground();
 			next();
 		} else if ( context.pathname.includes( 'videopress' ) ) {
-			console.log( 'Includes videopress' );
 			addVideoPressSignupClassName();
 			removeWhiteBackground();
 			next();
