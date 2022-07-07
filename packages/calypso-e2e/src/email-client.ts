@@ -23,7 +23,6 @@ export class EmailClient {
 	 * @param param0 Keyed parameter object.
 	 * @param {string} param0.inboxId ID of the inbox to look into. Also known as serverId in Mailosaur parlance.
 	 * @param {string} param0.sentTo Recipient email or phone number.
-	 * @param {string} param0.sentFrom Sender email or phone number.
 	 * @param {string} param0.subject Subject of the message.
 	 * @param {string} param0.body Body of the message.
 	 * @returns {Message} Message object returned by Mailosaur client.
@@ -31,19 +30,16 @@ export class EmailClient {
 	async getLastMatchingMessage( {
 		inboxId,
 		sentTo,
-		sentFrom,
 		subject,
 		body,
 	}: {
 		inboxId: string;
-		sentTo?: string;
-		sentFrom?: string;
+		sentTo: string;
 		subject?: string;
 		body?: string;
 	} ): Promise< Message > {
 		const searchCriteria = {
 			sentTo: sentTo,
-			sentFrom: sentFrom,
 			subject: subject !== undefined ? subject : '',
 			body: body !== undefined ? body : '',
 		};
