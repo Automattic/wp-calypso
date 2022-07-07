@@ -22,7 +22,7 @@ import type { ReactElement } from 'react';
 const globalOverrides = css`
 	.is-section-add-ons {
 		#content.layout__content {
-			background: red;
+			background: #fdfdfd;
 		}
 	}
 `;
