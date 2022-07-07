@@ -89,8 +89,14 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	}, [ cancellationOffer, purchase ] );
 
 	const offerDiscountBasedFromPurchasePrice = useMemo( () => {
+		// toFixed will round to the 3rd decimal place here.
+		// This will catch floats like 19.9999 and round them to the closest integer.
 		return cancellationOffer
-			? Math.floor( ( 1 - cancellationOffer.rawPrice / purchase.amount ) * 100 )
+			? Math.floor(
+					Number.parseFloat(
+						Number( 1 - cancellationOffer.rawPrice / purchase.amount ).toFixed( 3 )
+					) * 100
+			  )
 			: 0;
 	}, [ cancellationOffer, purchase ] );
 

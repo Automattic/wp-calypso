@@ -135,11 +135,12 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 		a {
 			font-weight: 600;
 			text-decoration: underline;
-			color: var( --studio-gray-100 );
+			color: var( --studio-jetpack-green-60 );
 
 			&:hover,
 			&:focus {
 				text-decoration-thickness: 3px;
+				color: var( --studio-jetpack-green-70 );
 			}
 		}
 	}

@@ -30,13 +30,13 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 
 		switch ( billingInterval ) {
 			case PLAN_MONTHLY_PERIOD:
-				interval = translate( '%(count) months', { args: { count: periods } } );
+				interval = translate( '%(count)s months', { args: { count: periods } } );
 				singularInterval = translate( 'month' );
 				break;
 
 			case PLAN_ANNUAL_PERIOD:
 				if ( periods > 1 ) {
-					interval = translate( '%(count) years', { args: { count: periods } } );
+					interval = translate( '%(count)s years', { args: { count: periods } } );
 				}
 				interval = translate( 'year' );
 				singularInterval = translate( 'year' );
@@ -44,7 +44,7 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 
 			default:
 				if ( periods > 1 ) {
-					interval = translate( '%(count) renewals', { args: { count: periods } } );
+					interval = translate( '%(count)s renewals', { args: { count: periods } } );
 				}
 				interval = translate( 'renewal' );
 				singularInterval = translate( 'renewal' );
@@ -86,7 +86,8 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 							discount: percentDiscount,
 						},
 					} ) }
-					<br />
+				</p>
+				<p>
 					{ translate(
 						'Your subscription will renew at %(renewalPrice)s for the next %(interval)s. It will then renew at %(fullPrice)s each following %(singularInterval)s.',
 						{
