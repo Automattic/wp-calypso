@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import type { AppLogo } from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
+import type { AppLogo } from 'calypso/my-sites/email/email-providers-comparison/stacked/email-provider-stacked-card/email-provider-stacked-features';
 import type { TranslateResult } from 'i18n-calypso';
 
 export interface ProviderCardProps {

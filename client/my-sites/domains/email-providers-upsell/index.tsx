@@ -1,6 +1,6 @@
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-comparison/stacked';
 
 interface EmailProvidersUpsellProps {
 	selectedDomainName: string;
