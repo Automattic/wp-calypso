@@ -89,6 +89,7 @@
 		"sign-in-with-apple": false,
 		"signup/anchor-fm": true,
 		"signup/professional-email-step": false,
+		"signup/add-ons": false,
 		"signup/reskin": true,
 		"signup/seller-upgrade-modal": false,
 		"signup/social": true,

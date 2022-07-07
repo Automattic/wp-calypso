@@ -112,6 +112,7 @@
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
 		"signup/professional-email-step": false,
+		"signup/add-ons": false,
 		"signup/anchor-fm": true,
 		"signup/reskin": true,
 		"signup/social": true,

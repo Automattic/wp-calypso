@@ -141,6 +141,7 @@
 		"sign-in-with-apple/redirect": true,
 		"signup/anchor-fm": true,
 		"signup/professional-email-step": false,
+		"signup/add-ons": false,
 		"signup/reskin": true,
 		"signup/seller-upgrade-modal": false,
 		"signup/social": true,
