@@ -221,7 +221,8 @@ const MailboxesForm = ( {
 	emailProduct: ProductListItem | null;
 	goToEmail: () => void;
 } ): JSX.Element => {
-	const [ state, setState ] = useState( { isValidating: false, isAddingToCart: false } );
+	const [ isAddingToCart, setIsAddingToCart ] = useState( false );
+	const [ isValidating, setIsValidating ] = useState( false );
 
 	const cartKey = useCartKey();
 	const cartManager = useShoppingCart( cartKey );
@@ -261,24 +262,25 @@ const MailboxesForm = ( {
 			} );
 		};
 
-		setState( { ...state, isValidating: true } );
+		setIsValidating( true );
 		if (
 			! ( await mailboxOperations.validateAndCheck( mailProperties.isAdditionalMailboxesPurchase ) )
 		) {
 			recordContinueEvent( { canContinue: false } );
-			setState( { ...state, isValidating: false } );
+			setIsValidating( false );
 			return;
 		}
 
+		setIsValidating( false );
 		recordContinueEvent( { canContinue: true } );
-		setState( { ...state, isAddingToCart: true } );
+		setIsAddingToCart( true );
 
 		cartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )
 			.then( () => {
 				page( '/checkout/' + selectedSite.slug );
 			} )
-			.finally( () => setState( { ...state, isAddingToCart: false } ) );
+			.finally( () => setIsAddingToCart( false ) );
 	};
 
 	return (
@@ -287,7 +289,7 @@ const MailboxesForm = ( {
 
 			<Card>
 				<NewMailBoxList
-					areButtonsBusy={ state.isAddingToCart || state.isValidating }
+					areButtonsBusy={ isAddingToCart || isValidating }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }
