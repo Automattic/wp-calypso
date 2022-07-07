@@ -7,6 +7,7 @@ import {
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
+import ListTile from '@automattic/components/src/list-tile/docs/example';
 import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
@@ -284,6 +285,7 @@ export default class DesignAssets extends Component {
 					<Wizard readmeFilePath="wizard" />
 					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
 					<WpcomColophon readmeFilePath="wpcom-colophon" />
+					<ListTile readmeFilePath="list-tile" />
 				</Collection>
 			</Main>
 		);
