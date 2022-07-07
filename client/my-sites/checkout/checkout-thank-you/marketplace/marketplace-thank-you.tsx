@@ -125,6 +125,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Step 0 hides the progress bar. It means "complete" or "still loading transfer status".
 	// Steps 1-4 advance through the bar.
 	const transferStatus = transfer?.status;
+	const isPluginOnSite = !! pluginOnSite;
 	useEffect( () => {
 		if ( transferStatus === AtomicTransferActive ) {
 			setCurrentStep( 1 );
@@ -134,15 +135,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			setCurrentStep( 3 );
 		} else if ( transferStatus === AtomicTransferComplete ) {
 			/*
-			 * When we're done transferring, we want to see pluginOnSite to advance
+			 * When we're done transferring, we want to see isPluginOnSite to advance
 			 * to step 0 (complete).
 			 * Even after pluginOnSite exists, subsequent requests temporarily set
 			 * pluginOnSite = undefined when there are outstanding network requests.
-			 * Workaround: After seeing pluginOnSite once, we cannot go back to step 4.
+			 * Workaround: After seeing isPluginOnSite once, we cannot go back to step 4.
 			 */
-			if ( ! pluginOnSite && ! sawPluginOnce ) {
+			if ( ! isPluginOnSite && ! sawPluginOnce ) {
 				setCurrentStep( 4 );
-			} else if ( pluginOnSite && ! sawPluginOnce ) {
+			} else if ( isPluginOnSite && ! sawPluginOnce ) {
 				setCurrentStep( 0 );
 				setSawPluginOnce( true );
 			} else {
@@ -151,7 +152,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} else {
 			setCurrentStep( 0 );
 		}
-	}, [ transferStatus, pluginOnSite, sawPluginOnce ] );
+	}, [ transferStatus, isPluginOnSite, sawPluginOnce ] );
 
 	const steps = useMemo(
 		() => [
