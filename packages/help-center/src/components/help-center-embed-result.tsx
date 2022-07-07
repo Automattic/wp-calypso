@@ -12,14 +12,11 @@ import { BackButton } from './back-button';
 import ArticleContent from './help-center-article-content';
 
 export const HelpCenterEmbedResult: React.FC = () => {
-	const { search } = useLocation();
+	const location = useLocation();
 	const history = useHistory();
 	const sectionName = useSelector( getSectionName );
-	const params = new URLSearchParams( search );
-	const postId = params.get( 'postId' );
-	const blogId = params.get( 'blogId' );
-	const query = params.get( 'query' );
-	const link = params.get( 'link' );
+
+	const { query, content, title, link } = location.state;
 
 	useEffect( () => {
 		const tracksData = {
@@ -34,10 +31,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 
 	const redirectToSearchOrHome = () => {
 		if ( query ) {
-			const search = new URLSearchParams( {
-				query,
-			} ).toString();
-			history.push( `/?${ search }` );
+			history.push( `/?query=${ query }` );
 		} else {
 			history.push( '/' );
 		}
@@ -60,7 +54,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 					</Button>
 				</FlexItem>
 			</Flex>
-			{ postId && <ArticleContent postId={ +postId } blogId={ blogId } /> }
+			{ content && <ArticleContent content={ content } title={ title } link={ link } /> }
 		</div>
 	);
 };

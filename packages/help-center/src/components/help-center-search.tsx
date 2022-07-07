@@ -18,19 +18,12 @@ export const HelpCenterSearch = () => {
 
 	const redirectToArticle = useCallback(
 		( event, result ) => {
-			const search = new URLSearchParams( {
-				postId: result.post_id,
-				query: searchQuery,
-				link: result.link ?? '',
-				title: result.title,
-			} );
-
-			if ( result.blog_id ) {
-				search.append( 'blogId', result.blog_id );
-			}
-
 			event.preventDefault();
-			history.push( `/post/?${ search.toString() }` );
+			const searchResult = {
+				...result,
+				query: searchQuery,
+			};
+			history.push( `/post/?${ result.slug }`, searchResult );
 		},
 		[ history, searchQuery ]
 	);
