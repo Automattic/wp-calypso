@@ -6,6 +6,8 @@ const selectors = {
 
 	emailInput: 'input[type="email"]',
 	passwordInput: 'input[type="password"]',
+	phoneInput: 'input[type="tel"][id="phoneNumberId"]',
+	otpInput: 'input[type="tel"][id="id="idvAnyPhonePin"]',
 };
 
 /**
@@ -20,27 +22,9 @@ export class GoogleLoginPage {
 
 	/**
 	 *
-	 * @param param0
-	 * @param param0.email
-	 * @param param0.password
-	 */
-	async enterCredentials( {
-		email,
-		password,
-	}: {
-		email: string;
-		password: string;
-	} ): Promise< void > {
-		await this.enterEmail( email );
-		await this.clickButton( 'Next' );
-		await this.enterPassword( password );
-	}
-
-	/**
-	 *
 	 * @param email
 	 */
-	async enterEmail( email: string ): Promise< void > {
+	async enterUsername( email: string ): Promise< void > {
 		const locator = this.page.locator( selectors.emailInput );
 		await locator.waitFor( { state: 'visible' } );
 
@@ -53,11 +37,54 @@ export class GoogleLoginPage {
 	 */
 	async enterPassword( password: string ): Promise< void > {
 		const locator = this.page.locator( selectors.passwordInput );
-		await locator.waitFor( { state: 'visible' } );
+
 		const elementHandle = await locator.elementHandle();
-		await elementHandle?.waitForElementState( 'stable' );
+		await Promise.all( [
+			locator.waitFor( { state: 'visible' } ),
+			elementHandle?.waitForElementState( 'stable' ),
+		] );
 
 		await locator.type( password );
+	}
+
+	/**
+	 *
+	 */
+	async isChallengeShown(): Promise< boolean > {
+		const locator = this.page.locator( selectors.phoneInput );
+
+		return Boolean( await locator.count() );
+	}
+
+	/**
+	 *
+	 */
+	async enter2FAPhoneNumber( phoneNumber: string ): Promise< void > {
+		const locator = this.page.locator( selectors.phoneInput );
+		const elementHandle = await locator.elementHandle();
+
+		await Promise.all( [
+			locator.waitFor( { state: 'visible' } ),
+			elementHandle?.waitForElementState( 'stable' ),
+		] );
+
+		await locator.type( phoneNumber );
+	}
+
+	/**
+	 *
+	 * @param code
+	 */
+	async enter2FACode( code: string ): Promise< void > {
+		const locator = this.page.locator( selectors.otpInput );
+		const elementHandle = await locator.elementHandle();
+
+		await Promise.all( [
+			locator.waitFor( { state: 'visible' } ),
+			elementHandle?.waitForElementState( 'stable' ),
+		] );
+
+		await locator.type( code );
 	}
 
 	/**
