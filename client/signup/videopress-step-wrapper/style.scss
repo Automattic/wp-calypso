@@ -42,8 +42,6 @@
 }
 
 .videopress-step-wrapper {
-	// background: var( --videopress-color-background-dark );
-	// color: var( --videopress-color-text );
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
@@ -216,7 +214,7 @@
 	}
 }
 
-.signup__step.is-p-2-get-started {
+.signup__step.is-videopress-get-started {
 	.videopress-step-wrapper {
 		@include break-mobile {
 			padding-left: 20px;
