@@ -51,11 +51,15 @@
 }
 
 .videopress-step-wrapper__top {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 	height: 70px;
 	min-height: 70px;
 	color: var( --videopress-color-background-dark );
 	background: var( --videopress-color-text );
 }
+
 .videopress-step-wrapper__middle {
 	background: var( --videopress-color-background-dark );
 	color: var( --videopress-color-text );
@@ -113,24 +117,25 @@
 }
 
 .videopress-step-wrapper__header-logo {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+
 	svg path {
 		fill: var( --videopress-color-background-dark );
 	}
 	span {
 	    @extend .wp-brand-font;
-		position: absolute;
-		top: -2px;
-		left: 40px;
+		margin-left: 4px;
 		font-weight: 600;
 	}
 }
 
 .videopress-step-wrapper__header-step-indicator,
 .videopress-step-wrapper__header-logout {
-	position: absolute;
-	right: 24px;
-	top: 24px;
 	font-size: 0.875rem;
+	align-self: end;
+	margin-right: 24px;
 }
 
 .videopress-step-wrapper__header-step-indicator {
