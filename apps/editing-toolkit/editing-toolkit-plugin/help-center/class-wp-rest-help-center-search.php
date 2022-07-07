@@ -40,16 +40,12 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 					'callback'            => array( $this, 'get_search_results' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 					'args'                => array(
-						'query'           => array(
+						'query'  => array(
 							'type' => 'string',
 						),
-						'locale'          => array(
+						'locale' => array(
 							'type'    => 'string',
 							'default' => 'en',
-						),
-						'include_post_id' => array(
-							'type'    => 'boolean',
-							'default' => true,
 						),
 					),
 				),
@@ -74,15 +70,14 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_search_results( \WP_REST_Request $request ) {
-		$query           = $request['query'];
-		$locale          = $request['locale'];
-		$include_post_id = $request['include_post_id'];
+		$query  = $request['query'];
+		$locale = $request['locale'];
 
 		if ( $this->is_wpcom ) {
-			$response = \WPCOM_Help_Search::search_wpcom_support( $query, $locale, $include_post_id );
+			$response = \WPCOM_Help_Search::search_wpcom_support( $query, $locale );
 		} else {
 			$body = Client::wpcom_json_api_request_as_user(
-				'/help/search/wpcom?query=' . $query . '&locale=' . $locale . '&include_post_id=' . $include_post_id
+				'/help/search/wpcom?query=' . $query . '&locale=' . $locale
 			);
 
 			if ( is_wp_error( $body ) ) {
