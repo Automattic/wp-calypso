@@ -271,12 +271,9 @@ function HelpSearchResults( {
 		: translate( 'Helpful resources for this section' );
 
 	const renderSearchResults = () => {
-		if ( isSearching && ! searchResults.length && ! adminResults.length ) {
-			return <PlaceholderLines lines={ placeholderLines } />;
-		}
-
 		return (
 			<>
+				{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 				{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 					<p className="help-center-search-results__empty-results">
 						{ translate(
