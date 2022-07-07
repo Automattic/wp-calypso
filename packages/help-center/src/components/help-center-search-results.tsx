@@ -208,8 +208,6 @@ function HelpSearchResults( {
 								rel: 'noreferrer',
 							} ) }
 						>
-							{ /* Old stuff - leaving this incase we need to quick revert
-							{ icon && <Gridicon icon={ icon } size={ 18 } /> } */ }
 							<LinkIcon />
 							<span>{ preventWidows( decodeEntities( title ) ) }</span>
 						</a>
