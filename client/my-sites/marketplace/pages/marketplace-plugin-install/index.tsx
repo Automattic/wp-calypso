@@ -14,6 +14,7 @@ import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
+import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -263,24 +264,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		],
 		[ isUploadFlow, translate ]
 	);
-
-	const additionalSteps = useMemo(
-		() => [
-			translate( 'Connecting the dots' ),
-			translate( 'Still working' ),
-			translate( 'Wheels are in motion' ),
-			translate( 'Working magic' ),
-			translate( 'Putting the pieces together' ),
-			translate( 'Assembling the parts' ),
-			translate( 'Stacking the building blocks' ),
-			translate( 'Getting our ducks in a row' ),
-			translate( 'Initiating countdown' ),
-			translate( 'Flipping the switches' ),
-			translate( 'Unlocking potential' ),
-			translate( 'Gears are turning' ),
-		],
-		[ translate ]
-	);
+	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
