@@ -205,6 +205,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	return (
 		<Dropdown aria-expanded={ open } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
 			<CurrentOption
+				aria-label={ translate( 'Pick a product term' ) }
 				disabled={ isDisabled }
 				onClick={ () => setOpen( ! open ) }
 				open={ open }
@@ -223,6 +224,8 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 						( { variantLabel, formattedCurrentPrice, productId, productSlug }, index ) => (
 							<Option
 								id={ productId.toString() }
+								aria-label={ variantLabel }
+								data-product-slug={ productSlug }
 								role="option"
 								key={ productSlug + variantLabel }
 								onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
