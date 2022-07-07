@@ -10,7 +10,7 @@
 
 	--videopress-color-white: #ffffff;
 
-	--videopress-color-link: #FFFC1B;
+	--videopress-color-link: #fffc1b;
 	--videopress-color-link-dark: #004cbf;
 
 	--videopress-color-border-light: #e7e9ea;
@@ -28,7 +28,7 @@
 	--videopress-color-background-dark: #121212;
 	--videopress-color-hover-dark: #061925;
 	--videopress-color-separator-light: #4d5860;
-	--videopress-color-background-button: linear-gradient(116.82deg, #FFFC1B 0%, #FFE61C 0.01%, #FFC700 100%);
+	--videopress-color-background-button: linear-gradient( 116.82deg, #fffc1b 0%, #ffe61c 0.01%, #ffc700 100% );
 
 	--videopress-font-inter: 'Inter', -apple-system, system-ui, blinkmacsystemfont, 'Segoe UI', 'Roboto',
 		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
@@ -71,7 +71,7 @@
 	}
 
 	a {
-		color: var(--videopress-color-link);
+		color: var( --videopress-color-link );
 		text-decoration: none;
 	}
 
@@ -96,9 +96,10 @@
 
 .videopress-step-wrapper__header-logo {
 	svg path {
-		fill: var(--videopress-color-text);
+		fill: var( --videopress-color-text );
 	}
 	span {
+	    @extend .wp-brand-font;
 		position: absolute;
 		top: -2px;
 		left: 40px;
@@ -125,7 +126,7 @@
 
 .videopress-step-wrapper button.is-primary {
 	@extend %p2-form-button;
-	background: var(--videopress-color-background-button);
+	background: var( --videopress-color-background-button );
 	color: #070707;
 	border-radius: 0;
 }
