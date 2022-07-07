@@ -531,6 +531,12 @@ const sections = [
 		module: 'calypso/my-sites/store',
 		group: 'sites',
 	},
+	{
+		name: 'add-ons',
+		paths: [ '/add-ons', '/add-ons/[^\\/]+' ],
+		module: 'calypso/my-sites/add-ons',
+		group: 'sites',
+	},
 ];
 
 module.exports = sections;
