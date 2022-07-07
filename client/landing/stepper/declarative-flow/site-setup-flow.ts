@@ -324,6 +324,12 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'vertical': {
+					const data = providedDependencies.data as Record< string, any >;
+
+					if ( data?.error ) {
+						return navigate( 'error', data );
+					}
+
 					if ( goalsStepEnabled ) {
 						if ( goals.includes( SiteGoal.Import ) ) {
 							return navigate( 'import' );

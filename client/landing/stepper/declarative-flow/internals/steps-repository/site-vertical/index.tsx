@@ -1,5 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -15,7 +13,7 @@ import type { Step } from '../../types';
 import type { Vertical } from 'calypso/components/select-vertical/types';
 
 const SiteVertical: Step = function SiteVertical( { navigation } ) {
-	const { goBack, goNext, submit } = navigation;
+	const { goNext, submit } = navigation;
 	const [ vertical, setVertical ] = React.useState< Vertical | null >();
 	const [ isBusy, setIsBusy ] = React.useState( false );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
@@ -27,8 +25,6 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const headerText = translate( 'What’s your website about?' );
 	const subHeaderText = translate( 'Choose a category that defines your website the best.' );
 	const isSkipSynonyms = useQuery().get( 'isSkipSynonyms' );
-	const isEnglishLocale = useIsEnglishLocale();
-	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
 
 	const handleSiteVerticalSelect = ( vertical: Vertical ) => {
 		setVertical( vertical );
@@ -60,34 +56,67 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	}
 
 	return (
-		<StepContainer
-			stepName={ 'site-vertical' }
-			goBack={ goalsCaptureStepEnabled ? goBack : undefined }
-			goNext={ goNext }
-			headerImageUrl={ siteVerticalImage }
-			skipLabelText={ translate( 'Skip to dashboard' ) }
-			skipButtonAlign={ 'top' }
-			isHorizontalLayout={ true }
-			hideBack={ ! goalsCaptureStepEnabled }
-			formattedHeader={
-				<FormattedHeader
-					id={ 'site-vertical-header' }
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-					align={ 'left' }
-				/>
-			}
-			stepContent={
-				<SiteVerticalForm
-					defaultVertical={ siteVertical }
-					isSkipSynonyms={ Boolean( isSkipSynonyms ) }
-					isBusy={ isBusy }
-					onSelect={ handleSiteVerticalSelect }
-					onSubmit={ handleSubmit }
-				/>
-			}
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			<StepContainer
+				stepName={ 'site-vertical' }
+				goNext={ goNext }
+				headerImageUrl={ siteVerticalImage }
+				skipLabelText={ translate( 'Skip to dashboard' ) }
+				skipButtonAlign={ 'top' }
+				isHorizontalLayout={ true }
+				hideBack={ true }
+				formattedHeader={
+					<FormattedHeader
+						id={ 'site-vertical-header' }
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+						align={ 'left' }
+					/>
+				}
+				stepContent={
+					<>
+						<button
+							onClick={ ( e ) => {
+								e.preventDefault();
+								submit?.( { data: { error: 'OH NO! 🙀', message: 'This is an error message!' } } );
+							} }
+							className="button site-vertical__submit-button is-primary"
+							style={ {
+								position: 'absolute',
+								bottom: '249px',
+								right: '280px',
+							} }
+						>
+							Error 1
+						</button>
+						<button
+							onClick={ ( e ) => {
+								e.preventDefault();
+								submit?.( {
+									data: { error: '😱😱😱😱😱', message: 'Something else bad happened!' },
+								} );
+							} }
+							className="button site-vertical__submit-button is-primary"
+							style={ {
+								position: 'absolute',
+								bottom: '249px',
+								right: '130px',
+							} }
+						>
+							Error 2
+						</button>
+						<SiteVerticalForm
+							defaultVertical={ siteVertical }
+							isSkipSynonyms={ Boolean( isSkipSynonyms ) }
+							isBusy={ isBusy }
+							onSelect={ handleSiteVerticalSelect }
+							onSubmit={ handleSubmit }
+						/>
+					</>
+				}
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
 	);
 };
 

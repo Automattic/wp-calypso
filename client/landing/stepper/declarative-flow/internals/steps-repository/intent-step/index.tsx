@@ -1,6 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { isEnabled } from '@automattic/calypso-config';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen, StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -18,9 +16,8 @@ import './style.scss';
 /**
  * The intent capture step
  */
-const IntentStep: Step = function IntentStep( { navigation } ) {
+const IntentStep: Step = function IntentStep( { navigation, data } ) {
 	const { goBack, goNext, submit } = navigation;
-	const isEnglishLocale = useIsEnglishLocale();
 	const translate = useTranslate();
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
@@ -45,34 +42,38 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 		submit?.( providedDependencies, intent );
 	};
 
+	const extraData = data as Record< string, any >;
+
 	return (
-		<StepContainer
-			stepName={ 'intent-step' }
-			headerImageUrl={ intentImageUrl }
-			goBack={ goBack }
-			goNext={ goNext }
-			skipLabelText={ translate( 'Skip to dashboard' ) }
-			skipButtonAlign={ 'top' }
-			hideBack={ ! ( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale ) }
-			isHorizontalLayout={ true }
-			formattedHeader={
-				<FormattedHeader
-					id={ 'intent-header' }
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-					align={ 'left' }
-				/>
-			}
-			stepContent={
-				<IntentScreen
-					intents={ intents }
-					intentsAlt={ intentsAlt }
-					onSelect={ submitIntent }
-					preventWidows={ preventWidows }
-				/>
-			}
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			{ extraData?.message && <h1>{ extraData.message }</h1> }
+			<StepContainer
+				stepName={ 'intent-step' }
+				headerImageUrl={ intentImageUrl }
+				goBack={ goBack }
+				goNext={ goNext }
+				skipLabelText={ translate( 'Skip to dashboard' ) }
+				skipButtonAlign={ 'top' }
+				isHorizontalLayout={ true }
+				formattedHeader={
+					<FormattedHeader
+						id={ 'intent-header' }
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+						align={ 'left' }
+					/>
+				}
+				stepContent={
+					<IntentScreen
+						intents={ intents }
+						intentsAlt={ intentsAlt }
+						onSelect={ submitIntent }
+						preventWidows={ preventWidows }
+					/>
+				}
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
 	);
 };
 
