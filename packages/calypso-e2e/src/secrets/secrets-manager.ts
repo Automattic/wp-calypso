@@ -174,7 +174,10 @@ export class SecretsManager {
 				jetpackUserJN: { ...fakeAccount },
 				commentingUser: { ...fakeAccount },
 				notificationsUser: { ...fakeAccount },
-				googleLoginUser: { ...fakeAccount },
+				googleLoginUser: {
+					...fakeAccount,
+					smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' },
+				},
 			},
 			otherTestSites: {
 				notifications: 'FAKE_VALUE',
