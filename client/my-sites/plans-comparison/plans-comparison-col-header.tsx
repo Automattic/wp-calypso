@@ -28,6 +28,11 @@ const PlanTitle = styled.h2`
 			font-family: Recoleta;
 		}
 	}
+
+	/* Force title element height to 96px; to keep plans title cells aligned. */
+	@media ( min-width: ${ SCREEN_BREAKPOINT_SIGNUP + 1 }px ) and ( max-width: 870px ) {
+		height: 96px;
+	}
 `;
 
 const PlanDescription = styled.div`

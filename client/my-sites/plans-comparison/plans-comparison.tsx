@@ -319,33 +319,12 @@ const ComparisonTable = styled.table< TableProps >`
 	thead tr:first-child th,
 	thead tr:first-child td {
 		border: none;
-
-		@media screen and ( min-width: ${ SCREEN_BREAKPOINT_SIGNUP + 1 }px ) {
-			.is-section-signup & {
-				padding-bottom: 0;
-			}
-		}
-
-		@media screen and ( min-width: ${ SCREEN_BREAKPOINT_PLANS + 1 }px ) {
-			.is-section-plans & {
-				padding-bottom: 0;
-			}
-		}
+		padding-bottom: 0;
 	}
 
 	thead tr:nth-child( 2 ) th,
 	thead tr:nth-child( 2 ) td {
-		@media screen and ( min-width: ${ SCREEN_BREAKPOINT_SIGNUP + 1 }px ) {
-			.is-section-signup & {
-				padding-top: 0;
-			}
-		}
-
-		@media screen and ( min-width: ${ SCREEN_BREAKPOINT_PLANS + 1 }px ) {
-			.is-section-plans & {
-				padding-top: 0;
-			}
-		}
+		padding-top: 0;
 	}
 
 	th:last-child,
