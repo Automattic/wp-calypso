@@ -35,7 +35,6 @@ class SiteSettingsFormWriting extends Component {
 			handleAutosavingRadio,
 			handleSubmitForm,
 			isPodcastingSupported,
-			isMasterbarSectionVisible,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -141,13 +140,6 @@ class SiteSettingsFormWriting extends Component {
 						<PressThis />
 					</div>
 				) }
-
-				{ isMasterbarSectionVisible && (
-					<Masterbar
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-					/>
-				) }
 			</form>
 		);
 	}
@@ -163,10 +155,6 @@ const connectComponent = connect(
 		return {
 			siteIsJetpack,
 			siteId,
-			isMasterbarSectionVisible:
-				siteIsJetpack &&
-				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
-				! isAtomic,
 			isPodcastingSupported,
 			isAtomic,
 		};

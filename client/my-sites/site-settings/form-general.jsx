@@ -51,6 +51,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import SiteIconSetting from './site-icon-setting';
 import wrapSettingsForm from './wrap-settings-form';
+import Masterbar from './masterbar';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -165,6 +166,23 @@ export class SiteSettingsFormGeneral extends Component {
 							</Button>
 						</div>
 					</div>
+				) }
+			</>
+		);
+	}
+
+	toolbarOption() {
+		const { isRequestingSettings, isSavingSettings, siteIsJetpack, siteIsAtomic } = this.props;
+
+		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
+
+		return (
+			<>
+				{ isNonAtomicJetpackSite && (
+					<Masterbar
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+					/>
 				) }
 			</>
 		);
@@ -640,6 +658,8 @@ export class SiteSettingsFormGeneral extends Component {
 				</Card>
 
 				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
+
+				{ this.toolbarOption() }
 
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
