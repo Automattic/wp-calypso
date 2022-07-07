@@ -124,14 +124,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite.
 	// Step 0 hides the progress bar. It means "complete" or "still loading transfer status".
 	// Steps 1-4 advance through the bar.
+	const transferStatus = transfer?.status;
 	useEffect( () => {
-		if ( transfer?.status === AtomicTransferActive ) {
+		if ( transferStatus === AtomicTransferActive ) {
 			setCurrentStep( 1 );
-		} else if ( transfer?.status === AtomicTransferProvisioned ) {
+		} else if ( transferStatus === AtomicTransferProvisioned ) {
 			setCurrentStep( 2 );
-		} else if ( transfer?.status === AtomicTransferRelocating ) {
+		} else if ( transferStatus === AtomicTransferRelocating ) {
 			setCurrentStep( 3 );
-		} else if ( transfer?.status === AtomicTransferComplete ) {
+		} else if ( transferStatus === AtomicTransferComplete ) {
 			/*
 			 * When we're done transferring, we want to see pluginOnSite to advance
 			 * to step 0 (complete).
@@ -150,7 +151,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} else {
 			setCurrentStep( 0 );
 		}
-	}, [ transfer, pluginOnSite, sawPluginOnce ] );
+	}, [ transferStatus, pluginOnSite, sawPluginOnce ] );
 
 	const steps = useMemo(
 		() => [
