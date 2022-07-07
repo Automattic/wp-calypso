@@ -63,8 +63,12 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ sawPluginOnce, setSawPluginOnce ] = useState( false );
 
+	const isPluginOnSite = !! pluginOnSite;
+	const transferStatus = transfer?.status;
+
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
+	// The dependencies intentionally use transfer over transferStatus.
 	useEffect( () => {
 		if ( ! siteId || transfer?.status === AtomicTransferComplete ) {
 			return;
@@ -105,10 +109,10 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( transfer?.status === AtomicTransferComplete && ! pluginOnSite && ! isRequestingPlugins ) {
+		if ( transferStatus === AtomicTransferComplete && ! pluginOnSite && ! isRequestingPlugins ) {
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
-	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId, transfer ] );
+	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId, transferStatus ] );
 
 	// Update the menu after the site been transferred to Atomic or after the plugin has
 	// been installed, since that might change some menu items
@@ -122,8 +126,6 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite.
 	// Step 0 hides the progress bar. It means "complete" or "still loading transfer status".
 	// Steps 1-4 advance through the bar.
-	const transferStatus = transfer?.status;
-	const isPluginOnSite = !! pluginOnSite;
 	useEffect( () => {
 		if ( transferStatus === AtomicTransferActive ) {
 			setCurrentStep( 1 );
