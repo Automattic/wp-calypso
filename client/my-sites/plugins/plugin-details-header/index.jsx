@@ -17,7 +17,6 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	const selectedSite = useSelector( getSelectedSite );
-	const banner = plugin.banners?.high || plugin.banners?.low;
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
@@ -29,11 +28,6 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 
 	return (
 		<div className="plugin-details-header__container">
-			{ Boolean( banner ) && (
-				<div className="plugin-details-header__banner">
-					<img className="plugin-details-header__banner-image" alt={ plugin.name } src={ banner } />
-				</div>
-			) }
 			<div className="plugin-details-header__main-info">
 				<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
 				<div className="plugin-details-header__title-container">
@@ -98,7 +92,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 	);
 };
 
-const LegacyPluginDetailsHeader = ( { plugin } ) => {
+function LegacyPluginDetailsHeader( { plugin } ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
@@ -154,10 +148,10 @@ const LegacyPluginDetailsHeader = ( { plugin } ) => {
 			</div>
 		</div>
 	);
-};
+}
 
 const LIMIT_OF_TAGS = 3;
-const Tags = ( { plugin } ) => {
+function Tags( { plugin } ) {
 	const selectedSite = useSelector( getSelectedSite );
 
 	if ( ! plugin?.tags ) {
@@ -179,9 +173,9 @@ const Tags = ( { plugin } ) => {
 			) ) }
 		</span>
 	);
-};
+}
 
-const PluginDetailsHeaderPlaceholder = () => {
+function PluginDetailsHeaderPlaceholder() {
 	return (
 		<div className="plugin-details-header__wrapper is-placeholder">
 			<div className="plugin-details-header__tags">...</div>
@@ -192,6 +186,6 @@ const PluginDetailsHeaderPlaceholder = () => {
 			</div>
 		</div>
 	);
-};
+}
 
 export default PluginDetailsHeader;

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -231,7 +230,6 @@ class PluginSections extends Component {
 		} );
 		const banner = this.props.plugin?.banners?.high || this.props.plugin?.banners?.low;
 		const videoUrl = this.props.plugin?.banner_video_src;
-		const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 		/*eslint-disable react/no-danger*/
 		if (
@@ -273,15 +271,14 @@ class PluginSections extends Component {
 
 		return (
 			<div ref={ this.descriptionContent } className={ contentClasses }>
-				{ legacyVersion && (
-					<div className="plugin-sections__banner">
-						<img
-							className="plugin-sections__banner-image"
-							alt={ this.props.plugin.name }
-							src={ banner }
-						/>
-					</div>
-				) }
+				<div className="plugin-sections__banner">
+					<img
+						className="plugin-sections__banner-image"
+						alt={ this.props.plugin.name }
+						src={ banner }
+					/>
+				</div>
+
 				<div
 					// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
 					dangerouslySetInnerHTML={ {
