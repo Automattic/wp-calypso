@@ -1,4 +1,4 @@
-import { Page } from 'playwright';
+import { Page, Locator } from 'playwright';
 
 const selectors = {
 	// Generic
@@ -7,7 +7,7 @@ const selectors = {
 	emailInput: 'input[type="email"]',
 	passwordInput: 'input[type="password"]',
 	phoneInput: 'input[type="tel"][id="phoneNumberId"]',
-	otpInput: 'input[type="tel"][id="id="idvAnyPhonePin"]',
+	otpInput: 'input[type="tel"][id="idvAnyPhonePin"],input[type="tel"][id="totpPin"]', // Match on both SMS OTP and TOTP inputs.
 };
 
 /**
@@ -20,6 +20,22 @@ export class GoogleLoginPage {
 	 * @param {Page} page Handler for instance of the Google login page.
 	 */
 	constructor( private page: Page ) {}
+
+	/**
+	 * Waits until the target locator is stable.
+	 *
+	 * After clicking the "Next" button on the Google login form,
+	 * sliding animations are played. This can interfere with the
+	 * ability for Playwright to successfully interact with the
+	 * target locator.
+	 */
+	private async waitUntilStable( locator: Locator ) {
+		const elementHandle = await locator.elementHandle();
+		await Promise.all( [
+			locator.waitFor( { state: 'visible' } ),
+			elementHandle?.waitForElementState( 'stable' ),
+		] );
+	}
 
 	/**
 	 * Fills the username field.
@@ -47,11 +63,7 @@ export class GoogleLoginPage {
 	async enterPassword( password: string ): Promise< void > {
 		const locator = this.page.locator( selectors.passwordInput );
 
-		const elementHandle = await locator.elementHandle();
-		await Promise.all( [
-			locator.waitFor( { state: 'visible' } ),
-			elementHandle?.waitForElementState( 'stable' ),
-		] );
+		await this.waitUntilStable( locator );
 
 		await locator.type( password, { delay: 50 } );
 	}
@@ -74,12 +86,8 @@ export class GoogleLoginPage {
 	 */
 	async enter2FAPhoneNumber( phoneNumber: string ): Promise< void > {
 		const locator = this.page.locator( selectors.phoneInput );
-		const elementHandle = await locator.elementHandle();
 
-		await Promise.all( [
-			locator.waitFor( { state: 'visible' } ),
-			elementHandle?.waitForElementState( 'stable' ),
-		] );
+		await this.waitUntilStable( locator );
 
 		await locator.type( phoneNumber );
 	}
@@ -91,12 +99,8 @@ export class GoogleLoginPage {
 	 */
 	async enter2FACode( code: string ): Promise< void > {
 		const locator = this.page.locator( selectors.otpInput );
-		const elementHandle = await locator.elementHandle();
 
-		await Promise.all( [
-			locator.waitFor( { state: 'visible' } ),
-			elementHandle?.waitForElementState( 'stable' ),
-		] );
+		await this.waitUntilStable( locator );
 
 		await locator.type( code );
 	}
