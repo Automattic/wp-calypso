@@ -16,26 +16,25 @@ interface ArticleContent {
 const ArticleContent = ( { content, title, link, isLoading = false }: ArticleContent ) => {
 	const post = { title: title, url: link };
 	return (
-		<>
-			<article className="help-center-article-content__story">
-				<SupportArticleHeader post={ post } isLoading={ isLoading } />
-				{
-					isLoading ? (
-						<Placeholders />
-					) : (
-						/*eslint-disable react/no-danger */
-
+		<article className="help-center-article-content__story">
+			{
+				isLoading ? (
+					<Placeholders lines={ 8 } />
+				) : (
+					/*eslint-disable react/no-danger */
+					<>
+						<SupportArticleHeader post={ post } isLoading={ false } />
 						<EmbedContainer>
 							<div
 								className="help-center-article-content__story-content"
 								dangerouslySetInnerHTML={ { __html: content } }
 							/>
 						</EmbedContainer>
-					)
-					/*eslint-enable react/no-danger */
-				}
-			</article>
-		</>
+					</>
+				)
+				/*eslint-enable react/no-danger */
+			}
+		</article>
 	);
 };
 
