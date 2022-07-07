@@ -30,4 +30,16 @@ describe( 'PurchaseItem', () => {
 			expect( screen.getByText( translation ) ).toBeInTheDocument();
 		} );
 	} );
+
+	test( 'should display warning if auto-renew is enabled but no payment method"', () => {
+		const purchase = {
+			productSlug: 'business-bundle',
+			expiryDate: moment().subtract( 10, 'hours' ).format(),
+			isAutoRenewEnabled: true,
+		};
+
+		renderWithProvider( <PurchaseItem purchase={ purchase } /> );
+
+		expect( screen.getByText( 'No payment method' ) ).toBeInTheDocument();
+	} );
 } );

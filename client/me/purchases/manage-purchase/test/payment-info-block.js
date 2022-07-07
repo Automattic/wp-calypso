@@ -309,4 +309,13 @@ describe( 'PaymentInfoBlock', () => {
 			} );
 		} );
 	} );
+	it( 'shows warning if auto-renew is enabled without a payment method', () => {
+		const expiryDate = new Date();
+		expiryDate.setDate( expiryDate.getDate() - 365 );
+		const purchase = {
+			isAutoRenewEnabled: 'true',
+		};
+		render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
+		expect( screen.getByText( 'No payment method' ) ).toBeInTheDocument();
+	} );
 } );

@@ -1,3 +1,4 @@
+import { Icon, warning } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PaymentLogo from 'calypso/components/payment-logo';
@@ -94,6 +95,17 @@ export default function PaymentInfoBlock( {
 
 	if ( purchase.isInAppPurchase ) {
 		return <PaymentInfoBlockWrapper>{ translate( 'In-App Purchase' ) }</PaymentInfoBlockWrapper>;
+	}
+
+	if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
+		return (
+			<PaymentInfoBlockWrapper>
+				<div className={ 'manage-purchase__no-payment-method' }>
+					<Icon icon={ warning } />
+					{ translate( 'No payment method' ) }
+				</div>
+			</PaymentInfoBlockWrapper>
+		);
 	}
 
 	return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;

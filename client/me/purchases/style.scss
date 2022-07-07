@@ -52,7 +52,7 @@
 	@include breakpoint-deprecated( '>960px' ) {
 		display: flex;
 		align-items: center;
-		flex: 0 0 140px;
+		flex: 0 0 200px;
 		flex-wrap: wrap;
 	}
 }
@@ -103,12 +103,12 @@
 .purchase-item__site,
 .membership-item {
 	.site-icon {
-		border-radius: 2px;
+		border-radius: 2px; /* stylelint-disable-line scales/radii */
 	}
 
 	.site-icon,
 	.site-icon__img {
-		border-radius: 2px;
+		border-radius: 2px; /* stylelint-disable-line scales/radii */
 		width: 36px;
 		height: 36px;
 	}
@@ -118,7 +118,7 @@
 	display: flex;
 	width: 36px;
 	height: 36px;
-	border-radius: 2px;
+	border-radius: 2px; /* stylelint-disable-line scales/radii */
 	background: var( --color-error-50 );
 	align-items: center;
 	justify-content: center;
@@ -181,7 +181,7 @@
 				top: calc( 50% - 4px );
 				left: -16px;
 				background: var( --color-error-50 );
-				border-radius: 100%;
+				border-radius: 100%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			}
 		}
 	}
@@ -223,4 +223,13 @@
 
 .purchase-item__backup-payment-method-notice button {
 	display: flex;
+}
+
+.purchase-item__no-payment-method {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	svg path {
+		fill: var( --color-warning-30 );
+	}
 }

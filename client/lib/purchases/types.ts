@@ -23,6 +23,42 @@ export interface Purchase {
 	isLocked: boolean;
 	isInAppPurchase: boolean;
 	iapPurchaseManagementLink?: string;
+	attachedToPurchaseId: number;
+	billPeriodDays: number;
+	billPeriodLabel: string;
+	canDisableAutoRenew: boolean;
+	canReenableAutoRenewal: boolean;
+	canExplicitRenew: boolean;
+	costToUnbundle: number;
+	costToUnbundleText: string;
+	currencySymbol: string;
+	description: string;
+	domainRegistrationAgreementUrl: any;
+	error: any;
+	blogCreatedDate: string;
+	expiryStatus: string;
+	includedDomain: string;
+	includedDomainPurchaseAmount: number;
+	introductoryOffer: any;
+	isCancelable: boolean;
+	isRefundable: boolean;
+	isRenewable: boolean;
+	isRenewal: boolean;
+	priceText: string;
+	partnerName: string;
+	partnerSlug: string;
+	pendingTransfer: boolean;
+	productId: number;
+	totalRefundAmount: number;
+	totalRefundText: string;
+	refundAmount: number;
+	refundOptions: any;
+	refundText: string;
+	refundPeriodInDays: number;
+	regularPriceText: string;
+	siteName: string;
+	purchaseRenewalQuantity: any;
+	isAutoRenewEnabled: boolean;
 }
 
 export interface PurchasePayment {

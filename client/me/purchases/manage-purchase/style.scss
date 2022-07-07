@@ -310,6 +310,15 @@
 		}
 	}
 
+	.manage-purchase__no-payment-method {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		svg path {
+			fill: var( --color-warning-30 );
+		}
+	}
+
 	.payment-logo {
 		margin-right: 5px;
 	}
