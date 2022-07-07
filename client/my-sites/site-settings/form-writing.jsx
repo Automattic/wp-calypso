@@ -12,7 +12,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
-import Masterbar from './masterbar';
 import MediaSettingsWriting from './media-settings-writing';
 import PressThis from './press-this';
 import PublishingTools from './publishing-tools';

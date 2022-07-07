@@ -49,9 +49,9 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import Masterbar from './masterbar';
 import SiteIconSetting from './site-icon-setting';
 import wrapSettingsForm from './wrap-settings-form';
-import Masterbar from './masterbar';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
