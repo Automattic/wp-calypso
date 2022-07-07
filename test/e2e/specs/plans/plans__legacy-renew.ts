@@ -54,7 +54,6 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 
 	describe( 'Renew Plan', function () {
 		it( `Details of purchased plan ${ planTier } are shown`, async function () {
-			const plansPage = new PlansPage( page, 'legacy' );
 			await plansPage.clickManagePlan();
 
 			individualPurchasesPage = new IndividualPurchasePage( page );
