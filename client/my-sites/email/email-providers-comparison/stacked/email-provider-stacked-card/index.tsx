@@ -6,8 +6,8 @@ import PromoCard, { TitleLocation } from 'calypso/components/promo-section/promo
 import {
 	EmailProviderStackedFeatures,
 	EmailProviderStackedFeaturesToggleButton,
-} from 'calypso/my-sites/email/email-providers-stacked-comparison/email-provider-stacked-card/email-provider-stacked-features';
-import type { ProviderCardProps } from 'calypso/my-sites/email/email-providers-stacked-comparison/provider-cards/provider-card-props';
+} from 'calypso/my-sites/email/email-providers-comparison/stacked/email-provider-stacked-card/email-provider-stacked-features';
+import type { ProviderCardProps } from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/provider-card-props';
 import type { MouseEvent, ReactElement } from 'react';
 
 import './style.scss';

@@ -33,6 +33,7 @@ object WebApp : Project({
 	buildType(playwrightPrBuildType("desktop", "23cc069f-59e5-4a63-a131-539fb55264e7"))
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
+	buildType(AuthenticationE2ETests)
 	buildType(QuarantinedE2ETests)
 })
 
@@ -784,6 +785,44 @@ object PreReleaseE2ETests : E2EBuildType(
 			buildFailed = true
 			buildFinishedSuccessfully = true
 			buildProbablyHanging = true
+		}
+	}
+)
+
+object AuthenticationE2ETests : E2EBuildType(
+	buildId = "Calypso_E2E_Authentication",
+	buildUuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8",
+	buildName = "Authentication E2E Tests",
+	buildDescription = "Runs a suite of Authentication E2E tests.",
+	concurrentBuilds = 1,
+	testGroup = "authentication",
+	buildParams = {
+		param("env.VIEWPORT_NAME", "desktop")
+	},
+	buildFeatures = {
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	},
+	buildTriggers = {
+		schedule {
+			schedulingPolicy = cron {
+				hours = "*/2"
+			}
+			branchFilter = "+:<default>"
+			triggerBuild = always()
+			withPendingChangesOnly = false
 		}
 	}
 )

@@ -84,7 +84,6 @@ export function SitesDashboard() {
 								<ClassNames>
 									{ ( { css } ) => (
 										<SitesTable
-											buildSiteUrl={ ( { slug } ) => '/home/' + slug }
 											className={ css`
 												margin-top: 32px;
 											` }
