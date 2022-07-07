@@ -116,6 +116,8 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 		: null;
 
 	const starIcon = (
+		// Safari has problems rendering SVGs in retina screens when used inside an img tag, so we should use inline SVG instead.
+		// See details on this PR: https://github.com/Automattic/wp-calypso/pull/65304
 		<SVG className="jetpack-product-card__header-icon" width="16" height="16" viewBox="0 0 16 16">
 			<Path
 				d="M8 11.513 12.12 14l-1.093-4.687 3.64-3.153-4.793-.407-1.873-4.42-1.874 4.42-4.793.407 3.64 3.153L3.881 14 8 11.513Z"
