@@ -144,7 +144,6 @@ export default function WPCheckout( {
 	countriesList: CountryListItem[];
 	createUserAndSiteBeforeTransaction: boolean;
 	infoMessage?: JSX.Element;
-	isJetpackNotAtomic: boolean;
 	isLoggedOutCart: boolean;
 	onPageLoadError: CheckoutPageErrorCallback;
 	removeProductFromCart: RemoveProductFromCart;
