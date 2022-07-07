@@ -17,7 +17,6 @@ import {
 	TOTPClient,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { skipItIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -50,41 +49,28 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Google' ), function () {
 
 	it( 'Enter Google password', async function () {
 		await googleLoginPage.enterPassword( credentials.password );
+		await googleLoginPage.clickButton( 'Next' );
 
 		try {
-			await Promise.all( [
-				googlePopupPage.waitForEvent( 'close', { timeout: 5 * 1000 } ),
-				googleLoginPage.clickButton( 'Next' ),
-			] );
+			await googlePopupPage.waitForEvent( 'close', { timeout: 5 * 1000 } );
 		} catch {
 			challenge = true;
 		}
-		console.log( challenge );
 	} );
 
-	describe( 'Complete 2FA', function () {
-		// skipItIf( ! challenge )( 'Enter 2FA phone number', async function () {
-		// 	expect( await googleLoginPage.isChallengeShown() ).toBe( true );
-
-		// 	await googleLoginPage.enter2FAPhoneNumber( credentials.smsNumber?.number as string );
-		// 	await googleLoginPage.clickButton( 'Next' );
-		// } );
-
-		skipItIf( ! challenge )( 'Enter 2FA code', async function () {
-			// const message = await emailClient.getLastMatchingMessage( {
-			// 	inboxId: SecretsManager.secrets.mailosaur.totpUserInboxId,
-			// 	sentFrom: '18339020110',
-			// } );
-			// const rawCode = emailClient.get2FACodeFromMessage( message );
-			// const code = rawCode.match( /[\d]{6}$/ );
-			// if ( ! code ) {
-			// 	throw new Error( 'Failed to extract Google 2FA code.' );
-			// }
+	it( 'Enter 2FA code if required', async function () {
+		// Cannot use `skipItIf` here due to Jest pre-computing whether the
+		// test steps run at runtime.
+		if ( challenge ) {
 			const totpClient = new TOTPClient( credentials.totpKey as string );
 			const code = totpClient.getToken();
 
 			await googleLoginPage.enter2FACode( code );
-		} );
+			await Promise.all( [
+				googlePopupPage.waitForEvent( 'close' ),
+				googleLoginPage.clickButton( 'Next' ),
+			] );
+		}
 	} );
 
 	it( 'Redirected to /home upon successful login', async function () {
