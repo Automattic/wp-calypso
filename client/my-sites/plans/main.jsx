@@ -3,6 +3,8 @@ import {
 	getPlan,
 	getIntervalTypeForTerm,
 	PLAN_FREE,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
@@ -171,9 +173,14 @@ class Plans extends Component {
 
 		if (
 			eligibleForProPlan &&
-			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO ].includes(
-				currentPlan?.productSlug
-			)
+			[
+				PLAN_FREE,
+				PLAN_WPCOM_FLEXIBLE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
+				PLAN_PERSONAL,
+				PLAN_PREMIUM,
+			].includes( currentPlan?.productSlug )
 		) {
 			return (
 				<PlansComparison
