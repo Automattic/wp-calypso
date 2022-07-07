@@ -476,14 +476,11 @@ export class UserStep extends Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ this.props.translate( "Let's get started" ) }
-				subHeaderText={ this.props.translate( "First, let's create your account.", {
-					components: { strong: <strong /> },
-					}
-				) }
+				subHeaderText={ this.props.translate( "First, let's create your account.", {} ) }
 				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 					args: {
 						currentStep: 1,
-						totalSteps: 3,
+						totalSteps: 1, // TODO: change as we add more steps.
 					},
 				} ) }
 			>

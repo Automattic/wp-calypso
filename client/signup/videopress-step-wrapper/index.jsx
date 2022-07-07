@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import './style.scss';
+
 function VideoPressStepWrapper( {
 	flowName,
 	stepName,
@@ -41,7 +42,9 @@ function VideoPressStepWrapper( {
 						<Icon icon={ headerIcon } />
 					</div>
 				) }
-				{ headerText && <h1 className="wp-brand-font videopress-step-wrapper__header-text">{ headerText }</h1> }
+				{ headerText && (
+					<h1 className="wp-brand-font videopress-step-wrapper__header-text">{ headerText }</h1>
+				) }
 				{ subHeaderText && (
 					<p className="videopress-step-wrapper__subheader-text">{ subHeaderText }</p>
 				) }
