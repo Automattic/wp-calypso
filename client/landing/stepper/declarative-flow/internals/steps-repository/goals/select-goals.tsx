@@ -1,43 +1,95 @@
+import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
+import { useTranslate } from 'i18n-calypso';
+import DIFMLink from './difm-link';
 import { useGoals } from './goals';
+import ImportLink from './import-link';
 import SelectCard from './select-card';
 
 type SelectGoalsProps = {
-	onChange: ( selectedGoals: Onboard.GoalKey[] ) => void;
-	selectedGoals: Onboard.GoalKey[];
+	displayAllGoals: boolean;
+	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
+	onSubmit: ( selectedGoals: Onboard.SiteGoal[] ) => void;
+	selectedGoals: Onboard.SiteGoal[];
 };
 
-export const SelectGoals: React.FC< SelectGoalsProps > = ( { onChange, selectedGoals } ) => {
-	const goals = useGoals();
+const SiteGoal = Onboard.SiteGoal;
 
-	const handleChange = ( selected: boolean, value: string ) => {
-		const newSelectedGoals = [ ...selectedGoals ];
-		const goalKey = value as Onboard.GoalKey;
+export const SelectGoals = ( {
+	displayAllGoals,
+	onChange,
+	onSubmit,
+	selectedGoals,
+}: SelectGoalsProps ) => {
+	const translate = useTranslate();
+	const goalOptions = useGoals( displayAllGoals );
 
-		if ( selected ) {
-			newSelectedGoals.push( goalKey );
-		} else {
-			const goalIndex = newSelectedGoals.indexOf( goalKey );
-			newSelectedGoals.splice( goalIndex, 1 );
-		}
+	const addGoal = ( goal: Onboard.SiteGoal ) => {
+		const goalSet = new Set( selectedGoals );
+		goalSet.add( goal );
+		return Array.from( goalSet );
+	};
 
+	const removeGoal = ( goal: Onboard.SiteGoal ) => {
+		const goalSet = new Set( selectedGoals );
+		goalSet.delete( goal );
+		return Array.from( goalSet );
+	};
+
+	const handleChange = ( selected: boolean, goal: Onboard.SiteGoal ) => {
+		const newSelectedGoals = selected ? addGoal( goal ) : removeGoal( goal );
 		onChange( newSelectedGoals );
 	};
 
+	const handleContinueButtonClick = () => {
+		onSubmit( selectedGoals );
+	};
+
+	const handleImportLinkClick = () => {
+		const selectedGoalsWithImport = addGoal( SiteGoal.Import );
+		onSubmit( selectedGoalsWithImport );
+	};
+
+	const handleDIFMLinkClick = () => {
+		const selectedGoalsWithDIFM = addGoal( SiteGoal.DIFM );
+		onSubmit( selectedGoalsWithDIFM );
+	};
+
 	return (
-		<div className="select-goals__container">
-			{ goals.map( ( goal ) => (
-				<SelectCard
-					key={ goal.key }
-					onChange={ handleChange }
-					selected={ selectedGoals.includes( goal.key ) }
-					value={ goal.key }
-				>
-					<span className="select-goals__goal-title">{ goal.title }</span>
-					{ goal.isPremium && <span className="select-goals__premium-badge">Premium</span> }
-				</SelectCard>
-			) ) }
-		</div>
+		<>
+			{ displayAllGoals && (
+				<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
+			) }
+
+			<div className="select-goals__cards-container">
+				{ goalOptions.map( ( { key, title, isPremium } ) => (
+					<SelectCard
+						key={ key }
+						onChange={ handleChange }
+						selected={ selectedGoals.includes( key ) }
+						value={ key }
+					>
+						<span className="select-goals__goal-title">{ title }</span>
+						{ isPremium && (
+							<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
+						) }
+					</SelectCard>
+				) ) }
+			</div>
+
+			<div className="select-goals__actions-container">
+				<Button primary onClick={ handleContinueButtonClick }>
+					{ translate( 'Continue' ) }
+				</Button>
+			</div>
+
+			{ ! displayAllGoals && (
+				<div className="select-goals__links-container">
+					<ImportLink onClick={ handleImportLinkClick } />
+					<DIFMLink onClick={ handleDIFMLinkClick } />
+				</div>
+			) }
+		</>
 	);
 };
 

@@ -1,9 +1,19 @@
+/* eslint-disable no-restricted-imports */
+/**
+ * External Dependencies
+ */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Spinner } from '@automattic/components';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
+import { getSectionName } from 'calypso/state/ui/selectors';
+/**
+ * Internal Dependencies
+ */
 import { BackButton } from '..';
 import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
@@ -23,6 +33,14 @@ export const HelpCenterContactPage: React.FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
+
+	if ( renderChat.isLoading ) {
+		return (
+			<div className="help-center-contact-page__loading">
+				<Spinner baseClassName="" />
+			</div>
+		);
+	}
 
 	return (
 		<div className="help-center-contact-page">
@@ -87,16 +105,20 @@ export const HelpCenterContactPage: React.FC = () => {
 export const HelpCenterContactButton: React.FC = () => {
 	const { __ } = useI18n();
 	const url = useStillNeedHelpURL();
+	const sectionName = useSelector( getSectionName );
+	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
 	const trackContactButtonClicked = () => {
 		recordTracksEvent( 'calypso_inlinehelp_morehelp_click', {
-			location: 'help-center-still-need-help',
+			location: 'help-center',
+			section: sectionName,
 		} );
 	};
 
 	return (
 		<Link
-			to={ url }
+			to={ redirectToWpcom ? { pathname: url } : url }
+			target={ redirectToWpcom ? '_blank' : '_self' }
 			onClick={ trackContactButtonClicked }
 			className="button help-center-contact-page__button"
 		>

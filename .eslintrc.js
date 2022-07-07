@@ -5,6 +5,7 @@ const reactVersion = require( './client/package.json' ).dependencies.react;
 
 module.exports = {
 	root: true,
+	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		babelOptions: {
 			configFile: path.join( __dirname, './babel.config.js' ),

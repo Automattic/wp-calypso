@@ -201,6 +201,10 @@ describe( 'index', () => {
 			expect( hasGSuiteSupportedDomain( [] ) ).toEqual( false );
 		} );
 
+		test( 'returns false if passed an array with a single undefined member', () => {
+			expect( hasGSuiteSupportedDomain( [ undefined ] ) ).toEqual( false );
+		} );
+
 		test( 'returns false if passed an array with invalid domains', () => {
 			expect(
 				hasGSuiteSupportedDomain( [

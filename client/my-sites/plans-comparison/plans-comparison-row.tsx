@@ -8,7 +8,7 @@ interface Props {
 	feature: PlanComparisonFeature;
 	plans: WPComPlan[];
 	isLegacySiteWithHigherLimits: boolean;
-	isExperiment?: boolean;
+	meta?: Record< string, unknown >;
 }
 
 export const DesktopContent = styled.div`
@@ -67,6 +67,7 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( {
 	feature,
 	plans,
 	isLegacySiteWithHigherLimits,
+	meta,
 } ) => {
 	return (
 		<tr>
@@ -86,12 +87,12 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( {
 					<td key={ plan.getProductId() }>
 						<DesktopContent>
 							{ renderContent(
-								feature.getCellText( includedFeature, false, isLegacySiteWithHigherLimits )
+								feature.getCellText( includedFeature, false, isLegacySiteWithHigherLimits, meta )
 							) }
 						</DesktopContent>
 						<MobileContent>
 							{ renderContent(
-								feature.getCellText( includedFeature, true, isLegacySiteWithHigherLimits )
+								feature.getCellText( includedFeature, true, isLegacySiteWithHigherLimits, meta )
 							) }
 						</MobileContent>
 					</td>

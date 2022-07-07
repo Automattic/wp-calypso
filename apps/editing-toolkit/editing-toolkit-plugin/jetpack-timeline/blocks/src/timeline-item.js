@@ -12,6 +12,8 @@ import { positionLeft, positionRight } from '@wordpress/icons';
 import classnames from 'classnames';
 import { TimelineIcon } from './icon';
 
+const DEFAULT_BACKGROUND = '#eeeeee';
+
 function Controls( { alignment, clientId, toggleAlignment } ) {
 	const parentIsAlternating = useSelect( ( select ) => {
 		const parentIds = select( 'core/block-editor' ).getBlockParents( clientId );
@@ -83,7 +85,8 @@ export function registerTimelineItemBlock() {
 								colorSettings={ [
 									{
 										value: attributes.background,
-										onChange: ( background ) => setAttributes( { background } ),
+										onChange: ( background ) =>
+											setAttributes( { background: background || DEFAULT_BACKGROUND } ),
 										label: __( 'Background Color', 'full-site-editing' ),
 									},
 								] }
@@ -129,7 +132,7 @@ export function registerTimelineItemBlock() {
 			},
 			background: {
 				type: 'string',
-				default: '#eeeeee',
+				default: DEFAULT_BACKGROUND,
 			},
 		},
 	} );

@@ -8,18 +8,22 @@ import HelpContact from 'calypso/me/help/help-contact';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getInlineHelpSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 function InlineHelpContactViewLoaded() {
 	const dispatch = useDispatch();
 	const supportVariation = useSelector( getInlineHelpSupportVariation );
+	const sectionName = useSelector( getSectionName );
 
 	useEffect( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_inlinehelp_contact_view', {
 				support_variation: supportVariation,
+				location: 'inline-help-popover',
+				section: sectionName,
 			} )
 		);
-	}, [ dispatch, supportVariation ] );
+	}, [ dispatch, supportVariation, sectionName ] );
 
 	return supportVariation === SUPPORT_FORUM ? <InlineHelpForumView /> : <HelpContact compact />;
 }

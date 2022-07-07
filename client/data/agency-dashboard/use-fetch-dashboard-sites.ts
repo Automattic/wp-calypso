@@ -15,6 +15,7 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) =>
 	);
 
 const useFetchDashboardSites = (
+	isPartnerOAuthTokenLoaded: boolean,
 	searchQuery: string,
 	currentPage: number,
 	filter: AgencyDashboardFilter
@@ -43,11 +44,11 @@ const useFetchDashboardSites = (
 					perPage: data.per_page,
 				};
 			},
-			refetchOnWindowFocus: false,
 			onError: () =>
 				dispatch(
 					errorNotice( translate( 'Failed to retrieve your sites. Please try again later.' ) )
 				),
+			enabled: isPartnerOAuthTokenLoaded,
 		}
 	);
 };

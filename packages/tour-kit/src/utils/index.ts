@@ -1,3 +1,5 @@
+import debugFactory from 'debug';
+
 /**
  * Helper to convert CSV of `classes` to an array.
  *
@@ -11,3 +13,5 @@ export function classParser( classes?: string | string[] ): string[] | null {
 
 	return null;
 }
+
+export const debug = debugFactory( 'tour-kit' );

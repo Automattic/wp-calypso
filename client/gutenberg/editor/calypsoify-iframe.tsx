@@ -658,6 +658,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	handleCheckoutSuccess = () => {
 		if ( this.checkoutPort ) {
 			this.checkoutPort.postMessage( 'checkout complete' );
@@ -843,6 +846,14 @@ const mapStateToProps = (
 	if ( 'site' === editorType && blockEditorSettings?.home_template?.postType ) {
 		queryArgs.postType = blockEditorSettings.home_template.postType;
 		queryArgs.postId = blockEditorSettings.home_template.postId;
+	}
+
+	const noticePattern = /[&?]notice=([\w_-]+)/;
+	const match = noticePattern.exec( document.location.search );
+	const notice = match && match[ 1 ];
+
+	if ( notice ) {
+		queryArgs.notice = notice;
 	}
 
 	const siteAdminUrl =

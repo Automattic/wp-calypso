@@ -11,6 +11,7 @@ import { MemoryRouter } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
+import { FeatureFlagProvider } from '../contexts/FeatureFlagContext';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
@@ -54,31 +55,32 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } 
 
 	return (
 		<MemoryRouter>
-			<OptionalDraggable
-				disabled={ isMinimized }
-				draggable={ ! isMobile }
-				handle=".help-center__container-header"
-				bounds="body"
-			>
-				<Card className={ classNames } { ...animationProps }>
-					<HelpCenterHeader
-						isMinimized={ isMinimized }
-						onMinimize={ () => setIsMinimized( true ) }
-						onMaximize={ () => setIsMinimized( false ) }
-						onDismiss={ onDismiss }
-					/>
-					{ isLoading ? (
-						<div className="help-center-container__loading">
-							<Spinner baseClassName="" className="help-center-container__spinner" />
-						</div>
-					) : (
-						<>
-							<HelpCenterContent isMinimized={ isMinimized } />
-							{ ! isMinimized && <HelpCenterFooter /> }
-						</>
-					) }
-				</Card>
-			</OptionalDraggable>
+			<FeatureFlagProvider>
+				<OptionalDraggable
+					draggable={ ! isMobile }
+					handle=".help-center__container-header"
+					bounds="body"
+				>
+					<Card className={ classNames } { ...animationProps }>
+						<HelpCenterHeader
+							isMinimized={ isMinimized }
+							onMinimize={ () => setIsMinimized( true ) }
+							onMaximize={ () => setIsMinimized( false ) }
+							onDismiss={ onDismiss }
+						/>
+						{ isLoading ? (
+							<div className="help-center-container__loading">
+								<Spinner baseClassName="" className="help-center-container__spinner" />
+							</div>
+						) : (
+							<>
+								<HelpCenterContent isMinimized={ isMinimized } />
+								{ ! isMinimized && <HelpCenterFooter /> }
+							</>
+						) }
+					</Card>
+				</OptionalDraggable>
+			</FeatureFlagProvider>
 		</MemoryRouter>
 	);
 };

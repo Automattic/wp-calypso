@@ -15,7 +15,7 @@ import WarningCard from 'calypso/components/warning-card';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import useWooCommerceOnPlansEligibility from 'calypso/signup/steps/woocommerce-install/hooks/use-woop-handling';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import WooCommerceColophon from './woocommerce-colophon';
 
@@ -67,8 +67,14 @@ const LandingPage: React.FunctionComponent< Props > = ( { siteId } ) => {
 	}
 
 	async function resendVerificationEmail() {
-		await sendEmailVerification();
-		dispatch( successNotice( __( 'The verification email has been sent.' ) ) );
+		try {
+			await sendEmailVerification();
+			dispatch( successNotice( __( 'The verification email has been sent.' ) ) );
+		} catch ( Error ) {
+			dispatch(
+				errorNotice( __( 'An error has occurred, please check your connection and retry.' ) )
+			);
+		}
 	}
 
 	function renderWarningNotice() {

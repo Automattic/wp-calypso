@@ -22,9 +22,10 @@ import 'calypso/state/themes/init';
  *
  * @param  {string}   themeId Theme ID
  * @param  {number}   siteId  Site ID
+ * @param  {string}   locale  Locale slug
  * @returns {Function}         Action thunk
  */
-export function requestTheme( themeId, siteId ) {
+export function requestTheme( themeId, siteId, locale ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: THEME_REQUEST,
@@ -59,7 +60,10 @@ export function requestTheme( themeId, siteId ) {
 
 		if ( siteId === 'wpcom' ) {
 			return wpcom.req
-				.get( `/themes/${ themeId }`, { apiVersion: '1.2' } )
+				.get(
+					`/themes/${ themeId }`,
+					Object.assign( { apiVersion: '1.2' }, locale ? { locale } : null )
+				)
 				.then( ( theme ) => {
 					dispatch( receiveTheme( normalizeWpcomTheme( theme ), siteId ) );
 					dispatch( {

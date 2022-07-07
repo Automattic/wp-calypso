@@ -1,19 +1,24 @@
+/* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from './back-button';
 import { SuccessIcon } from './success-icon';
 
 export const SuccessScreen: React.FC = () => {
 	const { __ } = useI18n();
 	const { search } = useLocation();
+	const sectionName = useSelector( getSectionName );
 	const params = new URLSearchParams( search );
 	const forumTopicUrl = params.get( 'forumTopic' );
 
 	const trackForumOpen = () =>
 		recordTracksEvent( 'calypso_inlinehelp_forums_open', {
 			location: 'help-center',
+			section: sectionName,
 		} );
 
 	return (

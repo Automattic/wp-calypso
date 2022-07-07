@@ -13,6 +13,11 @@ export function isFetching( state, pluginSlug ) {
 	return state?.plugins.wporg.fetchingItems[ pluginSlug ] ?? false;
 }
 
+export function hasError( state, pluginSlug ) {
+	const plugin = getPlugin( state, pluginSlug );
+	return plugin?.error ?? null;
+}
+
 export function isFetched( state, pluginSlug ) {
 	const plugin = getPlugin( state, pluginSlug );
 	return plugin ? !! plugin.fetched : false;

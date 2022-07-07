@@ -19,6 +19,7 @@ import {
 	removeUnsavedUserSetting,
 	setUserSetting,
 } from 'calypso/state/user-settings/actions';
+import EmailNotVerifiedNotice from './email-not-verified-notice';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { UserSettingsType } from 'calypso/state/selectors/get-user-settings';
 import type { ChangeEvent } from 'react';
@@ -233,6 +234,8 @@ const AccountEmailField = ( {
 				<FormSettingExplanation>
 					{ translate( 'Will not be publicly displayed' ) }
 				</FormSettingExplanation>
+
+				<EmailNotVerifiedNotice />
 
 				<AccountEmailPendingEmailChangeNotice
 					unsavedUserSettings={ unsavedUserSettings }

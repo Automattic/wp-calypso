@@ -7,7 +7,8 @@ type ResponseType< T extends 'CHAT' | 'OTHER' > = T extends 'CHAT'
 	: OtherSupportAvailability;
 
 export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
-	supportType: SUPPORT_TYPE
+	supportType: SUPPORT_TYPE,
+	enabled = true
 ) {
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >(
 		supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability',
@@ -17,6 +18,7 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 				apiVersion: '1.1',
 			} ),
 		{
+			enabled,
 			refetchOnWindowFocus: false,
 			keepPreviousData: true,
 		}

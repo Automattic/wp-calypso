@@ -2,6 +2,7 @@
 @import '@automattic/color-studio/dist/color-variables';
 
 .plugins-browser-item {
+	background-color: $studio-white;
 	box-sizing: border-box;
 	cursor: pointer;
 	display: block;
@@ -69,12 +70,8 @@
 			*:not( .plugins-browser-item__incompatible ) {
 				opacity: 0.6;
 			}
-
 		}
-
 	}
-
-
 }
 
 .plugins-browser-item__info {
@@ -203,7 +200,7 @@
 
 	.gridicon.checkmark--inactive {
 		color: var( --studio-gray-60 );
-		border: 2px solid  var( --studio-gray-60 );
+		border: 2px solid var( --studio-gray-60 );
 	}
 }
 

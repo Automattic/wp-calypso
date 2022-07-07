@@ -1,6 +1,7 @@
 import page from 'page';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import AddMailboxes from 'calypso/my-sites/email/add-mailboxes';
 import EmailForwardsAdd from 'calypso/my-sites/email/email-forwards-add';
 import EmailHome from 'calypso/my-sites/email/email-management/email-home';
 import TitanControlPanelRedirect from 'calypso/my-sites/email/email-management/titan-control-panel-redirect';
@@ -8,11 +9,10 @@ import TitanManageMailboxes from 'calypso/my-sites/email/email-management/titan-
 import TitanManagementIframe from 'calypso/my-sites/email/email-management/titan-management-iframe';
 import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-providers-comparison/in-depth';
 import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-stacked-comparison';
-import GSuiteAddUsers from 'calypso/my-sites/email/gsuite-add-users';
+import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-comparison/stacked';
+import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import InboxManagement from 'calypso/my-sites/email/inbox';
 import * as paths from 'calypso/my-sites/email/paths';
-import TitanAddMailboxes from 'calypso/my-sites/email/titan-add-mailboxes';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
 import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
@@ -43,9 +43,10 @@ export default {
 					title="Email Management > Add Google Users"
 				/>
 
-				<GSuiteAddUsers
-					source={ pageContext.query.source }
+				<AddMailboxes
+					provider={ EmailProvider.Google }
 					selectedDomainName={ pageContext.params.domain }
+					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -97,9 +98,10 @@ export default {
 					title="Email Management > Add Titan Mailboxes"
 				/>
 
-				<TitanAddMailboxes
-					source={ pageContext.query.source }
+				<AddMailboxes
+					provider={ EmailProvider.Titan }
 					selectedDomainName={ pageContext.params.domain }
+					source={ pageContext.query.source }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -197,6 +199,7 @@ export default {
 				/>
 
 				<TitanSetUpThankYou
+					containerClassName="titan-set-up-thank-you__container_wrapped"
 					domainName={ pageContext.params.domain }
 					emailAddress={ pageContext.query.email }
 				/>

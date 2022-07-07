@@ -1,5 +1,5 @@
 import { combineReducers } from '@wordpress/data';
-import { GoalKey } from './constants';
+import { SiteGoal } from './constants';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
@@ -106,7 +106,7 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( [ 'RESET_SELECTED_DESIGN', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return undefined;
 	}
 	return state;
@@ -226,7 +226,7 @@ const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( [ 'RESET_INTENT', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return '';
 	}
 	return state;
@@ -295,12 +295,28 @@ const stepProgress: Reducer< { count: number; progress: number } | undefined, On
 	return state;
 };
 
-const goals: Reducer< GoalKey[], OnboardAction > = ( state = [], action ) => {
+const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
 		return action.goals;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'CLEAR_IMPORT_GOAL' ) {
+		return state.filter( ( goal ) => goal !== SiteGoal.Import );
+	}
+	if ( action.type === 'CLEAR_DIFM_GOAL' ) {
+		return state.filter( ( goal ) => goal !== SiteGoal.DIFM );
+	}
+	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return [];
+	}
+	return state;
+};
+
+const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_EDIT_EMAIL' ) {
+		return action.email;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
 	}
 	return state;
 };
@@ -333,6 +349,7 @@ const reducer = combineReducers( {
 	progressTitle,
 	stepProgress,
 	goals,
+	editEmail,
 } );
 
 export type State = ReturnType< typeof reducer >;

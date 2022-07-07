@@ -1,83 +1,41 @@
-import fetch, { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
+import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import type { AccountCredentials } from './data-helper';
+import { BearerTokenErrorResponse } from './types';
+import type {
+	AccountDetails,
+	SiteDetails,
+	BearerTokenResponse,
+	AllSitesResponse,
+	MyAccountInformationResponse,
+	AccountClosureResponse,
+	SiteDeletionResponse,
+	CalypsoPreferencesResponse,
+	ErrorResponse,
+	AccountCredentials,
+	NewSiteResponse,
+	NewSiteParams,
+} from './types';
+import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
-export interface AccountClosureDetails {
-	userID: number;
-	username: string;
-	email: string;
-}
-export interface SiteDetails {
-	url: string;
-	id: string;
-	name: string;
-}
+/* Internal types and interfaces */
 
+/**
+ * Specifies the version of WordPress.com REST API.
+ */
 type EndpointVersions = '1' | '1.1' | '1.2' | '1.3';
-interface BearerTokenResponse {
-	success: string;
-	data: {
-		bearer_token: string;
-		token_links: string[];
-	};
-}
+
+/**
+ * Interface defining the request structure to be sent to the API.
+ */
 interface RequestParams {
 	method: 'post' | 'get';
 	headers?: HeadersInit;
 	body?: BodyInit;
 }
-interface Site {
-	ID: number;
-	name: string;
-	description: string;
-	URL: string;
-	site_owner: number;
-}
-interface AllSitesResponse {
-	sites: Site[];
-}
-interface CalypsoPreferencesResponse {
-	calypso_preferences: {
-		recentSites: number[];
-	};
-}
-interface MyAccountInformationResponse {
-	ID: number;
-	username: string;
-	email: string;
-}
-export interface NewUserResponse {
-	code: number;
-	body: {
-		success: boolean;
-		user_id: number;
-		username: string;
-		bearer_token: string;
-	};
-}
-export interface NewSiteResponse {
-	code: number;
-	body: {
-		success: boolean;
-		blog_details: {
-			url: string;
-			blogid: string;
-			blogname: string;
-			site_slug: string;
-		};
-	};
-}
-interface SiteDeletionResponse {
-	ID: number;
-	name: string;
-	status: string;
-}
 
-export interface AccountClosureResponse {
-	success: boolean;
-}
+/* Constants */
 
-const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
+export const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
 const REST_API_BASE_URL = 'https://public-api.wordpress.com';
 
 /**
@@ -105,8 +63,9 @@ export class RestAPIClient {
 	 * Otherwise, an API call is made to obtain the bearer token and the resulting value is returned
 	 *
 	 * @returns {Promise<string>} String representing the bearer token.
+	 * @throws {Error} If the API responded with a success status of false.
 	 */
-	private async getBearerToken(): Promise< string > {
+	async getBearerToken(): Promise< string > {
 		if ( this.bearerToken !== null ) {
 			return this.bearerToken;
 		}
@@ -120,13 +79,21 @@ export class RestAPIClient {
 		params.append( 'get_bearer_token', '1' );
 
 		// Request the bearer token for the user.
-		const response: BearerTokenResponse = await this.sendRequest( new URL( BEARER_TOKEN_URL ), {
-			method: 'post',
-			body: params,
-		} );
+		const response: BearerTokenResponse | BearerTokenErrorResponse = await this.sendRequest(
+			new URL( BEARER_TOKEN_URL ),
+			{
+				method: 'post',
+				body: params,
+			}
+		);
+
+		if ( response.success === false ) {
+			const firstError = response.data.errors.at( 0 );
+			throw new Error( `${ firstError?.code }: ${ firstError?.message }` );
+		}
 
 		this.bearerToken = response.data.bearer_token;
-		return this.bearerToken;
+		return response.data.bearer_token;
 	}
 
 	/* Request builder methods */
@@ -139,7 +106,8 @@ export class RestAPIClient {
 	 */
 	private async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
 		if ( scheme === 'bearer' ) {
-			return `Bearer ${ await this.getBearerToken() }`;
+			const bearerToken = await this.getBearerToken();
+			return `Bearer ${ bearerToken }`;
 		}
 
 		throw new Error( 'Unsupported authorization scheme specified.' );
@@ -161,9 +129,10 @@ export class RestAPIClient {
 	 * @param {string} endpoint REST API path.
 	 * @returns {URL} Full URL to the endpoint.
 	 */
-	private getRequestURL( version: EndpointVersions, endpoint: string ): URL {
+	getRequestURL( version: EndpointVersions, endpoint: string ): URL {
 		const path = `/rest/v${ version }/${ endpoint }`.replace( /([^:]\/)\/+/g, '$1' );
-		return new URL( path, REST_API_BASE_URL );
+		const sanitizedPath = path.trimEnd().replace( /\/$/, '' );
+		return new URL( sanitizedPath, REST_API_BASE_URL );
 	}
 
 	/**
@@ -193,6 +162,7 @@ export class RestAPIClient {
 	 * 	- site owner
 	 *
 	 * @returns {Promise<AllSitesResponse} JSON array of sites.
+	 * @throws {Error} If API responded with an error.
 	 */
 	async getAllSites(): Promise< AllSitesResponse > {
 		const params: RequestParams = {
@@ -203,7 +173,50 @@ export class RestAPIClient {
 			},
 		};
 
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Given parameters, create a new site.
+	 *
+	 * @param {NewSiteParams} newSiteParams Details for the new site.
+	 * @returns {Promise<NewSiteResponse>} Confirmation details for the new site.
+	 * @throws {ErrorResponse} If API responded with an error.
+	 */
+	async createSite( newSiteParams: NewSiteParams ): Promise< NewSiteResponse > {
+		const body = {
+			client_id: SecretsManager.secrets.calypsoOauthApplication.client_id,
+			client_secret: SecretsManager.secrets.calypsoOauthApplication.client_secret,
+			blog_name: newSiteParams.name,
+			blog_title: newSiteParams.title,
+		};
+
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( body ),
+		};
+
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/sites/new' ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 
 	/**
@@ -286,6 +299,7 @@ export class RestAPIClient {
 	 * via the bearer token.
 	 *
 	 * @returns {Promise<MyAccountInformationResponse>} Response containing user details.
+	 * @throws {Error} If API responded with an error.
 	 */
 	async getMyAccountInformation(): Promise< MyAccountInformationResponse > {
 		const params: RequestParams = {
@@ -296,7 +310,15 @@ export class RestAPIClient {
 			},
 		};
 
-		return await this.sendRequest( this.getRequestURL( '1.1', '/me' ), params );
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me' ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 
 	/**
@@ -310,12 +332,10 @@ export class RestAPIClient {
 	 * authenticated via the bearer token is checked against the
 	 * supplied parameters.
 	 *
-	 * @param { AccountClosureDetails} expectedAccountDetails Details of the accounts to be closed.
+	 * @param { AccountDetails} expectedAccountDetails Details of the accounts to be closed.
 	 * @returns {Promise<boolean>} True if account closure was successful. False otherwise.
 	 */
-	async closeAccount(
-		expectedAccountDetails: AccountClosureDetails
-	): Promise< AccountClosureResponse > {
+	async closeAccount( expectedAccountDetails: AccountDetails ): Promise< AccountClosureResponse > {
 		const accountInformation = await this.getMyAccountInformation();
 
 		// Multiple guards to ensure we are operating on the

@@ -10,7 +10,7 @@ import SearchCard from 'calypso/components/search-card';
 import { SITE_CARDS_PER_PAGE } from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form/constants';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import './style.scss';
 
@@ -51,6 +51,7 @@ export default function AssignLicenseForm( {
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
 	const onSelectSite = ( site: any ) => setSelectedSite( site );
+	const notificationId = 'partner-portal-assign-license-form';
 
 	let results = sites;
 
@@ -83,12 +84,17 @@ export default function AssignLicenseForm( {
 		},
 		onError: ( error: Error ) => {
 			setIsSubmitting( false );
-			dispatch( errorNotice( error.message ) );
+			dispatch(
+				errorNotice( error.message, {
+					id: notificationId,
+				} )
+			);
 		},
 	} );
 
 	const onAssignLicense = useCallback( () => {
 		setIsSubmitting( true );
+		dispatch( removeNotice( notificationId ) );
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_assign_license_submit', {
 				license_key: licenseKey,

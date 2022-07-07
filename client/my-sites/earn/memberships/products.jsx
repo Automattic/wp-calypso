@@ -28,7 +28,7 @@ import './style.scss';
 
 class MembershipsProductsSection extends Component {
 	state = {
-		showAddEditDialog: false,
+		showAddEditDialog: window.location.hash === '#add-new-payment-plan',
 		showDeleteDialog: false,
 		product: null,
 	};
@@ -112,7 +112,7 @@ class MembershipsProductsSection extends Component {
 						{ this.renderEllipsisMenu( product.ID ) }
 					</CompactCard>
 				) ) }
-				{ this.state.showAddEditDialog && (
+				{ this.state.showAddEditDialog && this.props.hasStripeFeature && (
 					<RecurringPaymentsPlanAddEditModal
 						closeDialog={ this.closeDialog }
 						product={ this.state.product }

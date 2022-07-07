@@ -9,8 +9,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 .design-setup {
 	.step-container {
-		padding-left: 20px;
-		padding-right: 20px;
+		padding-inline-start: 20px;
+		padding-inline-end: 20px;
 		max-width: 1440px;
 
 		.step-container__content {
@@ -18,8 +18,8 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 
 		@include break-small {
-			padding-left: 48px;
-			padding-right: 48px;
+			padding-inline-start: 48px;
+			padding-inline-end: 48px;
 		}
 	}
 
@@ -54,9 +54,9 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		.formatted-header {
 			margin: 0;
 			flex-grow: 1;
-			text-align: left;
+			text-align: start;
 
-			&.is-anchor-header {
+			&.anchor-fm-design-picker__header {
 				flex-basis: 100%;
 				margin-top: 80px;
 				margin-bottom: 64px;
@@ -69,7 +69,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				font-size: 2.15rem; /* stylelint-disable-line */
 				font-weight: 400;
 				padding: 0;
-				text-align: left;
+				text-align: start;
 				margin: 0;
 
 				@include break-xlarge {
@@ -79,7 +79,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 			.formatted-header__subtitle {
 				padding: 0;
-				text-align: left;
+				text-align: start;
 				color: $gray-60;
 				font-size: 1rem;
 				margin: 12px 0 32px;
@@ -270,6 +270,27 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 		}
 	}
+
+	.step-container > .step-container__header {
+		.formatted-header {
+			h1.formatted-header__title {
+				font-family: $sans;
+				font-weight: 500;
+				font-size: $font-body;
+			}
+		}
+	}
+
+	.design-setup__info-popover {
+		background-color: var( --studio-gray-100 );
+		padding: 8px 8px 3px;
+		border-radius: 2px;
+		margin-right: 10px;
+		cursor: pointer;
+		svg {
+			pointer-events: none;
+		}
+	}
 }
 
 /* Hide categories from the sell intent */
@@ -285,19 +306,31 @@ $design-button-primary-color: rgb( 17, 122, 201 );
  * Generated Design Picker
  */
 .design-picker__is-generated {
+
+	// Design preview work different between mobile and desktop views.
+	// In mobile, design preview only shows up when in preview mode.
+	// In desktop, design preview is always present next to the thumbnail.
+	// See: https://github.com/Automattic/wp-calypso/issues/65116
+	@mixin generated-design-picker-show-preview {
+		opacity: 1;
+		pointer-events: auto;
+		position: relative;
+		z-index: 1;
+	}
+
 	&.step-container {
 		max-width: none;
 
 		@include onboarding-break-full-hd {
 			.generated-design-picker__thumbnails {
-				padding-right: 4rem;
+				padding-inline-end: 4rem;
 			}
 		}
 
 		@include onboarding-break-2k {
 			max-width: 2240px;
-			padding-left: 0;
-			padding-right: 0;
+			padding-inline-start: 0;
+			padding-inline-end: 0;
 		}
 	}
 
@@ -319,6 +352,12 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		.generated-design-picker__previews {
 			min-height: calc( 100vh - 172px );
 			margin-bottom: 84px;
+
+			.web-preview__inner {
+				&.is-selected {
+					@include generated-design-picker-show-preview;
+				}
+			}
 		}
 	}
 
@@ -346,7 +385,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 				svg {
 					height: 6px;
-					left: 12px;
+					inset-inline-start: 12px;
 
 					rect {
 						height: 6px;
@@ -449,14 +488,14 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			position: sticky;
 			top: 109px;
 			flex: 0 154px;
-			padding-right: 1.5rem;
+			padding-inline-end: 1.5rem;
 			margin-bottom: 0;
 		}
 
 		@include break-medium {
 			flex: 0 248px;
 			margin-bottom: 0;
-			padding-right: 2rem;
+			padding-inline-end: 2rem;
 		}
 	}
 
@@ -468,26 +507,25 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 		.web-preview__inner {
 			opacity: 0;
-			left: 0;
+			inset-inline-start: 0;
 			overflow: hidden;
 			pointer-events: none;
 			position: absolute;
-			right: 0;
+			inset-inline-end: 0;
 			top: 0;
 			transition: opacity 0.15s ease-in-out;
 
-			&.is-selected {
-				opacity: 1;
-				pointer-events: auto;
-				position: relative;
-				z-index: 1;
+			@include break-small {
+				&.is-selected {
+					@include generated-design-picker-show-preview;
+				}
 			}
 
 			.preview-toolbar__browser-header {
 				height: 34px;
 
 				svg {
-					left: 12px;
+					inset-inline-start: 12px;
 				}
 			}
 

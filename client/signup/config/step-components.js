@@ -1,4 +1,5 @@
 const stepNameToModuleName = {
+	'add-ons': 'add-ons',
 	'clone-start': 'clone-start',
 	'clone-destination': 'clone-destination',
 	'clone-credentials': 'clone-credentials',
@@ -78,11 +79,6 @@ const stepNameToModuleName = {
 	'difm-page-picker': 'page-picker',
 	'website-content': 'website-content',
 	intent: 'intent',
-	list: 'import',
-	capture: 'import',
-	ready: 'import',
-	importing: 'import-from',
-	static: 'import-light',
 	'select-site': 'woocommerce-install/select-site',
 	'store-address': 'woocommerce-install/step-store-address',
 	'business-info': 'woocommerce-install/step-business-info',

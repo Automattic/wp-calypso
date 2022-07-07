@@ -224,11 +224,17 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	create_new_blog: boolean;
 	cart_key: CartKey;
 	products: P[];
-	total_tax: string; // Please try not to use this
+	/**
+	 * @deprecated This is a float and is unreliable. Use total_tax_integer or total_tax_display.
+	 */
+	total_tax: string;
 	total_tax_integer: number;
 	total_tax_display: string;
 	total_tax_breakdown: TaxBreakdownItem[];
-	total_cost: number; // Please try not to use this
+	/**
+	 * @deprecated This is a float and is unreliable. Use total_cost_integer or total_cost_display.
+	 */
+	total_cost: number;
 	total_cost_integer: number;
 	total_cost_display: string;
 	coupon_savings_total_integer: number;
@@ -323,12 +329,17 @@ export interface ResponseCartProduct {
 	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
 	uuid: string;
+	/**
+	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer or item_subtotal_display.
+	 */
 	cost: number;
 	cost_before_coupon?: number;
+	/**
+	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer or coupon_savings_display.
+	 */
 	coupon_savings?: number;
 	coupon_savings_display?: string;
 	coupon_savings_integer?: number;
-	price: number;
 	item_tax: number;
 	product_type: string;
 	included_domain_purchase_amount: number;

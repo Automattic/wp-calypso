@@ -38,16 +38,25 @@ export class TypeSelector extends Component {
 
 	handleSelectClick = ( event ) => {
 		const type = event.target.getAttribute( 'id' );
-
-		if ( this.getSelectedCheckboxes().includes( type ) ) {
+		const selectedCheckboxes = this.getSelectedCheckboxes();
+		const parentTypeKey = this.props.parentType?.key;
+		const isParentType = type === parentTypeKey;
+		const parentTypeIndex = selectedCheckboxes.indexOf( parentTypeKey );
+		const hasAllIssues = parentTypeIndex > -1;
+		if ( hasAllIssues && ! isParentType ) {
+			selectedCheckboxes.splice( parentTypeIndex, 1 );
+		}
+		if ( selectedCheckboxes.includes( type ) ) {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: this.getSelectedCheckboxes().filter( ( ch ) => ch !== type ),
+				selectedCheckboxes: selectedCheckboxes.filter( ( ch ) => ch !== type ),
 			} );
 		} else {
 			this.setState( {
 				userHasSelected: true,
-				selectedCheckboxes: [ ...new Set( this.getSelectedCheckboxes() ).add( type ) ],
+				selectedCheckboxes: isParentType
+					? [ parentTypeKey ]
+					: [ ...new Set( selectedCheckboxes ).add( type ) ],
 			} );
 		}
 	};
@@ -64,8 +73,12 @@ export class TypeSelector extends Component {
 	};
 
 	typeKeyToName = ( key ) => {
-		const { types } = this.props;
-		const match = types.find( ( item ) => item.key === key );
+		const { types, isNested, parentType } = this.props;
+		const allTypes = [ ...types ];
+		if ( isNested ) {
+			allTypes.push( parentType );
+		}
+		const match = allTypes.find( ( item ) => item.key === key );
 		return match?.name ?? key;
 	};
 
@@ -106,7 +119,7 @@ export class TypeSelector extends Component {
 	};
 
 	renderCheckboxSelection = () => {
-		const { translate, types } = this.props;
+		const { translate, types, isNested, parentType } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 
 		return (
@@ -114,9 +127,20 @@ export class TypeSelector extends Component {
 				{ types && !! types.length && (
 					<div>
 						<Fragment>
-							<div className="type-selector__activity-types-selection-granular">
-								{ types.map( this.renderCheckbox ) }
-							</div>
+							{ isNested ? (
+								<ul className="type-selector__nested-checkbox">
+									<li>{ this.renderCheckbox( parentType ) }</li>
+									<ul>
+										<li className="type-selector__activity-types-selection-granular">
+											{ types.map( this.renderCheckbox ) }
+										</li>
+									</ul>
+								</ul>
+							) : (
+								<div className="type-selector__activity-types-selection-granular">
+									{ types.map( this.renderCheckbox ) }
+								</div>
+							) }
 						</Fragment>
 						<div className="type-selector__activity-types-selection-info">
 							<div className="type-selector__date-range-info">
@@ -176,7 +200,7 @@ export class TypeSelector extends Component {
 	};
 
 	render() {
-		const { title, isVisible } = this.props;
+		const { title, isVisible, isNested } = this.props;
 		const selectedCheckboxes = this.getSelectedCheckboxes();
 		const hasSelectedCheckboxes = selectedCheckboxes.length > 0;
 
@@ -194,8 +218,8 @@ export class TypeSelector extends Component {
 					onClick={ this.handleButtonClick }
 					ref={ this.typeButton }
 				>
-					{ title }
-					{ hasSelectedCheckboxes && <span>: </span> }
+					{ ( ! isNested || ( isNested && ! hasSelectedCheckboxes ) ) && title }
+					{ ! isNested && hasSelectedCheckboxes && <span>: </span> }
 					{ hasSelectedCheckboxes && selectedCheckboxes.map( this.typeKeyToName ).join( ', ' ) }
 				</Button>
 				{ hasSelectedCheckboxes && (
@@ -213,7 +237,7 @@ export class TypeSelector extends Component {
 						id="filterbar__activity-types"
 						isVisible={ isVisible }
 						onClose={ this.handleClose }
-						position="bottom"
+						position={ isNested ? 'bottom left' : 'bottom' }
 						relativePosition={ { left: -80 } }
 						context={ this.typeButton.current }
 					>

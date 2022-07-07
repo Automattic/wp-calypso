@@ -11,20 +11,15 @@ import {
 	CartCheckoutPage,
 	NavbarComponent,
 	IndividualPurchasePage,
-	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), function () {
-	const inboxId = SecretsManager.secrets.mailosaur.signupInboxId;
-	const username = DataHelper.getUsername( { prefix: 'domainonly' } );
-	const email = DataHelper.getTestEmailAddress( {
-		inboxId: inboxId,
-		prefix: username,
+	const testUser = DataHelper.getNewTestUser( {
+		usernamePrefix: 'domainonly',
 	} );
-	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
 
 	let page: Page;
 	let selectedDomain: string;
@@ -46,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 
 		it( 'Search for a domain', async function () {
 			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( username + '.live' );
+			await domainSearchComponent.search( testUser.username + '.live' );
 		} );
 
 		it( 'Select a .live domain', async function () {
@@ -59,7 +54,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 
 		it( 'Sign up for a WordPress.com account', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			await userSignupPage.signup( email, username, signupPassword );
+			await userSignupPage.signup( testUser.email, testUser.username, testUser.password );
 		} );
 
 		it( 'Land in checkout cart', async function () {
@@ -70,7 +65,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 
 		it( 'Enter registrar details', async function () {
 			await cartCheckoutPage.enterDomainRegistrarDetails(
-				DataHelper.getTestDomainRegistrarDetails( email )
+				DataHelper.getTestDomainRegistrarDetails( testUser.email )
 			);
 		} );
 
@@ -80,6 +75,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 
 		// Skipping this test because of inconsistency in cookie working in this flow
 		// See GH Issue #56961 (https://github.com/Automattic/wp-calypso/issues/56961)
+		// eslint-disable-next-line jest/no-disabled-tests
 		it.skip( 'Prices are shown in Japanese Yen', async function () {
 			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
 				rawString: true,

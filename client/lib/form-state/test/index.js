@@ -43,6 +43,8 @@ describe( 'index', () => {
 				const controller = testController( { fieldNames: [ 'firstName' ] } );
 				const state = controller.getInitialState();
 
+				expect( formState.isFieldDisabled( state, 'firstName' ) ).toStrictEqual( true );
+
 				assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), true );
 			} );
 		} );
@@ -50,7 +52,7 @@ describe( 'index', () => {
 		test( 'enables the fields on the first event', () => {
 			return new Promise( ( done ) => {
 				const onNewState = checkNthState( 0, function ( state ) {
-					assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), false );
+					expect( formState.isFieldDisabled( state, 'firstName' ) ).toStrictEqual( false );
 					done();
 				} );
 
@@ -65,7 +67,7 @@ describe( 'index', () => {
 			test( 'updates the field value', () => {
 				return new Promise( ( done ) => {
 					const onNewState = checkNthState( 1, function ( state ) {
-						assert.strictEqual( formState.getFieldValue( state, 'firstName' ), 'foo' );
+						expect( formState.getFieldValue( state, 'firstName' ) ).toStrictEqual( 'foo' );
 						done();
 					} );
 
@@ -88,7 +90,7 @@ describe( 'index', () => {
 					};
 
 					const onNewState = checkNthState( 3, function ( state ) {
-						assert.deepEqual( formState.getErrorMessages( state ), [ 'invalid' ] );
+						expect( formState.getErrorMessages( state ) ).toStrictEqual( [ 'invalid' ] );
 						done();
 					} );
 
@@ -115,7 +117,7 @@ describe( 'index', () => {
 						};
 
 						const onNewState = checkNthState( 4, function ( state ) {
-							assert.deepEqual( formState.getErrorMessages( state ), [ 'invalid' ] );
+							expect( formState.getErrorMessages( state ) ).toStrictEqual( [ 'invalid' ] );
 							done();
 						} );
 

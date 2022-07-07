@@ -3,7 +3,6 @@ import wpcomRequest from 'wpcom-proxy-request';
 import { useSite } from './use-site';
 
 type Response = {
-	is_fse_eligible: boolean;
 	is_fse_active: boolean;
 };
 
@@ -23,7 +22,6 @@ export function useFSEStatus() {
 	);
 
 	return {
-		FSEEligible: Boolean( data?.is_fse_eligible ),
 		FSEActive: Boolean( data?.is_fse_active ),
 		isLoading,
 	};

@@ -1,5 +1,5 @@
 import { Locator, Page } from 'playwright';
-import { TracksEvent, TracksEventProperties } from '../../types';
+import { TracksEvent, TracksEventProperties } from './types';
 
 // Exporting just for unit testing
 export const createEventMatchingPredicate = (

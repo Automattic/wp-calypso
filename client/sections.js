@@ -19,6 +19,12 @@ const sections = [
 		group: 'sites',
 	},
 	{
+		name: 'sites-dashboard',
+		paths: [ '/sites-dashboard' ],
+		module: 'calypso/sites-dashboard',
+		group: 'sites-dashboard',
+	},
+	{
 		name: 'account',
 		paths: [ '/me/account' ],
 		module: 'calypso/me/account',
@@ -286,6 +292,7 @@ const sections = [
 		paths: [ '/read' ],
 		module: 'calypso/reader',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -299,6 +306,7 @@ const sections = [
 		],
 		module: 'calypso/reader',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -306,6 +314,7 @@ const sections = [
 		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 		module: 'calypso/reader/full-post',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -520,6 +529,12 @@ const sections = [
 		name: 'woocommerce',
 		paths: [ '/store' ],
 		module: 'calypso/my-sites/store',
+		group: 'sites',
+	},
+	{
+		name: 'add-ons',
+		paths: [ '/add-ons', '/add-ons/[^\\/]+' ],
+		module: 'calypso/my-sites/add-ons',
 		group: 'sites',
 	},
 ];

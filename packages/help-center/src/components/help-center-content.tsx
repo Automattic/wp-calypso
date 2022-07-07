@@ -1,8 +1,17 @@
+/* eslint-disable no-restricted-imports */
+/**
+ * External Dependencies
+ */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CardBody } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import classnames from 'classnames';
+import { useSelector } from 'react-redux';
 import { Route, useLocation } from 'react-router-dom';
+import { getSectionName } from 'calypso/state/ui/selectors';
+/**
+ * Internal Dependencies
+ */
 import { Content } from '../types';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
@@ -14,13 +23,16 @@ import { SuccessScreen } from './ticket-success-screen';
 const HelpCenterContent: React.FC< Content > = ( { isMinimized } ) => {
 	const location = useLocation();
 	const className = classnames( 'help-center__container-content' );
+	const section = useSelector( getSectionName );
 
 	useEffect( () => {
-		recordTracksEvent( 'helpcenter_page_open', {
+		recordTracksEvent( 'calypso_helpcenter_page_open', {
 			pathname: location.pathname,
 			search: location.search,
+			section,
+			location: 'help-center',
 		} );
-	}, [ location ] );
+	}, [ location, section ] );
 
 	return (
 		<CardBody hidden={ isMinimized } className={ className }>

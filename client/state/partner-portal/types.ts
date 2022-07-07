@@ -76,6 +76,7 @@ export interface APIPartner {
 	keys: APIPartnerKey[];
 	tos: string;
 	partner_type: string;
+	has_valid_payment_method: boolean;
 }
 
 // The API-returned license object is not quite consistent right now so we only define the properties we actively rely on.
@@ -182,11 +183,13 @@ export interface Partner {
 	keys: PartnerKey[];
 	tos: string;
 	partner_type: string;
+	has_valid_payment_method: boolean;
 }
 
 export interface PartnerStore {
 	hasFetched: boolean;
 	isFetching: boolean;
+	isPartnerOAuthTokenLoaded: boolean;
 	activePartnerKey: number;
 	current: Partner | null;
 	error: APIError | null;

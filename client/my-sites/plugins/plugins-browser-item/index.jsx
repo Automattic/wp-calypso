@@ -1,4 +1,6 @@
+import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -19,9 +21,11 @@ import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
+import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
@@ -38,6 +42,7 @@ const PluginsBrowserListElement = ( props ) => {
 
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const localizeUrl = useLocalizeUrl();
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -112,7 +117,13 @@ const PluginsBrowserListElement = ( props ) => {
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
 
+	const canInstallPlugins =
+		useSelector( ( state ) =>
+			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PLUGINS )
+		) || jetpackNonAtomic;
+
 	if ( isPlaceholder ) {
+		// eslint-disable-next-line no-use-before-define
 		return <Placeholder iconSize={ iconSize } />;
 	}
 
@@ -123,7 +134,7 @@ const PluginsBrowserListElement = ( props ) => {
 	const onClick = ( e ) => {
 		e.preventDefault();
 		e.stopPropagation();
-		window.location.href = 'https://wordpress.com/support/incompatible-plugins/';
+		window.location.href = localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' );
 	};
 
 	return (
@@ -178,11 +189,13 @@ const PluginsBrowserListElement = ( props ) => {
 				) }
 				<div className="plugins-browser-item__footer">
 					{ variant === PluginsBrowserElementVariant.Extended && (
+						// eslint-disable-next-line no-use-before-define
 						<InstalledInOrPricing
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
 							plugin={ plugin }
 							shouldUpgrade={ shouldUpgrade }
+							canInstallPlugins={ canInstallPlugins }
 							currentSites={ currentSites }
 						/>
 					) }
@@ -218,18 +231,42 @@ const InstalledInOrPricing = ( {
 	isWpcomPreinstalled,
 	plugin,
 	shouldUpgrade,
+	canInstallPlugins,
 	currentSites,
 } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const isPluginAtive = useSelector( ( state ) =>
+	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
-	const active = isWpcomPreinstalled || isPluginAtive;
+	const { isPreinstalledPremiumPlugin, isPreinstalledPremiumPluginUpgraded } =
+		usePreinstalledPremiumPlugin( plugin.slug );
+	const active = isWpcomPreinstalled || isPluginActive;
 
 	let checkmarkColorClass = 'checkmark--active';
 
-	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
+	if ( isPreinstalledPremiumPluginUpgraded ) {
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
+		return (
+			<div className="plugins-browser-item__installed-and-active-container">
+				<div className="plugins-browser-item__installed ">
+					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
+					{ translate( 'Installed' ) }
+				</div>
+				<div className="plugins-browser-item__active">
+					<Badge type={ active ? 'success' : 'info' }>
+						{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
+					</Badge>
+				</div>
+			</div>
+		);
+		/* eslint-enable wpcalypso/jsx-gridicon-size */
+	}
+
+	if (
+		( ! isPreinstalledPremiumPlugin && sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
+		isWpcomPreinstalled
+	) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
 			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
@@ -269,11 +306,16 @@ const InstalledInOrPricing = ( {
 								<>
 									{ price + ' ' }
 									<span className="plugins-browser-item__period">{ period }</span>
+									{ shouldUpgrade && (
+										<div className="plugins-browser-item__period">
+											{ translate( 'Requires a plan upgrade' ) }
+										</div>
+									) }
 								</>
 							) : (
 								<>
 									{ translate( 'Free' ) }
-									{ shouldUpgrade && (
+									{ ! canInstallPlugins && (
 										<span className="plugins-browser-item__requires-plan-upgrade">
 											{ translate( 'Requires a plan upgrade' ) }
 										</span>

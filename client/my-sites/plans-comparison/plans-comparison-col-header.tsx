@@ -1,4 +1,4 @@
-import { TYPE_PRO, TYPE_STARTER } from '@automattic/calypso-products';
+import { TYPE_STARTER } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
@@ -10,7 +10,6 @@ interface Props {
 	plan: Plan;
 	price?: number;
 	originalPrice?: number;
-	isExperiment?: boolean;
 	onClick?: ( productSlug: string ) => void;
 	translate: typeof translate;
 }
@@ -89,7 +88,6 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	originalPrice,
 	children,
 	translate,
-	isExperiment,
 } ) => {
 	const isDiscounted = typeof originalPrice === 'number';
 
@@ -98,33 +96,29 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 			<PlanTitle>{ plan.getTitle() }</PlanTitle>
 
 			<PlanDescription>
-				{ plan.type === TYPE_STARTER && isExperiment && (
+				{ plan.type === TYPE_STARTER ? (
 					<>
-						<p>Great for blogs and simple sites:</p>
+						<p>{ translate( 'Great for blogs and simple sites:' ) }</p>
 						<ul>
-							<li>Custom domain name.</li>
-							<li>Collect payments and donations.</li>
-							<li>6GB of storage for images.</li>
-							<li>Automatic WordPress updates.</li>
-							<li>A la carte upgrades available.</li>
+							<li>{ translate( 'Custom domain name.' ) }</li>
+							<li>{ translate( 'Collect payments and donations.' ) }</li>
+							<li>{ translate( '6GB of storage for images.' ) }</li>
+							<li>{ translate( 'Automatic WordPress updates' ) }.</li>
+							<li>{ translate( 'A la carte upgrades available.' ) }</li>
+						</ul>
+					</>
+				) : (
+					<>
+						<p>{ translate( 'Great for business and custom sites:' ) }</p>
+						<ul>
+							<li>{ translate( 'Unlock 50k+ plugins and themes.' ) }</li>
+							<li>{ translate( 'Advanced ecommerce tools.' ) }</li>
+							<li>{ translate( 'Premium website themes.' ) }</li>
+							<li>{ translate( '50GB of media storage.' ) }</li>
+							<li>{ translate( '24-hour live chat support.' ) }</li>
 						</ul>
 					</>
 				) }
-
-				{ plan.type === TYPE_PRO && isExperiment && (
-					<>
-						<p>Great for business and custom sites:</p>
-						<ul>
-							<li>Unlock 50k+ plugins and themes.</li>
-							<li>Advanced ecommerce tools.</li>
-							<li>Premium website themes.</li>
-							<li>50GB of media storage.</li>
-							<li>24-hour live chat support.</li>
-						</ul>
-					</>
-				) }
-
-				{ ! isExperiment && plan.getDescription() }
 			</PlanDescription>
 			<PriceContainer>
 				{ isDiscounted && (

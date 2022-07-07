@@ -1,4 +1,5 @@
 import { Card, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -152,13 +153,13 @@ class DesktopDownloadCard extends Component {
 
 		switch ( platformLink ) {
 			case MAC_LINK:
-				return <a href={ platformLink } onClick={ trackMacClick } />;
+				return <a href={ localizeUrl( platformLink ) } onClick={ trackMacClick } />;
 			case LINUX_TAR_LINK:
-				return <a href={ platformLink } onClick={ trackLinuxTarClick } />;
+				return <a href={ localizeUrl( platformLink ) } onClick={ trackLinuxTarClick } />;
 			case LINUX_DEB_LINK:
-				return <a href={ platformLink } onClick={ trackLinuxDebClick } />;
+				return <a href={ localizeUrl( platformLink ) } onClick={ trackLinuxDebClick } />;
 			default:
-				return <a href={ platformLink } onClick={ trackWindowsClick } />;
+				return <a href={ localizeUrl( platformLink ) } onClick={ trackWindowsClick } />;
 		}
 	}
 
@@ -178,7 +179,7 @@ class DesktopDownloadCard extends Component {
 				</div>
 				<Button
 					className="get-apps__desktop-button"
-					href={ this.getButtonLink( platform ) }
+					href={ localizeUrl( this.getButtonLink( platform ) ) }
 					onClick={ this.getButtonClickHandler( platform ) }
 				>
 					{ translate( 'Download' ) }

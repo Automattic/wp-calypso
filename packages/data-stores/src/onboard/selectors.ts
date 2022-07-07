@@ -46,3 +46,5 @@ export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 
 export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 	hasSelectedDesign( state ) && ! state.selectedFonts;
+
+export const getEditEmail = ( state: State ) => state.editEmail;

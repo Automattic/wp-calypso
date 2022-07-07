@@ -1,7 +1,7 @@
 import { Frame, Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
-import type { PaymentDetails, RegistrarDetails } from '../../data-helper';
+import type { PaymentDetails, RegistrarDetails } from '../../types/data-helper.types';
 
 const selectors = {
 	// Modal

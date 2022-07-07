@@ -5,6 +5,7 @@
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
 const webpack = require( 'webpack' );
 
 const FSE_MODULE_PREFIX = 'a8c-fse';
@@ -108,6 +109,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 					}
 				},
 			} ),
+			new ReadableJsAssetsWebpackPlugin(),
 		],
 		devtool: isDevelopment ? 'inline-cheap-source-map' : 'source-map',
 		stats: 'minimal',

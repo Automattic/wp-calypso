@@ -20,6 +20,10 @@
 }
 .site-card__expanded-content {
 	padding: 0 0.3em;
+
+	a {
+		display: flex;
+	}
 }
 .site-card__expanded-content-list {
 	margin: 0 -5px;

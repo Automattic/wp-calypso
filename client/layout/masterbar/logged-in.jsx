@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Popover, Button } from '@automattic/components';
+import { shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -21,6 +22,7 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
@@ -30,7 +32,11 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	isJetpackSite,
+	isSimpleSite as getIsSimpleSite,
+} from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -490,15 +496,19 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isCheckout, isCheckoutPending } = this.props;
+		const { isInEditor, isCheckout, isCheckoutPending, isSimpleSite, user, locale } = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending ) {
 			return this.renderCheckout();
 		}
 		if ( isMobile ) {
-			const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
-			if ( this.props.isInEditor && isHelpCenterEnabled ) {
+			if (
+				config.isEnabled( 'editor/help-center' ) &&
+				shouldShowHelpCenterToUser( user.ID, locale ) &&
+				isInEditor &&
+				isSimpleSite
+			) {
 				return (
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
@@ -588,6 +598,8 @@ export default connect(
 			// If the user is newer than new navigation shipping date, don't tell them this nav is new. Everything is new to them.
 			isUserNewerThanNewNavigation:
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
+			locale: getCurrentLocaleSlug( state ),
+			isSimpleSite: getIsSimpleSite( state ),
 		};
 	},
 	{

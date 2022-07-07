@@ -35,11 +35,11 @@
 	}
 
 	&.is-left-align {
-		text-align: left;
+		text-align: start;
 	}
 
 	&.is-right-align {
-		text-align: right;
+		text-align: end;
 	}
 }
 
@@ -80,7 +80,7 @@
 // Compact header on small screens
 .formatted-header.is-compact-on-mobile {
 	@include breakpoint-deprecated( '<660px' ) {
-		text-align: left;
+		text-align: start;
 
 		.formatted-header__title {
 			font-size: 17px;

@@ -1,7 +1,6 @@
 import { Page } from 'playwright';
-import { NewSiteResponse } from '../../rest-api-client';
 import { PlansPage, Plans } from './plans-page';
-import type { SiteDetails } from '../../rest-api-client';
+import type { SiteDetails } from '../../types/rest-api-client.types';
 
 /**
  * Represents the Signup > Pick a Plan page.
@@ -38,12 +37,12 @@ export class SignupPickPlanPage {
 			throw new Error( 'Failed to create new site when selecting a plan at signup.' );
 		}
 
-		const responseBody: NewSiteResponse = await response.json();
+		const responseJSON = await response.json();
 
 		return {
-			id: responseBody.body.blog_details.blogid,
-			url: responseBody.body.blog_details.url,
-			name: responseBody.body.blog_details.blogname,
+			id: responseJSON[ 'body' ].blog_details.blogid,
+			url: responseJSON[ 'body' ].blog_details.url,
+			name: responseJSON[ 'body' ].blog_details.blogname,
 		};
 	}
 }

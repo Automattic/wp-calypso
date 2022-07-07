@@ -42,7 +42,6 @@ export function getLicenseState(
  * This is a hack around TypeScript's poor support of enums as types.
  *
  * @example const enumMember = valueToEnum< SomeEnumType >( SomeEnumType, 'foo', SomeEnumType.SomeMember );
- *
  * @template T
  * @param {Record< string, * >} enumType Enum type to search in.
  * @param {*} value The enum value we are looking to get the member for.
@@ -166,4 +165,14 @@ export function formatApiPartner( partner: APIPartner ): Partner {
 			hasLicenses: key.has_licenses,
 		} ) ),
 	};
+}
+
+/**
+ * Format the string by removing Jetpack, (, ) from the product name
+ *
+ * @param product Product name
+ * @returns Product title
+ */
+export function getProductTitle( product: string ): string {
+	return product.replace( /(?:Jetpack\s|[)(])/gi, '' );
 }

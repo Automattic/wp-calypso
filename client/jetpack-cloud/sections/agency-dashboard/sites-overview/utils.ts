@@ -2,14 +2,40 @@ import { translate } from 'i18n-calypso';
 import type {
 	AllowedTypes,
 	SiteData,
-	FormattedRowObj,
+	Site,
 	StatusEventNames,
 	ActionEventNames,
 	AllowedStatusTypes,
 	AllowedActionTypes,
 	StatusTooltip,
+	RowMetaData,
+	BackupNode,
+	ScanNode,
+	MonitorNode,
 } from './types';
-import type { ReactChild } from 'react';
+
+export const siteColumns = [
+	{
+		key: 'site',
+		title: translate( 'Site' ),
+	},
+	{
+		key: 'backup',
+		title: translate( 'Backup' ),
+	},
+	{
+		key: 'scan',
+		title: translate( 'Scan' ),
+	},
+	{
+		key: 'monitor',
+		title: translate( 'Monitor' ),
+	},
+	{
+		key: 'plugin',
+		title: translate( 'Plugin Updates' ),
+	},
+];
 
 // Event names for all actions for large screen(>960px) and small screen(<960px)
 export const actionEventNames: ActionEventNames = {
@@ -112,7 +138,7 @@ const pluginEventNames: StatusEventNames = {
 // Returns event name needed for all the feature state clicks on the agency dashboard
 const getRowEventName = (
 	type: AllowedTypes,
-	status: AllowedStatusTypes,
+	status: AllowedStatusTypes | string,
 	isLargeScreen: boolean
 ) => {
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
@@ -196,7 +222,7 @@ const getLinks = (
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime&source=dashboard`;
 			} else {
 				link = `/backup/${ siteUrl }`;
 			}
@@ -204,7 +230,7 @@ const getLinks = (
 		}
 		case 'scan': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan&source=dashboard`;
 			} else {
 				link = `/scan/${ siteUrl }`;
 			}
@@ -237,16 +263,7 @@ export const getRowMetaData = (
 	rows: SiteData,
 	type: AllowedTypes,
 	isLargeScreen: boolean
-): {
-	row: { value: { url: string }; status: string; error: string };
-	link: string;
-	isExternalLink: boolean;
-	siteError: string;
-	tooltip: ReactChild | undefined;
-	tooltipId: string;
-	siteDown: boolean;
-	eventName: string | undefined;
-} => {
+): RowMetaData => {
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
 	const siteUrlWithScheme = rows.site?.value?.url_with_scheme;
@@ -267,8 +284,8 @@ export const getRowMetaData = (
 	};
 };
 
-const formatBackupData = ( site: SiteData ) => {
-	const backup: FormattedRowObj = {
+const formatBackupData = ( site: Site ) => {
+	const backup: BackupNode = {
 		value: '',
 		status: '',
 		type: 'backup',
@@ -301,8 +318,8 @@ const formatBackupData = ( site: SiteData ) => {
 	return backup;
 };
 
-const formatScanData = ( site: SiteData ) => {
-	const scan: FormattedRowObj = {
+const formatScanData = ( site: Site ) => {
+	const scan: ScanNode = {
 		value: '',
 		status: '',
 		type: 'scan',
@@ -330,8 +347,8 @@ const formatScanData = ( site: SiteData ) => {
 	return scan;
 };
 
-const formatMonitorData = ( site: SiteData ) => {
-	const monitor: FormattedRowObj = {
+const formatMonitorData = ( site: Site ) => {
+	const monitor: MonitorNode = {
 		value: '',
 		status: '',
 		type: 'monitor',
@@ -352,7 +369,7 @@ const formatMonitorData = ( site: SiteData ) => {
 /**
  * Returns formatted sites
  */
-export const formatSites = ( sites: Array< any > = [] ): Array< any > => {
+export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | [] => {
 	return sites.map( ( site ) => {
 		const pluginUpdates = site.awaiting_plugin_updates;
 		return {
@@ -366,10 +383,10 @@ export const formatSites = ( sites: Array< any > = [] ): Array< any > => {
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),
 			plugin: {
-				value: `${ pluginUpdates.length } ${ translate( 'Available' ) }`,
-				status: pluginUpdates.length > 0 ? 'warning' : 'success',
+				value: `${ pluginUpdates?.length } ${ translate( 'Available' ) }`,
+				status: pluginUpdates?.length > 0 ? 'warning' : 'success',
 				type: 'plugin',
-				updates: pluginUpdates.length,
+				updates: pluginUpdates?.length,
 			},
 		};
 	} );

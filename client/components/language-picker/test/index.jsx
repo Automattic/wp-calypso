@@ -1,8 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { LanguagePicker } from '../';
 
 const defaultProps = {
@@ -47,29 +46,27 @@ const defaultProps = {
 
 describe( 'LanguagePicker', () => {
 	test( 'should render the right icon and label', () => {
-		const wrapper = shallow( <LanguagePicker { ...defaultProps } /> );
-		expect( wrapper.find( '.language-picker__icon' ).text() ).toBe( 'en' );
-		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( 'English' );
+		render( <LanguagePicker { ...defaultProps } /> );
+		expect( screen.getByText( 'en' ).parentNode ).toHaveClass( 'language-picker__icon' );
+		expect( screen.getByText( 'English' ) ).toHaveClass( 'language-picker__name-label' );
 	} );
 	test( 'should render the right icon and label for a language variant', () => {
 		const newProps = { ...defaultProps, value: 'de_formal' };
-		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
-		expect( wrapper.find( '.language-picker__icon' ).text() ).toBe( 'de' );
-		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( 'Deutsch (Sie)' );
+		render( <LanguagePicker { ...newProps } /> );
+		expect( screen.getByText( 'de' ).parentNode ).toHaveClass( 'language-picker__icon' );
+		expect( screen.getByText( 'Deutsch (Sie)' ) ).toHaveClass( 'language-picker__name-label' );
 	} );
 	test( 'should render the right icon and label for a language variant with regional subcode', () => {
 		const newProps = { ...defaultProps, value: 'es-mx_gringos' };
-		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
-		expect( wrapper.find( '.language-picker__icon-inner' ).html() ).toBe(
-			'<div class="language-picker__icon-inner">es mx</div>'
-		);
-		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe(
-			'Español de México de los Gringos'
+		render( <LanguagePicker { ...newProps } /> );
+		expect( screen.getByText( 'es mx' ).parentNode ).toHaveClass( 'language-picker__icon' );
+		expect( screen.getByText( 'Español de México de los Gringos' ) ).toHaveClass(
+			'language-picker__name-label'
 		);
 	} );
 	test( 'ensure non utf language names display in localized character sets', () => {
 		const newProps = { ...defaultProps, value: 'ko' };
-		const wrapper = shallow( <LanguagePicker { ...newProps } /> );
-		expect( wrapper.find( '.language-picker__name-label' ).text() ).toBe( '한국어' );
+		render( <LanguagePicker { ...newProps } /> );
+		expect( screen.getByText( '한국어' ) ).toHaveClass( 'language-picker__name-label' );
 	} );
 } );

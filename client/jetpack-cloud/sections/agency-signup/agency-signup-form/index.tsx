@@ -1,17 +1,21 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { receivePartner } from 'calypso/state/partner-portal/partner/actions';
 import useCreatePartnerMutation from 'calypso/state/partner-portal/partner/hooks/use-create-partner-mutation';
-import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
+import {
+	getCurrentPartner,
+	hasFetchedPartner,
+} from 'calypso/state/partner-portal/partner/selectors';
 import { translateInvalidPartnerParameterError } from 'calypso/state/partner-portal/partner/utils';
 import type { APIError } from 'calypso/state/partner-portal/types';
 import type { ReactElement } from 'react';
@@ -21,18 +25,17 @@ export default function AgencySignupForm(): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
+	const hasFetched = useSelector( hasFetchedPartner );
 	const notificationId = 'partner-portal-agency-signup-form';
 
 	const createPartner = useCreatePartnerMutation( {
 		onSuccess: ( partner ) => {
 			dispatch( receivePartner( formatApiPartner( partner ) ) );
-
-			page.redirect( partnerPortalBasePath() );
 		},
 		onError: ( error: APIError ) => {
 			let message = error.message;
 
-			if ( error.code === 'rest_invalid_param' && typeof error?.data?.params !== undefined ) {
+			if ( error.code === 'rest_invalid_param' && typeof error?.data?.params !== 'undefined' ) {
 				message = translateInvalidPartnerParameterError( error.data.params );
 			}
 
@@ -62,6 +65,13 @@ export default function AgencySignupForm(): ReactElement {
 		[ notificationId, partner?.id, createPartner.mutate, dispatch ]
 	);
 
+	// Redirect the user if they are already a partner or the form was submitted successfully.
+	useEffect( () => {
+		if ( partner ) {
+			page.redirect( partnerPortalBasePath() );
+		}
+	} );
+
 	return (
 		<Card className="agency-signup-form">
 			<svg
@@ -88,12 +98,16 @@ export default function AgencySignupForm(): ReactElement {
 				{ translate( 'Tell us about yourself and your business.' ) }
 			</h2>
 
-			<CompanyDetailsForm
-				includeTermsOfService={ true }
-				isLoading={ createPartner.isLoading }
-				onSubmit={ onSubmit }
-				submitLabel={ translate( 'Continue' ) }
-			/>
+			{ ( ! hasFetched || partner ) && <TextPlaceholder /> }
+
+			{ hasFetched && ! partner && (
+				<CompanyDetailsForm
+					includeTermsOfService={ true }
+					isLoading={ createPartner.isLoading }
+					onSubmit={ onSubmit }
+					submitLabel={ translate( 'Continue' ) }
+				/>
+			) }
 		</Card>
 	);
 }

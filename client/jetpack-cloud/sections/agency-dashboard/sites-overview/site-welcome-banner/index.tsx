@@ -8,7 +8,8 @@ import {
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE,
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE as homePagePreferenceName,
 	getJetpackDashboardWelcomeBannerPreference as getPreference,
-} from 'calypso/state/partner-portal/agency-dashboard/selectors';
+	jetpackDashboardRedirectLink,
+} from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import type { PreferenceType } from '../types';
 
@@ -72,6 +73,8 @@ export default function SiteWelcomeBanner( {
 		);
 	}, [ handleTrackEvents, isDashboardView, savePreferenceType ] );
 
+	const dashboardHref = useSelector( jetpackDashboardRedirectLink );
+
 	// Hide the banner if the banner is already viewed
 	// on the dashboard page or the banner is dismissed
 	if ( isDismissed || hideBanner ) {
@@ -94,7 +97,7 @@ export default function SiteWelcomeBanner( {
 			horizontal
 			iconPath={ tipIcon }
 			callToAction={ isDashboardView ? translate( 'Got it' ) : translate( 'View' ) }
-			href={ isDashboardView ? '' : '/dashboard' }
+			href={ isDashboardView ? '' : dashboardHref }
 			onClick={ isDashboardView ? dismissBanner : trackViewEvent }
 			dismissTemporary={ ! isDashboardView }
 			onDismiss={ dismissBanner }

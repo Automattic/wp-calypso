@@ -13,7 +13,7 @@ function validateAllFields( fieldValues, existingEmailForwards = [] ) {
 			return [ 'Invalid' ];
 		}
 
-		if ( name !== 'mailbox' ) {
+		if ( fieldName !== 'mailbox' ) {
 			return [];
 		}
 
@@ -34,4 +34,5 @@ function validateField( { name, value } ) {
 
 export { getEmailForwardsCount } from './get-email-forwards-count';
 export { hasEmailForwards } from './has-email-forwards';
+export { getDomainsWithEmailForwards } from './get-domains-with-email-forwards';
 export { validateAllFields };

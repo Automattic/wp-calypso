@@ -3,12 +3,14 @@ import {
 	NewSiteBlogDetails,
 	NewSiteErrorResponse,
 	SiteDetails,
+	SiteError,
 	Domain,
 	SiteLaunchState,
 	SiteLaunchStatus,
 	SiteSettings,
 	AtomicTransferStatus,
 	LatestAtomicTransferStatus,
+	GlobalStyles,
 } from './types';
 import {
 	AtomicTransferState,
@@ -63,6 +65,17 @@ export const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = 
 		case 'RESET_SITE_STORE':
 		case 'RESET_RECEIVE_NEW_SITE_FAILED':
 			return false;
+	}
+	return state;
+};
+
+export const fetchingSiteError: Reducer< SiteError | undefined, Action > = ( state, action ) => {
+	switch ( action.type ) {
+		case 'RECEIVE_SITE_FAILED':
+			return {
+				error: action.response.error,
+				message: action.response.message,
+			};
 	}
 	return state;
 };
@@ -149,6 +162,23 @@ export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action >
 			},
 		};
 	}
+	return state;
+};
+
+export const sitesGlobalStyles: Reducer< { [ key: number ]: GlobalStyles }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_SITE_GLOBAL_STYLES' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				...state?.[ action.siteId ],
+				...action.globalStyles,
+			},
+		};
+	}
+
 	return state;
 };
 
@@ -370,10 +400,12 @@ const newSite = combineReducers( {
 const reducer = combineReducers( {
 	isFetchingSiteDetails,
 	newSite,
+	fetchingSiteError,
 	sites,
 	launchStatus,
 	sitesDomains,
 	sitesSettings,
+	sitesGlobalStyles,
 	siteSetupErrors,
 	atomicTransferStatus,
 	latestAtomicTransferStatus,

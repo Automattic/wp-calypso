@@ -1,10 +1,10 @@
 import i18n from 'i18n-calypso';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import 'calypso/state/partner-portal/stored-cards/init';
+import { STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED } from 'calypso/state/action-types';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
 import type { AnyAction, Dispatch } from 'redux';
-
-import 'calypso/state/partner-portal/stored-cards/init';
 
 export const fetchStoredCards =
 	( paging: { startingAfter: string; endingBefore: string } ) =>
@@ -35,6 +35,11 @@ export const fetchStoredCards =
 				dispatch( {
 					type: 'STORED_CARDS_FETCH_COMPLETED',
 					list: data.items,
+				} );
+
+				dispatch( {
+					type: 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED',
+					payment_method_id: data.items.find( ( currCard ) => currCard.is_default ),
 				} );
 			} )
 			.catch( ( error: Error ) => {
@@ -76,7 +81,7 @@ export const deleteStoredCard =
 				} );
 
 				dispatch( {
-					type: 'STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED',
+					type: STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED,
 					payment_method_id: response.primary_payment_method_id,
 				} );
 			} )

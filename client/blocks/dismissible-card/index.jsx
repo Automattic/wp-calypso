@@ -1,4 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
@@ -14,6 +15,7 @@ function DismissibleCard( { className, highlight, temporary, onClick, preference
 	const isDismissed = useSelector( ( state ) => getPreference( state, preference ) );
 	const hasReceivedPreferences = useSelector( hasReceivedRemotePreferences );
 	const dispatch = useDispatch();
+	const translate = useTranslate();
 
 	if ( isDismissed || ! hasReceivedPreferences ) {
 		return null;
@@ -27,7 +29,13 @@ function DismissibleCard( { className, highlight, temporary, onClick, preference
 	return (
 		<Card className={ className } highlight={ highlight }>
 			<QueryPreferences />
-			<Gridicon icon="cross" className="dismissible-card__close-icon" onClick={ handleClick } />
+			<button
+				className="dismissible-card__close-button"
+				onClick={ handleClick }
+				aria-label={ translate( 'Dismiss' ) }
+			>
+				<Gridicon icon="cross" />
+			</button>
 			{ children }
 		</Card>
 	);

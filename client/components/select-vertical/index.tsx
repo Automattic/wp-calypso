@@ -64,7 +64,7 @@ const SelectVertical: React.FC< Props > = ( {
 
 	return (
 		<>
-			<FormLabel>{ translate( 'Select a category' ) }</FormLabel>
+			<FormLabel>{ translate( 'Search for a category' ) }</FormLabel>
 			<SuggestionSearch
 				placeholder={ String( translate( 'Ex. Cafe, Education, Photography' ) ) }
 				searchTerm={ searchTerm }

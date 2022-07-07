@@ -1,9 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { isBlogger, isPersonal, isPremium } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import { useSelector } from 'react-redux';
+import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -18,18 +21,32 @@ function getHoldMessages(
 	context: string | null,
 	translate: LocalizeProps[ 'translate' ],
 	eligibleForProPlan: boolean,
-	billingPeriod?: string
+	billingPeriod?: string,
+	isMarketplace?: boolean,
+	isLegacyPlan?: boolean
 ) {
 	return {
 		NO_BUSINESS_PLAN: {
-			title: eligibleForProPlan
-				? translate( 'Upgrade to a Pro plan' )
-				: translate( 'Upgrade to a Business plan' ),
+			title: ( function () {
+				if ( ! isLegacyPlan && isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
+					return translate( 'Upgrade to a Starter plan' );
+				}
+
+				if ( ! isLegacyPlan && eligibleForProPlan ) {
+					return translate( 'Upgrade to a Pro plan' );
+				}
+
+				return translate( 'Upgrade to a Business plan' );
+			} )(),
 			description: ( function () {
 				if ( context === 'themes' ) {
 					return translate(
 						"You'll also get to install custom plugins, have more storage, and access live support."
 					);
+				}
+
+				if ( isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
+					return translate( "You'll also get to collect payments and have more storage." );
 				}
 
 				if ( billingPeriod === IntervalLength.MONTHLY ) {
@@ -85,10 +102,11 @@ function getHoldMessages(
 			supportUrl: null,
 		},
 		EXCESSIVE_DISK_SPACE: {
-			title: translate( 'Upload not available' ),
-			description: translate(
-				'This site is not currently eligible to install themes and plugins. Please contact our support team for help.'
-			),
+			title: translate( 'Increase storage space', {
+				comment:
+					'Message displayed when a Simple site cannot be transferred to Atomic because there is not enough disk space. It appears after the heading "To continue you\'ll need to: ", inside a list with actions to perform in order to proceed with the transfer.',
+			} ),
+			description: <ExcessiveDiskSpace />,
 			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
 	};
@@ -158,6 +176,7 @@ export function getBlockingMessages(
 interface ExternalProps {
 	context: string | null;
 	holds: string[];
+	isMarketplace?: boolean;
 	isPlaceholder: boolean;
 }
 
@@ -201,13 +220,27 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
+export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
+
+	const plan = selectedSite?.plan;
+	let isLegacyPlan = false;
+	if ( typeof plan !== 'undefined' ) {
+		isLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
+	}
+
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
 	const billingPeriod = useSelector( getBillingInterval );
-	const holdMessages = getHoldMessages( context, translate, eligibleForProPlan, billingPeriod );
+	const holdMessages = getHoldMessages(
+		context,
+		translate,
+		eligibleForProPlan,
+		billingPeriod,
+		isMarketplace,
+		isLegacyPlan
+	);
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );

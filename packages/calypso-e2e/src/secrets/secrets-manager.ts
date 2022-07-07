@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */ // We have to do some dynamic parsing and iteration as we validate JSON.
 import fs from 'fs';
 import path from 'path';
+import type { Secrets } from '.';
 
 export const TEST_ACCOUNT_NAMES = [
 	'defaultUser',
@@ -18,6 +19,8 @@ export const TEST_ACCOUNT_NAMES = [
 	'calypsoPreReleaseUser',
 	'i18nUser',
 	'p2User',
+	'totpUser',
+	'smsUser',
 	'jetpackUser',
 	'jetpackUserPREMIUM',
 	'jetpackUserJN',
@@ -25,43 +28,6 @@ export const TEST_ACCOUNT_NAMES = [
 	'notificationsUser',
 	'googleLoginUser',
 ] as const;
-
-export type TestAccountName = typeof TEST_ACCOUNT_NAMES[ number ];
-
-export type OtherTestSiteName = 'notifications';
-
-export interface Secrets {
-	passwordForNewTestSignUps: string;
-	storeSandboxCookieValue: string;
-	testCouponCode: string;
-	wpccAuthPath: string;
-	calypsoOauthApplication: {
-		client_id: string;
-		client_secret: string;
-	};
-	martechTosUploadCredentials: {
-		bearer_token: string;
-	};
-	mailosaur: {
-		apiKey: string;
-		inviteInboxId: string;
-		signupInboxId: string;
-		domainsInboxId: string;
-		defaultUserInboxId: string;
-	};
-	testAccounts: {
-		[ key in TestAccountName ]: {
-			username: string;
-			password: string;
-			primarySite?: string;
-			otherSites?: string[];
-			totpKey?: string;
-		};
-	};
-	otherTestSites: {
-		[ key in OtherTestSiteName ]: string;
-	};
-}
 
 /**
  * Static class that gives you access to secrets needed for E2E testing.
@@ -181,6 +147,7 @@ export class SecretsManager {
 				signupInboxId: 'FAKE_VALUE',
 				domainsInboxId: 'FAKE_VALUE',
 				defaultUserInboxId: 'FAKE_VALUE',
+				totpUserInboxId: 'FAKE_VALUE',
 			},
 			testAccounts: {
 				defaultUser: { ...fakeAccount },
@@ -197,8 +164,11 @@ export class SecretsManager {
 				martechTosUser: { ...fakeAccount },
 				calypsoPreReleaseUser: { ...fakeAccount },
 				i18nUser: { ...fakeAccount },
-				// This one needs a totpKey
+				// The following two needs a totpKey
 				p2User: { ...fakeAccount, totpKey: 'FAKE_VALUE' },
+				totpUser: { ...fakeAccount, totpKey: 'FAKE_VALUE' },
+				// The following user needs smsNumber
+				smsUser: { ...fakeAccount, smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' } },
 				jetpackUser: { ...fakeAccount },
 				jetpackUserPREMIUM: { ...fakeAccount },
 				jetpackUserJN: { ...fakeAccount },

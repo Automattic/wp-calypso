@@ -15,13 +15,10 @@ import { Page, Browser } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function () {
-	const inboxId = SecretsManager.secrets.mailosaur.signupInboxId;
-	const username = DataHelper.getUsername( { prefix: 'wpcc' } );
-	const email = DataHelper.getTestEmailAddress( {
-		inboxId: inboxId,
-		prefix: username,
+	const testUser = DataHelper.getNewTestUser( {
+		usernamePrefix: 'wpcc',
 	} );
-	const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
+	const emailClient = new EmailClient();
 
 	let page: Page;
 
@@ -41,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 
 		it( 'Create a new WordPress.com account', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			await userSignupPage.signupWPCC( email, signupPassword );
+			await userSignupPage.signupWPCC( testUser.email, testUser.password );
 		} );
 
 		it( 'User lands in CrowdSignal dashboard', async function () {
@@ -50,10 +47,9 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 		} );
 
 		it( 'Get activation link', async function () {
-			const emailClient = new EmailClient();
-			const message = await emailClient.getLastEmail( {
-				inboxId: inboxId,
-				emailAddress: email,
+			const message = await emailClient.getLastMatchingMessage( {
+				inboxId: testUser.inboxId,
+				sentTo: testUser.email,
 				subject: 'Activate',
 			} );
 			const links = await emailClient.getLinksFromMessage( message );
@@ -96,9 +92,9 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 		} );
 
 		it( 'Ensure user is unable to log in', async function () {
-			await loginPage.fillUsername( email );
+			await loginPage.fillUsername( testUser.email );
 			await loginPage.clickSubmit();
-			await loginPage.fillPassword( signupPassword );
+			await loginPage.fillPassword( testUser.password );
 			await loginPage.clickSubmit();
 
 			await page.waitForSelector( 'text=This account has been closed' );

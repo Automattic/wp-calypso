@@ -8,7 +8,7 @@ import {
 	ExternalLineItemAmount,
 } from '../types';
 
-export function validateArg< V extends unknown >(
+export function validateArg< V >(
 	value: V,
 	errorMessage: string
 ): asserts value is NonNullable< V > {
@@ -17,7 +17,7 @@ export function validateArg< V extends unknown >(
 	}
 }
 
-export function validateArgIfUndefined< V extends unknown >(
+export function validateArgIfUndefined< V >(
 	value: V,
 	errorMessage: string
 ): asserts value is Exclude< V, undefined > {

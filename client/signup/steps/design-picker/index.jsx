@@ -19,7 +19,6 @@ import { useEffect, useLayoutEffect, useMemo, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview';
-import { useBlockEditorSettingsQuery } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { openCheckoutModal } from 'calypso/my-sites/checkout/modal/utils';
@@ -63,24 +62,13 @@ export default function DesignPickerStep( props ) {
 			? 'all'
 			: 'free';
 
-	// Limit themes to those that support the Site editor, if site is fse eligible
-	const { isLoading: blockEditorSettingsAreLoading, data: blockEditorSettings } =
-		useBlockEditorSettingsQuery( siteId, userLoggedIn && ! props.useDIFMThemes );
-	const isFSEEligible = blockEditorSettings?.is_fse_eligible ?? false;
-
 	const getThemeFilters = () => {
 		if ( props.useDIFMThemes ) return 'do-it-for-me';
 
-		if ( isFSEEligible ) return 'auto-loading-homepage,full-site-editing';
-
-		return 'auto-loading-homepage';
+		return 'auto-loading-homepage,full-site-editing';
 	};
 
-	const { data: apiThemes = [] } = useThemeDesignsQuery(
-		{ filter: getThemeFilters(), tier },
-		// Wait until block editor settings have loaded to load themes
-		{ enabled: ! blockEditorSettingsAreLoading }
-	);
+	const { data: apiThemes = [] } = useThemeDesignsQuery( { filter: getThemeFilters(), tier } );
 
 	useEffect(
 		() => {

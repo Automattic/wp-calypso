@@ -5,9 +5,12 @@ import {
 	ProductsList,
 	User,
 	AutomatedTransferEligibility,
+	StepperInternal,
+	Analyzer,
 } from '@automattic/data-stores';
 
 export const ONBOARD_STORE = Onboard.register();
+export const STEPPER_INTERNAL_STORE = StepperInternal.register();
 
 export const SITE_STORE = Site.register( {
 	client_id: config( 'wpcom_signup_id' ),
@@ -22,3 +25,5 @@ export const USER_STORE = User.register( {
 } );
 
 export const AUTOMATED_ELIGIBILITY_STORE = AutomatedTransferEligibility.register();
+
+export const ANALYZER_STORE = Analyzer.register();

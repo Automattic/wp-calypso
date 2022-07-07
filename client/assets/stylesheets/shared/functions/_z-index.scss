@@ -175,6 +175,9 @@ $z-layers: (
 		'.is-section-signup::before': -1,
 		'.layout__primary::before': -1,
 	),
+	'.is-section-stepper': (
+		'.step-container__navigation.action-buttons': 30,
+	),
 	'.ribbon': (
 		'.ribbon__title::before': -1,
 		'.ribbon__title::after': -1,

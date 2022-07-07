@@ -1,4 +1,13 @@
-import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_STARTER,
+	isBlogger,
+	isPersonal,
+	isPremium,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -52,14 +61,50 @@ const USPS: React.FC< Props > = ( {
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 
 	const selectedSite = useSelector( getSelectedSite );
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
+	const requiredPlan = useSelector( ( state ) => {
+		if ( ! shouldUpgrade ) {
+			return '';
+		}
+
+		const plan = selectedSite?.plan;
+		let isLegacyPlan = false;
+		if ( typeof plan !== 'undefined' ) {
+			isLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
+		}
+
+		if ( ! isLegacyPlan && isMarketplaceProduct && isEnabled( 'marketplace-starter-plan' ) ) {
+			return PLAN_WPCOM_STARTER;
+		}
+
+		if ( ! isLegacyPlan && isEligibleForProPlan( state, selectedSite?.ID ) ) {
+			return PLAN_WPCOM_PRO;
+		}
+
+		return isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
+	} );
 
 	const planDisplayCost = useSelector( ( state ) => {
-		const productSlug = isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
-		return getProductDisplayCost( state, eligibleForProPlan ? PLAN_WPCOM_PRO : productSlug );
+		return getProductDisplayCost( state, requiredPlan );
 	} );
+	let planText;
+	switch ( requiredPlan ) {
+		case PLAN_WPCOM_STARTER:
+			planText = translate( 'Included in the Starter plan (%s):', {
+				args: [ planDisplayCost ],
+			} );
+			break;
+		case PLAN_WPCOM_PRO:
+			planText = translate( 'Included in the Pro plan (%s):', {
+				args: [ planDisplayCost ],
+			} );
+			break;
+		case PLAN_BUSINESS:
+		case PLAN_BUSINESS_MONTHLY:
+			planText = translate( 'Included in the Business plan (%s):', {
+				args: [ planDisplayCost ],
+			} );
+			break;
+	}
 
 	const supportText = usePluginsSupportText();
 
@@ -91,13 +136,7 @@ const USPS: React.FC< Props > = ( {
 					{
 						id: 'plan',
 						className: 'title',
-						text: eligibleForProPlan
-							? translate( 'Included in the Pro plan (%s):', {
-									args: [ planDisplayCost ],
-							  } )
-							: translate( 'Included in the Business plan (%s):', {
-									args: [ planDisplayCost ],
-							  } ),
+						text: planText,
 						eligibilities: [ 'needs-upgrade' ],
 					},
 			  ]
@@ -112,7 +151,27 @@ const USPS: React.FC< Props > = ( {
 					},
 			  ]
 			: [] ),
-		...( shouldUpgrade
+		...( shouldUpgrade && requiredPlan === PLAN_WPCOM_STARTER
+			? [
+					{
+						id: 'collect-payments',
+						image: <Gridicon icon="money" size={ 16 } />,
+						text: translate( 'Payments collection' ),
+						eligibilities: [ 'needs-upgrade' ],
+					},
+			  ]
+			: [] ),
+		...( shouldUpgrade && requiredPlan === PLAN_WPCOM_STARTER
+			? [
+					{
+						id: 'storage',
+						image: <Gridicon icon="product" size={ 16 } />,
+						text: translate( '6GB of storage' ),
+						eligibilities: [ 'needs-upgrade' ],
+					},
+			  ]
+			: [] ),
+		...( shouldUpgrade && requiredPlan !== PLAN_WPCOM_STARTER
 			? [
 					{
 						id: 'hosting',
@@ -122,7 +181,7 @@ const USPS: React.FC< Props > = ( {
 					},
 			  ]
 			: [] ),
-		...( shouldUpgrade || isMarketplaceProduct
+		...( shouldUpgrade && requiredPlan !== PLAN_WPCOM_STARTER
 			? [
 					{
 						id: 'support',

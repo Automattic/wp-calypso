@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -9,10 +10,12 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { PREINSTALLED_PREMIUM_PLUGINS } from 'calypso/my-sites/plugins/constants';
 import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
@@ -181,6 +184,16 @@ export function normalizeCompatibilityList( compatibilityList ) {
 export function normalizePluginData( plugin, pluginData ) {
 	plugin = getAllowedPluginData( { ...plugin, ...pluginData } );
 
+	// Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
+	// but require a paid upgrade to function.
+	if ( !! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] && ! plugin.variations ) {
+		const { monthly, yearly } = PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products;
+		plugin.variations = {
+			monthly: { product_slug: monthly },
+			yearly: { product_slug: yearly },
+		};
+	}
+
 	return Object.entries( plugin ).reduce( ( returnData, [ key, item ] ) => {
 		switch ( key ) {
 			case 'short_description':
@@ -335,12 +348,17 @@ export function getPluginAuthorProfileKeyword( plugin ) {
 /**
  * @param currentPlan
  * @param pluginBillingPeriod
+ * @param eligibleForProPlan
+ * @param isMarketplace
  * @returns the correct business plan slug depending on current plan and pluginBillingPeriod
  */
-export function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleForProPlan ) {
-	if ( eligibleForProPlan ) {
-		return PLAN_WPCOM_PRO;
-	}
+export function businessPlanToAdd(
+	currentPlan,
+	pluginBillingPeriod,
+	eligibleForProPlan,
+	isMarketplace = false
+) {
+	// Legacy plans always upgrade to business.
 	switch ( currentPlan.product_slug ) {
 		case PLAN_PERSONAL_2_YEARS:
 		case PLAN_PREMIUM_2_YEARS:
@@ -351,6 +369,13 @@ export function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleFor
 		case PLAN_BLOGGER:
 			return PLAN_BUSINESS;
 		default:
+			// Not on a legacy plan: Can upgrade to Starter, Pro, or Business depending on settings.
+			if ( isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
+				return PLAN_WPCOM_STARTER;
+			}
+			if ( eligibleForProPlan ) {
+				return PLAN_WPCOM_PRO;
+			}
 			// Return annual plan if selected, monthly otherwise.
 			return pluginBillingPeriod === IntervalLength.ANNUALLY
 				? PLAN_BUSINESS

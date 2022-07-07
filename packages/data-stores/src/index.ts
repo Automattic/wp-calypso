@@ -1,3 +1,4 @@
+import * as Analyzer from './analyzer';
 import * as Auth from './auth';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
@@ -10,6 +11,7 @@ import * as Plans from './plans';
 import * as ProductsList from './products-list';
 import * as Reader from './reader';
 import * as Site from './site';
+import * as StepperInternal from './stepper-internal';
 import * as User from './user';
 import * as Verticals from './verticals';
 import * as VerticalsTemplates from './verticals-templates';
@@ -28,6 +30,7 @@ export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 
 export {
+	Analyzer,
 	Auth,
 	User,
 	DomainSuggestions,
@@ -44,6 +47,7 @@ export {
 	persistenceConfigFactory,
 	ProductsList,
 	AutomatedTransferEligibility,
+	StepperInternal,
 };
 
 /**

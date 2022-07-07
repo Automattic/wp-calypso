@@ -71,6 +71,7 @@
 	}
 
 	&__footer-image {
+		width: 100%;
 		padding-left: 15px;
 		@include break-large {
 			padding-left: 0;
@@ -96,17 +97,14 @@
 		line-height: 30px;
 		font-weight: 500;
 		margin-bottom: 24px;
-		span {
-			.is-placeholder & {
-				@include placeholder( --studio-gray-5 );
-			}
+		.is-placeholder & {
+			@include placeholder( --studio-gray-5 );
 		}
 	}
 
 	&__placeholder-image {
-		width: calc( 100% - 50px );
 		height: 0;
-		margin: 25px;
+		margin: 25px 65px 25px 25px;
 		padding-bottom: 85%;
 		@include placeholder( --studio-gray-5 );
 	}

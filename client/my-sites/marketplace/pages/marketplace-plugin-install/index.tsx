@@ -14,6 +14,7 @@ import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
+import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -232,17 +233,26 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	// Check completition of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
+			// Default process
 			( installedPlugin && pluginActive ) ||
-			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus )
+			// Transfer to atomic using a marketplace plugin
+			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus ) ||
+			// Transfer to atomic uploading a zip plugin
+			( uploadedPluginSlug &&
+				isUploadFlow &&
+				! isAtomic &&
+				transferStates.COMPLETE === automatedTransferStatus )
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
-					`/marketplace/thank-you/${ installedPlugin?.slug || productSlug }/${ selectedSiteSlug }`
+					`/marketplace/thank-you/${
+						installedPlugin?.slug || productSlug || uploadedPluginSlug
+					}/${ selectedSiteSlug }`
 				)
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginActive, automatedTransferStatus ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	}, [ pluginActive, automatedTransferStatus, atomicFlow, isUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	const steps = useMemo(
 		() => [
@@ -254,16 +264,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		],
 		[ isUploadFlow, translate ]
 	);
-
-	const additionalSteps = useMemo(
-		() => [
-			translate( 'Connecting the dots' ),
-			translate( 'Still working' ),
-			translate( 'Wheels are in motion' ),
-			translate( 'Working magic' ),
-		],
-		[ translate ]
-	);
+	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const renderError = () => {
 		// Evaluate error causes in priority order

@@ -1,7 +1,7 @@
 import page from 'page';
 import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import wpcomUpsellController from 'calypso/lib/jetpack/wpcom-upsell-controller';
+import wpcomAtomicTransfer from 'calypso/lib/jetpack/wpcom-atomic-transfer';
 import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import {
 	backupDownload,
@@ -13,7 +13,7 @@ import {
 	showUnavailableForVaultPressSites,
 	showUnavailableForMultisites,
 } from 'calypso/my-sites/backup/controller';
-import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-upsell';
+import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-backup-upsell';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -39,7 +39,7 @@ export default function () {
 		navigation,
 		backupDownload,
 		wrapInSiteOffsetProvider,
-		wpcomUpsellController( WPCOMUpsellPage ),
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -56,7 +56,7 @@ export default function () {
 		navigation,
 		backupRestore,
 		wrapInSiteOffsetProvider,
-		wpcomUpsellController( WPCOMUpsellPage ),
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
@@ -74,7 +74,7 @@ export default function () {
 		backups,
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoBackup,
-		wpcomUpsellController( WPCOMUpsellPage ),
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,

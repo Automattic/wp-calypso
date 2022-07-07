@@ -2,11 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import DocService from 'calypso/devdocs/service';
 import SingleDocClass from '../doc';
 
 jest.mock( 'calypso/devdocs/service', () => ( {
-	fetch: () => {},
+	fetch: jest.fn(),
 } ) );
 
 const defaultProps = {
@@ -18,21 +19,28 @@ const defaultProps = {
 describe( 'SingleDoc', () => {
 	describe( 'render test', () => {
 		test( 'should render html with marked text', () => {
-			const wrapper = shallow( <SingleDocClass { ...defaultProps } /> );
-			wrapper.setState( { body: '<div><p>something hello</p></div>' } );
-			expect( wrapper.find( '.devdocs__body .devdocs__doc-content' ).html() ).toEqual(
-				'<div class="devdocs__doc-content"><div><p>something <mark>hello</mark></p></div></div>'
+			const text = 'something hello';
+			DocService.fetch.mockImplementationOnce( ( path, cb ) =>
+				cb( null, `<div><p>${ text }</p></div>` )
 			);
-			expect( wrapper.find( 'Error' ) ).toHaveLength( 0 );
+
+			render( <SingleDocClass { ...defaultProps } /> );
+
+			const mark = screen.getByText( 'hello' );
+			expect( mark.tagName ).toBe( 'MARK' );
+
+			const doc = screen.getByText( 'something' );
+			expect( doc ).toHaveTextContent( text );
 		} );
 
 		test( 'should render Error component', () => {
-			const wrapper = shallow( <SingleDocClass { ...defaultProps } /> );
-			wrapper.setState( {
-				error: 'Error invoking /devdocs/content: File does not exist" is displayed',
-			} );
-			expect( wrapper.find( 'Error' ) ).toHaveLength( 1 );
-			expect( wrapper.find( '.devdocs__body' ) ).toHaveLength( 0 );
+			DocService.fetch.mockImplementationOnce( ( path, cb ) =>
+				cb( 'Error invoking /devdocs/content: File does not exist" is displayed' )
+			);
+			render( <SingleDocClass { ...defaultProps } /> );
+
+			const error = screen.queryByText( /sorry, we can't find that page right now/i );
+			expect( error ).toBeInTheDocument();
 		} );
 	} );
 } );

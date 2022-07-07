@@ -15,7 +15,7 @@ import './style.scss';
 interface Props {
 	isLargeScreen?: boolean;
 	site: SiteNode;
-	siteError: boolean;
+	siteError: boolean | undefined;
 }
 
 export default function SiteActions( {
@@ -72,7 +72,7 @@ export default function SiteActions( {
 					<>
 						<PopoverMenuItem
 							onClick={ () => handleClickMenuItem( 'issue_license' ) }
-							href={ `/partner-portal/issue-license/?site_id=${ siteId }` }
+							href={ `/partner-portal/issue-license/?site_id=${ siteId }&source=dashboard` }
 							className="site-actions__menu-item"
 							icon="chevron-right"
 						>

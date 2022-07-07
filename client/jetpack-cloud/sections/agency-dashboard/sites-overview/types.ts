@@ -6,17 +6,81 @@ export type AllowedTypes = 'site' | 'backup' | 'scan' | 'monitor' | 'plugin';
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< { key: string; title: ReactChild } >;
 
+export type AllowedStatusTypes =
+	| 'inactive'
+	| 'progress'
+	| 'failed'
+	| 'warning'
+	| 'success'
+	| 'disabled';
+
+export interface Site {
+	blog_id: number;
+	url: string;
+	url_with_scheme: string;
+	monitor_active: boolean;
+	monitor_site_status: boolean;
+	has_scan: boolean;
+	has_backup: boolean;
+	latest_scan_threats_found: Array< any >;
+	latest_backup_status: string;
+	is_connection_healthy: boolean;
+	awaiting_plugin_updates: Array< string >;
+}
 export interface SiteNode {
-	value: { blog_id: number; url: string; url_with_scheme: string };
-	error: string;
+	value: Site;
+	error: boolean;
 	type: AllowedTypes;
-	status: string;
+	status: AllowedStatusTypes | string;
+}
+
+export interface BackupNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes | string;
+	value: ReactChild;
+}
+
+export interface ScanNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes | string;
+	value: ReactChild;
+	threats: number;
+}
+
+interface PluginNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes;
+	value: ReactChild;
+	updates: number;
+}
+export interface MonitorNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes | string;
+	value: ReactChild;
+	error?: boolean;
 }
 export interface SiteData {
 	site: SiteNode;
-	scan: { threats: number };
-	plugin: { updates: number };
+	backup: BackupNode;
+	scan: ScanNode;
+	plugin: PluginNode;
+	monitor: MonitorNode;
 	[ key: string ]: any;
+}
+
+export interface RowMetaData {
+	row: {
+		value: Site | any;
+		status: AllowedStatusTypes | string;
+		error?: boolean;
+	};
+	link: string;
+	isExternalLink: boolean;
+	siteError: boolean;
+	tooltip: ReactChild | undefined;
+	tooltipId: string;
+	siteDown?: boolean;
+	eventName: string | undefined;
 }
 
 export type PreferenceType = 'dismiss' | 'view';
@@ -25,16 +89,6 @@ export type Preference = {
 	dismiss?: boolean;
 	view?: boolean;
 };
-
-export type FormattedRowObj = {
-	value: ReactChild;
-	status: string;
-	type: string;
-	threats?: number;
-	error?: boolean;
-};
-
-export type AllowedStatusTypes = 'inactive' | 'progress' | 'failed' | 'warning' | 'success';
 
 export type StatusEventNames = {
 	[ key in AllowedStatusTypes | string ]: { small_screen: string; large_screen: string };
@@ -64,4 +118,9 @@ export type AgencyDashboardFilterOption =
 
 export type AgencyDashboardFilter = {
 	issueTypes: Array< AgencyDashboardFilterOption | string >;
+};
+
+export type PurchasedProduct = {
+	selectedSite: string;
+	selectedProduct: { name: string; key: string };
 };

@@ -1,4 +1,11 @@
-import { getPlan, PLAN_WPCOM_PRO, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	getPlan,
+	PLAN_PREMIUM,
+	PLAN_WPCOM_PRO,
+	WPCOM_DIFM_LITE,
+} from '@automattic/calypso-products';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -38,6 +45,13 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 	const translate = useTranslate();
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
 	const isLoading = useSelector( isProductsListFetching );
+	const isEnglishLocale = useIsEnglishLocale();
+	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
+
+	const getBackUrl = ( siteSlug?: string ) => {
+		const step = goalsCaptureStepEnabled ? 'goals' : 'intent';
+		return `/setup/${ step }?siteSlug=${ siteSlug }`;
+	};
 
 	const headerText = translate( 'Let our experts create your dream site' );
 
@@ -55,7 +69,9 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 					args: {
 						displayCost,
 						fulfillmentDays: 4,
-						plan: getPlan( PLAN_WPCOM_PRO )?.getTitle(),
+						plan: isEnabled( 'plans/pro-plan' )
+							? getPlan( PLAN_WPCOM_PRO )?.getTitle()
+							: getPlan( PLAN_PREMIUM )?.getTitle(),
 					},
 					components: {
 						PriceWrapper: isLoading ? <Placeholder /> : <strong />,
@@ -92,7 +108,8 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 	const onSelect = ( value: ChoiceType ) => {
 		recordTracksEvent( 'calypso_signup_difm_service_selected', { service: value } );
 		if ( 'builtby' === value ) {
-			window.location.href = 'https://builtbywp.com/';
+			window.location.href =
+				'https://builtbywp.com/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=onboard';
 			return;
 		}
 		dispatch(
@@ -123,7 +140,7 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 						intentsAlt={ [] }
 					/>
 				}
-				backUrl={ `/setup/intent?siteSlug=${ props.queryObject.siteSlug }` }
+				backUrl={ getBackUrl( props.queryObject.siteSlug ) }
 				hideBack={ false }
 				allowBackFirstStep={ true }
 				align={ 'left' }

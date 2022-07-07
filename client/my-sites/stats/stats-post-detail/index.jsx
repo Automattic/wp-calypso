@@ -20,7 +20,12 @@ import {
 	getPostPreviewUrl,
 } from 'calypso/state/posts/selectors';
 import hasNavigated from 'calypso/state/selectors/has-navigated';
-import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
+import {
+	getSiteOption,
+	getSiteSlug,
+	isJetpackSite,
+	isSitePreviewable,
+} from 'calypso/state/sites/selectors';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostMonths from '../stats-detail-months';
@@ -78,6 +83,7 @@ class StatsPostDetail extends Component {
 
 	render() {
 		const {
+			isLatestPostsHomepage,
 			isRequestingPost,
 			isRequestingStats,
 			countViews,
@@ -92,14 +98,19 @@ class StatsPostDetail extends Component {
 		const postOnRecord = post && post.title !== null;
 		const isLoading = isRequestingStats && ! countViews;
 		let title;
+
 		if ( postOnRecord ) {
 			if ( typeof post.title === 'string' && post.title.length ) {
 				title = decodeEntities( stripHTML( post.title ) );
 			}
 		}
 
-		if ( ! postOnRecord && ! isRequestingPost ) {
+		if ( ! postOnRecord && ! isLatestPostsHomepage && ! isRequestingPost ) {
 			title = translate( "We don't have that post on record yet." );
+		}
+
+		if ( isLatestPostsHomepage ) {
+			title = translate( 'Home page / Archives' );
 		}
 
 		const postType = post && post.type !== null ? post.type : 'post';
@@ -120,7 +131,7 @@ class StatsPostDetail extends Component {
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
 				/>
-				{ siteId && <QueryPosts siteId={ siteId } postId={ postId } /> }
+				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
 				<HeaderCake
@@ -190,14 +201,17 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
+	const isLatestPostsHomepage =
+		getSiteOption( state, siteId, 'show_on_front' ) === 'posts' && postId === 0;
 
 	return {
 		post: getSitePost( state, siteId, postId ),
+		isLatestPostsHomepage,
 		isRequestingPost: isRequestingSitePost( state, siteId, postId ),
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ! isJetpack && isPreviewable,
+		showViewLink: ! isJetpack && ! isLatestPostsHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		hasNavigated: hasNavigated( state ),
 		siteId,

@@ -7,6 +7,8 @@
  */
 
 .select-vertical__suggestion-search {
+    --select-vertical-search-dropdown-height: 40vh;
+
     position: relative;
     width: auto;
 
@@ -31,7 +33,7 @@
         }
 
         .components-button {
-            .gridicon {
+            .gridicons-chevron-down {
                 transform: rotate( -180deg );
             }
         }
@@ -42,8 +44,9 @@
         height: 44px;
         font-size: $font-body;
         line-height: 20px;
-        padding: 12px 86px 12px 16px;
+        padding: 12px 100px 12px 16px;
         transition: none;
+        color: var( --studio-gray-90 );
 
         &::placeholder {
             font-size: $font-body-small;
@@ -51,9 +54,7 @@
     }
 
     .spinner {
-        position: absolute;
-        right: 50px;
-        top: 12px;
+        margin-right: 4px;
     }
 
     @include break-small() {
@@ -65,11 +66,18 @@
     position: relative;
     z-index: 20;
 
-    .components-button {
+    .select-vertical__suggestion-buttons {
         height: 100%;
         position: absolute;
-        right: 4px;
+        right: 16px;
         top: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .components-button {
+        padding: 3px;
 
         &:focus:not( :disabled ) {
             box-shadow: none;
@@ -79,7 +87,7 @@
             box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color );
         }
 
-        .gridicon {
+        .gridicons-chevron-down {
             transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
         }
     }
@@ -94,13 +102,14 @@
     border-width: 0 1px 1px;
     box-sizing: border-box;
     left: 0;
-    max-height: 420px;
+    max-height: var( --select-vertical-search-dropdown-height );
     overflow: auto;
     padding: 0 0 12px;
     position: absolute;
     right: 0;
     top: 40px;
     transition: none;
+	z-index: z-index( '.is-section-stepper', '.step-container__navigation.action-buttons' );
 
     .suggestions__category-heading {
         background-color: #fff;
@@ -117,11 +126,20 @@
         font-size: $font-body;
         line-height: 20px;
         padding: 6px 16px;
+        color: var( --studio-gray-90 );
     }
 
     .suggestions__label {
         &.is-emphasized {
             font-weight: inherit;
         }
+    }
+
+    &:empty {
+        display: none;
+    }
+
+    @include break-small() {
+        --select-vertical-search-dropdown-height: 420px;
     }
 }

@@ -1,0 +1,97 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+$card-height-desktop: 250px;
+$preview-max-width: 360px;
+$content-max-width: 210px;
+
+.backup-getting-started {
+	display: grid;
+	grid-template-columns: 1fr;
+	background-color: #f9f9f6;
+
+	@include break-medium {
+		height: $card-height-desktop;
+		background-image: url( 'calypso/assets/images/jetpack/getting-started-backup-bg.svg' );
+		grid-template-columns: minmax( 0, $preview-max-width ) minmax( $content-max-width, 1fr );
+		grid-column-gap: 1.5rem;
+	}
+}
+
+.backup-getting-started__preview {
+	$display-mode: block;
+
+	position: relative;
+	margin: 0 0 2rem;
+	border-radius: 2 * 4px;
+	box-shadow: 0 5px 5px 0 rgb( #000, 0.01 ), 5px 5px 22px 0 rgb( #000, 0.25 );
+	overflow: hidden;
+
+	@include break-medium {
+		margin: 0;
+	}
+
+	&[data-hidden='mobile'] {
+		display: none;
+
+		@include break-medium {
+			display: $display-mode;
+		}
+	}
+	&[data-hidden='desktop'] {
+		display: $display-mode;
+
+		@include break-medium {
+			display: none;
+		}
+	}
+}
+
+.backup-getting-started__image {
+	display: block;
+	width: auto;
+	height: 100%;
+	object-fit: contain;
+	background-color: var( --studio-white );
+}
+
+.backup-getting-started__time-length {
+	position: absolute;
+	right: 0.75rem;
+	bottom: 0.75rem;
+	padding: 0.25rem 0.5rem;
+	border-radius: 4px;
+	background-color: var( --studio-gray-80 );
+	color: var( --studio-white );
+	font-size: 1.25rem;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: -0.02em;
+	user-select: none;
+}
+
+.backup-getting-started__content {
+	display: flex;
+	flex-direction: column;
+}
+
+.backup-getting-started__header {
+	font-size: 1.25rem;
+	line-height: 1.5rem;
+	letter-spacing: -0.02em;
+	font-weight: 700;
+	margin: 0 0 1rem;
+	padding-right: 1.125rem;
+}
+
+.backup-getting-started__text {
+	font-size: 0.875rem;
+	line-height: 1.25rem;
+	letter-spacing: -0.02em;
+	margin: 0 0 1rem;
+}
+
+.backup-getting-started__button {
+	margin-top: auto;
+	align-self: flex-start;
+}

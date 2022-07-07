@@ -1,3 +1,4 @@
+import { GSuiteProductUser, TitanProductUser } from '@automattic/shopping-cart';
 import {
 	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_DOMAIN,
@@ -24,6 +25,7 @@ import {
 	PasswordValidator,
 	RequiredIfVisibleValidator,
 	RequiredValidator,
+	PreviouslySpecifiedMailboxNamesValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
 	FormFieldNames,
@@ -65,7 +67,7 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_MAILBOX, new RequiredValidator< string >() ],
 			[ FIELD_NAME, new RequiredIfVisibleValidator() ],
 			[ FIELD_NAME, new MaximumStringLengthValidator( 60 ) ],
-			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( this.existingMailboxNames ) ],
+			[ FIELD_MAILBOX, new ExistingMailboxNamesValidator( domainName, this.existingMailboxNames ) ],
 			[
 				FIELD_MAILBOX,
 				new MailboxNameValidator( domainName, mailboxHasDomainError, areApostrophesSupported ),
@@ -93,6 +95,20 @@ class MailboxForm< T extends EmailProvider > {
 		};
 	}
 
+	getPreviouslySpecifiedMailboxNameValidators(
+		previouslySpecifiedMailboxNames: string[]
+	): [ ValidatorFieldNames, Validator< unknown > ][] {
+		const domainField = this.getFormField< string >( FIELD_DOMAIN );
+		const domainName = domainField?.value ?? '';
+
+		return [
+			[
+				FIELD_MAILBOX,
+				new PreviouslySpecifiedMailboxNamesValidator( domainName, previouslySpecifiedMailboxNames ),
+			],
+		];
+	}
+
 	clearErrors() {
 		for ( const field of Object.values( this.formFields ) ) {
 			if ( ! field ) {
@@ -106,7 +122,7 @@ class MailboxForm< T extends EmailProvider > {
 	/**
 	 * Returns the mailbox field values in a shape that can be consumed by the shopping cart at checkout
 	 */
-	getAsCartItem(): Record< string, string | boolean | undefined > {
+	getAsCartItem(): TitanProductUser | GSuiteProductUser {
 		const commonFields = {
 			email: `${ this.getFieldValue< string >( FIELD_MAILBOX ) }@${ this.getFieldValue< string >(
 				FIELD_DOMAIN
@@ -126,6 +142,12 @@ class MailboxForm< T extends EmailProvider > {
 					is_admin: this.getFieldValue< boolean >( FIELD_IS_ADMIN ),
 					name: this.getFieldValue< string >( FIELD_NAME ),
 			  };
+	}
+
+	getAsFlatObject(): Record< FormFieldNames, string | boolean | undefined > {
+		return Object.fromEntries(
+			Object.values( this.formFields ).map( ( field ) => [ field.fieldName, field.value ] )
+		);
 	}
 
 	getFieldValue< R >( fieldName: FormFieldNames ) {
@@ -183,25 +205,37 @@ class MailboxForm< T extends EmailProvider > {
 		}
 	}
 
-	validate( skipInvisibleFields = false ) {
+	private validateFieldByName(
+		fieldName: ValidatorFieldNames,
+		validator: Validator< unknown >,
+		skipInvisibleFields: boolean
+	) {
+		if ( ! fieldName ) {
+			return;
+		}
+
+		const field = this.getFormField( fieldName );
+		if ( ! field || field.error ) {
+			return;
+		}
+
+		if ( skipInvisibleFields && ! field.isVisible ) {
+			return;
+		}
+
+		validator.validate( field );
+	}
+
+	validate(
+		skipInvisibleFields = false,
+		additionalValidators?: [ ValidatorFieldNames, Validator< unknown > ][]
+	) {
 		this.clearErrors();
 
-		for ( const [ fieldName, validator ] of this.getValidators() ) {
-			if ( ! fieldName ) {
-				continue;
-			}
-
-			const field = this.getFormField( fieldName );
-			if ( ! field || field.error ) {
-				continue;
-			}
-
-			if ( skipInvisibleFields && ! field.isVisible ) {
-				continue;
-			}
-
-			validator.validate( field );
-		}
+		[ ...this.getValidators(), ...( additionalValidators ?? [] ) ].forEach(
+			( [ fieldName, validator ] ) =>
+				this.validateFieldByName( fieldName, validator, skipInvisibleFields )
+		);
 	}
 
 	validateField( fieldName: FormFieldNames ) {
