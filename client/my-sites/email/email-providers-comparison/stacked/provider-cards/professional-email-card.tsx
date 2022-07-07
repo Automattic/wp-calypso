@@ -46,16 +46,24 @@ const getTitanFeatures = () => {
 
 const professionalEmailCardInformation: ProviderCardProps = {
 	className: 'professional-email-card',
-	expandButtonLabel: translate( 'Select' ),
+	get expandButtonLabel() {
+		return translate( 'Select' );
+	},
 	providerKey: 'titan',
 	showExpandButton: true,
-	description: translate(
-		'Integrated email solution with powerful features. Manage your email and more on any device.'
-	),
+	get description() {
+		return translate(
+			'Integrated email solution with powerful features. Manage your email and more on any device.'
+		);
+	},
 	logo,
-	productName: getTitanProductName(),
+	get productName() {
+		return getTitanProductName();
+	},
 	footerBadge: badge,
-	features: getTitanFeatures(),
+	get features() {
+		return getTitanFeatures();
+	},
 };
 
 const PasswordResetTipField = ( {

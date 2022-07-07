@@ -7,11 +7,12 @@ const unsubscribe = subscribe( () => {
 	dispatch( 'core/nux' ).disableTips();
 	if ( select( 'core/edit-post' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-post' ).toggleFeature( 'welcomeGuide' );
+		unsubscribe();
 	}
 	if ( select( 'core/edit-site' )?.isFeatureActive( 'welcomeGuide' ) ) {
 		dispatch( 'core/edit-site' ).toggleFeature( 'welcomeGuide' );
+		unsubscribe();
 	}
-	unsubscribe();
 } );
 
 // Listen for these features being triggered to call dotcom welcome guide instead.

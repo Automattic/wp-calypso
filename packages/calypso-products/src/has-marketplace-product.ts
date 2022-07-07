@@ -1,20 +1,20 @@
-const cleanSlug = ( slug: string ) =>
-	slug && slug.replace( /_/g, '-' ).split( /-(monthly|yearly|2y)/ )[ 0 ];
-
 /**
- * Returns true if a list of products contains a marketplace product with the specified product slug.
+ * Returns true if a list of products includes a product with a matching product or store product slug.
  *
  * @param {object} productsList - List of products
- * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
+ * @param {string} searchSlug - Either a product slug e.g. woocommerce-product-csv-import-suite or store product slug, e.g wc_product_csv_import_suite_yearly
  * @returns {boolean}
  */
 export const hasMarketplaceProduct = (
-	productsList: Record< string, { product_type: string; product_slug: string } >,
-	productSlug: string
+	productsList: Record< string, { product_type: string; billing_product_slug: string } >,
+	searchSlug: string
 ): boolean =>
+	// storeProductSlug is from the legacy store_products system, billing_product_slug is from
+	// the non-legacy billing system and for marketplace plugins will match the slug of the plugin
+	// by convention.
 	Object.entries( productsList ).some(
-		( [ subscriptionSlug, { product_type } ] ) =>
-			cleanSlug( productSlug ) === cleanSlug( subscriptionSlug ) &&
+		( [ storeProductSlug, { product_type, billing_product_slug } ] ) =>
+			( searchSlug === storeProductSlug || searchSlug === billing_product_slug ) &&
 			// additional type check needed when called from JS context
 			typeof product_type === 'string' &&
 			product_type.startsWith( 'marketplace' )
