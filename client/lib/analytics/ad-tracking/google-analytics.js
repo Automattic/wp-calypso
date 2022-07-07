@@ -3,14 +3,16 @@ import config from '@automattic/calypso-config';
 import { isPiiUrl, mayWeTrackCurrentUserGdpr } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isGoogleAnalyticsEnabled, TRACKING_IDS } from './constants';
-import { setupGtag } from './setup-gtag';
+import * as GA4 from './google-analytics-4';
 
 // Ensure setup has run.
 import './setup';
 
-export function setupGoogleAnalyticsGtag( options ) {
-	setupGtag();
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, options );
+export function setupGoogleAnalyticsGtag( params ) {
+	GA4.setup( params );
+
+	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, params );
+	window.gtag( 'config', TRACKING_IDS.jetpackGoogleAnalyticsGtag, params );
 }
 
 /**
@@ -70,17 +72,18 @@ export function fireGoogleAnalyticsPageView(
 	pageTitle,
 	useJetpackGoogleAnalytics = false
 ) {
-	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, {
+	GA4.firePageView( pageTitle, urlPath, useJetpackGoogleAnalytics );
+
+	const params = {
 		...getGoogleAnalyticsDefaultConfig(),
 		page_path: urlPath,
 		page_title: pageTitle,
-	} );
+	};
+
+	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, params );
+
 	if ( useJetpackGoogleAnalytics ) {
-		window.gtag( 'config', TRACKING_IDS.jetpackGoogleAnalyticsGtag, {
-			...getGoogleAnalyticsDefaultConfig(),
-			page_path: urlPath,
-			page_title: pageTitle,
-		} );
+		window.gtag( 'config', TRACKING_IDS.jetpackGoogleAnalyticsGtag, params );
 	}
 }
 

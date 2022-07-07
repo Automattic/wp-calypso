@@ -127,7 +127,7 @@ export function WPOrderReviewLineItems( {
 					<CouponLineItem
 						lineItem={ couponLineItem }
 						isSummary={ isSummary }
-						hasDeleteButton={ ! isSummary }
+						hasDeleteButton
 						removeProductFromCart={ removeCoupon }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						isPwpoUser={ isPwpoUser }

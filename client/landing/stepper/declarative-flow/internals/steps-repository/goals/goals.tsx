@@ -7,9 +7,9 @@ const HIDE_GOALS = [ SiteGoal.DIFM, SiteGoal.Import ];
 
 const shouldDisplayGoal = ( { key }: Goal ) => ! HIDE_GOALS.includes( key );
 
-export const useGoals = (): Goal[] => {
+export const useGoals = ( displayAllGoals = false ): Goal[] => {
 	const translate = useTranslate();
-	return [
+	const goals = [
 		{
 			key: SiteGoal.Write,
 			title: translate( 'Write & Publish' ),
@@ -35,5 +35,6 @@ export const useGoals = (): Goal[] => {
 			key: SiteGoal.Other,
 			title: translate( 'Other' ),
 		},
-	].filter( shouldDisplayGoal );
+	];
+	return displayAllGoals ? goals : goals.filter( shouldDisplayGoal );
 };

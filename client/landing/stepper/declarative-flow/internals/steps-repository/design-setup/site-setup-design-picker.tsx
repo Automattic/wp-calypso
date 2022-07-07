@@ -79,6 +79,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	// Setup a click handler to close the info popup when the user clicks anywhere outside the popup.
 	useEffect( () => {
 		const closeInfoPopup = ( e: any ) => {
+			if ( ! e.isTrusted ) {
+				return;
+			}
 			const infoPopup = document.querySelector( '.site-setup.design-setup .theme-info-popup' );
 			const isInfoPopupButton = e.target.classList.contains( 'design-setup__info-popover' );
 			const isInfoPopupButtonParent = e.target.parentNode.classList.contains(
@@ -130,7 +133,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const enabledGeneratedDesigns =
 		verticalsStepEnabled &&
 		isEnabled( 'signup/design-picker-generated-designs' ) &&
-		intent === 'build';
+		( intent === 'build' || intent === 'write' );
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
 		useStarterDesignsGeneratedQuery(
@@ -370,7 +373,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		window.scrollTo( { top: 0 } );
 	}, [ isForceStaticDesigns, isPreviewingDesign ] );
 
-	// When the intent is build, we can potentially show the generated design picker.
+	// When the intent is build or write, we can potentially show the generated design picker.
 	// Don't render until we've fetched the generated designs from the backend.
 	if ( ! site || isLoadingGeneratedDesigns ) {
 		return null;

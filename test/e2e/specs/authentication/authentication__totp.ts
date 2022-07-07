@@ -1,5 +1,5 @@
 /**
- * @group calypso-release
+ * @group authentication
  */
 
 import { DataHelper, TestAccount } from '@automattic/calypso-e2e';

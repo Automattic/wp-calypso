@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Popover, Button } from '@automattic/components';
+import { shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -31,7 +32,11 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	getSiteSlug,
+	isJetpackSite,
+	isSimpleSite as getIsSimpleSite,
+} from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -491,23 +496,17 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isCheckout, isCheckoutPending } = this.props;
+		const { isInEditor, isCheckout, isCheckoutPending, isSimpleSite, user, locale } = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending ) {
 			return this.renderCheckout();
 		}
 		if ( isMobile ) {
-			const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
-			const isSimpleSite = window.location.host.endsWith( '.wordpress.com' );
-			const currentSegment = 10; //percentage of users that will see the Help Center, not the FAB
-			const userSegment = this.props.user.ID % 100;
-
 			if (
-				this.props.isInEditor &&
-				isHelpCenterEnabled &&
-				userSegment < currentSegment &&
-				this.props.locale === 'en' &&
+				config.isEnabled( 'editor/help-center' ) &&
+				shouldShowHelpCenterToUser( user.ID, locale ) &&
+				isInEditor &&
 				isSimpleSite
 			) {
 				return (
@@ -600,6 +599,7 @@ export default connect(
 			isUserNewerThanNewNavigation:
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			locale: getCurrentLocaleSlug( state ),
+			isSimpleSite: getIsSimpleSite( state ),
 		};
 	},
 	{

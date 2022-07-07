@@ -287,6 +287,9 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		border-radius: 2px;
 		margin-right: 10px;
 		cursor: pointer;
+		svg {
+			pointer-events: none;
+		}
 	}
 }
 

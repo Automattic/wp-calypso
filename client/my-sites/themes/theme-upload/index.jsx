@@ -42,7 +42,6 @@ import {
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
@@ -98,7 +97,7 @@ class Upload extends Component {
 	componentDidMount() {
 		const { siteId, inProgress, noticeType } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
-		if ( this.props.isAutomatedTransfer && this.props.canUploadThemesOrPlugins ) {
+		if ( this.props.isAtomic && this.props.canUploadThemesOrPlugins ) {
 			this.redirectToWpAdmin();
 		}
 
@@ -124,7 +123,7 @@ class Upload extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.isAutomatedTransfer && this.props.canUploadThemesOrPlugins ) {
+		if ( this.props.isAtomic && this.props.canUploadThemesOrPlugins ) {
 			this.redirectToWpAdmin();
 		}
 		if ( this.props.complete && ! prevProps.complete ) {
@@ -266,7 +265,8 @@ class Upload extends Component {
 			failed,
 			inProgress,
 			isJetpack,
-			isAutomatedTransfer,
+			isStandaloneJetpack,
+			isAtomic,
 			selectedSite,
 			uploadedTheme,
 		} = this.props;
@@ -274,7 +274,8 @@ class Upload extends Component {
 		const { showEligibility } = this.state;
 
 		const uploadAction = isJetpack ? this.props.uploadTheme : this.props.initiateThemeTransfer;
-		const isDisabled = showEligibility || ( ! canUploadThemesOrPlugins && ! isJetpack );
+		const isDisabled =
+			! isStandaloneJetpack && ( ! canUploadThemesOrPlugins || ( ! isAtomic && showEligibility ) );
 
 		const WrapperComponent = isDisabled ? FeatureExample : Fragment;
 
@@ -286,7 +287,7 @@ class Upload extends Component {
 					) }
 					{ inProgress && this.renderProgressBar() }
 					{ complete && ! failed && uploadedTheme && this.renderTheme() }
-					{ complete && isAutomatedTransfer && <WpAdminAutoLogin site={ selectedSite } /> }
+					{ complete && isAtomic && <WpAdminAutoLogin site={ selectedSite } /> }
 				</Card>
 			</WrapperComponent>
 		);
@@ -310,14 +311,15 @@ class Upload extends Component {
 			canUploadThemesOrPlugins,
 			complete,
 			isFetchingPurchases,
-			isJetpack,
+			isStandaloneJetpack,
 			isMultisite,
 			siteId,
 			themeId,
 			translate,
 		} = this.props;
 
-		const showUpgradeBanner = ! isFetchingPurchases && ! canUploadThemesOrPlugins && ! isJetpack;
+		const showUpgradeBanner =
+			! isFetchingPurchases && ! canUploadThemesOrPlugins && ! isStandaloneJetpack;
 		const { showEligibility } = this.state;
 
 		if ( isMultisite ) {
@@ -376,6 +378,9 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const themeId = getUploadedThemeId( state, siteId );
 	const isJetpack = isJetpackSite( state, siteId );
+	const isAtomic = isSiteWpcomAtomic( state, siteId );
+	const isStandaloneJetpack = isJetpack && ! isAtomic;
+
 	const { eligibilityHolds, eligibilityWarnings } = getEligibility( state, siteId );
 	// Use this selector to take advantage of eligibility card placeholders
 	// before data has loaded.
@@ -389,17 +394,16 @@ const mapStateToProps = ( state ) => {
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ) ||
 		siteHasFeature( state, siteId, FEATURE_UPLOAD_PLUGINS );
 
-	const isAtomic = isSiteWpcomAtomic( state, siteId );
-
 	const showEligibility =
-		( isAtomic || ( canUploadThemesOrPlugins && ! isJetpack ) ) &&
-		( hasEligibilityMessages || ! isEligible );
+		canUploadThemesOrPlugins && ! isAtomic && ( hasEligibilityMessages || ! isEligible );
 
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		selectedSite: getSelectedSite( state ),
+		isAtomic,
 		isJetpack,
+		isStandaloneJetpack,
 		inProgress: isUploadInProgress( state, siteId ),
 		complete: isUploadComplete( state, siteId ),
 		failed: hasUploadFailed( state, siteId ),
@@ -412,7 +416,6 @@ const mapStateToProps = ( state ) => {
 		installing: isInstallInProgress( state, siteId ),
 		backPath: getBackPath( state ),
 		showEligibility,
-		isAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 		canUploadThemesOrPlugins,
 		isFetchingPurchases:

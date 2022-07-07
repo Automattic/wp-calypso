@@ -458,7 +458,11 @@ export function siteSelection( context, next ) {
 	}
 
 	// If the path fragment does not resemble a site, set all sites to visible
-	if ( ! ( typeof siteFragment === 'string' && siteFragment.length ) ) {
+	const typeOfSiteFragment = typeof siteFragment;
+	if (
+		! ( typeOfSiteFragment === 'string' && siteFragment.length ) &&
+		typeOfSiteFragment !== 'number'
+	) {
 		dispatch( setAllSitesSelected() );
 		return next();
 	}

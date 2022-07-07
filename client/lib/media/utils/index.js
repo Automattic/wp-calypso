@@ -1,4 +1,5 @@
 export { canUserDeleteItem } from 'calypso/lib/media/utils/can-user-delete-item';
+export { canUseVideoPress } from 'calypso/lib/media/utils/can-use-videopress';
 export { canvasToBlob } from 'calypso/lib/media/utils/canvas-to-blob';
 export { createTransientMedia } from 'calypso/lib/media/utils/create-transient-media';
 export { filterItemsByMimePrefix } from 'calypso/lib/media/utils/filter-items-by-mime-prefix';

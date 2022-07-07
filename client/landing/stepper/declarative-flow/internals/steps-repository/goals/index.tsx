@@ -1,14 +1,13 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
 import './style.scss';
@@ -28,6 +27,7 @@ type TracksGoalsSelectEventProperties = {
 const SiteGoal = Onboard.SiteGoal;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
+const displayAllGoals = isEnabled( 'signup/goals-step-2' );
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
 	'create-blog-lp': [ SiteGoal.Write ],
 };
@@ -39,11 +39,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const translate = useTranslate();
 	const welcomeText = translate( 'Welcome!' );
 	const whatAreYourGoalsText = translate( 'What are your goals?' );
-	const headerText = (
-		<>
-			{ welcomeText } <br /> { whatAreYourGoalsText }
-		</>
-	);
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
@@ -52,10 +47,17 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const refParameter = getQueryArgs()?.ref as string;
 
 	useEffect( () => {
-		clearDIFMGoal();
-		clearImportGoal();
+		if ( ! displayAllGoals ) {
+			clearDIFMGoal();
+			clearImportGoal();
+		}
+
 		resetIntent();
-	}, [ clearDIFMGoal, clearImportGoal, resetIntent ] );
+
+		// Delibirately not including all deps in the deps array
+		// This hook is only meant to be executed in the first render
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	const recordGoalsSelectTracksEvent = (
 		goals: Onboard.SiteGoal[],
@@ -104,7 +106,12 @@ const GoalsStep: Step = ( { navigation } ) => {
 	};
 
 	const stepContent = (
-		<SelectGoals selectedGoals={ goals } onChange={ setGoals } onSubmit={ handleSubmit } />
+		<SelectGoals
+			displayAllGoals={ displayAllGoals }
+			selectedGoals={ goals }
+			onChange={ setGoals }
+			onSubmit={ handleSubmit }
+		/>
 	);
 
 	useEffect( () => {
@@ -122,22 +129,16 @@ const GoalsStep: Step = ( { navigation } ) => {
 		<>
 			<DocumentHead title={ whatAreYourGoalsText } />
 
-			<StepContainer
+			<GoalsCaptureContainer
+				displayAllGoals={ displayAllGoals }
+				welcomeText={ welcomeText }
+				whatAreYourGoalsText={ whatAreYourGoalsText }
+				subHeaderText={ subHeaderText }
 				stepName={ 'goals-step' }
 				goNext={ navigation.goNext }
 				skipLabelText={ translate( 'Skip to dashboard' ) }
 				skipButtonAlign={ 'top' }
 				hideBack={ true }
-				isHorizontalLayout={ true }
-				headerImageUrl={ intentImageUrl }
-				className={ 'goals__container' }
-				formattedHeader={
-					<FormattedHeader
-						id={ 'goals-header' }
-						headerText={ headerText }
-						subHeaderText={ subHeaderText }
-					/>
-				}
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }
 			/>

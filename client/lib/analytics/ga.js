@@ -13,14 +13,14 @@ let initialized = false;
 
 function initialize() {
 	if ( ! initialized ) {
-		const parameters = {
+		const params = {
 			send_page_view: false,
 			...getGoogleAnalyticsDefaultConfig(),
 		};
 
-		gaDebug( 'parameters:', parameters );
+		gaDebug( 'parameters:', params );
 
-		setupGoogleAnalyticsGtag( parameters );
+		setupGoogleAnalyticsGtag( params );
 
 		initialized = true;
 	}

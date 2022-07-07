@@ -7,6 +7,7 @@ import { useSupportAvailability } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
+import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -23,15 +24,22 @@ import '../styles.scss';
 const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
-	const siteId = useSelector( getSelectedSiteId );
-	const isSimpleSite = window.location.host.endsWith( '.wordpress.com' );
+	const { siteId, isSimpleSite } = useSelector( ( state ) => {
+		return {
+			siteId: getSelectedSiteId( state ),
+			isSimpleSite: getIsSimpleSite( state ),
+		};
+	} );
 
 	// prefetch the current site and user
 	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 	const user = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
-	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT' );
-	const { data: supportData, isLoading: isSupportDataLoading } = useSupportAvailability( 'OTHER' );
+	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT', isSimpleSite );
+	const { data: supportData, isLoading: isSupportDataLoading } = useSupportAvailability(
+		'OTHER',
+		isSimpleSite
+	);
 	useStillNeedHelpURL();
 
 	useEffect( () => {

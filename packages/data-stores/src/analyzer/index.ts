@@ -4,9 +4,8 @@ import { createActions } from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducers';
 import * as selectors from './selectors';
+export * from './types';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
-
-export type { ColorsData } from './types';
 export type { State };
 
 let isRegistered = false;

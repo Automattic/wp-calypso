@@ -1,10 +1,11 @@
-import { Button, SitesTable, Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { css, ClassNames } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import getSites from 'calypso/state/selectors/get-sites';
 import { notNullish } from '../util';
+import { SitesTable } from './sites-table';
 import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
 const MAX_PAGE_WIDTH = '1184px';
@@ -83,7 +84,6 @@ export function SitesDashboard() {
 								<ClassNames>
 									{ ( { css } ) => (
 										<SitesTable
-											buildSiteUrl={ ( { slug } ) => '/home/' + slug }
 											className={ css`
 												margin-top: 32px;
 											` }

@@ -826,14 +826,14 @@ const ThemeSheetWithOptions = ( props ) => {
 		isLoggedIn,
 		isPremium,
 		isPurchased,
-		isJetpack,
+		isStandaloneJetpack,
 		demoUrl,
 		showTryAndCustomize,
 	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
-	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! isPurchased;
+	const needsJetpackPlanUpgrade = isStandaloneJetpack && isPremium && ! isPurchased;
 
 	if ( ! showTryAndCustomize ) {
 		secondaryOption = null;
