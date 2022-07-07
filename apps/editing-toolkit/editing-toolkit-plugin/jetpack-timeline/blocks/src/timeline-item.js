@@ -19,11 +19,7 @@ function Colors() {
 	const colors = useSetting( 'color.palette' );
 	let appendTransparent = true;
 	if ( colors.length > 0 ) {
-		colors.forEach( ( color ) => {
-			if ( 'transparent' === color.color ) {
-				appendTransparent = false;
-			}
-		} );
+		const appendTransparent = colors.every( ( { color } ) => 'transparent' !== color );
 		if ( appendTransparent ) {
 			colors.push( {
 				name: __( 'Transparent', 'full-site-editing' ),
