@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 import eye from 'calypso/assets/images/marketplace/eye.svg';
@@ -19,11 +20,26 @@ const PluginDetailsSidebar = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
+
 	const isWooCommercePluginRequired = requirements.plugins?.some(
 		( pluginName ) => pluginName === 'plugins/woocommerce'
 	);
 
 	const supportText = usePluginsSupportText();
+
+	const supportLinks = [
+		{
+			href: 'https://wordpress.com/support/help-support-options/#live-chat-support',
+			label: translate( 'How to get help!' ),
+		},
+		{ href: 'https://automattic.com/privacy/', label: translate( 'See privacy policy' ) },
+	];
+	documentation_url &&
+		supportLinks.unshift( {
+			href: documentation_url,
+			label: translate( 'View documentation' ),
+		} );
 
 	if ( ! isMarketplaceProduct ) {
 		return (
@@ -54,25 +70,13 @@ const PluginDetailsSidebar = ( {
 			</>
 		);
 	}
-	const supportLinks = [
-		{
-			href: 'https://wordpress.com/support/help-support-options/#live-chat-support',
-			label: translate( 'How to get help!' ),
-		},
-		{ href: 'https://automattic.com/privacy/', label: translate( 'See privacy policy' ) },
-	];
-	documentation_url &&
-		supportLinks.unshift( {
-			href: documentation_url,
-			label: translate( 'View documentation' ),
-		} );
 
 	return (
 		<div className="plugin-details-sidebar__plugin-details-content">
 			{ isWooCommercePluginRequired && (
 				<PluginDetailsSidebarUSP
 					id="woo"
-					icon={ { src: wooLogo } }
+					icon={ legacyVersion && { src: wooLogo } }
 					title={ translate( 'Your store foundations' ) }
 					description={ translate(
 						'This plugin requires the WooCommerce plugin to work.{{br/}}If you do not have it installed, it will be installed automatically for free.',
@@ -88,23 +92,23 @@ const PluginDetailsSidebar = ( {
 			{ demo_url && (
 				<PluginDetailsSidebarUSP
 					id="demo"
-					icon={ { src: eye } }
+					icon={ legacyVersion && { src: eye } }
 					title={ translate( 'Try it before you buy it' ) }
 					description={ translate(
 						'Take a look at the posibilities of this plugin before your commit.'
 					) }
 					links={ [ { href: { demo_url }, label: translate( 'View live demo' ) } ] }
-					first={ ! isWooCommercePluginRequired }
+					first={ ! isWooCommercePluginRequired || ! legacyVersion }
 				/>
 			) }
 
 			<PluginDetailsSidebarUSP
 				id="support"
-				icon={ { src: support } }
+				icon={ legacyVersion && { src: support } }
 				title={ translate( 'Support' ) }
 				description={ supportText }
 				links={ supportLinks }
-				first={ ! isWooCommercePluginRequired && ! demo_url }
+				first={ ( ! isWooCommercePluginRequired && ! demo_url ) || ! legacyVersion }
 			/>
 		</div>
 	);

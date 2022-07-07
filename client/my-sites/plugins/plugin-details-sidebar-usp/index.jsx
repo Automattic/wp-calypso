@@ -53,8 +53,13 @@ const PluginDetailsSidebarUSP = ( { id, icon, title, description, links, first }
 	const Header = () => {
 		return (
 			<>
-				<Icon src={ icon.src } showAsAccordion={ isNarrow } />
-				&nbsp;
+				{ icon && (
+					<>
+						<Icon src={ icon.src } showAsAccordion={ isNarrow } />
+						&nbsp;
+					</>
+				) }
+
 				<Title showAsAccordion={ isNarrow }>{ title }</Title>
 			</>
 		);

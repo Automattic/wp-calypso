@@ -10,6 +10,12 @@
 }
 
 .plugin-details-sidebar__plugin-details-content {
+	margin: 32px 0;
+	padding: 32px 0;
+	border-style: solid none;
+	border-width: 1px;
+	border-color: #eeeeee;
+
 	.title {
 		color: var( --studio-gray-60 );
 		font-size: $font-body-extra-small;
@@ -33,5 +39,13 @@
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap; // Needed for paid plugin USPs.
+	}
+}
+
+.legacy {
+	.plugin-details-sidebar__plugin-details-content {
+		margin: 0;
+		padding: 0;
+		border-style: none;
 	}
 }
