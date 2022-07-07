@@ -15,9 +15,8 @@ import { TimelineIcon } from './icon';
 
 const DEFAULT_BACKGROUND = '#eeeeee';
 
-function Colors() {
+function useBackgroundColors() {
 	const colors = useSetting( 'color.palette' );
-	let appendTransparent = true;
 	if ( colors.length > 0 ) {
 		const appendTransparent = colors.every( ( { color } ) => 'transparent' !== color );
 		if ( appendTransparent ) {
@@ -69,7 +68,7 @@ export function registerTimelineItemBlock() {
 		icon: TimelineIcon,
 		category: 'widgets',
 		parent: [ 'jetpack/timeline' ],
-		edit: ( { attributes, clientId, setAttributes } ) => {
+		edit: function Edit( { attributes, clientId, setAttributes } ) {
 			const style = {
 				backgroundColor: attributes.background,
 			};
@@ -105,7 +104,7 @@ export function registerTimelineItemBlock() {
 										onChange: ( background ) =>
 											setAttributes( { background: background || DEFAULT_BACKGROUND } ),
 										label: __( 'Background Color', 'full-site-editing' ),
-										colors: Colors(),
+										colors: useBackgroundColors(),
 									},
 								] }
 							/>
