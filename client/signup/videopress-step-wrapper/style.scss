@@ -9,7 +9,7 @@
 
 	--videopress-color-white: #ffffff;
 
-	--videopress-color-link: #0267ff;
+	--videopress-color-link: #FFFC1B;
 	--videopress-color-link-dark: #004cbf;
 
 	--videopress-color-border-light: #e7e9ea;
@@ -29,15 +29,15 @@
 	--videopress-color-separator-light: #4d5860;
 	--videopress-color-background-button: linear-gradient(116.82deg, #FFFC1B 0%, #FFE61C 0.01%, #FFC700 100%);
 
-	--p2-font-inter: 'Inter', -apple-system, system-ui, blinkmacsystemfont, 'Segoe UI', 'Roboto',
+	--videopress-font-inter: 'Inter', -apple-system, system-ui, blinkmacsystemfont, 'Segoe UI', 'Roboto',
 		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
 
-	--p2-font-size-form-xxs: 14px;
-	--p2-font-size-form-xs: 15px;
-	--p2-font-size-form-s: 16px;
-	--p2-font-size-form: 18px;
-	--p2-font-size-form-xl: 26px;
-	--p2-font-size-form-xxl: 32px;
+	--videopress-font-size-form-xxs: 14px;
+	--videopress-font-size-form-xs: 15px;
+	--videopress-font-size-form-s: 16px;
+	--videopress-font-size-form: 18px;
+	--videopress-font-size-form-xl: 26px;
+	--videopress-font-size-form-xxl: 32px;
 }
 
 .videopress-step-wrapper {
@@ -48,7 +48,7 @@
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	font-family: var( --p2-font-inter );
+	font-family: var( --videopress-font-inter );
 	line-height: 1.8;
 	padding: 96px 1.5em 24px;
 
@@ -64,13 +64,14 @@
 	}
 
 	input {
-		font-family: var( --p2-font-inter );
+		font-family: var( --vidoepress-font-inter );
 	background: var( --videopress-color-background-dark );
 	color: var( --videopress-color-text );
 	}
 
 	a {
-		@extend %p2-link;
+		color: var(--videopress-color-link);
+		text-decoration: none;
 	}
 
 	.videopress-step-wrapper__header-text {
@@ -94,7 +95,13 @@
 
 .videopress-step-wrapper__header-logo {
 	svg path {
-		fill: inherit;
+		fill: var(--videopress-color-text);
+	}
+	span {
+		position: absolute;
+		top: -2px;
+		left: 40px;
+		font-weight: 600;
 	}
 }
 
@@ -119,10 +126,11 @@
 	@extend %p2-form-button;
 	background: var(--videopress-color-background-button);
 	color: #070707;
+	border-radius: 0;
 }
 
 .videopress-step-wrapper__header-text {
-	font-size: var( --p2-font-size-form-xxl );
+	font-size: var( --videopress-font-size-form-xxl );
 	font-weight: 900; /* stylelint-disable-line */
 	text-align: center;
 	line-height: 1.3;
