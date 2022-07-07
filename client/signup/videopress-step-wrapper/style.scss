@@ -1,7 +1,7 @@
 @import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap' );
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
-@import 'calypso/assets/stylesheets/_p2-extends.scss';
+@import 'calypso/assets/stylesheets/_videopress-extends.scss';
 @import '@automattic/typography/styles/variables';
 
 :root {
@@ -42,14 +42,26 @@
 }
 
 .videopress-step-wrapper {
+	// background: var( --videopress-color-background-dark );
+	// color: var( --videopress-color-text );
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	font-family: var( --videopress-font-inter );
+}
+
+.videopress-step-wrapper__top {
+	height: 70px;
+	min-height: 70px;
+	color: var( --videopress-color-background-dark );
+	background: var( --videopress-color-text );
+}
+.videopress-step-wrapper__middle {
 	background: var( --videopress-color-background-dark );
 	color: var( --videopress-color-text );
 	box-sizing: border-box;
 	margin: 0 auto;
 	height: 100vh;
-	display: flex;
-	flex-direction: column;
-	font-family: var( --videopress-font-inter );
 	line-height: 1.8;
 	padding: 96px 1.5em 24px;
 
@@ -78,14 +90,20 @@
 	.videopress-step-wrapper__header-text {
 		margin-bottom: 0.5em;
 	}
+
+	& .signup-form__social-buttons button {
+		background: rgba( 255, 255, 255, 0.2 );
+		border-radius: 2px;
+		color: var( --color-neutral-20 );
+	}
 }
 
 .videopress-step-wrapper__header-icon {
 	display: flex;
 	justify-content: center;
 	margin-bottom: 18px;
-	background: var( --videopress-color-background-dark );
-	color: var( --videopress-color-text );
+	color: var( --videopress-color-background-dark );
+	background: var( --videopress-color-text );
 }
 
 .videopress-step-wrapper__header-text {
@@ -96,7 +114,7 @@
 
 .videopress-step-wrapper__header-logo {
 	svg path {
-		fill: var( --videopress-color-text );
+		fill: var( --videopress-color-background-dark );
 	}
 	span {
 	    @extend .wp-brand-font;
@@ -116,16 +134,16 @@
 }
 
 .videopress-step-wrapper__header-step-indicator {
-	color: var( --videopress-color-text-light );
+	color: var( --videopress-color-background-dark );
 	font-weight: 500;
 }
 
 .videopress-step-wrapper__header-logout button {
-	@extend %p2-button-link;
+	@extend %videopress-button-link;
 }
 
 .videopress-step-wrapper button.is-primary {
-	@extend %p2-form-button;
+	@extend %videopress-form-button;
 	background: var( --videopress-color-background-button );
 	color: #070707;
 	border-radius: 0;
@@ -167,7 +185,7 @@
 }
 
 .videopress-step-wrapper__footer-text {
-	font-size: var( --p2-font-size-form-xxs );
+	font-size: var( --videopress-font-size-form-xxs );
 }
 
 /* Step-specific overrides */

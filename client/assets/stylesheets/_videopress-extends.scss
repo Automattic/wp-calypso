@@ -1,39 +1,39 @@
 /**
- * P2 common styles
+ * VideoPress common styles
  */
 
 // Text input field
-%p2-form-input-text {
+%videopress-form-input-text {
 	background: #fff;
-	border-color: var( --p2-color-border-medium );
+	border-color: var( --videopress-color-border-medium );
 	border-radius: 2px;
-	color: var( --p2-color-text );
-	font-family: var( --p2-font-inter );
-	font-size: var( --p2-font-size-form-s );
+	color: var( --videopress-color-text );
+	font-family: var( --videopress-font-inter );
+	font-size: var( --videopress-font-size-form-s );
 	line-height: 1.5;
 	padding: 14px 16px;
 
 	&:hover:enabled,
 	&:focus:enabled {
-		border-color: var( --p2-color-link );
+		border-color: var( --videopress-color-link );
 	}
 
 	&:focus:enabled,
 	&:focus:hover:enabled {
-		box-shadow: 0 0 0 1px var( --p2-color-link );
+		box-shadow: 0 0 0 1px var( --videopress-color-link );
 	}
 
 	&.is-error {
-		border-color: var( --p2-color-error );
+		border-color: var( --videopress-color-error );
 
 		&:focus:enabled,
 		&:focus:hover:enabled {
-			box-shadow: 0 0 0 1px var( --p2-color-error );
+			box-shadow: 0 0 0 1px var( --videopress-color-error );
 		}
 	}
 }
 
-%p2-form-input-password {
+%videopress-form-input-password {
 	.form-text-input {
 		padding-right: 40px;
 	}
@@ -58,8 +58,8 @@
 	}
 }
 
-%p2-form-input-validation {
-	font-size: var( --p2-font-size-form-xxs );
+%videopress-form-input-validation {
+	font-size: var( --videopress-font-size-form-xxs );
 	line-height: 1.5;
 	padding: 8px 0 0 2px;
 	margin-bottom: 1rem;
@@ -69,20 +69,20 @@
 	}
 
 	&.is-error {
-		color: var( --p2-color-error );
+		color: var( --videopress-color-error );
 	}
 }
 
 // Button
-%p2-form-button {
-	background-color: var( --p2-color-button );
-	color: var( --p2-color-text );
+%videopress-form-button {
+	background-color: var( --videopress-color-button );
+	color: var( --videopress-color-text );
 	border: none;
 	border-radius: 50px; /* stylelint-disable-line */
 	display: flex;
 	align-items: center;
-	font-family: var( --p2-font-inter );
-	font-size: var( --p2-font-size-form-xs );
+	font-family: var( --videopress-font-inter );
+	font-size: var( --videopress-font-size-form-xs );
 	letter-spacing: -0.01em;
 	justify-content: center;
 	line-height: 1.5;
@@ -93,53 +93,53 @@
 	width: 100%;
 
 	&:hover:not( :disabled ):not( .disabled ) {
-		background-color: var( --p2-color-button-dark );
-		color: var( --p2-color-text );
+		background-color: var( --videopress-color-button-dark );
+		color: var( --videopress-color-text );
 	}
 
 	&.is-primary {
-		background-color: var( --p2-color-link );
-		color: var( --p2-color-white );
+		background-color: var( --videopress-color-link );
+		color: var( --videopress-color-white );
 
 		&:hover:not( :disabled ):not( .disabled ),
 		&:focus:not( :disabled ):not( .disabled ) {
-			background-color: var( --p2-color-link-dark );
-			color: var( --p2-color-white );
+			background-color: var( --videopress-color-link-dark );
+			color: var( --videopress-color-white );
 		}
 
 		&[disabled],
 		&.disabled {
 			opacity: 0.5;
-			background-color: var( --p2-color-link );
-			color: var( --p2-color-white );
+			background-color: var( --videopress-color-link );
+			color: var( --videopress-color-white );
 		}
 	}
 
 	&[disabled],
 	&.disabled {
-		background-color: var( --p2-color-button );
-		color: var( --p2-color-text-light );
+		background-color: var( --videopress-color-button );
+		color: var( --videopress-color-text-light );
 		cursor: default;
 	}
 }
 
-%p2-button-link {
+%videopress-button-link {
 	background: none;
-	color: var( --p2-color-link );
+	color: var( --videopress-color-link );
 	text-decoration: underline;
-	font-family: var( --p2-font-inter );
+	font-family: var( --videopress-font-inter );
 
 	&:hover:not( :disabled ):not( .disabled ) {
 		background: none;
-		color: var( --p2-color-link-dark );
+		color: var( --videopress-color-link-dark );
 	}
 }
 
-%p2-link {
-	color: var( --p2-color-link );
+%videopress-link {
+	color: var( --videopress-color-link );
 	text-decoration: none;
 
 	&:hover {
-		color: var( --p2-color-link-dark );
+		color: var( --videopress-color-link-dark );
 	}
 }

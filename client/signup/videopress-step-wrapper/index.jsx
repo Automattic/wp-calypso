@@ -25,7 +25,7 @@ function VideoPressStepWrapper( {
 
 	return (
 		<div className={ classnames( 'videopress-step-wrapper', className ) }>
-			<div className="videopress-step-wrapper__header">
+			<div className="videopress-step-wrapper__top">
 				<div className="videopress-step-wrapper__header-logo">
 					<SVG xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
 						<Path
@@ -37,17 +37,6 @@ function VideoPressStepWrapper( {
 					</SVG>
 					<span>VideoPress</span>
 				</div>
-				{ headerIcon && (
-					<div className="videopress-step-wrapper__header-icon">
-						<Icon icon={ headerIcon } />
-					</div>
-				) }
-				{ headerText && (
-					<h1 className="wp-brand-font videopress-step-wrapper__header-text">{ headerText }</h1>
-				) }
-				{ subHeaderText && (
-					<p className="videopress-step-wrapper__subheader-text">{ subHeaderText }</p>
-				) }
 				{ stepIndicator && (
 					<div className="videopress-step-wrapper__header-step-indicator">{ stepIndicator }</div>
 				) }
@@ -63,24 +52,39 @@ function VideoPressStepWrapper( {
 					</div>
 				) }
 			</div>
-			<StepWrapper
-				hideFormattedHeader
-				shouldHideNavButtons={ true }
-				flowName={ flowName }
-				stepName={ stepName }
-				positionInFlow={ positionInFlow }
-				fallbackHeaderText=""
-				stepContent={ children }
-			/>
-			<div className="videopress-step-wrapper__footer">
-				<img
-					src="/calypso/images/p2/w-logo.png"
-					className="videopress-step-wrapper__w-logo"
-					alt="WP.com logo"
+			<div className="videopress-step-wrapper__middle">
+				<div className="videopress-step-wrapper__header">
+					{ headerIcon && (
+						<div className="videopress-step-wrapper__header-icon">
+							<Icon icon={ headerIcon } />
+						</div>
+					) }
+					{ headerText && (
+						<h1 className="wp-brand-font videopress-step-wrapper__header-text">{ headerText }</h1>
+					) }
+					{ subHeaderText && (
+						<p className="videopress-step-wrapper__subheader-text">{ subHeaderText }</p>
+					) }
+				</div>
+				<StepWrapper
+					hideFormattedHeader
+					shouldHideNavButtons={ true }
+					flowName={ flowName }
+					stepName={ stepName }
+					positionInFlow={ positionInFlow }
+					fallbackHeaderText=""
+					stepContent={ children }
 				/>
-				<span className="videopress-step-wrapper__footer-text">
-					{ translate( 'Powered by WordPress.com' ) }
-				</span>
+				<div className="videopress-step-wrapper__footer">
+					<img
+						src="/calypso/images/p2/w-logo.png"
+						className="videopress-step-wrapper__w-logo"
+						alt="WP.com logo"
+					/>
+					<span className="videopress-step-wrapper__footer-text">
+						{ translate( 'Powered by WordPress.com' ) }
+					</span>
+				</div>
 			</div>
 		</div>
 	);
