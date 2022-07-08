@@ -40,13 +40,13 @@ class SharingServiceExamples extends Component {
 	static propTypes = {
 		service: PropTypes.object.isRequired,
 		site: PropTypes.object,
-		isJetpack: PropTypes.bool,
+		hasJetpack: PropTypes.bool,
 		translate: PropTypes.func,
 	};
 
 	static defaultProps = {
 		site: Object.freeze( {} ),
-		isJetpack: false,
+		hasJetpack: false,
 	};
 
 	getSharingButtonsLink() {
@@ -119,7 +119,7 @@ class SharingServiceExamples extends Component {
 				textOnly: true,
 			} ),
 		};
-		return this.props.isJetpack
+		return this.props.hasJetpack
 			? [
 					{
 						image,
@@ -210,7 +210,7 @@ class SharingServiceExamples extends Component {
 				textOnly: true,
 			} ),
 		};
-		return this.props.isJetpack
+		return this.props.hasJetpack
 			? [
 					{
 						image,
@@ -254,7 +254,7 @@ class SharingServiceExamples extends Component {
 			src: '/calypso/images/sharing/connections-tumblr.png',
 			alt: this.props.translate( 'Share posts to your Tumblr blog', { textOnly: true } ),
 		};
-		return this.props.isJetpack
+		return this.props.hasJetpack
 			? [
 					{
 						image,
@@ -298,7 +298,7 @@ class SharingServiceExamples extends Component {
 			src: '/calypso/images/sharing/connections-twitter2.png',
 			alt: this.props.translate( 'Share posts to your Twitter followers', { textOnly: true } ),
 		};
-		return this.props.isJetpack
+		return this.props.hasJetpack
 			? [
 					{
 						image,
@@ -447,5 +447,5 @@ class SharingServiceExamples extends Component {
 
 export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
-	isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+	hasJetpack: ! isJetpackCloud() || isJetpackSite( state, getSelectedSiteId( state ) ),
 } ) )( localize( SharingServiceExamples ) );
