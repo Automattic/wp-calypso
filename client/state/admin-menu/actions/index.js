@@ -4,7 +4,10 @@ import { ADMIN_MENU_REQUEST, ADMIN_MENU_RECEIVE } from 'calypso/state/action-typ
 import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPluginOnSite,
+	isRequesting as isRequestingPlugins,
+} from 'calypso/state/plugins/installed/selectors';
 
 export const requestAdminMenu = function requestAdminMenu( siteId ) {
 	return {
@@ -23,13 +26,13 @@ export const receiveAdminMenu = function receiveAdminMenu( siteId, menu ) {
 
 export const updateAdminMenuAfterPluginInstallation =
 	( siteId, productSlug ) => ( dispatch, getState ) => {
-		const { transfer } = getLatestAtomicTransfer( getState(), siteId );
-		const pluginOnSite = getPluginOnSite( getState(), siteId, productSlug );
-
 		// Wait for the Atomic transfer to be completed...
+		const { transfer } = getLatestAtomicTransfer( getState(), siteId );
 		if ( transfer?.status !== 'completed' ) {
-			// Check again after 2s.
+			// Poll the Atomic transfer status again.
 			dispatch( requestLatestAtomicTransfer( siteId ) );
+
+			// Check once more after 2s.
 			setTimeout(
 				() => dispatch( updateAdminMenuAfterPluginInstallation( siteId, productSlug ) ),
 				2000
@@ -38,9 +41,14 @@ export const updateAdminMenuAfterPluginInstallation =
 		}
 
 		// ...and for the plugin to be installed.
+		const pluginOnSite = getPluginOnSite( getState(), siteId, productSlug );
 		if ( ! pluginOnSite ) {
-			// Check again after 2s.
-			dispatch( fetchSitePlugins( siteId ) );
+			// Poll the plugin installation status again.
+			if ( ! isRequestingPlugins( getState(), siteId ) ) {
+				dispatch( fetchSitePlugins( siteId ) );
+			}
+
+			// Check once more after 2s.
 			setTimeout(
 				() => dispatch( updateAdminMenuAfterPluginInstallation( siteId, productSlug ) ),
 				2000
