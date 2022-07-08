@@ -236,6 +236,7 @@ export default class DesignAssets extends Component {
 					<LineChart readmeFilePath="line-chart" />
 					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
+					<ListTile readmeFilePath="/packages/components/src/list-tile" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
 					<Notices readmeFilePath="notice" />
@@ -285,7 +286,6 @@ export default class DesignAssets extends Component {
 					<Wizard readmeFilePath="wizard" />
 					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
 					<WpcomColophon readmeFilePath="wpcom-colophon" />
-					<ListTile readmeFilePath="list-tile" />
 				</Collection>
 			</Main>
 		);
