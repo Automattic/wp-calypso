@@ -46,7 +46,8 @@ export default function ChooseServiceStep( props: Props ): React.ReactNode {
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
 	const isLoading = useSelector( isProductsListFetching );
 	const isEnglishLocale = useIsEnglishLocale();
-	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
+	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
+	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
 	const getBackUrl = ( siteSlug?: string ) => {
 		const step = goalsCaptureStepEnabled ? 'goals' : 'intent';

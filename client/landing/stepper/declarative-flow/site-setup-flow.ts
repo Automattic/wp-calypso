@@ -31,10 +31,11 @@ export const siteSetupFlow: Flow = {
 
 	useSteps() {
 		const isEnglishLocale = useIsEnglishLocale();
+		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 
 		return [
-			...( isEnabled( 'signup/goals-step' ) && isEnglishLocale ? [ 'goals' ] : [] ),
-			...( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale ? [ 'vertical' ] : [] ),
+			...( isEnabled( 'signup/goals-step' ) && isEnabledFTM ? [ 'goals' ] : [] ),
+			...( isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM ? [ 'vertical' ] : [] ),
 			'intent',
 			'options',
 			'designSetup',
@@ -78,6 +79,7 @@ export const siteSetupFlow: Flow = {
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
 		const isEnglishLocale = useIsEnglishLocale();
+		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
 
 		let siteSlug: string | null = null;
@@ -98,8 +100,8 @@ export const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale;
-		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
+		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
+		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
 		// Set up Step progress for Woo flow - "Step 2 of 4"
 		if ( intent === 'sell' && storeType === 'power' ) {
