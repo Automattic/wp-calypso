@@ -5,7 +5,6 @@ import {
 	isPersonal,
 	isPremium,
 	TYPE_BUSINESS,
-	TYPE_STARTER,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_UPLOAD_PLUGINS,
@@ -350,29 +349,6 @@ const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSl
 	);
 };
 
-const UpgradeNudgePaid = ( props ) => {
-	const translate = useTranslate();
-
-	if ( ! props.sitePlan ) {
-		return null;
-	}
-
-	const plan = findFirstSimilarPlanKey( props.sitePlan.product_slug, {
-		type: TYPE_STARTER,
-	} );
-
-	return (
-		<UpsellNudge
-			event="calypso_plugins_browser_upgrade_nudge"
-			showIcon={ true }
-			href={ `/checkout/${ props.siteSlug }/starter` }
-			feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
-			plan={ plan }
-			title={ translate( 'Upgrade to the Starter plan to install paid plugins.' ) }
-		/>
-	);
-};
-
 const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -501,13 +477,6 @@ const PluginBrowserContent = ( props ) => {
 		<>
 			{ ! props.jetpackNonAtomic && (
 				<>
-					<div className="plugins-browser__upgrade-banner">
-						{ eligibleForProPlan && ! isLegacyPlan ? (
-							<UpgradeNudgePaid { ...props } />
-						) : (
-							<UpgradeNudge { ...props } />
-						) }
-					</div>
 					<PluginSingleListView { ...props } category="paid" />
 				</>
 			) }

@@ -27,10 +27,6 @@ function getHoldMessages(
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
-				if ( ! isLegacyPlan && isMarketplace ) {
-					return translate( 'Upgrade to a Starter plan' );
-				}
-
 				if ( ! isLegacyPlan && eligibleForProPlan ) {
 					return translate( 'Upgrade to a Pro plan' );
 				}
@@ -42,10 +38,6 @@ function getHoldMessages(
 					return translate(
 						"You'll also get to install custom plugins, have more storage, and access live support."
 					);
-				}
-
-				if ( isMarketplace ) {
-					return translate( "You'll also get to collect payments and have more storage." );
 				}
 
 				if ( billingPeriod === IntervalLength.MONTHLY ) {
