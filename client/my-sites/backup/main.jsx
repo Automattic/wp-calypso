@@ -32,6 +32,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BackupDatePicker from './backup-date-picker';
+import BackupsMadeRealtimeBanner from './backups-made-realtime-banner';
 import EnableRestoresBanner from './enable-restores-banner';
 import { backupMainPath } from './paths';
 import SearchResults from './search-results';
@@ -175,6 +176,7 @@ const BackupStatus = ( { selectedDate, needCredentials, onDateChange } ) => {
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
 				{ needCredentials && <EnableRestoresBanner /> }
+				{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
 
 				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 				<BackupStorageSpace />
