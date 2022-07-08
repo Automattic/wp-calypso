@@ -179,6 +179,7 @@ export class SiteSettingsFormGeneral extends Component {
 		return (
 			<>
 				{ isNonAtomicJetpackSite && (
+					// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
 					<Masterbar
 						isSavingSettings={ isSavingSettings }
 						isRequestingSettings={ isRequestingSettings }
@@ -659,8 +660,6 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
 
-				{ this.toolbarOption() }
-
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
@@ -695,6 +694,8 @@ export class SiteSettingsFormGeneral extends Component {
 						) }
 					</div>
 				) }
+
+				{ this.toolbarOption() }
 			</div>
 		);
 	}
