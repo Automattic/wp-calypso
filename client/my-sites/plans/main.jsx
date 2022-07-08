@@ -246,7 +246,6 @@ class Plans extends Component {
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
-								{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 								{ this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</div>
