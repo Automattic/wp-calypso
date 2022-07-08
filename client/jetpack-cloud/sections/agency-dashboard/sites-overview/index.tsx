@@ -36,7 +36,7 @@ export default function SitesOverview(): ReactElement {
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
-	const [ hightLightTab, setHightLightTab ] = useState( false );
+	const [ highlightTab, setHighlightTab ] = useState( false );
 
 	const { search, currentPage, filter } = useContext( SitesOverviewContext );
 
@@ -53,7 +53,7 @@ export default function SitesOverview(): ReactElement {
 
 	useEffect( () => {
 		if ( highlightFavoriteTab ) {
-			setHightLightTab( true );
+			setHighlightTab( true );
 			page.redirect( removeQueryArgs( window.location.pathname, 'highlight' ) );
 		}
 	}, [ highlightFavoriteTab ] );
@@ -137,7 +137,7 @@ export default function SitesOverview(): ReactElement {
 							className={ classNames(
 								'sites-overview__section-nav',
 								isMobile &&
-									hightLightTab &&
+									highlightTab &&
 									selectedItem.key === 'favorites' &&
 									'site-overview__highlight-tab'
 							) }
