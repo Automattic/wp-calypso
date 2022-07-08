@@ -181,7 +181,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					// End of woo flow
-					if ( storeType === 'power' ) {
+					if ( intent === 'sell' && storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
 						if (
@@ -298,7 +298,7 @@ export const siteSetupFlow: Flow = {
 					const [ checkoutUrl ] = params;
 
 					if ( checkoutUrl ) {
-						return exitFlow( checkoutUrl.toString() );
+						window.location.replace( checkoutUrl.toString() );
 					}
 
 					return navigate( 'wooTransfer' );
