@@ -19,9 +19,10 @@ import {
 } from 'calypso/state/order-transactions/constants';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 interface CheckoutPendingProps {
-	orderId: number;
+	orderId: number | ':orderId';
 	siteSlug?: string;
 	redirectTo?: string;
 }
@@ -44,10 +45,19 @@ interface CheckoutPendingProps {
  * case, that string will be replaced by the receipt ID when the transaction
  * completes.
  */
-function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProps ) {
+function CheckoutPending( {
+	orderId: orderIdOrPlaceholder,
+	siteSlug,
+	redirectTo,
+}: CheckoutPendingProps ) {
+	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 	const translate = useTranslate();
-	const transaction = useSelector( ( state ) => getOrderTransaction( state, orderId ) );
-	const error = useSelector( ( state ) => getOrderTransactionError( state, orderId ) );
+	const transaction: OrderTransaction | null = useSelector( ( state ) =>
+		orderId ? getOrderTransaction( state, orderId ) : null
+	);
+	const error = useSelector( ( state ) =>
+		orderId ? getOrderTransactionError( state, orderId ) : undefined
+	);
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
@@ -81,6 +91,17 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 			page( failRedirectUrl );
 		};
 
+		if ( ! orderId ) {
+			// If the order ID is missing, we don't know what to do because there's no
+			// way to know the status of the transaction. If this happens it's
+			// definitely a bug, but let's keep the existing behavior and send the user
+			// to a generic thank-you page, assuming that the purchase was successful.
+			// This goes to the URL path `/checkout/thank-you/:site/:receiptId`.
+			didRedirect.current = true;
+			page( `/checkout/thank-you/${ siteSlug ?? 'no-site' }/unknown` );
+			return;
+		}
+
 		const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
 
 		if ( transaction ) {
@@ -90,6 +111,11 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 				const { receiptId } = transaction;
 
 				didRedirect.current = true;
+
+				if ( redirectTo?.includes( ':receiptId' ) ) {
+					performRedirect( redirectTo.replace( ':receiptId', `${ receiptId }` ) );
+					return;
+				}
 
 				// Only treat `/pending` as a placeholder if it's the end of the URL
 				// pathname, but preserve query strings or hashes.
@@ -146,11 +172,11 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 		if ( error ) {
 			retryOnError();
 		}
-	}, [ error, redirectTo, reduxDispatch, siteSlug, transaction, translate, reloadCart ] );
+	}, [ error, redirectTo, reduxDispatch, siteSlug, transaction, translate, reloadCart, orderId ] );
 
 	return (
 		<Main className="checkout-thank-you__pending">
-			<QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } />
+			{ orderId && <QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } /> }
 			<PageViewTracker
 				path={
 					siteSlug
@@ -168,6 +194,10 @@ function CheckoutPending( { orderId, siteSlug, redirectTo }: CheckoutPendingProp
 			/>
 		</Main>
 	);
+}
+
+function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
+	return Number.isInteger( orderId );
 }
 
 function performRedirect( url: string ): void {

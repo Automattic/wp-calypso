@@ -202,17 +202,24 @@ export function redirectJetpackLegacyPlans( context, next ) {
 }
 
 export function checkoutPending( context, next ) {
-	const orderId = Number( context.params.orderId );
+	const orderId = Number.isInteger( Number( context.params.orderId ) )
+		? Number( context.params.orderId )
+		: ':orderId';
+
+	/**
+	 * @type {string|undefined}
+	 */
 	const siteSlug = context.params.site;
+
+	/**
+	 * @type {string|undefined}
+	 */
+	const redirectTo = context.query.redirectTo;
 
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
-		<CheckoutPending
-			orderId={ orderId }
-			siteSlug={ siteSlug }
-			redirectTo={ context.query.redirectTo }
-		/>
+		<CheckoutPending orderId={ orderId } siteSlug={ siteSlug } redirectTo={ redirectTo } />
 	);
 
 	next();

@@ -179,6 +179,7 @@
 		"@wordpress/icons": "^9.0.0",
 		"@wordpress/is-shallow-equal": "^4.9.0",
 		"@wordpress/jest-preset-default": "^8.2.0",
+		"@wordpress/primitives": "^3.8.0",
 		"@wordpress/url": "^3.10.0",
 		"backstopjs": "5.1.0",
 		"browserslist": "^4.16.0",

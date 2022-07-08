@@ -2,13 +2,15 @@ import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
+import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
+import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { updateAdminMenuAfterPluginInstallation } from 'calypso/state/admin-menu/actions';
@@ -41,6 +43,9 @@ const ThankYouContainer = styled.div`
 	}
 `;
 
+const AtomicTransferActive = 'active';
+const AtomicTransferProvisioned = 'provisioned';
+const AtomicTransferRelocating = 'relocating_switcheroo';
 const AtomicTransferComplete = 'completed';
 
 const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
@@ -55,9 +60,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
+	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ sawPluginOnce, setSawPluginOnce ] = useState( false );
+
+	const isPluginOnSite = !! pluginOnSite;
+	const transferStatus = transfer?.status;
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
+	// The dependencies intentionally use transfer over transferStatus.
 	useEffect( () => {
 		if ( ! siteId || transfer?.status === AtomicTransferComplete ) {
 			return;
@@ -98,12 +109,10 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( transfer?.status === AtomicTransferComplete && ! pluginOnSite && ! isRequestingPlugins ) {
+		if ( transferStatus === AtomicTransferComplete && ! pluginOnSite && ! isRequestingPlugins ) {
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
-		// Do not add retries in dependencies to avoid infinite loop.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId, transfer ] );
+	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId, transferStatus ] );
 
 	// Update the menu after the site been transferred to Atomic or after the plugin has
 	// been installed, since that might change some menu items
@@ -113,6 +122,48 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		// Use an empty array of dependencies since we want to run this effect only once.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
+	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite.
+	// Step 0 hides the progress bar. It means "complete" or "still loading transfer status".
+	// Steps 1-4 advance through the bar.
+	useEffect( () => {
+		if ( transferStatus === AtomicTransferActive ) {
+			setCurrentStep( 1 );
+		} else if ( transferStatus === AtomicTransferProvisioned ) {
+			setCurrentStep( 2 );
+		} else if ( transferStatus === AtomicTransferRelocating ) {
+			setCurrentStep( 3 );
+		} else if ( transferStatus === AtomicTransferComplete ) {
+			/*
+			 * When we're done transferring, we want to see isPluginOnSite to advance
+			 * to step 0 (complete).
+			 * Even after pluginOnSite exists, subsequent requests temporarily set
+			 * pluginOnSite = undefined when there are outstanding network requests.
+			 * Workaround: After seeing isPluginOnSite once, we cannot go back to step 4.
+			 */
+			if ( ! isPluginOnSite && ! sawPluginOnce ) {
+				setCurrentStep( 4 );
+			} else if ( isPluginOnSite && ! sawPluginOnce ) {
+				setCurrentStep( 0 );
+				setSawPluginOnce( true );
+			} else {
+				setCurrentStep( 0 );
+			}
+		} else {
+			setCurrentStep( 0 );
+		}
+	}, [ transferStatus, isPluginOnSite, sawPluginOnce ] );
+
+	const steps = useMemo(
+		() => [
+			translate( 'Activating the plugin feature' ), // Transferring to Atomic
+			translate( 'Setting up plugin installation' ), // Transferring to Atomic
+			translate( 'Installing plugin' ), // Transferring to Atomic
+			translate( 'Activating plugin' ),
+		],
+		[ translate ]
+	);
+	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const thankYouImage = {
 		alt: '',
@@ -202,17 +253,29 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
 			/>
+			{ currentStep > 0 && (
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+				<div className="marketplace-plugin-install__root">
+					<MarketplaceProgressBar
+						steps={ steps }
+						currentStep={ currentStep - 1 }
+						additionalSteps={ additionalSteps }
+					/>
+				</div>
+			) }
 			<ThankYouContainer>
-				<ThankYou
-					containerClassName="marketplace-thank-you"
-					sections={ [ setupSection ] }
-					showSupportSection={ true }
-					thankYouImage={ thankYouImage }
-					thankYouTitle={ translate( 'All ready to go!' ) }
-					thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
-					headerBackgroundColor="#fff"
-					headerTextColor="#000"
-				/>
+				{ transfer && (
+					<ThankYou
+						containerClassName="marketplace-thank-you"
+						sections={ [ setupSection ] }
+						showSupportSection={ true }
+						thankYouImage={ thankYouImage }
+						thankYouTitle={ translate( 'All ready to go!' ) }
+						thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
+						headerBackgroundColor="#fff"
+						headerTextColor="#000"
+					/>
+				) }
 			</ThankYouContainer>
 		</ThemeProvider>
 	);

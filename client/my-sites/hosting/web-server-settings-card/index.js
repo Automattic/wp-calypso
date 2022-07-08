@@ -136,7 +136,7 @@ const WebServerSettingsCard = ( {
 
 	const getStaticFile404Settings = () => [
 		{
-			label: translate( 'Default (recommended)', {
+			label: translate( 'Default', {
 				comment: 'The default way to handle requests for nonexistent static files.',
 			} ),
 			value: 'default',

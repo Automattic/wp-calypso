@@ -460,7 +460,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
 
-		await this.editorSettingsSidebarComponent.expandSection( 'Status & Visibility' );
+		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
 		await this.editorSettingsSidebarComponent.openVisibilityOptions();
 		await this.editorSettingsSidebarComponent.selectVisibility( visibility, {
 			password: password,
@@ -595,7 +595,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
 
-		await this.editorSettingsSidebarComponent.expandSection( 'Status & Visibility' );
+		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
 		await this.editorSettingsSidebarComponent.openSchedule();
 		await this.editorSettingsSidebarComponent.setScheduleDetails( date );
 		await this.editorSettingsSidebarComponent.closeSchedule();

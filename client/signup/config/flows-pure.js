@@ -14,6 +14,7 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
+	getAddOnsStep = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -69,7 +70,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'free',
-			steps: [ 'user', 'domains' ],
+			steps: getAddOnsStep( [ 'user', 'domains' ] ),
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2020-08-11',
@@ -100,9 +101,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding',
-			steps: isEnabled( 'signup/professional-email-step' )
-				? [ 'user', 'domains', 'emails', 'plans' ]
-				: [ 'user', 'domains', 'plans' ],
+			steps: getAddOnsStep(
+				isEnabled( 'signup/professional-email-step' )
+					? [ 'user', 'domains', 'emails', 'plans' ]
+					: [ 'user', 'domains', 'plans' ]
+			),
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
@@ -110,7 +113,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-with-email',
-			steps: [ 'user', 'domains', 'emails', 'plans' ],
+			steps: getAddOnsStep( [ 'user', 'domains', 'emails', 'plans' ] ),
 			destination: getSignupDestination,
 			description:
 				'Copy of the onboarding flow that always includes an email step; the flow is used by the Professional Email landing page',
@@ -119,7 +122,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-registrationless',
-			steps: [ 'domains', 'plans-new', 'user-new' ],
+			steps: getAddOnsStep( [ 'domains', 'plans-new', 'user-new' ] ),
 			destination: getSignupDestination,
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',

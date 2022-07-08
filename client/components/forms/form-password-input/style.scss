@@ -4,6 +4,10 @@
 	.form-text-input {
 		/*!rtl:ignore*/
 		padding-right: 32px;
+
+		&::-ms-reveal {
+			display: none;
+		}
 	}
 
 	.form-password-input__toggle {
