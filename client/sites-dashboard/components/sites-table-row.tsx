@@ -79,15 +79,17 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	return (
 		<Row>
 			<td>
-				<div style={ { display: 'flex', alignItems: 'center' } }>
-					<a
-						style={ { display: 'block' } }
-						href={ getDashboardUrl( site.slug ) }
-						title={ __( 'Visit Dashboard' ) }
-					>
-						<SiteIcon siteId={ site.ID } size={ 50 } />
-					</a>
-					<div style={ { marginLeft: '20px' } }>
+				<ListTile
+					leading={
+						<a
+							style={ { display: 'block' } }
+							href={ getDashboardUrl( site.slug ) }
+							title={ __( 'Visit Dashboard' ) }
+						>
+							<SiteIcon siteId={ site.ID } size={ 50 } />
+						</a>
+					}
+					title={
 						<div style={ { display: 'flex', alignItems: 'center', marginBottom: '8px' } }>
 							<SiteName style={ { marginRight: '8px' } }>
 								<a href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
@@ -96,6 +98,8 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 						</div>
+					}
+					subtitle={
 						<div>
 							<SiteUrl
 								href={ site.URL }
@@ -111,8 +115,8 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							) }
 							{ isComingSoon && <SitesLaunchStatusBadge>Coming soon</SitesLaunchStatusBadge> }
 						</div>
-					</div>
-				</div>
+					}
+				/>
 			</td>
 			<td className="sites-table-row__mobile-hidden">{ site.plan.product_name_short }</td>
 			<td className="sites-table-row__mobile-hidden">July 16, 1969</td>
