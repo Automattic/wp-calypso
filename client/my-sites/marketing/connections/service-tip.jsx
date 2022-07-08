@@ -20,13 +20,13 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
  *
  * @type {string[]}
  */
-const SERVICES_WITH_TIPS = [ 'twitter', 'instagram', 'google_plus' ];
+const SERVICES_WITH_TIPS = [ 'instagram', 'google_plus' ];
 /**
- * List of services that should only have tips on Jetpack sites.
+ * List of services we provide tips for, only if the site is connected to Jetpack.
  *
  * @type {string[]}
  */
-const JETPACK_ONLY_TIPS = [ 'facebook' ];
+const JETPACK_SERVICES_WITH_TIPS = SERVICES_WITH_TIPS.concat( [ 'facebook', 'twitter' ] );
 
 class SharingServiceTip extends Component {
 	static propTypes = {
@@ -116,7 +116,7 @@ class SharingServiceTip extends Component {
 		const { service } = this.props;
 		if (
 			! includes(
-				SERVICES_WITH_TIPS.concat( this.props.isJetpack ? JETPACK_ONLY_TIPS : [] ),
+				this.props.isJetpack ? JETPACK_SERVICES_WITH_TIPS : SERVICES_WITH_TIPS,
 				service.ID
 			) ||
 			'google_plus' === service.ID

@@ -52,10 +52,8 @@ class SharingServiceExamples extends Component {
 	getSharingButtonsLink() {
 		if ( this.props.site ) {
 			return isJetpackCloud()
-				? localizeUrl(
-						'https://jetpack.com/redirect/?source=calypso-marketing-sharing-buttons&site=' +
-							this.props.site.slug
-				  )
+				? 'https://jetpack.com/redirect/?source=calypso-marketing-sharing-buttons&site=' +
+						this.props.site.slug
 				: '/sharing/buttons/' + this.props.site.slug;
 		}
 		return localizeUrl( 'https://wordpress.com/support/sharing/' );
@@ -288,42 +286,53 @@ class SharingServiceExamples extends Component {
 	}
 
 	twitter() {
-		return [
+		const label = this.props.translate(
+			'{{strong}}Connect{{/strong}} to automatically share posts with your Twitter followers.',
 			{
-				image: {
-					src: '/calypso/images/sharing/connections-twitter2.png',
-					alt: this.props.translate( 'Share posts to your Twitter followers', { textOnly: true } ),
+				components: {
+					strong: <strong />,
 				},
-				label: this.props.translate(
-					'{{strong}}Connect{{/strong}} to automatically share posts with your Twitter followers.',
+			}
+		);
+		const image = {
+			src: '/calypso/images/sharing/connections-twitter2.png',
+			alt: this.props.translate( 'Share posts to your Twitter followers', { textOnly: true } ),
+		};
+		return this.props.isJetpack
+			? [
 					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			},
-			{
-				image: {
-					src: '/calypso/images/sharing/connections-twitter.png',
-					alt: this.props.translate( 'Add a Twitter Timeline Widget', { textOnly: true } ),
-				},
-				label: this.props.translate(
-					'Add a {{link}}Twitter Timeline Widget{{/link}} to display your latest tweets on your site.',
+						image,
+						label,
+					},
 					{
-						components: {
-							link: (
-								<a
-									href={ localizeUrl(
-										'https://wordpress.com/support/widgets/twitter-timeline-widget/'
-									) }
-								/>
-							),
+						image: {
+							src: '/calypso/images/sharing/connections-twitter.png',
+							alt: this.props.translate( 'Add a Twitter Timeline Widget', { textOnly: true } ),
 						},
-					}
-				),
-			},
-		];
+						label: this.props.translate(
+							'Add a {{link}}Twitter Timeline Widget{{/link}} to display your latest tweets on your site.',
+							{
+								components: {
+									link: (
+										<a
+											href={ localizeUrl(
+												'https://wordpress.com/support/widgets/twitter-timeline-widget/'
+											) }
+										/>
+									),
+								},
+							}
+						),
+					},
+			  ]
+			: [
+					{
+						label,
+					},
+					{
+						image,
+					},
+			  ];
 	}
 
 	p2_slack() {
