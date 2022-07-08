@@ -30,7 +30,6 @@ import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
