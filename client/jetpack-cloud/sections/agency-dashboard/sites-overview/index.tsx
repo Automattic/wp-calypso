@@ -3,7 +3,7 @@ import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { ReactElement, useContext, useEffect, useState } from 'react';
+import { ReactElement, useContext, useEffect, useState, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';

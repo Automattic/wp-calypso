@@ -1,6 +1,6 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useState, ReactElement, MouseEvent, KeyboardEvent } from 'react';
+import { useState, useCallback, ReactElement, MouseEvent, KeyboardEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SiteActions from '../site-actions';
@@ -20,20 +20,21 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
-	const toggleIsExpanded = (
-		event: MouseEvent< HTMLSpanElement > | KeyboardEvent< HTMLSpanElement >
-	) => {
-		// Don't toogle the card when clicked on set/remove favorite
-		if ( ( event?.target as HTMLElement )?.closest( '.site-set-favorite__favorite-icon' ) ) {
-			return;
-		}
-		setIsExpanded( ( expanded ) => {
-			if ( ! expanded ) {
-				dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_card_expand' ) );
+	const toggleIsExpanded = useCallback(
+		() => ( event: MouseEvent< HTMLSpanElement > | KeyboardEvent< HTMLSpanElement > ) => {
+			// Don't toogle the card when clicked on set/remove favorite
+			if ( ( event?.target as HTMLElement )?.closest( '.site-set-favorite__favorite-icon' ) ) {
+				return;
 			}
-			return ! expanded;
-		} );
-	};
+			setIsExpanded( ( expanded ) => {
+				if ( ! expanded ) {
+					dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_card_expand' ) );
+				}
+				return ! expanded;
+			} );
+		},
+		[ setIsExpanded, dispatch ]
+	);
 
 	const toggleContent = isExpanded ? (
 		<Gridicon icon="chevron-up" className="site-card__card-toggle-icon" size={ 18 } />

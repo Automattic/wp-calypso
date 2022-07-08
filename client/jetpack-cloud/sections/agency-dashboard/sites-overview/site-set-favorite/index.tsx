@@ -140,19 +140,18 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	};
 
 	return (
-		<>
-			<Button
-				borderless
-				compact
-				disabled={ isLoading }
-				onClick={ handleFavoriteChange }
-				className={ classNames(
-					'site-set-favorite__favorite-icon',
-					isFavorite && 'site-set-favorite__favorite-icon-active'
-				) }
-			>
-				<Icon size={ 24 } icon={ isFavorite ? starFilled : starEmpty } />
-			</Button>
-		</>
+		<Button
+			borderless
+			compact
+			disabled={ isLoading }
+			onClick={ handleFavoriteChange }
+			className={ classNames(
+				'site-set-favorite__favorite-icon',
+				isFavorite && 'site-set-favorite__favorite-icon-active'
+			) }
+			aria-label={ translate( 'Toggle favorite site' ) }
+		>
+			<Icon size={ 24 } icon={ isFavorite ? starFilled : starEmpty } />
+		</Button>
 	);
 }
