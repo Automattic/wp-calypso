@@ -15,6 +15,7 @@ export interface IPurchaseFlowState {
 	primaryDomain: string | null;
 	productSlugInstalled: string | null;
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS;
+	thirdPartyDevsAccountConsent: boolean;
 }
 
 export interface IBillingIntervalState {

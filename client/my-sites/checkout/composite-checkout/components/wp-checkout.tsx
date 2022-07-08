@@ -38,7 +38,9 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { IAppState } from 'calypso/state/types';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -220,6 +222,10 @@ export default function WPCheckout( {
 		}
 		return false;
 	} );
+
+	const is3PDAccountConsentAccepted = useSelector(
+		( state: IAppState ) => getPurchaseFlowState( state ).thirdPartyDevsAccountConsent
+	);
 
 	const { formStatus } = useFormStatus();
 
@@ -487,7 +493,7 @@ export default function WPCheckout( {
 			<CheckoutFormSubmit
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				submitButtonFooter={ <SubmitButtonFooter /> }
-				disableSubmitButton={ isOrderReviewActive }
+				disableSubmitButton={ isOrderReviewActive || ! is3PDAccountConsentAccepted }
 			/>
 		</CheckoutStepGroup>
 	);

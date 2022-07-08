@@ -13,12 +13,18 @@ export const defaultState: IPurchaseFlowState = {
 	primaryDomain: null,
 	productSlugInstalled: null,
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
+	thirdPartyDevsAccountConsent: false,
 };
 
 const purchaseFlow = withSchemaValidation(
 	purchaseFlowSchema,
 	( state: IPurchaseFlowState = defaultState, action: AnyAction ): IPurchaseFlowState => {
 		switch ( action.type ) {
+			case 'CHECKOUT_THIRD_PARTY_DEVS_ACCOUNT_CONSENT':
+				return {
+					...state,
+					thirdPartyDevsAccountConsent: action.payload,
+				};
 			case MARKETPLACE_PRIMARY_DOMAIN_SELECT:
 				return {
 					...state,
