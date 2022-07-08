@@ -152,6 +152,7 @@
 		"signup/inline-help": false,
 		"signup/goals-step": true,
 		"signup/goals-step-2": false,
+		"signup/ftm-flow-non-en": true,
 		"signup/hero-flow-non-en": true,
 		"signup/site-vertical-step": true,
 		"signup/starting-point-courses": true,

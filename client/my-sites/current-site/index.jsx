@@ -8,7 +8,7 @@ import AllSites from 'calypso/blocks/all-sites';
 import Site from 'calypso/blocks/site';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
@@ -33,6 +33,7 @@ class CurrentSite extends Component {
 		event.preventDefault();
 		event.stopPropagation();
 		this.props.setLayoutFocus( 'sites' );
+		this.props.recordTracksEvent( 'calypso_switch_site_click' );
 		this.props.recordGoogleEvent( 'Sidebar', 'Clicked Switch Site' );
 	};
 
@@ -118,6 +119,7 @@ export default connect(
 	} ),
 	{
 		recordGoogleEvent,
+		recordTracksEvent,
 		setLayoutFocus,
 		savePreference,
 	}

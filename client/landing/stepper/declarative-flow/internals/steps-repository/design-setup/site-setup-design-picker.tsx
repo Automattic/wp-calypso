@@ -55,6 +55,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const isEnglishLocale = useIsEnglishLocale();
+	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
@@ -97,7 +98,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		[ staticDesigns ]
 	);
 
-	const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale;
+	const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
 
 	const enabledGeneratedDesigns =
 		verticalsStepEnabled &&

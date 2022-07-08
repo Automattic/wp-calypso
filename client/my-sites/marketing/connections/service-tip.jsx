@@ -4,6 +4,10 @@ import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Module constants
@@ -16,13 +20,33 @@ import { Component } from 'react';
  *
  * @type {string[]}
  */
-const SERVICES_WITH_TIPS = [ 'facebook', 'twitter', 'instagram', 'google_plus' ];
+const SERVICES_WITH_TIPS = [ 'instagram', 'google_plus' ];
+/**
+ * List of services we provide tips for, only if the site is connected to Jetpack.
+ *
+ * @type {string[]}
+ */
+const JETPACK_SERVICES_WITH_TIPS = SERVICES_WITH_TIPS.concat( [ 'facebook', 'twitter' ] );
 
 class SharingServiceTip extends Component {
 	static propTypes = {
 		service: PropTypes.object.isRequired,
 		translate: PropTypes.func,
+		isJetpack: PropTypes.bool,
+		site: PropTypes.object,
 	};
+
+	getSharingButtonsLink() {
+		if ( this.props.site ) {
+			return isJetpackCloud()
+				? localizeUrl(
+						'https://jetpack.com/redirect/?source=calypso-marketing-sharing-buttons&site=' +
+							this.props.site.slug
+				  )
+				: '/sharing/buttons/' + this.props.site.slug;
+		}
+		return localizeUrl( 'https://wordpress.com/support/sharing/' );
+	}
 
 	facebook() {
 		return this.props.translate(
@@ -36,7 +60,7 @@ class SharingServiceTip extends Component {
 							) }
 						/>
 					),
-					shareButtonLink: <a href={ localizeUrl( 'https://wordpress.com/support/sharing/' ) } />,
+					shareButtonLink: <a href={ this.getSharingButtonsLink() } />,
 					embedLink: (
 						<a
 							href={ localizeUrl(
@@ -90,7 +114,13 @@ class SharingServiceTip extends Component {
 
 	render() {
 		const { service } = this.props;
-		if ( ! includes( SERVICES_WITH_TIPS, service.ID ) || 'google_plus' === service.ID ) {
+		if (
+			! includes(
+				this.props.isJetpack ? JETPACK_SERVICES_WITH_TIPS : SERVICES_WITH_TIPS,
+				service.ID
+			) ||
+			'google_plus' === service.ID
+		) {
 			return <div className="connections__sharing-service-tip" />;
 		}
 
@@ -103,4 +133,7 @@ class SharingServiceTip extends Component {
 	}
 }
 
-export default localize( SharingServiceTip );
+export default connect( ( state ) => ( {
+	site: getSelectedSite( state ),
+	isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+} ) )( localize( SharingServiceTip ) );
