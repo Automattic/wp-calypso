@@ -16,7 +16,7 @@ import { TimelineIcon } from './icon';
 const DEFAULT_BACKGROUND = '#eeeeee';
 
 function useBackgroundColors() {
-	const colors = useSetting( 'color.palette' );
+	const colors = [ ...useSetting( 'color.palette' ) ];
 	if ( colors.length > 0 ) {
 		const appendTransparent = colors.every( ( { color } ) => 'transparent' !== color );
 		if ( appendTransparent ) {
