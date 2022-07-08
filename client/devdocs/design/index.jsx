@@ -7,6 +7,7 @@ import {
 import Buttons from '@automattic/components/src/button/docs/example';
 import Cards from '@automattic/components/src/card/docs/example';
 import Gridicon from '@automattic/components/src/gridicon/docs/example';
+import ListTile from '@automattic/components/src/list-tile/docs/example';
 import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
@@ -235,6 +236,7 @@ export default class DesignAssets extends Component {
 					<LineChart readmeFilePath="line-chart" />
 					<LinkCard readmeFilePath="link-card" />
 					<ListEnd readmeFilePath="list-end" />
+					<ListTile readmeFilePath="/packages/components/src/list-tile" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
 					<MultipleChoiceQuestionExample readmeFilePath="multiple-choice-question" />
 					<Notices readmeFilePath="notice" />
