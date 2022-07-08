@@ -388,6 +388,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 				type: 'plugin',
 				updates: pluginUpdates?.length,
 			},
+			isFavorite: site.is_favorite,
 		};
 	} );
 };
