@@ -28,7 +28,8 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const subHeaderText = translate( 'Choose a category that defines your website the best.' );
 	const isSkipSynonyms = useQuery().get( 'isSkipSynonyms' );
 	const isEnglishLocale = useIsEnglishLocale();
-	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
+	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
+	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
 	const handleSiteVerticalSelect = ( vertical: Vertical ) => {
 		setVertical( vertical );
