@@ -85,7 +85,7 @@
 		margin: 0 0.2em;
 	}
 	svg {
-		margin-left: -0.4em;
+		margin-inline-start: -0.4em;
 	}
 	&:hover {
 		background: var( --studio-gray-80 );
@@ -115,13 +115,13 @@
 	color: var( --studio-gray-100 );
 	@include break-zoomed-in {
 		width: calc( 100% - 90px );
-		margin-left: 8px;
-		margin-right: 5px;
+		margin-inline-start: 8px;
+		margin-inline-end: 5px;
 		font-size: 1rem;
 	}
 	@include break-large() {
 		width: calc( 100% - 55px );
-		margin-left: 32px;
+		margin-inline-start: 32px;
 		font-size: 0.875rem;
 	}
 }
@@ -260,10 +260,10 @@
 	}
 	.section-nav__mobile-header {
 		.count {
-			margin-left: 8px;
+			margin-inline-start: 8px;
 		}
 		.gridicon {
-			margin-left: auto;
+			margin-inline-start: auto;
 		}
 	}
 	.count {

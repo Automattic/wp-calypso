@@ -14,7 +14,7 @@ const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => 
 			} ),
 			{}
 		),
-		...( filter.showOnlyFavorites && { show_only_favorites: true } ),
+		show_only_favorites: Boolean( filter.showOnlyFavorites ),
 	};
 };
 
