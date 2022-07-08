@@ -32,17 +32,15 @@ class SharingServiceTip extends Component {
 	static propTypes = {
 		service: PropTypes.object.isRequired,
 		translate: PropTypes.func,
-		isJetpack: PropTypes.bool,
+		hasJetpack: PropTypes.bool,
 		site: PropTypes.object,
 	};
 
 	getSharingButtonsLink() {
 		if ( this.props.site ) {
 			return isJetpackCloud()
-				? localizeUrl(
-						'https://jetpack.com/redirect/?source=calypso-marketing-sharing-buttons&site=' +
-							this.props.site.slug
-				  )
+				? 'https://jetpack.com/redirect/?source=calypso-marketing-sharing-buttons&site=' +
+						this.props.site.slug
 				: '/sharing/buttons/' + this.props.site.slug;
 		}
 		return localizeUrl( 'https://wordpress.com/support/sharing/' );
@@ -116,7 +114,7 @@ class SharingServiceTip extends Component {
 		const { service } = this.props;
 		if (
 			! includes(
-				this.props.isJetpack ? JETPACK_SERVICES_WITH_TIPS : SERVICES_WITH_TIPS,
+				this.props.hasJetpack ? JETPACK_SERVICES_WITH_TIPS : SERVICES_WITH_TIPS,
 				service.ID
 			) ||
 			'google_plus' === service.ID
@@ -135,5 +133,5 @@ class SharingServiceTip extends Component {
 
 export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
-	isJetpack: isJetpackSite( state, getSelectedSiteId( state ) ),
+	hasJetpack: ! isJetpackCloud() || isJetpackSite( state, getSelectedSiteId( state ) ),
 } ) )( localize( SharingServiceTip ) );
