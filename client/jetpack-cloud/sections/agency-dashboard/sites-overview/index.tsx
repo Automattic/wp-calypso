@@ -1,7 +1,9 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useContext, useEffect, useMemo } from 'react';
+import page from 'page';
+import { ReactElement, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -32,6 +34,10 @@ export default function SitesOverview(): ReactElement {
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 	const purchasedLicense = useSelector( getPurchasedLicense );
 
+	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
+
+	const [ hightLightTab, setHightLightTab ] = useState( false );
+
 	const { search, currentPage, filter } = useContext( SitesOverviewContext );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
@@ -44,6 +50,13 @@ export default function SitesOverview(): ReactElement {
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_visit' ) );
 	}, [ dispatch ] );
+
+	useEffect( () => {
+		if ( highlightFavoriteTab ) {
+			setHightLightTab( true );
+			page.redirect( removeQueryArgs( window.location.pathname, 'highlight' ) );
+		}
+	}, [ highlightFavoriteTab ] );
 
 	useEffect( () => {
 		if ( jetpackSiteDisconnected ) {
@@ -123,7 +136,10 @@ export default function SitesOverview(): ReactElement {
 							selectedCount={ selectedItem.count }
 							className={ classNames(
 								'sites-overview__section-nav',
-								isMobile && selectedItem.key === 'favorites' && 'site-overview__highlight-tab'
+								isMobile &&
+									hightLightTab &&
+									selectedItem.key === 'favorites' &&
+									'site-overview__highlight-tab'
 							) }
 						>
 							<NavTabs selectedText={ selectedItem.label } selectedCount={ selectedItem.count }>
