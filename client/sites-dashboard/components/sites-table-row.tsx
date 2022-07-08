@@ -67,26 +67,12 @@ const VisitDashboardItem = ( { site }: { site: SiteData } ) => {
 	);
 };
 
-const P2Badge = ( { site }: { site: SiteData } ) => {
-	if ( site.options && site.options.is_wpforteams_site ) {
-		return <SitesP2Badge>P2</SitesP2Badge>;
-	}
-	return null;
-};
-
-const LaunchStatusBadge = ( { site }: { site: SiteData } ) => {
-	const isComingSoon =
-		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
-	if ( site.is_private && ! isComingSoon ) {
-		return <SitesLaunchStatusBadge>Private</SitesLaunchStatusBadge>;
-	} else if ( isComingSoon ) {
-		return <SitesLaunchStatusBadge>Coming soon</SitesLaunchStatusBadge>;
-	}
-	return null;
-};
-
 export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
+
+	const isComingSoon =
+		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
+	const isP2Site = site.options?.is_wpforteams_site;
 
 	return (
 		<Row>
@@ -106,7 +92,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 									{ site.name ? site.name : __( '(No Site Title)' ) }
 								</a>
 							</SiteName>
-							<P2Badge site={ site } />
+							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 						</div>
 						<div>
 							<SiteUrl
@@ -118,7 +104,10 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							>
 								{ displaySiteUrl( site.URL ) }
 							</SiteUrl>
-							<LaunchStatusBadge site={ site } />
+							{ site.is_private && ! isComingSoon && (
+								<SitesLaunchStatusBadge>Private</SitesLaunchStatusBadge>
+							) }
+							{ isComingSoon && <SitesLaunchStatusBadge>Coming soon</SitesLaunchStatusBadge> }
 						</div>
 					</div>
 				</div>
