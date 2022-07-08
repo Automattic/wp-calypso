@@ -112,6 +112,17 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'with-add-ons',
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ 'user', 'domains', 'emails', 'plans', 'add-ons' ]
+				: [ 'user', 'domains', 'plans', 'add-ons' ],
+			destination: getSignupDestination,
+			description:
+				'Copy of the onboarding flow that includes an add-ons step; the flow is used for AB testing (ExPlat) add-ons in signup',
+			lastModified: '2022-07-07',
+			showRecaptcha: true,
+		},
+		{
 			name: 'onboarding-with-email',
 			steps: getAddOnsStep( [ 'user', 'domains', 'emails', 'plans' ] ),
 			destination: getSignupDestination,
