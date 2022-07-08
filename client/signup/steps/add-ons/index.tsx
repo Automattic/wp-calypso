@@ -137,11 +137,13 @@ export default function AddOnsStep( props: Props ): React.ReactElement {
 			cartItem: addOnProducts,
 		};
 
-		dispatch(
-			submitSignupStep( step, {
-				cartItem: addOnProducts,
-			} )
-		);
+		setTimeout( () => {
+			dispatch(
+				submitSignupStep( step, {
+					cartItem: addOnProducts,
+				} )
+			);
+		}, 10 );
 	}, [ dispatch, props.stepName, props.stepSectionName, selectedAddOns ] );
 
 	return (
