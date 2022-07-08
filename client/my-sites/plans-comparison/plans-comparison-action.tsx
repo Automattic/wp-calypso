@@ -6,6 +6,8 @@ import {
 	PLAN_FREE,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
+	TYPE_STARTER,
+	TYPE_PRO,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
@@ -94,6 +96,14 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	if ( ! isInSignup ) {
 		if ( isCurrentPlan ) {
 			return <Button disabled>{ translate( 'This is your plan' ) }</Button>;
+		}
+
+		if (
+			( currentSitePlanSlug === 'value_bundle' && [ TYPE_STARTER ].includes( plan.type ) ) ||
+			( currentSitePlanSlug === 'business-bundle' &&
+				[ TYPE_STARTER, TYPE_PRO ].includes( plan.type ) )
+		) {
+			return <Button disabled>{ translate( 'Unavailable' ) }</Button>;
 		}
 
 		if ( [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {
