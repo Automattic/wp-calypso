@@ -58,7 +58,7 @@ const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
 };
 
-const VisitDashboardItem = ( site: SiteData ) => {
+const VisitDashboardItem = ( { site }: { site: SiteData } ) => {
 	const { __ } = useI18n();
 	return (
 		<PopoverMenuItem href={ getDashboardUrl( site.slug ) }>
@@ -67,14 +67,14 @@ const VisitDashboardItem = ( site: SiteData ) => {
 	);
 };
 
-const P2Badge = ( site: SiteData ) => {
+const P2Badge = ( { site }: { site: SiteData } ) => {
 	if ( site.options && site.options.is_wpforteams_site ) {
 		return <SitesP2Badge>P2</SitesP2Badge>;
 	}
 	return null;
 };
 
-const LaunchStatusBadge = ( site: SiteData ) => {
+const LaunchStatusBadge = ( { site }: { site: SiteData } ) => {
 	const isComingSoon =
 		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 	if ( site.is_private && ! isComingSoon ) {
@@ -106,7 +106,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 									{ site.name ? site.name : __( '(No Site Title)' ) }
 								</a>
 							</SiteName>
-							{ P2Badge( site ) }
+							<P2Badge site={ site } />
 						</div>
 						<div>
 							<SiteUrl
@@ -118,7 +118,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							>
 								{ displaySiteUrl( site.URL ) }
 							</SiteUrl>
-							{ LaunchStatusBadge( site ) }
+							<LaunchStatusBadge site={ site } />
 						</div>
 					</div>
 				</div>
@@ -126,7 +126,9 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 			<td className="sites-table-row__mobile-hidden">{ site.plan.product_name_short }</td>
 			<td className="sites-table-row__mobile-hidden"></td>
 			<td style={ { width: '20px' } }>
-				<EllipsisMenu>{ VisitDashboardItem( site ) }</EllipsisMenu>
+				<EllipsisMenu>
+					<VisitDashboardItem site={ site } />
+				</EllipsisMenu>
 			</td>
 		</Row>
 	);
