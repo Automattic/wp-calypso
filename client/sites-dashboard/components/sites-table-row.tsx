@@ -17,6 +17,7 @@ const Row = styled.tr`
 	td {
 		padding-top: 12px;
 		padding-bottom: 12px;
+		padding-right: 24px;
 		vertical-align: middle;
 		font-size: 14px;
 		line-height: 20px;
@@ -113,7 +114,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 				</div>
 			</td>
 			<td className="sites-table-row__mobile-hidden">{ site.plan.product_name_short }</td>
-			<td className="sites-table-row__mobile-hidden"></td>
+			<td className="sites-table-row__mobile-hidden">July 16, 1969</td>
 			<td style={ { width: '20px' } }>
 				<EllipsisMenu>
 					<VisitDashboardItem site={ site } />
