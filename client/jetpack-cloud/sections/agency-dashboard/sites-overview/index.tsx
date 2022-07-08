@@ -1,7 +1,7 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useContext, useEffect } from 'react';
+import { ReactElement, useContext, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -55,32 +55,44 @@ export default function SitesOverview(): ReactElement {
 
 	const basePath = '/dashboard';
 
-	const navItems = [
-		{
-			key: 'all',
-			label: isMobile ? translate( 'All Sites' ) : translate( 'All' ),
-		},
-		{
-			key: 'favorites',
-			label: translate( 'Favorites' ),
-		},
-	].map( ( navItem ) => {
-		const isFavorite = navItem.key === 'favorites';
-		return {
-			...navItem,
-			count: ( isFavorite ? data?.totalFavorites : data?.total ) || 0,
-			selected: isFavorite ? filter.showOnlyFavorites : ! filter.showOnlyFavorites,
-			path: `${ basePath }${ isFavorite ? '/favorites' : '' }${ search ? '?s=' + search : '' }`,
-			onClick: () => {
-				dispatch(
-					recordTracksEvent( 'calypso_jetpack_agency_dashboard_tab_click', {
-						nav_item: navItem.key,
-					} )
-				);
-			},
-			children: navItem.label,
-		};
-	} );
+	const navItems = useMemo(
+		() =>
+			[
+				{
+					key: 'all',
+					label: isMobile ? translate( 'All Sites' ) : translate( 'All' ),
+				},
+				{
+					key: 'favorites',
+					label: translate( 'Favorites' ),
+				},
+			].map( ( navItem ) => {
+				const isFavorite = navItem.key === 'favorites';
+				return {
+					...navItem,
+					count: ( isFavorite ? data?.totalFavorites : data?.total ) || 0,
+					selected: isFavorite ? filter.showOnlyFavorites : ! filter.showOnlyFavorites,
+					path: `${ basePath }${ isFavorite ? '/favorites' : '' }${ search ? '?s=' + search : '' }`,
+					onClick: () => {
+						dispatch(
+							recordTracksEvent( 'calypso_jetpack_agency_dashboard_tab_click', {
+								nav_item: navItem.key,
+							} )
+						);
+					},
+					children: navItem.label,
+				};
+			} ),
+		[
+			data?.total,
+			data?.totalFavorites,
+			dispatch,
+			filter.showOnlyFavorites,
+			isMobile,
+			search,
+			translate,
+		]
+	);
 
 	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
 
