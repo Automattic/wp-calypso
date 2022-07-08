@@ -8,7 +8,7 @@ Renders a ListTile component.
 import ListTile from '@automattic/components';
 
 function render() {
-	return <ListTile title={'Title'}/>;
+	return <ListTile title="Title" />;
 }
 ```
 
