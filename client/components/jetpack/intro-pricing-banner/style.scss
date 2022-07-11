@@ -38,9 +38,9 @@
 .intro-pricing-banner,
 .intro-pricing-banner__loading {
 	height: 120px;
-	margin-bottom: 32px;
+	margin-bottom: 2rem;
 
-	gap: 20px;
+	gap: 1.25rem;
 
 	@include break-large {
 		height: 54px;
