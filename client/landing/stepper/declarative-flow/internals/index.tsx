@@ -37,10 +37,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const history = useHistory();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
+	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const stepNavigation = flow.useStepNavigation( currentRoute, async ( path, extraData = null ) => {
 		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
-		if ( extraData ) {
-			setStepData( extraData );
+		if ( ! extraData ) {
+			setStepData( {
+				path: path,
+				intent: intent,
+				extras: extraData,
+			} );
 		}
 
 		const _path = path.includes( '?' ) // does path contain search params
@@ -87,7 +92,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return (
 					<Route key={ path } path={ `/${ path }` }>
 						<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
-							<ProgressBar value={ progressValue * 100 } total={ 100 } />
+							<ProgressBar
+								className={ classnames( 'flow-progress' ) }
+								value={ progressValue * 100 }
+								total={ 100 }
+							/>
 							<SignupHeader />
 							{ renderStep( path ) }
 						</div>

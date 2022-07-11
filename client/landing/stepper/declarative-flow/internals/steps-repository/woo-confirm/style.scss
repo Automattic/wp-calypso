@@ -1,4 +1,6 @@
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
 
 body.is-section-stepper {
 	// Two column layout.
@@ -115,6 +117,11 @@ body.is-section-stepper {
 		.woo-confirm__info-section {
 			display: flex;
 			justify-content: center;
+			margin-top: 25vh;
+
+			@include break-small {
+				margin-top: 45vh;
+			}
 
 			.wpcom__loading-ellipsis {
 				display: block;
