@@ -800,6 +800,11 @@ export function generateSteps( {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
 		},
+
+		'videopress-confirm-email': {
+			stepName: 'videopress-confirm-email',
+			fulfilledStepCallback: excludeStepIfEmailVerified,
+		},
 	};
 }
 
