@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ProgressBar, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -66,7 +67,10 @@ class ImportingPane extends ImportingPaneBase {
 					<AuthorMappingPane
 						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ this.handleOnMap }
-						onStartImport={ () => this.props.startImporting( this.props.importerStatus ) }
+						onStartImport={ () => {
+							recordTracksEvent( 'calypso_site_importer_map_import_progress' );
+							this.props.startImporting( this.props.importerStatus );
+						} }
 						siteId={ siteId }
 						sourceType={ sourceType }
 						sourceAuthors={ customData.sourceAuthors }

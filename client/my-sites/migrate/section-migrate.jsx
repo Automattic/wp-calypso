@@ -69,7 +69,8 @@ export class SectionMigrate extends Component {
 		this.updateFromAPI();
 	}
 
-	componentDidUpdate( prevProps ) {
+	/* eslint-disable no-unused-vars */
+	componentDidUpdate( prevProps, prevState ) {
 		if ( this.isNonAtomicJetpack() ) {
 			return page( `/import/${ this.props.targetSiteSlug }` );
 		}

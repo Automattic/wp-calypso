@@ -9,11 +9,18 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import { requestSite } from 'calypso/state/sites/actions';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+const trackEventName = 'calypso_signup_actions_submit_step';
+const trackEventParams = {
+	intent: 'import',
+	step: 'importReadyPreview',
+};
 
 interface Props {
 	siteId: number;
@@ -56,6 +63,10 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 
 		dispatch( requestSite( fromSite ) );
 	}, [ hasOriginSiteJetpackConnected ] );
+
+	useEffect( () => {
+		dispatch( recordTracksEvent( trackEventName, trackEventParams ) );
+	}, [] );
 
 	/**
 	 ↓ Methods
