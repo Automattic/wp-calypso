@@ -2,6 +2,20 @@ import page from 'page';
 
 /**
  * Redirect to a checkout pending page and from there to a (relative or absolute) url.
+ *
+ * The `url` parameter is the final destination. It will be appended to the
+ * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `/checkout/thank-you/:receiptId`, then this will look something like:
+ * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ *
+ * The pending page will redirect to the final destination when the order is complete.
+ *
+ * If `siteSlug` is not provided, it will use `no-site`.
+ *
+ * An order ID is required for the pending page to operate. If `orderId` is not
+ * provided, it will use the placeholder `:orderId` but please note that this
+ * must be replaced somewhere (typically in an endpoint) before the
+ * resulting URL will be valid!
  */
 export function redirectThroughPending(
 	url: string,
@@ -24,6 +38,20 @@ function isRelativeUrl( url: string ): boolean {
 
 /**
  * Redirect to a checkout pending page and from there to a relative url.
+ *
+ * The `url` parameter is the final destination. It will be appended to the
+ * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `/checkout/thank-you/:receiptId`, then this will look something like:
+ * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ *
+ * The pending page will redirect to the final destination when the order is complete.
+ *
+ * If `siteSlug` is not provided, it will use `no-site`.
+ *
+ * An order ID is required for the pending page to operate. If `orderId` is not
+ * provided, it will use the placeholder `:orderId` but please note that this
+ * must be replaced somewhere (typically in an endpoint) before the
+ * resulting URL will be valid!
  */
 export function relativeRedirectThroughPending(
 	url: string,
@@ -36,6 +64,20 @@ export function relativeRedirectThroughPending(
 
 /**
  * Redirect to a checkout pending page and from there to an absolute url.
+ *
+ * The `url` parameter is the final destination. It will be appended to the
+ * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `/checkout/thank-you/:receiptId`, then this will look something like:
+ * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ *
+ * The pending page will redirect to the final destination when the order is complete.
+ *
+ * If `siteSlug` is not provided, it will use `no-site`.
+ *
+ * An order ID is required for the pending page to operate. If `orderId` is not
+ * provided, it will use the placeholder `:orderId` but please note that this
+ * must be replaced somewhere (typically in an endpoint) before the
+ * resulting URL will be valid!
  */
 export function absoluteRedirectThroughPending(
 	url: string,
@@ -47,6 +89,20 @@ export function absoluteRedirectThroughPending(
 
 /**
  * Add a relative or absolute url to the checkout pending page url.
+ *
+ * The `url` parameter is the final destination. It will be appended to the
+ * `redirectTo` query param on a URL for the pending page. If `url` is
+ * `/checkout/thank-you/:receiptId`, then this will look something like:
+ * `/checkout/thank-you/example.com/pending/1234?redirectTo=/checkout/thank-you/:receiptId`
+ *
+ * The pending page will redirect to the final destination when the order is complete.
+ *
+ * If `siteSlug` is not provided, it will use `no-site`.
+ *
+ * An order ID is required for the pending page to operate. If `orderId` is not
+ * provided, it will use the placeholder `:orderId` but please note that this
+ * must be replaced somewhere (typically in an endpoint) before the
+ * resulting URL will be valid!
  */
 export function addUrlToPendingPageRedirect(
 	url: string,
