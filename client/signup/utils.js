@@ -5,6 +5,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
 import steps from 'calypso/signup/config/steps-pure';
+import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './config/constants';
 
 const { defaultFlowName } = flows;
 
@@ -113,6 +114,14 @@ export function getThemeForDesignType( designType ) {
 		default:
 			return 'pub/twentyseventeen';
 	}
+}
+
+export function getVideoPressOnboardingTotalSteps() {
+	return VIDEOPRESS_ONBOARDING_FLOW_STEPS.length;
+}
+
+export function getVideoPressOnboardingStepNumber( stepName ) {
+	return VIDEOPRESS_ONBOARDING_FLOW_STEPS.indexOf( stepName ) + 1;
 }
 
 export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {

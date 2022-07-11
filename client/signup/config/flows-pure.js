@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
 const noop = () => {};
 
@@ -246,7 +247,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'videopress',
-			steps: [ 'user', 'videopress-site' ],
+			steps: VIDEOPRESS_ONBOARDING_FLOW_STEPS,
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'VideoPress signup flow',
 			lastModified: '2022-07-06',

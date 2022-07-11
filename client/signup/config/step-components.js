@@ -60,6 +60,7 @@ const stepNameToModuleName = {
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
 	'videopress-site': 'videopress-site',
+	'videopress-confirm-email': 'videopress-confirm-email',
 	'reader-landing': 'reader-landing',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
