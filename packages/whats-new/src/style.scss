@@ -95,8 +95,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 			}
 
 			.guide__forward-button {
-				background-color: var( --color-accent );
-				border-color: var( --color-accent );
+				background-color: var( --wp-admin-theme-color );
+				border-color: var( --wp-admin-theme-color );
 
 				color: var( --color-text-inverted );
 				font-size: $font-body-small;
