@@ -188,6 +188,7 @@
 		"config": "^3.3.6",
 		"debug": "^4.3.3",
 		"enhanced-resolve": "5.9.3",
+		"fuse.js": "^6.6.2",
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
 		"lodash": "^4.17.21",

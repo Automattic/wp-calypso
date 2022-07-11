@@ -18415,6 +18415,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fuse.js@npm:^6.6.2":
+  version: 6.6.2
+  resolution: "fuse.js@npm:6.6.2"
+  checksum: c2fe4f234f516e9ea83b06f06f8f3c8b7117f51aa75bbccd052eed0c0423364bf1e360ffbf29cadae8ef6aa39476b7961eaf9d07bed779cea5c83d62b34e2df9
+  languageName: node
+  linkType: hard
+
 "gauge@npm:^3.0.0":
   version: 3.0.1
   resolution: "gauge@npm:3.0.1"
@@ -35719,6 +35726,7 @@ swiper@4.5.1:
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
     fsevents: ^2.3.2
+    fuse.js: ^6.6.2
     gettext-parser: ^4.0.3
     glob: ^7.1.6
     globby: ^10.0.2
