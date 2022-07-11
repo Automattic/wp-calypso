@@ -33,9 +33,7 @@ export const BackToTopButton: FC< Props > = ( { container } ) => {
 			containerNode.addEventListener( 'scroll', scrollCallback );
 
 			return () => {
-				if ( containerNode ) {
-					containerNode.removeEventListener( 'scroll', scrollCallback );
-				}
+				containerNode.removeEventListener( 'scroll', scrollCallback );
 			};
 		}
 	}, [ container, scrollCallback ] );
