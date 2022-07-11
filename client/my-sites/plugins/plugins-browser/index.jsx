@@ -458,14 +458,6 @@ function isNotInstalled( plugin, installedPlugins ) {
 }
 
 const PluginBrowserContent = ( props ) => {
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, props.selectedSite?.ID )
-	);
-
-	const isLegacyPlan =
-		props.sitePlan &&
-		( isBlogger( props.sitePlan ) || isPersonal( props.sitePlan ) || isPremium( props.sitePlan ) );
-
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
 	}
@@ -475,12 +467,8 @@ const PluginBrowserContent = ( props ) => {
 
 	return (
 		<>
-			{ ! props.jetpackNonAtomic && (
-				<>
-					<PluginSingleListView { ...props } category="paid" />
-				</>
-			) }
-			{ eligibleForProPlan && ! isLegacyPlan && <UpgradeNudge { ...props } /> }
+			{ ! props.jetpackNonAtomic && <PluginSingleListView { ...props } category="paid" /> }
+			<UpgradeNudge { ...props } />
 			<PluginSingleListView { ...props } category="featured" />
 			<PluginSingleListView { ...props } category="popular" />
 		</>
