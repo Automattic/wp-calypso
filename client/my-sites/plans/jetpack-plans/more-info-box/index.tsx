@@ -9,12 +9,12 @@ import './style.scss';
 type MoreInfoProps = {
 	buttonLabel: TranslateResult | ReactNode;
 	buttonLink: string;
-	track: string;
+	trackEventName: string;
 };
 
-const MoreInfoBox: React.FC< MoreInfoProps > = ( { buttonLabel, buttonLink, track } ) => (
+const MoreInfoBox: React.FC< MoreInfoProps > = ( { buttonLabel, buttonLink, trackEventName } ) => (
 	<Button
-		onClick={ () => recordTracksEvent( track ) }
+		onClick={ () => recordTracksEvent( trackEventName ) }
 		href={ buttonLink }
 		target="_blank"
 		rel="noreferrer"
