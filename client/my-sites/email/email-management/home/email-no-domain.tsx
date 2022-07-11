@@ -1,6 +1,5 @@
 import { isFreePlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import EmptyContent from 'calypso/components/empty-content';
@@ -13,15 +12,14 @@ import type { AppState } from 'calypso/types';
 const EmailNoDomain = ( {
 	selectedSite,
 	translate,
-	source
-} : {
-	selectedSite: SiteData,
-	translate: Function,
-	source: string
+	source,
+}: {
+	selectedSite: SiteData;
+	translate: ( input: string ) => string;
+	source: string;
 } ) => {
-	const hasAvailableDomainCredit = useSelector( ( state: AppState ) => {
-		hasDomainCredit( state, selectedSite.ID );
-	}
+	const hasAvailableDomainCredit = useSelector( ( state: AppState ) =>
+		hasDomainCredit( state, selectedSite.ID )
 	);
 
 	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? null );
@@ -96,15 +94,6 @@ const EmailNoDomain = ( {
 			{ trackImpression( 'domain' ) }
 		</EmptyContent>
 	);
-};
-
-EmailNoDomain.propTypes = {
-	// Props passed to this component
-	selectedSite: PropTypes.object.isRequired,
-	source: PropTypes.string,
-
-	// Props injected via localize()
-	translate: PropTypes.func.isRequired,
 };
 
 export default localize( EmailNoDomain );

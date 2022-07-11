@@ -24,6 +24,7 @@ import {
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import type { EmailAccount } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { AppState } from 'calypso/types';
 
 export function getNumberOfMailboxesText( domain: ResponseDomain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -69,7 +70,7 @@ export function getNumberOfMailboxesText( domain: ResponseDomain ) {
  * @param domain - domain object
  * @returns the corresponding email purchase, or null if not found
  */
-export function getEmailPurchaseByDomain( state: any, domain: ResponseDomain ) {
+export function getEmailPurchaseByDomain( state: AppState, domain: ResponseDomain ) {
 	const subscriptionId = getEmailSubscriptionIdByDomain( domain );
 
 	return subscriptionId ? getByPurchaseId( state, subscriptionId ) : null;
