@@ -12,6 +12,7 @@ import {
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
 import nock from 'nock';
+import { QueryClientProvider, QueryClient } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -56,6 +57,7 @@ describe( 'Checkout contact step', () => {
 	let MyCheckout;
 
 	beforeEach( () => {
+		nock.cleanAll();
 		jest.clearAllMocks();
 		getPlansBySiteId.mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
@@ -76,6 +78,7 @@ describe( 'Checkout contact step', () => {
 		} );
 
 		const store = createTestReduxStore();
+		const queryClient = new QueryClient();
 
 		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps, useUndefinedCartKey } ) => {
 			const managerClient = createShoppingCartManagerClient( {
@@ -84,28 +87,33 @@ describe( 'Checkout contact step', () => {
 			} );
 			const mainCartKey = 'foo.com';
 			useCartKey.mockImplementation( () => ( useUndefinedCartKey ? undefined : mainCartKey ) );
-			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( '/rest/v1.1/logstash' )
+				.reply( 200 );
 			mockMatchMediaOnWindow();
 			return (
-				<ReduxProvider store={ store }>
-					<ShoppingCartProvider
-						managerClient={ managerClient }
-						options={ {
-							defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
-						} }
-						{ ...additionalCartProps }
-					>
-						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-							<CompositeCheckout
-								siteId={ siteId }
-								siteSlug={ 'foo.com' }
-								getStoredCards={ async () => [] }
-								overrideCountryList={ countryList }
-								{ ...additionalProps }
-							/>
-						</StripeHookProvider>
-					</ShoppingCartProvider>
-				</ReduxProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ReduxProvider store={ store }>
+						<ShoppingCartProvider
+							managerClient={ managerClient }
+							options={ {
+								defaultCartKey: useUndefinedCartKey ? undefined : mainCartKey,
+							} }
+							{ ...additionalCartProps }
+						>
+							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+								<CompositeCheckout
+									siteId={ siteId }
+									siteSlug={ 'foo.com' }
+									getStoredCards={ async () => [] }
+									overrideCountryList={ countryList }
+									{ ...additionalProps }
+								/>
+							</StripeHookProvider>
+						</ShoppingCartProvider>
+					</ReduxProvider>
+				</QueryClientProvider>
 			);
 		};
 	} );
@@ -116,6 +124,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { total_cost_integer: 0, total_cost_display: '0' };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -126,6 +138,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the contact step when the purchase is not free', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.getByText( /Enter your (billing|contact) information/ ) ).toBeInTheDocument();
@@ -133,6 +149,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -143,6 +163,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the domain fields when a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -153,6 +177,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders the domain fields when a domain transfer is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainTransferProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -163,6 +191,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -177,6 +209,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -194,6 +230,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -206,6 +246,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -218,6 +262,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -232,6 +280,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		await waitFor( () => {
@@ -248,11 +300,15 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
-		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).not.toBeInTheDocument();
+		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
 
 	/**
@@ -269,8 +325,10 @@ describe( 'Checkout contact step', () => {
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		// Wait for the cart to load
 		await screen.findByText( 'Country' );
+		// Wait for validation to start
+		await screen.findByText( 'Please wait…' );
 		// Wait for the validation to complete
-		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
+		await waitFor( () => expect( screen.queryByText( 'Please wait…' ) ).not.toBeInTheDocument() );
 		expect( screen.queryByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 	} );
 
@@ -282,10 +340,6 @@ describe( 'Checkout contact step', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: false, messages: [ 'Invalid' ] } );
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		// Wait for the cart to load
-		await screen.findByText( 'Country' );
-		// Wait for the validation to complete
-		await waitForElementToBeRemoved( () => screen.queryAllByText( 'Please wait…' ) );
 		await expect( screen.findByTestId( 'payment-method-step--visible' ) ).toNeverAppear();
 	} );
 
@@ -320,6 +374,10 @@ describe( 'Checkout contact step', () => {
 				email: 'test@example.com',
 			};
 			nock.cleanAll();
+
+			mockCachedContactDetailsEndpoint( {
+				country_code: null,
+			} );
 
 			const messages = ( () => {
 				if ( valid === 'valid' ) {
@@ -436,6 +494,10 @@ describe( 'Checkout contact step', () => {
 	);
 
 	it( 'renders the checkout summary', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		render( <MyCheckout />, container );
 		await waitFor( () => {
 			expect( screen.getByText( 'Purchase Details' ) ).toBeInTheDocument();
@@ -444,6 +506,10 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
+		mockCachedContactDetailsEndpoint( {
+			country_code: null,
+		} );
+
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const editOrderButton = await screen.findByLabelText( 'Edit your order' );

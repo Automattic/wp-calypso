@@ -3,37 +3,19 @@ import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useEffect, useRef } from 'react';
-import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import useCountryList from './use-country-list';
 import type {
 	PossiblyCompleteDomainContactDetails,
 	CountryListItem,
 } from '@automattic/wpcom-checkout';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
+const debug = debugFactory(
+	'calypso:composite-checkout:use-cached-contact-details-for-checkout-form'
+);
 
-function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null {
-	const reduxDispatch = useReduxDispatch();
-	const haveRequestedCachedDetails = useRef< 'not-started' | 'pending' | 'done' >( 'not-started' );
-	const cachedContactDetails = useSelector( getContactDetailsCache );
-	useEffect( () => {
-		if ( haveRequestedCachedDetails.current === 'not-started' ) {
-			debug( 'requesting cached domain contact details' );
-			reduxDispatch( requestContactDetailsCache() );
-			haveRequestedCachedDetails.current = 'pending';
-		}
-	}, [ reduxDispatch ] );
-	if ( haveRequestedCachedDetails.current === 'pending' && cachedContactDetails ) {
-		debug( 'cached domain contact details retrieved', cachedContactDetails );
-		haveRequestedCachedDetails.current = 'done';
-	}
-	return cachedContactDetails;
-}
-
-function useCachedContactDetailsForCheckoutForm(
+export function useCachedContactDetailsForCheckoutForm(
 	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
 	overrideCountryList?: CountryListItem[]
 ): void {
@@ -101,15 +83,4 @@ function useCachedContactDetailsForCheckoutForm(
 		loadDomainContactDetailsFromCache,
 		countriesList,
 	] );
-}
-
-/**
- * Load cached contact details from the server and use them to populate the
- * checkout contact form and the shopping cart tax location.
- */
-export default function useCachedDomainContactDetails(
-	overrideCountryList?: CountryListItem[]
-): void {
-	const cachedContactDetails = useCachedContactDetails();
-	useCachedContactDetailsForCheckoutForm( cachedContactDetails, overrideCountryList );
 }

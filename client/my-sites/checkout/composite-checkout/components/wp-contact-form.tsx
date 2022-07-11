@@ -1,7 +1,8 @@
 import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
-import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
+import { useCachedContactDetails } from '../hooks/use-cached-contact-details';
+import { useCachedContactDetailsForCheckoutForm } from '../hooks/use-cached-contact-details-for-checkout-form';
 import ContactDetailsContainer from './contact-details-container';
 import type {
 	CountryListItem,
@@ -43,7 +44,8 @@ export default function WPContactForm( {
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
 
-	useCachedDomainContactDetails( countriesList );
+	const { data, isFetching } = useCachedContactDetails();
+	useCachedContactDetailsForCheckoutForm( isFetching ? null : data ?? null, countriesList );
 
 	return (
 		<BillingFormFields>

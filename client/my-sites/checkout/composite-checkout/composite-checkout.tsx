@@ -9,7 +9,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -692,7 +691,6 @@ export default function CompositeCheckout( {
 			<QuerySitePurchases siteId={ updatedSiteId } />
 			<QueryPlans />
 			<QueryProducts />
-			<QueryContactDetailsCache />
 			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type={ 'post' } /> }
 			<PageViewTracker
 				path={ analyticsPath }

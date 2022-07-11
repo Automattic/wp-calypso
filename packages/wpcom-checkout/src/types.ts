@@ -111,9 +111,10 @@ export type WPCOMTransactionEndpointPaymentDetails = {
 	eventSource?: string;
 };
 
-// The data model used in ContactDetailsFormFields and related components.
-// This is the data returned by the redux state, where the fields could have a
-// null value.
+// The data model used in ContactDetailsFormFields and related components. This
+// is the data returned by the `getContactDetailsCache` selector from Redux
+// state or the `useCachedDomainContactDetails` hook. Typically derived from
+// `FetchedContactDetails`.
 export type PossiblyCompleteDomainContactDetails = {
 	firstName: string | null;
 	lastName: string | null;
@@ -127,6 +128,24 @@ export type PossiblyCompleteDomainContactDetails = {
 	state: string | null;
 	postalCode: string | null;
 	countryCode: string | null;
+	fax: string | null;
+};
+
+// The data returned by the cached contact details endpoint. Typically
+// converted to `PossiblyCompleteDomainContactDetails` before being used.
+export type FetchedContactDetails = {
+	first_name: string | null;
+	last_name: string | null;
+	organization: string | null;
+	email: string | null;
+	alternate_email: string | null;
+	phone: string | null;
+	address_1: string | null;
+	address_2: string | null;
+	city: string | null;
+	state: string | null;
+	postal_code: string | null;
+	country_code: string | null;
 	fax: string | null;
 };
 
