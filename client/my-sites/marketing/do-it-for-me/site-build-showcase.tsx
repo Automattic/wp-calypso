@@ -3,6 +3,7 @@ import site1 from 'calypso/assets/images/difm/site1.jpg';
 import site2 from 'calypso/assets/images/difm/site2.jpg';
 import site3 from 'calypso/assets/images/difm/site3.jpg';
 import site4 from 'calypso/assets/images/difm/site4.jpg';
+import site5 from 'calypso/assets/images/difm/site5.jpg';
 
 const Container = styled.div`
 	height: 100%;
@@ -26,7 +27,7 @@ const Container = styled.div`
 		height: 100%;
 		position: absolute;
 		top: 0;
-		animation: fadeAnimation 20s infinite;
+		animation: fadeAnimation 25s infinite;
 		background-size: contain;
 		background-repeat: no-repeat;
 		opacity: 0;
@@ -41,6 +42,9 @@ const Container = styled.div`
 	> div:nth-child( 4 ) {
 		animation-delay: 15s;
 	}
+	> div:nth-child( 5 ) {
+		animation-delay: 20s;
+	}
 `;
 
 export default function SiteBuildShowcase() {
@@ -50,6 +54,7 @@ export default function SiteBuildShowcase() {
 			<div style={ { backgroundImage: `url( ${ site2 } )` } } />
 			<div style={ { backgroundImage: `url( ${ site3 } )` } } />
 			<div style={ { backgroundImage: `url( ${ site4 } )` } } />
+			<div style={ { backgroundImage: `url( ${ site5 } )` } } />
 		</Container>
 	);
 }
