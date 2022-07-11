@@ -27,6 +27,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'commentingUser',
 	'notificationsUser',
 	'googleLoginUser',
+	'appleLoginUser',
 ] as const;
 
 /**
@@ -178,6 +179,9 @@ export class SecretsManager {
 					...fakeAccount,
 					smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' },
 					totpKey: 'FAKE_VALUE',
+				},
+				appleLoginUser: {
+					...fakeAccount,
 				},
 			},
 			otherTestSites: {
