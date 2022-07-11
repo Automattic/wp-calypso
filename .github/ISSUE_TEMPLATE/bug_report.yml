@@ -74,11 +74,12 @@ body:
   - type: dropdown
     id: site-type
     attributes:
-      label: Simple/Atomic
+      label: Platform (Simple, Atomic, or both?)
       description: (You may select more than one)
       options:
         - Simple
         - Atomic
+        - Self-hosted
       multiple: true
   - type: textarea
     id: other_notes
