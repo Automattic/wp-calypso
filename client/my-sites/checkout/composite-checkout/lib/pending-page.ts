@@ -67,7 +67,9 @@ export function relativeRedirectThroughPending(
 	url: string,
 	options: Pick< PendingPageRedirectOptions, 'siteSlug' | 'orderId' >
 ): void {
-	window.scrollTo( 0, 0 );
+	if ( typeof window !== 'undefined' ) {
+		window.scrollTo( 0, 0 );
+	}
 	page(
 		addUrlToPendingPageRedirect( url, {
 			...options,
