@@ -455,7 +455,7 @@ function PurchaseMetaExpiration( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
-	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled;
+	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
