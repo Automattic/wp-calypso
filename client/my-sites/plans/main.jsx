@@ -41,7 +41,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { IntervalTypeToggle } from '../plans-features-main/plan-type-selector';
+import { ExperimentalIntervalTypeToggle } from '../plans-features-main/plan-type-selector';
 
 const ProfessionalEmailPromotionPlaceholder = styled.div`
 	animation: loading-fade 1.6s ease-in-out infinite;
@@ -188,15 +188,13 @@ class Plans extends Component {
 
 			return (
 				<>
-					{ intervalType && (
-						<IntervalTypeToggle
-							intervalType={ intervalType }
-							isInSignup={ false }
-							plans={ [] }
-							siteSlug={ selectedSite.slug }
-							eligibleForWpcomMonthlyPlans={ true }
-						/>
-					) }
+					<ExperimentalIntervalTypeToggle
+						intervalType={ intervalType }
+						isInSignup={ false }
+						plans={ [] }
+						siteSlug={ selectedSite.slug }
+						eligibleForWpcomMonthlyPlans={ true }
+					/>
 					<PlansComparison
 						purchaseId={ this.props.purchase?.id }
 						isInSignup={ false }

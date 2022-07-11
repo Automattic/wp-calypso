@@ -25,7 +25,7 @@ import PlansComparison, {
 	isStarterPlanEnabled,
 } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { IntervalTypeToggle } from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -179,14 +179,13 @@ export class PlansStep extends Component {
 			return (
 				<div>
 					{ errorDisplay }
-					{ intervalType && (
-						<IntervalTypeToggle
-							intervalType={ intervalType }
-							isInSignup={ true }
-							plans={ [] }
-							eligibleForWpcomMonthlyPlans={ true }
-						/>
-					) }
+					<ExperimentalIntervalTypeToggle
+						experiment="calypso_plugins_search_page_jetpack_search"
+						intervalType={ intervalType }
+						isInSignup={ true }
+						plans={ [] }
+						eligibleForWpcomMonthlyPlans={ true }
+					/>
 					<PlansComparison
 						isInSignup={ true }
 						intervalType={ intervalType }

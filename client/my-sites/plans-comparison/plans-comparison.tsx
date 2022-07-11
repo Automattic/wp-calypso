@@ -1,9 +1,9 @@
 import {
+	TERM_MONTHLY,
 	TYPE_FREE,
 	TYPE_FLEXIBLE,
 	TYPE_PRO,
 	WPCOM_FEATURES_NO_ADVERTS,
-	isMonthly,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css, Global } from '@emotion/react';
@@ -495,7 +495,8 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 						{ plans.map( ( plan, index ) => {
 							const isDomainConnectionDisabled =
 								selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type );
-							const isMonthlyPlanDisabled = 'monthly' === intervalType && ! isMonthly( plan.type );
+							const isMonthlyPlan = plan?.term === TERM_MONTHLY;
+							const isMonthlyPlanDisabled = 'monthly' === intervalType && ! isMonthlyPlan;
 
 							return (
 								<PlansComparisonColHeader
