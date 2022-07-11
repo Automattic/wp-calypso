@@ -219,12 +219,21 @@ export function recordInboxNewMailboxUpsellClickEvent() {
 }
 
 /**
- * Tracks an event for the key 'calypso_inbox_upsell'.
+ * Tracks an event for the key 'calypso_{source}_upsell', where {source} defaults to "email".
+ * For upsell triggered from the inbox, the event 'calypso_inbox_upsell' will be tracked.
  *
+ * @param source - source generating the event.
  * @param context context, where this event was logged.
  */
-export function recordInboxUpsellTracksEvent( context: string | null = null ) {
-	recordTracksEvent( 'calypso_inbox_upsell', {
+export function recordEmailUpsellTracksEvent(
+	source: string | null = null,
+	context: string | null = null
+) {
+	if ( ! source ) {
+		source = 'email';
+	}
+
+	recordTracksEvent( 'calypso_' + source + '_upsell', {
 		context,
 	} );
 }
