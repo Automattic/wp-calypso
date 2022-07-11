@@ -13,7 +13,6 @@ import { getSectionName } from 'calypso/state/ui/selectors';
  * Internal Dependencies
  */
 import { Content } from '../types';
-import { BackToTopButton } from './back-to-top-button';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
 import { HelpCenterEmbedResult } from './help-center-embed-result';
@@ -43,7 +42,6 @@ const HelpCenterContent: React.FC< Content > = ( { isMinimized } ) => {
 			</Route>
 			<Route path="/post">
 				<HelpCenterEmbedResult />
-				<BackToTopButton container={ containerRef } />
 			</Route>
 			<Route path="/contact-options">
 				<HelpCenterContactPage />
