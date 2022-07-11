@@ -20,7 +20,6 @@ const EmptyContainer = styled.div`
 type SitesContainerProps = {
 	sites: SiteData[];
 	filter: string;
-	className?: string;
 };
 
 export const SitesContainer = ( { sites, filter }: SitesContainerProps ) => {
