@@ -7,10 +7,6 @@ export interface Container {
 	isLoading?: boolean;
 }
 
-export interface Content {
-	isMinimized: boolean;
-}
-
 export interface Header {
 	isMinimized?: boolean;
 	onMinimize?: () => void;
