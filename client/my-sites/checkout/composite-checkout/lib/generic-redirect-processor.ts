@@ -46,7 +46,10 @@ export default async function genericRedirectProcessor(
 		search = '',
 	} = typeof window !== 'undefined' ? window.location : {};
 	const thankYouUrl = getThankYouUrl() || 'https://wordpress.com';
-	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, siteSlug, undefined, 'absolute' );
+	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+		siteSlug,
+		urlType: 'absolute',
+	} );
 	const cancelUrl = `${ origin }${ pathname }${ search }`;
 
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
