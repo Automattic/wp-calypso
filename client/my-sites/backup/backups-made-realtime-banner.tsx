@@ -18,17 +18,17 @@ const BackupsMadeRealtimeBanner: FunctionComponent = () => {
 			description={ translate(
 				'Your site is backed up as you make edits, and automatically once a day.'
 			) }
-			horizontal="true"
-			disableCircle={ true }
 			event="calypso_backups_made_realtime_banner"
 			dismissPreferenceName={ `backups-made-realtime-${ siteId }` }
 			href="https://jetpack.com/blog/real-time-backups-become-a-reality-with-jetpack/"
 			target="_blank"
-			icon={ 'history' }
+			icon="history"
 			title={ translate( 'Every change you make will be backed up' ) }
 			tracksClickName="calypso_backups_made_realtime_banner_click"
 			tracksDismissName="calypso_backups_made_realtime_banner_dismiss"
 			tracksImpressionName="ccalypso_backups_made_realtime_banner_view"
+			horizontal
+			disableCircle
 		/>
 	);
 };
