@@ -57,6 +57,9 @@ const ImageSection = styled.div`
 	width: 540px;
 	height: 562px;
 	padding-top: 75px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	@media ( max-width: 960px ) {
 		display: none;
 	}
