@@ -11,10 +11,10 @@ const Container = styled.div`
 	position: relative;
 
 	@keyframes fadeAnimation {
-		10% {
+		7% {
 			opacity: 1;
 		}
-		20% {
+		23% {
 			opacity: 1;
 		}
 		30% {
@@ -27,23 +27,23 @@ const Container = styled.div`
 		height: 100%;
 		position: absolute;
 		top: 0;
-		animation: fadeAnimation 25s infinite;
+		animation: fadeAnimation 36s infinite;
 		background-size: contain;
 		background-repeat: no-repeat;
 		opacity: 0;
 	}
 
 	> div:nth-child( 2 ) {
-		animation-delay: 5s;
+		animation-delay: 8s;
 	}
 	> div:nth-child( 3 ) {
-		animation-delay: 10s;
+		animation-delay: 16s;
 	}
 	> div:nth-child( 4 ) {
-		animation-delay: 15s;
+		animation-delay: 24s;
 	}
 	> div:nth-child( 5 ) {
-		animation-delay: 20s;
+		animation-delay: 32s;
 	}
 `;
 
