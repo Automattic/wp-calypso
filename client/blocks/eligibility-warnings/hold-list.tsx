@@ -21,7 +21,6 @@ function getHoldMessages(
 	translate: LocalizeProps[ 'translate' ],
 	eligibleForProPlan: boolean,
 	billingPeriod?: string,
-	isMarketplace?: boolean,
 	isLegacyPlan?: boolean
 ) {
 	return {
@@ -167,7 +166,6 @@ export function getBlockingMessages(
 interface ExternalProps {
 	context: string | null;
 	holds: string[];
-	isMarketplace?: boolean;
 	isPlaceholder: boolean;
 }
 
@@ -211,7 +209,7 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
+export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const plan = selectedSite?.plan;
@@ -229,7 +227,6 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		translate,
 		eligibleForProPlan,
 		billingPeriod,
-		isMarketplace,
 		isLegacyPlan
 	);
 	const blockingMessages = getBlockingMessages( translate );
