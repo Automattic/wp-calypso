@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CardBody } from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 import { useSelector } from 'react-redux';
 import { Route, useLocation } from 'react-router-dom';
@@ -13,6 +13,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
  * Internal Dependencies
  */
 import { Content } from '../types';
+import { BackToTopButton } from './back-to-top-button';
 import { HelpCenterContactForm } from './help-center-contact-form';
 import { HelpCenterContactPage } from './help-center-contact-page';
 import { HelpCenterEmbedResult } from './help-center-embed-result';
@@ -24,6 +25,7 @@ const HelpCenterContent: React.FC< Content > = ( { isMinimized } ) => {
 	const location = useLocation();
 	const className = classnames( 'help-center__container-content' );
 	const section = useSelector( getSectionName );
+	const containerRef = useRef( null );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -35,12 +37,13 @@ const HelpCenterContent: React.FC< Content > = ( { isMinimized } ) => {
 	}, [ location, section ] );
 
 	return (
-		<CardBody hidden={ isMinimized } className={ className }>
+		<CardBody hidden={ isMinimized } className={ className } ref={ containerRef }>
 			<Route exact path="/">
 				<HelpCenterSearch />
 			</Route>
 			<Route path="/post">
 				<HelpCenterEmbedResult />
+				<BackToTopButton container={ containerRef } />
 			</Route>
 			<Route path="/contact-options">
 				<HelpCenterContactPage />
