@@ -179,6 +179,7 @@ export const isP2Flow = ( flowName ) => {
 export const isVideoPressFlow = ( flowName ) => {
 	return flowName === 'videopress';
 };
+
 /**
  * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
  * i.e. Check "launch-site" flow while having a purchased paid plan
