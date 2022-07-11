@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { captureException } from 'calypso/lib/sentry';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -24,6 +25,7 @@ const logCheckoutError = ( error ) => {
 			message: error.message + '; Stack: ' + error.stack,
 		},
 	} );
+	captureException( error );
 };
 
 export default function CheckoutSystemDecider( {
