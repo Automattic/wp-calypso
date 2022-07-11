@@ -110,7 +110,7 @@
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
-		"migration/sign-in-with-google": false,
+		"migration/sign-in-with-google": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
 		"oauth": false,

@@ -49,7 +49,7 @@
 		"layout/support-article-dialog": false,
 		"marketplace-test": false,
 		"marketplace-domain-bundle": false,
-		"migration/sign-in-with-google": false,
+		"migration/sign-in-with-google": true,
 		"oauth": true,
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
