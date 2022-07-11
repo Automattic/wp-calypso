@@ -33,6 +33,11 @@ export function redirectThroughPending(
 	try {
 		relativeRedirectThroughPending( url, options );
 	} catch ( err ) {
+		// eslint-disable-next-line no-console
+		console.error(
+			`relative redirect to "${ url }" failed. Falling back to absolute redirect. Error was:`,
+			err
+		);
 		absoluteRedirectThroughPending( url, options );
 	}
 }
