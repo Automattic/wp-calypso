@@ -13,9 +13,11 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductCost, isProductsListFetching } from 'calypso/state/products-list/selectors';
@@ -53,9 +55,8 @@ const ContentSection = styled.div`
 
 const ImageSection = styled.div`
 	width: 540px;
-	img {
-		width: 100%;
-	}
+	height: 562px;
+	padding-top: 75px;
 	@media ( max-width: 960px ) {
 		display: none;
 	}
@@ -347,10 +348,7 @@ export default function DIFMLanding( {
 					</CTASectionWrapper>
 				</ContentSection>
 				<ImageSection>
-					<img
-						alt="website examples"
-						src="https://assets.a8c.vercel.app/static/difm-lite/hero-lockup.png"
-					></img>
+					<AsyncLoad require="./site-build-showcase" placeholder={ <LoadingEllipsis /> } />
 				</ImageSection>
 			</Wrapper>
 
