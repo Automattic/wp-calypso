@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isBlogger, isPersonal, isPremium } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -28,7 +27,7 @@ function getHoldMessages(
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
-				if ( ! isLegacyPlan && isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
+				if ( ! isLegacyPlan && isMarketplace ) {
 					return translate( 'Upgrade to a Starter plan' );
 				}
 
@@ -45,7 +44,7 @@ function getHoldMessages(
 					);
 				}
 
-				if ( isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
+				if ( isMarketplace ) {
 					return translate( "You'll also get to collect payments and have more storage." );
 				}
 

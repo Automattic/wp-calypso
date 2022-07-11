@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -72,7 +71,7 @@ const USPS: React.FC< Props > = ( {
 			isLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
 		}
 
-		if ( ! isLegacyPlan && isMarketplaceProduct && isEnabled( 'marketplace-starter-plan' ) ) {
+		if ( ! isLegacyPlan && isMarketplaceProduct ) {
 			return PLAN_WPCOM_STARTER;
 		}
 

@@ -65,7 +65,6 @@
 		"marketplace-test": false,
 		"marketplace-domain-bundle": false,
 		"marketplace-jetpack-plugin-search": false,
-		"marketplace-starter-plan": true,
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
 		"migration/sign-in-with-google": true,
