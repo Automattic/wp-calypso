@@ -24,6 +24,17 @@ export default class TusUploader {
 		return this.wpcom.req.post( params, {}, null, null );
 	};
 
+	performOnboardingVideoUpload = ( files, { onError, onSuccess, onProgress } ) => {
+		const file = files[ 0 ];
+		const uploader = this.resumableUploader( {
+			onError,
+			onSuccess,
+			onProgress,
+		} );
+
+		return this.createGetJwtRequest().then( ( jwtData ) => uploader( file, jwtData ) );
+	};
+
 	startUpload = ( files ) => {
 		const file = files[ 0 ];
 		return new Promise( ( resolve, reject ) => {

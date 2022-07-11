@@ -26,6 +26,7 @@ export function generateSteps( {
 	createAccount = noop,
 	createSite = noop,
 	createWpForTeamsSite = noop,
+	createVideoPressSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	currentPage = noop,
@@ -804,6 +805,34 @@ export function generateSteps( {
 		'videopress-confirm-email': {
 			stepName: 'videopress-confirm-email',
 			fulfilledStepCallback: excludeStepIfEmailVerified,
+		},
+		'videopress-site': {
+			stepName: 'videopress-site',
+			// apiRequestFunction: createVideoPressSite,
+			// providesDependencies: [ 'siteSlug' ],
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				// 'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				// 'isManageSiteFlow',
+			],
+			// optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			// props: {
+			// 	isDomainOnly: false,
+			// },
+			// delayApiRequestUntilComplete: true,
+		},
+		'videopress-confirm-email': {
+			stepName: 'videopress-confirm-email',
+			fulfilledStepCallback: excludeStepIfEmailVerified,
+		},
+		'videopress-upload': {
+			stepName: 'videopress-upload',
+			apiRequestFunction: createVideoPressSite,
+			providesDependencies: [ 'siteSlug' ],
 		},
 	};
 }

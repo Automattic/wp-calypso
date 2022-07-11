@@ -857,11 +857,80 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	} );
 }
 
+export function createVideoPressSite( callback, dependencies, data, reduxStore ) {
+	const { siteId, siteSlug } = data;
+	const { cartItem, designType, siteUrl, themeSlugWithRepo } = dependencies;
+	const reduxState = reduxStore.getState();
+	const domainItem = dependencies.domainItem
+		? prepareItemForAddingToCart(
+				addPrivacyProtectionIfSupported( dependencies.domainItem, reduxState )
+		  )
+		: null;
+
+	if ( designType === 'domain' ) {
+		const cartKey = 'no-site';
+		const providedDependencies = {
+			siteId: null,
+			siteSlug: cartKey,
+			themeSlugWithRepo: '',
+			domainItem,
+		};
+
+		const domainChoiceCart = [ domainItem ].filter( Boolean );
+		cartManagerClient
+			.forCartKey( cartKey )
+			.actions.replaceProductsInCart( domainChoiceCart )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => {
+				debug( 'product replace request had an error', error );
+				reduxStore.dispatch( errorNotice( error.message ) );
+				callback( error, providedDependencies );
+			} );
+	} else if ( designType === 'existing-site' ) {
+		const providedDependencies = {
+			siteId,
+			siteSlug,
+		};
+		const products = [ dependencies.domainItem, dependencies.privacyItem, dependencies.cartItem ]
+			.filter( Boolean )
+			.map( ( item ) => prepareItemForAddingToCart( item ) );
+
+		cartManagerClient
+			.forCartKey( siteId )
+			.actions.replaceProductsInCart( products )
+			.then( () => callback( undefined, providedDependencies ) )
+			.catch( ( error ) => {
+				debug( 'product replace request had an error', error );
+				reduxStore.dispatch( errorNotice( error.message ) );
+				callback( error, providedDependencies );
+			} );
+	} else {
+		const newSiteData = {
+			cartItem,
+			domainItem,
+			isPurchasingItem: true,
+			siteUrl,
+			themeSlugWithRepo,
+		};
+
+		createSiteWithCart(
+			( errors, providedDependencies ) => {
+				callback(
+					errors,
+					pick( providedDependencies, [ 'siteId', 'siteSlug', 'themeSlugWithRepo', 'domainItem' ] )
+				);
+			},
+			dependencies,
+			newSiteData,
+			reduxStore
+		);
+	}
+}
 export function createWpForTeamsSite( callback, dependencies, stepData, reduxStore ) {
 	const { site, siteTitle } = stepData;
 
 	// The new p2 theme for WP for Teams project.
-	// More info: https://wp.me/p9lV3a-1dM-p2
+	// More info: https://wp.me/p9lv3a-1dm-p2
 	const themeSlugWithRepo = 'pub/p2020';
 
 	const locale = getLocaleSlug();

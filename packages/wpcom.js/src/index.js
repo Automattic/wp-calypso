@@ -5,6 +5,7 @@ import Domains from './lib/domains';
 import Me from './lib/me';
 import Plans from './lib/plans';
 import Site from './lib/site';
+import TusUploader from './lib/tus-uploader';
 import Users from './lib/users';
 import Pinghub from './lib/util/pinghub';
 import Request from './lib/util/request';
@@ -165,6 +166,7 @@ WPCOM.Plans = Plans;
 WPCOM.Request = Request;
 WPCOM.Site = Site;
 WPCOM.Users = Users;
+WPCOM.TusUploader = TusUploader;
 
 if ( ! Promise.prototype.timeout ) {
 	/**
