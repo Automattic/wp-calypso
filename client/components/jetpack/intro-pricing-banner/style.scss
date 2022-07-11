@@ -72,14 +72,14 @@
 
 	.intro-pricing-banner__agencies {
 		display: none;
+
+		@include break-large {
+			display: flex;
+		}
 	}
 
 	@include break-large {
 		height: 52px;
-
-		.intro-pricing-banner__agencies {
-			display: flex;
-		}
 	}
 }
 .is-section-jetpack-connect,
