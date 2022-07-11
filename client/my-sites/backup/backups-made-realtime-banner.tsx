@@ -2,7 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
-// import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
