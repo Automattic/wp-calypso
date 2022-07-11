@@ -67,6 +67,9 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { globalStyles } from 'calypso/sites-dashboard/controller';
+import { Global } from '@emotion/react';
+import { SitesDashboard } from 'calypso/sites-dashboard/components/sites-dashboard';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -346,6 +349,15 @@ function createSitesComponent( context ) {
 	const basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
 
 	recordPageView( contextPath, sitesPageTitleForAnalytics );
+
+	if ( config.isEnabled( 'build/sites-dashboard' ) ) {
+		return (
+			<>
+				<Global styles={ globalStyles } />
+				<SitesDashboard />
+			</>
+		);
+	}
 
 	return (
 		<SitesComponent

@@ -2,7 +2,7 @@ import { Global, css } from '@emotion/react';
 import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from 'page';
 
-const globalStyles = css`
+export const globalStyles = css`
 	body.is-group-sites-dashboard {
 		background: #fdfdfd;
 
