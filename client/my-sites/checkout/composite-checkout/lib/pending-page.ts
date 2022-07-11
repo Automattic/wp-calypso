@@ -1,5 +1,11 @@
 import page from 'page';
 
+export interface PendingPageRedirectOptions {
+	siteSlug?: string | undefined;
+	orderId?: string | number | undefined;
+	urlType?: 'relative' | 'absolute';
+}
+
 /**
  * Redirect to a checkout pending page and from there to a (relative or absolute) url.
  *
@@ -19,16 +25,15 @@ import page from 'page';
  */
 export function redirectThroughPending(
 	url: string,
-	siteSlug: string | undefined,
-	orderId: string | number | undefined
+	options: Pick< PendingPageRedirectOptions, 'siteSlug' | 'orderId' >
 ): void {
 	if ( ! isRelativeUrl( url ) ) {
-		return absoluteRedirectThroughPending( url, siteSlug, orderId );
+		return absoluteRedirectThroughPending( url, options );
 	}
 	try {
-		relativeRedirectThroughPending( url, siteSlug, orderId );
+		relativeRedirectThroughPending( url, options );
 	} catch ( err ) {
-		absoluteRedirectThroughPending( url, siteSlug, orderId );
+		absoluteRedirectThroughPending( url, options );
 	}
 }
 
@@ -55,11 +60,15 @@ function isRelativeUrl( url: string ): boolean {
  */
 export function relativeRedirectThroughPending(
 	url: string,
-	siteSlug: string | undefined,
-	orderId: string | number | undefined
+	options: Pick< PendingPageRedirectOptions, 'siteSlug' | 'orderId' >
 ): void {
 	window.scrollTo( 0, 0 );
-	page( addUrlToPendingPageRedirect( url, siteSlug, orderId, 'relative' ) );
+	page(
+		addUrlToPendingPageRedirect( url, {
+			...options,
+			urlType: 'relative',
+		} )
+	);
 }
 
 /**
@@ -81,10 +90,12 @@ export function relativeRedirectThroughPending(
  */
 export function absoluteRedirectThroughPending(
 	url: string,
-	siteSlug: string | undefined,
-	orderId: string | number | undefined
+	options: Pick< PendingPageRedirectOptions, 'siteSlug' | 'orderId' >
 ): void {
-	window.location.href = addUrlToPendingPageRedirect( url, siteSlug, orderId, 'absolute' );
+	window.location.href = addUrlToPendingPageRedirect( url, {
+		...options,
+		urlType: 'absolute',
+	} );
 }
 
 /**
@@ -103,13 +114,16 @@ export function absoluteRedirectThroughPending(
  * provided, it will use the placeholder `:orderId` but please note that this
  * must be replaced somewhere (typically in an endpoint) before the
  * resulting URL will be valid!
+ *
+ * You should always specify `urlType` as either 'absolute' or 'relative' but
+ * it will default to 'absolute'.
  */
 export function addUrlToPendingPageRedirect(
 	url: string,
-	siteSlug: string | undefined,
-	orderId: string | number | undefined,
-	urlType: 'relative' | 'absolute'
+	options: PendingPageRedirectOptions
 ): string {
+	const { siteSlug, orderId, urlType = 'absolute' } = options;
+
 	const { origin = 'https://wordpress.com' } = typeof window !== 'undefined' ? window.location : {};
 	const successUrlPath =
 		`/checkout/thank-you/${ siteSlug || 'no-site' }/pending/` +
