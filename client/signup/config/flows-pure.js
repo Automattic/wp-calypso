@@ -246,7 +246,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'videopress',
-			steps: [ 'user' ],
+			steps: [ 'user', 'videopress-site' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'VideoPress signup flow',
 			lastModified: '2022-07-06',
