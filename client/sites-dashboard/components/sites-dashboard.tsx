@@ -90,10 +90,15 @@ export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 							launchStatus={ launchStatus }
 						>
 <<<<<<< HEAD
+<<<<<<< HEAD
 							{ ( filteredSites ) => <SearchableSitesTable sites={ filteredSites } /> }
 =======
 							{ ( filteredSites, filter ) => (
 								<SitesContainer sites={ filteredSites } filter={ filter } />
+=======
+							{ ( filteredSites, status ) => (
+								<SitesContainer sites={ filteredSites } status={ status } />
+>>>>>>> 97c346dfca (refactor site filter to be site status instead)
 							) }
 >>>>>>> f9907e6090 (update filtered sites functionality to also return the filter key)
 						</SitesTableFilterTabs>

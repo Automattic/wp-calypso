@@ -19,10 +19,10 @@ const EmptyContainer = styled.div`
 
 type SitesContainerProps = {
 	sites: SiteData[];
-	filter: string;
+	status: string;
 };
 
-export const SitesContainer = ( { sites, filter }: SitesContainerProps ) => {
+export const SitesContainer = ( { sites, status }: SitesContainerProps ) => {
 	const { __ } = useI18n();
 	if ( sites.length > 0 ) {
 		return (
@@ -39,7 +39,7 @@ export const SitesContainer = ( { sites, filter }: SitesContainerProps ) => {
 		);
 	}
 
-	switch ( filter ) {
+	switch ( status ) {
 		case 'launched':
 			return (
 				<EmptyContainer>
