@@ -11,13 +11,13 @@ const Container = styled.div`
 	position: relative;
 
 	@keyframes fadeAnimation {
-		7% {
+		6% {
 			opacity: 1;
 		}
-		23% {
+		20% {
 			opacity: 1;
 		}
-		30% {
+		26% {
 			opacity: 0;
 		}
 	}
@@ -27,7 +27,7 @@ const Container = styled.div`
 		height: 100%;
 		position: absolute;
 		top: 0;
-		animation: fadeAnimation 36s infinite;
+		animation: fadeAnimation 40s infinite;
 		background-size: contain;
 		background-repeat: no-repeat;
 		opacity: 0;
