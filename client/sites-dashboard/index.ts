@@ -9,5 +9,5 @@ export default function () {
 		return;
 	}
 
-	page( '/sites-dashboard', sitesDashboard, makeLayout, clientRender );
+	page( '/sites-dashboard/:launchStatus?', sitesDashboard, makeLayout, clientRender );
 }

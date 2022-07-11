@@ -8,6 +8,10 @@ import { notNullish } from '../util';
 import { SitesTable } from './sites-table';
 import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
+interface SitesDashboardProps {
+	launchStatus?: string;
+}
+
 const MAX_PAGE_WIDTH = '1184px';
 
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
@@ -54,7 +58,7 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-export function SitesDashboard() {
+export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 	const sites = useSelector( getSites );
 
@@ -79,6 +83,7 @@ export function SitesDashboard() {
 								position: relative;
 								top: -48px;
 							` }
+							launchStatus={ launchStatus }
 						>
 							{ ( filteredSites ) => (
 								<ClassNames>
