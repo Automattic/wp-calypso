@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { Global } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
@@ -48,6 +49,8 @@ import {
 import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lite-in-progress';
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
+import { SitesDashboard } from 'calypso/sites-dashboard/components/sites-dashboard';
+import { globalStyles } from 'calypso/sites-dashboard/controller';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice, warningNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -67,9 +70,6 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { globalStyles } from 'calypso/sites-dashboard/controller';
-import { Global } from '@emotion/react';
-import { SitesDashboard } from 'calypso/sites-dashboard/components/sites-dashboard';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
