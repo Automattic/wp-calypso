@@ -45,7 +45,7 @@ describe( 'genericRedirectProcessor', () => {
 			payment_partner: 'IE',
 			postal_code: '10001',
 			success_url:
-				'https://wordpress.com/checkout/thank-you/no-site/pending?redirectTo=%2Fthank-you',
+				'https://wordpress.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you',
 			zip: '10001',
 		},
 		tos: {
@@ -152,7 +152,7 @@ describe( 'genericRedirectProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=%2Fthank-you',
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you',
 			},
 		} );
 	} );
@@ -189,7 +189,7 @@ describe( 'genericRedirectProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=' +
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=' +
 					encodeURIComponent( thankYouUrl ),
 			},
 		} );
@@ -227,7 +227,7 @@ describe( 'genericRedirectProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=' +
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=' +
 					encodeURIComponent( thankYouUrl ),
 			},
 		} );
@@ -274,7 +274,7 @@ describe( 'genericRedirectProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=%2Fthank-you',
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you',
 			},
 		} );
 	} );
@@ -310,7 +310,7 @@ describe( 'genericRedirectProcessor', () => {
 			payment: {
 				...basicExpectedStripeRequest.payment,
 				success_url:
-					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending?redirectTo=%2Fthank-you',
+					'https://wordpress.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you',
 			},
 		} );
 	} );
