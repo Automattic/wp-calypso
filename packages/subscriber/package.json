@@ -1,0 +1,61 @@
+{
+	"name": "@automattic/subscriber",
+	"version": "0.0.1",
+	"description": "Subscriber importer",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/subscriber"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"types": "dist/types",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@automattic/components": "workspace:^",
+		"@automattic/viewport": "workspace:^",
+		"@automattic/viewport-react": "workspace:^",
+		"@popperjs/core": "^2.10.2",
+		"@wordpress/base-styles": "^4.5.0",
+		"@wordpress/components": "^19.11.0",
+		"@wordpress/dom": "^3.9.0",
+		"@wordpress/element": "^4.7.0",
+		"@wordpress/i18n": "^4.9.0",
+		"@wordpress/icons": "^9.0.0",
+		"@wordpress/primitives": "^3.7.0",
+		"@wordpress/react-i18n": "^3.7.0",
+		"classnames": "^2.3.1",
+		"debug": "^4.3.4",
+		"react-popper": "^2.2.5"
+	},
+	"devDependencies": {
+		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/calypso-storybook": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^4.5.5"
+	},
+	"peerDependencies": {
+		"@wordpress/data": "^6.1.5",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"reakit-utils": "^0.15.1",
+		"redux": "^4.1.2"
+	}
+}
