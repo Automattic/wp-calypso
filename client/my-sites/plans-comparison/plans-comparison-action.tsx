@@ -37,7 +37,7 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 	const { isCurrentPlan, plan } = props;
 
 	const planTitle = plan?.getTitle();
-	const planSlug = plan?.getStoreSlug();
+	const planSlug = plan?.getStoreSlug() || '';
 
 	if ( [ PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ].includes( planSlug ) ) {
 		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Choose Pro' )
