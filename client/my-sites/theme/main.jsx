@@ -465,25 +465,6 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderSupportCssCard = ( buttonCount ) => {
-		return (
-			<Card className="theme__sheet-card-support">
-				<Gridicon icon="briefcase" size={ 48 } />
-				<div className="theme__sheet-card-support-details">
-					{ this.props.translate( 'Need CSS help? ' ) }
-					<small>{ this.props.translate( 'Get help from the experts in our CSS forum' ) }</small>
-				</div>
-				<Button
-					primary={ buttonCount === 1 }
-					href="//en.forums.wordpress.com/forum/css-customization"
-					onClick={ this.trackCssClick }
-				>
-					{ this.props.translate( 'Visit forum' ) }
-				</Button>
-			</Card>
-		);
-	};
-
 	renderSupportTab = () => {
 		const {
 			author,
@@ -505,7 +486,6 @@ class ThemeSheet extends Component {
 						! isStandaloneJetpack &&
 						this.renderSupportContactUsCard( buttonCount++ ) }
 					{ forumUrl && this.renderSupportThemeForumCard( buttonCount++ ) }
-					{ isWpcomTheme && this.renderSupportCssCard( buttonCount++ ) }
 				</div>
 			);
 
