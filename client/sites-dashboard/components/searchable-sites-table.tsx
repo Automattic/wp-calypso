@@ -1,7 +1,7 @@
-import Search from '@automattic/search';
 import { ClassNames } from '@emotion/react';
 import { useMemo, useState } from 'react';
 import { searchCollection } from 'calypso/components/search-sites/utils';
+import { SitesSearch } from './sites-search';
 import { SitesTable } from './sites-table';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
@@ -31,7 +31,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 							max-width: 100%;
 						` }
 					>
-						<Search onSearch={ setTerm } delaySearch />
+						<SitesSearch onSearch={ setTerm } delaySearch isReskinned />
 					</div>
 					<SitesTable sites={ filteredSites } />
 				</>
