@@ -600,6 +600,12 @@
 		}
 	}
 
+	.login__form-header-wrapper {
+		> p {
+			display: none;
+		}
+	}
+
 	.login__form-action,
 	.magic-login__form-action {
 		text-align: center;
