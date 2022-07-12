@@ -1,11 +1,24 @@
+import Search from '@automattic/search';
 import { ClassNames } from '@emotion/react';
-import { useState } from 'react';
-import Search from 'calypso/components/search';
+import { useMemo, useState } from 'react';
+import { searchCollection } from 'calypso/components/search-sites/utils';
 import { SitesTable } from './sites-table';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
-export function SearchableSitesTable( { sites }: { className?: string; sites: SiteData[] } ) {
-	const [ search, setSearch ] = useState( '' );
+interface SearchableSitesTableProps {
+	sites: SiteData[];
+}
+
+export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
+	const [ term, setTerm ] = useState( '' );
+
+	const filteredSites = useMemo( () => {
+		if ( ! term ) {
+			return sites;
+		}
+
+		return searchCollection( sites, term.toLowerCase(), [ 'URL', 'domain', 'name', 'slug' ] );
+	}, [ term, sites ] );
 
 	return (
 		<ClassNames>
@@ -15,8 +28,8 @@ export function SearchableSitesTable( { sites }: { className?: string; sites: Si
 						margin-top: 32px;
 					` }
 				>
-					<Search onSearch={ setSearch } value={ search } />
-					<SitesTable sites={ sites } />
+					<Search onSearch={ setTerm } delaySearch />
+					<SitesTable sites={ filteredSites } />
 				</div>
 			) }
 		</ClassNames>
