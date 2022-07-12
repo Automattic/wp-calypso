@@ -37,9 +37,16 @@ function fetchForKey( postKey, isHelpCenter ) {
 		return isHelpCenter
 			? apiFetch( {
 					global: true,
-					path: `/wpcom/v2/help-center/fetch-post?post_id=${ postKey.postId }&blog_id=${ postKey.blogId }`,
+					path: `/wpcom/v2/help-center/fetch-post?post_id=${ encodeURIComponent(
+						postKey.postId
+					) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
 			  } )
-			: wpcom.req.get( `/read/sites/${ postKey.blogId }/posts/${ postKey.postId }`, query );
+			: wpcom.req.get(
+					`/read/sites/${ encodeURIComponent( postKey.blogId ) }/posts/${ encodeURIComponent(
+						postKey.postId
+					) }`,
+					query
+			  );
 	}
 	const { postId, feedId, ...params } = postKey;
 	return wpcom.req.get(
