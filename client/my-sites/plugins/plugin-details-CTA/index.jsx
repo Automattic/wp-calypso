@@ -184,7 +184,7 @@ const PluginDetailsCTA = ( {
 					}
 				</PluginPrice>
 			</div>
-			{ ! legacyVersion && (
+			{ ! legacyVersion && isMarketplaceProduct && (
 				<BillingIntervalSwitcher
 					billingPeriod={ billingPeriod }
 					onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
@@ -238,7 +238,7 @@ const PluginDetailsCTA = ( {
 				</div>
 			) }
 
-			{ ! isJetpackSelfHosted && (
+			{ legacyVersion && ! isJetpackSelfHosted && (
 				<USPS
 					shouldUpgrade={ shouldUpgrade }
 					isFreePlan={ isFreePlan }

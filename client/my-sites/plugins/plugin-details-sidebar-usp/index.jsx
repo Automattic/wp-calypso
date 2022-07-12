@@ -48,7 +48,14 @@ const Description = styled.div`
 	margin-bottom: 12px;
 `;
 
-const PluginDetailsSidebarUSP = ( { id, icon, title, description, links, first } ) => {
+const PluginDetailsSidebarUSP = ( {
+	id,
+	title,
+	description,
+	icon = undefined,
+	links = undefined,
+	first = false,
+} ) => {
 	const isNarrow = useBreakpoint( '<1040px' );
 	const Header = () => {
 		return (
