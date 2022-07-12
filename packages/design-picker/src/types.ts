@@ -17,6 +17,8 @@ export interface Category {
 export interface DesignRecipe {
 	stylesheet?: string;
 	pattern_ids?: number[];
+	header_pattern_ids?: number[];
+	footer_pattern_ids?: number[];
 }
 
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'

@@ -293,8 +293,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				apiNamespace: 'wpcom/v2',
 				body: {
 					trim_content: true,
-					pattern_ids: recipe?.pattern_ids,
 					vertical_id: siteVerticalId || undefined,
+					pattern_ids: recipe?.pattern_ids,
+					header_pattern_ids: recipe?.header_pattern_ids || [],
+					footer_pattern_ids: recipe?.footer_pattern_ids || [],
 				},
 				method: 'POST',
 			} );

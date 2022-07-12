@@ -194,6 +194,12 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		is_premium: design?.is_premium,
 		is_generated: showGeneratedDesigns,
 		...( design?.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
+		...( design?.recipe?.header_pattern_ids && {
+			header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
+		} ),
+		...( design?.recipe?.footer_pattern_ids && {
+			footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
+		} ),
 	} );
 
 	const categorizationOptions = getCategorizationOptions(
