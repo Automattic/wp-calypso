@@ -54,6 +54,7 @@ import CheckoutNextSteps from './checkout-next-steps';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
+import ThirdPartyDevsAccount from './third-party-plugins-developer-account';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
@@ -490,6 +491,7 @@ export default function WPCheckout( {
 				validatingButtonAriaLabel={ validatingButtonText }
 				isCompleteCallback={ () => false }
 			/>
+			<ThirdPartyDevsAccount cart={ responseCart } />
 			<CheckoutFormSubmit
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				submitButtonFooter={ <SubmitButtonFooter /> }

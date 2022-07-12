@@ -9,7 +9,6 @@ import {
 import styled from '@emotion/styled';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
-import ThirdPartyDevsAccount from './third-party-plugins-developer-account';
 import { WPOrderReviewSection } from './wp-order-review-line-items';
 
 const CheckoutTermsWrapper = styled.div`
@@ -49,7 +48,6 @@ export default function PaymentMethodStep() {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	return (
 		<>
-			<ThirdPartyDevsAccount />
 			<CheckoutTermsWrapper>
 				<CheckoutTerms cart={ responseCart } />
 			</CheckoutTermsWrapper>
