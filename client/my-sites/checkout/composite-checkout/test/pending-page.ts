@@ -9,6 +9,8 @@ jest.mock( 'page' );
 // This seems to be the default origin for jsdom + Jest.
 const currentWindowOrigin = 'https://example.com';
 
+const encodedReceiptPlaceholder = encodeURIComponent( ':receiptId' );
+
 describe( 'addUrlToPendingPageRedirect', () => {
 	beforeAll( () => {
 		jest.spyOn( window, 'scrollTo' ).mockImplementation();
@@ -26,7 +28,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 		expect( actual ).toEqual(
 			`/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
 				finalUrl
-			) }`
+			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
 	} );
 
@@ -42,7 +44,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 		expect( actual ).toEqual(
 			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
 				finalUrl
-			) }`
+			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
 	} );
 
@@ -57,7 +59,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 		expect( actual ).toEqual(
 			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
 				finalUrl
-			) }`
+			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
 	} );
 
@@ -70,7 +72,7 @@ describe( 'addUrlToPendingPageRedirect', () => {
 		expect( actual ).toEqual(
 			`${ currentWindowOrigin }/checkout/thank-you/no-site/pending/${ orderId }?redirectTo=${ encodeURIComponent(
 				finalUrl
-			) }`
+			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
 	} );
 
@@ -83,7 +85,22 @@ describe( 'addUrlToPendingPageRedirect', () => {
 		expect( actual ).toEqual(
 			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/:orderId?redirectTo=${ encodeURIComponent(
 				finalUrl
-			) }`
+			) }&receiptId=${ encodedReceiptPlaceholder }`
+		);
+	} );
+
+	it( 'returns a receipt ID as `receiptId` if provided', () => {
+		const finalUrl = '/foo/bar/baz';
+		const siteSlug = 'example2.com';
+		const receiptId = 1234;
+		const actual = addUrlToPendingPageRedirect( finalUrl, {
+			siteSlug,
+			receiptId,
+		} );
+		expect( actual ).toEqual(
+			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/:orderId?redirectTo=${ encodeURIComponent(
+				finalUrl
+			) }&receiptId=${ receiptId }`
 		);
 	} );
 } );
@@ -102,7 +119,7 @@ describe( 'redirectThroughPending', () => {
 		expect( redirectSpy ).toHaveBeenCalledWith(
 			`/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
 				finalUrl
-			) }`
+			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
 	} );
 
@@ -123,7 +140,7 @@ describe( 'redirectThroughPending', () => {
 		expect( global.window.location.href ).toEqual(
 			`${ currentWindowOrigin }/checkout/thank-you/${ siteSlug }/pending/${ orderId }?redirectTo=${ encodeURIComponent(
 				finalUrl
-			) }`
+			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
 		delete global.window.location;
 	} );
