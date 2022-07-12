@@ -1,3 +1,4 @@
+import { __, sprintf } from '@wordpress/i18n';
 import { get } from 'lodash';
 import { stringify } from 'qs';
 import { convertPlatformName } from 'calypso/blocks/import/util.ts';
@@ -224,13 +225,12 @@ export const validateSiteIsImportable =
 				targetPlatform &&
 				analyzeUrlResult?.value?.platform !== targetPlatform
 			) {
-				dispatch(
-					siteImporterIsSiteImportableFailed( {
-						message: `The URL you entered does not seem to be a ${ convertPlatformName(
-							targetPlatform
-						) } site.`,
-					} )
+				const message = sprintf(
+					/* translators: %s - the formatted website platform name (eg: Wix, Squarespace, Blogger, etc.) */
+					__( 'The URL you entered does not seem to be a %s site.' ),
+					convertPlatformName( targetPlatform )
 				);
+				dispatch( siteImporterIsSiteImportableFailed( { message } ) );
 			} else {
 				dispatch( siteImporterIsSiteImportableFailed( isSiteImportableResult.reason ) );
 			}
