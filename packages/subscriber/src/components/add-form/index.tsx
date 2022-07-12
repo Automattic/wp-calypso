@@ -1,20 +1,34 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Title, SubTitle, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload } from '@wordpress/components';
+import { Icon, check } from '@wordpress/icons';
+import emailValidator from 'email-validator';
 import React, { FormEvent, FunctionComponent, useState } from 'react';
 import './style.scss';
 
 export const AddSubscriberForm: FunctionComponent = () => {
 	const [ emails, setEmails ] = useState< string[] >( [] );
+	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
 
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
+	}
+
+	function onEmailChange( value: string, index: number ) {
+		setEmail( value, index );
+		setIsValidEmail( value, index );
 	}
 
 	function setEmail( value: string, index: number ) {
 		const _emails = Array.from( emails );
 		_emails[ index ] = value;
 		setEmails( _emails );
+	}
+
+	function setIsValidEmail( value: string, index: number ) {
+		const _isValidEmails = Array.from( isValidEmails );
+		_isValidEmails[ index ] = emailValidator.validate( value );
+		setIsValidEmails( _isValidEmails );
 	}
 
 	return (
@@ -29,16 +43,19 @@ export const AddSubscriberForm: FunctionComponent = () => {
 					<TextControl
 						placeholder={ 'sibling@email.com' }
 						value={ emails[ 0 ] || '' }
-						onChange={ ( value ) => setEmail( value, 0 ) }
+						help={ isValidEmails[ 0 ] ? <Icon icon={ check } /> : undefined }
+						onChange={ ( value ) => onEmailChange( value, 0 ) }
 					/>
 					<TextControl
 						placeholder={ 'parents@email.com' }
 						value={ emails[ 1 ] || '' }
+						help={ isValidEmails[ 1 ] ? <Icon icon={ check } /> : undefined }
 						onChange={ ( value ) => setEmail( value, 1 ) }
 					/>
 					<TextControl
 						placeholder={ 'friend@email.com' }
 						value={ emails[ 2 ] || '' }
+						help={ isValidEmails[ 2 ] ? <Icon icon={ check } /> : undefined }
 						onChange={ ( value ) => setEmail( value, 2 ) }
 					/>
 

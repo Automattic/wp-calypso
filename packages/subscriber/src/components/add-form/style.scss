@@ -69,5 +69,15 @@
 			text-decoration: none;
 		}
 	}
+
+	.components-base-control {
+		position: relative;
+	}
+
+	.components-base-control__help {
+		position: absolute;
+		top: 5px;
+		right: 10px;
+	}
 }
 
