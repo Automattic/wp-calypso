@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CardBody } from '@wordpress/components';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import classnames from 'classnames';
 import { useSelector } from 'react-redux';
 import { Route, useLocation } from 'react-router-dom';
@@ -24,7 +24,6 @@ const HelpCenterContent: React.FC< Content > = ( { isMinimized } ) => {
 	const location = useLocation();
 	const className = classnames( 'help-center__container-content' );
 	const section = useSelector( getSectionName );
-	const containerRef = useRef( null );
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -36,7 +35,7 @@ const HelpCenterContent: React.FC< Content > = ( { isMinimized } ) => {
 	}, [ location, section ] );
 
 	return (
-		<CardBody hidden={ isMinimized } className={ className } ref={ containerRef }>
+		<CardBody hidden={ isMinimized } className={ className }>
 			<Route exact path="/">
 				<HelpCenterSearch />
 			</Route>
