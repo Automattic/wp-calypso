@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Title, SubTitle } from '@automattic/onboarding';
-import { TextControl } from '@wordpress/components';
+import { Title, SubTitle, NextButton, SkipButton } from '@automattic/onboarding';
+import { TextControl, FormFileUpload } from '@wordpress/components';
 import React, { FunctionComponent } from 'react';
 import './style.scss';
 
@@ -35,6 +35,23 @@ export const AddSubscriberForm: FunctionComponent = () => {
 							/* on value change */
 						} }
 					/>
+
+					<label>
+						Or bring your mailing list from other newsletters by{ ' ' }
+						<FormFileUpload
+							onChange={ () => {
+								/* on value change */
+							} }
+						>
+							uploading a CSV file
+						</FormFileUpload>
+						.
+					</label>
+
+					<NextButton type={ 'submit' } className={ 'add-subscriber__form-submit-btn' }>
+						Add subscribers
+					</NextButton>
+					<SkipButton className={ 'add-subscriber__form-skip-btn' }>Not yet</SkipButton>
 				</form>
 			</div>
 		</div>
