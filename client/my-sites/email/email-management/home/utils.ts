@@ -227,14 +227,10 @@ export function recordInboxNewMailboxUpsellClickEvent() {
  * @param context context, where this event was logged.
  */
 export function recordEmailUpsellTracksEvent(
-	source: string | null = null,
+	source: string | null = 'email',
 	context: string | null = null
 ) {
-	if ( ! source ) {
-		source = 'email';
-	}
-
-	recordTracksEvent( 'calypso_' + source + '_upsell', {
+	recordTracksEvent( `calypso_${ source }_upsell`, {
 		context,
 	} );
 }
