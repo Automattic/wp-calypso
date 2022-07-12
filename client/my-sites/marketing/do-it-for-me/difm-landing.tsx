@@ -326,7 +326,7 @@ export default function DIFMLanding( {
 						<Step
 							index={ translate( '4' ) }
 							title={ translate( 'Submit content for your new website' ) }
-							description={ translate( 'Content can be edited later with the help of support.' ) }
+							description={ translate( 'Content can be edited later with the WordPress editor.' ) }
 						/>
 					</VerticalStepProgress>
 					<p>
