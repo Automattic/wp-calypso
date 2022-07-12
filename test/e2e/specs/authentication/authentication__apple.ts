@@ -64,14 +64,14 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Apple' ), function () {
 			const code = emailClient.get2FACodeFromMessage( message );
 
 			await appleLoginPage.enter2FACode( code );
-			await appleLoginPage.clickButtonWithText( 'Trust' );
+			await appleLoginPage.clickButtonWithExactText( 'Trust' );
 		}
 	} );
 
 	it( 'Confirm login with Apple ID', async function () {
 		await Promise.all( [
 			page.waitForNavigation( { url: /.*\/home\/.*/ } ),
-			appleLoginPage.clickButtonWithText( 'Continue' ),
+			appleLoginPage.clickButtonContainingText( 'Continue' ),
 		] );
 	} );
 } );

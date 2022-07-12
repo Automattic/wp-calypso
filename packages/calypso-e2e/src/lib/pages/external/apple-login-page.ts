@@ -2,7 +2,8 @@ import { Page } from 'playwright';
 
 const selectors = {
 	// General
-	buttonWithText: ( text: string ) => `button:text-is("${ text }")`,
+	buttonContainingText: ( text: string ) => `button:has-text("${ text }")`,
+	buttonWithExactText: ( text: string ) => `button:text-is("${ text }")`,
 
 	// Inputs
 	emailInput: 'input[id="account_name_text_field"]',
@@ -34,12 +35,22 @@ export class AppleLoginPage {
 	}
 
 	/**
+	 * Clicks on a button containing a string of text.
+	 *
+	 * @param {string} text Text on the button.
+	 */
+	async clickButtonContainingText( text: string ): Promise< void > {
+		const locator = this.page.locator( selectors.buttonContainingText( text ) );
+		await locator.click();
+	}
+
+	/**
 	 * Clicks on a button with the **exact** text.
 	 *
 	 * @param {string} text Text on the button.
 	 */
-	async clickButtonWithText( text: string ): Promise< void > {
-		const locator = this.page.locator( selectors.buttonWithText( text ) );
+	async clickButtonWithExactText( text: string ): Promise< void > {
+		const locator = this.page.locator( selectors.buttonWithExactText( text ) );
 		await locator.click();
 	}
 
@@ -80,6 +91,6 @@ export class AppleLoginPage {
 	 */
 	async enter2FACode( code: string ): Promise< void > {
 		const locator = this.page.locator( selectors.otpInput );
-		await locator.type( code, { delay: 500 } );
+		await locator.type( code, { delay: 150 } );
 	}
 }
