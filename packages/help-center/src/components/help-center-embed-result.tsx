@@ -9,9 +9,9 @@ import { useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from './back-button';
+import { BackToTopButton } from './back-to-top-button';
 import ArticleContent from './help-center-article-content';
 import ArticleFetchingContent from './help-center-article-fetching-content';
-import { BackToTopButton } from './back-to-top-button';
 
 export const HelpCenterEmbedResult: React.FC = () => {
 	const { state, search } = useLocation();
@@ -46,28 +46,30 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	};
 
 	return (
-		<div className="help-center-embed-result">
-			<Flex justify="space-between">
-				<FlexItem>
-					<BackButton onClick={ redirectToSearchOrHome } />
-				</FlexItem>
-				<FlexItem>
-					<Button
-						borderless={ true }
-						href={ link ?? '' }
-						target="_blank"
-						className="help-center-embed-result__external-button"
-					>
-						<Icon icon={ external } size={ 20 } />
-					</Button>
-				</FlexItem>
-			</Flex>
-			{ state?.content ? (
-				<ArticleContent content={ state.content } title={ state.title } link={ state.link } />
-			) : (
-				postId && <ArticleFetchingContent postId={ +postId } blogId={ blogId } />
-			) }
-		</div>
-    <BackToTopButton />
+		<>
+			<div className="help-center-embed-result">
+				<Flex justify="space-between">
+					<FlexItem>
+						<BackButton onClick={ redirectToSearchOrHome } />
+					</FlexItem>
+					<FlexItem>
+						<Button
+							borderless={ true }
+							href={ link ?? '' }
+							target="_blank"
+							className="help-center-embed-result__external-button"
+						>
+							<Icon icon={ external } size={ 20 } />
+						</Button>
+					</FlexItem>
+				</Flex>
+				{ state?.content ? (
+					<ArticleContent content={ state.content } title={ state.title } link={ state.link } />
+				) : (
+					postId && <ArticleFetchingContent postId={ +postId } blogId={ blogId } />
+				) }
+			</div>
+			<BackToTopButton />
+		</>
 	);
 };
