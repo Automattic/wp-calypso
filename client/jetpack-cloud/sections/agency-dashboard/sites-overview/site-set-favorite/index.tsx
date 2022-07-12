@@ -101,9 +101,12 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 
 				// Optimistically update the favorites count of the current query and the sibling query
 				const updateTotalFavorites = ( oldSites: any ) => {
+					const currentCount = oldSites?.total_favorites;
+					// Prevent value being set to negative
+					const decrementer = currentCount > 0 ? -1 : 0;
 					return {
 						...oldSites,
-						total_favorites: oldSites.total_favorites + ( isFavorite ? -1 : 1 ),
+						total_favorites: currentCount + ( isFavorite ? decrementer : 1 ),
 					};
 				};
 				queryClient.setQueryData( queryKey, updateTotalFavorites );
