@@ -104,7 +104,7 @@ class GoogleLoginButton extends Component {
 	}
 
 	async loadGoogleIdentityServicesAPI() {
-		if ( ! window.google?.accounts.oauth2 ) {
+		if ( ! window.google?.accounts?.oauth2 ) {
 			await loadScript( 'https://accounts.google.com/gsi/client' );
 		}
 

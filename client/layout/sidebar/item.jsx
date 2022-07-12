@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Count from 'calypso/components/count';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -9,6 +10,7 @@ import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isExternal } from 'calypso/lib/url';
 import { preload } from 'calypso/sections-helper';
+import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
@@ -17,6 +19,7 @@ export default function SidebarItem( props ) {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
 	} );
+	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
 
 	let _preloaded = false;
@@ -76,7 +79,7 @@ export default function SidebarItem( props ) {
 						</Badge>
 					) }
 				</span>
-				{ showAsExternal && <Gridicon icon="external" size={ 24 } /> }
+				{ showAsExternal && ! sidebarIsCollapsed && <Gridicon icon="external" size={ 24 } /> }
 				{ props.children }
 			</a>
 		</li>

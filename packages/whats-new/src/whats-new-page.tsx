@@ -1,9 +1,25 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, GuidePage } from '@wordpress/components';
+import { Button } from '@wordpress/components';
+import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect } from 'react';
 
-function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageNumber } ) {
+interface Props {
+	heading: string;
+	description: string;
+	imageSrc: string;
+	link: string;
+	pageNumber: number;
+	isLastPage: boolean;
+}
+
+const WhatsNewPage: React.FC< Props > = ( {
+	heading,
+	description,
+	imageSrc,
+	isLastPage,
+	link,
+	pageNumber,
+} ) => {
 	const __ = useI18n().__;
 
 	useEffect( () => {
@@ -14,7 +30,7 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageN
 	}, [ isLastPage, pageNumber ] );
 
 	return (
-		<GuidePage className="whats-new-page__container">
+		<div className="whats-new-page__container">
 			<div className="whats-new-page__text">
 				{ heading && <h1 className="whats-new-page__heading">{ heading }</h1> }
 				<div className="whats-new-page__description">
@@ -34,16 +50,18 @@ function WhatsNewPage( { description, heading, imageSrc, isLastPage, link, pageN
 			</div>
 			<div className="whats-new-page__visual">
 				{ imageSrc && (
-					<img
-						src={ imageSrc }
-						alt={ description }
-						aria-hidden="true"
-						className={ 'whats-new-page__image' }
-					/>
+					<div className="whats-new-page__image-container">
+						<img
+							src={ imageSrc }
+							alt={ description }
+							aria-hidden="true"
+							className={ 'whats-new-page__image' }
+						/>
+					</div>
 				) }
 			</div>
-		</GuidePage>
+		</div>
 	);
-}
+};
 
 export default WhatsNewPage;

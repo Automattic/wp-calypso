@@ -28,7 +28,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
-		plansPage = new PlansPage( page, 'legacy' );
+		plansPage = new PlansPage( page, 'current' );
 	} );
 
 	it( 'Navigate to Upgrades > Plans', async function () {

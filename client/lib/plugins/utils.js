@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
@@ -370,7 +369,7 @@ export function businessPlanToAdd(
 			return PLAN_BUSINESS;
 		default:
 			// Not on a legacy plan: Can upgrade to Starter, Pro, or Business depending on settings.
-			if ( isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
+			if ( isMarketplace ) {
 				return PLAN_WPCOM_STARTER;
 			}
 			if ( eligibleForProPlan ) {

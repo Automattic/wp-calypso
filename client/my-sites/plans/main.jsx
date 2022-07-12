@@ -3,6 +3,8 @@ import {
 	getPlan,
 	getIntervalTypeForTerm,
 	PLAN_FREE,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
@@ -28,7 +30,6 @@ import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import legacyPlanNotice from 'calypso/my-sites/plans/legacy-plan-notice';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -171,9 +172,14 @@ class Plans extends Component {
 
 		if (
 			eligibleForProPlan &&
-			[ PLAN_FREE, PLAN_WPCOM_FLEXIBLE, PLAN_WPCOM_STARTER, PLAN_WPCOM_PRO ].includes(
-				currentPlan?.productSlug
-			)
+			[
+				PLAN_FREE,
+				PLAN_WPCOM_FLEXIBLE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
+				PLAN_PERSONAL,
+				PLAN_PREMIUM,
+			].includes( currentPlan?.productSlug )
 		) {
 			return (
 				<PlansComparison
@@ -239,7 +245,6 @@ class Plans extends Component {
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
-								{ legacyPlanNotice( eligibleForProPlan, selectedSite ) }
 								{ this.renderPlansMain() }
 								<PerformanceTrackerStop />
 							</div>

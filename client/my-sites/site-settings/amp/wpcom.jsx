@@ -1,4 +1,4 @@
-import { FEATURE_SFTP, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_INSTALL_PLUGINS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
@@ -50,10 +50,10 @@ class AmpWpcom extends Component {
 	};
 
 	renderUpgradeNotice() {
-		const { hasSftpFeature, siteSlug, translate } = this.props;
+		const { canInstallPlugins, siteSlug, translate } = this.props;
 		let tracksProps;
 
-		if ( ! hasSftpFeature ) {
+		if ( ! canInstallPlugins ) {
 			tracksProps = {
 				tracksImpressionName: 'calypso_settings_amp_upsell_impression',
 				tracksClickName: 'calypso_settings_amp_upsell_click',
@@ -152,11 +152,11 @@ class AmpWpcom extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
+		const canInstallPlugins = siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS );
 
 		return {
 			siteSlug: getSelectedSiteSlug( state ),
-			hasSftpFeature,
+			canInstallPlugins,
 		};
 	},
 	{ recordTracksEvent }

@@ -1,6 +1,9 @@
 import styled from '@emotion/styled';
 import { TabPanel } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { removeQueryArgs } from '@wordpress/url';
+import page from 'page';
+import { addQueryArgs } from 'calypso/lib/url';
 import SitesBadge from './sites-badge';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data'; // eslint-disable-line no-restricted-imports
 
@@ -8,6 +11,7 @@ interface SitesTableFilterTabsProps {
 	allSites: SiteData[];
 	children( filteredSites: SiteData[] ): JSX.Element;
 	className?: string;
+	launchStatus?: string;
 }
 
 interface FilteredSites {
@@ -45,6 +49,7 @@ export function SitesTableFilterTabs( {
 	allSites,
 	children: renderContents,
 	className,
+	launchStatus,
 }: SitesTableFilterTabsProps ) {
 	const { __ } = useI18n();
 
@@ -54,6 +59,10 @@ export function SitesTableFilterTabs( {
 		{ name: 'private', title: __( 'Private' ) },
 		{ name: 'coming-soon', title: __( 'Coming soon' ) },
 	];
+
+	const initialTabName = tabs.find( ( tab ) => tab.name === launchStatus )
+		? launchStatus
+		: undefined;
 
 	const filteredSites: FilteredSites = tabs.reduce(
 		( acc, { name } ) => ( { ...acc, [ name ]: filterSites( allSites, name ) } ),
@@ -71,7 +80,18 @@ export function SitesTableFilterTabs( {
 	} ) );
 
 	return (
-		<SitesTabPanel className={ className } tabs={ tabs as TabPanel.Tab[] }>
+		<SitesTabPanel
+			className={ className }
+			initialTabName={ initialTabName }
+			tabs={ tabs as TabPanel.Tab[] }
+			onSelect={ ( tabName ) => {
+				page(
+					'all' === tabName
+						? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
+						: addQueryArgs( { status: tabName }, window.location.pathname + window.location.search )
+				);
+			} }
+		>
 			{ ( tab ) => renderContents( filteredSites[ tab.name ] ) }
 		</SitesTabPanel>
 	);

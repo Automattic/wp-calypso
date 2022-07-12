@@ -357,8 +357,8 @@ function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
  * just add the DIFM Lite product to the cart.
  */
 export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
-	const { newOrExistingSiteChoice } = dependencies;
 	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
+	const { newOrExistingSiteChoice } = signupDependencies;
 
 	const providedDependencies = { ...signupDependencies, ...dependencies };
 

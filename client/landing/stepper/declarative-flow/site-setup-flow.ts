@@ -64,6 +64,7 @@ export const siteSetupFlow: Flow = {
 			'wooConfirm',
 			'editEmail',
 			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
+			'difmStartingPoint',
 		] as StepPath[];
 	},
 	useSideEffect() {
@@ -181,7 +182,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					// End of woo flow
-					if ( storeType === 'power' ) {
+					if ( intent === 'sell' && storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
 						if (
@@ -223,7 +224,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					if ( intent === SiteIntent.DIFM ) {
-						return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+						return navigate( 'difmStartingPoint' );
 					}
 
 					if ( verticalsStepEnabled ) {
@@ -259,7 +260,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						}
 						case 'difm': {
-							return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+							return navigate( 'difmStartingPoint' );
 						}
 						default: {
 							return navigate( submittedIntent as StepPath );
@@ -298,7 +299,7 @@ export const siteSetupFlow: Flow = {
 					const [ checkoutUrl ] = params;
 
 					if ( checkoutUrl ) {
-						return exitFlow( checkoutUrl.toString() );
+						window.location.replace( checkoutUrl.toString() );
 					}
 
 					return navigate( 'wooTransfer' );
@@ -368,6 +369,10 @@ export const siteSetupFlow: Flow = {
 					}
 
 					return navigate( providedDependencies?.url as StepPath );
+				}
+
+				case 'difmStartingPoint': {
+					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
 				}
 			}
 		}
@@ -440,6 +445,9 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'import' );
 
 				case 'vertical':
+					if ( intent === 'difm' ) {
+						return navigate( 'difmStartingPoint' );
+					}
 					if ( goalsStepEnabled ) {
 						return navigate( 'goals' );
 					}
@@ -453,6 +461,11 @@ export const siteSetupFlow: Flow = {
 					}
 
 				case 'import':
+					if ( goalsStepEnabled ) {
+						return navigate( 'goals' );
+					}
+
+				case 'difmStartingPoint':
 					if ( goalsStepEnabled ) {
 						return navigate( 'goals' );
 					}
@@ -482,6 +495,14 @@ export const siteSetupFlow: Flow = {
 
 				case 'import':
 					return navigate( 'importList' );
+
+				case 'difmStartingPoint': {
+					if ( verticalsStepEnabled ) {
+						return navigate( 'vertical' );
+					}
+
+					return navigate( 'designSetup' );
+				}
 
 				default:
 					return navigate( 'intent' );
