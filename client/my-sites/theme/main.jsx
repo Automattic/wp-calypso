@@ -457,7 +457,7 @@ class ThemeSheet extends Component {
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
-					href={ this.props.forumUrl }
+					href={ localizeUrl( this.props.forumUrl ) }
 					onClick={ this.trackThemeForumClick }
 				>
 					{ this.props.translate( 'Visit forum' ) }
