@@ -6,17 +6,20 @@ import EmptyContent from 'calypso/components/empty-content';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 import { SitesTable } from './sites-table';
 
-const EmptyContainer = styled.div`
+const EmptySites = styled( EmptyContent )`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	height: 600px;
-
-	.empty-content__line {
-		max-width: 650px;
-	}
+	align-items: center;
 `;
 
+const SecondaryText = styled.p`
+	max-width: 650px;
+`;
+
+const Title = styled.div`
+	margin-top: 50%;
+`;
 type SitesContainerProps = {
 	sites: SiteData[];
 	status: string;
@@ -24,6 +27,7 @@ type SitesContainerProps = {
 
 export const SitesContainer = ( { sites, status }: SitesContainerProps ) => {
 	const { __ } = useI18n();
+	sites = [];
 	if ( sites.length > 0 ) {
 		return (
 			<ClassNames>
@@ -39,101 +43,96 @@ export const SitesContainer = ( { sites, status }: SitesContainerProps ) => {
 		);
 	}
 
-	switch ( status ) {
-		case 'launched':
-			return (
-				<EmptyContainer>
-					<EmptyContent
-						title={ __( "You haven't launched a site" ) }
-						line={
-							<p>
-								{ createInterpolateElement(
-									__(
-										'Our <a>support center</a> and team are here to help you as you work your way towards launch.'
-									),
-									{
-										a: (
-											<a
-												href={ 'https://wordpress.com/support/' }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									}
-								) }
-							</p>
-						}
-						illustration={ '' }
-					/>
-				</EmptyContainer>
-			);
-		case 'private':
-			return (
-				<EmptyContainer>
-					<EmptyContent
-						title={ __( 'You have no private sites' ) }
-						line={
-							<p>
-								{ createInterpolateElement(
-									__(
-										"Private sites aren't accessible to the world. Read more about them <a>here</a>."
-									),
-									{
-										a: (
-											<a
-												href={ 'https://wordpress.com/support/settings/privacy-settings/' }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									}
-								) }
-							</p>
-						}
-						illustration={ '' }
-					/>
-				</EmptyContainer>
-			);
-		case 'coming-soon':
-			return (
-				<EmptyContainer>
-					<EmptyContent
-						title={ __( 'You have no coming soon sites' ) }
-						line={
-							<p>
-								{ createInterpolateElement(
-									__(
-										'Coming soon sites will display a landing page letting people know that a site is being built. Read more about them <a>here</a>.'
-									),
-									{
-										a: (
-											<a
-												href={ 'https://wordpress.com/support/settings/privacy-settings/' }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									}
-								) }
-							</p>
-						}
-						illustration={ '' }
-					/>
-				</EmptyContainer>
-			);
-		default:
-			return (
-				<EmptyContainer>
-					<EmptyContent
-						title={ __( 'Create your first site' ) }
-						line={ __(
-							"It's time to get your ideas online. We'll guide you through the process of creating a site that best suits your needs."
+	if ( status === 'launched' ) {
+		return (
+			<EmptySites
+				title={ <Title> { __( "You haven't launched a site" ) } </Title> }
+				line={
+					<SecondaryText>
+						{ createInterpolateElement(
+							__(
+								'Our <a>support center</a> and team are here to help you as you work your way towards launch.'
+							),
+							{
+								a: (
+									<a
+										href={ 'https://wordpress.com/support/' }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							}
 						) }
-						action={ __( 'Create your first site' ) }
-						actionURL={ '/start?ref=sites-dashboard' }
-						illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
-					/>
-				</EmptyContainer>
-			);
+					</SecondaryText>
+				}
+				illustration={ '' }
+			/>
+		);
 	}
+
+	if ( status === 'private' ) {
+		return (
+			<EmptySites
+				title={ <Title> { __( 'You have no private sites' ) } </Title> }
+				line={
+					<SecondaryText>
+						{ createInterpolateElement(
+							__(
+								"Private sites aren't accessible to the world. Read more about them <a>here</a>."
+							),
+							{
+								a: (
+									<a
+										href={ 'https://wordpress.com/support/settings/privacy-settings/' }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							}
+						) }
+					</SecondaryText>
+				}
+				illustration={ '' }
+			/>
+		);
+	}
+
+	if ( status === 'coming-soon' ) {
+		return (
+			<EmptySites
+				title={ <Title> { __( 'You have no coming soon sites' ) } </Title> }
+				line={
+					<SecondaryText>
+						{ createInterpolateElement(
+							__(
+								'Coming soon sites will display a landing page letting people know that a site is being built. Read more about them <a>here</a>.'
+							),
+							{
+								a: (
+									<a
+										href={ 'https://wordpress.com/support/settings/privacy-settings/' }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							}
+						) }
+					</SecondaryText>
+				}
+				illustration={ '' }
+			/>
+		);
+	}
+
+	return (
+		<EmptySites
+			title={ __( 'Create your first site' ) }
+			line={ __(
+				"It's time to get your ideas online. We'll guide you through the process of creating a site that best suits your needs."
+			) }
+			action={ __( 'Create your first site' ) }
+			actionURL={ '/start?ref=sites-dashboard' }
+			illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+		/>
+	);
 };
