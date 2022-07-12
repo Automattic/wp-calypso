@@ -23,6 +23,7 @@ import type { OrderTransaction } from 'calypso/state/selectors/get-order-transac
 
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
+	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
 }
@@ -47,6 +48,7 @@ interface CheckoutPendingProps {
  */
 function CheckoutPending( {
 	orderId: orderIdOrPlaceholder,
+	receiptId,
 	siteSlug,
 	redirectTo,
 }: CheckoutPendingProps ) {
@@ -91,12 +93,19 @@ function CheckoutPending( {
 			page( failRedirectUrl );
 		};
 
+		if ( receiptId && ! redirectTo?.includes( ':receiptId' ) ) {
+			didRedirect.current = true;
+			redirectWithInterpolatedReceipt( redirectTo, siteSlug, receiptId );
+			return;
+		}
+
 		if ( ! orderId ) {
-			// If the order ID is missing, we don't know what to do because there's no
-			// way to know the status of the transaction. If this happens it's
-			// definitely a bug, but let's keep the existing behavior and send the user
-			// to a generic thank-you page, assuming that the purchase was successful.
-			// This goes to the URL path `/checkout/thank-you/:site/:receiptId`.
+			// If the order ID is missing and there is no receiptId, we don't know
+			// what to do because there's no way to know the status of the
+			// transaction. If this happens it's definitely a bug, but let's keep the
+			// existing behavior and send the user to a generic thank-you page,
+			// assuming that the purchase was successful. This goes to the URL path
+			// `/checkout/thank-you/:site/:receiptId` but without a receiptId.
 			didRedirect.current = true;
 			page( `/checkout/thank-you/${ siteSlug ?? 'no-site' }/unknown` );
 			return;
@@ -108,11 +117,10 @@ function CheckoutPending( {
 			const { processingStatus } = transaction;
 
 			if ( SUCCESS === processingStatus ) {
-				const { receiptId } = transaction;
+				const { receiptId: transactionReceiptId } = transaction;
 
 				didRedirect.current = true;
-
-				redirectWithInterpolatedReceipt( redirectTo, siteSlug, receiptId );
+				redirectWithInterpolatedReceipt( redirectTo, siteSlug, transactionReceiptId );
 				return;
 			}
 
@@ -151,7 +159,17 @@ function CheckoutPending( {
 		if ( error ) {
 			retryOnError();
 		}
-	}, [ error, redirectTo, reduxDispatch, siteSlug, transaction, translate, reloadCart, orderId ] );
+	}, [
+		error,
+		redirectTo,
+		reduxDispatch,
+		siteSlug,
+		transaction,
+		translate,
+		reloadCart,
+		orderId,
+		receiptId,
+	] );
 
 	return (
 		<Main className="checkout-thank-you__pending">
