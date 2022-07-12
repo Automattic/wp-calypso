@@ -22,9 +22,15 @@
 			margin-bottom: 1rem;
 			font-size: $font-title-medium;
 		}
+
 		p {
 			margin-bottom: 1rem;
 			font-size: $font-body;
+
+			a {
+				color: var( --studio-gray-80 );
+				text-decoration: underline;
+			}
 		}
 
 		.button {
