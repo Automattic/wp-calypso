@@ -53,6 +53,7 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
+	isWporgTheme,
 	getCanonicalTheme,
 	getPremiumThemePrice,
 	getThemeDetailsUrl,
@@ -443,8 +444,8 @@ class ThemeSheet extends Component {
 			return null;
 		}
 
-		const description = this.props.isPremium
-			? this.props.translate( 'Get in touch with the theme author' )
+		const description = this.props.isWporg
+			? this.props.translate( 'Get help from the theme author and WordPress.org community' )
 			: this.props.translate( 'Get help from volunteers and staff' );
 
 		return (
@@ -870,6 +871,7 @@ export default connect(
 			backPath,
 			isCurrentUserPaid,
 			isWpcomTheme,
+			isWporg: isWporgTheme( state, id ),
 			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, id, siteId ),
 			isJetpack,
