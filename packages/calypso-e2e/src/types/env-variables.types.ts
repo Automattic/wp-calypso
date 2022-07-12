@@ -21,4 +21,5 @@ export interface SupportedEnvVariables extends EnvVariables {
 	TEST_ON_ATOMIC: boolean;
 	TEST_ON_JETPACK: boolean;
 	CALYPSO_BASE_URL: string;
+	BROWSER_NAME: string;
 }
