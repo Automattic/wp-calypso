@@ -22,6 +22,7 @@
 		a {
 			color: var( --color-primary-100 );
 			text-decoration: underline;
+			// This works in all major browsers except for Firefox for Android. It is also not imperative that this works
 			text-underline-offset: 3px;
 		}
 	}
