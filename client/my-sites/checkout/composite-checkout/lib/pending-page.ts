@@ -3,6 +3,7 @@ import page from 'page';
 export interface PendingPageRedirectOptions {
 	siteSlug?: string | undefined;
 	orderId?: string | number | undefined;
+	receiptId?: string | number | undefined;
 	urlType?: 'relative' | 'absolute';
 }
 
@@ -18,6 +19,9 @@ export interface PendingPageRedirectOptions {
  *
  * If `siteSlug` is not provided, it will use `no-site`.
  *
+ * If `receiptId` is provided, it means the transaction is already complete and
+ * may cause the pending page to redirect immediately to the `url`.
+ *
  * An order ID is required for the pending page to operate. If `orderId` is not
  * provided, it will use the placeholder `:orderId` but please note that this
  * must be replaced somewhere (typically in an endpoint) before the
@@ -25,7 +29,7 @@ export interface PendingPageRedirectOptions {
  */
 export function redirectThroughPending(
 	url: string,
-	options: Pick< PendingPageRedirectOptions, 'siteSlug' | 'orderId' >
+	options: Omit< PendingPageRedirectOptions, 'urlType' >
 ): void {
 	if ( ! isRelativeUrl( url ) ) {
 		return absoluteRedirectThroughPending( url, options );
@@ -58,6 +62,9 @@ function isRelativeUrl( url: string ): boolean {
  *
  * If `siteSlug` is not provided, it will use `no-site`.
  *
+ * If `receiptId` is provided, it means the transaction is already complete and
+ * may cause the pending page to redirect immediately to the `url`.
+ *
  * An order ID is required for the pending page to operate. If `orderId` is not
  * provided, it will use the placeholder `:orderId` but please note that this
  * must be replaced somewhere (typically in an endpoint) before the
@@ -65,7 +72,7 @@ function isRelativeUrl( url: string ): boolean {
  */
 export function relativeRedirectThroughPending(
 	url: string,
-	options: Pick< PendingPageRedirectOptions, 'siteSlug' | 'orderId' >
+	options: Omit< PendingPageRedirectOptions, 'urlType' >
 ): void {
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
@@ -90,6 +97,9 @@ export function relativeRedirectThroughPending(
  *
  * If `siteSlug` is not provided, it will use `no-site`.
  *
+ * If `receiptId` is provided, it means the transaction is already complete and
+ * may cause the pending page to redirect immediately to the `url`.
+ *
  * An order ID is required for the pending page to operate. If `orderId` is not
  * provided, it will use the placeholder `:orderId` but please note that this
  * must be replaced somewhere (typically in an endpoint) before the
@@ -97,7 +107,7 @@ export function relativeRedirectThroughPending(
  */
 export function absoluteRedirectThroughPending(
 	url: string,
-	options: Pick< PendingPageRedirectOptions, 'siteSlug' | 'orderId' >
+	options: Omit< PendingPageRedirectOptions, 'urlType' >
 ): void {
 	window.location.href = addUrlToPendingPageRedirect( url, {
 		...options,
@@ -122,6 +132,9 @@ export function absoluteRedirectThroughPending(
  * must be replaced somewhere (typically in an endpoint) before the
  * resulting URL will be valid!
  *
+ * If `receiptId` is provided, it means the transaction is already complete and
+ * may cause the pending page to redirect immediately to the `url`.
+ *
  * You should always specify `urlType` as either 'absolute' or 'relative' but
  * it will default to 'absolute'.
  */
@@ -129,7 +142,7 @@ export function addUrlToPendingPageRedirect(
 	url: string,
 	options: PendingPageRedirectOptions
 ): string {
-	const { siteSlug, orderId, urlType = 'absolute' } = options;
+	const { siteSlug, orderId, urlType = 'absolute', receiptId = ':receiptId' } = options;
 
 	const { origin = 'https://wordpress.com' } = typeof window !== 'undefined' ? window.location : {};
 	const successUrlPath =
@@ -138,6 +151,7 @@ export function addUrlToPendingPageRedirect(
 	const successUrlBase = `${ origin }${ successUrlPath }`;
 	const successUrlObject = new URL( successUrlBase );
 	successUrlObject.searchParams.set( 'redirectTo', url );
+	successUrlObject.searchParams.set( 'receiptId', String( receiptId ) );
 	if ( urlType === 'relative' ) {
 		return successUrlObject.pathname + successUrlObject.search + successUrlObject.hash;
 	}
