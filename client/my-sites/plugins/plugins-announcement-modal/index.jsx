@@ -20,7 +20,7 @@ const PluginsAnnouncementModal = () => {
 		return null;
 	}
 
-	if ( ! isStarter( sitePlan ) ) {
+	if ( ! siteId || ! isStarter( sitePlan ) ) {
 		return null;
 	}
 
