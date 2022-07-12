@@ -112,28 +112,7 @@ function CheckoutPending( {
 
 				didRedirect.current = true;
 
-				if ( redirectTo?.includes( ':receiptId' ) ) {
-					performRedirect( redirectTo.replace( ':receiptId', `${ receiptId }` ) );
-					return;
-				}
-
-				// Only treat `/pending` as a placeholder if it's the end of the URL
-				// pathname, but preserve query strings or hashes.
-				const receiptPlaceholderRegexp = /\/pending([?#]|$)/;
-				if ( redirectTo && receiptPlaceholderRegexp.test( redirectTo ) ) {
-					performRedirect( redirectTo.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` ) );
-					return;
-				}
-
-				if ( redirectTo ) {
-					performRedirect( redirectTo );
-					return;
-				}
-
-				const defaultSuccessUrl = siteSlug
-					? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-					: '/checkout/thank-you/no-site';
-				performRedirect( defaultSuccessUrl );
+				redirectWithInterpolatedReceipt( redirectTo, siteSlug, receiptId );
 				return;
 			}
 
@@ -198,6 +177,35 @@ function CheckoutPending( {
 
 function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
 	return Number.isInteger( orderId );
+}
+
+function redirectWithInterpolatedReceipt(
+	url: string | undefined,
+	siteSlug: string | undefined,
+	receiptId: number
+): void {
+	if ( url?.includes( ':receiptId' ) ) {
+		performRedirect( url.replace( ':receiptId', `${ receiptId }` ) );
+		return;
+	}
+
+	// Only treat `/pending` as a placeholder if it's the end of the URL
+	// pathname, but preserve query strings or hashes.
+	const receiptPlaceholderRegexp = /\/pending([?#]|$)/;
+	if ( url && receiptPlaceholderRegexp.test( url ) ) {
+		performRedirect( url.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` ) );
+		return;
+	}
+
+	if ( url ) {
+		performRedirect( url );
+		return;
+	}
+
+	const defaultSuccessUrl = siteSlug
+		? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
+		: '/checkout/thank-you/no-site';
+	performRedirect( defaultSuccessUrl );
 }
 
 function performRedirect( url: string ): void {
