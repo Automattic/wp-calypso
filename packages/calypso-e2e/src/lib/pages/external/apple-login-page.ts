@@ -2,13 +2,17 @@ import { Page } from 'playwright';
 
 const selectors = {
 	// General
-	buttonWithText: ( text: string ) => `button:text("${ text }")`,
+	buttonWithText: ( text: string ) => `button:text-is("${ text }")`,
 
 	// Inputs
 	emailInput: 'input[id="account_name_text_field"]',
 	passwordInput: 'input[id="password_text_field"]',
 	otpInput:
 		'input[aria-label="Enter verification code. After entering the verification code, the page gets updated automatically. Digit 1"]',
+
+	// Button
+	continueButton: 'button[aria-label="Continue"][aria-disabled="false"]',
+	submitFormButton: 'button[aria-label="Sign In"][aria-disabled="false"]',
 };
 
 /**
@@ -30,7 +34,7 @@ export class AppleLoginPage {
 	}
 
 	/**
-	 * Clicks on a button with text.
+	 * Clicks on a button with the **exact** text.
 	 *
 	 * @param {string} text Text on the button.
 	 */
@@ -48,9 +52,8 @@ export class AppleLoginPage {
 		const locator = this.page.locator( selectors.emailInput );
 		await locator.fill( email );
 
-		const buttonLocator = this.page.locator(
-			'button[aria-label="Continue"][aria-disabled="false"]'
-		);
+		// Wait for the button to no longer be marked "disabled".
+		const buttonLocator = this.page.locator( selectors.continueButton );
 		await buttonLocator.waitFor();
 	}
 
@@ -63,9 +66,8 @@ export class AppleLoginPage {
 		const locator = this.page.locator( selectors.passwordInput );
 		await locator.type( password );
 
-		const buttonLocator = this.page.locator(
-			'button[aria-label="Sign In"][aria-disabled="false"]'
-		);
+		// Wait for the button to no longer be marked "disabled".
+		const buttonLocator = this.page.locator( selectors.submitFormButton );
 		await buttonLocator.waitFor();
 	}
 
