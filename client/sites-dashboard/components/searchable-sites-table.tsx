@@ -23,14 +23,18 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 	return (
 		<ClassNames>
 			{ ( { css } ) => (
-				<div
-					className={ css`
-						margin-top: 32px;
-					` }
-				>
-					<Search onSearch={ setTerm } delaySearch />
+				<>
+					<div
+						className={ css`
+							margin: 32px 0;
+							width: 286px;
+							max-width: 100%;
+						` }
+					>
+						<Search onSearch={ setTerm } delaySearch />
+					</div>
 					<SitesTable sites={ filteredSites } />
-				</div>
+				</>
 			) }
 		</ClassNames>
 	);
