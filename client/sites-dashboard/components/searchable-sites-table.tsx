@@ -1,4 +1,5 @@
 import { ClassNames } from '@emotion/react';
+import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
 import { searchCollection } from 'calypso/components/search-sites/utils';
 import { SitesSearch } from './sites-search';
@@ -10,6 +11,8 @@ interface SearchableSitesTableProps {
 }
 
 export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
+	const { __ } = useI18n();
+
 	const [ term, setTerm ] = useState( '' );
 
 	const filteredSites = useMemo( () => {
@@ -31,7 +34,12 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 							max-width: 100%;
 						` }
 					>
-						<SitesSearch onSearch={ setTerm } delaySearch isReskinned />
+						<SitesSearch
+							onSearch={ setTerm }
+							delaySearch
+							isReskinned
+							placeholder={ __( 'Search by name or domain' ) + '...' }
+						/>
 					</div>
 					<SitesTable sites={ filteredSites } />
 				</>
