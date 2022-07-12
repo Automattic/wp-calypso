@@ -154,9 +154,12 @@ export class PlansPage {
 		// See https://github.com/Automattic/wp-calypso/issues/64389
 		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
 		if ( this.version === 'legacy' && envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.page.waitForResponse( ( response ) =>
-				response.url().includes( '/images/wpcom-ecommerce' )
-			);
+			await Promise.all( [
+				this.page.waitForResponse( /plans\?/ ),
+				this.page.waitForResponse( ( response ) =>
+					response.url().includes( '/images/wpcom-ecommerce' )
+				),
+			] );
 		}
 
 		await clickNavTab( this.page, targetTab );
