@@ -20,7 +20,7 @@ import {
 	excludeFseDesigns,
 } from '../utils';
 import BadgeContainer from './badge-container';
-import { DesignPickerCategoryFilter } from './design-picker-category-filter';
+import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
 import './style.scss';
@@ -106,14 +106,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					: __( 'Included in the Pro plan' ),
 				{
 					button: (
-						<Button
-							isLink={ true }
-							className="design-picker__button-link"
-							onClick={ ( e: any ) => {
-								e.stopPropagation();
-								onCheckout?.();
-							} }
-						/>
+						<Button isLink={ true } className="design-picker__button-link" onClick={ onCheckout } />
 					),
 				}
 			);
@@ -123,54 +116,55 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	}
 
 	return (
-		<button
-			className="design-picker__design-option"
-			disabled={ disabled }
-			data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
-			onClick={ () => onSelect( design ) }
-		>
-			{ hasDesignOptionHeader && (
-				<span className="design-picker__design-option-header">
-					<svg width="28" height="6">
-						<g>
-							<rect width="6" height="6" rx="3" />
-							<rect x="11" width="6" height="6" rx="3" />
-							<rect x="22" width="6" height="6" rx="3" />
-						</g>
-					</svg>
-				</span>
-			) }
-			<span
-				className={ classnames(
-					'design-picker__image-frame',
-					'design-picker__image-frame-landscape',
-					design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
-					{
-						'design-picker__image-frame-blank': isBlankCanvas,
-						'design-picker__image-frame-no-header': ! hasDesignOptionHeader,
-					}
-				) }
+		<div className="design-picker__design-option">
+			<button
+				disabled={ disabled }
+				data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
+				onClick={ () => onSelect( design ) }
 			>
-				{ isBlankCanvas ? (
-					<div className="design-picker__image-frame-blank-canvas__title">
-						{ __( 'Start from scratch', __i18n_text_domain__ ) }
-					</div>
-				) : (
-					<div className="design-picker__image-frame-inside">
-						<DesignPreviewImage design={ design } locale={ locale } highRes={ highRes } />
-					</div>
+				{ hasDesignOptionHeader && (
+					<span className="design-picker__design-option-header">
+						<svg width="28" height="6">
+							<g>
+								<rect width="6" height="6" rx="3" />
+								<rect x="11" width="6" height="6" rx="3" />
+								<rect x="22" width="6" height="6" rx="3" />
+							</g>
+						</svg>
+					</span>
 				) }
-			</span>
-			<span className="design-picker__option-overlay">
-				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-					{ ! hideDesignTitle && (
-						<span className="design-picker__option-name">{ designTitle }</span>
+				<span
+					className={ classnames(
+						'design-picker__image-frame',
+						'design-picker__image-frame-landscape',
+						design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
+						{
+							'design-picker__image-frame-blank': isBlankCanvas,
+							'design-picker__image-frame-no-header': ! hasDesignOptionHeader,
+						}
 					) }
-					{ badgeContainer }
+				>
+					{ isBlankCanvas ? (
+						<div className="design-picker__image-frame-blank-canvas__title">
+							{ __( 'Start from scratch', __i18n_text_domain__ ) }
+						</div>
+					) : (
+						<div className="design-picker__image-frame-inside">
+							<DesignPreviewImage design={ design } locale={ locale } highRes={ highRes } />
+						</div>
+					) }
 				</span>
-				{ getPricingDescription() }
-			</span>
-		</button>
+				<span className="design-picker__option-overlay">
+					<span id={ makeOptionId( design ) } className="design-picker__option-meta">
+						{ ! hideDesignTitle && (
+							<span className="design-picker__option-name">{ designTitle }</span>
+						) }
+						{ badgeContainer }
+					</span>
+				</span>
+			</button>
+			{ getPricingDescription() }
+		</div>
 	);
 };
 
@@ -290,8 +284,6 @@ export interface UnifiedDesignPickerProps {
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
 	generatedDesignsHeading?: React.ReactNode;
-	categoriesFooter?: React.ReactNode;
-	recommendedCategorySlug: string | null;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
@@ -308,11 +300,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	} ).featured,
 	premiumBadge,
 	categoriesHeading,
-	categoriesFooter,
 	categorization,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
-	recommendedCategorySlug,
 	isPremiumThemeAvailable,
 	onCheckout = undefined,
 } ) => {
@@ -328,19 +318,23 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 
 	return (
 		<div
-			className={ classnames( 'design-picker', `design-picker--theme-light`, {
-				'design-picker--has-categories': hasCategories,
-			} ) }
+			className={ classnames(
+				'design-picker',
+				`design-picker--theme-light`,
+				'design-picker__unified',
+				{
+					'design-picker--has-categories': hasCategories,
+				}
+			) }
 		>
 			{ categorization && hasCategories && (
-				<DesignPickerCategoryFilter
-					categories={ categorization.categories }
-					selectedCategory={ categorization.selection }
-					recommendedCategorySlug={ recommendedCategorySlug }
-					onSelect={ categorization.onSelect }
-					heading={ categoriesHeading }
-					footer={ categoriesFooter }
-				/>
+				<>
+					{ categoriesHeading }
+					<UnifiedDesignPickerCategoryFilter
+						categories={ categorization.categories }
+						onSelect={ categorization.onSelect }
+					/>
+				</>
 			) }
 			<div className={ 'design-picker__grid' }>
 				{ filteredDesigns.map( ( design ) => (

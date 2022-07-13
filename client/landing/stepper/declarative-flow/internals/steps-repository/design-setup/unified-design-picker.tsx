@@ -35,11 +35,6 @@ import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
 
-// The distance from top when sticky should be 109px and it's aligned with thumbnails and previews
-const STICKY_OPTIONS = {
-	rootMargin: '-109px 0px 0px',
-};
-
 /**
  * The site setup design picker
  */
@@ -91,9 +86,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		[ staticDesigns ]
 	);
 
-	const enabledGeneratedDesigns =
-		isEnabledFTM &&
-		( intent === 'build' || intent === 'write' );
+	const enabledGeneratedDesigns = isEnabledFTM && ( intent === 'build' || intent === 'write' );
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
 		useStarterDesignsGeneratedQuery(
@@ -105,8 +98,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			{ enabled: enabledGeneratedDesigns && !! siteVerticalId }
 		);
 
-	const showGeneratedDesigns =
-		enabledGeneratedDesigns && generatedDesigns.length > 0;
+	const showGeneratedDesigns = enabledGeneratedDesigns && generatedDesigns.length > 0;
 
 	const isPreviewingGeneratedDesign =
 		isMobile && showGeneratedDesigns && selectedDesign && isPreviewingDesign;
@@ -123,14 +115,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}, [ hasTrackedView, generatedDesigns ] );
 
-	function headerText() {
-		return translate( 'Pick a design' );
-	}
-
-	function subHeaderText() {
-		return translate( 'One of these homepage options could be great to start with. You can always change it later.' );
-	}
-
 	const getEventPropsByDesign = ( design: Design ) => ( {
 		slug: design?.slug,
 		theme: design?.recipe?.stylesheet,
@@ -142,10 +126,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		...( design?.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 	} );
 
-	const categorizationOptions = getCategorizationOptions(
-		intent,
-		true
-	);
+	const categorizationOptions = getCategorizationOptions( intent, true );
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
 	const handleSubmit = ( providedDependencies?: ProvidedDependencies ) => {
@@ -199,13 +180,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		setSelectedDesign( _selectedDesign );
 		setIsPreviewingDesign( true );
-	}
-
-	function viewMoreDesigns() {
-		recordTracksEvent( 'calypso_signup_design_view_more_select' );
-
-		setSelectedDesign( undefined );
-		setIsPreviewingDesign( false );
 	}
 
 	function upgradePlan() {
@@ -321,7 +295,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</>
 		);
 
-		
 		const actionButtons = (
 			<div>
 				{ shouldUpgrade ? (
@@ -342,7 +315,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					stepName={ STEP_NAME }
 					stepContent={ stepContent }
 					hideSkip
-					hideNext={ shouldUpgrade }
+					hideNext={ true }
 					className={ 'design-setup__preview' }
 					nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
 					goBack={ handleBackClick }
@@ -361,37 +334,36 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		);
 	}
 
-	const heading = (
+	const categoriesHeading = (
 		<FormattedHeader
 			id={ 'step-header' }
-			headerText={ headerText() }
-			subHeaderText={ subHeaderText() }
+			headerText={ translate( 'Selected themes for you' ) }
+			subHeaderText={ translate( "These might work if you'd like" ) }
 			align="left"
 		/>
 	);
 
 	const newDesignEnabled = isEnabled( 'signup/theme-preview-screen' );
 
-	const stepContent =
-			<UnifiedDesignPicker
-				generatedDesigns={ generatedDesigns }
-				staticDesigns={ shuffledStaticDesigns }
-				verticalId={ siteVerticalId }
-				locale={ locale }
-				onSelect={ pickDesign }
-				onPreview={ previewDesign }
-				onUpgrade={ upgradePlan }
-				onCheckout={ goToCheckout }
-				premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
-				generatedDesignsHeading={ 'Suitable for your site type' }
-				categorization={ categorization }
-				recommendedCategorySlug={ categorizationOptions.defaultSelection }
-				categoriesHeading={ heading }
-				isPremiumThemeAvailable={ isPremiumThemeAvailable }
-				previewOnly={ newDesignEnabled }
-				hasDesignOptionHeader={ ! newDesignEnabled }
-			/>
-
+	const stepContent = (
+		<UnifiedDesignPicker
+			generatedDesigns={ generatedDesigns }
+			staticDesigns={ shuffledStaticDesigns }
+			verticalId={ siteVerticalId }
+			locale={ locale }
+			onSelect={ pickDesign }
+			onPreview={ previewDesign }
+			onUpgrade={ upgradePlan }
+			onCheckout={ goToCheckout }
+			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
+			generatedDesignsHeading={ 'Suitable for your site type' }
+			categorization={ categorization }
+			categoriesHeading={ categoriesHeading }
+			isPremiumThemeAvailable={ isPremiumThemeAvailable }
+			previewOnly={ newDesignEnabled }
+			hasDesignOptionHeader={ ! newDesignEnabled }
+		/>
+	);
 
 	return (
 		<StepContainer
@@ -403,10 +375,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			} ) }
 			skipButtonAlign={ 'top' }
 			hideFormattedHeader
-			backLabelText={
-				translate( 'Back' )
+			backLabelText={ translate( 'Back' ) }
+			skipLabelText={
+				intent === 'write' ? translate( 'Skip and draft first post' ) : translate( 'Skip for now' )
 			}
-			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : translate( 'Skip for now') }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ isPreviewingGeneratedDesign ? pickDesign : handleSubmit }

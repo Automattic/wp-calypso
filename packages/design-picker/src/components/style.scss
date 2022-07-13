@@ -50,6 +50,11 @@
 		font-family: inherit;
 	}
 
+	.design-picker__design-option > button {
+		width: 100%;
+		padding: 0;
+	}
+
 	.design-picker__design-option-header {
 		display: flex;
 		align-items: center;
@@ -372,6 +377,13 @@
 		.design-button-cover {
 			opacity: 1;
 		}
+	}
+}
+
+.design-picker.design-picker__unified {
+	display: block;
+	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
+		justify-content: flex-start;
 	}
 }
 
