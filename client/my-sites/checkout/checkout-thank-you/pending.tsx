@@ -54,6 +54,131 @@ function CheckoutPending( {
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 	const translate = useTranslate();
+
+	useRedirectOnTransactionSuccess( {
+		orderId,
+		receiptId,
+		siteSlug,
+		redirectTo,
+	} );
+
+	return (
+		<Main className="checkout-thank-you__pending">
+			{ orderId && <QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } /> }
+			<PageViewTracker
+				path={
+					siteSlug
+						? '/checkout/thank-you/:site/pending/:order_id'
+						: '/checkout/thank-you/no-site/pending/:order_id'
+				}
+				title="Checkout Pending"
+				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
+			/>
+			<EmptyContent
+				illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
+				illustrationWidth={ 500 }
+				title={ translate( 'Processing…' ) }
+				line={ translate( "Almost there – we're currently finalizing your order." ) }
+			/>
+		</Main>
+	);
+}
+
+function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
+	return Number.isInteger( orderId );
+}
+
+function redirectWithInterpolatedReceipt(
+	url: string | undefined,
+	siteSlug: string | undefined,
+	receiptId: number
+): void {
+	if ( url?.includes( ':receiptId' ) ) {
+		performRedirect( url.replaceAll( ':receiptId', `${ receiptId }` ), siteSlug );
+		return;
+	}
+
+	// Only treat `/pending` as a placeholder if it's the end of the URL
+	// pathname, but preserve query strings or hashes.
+	const receiptPlaceholderRegexp = /\/pending([?#]|$)/;
+	if ( url && receiptPlaceholderRegexp.test( url ) ) {
+		performRedirect( url.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` ), siteSlug );
+		return;
+	}
+
+	if ( url ) {
+		performRedirect( url, siteSlug );
+		return;
+	}
+
+	const defaultSuccessUrl = siteSlug
+		? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
+		: '/checkout/thank-you/no-site';
+	performRedirect( defaultSuccessUrl, siteSlug );
+}
+
+function performRedirect( url: string, siteSlug: string | undefined ): void {
+	if ( url.startsWith( '/' ) ) {
+		page( url );
+		return;
+	}
+
+	const allowedHostsForRedirect = [
+		'wordpress.com',
+		'calypso.localhost',
+		'jetpack.cloud.localhost',
+		'cloud.jetpack.com',
+		siteSlug,
+	];
+
+	try {
+		const parsedUrl = new URL( url );
+		const { hostname, pathname } = parsedUrl;
+		if ( ! hostname ) {
+			throw new Error( `No hostname found for redirect '${ url }'` );
+		}
+
+		// For subdirectory site, check that both hostname and subdirectory matches
+		// the siteSlug (host.name::subdirectory).
+		if ( siteSlug?.includes( '::' ) ) {
+			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
+			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
+			if (
+				hostname !== hostnameFromSlug &&
+				! pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
+			) {
+				throw new Error( `Redirect '${ url }' is not valid for subdirectory site '${ siteSlug }'` );
+			}
+			window.location.href = url;
+			return;
+		}
+
+		if ( ! allowedHostsForRedirect.includes( hostname ) ) {
+			throw new Error( `Invalid hostname '${ hostname }' for redirect '${ url }'` );
+		}
+
+		window.location.href = url;
+	} catch ( err ) {
+		// eslint-disable-next-line no-console
+		console.error( `Redirecting to absolute url '${ url }' failed:`, err );
+	}
+
+	const fallbackUrl = '/checkout/thank-you/no-site';
+	page( fallbackUrl );
+}
+
+function useRedirectOnTransactionSuccess( {
+	orderId,
+	receiptId,
+	siteSlug,
+	redirectTo,
+}: {
+	orderId: number | undefined;
+	receiptId: number | undefined;
+	siteSlug?: string;
+	redirectTo?: string;
+} ): void {
+	const translate = useTranslate();
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
 		orderId ? getOrderTransaction( state, orderId ) : null
 	);
@@ -64,7 +189,6 @@ function CheckoutPending( {
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const didRedirect = useRef( false );
-
 	useEffect( () => {
 		if ( didRedirect.current ) {
 			return;
@@ -170,110 +294,6 @@ function CheckoutPending( {
 		orderId,
 		receiptId,
 	] );
-
-	return (
-		<Main className="checkout-thank-you__pending">
-			{ orderId && <QueryOrderTransaction orderId={ orderId } pollIntervalMs={ 5000 } /> }
-			<PageViewTracker
-				path={
-					siteSlug
-						? '/checkout/thank-you/:site/pending/:order_id'
-						: '/checkout/thank-you/no-site/pending/:order_id'
-				}
-				title="Checkout Pending"
-				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
-			/>
-			<EmptyContent
-				illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
-				illustrationWidth={ 500 }
-				title={ translate( 'Processing…' ) }
-				line={ translate( "Almost there – we're currently finalizing your order." ) }
-			/>
-		</Main>
-	);
-}
-
-function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
-	return Number.isInteger( orderId );
-}
-
-function redirectWithInterpolatedReceipt(
-	url: string | undefined,
-	siteSlug: string | undefined,
-	receiptId: number
-): void {
-	if ( url?.includes( ':receiptId' ) ) {
-		performRedirect( url.replaceAll( ':receiptId', `${ receiptId }` ), siteSlug );
-		return;
-	}
-
-	// Only treat `/pending` as a placeholder if it's the end of the URL
-	// pathname, but preserve query strings or hashes.
-	const receiptPlaceholderRegexp = /\/pending([?#]|$)/;
-	if ( url && receiptPlaceholderRegexp.test( url ) ) {
-		performRedirect( url.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` ), siteSlug );
-		return;
-	}
-
-	if ( url ) {
-		performRedirect( url, siteSlug );
-		return;
-	}
-
-	const defaultSuccessUrl = siteSlug
-		? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-		: '/checkout/thank-you/no-site';
-	performRedirect( defaultSuccessUrl, siteSlug );
-}
-
-function performRedirect( url: string, siteSlug: string | undefined ): void {
-	if ( url.startsWith( '/' ) ) {
-		page( url );
-		return;
-	}
-
-	const allowedHostsForRedirect = [
-		'wordpress.com',
-		'calypso.localhost',
-		'jetpack.cloud.localhost',
-		'cloud.jetpack.com',
-		siteSlug,
-	];
-
-	try {
-		const parsedUrl = new URL( url );
-		const { hostname, pathname } = parsedUrl;
-		if ( ! hostname ) {
-			throw new Error( `No hostname found for redirect '${ url }'` );
-		}
-
-		// For subdirectory site, check that both hostname and subdirectory matches
-		// the siteSlug (host.name::subdirectory).
-		if ( siteSlug?.includes( '::' ) ) {
-			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
-			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
-			if (
-				hostname !== hostnameFromSlug &&
-				! pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
-			) {
-				throw new Error( `Redirect '${ url }' is not valid for subdirectory site '${ siteSlug }'` );
-			}
-			window.location.href = url;
-			return;
-		}
-
-		if ( ! allowedHostsForRedirect.includes( hostname ) ) {
-			throw new Error( `Invalid hostname '${ hostname }' for redirect '${ url }'` );
-		}
-
-		window.location.href = url;
-	} catch ( err ) {
-		// eslint-disable-next-line no-console
-		console.error( `Redirecting to absolute url '${ url }' failed:`, err );
-	}
-
-	const fallbackUrl = '/checkout/thank-you/no-site';
-	page( fallbackUrl );
 }
 
 export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {
