@@ -101,6 +101,7 @@ const PluginsBrowserListElement = ( props ) => {
 			recordTracksEvent( 'calypso_marketplace_search_traintracks_interact', {
 				railcar: plugin.railcar.railcar,
 				action: 'product_opened',
+				blog_id: selectedSite?.ID,
 			} );
 		}
 	}, [ site, plugin, selectedSite, props.listName ] );
