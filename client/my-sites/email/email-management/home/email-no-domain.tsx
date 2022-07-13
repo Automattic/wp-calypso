@@ -1,5 +1,5 @@
 import { isFreePlan } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import EmptyContent from 'calypso/components/empty-content';
@@ -9,15 +9,9 @@ import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { AppState } from 'calypso/types';
 
-const EmailNoDomain = ( {
-	selectedSite,
-	translate,
-	source,
-}: {
-	selectedSite: SiteData;
-	translate: ( input: string ) => string;
-	source: string;
-} ) => {
+const EmailNoDomain = ( { selectedSite, source }: { selectedSite: SiteData; source: string } ) => {
+	const translate = useTranslate();
+
 	const hasAvailableDomainCredit = useSelector( ( state: AppState ) =>
 		hasDomainCredit( state, selectedSite.ID )
 	);
@@ -96,4 +90,4 @@ const EmailNoDomain = ( {
 	);
 };
 
-export default localize( EmailNoDomain );
+export default EmailNoDomain;
