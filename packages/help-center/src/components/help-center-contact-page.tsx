@@ -15,10 +15,14 @@ import { getSectionName } from 'calypso/state/ui/selectors';
  * Internal Dependencies
  */
 import { BackButton } from '..';
-import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
-import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
-import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
+import {
+	useActiveSupportTicketsQuery,
+	useShouldRenderChatOption,
+	useShouldRenderEmailOption,
+	useStillNeedHelpURL,
+} from '../hooks';
 import Mail from '../icons/mail';
+import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
 
 const ConditionalLink: React.FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
@@ -33,8 +37,9 @@ export const HelpCenterContactPage: React.FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
+	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery();
 
-	if ( renderChat.isLoading ) {
+	if ( renderChat.isLoading || isLoadingTickets ) {
 		return (
 			<div className="help-center-contact-page__loading">
 				<Spinner baseClassName="" />
@@ -47,6 +52,7 @@ export const HelpCenterContactPage: React.FC = () => {
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
+				<HelpCenterActiveTicketNotice tickets={ tickets } />
 				<div
 					className={ classnames( 'help-center-contact-page__boxes', {
 						'is-reversed': ! renderChat.render || renderChat.state !== 'AVAILABLE',
