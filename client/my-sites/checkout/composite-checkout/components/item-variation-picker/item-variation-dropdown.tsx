@@ -5,7 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { ItemVariantPrice } from './variant-price';
-import type { ItemVariationPickerProps } from './types';
+import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 const VariantLabel = styled.span`
 	font-size: ${ ( props ) => props.theme.fontSize.small };
@@ -219,25 +220,69 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				<Gridicon icon={ open ? 'chevron-up' : 'chevron-down' } />
 			</CurrentOption>
 			{ open && (
-				<OptionList role="listbox" tabIndex={ -1 }>
-					{ variants.map(
-						( { variantLabel, formattedCurrentPrice, productId, productSlug }, index ) => (
-							<Option
-								id={ productId.toString() }
-								aria-label={ variantLabel }
-								data-product-slug={ productSlug }
-								role="option"
-								key={ productSlug + variantLabel }
-								onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
-								selected={ index === highlightedVariantIndex }
-							>
-								<VariantLabel>{ variantLabel }</VariantLabel>
-								<VariantPrice>{ formattedCurrentPrice }</VariantPrice>
-							</Option>
-						)
-					) }
-				</OptionList>
+				<ItemVariantOptionList
+					variants={ variants }
+					highlightedVariantIndex={ highlightedVariantIndex }
+					selectedItem={ selectedItem }
+					handleChange={ handleChange }
+				/>
 			) }
 		</Dropdown>
 	);
 };
+
+function ItemVariantOptionList( {
+	variants,
+	highlightedVariantIndex,
+	selectedItem,
+	handleChange,
+}: {
+	variants: WPCOMProductVariant[];
+	highlightedVariantIndex: number | null;
+	selectedItem: ResponseCartProduct;
+	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
+} ) {
+	return (
+		<OptionList role="listbox" tabIndex={ -1 }>
+			{ variants.map( ( variant, index ) => (
+				<ItemVariantOption
+					key={ variant.productSlug + variant.variantLabel }
+					variant={ variant }
+					highlightedVariantIndex={ highlightedVariantIndex }
+					index={ index }
+					selectedItem={ selectedItem }
+					handleChange={ handleChange }
+				/>
+			) ) }
+		</OptionList>
+	);
+}
+
+function ItemVariantOption( {
+	variant,
+	highlightedVariantIndex,
+	index,
+	selectedItem,
+	handleChange,
+}: {
+	variant: WPCOMProductVariant;
+	highlightedVariantIndex: number | null;
+	index: number;
+	selectedItem: ResponseCartProduct;
+	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
+} ) {
+	const { variantLabel, formattedCurrentPrice, productId, productSlug } = variant;
+	return (
+		<Option
+			id={ productId.toString() }
+			aria-label={ variantLabel }
+			data-product-slug={ productSlug }
+			role="option"
+			onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
+			selected={ index === highlightedVariantIndex }
+		>
+			<VariantLabel>{ variantLabel }</VariantLabel>
+			<VariantPrice>{ formattedCurrentPrice }</VariantPrice>
+		</Option>
+	);
+}
