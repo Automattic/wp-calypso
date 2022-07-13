@@ -28,6 +28,7 @@ const selectors = {
 	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
 	startImportButton: 'button:text("Import your site content")',
+	startImportGoalButton: 'span:has-text("Import my existing website content")',
 	// And entry of the list of selectable importers
 	importerListButton: ( index: number ) =>
 		`div.list__importers-primary:nth-child(${ index + 1 }) .action-card__button-container button`,
@@ -61,7 +62,9 @@ export class StartImportFlow {
 	 * Validates that we've landed on the setup page.
 	 */
 	async validateSetupPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.startImportButton );
+		await this.page.locator(
+			`${ selectors.startImportButton }, ${ selectors.startImportGoalButton }`
+		);
 	}
 
 	/**
