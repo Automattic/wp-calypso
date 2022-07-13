@@ -45,19 +45,6 @@ body:
         e.g. Clicking the button does nothing visibly.
     validations:
       required: true
-  - type: input
-    id: issue_context
-    attributes:
-      label: Context
-      placeholder: |
-        e.g. Customer report, details of your exploratory testing, etc.
-  - type: markdown
-    attributes:
-      value: |
-        ---
-        ## Additional context
-
-        Please provide whatever additional information you have available to you. If not, please scroll to the bottom and submit the issue.
   - type: dropdown
     id: browser
     attributes:
@@ -71,14 +58,28 @@ body:
         - iOS Safari
         - Android Chrome
       multiple: true
+  - type: input
+    id: issue_context
+    attributes:
+      label: Context
+      placeholder: |
+        e.g. Customer report, details of your exploratory testing, etc.
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        ## Additional context
+
+        The following section is optional. If you're an Automattician, you should be able to fill it in. If not, please scroll to the bottom and submit the issue.
   - type: dropdown
     id: site-type
     attributes:
-      label: Simple/Atomic
+      label: Platform (Simple, Atomic, or both?)
       description: (You may select more than one)
       options:
         - Simple
         - Atomic
+        - Self-hosted
       multiple: true
   - type: textarea
     id: other_notes
