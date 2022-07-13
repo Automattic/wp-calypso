@@ -10,6 +10,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDebounce } from 'use-debounce';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
 import { requestProductsList } from 'calypso/state/products-list/actions';
@@ -163,14 +164,15 @@ export function useCartForDIFM( selectedPages: string[] ): {
 	const { replaceProductsInCart, responseCart, isLoading, isPendingUpdate } = useShoppingCart(
 		cartKey ?? undefined
 	);
+	const debouncedSelectedPages = useDebounce( selectedPages, 500 );
 
 	const difmExtra = useCallback(
 		() =>
 			buildDIFMCartExtrasObject( {
 				...signupDependencies,
-				selectedPageTitles: selectedPages,
+				selectedPageTitles: debouncedSelectedPages,
 			} ),
-		[ signupDependencies, selectedPages ]
+		[ signupDependencies, debouncedSelectedPages ]
 	);
 
 	useEffect( () => {

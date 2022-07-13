@@ -24,13 +24,13 @@ import {
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { Dependencies } from 'calypso/signup/types';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
 import useCartForDIFM from './use-cart-for-difm';
+import type { Dependencies } from 'calypso/signup/types';
 
 import './style.scss';
 
@@ -206,7 +206,6 @@ interface StepProps {
 	goToStep: () => void;
 	goToNextStep: () => void;
 	signupDependencies: Dependencies;
-	isPaidPlan: boolean;
 }
 
 const StyledButton = styled( Button )`
