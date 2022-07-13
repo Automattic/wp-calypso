@@ -363,6 +363,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			language: locale,
 			// If the user fills out the site title with write intent, we show it on the design preview
 			siteTitle: intent === 'write' ? siteTitle : undefined,
+			verticalId: siteVerticalId,
 		} );
 
 		const stepContent = (
@@ -532,6 +533,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
+			verticalId={ siteVerticalId }
 		/>
 	);
 
