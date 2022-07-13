@@ -36,6 +36,7 @@ export interface ProductListItem {
 	};
 	sale_cost?: number;
 	is_privacy_protection_product_purchase_allowed?: boolean;
+	item_original_cost_for_quantity_one_display: string; // without discounts or volume, and quantity 1
 }
 
 export function getProductsList( state: AppState ): Record< string, ProductListItem > {
