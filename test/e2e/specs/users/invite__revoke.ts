@@ -1,5 +1,5 @@
 /**
- * @group calypso-pr
+ * @group calypso-release
  */
 
 import {
