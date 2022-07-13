@@ -206,7 +206,7 @@ class GoogleLoginButton extends Component {
 			const { code: error_code } = getErrorFromHTTPError( httpError );
 
 			if ( error_code ) {
-				this.props.recordTracksEvent( 'calypso_login_auth_code_exchange_failure', {
+				this.props.recordTracksEvent( 'calypso_login_social_auth_code_exchange_failure', {
 					social_account_type: 'google',
 					error_code,
 				} );
