@@ -74,7 +74,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } 
 							</div>
 						) : (
 							<>
-								<HelpCenterContent isMinimized={ isMinimized } />
+								<HelpCenterContent />
 								{ ! isMinimized && <HelpCenterFooter /> }
 							</>
 						) }
