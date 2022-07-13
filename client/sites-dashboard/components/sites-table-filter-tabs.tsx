@@ -9,7 +9,7 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data'; // eslint-
 
 interface SitesTableFilterTabsProps {
 	allSites: SiteData[];
-	children( filteredSites: SiteData[], filter: string ): JSX.Element;
+	children( filteredSites: SiteData[], status: string ): JSX.Element;
 	className?: string;
 	launchStatus?: string;
 }
