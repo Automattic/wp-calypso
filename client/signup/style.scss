@@ -23,7 +23,6 @@ body.is-section-signup {
 	&.is-videopress-signup {
 		background: var( --videopress-color-background-dark );
 		color: var( --videopress-color-text );
-		letter-spacing: -0.01em;
 
 		&.has-loading-screen-signup {
 			background: var( --videopress-color-background-dark );
@@ -71,6 +70,7 @@ body.is-section-signup {
 			}
 		}
 	}
+
 	&.is-p2-signup {
 		background: var( --p2-color-white );
 		color: var( --p2-color-text );
