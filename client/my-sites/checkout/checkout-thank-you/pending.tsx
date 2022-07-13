@@ -203,7 +203,7 @@ function redirectWithInterpolatedReceipt(
 	receiptId: number
 ): void {
 	if ( url?.includes( ':receiptId' ) ) {
-		performRedirect( url.replace( ':receiptId', `${ receiptId }` ) );
+		performRedirect( url.replaceAll( ':receiptId', `${ receiptId }` ) );
 		return;
 	}
 
