@@ -31,7 +31,7 @@ function ThirdPartyDevsAccount( { cart, translate } ) {
 	}
 
 	return (
-		<div className="checkout-step" style={ { padding: '24px' } }>
+		<div className="checkout-step" style={ { padding: '24px 24px 24px 59px' } }>
 			<FormCheckbox
 				style={ { margin: ' 8px 0 16px -24px' } }
 				onChange={ handleThirdPartyDevAccountConsent }
