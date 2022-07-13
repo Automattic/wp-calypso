@@ -137,9 +137,6 @@ class Login extends Component {
 		if ( this.props.onTwoFactorRequested ) {
 			this.props.onTwoFactorRequested( authType );
 		} else {
-			const currentURLQueryParameters = this.props?.redirectTo
-				? Object.fromEntries( new URL( this.props.redirectTo ).searchParams.entries() )
-				: '';
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
@@ -147,7 +144,7 @@ class Login extends Component {
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
-					isPartnerSignup: isPartnerSignupQuery( currentURLQueryParameters ),
+					isPartnerSignup: this.props.isPartnerSignup,
 				} )
 			);
 		}
