@@ -100,6 +100,24 @@
 	}
 }
 
+.plugin-details-CTA__installed-text {
+	color: var( --studio-gray-100 );
+	font-size: $font-body;
+	height: 40px;
+
+	.plugin-details-CTA__installed-text-quantity {
+		color: var( --studio-green-50 );
+	}
+
+	.plugin-details-CTA__installed-text-active {
+		color: var( --studio-green-60 );
+	}
+
+	.plugin-details-CTA__installed-text-inactive {
+		color: var( --studio-red-60 );
+	}
+}
+
 .is-placeholder {
 	.plugin-details-CTA__price,
 	.plugin-details-CTA__install,

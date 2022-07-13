@@ -4,7 +4,7 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { userCan } from 'calypso/lib/site/utils';
@@ -12,7 +12,11 @@ import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/bil
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
-import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
+import {
+	isRequestingForSites,
+	getSiteObjectsWithPlugin,
+	getPluginOnSite,
+} from 'calypso/state/plugins/installed/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -55,10 +59,18 @@ const PluginDetailsCTA = ( props ) => {
 		: FEATURE_INSTALL_PLUGINS;
 	const incompatiblePlugin = ! isJetpackSelfHosted && ! isCompatiblePlugin( pluginSlug );
 	const userCantManageTheSite = ! userCan( 'manage_options', selectedSite );
+	const sitePlugin = useSelector( ( state ) =>
+		getPluginOnSite( state, selectedSite?.ID, pluginSlug )
+	);
 
 	const shouldUpgrade =
 		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
 		! isJetpackSelfHosted;
+
+	const sitesWithPlugin = useSelector( ( state ) =>
+		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
+	);
+	const installedOnSitesQuantity = sitesWithPlugin.length;
 
 	// Eligibilities for Simple Sites.
 	// eslint-disable-next-line prefer-const
@@ -120,14 +132,55 @@ const PluginDetailsCTA = ( props ) => {
 		return <LegacyPluginDetailsCTA { ...props } />;
 	}
 
-	if ( isPluginInstalledOnsite ) {
+	if ( isPluginInstalledOnsite && sitePlugin ) {
 		// Check if already instlaled on the site
-		return null;
+		const activeText = translate( '{{span}}active{{/span}}', {
+			components: {
+				span: <span className="plugin-details-CTA__installed-text-active"></span>,
+			},
+		} );
+		const inactiveText = translate( '{{span}}inactive{{/span}}', {
+			components: {
+				span: <span className="plugin-details-CTA__installed-text-inactive"></span>,
+			},
+		} );
+		const { active } = sitePlugin;
+
+		return (
+			<div className="plugin-details-CTA__container">
+				<div className="plugin-details-CTA__installed-text">
+					{ translate( 'Installed and {{activation /}}', {
+						components: {
+							activation: active ? activeText : inactiveText,
+						},
+					} ) }
+				</div>
+				<Button>{ active ? translate( 'Deactivate' ) : translate( 'Activate' ) }</Button>
+			</div>
+		);
 	}
 
 	if ( ! selectedSite ) {
 		// Check if there is no site selected
-		return null;
+		return (
+			<div className="plugin-details-CTA__container">
+				<div className="plugin-details-CTA__installed-text">
+					{ !! installedOnSitesQuantity &&
+						translate(
+							'Installed on {{span}}%d site{{/span}}',
+							'Installed on {{span}}%d sites{{/span}}',
+							{
+								args: [ installedOnSitesQuantity ],
+								installedOnSitesQuantity,
+								components: {
+									span: <span className="plugin-details-CTA__installed-text-quantity"></span>,
+								},
+							}
+						) }
+				</div>
+				<Button>{ translate( 'Manage sites' ) }</Button>
+			</div>
+		);
 	}
 
 	return (
@@ -185,7 +238,8 @@ const PluginDetailsCTA = ( props ) => {
 					</span>
 				</div>
 			) }
-			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
+			{ /* Awaiting confirmation for adding this section */ }
+			{ /* { ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-CTA__t-and-c">
 					{ translate(
 						'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
@@ -205,7 +259,7 @@ const PluginDetailsCTA = ( props ) => {
 						}
 					) }
 				</div>
-			) }
+			) } */ }
 		</div>
 	);
 };

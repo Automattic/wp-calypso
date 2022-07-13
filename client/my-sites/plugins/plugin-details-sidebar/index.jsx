@@ -39,7 +39,7 @@ const PluginDetailsSidebar = ( {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const billingPeriod = useSelector( getBillingInterval );
-	const isFreePlan = isFreePlanProduct( selectedSite?.plan );
+	const isFreePlan = selectedSite && isFreePlanProduct( selectedSite.plan );
 	const pluginFeature = isMarketplaceProduct
 		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 		: FEATURE_INSTALL_PLUGINS;
@@ -115,7 +115,7 @@ const PluginDetailsSidebar = ( {
 				/>
 			) }
 
-			{ ! legacyVersion && (
+			{ ! legacyVersion && selectedSite && (
 				<USPS
 					shouldUpgrade={ shouldUpgrade }
 					isFreePlan={ isFreePlan }
@@ -124,7 +124,7 @@ const PluginDetailsSidebar = ( {
 				/>
 			) }
 
-			{ ! legacyVersion && (
+			{ ! legacyVersion && selectedSite && (
 				<PlanUSPS
 					shouldUpgrade={ shouldUpgrade }
 					isFreePlan={ isFreePlan }
