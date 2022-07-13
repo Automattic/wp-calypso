@@ -203,7 +203,7 @@ function redirectWithInterpolatedReceipt(
 	receiptId: number
 ): void {
 	if ( url?.includes( ':receiptId' ) ) {
-		performRedirect( url.replaceAll( ':receiptId', `${ receiptId }` ) );
+		performRedirect( url.replaceAll( ':receiptId', `${ receiptId }` ), siteSlug );
 		return;
 	}
 
@@ -211,27 +211,69 @@ function redirectWithInterpolatedReceipt(
 	// pathname, but preserve query strings or hashes.
 	const receiptPlaceholderRegexp = /\/pending([?#]|$)/;
 	if ( url && receiptPlaceholderRegexp.test( url ) ) {
-		performRedirect( url.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` ) );
+		performRedirect( url.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` ), siteSlug );
 		return;
 	}
 
 	if ( url ) {
-		performRedirect( url );
+		performRedirect( url, siteSlug );
 		return;
 	}
 
 	const defaultSuccessUrl = siteSlug
 		? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
 		: '/checkout/thank-you/no-site';
-	performRedirect( defaultSuccessUrl );
+	performRedirect( defaultSuccessUrl, siteSlug );
 }
 
-function performRedirect( url: string ): void {
+function performRedirect( url: string, siteSlug: string | undefined ): void {
 	if ( url.startsWith( '/' ) ) {
 		page( url );
 		return;
 	}
-	window.location.href = url;
+
+	const allowedHostsForRedirect = [
+		'wordpress.com',
+		'calypso.localhost',
+		'jetpack.cloud.localhost',
+		'cloud.jetpack.com',
+		siteSlug,
+	];
+
+	try {
+		const parsedUrl = new URL( url );
+		const { hostname, pathname } = parsedUrl;
+		if ( ! hostname ) {
+			throw new Error( `No hostname found for redirect '${ url }'` );
+		}
+
+		// For subdirectory site, check that both hostname and subdirectory matches
+		// the siteSlug (host.name::subdirectory).
+		if ( siteSlug?.includes( '::' ) ) {
+			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
+			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
+			if (
+				hostname !== hostnameFromSlug &&
+				! pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
+			) {
+				throw new Error( `Redirect '${ url }' is not valid for subdirectory site '${ siteSlug }'` );
+			}
+			window.location.href = url;
+			return;
+		}
+
+		if ( ! allowedHostsForRedirect.includes( hostname ) ) {
+			throw new Error( `Invalid hostname '${ hostname }' for redirect '${ url }'` );
+		}
+
+		window.location.href = url;
+	} catch ( err ) {
+		// eslint-disable-next-line no-console
+		console.error( `Redirecting to absolute url '${ url }' failed:`, err );
+	}
+
+	const fallbackUrl = '/checkout/thank-you/no-site';
+	page( fallbackUrl );
 }
 
 export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {
