@@ -19,3 +19,14 @@
 		font-size: 2.25rem;
 	}
 }
+
+// Make sure FAQ's are visible below the sticky header when linked to
+.jetpack-faq__section {
+	button {
+		scroll-margin-top: 74px;
+
+		@include break-large {
+			scroll-margin-top: 52px;
+		}
+	}
+}
