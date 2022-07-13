@@ -35,6 +35,7 @@
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
+		"difm/allow-woa-sites": false,
 		"fullstory": true,
 		"gdpr-banner": false,
 		"google-my-business": false,
