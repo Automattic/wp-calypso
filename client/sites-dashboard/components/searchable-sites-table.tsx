@@ -40,7 +40,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 							onSearch={ handleSearch }
 							delaySearch
 							isReskinned
-							placeholder={ __( 'Search by name or domain' ) + '...' }
+							placeholder={ __( 'Search by name or domain…' ) }
 						/>
 					</div>
 					<SitesTable sites={ filteredSites } />
