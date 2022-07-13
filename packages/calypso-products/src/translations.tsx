@@ -261,6 +261,32 @@ export const getJetpackProductsTaglines = (): Record<
 	};
 };
 
+export const getJetpackProductDisclaimers = (): Record< string, TranslateResult > => {
+	const backupT1Disclaimer = translate(
+		'* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.',
+		{
+			components: {
+				link: <a href="#backup-storage-limits-faq"></a>,
+			},
+		}
+	);
+	const backupT2Disclaimer = translate(
+		'* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.',
+		{
+			components: {
+				link: <a href="#backup-storage-limits-faq"></a>,
+			},
+		}
+	);
+
+	return {
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupT1Disclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1Disclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2Disclaimer,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2Disclaimer,
+	};
+};
+
 export const getJetpackProductsDescriptions = (): Record< string, TranslateResult > => {
 	const backupDailyDescription = translate(
 		'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'

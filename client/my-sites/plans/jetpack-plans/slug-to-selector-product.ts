@@ -3,6 +3,7 @@ import {
 	getJetpackProductTagline,
 	getJetpackProductCallToAction,
 	getJetpackProductDescription,
+	getJetpackProductDisclaimer,
 	getJetpackProductShortName,
 	getMonthlyPlanByYearly,
 	getPlan,
@@ -127,6 +128,7 @@ function itemToSelectorProduct(
 			features: {
 				items: buildCardFeaturesFromItem( item ),
 			},
+			disclaimer: getJetpackProductDisclaimer( item ),
 		};
 	}
 
