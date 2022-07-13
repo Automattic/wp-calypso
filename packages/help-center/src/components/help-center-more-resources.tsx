@@ -3,7 +3,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import WhatsNewGuide from '@automattic/whats-new';
 import { Button, SVG, Circle } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
@@ -25,6 +25,7 @@ export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
 	const [ showWhatsNewDot, setShowWhatsNewDot ] = useState( false );
 	const sectionName = useSelector( getSectionName );
+	const locale = useLocale();
 
 	const { isBusinessOrEcomPlanUser, siteId, isSimpleSite } = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
@@ -78,19 +79,21 @@ export const HelpCenterMoreResources = () => {
 
 	return (
 		<>
-			<h3 className="help-center__section-title">{ __( 'More Resources' ) }</h3>
+			<h3 className="help-center__section-title">
+				{ __( 'More Resources', __i18n_text_domain__ ) }
+			</h3>
 			<ul className="inline-help__more-resources" aria-labelledby="inline-help__more-resources">
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
+							href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/', locale ) }
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__video"
 							onClick={ () => trackMoreResourcesButtonClick( 'video' ) }
 						>
 							<Icon icon={ video } size={ 24 } />
-							<span>{ __( 'Video tutorials' ) }</span>
+							<span>{ __( 'Video tutorials', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -98,14 +101,14 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://wordpress.com/webinars' ) }
+							href={ localizeUrl( 'https://wordpress.com/webinars', locale ) }
 							rel="noreferrer"
 							target="_blank"
 							onClick={ trackWebinairsButtonClick }
 							className="inline-help__capture-video"
 						>
 							<Icon icon={ captureVideo } size={ 24 } />
-							<span>{ __( 'Webinars' ) }</span>
+							<span>{ __( 'Webinars', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -113,14 +116,14 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://wpcourses.com/?ref=wpcom-help-more-resources' ) }
+							href={ localizeUrl( 'https://wpcourses.com/?ref=wpcom-help-more-resources', locale ) }
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__desktop"
 							onClick={ () => trackMoreResourcesButtonClick( 'courses' ) }
 						>
 							<Icon icon={ desktop } size={ 24 } />
-							<span>{ __( 'Courses' ) }</span>
+							<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -128,14 +131,14 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://learn.wordpress.com' ) }
+							href={ localizeUrl( 'https://learn.wordpress.com', locale ) }
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__format-list-numbered"
 							onClick={ () => trackMoreResourcesButtonClick( 'guides' ) }
 						>
 							<Icon icon={ formatListNumbered } size={ 24 } />
-							<span>{ __( 'Step-by-step guides' ) }</span>
+							<span>{ __( 'Step-by-step guides', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -149,7 +152,7 @@ export const HelpCenterMoreResources = () => {
 								className="inline-help__new-releases"
 							>
 								<Icon icon={ <NewReleases /> } size={ 24 } />
-								<span>{ __( "What's new" ) }</span>
+								<span>{ __( "What's new", __i18n_text_domain__ ) }</span>
 								{ showWhatsNewDot && (
 									<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
 								) }
