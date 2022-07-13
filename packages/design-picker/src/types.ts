@@ -42,6 +42,7 @@ export interface Design {
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
 	preview?: 'static';
 	design_type?: DesignType;
+	price?: string;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;
@@ -65,6 +66,7 @@ export interface DesignPreviewOptions {
 	siteTitle?: string;
 	viewport_width?: number;
 	viewport_height?: number;
+	use_screenshot_overrides?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

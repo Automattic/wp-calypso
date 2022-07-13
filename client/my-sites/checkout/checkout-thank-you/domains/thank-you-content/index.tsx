@@ -1,11 +1,13 @@
-import { Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import DomainMappingProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-mapping';
 import DomainRegistrationThankYouProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-registration';
 import DomainTransferProps from 'calypso/my-sites/checkout/checkout-thank-you/domains/thank-you-content/domain-transfer';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import {
+	emailManagementInbox,
+	emailManagementPurchaseNewEmailAccount,
+} from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import type { ThankYouNextStepProps } from 'calypso/components/thank-you/types';
 import type {
@@ -23,18 +25,21 @@ const thankYouContentGetter: Record< DomainThankYouType, DomainThankYouPropsGett
 export default thankYouContentGetter;
 
 interface StepCTAProps {
-	domainType: DomainThankYouType;
+	siteName: string;
 	email?: string;
 	primary: boolean;
 }
 
-const StepCTA = ( { email, primary, domainType }: StepCTAProps ) => {
+const StepCTA = ( { email, primary, siteName }: StepCTAProps ) => {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
+
+	const redirectUrl = `${ window.location.protocol }//${
+		window.location.host
+	}${ emailManagementInbox( siteName ) }`;
 
 	return (
 		<FullWidthButton
-			href={ getTitanEmailUrl( titanAppsUrlPrefix, email, true ) }
-			target="_blank"
+			href={ getTitanEmailUrl( titanAppsUrlPrefix, email, true, redirectUrl ) }
 			primary={ primary }
 			onClick={ () => {
 				recordEmailAppLaunchEvent( {
@@ -45,7 +50,6 @@ const StepCTA = ( { email, primary, domainType }: StepCTAProps ) => {
 			} }
 		>
 			{ translate( 'Go to Inbox' ) }
-			<Gridicon className={ `domain-${ domainType }__icon-external` } icon="external" />
 		</FullWidthButton>
 	);
 };
@@ -98,6 +102,6 @@ export function buildDomainStepForProfessionalEmail(
 		stepKey: `domain_${ domainType }_whats_next_email_setup_view_inbox`,
 		stepTitle: translate( 'Access your inbox' ),
 		stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
-		stepCta: <StepCTA email={ email } primary={ primary } domainType={ domainType } />,
+		stepCta: <StepCTA siteName={ selectedSiteSlug } email={ email } primary={ primary } />,
 	};
 }

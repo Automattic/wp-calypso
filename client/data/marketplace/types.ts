@@ -23,7 +23,7 @@ export type Plugin = {
 	last_updated?: string;
 	short_description?: string;
 	download_link?: string;
-	icons?: Record< string, string >;
+	icon?: string;
 	railcar: Railcar;
 };
 
@@ -53,6 +53,14 @@ export type ESIndexResult = {
 	'plugin.support_threads'?: number;
 	'plugin.support_threads_resolved'?: number;
 	'plugin.active_installs'?: number;
+	'plugin.icons'?: string;
+};
+
+export type Icon = {
+	filename: string;
+	revision: string;
+	resolution: string;
+	location: string;
 };
 
 export type Railcar = Record< string, string | number >;

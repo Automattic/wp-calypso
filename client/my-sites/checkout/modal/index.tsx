@@ -21,6 +21,9 @@ export interface Props {
 	title?: string;
 	productAliasFromUrl?: string;
 	redirectTo?: string;
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	checkoutOnSuccessCallback?: () => void;
 	onClose?: () => void;
 }
@@ -54,6 +57,9 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 		page( previousRoute );
 	};
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	const handleAfterPaymentComplete = () => {
 		checkoutOnSuccessCallback?.();
 		handleRequestClose();

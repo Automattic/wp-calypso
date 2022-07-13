@@ -19,6 +19,8 @@ export const TEST_ACCOUNT_NAMES = [
 	'calypsoPreReleaseUser',
 	'i18nUser',
 	'p2User',
+	'totpUser',
+	'smsUser',
 	'jetpackUser',
 	'jetpackUserPREMIUM',
 	'jetpackUserJN',
@@ -145,6 +147,7 @@ export class SecretsManager {
 				signupInboxId: 'FAKE_VALUE',
 				domainsInboxId: 'FAKE_VALUE',
 				defaultUserInboxId: 'FAKE_VALUE',
+				totpUserInboxId: 'FAKE_VALUE',
 			},
 			testAccounts: {
 				defaultUser: { ...fakeAccount },
@@ -161,14 +164,21 @@ export class SecretsManager {
 				martechTosUser: { ...fakeAccount },
 				calypsoPreReleaseUser: { ...fakeAccount },
 				i18nUser: { ...fakeAccount },
-				// This one needs a totpKey
+				// The following two needs a totpKey
 				p2User: { ...fakeAccount, totpKey: 'FAKE_VALUE' },
+				totpUser: { ...fakeAccount, totpKey: 'FAKE_VALUE' },
+				// The following user needs smsNumber
+				smsUser: { ...fakeAccount, smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' } },
 				jetpackUser: { ...fakeAccount },
 				jetpackUserPREMIUM: { ...fakeAccount },
 				jetpackUserJN: { ...fakeAccount },
 				commentingUser: { ...fakeAccount },
 				notificationsUser: { ...fakeAccount },
-				googleLoginUser: { ...fakeAccount },
+				googleLoginUser: {
+					...fakeAccount,
+					smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' },
+					totpKey: 'FAKE_VALUE',
+				},
 			},
 			otherTestSites: {
 				notifications: 'FAKE_VALUE',

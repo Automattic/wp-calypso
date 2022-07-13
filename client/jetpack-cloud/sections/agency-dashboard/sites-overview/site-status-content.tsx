@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import SiteSetFavorite from './site-set-favorite';
 import { getRowMetaData } from './utils';
 import type { AllowedTypes, SiteData } from './types';
 
@@ -13,12 +14,14 @@ interface Props {
 	rows: SiteData;
 	type: AllowedTypes;
 	isLargeScreen?: boolean;
+	isFavorite?: boolean;
 }
 
 export default function SiteStatusContent( {
 	rows,
 	type,
 	isLargeScreen = false,
+	isFavorite = false,
 }: Props ): ReactElement {
 	const dispatch = useDispatch();
 
@@ -83,8 +86,14 @@ export default function SiteStatusContent( {
 				</span>
 			);
 		}
+
 		return (
 			<>
+				<SiteSetFavorite
+					isFavorite={ isFavorite }
+					siteId={ rows.site.value.blog_id }
+					siteUrl={ rows.site.value.url }
+				/>
 				<span className="sites-overview__row-text">{ value.url }</span>
 				<span className="sites-overview__overlay"></span>
 				{ errorContent }

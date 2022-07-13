@@ -15,7 +15,7 @@ import './style.scss';
 interface Props {
 	isLargeScreen?: boolean;
 	site: SiteNode;
-	siteError: boolean;
+	siteError: boolean | undefined;
 }
 
 export default function SiteActions( {

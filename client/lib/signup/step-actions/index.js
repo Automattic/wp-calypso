@@ -176,7 +176,6 @@ function getNewSiteParams( {
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
-			enable_fse: true,
 		},
 		validate: false,
 	};
@@ -281,11 +280,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		return;
 	}
 
-	recordTracksEvent( 'calypso_fse_enrolled', {
-		flow: flowToCheck,
-		site_enrolled: !! newSiteParams.options.enable_fse,
-	} );
-
 	const locale = getLocaleSlug();
 
 	wpcom.req.post(
@@ -363,8 +357,8 @@ function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
  * just add the DIFM Lite product to the cart.
  */
 export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
-	const { newOrExistingSiteChoice } = dependencies;
 	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
+	const { newOrExistingSiteChoice } = signupDependencies;
 
 	const providedDependencies = { ...signupDependencies, ...dependencies };
 
@@ -519,6 +513,28 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+}
+export function addAddOnsToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	siteSlug,
+	stepProvidedDependencies
+) {
+	const slug = siteSlug || dependencies.siteSlug;
+	const { cartItem } = stepProvidedItems;
+
+	const providedDependencies = stepProvidedDependencies || { cartItem };
+	if ( ! cartItem || isEmpty( cartItem ) ) {
+		// the user hans't selected any addons
+		defer( callback );
+
+		return;
+	}
+
+	const newCartItems = cartItem.filter( ( item ) => item );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
 
 export function addDomainToCart(
@@ -1042,6 +1058,23 @@ export function excludeStepIfProfileComplete( stepName, defaultDependencies, nex
 		debug( 'Skipping P2 complete profile step' );
 		recordTracksEvent( 'calypso_signup_p2_complete_profile_autoskip' );
 		nextProps.submitSignupStep( { stepName, wasSkipped: true } );
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { store, submitSignupStep } = nextProps;
+
+	const state = store.getState();
+	const cartItem = get( getSignupDependencyStore( state ), 'cartItem', null );
+	let fulfilledDependencies = [];
+
+	if ( cartItem ) {
+		submitSignupStep( { stepName, cartItem: [], wasSkipped: true }, { cartItem: [] } );
+		fulfilledDependencies = [ 'cartItem' ];
+	}
+
+	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
 		flows.excludeStep( stepName );
 	}
 }

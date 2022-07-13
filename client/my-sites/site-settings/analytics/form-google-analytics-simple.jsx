@@ -79,7 +79,11 @@ const GoogleAnalyticsSimpleForm = ( {
 			/>
 		);
 		return (
-			<form id="analytics" onSubmit={ handleSubmitForm }>
+			<form
+				aria-label="Google Analytics Site Settings"
+				id="analytics"
+				onSubmit={ handleSubmitForm }
+			>
 				<SettingsSectionHeader
 					disabled={ isSubmitButtonDisabled }
 					isSaving={ isSavingSettings }

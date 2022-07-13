@@ -55,7 +55,7 @@ export interface SitePlanData {
 	productSlug: string;
 }
 
-interface SitesPlansResult {
+export interface SitesPlansResult {
 	data: SitePlanData[];
 }
 
@@ -66,9 +66,7 @@ export function useGetProductVariants(
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
-	const sitePlans: SitesPlansResult | null = useSelector( ( state ) =>
-		siteId ? getPlansBySiteId( state, siteId ) : null
-	);
+	const sitePlans: SitesPlansResult = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
 	const activePlan: SitePlanData | undefined = sitePlans?.data?.find(
 		( plan ) => plan.currentPlan
 	);
@@ -78,7 +76,7 @@ export function useGetProductVariants(
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
-		return siteId ? computeProductsWithPrices( state, siteId, variantProductSlugs ) : [];
+		return computeProductsWithPrices( state, siteId, variantProductSlugs );
 	} );
 
 	const [ haveFetchedProducts, setHaveFetchedProducts ] = useState( false );

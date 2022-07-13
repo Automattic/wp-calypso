@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
@@ -23,6 +24,7 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -31,6 +33,7 @@ class SiteSettingsPerformance extends Component {
 		const {
 			fields,
 			handleAutosavingToggle,
+			hasManagePluginsFeature,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -91,7 +94,7 @@ class SiteSettingsPerformance extends Component {
 
 				{ showCloudflare && ! siteIsJetpackNonAtomic && <Cloudflare /> }
 
-				{ siteIsJetpack && (
+				{ ( siteIsJetpackNonAtomic || ( siteIsAtomic && hasManagePluginsFeature ) ) && (
 					<Fragment>
 						<QueryJetpackModules siteId={ siteId } />
 
@@ -131,7 +134,7 @@ class SiteSettingsPerformance extends Component {
 					</Fragment>
 				) }
 
-				{ siteIsJetpack ? (
+				{ siteIsJetpackNonAtomic || ( siteIsAtomic && hasManagePluginsFeature ) ? (
 					<AmpJetpack />
 				) : (
 					<AmpWpcom
@@ -165,6 +168,7 @@ const connectComponent = connect( ( state ) => {
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 
 	return {
+		hasManagePluginsFeature: siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ),
 		site,
 		siteIsJetpack,
 		siteIsAtomic,

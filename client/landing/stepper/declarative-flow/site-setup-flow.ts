@@ -4,9 +4,10 @@ import { useDesignsBySite } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
+import { ImporterMainPlatform } from 'calypso/blocks/import/types';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { useFSEStatus } from '../hooks/use-fse-status';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
@@ -30,10 +31,11 @@ export const siteSetupFlow: Flow = {
 
 	useSteps() {
 		const isEnglishLocale = useIsEnglishLocale();
+		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 
 		return [
-			...( isEnabled( 'signup/goals-step' ) && isEnglishLocale ? [ 'goals' ] : [] ),
-			...( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale ? [ 'vertical' ] : [] ),
+			...( isEnabled( 'signup/goals-step' ) && isEnabledFTM ? [ 'goals' ] : [] ),
+			...( isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM ? [ 'vertical' ] : [] ),
 			'intent',
 			'options',
 			'designSetup',
@@ -62,6 +64,7 @@ export const siteSetupFlow: Flow = {
 			'wooConfirm',
 			'editEmail',
 			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
+			'difmStartingPoint',
 		] as StepPath[];
 	},
 	useSideEffect() {
@@ -77,6 +80,8 @@ export const siteSetupFlow: Flow = {
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
 		const isEnglishLocale = useIsEnglishLocale();
+		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
+		const urlQueryParams = useQuery();
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -92,13 +97,12 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetGoals, resetIntent } =
+		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
-		const { FSEActive } = useFSEStatus();
 		const dispatch = reduxDispatch();
-		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale;
-		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnglishLocale;
+		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
+		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
 		// Set up Step progress for Woo flow - "Step 2 of 4"
 		if ( intent === 'sell' && storeType === 'power' ) {
@@ -144,6 +148,7 @@ export const siteSetupFlow: Flow = {
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
 			resetGoals();
 			resetIntent();
+			resetSelectedDesign();
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -177,7 +182,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					// End of woo flow
-					if ( storeType === 'power' ) {
+					if ( intent === 'sell' && storeType === 'power' ) {
 						dispatch( recordTracksEvent( 'calypso_woocommerce_dashboard_redirect' ) );
 
 						if (
@@ -188,10 +193,6 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'wooVerifyEmail' );
 						}
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
-					}
-
-					if ( FSEActive && intent !== 'write' ) {
-						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
 					return exitFlow( `/home/${ siteSlug }` );
@@ -223,7 +224,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					if ( intent === SiteIntent.DIFM ) {
-						return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+						return navigate( 'difmStartingPoint' );
 					}
 
 					if ( verticalsStepEnabled ) {
@@ -259,7 +260,7 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'options' );
 						}
 						case 'difm': {
-							return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
+							return navigate( 'difmStartingPoint' );
 						}
 						default: {
 							return navigate( submittedIntent as StepPath );
@@ -298,7 +299,7 @@ export const siteSetupFlow: Flow = {
 					const [ checkoutUrl ] = params;
 
 					if ( checkoutUrl ) {
-						return exitFlow( checkoutUrl.toString() );
+						window.location.replace( checkoutUrl.toString() );
 					}
 
 					return navigate( 'wooTransfer' );
@@ -343,7 +344,17 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'intent' );
 				}
 
-				case 'importReady':
+				case 'importReady': {
+					if (
+						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
+							providedDependencies?.platform as ImporterMainPlatform
+						) !== -1
+					) {
+						return exitFlow( providedDependencies?.url as string );
+					}
+
+					return navigate( providedDependencies?.url as StepPath );
+				}
 				case 'importReadyPreview': {
 					return navigate( providedDependencies?.url as StepPath );
 				}
@@ -358,6 +369,10 @@ export const siteSetupFlow: Flow = {
 					}
 
 					return navigate( providedDependencies?.url as StepPath );
+				}
+
+				case 'difmStartingPoint': {
+					return exitFlow( `/start/website-design-services/?siteSlug=${ siteSlug }` );
 				}
 			}
 		}
@@ -407,6 +422,15 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'wooVerifyEmail' );
 
 				case 'importList':
+					// eslint-disable-next-line no-case-declarations
+					const backToStep = urlQueryParams.get( 'backToStep' );
+
+					if ( backToStep ) {
+						return navigate( `${ backToStep as StepPath }?siteSlug=${ siteSlug }` );
+					}
+
+					return navigate( 'import' );
+
 				case 'importReady':
 				case 'importReadyNot':
 				case 'importReadyWpcom':
@@ -421,6 +445,9 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'import' );
 
 				case 'vertical':
+					if ( intent === 'difm' ) {
+						return navigate( 'difmStartingPoint' );
+					}
 					if ( goalsStepEnabled ) {
 						return navigate( 'goals' );
 					}
@@ -434,6 +461,11 @@ export const siteSetupFlow: Flow = {
 					}
 
 				case 'import':
+					if ( goalsStepEnabled ) {
+						return navigate( 'goals' );
+					}
+
+				case 'difmStartingPoint':
 					if ( goalsStepEnabled ) {
 						return navigate( 'goals' );
 					}
@@ -463,6 +495,14 @@ export const siteSetupFlow: Flow = {
 
 				case 'import':
 					return navigate( 'importList' );
+
+				case 'difmStartingPoint': {
+					if ( verticalsStepEnabled ) {
+						return navigate( 'vertical' );
+					}
+
+					return navigate( 'designSetup' );
+				}
 
 				default:
 					return navigate( 'intent' );

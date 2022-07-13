@@ -11,8 +11,6 @@ import googleDriveIcon from 'calypso/assets/images/email-providers/google-worksp
 import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/gmail.svg';
 import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/sheets.svg';
 import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/slides.svg';
-import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/flat/calendar.svg';
-import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/flat/contacts.svg';
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -37,13 +35,7 @@ import {
 	getGoogleSlidesUrl,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
-import {
-	getTitanCalendarUrl,
-	getTitanContactsUrl,
-	getTitanEmailUrl,
-	hasTitanMailWithUs,
-	useTitanAppsUrlPrefix,
-} from 'calypso/lib/titan';
+import { getTitanEmailUrl, hasTitanMailWithUs, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
@@ -89,31 +81,14 @@ const getTitanMenuItems = ( {
 
 	return [
 		{
-			href: getTitanEmailUrl( titanAppsUrlPrefix, email ),
+			href: getTitanEmailUrl( titanAppsUrlPrefix, email, false, window.location.href ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
+			isInternalLink: true,
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'webmail' ),
-		},
-		{
-			href: getTitanCalendarUrl( titanAppsUrlPrefix, email ),
-			image: titanCalendarIcon,
-			imageAltText: translate( 'Titan Calendar icon' ),
-			title: translate( 'View Calendar', {
-				comment: 'View the Calendar application for Titan',
-			} ),
-			onClick: getTitanClickHandler( 'calendar' ),
-		},
-		{
-			href: getTitanContactsUrl( titanAppsUrlPrefix, email ),
-			image: titanContactsIcon,
-			imageAltText: translate( 'Titan Contacts icon' ),
-			title: translate( 'View Contacts', {
-				comment: 'View the Contacts application for Titan',
-			} ),
-			onClick: getTitanClickHandler( 'contacts' ),
 		},
 		...( canCurrentUserAddEmail( domain )
 			? [

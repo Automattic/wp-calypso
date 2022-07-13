@@ -1,6 +1,7 @@
 
-.site-card__vertical-align-middle {
+.site-card__card-toggle-icon {
 	vertical-align: middle;
+	margin-inline-start: 32px;
 }
 .site-card__header {
 	position: relative;
@@ -20,6 +21,10 @@
 }
 .site-card__expanded-content {
 	padding: 0 0.3em;
+
+	a {
+		display: flex;
+	}
 }
 .site-card__expanded-content-list {
 	margin: 0 -5px;

@@ -7,6 +7,13 @@ export function getPlansBySite( state, site ) {
 	return getPlansBySiteId( state, site.ID );
 }
 
+/**
+ * Returns plans for a site Id
+ *
+ * @param  {object} state        global state
+ * @param  {number|undefined} siteId       the site id
+ * @returns {import('calypso/my-sites/checkout/composite-checkout/hooks/product-variants').SitesPlansResult} the matching plan
+ */
 export function getPlansBySiteId( state, siteId ) {
 	if ( ! siteId ) {
 		return initialSiteState;

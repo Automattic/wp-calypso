@@ -88,12 +88,16 @@ export class LoginPage {
 
 	/**
 	 * Clicks the "Continue with Google" link.
+	 *
+	 * @returns {Promise<Page>} Handler to the popup page.
 	 */
-	async clickLoginWithGoogle(): Promise< Locator > {
+	async clickLoginWithGoogle(): Promise< Page > {
 		const locator = await this.page.locator( ':text-is("Continue with Google")' );
-		await locator.click();
+		// Intercept the popup that appears when Login with Google button
+		// is clicked.
+		const [ page ] = await Promise.all( [ this.page.waitForEvent( 'popup' ), locator.click() ] );
 
-		return locator;
+		return page;
 	}
 
 	/**

@@ -61,7 +61,7 @@ export function items( state = {}, action ) {
 			return updatePluginState(
 				state,
 				pluginSlug,
-				Object.assign( { fetched: false, wporg: false } )
+				Object.assign( { fetched: false, wporg: false, error: action.error } )
 			);
 		default:
 			return state;

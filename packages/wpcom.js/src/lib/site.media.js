@@ -153,18 +153,11 @@ Media.prototype.addFiles = function ( query, files, fn ) {
 		}
 	}
 
-	const videoFiles = [];
-	const isArray = Array.isArray( files );
-	files = isArray ? files : [ files ];
+	if ( ! Array.isArray( files ) ) {
+		files = [ files ];
+	}
 
-	files = files.filter( ( file ) => {
-		if ( !! file.type && file.type.startsWith( 'video/' ) ) {
-			videoFiles.push( file );
-			return false;
-		}
-		return true;
-	} );
-
+	const videoFiles = this.filterFilesUploadableOnVideoPress( files );
 	if ( videoFiles.length ) {
 		const uploader = new TusUploader( this.wpcom, this._sid );
 		return uploader.startUpload( videoFiles );
@@ -176,6 +169,26 @@ Media.prototype.addFiles = function ( query, files, fn ) {
 	};
 
 	return this.wpcom.req.post( params, query, null, fn );
+};
+
+/**
+ * Filters an array to only return files that can use VideoPress for upload.
+ *
+ * @param {Array} files An array of file objects
+ * @returns {Array}
+ */
+Media.prototype.filterFilesUploadableOnVideoPress = function ( files ) {
+	return files.filter( ( file ) => this.fileCanBeUploadedOnVideoPress( file ) );
+};
+
+/**
+ * Checks whether a media file can use VideoPress for upload.
+ *
+ * @param {object} file A file object
+ * @returns {boolean}
+ */
+Media.prototype.fileCanBeUploadedOnVideoPress = function ( file ) {
+	return !! file.canUseVideoPress && !! file.type && file.type.startsWith( 'video/' );
 };
 
 /**

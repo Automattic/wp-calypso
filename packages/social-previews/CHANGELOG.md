@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.5 (unreleased)
+
+- Declare an optional peer dependency on `@babel/runtime`, for CommonJS environments. This dependency already existed previously, it just wasn't declared.
+
 ## v1.1.4 (2022-05-25)
 
 - Add missing dependency on `@emotion/react`.

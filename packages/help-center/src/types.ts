@@ -35,3 +35,7 @@ export interface Article {
 	post_id?: string;
 	blog_id?: string;
 }
+
+export interface FeatureFlags {
+	loadNextStepsTutorial: boolean;
+}

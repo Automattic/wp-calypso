@@ -3,12 +3,14 @@
 .yarn
 /assets/
 /build/
+dist/
 /public/
 /vendor/
 node_modules/
 !.eslintrc.js
 /client/server/devdocs/search-index.js
 /packages/calypso-codemods/tests
+/packages/webpack-rtl-plugin/test/dist*/
 /packages/wp-babel-makepot/test/examples
 /packages/wpcom.js/webapp/tests/mocha.js
 /desktop/build/

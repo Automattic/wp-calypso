@@ -4,6 +4,7 @@
 
 import { render } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { siteColumns } from '../../utils';
@@ -15,14 +16,24 @@ describe( '<SiteTable>', () => {
 	const blogId = 1234;
 	const pluginUpdates = [ 'plugin-1', 'plugin-2', 'plugin-3' ];
 	const siteUrl = 'test.jurassic.ninja';
+	const siteObj = {
+		blog_id: blogId,
+		url: 'test.jurassic.ninja',
+		url_with_scheme: 'https://test.jurassic.ninja/',
+		monitor_active: false,
+		monitor_site_status: false,
+		has_scan: true,
+		has_backup: false,
+		latest_scan_threats_found: [],
+		latest_backup_status: '',
+		is_connection_healthy: true,
+		awaiting_plugin_updates: [],
+		is_favorite: false,
+	};
 	const items: Array< SiteData > = [
 		{
 			site: {
-				value: {
-					blog_id: blogId,
-					url: siteUrl,
-					url_with_scheme: `https://${ siteUrl }/`,
-				},
+				value: siteObj,
 				error: false,
 				type: 'site',
 				status: '',
@@ -63,16 +74,19 @@ describe( '<SiteTable>', () => {
 	];
 	const props = {
 		items,
-		isFetching: false,
+		isLoading: false,
 		columns: siteColumns,
 	};
 	const initialState = {};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
+	const queryClient = new QueryClient();
 
 	const { getByTestId } = render(
 		<Provider store={ store }>
-			<SiteTable { ...props } />
+			<QueryClientProvider client={ queryClient }>
+				<SiteTable { ...props } />
+			</QueryClientProvider>
 		</Provider>
 	);
 

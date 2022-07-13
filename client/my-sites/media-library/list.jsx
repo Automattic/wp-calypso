@@ -145,10 +145,7 @@ export class MediaLibraryList extends Component {
 	};
 
 	getItemGroup = ( item ) => {
-		const minDate = Math.min(
-			new Date( item.date.slice( 0, 10 ) ).getTime(),
-			new Date().getTime()
-		);
+		const minDate = Math.min( new Date( item.date ).getTime(), new Date().getTime() );
 		return this.props.moment( minDate ).format( 'YYYY-MM-DD' );
 	};
 

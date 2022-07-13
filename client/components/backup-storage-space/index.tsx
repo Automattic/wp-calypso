@@ -4,11 +4,9 @@ import { useSelector } from 'react-redux';
 import { useQueryRewindPolicies } from 'calypso/components/data/query-rewind-policies';
 import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
-import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 import {
 	getRewindBytesAvailable,
 	getRewindBytesUsed,
-	isRequestingRewindPolicies,
 	isRequestingRewindSize,
 } from 'calypso/state/rewind/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -29,16 +27,7 @@ const BackupStorageSpace: React.FC = () => {
 	const usageLevel = getUsageLevel( bytesUsed, bytesAvailable ) ?? StorageUsageLevels.Normal;
 
 	const showWarning = usageLevel !== StorageUsageLevels.Normal;
-
-	const requestingPurchases = useSelector( isFetchingSitePurchases );
-	const requestingPolicies = useSelector( ( state ) =>
-		isRequestingRewindPolicies( state, siteId )
-	);
 	const requestingSize = useSelector( ( state ) => isRequestingRewindSize( state, siteId ) );
-
-	if ( requestingPolicies || requestingPurchases ) {
-		return <Card className="backup-storage-space__loading" />;
-	}
 
 	// Sites without a storage policy don't have a notion of "bytes available,"
 	// so this value will be undefined; if so, don't render

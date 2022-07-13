@@ -23,7 +23,7 @@ const Cloudflare = () => {
 	const hasJetpackCDN = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_CDN )
 	);
-	const upgradeLink = `/plans/${ siteSlug }?customerType=business`;
+	const upgradeLink = `/checkout/${ siteSlug }/pro`;
 
 	const recordClick = () => {
 		dispatch(

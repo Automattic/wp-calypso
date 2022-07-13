@@ -733,6 +733,7 @@ class HelpContact extends Component {
 export default connect(
 	( state ) => {
 		const selectedSite = getHelpSelectedSite( state );
+		const isChatEligible = isHappychatUserEligible( state );
 		return {
 			selectedSite,
 			currentUserLocale: getCurrentUserLocale( state ),
@@ -744,12 +745,12 @@ export default connect(
 			isDirectlyReady: isDirectlyReady( state ),
 			isDirectlyUninitialized: isDirectlyUninitialized( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isHappychatUserEligible: isHappychatUserEligible( state ),
+			isHappychatUserEligible: isChatEligible,
 			localizedLanguageNames: getLocalizedLanguageNames( state ),
 			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
 			ticketSupportRequestError: getTicketSupportRequestError( state ),
 			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
-			shouldStartHappychatConnection: ! isRequestingSites( state ) && selectedSite,
+			shouldStartHappychatConnection: ! isRequestingSites( state ) && isChatEligible,
 			isRequestingSites: isRequestingSites( state ),
 			supportVariation: getInlineHelpSupportVariation( state ),
 		};

@@ -14,6 +14,9 @@ export interface SiteData {
 	products?: SiteDataPlan[];
 	capabilities?: Record< string, boolean >;
 	is_wpcom_atomic?: boolean;
+	is_private?: boolean;
+	is_coming_soon?: boolean;
+	launch_status?: string;
 	// TODO: fill out the rest of this
 }
 

@@ -1,4 +1,5 @@
 import { FormInputValidation } from '@automattic/components';
+import { TranslateResult } from 'i18n-calypso';
 import { InvalidEvent, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -16,6 +17,7 @@ import './style.scss';
 
 interface MailboxFormFieldProps {
 	field: MailboxFormFieldBase< string >;
+	fieldLabelText?: TranslateResult;
 	isAutoFocusEnabled?: boolean;
 	isFirstVisibleField?: boolean;
 	isPasswordField?: boolean;
@@ -75,15 +77,19 @@ const MailboxField = ( {
 	children,
 	...props
 }: MailboxFormFieldProps & { children?: JSX.Element } ): JSX.Element | null => {
+	const defaultFieldLabelText = useGetDefaultFieldLabelText(
+		props.field.fieldName as MutableFormFieldNames
+	);
+
 	const {
 		field: originalField,
+		fieldLabelText = defaultFieldLabelText,
 		lowerCaseChangeValue = false,
 		onRequestFieldValidation,
 		onFieldValueChanged = () => undefined,
 	} = props;
 
 	const [ { field }, setFieldState ] = useState( { field: originalField } );
-	const fieldLabelText = useGetDefaultFieldLabelText( field.fieldName as MutableFormFieldNames );
 
 	if ( ! field.isVisible ) {
 		return null;
@@ -95,9 +101,11 @@ const MailboxField = ( {
 
 	const onBlur = () => {
 		if ( ! field.isTouched ) {
-			field.isTouched = field.hasValidValue();
+			field.isTouched = field.value?.length > 0;
 		}
-		onRequestFieldValidation( field );
+		if ( field.isTouched ) {
+			onRequestFieldValidation( field );
+		}
 		field.dispatchState();
 	};
 

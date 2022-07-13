@@ -75,6 +75,7 @@ export type EventListener = ( ...payload: any ) => any;
 
 export interface I18N {
 	translate( options: DeprecatedTranslateOptions ): React.ReactChild;
+	translate( original: string ): string;
 	translate( original: string ): React.ReactChild;
 	translate( original: string, options: TranslateOptions ): React.ReactChild;
 	translate( original: string, options: TranslateOptionsText ): string;

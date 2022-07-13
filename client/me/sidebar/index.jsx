@@ -70,7 +70,7 @@ class MeSidebar extends Component {
 							onClick={ this.onSignOut }
 							title={ translate( 'Log out of WordPress.com' ) }
 						>
-							<span class="sidebar__me-signout-text">{ translate( 'Log out' ) }</span>
+							<span className="sidebar__me-signout-text">{ translate( 'Log out' ) }</span>
 							<Gridicon icon="popout" size={ 16 } />
 						</Button>
 					</div>

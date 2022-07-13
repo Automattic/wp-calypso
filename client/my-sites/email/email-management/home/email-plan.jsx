@@ -83,7 +83,7 @@ function getMailboxes( data ) {
 	return account?.emails ?? [];
 }
 
-function EmailPlan( { domain, selectedSite, source } ) {
+function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -292,7 +292,7 @@ function EmailPlan( { domain, selectedSite, source } ) {
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
-			<HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake>
+			{ ! hideHeaderCake && <HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake> }
 			<EmailPlanHeader
 				domain={ domain }
 				hasEmailSubscription={ hasSubscription }
@@ -326,6 +326,7 @@ function EmailPlan( { domain, selectedSite, source } ) {
 
 EmailPlan.propTypes = {
 	domain: PropTypes.object.isRequired,
+	hideHeaderCake: PropTypes.bool,
 	selectedSite: PropTypes.object.isRequired,
 	source: PropTypes.string,
 };

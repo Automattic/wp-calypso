@@ -21,6 +21,7 @@ export const getDesignPreviewUrl = (
 		...( options.viewport_width && { viewport_width: options.viewport_width } ),
 		viewport_height: options.viewport_height || DEFAULT_VIEWPORT_HEIGHT,
 		source_site: 'patternboilerplates.wordpress.com',
+		use_screenshot_overrides: options.use_screenshot_overrides,
 	} );
 
 	const siteTitle = options.siteTitle || design.title;

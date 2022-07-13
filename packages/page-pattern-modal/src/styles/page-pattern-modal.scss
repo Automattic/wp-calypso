@@ -216,7 +216,11 @@ $sidebar-width-desktop: 324px;
 		position: fixed;
 		width: $sidebar-width;
 		padding-right: 22px;
-
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		top: 63px;
+		bottom: 33px;
 		// Manually choosing when to enable/disable pointer events so that
 		// the scroll wheel behaviour feels natural when the mouse is over
 		// the sidebar. The sidebar is fixed position so it doesn't move when
@@ -230,14 +234,6 @@ $sidebar-width-desktop: 324px;
 		> * {
 			pointer-events: auto;
 		}
-
-		.page-pattern-modal__category-list {
-			pointer-events: none;
-
-			.page-pattern-modal__category-button {
-				pointer-events: auto;
-			}
-		}
 	}
 	@media screen and ( min-width: $breakpoint-desktop ) {
 		width: $sidebar-width-desktop;
@@ -248,7 +244,8 @@ $sidebar-width-desktop: 324px;
 .page-pattern-modal__category-list {
 	display: none;
 	margin: 0;
-	padding-top: 35px;
+	margin-top: 35px;
+	overflow: auto;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		display: block;

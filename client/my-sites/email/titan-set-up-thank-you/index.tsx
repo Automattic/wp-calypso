@@ -9,6 +9,7 @@ import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/co
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
+	emailManagementInbox,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -42,6 +43,7 @@ const TitanSetUpThankYou = ( {
 	const translate = useTranslate();
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
+	const inboxPath = emailManagementInbox( selectedSiteSlug );
 
 	const thankYouImage = {
 		alt: translate( 'Thank you' ),
@@ -67,9 +69,13 @@ const TitanSetUpThankYou = ( {
 				stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 				stepCta: (
 					<FullWidthButton
-						href={ getTitanEmailUrl( titanAppsUrlPrefix, emailAddress, true ) }
+						href={ getTitanEmailUrl(
+							titanAppsUrlPrefix,
+							emailAddress,
+							false,
+							`${ window.location.protocol }//${ window.location.host }${ inboxPath }`
+						) }
 						primary
-						target="_blank"
 						onClick={ () => {
 							recordEmailAppLaunchEvent( {
 								provider: 'titan',
@@ -79,7 +85,6 @@ const TitanSetUpThankYou = ( {
 						} }
 					>
 						{ translate( 'Go to Inbox' ) }
-						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
 				),
 			},

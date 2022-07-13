@@ -18,7 +18,7 @@ export type EditorSidebarTab = 'Post' | 'Block' | 'Page';
  * The different foldable sections on the sidebar.
  */
 export type ArticleSections =
-	| 'Status & Visibility'
+	| 'Summary'
 	| 'Revisions'
 	| 'Permalink'
 	| 'Categories'

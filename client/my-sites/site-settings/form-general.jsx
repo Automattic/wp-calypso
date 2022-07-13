@@ -49,6 +49,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import Masterbar from './masterbar';
 import SiteIconSetting from './site-icon-setting';
 import wrapSettingsForm from './wrap-settings-form';
 
@@ -165,6 +166,24 @@ export class SiteSettingsFormGeneral extends Component {
 							</Button>
 						</div>
 					</div>
+				) }
+			</>
+		);
+	}
+
+	toolbarOption() {
+		const { isRequestingSettings, isSavingSettings, siteIsJetpack, siteIsAtomic } = this.props;
+
+		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
+
+		return (
+			<>
+				{ isNonAtomicJetpackSite && (
+					// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
+					<Masterbar
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+					/>
 				) }
 			</>
 		);
@@ -675,6 +694,8 @@ export class SiteSettingsFormGeneral extends Component {
 						) }
 					</div>
 				) }
+
+				{ this.toolbarOption() }
 			</div>
 		);
 	}

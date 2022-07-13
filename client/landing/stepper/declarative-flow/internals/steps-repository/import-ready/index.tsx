@@ -38,7 +38,7 @@ const ImportReady: Step = function ImportStep( props ) {
 			'stepper'
 		);
 
-		navigation.submit?.( { url } );
+		navigation.submit?.( { url, platform: urlData.platform } );
 	}
 
 	function goToHomeStep() {
@@ -49,11 +49,12 @@ const ImportReady: Step = function ImportStep( props ) {
 	 ↓ Renders
 	 */
 	return (
-		<ImportWrapper { ...props }>
+		<ImportWrapper { ...props } stepName="ready">
 			<ReadyStep
 				platform={ urlData?.platform }
 				goToImporterPage={ goToImporterPage }
 				recordTracksEvent={ recordTracksEvent }
+				fromSite={ urlData?.url }
 			/>
 		</ImportWrapper>
 	);
