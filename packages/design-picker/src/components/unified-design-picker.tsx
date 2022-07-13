@@ -278,72 +278,60 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	);
 };
 
-export interface DesignPickerProps {
+export interface UnifiedDesignPickerProps {
 	locale: string;
+	verticalId?: string;
 	onSelect: ( design: Design ) => void;
 	onPreview?: ( design: Design ) => void;
 	onUpgrade?: () => void;
-	designs?: Design[];
+	generatedDesigns?: Design[];
+	staticDesigns?: Design[];
 	premiumBadge?: React.ReactNode;
-	isGridMinimal?: boolean;
-	theme?: 'dark' | 'light';
-	className?: string;
-	highResThumbnails?: boolean;
 	categorization?: Categorization;
 	categoriesHeading?: React.ReactNode;
-	anchorHeading?: React.ReactNode;
+	generatedDesignsHeading?: React.ReactNode;
 	categoriesFooter?: React.ReactNode;
 	recommendedCategorySlug: string | null;
-	hideFullScreenPreview?: boolean;
-	hideDesignTitle?: boolean;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
 }
-const DesignPicker: React.FC< DesignPickerProps > = ( {
+const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
 	onSelect,
 	onPreview,
 	onUpgrade,
-	designs = getAvailableDesigns( {
+	staticDesigns = getAvailableDesigns( {
 		featuredDesignsFilter: ( design ) =>
 			! design.features.includes( 'anchorfm' ) && excludeFseDesigns( design ),
 	} ).featured,
 	premiumBadge,
-	isGridMinimal,
-	theme = 'light',
-	className,
-	highResThumbnails = false,
 	categoriesHeading,
-	anchorHeading,
 	categoriesFooter,
 	categorization,
-	hideFullScreenPreview,
-	hideDesignTitle,
-	recommendedCategorySlug,
-	isPremiumThemeAvailable,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
+	recommendedCategorySlug,
+	isPremiumThemeAvailable,
 	onCheckout = undefined,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
-			? filterDesignsByCategory( designs, categorization.selection )
-			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
+			? filterDesignsByCategory( staticDesigns, categorization.selection )
+			: staticDesigns.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
 		return result;
-	}, [ designs, categorization?.selection ] );
+	}, [ staticDesigns, categorization?.selection ] );
 
 	return (
 		<div
-			className={ classnames( 'design-picker', `design-picker--theme-${ theme }`, className, {
+			className={ classnames( 'design-picker', `design-picker--theme-light`, {
 				'design-picker--has-categories': hasCategories,
 			} ) }
 		>
-			{ anchorHeading }
 			{ categorization && hasCategories && (
 				<DesignPickerCategoryFilter
 					categories={ categorization.categories }
@@ -354,7 +342,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					footer={ categoriesFooter }
 				/>
 			) }
-			<div className={ isGridMinimal ? 'design-picker__grid-minimal' : 'design-picker__grid' }>
+			<div className={ 'design-picker__grid' }>
 				{ filteredDesigns.map( ( design ) => (
 					<DesignButtonContainer
 						key={ design.slug }
@@ -364,9 +352,9 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						onPreview={ onPreview }
 						onUpgrade={ onUpgrade }
 						premiumBadge={ premiumBadge }
-						highRes={ highResThumbnails }
-						hideFullScreenPreview={ hideFullScreenPreview }
-						hideDesignTitle={ hideDesignTitle }
+						highRes={ false }
+						hideFullScreenPreview={ false }
+						hideDesignTitle={ false }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 						previewOnly={ previewOnly }
 						hasDesignOptionHeader={ hasDesignOptionHeader }
@@ -378,4 +366,4 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	);
 };
 
-export { DesignPicker as default, DesignPreviewImage };
+export { UnifiedDesignPicker as default, DesignPreviewImage };
