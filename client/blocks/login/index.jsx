@@ -70,6 +70,7 @@ class Login extends Component {
 		onTwoFactorRequested: PropTypes.func,
 		signupUrl: PropTypes.string,
 		redirectTo: PropTypes.string,
+		isPartnerSignup: PropTypes.bool,
 	};
 
 	state = {
