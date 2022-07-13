@@ -114,7 +114,7 @@
 	vertical-align: middle;
 	color: var( --studio-gray-100 );
 	@include break-zoomed-in {
-		width: calc( 100% - 90px );
+		width: calc( 100% - 120px );
 		margin-inline-start: 8px;
 		margin-inline-end: 5px;
 		font-size: 1rem;
@@ -139,7 +139,7 @@
 		rgba( 255, 255, 255, 1 ) 100%
 	);
 	top: 0;
-	right: 48px;
+	right: 75px;
 	@include break-large() {
 		right: 0;
 	}
