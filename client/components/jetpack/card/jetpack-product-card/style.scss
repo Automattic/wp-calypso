@@ -242,3 +242,10 @@
 		}
 	}
 }
+
+.jetpack-product-card__disclaimer {
+	a {
+		color: var( --studio-jetpack-green-30 );
+		text-decoration: underline;
+	}
+}
