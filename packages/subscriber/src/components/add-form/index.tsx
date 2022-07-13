@@ -69,7 +69,7 @@ export const AddSubscriberForm: FunctionComponent = () => {
 									key={ i }
 									value={ f }
 									onChange={ () => {
-										/* empty function */
+										return;
 									} }
 									disabled
 									help={ <Icon icon={ check } /> }
