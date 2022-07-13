@@ -23,6 +23,8 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 		return searchCollection( sites, term.toLowerCase(), [ 'URL', 'domain', 'name', 'slug' ] );
 	}, [ term, sites ] );
 
+	const handleSearch = ( rawTerm: string ) => setTerm( rawTerm.trim() );
+
 	return (
 		<ClassNames>
 			{ ( { css } ) => (
@@ -35,7 +37,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 						` }
 					>
 						<SitesSearch
-							onSearch={ setTerm }
+							onSearch={ handleSearch }
 							delaySearch
 							isReskinned
 							placeholder={ __( 'Search by name or domain' ) + '...' }
