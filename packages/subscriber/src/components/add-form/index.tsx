@@ -7,6 +7,7 @@ import React, { FormEvent, FunctionComponent, useState } from 'react';
 import './style.scss';
 
 export const AddSubscriberForm: FunctionComponent = () => {
+	const [ files, setFiles ] = useState< string[] >( [] );
 	const [ emails, setEmails ] = useState< string[] >( [] );
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
 
@@ -60,13 +61,32 @@ export const AddSubscriberForm: FunctionComponent = () => {
 					/>
 
 					<label>
-						Or bring your mailing list from other newsletters by{ ' ' }
+						{ !! files.length && 'Or bring your mailing list from other newsletters.' }
+						{ ! files.length && 'Or bring your mailing list from other newsletters by' }
+						{ !! files.length &&
+							files.map( ( f, i ) => (
+								<TextControl
+									key={ i }
+									value={ f }
+									onChange={ () => {
+										/* empty function */
+									} }
+									disabled
+									help={ <Icon icon={ check } /> }
+								/>
+							) ) }
 						<FormFileUpload
-							onChange={ () => {
+							onChange={ ( e ) => {
 								/* on value change */
+								const _files = Array.from( files );
+								const f = e.target.files;
+								f && f.length && _files.push( f[ 0 ].name );
+
+								setFiles( _files );
 							} }
 						>
-							uploading a CSV file
+							{ !! files.length && 'Add another CSV file' }
+							{ ! files.length && 'uploading a CSV file' }
 						</FormFileUpload>
 						.
 					</label>

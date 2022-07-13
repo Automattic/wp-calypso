@@ -10,13 +10,11 @@
 	.onboarding-title {
 		margin-bottom: 1rem;
 		font-size: 3.25rem; /* stylelint-disable-line */
-		color: var( --studio-gray-100 );
 	}
 
 	.onboarding-subtitle {
 		margin-bottom: 1.5rem;
 		font-size: 1.125rem; /* stylelint-disable-line */
-		color: var( --studio-gray-100 );
 	}
 }
 
@@ -26,9 +24,14 @@
 
 	label {
 		display: inline-block;
+		width: 100%;
 		font-size: 0.875rem;
 		line-height: 1.25rem;
 		margin: 1.5rem 0;
+
+		.components-base-control__field {
+			margin: 0.5rem auto;
+		}
 	}
 
 	.components-text-control__input {
@@ -39,6 +42,10 @@
 
 		&::placeholder {
 			color: var( --studio-gray-20 );
+		}
+
+		&[disabled] {
+			background: var( --studio-gray-5 );
 		}
 	}
 
