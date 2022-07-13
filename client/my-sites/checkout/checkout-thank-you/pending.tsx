@@ -33,12 +33,20 @@ interface CheckoutPendingProps {
  *
  * The `orderId` prop comes from the last part of the URL and the `siteSlug`
  * prop comes from the `:site` part of the URL and will be empty if there is no
- * site.
+ * site. In some cases (eg: free purchases which do not generate an order),
+ * this could be the placeholder `:orderId`. If that happens and there is a
+ * `receiptId` prop, the success redirect will still occur, but if it happens
+ * when there is no `receiptId`, we cannot know what to do and the user will be
+ * redirected to a generic thank-you page.
  *
  * The `redirectTo` prop comes from the query string parameter of the same
  * name. It may include a literal `/pending` as part of the URL; if that's the
  * case, that string will be replaced by the receipt ID when the transaction
  * completes.
+ *
+ * The `receiptId` prop comes from the query string parameter of the same name.
+ * It must be numeric. If set, we know that the transaction is complete and
+ * will skip polling for the order.
  */
 function CheckoutPending( {
 	orderId: orderIdOrPlaceholder,
@@ -212,6 +220,8 @@ function useRedirectOnTransactionSuccess( {
 		};
 
 		if ( receiptId ) {
+			// If there is a receipt ID, then the order must already be complete. In
+			// that case, we can redirect immediately.
 			didRedirect.current = true;
 			redirectWithInterpolatedReceipt( redirectTo, siteSlug, receiptId );
 			return;
@@ -225,6 +235,10 @@ function useRedirectOnTransactionSuccess( {
 			// assuming that the purchase was successful. This goes to the URL path
 			// `/checkout/thank-you/:site/:receiptId` but without a receiptId.
 			didRedirect.current = true;
+			// eslint-disable-next-line no-console
+			console.error(
+				'No order ID and no receipt ID found for transaction; redirecting to generic thank-you page.'
+			);
 			page( `/checkout/thank-you/${ siteSlug ?? 'no-site' }/unknown` );
 			return;
 		}
@@ -234,6 +248,7 @@ function useRedirectOnTransactionSuccess( {
 		if ( transaction ) {
 			const { processingStatus } = transaction;
 
+			// If the order is complete, we can redirect to the final page.
 			if ( SUCCESS === processingStatus ) {
 				const { receiptId: transactionReceiptId } = transaction;
 
