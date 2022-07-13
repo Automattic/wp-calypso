@@ -60,7 +60,7 @@ const mapStarRatingToPercent = ( starRating?: number ) => ( starRating ?? 0 / 5 
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) return [];
-	return results.map( ( { fields: hit } ) => {
+	return results.map( ( { fields: hit, railcar } ) => {
 		const plugin = {
 			name: hit[ 'title.default' ], // TODO: add localization
 			slug: hit.slug,
@@ -77,6 +77,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			last_updated: hit.modified,
 			short_description: hit[ 'excerpt.default' ], // TODO: add localization
 			icon: createIconUrl( hit.slug, hit[ 'plugin.icons' ] ),
+			railcar,
 		};
 		return plugin;
 	} );
