@@ -123,6 +123,9 @@
 		width: calc( 100% - 55px );
 		margin-inline-start: 32px;
 		font-size: 0.875rem;
+		position: absolute;
+		top: 50%;
+		transform: translateY( -50% );
 	}
 }
 .sites-overview__overlay {

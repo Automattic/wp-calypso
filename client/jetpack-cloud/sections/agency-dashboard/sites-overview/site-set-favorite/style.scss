@@ -6,6 +6,7 @@
 	top: 6px;
 	color: var( --studio-gray-20 ) !important;
 	@include break-large() {
+		position: static;
 		visibility: hidden;
 		color: var( --color-primary ) !important;
 	}
