@@ -57,6 +57,8 @@ interface DesignButtonProps {
 	disabled?: boolean;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
+	hideDescription?: boolean;
+	hideBadge?: boolean;
 	hasDesignOptionHeader?: boolean;
 	isPremiumThemeAvailable?: boolean;
 	onCheckout?: any;
@@ -70,6 +72,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	highRes,
 	disabled,
 	hideDesignTitle,
+	hideDescription,
+	hideBadge,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable = false,
 	onCheckout = undefined,
@@ -94,6 +98,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 	function getPricingDescription() {
 		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
+			return null;
+		}
+
+		if ( hideDescription ) {
 			return null;
 		}
 
@@ -166,7 +174,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					{ ! hideDesignTitle && (
 						<span className="design-picker__option-name">{ designTitle }</span>
 					) }
-					{ badgeContainer }
+					{ ! hideBadge && badgeContainer }
 				</span>
 				{ getPricingDescription() }
 			</span>
@@ -296,6 +304,8 @@ export interface DesignPickerProps {
 	recommendedCategorySlug: string | null;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
+	hideDescription?: boolean;
+	hideBadge?: boolean;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
@@ -321,6 +331,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	categorization,
 	hideFullScreenPreview,
 	hideDesignTitle,
+	hideDescription,
+	hideBadge,
 	recommendedCategorySlug,
 	isPremiumThemeAvailable,
 	previewOnly = false,
@@ -367,6 +379,8 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						highRes={ highResThumbnails }
 						hideFullScreenPreview={ hideFullScreenPreview }
 						hideDesignTitle={ hideDesignTitle }
+						hideDescription={ hideDescription }
+						hideBadge={ hideBadge }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 						previewOnly={ previewOnly }
 						hasDesignOptionHeader={ hasDesignOptionHeader }

@@ -746,6 +746,8 @@ export function generateSteps( {
 				showLetUsChoose: true,
 				hideFullScreenPreview: true,
 				hideDesignTitle: true,
+				hideDescription: true,
+				hideBadge: true,
 			},
 		},
 		'difm-options': {

@@ -42,6 +42,8 @@ export default function DesignPickerStep( props ) {
 		showLetUsChoose,
 		hideFullScreenPreview,
 		hideDesignTitle,
+		hideDescription,
+		hideBadge,
 		signupDependencies: dependencies,
 	} = props;
 
@@ -242,6 +244,8 @@ export default function DesignPickerStep( props ) {
 					categoriesFooter={ renderCategoriesFooter() }
 					hideFullScreenPreview={ hideFullScreenPreview }
 					hideDesignTitle={ hideDesignTitle }
+					hideDescription={ hideDescription }
+					hideBadge={ hideBadge }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				/>
 				{ renderCheckoutModal() }
