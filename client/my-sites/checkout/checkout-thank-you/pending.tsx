@@ -10,13 +10,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
-import {
-	SUCCESS,
-	ERROR,
-	FAILURE,
-	UNKNOWN,
-	ASYNC_PENDING,
-} from 'calypso/state/order-transactions/constants';
+import { SUCCESS, ERROR, FAILURE, UNKNOWN } from 'calypso/state/order-transactions/constants';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
@@ -245,12 +239,6 @@ function useRedirectOnTransactionSuccess( {
 
 				didRedirect.current = true;
 				redirectWithInterpolatedReceipt( redirectTo, siteSlug, transactionReceiptId );
-				return;
-			}
-
-			if ( ASYNC_PENDING === transaction.processingStatus ) {
-				didRedirect.current = true;
-				page( '/me/purchases/pending' );
 				return;
 			}
 
