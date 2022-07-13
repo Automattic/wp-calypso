@@ -7,38 +7,39 @@ import { Icon, external } from '@wordpress/icons';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
-import ArticleContent from 'calypso/blocks/support-article-dialog/dialog-content';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
+import ArticleContent from './help-center-article-content';
+import ArticleFetchingContent from './help-center-article-fetching-content';
 
 export const HelpCenterEmbedResult: React.FC = () => {
-	const { search } = useLocation();
+	const { state, search } = useLocation();
 	const history = useHistory();
 	const sectionName = useSelector( getSectionName );
+
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
 	const blogId = params.get( 'blogId' );
-	const query = params.get( 'query' );
-	const link = params.get( 'link' );
+	const link = state ? state.link : params.get( 'link' );
 
 	useEffect( () => {
-		const tracksData = {
-			search_query: query,
-			location: 'help-center',
-			section: sectionName,
-			result_url: link,
-		};
+		if ( state ) {
+			const { query, link } = state;
+			const tracksData = {
+				search_query: query,
+				location: 'help-center',
+				section: sectionName,
+				result_url: link,
+			};
 
-		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
-	}, [ query, link, sectionName ] );
+			recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
+		}
+	}, [ state, sectionName ] );
 
 	const redirectToSearchOrHome = () => {
-		if ( query ) {
-			const search = new URLSearchParams( {
-				query,
-			} ).toString();
-			history.push( `/?${ search }` );
+		if ( state?.query ) {
+			history.push( `/?query=${ state.query }` );
 		} else {
 			history.push( '/' );
 		}
@@ -62,7 +63,11 @@ export const HelpCenterEmbedResult: React.FC = () => {
 						</Button>
 					</FlexItem>
 				</Flex>
-				<ArticleContent postId={ postId } blogId={ blogId } articleUrl={ null } />
+				{ state?.content ? (
+					<ArticleContent content={ state.content } title={ state.title } link={ state.link } />
+				) : (
+					postId && <ArticleFetchingContent postId={ +postId } blogId={ blogId } />
+				) }
 			</div>
 			<BackToTopButton />
 		</>

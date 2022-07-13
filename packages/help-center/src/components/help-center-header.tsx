@@ -9,12 +9,13 @@ import type { Header, WindowState } from '../types';
 import type { ReactElement } from 'react';
 
 export function ArticleTitle() {
-	const { search } = useLocation();
-	const params = new URLSearchParams( search );
+	const location = useLocation();
+	const { title } = location.state;
+
 	return (
 		<>
 			<Icon icon={ page } />
-			<span className="help-center-header__article-title">{ params.get( 'title' ) }</span>
+			<span className="help-center-header__article-title">{ title }</span>
 		</>
 	);
 }
