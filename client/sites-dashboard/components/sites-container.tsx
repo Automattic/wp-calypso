@@ -27,7 +27,6 @@ type SitesContainerProps = {
 
 export const SitesContainer = ( { sites, status }: SitesContainerProps ) => {
 	const { __ } = useI18n();
-	sites = [];
 	if ( sites.length > 0 ) {
 		return (
 			<ClassNames>
