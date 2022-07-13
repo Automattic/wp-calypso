@@ -222,4 +222,10 @@ describe( 'search', () => {
 		// check that a second item was added to history
 		expect( document.querySelectorAll( 'li' ) ).toHaveLength( 2 );
 	} );
+
+	it( 'should allow a custom search icon', () => {
+		render( <Search searchIcon="CUSTOMICON" /> );
+
+		expect( screen.getByText( 'CUSTOMICON' ) ).toBeTruthy();
+	} );
 } );
