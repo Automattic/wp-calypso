@@ -245,6 +245,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'videopress',
+			steps: [ 'user' ],
+			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+			description: 'VideoPress signup flow',
+			lastModified: '2022-07-06',
+			showRecaptcha: true,
+		},
+		{
 			// When adding steps, make sure that signup campaign ref's continue to work.
 			name: 'p2',
 			steps: [ 'user', 'p2-confirm-email', 'p2-complete-profile', 'p2-join-workspace', 'p2-site' ],
