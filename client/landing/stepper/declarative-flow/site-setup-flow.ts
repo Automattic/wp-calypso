@@ -23,6 +23,7 @@ import {
 } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
 
+const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
@@ -75,6 +76,7 @@ export const siteSetupFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
@@ -99,7 +101,7 @@ export const siteSetupFlow: Flow = {
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
@@ -135,10 +137,18 @@ export const siteSetupFlow: Flow = {
 				 * because the exitFlow itself is called more than once on actual flow exits.
 				 */
 				return new Promise( () => {
-					const pendingActions = [ setIntentOnSite( siteSlug as string, intent ) ];
-					if ( siteSlug && goalsStepEnabled ) {
+					if ( ! siteSlug ) return;
+
+					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
+
+					if ( goalsStepEnabled ) {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
+
+					if ( intent === SiteIntent.Write && ! selectedDesign ) {
+						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
+					}
+
 					Promise.all( pendingActions ).then( () => window.location.replace( to ) );
 				} );
 			} );
