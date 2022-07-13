@@ -24,10 +24,10 @@ type ItemProps = {
 };
 
 const SiteLogo: FC< { logo: ItemProps[ 'logo' ] } > = ( { logo } ) => {
-	const siteLogo = <img width="34" alt="" area-hidden="true" src={ logo?.url }></img>;
-	const globeLogo = globe;
-
-	return logo?.url ? siteLogo : globeLogo;
+	if ( logo?.url ) {
+		return <img width="34" alt="" aria-hidden="true" src={ logo?.url } />;
+	}
+	return globe;
 };
 
 const SitePickerItem: FC< ItemProps > = ( {
