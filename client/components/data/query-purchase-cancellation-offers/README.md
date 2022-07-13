@@ -5,6 +5,7 @@
 ## Usage
 
 Render the component, passing in the properties below. It does not accept any children, nor does it render any elements to the page.
+The properties `siteId` and `purchaseId` are required and must be defined.
 
 ```tsx
 /* eslint-disable */
@@ -18,7 +19,11 @@ const listProductPrice: React.FC = ( { product } ) => {
 
 	return (
 		<div>
-			<QueryPurchaseCancellationOffers siteId={ product.siteId } purchaseId={ product.purchaseId } />
+			{
+				product.siteId && product.purchaseId ?
+				<QueryPurchaseCancellationOffers siteId={product.siteId} purchaseId={product.purchaseId} /> : 
+				null
+			}
 		</div>
 	);
 };

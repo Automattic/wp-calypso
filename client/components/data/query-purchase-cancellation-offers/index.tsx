@@ -1,15 +1,14 @@
-import * as React from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCancellationOffers } from 'calypso/state/cancellation-offers/actions';
 import isFetchingCancellationOffers from 'calypso/state/cancellation-offers/selectors/is-fetching-cancellation-offers';
 
 interface OwnProps {
-	siteId?: number;
-	purchaseId?: number;
+	siteId: number;
+	purchaseId: number;
 }
 
-const QueryPurchaseCancellationOffers: React.FC< OwnProps > = ( { siteId, purchaseId } ) => {
+const QueryPurchaseCancellationOffers = ( { siteId, purchaseId }: OwnProps ) => {
 	const dispatch = useDispatch();
 
 	const fetchingCancellationOffers = useSelector( ( state ) =>
@@ -20,7 +19,7 @@ const QueryPurchaseCancellationOffers: React.FC< OwnProps > = ( { siteId, purcha
 		if ( siteId && fetchingCancellationOffers === null ) {
 			dispatch( fetchCancellationOffers( siteId, purchaseId ) );
 		}
-	}, [ dispatch, fetchingCancellationOffers, siteId ] );
+	}, [ dispatch, fetchingCancellationOffers, siteId, purchaseId ] );
 
 	return null;
 };

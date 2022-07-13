@@ -48,7 +48,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	flowType,
 	...props
 } ) => {
-	const provideCancellationOffer = config.isEnabled( 'cancellation-offers' );
+	const shouldProvideCancellationOffer = config.isEnabled( 'cancellation-offers' );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const initialCancellationStep = useMemo( () => {
@@ -86,18 +86,21 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	const isOfferPriceSameOrLowerThanPurchasePrice = useMemo( () => {
 		return cancellationOffer ? purchase.amount >= cancellationOffer.originalPrice : false;
-	}, [ cancellationOffer, purchase ] );
+	}, [ cancellationOffer, purchase.amount ] );
 
 	const offerDiscountBasedFromPurchasePrice = useMemo( () => {
-		// toFixed will round to the 3rd decimal place here.
-		// This will catch floats like 19.9999 and round them to the closest integer.
-		return cancellationOffer
-			? Math.floor(
-					Number.parseFloat(
-						Number( 1 - cancellationOffer.rawPrice / purchase.amount ).toFixed( 3 )
-					) * 100
-			  )
-			: 0;
+		if ( cancellationOffer ) {
+			// Get the percentage difference in the price of the offer over the price of the original purchase.
+			// toFixed will round to the 3rd decimal place here.
+			// This will catch floats like .1999, and round them up.
+			const offerPercentageOfPurchaseAmount = Number(
+				1 - cancellationOffer.rawPrice / purchase.amount
+			).toFixed( 3 );
+			// Since toFixed returns a string, we use parseFloat here to get the decimal value.
+			// floor is used to get a whole percentage number value.
+			return Math.floor( Number.parseFloat( offerPercentageOfPurchaseAmount ) * 100 );
+		}
+		return 0;
 	}, [ cancellationOffer, purchase ] );
 
 	/**
@@ -150,7 +153,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 			// During the cancellation decision, potentially show an offer
 			if (
-				provideCancellationOffer &&
+				shouldProvideCancellationOffer &&
 				cancellationOffer &&
 				isOfferPriceSameOrLowerThanPurchasePrice &&
 				offerDiscountBasedFromPurchasePrice >= 10
@@ -164,7 +167,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		steps,
 		purchase,
 		cancellationOffer,
-		provideCancellationOffer,
+		shouldProvideCancellationOffer,
 		isOfferPriceSameOrLowerThanPurchasePrice,
 		offerDiscountBasedFromPurchasePrice,
 	] );
@@ -259,7 +262,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	const renderStepButtons = () => {
 		const { disableButtons } = props;
 		const disabled = disableButtons;
-		const loadingOffers = provideCancellationOffer && fetchingCancellationOffers;
+		const loadingOffers = shouldProvideCancellationOffer && fetchingCancellationOffers;
 		const close = {
 			action: 'close',
 			disabled: disabled,
@@ -374,7 +377,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	return (
 		<>
-			{ provideCancellationOffer && (
+			{ shouldProvideCancellationOffer && (
 				<QueryPurchaseCancellationOffers siteId={ purchase.siteId } purchaseId={ purchase.id } />
 			) }
 			<Dialog
