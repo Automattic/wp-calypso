@@ -208,7 +208,7 @@ $input-z-index: 20;
 			font-size: $font-body;
 
 			&::before {
-				@include long-content-fade( $size: 32px, $z-index: $input-z-index + 2 );
+				@include long-content-fade( $direction: right, $size: 32px, $z-index: $input-z-index + 2, $color: var( --color-surface ) );
 				border-radius: inherit;
 			}
 
@@ -218,7 +218,8 @@ $input-z-index: 20;
 					@include long-content-fade(
 						$direction: right,
 						$size: 32px,
-						$z-index: $input-z-index + 2
+						$z-index: $input-z-index + 2,
+						$color: var( --color-surface )
 					);
 					border-radius: inherit;
 				}
