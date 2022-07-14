@@ -24,7 +24,13 @@ type Props = {
 	supportSite?: SiteDetails;
 };
 
-function getPostUrl( article: Article, query: string ) {
+function getPostUrl( article: Article, query: string, locale: string ) {
+	if ( 'en' !== locale ) {
+		return {
+			pathname: article.link,
+		};
+	}
+
 	// if it's a wpcom support article, it has an ID
 	if ( article.post_id ) {
 		const params = new URLSearchParams( {
@@ -84,13 +90,8 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 				{ articles.map( ( article ) => (
 					<li key={ article.link }>
 						<Link
-							onClick={ ( event ) => {
-								if ( 'en' !== locale ) {
-									event.preventDefault();
-									window.open( article.link, '_blank' );
-								}
-							} }
-							to={ getPostUrl( article as Article, message ) }
+							to={ getPostUrl( article as Article, message, locale ) }
+							target={ 'en' !== locale ? '_blank' : '' }
 						>
 							<Icon icon={ page } />
 							{ article.title }
