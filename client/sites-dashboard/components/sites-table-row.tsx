@@ -59,7 +59,9 @@ const SiteUrl = styled.a`
 `;
 
 const getDashboardUrl = ( slug: string, siteBasePath: string ) => {
-	const path = siteBasePath;
+	let path = siteBasePath;
+
+	path = path.split( '?' )[ 0 ];
 
 	return path + '/' + slug;
 };
