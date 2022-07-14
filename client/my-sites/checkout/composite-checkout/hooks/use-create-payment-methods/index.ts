@@ -296,6 +296,7 @@ function useCreateApplePay( {
 	stripe,
 	isApplePayAvailable,
 	isWebPayLoading,
+	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -303,16 +304,17 @@ function useCreateApplePay( {
 	stripe: Stripe | null;
 	isApplePayAvailable: boolean;
 	isWebPayLoading: boolean;
+	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
 
 	const shouldCreateApplePayMethod = isStripeReady && ! isWebPayLoading && isApplePayAvailable;
 
 	const applePayMethod = useMemo( () => {
-		return shouldCreateApplePayMethod && stripe && stripeConfiguration
-			? createApplePayMethod( stripe, stripeConfiguration )
+		return shouldCreateApplePayMethod && stripe && stripeConfiguration && cartKey
+			? createApplePayMethod( stripe, stripeConfiguration, cartKey )
 			: null;
-	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration ] );
+	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration, cartKey ] );
 
 	return applePayMethod;
 }
@@ -441,6 +443,7 @@ export default function useCreatePaymentMethods( {
 		stripe,
 		isApplePayAvailable,
 		isWebPayLoading,
+		cartKey,
 	} );
 
 	const googlePayMethod = useCreateGooglePay( {
