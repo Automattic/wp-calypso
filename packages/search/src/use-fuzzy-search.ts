@@ -6,16 +6,23 @@ const defaultOptions = {
 	distance: 20,
 };
 
-type UseFuzzySearchOptions< T > = {
+type FieldsProp< T > = T extends string
+	? {
+			fields?: never;
+	  }
+	: {
+			fields: Fuse.IFuseOptions< T >[ 'keys' ];
+	  };
+
+export type UseFuzzySearchOptions< T > = {
 	data: T[];
-	fields: Fuse.IFuseOptions< T >[ 'keys' ];
 	options?: Partial< Fuse.IFuseOptions< T > >;
 	initialQuery?: string;
-};
+} & FieldsProp< T >;
 
 export const useFuzzySearch = < T >( {
 	data,
-	fields,
+	fields = [],
 	initialQuery = '',
 	options = defaultOptions,
 }: UseFuzzySearchOptions< T > ) => {
