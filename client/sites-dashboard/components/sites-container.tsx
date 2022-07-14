@@ -22,12 +22,13 @@ const Title = styled.div`
 type SitesContainerProps = {
 	sites: SiteData[];
 	status: string;
+	siteBasePath: string;
 };
 
-export const SitesContainer = ( { sites, status }: SitesContainerProps ) => {
+export const SitesContainer = ( { sites, status, siteBasePath }: SitesContainerProps ) => {
 	const { __ } = useI18n();
 	if ( sites.length > 0 ) {
-		return <SearchableSitesTable sites={ sites } />;
+		return <SearchableSitesTable sites={ sites } siteBasePath={ siteBasePath } />;
 	}
 
 	if ( status === 'launched' ) {
