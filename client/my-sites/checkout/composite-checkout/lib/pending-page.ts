@@ -191,6 +191,91 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
 	return url;
 }
 
+function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
+	if ( url.startsWith( '/' ) ) {
+		return true;
+	}
+
+	const allowedHostsForRedirect = [
+		'wordpress.com',
+		'calypso.localhost',
+		'jetpack.cloud.localhost',
+		'cloud.jetpack.com',
+		siteSlug,
+	];
+
+	try {
+		const parsedUrl = new URL( url );
+		const { hostname, pathname } = parsedUrl;
+		if ( ! hostname ) {
+			return false;
+		}
+
+		// For subdirectory site, check that both hostname and subdirectory matches
+		// the siteSlug (host.name::subdirectory).
+		if ( siteSlug?.includes( '::' ) ) {
+			const [ hostnameFromSlug, ...subdirectoryParts ] = siteSlug.split( '::' );
+			const subdirectoryPathFromSlug = subdirectoryParts.join( '/' );
+			if (
+				hostname !== hostnameFromSlug &&
+				! pathname?.startsWith( `/${ subdirectoryPathFromSlug }` )
+			) {
+				return false;
+			}
+			return true;
+		}
+
+		if ( ! allowedHostsForRedirect.includes( hostname ) ) {
+			return false;
+		}
+
+		return true;
+	} catch ( err ) {
+		// eslint-disable-next-line no-console
+		console.error( `Redirecting to absolute url '${ url }' failed:`, err );
+	}
+	return false;
+}
+
+function filterAllowedRedirect( url: string, siteSlug: string | undefined ): string {
+	if ( isRedirectAllowed( url, siteSlug ) ) {
+		return url;
+	}
+	const fallbackUrl = '/checkout/thank-you/no-site';
+	return fallbackUrl;
+}
+
+function getDefaultSuccessUrl(
+	siteSlug: string | undefined,
+	receiptId: number | undefined
+): string {
+	if ( receiptId ) {
+		return `/checkout/thank-you/${ siteSlug ?? 'no-site' }/${ receiptId }`;
+	}
+	if ( siteSlug ) {
+		return `/checkout/thank-you/${ siteSlug }/unknown-receipt`;
+	}
+	return '/checkout/thank-you/no-site';
+}
+
+/**
+ * Calculate a URL to visit after the post-checkout pending page.
+ *
+ * Designed to be run by the `CheckoutPending` component which is displayed
+ * after checkout.
+ *
+ * Typically this will only return a result if the transaction exists and was
+ * successful, but it will also return a result if there is an error, if there
+ * is a receipt (meaning the transaction was already successful), or if there
+ * is no receipt and no order (meaning we have to guess what to do).
+ *
+ * If a redirect is appropriate, the returned URL will usually be the
+ * `redirectTo` option, but only if it is a relative URL or in a list of
+ * allowed hosts to prevent having an open redirect. Otherwise it may be a
+ * generic thank-you page.
+ *
+ * The result may also include an error message that should be displayed.
+ */
 export function getRedirectFromPendingPage( {
 	error,
 	transaction,
@@ -205,21 +290,18 @@ export function getRedirectFromPendingPage( {
 		"Sorry, we couldn't process your payment. Please try again later."
 	);
 	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
-	const defaultSuccessUrl =
-		siteSlug && receiptId
-			? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-			: '/checkout/thank-you/no-site';
 
 	// If there is a receipt ID, then the order must already be complete. In
 	// that case, we can redirect immediately.
-	if ( receiptId && redirectTo ) {
+	if ( receiptId ) {
 		return {
-			url: interpolateReceiptId( redirectTo, receiptId ),
-		};
-	}
-	if ( receiptId && ! redirectTo ) {
-		return {
-			url: interpolateReceiptId( defaultSuccessUrl, receiptId ),
+			url: filterAllowedRedirect(
+				interpolateReceiptId(
+					redirectTo ?? getDefaultSuccessUrl( siteSlug, receiptId ),
+					receiptId
+				),
+				siteSlug
+			),
 		};
 	}
 
@@ -228,10 +310,10 @@ export function getRedirectFromPendingPage( {
 	// transaction. If this happens it's definitely a bug, but let's keep the
 	// existing behavior and send the user to a generic thank-you page,
 	// assuming that the purchase was successful. This goes to the URL path
-	// `/checkout/thank-you/:site/:receiptId` but without a receiptId.
+	// `/checkout/thank-you/:site/:receiptId` but without a real receiptId.
 	if ( ! orderId ) {
 		return {
-			url: `/checkout/thank-you/${ siteSlug ?? 'no-site' }/unknown-receipt`,
+			url: getDefaultSuccessUrl( siteSlug, receiptId ),
 		};
 	}
 
@@ -243,7 +325,13 @@ export function getRedirectFromPendingPage( {
 			const { receiptId: transactionReceiptId } = transaction;
 
 			return {
-				url: interpolateReceiptId( redirectTo ?? defaultSuccessUrl, transactionReceiptId ),
+				url: filterAllowedRedirect(
+					interpolateReceiptId(
+						redirectTo ?? getDefaultSuccessUrl( siteSlug, transactionReceiptId ),
+						transactionReceiptId
+					),
+					siteSlug
+				),
 			};
 		}
 
