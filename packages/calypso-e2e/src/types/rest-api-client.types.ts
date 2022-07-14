@@ -92,19 +92,17 @@ export interface Invite {
 	role: string;
 	is_pending: boolean;
 	user: {
-		email: string;
+		email: string; // Email address for the invited user.
 	};
 	invited_by: {
 		ID: number;
 		login: string;
-		site_ID: number;
+		site_ID: number; // Target site the user is invited to.
 	};
 }
 
-export interface AllInvitesResponse {
-	// Ignore the `found`: number attribute.
-	[ index: number ]: Array< Invite >;
-}
+// Export as Array to expose function calls of arrays.
+export type AllInvitesResponse = Array< Invite >;
 
 export interface DeleteInvitesResponse {
 	deleted: string[];
