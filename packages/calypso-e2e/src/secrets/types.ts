@@ -6,7 +6,13 @@ export type TestAccountName = typeof TEST_ACCOUNT_NAMES[ number ];
 export interface TestAccountCredentials {
 	username: string;
 	password: string;
-	primarySite?: string;
+	primarySite?:
+		| string // Only for backward compatibility during transition to the structure below.
+		| {
+				url: string;
+				id: number;
+		  };
+
 	otherSites?: string[];
 	totpKey?: string;
 	email?: string;
