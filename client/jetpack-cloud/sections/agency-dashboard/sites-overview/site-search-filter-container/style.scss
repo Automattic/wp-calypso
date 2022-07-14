@@ -25,6 +25,12 @@
 	}
 	.search.is-open {
 		box-shadow: none;
+		.search__open-icon {
+			width: 40px;
+			@include break-large() {
+				width: 60px;
+			}
+		}
 	}
 }
 
@@ -43,6 +49,9 @@
 	.filterbar__wrap.card {
 		overflow-x: auto;
 		box-shadow: none;
+		.filterbar__label {
+			margin-left: 12px;
+		}
 		.filterbar__control-list {
 			li {
 				display: inline-flex;
