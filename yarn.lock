@@ -1171,6 +1171,7 @@ __metadata:
     "@wordpress/is-shallow-equal": ^4.9.0
     "@wordpress/react-i18n": ^3.7.0
     classnames: ^2.3.1
+    fuse.js: ^6.6.2
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -18415,6 +18416,13 @@ __metadata:
   version: 3.6.1
   resolution: "fuse.js@npm:3.6.1"
   checksum: bd9d5bc4d82781de7bb46057e96775f9efc497eb8b334b61cfea589db730c1fe7789bf5ff61b1146c15e18ffe5b27715807e5d436f333662b47917b530ced5e9
+  languageName: node
+  linkType: hard
+
+"fuse.js@npm:^6.6.2":
+  version: 6.6.2
+  resolution: "fuse.js@npm:6.6.2"
+  checksum: c2fe4f234f516e9ea83b06f06f8f3c8b7117f51aa75bbccd052eed0c0423364bf1e360ffbf29cadae8ef6aa39476b7961eaf9d07bed779cea5c83d62b34e2df9
   languageName: node
   linkType: hard
 
