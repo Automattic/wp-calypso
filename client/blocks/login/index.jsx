@@ -42,7 +42,6 @@ import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-fr
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
-
 import './style.scss';
 
 class Login extends Component {
@@ -70,6 +69,8 @@ class Login extends Component {
 		onSocialConnectStart: PropTypes.func,
 		onTwoFactorRequested: PropTypes.func,
 		signupUrl: PropTypes.string,
+		redirectTo: PropTypes.string,
+		isPartnerSignup: PropTypes.bool,
 	};
 
 	state = {
@@ -144,6 +145,7 @@ class Login extends Component {
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
+					isPartnerSignup: this.props.isPartnerSignup,
 				} )
 			);
 		}
