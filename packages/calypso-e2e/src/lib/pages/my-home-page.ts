@@ -5,6 +5,7 @@ const selectors = {
 
 	// Task card (topmost card)
 	taskHeadingMessage: ( message: string ) => `div.task h2:has-text("${ message }")`,
+	siteTitle: ( vertical: string ) => `div.site__title:has-text("${ vertical }")`,
 };
 
 /**
@@ -42,5 +43,15 @@ export class MyHomePage {
 	 */
 	async validateTaskHeadingMessage( message: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.taskHeadingMessage( message ) );
+	}
+
+	/**
+	 * Given a partial or full string, verify that a site generated from
+	 * a vertical design uses the vertical name as the default site title.
+	 *
+	 * @param {string} vertical Name of the vertical used as the site title.
+	 */
+	async validateSiteTitle( vertical: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.siteTitle( vertical ) );
 	}
 }

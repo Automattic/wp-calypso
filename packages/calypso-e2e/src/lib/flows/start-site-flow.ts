@@ -29,8 +29,20 @@ const selectors = {
 	goalButton: ( goal: string ) => `.select-card__container:has-text("${ goal }")`,
 	selectedGoalButton: ( goal: string ) => `.select-card__container.selected:has-text("${ goal }")`,
 
+	// Verticals
+	suggestedVertical: ( vertical: string ) => `button:has-text("${ vertical }")`,
+	clearVerticalButton: 'button:[aria-label="Clear Search"]',
+
+	// TODO: Get header validation working. Here are a few attempts, for future reference:
+	verticalDesignHeader: ( vertical: string ) => `h1.wp-block-site-title:text("${ vertical }")`,
+	// verticalDesignHeader: ( vertical: string ) => `role=link[name="${ vertical }"]`,
+	// verticalDesignHeader: ( vertical: string ) => `div.wp-container-4 a:has-text("${ vertical }")`,
+	// verticalDesignHeader: ( vertical: string ) => `div:has-text("${ vertical }") >> nth=2`,
+	// verticalDesignHeader: ( vertical: string ) => `div.site-brand a:has-text("${ vertical }")`,
+
 	// Step containers
 	themePickerContainer: '.design-picker',
+	designSetupContainer: '.design-setup',
 	goalsStepContainer: '.goals-step',
 	verticalsStepContainer: '.site-vertical',
 	intentStepContainer: '.intent-step',
@@ -112,6 +124,23 @@ export class StartSiteFlow {
 	}
 
 	/**
+	 * Select site vertical, which may be different than entered vertical.
+	 *
+	 * @param {string} vertical Name of the vertical to select.
+	 */
+	async selectVertical( vertical: string ): Promise< void > {
+		await this.page.click( selectors.suggestedVertical( vertical ) );
+	}
+
+	/**
+	 * Clears the vertical search.
+	 * TODO: Add a check to see if the button is there, if not, it's already cleared
+	 */
+	async clearVertical(): Promise< void > {
+		await this.page.click( selectors.clearVerticalButton );
+	}
+
+	/**
 	 * Enter blog name.
 	 *
 	 * @param {string} name Name for the blog.
@@ -152,6 +181,22 @@ export class StartSiteFlow {
 	 */
 	async validateOnDesignPickerScreen(): Promise< void > {
 		await this.page.waitForSelector( selectors.themePickerContainer );
+	}
+
+	/**
+	 * Validates we've landed on the design setup screen used in the vertical flow.
+	 */
+	async validateOnDesignSetupScreen(): Promise< void > {
+		await this.page.waitForSelector( selectors.designSetupContainer );
+	}
+
+	/**
+	 * Validates the header on a generated vertical design.
+	 *
+	 * @param {string} vertical Name of the vertical to validate.
+	 */
+	async validateVerticalDesignHeader( vertical: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.verticalDesignHeader( vertical ) );
 	}
 
 	/**
