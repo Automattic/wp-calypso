@@ -48,7 +48,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 					{ filteredSites.length > 0 ? (
 						<SitesTable sites={ filteredSites } />
 					) : (
-						<h2>No sites match your search.</h2>
+						<h2>{ __( 'No sites match your search.' ) }</h2>
 					) }
 				</>
 			) }
