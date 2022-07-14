@@ -311,7 +311,7 @@ export function getRedirectFromPendingPage( {
 	// `/checkout/thank-you/:site/:receiptId` but without a real receiptId.
 	if ( ! orderId ) {
 		return {
-			url: getDefaultSuccessUrl( siteSlug, receiptId ),
+			url: getDefaultSuccessUrl( siteSlug, undefined ),
 		};
 	}
 
@@ -329,7 +329,7 @@ export function getRedirectFromPendingPage( {
 						transactionReceiptId
 					),
 					siteSlug,
-					getDefaultSuccessUrl( siteSlug, receiptId )
+					getDefaultSuccessUrl( siteSlug, transactionReceiptId )
 				),
 			};
 		}
