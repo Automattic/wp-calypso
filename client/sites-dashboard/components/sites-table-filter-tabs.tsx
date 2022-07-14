@@ -25,7 +25,6 @@ interface SiteTab extends Omit< TabPanel.Tab, 'title' > {
 const SitesTabPanel = styled( TabPanel )`
 	.components-tab-panel__tabs {
 		overflow-x: auto;
-		padding-bottom: 10px;
 	}
 
 	.components-tab-panel__tabs-item {
