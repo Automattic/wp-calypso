@@ -521,10 +521,14 @@ export function switchWebpackCSS( isRTL ) {
 		}
 
 		const newLink = await loadCSS( newHref, currentLink );
-		newLink.setAttribute( 'data-webpack', true );
-
-		if ( currentLink.parentElement ) {
-			currentLink.parentElement.removeChild( currentLink );
+		// After the CSS loads the RTL status might have changed
+		// This is a double-check to ensure the value of isRTL
+		// before the CSS link is removed from the DOM
+		if ( i18n.isRtl() === isRTL ) {
+			newLink.setAttribute( 'data-webpack', true );
+			currentLink.parentElement?.removeChild( currentLink );
+		} else {
+			currentLink.parentElement?.removeChild( newLink );
 		}
 	} );
 }
