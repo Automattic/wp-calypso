@@ -3,7 +3,6 @@ import {
 	InnerBlocks,
 	PanelColorSettings,
 	BlockControls,
-	useSetting,
 } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
@@ -14,21 +13,6 @@ import classnames from 'classnames';
 import { TimelineIcon } from './icon';
 
 const DEFAULT_BACKGROUND = '#eeeeee';
-
-function useBackgroundColors() {
-	const colors = [ ...useSetting( 'color.palette' ) ];
-	if ( colors.length > 0 ) {
-		const appendTransparent = colors.every( ( { color } ) => 'transparent' !== color );
-		if ( appendTransparent ) {
-			colors.push( {
-				name: __( 'Transparent', 'full-site-editing' ),
-				slug: 'transparent',
-				color: 'transparent',
-			} );
-		}
-	}
-	return colors;
-}
 
 function Controls( { alignment, clientId, toggleAlignment } ) {
 	const parentIsAlternating = useSelect( ( select ) => {
@@ -98,13 +82,13 @@ export function registerTimelineItemBlock() {
 						<InspectorControls>
 							<PanelColorSettings
 								title={ __( 'Color Settings', 'full-site-editing' ) }
+								enableAlpha={ true }
 								colorSettings={ [
 									{
 										value: attributes.background,
 										onChange: ( background ) =>
 											setAttributes( { background: background || DEFAULT_BACKGROUND } ),
 										label: __( 'Background Color', 'full-site-editing' ),
-										colors: useBackgroundColors(),
 									},
 								] }
 							/>
