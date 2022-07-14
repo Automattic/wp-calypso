@@ -271,7 +271,7 @@ function ItemVariantOption( {
 	selectedItem: ResponseCartProduct;
 	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
 } ) {
-	const { variantLabel, formattedCurrentPrice, productId, productSlug } = variant;
+	const { variantLabel, productId, productSlug } = variant;
 	return (
 		<Option
 			id={ productId.toString() }
@@ -281,8 +281,7 @@ function ItemVariantOption( {
 			onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
 			selected={ index === highlightedVariantIndex }
 		>
-			<VariantLabel>{ variantLabel }</VariantLabel>
-			<VariantPrice>{ formattedCurrentPrice }</VariantPrice>
+			<ItemVariantPrice variant={ variant } />
 		</Option>
 	);
 }
