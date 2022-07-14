@@ -1,3 +1,4 @@
+import { useRef, useEffect } from '@wordpress/element';
 /* eslint-disable no-restricted-imports */
 import SupportArticleHeader from 'calypso/blocks/support-article-dialog/header';
 import EmbedContainer from 'calypso/components/embed-container';
@@ -13,27 +14,42 @@ interface ArticleContent {
 	isLoading?: boolean;
 }
 
+interface ContentWithExternalLinks {
+	content: string;
+	className?: string;
+}
+
+const ContentWithExternalLinks = ( { content, className }: ContentWithExternalLinks ) => {
+	const contentRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		if ( contentRef.current && content.length ) {
+			contentRef.current.innerHTML = content;
+			const links = contentRef.current.querySelectorAll( 'a' );
+			[ ...links ].forEach( ( l ) => l.setAttribute( 'target', '_blank' ) );
+		}
+	}, [ contentRef, content ] );
+
+	return <div ref={ contentRef } className={ className } />;
+};
+
 const ArticleContent = ( { content, title, link, isLoading = false }: ArticleContent ) => {
 	const post = { title: title, url: link };
 	return (
 		<article className="help-center-article-content__story">
-			{
-				isLoading ? (
-					<Placeholders lines={ 8 } />
-				) : (
-					/*eslint-disable react/no-danger */
-					<>
-						<SupportArticleHeader post={ post } isLoading={ false } />
-						<EmbedContainer>
-							<div
-								className="help-center-article-content__story-content"
-								dangerouslySetInnerHTML={ { __html: content } }
-							/>
-						</EmbedContainer>
-					</>
-				)
-				/*eslint-enable react/no-danger */
-			}
+			{ isLoading ? (
+				<Placeholders lines={ 8 } />
+			) : (
+				<>
+					<SupportArticleHeader post={ post } isLoading={ false } />
+					<EmbedContainer>
+						<ContentWithExternalLinks
+							className="help-center-article-content__story-content"
+							content={ content }
+						/>
+					</EmbedContainer>
+				</>
+			) }
 		</article>
 	);
 };
