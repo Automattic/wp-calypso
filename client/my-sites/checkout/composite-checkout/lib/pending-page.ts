@@ -250,13 +250,7 @@ function getDefaultSuccessUrl(
 	siteSlug: string | undefined,
 	receiptId: number | undefined
 ): string {
-	if ( receiptId ) {
-		return `/checkout/thank-you/${ siteSlug ?? 'no-site' }/${ receiptId }`;
-	}
-	if ( siteSlug ) {
-		return `/checkout/thank-you/${ siteSlug }/unknown-receipt`;
-	}
-	return '/checkout/thank-you/no-site';
+	return `/checkout/thank-you/${ siteSlug ?? 'no-site' }/${ receiptId ?? 'unknown-receipt' }`;
 }
 
 /**
