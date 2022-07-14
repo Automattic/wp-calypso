@@ -29,6 +29,6 @@ export * from './writing-settings-page';
 export * from './shared-types';
 export * from './full-site-editor-page';
 export * from './checkout-thank-you-page';
-export * from './google-login-page';
 
 export * from './me';
+export * from './external';

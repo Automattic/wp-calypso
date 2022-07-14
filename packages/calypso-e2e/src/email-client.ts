@@ -22,31 +22,39 @@ export class EmailClient {
 	 *
 	 * @param param0 Keyed parameter object.
 	 * @param {string} param0.inboxId ID of the inbox to look into. Also known as serverId in Mailosaur parlance.
+	 * @param {Date} param0.receivedAfter Timestamp marking the earliest point the search should look up.
 	 * @param {string} param0.sentTo Recipient email or phone number.
+	 * @param {string} param0.sentFrom Sender email or phone number.
 	 * @param {string} param0.subject Subject of the message.
 	 * @param {string} param0.body Body of the message.
 	 * @returns {Message} Message object returned by Mailosaur client.
 	 */
 	async getLastMatchingMessage( {
 		inboxId,
+		receivedAfter,
 		sentTo,
+		sentFrom,
 		subject,
 		body,
 	}: {
 		inboxId: string;
-		sentTo: string;
+		receivedAfter?: Date;
+		sentTo?: string;
+		sentFrom?: string;
 		subject?: string;
 		body?: string;
 	} ): Promise< Message > {
 		const searchCriteria = {
-			sentTo: sentTo,
+			sentTo: sentTo !== undefined ? sentTo : '',
+			sentFrom: sentFrom !== undefined ? sentFrom : '',
 			subject: subject !== undefined ? subject : '',
 			body: body !== undefined ? body : '',
 		};
 
-		// Get messages sent since the client was initialized.
+		// Get messages received after either when the client was
+		// initialized, or a specified timestamp.
 		const message = await this.client.messages.get( inboxId, searchCriteria, {
-			receivedAfter: this.startTimestamp,
+			receivedAfter: receivedAfter !== undefined ? receivedAfter : this.startTimestamp,
 		} );
 		return message;
 	}
