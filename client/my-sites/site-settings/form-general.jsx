@@ -634,7 +634,9 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 
 		// We currently don't have a monthly or a biennial pro plan, hence keeping the business plan upsell for those cases.
-		const upsellPlan = isWpComAnnualPlan( site.plan.product_slug ) ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
+		const upsellPlan = isWpComAnnualPlan( site?.plan.product_slug )
+			? PLAN_WPCOM_PRO
+			: PLAN_BUSINESS;
 
 		return (
 			<div className={ classNames( classes ) }>
