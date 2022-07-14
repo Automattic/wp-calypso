@@ -221,7 +221,10 @@ export function recordInboxNewMailboxUpsellClickEvent() {
 
 /**
  * Tracks an event for the key 'calypso_{source}_upsell', where {source} defaults to "email".
- * For upsell triggered from the inbox, the event 'calypso_inbox_upsell' will be tracked.
+ *
+ * Events tracked:
+ * `calypso_inbox_upsell`, when upsell triggered by a CTA click from the Inbox.
+ * `calypso_email_upsell`, when upsell triggered by a CTA click from Upgrades > Emails.
  *
  * @param source - source generating the event.
  * @param context context, where this event was logged.
