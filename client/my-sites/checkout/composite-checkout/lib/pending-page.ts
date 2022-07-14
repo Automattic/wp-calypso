@@ -235,11 +235,14 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 	return false;
 }
 
-function filterAllowedRedirect( url: string, siteSlug: string | undefined ): string {
+function filterAllowedRedirect(
+	url: string,
+	siteSlug: string | undefined,
+	fallbackUrl: string
+): string {
 	if ( isRedirectAllowed( url, siteSlug ) ) {
 		return url;
 	}
-	const fallbackUrl = '/checkout/thank-you/no-site';
 	return fallbackUrl;
 }
 
@@ -294,7 +297,8 @@ export function getRedirectFromPendingPage( {
 					redirectTo ?? getDefaultSuccessUrl( siteSlug, receiptId ),
 					receiptId
 				),
-				siteSlug
+				siteSlug,
+				getDefaultSuccessUrl( siteSlug, receiptId )
 			),
 		};
 	}
@@ -324,7 +328,8 @@ export function getRedirectFromPendingPage( {
 						redirectTo ?? getDefaultSuccessUrl( siteSlug, transactionReceiptId ),
 						transactionReceiptId
 					),
-					siteSlug
+					siteSlug,
+					getDefaultSuccessUrl( siteSlug, receiptId )
 				),
 			};
 		}
