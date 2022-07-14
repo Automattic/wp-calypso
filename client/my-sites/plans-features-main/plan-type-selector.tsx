@@ -173,8 +173,7 @@ export const ExperimentalIntervalTypeToggle: React.FunctionComponent< IntervalTy
 					return <></>;
 				}
 
-				const isTreatment = 'treatment' === experimentAssignment?.variationName;
-				if ( ! isTreatment ) {
+				if ( 'treatment' !== experimentAssignment?.variationName ) {
 					return <></>;
 				}
 

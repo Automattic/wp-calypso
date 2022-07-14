@@ -180,7 +180,6 @@ export class PlansStep extends Component {
 				<div>
 					{ errorDisplay }
 					<ExperimentalIntervalTypeToggle
-						experiment="calypso_plugins_search_page_jetpack_search"
 						intervalType={ intervalType }
 						isInSignup={ true }
 						plans={ [] }

@@ -481,7 +481,6 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 		<>
 			<Global styles={ globalOverrides } />
 			<QueryProductsList />
-
 			<ComparisonTable
 				firstColWidth={ 31 }
 				planCount={ plans.length }
