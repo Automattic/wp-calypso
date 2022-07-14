@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
 import { searchCollection } from 'calypso/components/search-sites/utils';
 import { SitesSearch } from './sites-search';
+import { SitesSearchIcon } from './sites-search-icon';
 import { SitesTable } from './sites-table';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
@@ -37,6 +38,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 						` }
 					>
 						<SitesSearch
+							searchIcon={ <SitesSearchIcon /> }
 							onSearch={ handleSearch }
 							delaySearch
 							isReskinned
