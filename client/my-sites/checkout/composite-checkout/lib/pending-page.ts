@@ -303,7 +303,7 @@ export function getRedirectFromPendingPage( {
 	// existing behavior and send the user to a generic thank-you page,
 	// assuming that the purchase was successful. This goes to the URL path
 	// `/checkout/thank-you/:site/:receiptId` but without a real receiptId.
-	if ( ! orderId ) {
+	if ( ! orderId && ! transaction ) {
 		return {
 			url: getDefaultSuccessUrl( siteSlug, undefined ),
 		};
