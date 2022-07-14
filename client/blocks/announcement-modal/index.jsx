@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { Title } from '@automattic/onboarding';
 import { Guide } from '@wordpress/components';
 import { useSelector, useDispatch } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -17,9 +16,7 @@ const Page = ( { headline, heading, content, image, cta, handleDismiss } ) => {
 				<div className="announcement-modal__headline">
 					<span>{ headline }</span>
 				</div>
-				<div className="announcement-modal__heading">
-					<Title tagName="h2">{ preventWidows( heading ) }</Title>
-				</div>
+				<div className="announcement-modal__heading">{ preventWidows( heading ) }</div>
 				<div className="announcement-modal__description">
 					<p>{ preventWidows( content ) }</p>
 				</div>
