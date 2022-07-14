@@ -82,6 +82,35 @@ export interface AccountClosureResponse {
 	success: boolean;
 }
 
+export interface NewInviteResponse {
+	sent: string[];
+	errors: string[];
+}
+
+export interface Invite {
+	invite_key: string;
+	role: string;
+	is_pending: boolean;
+	user: {
+		email: string;
+	};
+	invited_by: {
+		ID: number;
+		login: string;
+		site_ID: number;
+	};
+}
+
+export interface AllInvitesResponse {
+	// Ignore the `found`: number attribute.
+	[ index: number ]: Array< Invite >;
+}
+
+export interface DeleteInvitesResponse {
+	deleted: string[];
+	invalid: string[];
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {
