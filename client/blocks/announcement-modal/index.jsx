@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
-import { Title } from '@automattic/onboarding';
 import { Guide } from '@wordpress/components';
 import { useSelector, useDispatch } from 'react-redux';
+import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -16,11 +16,9 @@ const Page = ( { headline, heading, content, image, cta, handleDismiss } ) => {
 				<div className="announcement-modal__headline">
 					<span>{ headline }</span>
 				</div>
-				<div className="announcement-modal__heading">
-					<Title tagName="h2">{ heading }</Title>
-				</div>
+				<div className="announcement-modal__heading">{ preventWidows( heading ) }</div>
 				<div className="announcement-modal__description">
-					<p>{ content }</p>
+					<p>{ preventWidows( content ) }</p>
 				</div>
 				{ cta && (
 					<div className="announcement-modal__cta">

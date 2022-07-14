@@ -16,8 +16,6 @@ import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
-import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -37,6 +35,7 @@ import { useCategories } from 'calypso/my-sites/plugins/categories/use-categorie
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
@@ -652,16 +651,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			recordGoogleEvent( 'Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow' ),
 			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
 		);
-	const annoncementPages = [
-		{
-			headline: translate( 'NEW' ),
-			heading: translate( 'Buy the best plugins' ),
-			content: translate(
-				"Now you can purchase plugins right on WordPress.com to extend your website's capabilities."
-			),
-			featureImage: announcementImage,
-		},
-	];
 
 	useEffect( () => {
 		if ( search && searchTitle ) {
@@ -688,13 +677,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			/>
 			<DocumentHead title={ translate( 'Plugins' ) } />
 
-			{ ! jetpackNonAtomic && (
-				<AnnouncementModal
-					announcementId="plugins-page-woo-extensions"
-					pages={ annoncementPages }
-					finishButtonText={ translate( "Let's explore!" ) }
-				/>
-			) }
+			<PluginsAnnouncementModal />
 			{ ! hideHeader && (
 				<FixedNavigationHeader
 					className="plugins-browser__header"
