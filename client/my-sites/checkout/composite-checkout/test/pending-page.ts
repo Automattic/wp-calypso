@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 import page from 'page';
-import { addUrlToPendingPageRedirect, redirectThroughPending } from '../lib/pending-page';
+import {
+	addUrlToPendingPageRedirect,
+	redirectThroughPending,
+	getRedirectFromPendingPage,
+} from '../lib/pending-page';
 
 jest.mock( 'page' );
 
@@ -143,5 +147,62 @@ describe( 'redirectThroughPending', () => {
 			) }&receiptId=${ encodedReceiptPlaceholder }`
 		);
 		delete global.window.location;
+	} );
+} );
+
+describe( 'getRedirectFromPendingPage', () => {
+	it( 'returns a simple relative url if there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( { redirectTo: '/home', receiptId: 12345 } );
+		expect( actual ).toEqual( { url: '/home' } );
+	} );
+
+	it( 'returns a receipt interpolated relative url if there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home/:receiptId',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( { url: '/home/12345' } );
+	} );
+
+	it( 'returns a simple absolute url if it is allowed and there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: 'https://wordpress.com/home',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( { url: 'https://wordpress.com/home' } );
+	} );
+
+	it( 'returns a simple absolute url if it matches the siteSlug and there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: 'https://example.com/home',
+			receiptId: 12345,
+			siteSlug: 'example.com',
+		} );
+		expect( actual ).toEqual( { url: 'https://example.com/home' } );
+	} );
+
+	it( 'returns a receipt interpolated absolute url if it is allowed and there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: 'https://wordpress.com/home/:receiptId',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( { url: 'https://wordpress.com/home/12345' } );
+	} );
+
+	it( 'returns a generic siteless url for an absolute url if it is not allowed and there is also a receipt', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: 'https://example.com/home',
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
+	} );
+
+	it( 'returns a generic url with a site for an absolute url if it is not allowed and there is also a receipt and a site', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: 'https://example.com/home',
+			receiptId: 12345,
+			siteSlug: 'foo.bar',
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/foo.bar/12345' } );
 	} );
 } );
