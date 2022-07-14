@@ -516,9 +516,6 @@ export function switchWebpackCSS( isRTL ) {
 	forEach( currentLinks, async ( currentLink ) => {
 		const currentHref = currentLink.getAttribute( 'href' );
 		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
-		if ( currentHref === newHref ) {
-			return;
-		}
 
 		const newLink = await loadCSS( newHref, currentLink );
 		newLink.setAttribute( 'data-webpack', true );
