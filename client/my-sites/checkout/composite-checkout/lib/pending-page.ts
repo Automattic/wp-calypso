@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { SUCCESS, ERROR, FAILURE, UNKNOWN } from 'calypso/state/order-transactions/constants';
 import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
@@ -12,7 +11,7 @@ export interface PendingPageRedirectOptions {
 
 export interface RedirectInstructions {
 	url: string;
-	errorNotice?: string;
+	isError?: boolean;
 }
 
 export interface RedirectForTransactionStatusArgs {
@@ -22,7 +21,6 @@ export interface RedirectForTransactionStatusArgs {
 	receiptId?: number;
 	redirectTo?: string;
 	siteSlug?: string;
-	translate: ReturnType< typeof useTranslate >;
 }
 
 /**
@@ -274,7 +272,7 @@ function getDefaultSuccessUrl(
  * allowed hosts to prevent having an open redirect. Otherwise it may be a
  * generic thank-you page.
  *
- * The result may also include an error message that should be displayed.
+ * The result may also be marked as an error if it is not a success url.
  */
 export function getRedirectFromPendingPage( {
 	error,
@@ -283,12 +281,8 @@ export function getRedirectFromPendingPage( {
 	receiptId,
 	redirectTo,
 	siteSlug,
-	translate,
 }: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
 	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
-	const defaultFailErrorNotice = translate(
-		"Sorry, we couldn't process your payment. Please try again later."
-	);
 	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
 
 	// If there is a receipt ID, then the order must already be complete. In
@@ -341,8 +335,8 @@ export function getRedirectFromPendingPage( {
 		// checkout page so they can try again.
 		if ( ERROR === processingStatus || FAILURE === processingStatus ) {
 			return {
-				errorNotice: defaultFailErrorNotice,
 				url: defaultFailUrl,
+				isError: true,
 			};
 		}
 
@@ -350,8 +344,8 @@ export function getRedirectFromPendingPage( {
 		// Redirect users back to the plan page so that they won't be stuck here.
 		if ( UNKNOWN === processingStatus ) {
 			return {
-				errorNotice: defaultFailErrorNotice,
 				url: planRoute,
+				isError: true,
 			};
 		}
 	}
@@ -359,8 +353,8 @@ export function getRedirectFromPendingPage( {
 	// A HTTP error occured; we will send the user back to checkout.
 	if ( error ) {
 		return {
-			errorNotice: defaultFailErrorNotice,
 			url: defaultFailUrl,
+			isError: true,
 		};
 	}
 

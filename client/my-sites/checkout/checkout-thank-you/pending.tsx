@@ -138,16 +138,18 @@ function useRedirectOnTransactionSuccess( {
 			receiptId,
 			redirectTo,
 			siteSlug,
-			translate,
 		} );
 
 		if ( ! redirectInstructions ) {
 			return;
 		}
 
-		if ( redirectInstructions.errorNotice ) {
+		if ( redirectInstructions.isError ) {
+			const defaultFailErrorNotice = translate(
+				"Sorry, we couldn't process your payment. Please try again later."
+			);
 			reduxDispatch(
-				errorNotice( redirectInstructions.errorNotice, {
+				errorNotice( defaultFailErrorNotice, {
 					isPersistent: true,
 				} )
 			);
