@@ -6,6 +6,7 @@ import {
 	useSiteIntent,
 	getContextResults,
 } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -49,6 +50,7 @@ function getPostUrl( article: Article, query: string ) {
 
 export function SibylArticles( { message = '', supportSite }: Props ) {
 	const { __ } = useI18n();
+	const locale = useLocale();
 
 	const isAtomic = Boolean(
 		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
@@ -81,7 +83,15 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 			>
 				{ articles.map( ( article ) => (
 					<li key={ article.link }>
-						<Link to={ getPostUrl( article as Article, message ) }>
+						<Link
+							onClick={ ( event ) => {
+								if ( 'en' !== locale ) {
+									event.preventDefault();
+									window.open( article.link, '_blank' );
+								}
+							} }
+							to={ getPostUrl( article as Article, message ) }
+						>
 							<Icon icon={ page } />
 							{ article.title }
 						</Link>
