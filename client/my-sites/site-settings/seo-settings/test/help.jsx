@@ -1,23 +1,38 @@
 /**
  * @jest-environment jsdom
  */
-import { shallow } from 'enzyme';
-import { SeoSettingsHelpCard } from '../help';
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
+import { screen } from '@testing-library/react';
+import { reducer as ui } from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import SeoSettingsHelpCard from '../help';
 
-const props = {
-	disabled: false,
-	siteId: 1,
-	translate: ( x ) => x,
+const siteId = 1;
+const initialState = {
+	ui: {
+		selectedSiteId: siteId,
+	},
 };
+
+const advancedSeoState = {
+	sites: { features: { [ siteId ]: { data: { active: [ FEATURE_ADVANCED_SEO ] } } } },
+};
+
+const render = ( el, options ) => renderWithProvider( el, { ...options, reducers: { ui } } );
 
 describe( 'SeoSettingsHelpCard basic tests', () => {
 	test( 'should render SEO help card when has advanced seo', () => {
-		const comp = shallow( <SeoSettingsHelpCard { ...props } hasAdvancedSEOFeature={ true } /> );
-		expect( comp.find( '.seo-settings__help' ) ).toHaveLength( 1 );
+		render( <SeoSettingsHelpCard />, {
+			initialState: {
+				...initialState,
+				...advancedSeoState,
+			},
+		} );
+		expect( screen.queryByText( /more advanced control/i ) ).toBeVisible();
 	} );
 
 	test( 'should not render SEO help card when does not have advanced seo', () => {
-		const comp = shallow( <SeoSettingsHelpCard { ...props } hasAdvancedSEOFeature={ false } /> );
-		expect( comp.find( '.seo-settings__help' ) ).toHaveLength( 0 );
+		render( <SeoSettingsHelpCard />, { initialState } );
+		expect( screen.queryByText( /more advanced control/i ) ).not.toBeInTheDocument();
 	} );
 } );
