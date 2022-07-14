@@ -12,6 +12,7 @@ export interface PendingPageRedirectOptions {
 export interface RedirectInstructions {
 	url: string;
 	isError?: boolean;
+	isUnknown?: boolean;
 }
 
 export interface RedirectForTransactionStatusArgs {
@@ -344,7 +345,7 @@ export function getRedirectFromPendingPage( {
 		if ( UNKNOWN === processingStatus ) {
 			return {
 				url: planRoute,
-				isError: true,
+				isUnknown: true,
 			};
 		}
 	}

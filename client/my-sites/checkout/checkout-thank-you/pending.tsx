@@ -155,6 +155,15 @@ function useRedirectOnTransactionSuccess( {
 			);
 		}
 
+		if ( redirectInstructions.isUnknown ) {
+			const unknownNotice = translate( 'Oops! Something went wrong. Please try again later.' );
+			reduxDispatch(
+				errorNotice( unknownNotice, {
+					isPersistent: true,
+				} )
+			);
+		}
+
 		didRedirect.current = true;
 		performRedirect( redirectInstructions.url );
 	}, [
