@@ -1,25 +1,47 @@
 import { isFreePlan } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import EmptyContent from 'calypso/components/empty-content';
-import { recordInboxUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordEmailUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { AppState } from 'calypso/types';
 
-const noop = () => {};
+const EmailNoDomain = ( { selectedSite, source }: { selectedSite: SiteData; source: string } ) => {
+	const translate = useTranslate();
 
-const EmailNoDomain = ( { selectedSite, translate, source } ) => {
-	const hasAvailableDomainCredit = useSelector( ( state ) =>
+	const hasAvailableDomainCredit = useSelector( ( state: AppState ) =>
 		hasDomainCredit( state, selectedSite.ID )
 	);
 
 	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? null );
 
-	const trackEvent =
-		source != null
-			? () => recordInboxUpsellTracksEvent( isFreePlanProduct ? 'plan' : 'domain' )
-			: noop;
+	const trackEvent = () => {
+		recordEmailUpsellTracksEvent( source, isFreePlanProduct ? 'plan' : 'domain' );
+	};
+
+	const trackImpression = ( noDomainContext: string ) => {
+		// This is executed multiple times by different conditionals as the site states get set.
+		// Particularly, `hasAvailableDomainCredit` takes some time to be returned.
+		// To ensure we are tracking the proper values, only make a tracking request when all states are set.
+		if ( isFreePlanProduct === null || hasAvailableDomainCredit === null ) {
+			return '';
+		}
+
+		const noDomainSource = source || 'email';
+
+		return (
+			<TrackComponentView
+				eventName="calypso_email_management_no_domain"
+				eventProperties={ {
+					context: noDomainContext,
+					source: noDomainSource,
+				} }
+			/>
+		);
+	};
 
 	if ( isFreePlanProduct ) {
 		return (
@@ -32,7 +54,9 @@ const EmailNoDomain = ( { selectedSite, translate, source } ) => {
 					'Upgrade to a plan now, set up your domain and pick from one of our flexible options to connect your domain with email and start getting emails today.'
 				) }
 				title={ translate( 'Get your own domain for a custom email address' ) }
-			/>
+			>
+				{ trackImpression( 'plan' ) }
+			</EmptyContent>
 		);
 	}
 
@@ -47,7 +71,9 @@ const EmailNoDomain = ( { selectedSite, translate, source } ) => {
 					'Claim your domain, pick from one of our flexible options to connect your domain with email and start getting emails today.'
 				) }
 				title={ translate( 'Claim your free domain to use with a custom email address' ) }
-			/>
+			>
+				{ trackImpression( 'domain' ) }
+			</EmptyContent>
 		);
 	}
 
@@ -61,17 +87,10 @@ const EmailNoDomain = ( { selectedSite, translate, source } ) => {
 				'Set up or buy your domain, pick from one of our flexible email options, and start getting emails today.'
 			) }
 			title={ translate( 'Set up a domain to use with a custom email address' ) }
-		/>
+		>
+			{ trackImpression( 'domain' ) }
+		</EmptyContent>
 	);
 };
 
-EmailNoDomain.propTypes = {
-	// Props passed to this component
-	selectedSite: PropTypes.object.isRequired,
-	source: PropTypes.string,
-
-	// Props injected via localize()
-	translate: PropTypes.func.isRequired,
-};
-
-export default localize( EmailNoDomain );
+export default EmailNoDomain;
