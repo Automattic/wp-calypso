@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ProgressBar } from '@automattic/components';
 import { Hooray, Progress, SubTitle, Title, NextButton } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
@@ -11,6 +10,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
 import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -85,28 +85,28 @@ export class ImportEverything extends SectionMigrate {
 			prevState.migrationStatus !== MigrationStatus.BACKING_UP &&
 			this.state.migrationStatus === MigrationStatus.BACKING_UP
 		) {
-			recordTracksEvent( 'calypso_site_importer_import_progress_backing_up' );
+			this.props.recordTracksEvent( 'calypso_site_importer_import_progress_backing_up' );
 		}
 
 		if (
 			prevState.migrationStatus !== MigrationStatus.RESTORING &&
 			this.state.migrationStatus === MigrationStatus.RESTORING
 		) {
-			recordTracksEvent( 'calypso_site_importer_import_progress_restoring' );
+			this.props.recordTracksEvent( 'calypso_site_importer_import_progress_restoring' );
 		}
 
 		if (
 			prevState.migrationStatus !== MigrationStatus.ERROR &&
 			this.state.migrationStatus === MigrationStatus.ERROR
 		) {
-			recordTracksEvent( 'calypso_site_importer_import_failure' );
+			this.props.recordTracksEvent( 'calypso_site_importer_import_failure' );
 		}
 
 		if (
 			prevState.migrationStatus !== MigrationStatus.DONE &&
 			this.state.migrationStatus === MigrationStatus.DONE
 		) {
-			recordTracksEvent( 'calypso_site_importer_import_success' );
+			this.props.recordTracksEvent( 'calypso_site_importer_import_success' );
 		}
 	};
 
@@ -186,7 +186,7 @@ export class ImportEverything extends SectionMigrate {
 					</SubTitle>
 					<DoneButton
 						onSiteViewClick={ () => {
-							recordTracksEvent( 'calypso_site_importer_view_site' );
+							this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
 							stepNavigator?.goToSiteViewPage?.();
 						} }
 					/>
@@ -263,6 +263,7 @@ export const connector = connect(
 		receiveSite,
 		updateSiteMigrationMeta,
 		requestSite,
+		recordTracksEvent,
 	}
 );
 
