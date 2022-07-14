@@ -2,6 +2,15 @@ import { DEFAULT_VIEWPORT_HEIGHT } from '../../constants';
 import { Design, DesignPreviewOptions } from '../../types';
 import { getDesignPreviewUrl } from '../designs';
 
+const mergeDesign = ( currentDesign, newDesign ) => ( {
+	...currentDesign,
+	...newDesign,
+	recipe: {
+		...currentDesign.recipe,
+		...newDesign.recipe,
+	},
+} );
+
 describe( 'Design Picker designs utils', () => {
 	describe( 'getDesignPreviewUrl', () => {
 		const design = {
@@ -15,6 +24,26 @@ describe( 'Design Picker designs utils', () => {
 		it( 'should return the block-previews/site endpoint with the correct query params', () => {
 			expect( getDesignPreviewUrl( design, {} ) ).toEqual(
 				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&viewport_height=${ DEFAULT_VIEWPORT_HEIGHT }&source_site=patternboilerplates.wordpress.com&site_title=Zoologist`
+			);
+		} );
+
+		it( 'should append the header_pattern_ids to the query params', () => {
+			const customizedDesign = mergeDesign( design, {
+				recipe: { header_pattern_ids: [ 56, 78 ] },
+			} );
+
+			expect( getDesignPreviewUrl( customizedDesign, {} ) ).toEqual(
+				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&header_pattern_ids=56%2C78&viewport_height=${ DEFAULT_VIEWPORT_HEIGHT }&source_site=patternboilerplates.wordpress.com&site_title=Zoologist`
+			);
+		} );
+
+		it( 'should append the footer_pattern_ids to the query params', () => {
+			const customizedDesign = mergeDesign( design, {
+				recipe: { footer_pattern_ids: [ 56, 78 ] },
+			} );
+
+			expect( getDesignPreviewUrl( customizedDesign, {} ) ).toEqual(
+				`https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=12%2C34&footer_pattern_ids=56%2C78&viewport_height=${ DEFAULT_VIEWPORT_HEIGHT }&source_site=patternboilerplates.wordpress.com&site_title=Zoologist`
 			);
 		} );
 
