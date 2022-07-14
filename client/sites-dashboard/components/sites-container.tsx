@@ -1,10 +1,9 @@
-import { ClassNames } from '@emotion/react';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import EmptyContent from 'calypso/components/empty-content';
 import { SiteData } from 'calypso/state/ui/selectors/site-data';
-import { SitesTable } from './sites-table';
+import { SearchableSitesTable } from './searchable-sites-table';
 
 const EmptySites = styled( EmptyContent )`
 	display: flex;
@@ -28,18 +27,7 @@ type SitesContainerProps = {
 export const SitesContainer = ( { sites, status }: SitesContainerProps ) => {
 	const { __ } = useI18n();
 	if ( sites.length > 0 ) {
-		return (
-			<ClassNames>
-				{ ( { css } ) => (
-					<SitesTable
-						className={ css`
-							margin-top: 32px;
-						` }
-						sites={ sites }
-					/>
-				) }
-			</ClassNames>
-		);
+		return <SearchableSitesTable sites={ sites } />;
 	}
 
 	if ( status === 'launched' ) {
