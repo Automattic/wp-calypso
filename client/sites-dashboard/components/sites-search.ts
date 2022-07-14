@@ -6,9 +6,4 @@ export const SitesSearch = styled( Search )`
 	border-radius: 4px;
 	overflow: hidden;
 	height: 44px;
-
-	// TODO: make the fade optional in the component
-	.search-component__input-fade::before {
-		display: none !important;
-	}
 `;
