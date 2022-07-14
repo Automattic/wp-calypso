@@ -39,7 +39,7 @@
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.10.2",
 		"@wordpress/base-styles": "^4.5.0",
-		"@wordpress/components": "^19.11.0",
+		"@wordpress/components": "^19.15.0",
 		"@wordpress/i18n": "^4.9.0",
 		"@wordpress/icons": "^9.0.0",
 		"@wordpress/primitives": "^3.7.0",
