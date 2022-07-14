@@ -90,33 +90,19 @@ function isValidOrderId( orderId: number | ':orderId' ): orderId is number {
 	return Number.isInteger( orderId );
 }
 
-function redirectWithInterpolatedReceipt(
-	url: string | undefined,
-	siteSlug: string | undefined,
-	receiptId: number
-): void {
-	if ( url?.includes( ':receiptId' ) ) {
-		performRedirect( url.replaceAll( ':receiptId', `${ receiptId }` ), siteSlug );
-		return;
+function interpolateReceiptId( url: string, receiptId: number ): string {
+	if ( url.includes( ':receiptId' ) ) {
+		return url.replaceAll( ':receiptId', `${ receiptId }` );
 	}
 
 	// Only treat `/pending` as a placeholder if it's the end of the URL
 	// pathname, but preserve query strings or hashes.
 	const receiptPlaceholderRegexp = /\/pending([?#]|$)/;
-	if ( url && receiptPlaceholderRegexp.test( url ) ) {
-		performRedirect( url.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` ), siteSlug );
-		return;
+	if ( receiptPlaceholderRegexp.test( url ) ) {
+		return url.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` );
 	}
 
-	if ( url ) {
-		performRedirect( url, siteSlug );
-		return;
-	}
-
-	const defaultSuccessUrl = siteSlug
-		? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-		: '/checkout/thank-you/no-site';
-	performRedirect( defaultSuccessUrl, siteSlug );
+	return url;
 }
 
 function performRedirect( url: string, siteSlug: string | undefined ): void {
@@ -169,6 +155,109 @@ function performRedirect( url: string, siteSlug: string | undefined ): void {
 	page( fallbackUrl );
 }
 
+interface RedirectInstructions {
+	url: string;
+	errorNotice?: string;
+}
+
+interface RedirectForTransactionStatusArgs {
+	error?: Error | null;
+	transaction?: OrderTransaction | null;
+	orderId?: number;
+	receiptId?: number;
+	redirectTo?: string;
+	siteSlug?: string;
+	translate: ReturnType< typeof useTranslate >;
+}
+
+function getRedirectForTransactionStatus( {
+	error,
+	transaction,
+	orderId,
+	receiptId,
+	redirectTo,
+	siteSlug,
+	translate,
+}: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
+	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
+	const defaultFailErrorNotice = translate(
+		"Sorry, we couldn't process your payment. Please try again later."
+	);
+	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
+	const defaultSuccessUrl =
+		siteSlug && receiptId
+			? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
+			: '/checkout/thank-you/no-site';
+
+	// If there is a receipt ID, then the order must already be complete. In
+	// that case, we can redirect immediately.
+	if ( receiptId && redirectTo ) {
+		return {
+			url: interpolateReceiptId( redirectTo, receiptId ),
+		};
+	}
+	if ( receiptId && ! redirectTo ) {
+		return {
+			url: interpolateReceiptId( defaultSuccessUrl, receiptId ),
+		};
+	}
+
+	// If the order ID is missing and there is no receiptId, we don't know
+	// what to do because there's no way to know the status of the
+	// transaction. If this happens it's definitely a bug, but let's keep the
+	// existing behavior and send the user to a generic thank-you page,
+	// assuming that the purchase was successful. This goes to the URL path
+	// `/checkout/thank-you/:site/:receiptId` but without a receiptId.
+	if ( ! orderId ) {
+		return {
+			url: `/checkout/thank-you/${ siteSlug ?? 'no-site' }/unknown-receipt`,
+		};
+	}
+
+	if ( transaction ) {
+		const { processingStatus } = transaction;
+
+		// If the order is complete, we can redirect to the final page.
+		if ( SUCCESS === processingStatus ) {
+			const { receiptId: transactionReceiptId } = transaction;
+
+			return {
+				url: interpolateReceiptId( redirectTo ?? defaultSuccessUrl, transactionReceiptId ),
+			};
+		}
+
+		// If the processing status indicates that there was something wrong, it
+		// could be because the user has cancelled the payment, or because the
+		// payment failed after being authorized. Redirect users back to the
+		// checkout page so they can try again.
+		if ( ERROR === processingStatus || FAILURE === processingStatus ) {
+			return {
+				errorNotice: defaultFailErrorNotice,
+				url: defaultFailUrl,
+			};
+		}
+
+		// The API has responded a status string that we don't expect somehow.
+		// Redirect users back to the plan page so that they won't be stuck here.
+		if ( UNKNOWN === processingStatus ) {
+			return {
+				errorNotice: defaultFailErrorNotice,
+				url: planRoute,
+			};
+		}
+	}
+
+	// A HTTP error occured; we will send the user back to checkout.
+	if ( error ) {
+		return {
+			errorNotice: defaultFailErrorNotice,
+			url: defaultFailUrl,
+		};
+	}
+
+	return undefined;
+}
+
 function useRedirectOnTransactionSuccess( {
 	orderId,
 	receiptId,
@@ -184,8 +273,8 @@ function useRedirectOnTransactionSuccess( {
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
 		orderId ? getOrderTransaction( state, orderId ) : null
 	);
-	const error = useSelector( ( state ) =>
-		orderId ? getOrderTransactionError( state, orderId ) : undefined
+	const error: Error | null = useSelector( ( state ) =>
+		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
@@ -202,90 +291,30 @@ function useRedirectOnTransactionSuccess( {
 		// as empty.
 		reloadCart();
 
-		const retryOnError = () => {
-			didRedirect.current = true;
-			const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
-			const failRedirectUrl = defaultFailUrl;
+		const redirectInstructions = getRedirectForTransactionStatus( {
+			error,
+			transaction,
+			orderId,
+			receiptId,
+			redirectTo,
+			siteSlug,
+			translate,
+		} );
 
+		if ( ! redirectInstructions ) {
+			return;
+		}
+
+		if ( redirectInstructions.errorNotice ) {
 			reduxDispatch(
-				errorNotice(
-					translate( "Sorry, we couldn't process your payment. Please try again later." ),
-					{
-						isPersistent: true,
-					}
-				)
+				errorNotice( redirectInstructions.errorNotice, {
+					isPersistent: true,
+				} )
 			);
-
-			page( failRedirectUrl );
-		};
-
-		if ( receiptId ) {
-			// If there is a receipt ID, then the order must already be complete. In
-			// that case, we can redirect immediately.
-			didRedirect.current = true;
-			redirectWithInterpolatedReceipt( redirectTo, siteSlug, receiptId );
-			return;
 		}
 
-		if ( ! orderId ) {
-			// If the order ID is missing and there is no receiptId, we don't know
-			// what to do because there's no way to know the status of the
-			// transaction. If this happens it's definitely a bug, but let's keep the
-			// existing behavior and send the user to a generic thank-you page,
-			// assuming that the purchase was successful. This goes to the URL path
-			// `/checkout/thank-you/:site/:receiptId` but without a receiptId.
-			didRedirect.current = true;
-			// eslint-disable-next-line no-console
-			console.error(
-				'No order ID and no receipt ID found for transaction; redirecting to generic thank-you page.'
-			);
-			page( `/checkout/thank-you/${ siteSlug ?? 'no-site' }/unknown` );
-			return;
-		}
-
-		const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
-
-		if ( transaction ) {
-			const { processingStatus } = transaction;
-
-			// If the order is complete, we can redirect to the final page.
-			if ( SUCCESS === processingStatus ) {
-				const { receiptId: transactionReceiptId } = transaction;
-
-				didRedirect.current = true;
-				redirectWithInterpolatedReceipt( redirectTo, siteSlug, transactionReceiptId );
-				return;
-			}
-
-			// If the processing status indicates that there was something wrong, it
-			// could be because the user has cancelled the payment, or because the
-			// payment failed after being authorized.
-			if ( ERROR === processingStatus || FAILURE === processingStatus ) {
-				// redirect users back to the checkout page so they can try again.
-				retryOnError();
-				return;
-			}
-
-			// The API has responded a status string that we don't expect somehow.
-			if ( UNKNOWN === processingStatus ) {
-				didRedirect.current = true;
-
-				reduxDispatch(
-					errorNotice( translate( 'Oops! Something went wrong. Please try again later.' ), {
-						isPersistent: true,
-					} )
-				);
-
-				// Redirect users back to the plan page so that they won't be stuck here.
-				page( planRoute );
-				return;
-			}
-		}
-
-		// A HTTP error occured; we will send the user back to checkout.
-		if ( error ) {
-			retryOnError();
-		}
+		didRedirect.current = true;
+		performRedirect( redirectInstructions.url, siteSlug );
 	}, [
 		error,
 		redirectTo,
