@@ -1,10 +1,28 @@
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { SUCCESS, ERROR, FAILURE, UNKNOWN } from 'calypso/state/order-transactions/constants';
+import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 export interface PendingPageRedirectOptions {
 	siteSlug?: string | undefined;
 	orderId?: string | number | undefined;
 	receiptId?: string | number | undefined;
 	urlType?: 'relative' | 'absolute';
+}
+
+export interface RedirectInstructions {
+	url: string;
+	errorNotice?: string;
+}
+
+export interface RedirectForTransactionStatusArgs {
+	error?: Error | null;
+	transaction?: OrderTransaction | null;
+	orderId?: number;
+	receiptId?: number;
+	redirectTo?: string;
+	siteSlug?: string;
+	translate: ReturnType< typeof useTranslate >;
 }
 
 /**
@@ -156,4 +174,107 @@ export function addUrlToPendingPageRedirect(
 		return successUrlObject.pathname + successUrlObject.search + successUrlObject.hash;
 	}
 	return successUrlObject.href;
+}
+
+function interpolateReceiptId( url: string, receiptId: number ): string {
+	if ( url.includes( ':receiptId' ) ) {
+		return url.replaceAll( ':receiptId', `${ receiptId }` );
+	}
+
+	// Only treat `/pending` as a placeholder if it's the end of the URL
+	// pathname, but preserve query strings or hashes.
+	const receiptPlaceholderRegexp = /\/pending([?#]|$)/;
+	if ( receiptPlaceholderRegexp.test( url ) ) {
+		return url.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` );
+	}
+
+	return url;
+}
+
+export function getRedirectFromPendingPage( {
+	error,
+	transaction,
+	orderId,
+	receiptId,
+	redirectTo,
+	siteSlug,
+	translate,
+}: RedirectForTransactionStatusArgs ): RedirectInstructions | undefined {
+	const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
+	const defaultFailErrorNotice = translate(
+		"Sorry, we couldn't process your payment. Please try again later."
+	);
+	const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
+	const defaultSuccessUrl =
+		siteSlug && receiptId
+			? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
+			: '/checkout/thank-you/no-site';
+
+	// If there is a receipt ID, then the order must already be complete. In
+	// that case, we can redirect immediately.
+	if ( receiptId && redirectTo ) {
+		return {
+			url: interpolateReceiptId( redirectTo, receiptId ),
+		};
+	}
+	if ( receiptId && ! redirectTo ) {
+		return {
+			url: interpolateReceiptId( defaultSuccessUrl, receiptId ),
+		};
+	}
+
+	// If the order ID is missing and there is no receiptId, we don't know
+	// what to do because there's no way to know the status of the
+	// transaction. If this happens it's definitely a bug, but let's keep the
+	// existing behavior and send the user to a generic thank-you page,
+	// assuming that the purchase was successful. This goes to the URL path
+	// `/checkout/thank-you/:site/:receiptId` but without a receiptId.
+	if ( ! orderId ) {
+		return {
+			url: `/checkout/thank-you/${ siteSlug ?? 'no-site' }/unknown-receipt`,
+		};
+	}
+
+	if ( transaction ) {
+		const { processingStatus } = transaction;
+
+		// If the order is complete, we can redirect to the final page.
+		if ( SUCCESS === processingStatus ) {
+			const { receiptId: transactionReceiptId } = transaction;
+
+			return {
+				url: interpolateReceiptId( redirectTo ?? defaultSuccessUrl, transactionReceiptId ),
+			};
+		}
+
+		// If the processing status indicates that there was something wrong, it
+		// could be because the user has cancelled the payment, or because the
+		// payment failed after being authorized. Redirect users back to the
+		// checkout page so they can try again.
+		if ( ERROR === processingStatus || FAILURE === processingStatus ) {
+			return {
+				errorNotice: defaultFailErrorNotice,
+				url: defaultFailUrl,
+			};
+		}
+
+		// The API has responded a status string that we don't expect somehow.
+		// Redirect users back to the plan page so that they won't be stuck here.
+		if ( UNKNOWN === processingStatus ) {
+			return {
+				errorNotice: defaultFailErrorNotice,
+				url: planRoute,
+			};
+		}
+	}
+
+	// A HTTP error occured; we will send the user back to checkout.
+	if ( error ) {
+		return {
+			errorNotice: defaultFailErrorNotice,
+			url: defaultFailUrl,
+		};
+	}
+
+	return undefined;
 }
