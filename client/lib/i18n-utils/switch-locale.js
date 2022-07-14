@@ -521,10 +521,9 @@ export function switchWebpackCSS( isRTL ) {
 		}
 
 		const newLink = await loadCSS( newHref, currentLink );
-		// After the CSS loads the RTL status might have changed
+		// After the CSS files load the RTL state might have changed
 		// This is a double-check to ensure the value of isRTL
-		// before the CSS link is removed from the DOM
-		if ( i18n.isRtl() === isRTL ) {
+		if ( i18n.isRtl() === isRTL && newLink ) {
 			newLink.setAttribute( 'data-webpack', true );
 			currentLink.parentElement?.removeChild( currentLink );
 		} else {
@@ -542,6 +541,15 @@ export function switchWebpackCSS( isRTL ) {
  */
 function loadCSS( cssUrl, currentLink ) {
 	return new Promise( ( resolve ) => {
+		// While looping the current links the RTL state might have changed
+		// This is a double-check to ensure the value of isRTL
+		const isRTL = i18n.isRtl();
+		const isRTLHref = currentLink.getAttribute( 'href' ).endsWith( '.rtl.css' );
+
+		if ( isRTL === isRTLHref ) {
+			return resolve( null );
+		}
+
 		const link = document.createElement( 'link' );
 		link.rel = 'stylesheet';
 		link.type = 'text/css';
