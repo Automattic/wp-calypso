@@ -6,10 +6,17 @@ import emailValidator from 'email-validator';
 import React, { FormEvent, FunctionComponent, useState } from 'react';
 import './style.scss';
 
-export const AddSubscriberForm: FunctionComponent = () => {
+interface Props {
+	showSkipBtn?: boolean;
+	onSkipBtnClick?: () => void;
+}
+
+export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ files, setFiles ] = useState< string[] >( [] );
 	const [ emails, setEmails ] = useState< string[] >( [] );
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
+
+	const { showSkipBtn, onSkipBtnClick } = props;
 
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
@@ -94,7 +101,14 @@ export const AddSubscriberForm: FunctionComponent = () => {
 					<NextButton type={ 'submit' } className={ 'add-subscriber__form-submit-btn' }>
 						Add subscribers
 					</NextButton>
-					<SkipButton className={ 'add-subscriber__form-skip-btn' }>Not yet</SkipButton>
+					{ showSkipBtn && (
+						<SkipButton
+							className={ 'add-subscriber__form-skip-btn' }
+							onClick={ () => onSkipBtnClick?.() }
+						>
+							Not yet
+						</SkipButton>
+					) }
 				</form>
 			</div>
 		</div>
