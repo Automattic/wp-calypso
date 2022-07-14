@@ -1743,7 +1743,7 @@ PLANS_LIST[ PLAN_WPCOM_PRO ] = {
 PLANS_LIST[ PLAN_WPCOM_PRO_MONTHLY ] = {
 	...getPlanProDetails(),
 	...getMonthlyTimeframe(),
-	availableFor: ( plan ) => [ PLAN_FREE, PLAN_WPCOM_STARTER ].includes( plan ),
+	availableFor: ( plan ) => [ PLAN_FREE ].includes( plan ),
 	getProductId: () => 1034,
 	getStoreSlug: () => PLAN_WPCOM_PRO_MONTHLY,
 	getPathSlug: () => 'pro-monthly',

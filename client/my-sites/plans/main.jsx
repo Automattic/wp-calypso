@@ -185,16 +185,21 @@ class Plans extends Component {
 			].includes( currentPlan?.productSlug )
 		) {
 			const intervalType = this.props.intervalType;
+			const eligibleForIntervalTypeToggle = [ PLAN_FREE, PLAN_WPCOM_PRO_MONTHLY ].includes(
+				currentPlan?.productSlug
+			);
 
 			return (
 				<>
-					<ExperimentalIntervalTypeToggle
-						intervalType={ intervalType }
-						isInSignup={ false }
-						plans={ [] }
-						siteSlug={ selectedSite.slug }
-						eligibleForWpcomMonthlyPlans={ true }
-					/>
+					{ eligibleForIntervalTypeToggle && (
+						<ExperimentalIntervalTypeToggle
+							intervalType={ intervalType }
+							isInSignup={ false }
+							plans={ [] }
+							siteSlug={ selectedSite.slug }
+							eligibleForWpcomMonthlyPlans={ true }
+						/>
+					) }
 					<PlansComparison
 						purchaseId={ this.props.purchase?.id }
 						isInSignup={ false }
