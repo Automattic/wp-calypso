@@ -400,7 +400,13 @@ const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	);
 };
 
-const ManageButton = ( { shouldShowManageButton, siteAdminUrl, siteSlug, jetpackNonAtomic } ) => {
+const ManageButton = ( {
+	shouldShowManageButton,
+	siteAdminUrl,
+	siteSlug,
+	jetpackNonAtomic,
+	hasManagePlugins,
+} ) => {
 	const translate = useTranslate();
 
 	if ( ! shouldShowManageButton ) {
@@ -410,10 +416,11 @@ const ManageButton = ( { shouldShowManageButton, siteAdminUrl, siteSlug, jetpack
 	const site = siteSlug ? '/' + siteSlug : '';
 
 	// When no site is selected eg `/plugins` or when Jetpack is self hosted
-	// show the Calypso Plugins Manage page.
+	// or if the site does not have the manage plugins feature show the
+	// Calypso Plugins Manage page.
 	// In any other case, redirect to current site WP Admin.
 	const managePluginsDestination =
-		! siteAdminUrl || jetpackNonAtomic
+		! siteAdminUrl || jetpackNonAtomic || ! hasManagePlugins
 			? `/plugins/manage${ site }`
 			: `${ siteAdminUrl }plugins.php`;
 
@@ -691,6 +698,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 							siteAdminUrl={ siteAdminUrl }
 							siteSlug={ siteSlug }
 							jetpackNonAtomic={ jetpackNonAtomic }
+							hasManagePlugins={ hasManagePlugins }
 						/>
 
 						<UploadPluginButton
