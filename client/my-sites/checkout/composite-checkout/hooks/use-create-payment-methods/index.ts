@@ -38,6 +38,7 @@ import useCreateExistingCards from './use-create-existing-cards';
 import type { StoredCard } from '../../types/stored-cards';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { CartKey } from '@automattic/shopping-cart';
 import type { Stripe } from '@stripe/stripe-js';
 
 export { useCreateExistingCards };
@@ -323,6 +324,7 @@ function useCreateGooglePay( {
 	stripe,
 	isGooglePayAvailable,
 	isWebPayLoading,
+	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -330,6 +332,7 @@ function useCreateGooglePay( {
 	stripe: Stripe | null;
 	isGooglePayAvailable: boolean;
 	isWebPayLoading: boolean;
+	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady =
 		! isStripeLoading &&
@@ -341,10 +344,10 @@ function useCreateGooglePay( {
 		isEnabled( 'checkout/google-pay' );
 
 	return useMemo( () => {
-		return isStripeReady && stripe && stripeConfiguration
-			? createGooglePayMethod( stripe, stripeConfiguration )
+		return isStripeReady && stripe && stripeConfiguration && cartKey
+			? createGooglePayMethod( stripe, stripeConfiguration, cartKey )
 			: null;
-	}, [ stripe, stripeConfiguration, isStripeReady ] );
+	}, [ stripe, stripeConfiguration, isStripeReady, cartKey ] );
 }
 
 export default function useCreatePaymentMethods( {
@@ -447,6 +450,7 @@ export default function useCreatePaymentMethods( {
 		stripe,
 		isGooglePayAvailable,
 		isWebPayLoading,
+		cartKey,
 	} );
 
 	const existingCardMethods = useCreateExistingCards( {
