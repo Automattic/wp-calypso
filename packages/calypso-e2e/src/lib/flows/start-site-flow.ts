@@ -31,7 +31,8 @@ const selectors = {
 
 	// Verticals
 	suggestedVertical: ( vertical: string ) => `button:has-text("${ vertical }")`,
-	clearVerticalButton: 'button:[aria-label="Clear Search"]',
+	clearVerticalButton: 'button[aria-label="Clear Search"]',
+	verticalDropdownButton: 'button:has(svg.gridicons-chevron-down)',
 
 	// TODO: Get header validation working. Here are a few attempts, for future reference:
 	verticalDesignHeader: ( vertical: string ) => `h1.wp-block-site-title:text("${ vertical }")`,
@@ -138,6 +139,14 @@ export class StartSiteFlow {
 	 */
 	async clearVertical(): Promise< void > {
 		await this.page.click( selectors.clearVerticalButton );
+	}
+
+	/**
+	 * Click the dropdown arrow in the vertical search field to expand or collapse
+	 * the list of suggested verticals.
+	 */
+	async toggleVerticalDropdown(): Promise< void > {
+		await this.page.click( selectors.verticalDropdownButton );
 	}
 
 	/**

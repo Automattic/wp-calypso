@@ -18,7 +18,6 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-// TODO: Parameterize test to input a list of verticals
 describe( DataHelper.createSuiteTitle( 'Vertical: Selected' ), function () {
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'free',
@@ -77,10 +76,8 @@ describe( DataHelper.createSuiteTitle( 'Vertical: Selected' ), function () {
 	} );
 
 	describe( 'Vertical flow', function () {
-		// TODO: Add case where vertical is selected from drop down (no input)
-		// TODO: Add case where user clears vertical search
-		// TODO: Add case where user enters valid vertical without selecting (manual entry)
-		it( 'Select a vertical', async function () {
+		// TODO: Parameterize test with a list of common verticals
+		it( 'Select a vertical based on input', async function () {
 			const currentStep = await startSiteFlow.getCurrentStep();
 			if ( currentStep === 'vertical' ) {
 				await startSiteFlow.enterVertical( 'People & Society' );
@@ -89,15 +86,57 @@ describe( DataHelper.createSuiteTitle( 'Vertical: Selected' ), function () {
 			}
 		} );
 
-		it( 'See design picker screen', async function () {
+		it( 'See design picker screen for input flow', async function () {
 			await startSiteFlow.validateOnDesignSetupScreen();
 
 			// TODO: Get header validation working
 			// await startSiteFlow.validateVerticalDesignHeader( 'vertical' );
 		} );
 
-		// TODO: Find a better way to validate the suggested vertical design
-		// TODO: Add case where user goes back and selects a different vertical
+		// TODO: Investigate back button bug when run on wpcalypso.wordpress.com
+		it( 'Navigate back for manual flow', async function () {
+			await startSiteFlow.goBackOneScreen();
+		} );
+
+		it( 'Enter a vertical manually', async function () {
+			const currentStep = await startSiteFlow.getCurrentStep();
+			if ( currentStep === 'vertical' ) {
+				await startSiteFlow.clearVertical();
+				await startSiteFlow.enterVertical( 'People & Society' );
+				await startSiteFlow.toggleVerticalDropdown();
+				await startSiteFlow.clickButton( 'Continue' );
+			}
+		} );
+
+		// Validate that theme picker is used instead of vertical design screen
+		// TODO: Investigate if manually entering an exact vertical match is a bug
+		it( 'See theme picker screen for manual flow', async function () {
+			await startSiteFlow.validateOnDesignPickerScreen();
+		} );
+
+		it( 'Navigate back for suggestion flow', async function () {
+			await startSiteFlow.goBackOneScreen();
+		} );
+
+		it( 'Select a vertical from suggestions dropdown', async function () {
+			const currentStep = await startSiteFlow.getCurrentStep();
+			if ( currentStep === 'vertical' ) {
+				await startSiteFlow.toggleVerticalDropdown();
+
+				// TODO: Select random vertical from suggested list
+				await startSiteFlow.selectVertical( 'Food' );
+				await startSiteFlow.clickButton( 'Continue' );
+			}
+		} );
+
+		it( 'See design picker screen for suggestion flow', async function () {
+			await startSiteFlow.validateOnDesignSetupScreen();
+
+			// TODO: Get header validation working
+			// await startSiteFlow.validateVerticalDesignHeader( 'vertical' );
+		} );
+
+		// TODO: Find a better way to validate the selected vertical design
 
 		it( 'Select a design', async function () {
 			await startSiteFlow.clickButton( 'Continue' );
@@ -105,7 +144,7 @@ describe( DataHelper.createSuiteTitle( 'Vertical: Selected' ), function () {
 
 		it( 'See site on home dashboard', async function () {
 			const myHomePage = new MyHomePage( page );
-			await myHomePage.validateSiteTitle( 'People & Society' );
+			await myHomePage.validateSiteTitle( 'Food' );
 		} );
 	} );
 
