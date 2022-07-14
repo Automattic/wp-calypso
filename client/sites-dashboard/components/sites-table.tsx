@@ -6,6 +6,7 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 interface SitesTableProps {
 	className?: string;
 	sites: SiteData[];
+	siteBasePath: string;
 }
 
 const Table = styled.table`
@@ -32,7 +33,7 @@ const Row = styled.tr`
 	}
 `;
 
-export function SitesTable( { className, sites }: SitesTableProps ) {
+export function SitesTable( { className, sites, siteBasePath }: SitesTableProps ) {
 	const { __ } = useI18n();
 
 	return (
@@ -47,7 +48,7 @@ export function SitesTable( { className, sites }: SitesTableProps ) {
 			</thead>
 			<tbody>
 				{ sites.map( ( site ) => (
-					<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
+					<SitesTableRow site={ site } key={ site.ID } siteBasePath={ siteBasePath } />
 				) ) }
 			</tbody>
 		</Table>

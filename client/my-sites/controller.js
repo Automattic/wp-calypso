@@ -354,7 +354,7 @@ function createSitesComponent( context ) {
 		return (
 			<>
 				<Global styles={ globalStyles } />
-				<SitesDashboard />
+				<SitesDashboard siteBasePath={ basePath } />
 			</>
 		);
 	}
