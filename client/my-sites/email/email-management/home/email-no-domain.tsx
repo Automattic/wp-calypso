@@ -23,6 +23,9 @@ const EmailNoDomain = ( { selectedSite, source }: { selectedSite: SiteData; sour
 	};
 
 	const trackImpression = ( noDomainContext: string ) => {
+		// This is executed multiple times by different conditionals as the site states get set.
+		// Particularly, `hasAvailableDomainCredit` takes some time to be returned.
+		// To ensure we are tracking the proper values, only make a tracking request when all states are set.
 		if ( isFreePlanProduct === null || hasAvailableDomainCredit === null ) {
 			return '';
 		}
