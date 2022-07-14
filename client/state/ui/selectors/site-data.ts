@@ -20,6 +20,18 @@ export interface SiteData {
 	// TODO: fill out the rest of this
 }
 
+export interface SiteExcerptData {
+	ID: number;
+	name: string;
+	URL: string;
+	slug: string;
+	options?: SiteDataOptions;
+	plan: SiteDataPlan;
+	is_private?: boolean;
+	is_coming_soon?: boolean;
+	launch_status?: string;
+}
+
 export interface SiteDataPlan {
 	product_id: number;
 	product_slug: string;

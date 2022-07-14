@@ -3,7 +3,7 @@ import { css, ClassNames } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
-import getSites from 'calypso/state/selectors/get-sites';
+import getSiteExcerpts from 'calypso/state/selectors/get-site-excerpts';
 import { notNullish } from '../util';
 import { SitesTable } from './sites-table';
 import { SitesTableFilterTabs } from './sites-table-filter-tabs';
@@ -60,7 +60,7 @@ const DashboardHeading = styled.h1`
 
 export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 	const { __ } = useI18n();
-	const sites = useSelector( getSites );
+	const sites = Object.values( useSelector( getSiteExcerpts ) );
 
 	return (
 		<main>

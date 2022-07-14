@@ -5,6 +5,10 @@ import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
 	SITE_DELETE_RECEIVE,
+	SITE_EXCERPTS_RECEIVE,
+	SITE_EXCERPTS_REQUEST,
+	SITE_EXCERPTS_REQUEST_FAILURE,
+	SITE_EXCERPTS_REQUEST_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -21,7 +25,12 @@ import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
-import { SITE_REQUEST_FIELDS, SITE_REQUEST_OPTIONS } from 'calypso/state/sites/constants';
+import {
+	SITE_REQUEST_FIELDS,
+	SITE_REQUEST_OPTIONS,
+	SITE_EXCERPT_REQUEST_FIELDS,
+	SITE_EXCERPT_REQUEST_OPTIONS,
+} from 'calypso/state/sites/constants';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 /**
@@ -52,6 +61,58 @@ export function receiveSite( site ) {
 	return {
 		type: SITE_RECEIVE,
 		site,
+	};
+}
+
+/**
+ * Returns an action object to be used in signalling that site objects have
+ * been received.
+ *
+ * @param  {object[]} sites Sites received
+ * @returns {object}         Action object
+ */
+export function receiveSiteExcerpts( sites ) {
+	return {
+		type: SITE_EXCERPTS_RECEIVE,
+		sites,
+	};
+}
+
+/**
+ * Triggers a network request to request a limited set of site data.
+ *
+ * @returns {Function}        Action thunk
+ */
+export function requestSiteExcerpts() {
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_EXCERPTS_REQUEST,
+		} );
+		const siteFilter = config( 'site_filter' );
+
+		return wpcom
+			.me()
+			.sites( {
+				apiVersion: '1.2',
+				site_visibility: 'all',
+				include_domain_only: true,
+				site_activity: 'active',
+				fields: SITE_EXCERPT_REQUEST_FIELDS,
+				options: SITE_EXCERPT_REQUEST_OPTIONS,
+				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
+			} )
+			.then( ( response ) => {
+				dispatch( receiveSiteExcerpts( response.sites ) );
+				dispatch( {
+					type: SITE_EXCERPTS_REQUEST_SUCCESS,
+				} );
+			} )
+			.catch( ( error ) => {
+				dispatch( {
+					type: SITE_EXCERPTS_REQUEST_FAILURE,
+					error,
+				} );
+			} );
 	};
 }
 

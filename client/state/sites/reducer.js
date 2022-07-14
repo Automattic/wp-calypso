@@ -4,6 +4,10 @@ import {
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	JETPACK_SITE_DISCONNECT_REQUEST,
+	SITE_EXCERPTS_RECEIVE,
+	SITE_EXCERPTS_REQUEST,
+	SITE_EXCERPTS_REQUEST_FAILURE,
+	SITE_EXCERPTS_REQUEST_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -27,7 +31,7 @@ import { featuresReducer as features } from './features/reducer';
 import introOffers from './intro-offers/reducer';
 import { plans } from './plans/reducer';
 import { products } from './products/reducer';
-import { sitesSchema, hasAllSitesListSchema } from './schema';
+import { siteExcerptsSchema, sitesSchema, hasAllSitesListSchema } from './schema';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -270,6 +274,51 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 } );
 
 /**
+ * Tracks all known site excerpt objects, indexed by site ID.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action payload
+ * @returns {object}        Updated state
+ */
+export const excerpts = withSchemaValidation( siteExcerptsSchema, ( state = null, action ) => {
+	if ( state === null && action.type !== SITE_EXCERPTS_RECEIVE ) {
+		return null;
+	}
+	switch ( action.type ) {
+		case SITE_EXCERPTS_RECEIVE: {
+			// Normalize incoming site(s) to array
+
+			const sites = action.site ? [ action.site ] : action.sites;
+
+			// SITE_EXCERPTS_RECEIVE occurs when we receive the entire set of user
+			// sites (replace existing state). Otherwise merge into state.
+
+			const initialNextState = SITE_EXCERPTS_RECEIVE === action.type ? {} : state;
+
+			return reduce(
+				sites,
+				( memo, site ) => {
+					// Bypass if site object hasn't changed
+					if ( isEqual( memo[ site.ID ], site ) ) {
+						return memo;
+					}
+
+					// Avoid mutating state
+					if ( memo === state ) {
+						memo = { ...state };
+					}
+
+					memo[ site.ID ] = site;
+					return memo;
+				},
+				initialNextState || {}
+			);
+		}
+	}
+	return state;
+} );
+
+/**
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for all
  * sites.
@@ -285,6 +334,28 @@ export const requestingAll = ( state = false, action ) => {
 		case SITES_REQUEST_FAILURE:
 			return false;
 		case SITES_REQUEST_SUCCESS:
+			return false;
+	}
+
+	return state;
+};
+
+/**
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether a network request is in progress for all
+ * excerpts.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
+ */
+export const requestingExcerpts = ( state = false, action ) => {
+	switch ( action.type ) {
+		case SITE_EXCERPTS_REQUEST:
+			return true;
+		case SITE_EXCERPTS_REQUEST_FAILURE:
+			return false;
+		case SITE_EXCERPTS_REQUEST_SUCCESS:
 			return false;
 	}
 
@@ -360,7 +431,9 @@ export const jetpackSiteDisconnected = ( state = false, action ) => {
 export default combineReducers( {
 	connection,
 	domains,
+	excerpts,
 	requestingAll,
+	requestingExcerpts,
 	introOffers,
 	items,
 	plans,

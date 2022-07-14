@@ -62,6 +62,48 @@ export const sitesSchema = {
 	additionalProperties: false,
 };
 
+export const siteExcerptsSchema = {
+	type: 'object',
+	patternProperties: {
+		//be careful to escape regexes properly
+		'^\\d+$': {
+			type: 'object',
+			required: [ 'ID', 'name' ],
+			properties: {
+				ID: { type: 'number' },
+				name: { type: 'string' },
+				URL: { type: 'string' },
+				slug: { type: 'string' },
+				icon: {
+					type: 'object',
+					properties: {
+						img: { type: 'string' },
+						ico: { type: 'string' },
+						media_id: { type: 'number' },
+					},
+				},
+				is_coming_soon: { type: 'boolean' },
+				is_private: { type: 'boolean' },
+				launch_status: { type: 'string' },
+				options: { type: 'object' },
+				plan: {
+					type: 'object',
+					required: [ 'product_id', 'product_slug' ],
+					properties: {
+						product_id: { type: [ 'number', 'string' ] },
+						product_slug: { type: 'string' },
+						product_name_short: { type: [ 'string', 'null' ] },
+						expired: { type: 'boolean' },
+						user_is_owner: { type: 'boolean' },
+						is_free: { type: 'boolean' },
+					},
+				},
+			},
+		},
+	},
+	additionalProperties: false,
+};
+
 export const hasAllSitesListSchema = {
 	type: [ 'boolean', 'null' ],
 };

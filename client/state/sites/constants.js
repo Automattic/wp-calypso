@@ -71,3 +71,20 @@ export const SITE_REQUEST_OPTIONS = [
 	'difm_lite_site_options',
 	'site_intent',
 ].join();
+
+// Performance-optimized request for lists of sites.
+// Don't add more fields because you will make the request slower.
+export const SITE_EXCERPT_REQUEST_FIELDS = [
+	'ID',
+	'URL',
+	'is_coming_soon',
+	'is_private',
+	'launch_status',
+	'slug',
+	'icon',
+	'name',
+	'options',
+	'plan',
+].join();
+
+export const SITE_EXCERPT_REQUEST_OPTIONS = [ 'is_wpforteams_site' ].join();

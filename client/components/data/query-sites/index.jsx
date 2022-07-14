@@ -3,9 +3,10 @@ import { Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { requestSites, requestSite } from 'calypso/state/sites/actions';
+import { requestSites, requestSite, requestSiteExcerpts } from 'calypso/state/sites/actions';
 import {
 	isRequestingSites,
+	isRequestingSiteExcerpts,
 	isRequestingSite,
 	hasAllSitesList,
 } from 'calypso/state/sites/selectors';
@@ -23,6 +24,22 @@ function QueryAll() {
 
 	useEffect( () => {
 		dispatch( requestAll() );
+	}, [ dispatch ] );
+
+	return null;
+}
+
+const requestAllExcerpts = () => ( dispatch, getState ) => {
+	if ( ! isRequestingSiteExcerpts( getState() ) ) {
+		dispatch( requestSiteExcerpts() );
+	}
+};
+
+function QueryAllExcerpts() {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		dispatch( requestAllExcerpts() );
 	}, [ dispatch ] );
 
 	return null;
@@ -72,9 +89,15 @@ function QueryPrimaryAndRecent() {
 	return null;
 }
 
-export default function QuerySites( { siteId, allSites = false, primaryAndRecent = false } ) {
+export default function QuerySites( {
+	siteId,
+	allExcerpts = false,
+	allSites = false,
+	primaryAndRecent = false,
+} ) {
 	return (
 		<Fragment>
+			{ allExcerpts && <QueryAllExcerpts /> }
 			{ allSites && <QueryAll /> }
 			{ siteId && <QuerySingle siteId={ siteId } /> }
 			{ primaryAndRecent && <QueryPrimaryAndRecent /> }
@@ -83,6 +106,7 @@ export default function QuerySites( { siteId, allSites = false, primaryAndRecent
 }
 
 QuerySites.propTypes = {
+	allExcerpts: PropTypes.bool,
 	allSites: PropTypes.bool,
 	primaryAndRecent: PropTypes.bool,
 	siteId: PropTypes.oneOfType( [

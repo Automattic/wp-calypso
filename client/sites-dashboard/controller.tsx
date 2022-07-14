@@ -1,4 +1,5 @@
 import { Global, css } from '@emotion/react';
+import QuerySites from 'calypso/components/data/query-sites';
 import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from 'page';
 
@@ -17,6 +18,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
 			<Global styles={ globalStyles } />
+			<QuerySites allExcerpts />
 			<SitesDashboard launchStatus={ context.query.status } />
 		</>
 	);
