@@ -1,5 +1,6 @@
-import { TYPE_STARTER } from '@automattic/calypso-products';
+import { TYPE_STARTER, TERM_MONTHLY } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
+import classNames from 'classnames';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import type { Plan } from '@automattic/calypso-products';
 import type { translate } from 'i18n-calypso';
@@ -50,6 +51,10 @@ const PlanDescription = styled.div`
 		margin-bottom: 0.75rem;
 	}
 
+	li.is-hidden {
+		visibility: hidden;
+	}
+
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
 		.is-section-signup & {
 			display: none;
@@ -68,6 +73,10 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 	children,
 	translate,
 } ) => {
+	const hiddenOnMonthlyClass = classNames( {
+		'is-hidden': plan?.term === TERM_MONTHLY,
+	} );
+
 	return (
 		<th scope="col">
 			<PlanTitle>{ plan.getTitle() }</PlanTitle>
@@ -91,7 +100,9 @@ export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
 							<li>{ translate( 'Advanced ecommerce tools.' ) }</li>
 							<li>{ translate( 'Premium website themes.' ) }</li>
 							<li>{ translate( '50GB of media storage.' ) }</li>
-							<li>{ translate( '24-hour live chat support.' ) }</li>
+							<li className={ hiddenOnMonthlyClass }>
+								{ translate( '24-hour live chat support.' ) }
+							</li>
 						</ul>
 					</>
 				) }
