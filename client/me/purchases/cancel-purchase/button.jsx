@@ -31,6 +31,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
@@ -41,6 +42,7 @@ class CancelPurchaseButton extends Component {
 		cancelBundledDomain: PropTypes.bool.isRequired,
 		includedDomainPurchase: PropTypes.object,
 		disabled: PropTypes.bool,
+		activeSubscriptions: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -51,6 +53,7 @@ class CancelPurchaseButton extends Component {
 	state = {
 		disabled: false,
 		showDialog: false,
+		isShowingMarketplaceSubscriptionsDialog: false,
 	};
 
 	getCancellationFlowType = () => {
@@ -72,6 +75,7 @@ class CancelPurchaseButton extends Component {
 	closeDialog = () => {
 		this.setState( {
 			showDialog: false,
+			isShowingMarketplaceSubscriptionsDialog: false,
 		} );
 	};
 
@@ -232,6 +236,18 @@ class CancelPurchaseButton extends Component {
 		}
 	};
 
+	shouldHandleMarketplaceSubscriptions() {
+		const { activeSubscriptions } = this.props;
+
+		return activeSubscriptions?.length > 0;
+	}
+
+	showMarketplaceDialog = () => {
+		this.setState( {
+			isShowingMarketplaceSubscriptionsDialog: true,
+		} );
+	};
+
 	submitCancelAndRefundPurchase = () => {
 		const refundable = hasAmountAvailableToRefund( this.props.purchase );
 
@@ -275,14 +291,16 @@ class CancelPurchaseButton extends Component {
 		}
 
 		const disableButtons = this.state.disabled || this.props.disabled;
-		const { isJetpack } = this.props;
+		const { isJetpack, activeSubscriptions } = this.props;
 
 		return (
 			<div>
 				<Button
 					className="cancel-purchase__button"
 					disabled={ disableButtons }
-					onClick={ onClick }
+					onClick={
+						this.shouldHandleMarketplaceSubscriptions() ? this.showMarketplaceDialog : onClick
+					}
 					primary
 				>
 					{ text }
@@ -311,6 +329,16 @@ class CancelPurchaseButton extends Component {
 						onClose={ this.closeDialog }
 						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 						flowType={ this.getCancellationFlowType() }
+					/>
+				) }
+
+				{ this.shouldHandleMarketplaceSubscriptions() && (
+					<MarketPlaceSubscriptionsDialog
+						isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
+						closeDialog={ this.closeDialog }
+						removePlan={ onClick }
+						planName={ getName( purchase ) }
+						activeSubscriptions={ activeSubscriptions }
 					/>
 				) }
 			</div>

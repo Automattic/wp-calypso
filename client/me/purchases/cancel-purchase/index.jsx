@@ -1,4 +1,9 @@
-import { isDomainRegistration, isDomainTransfer } from '@automattic/calypso-products';
+import {
+	isDomainRegistration,
+	isDomainTransfer,
+	isPlan,
+	hasMarketplaceProduct,
+} from '@automattic/calypso-products';
 import { Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -24,8 +29,10 @@ import PurchaseSiteHeader from 'calypso/me/purchases/purchases-site/header';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { isDataLoading } from 'calypso/me/purchases/utils';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getByPurchaseId,
+	getSitePurchases,
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
 } from 'calypso/state/purchases/selectors';
@@ -104,6 +111,17 @@ class CancelPurchase extends Component {
 	onCancelConfirmationStateChange = ( newState ) => {
 		this.setState( newState );
 	};
+
+	getActiveMarketplaceSubscriptions() {
+		const { purchase, purchases, productsList } = this.props;
+
+		if ( ! isPlan( purchase ) ) return [];
+
+		return purchases.filter(
+			( _purchase ) =>
+				_purchase.active && hasMarketplaceProduct( productsList, _purchase.productSlug )
+		);
+	}
 
 	renderFooterText = () => {
 		const { purchase } = this.props;
@@ -223,6 +241,7 @@ class CancelPurchase extends Component {
 						cancelBundledDomain={ this.state.cancelBundledDomain }
 						purchaseListUrl={ this.props.purchaseListUrl }
 						getConfirmCancelDomainUrlFor={ this.props.getConfirmCancelDomainUrlFor }
+						activeSubscriptions={ this.getActiveMarketplaceSubscriptions() }
 					/>
 				</CompactCard>
 			</Fragment>
@@ -232,10 +251,14 @@ class CancelPurchase extends Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
+	const purchases = purchase && getSitePurchases( state, purchase.siteId );
+	const productsList = getProductsList( state );
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
+		purchases,
+		productsList,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		site: getSite( state, purchase ? purchase.siteId : null ),
 	};
