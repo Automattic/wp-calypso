@@ -32,11 +32,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
-import {
-	getSiteSlug,
-	isJetpackSite,
-	isSimpleSite as getIsSimpleSite,
-} from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -496,7 +492,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, isSimpleSite, user, locale } = this.props;
+		const { isInEditor, isCheckout, isCheckoutPending, user, locale } = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending ) {
@@ -506,8 +502,7 @@ class MasterbarLoggedIn extends Component {
 			if (
 				config.isEnabled( 'editor/help-center' ) &&
 				shouldShowHelpCenterToUser( user.ID, locale ) &&
-				isInEditor &&
-				isSimpleSite
+				isInEditor
 			) {
 				return (
 					<Masterbar>
@@ -599,7 +594,6 @@ export default connect(
 			isUserNewerThanNewNavigation:
 				new Date( getCurrentUserDate( state ) ).getTime() > NEW_MASTERBAR_SHIPPING_DATE,
 			locale: getCurrentLocaleSlug( state ),
-			isSimpleSite: getIsSimpleSite( state ),
 		};
 	},
 	{

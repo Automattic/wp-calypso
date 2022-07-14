@@ -107,11 +107,54 @@
 }
 
 .product-grid__pricing-banner {
-	height: 54px;
+	height: 120px;
+
+	margin-bottom: 1.25rem;
+
+	@include break-large {
+		height: 54px;
+
+		margin-bottom: 0;
+	}
 }
 
 .product-grid__more.is-detached {
-	margin-top: 48px;
+	margin-top: 3rem;
+}
+
+.product-grid__more-container {
+	background-color: var( --color-surface );
+
+	margin: 1.5rem 0;
+	padding: 1.875rem 0.9375rem 1.625rem;
+	border-radius: calc( 2 * 4px );
+
+	text-align: center;
+
+	@include break-small {
+		margin: 0 1.875rem;
+
+		border-radius: 0 0 calc( 2 * 4px ) calc( 2 * 4px );
+	}
+}
+
+.product-grid__more-headline {
+	padding-bottom: 0.9375rem;
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: inherit;
+}
+
+.product-grid__more-buttons {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+
+	@include break-medium {
+		justify-content: center;
+		flex-direction: row;
+	}
 }
 
 .product-grid__category-filter {

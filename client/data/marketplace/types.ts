@@ -24,6 +24,7 @@ export type Plugin = {
 	short_description?: string;
 	download_link?: string;
 	icon?: string;
+	railcar: Railcar;
 };
 
 export type ESIndexResult = {
@@ -62,7 +63,9 @@ export type Icon = {
 	location: string;
 };
 
-export type ESHits = Array< { fields: ESIndexResult } >;
+export type Railcar = Record< string, string | number >;
+
+export type ESHits = Array< { fields: ESIndexResult; railcar: Railcar } >;
 
 export type ESResponse = { data: { results: ESHits; total: number; page_handle: string } };
 

@@ -1,3 +1,4 @@
+import apiFetch from '@wordpress/api-fetch';
 import { filter, forEach, compact, partition, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
 import { bumpStat } from 'calypso/lib/analytics/mc';
@@ -24,7 +25,7 @@ function trackRailcarRender( post ) {
 	tracks.recordTracksEvent( 'calypso_traintracks_render', post.railcar );
 }
 
-function fetchForKey( postKey ) {
+function fetchForKey( postKey, isHelpCenter ) {
 	const query = {};
 
 	const contentWidth = readerContentWidth();
@@ -33,7 +34,19 @@ function fetchForKey( postKey ) {
 	}
 
 	if ( postKey.blogId ) {
-		return wpcom.req.get( `/read/sites/${ postKey.blogId }/posts/${ postKey.postId }`, query );
+		return isHelpCenter
+			? apiFetch( {
+					global: true,
+					path: `/wpcom/v2/help-center/fetch-post?post_id=${ encodeURIComponent(
+						postKey.postId
+					) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
+			  } )
+			: wpcom.req.get(
+					`/read/sites/${ encodeURIComponent( postKey.blogId ) }/posts/${ encodeURIComponent(
+						postKey.postId
+					) }`,
+					query
+			  );
 	}
 	const { postId, feedId, ...params } = postKey;
 	return wpcom.req.get(
@@ -101,16 +114,17 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 };
 
 const requestsInFlight = new Set();
-export const fetchPost = ( postKey ) => ( dispatch ) => {
+export const fetchPost = ( postKey, isHelpCenter ) => ( dispatch ) => {
 	const requestKey = keyToString( postKey );
 	if ( requestsInFlight.has( requestKey ) ) {
 		return;
 	}
+
 	requestsInFlight.add( requestKey );
 	function removeKey() {
 		requestsInFlight.delete( requestKey );
 	}
-	return fetchForKey( postKey )
+	return fetchForKey( postKey, isHelpCenter )
 		.then( ( data ) => {
 			removeKey();
 			return dispatch( receivePosts( [ data ] ) );

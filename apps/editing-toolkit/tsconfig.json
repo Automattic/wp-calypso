@@ -34,16 +34,18 @@
 	},
 	"exclude": [ "node_modules" ],
 	"references": [
-		{ "path": "../../packages/data-stores" },
 		{ "path": "../../packages/calypso-analytics" },
 		{ "path": "../../packages/composite-checkout" },
+		{ "path": "../../packages/data-stores" },
 		{ "path": "../../packages/domain-picker" },
-		{ "path": "../../packages/onboarding" },
-		{ "path": "../../packages/launch" },
-		{ "path": "../../packages/tour-kit" },
 		{ "path": "../../packages/happychat-connection" },
+		{ "path": "../../packages/help-center" },
+		{ "path": "../../packages/i18n-utils" },
+		{ "path": "../../packages/launch" },
+		{ "path": "../../packages/onboarding" },
 		{ "path": "../../packages/plans-grid" },
+		{ "path": "../../packages/state-utils" },
 		{ "path": "../../packages/site-picker" },
-		{ "path": "../../packages/i18n-utils" }
+		{ "path": "../../packages/tour-kit" }
 	]
 }

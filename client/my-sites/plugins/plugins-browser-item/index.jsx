@@ -4,7 +4,7 @@ import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -73,6 +73,22 @@ const PluginsBrowserListElement = ( props ) => {
 		return url;
 	}, [ plugin, site ] );
 
+	useEffect(
+		function trackPluginItemRender() {
+			if ( plugin.railcar ) {
+				recordTracksEvent( 'calypso_marketplace_search_traintracks_render', {
+					site: site,
+					plugin: plugin.slug,
+					blog_id: selectedSite?.ID,
+					ui_algo: props.listName, // this can also be used to test different layouts eg. list/grid
+					ui_position: props.gridPosition,
+					...plugin.railcar,
+				} );
+			}
+		},
+		[ plugin.railcar ]
+	);
+
 	const trackPluginLinkClick = useCallback( () => {
 		recordTracksEvent( 'calypso_plugin_browser_item_click', {
 			site: site,
@@ -81,6 +97,13 @@ const PluginsBrowserListElement = ( props ) => {
 			grid_position: props.gridPosition,
 			blog_id: selectedSite?.ID,
 		} );
+		if ( plugin.railcar ) {
+			recordTracksEvent( 'calypso_marketplace_search_traintracks_interact', {
+				railcar: plugin.railcar.railcar,
+				action: 'product_opened',
+				blog_id: selectedSite?.ID,
+			} );
+		}
 	}, [ site, plugin, selectedSite, props.listName ] );
 
 	const isWpcomPreinstalled = useMemo( () => {

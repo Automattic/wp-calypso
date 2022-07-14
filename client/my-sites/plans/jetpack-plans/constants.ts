@@ -42,6 +42,7 @@ import type { SelectorProduct } from './types';
 import type { JetpackPlanSlug, JetpackPurchasableItemSlug } from '@automattic/calypso-products';
 
 export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
+export const AGENCIES_PAGE = 'https://jetpack.com/for/agencies/';
 export const INTRO_PRICING_DISCOUNT_PERCENTAGE = 50;
 export const GUARANTEE_DAYS = 14;
 

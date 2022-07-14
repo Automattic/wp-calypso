@@ -226,7 +226,19 @@ export function checkoutPending( context, next ) {
 }
 
 export function checkoutThankYou( context, next ) {
-	const receiptId = Number( context.params.receiptId );
+	// This route requires a numeric receipt ID like
+	// `/checkout/thank-you/example.com/1234` but it also operates as a fallback
+	// if something goes wrong with the "pending" page and will respond to a URL
+	// like `/checkout/thank-you/example.com/pending`. In that case, the word
+	// `pending` is a placeholder for the receipt ID that never got properly
+	// replaced (perhaps it could not find the receipt ID, for example).
+	//
+	// In that case, we still want to display a generic thank-you page (because
+	// the transaction was probably still successful), so we set `receiptId` to
+	// `undefined`.
+	const receiptId = Number.isInteger( Number( context.params.receiptId ) )
+		? Number( context.params.receiptId )
+		: undefined;
 	const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 
 	const state = context.store.getState();

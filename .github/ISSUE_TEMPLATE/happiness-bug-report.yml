@@ -87,11 +87,12 @@ body:
   - type: dropdown
     id: site-type
     attributes:
-      label: Simple, Atomic or both?
+      label: Platform (Simple, Atomic, or both?)
       description: (You may select more than one)
       options:
         - Simple
         - Atomic
+        - Self-hosted
       multiple: true
   - type: markdown
     attributes:

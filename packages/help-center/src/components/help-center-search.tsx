@@ -3,9 +3,10 @@
 import { useState, useCallback } from '@wordpress/element';
 import { useHistory, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
-import InlineHelpSearchResults from 'calypso/blocks/inline-help/inline-help-search-results';
-import './help-center-search.scss';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { HelpCenterMoreResources } from './help-center-more-resources';
+import HelpCenterSearchResults from './help-center-search-results';
+import './help-center-search.scss';
 import { SibylArticles } from './help-center-sibyl-articles';
 
 export const HelpCenterSearch = () => {
@@ -18,19 +19,13 @@ export const HelpCenterSearch = () => {
 
 	const redirectToArticle = useCallback(
 		( event, result ) => {
-			const search = new URLSearchParams( {
-				postId: result.post_id,
-				query: searchQuery,
-				link: result.link ?? '',
-				title: result.title,
-			} );
-
-			if ( result.blog_id ) {
-				search.append( 'blogId', result.blog_id );
-			}
-
 			event.preventDefault();
-			history.push( `/post/?${ search.toString() }` );
+			const searchResult = {
+				...result,
+				title: preventWidows( decodeEntities( result.title ) ),
+				query: searchQuery,
+			};
+			history.push( `/post/?${ result.slug }`, searchResult );
 		},
 		[ history, searchQuery ]
 	);
@@ -44,7 +39,7 @@ export const HelpCenterSearch = () => {
 				isVisible
 			/>
 			{ searchQuery && (
-				<InlineHelpSearchResults
+				<HelpCenterSearchResults
 					onSelect={ redirectToArticle }
 					searchQuery={ searchQuery }
 					openAdminInNewTab

@@ -389,10 +389,6 @@ function load_help_center() {
 	// enable help center for all proxied users.
 	$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
 
-	if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC && ! $is_proxied ) {
-		return;
-	}
-
 	// only shipping to en locale for now.
 	$current_locale = get_locale();
 
