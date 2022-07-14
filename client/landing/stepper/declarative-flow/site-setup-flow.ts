@@ -505,7 +505,9 @@ export const siteSetupFlow: Flow = {
 					return exitFlow( `/home/${ siteSlug }` );
 
 				case 'import':
-					return navigate( 'importList' );
+					return isEnabled( 'onboarding/import-light' )
+						? navigate( 'intent' )
+						: navigate( 'importList' );
 
 				case 'difmStartingPoint': {
 					if ( verticalsStepEnabled ) {
