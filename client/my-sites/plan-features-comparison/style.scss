@@ -335,7 +335,8 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.notouch .signup__step .segmented-control.price-toggle {
+.notouch .signup__step .segmented-control.price-toggle,
+.notouch .plans .segmented-control.price-toggle {
 	background-color: var( --studio-gray-5 );
 	border-color: var( --studio-gray-5 );
 	border-radius: 6px; /* stylelint-disable-line */
@@ -458,7 +459,8 @@ body.is-section-signup.is-white-signup {
 	}
 }
 
-.notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle {
+.notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle,
+.notouch body.is-section-plans.is-section-plans .plans .segmented-control.price-toggle {
 	background-color: #f2f2f2;
 	margin-top: 0;
 

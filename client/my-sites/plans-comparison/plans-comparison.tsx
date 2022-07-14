@@ -1,4 +1,5 @@
 import {
+	TERM_MONTHLY,
 	TYPE_FREE,
 	TYPE_FLEXIBLE,
 	TYPE_PRO,
@@ -244,6 +245,7 @@ export const globalOverrides = css`
 const ComparisonTable = styled.table< TableProps >`
 	border-collapse: collapse;
 	max-width: ${ ( { hideFreePlan } ) => ( hideFreePlan ? 728 : 980 ) }px;
+	margin-top: 20px;
 
 	.is-section-plans & {
 		html[dir='ltr'] & {
@@ -411,9 +413,9 @@ const PlansComparisonToggle = styled.tbody`
 		}
 	}
 `;
-
 interface Props {
 	isInSignup?: boolean;
+	intervalType?: string;
 	selectedSiteId?: number;
 	selectedSiteSlug?: string;
 	selectedDomainConnection?: boolean;
@@ -437,6 +439,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	isInSignup = false,
 	selectedSiteId,
 	selectedSiteSlug,
+	intervalType,
 	selectedDomainConnection,
 	purchaseId,
 	hideFreePlan,
@@ -452,7 +455,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 	 * @todo clk Use of `hideFreePlan` will cause breakage if we are not showing the free plan at all.
 	 * Potentially remove `hideFreePlan` logic alltogether when plans are finalised.
 	 */
-	const plans = usePlans( hideFreePlan );
+	const plans = usePlans( hideFreePlan, intervalType );
 	const prices = usePlanPrices( plans );
 	const translate = useTranslate();
 
@@ -488,30 +491,35 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 						<td className={ `is-first` }>
 							<br />
 						</td>
-						{ plans.map( ( plan, index ) => (
-							<PlansComparisonColHeader
-								key={ plan.getProductId() }
-								plan={ plan }
-								currencyCode={ currencyCode }
-								price={ prices[ index ].price }
-								originalPrice={ prices[ index ].originalPrice }
-								translate={ translate }
-							>
-								{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
-								<PlansComparisonAction
-									currentSitePlanSlug={ sitePlan?.product_slug }
+						{ plans.map( ( plan, index ) => {
+							const isDomainConnectionDisabled =
+								selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type );
+							const isMonthlyPlan = plan?.term === TERM_MONTHLY;
+							const isMonthlyPlanDisabled = 'monthly' === intervalType && ! isMonthlyPlan;
+
+							return (
+								<PlansComparisonColHeader
+									key={ plan.getProductId() }
 									plan={ plan }
-									isInSignup={ isInSignup }
-									isPrimary={ plan.type === TYPE_PRO }
-									isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
-									manageHref={ manageHref }
-									disabled={
-										selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type )
-									}
-									onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
-								/>
-							</PlansComparisonColHeader>
-						) ) }
+									currencyCode={ currencyCode }
+									price={ prices[ index ].price }
+									originalPrice={ prices[ index ].originalPrice }
+									translate={ translate }
+								>
+									{ selectedDomainConnection && <PlansDomainConnectionInfo plan={ plan } /> }
+									<PlansComparisonAction
+										currentSitePlanSlug={ sitePlan?.product_slug }
+										plan={ plan }
+										isInSignup={ isInSignup }
+										isPrimary={ plan.type === TYPE_PRO }
+										isCurrentPlan={ sitePlan?.product_slug === plan.getStoreSlug() }
+										manageHref={ manageHref }
+										disabled={ isDomainConnectionDisabled || isMonthlyPlanDisabled }
+										onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
+									/>
+								</PlansComparisonColHeader>
+							);
+						} ) }
 					</tr>
 				</THead>
 				<PlansComparisonRows>

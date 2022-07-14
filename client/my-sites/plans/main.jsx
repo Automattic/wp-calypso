@@ -8,6 +8,7 @@ import {
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
+	PLAN_WPCOM_PRO_MONTHLY,
 } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { addQueryArgs } from '@wordpress/url';
@@ -40,6 +41,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ExperimentalIntervalTypeToggle } from '../plans-features-main/plan-type-selector';
 
 const ProfessionalEmailPromotionPlaceholder = styled.div`
 	animation: loading-fade 1.6s ease-in-out infinite;
@@ -179,16 +181,34 @@ class Plans extends Component {
 				PLAN_WPCOM_PRO,
 				PLAN_PERSONAL,
 				PLAN_PREMIUM,
+				PLAN_WPCOM_PRO_MONTHLY,
 			].includes( currentPlan?.productSlug )
 		) {
+			const intervalType = this.props.intervalType;
+			const eligibleForIntervalTypeToggle = [ PLAN_FREE, PLAN_WPCOM_PRO_MONTHLY ].includes(
+				currentPlan?.productSlug
+			);
+
 			return (
-				<PlansComparison
-					purchaseId={ this.props.purchase?.id }
-					isInSignup={ false }
-					onSelectPlan={ this.onSelectPlan }
-					selectedSiteId={ selectedSite?.ID }
-					selectedSiteSlug={ selectedSite?.slug }
-				/>
+				<>
+					{ eligibleForIntervalTypeToggle && (
+						<ExperimentalIntervalTypeToggle
+							intervalType={ intervalType }
+							isInSignup={ false }
+							plans={ [] }
+							siteSlug={ selectedSite.slug }
+							eligibleForWpcomMonthlyPlans={ true }
+						/>
+					) }
+					<PlansComparison
+						purchaseId={ this.props.purchase?.id }
+						isInSignup={ false }
+						intervalType={ intervalType }
+						onSelectPlan={ this.onSelectPlan }
+						selectedSiteId={ selectedSite?.ID }
+						selectedSiteSlug={ selectedSite?.slug }
+					/>
+				</>
 			);
 		}
 
