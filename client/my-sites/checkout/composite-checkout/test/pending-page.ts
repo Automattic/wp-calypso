@@ -3,6 +3,13 @@
  */
 import page from 'page';
 import {
+	SUCCESS,
+	ERROR,
+	FAILURE,
+	UNKNOWN,
+	PROCESSING,
+} from 'calypso/state/order-transactions/constants';
+import {
 	addUrlToPendingPageRedirect,
 	redirectThroughPending,
 	getRedirectFromPendingPage,
@@ -189,7 +196,7 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: 'https://wordpress.com/home/12345' } );
 	} );
 
-	it( 'returns a generic siteless url for an absolute url if it is not allowed and there is also a receipt', () => {
+	it( 'returns a generic no-site url for an absolute url if it is not allowed and there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			redirectTo: 'https://example.com/home',
 			receiptId: 12345,
@@ -204,5 +211,159 @@ describe( 'getRedirectFromPendingPage', () => {
 			siteSlug: 'foo.bar',
 		} );
 		expect( actual ).toEqual( { url: '/checkout/thank-you/foo.bar/12345' } );
+	} );
+
+	it( 'returns a no-site generic url if there is no receipt and no order and no site', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/no-site/unknown-receipt' } );
+	} );
+
+	it( 'returns a generic url with a site if there is no receipt and no order and a site', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			siteSlug: 'example.com',
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/example.com/unknown-receipt' } );
+	} );
+
+	it( 'returns a simple success url if the transaction is successful', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 1234,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/home' } );
+	} );
+
+	it( 'returns a success url with interpolated receipt if the transaction is successful', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home/:receiptId',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 1234,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/home/1234' } );
+	} );
+
+	it( 'returns a generic url if the transaction is successful and the url is not allowed', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: 'https://foo.bar/home/:receiptId',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				receiptId: 1234,
+				processingStatus: SUCCESS,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/checkout/thank-you/example.com/1234' } );
+	} );
+
+	it( 'returns a checkout url if the transaction has an error', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				processingStatus: ERROR,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/checkout/example.com', isError: true } );
+	} );
+
+	it( 'returns a checkout url if the transaction fails', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				processingStatus: FAILURE,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/checkout/example.com', isError: true } );
+	} );
+
+	it( 'returns a root url if the transaction has an error and there is no site', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				processingStatus: ERROR,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/', isError: true } );
+	} );
+
+	it( 'returns a root url if the transaction fails and there is no site', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				processingStatus: FAILURE,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/', isError: true } );
+	} );
+
+	it( 'returns a checkout url if there was an error', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			siteSlug: 'example.com',
+			error: new Error( 'test error' ),
+			orderId: 1,
+		} );
+		expect( actual ).toEqual( { url: '/checkout/example.com', isError: true } );
+	} );
+
+	it( 'returns a plans url if the transaction is unknown', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			siteSlug: 'example.com',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				processingStatus: UNKNOWN,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/plans/my-plan/example.com', isUnknown: true } );
+	} );
+
+	it( 'returns a pricing url if the transaction is unknown and there is no site', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				processingStatus: UNKNOWN,
+			},
+		} );
+		expect( actual ).toEqual( { url: '/pricing', isUnknown: true } );
+	} );
+
+	it( 'returns nothing if the transaction is not complete', () => {
+		const actual = getRedirectFromPendingPage( {
+			redirectTo: '/home',
+			transaction: {
+				orderId: 1,
+				userId: 1,
+				processingStatus: PROCESSING,
+			},
+		} );
+		expect( actual ).toBeUndefined();
 	} );
 } );
