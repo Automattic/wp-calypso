@@ -318,14 +318,14 @@ const ComparisonTable = styled.table< TableProps >`
 		}
 	}
 
-	thead tr:first-child th,
-	thead tr:first-child td {
+	thead tr:first-of-type th,
+	thead tr:first-of-type td {
 		border: none;
 		padding-bottom: 0;
 	}
 
-	thead tr:nth-child( 2 ) th,
-	thead tr:nth-child( 2 ) td {
+	thead tr:nth-of-type( 2 ) th,
+	thead tr:nth-of-type( 2 ) td {
 		padding-top: 0;
 	}
 
