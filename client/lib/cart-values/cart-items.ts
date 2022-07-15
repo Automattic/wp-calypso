@@ -31,6 +31,7 @@ import {
 	isRenewable,
 	isSiteRedirect,
 	isSpaceUpgrade,
+	isStarter,
 	isTitanMail,
 	isTrafficGuide,
 	isUnlimitedSpace,
@@ -115,6 +116,10 @@ export function hasProPlan( cart: ResponseCart ): boolean {
 
 export function hasBusinessPlan( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isBusiness );
+}
+
+export function hasStarterPlan( cart: ResponseCart ): boolean {
+	return getAllCartItems( cart ).some( isStarter );
 }
 
 export function hasDomainCredit( cart: ResponseCart ): boolean {

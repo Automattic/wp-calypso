@@ -155,7 +155,7 @@ const ProfessionalEmailUpsell = ( {
 		<div>
 			<header className="professional-email-upsell__header">
 				<h3 className="professional-email-upsell__small-title">
-					{ translate( "Hold tight, we're getting your site ready." ) }
+					{ translate( "Hold tight, we're getting things ready." ) }
 				</h3>
 				<h1 className="professional-email-upsell__title wp-brand-font">
 					{ translate( 'Add Professional Email @%(domain)s', {
