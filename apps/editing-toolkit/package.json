@@ -42,7 +42,7 @@
 		"test:js:help": "npx wp-scripts test-unit-js --config='jest.config.js' --help --colors",
 		"test:js:update-snapshots": "npx wp-scripts test-unit-js -u --config='jest.config.js' --colors",
 		"test:js:watch": "npx wp-scripts test-unit-js --config='jest.config.js' --watch --colors",
-		"test:php": "npx wp-env run phpunit 'phpunit -c /var/www/html/wp-content/plugins/editing-toolkit-plugin/phpunit.xml.dist'",
+		"test:php": "wp-env run tests-wordpress /var/www/html/wp-content/plugins/editing-toolkit-plugin/vendor/bin/phpunit -c /var/www/html/wp-content/plugins/editing-toolkit-plugin/phpunit.xml.dist --verbose",
 		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
