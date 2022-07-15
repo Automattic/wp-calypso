@@ -1,8 +1,6 @@
 <?php
 /**
- * PHPUnit bootstrap file
- *
- * @see https://github.com/WordPress/gutenberg/blob/HEAD/phpunit/bootstrap.php
+ * PHPUnit bootstrap file.
  *
  * @package FullSiteEditing
  */
@@ -10,25 +8,20 @@
 // Require composer dependencies.
 require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 
-$_tests_dir = getenv( 'WP_PHPUNIT__DIR' );
+$_tests_dir = getenv( 'WP_TESTS_DIR' );
 
-if ( ! $_tests_dir ) {
+if ( ! $_tests_dir || ! file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
 	throw new Exception( 'Could not find the WordPress test lib.' );
 }
 
 // Give access to tests_add_filter() function.
-require_once $_tests_dir . '/includes/functions.php';
+require_once "{$_tests_dir}/includes/functions.php";
 
 /**
  * Manually load the plugin being tested.
  */
 function _manually_load_plugin() {
-	update_option(
-		'active_plugins',
-		array(
-			'editing-toolkit-plugin/full-site-editing-plugin.php',
-		)
-	);
+	require dirname( __DIR__ ) . '/full-site-editing-plugin.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
@@ -54,7 +47,7 @@ function fail_if_died( $message ) {
 tests_add_filter( 'wp_die_handler', 'fail_if_died' );
 
 // Start up the WP testing environment.
-require $_tests_dir . '/includes/bootstrap.php';
+require "{$_tests_dir}/includes/bootstrap.php";
 
 // Use existing behavior for wp_die during actual test execution.
 remove_filter( 'wp_die_handler', 'fail_if_died' );
