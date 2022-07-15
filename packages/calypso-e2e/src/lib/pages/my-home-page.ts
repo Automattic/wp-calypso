@@ -2,10 +2,11 @@ import { Page } from 'playwright';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
+	homePageContainer: '.is-section-home',
 
 	// Task card (topmost card)
 	taskHeadingMessage: ( message: string ) => `div.task h2:has-text("${ message }")`,
-	siteTitle: ( vertical: string ) => `div.site__title:has-text("${ vertical }")`,
+	siteTitle: ( title: string ) => `div.site__title:has-text("${ title }")`,
 };
 
 /**
@@ -46,12 +47,19 @@ export class MyHomePage {
 	}
 
 	/**
-	 * Given a partial or full string, verify that a site generated from
-	 * a vertical design uses the vertical name as the default site title.
+	 * Given a partial or full string, verify a site title containing the
+	 * string is displayed on the home page.
 	 *
-	 * @param {string} vertical Name of the vertical used as the site title.
+	 * @param {string} title Partial or fully matching site title.
 	 */
-	async validateSiteTitle( vertical: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.siteTitle( vertical ) );
+	async validateSiteTitle( title: string ): Promise< void > {
+		await this.page.locator( selectors.siteTitle( title ) );
+	}
+
+	/**
+	 * Validates we've landed on the home page screen.
+	 */
+	async validateOnHomePage(): Promise< void > {
+		await this.page.locator( selectors.homePageContainer );
 	}
 }

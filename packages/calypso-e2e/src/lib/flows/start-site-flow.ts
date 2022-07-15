@@ -1,4 +1,5 @@
 import { Frame, Page } from 'playwright';
+import { DataHelper } from '../..';
 import envVariables from '../../env-variables';
 
 /**
@@ -134,11 +135,12 @@ export class StartSiteFlow {
 	}
 
 	/**
-	 * Clears the vertical search.
-	 * TODO: Add a check to see if the button is there, if not, it's already cleared
+	 * Clear the vertical search field if the clear button is visible.
 	 */
 	async clearVertical(): Promise< void > {
-		await this.page.click( selectors.clearVerticalButton );
+		if ( await this.page.locator( selectors.clearVerticalButton ).isVisible() ) {
+			await this.page.click( selectors.clearVerticalButton );
+		}
 	}
 
 	/**
@@ -186,17 +188,26 @@ export class StartSiteFlow {
 	}
 
 	/**
-	 * Validates we've landed on the design picker screen.
+	 * Go to goals setup page.
+	 *
+	 * @param {string} siteSlug The site slug URL.
 	 */
-	async validateOnDesignPickerScreen(): Promise< void > {
-		await this.page.waitForSelector( selectors.themePickerContainer );
+	async startGoalsSetup( siteSlug: string ): Promise< void > {
+		await this.page.goto( DataHelper.getCalypsoURL( '/setup/goals', { siteSlug } ) );
 	}
 
 	/**
-	 * Validates we've landed on the design setup screen used in the vertical flow.
+	 * Validates we've landed on the design picker screen.
+	 */
+	async validateOnDesignPickerScreen(): Promise< void > {
+		await this.page.locator( selectors.themePickerContainer );
+	}
+
+	/**
+	 * Validates we've landed on the design setup screen.
 	 */
 	async validateOnDesignSetupScreen(): Promise< void > {
-		await this.page.waitForSelector( selectors.designSetupContainer );
+		await this.page.locator( selectors.designSetupContainer );
 	}
 
 	/**
@@ -205,7 +216,7 @@ export class StartSiteFlow {
 	 * @param {string} vertical Name of the vertical to validate.
 	 */
 	async validateVerticalDesignHeader( vertical: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.verticalDesignHeader( vertical ) );
+		await this.page.locator( selectors.verticalDesignHeader( vertical ) );
 	}
 
 	/**

@@ -1,71 +1,39 @@
 /**
- * @group calyepso-quarantined
+ * @group calypso-pr
  */
 
 import {
+	BrowserManager,
 	DataHelper,
-	DomainSearchComponent,
-	LoginPage,
 	MyHomePage,
-	NewUserResponse,
-	RestAPIClient,
-	SignupPickPlanPage,
 	StartSiteFlow,
-	UserSignupPage,
+	TestAccount,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Vertical: Selected' ), function () {
-	const testUser = DataHelper.getNewTestUser( {
-		usernamePrefix: 'free',
-	} );
+	// TODO: Find a more elegant way to use a test account's existing site
+	const siteSlug = 'e2eflowtestingprereleaseuser2.wordpress.com';
 
-	let domainSearchComponent: DomainSearchComponent;
 	let page: Page;
 	let startSiteFlow: StartSiteFlow;
-	let userCreatedFlag = false;
-	let userDetails: NewUserResponse;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
+		const testAccount = new TestAccount( 'calypsoPreReleaseUser' );
+		await testAccount.authenticate( page );
 	} );
 
-	describe( 'Onboarding flow', function () {
-		it( 'Navigate to Signup page', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.visit();
-			await loginPage.clickSignUp();
-		} );
-
-		// TODO: Investigate if using an existing user simplifies the flow
-		it( 'Sign up as a new user', async function () {
-			const userSignupPage = new UserSignupPage( page );
-			userDetails = await userSignupPage.signup(
-				testUser.email,
-				testUser.username,
-				testUser.password
-			);
-
-			userCreatedFlag = true;
-		} );
-
-		it( 'Select a free .wordpress.com domain', async function () {
-			domainSearchComponent = new DomainSearchComponent( page );
-			await domainSearchComponent.search( testUser.siteName );
-			await domainSearchComponent.selectDomain( '.wordpress.com' );
-		} );
-
-		it( 'Select WordPress.com Free plan', async function () {
-			const signupPickPlanPage = new SignupPickPlanPage( page );
-			await signupPickPlanPage.selectPlan( 'Free' );
+	describe( 'Start setup flow', function () {
+		beforeAll( async function () {
+			await BrowserManager.setStoreCookie( page );
 		} );
 
 		it( 'Skip goals step', async function () {
 			startSiteFlow = new StartSiteFlow( page );
-
+			await startSiteFlow.startGoalsSetup( siteSlug );
 			await page.waitForLoadState( 'networkidle' );
 			const currentStep = await startSiteFlow.getCurrentStep();
 
@@ -75,7 +43,7 @@ describe( DataHelper.createSuiteTitle( 'Vertical: Selected' ), function () {
 		} );
 	} );
 
-	describe( 'Vertical flow', function () {
+	describe( 'Vertical flow: Input-based selection', function () {
 		// TODO: Parameterize test with a list of common verticals
 		it( 'Select a vertical based on input', async function () {
 			const currentStep = await startSiteFlow.getCurrentStep();
@@ -86,18 +54,20 @@ describe( DataHelper.createSuiteTitle( 'Vertical: Selected' ), function () {
 			}
 		} );
 
-		it( 'See design picker screen for input flow', async function () {
+		it( 'See design picker screen', async function () {
 			await startSiteFlow.validateOnDesignSetupScreen();
 
 			// TODO: Get header validation working
 			// await startSiteFlow.validateVerticalDesignHeader( 'vertical' );
 		} );
 
-		// TODO: Investigate back button bug when run on wpcalypso.wordpress.com
-		it( 'Navigate back for manual flow', async function () {
+		// TODO: Investigate back button waitForLoadState issue
+		it( 'Navigate back', async function () {
 			await startSiteFlow.goBackOneScreen();
 		} );
+	} );
 
+	describe( 'Vertical flow: Manual entry', function () {
 		it( 'Enter a vertical manually', async function () {
 			const currentStep = await startSiteFlow.getCurrentStep();
 			if ( currentStep === 'vertical' ) {
@@ -109,27 +79,30 @@ describe( DataHelper.createSuiteTitle( 'Vertical: Selected' ), function () {
 		} );
 
 		// Validate that theme picker is used instead of vertical design screen
-		// TODO: Investigate if manually entering an exact vertical match is a bug
-		it( 'See theme picker screen for manual flow', async function () {
+		// TODO: Investigate if manually entering an exact vertical match should
+		// result in a vertical being selected
+		it( 'See theme picker screen', async function () {
 			await startSiteFlow.validateOnDesignPickerScreen();
 		} );
 
-		it( 'Navigate back for suggestion flow', async function () {
+		it( 'Navigate back', async function () {
 			await startSiteFlow.goBackOneScreen();
 		} );
+	} );
 
-		it( 'Select a vertical from suggestions dropdown', async function () {
+	describe( 'Vertical flow: Suggestion dropdown', function () {
+		it( 'Select a vertical from the suggestions dropdown', async function () {
 			const currentStep = await startSiteFlow.getCurrentStep();
 			if ( currentStep === 'vertical' ) {
 				await startSiteFlow.toggleVerticalDropdown();
 
-				// TODO: Select random vertical from suggested list
+				// TODO: Select a random vertical from the suggested list
 				await startSiteFlow.selectVertical( 'Food' );
 				await startSiteFlow.clickButton( 'Continue' );
 			}
 		} );
 
-		it( 'See design picker screen for suggestion flow', async function () {
+		it( 'See design picker screen', async function () {
 			await startSiteFlow.validateOnDesignSetupScreen();
 
 			// TODO: Get header validation working
@@ -146,20 +119,5 @@ describe( DataHelper.createSuiteTitle( 'Vertical: Selected' ), function () {
 			const myHomePage = new MyHomePage( page );
 			await myHomePage.validateSiteTitle( 'Food' );
 		} );
-	} );
-
-	afterAll( async function () {
-		const restAPIClient = new RestAPIClient(
-			{ username: testUser.username, password: testUser.password },
-			userDetails.body.bearer_token
-		);
-
-		if ( userCreatedFlag ) {
-			await apiCloseAccount( restAPIClient, {
-				userID: userDetails.body.user_id,
-				username: testUser.username,
-				email: testUser.email,
-			} );
-		}
 	} );
 } );
