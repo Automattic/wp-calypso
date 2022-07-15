@@ -8,21 +8,16 @@ import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
-import {
-	SUCCESS,
-	ERROR,
-	FAILURE,
-	UNKNOWN,
-	ASYNC_PENDING,
-} from 'calypso/state/order-transactions/constants';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
 
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
+	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
 }
@@ -38,141 +33,36 @@ interface CheckoutPendingProps {
  *
  * The `orderId` prop comes from the last part of the URL and the `siteSlug`
  * prop comes from the `:site` part of the URL and will be empty if there is no
- * site.
+ * site. In some cases (eg: free purchases which do not generate an order),
+ * this could be the placeholder `:orderId`. If that happens and there is a
+ * `receiptId` prop, the success redirect will still occur, but if it happens
+ * when there is no `receiptId`, we cannot know what to do and the user will be
+ * redirected to a generic thank-you page.
  *
  * The `redirectTo` prop comes from the query string parameter of the same
  * name. It may include a literal `/pending` as part of the URL; if that's the
  * case, that string will be replaced by the receipt ID when the transaction
  * completes.
+ *
+ * The `receiptId` prop comes from the query string parameter of the same name.
+ * It must be numeric. If set, we know that the transaction is complete and
+ * will skip polling for the order.
  */
 function CheckoutPending( {
 	orderId: orderIdOrPlaceholder,
+	receiptId,
 	siteSlug,
 	redirectTo,
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
 	const translate = useTranslate();
-	const transaction: OrderTransaction | null = useSelector( ( state ) =>
-		orderId ? getOrderTransaction( state, orderId ) : null
-	);
-	const error = useSelector( ( state ) =>
-		orderId ? getOrderTransactionError( state, orderId ) : undefined
-	);
-	const reduxDispatch = useDispatch();
-	const cartKey = useCartKey();
-	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
-	const didRedirect = useRef( false );
 
-	useEffect( () => {
-		if ( didRedirect.current ) {
-			return;
-		}
-
-		// Make sure the cart is always fresh if anything changes. This way, once
-		// the order completes and the server empties the cart, the front-end will
-		// get an updated cached cart and future pages will show the cart correctly
-		// as empty.
-		reloadCart();
-
-		const retryOnError = () => {
-			didRedirect.current = true;
-			const defaultFailUrl = siteSlug ? `/checkout/${ siteSlug }` : '/';
-			const failRedirectUrl = defaultFailUrl;
-
-			reduxDispatch(
-				errorNotice(
-					translate( "Sorry, we couldn't process your payment. Please try again later." ),
-					{
-						isPersistent: true,
-					}
-				)
-			);
-
-			page( failRedirectUrl );
-		};
-
-		if ( ! orderId ) {
-			// If the order ID is missing, we don't know what to do because there's no
-			// way to know the status of the transaction. If this happens it's
-			// definitely a bug, but let's keep the existing behavior and send the user
-			// to a generic thank-you page, assuming that the purchase was successful.
-			// This goes to the URL path `/checkout/thank-you/:site/:receiptId`.
-			didRedirect.current = true;
-			page( `/checkout/thank-you/${ siteSlug ?? 'no-site' }/unknown` );
-			return;
-		}
-
-		const planRoute = siteSlug ? `/plans/my-plan/${ siteSlug }` : '/pricing';
-
-		if ( transaction ) {
-			const { processingStatus } = transaction;
-
-			if ( SUCCESS === processingStatus ) {
-				const { receiptId } = transaction;
-
-				didRedirect.current = true;
-
-				if ( redirectTo?.includes( ':receiptId' ) ) {
-					performRedirect( redirectTo.replace( ':receiptId', `${ receiptId }` ) );
-					return;
-				}
-
-				// Only treat `/pending` as a placeholder if it's the end of the URL
-				// pathname, but preserve query strings or hashes.
-				const receiptPlaceholderRegexp = /\/pending([?#]|$)/;
-				if ( redirectTo && receiptPlaceholderRegexp.test( redirectTo ) ) {
-					performRedirect( redirectTo.replace( receiptPlaceholderRegexp, `/${ receiptId }$1` ) );
-					return;
-				}
-
-				if ( redirectTo ) {
-					performRedirect( redirectTo );
-					return;
-				}
-
-				const defaultSuccessUrl = siteSlug
-					? `/checkout/thank-you/${ siteSlug }/${ receiptId }`
-					: '/checkout/thank-you/no-site';
-				performRedirect( defaultSuccessUrl );
-				return;
-			}
-
-			if ( ASYNC_PENDING === transaction.processingStatus ) {
-				didRedirect.current = true;
-				page( '/me/purchases/pending' );
-				return;
-			}
-
-			// If the processing status indicates that there was something wrong, it
-			// could be because the user has cancelled the payment, or because the
-			// payment failed after being authorized.
-			if ( ERROR === processingStatus || FAILURE === processingStatus ) {
-				// redirect users back to the checkout page so they can try again.
-				retryOnError();
-				return;
-			}
-
-			// The API has responded a status string that we don't expect somehow.
-			if ( UNKNOWN === processingStatus ) {
-				didRedirect.current = true;
-
-				reduxDispatch(
-					errorNotice( translate( 'Oops! Something went wrong. Please try again later.' ), {
-						isPersistent: true,
-					} )
-				);
-
-				// Redirect users back to the plan page so that they won't be stuck here.
-				page( planRoute );
-				return;
-			}
-		}
-
-		// A HTTP error occured; we will send the user back to checkout.
-		if ( error ) {
-			retryOnError();
-		}
-	}, [ error, redirectTo, reduxDispatch, siteSlug, transaction, translate, reloadCart, orderId ] );
+	useRedirectOnTransactionSuccess( {
+		orderId,
+		receiptId,
+		siteSlug,
+		redirectTo,
+	} );
 
 	return (
 		<Main className="checkout-thank-you__pending">
@@ -206,6 +96,87 @@ function performRedirect( url: string ): void {
 		return;
 	}
 	window.location.href = url;
+}
+
+function useRedirectOnTransactionSuccess( {
+	orderId,
+	receiptId,
+	siteSlug,
+	redirectTo,
+}: {
+	orderId: number | undefined;
+	receiptId: number | undefined;
+	siteSlug?: string;
+	redirectTo?: string;
+} ): void {
+	const translate = useTranslate();
+	const transaction: OrderTransaction | null = useSelector( ( state ) =>
+		orderId ? getOrderTransaction( state, orderId ) : null
+	);
+	const error: Error | null = useSelector( ( state ) =>
+		orderId ? getOrderTransactionError( state, orderId ) : null
+	);
+	const reduxDispatch = useDispatch();
+	const cartKey = useCartKey();
+	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
+	const didRedirect = useRef( false );
+	useEffect( () => {
+		if ( didRedirect.current ) {
+			return;
+		}
+
+		// Make sure the cart is always fresh if anything changes. This way, once
+		// the order completes and the server empties the cart, the front-end will
+		// get an updated cached cart and future pages will show the cart correctly
+		// as empty.
+		reloadCart();
+
+		const redirectInstructions = getRedirectFromPendingPage( {
+			error,
+			transaction,
+			orderId,
+			receiptId,
+			redirectTo,
+			siteSlug,
+		} );
+
+		if ( ! redirectInstructions ) {
+			return;
+		}
+
+		if ( redirectInstructions.isError ) {
+			const defaultFailErrorNotice = translate(
+				"Sorry, we couldn't process your payment. Please try again later."
+			);
+			reduxDispatch(
+				errorNotice( defaultFailErrorNotice, {
+					isPersistent: true,
+				} )
+			);
+		}
+
+		if ( redirectInstructions.isUnknown ) {
+			const unknownNotice = translate( 'Oops! Something went wrong. Please try again later.' );
+			reduxDispatch(
+				errorNotice( unknownNotice, {
+					isPersistent: true,
+				} )
+			);
+		}
+
+		didRedirect.current = true;
+		performRedirect( redirectInstructions.url );
+	}, [
+		error,
+		redirectTo,
+		reduxDispatch,
+		siteSlug,
+		transaction,
+		translate,
+		reloadCart,
+		orderId,
+		receiptId,
+	] );
 }
 
 export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {
