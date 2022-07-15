@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -13,15 +14,17 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
-import { updateAdminMenuAfterPluginInstallation } from 'calypso/state/admin-menu/actions';
-import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
-import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors/is-fetching-automated-transfer-status';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -43,11 +46,6 @@ const ThankYouContainer = styled.div`
 	}
 `;
 
-const AtomicTransferActive = 'active';
-const AtomicTransferProvisioned = 'provisioned';
-const AtomicTransferRelocating = 'relocating_switcheroo';
-const AtomicTransferComplete = 'completed';
-
 const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -58,23 +56,28 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+	const isFetchingTransferStatus = useSelector( ( state ) =>
+		isFetchingAutomatedTransferStatus( state, siteId )
+	);
+	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
+	const hasManagePluginsFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
-	const [ currentStep, setCurrentStep ] = useState( 0 );
-	const [ sawPluginOnce, setSawPluginOnce ] = useState( false );
+	const [ currentStep, setCurrentStep ] = useState( 1 );
 
 	const isPluginOnSite = !! pluginOnSite;
-	const transferStatus = transfer?.status;
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
-	// The dependencies intentionally use transfer over transferStatus.
 	useEffect( () => {
-		if ( ! siteId || transfer?.status === AtomicTransferComplete ) {
+		if ( ! siteId || transferStatus === transferStates.COMPLETE ) {
 			return;
 		}
-		waitFor( 2 ).then( () => dispatch( requestLatestAtomicTransfer( siteId ) ) );
-	}, [ siteId, dispatch, transfer ] );
+		if ( ! isFetchingTransferStatus ) {
+			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
+		}
+	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus ] );
 
 	useEffect( () => {
 		dispatch(
@@ -109,58 +112,30 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( transferStatus === AtomicTransferComplete && ! pluginOnSite && ! isRequestingPlugins ) {
+		if ( ! siteId ) {
+			return;
+		}
+
+		if ( transferStatus === transferStates.COMPLETE && ! isPluginOnSite && ! isRequestingPlugins ) {
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
-	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId, transferStatus ] );
+	}, [ isRequestingPlugins, isPluginOnSite, dispatch, siteId, transferStatus ] );
 
-	// Update the menu after the site been transferred to Atomic or after the plugin has
-	// been installed, since that might change some menu items
+	// Set progressbar (currentStep) depending on transfer status.
+	// Step 0 hides the progress bar. It means "complete".
+	// Steps 1-2 advance through the bar.
 	useEffect( () => {
-		dispatch( updateAdminMenuAfterPluginInstallation( siteId, productSlug ) );
-
-		// Use an empty array of dependencies since we want to run this effect only once.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
-
-	// Set progressbar (currentStep) depending on transfer.status and pluginOnSite.
-	// Step 0 hides the progress bar. It means "complete" or "still loading transfer status".
-	// Steps 1-4 advance through the bar.
-	useEffect( () => {
-		if ( transferStatus === AtomicTransferActive ) {
+		if ( transferStatus !== transferStates.COMPLETE ) {
 			setCurrentStep( 1 );
-		} else if ( transferStatus === AtomicTransferProvisioned ) {
+		} else if ( ! isPluginOnSite ) {
 			setCurrentStep( 2 );
-		} else if ( transferStatus === AtomicTransferRelocating ) {
-			setCurrentStep( 3 );
-		} else if ( transferStatus === AtomicTransferComplete ) {
-			/*
-			 * When we're done transferring, we want to see isPluginOnSite to advance
-			 * to step 0 (complete).
-			 * Even after pluginOnSite exists, subsequent requests temporarily set
-			 * pluginOnSite = undefined when there are outstanding network requests.
-			 * Workaround: After seeing isPluginOnSite once, we cannot go back to step 4.
-			 */
-			if ( ! isPluginOnSite && ! sawPluginOnce ) {
-				setCurrentStep( 4 );
-			} else if ( isPluginOnSite && ! sawPluginOnce ) {
-				setCurrentStep( 0 );
-				setSawPluginOnce( true );
-			} else {
-				setCurrentStep( 0 );
-			}
 		} else {
 			setCurrentStep( 0 );
 		}
-	}, [ transferStatus, isPluginOnSite, sawPluginOnce ] );
+	}, [ transferStatus, isPluginOnSite ] );
 
 	const steps = useMemo(
-		() => [
-			translate( 'Activating the plugin feature' ), // Transferring to Atomic
-			translate( 'Setting up plugin installation' ), // Transferring to Atomic
-			translate( 'Installing plugin' ), // Transferring to Atomic
-			translate( 'Activating plugin' ),
-		],
+		() => [ translate( 'Installing plugin' ), translate( 'Activating plugin' ) ],
 		[ translate ]
 	);
 	const additionalSteps = useMarketplaceAdditionalSteps();
@@ -178,9 +153,11 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		| { action_links?: { Settings?: string }; name?: string };
 
 	const fallbackSetupUrl = wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url;
+	const managePluginsUrl = hasManagePluginsFeature
+		? `${ siteAdminUrl }plugins.php`
+		: `/plugins/manage/${ siteSlug } `;
 
-	const setupURL =
-		pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || `${ siteAdminUrl }plugins.php`;
+	const setupURL = pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || managePluginsUrl;
 
 	const documentationURL = wpComPluginData?.documentation_url;
 
@@ -198,7 +175,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					<FullWidthButton
 						href={ setupURL }
 						primary
-						busy={ ! pluginOnSite || transfer?.status !== AtomicTransferComplete }
+						busy={ ! isPluginOnSite || transferStatus !== transferStates.COMPLETE }
 					>
 						{ translate( 'Manage plugin' ) }
 					</FullWidthButton>
@@ -252,6 +229,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			<MasterbarStyled
 				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
+				canGoBack={ currentStep === 0 }
 			/>
 			{ currentStep > 0 && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -264,18 +242,16 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				</div>
 			) }
 			<ThankYouContainer>
-				{ transfer && (
-					<ThankYou
-						containerClassName="marketplace-thank-you"
-						sections={ [ setupSection ] }
-						showSupportSection={ true }
-						thankYouImage={ thankYouImage }
-						thankYouTitle={ translate( 'All ready to go!' ) }
-						thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
-						headerBackgroundColor="#fff"
-						headerTextColor="#000"
-					/>
-				) }
+				<ThankYou
+					containerClassName="marketplace-thank-you"
+					sections={ [ setupSection ] }
+					showSupportSection={ true }
+					thankYouImage={ thankYouImage }
+					thankYouTitle={ translate( 'All ready to go!' ) }
+					thankYouSubtitle={ isPluginOnSite ? thankYouSubtitle : '' }
+					headerBackgroundColor="#fff"
+					headerTextColor="#000"
+				/>
 			</ThankYouContainer>
 		</ThemeProvider>
 	);
