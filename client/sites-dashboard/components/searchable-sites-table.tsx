@@ -45,7 +45,11 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 							placeholder={ __( 'Search by name or domain…' ) }
 						/>
 					</div>
-					<SitesTable sites={ filteredSites } />
+					{ filteredSites.length > 0 ? (
+						<SitesTable sites={ filteredSites } />
+					) : (
+						<h2>{ __( 'No sites match your search.' ) }</h2>
+					) }
 				</>
 			) }
 		</ClassNames>
