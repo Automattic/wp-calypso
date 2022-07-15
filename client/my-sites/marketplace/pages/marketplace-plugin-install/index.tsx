@@ -247,7 +247,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 				page.redirect(
 					`/marketplace/thank-you/${
 						installedPlugin?.slug || productSlug || uploadedPluginSlug
-					}/${ selectedSiteSlug }`
+					}/${ selectedSiteSlug }?hide-progress-bar`
 				)
 			);
 		}

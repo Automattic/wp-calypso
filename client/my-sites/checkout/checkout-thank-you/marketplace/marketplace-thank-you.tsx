@@ -70,6 +70,9 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const [ currentStep, setCurrentStep ] = useState( 1 );
 
 	const isPluginOnSite = !! pluginOnSite;
+	const hideProgressBar = new URLSearchParams( document.location.search ).has(
+		'hide-progress-bar'
+	);
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -134,6 +137,11 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Step 0 hides the progress bar. It means "complete".
 	// Steps 1-2 advance through the bar.
 	useEffect( () => {
+		if ( hideProgressBar ) {
+			setCurrentStep( 0 );
+			return;
+		}
+
 		if ( transferStatus !== transferStates.COMPLETE ) {
 			setCurrentStep( 1 );
 		} else if ( ! isPluginOnSite ) {
@@ -141,7 +149,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} else {
 			setCurrentStep( 0 );
 		}
-	}, [ transferStatus, isPluginOnSite ] );
+	}, [ transferStatus, isPluginOnSite, hideProgressBar ] );
 
 	const steps = useMemo(
 		() => [ translate( 'Installing plugin' ), translate( 'Activating plugin' ) ],
