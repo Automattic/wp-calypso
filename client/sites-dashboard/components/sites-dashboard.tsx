@@ -10,6 +10,7 @@ import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
 interface SitesDashboardProps {
 	launchStatus?: string;
+	siteBasePath?: string;
 }
 
 const MAX_PAGE_WIDTH = '1184px';
@@ -58,7 +59,7 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
+export function SitesDashboard( { launchStatus, siteBasePath }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 	const sites = useSelector( getSites );
 
@@ -86,7 +87,11 @@ export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 							launchStatus={ launchStatus }
 						>
 							{ ( filteredSites, status ) => (
-								<SitesContainer sites={ filteredSites } status={ status } />
+								<SitesContainer
+									sites={ filteredSites }
+									status={ status }
+									siteBasePath={ siteBasePath }
+								/>
 							) }
 						</SitesTableFilterTabs>
 					) }

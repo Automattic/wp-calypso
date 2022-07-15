@@ -96,7 +96,9 @@ export function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
-	const allSitesPath = config.isEnabled( 'build/sites-dashboard' ) ? '/sites-dashboard' : basePath;
+	const allSitesPath = config.isEnabled( 'build/sites-dashboard' )
+		? addQueryArgs( { return: basePath === '/home' ? undefined : basePath }, '/sites-dashboard' )
+		: basePath;
 
 	return (
 		<NavigationComponent

@@ -10,6 +10,7 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 interface SiteTableRowProps {
 	site: SiteData;
+	siteBasePath: string;
 }
 
 const Row = styled.tr`
@@ -52,8 +53,8 @@ const SiteUrl = styled.a`
 	}
 `;
 
-const getDashboardUrl = ( slug: string ) => {
-	return '/home/' + slug;
+const getDashboardUrl = ( slug: string, siteBasePath: string ) => {
+	return siteBasePath + '/' + slug;
 };
 
 const displaySiteUrl = ( siteUrl: string ) => {
@@ -63,13 +64,13 @@ const displaySiteUrl = ( siteUrl: string ) => {
 const VisitDashboardItem = ( { site }: { site: SiteData } ) => {
 	const { __ } = useI18n();
 	return (
-		<PopoverMenuItem href={ getDashboardUrl( site.slug ) }>
+		<PopoverMenuItem href={ getDashboardUrl( site.slug, '/home' ) }>
 			{ __( 'Visit Dashboard' ) }
 		</PopoverMenuItem>
 	);
 };
 
-export default function SitesTableRow( { site }: SiteTableRowProps ) {
+export default function SitesTableRow( { site, siteBasePath }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 
 	const isComingSoon =
@@ -83,7 +84,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 					leading={
 						<a
 							style={ { display: 'block' } }
-							href={ getDashboardUrl( site.slug ) }
+							href={ getDashboardUrl( site.slug, siteBasePath ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
 							<SiteIcon siteId={ site.ID } size={ 50 } />
@@ -92,7 +93,10 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 					title={
 						<div style={ { display: 'flex', alignItems: 'center', marginBottom: '8px' } }>
 							<SiteName style={ { marginRight: '8px' } }>
-								<a href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
+								<a
+									href={ getDashboardUrl( site.slug, siteBasePath ) }
+									title={ __( 'Visit Dashboard' ) }
+								>
 									{ site.name ? site.name : __( '(No Site Title)' ) }
 								</a>
 							</SiteName>

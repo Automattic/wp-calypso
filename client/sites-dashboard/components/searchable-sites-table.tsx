@@ -9,9 +9,10 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 interface SearchableSitesTableProps {
 	sites: SiteData[];
+	siteBasePath: string;
 }
 
-export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
+export function SearchableSitesTable( { sites, siteBasePath }: SearchableSitesTableProps ) {
 	const { __ } = useI18n();
 
 	const [ term, setTerm ] = useState( '' );
@@ -46,7 +47,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 						/>
 					</div>
 					{ filteredSites.length > 0 ? (
-						<SitesTable sites={ filteredSites } />
+						<SitesTable sites={ filteredSites } siteBasePath={ siteBasePath } />
 					) : (
 						<h2>{ __( 'No sites match your search.' ) }</h2>
 					) }
