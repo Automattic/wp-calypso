@@ -4,7 +4,9 @@ on:
   pull_request_target: # When a PR is opened, edited, updated, closed, or a label is added.
     types: [opened, reopened, synchronize, edited, labeled, closed]
   issues: # For auto-triage of issues.
-    types: [opened, reopened]
+    types: [opened, reopened, edited]
+  issue_comment: # To gather support references in issue comments.
+    types: [created]
 concurrency:
   # For pull_request_target, cancel any concurrent jobs with the same type (e.g. "opened", "labeled") and branch.
   # Don't cancel any for other events, accomplished by grouping on the unique run_id.
@@ -40,4 +42,4 @@ jobs:
          slack_design_channel: ${{ secrets.SLACK_DESIGN_CHANNEL }}
          slack_editorial_channel: ${{ secrets.SLACK_EDITORIAL_CHANNEL }}
          slack_team_channel: ${{ secrets.SLACK_TEAM_CHANNEL }}
-         tasks: 'assignIssues,cleanLabels,notifyDesign,notifyEditorial,flagOss,triageNewIssues'
+         tasks: 'assignIssues,cleanLabels,notifyDesign,notifyEditorial,flagOss,triageNewIssues,gatherSupportReferences'
