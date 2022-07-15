@@ -1,4 +1,8 @@
-import { PLAN_ANNUAL_PERIOD, PLAN_MONTHLY_PERIOD } from '@automattic/calypso-products';
+import {
+	PLAN_ANNUAL_PERIOD,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -22,41 +26,96 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 	const { offer, purchase, percentDiscount } = props;
 	const translate = useTranslate();
 
-	const { interval, singularInterval } = useMemo( () => {
-		const periods = offer.discountedPeriods;
-		const billingInterval = purchase.billPeriodDays;
-		let interval;
-		let singularInterval;
-
-		switch ( billingInterval ) {
-			case PLAN_MONTHLY_PERIOD:
-				interval = translate( '%(count)s months', { args: { count: periods } } );
-				singularInterval = translate( 'month' );
-				break;
-
-			case PLAN_ANNUAL_PERIOD:
-				if ( periods > 1 ) {
-					interval = translate( '%(count)s years', { args: { count: periods } } );
-				}
-				interval = translate( 'year' );
-				singularInterval = translate( 'year' );
-				break;
-
-			default:
-				if ( periods > 1 ) {
-					interval = translate( '%(count)s renewals', { args: { count: periods } } );
-				}
-				interval = translate( 'renewal' );
-				singularInterval = translate( 'renewal' );
-				break;
-		}
-
-		return { interval, singularInterval };
-	}, [ purchase, offer ] );
-
 	const onClickAccept = useCallback( () => {
 		return;
 	}, [] );
+
+	const { offerHeadline, renewalCopy } = useMemo( () => {
+		const periods = offer.discountedPeriods;
+		const renewalPrice = formatCurrency( offer.rawPrice, offer.currencyCode );
+		const fullPrice = formatCurrency( offer.originalPrice, offer.currencyCode );
+		const headlineOptions = {
+			args: {
+				periods,
+				discount: percentDiscount,
+				name: purchase.productName,
+			},
+		};
+		const renewalCopyOptions = {
+			args: {
+				periods,
+				renewalPrice,
+				fullPrice,
+			},
+		};
+
+		let offerHeadline;
+		let renewalCopy;
+
+		switch ( purchase.billPeriodDays ) {
+			case PLAN_BIENNIAL_PERIOD:
+				offerHeadline = translate(
+					'Get %(discount)d%% off %(name)s for your next %(periods)d two-year renewals',
+					headlineOptions
+				);
+				renewalCopy = translate(
+					'Your biennial subscription renews every two years. It will automatically renew at %(renewalPrice)s/biennium for the next %(periods)d bienniums and then %(fullPrice)s/biennium for each following biennium.',
+					renewalCopyOptions
+				);
+				if ( 1 === periods ) {
+					offerHeadline = translate(
+						'Get %(discount)d%% off %(name)s for your next two-year renewal',
+						headlineOptions
+					);
+					renewalCopy = translate(
+						'Your biennial subscription renews every two years. It will automatically renew at %(renewalPrice)s/biennium for the next biennium and then %(fullPrice)s/biennium for each following biennium.',
+						renewalCopyOptions
+					);
+				}
+				break;
+			case PLAN_ANNUAL_PERIOD:
+				offerHeadline = translate(
+					'Get %(discount)d%% off %(name)s for the next %(periods)d years',
+					headlineOptions
+				);
+				renewalCopy = translate(
+					'Your annual subscription will automatically renew at %(renewalPrice)s/year for the next %(periods)d years and then %(fullPrice)s/year for each following year.',
+					renewalCopyOptions
+				);
+				if ( 1 === periods ) {
+					offerHeadline = translate(
+						'Get %(discount)d%% off %(name)s for the next year',
+						headlineOptions
+					);
+					renewalCopy = translate(
+						'Your annual subscription will automatically renew at %(renewalPrice)s/year for the next year and then %(fullPrice)s/year for each following year.',
+						renewalCopyOptions
+					);
+				}
+				break;
+			case PLAN_MONTHLY_PERIOD:
+				offerHeadline = translate(
+					'Get %(discount)d%% off %(name)s for the next %(periods)d months',
+					headlineOptions
+				);
+				renewalCopy = translate(
+					'Your monthly subscription will automatically renew at %(renewalPrice)s/month for the next %(periods)d months and then %(fullPrice)s/month for each following month.',
+					renewalCopyOptions
+				);
+				if ( 1 === periods ) {
+					offerHeadline = translate(
+						'Get %(discount)d%% off %(name)s for the next year',
+						headlineOptions
+					);
+					renewalCopy = translate(
+						'Your monthly subscription will automatically renew at %(renewalPrice)s/month for the next month and then %(fullPrice)s/month for each following month.',
+						renewalCopyOptions
+					);
+				}
+		}
+
+		return { offerHeadline, renewalCopy };
+	}, [ offer, percentDiscount ] );
 
 	return (
 		<>
@@ -66,40 +125,23 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 					'We’d love to help make Jetpack work for you. Would the special offer below interest you?'
 				) }
 				align="center"
-				isSecondary={ true }
+				isSecondary
 			/>
 
 			<div className="jetpack-cancellation-offer__card">
 				<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
-				<p className="jetpack-cancellation-offer__headline">
-					{ translate( 'Get %(discount)d%% off %(name)s for the next %(interval)s', {
-						args: {
-							discount: percentDiscount,
-							name: purchase.productName,
-							interval: interval,
-						},
-					} ) }
-				</p>
-				<p>
-					{ translate( '%(discount)d%% discount will be applied next time you are billed.', {
-						args: {
-							discount: percentDiscount,
-						},
-					} ) }
-				</p>
+				<p className="jetpack-cancellation-offer__headline">{ offerHeadline }</p>
 				<p>
 					{ translate(
-						'Your subscription will renew at %(renewalPrice)s for the next %(interval)s. It will then renew at %(fullPrice)s each following %(singularInterval)s.',
+						'%(percentDiscount)d%% discount will be applied next time you are billed. ',
 						{
 							args: {
-								renewalPrice: formatCurrency( offer.rawPrice, offer.currencyCode ),
-								interval: interval,
-								fullPrice: formatCurrency( offer.originalPrice, offer.currencyCode ),
-								singularInterval: singularInterval,
+								percentDiscount,
 							},
 						}
 					) }
 				</p>
+				<p>{ renewalCopy }</p>
 				<p className="jetpack-cancellation-offer__tos">
 					{ translate(
 						'Getting this discount means you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',

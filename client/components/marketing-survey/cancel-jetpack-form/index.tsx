@@ -73,7 +73,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	const cancellationOffer = useSelector( ( state ) => {
 		const offers = getCancellationOffers( state, purchase.id );
-		if ( offers.length > 0 ) {
+		if ( 1 === offers.length ) {
 			return offers[ 0 ];
 		}
 
@@ -90,7 +90,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	const offerDiscountBasedFromPurchasePrice = useMemo( () => {
 		if ( cancellationOffer ) {
-			// Get the percentage difference in the price of the offer over the price of the original purchase.
+			// Get the percentage difference in the price of the offer over the price of the purchase.
 			// toFixed will round to the 3rd decimal place here.
 			// This will catch floats like .1999, and round them up.
 			const offerPercentageOfPurchaseAmount = Number(
@@ -377,7 +377,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	return (
 		<>
-			{ shouldProvideCancellationOffer && (
+			{ shouldProvideCancellationOffer && purchase.siteId && purchase.id && (
 				<QueryPurchaseCancellationOffers siteId={ purchase.siteId } purchaseId={ purchase.id } />
 			) }
 			<Dialog

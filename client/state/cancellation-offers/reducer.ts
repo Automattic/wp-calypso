@@ -34,7 +34,7 @@ const createCancellationOfferMap = ( payload: CancellationOfferAPIResponse[] ) =
 	return payload.map( mapResponseObject );
 };
 
-const isFetching = ( state = {}, action: AnyAction ) => {
+const isFetching = ( state = false, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_REQUEST:
 			return true;
@@ -64,11 +64,11 @@ export const offers = ( state = [], action: AnyAction ) => {
 	return state;
 };
 
-const cancellationOffers = combineReducers( {
+const cancellationOffersReducer = combineReducers( {
 	isFetching,
 	error,
 	offers,
 } );
 
-const reducer = keyedReducer( 'purchaseId', cancellationOffers );
+const reducer = keyedReducer( 'purchaseId', cancellationOffersReducer );
 export default withStorageKey( 'cancellationOffers', reducer );
