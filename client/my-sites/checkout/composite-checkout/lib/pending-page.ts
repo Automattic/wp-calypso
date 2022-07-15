@@ -175,6 +175,16 @@ export function addUrlToPendingPageRedirect(
 	return successUrlObject.href;
 }
 
+/**
+ * Replaces receipt ID placeholders in a URL with the receipt ID.
+ *
+ * There are currently two types of placeholders. The first and most common is
+ * the explicit `:receiptId` string. However, prior to D83814-code, the server
+ * would use the word `pending` as the placeholder (which was confusing because
+ * there exists a calypso URL with the word `pending` followed by an order ID).
+ * Just in case that pattern is still used, this function handles that
+ * placeholder as well.
+ */
 function interpolateReceiptId( url: string, receiptId: number ): string {
 	if ( url.includes( ':receiptId' ) ) {
 		return url.replaceAll( ':receiptId', `${ receiptId }` );
@@ -190,6 +200,14 @@ function interpolateReceiptId( url: string, receiptId: number ): string {
 	return url;
 }
 
+/**
+ * Return false for absolute URLs which are on unknown hosts.
+ *
+ * Because the `redirectTo` query param on the pending page is the target of
+ * that page's redirect, we want to make sure we do not create an open redirect
+ * security hole that could go anywhere. This function will disallow a URL
+ * which is absolute and on an unknown host.
+ */
 function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean {
 	if ( url.startsWith( '/' ) ) {
 		return true;
@@ -236,6 +254,14 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 	return false;
 }
 
+/**
+ * Guard against redirecting to absolute URLs which are on unknown hosts.
+ *
+ * Because the `redirectTo` query param on the pending page is the target of
+ * that page's redirect, we want to make sure we do not create an open redirect
+ * security hole that could go anywhere. This function will disallow a URL
+ * which is absolute and on an unknown host, returning the `fallbackUrl` instead.
+ */
 function filterAllowedRedirect(
 	url: string,
 	siteSlug: string | undefined,
@@ -270,7 +296,12 @@ function getDefaultSuccessUrl(
  * allowed hosts to prevent having an open redirect. Otherwise it may be a
  * generic thank-you page.
  *
- * The result may also be marked as an error if it is not a success url.
+ * If the transaction is still pending, this will return `undefined` and no
+ * redirect should be performed.
+ *
+ * The result may also include `isError` if there was an error during the
+ * redirect or transaction, or `isUnknown` if the transaction had an unknown
+ * response. These flags can be used to notify the user.
  */
 export function getRedirectFromPendingPage( {
 	error,
