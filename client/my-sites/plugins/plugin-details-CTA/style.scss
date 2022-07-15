@@ -72,6 +72,7 @@
 .plugin-details-CTA__t-and-c {
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-50 );
+	margin-bottom: 16px;
 }
 
 .plugin-details-CTA__not-available {
@@ -115,6 +116,12 @@
 
 	.plugin-details-CTA__installed-text-inactive {
 		color: var( --studio-red-60 );
+	}
+}
+
+.legacy {
+	.plugin-details-CTA__t-and-c {
+		margin-bottom: 0;
 	}
 }
 

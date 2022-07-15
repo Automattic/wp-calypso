@@ -226,20 +226,7 @@ const PluginDetailsCTA = ( props ) => {
 					disabled={ requestingPluginsForSites || incompatiblePlugin || userCantManageTheSite }
 				/>
 			</div>
-			{ shouldUpgrade && (
-				<div className="plugin-details-CTA__upgrade-required">
-					<span className="plugin-details-CTA__upgrade-required-icon">
-						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						<Gridicon icon="notice-outline" size={ 20 } />
-						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-					</span>
-					<span className="plugin-details-CTA__upgrade-required-text">
-						{ translate( 'You need to upgrade your plan to install plugins.' ) }
-					</span>
-				</div>
-			) }
-			{ /* Awaiting confirmation for adding this section */ }
-			{ /* { ! isJetpackSelfHosted && ! isMarketplaceProduct && (
+			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-CTA__t-and-c">
 					{ translate(
 						'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
@@ -259,7 +246,19 @@ const PluginDetailsCTA = ( props ) => {
 						}
 					) }
 				</div>
-			) } */ }
+			) }
+			{ shouldUpgrade && (
+				<div className="plugin-details-CTA__upgrade-required">
+					<span className="plugin-details-CTA__upgrade-required-icon">
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						<Gridicon icon="notice-outline" size={ 20 } />
+						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+					</span>
+					<span className="plugin-details-CTA__upgrade-required-text">
+						{ translate( 'You need to upgrade your plan to install plugins.' ) }
+					</span>
+				</div>
+			) }
 		</div>
 	);
 };
