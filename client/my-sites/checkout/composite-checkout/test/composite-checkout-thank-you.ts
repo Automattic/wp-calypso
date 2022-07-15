@@ -589,6 +589,20 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( redirectTo + '&action=edit&plan_upgraded=1' );
 	} );
 
+	it( 'redirects to external redirectTo url if the hostame is cloud.jetpack.com', () => {
+		const adminUrl = 'https://my.site/wp-admin/';
+		const redirectTo = 'https://cloud.jetpack.com/backup/foo.bar';
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
+		expect( url ).toBe( redirectTo );
+	} );
+
+	it( 'redirects to external redirectTo url if the hostame is jetpack.cloud.localhost', () => {
+		const adminUrl = 'https://my.site/wp-admin/';
+		const redirectTo = 'http://jetpack.cloud.localhost:3000/backup/foo.bar';
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
+		expect( url ).toBe( redirectTo );
+	} );
+
 	it( 'redirects to manage purchase page if there is a renewal', () => {
 		const cart = {
 			...getEmptyResponseCart(),
