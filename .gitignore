@@ -113,5 +113,7 @@ desktop/.yarn/*
 .pnp.*
 yarn-json-output.json
 
+.phpunit.result.cache
+
 # Profile results:
 /profiles/
