@@ -6,6 +6,7 @@ import {
 	useSiteIntent,
 	getContextResults,
 } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -23,7 +24,13 @@ type Props = {
 	supportSite?: SiteDetails;
 };
 
-function getPostUrl( article: Article, query: string ) {
+function getPostUrl( article: Article, query: string, locale: string ) {
+	if ( 'en' !== locale ) {
+		return {
+			pathname: article.link,
+		};
+	}
+
 	// if it's a wpcom support article, it has an ID
 	if ( article.post_id ) {
 		const params = new URLSearchParams( {
@@ -49,6 +56,7 @@ function getPostUrl( article: Article, query: string ) {
 
 export function SibylArticles( { message = '', supportSite }: Props ) {
 	const { __ } = useI18n();
+	const locale = useLocale();
 
 	const isAtomic = Boolean(
 		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
@@ -81,7 +89,10 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 			>
 				{ articles.map( ( article ) => (
 					<li key={ article.link }>
-						<Link to={ getPostUrl( article as Article, message ) }>
+						<Link
+							to={ getPostUrl( article as Article, message, locale ) }
+							target={ 'en' !== locale ? '_blank' : '' }
+						>
 							<Icon icon={ page } />
 							{ article.title }
 						</Link>

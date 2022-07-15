@@ -7,10 +7,10 @@ import {
 	SUPPORT_TYPE_API_HELP,
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from '@automattic/data-stores';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
+import { __ } from '@wordpress/i18n';
 import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -101,7 +101,6 @@ function HelpSearchResults( {
 	openAdminInNewTab = false,
 	location = 'inline-help-popover',
 }: HelpSearchResults ) {
-	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const hasPurchases = useSelector( hasCancelableUserPurchases );
@@ -112,13 +111,14 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
+	const locale = useLocale();
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery );
+	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery, locale );
 
 	const searchResults = searchData?.wordpress_support_links ?? [];
 	const hasAPIResults = searchResults.length > 0;
@@ -243,19 +243,19 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: translate( 'Recommended resources' ),
+				title: __( 'Recommended resources', __i18n_text_domain__ ),
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? translate( 'Recommended resources' ) : '',
+				title: ! searchQuery.length ? __( 'Recommended resources', __i18n_text_domain__ ) : '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_ADMIN_SECTION,
-				title: translate( 'Show me where to' ),
+				title: __( 'Show me where to', __i18n_text_domain__ ),
 				results: adminResults,
 				condition: !! searchQuery && adminResults.length > 0,
 			},
@@ -265,8 +265,8 @@ function HelpSearchResults( {
 	};
 
 	const resultsLabel = hasAPIResults
-		? translate( 'Search Results' )
-		: translate( 'Helpful resources for this section' );
+		? __( 'Search Results', __i18n_text_domain__ )
+		: __( 'Helpful resources for this section', __i18n_text_domain__ );
 
 	const renderSearchResults = () => {
 		return (
@@ -274,8 +274,9 @@ function HelpSearchResults( {
 				{ isSearching && ! searchResults.length && <PlaceholderLines lines={ placeholderLines } /> }
 				{ searchQuery && ! ( hasAPIResults || isSearching ) ? (
 					<p className="help-center-search-results__empty-results">
-						{ translate(
-							'Sorry, there were no matches. Here are some of the most searched for help pages for this section:'
+						{ __(
+							'Sorry, there were no matches. Here are some of the most searched for help pages for this section:',
+							__i18n_text_domain__
 						) }
 					</p>
 				) : null }
