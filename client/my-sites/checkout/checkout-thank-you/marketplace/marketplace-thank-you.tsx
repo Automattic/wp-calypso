@@ -14,6 +14,7 @@ import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/prog
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
@@ -112,11 +113,17 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( ! siteId ) {
+		if ( ! siteId || transferStatus !== transferStates.COMPLETE ) {
 			return;
 		}
 
-		if ( transferStatus === transferStates.COMPLETE && ! isPluginOnSite && ! isRequestingPlugins ) {
+		// Update the menu after the plugin has been installed, since that might change some menu items.
+		if ( isPluginOnSite ) {
+			dispatch( requestAdminMenu( siteId ) );
+			return;
+		}
+
+		if ( ! isRequestingPlugins ) {
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
 	}, [ isRequestingPlugins, isPluginOnSite, dispatch, siteId, transferStatus ] );
