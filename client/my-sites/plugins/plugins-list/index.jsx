@@ -522,11 +522,11 @@ export class PluginsList extends Component {
 	}
 
 	getAllowedPluginActions( plugin ) {
-		const { hasManagePlugins, siteIsAtomic, siteIsJetpack } = this.props;
+		const { hasManagePlugins, siteIsAtomic, siteIsJetpack, selectedSite } = this.props;
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
 		const isManagedPlugin = siteIsAtomic && autoManagedPlugins.includes( plugin.slug );
 		const canManagePlugins =
-			( siteIsJetpack && ! siteIsAtomic ) || ( siteIsAtomic && hasManagePlugins );
+			! selectedSite || ( siteIsJetpack && ! siteIsAtomic ) || ( siteIsAtomic && hasManagePlugins );
 
 		return {
 			autoupdate: ! isManagedPlugin && canManagePlugins,
