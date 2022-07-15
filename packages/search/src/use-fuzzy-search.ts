@@ -40,8 +40,8 @@ export const useFuzzySearch = < T >( {
 	 * the `fuseInstance` variable to the dependency array.
 	 *
 	 */
-	const [ fuseInstance ] = useState< Fuse< T > >( () => {
-		return new Fuse< T >( data, {
+	const [ fuseInstance ] = useState( () => {
+		return new Fuse( data, {
 			keys: fields,
 			includeScore: false,
 			includeMatches: false,
