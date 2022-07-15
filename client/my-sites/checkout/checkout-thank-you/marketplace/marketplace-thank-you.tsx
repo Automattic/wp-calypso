@@ -27,8 +27,9 @@ import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const ThankYouContainer = styled.div`
@@ -66,6 +67,10 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const hasManagePluginsFeature = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS )
 	);
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+	const isJetpackSelfHosted = isJetpack && ! isAtomic;
+
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
 	const [ currentStep, setCurrentStep ] = useState( 1 );
 
@@ -77,13 +82,13 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
 	useEffect( () => {
-		if ( ! siteId || transferStatus === transferStates.COMPLETE ) {
+		if ( ! siteId || transferStatus === transferStates.COMPLETE || isJetpackSelfHosted ) {
 			return;
 		}
 		if ( ! isFetchingTransferStatus ) {
 			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
 		}
-	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus ] );
+	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, isJetpackSelfHosted ] );
 
 	useEffect( () => {
 		dispatch(
@@ -118,7 +123,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( ! siteId || transferStatus !== transferStates.COMPLETE ) {
+		if ( ! siteId || ( isAtomic && transferStatus !== transferStates.COMPLETE ) ) {
 			return;
 		}
 
@@ -131,7 +136,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		if ( ! isRequestingPlugins ) {
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
-	}, [ isRequestingPlugins, isPluginOnSite, dispatch, siteId, transferStatus ] );
+	}, [ isRequestingPlugins, isPluginOnSite, dispatch, siteId, transferStatus, isAtomic ] );
 
 	// Set progressbar (currentStep) depending on transfer status.
 	// Step 0 hides the progress bar. It means "complete".
@@ -189,11 +194,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					'Get to know your plugin and customize it, so you can hit the ground running.'
 				),
 				stepCta: (
-					<FullWidthButton
-						href={ setupURL }
-						primary
-						busy={ ! isPluginOnSite || transferStatus !== transferStates.COMPLETE }
-					>
+					<FullWidthButton href={ setupURL } primary busy={ ! isPluginOnSite }>
 						{ translate( 'Manage plugin' ) }
 					</FullWidthButton>
 				),
