@@ -71,7 +71,7 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 	 */
 	public function get_search_results( \WP_REST_Request $request ) {
 		$query  = $request['query'];
-		$locale = get_locale();
+		$locale = $request['locale'];
 
 		if ( $this->is_wpcom ) {
 			$response = \WPCOM_Help_Search::search_wpcom_support( $query, $locale );
