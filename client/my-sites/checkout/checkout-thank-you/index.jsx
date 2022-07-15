@@ -372,7 +372,7 @@ export class CheckoutThankYou extends Component {
 	};
 
 	render() {
-		const { translate, isHappychatEligible, email } = this.props;
+		const { translate, isHappychatEligible, email, selectedSite } = this.props;
 		let purchases = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
@@ -384,6 +384,7 @@ export class CheckoutThankYou extends Component {
 		let wasGSuiteOrGoogleWorkspace = false;
 		let wasTitanEmailOnlyProduct = false;
 		let wasTitanEmailProduct = false;
+		let wasDomainOnly = false;
 
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
@@ -403,6 +404,11 @@ export class CheckoutThankYou extends Component {
 			);
 			wasDIFMProduct = purchases.some( isDIFMProduct );
 			wasTitanEmailOnlyProduct = purchases.length === 1 && purchases.some( isTitanMail );
+			wasDomainOnly =
+				selectedSite?.options?.is_domain_only &&
+				purchases.every(
+					( purchase ) => isDomainMapping( purchase ) || isDomainRegistration( purchase )
+				);
 		} else if ( isStarterPlanEnabled() ) {
 			// Don't show the Happiness support until we figure out the user doesn't have a starter plan
 			showHappinessSupport = false;
@@ -483,7 +489,7 @@ export class CheckoutThankYou extends Component {
 					domain={ domainName }
 					email={ professionalEmailPurchase ? professionalEmailPurchase.meta : emailFallback }
 					hasProfessionalEmail={ wasTitanEmailProduct }
-					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace }
+					hideProfessionalEmailStep={ wasGSuiteOrGoogleWorkspace || wasDomainOnly }
 					selectedSiteSlug={ this.props.selectedSiteSlug }
 					type={ purchaseType }
 				/>
