@@ -75,7 +75,10 @@ export class PluginsMain extends Component {
 			}
 		} );
 
-		if ( prevProps.isRequestingSites && ! this.props.isRequestingSites ) {
+		if (
+			( prevProps.isRequestingSites && ! this.props.isRequestingSites ) ||
+			prevProps.selectedSiteSlug !== selectedSiteSlug
+		) {
 			// Selected site is not a Jetpack site
 			if (
 				selectedSiteSlug &&
