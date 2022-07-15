@@ -516,18 +516,17 @@ export function switchWebpackCSS( isRTL ) {
 	forEach( currentLinks, async ( currentLink ) => {
 		const currentHref = currentLink.getAttribute( 'href' );
 		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
-		if ( currentHref === newHref ) {
+		const isNewHrefAdded = currentLink.parentElement?.querySelector( `[href = '${ newHref }']` );
+
+		if ( currentHref === newHref || isNewHrefAdded ) {
 			return;
 		}
 
 		const newLink = await loadCSS( newHref, currentLink );
-		// After the CSS files load the RTL state might have changed
-		// This is a double-check to ensure the value of isRTL
-		if ( i18n.isRtl() === isRTL && newLink ) {
+
+		if ( newLink ) {
 			newLink.setAttribute( 'data-webpack', true );
 			currentLink.parentElement?.removeChild( currentLink );
-		} else {
-			currentLink.parentElement?.removeChild( newLink );
 		}
 	} );
 }
