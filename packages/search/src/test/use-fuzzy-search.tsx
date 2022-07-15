@@ -15,37 +15,43 @@ const TestComponent = < T, >( props: UseFuzzySearchOptions< T > ) => {
 };
 
 describe( 'useFuzzySearch', () => {
-	it( 'allows fuzzy searching a simple string array', () => {
+	it( 'allows fuzzy searching a simple string array', async () => {
+		const user = userEvent.setup();
+
 		const data = [ 'ok', 'hello' ];
 
 		render( <TestComponent data={ data } /> );
 
 		const searchbox = screen.getByRole( 'searchbox' );
-		userEvent.type( searchbox, 'k' );
+		await user.type( searchbox, 'k' );
 
 		expect( screen.queryByText( /ok/ ) ).toBeTruthy();
 		expect( screen.queryByText( /hello/ ) ).not.toBeTruthy();
 	} );
 
-	it( 'allows fuzzy searching an array of objects', () => {
+	it( 'allows fuzzy searching an array of objects', async () => {
+		const user = userEvent.setup();
+
 		const data = [ { prop: 'value' }, { prop: 'another' } ];
 
 		render( <TestComponent data={ data } fields={ [ 'prop' ] } /> );
 
 		const searchbox = screen.getByRole( 'searchbox' );
-		userEvent.type( searchbox, 'v' );
+		await user.type( searchbox, 'v' );
 
 		expect( screen.queryByText( /value/ ) ).toBeTruthy();
 		expect( screen.queryByText( /another/ ) ).not.toBeTruthy();
 	} );
 
-	it( 'allows fuzzy searching on nested keys', () => {
+	it( 'allows fuzzy searching on nested keys', async () => {
+		const user = userEvent.setup();
+
 		const data = [ { deep: { prop: 'value' } }, { deep: { prop: 'another' } } ];
 
 		render( <TestComponent data={ data } fields={ [ 'deep.prop' ] } /> );
 
 		const searchbox = screen.getByRole( 'searchbox' );
-		userEvent.type( searchbox, 'an' );
+		await user.type( searchbox, 'an' );
 
 		expect( screen.queryByText( /another/ ) ).toBeTruthy();
 		expect( screen.queryByText( /value/ ) ).not.toBeTruthy();

@@ -1162,7 +1162,7 @@ __metadata:
     "@storybook/react": ^6.4.18
     "@testing-library/dom": ^8.11.3
     "@testing-library/react": ^12.1.3
-    "@testing-library/user-event": ^13.5.0
+    "@testing-library/user-event": ^14.2.5
     "@wordpress/base-styles": ^4.5.0
     "@wordpress/components": ^19.15.0
     "@wordpress/compose": ^5.7.0
@@ -6409,23 +6409,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^13.5.0":
-  version: 13.5.0
-  resolution: "@testing-library/user-event@npm:13.5.0"
-  dependencies:
-    "@babel/runtime": ^7.12.5
+"@testing-library/user-event@npm:^14.2.0, @testing-library/user-event@npm:^14.2.5":
+  version: 14.2.5
+  resolution: "@testing-library/user-event@npm:14.2.5"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: ff57edaeab31322c80c3f01d55404b4cebb907b9ec7672b96a1a14d053f172046b01c5f27b45677927ebee8ed91bce695a7d09edec9a48875cfacabe39d0426a
-  languageName: node
-  linkType: hard
-
-"@testing-library/user-event@npm:^14.2.0":
-  version: 14.2.0
-  resolution: "@testing-library/user-event@npm:14.2.0"
-  peerDependencies:
-    "@testing-library/dom": ">=7.21.4"
-  checksum: 1011c63521685bfb758d6c8d4fed5f16de6ebc28f5817d017364302d7b69f00acacb9dea1a1bf4a5efdf6e166f66541a42b6c6e8e08914310cd23a1b1af98e98
+  checksum: b585e1e137e4c2a1d6b11e7eb59fc8c8e49b4d7be41e24fbbdff1f01aef65096e3793fe16198f525fcbeafc5ec3605333abf518b02cac50c9a188ec06acc7009
   languageName: node
   linkType: hard
 
