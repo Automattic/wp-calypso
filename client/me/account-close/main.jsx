@@ -23,7 +23,6 @@ import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purc
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import isAccountClosed from 'calypso/state/selectors/is-account-closed';
-import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
 import AccountCloseConfirmDialog from './confirm-dialog';
 
 import './style.scss';
@@ -67,9 +66,8 @@ class AccountSettingsClose extends Component {
 	};
 
 	render() {
-		const { translate, hasAtomicSites, hasCancelablePurchases, isLoading, purchasedPremiumThemes } =
-			this.props;
-		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
+		const { translate, hasCancelablePurchases, isLoading, purchasedPremiumThemes } = this.props;
+		const isDeletePossible = ! isLoading && ! hasCancelablePurchases;
 		const containerClasses = classnames( 'account-close', 'main', 'is-wide-layout', {
 			'is-loading': isLoading,
 			'is-hiding-other-sites': this.state.showSiteDropdown,
@@ -135,28 +133,8 @@ class AccountSettingsClose extends Component {
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
-						{ ! isLoading && hasAtomicSites && (
-							<Fragment>
-								<p className="account-close__body-copy">
-									{ translate(
-										'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
-									) }
-								</p>
-								<p className="account-close__body-copy">
-									{ translate(
-										'You will not be able to open a new WordPress.com account using the same email address for 30 days.'
-									) }
-								</p>
-								<p className="account-close__body-copy">
-									{ translate( 'To close this account now, {{a}}contact our support team{{/a}}.', {
-										components: {
-											a: <ActionPanelLink href="/help/contact" />,
-										},
-									} ) }
-								</p>
-							</Fragment>
-						) }
-						{ ! isLoading && hasCancelablePurchases && ! hasAtomicSites && (
+
+						{ ! isLoading && hasCancelablePurchases && (
 							<Fragment>
 								<p className="account-close__body-copy">
 									{ translate( 'You still have active purchases on your account.' ) }
@@ -227,18 +205,17 @@ class AccountSettingsClose extends Component {
 					</ActionPanelBody>
 					<ActionPanelFooter>
 						{ ( isLoading || isDeletePossible ) && (
-							<Button scary onClick={ this.handleDeleteClick }>
+							<Button
+								scary
+								onClick={ this.handleDeleteClick }
+								data-testid={ 'close-account-button' }
+							>
 								<Gridicon icon="trash" />
 								{ translate( 'Close account', { context: 'button label' } ) }
 							</Button>
 						) }
-						{ hasAtomicSites && (
-							<Button primary href="/help/contact">
-								{ translate( 'Contact support' ) }
-							</Button>
-						) }
-						{ hasCancelablePurchases && ! hasAtomicSites && (
-							<Button primary href="/me/purchases">
+						{ hasCancelablePurchases && (
+							<Button primary href="/me/purchases" data-testid={ 'manage-purchases-button' }>
 								{ translate( 'Manage purchases', { context: 'button label' } ) }
 							</Button>
 						) }
@@ -265,7 +242,6 @@ export default connect(
 			isLoading,
 			hasCancelablePurchases: hasCancelableUserPurchases( state ),
 			purchasedPremiumThemes,
-			hasAtomicSites: userHasAnyAtomicSites( state ),
 			isAccountClosed: isAccountClosed( state ),
 			sitesToBeDeleted: getAccountClosureSites( state ),
 		};
