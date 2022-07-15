@@ -86,8 +86,8 @@ class CancelPurchaseButton extends Component {
 		page( this.props.getConfirmCancelDomainUrlFor( slug, id ) );
 	};
 
-	cancelPurchase = () => {
-		const { purchase, translate } = this.props;
+	cancelPurchase = ( purchase ) => {
+		const { translate } = this.props;
 
 		this.setDisabled( true );
 
@@ -157,8 +157,8 @@ class CancelPurchaseButton extends Component {
 		page.redirect( this.props.purchaseListUrl );
 	};
 
-	cancelAndRefund = () => {
-		const { purchase, cancelBundledDomain } = this.props;
+	cancelAndRefund = ( purchase ) => {
+		const { cancelBundledDomain } = this.props;
 
 		this.setDisabled( true );
 
@@ -249,12 +249,22 @@ class CancelPurchaseButton extends Component {
 	};
 
 	submitCancelAndRefundPurchase = () => {
-		const refundable = hasAmountAvailableToRefund( this.props.purchase );
+		const { purchase } = this.props;
+		const refundable = hasAmountAvailableToRefund( purchase );
 
 		if ( refundable ) {
-			this.cancelAndRefund();
+			this.cancelAndRefund( purchase );
 		} else {
-			this.cancelPurchase();
+			this.cancelPurchase( purchase );
+		}
+	};
+
+	handleMarketplaceSubscriptions = () => {
+		// If the site has active Marketplace subscriptions, remove these as well
+		if ( this.shouldHandleMarketplaceSubscriptions() ) {
+			this.props.activeSubscriptions.forEach( ( s ) =>
+				hasAmountAvailableToRefund( s ) ? this.cancelAndRefund( s ) : this.cancelPurchase( s )
+			);
 		}
 	};
 
@@ -292,6 +302,10 @@ class CancelPurchaseButton extends Component {
 
 		const disableButtons = this.state.disabled || this.props.disabled;
 		const { isJetpack, activeSubscriptions } = this.props;
+		const closeDialogAndProceed = () => {
+			this.closeDialog();
+			return onClick();
+		};
 
 		return (
 			<div>
@@ -336,7 +350,7 @@ class CancelPurchaseButton extends Component {
 					<MarketPlaceSubscriptionsDialog
 						isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
 						closeDialog={ this.closeDialog }
-						removePlan={ onClick }
+						removePlan={ closeDialogAndProceed }
 						planName={ getName( purchase ) }
 						activeSubscriptions={ activeSubscriptions }
 					/>
