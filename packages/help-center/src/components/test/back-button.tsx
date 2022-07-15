@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/no-extraneous-dependencies */
+import { Button } from '@automattic/components';
 import { shallow } from 'enzyme';
-import { MemoryRouter } from 'react-router-dom';
-import { BackButton } from '../back-button.tsx';
+import { BackButton, Props } from '../back-button';
 
 const mockHistoryPush = jest.fn();
 const mockHistoryGoBack = jest.fn();
@@ -16,12 +16,8 @@ jest.mock( 'react-router-dom', () => ( {
 	} ),
 } ) );
 
-function renderWrapper( props ) {
-	return shallow(
-		<MemoryRouter>
-			<BackButton { ...props } />
-		</MemoryRouter>
-	);
+function renderWrapper( props: Props ) {
+	return shallow( <BackButton { ...props } /> );
 }
 
 describe( 'BackButton', () => {
@@ -29,7 +25,7 @@ describe( 'BackButton', () => {
 		describe( 'and the system decides to navigate back home', () => {
 			it( 'navigates back home', () => {
 				const wrapper = renderWrapper( { backToRoot: true } );
-				const button = wrapper.find( BackButton ).dive();
+				const button = wrapper.find( Button );
 				button.simulate( 'click' );
 				expect( mockHistoryPush.mock.calls.length ).toBe( 1 );
 			} );
@@ -38,7 +34,7 @@ describe( 'BackButton', () => {
 		describe( 'and the system decides to navigate to the previous page', () => {
 			it( 'navigates to the previous page', () => {
 				const wrapper = renderWrapper( { backToRoot: false } );
-				const button = wrapper.find( BackButton ).dive();
+				const button = wrapper.find( Button );
 				button.simulate( 'click' );
 				expect( mockHistoryGoBack.mock.calls.length ).toBe( 1 );
 			} );
@@ -49,7 +45,7 @@ describe( 'BackButton', () => {
 				const onClickSpy = jest.fn();
 				const wrapper = renderWrapper( { onClick: onClickSpy } );
 
-				const button = wrapper.find( BackButton ).dive();
+				const button = wrapper.find( Button );
 				button.simulate( 'click' );
 
 				expect( onClickSpy.mock.calls.length ).toBe( 1 );
