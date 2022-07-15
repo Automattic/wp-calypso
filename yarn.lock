@@ -1161,6 +1161,7 @@ __metadata:
     "@storybook/addon-actions": ^6.4.21
     "@storybook/react": ^6.4.18
     "@testing-library/dom": ^8.11.3
+    "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^14.2.5
     "@wordpress/base-styles": ^4.5.0
@@ -6356,9 +6357,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^5.16.2":
-  version: 5.16.2
-  resolution: "@testing-library/jest-dom@npm:5.16.2"
+"@testing-library/jest-dom@npm:^5.16.2, @testing-library/jest-dom@npm:^5.16.4":
+  version: 5.16.4
+  resolution: "@testing-library/jest-dom@npm:5.16.4"
   dependencies:
     "@babel/runtime": ^7.9.2
     "@types/testing-library__jest-dom": ^5.9.1
@@ -6369,7 +6370,7 @@ __metadata:
     dom-accessibility-api: ^0.5.6
     lodash: ^4.17.15
     redent: ^3.0.0
-  checksum: f57ee673318f97ace6d7aac94a466f39264060afa5857c41f2fa39c40c6a9dfd29373f624a329286912eb078d95e7afdd2c728f02dae8cf0e82ad628263200d8
+  checksum: c34016bbc4865f8f9912d62ac63b409b87e785ff281a50f6eae8c1bc2364963c0831541da8a185bbd8b5964a6e3371fb623c339e8128d84706eb06f93f145801
   languageName: node
   linkType: hard
 

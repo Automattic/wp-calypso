@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Search, { useFuzzySearch } from '..';
 import type { UseFuzzySearchOptions } from '../use-fuzzy-search';
+import '@testing-library/jest-dom';
 
 const TestComponent = < T, >( props: UseFuzzySearchOptions< T > ) => {
 	const { results, setQuery } = useFuzzySearch( props );
@@ -25,8 +26,8 @@ describe( 'useFuzzySearch', () => {
 		const searchbox = screen.getByRole( 'searchbox' );
 		await user.type( searchbox, 'k' );
 
-		expect( screen.queryByText( /ok/ ) ).toBeTruthy();
-		expect( screen.queryByText( /hello/ ) ).not.toBeTruthy();
+		expect( screen.queryByText( /ok/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /hello/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'allows fuzzy searching an array of objects', async () => {
@@ -39,8 +40,8 @@ describe( 'useFuzzySearch', () => {
 		const searchbox = screen.getByRole( 'searchbox' );
 		await user.type( searchbox, 'v' );
 
-		expect( screen.queryByText( /value/ ) ).toBeTruthy();
-		expect( screen.queryByText( /another/ ) ).not.toBeTruthy();
+		expect( screen.queryByText( /value/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /another/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'allows fuzzy searching on nested keys', async () => {
@@ -53,8 +54,8 @@ describe( 'useFuzzySearch', () => {
 		const searchbox = screen.getByRole( 'searchbox' );
 		await user.type( searchbox, 'an' );
 
-		expect( screen.queryByText( /another/ ) ).toBeTruthy();
-		expect( screen.queryByText( /value/ ) ).not.toBeTruthy();
+		expect( screen.queryByText( /another/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /value/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'allows setting an initial query', () => {
@@ -62,7 +63,7 @@ describe( 'useFuzzySearch', () => {
 
 		render( <TestComponent data={ data } fields={ [ 'prop' ] } initialQuery="ano" /> );
 
-		expect( screen.queryByText( /another/ ) ).toBeTruthy();
-		expect( screen.queryByText( /value/ ) ).not.toBeTruthy();
+		expect( screen.queryByText( /another/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /value/ ) ).not.toBeInTheDocument();
 	} );
 } );
