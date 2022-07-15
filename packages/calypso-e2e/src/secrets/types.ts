@@ -3,19 +3,22 @@ import { TEST_ACCOUNT_NAMES } from '.';
 type OtherTestSiteName = 'notifications';
 export type TestAccountName = typeof TEST_ACCOUNT_NAMES[ number ];
 
+interface TestAccountSites {
+	id: number;
+	url: string;
+}
+
 export interface TestAccountCredentials {
 	username: string;
 	password: string;
-	primarySite?:
-		| string // Only for backward compatibility during transition to the structure below.
-		| {
-				url: string;
-				id: number;
-		  };
-
+	userID?: number;
+	email?: string;
+	testSites?: {
+		primary: TestAccountSites;
+	};
+	primarySite?: string;
 	otherSites?: string[];
 	totpKey?: string;
-	email?: string;
 	smsNumber?: {
 		number: string;
 		code: string;
