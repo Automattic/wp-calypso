@@ -36,11 +36,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 		beforeAll( async () => {
 			restAPIClient = new RestAPIClient( credentials );
 
-			if ( typeof credentials.primarySite === 'string' ) {
-				throw new Error( 'Missing data: primarySite should have {url, id} object as value.' );
-			}
-
-			await restAPIClient.createInvite( credentials.primarySite?.id as number, {
+			await restAPIClient.createInvite( credentials.testSites?.primary?.id as number, {
 				email: [ testEmailAddress ],
 				role: role,
 				message: inviteMessage,
@@ -101,11 +97,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 			return;
 		}
 
-		if ( typeof credentials.primarySite === 'string' ) {
-			return;
-		}
 		const response = await restAPIClient.deleteInvite(
-			credentials.primarySite?.id as number,
+			credentials.testSites?.primary.id as number,
 			testEmailAddress
 		);
 
