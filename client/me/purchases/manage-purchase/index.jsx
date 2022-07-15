@@ -39,7 +39,6 @@ import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-wo
 import AsyncLoad from 'calypso/components/async-load';
 import Badge from 'calypso/components/badge';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
@@ -878,7 +877,6 @@ class ManagePurchase extends Component {
 
 		return (
 			<Fragment>
-				<QueryProductsList />
 				<QueryStoredCards />
 				<TrackPurchasePageView
 					eventName="calypso_manage_purchase_view"
