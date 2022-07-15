@@ -18,7 +18,7 @@ class Coming_Soon_Test extends TestCase {
 	/**
 	 * Post-test suite actions.
 	 */
-	public static function tearDownAfterClass() {
+	public static function tearDownAfterClass(): void {
 		self::delete_coming_soon_site_options();
 		parent::tearDownAfterClass();
 	}

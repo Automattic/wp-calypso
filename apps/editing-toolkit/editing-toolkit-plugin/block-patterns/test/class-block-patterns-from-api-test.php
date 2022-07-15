@@ -29,8 +29,8 @@ class Block_Patterns_From_Api_Test extends TestCase {
 	/**
 	 * Pre-test setup.
 	 */
-	public function setUp() {
-		parent::setUp();
+	public function set_up() {
+		parent::set_up();
 		$this->pattern_mock_object = array(
 			'ID'            => '1',
 			'site_id'       => '2',
