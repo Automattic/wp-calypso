@@ -5,7 +5,7 @@ import useManagerClient from './use-manager-client';
 import useRefetchOnFocus from './use-refetch-on-focus';
 import type { UseShoppingCart, CartKey } from './types';
 
-export default function useShoppingCart( cartKey?: CartKey ): UseShoppingCart {
+export default function useShoppingCart( cartKey: CartKey ): UseShoppingCart {
 	const managerClient = useManagerClient( 'useShoppingCart' );
 
 	const { defaultCartKey } = useContext( ShoppingCartOptionsContext );
