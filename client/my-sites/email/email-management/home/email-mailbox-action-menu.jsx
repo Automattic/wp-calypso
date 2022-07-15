@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import googleAdminIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/admin.svg';
 import googleCalendarIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/calendar.svg';
@@ -11,13 +11,11 @@ import googleDriveIcon from 'calypso/assets/images/email-providers/google-worksp
 import gmailIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/gmail.svg';
 import googleSheetsIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/sheets.svg';
 import googleSlidesIcon from 'calypso/assets/images/email-providers/google-workspace/services/flat/slides.svg';
-import titanCalendarIcon from 'calypso/assets/images/email-providers/titan/services/flat/calendar.svg';
-import titanContactsIcon from 'calypso/assets/images/email-providers/titan/services/flat/contacts.svg';
 import titanMailIcon from 'calypso/assets/images/email-providers/titan/services/flat/mail.svg';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import MaterialIcon from 'calypso/components/material-icon';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { useRemoveEmailForwardMutation } from 'calypso/data/emails/use-remove-email-forward-mutation';
+import useRemoveEmailForwardMutation from 'calypso/data/emails/use-remove-email-forward-mutation';
 import { useRemoveTitanMailboxMutation } from 'calypso/data/emails/use-remove-titan-mailbox-mutation';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
@@ -37,13 +35,7 @@ import {
 	getGoogleSlidesUrl,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
-import {
-	getTitanCalendarUrl,
-	getTitanContactsUrl,
-	getTitanEmailUrl,
-	hasTitanMailWithUs,
-	useTitanAppsUrlPrefix,
-} from 'calypso/lib/titan';
+import { getTitanEmailUrl, hasTitanMailWithUs, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
@@ -89,31 +81,14 @@ const getTitanMenuItems = ( {
 
 	return [
 		{
-			href: getTitanEmailUrl( titanAppsUrlPrefix, email ),
+			href: getTitanEmailUrl( titanAppsUrlPrefix, email, false, window.location.href ),
 			image: titanMailIcon,
 			imageAltText: translate( 'Titan Mail icon' ),
+			isInternalLink: true,
 			title: translate( 'View Mail', {
 				comment: 'View the Email application (i.e. the webmail) for Titan',
 			} ),
 			onClick: getTitanClickHandler( 'webmail' ),
-		},
-		{
-			href: getTitanCalendarUrl( titanAppsUrlPrefix, email ),
-			image: titanCalendarIcon,
-			imageAltText: translate( 'Titan Calendar icon' ),
-			title: translate( 'View Calendar', {
-				comment: 'View the Calendar application for Titan',
-			} ),
-			onClick: getTitanClickHandler( 'calendar' ),
-		},
-		{
-			href: getTitanContactsUrl( titanAppsUrlPrefix, email ),
-			image: titanContactsIcon,
-			imageAltText: translate( 'Titan Contacts icon' ),
-			title: translate( 'View Contacts', {
-				comment: 'View the Contacts application for Titan',
-			} ),
-			onClick: getTitanClickHandler( 'contacts' ),
 		},
 		...( canCurrentUserAddEmail( domain )
 			? [
@@ -221,7 +196,7 @@ const getEmailForwardMenuItems = ( { mailbox, removeEmailForward, translate } ) 
 					mailbox: mailbox.mailbox,
 				} );
 
-				removeEmailForward();
+				removeEmailForward( mailbox );
 			},
 			key: `remove_forward:${ mailbox.mailbox }`,
 			title: translate( 'Remove email forward', {
@@ -333,56 +308,6 @@ RemoveTitanMailboxConfirmationDialog.propTypes = {
 	setVisible: PropTypes.func.isRequired,
 };
 
-const EmailForwardRemovalResponseMessage = ( { mailbox, successful } ) => {
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	const emailAddress = getEmailAddress( mailbox );
-
-	const noticeDuration = 7000;
-
-	const errorMessage = errorNotice(
-		translate(
-			'There was an error removing {{strong}}%(emailAddress)s{{/strong}} from your account',
-			{
-				comment:
-					'%(emailAddress)s is the receiver email address for the email forward being deleted',
-				args: { emailAddress },
-				components: {
-					strong: <strong />,
-				},
-			}
-		),
-		{ duration: noticeDuration }
-	);
-
-	const successMessage = successNotice(
-		translate( '{{strong}}%(emailAddress)s{{/strong}} has been removed from your account', {
-			comment: '%(emailAddress)s is the receiver email address for the email forward being deleted',
-			args: { emailAddress },
-			components: {
-				strong: <strong />,
-			},
-		} ),
-		{ duration: noticeDuration }
-	);
-
-	useEffect( () => {
-		if ( successful ) {
-			dispatch( successMessage );
-			return;
-		}
-		dispatch( errorMessage );
-	}, [ successful ] );
-
-	return null;
-};
-
-EmailForwardRemovalResponseMessage.propTypes = {
-	mailbox: PropTypes.object.isRequired,
-	successful: PropTypes.bool.isRequired,
-};
-
 const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 	const translate = useTranslate();
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
@@ -390,18 +315,7 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 	const [ removeTitanMailboxDialogVisible, setRemoveTitanMailboxDialogVisible ] = useState( false );
 	const domainHasTitanMailWithUs = hasTitanMailWithUs( domain );
 
-	const [ emailForwardRemovalStatus, setEmailForwardRemovalStatus ] = useState( '' );
-
-	const { mutate: removeEmailForward } = useRemoveEmailForwardMutation(
-		mailbox.domain,
-		mailbox.mailbox,
-		{
-			onSettled: ( data ) => {
-				const status = data?.deleted === 1 ? 'success' : 'error';
-				setEmailForwardRemovalStatus( status );
-			},
-		}
-	);
+	const { mutate: removeEmailForward } = useRemoveEmailForwardMutation( mailbox.domain );
 
 	const getMenuItems = () => {
 		if ( domainHasTitanMailWithUs ) {
@@ -442,12 +356,6 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 					mailbox={ mailbox }
 					setVisible={ setRemoveTitanMailboxDialogVisible }
 					visible={ removeTitanMailboxDialogVisible }
-				/>
-			) }
-			{ emailForwardRemovalStatus && (
-				<EmailForwardRemovalResponseMessage
-					mailbox={ mailbox }
-					successful={ emailForwardRemovalStatus === 'success' }
 				/>
 			) }
 			<EllipsisMenu position="bottom left" className="email-mailbox-action-menu__main">

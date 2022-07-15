@@ -53,6 +53,15 @@ describe( 'EditGravatar', () => {
 			expect( wrapper.find( ImageEditor ).length ).toEqual( 0 );
 		} );
 
+		test( 'indicates when Gravatar is hidden', () => {
+			const wrapper = shallow(
+				<EditGravatar translate={ noop } user={ user } isGravatarProfileHidden={ true } />
+			);
+			expect( wrapper.find( '.edit-gravatar .edit-gravatar__gravatar-is-hidden' ) ).toHaveLength(
+				1
+			);
+		} );
+
 		describe( 'drag and drop', () => {
 			test( 'does not contain a drop zone for unverified users', () => {
 				const wrapper = shallow(

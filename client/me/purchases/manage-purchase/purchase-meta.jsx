@@ -261,6 +261,23 @@ function PurchaseMetaPrice( { purchase } ) {
 		period = translate( 'month' );
 	}
 
+	if ( purchase.billPeriodLabel ) {
+		switch ( purchase.billPeriodLabel ) {
+			case 'per year':
+				period = translate( 'year' );
+				break;
+			case 'per month':
+				period = translate( 'month' );
+				break;
+			case 'per week':
+				period = translate( 'week' );
+				break;
+			case 'per day':
+				period = translate( 'day' );
+				break;
+		}
+	}
+
 	// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
 	return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
 		args: { period },

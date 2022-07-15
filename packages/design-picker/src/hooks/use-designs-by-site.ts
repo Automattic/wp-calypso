@@ -24,11 +24,7 @@ export function useDesignsBySite( site: SiteDetails | null ) {
 			? 'all'
 			: 'free';
 
-	const FSEEligible = site?.is_fse_eligible;
-
-	const themeFilters = FSEEligible
-		? 'auto-loading-homepage,full-site-editing'
-		: 'auto-loading-homepage';
+	const themeFilters = 'auto-loading-homepage,full-site-editing';
 
 	return useThemeDesignsQuery(
 		{ filter: themeFilters, tier },

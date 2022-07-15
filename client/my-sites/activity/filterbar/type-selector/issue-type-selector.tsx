@@ -2,11 +2,16 @@ import { localize, translate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateFilter } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 import { TypeSelector } from './type-selector';
 
 interface Props {
 	translate: typeof translate;
 }
+
+const parentTypeKey = 'all_issues';
+
 const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 	const { translate } = props;
 
@@ -34,6 +39,11 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 	];
 	return (
 		<TypeSelector
+			parentType={ {
+				key: parentTypeKey,
+				name: translate( 'All issues' ),
+			} }
+			isNested
 			types={ issueTypes }
 			typeKey="issueTypes"
 			title={ translate( 'Issue Type' ) }
@@ -43,6 +53,12 @@ const IssueTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 };
 
 const selectIssueType = ( types: any ) => ( dispatch: any ) => {
+	dispatch(
+		savePreference(
+			JETPACK_AGENCY_DASHBOARD_DEFAULT_FILTER_CLEARED_KEY,
+			! types.includes( parentTypeKey )
+		)
+	);
 	if ( types.length ) {
 		const eventObj = types.reduce(
 			( acc: any, obj: any ) => ( {

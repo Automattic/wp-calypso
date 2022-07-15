@@ -15,7 +15,7 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackSearchDisconnected from './disconnected';
 import JetpackSearchUpsell from './jetpack-search-upsell';
 import SearchMain from './main';
-import WPComSearchPlaceholder from './placeholder';
+import WpcomSearchUpsellPlaceholder from './wpcom-search-upsell-placeholder';
 
 const debug = new Debug( 'calypso:my-sites:search:controller' );
 
@@ -33,7 +33,7 @@ export function showUpsellIfNoSearch( context, next ) {
 	const isRequestingForSite = isJetpack ? isFetchingJetpackModules : isRequestingSiteSettings;
 	const UpsellPlaceholder = isJetpackCloud()
 		? UpsellProductCardPlaceholder
-		: WPComSearchPlaceholder;
+		: WpcomSearchUpsellPlaceholder;
 
 	context.primary = (
 		<>

@@ -278,6 +278,7 @@ class PluginSections extends Component {
 						src={ banner }
 					/>
 				</div>
+
 				<div
 					// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
 					dangerouslySetInnerHTML={ {

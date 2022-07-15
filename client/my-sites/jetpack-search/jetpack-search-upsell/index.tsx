@@ -105,7 +105,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 									action: {
 										url:
 											siteId && selectedSiteSlug
-												? addQueryArgs( `/checkout/${ selectedSiteSlug }/jetpack_scan`, {
+												? addQueryArgs( `/checkout/${ selectedSiteSlug }/jetpack_search`, {
 														redirect_to: postCheckoutUrl,
 												  } )
 												: WPComUpgradeUrl,

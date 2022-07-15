@@ -20,6 +20,10 @@ export type NavigationControls = {
 	 * Submits the answers provided in the flow
 	 */
 	submit?: ( providedDependencies?: ProvidedDependencies, ...params: string[] ) => void;
+	/**
+	 * Exits the flow and continue to the given path
+	 */
+	exitFlow?: ( to: string ) => void;
 };
 
 /**
@@ -29,7 +33,7 @@ export type UseStepHook = () => StepPath[];
 
 export type UseStepNavigationHook = (
 	currentStep: StepPath,
-	navigate: ( stepName: StepPath | `${ StepPath }?${ string }` ) => void,
+	navigate: ( stepName: StepPath | `${ StepPath }?${ string }`, extraData?: any ) => void,
 	steps?: StepPath[]
 ) => NavigationControls;
 
@@ -49,7 +53,9 @@ export type Flow = {
 
 export type StepProps = {
 	navigation: NavigationControls;
+	stepName?: string | null;
 	flow: string | null;
+	data?: Record< string, unknown >;
 };
 
 export type Step = React.FC< StepProps >;

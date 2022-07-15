@@ -43,7 +43,7 @@ class PopoverExample extends PureComponent {
 		return (
 			<div>
 				<button
-					className="button"
+					className="example__button"
 					ref={ this.popoverButtonRef }
 					onClick={ this.swapPopoverVisibility }
 				>
@@ -68,7 +68,7 @@ class PopoverExample extends PureComponent {
 		return (
 			<div>
 				<button
-					className="button"
+					className="example__button"
 					ref={ this.popoverMenuButtonRef }
 					onClick={ this.showPopoverMenu }
 				>

@@ -6,7 +6,7 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
-import QrCodeLoginPage from './qr-code-login';
+import QrCodeLoginPage from './qr-code-login-page';
 import WPLogin from './wp-login';
 
 const enhanceContextWithLogin = ( context ) => {
@@ -90,7 +90,8 @@ export function magicLogin( context, next ) {
 }
 
 export function qrCodeLogin( context, next ) {
-	context.primary = <QrCodeLoginPage locale={ context.params.lang } />;
+	const { redirect_to } = context.query;
+	context.primary = <QrCodeLoginPage locale={ context.params.lang } redirectTo={ redirect_to } />;
 
 	next();
 }

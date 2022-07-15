@@ -14,10 +14,9 @@ import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { showAgencyDashboard } from 'calypso/state/partner-portal/partner/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -213,6 +212,7 @@ export class SiteSelector extends Component {
 	};
 
 	onAllSitesSelect = ( event ) => {
+		this.props.recordTracksEvent( 'calypso_all_my_sites_click' );
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
@@ -466,9 +466,6 @@ const navigateToSite =
 	( dispatch, getState ) => {
 		const state = getState();
 		const site = getSite( state, siteId );
-		if ( isJetpackCloud() && ! site && showAgencyDashboard( state ) ) {
-			return page.redirect( '/dashboard' );
-		}
 		const pathname = getPathnameForSite();
 		if ( pathname ) {
 			page( pathname );
@@ -567,5 +564,5 @@ const mapState = ( state ) => {
 export default flow(
 	localize,
 	searchSites,
-	connect( mapState, { navigateToSite } )
+	connect( mapState, { navigateToSite, recordTracksEvent } )
 )( SiteSelector );

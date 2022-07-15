@@ -1,56 +1,14 @@
 import path from 'path';
+import { getMag16Locales, getViewports } from './data-helper';
 import { TEST_ACCOUNT_NAMES } from './secrets';
 import { TestAccountName } from '.';
+import type { SupportedEnvVariables, EnvVariableValue } from './types/env-variables.types';
 
-const VIEWPORT_NAMES = [ 'mobile', 'desktop' ] as const;
-export const TEST_LOCALES = [
-	'en',
-	'es',
-	'pt-br',
-	'de',
-	'fr',
-	'he',
-	'ja',
-	'it',
-	'nl',
-	'ru',
-	'tr',
-	'id',
-	'zh-cn',
-	'zh-tw',
-	'ko',
-	'ar',
-	'sv',
-] as const;
-// TODO: Maybe move these to config? 👆
-
-type EnvVariableKey = string;
-type EnvVariableValue = boolean | string | string[] | number;
-type EnvVariables = {
-	[ key: EnvVariableKey ]: EnvVariableValue;
-};
-
-export type ViewportName = typeof VIEWPORT_NAMES[ number ];
-export type TestLocales = string[] & typeof TEST_LOCALES;
-
-export interface SupportedEnvVariables extends EnvVariables {
-	VIEWPORT_NAME: ViewportName;
-	GUTENBERG_EDGE: boolean;
-	COBLOCKS_EDGE: boolean;
-	TEST_LOCALES: TestLocales;
-	COOKIES_PATH: string;
-	AUTHENTICATE_ACCOUNTS: TestAccountName[];
-	ARTIFACTS_PATH: string;
-	HEADLESS: boolean;
-	SLOW_MO: number;
-	TEST_ON_ATOMIC: boolean;
-	TEST_ON_JETPACK: boolean;
-	CALYPSO_BASE_URL: string;
-}
-
+const VIEWPORT_NAMES = getViewports();
+const MAG16_LOCALES = getMag16Locales();
 const defaultEnvVariables: SupportedEnvVariables = {
 	VIEWPORT_NAME: 'desktop',
-	TEST_LOCALES: [ ...TEST_LOCALES ],
+	TEST_LOCALES: [ ...MAG16_LOCALES ],
 	HEADLESS: false,
 	SLOW_MO: 0,
 	GUTENBERG_EDGE: false,
@@ -61,6 +19,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	TEST_ON_ATOMIC: false,
 	TEST_ON_JETPACK: false,
 	CALYPSO_BASE_URL: 'https://wordpress.com',
+	BROWSER_NAME: 'chromium',
 };
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {
@@ -105,10 +64,10 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 			break;
 		}
 		case 'TEST_LOCALES': {
-			const supportedValues = TEST_LOCALES as ReadonlyArray< string >;
+			const supportedValues = MAG16_LOCALES as ReadonlyArray< string >;
 			if ( ! ( output as string[] ).every( ( v ) => supportedValues.includes( v ) ) ) {
 				throw new Error(
-					`Unknown TEST_LOCALES value: ${ output }.\nSupported values: ${ TEST_LOCALES }`
+					`Unknown TEST_LOCALES value: ${ output }.\nSupported values: ${ MAG16_LOCALES }`
 				);
 			}
 			break;

@@ -1,7 +1,7 @@
 import { Onboard } from '@automattic/data-stores';
 
 export type Goal = {
-	key: Onboard.GoalKey;
+	key: Onboard.SiteGoal;
 	title: React.ReactChild | string;
 	isPremium?: boolean;
 };

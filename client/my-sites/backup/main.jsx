@@ -28,11 +28,11 @@ import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewin
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteSettingsInitialized from 'calypso/state/selectors/is-site-settings-initialized';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import BackupDatePicker from './backup-date-picker';
+import BackupsMadeRealtimeBanner from './backups-made-realtime-banner';
 import EnableRestoresBanner from './enable-restores-banner';
 import { backupMainPath } from './paths';
 import SearchResults from './search-results';
@@ -117,7 +117,7 @@ const isFilterEmpty = ( filter ) => {
 	return true;
 };
 
-const AdminContent = ( { selectedDate } ) => {
+function AdminContent( { selectedDate } ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -157,19 +157,18 @@ const AdminContent = ( { selectedDate } ) => {
 			) }
 		</>
 	);
-};
+}
 
-const BackupStatus = ( { selectedDate, needCredentials, onDateChange } ) => {
+function BackupStatus( { selectedDate, needCredentials, onDateChange } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
-	const isSettingsInitialized = useSelectedSiteSelector( isSiteSettingsInitialized );
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
 		WPCOM_FEATURES_REAL_TIME_BACKUPS
 	);
 
-	if ( isFetchingSiteFeatures || ! isPoliciesInitialized || ! isSettingsInitialized ) {
+	if ( isFetchingSiteFeatures || ! isPoliciesInitialized ) {
 		return <BackupPlaceholder showDatePicker={ true } />;
 	}
 
@@ -177,6 +176,7 @@ const BackupStatus = ( { selectedDate, needCredentials, onDateChange } ) => {
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
 				{ needCredentials && <EnableRestoresBanner /> }
+				{ ! needCredentials && hasRealtimeBackups && <BackupsMadeRealtimeBanner /> }
 
 				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 				<BackupStorageSpace />
@@ -188,6 +188,6 @@ const BackupStatus = ( { selectedDate, needCredentials, onDateChange } ) => {
 			</div>
 		</div>
 	);
-};
+}
 
 export default BackupPage;

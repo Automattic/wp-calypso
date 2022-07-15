@@ -30,7 +30,7 @@ const request = ( siteId, postId, query ) => ( dispatch, getState ) => {
 		return;
 	}
 
-	if ( ! isRequestingSitePost( state, siteId, postId ) ) {
+	if ( ! isRequestingSitePost( state, siteId, postId ) && postId > 0 ) {
 		log( 'Request single post for site %d post %d', siteId, postId );
 		dispatch( requestSitePost( siteId, postId ) );
 	}

@@ -23,7 +23,7 @@ import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-sl
 
 const debug = debugModule( 'calypso:data-layer:update-credentials' );
 const navigateTo =
-	undefined !== typeof window
+	'undefined' !== typeof window
 		? ( path ) => window.open( path, '_blank' )
 		: ( path ) => page( path );
 

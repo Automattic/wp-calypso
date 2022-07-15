@@ -68,7 +68,6 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 		return (
 			<React.Fragment>
 				<JetpackBenefitsCard
-					jestMarker="loading-backups" // for test suite
 					headline={ translate( 'Site Backups' ) }
 					description={ translate( 'Loading backup data' ) }
 					stat={ translate( 'Placeholder' ) }
@@ -106,7 +105,6 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 	if ( ! mostRecentBackup ) {
 		return (
 			<JetpackBenefitsCard
-				jestMarker="no-backups" // for test suite
 				headline={ translate( 'Site Backups' ) }
 				description={ translate( 'Jetpack will back up your site soon.' ) }
 			/>
@@ -117,7 +115,6 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 	if ( mostRecentBackup.status !== 'finished' && mostRecentBackup.status !== 'started' ) {
 		return (
 			<JetpackBenefitsCard
-				jestMarker="recent-backup-error" // for test suite
 				headline={ translate( 'Site Backups' ) }
 				description={ translate(
 					"Jetpack's last attempt to back up your site was not successful. Please contact Jetpack support."
@@ -156,7 +153,6 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 
 	return (
 		<JetpackBenefitsCard
-			jestMarker="default-backup-output" // for test suite
 			headline={ translate( 'Site Backups' ) }
 			description={ translate( 'Your latest site backup.' ) }
 			stat={ lastBackupTimeAgo }

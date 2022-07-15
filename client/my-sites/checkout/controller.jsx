@@ -34,7 +34,7 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
-import CheckoutPendingComponent from './checkout-thank-you/pending';
+import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
@@ -202,16 +202,32 @@ export function redirectJetpackLegacyPlans( context, next ) {
 }
 
 export function checkoutPending( context, next ) {
-	const orderId = Number( context.params.orderId );
+	const orderId = Number.isInteger( Number( context.params.orderId ) )
+		? Number( context.params.orderId )
+		: ':orderId';
+
+	/**
+	 * @type {string|undefined}
+	 */
 	const siteSlug = context.params.site;
+
+	/**
+	 * @type {string|undefined}
+	 */
+	const redirectTo = context.query.redirectTo;
+
+	const receiptId = Number.isInteger( Number( context.query.receiptId ) )
+		? Number( context.query.receiptId )
+		: undefined;
 
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
-		<CheckoutPendingComponent
+		<CheckoutPending
 			orderId={ orderId }
 			siteSlug={ siteSlug }
-			redirectTo={ context.query.redirectTo }
+			redirectTo={ redirectTo }
+			receiptId={ receiptId }
 		/>
 	);
 
@@ -219,7 +235,19 @@ export function checkoutPending( context, next ) {
 }
 
 export function checkoutThankYou( context, next ) {
-	const receiptId = Number( context.params.receiptId );
+	// This route requires a numeric receipt ID like
+	// `/checkout/thank-you/example.com/1234` but it also operates as a fallback
+	// if something goes wrong with the "pending" page and will respond to a URL
+	// like `/checkout/thank-you/example.com/pending`. In that case, the word
+	// `pending` is a placeholder for the receipt ID that never got properly
+	// replaced (perhaps it could not find the receipt ID, for example).
+	//
+	// In that case, we still want to display a generic thank-you page (because
+	// the transaction was probably still successful), so we set `receiptId` to
+	// `undefined`.
+	const receiptId = Number.isInteger( Number( context.params.receiptId ) )
+		? Number( context.params.receiptId )
+		: undefined;
 	const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 
 	const state = context.store.getState();
@@ -238,15 +266,16 @@ export function checkoutThankYou( context, next ) {
 			<CheckoutThankYouDocumentTitle />
 
 			<CheckoutThankYouComponent
-				receiptId={ receiptId }
-				gsuiteReceiptId={ gsuiteReceiptId }
-				domainOnlySiteFlow={ isEmpty( context.params.site ) }
-				selectedFeature={ context.params.feature }
-				redirectTo={ context.query.redirect_to }
-				upgradeIntent={ context.query.intent }
-				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
-				selectedSite={ selectedSite }
 				displayMode={ displayMode }
+				domainOnlySiteFlow={ isEmpty( context.params.site ) }
+				email={ context.query.email }
+				gsuiteReceiptId={ gsuiteReceiptId }
+				receiptId={ receiptId }
+				redirectTo={ context.query.redirect_to }
+				selectedFeature={ context.params.feature }
+				selectedSite={ selectedSite }
+				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
+				upgradeIntent={ context.query.intent }
 			/>
 		</>
 	);

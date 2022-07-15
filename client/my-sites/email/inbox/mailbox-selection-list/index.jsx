@@ -1,13 +1,15 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { getMailboxesCacheKey, useGetMailboxes } from 'calypso/data/emails/use-get-mailboxes';
+import {
+	getCacheKey as getMailboxesQueryKey,
+	useGetMailboxes,
+} from 'calypso/data/emails/use-get-mailboxes';
 import errorIllustration from 'calypso/landing/browsehappy/illustration.svg';
 import {
 	getEmailAddress,
@@ -20,12 +22,9 @@ import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import {
-	recordEmailAppLaunchEvent,
-	recordInboxNewMailboxUpsellClickEvent,
-} from 'calypso/my-sites/email/email-management/home/utils';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
-import { emailManagement, emailManagementInbox } from 'calypso/my-sites/email/paths';
+import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import NewMailboxUpsell from 'calypso/my-sites/email/inbox/new-mailbox-upsell';
+import { emailManagementInbox } from 'calypso/my-sites/email/paths';
 import { recordPageView } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ProgressLine from './progress-line';
@@ -37,7 +36,12 @@ import './style.scss';
 
 const getExternalUrl = ( mailbox, titanAppsUrlPrefix ) => {
 	if ( isTitanMailAccount( mailbox ) ) {
-		return getTitanEmailUrl( titanAppsUrlPrefix, getEmailAddress( mailbox ), true );
+		return getTitanEmailUrl(
+			titanAppsUrlPrefix,
+			getEmailAddress( mailbox ),
+			! titanAppsUrlPrefix,
+			window.location.href
+		);
 	}
 
 	if ( isGoogleEmailAccount( mailbox ) ) {
@@ -106,7 +110,7 @@ const MailboxItem = ( { mailbox } ) => {
 			}
 			className="mailbox-selection-list__item"
 			href={ getExternalUrl( mailbox, titanAppsUrlPrefix ) }
-			target="external"
+			target={ isTitanMailAccount( mailbox ) ? null : 'external' }
 		>
 			<span className="mailbox-selection-list__icon">
 				<MailboxItemIcon mailbox={ mailbox } />
@@ -121,31 +125,6 @@ const MailboxItem = ( { mailbox } ) => {
 MailboxItem.propType = {
 	mailbox: PropTypes.object.isRequired,
 	key: PropTypes.string,
-};
-
-const NewMailboxUpsell = () => {
-	const translate = useTranslate();
-	const selectedSite = useSelector( getSelectedSite );
-	const selectedSiteSlug = selectedSite?.slug;
-
-	const handleCreateNewMailboxClick = useCallback( () => {
-		recordInboxNewMailboxUpsellClickEvent();
-		page( emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } ) );
-	}, [ selectedSiteSlug ] );
-
-	return (
-		<div className="mailbox-selection-list__new-mailbox-upsell-container">
-			<div className="mailbox-selection-list__new-mailbox-upsell-messages">
-				<h2>{ translate( 'Need another mailbox?' ) }</h2>
-				<div>{ translate( 'Create new and activate immediately' ) }</div>
-			</div>
-			<div className="mailbox-selection-list__new-mailbox-upsell-cta">
-				<Button onClick={ handleCreateNewMailboxClick }>
-					{ translate( 'Create a new mailbox' ) }
-				</Button>
-			</div>
-		</div>
-	);
 };
 
 const MailboxItems = ( { mailboxes } ) => {
@@ -164,8 +143,6 @@ const MailboxItems = ( { mailboxes } ) => {
 			{ mailboxes.map( ( mailbox, index ) => (
 				<MailboxItem mailbox={ mailbox } key={ index } />
 			) ) }
-
-			<NewMailboxUpsell />
 		</>
 	);
 };
@@ -195,7 +172,7 @@ const MailboxLoaderError = ( { refetchMailboxes, siteId } ) => {
 	const queryClient = useQueryClient();
 
 	const reloadMailboxes = () => {
-		queryClient.removeQueries( getMailboxesCacheKey( siteId ) );
+		queryClient.removeQueries( getMailboxesQueryKey( siteId ) );
 		refetchMailboxes();
 	};
 
@@ -229,13 +206,18 @@ MailboxLoaderError.propType = {
 	siteId: PropTypes.number.isRequired,
 };
 
-const MailboxSelectionList = () => {
+const MailboxSelectionList = ( { domains } ) => {
 	const dispatch = useDispatch();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID ?? null;
 	const translate = useTranslate();
 
-	const { data, isError, isLoading, refetch } = useGetMailboxes( selectedSiteId, {
+	const {
+		data: allMailboxes = [],
+		isError,
+		isLoading,
+		refetch,
+	} = useGetMailboxes( selectedSiteId, {
 		retry: 2,
 	} );
 
@@ -256,15 +238,16 @@ const MailboxSelectionList = () => {
 		return <MailboxLoaderError refetchMailboxes={ refetch } siteId={ selectedSiteId } />;
 	}
 
-	const mailboxes = ( data?.mailboxes ?? [] ).filter(
-		( mailbox ) => ! isEmailForwardAccount( mailbox )
-	);
+	const mailboxes = allMailboxes.filter( ( mailbox ) => ! isEmailForwardAccount( mailbox ) );
 
 	return (
 		<div className="mailbox-selection-list__container">
 			<div className="mailbox-selection-list">
 				{ mailboxes.length > 0 ? (
-					<MailboxItems mailboxes={ mailboxes } />
+					<>
+						<MailboxItems mailboxes={ mailboxes } />
+						<NewMailboxUpsell domains={ domains } />
+					</>
 				) : (
 					<MailboxListStatus statusMessage={ translate( 'You have no mailboxes yet.' ) } />
 				) }

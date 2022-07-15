@@ -1,9 +1,11 @@
 import { AnyAction } from 'redux';
 import {
+	JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET,
 	JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE,
 	JETPACK_PARTNER_PORTAL_PARTNER_REQUEST,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
+	STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import { activePartnerKeySchema } from './schema';
@@ -39,6 +41,15 @@ export const isFetching = ( state = initialState.isFetching, action: AnyAction )
 	return state;
 };
 
+export const isPartnerOAuthTokenLoaded = ( state = false, action: AnyAction ) => {
+	switch ( action.type ) {
+		case JETPACK_PARTNER_PORTAL_OAUTH_TOKEN_SET:
+			return true;
+		default:
+			return state;
+	}
+};
+
 const activePartnerKeyReducer = ( state = initialState.activePartnerKey, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_PARTNER_PORTAL_PARTNER_ACTIVE_PARTNER_KEY_UPDATE:
@@ -62,6 +73,15 @@ const current = ( state = initialState.current, action: AnyAction ) => {
 			}
 
 			return action.partner;
+
+		case STORED_CARDS_UPDATE_IS_PRIMARY_COMPLETED:
+			if ( null !== state ) {
+				return Object.assign( state, {
+					has_valid_payment_method: !! action?.payment_method_id,
+				} );
+			}
+
+			return state;
 	}
 
 	return state;
@@ -79,6 +99,7 @@ export const error = ( state = initialState.error, action: AnyAction ) => {
 export default combineReducers( {
 	hasFetched,
 	isFetching,
+	isPartnerOAuthTokenLoaded,
 	activePartnerKey,
 	current,
 	error,

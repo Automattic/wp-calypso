@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import thankYouEmail from 'calypso/assets/images/illustrations/thank-you-email.svg';
@@ -8,6 +9,7 @@ import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/co
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
+	emailManagementInbox,
 	emailManagementTitanControlPanelRedirect,
 } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
@@ -20,6 +22,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 type TitanSetUpThankYouProps = {
+	containerClassName?: string;
 	domainName: string;
 	emailAddress?: string;
 	title?: string;
@@ -27,6 +30,7 @@ type TitanSetUpThankYouProps = {
 };
 
 const TitanSetUpThankYou = ( {
+	containerClassName,
 	domainName,
 	emailAddress,
 	subtitle,
@@ -39,6 +43,7 @@ const TitanSetUpThankYou = ( {
 	const translate = useTranslate();
 
 	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
+	const inboxPath = emailManagementInbox( selectedSiteSlug );
 
 	const thankYouImage = {
 		alt: translate( 'Thank you' ),
@@ -64,9 +69,13 @@ const TitanSetUpThankYou = ( {
 				stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
 				stepCta: (
 					<FullWidthButton
-						href={ getTitanEmailUrl( titanAppsUrlPrefix, emailAddress, true ) }
+						href={ getTitanEmailUrl(
+							titanAppsUrlPrefix,
+							emailAddress,
+							false,
+							`${ window.location.protocol }//${ window.location.host }${ inboxPath }`
+						) }
 						primary
-						target="_blank"
 						onClick={ () => {
 							recordEmailAppLaunchEvent( {
 								provider: 'titan',
@@ -76,7 +85,6 @@ const TitanSetUpThankYou = ( {
 						} }
 					>
 						{ translate( 'Go to Inbox' ) }
-						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
 					</FullWidthButton>
 				),
 			},
@@ -118,7 +126,7 @@ const TitanSetUpThankYou = ( {
 
 	return (
 		<ThankYou
-			containerClassName="titan-set-up-thank-you__container"
+			containerClassName={ classNames( 'titan-set-up-thank-you__container', containerClassName ) }
 			headerClassName={ 'titan-set-up-thank-you__header' }
 			sections={ [ titanThankYouSection ] }
 			showSupportSection={ true }

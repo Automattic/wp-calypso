@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
 	useSibylQuery,
@@ -5,11 +6,15 @@ import {
 	useSiteIntent,
 	getContextResults,
 } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import { Article } from '../types';
 
 export const SITE_STORE = 'automattic/site' as const;
@@ -19,7 +24,13 @@ type Props = {
 	supportSite?: SiteDetails;
 };
 
-function getPostUrl( article: Article, query: string ) {
+function getPostUrl( article: Article, query: string, locale: string ) {
+	if ( 'en' !== locale ) {
+		return {
+			pathname: article.link,
+		};
+	}
+
 	// if it's a wpcom support article, it has an ID
 	if ( article.post_id ) {
 		const params = new URLSearchParams( {
@@ -45,6 +56,7 @@ function getPostUrl( article: Article, query: string ) {
 
 export function SibylArticles( { message = '', supportSite }: Props ) {
 	const { __ } = useI18n();
+	const locale = useLocale();
 
 	const isAtomic = Boolean(
 		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
@@ -59,9 +71,12 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 
 	const { data: intent } = useSiteIntent( supportSite?.ID );
 
-	const articles = sibylArticles?.length
-		? sibylArticles
-		: getContextResults( 'gutenberg-editor', intent?.site_intent ?? '' );
+	const sectionName = useSelector( getSectionName );
+	const articles = useMemo( () => {
+		return sibylArticles?.length
+			? sibylArticles
+			: getContextResults( sectionName, intent?.site_intent ?? '' );
+	}, [ sibylArticles, sectionName, intent?.site_intent ] );
 
 	return (
 		<div className="help-center-sibyl-articles__container">
@@ -73,8 +88,11 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 				aria-labelledby="help-center--contextual_help"
 			>
 				{ articles.map( ( article ) => (
-					<li>
-						<Link to={ getPostUrl( article as Article, message ) }>
+					<li key={ article.link }>
+						<Link
+							to={ getPostUrl( article as Article, message, locale ) }
+							target={ 'en' !== locale ? '_blank' : '' }
+						>
 							<Icon icon={ page } />
 							{ article.title }
 						</Link>

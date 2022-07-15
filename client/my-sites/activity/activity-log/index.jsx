@@ -61,7 +61,7 @@ import {
 	getSiteSlug,
 	getSiteTitle,
 	isJetpackSite,
-	isJetpackSiteSecondaryNetworkSite as getIsJetpackSiteSecondaryNetworkSite,
+	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActivityLogBanner from '../activity-log-banner';
@@ -118,7 +118,7 @@ class ActivityLog extends Component {
 		// localize
 		moment: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
-		isJetpackSiteSecondaryNetworkSite: PropTypes.bool,
+		isMultisite: PropTypes.bool,
 	};
 
 	state = {
@@ -427,7 +427,7 @@ class ActivityLog extends Component {
 			isAtomic,
 			isJetpack,
 			isIntroDismissed,
-			isJetpackSiteSecondaryNetworkSite,
+			isMultisite,
 		} = this.props;
 
 		const disableRestore =
@@ -491,7 +491,7 @@ class ActivityLog extends Component {
 					<RewindUnavailabilityNotice siteId={ siteId } />
 				) }
 				<IntroBanner siteId={ siteId } />
-				{ ! hasFullActivityLog && isIntroDismissed && ! isJetpackSiteSecondaryNetworkSite && (
+				{ ! hasFullActivityLog && isIntroDismissed && ! isMultisite && (
 					<UpgradeBanner siteId={ siteId } />
 				) }
 				{ siteId && isJetpack && <ActivityLogTasklist siteId={ siteId } /> }
@@ -686,7 +686,7 @@ export default connect(
 			timezone,
 			hasFullActivityLog: siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG ),
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
-			isJetpackSiteSecondaryNetworkSite: getIsJetpackSiteSecondaryNetworkSite( state, siteId ),
+			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 		};
 	},
 	{

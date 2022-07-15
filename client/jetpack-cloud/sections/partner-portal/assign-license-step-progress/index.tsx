@@ -1,7 +1,11 @@
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import { Fragment } from 'react';
+import { useSelector } from 'react-redux';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
+import type { ReactChild, ReactElement } from 'react';
 import './style.scss';
 
 function getStepClassName( currentStep: number, step: number ): any {
@@ -12,32 +16,83 @@ function getStepClassName( currentStep: number, step: number ): any {
 	} );
 }
 
-export default function ( { currentStep }: { currentStep: number } ): ReactElement {
+function CheckMarkOrNumber( {
+	currentStep,
+	step,
+}: {
+	currentStep: number;
+	step: number;
+} ): ReactElement {
+	if ( currentStep > step ) {
+		return (
+			<span className="assign-license-step-progress__step-circle">
+				<Gridicon icon="checkmark" size={ 16 } />
+			</span>
+		);
+	}
+
+	return (
+		<span className="assign-license-step-progress__step-circle">
+			<span>{ step }</span>
+		</span>
+	);
+}
+
+type StepKey = 'issueLicense' | 'addPaymentMethod' | 'assignLicense';
+
+interface Step {
+	key: StepKey;
+	label: ReactChild | null;
+}
+
+interface Props {
+	currentStep: StepKey;
+}
+
+export default function AssignLicenseStepProgress( { currentStep }: Props ): ReactElement | null {
 	const translate = useTranslate();
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
+	const sites = useSelector( getSites ).length;
+
+	const steps: Step[] = [ { key: 'issueLicense', label: translate( 'Issue new license' ) } ];
+
+	if ( paymentMethodRequired ) {
+		steps.push( { key: 'addPaymentMethod', label: translate( 'Add Payment Method' ) } );
+	}
+
+	if ( sites > 0 ) {
+		steps.push( { key: 'assignLicense', label: translate( 'Assign license' ) } );
+	}
+
+	// Don't show the breadcrumbs if we have less than 2 as they are not very informative in this case.
+	if ( steps.length < 2 ) {
+		return null;
+	}
+
+	const currentStepIndex = Math.max(
+		steps.findIndex( ( step ) => step.key === currentStep ),
+		0
+	);
 
 	return (
 		<div className="assign-license-step-progress">
-			<div
-				className={ `assign-license-step-progress__step ${ getStepClassName( currentStep, 1 ) }` }
-			>
-				<span className="assign-license-step-progress__step-circle">
-					<Gridicon icon="checkmark" />
-				</span>
-				<span className="assign-license-step-progress__step-name">
-					{ translate( 'Issue new license' ) }
-				</span>
-			</div>
-			<div className="assign-license-step-progress__step-separator" />
-			<div
-				className={ `assign-license-step-progress__step ${ getStepClassName( currentStep, 2 ) }` }
-			>
-				<span className="assign-license-step-progress__step-circle">
-					<span>2</span>
-				</span>
-				<span className="assign-license-step-progress__step-name">
-					{ translate( 'Assign license' ) }
-				</span>
-			</div>
+			{ steps.map( ( { key, label }, index ) => (
+				<Fragment key={ key }>
+					<div
+						className={ `assign-license-step-progress__step ${ getStepClassName(
+							currentStepIndex,
+							index
+						) }` }
+					>
+						<CheckMarkOrNumber currentStep={ currentStepIndex + 1 } step={ index + 1 } />
+						<span className="assign-license-step-progress__step-name">{ label }</span>
+					</div>
+
+					{ index < steps.length - 1 && (
+						<div className="assign-license-step-progress__step-separator" />
+					) }
+				</Fragment>
+			) ) }
 		</div>
 	);
 }

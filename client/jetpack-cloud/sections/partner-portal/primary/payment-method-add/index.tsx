@@ -10,6 +10,7 @@ import { CheckoutProvider, CheckoutSubmitButton } from '@automattic/composite-ch
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { CardElement, useElements } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
+import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo, ReactElement, useEffect } from 'react';
@@ -17,8 +18,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
+import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { getStripeConfiguration } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-stripe-configuration';
 import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
@@ -26,12 +29,15 @@ import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sid
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { hasValidPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 
 import './style.scss';
 
 function PaymentMethodAdd(): ReactElement {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
+	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 	const {
 		reload: reloadSetupIntentId,
@@ -51,6 +57,13 @@ function PaymentMethodAdd(): ReactElement {
 	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
+
+	const returnQueryArg = useMemo(
+		() => getQueryArg( window.location.href, 'return' ),
+		[ window.location.href, getQueryArg ]
+	);
+
+	useReturnUrl( hasPaymentMethod );
 
 	const onGoToPaymentMethods = () => {
 		reduxDispatch(
@@ -82,6 +95,19 @@ function PaymentMethodAdd(): ReactElement {
 		[ reduxDispatch ]
 	);
 
+	const successCallback = useCallback( () => {
+		if ( returnQueryArg ) {
+			reduxDispatch(
+				fetchStoredCards( {
+					startingAfter: '',
+					endingBefore: '',
+				} )
+			);
+		} else {
+			page( '/partner-portal/payment-methods/' );
+		}
+	}, [ reduxDispatch, page, window, getQueryArg ] );
+
 	useEffect( () => {
 		if ( stripeLoadingError ) {
 			reduxDispatch( errorNotice( stripeLoadingError.message ) );
@@ -101,6 +127,8 @@ function PaymentMethodAdd(): ReactElement {
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 
+			{ returnQueryArg && <AssignLicenseStepProgress currentStep="addPaymentMethod" /> }
+
 			<div className="payment-method-add__header">
 				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
 			</div>
@@ -108,7 +136,7 @@ function PaymentMethodAdd(): ReactElement {
 			<CheckoutProvider
 				onPaymentComplete={ () => {
 					onPaymentSelectComplete( {
-						successCallback: () => page( '/partner-portal/payment-methods/' ),
+						successCallback,
 						translate,
 						showSuccessMessage,
 						reloadSetupIntentId,

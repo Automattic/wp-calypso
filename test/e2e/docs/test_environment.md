@@ -11,6 +11,8 @@
 - [Test Environment](#test-environment)
   - [Environment Variables](#environment-variables)
   - [Secrets File](#secrets-file)
+    - [Decrypting the Secrets](#decrypting-the-secrets)
+    - [Using the Secrets](#using-the-secrets)
 
 <!-- /TOC -->
 
@@ -18,7 +20,7 @@ The environment configuration for these tests comes from two different sources: 
 
 ## Environment Variables
 
-Most non-sensitive runtime configuration comes from environment variables. All of our environment variables have fallback defaults that can be overriden.
+Most non-sensitive runtime configuration comes from environment variables. All of our environment variables have fallback defaults.
 
 For example:
 
@@ -26,9 +28,7 @@ For example:
 VIEWPORT_NAME=mobile yarn jest specs/<etc>
 ```
 
-For a list of supported environment variables, please refer to [this page](environment_variables.md).
-
-Environment variable values are presented with static typings through the [`env-variables.ts`](../../../packages/calypso-e2e//src/env-variables.ts) module.
+The list of supported environment variables are found in [`env-variables.ts`](../../../packages/calypso-e2e//src/env-variables.ts). This file also adds static type checking and is the most up-to-date resource. The [Envionment Variables](./environment_variables.md) page may be out of date but will contain explanations of what the individual variables mean.
 
 To use:
 
@@ -48,10 +48,10 @@ if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 
 Within `@automattic/calypso-e2e/src/secrets` is an encrypted file that holds various sensitive secrets, such as API keys and test account information. This must be decrypted prior to use.
 
-To decrypt the secrets, set the environment variable `E2E_SECRETS_KEY` to the secret from the Automattic secret store.
+To decrypt the secrets, set the environment variable `E2E_SECRETS_KEY` to the "Calypso E2E Config decode key" from the Automattic secret store.
 
 ```
-export E2E_SECRETS_KEY='<secret key from the secret store>'
+export E2E_SECRETS_KEY='<Calypso E2E Config decode key from the secret store>'
 ```
 
 Then, either here or in the `@automattic/calypso-e2e` workspace, run `yarn decrypt-secrets`.

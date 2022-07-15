@@ -1,6 +1,6 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useState, ReactElement } from 'react';
+import { useState, useCallback, ReactElement, MouseEvent, KeyboardEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SiteActions from '../site-actions';
@@ -20,19 +20,26 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
-	const toggleIsExpanded = () => {
-		setIsExpanded( ( expanded ) => {
-			if ( ! expanded ) {
-				dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_card_expand' ) );
+	const toggleIsExpanded = useCallback(
+		( event: MouseEvent< HTMLSpanElement > | KeyboardEvent< HTMLSpanElement > ) => {
+			// Don't toogle the card when clicked on set/remove favorite
+			if ( ( event?.target as HTMLElement )?.closest( '.site-set-favorite__favorite-icon' ) ) {
+				return;
 			}
-			return ! expanded;
-		} );
-	};
+			setIsExpanded( ( expanded ) => {
+				if ( ! expanded ) {
+					dispatch( recordTracksEvent( 'calypso_jetpack_agency_dashboard_card_expand' ) );
+				}
+				return ! expanded;
+			} );
+		},
+		[ setIsExpanded, dispatch ]
+	);
 
 	const toggleContent = isExpanded ? (
-		<Gridicon icon="chevron-up" className="site-card__vertical-align-middle" size={ 18 } />
+		<Gridicon icon="chevron-up" className="site-card__card-toggle-icon" size={ 18 } />
 	) : (
-		<Gridicon icon="chevron-down" className="site-card__vertical-align-middle" size={ 18 } />
+		<Gridicon icon="chevron-down" className="site-card__card-toggle-icon" size={ 18 } />
 	);
 
 	const headerItem = rows[ 'site' ];
@@ -40,6 +47,7 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 	const site = rows.site;
 	const siteError = site.error || rows.monitor.error;
 	const siteUrl = site.value.url;
+	const isFavorite = rows.isFavorite;
 
 	return (
 		<Card className="site-card__card" compact>
@@ -52,7 +60,7 @@ export default function SiteCard( { rows, columns }: Props ): ReactElement {
 					tabIndex={ 0 }
 				>
 					{ toggleContent }
-					<SiteStatusContent rows={ rows } type={ headerItem.type } />
+					<SiteStatusContent rows={ rows } type={ headerItem.type } isFavorite={ isFavorite } />
 				</span>
 				<SiteActions site={ site } siteError={ siteError } />
 			</div>

@@ -255,29 +255,63 @@ class PasswordValidator extends BaseValidator< string > {
 
 class ExistingMailboxNamesValidator extends BaseValidator< string > {
 	private readonly existingMailboxNames: string[];
+	protected readonly domainName: string;
 
-	constructor( existingMailboxNames: string[] ) {
+	constructor( domainName: string, existingMailboxNames: string[] ) {
 		super();
+		this.domainName = domainName;
 		this.existingMailboxNames = existingMailboxNames;
 	}
 
-	static getExistingMailboxError(): FieldError {
-		return i18n.translate( 'Please use unique mailboxes.' );
+	static getExistingMailboxError( domainName: string, existingMailboxName: string ): FieldError {
+		return i18n.translate(
+			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} already exists in your account.',
+			{
+				args: { emailAddress: `${ existingMailboxName }@${ domainName }` },
+				components: { strong: createElement( 'strong' ) },
+			}
+		);
+	}
+
+	getMailboxError( fieldValue: string ) {
+		return ExistingMailboxNamesValidator.getExistingMailboxError( this.domainName, fieldValue );
 	}
 
 	validateField( field: MailboxFormFieldBase< string > ): void {
-		const existingMailboxNames = this.existingMailboxNames ?? [];
-		if ( ! existingMailboxNames ) {
+		if ( ! field.value || field.error ) {
 			return;
 		}
 
-		if (
-			existingMailboxNames
-				.map( ( item ) => item.toLowerCase() )
-				.includes( field.value?.toLowerCase() ?? '' )
-		) {
-			field.error = ExistingMailboxNamesValidator.getExistingMailboxError();
-		}
+		const fieldValueLowerCased = field.value.trim().toLowerCase();
+
+		this.existingMailboxNames.forEach( ( value ) => {
+			const existingMailboxName = value.toLowerCase();
+
+			if ( existingMailboxName !== fieldValueLowerCased ) {
+				return;
+			}
+
+			field.error = this.getMailboxError( fieldValueLowerCased );
+		} );
+	}
+}
+
+class PreviouslySpecifiedMailboxNamesValidator extends ExistingMailboxNamesValidator {
+	getMailboxError( fieldValue: string ) {
+		return PreviouslySpecifiedMailboxNamesValidator.getExistingMailboxError(
+			this.domainName,
+			fieldValue
+		);
+	}
+
+	static getExistingMailboxError( domainName: string, existingMailboxName: string ): FieldError {
+		return i18n.translate(
+			'Please use unique email addresses. {{strong}}%(emailAddress)s{{/strong}} has already been specified before.',
+			{
+				args: { emailAddress: `${ existingMailboxName }@${ domainName }` },
+				components: { strong: createElement( 'strong' ) },
+			}
+		);
 	}
 }
 
@@ -359,6 +393,7 @@ export {
 	MailboxNameValidator,
 	MailboxNameAvailabilityValidator,
 	PasswordValidator,
+	PreviouslySpecifiedMailboxNamesValidator,
 	RequiredValidator,
 	RequiredIfVisibleValidator,
 	MaximumStringLengthValidator,

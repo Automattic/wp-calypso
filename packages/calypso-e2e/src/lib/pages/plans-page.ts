@@ -8,7 +8,7 @@ type PlansGridVersion = 'current' | 'legacy';
 type PlansComparisonAction = 'show' | 'hide';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
-export type Plans = 'Free' | 'Pro';
+export type Plans = 'Free' | 'Pro' | 'Starter';
 export type LegacyPlans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
@@ -147,31 +147,21 @@ export class PlansPage {
 	 * @param {PlansPageTab} targetTab Name of the tab.
 	 */
 	async clickTab( targetTab: PlansPageTab ): Promise< void > {
-		// Plans page against the current WordPress.com Plans do not
-		// require any clicking of navigation tabs.
-		if ( this.version === 'current' ) {
-			return;
+		// On mobile viewports, the way PlansPage loads its contents
+		// causes an event to fire which closes all open panes.
+		// Waiting for one of the last SVGs to load on the page is
+		// a hacky but effective workaround.
+		// See https://github.com/Automattic/wp-calypso/issues/64389
+		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
+		if ( this.version === 'legacy' && envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await Promise.all( [
+				this.page.waitForResponse( /plans\?/ ),
+				this.page.waitForResponse( ( response ) =>
+					response.url().includes( '/images/wpcom-ecommerce' )
+				),
+			] );
 		}
 
-		// If the target tab is already active, short circuit.
-		const currentSelectedLocator = this.page.locator( selectors.activeNavigationTab( targetTab ) );
-		if ( ( await currentSelectedLocator.count() ) > 0 ) {
-			return;
-		}
-
-		if ( targetTab === 'My Plan' ) {
-			// User is currently on the Plans tab and going to My Plans.
-			// Wait for the Plans grid to fully render.
-			const plansGridLocator = this.page.locator( selectors.legacyPlansGrid );
-			await plansGridLocator.waitFor();
-		}
-		if ( targetTab === 'Plans' ) {
-			// User is currently on the My Plans tab and going to Plans.
-			// Wait for the detais of the current plan to complete rendering
-			// asynchronously.
-			const placeholderLocator = this.page.locator( `.my-plan-card${ selectors.placeholder }` );
-			await placeholderLocator.waitFor( { state: 'hidden' } );
-		}
 		await clickNavTab( this.page, targetTab );
 	}
 

@@ -61,7 +61,10 @@ class ReskinSideExplainer extends Component {
 			subtitle = subtitle2;
 			subtitle2 = null;
 		}
-		return { title, subtitle, subtitle2, ctaText: false };
+
+		const ctaText = translate( 'Choose my domain later' );
+
+		return { title, subtitle, subtitle2, ctaText };
 	}
 	getStrings() {
 		const { type, translate } = this.props;

@@ -6,6 +6,9 @@ import {
 	PLAN_FREE,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_STARTER,
+	TYPE_STARTER,
+	TYPE_PRO,
+	PLAN_WPCOM_PRO_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
@@ -34,9 +37,9 @@ function getButtonText( props: Partial< Props >, translate: TranslateFunc ): Tra
 	const { isCurrentPlan, plan } = props;
 
 	const planTitle = plan?.getTitle();
-	const planSlug = plan?.getStoreSlug();
+	const planSlug = plan?.getStoreSlug() || '';
 
-	if ( planSlug === PLAN_WPCOM_PRO ) {
+	if ( [ PLAN_WPCOM_PRO, PLAN_WPCOM_PRO_MONTHLY ].includes( planSlug ) ) {
 		return 'en' === i18n.getLocaleSlug() || i18n.hasTranslation( 'Choose Pro' )
 			? translate( 'Choose Pro' )
 			: translate( 'Try Pro risk-free' );
@@ -94,6 +97,14 @@ export const PlansComparisonAction: React.FunctionComponent< Props > = ( {
 	if ( ! isInSignup ) {
 		if ( isCurrentPlan ) {
 			return <Button disabled>{ translate( 'This is your plan' ) }</Button>;
+		}
+
+		if (
+			( currentSitePlanSlug === 'value_bundle' && [ TYPE_STARTER ].includes( plan.type ) ) ||
+			( currentSitePlanSlug === 'business-bundle' &&
+				[ TYPE_STARTER, TYPE_PRO ].includes( plan.type ) )
+		) {
+			return <Button disabled>{ translate( 'Unavailable' ) }</Button>;
 		}
 
 		if ( [ TYPE_FLEXIBLE, TYPE_FREE ].includes( plan.type ) ) {

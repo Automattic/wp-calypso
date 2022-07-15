@@ -8,11 +8,16 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { jetpackDashboardRedirectLink } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import {
 	getCurrentPartner,
 	hasFetchedPartner,
+	showAgencyDashboard,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { isPartnerPortal } from 'calypso/state/partner-portal/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 
 import './style.scss';
 
@@ -25,8 +30,13 @@ export default function PortalNav( { className = '' }: Props ): ReactElement | n
 	const translate = useTranslate();
 	const partnerFetched = useSelector( hasFetchedPartner );
 	const partner = useSelector( getCurrentPartner );
-	const isManagingSites = ! useSelector( isPartnerPortal );
-	const selectedText = isManagingSites ? translate( 'Manage Sites' ) : translate( 'Licensing' );
+	const isPrimarySiteJetpackSite = useSelector( getPrimarySiteIsJetpack );
+	const dashboardLink = useSelector( jetpackDashboardRedirectLink );
+	const currentUser = useSelector( getCurrentUser );
+	const currentRoute = useSelector( getCurrentRoute );
+	const showDashboard = useSelector( showAgencyDashboard );
+	const isPartnerPortalRoute = useSelector( isPartnerPortal );
+	const isDashboardRoute = currentRoute.startsWith( '/dashboard' );
 	const show = partnerFetched && partner;
 
 	if ( ! isSectionNameEnabled( 'jetpack-cloud-partner-portal' ) ) {
@@ -41,6 +51,19 @@ export default function PortalNav( { className = '' }: Props ): ReactElement | n
 		);
 	};
 
+	const manageSiteLink =
+		isPrimarySiteJetpackSite && currentUser
+			? `/landing/${ currentUser.primarySiteSlug }`
+			: '/landing';
+
+	let selectedText = translate( 'Manage Sites' );
+
+	if ( isPartnerPortalRoute ) {
+		selectedText = translate( 'Licensing' );
+	} else if ( isDashboardRoute ) {
+		selectedText = translate( 'Dashboard' );
+	}
+
 	return (
 		<>
 			<QueryJetpackPartnerPortalPartner />
@@ -51,16 +74,25 @@ export default function PortalNav( { className = '' }: Props ): ReactElement | n
 					className={ classnames( 'portal-nav', className ) }
 				>
 					<NavTabs label={ translate( 'Portal' ) }>
+						{ showDashboard && (
+							<NavItem
+								path={ dashboardLink }
+								selected={ isDashboardRoute }
+								onClick={ () => onNavItemClick( 'Dashboard' ) }
+							>
+								{ translate( 'Dashboard' ) }
+							</NavItem>
+						) }
 						<NavItem
-							path="/"
-							selected={ isManagingSites }
+							path={ manageSiteLink }
+							selected={ ! ( isDashboardRoute || isPartnerPortalRoute ) }
 							onClick={ () => onNavItemClick( 'Manage Sites' ) }
 						>
 							{ translate( 'Manage Sites' ) }
 						</NavItem>
 						<NavItem
 							path="/partner-portal"
-							selected={ ! isManagingSites }
+							selected={ isPartnerPortalRoute }
 							onClick={ () => onNavItemClick( 'Licensing' ) }
 						>
 							{ translate( 'Licensing' ) }

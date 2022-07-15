@@ -1,0 +1,83 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.new-mailbox-list__main {
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+.new-mailbox-list__actions {
+	display: flex;
+	flex-direction: column-reverse;
+
+	@include break-mobile {
+		flex-direction: row;
+		justify-content: space-between;
+	}
+
+	> .button {
+		margin-top: 1.5em;
+	}
+
+	> .button:not( :last-child ) {
+		margin-top: 1em;
+
+		@include break-mobile {
+			margin-top: 0;
+			margin-right: 1.5em;
+		}
+	}
+}
+
+.new-mailbox-list__supplied-actions {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	@include break-mobile {
+		flex-direction: row;
+	}
+
+	> .button:not( :first-child ) {
+		margin-top: 1em;
+
+		@include break-mobile {
+			margin-top: 0;
+			margin-left: 1.5em;
+		}
+	}
+}
+
+.new-mailbox-list__supplied-actions--disable-additional-mailboxes {
+	flex-direction: row-reverse;
+}
+
+.new-mailbox-list__main-actions {
+	display: flex;
+	flex-direction: column;
+
+	button {
+		margin-top: 10px;
+	}
+
+	@include break-mobile {
+		flex-direction: row;
+
+		button {
+			margin-left: 10px;
+			margin-top: 0;
+		}
+	}
+}
+
+.new-mailbox-list__numbered-heading.card-heading {
+	color: var( --color-text-subtle );
+	line-height: 2;
+	margin-top: 16px;
+	margin-bottom: 16px;
+}
+
+.new-mailbox-list__separator {
+	margin-top: 1.5em;
+}

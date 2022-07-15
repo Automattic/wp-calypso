@@ -13,7 +13,7 @@ console.log( config( 'redirect_uri' ) );
 
 ## Feature Flags
 
-The config files contain a features object that can be used to determine whether to enable a feature for certain environments. This allows us to merge in-progress features without launching them to production. The config module adds a method to detect this: `config.isEnabled()`. Please make sure to add new feature flags alphabetically so they are easy to find. Remember to also include any new feature flags in all config files (client.json, development.json, production.json, horizon.json, stage.json, test.json, wpcalypso.json)
+The config files contain a features object that can be used to determine whether to enable a feature for certain environments. This allows us to merge in-progress features without launching them to production. The config module adds a method to detect this: `config.isEnabled()`.
 
 ```json
 {
@@ -22,6 +22,24 @@ The config files contain a features object that can be used to determine whether
 	}
 }
 ```
+
+Please make sure to add new feature flags alphabetically so they are easy to find and add any new feature flags in all config files (client.json, development.json, production.json, horizon.json, stage.json, test.json, wpcalypso.json).
+
+### Progression of Environments
+
+When working with feature flags, there is a progression of environments that should be considered.
+
+For development of WordPress.com, that looks something like:
+
+> development -> wpcalypso -> horizon -> stage -> production
+
+For development of Jetpack, this looks something like:
+
+> jetpack-cloud-development -> jetpack-cloud-horizon -> jetpack-cloud-stage -> jetpack-cloud-production
+
+As we enable a feature through these progressions, left to right, the feature should most likely be enabled on environments to the left. For example, if a WordPress.com feature is currently enabled in horizon, it should likely also be enabled in development and wpcalypso.
+
+Lastly, once you ship to production, you should consider cleaning up your flag checks to leave a tidy development environment.
 
 ### Testing Feature Flags Locally
 

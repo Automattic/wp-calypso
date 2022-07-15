@@ -3,16 +3,24 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import illustrationImg from 'calypso/assets/images/onboarding/import-2.svg';
 import ActionCard from 'calypso/components/action-card';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import { requestSite } from 'calypso/state/sites/actions';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+const trackEventName = 'calypso_signup_actions_submit_step';
+const trackEventParams = {
+	intent: 'import',
+	step: 'importReadyPreview',
+};
 
 interface Props {
 	siteId: number;
@@ -56,6 +64,10 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 		dispatch( requestSite( fromSite ) );
 	}, [ hasOriginSiteJetpackConnected ] );
 
+	useEffect( () => {
+		dispatch( recordTracksEvent( trackEventName, trackEventParams ) );
+	}, [] );
+
 	/**
 	 ↓ Methods
 	 */
@@ -81,7 +93,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 					subHeaderText={ __( 'Choose what you would like to import to your new site.' ) }
 				/>
 				<div className={ 'step-wrapper__header-image' }>
-					<img alt="" src="/calypso/images/importer/onboarding-2.svg" />
+					<img alt="Import" src={ illustrationImg } aria-hidden="true" />
 				</div>
 			</div>
 			<div className={ 'import-layout__column' }>

@@ -7,6 +7,7 @@ export const getState = ( state: State ) => state;
 export const getNewSite = ( state: State ) => state.newSite.data;
 export const getNewSiteError = ( state: State ) => state.newSite.error;
 export const isFetchingSite = ( state: State ) => state.newSite.isFetching;
+export const getFetchingSiteError = ( state: State ) => state.fetchingSiteError;
 export const isFetchingSiteDetails = ( state: State ) => state.isFetchingSiteDetails;
 export const isNewSite = ( state: State ) => !! state.newSite.data;
 
@@ -59,6 +60,10 @@ export const getSiteDomains = ( state: State, siteId: number ) => {
 
 export const getSiteSettings = ( state: State, siteId: number ) => {
 	return state.sitesSettings[ siteId ];
+};
+
+export const getSiteGlobalStyles = ( state: State, siteId: number ) => {
+	return state.sitesGlobalStyles[ siteId ];
 };
 
 export const getSiteSetupError = ( state: State ) => {

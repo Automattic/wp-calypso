@@ -1,3 +1,8 @@
+import {
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	WPCOM_FEATURES_MANAGE_PLUGINS,
+	WPCOM_FEATURES_UPLOAD_PLUGINS,
+} from '@automattic/calypso-products/src';
 import { Button } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
@@ -8,6 +13,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import Main from 'calypso/components/main';
@@ -27,6 +33,8 @@ import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-use
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getUpdateableJetpackSites from 'calypso/state/selectors/get-updateable-jetpack-sites';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	canJetpackSiteUpdateFiles,
 	isJetpackSite,
@@ -56,6 +64,8 @@ export class PluginsMain extends Component {
 			hasJetpackSites: hasJpSites,
 			selectedSiteIsJetpack,
 			selectedSiteSlug,
+			hasInstallPurchasedPlugins,
+			hasManagePlugins,
 		} = this.props;
 
 		currentPlugins.map( ( plugin ) => {
@@ -65,9 +75,15 @@ export class PluginsMain extends Component {
 			}
 		} );
 
-		if ( prevProps.isRequestingSites && ! this.props.isRequestingSites ) {
+		if (
+			( prevProps.isRequestingSites && ! this.props.isRequestingSites ) ||
+			prevProps.selectedSiteSlug !== selectedSiteSlug
+		) {
 			// Selected site is not a Jetpack site
-			if ( selectedSiteSlug && ! selectedSiteIsJetpack ) {
+			if (
+				selectedSiteSlug &&
+				( ! selectedSiteIsJetpack || ! ( hasInstallPurchasedPlugins || hasManagePlugins ) )
+			) {
 				page.redirect( `/plugins/${ selectedSiteSlug }` );
 				return;
 			}
@@ -343,8 +359,12 @@ export class PluginsMain extends Component {
 	};
 
 	renderUploadPluginButton( isMobile ) {
-		const { selectedSiteSlug, translate } = this.props;
+		const { selectedSiteSlug, translate, hasUploadPlugins } = this.props;
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
+
+		if ( ! hasUploadPlugins ) {
+			return null;
+		}
 
 		return (
 			<Button
@@ -409,6 +429,7 @@ export class PluginsMain extends Component {
 			<Main wideLayout>
 				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				<QueryJetpackPlugins siteIds={ this.props.siteIds } />
+				<QuerySiteFeatures siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
 				<FixedNavigationHeader
 					className="plugins__page-heading"
@@ -452,6 +473,15 @@ export default flow(
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			const jetpackNonAtomic =
+				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
+			const hasManagePlugins =
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_MANAGE_PLUGINS ) || jetpackNonAtomic;
+			const hasUploadPlugins =
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic;
+			const hasInstallPurchasedPlugins =
+				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ||
+				jetpackNonAtomic;
 
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
@@ -473,6 +503,9 @@ export default flow(
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )
 					: canCurrentUserManagePlugins( state ),
+				hasManagePlugins: hasManagePlugins,
+				hasUploadPlugins: hasUploadPlugins,
+				hasInstallPurchasedPlugins: hasInstallPurchasedPlugins,
 			};
 		},
 		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }

@@ -64,5 +64,6 @@ describe( 'selectors', () => {
 		} );
 
 		expect( select( store ).getProductsList() ).toEqual( apiResponse );
+		expect( select( store ).getProductBySlug( 'free_plan' ) ).toEqual( apiResponse[ 'free_plan' ] );
 	} );
 } );

@@ -20,6 +20,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -37,6 +38,7 @@ export class LoginLinks extends Component {
 		twoFactorAuthType: PropTypes.string,
 		isGutenboarding: PropTypes.bool.isRequired,
 		usernameOrEmail: PropTypes.string,
+		isPartnerSignup: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -126,7 +128,8 @@ export class LoginLinks extends Component {
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
 			this.props.isGutenboarding ||
-			this.props.isP2Login
+			this.props.isP2Login ||
+			this.props.isPartnerSignup
 		) {
 			return null;
 		}
@@ -267,6 +270,7 @@ export class LoginLinks extends Component {
 		const loginUrl = login( {
 			locale: this.props.locale,
 			twoFactorAuthType: 'qr',
+			redirectTo: this.props.query?.redirect_to,
 			signupUrl: this.props.query?.signup_url,
 		} );
 		return <a href={ loginUrl }>{ this.props.translate( 'Login via the mobile app' ) }</a>;
@@ -377,6 +381,7 @@ export default connect(
 		query: getCurrentQueryArguments( state ),
 		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
 		wccomFrom: getCurrentQueryArguments( state )[ 'wccom-from' ],
+		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
 		recordTracksEvent,

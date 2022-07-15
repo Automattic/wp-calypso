@@ -1,23 +1,56 @@
 import { Button, Guide } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import './modal-style.scss';
+import Inbox from './embedded-inbox.svg';
 import Visual from './plans-visual.svg';
 
 export default function ModalTemplate( {
-	featureClass,
 	CTA,
-	trackImpression,
-	message,
 	description,
+	disclaimer,
+	featureClass,
+	icon,
+	message,
 	onClick,
 	onDismiss,
 	title,
-	disclaimer,
+	trackImpression,
 } ) {
 	trackImpression && trackImpression();
 
 	// technically, non-dismissable jitms are authorable, however, that doesn't make any sense as a modal.
 	const [ isDismissed, setDismissed ] = useState( [] );
+	const translate = useTranslate();
+
+	const getModalImage = () => {
+		switch ( icon ) {
+			case 'embedded-inbox':
+				return Inbox;
+			default:
+				return Visual;
+		}
+	};
+
+	const getModalAltText = () => {
+		switch ( icon ) {
+			case 'embedded-inbox':
+				return translate( 'Embedded inbox', { textOnly: true } );
+			default:
+				return translate( 'List of available WordPress.com plans', {
+					textOnly: true,
+				} );
+		}
+	};
+
+	const getModalClassName = () => {
+		switch ( icon ) {
+			case 'embedded-inbox':
+				return 'modal__embedded-inbox';
+			default:
+				return 'modal__plans';
+		}
+	};
 
 	return isDismissed.includes( featureClass ) ? null : (
 		<Guide
@@ -37,7 +70,6 @@ export default function ModalTemplate( {
 								<h1 className="modal__heading">{ message }</h1>
 								<p className="modal__text">
 									{ description }
-									<br />
 									<Button
 										href={ CTA.link }
 										isPrimary={ true }
@@ -45,6 +77,7 @@ export default function ModalTemplate( {
 											onClick();
 											setDismissed( isDismissed.concat( [ featureClass ] ) );
 										} }
+										tabindex={ -2 }
 									>
 										{ CTA.message }
 									</Button>
@@ -55,8 +88,9 @@ export default function ModalTemplate( {
 							</div>
 							<div className="modal__sidebar">
 								<img
-									src={ Visual }
-									alt="list of available plans — premium, business, and ecommerce plans"
+									className={ getModalClassName() }
+									src={ getModalImage() }
+									alt={ getModalAltText() }
 								/>
 							</div>
 						</>

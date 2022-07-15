@@ -5,14 +5,12 @@ import {
 	isWpComBusinessPlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
-	isJetpackPlan,
-	isJetpackProduct,
 	planMatches,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
-import { Dialog, Button } from '@automattic/components';
+import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
 import { getCurrencyDefaults } from '@automattic/format-currency';
 import { SUPPORT_HAPPYCHAT } from '@automattic/help-center';
 import {
@@ -36,15 +34,9 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormLegend from 'calypso/components/forms/form-legend';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
-import FormTextarea from 'calypso/components/forms/form-textarea';
-import HappychatButton from 'calypso/components/happychat/button';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { getName, isRefundable } from 'calypso/lib/purchases';
+import { isRefundable } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -59,6 +51,7 @@ import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { getCancellationReasons } from './cancellation-reasons';
 import { CANCEL_FLOW_TYPE } from './constants';
@@ -71,67 +64,38 @@ import {
 	nextAdventureOptionsForPurchase,
 } from './options-for-product';
 import PrecancellationChatButton from './precancellation-chat-button';
-import previousStep from './previous-step';
-import { radioTextOption, radioSelectOption } from './radio-option';
 import BusinessATStep from './step-components/business-at-step';
 import DowngradeStep from './step-components/downgrade-step';
 import FreeMonthOfferStep from './step-components/free-month-offer-step';
 import UpgradeATStep from './step-components/upgrade-at-step';
-import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, FINAL_STEP, INITIAL_STEP } from './steps';
+import { ATOMIC_REVERT_STEP, FEEDBACK_STEP } from './steps';
 
 import './style.scss';
 
 class CancelPurchaseForm extends Component {
 	static propTypes = {
-		defaultContent: PropTypes.node.isRequired,
 		disableButtons: PropTypes.bool,
 		purchase: PropTypes.object.isRequired,
 		isVisible: PropTypes.bool,
-		onInputChange: PropTypes.func.isRequired,
 		onClose: PropTypes.func.isRequired,
 		onClickFinalConfirm: PropTypes.func.isRequired,
 		flowType: PropTypes.string.isRequired,
-		showSurvey: PropTypes.bool.isRequired,
 		translate: PropTypes.func,
 		cancelBundledDomain: PropTypes.bool,
 		includedDomainPurchase: PropTypes.object,
+		linkedPurchases: PropTypes.array,
 	};
 
 	static defaultProps = {
-		defaultContent: '',
-		onInputChange: () => {},
-		showSurvey: true,
 		isVisible: false,
 	};
 
-	shouldShowChatButton() {
-		// Jetpack doesn't do Happychat support
-		// NOTE: The HappychatButton component may still decide not to render,
-		// based on agent availability and connection status.
-		return ! this.props.isJetpack;
-	}
-
-	shouldUseBlankCanvasLayout() {
-		const { isJetpack, purchase } = this.props;
-		return isPlan( purchase ) && ! isJetpack;
-	}
-
 	getAllSurveySteps() {
-		const { purchase, willAtomicSiteRevert } = this.props;
-
-		if ( isPlan( purchase ) ) {
-			if ( this.shouldUseBlankCanvasLayout() ) {
-				if ( willAtomicSiteRevert ) {
-					return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
-				}
-
-				return [ FEEDBACK_STEP ];
-			}
-
-			return [ INITIAL_STEP, FINAL_STEP ];
+		if ( this.props.willAtomicSiteRevert ) {
+			return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
 		}
 
-		return [ FINAL_STEP ];
+		return [ FEEDBACK_STEP ];
 	}
 
 	initSurveyState() {
@@ -161,9 +125,8 @@ class CancelPurchaseForm extends Component {
 			questionOneText: '',
 			questionOneOrder,
 			questionTwoText: '',
-			questionTwoOrder: questionTwoOrder,
+			questionTwoOrder,
 			questionThreeText: '',
-			importQuestionText: '',
 			isSubmitting: false,
 			upsell: '',
 			atomicRevertCheckOne: false,
@@ -182,7 +145,7 @@ class CancelPurchaseForm extends Component {
 		const { purchase, downgradeClick, freeMonthOfferClick } = this.props;
 		const productSlug = purchase?.productSlug || '';
 
-		if ( ! this.shouldUseBlankCanvasLayout() || ! productSlug ) {
+		if ( ! productSlug ) {
 			return '';
 		}
 
@@ -257,7 +220,6 @@ class CancelPurchaseForm extends Component {
 			upsell: '',
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onTextOneChange = ( eventOrValue ) => {
@@ -267,7 +229,6 @@ class CancelPurchaseForm extends Component {
 			questionOneText: value,
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onSelectOneChange = ( optionOrValue ) => {
@@ -278,7 +239,6 @@ class CancelPurchaseForm extends Component {
 			upsell: this.getUpsellType( value ) || '',
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onRadioTwoChange = ( eventOrValue ) => {
@@ -291,7 +251,6 @@ class CancelPurchaseForm extends Component {
 			questionTwoText: '',
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onTextTwoChange = ( eventOrValue ) => {
@@ -301,7 +260,6 @@ class CancelPurchaseForm extends Component {
 			questionTwoText: value,
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onTextThreeChange = ( eventOrValue ) => {
@@ -311,7 +269,6 @@ class CancelPurchaseForm extends Component {
 			questionThreeText: value,
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	onImportRadioChange = ( eventOrValue ) => {
@@ -321,20 +278,8 @@ class CancelPurchaseForm extends Component {
 		const newState = {
 			...this.state,
 			importQuestionRadio: value,
-			importQuestionText: '',
 		};
 		this.setState( newState );
-		this.props.onInputChange( newState );
-	};
-
-	onImportTextChange = ( eventOrValue ) => {
-		const value = eventOrValue?.currentTarget?.value ?? eventOrValue;
-		const newState = {
-			...this.state,
-			importQuestionText: value,
-		};
-		this.setState( newState );
-		this.props.onInputChange( newState );
 	};
 
 	// Because of the legacy reason, we can't just use `flowType` here.
@@ -521,72 +466,37 @@ class CancelPurchaseForm extends Component {
 		const { questionOneOrder, questionOneRadio, questionOneText } = this.state;
 		const { productSlug } = this.props.purchase; // Product being cancelled
 		const reasons = getCancellationReasons( questionOneOrder, { productSlug } );
-
-		if ( this.shouldUseBlankCanvasLayout() ) {
-			const selectedOption = reasons.find( ( { value } ) => value === questionOneRadio );
-
-			return (
-				<div className="cancel-purchase-form__feedback-question">
-					<SelectControl
-						label={ translate( 'Why are you canceling?' ) }
-						value={ questionOneRadio }
-						options={ reasons }
-						onChange={ this.onRadioOneChange }
-					/>
-					{ selectedOption?.textPlaceholder && (
-						<TextControl
-							placeholder={ selectedOption.textPlaceholder }
-							value={ questionOneText }
-							onChange={ this.onTextOneChange }
-						/>
-					) }
-					{ selectedOption?.selectOptions && ! selectedOption?.textPlaceholder && (
-						<SelectControl
-							label={ selectedOption.selectLabel }
-							value={ questionOneText || selectedOption.selectInitialValue || '' }
-							options={ selectedOption.selectOptions }
-							onChange={ this.onSelectOneChange }
-						/>
-					) }
-					{ this.showUpsell() }
-				</div>
-			);
-		}
+		const selectedOption = reasons.find( ( { value } ) => value === questionOneRadio );
 
 		return (
-			<div className="cancel-purchase-form__question">
-				<FormLegend>{ translate( 'Please tell us why you are canceling:' ) }</FormLegend>
-				{ reasons.map(
-					( { value, label, selectLabel, selectOptions, selectInitialValue, textPlaceholder } ) =>
-						textPlaceholder
-							? radioTextOption(
-									'questionOne',
-									value,
-									questionOneRadio,
-									questionOneText,
-									this.onRadioOneChange,
-									this.onTextOneChange,
-									label,
-									textPlaceholder
-							  )
-							: radioSelectOption(
-									'questionOne',
-									value,
-									questionOneRadio,
-									this.onRadioOneChange,
-									this.onSelectOneChange,
-									label,
-									selectLabel,
-									selectOptions,
-									selectInitialValue
-							  )
+			<div className="cancel-purchase-form__feedback-question">
+				<SelectControl
+					label={ translate( 'Why are you canceling?' ) }
+					value={ questionOneRadio }
+					options={ reasons }
+					onChange={ this.onRadioOneChange }
+				/>
+				{ selectedOption?.textPlaceholder && (
+					<TextControl
+						placeholder={ selectedOption.textPlaceholder }
+						value={ questionOneText }
+						onChange={ this.onTextOneChange }
+					/>
 				) }
+				{ selectedOption?.selectOptions && ! selectedOption?.textPlaceholder && (
+					<SelectControl
+						label={ selectedOption.selectLabel }
+						value={ questionOneText || selectedOption.selectInitialValue || '' }
+						options={ selectedOption.selectOptions }
+						onChange={ this.onSelectOneChange }
+					/>
+				) }
+				{ this.showUpsell() }
 			</div>
 		);
 	};
 
 	renderQuestionTwo = () => {
-		const reasons = {};
 		const { translate } = this.props;
 		const { questionTwoOrder, questionTwoRadio, questionTwoText } = this.state;
 
@@ -635,66 +545,40 @@ class CancelPurchaseForm extends Component {
 			},
 		];
 
-		if ( this.shouldUseBlankCanvasLayout() ) {
-			const optionKeys = [ ...questionTwoOrder ];
-			optionKeys.unshift( '' ); // Placeholder.
+		const optionKeys = [ ...questionTwoOrder ];
+		optionKeys.unshift( '' ); // Placeholder.
 
-			const selectedOption = options.find( ( option ) => option.value === questionTwoRadio );
-
-			return (
-				<div className="cancel-purchase-form__feedback-question">
-					<SelectControl
-						label={ translate( 'Where is your next adventure taking you?' ) }
-						value={ questionTwoRadio }
-						options={ optionKeys.map( ( key ) => {
-							const option = options.find( ( { value } ) => value === key );
-							return {
-								label: option.label,
-								value: option.value,
-								disabled: ! option.value,
-							};
-						} ) }
-						onChange={ this.onRadioTwoChange }
-					/>
-					{ selectedOption?.textPlaceholder && (
-						<TextControl
-							placeholder={ selectedOption.textPlaceholder }
-							value={ questionTwoText }
-							onChange={ this.onTextTwoChange }
-						/>
-					) }
-				</div>
-			);
-		}
-
-		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioTextOption(
-				groupName,
-				key,
-				questionTwoRadio,
-				questionTwoText,
-				this.onRadioTwoChange,
-				this.onTextTwoChange,
-				radioPrompt,
-				textPlaceholder
-			) );
-
-		options.forEach( ( { label, textPlaceholder, value } ) =>
-			appendRadioOption( 'questionTwo', value, label, textPlaceholder )
-		);
+		const selectedOption = options.find( ( option ) => option.value === questionTwoRadio );
 
 		return (
-			<div className="cancel-purchase-form__question">
-				<FormLegend>{ translate( 'Where is your next adventure taking you?' ) }</FormLegend>
-				{ questionTwoOrder.map( ( question ) => reasons[ question ] ) }
+			<div className="cancel-purchase-form__feedback-question">
+				<SelectControl
+					label={ translate( 'Where is your next adventure taking you?' ) }
+					value={ questionTwoRadio }
+					options={ optionKeys.map( ( key ) => {
+						const option = options.find( ( { value } ) => value === key );
+						return {
+							label: option.label,
+							value: option.value,
+							disabled: ! option.value,
+						};
+					} ) }
+					onChange={ this.onRadioTwoChange }
+				/>
+				{ selectedOption?.textPlaceholder && (
+					<TextControl
+						placeholder={ selectedOption.textPlaceholder }
+						value={ questionTwoText }
+						onChange={ this.onTextTwoChange }
+					/>
+				) }
 			</div>
 		);
 	};
 
 	renderImportQuestion = () => {
-		const reasons = [];
 		const { translate } = this.props;
-		const { importQuestionRadio, importQuestionText } = this.state;
+		const { importQuestionRadio } = this.state;
 
 		const options = [
 			{
@@ -717,117 +601,47 @@ class CancelPurchaseForm extends Component {
 			},
 		];
 
-		if ( this.shouldUseBlankCanvasLayout() ) {
-			// Add placeholder.
-			options.unshift( {
-				value: '',
-				label: translate( 'Select an answer' ),
-			} );
-
-			return (
-				<div className="cancel-purchase-form__feedback-question">
-					<SelectControl
-						label={ translate( 'You imported from another site. How did the import go?' ) }
-						value={ importQuestionRadio }
-						options={ options.map( ( { label, value } ) => ( {
-							label,
-							value,
-							disabled: ! value,
-						} ) ) }
-						onChange={ this.onImportRadioChange }
-					/>
-				</div>
-			);
-		}
-
-		const appendRadioOption = ( groupName, key, radioPrompt, textPlaceholder ) =>
-			reasons.push(
-				radioTextOption(
-					groupName,
-					key,
-					importQuestionRadio,
-					importQuestionText,
-					this.onImportRadioChange,
-					this.onImportTextChange,
-					radioPrompt,
-					textPlaceholder
-				)
-			);
-
-		options.forEach( ( { label, value } ) => appendRadioOption( 'importQuestion', value, label ) );
+		// Add placeholder.
+		options.unshift( {
+			value: '',
+			label: translate( 'Select an answer' ),
+		} );
 
 		return (
-			<div className="cancel-purchase-form__question">
-				<FormLegend>
-					{ translate( 'You imported from another site. How did the import go?' ) }
-				</FormLegend>
-				{ reasons }
+			<div className="cancel-purchase-form__feedback-question">
+				<SelectControl
+					label={ translate( 'You imported from another site. How did the import go?' ) }
+					value={ importQuestionRadio }
+					options={ options.map( ( { label, value } ) => ( {
+						label,
+						value,
+						disabled: ! value,
+					} ) ) }
+					onChange={ this.onImportRadioChange }
+				/>
 			</div>
 		);
 	};
 
 	renderFreeformQuestion = () => {
-		const { translate, isImport } = this.props;
+		const { translate, isImport, purchase } = this.props;
 
-		if ( this.shouldUseBlankCanvasLayout() ) {
-			if ( ! isSurveyFilledIn( this.state, isImport ) ) {
-				// Do not display this question unless user has already answered previous questions.
-				return null;
-			}
-
-			return (
-				<div className="cancel-purchase-form__feedback-question">
-					<TextareaControl
-						label={ translate( "What's one thing we could have done better?" ) }
-						value={ this.state.questionThreeText }
-						onChange={ this.onTextThreeChange }
-						placeholder={ translate( 'Optional' ) }
-						name="improvementInput"
-						id="improvementInput"
-					/>
-				</div>
-			);
+		if ( ! isSurveyFilledIn( this.state, isImport, isPlan( purchase ) ) ) {
+			// Do not display this question unless user has already answered previous questions.
+			return null;
 		}
 
 		return (
-			<FormFieldset>
-				<FormLabel>
-					{ translate( "What's one thing we could have done better? (optional)" ) }
-					<FormTextarea
-						name="improvementInput"
-						id="improvementInput"
-						value={ this.state.questionThreeText }
-						onChange={ this.onTextThreeChange }
-					/>
-				</FormLabel>
-			</FormFieldset>
-		);
-	};
-
-	onChatInitiated = () => {
-		this.recordEvent( 'calypso_purchases_cancel_form_chat_initiated' );
-		this.closeDialog();
-	};
-
-	renderLiveChat = () => {
-		const { purchase, translate } = this.props;
-		const productName = getName( purchase );
-		return (
-			<FormFieldset>
-				<p>
-					{ translate(
-						'As a %(productName)s user, you have instant access to our team of Happiness ' +
-							'Engineers who can answer your questions and get your site up and running ' +
-							'just as you like! Click the button below to start a chat now.',
-						{
-							args: { productName },
-						}
-					) }
-				</p>
-				<HappychatButton primary borderless={ false } onClick={ this.onChatInitiated }>
-					{ translate( 'Start a Live chat' ) }
-				</HappychatButton>
-			</FormFieldset>
+			<div className="cancel-purchase-form__feedback-question">
+				<TextareaControl
+					label={ translate( "What's one thing we could have done better?" ) }
+					value={ this.state.questionThreeText }
+					onChange={ this.onTextThreeChange }
+					placeholder={ translate( 'Optional' ) }
+					name="improvementInput"
+					id="improvementInput"
+				/>
+			</div>
 		);
 	};
 
@@ -844,9 +658,10 @@ class CancelPurchaseForm extends Component {
 	};
 
 	surveyContent() {
-		const { atomicTransfer, translate, isImport, isJetpack, moment, showSurvey, site } = this.props;
+		const { atomicTransfer, translate, isImport, moment, purchase, site, hasBackupsFeature } =
+			this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep } = this.state;
-		const productName = isJetpack ? translate( 'Jetpack' ) : translate( 'WordPress.com' );
+		const productName = translate( 'WordPress.com' );
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -862,9 +677,13 @@ class CancelPurchaseForm extends Component {
 						) }
 					/>
 					<div className="cancel-purchase-form__feedback-questions">
-						{ this.renderQuestionOne() }
-						{ isImport && this.renderImportQuestion() }
-						{ this.renderQuestionTwo() }
+						{ isPlan( purchase ) && (
+							<>
+								{ this.renderQuestionOne() }
+								{ isImport && this.renderImportQuestion() }
+								{ this.renderQuestionTwo() }
+							</>
+						) }
 						{ this.renderFreeformQuestion() }
 					</div>
 				</div>
@@ -873,31 +692,56 @@ class CancelPurchaseForm extends Component {
 
 		if ( surveyStep === ATOMIC_REVERT_STEP ) {
 			const atomicTransferDate = moment( atomicTransfer.created_at ).format( 'LL' );
+			let subHeaderText;
+			if ( isPlan( purchase ) ) {
+				subHeaderText = translate(
+					'If you deactivate your plan, we will set your site to private and revert it to the point when you installed your first plugin or custom theme, or activated hosting features ' +
+						'on {{strong}}%(atomicTransferDate)s{{/strong}}. All of your posts, pages, and media will be preserved, except for content generated by plugins or custom themes. {{moreInfoTooltip/}}',
+					{
+						args: { atomicTransferDate },
+						components: {
+							moreInfoTooltip: (
+								<InfoPopover className="cancel-purchase-form__atomic-revert-more-info">
+									{ translate(
+										'On %(atomicTransferDate)s, we automatically moved your site to a platform that supports the usage of plugins, custom themes, and hosting features. ' +
+											'If you deactivate your plan, we will move your site back to its original platform.',
+										{ args: { atomicTransferDate } }
+									) }
+								</InfoPopover>
+							),
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							strong: <strong className="is-highlighted" />,
+						},
+					}
+				);
+			} else {
+				subHeaderText = translate(
+					'If you deactivate your product, we will set your site to private and revert it to the point when you installed your first plugin or custom theme, or activated hosting features ' +
+						'on {{strong}}%(atomicTransferDate)s{{/strong}}. All of your posts, pages, and media will be preserved, except for content generated by plugins or custom themes. {{moreInfoTooltip/}}',
+					{
+						args: { atomicTransferDate },
+						components: {
+							moreInfoTooltip: (
+								<InfoPopover className="cancel-purchase-form__atomic-revert-more-info">
+									{ translate(
+										'On %(atomicTransferDate)s, we automatically moved your site to a platform that supports the usage of plugins, custom themes, and hosting features. ' +
+											'If you deactivate your product, we will move your site back to its original platform.',
+										{ args: { atomicTransferDate } }
+									) }
+								</InfoPopover>
+							),
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							strong: <strong className="is-highlighted" />,
+						},
+					}
+				);
+			}
 			return (
 				<div className="cancel-purchase-form__atomic-revert">
 					<FormattedHeader
 						brandFont
-						headerText={ translate( 'Proceed with caution' ) }
-						subHeaderText={ translate(
-							'After deactivating your plan, we will return your site back to the point when you installed your first plugin or custom theme or activated hosting features on {{strong}}%(atomicTransferDate)s{{/strong}}. Your posts, pages and media will be preserved. {{moreInfoTooltip/}}',
-							{
-								args: { atomicTransferDate },
-								components: {
-									moreInfoTooltip: (
-										<InfoPopover className="cancel-purchase-form__atomic-revert-more-info">
-											{ translate(
-												'We automatically moved your site to a separate platform on %(atomicTransferDate)s in order to support the usage of plugins, custom themes, and hosting features. ' +
-													'These features will no longer be supported if you deactivate your plan, so we’ll move your site back to its original platform. ' +
-													'All the posts, pages and media added before and after %(atomicTransferDate)s will be preserved (with the exception of the content generated by plugins or custom themes).',
-												{ args: { atomicTransferDate } }
-											) }
-										</InfoPopover>
-									),
-									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									strong: <strong className="is-highlighted" />,
-								},
-							}
-						) }
+						headerText={ translate( 'Proceed With Caution' ) }
+						subHeaderText={ subHeaderText }
 					/>
 					<p>
 						{ translate(
@@ -919,54 +763,22 @@ class CancelPurchaseForm extends Component {
 						checked={ atomicRevertCheckTwo }
 						onChange={ ( isChecked ) => this.setState( { atomicRevertCheckTwo: isChecked } ) }
 					/>
-					<div className="cancel-purchase-form__backups">
-						<h4>{ translate( 'Would you like to download the backup of your site?' ) }</h4>
-						<p>
-							{ translate(
-								"To make sure you have everything after your plan is deactivated or if you'd like to migrate, you can download a backup."
-							) }
-						</p>
-						<ExternalLink icon href={ `/backup/${ site.slug }` }>
-							{ translate( 'Go to your backups' ) }
-						</ExternalLink>
-					</div>
+					{ hasBackupsFeature && (
+						<div className="cancel-purchase-form__backups">
+							<h4>{ translate( 'Would you like to download the backup of your site?' ) }</h4>
+							<p>
+								{ translate(
+									"To make sure you have everything after your plan is deactivated or if you'd like to migrate, you can download a backup."
+								) }
+							</p>
+							<ExternalLink icon href={ `/backup/${ site.slug }` }>
+								{ translate( 'Go to your backups' ) }
+							</ExternalLink>
+						</div>
+					) }
 				</div>
 			);
 		}
-
-		if ( showSurvey ) {
-			if ( surveyStep === INITIAL_STEP ) {
-				return (
-					<div>
-						<FormSectionHeading>{ translate( 'Share your feedback' ) }</FormSectionHeading>
-						<p>
-							{ translate(
-								'Before you go, please answer a few quick questions to help us improve %(productName)s.',
-								{
-									args: { productName },
-								}
-							) }
-						</p>
-						{ this.renderQuestionOne() }
-						{ isImport && this.renderImportQuestion() }
-						{ this.renderQuestionTwo() }
-					</div>
-				);
-			}
-
-			return (
-				<div>
-					<FormSectionHeading>
-						{ translate( 'One more question before you go.' ) }
-					</FormSectionHeading>
-					{ this.renderFreeformQuestion() }
-					{ this.props.defaultContent }
-				</div>
-			);
-		}
-
-		// just return the default if we don't want to show the survey
-		return <div>{ this.props.defaultContent }</div>;
 	}
 
 	closeDialog = () => {
@@ -989,129 +801,63 @@ class CancelPurchaseForm extends Component {
 		this.changeSurveyStep( nextStep );
 	};
 
-	clickPrevious = () => {
-		this.changeSurveyStep( previousStep );
-	};
-
 	getStepButtons = () => {
-		const { flowType, translate, disableButtons, purchase, isImport } = this.props;
+		const { flowType, translate, disableButtons, isImport, purchase } = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, isSubmitting, surveyStep } = this.state;
 		const isCancelling = disableButtons || isSubmitting;
 
 		const allSteps = this.getAllSurveySteps();
-		const isFirstStep = surveyStep === allSteps[ 0 ];
 		const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
+		const buttons = [];
 
-		if ( this.shouldUseBlankCanvasLayout() ) {
-			const buttons = [];
-
-			let canGoNext = ! isCancelling;
-			if ( surveyStep === FEEDBACK_STEP ) {
-				canGoNext = isSurveyFilledIn( this.state, isImport );
-			} else if ( surveyStep === ATOMIC_REVERT_STEP ) {
-				canGoNext = atomicRevertCheckOne && atomicRevertCheckTwo;
-			}
-
-			buttons.push(
-				<GutenbergButton disabled={ isCancelling } isPrimary onClick={ this.closeDialog }>
-					{ translate( 'Keep my plan' ) }
-				</GutenbergButton>
-			);
-
-			if ( ! isLastStep ) {
-				buttons.push(
-					<GutenbergButton disabled={ ! canGoNext } isDefault onClick={ this.clickNext }>
-						{ translate( 'Next' ) }
-					</GutenbergButton>
-				);
-			}
-
-			if ( isLastStep ) {
-				let actionText;
-				if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
-					actionText = isCancelling ? translate( 'Removing…' ) : translate( 'Remove plan' );
-				} else {
-					actionText = isCancelling ? translate( 'Cancelling…' ) : translate( 'Cancel plan' );
-				}
-				buttons.push(
-					<GutenbergButton
-						isDefault
-						isBusy={ isCancelling }
-						disabled={ ! canGoNext }
-						onClick={ this.onSubmit }
-					>
-						{ actionText }
-					</GutenbergButton>
-				);
-			}
-
-			return buttons;
+		let canGoNext = ! isCancelling;
+		if ( surveyStep === FEEDBACK_STEP ) {
+			canGoNext = isSurveyFilledIn( this.state, isImport, isPlan( purchase ) );
+		} else if ( surveyStep === ATOMIC_REVERT_STEP ) {
+			canGoNext = atomicRevertCheckOne && atomicRevertCheckTwo;
 		}
 
-		const close = {
-			action: 'close',
-			disabled: isCancelling,
-			label: translate( "I'll Keep It" ),
-		};
-		const chat = (
-			<PrecancellationChatButton
-				purchase={ purchase }
-				onClick={ this.closeDialog }
-				surveyStep={ surveyStep }
-			/>
-		);
-		const next = {
-			action: 'next',
-			disabled: isCancelling || ! isSurveyFilledIn( this.state, isImport ),
-			label: translate( 'Next Step' ),
-			onClick: this.clickNext,
-		};
-		const prev = {
-			action: 'prev',
-			disabled: isCancelling,
-			label: translate( 'Previous Step' ),
-			onClick: this.clickPrevious,
-		};
-		const cancel = {
-			action: 'cancel',
-			disabled: isCancelling,
-			label: translate( 'Cancel Now' ),
-			onClick: this.onSubmit,
-			isPrimary: true,
-		};
-
-		const removeText = translate( 'Remove It' );
-		const removingText = translate( 'Removing' );
-		const remove = (
-			<Button
-				disabled={ this.props.disableButtons }
-				busy={ this.props.disableButtons }
-				onClick={ this.onSubmit }
-				primary
-				data-e2e-button="remove"
-			>
-				{ this.props.disableButtons ? removingText : removeText }
-			</Button>
+		let closeText = translate( 'Keep my product' );
+		if ( isPlan( purchase ) ) {
+			closeText = translate( 'Keep my plan' );
+		}
+		buttons.push(
+			<GutenbergButton disabled={ isCancelling } isPrimary onClick={ this.closeDialog }>
+				{ closeText }
+			</GutenbergButton>
 		);
 
-		const firstButtons = [ close ];
-		if ( this.shouldShowChatButton() ) {
-			firstButtons.unshift( chat );
+		if ( ! isLastStep ) {
+			buttons.push(
+				<GutenbergButton disabled={ ! canGoNext } isDefault onClick={ this.clickNext }>
+					{ translate( 'Next' ) }
+				</GutenbergButton>
+			);
 		}
 
 		if ( isLastStep ) {
-			const stepsCount = allSteps.length;
-			const prevButton = stepsCount > 1 ? [ prev ] : [];
-
-			switch ( flowType ) {
-				case CANCEL_FLOW_TYPE.REMOVE:
-					return firstButtons.concat( [ ...prevButton, remove ] );
-				default:
-					return firstButtons.concat( [ ...prevButton, cancel ] );
+			let actionText;
+			const isRemoveFlow = flowType === CANCEL_FLOW_TYPE.REMOVE;
+			if ( isCancelling ) {
+				actionText = isRemoveFlow ? translate( 'Removing…' ) : translate( 'Cancelling…' );
+			} else if ( isPlan( purchase ) ) {
+				actionText = isRemoveFlow ? translate( 'Remove plan' ) : translate( 'Cancel plan' );
+			} else {
+				actionText = isRemoveFlow ? translate( 'Remove product' ) : translate( 'Cancel product' );
 			}
+			buttons.push(
+				<GutenbergButton
+					isDefault
+					isBusy={ isCancelling }
+					disabled={ ! canGoNext }
+					onClick={ this.onSubmit }
+				>
+					{ actionText }
+				</GutenbergButton>
+			);
 		}
 
-		return firstButtons.concat( isFirstStep ? [ next ] : [ prev, next ] );
+		return buttons;
 	};
 
 	fetchPurchaseExtendedStatus = async ( purchaseId ) => {
@@ -1161,101 +907,94 @@ class CancelPurchaseForm extends Component {
 		}
 	}
 
+	getHeaderTitle() {
+		const { flowType, purchase, translate } = this.props;
+
+		if ( flowType === CANCEL_FLOW_TYPE.REMOVE ) {
+			if ( isPlan( purchase ) ) {
+				return translate( 'Remove plan' );
+			}
+			return translate( 'Remove product' );
+		}
+
+		if ( isPlan( purchase ) ) {
+			return translate( 'Cancel plan' );
+		}
+		return translate( 'Cancel product' );
+	}
+
 	render() {
 		const { surveyStep } = this.state;
 		if ( ! surveyStep ) {
 			return null;
 		}
 
-		const {
-			flowType,
-			isChatActive,
-			isChatAvailable,
-			isJetpack,
-			purchase,
-			site,
-			supportVariation,
-			translate,
-		} = this.props;
-
-		if ( isPlan( purchase ) && ! isJetpack ) {
-			const steps = this.getAllSurveySteps();
-
-			return (
-				<>
-					<QueryPlans />
-					{ site && <QuerySitePlans siteId={ site.ID } /> }
-					<QuerySupportTypes />
-					{ this.props.isVisible && (
-						<BlankCanvas className="cancel-purchase-form">
-							<BlankCanvas.Header onBackClick={ this.closeDialog }>
-								{ flowType === CANCEL_FLOW_TYPE.REMOVE
-									? translate( 'Remove plan' )
-									: translate( 'Cancel plan' ) }
-								<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
-								{ steps.length > 1 && (
-									<span className="cancel-purchase-form__step">
-										{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
-											args: {
-												currentStep: steps.indexOf( surveyStep ) + 1,
-												totalSteps: steps.length,
-											},
-										} ) }
-									</span>
-								) }
-							</BlankCanvas.Header>
-							<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
-							<BlankCanvas.Footer>
-								<div className="cancel-purchase-form__actions">
-									<div className="cancel-purchase-form__buttons">
-										{ this.getStepButtons().map( ( button, key ) =>
-											cloneElement( button, { key } )
-										) }
-									</div>
-									{ ( isChatAvailable || isChatActive ) &&
-										supportVariation === SUPPORT_HAPPYCHAT && (
-											<PrecancellationChatButton
-												icon="chat_bubble"
-												onClick={ this.closeDialog }
-												purchase={ purchase }
-												surveyStep={ surveyStep }
-											/>
-										) }
-								</div>
-							</BlankCanvas.Footer>
-						</BlankCanvas>
-					) }
-				</>
-			);
-		}
+		const { isChatActive, isChatAvailable, purchase, site, supportVariation, translate } =
+			this.props;
+		const steps = this.getAllSurveySteps();
 
 		return (
-			<Dialog
-				isVisible={ this.props.isVisible }
-				onClose={ this.closeDialog }
-				buttons={ this.getStepButtons() }
-				className="cancel-purchase-form__dialog"
-			>
-				{ this.surveyContent() }
+			<>
 				<QueryPlans />
 				{ site && <QuerySitePlans siteId={ site.ID } /> }
-			</Dialog>
+				<QuerySupportTypes />
+				{ this.props.isVisible && (
+					<BlankCanvas className="cancel-purchase-form">
+						<BlankCanvas.Header onBackClick={ this.closeDialog }>
+							{ this.getHeaderTitle() }
+							<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
+							{ steps.length > 1 && (
+								<span className="cancel-purchase-form__step">
+									{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
+										args: {
+											currentStep: steps.indexOf( surveyStep ) + 1,
+											totalSteps: steps.length,
+										},
+									} ) }
+								</span>
+							) }
+						</BlankCanvas.Header>
+						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
+						<BlankCanvas.Footer>
+							<div className="cancel-purchase-form__actions">
+								<div className="cancel-purchase-form__buttons">
+									{ this.getStepButtons().map( ( button, key ) =>
+										cloneElement( button, { key } )
+									) }
+								</div>
+								{ ( isChatAvailable || isChatActive ) && supportVariation === SUPPORT_HAPPYCHAT && (
+									<PrecancellationChatButton
+										icon="chat_bubble"
+										onClick={ this.closeDialog }
+										purchase={ purchase }
+										surveyStep={ surveyStep }
+									/>
+								) }
+							</div>
+						</BlankCanvas.Footer>
+					</BlankCanvas>
+				) }
+			</>
 		);
 	}
 }
 
 export default connect(
-	( state, { purchase } ) => ( {
+	( state, { purchase, linkedPurchases } ) => ( {
 		isChatAvailable: isHappychatAvailable( state ),
 		isChatActive: hasActiveHappychatSession( state ),
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
-		isJetpack: isJetpackPlan( purchase ) || isJetpackProduct( purchase ),
 		downgradePlanPrice: getDowngradePlanRawPrice( state, purchase ),
 		supportVariation: getSupportVariation( state ),
 		site: getSite( state, purchase.siteId ),
-		willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation( state, purchase.id ),
+		willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
+			state,
+			purchase.id,
+			linkedPurchases
+		),
 		atomicTransfer: getAtomicTransfer( state, purchase.siteId ),
+		hasBackupsFeature: siteHasFeature( state, purchase.siteId, WPCOM_FEATURES_BACKUPS ),
 	} ),
 	{
 		fetchAtomicTransfer,

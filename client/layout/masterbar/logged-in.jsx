@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Popover, Button } from '@automattic/components';
+import { shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -490,15 +491,18 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isCheckout, isCheckoutPending } = this.props;
+		const { isInEditor, isCheckout, isCheckoutPending, user, locale } = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending ) {
 			return this.renderCheckout();
 		}
 		if ( isMobile ) {
-			const isHelpCenterEnabled = config.isEnabled( 'editor/help-center' );
-			if ( this.props.isInEditor && isHelpCenterEnabled ) {
+			if (
+				config.isEnabled( 'editor/help-center' ) &&
+				shouldShowHelpCenterToUser( user.ID, locale ) &&
+				isInEditor
+			) {
 				return (
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">

@@ -2,21 +2,21 @@ import { CheckboxControl } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import classNames from 'classnames';
 
-type SelectCardProps = {
+type SelectCardProps< T > = {
 	children: React.ReactNode;
 	className?: string;
-	onChange: ( checked: boolean, value: string ) => void;
+	onChange: ( checked: boolean, value: T ) => void;
 	selected: boolean;
-	value: string;
+	value: T;
 };
 
-const SelectCard: React.FC< SelectCardProps > = ( {
+const SelectCard = < T, >( {
 	children,
 	className,
 	onChange,
 	selected,
 	value,
-} ) => {
+}: SelectCardProps< T > ) => {
 	const handleClick = ( evt: React.MouseEvent ) => {
 		onChange( ! selected, value );
 		evt.stopPropagation();

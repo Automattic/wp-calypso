@@ -28,7 +28,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
-		plansPage = new PlansPage( page, 'legacy' );
+		plansPage = new PlansPage( page, 'current' );
 	} );
 
 	it( 'Navigate to Upgrades > Plans', async function () {
@@ -54,7 +54,6 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 
 	describe( 'Renew Plan', function () {
 		it( `Details of purchased plan ${ planTier } are shown`, async function () {
-			const plansPage = new PlansPage( page, 'legacy' );
 			await plansPage.clickManagePlan();
 
 			individualPurchasesPage = new IndividualPurchasePage( page );

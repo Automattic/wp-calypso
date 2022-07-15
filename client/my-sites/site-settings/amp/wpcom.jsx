@@ -1,3 +1,4 @@
+import { WPCOM_FEATURES_INSTALL_PLUGINS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
@@ -6,10 +7,12 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './wpcom.scss';
 
@@ -46,9 +49,42 @@ class AmpWpcom extends Component {
 		page( '/customize/amp/' + this.props.siteSlug );
 	};
 
+	renderUpgradeNotice() {
+		const { canInstallPlugins, siteSlug, translate } = this.props;
+		let tracksProps;
+
+		if ( ! canInstallPlugins ) {
+			tracksProps = {
+				tracksImpressionName: 'calypso_settings_amp_upsell_impression',
+				tracksClickName: 'calypso_settings_amp_upsell_click',
+				event: 'calypso_settings_amp_upsell',
+			};
+		}
+
+		return (
+			<UpsellNudge
+				title={ translate( 'Install the AMP plugin' ) }
+				description={ translate(
+					'AMP enables the creation of websites and ads that load near instantly, ' +
+						'giving site visitors a smooth, more engaging experience on mobile and desktop.'
+				) }
+				plan={ PLAN_WPCOM_PRO }
+				href={ `/plugins/amp/${ siteSlug }` }
+				forceHref={ true }
+				showIcon={ true }
+				forceDisplay
+				{ ...tracksProps }
+			/>
+		);
+	}
+
 	render() {
 		const {
-			fields: { amp_is_supported: ampIsSupported, amp_is_enabled: ampIsEnabled },
+			fields: {
+				amp_is_supported: ampIsSupported,
+				amp_is_deprecated: ampIsDeprecated,
+				amp_is_enabled: ampIsEnabled,
+			},
 			isRequestingSettings,
 			isSavingSettings,
 			siteSlug,
@@ -60,6 +96,15 @@ class AmpWpcom extends Component {
 
 		if ( ! ampIsSupported ) {
 			return null;
+		}
+
+		if ( ampIsDeprecated ) {
+			return (
+				<div className="amp__main site-settings__traffic-settings">
+					<SettingsSectionHeader title={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
+					{ this.renderUpgradeNotice() }
+				</div>
+			);
 		}
 
 		return (
@@ -105,8 +150,14 @@ class AmpWpcom extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		siteSlug: getSelectedSiteSlug( state ),
-	} ),
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const canInstallPlugins = siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS );
+
+		return {
+			siteSlug: getSelectedSiteSlug( state ),
+			canInstallPlugins,
+		};
+	},
 	{ recordTracksEvent }
 )( localize( AmpWpcom ) );

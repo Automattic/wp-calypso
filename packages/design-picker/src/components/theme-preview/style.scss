@@ -1,0 +1,20 @@
+@import '@automattic/onboarding/styles/mixins';
+
+.theme-preview__container {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	overflow: hidden;
+	pointer-events: none;
+
+	&--loading {
+		@include onboarding-placeholder();
+	}
+}
+
+.theme-preview__frame {
+	border: none;
+	transform-origin: 0 0;
+}

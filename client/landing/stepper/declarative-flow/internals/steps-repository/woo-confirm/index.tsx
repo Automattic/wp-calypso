@@ -159,12 +159,18 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			! ( eligibilityWarnings && eligibilityWarnings?.length ); // there is no warnings from eligibility (warnings).
 	}
 
+	const flags = new URLSearchParams( window.location.search ).get( 'flags' );
+	const queryArgs = {
+		siteSlug: wpcomDomain,
+		...( flags ? { flags } : {} ),
+	};
+
 	const siteUpgrading = {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
 			{
-				redirect_to: addQueryArgs( { siteSlug: wpcomDomain }, '/setup/wooTransfer' ),
-				cancel_to: addQueryArgs( { siteSlug: wpcomDomain }, '/setup/wooConfirm' ),
+				redirect_to: addQueryArgs( queryArgs, '/setup/wooTransfer' ),
+				cancel_to: addQueryArgs( queryArgs, '/setup/wooConfirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),

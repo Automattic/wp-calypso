@@ -1,5 +1,5 @@
 /**
- * @group gutenberg
+ * @group editor-tracking
  */
 
 import {
@@ -11,15 +11,14 @@ import {
 	PageTemplateModalComponent,
 	TestAccount,
 	EditorTracksEventManager,
-	TracksEventProperties,
 	SiteType,
-	TEST_LOCALES,
 	FullSiteEditorPage,
 	TemplatePartBlock,
 	OpenInlineInserter,
 	HeaderBlock,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import type { TracksEventProperties } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
@@ -79,7 +78,7 @@ describe(
 
 					// Our current list doesn't include GB english, which is on some of our test sites.
 					// Adding that here so we don't accidentally expand our i18n tests.
-					const expectedLocales = new Set( [ ...TEST_LOCALES, 'en-gb' ] );
+					const expectedLocales = new Set( [ ...DataHelper.getMag16Locales(), 'en-gb' ] );
 					const numericRegex = /^\d+$/;
 
 					let tracksEventProperties: TracksEventProperties;
@@ -98,7 +97,7 @@ describe(
 					} );
 
 					it( '"blog_id" is a numeric value', async function () {
-						expect( numericRegex.test( tracksEventProperties.blog_id ) ).toBe( true );
+						expect( numericRegex.test( tracksEventProperties.blog_id.toString() ) ).toBe( true );
 					} );
 
 					it( '"site_type" matches the current site type', async function () {
@@ -107,19 +106,25 @@ describe(
 					} );
 
 					it( '"user_locale" is a valid locale', async function () {
-						expect( expectedLocales.has( tracksEventProperties.user_locale ) ).toBe( true );
+						expect( expectedLocales.has( tracksEventProperties.user_locale.toString() ) ).toBe(
+							true
+						);
 					} );
 
 					it( '"blog_tz" is a numeric value', async function () {
-						expect( numericRegex.test( tracksEventProperties.blog_tz ) ).toBe( true );
+						expect( numericRegex.test( tracksEventProperties.blog_tz.toString() ) ).toBe( true );
 					} );
 
 					it( '"user_lang" is a valid locale', async function () {
-						expect( expectedLocales.has( tracksEventProperties.user_lang ) ).toBe( true );
+						expect( expectedLocales.has( tracksEventProperties.user_lang.toString() ) ).toBe(
+							true
+						);
 					} );
 
 					it( '"blog_lang" is a valid locale', async function () {
-						expect( expectedLocales.has( tracksEventProperties.blog_lang ) ).toBe( true );
+						expect( expectedLocales.has( tracksEventProperties.blog_lang.toString() ) ).toBe(
+							true
+						);
 					} );
 				} );
 			} );

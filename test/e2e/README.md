@@ -25,7 +25,7 @@ Calypso E2E requires the following:
 
 - [NodeJS 16.13](https://nodejs.org/en/blog/release/v16.13.2/) or higher
 - [TypeScript 4.5](https://www.staging-typescript.org/docs/handbook/release-notes/typescript-4-5.html) or higher
-- [Playwright 1.18](https://playwright.dev/docs/release-notes#version-118) or higher
+- [Playwright 1.22](https://playwright.dev/docs/release-notes#version-122) or higher
 - [yarn 3.1](https://github.com/yarnpkg/berry) or higher
 
 ## Quick start
@@ -56,8 +56,10 @@ nvm use <node_version>
 
 5. install `yarn`.
 
+See [this guide](https://yarnpkg.com/getting-started/install).
+
 ```
-npm install yarn
+corepack enable
 ```
 
 6. clone this repository
@@ -87,7 +89,7 @@ cd test/e2e
 10. [decrypt](docs/test_environment.md) the secrets file.
 
 ```
-export E2E_SECRETS_KEY='<secret key from the Automattic secret store>'
+export E2E_SECRETS_KEY='Calypso E2E Config decode key from the Automattic secret store>'
 yarn decrypt-secrets
 ```
 

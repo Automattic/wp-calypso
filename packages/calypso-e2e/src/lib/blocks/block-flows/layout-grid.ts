@@ -1,6 +1,6 @@
 import { Locator } from 'playwright';
-import { BlockFlow, EditorContext, PublishedPostContext } from '..';
 import { OpenInlineInserter } from '../../pages';
+import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
 // As a layout block, there's pretty massive amounts of potential variability in configuration.
 // To keep things simple and maintainable, I think it's best to just lock in a simple, singular case (two columns of text) for the smoke test.

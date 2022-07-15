@@ -564,7 +564,13 @@ export class DateRange extends Component {
 						},
 					} ) }
 				{ startDate && endDate && (
-					<Button className="date-range__info-btn" borderless compact onClick={ this.resetDates }>
+					<Button
+						className="date-range__info-btn"
+						borderless
+						compact
+						onClick={ this.resetDates }
+						aria-label={ this.props.translate( 'Reset selected dates' ) }
+					>
 						{ this.props.translate( '{{icon/}} reset selected dates', {
 							components: { icon: <Gridicon aria-hidden="true" icon="cross-small" /> },
 						} ) }
@@ -649,9 +655,16 @@ export class DateRange extends Component {
 			'date-range__picker': true,
 		};
 
+		const calendarInitialDate =
+			this.props.firstSelectableDate ||
+			( this.props.lastSelectableDate &&
+				moment( this.props.lastSelectableDate ).subtract( 1, 'month' ) ) ||
+			this.state.startDate;
+
 		return (
 			<DatePicker
 				calendarViewDate={ this.state.focusedMonth }
+				calendarInitialDate={ this.momentDateToJsDate( calendarInitialDate ) }
 				rootClassNames={ rootClassNames }
 				modifiers={ modifiers }
 				showOutsideDays={ false }

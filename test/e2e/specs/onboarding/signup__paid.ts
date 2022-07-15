@@ -30,14 +30,9 @@ const isStagingOrProd = DataHelper.getCalypsoURL()
 skipDescribeIf( isStagingOrProd )(
 	DataHelper.createSuiteTitle( 'Signup: WordPress.com Paid' ),
 	function () {
-		const inboxId = SecretsManager.secrets.mailosaur.inviteInboxId;
-		const username = DataHelper.getUsername( { prefix: 'paid' } );
-		const email = DataHelper.getTestEmailAddress( {
-			inboxId: inboxId,
-			prefix: username,
+		const testUser = DataHelper.getNewTestUser( {
+			usernamePrefix: 'paid',
 		} );
-		const signupPassword = SecretsManager.secrets.passwordForNewTestSignUps;
-		const blogName = DataHelper.getBlogName();
 		const theme = 'Zoologist';
 
 		let page: Page;
@@ -49,7 +44,7 @@ skipDescribeIf( isStagingOrProd )(
 		} );
 
 		describe( 'Signup and select plan', function () {
-			const targetDomain = `${ blogName }.live`;
+			const targetDomain = `${ testUser.siteName }.live`;
 
 			let cartCheckoutPage: CartCheckoutPage;
 
@@ -65,12 +60,12 @@ skipDescribeIf( isStagingOrProd )(
 
 			it( 'Sign up as new user', async function () {
 				const userSignupPage = new UserSignupPage( page );
-				await userSignupPage.signup( email, username, signupPassword );
+				await userSignupPage.signup( testUser.email, testUser.username, testUser.password );
 			} );
 
 			it( 'Select a .live domain', async function () {
 				const domainSearchComponent = new DomainSearchComponent( page );
-				await domainSearchComponent.search( blogName );
+				await domainSearchComponent.search( testUser.username );
 				await domainSearchComponent.selectDomain( targetDomain );
 			} );
 
@@ -132,7 +127,15 @@ skipDescribeIf( isStagingOrProd )(
 		describe( 'Onboarding flow', function () {
 			it( 'Select "build" path', async function () {
 				startSiteFlow = new StartSiteFlow( page );
-				await startSiteFlow.clickButton( 'Start building' );
+
+				await page.waitForLoadState( 'networkidle' );
+				const isGoalsStep = await page.isVisible( ':has-text("What are your goals")' );
+
+				if ( isGoalsStep ) {
+					await startSiteFlow.clickButton( 'Continue' );
+				} else {
+					await startSiteFlow.clickButton( 'Start building' );
+				}
 			} );
 
 			it( 'Select a theme to preview', async function () {

@@ -10,11 +10,13 @@ export function useCanUserManageOptions() {
 	const siteId = useSelect(
 		( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
 	);
-	const isRequesting = useSelector( ( state ) => isRequestingSites( state ) );
 
+	const isRequesting = useSelector( ( state ) => isRequestingSites( state ) );
 	const hasManageOptionsCap = useSelector( ( state ) =>
 		canCurrentUser( state, siteId as number, 'manage_options' )
 	);
 
-	return isRequesting ? 'requesting' : hasManageOptionsCap ?? false;
+	if ( siteId ) {
+		return isRequesting ? 'requesting' : hasManageOptionsCap ?? false;
+	}
 }

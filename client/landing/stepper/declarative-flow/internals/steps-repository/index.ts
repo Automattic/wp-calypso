@@ -28,6 +28,8 @@ export { default as processing } from './processing-step';
 export { default as error } from './error-step';
 export { default as wooConfirm } from './woo-confirm';
 export { default as wooVerifyEmail } from './woo-verify-email';
+export { default as editEmail } from './edit-email';
+export { default as difmStartingPoint } from './difm-starting-point';
 
 export type StepPath =
 	| 'courses'
@@ -59,4 +61,6 @@ export type StepPath =
 	| 'wooInstallPlugins'
 	| 'error'
 	| 'wooConfirm'
-	| 'wooVerifyEmail';
+	| 'wooVerifyEmail'
+	| 'editEmail'
+	| 'difmStartingPoint';

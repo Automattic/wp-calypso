@@ -4,6 +4,8 @@ export const GROUP_WPCOM = 'GROUP_WPCOM';
 export const PRODUCT_NO_ADS = 'no-adverts/no-adverts.php';
 export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
+export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';
+export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
 
 export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];
 
@@ -33,6 +35,7 @@ export const PLAN_P2_PLUS = 'wp_p2_plus_monthly';
 export const PLAN_P2_FREE = 'p2_free_plan'; // Not a real plan; it's a renamed WP.com Free for the P2 project.
 export const PLAN_WPCOM_FLEXIBLE = 'wpcom-flexible'; // Not a real plan; it's a renamed WP.com Free for the plans overhaul.
 export const PLAN_WPCOM_PRO = 'pro-plan';
+export const PLAN_WPCOM_PRO_MONTHLY = 'pro-plan-monthly';
 export const PLAN_WPCOM_STARTER = 'starter-plan';
 
 export const WPCOM_PLANS = <const>[
@@ -59,6 +62,7 @@ export const WPCOM_PLANS = <const>[
 	PLAN_P2_FREE,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_WPCOM_STARTER,
 ];
 
@@ -67,6 +71,7 @@ export const WPCOM_MONTHLY_PLANS = <const>[
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_WPCOM_PRO_MONTHLY,
 ];
 
 export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';

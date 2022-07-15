@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
@@ -25,16 +26,19 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
 import { isOffline } from 'calypso/state/application/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
 	getSelectedSiteId,
+	getSectionName,
 	masterbarIsVisible,
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
@@ -240,7 +244,7 @@ class Layout extends Component {
 			};
 		};
 
-		const loadInlineHelp = this.shouldLoadInlineHelp();
+		const loadInlineHelp = this.shouldLoadInlineHelp() && ! this.props.disableFAB;
 
 		return (
 			<div className={ sectionClass }>
@@ -366,6 +370,15 @@ export default withCurrentRoute(
 		const sidebarIsHidden = ! secondary || isWcMobileApp();
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
+		const isEditor = getSectionName( state ) === 'gutenberg-editor';
+		const userAllowedToHelpCenter = shouldShowHelpCenterToUser(
+			getCurrentUserId( state ),
+			getCurrentLocaleSlug( state )
+		);
+
+		const disableFAB =
+			isEditor && config.isEnabled( 'editor/help-center' ) && userAllowedToHelpCenter;
+
 		return {
 			masterbarIsHidden,
 			sidebarIsHidden,
@@ -395,6 +408,7 @@ export default withCurrentRoute(
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
+			disableFAB,
 		};
 	} )( Layout )
 );

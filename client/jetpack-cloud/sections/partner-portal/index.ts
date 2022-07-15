@@ -58,6 +58,7 @@ export default function () {
 		controller.requireAccessContext,
 		controller.requireTermsOfServiceConsentContext,
 		controller.requireSelectedPartnerKeyContext,
+		controller.requireValidPaymentMethod,
 		controller.assignLicenseContext,
 		makeLayout,
 		clientRender

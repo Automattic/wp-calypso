@@ -1,12 +1,19 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button } from '@automattic/components';
-import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useRef } from 'react';
-import { getDesignPreviewUrl, getMShotOptions } from '../utils';
+import {
+	DEFAULT_VIEWPORT_WIDTH,
+	DEFAULT_VIEWPORT_HEIGHT,
+	MOBILE_VIEWPORT_WIDTH,
+	STICKY_OFFSET_TOP,
+} from '../constants';
+import { getDesignPreviewUrl } from '../utils';
+import ThemePreview from './theme-preview';
 import type { Design } from '../types';
 import './style.scss';
 
@@ -14,23 +21,24 @@ import './style.scss';
 const noop = () => {};
 
 interface GeneratedDesignThumbnailProps {
-	slug: string;
 	thumbnailUrl: string;
 	isSelected: boolean;
 	onPreview: () => void;
+	label: string;
 }
 
 const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
-	slug,
 	thumbnailUrl,
 	isSelected,
 	onPreview,
+	label,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	return (
 		<button
 			type="button"
+			aria-label={ label }
 			className={ classnames( 'generated-design-thumbnail', { 'is-selected': isSelected } ) }
 			onClick={ onPreview }
 		>
@@ -44,12 +52,9 @@ const GeneratedDesignThumbnail: React.FC< GeneratedDesignThumbnailProps > = ( {
 				</svg>
 			</span>
 			<span className="generated-design-thumbnail__image">
-				<MShotsImage
+				<ThemePreview
 					url={ thumbnailUrl }
-					alt=""
-					aria-labelledby={ `generated-design-thumbnail__image__${ slug }` }
-					options={ getMShotOptions( { isMobile } ) }
-					scrollable={ false }
+					viewportWidth={ isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH }
 				/>
 			</span>
 		</button>
@@ -80,9 +85,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	onViewMore,
 } ) => {
 	const { __ } = useI18n();
-
 	const isMobile = useViewportMatch( 'small', '<' );
-
 	const wrapperRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
@@ -96,7 +99,10 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 				return;
 			}
 
-			const offsetTop = wrapperRef.current.offsetTop - window.pageYOffset;
+			const offsetTop = Math.max(
+				wrapperRef.current.offsetTop - window.pageYOffset,
+				STICKY_OFFSET_TOP
+			);
 			wrapperRef.current.style.setProperty( 'height', `calc( 100vh - ${ offsetTop }px` );
 		};
 
@@ -120,10 +126,17 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 						designs.map( ( design, index ) => (
 							<GeneratedDesignThumbnail
 								key={ design.slug }
-								slug={ design.slug }
-								thumbnailUrl={ getDesignPreviewUrl( design, { language: locale, verticalId } ) }
+								thumbnailUrl={ getDesignPreviewUrl( design, {
+									language: locale,
+									verticalId,
+									viewport_width: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
+									viewport_height: DEFAULT_VIEWPORT_HEIGHT,
+									use_screenshot_overrides: true,
+								} ) }
 								isSelected={ selectedDesign?.slug === design.slug }
 								onPreview={ () => onPreview( design, index ) }
+								/* translators: %s: Option number. Ex. Preview design option 1. */
+								label={ sprintf( __( 'Preview design option %s' ), index + 1 ) }
 							/>
 						) ) }
 					<Button className="generated-design-picker__view-more" onClick={ onViewMore }>

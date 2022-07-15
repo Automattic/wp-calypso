@@ -5,7 +5,7 @@ interface Availability {
 
 export interface HappyChatAvailability {
 	locale: string;
-	isUserEligible: boolean;
+	is_user_eligible: boolean;
 	supportLevel:
 		| 'free'
 		| 'personal'
@@ -17,12 +17,13 @@ export interface HappyChatAvailability {
 		| 'jetpack-paid'
 		| 'p2-plus';
 	nickname: string;
-	isClosed: boolean;
+	is_chat_closed: boolean;
 	availability: Availability;
 }
 
 export interface OtherSupportAvailability {
 	is_user_eligible_for_upwork: boolean;
-	is_user_eligible_for_kayako: boolean;
+	is_user_eligible_for_tickets: boolean;
 	is_user_eligible_for_directly: boolean;
+	is_user_eligible_for_chat: boolean;
 }

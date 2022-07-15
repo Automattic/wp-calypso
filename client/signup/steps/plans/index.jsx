@@ -25,6 +25,7 @@ import PlansComparison, {
 	isStarterPlanEnabled,
 } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -174,11 +175,19 @@ export class PlansStep extends Component {
 		if ( eligibleForProPlan ) {
 			const selectedDomainConnection =
 				this.props.progress?.domains?.domainItem?.product_slug === 'domain_map';
+			const intervalType = this.getIntervalType();
 			return (
 				<div>
 					{ errorDisplay }
+					<ExperimentalIntervalTypeToggle
+						intervalType={ intervalType }
+						isInSignup={ true }
+						plans={ [] }
+						eligibleForWpcomMonthlyPlans={ true }
+					/>
 					<PlansComparison
 						isInSignup={ true }
+						intervalType={ intervalType }
 						onSelectPlan={ this.onSelectPlan }
 						selectedSiteId={ selectedSite?.ID || undefined }
 						selectedDomainConnection={ selectedDomainConnection }

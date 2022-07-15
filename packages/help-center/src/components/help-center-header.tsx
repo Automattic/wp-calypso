@@ -1,5 +1,5 @@
 import { CardHeader, Button, Flex } from '@wordpress/components';
-import { closeSmall, chevronUp, lineSolid, commentContent, Icon } from '@wordpress/icons';
+import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useEffect, useState } from 'react';
@@ -9,9 +9,15 @@ import type { Header, WindowState } from '../types';
 import type { ReactElement } from 'react';
 
 export function ArticleTitle() {
-	const { search } = useLocation();
-	const params = new URLSearchParams( search );
-	return <span className="help-center-header__article-title">{ params.get( 'title' ) }</span>;
+	const location = useLocation();
+	const { title } = location.state;
+
+	return (
+		<>
+			<Icon icon={ page } />
+			<span className="help-center-header__article-title">{ title }</span>
+		</>
+	);
 }
 
 const SupportModeTitle = (): ReactElement => {
@@ -67,7 +73,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 	return (
 		<CardHeader className={ classNames }>
 			<Flex>
-				<p className="help-center-header__text">
+				<p id="header-text" className="help-center-header__text">
 					{ isMinimized ? (
 						<Switch>
 							<Route path="/" exact>
@@ -82,12 +88,6 @@ const HelpCenterHeader: React.FC< Header > = ( {
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
 					) }
-					<span
-						className="help-center-header__a8c-only-badge"
-						title="The help center is only visible to Automatticians at this stage."
-					>
-						a8c only
-					</span>
 					{ isMinimized && unreadCount ? (
 						<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
 					) : null }
@@ -98,6 +98,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							className={ 'help-center-header__maximize' }
 							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 							icon={ chevronUp }
+							tooltipPosition="top left"
 							onClick={ requestMaximize }
 						/>
 					) : (
@@ -105,6 +106,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							className={ 'help-center-header__minimize' }
 							label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
 							icon={ lineSolid }
+							tooltipPosition="top left"
 							onClick={ onMinimize }
 						/>
 					) }
@@ -112,6 +114,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 					<Button
 						className={ 'help-center-header__close' }
 						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
+						tooltipPosition="top left"
 						icon={ closeSmall }
 						onClick={ onDismiss }
 					/>

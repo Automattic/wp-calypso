@@ -53,6 +53,13 @@ import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
+/**
+ * Generates a callback to be called after checkout is successfully complete.
+ *
+ * IMPORTANT NOTE: This will not be called for redirect payment methods like
+ * PayPal. They will redirect directly to the post-checkout page decided by
+ * `getThankYouUrl`.
+ */
 export default function useCreatePaymentCompleteCallback( {
 	createUserAndSiteBeforeTransaction,
 	productAliasFromUrl,
@@ -386,14 +393,7 @@ function recordPaymentCompleteAnalytics( {
 		} )
 	);
 	recordPurchase( {
-		cart: {
-			total_cost: responseCart.total_cost,
-			currency: responseCart.currency,
-			is_signup: responseCart.is_signup,
-			products: responseCart.products,
-			coupon_code: responseCart.coupon,
-			total_tax: responseCart.total_tax,
-		},
+		cart: responseCart,
 		orderId: transactionResult?.receipt_id,
 	} );
 

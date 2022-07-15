@@ -38,6 +38,7 @@ import useCreateExistingCards from './use-create-existing-cards';
 import type { StoredCard } from '../../types/stored-cards';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { CartKey } from '@automattic/shopping-cart';
 import type { Stripe } from '@stripe/stripe-js';
 
 export { useCreateExistingCards };
@@ -189,14 +190,10 @@ function useCreateGiropay( {
 function useCreateWeChat( {
 	isStripeLoading,
 	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
 	siteSlug,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
-	stripeConfiguration: StripeConfiguration | null;
-	stripe: Stripe | null;
 	siteSlug?: string | undefined;
 } ): PaymentMethod | null {
 	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
@@ -206,12 +203,10 @@ function useCreateWeChat( {
 			shouldLoad
 				? createWeChatMethod( {
 						store: paymentMethodStore,
-						stripe,
-						stripeConfiguration,
 						siteSlug,
 				  } )
 				: null,
-		[ shouldLoad, paymentMethodStore, stripe, stripeConfiguration, siteSlug ]
+		[ shouldLoad, paymentMethodStore, siteSlug ]
 	);
 }
 
@@ -301,6 +296,7 @@ function useCreateApplePay( {
 	stripe,
 	isApplePayAvailable,
 	isWebPayLoading,
+	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -308,16 +304,17 @@ function useCreateApplePay( {
 	stripe: Stripe | null;
 	isApplePayAvailable: boolean;
 	isWebPayLoading: boolean;
+	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
 
 	const shouldCreateApplePayMethod = isStripeReady && ! isWebPayLoading && isApplePayAvailable;
 
 	const applePayMethod = useMemo( () => {
-		return shouldCreateApplePayMethod && stripe && stripeConfiguration
-			? createApplePayMethod( stripe, stripeConfiguration )
+		return shouldCreateApplePayMethod && stripe && stripeConfiguration && cartKey
+			? createApplePayMethod( stripe, stripeConfiguration, cartKey )
 			: null;
-	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration ] );
+	}, [ shouldCreateApplePayMethod, stripe, stripeConfiguration, cartKey ] );
 
 	return applePayMethod;
 }
@@ -329,6 +326,7 @@ function useCreateGooglePay( {
 	stripe,
 	isGooglePayAvailable,
 	isWebPayLoading,
+	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
@@ -336,6 +334,7 @@ function useCreateGooglePay( {
 	stripe: Stripe | null;
 	isGooglePayAvailable: boolean;
 	isWebPayLoading: boolean;
+	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady =
 		! isStripeLoading &&
@@ -347,10 +346,10 @@ function useCreateGooglePay( {
 		isEnabled( 'checkout/google-pay' );
 
 	return useMemo( () => {
-		return isStripeReady && stripe && stripeConfiguration
-			? createGooglePayMethod( stripe, stripeConfiguration )
+		return isStripeReady && stripe && stripeConfiguration && cartKey
+			? createGooglePayMethod( stripe, stripeConfiguration, cartKey )
 			: null;
-	}, [ stripe, stripeConfiguration, isStripeReady ] );
+	}, [ stripe, stripeConfiguration, isStripeReady, cartKey ] );
 }
 
 export default function useCreatePaymentMethods( {
@@ -419,8 +418,6 @@ export default function useCreatePaymentMethods( {
 	const wechatMethod = useCreateWeChat( {
 		isStripeLoading,
 		stripeLoadingError,
-		stripeConfiguration,
-		stripe,
 		siteSlug,
 	} );
 
@@ -446,6 +443,7 @@ export default function useCreatePaymentMethods( {
 		stripe,
 		isApplePayAvailable,
 		isWebPayLoading,
+		cartKey,
 	} );
 
 	const googlePayMethod = useCreateGooglePay( {
@@ -455,6 +453,7 @@ export default function useCreatePaymentMethods( {
 		stripe,
 		isGooglePayAvailable,
 		isWebPayLoading,
+		cartKey,
 	} );
 
 	const existingCardMethods = useCreateExistingCards( {

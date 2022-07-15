@@ -92,7 +92,7 @@ export class MediaPage {
 		);
 		await elementHandle.click();
 		await this.page.waitForFunction(
-			( element: any ) => element.classList.contains( 'is-selected' ),
+			( element: SVGElement | HTMLElement ) => element.classList.contains( 'is-selected' ),
 			elementHandle
 		);
 	}

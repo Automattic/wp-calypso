@@ -9,7 +9,6 @@ type HomeTemplateSettings = {
 };
 
 export type BlockEditorSettings = {
-	is_fse_eligible: boolean;
 	is_fse_active: boolean;
 	home_template: HomeTemplateSettings;
 };

@@ -14,15 +14,17 @@ import {
 import { emailManagement } from 'calypso/my-sites/email/paths';
 
 const EmailListActiveWarning = ( { domain, selectedSiteId } ) => {
-	const { data, error, isLoading } = useGetEmailAccountsQuery( selectedSiteId, domain.name, {
-		retry: false,
-	} );
-	let emailAccounts = null;
+	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
+		selectedSiteId,
+		domain.name,
+		{ retry: false }
+	);
 
-	if ( ! isLoading && ! error ) {
-		emailAccounts = data?.accounts[ 0 ] ?? [];
-	}
-	const { icon, statusClass, text } = resolveEmailPlanStatus( domain, emailAccounts, isLoading );
+	const { icon, statusClass, text } = resolveEmailPlanStatus(
+		domain,
+		emailAccounts[ 0 ],
+		isLoading
+	);
 
 	if ( statusClass === 'success' ) {
 		return null;

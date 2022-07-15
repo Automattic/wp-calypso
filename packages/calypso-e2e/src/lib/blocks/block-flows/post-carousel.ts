@@ -1,4 +1,4 @@
-import { BlockFlow } from '..';
+import { BlockFlow } from '.';
 
 const blockParentSelector = '[aria-label="Block: Post Carousel"]';
 

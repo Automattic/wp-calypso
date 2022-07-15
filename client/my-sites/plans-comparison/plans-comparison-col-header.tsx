@@ -1,16 +1,12 @@
-import { TYPE_PRO, TYPE_STARTER } from '@automattic/calypso-products';
+import { TYPE_STARTER, TERM_MONTHLY } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
-import PlanPrice from 'calypso/my-sites/plan-price';
+import classNames from 'classnames';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import type { Plan } from '@automattic/calypso-products';
 import type { translate } from 'i18n-calypso';
 
 interface Props {
-	currencyCode: string;
 	plan: Plan;
-	price?: number;
-	originalPrice?: number;
-	isExperiment?: boolean;
 	onClick?: ( productSlug: string ) => void;
 	translate: typeof translate;
 }
@@ -33,6 +29,11 @@ const PlanTitle = styled.h2`
 			font-family: Recoleta;
 		}
 	}
+
+	/* Force title element height to 96px; to keep plans title cells aligned. */
+	@media ( min-width: ${ SCREEN_BREAKPOINT_SIGNUP + 1 }px ) and ( max-width: 870px ) {
+		height: 96px;
+	}
 `;
 
 const PlanDescription = styled.div`
@@ -50,6 +51,10 @@ const PlanDescription = styled.div`
 		margin-bottom: 0.75rem;
 	}
 
+	li.is-hidden {
+		visibility: hidden;
+	}
+
 	@media screen and ( max-width: ${ SCREEN_BREAKPOINT_SIGNUP }px ) {
 		.is-section-signup & {
 			display: none;
@@ -63,98 +68,45 @@ const PlanDescription = styled.div`
 	}
 `;
 
-const PriceContainer = styled.div`
-	display: flex;
-	flex-direction: row;
-	font-family: Recoleta;
-	font-weight: 500;
-
-	.plan-price {
-		font-size: 2.75rem;
-		line-height: 1;
-	}
-`;
-
-const BillingTimeFrame = styled.div`
-	color: var( --studio-gray-40 );
-	font-size: 0.75rem;
-	font-weight: 500;
-	margin: 0.5rem 0 1rem;
-`;
-
 export const PlansComparisonColHeader: React.FunctionComponent< Props > = ( {
-	currencyCode,
 	plan,
-	price,
-	originalPrice,
 	children,
 	translate,
-	isExperiment,
 } ) => {
-	const isDiscounted = typeof originalPrice === 'number';
+	const hiddenOnMonthlyClass = classNames( {
+		'is-hidden': plan?.term === TERM_MONTHLY,
+	} );
 
 	return (
 		<th scope="col">
 			<PlanTitle>{ plan.getTitle() }</PlanTitle>
-
 			<PlanDescription>
-				{ plan.type === TYPE_STARTER && isExperiment && (
+				{ plan.type === TYPE_STARTER ? (
 					<>
-						<p>Great for blogs and simple sites:</p>
+						<p>{ translate( 'Great for blogs and simple sites:' ) }</p>
 						<ul>
-							<li>Custom domain name.</li>
-							<li>Collect payments and donations.</li>
-							<li>6GB of storage for images.</li>
-							<li>Automatic WordPress updates.</li>
-							<li>A la carte upgrades available.</li>
+							<li>{ translate( 'Custom domain name.' ) }</li>
+							<li>{ translate( 'Collect payments and donations.' ) }</li>
+							<li>{ translate( '6GB of storage for images.' ) }</li>
+							<li>{ translate( 'Automatic WordPress updates' ) }.</li>
+							<li>{ translate( 'A la carte upgrades available.' ) }</li>
+						</ul>
+					</>
+				) : (
+					<>
+						<p>{ translate( 'Great for business and custom sites:' ) }</p>
+						<ul>
+							<li>{ translate( 'Unlock 50k+ plugins and themes.' ) }</li>
+							<li>{ translate( 'Advanced ecommerce tools.' ) }</li>
+							<li>{ translate( 'Premium website themes.' ) }</li>
+							<li>{ translate( '50GB of media storage.' ) }</li>
+							<li className={ hiddenOnMonthlyClass }>
+								{ translate( '24-hour live chat support.' ) }
+							</li>
 						</ul>
 					</>
 				) }
-
-				{ plan.type === TYPE_PRO && isExperiment && (
-					<>
-						<p>Great for business and custom sites:</p>
-						<ul>
-							<li>Unlock 50k+ plugins and themes.</li>
-							<li>Advanced ecommerce tools.</li>
-							<li>Premium website themes.</li>
-							<li>50GB of media storage.</li>
-							<li>24-hour live chat support.</li>
-						</ul>
-					</>
-				) }
-
-				{ ! isExperiment && plan.getDescription() }
 			</PlanDescription>
-			<PriceContainer>
-				{ isDiscounted && (
-					<>
-						<PlanPrice
-							currencyCode={ currencyCode }
-							rawPrice={ originalPrice }
-							displayFlatPrice={ true }
-							translate={ translate }
-							original
-						/>
-						<PlanPrice
-							currencyCode={ currencyCode }
-							displayFlatPrice={ true }
-							rawPrice={ price }
-							translate={ translate }
-							discounted
-						/>
-					</>
-				) }
-				{ ! isDiscounted && (
-					<PlanPrice
-						currencyCode={ currencyCode }
-						displayFlatPrice={ true }
-						rawPrice={ price }
-						translate={ translate }
-					/>
-				) }
-			</PriceContainer>
-			<BillingTimeFrame>{ plan.getBillingTimeFrame() }</BillingTimeFrame>
 			{ children }
 		</th>
 	);

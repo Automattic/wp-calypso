@@ -5,8 +5,10 @@ import PropTypes from 'prop-types';
 import Badge from 'calypso/components/badge';
 import MaterialIcon from 'calypso/components/material-icon';
 import SectionHeader from 'calypso/components/section-header';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { getEmailForwardAddress, isEmailForward, isEmailUserAdmin } from 'calypso/lib/emails';
 import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-constants';
+import { getGSuiteSubscriptionStatus } from 'calypso/lib/gsuite';
 import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
 import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
 
@@ -84,10 +86,21 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 	}
 
 	if ( ! mailboxes || mailboxes.length < 1 ) {
+		let missingMailboxesText = translate( 'No mailboxes' );
+
+		if (
+			isRecentlyRegistered( domain.registrationDate, 45 ) &&
+			getGSuiteSubscriptionStatus( domain ) === 'unknown'
+		) {
+			missingMailboxesText = translate(
+				'We are configuring your mailboxes. You will receive an email shortly when they are ready to use.'
+			);
+		}
+
 		return (
 			<MailboxListHeader accountType={ accountType }>
 				<MailboxListItem hasNoEmails>
-					<span>{ translate( 'No mailboxes' ) }</span>
+					<span>{ missingMailboxesText }</span>
 				</MailboxListItem>
 			</MailboxListHeader>
 		);
@@ -117,7 +130,9 @@ function EmailPlanMailboxesList( { account, domain, isLoadingEmails, mailboxes }
 
 				<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
 
-				<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
+				{ ! mailbox.temporary && (
+					<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
+				) }
 			</MailboxListItem>
 		);
 	} );

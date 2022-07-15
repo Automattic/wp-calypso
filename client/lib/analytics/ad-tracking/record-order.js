@@ -1,10 +1,11 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import { isJetpackPlan, isJetpackProduct } from '@automattic/calypso-products';
 import {
 	costToUSD,
 	isAdTrackingAllowed,
 	refreshCountryCodeCookieGdpr,
 } from 'calypso/lib/analytics/utils';
+import { jetpackCartToGaPurchase } from '../utils/jetpack-cart-to-ga-purchase';
+import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
 import {
 	debug,
 	isCriteoEnabled,
@@ -34,6 +35,7 @@ import {
 } from './constants';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
+import { fireJetpackEcommercePurchase as fireJetpackEcommercePurchaseGA4 } from './google-analytics-4';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
@@ -57,11 +59,6 @@ export async function recordOrder( cart, orderId ) {
 	await loadTrackingScripts();
 
 	if ( cart.is_signup ) {
-		return;
-	}
-
-	if ( cart.total_cost < 0.01 ) {
-		debug( 'recordOrder: [Skipping] total cart cost is less than 0.01' );
 		return;
 	}
 
@@ -167,33 +164,6 @@ export async function recordOrder( cart, orderId ) {
 	// event we redirect the user to wordpress.com which causes a domain change preventing the expanding and inspection
 	// of any object in the JS console since they are no longer available.
 	debug( 'recordOrder: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
-}
-
-function splitWpcomJetpackCartInfo( cart ) {
-	const jetpackCost = cart.products
-		.map( ( product ) =>
-			isJetpackPlan( product ) || isJetpackProduct( product ) ? product.cost : 0
-		)
-		.reduce( ( accumulator, cost ) => accumulator + cost, 0 );
-	const wpcomCost = cart.total_cost - jetpackCost;
-	const wpcomProducts = cart.products.filter(
-		( product ) => ! isJetpackPlan( product ) && ! isJetpackProduct( product )
-	);
-	const jetpackProducts = cart.products.filter(
-		( product ) => isJetpackPlan( product ) || isJetpackProduct( product )
-	);
-
-	return {
-		wpcomProducts: wpcomProducts,
-		jetpackProducts: jetpackProducts,
-		containsWpcomProducts: 0 !== wpcomProducts.length,
-		containsJetpackProducts: 0 !== jetpackProducts.length,
-		jetpackCost: jetpackCost,
-		wpcomCost: wpcomCost,
-		jetpackCostUSD: costToUSD( jetpackCost, cart.currency ),
-		wpcomCostUSD: costToUSD( wpcomCost, cart.currency ),
-		totalCostUSD: costToUSD( cart.total_cost, cart.currency ),
-	};
 }
 
 /**
@@ -513,7 +483,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 			value: parseFloat( totalCostUSD ),
 			currency: 'USD',
 			tax: parseFloat( cart.total_tax ?? 0 ),
-			coupon: cart.coupon_code?.toString() ?? '',
+			coupon: cart.coupon?.toString() ?? '',
 			affiliation: brand,
 			items,
 		},
@@ -534,6 +504,10 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
  */
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
+		fireJetpackEcommercePurchaseGA4(
+			jetpackCartToGaPurchase( orderId, cart, wpcomJetpackCartInfo )
+		);
+
 		const jetpackParams = [
 			'event',
 			'purchase',
@@ -542,7 +516,7 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 				value: wpcomJetpackCartInfo.jetpackCostUSD,
 				currency: 'USD',
 				transaction_id: orderId,
-				coupon: cart.coupon_code?.toString() ?? '',
+				coupon: cart.coupon?.toString() ?? '',
 				items: wpcomJetpackCartInfo.jetpackProducts.map(
 					( { product_id, product_name_en, cost, volume } ) => ( {
 						id: product_id.toString(),

@@ -5,7 +5,6 @@
  * See LICENSE.md file in root directory for full license.
  */
 
-const assert = require( 'assert' );
 const getCallee = require( '../get-callee' );
 
 describe( '#getCallee', function () {
@@ -19,7 +18,7 @@ describe( '#getCallee', function () {
 		};
 		const callee = getCallee( node );
 
-		assert.equal( callee, node.callee );
+		expect( callee ).toEqual( node.callee );
 	} );
 
 	it( 'should return first non-sequence callee expression', function () {
@@ -41,7 +40,7 @@ describe( '#getCallee', function () {
 		};
 		const callee = getCallee( node );
 
-		assert.equal( callee, node.callee.expressions[ 1 ] );
+		expect( callee ).toEqual( node.callee.expressions[ 1 ] );
 	} );
 
 	it( 'should return first non-sequence member property', function () {
@@ -59,7 +58,6 @@ describe( '#getCallee', function () {
 			},
 		};
 		const callee = getCallee( node );
-
-		assert.equal( callee, node.callee.property );
+		expect( callee ).toEqual( node.callee.property );
 	} );
 } );

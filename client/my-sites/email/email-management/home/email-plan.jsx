@@ -9,6 +9,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
@@ -72,8 +73,8 @@ UpgradeNavItem.propTypes = {
 	selectedSiteSlug: PropTypes.string.isRequired,
 };
 
-function getAccount( data ) {
-	return data?.accounts?.[ 0 ];
+function getAccount( accounts ) {
+	return accounts?.[ 0 ];
 }
 
 function getMailboxes( data ) {
@@ -82,7 +83,7 @@ function getMailboxes( data ) {
 	return account?.emails ?? [];
 }
 
-function EmailPlan( { domain, selectedSite, source } ) {
+function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -276,15 +277,22 @@ function EmailPlan( { domain, selectedSite, source } ) {
 		);
 	}
 
-	const { data, isLoading } = useGetEmailAccountsQuery( selectedSite.ID, domain.name, {
-		retry: false,
-	} );
+	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
+
+	const { data: emailAccounts = [], isLoading } = useGetEmailAccountsQuery(
+		selectedSite.ID,
+		domain.name,
+		{
+			refetchOnMount: ! addEmailForwardMutationActive,
+			retry: false,
+		}
+	);
 
 	return (
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
-			<HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake>
+			{ ! hideHeaderCake && <HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake> }
 			<EmailPlanHeader
 				domain={ domain }
 				hasEmailSubscription={ hasSubscription }
@@ -292,12 +300,12 @@ function EmailPlan( { domain, selectedSite, source } ) {
 				isLoadingPurchase={ isLoadingPurchase }
 				purchase={ purchase }
 				selectedSite={ selectedSite }
-				emailAccount={ data?.accounts?.[ 0 ] || {} }
+				emailAccount={ getAccount( emailAccounts ) }
 			/>
 			<EmailPlanMailboxesList
-				account={ getAccount( data ) }
+				account={ getAccount( emailAccounts ) }
 				domain={ domain }
-				mailboxes={ getMailboxes( data ) }
+				mailboxes={ getMailboxes( emailAccounts ) }
 				isLoadingEmails={ isLoading }
 			/>
 			<div className="email-plan__actions">
@@ -318,6 +326,7 @@ function EmailPlan( { domain, selectedSite, source } ) {
 
 EmailPlan.propTypes = {
 	domain: PropTypes.object.isRequired,
+	hideHeaderCake: PropTypes.bool,
 	selectedSite: PropTypes.object.isRequired,
 	source: PropTypes.string,
 };

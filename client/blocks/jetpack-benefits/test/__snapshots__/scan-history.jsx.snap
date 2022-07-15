@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Scan History Jetpack Benefit Block If product is standalone scan, the expanded standalone card is rendered 1`] = `
+<div>
+  <div
+    class="jetpack-benefits__card jetpack-benefits__card--standalone card"
+  >
+    <p
+      class="jetpack-benefits__card-headline"
+    >
+      Site Scan
+    </p>
+    <div
+      class="jetpack-benefits__card-content"
+    >
+      <div
+        class="jetpack-benefits__standalone-summary"
+      >
+        <span
+          class="jetpack-benefits__stat-title"
+        >
+          Last Scan
+        </span>
+        <p
+          class="jetpack-benefits__card-stat"
+        >
+          Invalid date
+        </p>
+      </div>
+      <ul
+        class="jetpack-benefits__standalone-stats"
+      >
+        <li>
+          <span
+            class="jetpack-benefits__stat-title"
+          >
+            Malware Threats Found
+          </span>
+          <p
+            class="jetpack-benefits__card-stat"
+          >
+            ...
+          </p>
+        </li>
+        <li>
+          <span
+            class="jetpack-benefits__stat-title"
+          >
+            Threats Fixed (Lifetime)
+          </span>
+          <p
+            class="jetpack-benefits__card-stat"
+          >
+            0
+          </p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;

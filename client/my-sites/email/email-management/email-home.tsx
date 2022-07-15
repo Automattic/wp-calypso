@@ -1,13 +1,13 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
-import { useGetEmailDomainsQuery } from 'calypso/data/emails/use-get-email-domains-query';
+import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
+import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -17,8 +17,8 @@ import EmailListInactive from 'calypso/my-sites/email/email-management/home/emai
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-comparison/stacked';
+import { emailManagementTitanSetUpMailbox, emailManagement } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
@@ -76,7 +76,10 @@ interface EmailManagementHomeProps {
 	source: string;
 }
 
-const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
+const domainHasEmail = ( domain: ResponseDomain ) =>
+	hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
+
+const EmailHome = ( props: EmailManagementHomeProps ) => {
 	const {
 		emailListInactiveHeader,
 		selectedEmailProviderSlug,
@@ -98,23 +101,24 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
 
-	const {
-		data,
-		isLoading: isSiteDomainLoading,
-		remove: removeEmailDomainsCache,
-	} = useGetEmailDomainsQuery( selectedSite?.ID ?? null, {
-		retry: false,
-	} );
+	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
-	// Clear the query data when the component unmounts in order to prevent showing stale data when
-	// users return here after e.g. adding a new email forward.
-	useEffect( () => {
-		return () => {
-			removeEmailDomainsCache();
-		};
-	}, [] );
+	const { data: allDomains = [], isLoading: isSiteDomainLoading } = useGetDomainsQuery(
+		selectedSite?.ID ?? null,
+		{
+			refetchOnMount: ! addEmailForwardMutationActive,
+			retry: false,
+		}
+	);
 
-	const domains = data?.domains?.map( createSiteDomainObject );
+	const domains = allDomains.map( createSiteDomainObject );
+	const nonWpcomDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
+
+	const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );
+	const domainsWithNoEmail = nonWpcomDomains.filter( ( domain ) => ! domainHasEmail( domain ) );
+
+	const isSingleDomainThatHasEmail =
+		domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
 		return <LoadingPlaceholder />;
@@ -124,14 +128,9 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 		return <NoAccess />;
 	}
 
-	const domainHasEmail = ( domain: ResponseDomain ) =>
-		hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) || hasEmailForwards( domain );
-
 	if ( selectedDomainName ) {
 		const selectedDomain =
-			domains.find( ( domain: ResponseDomain ) => {
-				return selectedDomainName === domain.name;
-			} ) ?? ( {} as ResponseDomain );
+			domains.find( ( domain ) => selectedDomainName === domain.name ) ?? ( {} as ResponseDomain );
 
 		if ( ! domainHasEmail( selectedDomain ) ) {
 			return (
@@ -147,12 +146,19 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 
 		return (
 			<ContentWithHeader>
-				<EmailPlan selectedSite={ selectedSite } domain={ selectedDomain } source={ source } />
+				<EmailPlan
+					domain={ selectedDomain }
+					// When users have a single domain with email, they are auto-redirected from the
+					// `/email/:site_slug` page to `/email/:domain/manage/:site_slug`. That's why
+					// we also hide the back button, to avoid scenarios where clicking "Back"
+					// redirects users to the same page as they are currently on.
+					hideHeaderCake={ isSingleDomainThatHasEmail }
+					selectedSite={ selectedSite }
+					source={ source }
+				/>
 			</ContentWithHeader>
 		);
 	}
-
-	const nonWpcomDomains = domains.filter( ( domain: ResponseDomain ) => ! domain.isWPCOMDomain );
 
 	if ( nonWpcomDomains.length < 1 ) {
 		return (
@@ -161,11 +167,6 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 			</ContentWithHeader>
 		);
 	}
-
-	const domainsWithEmail = nonWpcomDomains.filter( domainHasEmail );
-	const domainsWithNoEmail = nonWpcomDomains.filter(
-		( domain: ResponseDomain ) => ! domainHasEmail( domain )
-	);
 
 	if ( domainsWithEmail.length < 1 && domainsWithNoEmail.length === 1 ) {
 		return (
@@ -179,14 +180,19 @@ const EmailHome = ( props: EmailManagementHomeProps ): ReactElement => {
 		);
 	}
 
-	if (
-		domainsWithEmail.length === 1 &&
-		domainsWithNoEmail.length === 0 &&
-		domainsWithEmail[ 0 ].domain === selectedSite?.domain &&
-		( domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount ?? 0 ) > 0 &&
-		domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
-	) {
-		page( emailManagementTitanSetUpMailbox( selectedSite?.slug, selectedSite?.domain ) );
+	if ( isSingleDomainThatHasEmail ) {
+		if (
+			( domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount ?? 0 ) > 0 &&
+			domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
+		) {
+			page.redirect(
+				emailManagementTitanSetUpMailbox( selectedSite.slug, domainsWithEmail[ 0 ].domain )
+			);
+			return null;
+		}
+
+		page.redirect( emailManagement( selectedSite.slug, domainsWithEmail[ 0 ].domain ) );
+		return null;
 	}
 
 	return (

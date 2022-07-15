@@ -1,4 +1,5 @@
 import { Design } from '@automattic/design-picker/src/types';
+import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
 	SiteLaunchError,
@@ -6,6 +7,7 @@ import {
 	LatestAtomicTransferError,
 	AtomicSoftwareStatusError,
 	AtomicSoftwareInstallError,
+	GlobalStyles,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import type {
@@ -106,7 +108,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		verticalId,
 	} );
 
-	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
+	const receiveSiteFailed = ( siteId: number, response: SiteError ) => ( {
 		type: 'RECEIVE_SITE_FAILED' as const,
 		siteId,
 		response,
@@ -188,6 +190,23 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return success;
 	}
 
+	const receiveSiteGlobalStyles = ( siteId: number, globalStyles: GlobalStyles ) => ( {
+		type: 'RECEIVE_SITE_GLOBAL_STYLES' as const,
+		siteId,
+		globalStyles,
+	} );
+
+	function* getGlobalStyles( siteId: number, stylesheet: string ) {
+		const globalStyles: GlobalStyles = yield wpcomRequest( {
+			path: `/sites/${ siteId }/global-styles/themes/${ stylesheet }`,
+			apiNamespace: 'wp/v2',
+		} );
+
+		yield receiveSiteGlobalStyles( siteId, globalStyles );
+
+		return globalStyles;
+	}
+
 	function* saveSiteSettings(
 		siteId: number,
 		settings: {
@@ -234,12 +253,32 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
+	function* setGoalsOnSite( siteSlug: string, goals: SiteGoal[] ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-goals`,
+				apiNamespace: 'wpcom/v2',
+				body: { site_goals: goals },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
 	function* saveSiteTitle( siteId: number, blogname: string | undefined ) {
 		yield saveSiteSettings( siteId, { blogname } );
 	}
 
 	function* saveSiteTagline( siteId: number, blogdescription: string | undefined ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
+	}
+
+	function* setThemeOnSite( siteSlug: string, theme: string ) {
+		yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/themes/mine`,
+			apiVersion: '1.1',
+			body: { theme: theme, dont_change_homepage: true },
+			method: 'POST',
+		} );
 	}
 
 	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId: string ) {
@@ -263,8 +302,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				apiNamespace: 'wpcom/v2',
 				body: {
 					trim_content: true,
-					pattern_ids: recipe?.pattern_ids,
 					vertical_id: siteVerticalId || undefined,
+					pattern_ids: recipe?.pattern_ids,
+					header_pattern_ids: recipe?.header_pattern_ids || [],
+					footer_pattern_ids: recipe?.footer_pattern_ids || [],
 				},
 				method: 'POST',
 			} );
@@ -459,12 +500,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		saveSiteTitle,
 		saveSiteSettings,
 		setIntentOnSite,
+		setGoalsOnSite,
 		receiveSiteTitle,
 		fetchNewSite,
 		fetchSite,
 		receiveNewSite,
 		receiveNewSiteFailed,
 		resetNewSiteFailed,
+		setThemeOnSite,
 		setDesignOnSite,
 		createSite,
 		receiveSite,
@@ -480,6 +523,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		launchSiteFailure,
 		getCart,
 		setCart,
+		getGlobalStyles,
+		receiveSiteGlobalStyles,
 		setSiteSetupError,
 		clearSiteSetupError,
 		initiateAtomicTransfer,
@@ -517,6 +562,7 @@ export type Action =
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'updateSiteSettings' ]
+			| ActionCreators[ 'receiveSiteGlobalStyles' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
 			| ActionCreators[ 'launchSiteStart' ]
