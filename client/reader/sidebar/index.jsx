@@ -35,7 +35,6 @@ import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarNudges from './reader-sidebar-nudges';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarTags from './reader-sidebar-tags';
-import { sidebarHOC } from './sidebarHOC';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
 
@@ -52,7 +51,7 @@ const A8CConversationsIcon = () => (
 	</svg>
 );
 
-class ReaderSidebar extends Component {
+export class ReaderSidebar extends Component {
 	state = {};
 
 	componentDidMount() {
@@ -264,4 +263,4 @@ export default connect(
 		toggleListsVisibility: toggleReaderSidebarLists,
 		toggleTagsVisibility: toggleReaderSidebarTags,
 	}
-)( localize( sidebarHOC( ReaderSidebar ) ) );
+)( localize( ReaderSidebar ) );
