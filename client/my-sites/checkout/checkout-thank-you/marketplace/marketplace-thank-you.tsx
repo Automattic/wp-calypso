@@ -17,8 +17,10 @@ import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
-import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors/is-fetching-automated-transfer-status';
+import {
+	getAutomatedTransferStatus,
+	isFetchingAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
