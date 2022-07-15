@@ -1,7 +1,10 @@
 import { ClassNames } from '@emotion/react';
 import { useI18n } from '@wordpress/react-i18n';
+import { removeQueryArgs } from '@wordpress/url';
+import page from 'page';
 import { useMemo, useState } from 'react';
 import { searchCollection } from 'calypso/components/search-sites/utils';
+import { addQueryArgs } from 'calypso/lib/url';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 import { SitesTable } from './sites-table';
@@ -9,12 +12,13 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 interface SearchableSitesTableProps {
 	sites: SiteData[];
+	initialSearch?: string;
 }
 
-export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
+export function SearchableSitesTable( { sites, initialSearch }: SearchableSitesTableProps ) {
 	const { __ } = useI18n();
 
-	const [ term, setTerm ] = useState( '' );
+	const [ term, setTerm ] = useState( initialSearch );
 
 	const filteredSites = useMemo( () => {
 		if ( ! term ) {
@@ -24,7 +28,17 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 		return searchCollection( sites, term.toLowerCase(), [ 'URL', 'domain', 'name', 'slug' ] );
 	}, [ term, sites ] );
 
-	const handleSearch = ( rawTerm: string ) => setTerm( rawTerm.trim() );
+	const handleSearch = ( rawTerm: string ) => {
+		setTerm( rawTerm.trim() );
+		const encodedTerm = encodeURIComponent( rawTerm.trim() );
+		if ( encodedTerm.length ) {
+			page(
+				addQueryArgs( { search: encodedTerm }, window.location.pathname + window.location.search )
+			);
+		} else {
+			page( removeQueryArgs( window.location.pathname + window.location.search, 'search' ) );
+		}
+	};
 
 	return (
 		<ClassNames>
@@ -43,6 +57,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 							delaySearch
 							isReskinned
 							placeholder={ __( 'Search by name or domain…' ) }
+							defaultValue={ initialSearch }
 						/>
 					</div>
 					{ filteredSites.length > 0 ? (
