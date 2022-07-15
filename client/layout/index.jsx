@@ -411,7 +411,8 @@ export default withCurrentRoute(
 			// authorization, it would remove the newly connected site that has been fetched separately.
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
+			sidebarIsCollapsed:
+				currentRoute && ! currentRoute.startsWith( '/read' ) && getSidebarIsCollapsed( state ),
 			disableFAB,
 		};
 	} )( Layout )
