@@ -593,6 +593,36 @@ export function sites( context, next ) {
 	next();
 }
 
+function createSitesDashboardComponent( context ) {
+	const contextPath = sectionify( context.path );
+
+	let filteredPathName = contextPath.split( '/no-site' )[ 0 ];
+
+	if ( context.querystring ) {
+		filteredPathName = `${ filteredPathName }?${ context.querystring }`;
+	}
+
+	// This path sets the URL to be visited once a site is selected
+	const basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
+
+	recordPageView( contextPath, sitesPageTitleForAnalytics );
+
+	return (
+		<>
+			<Global styles={ globalStyles } />
+			<SitesDashboard siteBasePath={ basePath } />
+		</>
+	);
+}
+
+export function sitesDashboard( context, next ) {
+	context.store.dispatch( setLayoutFocus( 'content' ) );
+	setSectionMiddleware( { group: 'sites' } )( context );
+
+	context.primary = createSitesDashboardComponent( context );
+	next();
+}
+
 export function redirectWithoutSite( redirectPath ) {
 	return ( context, next ) => {
 		const state = context.store.getState();
