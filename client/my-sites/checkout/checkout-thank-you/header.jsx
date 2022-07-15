@@ -295,7 +295,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		this.props.recordTracksEvent( 'calypso_thank_you_no_site_receipt_error' );
 
-		page( `/home/${ selectedSite.slug }` );
+		page( selectedSite?.slug ? `/home/${ selectedSite.slug }` : '/' );
 	};
 
 	visitDomain = ( event ) => {
