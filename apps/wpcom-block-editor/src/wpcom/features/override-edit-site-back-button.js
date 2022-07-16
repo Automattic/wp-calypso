@@ -15,9 +15,10 @@ const editSitePackage = require( '@wordpress/edit-site' );
  * both wp-admin and the calypso iframe.
  */
 function overrideBackToDashboardButton() {
-	if ( ! editSitePackage ) return;
+	if ( ! editSitePackage?.__experimentalMainDashboardButton ) return;
 
-	const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
+	const SiteEditorDashboardFill = editSitePackage.__experimentalMainDashboardButton;
+	const siteSlug = window.location.hostname;
 
 	registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
 		render: function SiteEditorCloseFill() {
@@ -25,7 +26,7 @@ function overrideBackToDashboardButton() {
 				createElement( NavigationBackButton, {
 					backButtonLabel: __( 'Dashboard' ),
 					className: 'edit-site-navigation-panel__back-to-dashboard',
-					href: 'helloworld.com', // TODO: Dynamically generate correct close url
+					href: `https://wordpress.com/home/${ siteSlug }`,
 				} ),
 			] );
 		},
