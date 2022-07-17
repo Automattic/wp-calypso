@@ -49,7 +49,10 @@ export default async function payPalProcessor(
 		currentUrl.searchParams.set( 'cart', 'no-user' );
 	}
 	const cancelUrl = currentUrl.toString();
-	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, siteSlug, undefined, 'absolute' );
+	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+		siteSlug,
+		urlType: 'absolute',
+	} );
 
 	const formattedTransactionData = createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		responseCart,
