@@ -42,7 +42,9 @@ const TitanSetUpThankYou = ( {
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 	const translate = useTranslate();
 
-	const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
+	const emailManagementPath = selectedSiteSlug
+		? emailManagement( selectedSiteSlug, domainName, currentRoute )
+		: '/email';
 	const inboxPath = emailManagementInbox( selectedSiteSlug );
 
 	const thankYouImage = {
