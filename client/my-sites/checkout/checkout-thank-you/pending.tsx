@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -5,15 +6,22 @@ import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import EmptyContent from 'calypso/components/empty-content';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
-import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
+import type {
+	OrderTransaction,
+	OrderTransactionSuccess,
+} from 'calypso/state/selectors/get-order-transaction';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
@@ -110,8 +118,12 @@ function useRedirectOnTransactionSuccess( {
 	redirectTo?: string;
 } ): void {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
 		orderId ? getOrderTransaction( state, orderId ) : null
+	);
+	const receipt = useSelector( ( state ) =>
+		getReceiptById( state, receiptId ?? ( transaction as OrderTransactionSuccess )?.receiptId )
 	);
 	const error: Error | null = useSelector( ( state ) =>
 		orderId ? getOrderTransactionError( state, orderId ) : null
@@ -119,6 +131,12 @@ function useRedirectOnTransactionSuccess( {
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
+
+	const firstPurchase = receipt.data?.purchases[ 0 ];
+	const isRenewal = firstPurchase?.isRenewal ?? false;
+	const productName = firstPurchase?.productName ?? '';
+	const willAutoRenew = firstPurchase?.willAutoRenew ?? false;
+
 	const didRedirect = useRef( false );
 	useEffect( () => {
 		if ( didRedirect.current ) {
@@ -165,18 +183,97 @@ function useRedirectOnTransactionSuccess( {
 		}
 
 		didRedirect.current = true;
+		if ( isRenewal ) {
+			displayRenewalSuccessNotice( {
+				productName,
+				billPeriod,
+				willAutoRenew,
+				expiry,
+				userEmail,
+				translate,
+				moment,
+				reduxDispatch,
+			} );
+		}
 		performRedirect( redirectInstructions.url );
 	}, [
+		willAutoRenew,
+		productName,
+		isRenewal,
 		error,
 		redirectTo,
 		reduxDispatch,
 		siteSlug,
 		transaction,
 		translate,
+		moment,
 		reloadCart,
 		orderId,
 		receiptId,
 	] );
+}
+
+function displayRenewalSuccessNotice( {
+	productName,
+	billPeriod,
+	willAutoRenew,
+	expiry,
+	userEmail,
+	translate,
+	moment,
+	reduxDispatch,
+}: {
+	productName: string;
+	billPeriod: string;
+	willAutoRenew: boolean;
+	expiry: string;
+	userEmail: string;
+	translate: ReturnType< typeof useTranslate >;
+	moment: ReturnType< typeof useLocalizedMoment >;
+	reduxDispatch: CalypsoDispatch;
+} ): void {
+	if ( willAutoRenew ) {
+		// showing notice for product that will auto-renew
+		reduxDispatch(
+			successNotice(
+				translate(
+					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. {{a}}Learn more about renewals{{/a}}',
+					{
+						args: {
+							productName,
+							duration: moment.duration( { days: parseInt( billPeriod, 10 ) } ).humanize(),
+							email: userEmail,
+						},
+						components: {
+							a: (
+								<a href={ localizeUrl( AUTO_RENEWAL ) } target="_blank" rel="noopener noreferrer" />
+							),
+						},
+					}
+				),
+				{ displayOnNextPage: true }
+			)
+		);
+		return;
+	}
+
+	// showing notice for product that will not auto-renew
+	reduxDispatch(
+		successNotice(
+			translate(
+				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. We sent your receipt to %(email)s.',
+				{
+					args: {
+						productName,
+						duration: moment.duration( { days: parseInt( billPeriod, 10 ) } ).humanize(),
+						date: moment( expiry ).format( 'LL' ),
+						email: userEmail,
+					},
+				}
+			),
+			{ displayOnNextPage: true }
+		)
+	);
 }
 
 export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {
