@@ -283,7 +283,8 @@ export default function getThankYouPageUrl( {
 	}
 
 	const signupFlowName = getSignupCompleteFlowName();
-	const isDomainOnly = siteSlug === 'no-site' && cart?.products.every( isDomainRegistration );
+	const isDomainOnly =
+		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
 
 	// Domain only flow
 	if ( ( cart?.create_new_blog || signupFlowName === 'domain' ) && ! isDomainOnly ) {

@@ -55,7 +55,7 @@ import type {
 	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
 
-export function getAllCartItems( cart: ResponseCart ): ResponseCartProduct[] {
+export function getAllCartItems( cart?: ResponseCart ): ResponseCartProduct[] {
 	return ( cart && cart.products ) || [];
 }
 
