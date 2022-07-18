@@ -91,10 +91,6 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 			$response = json_decode( wp_remote_retrieve_body( $body ) );
 		}
 
-		return rest_ensure_response(
-			array(
-				'wordpress_support_links' => $response,
-			)
-		);
+		return rest_ensure_response( $response );
 	}
 }
