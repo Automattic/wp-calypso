@@ -26,6 +26,7 @@
 		{ "path": "./happychat-connection" },
 		{ "path": "./help-center" },
 		{ "path": "./i18n-utils" },
+		{ "path": "./is-plain-object" },
 		{ "path": "./js-utils" },
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },

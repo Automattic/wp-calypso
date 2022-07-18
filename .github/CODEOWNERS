@@ -87,6 +87,7 @@
 /client/controller @Automattic/team-calypso-frameworks
 /client/layout @Automattic/team-calypso-frameworks
 /client/server @Automattic/team-calypso-frameworks
+/packages/is-plain-object @Automattic/team-calypso-frameworks
 /packages/js-utils @Automattic/team-calypso-frameworks
 
 # Jetpack Search

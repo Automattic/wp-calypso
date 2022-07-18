@@ -37,6 +37,7 @@
 		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/is-plain-object": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/language-picker": "workspace:^",
 		"@automattic/languages": "workspace:^",

@@ -780,6 +780,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/is-plain-object@workspace:^, @automattic/is-plain-object@workspace:packages/is-plain-object":
+  version: 0.0.0-use.local
+  resolution: "@automattic/is-plain-object@workspace:packages/is-plain-object"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    typescript: ^4.5.5
+  languageName: unknown
+  linkType: soft
+
 "@automattic/js-utils@workspace:^, @automattic/js-utils@workspace:packages/js-utils":
   version: 0.0.0-use.local
   resolution: "@automattic/js-utils@workspace:packages/js-utils"
@@ -12394,6 +12403,7 @@ __metadata:
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/is-plain-object": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/language-picker": "workspace:^"
     "@automattic/languages": "workspace:^"
