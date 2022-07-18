@@ -93,13 +93,16 @@ export function useLocale(): string {
  * }
  * export default withLocale( MyComponent );
  */
-export const withLocale = createHigherOrderComponent< { locale: string } >( ( InnerComponent ) => {
-	return ( props ) => {
-		const locale = useLocale();
-		const innerProps = { ...props, locale } as React.ComponentProps< typeof InnerComponent >;
-		return <InnerComponent { ...innerProps } />;
-	};
-}, 'withLocale' );
+export const withLocale = createHigherOrderComponent(
+	< OuterProps, >( InnerComponent: React.ComponentType< OuterProps & { locale: string } > ) => {
+		return ( props: OuterProps ) => {
+			const locale = useLocale();
+			const innerProps = { ...props, locale };
+			return <InnerComponent { ...innerProps } />;
+		};
+	},
+	'withLocale'
+);
 
 /**
  * React hook providing whether the current locale slug belongs to English or not

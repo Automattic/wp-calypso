@@ -2,7 +2,7 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
 import page from 'page';
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, ComponentType } from 'react';
 
 /**
  * Module variables
@@ -79,15 +79,16 @@ export interface ProtectedFormProps {
 /*
  * HOC that passes markChanged/markSaved props to the wrapped component instance
  */
-export const protectForm = createHigherOrderComponent< ProtectedFormProps >( ( InnerComponent ) => {
-	return ( props ) => {
-		const { markChanged, markSaved } = useProtectForm();
-		const innerProps = { ...props, markChanged, markSaved } as React.ComponentProps<
-			typeof InnerComponent
-		>;
-		return <InnerComponent { ...innerProps } />;
-	};
-}, 'protectForm' );
+export const protectForm = createHigherOrderComponent(
+	< OuterProps, >( InnerComponent: ComponentType< OuterProps & ProtectedFormProps > ) => {
+		return ( props: OuterProps ) => {
+			const { markChanged, markSaved } = useProtectForm();
+			const innerProps = { ...props, markChanged, markSaved };
+			return <InnerComponent { ...innerProps } />;
+		};
+	},
+	'protectForm'
+);
 
 /*
  * Declarative variant that takes a 'isChanged' prop.
