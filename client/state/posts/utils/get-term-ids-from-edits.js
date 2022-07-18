@@ -1,4 +1,5 @@
-import { isEmpty, isPlainObject, map, mapValues, reduce } from 'lodash';
+import isPlainObject from '@automattic/is-plain-object';
+import { isEmpty, map, mapValues, reduce } from 'lodash';
 
 /**
  * Takes existing term post edits and updates the `terms_by_id` attribute

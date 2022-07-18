@@ -1,4 +1,4 @@
-import { isPlainObject } from 'lodash';
+import isPlainObject from '@automattic/is-plain-object';
 
 /**
  * Normalize API Settings

@@ -1,5 +1,6 @@
+import isPlainObject from '@automattic/is-plain-object';
 import { extendAction } from '@automattic/state-utils';
-import { camelCase, isPlainObject, map, reduce, set, snakeCase } from 'lodash';
+import { camelCase, map, reduce, set, snakeCase } from 'lodash';
 
 const doBypassDataLayer = {
 	meta: {

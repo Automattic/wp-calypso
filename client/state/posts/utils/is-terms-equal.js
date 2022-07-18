@@ -1,4 +1,5 @@
-import { isPlainObject, map, xor } from 'lodash';
+import isPlainObject from '@automattic/is-plain-object';
+import { map, xor } from 'lodash';
 
 /**
  * Returns truthy if local terms object is the same as the API response

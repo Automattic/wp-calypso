@@ -1,5 +1,5 @@
+import isPlainObject from '@automattic/is-plain-object';
 import { useTranslate } from 'i18n-calypso';
-import { isPlainObject } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import ArrayPreference from './array-preference';
