@@ -7,6 +7,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+//import '../../assets/stylesheets/shared/mixins/_long-content-fade.scss';
 
 interface SiteTableRowProps {
 	site: SiteData;
@@ -47,9 +48,16 @@ const SiteName = styled.h2`
 
 const SiteUrl = styled.a`
 	color: var( --studio-gray-60 );
+	max-width: 60%;
+	width: 300px;
+	text-overflow: clip;
+	overflow: hidden;
+	display: inline-block;
 	&:visited {
 		color: var( --studio-gray-60 );
 	}
+	-webkit-mask-image: linear-gradient( 90deg, #000 90%, transparent );
+	mask-image: linear-gradient( 90deg, #000 60%, transparent );
 `;
 
 const getDashboardUrl = ( slug: string ) => {
@@ -105,7 +113,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 								href={ site.URL }
 								target="_blank"
 								rel="noreferrer"
-								title={ __( 'Visit Site' ) }
+								title={ site.URL }
 								style={ { marginRight: '8px' } }
 							>
 								{ displaySiteUrl( site.URL ) }
