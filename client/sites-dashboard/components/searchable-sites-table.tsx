@@ -1,7 +1,8 @@
 import { ClassNames } from '@emotion/react';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { searchCollection } from 'calypso/components/search-sites/utils';
+import { useSearchParams } from '../use-search-params';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 import { SitesTable } from './sites-table';
@@ -13,18 +14,24 @@ interface SearchableSitesTableProps {
 
 export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 	const { __ } = useI18n();
-
-	const [ term, setTerm ] = useState( '' );
+	const [ searchParams, setSearchParam ] = useSearchParams();
 
 	const filteredSites = useMemo( () => {
-		if ( ! term ) {
+		if ( ! searchParams.search ) {
 			return sites;
 		}
 
-		return searchCollection( sites, term.toLowerCase(), [ 'URL', 'domain', 'name', 'slug' ] );
-	}, [ term, sites ] );
+		return searchCollection( sites, searchParams.search.toLowerCase(), [
+			'URL',
+			'domain',
+			'name',
+			'slug',
+		] );
+	}, [ sites, searchParams.search ] );
 
-	const handleSearch = ( rawTerm: string ) => setTerm( rawTerm.trim() );
+	const handleSearch = ( rawTerm: string ) => {
+		setSearchParam( 'search', rawTerm.trim() );
+	};
 
 	return (
 		<ClassNames>
@@ -43,6 +50,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 							delaySearch
 							isReskinned
 							placeholder={ __( 'Search by name or domain…' ) }
+							defaultValue={ searchParams.search }
 						/>
 					</div>
 					{ filteredSites.length > 0 ? (

@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { removeQueryArgs } from '@wordpress/url';
 import page from 'page';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useSearchParams } from '../use-search-params';
 import SitesBadge from './sites-badge';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data'; // eslint-disable-line no-restricted-imports
 
@@ -51,6 +52,7 @@ export function SitesTableFilterTabs( {
 	launchStatus,
 }: SitesTableFilterTabsProps ) {
 	const { __ } = useI18n();
+	const [ searchParams, setSearchParam ] = useSearchParams();
 
 	let tabs: SiteTab[] = [
 		{ name: 'all', title: __( 'All' ) },
@@ -59,8 +61,8 @@ export function SitesTableFilterTabs( {
 		{ name: 'coming-soon', title: __( 'Coming soon' ) },
 	];
 
-	const initialTabName = tabs.find( ( tab ) => tab.name === launchStatus )
-		? launchStatus
+	const initialTabName = tabs.find( ( tab ) => tab.name === searchParams.status )
+		? searchParams.status
 		: undefined;
 
 	const filteredSites: FilteredSites = tabs.reduce(
@@ -83,13 +85,7 @@ export function SitesTableFilterTabs( {
 			className={ className }
 			initialTabName={ initialTabName }
 			tabs={ tabs as TabPanel.Tab[] }
-			onSelect={ ( tabName ) => {
-				page(
-					'all' === tabName
-						? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
-						: addQueryArgs( { status: tabName }, window.location.pathname + window.location.search )
-				);
-			} }
+			onSelect={ ( tabName ) => setSearchParam( 'status', tabName ) }
 		>
 			{ ( tab ) => renderContents( filteredSites[ tab.name ], tab.name ) }
 		</SitesTabPanel>
