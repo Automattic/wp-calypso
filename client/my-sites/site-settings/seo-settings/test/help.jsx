@@ -7,7 +7,7 @@ import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import SeoSettingsHelpCard from '../help';
 
-const siteId = 1;
+const siteId = 123456789;
 const initialState = {
 	ui: {
 		selectedSiteId: siteId,
