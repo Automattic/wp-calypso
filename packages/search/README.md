@@ -49,9 +49,11 @@ Example: imagine you're querying for `example.wordpress.com`. While "normal", su
 The simplest form of usage is to pass an array of strings as the `data` argument, which is your collection:
 
 ```js
-useFuzzySearch( {
-	data: [ 'site.wordpress.com', 'another.wordpress.com' ]
-} );
+const Component = () => {
+	const { results, query, setQuery } = useFuzzySearch( {
+		data: [ 'site.wordpress.com', 'another.wordpress.com' ],
+	} );
+};
 ```
 
 The hook returns an object with a few properties:
@@ -65,10 +67,12 @@ The hook returns an object with a few properties:
 You can also pass an array of objects as the `data`. That way you can search inside objects:
 
 ```js
-useFuzzySearch( {
-	data: [ { siteURL: 'site.wordpress.com', ... }, ... ],
-	keys: [ 'siteURL', 'nested.key' ],
-} );
+const Component = () => {
+	useFuzzySearch( {
+		data: [ { siteURL: 'site.wordpress.com', nested: { key: 'value' } } ],
+		keys: [ 'siteURL', 'nested.key' ],
+	} );
+};
 ```
 
 Note that you must pass the `keys` argument so the hook indexes those keys. Those are the keys that will be accounted when searching. That argument is **required** when you're working with an array of objects.
