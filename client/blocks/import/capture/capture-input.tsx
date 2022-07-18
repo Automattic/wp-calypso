@@ -89,10 +89,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					<span className={ classnames( { 'is-error': showValidationMsg } ) }>
 						{ ! showValidationMsg && (
 							<>
-								<Icon icon={ bulb } size={ 20 } />{ ' ' }
-								{ translate(
-									'You must own this website. You can still skip this step to start fresh.'
-								) }
+								<Icon icon={ bulb } size={ 20 } /> { translate( 'You must own this website.' ) }
 							</>
 						) }
 						{ showValidationMsg && (
