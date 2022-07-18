@@ -35,7 +35,7 @@ describe( 'useFuzzySearch', () => {
 
 		const data = [ { prop: 'value' }, { prop: 'another' } ];
 
-		render( <TestComponent data={ data } fields={ [ 'prop' ] } /> );
+		render( <TestComponent data={ data } keys={ [ 'prop' ] } /> );
 
 		const searchbox = screen.getByRole( 'searchbox' );
 		await user.type( searchbox, 'v' );
@@ -49,7 +49,7 @@ describe( 'useFuzzySearch', () => {
 
 		const data = [ { deep: { prop: 'value' } }, { deep: { prop: 'another' } } ];
 
-		render( <TestComponent data={ data } fields={ [ 'deep.prop' ] } /> );
+		render( <TestComponent data={ data } keys={ [ 'deep.prop' ] } /> );
 
 		const searchbox = screen.getByRole( 'searchbox' );
 		await user.type( searchbox, 'an' );
@@ -61,7 +61,7 @@ describe( 'useFuzzySearch', () => {
 	it( 'allows setting an initial query', () => {
 		const data = [ { prop: 'value' }, { prop: 'another' } ];
 
-		render( <TestComponent data={ data } fields={ [ 'prop' ] } initialQuery="ano" /> );
+		render( <TestComponent data={ data } keys={ [ 'prop' ] } initialQuery="ano" /> );
 
 		expect( screen.queryByText( /another/ ) ).toBeInTheDocument();
 		expect( screen.queryByText( /value/ ) ).not.toBeInTheDocument();
