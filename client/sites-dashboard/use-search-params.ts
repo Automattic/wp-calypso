@@ -12,9 +12,13 @@ export const useSearchParams = () => {
 	const [ searchParams, setSearchParams ] = useState( defaultParams );
 
 	useEffect( () => {
-		window.addEventListener( 'popstate', () => {
-			setSearchParams( defaultParams );
-		} );
+		const listener = () => {
+			setSearchParams( Object.fromEntries( new URLSearchParams( window.location.search ) ) );
+		};
+		window.addEventListener( 'popstate', listener );
+		return () => {
+			window.removeEventListener( 'popstate', listener );
+		};
 	}, [] );
 
 	const setSearchParam = ( param: string, value: string | null ) => {
