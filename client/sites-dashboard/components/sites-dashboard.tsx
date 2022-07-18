@@ -61,10 +61,6 @@ export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 	const { data: sites } = useSitesDataQuery();
 
-	if ( ! sites ) {
-		return null;
-	}
-
 	return (
 		<main>
 			<PageHeader>
