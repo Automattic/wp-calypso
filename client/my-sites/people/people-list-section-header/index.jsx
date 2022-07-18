@@ -58,12 +58,6 @@ class PeopleListSectionHeader extends Component {
 		return null;
 	}
 
-	isFollowersTab() {
-		const { currentRoute } = this.props;
-
-		return startsWith( currentRoute, '/people/followers' );
-	}
-
 	isSubscribersTab() {
 		const { currentRoute } = this.props;
 
@@ -85,7 +79,7 @@ class PeopleListSectionHeader extends Component {
 				popoverText={ this.getPopoverText() }
 			>
 				{ children }
-				{ siteLink && this.isFollowersTab() && (
+				{ siteLink && ! this.isSubscribersTab() && (
 					<Button compact href={ siteLink } className="people-list-section-header__add-button">
 						<Gridicon icon="user-add" />
 						<span>
