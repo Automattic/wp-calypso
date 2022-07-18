@@ -19,7 +19,6 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
@@ -180,7 +179,7 @@ class Plans extends Component {
 	}
 
 	render() {
-		const { selectedSite, translate, canAccessPlans, currentPlan, eligibleForProPlan } = this.props;
+		const { selectedSite, translate, canAccessPlans, currentPlan } = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
@@ -242,6 +241,5 @@ export default connect( ( state ) => {
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		eligibleForProPlan: isEligibleForProPlan( state, selectedSiteId ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
