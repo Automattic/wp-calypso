@@ -31,15 +31,25 @@ interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
 	highRes: boolean;
+	verticalId?: string;
 }
 
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => {
+const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
+	design,
+	locale,
+	highRes,
+	verticalId,
+} ) => {
 	const scrollable = design.preview !== 'static';
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	return (
 		<MShotsImage
-			url={ getDesignPreviewUrl( design, { language: locale, use_screenshot_overrides: true } ) }
+			url={ getDesignPreviewUrl( design, {
+				language: locale,
+				vertical_id: verticalId,
+				use_screenshot_overrides: true,
+			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
 			options={ getMShotOptions( { scrollable, highRes, isMobile } ) }
@@ -62,6 +72,7 @@ interface DesignButtonProps {
 	hasDesignOptionHeader?: boolean;
 	isPremiumThemeAvailable?: boolean;
 	onCheckout?: any;
+	verticalId?: string;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -77,6 +88,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable = false,
 	onCheckout = undefined,
+	verticalId,
 } ) => {
 	const { __ } = useI18n();
 
@@ -165,7 +177,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					</div>
 				) : (
 					<div className="design-picker__image-frame-inside">
-						<DesignPreviewImage design={ design } locale={ locale } highRes={ highRes } />
+						<DesignPreviewImage
+							design={ design }
+							locale={ locale }
+							highRes={ highRes }
+							verticalId={ verticalId }
+						/>
 					</div>
 				) }
 			</span>
@@ -310,6 +327,7 @@ export interface DesignPickerProps {
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
+	verticalId?: string;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -338,6 +356,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	previewOnly = false,
 	hasDesignOptionHeader = true,
 	onCheckout = undefined,
+	verticalId,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -385,6 +404,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						previewOnly={ previewOnly }
 						hasDesignOptionHeader={ hasDesignOptionHeader }
 						onCheckout={ onCheckout }
+						verticalId={ verticalId }
 					/>
 				) ) }
 			</div>

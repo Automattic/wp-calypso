@@ -119,6 +119,7 @@
 		"signup/stepper-flow": true,
 		"signup/woo-verify-email": false,
 		"signup/theme-preview-screen": true,
+		"signup/standard-theme-v13n": false,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
 		"ssr/sample-log-cache-misses": true,
