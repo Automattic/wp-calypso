@@ -177,7 +177,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const fallbackSetupUrl = wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url;
 	const managePluginsUrl = hasManagePluginsFeature
 		? `${ siteAdminUrl }plugins.php`
-		: `/plugins/manage/${ siteSlug } `;
+		: `/plugins/${ productSlug }/${ siteSlug } `;
 
 	const setupURL = pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || managePluginsUrl;
 
