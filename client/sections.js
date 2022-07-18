@@ -408,6 +408,12 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
+		name: 'campaigns',
+		paths: [ '/campaigns' ],
+		module: 'calypso/my-sites/campaigns',
+		group: 'sites',
+	},
+	{
 		name: 'import',
 		paths: [ '/import' ],
 		module: 'calypso/my-sites/importer',

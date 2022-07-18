@@ -1,0 +1,148 @@
+.comment-navigation {
+	@include breakpoint-deprecated( '<480px' ) {
+		.section-nav__mobile-header::after {
+			padding-left: 8px;
+		}
+		.section-nav__mobile-header-text {
+			flex: none;
+			width: auto;
+		}
+
+		.comment-navigation__open-bulk {
+			padding-top: 9px;
+			position: absolute;
+			right: 0;
+			top: 0;
+		}
+	}
+}
+
+.comment-navigation.is-bulk-edit {
+	padding-right: 0;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		.section-nav__mobile-header {
+			display: none;
+		}
+
+		.comment-navigation__bulk-count {
+			width: calc( 100% - 70px );
+		}
+
+		.comment-navigation__close-bulk {
+			position: absolute;
+			right: 0;
+			top: 3px;
+			width: 55px;
+		}
+	}
+}
+
+.comment-navigation__bulk-count {
+	display: inline-flex;
+}
+
+.comment-navigation__bulk-count .count {
+	margin-left: 8px;
+}
+
+.comment-navigation__tab {
+	padding: 16px;
+}
+
+.comment-navigation__actions {
+	display: flex;
+	padding: 11px 16px;
+
+	.button-group {
+		margin-right: 16px;
+	}
+}
+
+.comment-navigation__open-bulk .button {
+	margin-left: 16px;
+}
+
+.comment-navigation__close-bulk {
+	margin-left: auto;
+	padding: 0;
+	button.is-borderless {
+		padding: 10px 16px;
+		.gridicon {
+			top: 4px;
+		}
+	}
+}
+
+.comment-list__header {
+	overflow: visible;
+
+	&.is-sticky .header-cake {
+		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
+	}
+}
+
+.comment-list__header-title {
+	font-weight: 600;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.comment-list__header-post-title {
+	font-family: $serif;
+}
+
+.comment-list__header-date {
+	font-size: $font-body-small;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+@include breakpoint-deprecated( '<480px' ) {
+	.comment-list__header .header-cake__back.button.is-borderless.is-compact .gridicons-visible {
+		display: block;
+		margin: 0 auto;
+		top: 0;
+	}
+}
+
+.comment-list .pagination {
+	margin-top: 16px;
+}
+
+.comment-list__transition-enter {
+	display: none;
+
+	&.comment-list__transition-enter-active {
+		animation: comment-list__transition-enter 0.15s linear;
+	}
+}
+
+.comment-list__transition-exit {
+	opacity: 1;
+
+	&.comment-list__transition-exit-active {
+		opacity: 0.01;
+		transition: opacity 0.15s linear;
+	}
+}
+
+@keyframes comment-list__transition-enter {
+	0% {
+		display: none;
+		opacity: 0;
+	}
+	50% {
+		display: none;
+		opacity: 0;
+	}
+	51% {
+		display: block;
+		opacity: 0.01;
+	}
+	100% {
+		opacity: 1;
+	}
+}

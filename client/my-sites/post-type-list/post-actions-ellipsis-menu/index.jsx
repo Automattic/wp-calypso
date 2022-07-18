@@ -6,6 +6,7 @@ import PostActionsEllipsisMenuComments from './comments';
 import PostActionsEllipsisMenuCopyLink from './copy-link';
 import PostActionsEllipsisMenuDuplicate from './duplicate';
 import PostActionsEllipsisMenuEdit from './edit';
+import PostActionsEllipsisMenuPromote from './promote';
 import PostActionsEllipsisMenuPublish from './publish';
 import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuShare from './share';
@@ -22,6 +23,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 		actions.push(
 			<PostActionsEllipsisMenuEdit key="edit" />,
 			<PostActionsEllipsisMenuView key="view" />,
+			<PostActionsEllipsisMenuPromote key="promote" />,
 			<PostActionsEllipsisMenuStats key="stats" />,
 			<PostActionsEllipsisMenuComments key="comments" />,
 			<PostActionsEllipsisMenuPublish key="publish" />,

@@ -497,6 +497,13 @@ export default function buildFallbackResponse( {
 				},
 				{
 					parent: 'tools.php',
+					slug: 'tools-campaigns',
+					title: 'Promote Posts',
+					type: 'menu-item',
+					url: `/campaigns/${ siteDomain }`,
+				},
+				{
+					parent: 'tools.php',
 					slug: 'tools-import',
 					title: translate( 'Import' ),
 					type: 'submenu-item',
