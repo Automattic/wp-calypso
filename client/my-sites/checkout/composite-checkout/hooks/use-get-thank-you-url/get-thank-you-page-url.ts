@@ -164,7 +164,7 @@ export default function getThankYouPageUrl( {
 			return sanitizedRedirectTo;
 		}
 
-		if ( hostname === 'cloud.jetpack.com' ) {
+		if ( hostname === 'cloud.jetpack.com' || hostname === 'jetpack.cloud.localhost' ) {
 			debug( 'returning Jetpack cloud redirectTo', redirectTo );
 			return redirectTo;
 		}
