@@ -7,7 +7,6 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
-//import '../../assets/stylesheets/shared/mixins/_long-content-fade.scss';
 
 interface SiteTableRowProps {
 	site: SiteData;
