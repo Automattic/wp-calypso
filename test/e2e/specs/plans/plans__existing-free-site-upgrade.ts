@@ -19,7 +19,11 @@ import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
-describe(
+/**
+ * TODO: Remove Pro from Free site upgrade tests.
+ */
+/* eslint-disable jest/no-disabled-tests */
+describe.skip(
 	DataHelper.createSuiteTitle(
 		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Pro'
 	),
