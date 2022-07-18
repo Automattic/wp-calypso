@@ -22,6 +22,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
+import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { SearchResult } from '../types';
@@ -97,8 +98,15 @@ function HelpSearchResults( {
 }: HelpSearchResults ) {
 	const dispatch = useDispatch();
 
-	const hasPurchases = useSelector( hasCancelableUserPurchases );
-	const sectionName = useSelector( getSectionName );
+	const { hasPurchases, sectionName, adminResults, isSimpleSite } = useSelector( ( state ) => {
+		return {
+			hasPurchases: hasCancelableUserPurchases( state ),
+			sectionName: getSectionName( state ),
+			adminResults: getAdminHelpResults( state, searchQuery, 3 ),
+			isSimpleSite: getIsSimpleSite( state ),
+		};
+	} );
+
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = useSiteOption( 'site_intent' );
 	const rawContextualResults = useMemo(
@@ -106,13 +114,16 @@ function HelpSearchResults( {
 		[ sectionName, siteIntent ]
 	);
 	const locale = useLocale();
-	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery, locale );
+	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
+		searchQuery,
+		locale,
+		isSimpleSite
+	);
 
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;

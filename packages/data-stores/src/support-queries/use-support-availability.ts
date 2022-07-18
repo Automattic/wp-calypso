@@ -8,18 +8,20 @@ type ResponseType< T extends 'CHAT' | 'OTHER' > = T extends 'CHAT'
 
 export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 	supportType: SUPPORT_TYPE,
-	enabled = true
+	isSimpleSite = true
 ) {
 	return useQuery< ResponseType< SUPPORT_TYPE >, typeof Error >(
 		supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability',
 		async () =>
 			await wpcomRequest( {
-				path: `help-center/support-availability/${ supportType === 'OTHER' ? 'all' : 'chat' }`,
+				path: isSimpleSite
+					? `help/eligibility/${ supportType === 'OTHER' ? 'all' : 'chat' }/mine`
+					: `help-center/support-availability/${ supportType === 'OTHER' ? 'all' : 'chat' }`,
 				apiNamespace: 'wpcom/v2/',
 				apiVersion: '2',
 			} ),
 		{
-			enabled,
+			enabled: isSimpleSite,
 			refetchOnWindowFocus: false,
 			keepPreviousData: true,
 		}
