@@ -599,11 +599,13 @@ const Summary: React.FunctionComponent = () => {
 			hasPaidDomain={ hasPaidDomain }
 			isLoading={ isLoading }
 			onDomainSelect={ onDomainSelect }
-			/** NOTE: this makes the assumption that the user has a free domain,
+			/**
+			 * NOTE: this makes the assumption that the user has a free domain,
 			 * thus when they click the free domain, we just remove the value from the store
 			 * this is a valid strategy in this context because they won't even see this step if
 			 * they already have a paid domain
-			 * */
+			 *
+			 */
 			onExistingSubdomainSelect={ onExistingSubdomainSelect }
 		/>
 	);
