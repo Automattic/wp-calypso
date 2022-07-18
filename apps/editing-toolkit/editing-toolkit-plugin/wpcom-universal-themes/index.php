@@ -24,9 +24,8 @@ function hide_nav_menus_submenu() {
  * @return void
  */
 function init() {
-	// always unload first since we will add below only when needed.
-	remove_action( 'admin_menu', __NAMESPACE__ . '\hide_nav_menus_submenu' );
 	if ( wp_is_block_theme() ) {
+		// Hide Menus submenu if FSE theme is activated.
 		add_action( 'admin_menu', __NAMESPACE__ . '\hide_nav_menus_submenu' );
 	}
 }
