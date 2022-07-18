@@ -28,11 +28,11 @@ export function SearchableSitesTable( { sites, initialSearch }: SearchableSitesT
 	}, [ term, sites ] );
 
 	const handleSearch = ( rawTerm: string ) => {
-		setTerm( rawTerm.trim() );
-		const encodedTerm = encodeURIComponent( rawTerm.trim() );
-		if ( encodedTerm.length ) {
+		const trimmedTerm = rawTerm.trim();
+		setTerm( trimmedTerm );
+		if ( trimmedTerm.length ) {
 			page(
-				addQueryArgs( window.location.pathname + window.location.search, { search: encodedTerm } )
+				addQueryArgs( window.location.pathname + window.location.search, { search: trimmedTerm } )
 			);
 		} else {
 			page( removeQueryArgs( window.location.pathname + window.location.search, 'search' ) );
