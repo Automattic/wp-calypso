@@ -13,7 +13,7 @@ import { generateStepPath } from './helper';
 import type { Step } from '../../types';
 import './style.scss';
 
-const isEnabledImportLight = isEnabled( 'onboarding/import-light' );
+const isEnabledImportLight = isEnabled( 'onboarding/import-light-url-screen' );
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();

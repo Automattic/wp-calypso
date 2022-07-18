@@ -505,7 +505,7 @@ export const siteSetupFlow: Flow = {
 					return exitFlow( `/home/${ siteSlug }` );
 
 				case 'import':
-					return isEnabled( 'onboarding/import-light' )
+					return isEnabled( 'onboarding/import-light-url-screen' )
 						? navigate( 'intent' )
 						: navigate( 'importList' );
 
