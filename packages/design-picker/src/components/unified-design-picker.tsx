@@ -24,6 +24,7 @@ import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filt
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
 import ThemePreview from './theme-preview';
+import { useTranslate } from 'i18n-calypso';
 
 import './style.scss';
 
@@ -432,7 +433,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			! design.features.includes( 'anchorfm' ) && excludeFseDesigns( design ),
 	} ).featured,
 	generatedDesigns,
-	generatedDesignsHeading,
 	premiumBadge,
 	staticDesignsHeading,
 	heading,
@@ -443,6 +443,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	onCheckout = undefined,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
+	const translate = useTranslate();
 	return (
 		<div
 			className={ classnames(
@@ -455,14 +456,20 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			) }
 		>
 			{ heading }
-			{ generatedDesignsHeading }
+			<div>
+				<h3> { translate( 'Custom designs for your site' ) } </h3>
+				<p className="unified-design-picker__subtitle"> { translate( 'We generated these designs for you' ) }</p>
+			</div>
 			<GerneratedDesignPicker
 				locale={ locale }
 				designs={ generatedDesigns || [] }
 				onPreview={ onPreview }
 				verticalId={ verticalId }
 			/>
-			{ staticDesignsHeading }
+			<div> 
+				<h3> { translate( 'Selected themes for you' ) } </h3> 
+				<p className="unified-design-picker__subtitle"> { translate( "These might work if you'd like" ) } </p>
+			</div>
 			<StaticDesignPicker
 				locale={ locale }
 				onSelect={ onSelect }

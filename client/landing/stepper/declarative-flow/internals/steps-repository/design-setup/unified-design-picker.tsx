@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useStarterDesignsGeneratedQuery, useStarterDesignsQuery } from '@automattic/data-stores';
+import { useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	PremiumBadge,
@@ -358,13 +358,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			) }
 		/>
 	);
-	const staticDesignsHeading = (
-		<FormattedHeader
-			isSecondary={ true }
-			headerText={ translate( 'Selected themes for you' ) }
-			subHeaderText={ translate( "These might work if you'd like" ) }
-		/>
-	);
 
 	const newDesignEnabled = isEnabled( 'signup/theme-preview-screen' );
 
@@ -381,7 +374,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
 			heading={ heading }
 			categorization={ categorization }
-			staticDesignsHeading={ staticDesignsHeading }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }

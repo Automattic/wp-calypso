@@ -394,9 +394,13 @@
 		}
 	}
 	
-	.formatted-header h2.formatted-header__title {
+	h3 {
 		font-size: $font-title-small;
 		font-weight: 600;
+	}
+
+	.unified-design-picker__subtitle {
+		margin-bottom: 20px;
 	}
 
 	.generated-design-thumbnail {
