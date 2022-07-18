@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { TabPanel } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
-import page from 'page';
 import SitesBadge from './sites-badge';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data'; // eslint-disable-line no-restricted-imports
 
@@ -89,7 +88,9 @@ export function SitesTableFilterTabs( {
 			initialTabName={ initialTabName }
 			tabs={ tabs as TabPanel.Tab[] }
 			onSelect={ ( tabName ) => {
-				page(
+				window.history.pushState(
+					{},
+					'',
 					'all' === tabName
 						? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
 						: addQueryArgs( window.location.pathname + window.location.search, { status: tabName } )

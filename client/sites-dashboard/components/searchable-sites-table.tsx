@@ -1,7 +1,6 @@
 import { ClassNames } from '@emotion/react';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
-import page from 'page';
 import { useMemo, useState } from 'react';
 import { searchCollection } from 'calypso/components/search-sites/utils';
 import { SitesSearch } from './sites-search';
@@ -31,11 +30,17 @@ export function SearchableSitesTable( { sites, initialSearch }: SearchableSitesT
 		const trimmedTerm = rawTerm.trim();
 		setTerm( trimmedTerm );
 		if ( trimmedTerm.length ) {
-			page(
+			window.history.pushState(
+				{},
+				'',
 				addQueryArgs( window.location.pathname + window.location.search, { search: trimmedTerm } )
 			);
 		} else {
-			page( removeQueryArgs( window.location.pathname + window.location.search, 'search' ) );
+			window.history.pushState(
+				{},
+				'',
+				removeQueryArgs( window.location.pathname + window.location.search, 'search' )
+			);
 		}
 	};
 
