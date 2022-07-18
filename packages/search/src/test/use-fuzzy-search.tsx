@@ -26,7 +26,7 @@ describe( 'useFuzzySearch', () => {
 		const searchbox = screen.getByRole( 'searchbox' );
 		await user.type( searchbox, 'k' );
 
-		expect( screen.queryByText( /ok/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /ok/ ) ).toBeVisible();
 		expect( screen.queryByText( /hello/ ) ).not.toBeInTheDocument();
 	} );
 
@@ -40,7 +40,7 @@ describe( 'useFuzzySearch', () => {
 		const searchbox = screen.getByRole( 'searchbox' );
 		await user.type( searchbox, 'v' );
 
-		expect( screen.queryByText( /value/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /value/ ) ).toBeVisible();
 		expect( screen.queryByText( /another/ ) ).not.toBeInTheDocument();
 	} );
 
@@ -54,7 +54,7 @@ describe( 'useFuzzySearch', () => {
 		const searchbox = screen.getByRole( 'searchbox' );
 		await user.type( searchbox, 'an' );
 
-		expect( screen.queryByText( /another/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /another/ ) ).toBeVisible();
 		expect( screen.queryByText( /value/ ) ).not.toBeInTheDocument();
 	} );
 
@@ -63,7 +63,7 @@ describe( 'useFuzzySearch', () => {
 
 		render( <TestComponent data={ data } keys={ [ 'prop' ] } initialQuery="ano" /> );
 
-		expect( screen.queryByText( /another/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /another/ ) ).toBeVisible();
 		expect( screen.queryByText( /value/ ) ).not.toBeInTheDocument();
 	} );
 } );
