@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 import { TabPanel } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { removeQueryArgs } from '@wordpress/url';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import page from 'page';
-import { addQueryArgs } from 'calypso/lib/url';
 import SitesBadge from './sites-badge';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data'; // eslint-disable-line no-restricted-imports
 
@@ -93,7 +92,7 @@ export function SitesTableFilterTabs( {
 				page(
 					'all' === tabName
 						? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
-						: addQueryArgs( { status: tabName }, window.location.pathname + window.location.search )
+						: addQueryArgs( window.location.pathname + window.location.search, { status: tabName } )
 				);
 			} }
 		>
