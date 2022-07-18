@@ -47,7 +47,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
 				language: locale,
-				verticalId,
+				vertical_id: verticalId,
 				use_screenshot_overrides: true,
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
