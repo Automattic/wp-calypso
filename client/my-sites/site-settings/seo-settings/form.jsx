@@ -332,7 +332,11 @@ export class SiteSettingsFormSEO extends Component {
 						showIcon={ true }
 					/>
 				) }
-				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
+				<form
+					onChange={ this.props.markChanged }
+					className="seo-settings__seo-form"
+					aria-label="SEO Site Settings"
+				>
 					{ showAdvancedSeo && ! conflictedSeoPlugin && (
 						<div>
 							<SettingsSectionHeader
