@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useStarterDesignsGeneratedQuery } from '@automattic/data-stores';
+import { useStarterDesignsGeneratedQuery, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	PremiumBadge,
@@ -78,25 +78,35 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		)
 	);
 
-	const { data: themeDesigns = [] } = useDesignsBySite( site );
+	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
+		{
+			vertical_id: siteVerticalId,
+			seed: siteSlugOrId || undefined,
+			_locale: locale,
+		},
+		{ enabled: true }
+	);
 
-	const staticDesigns = themeDesigns;
+	// todo: remove this once filtering is implemented on backend
 	const shuffledStaticDesigns = useMemo(
-		() => shuffle( staticDesigns.filter( ( design ) => ! isBlankCanvasDesign( design ) ) ),
-		[ staticDesigns ]
+		() =>
+			shuffle(
+				allDesigns?.static?.designs?.filter( ( design ) => ! isBlankCanvasDesign( design ) ) || []
+			),
+		[ allDesigns?.static?.designs ]
 	);
 
 	const enabledGeneratedDesigns = isEnabledFTM && ( intent === 'build' || intent === 'write' );
-
-	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
-		useStarterDesignsGeneratedQuery(
-			{
-				vertical_id: siteVerticalId,
-				seed: siteSlugOrId || undefined,
-				_locale: locale,
-			},
-			{ enabled: enabledGeneratedDesigns && !! siteVerticalId }
-		);
+	const generatedDesigns = allDesigns?.generated?.designs || [];
+	// const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
+	// 	useStarterDesignsGeneratedQuery(
+	// 		{
+	// 			vertical_id: siteVerticalId,
+	// 			seed: siteSlugOrId || undefined,
+	// 			_locale: locale,
+	// 		},
+	// 		{ enabled: enabledGeneratedDesigns && !! siteVerticalId }
+	// 	);
 
 	const showGeneratedDesigns = enabledGeneratedDesigns && generatedDesigns.length > 0;
 
@@ -127,7 +137,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	} );
 
 	const categorizationOptions = getCategorizationOptions( intent, true );
-	const categorization = useCategorization( staticDesigns, categorizationOptions );
+
+	// console.log( 'useCategorization with:',  allDesigns?.static?.designs);
+	// const categorization = useCategorization(  allDesigns?.static?.designs || [], categorizationOptions );
+	const categorization = useCategorization( [], categorizationOptions );
 
 	const handleSubmit = ( providedDependencies?: ProvidedDependencies ) => {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
@@ -154,6 +167,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
+			//todo: update this?
 			const positionIndex = showGeneratedDesigns
 				? generatedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
 				: -1;
@@ -220,6 +234,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function recordStepContainerTracksEvent( eventName: string ) {
 		const tracksProps = {
+			//todo: fix this
 			step: showGeneratedDesigns ? 'generated-design-step' : 'design-step',
 			intent: intent,
 		};
@@ -228,6 +243,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	const handleBackClick = () => {
+		//todo: fixme in mobile?
 		if ( isPreviewingDesign && ( ! showGeneratedDesigns || isMobile ) ) {
 			setSelectedDesign( undefined );
 			setIsPreviewingDesign( false );
@@ -238,6 +254,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	};
 
 	// Track scroll event to make sure people are scrolling on mobile.
+	//todo: do we need this?
 	useTrackScrollPageFromTop( isMobile && ! isPreviewingDesign, flow || '', STEP_NAME, {
 		is_generated_designs: showGeneratedDesigns,
 	} );
@@ -247,9 +264,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		window.scrollTo( { top: 0 } );
 	}, [ isPreviewingDesign ] );
 
-	// When the intent is build or write, we can potentially show the generated design picker.
-	// Don't render until we've fetched the generated designs from the backend.
-	if ( ! site || isLoadingGeneratedDesigns ) {
+	// Don't render until we've fetched the designs from the backend.
+	if ( ! site || isLoadingDesigns ) {
 		return null;
 	}
 
@@ -333,13 +349,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</>
 		);
 	}
-
-	const categoriesHeading = (
+	const heading = (
 		<FormattedHeader
 			id={ 'step-header' }
+			headerText={ translate( 'Pick a design' ) }
+			subHeaderText={ translate(
+				'One of these homepage options could be great to start with. You can always change later.'
+			) }
+		/>
+	);
+	const staticDesignsHeading = (
+		<FormattedHeader
+			isSecondary={ true }
 			headerText={ translate( 'Selected themes for you' ) }
 			subHeaderText={ translate( "These might work if you'd like" ) }
-			align="left"
 		/>
 	);
 
@@ -356,9 +379,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
 			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
-			generatedDesignsHeading={ 'Suitable for your site type' }
+			heading={ heading }
 			categorization={ categorization }
-			categoriesHeading={ categoriesHeading }
+			staticDesignsHeading={ staticDesignsHeading }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }

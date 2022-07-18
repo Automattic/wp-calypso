@@ -23,7 +23,15 @@ import BadgeContainer from './badge-container';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
+import ThemePreview from './theme-preview';
+
 import './style.scss';
+
+import {
+	DEFAULT_VIEWPORT_WIDTH,
+	DEFAULT_VIEWPORT_HEIGHT,
+	MOBILE_VIEWPORT_WIDTH,
+} from '../constants';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
 
@@ -282,24 +290,46 @@ export interface UnifiedDesignPickerProps {
 	staticDesigns?: Design[];
 	premiumBadge?: React.ReactNode;
 	categorization?: Categorization;
-	categoriesHeading?: React.ReactNode;
+	staticDesignsHeading?: React.ReactNode;
+	heading?: React.ReactNode;
 	generatedDesignsHeading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
 }
-const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
+
+interface StaticDesignPickerProps {
+	locale: string;
+	verticalId?: string;
+	onSelect: ( design: Design ) => void;
+	onPreview?: ( design: Design ) => void;
+	onUpgrade?: () => void;
+	designs: Design[];
+	premiumBadge?: React.ReactNode;
+	categorization?: Categorization;
+	categoriesHeading?: React.ReactNode;
+	isPremiumThemeAvailable?: boolean;
+	previewOnly?: boolean;
+	hasDesignOptionHeader?: boolean;
+	onCheckout?: any;
+}
+
+interface GeneratedDesignPickerProps {
+	locale: string;
+	designs: Design[];
+	verticalId?: string;
+	heading?: React.ReactNode;
+	onPreview?: ( design: Design, positionIndex: number ) => void;
+}
+
+const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	locale,
 	onSelect,
 	onPreview,
 	onUpgrade,
-	staticDesigns = getAvailableDesigns( {
-		featuredDesignsFilter: ( design ) =>
-			! design.features.includes( 'anchorfm' ) && excludeFseDesigns( design ),
-	} ).featured,
+	designs,
 	premiumBadge,
-	categoriesHeading,
 	categorization,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
@@ -309,27 +339,17 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
-			? filterDesignsByCategory( staticDesigns, categorization.selection )
-			: staticDesigns.slice(); // cloning because otherwise .sort() would mutate the original prop
+			? filterDesignsByCategory( designs, categorization.selection )
+			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
 		return result;
-	}, [ staticDesigns, categorization?.selection ] );
+	}, [ designs, categorization?.selection ] );
 
 	return (
-		<div
-			className={ classnames(
-				'design-picker',
-				`design-picker--theme-light`,
-				'design-picker__unified',
-				{
-					'design-picker--has-categories': hasCategories,
-				}
-			) }
-		>
+		<div>
 			{ categorization && hasCategories && (
 				<>
-					{ categoriesHeading }
 					<UnifiedDesignPickerCategoryFilter
 						categories={ categorization.categories }
 						onSelect={ categorization.onSelect }
@@ -356,6 +376,106 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					/>
 				) ) }
 			</div>
+		</div>
+	);
+};
+
+const GerneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
+	locale,
+	designs,
+	verticalId,
+	onPreview,
+} ) => {
+	const isMobile = useViewportMatch( 'small', '<' );
+
+	return (
+		<div className="design-picker__grid">
+			{ designs.map( ( design ) => {
+				const previewUrl = getDesignPreviewUrl( design, {
+					language: locale,
+					verticalId,
+					viewport_width: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
+					viewport_height: DEFAULT_VIEWPORT_HEIGHT,
+					use_screenshot_overrides: true,
+				} );
+				return (
+					<div className="design-button-container">
+						<div className="design-picker__design-option">
+							<button
+								className="generated-design-thumbnail"
+								// disabled={ disabled }
+								// onClick={ () => onPreview( design ) }
+							>
+								<span className="generated-design-thumbnail__image">
+									<ThemePreview
+										url={ previewUrl }
+										viewportWidth={ isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH }
+									/>
+								</span>
+							</button>
+						</div>
+					</div>
+				);
+			} ) }
+		</div>
+	);
+};
+
+const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
+	locale,
+	onSelect,
+	onPreview,
+	onUpgrade,
+	verticalId,
+	staticDesigns = getAvailableDesigns( {
+		featuredDesignsFilter: ( design ) =>
+			! design.features.includes( 'anchorfm' ) && excludeFseDesigns( design ),
+	} ).featured,
+	generatedDesigns,
+	generatedDesignsHeading,
+	premiumBadge,
+	staticDesignsHeading,
+	heading,
+	categorization,
+	previewOnly = false,
+	hasDesignOptionHeader = true,
+	isPremiumThemeAvailable,
+	onCheckout = undefined,
+} ) => {
+	const hasCategories = !! categorization?.categories.length;
+	return (
+		<div
+			className={ classnames(
+				'design-picker',
+				`design-picker--theme-light`,
+				'design-picker__unified',
+				{
+					'design-picker--has-categories': hasCategories,
+				}
+			) }
+		>
+			{ heading }
+			{ generatedDesignsHeading }
+			<GerneratedDesignPicker
+				locale={ locale }
+				designs={ generatedDesigns || [] }
+				onPreview={ onPreview }
+				verticalId={ verticalId }
+			/>
+			{ staticDesignsHeading }
+			<StaticDesignPicker
+				locale={ locale }
+				onSelect={ onSelect }
+				onPreview={ onPreview }
+				onUpgrade={ onUpgrade }
+				designs={ staticDesigns }
+				premiumBadge={ premiumBadge }
+				categorization={ categorization }
+				previewOnly={ previewOnly }
+				hasDesignOptionHeader={ hasDesignOptionHeader }
+				isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				onCheckout={ onCheckout }
+			/>
 		</div>
 	);
 };

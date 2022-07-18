@@ -385,6 +385,25 @@
 	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
 		justify-content: flex-start;
 	}
+	.design-picker__grid {
+		@supports ( display: grid ) {
+			@include break-medium {
+				grid-template-columns: 1fr 1fr 1fr;
+				column-gap: 24px;
+			}
+		}
+	}
+	
+	.formatted-header h2.formatted-header__title {
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+
+	.generated-design-thumbnail {
+		height: 500px;
+		min-height: auto;
+		max-height: none;
+	}
 }
 
 // layout with categories
