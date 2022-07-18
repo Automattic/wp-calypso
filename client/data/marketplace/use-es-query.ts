@@ -1,3 +1,4 @@
+import languages, { LanguageSlug } from '@automattic/languages';
 import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 'react-query';
 import { useSelector } from 'react-redux';
 import { extractSearchInformation } from 'calypso/lib/plugins/utils';
@@ -83,6 +84,17 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	} );
 };
 
+const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
+	const defaultLanguage = 'en';
+
+	// the wpLocale for `en` would be `en_US`, but the server uses `en` too
+	if ( defaultLanguage === slug ) {
+		return slug;
+	}
+
+	return languages.find( ( l ) => l.langSlug === slug )?.wpLocale || defaultLanguage;
+};
+
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
@@ -100,7 +112,7 @@ export const useESPluginsInfinite = (
 				groupId: 'wporg',
 				pageHandle: pageParam,
 				pageSize,
-				locale: options.locale || locale,
+				locale: getWpLocaleBySlug( options.locale || locale ),
 			} ),
 		{
 			select: ( data: InfiniteData< ESResponse > ) => {
