@@ -13,6 +13,8 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { SUCCESS } from 'calypso/state/order-transactions/constants';
+import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
@@ -120,9 +122,12 @@ function useRedirectOnTransactionSuccess( {
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
 		orderId ? getOrderTransaction( state, orderId ) : null
 	);
-	const receipt = useSelector( ( state ) =>
-		getReceiptById( state, receiptId ?? ( transaction as OrderTransactionSuccess )?.receiptId )
-	);
+	const transactionReceiptId = isTransactionSuccessful( transaction )
+		? transaction.receiptId
+		: undefined;
+	const finalReceiptId = receiptId ?? transactionReceiptId;
+	const receipt = useSelector( ( state ) => getReceiptById( state, finalReceiptId ) );
+	const isReceiptLoaded = receipt.hasLoadedFromServer;
 	const error: Error | null = useSelector( ( state ) =>
 		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
@@ -135,6 +140,19 @@ function useRedirectOnTransactionSuccess( {
 	const productName = firstPurchase?.productName ?? '';
 	const willAutoRenew = firstPurchase?.willAutoRenew ?? false;
 
+	// Fetch receipt data once we have a receipt Id.
+	const didFetchReceipt = useRef( false );
+	useEffect( () => {
+		if ( didFetchReceipt.current ) {
+			return;
+		}
+		if ( ! isReceiptLoaded && finalReceiptId ) {
+			didFetchReceipt.current = true;
+			reduxDispatch( fetchReceipt( finalReceiptId ) );
+		}
+	}, [ finalReceiptId, isReceiptLoaded, reduxDispatch ] );
+
+	// Redirect and display notices.
 	const didRedirect = useRef( false );
 	useEffect( () => {
 		if ( didRedirect.current ) {
@@ -146,6 +164,12 @@ function useRedirectOnTransactionSuccess( {
 		// get an updated cached cart and future pages will show the cart correctly
 		// as empty.
 		reloadCart();
+
+		// Wait for the receipt to load before redirecting so we can display the
+		// correct notification and possibly run analytics.
+		if ( finalReceiptId && ! isReceiptLoaded ) {
+			return;
+		}
 
 		const redirectInstructions = getRedirectFromPendingPage( {
 			error,
@@ -191,19 +215,27 @@ function useRedirectOnTransactionSuccess( {
 		}
 		performRedirect( redirectInstructions.url );
 	}, [
-		willAutoRenew,
-		productName,
-		isRenewal,
 		error,
+		finalReceiptId,
+		isReceiptLoaded,
+		isRenewal,
+		orderId,
+		productName,
+		receiptId,
 		redirectTo,
 		reduxDispatch,
+		reloadCart,
 		siteSlug,
 		transaction,
 		translate,
-		reloadCart,
-		orderId,
-		receiptId,
+		willAutoRenew,
 	] );
+}
+
+function isTransactionSuccessful(
+	transaction: OrderTransaction | null
+): transaction is OrderTransactionSuccess {
+	return transaction?.processingStatus === SUCCESS;
 }
 
 function displayRenewalSuccessNotice( {
