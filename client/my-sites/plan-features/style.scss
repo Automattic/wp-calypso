@@ -337,6 +337,10 @@ $plan-features-sidebar-width: 272px;
 		&.is-ecommerce-plan {
 			border-bottom: solid 2px var( --color-plan-ecommerce );
 		}
+
+		.plans-features-main__notice{
+			margin-top: 0;
+		}
 	}
 
 	.plans-features-main__group.is-jetpack & {
@@ -665,6 +669,15 @@ $plan-features-sidebar-width: 272px;
 .plan-features__item-description {
 	display: inline-block;
 	margin-left: 10px;
+}
+
+/*= Plans in Upgrades
+========================================*/
+
+.plans-features-main__notice.is-wpcom {
+	.notice{
+		margin-bottom: -10px;
+	}
 }
 
 /*= Plans in Signup
