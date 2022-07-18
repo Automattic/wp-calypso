@@ -362,8 +362,8 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
 			// If the user fills out the site title with write intent, we show it on the design preview
-			siteTitle: intent === 'write' ? siteTitle : undefined,
-			verticalId: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
+			site_title: intent === 'write' ? siteTitle : undefined,
+			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
 		} );
 
 		const stepContent = (
