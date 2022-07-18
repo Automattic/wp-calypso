@@ -6,7 +6,6 @@ import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import EmptyContent from 'calypso/components/empty-content';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
@@ -118,7 +117,6 @@ function useRedirectOnTransactionSuccess( {
 	redirectTo?: string;
 } ): void {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
 		orderId ? getOrderTransaction( state, orderId ) : null
 	);
@@ -186,12 +184,8 @@ function useRedirectOnTransactionSuccess( {
 		if ( isRenewal ) {
 			displayRenewalSuccessNotice( {
 				productName,
-				billPeriod,
 				willAutoRenew,
-				expiry,
-				userEmail,
 				translate,
-				moment,
 				reduxDispatch,
 			} );
 		}
@@ -206,7 +200,6 @@ function useRedirectOnTransactionSuccess( {
 		siteSlug,
 		transaction,
 		translate,
-		moment,
 		reloadCart,
 		orderId,
 		receiptId,
@@ -215,42 +208,27 @@ function useRedirectOnTransactionSuccess( {
 
 function displayRenewalSuccessNotice( {
 	productName,
-	billPeriod,
 	willAutoRenew,
-	expiry,
-	userEmail,
 	translate,
-	moment,
 	reduxDispatch,
 }: {
 	productName: string;
-	billPeriod: string;
 	willAutoRenew: boolean;
-	expiry: string;
-	userEmail: string;
 	translate: ReturnType< typeof useTranslate >;
-	moment: ReturnType< typeof useLocalizedMoment >;
 	reduxDispatch: CalypsoDispatch;
 } ): void {
 	if ( willAutoRenew ) {
 		// showing notice for product that will auto-renew
 		reduxDispatch(
 			successNotice(
-				translate(
-					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. {{a}}Learn more about renewals{{/a}}',
-					{
-						args: {
-							productName,
-							duration: moment.duration( { days: parseInt( billPeriod, 10 ) } ).humanize(),
-							email: userEmail,
-						},
-						components: {
-							a: (
-								<a href={ localizeUrl( AUTO_RENEWAL ) } target="_blank" rel="noopener noreferrer" />
-							),
-						},
-					}
-				),
+				translate( 'Success! You renewed %(productName)s. {{a}}Learn more about renewals{{/a}}', {
+					args: {
+						productName,
+					},
+					components: {
+						a: <a href={ localizeUrl( AUTO_RENEWAL ) } target="_blank" rel="noopener noreferrer" />,
+					},
+				} ),
 				{ displayOnNextPage: true }
 			)
 		);
@@ -260,17 +238,11 @@ function displayRenewalSuccessNotice( {
 	// showing notice for product that will not auto-renew
 	reduxDispatch(
 		successNotice(
-			translate(
-				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. We sent your receipt to %(email)s.',
-				{
-					args: {
-						productName,
-						duration: moment.duration( { days: parseInt( billPeriod, 10 ) } ).humanize(),
-						date: moment( expiry ).format( 'LL' ),
-						email: userEmail,
-					},
-				}
-			),
+			translate( 'Success! You renewed %(productName)s.', {
+				args: {
+					productName,
+				},
+			} ),
 			{ displayOnNextPage: true }
 		)
 	);
