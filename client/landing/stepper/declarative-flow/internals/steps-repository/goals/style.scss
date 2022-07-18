@@ -87,7 +87,7 @@
 		padding: 32px 0 48px;
 		display: flex;
 		flex-direction: column;
-		justify-content: left;
+		justify-content: left  #{'/*rtl:right*/'};
 
 		button.is-primary {
 			width: 130px;

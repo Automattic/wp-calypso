@@ -29,7 +29,7 @@ describe( 'useShoppingCart', () => {
 
 	describe( 'addProductsToCart', () => {
 		const TestComponent = ( { products = undefined } ) => {
-			const { addProductsToCart } = useShoppingCart();
+			const { addProductsToCart } = useShoppingCart( undefined );
 			const onClick = () => {
 				addProductsToCart( products )
 					.then( () => markUpdateComplete() )
@@ -194,7 +194,7 @@ describe( 'useShoppingCart', () => {
 
 	describe( 'removeProductFromCart', () => {
 		const TestComponent = () => {
-			const { removeProductFromCart, responseCart } = useShoppingCart();
+			const { removeProductFromCart, responseCart } = useShoppingCart( undefined );
 			const onClick = () => {
 				const uuid = responseCart.products.length ? responseCart.products[ 0 ].uuid : null;
 				removeProductFromCart( uuid )
@@ -262,7 +262,7 @@ describe( 'useShoppingCart', () => {
 
 	describe( 'replaceProductsInCart', () => {
 		const TestComponent = ( { products } ) => {
-			const { replaceProductsInCart } = useShoppingCart();
+			const { replaceProductsInCart } = useShoppingCart( undefined );
 			const onClick = () => {
 				replaceProductsInCart( products )
 					.then( () => markUpdateComplete() )
@@ -349,7 +349,7 @@ describe( 'useShoppingCart', () => {
 
 	describe( 'replaceProductInCart', () => {
 		const TestComponent = () => {
-			const { replaceProductInCart, responseCart } = useShoppingCart();
+			const { replaceProductInCart, responseCart } = useShoppingCart( undefined );
 			const onClick = () => {
 				const uuid = responseCart.products.length ? responseCart.products[ 0 ].uuid : null;
 				replaceProductInCart( uuid, { product_id: planTwo.product_id } )
@@ -418,7 +418,7 @@ describe( 'useShoppingCart', () => {
 
 	describe( 'applyCoupon', () => {
 		const TestComponent = () => {
-			const { applyCoupon } = useShoppingCart();
+			const { applyCoupon } = useShoppingCart( undefined );
 			const onClick = () => {
 				applyCoupon( 'ABCD' )
 					.then( () => markUpdateComplete() )
@@ -486,7 +486,7 @@ describe( 'useShoppingCart', () => {
 
 	describe( 'removeCoupon', () => {
 		const TestComponent = () => {
-			const { removeCoupon } = useShoppingCart();
+			const { removeCoupon } = useShoppingCart( undefined );
 			const onClick = () => {
 				removeCoupon()
 					.then( () => markUpdateComplete() )
@@ -556,7 +556,7 @@ describe( 'useShoppingCart', () => {
 
 	describe( 'updateLocation', () => {
 		const TestComponent = () => {
-			const { updateLocation } = useShoppingCart();
+			const { updateLocation } = useShoppingCart( undefined );
 			const onClick = () => {
 				updateLocation( {
 					countryCode: 'US',
@@ -630,7 +630,7 @@ describe( 'useShoppingCart', () => {
 
 	describe( 'reloadFromServer', () => {
 		const TestComponent = () => {
-			const { reloadFromServer } = useShoppingCart();
+			const { reloadFromServer } = useShoppingCart( undefined );
 			const onClick = () => {
 				reloadFromServer()
 					.then( () => markUpdateComplete() )

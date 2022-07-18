@@ -302,7 +302,7 @@
 		fill: unset;
 	}
 }
-.site-overview__highlight-tab.section-nav {
+.sites-overview__highlight-tab.section-nav {
 	animation: highlight-tab-animation 0.4s linear;
 	.section-nav__mobile-header-text {
 		animation: highlight-tab-animation-count 0.4s linear;
@@ -310,4 +310,9 @@
 	.section-nav__mobile-header .gridicon {
 		animation: highlight-tab-animation-icon 0.4s linear;
 	}
+}
+.sites-overview__no-sites {
+	text-align: center;
+	font-size: 1.5rem;
+	margin-top: 16px;
 }
