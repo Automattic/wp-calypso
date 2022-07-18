@@ -21,7 +21,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 			return sites;
 		}
 
-		return searchCollection( sites, term.toLowerCase(), [ 'URL', 'domain', 'name', 'slug' ] );
+		return searchCollection( sites, term.toLowerCase(), [ 'URL', 'name', 'slug' ] );
 	}, [ term, sites ] );
 
 	const handleSearch = ( rawTerm: string ) => setTerm( rawTerm.trim() );
