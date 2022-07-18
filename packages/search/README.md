@@ -40,7 +40,9 @@ There are 2 search modes that can be used through the `searchMode` prop:
 
 A hook that exposes fuzzy searching functionality.
 
-It can be beneficial especially as the size of the dataset grows because this mechanism does not walk through the whole list. Also, some users might want to find an object that they do not remember the exact name, so entering a partial string, or even one with typos, would still return results ranked by proximity.
+It can be beneficial especially as the size of the dataset grows because this mechanism maintains an index instead of simply walking through the whole array looking for matches.
+
+Also, some users might want to find an object that they do not remember the exact name, so entering a partial string, or even one with typos, would still return results ranked by proximity.
 
 Example: imagine you're querying for `example.wordpress.com`. While "normal", substring search, would fail if you've searched for `exmple`, fuzzy search would still return the result.
 
