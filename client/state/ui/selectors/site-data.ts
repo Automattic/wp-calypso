@@ -7,6 +7,7 @@ export interface SiteData {
 	slug: string;
 	domain: string;
 	locale: string;
+	icon?: SiteDataIcon;
 	options?: SiteDataOptions;
 	wpcom_url?: string;
 	jetpack?: boolean;
@@ -18,6 +19,11 @@ export interface SiteData {
 	is_coming_soon?: boolean;
 	launch_status?: string;
 	// TODO: fill out the rest of this
+}
+
+export interface SiteDataIcon {
+	ico: string;
+	img: string;
 }
 
 export interface SiteDataPlan {

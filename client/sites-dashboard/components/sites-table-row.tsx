@@ -6,10 +6,10 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteExcerptData } from '../use-sites-data-query';
 
 interface SiteTableRowProps {
-	site: SiteData;
+	site: SiteExcerptData;
 }
 
 const Row = styled.tr`
@@ -60,7 +60,7 @@ const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
 };
 
-const VisitDashboardItem = ( { site }: { site: SiteData } ) => {
+const VisitDashboardItem = ( { site }: { site: SiteExcerptData } ) => {
 	const { __ } = useI18n();
 	return (
 		<PopoverMenuItem href={ getDashboardUrl( site.slug ) }>

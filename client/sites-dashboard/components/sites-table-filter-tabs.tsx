@@ -5,17 +5,17 @@ import { removeQueryArgs } from '@wordpress/url';
 import page from 'page';
 import { addQueryArgs } from 'calypso/lib/url';
 import SitesBadge from './sites-badge';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data'; // eslint-disable-line no-restricted-imports
+import type { SiteExcerptData } from '../use-sites-data-query';
 
 interface SitesTableFilterTabsProps {
-	allSites: SiteData[];
-	children( filteredSites: SiteData[], status: string ): JSX.Element;
+	allSites: SiteExcerptData[];
+	children( filteredSites: SiteExcerptData[], status: string ): JSX.Element;
 	className?: string;
 	launchStatus?: string;
 }
 
 interface FilteredSites {
-	[ name: string ]: SiteData[];
+	[ name: string ]: SiteExcerptData[];
 }
 
 interface SiteTab extends Omit< TabPanel.Tab, 'title' > {
@@ -96,7 +96,7 @@ export function SitesTableFilterTabs( {
 	);
 }
 
-function filterSites( sites: SiteData[], filterType: string ): SiteData[] {
+function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {
 	return sites.filter( ( site ) => {
 		const isComingSoon =
 			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
