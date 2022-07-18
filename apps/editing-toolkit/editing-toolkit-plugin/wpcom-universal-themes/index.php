@@ -26,6 +26,7 @@ function hide_nav_menus_submenu() {
 function init() {
 	if ( wp_is_block_theme() ) {
 		// Hide Menus submenu if FSE theme is activated.
+		// We hid the Menus submenu in the Full Site Editing Beta, so I kept it hidden for consistency purposes
 		add_action( 'admin_menu', __NAMESPACE__ . '\hide_nav_menus_submenu' );
 	}
 }
