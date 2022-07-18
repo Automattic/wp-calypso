@@ -1161,8 +1161,9 @@ __metadata:
     "@storybook/addon-actions": ^6.4.21
     "@storybook/react": ^6.4.18
     "@testing-library/dom": ^8.11.3
+    "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.3
-    "@testing-library/user-event": ^13.5.0
+    "@testing-library/user-event": ^14.2.5
     "@wordpress/base-styles": ^4.5.0
     "@wordpress/components": ^19.15.0
     "@wordpress/compose": ^5.7.0
@@ -1171,6 +1172,7 @@ __metadata:
     "@wordpress/is-shallow-equal": ^4.9.0
     "@wordpress/react-i18n": ^3.7.0
     classnames: ^2.3.1
+    fuse.js: ^6.6.2
     lodash: ^4.17.21
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -6355,9 +6357,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^5.16.2":
-  version: 5.16.2
-  resolution: "@testing-library/jest-dom@npm:5.16.2"
+"@testing-library/jest-dom@npm:^5.16.2, @testing-library/jest-dom@npm:^5.16.4":
+  version: 5.16.4
+  resolution: "@testing-library/jest-dom@npm:5.16.4"
   dependencies:
     "@babel/runtime": ^7.9.2
     "@types/testing-library__jest-dom": ^5.9.1
@@ -6368,7 +6370,7 @@ __metadata:
     dom-accessibility-api: ^0.5.6
     lodash: ^4.17.15
     redent: ^3.0.0
-  checksum: f57ee673318f97ace6d7aac94a466f39264060afa5857c41f2fa39c40c6a9dfd29373f624a329286912eb078d95e7afdd2c728f02dae8cf0e82ad628263200d8
+  checksum: c34016bbc4865f8f9912d62ac63b409b87e785ff281a50f6eae8c1bc2364963c0831541da8a185bbd8b5964a6e3371fb623c339e8128d84706eb06f93f145801
   languageName: node
   linkType: hard
 
@@ -6408,23 +6410,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^13.5.0":
-  version: 13.5.0
-  resolution: "@testing-library/user-event@npm:13.5.0"
-  dependencies:
-    "@babel/runtime": ^7.12.5
+"@testing-library/user-event@npm:^14.2.0, @testing-library/user-event@npm:^14.2.5":
+  version: 14.2.5
+  resolution: "@testing-library/user-event@npm:14.2.5"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: ff57edaeab31322c80c3f01d55404b4cebb907b9ec7672b96a1a14d053f172046b01c5f27b45677927ebee8ed91bce695a7d09edec9a48875cfacabe39d0426a
-  languageName: node
-  linkType: hard
-
-"@testing-library/user-event@npm:^14.2.0":
-  version: 14.2.0
-  resolution: "@testing-library/user-event@npm:14.2.0"
-  peerDependencies:
-    "@testing-library/dom": ">=7.21.4"
-  checksum: 1011c63521685bfb758d6c8d4fed5f16de6ebc28f5817d017364302d7b69f00acacb9dea1a1bf4a5efdf6e166f66541a42b6c6e8e08914310cd23a1b1af98e98
+  checksum: b585e1e137e4c2a1d6b11e7eb59fc8c8e49b4d7be41e24fbbdff1f01aef65096e3793fe16198f525fcbeafc5ec3605333abf518b02cac50c9a188ec06acc7009
   languageName: node
   linkType: hard
 
@@ -18415,6 +18406,13 @@ __metadata:
   version: 3.6.1
   resolution: "fuse.js@npm:3.6.1"
   checksum: bd9d5bc4d82781de7bb46057e96775f9efc497eb8b334b61cfea589db730c1fe7789bf5ff61b1146c15e18ffe5b27715807e5d436f333662b47917b530ced5e9
+  languageName: node
+  linkType: hard
+
+"fuse.js@npm:^6.6.2":
+  version: 6.6.2
+  resolution: "fuse.js@npm:6.6.2"
+  checksum: c2fe4f234f516e9ea83b06f06f8f3c8b7117f51aa75bbccd052eed0c0423364bf1e360ffbf29cadae8ef6aa39476b7961eaf9d07bed779cea5c83d62b34e2df9
   languageName: node
   linkType: hard
 
