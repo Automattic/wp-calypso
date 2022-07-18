@@ -2,7 +2,7 @@
 
 The search module.
 
-### Installation
+## Installation
 
 Install the package.
 
@@ -10,16 +10,16 @@ Install the package.
 yarn add @automattic/search
 ```
 
-### Internationalization
+## Internationalization
 
 This package depends directly on `@wordpress/i18n` for translations. This means consumers must provide locale data prior to using it.
 
-### Development Workflow
+## Development Workflow
 
 This package is developed as part of the Calypso monorepo. Run `yarn`
 in the root of the repository to get the required `devDependencies`.
 
-### Using [Storybook](https://storybook.js.org/)
+## Using [Storybook](https://storybook.js.org/)
 
 `yarn workspace @automattic/search run storybook`
 
