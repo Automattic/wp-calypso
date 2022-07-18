@@ -11,7 +11,7 @@ const InviteButton = ( { isPrimary = true, siteSlug } ) => {
 	return (
 		<Button primary={ isPrimary } href={ `/people/new/${ siteSlug }` }>
 			<Gridicon icon="user-add" />
-			<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
+			<span>{ translate( 'Add User', { context: 'Verb. Button to invite more users.' } ) }</span>
 		</Button>
 	);
 };
