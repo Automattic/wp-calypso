@@ -7,12 +7,12 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data'; // eslint-
 
 interface SitesTableFilterTabsProps {
 	allSites: SiteData[];
-	children( filteredSites: SiteData[], queryParams: SitesTableQueryParams ): JSX.Element;
+	children( filteredSites: SiteData[], filterOptions: SitesTableFilterOptions ): JSX.Element;
 	className?: string;
-	queryParams: SitesTableQueryParams;
+	filterOptions: SitesTableFilterOptions;
 }
 
-interface SitesTableQueryParams {
+interface SitesTableFilterOptions {
 	status?: string;
 	search?: string;
 }
@@ -51,7 +51,7 @@ export function SitesTableFilterTabs( {
 	allSites,
 	children: renderContents,
 	className,
-	queryParams,
+	filterOptions,
 }: SitesTableFilterTabsProps ) {
 	const { __ } = useI18n();
 
@@ -62,8 +62,8 @@ export function SitesTableFilterTabs( {
 		{ name: 'coming-soon', title: __( 'Coming soon' ) },
 	];
 
-	const initialTabName = tabs.find( ( tab ) => tab.name === queryParams.status )
-		? queryParams.status
+	const initialTabName = tabs.find( ( tab ) => tab.name === filterOptions.status )
+		? filterOptions.status
 		: undefined;
 
 	const filteredSites: FilteredSites = tabs.reduce(
@@ -79,7 +79,7 @@ export function SitesTableFilterTabs( {
 				<SitesBadge>{ filteredSites[ name ].length }</SitesBadge>
 			</>
 		),
-		queryParams: queryParams,
+		filterOptions: filterOptions,
 	} ) );
 
 	return (
@@ -97,7 +97,7 @@ export function SitesTableFilterTabs( {
 				);
 			} }
 		>
-			{ ( tab ) => renderContents( filteredSites[ tab.name ], tab.queryParams ) }
+			{ ( tab ) => renderContents( filteredSites[ tab.name ], tab.filterOptions ) }
 		</SitesTabPanel>
 	);
 }

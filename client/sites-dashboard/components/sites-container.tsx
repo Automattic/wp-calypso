@@ -21,21 +21,21 @@ const Title = styled.div`
 `;
 type SitesContainerProps = {
 	sites: SiteData[];
-	queryParams: SitesContainerQueryParams;
+	filterOptions: SitesContainerFilterOptions;
 };
 
-interface SitesContainerQueryParams {
+interface SitesContainerFilterOptions {
 	status?: string;
 	search?: string;
 }
 
-export const SitesContainer = ( { sites, queryParams }: SitesContainerProps ) => {
+export const SitesContainer = ( { sites, filterOptions }: SitesContainerProps ) => {
 	const { __ } = useI18n();
 	if ( sites.length > 0 ) {
-		return <SearchableSitesTable sites={ sites } initialSearch={ queryParams.search } />;
+		return <SearchableSitesTable sites={ sites } initialSearch={ filterOptions.search } />;
 	}
 
-	if ( queryParams.status === 'launched' ) {
+	if ( filterOptions.status === 'launched' ) {
 		return (
 			<EmptySites
 				title={ <Title> { __( "You haven't launched a site" ) } </Title> }
@@ -62,7 +62,7 @@ export const SitesContainer = ( { sites, queryParams }: SitesContainerProps ) =>
 		);
 	}
 
-	if ( queryParams.status === 'private' ) {
+	if ( filterOptions.status === 'private' ) {
 		return (
 			<EmptySites
 				title={ <Title> { __( 'You have no private sites' ) } </Title> }
@@ -89,7 +89,7 @@ export const SitesContainer = ( { sites, queryParams }: SitesContainerProps ) =>
 		);
 	}
 
-	if ( queryParams.status === 'coming-soon' ) {
+	if ( filterOptions.status === 'coming-soon' ) {
 		return (
 			<EmptySites
 				title={ <Title> { __( 'You have no coming soon sites' ) } </Title> }

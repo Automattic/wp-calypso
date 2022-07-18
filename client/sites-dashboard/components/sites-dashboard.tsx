@@ -88,10 +88,10 @@ export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 								position: relative;
 								top: -48px;
 							` }
-							queryParams={ queryParams }
+							filterOptions={ queryParams }
 						>
-							{ ( filteredSites, queryParams ) => (
-								<SitesContainer sites={ filteredSites } queryParams={ queryParams } />
+							{ ( filteredSites, filterOptions ) => (
+								<SitesContainer sites={ filteredSites } filterOptions={ filterOptions } />
 							) }
 						</SitesTableFilterTabs>
 					) }
