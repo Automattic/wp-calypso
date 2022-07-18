@@ -38,6 +38,12 @@ class PeopleListSectionHeader extends Component {
 		return '/people/new/' + siteSlug;
 	}
 
+	getAddSubscriberLink() {
+		const siteSlug = get( this.props, 'site.slug' );
+
+		return '/people/add-subscribers/' + siteSlug;
+	}
+
 	getPopoverText() {
 		const { currentRoute, translate } = this.props;
 
@@ -52,9 +58,22 @@ class PeopleListSectionHeader extends Component {
 		return null;
 	}
 
+	isFollowersTab() {
+		const { currentRoute } = this.props;
+
+		return startsWith( currentRoute, '/people/followers' );
+	}
+
+	isSubscribersTab() {
+		const { currentRoute } = this.props;
+
+		return startsWith( currentRoute, '/people/email-followers' );
+	}
+
 	render() {
 		const { label, count, children, translate } = this.props;
 		const siteLink = this.getAddLink();
+		const addSubscriberLink = this.getAddSubscriberLink();
 		const classes = classNames( this.props.className, 'people-list-section-header' );
 
 		return (
@@ -66,12 +85,17 @@ class PeopleListSectionHeader extends Component {
 				popoverText={ this.getPopoverText() }
 			>
 				{ children }
-				{ siteLink && (
+				{ siteLink && this.isFollowersTab() && (
 					<Button compact href={ siteLink } className="people-list-section-header__add-button">
 						<Gridicon icon="user-add" />
 						<span>
 							{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
 						</span>
+					</Button>
+				) }
+				{ addSubscriberLink && this.isSubscribersTab() && (
+					<Button href={ addSubscriberLink } compact primary>
+						{ translate( 'Add Subscribers', { context: 'Verb. Button to add more subscribers.' } ) }
 					</Button>
 				) }
 			</SectionHeader>

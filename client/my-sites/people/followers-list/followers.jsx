@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Card, Button } from '@automattic/components';
+import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -110,15 +111,12 @@ class Followers extends Component {
 			);
 		}
 
-		let emptyTitle;
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
-				emptyTitle = preventWidows(
-					this.props.translate( 'No one is following you by email yet.' )
-				);
-			} else {
-				emptyTitle = preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
+				return <AddSubscriberForm />;
 			}
+
+			const emptyTitle = preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
 			return <EmptyContent title={ emptyTitle } action={ this.renderInviteFollowersAction() } />;
 		}
 
