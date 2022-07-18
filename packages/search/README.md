@@ -23,9 +23,9 @@ in the root of the repository to get the required `devDependencies`.
 
 `yarn workspace @automattic/search run storybook`
 
-## What's included?
+## What's Included?
 
-### Search input
+### Search Input
 
 A search input component.
 
@@ -64,7 +64,7 @@ The hook returns an object with a few properties:
 - `setQuery`, so you can change the term after an event (i.e. input change).
 
 
-##### Searching an array of objects
+##### Searching an Array of Objects
 
 You can also pass an array of objects as the `data`. That way you can search inside objects:
 
@@ -79,10 +79,10 @@ const Component = () => {
 
 Note that you must pass the `keys` argument so the hook indexes those keys. Those are the keys that will be accounted when searching. That argument is **required** when you're working with an array of objects.
 
-##### Setting custom options
+##### Setting Custom Options
 
 Beyond passing `keys` (and [its variations](https://fusejs.io/examples.html)), you can extend the hook by providing the `options` argument, which will extend the fuzzy search mechanism following [the options described by Fuse.js](https://fusejs.io/api/options.html).
 
-##### Setting an initial query
+##### Setting an Initial Query
 
 It's also possible to set an initial query through the `initialQuery` argument. That'll be the the initial state for the returned `query` property and will be used as the initial search filter.
