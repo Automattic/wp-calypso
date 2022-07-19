@@ -1,4 +1,3 @@
-import { Card, Button } from '@automattic/components';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
@@ -7,7 +6,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
-import parselyIcon from 'calypso/assets/images/icons/parsely-logo.svg';
+import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Banner from 'calypso/components/banner';
@@ -20,9 +19,9 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import PromoCard from 'calypso/components/promo-card';
 import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { StatsNoContentBanner } from 'calypso/my-sites/stats/stats-no-content-banner';
@@ -313,40 +312,20 @@ class StatsSite extends Component {
 						</div>
 					</div>
 				</div>
-				<Card className="stats__parsely-banner">
-					<TrackComponentView eventName="calypso_stats_parsely_banner_view" />
-					<img src={ parselyIcon } alt="" aria-hidden="true" />
-					<div>
-						<FormattedHeader
-							brandFont
-							className="stats__parsely-banner-header"
-							headerText={ preventWidows(
-								translate( 'Discover more stats with Parse.ly Analytics' )
-							) }
-							align="left"
-						/>
-						<p>
-							{ preventWidows(
-								translate(
-									"Need deeper insights? Parse.ly Analytics makes it easy to understand the full impact of your content. {{br/}}Measure what's driving awareness, engagement, and conversions.",
-									{
-										components: {
-											br: <br />,
-										},
-									}
-								)
-							) }
-						</p>
-					</div>
-					<Button
-						primary
-						href="https://www.parse.ly/wordpress-demo?utm_source=wpstats&utm_medium=jitm&utm_campaign=parselywpstatsdemo"
-						onClick={ this.parselyClick }
-						target="_blank"
-					>
-						{ translate( 'Learn more' ) }
-					</Button>
-				</Card>
+				<PromoCard
+					eventName="calypso_stats_wordpress_seo_premium_banner_view"
+					headerText={ preventWidows(
+						translate( 'Increase site visitors with Yoast SEO Premium' )
+					) }
+					contentText={ preventWidows(
+						translate(
+							'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+						)
+					) }
+					ctaText={ translate( 'Learn more' ) }
+					image={ wordpressSeoIllustration }
+					onClick={ this.parselyClick }
+				/>
 				<JetpackColophon />
 			</>
 		);
@@ -417,3 +396,35 @@ export default connect(
 	},
 	{ recordGoogleEvent, enableJetpackStatsModule, recordTracksEvent }
 )( localize( StatsSite ) );
+
+/**
+	<Card className="stats__parsely-banner">
+		<TrackComponentView eventName="calypso_stats_parsely_banner_view" />
+		<img src={ wordpressSeoIllustration } alt="" aria-hidden="true" />
+		<div>
+			<FormattedHeader
+				brandFont
+				className="stats__parsely-banner-header"
+				headerText={ preventWidows(
+					translate( 'Increase site visitors with Yoast SEO Premium' )
+				) }
+				align="left"
+			/>
+			<p>
+				{ preventWidows(
+					translate(
+						'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+					)
+				) }
+			</p>
+			<Button
+				primary
+				href="https://www.parse.ly/wordpress-demo?utm_source=wpstats&utm_medium=jitm&utm_campaign=parselywpstatsdemo"
+				onClick={ this.parselyClick }
+				target="_blank"
+			>
+				{ translate( 'Learn more' ) }
+			</Button>
+		</div>
+	</Card>
+*/

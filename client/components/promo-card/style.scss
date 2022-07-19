@@ -1,0 +1,34 @@
+.promo-card {
+	display: flex;
+	font-size: $font-body-small;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	padding: 30px;
+	margin-top: 16px;
+
+	.formatted-header {
+		margin: 0 0 12px;
+	}
+
+	.formatted-header__title {
+		font-size: $font-title-large;
+	}
+
+	.promo-card__text {
+		max-width: 520px;
+	}
+
+	img {
+		max-width: 200px;
+		flex: 1;
+		height: auto;
+		margin-right: 60px;
+	}
+
+	p {
+		font-size: $font-body;
+		color: var( --color-text-subtle );
+		margin-bottom: 25px;
+	}
+}
