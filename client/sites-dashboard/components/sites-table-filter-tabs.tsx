@@ -5,7 +5,7 @@ import { removeQueryArgs } from '@wordpress/url';
 import page from 'page';
 import { addQueryArgs } from 'calypso/lib/url';
 import SitesBadge from './sites-badge';
-import type { SiteExcerptData } from '../use-sites-data-query';
+import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query';
 
 interface SitesTableFilterTabsProps {
 	allSites: SiteExcerptData[];

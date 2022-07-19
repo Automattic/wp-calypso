@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import SitesTableRow from './sites-table-row';
-import type { SiteExcerptData } from '../use-sites-data-query';
+import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query';
 
 interface SitesTableProps {
 	className?: string;

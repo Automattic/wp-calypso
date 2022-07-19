@@ -5,7 +5,7 @@ import { searchCollection } from 'calypso/components/search-sites/utils';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 import { SitesTable } from './sites-table';
-import type { SiteExcerptData } from '../use-sites-data-query';
+import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query';
 
 interface SearchableSitesTableProps {
 	sites: SiteExcerptData[];

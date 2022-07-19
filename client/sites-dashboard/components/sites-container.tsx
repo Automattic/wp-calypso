@@ -3,7 +3,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import EmptyContent from 'calypso/components/empty-content';
 import { SearchableSitesTable } from './searchable-sites-table';
-import type { SiteExcerptData } from '../use-sites-data-query';
+import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query';
 
 const EmptySites = styled( EmptyContent )`
 	display: flex;

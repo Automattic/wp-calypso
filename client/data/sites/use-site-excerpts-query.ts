@@ -3,7 +3,6 @@ import { useQuery } from 'react-query';
 import { useStore } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { SiteData, SiteDataOptions } from 'calypso/state/ui/selectors/site-data';
-import { notNullish } from './util';
 
 // Performance-optimized request for lists of sites.
 // Don't add more fields because you will make the request slower.
@@ -39,7 +38,7 @@ const fetchSites = (): Promise< { sites: SiteExcerptData[] } > => {
 	} );
 };
 
-export const useSitesDataQuery = () => {
+export const useSiteExcerptsQuery = () => {
 	const sites = useStore().getState().sites.items;
 
 	let reduxData = undefined;
@@ -58,3 +57,7 @@ export const useSitesDataQuery = () => {
 		},
 	} );
 };
+
+function notNullish< T >( t: T | null | undefined ): t is T {
+	return t !== null && t !== undefined;
+}
