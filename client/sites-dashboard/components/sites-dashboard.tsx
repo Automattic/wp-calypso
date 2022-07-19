@@ -3,7 +3,8 @@ import { css, ClassNames } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { SitesContainer } from './sites-container';
+import { NoSitesMessage } from './no-sites-message';
+import { SearchableSitesTable } from './searchable-sites-table';
 import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
 interface SitesDashboardProps {
@@ -83,9 +84,13 @@ export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 							` }
 							launchStatus={ launchStatus }
 						>
-							{ ( filteredSites, status ) => (
-								<SitesContainer sites={ filteredSites } status={ status } />
-							) }
+							{ ( filteredSites, status ) =>
+								filteredSites.length ? (
+									<SearchableSitesTable sites={ filteredSites } />
+								) : (
+									<NoSitesMessage status={ status } />
+								)
+							}
 						</SitesTableFilterTabs>
 					) }
 				</ClassNames>
