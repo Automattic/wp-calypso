@@ -26,6 +26,7 @@ import {
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -178,10 +179,26 @@ export class PlansFeaturesMain extends Component {
 			isProfessionalEmailPromotionAvailable,
 			redirectToAddDomainFlow,
 			translate,
+			locale,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const legacyText =
+			locale === 'en' ||
+			hasTranslation(
+				'Your current plan is no longer available for new subscriptions. ' +
+					'You’re all set to continue with the plan for as long as you like. ' +
+					'Alternatively, you can switch to any of our current plans by selecting it below. ' +
+					'Please keep in mind that switching plans will be irreversible.'
+			)
+				? translate(
+						'Your current plan is no longer available for new subscriptions. ' +
+							'You’re all set to continue with the plan for as long as you like. ' +
+							'Alternatively, you can switch to any of our current plans by selecting it below. ' +
+							'Please keep in mind that switching plans will be irreversible.'
+				  )
+				: null;
 		return (
 			<div
 				className={ classNames(
@@ -194,17 +211,8 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans="wpcom"
 			>
-				{ isCurrentPlanRetired && (
-					<Notice
-						showDismiss={ false }
-						status="is-info"
-						text={ translate(
-							'Your current plan is no longer available for new subscriptions. ' +
-								'You’re all set to continue with the plan for as long as you like. ' +
-								'Alternatively, you can switch to any of our current plans by selecting it below. ' +
-								'Please keep in mind that switching plans will be irreversible.'
-						) }
-					/>
+				{ isCurrentPlanRetired && legacyText && (
+					<Notice showDismiss={ false } status="is-info" text={ legacyText } />
 				) }
 				{ ! isCurrentPlanRetired && currentPurchaseIsInAppPurchase && (
 					<Notice
