@@ -2,7 +2,6 @@ import {
 	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
 	MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 	MARKETPLACE_QUEUE_PRODUCT_INSTALL,
-	MARKETPLACE_THIRD_PARTY_DEVS_ACCOUNT_CONSENT,
 } from 'calypso/state/action-types';
 import { THEME_TRANSFER_INITIATE_REQUEST } from 'calypso/state/themes/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
@@ -21,11 +20,6 @@ const purchaseFlow = withSchemaValidation(
 	purchaseFlowSchema,
 	( state: IPurchaseFlowState = defaultState, action: AnyAction ): IPurchaseFlowState => {
 		switch ( action.type ) {
-			case MARKETPLACE_THIRD_PARTY_DEVS_ACCOUNT_CONSENT:
-				return {
-					...state,
-					thirdPartyDevsAccountConsent: action.consent,
-				};
 			case MARKETPLACE_PRIMARY_DOMAIN_SELECT:
 				return {
 					...state,

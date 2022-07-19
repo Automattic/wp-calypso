@@ -2,7 +2,6 @@ import {
 	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
 	MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 	MARKETPLACE_QUEUE_PRODUCT_INSTALL,
-	MARKETPLACE_THIRD_PARTY_DEVS_ACCOUNT_CONSENT,
 } from 'calypso/state/action-types';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import type { AnyAction } from 'redux';
@@ -31,12 +30,5 @@ export function pluginInstallationStateChange(
 		type: MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 		state,
 		reason: reason,
-	};
-}
-
-export function setThirdPartyDevsAccountConsent( consent: boolean ): AnyAction {
-	return {
-		type: MARKETPLACE_THIRD_PARTY_DEVS_ACCOUNT_CONSENT,
-		consent,
 	};
 }

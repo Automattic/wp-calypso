@@ -39,9 +39,8 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
-import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { IAppState } from 'calypso/state/types';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -259,16 +258,20 @@ export default function WPCheckout( {
 
 	const { transactionStatus } = useTransactionStatus();
 
+	const hasMarketplaceProduct = useSelector( ( state ) => {
+		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
+	} );
+
 	const tooltipRef = useRef< HTMLDivElement >( null );
 
 	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
+	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
 
-	const is3PDAccountConsentAccepted = useSelector(
-		( state: IAppState ) => getPurchaseFlowState( state ).thirdPartyDevsAccountConsent
-	);
+	const disableSubmitButton =
+		isOrderReviewActive || ( hasMarketplaceProduct && ! is3PDAccountConsentAccepted );
 
 	function displayTooltipIfRequired() {
-		if ( ! is3PDAccountConsentAccepted ) {
+		if ( ! is3PDAccountConsentAccepted && hasMarketplaceProduct ) {
 			setIsTooltipVisible( true );
 		}
 	}
@@ -508,7 +511,12 @@ export default function WPCheckout( {
 				validatingButtonAriaLabel={ validatingButtonText }
 				isCompleteCallback={ () => false }
 			/>
-			<ThirdPartyDevsAccount cart={ responseCart } />
+			{ hasMarketplaceProduct && (
+				<ThirdPartyDevsAccount
+					isAccepted={ is3PDAccountConsentAccepted }
+					onChange={ setIs3PDAccountConsentAccepted }
+				/>
+			) }
 			<div
 				ref={ tooltipRef }
 				role="tooltip"
@@ -518,7 +526,7 @@ export default function WPCheckout( {
 				<CheckoutFormSubmit
 					submitButtonHeader={ <SubmitButtonHeader /> }
 					submitButtonFooter={ <SubmitButtonFooter /> }
-					disableSubmitButton={ isOrderReviewActive || ! is3PDAccountConsentAccepted }
+					disableSubmitButton={ disableSubmitButton }
 				/>
 			</div>
 			<Tooltip
