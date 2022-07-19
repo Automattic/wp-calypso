@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
+import withActiveTheme from 'calypso/data/themes/with-active-theme';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -30,9 +30,8 @@ import {
 
 const identity = ( theme ) => theme;
 
-function getAllThemeOptions( { translate, blockEditorSettings } ) {
-	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
-
+function getAllThemeOptions( { translate, activeThemeData } ) {
+	const isFSEActive = activeThemeData?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
 	const purchase = {
 		label: translate( 'Purchase', {
 			context: 'verb',
@@ -244,4 +243,4 @@ const connectOptionsHoc = connect(
 	}
 );
 
-export const connectOptions = compose( localize, withBlockEditorSettings, connectOptionsHoc );
+export const connectOptions = compose( localize, withActiveTheme, connectOptionsHoc );
