@@ -7,23 +7,29 @@ import { TRACKING_IDS } from './constants';
 import './setup';
 
 export function setup( params: Gtag.ConfigParams ) {
-	// TODO: GA4 properties for WPCOM will be here
-
 	if ( isJetpackCloud() ) {
 		window.gtag( 'config', TRACKING_IDS.jetpackGoogleGA4Gtag, params );
+	} else {
+		window.gtag( 'config', TRACKING_IDS.wpcomGoogleGA4Gtag, params );
 	}
 }
 
-export function fireJetpackEcommercePurchase( purchase: GaPurchase ) {
+export function fireJetpackEcommercePurchase( purchase: GaPurchase, shouldSendToJetpack = false ) {
+	const send_to = shouldSendToJetpack
+		? TRACKING_IDS.jetpackGoogleGA4Gtag
+		: TRACKING_IDS.wpcomGoogleGA4Gtag;
 	window.gtag( 'event', 'purchase', {
-		send_to: TRACKING_IDS.jetpackGoogleGA4Gtag,
+		send_to,
 		...purchase,
 	} );
 }
 
-export function fireJetpackEcommerceAddToCart( item: GaItem ) {
+export function fireJetpackEcommerceAddToCart( item: GaItem, shouldSendToJetpack = false ) {
+	const send_to = shouldSendToJetpack
+		? TRACKING_IDS.jetpackGoogleGA4Gtag
+		: TRACKING_IDS.wpcomGoogleGA4Gtag;
 	window.gtag( 'event', 'add_to_cart', {
-		send_to: TRACKING_IDS.jetpackGoogleGA4Gtag,
+		send_to,
 		value: item.price,
 		currency: 'USD',
 		items: [ item ],
@@ -31,11 +37,13 @@ export function fireJetpackEcommerceAddToCart( item: GaItem ) {
 }
 
 export function firePageView( title: string, location: string, shouldSendToJetpack = false ) {
-	if ( shouldSendToJetpack ) {
-		window.gtag( 'event', 'page_view', {
-			send_to: TRACKING_IDS.jetpackGoogleGA4Gtag,
-			page_title: title,
-			page_location: location,
-		} );
-	}
+	const send_to = shouldSendToJetpack
+		? TRACKING_IDS.jetpackGoogleGA4Gtag
+		: TRACKING_IDS.wpcomGoogleGA4Gtag;
+
+	window.gtag( 'event', 'page_view', {
+		send_to,
+		page_title: title,
+		page_location: location,
+	} );
 }
