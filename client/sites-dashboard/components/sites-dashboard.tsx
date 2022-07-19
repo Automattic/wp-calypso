@@ -2,9 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { css, ClassNames } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'react-redux';
-import getSites from 'calypso/state/selectors/get-sites';
-import { notNullish } from '../util';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { SitesContainer } from './sites-container';
 import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
@@ -60,7 +58,7 @@ const DashboardHeading = styled.h1`
 
 export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 	const { __ } = useI18n();
-	const sites = useSelector( getSites );
+	const { data: sites = [] } = useSiteExcerptsQuery();
 
 	return (
 		<main>
@@ -77,7 +75,7 @@ export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 				<ClassNames>
 					{ ( { css } ) => (
 						<SitesTableFilterTabs
-							allSites={ sites.filter( notNullish ) }
+							allSites={ sites }
 							className={ css`
 								${ wideCentered }
 								position: relative;

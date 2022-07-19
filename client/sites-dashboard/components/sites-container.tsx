@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import EmptyContent from 'calypso/components/empty-content';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
 import { SearchableSitesTable } from './searchable-sites-table';
+import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query';
 
 const EmptySites = styled( EmptyContent )`
 	display: flex;
@@ -20,7 +20,7 @@ const Title = styled.div`
 	margin-top: 50%;
 `;
 type SitesContainerProps = {
-	sites: SiteData[];
+	sites: SiteExcerptData[];
 	status: string;
 };
 

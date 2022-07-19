@@ -5,10 +5,10 @@ import { searchCollection } from 'calypso/components/search-sites/utils';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 import { SitesTable } from './sites-table';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query';
 
 interface SearchableSitesTableProps {
-	sites: SiteData[];
+	sites: SiteExcerptData[];
 }
 
 export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
@@ -21,7 +21,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 			return sites;
 		}
 
-		return searchCollection( sites, term.toLowerCase(), [ 'URL', 'domain', 'name', 'slug' ] );
+		return searchCollection( sites, term.toLowerCase(), [ 'URL', 'name', 'slug' ] );
 	}, [ term, sites ] );
 
 	const handleSearch = ( rawTerm: string ) => setTerm( rawTerm.trim() );
