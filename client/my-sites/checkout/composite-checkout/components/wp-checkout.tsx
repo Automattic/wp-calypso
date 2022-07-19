@@ -23,9 +23,10 @@ import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
+import Tooltip from 'calypso/components/tooltip';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -224,10 +225,6 @@ export default function WPCheckout( {
 		return false;
 	} );
 
-	const is3PDAccountConsentAccepted = useSelector(
-		( state: IAppState ) => getPurchaseFlowState( state ).thirdPartyDevsAccountConsent
-	);
-
 	const { formStatus } = useFormStatus();
 
 	const onReviewError = useCallback(
@@ -261,6 +258,26 @@ export default function WPCheckout( {
 		} );
 
 	const { transactionStatus } = useTransactionStatus();
+
+	const tooltipRef = useRef< HTMLDivElement >( null );
+
+	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
+
+	const is3PDAccountConsentAccepted = useSelector(
+		( state: IAppState ) => getPurchaseFlowState( state ).thirdPartyDevsAccountConsent
+	);
+
+	function displayTooltipIfRequired() {
+		if ( ! is3PDAccountConsentAccepted ) {
+			setIsTooltipVisible( true );
+		}
+	}
+
+	function hideTooltipIfVisible() {
+		if ( isTooltipVisible ) {
+			setIsTooltipVisible( false );
+		}
+	}
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
@@ -492,11 +509,26 @@ export default function WPCheckout( {
 				isCompleteCallback={ () => false }
 			/>
 			<ThirdPartyDevsAccount cart={ responseCart } />
-			<CheckoutFormSubmit
-				submitButtonHeader={ <SubmitButtonHeader /> }
-				submitButtonFooter={ <SubmitButtonFooter /> }
-				disableSubmitButton={ isOrderReviewActive || ! is3PDAccountConsentAccepted }
-			/>
+			<div
+				ref={ tooltipRef }
+				role="tooltip"
+				onMouseEnter={ () => displayTooltipIfRequired() }
+				onMouseLeave={ () => hideTooltipIfVisible() }
+			>
+				<CheckoutFormSubmit
+					submitButtonHeader={ <SubmitButtonHeader /> }
+					submitButtonFooter={ <SubmitButtonFooter /> }
+					disableSubmitButton={ isOrderReviewActive || ! is3PDAccountConsentAccepted }
+				/>
+			</div>
+			<Tooltip
+				id="tooltip__accept_acount_creation"
+				isVisible={ isTooltipVisible }
+				context={ tooltipRef.current }
+				autoPosition={ true }
+			>
+				{ translate( 'The terms above need to be accepted' ) }
+			</Tooltip>
 		</CheckoutStepGroup>
 	);
 }
