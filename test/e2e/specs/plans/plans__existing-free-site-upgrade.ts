@@ -1,7 +1,3 @@
-/**
- * @group calypso-pr
- */
-
 import {
 	DataHelper,
 	CheckoutThankYouPage,
@@ -19,11 +15,7 @@ import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
-/**
- * TODO: Remove Pro from Free site upgrade tests.
- */
-/* eslint-disable jest/no-disabled-tests */
-describe.skip(
+describe(
 	DataHelper.createSuiteTitle(
 		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Pro'
 	),
