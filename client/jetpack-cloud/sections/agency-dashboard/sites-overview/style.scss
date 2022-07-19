@@ -135,10 +135,10 @@
 		rgba( 255, 255, 255, 0.8 ) 30%,
 		rgba( 255, 255, 255, 1 ) 100%
 	);
-	top: 0;
-	right: 75px;
+	inset-block-start: 0;
+	inset-inline-end: 75px;
 	@include break-large() {
-		right: 0;
+		inset-inline-end: 0;
 	}
 }
 .sites-overview__vertical-align-middle {
@@ -189,7 +189,7 @@
 	color: #bbbbbb !important;
 	padding: 6px;
 	position: absolute;
-	right: 16px;
+	inset-inline-end: 16px;
 }
 .sites-overview__badge {
 	font-size: 0.75rem !important;
@@ -208,7 +208,7 @@
 	.popover__arrow {
 		&::before {
 			border-bottom-color: var( --studio-gray-60 ) !important;
-			top: 1px !important;
+			inset-block-start: 1px !important;
 		}
 	}
 	.popover__inner {
@@ -221,8 +221,8 @@
 .sites-overview__status-critical {
 	color: var( --studio-red-50 );
 	position: absolute;
-	right: 42px;
-	top: 50%;
+	inset-inline-end: 42px;
+	inset-block-start: 50%;
 	transform: translateY( -50% );
 	display: inline-flex;
 	@include break-large() {
@@ -231,8 +231,8 @@
 }
 .sites-overview__status-count {
 	position: absolute;
-	right: 42px;
-	top: 50%;
+	inset-inline-end: 42px;
+	inset-block-start: 50%;
 	transform: translateY( -50% );
 	border-radius: 50%; /* stylelint-disable-line */
 	border-width: 2px;
