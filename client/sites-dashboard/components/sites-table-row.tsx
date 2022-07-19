@@ -48,7 +48,7 @@ const SiteName = styled.h2`
 const SiteUrl = styled.a`
 	color: var( --studio-gray-60 );
 	max-width: 75%;
-	text-overflow: ellipse;
+	text-overflow: ellipsis;
 	overflow: hidden;
 	display: inline-block;
 	&:visited {
