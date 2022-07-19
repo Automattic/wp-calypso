@@ -340,7 +340,6 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 		result.sort( sortDesigns );
 		return result;
 	}, [ designs, categorization?.selection ] );
-
 	return (
 		<div>
 			{ categorization && hasCategories && (
@@ -348,6 +347,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 					<UnifiedDesignPickerCategoryFilter
 						categories={ categorization.categories }
 						onSelect={ categorization.onSelect }
+						selectedSlug={ categorization.selection }
 					/>
 				</>
 			) }
