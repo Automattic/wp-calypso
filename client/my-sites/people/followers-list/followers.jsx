@@ -113,7 +113,11 @@ class Followers extends Component {
 
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
-				return <AddSubscriberForm />;
+				return (
+					<Card>
+						<AddSubscriberForm />
+					</Card>
+				);
 			}
 
 			const emptyTitle = preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );

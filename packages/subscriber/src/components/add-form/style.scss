@@ -1,3 +1,13 @@
+.add-subscriber {
+	.components-notice {
+		margin: 0 0 1rem;
+	}
+
+	.components-notice.is-info {
+		background: var( --studio-gray-0 );
+	}
+}
+
 .add-subscriber__title-container {
 	text-align: center;
 	margin-bottom: 1rem;

@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Title, SubTitle, NextButton, SkipButton } from '@automattic/onboarding';
-import { TextControl, FormFileUpload, Button } from '@wordpress/components';
+import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
@@ -54,6 +54,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<div className={ 'add-subscriber' }>
+			<Notice isDismissible={ false }>You have 1 email list importing...</Notice>
 			<div className={ 'add-subscriber__title-container' }>
 				{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
 				{ showTitle && <Title>Add subscribers</Title> }
