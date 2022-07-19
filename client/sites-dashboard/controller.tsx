@@ -3,7 +3,7 @@ import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from 'page';
 
 const globalStyles = css`
-	body.is-group-sites {
+	body.is-group-sites-dashboard {
 		background: #fdfdfd;
 
 		.layout__content {

@@ -91,15 +91,15 @@ const noop = () => {};
 export function createNavigation( context ) {
 	const siteFragment = getSiteFragment( context.pathname );
 	let basePath = context.pathname;
-	let allSitesPath;
 
 	if ( siteFragment ) {
-		allSitesPath = basePath = sectionify( context.pathname );
+		basePath = sectionify( context.pathname );
 	}
 
-	if ( config.isEnabled( 'build/sites-dashboard' ) && allSitesPath === '/home' ) {
-		allSitesPath = '/sites';
-	}
+	const allSitesPath =
+		config.isEnabled( 'build/sites-dashboard' ) && basePath === '/home'
+			? '/sites-dashboard'
+			: basePath;
 
 	return (
 		<NavigationComponent
