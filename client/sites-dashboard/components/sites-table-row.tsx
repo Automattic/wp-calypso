@@ -39,16 +39,23 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	}
 `;
 
-const SiteName = styled.h2`
+const SiteName = styled.a`
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	margin-right: 8px;
 	font-weight: 500;
 	font-size: 16px;
 	letter-spacing: -0.4px;
-	color: var( --studio-gray-100 );
-	a {
-		color: inherit;
-		&:hover {
-			text-decoration: underline;
-		}
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&,
+	&:hover,
+	&:visited {
+		color: var( --studio-gray-100 );
 	}
 `;
 
@@ -77,6 +84,12 @@ const SiteListTile = styled( ListTile )`
 	@media only screen and ( max-width: 781px ) {
 		margin-right: 12px;
 	}
+`;
+
+const ListTileTitle = styled.div`
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
 `;
 
 const ListTileSubtitle = styled.div`
@@ -124,14 +137,12 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 						</a>
 					}
 					title={
-						<div style={ { display: 'flex', alignItems: 'center', marginBottom: '8px' } }>
-							<SiteName style={ { marginRight: '8px' } }>
-								<a href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
-									{ site.name ? site.name : __( '(No Site Title)' ) }
-								</a>
+						<ListTileTitle>
+							<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
+								{ site.name ? site.name : __( '(No Site Title)' ) }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-						</div>
+						</ListTileTitle>
 					}
 					subtitle={
 						<ListTileSubtitle>
