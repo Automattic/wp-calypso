@@ -213,6 +213,9 @@ function useRedirectOnTransactionSuccess( {
 				reduxDispatch,
 			} );
 		}
+		if ( ! isRenewal ) {
+			reduxDispatch( successNotice( translate( 'Your purchase has been completed!' ) ) );
+		}
 		performRedirect( redirectInstructions.url );
 	}, [
 		error,
