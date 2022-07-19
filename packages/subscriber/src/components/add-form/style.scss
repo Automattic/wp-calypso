@@ -32,6 +32,14 @@
 		.components-base-control__field {
 			margin: 0.5rem auto;
 		}
+
+		.components-button {
+			height: auto;
+			padding: 0;
+			font-size: 1em; /* stylelint-disable-line */
+			color: var( --color-text );
+			text-decoration: underline;
+		}
 	}
 
 	.components-text-control__input {
@@ -51,14 +59,6 @@
 
 	.components-form-file-upload {
 		display: inline-block;
-
-		.components-button {
-			height: auto;
-			padding: 0;
-			font-size: 1em; /* stylelint-disable-line */
-			color: var( --color-text );
-			text-decoration: underline;
-		}
 	}
 
 	.add-subscriber__form-submit-btn,

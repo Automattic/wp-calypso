@@ -1,9 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Title, SubTitle, NextButton, SkipButton } from '@automattic/onboarding';
-import { TextControl, FormFileUpload } from '@wordpress/components';
+import { TextControl, FormFileUpload, Button } from '@wordpress/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
-import React, { FormEvent, FunctionComponent, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import React, { ChangeEvent, FormEvent, FunctionComponent, useState } from 'react';
 import './style.scss';
 
 interface Props {
@@ -12,9 +14,13 @@ interface Props {
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
-	const [ files, setFiles ] = useState< string[] >( [] );
+	const __ = useTranslate();
+	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ emails, setEmails ] = useState< string[] >( [] );
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
+	const [ formFileUploadElement ] = useState(
+		createElement( FormFileUpload, { onChange: onFileInputChange } )
+	);
 
 	const { showSkipBtn, onSkipBtnClick } = props;
 
@@ -37,6 +43,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		const _isValidEmails = Array.from( isValidEmails );
 		_isValidEmails[ index ] = emailValidator.validate( value );
 		setIsValidEmails( _isValidEmails );
+	}
+
+	function onFileInputChange( e: ChangeEvent< HTMLInputElement > ) {
+		const f = e.target.files;
+		f && f.length && setSelectedFile( f[ 0 ] );
 	}
 
 	return (
@@ -67,36 +78,39 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						onChange={ ( value ) => setEmail( value, 2 ) }
 					/>
 
-					<label>
-						{ !! files.length && 'Or bring your mailing list from other newsletters.' }
-						{ ! files.length && 'Or bring your mailing list from other newsletters by' }
-						{ !! files.length &&
-							files.map( ( f, i ) => (
-								<TextControl
-									key={ i }
-									value={ f }
-									onChange={ () => {
-										return;
-									} }
-									disabled
-									help={ <Icon icon={ check } /> }
-								/>
-							) ) }
-						<FormFileUpload
-							onChange={ ( e ) => {
-								/* on value change */
-								const _files = Array.from( files );
-								const f = e.target.files;
-								f && f.length && _files.push( f[ 0 ].name );
+					{ selectedFile && (
+						<label>
+							{ createInterpolateElement(
+								__(
+									'Or bring your mailing list from other newsletters.<selectedFileName /><removeBtn>Remove selected file</removeBtn>'
+								),
+								{
+									removeBtn: createElement( Button, {
+										onClick: () => setSelectedFile( undefined ),
+									} ),
+									selectedFileName: createElement( TextControl, {
+										onChange: () => undefined,
+										disabled: true,
+										value: selectedFile?.name,
+										help: createElement( Icon, {
+											icon: check,
+										} ),
+									} ),
+								}
+							) }
+						</label>
+					) }
 
-								setFiles( _files );
-							} }
-						>
-							{ !! files.length && 'Add another CSV file' }
-							{ ! files.length && 'uploading a CSV file' }
-						</FormFileUpload>
-						.
-					</label>
+					{ ! selectedFile && (
+						<label>
+							{ createInterpolateElement(
+								__(
+									'Or bring your mailing list from other newsletters by <uploadBtn>uploading a CSV file.</uploadBtn>'
+								),
+								{ uploadBtn: formFileUploadElement }
+							) }
+						</label>
+					) }
 
 					<NextButton type={ 'submit' } className={ 'add-subscriber__form-submit-btn' }>
 						Add subscribers
