@@ -35,19 +35,16 @@ function fetchForKey( postKey, isHelpCenter = false, isSimpleSite = true ) {
 
 	if ( postKey.blogId ) {
 		if ( isHelpCenter ) {
-			return isSimpleSite
-				? apiFetch( {
-						global: true,
-						path: `/wpcom/v2/help/article/${ encodeURIComponent(
-							postKey.blogId
-						) }/${ encodeURIComponent( postKey.postId ) }`,
-				  } )
-				: apiFetch( {
-						global: true,
-						path: `/wpcom/v2/help-center/fetch-post?post_id=${ encodeURIComponent(
+			return apiFetch( {
+				global: true,
+				path: isSimpleSite
+					? `/wpcom/v2/help/article/${ encodeURIComponent( postKey.blogId ) }/${ encodeURIComponent(
 							postKey.postId
-						) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
-				  } );
+					  ) }`
+					: `/wpcom/v2/help-center/fetch-post?post_id=${ encodeURIComponent(
+							postKey.postId
+					  ) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
+			} );
 		}
 
 		return wpcom.req.get(

@@ -18,15 +18,12 @@ export const useHelpSearchQuery = (
 	return useQuery< SearchResult[] >(
 		[ 'help', search ],
 		() =>
-			isSimpleSite
-				? apiFetch< LinksForSection[] >( {
-						global: true,
-						path: `/wpcom/v2/help/search/wpcom?query=${ search }&locale=${ locale }`,
-				  } as APIFetchOptions )
-				: apiFetch< { wordpress_support_links: LinksForSection[] } >( {
-						global: true,
-						path: `/wpcom/v2/help-center/search?query=${ search }&locale=${ locale }`,
-				  } as APIFetchOptions ).then( ( result ) => result?.wordpress_support_links ),
+			apiFetch( {
+				global: true,
+				path: isSimpleSite
+					? `/wpcom/v2/help/search/wpcom?query=${ search }&locale=${ locale }`
+					: `/wpcom/v2/help-center/search?query=${ search }&locale=${ locale }`,
+			} as APIFetchOptions ),
 		{
 			onSuccess: async ( data ) => {
 				if ( ! data[ 0 ].content ) {
