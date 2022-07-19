@@ -60,7 +60,7 @@ describe( 'SeoForm basic tests', () => {
 
 	test( 'should not render Jetpack unsupported notice when is not jetpack site or supports seo', () => {
 		render( <SeoForm { ...props } /> );
-		expect( [] ).toHaveLength( 0 );
+		expect( screen.queryByRole( 'status', { name: 'Notice' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render optimize SEO nudge when has no SEO features', () => {
