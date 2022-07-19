@@ -9,6 +9,7 @@ import formatCurrency from '@automattic/format-currency';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import ExternalLink from 'calypso/components/external-link';
+import { preventWidows } from 'calypso/lib/formatting';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import {
 	getSitePlanRawPrice,
@@ -25,8 +26,10 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 		featureList = [
 			translate( 'Share posts that have already been published.' ),
 			translate( 'Schedule your social messages in advance.' ),
-			translate(
-				'Enjoy all other Jetpack Security features, including real-time cloud backups, real-time malware scanning, comment and form spam protection, and more.'
+			preventWidows(
+				translate(
+					'Enjoy all other Jetpack Security features, including real-time cloud backups, real-time malware scanning, comment and form spam protection, and more.'
+				)
 			),
 		];
 	} else {
