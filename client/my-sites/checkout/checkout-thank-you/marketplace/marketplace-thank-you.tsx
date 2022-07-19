@@ -123,7 +123,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( ! siteId || ( isAtomic && transferStatus !== transferStates.COMPLETE ) ) {
+		if ( ! siteId || ( ! isJetpackSelfHosted && transferStatus !== transferStates.COMPLETE ) ) {
 			return;
 		}
 
@@ -136,7 +136,14 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		if ( ! isRequestingPlugins ) {
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
-	}, [ isRequestingPlugins, isPluginOnSite, dispatch, siteId, transferStatus, isAtomic ] );
+	}, [
+		isRequestingPlugins,
+		isPluginOnSite,
+		dispatch,
+		siteId,
+		transferStatus,
+		isJetpackSelfHosted,
+	] );
 
 	// Set progressbar (currentStep) depending on transfer/plugin status.
 	useEffect( () => {
@@ -145,19 +152,37 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			return;
 		}
 
-		if ( transferStatus !== transferStates.COMPLETE ) {
-			setShowProgressBar( true );
+		setShowProgressBar( ! isPluginOnSite );
+
+		// Sites already transferred to Atomic or self-hosted Jetpack sites only show one step.
+		if ( isJetpack ) {
 			setCurrentStep( 0 );
-		} else if ( ! isPluginOnSite ) {
-			setShowProgressBar( true );
-			setCurrentStep( 1 );
-		} else {
-			setShowProgressBar( false );
+			return;
 		}
-	}, [ transferStatus, isPluginOnSite, showProgressBar ] );
+
+		if ( transferStatus === transferStates.ACTIVE ) {
+			setCurrentStep( 0 );
+		} else if ( transferStatus === transferStates.PROVISIONED ) {
+			setCurrentStep( 1 );
+		} else if ( transferStatus === transferStates.RELOCATING ) {
+			setCurrentStep( 2 );
+		} else if ( transferStatus === transferStates.COMPLETE ) {
+			setCurrentStep( 3 );
+		}
+	}, [ transferStatus, isPluginOnSite, showProgressBar, isJetpack ] );
 
 	const steps = useMemo(
-		() => [ translate( 'Installing plugin' ), translate( 'Activating plugin' ) ],
+		() =>
+			isJetpack
+				? [ translate( 'Installing plugin' ) ]
+				: [
+						translate( 'Activating the plugin feature' ), // Transferring to Atomic
+						translate( 'Setting up plugin installation' ), // Transferring to Atomic
+						translate( 'Installing plugin' ), // Transferring to Atomic
+						translate( 'Activating plugin' ),
+				  ],
+		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ translate ]
 	);
 	const additionalSteps = useMarketplaceAdditionalSteps();
