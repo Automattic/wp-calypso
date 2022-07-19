@@ -36,6 +36,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
 	&__theme-price {
 		display: flex;
+		margin-bottom: 5px;
 		align-items: baseline;
 		justify-content: flex-start;
 
@@ -48,23 +49,36 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
 	&__subscription-interval {
 		display: flex;
+		margin-bottom: 15px;
+
+		.form-label {
+			margin-right: 15px;
+
+			&:last-of-type {
+				margin-right: 0;
+			}
+		}
 	}
 
-	&__radio {
-		span {
-			color: var( --studio-green-50 );
-		}
+	&__plan-nudge {
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
+	}
+
+	&__subscription-savings {
+		color: var( --studio-green-50 );
+		margin-left: 8px;
 	}
 
 	h1.upgrade-modal__heading {
 		@extend .wp-brand-font;
-		font-size: $font-headline-medium;
+		font-size: $font-headline-small;
 		line-height: 1.1;
-		margin-bottom: 25px;
+		margin-bottom: 15px;
 	}
 
 	p {
-		margin-bottom: 35px;
+		margin-bottom: 20px;
 	}
 
 	&__close {
@@ -84,6 +98,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
         padding: 9px 25px;
         border-radius: 4px;
         font-weight: 500;
+		margin-bottom: 15px;
         box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
 		width: 100%;
 

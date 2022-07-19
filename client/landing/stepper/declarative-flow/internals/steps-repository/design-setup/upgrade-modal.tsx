@@ -2,7 +2,6 @@ import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/componen
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
@@ -45,44 +44,49 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 				</p>
 				<div className="upgrade-modal__theme-price">
 					<span>{ themePrice }</span>
-					{ translate( 'per year' ) }
+					{ subInterval === 'annually' ? translate( 'per year' ) : translate( 'per month' ) }
 				</div>
 				<div className="upgrade-modal__subscription-interval">
-					{ /* @TODO: Calculate savings based on annual/monthly price difference */ }
-					<FormFieldset>
-						<FormLabel>
-							<FormRadio
-								id="subscription-interval-monthly"
-								name="subscription-interval"
-								label={ translate( 'Monthly' ) }
-								className="upgrade-modal__radio"
-								value="monthly"
-								checked={ 'monthly' === subInterval }
-								onChange={ () => setSubInterval( 'monthly' ) }
-							/>
-						</FormLabel>
-						<FormLabel>
-							<FormRadio
-								id="subscription-interval-annually"
-								name="subscription-interval"
-								className="upgrade-modal__radio"
-								label={ translate( 'Annually {{span}}(Save $51){{/span}}', {
-									components: {
-										span: <span />,
-									},
-								} ) }
-								value="annually"
-								checked={ 'annually' === subInterval }
-								onChange={ () => setSubInterval( 'annually' ) }
-							/>
-						</FormLabel>
-					</FormFieldset>
+					<FormLabel>
+						<FormRadio
+							id="subscription-interval-monthly"
+							name="subscription-interval"
+							label={ translate( 'Monthly' ) }
+							className="upgrade-modal__radio"
+							value="monthly"
+							checked={ 'monthly' === subInterval }
+							onChange={ () => setSubInterval( 'monthly' ) }
+						/>
+					</FormLabel>
+					<FormLabel>
+						{ /* @TODO: Calculate savings based on annual/monthly price difference */ }
+						<FormRadio
+							id="subscription-interval-annually"
+							name="subscription-interval"
+							className="upgrade-modal__radio"
+							label={ translate( 'Annually {{span}}(Save $51){{/span}}', {
+								components: {
+									span: <span className="upgrade-modal__subscription-savings" />,
+								},
+							} ) }
+							value="annually"
+							checked={ 'annually' === subInterval }
+							onChange={ () => setSubInterval( 'annually' ) }
+						/>
+					</FormLabel>
 				</div>
 				<div className="upgrade-modal__actions">
 					<Button className="upgrade-modal__upgrade" primary onClick={ () => checkout() }>
 						{ translate( 'Buy and activate theme' ) }
 					</Button>
 				</div>
+				<p className="upgrade-modal__plan-nudge">
+					{ translate( 'or get it for free when on the {{a}}Premium plan{{/a}}', {
+						components: {
+							a: <a href="#" rel="noreferrer noopener" />,
+						},
+					} ) }
+				</p>
 			</div>
 			<div className="upgrade-modal__col">
 				<div className="upgrade-modal__included">
