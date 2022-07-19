@@ -6,12 +6,14 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
+import { siteHasPremiumPluginPurchase } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -82,6 +84,10 @@ const PluginDetailsCTA = ( {
 		! isAtomic && ! isJetpack && ( eligibilityHolds?.length || eligibilityWarnings?.length );
 
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
+
+	const isPluginPurchased = useSelector( ( state ) =>
+		siteHasPremiumPluginPurchase( state, selectedSite?.ID, plugin.slug )
+	);
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsCTAPlaceholder />;
@@ -158,31 +164,34 @@ const PluginDetailsCTA = ( {
 
 	return (
 		<div className="plugin-details-CTA__container">
-			<div className="plugin-details-CTA__price">
-				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
-					{ ( { isFetching, price, period } ) =>
-						isFetching ? (
-							<div className="plugin-details-CTA__price-placeholder">...</div>
-						) : (
-							<>
-								{ price ? (
-									<>
-										{ price + ' ' }
-										<span className="plugin-details-CTA__period">{ period }</span>
-									</>
-								) : (
-									translate( 'Free' )
-								) }
-								{ shouldUpgrade && (
-									<span className="plugin-details-CTA__uprade-required">
-										{ translate( 'Plan upgrade required' ) }
-									</span>
-								) }
-							</>
-						)
-					}
-				</PluginPrice>
-			</div>
+			{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
+			{ ! isPluginPurchased && (
+				<div className="plugin-details-CTA__price">
+					<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+						{ ( { isFetching, price, period } ) =>
+							isFetching ? (
+								<div className="plugin-details-CTA__price-placeholder">...</div>
+							) : (
+								<>
+									{ price ? (
+										<>
+											{ price + ' ' }
+											<span className="plugin-details-CTA__period">{ period }</span>
+										</>
+									) : (
+										translate( 'Free' )
+									) }
+									{ shouldUpgrade && (
+										<span className="plugin-details-CTA__uprade-required">
+											{ translate( 'Plan upgrade required' ) }
+										</span>
+									) }
+								</>
+							)
+						}
+					</PluginPrice>
+				</div>
+			) }
 			{ ! legacyVersion && (
 				<BillingIntervalSwitcher
 					billingPeriod={ billingPeriod }
@@ -194,6 +203,7 @@ const PluginDetailsCTA = ( {
 				<CTAButton
 					plugin={ plugin }
 					isPluginInstalledOnsite={ isPluginInstalledOnsite }
+					isPluginPurchased={ isPluginPurchased }
 					isJetpackSelfHosted={ isJetpackSelfHosted }
 					selectedSite={ selectedSite }
 					hasEligibilityMessages={ hasEligibilityMessages }
@@ -225,7 +235,7 @@ const PluginDetailsCTA = ( {
 				</div>
 			) }
 
-			{ ! isJetpackSelfHosted && (
+			{ ! isJetpackSelfHosted && ! isPluginPurchased && (
 				<USPS
 					shouldUpgrade={ shouldUpgrade }
 					isFreePlan={ isFreePlan }

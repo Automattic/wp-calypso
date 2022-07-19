@@ -28,6 +28,7 @@ export default function CTAButton( {
 	billingPeriod,
 	isJetpackSelfHosted,
 	isSiteConnected,
+	isPluginPurchased,
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -71,6 +72,13 @@ export default function CTAButton( {
 	const { isPreinstalledPremiumPlugin, preinstalledPremiumPluginProduct } =
 		usePreinstalledPremiumPlugin( plugin.slug );
 
+	let installButtonText = translate( 'Install and activate' );
+	if ( ! isPluginPurchased && ( isMarketplaceProduct || isPreinstalledPremiumPlugin ) ) {
+		installButtonText = translate( 'Purchase and activate' );
+	} else if ( shouldUpgrade ) {
+		installButtonText = translate( 'Upgrade and activate' );
+	}
+
 	return (
 		<>
 			<PluginCustomDomainDialog
@@ -86,6 +94,7 @@ export default function CTAButton( {
 						isMarketplaceProduct,
 						billingPeriod,
 						eligibleForProPlan,
+						isPluginPurchased,
 					} );
 				} }
 				isDialogVisible={ showAddCustomDomain }
@@ -113,6 +122,7 @@ export default function CTAButton( {
 							isMarketplaceProduct,
 							billingPeriod,
 							eligibleForProPlan,
+							isPluginPurchased,
 						} )
 					}
 				/>
@@ -137,18 +147,12 @@ export default function CTAButton( {
 						eligibleForProPlan,
 						isPreinstalledPremiumPlugin,
 						preinstalledPremiumPluginProduct,
+						isPluginPurchased,
 					} );
 				} }
 				disabled={ ( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false }
 			>
-				{
-					// eslint-disable-next-line no-nested-ternary
-					isMarketplaceProduct || isPreinstalledPremiumPlugin
-						? translate( 'Purchase and activate' )
-						: shouldUpgrade
-						? translate( 'Upgrade and activate' )
-						: translate( 'Install and activate' )
-				}
+				{ installButtonText }
 			</Button>
 			{ isJetpackSelfHosted && isMarketplaceProduct && (
 				<div className="plugin-details-CTA__not-available">
@@ -182,6 +186,7 @@ function onClickInstallPlugin( {
 	eligibleForProPlan,
 	isPreinstalledPremiumPlugin,
 	preinstalledPremiumPluginProduct,
+	isPluginPurchased,
 } ) {
 	dispatch( removePluginStatuses( 'completed', 'error' ) );
 
@@ -205,7 +210,7 @@ function onClickInstallPlugin( {
 
 	dispatch( productToBeInstalled( plugin.slug, selectedSite.slug ) );
 
-	if ( isMarketplaceProduct ) {
+	if ( ! isPluginPurchased && isMarketplaceProduct ) {
 		// We need to add the product to the  cart.
 		// Plugin install is handled on the backend by activating the subscription.
 		const variationPeriod = getPeriodVariationValue( billingPeriod );

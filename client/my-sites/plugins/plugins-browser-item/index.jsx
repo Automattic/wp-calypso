@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
@@ -20,6 +21,7 @@ import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import { siteHasPremiumPluginPurchase } from 'calypso/state/purchases/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -145,6 +147,10 @@ const PluginsBrowserListElement = ( props ) => {
 			siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PLUGINS )
 		) || jetpackNonAtomic;
 
+	const isPluginPurchased = useSelector( ( state ) =>
+		siteHasPremiumPluginPurchase( state, selectedSite?.ID, plugin.slug )
+	);
+
 	if ( isPlaceholder ) {
 		// eslint-disable-next-line no-use-before-define
 		return <Placeholder iconSize={ iconSize } />;
@@ -162,6 +168,7 @@ const PluginsBrowserListElement = ( props ) => {
 
 	return (
 		<li className={ classNames }>
+			{ selectedSite?.ID && <QuerySitePurchases siteId={ selectedSite?.ID } /> }
 			<a
 				href={ pluginLink }
 				className="plugins-browser-item__link"
@@ -220,6 +227,7 @@ const PluginsBrowserListElement = ( props ) => {
 							shouldUpgrade={ shouldUpgrade }
 							canInstallPlugins={ canInstallPlugins }
 							currentSites={ currentSites }
+							isPluginPurchased={ isPluginPurchased }
 						/>
 					) }
 					<div className="plugins-browser-item__additional-info">
@@ -256,6 +264,7 @@ const InstalledInOrPricing = ( {
 	shouldUpgrade,
 	canInstallPlugins,
 	currentSites,
+	isPluginPurchased,
 } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -315,6 +324,18 @@ const InstalledInOrPricing = ( {
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */
+	}
+
+	if ( isPluginPurchased ) {
+		return (
+			<div className="plugins-browser-item__installed-and-active-container">
+				<div className="plugins-browser-item__installed ">
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace,wpcalypso/jsx-gridicon-size */ }
+					<Gridicon icon="checkmark" className="checkmark--inactive" size={ 14 } />
+					{ translate( 'Uninstalled' ) }
+				</div>
+			</div>
+		);
 	}
 
 	return (
