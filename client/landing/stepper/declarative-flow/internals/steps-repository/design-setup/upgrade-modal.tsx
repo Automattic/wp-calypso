@@ -19,11 +19,10 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const theme = useThemeDetails( slug );
 	const features = theme.data && theme.data.taxonomies.features;
 	const featuresHeading = translate( 'Theme features' ) as string;
-	const plan = useSelect( ( select ) =>
-		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'pro-plan' )
+	const themeProduct = useSelect( ( select ) =>
+		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'premium-theme' )
 	);
-	const planName = plan?.product_name;
-	const planPrice = plan?.combined_cost_display;
+	const themePrice = themeProduct?.combined_cost_display;
 
 	return (
 		<Dialog
@@ -33,20 +32,10 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 			isFullScreen
 		>
 			<div className="upgrade-modal__col">
-				<div className="upgrade-modal__star-box">
-					<Gridicon icon="star" size={ 24 } />
-				</div>
 				<h1 className="upgrade-modal__heading">{ translate( 'Unlock this premium theme' ) }</h1>
 				<p>
-					{ /* Translators: planName is the name of the plan, planPrice is the plan price in the user's currency */ }
 					{ translate(
-						"This theme requires %(planName)s to unlock. It's %(planPrice)s a year, risk-free with a 14-day money-back guarantee.",
-						{
-							args: {
-								planName,
-								planPrice,
-							},
-						}
+						'You can purchase a subscription to use this theme or join the Premium plan to get it for free.'
 					) }
 				</p>
 				<div className="upgrade-modal__actions">
@@ -54,20 +43,13 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 						{ translate( 'Cancel' ) }
 					</Button>
 					<Button className="upgrade-modal__upgrade" primary onClick={ () => checkout() }>
-						{ translate( 'Upgrade plan' ) }
+						{ translate( 'Buy and activate theme' ) }
 					</Button>
 				</div>
 			</div>
 			<div className="upgrade-modal__col">
 				<div className="upgrade-modal__included">
-					<h2>
-						{ /* Translators: planName is the name of the plan */ }
-						{ translate( 'Included with %(planName)s', {
-							args: {
-								planName,
-							},
-						} ) }
-					</h2>
+					<h2>{ translate( 'Included with your purchase' ) }</h2>
 					<ul>
 						<li className="upgrade-modal__included-item">
 							<Gridicon icon="checkmark" size={ 16 } />
@@ -75,15 +57,11 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 						</li>
 						<li className="upgrade-modal__included-item">
 							<Gridicon icon="checkmark" size={ 16 } />
-							{ translate( 'Access to premium themes' ) }
+							{ translate( 'Dozens of free themes' ) }
 						</li>
 						<li className="upgrade-modal__included-item">
 							<Gridicon icon="checkmark" size={ 16 } />
-							{ translate( "Access to 1000's of plugins" ) }
-						</li>
-						<li className="upgrade-modal__included-item">
-							<Gridicon icon="checkmark" size={ 16 } />
-							{ translate( 'Unlimited support' ) }
+							{ translate( 'Unlimited customer support via email' ) }
 						</li>
 					</ul>
 				</div>
