@@ -438,7 +438,15 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, redirectToAddDomainFlow, shouldShowPlansFeatureComparison } = this.props;
+		const {
+			isInSignup,
+			isJetpack,
+			isLandingPage,
+			isLaunchPage,
+			siteId,
+			redirectToAddDomainFlow,
+			shouldShowPlansFeatureComparison,
+		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
