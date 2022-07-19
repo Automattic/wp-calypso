@@ -35,3 +35,11 @@ export interface Article {
 export interface FeatureFlags {
 	loadNextStepsTutorial: boolean;
 }
+
+export interface SearchResult {
+	link: string;
+	title: string | React.ReactChild;
+	icon?: string;
+	post_id?: number;
+	blog_id?: number;
+}
