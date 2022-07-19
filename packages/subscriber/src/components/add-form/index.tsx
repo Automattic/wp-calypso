@@ -9,20 +9,22 @@ import React, { ChangeEvent, FormEvent, FunctionComponent, useState } from 'reac
 import './style.scss';
 
 interface Props {
+	showTitle?: boolean;
+	showTitleEmoji?: boolean;
 	showSkipBtn?: boolean;
 	onSkipBtnClick?: () => void;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const __ = useTranslate();
+	const { showTitle, showTitleEmoji, showSkipBtn, onSkipBtnClick } = props;
+
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ emails, setEmails ] = useState< string[] >( [] );
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
 	const [ formFileUploadElement ] = useState(
 		createElement( FormFileUpload, { onChange: onFileInputChange } )
 	);
-
-	const { showSkipBtn, onSkipBtnClick } = props;
 
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
@@ -53,8 +55,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	return (
 		<div className={ 'add-subscriber' }>
 			<div className={ 'add-subscriber__title-container' }>
-				<h2 className={ 'add-subscriber__title-emoji' }>🤝</h2>
-				<Title>Add subscribers</Title>
+				{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
+				{ showTitle && <Title>Add subscribers</Title> }
 				<SubTitle>You can invite some people to your list.</SubTitle>
 			</div>
 			<div className={ 'add-subscriber__form--container' }>
