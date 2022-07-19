@@ -18,7 +18,7 @@ const Title = styled.div`
 	margin-top: 50%;
 `;
 type SitesContainerProps = {
-	status: string;
+	status?: string;
 };
 
 export const NoSitesMessage = ( { status }: SitesContainerProps ) => {
