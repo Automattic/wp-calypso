@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
@@ -29,6 +31,9 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 		window.scrollTo( 0, 0 );
 	};
 
+	const isPluginsPage = path.includes( '/plugins' );
+	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
+
 	return (
 		<div>
 			<SiteSelector showAddNewSite showAllSites allSitesPath={ path } siteBasePath="/backup" />
@@ -46,10 +51,21 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 							label={ translate( 'Dashboard', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
-							link={ path }
-							onNavigate={ onNavigate( 'Jetpack Cloud / Partner Portal' ) }
-							selected={ path === path }
+							link="/dashboard"
+							onNavigate={ onNavigate( 'Jetpack Cloud / Dashboard' ) }
+							selected={ ! isPluginsPage }
 						/>
+						{ isPluginManagementEnabled && (
+							<SidebarItem
+								customIcon={ <Icon className="sidebar__menu-icon" size={ 28 } icon={ plugins } /> }
+								label={ translate( 'Plugins', {
+									comment: 'Jetpack sidebar navigation item',
+								} ) }
+								link="/dashboard/plugins/manage"
+								onNavigate={ onNavigate( 'Jetpack Cloud / Plugins' ) }
+								selected={ isPluginsPage }
+							/>
+						) }
 					</SidebarMenu>
 				</SidebarRegion>
 				<SidebarFooter>
