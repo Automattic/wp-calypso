@@ -8,16 +8,14 @@ import {
 	useCategorization,
 	isBlankCanvasDesign,
 	getDesignPreviewUrl,
-	useDesignsBySite,
 } from '@automattic/design-picker';
 import { useLocale, useIsEnglishLocale } from '@automattic/i18n-utils';
-import { shuffle } from '@automattic/js-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -87,26 +85,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		{ enabled: true }
 	);
 
-	// todo: remove this once filtering is implemented on backend
-	const shuffledStaticDesigns = useMemo(
-		() =>
-			shuffle(
-				allDesigns?.static?.designs?.filter( ( design ) => ! isBlankCanvasDesign( design ) ) || []
-			),
-		[ allDesigns?.static?.designs ]
-	);
-
 	const enabledGeneratedDesigns = isEnabledFTM && ( intent === 'build' || intent === 'write' );
 	const generatedDesigns = allDesigns?.generated?.designs || [];
-	// const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
-	// 	useStarterDesignsGeneratedQuery(
-	// 		{
-	// 			vertical_id: siteVerticalId,
-	// 			seed: siteSlugOrId || undefined,
-	// 			_locale: locale,
-	// 		},
-	// 		{ enabled: enabledGeneratedDesigns && !! siteVerticalId }
-	// 	);
 
 	const showGeneratedDesigns = enabledGeneratedDesigns && generatedDesigns.length > 0;
 
@@ -138,9 +118,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const categorizationOptions = getCategorizationOptions( intent, true );
 
-	// console.log( 'useCategorization with:',  allDesigns?.static?.designs);
-	// const categorization = useCategorization(  allDesigns?.static?.designs || [], categorizationOptions );
-	const categorization = useCategorization( [], categorizationOptions );
+	const categorization = useCategorization(
+		allDesigns?.static?.designs || [],
+		categorizationOptions
+	);
 
 	const handleSubmit = ( providedDependencies?: ProvidedDependencies ) => {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
@@ -277,6 +258,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			language: locale,
 			// If the user fills out the site title with write intent, we show it on the design preview
 			siteTitle: intent === 'write' ? siteTitle : undefined,
+			verticalId: siteVerticalId,
 		} );
 
 		// todo: handle previewing and selecting generated designs
@@ -364,7 +346,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const stepContent = (
 		<UnifiedDesignPicker
 			generatedDesigns={ generatedDesigns }
-			staticDesigns={ shuffledStaticDesigns }
+			staticDesigns={ allDesigns?.static?.designs }
 			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelect={ pickDesign }

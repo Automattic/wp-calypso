@@ -8,8 +8,14 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { noop } from 'lodash';
 import { useMemo } from 'react';
+import {
+	DEFAULT_VIEWPORT_WIDTH,
+	DEFAULT_VIEWPORT_HEIGHT,
+	MOBILE_VIEWPORT_WIDTH,
+} from '../constants';
 import {
 	getAvailableDesigns,
 	getDesignPreviewUrl,
@@ -21,18 +27,10 @@ import {
 } from '../utils';
 import BadgeContainer from './badge-container';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
+import ThemePreview from './theme-preview';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
-import ThemePreview from './theme-preview';
-import { useTranslate } from 'i18n-calypso';
-
 import './style.scss';
-
-import {
-	DEFAULT_VIEWPORT_WIDTH,
-	DEFAULT_VIEWPORT_HEIGHT,
-	MOBILE_VIEWPORT_WIDTH,
-} from '../constants';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
 
@@ -285,15 +283,13 @@ export interface UnifiedDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
-	onPreview?: ( design: Design ) => void;
+	onPreview: ( design: Design ) => void;
 	onUpgrade?: () => void;
 	generatedDesigns?: Design[];
 	staticDesigns?: Design[];
 	premiumBadge?: React.ReactNode;
 	categorization?: Categorization;
-	staticDesignsHeading?: React.ReactNode;
 	heading?: React.ReactNode;
-	generatedDesignsHeading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
@@ -304,12 +300,11 @@ interface StaticDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
-	onPreview?: ( design: Design ) => void;
+	onPreview: ( design: Design ) => void;
 	onUpgrade?: () => void;
 	designs: Design[];
 	premiumBadge?: React.ReactNode;
 	categorization?: Categorization;
-	categoriesHeading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
@@ -320,8 +315,7 @@ interface GeneratedDesignPickerProps {
 	locale: string;
 	designs: Design[];
 	verticalId?: string;
-	heading?: React.ReactNode;
-	onPreview?: ( design: Design, positionIndex: number ) => void;
+	onPreview: ( design: Design ) => void;
 }
 
 const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
@@ -402,11 +396,7 @@ const GerneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 				return (
 					<div className="design-button-container">
 						<div className="design-picker__design-option">
-							<button
-								className="generated-design-thumbnail"
-								// disabled={ disabled }
-								// onClick={ () => onPreview( design ) }
-							>
+							<button className="generated-design-thumbnail" onClick={ () => onPreview( design ) }>
 								<span className="generated-design-thumbnail__image">
 									<ThemePreview
 										url={ previewUrl }
@@ -434,7 +424,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	} ).featured,
 	generatedDesigns,
 	premiumBadge,
-	staticDesignsHeading,
 	heading,
 	categorization,
 	previewOnly = false,
@@ -458,7 +447,12 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			{ heading }
 			<div>
 				<h3> { translate( 'Custom designs for your site' ) } </h3>
-				<p className="unified-design-picker__subtitle"> { translate( 'We generated these designs for you' ) }</p>
+				<p className="unified-design-picker__subtitle">
+					{ ' ' }
+					{ translate(
+						'Based on your input, these designs have been tailored for you. You can always change later.'
+					) }
+				</p>
 			</div>
 			<GerneratedDesignPicker
 				locale={ locale }
@@ -466,9 +460,12 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 				onPreview={ onPreview }
 				verticalId={ verticalId }
 			/>
-			<div> 
-				<h3> { translate( 'Selected themes for you' ) } </h3> 
-				<p className="unified-design-picker__subtitle"> { translate( "These might work if you'd like" ) } </p>
+			<div>
+				<h3> { translate( 'Selected themes for you' ) } </h3>
+				<p className="unified-design-picker__subtitle">
+					{ ' ' }
+					{ translate( "These might work if you'd like" ) }{ ' ' }
+				</p>
 			</div>
 			<StaticDesignPicker
 				locale={ locale }
