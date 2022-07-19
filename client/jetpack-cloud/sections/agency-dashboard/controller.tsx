@@ -3,7 +3,7 @@ import Header from './header';
 import PluginManagement from './plugin-management';
 import DashboardSidebar from './sidebar';
 
-export function agencyDashboardContext( context: PageJS.Context, next: () => void ): void {
+export function agencyDashboardContext( context: PageJS.Context, next: VoidFunction ): void {
 	const { s: search, page, issue_types } = context.query;
 	const filter = {
 		issueTypes: issue_types?.split( ',' ),
@@ -18,7 +18,7 @@ export function agencyDashboardContext( context: PageJS.Context, next: () => voi
 	next();
 }
 
-export function pluginManagementContext( context: PageJS.Context, next: () => void ): void {
+export function pluginManagementContext( context: PageJS.Context, next: VoidFunction ): void {
 	context.header = <Header />;
 	context.secondary = <DashboardSidebar path={ context.path } />;
 	context.primary = <PluginManagement />;
