@@ -83,12 +83,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const isBlankCanvas = isBlankCanvasDesign( design );
-
-	const defaultTitle = design.title;
-	const blankCanvasTitle = __( 'Blank Canvas', __i18n_text_domain__ );
-	const designTitle = isBlankCanvas ? blankCanvasTitle : defaultTitle;
-
 	const badgeType = design.is_premium ? 'premium' : 'none';
 
 	const badgeContainer = ! isEnabled( 'signup/theme-preview-screen' ) ? (
@@ -146,25 +140,18 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						'design-picker__image-frame-landscape',
 						design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
 						{
-							'design-picker__image-frame-blank': isBlankCanvas,
 							'design-picker__image-frame-no-header': ! hasDesignOptionHeader,
 						}
 					) }
 				>
-					{ isBlankCanvas ? (
-						<div className="design-picker__image-frame-blank-canvas__title">
-							{ __( 'Start from scratch', __i18n_text_domain__ ) }
-						</div>
-					) : (
-						<div className="design-picker__image-frame-inside">
-							<DesignPreviewImage design={ design } locale={ locale } highRes={ highRes } />
-						</div>
-					) }
+					<div className="design-picker__image-frame-inside">
+						<DesignPreviewImage design={ design } locale={ locale } highRes={ highRes } />
+					</div>
 				</span>
 				<span className="design-picker__option-overlay">
 					<span id={ makeOptionId( design ) } className="design-picker__option-meta">
 						{ ! hideDesignTitle && (
-							<span className="design-picker__option-name">{ designTitle }</span>
+							<span className="design-picker__option-name">{ design.title }</span>
 						) }
 						{ badgeContainer }
 					</span>

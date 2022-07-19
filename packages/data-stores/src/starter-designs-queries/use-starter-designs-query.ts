@@ -6,7 +6,7 @@ import type {
 	StarterDesignsGeneratedQueryParams,
 	AllStarterDesigns,
 } from './types';
-import type { Design } from '@automattic/design-picker/src/types';
+import type { Category, Design, DesignRecipe } from '@automattic/design-picker/src/types';
 
 interface Options extends QueryOptions< AllStarterDesignsResponse, unknown > {
 	enabled?: boolean;
@@ -14,7 +14,15 @@ interface Options extends QueryOptions< AllStarterDesignsResponse, unknown > {
 
 interface AllStarterDesignsResponse {
 	generated: { designs: StarterDesignsGenerated[] };
-	static: { designs: Design[] };
+	static: { designs: StarterDesignStatic[] };
+}
+
+interface StarterDesignStatic {
+	recipe: DesignRecipe;
+	slug: string;
+	title: string;
+	categories: Category[];
+	price?: string;
 }
 
 export function useStarterDesignsQuery(
@@ -27,7 +35,9 @@ export function useStarterDesignsQuery(
 				generated: {
 					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
 				},
-				static: response.static,
+				static: {
+					designs: response.static?.designs?.map( apiStarterDesignsStaticToDesign ),
+				},
 			} as AllStarterDesigns;
 		},
 		refetchOnMount: 'always',
@@ -44,6 +54,26 @@ function fetchStarterDesigns(
 		path: '/starter-designs',
 		query: stringify( queryParams ),
 	} );
+}
+
+function apiStarterDesignsStaticToDesign( design: StarterDesignStatic ): Design {
+	const { slug, title, recipe, categories, price } = design;
+	const is_premium =
+		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
+
+	return {
+		slug,
+		title,
+		recipe,
+		categories,
+		is_premium,
+		price,
+		design_type: is_premium ? 'premium' : 'standard',
+		// Deprecated; used for /start flow
+		features: [],
+		template: '',
+		theme: '',
+	};
 }
 
 function apiStarterDesignsGeneratedToDesign( design: StarterDesignsGenerated ): Design {
