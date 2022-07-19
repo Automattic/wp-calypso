@@ -53,12 +53,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		<form className={ classnames( 'import-light__capture' ) } onSubmit={ onFormSubmit }>
 			<FormFieldset>
 				<FormLabel>
-					{ createInterpolateElement(
-						translate( 'Existing site address <span>(optional)</span>' ).toString(),
-						{
-							span: createElement( 'span' ),
-						}
-					) }
+					{ createInterpolateElement( translate( 'Existing site address' ).toString(), {
+						span: createElement( 'span' ),
+					} ) }
 				</FormLabel>
 				<FormTextInput
 					type="text"
