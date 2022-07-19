@@ -3,7 +3,6 @@ import { css, ClassNames } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
-import { notNullish } from '../util';
 import { SitesContainer } from './sites-container';
 import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
@@ -59,7 +58,7 @@ const DashboardHeading = styled.h1`
 
 export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 	const { __ } = useI18n();
-	const { data: sites } = useSiteExcerptsQuery();
+	const { data: sites = [] } = useSiteExcerptsQuery();
 
 	return (
 		<main>
@@ -76,7 +75,7 @@ export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 				<ClassNames>
 					{ ( { css } ) => (
 						<SitesTableFilterTabs
-							allSites={ sites.filter( notNullish ) }
+							allSites={ sites }
 							className={ css`
 								${ wideCentered }
 								position: relative;
