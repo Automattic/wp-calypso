@@ -64,7 +64,7 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 			}
 			{ ...( isJetpack && {
 				description: translate(
-					'Publicize makes it easy to share your new posts on your social media networks automatically. With a Jetpack Security or Complete plan, you can share content that has already been published and can also schedule posts to be shared at a specific time. However, our Security and Complete plan users can also share content that has already been published, and schedule their posts to be shared at a specific time. {{ExternalLink}}Learn more{{/ExternalLink}}',
+					'Publicize makes it easy to share your new posts on your social media networks automatically. With a Jetpack Security or Complete plan, you can share content that has already been published and can also schedule posts to be shared at a specific time. {{ExternalLink}}Learn more{{/ExternalLink}}',
 					{
 						components: {
 							ExternalLink: (
