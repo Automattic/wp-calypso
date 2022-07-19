@@ -71,6 +71,12 @@ const SiteListTile = styled( ListTile )`
 	.list-tile__content {
 		min-width: 0;
 	}
+
+	margin-right: 0;
+
+	@media only screen and ( max-width: 781px ) {
+		margin-right: 12px;
+	}
 `;
 
 const ListTileSubtitle = styled.div`
@@ -136,13 +142,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 									</SitesLaunchStatusBadge>
 								</div>
 							) }
-							<SiteUrl
-								href={ site.URL }
-								target="_blank"
-								rel="noreferrer"
-								title={ site.URL }
-								style={ { marginRight: '8px' } }
-							>
+							<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
 								{ displaySiteUrl( site.URL ) }
 							</SiteUrl>
 						</ListTileSubtitle>
