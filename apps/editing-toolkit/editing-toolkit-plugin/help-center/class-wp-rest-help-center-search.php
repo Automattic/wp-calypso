@@ -80,6 +80,8 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 			return $body;
 		}
 
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
+
 		return rest_ensure_response( $response );
 	}
 }
