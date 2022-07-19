@@ -73,7 +73,9 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
 	const [ currentStep, setCurrentStep ] = useState( 0 );
-	const [ showProgressBar, setShowProgressBar ] = useState( true );
+	const [ showProgressBar, setShowProgressBar ] = useState(
+		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
+	);
 
 	const isPluginOnSite = !! pluginOnSite;
 
@@ -138,8 +140,8 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// Set progressbar (currentStep) depending on transfer/plugin status.
 	useEffect( () => {
-		if ( new URLSearchParams( document.location.search ).has( 'hide-progress-bar' ) ) {
-			setShowProgressBar( false );
+		// We don't want to show the progress bar again.
+		if ( ! showProgressBar ) {
 			return;
 		}
 
@@ -152,7 +154,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		} else {
 			setShowProgressBar( false );
 		}
-	}, [ transferStatus, isPluginOnSite ] );
+	}, [ transferStatus, isPluginOnSite, showProgressBar ] );
 
 	const steps = useMemo(
 		() => [ translate( 'Installing plugin' ), translate( 'Activating plugin' ) ],
@@ -252,7 +254,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				<div className="marketplace-plugin-install__root">
 					<MarketplaceProgressBar
 						steps={ steps }
-						currentStep={ currentStep - 1 }
+						currentStep={ currentStep }
 						additionalSteps={ additionalSteps }
 					/>
 				</div>
