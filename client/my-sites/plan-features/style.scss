@@ -667,6 +667,15 @@ $plan-features-sidebar-width: 272px;
 	margin-left: 10px;
 }
 
+/*= Plans notice in Upgrades
+========================================*/
+
+.plans-features-main__notice.is-wpcom {
+	.notice {
+		margin-bottom: -10px;
+	}
+}
+
 /*= Plans in Signup
 ========================================*/
 
