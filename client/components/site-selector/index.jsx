@@ -480,7 +480,7 @@ const navigateToSite =
 				const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
 
 				// There is currently no "all sites" version of the insights page
-				if ( path.match( /^\/stats\/insights/ ) ) {
+				if ( path.match( /^\/stats\/insights\/?/ ) ) {
 					return '/stats/day';
 				}
 
