@@ -6,6 +6,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
@@ -65,7 +66,12 @@ class PeopleInvites extends PureComponent {
 					} ) }
 				</HeaderCake>
 				<Card>
-					<AddSubscriberForm />
+					<EmailVerificationGate
+						noticeText={ this.props.translate( 'You must verify your email to add subscribers.' ) }
+						noticeStatus="is-info"
+					>
+						<AddSubscriberForm />
+					</EmailVerificationGate>
 				</Card>
 			</Main>
 		);
