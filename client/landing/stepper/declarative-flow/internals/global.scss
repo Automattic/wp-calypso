@@ -86,11 +86,6 @@ button {
 			fill: var( --color-text );
 			stroke: var( --color-text );
 			transform-origin: 0 0;
-
-			.rtl & {
-				/*rtl:ignore*/
-				transform-origin: 100% 0;
-			}
 		}
 
 		.signup-header__right {
