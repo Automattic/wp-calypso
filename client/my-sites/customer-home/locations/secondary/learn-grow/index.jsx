@@ -20,6 +20,7 @@ import FreePhotoLibrary from 'calypso/my-sites/customer-home/cards/education/fre
 // eslint-disable-next-line inclusive-language/use-inclusive-words
 import RespondToCustomerFeedback from 'calypso/my-sites/customer-home/cards/education/respond-to-customer-feedback';
 import EducationStore from 'calypso/my-sites/customer-home/cards/education/store';
+import WpCourses from 'calypso/my-sites/customer-home/cards/education/wpcourses';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -27,6 +28,7 @@ const cardComponents = {
 	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
 	[ EDUCATION_EARN ]: EducationEarn,
 	[ EDUCATION_STORE ]: EducationStore,
+	[ EDUCATION_WPCOURSES ]: WpCourses,
 	[ EDUCATION_FIND_SUCCESS ]: FindSuccess,
 	[ EDUCATION_RESPOND_TO_CUSTOMER_FEEDBACK ]: RespondToCustomerFeedback,
 	[ EDUCATION_BLOGGING_QUICK_START ]: BloggingQuickStart,
