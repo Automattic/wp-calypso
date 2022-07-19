@@ -86,7 +86,7 @@ export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 						>
 							{ ( filteredSites, status ) =>
 								filteredSites.length ? (
-									<SearchableSitesTable sites={ sites } />
+									<SearchableSitesTable sites={ filteredSites } />
 								) : (
 									<NoSitesMessage status={ status } />
 								)
