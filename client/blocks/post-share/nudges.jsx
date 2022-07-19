@@ -25,10 +25,9 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 		featureList = [
 			translate( 'Share posts that have already been published.' ),
 			translate( 'Schedule your social messages in advance.' ),
-			translate( 'Plus all the additional features included with Jetpack Security, such as:.' ),
-			translate( 'Real-time cloud backups.' ),
-			translate( 'Real-time malware scanning.' ),
-			translate( 'Comment and form spam protection.' ),
+			translate(
+				'Enjoy all other Jetpack Security features, including real-time cloud backups, real-time malware scanning, comment and form spam protection, and more.'
+			),
 		];
 	} else {
 		featureList = [
