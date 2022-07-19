@@ -28,13 +28,15 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
 
-	${ ( props ) =>
-		props.mobileHidden &&
-		css`
-			@media only screen and ( max-width: 781px ) {
+	@media only screen and ( max-width: 781px ) {
+		${ ( props ) =>
+			props.mobileHidden &&
+			css`
 				display: none;
-			}
-		` }
+			` };
+
+		padding-right: 0;
+	}
 `;
 
 const SiteName = styled.h2`
