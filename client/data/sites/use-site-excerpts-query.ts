@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { useQuery } from 'react-query';
 import { useStore } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
+import getSites from 'calypso/state/selectors/get-sites';
 import { SiteData, SiteDataOptions } from 'calypso/state/ui/selectors/site-data';
 
 // Performance-optimized request for lists of sites.
@@ -39,25 +40,26 @@ const fetchSites = (): Promise< { sites: SiteExcerptData[] } > => {
 };
 
 export const useSiteExcerptsQuery = () => {
-	const sites = useStore().getState().sites.items;
-
-	let reduxData = undefined;
-	if ( sites && Object.values( sites ) ) {
-		reduxData = {
-			sites: Object.values( sites ).filter( notNullish ),
-		};
-	}
+	const store = useStore();
 
 	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
 		staleTime: 1000 * 60 * 5, // 5 minutes
 		select: ( data ) => data?.sites,
-		initialData: reduxData,
+		initialData: () => {
+			// Not using `useSelector` (i.e. calling `getSites` directly) because we
+			// only want to get the initial state. We don't want to be updated when the
+			// data from `getSites` changes.
+			const reduxData = getSites( store.getState() ).filter( notNullish );
+			return reduxData.length ? { sites: reduxData } : undefined;
+		},
 		placeholderData: {
 			sites: [],
 		},
 	} );
 };
 
+// This "null" check also does the type assertion that allows TypeScript to
+// make strong guarantees about `t`.
 function notNullish< T >( t: T | null | undefined ): t is T {
 	return t !== null && t !== undefined;
 }
