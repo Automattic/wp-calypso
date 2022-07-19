@@ -86,6 +86,12 @@ const SiteListTile = styled( ListTile )`
 	}
 `;
 
+const ListTileLeading = styled.a`
+	@media only screen and ( max-width: 781px ) {
+		margin-right: 12px;
+	}
+`;
+
 const ListTileTitle = styled.div`
 	display: flex;
 	align-items: center;
@@ -128,13 +134,12 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 			<Column>
 				<SiteListTile
 					leading={
-						<a
-							style={ { display: 'block' } }
+						<ListTileLeading
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
 							<SiteIcon siteId={ site.ID } size={ 50 } />
-						</a>
+						</ListTileLeading>
 					}
 					title={
 						<ListTileTitle>
