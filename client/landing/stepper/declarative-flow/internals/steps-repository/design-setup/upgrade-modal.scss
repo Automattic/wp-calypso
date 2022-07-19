@@ -34,15 +34,16 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 		}
 	}
 
-	&__star-box {
-		background: var( --studio-gray-100 );
-		border-radius: 4px;
-		fill: white;
-		line-height: 75px;
-		width: 64px;
-		height: 64px;
-		margin-bottom: 25px;
-		text-align: center;
+	&__theme-price {
+		display: flex;
+		align-items: baseline;
+		justify-content: flex-start;
+
+		span {
+			@extend .wp-brand-font;
+			font-size: $font-headline-small;
+			margin-right: 10px;
+		}
 	}
 
 	h1.upgrade-modal__heading {
@@ -53,7 +54,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	}
 
 	p {
-		margin-bottom: 40px;
+		margin-bottom: 35px;
 	}
 
 	&__close {
@@ -67,16 +68,6 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 		}
 	}
 
-	&__actions {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	&__cancel.button {
-		border-radius: 4px;
-		width: 47%;
-	}
-
 	&__upgrade.button.is-primary {
 		background: $design-button-primary-color;
         border-color: $design-button-primary-color;
@@ -84,7 +75,6 @@ $design-button-primary-hover-color: var( --color-primary-60 );
         border-radius: 4px;
         font-weight: 500;
         box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
-		width: 47%;
 
         &:hover,
         &:focus {
