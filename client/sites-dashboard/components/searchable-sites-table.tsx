@@ -1,5 +1,7 @@
 import { ClassNames } from '@emotion/react';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
+import page from 'page';
 import { useMemo, useState } from 'react';
 import { searchCollection } from 'calypso/components/search-sites/utils';
 import { SitesSearch } from './sites-search';
@@ -9,12 +11,13 @@ import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query
 
 interface SearchableSitesTableProps {
 	sites: SiteExcerptData[];
+	initialSearch?: string;
 }
 
-export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
+export function SearchableSitesTable( { sites, initialSearch }: SearchableSitesTableProps ) {
 	const { __ } = useI18n();
 
-	const [ term, setTerm ] = useState( '' );
+	const [ term, setTerm ] = useState( initialSearch );
 
 	const filteredSites = useMemo( () => {
 		if ( ! term ) {
@@ -24,7 +27,17 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 		return searchCollection( sites, term.toLowerCase(), [ 'URL', 'name', 'slug' ] );
 	}, [ term, sites ] );
 
-	const handleSearch = ( rawTerm: string ) => setTerm( rawTerm.trim() );
+	const handleSearch = ( rawTerm: string ) => {
+		const trimmedTerm = rawTerm.trim();
+		setTerm( trimmedTerm );
+		if ( trimmedTerm.length ) {
+			page(
+				addQueryArgs( window.location.pathname + window.location.search, { search: trimmedTerm } )
+			);
+		} else {
+			page( removeQueryArgs( window.location.pathname + window.location.search, 'search' ) );
+		}
+	};
 
 	return (
 		<ClassNames>
@@ -43,6 +56,7 @@ export function SearchableSitesTable( { sites }: SearchableSitesTableProps ) {
 							delaySearch
 							isReskinned
 							placeholder={ __( 'Search by name or domain…' ) }
+							defaultValue={ initialSearch }
 						/>
 					</div>
 					{ filteredSites.length > 0 ? (

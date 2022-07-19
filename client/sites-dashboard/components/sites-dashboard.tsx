@@ -8,7 +8,12 @@ import { SearchableSitesTable } from './searchable-sites-table';
 import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
 interface SitesDashboardProps {
-	launchStatus?: string;
+	queryParams: SitesDashboardQueryParams;
+}
+
+interface SitesDashboardQueryParams {
+	status?: string;
+	search?: string;
 }
 
 const MAX_PAGE_WIDTH = '1184px';
@@ -57,7 +62,7 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
+export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 	const { data: sites = [] } = useSiteExcerptsQuery();
 
@@ -82,13 +87,16 @@ export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 								position: relative;
 								top: -48px;
 							` }
-							launchStatus={ launchStatus }
+							filterOptions={ queryParams }
 						>
-							{ ( filteredSites, status ) =>
+							{ ( filteredSites, filterOptions ) =>
 								filteredSites.length ? (
-									<SearchableSitesTable sites={ filteredSites } />
+									<SearchableSitesTable
+										sites={ filteredSites }
+										initialSearch={ queryParams.search }
+									/>
 								) : (
-									<NoSitesMessage status={ status } />
+									<NoSitesMessage status={ filterOptions.status } />
 								)
 							}
 						</SitesTableFilterTabs>
