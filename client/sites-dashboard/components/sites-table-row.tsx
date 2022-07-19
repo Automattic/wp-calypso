@@ -53,8 +53,6 @@ const SiteName = styled.h2`
 `;
 
 const SiteUrl = styled.a`
-	color: var( --studio-gray-60 );
-	max-width: 75%;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	display: inline-block;
@@ -64,6 +62,14 @@ const SiteUrl = styled.a`
 	&:hover,
 	&:visited {
 		color: var( --studio-gray-60 );
+	}
+`;
+
+const SiteListTile = styled( ListTile )`
+	line-height: initial;
+
+	.list-tile__content {
+		min-width: 0;
 	}
 `;
 
@@ -101,7 +107,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	return (
 		<Row>
 			<Column>
-				<ListTile
+				<SiteListTile
 					leading={
 						<a
 							style={ { display: 'block' } }
