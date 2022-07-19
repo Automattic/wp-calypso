@@ -44,7 +44,7 @@ const SellerCelebrationModalInner = () => {
 	const previousIsEditorSaving = useRef( false );
 	const hasSelectedPaymentsOnce = useHasSelectedPaymentBlockOnce();
 
-	const { isEditorSaving, linkUrl } = useSelect( ( select ) => {
+	const { isEditorSaving, hasPaymentsBlock, linkUrl } = useSelect( ( select ) => {
 		if ( isSiteEditor ) {
 			const isSavingSite =
 				select( 'core' ).isSavingEntityRecord( 'root', 'site' ) &&
@@ -55,9 +55,12 @@ const SellerCelebrationModalInner = () => {
 				select( 'core' ).isSavingEntityRecord( 'postType', 'page', pageId ) &&
 				! select( 'core' ).isAutosavingEntityRecord( 'postType', 'page', pageId );
 			const pageEntity = select( 'core' ).getEntityRecord( 'postType', 'page', pageId );
+			const paymentsBlock =
+				pageEntity?.content?.raw?.includes( '<!-- wp:jetpack/recurring-payments -->' ) ?? false;
 
 			return {
 				isEditorSaving: isSavingSite || isSavingEntity,
+				hasPaymentsBlock: paymentsBlock,
 				linkUrl: pageEntity?.link,
 			};
 		}
@@ -66,9 +69,13 @@ const SellerCelebrationModalInner = () => {
 		const isSavingEntity =
 			select( 'core' ).isSavingEntityRecord( 'postType', currentPost?.type, currentPost?.id ) &&
 			! select( 'core' ).isAutosavingEntityRecord( 'postType', currentPost?.type, currentPost?.id );
+		const globalBlockCount = select( 'core/block-editor' ).getGlobalBlockCount(
+			'jetpack/recurring-payments'
+		);
 
 		return {
 			isEditorSaving: isSavingEntity,
+			hasPaymentsBlock: globalBlockCount > 0,
 			linkUrl: currentPost.link,
 		};
 	} );
@@ -83,6 +90,7 @@ const SellerCelebrationModalInner = () => {
 			previousIsEditorSaving.current &&
 			! hasDisplayedModal &&
 			intent === 'sell' &&
+			hasPaymentsBlock &&
 			hasSelectedPaymentsOnce &&
 			! hasSeenSellerCelebrationModal
 		) {
@@ -95,6 +103,7 @@ const SellerCelebrationModalInner = () => {
 		isEditorSaving,
 		hasDisplayedModal,
 		intent,
+		hasPaymentsBlock,
 		hasSelectedPaymentsOnce,
 		hasSeenSellerCelebrationModal,
 		updateHasSeenSellerCelebrationModal,
