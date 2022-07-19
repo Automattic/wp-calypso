@@ -20,9 +20,6 @@ export const ImportWrapper: Step = function ( props ) {
 	const { navigation, children, stepName } = props;
 	const currentRoute = useCurrentRoute();
 	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;
-	const skipLabel = isEnabledImportLight
-		? __( 'Skip this step' )
-		: __( "I don't have a site address" );
 
 	return (
 		<>
@@ -36,7 +33,7 @@ export const ImportWrapper: Step = function ( props ) {
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }
 				goNext={ navigation.goNext }
-				skipLabelText={ skipLabel }
+				skipLabelText={ __( "I don't have a site address" ) }
 				isFullLayout={ true }
 				stepContent={ children as ReactElement }
 				recordTracksEvent={ recordTracksEvent }
