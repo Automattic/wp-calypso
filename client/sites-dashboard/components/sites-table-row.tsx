@@ -58,9 +58,18 @@ const SiteUrl = styled.a`
 	text-overflow: ellipsis;
 	overflow: hidden;
 	display: inline-block;
+	line-height: 1;
+
+	&,
+	&:hover,
 	&:visited {
 		color: var( --studio-gray-60 );
 	}
+`;
+
+const ListTileSubtitle = styled.div`
+	display: flex;
+	align-items: center;
 `;
 
 const getDashboardUrl = ( slug: string ) => {
@@ -87,6 +96,8 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 	const isP2Site = site.options?.is_wpforteams_site;
 
+	const displayStatusBadge = isComingSoon || site.is_private;
+
 	return (
 		<Row>
 			<Column>
@@ -111,7 +122,14 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 						</div>
 					}
 					subtitle={
-						<div>
+						<ListTileSubtitle>
+							{ displayStatusBadge && (
+								<div style={ { marginRight: '8px' } }>
+									<SitesLaunchStatusBadge>
+										{ isComingSoon ? __( 'Coming soon' ) : __( 'Private' ) }
+									</SitesLaunchStatusBadge>
+								</div>
+							) }
 							<SiteUrl
 								href={ site.URL }
 								target="_blank"
@@ -121,11 +139,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							>
 								{ displaySiteUrl( site.URL ) }
 							</SiteUrl>
-							{ site.is_private && ! isComingSoon && (
-								<SitesLaunchStatusBadge>Private</SitesLaunchStatusBadge>
-							) }
-							{ isComingSoon && <SitesLaunchStatusBadge>Coming soon</SitesLaunchStatusBadge> }
-						</div>
+						</ListTileSubtitle>
 					}
 				/>
 			</Column>
