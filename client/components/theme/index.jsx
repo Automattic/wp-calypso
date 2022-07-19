@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -12,6 +14,7 @@ import Tootlip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
@@ -35,6 +38,7 @@ export class Theme extends Component {
 			stylesheet: PropTypes.string,
 			taxonomies: PropTypes.object,
 			update: PropTypes.object,
+			price: PropTypes.any,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -87,6 +91,7 @@ export class Theme extends Component {
 
 	prevThemeThumbnailRef = createRef( null );
 	themeThumbnailRef = createRef( null );
+	premiumPopoverRef = createRef( null );
 
 	state = {
 		descriptionTooltipVisible: false,
@@ -243,7 +248,7 @@ export class Theme extends Component {
 		} );
 
 		const hasPrice = /\d/g.test( price );
-		const showUpsell = hasPrice && upsellUrl;
+		const showUpsell = theme.price && upsellUrl;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! hasPrice,
 			'theme__badge-price-upsell': showUpsell,
@@ -279,30 +284,52 @@ export class Theme extends Component {
 		const impressionEventName = 'calypso_upgrade_nudge_impression';
 		const upsellEventProperties = { cta_name: 'theme-upsell', theme: theme.id };
 		const upsellPopupEventProperties = { cta_name: 'theme-upsell-popup', theme: theme.id };
+		const upsellContent = ! isEnabled( 'signup/seller-upgrade-modal' ) ? (
+			<div className="theme__upsell-popover">
+				<h2 className="theme__upsell-heading">
+					{ translate( 'Use this theme at no extra cost on our Premium or Business Plan' ) }
+				</h2>
+				<Button
+					onClick={ this.onUpsellClick }
+					className="theme__upsell-cta"
+					primary
+					href={ upsellUrl }
+				>
+					{ translate( 'Upgrade Now' ) }
+				</Button>
+			</div>
+		) : (
+			<div>
+				<div class="theme__upsell-header">{ translate( 'Premium theme' ) }</div>
+				<div>
+					{ translate(
+						'This premium theme is included in the pro plan, or you can purchase individually for A$73 a year'
+					) }
+				</div>
+			</div>
+		);
 		const upsell = showUpsell && (
 			<span className="theme__upsell">
 				<TrackComponentView
 					eventName={ impressionEventName }
 					eventProperties={ upsellEventProperties }
 				/>
-				<InfoPopover icon="star" className="theme__upsell-icon" position="top left">
+				<InfoPopover
+					icon="star"
+					showOnHover={ isEnabled( 'signup/seller-upgrade-modal' ) }
+					className={ classNames(
+						! isEnabled( 'signup/seller-upgrade-modal' )
+							? 'theme__upsell-icon'
+							: 'theme__upsell-popover',
+						this.props.isPremiumThemesAvaiable ? 'active' : null
+					) }
+					position={ ! isEnabled( 'signup/seller-upgrade-modal' ) ? 'top left' : 'top' }
+				>
 					<TrackComponentView
 						eventName={ impressionEventName }
 						eventProperties={ upsellPopupEventProperties }
 					/>
-					<div className="theme__upsell-popover">
-						<h2 className="theme__upsell-heading">
-							{ translate( 'Use this theme at no extra cost on our Premium or Business Plan' ) }
-						</h2>
-						<Button
-							onClick={ this.onUpsellClick }
-							className="theme__upsell-cta"
-							primary
-							href={ upsellUrl }
-						>
-							{ translate( 'Upgrade Now' ) }
-						</Button>
-					</div>
+					{ upsellContent }
 				</InfoPopover>
 			</span>
 		);
@@ -367,10 +394,12 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
-						{ showPremiumBadge && (
+						{ showPremiumBadge && ! isEnabled( 'signup/seller-upgrade-modal' ) && (
 							<span className="theme__badge-premium">{ translate( 'Premium' ) }</span>
 						) }
-						<span className={ priceClass }>{ price }</span>
+						{ ! isEnabled( 'signup/seller-upgrade-modal' ) && (
+							<span className={ priceClass }>{ price }</span>
+						) }
 						{ upsell }
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
@@ -389,7 +418,7 @@ export class Theme extends Component {
 }
 
 export default connect(
-	( state, { theme } ) => {
+	( state, { theme, siteId } ) => {
 		const {
 			themes: { themesUpdate },
 		} = state;
@@ -398,6 +427,7 @@ export default connect(
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
+			isPremiumThemesAvaiable: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
