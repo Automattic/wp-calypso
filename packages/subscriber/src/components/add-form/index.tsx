@@ -219,8 +219,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							{ createInterpolateElement(
 								__(
 									'Sorry, you can only upload CSV files right now. ' +
-										'Most providers will let you export this from your settings. ' +
-										'<uploadBtn>Select another file</uploadBtn>'
+									'Most providers will let you export this from your settings. ' +
+									'<uploadBtn>Select another file</uploadBtn>'
 								),
 								{ uploadBtn: formFileUploadElement }
 							) }
@@ -265,7 +265,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							{ createInterpolateElement(
 								__(
 									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to ' +
-										'email each person on your list. <Button>Learn more</Button>'
+									'email each person on your list. <Button>Learn more</Button>'
 								),
 								{
 									Button: createElement( Button, {
