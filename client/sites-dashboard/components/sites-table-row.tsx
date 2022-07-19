@@ -1,5 +1,5 @@
 import { ListTile } from '@automattic/components';
-import { css } from '@emotion/react';
+import { ClassNames, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -74,11 +74,6 @@ const SiteUrl = styled.a`
 
 const SiteListTile = styled( ListTile )`
 	line-height: initial;
-
-	.list-tile__content {
-		min-width: 0;
-	}
-
 	margin-right: 0;
 
 	@media only screen and ( max-width: 781px ) {
@@ -130,48 +125,55 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	const displayStatusBadge = isComingSoon || site.is_private;
 
 	return (
-		<Row>
-			<Column>
-				<SiteListTile
-					leading={
-						<ListTileLeading
-							href={ getDashboardUrl( site.slug ) }
-							title={ __( 'Visit Dashboard' ) }
-						>
-							<SiteIcon siteId={ site.ID } size={ 50 } />
-						</ListTileLeading>
-					}
-					title={
-						<ListTileTitle>
-							<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
-								{ site.name ? site.name : __( '(No Site Title)' ) }
-							</SiteName>
-							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-						</ListTileTitle>
-					}
-					subtitle={
-						<ListTileSubtitle>
-							{ displayStatusBadge && (
-								<div style={ { marginRight: '8px' } }>
-									<SitesLaunchStatusBadge>
-										{ isComingSoon ? __( 'Coming soon' ) : __( 'Private' ) }
-									</SitesLaunchStatusBadge>
-								</div>
-							) }
-							<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
-								{ displaySiteUrl( site.URL ) }
-							</SiteUrl>
-						</ListTileSubtitle>
-					}
-				/>
-			</Column>
-			<Column mobileHidden>{ site.plan.product_name_short }</Column>
-			<Column mobileHidden>July 16, 1969</Column>
-			<Column style={ { width: '20px' } }>
-				<EllipsisMenu>
-					<VisitDashboardItem site={ site } />
-				</EllipsisMenu>
-			</Column>
-		</Row>
+		<ClassNames>
+			{ ( { css } ) => (
+				<Row>
+					<Column>
+						<SiteListTile
+							contentClassName={ css`
+								min-width: 0;
+							` }
+							leading={
+								<ListTileLeading
+									href={ getDashboardUrl( site.slug ) }
+									title={ __( 'Visit Dashboard' ) }
+								>
+									<SiteIcon siteId={ site.ID } size={ 50 } />
+								</ListTileLeading>
+							}
+							title={
+								<ListTileTitle>
+									<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
+										{ site.name ? site.name : __( '(No Site Title)' ) }
+									</SiteName>
+									{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
+								</ListTileTitle>
+							}
+							subtitle={
+								<ListTileSubtitle>
+									{ displayStatusBadge && (
+										<div style={ { marginRight: '8px' } }>
+											<SitesLaunchStatusBadge>
+												{ isComingSoon ? __( 'Coming soon' ) : __( 'Private' ) }
+											</SitesLaunchStatusBadge>
+										</div>
+									) }
+									<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
+										{ displaySiteUrl( site.URL ) }
+									</SiteUrl>
+								</ListTileSubtitle>
+							}
+						/>
+					</Column>
+					<Column mobileHidden>{ site.plan.product_name_short }</Column>
+					<Column mobileHidden>July 16, 1969</Column>
+					<Column style={ { width: '20px' } }>
+						<EllipsisMenu>
+							<VisitDashboardItem site={ site } />
+						</EllipsisMenu>
+					</Column>
+				</Row>
+			) }
+		</ClassNames>
 	);
 }
