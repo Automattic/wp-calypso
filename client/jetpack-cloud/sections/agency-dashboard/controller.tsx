@@ -18,7 +18,7 @@ export function agencyDashboardContext( context: PageJS.Context, next: VoidFunct
 	next();
 }
 
-export function pluginManagementContext( context: PageJS.Context, next: () => void ): void {
+export function pluginManagementContext( context: PageJS.Context, next: VoidFunction ): void {
 	context.header = <Header />;
 	context.secondary = <DashboardSidebar path={ context.path } />;
 	context.primary = <PluginManagement />;
