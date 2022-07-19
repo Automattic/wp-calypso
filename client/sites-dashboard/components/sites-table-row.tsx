@@ -47,16 +47,13 @@ const SiteName = styled.h2`
 
 const SiteUrl = styled.a`
 	color: var( --studio-gray-60 );
-	max-width: 60%;
-	width: 300px;
-	text-overflow: clip;
+	max-width: 75%;
+	text-overflow: ellipse;
 	overflow: hidden;
 	display: inline-block;
 	&:visited {
 		color: var( --studio-gray-60 );
 	}
-	-webkit-mask-image: linear-gradient( 90deg, #000 90%, transparent );
-	mask-image: linear-gradient( 90deg, #000 60%, transparent );
 `;
 
 const getDashboardUrl = ( slug: string ) => {
