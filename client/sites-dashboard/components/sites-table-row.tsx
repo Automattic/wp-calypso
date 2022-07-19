@@ -47,6 +47,10 @@ const SiteName = styled.h2`
 
 const SiteUrl = styled.a`
 	color: var( --studio-gray-60 );
+	max-width: 75%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	display: inline-block;
 	&:visited {
 		color: var( --studio-gray-60 );
 	}
@@ -105,7 +109,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 								href={ site.URL }
 								target="_blank"
 								rel="noreferrer"
-								title={ __( 'Visit Site' ) }
+								title={ site.URL }
 								style={ { marginRight: '8px' } }
 							>
 								{ displaySiteUrl( site.URL ) }
