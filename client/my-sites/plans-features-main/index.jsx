@@ -470,7 +470,7 @@ export class PlansFeaturesMain extends Component {
 				<div
 					className={ classNames( 'plans-features-main__notice', {
 						'is-wpcom':
-							! isJetpack && ! isInSignup && ! isLandingPage && ! isLaunchPage ? 'is-wpcom' : '',
+							! isJetpack && ! isInSignup && ! isLandingPage && ! isLaunchPage ? true : false,
 					} ) }
 				/>
 				{ ! hidePlanSelector && (
