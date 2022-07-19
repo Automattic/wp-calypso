@@ -1,4 +1,5 @@
 import { ListTile } from '@automattic/components';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -15,21 +16,25 @@ interface SiteTableRowProps {
 const Row = styled.tr`
 	line-height: 2em;
 	border-bottom: 1px solid #eee;
-	td {
-		padding-top: 12px;
-		padding-bottom: 12px;
-		padding-right: 24px;
-		vertical-align: middle;
-		font-size: 14px;
-		line-height: 20px;
-		letter-spacing: -0.24px;
-		color: var( --studio-gray-60 );
-	}
-	@media only screen and ( max-width: 781px ) {
-		.sites-table-row__mobile-hidden {
-			display: none;
-		}
-	}
+`;
+
+const Column = styled.td< { mobileHidden?: boolean } >`
+	padding-top: 12px;
+	padding-bottom: 12px;
+	padding-right: 24px;
+	vertical-align: middle;
+	font-size: 14px;
+	line-height: 20px;
+	letter-spacing: -0.24px;
+	color: var( --studio-gray-60 );
+
+	${ ( props ) =>
+		props.mobileHidden &&
+		css`
+			@media only screen and ( max-width: 781px ) {
+				display: none;
+			}
+		` }
 `;
 
 const SiteName = styled.h2`
@@ -82,7 +87,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 
 	return (
 		<Row>
-			<td>
+			<Column>
 				<ListTile
 					leading={
 						<a
@@ -121,14 +126,14 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 						</div>
 					}
 				/>
-			</td>
-			<td className="sites-table-row__mobile-hidden">{ site.plan.product_name_short }</td>
-			<td className="sites-table-row__mobile-hidden">July 16, 1969</td>
-			<td style={ { width: '20px' } }>
+			</Column>
+			<Column mobileHidden>{ site.plan.product_name_short }</Column>
+			<Column mobileHidden>July 16, 1969</Column>
+			<Column style={ { width: '20px' } }>
 				<EllipsisMenu>
 					<VisitDashboardItem site={ site } />
 				</EllipsisMenu>
-			</td>
+			</Column>
 		</Row>
 	);
 }
