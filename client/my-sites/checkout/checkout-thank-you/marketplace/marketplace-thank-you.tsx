@@ -72,12 +72,10 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
 
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
-	const [ currentStep, setCurrentStep ] = useState( 1 );
+	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ showProgressBar, setShowProgressBar ] = useState( true );
 
 	const isPluginOnSite = !! pluginOnSite;
-	const hideProgressBar = new URLSearchParams( document.location.search ).has(
-		'hide-progress-bar'
-	);
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
@@ -138,23 +136,23 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		}
 	}, [ isRequestingPlugins, isPluginOnSite, dispatch, siteId, transferStatus, isAtomic ] );
 
-	// Set progressbar (currentStep) depending on transfer status.
-	// Step 0 hides the progress bar. It means "complete".
-	// Steps 1-2 advance through the bar.
+	// Set progressbar (currentStep) depending on transfer/plugin status.
 	useEffect( () => {
-		if ( hideProgressBar ) {
-			setCurrentStep( 0 );
+		if ( new URLSearchParams( document.location.search ).has( 'hide-progress-bar' ) ) {
+			setShowProgressBar( false );
 			return;
 		}
 
 		if ( transferStatus !== transferStates.COMPLETE ) {
-			setCurrentStep( 1 );
-		} else if ( ! isPluginOnSite ) {
-			setCurrentStep( 2 );
-		} else {
+			setShowProgressBar( true );
 			setCurrentStep( 0 );
+		} else if ( ! isPluginOnSite ) {
+			setShowProgressBar( true );
+			setCurrentStep( 1 );
+		} else {
+			setShowProgressBar( false );
 		}
-	}, [ transferStatus, isPluginOnSite, hideProgressBar ] );
+	}, [ transferStatus, isPluginOnSite ] );
 
 	const steps = useMemo(
 		() => [ translate( 'Installing plugin' ), translate( 'Activating plugin' ) ],
@@ -247,9 +245,9 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			<MasterbarStyled
 				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
-				canGoBack={ currentStep === 0 }
+				canGoBack={ isPluginOnSite }
 			/>
-			{ currentStep > 0 && (
+			{ showProgressBar && (
 				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 				<div className="marketplace-plugin-install__root">
 					<MarketplaceProgressBar
@@ -259,18 +257,20 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					/>
 				</div>
 			) }
-			<ThankYouContainer>
-				<ThankYou
-					containerClassName="marketplace-thank-you"
-					sections={ [ setupSection ] }
-					showSupportSection={ true }
-					thankYouImage={ thankYouImage }
-					thankYouTitle={ translate( 'All ready to go!' ) }
-					thankYouSubtitle={ isPluginOnSite ? thankYouSubtitle : '' }
-					headerBackgroundColor="#fff"
-					headerTextColor="#000"
-				/>
-			</ThankYouContainer>
+			{ ! showProgressBar && (
+				<ThankYouContainer>
+					<ThankYou
+						containerClassName="marketplace-thank-you"
+						sections={ [ setupSection ] }
+						showSupportSection={ true }
+						thankYouImage={ thankYouImage }
+						thankYouTitle={ translate( 'All ready to go!' ) }
+						thankYouSubtitle={ isPluginOnSite ? thankYouSubtitle : '' }
+						headerBackgroundColor="#fff"
+						headerTextColor="#000"
+					/>
+				</ThankYouContainer>
+			) }
 		</ThemeProvider>
 	);
 };
