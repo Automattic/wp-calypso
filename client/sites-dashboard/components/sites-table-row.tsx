@@ -1,4 +1,5 @@
 import { ListTile } from '@automattic/components';
+import { ClassNames, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -15,45 +16,86 @@ interface SiteTableRowProps {
 const Row = styled.tr`
 	line-height: 2em;
 	border-bottom: 1px solid #eee;
-	td {
-		padding-top: 12px;
-		padding-bottom: 12px;
-		padding-right: 24px;
-		vertical-align: middle;
-		font-size: 14px;
-		line-height: 20px;
-		letter-spacing: -0.24px;
-		color: var( --studio-gray-60 );
-	}
+`;
+
+const Column = styled.td< { mobileHidden?: boolean } >`
+	padding-top: 12px;
+	padding-bottom: 12px;
+	padding-right: 24px;
+	vertical-align: middle;
+	font-size: 14px;
+	line-height: 20px;
+	letter-spacing: -0.24px;
+	color: var( --studio-gray-60 );
+
 	@media only screen and ( max-width: 781px ) {
-		.sites-table-row__mobile-hidden {
-			display: none;
-		}
+		${ ( props ) =>
+			props.mobileHidden &&
+			css`
+				display: none;
+			` };
+
+		padding-right: 0;
 	}
 `;
 
-const SiteName = styled.h2`
+const SiteName = styled.a`
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	margin-right: 8px;
 	font-weight: 500;
 	font-size: 16px;
 	letter-spacing: -0.4px;
-	color: var( --studio-gray-100 );
-	a {
-		color: inherit;
-		&:hover {
-			text-decoration: underline;
-		}
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&,
+	&:hover,
+	&:visited {
+		color: var( --studio-gray-100 );
 	}
 `;
 
 const SiteUrl = styled.a`
-	color: var( --studio-gray-60 );
-	max-width: 75%;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	display: inline-block;
+	line-height: 1;
+
+	&,
+	&:hover,
 	&:visited {
 		color: var( --studio-gray-60 );
 	}
+`;
+
+const SiteListTile = styled( ListTile )`
+	line-height: initial;
+	margin-right: 0;
+
+	@media only screen and ( max-width: 781px ) {
+		margin-right: 12px;
+	}
+`;
+
+const ListTileLeading = styled.a`
+	@media only screen and ( max-width: 781px ) {
+		margin-right: 12px;
+	}
+`;
+
+const ListTileTitle = styled.div`
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+`;
+
+const ListTileSubtitle = styled.div`
+	display: flex;
+	align-items: center;
 `;
 
 const getDashboardUrl = ( slug: string ) => {
@@ -80,55 +122,58 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 	const isP2Site = site.options?.is_wpforteams_site;
 
+	const displayStatusBadge = isComingSoon || site.is_private;
+
 	return (
-		<Row>
-			<td>
-				<ListTile
-					leading={
-						<a
-							style={ { display: 'block' } }
-							href={ getDashboardUrl( site.slug ) }
-							title={ __( 'Visit Dashboard' ) }
-						>
-							<SiteIcon siteId={ site.ID } size={ 50 } />
-						</a>
-					}
-					title={
-						<div style={ { display: 'flex', alignItems: 'center', marginBottom: '8px' } }>
-							<SiteName style={ { marginRight: '8px' } }>
-								<a href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
-									{ site.name ? site.name : __( '(No Site Title)' ) }
-								</a>
-							</SiteName>
-							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-						</div>
-					}
-					subtitle={
-						<div>
-							<SiteUrl
-								href={ site.URL }
-								target="_blank"
-								rel="noreferrer"
-								title={ site.URL }
-								style={ { marginRight: '8px' } }
-							>
-								{ displaySiteUrl( site.URL ) }
-							</SiteUrl>
-							{ site.is_private && ! isComingSoon && (
-								<SitesLaunchStatusBadge>Private</SitesLaunchStatusBadge>
-							) }
-							{ isComingSoon && <SitesLaunchStatusBadge>Coming soon</SitesLaunchStatusBadge> }
-						</div>
-					}
-				/>
-			</td>
-			<td className="sites-table-row__mobile-hidden">{ site.plan.product_name_short }</td>
-			<td className="sites-table-row__mobile-hidden">July 16, 1969</td>
-			<td style={ { width: '20px' } }>
-				<EllipsisMenu>
-					<VisitDashboardItem site={ site } />
-				</EllipsisMenu>
-			</td>
-		</Row>
+		<ClassNames>
+			{ ( { css } ) => (
+				<Row>
+					<Column>
+						<SiteListTile
+							contentClassName={ css`
+								min-width: 0;
+							` }
+							leading={
+								<ListTileLeading
+									href={ getDashboardUrl( site.slug ) }
+									title={ __( 'Visit Dashboard' ) }
+								>
+									<SiteIcon siteId={ site.ID } size={ 50 } />
+								</ListTileLeading>
+							}
+							title={
+								<ListTileTitle>
+									<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
+										{ site.name ? site.name : __( '(No Site Title)' ) }
+									</SiteName>
+									{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
+								</ListTileTitle>
+							}
+							subtitle={
+								<ListTileSubtitle>
+									{ displayStatusBadge && (
+										<div style={ { marginRight: '8px' } }>
+											<SitesLaunchStatusBadge>
+												{ isComingSoon ? __( 'Coming soon' ) : __( 'Private' ) }
+											</SitesLaunchStatusBadge>
+										</div>
+									) }
+									<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
+										{ displaySiteUrl( site.URL ) }
+									</SiteUrl>
+								</ListTileSubtitle>
+							}
+						/>
+					</Column>
+					<Column mobileHidden>{ site.plan.product_name_short }</Column>
+					<Column mobileHidden>July 16, 1969</Column>
+					<Column style={ { width: '20px' } }>
+						<EllipsisMenu>
+							<VisitDashboardItem site={ site } />
+						</EllipsisMenu>
+					</Column>
+				</Row>
+			) }
+		</ClassNames>
 	);
 }
