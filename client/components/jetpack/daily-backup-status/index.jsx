@@ -33,6 +33,7 @@ import './style.scss';
 const DailyBackupStatus = ( {
 	selectedDate,
 	lastBackupAttempt,
+	lastBackupAttemptOnDate,
 	lastBackupDate,
 	backup,
 	deltas,
@@ -114,9 +115,13 @@ const DailyBackupStatus = ( {
 
 	if ( backup ) {
 		const isSuccessful = hasRealtimeBackups ? isSuccessfulRealtimeBackup : isSuccessfulDailyBackup;
-
 		return isSuccessful( backup ) ? (
-			<BackupSuccessful backup={ backup } deltas={ deltas } selectedDate={ selectedDate } />
+			<BackupSuccessful
+				backup={ backup }
+				deltas={ deltas }
+				selectedDate={ selectedDate }
+				lastBackupAttemptOnDate={ lastBackupAttemptOnDate }
+			/>
 		) : (
 			<BackupFailed backup={ backup } />
 		);
@@ -141,6 +146,7 @@ const DailyBackupStatus = ( {
 DailyBackupStatus.propTypes = {
 	selectedDate: PropTypes.object.isRequired, // Moment object
 	lastBackupDate: PropTypes.object, // Moment object
+	lastBackupAttemptOnDate: PropTypes.object, // Moment object
 	backup: PropTypes.object,
 	deltas: PropTypes.object,
 };
@@ -157,7 +163,7 @@ const Wrapper = ( props ) => {
 				<QueryRewindBackups siteId={ siteId } />
 				<DailyBackupStatus { ...props } />
 			</Card>
-			<BackupWarnings selectedDate={ props.selectedDate } siteId={ siteId } />
+			<BackupWarnings lastBackupAttemptOnDate={ props.lastBackupAttemptOnDate } />
 		</>
 	);
 };
