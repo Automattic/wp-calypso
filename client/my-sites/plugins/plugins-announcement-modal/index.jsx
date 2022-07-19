@@ -5,11 +5,12 @@ import announcementImage from 'calypso/assets/images/marketplace/plugins-browser
 import AnnouncementModal from 'calypso/blocks/announcement-modal';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, getSitePlan } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const PluginsAnnouncementModal = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const selectedSiteUrl = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
 	);
@@ -32,12 +33,13 @@ const PluginsAnnouncementModal = () => {
 				"You can now extend your site's capabilities with premium plugins. Available for purchase on the plugins page."
 			),
 			featureImage: announcementImage,
+			ctaLink: `/plugins/${ selectedSiteUrl }`,
 		},
 	];
 
 	return (
 		<AnnouncementModal
-			announcementId="plugins-page-starter-plan-launch"
+			announcementId="plugins-page-starter-plan-launch2"
 			pages={ announcementPages }
 			finishButtonText={ translate( 'Explore now' ) }
 		/>
