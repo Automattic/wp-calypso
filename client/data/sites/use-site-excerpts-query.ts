@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useQuery } from 'react-query';
 import { useStore } from 'react-redux';
+import { withoutHttp, urlToSlug } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import getSites from 'calypso/state/selectors/get-sites';
 import { SiteData, SiteDataOptions } from 'calypso/state/ui/selectors/site-data';
@@ -20,7 +21,11 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'plan',
 ] as const;
 
-export const SITE_EXCERPT_REQUEST_OPTIONS = [ 'is_wpforteams_site' ] as const;
+export const SITE_EXCERPT_REQUEST_OPTIONS = [
+	'is_redirect',
+	'is_wpforteams_site',
+	'unmapped_url',
+] as const;
 
 export type SiteExcerptData = Pick< SiteData, typeof SITE_EXCERPT_REQUEST_FIELDS[ number ] > & {
 	options?: Pick< SiteDataOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
@@ -44,7 +49,19 @@ export const useSiteExcerptsQuery = () => {
 
 	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
 		staleTime: 1000 * 60 * 5, // 5 minutes
-		select: ( data ) => data?.sites,
+		select: ( data ) =>
+			data?.sites.map( ( site ) => {
+				if ( site.options?.is_mapped_domain && site.options?.unmapped_url ) {
+					return {
+						...site,
+						slug: withoutHttp( site.options?.unmapped_url ),
+					};
+				}
+				return {
+					...site,
+					slug: urlToSlug( site.URL ),
+				};
+			} ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
 			// only want to get the initial state. We don't want to be updated when the
