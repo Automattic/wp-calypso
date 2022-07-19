@@ -5,6 +5,7 @@ import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
@@ -115,7 +116,14 @@ class Followers extends Component {
 			if ( 'email' === this.props.type ) {
 				return (
 					<Card>
-						<AddSubscriberForm />
+						<EmailVerificationGate
+							noticeText={ this.props.translate(
+								'You must verify your email to add subscribers.'
+							) }
+							noticeStatus="is-info"
+						>
+							<AddSubscriberForm />
+						</EmailVerificationGate>
 					</Card>
 				);
 			}
