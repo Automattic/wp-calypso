@@ -82,7 +82,7 @@ Note that you must pass the `keys` argument so the hook indexes those keys. Thos
 
 Beyond passing `keys` (and [its variations](https://fusejs.io/examples.html)), you can extend the hook by providing the `options` argument, which will extend the fuzzy search mechanism following [the options described by Fuse.js](https://fusejs.io/api/options.html).
 
-##### Updating Query Setting an Initial Query
+##### Updating Query
 
 You ["control"](https://reactjs.org/docs/uncontrolled-components.html) the query string
 passed to the hook. Updating the query string should be handled in the parent component
