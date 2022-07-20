@@ -1,13 +1,11 @@
 import { Card, Button } from '@automattic/components';
 import FormattedHeader from 'calypso/components/formatted-header';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 
 import './style.scss';
 
-const PromoCard = ( { headerText, contentText, image, eventName, ctaText, onClick } ) => {
+const PromoCard = ( { headerText, contentText, image, ctaText, onClick } ) => {
 	return (
 		<Card className="promo-card">
-			<TrackComponentView eventName={ eventName } />
 			<img src={ image } alt="" aria-hidden="true" />
 			<div className="promo-card__text">
 				<FormattedHeader brandFont headerText={ headerText } align="left" />

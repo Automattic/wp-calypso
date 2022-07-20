@@ -8,6 +8,7 @@ import titlecase from 'to-title-case';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
+import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -19,7 +20,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PromoCard from 'calypso/components/promo-card';
 import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -139,10 +139,6 @@ class StatsSite extends Component {
 			const updatedQs = stringifyQs( updateQueryString( { tab: tab.attr } ) );
 			page.show( `${ window.location.pathname }?${ updatedQs }` );
 		}
-	};
-
-	parselyClick = () => {
-		this.props.recordTracksEvent( 'calypso_stats_parsely_banner_click' );
 	};
 
 	renderPrivateSiteBanner( siteId, siteSlug ) {
@@ -311,15 +307,17 @@ class StatsSite extends Component {
 						</div>
 					</div>
 				</div>
-				<PromoCard
-					eventName="calypso_stats_wordpress_seo_premium_banner_view"
+				<PromoCardBlock
+					productSlug="wordpress-seo-premium"
+					impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
+					clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
 					headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
 					contentText={ translate(
 						'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
 					) }
 					ctaText={ translate( 'Learn more' ) }
 					image={ wordpressSeoIllustration }
-					onClick={ this.parselyClick }
+					href={ `/plugins/wordpress-seo-premium/${ slug }` }
 				/>
 				<JetpackColophon />
 			</>
