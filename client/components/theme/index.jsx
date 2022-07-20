@@ -1,6 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
+import { Button as LinkButton } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty, isEqual, some } from 'lodash';
@@ -13,6 +16,7 @@ import PulsingDot from 'calypso/components/pulsing-dot';
 import Tootlip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
@@ -238,8 +242,35 @@ export class Theme extends Component {
 		);
 	};
 
+	getUpsellMessage() {
+		const { isPremiumThemesAvaiable, eligibleForProPlan, theme, price, translate } = this.props;
+		const hasPrice = /\d/g.test( price );
+
+		if ( ! hasPrice && theme.price && ! isPremiumThemesAvaiable ) {
+			return translate( 'You have purchased an annual subscription for this theme' );
+		} else if ( isPremiumThemesAvaiable ) {
+			return translate( 'The premium theme is included in your plan.' );
+		}
+
+		return createInterpolateElement(
+			sprintf(
+				/* translators: the "price" is the price of the theme, example: U$50; the "planName" can be "Pro plan" or "Premium plan". */
+				translate(
+					'This premium theme is included in the <Link>%(planName)s</Link>, or you can purchase individually for %(price)s a year'
+				),
+				{
+					price: theme.price,
+					planName: eligibleForProPlan ? translate( 'Pro plan' ) : translate( 'Premium plan' ),
+				}
+			),
+			{
+				Link: <LinkButton isLink />,
+			}
+		);
+	}
+
 	render() {
-		const { active, price, theme, translate, upsellUrl } = this.props;
+		const { active, price, theme, translate, upsellUrl, isPremiumThemesAvaiable } = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -248,7 +279,9 @@ export class Theme extends Component {
 		} );
 
 		const hasPrice = /\d/g.test( price );
-		const showUpsell = theme.price && upsellUrl;
+		const showUpsell = ! isEnabled( 'signup/seller-upgrade-modal' )
+			? hasPrice && upsellUrl
+			: upsellUrl && theme.price && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
 			'theme__badge-price-upgrade': ! hasPrice,
 			'theme__badge-price-upsell': showUpsell,
@@ -284,6 +317,7 @@ export class Theme extends Component {
 		const impressionEventName = 'calypso_upgrade_nudge_impression';
 		const upsellEventProperties = { cta_name: 'theme-upsell', theme: theme.id };
 		const upsellPopupEventProperties = { cta_name: 'theme-upsell-popup', theme: theme.id };
+
 		const upsellContent = ! isEnabled( 'signup/seller-upgrade-modal' ) ? (
 			<div className="theme__upsell-popover">
 				<h2 className="theme__upsell-heading">
@@ -301,11 +335,7 @@ export class Theme extends Component {
 		) : (
 			<div>
 				<div class="theme__upsell-header">{ translate( 'Premium theme' ) }</div>
-				<div>
-					{ translate(
-						'This premium theme is included in the pro plan, or you can purchase individually for A$73 a year'
-					) }
-				</div>
+				<div>{ this.getUpsellMessage() }</div>
 			</div>
 		);
 		const upsell = showUpsell && (
@@ -321,7 +351,7 @@ export class Theme extends Component {
 						! isEnabled( 'signup/seller-upgrade-modal' )
 							? 'theme__upsell-icon'
 							: 'theme__upsell-popover',
-						this.props.isPremiumThemesAvaiable ? 'active' : null
+						isPremiumThemesAvaiable || showPremiumBadge ? 'active' : null
 					) }
 					position={ ! isEnabled( 'signup/seller-upgrade-modal' ) ? 'top left' : 'top' }
 				>
@@ -428,6 +458,7 @@ export default connect(
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isPremiumThemesAvaiable: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
+			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
