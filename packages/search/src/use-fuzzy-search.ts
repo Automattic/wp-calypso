@@ -48,8 +48,8 @@ export const useFuzzySearch = < T >( {
 		// Every time the query or the data changes, we update the collection
 		// This assignment takes less than 1ms for thousands of items
 		fuseInstance.setCollection( data );
-		const results = fuseInstance.search( query ).map( ( { item } ) => item );
-		return results;
+
+		return fuseInstance.search( query ).map( ( { item } ) => item );
 	}, [ fuseInstance, query, data ] );
 
 	return results;
