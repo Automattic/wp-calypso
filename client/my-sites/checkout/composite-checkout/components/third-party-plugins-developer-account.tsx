@@ -7,7 +7,11 @@ const CheckboxTermsWrapper = styled.div`
 `;
 
 const StyledFormCheckbox = styled( FormCheckbox )`
-	margin: 8px 0 16px -24px;
+	// Increase specificity with && to avoid form-checkbox overriding the margin
+	// Source: https://stackoverflow.com/a/64486501
+	&& {
+		margin: 8px 0 16px -24px;
+	}
 `;
 
 const MessageWrapper = styled.div`
