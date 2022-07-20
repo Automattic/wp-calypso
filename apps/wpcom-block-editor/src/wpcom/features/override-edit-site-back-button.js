@@ -1,6 +1,5 @@
 import { __experimentalNavigationBackButton as NavigationBackButton } from '@wordpress/components';
 import domReady from '@wordpress/dom-ready';
-import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 /**
@@ -22,13 +21,16 @@ function overrideBackToDashboardButton() {
 
 	registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
 		render: function SiteEditorCloseFill() {
-			return createElement( SiteEditorDashboardFill, null, [
-				createElement( NavigationBackButton, {
-					backButtonLabel: __( 'Dashboard' ),
-					className: 'edit-site-navigation-panel__back-to-dashboard',
-					href: `https://wordpress.com/home/${ siteSlug }`,
-				} ),
-			] );
+			return (
+				<SiteEditorDashboardFill>
+					<NavigationBackButton
+						backButtonLabel={ __( 'Dashboard' ) }
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="edit-site-navigation-panel__back-to-dashboard"
+						href={ `https://wordpress.com/home/${ siteSlug }` }
+					/>
+				</SiteEditorDashboardFill>
+			);
 		},
 	} );
 }
