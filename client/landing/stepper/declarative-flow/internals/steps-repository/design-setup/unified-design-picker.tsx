@@ -224,8 +224,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	const handleBackClick = () => {
-		//todo: fixme in mobile?
-		if ( isPreviewingDesign && ( ! showGeneratedDesigns || isMobile ) ) {
+		if ( isPreviewingDesign ) {
 			setSelectedDesign( undefined );
 			setIsPreviewingDesign( false );
 			return;
