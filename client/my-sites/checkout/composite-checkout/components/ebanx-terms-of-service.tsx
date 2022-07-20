@@ -1,6 +1,7 @@
 import { usePaymentMethod } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
+import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 
@@ -14,10 +15,10 @@ export function EbanxTermsOfService() {
 		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
 	if ( ! canUseEbanx ) {
-		return;
+		return null;
 	}
 	if ( currentPaymentMethod?.id !== 'card' ) {
-		return;
+		return null;
 	}
 
 	// This text and link was provided by EBanx directly. See https://github.com/Automattic/payments-shilling/issues/983
@@ -31,9 +32,5 @@ export function EbanxTermsOfService() {
 			},
 		}
 	);
-	return (
-		<div>
-			<p>{ tosText }</p>
-		</div>
-	);
+	return <CheckoutTermsItem>{ tosText }</CheckoutTermsItem>;
 }
