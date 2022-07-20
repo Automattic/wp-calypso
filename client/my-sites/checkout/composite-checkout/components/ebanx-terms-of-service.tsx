@@ -14,10 +14,9 @@ export function EbanxTermsOfService() {
 	const canUseEbanx = responseCart.allowed_payment_methods.includes(
 		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
-	if ( ! canUseEbanx ) {
-		return null;
-	}
-	if ( currentPaymentMethod?.id !== 'card' ) {
+	const isNewEbanxCardSelected = canUseEbanx && currentPaymentMethod?.id === 'card';
+	const isSavedEbanxCardSelected = currentPaymentMethod?.id === 'existing-card-ebanx';
+	if ( ! isNewEbanxCardSelected && ! isSavedEbanxCardSelected ) {
 		return null;
 	}
 
