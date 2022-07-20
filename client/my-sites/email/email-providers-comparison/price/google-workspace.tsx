@@ -62,7 +62,8 @@ const GoogleWorkspacePrice = ( {
 	}
 
 	const isDiscounted = hasDiscount( product );
-	const isEligibleForFreeTrial = isDomainEligibleForGoogleWorkspaceFreeTrial( domain );
+	const isEligibleForFreeTrial =
+		isDomainInCart || isDomainEligibleForGoogleWorkspaceFreeTrial( domain );
 
 	const priceWithInterval = (
 		<PriceWithInterval
@@ -73,6 +74,8 @@ const GoogleWorkspacePrice = ( {
 			product={ product }
 		/>
 	);
+
+	const introductoryOffer = product?.introductory_offer ?? null;
 
 	return (
 		<>
@@ -87,9 +90,14 @@ const GoogleWorkspacePrice = ( {
 				</div>
 			) }
 
-			{ isEligibleForFreeTrial && (
+			{ isEligibleForFreeTrial && ( introductoryOffer?.cost_per_interval ?? 0 ) === 0 && (
 				<div className="google-workspace-price__trial-badge badge badge--info-green">
-					{ translate( '1 month free' ) }
+					{ translate( '%(intervalCount)d %(intervalUnit)s free', {
+						args: {
+							intervalCount: introductoryOffer?.interval_count,
+							intervalUnit: introductoryOffer?.interval_unit,
+						},
+					} ) }
 				</div>
 			) }
 

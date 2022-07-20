@@ -93,7 +93,9 @@ const PriceWithInterval = ( {
 
 	if ( isDiscounted || isEligibleForFreeTrial ) {
 		const salePrice = formatCurrency(
-			isEligibleForFreeTrial ? 0 : product?.sale_cost ?? 0,
+			isEligibleForFreeTrial
+				? ( product?.introductory_offer?.cost_per_interval as number )
+				: product?.sale_cost ?? 0,
 			currencyCode ?? '',
 			{ stripZeros: true }
 		);
