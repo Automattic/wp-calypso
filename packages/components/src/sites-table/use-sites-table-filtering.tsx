@@ -1,3 +1,4 @@
+import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { SitesCountBadge } from './sites-count-badge';
@@ -7,16 +8,20 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesTableFilterOptions {
 	status?: string;
+	search?: string;
 }
 
 interface UseSitesTableFilteringResult {
 	filteredSites: SiteExcerptData[];
 	tabs: Tab[];
+	selectedTabHasSites: boolean;
+	query: string;
+	setQuery: ( newQuery: string ) => void;
 }
 
 export function useSitesTableFiltering(
 	allSites: SiteExcerptData[],
-	{ status = 'all' }: SitesTableFilterOptions
+	{ status = 'all', search }: SitesTableFilterOptions
 ): UseSitesTableFilteringResult {
 	const { __ } = useI18n();
 
@@ -44,10 +49,22 @@ export function useSitesTableFiltering(
 		return [ tabs, filteredByStatus ];
 	}, [ allSites, __ ] );
 
-	return {
-		filteredSites: filteredByStatus[ status ],
-		tabs,
-	};
+	const {
+		results: filteredSites,
+		query,
+		setQuery,
+	} = useFuzzySearch( {
+		data: filteredByStatus[ status ],
+		keys: [ 'URL', 'name', 'slug' ],
+		initialQuery: search,
+	} );
+
+	// If `filteredSites` is empty we want to know whether that's due to
+	// there being no sites in the selected tab or because the search has
+	// found no sites.
+	const selectedTabHasSites = !! filteredByStatus[ status ].length;
+
+	return { filteredSites, tabs, selectedTabHasSites, query, setQuery };
 }
 
 function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {

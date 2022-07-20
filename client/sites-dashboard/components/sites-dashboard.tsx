@@ -4,9 +4,12 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
+import { useCallback } from 'react';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
-import { SearchableSitesTable } from './searchable-sites-table';
+import { SitesSearch } from './sites-search';
+import { SitesSearchIcon } from './sites-search-icon';
+import { SitesTable } from './sites-table';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
@@ -69,15 +72,39 @@ const SitesTableFilterTabs = styled( TabPanel )`
 	top: -48px;
 `;
 
+const SearchWrapper = styled.div`
+	margin: 32px 0;
+	width: 286px;
+	max-width: 100%;
+`;
+
 export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 	const { data: allSites = [] } = useSiteExcerptsQuery();
 
-	const { filteredSites, tabs } = useSitesTableFiltering( allSites, queryParams );
+	const { filteredSites, tabs, selectedTabHasSites, query, setQuery } = useSitesTableFiltering(
+		allSites,
+		queryParams
+	);
 
 	const selectedTabName = tabs.some( ( tab ) => tab.name === queryParams.status )
 		? queryParams.status
 		: undefined;
+
+	const handleSearch = useCallback(
+		( rawTerm: string ) => {
+			const trimmedTerm = rawTerm.trim();
+			setQuery( trimmedTerm );
+			if ( trimmedTerm.length ) {
+				page(
+					addQueryArgs( window.location.pathname + window.location.search, { search: trimmedTerm } )
+				);
+			} else {
+				page( removeQueryArgs( window.location.pathname + window.location.search, 'search' ) );
+			}
+		},
+		[ setQuery ]
+	);
 
 	return (
 		<main>
@@ -97,8 +124,23 @@ export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 					onSelect={ handleTabSelect }
 				>
 					{ () =>
-						filteredSites.length ? (
-							<SearchableSitesTable sites={ filteredSites } initialSearch={ queryParams.search } />
+						selectedTabHasSites ? (
+							<>
+								<SearchWrapper>
+									<SitesSearch
+										searchIcon={ <SitesSearchIcon /> }
+										onSearch={ handleSearch }
+										isReskinned
+										placeholder={ __( 'Search by name or domain…' ) }
+										value={ query }
+									/>
+								</SearchWrapper>
+								{ filteredSites.length > 0 ? (
+									<SitesTable sites={ filteredSites } />
+								) : (
+									<h2>{ __( 'No sites match your search.' ) }</h2>
+								) }
+							</>
 						) : (
 							<NoSitesMessage status={ selectedTabName } />
 						)
