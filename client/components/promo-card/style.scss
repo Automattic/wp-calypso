@@ -5,7 +5,11 @@
 	align-items: center;
 	justify-content: center;
 	padding: 30px;
-	margin-top: 16px;
+	margin-top: 25px;
+	
+	@media screen and ( max-width: 910px ) {
+		flex-direction: column;
+	}
 
 	.formatted-header {
 		margin: 0 0 12px;
@@ -13,17 +17,33 @@
 
 	.formatted-header__title {
 		font-size: $font-title-large;
+
+		@media screen and ( max-width: 910px ) {
+			text-align: center;
+		}
 	}
 
 	.promo-card__text {
-		max-width: 520px;
+		flex: 1;
+		max-width: 70%;
+		margin-right: 15px;
+
+		@media screen and ( max-width: 910px ) {
+			margin-right: 0;
+			text-align: center;
+		}
 	}
 
 	img {
 		max-width: 200px;
 		flex: 1;
 		height: auto;
-		margin-right: 60px;
+		margin-right: 58px;
+
+		@media screen and ( max-width: 910px ) {
+			margin-right: 0;
+			margin-bottom: 20px;
+		}
 	}
 
 	p {
