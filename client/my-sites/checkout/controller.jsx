@@ -41,7 +41,7 @@ import UpsellNudge, {
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
-import { getProductSlugFromContext } from './utils';
+import { getDomainOrProductFromContext } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -118,7 +118,7 @@ export function checkout( context, next ) {
 
 	const product = isJetpackCheckout
 		? context.params.productSlug
-		: getProductSlugFromContext( context );
+		: getDomainOrProductFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -182,7 +182,7 @@ export function checkout( context, next ) {
 }
 
 export function redirectJetpackLegacyPlans( context, next ) {
-	const product = getProductSlugFromContext( context );
+	const product = getDomainOrProductFromContext( context );
 
 	if ( isJetpackLegacyItem( product ) ) {
 		const state = context.store.getState();
