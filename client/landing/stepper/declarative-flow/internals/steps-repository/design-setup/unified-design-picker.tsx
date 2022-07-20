@@ -6,10 +6,9 @@ import {
 	UnifiedDesignPicker,
 	PremiumBadge,
 	useCategorization,
-	isBlankCanvasDesign,
 	getDesignPreviewUrl,
 } from '@automattic/design-picker';
-import { useLocale, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -44,8 +43,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, exitFlow } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
-	const isEnglishLocale = useIsEnglishLocale();
-	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
@@ -86,10 +83,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		{ enabled: true }
 	);
 
-	const enabledGeneratedDesigns = isEnabledFTM && ( intent === 'build' || intent === 'write' );
 	const generatedDesigns = allDesigns?.generated?.designs || [];
 	const staticDesigns = allDesigns?.static?.designs || [];
-	const showGeneratedDesigns = enabledGeneratedDesigns && generatedDesigns.length > 0;
 
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
@@ -226,10 +221,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	};
 
 	// Track scroll event to make sure people are scrolling on mobile.
-	//todo: do we need this?
-	useTrackScrollPageFromTop( isMobile && ! isPreviewingDesign, flow || '', STEP_NAME, {
-		is_generated_designs: showGeneratedDesigns,
-	} );
+	useTrackScrollPageFromTop( isMobile && ! isPreviewingDesign, flow || '', STEP_NAME );
 
 	// Make sure people is at the top when entering/leaving preview mode.
 	useEffect( () => {
@@ -242,8 +234,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
-		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
-		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
+		const designTitle = selectedDesign.title;
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
@@ -251,8 +242,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			siteTitle: intent === 'write' ? siteTitle : undefined,
 			verticalId: siteVerticalId,
 		} );
-
-		// todo: handle previewing and selecting generated designs
 
 		const stepContent = (
 			<>

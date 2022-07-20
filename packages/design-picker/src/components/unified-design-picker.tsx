@@ -437,10 +437,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					<div>
 						<h3> { translate( 'Custom designs for your site' ) } </h3>
 						<p className="unified-design-picker__subtitle">
-							{ ' ' }
-							{ translate(
-								'Based on your input, these designs have been tailored for you. You can always change later.'
-							) }
+							{ translate( 'Based on your input, these designs have been tailored for you.' ) }
 						</p>
 					</div>
 					<GerneratedDesignPicker
@@ -454,8 +451,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div>
 				<h3> { translate( 'Selected themes for you' ) } </h3>
 				<p className="unified-design-picker__subtitle">
-					{ ' ' }
-					{ translate( "These might work if you'd like" ) }{ ' ' }
+					{ translate( "These might work if you'd like" ) }
 				</p>
 			</div>
 			<StaticDesignPicker
