@@ -1,5 +1,5 @@
 import Fuse from 'fuse.js';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const defaultOptions = {
 	threshold: 0.4,
@@ -47,16 +47,19 @@ export const useFuzzySearch = < T >( {
 		} );
 	} );
 
-	useEffect( () => {
-		fuseInstance.setCollection( data );
-	}, [ fuseInstance, data ] );
+	const [ results, setRestults ] = useState( data );
 
-	const results = useMemo( () => {
+	useEffect( () => {
 		if ( ! query ) {
-			return data;
+			setRestults( data );
+			return;
 		}
 
-		return fuseInstance.search( query ).map( ( { item } ) => item );
+		// Every tiime the query or the data changes, we update the collection
+		// This assignment takes less than 1ms for hundreds or thousands of items
+		fuseInstance.setCollection( data );
+		const results = fuseInstance.search( query ).map( ( { item } ) => item );
+		setRestults( results );
 	}, [ fuseInstance, query, data ] );
 
 	return results;
