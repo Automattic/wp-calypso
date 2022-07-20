@@ -1,10 +1,9 @@
+import { useSitesTableFiltering } from '@automattic/components';
 import styled from '@emotion/styled';
 import { TabPanel } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
 import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
-import SitesBadge from './sites-badge';
-import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesTableFilterTabsProps {
 	allSites: SiteExcerptData[];
@@ -13,17 +12,9 @@ interface SitesTableFilterTabsProps {
 	filterOptions: SitesTableFilterOptions;
 }
 
-interface FilteredSites {
-	[ name: string ]: SiteExcerptData[];
-}
-
 interface SitesTableFilterOptions {
 	status?: string;
 	search?: string;
-}
-
-interface SiteTab extends Omit< TabPanel.Tab, 'title' > {
-	title: React.ReactChild;
 }
 
 const SitesTabPanel = styled( TabPanel )`
@@ -54,34 +45,11 @@ export function SitesTableFilterTabs( {
 	className,
 	filterOptions,
 }: SitesTableFilterTabsProps ) {
-	const { __ } = useI18n();
-
-	let tabs: SiteTab[] = [
-		{ name: 'all', title: __( 'All' ) },
-		{ name: 'launched', title: __( 'Launched' ) },
-		{ name: 'private', title: __( 'Private' ) },
-		{ name: 'coming-soon', title: __( 'Coming soon' ) },
-	];
+	const { filteredSites, tabs } = useSitesTableFiltering( allSites, filterOptions );
 
 	const initialTabName = tabs.find( ( tab ) => tab.name === filterOptions.status )
 		? filterOptions.status
 		: undefined;
-
-	const filteredSites: FilteredSites = tabs.reduce(
-		( acc, { name } ) => ( { ...acc, [ name ]: filterSites( allSites, name ) } ),
-		{}
-	);
-
-	tabs = tabs.map( ( { name, title } ) => ( {
-		name,
-		title: (
-			<>
-				{ title }
-				<SitesBadge>{ filteredSites[ name ].length }</SitesBadge>
-			</>
-		),
-		filterOptions: filterOptions,
-	} ) );
 
 	return (
 		<SitesTabPanel
@@ -96,26 +64,7 @@ export function SitesTableFilterTabs( {
 				);
 			} }
 		>
-			{ ( tab ) => renderContents( filteredSites[ tab.name ], tab.filterOptions ) }
+			{ () => renderContents( filteredSites, filterOptions ) }
 		</SitesTabPanel>
 	);
-}
-
-function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {
-	return sites.filter( ( site ) => {
-		const isComingSoon =
-			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
-
-		switch ( filterType ) {
-			case 'launched':
-				return ! site.is_private && ! isComingSoon;
-			case 'private':
-				return site.is_private && ! isComingSoon;
-			case 'coming-soon':
-				return isComingSoon;
-			default:
-				// Treat unknown filters the same as 'all'
-				return site;
-		}
-	} );
 }
