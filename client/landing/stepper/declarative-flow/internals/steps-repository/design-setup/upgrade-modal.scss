@@ -9,9 +9,24 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	flex-direction: column;
 	padding: 0;
 
+	&.loading {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		max-width: 775px;
+	}
+
 	@include break-medium() {
 		flex-direction: row;
 		max-width: 775px;
+
+		&.loading {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 775px;
+			height: 430px;
+		}
 	}
 
 	&__col {
