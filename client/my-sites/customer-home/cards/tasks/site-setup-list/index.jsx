@@ -5,8 +5,8 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import withActiveTheme from 'calypso/data/themes/with-active-theme';
 import { getTaskList } from 'calypso/lib/checklist';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -207,6 +207,7 @@ const SiteSetupList = ( {
 		taskUrls,
 		userEmail,
 		isBlogger,
+		isFSEActive,
 	] );
 
 	useEffect( () => {
@@ -339,9 +340,9 @@ const SiteSetupList = ( {
 };
 
 const ConnectedSiteSetupList = connect( ( state, props ) => {
-	const { blockEditorSettings } = props;
+	const { activeThemeData } = props;
 
-	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
+	const isFSEActive = activeThemeData?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
 	const siteId = getSelectedSiteId( state );
 	const user = getCurrentUser( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
@@ -375,4 +376,4 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 	};
 } )( SiteSetupList );
 
-export default withBlockEditorSettings( ConnectedSiteSetupList );
+export default withActiveTheme( ConnectedSiteSetupList );
