@@ -12,7 +12,7 @@ import './style.scss';
 /**
  * Show the seller celebration modal
  */
-const SellerCelebrationModalInner = () => {
+const SellerCelebrationModal = () => {
 	const { addEntities } = useDispatch( 'core' );
 
 	useEffect( () => {
@@ -42,14 +42,10 @@ const SellerCelebrationModalInner = () => {
 	const previousIsEditorSaving = useRef( false );
 	const { isEditorSaving, hasPaymentsBlock, linkUrl } = useSelect( ( select ) => {
 		if ( isSiteEditor ) {
-			const isSavingSite =
-				select( 'core' ).isSavingEntityRecord( 'root', 'site' ) &&
-				! select( 'core' ).isAutosavingEntityRecord( 'root', 'site' );
+			const isSavingSite = select( 'core' ).isSavingEntityRecord( 'root', 'site' );
 			const page = select( 'core/edit-site' ).getPage();
 			const pageId = parseInt( page?.context?.postId );
-			const isSavingEntity =
-				select( 'core' ).isSavingEntityRecord( 'postType', 'page', pageId ) &&
-				! select( 'core' ).isAutosavingEntityRecord( 'postType', 'page', pageId );
+			const isSavingEntity = select( 'core' ).isSavingEntityRecord( 'postType', 'page', pageId );
 			const pageEntity = select( 'core' ).getEntityRecord( 'postType', 'page', pageId );
 			const paymentsBlock =
 				pageEntity?.content?.raw?.includes( '<!-- wp:jetpack/recurring-payments -->' ) ?? false;
@@ -60,9 +56,11 @@ const SellerCelebrationModalInner = () => {
 			};
 		}
 		const currentPost = select( 'core/editor' ).getCurrentPost();
-		const isSavingEntity =
-			select( 'core' ).isSavingEntityRecord( 'postType', currentPost?.type, currentPost?.id ) &&
-			! select( 'core' ).isAutosavingEntityRecord( 'postType', currentPost?.type, currentPost?.id );
+		const isSavingEntity = select( 'core' ).isSavingEntityRecord(
+			'postType',
+			currentPost?.type,
+			currentPost?.id
+		);
 		const globalBlockCount = select( 'core/block-editor' ).getGlobalBlockCount(
 			'jetpack/recurring-payments'
 		);
@@ -126,14 +124,6 @@ const SellerCelebrationModalInner = () => {
 			onOpen={ () => recordTracksEvent( 'calypso_editor_wpcom_seller_celebration_modal_show' ) }
 		/>
 	);
-};
-
-const SellerCelebrationModal = () => {
-	const intent = useSiteIntent();
-	if ( intent === 'sell' ) {
-		return <SellerCelebrationModalInner />;
-	}
-	return null;
 };
 
 export default SellerCelebrationModal;
