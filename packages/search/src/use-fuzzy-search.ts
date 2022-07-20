@@ -47,19 +47,19 @@ export const useFuzzySearch = < T >( {
 		} );
 	} );
 
-	const [ results, setRestults ] = useState( data );
+	const [ results, setResults ] = useState( data );
 
 	useEffect( () => {
 		if ( ! query ) {
-			setRestults( data );
+			setResults( data );
 			return;
 		}
 
-		// Every tiime the query or the data changes, we update the collection
-		// This assignment takes less than 1ms for hundreds or thousands of items
+		// Every time the query or the data changes, we update the collection
+		// This assignment takes less than 1ms for thousands of items
 		fuseInstance.setCollection( data );
 		const results = fuseInstance.search( query ).map( ( { item } ) => item );
-		setRestults( results );
+		setResults( results );
 	}, [ fuseInstance, query, data ] );
 
 	return results;
