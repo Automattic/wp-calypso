@@ -61,7 +61,7 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 								label={ translate( 'Plugins', {
 									comment: 'Jetpack sidebar navigation item',
 								} ) }
-								link="/dashboard/plugins/manage"
+								link="/plugins/manage"
 								onNavigate={ onNavigate( 'Jetpack Cloud / Plugins' ) }
 								selected={ isPluginsPage }
 							/>
