@@ -6,7 +6,11 @@ import type { StepPath } from '../declarative-flow/internals/steps-repository';
 const SiteIntent = Onboard.SiteIntent;
 const MAX_STEPS = 10;
 
-export function useSiteSetupFlowProgress( currentStep: StepPath, intent: string, storeType: string ) {
+export function useSiteSetupFlowProgress(
+	currentStep: StepPath,
+	intent: string,
+	storeType: string
+) {
 	const isEnglishLocale = useIsEnglishLocale();
 	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
