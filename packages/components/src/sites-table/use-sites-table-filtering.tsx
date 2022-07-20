@@ -15,8 +15,6 @@ interface UseSitesTableFilteringResult {
 	filteredSites: SiteExcerptData[];
 	tabs: Tab[];
 	selectedTabHasSites: boolean;
-	query: string;
-	setQuery: ( newQuery: string ) => void;
 }
 
 export function useSitesTableFiltering(
@@ -49,14 +47,10 @@ export function useSitesTableFiltering(
 		return [ tabs, filteredByStatus ];
 	}, [ allSites, __ ] );
 
-	const {
-		results: filteredSites,
-		query,
-		setQuery,
-	} = useFuzzySearch( {
+	const filteredSites = useFuzzySearch( {
 		data: filteredByStatus[ status ],
 		keys: [ 'URL', 'name', 'slug' ],
-		initialQuery: search,
+		query: search,
 	} );
 
 	// If `filteredSites` is empty we want to know whether that's due to
@@ -64,7 +58,7 @@ export function useSitesTableFiltering(
 	// found no sites.
 	const selectedTabHasSites = !! filteredByStatus[ status ].length;
 
-	return { filteredSites, tabs, selectedTabHasSites, query, setQuery };
+	return { filteredSites, tabs, selectedTabHasSites };
 }
 
 function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {

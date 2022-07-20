@@ -1,11 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import Search, { useFuzzySearch } from '..';
 import type { UseFuzzySearchOptions } from '../use-fuzzy-search';
 import '@testing-library/jest-dom';
 
 const TestComponent = < T, >( props: UseFuzzySearchOptions< T > ) => {
-	const { results, setQuery } = useFuzzySearch( props );
+	const [ query, setQuery ] = useState( props.query );
+	const results = useFuzzySearch( { ...props, query } );
 
 	return (
 		<>
@@ -61,7 +63,7 @@ describe( 'useFuzzySearch', () => {
 	it( 'allows setting an initial query', () => {
 		const data = [ { prop: 'value' }, { prop: 'another' } ];
 
-		render( <TestComponent data={ data } keys={ [ 'prop' ] } initialQuery="ano" /> );
+		render( <TestComponent data={ data } keys={ [ 'prop' ] } query="ano" /> );
 
 		expect( screen.queryByText( /another/ ) ).toBeVisible();
 		expect( screen.queryByText( /value/ ) ).not.toBeInTheDocument();

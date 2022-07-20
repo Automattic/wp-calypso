@@ -52,16 +52,14 @@ The simplest form of usage is to pass an array of strings as the `data` argument
 
 ```js
 const Component = () => {
-	const { results, query, setQuery } = useFuzzySearch( {
+	const results = useFuzzySearch( {
 		data: [ 'site.wordpress.com', 'another.wordpress.com' ],
+		query: 'search term',
 	} );
 };
 ```
 
-The hook returns an object with a few properties:
-- `results`, which is your data;
-- `query`, that is the searched term;
-- `setQuery`, so you can change the term after an event (i.e. input change).
+The hook returns a subset of the data you passed in the `data` argument.
 
 
 ##### Searching an Array of Objects
@@ -73,6 +71,7 @@ const Component = () => {
 	useFuzzySearch( {
 		data: [ { siteURL: 'site.wordpress.com', nested: { key: 'value' } } ],
 		keys: [ 'siteURL', 'nested.key' ],
+		query: 'value'
 	} );
 };
 ```
@@ -83,6 +82,20 @@ Note that you must pass the `keys` argument so the hook indexes those keys. Thos
 
 Beyond passing `keys` (and [its variations](https://fusejs.io/examples.html)), you can extend the hook by providing the `options` argument, which will extend the fuzzy search mechanism following [the options described by Fuse.js](https://fusejs.io/api/options.html).
 
-##### Setting an Initial Query
+##### Updating Query Setting an Initial Query
 
-It's also possible to set an initial query through the `initialQuery` argument. That'll be the the initial state for the returned `query` property and will be used as the initial search filter.
+You ["control"](https://reactjs.org/docs/uncontrolled-components.html) the query string
+passed to the hook. Updating the query string should be handled in the parent component
+before being passed in to the hook.
+
+```js
+const Component = () => {
+	const [ query, setQuery ] = useState( '' );
+	const searchResults = useFuzzySearch( {
+		data: [ 'site.wordpress.com', 'another.wordpress.com' ],
+		query: query,
+	} );
+
+	// Render UI that calls `setQuery()` ...
+};
+```

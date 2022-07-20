@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
-import { useCallback } from 'react';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
 import { SitesSearch } from './sites-search';
@@ -78,33 +77,17 @@ const SearchWrapper = styled.div`
 	max-width: 100%;
 `;
 
-export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
+export function SitesDashboard( { queryParams: { search, status } }: SitesDashboardProps ) {
 	const { __ } = useI18n();
+
 	const { data: allSites = [] } = useSiteExcerptsQuery();
 
-	const { filteredSites, tabs, selectedTabHasSites, query, setQuery } = useSitesTableFiltering(
-		allSites,
-		queryParams
-	);
+	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( allSites, {
+		search,
+		status,
+	} );
 
-	const selectedTabName = tabs.some( ( tab ) => tab.name === queryParams.status )
-		? queryParams.status
-		: undefined;
-
-	const handleSearch = useCallback(
-		( rawTerm: string ) => {
-			const trimmedTerm = rawTerm.trim();
-			setQuery( trimmedTerm );
-			if ( trimmedTerm.length ) {
-				page(
-					addQueryArgs( window.location.pathname + window.location.search, { search: trimmedTerm } )
-				);
-			} else {
-				page( removeQueryArgs( window.location.pathname + window.location.search, 'search' ) );
-			}
-		},
-		[ setQuery ]
-	);
+	const selectedTabName = tabs.find( ( tab ) => tab.name === status )?.name;
 
 	return (
 		<main>
@@ -132,7 +115,7 @@ export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 										onSearch={ handleSearch }
 										isReskinned
 										placeholder={ __( 'Search by name or domain…' ) }
-										value={ query }
+										defaultValue={ search }
 									/>
 								</SearchWrapper>
 								{ filteredSites.length > 0 ? (
@@ -157,4 +140,15 @@ function handleTabSelect( tabName: string ) {
 			? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
 			: addQueryArgs( window.location.pathname + window.location.search, { status: tabName } )
 	);
+}
+
+function handleSearch( rawTerm: string ) {
+	const trimmedTerm = rawTerm.trim();
+	if ( trimmedTerm.length ) {
+		page(
+			addQueryArgs( window.location.pathname + window.location.search, { search: trimmedTerm } )
+		);
+	} else {
+		page( removeQueryArgs( window.location.pathname + window.location.search, 'search' ) );
+	}
 }

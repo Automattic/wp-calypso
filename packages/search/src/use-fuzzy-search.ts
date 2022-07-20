@@ -17,17 +17,15 @@ type KeysProp< T > = T extends string
 export type UseFuzzySearchOptions< T > = {
 	data: T[];
 	options?: Partial< Fuse.IFuseOptions< T > >;
-	initialQuery?: string;
+	query?: string;
 } & KeysProp< T >;
 
 export const useFuzzySearch = < T >( {
 	data,
 	keys = [],
-	initialQuery = '',
+	query = '',
 	options = defaultOptions,
 }: UseFuzzySearchOptions< T > ) => {
-	const [ query, setQuery ] = useState( initialQuery );
-
 	/**
 	 * We want to re-use the `Fuse` instance because creating one every time
 	 * the dataset changes is an expensive operation.
@@ -61,9 +59,5 @@ export const useFuzzySearch = < T >( {
 		return fuseInstance.search( query ).map( ( { item } ) => item );
 	}, [ fuseInstance, query, data ] );
 
-	return {
-		results,
-		query,
-		setQuery,
-	};
+	return results;
 };
