@@ -300,10 +300,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
 			// Send vertical_id only if the current design is generated design or we enabled the v13n of standard themes
 			const vertical_id =
-				selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-					? siteVerticalId
-					: undefined;
-
+				!! recipe || isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined;
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
