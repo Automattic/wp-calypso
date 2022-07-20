@@ -1,5 +1,15 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getPlan, getIntervalTypeForTerm, PLAN_FREE } from '@automattic/calypso-products';
+import {
+	getPlan,
+	getIntervalTypeForTerm,
+	PLAN_FREE,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_FLEXIBLE,
+	PLAN_WPCOM_STARTER,
+	PLAN_WPCOM_PRO_MONTHLY,
+} from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
@@ -19,6 +29,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import PlansComparison, { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
@@ -30,6 +41,7 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { ExperimentalIntervalTypeToggle } from '../plans-features-main/plan-type-selector';
 
 const ProfessionalEmailPromotionPlaceholder = styled.div`
 	animation: loading-fade 1.6s ease-in-out infinite;
@@ -141,7 +153,7 @@ class Plans extends Component {
 	};
 
 	renderPlansMain() {
-		const { currentPlan, selectedSite, isWPForTeamsSite } = this.props;
+		const { currentPlan, selectedSite, isWPForTeamsSite, eligibleForProPlan } = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
 			// Maybe we should show a loading indicator here?
@@ -157,6 +169,46 @@ class Plans extends Component {
 					withDiscount={ this.props.withDiscount }
 					discountEndDate={ this.props.discountEndDate }
 				/>
+			);
+		}
+
+		if (
+			eligibleForProPlan &&
+			[
+				PLAN_FREE,
+				PLAN_WPCOM_FLEXIBLE,
+				PLAN_WPCOM_STARTER,
+				PLAN_WPCOM_PRO,
+				PLAN_PERSONAL,
+				PLAN_PREMIUM,
+				PLAN_WPCOM_PRO_MONTHLY,
+			].includes( currentPlan?.productSlug )
+		) {
+			const intervalType = this.props.intervalType;
+			const eligibleForIntervalTypeToggle = [ PLAN_FREE, PLAN_WPCOM_PRO_MONTHLY ].includes(
+				currentPlan?.productSlug
+			);
+
+			return (
+				<>
+					{ eligibleForIntervalTypeToggle && (
+						<ExperimentalIntervalTypeToggle
+							intervalType={ intervalType }
+							isInSignup={ false }
+							plans={ [] }
+							siteSlug={ selectedSite.slug }
+							eligibleForWpcomMonthlyPlans={ true }
+						/>
+					) }
+					<PlansComparison
+						purchaseId={ this.props.purchase?.id }
+						isInSignup={ false }
+						intervalType={ intervalType }
+						onSelectPlan={ this.onSelectPlan }
+						selectedSiteId={ selectedSite?.ID }
+						selectedSiteSlug={ selectedSite?.slug }
+					/>
+				</>
 			);
 		}
 
@@ -179,7 +231,7 @@ class Plans extends Component {
 	}
 
 	render() {
-		const { selectedSite, translate, canAccessPlans, currentPlan } = this.props;
+		const { selectedSite, translate, canAccessPlans, currentPlan, eligibleForProPlan } = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
@@ -207,7 +259,8 @@ class Plans extends Component {
 							<FormattedHeader
 								brandFont
 								headerText={ translate( 'Plans' ) }
-								subHeaderText={ description }
+								subHeaderText={ ! eligibleForProPlan && description }
+								tooltipText={ eligibleForProPlan && description }
 								align="left"
 							/>
 							<div id="plans" className="plans plans__has-sidebar">
@@ -241,5 +294,6 @@ export default connect( ( state ) => {
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+		eligibleForProPlan: isEligibleForProPlan( state, selectedSiteId ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

@@ -393,7 +393,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							<span>
 								{ createInterpolateElement(
 									__(
-										'Grow your business with <strong>WordPress Business</strong>',
+										'Grow your business with <strong>WordPress.com Pro</strong>',
 										__i18n_text_domain__
 									),
 									{
@@ -477,7 +477,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						<p className="focused-launch-summary__side-commentary-title">
 							{ createInterpolateElement(
 								__(
-									'Monetize your site with <strong>WordPress Premium</strong>',
+									'Monetize your site with <strong>WordPress.com Pro</strong>',
 									__i18n_text_domain__
 								),
 								{
@@ -599,13 +599,11 @@ const Summary: React.FunctionComponent = () => {
 			hasPaidDomain={ hasPaidDomain }
 			isLoading={ isLoading }
 			onDomainSelect={ onDomainSelect }
-			/**
-			 * NOTE: this makes the assumption that the user has a free domain,
+			/** NOTE: this makes the assumption that the user has a free domain,
 			 * thus when they click the free domain, we just remove the value from the store
 			 * this is a valid strategy in this context because they won't even see this step if
 			 * they already have a paid domain
-			 *
-			 */
+			 * */
 			onExistingSubdomainSelect={ onExistingSubdomainSelect }
 		/>
 	);

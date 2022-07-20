@@ -1,12 +1,13 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { isDomainBundledWithPlan, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
 import { getDomainPrice, getDomainProductSlug } from 'calypso/lib/domains';
+import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 
 export function getTransferPriceText( { cart, currencyCode, domain, productsList } ) {
 	const productSlug = getDomainProductSlug( domain );
 	const domainProductPrice = getDomainPrice( productSlug, productsList, currencyCode );
 
-	if ( ! domainProductPrice ) {
+	if ( ! domainProductPrice || isStarterPlanEnabled() ) {
 		return;
 	}
 

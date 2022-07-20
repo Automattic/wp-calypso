@@ -4,6 +4,7 @@ import {
 	isDomainMappingFree,
 	isNextDomainFree,
 } from 'calypso/lib/cart-values/cart-items';
+import { isStarterPlanEnabled } from 'calypso/my-sites/plans-comparison';
 
 export function getMappingFreeText( {
 	cart,
@@ -21,7 +22,9 @@ export function getMappingFreeText( {
 	) {
 		mappingFreeText = __( 'No additional charge with your plan' );
 	} else if ( primaryWithPlansOnly || isSignupStep ) {
-		mappingFreeText = __( 'Included in annual plans' );
+		mappingFreeText = isStarterPlanEnabled()
+			? __( 'Included in paid plans' )
+			: __( 'Included in Pro plan' );
 	}
 
 	return mappingFreeText;

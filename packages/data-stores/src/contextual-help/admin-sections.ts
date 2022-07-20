@@ -140,10 +140,10 @@ export function generateAdminSections(
 		{
 			title: __( 'Earn money from my site', __i18n_text_domain__ ),
 			description: __(
-				"By upgrading to the Premium plan, you'll be able to monetize your site through the WordAds program."
+				"By upgrading to the Pro plan, you'll be able to monetize your site through the WordAds program."
 			),
 			link: `/earn/${ siteSlug }`,
-			synonyms: [ 'monetize', 'wordads', 'premium' ],
+			synonyms: [ 'monetize', 'wordads', 'pro' ],
 			icon: 'money',
 		},
 		{

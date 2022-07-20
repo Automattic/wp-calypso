@@ -1,3 +1,4 @@
+import { isFreePlanProduct, isFlexiblePlanProduct, isPro } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -7,8 +8,10 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { sectionify } from 'calypso/lib/route';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -36,7 +39,7 @@ class PlansNavigation extends Component {
 	}
 
 	render() {
-		const { site, shouldShowMyPlan, translate } = this.props;
+		const { site, shouldShowMyPlan, shouldShowPlans, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = Boolean( site ) && isMobile();
@@ -53,14 +56,16 @@ class PlansNavigation extends Component {
 								{ translate( 'My Plan' ) }
 							</NavItem>
 						) }
-						<NavItem
-							path={ `/plans/${ site.slug }` }
-							selected={
-								path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
-							}
-						>
-							{ translate( 'Plans' ) }
-						</NavItem>
+						{ shouldShowPlans && (
+							<NavItem
+								path={ `/plans/${ site.slug }` }
+								selected={
+									path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
+								}
+							>
+								{ translate( 'Plans' ) }
+							</NavItem>
+						) }
 					</NavTabs>
 				</SectionNav>
 			)
@@ -74,10 +79,24 @@ export default connect( ( state ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isOnFreePlan = isSiteOnFreePlan( state, siteId );
 	const isAtomic = isAtomicSite( state, siteId );
+	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
+	const currentPlan = getCurrentPlan( state, siteId );
+	let shouldShowMyPlan = ! isOnFreePlan || ( isJetpack && ! isAtomic );
+	let shouldShowPlans = true;
+	let isFreeOrFlexible = false;
 
+	// do not show the Plans tab if user is on a Pro plan
+	if ( eligibleForProPlan && currentPlan ) {
+		isFreeOrFlexible = isFreePlanProduct( currentPlan ) || isFlexiblePlanProduct( currentPlan );
+		shouldShowMyPlan = isFreeOrFlexible ? false : true;
+		shouldShowPlans = isFreeOrFlexible || ! isPro( currentPlan ) ? true : false;
+	}
 	return {
 		isJetpack,
-		shouldShowMyPlan: ! isOnFreePlan || ( isJetpack && ! isAtomic ),
+		shouldShowMyPlan,
+		shouldShowPlans,
 		site,
+		eligibleForProPlan,
+		isFreeOrFlexible,
 	};
 } )( localize( PlansNavigation ) );

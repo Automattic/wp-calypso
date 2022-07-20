@@ -19,6 +19,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -105,7 +106,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					/>
 				);
 				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
-				expect( screen.queryByTestId( 'upsell-nudge' ).textContent ).toBe( PLAN_BUSINESS );
+				expect( screen.queryByTestId( 'upsell-nudge' ).textContent ).toBe( PLAN_WPCOM_PRO );
 			} );
 		} );
 

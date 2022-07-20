@@ -9,6 +9,7 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_WPCOM_PRO,
+	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
@@ -347,9 +348,15 @@ export function getPluginAuthorProfileKeyword( plugin ) {
  * @param currentPlan
  * @param pluginBillingPeriod
  * @param eligibleForProPlan
+ * @param isMarketplace
  * @returns the correct business plan slug depending on current plan and pluginBillingPeriod
  */
-export function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleForProPlan ) {
+export function businessPlanToAdd(
+	currentPlan,
+	pluginBillingPeriod,
+	eligibleForProPlan,
+	isMarketplace = false
+) {
 	// Legacy plans always upgrade to business.
 	switch ( currentPlan.product_slug ) {
 		case PLAN_PERSONAL_2_YEARS:
@@ -361,6 +368,10 @@ export function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleFor
 		case PLAN_BLOGGER:
 			return PLAN_BUSINESS;
 		default:
+			// Not on a legacy plan: Can upgrade to Starter, Pro, or Business depending on settings.
+			if ( isMarketplace ) {
+				return PLAN_WPCOM_STARTER;
+			}
 			if ( eligibleForProPlan ) {
 				return PLAN_WPCOM_PRO;
 			}
