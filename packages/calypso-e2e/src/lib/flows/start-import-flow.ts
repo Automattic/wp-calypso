@@ -9,6 +9,7 @@ const selectors = {
 
 	// Inputs
 	urlInput: 'input.capture__input',
+	goalsCaptureUrlInput: 'input.form-text-input[value]',
 
 	// The "content only" "continue" button of '/start/from/importing/wordpress'
 	wpContentOnlyContinueButton:
@@ -71,7 +72,7 @@ export class StartImportFlow {
 	 * Validates that we've landed on the URL capture page.
 	 */
 	async validateURLCapturePage(): Promise< void > {
-		await this.page.waitForSelector( selectors.urlInput );
+		await this.page.waitForURL( /.*setup\/import.*/ );
 	}
 
 	/**
@@ -142,8 +143,20 @@ export class StartImportFlow {
 	 * @param {string} url The source URL.
 	 */
 	async enterURL( url: string ): Promise< void > {
-		await this.page.fill( selectors.urlInput, url );
-		await this.page.click( selectors.checkUrlButton );
+		const legacyURLInput = this.page.locator( selectors.urlInput );
+		const goalsCaptureURLInput = this.page.locator( selectors.goalsCaptureUrlInput );
+
+		// Branching to support both Legacy and Goals Capture versions
+		// of the URL input for importer.
+		// See https://github.com/Automattic/wp-calypso/issues/65792
+		if ( ( await legacyURLInput.count() ) > 0 ) {
+			await this.page.fill( selectors.urlInput, url );
+			await this.page.click( selectors.checkUrlButton );
+		}
+		if ( ( await goalsCaptureURLInput.count() ) > 0 ) {
+			await this.page.fill( selectors.goalsCaptureUrlInput, url );
+			await this.page.click( selectors.button( 'Continue' ) );
+		}
 	}
 
 	/**
