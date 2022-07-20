@@ -113,7 +113,7 @@
 		"signup/goals-step": true,
 		"signup/goals-step-2": false,
 		"signup/inline-help": false,
-		"signup/ftm-flow-non-en": false,
+		"signup/ftm-flow-non-en": true,
 		"signup/hero-flow-non-en": true,
 		"signup/starting-point-courses": true,
 		"signup/site-vertical-step": true,
