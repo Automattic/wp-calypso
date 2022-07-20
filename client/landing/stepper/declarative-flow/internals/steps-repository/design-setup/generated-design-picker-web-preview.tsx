@@ -45,7 +45,7 @@ const GeneratedDesignPickerWebPreview: React.FC< GeneratedDesignPickerWebPreview
 			showDeviceSwitcher={ false }
 			previewUrl={ getDesignPreviewUrl( design, {
 				language: locale,
-				vertical_id: verticalId,
+				verticalId,
 				viewport_width: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
 				viewport_height: DEFAULT_VIEWPORT_HEIGHT,
 			} ) }

@@ -362,8 +362,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
 			// If the user fills out the site title with write intent, we show it on the design preview
-			site_title: intent === 'write' ? siteTitle : undefined,
-			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
+			siteTitle: intent === 'write' ? siteTitle : undefined,
 		} );
 
 		const stepContent = (
@@ -533,7 +532,6 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
-			verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined }
 		/>
 	);
 
