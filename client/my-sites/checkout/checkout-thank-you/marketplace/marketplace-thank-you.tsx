@@ -147,16 +147,15 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 
 	// Set progressbar (currentStep) depending on transfer/plugin status.
 	useEffect( () => {
-		// We don't want to show the progress bar again.
+		// We don't want to show the progress bar again when it is hidden.
 		if ( ! showProgressBar ) {
 			return;
 		}
 
 		setShowProgressBar( ! isPluginOnSite );
 
-		// Sites already transferred to Atomic or self-hosted Jetpack sites only show one step.
+		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
 		if ( isJetpack ) {
-			setCurrentStep( 0 );
 			return;
 		}
 
