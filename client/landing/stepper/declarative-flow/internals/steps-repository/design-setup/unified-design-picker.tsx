@@ -61,6 +61,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
 		}
 	}, [ isAtomic ] );
+
 	const isEligibleForProPlan = useSelect(
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
@@ -87,41 +88,34 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const enabledGeneratedDesigns = isEnabledFTM && ( intent === 'build' || intent === 'write' );
 	const generatedDesigns = allDesigns?.generated?.designs || [];
-
+	const staticDesigns = allDesigns?.static?.designs || [];
 	const showGeneratedDesigns = enabledGeneratedDesigns && generatedDesigns.length > 0;
-
-	const isPreviewingGeneratedDesign =
-		isMobile && showGeneratedDesigns && selectedDesign && isPreviewingDesign;
 
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
-		if ( hasTrackedView.current ) {
+		if ( ! hasTrackedView.current && staticDesigns.length > 0 ) {
 			hasTrackedView.current = true;
 			recordTracksEvent( 'calypso_signup_unified_design_picker_view', {
 				vertical_id: siteVerticalId,
-				generated_designs: generatedDesigns?.map( ( design ) => design.slug ).join( ',' ),
-				// todo: add static designs
+				generated_designs: generatedDesigns.map( ( design ) => design.slug ).join( ',' ),
+				static_designs: staticDesigns.map( ( design ) => design.slug ).join( ',' ),
 			} );
 		}
-	}, [ hasTrackedView, generatedDesigns ] );
+	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
 
 	const getEventPropsByDesign = ( design: Design ) => ( {
 		slug: design?.slug,
 		theme: design?.recipe?.stylesheet,
-		template: design?.template,
 		flow,
 		intent,
 		is_premium: design?.is_premium,
-		is_generated: showGeneratedDesigns,
+		design_type: design.design_type,
 		...( design?.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
 	} );
 
 	const categorizationOptions = getCategorizationOptions( intent, true );
 
-	const categorization = useCategorization(
-		allDesigns?.static?.designs || [],
-		categorizationOptions
-	);
+	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
 	const handleSubmit = ( providedDependencies?: ProvidedDependencies ) => {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
@@ -142,22 +136,21 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setShowUpgradeModal( false );
 	};
 
-	function pickDesign(
-		_selectedDesign: Design | undefined = selectedDesign,
-		buttonLocation?: string
-	) {
+	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
-			//todo: update this?
-			const positionIndex = showGeneratedDesigns
-				? generatedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
-				: -1;
-
+			let positionIndex = generatedDesigns.findIndex(
+				( design ) => design.slug === _selectedDesign.slug
+			);
+			if ( positionIndex === -1 ) {
+				positionIndex = staticDesigns.findIndex(
+					( design ) => design.slug === _selectedDesign.slug
+				);
+			}
 			setPendingAction( () => setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ) );
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign ),
-				...( buttonLocation && { button_location: buttonLocation } ),
-				...( showGeneratedDesigns && positionIndex >= 0 && { position_index: positionIndex } ),
+				...( positionIndex >= 0 && { position_index: positionIndex } ),
 			} );
 
 			handleSubmit( {
@@ -215,8 +208,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function recordStepContainerTracksEvent( eventName: string ) {
 		const tracksProps = {
-			//todo: fix this
-			step: showGeneratedDesigns ? 'generated-design-step' : 'design-step',
+			step: 'design-step',
 			intent: intent,
 		};
 
@@ -345,7 +337,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const stepContent = (
 		<UnifiedDesignPicker
 			generatedDesigns={ generatedDesigns }
-			staticDesigns={ allDesigns?.static?.designs || [] }
+			staticDesigns={ staticDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelect={ pickDesign }
@@ -365,8 +357,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		<StepContainer
 			stepName={ STEP_NAME }
 			className={ classnames( {
-				'design-picker__is-generated': showGeneratedDesigns,
-				'design-picker__is-generated-previewing': isPreviewingGeneratedDesign,
 				'design-picker__has-categories': true,
 			} ) }
 			skipButtonAlign={ 'top' }
@@ -377,7 +367,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
-			goNext={ isPreviewingGeneratedDesign ? pickDesign : handleSubmit }
+			goNext={ handleSubmit }
 			goBack={ handleBackClick }
 		/>
 	);
