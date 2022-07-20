@@ -51,7 +51,7 @@ class StepConfirmMigration extends Component {
 		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 	}
 
-	renderCardProFooter() {
+	renderCardBusinessFooter() {
 		const { translate } = this.props;
 
 		// If the site is has an appropriate plan, no upgrade footer is required
@@ -63,7 +63,7 @@ class StepConfirmMigration extends Component {
 			<CompactCard className="migrate__card-footer">
 				<Gridicon className="migrate__card-footer-gridicon" icon="info-outline" size={ 12 } />
 				<span className="migrate__card-footer-text">
-					{ translate( 'A Pro Plan is required to import everything.' ) }
+					{ translate( 'A Business Plan is required to import everything.' ) }
 				</span>
 			</CompactCard>
 		);
@@ -138,7 +138,7 @@ class StepConfirmMigration extends Component {
 					</div>
 					{ this.renderMigrationButton() }
 				</CompactCard>
-				{ this.renderCardProFooter() }
+				{ this.renderCardBusinessFooter() }
 			</>
 		);
 	}

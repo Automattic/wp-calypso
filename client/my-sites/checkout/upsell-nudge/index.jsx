@@ -2,7 +2,6 @@ import { isMonthly, getPlanByPathSlug, TERM_MONTHLY } from '@automattic/calypso-
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
-import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
@@ -364,12 +363,12 @@ export class UpsellNudge extends Component {
 		return getThankYouPageUrl( getThankYouPageUrlArguments );
 	};
 
-	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
-		const { trackUpsellButtonClick, upsellType } = this.props;
+	handleClickDecline = () => {
+		const { trackUpsellButtonClick, upsellType, siteSlug } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
 
-		const url = this.getThankYouPageUrlForIncomingCart( shouldHideUpsellNudges );
+		const url = `/setup/goals?siteSlug=${ siteSlug }&notice=purchase-success`;
 
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
@@ -378,13 +377,7 @@ export class UpsellNudge extends Component {
 			clearSignupDestinationCookie();
 		}
 
-		// If url starts with http, use browser redirect.
-		// If url is a route, use page router.
-		if ( isURL( url ) ) {
-			window.location.href = url;
-		} else {
-			page.redirect( url );
-		}
+		window.location.href = url;
 	};
 
 	handleClickAccept = ( buttonAction ) => {
