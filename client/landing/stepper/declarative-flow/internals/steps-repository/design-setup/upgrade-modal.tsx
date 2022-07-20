@@ -81,9 +81,9 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 					</Button>
 				</div>
 				<p className="upgrade-modal__plan-nudge">
-					{ translate( 'or get it for free when on the {{a}}Premium plan{{/a}}', {
+					{ translate( 'or get it for free when on the {{button}}Premium plan{{/button}}', {
 						components: {
-							a: <a href="#" rel="noreferrer noopener" />,
+							button: <Button onClick={ () => checkout() } plain />,
 						},
 					} ) }
 				</p>
