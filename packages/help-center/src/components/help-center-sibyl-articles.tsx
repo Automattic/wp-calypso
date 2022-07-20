@@ -12,7 +12,7 @@ import { Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { Article } from '../types';
@@ -24,18 +24,13 @@ type Props = {
 	supportSite?: SiteDetails;
 };
 
-const ConfigurableLink: React.FC< { external: boolean; fullUrl: string } & LinkProps > = ( {
-	external,
-	fullUrl,
-	...props
-} ) => {
-	if ( external ) {
-		return <a href={ fullUrl } target="_blank" rel="noreferrer noopener" { ...props } />;
+function getPostUrl( article: Article, query: string, locale: string ) {
+	if ( 'en' !== locale ) {
+		return {
+			pathname: article.link,
+		};
 	}
-	return <Link { ...props } />;
-};
 
-function getPostUrl( article: Article, query: string ) {
 	// if it's a wpcom support article, it has an ID
 	if ( article.post_id ) {
 		const params = new URLSearchParams( {
@@ -94,14 +89,13 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 			>
 				{ articles.map( ( article ) => (
 					<li key={ article.link }>
-						<ConfigurableLink
-							to={ getPostUrl( article as Article, message ) }
-							external={ 'en' !== locale }
-							fullUrl={ article.link }
+						<Link
+							to={ getPostUrl( article as Article, message, locale ) }
+							target={ 'en' !== locale ? '_blank' : '' }
 						>
 							<Icon icon={ page } />
 							{ article.title }
-						</ConfigurableLink>
+						</Link>
 					</li>
 				) ) }
 			</ul>
