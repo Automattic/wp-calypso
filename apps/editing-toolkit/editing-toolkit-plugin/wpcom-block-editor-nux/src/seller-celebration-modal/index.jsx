@@ -12,7 +12,7 @@ import './style.scss';
 /**
  * Show the seller celebration modal
  */
-const SellerCelebrationModalInner = () => {
+const SellerCelebrationModal = () => {
 	const { addEntities } = useDispatch( 'core' );
 
 	useEffect( () => {
@@ -126,14 +126,6 @@ const SellerCelebrationModalInner = () => {
 			onOpen={ () => recordTracksEvent( 'calypso_editor_wpcom_seller_celebration_modal_show' ) }
 		/>
 	);
-};
-
-const SellerCelebrationModal = () => {
-	const intent = useSiteIntent();
-	if ( intent === 'sell' ) {
-		return <SellerCelebrationModalInner />;
-	}
-	return null;
 };
 
 export default SellerCelebrationModal;
