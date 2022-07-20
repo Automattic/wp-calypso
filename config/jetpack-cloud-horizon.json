@@ -60,6 +60,7 @@
 		"backup": true,
 		"jetpack-cloud": true,
 		"jetpack-cloud-agency-dashboard": true,
+		"jetpack-cloud-plugin-management": false,
 		"jetpack-cloud-agency-signup": true,
 		"jetpack-cloud-auth": false,
 		"jetpack-cloud-partner-portal": true,

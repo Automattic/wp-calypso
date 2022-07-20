@@ -470,6 +470,12 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-cloud-plugin-management',
+		paths: [ '/plugins' ],
+		module: 'calypso/jetpack-cloud/sections/plugin-management',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-cloud-settings',
 		paths: [ '/settings' ],
 		module: 'calypso/jetpack-cloud/sections/settings',

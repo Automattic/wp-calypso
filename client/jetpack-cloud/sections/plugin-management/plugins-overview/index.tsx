@@ -11,9 +11,9 @@ import {
 	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
 
-import '../style.scss';
+import '../../../style.scss';
 
-export default function PluginManagement(): ReactElement {
+export default function PluginsOverview(): ReactElement {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const hasActiveKey = useSelector( hasActivePartnerKey );
@@ -38,6 +38,6 @@ export default function PluginManagement(): ReactElement {
 	}
 
 	return (
-		<>{ isFetching ? <JetpackLogo className="plugin-management__logo" size={ 72 } /> : null }</>
+		<>{ isFetching ? <JetpackLogo className="plugins-overview__logo" size={ 72 } /> : null }</>
 	);
 }
