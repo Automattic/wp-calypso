@@ -58,7 +58,6 @@ export const EligibilityWarnings = ( {
 	feature,
 	eligibilityData,
 	isEligible,
-	isMarketplace,
 	isPlaceholder,
 	onProceed,
 	standaloneProceed,
@@ -126,12 +125,7 @@ export const EligibilityWarnings = ( {
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<CompactCard>
-					<HoldList
-						context={ context }
-						holds={ listHolds }
-						isMarketplace={ isMarketplace }
-						isPlaceholder={ isPlaceholder }
-					/>
+					<HoldList context={ context } holds={ listHolds } isPlaceholder={ isPlaceholder } />
 				</CompactCard>
 			) }
 
