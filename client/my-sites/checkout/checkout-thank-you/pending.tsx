@@ -190,7 +190,7 @@ function useRedirectOnTransactionSuccess( {
 			);
 			reduxDispatch(
 				errorNotice( defaultFailErrorNotice, {
-					isPersistent: true,
+					displayOnNextPage: true,
 				} )
 			);
 		}
@@ -199,7 +199,7 @@ function useRedirectOnTransactionSuccess( {
 			const unknownNotice = translate( 'Oops! Something went wrong. Please try again later.' );
 			reduxDispatch(
 				errorNotice( unknownNotice, {
-					isPersistent: true,
+					displayOnNextPage: true,
 				} )
 			);
 		}
@@ -214,7 +214,11 @@ function useRedirectOnTransactionSuccess( {
 			} );
 		}
 		if ( ! isRenewal ) {
-			reduxDispatch( successNotice( translate( 'Your purchase has been completed!' ) ) );
+			reduxDispatch(
+				successNotice( translate( 'Your purchase has been completed!' ), {
+					displayOnNextPage: true,
+				} )
+			);
 		}
 		performRedirect( redirectInstructions.url );
 	}, [
