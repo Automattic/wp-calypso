@@ -15,7 +15,8 @@ export function EbanxTermsOfService() {
 		translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' ) ?? ''
 	);
 	const isNewEbanxCardSelected = canUseEbanx && currentPaymentMethod?.id === 'card';
-	const isSavedEbanxCardSelected = currentPaymentMethod?.id === 'existing-card-ebanx';
+	const isSavedEbanxCardSelected =
+		currentPaymentMethod?.paymentProcessorId === 'existing-card-ebanx';
 	if ( ! isNewEbanxCardSelected && ! isSavedEbanxCardSelected ) {
 		return null;
 	}
