@@ -89,7 +89,7 @@ class StepImportOrMigrate extends Component {
 		}
 
 		if ( ! isTargetSiteAtomic ) {
-			return <p>{ translate( 'Import your entire site with the Business Plan.' ) }</p>;
+			return <p>{ translate( 'Import your entire site with the Pro Plan.' ) }</p>;
 		}
 	};
 

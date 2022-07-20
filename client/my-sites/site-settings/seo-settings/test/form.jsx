@@ -17,7 +17,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_BUSINESS,
+	PLAN_WPCOM_PRO,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -158,7 +158,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 			const nudge = screen.getByTestId( 'UpsellNudge' );
 			expect( nudge ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalledWith(
-				expect.objectContaining( { plan: PLAN_BUSINESS } ),
+				expect.objectContaining( { plan: PLAN_WPCOM_PRO } ),
 				expect.anything()
 			);
 		}

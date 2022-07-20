@@ -14,6 +14,7 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
+import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -34,6 +35,7 @@ export function PlanStorage( { children, className, siteId } ) {
 	const canViewBar = useSelector( ( state ) => canCurrentUser( state, siteId, 'publish_posts' ) );
 	const translate = useTranslate();
 	const { data: mediaStorage } = useMediaStorageQuery( siteId );
+	const eligibleForProPlan = useSelector( ( state ) => isEligibleForProPlan( state, siteId ) );
 	const legacySiteWithHigherLimits = useSelector( ( state ) =>
 		isLegacySiteWithHigherLimits( state, siteId )
 	);
@@ -46,7 +48,7 @@ export function PlanStorage( { children, className, siteId } ) {
 		return null;
 	}
 
-	if ( mediaStorage ) {
+	if ( eligibleForProPlan && mediaStorage ) {
 		// Only override the storage for non-legacy sites that are on a free
 		// plan. Even if the site is on a free plan, it could have a space
 		// upgrade product on top of that, so also check that it is using the

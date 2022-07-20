@@ -121,7 +121,7 @@ export class PlansAtomicStoreStep extends Component {
 		let headerText = translate( "Pick a plan that's right for you." );
 
 		if ( designType === DESIGN_TYPE_STORE ) {
-			headerText = translate( "You'll need the eCommerce plan." );
+			headerText = translate( "You'll need the Pro plan." );
 		}
 
 		return (

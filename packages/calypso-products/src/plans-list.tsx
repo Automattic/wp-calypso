@@ -1267,7 +1267,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PERSONAL,
 				PLAN_PERSONAL_2_YEARS,
 				PLAN_PREMIUM_MONTHLY,
-				PLAN_WPCOM_STARTER,
 			].includes( plan ),
 		getProductId: () => 1003,
 		getStoreSlug: () => PLAN_PREMIUM,
@@ -1309,7 +1308,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PREMIUM_MONTHLY,
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
-				PLAN_WPCOM_PRO_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1018,
 		getStoreSlug: () => PLAN_BUSINESS_MONTHLY,
@@ -1323,8 +1321,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
-				PLAN_WPCOM_STARTER,
-				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_MONTHLY,
@@ -1334,7 +1330,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PREMIUM,
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_BUSINESS_MONTHLY,
-				PLAN_WPCOM_PRO_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1008,
 		getStoreSlug: () => PLAN_BUSINESS,
@@ -1348,8 +1343,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
-				PLAN_WPCOM_STARTER,
-				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_MONTHLY,
@@ -1360,7 +1353,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_PREMIUM_2_YEARS,
 				PLAN_BUSINESS,
 				PLAN_BUSINESS_MONTHLY,
-				PLAN_WPCOM_PRO_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1028,
 		getStoreSlug: () => PLAN_BUSINESS_2_YEARS,
@@ -1384,7 +1376,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_MONTHLY,
 				PLAN_BUSINESS,
 				PLAN_BUSINESS_2_YEARS,
-				PLAN_WPCOM_PRO_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1021,
 		getStoreSlug: () => PLAN_ECOMMERCE_MONTHLY,
@@ -1398,8 +1389,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
-				PLAN_WPCOM_STARTER,
-				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_MONTHLY,
@@ -1412,7 +1401,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS,
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_ECOMMERCE_MONTHLY,
-				PLAN_WPCOM_PRO_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1011,
 		getStoreSlug: () => PLAN_ECOMMERCE,
@@ -1426,8 +1414,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		availableFor: ( plan ) =>
 			[
 				PLAN_FREE,
-				PLAN_WPCOM_STARTER,
-				PLAN_WPCOM_PRO,
 				PLAN_BLOGGER,
 				PLAN_BLOGGER_2_YEARS,
 				PLAN_PERSONAL_MONTHLY,
@@ -1441,7 +1427,6 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				PLAN_BUSINESS_2_YEARS,
 				PLAN_ECOMMERCE_MONTHLY,
 				PLAN_ECOMMERCE,
-				PLAN_WPCOM_PRO_MONTHLY,
 			].includes( plan ),
 		getProductId: () => 1031,
 		getStoreSlug: () => PLAN_ECOMMERCE_2_YEARS,
