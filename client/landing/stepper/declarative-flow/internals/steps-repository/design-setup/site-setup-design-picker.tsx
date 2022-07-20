@@ -412,7 +412,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				<div>
 					{ shouldUpgrade ? (
 						<Button primary borderless={ false } onClick={ upgradePlan }>
-							{ translate( 'Unlock theme' ) }
+							{ isEnabled( 'signup/seller-upgrade-modal' )
+								? translate( 'Purchase this theme' )
+								: translate( 'Unlock theme' ) }
 						</Button>
 					) : (
 						<Button primary borderless={ false } onClick={ () => pickDesign() }>
