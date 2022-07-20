@@ -1,13 +1,9 @@
-import { TabPanel } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { SitesCountBadge } from './sites-count-badge';
+import type { Tab } from '../tab-panel';
 // eslint-disable-next-line no-restricted-imports
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-
-interface SiteTab extends Omit< TabPanel.Tab, 'title' > {
-	title: React.ReactChild;
-}
 
 interface SitesTableFilterOptions {
 	status?: string;
@@ -15,7 +11,7 @@ interface SitesTableFilterOptions {
 
 interface UseSitesTableFilteringResult {
 	filteredSites: SiteExcerptData[];
-	tabs: SiteTab[];
+	tabs: Tab[];
 }
 
 export function useSitesTableFiltering(
@@ -25,7 +21,7 @@ export function useSitesTableFiltering(
 	const { __ } = useI18n();
 
 	const [ tabs, filteredByStatus ] = useMemo( () => {
-		const tabs: SiteTab[] = [
+		const tabs: Tab[] = [
 			{ name: 'all', title: __( 'All' ) },
 			{ name: 'launched', title: __( 'Launched' ) },
 			{ name: 'private', title: __( 'Private' ) },

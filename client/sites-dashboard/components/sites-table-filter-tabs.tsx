@@ -1,6 +1,4 @@
-import { useSitesTableFiltering } from '@automattic/components';
-import styled from '@emotion/styled';
-import { TabPanel } from '@wordpress/components';
+import { useSitesTableFiltering, TabPanel } from '@automattic/components';
 import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -17,28 +15,6 @@ interface SitesTableFilterOptions {
 	search?: string;
 }
 
-const SitesTabPanel = styled( TabPanel )`
-	.components-tab-panel__tabs {
-		overflow-x: auto;
-	}
-
-	.components-tab-panel__tabs-item {
-		--wp-admin-theme-color: var( --studio-gray-100 );
-		color: var( --studio-gray-60 );
-		padding: 0;
-		margin-right: 24px;
-		font-size: 16px;
-		flex-shrink: 0;
-	}
-	.components-tab-panel__tabs-item:hover,
-	.components-tab-panel__tabs-item.is-active,
-	.components-tab-panel__tabs-item.is-active:focus,
-	.components-tab-panel__tabs-item:focus:not( :disabled ) {
-		box-shadow: inset 0 -2px 0 0 var( --wp-admin-theme-color );
-		color: var( --studio-gray-100 );
-	}
-`;
-
 export function SitesTableFilterTabs( {
 	allSites,
 	children: renderContents,
@@ -52,10 +28,10 @@ export function SitesTableFilterTabs( {
 		: undefined;
 
 	return (
-		<SitesTabPanel
+		<TabPanel
 			className={ className }
 			initialTabName={ initialTabName }
-			tabs={ tabs as TabPanel.Tab[] }
+			tabs={ tabs }
 			onSelect={ ( tabName ) => {
 				page(
 					'all' === tabName
@@ -65,6 +41,6 @@ export function SitesTableFilterTabs( {
 			} }
 		>
 			{ () => renderContents( filteredSites, filterOptions ) }
-		</SitesTabPanel>
+		</TabPanel>
 	);
 }

@@ -11,6 +11,7 @@ export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
 export { default as ScreenReaderText } from './screen-reader-text';
 export { default as Suggestions } from './suggestions';
+export { TabPanel } from './tab-panel';
 export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
 export { HappinessEngineersTray } from './happiness-engineers-tray';
