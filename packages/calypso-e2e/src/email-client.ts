@@ -55,6 +55,7 @@ export class EmailClient {
 		// initialized, or a specified timestamp.
 		const message = await this.client.messages.get( inboxId, searchCriteria, {
 			receivedAfter: receivedAfter !== undefined ? receivedAfter : this.startTimestamp,
+			timeout: 90 * 1000, // Sometimes SMS is slow to be received.
 		} );
 		return message;
 	}
