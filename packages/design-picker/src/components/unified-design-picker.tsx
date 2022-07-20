@@ -272,8 +272,8 @@ export interface UnifiedDesignPickerProps {
 	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design ) => void;
 	onUpgrade?: () => void;
-	generatedDesigns?: Design[];
-	staticDesigns?: Design[];
+	generatedDesigns: Design[];
+	staticDesigns: Design[];
 	premiumBadge?: React.ReactNode;
 	categorization?: Categorization;
 	heading?: React.ReactNode;
@@ -432,21 +432,25 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			) }
 		>
 			{ heading }
-			<div>
-				<h3> { translate( 'Custom designs for your site' ) } </h3>
-				<p className="unified-design-picker__subtitle">
-					{ ' ' }
-					{ translate(
-						'Based on your input, these designs have been tailored for you. You can always change later.'
-					) }
-				</p>
-			</div>
-			<GerneratedDesignPicker
-				locale={ locale }
-				designs={ generatedDesigns || [] }
-				onPreview={ onPreview }
-				verticalId={ verticalId }
-			/>
+			{ generatedDesigns.length > 0 && (
+				<>
+					<div>
+						<h3> { translate( 'Custom designs for your site' ) } </h3>
+						<p className="unified-design-picker__subtitle">
+							{ ' ' }
+							{ translate(
+								'Based on your input, these designs have been tailored for you. You can always change later.'
+							) }
+						</p>
+					</div>
+					<GerneratedDesignPicker
+						locale={ locale }
+						designs={ generatedDesigns }
+						onPreview={ onPreview }
+						verticalId={ verticalId }
+					/>
+				</>
+			) }
 			<div>
 				<h3> { translate( 'Selected themes for you' ) } </h3>
 				<p className="unified-design-picker__subtitle">

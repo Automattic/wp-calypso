@@ -346,7 +346,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const stepContent = (
 		<UnifiedDesignPicker
 			generatedDesigns={ generatedDesigns }
-			staticDesigns={ allDesigns?.static?.designs }
+			staticDesigns={ allDesigns?.static?.designs || [] }
 			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelect={ pickDesign }
