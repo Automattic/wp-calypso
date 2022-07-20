@@ -24,8 +24,14 @@ import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-u
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
-import { SearchResult } from '../types';
 import PlaceholderLines from './placeholder-lines';
+
+interface SearchResult {
+	link: string;
+	title: string | React.ReactChild;
+	icon?: string;
+	post_id?: number;
+}
 
 interface SearchResultsSection {
 	type: string;
@@ -114,7 +120,7 @@ function HelpSearchResults( {
 	);
 	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery, locale );
 
-	const searchResults = searchData ?? [];
+	const searchResults = searchData?.wordpress_support_links ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
 	useEffect( () => {
