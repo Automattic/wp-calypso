@@ -87,7 +87,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return (
 					<Route key={ path } path={ `/${ path }` }>
 						<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
-							<ProgressBar value={ progressValue * 100 } total={ 100 } color="#1e81cc" />
+							<ProgressBar value={ progressValue * 100 } total={ 100 } />
 							<SignupHeader />
 							{ renderStep( path ) }
 						</div>

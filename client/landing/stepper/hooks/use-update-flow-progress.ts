@@ -1,18 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { useSelect, useDispatch } from '@wordpress/data';
-import { ONBOARD_STORE } from '../stores';
 import type { StepPath } from '../declarative-flow/internals/steps-repository';
 
 const SiteIntent = Onboard.SiteIntent;
 const MAX_STEPS = 10;
 
-export function useUpdateFlowProgress( currentStep: StepPath ) {
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-	const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-	const { setStepProgress } = useDispatch( ONBOARD_STORE );
-
+export function useUpdateFlowProgress( currentStep: StepPath, intent: string, storeType: string ) {
 	const isEnglishLocale = useIsEnglishLocale();
 	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
@@ -27,7 +21,6 @@ export function useUpdateFlowProgress( currentStep: StepPath ) {
 	let beginningSegment = ( beginningSteps.length - 1 ) / MAX_STEPS;
 	let middleSegment = 0;
 	let middleProgress: { progress: number; count: number } | null = null;
-	let endStep = false;
 	let flowProgress;
 
 	switch ( currentStep ) {
@@ -35,9 +28,6 @@ export function useUpdateFlowProgress( currentStep: StepPath ) {
 		case 'vertical':
 		case 'intent':
 			beginningSegment = beginningSteps.indexOf( currentStep ) / MAX_STEPS;
-			break;
-		case 'processing':
-			endStep = true;
 			break;
 	}
 
@@ -138,9 +128,9 @@ export function useUpdateFlowProgress( currentStep: StepPath ) {
 
 	flowProgress = beginningSegment + middleSegment;
 
-	if ( endStep ) {
+	if ( currentStep === 'processing' ) {
 		flowProgress = MAX_STEPS;
 	}
 
-	setStepProgress( { progress: flowProgress, count: MAX_STEPS } );
+	return { progress: flowProgress, count: MAX_STEPS };
 }

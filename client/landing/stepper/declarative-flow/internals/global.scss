@@ -5,6 +5,7 @@
 @import '@automattic/calypso-color-schemes';
 @import '@automattic/typography/styles/fonts';
 @import '@automattic/onboarding/styles/mixins';
+@import '@automattic/onboarding/styles/variables';
 
 /**
  * General onboarding styling
@@ -77,6 +78,12 @@ button {
 		left: 0;
 		border-radius: 0;
 		z-index: 99;
+		background-color: transparent;
+
+		.progress-bar__progress {
+			background-color: $onboarding-accent-blue;
+			border-radius: 0;
+		}
 	}
 
 	.import-step,

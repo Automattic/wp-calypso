@@ -101,14 +101,18 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, resetGoals, resetIntent, resetSelectedDesign } =
+		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
-		useUpdateFlowProgress( currentStep );
+		const flowProgress = useUpdateFlowProgress( currentStep, intent, storeType );
+
+		if ( flowProgress ) {
+			setStepProgress( flowProgress );
+		}
 
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
