@@ -25,8 +25,8 @@ const ContentWithExternalLinks = ( { content, className }: ContentWithExternalLi
 	useEffect( () => {
 		if ( contentRef.current && content.length ) {
 			contentRef.current.innerHTML = content;
-			const links = contentRef.current.querySelectorAll( 'a' );
-			[ ...links ].forEach( ( l ) => l.setAttribute( 'target', '_blank' ) );
+			const externalLinks = contentRef.current.querySelectorAll( 'a[href*="http"]' );
+			externalLinks.forEach( ( l ) => l.setAttribute( 'target', '_blank' ) );
 		}
 	}, [ contentRef, content ] );
 
