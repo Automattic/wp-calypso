@@ -13,7 +13,6 @@ export const defaultState: IPurchaseFlowState = {
 	primaryDomain: null,
 	productSlugInstalled: null,
 	pluginInstallationStatus: MARKETPLACE_ASYNC_PROCESS_STATUS.UNKNOWN,
-	thirdPartyDevsAccountConsent: false,
 };
 
 const purchaseFlow = withSchemaValidation(
