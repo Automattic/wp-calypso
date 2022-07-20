@@ -1,11 +1,12 @@
-import { Button, Gridicon } from '@automattic/components';
-import { css, ClassNames } from '@emotion/react';
+import { Button, Gridicon, TabPanel, useSitesTableFiltering } from '@automattic/components';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
+import page from 'page';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
 import { SearchableSitesTable } from './searchable-sites-table';
-import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
@@ -62,9 +63,21 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
+const SitesTableFilterTabs = styled( TabPanel )`
+	${ wideCentered }
+	position: relative;
+	top: -48px;
+`;
+
 export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 	const { __ } = useI18n();
-	const { data: sites = [] } = useSiteExcerptsQuery();
+	const { data: allSites = [] } = useSiteExcerptsQuery();
+
+	const { filteredSites, tabs } = useSitesTableFiltering( allSites, queryParams );
+
+	const selectedTabName = tabs.some( ( tab ) => tab.name === queryParams.status )
+		? queryParams.status
+		: undefined;
 
 	return (
 		<main>
@@ -78,31 +91,28 @@ export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<ClassNames>
-					{ ( { css } ) => (
-						<SitesTableFilterTabs
-							allSites={ sites }
-							className={ css`
-								${ wideCentered }
-								position: relative;
-								top: -48px;
-							` }
-							filterOptions={ queryParams }
-						>
-							{ ( filteredSites, filterOptions ) =>
-								filteredSites.length ? (
-									<SearchableSitesTable
-										sites={ filteredSites }
-										initialSearch={ queryParams.search }
-									/>
-								) : (
-									<NoSitesMessage status={ filterOptions.status } />
-								)
-							}
-						</SitesTableFilterTabs>
-					) }
-				</ClassNames>
+				<SitesTableFilterTabs
+					tabs={ tabs }
+					initialTabName={ selectedTabName }
+					onSelect={ handleTabSelect }
+				>
+					{ () =>
+						filteredSites.length ? (
+							<SearchableSitesTable sites={ filteredSites } initialSearch={ queryParams.search } />
+						) : (
+							<NoSitesMessage status={ selectedTabName } />
+						)
+					}
+				</SitesTableFilterTabs>
 			</PageBodyWrapper>
 		</main>
+	);
+}
+
+function handleTabSelect( tabName: string ) {
+	page(
+		'all' === tabName
+			? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
+			: addQueryArgs( window.location.pathname + window.location.search, { status: tabName } )
 	);
 }
