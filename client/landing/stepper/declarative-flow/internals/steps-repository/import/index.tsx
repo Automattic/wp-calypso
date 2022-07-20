@@ -1,8 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { ReactElement } from 'react';
 import CaptureStep from 'calypso/blocks/import/capture';
+import CaptureStepRetired from 'calypso/blocks/import/capture-retired';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -10,6 +12,8 @@ import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
 import type { Step } from '../../types';
 import './style.scss';
+
+const isEnabledImportLight = isEnabled( 'onboarding/import-light-url-screen' );
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
@@ -25,7 +29,7 @@ export const ImportWrapper: Step = function ( props ) {
 				stepName={ stepName || 'import-step' }
 				flowName={ 'importer' }
 				className={ 'import__onboarding-page' }
-				hideSkip={ shouldHideSkipBtn }
+				hideSkip={ isEnabledImportLight || shouldHideSkipBtn }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }
 				goNext={ navigation.goNext }
@@ -43,9 +47,19 @@ const ImportStep: Step = function ImportStep( props ) {
 
 	return (
 		<ImportWrapper { ...props }>
-			<CaptureStep
-				goToStep={ ( step, section ) => navigation.goToStep?.( generateStepPath( step, section ) ) }
-			/>
+			{ isEnabledImportLight ? (
+				<CaptureStep
+					goToStep={ ( step, section ) =>
+						navigation.goToStep?.( generateStepPath( step, section ) )
+					}
+				/>
+			) : (
+				<CaptureStepRetired
+					goToStep={ ( step, section ) =>
+						navigation.goToStep?.( generateStepPath( step, section ) )
+					}
+				/>
+			) }
 		</ImportWrapper>
 	);
 };

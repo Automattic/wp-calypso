@@ -108,6 +108,19 @@ export default function SitesOverview(): ReactElement {
 	);
 
 	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
+	const hasAppliedFilter = !! search || filter?.issueTypes?.length > 0;
+	const showEmptyState = ! isLoading && ! isError && ! data?.sites?.length;
+
+	let emptyStateMessage = '';
+	if ( showEmptyState ) {
+		emptyStateMessage = translate( 'No active sites' );
+		if ( filter.showOnlyFavorites ) {
+			emptyStateMessage = translate( "You don't have any favorites yet." );
+		}
+		if ( hasAppliedFilter ) {
+			emptyStateMessage = translate( 'No results found. Please try refining your search.' );
+		}
+	}
 
 	return (
 		<div className="sites-overview">
@@ -139,7 +152,7 @@ export default function SitesOverview(): ReactElement {
 								isMobile &&
 									highlightTab &&
 									selectedItem.key === 'favorites' &&
-									'site-overview__highlight-tab'
+									'sites-overview__highlight-tab'
 							) }
 						>
 							<NavTabs selectedText={ selectedItem.label } selectedCount={ selectedItem.count }>
@@ -152,18 +165,19 @@ export default function SitesOverview(): ReactElement {
 				</div>
 				<div className="sites-overview__content">
 					<div className="sites-overview__content-wrapper">
-						<SiteSearchFilterContainer
-							searchQuery={ search }
-							currentPage={ currentPage }
-							filter={ filter }
-							isLoading={ isLoading }
-						/>
-						<SiteContent
-							data={ data }
-							isError={ isError }
-							isLoading={ isLoading }
-							currentPage={ currentPage }
-						/>
+						{ ( ! showEmptyState || hasAppliedFilter ) && (
+							<SiteSearchFilterContainer
+								searchQuery={ search }
+								currentPage={ currentPage }
+								filter={ filter }
+								isLoading={ isLoading }
+							/>
+						) }
+						{ showEmptyState ? (
+							<div className="sites-overview__no-sites">{ emptyStateMessage }</div>
+						) : (
+							<SiteContent data={ data } isLoading={ isLoading } currentPage={ currentPage } />
+						) }
 					</div>
 				</div>
 			</div>

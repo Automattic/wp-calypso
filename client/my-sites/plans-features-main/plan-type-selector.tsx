@@ -17,6 +17,7 @@ import { useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import { Primitive } from 'utility-types';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { ProvideExperimentData } from 'calypso/lib/explat';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
 	getPlanBySlug,
@@ -122,7 +123,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
-	const popupIsVisible = intervalType === 'monthly' && isInSignup;
+	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
 	const maxDiscount = useMaxDiscount( props.plans );
 
 	if ( ! eligibleForWpcomMonthlyPlans ) {
@@ -159,6 +160,26 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		</IntervalTypeToggleWrapper>
+	);
+};
+
+export const ExperimentalIntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = (
+	props
+) => {
+	return (
+		<ProvideExperimentData name="calypso_show_interval_type_selector_2022_07">
+			{ ( isLoading, experimentAssignment ) => {
+				if ( isLoading || ! props.intervalType ) {
+					return <></>;
+				}
+
+				if ( 'treatment' !== experimentAssignment?.variationName ) {
+					return <></>;
+				}
+
+				return <IntervalTypeToggle { ...props } />;
+			} }
+		</ProvideExperimentData>
 	);
 };
 

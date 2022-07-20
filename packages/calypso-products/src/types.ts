@@ -35,6 +35,7 @@ export interface WPComPlan extends Plan {
 	getPortfolioSignupFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
+	getAnnualPlansOnlyFeatures?: () => string[];
 }
 
 export type IncompleteWPcomPlan = Partial< WPComPlan > &

@@ -62,7 +62,7 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function permission_callback() {
-		return current_user_can( 'read' );
+		return is_user_logged_in();
 	}
 
 	/**

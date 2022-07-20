@@ -1,7 +1,8 @@
 import { Button } from '@automattic/components';
-import { Title } from '@automattic/onboarding';
 import { Guide } from '@wordpress/components';
+import { default as pageRouter } from 'page';
 import { useSelector, useDispatch } from 'react-redux';
+import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -9,22 +10,20 @@ import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/prefe
 
 import './style.scss';
 
-const Page = ( { headline, heading, content, image, cta, handleDismiss } ) => {
+const Page = ( { headline, heading, content, image, cta, handleClick } ) => {
 	return (
 		<div className="announcement-modal__page">
 			<div className="announcement-modal__text">
 				<div className="announcement-modal__headline">
 					<span>{ headline }</span>
 				</div>
-				<div className="announcement-modal__heading">
-					<Title tagName="h2">{ heading }</Title>
-				</div>
+				<div className="announcement-modal__heading">{ preventWidows( heading ) }</div>
 				<div className="announcement-modal__description">
-					<p>{ content }</p>
+					<p>{ preventWidows( content ) }</p>
 				</div>
 				{ cta && (
 					<div className="announcement-modal__cta">
-						<Button primary onClick={ handleDismiss }>
+						<Button primary onClick={ handleClick }>
 							{ cta }
 						</Button>
 					</div>
@@ -56,6 +55,16 @@ const Modal = ( { announcementId, pages, finishButtonText } ) => {
 		);
 	};
 
+	const handleClick = ( ctaLink ) => {
+		dispatch( savePreference( dismissPreference, 1 ) );
+		dispatch(
+			recordTracksEvent( 'calypso_announcement_modal_click', {
+				announcement_id: announcementId,
+			} )
+		);
+		pageRouter( ctaLink );
+	};
+
 	return (
 		<Guide
 			className="announcement-modal"
@@ -74,7 +83,7 @@ const Modal = ( { announcementId, pages, finishButtonText } ) => {
 						heading={ page.heading }
 						content={ page.content }
 						cta={ singlePage ? finishButtonText : null }
-						handleDismiss={ handleDismiss }
+						handleClick={ () => ( page?.ctaLink ? handleClick( page.ctaLink ) : handleDismiss() ) }
 					/>
 				),
 			} ) ) }

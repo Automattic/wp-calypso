@@ -14,6 +14,8 @@ import './style.scss';
 
 type TracksGoalsSelectEventProperties = {
 	goals: string;
+	combo: string;
+	total: number;
 	write?: number;
 	promote?: number;
 	sell?: number;
@@ -65,6 +67,8 @@ const GoalsStep: Step = ( { navigation } ) => {
 	) => {
 		const eventProperties: TracksGoalsSelectEventProperties = {
 			goals: serializeGoals( goals ),
+			combo: goals.sort().join( ',' ),
+			total: goals.length,
 			intent,
 		};
 

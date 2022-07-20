@@ -18,6 +18,10 @@ import {
 import { SiteDetails } from '../types';
 import type { State } from '../reducer';
 
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: () => false,
+} ) );
+
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 	default: jest.fn(),

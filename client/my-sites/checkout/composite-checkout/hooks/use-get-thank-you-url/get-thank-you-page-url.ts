@@ -164,7 +164,7 @@ export default function getThankYouPageUrl( {
 			return sanitizedRedirectTo;
 		}
 
-		if ( hostname === 'cloud.jetpack.com' ) {
+		if ( hostname === 'cloud.jetpack.com' || hostname === 'jetpack.cloud.localhost' ) {
 			debug( 'returning Jetpack cloud redirectTo', redirectTo );
 			return redirectTo;
 		}
@@ -298,7 +298,6 @@ export default function getThankYouPageUrl( {
 	if ( isReceiptIdOrPlaceholder( pendingOrReceiptId ) ) {
 		const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
 			receiptId: pendingOrReceiptId,
-			orderId: orderId ? Number( orderId ) : undefined,
 			cart,
 			siteSlug,
 			hideUpsell: Boolean( hideNudge ),
@@ -496,17 +495,11 @@ function getPlanUpgradeUpsellUrl( {
 	receiptId,
 	cart,
 	siteSlug,
-	orderId,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
-	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 } ): string | undefined {
-	if ( orderId ) {
-		return;
-	}
-
 	if ( cart && hasPremiumPlan( cart ) ) {
 		const upgradeItem = getNextHigherPlanSlug( cart );
 
@@ -520,14 +513,12 @@ function getPlanUpgradeUpsellUrl( {
 
 function getRedirectUrlForPostCheckoutUpsell( {
 	receiptId,
-	orderId,
 	cart,
 	siteSlug,
 	hideUpsell,
 	domains,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
-	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
@@ -539,7 +530,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {
 		receiptId,
 		cart,
-		orderId,
 		siteSlug,
 		domains,
 	} );
@@ -562,7 +552,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		const planUpgradeUpsellUrl = getPlanUpgradeUpsellUrl( {
 			receiptId,
 			cart,
-			orderId,
 			siteSlug,
 		} );
 
@@ -576,16 +565,14 @@ function getProfessionalEmailUpsellUrl( {
 	receiptId,
 	cart,
 	siteSlug,
-	orderId,
 	domains,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	orderId: number | undefined;
 	domains: ResponseDomain[] | undefined;
 } ): string | undefined {
-	if ( orderId || ! cart ) {
+	if ( ! cart ) {
 		return;
 	}
 

@@ -2,12 +2,14 @@
  * @group calypso-pr
  */
 
-import { DataHelper, StartImportFlow, TestAccount } from '@automattic/calypso-e2e';
+import { DataHelper, SecretsManager, StartImportFlow, TestAccount } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
+	const credentials = SecretsManager.secrets.testAccounts.defaultUser;
+
 	let page: Page;
 	let startImportFlow: StartImportFlow;
 
@@ -20,11 +22,11 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 	} );
 
 	/**
-	 * Navigate to initial setup page.
+	 * Reusable function to navigate to initial setup page.
 	 *
 	 * @param siteSlug The site slug URL.
 	 */
-	const navigateToSetup = ( siteSlug = 'e2eflowtesting4.wordpress.com' ) => {
+	const navigateToSetup = ( siteSlug = credentials.primarySite as string ) => {
 		it( `Navigate to Setup page as ${ siteSlug }`, async () => {
 			await startImportFlow.startSetup( siteSlug );
 			await startImportFlow.validateURLCapturePage();

@@ -19,7 +19,7 @@ const WpCourses = () => {
 			links={ [
 				{
 					externalLink: true,
-					url: 'https://wpcourses.com/course/blogging-beginners-course/',
+					url: 'https://wpcourses.com/course/intro-to-blogging/',
 					text: 'Learn more',
 				},
 			] }

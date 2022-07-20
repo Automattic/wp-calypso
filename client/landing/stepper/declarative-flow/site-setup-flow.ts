@@ -10,7 +10,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
+import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
@@ -23,6 +25,7 @@ import {
 } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
 
+const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
@@ -75,6 +78,7 @@ export const siteSetupFlow: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
@@ -99,29 +103,15 @@ export const siteSetupFlow: Flow = {
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
-		// Set up Step progress for Woo flow - "Step 2 of 4"
-		if ( intent === 'sell' && storeType === 'power' ) {
-			switch ( currentStep ) {
-				case 'storeAddress':
-					setStepProgress( { progress: 1, count: 4 } );
-					break;
-				case 'businessInfo':
-					setStepProgress( { progress: 2, count: 4 } );
-					break;
-				case 'wooConfirm':
-					setStepProgress( { progress: 3, count: 4 } );
-					break;
-				case 'processing':
-					setStepProgress( { progress: 4, count: 4 } );
-					break;
-			}
-		} else {
-			setStepProgress( undefined );
+		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
+
+		if ( flowProgress ) {
+			setStepProgress( flowProgress );
 		}
 
 		const exitFlow = ( to: string ) => {
@@ -135,10 +125,18 @@ export const siteSetupFlow: Flow = {
 				 * because the exitFlow itself is called more than once on actual flow exits.
 				 */
 				return new Promise( () => {
-					const pendingActions = [ setIntentOnSite( siteSlug as string, intent ) ];
-					if ( siteSlug && goalsStepEnabled ) {
+					if ( ! siteSlug ) return;
+
+					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
+
+					if ( goalsStepEnabled ) {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
+
+					if ( intent === SiteIntent.Write && ! selectedDesign ) {
+						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
+					}
+
 					Promise.all( pendingActions ).then( () => window.location.replace( to ) );
 				} );
 			} );
@@ -523,10 +521,11 @@ export const siteSetupFlow: Flow = {
 		const fetchingSiteError = useSelect( ( select ) =>
 			select( SITE_STORE ).getFetchingSiteError()
 		);
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		if ( ! userIsLoggedIn ) {
 			redirect( '/start' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup requires a logged in user',
 			};
@@ -534,7 +533,7 @@ export const siteSetupFlow: Flow = {
 
 		if ( ! siteSlug && ! siteId ) {
 			redirect( '/' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup did not provide the site slug or site id it is configured to.',
 			};
@@ -542,12 +541,26 @@ export const siteSetupFlow: Flow = {
 
 		if ( fetchingSiteError ) {
 			redirect( '/' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: fetchingSiteError.message,
 			};
 		}
 
-		return { state: AssertConditionState.SUCCESS };
+		const canManageOptions = useCanUserManageOptions();
+		if ( canManageOptions === 'requesting' ) {
+			result = {
+				state: AssertConditionState.CHECKING,
+			};
+		} else if ( canManageOptions === false ) {
+			redirect( '/start' );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message:
+					'site-setup the user needs to have the manage_options capability to go through the flow.',
+			};
+		}
+
+		return result;
 	},
 };

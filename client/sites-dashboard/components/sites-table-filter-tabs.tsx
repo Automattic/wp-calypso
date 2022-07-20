@@ -1,21 +1,25 @@
 import styled from '@emotion/styled';
 import { TabPanel } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { removeQueryArgs } from '@wordpress/url';
+import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
-import { addQueryArgs } from 'calypso/lib/url';
 import SitesBadge from './sites-badge';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data'; // eslint-disable-line no-restricted-imports
+import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query';
 
 interface SitesTableFilterTabsProps {
-	allSites: SiteData[];
-	children( filteredSites: SiteData[] ): JSX.Element;
+	allSites: SiteExcerptData[];
+	children( filteredSites: SiteExcerptData[], filterOptions: SitesTableFilterOptions ): JSX.Element;
 	className?: string;
-	launchStatus?: string;
+	filterOptions: SitesTableFilterOptions;
 }
 
 interface FilteredSites {
-	[ name: string ]: SiteData[];
+	[ name: string ]: SiteExcerptData[];
+}
+
+interface SitesTableFilterOptions {
+	status?: string;
+	search?: string;
 }
 
 interface SiteTab extends Omit< TabPanel.Tab, 'title' > {
@@ -25,7 +29,6 @@ interface SiteTab extends Omit< TabPanel.Tab, 'title' > {
 const SitesTabPanel = styled( TabPanel )`
 	.components-tab-panel__tabs {
 		overflow-x: auto;
-		padding-bottom: 10px;
 	}
 
 	.components-tab-panel__tabs-item {
@@ -49,7 +52,7 @@ export function SitesTableFilterTabs( {
 	allSites,
 	children: renderContents,
 	className,
-	launchStatus,
+	filterOptions,
 }: SitesTableFilterTabsProps ) {
 	const { __ } = useI18n();
 
@@ -60,8 +63,8 @@ export function SitesTableFilterTabs( {
 		{ name: 'coming-soon', title: __( 'Coming soon' ) },
 	];
 
-	const initialTabName = tabs.find( ( tab ) => tab.name === launchStatus )
-		? launchStatus
+	const initialTabName = tabs.find( ( tab ) => tab.name === filterOptions.status )
+		? filterOptions.status
 		: undefined;
 
 	const filteredSites: FilteredSites = tabs.reduce(
@@ -77,6 +80,7 @@ export function SitesTableFilterTabs( {
 				<SitesBadge>{ filteredSites[ name ].length }</SitesBadge>
 			</>
 		),
+		filterOptions: filterOptions,
 	} ) );
 
 	return (
@@ -88,16 +92,16 @@ export function SitesTableFilterTabs( {
 				page(
 					'all' === tabName
 						? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
-						: addQueryArgs( { status: tabName }, window.location.pathname + window.location.search )
+						: addQueryArgs( window.location.pathname + window.location.search, { status: tabName } )
 				);
 			} }
 		>
-			{ ( tab ) => renderContents( filteredSites[ tab.name ] ) }
+			{ ( tab ) => renderContents( filteredSites[ tab.name ], tab.filterOptions ) }
 		</SitesTabPanel>
 	);
 }
 
-function filterSites( sites: SiteData[], filterType: string ): SiteData[] {
+function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {
 	return sites.filter( ( site ) => {
 		const isComingSoon =
 			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );

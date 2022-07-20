@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import FeatureItem from 'calypso/components/feature-item';
 import LinkCard from 'calypso/components/link-card';
 import Section from 'calypso/components/section';
+import { preventWidows } from 'calypso/lib/formatting';
 
 const ThreeColumnContainer = styled.div`
 	@media ( max-width: 960px ) {
@@ -64,7 +65,12 @@ const EducationFooter = () => {
 					/>
 				</ThreeColumnContainer>
 			</Section>
-			<Section header={ __( 'Add additional features to your WordPress site. Risk free.' ) } dark>
+			<Section
+				header={ preventWidows(
+					__( 'Add additional features to your WordPress site. Risk free.' )
+				) }
+				dark
+			>
 				<ThreeColumnContainer>
 					<FeatureItem header={ __( 'Fully Managed' ) }>
 						{ __(

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Design } from '@automattic/design-picker/src/types';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -272,6 +273,15 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
+	function* setThemeOnSite( siteSlug: string, theme: string ) {
+		yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/themes/mine`,
+			apiVersion: '1.1',
+			body: { theme: theme, dont_change_homepage: true },
+			method: 'POST',
+		} );
+	}
+
 	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId: string ) {
 		const { theme, recipe } = selectedDesign;
 
@@ -288,12 +298,18 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		 */
 		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
 		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
+			// Send vertical_id only if the current design is generated design or we enabled the v13n of standard themes
+			const vertical_id =
+				selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
+					? siteVerticalId
+					: undefined;
+
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
 				body: {
 					trim_content: true,
-					vertical_id: siteVerticalId || undefined,
+					vertical_id: vertical_id || undefined,
 					pattern_ids: recipe?.pattern_ids,
 					header_pattern_ids: recipe?.header_pattern_ids || [],
 					footer_pattern_ids: recipe?.footer_pattern_ids || [],
@@ -498,6 +514,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveNewSite,
 		receiveNewSiteFailed,
 		resetNewSiteFailed,
+		setThemeOnSite,
 		setDesignOnSite,
 		createSite,
 		receiveSite,

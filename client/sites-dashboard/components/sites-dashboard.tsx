@@ -2,14 +2,18 @@ import { Button, Gridicon } from '@automattic/components';
 import { css, ClassNames } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'react-redux';
-import getSites from 'calypso/state/selectors/get-sites';
-import { notNullish } from '../util';
-import { SitesTable } from './sites-table';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { NoSitesMessage } from './no-sites-message';
+import { SearchableSitesTable } from './searchable-sites-table';
 import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
 interface SitesDashboardProps {
-	launchStatus?: string;
+	queryParams: SitesDashboardQueryParams;
+}
+
+interface SitesDashboardQueryParams {
+	status?: string;
+	search?: string;
 }
 
 const MAX_PAGE_WIDTH = '1184px';
@@ -58,9 +62,9 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
+export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 	const { __ } = useI18n();
-	const sites = useSelector( getSites );
+	const { data: sites = [] } = useSiteExcerptsQuery();
 
 	return (
 		<main>
@@ -77,26 +81,24 @@ export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
 				<ClassNames>
 					{ ( { css } ) => (
 						<SitesTableFilterTabs
-							allSites={ sites.filter( notNullish ) }
+							allSites={ sites }
 							className={ css`
 								${ wideCentered }
 								position: relative;
 								top: -48px;
 							` }
-							launchStatus={ launchStatus }
+							filterOptions={ queryParams }
 						>
-							{ ( filteredSites ) => (
-								<ClassNames>
-									{ ( { css } ) => (
-										<SitesTable
-											className={ css`
-												margin-top: 32px;
-											` }
-											sites={ filteredSites }
-										/>
-									) }
-								</ClassNames>
-							) }
+							{ ( filteredSites, filterOptions ) =>
+								filteredSites.length ? (
+									<SearchableSitesTable
+										sites={ filteredSites }
+										initialSearch={ queryParams.search }
+									/>
+								) : (
+									<NoSitesMessage status={ filterOptions.status } />
+								)
+							}
 						</SitesTableFilterTabs>
 					) }
 				</ClassNames>

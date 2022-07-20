@@ -216,10 +216,19 @@ export function checkoutPending( context, next ) {
 	 */
 	const redirectTo = context.query.redirectTo;
 
+	const receiptId = Number.isInteger( Number( context.query.receiptId ) )
+		? Number( context.query.receiptId )
+		: undefined;
+
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
-		<CheckoutPending orderId={ orderId } siteSlug={ siteSlug } redirectTo={ redirectTo } />
+		<CheckoutPending
+			orderId={ orderId }
+			siteSlug={ siteSlug }
+			redirectTo={ redirectTo }
+			receiptId={ receiptId }
+		/>
 	);
 
 	next();
