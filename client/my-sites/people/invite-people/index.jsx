@@ -73,14 +73,7 @@ class InvitePeople extends Component {
 	};
 
 	getInitialState = () => {
-		const { isAtomic, isWPForTeamsSite } = this.props;
-
-		let defaultRole = 'follower';
-		if ( isWPForTeamsSite ) {
-			defaultRole = 'editor';
-		} else if ( isAtomic ) {
-			defaultRole = 'subscriber';
-		}
+		const defaultRole = 'editor';
 
 		return {
 			isExternal: false,
@@ -398,10 +391,6 @@ class InvitePeople extends Component {
 	renderInviteForm = () => {
 		const { site, translate, needsVerification, isJetpack, showSSONotice } = this.props;
 
-		// Atomic private sites don't support Viewers/Followers.
-		// @see https://github.com/Automattic/wp-calypso/issues/43919
-		const includeFollower = ! this.props.isAtomic;
-
 		const inviteForm = (
 			<Card>
 				<EmailVerificationGate>
@@ -434,7 +423,6 @@ class InvitePeople extends Component {
 						<RoleSelect
 							id="role"
 							name="role"
-							includeFollower={ includeFollower }
 							siteId={ this.props.siteId }
 							onChange={ this.onRoleChange }
 							onFocus={ this.onFocusRoleSelect }
