@@ -18,6 +18,7 @@ import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import type { RedirectInstructions } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import type {
 	OrderTransaction,
 	OrderTransactionSuccess,
@@ -184,42 +185,15 @@ function useRedirectOnTransactionSuccess( {
 			return;
 		}
 
-		if ( redirectInstructions.isError ) {
-			const defaultFailErrorNotice = translate(
-				"Sorry, we couldn't process your payment. Please try again later."
-			);
-			reduxDispatch(
-				errorNotice( defaultFailErrorNotice, {
-					displayOnNextPage: true,
-				} )
-			);
-		}
-
-		if ( redirectInstructions.isUnknown ) {
-			const unknownNotice = translate( 'Oops! Something went wrong. Please try again later.' );
-			reduxDispatch(
-				errorNotice( unknownNotice, {
-					displayOnNextPage: true,
-				} )
-			);
-		}
-
 		didRedirect.current = true;
-		if ( isRenewal ) {
-			displayRenewalSuccessNotice( {
-				productName,
-				willAutoRenew,
-				translate,
-				reduxDispatch,
-			} );
-		}
-		if ( ! isRenewal ) {
-			reduxDispatch(
-				successNotice( translate( 'Your purchase has been completed!' ), {
-					displayOnNextPage: true,
-				} )
-			);
-		}
+		triggerPostRedirectNotices( {
+			redirectInstructions,
+			isRenewal,
+			productName,
+			willAutoRenew,
+			translate,
+			reduxDispatch,
+		} );
 		performRedirect( redirectInstructions.url );
 	}, [
 		error,
@@ -243,6 +217,60 @@ function isTransactionSuccessful(
 	transaction: OrderTransaction | null
 ): transaction is OrderTransactionSuccess {
 	return transaction?.processingStatus === SUCCESS;
+}
+
+function triggerPostRedirectNotices( {
+	redirectInstructions,
+	isRenewal,
+	productName,
+	willAutoRenew,
+	translate,
+	reduxDispatch,
+}: {
+	redirectInstructions: RedirectInstructions;
+	isRenewal: boolean;
+	productName: string;
+	willAutoRenew: boolean;
+	translate: ReturnType< typeof useTranslate >;
+	reduxDispatch: CalypsoDispatch;
+} ): void {
+	if ( redirectInstructions.isError ) {
+		const defaultFailErrorNotice = translate(
+			"Sorry, we couldn't process your payment. Please try again later."
+		);
+		reduxDispatch(
+			errorNotice( defaultFailErrorNotice, {
+				displayOnNextPage: true,
+			} )
+		);
+		return;
+	}
+
+	if ( redirectInstructions.isUnknown ) {
+		const unknownNotice = translate( 'Oops! Something went wrong. Please try again later.' );
+		reduxDispatch(
+			errorNotice( unknownNotice, {
+				displayOnNextPage: true,
+			} )
+		);
+		return;
+	}
+
+	if ( isRenewal ) {
+		displayRenewalSuccessNotice( {
+			productName,
+			willAutoRenew,
+			translate,
+			reduxDispatch,
+		} );
+		return;
+	}
+
+	reduxDispatch(
+		successNotice( translate( 'Your purchase has been completed!' ), {
+			displayOnNextPage: true,
+		} )
+	);
 }
 
 function displayRenewalSuccessNotice( {
