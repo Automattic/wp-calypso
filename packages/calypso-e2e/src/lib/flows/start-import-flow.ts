@@ -5,7 +5,7 @@ const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
 	backLink: '.navigation-link:text("Back")',
-	dontHaveASiteButton: '.navigation-link:text("I don\'t have a site address")',
+	dontHaveASiteButton: 'button:text-matches("don\'t have a site address", "i")',
 
 	// Inputs
 	urlInput: 'input.capture__input',
@@ -19,7 +19,7 @@ const selectors = {
 	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 
 	// Errors
-	analyzeError: ( text: string ) => `div.capture__input-error-msg:text("${ text }")`,
+	analyzeError: ( text: string ) => `:text("${ text }")`,
 
 	// Headers
 	setupHeader: 'h1:text("Themes")',
@@ -141,22 +141,31 @@ export class StartImportFlow {
 	 * Enter the URL to import from on the "Enter your site address" input form.
 	 *
 	 * @param {string} url The source URL.
+	 * @throws {Error} If no URL input is found.
 	 */
 	async enterURL( url: string ): Promise< void > {
-		const legacyURLInput = this.page.locator( selectors.urlInput );
-		const goalsCaptureURLInput = this.page.locator( selectors.goalsCaptureUrlInput );
+		await this.page.waitForLoadState( 'load' );
 
-		// Branching to support both Legacy and Goals Capture versions
+		const legacyURLInputLocator = this.page.locator( selectors.urlInput );
+		const goalsCaptureURLInputLocator = this.page.locator( selectors.goalsCaptureUrlInput );
+
+		// Support both Legacy and Goals Capture versions
 		// of the URL input for importer.
 		// See https://github.com/Automattic/wp-calypso/issues/65792
-		if ( ( await legacyURLInput.count() ) > 0 ) {
-			await this.page.fill( selectors.urlInput, url );
-			await this.page.click( selectors.checkUrlButton );
+		const element = await Promise.race( [
+			legacyURLInputLocator.elementHandle(),
+			goalsCaptureURLInputLocator.elementHandle(),
+		] );
+
+		if ( ! element ) {
+			throw new Error( `No matching URL input found at Site Importer.` );
 		}
-		if ( ( await goalsCaptureURLInput.count() ) > 0 ) {
-			await this.page.fill( selectors.goalsCaptureUrlInput, url );
-			await this.page.click( selectors.button( 'Continue' ) );
-		}
+		await element.fill( url );
+		const continueLocator = this.page.locator(
+			`${ selectors.checkUrlButton }, ${ selectors.button( 'Continue' ) }`
+		);
+
+		await continueLocator.click();
 	}
 
 	/**
