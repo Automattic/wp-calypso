@@ -465,7 +465,11 @@ function LegacyPluginDetails( props ) {
 			<div className="plugin-details__page legacy">
 				<div className="plugin-details__layout plugin-details__top-section">
 					<div className="plugin-details__layout-col-left">
-						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+						<PluginDetailsHeader
+							plugin={ fullPlugin }
+							isPlaceholder={ showPlaceholder }
+							isJetpackCloud={ isJetpackCloud }
+						/>
 					</div>
 
 					<div className="plugin-details__layout-col-right">
