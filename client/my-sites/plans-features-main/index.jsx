@@ -211,6 +211,7 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans="wpcom"
 			>
+				<div className="plans-features-main__notice" />
 				{ isCurrentPlanRetired && legacyText && (
 					<Notice showDismiss={ false } status="is-info" text={ legacyText } />
 				) }
