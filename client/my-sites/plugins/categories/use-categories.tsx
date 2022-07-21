@@ -73,13 +73,6 @@ export function useCategories(
 			slug: 'customer',
 			tags: [ 'customer-service', 'live-chat', 'crm' ],
 		},
-		design: {
-			name: __( 'Design' ),
-			description: __( 'Design' ),
-			icon: 'grid',
-			slug: 'design',
-			tags: [ 'design' ],
-		},
 		donations: {
 			name: __( 'Crowdfunding' ),
 			description: __( 'Crowdfunding' ),
@@ -96,19 +89,19 @@ export function useCategories(
 				'charity',
 			],
 		},
+		design: {
+			name: __( 'Design' ),
+			description: __( 'Design' ),
+			icon: 'grid',
+			slug: 'design',
+			tags: [ 'design' ],
+		},
 		ecommerce: {
 			name: __( 'Ecommerce & Business' ),
 			description: __( 'Ecommerce' ),
 			icon: 'grid',
 			slug: 'ecommerce',
 			tags: [ 'ecommerce', 'e-commerce', 'woocommerce', 'business', 'business-directory' ],
-		},
-		education: {
-			name: __( 'Learning Management Systems' ),
-			description: __( 'Education' ),
-			icon: 'grid',
-			slug: 'education',
-			tags: [ 'education', 'lms', 'learning-management-systems', 'elearning' ],
 		},
 		email: {
 			name: __( 'Email' ),
@@ -130,6 +123,13 @@ export function useCategories(
 			icon: 'grid',
 			slug: 'finance',
 			tags: [ 'finance', 'payment', 'credit-card', 'payment-gateway' ],
+		},
+		education: {
+			name: __( 'Learning Management Systems' ),
+			description: __( 'Education' ),
+			icon: 'grid',
+			slug: 'education',
+			tags: [ 'education', 'lms', 'learning-management-systems', 'elearning' ],
 		},
 		marketing: {
 			name: __( 'Marketing' ),
