@@ -16,25 +16,25 @@ export type Category = {
 };
 
 const ALLOWED_CATEGORIES = [
-	'discover',
 	'analytics',
 	'booking',
 	'customer',
 	'design',
+	'discover',
 	'donations',
 	'ecommerce',
 	'education',
-	'finance',
-	'marketing',
-	'seo',
-	'photo',
-	'social',
-	'widgets',
 	'email',
 	'events',
-	'security',
-	'shipping',
+	'finance',
+	'marketing',
+	'photo',
 	'posts',
+	'security',
+	'seo',
+	'shipping',
+	'social',
+	'widgets',
 ];
 
 const Categories = ( { selected }: { selected?: string } ) => {
