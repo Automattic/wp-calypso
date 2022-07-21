@@ -74,11 +74,11 @@ export function useCategories(
 			],
 		},
 		customer: {
-			name: __( 'Customer Service' ),
+			name: __( 'CRM & Live Chat' ),
 			description: __( 'Customer Service' ),
 			icon: 'grid',
 			slug: 'customer',
-			tags: [ 'customer-service' ],
+			tags: [ 'customer-service', 'live-chat', 'crm' ],
 		},
 		design: {
 			name: __( 'Design' ),
