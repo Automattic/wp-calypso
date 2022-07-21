@@ -1,0 +1,18 @@
+.site-thumbnail {
+	background-color: #f5f7f7;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&.site-thumbnail__size-small {
+		width: 108px;
+		height: 78px;
+		border-radius: 4px;
+		padding: 16px;
+	}
+
+	&.site-thumbnail__size-medium {
+		width: 374px;
+		height: 304px;
+	}
+}
