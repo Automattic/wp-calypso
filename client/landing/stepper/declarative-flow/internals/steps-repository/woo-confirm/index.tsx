@@ -174,7 +174,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
-		description: __( 'Upgrade to the Pro plan and set up your WooCommerce store.' ),
+		description: __( 'Upgrade to the Business plan and set up your WooCommerce store.' ),
 	};
 
 	const domain = stagingDomain;

@@ -368,7 +368,7 @@ export class UpsellNudge extends Component {
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
 
-		const url = `/setup/goals?siteSlug=${ siteSlug }&notice=purchase-success`;
+		const url = `/home/${ siteSlug }`;
 
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
