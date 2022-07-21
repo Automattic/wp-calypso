@@ -1,9 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
@@ -25,6 +27,8 @@ interface Props {
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const { translate, onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError } = props;
+	const locale = useLocale();
+	const { hasTranslation } = useI18n();
 
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
@@ -49,11 +53,18 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		setSubmitted( true );
 	}
 
+	const newSiteAddressLabel = translate( 'Existing site address' );
+	const oldSiteAddressLabel = translate( 'Enter your site address' );
+	const siteAddressLabel =
+		locale.startsWith( 'en' ) || hasTranslation( newSiteAddressLabel )
+			? newSiteAddressLabel
+			: oldSiteAddressLabel;
+
 	return (
 		<form className={ classnames( 'import-light__capture' ) } onSubmit={ onFormSubmit }>
 			<FormFieldset>
 				<FormLabel>
-					{ createInterpolateElement( translate( 'Existing site address' ).toString(), {
+					{ createInterpolateElement( siteAddressLabel.toString(), {
 						span: createElement( 'span' ),
 					} ) }
 				</FormLabel>
