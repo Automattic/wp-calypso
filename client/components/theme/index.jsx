@@ -16,7 +16,6 @@ import PulsingDot from 'calypso/components/pulsing-dot';
 import Tootlip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -244,8 +243,8 @@ export class Theme extends Component {
 	};
 
 	goToCheckout = () => {
-		const { siteSlug, eligibleForProPlan } = this.props;
-		const plan = eligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+		const { siteSlug } = this.props;
+		const plan = 'premium';
 
 		if ( siteSlug ) {
 			const params = new URLSearchParams();
@@ -258,7 +257,7 @@ export class Theme extends Component {
 	};
 
 	getUpsellMessage() {
-		const { isPremiumThemesAvaiable, eligibleForProPlan, theme, price, translate } = this.props;
+		const { isPremiumThemesAvaiable, theme, price, translate } = this.props;
 		const hasPrice = /\d/g.test( price );
 
 		if ( ! hasPrice && theme.price && ! isPremiumThemesAvaiable ) {
@@ -269,13 +268,12 @@ export class Theme extends Component {
 
 		return createInterpolateElement(
 			sprintf(
-				/* translators: the "price" is the price of the theme, example: U$50; the "planName" can be "Pro plan" or "Premium plan". */
+				/* translators: the "price" is the price of the theme, example: U$50; */
 				translate(
-					'This premium theme is included in the <Link>%(planName)s</Link>, or you can purchase individually for %(price)s a year'
+					'This premium theme is included in the <Link>Premium plan</Link>, or you can purchase individually for %(price)s a year'
 				),
 				{
 					price: theme.price,
-					planName: eligibleForProPlan ? translate( 'Pro plan' ) : translate( 'Premium plan' ),
 				}
 			),
 			{
@@ -477,7 +475,6 @@ export default connect(
 			isPremiumThemesAvaiable:
 				isPremiumThemesAvaiable?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
-			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
