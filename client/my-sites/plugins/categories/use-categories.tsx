@@ -117,6 +117,13 @@ export function useCategories(
 			slug: 'email',
 			tags: [ 'email' ],
 		},
+		events: {
+			name: __( 'Events Calendar' ),
+			description: __( 'Events Calendar' ),
+			icon: 'grid',
+			slug: 'events',
+			tags: [ 'events-calendar', 'calendar', 'calendar-event' ],
+		},
 		finance: {
 			name: __( 'Finance & Payments' ),
 			description: __( 'Finance' ),
