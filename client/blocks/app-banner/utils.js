@@ -59,10 +59,10 @@ export function getCurrentSection( currentSection, isNotesOpen ) {
 	return null;
 }
 
-function getDismissTimes( isControl ) {
+function getDismissTimes() {
 	const currentTime = Date.now();
-	const longerTime = isControl ? ONE_MONTH_IN_MILLISECONDS : TWO_WEEKS_IN_MILLISECONDS;
-	const shorterTime = isControl ? ONE_WEEK_IN_MILLISECONDS : ONE_DAY_IN_MILLISECONDS;
+	const longerTime = TWO_WEEKS_IN_MILLISECONDS;
+	const shorterTime = ONE_DAY_IN_MILLISECONDS;
 
 	return {
 		longerDuration: currentTime + longerTime,
@@ -70,8 +70,8 @@ function getDismissTimes( isControl ) {
 	};
 }
 
-export function getNewDismissTimes( dismissedSection, currentDismissTimes, isControl ) {
-	const dismissTimes = getDismissTimes( isControl );
+export function getNewDismissTimes( dismissedSection, currentDismissTimes ) {
+	const dismissTimes = getDismissTimes();
 
 	return reduce(
 		ALLOWED_SECTIONS,
