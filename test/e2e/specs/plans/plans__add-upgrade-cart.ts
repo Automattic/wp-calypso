@@ -31,14 +31,13 @@ describe( DataHelper.createSuiteTitle( 'Plans: Add Upgrade to Cart' ), function 
 
 	describe( 'View Plans comparison', function () {
 		it( 'Show full details of the plan', async function () {
-			plansPage = new PlansPage( page, 'current' );
-			await plansPage.showPlanComparison();
+			plansPage = new PlansPage( page );
 		} );
 	} );
 
 	describe( 'Add WordPress.com Pro to cart', function () {
 		it( `Click button to upgrade to WordPress.com Pro`, async function () {
-			await plansPage.selectPlan( 'Pro' );
+			await plansPage.selectPlan( 'Premium' ); //Placeholder
 		} );
 
 		it( `WordPress.com Pro is added to cart`, async function () {

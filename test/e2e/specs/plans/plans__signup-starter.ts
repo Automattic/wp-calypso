@@ -67,7 +67,7 @@ describe(
 
 			it( 'Select WordPress.com Starter plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				await signupPickPlanPage.selectPlan( 'Starter' );
+				await signupPickPlanPage.selectPlan( 'Personal' ); // Placeholder
 
 				siteCreatedFlag = true;
 			} );
@@ -111,15 +111,15 @@ describe(
 			} );
 
 			it( 'Plans page states user is on WordPress.com Starter plan', async function () {
-				const plansPage = new PlansPage( page, 'current' );
+				const plansPage = new PlansPage( page );
 				await plansPage.clickTab( 'My Plan' );
-				await plansPage.validateActivePlan( 'Starter' );
+				await plansPage.validateActivePlan( 'Personal' ); // Placeholder
 			} );
 		} );
 
 		describe( 'Cancel Plan', function () {
 			it( 'View purchased upgrade details', async function () {
-				const plansPage = new PlansPage( page, 'current' );
+				const plansPage = new PlansPage( page );
 				await plansPage.clickManagePlan();
 			} );
 
