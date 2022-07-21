@@ -101,6 +101,7 @@ export function createNavigation( context ) {
 			? '/sites-dashboard'
 			: basePath;
 
+	// Update allSitesPath if it is plugins page in Jetpack Cloud
 	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {
 		allSitesPath = '/plugins';
 	}
@@ -354,6 +355,7 @@ function createSitesComponent( context ) {
 	// This path sets the URL to be visited once a site is selected
 	let basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
 
+	// Update basePath if it is plugins page in Jetpack Cloud
 	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {
 		basePath = '/plugins/manage';
 	}
