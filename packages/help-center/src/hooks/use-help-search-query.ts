@@ -10,6 +10,7 @@ interface APIFetchOptions {
 export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
+	isSimpleSite = true,
 	queryOptions: Record< string, unknown > = {}
 ) => {
 	const queryClient = useQueryClient();
@@ -19,7 +20,9 @@ export const useHelpSearchQuery = (
 		() =>
 			apiFetch( {
 				global: true,
-				path: `/wpcom/v2/help-center/search?query=${ search }&locale=${ locale }`,
+				path: isSimpleSite
+					? `/wpcom/v2/help/search/wpcom?query=${ search }&locale=${ locale }`
+					: `/wpcom/v2/help-center/search?query=${ search }&locale=${ locale }`,
 			} as APIFetchOptions ),
 		{
 			onSuccess: async ( data ) => {
@@ -28,7 +31,9 @@ export const useHelpSearchQuery = (
 						data.map( async ( result: SearchResult ) => {
 							const article: { [ content: string ]: string } = await apiFetch( {
 								global: true,
-								path: `/wpcom/v2/help-center/fetch-post?blog_id=${ result.blog_id }&post_id=${ result.post_id }`,
+								path: isSimpleSite
+									? `/wpcom/v2/help/article/${ result.blog_id }/${ result.post_id }`
+									: `/wpcom/v2/help-center/fetch-post?blog_id=${ result.blog_id }&post_id=${ result.post_id }`,
 							} as APIFetchOptions );
 							return { ...result, content: article.content };
 						} )
