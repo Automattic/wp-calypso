@@ -6,6 +6,8 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PromoCard from 'calypso/components/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPluginOnSite, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PromoCardBlock = ( props ) => {
@@ -14,6 +16,9 @@ const PromoCardBlock = ( props ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const selectedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSiteId, productSlug )
+	);
+	const jetpackNonAtomic = useSelector(
+		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);
 	const isFetching = useSelector( ( state ) => isRequestingForSites( state, [ selectedSiteId ] ) );
 
@@ -26,7 +31,11 @@ const PromoCardBlock = ( props ) => {
 		<>
 			<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
 			<TrackComponentView eventName={ impressionEvent } />
-			{ selectedPlugin || isFetching ? <div></div> : <PromoCard { ...{ ...props, onClick } } /> }
+			{ jetpackNonAtomic && ( selectedPlugin || isFetching ) ? (
+				<div></div>
+			) : (
+				<PromoCard { ...{ ...props, onClick } } />
+			) }
 		</>
 	);
 };
