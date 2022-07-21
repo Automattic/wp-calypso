@@ -60,6 +60,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 			? newSiteAddressLabel
 			: oldSiteAddressLabel;
 
+	const ownSiteMsg = translate( 'You must own this website.' );
+	const ownSiteMsgTranslationReady = locale.startsWith( 'en' ) || hasTranslation( ownSiteMsg );
+
 	return (
 		<form className={ classnames( 'import-light__capture' ) } onSubmit={ onFormSubmit }>
 			<FormFieldset>
@@ -95,9 +98,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</Button>
 				<FormSettingExplanation>
 					<span className={ classnames( { 'is-error': showValidationMsg } ) }>
-						{ ! showValidationMsg && (
+						{ ! showValidationMsg && ownSiteMsgTranslationReady && (
 							<>
-								<Icon icon={ bulb } size={ 20 } /> { translate( 'You must own this website.' ) }
+								<Icon icon={ bulb } size={ 20 } /> { ownSiteMsg }
 							</>
 						) }
 						{ showValidationMsg && (
