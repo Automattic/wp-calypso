@@ -13,6 +13,8 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"olark_chat_identity": "7089-503-10-5123",
+	"dsp_stripe_pub_key": "pk_test_todo",
+	"dsp_widget_js_src": "http://todo",
 	"features": {
 		"ad-tracking": false,
 		"build/sites-dashboard": true,
@@ -97,6 +99,7 @@
 		"plugins/plugin-details-layout": false,
 		"post-editor/checkout-overlay": true,
 		"press-this": true,
+		"promote-post": false,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
