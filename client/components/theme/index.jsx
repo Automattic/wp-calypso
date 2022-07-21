@@ -349,8 +349,10 @@ export class Theme extends Component {
 			</div>
 		) : (
 			<div>
-				<div className="theme__upsell-header">{ translate( 'Premium theme' ) }</div>
-				<div>{ this.getUpsellMessage() }</div>
+				<div data-testid="upsell-header" className="theme__upsell-header">
+					{ translate( 'Premium theme' ) }
+				</div>
+				<div data-testid="upsell-message">{ this.getUpsellMessage() }</div>
 			</div>
 		);
 		const upsell = showUpsell && (
@@ -463,7 +465,7 @@ export class Theme extends Component {
 }
 
 export default connect(
-	( state, { theme, siteId } ) => {
+	( state, { theme, siteId, isPremiumThemesAvaiable } ) => {
 		const {
 			themes: { themesUpdate },
 		} = state;
@@ -472,7 +474,9 @@ export default connect(
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
-			isPremiumThemesAvaiable: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
+			isPremiumThemesAvaiable:
+				isPremiumThemesAvaiable?.() ||
+				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 		};
