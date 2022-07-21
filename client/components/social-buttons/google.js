@@ -31,6 +31,7 @@ class GoogleSocialButton extends Component {
 		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
+		startingPoint: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		uxMode: PropTypes.string,
 	};
@@ -90,6 +91,7 @@ class GoogleSocialButton extends Component {
 				if ( response.error ) {
 					this.props.recordTracksEvent( 'calypso_social_button_failure', {
 						social_account_type: 'google',
+						starting_point: this.props.startingPoint,
 						error_code: response.error,
 					} );
 
@@ -208,6 +210,7 @@ class GoogleSocialButton extends Component {
 			if ( error_code ) {
 				this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_failure', {
 					social_account_type: 'google',
+					starting_point: this.props.startingPoint,
 					error_code,
 				} );
 			}
@@ -263,6 +266,7 @@ class GoogleSocialButton extends Component {
 			.then( responseHandler, ( error ) => {
 				this.props.recordTracksEvent( 'calypso_social_button_failure', {
 					social_account_type: 'google',
+					starting_point: this.props.startingPoint,
 					error_code: error.error,
 				} );
 			} );
