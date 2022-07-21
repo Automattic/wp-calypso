@@ -64,14 +64,7 @@ export function useCategories(
 			description: __( 'Booking' ),
 			icon: 'grid',
 			slug: 'booking',
-			tags: [
-				'booking',
-				'scheduling',
-				'appointment',
-				'reservations',
-				'reservation',
-				'booking-calendar',
-			],
+			tags: [ 'booking', 'scheduling', 'appointment', 'reservation', 'booking-calendar' ],
 		},
 		customer: {
 			name: __( 'CRM & Live Chat' ),
