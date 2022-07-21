@@ -311,7 +311,7 @@ describe( 'PaymentInfoBlock', () => {
 	} );
 	it( 'shows warning if auto-renew is enabled without a payment method', () => {
 		const purchase = {
-			isAutoRenewEnabled: 'true',
+			isAutoRenewEnabled: true,
 		};
 		render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 		expect(
