@@ -85,7 +85,7 @@ export function useCategories(
 			description: __( 'Design' ),
 			icon: 'grid',
 			slug: 'design',
-			tags: [ 'design' ],
+			tags: [ 'design', 'blocks', 'editor' ],
 		},
 		donations: {
 			name: __( 'Donations' ),
