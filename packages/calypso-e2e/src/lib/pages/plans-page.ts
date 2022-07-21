@@ -17,7 +17,7 @@ const selectors = {
 			// link.
 			return `button:text-matches("${ name }", "i")`;
 		}
-		return `button.is-${ name }-plan`;
+		return `button.is-${ name.toLowerCase() }-plan`;
 	},
 
 	// Navigation
