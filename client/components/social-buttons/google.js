@@ -88,7 +88,7 @@ class GoogleLoginButton extends Component {
 			redirect_uri: this.props.redirectUri,
 			callback: ( response ) => {
 				if ( response.error ) {
-					this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+					this.props.recordTracksEvent( 'calypso_social_button_failure', {
 						social_account_type: 'google',
 						error_code: response.error,
 					} );
@@ -206,7 +206,7 @@ class GoogleLoginButton extends Component {
 			const { code: error_code } = getErrorFromHTTPError( httpError );
 
 			if ( error_code ) {
-				this.props.recordTracksEvent( 'calypso_login_social_auth_code_exchange_failure', {
+				this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_failure', {
 					social_account_type: 'google',
 					error_code,
 				} );
@@ -261,7 +261,7 @@ class GoogleLoginButton extends Component {
 			.getAuthInstance()
 			.signIn( { prompt: 'select_account' } )
 			.then( responseHandler, ( error ) => {
-				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+				this.props.recordTracksEvent( 'calypso_social_button_failure', {
 					social_account_type: 'google',
 					error_code: error.error,
 				} );
