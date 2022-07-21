@@ -508,7 +508,7 @@ const PluginBrowserContent = ( props ) => {
 	// Whether to show an upgrade banner specific to premium plugins.
 	const lowerPlanAvailable =
 		! hasInstallPurchasedPlugins &&
-		requiredPlansPurchasedPlugins[ 0 ] === requiredPlansAllPlugins[ 0 ];
+		requiredPlansPurchasedPlugins[ 0 ] !== requiredPlansAllPlugins[ 0 ];
 
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
@@ -532,7 +532,7 @@ const PluginBrowserContent = ( props ) => {
 					<PluginSingleListView { ...props } category="paid" />
 				</>
 			) }
-			{ hasInstallPurchasedPlugins && <UpgradeNudge { ...props } /> }
+			{ ( hasInstallPurchasedPlugins || lowerPlanAvailable ) && <UpgradeNudge { ...props } /> }
 			<PluginSingleListView { ...props } category="featured" />
 			<PluginSingleListView { ...props } category="popular" />
 		</>
