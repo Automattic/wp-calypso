@@ -19,6 +19,7 @@ import { decodeEntities } from 'calypso/lib/formatting';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
@@ -242,6 +243,20 @@ export class Theme extends Component {
 		);
 	};
 
+	goToCheckout = () => {
+		const { siteSlug, eligibleForProPlan } = this.props;
+		const plan = eligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+
+		if ( siteSlug ) {
+			const params = new URLSearchParams();
+			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
+
+			window.location.href = `/checkout/${ encodeURIComponent(
+				siteSlug
+			) }/${ plan }?${ params.toString() }`;
+		}
+	};
+
 	getUpsellMessage() {
 		const { isPremiumThemesAvaiable, eligibleForProPlan, theme, price, translate } = this.props;
 		const hasPrice = /\d/g.test( price );
@@ -264,7 +279,7 @@ export class Theme extends Component {
 				}
 			),
 			{
-				Link: <LinkButton isLink />,
+				Link: <LinkButton isLink onClick={ this.goToCheckout } />,
 			}
 		);
 	}
@@ -334,7 +349,7 @@ export class Theme extends Component {
 			</div>
 		) : (
 			<div>
-				<div class="theme__upsell-header">{ translate( 'Premium theme' ) }</div>
+				<div className="theme__upsell-header">{ translate( 'Premium theme' ) }</div>
 				<div>{ this.getUpsellMessage() }</div>
 			</div>
 		);
@@ -459,6 +474,7 @@ export default connect(
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isPremiumThemesAvaiable: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
+			siteSlug: getSiteSlug( state, siteId ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
