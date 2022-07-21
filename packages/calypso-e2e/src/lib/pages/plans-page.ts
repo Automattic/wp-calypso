@@ -110,7 +110,8 @@ export class PlansPage {
 		// See https://github.com/Automattic/wp-calypso/issues/64389
 		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.page.dispatchEvent( targetTab, 'click' );
+			// await this.page.dispatchEvent( targetTab, 'click' );
+			await clickNavTab( this.page, targetTab, { force: true } );
 		} else {
 			await clickNavTab( this.page, targetTab );
 		}
