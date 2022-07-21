@@ -33,6 +33,8 @@ export function useSiteSetupFlowProgress(
 		case 'intent':
 			beginningSegment = beginningSteps.indexOf( currentStep ) / MAX_STEPS;
 			break;
+		case 'difmStartingPoint':
+			return { progress: 0, count: 0 };
 	}
 
 	switch ( intent ) {
