@@ -224,6 +224,11 @@ class GoogleSocialButton extends Component {
 			return;
 		}
 
+		this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
+			social_account_type: 'google',
+			starting_point: this.props.startingPoint,
+		} );
+
 		const { access_token, id_token } = response.body.data;
 
 		this.props.responseHandler( { access_token, id_token } );
