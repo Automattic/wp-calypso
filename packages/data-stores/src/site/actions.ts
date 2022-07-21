@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Design } from '@automattic/design-picker/src/types';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -298,18 +297,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		 */
 		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
 		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
-			// Send vertical_id only if the current design is generated design or we enabled the v13n of standard themes
-			const vertical_id =
-				selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-					? siteVerticalId
-					: undefined;
-
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
 				body: {
 					trim_content: true,
-					vertical_id: vertical_id || undefined,
+					vertical_id: siteVerticalId || undefined,
 					pattern_ids: recipe?.pattern_ids,
 					header_pattern_ids: recipe?.header_pattern_ids || [],
 					footer_pattern_ids: recipe?.footer_pattern_ids || [],

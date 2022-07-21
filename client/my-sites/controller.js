@@ -96,10 +96,15 @@ export function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
+	const allSitesPath =
+		config.isEnabled( 'build/sites-dashboard' ) && basePath === '/home'
+			? '/sites-dashboard'
+			: basePath;
+
 	return (
 		<NavigationComponent
 			path={ context.path }
-			allSitesPath={ basePath }
+			allSitesPath={ allSitesPath }
 			siteBasePath={ basePath }
 		/>
 	);

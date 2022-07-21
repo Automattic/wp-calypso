@@ -19,9 +19,9 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	const sectionName = useSelector( getSectionName );
 
 	const params = new URLSearchParams( search );
-	const postId = params.get( 'postId' );
-	const blogId = params.get( 'blogId' );
-	const link = state ? state.link : params.get( 'link' );
+	const postId = state?.post_id ?? params.get( 'postId' );
+	const blogId = state?.blog_id ?? params.get( 'blogId' );
+	const link = state?.link ?? params.get( 'link' );
 
 	useEffect( () => {
 		if ( state ) {

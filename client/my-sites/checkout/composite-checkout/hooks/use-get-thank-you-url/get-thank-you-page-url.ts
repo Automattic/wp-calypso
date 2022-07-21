@@ -9,6 +9,7 @@ import {
 	isPlan,
 	isWpComPremiumPlan,
 	isTitanMail,
+	isDomainRegistration,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -35,6 +36,7 @@ import {
 	hasTrafficGuide,
 	hasDIFMProduct,
 	hasProPlan,
+	hasStarterPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
@@ -281,9 +283,11 @@ export default function getThankYouPageUrl( {
 	}
 
 	const signupFlowName = getSignupCompleteFlowName();
+	const isDomainOnly =
+		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
 
 	// Domain only flow
-	if ( cart?.create_new_blog || signupFlowName === 'domain' ) {
+	if ( ( cart?.create_new_blog || signupFlowName === 'domain' ) && ! isDomainOnly ) {
 		clearSignupCompleteFlowName();
 		const newBlogReceiptUrl = urlFromCookie
 			? `${ urlFromCookie }/${ pendingOrReceiptId }`
@@ -302,6 +306,7 @@ export default function getThankYouPageUrl( {
 			siteSlug,
 			hideUpsell: Boolean( hideNudge ),
 			domains,
+			isDomainOnly,
 		} );
 
 		if ( redirectUrlForPostCheckoutUpsell ) {
@@ -517,12 +522,14 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	siteSlug,
 	hideUpsell,
 	domains,
+	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
 	domains: ResponseDomain[] | undefined;
+	isDomainOnly?: boolean;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -532,6 +539,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		cart,
 		siteSlug,
 		domains,
+		isDomainOnly,
 	} );
 
 	if ( professionalEmailUpsellUrl ) {
@@ -566,11 +574,13 @@ function getProfessionalEmailUpsellUrl( {
 	cart,
 	siteSlug,
 	domains,
+	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	domains: ResponseDomain[] | undefined;
+	isDomainOnly?: boolean;
 } ): string | undefined {
 	if ( ! cart ) {
 		return;
@@ -585,11 +595,13 @@ function getProfessionalEmailUpsellUrl( {
 	}
 
 	if (
+		! isDomainOnly &&
 		! hasBloggerPlan( cart ) &&
 		! hasPersonalPlan( cart ) &&
 		! hasBusinessPlan( cart ) &&
 		! hasEcommercePlan( cart ) &&
-		! hasProPlan( cart )
+		! hasProPlan( cart ) &&
+		! hasStarterPlan( cart )
 	) {
 		return;
 	}

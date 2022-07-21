@@ -16,10 +16,6 @@ import {
 	SiteError,
 } from '../types';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: () => false,
-} ) );
-
 describe( 'Site', () => {
 	const siteDetailsResponse: SiteDetails = {
 		ID: 12345,

@@ -1,7 +1,3 @@
-/**
- * @group calypso-pr
- */
-
 import {
 	DataHelper,
 	CheckoutThankYouPage,
