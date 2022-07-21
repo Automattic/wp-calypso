@@ -11,7 +11,14 @@ const selectors = {
 	// Generic
 	placeholder: `.is-placeholder`,
 	managePlanButton: `a:has-text("Manage plan")`,
-	selectPlanButton: ( name: Plans ) => `button.is-${ name }-plan`,
+	selectPlanButton: ( name: Plans ) => {
+		if ( name === 'Free' ) {
+			// Free plan is a pseudo-button presented as a
+			// link.
+			return `button:text-matches("${ name }", "i")`;
+		}
+		return `button.is-${ name }-plan`;
+	},
 
 	// Navigation
 	mobileNavTabsToggle: `button.section-nav__mobile-header`,
