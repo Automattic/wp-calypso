@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import { css, ClassNames } from '@emotion/react';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
@@ -21,15 +21,15 @@ const MAX_PAGE_WIDTH = '1184px';
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
 // background color and border needs to be able to extend into that padding.
-const pagePadding = css`
-	padding-left: 32px;
-	padding-right: 32px;
-`;
+const pagePadding = {
+	paddingLeft: '32px',
+	paddingRight: '32px',
+};
 
-const wideCentered = css`
-	max-width: ${ MAX_PAGE_WIDTH };
-	margin: 0 auto;
-`;
+const wideCentered = {
+	maxWidth: MAX_PAGE_WIDTH,
+	margin: '0 auto',
+};
 
 const PageHeader = styled.div`
 	${ pagePadding }
@@ -78,30 +78,23 @@ export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<ClassNames>
-					{ ( { css } ) => (
-						<SitesTableFilterTabs
-							allSites={ sites }
-							className={ css`
-								${ wideCentered }
-								position: relative;
-								top: -48px;
-							` }
-							filterOptions={ queryParams }
-						>
-							{ ( filteredSites, filterOptions ) =>
-								filteredSites.length ? (
-									<SearchableSitesTable
-										sites={ filteredSites }
-										initialSearch={ queryParams.search }
-									/>
-								) : (
-									<NoSitesMessage status={ filterOptions.status } />
-								)
-							}
-						</SitesTableFilterTabs>
-					) }
-				</ClassNames>
+				<SitesTableFilterTabs
+					allSites={ sites }
+					className={ css`
+						${ wideCentered }
+						position: relative;
+						top: -48px;
+					` }
+					filterOptions={ queryParams }
+				>
+					{ ( filteredSites, filterOptions ) =>
+						filteredSites.length ? (
+							<SearchableSitesTable sites={ filteredSites } initialSearch={ queryParams.search } />
+						) : (
+							<NoSitesMessage status={ filterOptions.status } />
+						)
+					}
+				</SitesTableFilterTabs>
 			</PageBodyWrapper>
 		</main>
 	);
