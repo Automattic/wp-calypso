@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
 import { isRequesting } from 'calypso/state/login/selectors';
@@ -34,6 +35,30 @@ class SocialLoginActionButton extends Component {
 		this.setState( { fetchingUser: false } );
 	};
 
+	recordLoginSuccess = ( service ) => {
+		this.props.recordTracksEvent( 'calypso_login_social_login_success', {
+			social_account_type: service,
+			starting_point: 'social-connect',
+		} );
+	};
+
+	handleButtonClick = () => {
+		const { isConnected, service } = this.props;
+
+		if ( isConnected ) {
+			this.disconnectFromSocialService();
+			this.props.recordTracksEvent( 'calypso_login_social_disconnect', {
+				social_account_type: service,
+				starting_point: 'social-connect',
+			} );
+		} else {
+			this.props.recordTracksEvent( 'calypso_login_social_button_click', {
+				social_account_type: service,
+				starting_point: 'social-connect',
+			} );
+		}
+	};
+
 	handleSocialServiceResponse = ( response ) => {
 		const { service } = this.props;
 
@@ -50,6 +75,8 @@ class SocialLoginActionButton extends Component {
 				return;
 			}
 
+			this.recordLoginSuccess( service );
+
 			socialInfo = {
 				...socialInfo,
 				access_token: tokens.access_token,
@@ -61,6 +88,8 @@ class SocialLoginActionButton extends Component {
 			if ( ! response.id_token ) {
 				return;
 			}
+
+			this.recordLoginSuccess( service );
 
 			const userData = response.user || {};
 
@@ -94,7 +123,7 @@ class SocialLoginActionButton extends Component {
 				disabled={ disabled }
 				compact={ true }
 				isPrimary={ ! isConnected }
-				onClick={ isConnected && this.disconnectFromSocialService }
+				onClick={ this.handleButtonClick }
 			>
 				{ buttonLabel }
 			</FormButton>
@@ -108,6 +137,7 @@ class SocialLoginActionButton extends Component {
 			return (
 				<GoogleSocialButton
 					clientId={ config( 'google_oauth_client_id' ) }
+					onClick={ this.handleButtonClick }
 					responseHandler={ this.handleSocialServiceResponse }
 					startingPoint={ 'social-connect' }
 				>
@@ -122,6 +152,7 @@ class SocialLoginActionButton extends Component {
 				<AppleLoginButton
 					clientId={ config( 'apple_oauth_client_id' ) }
 					uxMode={ uxMode }
+					onClick={ this.handleButtonClick }
 					responseHandler={ this.handleSocialServiceResponse }
 					redirectUri={ redirectUri }
 					socialServiceResponse={ this.props.socialServiceResponse }
@@ -143,5 +174,6 @@ export default connect(
 		connectSocialUser,
 		disconnectSocialUser,
 		fetchCurrentUser,
+		recordTracksEvent,
 	}
 )( localize( SocialLoginActionButton ) );
