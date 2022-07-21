@@ -316,9 +316,7 @@
 		gap: 4px;
 		svg {
 			flex-shrink: 0;
-			path {
-				fill: var( --color-warning-30 );
-			}
+			fill: var( --color-warning-30 );
 		}
 	}
 
