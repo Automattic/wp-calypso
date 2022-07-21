@@ -64,8 +64,8 @@ export interface Design {
 
 export interface DesignPreviewOptions {
 	language?: string;
-	vertical_id?: string;
-	site_title?: string;
+	verticalId?: string;
+	siteTitle?: string;
 	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;

@@ -11,10 +11,6 @@ import {
 	AtomicSoftwareStatus,
 } from '../types';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: () => false,
-} ) );
-
 const client_id = 'magic_client_id';
 const client_secret = 'magic_client_secret';
 const mockedClientCredentials = { client_id, client_secret };

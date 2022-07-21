@@ -128,7 +128,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 								key={ design.slug }
 								thumbnailUrl={ getDesignPreviewUrl( design, {
 									language: locale,
-									vertical_id: verticalId,
+									verticalId,
 									viewport_width: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
 									viewport_height: DEFAULT_VIEWPORT_HEIGHT,
 									use_screenshot_overrides: true,

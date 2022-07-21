@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useQuery } from 'react-query';
 import { useStore } from 'react-redux';
+import { urlToSlug } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import getSites from 'calypso/state/selectors/get-sites';
 import { SiteData, SiteDataOptions } from 'calypso/state/ui/selectors/site-data';
@@ -13,20 +14,28 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'is_coming_soon',
 	'is_private',
 	'launch_status',
-	'slug',
 	'icon',
 	'name',
 	'options',
 	'plan',
 ] as const;
 
+export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;
+
 export const SITE_EXCERPT_REQUEST_OPTIONS = [ 'is_wpforteams_site' ] as const;
 
-export type SiteExcerptData = Pick< SiteData, typeof SITE_EXCERPT_REQUEST_FIELDS[ number ] > & {
+type SiteExcerptNetworkData = Pick< SiteData, typeof SITE_EXCERPT_REQUEST_FIELDS[ number ] > & {
 	options?: Pick< SiteDataOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
 };
 
-const fetchSites = (): Promise< { sites: SiteExcerptData[] } > => {
+export type SiteExcerptData = Pick<
+	SiteData,
+	typeof SITE_EXCERPT_REQUEST_FIELDS[ number ] | typeof SITE_EXCERPT_COMPUTED_FIELDS[ number ]
+> & {
+	options?: Pick< SiteDataOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
+};
+
+const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	const siteFilter = config< string[] >( 'site_filter' );
 	return wpcom.me().sites( {
 		apiVersion: '1.2',
@@ -44,7 +53,7 @@ export const useSiteExcerptsQuery = () => {
 
 	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
 		staleTime: 1000 * 60 * 5, // 5 minutes
-		select: ( data ) => data?.sites,
+		select: ( data ) => data?.sites.map( computeFields ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
 			// only want to get the initial state. We don't want to be updated when the
@@ -62,4 +71,14 @@ export const useSiteExcerptsQuery = () => {
 // make strong guarantees about `t`.
 function notNullish< T >( t: T | null | undefined ): t is T {
 	return t !== null && t !== undefined;
+}
+
+function computeFields( data: SiteExcerptNetworkData ): SiteExcerptData {
+	return {
+		...data,
+		// TODO: The algorithm Calypso uses to compute slugs is more sophisticated
+		// because it deals with comflicting URLs (see /client/state/sites/selectors/get-site-slug.js)
+		// We may need to request more site options to properly compute the slug.
+		slug: urlToSlug( data.URL ),
+	};
 }
