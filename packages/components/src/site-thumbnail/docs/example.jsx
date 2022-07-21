@@ -43,7 +43,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Private Site without Site Icon and Light Background</h3>
-					<SiteThumbnail backgroundColor="#BABABA">W</SiteThumbnail>
+					<SiteThumbnail backgroundColor="#008B8B">WP</SiteThumbnail>
 				</div>
 				<div
 					style={ {
@@ -74,7 +74,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Public Site</h3>
-					<SiteThumbnail size="medium" />
+					<SiteThumbnail size="medium" mShotsUrl="https://wpvip.com" />
 				</div>
 				<div
 					style={ {
