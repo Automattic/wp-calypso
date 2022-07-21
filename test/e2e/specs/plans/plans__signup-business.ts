@@ -21,10 +21,10 @@ import type { SiteDetails } from '@automattic/calypso-e2e';
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com eCommerce site as exising user' ),
+	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com Business site as exising user' ),
 	function () {
 		const blogName = DataHelper.getBlogName();
-		const planName = 'eCommerce';
+		const planName = 'Business';
 
 		let testAccount: TestAccount;
 		let page: Page;
