@@ -11,6 +11,7 @@ import SignupForm from 'calypso/blocks/signup-form';
 import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import { fetchSites } from 'calypso/data/sites/use-site-excerpts-query';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
@@ -32,7 +33,9 @@ import {
 	isP2Flow,
 } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { loginSocialUser, rebootAfterLogin } from 'calypso/state/login/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -244,7 +247,7 @@ export class UserStep extends Component {
 		} );
 	};
 
-	submit = ( data ) => {
+	submit = async ( data ) => {
 		const { flowName, stepName, oauth2Signup } = this.props;
 		const dependencies = {};
 		if ( oauth2Signup ) {
@@ -263,6 +266,25 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
+
+		if ( data?.socialLoginSuccess ) {
+			const socialInfo = {
+				service: 'google',
+				access_token: data.access_token,
+				id_token: data.id_token,
+			};
+			try {
+				await this.props.loginSocialUser( socialInfo, '/home' );
+				const result = await fetchSites();
+
+				if ( result.sites.length > 0 ) {
+					this.props.rebootAfterLogin();
+					return;
+				}
+			} catch ( error ) {
+				// Safe to proceed if error.
+			}
+		}
 
 		this.props.goToNextStep();
 	};
@@ -334,6 +356,7 @@ export class UserStep extends Component {
 			id_token,
 			userData,
 			queryArgs: initialContext?.query || {},
+			socialLoginSuccess: true,
 		} );
 	};
 
@@ -517,6 +540,7 @@ export class UserStep extends Component {
 
 export default connect(
 	( state ) => ( {
+		currentUser: getCurrentUser( state ),
 		oauth2Client: getCurrentOAuth2Client( state ),
 		suggestedUsername: getSuggestedUsername( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
@@ -525,7 +549,10 @@ export default connect(
 	} ),
 	{
 		errorNotice,
+		loginSocialUser,
+		rebootAfterLogin,
 		recordTracksEvent,
+		fetchCurrentUser,
 		fetchOAuth2ClientData,
 		saveSignupStep,
 		submitSignupStep,

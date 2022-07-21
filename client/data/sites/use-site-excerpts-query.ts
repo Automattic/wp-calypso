@@ -35,7 +35,7 @@ export type SiteExcerptData = Pick<
 	options?: Pick< SiteDataOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
 };
 
-const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
+export const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	const siteFilter = config< string[] >( 'site_filter' );
 	return wpcom.me().sites( {
 		apiVersion: '1.2',
