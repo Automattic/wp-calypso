@@ -168,7 +168,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 					</Column>
 					<Column mobileHidden>{ site.plan.product_name_short }</Column>
 					<Column mobileHidden>
-						<TimeSince date={ site.options?.updated_at } />
+						{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '-' }
 					</Column>
 					<Column style={ { width: '20px' } }>
 						<EllipsisMenu>
