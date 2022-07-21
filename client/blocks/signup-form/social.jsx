@@ -50,6 +50,10 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
+		this.props.recordTracksEvent( 'calypso_signup_social_button_success', {
+			social_account_type: 'google',
+		} );
+
 		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
 	};
 
