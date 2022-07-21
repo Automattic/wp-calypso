@@ -237,7 +237,18 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				? generatedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
 				: -1;
 
-			setPendingAction( () => setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ) );
+			// Send vertical_id only if the current design is generated design or we enabled the v13n of standard themes.
+			// We cannot check the config inside `setDesignOnSite` action. See https://github.com/Automattic/wp-calypso/pull/65531#issuecomment-1190850273
+			setPendingAction( () =>
+				setDesignOnSite(
+					siteSlugOrId,
+					_selectedDesign,
+					_selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
+						? siteVerticalId
+						: ''
+				)
+			);
+
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign ),
 				...( buttonLocation && { button_location: buttonLocation } ),
