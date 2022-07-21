@@ -61,7 +61,6 @@ const Component = () => {
 
 The hook returns a subset of the data you passed in the `data` argument.
 
-
 ##### Searching an Array of Objects
 
 You can also pass an array of objects as the `data`. That way you can search inside objects:
@@ -71,7 +70,7 @@ const Component = () => {
 	useFuzzySearch( {
 		data: [ { siteURL: 'site.wordpress.com', nested: { key: 'value' } } ],
 		keys: [ 'siteURL', 'nested.key' ],
-		query: 'value'
+		query: 'value',
 	} );
 };
 ```
