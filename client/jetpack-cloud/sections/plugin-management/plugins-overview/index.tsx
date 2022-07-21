@@ -1,9 +1,12 @@
 import config from '@automattic/calypso-config';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { ReactElement, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
+import PluginsMain from 'calypso/my-sites/plugins/main';
 import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
@@ -11,9 +14,16 @@ import {
 	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
 
-import '../../../style.scss';
+import './style.scss';
 
-export default function PluginsOverview(): ReactElement {
+interface Props {
+	filter: string;
+	search: string;
+}
+
+export default function PluginOverview( { filter, search }: Props ): ReactElement {
+	const translate = useTranslate();
+
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const hasActiveKey = useSelector( hasActivePartnerKey );
@@ -34,7 +44,12 @@ export default function PluginsOverview(): ReactElement {
 	}
 
 	if ( hasFetched ) {
-		return <>Plugin Management</>;
+		return (
+			<div className="plugins-overview__container">
+				<SidebarNavigation sectionTitle={ translate( 'Plugins' ) } />
+				<PluginsMain isJetpackCloud filter={ filter } search={ search } />
+			</div>
+		);
 	}
 
 	return (
