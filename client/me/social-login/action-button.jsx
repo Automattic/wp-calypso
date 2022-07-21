@@ -41,14 +41,21 @@ class SocialLoginActionButton extends Component {
 		} );
 	};
 
-	handleButtonClick = () => {
+	handleButtonClick = async () => {
 		const { isConnected, service } = this.props;
 
 		if ( isConnected ) {
-			this.disconnectFromSocialService();
-			this.props.recordTracksEvent( 'calypso_account_social_disconnect', {
-				social_account_type: service,
-			} );
+			try {
+				await this.disconnectFromSocialService();
+				this.props.recordTracksEvent( 'calypso_account_social_disconnect_success', {
+					social_account_type: service,
+				} );
+			} catch ( error ) {
+				this.props.recordTracksEvent( 'calypso_account_social_disconnect_failure', {
+					error_code: error.code,
+					social_account_type: service,
+				} );
+			}
 		} else {
 			this.props.recordTracksEvent( 'calypso_account_social_connect_button_click', {
 				social_account_type: service,
@@ -103,7 +110,7 @@ class SocialLoginActionButton extends Component {
 
 	disconnectFromSocialService = () => {
 		const { service } = this.props;
-		this.props.disconnectSocialUser( service ).then( this.refreshUser );
+		return this.props.disconnectSocialUser( service ).then( this.refreshUser );
 	};
 
 	render() {
