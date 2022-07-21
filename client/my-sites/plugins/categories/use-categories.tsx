@@ -81,8 +81,8 @@ export function useCategories(
 			tags: [ 'design' ],
 		},
 		donations: {
-			name: __( 'Donations' ),
-			description: __( 'Donations' ),
+			name: __( 'Crowdfunding' ),
+			description: __( 'Crowdfunding' ),
 			icon: 'grid',
 			slug: 'donations',
 			tags: [
