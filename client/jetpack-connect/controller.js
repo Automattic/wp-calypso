@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
@@ -52,11 +51,9 @@ import InstallInstructions from './install-instructions';
 import JetpackConnect from './main';
 import NoDirectAccessError from './no-direct-access-error';
 import {
-	clearPlan,
 	isCalypsoStartedConnection,
 	persistMobileRedirect,
 	retrieveMobileRedirect,
-	retrievePlan,
 	storePlan,
 } from './persistence-utils';
 import OrgCredentialsForm from './remote-credentials';
@@ -144,37 +141,42 @@ export function offerResetRedirects( context, next ) {
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
+	const queryRedirect = context.query.redirect;
+	const hasPaidPlan = selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null;
+	const isNotJetpack = selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null;
 
 	// Redirect AT sites back to wp-admin
 	const isAutomatedTransfer = selectedSite
 		? isSiteAutomatedTransfer( state, selectedSite.ID )
 		: null;
 	if ( isAutomatedTransfer ) {
-		debug( 'controller: offerResetRedirects -> redirecting WoA back to wp-admin', context.params );
+		debug(
+			'controller: offerResetRedirects -> redirecting WoA site back to wp-admin',
+			context.params
+		);
 		return navigate( selectedSite.URL + JETPACK_ADMIN_PATH );
 	}
 
-	// If site has a paid plan or is not a Jetpack site, redirect to Calypso's Plans page
-	const hasPlan = selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null;
-	const isNotJetpack = selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null;
-	if ( hasPlan || isNotJetpack ) {
+	if ( isNotJetpack ) {
 		debug(
-			'controller: offerResetRedirects -> redirecting to /plans since site has a plan or is not a Jetpack site',
+			'controller: offerResetRedirects -> redirecting to /plans since site is not a Jetpack site',
 			context.params
 		);
-		return navigate( CALYPSO_PLANS_PAGE + selectedSite.slug );
+		return page.redirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
 	}
 
-	// If the user previously selected Jetpack Free, redirect them to their wp-admin page
-	const storedPlan = retrievePlan();
-	clearPlan();
-	if ( storedPlan === PLAN_JETPACK_FREE ) {
+	// If the site already has a paid plan, skip the plans/products page and redirect back to wp-admin.
+	if ( hasPaidPlan ) {
 		debug(
-			'controller: offerResetRedirects -> redirecting to wp-admin because the user got here by clicking Jetpack Free',
+			'controller: offerResetRedirects -> redirecting to back to wp-admin because site already has a paid plan',
 			context.params
 		);
-		navigate( context.query.redirect || selectedSite.options.admin_url );
-		return;
+
+		if ( queryRedirect ) {
+			return navigate( queryRedirect );
+		} else if ( selectedSite ) {
+			return navigate( selectedSite.URL + JETPACK_ADMIN_PATH );
+		}
 	}
 
 	// If current user is not an admin (can't purchase plans), redirect the user to /posts if
@@ -188,7 +190,6 @@ export function offerResetRedirects( context, next ) {
 			return page.redirect( CALYPSO_REDIRECTION_PAGE );
 		}
 
-		const queryRedirect = context.query.redirect;
 		if ( queryRedirect ) {
 			navigate( queryRedirect );
 		} else if ( selectedSite ) {
