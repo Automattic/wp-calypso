@@ -40,6 +40,8 @@ describe( 'PurchaseItem', () => {
 
 		renderWithProvider( <PurchaseItem purchase={ purchase } /> );
 
-		expect( screen.getByText( 'No payment method' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( 'You don’t have a payment method to renew this subscription' )
+		).toBeInTheDocument();
 	} );
 } );

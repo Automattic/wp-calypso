@@ -410,10 +410,10 @@ class PurchaseItem extends Component {
 
 		if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
 			return (
-				<divm className={ 'purchase-item__no-payment-method' }>
+				<div className={ 'purchase-item__no-payment-method' }>
 					<Icon icon={ warningIcon } />
-					<span>No payment method</span>
-				</divm>
+					<span>You don’t have a payment method to renew this subscription</span>
+				</div>
 			);
 		}
 

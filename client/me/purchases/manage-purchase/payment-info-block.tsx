@@ -102,7 +102,7 @@ export default function PaymentInfoBlock( {
 			<PaymentInfoBlockWrapper>
 				<div className={ 'manage-purchase__no-payment-method' }>
 					<Icon icon={ warning } />
-					{ translate( 'No payment method' ) }
+					{ translate( 'You don’t have a payment method to renew this subscription' ) }
 				</div>
 			</PaymentInfoBlockWrapper>
 		);

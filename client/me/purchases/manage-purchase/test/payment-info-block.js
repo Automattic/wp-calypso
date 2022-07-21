@@ -314,6 +314,8 @@ describe( 'PaymentInfoBlock', () => {
 			isAutoRenewEnabled: 'true',
 		};
 		render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-		expect( screen.getByText( 'No payment method' ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( 'You don’t have a payment method to renew this subscription' )
+		).toBeInTheDocument();
 	} );
 } );
