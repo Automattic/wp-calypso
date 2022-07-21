@@ -31,6 +31,7 @@ const ALLOWED_CATEGORIES = [
 	'social',
 	'widgets',
 	'email',
+	'events',
 	'security',
 	'shipping',
 	'posts',
