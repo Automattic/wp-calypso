@@ -266,9 +266,9 @@ export class SectionMigrate extends Component {
 	};
 
 	goToCart = () => {
-		const { sourceSite, targetSiteSlug, targetSiteEligibleForProPlan } = this.props;
+		const { sourceSite, targetSiteSlug } = this.props;
 		const sourceSiteSlug = get( sourceSite, 'slug' );
-		const plan = targetSiteEligibleForProPlan ? 'pro' : 'business';
+		const plan = 'business';
 
 		page(
 			`/checkout/${ targetSiteSlug }/${ plan }?redirect_to=/migrate/from/${ sourceSiteSlug }/to/${ targetSiteSlug }%3Fstart%3Dtrue`
