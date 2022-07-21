@@ -104,11 +104,11 @@ export function useCategories(
 			tags: [ 'ecommerce', 'e-commerce', 'woocommerce', 'business', 'business-directory' ],
 		},
 		education: {
-			name: __( 'Education' ),
+			name: __( 'Learning Management Systems' ),
 			description: __( 'Education' ),
 			icon: 'grid',
 			slug: 'education',
-			tags: [ 'education' ],
+			tags: [ 'education', 'lms', 'learning-management-systems', 'elearning' ],
 		},
 		email: {
 			name: __( 'Email' ),
