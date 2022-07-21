@@ -273,6 +273,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</>
 		);
 
+		const pickDesignText =
+			selectedDesign?.design_type === 'vertical'
+				? translate( 'Select and continue' )
+				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
+
 		const actionButtons = (
 			<div>
 				{ shouldUpgrade ? (
@@ -281,7 +286,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					</Button>
 				) : (
 					<Button primary borderless={ false } onClick={ () => pickDesign() }>
-						{ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
+						{ pickDesignText }
 					</Button>
 				) }
 			</div>
@@ -295,7 +300,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					hideSkip
 					hideNext={ true }
 					className={ 'design-setup__preview' }
-					nextLabelText={ translate( 'Start with %(designTitle)s', { args: { designTitle } } ) }
+					nextLabelText={ pickDesignText }
 					goBack={ handleBackClick }
 					goNext={ () => pickDesign() }
 					formattedHeader={
