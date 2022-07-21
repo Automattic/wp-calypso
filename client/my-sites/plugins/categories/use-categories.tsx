@@ -6,27 +6,31 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Category } from '.';
 
 export const ALLOWED_CATEGORIES = [
-	'discover',
-	'paid',
-	'popular',
-	'featured',
 	'analytics',
 	'booking',
 	'customer',
 	'design',
+	'discover',
 	'donations',
 	'ecommerce',
 	'education',
+	'email',
+	'events',
 	'finance',
 	'marketing',
-	'seo',
 	'photo',
+	'posts',
+	'security',
+	'seo',
+	'shipping',
 	'social',
 	'widgets',
-	'email',
-	'security',
-	'shipping',
-	'posts',
+
+	// "Top paid plugins", "Editors pick" etc aren't real categories but we
+	// treat them like they are in the UI so include them here
+	'popular',
+	'featured',
+	'paid',
 ];
 
 export function useCategories(
