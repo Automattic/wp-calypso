@@ -667,10 +667,12 @@ $plan-features-sidebar-width: 272px;
 	margin-left: 10px;
 }
 
-/*= Plans notice in Upgrades
+/*= Plans Features Upgrades notices
 ========================================*/
 .plans-features-main__notice + .notice {
-	margin-top: -14px;
+	@media ( min-width: 660px ) {
+		margin-top: -14px;
+	}
 }
 
 /*= Plans in Signup
