@@ -372,7 +372,7 @@ const GerneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 
 	return (
 		<div className="design-picker__grid">
-			{ designs.map( ( design ) => {
+			{ designs.map( ( design, index ) => {
 				const previewUrl = getDesignPreviewUrl( design, {
 					language: locale,
 					verticalId,
@@ -381,7 +381,7 @@ const GerneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 					use_screenshot_overrides: true,
 				} );
 				return (
-					<div className="design-button-container">
+					<div className="design-button-container" key={ `generated-design__${ index }` }>
 						<div className="design-picker__design-option">
 							<button className="generated-design-thumbnail" onClick={ () => onPreview( design ) }>
 								<span className="generated-design-thumbnail__image">
