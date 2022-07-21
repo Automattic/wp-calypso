@@ -1,11 +1,11 @@
 import {
 	FEATURE_INSTALL_PLUGINS,
 	findFirstSimilarPlanKey,
+	getPlan,
 	isBlogger,
 	isPersonal,
 	isPremium,
 	TYPE_BUSINESS,
-	TYPE_STARTER,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_UPLOAD_PLUGINS,
@@ -49,6 +49,7 @@ import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getPlugins, isEqualSlugOrId } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -352,22 +353,27 @@ const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSl
 const UpgradeNudgePaid = ( props ) => {
 	const translate = useTranslate();
 
-	if ( ! props.sitePlan ) {
+	const requiredPlans = useSelector( ( state ) =>
+		getPlansForFeature( state, props.selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
+
+	if ( ! requiredPlans ) {
 		return null;
 	}
 
-	const plan = findFirstSimilarPlanKey( props.sitePlan.product_slug, {
-		type: TYPE_STARTER,
-	} );
+	const requiredPlan = getPlan( requiredPlans[ 0 ] );
 
 	return (
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
 			showIcon={ true }
-			href={ `/checkout/${ props.siteSlug }/starter` }
+			href={ `/checkout/${ props.siteSlug }/${ requiredPlan.getPathSlug() }` }
 			feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
-			plan={ plan }
-			title={ translate( 'Upgrade to the Starter plan to install paid plugins.' ) }
+			plan={ requiredPlan.getStoreSlug() }
+			title={ translate( 'Upgrade to the %(planName)s plan to install premium plugins.', {
+				textOnly: true,
+				args: { planName: requiredPlan.getTitle() },
+			} ) }
 		/>
 	);
 };
@@ -488,13 +494,21 @@ function isNotInstalled( plugin, installedPlugins ) {
 }
 
 const PluginBrowserContent = ( props ) => {
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, props.selectedSite?.ID )
+	const requiredPlansPurchasedPlugins = useSelector( ( state ) =>
+		getPlansForFeature( state, props.selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
+	const requiredPlansAllPlugins = useSelector( ( state ) =>
+		getPlansForFeature( state, props.selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
 	);
 
-	const isLegacyPlan =
-		props.sitePlan &&
-		( isBlogger( props.sitePlan ) || isPersonal( props.sitePlan ) || isPremium( props.sitePlan ) );
+	const hasInstallPurchasedPlugins = useSelector( ( state ) =>
+		siteHasFeature( state, props.selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
+
+	// Whether to show an upgrade banner specific to premium plugins.
+	const lowerPlanAvailable =
+		! hasInstallPurchasedPlugins &&
+		requiredPlansPurchasedPlugins[ 0 ] === requiredPlansAllPlugins[ 0 ];
 
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
@@ -508,16 +522,17 @@ const PluginBrowserContent = ( props ) => {
 			{ ! props.jetpackNonAtomic && (
 				<>
 					<div className="plugins-browser__upgrade-banner">
-						{ eligibleForProPlan && ! isLegacyPlan ? (
+						{ ! hasInstallPurchasedPlugins && lowerPlanAvailable && (
 							<UpgradeNudgePaid { ...props } />
-						) : (
+						) }
+						{ ! hasInstallPurchasedPlugins && ! lowerPlanAvailable && (
 							<UpgradeNudge { ...props } />
 						) }
 					</div>
 					<PluginSingleListView { ...props } category="paid" />
 				</>
 			) }
-			{ eligibleForProPlan && ! isLegacyPlan && <UpgradeNudge { ...props } /> }
+			{ hasInstallPurchasedPlugins && <UpgradeNudge { ...props } /> }
 			<PluginSingleListView { ...props } category="featured" />
 			<PluginSingleListView { ...props } category="popular" />
 		</>
