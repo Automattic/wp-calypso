@@ -101,7 +101,6 @@ export interface SiteDetails {
 	launch_status: string;
 	jetpack: boolean;
 	is_fse_eligible: boolean;
-	is_fse_active: boolean;
 	logo: { id: string; sizes: string[]; url: string };
 	options: {
 		admin_url?: string;
