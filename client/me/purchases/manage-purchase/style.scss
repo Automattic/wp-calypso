@@ -314,8 +314,11 @@
 		display: flex;
 		align-items: center;
 		gap: 4px;
-		svg path {
-			fill: var( --color-warning-30 );
+		svg {
+			flex-shrink: 0;
+			path {
+				fill: var( --color-warning-30 );
+			}
 		}
 	}
 
@@ -441,11 +444,5 @@
 
 	@include breakpoint-deprecated( '>480px' ) {
 		margin-top: 0;
-	}
-}
-
-.manage-purchase__no-payment-method {
-	svg {
-		flex-shrink: 0;
 	}
 }
