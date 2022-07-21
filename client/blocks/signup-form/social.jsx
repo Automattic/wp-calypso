@@ -58,7 +58,7 @@ class SocialSignupForm extends Component {
 	};
 
 	trackSocialLogin = ( service ) => {
-		this.props.recordTracksEvent( 'calypso_login_social_button_click', {
+		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
 		} );
 	};
