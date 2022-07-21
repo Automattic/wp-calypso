@@ -4,15 +4,28 @@
 	align-items: center;
 	justify-content: center;
 
-	&.site-thumbnail__size-small {
-		width: 108px;
-		height: 78px;
-		border-radius: 4px;
-		padding: 16px;
-	}
+}
 
-	&.site-thumbnail__size-medium {
-		width: 374px;
-		height: 304px;
+.site-thumbnail__size-small {
+	width: 108px;
+	height: 78px;
+	border-radius: 4px;
+}
+
+.site-thumbnail__size-medium {
+	width: 374px;
+	height: 304px;
+}
+
+.site-thumbnail-visible {
+	animation: fadein 1.5s;
+}
+
+@keyframes fadein {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
 	}
 }
