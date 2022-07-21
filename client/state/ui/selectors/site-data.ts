@@ -52,6 +52,6 @@ export interface SiteDataOptions {
 	is_difm_lite_in_progress: boolean;
 	is_domain_only: boolean;
 	difm_lite_site_options?: DIFMLiteSiteOptions;
-	updated_at: string | undefined;
+	updated_at?: string;
 	// TODO: fill out the rest of this
 }
