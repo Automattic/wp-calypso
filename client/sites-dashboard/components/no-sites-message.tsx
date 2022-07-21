@@ -112,7 +112,7 @@ export const NoSitesMessage = ( { status }: SitesContainerProps ) => {
 				"It's time to get your ideas online. We'll guide you through the process of creating a site that best suits your needs."
 			) }
 			action={ __( 'Create your first site' ) }
-			actionURL={ '/start?source=sites-dashboard' }
+			actionURL={ '/start?source=sites-dashboard&ref=calypso-nosites' }
 			illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 		/>
 	);
