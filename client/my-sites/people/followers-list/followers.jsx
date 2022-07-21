@@ -145,8 +145,8 @@ class Followers extends Component {
 
 			if ( this.props.type === 'email' ) {
 				headerText = this.props.translate(
-					'You have %(number)d follower receiving updates by email',
-					'You have %(number)d followers receiving updates by email',
+					'You have %(number)d subscriber receiving updates by email',
+					'You have %(number)d subscribers receiving updates by email',
 					{
 						args: { number: this.props.totalFollowers },
 						count: this.props.totalFollowers,
