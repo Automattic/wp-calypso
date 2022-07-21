@@ -34,7 +34,6 @@ describe( 'PurchaseItem', () => {
 	test( 'should display warning if auto-renew is enabled but no payment method', () => {
 		const purchase = {
 			productSlug: 'business-bundle',
-			expiryDate: moment().subtract( 10, 'hours' ).format(),
 			isAutoRenewEnabled: true,
 		};
 
@@ -48,7 +47,6 @@ describe( 'PurchaseItem', () => {
 	test( 'should not display warning if auto-renew is disabled with no payment method', () => {
 		const purchase = {
 			productSlug: 'business-bundle',
-			expiryDate: moment().subtract( 10, 'hours' ).format(),
 			isAutoRenewEnabled: false,
 		};
 
