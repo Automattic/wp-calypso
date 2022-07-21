@@ -36,9 +36,8 @@ class SocialLoginActionButton extends Component {
 	};
 
 	recordLoginSuccess = ( service ) => {
-		this.props.recordTracksEvent( 'calypso_login_social_login_success', {
+		this.props.recordTracksEvent( 'calypso_account_social_connect_success', {
 			social_account_type: service,
-			starting_point: 'social-connect',
 		} );
 	};
 
@@ -47,14 +46,12 @@ class SocialLoginActionButton extends Component {
 
 		if ( isConnected ) {
 			this.disconnectFromSocialService();
-			this.props.recordTracksEvent( 'calypso_login_social_disconnect', {
+			this.props.recordTracksEvent( 'calypso_account_social_disconnect', {
 				social_account_type: service,
-				starting_point: 'social-connect',
 			} );
 		} else {
-			this.props.recordTracksEvent( 'calypso_login_social_button_click', {
+			this.props.recordTracksEvent( 'calypso_account_social_connect_button_click', {
 				social_account_type: service,
-				starting_point: 'social-connect',
 			} );
 		}
 	};
@@ -139,7 +136,7 @@ class SocialLoginActionButton extends Component {
 					clientId={ config( 'google_oauth_client_id' ) }
 					onClick={ this.handleButtonClick }
 					responseHandler={ this.handleSocialServiceResponse }
-					startingPoint={ 'social-connect' }
+					startingPoint={ 'account-social-connect' }
 				>
 					{ actionButton }
 				</GoogleSocialButton>
