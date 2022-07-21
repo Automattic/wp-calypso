@@ -43,6 +43,7 @@
 		"importers/substack": true,
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
+		"jetpack/plugin-management": false,
 		"jetpack/concierge-sessions": false,
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,
