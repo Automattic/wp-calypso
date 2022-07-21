@@ -1,5 +1,4 @@
 import { useFuzzySearch } from '@automattic/search';
-import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import page from 'page';
@@ -36,21 +35,13 @@ export function SearchableSitesTable( { sites, initialSearch }: SearchableSitesT
 
 	return (
 		<>
-			<div
-				className={ css`
-					margin: 32px 0;
-					width: 286px;
-					max-width: 100%;
-				` }
-			>
-				<SitesSearch
-					searchIcon={ <SitesSearchIcon /> }
-					onSearch={ handleSearch }
-					isReskinned
-					placeholder={ __( 'Search by name or domain…' ) }
-					defaultValue={ initialSearch }
-				/>
-			</div>
+			<SitesSearch
+				searchIcon={ <SitesSearchIcon /> }
+				onSearch={ handleSearch }
+				isReskinned
+				placeholder={ __( 'Search by name or domain…' ) }
+				defaultValue={ initialSearch }
+			/>
 			{ results.length > 0 ? (
 				<SitesTable sites={ results } />
 			) : (

@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import { css } from '@emotion/css';
+import { css, CSSObject } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
@@ -21,7 +21,7 @@ const MAX_PAGE_WIDTH = '1184px';
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
 // background color and border needs to be able to extend into that padding.
-const pagePadding = {
+const pagePadding: CSSObject = {
 	paddingLeft: '32px',
 	paddingRight: '32px',
 };
