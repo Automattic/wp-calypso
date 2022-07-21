@@ -28,6 +28,7 @@ import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/us
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	getName,
+	hasPaymentMethod,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -39,7 +40,6 @@ import {
 	isRenewable,
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
-	hasPaymentMethod,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
