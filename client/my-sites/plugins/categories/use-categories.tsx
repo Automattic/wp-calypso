@@ -157,7 +157,7 @@ export function useCategories(
 			tags: [ 'posts', 'post', 'page', 'pages' ],
 		},
 		seo: {
-			name: __( 'Search Optimization' ),
+			name: __( 'Search Engine Optimization' ),
 			description: __( 'Search Optimization' ),
 			icon: 'grid',
 			slug: 'seo',
