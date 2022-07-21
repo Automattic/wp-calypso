@@ -20,9 +20,10 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 	// methods from LoginPage to separate out the steps that
 	// are bundled together in the TestAccount class.
 	it( 'Navigate to Login page', async function () {
+		// Test redirect to full URL.
 		await page.goto(
 			DataHelper.getCalypsoURL(
-				'log-in?site=e2eflowtestingtotp.wordpress.com&redirect_to=%2Fsettings%2Fgeneral'
+				`log-in?site=${ credentials.primarySite }&redirect_to=%2Fsettings%2Fgeneral%2F${ credentials.primarySite }`
 			)
 		);
 	} );
