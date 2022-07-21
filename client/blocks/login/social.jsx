@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import GoogleLoginButton from 'calypso/components/social-buttons/google';
+import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { login } from 'calypso/lib/paths';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -210,7 +210,7 @@ class SocialLoginForm extends Component {
 			<Card className="login__social">
 				<div className="login__social-buttons">
 					<div className=" login__social-buttons-container">
-						<GoogleLoginButton
+						<GoogleSocialButton
 							clientId={ config( 'google_oauth_client_id' ) }
 							responseHandler={ this.handleGoogleResponse }
 							uxMode={ uxMode }

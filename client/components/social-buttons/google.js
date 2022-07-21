@@ -21,7 +21,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class GoogleLoginButton extends Component {
+class GoogleSocialButton extends Component {
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
 		fetchBasicProfile: PropTypes.bool,
@@ -357,4 +357,4 @@ export default connect(
 		recordTracksEvent,
 		showErrorNotice: errorNotice,
 	}
-)( localize( GoogleLoginButton ) );
+)( localize( GoogleSocialButton ) );
