@@ -54,6 +54,8 @@ export function activate(
 			);
 		}
 
+		keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
+
 		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
 	};
 }
