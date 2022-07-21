@@ -39,6 +39,7 @@ import {
 	isRenewable,
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
+	hasPaymentMethod,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -469,7 +470,7 @@ function PurchaseMetaExpiration( {
 			? translate( 'Auto-renew is ON' )
 			: translate( 'Auto-renew is OFF' );
 		const subsBillingText =
-			isAutorenewalEnabled && ! hideAutoRenew
+			isAutorenewalEnabled && ! hideAutoRenew && hasPaymentMethod( purchase )
 				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 						args: {
 							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
