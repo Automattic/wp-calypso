@@ -4,7 +4,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { sprintf } from '@wordpress/i18n';
+import { sprintf, hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { noop } from 'lodash';
@@ -128,7 +128,9 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						onCheckout?.();
 					} }
 				>
-					{ __( 'Included in WordPress.com Premium' ) }
+					{ hasTranslation( 'Included in WordPress.com Premium' )
+						? __( 'Included in WordPress.com Premium' )
+						: __( 'Upgrade to Premium' ) }
 				</Button>
 			) : (
 				__( 'Included in your plan' )
