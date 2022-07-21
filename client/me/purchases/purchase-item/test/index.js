@@ -31,7 +31,7 @@ describe( 'PurchaseItem', () => {
 		} );
 	} );
 
-	test( 'should display warning if auto-renew is enabled but no payment method"', () => {
+	test( 'should display warning if auto-renew is enabled but no payment method', () => {
 		const purchase = {
 			productSlug: 'business-bundle',
 			expiryDate: moment().subtract( 10, 'hours' ).format(),
@@ -43,5 +43,19 @@ describe( 'PurchaseItem', () => {
 		expect(
 			screen.getByText( 'You don’t have a payment method to renew this subscription' )
 		).toBeInTheDocument();
+	} );
+
+	test( 'should not display warning if auto-renew is disabled with no payment method', () => {
+		const purchase = {
+			productSlug: 'business-bundle',
+			expiryDate: moment().subtract( 10, 'hours' ).format(),
+			isAutoRenewEnabled: false,
+		};
+
+		renderWithProvider( <PurchaseItem purchase={ purchase } /> );
+
+		expect(
+			screen.queryByText( 'You don’t have a payment method to renew this subscription' )
+		).toBeNull();
 	} );
 } );
