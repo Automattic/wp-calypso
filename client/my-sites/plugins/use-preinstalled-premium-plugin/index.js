@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { getPluginOnSite, getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
@@ -21,11 +21,12 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 	const isPreinstalledPremiumPluginUpgraded = useSelector(
 		( state ) =>
 			!! preinstalledPremiumPlugin &&
+			!! selectedSiteId &&
 			siteHasFeature( state, selectedSiteId, preinstalledPremiumPlugin.feature )
 	);
 
 	const isPreinstalledPremiumPluginActive = useSelector( ( state ) => {
-		if ( ! preinstalledPremiumPlugin ) {
+		if ( ! preinstalledPremiumPlugin || ! selectedSiteId ) {
 			return false;
 		}
 		// Always active on simple sites
@@ -33,6 +34,11 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
 			! isJetpackSite( state, selectedSiteId )
 		) {
+			return true;
+		}
+		// Always active on atomic sites that don't have the plugin installed
+		const pluginOnSite = getPluginOnSite( state, selectedSiteId, pluginSlug );
+		if ( isSiteAutomatedTransfer( state, selectedSiteId ) && ! pluginOnSite ) {
 			return true;
 		}
 		return isPluginActive( state, selectedSiteId, pluginSlug );
