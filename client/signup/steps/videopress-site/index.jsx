@@ -419,7 +419,7 @@ class VideoPressSite extends Component {
 		const { isFetchingDefaultSuggestion } = this.state;
 
 		return (
-			<div class="videopress-site__wordpress-domain-default-container">
+			<div className="videopress-site__wordpress-domain-default-container">
 				<span
 					className="videopress-site__wordpress-domain-default"
 					title={ site ? `https://${ site }.wordpress.com` : '' }
@@ -570,7 +570,7 @@ class VideoPressSite extends Component {
 						className="videopress-site__site-description"
 						disabled={ submitting }
 						name="site-description"
-						value={ siteDescription }
+						value={ siteDescription || '' }
 						isError={ formState.isFieldInvalid( form, 'siteDescription' ) }
 						isValid={ formState.isFieldValid( form, 'siteDescription' ) }
 						onBlur={ this.handleBlur }
