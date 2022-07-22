@@ -76,12 +76,12 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		} );
 
 		it( 'Click on the "Plans" navigation tab', async function () {
-			plansPage = new PlansPage( page, 'legacy' );
+			plansPage = new PlansPage( page );
 			await plansPage.clickTab( 'Plans' );
 		} );
 
-		it( 'Click on "Upgrade" button for WordPress.com Pro plan', async function () {
-			await plansPage.selectPlan( 'Pro' );
+		it( 'Click on "Upgrade" button for WordPress.com Premium plan', async function () {
+			await plansPage.selectPlan( 'Premium' );
 		} );
 
 		it( 'WordPress.com Pro is added to cart', async function () {

@@ -7,7 +7,6 @@ import {
 	SignupPickPlanPage,
 	StartSiteFlow,
 	SidebarComponent,
-	PlansPage,
 	RestAPIClient,
 	UserSignupPage,
 	LoginPage,
@@ -84,11 +83,6 @@ describe(
 			it( 'Navigate to Upgrades > Plans', async function () {
 				sidebarComponent = new SidebarComponent( page );
 				await sidebarComponent.navigate( 'Upgrade', 'Plans' );
-			} );
-
-			it( 'View plan comparison', async function () {
-				const plansPage = new PlansPage( page, 'current' );
-				await plansPage.showPlanComparison();
 			} );
 		} );
 

@@ -55,7 +55,7 @@ describe(
 
 			it( 'Select WordPress.com Pro plan', async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				siteDetails = await signupPickPlanPage.selectPlan( 'Pro' );
+				siteDetails = await signupPickPlanPage.selectPlan( 'Premium' ); // Placeholder
 
 				siteCreatedFlag = true;
 			} );
@@ -97,8 +97,8 @@ describe(
 			} );
 
 			it( 'Plans page states user is on WordPress.com Pro plan', async function () {
-				const plansPage = new PlansPage( page, 'current' );
-				await plansPage.validateActivePlan( 'Pro' );
+				const plansPage = new PlansPage( page );
+				await plansPage.validateActivePlan( 'Premium' ); // Placeholder
 			} );
 
 			it( 'Validate storage capacity', async function () {
