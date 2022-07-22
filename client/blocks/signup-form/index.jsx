@@ -444,8 +444,9 @@ class SignupForm extends Component {
 		return this.props.from;
 	}
 
-	getLoginLink() {
+	getLoginLink( { emailAddress } = {} ) {
 		return login( {
+			emailAddress,
 			isJetpack: this.isJetpack(),
 			from: this.getLoginLinkFrom(),
 			redirectTo: this.props.redirectToAfterLoginUrl,
@@ -818,6 +819,27 @@ class SignupForm extends Component {
 	};
 
 	getNotice() {
+		const userExistsError = this.getUserExistsError( this.props );
+
+		if ( userExistsError ) {
+			return this.globalNotice(
+				{
+					info: true,
+					message: this.props.translate(
+						'The email address "%(email)s" is associated with a WordPress.com account. ' +
+							'{{a}}Log in{{/a}} to connect it to your social profile, or choose a different profile.',
+						{
+							args: { email: userExistsError.email },
+							components: {
+								a: <a href={ this.getLoginLink( { emailAddress: userExistsError.email } ) } />,
+							},
+						}
+					),
+				},
+				'is-info'
+			);
+		}
+
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
@@ -939,10 +961,6 @@ class SignupForm extends Component {
 	};
 
 	render() {
-		if ( this.getUserExistsError( this.props ) ) {
-			return null;
-		}
-
 		if ( isCrowdsignalOAuth2Client( this.props.oauth2Client ) ) {
 			const socialProps = pick( this.props, [
 				'isSocialSignupEnabled',
