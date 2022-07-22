@@ -437,15 +437,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const {
-			isInSignup,
-			isJetpack,
-			isLandingPage,
-			isLaunchPage,
-			siteId,
-			redirectToAddDomainFlow,
-			shouldShowPlansFeatureComparison,
-		} = this.props;
+		const { siteId, redirectToAddDomainFlow, shouldShowPlansFeatureComparison } = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -467,12 +459,6 @@ export class PlansFeaturesMain extends Component {
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<HappychatConnection />
-				<div
-					className={ classNames( 'plans-features-main__notice', {
-						'is-wpcom':
-							! isJetpack && ! isInSignup && ! isLandingPage && ! isLaunchPage ? true : false,
-					} ) }
-				/>
 				{ ! hidePlanSelector && (
 					<PlanTypeSelector
 						{ ...this.props }
