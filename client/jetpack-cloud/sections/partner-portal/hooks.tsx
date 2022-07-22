@@ -19,7 +19,10 @@ import useIssueLicenseMutation, {
 	MutationIssueLicenseVariables,
 } from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import {
+	doesPartnerRequireAPaymentMethod,
+	hasValidPaymentMethod,
+} from 'calypso/state/partner-portal/partner/selectors';
 import {
 	APIError,
 	APILicense,
@@ -143,8 +146,14 @@ function alphabeticallySortedProductOptions(
  */
 export function useLicenseIssuing(
 	selectedSite?: { ID: number; domain: string } | null,
-	product: string | null
-): [ UseMutationResult< APILicense, APIError, MutationIssueLicenseVariables, unknown >, boolean ] {
+	defaultProduct?: string | null
+): [
+	UseMutationResult< APILicense, APIError, MutationIssueLicenseVariables, unknown >,
+	boolean,
+	string,
+	( product: string ) => void,
+	() => void
+] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites ).length;
@@ -153,7 +162,10 @@ export function useLicenseIssuing(
 		select: alphabeticallySortedProductOptions,
 	} );
 
+	const [ product, setProduct ] = useState( defaultProduct || '' );
+
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
+	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
 
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 
@@ -172,6 +184,18 @@ export function useLicenseIssuing(
 		}
 		return page.redirect( '/dashboard' );
 	};
+
+	const requirePaymentMethod = useCallback( () => {
+		if ( paymentMethodRequired && ! hasPaymentMethod ) {
+			const nextStep = addQueryArgs(
+				{
+					product,
+				},
+				partnerPortalBasePath( '/payment-methods/add' )
+			);
+			page( nextStep );
+		}
+	}, [ product, hasPaymentMethod, paymentMethodRequired ] );
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
@@ -212,15 +236,6 @@ export function useLicenseIssuing(
 				nextStep = addQueryArgs(
 					{ key: license.license_key },
 					partnerPortalBasePath( '/assign-license' )
-				);
-			}
-
-			if ( paymentMethodRequired ) {
-				nextStep = addQueryArgs(
-					{
-						return: ensurePartnerPortalReturnUrl( nextStep ),
-					},
-					partnerPortalBasePath( '/payment-methods/add' )
 				);
 			}
 
@@ -281,5 +296,5 @@ export function useLicenseIssuing(
 		},
 	} );
 
-	return [ issueLicense, isSubmitting ];
+	return [ issueLicense, isSubmitting, product, setProduct, requirePaymentMethod ];
 }
