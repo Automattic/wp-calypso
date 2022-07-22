@@ -9,7 +9,7 @@ import {
 	CheckoutStep,
 	CheckoutStepGroup,
 	CheckoutStepBody,
-	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
+	CheckoutSummaryArea,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -23,10 +23,9 @@ import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import MaterialIcon from 'calypso/components/material-icon';
-import Tooltip from 'calypso/components/tooltip';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -262,25 +261,16 @@ export default function WPCheckout( {
 		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
 	} );
 
-	const tooltipRef = useRef< HTMLDivElement >( null );
-
-	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
 	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
+	const [ isSubmitted, setIsSubmitted ] = useState( false );
 
-	const disableSubmitButton =
-		isOrderReviewActive || ( hasMarketplaceProduct && ! is3PDAccountConsentAccepted );
-
-	function displayTooltipIfRequired() {
-		if ( ! is3PDAccountConsentAccepted && hasMarketplaceProduct ) {
-			setIsTooltipVisible( true );
+	const validateForm = () => {
+		setIsSubmitted( true );
+		if ( hasMarketplaceProduct && ! is3PDAccountConsentAccepted ) {
+			return false;
 		}
-	}
-
-	function hideTooltipIfVisible() {
-		if ( isTooltipVisible ) {
-			setIsTooltipVisible( false );
-		}
-	}
+		return true;
+	};
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
@@ -515,37 +505,18 @@ export default function WPCheckout( {
 				<ThirdPartyDevsAccount
 					isAccepted={ is3PDAccountConsentAccepted }
 					onChange={ setIs3PDAccountConsentAccepted }
+					isSubmitted={ isSubmitted }
 				/>
 			) }
-			<div
-				ref={ tooltipRef }
-				role="tooltip"
-				onMouseEnter={ () => displayTooltipIfRequired() }
-				onMouseLeave={ () => hideTooltipIfVisible() }
-			>
-				<CheckoutFormSubmit
-					submitButtonHeader={ <SubmitButtonHeader /> }
-					submitButtonFooter={ <SubmitButtonFooter /> }
-					disableSubmitButton={ disableSubmitButton }
-				/>
-			</div>
-			<Tooltip
-				id="tooltip__accept_acount_creation"
-				isVisible={ isTooltipVisible }
-				context={ tooltipRef.current }
-				autoPosition={ true }
-			>
-				{ translate( 'The terms above need to be accepted' ) }
-			</Tooltip>
+			<CheckoutFormSubmit
+				validateForm={ validateForm }
+				submitButtonHeader={ <SubmitButtonHeader /> }
+				submitButtonFooter={ <SubmitButtonFooter /> }
+				disableSubmitButton={ isOrderReviewActive }
+			/>
 		</CheckoutStepGroup>
 	);
 }
-
-const CheckoutSummaryArea = styled( CheckoutSummaryAreaUnstyled )`
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		position: relative;
-	}
-`;
 
 const CheckoutSummaryTitleLink = styled.button`
 	background: ${ ( props ) => props.theme.colors.background };

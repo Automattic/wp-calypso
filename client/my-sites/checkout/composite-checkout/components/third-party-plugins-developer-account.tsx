@@ -1,8 +1,11 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { localize, LocalizeProps } from 'i18n-calypso';
+import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
-const CheckboxTermsWrapper = styled.div`
+const CheckboxTermsWrapper = styled( FormLabel )`
 	padding: 24px 24px 24px 59px;
 `;
 
@@ -19,14 +22,24 @@ const MessageWrapper = styled.div`
 	margin-left: 0;
 `;
 
+const ErrorMessage = styled.small`
+	color: var( --color-error );
+	font-weight: normal;
+`;
+
 interface ExternalProps {
 	isAccepted: boolean;
+	isSubmitted: boolean;
 	onChange: ( isAccepted: boolean ) => void;
 }
 
 type Props = ExternalProps & LocalizeProps;
 
-function ThirdPartyDevsAccount( { isAccepted, onChange, translate }: Props ) {
+function ThirdPartyDevsAccount( { isAccepted, isSubmitted, onChange, translate }: Props ) {
+	const [ touched, setTouched ] = useState( false );
+	const theme = useTheme();
+	const displayErrorMessage = ( isSubmitted || touched ) && ! isAccepted;
+
 	const message = translate(
 		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.'
 	);
@@ -36,9 +49,22 @@ function ThirdPartyDevsAccount( { isAccepted, onChange, translate }: Props ) {
 	};
 
 	return (
-		<CheckboxTermsWrapper>
-			<StyledFormCheckbox onChange={ handleChange } checked={ isAccepted } />
+		<CheckboxTermsWrapper
+			style={
+				displayErrorMessage
+					? { border: `3px solid ${ theme.colors.highlight }`, borderRadius: '3px' }
+					: {}
+			}
+		>
+			<StyledFormCheckbox
+				onChange={ handleChange }
+				onBlur={ () => setTouched( true ) }
+				checked={ isAccepted }
+			/>
 			<MessageWrapper>{ message }</MessageWrapper>
+			{ displayErrorMessage && (
+				<ErrorMessage>{ translate( 'The terms above need to be accepted' ) }</ErrorMessage>
+			) }
 		</CheckboxTermsWrapper>
 	);
 }
