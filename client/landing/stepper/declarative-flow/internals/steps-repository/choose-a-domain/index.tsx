@@ -3,24 +3,21 @@ import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
-/**
- * The podcasts step title
- */
-const PodcastsStep: Step = function PodcastsStep( { navigation } ) {
+const ChooseADomain: Step = function ChooseADomain( { navigation } ) {
 	const { goNext, goBack } = navigation;
 
 	return (
 		<StepContainer
-			stepName={ 'podcasts' }
+			stepName={ 'chooseADomain' }
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
-			stepContent={ <h1>Podcasts</h1> }
+			stepContent={ <h1>Choose a domain step</h1> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
 };
 
-export default PodcastsStep;
+export default ChooseADomain;

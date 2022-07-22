@@ -10,7 +10,7 @@ export const podcasts: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'podcasts' ] as StepPath[];
+		return [ 'letsGetStarted', 'chooseADomain' ] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -23,6 +23,7 @@ export const podcasts: Flow = {
 		};
 
 		const goNext = () => {
+			navigate( 'chooseADomain' );
 			return;
 		};
 

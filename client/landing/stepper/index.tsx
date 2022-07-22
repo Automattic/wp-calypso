@@ -33,7 +33,6 @@ import { linkInBio } from './declarative-flow/link-in-bio';
 import { newsletters } from './declarative-flow/newsletters';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
-import { tailoredSignup } from './declarative-flow/tailored-signup';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
 import { useQuery } from './hooks/use-query';
@@ -61,7 +60,6 @@ interface configurableFlows {
 }
 
 const availableFlows: Array< configurableFlows > = [
-	{ flowName: 'tailored', pathToFlow: tailoredSignup },
 	{ flowName: 'newsletters', pathToFlow: newsletters },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
@@ -76,7 +74,7 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
 	} else {
-		availableFlows.find( ( currentFlow ) => {
+		availableFlows.forEach( ( currentFlow ) => {
 			if ( currentFlow.flowName === flowName ) {
 				flow = currentFlow.pathToFlow;
 			}
