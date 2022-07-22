@@ -29,25 +29,12 @@ const FilterBar = styled.div`
 	padding: 32px 0;
 `;
 
-const siteStatusOptions = [
-	{ value: 'all', label: 'All Sites' },
-	{ value: 'launched', label: 'Launched' },
-	{ value: 'coming-soon', label: 'Coming Soon' },
-	{ value: 'private', label: 'Private' },
-];
-
-export function SearchableSitesTable( {
-	sites,
-	initialSearch,
-	filterOptions,
-}: SearchableSitesTableProps ) {
-	const { __ } = useI18n();
-
-	const filteredSites = sites.filter( ( site ) => {
+function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {
+	return sites.filter( ( site ) => {
 		const isComingSoon =
 			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 
-		switch ( filterOptions.status ) {
+		switch ( filterType ) {
 			case 'launched':
 				return ! site.is_private && ! isComingSoon;
 			case 'private':
@@ -59,6 +46,25 @@ export function SearchableSitesTable( {
 				return site;
 		}
 	} );
+}
+
+export function SearchableSitesTable( {
+	sites,
+	initialSearch,
+	filterOptions,
+}: SearchableSitesTableProps ) {
+	const { __ } = useI18n();
+
+	const filteredSites = filterSites( sites, filterOptions.status );
+
+	const siteStatusOptions = [
+		{ value: 'all', label: 'All Sites', count: 12 },
+		{ value: 'launched', label: 'Launched' },
+		{ value: 'coming-soon', label: 'Coming Soon' },
+		{ value: 'private', label: 'Private' },
+	];
+
+	const filterOptionValue = filterOptions.status ? filterOptions.status : 'all';
 
 	const { setQuery, results } = useFuzzySearch( {
 		data: filteredSites,
@@ -78,8 +84,6 @@ export function SearchableSitesTable( {
 		}
 	};
 
-	console.log( 'search:', initialSearch );
-
 	return (
 		<ClassNames>
 			{ ( { css } ) => (
@@ -94,20 +98,31 @@ export function SearchableSitesTable( {
 						/>
 						<SelectDropdown
 							selectedText={
-								siteStatusOptions.find( ( option ) => option.value === filterOptions.status )?.label
+								siteStatusOptions.find( ( option ) => option.value === filterOptions.status )
+									?.label || 'All Sites'
 							}
-							initialSelected={ filterOptions.status }
-							onSelect={ ( option ) => {
-								page(
-									'all' === option.value
-										? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
-										: addQueryArgs( window.location.pathname + window.location.search, {
-												status: option.value,
-										  } )
-								);
-							} }
-							options={ siteStatusOptions }
-						/>
+						>
+							{ siteStatusOptions.map( ( option ) => (
+								<SelectDropdown.Item
+									selected={ option.value === filterOptionValue }
+									count={ filterSites( sites, option.value )?.length || 0 }
+									onClick={ () => {
+										page(
+											'all' === option.value
+												? removeQueryArgs(
+														window.location.pathname + window.location.search,
+														'status'
+												  )
+												: addQueryArgs( window.location.pathname + window.location.search, {
+														status: option.value,
+												  } )
+										);
+									} }
+								>
+									{ option.label }
+								</SelectDropdown.Item>
+							) ) }
+						</SelectDropdown>
 					</FilterBar>
 					{ results.length > 0 ? (
 						<SitesTable sites={ results } />
