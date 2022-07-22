@@ -73,7 +73,7 @@ export default function IssueLicenseForm( {
 		}
 	}, [ dispatch, product, issueLicense.mutate ] );
 
-	const selectedSiteDomian = selectedSite?.domain;
+	const selectedSiteDomain = selectedSite?.domain;
 
 	return (
 		<div className="issue-license-form">
@@ -83,11 +83,11 @@ export default function IssueLicenseForm( {
 				<>
 					<div className="issue-license-form__top">
 						<p className="issue-license-form__description">
-							{ selectedSiteDomian
+							{ selectedSiteDomain
 								? translate(
 										'Select the Jetpack product you would like to add to {{strong}}%(selectedSiteDomian)s{{/strong}}',
 										{
-											args: { selectedSiteDomian },
+											args: { selectedSiteDomain },
 											components: { strong: <strong /> },
 										}
 								  )
