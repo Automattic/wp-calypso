@@ -1,5 +1,9 @@
 import { useSelector } from 'react-redux';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import { getSitesWithPlugin } from 'calypso/state/plugins/installed/selectors';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -39,11 +43,36 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 	const preinstalledPremiumPluginProduct =
 		preinstalledPremiumPlugin?.products?.[ getPeriodVariationValue( billingPeriod ) ];
 
+	const sitesWithPreinstalledPremiumPlugin = useSelector( ( state ) => {
+		if ( ! preinstalledPremiumPlugin ) {
+			return 0;
+		}
+		if ( selectedSiteId ) {
+			return isPreinstalledPremiumPluginUpgraded;
+		}
+
+		const allSites = getSelectedOrAllSites( state );
+		const allSimpleSites = allSites.filter(
+			( site ) =>
+				canCurrentUser( state, site.ID, 'manage_options' ) &&
+				! isSiteAutomatedTransfer( state, site.ID ) &&
+				! isJetpackSite( state, site.ID )
+		);
+		const sitesWithPlugin = getSitesWithPlugin(
+			state,
+			siteObjectsToSiteIds( allSites ),
+			pluginSlug
+		);
+
+		return allSimpleSites.length + sitesWithPlugin.length;
+	} );
+
 	return {
 		isPreinstalledPremiumPlugin: !! preinstalledPremiumPlugin,
 		isPreinstalledPremiumPluginActive,
 		isPreinstalledPremiumPluginUpgraded,
 		preinstalledPremiumPluginFeature,
 		preinstalledPremiumPluginProduct,
+		sitesWithPreinstalledPremiumPlugin,
 	};
 }

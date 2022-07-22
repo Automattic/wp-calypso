@@ -1,21 +1,42 @@
+/* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
 export default function PreinstalledPremiumPluginBrowserItemPricing( { plugin } ) {
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const {
+		isPreinstalledPremiumPluginActive,
+		isPreinstalledPremiumPluginUpgraded,
+		sitesWithPreinstalledPremiumPlugin,
+	} = usePreinstalledPremiumPlugin( plugin.slug );
 	const translate = useTranslate();
 
-	const { isPreinstalledPremiumPluginActive, isPreinstalledPremiumPluginUpgraded } =
-		usePreinstalledPremiumPlugin( plugin.slug );
-
-	if ( isPreinstalledPremiumPluginUpgraded ) {
-		const checkmarkColorClass = isPreinstalledPremiumPluginActive
+	const checkmarkColorClass =
+		! selectedSiteId || isPreinstalledPremiumPluginActive
 			? 'checkmark--active'
 			: 'checkmark--inactive';
-		/* eslint-disable wpcalypso/jsx-gridicon-size */
+
+	if ( ! selectedSiteId && sitesWithPreinstalledPremiumPlugin > 0 ) {
+		return (
+			<div className="plugins-browser-item__installed-and-active-container">
+				<div className="plugins-browser-item__installed ">
+					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
+					{ translate( 'Installed on %d site', 'Installed on %d sites', {
+						args: [ sitesWithPreinstalledPremiumPlugin ],
+						count: sitesWithPreinstalledPremiumPlugin,
+					} ) }
+				</div>
+			</div>
+		);
+	}
+
+	if ( isPreinstalledPremiumPluginUpgraded ) {
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
@@ -29,7 +50,6 @@ export default function PreinstalledPremiumPluginBrowserItemPricing( { plugin } 
 				</div>
 			</div>
 		);
-		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
 
 	return (
