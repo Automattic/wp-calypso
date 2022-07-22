@@ -26,6 +26,8 @@ import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-p
 import { getStripeConfiguration } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-stripe-configuration';
 import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
@@ -192,7 +194,11 @@ function PaymentMethodAdd(): ReactElement {
 							<div className="payment-method-add__navigation-buttons">
 								<Button
 									className="payment-method-add__back-button"
-									href="/partner-portal/payment-methods/"
+									href={
+										product
+											? addQueryArgs( { product }, partnerPortalBasePath( '/issue-license' ) )
+											: '/partner-portal/payment-methods/'
+									}
 									disabled={ isStripeLoading || issueLicense.isLoading || isSubmitting }
 									onClick={ onGoToPaymentMethods }
 								>
