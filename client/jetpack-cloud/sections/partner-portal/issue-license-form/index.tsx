@@ -1,9 +1,8 @@
 import { Button } from '@automattic/components';
-import { getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import sortBy from 'lodash/sortBy';
-import page from 'page';
-import { ReactElement, useCallback, useEffect } from 'react';
+import { ReactElement, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
@@ -75,18 +74,6 @@ export default function IssueLicenseForm( {
 	}, [ dispatch, product, issueLicense.mutate ] );
 
 	const selectedSiteDomian = selectedSite?.domain;
-
-	// If a product is passed down from the query we want to instantly try and create a license for it
-	// and we only want to try that once hence why we pass no dependencies to useEffect().
-	// This is a short-term solution as we shouldn't be executing such actions with a GET request without a nonce.
-	useEffect( () => {
-		if ( defaultProduct !== '' ) {
-			page.redirect(
-				removeQueryArgs( window.location.pathname + window.location.search, 'product' )
-			);
-			issueLicense.mutate( { product: defaultProduct } );
-		}
-	}, [] );
 
 	return (
 		<div className="issue-license-form">
