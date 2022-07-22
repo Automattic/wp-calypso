@@ -263,7 +263,6 @@ describe( 'getSiteOptions', () => {
 		URL: 'https://test.wordpress.com',
 		launch_status: '',
 		jetpack: false,
-		is_fse_eligible: false,
 		logo: { id: 'logoId', sizes: [ 'small' ], url: 'logoURL' },
 		options,
 		capabilities: {
