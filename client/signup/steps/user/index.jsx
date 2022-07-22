@@ -469,7 +469,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					shouldRedirectOnSocialConnectAttempt={ false }
+					shouldDisplayUserExistsError
 				/>
 				<div id="g-recaptcha"></div>
 			</>

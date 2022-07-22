@@ -101,7 +101,7 @@ class SignupForm extends Component {
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
-		shouldRedirectOnSocialConnectAttempt: PropTypes.bool,
+		shouldDisplayUserExistsError: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -115,7 +115,7 @@ class SignupForm extends Component {
 		isPasswordless: false,
 		isSocialSignupEnabled: false,
 		horizontal: false,
-		shouldRedirectOnSocialConnectAttempt: true,
+		shouldDisplayUserExistsError: false,
 	};
 
 	constructor( props ) {
@@ -196,12 +196,16 @@ class SignupForm extends Component {
 	/**
 	 * If the step is invalid because we had an error that the user exists,
 	 * we should prompt user with a request to connect his social account
-	 * to his existing WPCOM account
+	 * to his existing WPCOM account.
+	 *
+	 * That can be done either by redirecting or only suggesting. If it's done
+	 * by suggesting, bail out of redirecting and display the error.
 	 */
 	maybeRedirectToSocialConnect() {
-		if ( ! this.props.shouldRedirectOnSocialConnectAttempt ) {
+		if ( this.props.shouldDisplayUserExistsError ) {
 			return;
 		}
+
 		const userExistsError = this.getUserExistsError( this.props );
 
 		if ( userExistsError ) {
@@ -961,6 +965,10 @@ class SignupForm extends Component {
 	};
 
 	render() {
+		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
+			return null;
+		}
+
 		if ( isCrowdsignalOAuth2Client( this.props.oauth2Client ) ) {
 			const socialProps = pick( this.props, [
 				'isSocialSignupEnabled',
