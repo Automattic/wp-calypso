@@ -21,7 +21,10 @@ import Main from 'calypso/components/main';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
-import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import {
+	useReturnUrl,
+	useLicenseIssuing,
+} from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { getStripeConfiguration } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-stripe-configuration';
 import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
@@ -60,12 +63,19 @@ function PaymentMethodAdd(): ReactElement {
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
 
+	const returnQueryArg = useMemo(
+		() => ( getQueryArg( window.location.href, 'return' ) || '' ).toString(),
+		[ window.location.href, getQueryArg ]
+	);
+
 	const product = useMemo(
 		() => ( getQueryArg( window.location.href, 'product' ) || '' ).toString(),
 		[ window.location.href, getQueryArg ]
 	);
 
 	const [ issueLicense, isSubmitting ] = useLicenseIssuing( null, product );
+
+	useReturnUrl( !! returnQueryArg && hasPaymentMethod );
 
 	const onGoToPaymentMethods = () => {
 		reduxDispatch(
@@ -98,7 +108,7 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const successCallback = useCallback( () => {
-		if ( product ) {
+		if ( returnQueryArg || product ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -111,10 +121,10 @@ function PaymentMethodAdd(): ReactElement {
 	}, [ page, product, issueLicense ] );
 
 	useEffect( () => {
-		if ( hasPaymentMethod ) {
+		if ( product && hasPaymentMethod ) {
 			issueLicense.mutate( { product } );
 		}
-	}, [ hasPaymentMethod ] );
+	}, [ hasPaymentMethod, product ] );
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
@@ -135,7 +145,9 @@ function PaymentMethodAdd(): ReactElement {
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 
-			{ product && <AssignLicenseStepProgress currentStep="addPaymentMethod" /> }
+			{ ( !! returnQueryArg || product ) && (
+				<AssignLicenseStepProgress currentStep="addPaymentMethod" />
+			) }
 
 			<div className="payment-method-add__header">
 				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
