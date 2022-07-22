@@ -33,7 +33,7 @@ export const useGetTier1UpgradeProduct = (): StorageUpgradeGetter => {
 							text: translate( 'One-click restore from the last 30 days of backups' ),
 						},
 						{
-							text: translate( '30-day activity log' ),
+							text: translate( '30-day activity log*' ),
 						},
 						{
 							text: translate( 'Real-time backups (as you edit)' ),
@@ -76,7 +76,7 @@ export const useGetTier2UpgradeProduct = (): StorageUpgradeGetter => {
 							isHighlighted: true,
 						},
 						{
-							text: translate( 'One year activity log' ),
+							text: translate( 'One year activity log*' ),
 							isHighlighted: true,
 						},
 						{
