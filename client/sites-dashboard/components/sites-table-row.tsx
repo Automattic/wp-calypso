@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import SiteIcon from 'calypso/blocks/site-icon';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import TimeSince from 'calypso/components/time-since';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -166,7 +167,9 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 						/>
 					</Column>
 					<Column mobileHidden>{ site.plan.product_name_short }</Column>
-					<Column mobileHidden>July 16, 1969</Column>
+					<Column mobileHidden>
+						{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
+					</Column>
 					<Column style={ { width: '20px' } }>
 						<EllipsisMenu>
 							<VisitDashboardItem site={ site } />
