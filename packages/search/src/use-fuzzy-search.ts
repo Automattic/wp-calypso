@@ -36,7 +36,6 @@ export const useFuzzySearch = < T >( {
 			keys,
 			includeScore: false,
 			includeMatches: false,
-			shouldSort: false,
 			...options,
 		} );
 	}, [ keys, options ] );
