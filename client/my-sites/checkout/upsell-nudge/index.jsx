@@ -363,12 +363,12 @@ export class UpsellNudge extends Component {
 		return getThankYouPageUrl( getThankYouPageUrlArguments );
 	};
 
-	handleClickDecline = () => {
-		const { trackUpsellButtonClick, upsellType, siteSlug } = this.props;
+	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
+		const { trackUpsellButtonClick, upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
 
-		const url = `/home/${ siteSlug }`;
+		const url = this.getThankYouPageUrlForIncomingCart( shouldHideUpsellNudges );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
