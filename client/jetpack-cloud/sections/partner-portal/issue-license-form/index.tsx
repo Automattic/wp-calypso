@@ -3,12 +3,13 @@ import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import sortBy from 'lodash/sortBy';
 import page from 'page';
-import { ReactElement, useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { ReactElement, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
+import { hasValidPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { AssignLicenceProps } from '../types';
 import './style.scss';
@@ -29,13 +30,14 @@ export default function IssueLicenseForm( {
 }: AssignLicenceProps ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );
 
 	const defaultProduct = ( getQueryArg( window.location.href, 'product' ) || '' ).toString();
-	const [ product, setProduct ] = useState( defaultProduct );
-	const [ issueLicense, isSubmitting ] = useLicenseIssuing( selectedSite, product );
+	const [ issueLicense, isSubmitting, product, setProduct, requirePaymentMethod ] =
+		useLicenseIssuing( selectedSite, defaultProduct );
 
 	const onSelectProduct = useCallback(
 		( value ) => {
@@ -64,7 +66,12 @@ export default function IssueLicenseForm( {
 
 	const onIssueLicense = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_submit', { product } ) );
-		issueLicense.mutate( { product } );
+
+		if ( hasPaymentMethod ) {
+			issueLicense.mutate( { product } );
+		} else {
+			requirePaymentMethod();
+		}
 	}, [ dispatch, product, issueLicense.mutate ] );
 
 	const selectedSiteDomian = selectedSite?.domain;
