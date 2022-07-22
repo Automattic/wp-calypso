@@ -73,8 +73,7 @@ class ReskinSideExplainer extends Component {
 					subtitle2 = null;
 				}
 
-				ctaText = false;
-
+				ctaText = translate( 'Choose my domain later' );
 				break;
 
 			case 'use-your-domain':
