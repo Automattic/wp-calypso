@@ -1,9 +1,8 @@
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
-import * as Mshots from './use-mshots';
+import { useMshotsImg } from './use-mshots';
 import { getTextColorFromBackground } from './utils';
-declare let require: ( path: string ) => typeof Mshots;
 
 const MSHOTS_OPTION = {
 	vpw: 1200,
@@ -24,13 +23,7 @@ export const SiteThumbnail = ( {
 	mShotsUrl,
 	size = 'small',
 }: Props ) => {
-	let useMshots: typeof Mshots;
-	let maybeImage: HTMLImageElement | undefined;
-
-	if ( mShotsUrl ) {
-		useMshots = require( './use-mshots' );
-		maybeImage = useMshots.useMshotsImg( mShotsUrl, MSHOTS_OPTION );
-	}
+	const maybeImage = useMshotsImg( mShotsUrl ?? '', MSHOTS_OPTION );
 
 	const src: string = maybeImage?.src || '';
 	const visible = !! src;

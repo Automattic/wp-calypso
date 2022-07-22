@@ -59,6 +59,10 @@ export const useMshotsImg = (
 	// to browser caching. Getting this wrong looks like the url resolving
 	// before the image is ready.
 	useEffect( () => {
+		if ( src.length === 0 ) {
+			return;
+		}
+
 		// If there's been a "props" change we need to reset everything:
 		if (
 			options !== previousOptions.current ||
