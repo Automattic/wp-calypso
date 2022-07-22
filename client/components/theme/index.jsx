@@ -442,7 +442,7 @@ export class Theme extends Component {
 						{ showPremiumBadge && ! isEnabled( 'signup/seller-upgrade-modal' ) && (
 							<span className="theme__badge-premium">{ translate( 'Premium' ) }</span>
 						) }
-						{ ! isEnabled( 'signup/seller-upgrade-modal' ) && (
+						{ ( ! isEnabled( 'signup/seller-upgrade-modal' ) || active ) && (
 							<span className={ priceClass }>{ price }</span>
 						) }
 						{ upsell }
