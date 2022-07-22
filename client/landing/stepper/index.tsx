@@ -29,12 +29,16 @@ import { WindowLocaleEffectManager } from '../gutenboarding/components/window-lo
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
+import { linkInBio } from './declarative-flow/link-in-bio';
+import { newsletters } from './declarative-flow/newsletters';
+import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import { tailoredSignup } from './declarative-flow/tailored-signup';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
 import { useQuery } from './hooks/use-query';
 import { USER_STORE } from './stores';
+import type { Flow } from './declarative-flow/internals/types';
 
 function generateGetSuperProps() {
 	return () => ( {
@@ -51,6 +55,18 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	reduxStore.dispatch( requestSites() );
 }
 
+interface configurableFlows {
+	flowName: string;
+	pathToFlow: Flow;
+}
+
+const availableFlows: Array< configurableFlows > = [
+	{ flowName: 'tailored', pathToFlow: tailoredSignup },
+	{ flowName: 'newsletters', pathToFlow: newsletters },
+	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
+	{ flowName: 'podcasts', pathToFlow: podcasts },
+];
+
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
 	const { anchorFmPodcastId } = useAnchorFmParams();
 	const flowName = useQuery().get( 'flow' );
@@ -59,10 +75,12 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
-	}
-
-	if ( flowName === 'tailored' ) {
-		flow = tailoredSignup;
+	} else {
+		availableFlows.find( ( currentFlow ) => {
+			if ( currentFlow.flowName === flowName ) {
+				flow = currentFlow.pathToFlow;
+			}
+		} );
 	}
 
 	const { receiveCurrentUser } = useDispatch( USER_STORE );

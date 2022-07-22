@@ -30,6 +30,9 @@ export { default as wooConfirm } from './woo-confirm';
 export { default as wooVerifyEmail } from './woo-verify-email';
 export { default as editEmail } from './edit-email';
 export { default as difmStartingPoint } from './difm-starting-point';
+export { default as newsletters } from './newsletters';
+export { default as podcasts } from './podcasts';
+export { default as linkInBio } from './link-in-bio';
 
 export type StepPath =
 	| 'courses'
@@ -63,4 +66,7 @@ export type StepPath =
 	| 'wooConfirm'
 	| 'wooVerifyEmail'
 	| 'editEmail'
-	| 'difmStartingPoint';
+	| 'difmStartingPoint'
+	| 'newsletters'
+	| 'podcasts'
+	| 'linkInBio';
