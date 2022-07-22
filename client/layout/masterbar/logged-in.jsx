@@ -267,7 +267,7 @@ class MasterbarLoggedIn extends Component {
 				previousPath={ previousPath }
 				siteSlug={ siteSlug }
 				isLeavingAllowed={ ! isCheckoutPending }
-				showHelpCenter={ userAllowedToHelpCenter }
+				userAllowedToHelpCenter={ userAllowedToHelpCenter }
 			/>
 		);
 	}
@@ -532,6 +532,9 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderCart() }
 							{ this.renderNotifications() }
+							{ config.isEnabled( 'calypso/help-center' ) &&
+								shouldShowHelpCenterToUser( user.ID, locale ) &&
+								this.renderHelpCenter() }
 							{ this.renderMenu() }
 						</div>
 					</Masterbar>
@@ -555,6 +558,9 @@ class MasterbarLoggedIn extends Component {
 					<div className="masterbar__section masterbar__section--right">
 						{ this.renderCart() }
 						{ this.renderMe() }
+						{ config.isEnabled( 'calypso/help-center' ) &&
+							shouldShowHelpCenterToUser( user.ID, locale ) &&
+							this.renderHelpCenter() }
 						{ this.renderNotifications() }
 					</div>
 				</Masterbar>

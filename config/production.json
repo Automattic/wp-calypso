@@ -16,8 +16,10 @@
 	"features": {
 		"ad-tracking": true,
 		"bilmur-script": true,
+		"calypso/help-center": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
+		"checkout/help-center": false,
 		"cloudflare": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
@@ -31,7 +33,6 @@
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"editor/help-center": true,
-		"checkout/help-center": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,

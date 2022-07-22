@@ -26,7 +26,7 @@ interface Props {
 	previousPath?: string;
 	siteSlug?: string;
 	isLeavingAllowed?: boolean;
-	showHelpCenter?: boolean;
+	userAllowedToHelpCenter?: boolean;
 }
 
 const CheckoutMasterbar = ( {
@@ -35,7 +35,7 @@ const CheckoutMasterbar = ( {
 	previousPath,
 	siteSlug,
 	isLeavingAllowed,
-	showHelpCenter,
+	userAllowedToHelpCenter,
 }: Props ) => {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
@@ -98,7 +98,7 @@ const CheckoutMasterbar = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
-			{ showHelpCenter && (
+			{ userAllowedToHelpCenter && (
 				<Item
 					onClick={ () => dispatch( setHelpCenterVisible( ! isShowingHelpCenter ) ) }
 					className={ classnames( 'masterbar__item-help', {
@@ -119,13 +119,6 @@ const CheckoutMasterbar = ( {
 				secondaryButtonCTA={ modalSecondaryText }
 				secondaryAction={ clearCartAndLeave }
 			/>
-			{ showHelpCenter && isShowingHelpCenter && (
-				<AsyncLoad
-					require="@automattic/help-center"
-					placeholder={ null }
-					handleClose={ () => dispatch( setHelpCenterVisible( false ) ) }
-				/>
-			) }
 		</Masterbar>
 	);
 };

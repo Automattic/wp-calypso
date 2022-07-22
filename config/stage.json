@@ -14,8 +14,10 @@
 	"olark_chat_identity": "7089-503-10-5123",
 	"features": {
 		"ad-tracking": false,
+		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
+		"checkout/help-center": true,
 		"cloudflare": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
@@ -30,7 +32,6 @@
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
 		"editor/help-center": true,
-		"checkout/help-center": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,
