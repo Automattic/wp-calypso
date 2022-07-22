@@ -9,7 +9,7 @@ import tracksRecordEvent from './track-record-event';
 export default () => ( {
 	id: 'wpcom-block-editor-template-part-choose-existing',
 	selector:
-		'.wp-block-template-part__placeholder-preview-dropdown-content .wp-block-template-part__selection-preview-item',
+		'.block-library-template-part__selection-content .block-editor-block-patterns-list__item',
 	type: 'click',
 	handler: () => {
 		const block = select( 'core/block-editor' ).getSelectedBlock();
@@ -19,6 +19,7 @@ export default () => ( {
 			'wp_template_part',
 			templatePartId
 		);
+
 		tracksRecordEvent( 'wpcom_block_editor_template_part_choose_existing', {
 			variation_slug: templatePart?.area,
 			template_part_id: templatePartId,
