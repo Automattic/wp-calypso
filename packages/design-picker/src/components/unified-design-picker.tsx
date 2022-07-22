@@ -382,7 +382,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 					<div className="design-button-container" key={ `generated-design__${ index }` }>
 						<div className="design-picker__design-option">
 							<button className="generated-design-thumbnail" onClick={ () => onPreview( design ) }>
-								<span className="generated-design-thumbnail__image">
+								<span className="generated-design-thumbnail__image design-picker__image-frame design-picker__image-frame-no-header">
 									<ThemePreview
 										url={ previewUrl }
 										viewportWidth={ isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH }
