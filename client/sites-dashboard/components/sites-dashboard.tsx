@@ -104,7 +104,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 				<SitesTableFilterTabs
 					tabs={ tabs }
 					initialTabName={ selectedTabName }
-					onSelect={ handleTabSelect }
+					onSelect={ ( newTab ) => handleQueryParamChange( 'status', newTab, 'all' ) }
 				>
 					{ () =>
 						selectedTabHasSites ? (
@@ -112,7 +112,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 								<SearchWrapper>
 									<SitesSearch
 										searchIcon={ <SitesSearchIcon /> }
-										onSearch={ handleSearch }
+										onSearch={ ( term ) => handleQueryParamChange( 'search', term ) }
 										isReskinned
 										placeholder={ __( 'Search by name or domain…' ) }
 										defaultValue={ search }
@@ -134,21 +134,26 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 	);
 }
 
-function handleTabSelect( tabName: string ) {
-	page(
-		'all' === tabName
-			? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
-			: addQueryArgs( window.location.pathname + window.location.search, { status: tabName } )
-	);
-}
+/**
+ * Updates a query param used by the sites dashboard, causing a page navigation.
+ * Param will be removed if it is empty or matches its default value.
+ *
+ * @param paramName name of the param being updated
+ * @param paramValue new value for the param
+ * @param defaultValue if the new param matches the default it'll be removed
+ */
+function handleQueryParamChange(
+	paramName: keyof SitesDashboardQueryParams,
+	paramValue: string | null,
+	defaultValue = ''
+) {
+	// Ensure we keep existing query params by appending `.search`
+	const pathWithQuery = window.location.pathname + window.location.search;
 
-function handleSearch( rawTerm: string ) {
-	const trimmedTerm = rawTerm.trim();
-	if ( trimmedTerm.length ) {
-		page(
-			addQueryArgs( window.location.pathname + window.location.search, { search: trimmedTerm } )
-		);
+	const trimmedValue = paramValue?.trim();
+	if ( trimmedValue && trimmedValue !== defaultValue ) {
+		page( addQueryArgs( pathWithQuery, { [ paramName ]: trimmedValue } ) );
 	} else {
-		page( removeQueryArgs( window.location.pathname + window.location.search, 'search' ) );
+		page( removeQueryArgs( pathWithQuery, paramName ) );
 	}
 }
