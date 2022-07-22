@@ -44,6 +44,9 @@ const SellerCelebrationModalInner = () => {
 	const previousIsEditorSaving = useRef( false );
 	const hasSelectedPaymentsOnce = useHasSelectedPaymentBlockOnce();
 
+	const { hasSeenSellerCelebrationModal, updateHasSeenSellerCelebrationModal } =
+		useHasSeenSellerCelebrationModal();
+
 	const { isEditorSaving, hasPaymentsBlock, linkUrl } = useSelect( ( select ) => {
 		if ( isSiteEditor ) {
 			const isSavingSite =
@@ -55,8 +58,21 @@ const SellerCelebrationModalInner = () => {
 				select( 'core' ).isSavingEntityRecord( 'postType', 'page', pageId ) &&
 				! select( 'core' ).isAutosavingEntityRecord( 'postType', 'page', pageId );
 			const pageEntity = select( 'core' ).getEntityRecord( 'postType', 'page', pageId );
-			const paymentsBlock =
-				pageEntity?.content?.raw?.includes( '<!-- wp:jetpack/recurring-payments -->' ) ?? false;
+
+			let paymentsBlock = false;
+			// Only check for payment blocks if we haven't seen the celebration modal text yet
+			if ( ! hasSeenSellerCelebrationModal ) {
+				const didCountRecurringPayments =
+					select( 'core/block-editor' ).getGlobalBlockCount( 'jetpack/recurring-payments' ) > 0;
+				const didCountSimplePayments =
+					select( 'core/block-editor' ).getGlobalBlockCount( 'jetpack/simple-payments' ) > 0;
+				paymentsBlock =
+					( pageEntity?.content?.raw?.includes( '<!-- wp:jetpack/recurring-payments -->' ) ||
+						pageEntity?.content?.raw?.includes( '<!-- wp:jetpack/simple-payments -->' ) ||
+						didCountRecurringPayments ||
+						didCountSimplePayments ) ??
+					false;
+			}
 
 			return {
 				isEditorSaving: isSavingSite || isSavingEntity,
@@ -69,20 +85,25 @@ const SellerCelebrationModalInner = () => {
 		const isSavingEntity =
 			select( 'core' ).isSavingEntityRecord( 'postType', currentPost?.type, currentPost?.id ) &&
 			! select( 'core' ).isAutosavingEntityRecord( 'postType', currentPost?.type, currentPost?.id );
-		const globalBlockCount = select( 'core/block-editor' ).getGlobalBlockCount(
-			'jetpack/recurring-payments'
-		);
+
+		let paymentBlockCount = 0;
+		// Only check for payment blocks if we haven't seen the celebration modal yet
+		if ( ! hasSeenSellerCelebrationModal ) {
+			paymentBlockCount += select( 'core/block-editor' ).getGlobalBlockCount(
+				'jetpack/recurring-payments'
+			);
+			paymentBlockCount +=
+				select( 'core/block-editor' ).getGlobalBlockCount( 'jetpack/simple-payments' );
+		}
 
 		return {
 			isEditorSaving: isSavingEntity,
-			hasPaymentsBlock: globalBlockCount > 0,
+			hasPaymentsBlock: paymentBlockCount > 0,
 			linkUrl: currentPost.link,
 		};
 	} );
 
 	const intent = useSiteIntent();
-	const { hasSeenSellerCelebrationModal, updateHasSeenSellerCelebrationModal } =
-		useHasSeenSellerCelebrationModal();
 
 	useEffect( () => {
 		if (
