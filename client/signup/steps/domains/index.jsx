@@ -749,6 +749,9 @@ class DomainsStep extends Component {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backUrl = `/settings/general/${ siteSlug }`;
 				backLabelText = translate( 'Back to General Settings' );
+			} else if ( 'sites-dashboard' === source ) {
+				backUrl = '/sites-dashboard';
+				backLabelText = translate( 'Back to My Sites' );
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = '/sites/';
 				backLabelText = translate( 'Back to My Sites' );
