@@ -19,7 +19,7 @@ interface TracksEventProps {
 
 interface InstallThemeButtonProps {
 	isMultisite: boolean | null;
-	jetpackSite: boolean | null;
+	jetpackSite: boolean | null | undefined;
 	isLoggedIn: boolean;
 	siteSlug: string | null;
 	siteCanInstallThemes: boolean | null;
