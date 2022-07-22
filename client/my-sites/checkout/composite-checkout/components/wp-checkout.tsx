@@ -9,7 +9,7 @@ import {
 	CheckoutStep,
 	CheckoutStepGroup,
 	CheckoutStepBody,
-	CheckoutSummaryArea,
+	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -517,6 +517,12 @@ export default function WPCheckout( {
 		</CheckoutStepGroup>
 	);
 }
+
+const CheckoutSummaryArea = styled( CheckoutSummaryAreaUnstyled )`
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		position: relative;
+	}
+`;
 
 const CheckoutSummaryTitleLink = styled.button`
 	background: ${ ( props ) => props.theme.colors.background };
