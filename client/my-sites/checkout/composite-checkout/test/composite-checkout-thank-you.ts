@@ -1294,6 +1294,30 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
+		it( 'Is displayed if user is buying a domain only registration', () => {
+			const cart = {
+				...getEmptyResponseCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						is_domain_registration: true,
+						meta: 'foo.bar',
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'no-site',
+				cart,
+				receiptId: samplePurchaseId,
+			} );
+
+			expect( url ).toBe(
+				`/checkout/offer-professional-email/foo.bar/${ samplePurchaseId }/no-site`
+			);
+		} );
+
 		it( 'Is not displayed if cart is missing', () => {
 			const url = getThankYouPageUrl( {
 				...defaultArgs,

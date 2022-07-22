@@ -446,7 +446,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
-    "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/domain-utils": "workspace:^"
     "@automattic/format-currency": "workspace:^"

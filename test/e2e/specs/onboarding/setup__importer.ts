@@ -73,9 +73,18 @@ describe( DataHelper.createSuiteTitle( 'Site Import' ), () => {
 		it( 'Start an invalid WordPress import typo', async () => {
 			// 1.gravatar.com is guaranteed never to be a valid DNS
 			await startImportFlow.enterURL( 'zz.gravatar.com' );
-			await startImportFlow.validateErrorCapturePage(
-				'The address you entered is not valid. Please try again.'
-			);
+
+			// Support both Legacy and Goals Capture versions
+			// of the error message.
+			// See https://github.com/Automattic/wp-calypso/issues/65792
+			await Promise.race( [
+				startImportFlow.validateErrorCapturePage(
+					'The address you entered is not valid. Please try again.'
+				),
+				startImportFlow.validateErrorCapturePage(
+					'Please enter a valid website address. You can copy and paste.'
+				),
+			] );
 		} );
 	} );
 

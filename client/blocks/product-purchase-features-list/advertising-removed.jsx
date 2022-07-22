@@ -14,12 +14,12 @@ export default localize( ( { isEligiblePlan, selectedSite, translate } ) => {
 								'All WordPress.com advertising has been removed from your site so your brand can stand out without distractions.'
 						  )
 						: translate(
-								'All WordPress.com advertising has been removed from your site. Upgrade to Pro ' +
+								'All WordPress.com advertising has been removed from your site. Upgrade to Business ' +
 									'to remove the WordPress.com footer credit.'
 						  )
 				}
-				buttonText={ ! isEligiblePlan ? translate( 'Upgrade to Pro' ) : null }
-				href={ ! isEligiblePlan ? '/checkout/' + selectedSite.slug + '/pro' : null }
+				buttonText={ ! isEligiblePlan ? translate( 'Upgrade to Business' ) : null }
+				href={ ! isEligiblePlan ? '/checkout/' + selectedSite.slug + '/business' : null }
 			/>
 		</div>
 	);

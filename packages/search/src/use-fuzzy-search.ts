@@ -1,5 +1,5 @@
 import Fuse from 'fuse.js';
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 
 const defaultOptions = {
 	threshold: 0.4,
@@ -30,31 +30,24 @@ export const useFuzzySearch = < T >( {
 	 * We want to re-use the `Fuse` instance because creating one every time
 	 * the dataset changes is an expensive operation.
 	 *
-	 * I first used `useRef` to save that instance, but that hook does not allow
-	 * lazy instantiation of the initial value, so I had to create wrapper functions
-	 * and the result didn't look great.
-	 *
-	 * Falling back to `useState` fixes that problem, though now we have to add
-	 * the `fuseInstance` variable to the dependency array.
-	 *
 	 */
-	const [ fuseInstance ] = useState( () => {
-		return new Fuse( data, {
+	const fuseInstance = useMemo( () => {
+		return new Fuse( [], {
 			keys,
 			includeScore: false,
 			includeMatches: false,
 			...options,
 		} );
-	} );
-
-	useEffect( () => {
-		fuseInstance.setCollection( data );
-	}, [ fuseInstance, data ] );
+	}, [ keys, options ] );
 
 	const results = useMemo( () => {
 		if ( ! query ) {
 			return data;
 		}
+
+		// Every time the query or the data changes, we update the collection
+		// This assignment takes less than 1ms for thousands of items
+		fuseInstance.setCollection( data );
 
 		return fuseInstance.search( query ).map( ( { item } ) => item );
 	}, [ fuseInstance, query, data ] );
