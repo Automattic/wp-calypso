@@ -146,12 +146,10 @@ function alphabeticallySortedProductOptions(
  */
 export function useLicenseIssuing(
 	selectedSite?: { ID: number; domain: string } | null,
-	defaultProduct?: string | null
+	product?: string | null
 ): [
 	UseMutationResult< APILicense, APIError, MutationIssueLicenseVariables, unknown >,
 	boolean,
-	string,
-	( product: string ) => void,
 	() => void
 ] {
 	const translate = useTranslate();
@@ -161,8 +159,6 @@ export function useLicenseIssuing(
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );
-
-	const [ product, setProduct ] = useState( defaultProduct || '' );
 
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
@@ -296,5 +292,5 @@ export function useLicenseIssuing(
 		},
 	} );
 
-	return [ issueLicense, isSubmitting, product, setProduct, requirePaymentMethod ];
+	return [ issueLicense, isSubmitting, requirePaymentMethod ];
 }

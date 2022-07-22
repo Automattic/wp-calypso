@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import sortBy from 'lodash/sortBy';
-import { ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
@@ -35,8 +35,11 @@ export default function IssueLicenseForm( {
 	} );
 
 	const defaultProduct = ( getQueryArg( window.location.href, 'product' ) || '' ).toString();
-	const [ issueLicense, isSubmitting, product, setProduct, requirePaymentMethod ] =
-		useLicenseIssuing( selectedSite, defaultProduct );
+	const [ product, setProduct ] = useState( defaultProduct );
+	const [ issueLicense, isSubmitting, requirePaymentMethod ] = useLicenseIssuing(
+		selectedSite,
+		product
+	);
 
 	const onSelectProduct = useCallback(
 		( value ) => {

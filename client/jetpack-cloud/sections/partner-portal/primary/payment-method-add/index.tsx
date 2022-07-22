@@ -58,13 +58,12 @@ function PaymentMethodAdd(): ReactElement {
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
 
-	const productQueryArg = useMemo(
-		() => getQueryArg( window.location.href, 'product' ),
+	const product = useMemo(
+		() => ( getQueryArg( window.location.href, 'product' ) || '' ).toString(),
 		[ window.location.href, getQueryArg ]
 	);
 
-	const defaultProduct = ( getQueryArg( window.location.href, 'product' ) || '' ).toString();
-	const [ issueLicense, isSubmitting, product ] = useLicenseIssuing( null, defaultProduct );
+	const [ issueLicense, isSubmitting ] = useLicenseIssuing( null, product );
 
 	const onGoToPaymentMethods = () => {
 		reduxDispatch(
@@ -134,7 +133,7 @@ function PaymentMethodAdd(): ReactElement {
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 
-			{ productQueryArg && <AssignLicenseStepProgress currentStep="addPaymentMethod" /> }
+			{ product && <AssignLicenseStepProgress currentStep="addPaymentMethod" /> }
 
 			<div className="payment-method-add__header">
 				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
