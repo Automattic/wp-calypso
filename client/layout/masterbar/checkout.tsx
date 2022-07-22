@@ -7,7 +7,6 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
