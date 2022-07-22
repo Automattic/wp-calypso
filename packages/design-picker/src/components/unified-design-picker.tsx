@@ -17,13 +17,11 @@ import {
 	MOBILE_VIEWPORT_WIDTH,
 } from '../constants';
 import {
-	getAvailableDesigns,
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
 	sortDesigns,
-	excludeFseDesigns,
 } from '../utils';
 import BadgeContainer from './badge-container';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
@@ -362,7 +360,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	);
 };
 
-const GerneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
+const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 	locale,
 	designs,
 	verticalId,
@@ -405,10 +403,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	onPreview,
 	onUpgrade,
 	verticalId,
-	staticDesigns = getAvailableDesigns( {
-		featuredDesignsFilter: ( design ) =>
-			! design.features.includes( 'anchorfm' ) && excludeFseDesigns( design ),
-	} ).featured,
+	staticDesigns,
 	generatedDesigns,
 	premiumBadge,
 	heading,
@@ -440,7 +435,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 							{ translate( 'Based on your input, these designs have been tailored for you.' ) }
 						</p>
 					</div>
-					<GerneratedDesignPicker
+					<GeneratedDesignPicker
 						locale={ locale }
 						designs={ generatedDesigns }
 						onPreview={ onPreview }
@@ -451,7 +446,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div>
 				<h3> { translate( 'Selected themes for you' ) } </h3>
 				<p className="unified-design-picker__subtitle">
-					{ translate( "These might work if you'd like" ) }
+					{ translate( 'Choose a starting theme. You can change it later.' ) }
 				</p>
 			</div>
 			<StaticDesignPicker

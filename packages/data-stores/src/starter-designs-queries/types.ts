@@ -12,7 +12,7 @@ export interface StarterDesignsGenerated {
 	recipe: DesignRecipe;
 }
 
-export interface AllStarterDesigns {
+export interface StarterDesigns {
 	generated: { designs: Design[] };
 	static: { designs: Design[] };
 }

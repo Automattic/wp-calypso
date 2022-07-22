@@ -299,27 +299,25 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		);
 
 		return (
-			<>
-				<StepContainer
-					stepName={ STEP_NAME }
-					stepContent={ stepContent }
-					hideSkip
-					hideNext={ true }
-					className={ 'design-setup__preview' }
-					nextLabelText={ pickDesignText }
-					goBack={ handleBackClick }
-					goNext={ () => pickDesign() }
-					formattedHeader={
-						<FormattedHeader
-							id={ 'design-setup-header' }
-							headerText={ designTitle }
-							align={ isMobile ? 'left' : 'center' }
-						/>
-					}
-					customizedActionButtons={ actionButtons }
-					recordTracksEvent={ recordStepContainerTracksEvent }
-				/>
-			</>
+			<StepContainer
+				stepName={ STEP_NAME }
+				stepContent={ stepContent }
+				hideSkip
+				hideNext={ true }
+				className={ 'design-setup__preview' }
+				nextLabelText={ pickDesignText }
+				goBack={ handleBackClick }
+				goNext={ () => pickDesign() }
+				formattedHeader={
+					<FormattedHeader
+						id={ 'design-setup-header' }
+						headerText={ designTitle }
+						align={ isMobile ? 'left' : 'center' }
+					/>
+				}
+				customizedActionButtons={ actionButtons }
+				recordTracksEvent={ recordStepContainerTracksEvent }
+			/>
 		);
 	}
 	const heading = (

@@ -1,23 +1,25 @@
 import { stringify } from 'qs';
 import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import type {
-	StarterDesignsGenerated,
-	StarterDesignsGeneratedQueryParams,
-	AllStarterDesigns,
-} from './types';
+import type { StarterDesigns } from './types';
 import type { Category, Design, DesignRecipe } from '@automattic/design-picker/src/types';
 
-interface Options extends QueryOptions< AllStarterDesignsResponse, unknown > {
+interface StarterDesignsQueryParams {
+	vertical_id: string;
+	seed?: string;
+	_locale: string;
+}
+
+interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 	enabled?: boolean;
 }
 
-interface AllStarterDesignsResponse {
-	generated: { designs: StarterDesignsGenerated[] };
-	static: { designs: StarterDesignStatic[] };
+interface StarterDesignsResponse {
+	generated: { designs: GeneratedDesign[] };
+	static: { designs: StaticDesign[] };
 }
 
-interface StarterDesignStatic {
+interface StaticDesign {
 	recipe: DesignRecipe;
 	slug: string;
 	title: string;
@@ -25,12 +27,18 @@ interface StarterDesignStatic {
 	price?: string;
 }
 
+interface GeneratedDesign {
+	slug: string;
+	title: string;
+	recipe: DesignRecipe;
+}
+
 export function useStarterDesignsQuery(
-	queryParams: StarterDesignsGeneratedQueryParams,
+	queryParams: StarterDesignsQueryParams,
 	queryOptions: Options = {}
-): UseQueryResult< AllStarterDesigns > {
+): UseQueryResult< StarterDesigns > {
 	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
-		select: ( response: AllStarterDesignsResponse ) => {
+		select: ( response: StarterDesignsResponse ) => {
 			return {
 				generated: {
 					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
@@ -38,7 +46,7 @@ export function useStarterDesignsQuery(
 				static: {
 					designs: response.static?.designs?.map( apiStarterDesignsStaticToDesign ),
 				},
-			} as AllStarterDesigns;
+			} as StarterDesigns;
 		},
 		refetchOnMount: 'always',
 		staleTime: Infinity,
@@ -47,16 +55,16 @@ export function useStarterDesignsQuery(
 }
 
 function fetchStarterDesigns(
-	queryParams: StarterDesignsGeneratedQueryParams
-): Promise< AllStarterDesignsResponse > {
-	return wpcomRequest< AllStarterDesignsResponse >( {
+	queryParams: StarterDesignsQueryParams
+): Promise< StarterDesignsResponse > {
+	return wpcomRequest< StarterDesignsResponse >( {
 		apiNamespace: 'wpcom/v2',
 		path: '/starter-designs',
 		query: stringify( queryParams ),
 	} );
 }
 
-function apiStarterDesignsStaticToDesign( design: StarterDesignStatic ): Design {
+function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 	const { slug, title, recipe, categories, price } = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
@@ -76,7 +84,7 @@ function apiStarterDesignsStaticToDesign( design: StarterDesignStatic ): Design 
 	};
 }
 
-function apiStarterDesignsGeneratedToDesign( design: StarterDesignsGenerated ): Design {
+function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
 	const { slug, title, recipe } = design;
 
 	return {
