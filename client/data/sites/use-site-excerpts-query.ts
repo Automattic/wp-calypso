@@ -4,36 +4,12 @@ import { useStore } from 'react-redux';
 import { urlToSlug } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import getSites from 'calypso/state/selectors/get-sites';
-import { SiteData, SiteDataOptions } from 'calypso/state/ui/selectors/site-data';
-
-// Performance-optimized request for lists of sites.
-// Don't add more fields because you will make the request slower.
-export const SITE_EXCERPT_REQUEST_FIELDS = [
-	'ID',
-	'URL',
-	'is_coming_soon',
-	'is_private',
-	'launch_status',
-	'icon',
-	'name',
-	'options',
-	'plan',
-] as const;
-
-export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;
-
-export const SITE_EXCERPT_REQUEST_OPTIONS = [ 'is_wpforteams_site' ] as const;
-
-type SiteExcerptNetworkData = Pick< SiteData, typeof SITE_EXCERPT_REQUEST_FIELDS[ number ] > & {
-	options?: Pick< SiteDataOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
-};
-
-export type SiteExcerptData = Pick<
-	SiteData,
-	typeof SITE_EXCERPT_REQUEST_FIELDS[ number ] | typeof SITE_EXCERPT_COMPUTED_FIELDS[ number ]
-> & {
-	options?: Pick< SiteDataOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
-};
+import {
+	SiteExcerptData,
+	SiteExcerptNetworkData,
+	SITE_EXCERPT_REQUEST_FIELDS,
+	SITE_EXCERPT_REQUEST_OPTIONS,
+} from './site-excerpt-types';
 
 const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	const siteFilter = config< string[] >( 'site_filter' );

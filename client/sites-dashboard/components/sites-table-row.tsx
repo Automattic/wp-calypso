@@ -7,7 +7,7 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
-import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
 	site: SiteExcerptData;

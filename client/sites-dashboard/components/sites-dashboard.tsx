@@ -1,11 +1,14 @@
-import { Button, Gridicon } from '@automattic/components';
-import { css, ClassNames } from '@emotion/react';
+import { Button, Gridicon, TabPanel, useSitesTableFiltering } from '@automattic/components';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
+import page from 'page';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
-import { SearchableSitesTable } from './searchable-sites-table';
-import { SitesTableFilterTabs } from './sites-table-filter-tabs';
+import { SitesSearch } from './sites-search';
+import { SitesSearchIcon } from './sites-search-icon';
+import { SitesTable } from './sites-table';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
@@ -62,9 +65,29 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
+const SitesTableFilterTabs = styled( TabPanel )`
+	${ wideCentered }
+	position: relative;
+	top: -48px;
+`;
+
+const SearchWrapper = styled.div`
+	margin: 32px 0;
+	width: 286px;
+	max-width: 100%;
+`;
+
+export function SitesDashboard( { queryParams: { search, status } }: SitesDashboardProps ) {
 	const { __ } = useI18n();
-	const { data: sites = [] } = useSiteExcerptsQuery();
+
+	const { data: allSites = [] } = useSiteExcerptsQuery();
+
+	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( allSites, {
+		search,
+		status,
+	} );
+
+	const selectedTabName = tabs.find( ( tab ) => tab.name === status )?.name;
 
 	return (
 		<main>
@@ -78,31 +101,54 @@ export function SitesDashboard( { queryParams }: SitesDashboardProps ) {
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<ClassNames>
-					{ ( { css } ) => (
-						<SitesTableFilterTabs
-							allSites={ sites }
-							className={ css`
-								${ wideCentered }
-								position: relative;
-								top: -48px;
-							` }
-							filterOptions={ queryParams }
-						>
-							{ ( filteredSites, filterOptions ) =>
-								filteredSites.length ? (
-									<SearchableSitesTable
-										sites={ filteredSites }
-										initialSearch={ queryParams.search }
+				<SitesTableFilterTabs
+					tabs={ tabs }
+					initialTabName={ selectedTabName }
+					onSelect={ handleTabSelect }
+				>
+					{ () =>
+						selectedTabHasSites ? (
+							<>
+								<SearchWrapper>
+									<SitesSearch
+										searchIcon={ <SitesSearchIcon /> }
+										onSearch={ handleSearch }
+										isReskinned
+										placeholder={ __( 'Search by name or domain…' ) }
+										defaultValue={ search }
 									/>
+								</SearchWrapper>
+								{ filteredSites.length > 0 ? (
+									<SitesTable sites={ filteredSites } />
 								) : (
-									<NoSitesMessage status={ filterOptions.status } />
-								)
-							}
-						</SitesTableFilterTabs>
-					) }
-				</ClassNames>
+									<h2>{ __( 'No sites match your search.' ) }</h2>
+								) }
+							</>
+						) : (
+							<NoSitesMessage status={ selectedTabName } />
+						)
+					}
+				</SitesTableFilterTabs>
 			</PageBodyWrapper>
 		</main>
 	);
+}
+
+function handleTabSelect( tabName: string ) {
+	page(
+		'all' === tabName
+			? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
+			: addQueryArgs( window.location.pathname + window.location.search, { status: tabName } )
+	);
+}
+
+function handleSearch( rawTerm: string ) {
+	const trimmedTerm = rawTerm.trim();
+	if ( trimmedTerm.length ) {
+		page(
+			addQueryArgs( window.location.pathname + window.location.search, { search: trimmedTerm } )
+		);
+	} else {
+		page( removeQueryArgs( window.location.pathname + window.location.search, 'search' ) );
+	}
 }
