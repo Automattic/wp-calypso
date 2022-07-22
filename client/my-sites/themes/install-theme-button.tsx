@@ -1,7 +1,7 @@
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { connect, ConnectedProps } from 'react-redux';
 import { Dispatch } from 'redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -17,15 +17,8 @@ interface TracksEventProps {
 	tracksEventProps: { site_type: string | null };
 }
 
-interface InstallThemeButtonProps {
-	isMultisite: boolean | null;
-	jetpackSite: boolean | null | undefined;
-	isLoggedIn: boolean;
-	siteSlug: string | null;
-	siteCanInstallThemes: boolean | null;
-	dispatchTracksEvent( { tracksEventProps }: TracksEventProps ): void;
+interface InstallThemeButtonProps extends PropsFromRedux {
 	canUploadThemesOrPlugins: boolean;
-	atomicSite: boolean | null;
 }
 
 const InstallThemeButton: React.FC< InstallThemeButtonProps > = ( {
@@ -103,4 +96,7 @@ const mapDispatchToProps = ( dispatch: Dispatch ) => ( {
 		dispatch( recordTracksEvent( 'calypso_click_theme_upload', tracksEventProps ) ),
 } );
 
-export default connect( mapStateToProps, mapDispatchToProps )( InstallThemeButton );
+const connector = connect( mapStateToProps, mapDispatchToProps );
+type PropsFromRedux = ConnectedProps< typeof connector >;
+
+export default connector( InstallThemeButton );
