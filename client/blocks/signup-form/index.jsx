@@ -101,6 +101,7 @@ class SignupForm extends Component {
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
+		shouldRedirectOnSocialConnectAttempt: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -114,6 +115,7 @@ class SignupForm extends Component {
 		isPasswordless: false,
 		isSocialSignupEnabled: false,
 		horizontal: false,
+		shouldRedirectOnSocialConnectAttempt: true,
 	};
 
 	constructor( props ) {
@@ -197,6 +199,9 @@ class SignupForm extends Component {
 	 * to his existing WPCOM account
 	 */
 	maybeRedirectToSocialConnect() {
+		if ( ! this.props.shouldRedirectOnSocialConnectAttempt ) {
+			return;
+		}
 		const userExistsError = this.getUserExistsError( this.props );
 
 		if ( userExistsError ) {
