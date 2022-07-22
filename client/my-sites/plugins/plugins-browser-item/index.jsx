@@ -26,6 +26,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
+import PreinstalledPremiumPluginBrowserItemPricing from './preinstalled-premium-plugin-browser-item-pricing';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
@@ -262,39 +263,19 @@ const InstalledInOrPricing = ( {
 	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
-	const {
-		isPreinstalledPremiumPlugin,
-		isPreinstalledPremiumPluginActive,
-		isPreinstalledPremiumPluginUpgraded,
-	} = usePreinstalledPremiumPlugin( plugin.slug );
-	const active = isWpcomPreinstalled || isPluginActive || isPreinstalledPremiumPluginActive;
+	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
+	const active = isWpcomPreinstalled || isPluginActive;
+	let checkmarkColorClass = 'checkmark--active';
 
-	const checkmarkColorClass =
-		! selectedSiteId || active ? 'checkmark--active' : 'checkmark--inactive';
-
-	if ( isPreinstalledPremiumPluginUpgraded ) {
-		/* eslint-disable wpcalypso/jsx-gridicon-size */
-		return (
-			<div className="plugins-browser-item__installed-and-active-container">
-				<div className="plugins-browser-item__installed ">
-					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
-					{ translate( 'Installed' ) }
-				</div>
-				<div className="plugins-browser-item__active">
-					<Badge type={ active ? 'success' : 'info' }>
-						{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
-					</Badge>
-				</div>
-			</div>
-		);
-		/* eslint-enable wpcalypso/jsx-gridicon-size */
+	if ( isPreinstalledPremiumPlugin ) {
+		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
 	}
 
-	if (
-		( ! isPreinstalledPremiumPlugin && sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
-		isWpcomPreinstalled
-	) {
+	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
+		if ( selectedSiteId ) {
+			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
+		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
@@ -330,7 +311,7 @@ const InstalledInOrPricing = ( {
 								<>
 									{ price + ' ' }
 									<span className="plugins-browser-item__period">{ period }</span>
-									{ shouldUpgrade && ! isPreinstalledPremiumPlugin && (
+									{ shouldUpgrade && (
 										<div className="plugins-browser-item__period">
 											{ translate( 'Requires a plan upgrade' ) }
 										</div>
