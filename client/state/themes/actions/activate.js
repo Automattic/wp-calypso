@@ -45,6 +45,8 @@ export function activate(
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
 		}
 
+		keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
+
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
 			// If theme is already installed, installation will silently fail,
@@ -53,8 +55,6 @@ export function activate(
 				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
 			);
 		}
-
-		keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
 
 		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
 	};
