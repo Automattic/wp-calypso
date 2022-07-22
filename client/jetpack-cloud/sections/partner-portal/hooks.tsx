@@ -1,11 +1,11 @@
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import sortBy from 'lodash/sortBy';
 import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
 import { UseMutationResult, useQuery, UseQueryOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+	alphabeticallySortedProductOptions,
 	ensurePartnerPortalReturnUrl,
 	getProductTitle,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -23,12 +23,7 @@ import {
 	doesPartnerRequireAPaymentMethod,
 	hasValidPaymentMethod,
 } from 'calypso/state/partner-portal/partner/selectors';
-import {
-	APIError,
-	APILicense,
-	APIProductFamily,
-	APIProductFamilyProduct,
-} from 'calypso/state/partner-portal/types';
+import { APIError, APILicense } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 
 /**
@@ -128,16 +123,6 @@ export function useCursorPagination(
 	);
 
 	return [ page, showPagination, onNavigate ];
-}
-
-function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
-	return families.flatMap( ( family ) => family.products );
-}
-
-function alphabeticallySortedProductOptions(
-	families: APIProductFamily[]
-): APIProductFamilyProduct[] {
-	return sortBy( selectProductOptions( families ), ( product ) => product.name );
 }
 
 /**
