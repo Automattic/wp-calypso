@@ -45,6 +45,9 @@ class SocialLoginActionButton extends Component {
 		const { isConnected, service } = this.props;
 
 		if ( isConnected ) {
+			this.props.recordTracksEvent( 'calypso_account_social_disconnect_button_click', {
+				social_account_type: service,
+			} );
 			try {
 				await this.disconnectFromSocialService();
 				this.props.recordTracksEvent( 'calypso_account_social_disconnect_success', {
