@@ -9,7 +9,7 @@ import getSelectedSiteId from './get-selected-site-id';
  * @param  {object}  state Global state tree
  * @returns {?string}       Selected site slug
  */
-export default function getSelectedSiteSlug( state: IAppState ) {
+export default function getSelectedSiteSlug( state: IAppState ): null | string {
 	const siteId = getSelectedSiteId( state );
 	if ( ! siteId ) {
 		return null;
