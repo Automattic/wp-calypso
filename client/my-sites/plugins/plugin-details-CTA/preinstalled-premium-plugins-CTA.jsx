@@ -53,10 +53,12 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 						isFetching ? (
 							<div className="plugin-details-CTA__price-placeholder">...</div>
 						) : (
-							<>
-								{ price + ' ' }
-								<span className="plugin-details-CTA__period">{ period }</span>
-							</>
+							translate( '{{span}}From{{/span}} %(price)s {{span}}%(period)s{{/span}}', {
+								args: { price, period },
+								components: { span: <span className="plugin-details-CTA__period" /> },
+								comment:
+									'`price` already includes the currency symbol; `period` can be monthly or yearly. Example: "From $100 monthly"',
+							} )
 						)
 					}
 				</PluginPrice>
