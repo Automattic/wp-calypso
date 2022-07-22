@@ -45,7 +45,7 @@ const SiteName = styled.a`
 	white-space: nowrap;
 	margin-right: 8px;
 	font-weight: 500;
-	font-size: 16px;
+	font-size: 14px;
 	letter-spacing: -0.4px;
 
 	&:hover {
@@ -122,7 +122,15 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 	const isP2Site = site.options?.is_wpforteams_site;
 
-	const displayStatusBadge = isComingSoon || site.is_private;
+	let siteStatusLabel = __( 'Live' );
+
+	if ( isComingSoon ) {
+		siteStatusLabel = __( 'Coming soon' );
+	} else if ( site.is_private ) {
+		siteStatusLabel = __( 'Private' );
+	}
+
+	console.log( 'site:', site );
 
 	return (
 		<ClassNames>
@@ -151,13 +159,6 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							}
 							subtitle={
 								<ListTileSubtitle>
-									{ displayStatusBadge && (
-										<div style={ { marginRight: '8px' } }>
-											<SitesLaunchStatusBadge>
-												{ isComingSoon ? __( 'Coming soon' ) : __( 'Private' ) }
-											</SitesLaunchStatusBadge>
-										</div>
-									) }
 									<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
 										{ displaySiteUrl( site.URL ) }
 									</SiteUrl>
@@ -167,6 +168,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 					</Column>
 					<Column mobileHidden>{ site.plan.product_name_short }</Column>
 					<Column mobileHidden>July 16, 1969</Column>
+					<Column mobileHidden>{ siteStatusLabel }</Column>
 					<Column style={ { width: '20px' } }>
 						<EllipsisMenu>
 							<VisitDashboardItem site={ site } />

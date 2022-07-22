@@ -1,8 +1,11 @@
 import { useFuzzySearch } from '@automattic/search';
 import { ClassNames } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import page from 'page';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import { NoSitesMessage } from './no-sites-message';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 import { SitesTable } from './sites-table';
@@ -11,13 +14,54 @@ import type { SiteExcerptData } from 'calypso/data/sites/use-site-excerpts-query
 interface SearchableSitesTableProps {
 	sites: SiteExcerptData[];
 	initialSearch?: string;
+	filterOptions: SitesTableFilterOptions;
 }
 
-export function SearchableSitesTable( { sites, initialSearch }: SearchableSitesTableProps ) {
+interface SitesTableFilterOptions {
+	status?: string;
+	search?: string;
+}
+
+const FilterBar = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 32px 0;
+`;
+
+const siteStatusOptions = [
+	{ value: 'all', label: 'All Sites' },
+	{ value: 'launched', label: 'Launched' },
+	{ value: 'coming-soon', label: 'Coming Soon' },
+	{ value: 'private', label: 'Private' },
+];
+
+export function SearchableSitesTable( {
+	sites,
+	initialSearch,
+	filterOptions,
+}: SearchableSitesTableProps ) {
 	const { __ } = useI18n();
 
+	const filteredSites = sites.filter( ( site ) => {
+		const isComingSoon =
+			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
+
+		switch ( filterOptions.status ) {
+			case 'launched':
+				return ! site.is_private && ! isComingSoon;
+			case 'private':
+				return site.is_private && ! isComingSoon;
+			case 'coming-soon':
+				return isComingSoon;
+			default:
+				// Treat unknown filters the same as 'all'
+				return site;
+		}
+	} );
+
 	const { setQuery, results } = useFuzzySearch( {
-		data: sites,
+		data: filteredSites,
 		keys: [ 'URL', 'name', 'slug' ],
 		initialQuery: initialSearch,
 	} );
@@ -34,17 +78,13 @@ export function SearchableSitesTable( { sites, initialSearch }: SearchableSitesT
 		}
 	};
 
+	console.log( 'search:', initialSearch );
+
 	return (
 		<ClassNames>
 			{ ( { css } ) => (
 				<>
-					<div
-						className={ css`
-							margin: 32px 0;
-							width: 286px;
-							max-width: 100%;
-						` }
-					>
+					<FilterBar>
 						<SitesSearch
 							searchIcon={ <SitesSearchIcon /> }
 							onSearch={ handleSearch }
@@ -52,11 +92,33 @@ export function SearchableSitesTable( { sites, initialSearch }: SearchableSitesT
 							placeholder={ __( 'Search by name or domain…' ) }
 							defaultValue={ initialSearch }
 						/>
-					</div>
+						<SelectDropdown
+							selectedText={
+								siteStatusOptions.find( ( option ) => option.value === filterOptions.status )?.label
+							}
+							initialSelected={ filterOptions.status }
+							onSelect={ ( option ) => {
+								page(
+									'all' === option.value
+										? removeQueryArgs( window.location.pathname + window.location.search, 'status' )
+										: addQueryArgs( window.location.pathname + window.location.search, {
+												status: option.value,
+										  } )
+								);
+							} }
+							options={ siteStatusOptions }
+						/>
+					</FilterBar>
 					{ results.length > 0 ? (
 						<SitesTable sites={ results } />
 					) : (
-						<h2>{ __( 'No sites match your search.' ) }</h2>
+						<>
+							{ initialSearch ? (
+								<p>{ __( 'No sites match your search.' ) }</p>
+							) : (
+								<NoSitesMessage status={ filterOptions.status } />
+							) }
+						</>
 					) }
 				</>
 			) }
