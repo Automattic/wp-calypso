@@ -460,8 +460,8 @@ class RegisterDomainStep extends Component {
 			delayTimeout: 1000,
 			describedBy: 'step-header',
 			dir: 'ltr',
-			defaultValue: this.state.lastQuery,
-			value: this.state.lastQuery,
+			defaultValue: this.state.hideInitialQuery ? '' : this.state.lastQuery,
+			value: this.state.hideInitialQuery ? '' : this.state.lastQuery,
 			inputLabel: this.props.translate( 'What would you like your domain name to be?' ),
 			minLength: MIN_QUERY_LENGTH,
 			maxLength: 60,
@@ -760,6 +760,7 @@ class RegisterDomainStep extends Component {
 				lastDomainSearched: null,
 				isQueryInvalid: false,
 				lastQuery: cleanedQuery,
+				hideInitialQuery: false,
 				loadingResults,
 				loadingSubdomainResults: loadingResults,
 				pageNumber: 1,
@@ -1129,6 +1130,7 @@ class RegisterDomainStep extends Component {
 				lastQuery: domain,
 				lastVertical: this.props.vertical,
 				lastFilters: this.state.filters,
+				hideInitialQuery: false,
 			},
 			this.save
 		);

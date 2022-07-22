@@ -13,7 +13,6 @@ interface Props {
 	searchTerm: string;
 	suggestions: Vertical[];
 	isLoading?: boolean | undefined;
-	isShowSkipOption?: boolean | undefined;
 	isDisableInput?: boolean | undefined;
 	onInputChange?: ( value: string ) => void;
 	onSelect?: ( vertical: Vertical ) => void;
@@ -24,7 +23,6 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 	searchTerm,
 	suggestions,
 	isLoading,
-	isShowSkipOption,
 	isDisableInput,
 	onInputChange,
 	onSelect,
@@ -123,10 +121,6 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 			return [];
 		}
 
-		if ( ! isShowSkipOption ) {
-			return suggestions || [];
-		}
-
 		return suggestions.concat( [
 			{
 				value: '',
@@ -134,7 +128,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 				category: 0 < suggestions.length ? '—' : '',
 			},
 		] );
-	}, [ translate, suggestions, isLoading, isShowSuggestions, isShowSkipOption ] );
+	}, [ translate, suggestions, isLoading, isShowSuggestions ] );
 
 	useEffect( () => {
 		if ( ! ( window.visualViewport && isMobile ) ) {

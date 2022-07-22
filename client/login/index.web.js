@@ -81,16 +81,14 @@ export default ( router ) => {
 		);
 	}
 
-	if ( config.isEnabled( 'login/qr-code-login' ) ) {
-		router(
-			[ `/log-in/qr/${ lang }` ],
-			redirectLoggedIn,
-			setLocaleMiddleware(),
-			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-			qrCodeLogin,
-			makeLoggedOutLayout
-		);
-	}
+	router(
+		[ `/log-in/qr/${ lang }` ],
+		redirectLoggedIn,
+		setLocaleMiddleware(),
+		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
+		qrCodeLogin,
+		makeLoggedOutLayout
+	);
 
 	router(
 		[

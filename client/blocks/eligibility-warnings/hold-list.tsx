@@ -1,4 +1,3 @@
-import { isBlogger, isPersonal, isPremium } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -20,32 +19,18 @@ function getHoldMessages(
 	context: string | null,
 	translate: LocalizeProps[ 'translate' ],
 	eligibleForProPlan: boolean,
-	billingPeriod?: string,
-	isMarketplace?: boolean,
-	isLegacyPlan?: boolean
+	billingPeriod?: string
 ) {
 	return {
 		NO_BUSINESS_PLAN: {
-			title: ( function () {
-				if ( ! isLegacyPlan && isMarketplace ) {
-					return translate( 'Upgrade to a Starter plan' );
-				}
-
-				if ( ! isLegacyPlan && eligibleForProPlan ) {
-					return translate( 'Upgrade to a Pro plan' );
-				}
-
-				return translate( 'Upgrade to a Business plan' );
-			} )(),
+			title: eligibleForProPlan
+				? translate( 'Upgrade to a Pro plan' )
+				: translate( 'Upgrade to a Business plan' ),
 			description: ( function () {
 				if ( context === 'themes' ) {
 					return translate(
 						"You'll also get to install custom plugins, have more storage, and access live support."
 					);
-				}
-
-				if ( isMarketplace ) {
-					return translate( "You'll also get to collect payments and have more storage." );
 				}
 
 				if ( billingPeriod === IntervalLength.MONTHLY ) {
@@ -175,7 +160,6 @@ export function getBlockingMessages(
 interface ExternalProps {
 	context: string | null;
 	holds: string[];
-	isMarketplace?: boolean;
 	isPlaceholder: boolean;
 }
 
@@ -219,27 +203,14 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
+export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-
-	const plan = selectedSite?.plan;
-	let isLegacyPlan = false;
-	if ( typeof plan !== 'undefined' ) {
-		isLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
-	}
 
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
 	const billingPeriod = useSelector( getBillingInterval );
-	const holdMessages = getHoldMessages(
-		context,
-		translate,
-		eligibleForProPlan,
-		billingPeriod,
-		isMarketplace,
-		isLegacyPlan
-	);
+	const holdMessages = getHoldMessages( context, translate, eligibleForProPlan, billingPeriod );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );

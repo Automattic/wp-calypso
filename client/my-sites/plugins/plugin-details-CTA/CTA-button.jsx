@@ -217,8 +217,7 @@ function onClickInstallPlugin( {
 				`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
 					selectedSite?.plan,
 					billingPeriod,
-					eligibleForProPlan,
-					true
+					eligibleForProPlan
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
 				}`

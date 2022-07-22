@@ -36,7 +36,8 @@ export default function PortalNav( { className = '' }: Props ): ReactElement | n
 	const currentRoute = useSelector( getCurrentRoute );
 	const showDashboard = useSelector( showAgencyDashboard );
 	const isPartnerPortalRoute = useSelector( isPartnerPortal );
-	const isDashboardRoute = currentRoute.startsWith( '/dashboard' );
+	const isDashboardRoute =
+		currentRoute.startsWith( '/dashboard' ) || currentRoute.startsWith( '/plugins' );
 	const show = partnerFetched && partner;
 
 	if ( ! isSectionNameEnabled( 'jetpack-cloud-partner-portal' ) ) {
