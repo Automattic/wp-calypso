@@ -330,7 +330,7 @@ const InstalledInOrPricing = ( {
 								<>
 									{ price + ' ' }
 									<span className="plugins-browser-item__period">{ period }</span>
-									{ shouldUpgrade && (
+									{ shouldUpgrade && ! isPreinstalledPremiumPlugin && (
 										<div className="plugins-browser-item__period">
 											{ translate( 'Requires a plan upgrade' ) }
 										</div>
