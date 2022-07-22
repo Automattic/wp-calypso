@@ -26,7 +26,7 @@ function sortSitesByLastPublish( sites: SiteExcerptData[], order: string ): Site
 	return sites.sort( ( a, b ) => {
 		if ( a.options?.updated_at && b.options?.updated_at ) {
 			return (
-				( Date.parse( b.options?.updated_at ) - Date.parse( a.options?.updated_at ) ) *
+				( Date.parse( a.options?.updated_at ) - Date.parse( b.options?.updated_at ) ) *
 				( order === 'asc' ? 1 : -1 )
 			);
 		}

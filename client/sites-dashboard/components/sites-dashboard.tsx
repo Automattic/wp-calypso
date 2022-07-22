@@ -97,6 +97,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 
 	const { sortedSites } = useSitesTableSorting( filteredSites, {
 		sort: 'last-publish',
+		order: 'desc',
 	} );
 
 	return (
