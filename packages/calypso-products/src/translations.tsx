@@ -261,12 +261,20 @@ export const getJetpackProductsTaglines = (): Record<
 	};
 };
 
-export const getJetpackProductDisclaimers = (): Record< string, TranslateResult > => {
+export const getJetpackProductDisclaimers = ( link: string ): Record< string, TranslateResult > => {
+	const getLink = () => {
+		if ( link[ 0 ] === '#' ) {
+			return <a href={ link }></a>;
+		}
+
+		return <a href={ link } target="_blank" rel="noreferrer"></a>;
+	};
+
 	const backupT1Disclaimer = translate(
 		'* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.',
 		{
 			components: {
-				link: <a href="#backup-storage-limits-faq"></a>,
+				link: getLink(),
 			},
 		}
 	);
@@ -274,7 +282,7 @@ export const getJetpackProductDisclaimers = (): Record< string, TranslateResult 
 		'* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.',
 		{
 			components: {
-				link: <a href="#backup-storage-limits-faq"></a>,
+				link: getLink(),
 			},
 		}
 	);
