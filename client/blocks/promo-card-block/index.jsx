@@ -30,11 +30,13 @@ const PromoCardBlock = ( props ) => {
 	return (
 		<>
 			<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
-			<TrackComponentView eventName={ impressionEvent } />
 			{ jetpackNonAtomic || selectedPlugin || isFetching ? (
 				<div></div>
 			) : (
-				<PromoCard { ...{ ...props, onClick } } />
+				<>
+					<TrackComponentView eventName={ impressionEvent } />
+					<PromoCard { ...{ ...props, onClick } } />
+				</>
 			) }
 		</>
 	);
