@@ -128,7 +128,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						onCheckout?.();
 					} }
 				>
-					{ hasTranslation( 'Included in WordPress.com Premium' )
+					{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
 						? __( 'Included in WordPress.com Premium' )
 						: __( 'Upgrade to Premium' ) }
 				</Button>
