@@ -21,6 +21,39 @@
 	animation: fadein 1.5s;
 }
 
+.site-thumbnail-loader {
+    animation-duration: 2.4s;
+    animation-fill-mode: forwards;
+    animation-iteration-count: infinite;
+    animation-name: shimmer;
+    animation-timing-function: linear;
+    background: linear-gradient( to top, transparent 8%, #f0f0f066 18%, transparent 33% );
+    background-size: 100% 1200px;
+}
+
+
+@-webkit-keyframes shimmer {
+    0% {
+        background-position: 0 -100%;
+    }
+    100% {
+        background-position: 0 100%;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 0 -1200px;
+    }
+    100% {
+        background-position: 0 1200px;
+    }
+}
+  
+//     .media {
+//     height: 300px;
+// }
+
 @keyframes fadein {
 	from {
 		opacity: 0;
