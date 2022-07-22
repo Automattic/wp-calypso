@@ -1,4 +1,10 @@
-import { Button, Gridicon, TabPanel, useSitesTableFiltering } from '@automattic/components';
+import {
+	Button,
+	Gridicon,
+	TabPanel,
+	useSitesTableFiltering,
+	useSitesTableSorting,
+} from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -89,6 +95,10 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 
 	const selectedTabName = tabs.find( ( tab ) => tab.name === status )?.name;
 
+	const { sortedSites } = useSitesTableSorting( filteredSites, {
+		sort: 'last-publish',
+	} );
+
 	return (
 		<main>
 			<PageHeader>
@@ -118,8 +128,8 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 										defaultValue={ search }
 									/>
 								</SearchWrapper>
-								{ filteredSites.length > 0 ? (
-									<SitesTable sites={ filteredSites } />
+								{ sortedSites.length > 0 ? (
+									<SitesTable sites={ sortedSites } />
 								) : (
 									<h2>{ __( 'No sites match your search.' ) }</h2>
 								) }
