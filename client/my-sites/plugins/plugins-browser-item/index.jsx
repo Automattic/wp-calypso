@@ -270,7 +270,7 @@ const InstalledInOrPricing = ( {
 	const active = isWpcomPreinstalled || isPluginActive || isPreinstalledPremiumPluginActive;
 
 	const checkmarkColorClass =
-		selectedSiteId && active ? 'checkmark--active' : 'checkmark--inactive';
+		! selectedSiteId || active ? 'checkmark--active' : 'checkmark--inactive';
 
 	if ( isPreinstalledPremiumPluginUpgraded ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
