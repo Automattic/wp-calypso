@@ -36,6 +36,24 @@ class SocialLoginForm extends Component {
 		linkingSocialService: '',
 	};
 
+	reportSocialLoginFailure = ( { service, socialInfo, error } ) => {
+		if ( error.code === 'user_exists' || error.code === 'unknown_user' ) {
+			this.props.createSocialUserFailed( socialInfo, error );
+
+			this.recordEvent( 'calypso_social_auth_attempt', service, {
+				error_code: error.code,
+				starting_point: 'login',
+			} );
+
+			return;
+		}
+
+		this.recordEvent( 'calypso_login_social_login_failure', service, {
+			error_code: error.code,
+			error_message: error.message,
+		} );
+	};
+
 	handleGoogleResponse = ( response, triggeredByUser = true ) => {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
@@ -74,14 +92,7 @@ class SocialLoginForm extends Component {
 				onSuccess();
 			},
 			( error ) => {
-				if ( error.code === 'user_exists' ) {
-					this.props.createSocialUserFailed( socialInfo, error );
-				}
-
-				this.recordEvent( 'calypso_login_social_login_failure', 'google', {
-					error_code: error.code,
-					error_message: error.message,
-				} );
+				this.reportSocialLoginFailure( { service: 'google', socialInfo, error } );
 			}
 		);
 	};
@@ -117,14 +128,7 @@ class SocialLoginForm extends Component {
 				onSuccess();
 			},
 			( error ) => {
-				if ( error.code === 'user_exists' ) {
-					this.props.createSocialUserFailed( socialInfo, error );
-				}
-
-				this.recordEvent( 'calypso_login_social_login_failure', 'apple', {
-					error_code: error.code,
-					error_message: error.message,
-				} );
+				this.reportSocialLoginFailure( { service: 'apple', socialInfo, error } );
 			}
 		);
 	};
