@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -13,6 +14,7 @@ import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
+import { getSignupUrl } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -38,10 +40,12 @@ import {
 import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
+
 import './style.scss';
 
 class Login extends Component {
@@ -195,6 +199,24 @@ class Login extends Component {
 		this.props.rebootAfterLogin( {
 			social_service_connected: this.props.socialConnect,
 		} );
+	};
+
+	getSignupUrl = () => {
+		if ( this.props.signupUrl ) {
+			return this.props.signupUrl;
+		}
+
+		const { currentQuery, currentRoute, oauth2Client, locale, isGutenboarding } = this.props;
+		const { pathname } = getUrlParts( window.location.href );
+
+		return getSignupUrl(
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
 	};
 
 	renderHeader() {
@@ -506,7 +528,7 @@ class Login extends Component {
 			>
 				{ this.renderHeader() }
 
-				<ErrorNotice />
+				<ErrorNotice signupUrl={ this.getSignupUrl() } />
 
 				{ this.renderNotice() }
 
@@ -540,6 +562,8 @@ export default connect(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
+		currentQuery: getCurrentQueryArguments( state ),
+		currentRoute: getCurrentRoute( state ),
 	} ),
 	{
 		rebootAfterLogin,

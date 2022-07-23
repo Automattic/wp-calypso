@@ -17,6 +17,7 @@ class ErrorNotice extends Component {
 		requestAccountError: PropTypes.object,
 		requestError: PropTypes.object,
 		twoFactorAuthRequestError: PropTypes.object,
+		signupUrl: PropTypes.string,
 	};
 
 	componentDidUpdate( prevProps ) {
@@ -69,6 +70,18 @@ class ErrorNotice extends Component {
 		}
 
 		let message = error.message;
+
+		if ( error.code === 'unknown_user' && this.props.signupUrl ) {
+			message = this.props.translate(
+				"Hmm, we can't find a WordPress.com account for that social login. Please double check your information and try again. " +
+					'Alternatively, you can try {{a}}creating a new account{{/a}}.',
+				{
+					components: {
+						a: <a href={ this.props.signupUrl } />,
+					},
+				}
+			);
+		}
 
 		// Account closed error from the API contains HTML, so set a custom message for that case
 		if ( error.code === 'deleted_user' ) {
