@@ -370,10 +370,10 @@ export const socialAccount = ( state = { createError: null }, action ) => {
 	return state;
 };
 
-const userExistsErrorHandler = ( state, { error, authInfo } ) => {
-	if ( error.code === 'user_exists' ) {
+const socialResponseErrorHandler = ( state, { error, authInfo } ) => {
+	if ( error.code === 'user_exists' || error.code === 'unknown_user' ) {
 		return {
-			isLinking: true,
+			isLinking: error.code === 'user_exists',
 			email: error.email,
 			authInfo,
 		};
@@ -385,9 +385,9 @@ const userExistsErrorHandler = ( state, { error, authInfo } ) => {
 export const socialAccountLink = ( state = { isLinking: false }, action ) => {
 	switch ( action.type ) {
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE:
-			return userExistsErrorHandler( state, action );
+			return socialResponseErrorHandler( state, action );
 		case SOCIAL_LOGIN_REQUEST_FAILURE:
-			return userExistsErrorHandler( state, action );
+			return socialResponseErrorHandler( state, action );
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
 			return { isLinking: false };
 		case CURRENT_USER_RECEIVE:

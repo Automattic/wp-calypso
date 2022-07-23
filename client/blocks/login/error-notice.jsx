@@ -4,11 +4,13 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	getRequestError,
 	getTwoFactorAuthRequestError,
 	getCreateSocialAccountError,
 	getRequestSocialAccountError,
+	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
 
 class ErrorNotice extends Component {
@@ -71,13 +73,23 @@ class ErrorNotice extends Component {
 
 		let message = error.message;
 
-		if ( error.code === 'unknown_user' && this.props.signupUrl ) {
+		const { signupUrl, socialAccountLinkService } = this.props;
+
+		if ( error.code === 'unknown_user' && signupUrl ) {
 			message = this.props.translate(
 				"Hmm, we can't find a WordPress.com account for that social login. Please double check your information and try again. " +
 					'Alternatively, you can try {{a}}creating a new account{{/a}}.',
 				{
 					components: {
-						a: <a href={ this.props.signupUrl } />,
+						a: (
+							<a
+								href={
+									socialAccountLinkService
+										? addQueryArgs( { launch_service: socialAccountLinkService }, signupUrl )
+										: signupUrl
+								}
+							/>
+						),
 					},
 				}
 			);
@@ -115,4 +127,5 @@ export default connect( ( state ) => ( {
 	requestAccountError: getRequestSocialAccountError( state ),
 	requestError: getRequestError( state ),
 	twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
+	socialAccountLinkService: getSocialAccountLinkService( state ),
 } ) )( localize( ErrorNotice ) );
