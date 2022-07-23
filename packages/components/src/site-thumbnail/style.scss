@@ -3,6 +3,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	position: relative;
 
 }
 
@@ -21,7 +22,8 @@
 	animation: fadein 1.5s;
 }
 
-.site-thumbnail-loader {
+.site-thumbnail-loader::before {
+	content: '';
     animation-duration: 2.4s;
     animation-fill-mode: forwards;
     animation-iteration-count: infinite;
@@ -29,6 +31,13 @@
     animation-timing-function: linear;
     background: linear-gradient( to top, transparent 8%, #f0f0f066 18%, transparent 33% );
     background-size: 100% 1200px;
+	width: 100%;
+    height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1;
+	display: inline-table;
 }
 
 
