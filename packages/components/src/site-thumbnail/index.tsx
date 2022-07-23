@@ -26,19 +26,22 @@ export const SiteThumbnail = ( {
 	const maybeImage = useMshotsImg( mShotsUrl ?? '', MSHOTS_OPTION );
 
 	const src: string = maybeImage?.src || '';
-	const visible = !! src;
+	const visible = !! src && mShotsUrl;
 	const textColor = backgroundColor && getTextColorFromBackground( backgroundColor );
+
 	const className = classnames(
 		'site-thumbnail',
 		visible ? 'site-thumbnail-visible' : '',
 		`site-thumbnail__size-${ size }`
 	);
 
+	const loader = visible ? 'site-thumbnail-loader' : '';
+
 	const backgroundImage = maybeImage?.src && `url( ${ maybeImage?.src } )`;
 
 	return ! visible ? (
 		<div className={ className } style={ { backgroundColor: backgroundColor, color: textColor } }>
-			{ children }
+			<div className={ loader }>{ children }</div>
 		</div>
 	) : (
 		<div
