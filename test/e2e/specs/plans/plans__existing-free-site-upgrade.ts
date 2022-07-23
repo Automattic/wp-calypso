@@ -66,7 +66,7 @@ describe(
 			await testAccount.authenticate( page );
 		} );
 
-		describe( 'Upgrade to WordPress.com Premium', function () {
+		describe( `Upgrade to WordPress.com ${ planName }`, function () {
 			let cartCheckoutPage: CartCheckoutPage;
 			let plansPage: PlansPage;
 
