@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import { BearerTokenErrorResponse, Invite } from './types';
+import { BearerTokenErrorResponse, TestFile } from './types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
@@ -18,6 +18,10 @@ import type {
 	NewInviteResponse,
 	AllInvitesResponse,
 	DeleteInvitesResponse,
+	NewPostParams,
+	NewMediaResponse,
+	NewPostResponse,
+	Invite,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -123,8 +127,14 @@ export class RestAPIClient {
 	 *
 	 * @returns {string} Content-Type header string.
 	 */
-	private getContentTypeHeader( value: 'json' ): string {
-		return `application/${ value }`;
+	private getContentTypeHeader( value: 'json' | 'formdata' ): string {
+		if ( value === 'json' ) {
+			return `application/${ value }`;
+		}
+		if ( value === 'formdata' ) {
+			return 'multipart/form-data';
+		}
+		return '';
 	}
 
 	/**
@@ -153,7 +163,7 @@ export class RestAPIClient {
 	 * @returns {Promise<any>} Decoded JSON response.
 	 */
 	async sendRequest( url: URL, params: RequestParams | URLSearchParams ): Promise< any > {
-		const response = await fetch( url, params as RequestInit );
+		const response = await fetch( url.toString(), params as RequestInit );
 		return response.json();
 	}
 
@@ -226,6 +236,9 @@ export class RestAPIClient {
 			);
 		}
 
+		// Covert the `blogid` attribute to number, which is how
+		// it is used elsewhre in the REST API.
+		response[ 'blog_details' ][ 'blogid' ] = parseInt( response[ 'blog_details' ][ 'blogid' ] );
 		return response;
 	}
 
@@ -271,7 +284,7 @@ export class RestAPIClient {
 				break;
 			}
 
-			if ( site.ID !== parseInt( expectedSiteDetails.id ) ) {
+			if ( site.ID !== expectedSiteDetails.id ) {
 				console.info(
 					`Aborting site deletion: site ID did not match.\nExpected: ${ site.ID }, Got: ${ expectedSiteDetails.id } `
 				);
@@ -551,5 +564,99 @@ export class RestAPIClient {
 		};
 
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
+	}
+
+	/* Posts */
+
+	/**
+	 * Creates a post on the site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {NewPostParams} details Details of the new post.
+	 */
+	async createPost( siteID: number, details: NewPostParams ): Promise< NewPostResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( details ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/* Media */
+
+	/**
+	 * Uploads a media file.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param param1 Optional object parameter.
+	 * @param {TestFile} param1.media Local media file to be uploaded.
+	 * @param {string} param1.mediaURL URL to the media file to be uploaded.
+	 * @throws {Error} If neither media nor mediaURL are defined.
+	 */
+	async uploadMedia(
+		siteID: number,
+		{ media, mediaURL }: { media?: TestFile; mediaURL?: string }
+	): Promise< NewMediaResponse > {
+		let params: RequestParams | undefined;
+
+		if ( ! media && ! mediaURL ) {
+			throw new Error( 'Either `media` or `mediaURL` parameter must be defined.' );
+		}
+
+		if ( media ) {
+			throw new Error( 'Not implemented yet.' );
+			// const formData = new FormData();
+			// formData.append( 'media', media );
+
+			// params = {
+			// 	method: 'post',
+			// 	headers: {
+			// 		Authorization: await this.getAuthorizationHeader( 'bearer' ),
+			// 		'Content-Type': 'image/jpeg',
+			// 	},
+			// 	body: formData as BodyInit,
+			// };
+		}
+		if ( mediaURL ) {
+			params = {
+				method: 'post',
+				headers: {
+					Authorization: await this.getAuthorizationHeader( 'bearer' ),
+					'Content-Type': this.getContentTypeHeader( 'json' ),
+				},
+				body: JSON.stringify( { media_urls: mediaURL } ),
+			};
+		}
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/media/new` ),
+			params as RequestParams
+		);
+
+		console.log( response );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 }
