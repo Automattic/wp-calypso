@@ -830,8 +830,9 @@ class SignupForm extends Component {
 				{
 					info: true,
 					message: this.props.translate(
-						'The email address "%(email)s" is associated with a WordPress.com account. ' +
-							'{{a}}Log in{{/a}} to connect it to your social profile, or choose a different profile.',
+						'We found a WordPress.com account with the email address "%(email)s". ' +
+							'{{a}}Log in to this account{{/a}} to connect it to your profile, ' +
+							'or choose a different one.',
 						{
 							args: { email: userExistsError.email },
 							components: {
