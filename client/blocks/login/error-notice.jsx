@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { addQueryArgs } from 'calypso/lib/url';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getRequestError,
 	getTwoFactorAuthRequestError,
@@ -56,6 +57,12 @@ class ErrorNotice extends Component {
 		);
 	}
 
+	registerSignupUrlClickEvent = () => {
+		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click', {
+			reason: 'unknown_user',
+		} );
+	};
+
 	render() {
 		const error = this.getError();
 
@@ -88,6 +95,7 @@ class ErrorNotice extends Component {
 										? addQueryArgs( { launch_service: socialAccountLinkService }, signupUrl )
 										: signupUrl
 								}
+								onClick={ this.registerSignupUrlClickEvent }
 							/>
 						),
 					},
@@ -122,10 +130,15 @@ class ErrorNotice extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	createAccountError: getCreateSocialAccountError( state ),
-	requestAccountError: getRequestSocialAccountError( state ),
-	requestError: getRequestError( state ),
-	twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
-	socialAccountLinkService: getSocialAccountLinkService( state ),
-} ) )( localize( ErrorNotice ) );
+export default connect(
+	( state ) => ( {
+		createAccountError: getCreateSocialAccountError( state ),
+		requestAccountError: getRequestSocialAccountError( state ),
+		requestError: getRequestError( state ),
+		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
+		socialAccountLinkService: getSocialAccountLinkService( state ),
+	} ),
+	{
+		recordTracksEvent,
+	}
+)( localize( ErrorNotice ) );
