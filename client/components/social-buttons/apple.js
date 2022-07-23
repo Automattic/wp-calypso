@@ -8,6 +8,7 @@ import { cloneElement, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import AppleIcon from 'calypso/components/social-icons/apple';
 import { isFormDisabled } from 'calypso/state/login/selectors';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
 import './style.scss';
 
@@ -46,6 +47,10 @@ class AppleLoginButton extends Component {
 				this.handleSocialResponseFromRedirect( this.props.socialServiceResponse );
 			this.loadAppleClient();
 		}
+
+		if ( this.props.launchServiceOnLoad ) {
+			this.authenticate();
+		}
 	}
 
 	handleSocialResponseFromRedirect( socialServiceResponse ) {
@@ -68,6 +73,18 @@ class AppleLoginButton extends Component {
 			id_token: socialServiceResponse.id_token,
 			user: user,
 		} );
+	}
+
+	authenticate() {
+		if ( this.props.uxMode === 'popup' ) {
+			requestExternalAccess( connectUrlPopupFLow, this.props.responseHandler );
+			return;
+		}
+
+		if ( this.props.uxMode === 'redirect' ) {
+			this.loadAppleClient().then( ( AppleID ) => AppleID.auth.signIn() );
+			return;
+		}
 	}
 
 	async loadAppleClient() {
@@ -101,15 +118,7 @@ class AppleLoginButton extends Component {
 			this.props.onClick( event );
 		}
 
-		if ( this.props.uxMode === 'popup' ) {
-			requestExternalAccess( connectUrlPopupFLow, this.props.responseHandler );
-			return;
-		}
-
-		if ( this.props.uxMode === 'redirect' ) {
-			this.loadAppleClient().then( ( AppleID ) => AppleID.auth.signIn() );
-			return;
-		}
+		this.authenticate();
 	};
 
 	render() {
@@ -161,6 +170,7 @@ class AppleLoginButton extends Component {
 export default connect(
 	( state ) => ( {
 		isFormDisabled: isFormDisabled( state ),
+		launchServiceOnLoad: getInitialQueryArguments( state ).launch_service === 'apple',
 	} ),
 	null
 )( localize( AppleLoginButton ) );
