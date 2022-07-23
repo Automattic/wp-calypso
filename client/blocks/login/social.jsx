@@ -38,13 +38,7 @@ class SocialLoginForm extends Component {
 
 	reportSocialLoginFailure = ( { service, socialInfo, error } ) => {
 		if ( error.code === 'user_exists' || error.code === 'unknown_user' ) {
-			this.props.createSocialUserFailed( socialInfo, error );
-
-			this.recordEvent( 'calypso_social_auth_attempt', service, {
-				error_code: error.code,
-				starting_point: 'login',
-			} );
-
+			this.props.createSocialUserFailed( socialInfo, error, 'login' );
 			return;
 		}
 
