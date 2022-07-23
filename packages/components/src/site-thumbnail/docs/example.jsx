@@ -1,3 +1,4 @@
+import WordPressLogo from '../../wordpress-logo';
 import { SiteThumbnail } from '../index';
 
 export default function SiteThumbnailExample() {
@@ -32,7 +33,11 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Private Site with Site Icon</h3>
-					<SiteThumbnail />
+					<SiteThumbnail backgroundColor="purple">
+						<div style={ { paddingTop: '25px' } }>
+							<WordPressLogo size={ 36 } />
+						</div>
+					</SiteThumbnail>
 				</div>
 				<div
 					style={ {
@@ -54,7 +59,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Coming Soon Site</h3>
-					<SiteThumbnail />
+					<SiteThumbnail>CS</SiteThumbnail>
 				</div>
 			</div>
 			<h2>Medium</h2>
@@ -84,7 +89,11 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Private Site with Site Icon</h3>
-					<SiteThumbnail size="medium" />
+					<SiteThumbnail size="medium" backgroundColor="cyan">
+						<div style={ { paddingTop: '25px' } }>
+							<WordPressLogo />
+						</div>
+					</SiteThumbnail>
 				</div>
 				<div
 					style={ {
@@ -106,7 +115,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Coming Soon Site</h3>
-					<SiteThumbnail size="medium" />
+					<SiteThumbnail size="medium">CS</SiteThumbnail>
 				</div>
 			</div>
 		</div>
