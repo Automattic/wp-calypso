@@ -17,7 +17,7 @@ const selectors = {
 			// link.
 			return `button:text-matches("${ name }", "i")`;
 		}
-		return `button.is-${ name.toLowerCase() }-plan`;
+		return `button.is-${ name.toLowerCase() }-plan:visible`;
 	},
 
 	// Navigation
@@ -61,7 +61,7 @@ export class PlansPage {
 	 */
 	async selectPlan( plan: Plans ): Promise< void > {
 		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
-		await Promise.all( [ this.page.waitForNavigation(), locator.click() ] );
+		await Promise.all( [ this.page.waitForNavigation(), locator.first().click() ] );
 	}
 
 	/* Generic */

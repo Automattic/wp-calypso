@@ -1,6 +1,9 @@
+/**
+ * @group calypso-release
+ */
+
 import {
 	DataHelper,
-	CheckoutThankYouPage,
 	SidebarComponent,
 	PlansPage,
 	CartCheckoutPage,
@@ -9,46 +12,61 @@ import {
 	BrowserManager,
 	SecretsManager,
 	NewSiteResponse,
+	NewPostResponse,
+	PublishedPostPage,
+	NavbarComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
+const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase() );
 
 describe(
 	DataHelper.createSuiteTitle(
-		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Pro'
+		'Plans: Upgrade exising WordPress.com Free site to WordPress.com Premium'
 	),
 	function () {
 		const blogName = DataHelper.getBlogName();
+		const planName = 'Premium';
+		const publishedPosts: NewPostResponse[] = [];
 		let siteCreatedFlag: boolean;
-		let newSite: NewSiteResponse;
+		let newSiteDetails: NewSiteResponse;
 		let restAPIClient: RestAPIClient;
 		let page: Page;
 
 		beforeAll( async function () {
-			// Set up the test site programmatically.
+			// Set up the test site programmatically against simpleSiteFreePlanUser.
 			const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
-			restAPIClient = new RestAPIClient( credentials );
 
-			newSite = await restAPIClient.createSite( {
+			restAPIClient = new RestAPIClient( credentials );
+			console.info( 'Creating a new test site.' );
+			newSiteDetails = await restAPIClient.createSite( {
 				name: blogName,
 				title: blogName,
 			} );
 
-			if ( ! newSite ) {
-				throw new Error( `Failed to create new site via REST API.\nHTTP response: ${ newSite }` );
-			}
 			siteCreatedFlag = true;
 
-			// Authenticate as user.
+			// Add posts to site.
+			console.info( 'Adding test posts to the site.' );
+			for await ( const title of postTitles ) {
+				publishedPosts.push(
+					await restAPIClient.createPost( newSiteDetails.blog_details.blogid, {
+						title: title,
+					} )
+				);
+			}
+
+			// Launch browser.
 			page = await browser.newPage();
 
+			// Authenticate as simpleSiteFreePlanUser.
 			const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
 			await testAccount.authenticate( page );
 		} );
 
-		describe( 'Upgrade to WordPress.com Pro', function () {
+		describe( 'Upgrade to WordPress.com Premium', function () {
 			let cartCheckoutPage: CartCheckoutPage;
 			let plansPage: PlansPage;
 
@@ -57,33 +75,35 @@ describe(
 			} );
 
 			it( 'Navigate to Upgrades > Plans', async function () {
-				await page.goto( DataHelper.getCalypsoURL( `/plans/${ newSite.blog_details.site_slug }` ) );
+				await page.goto(
+					DataHelper.getCalypsoURL( `/plans/${ newSiteDetails.blog_details.site_slug }` )
+				);
 			} );
 
 			it( 'View available plans', async function () {
 				plansPage = new PlansPage( page );
 			} );
 
-			it( 'Click button to upgrade to WordPress.com Pro', async function () {
-				await plansPage.selectPlan( 'Premium' ); // Placeholder
+			it( `Click button to upgrade to WordPress.com ${ planName }`, async function () {
+				await plansPage.selectPlan( 'Premium' );
 			} );
 
-			it( 'WordPress.com Pro is added to cart', async function () {
+			it( `WordPress.com ${ planName } is added to cart`, async function () {
 				cartCheckoutPage = new CartCheckoutPage( page );
-				await cartCheckoutPage.validateCartItem( `WordPress.com Pro` );
+				await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 			} );
 
 			it( 'Make purchase', async function () {
 				await cartCheckoutPage.purchase();
 			} );
 
-			it( 'View new features', async function () {
-				const checkoutThankYouPage = new CheckoutThankYouPage( page );
-				await checkoutThankYouPage.clickButton( 'View my new features' );
+			it( 'Return to My Home dashboard', async function () {
+				const navbarComponent = new NavbarComponent( page );
+				await navbarComponent.clickMySites();
 			} );
 		} );
 
-		describe( 'Validate WordPress.com Pro functionality', function () {
+		describe( `Validate WordPress.com ${ planName } functionality`, function () {
 			let sidebarComponent: SidebarComponent;
 
 			it( 'Navigate to Upgrades > Plans', async function () {
@@ -91,9 +111,24 @@ describe(
 				await sidebarComponent.navigate( 'Upgrades', 'Plans' );
 			} );
 
-			it( 'Plans page states user is on WordPress.com Pro plan', async function () {
+			it( `Plans page states user is on WordPress.com ${ planName } plan`, async function () {
 				const plansPage = new PlansPage( page );
-				await plansPage.validateActivePlan( 'Premium' ); // Placeholder
+				await plansPage.clickTab( 'My Plan' );
+				await plansPage.validateActivePlan( 'Premium' );
+			} );
+		} );
+
+		describe( 'Validate site content is intact', function () {
+			it.each( postTitles )( 'Post %s is preserved', async function ( postTitle: string ) {
+				// Locate the new post response for the post in question.
+				const postResponse = publishedPosts.find(
+					( r ) => r.title === postTitle
+				) as NewPostResponse;
+
+				// Visit the page and validate.
+				await page.goto( postResponse.URL );
+				const publishedPostPage = new PublishedPostPage( page );
+				await publishedPostPage.validateTitle( postTitle );
 			} );
 		} );
 
@@ -103,9 +138,9 @@ describe(
 			}
 
 			await apiDeleteSite( restAPIClient, {
-				url: newSite.blog_details.url,
-				id: newSite.blog_details.blogid,
-				name: newSite.blog_details.blogname,
+				url: newSiteDetails.blog_details.url,
+				id: newSiteDetails.blog_details.blogid,
+				name: newSiteDetails.blog_details.blogname,
 			} );
 		} );
 	}
