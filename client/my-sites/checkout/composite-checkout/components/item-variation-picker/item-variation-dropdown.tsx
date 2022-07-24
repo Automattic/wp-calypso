@@ -8,17 +8,6 @@ import { ItemVariantPrice } from './variant-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-const VariantLabel = styled.span`
-	font-size: ${ ( props ) => props.theme.fontSize.small };
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-`;
-
-const VariantPrice = styled.span`
-	font-size: ${ ( props ) => props.theme.fontSize.small };
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	color: #646970;
-`;
-
 interface CurrentOptionProps {
 	open: boolean;
 }
@@ -55,22 +44,23 @@ const Option = styled.li< OptionProps >`
 	align-items: center;
 	background: white;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
+	color: #646970;
 	display: flex;
 	flex-direction: row;
+	font-size: ${ ( props ) => props.theme.fontSize.small };
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 	justify-content: space-between;
 	/* the calc aligns the price with the price in CurrentOption */
 	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 	cursor: pointer;
 
-	${ ( props ) =>
-		props.selected &&
-		css`
-			background: #055d9c;
+	&:hover {
+		background: #e9f0f5;
+	}
 
-			${ VariantLabel }, ${ VariantPrice } {
-				color: white;
-			}
-		` }
+	&.is-selected {
+		background: #055d9c;
+	}
 `;
 
 const Dropdown = styled.div`
@@ -272,14 +262,16 @@ function ItemVariantOption( {
 	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
+	const isSelected = index === highlightedVariantIndex;
 	return (
 		<Option
 			id={ productId.toString() }
+			className={ isSelected ? 'is-selected' : undefined }
 			aria-label={ variantLabel }
 			data-product-slug={ productSlug }
 			role="option"
 			onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
-			selected={ index === highlightedVariantIndex }
+			selected={ isSelected }
 		>
 			<ItemVariantPrice variant={ variant } />
 		</Option>
