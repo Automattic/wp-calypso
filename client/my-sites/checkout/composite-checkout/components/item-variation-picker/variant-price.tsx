@@ -13,7 +13,7 @@ const Discount = styled.span`
 		margin-left: 8px;
 	}
 
-	.is-selected & {
+	.item-variant-option--selected & {
 		color: #b8e6bf;
 	}
 
@@ -32,7 +32,7 @@ const DoNotPayThis = styled.del`
 		margin-left: 8px;
 	}
 
-	.is-selected & {
+	.item-variant-option--selected & {
 		color: #fff;
 	}
 `;
@@ -40,7 +40,7 @@ const DoNotPayThis = styled.del`
 const Price = styled.span`
 	color: #646970;
 
-	.is-selected & {
+	.item-variant-option--selected & {
 		color: #fff;
 	}
 `;
@@ -54,7 +54,7 @@ const Variant = styled.div`
 	line-height: 20px;
 	width: 100%;
 
-	.is-selected & {
+	.item-variant-option--selected & {
 		color: #fff;
 	}
 `;

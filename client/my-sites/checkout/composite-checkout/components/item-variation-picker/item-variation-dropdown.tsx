@@ -58,7 +58,7 @@ const Option = styled.li< OptionProps >`
 		background: #e9f0f5;
 	}
 
-	&.is-selected {
+	&.item-variant-option--selected {
 		background: #055d9c;
 	}
 `;
@@ -266,7 +266,7 @@ function ItemVariantOption( {
 	return (
 		<Option
 			id={ productId.toString() }
-			className={ isSelected ? 'is-selected' : undefined }
+			className={ isSelected ? 'item-variant-option--selected' : undefined }
 			aria-label={ variantLabel }
 			data-product-slug={ productSlug }
 			role="option"
