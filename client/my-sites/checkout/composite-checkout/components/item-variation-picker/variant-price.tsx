@@ -13,6 +13,10 @@ const Discount = styled.span`
 		margin-left: 8px;
 	}
 
+	.is-selected & {
+		color: #b8e6bf;
+	}
+
 	@media ( max-width: 660px ) {
 		width: 100%;
 	}
@@ -27,10 +31,18 @@ const DoNotPayThis = styled.del`
 		margin-right: 0;
 		margin-left: 8px;
 	}
+
+	.is-selected & {
+		color: #fff;
+	}
 `;
 
 const Price = styled.span`
 	color: #646970;
+
+	.is-selected & {
+		color: #fff;
+	}
 `;
 
 const Variant = styled.div`
@@ -41,6 +53,10 @@ const Variant = styled.div`
 	justify-content: space-between;
 	line-height: 20px;
 	width: 100%;
+
+	.is-selected & {
+		color: #fff;
+	}
 `;
 
 const Label = styled.span`
