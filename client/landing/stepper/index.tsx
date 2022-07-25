@@ -74,10 +74,6 @@ window.AppBoot = async () => {
 	requestAllBlogsAccess();
 
 	setupWpDataDebug();
-	// User is left undefined here because the user account will not be created
-	// until after the user has completed the flow.
-	// This also saves us from having to pull in lib/user/user and it's dependencies.
-	initializeAnalytics( undefined, generateGetSuperProps() );
 	addHotJarScript();
 	retargetFullStory();
 	// Add accessible-focus listener.
@@ -94,6 +90,8 @@ window.AppBoot = async () => {
 	await loadPersistedState();
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
+
+	initializeAnalytics( user, generateGetSuperProps() );
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
