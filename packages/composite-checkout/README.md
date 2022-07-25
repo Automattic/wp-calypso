@@ -226,6 +226,8 @@ The props you can provide to this component are as follows.
 - `className?: string`. An optional className.
 - `disabled?: boolean`. The button will automatically be disabled if the [form status](#useFormStatus) is not `ready`, but you can disable it for other cases as well.
 - `onLoadError?: ( error: string ) => void`. A callback that will be called if the error boundary is triggered.
+- `validateForm?`: `() => boolean`. A callback that will be called when the `onClick` event is triggered. If the callback is not passed or returns `truthy`, the `onClick` event will be triggered. If the callback returns `false`, the `onClick` event will **not** be triggered.  
+  This can be used by a client component to prevent the form being submitted if there is any validation errors.
 
 ### CheckoutSummaryArea
 
