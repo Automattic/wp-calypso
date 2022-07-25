@@ -244,15 +244,6 @@ export default function getThankYouPageUrl( {
 		return fallbackUrl;
 	}
 
-	updateUrlInCookie( {
-		cart,
-		fallbackUrl,
-		getUrlFromCookie,
-		isInModal,
-		saveUrlToCookie,
-		siteSlug,
-	} );
-
 	// Manual renewals usually have a `redirectTo` but if they do not, return to
 	// the manage purchases page.
 	const firstRenewalInCart =
@@ -271,6 +262,15 @@ export default function getThankYouPageUrl( {
 	const signupFlowName = getSignupCompleteFlowName();
 	const isDomainOnly =
 		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
+
+	updateUrlInCookie( {
+		cart,
+		fallbackUrl,
+		getUrlFromCookie,
+		isInModal,
+		saveUrlToCookie,
+		siteSlug,
+	} );
 
 	// Fetch the thank-you page url from a cookie if it is set.
 	const urlFromCookie = getUrlFromCookie();
