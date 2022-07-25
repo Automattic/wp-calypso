@@ -102,15 +102,6 @@ function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 		.slice( 0, 3 )
 		.join( ' · ' );
 
-	let target = '_self';
-	let rel;
-	let basePath = '/plugins';
-	if ( isJetpackCloud ) {
-		target = '_blank';
-		rel = 'noreferrer';
-		basePath = 'https://wordpress.com/plugins';
-	}
-
 	return (
 		<div className="plugin-details-header__container">
 			<div className="plugin-details-header__tags">{ tags }</div>
@@ -127,15 +118,17 @@ function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 				<div className="plugin-details-header__info">
 					<div className="plugin-details-header__info-title">{ translate( 'Developer' ) }</div>
 					<div className="plugin-details-header__info-value">
-						<a
-							href={ `${ basePath }/${
-								selectedSite?.slug || ''
-							}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"` }
-							target={ target }
-							rel={ rel }
-						>
-							{ plugin.author_name }
-						</a>
+						{ isJetpackCloud ? (
+							plugin.author_name
+						) : (
+							<a
+								href={ `/plugin/${
+									selectedSite?.slug || ''
+								}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"` }
+							>
+								{ plugin.author_name }
+							</a>
+						) }
 					</div>
 				</div>
 				{ !! plugin.rating && (
