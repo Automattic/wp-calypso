@@ -172,7 +172,7 @@
 		"@types/wordpress__data-controls": "^2.2.0",
 		"@types/wordpress__editor": "^10.0.1",
 		"@wordpress/base-styles": "^4.5.0",
-		"@wordpress/components": "^19.11.0",
+		"@wordpress/components": "^19.15.0",
 		"@wordpress/data": "^6.9.0",
 		"@wordpress/element": "^4.7.0",
 		"@wordpress/i18n": "^4.9.0",

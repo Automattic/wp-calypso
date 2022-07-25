@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -35,9 +35,31 @@ export default function LicenseListEmpty( { filter }: Props ): ReactElement {
 	return (
 		<div className="license-list__empty-list">
 			<h2>{ licenseFilterStatusTitle }</h2>
+
+			{ filter === LicenseFilter.NotRevoked && (
+				<p>
+					{ translate(
+						'Learn more about {{a}}adding licenses and billing {{icon}}{{/icon}}{{/a}}.',
+						{
+							components: {
+								a: (
+									<a
+										href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/"
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
+								icon: <Gridicon icon="external" size={ 16 } />,
+							},
+						}
+					) }
+				</p>
+			) }
+
 			{ filter === LicenseFilter.Detached && hasAssignedLicenses && (
 				<p>{ translate( 'Every license you own is currently attached to a site.' ) }</p>
 			) }
+
 			<Button href="/partner-portal/issue-license" onClick={ onIssueNewLicense }>
 				{ translate( 'Issue New License' ) }
 			</Button>

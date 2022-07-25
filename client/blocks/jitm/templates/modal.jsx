@@ -17,8 +17,6 @@ export default function ModalTemplate( {
 	title,
 	trackImpression,
 } ) {
-	trackImpression && trackImpression();
-
 	// technically, non-dismissable jitms are authorable, however, that doesn't make any sense as a modal.
 	const [ isDismissed, setDismissed ] = useState( [] );
 	const translate = useTranslate();
@@ -64,6 +62,7 @@ export default function ModalTemplate( {
 				{
 					content: (
 						<>
+							{ trackImpression && trackImpression() }
 							<div className="modal__container">
 								{ /* todo: allow specifying this text via jitm configuration */ }
 								<p className="modal__limited-offer">{ title }</p>
@@ -77,7 +76,7 @@ export default function ModalTemplate( {
 											onClick();
 											setDismissed( isDismissed.concat( [ featureClass ] ) );
 										} }
-										tabindex={ -2 }
+										tabIndex={ -2 }
 									>
 										{ CTA.message }
 									</Button>

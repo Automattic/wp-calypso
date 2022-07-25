@@ -431,15 +431,17 @@ export class PluginsMain extends Component {
 				<QueryJetpackPlugins siteIds={ this.props.siteIds } />
 				<QuerySiteFeatures siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
-				<FixedNavigationHeader
-					className="plugins__page-heading"
-					navigationItems={ this.getNavigationItems() }
-				>
-					<div className="plugins__main-buttons">
-						{ this.renderAddPluginButton() }
-						{ this.renderUploadPluginButton( this.state.isMobile ) }
-					</div>
-				</FixedNavigationHeader>
+				{ this.props.shouldDisplayNavigationHeader && (
+					<FixedNavigationHeader
+						className="plugins__page-heading"
+						navigationItems={ this.getNavigationItems() }
+					>
+						<div className="plugins__main-buttons">
+							{ this.renderAddPluginButton() }
+							{ this.renderUploadPluginButton( this.state.isMobile ) }
+						</div>
+					</FixedNavigationHeader>
+				) }
 				<div className="plugins__main">
 					<div className="plugins__main-header">
 						<SectionNav selectedText={ this.getSelectedText() }>
@@ -466,7 +468,7 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		( state, { filter } ) => {
+		( state, { filter, isJetpackCloud } ) => {
 			const sites = getSelectedOrAllSitesWithPlugins( state );
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
@@ -506,6 +508,7 @@ export default flow(
 				hasManagePlugins: hasManagePlugins,
 				hasUploadPlugins: hasUploadPlugins,
 				hasInstallPurchasedPlugins: hasInstallPurchasedPlugins,
+				shouldDisplayNavigationHeader: ! isJetpackCloud,
 			};
 		},
 		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }

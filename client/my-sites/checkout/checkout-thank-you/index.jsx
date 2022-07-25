@@ -493,6 +493,7 @@ export class CheckoutThankYou extends Component {
 				<TitanSetUpThankYou
 					domainName={ purchases[ 0 ].meta }
 					emailAddress={ email }
+					isDomainOnlySite={ this.props.domainOnlySiteFlow }
 					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
 					title={ translate( 'Congratulations on your purchase!' ) }
 				/>

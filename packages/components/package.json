@@ -29,6 +29,7 @@
 	"dependencies": {
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
+		"@automattic/search": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/base-styles": "^4.5.0",
 		"classnames": "^2.3.1",

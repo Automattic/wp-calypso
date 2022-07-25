@@ -30,4 +30,30 @@ describe( 'PurchaseItem', () => {
 			expect( screen.getByText( translation ) ).toBeInTheDocument();
 		} );
 	} );
+
+	test( 'should display warning if auto-renew is enabled but no payment method', () => {
+		const purchase = {
+			productSlug: 'business-bundle',
+			isAutoRenewEnabled: true,
+		};
+
+		renderWithProvider( <PurchaseItem purchase={ purchase } /> );
+
+		expect(
+			screen.getByText( 'You don’t have a payment method to renew this subscription' )
+		).toBeInTheDocument();
+	} );
+
+	test( 'should not display warning if auto-renew is disabled with no payment method', () => {
+		const purchase = {
+			productSlug: 'business-bundle',
+			isAutoRenewEnabled: false,
+		};
+
+		renderWithProvider( <PurchaseItem purchase={ purchase } /> );
+
+		expect(
+			screen.queryByText( 'You don’t have a payment method to renew this subscription' )
+		).toBeNull();
+	} );
 } );

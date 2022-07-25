@@ -371,13 +371,16 @@ export default withCurrentRoute(
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		const isEditor = getSectionName( state ) === 'gutenberg-editor';
+		const isCheckout = getSectionName( state ) === 'checkout';
 		const userAllowedToHelpCenter = shouldShowHelpCenterToUser(
 			getCurrentUserId( state ),
 			getCurrentLocaleSlug( state )
 		);
 
 		const disableFAB =
-			isEditor && config.isEnabled( 'editor/help-center' ) && userAllowedToHelpCenter;
+			( ( isEditor && config.isEnabled( 'editor/help-center' ) ) ||
+				( isCheckout && config.isEnabled( 'checkout/help-center' ) ) ) &&
+			userAllowedToHelpCenter;
 
 		return {
 			masterbarIsHidden,
@@ -407,7 +410,7 @@ export default withCurrentRoute(
 			// authorization, it would remove the newly connected site that has been fetched separately.
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
+			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			disableFAB,
 		};
 	} )( Layout )

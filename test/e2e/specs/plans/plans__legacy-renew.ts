@@ -9,7 +9,6 @@ import {
 	IndividualPurchasePage,
 	CartCheckoutPage,
 	TestAccount,
-	NoticeComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -28,7 +27,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 
 		const testAccount = new TestAccount( 'simpleSitePersonalPlanUser' );
 		await testAccount.authenticate( page );
-		plansPage = new PlansPage( page, 'current' );
+		plansPage = new PlansPage( page );
 	} );
 
 	it( 'Navigate to Upgrades > Plans', async function () {
@@ -43,12 +42,6 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 
 		it( `${ planName } is the active plan`, async function () {
 			await plansPage.validateActivePlan( planTier );
-		} );
-
-		it( 'Legacy plan notice is shown', async function () {
-			const noticeComponent = new NoticeComponent( page );
-			const message = `You’re currently on a legacy plan. If you’d like to learn about your eligibility to switch to a Pro plan please contact support.`;
-			await noticeComponent.noticeShown( message );
 		} );
 	} );
 
