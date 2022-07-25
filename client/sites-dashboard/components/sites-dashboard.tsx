@@ -96,7 +96,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 	const selectedTabName = tabs.find( ( tab ) => tab.name === status )?.name;
 
 	const { sortedSites } = useSitesTableSorting( filteredSites, {
-		sort: 'last-publish',
+		sort: 'updated-at',
 		order: 'desc',
 	} );
 

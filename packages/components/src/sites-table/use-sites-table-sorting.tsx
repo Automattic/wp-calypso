@@ -15,7 +15,7 @@ export function useSitesTableSorting(
 	{ sort, order = 'asc' }: SitesTableSortOptions
 ): UseSitesTableSortingResult {
 	switch ( sort ) {
-		case 'last-publish':
+		case 'updated-at':
 			return { sortedSites: sortSitesByLastPublish( allSites, order ) };
 		default:
 			return { sortedSites: allSites };
