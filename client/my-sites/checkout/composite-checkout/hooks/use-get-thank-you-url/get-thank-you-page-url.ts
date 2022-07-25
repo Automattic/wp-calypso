@@ -519,32 +519,16 @@ function getFallbackDestination( {
 		return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 	}
 
-	return getSimpleThankYouUrl( {
-		cart,
-		siteSlug,
-		receiptIdOrPlaceholder,
-	} );
-}
-
-function getSimpleThankYouUrl( {
-	cart,
-	siteSlug,
-	receiptIdOrPlaceholder,
-}: {
-	cart: ResponseCart | undefined;
-	siteSlug: string;
-	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder;
-} ): string {
-	debug( 'attempt to add extra information as url query string' );
 	const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
-
 	if ( titanProducts && titanProducts.length > 0 ) {
 		const emails = titanProducts[ 0 ].extra?.email_users;
-
 		if ( emails && emails.length > 0 ) {
+			debug( 'site with titan products' );
 			return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
 		}
 	}
+
+	debug( 'simple thank-you page' );
 	return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 }
 
