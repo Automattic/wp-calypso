@@ -509,25 +509,43 @@ function getFallbackDestination( {
 		return `/plans/my-plan/${ siteSlug }?thank-you=true&install=all`;
 	}
 
-	const getSimpleThankYouUrl = (): string => {
-		debug( 'attempt to add extra information as url query string' );
-		const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
-
-		if ( titanProducts && titanProducts.length > 0 ) {
-			const emails = titanProducts[ 0 ].extra?.email_users;
-
-			if ( emails && emails.length > 0 ) {
-				return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
-			}
-		}
-		return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
-	};
+	if ( ! receiptIdOrPlaceholder ) {
+		debug( 'product without receipt or placeholder' );
+		return `/checkout/thank-you/${ siteSlug }`;
+	}
 
 	if ( feature && isValidFeatureKey( feature ) ) {
 		debug( 'site with receipt or cart; feature is', feature );
 		return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 	}
-	return getSimpleThankYouUrl();
+
+	return getSimpleThankYouUrl( {
+		cart,
+		siteSlug,
+		receiptIdOrPlaceholder,
+	} );
+}
+
+function getSimpleThankYouUrl( {
+	cart,
+	siteSlug,
+	receiptIdOrPlaceholder,
+}: {
+	cart: ResponseCart | undefined;
+	siteSlug: string;
+	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder;
+} ): string {
+	debug( 'attempt to add extra information as url query string' );
+	const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
+
+	if ( titanProducts && titanProducts.length > 0 ) {
+		const emails = titanProducts[ 0 ].extra?.email_users;
+
+		if ( emails && emails.length > 0 ) {
+			return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
+		}
+	}
+	return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 }
 
 /**
