@@ -19,7 +19,6 @@ import { infoNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -87,7 +86,6 @@ export default function useCreatePaymentCompleteCallback( {
 	const reduxStore = useStore();
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) =>
@@ -127,7 +125,6 @@ export default function useCreatePaymentCompleteCallback( {
 				cart: responseCart,
 				isJetpackNotAtomic,
 				productAliasFromUrl,
-				isEligibleForSignupDestinationResult,
 				hideNudge: isComingFromUpsell,
 				isInModal,
 				isJetpackCheckout,
@@ -256,7 +253,6 @@ export default function useCreatePaymentCompleteCallback( {
 			feature,
 			isJetpackNotAtomic,
 			productAliasFromUrl,
-			isEligibleForSignupDestinationResult,
 			isComingFromUpsell,
 			isInModal,
 			reduxStore,

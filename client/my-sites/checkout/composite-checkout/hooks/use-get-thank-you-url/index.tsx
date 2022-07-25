@@ -1,7 +1,6 @@
 import debugFactory from 'debug';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getThankYouPageUrl from './get-thank-you-page-url';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -40,7 +39,6 @@ export default function useGetThankYouUrl( {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( cart );
 
 	const getThankYouUrl = useCallback( () => {
 		const getThankYouPageUrlArguments = {
@@ -52,7 +50,6 @@ export default function useGetThankYouUrl( {
 			cart,
 			isJetpackNotAtomic,
 			productAliasFromUrl,
-			isEligibleForSignupDestinationResult,
 			hideNudge,
 			isInModal,
 			isJetpackCheckout,
@@ -66,7 +63,6 @@ export default function useGetThankYouUrl( {
 		return url;
 	}, [
 		isInModal,
-		isEligibleForSignupDestinationResult,
 		siteSlug,
 		adminUrl,
 		isJetpackNotAtomic,
