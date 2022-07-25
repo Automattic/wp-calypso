@@ -148,7 +148,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					( design ) => design.slug === _selectedDesign.slug
 				);
 			}
-			setPendingAction( () => setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ) );
+			// Send vertical_id only if the current design is generated design or we enabled the v13n of standard themes.
+			// We cannot check the config inside `setDesignOnSite` action. See https://github.com/Automattic/wp-calypso/pull/65531#issuecomment-1190850273
+			setPendingAction( () =>
+				setDesignOnSite(
+					siteSlugOrId,
+					_selectedDesign,
+					_selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
+						? siteVerticalId
+						: ''
+				)
+			);
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign ),
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
@@ -245,8 +255,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
 			// If the user fills out the site title with write intent, we show it on the design preview
-			siteTitle: intent === 'write' ? siteTitle : undefined,
-			verticalId: siteVerticalId,
+			site_title: intent === 'write' ? siteTitle : undefined,
+			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
 		} );
 
 		const stepContent = (
