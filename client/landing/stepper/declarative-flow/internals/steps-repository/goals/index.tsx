@@ -53,11 +53,11 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const refParameter = getQueryArgs()?.ref as string;
 
 	const getSiteTitle = ( intent: Onboard.SiteIntent ) => {
-		if ( intent === Onboarding.SiteIntent.Write ) {
+		if ( intent === Onboard.SiteIntent.Write ) {
 			return translate( 'My blog' );
 		}
 
-		if ( intent === Onboarding.SiteIntent.Sell ) {
+		if ( intent === Onboard.SiteIntent.Sell ) {
 			return translate( 'My store' );
 		}
 
