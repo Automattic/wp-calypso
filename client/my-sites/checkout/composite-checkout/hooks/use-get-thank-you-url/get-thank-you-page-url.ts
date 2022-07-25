@@ -20,6 +20,8 @@ import {
 } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import {
+	getGoogleApps,
+	hasGoogleApps,
 	hasRenewalItem,
 	getAllCartItems,
 	getDomainRegistrations,
@@ -31,7 +33,6 @@ import {
 	hasPremiumPlan,
 	hasBusinessPlan,
 	hasEcommercePlan,
-	hasGoogleApps,
 	hasTitanMail,
 	hasTrafficGuide,
 	hasDIFMProduct,
@@ -91,7 +92,6 @@ export default function getThankYouPageUrl( {
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
-	isEligibleForSignupDestinationResult,
 	hideNudge,
 	isInModal,
 	isJetpackCheckout = false,
@@ -112,7 +112,6 @@ export default function getThankYouPageUrl( {
 	productAliasFromUrl?: string;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
-	isEligibleForSignupDestinationResult?: boolean;
 	hideNudge?: boolean;
 	isInModal?: boolean;
 	isJetpackCheckout?: boolean;
@@ -328,12 +327,9 @@ export default function getThankYouPageUrl( {
 
 	// Display the cookie post-checkout URL (with the display mode query param
 	// for special product-specific messaging and a notice param used by
-	// in-editor checkout) if there is one set
-	// (isEligibleForSignupDestinationResult is set by
-	// isEligibleForSignupDestination which looks at the same cookie as
-	// urlFromCookie) and the cart does not contain Google Apps with a domain
-	// receipt.
-	if ( isEligibleForSignupDestinationResult && urlFromCookie ) {
+	// in-editor checkout) if there is one set and the cart does not contain
+	// Google Apps without a domain receipt.
+	if ( cart && doesCartContainGoogleAppsWithoutDomainReceipt( cart ) && urlFromCookie ) {
 		debug( 'is eligible for signup destination', urlFromCookie );
 		const noticeType = getNoticeType( cart );
 		const queryParams = { ...displayModeParam, ...noticeType };
@@ -784,4 +780,18 @@ function isRedirectSameSite( redirectTo: string, siteSlug?: string ) {
 	}
 	// For standard non-subdirectory site, check that hostname matches the siteSlug.
 	return hostname === siteSlug;
+}
+
+function doesCartContainGoogleAppsWithoutDomainReceipt( cart: ResponseCart ): boolean {
+	if ( ! hasGoogleApps( cart ) ) {
+		return false;
+	}
+	if ( hasGoogleApps( cart ) ) {
+		const googleAppsProducts = getGoogleApps( cart );
+		const domainReceiptId = googleAppsProducts[ 0 ].extra.receipt_for_domain;
+		if ( ! domainReceiptId ) {
+			return true;
+		}
+	}
+	return true;
 }
