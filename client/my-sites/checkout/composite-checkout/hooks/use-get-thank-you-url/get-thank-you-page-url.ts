@@ -786,12 +786,10 @@ function doesCartContainGoogleAppsWithoutDomainReceipt( cart: ResponseCart ): bo
 	if ( ! hasGoogleApps( cart ) ) {
 		return false;
 	}
-	if ( hasGoogleApps( cart ) ) {
-		const googleAppsProducts = getGoogleApps( cart );
-		const domainReceiptId = googleAppsProducts[ 0 ].extra.receipt_for_domain;
-		if ( ! domainReceiptId ) {
-			return true;
-		}
+	const googleAppsProducts = getGoogleApps( cart );
+	const domainReceiptId = googleAppsProducts[ 0 ].extra.receipt_for_domain;
+	if ( ! domainReceiptId ) {
+		return true;
 	}
-	return true;
+	return false;
 }
