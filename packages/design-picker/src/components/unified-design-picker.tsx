@@ -44,7 +44,6 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	highRes,
 	verticalId,
 } ) => {
-	const scrollable = design.preview !== 'static';
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	return (
@@ -56,8 +55,8 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
-			options={ getMShotOptions( { scrollable, highRes, isMobile } ) }
-			scrollable={ scrollable }
+			options={ getMShotOptions( { scrollable: true, highRes, isMobile } ) }
+			scrollable={ true }
 		/>
 	);
 };
@@ -153,7 +152,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					className={ classnames(
 						'design-picker__image-frame',
 						'design-picker__image-frame-landscape',
-						design.preview === 'static' ? 'design-picker__static' : 'design-picker__scrollable',
+						'design-picker__scrollable',
 						{
 							'design-picker__image-frame-no-header': ! hasDesignOptionHeader,
 						}
@@ -351,13 +350,11 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	return (
 		<div>
 			{ categorization && hasCategories && (
-				<>
-					<UnifiedDesignPickerCategoryFilter
-						categories={ categorization.categories }
-						onSelect={ categorization.onSelect }
-						selectedSlug={ categorization.selection }
-					/>
-				</>
+				<UnifiedDesignPickerCategoryFilter
+					categories={ categorization.categories }
+					onSelect={ categorization.onSelect }
+					selectedSlug={ categorization.selection }
+				/>
 			) }
 			<div className={ 'design-picker__grid' }>
 				{ filteredDesigns.map( ( design ) => (
@@ -394,7 +391,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 
 	return (
 		<div className="design-picker__grid">
-			{ designs.map( ( design, index ) => {
+			{ designs.map( ( design ) => {
 				const previewUrl = getDesignPreviewUrl( design, {
 					language: locale,
 					vertical_id: verticalId,
@@ -403,7 +400,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 					use_screenshot_overrides: true,
 				} );
 				return (
-					<div className="design-button-container" key={ `generated-design__${ index }` }>
+					<div className="design-button-container" key={ `generated-design__${ design.slug }` }>
 						<div className="design-picker__design-option">
 							<button className="generated-design-thumbnail" onClick={ () => onPreview( design ) }>
 								<span className="generated-design-thumbnail__image design-picker__image-frame design-picker__image-frame-no-header">

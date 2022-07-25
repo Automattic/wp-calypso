@@ -12,7 +12,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -33,7 +32,7 @@ import './style.scss';
 import type { Design } from '@automattic/design-picker';
 
 /**
- * The site setup design picker
+ * The unified design picker
  */
 const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
@@ -313,7 +312,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				hideNext={ true }
 				className={ 'design-setup__preview' }
 				nextLabelText={ pickDesignText }
 				goBack={ handleBackClick }
@@ -364,9 +362,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	return (
 		<StepContainer
 			stepName={ STEP_NAME }
-			className={ classnames( {
-				'design-picker__has-categories': true,
-			} ) }
+			className="unified-design-picker__has-categories"
 			skipButtonAlign={ 'top' }
 			hideFormattedHeader
 			backLabelText={ translate( 'Back' ) }
