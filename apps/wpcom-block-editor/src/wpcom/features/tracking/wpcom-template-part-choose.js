@@ -49,7 +49,6 @@ export const wpcomTemplatePartChooseBubble = () => ( {
 	handler: () => {
 		// If replaced_variation_slug is not defined, we're inserting a new template part.
 		if ( ! replaceData.replaced_variation_slug ) {
-			console.log( 'inserting new' ); // eslint-disable-line
 			const block = select( 'core/block-editor' ).getSelectedBlock();
 			const templatePartId = `${ block.attributes.theme }//${ block.attributes.slug }`;
 			const templatePart = select( 'core' ).getEditedEntityRecord(
@@ -82,7 +81,6 @@ export const wpcomTemplatePartReplaceBubble = () => ( {
 	handler: () => {
 		// If replaced_variation_slug is defined, we're replacing a template part.
 		if ( replaceData.replaced_variation_slug ) {
-			console.log( 'replacing' ); // eslint-disable-line
 			const block = select( 'core/block-editor' ).getSelectedBlock();
 			const templatePartId = `${ block.attributes.theme }//${ block.attributes.slug }`;
 			const templatePart = select( 'core' ).getEditedEntityRecord(
