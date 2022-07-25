@@ -22,8 +22,7 @@ interface Props {
 	filter?: string;
 	search?: string;
 	site?: string;
-	plugin?: string;
-	isDetails?: boolean;
+	pluginSlug?: string;
 	path?: string;
 }
 
@@ -31,8 +30,7 @@ export default function PluginOverview( {
 	filter,
 	search,
 	site,
-	plugin,
-	isDetails,
+	pluginSlug,
 	path,
 }: Props ): ReactElement {
 	const dispatch = useDispatch();
@@ -70,8 +68,8 @@ export default function PluginOverview( {
 		return (
 			<div className="plugins-overview__container">
 				<SidebarNavigation sectionTitle={ translate( 'Plugins' ) } />
-				{ isDetails ? (
-					<PluginDetails isJetpackCloud siteUrl={ site } pluginSlug={ plugin } path={ path } />
+				{ pluginSlug ? (
+					<PluginDetails isJetpackCloud siteUrl={ site } pluginSlug={ pluginSlug } path={ path } />
 				) : (
 					<PluginsMain isJetpackCloud filter={ filter } search={ search } />
 				) }

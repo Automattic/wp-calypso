@@ -27,8 +27,6 @@ export function pluginDetailsContext( context: PageJS.Context, next: VoidFunctio
 	if ( ! site ) {
 		context.secondary = <DashboardSidebar path={ context.path } />;
 	}
-	context.primary = (
-		<PluginsOverview plugin={ plugin } site={ site } isDetails path={ context.path } />
-	);
+	context.primary = <PluginsOverview pluginSlug={ plugin } site={ site } path={ context.path } />;
 	next();
 }
