@@ -1034,7 +1034,7 @@ describe( 'getThankYouPageUrl', () => {
 		);
 	} );
 
-	it( 'redirects to the receipt page with when the business upgrade nudge would normally be included', () => {
+	it( 'redirects to the business upgrade nudge with a placeholder when jetpack is not in the cart and premium is in the cart but there is no receipt', () => {
 		const cart = {
 			...getEmptyResponseCart(),
 			products: [
@@ -1050,7 +1050,7 @@ describe( 'getThankYouPageUrl', () => {
 			orderId: sampleOrderId,
 			cart,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/:receiptId` );
+		expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/:receiptId` );
 	} );
 
 	it( 'redirects to the thank you page if jetpack is not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
