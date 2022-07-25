@@ -103,10 +103,6 @@ class GoogleSocialButton extends Component {
 		} );
 
 		this.setState( { isDisabled: false } );
-
-		if ( this.props.launchServiceOnLoad ) {
-			this.client.requestCode();
-		}
 	}
 
 	async loadGoogleIdentityServicesAPI() {
@@ -365,7 +361,6 @@ export default connect(
 	( state ) => ( {
 		isFormDisabled: isFormDisabled( state ),
 		authCodeFromRedirect: getInitialQueryArguments( state ).code,
-		launchServiceOnLoad: getInitialQueryArguments( state ).launch_service === 'google',
 	} ),
 	{
 		recordTracksEvent,
