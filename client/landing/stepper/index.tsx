@@ -29,10 +29,15 @@ import { WindowLocaleEffectManager } from '../gutenboarding/components/window-lo
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
+import { linkInBio } from './declarative-flow/link-in-bio';
+import { newsletters } from './declarative-flow/newsletters';
+import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
+import { useQuery } from './hooks/use-query';
 import { USER_STORE } from './stores';
+import type { Flow } from './declarative-flow/internals/types';
 
 function generateGetSuperProps() {
 	return () => ( {
@@ -49,12 +54,31 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	reduxStore.dispatch( requestSites() );
 }
 
-const FlowWrapper: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
+interface configurableFlows {
+	flowName: string;
+	pathToFlow: Flow;
+}
+
+const availableFlows: Array< configurableFlows > = [
+	{ flowName: 'newsletters', pathToFlow: newsletters },
+	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
+	{ flowName: 'podcasts', pathToFlow: podcasts },
+];
+
+const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
 	const { anchorFmPodcastId } = useAnchorFmParams();
+	const flowName = useQuery().get( 'flow' );
+
 	let flow = siteSetupFlow;
 
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
+	} else {
+		availableFlows.forEach( ( currentFlow ) => {
+			if ( currentFlow.flowName === flowName ) {
+				flow = currentFlow.pathToFlow;
+			}
+		} );
 	}
 
 	const { receiveCurrentUser } = useDispatch( USER_STORE );
@@ -106,7 +130,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowWrapper user={ user as UserStore.CurrentUser } />
+						<FlowSwitch user={ user as UserStore.CurrentUser } />
 					</BrowserRouter>
 					{ config.isEnabled( 'signup/inline-help' ) && (
 						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
