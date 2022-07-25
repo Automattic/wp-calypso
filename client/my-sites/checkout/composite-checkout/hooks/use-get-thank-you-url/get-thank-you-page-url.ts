@@ -258,11 +258,6 @@ export default function getThankYouPageUrl( {
 		);
 		return managePurchaseUrl;
 	}
-
-	const signupFlowName = getSignupCompleteFlowName();
-	const isDomainOnly =
-		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
-
 	updateUrlInCookie( {
 		cart,
 		fallbackUrl,
@@ -276,19 +271,23 @@ export default function getThankYouPageUrl( {
 	const urlFromCookie = getUrlFromCookie();
 	debug( 'cookie url is', urlFromCookie );
 
-	if ( ( cart?.create_new_blog || signupFlowName === 'domain' ) && ! isDomainOnly ) {
+	// Use the cookie post-checkout URL followed by the receipt ID if this is a
+	// signup flow that is not only for domain registrations and the cookie
+	// post-checkout URL is not the signup "intent" flow.
+	const signupFlowName = getSignupCompleteFlowName();
+	const isDomainOnly =
+		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
+	if (
+		( cart?.create_new_blog || signupFlowName === 'domain' ) &&
+		! isDomainOnly &&
+		urlFromCookie &&
+		receiptIdOrPlaceholder &&
+		! urlFromCookie.includes( '/start/setup-site' )
+	) {
 		clearSignupCompleteFlowName();
-
-		if (
-			urlFromCookie &&
-			receiptIdOrPlaceholder &&
-			// Skip composed url if we have to redirect to intent flow.
-			! urlFromCookie.includes( '/start/setup-site' )
-		) {
-			const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
-			debug( 'new blog created, so returning', newBlogReceiptUrl );
-			return newBlogReceiptUrl;
-		}
+		const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
+		debug( 'new blog created, so returning', newBlogReceiptUrl );
+		return newBlogReceiptUrl;
 	}
 
 	const redirectUrlForPostCheckoutUpsell = receiptIdOrPlaceholder
