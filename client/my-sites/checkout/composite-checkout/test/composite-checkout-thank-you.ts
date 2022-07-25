@@ -27,7 +27,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 } ) );
 
 const samplePurchaseId = 12342424241;
-const sampleOrderId = 5423525543;
 
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => null ),
@@ -63,7 +62,6 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			receiptId: String( samplePurchaseId ),
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
@@ -73,7 +71,6 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
@@ -82,7 +79,6 @@ describe( 'getThankYouPageUrl', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/:receiptId` );
 	} );
@@ -155,7 +151,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe(
 			`/checkout/thank-you/features/all-free-features/foo.bar/${ samplePurchaseId }`
@@ -167,7 +162,6 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/features/all-free-features/foo.bar/:receiptId` );
 	} );
@@ -583,7 +577,7 @@ describe( 'getThankYouPageUrl', () => {
 		const adminUrl = 'https://my.site/wp-admin/';
 		const redirectTo = 'https://other.site/post.php?post=515';
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
 	it( 'redirects to external redirectTo url if it starts with admin_url for site', () => {
@@ -805,7 +799,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 			getUrlFromCookie,
 		} );
 		expect( url ).toBe( `/cookie/${ samplePurchaseId }` );
@@ -829,7 +822,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 			getUrlFromCookie,
 		} );
 		expect( url ).toBe( `/cookie/${ samplePurchaseId }` );
@@ -851,7 +843,6 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			orderId: sampleOrderId,
 			getUrlFromCookie,
 		} );
 		expect( url ).toBe( `/cookie/:receiptId` );
@@ -931,7 +922,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
@@ -954,7 +944,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
@@ -981,7 +970,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=concierge` );
 	} );
@@ -1004,7 +992,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
@@ -1025,7 +1012,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/${ samplePurchaseId }` );
 	} );
@@ -1046,7 +1032,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe(
 			`/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
@@ -1066,7 +1051,6 @@ describe( 'getThankYouPageUrl', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			orderId: sampleOrderId,
 			cart,
 		} );
 		expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/:receiptId` );
@@ -1087,7 +1071,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
@@ -1107,7 +1090,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
@@ -1127,7 +1109,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=concierge` );
 	} );
@@ -1199,7 +1180,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1224,7 +1204,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1249,7 +1228,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1274,7 +1252,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1304,7 +1281,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1342,7 +1318,6 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1365,7 +1340,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1388,7 +1362,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1412,7 +1385,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1439,7 +1411,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				domains,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1463,7 +1434,6 @@ describe( 'getThankYouPageUrl', () => {
 				domains,
 				hideNudge: true,
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				siteSlug: 'foo.bar',
 			} );
 
@@ -1486,7 +1456,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
@@ -1506,7 +1475,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 			hideNudge: true,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
@@ -1527,7 +1495,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=traffic-guide` );
 	} );
@@ -1547,7 +1514,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
-			orderId: sampleOrderId,
 			isJetpackNotAtomic: true,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=traffic-guide` );
@@ -1617,7 +1583,6 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: 'foo.bar',
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				cart,
 			} );
 			expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/${ samplePurchaseId }` );
@@ -1638,7 +1603,6 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: 'foo.bar',
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				cart,
 			} );
 			expect( url ).toBe(
@@ -1661,7 +1625,6 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: 'foo.bar',
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				cart,
 			} );
 			expect( url ).toBe(
@@ -1688,7 +1651,6 @@ describe( 'getThankYouPageUrl', () => {
 				...defaultArgs,
 				siteSlug: 'foo.bar',
 				receiptId: samplePurchaseId,
-				orderId: sampleOrderId,
 				cart,
 			} );
 			expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
@@ -1733,7 +1695,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				isJetpackCheckout: true,
 				receiptId: 80023,
-				orderId: sampleOrderId,
 			} );
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023'
@@ -1756,7 +1717,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				isJetpackCheckout: true,
 				receiptId: '80023',
-				orderId: sampleOrderId,
 			} );
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023'
@@ -1803,7 +1763,6 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 				isJetpackCheckout: true,
 				receiptId: 80023,
-				orderId: sampleOrderId,
 				jetpackTemporarySiteId: '123456789',
 			} );
 			expect( url ).toBe(
