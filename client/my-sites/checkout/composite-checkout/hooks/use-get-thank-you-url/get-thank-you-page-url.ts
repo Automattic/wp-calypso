@@ -289,9 +289,6 @@ export default function getThankYouPageUrl( {
 			debug( 'new blog created, so returning', newBlogReceiptUrl );
 			return newBlogReceiptUrl;
 		}
-
-		debug( 'new blog created, but using fallback', fallbackUrl );
-		return fallbackUrl;
 	}
 
 	const redirectUrlForPostCheckoutUpsell = receiptIdOrPlaceholder
