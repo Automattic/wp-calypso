@@ -37,7 +37,7 @@ export function activate(
 		 * allowing cancel it if it's desired.
 		 */
 		if (
-			themeHasAutoLoadingHomepage( getState(), themeId ) &&
+			themeHasAutoLoadingHomepage( getState(), themeId, siteId ) &&
 			! isJetpackSite( getState(), siteId ) &&
 			! isSiteAtomic( getState(), siteId ) &&
 			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
