@@ -220,7 +220,7 @@ class DomainsStep extends Component {
 	};
 
 	handleDomainExplainerClick = () => {
-		const hideFreePlan = false;
+		const hideFreePlan = true;
 		this.handleSkip( undefined, hideFreePlan );
 	};
 
