@@ -310,29 +310,38 @@ export default function getThankYouPageUrl( {
 		return redirectUrlForPostCheckoutUpsell;
 	}
 
-	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
-	// when purchasing a concierge session or when purchasing the Ultimate Traffic Guide
+	// The display mode query param (eg: `?d=concierge`) is used to show
+	// purchase-specific messaging, for e.g. the Schedule Session button when
+	// purchasing a concierge session or when purchasing the Ultimate Traffic
+	// Guide.
 	const displayModeParam = getDisplayModeParamFromCart( cart );
 
-	const thankYouPageUrlForTrafficGuide = receiptIdOrPlaceholder
-		? getThankYouPageUrlForTrafficGuide( {
-				cart,
-				siteSlug,
-				receiptIdOrPlaceholder,
-		  } )
-		: undefined;
-	if ( thankYouPageUrlForTrafficGuide ) {
-		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, displayModeParam );
+	// Display the regular receipt thank-you page with specific messaging from
+	// the display mode query param if the purchase includes the traffic-guide.
+	if ( receiptIdOrPlaceholder && cart && hasTrafficGuide( cart ) ) {
+		const thankYouPageUrlForTrafficGuide = getThankYouPageUrlForTrafficGuide( {
+			siteSlug,
+			receiptIdOrPlaceholder,
+		} );
+		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, { d: 'traffic-guide' } );
 	}
 
+	// Display the cookie post-checkout URL (with the display mode query param
+	// for special product-specific messaging and a notice param used by
+	// in-editor checkout) if there is one set
+	// (isEligibleForSignupDestinationResult is set by
+	// isEligibleForSignupDestination which looks at the same cookie as
+	// urlFromCookie) and the cart does not contain Google Apps with a domain
+	// receipt.
 	if ( isEligibleForSignupDestinationResult && urlFromCookie ) {
 		debug( 'is eligible for signup destination', urlFromCookie );
 		const noticeType = getNoticeType( cart );
 		const queryParams = { ...displayModeParam, ...noticeType };
 		return getUrlWithQueryParam( urlFromCookie, queryParams );
 	}
+
 	debug( 'returning fallback url', fallbackUrl );
-	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
+	return getUrlWithQueryParam( fallbackUrl, displayModeParam ?? {} );
 }
 
 function updateUrlInCookie( {
@@ -659,22 +668,25 @@ function getProfessionalEmailUpsellUrl( {
 	return `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteSlug }`;
 }
 
-function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {
+function getDisplayModeParamFromCart(
+	cart: ResponseCart | undefined
+): undefined | { d: 'concierge' | 'traffic-guide' } {
 	if ( cart && hasConciergeSession( cart ) ) {
 		return { d: 'concierge' };
 	}
 	if ( cart && hasTrafficGuide( cart ) ) {
 		return { d: 'traffic-guide' };
 	}
-	return {};
+	return undefined;
 }
 
-function getNoticeType( cart: ResponseCart | undefined ): Record< string, string > {
+function getNoticeType(
+	cart: ResponseCart | undefined
+): undefined | { notice: 'purchase-success' } {
 	if ( cart ) {
 		return { notice: 'purchase-success' };
 	}
-
-	return {};
+	return undefined;
 }
 
 function getUrlWithQueryParam( url = '/', queryParams: Record< string, string > = {} ): string {
@@ -725,18 +737,13 @@ function modifyCookieUrlIfAtomic(
 }
 
 function getThankYouPageUrlForTrafficGuide( {
-	cart,
 	siteSlug,
 	receiptIdOrPlaceholder,
 }: {
-	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder;
 } ) {
-	if ( ! cart ) return;
-	if ( hasTrafficGuide( cart ) ) {
-		return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
-	}
+	return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 }
 
 function getRedirectUrlFromCart( cart: ResponseCart ): string | null {
