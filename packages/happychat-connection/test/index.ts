@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { buildConnection } from '@automattic/happychat-connection';
+// eslint-disable-next-line no-restricted-imports
 import {
 	receiveAccept,
 	receiveConnect,
@@ -18,6 +18,9 @@ import {
 	requestTranscript,
 	sendTyping,
 } from 'calypso/state/happychat/connection/actions';
+import { buildConnection } from '../src';
+import { buildConnectionForCheckingAvailability } from '../src/connection';
+import { HappychatAuth } from '../src/types';
 
 const getConnection = () =>
 	buildConnection( {
@@ -37,33 +40,55 @@ const getConnection = () =>
 		requestTranscript,
 	} );
 
+const buildUserData = () => {
+	const signer_user_id = 12;
+	const jwt = 'jwt';
+	const locale = 'locale';
+	const groups = [ 'groups' ];
+	const geoLocation = { country_short: '', country_long: '', region: '', city: '' };
+	const fullUser = {
+		ID: signer_user_id,
+	};
+
+	return {
+		user: {
+			signer_user_id,
+			jwt,
+			locale,
+			groups,
+			geoLocation,
+		},
+		fullUser,
+	};
+};
+
+const setupFixture = ( { config }: { config: Promise< HappychatAuth > } ) => {
+	const dispatch = jest.fn();
+	const connection = getConnection();
+	const openSocket = connection.init( dispatch, config );
+
+	return {
+		dispatch,
+		connection,
+		openSocket,
+	};
+};
+
 describe( 'connection', () => {
 	describe( 'init', () => {
-		describe( 'should bind SockeIO events upon config promise resolution', () => {
-			const signer_user_id = 12;
-			const jwt = 'jwt';
-			const locale = 'locale';
-			const groups = 'groups';
-			const geoLocation = 'location';
-
+		describe( 'should bind SocketIO events upon config promise resolution', () => {
+			const userData = buildUserData();
 			let socket;
 			let dispatch;
 			let openSocket;
 			beforeEach( () => {
 				socket = new EventEmitter();
-				dispatch = jest.fn();
-				const connection = getConnection();
-				const config = Promise.resolve( {
-					url: socket,
-					user: {
-						signer_user_id,
-						jwt,
-						locale,
-						groups,
-						geoLocation,
-					},
-				} );
-				openSocket = connection.init( dispatch, config );
+				( { dispatch, openSocket } = setupFixture( {
+					config: Promise.resolve( {
+						url: socket,
+						...userData,
+					} ),
+				} ) );
 			} );
 
 			test( 'connect event', () => {
@@ -74,6 +99,7 @@ describe( 'connection', () => {
 
 			test( 'token event', () => {
 				const callback = jest.fn();
+				const { signer_user_id, jwt, locale, groups } = userData.user;
 				socket.emit( 'token', callback );
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
 				expect( dispatch ).toHaveBeenCalledWith( receiveToken() );
@@ -82,6 +108,7 @@ describe( 'connection', () => {
 			} );
 
 			test( 'init event', () => {
+				const { signer_user_id, locale, groups, geoLocation } = userData.user;
 				socket.emit( 'init' );
 				expect( dispatch ).toHaveBeenCalledTimes( 2 );
 				expect( dispatch.mock.calls[ 0 ][ 0 ] ).toEqual(
@@ -144,16 +171,15 @@ describe( 'connection', () => {
 		} );
 
 		describe( 'should not bind SocketIO events upon config promise rejection', () => {
-			let connection;
 			let socket;
 			let dispatch;
 			let openSocket;
 			const rejectMsg = 'no auth';
 			beforeEach( () => {
 				socket = new EventEmitter();
-				dispatch = jest.fn();
-				connection = getConnection();
-				openSocket = connection.init( dispatch, Promise.reject( rejectMsg ) );
+				( { dispatch, openSocket } = setupFixture( {
+					config: Promise.reject( rejectMsg ),
+				} ) );
 			} );
 
 			test( 'openSocket Promise has been rejected', () => {
@@ -233,31 +259,17 @@ describe( 'connection', () => {
 	} );
 
 	describe( 'when auth promise chain is fulfilled', () => {
-		const signer_user_id = 12;
-		const jwt = 'jwt';
-		const locale = 'locale';
-		const groups = 'groups';
-		const geoLocation = 'location';
-
 		let socket;
 		let dispatch;
 		let connection;
-		let config;
 		beforeEach( () => {
 			socket = new EventEmitter();
-			dispatch = jest.fn();
-			connection = getConnection();
-			config = Promise.resolve( {
-				url: socket,
-				user: {
-					signer_user_id,
-					jwt,
-					locale,
-					groups,
-					geoLocation,
-				},
-			} );
-			connection.init( dispatch, config );
+			( { dispatch, connection } = setupFixture( {
+				config: Promise.resolve( {
+					url: socket,
+					...buildUserData(),
+				} ),
+			} ) );
 		} );
 
 		test( 'connection.send should emit a SocketIO event', () => {
@@ -307,13 +319,11 @@ describe( 'connection', () => {
 		let socket;
 		let dispatch;
 		let connection;
-		let config;
 		beforeEach( () => {
 			socket = new EventEmitter();
-			dispatch = jest.fn();
-			connection = getConnection();
-			config = Promise.reject( 'no auth' );
-			connection.init( dispatch, config );
+			( { dispatch, connection } = setupFixture( {
+				config: Promise.reject( 'no auth' ),
+			} ) );
 		} );
 
 		test( 'connection.send should dispatch receiveError action', async () => {
@@ -333,5 +343,44 @@ describe( 'connection', () => {
 				receiveError( 'failed to send ' + action.event + ': no auth' )
 			);
 		} );
+	} );
+} );
+
+describe( 'connection for checking availability', () => {
+	let socket;
+	let dispatch;
+	let connection;
+	let openSocket;
+
+	beforeEach( () => {
+		socket = new EventEmitter();
+		dispatch = jest.fn();
+		connection = buildConnectionForCheckingAvailability( {
+			receiveAccept,
+			receiveUnauthorized,
+		} );
+		const config = Promise.resolve( {
+			url: socket,
+			...buildUserData(),
+		} );
+		openSocket = connection.init( dispatch, config );
+	} );
+
+	test( 'unauthorized event and closing of connection', async () => {
+		socket.close = jest.fn();
+		socket.emit( 'unauthorized' );
+		await expect( openSocket ).rejects.toBe( 'user is not authorized' );
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( dispatch ).toHaveBeenCalledWith( receiveUnauthorized( 'User is not authorized' ) );
+		expect( socket.close ).toHaveBeenCalled();
+	} );
+
+	test( 'accept event and closing of connection', () => {
+		socket.close = jest.fn();
+		const isAvailable = true;
+		socket.emit( 'accept', isAvailable );
+		expect( dispatch ).toHaveBeenCalledTimes( 1 );
+		expect( dispatch ).toHaveBeenCalledWith( receiveAccept( true ) );
+		expect( socket.close ).toHaveBeenCalled();
 	} );
 } );
