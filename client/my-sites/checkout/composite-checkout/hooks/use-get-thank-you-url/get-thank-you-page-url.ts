@@ -244,19 +244,14 @@ export default function getThankYouPageUrl( {
 		return fallbackUrl;
 	}
 
-	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
-
-	// If the user is making a purchase/upgrading within the editor,
-	// we want to return them back to the editor after the purchase is successful.
-	if ( isInModal && cart && ! hasEcommercePlan( cart ) ) {
-		saveUrlToCookie( window?.location.href );
-	}
-
-	modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug );
-
-	// Fetch the thank-you page url from a cookie if it is set
-	const urlFromCookie = getUrlFromCookie();
-	debug( 'cookie url is', urlFromCookie );
+	updateUrlInCookie( {
+		cart,
+		fallbackUrl,
+		getUrlFromCookie,
+		isInModal,
+		saveUrlToCookie,
+		siteSlug,
+	} );
 
 	if ( cart && hasRenewalItem( cart ) && siteSlug ) {
 		const renewalItem: ResponseCartProduct = getRenewalItems( cart )[ 0 ];
@@ -275,6 +270,10 @@ export default function getThankYouPageUrl( {
 	const signupFlowName = getSignupCompleteFlowName();
 	const isDomainOnly =
 		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
+
+	// Fetch the thank-you page url from a cookie if it is set.
+	const urlFromCookie = getUrlFromCookie();
+	debug( 'cookie url is', urlFromCookie );
 
 	// Domain only flow
 	if ( ( cart?.create_new_blog || signupFlowName === 'domain' ) && ! isDomainOnly ) {
@@ -334,6 +333,41 @@ export default function getThankYouPageUrl( {
 	}
 	debug( 'returning fallback url', fallbackUrl );
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
+}
+
+function updateUrlInCookie( {
+	cart,
+	fallbackUrl,
+	getUrlFromCookie,
+	isInModal,
+	saveUrlToCookie,
+	siteSlug,
+}: {
+	cart: ResponseCart | undefined;
+	fallbackUrl: string;
+	getUrlFromCookie: GetUrlFromCookie;
+	isInModal: boolean | undefined;
+	saveUrlToCookie: SaveUrlToCookie;
+	siteSlug: string | undefined;
+} ): void {
+	// If there is an ecommerce plan in cart, then irrespective of the signup
+	// flow destination (which tends to be set in a cookie), we will want the
+	// final destination to always be "Thank You" page for the eCommerce plan.
+	// This is because the ecommerce store setup happens in this page. If the
+	// user purchases additional products via upsell nudges, the original saved
+	// receipt ID will be used to display the Thank You page for the eCommerce
+	// plan purchase.
+	if ( cart && hasEcommercePlan( cart ) ) {
+		saveUrlToCookie( fallbackUrl );
+	}
+
+	// If the user is making a purchase/upgrading within the editor, we want to
+	// return them back to the editor after the purchase is successful.
+	if ( isInModal && cart && ! hasEcommercePlan( cart ) ) {
+		saveUrlToCookie( window?.location.href );
+	}
+
+	modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug );
 }
 
 function getNewBlogReceiptUrl(
@@ -674,26 +708,6 @@ function getUrlWithQueryParam( url = '/', queryParams: Record< string, string > 
 	};
 
 	return formatUrl( getUrlFromParts( urlParts ), urlType );
-}
-
-/**
- * If there is an ecommerce plan in cart, then irrespective of the signup flow destination, the final destination
- * will always be "Thank You" page for the eCommerce plan. This is because the ecommerce store setup happens in this page.
- * If the user purchases additional products via upsell nudges, the original saved receipt ID will be used to
- * display the Thank You page for the eCommerce plan purchase.
- *
- * @param {Function} saveUrlToCookie The function that performs the saving
- * @param {object} cart The cart object
- * @param {string} destinationUrl The url to save
- */
-function saveUrlToCookieIfEcomm(
-	saveUrlToCookie: SaveUrlToCookie,
-	cart: ResponseCart | undefined,
-	destinationUrl: string
-): void {
-	if ( cart && hasEcommercePlan( cart ) ) {
-		saveUrlToCookie( destinationUrl );
-	}
 }
 
 function modifyUrlIfAtomic( siteSlug: string | undefined, url: string ): string {
