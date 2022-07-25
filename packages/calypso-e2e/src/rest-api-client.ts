@@ -1,3 +1,5 @@
+import fs from 'fs';
+import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
 import { BearerTokenErrorResponse, TestFile } from './types';
@@ -620,18 +622,18 @@ export class RestAPIClient {
 		}
 
 		if ( media ) {
-			throw new Error( 'Not implemented yet.' );
-			// const formData = new FormData();
-			// formData.append( 'media', media );
+			const data = new FormData();
+			data.append( 'media[]', fs.createReadStream( media.fullpath ) );
 
-			// params = {
-			// 	method: 'post',
-			// 	headers: {
-			// 		Authorization: await this.getAuthorizationHeader( 'bearer' ),
-			// 		'Content-Type': 'image/jpeg',
-			// 	},
-			// 	body: formData as BodyInit,
-			// };
+			params = {
+				method: 'post',
+				headers: {
+					// Important: include the boundary
+					Authorization: await this.getAuthorizationHeader( 'bearer' ),
+					...data.getHeaders(),
+				},
+				body: data,
+			};
 		}
 		if ( mediaURL ) {
 			params = {
@@ -648,8 +650,6 @@ export class RestAPIClient {
 			this.getRequestURL( '1.1', `/sites/${ siteID }/media/new` ),
 			params as RequestParams
 		);
-
-		console.log( response );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
