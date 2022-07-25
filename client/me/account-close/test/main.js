@@ -56,9 +56,9 @@ function createTestStore( is_refundable, is_automated_transfer ) {
 			},
 			sites: {
 				items: {
-					'www.test.com': {
-						ID: 'www.test.com',
-						URL: 'http://www.test.com',
+					'example.com': {
+						ID: '1234',
+						URL: 'http://example.com',
 						is_wpcom_atomic: true,
 						options: {
 							is_automated_transfer,
