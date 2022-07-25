@@ -19,6 +19,7 @@ import {
 	CheckoutStepGroup,
 	useSetStepComplete,
 } from '../src/public-api';
+import { PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
 
 const myContext = createContext();
@@ -177,6 +178,7 @@ describe( 'Checkout', () => {
 		const mockMethod = createMockMethod();
 		const { items, total } = createMockItems();
 		const steps = createMockStepObjects();
+		let validateForm;
 
 		beforeEach( () => {
 			MyCheckout = ( props ) => {
@@ -196,7 +198,7 @@ describe( 'Checkout', () => {
 							<CheckoutStepGroup>
 								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
-								<CheckoutFormSubmit />
+								<CheckoutFormSubmit validateForm={ validateForm } />
 							</CheckoutStepGroup>
 						</CheckoutProvider>
 					</myContext.Provider>
@@ -592,14 +594,72 @@ describe( 'Checkout', () => {
 			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 		} );
 	} );
+
+	describe( 'with validation', function () {
+		let MyCheckout;
+		const submitButton = <MockSubmitButtonSimple />;
+		const mockMethod = createMockMethod( submitButton );
+		const { items, total } = createMockItems();
+		const steps = createMockStepObjects();
+		const validateForm = jest.fn();
+
+		beforeEach( () => {
+			MyCheckout = ( props ) => {
+				const [ paymentData, setPaymentData ] = useState( {} );
+				const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+					createStepsFromStepObjects( props.steps || steps );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
+				return (
+					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+						<CheckoutProvider
+							items={ items }
+							total={ total }
+							paymentMethods={ [ mockMethod ] }
+							paymentProcessors={ getMockPaymentProcessors() }
+							initiallySelectedPaymentMethodId={ mockMethod.id }
+						>
+							<CheckoutStepGroup>
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+								<CheckoutFormSubmit validateForm={ validateForm } />
+							</CheckoutStepGroup>
+						</CheckoutProvider>
+					</myContext.Provider>
+				);
+			};
+		} );
+		it( 'does not trigger the onClick event of the button if validateForm callback is falsy', async () => {
+			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ] ] } /> );
+			const firstStepContinue = getByText( 'Pay Please' );
+			validateForm.mockReturnValue( true );
+
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
+
+			expect( getByText( 'Pay Please' ) ).toBeDisabled();
+		} );
+		it( 'does trigger the onClick event of the button if validateForm callback is truthy', async () => {
+			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ] ] } /> );
+			const firstStepContinue = getByText( 'Pay Please' );
+			validateForm.mockReturnValue( false );
+
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
+
+			expect( getByText( 'Pay Please' ) ).not.toBeDisabled();
+		} );
+	} );
 } );
 
-function createMockMethod() {
+function createMockMethod( submitButton = <MockSubmitButton /> ) {
 	return {
 		id: 'mock',
+		paymentProcessorId: 'mock',
 		label: <span data-testid="mock-label">Mock Label</span>,
 		activeContent: <MockPaymentForm />,
-		submitButton: <MockSubmitButton />,
+		submitButton,
 		inactiveContent: 'Mock Method',
 		getAriaLabel: () => 'Mock Method',
 	};
@@ -631,6 +691,13 @@ function MockPaymentForm( { summary } ) {
 	);
 }
 
+function MockSubmitButtonSimple( { disabled, onClick } ) {
+	return (
+		<button disabled={ disabled } onClick={ onClick }>
+			Pay Please
+		</button>
+	);
+}
 function createMockItems() {
 	const items = [
 		{
@@ -804,6 +871,6 @@ function StepWithEditableField() {
 
 function getMockPaymentProcessors() {
 	return {
-		mock: async () => ( { success: true } ),
+		mock: async () => ( { success: true, type: PaymentProcessorResponseType.SUCCESS } ),
 	};
 }
