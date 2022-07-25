@@ -28,7 +28,6 @@ type TracksGoalsSelectEventProperties = {
 };
 
 const SiteGoal = Onboard.SiteGoal;
-const SiteIntent = Onboard.SiteIntent;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
 const displayAllGoals = isEnabled( 'signup/goals-step-2' );
@@ -78,7 +77,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const recordGoalsSelectTracksEvent = ( goals: SiteGoal[], intent: SiteIntent ) => {
+	const recordGoalsSelectTracksEvent = (
+		goals: Onboard.SiteGoal[],
+		intent: Onboard.SiteIntent
+	) => {
 		const eventProperties: TracksGoalsSelectEventProperties = {
 			goals: serializeGoals( goals ),
 			combo: goals.sort().join( ',' ),
@@ -97,7 +99,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_goals_select', eventProperties );
 	};
 
-	const recordIntentSelectTracksEvent = ( submittedGoals: SiteGoal[], intent: SiteIntent ) => {
+	const recordIntentSelectTracksEvent = (
+		submittedGoals: Onboard.SiteGoal[],
+		intent: Onboard.SiteIntent
+	) => {
 		const hasImportGoal = submittedGoals.includes( SiteGoal.Import );
 
 		const eventProperties = {
@@ -108,7 +113,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
 	};
 
-	const handleSubmit = async ( submittedGoals: SiteGoal[] ) => {
+	const handleSubmit = async ( submittedGoals: Onboard.SiteGoal[] ) => {
 		setGoals( submittedGoals );
 
 		const intent = goalsToIntent( submittedGoals );
