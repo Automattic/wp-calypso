@@ -5,11 +5,10 @@ import { urlToSlug } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import getSites from 'calypso/state/selectors/get-sites';
 import {
-	SiteExcerptData,
-	SiteExcerptNetworkData,
 	SITE_EXCERPT_REQUEST_FIELDS,
 	SITE_EXCERPT_REQUEST_OPTIONS,
-} from './site-excerpt-types';
+} from './site-excerpt-constants';
+import { SiteExcerptData, SiteExcerptNetworkData } from './site-excerpt-types';
 
 const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	const siteFilter = config< string[] >( 'site_filter' );
