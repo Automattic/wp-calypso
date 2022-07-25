@@ -194,7 +194,7 @@ export default function getThankYouPageUrl( {
 	// endpoint (`/me/transactions/order/:orderId`) for the transaction data,
 	// then replaces the `:receiptId` placeholder itself and redirects to the
 	// receipt page.
-	const receiptIdOrPlaceholder = getPendingOrReceiptId( receiptId, purchaseId );
+	const receiptIdOrPlaceholder = getReceiptIdOrPlaceholder( receiptId, purchaseId );
 	debug( 'receiptIdOrPlaceholder is', receiptIdOrPlaceholder );
 
 	// jetpack userless & siteless checkout uses a special thank you page
@@ -346,7 +346,7 @@ function getNewBlogReceiptUrl(
 		: fallbackUrl;
 }
 
-function getPendingOrReceiptId(
+function getReceiptIdOrPlaceholder(
 	receiptId: string | number | undefined,
 	purchaseId: string | number | undefined
 ): ReceiptIdOrPlaceholder | undefined {
