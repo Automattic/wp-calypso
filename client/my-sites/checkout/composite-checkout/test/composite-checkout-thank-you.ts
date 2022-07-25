@@ -622,14 +622,14 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/me/purchases/foo.bar/123abc' );
 	} );
 
-	it( 'does not redirect to url from cookie if isEligibleForSignupDestinationResult is false', () => {
+	it( 'does not redirect to url from cookie if cart contains a Google Apps product without a domain receipt', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			...getEmptyResponseCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
-					product_slug: 'foo',
+					product_slug: 'wp_google_workspace_business_starter_monthly',
 				},
 			],
 		};
@@ -638,19 +638,41 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestinationResult: false,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
-	it( 'Redirects to root if there is no purchase and isEligibleForSignupDestinationResult is false', () => {
+	it( 'does redirect to url from cookie if cart contains a Google Apps product with a domain receipt', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			...getEmptyResponseCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
-					product_slug: 'foo',
+					product_slug: 'wp_google_workspace_business_starter_monthly',
+					extra: {
+						receipt_for_domain: 1234,
+					},
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			getUrlFromCookie,
+		} );
+		expect( url ).toBe( '/cookie?notice=purchase-success' );
+	} );
+
+	it( 'Redirects to root if there is no purchase and cart contains a Google Apps product without a domain receipt', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			...getEmptyResponseCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'wp_google_workspace_business_starter_monthly',
 				},
 			],
 		};
@@ -661,7 +683,6 @@ describe( 'getThankYouPageUrl', () => {
 			noPurchaseMade: true,
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestinationResult: false,
 		} );
 		expect( url ).toBe( '/' );
 	} );
@@ -683,12 +704,11 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestinationResult: true,
 		} );
 		expect( url ).toBe( '/after/purchase/url' );
 	} );
 
-	it( 'redirects to url from cookie with notice type set to "purchase-success" if isEligibleForSignupDestination is set', () => {
+	it( 'redirects to url from cookie with notice type set to "purchase-success"', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			...getEmptyResponseCart(),
@@ -704,7 +724,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestinationResult: true,
 		} );
 		expect( url ).toBe( '/cookie?notice=purchase-success' );
 	} );
