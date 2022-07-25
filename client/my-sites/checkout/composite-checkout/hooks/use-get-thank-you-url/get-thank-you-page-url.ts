@@ -329,7 +329,7 @@ export default function getThankYouPageUrl( {
 	// for special product-specific messaging and a notice param used by
 	// in-editor checkout) if there is one set and the cart does not contain
 	// Google Apps without a domain receipt.
-	if ( cart && doesCartContainGoogleAppsWithoutDomainReceipt( cart ) && urlFromCookie ) {
+	if ( cart && ! doesCartContainGoogleAppsWithoutDomainReceipt( cart ) && urlFromCookie ) {
 		debug( 'is eligible for signup destination', urlFromCookie );
 		const noticeType = getNoticeType( cart );
 		const queryParams = { ...displayModeParam, ...noticeType };
