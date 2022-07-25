@@ -84,8 +84,8 @@ class ErrorNotice extends Component {
 
 		if ( error.code === 'unknown_user' && signupUrl ) {
 			message = this.props.translate(
-				"Hmm, we can't find a WordPress.com account for that social login. Please double check your information and try again. " +
-					'Alternatively, you can try {{a}}creating a new account{{/a}}.',
+				"Hmm, we can't find a WordPress.com account for that social login. Please double check your information and try again." +
+					' Alternatively, you can {{a}}sign up for a new account{{/a}}.',
 				{
 					components: {
 						a: (
