@@ -369,6 +369,16 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
+
+		let headerDesignTitle = <div>{ designTitle }</div>;
+		if ( selectedDesign.is_premium ) {
+			headerDesignTitle = (
+				<div>
+					{ designTitle } <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
+				</div>
+			);
+		}
+
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
@@ -450,7 +460,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 					formattedHeader={
 						<FormattedHeader
 							id={ 'design-setup-header' }
-							headerText={ designTitle }
+							headerText={ headerDesignTitle }
 							align={ isMobile ? 'left' : 'center' }
 						/>
 					}
