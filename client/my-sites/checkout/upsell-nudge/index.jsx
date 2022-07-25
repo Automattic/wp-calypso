@@ -2,6 +2,7 @@ import { isMonthly, getPlanByPathSlug, TERM_MONTHLY } from '@automattic/calypso-
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
+import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
@@ -377,7 +378,11 @@ export class UpsellNudge extends Component {
 			clearSignupDestinationCookie();
 		}
 
-		window.location.href = url;
+		if ( isURL( url ) ) {
+			window.location.href = url;
+		} else {
+			page.redirect( url );
+		}
 	};
 
 	handleClickAccept = ( buttonAction ) => {
