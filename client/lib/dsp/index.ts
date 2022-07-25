@@ -42,7 +42,7 @@ export async function showDSPWidgetModal( siteId: number, postId?: number ) {
 			apiHost: 'https://public-api.wordpress.com',
 			apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,
 			// todo fetch rlt somehow
-			authToken: 'rlt-todo',
+			authToken: 'wpcom-proxy-request',
 			template: 'article',
 			urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 		} );
