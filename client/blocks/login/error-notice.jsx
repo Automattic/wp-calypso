@@ -4,14 +4,12 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
-import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getRequestError,
 	getTwoFactorAuthRequestError,
 	getCreateSocialAccountError,
 	getRequestSocialAccountError,
-	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
 
 class ErrorNotice extends Component {
@@ -57,12 +55,6 @@ class ErrorNotice extends Component {
 		);
 	}
 
-	registerSignupUrlClickEvent = () => {
-		this.props.recordTracksEvent( 'calypso_login_sign_up_link_click', {
-			reason: 'unknown_user',
-		} );
-	};
-
 	render() {
 		const error = this.getError();
 
@@ -80,7 +72,7 @@ class ErrorNotice extends Component {
 
 		let message = error.message;
 
-		const { signupUrl, socialAccountLinkService } = this.props;
+		const { signupUrl } = this.props;
 
 		if ( error.code === 'unknown_user' && signupUrl ) {
 			message = this.props.translate(
@@ -90,12 +82,10 @@ class ErrorNotice extends Component {
 					components: {
 						a: (
 							<a
-								href={
-									socialAccountLinkService
-										? addQueryArgs( { launch_service: socialAccountLinkService }, signupUrl )
-										: signupUrl
-								}
-								onClick={ this.registerSignupUrlClickEvent }
+								href={ signupUrl }
+								onClick={ this.props.recordTracksEvent(
+									'calypso_login_social_unknown_signup_link_click'
+								) }
 							/>
 						),
 					},
@@ -136,7 +126,6 @@ export default connect(
 		requestAccountError: getRequestSocialAccountError( state ),
 		requestError: getRequestError( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
-		socialAccountLinkService: getSocialAccountLinkService( state ),
 	} ),
 	{
 		recordTracksEvent,
