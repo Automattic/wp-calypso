@@ -1,13 +1,5 @@
 import config from '@automattic/calypso-config';
-import {
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_BUSINESS,
-	PLAN_WPCOM_PRO,
-	PLAN_WPCOM_STARTER,
-	isBlogger,
-	isPersonal,
-	isPremium,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -27,7 +19,7 @@ const StyledUl = styled.ul`
 
 const StyledLi = styled.li`
 	color: var( --studio-gray-80 );
-	font-size: 12px;
+	font-size: $font-body-small;
 	display: flex;
 	align-items: center;
 	margin: 5px 0;
@@ -45,6 +37,7 @@ const StyledLi = styled.li`
 
 	&.legacy {
 		color: var( --studio-gray-50 );
+		font-size: 12px;
 	}
 `;
 

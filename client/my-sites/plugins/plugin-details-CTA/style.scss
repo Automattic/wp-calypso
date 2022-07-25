@@ -47,6 +47,7 @@
 	font-family: $sans;
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-50 );
+	padding-left: 3px;
 }
 
 .plugin-details-CTA__uprade-required {
@@ -92,6 +93,7 @@
 
 	.plugin-details-CTA__upgrade-required-icon {
 		color: var( --studio-orange-40 );
+		padding-top: 3px;
 	}
 
 	.plugin-details-CTA__upgrade-required-text {
@@ -122,6 +124,10 @@
 .legacy {
 	.plugin-details-CTA__t-and-c {
 		margin-bottom: 0;
+	}
+
+	.plugin-details-CTA__period {
+		padding-left: 0;
 	}
 }
 

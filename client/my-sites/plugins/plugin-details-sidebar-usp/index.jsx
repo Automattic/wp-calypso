@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Fragment } from 'react';
@@ -41,7 +42,8 @@ const Title = styled.div`
 	color: var( --studio-gray-100 );
 	font-size: 16px;
 	${ ( props ) => ! props.showAsAccordion && 'font-weight: 600' };
-	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 12px;' };
+	${ ( props ) => ! props.showAsAccordion && ! props.legacy && 'margin-bottom: 4px;' };
+	${ ( props ) => ! props.showAsAccordion && props.legacy && 'margin-bottom: 12px;' };
 `;
 const Description = styled.div`
 	color: var( --studio-gray-60 );
@@ -56,6 +58,8 @@ const PluginDetailsSidebarUSP = ( {
 	links = undefined,
 	first = false,
 } ) => {
+	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
+
 	const isNarrow = useBreakpoint( '<1040px' );
 	const Header = () => {
 		return (
@@ -67,7 +71,9 @@ const PluginDetailsSidebarUSP = ( {
 					</>
 				) }
 
-				<Title showAsAccordion={ isNarrow }>{ title }</Title>
+				<Title showAsAccordion={ isNarrow } legacy={ legacyVersion }>
+					{ title }
+				</Title>
 			</>
 		);
 	};
