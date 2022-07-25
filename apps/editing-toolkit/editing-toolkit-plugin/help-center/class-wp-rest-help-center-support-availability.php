@@ -20,11 +20,6 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 		$this->namespace                       = 'wpcom/v2';
 		$this->rest_base                       = 'help-center/support-availability';
 		$this->wpcom_is_site_specific_endpoint = false;
-		$this->is_wpcom                        = false;
-
-		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
-			$this->is_wpcom = true;
-		}
 	}
 
 	/**
@@ -99,15 +94,11 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 	 * @return WP_REST_Response
 	 */
 	public function get_chat_support_eligibility() {
-		if ( $this->is_wpcom ) {
-			$response = \WPCOM_Help_Eligibility::get_user_chat_support_eligibility();
-		} else {
-			$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/chat/mine' );
-			if ( is_wp_error( $body ) ) {
-				return $body;
-			}
-			$response = json_decode( wp_remote_retrieve_body( $body ) );
+		$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/chat/mine' );
+		if ( is_wp_error( $body ) ) {
+			return $body;
 		}
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
 		return rest_ensure_response( $response );
 	}

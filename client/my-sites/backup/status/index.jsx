@@ -32,6 +32,7 @@ export const DailyStatus = ( { selectedDate } ) => {
 				lastBackupDate,
 				backup: lastBackupAttemptOnDate,
 				deltas,
+				lastBackupAttemptOnDate,
 			} }
 		/>
 	);
@@ -73,6 +74,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 					lastBackupDate,
 					backup: lastSuccessfulBackupOnDate || lastBackupAttemptOnDate,
 					lastBackupAttempt,
+					lastBackupAttemptOnDate,
 				} }
 			/>
 

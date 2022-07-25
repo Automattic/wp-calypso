@@ -115,10 +115,10 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	renderCurrentActionButtons() {
-		const { hasManagePluginsFeature, isWpComAtomic, translate } = this.props;
+		const { hasManagePluginsFeature, isWpComAtomic, translate, siteId } = this.props;
 		const buttons = [];
 
-		if ( isWpComAtomic && ! hasManagePluginsFeature ) {
+		if ( siteId && isWpComAtomic && ! hasManagePluginsFeature ) {
 			return buttons;
 		}
 
@@ -381,6 +381,7 @@ export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
+		siteId,
 		allSites: getSites( state ),
 		hasManagePluginsFeature: siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS ),
 		isWpComAtomic: isSiteWpcomAtomic( state, siteId ),

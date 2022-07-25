@@ -4,8 +4,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { sprintf, hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { noop } from 'lodash';
@@ -31,15 +30,25 @@ interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
 	highRes: boolean;
+	verticalId?: string;
 }
 
-const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( { design, locale, highRes } ) => {
+const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
+	design,
+	locale,
+	highRes,
+	verticalId,
+} ) => {
 	const scrollable = design.preview !== 'static';
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	return (
 		<MShotsImage
-			url={ getDesignPreviewUrl( design, { language: locale, use_screenshot_overrides: true } ) }
+			url={ getDesignPreviewUrl( design, {
+				language: locale,
+				vertical_id: verticalId,
+				use_screenshot_overrides: true,
+			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
 			options={ getMShotOptions( { scrollable, highRes, isMobile } ) }
@@ -62,6 +71,7 @@ interface DesignButtonProps {
 	hasDesignOptionHeader?: boolean;
 	isPremiumThemeAvailable?: boolean;
 	onCheckout?: any;
+	verticalId?: string;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -77,6 +87,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable = false,
 	onCheckout = undefined,
+	verticalId,
 } ) => {
 	const { __ } = useI18n();
 
@@ -108,22 +119,21 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		let text: any = __( 'Free' );
 
 		if ( design.is_premium ) {
-			text = createInterpolateElement(
-				shouldUpgrade
-					? __( '<button>Included in the Pro plan</button>' )
-					: __( 'Included in the Pro plan' ),
-				{
-					button: (
-						<Button
-							isLink={ true }
-							className="design-picker__button-link"
-							onClick={ ( e: any ) => {
-								e.stopPropagation();
-								onCheckout?.();
-							} }
-						/>
-					),
-				}
+			text = shouldUpgrade ? (
+				<Button
+					isLink={ true }
+					className="design-picker__button-link"
+					onClick={ ( e: any ) => {
+						e.stopPropagation();
+						onCheckout?.();
+					} }
+				>
+					{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
+						? __( 'Included in WordPress.com Premium' )
+						: __( 'Upgrade to Premium' ) }
+				</Button>
+			) : (
+				__( 'Included in your plan' )
 			);
 		}
 
@@ -165,7 +175,12 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					</div>
 				) : (
 					<div className="design-picker__image-frame-inside">
-						<DesignPreviewImage design={ design } locale={ locale } highRes={ highRes } />
+						<DesignPreviewImage
+							design={ design }
+							locale={ locale }
+							highRes={ highRes }
+							verticalId={ verticalId }
+						/>
 					</div>
 				) }
 			</span>
@@ -310,6 +325,7 @@ export interface DesignPickerProps {
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
+	verticalId?: string;
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -338,6 +354,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	previewOnly = false,
 	hasDesignOptionHeader = true,
 	onCheckout = undefined,
+	verticalId,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -385,6 +402,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						previewOnly={ previewOnly }
 						hasDesignOptionHeader={ hasDesignOptionHeader }
 						onCheckout={ onCheckout }
+						verticalId={ verticalId }
 					/>
 				) ) }
 			</div>

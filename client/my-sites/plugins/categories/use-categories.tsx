@@ -6,27 +6,31 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Category } from '.';
 
 export const ALLOWED_CATEGORIES = [
-	'discover',
-	'paid',
-	'popular',
-	'featured',
 	'analytics',
 	'booking',
 	'customer',
 	'design',
+	'discover',
 	'donations',
 	'ecommerce',
 	'education',
+	'email',
+	'events',
 	'finance',
 	'marketing',
-	'seo',
 	'photo',
+	'posts',
+	'security',
+	'seo',
+	'shipping',
 	'social',
 	'widgets',
-	'email',
-	'security',
-	'shipping',
-	'posts',
+
+	// "Top paid plugins", "Editors pick" etc aren't real categories but we
+	// treat them like they are in the UI so include them here
+	'popular',
+	'featured',
+	'paid',
 ];
 
 export function useCategories(
@@ -64,32 +68,18 @@ export function useCategories(
 			description: __( 'Booking' ),
 			icon: 'grid',
 			slug: 'booking',
-			tags: [
-				'booking',
-				'scheduling',
-				'appointment',
-				'reservations',
-				'reservation',
-				'booking-calendar',
-			],
+			tags: [ 'booking', 'scheduling', 'appointment', 'reservation', 'booking-calendar' ],
 		},
 		customer: {
-			name: __( 'Customer Service' ),
+			name: __( 'CRM & Live Chat' ),
 			description: __( 'Customer Service' ),
 			icon: 'grid',
 			slug: 'customer',
-			tags: [ 'customer-service' ],
-		},
-		design: {
-			name: __( 'Design' ),
-			description: __( 'Design' ),
-			icon: 'grid',
-			slug: 'design',
-			tags: [ 'design' ],
+			tags: [ 'customer-service', 'live-chat', 'crm' ],
 		},
 		donations: {
-			name: __( 'Donations' ),
-			description: __( 'Donations' ),
+			name: __( 'Crowdfunding' ),
+			description: __( 'Crowdfunding' ),
 			icon: 'grid',
 			slug: 'donations',
 			tags: [
@@ -103,19 +93,19 @@ export function useCategories(
 				'charity',
 			],
 		},
+		design: {
+			name: __( 'Design' ),
+			description: __( 'Design' ),
+			icon: 'grid',
+			slug: 'design',
+			tags: [ 'design' ],
+		},
 		ecommerce: {
 			name: __( 'Ecommerce & Business' ),
 			description: __( 'Ecommerce' ),
 			icon: 'grid',
 			slug: 'ecommerce',
 			tags: [ 'ecommerce', 'e-commerce', 'woocommerce', 'business', 'business-directory' ],
-		},
-		education: {
-			name: __( 'Education' ),
-			description: __( 'Education' ),
-			icon: 'grid',
-			slug: 'education',
-			tags: [ 'education' ],
 		},
 		email: {
 			name: __( 'Email' ),
@@ -124,12 +114,26 @@ export function useCategories(
 			slug: 'email',
 			tags: [ 'email' ],
 		},
+		events: {
+			name: __( 'Events Calendar' ),
+			description: __( 'Events Calendar' ),
+			icon: 'grid',
+			slug: 'events',
+			tags: [ 'events-calendar', 'calendar', 'calendar-event' ],
+		},
 		finance: {
 			name: __( 'Finance & Payments' ),
 			description: __( 'Finance' ),
 			icon: 'grid',
 			slug: 'finance',
 			tags: [ 'finance', 'payment', 'credit-card', 'payment-gateway' ],
+		},
+		education: {
+			name: __( 'Learning Management Systems' ),
+			description: __( 'Education' ),
+			icon: 'grid',
+			slug: 'education',
+			tags: [ 'education', 'lms', 'learning-management-systems', 'elearning' ],
 		},
 		marketing: {
 			name: __( 'Marketing' ),
@@ -153,7 +157,7 @@ export function useCategories(
 			tags: [ 'posts', 'post', 'page', 'pages' ],
 		},
 		seo: {
-			name: __( 'Search Optimization' ),
+			name: __( 'Search Engine Optimization' ),
 			description: __( 'Search Optimization' ),
 			icon: 'grid',
 			slug: 'seo',

@@ -1,3 +1,4 @@
+import languages, { LanguageSlug } from '@automattic/languages';
 import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 'react-query';
 import { useSelector } from 'react-redux';
 import { extractSearchInformation } from 'calypso/lib/plugins/utils';
@@ -62,25 +63,36 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) return [];
 	return results.map( ( { fields: hit, railcar } ) => {
 		const plugin = {
-			name: hit[ 'title.default' ], // TODO: add localization
+			name: hit.plugin.title, // TODO: add localization
 			slug: hit.slug,
 			version: hit[ 'plugin.stable_tag' ],
 			author: hit.author,
 			author_name: hit.author,
 			author_profile: '', // TODO: get author profile URL
 			tested: hit[ 'plugin.tested' ],
-			rating: mapStarRatingToPercent( hit[ 'plugin.rating' ] ),
-			num_ratings: hit[ 'plugin.num_ratings' ],
+			rating: mapStarRatingToPercent( hit.plugin.rating ),
+			num_ratings: hit.plugin.num_ratings,
 			support_threads: hit[ 'plugin.support_threads' ],
 			support_threads_resolved: hit[ 'plugin.support_threads_resolved' ],
 			active_installs: hit[ 'plugin.active_installs' ],
 			last_updated: hit.modified,
-			short_description: hit[ 'excerpt.default' ], // TODO: add localization
-			icon: createIconUrl( hit.slug, hit[ 'plugin.icons' ] ),
+			short_description: hit.plugin.excerpt, // TODO: add localization
+			icon: createIconUrl( hit.slug, hit.plugin.icons ),
 			railcar,
 		};
 		return plugin;
 	} );
+};
+
+const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
+	const defaultLanguage = 'en';
+
+	// the wpLocale for `en` would be `en_US`, but the server uses `en` too
+	if ( defaultLanguage === slug ) {
+		return slug;
+	}
+
+	return languages.find( ( l ) => l.langSlug === slug )?.wpLocale || defaultLanguage;
 };
 
 export const useESPluginsInfinite = (
@@ -100,7 +112,7 @@ export const useESPluginsInfinite = (
 				groupId: 'wporg',
 				pageHandle: pageParam,
 				pageSize,
-				locale: options.locale || locale,
+				locale: getWpLocaleBySlug( options.locale || locale ),
 			} ),
 		{
 			select: ( data: InfiniteData< ESResponse > ) => {

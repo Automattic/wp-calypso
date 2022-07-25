@@ -8,15 +8,19 @@ import { useSiteSlugParam } from './use-site-slug-param';
 export function useCanUserManageOptions() {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSelect(
-		( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
+		( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug ),
+		undefined
 	);
-
 	const isRequesting = useSelector( ( state ) => isRequestingSites( state ) );
 	const hasManageOptionsCap = useSelector( ( state ) =>
 		canCurrentUser( state, siteId as number, 'manage_options' )
 	);
 
+	if ( isRequesting ) {
+		return 'requesting';
+	}
+
 	if ( siteId ) {
-		return isRequesting ? 'requesting' : hasManageOptionsCap ?? false;
+		return hasManageOptionsCap ?? false;
 	}
 }

@@ -48,7 +48,7 @@ describe( 'redirectJetpackLegacyPlans', () => {
 	} );
 
 	it( 'should not redirect if the plan is not a Jetpack legacy plan', () => {
-		utils.getDomainOrProductFromContext.mockReturnValue( PRODUCT_JETPACK_BACKUP_DAILY );
+		utils.getProductSlugFromContext.mockReturnValue( PRODUCT_JETPACK_BACKUP_DAILY );
 
 		redirectJetpackLegacyPlans( {}, next );
 
@@ -57,7 +57,7 @@ describe( 'redirectJetpackLegacyPlans', () => {
 	} );
 
 	it( 'should redirect if the plan is a Jetpack legacy plan', () => {
-		utils.getDomainOrProductFromContext.mockReturnValue( PLAN_JETPACK_PERSONAL );
+		utils.getProductSlugFromContext.mockReturnValue( PLAN_JETPACK_PERSONAL );
 
 		redirectJetpackLegacyPlans( { store }, next );
 

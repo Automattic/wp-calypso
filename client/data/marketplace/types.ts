@@ -36,24 +36,25 @@ export type ESIndexResult = {
 	like_count: number;
 	modified_gmt: string;
 	author: string;
-	excerpt_html: string;
-	'title.default': string;
 	'permalink.url.raw': string;
 	post_id: number;
 	title_html: string;
 	blog_icon_url: string;
 	modified: string;
 	post_type: string;
-	'excerpt.default': string;
 	date_gmt: string;
 	'plugin.stable_tag'?: string;
 	'plugin.tested'?: string;
-	'plugin.rating'?: number;
-	'plugin.num_ratings'?: number;
 	'plugin.support_threads'?: number;
 	'plugin.support_threads_resolved'?: number;
 	'plugin.active_installs'?: number;
-	'plugin.icons'?: string;
+	plugin: {
+		title: string;
+		excerpt: string;
+		icons: string;
+		rating: number;
+		num_ratings: number;
+	};
 };
 
 export type Icon = {
