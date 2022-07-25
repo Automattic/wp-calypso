@@ -219,26 +219,24 @@ export default function getThankYouPageUrl( {
 		);
 	}
 
-	const fallbackUrl = getFallbackDestination( {
-		receiptIdOrPlaceholder,
-		orderId,
-		noPurchaseMade,
-		siteSlug,
-		adminUrl,
-		feature,
-		cart,
-		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
-		productAliasFromUrl,
-		adminPageRedirect,
-		redirectTo,
-	} );
-	debug( 'fallbackUrl is', fallbackUrl );
-
 	// If there is no purchase, then send the user to a generic page (not
 	// post-purchase related). For example, this case arises when a Skip button
 	// is clicked on a concierge upsell nudge opened by a direct link to
 	// /checkout/offer-support-session.
 	if ( noPurchaseMade ) {
+		const fallbackUrl = getFallbackDestination( {
+			receiptIdOrPlaceholder,
+			orderId,
+			noPurchaseMade,
+			siteSlug,
+			adminUrl,
+			feature,
+			cart,
+			isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
+			productAliasFromUrl,
+			adminPageRedirect,
+			redirectTo,
+		} );
 		debug( 'there was no purchase, so returning: ', fallbackUrl );
 		return fallbackUrl;
 	}
@@ -318,12 +316,6 @@ export default function getThankYouPageUrl( {
 		return redirectUrlForPostCheckoutUpsell;
 	}
 
-	// The display mode query param (eg: `?d=concierge`) is used to show
-	// purchase-specific messaging, for e.g. the Schedule Session button when
-	// purchasing a concierge session or when purchasing the Ultimate Traffic
-	// Guide.
-	const displayModeParam = getDisplayModeParamFromCart( cart );
-
 	// Display the regular receipt thank-you page with specific messaging from
 	// the display mode query param if the purchase includes the traffic-guide.
 	if ( receiptIdOrPlaceholder && cart && hasTrafficGuide( cart ) ) {
@@ -333,6 +325,12 @@ export default function getThankYouPageUrl( {
 		} );
 		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, { d: 'traffic-guide' } );
 	}
+
+	// The display mode query param (eg: `?d=concierge`) is used to show
+	// purchase-specific messaging, for e.g. the Schedule Session button when
+	// purchasing a concierge session or when purchasing the Ultimate Traffic
+	// Guide.
+	const displayModeParam = getDisplayModeParamFromCart( cart );
 
 	// Display the cookie post-checkout URL (with the display mode query param
 	// for special product-specific messaging and a notice param used by
@@ -345,6 +343,19 @@ export default function getThankYouPageUrl( {
 		return getUrlWithQueryParam( urlFromCookie, queryParams );
 	}
 
+	const fallbackUrl = getFallbackDestination( {
+		receiptIdOrPlaceholder,
+		orderId,
+		noPurchaseMade,
+		siteSlug,
+		adminUrl,
+		feature,
+		cart,
+		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
+		productAliasFromUrl,
+		adminPageRedirect,
+		redirectTo,
+	} );
 	debug( 'returning fallback url', fallbackUrl );
 	return getUrlWithQueryParam( fallbackUrl, displayModeParam ?? {} );
 }
