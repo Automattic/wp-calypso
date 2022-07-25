@@ -84,7 +84,6 @@ export default function getThankYouPageUrl( {
 	redirectTo,
 	receiptId,
 	noPurchaseMade,
-	orderId,
 	purchaseId,
 	feature,
 	cart,
@@ -104,7 +103,6 @@ export default function getThankYouPageUrl( {
 	redirectTo?: string;
 	receiptId?: number | string;
 	noPurchaseMade?: boolean;
-	orderId?: number | string;
 	purchaseId?: number | string;
 	feature?: string;
 	cart?: ResponseCart;
@@ -251,7 +249,6 @@ export default function getThankYouPageUrl( {
 		getUrlFromCookie,
 		isInModal,
 		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
-		orderId,
 		productAliasFromUrl,
 		receiptIdOrPlaceholder,
 		redirectTo,
@@ -331,7 +328,6 @@ export default function getThankYouPageUrl( {
 
 	const fallbackUrl = getFallbackDestination( {
 		receiptIdOrPlaceholder,
-		orderId,
 		siteSlug,
 		adminUrl,
 		feature,
@@ -353,7 +349,6 @@ function updateUrlInCookie( {
 	getUrlFromCookie,
 	isInModal,
 	isJetpackNotAtomic,
-	orderId,
 	productAliasFromUrl,
 	receiptIdOrPlaceholder,
 	redirectTo,
@@ -367,7 +362,6 @@ function updateUrlInCookie( {
 	getUrlFromCookie: GetUrlFromCookie;
 	isInModal?: boolean;
 	isJetpackNotAtomic?: boolean;
-	orderId?: number | string;
 	productAliasFromUrl?: string;
 	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined;
 	redirectTo?: string;
@@ -388,7 +382,6 @@ function updateUrlInCookie( {
 			cart,
 			feature,
 			isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
-			orderId,
 			productAliasFromUrl,
 			receiptIdOrPlaceholder,
 			redirectTo,
@@ -428,7 +421,6 @@ function getReceiptIdOrPlaceholder(
 
 function getFallbackDestination( {
 	receiptIdOrPlaceholder,
-	orderId,
 	siteSlug,
 	adminUrl,
 	feature,
@@ -439,7 +431,6 @@ function getFallbackDestination( {
 	redirectTo,
 }: {
 	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined;
-	orderId?: string | number;
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
 	feature: string | undefined;
@@ -449,19 +440,9 @@ function getFallbackDestination( {
 	adminPageRedirect?: string;
 	redirectTo?: string;
 } ): string {
-	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
-	const isReceiptEmpty =
-		':receiptId' === receiptIdOrPlaceholder || receiptIdOrPlaceholder === undefined;
-	const isOrderEmpty = ! orderId;
-
 	if ( ! siteSlug ) {
 		debug( 'fallback is just root' );
 		return '/';
-	}
-
-	if ( isReceiptEmpty && isCartEmpty && isOrderEmpty ) {
-		debug( 'just site slug', siteSlug );
-		return `/checkout/thank-you/${ siteSlug }`;
 	}
 
 	// If we just purchased a Jetpack product or a Jetpack plan (either Jetpack Security or Jetpack Complete),
