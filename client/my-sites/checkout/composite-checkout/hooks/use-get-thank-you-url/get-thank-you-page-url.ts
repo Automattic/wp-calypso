@@ -452,86 +452,82 @@ function getFallbackDestination( {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty =
 		':receiptId' === receiptIdOrPlaceholder || receiptIdOrPlaceholder === undefined;
+	const isOrderEmpty = ! orderId;
 
-	// We will show the Thank You page if there's a site slug and either one of the following is true:
-	// - has a receipt number (or a pending order).
-	// - does not have a receipt number but has an item in cart (as in the case of paying with a redirect payment method).
-	// - has an orderId (as in the case of paying with a redirect payment method).
-	if ( siteSlug && ( ! isReceiptEmpty || ! isCartEmpty || orderId ) ) {
-		// If we just purchased a Jetpack product or a Jetpack plan (either Jetpack Security or Jetpack Complete),
-		// redirect to the my plans page. The product being purchased can come from the `product` prop or from the
-		// cart so we need to check both places.
-		const productsWithCustomThankYou = [ ...JETPACK_PRODUCTS_LIST, ...JETPACK_RESET_PLANS ];
-
-		// Check the cart (since our Thank You modal doesn't support multiple products, we only take the first
-		// one found).
-		const productFromCart = cart?.products?.find( ( { product_slug } ) =>
-			( productsWithCustomThankYou as ReadonlyArray< string > ).includes( product_slug )
-		)?.product_slug;
-
-		const purchasedProduct =
-			productFromCart ||
-			productsWithCustomThankYou.find(
-				( productWithCustom ) => productWithCustom === productAliasFromUrl
-			);
-		if ( isJetpackNotAtomic && purchasedProduct ) {
-			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
-
-			const adminPath =
-				redirectTo || adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
-
-			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
-			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
-			if ( isJetpackCloud() ) {
-				if ( redirectCheckoutToWpAdmin() && adminUrl ) {
-					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
-					return adminUrl + adminPath;
-				}
-				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
-				return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
-					`product=${ purchasedProduct }&thank-you=true`
-				) }`;
-			}
-			// Otherwise if not Jetpack Cloud:
-			return redirectCheckoutToWpAdmin() && adminUrl
-				? adminUrl + adminPath
-				: `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
-		}
-
-		// If we just purchased a legacy Jetpack plan, redirect to the Jetpack onboarding plugin install flow.
-		if ( isJetpackNotAtomic ) {
-			debug( 'the site is jetpack and has no jetpack product' );
-			return `/plans/my-plan/${ siteSlug }?thank-you=true&install=all`;
-		}
-
-		const getSimpleThankYouUrl = (): string => {
-			debug( 'attempt to add extra information as url query string' );
-			const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
-
-			if ( titanProducts && titanProducts.length > 0 ) {
-				const emails = titanProducts[ 0 ].extra?.email_users;
-
-				if ( emails && emails.length > 0 ) {
-					return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
-				}
-			}
-			return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
-		};
-
-		if ( feature && isValidFeatureKey( feature ) ) {
-			debug( 'site with receipt or cart; feature is', feature );
-			return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ receiptIdOrPlaceholder }`;
-		}
-		return getSimpleThankYouUrl();
+	if ( ! siteSlug ) {
+		debug( 'fallback is just root' );
+		return '/';
 	}
 
-	if ( siteSlug ) {
+	if ( isReceiptEmpty && isCartEmpty && isOrderEmpty ) {
 		debug( 'just site slug', siteSlug );
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
 
-	debug( 'fallback is just root' );
-	return '/';
+	// If we just purchased a Jetpack product or a Jetpack plan (either Jetpack Security or Jetpack Complete),
+	// redirect to the my plans page. The product being purchased can come from the `product` prop or from the
+	// cart so we need to check both places.
+	const productsWithCustomThankYou = [ ...JETPACK_PRODUCTS_LIST, ...JETPACK_RESET_PLANS ];
+
+	// Check the cart (since our Thank You modal doesn't support multiple products, we only take the first
+	// one found).
+	const productFromCart = cart?.products?.find( ( { product_slug } ) =>
+		( productsWithCustomThankYou as ReadonlyArray< string > ).includes( product_slug )
+	)?.product_slug;
+
+	const purchasedProduct =
+		productFromCart ||
+		productsWithCustomThankYou.find(
+			( productWithCustom ) => productWithCustom === productAliasFromUrl
+		);
+	if ( isJetpackNotAtomic && purchasedProduct ) {
+		debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
+
+		const adminPath = redirectTo || adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
+
+		// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
+		// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
+		if ( isJetpackCloud() ) {
+			if ( redirectCheckoutToWpAdmin() && adminUrl ) {
+				debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
+				return adminUrl + adminPath;
+			}
+			debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
+			return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
+				`product=${ purchasedProduct }&thank-you=true`
+			) }`;
+		}
+		// Otherwise if not Jetpack Cloud:
+		return redirectCheckoutToWpAdmin() && adminUrl
+			? adminUrl + adminPath
+			: `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
+	}
+
+	// If we just purchased a legacy Jetpack plan, redirect to the Jetpack onboarding plugin install flow.
+	if ( isJetpackNotAtomic ) {
+		debug( 'the site is jetpack and has no jetpack product' );
+		return `/plans/my-plan/${ siteSlug }?thank-you=true&install=all`;
+	}
+
+	const getSimpleThankYouUrl = (): string => {
+		debug( 'attempt to add extra information as url query string' );
+		const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
+
+		if ( titanProducts && titanProducts.length > 0 ) {
+			const emails = titanProducts[ 0 ].extra?.email_users;
+
+			if ( emails && emails.length > 0 ) {
+				return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
+			}
+		}
+		return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
+	};
+
+	if ( feature && isValidFeatureKey( feature ) ) {
+		debug( 'site with receipt or cart; feature is', feature );
+		return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ receiptIdOrPlaceholder }`;
+	}
+	return getSimpleThankYouUrl();
 }
 
 /**
