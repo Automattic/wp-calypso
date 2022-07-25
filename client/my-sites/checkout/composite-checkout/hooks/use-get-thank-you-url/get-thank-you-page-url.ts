@@ -257,11 +257,20 @@ export default function getThankYouPageUrl( {
 		);
 		return managePurchaseUrl;
 	}
+
 	updateUrlInCookie( {
+		adminPageRedirect,
+		adminUrl,
 		cart,
-		fallbackUrl,
+		feature,
 		getUrlFromCookie,
 		isInModal,
+		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
+		noPurchaseMade,
+		orderId,
+		productAliasFromUrl,
+		receiptIdOrPlaceholder,
+		redirectTo,
 		saveUrlToCookie,
 		siteSlug,
 	} );
@@ -341,19 +350,35 @@ export default function getThankYouPageUrl( {
 }
 
 function updateUrlInCookie( {
+	adminPageRedirect,
+	adminUrl,
 	cart,
-	fallbackUrl,
+	feature,
 	getUrlFromCookie,
 	isInModal,
+	isJetpackNotAtomic,
+	noPurchaseMade,
+	orderId,
+	productAliasFromUrl,
+	receiptIdOrPlaceholder,
+	redirectTo,
 	saveUrlToCookie,
 	siteSlug,
 }: {
-	cart: ResponseCart | undefined;
-	fallbackUrl: string;
+	adminPageRedirect?: string;
+	adminUrl?: string;
+	cart?: ResponseCart;
+	feature?: string;
 	getUrlFromCookie: GetUrlFromCookie;
-	isInModal: boolean | undefined;
+	isInModal?: boolean;
+	isJetpackNotAtomic?: boolean;
+	noPurchaseMade?: boolean;
+	orderId?: number | string;
+	productAliasFromUrl?: string;
+	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined;
+	redirectTo?: string;
 	saveUrlToCookie: SaveUrlToCookie;
-	siteSlug: string | undefined;
+	siteSlug?: string;
 } ): void {
 	// If there is an ecommerce plan in cart, then irrespective of the signup
 	// flow destination (which tends to be set in a cookie), we will want the
@@ -363,6 +388,20 @@ function updateUrlInCookie( {
 	// receipt ID will be used to display the Thank You page for the eCommerce
 	// plan purchase.
 	if ( cart && hasEcommercePlan( cart ) ) {
+		const fallbackUrl = getFallbackDestination( {
+			adminPageRedirect,
+			adminUrl,
+			cart,
+			feature,
+			isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
+			noPurchaseMade,
+			orderId,
+			productAliasFromUrl,
+			receiptIdOrPlaceholder,
+			redirectTo,
+			siteSlug,
+		} );
+
 		saveUrlToCookie( fallbackUrl );
 	}
 
