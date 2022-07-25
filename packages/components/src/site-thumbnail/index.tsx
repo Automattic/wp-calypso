@@ -13,7 +13,7 @@ const MSHOTS_OPTION = {
 type Props = {
 	backgroundColor?: string;
 	mShotsUrl?: string;
-	size?: string;
+	size?: 'small' | 'medium';
 	children?: ReactNode;
 };
 
@@ -35,18 +35,13 @@ export const SiteThumbnail = ( {
 		`site-thumbnail__size-${ size }`
 	);
 
-	const loader = visible ? 'site-thumbnail-loader' : '';
-
-	const backgroundImage = maybeImage?.src && `url( ${ maybeImage?.src } )`;
+	const loader = mShotsUrl ? 'site-thumbnail-loader' : '';
 
 	return ! visible ? (
 		<div className={ className } style={ { backgroundColor: backgroundColor, color: textColor } }>
 			<div className={ loader }>{ children }</div>
 		</div>
 	) : (
-		<div
-			className={ className }
-			style={ { backgroundColor: backgroundColor, backgroundImage: backgroundImage } }
-		/>
+		<img className={ className } src={ src } alt="site thumbnail" />
 	);
 };
