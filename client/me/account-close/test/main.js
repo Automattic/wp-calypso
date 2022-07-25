@@ -16,7 +16,7 @@ describe( 'AccountSettingsClose', () => {
 		expect( screen.queryByTestId( 'manage-purchases-button' ) ).toBeInTheDocument();
 	} );
 
-	it( 'Tells user to wait if Atomic site is being deleted', () => {
+	it( 'Tells user to wait if they still have an Atomic site', () => {
 		render(
 			<ReduxProvider store={ createTestStore( false, true ) }>
 				<AccountSettingsClose />
