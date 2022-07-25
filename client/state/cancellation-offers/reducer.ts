@@ -67,7 +67,7 @@ export const offers = ( state = [], action: AnyAction ) => {
 	return state;
 };
 
-export const isApplying = ( state = {}, action: AnyAction ) => {
+export const isApplying = ( state = false, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_APPLY:
 			return true;
@@ -79,16 +79,16 @@ export const isApplying = ( state = {}, action: AnyAction ) => {
 	return state;
 };
 
-export const applyError = ( state = {}, action: AnyAction ) => {
+export const applyError = ( state = null, action: AnyAction ) => {
 	switch ( action.type ) {
-		case PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS:
+		case PURCHASE_CANCELLATION_OFFER_APPLY_FAILURE:
 			return action.error;
 	}
 
 	return state;
 };
 
-export const applySuccess = ( state = {}, action: AnyAction ) => {
+export const applySuccess = ( state = false, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS:
 			return action.success;

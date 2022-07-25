@@ -25,10 +25,11 @@ interface Props {
 	siteId: number;
 	offer: CancellationOffer;
 	percentDiscount: number;
+	onGetDiscount: () => void;
 }
 
 const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
-	const { siteId, offer, purchase, percentDiscount } = props;
+	const { siteId, offer, purchase, percentDiscount, onGetDiscount } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isApplyingOffer = useSelector( ( state ) =>
@@ -129,11 +130,34 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 
 	const onClickAccept = useCallback( () => {
 		// is the offer being claimed/ is there already a success or error
-		if ( ! isApplyingOffer && offerApplySuccess === null && offerApplyError === null ) {
+		if ( ! isApplyingOffer && offerApplySuccess === false && ! offerApplyError ) {
 			dispatch( applyCancellationOffer( siteId, purchase.id ) );
-			// add analytics here
+			onGetDiscount(); // Takes care of analytics.
 		}
 	}, [ isApplyingOffer, offerApplySuccess, offerApplyError ] );
+
+	const getErrorOutput = useMemo( () => {
+		if ( offerApplyError ) {
+			switch ( offerApplyError.code ) {
+				case 'invalid_offer':
+					return (
+						<p className="jetpack-cancellation-offer__error-text">
+							{ translate(
+								'This discount appears to be invalid, please try reloading the purchase page.'
+							) }
+						</p>
+					);
+				default:
+					return (
+						<p className="jetpack-cancellation-offer__error-text">
+							{ translate( 'There was an error getting the discount!' ) }
+						</p>
+					);
+			}
+		}
+
+		return null;
+	}, [ offerApplyError ] );
 
 	return (
 		<>
@@ -186,10 +210,12 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 					className="jetpack-cancellation-offer__accept-cta"
 					primary
 					onClick={ onClickAccept }
-					disabled={ isApplyingOffer }
+					disabled={ isApplyingOffer || offerApplyError }
+					busy={ isApplyingOffer }
 				>
-					{ translate( 'Get discount' ) }
+					{ isApplyingOffer ? translate( 'Getting Discount' ) : translate( 'Get discount' ) }
 				</Button>
+				{ getErrorOutput }
 			</div>
 		</>
 	);

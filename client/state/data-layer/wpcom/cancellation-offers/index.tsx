@@ -62,7 +62,7 @@ const applyCancellationOffer = ( action: { siteId: number; purchaseId: number } 
 	);
 };
 
-const onApplySuccess = ( action: { purchaseId: number }, response: unknown ) => {
+const onApplySuccess = ( action: { purchaseId: number }, response: { success: boolean } ) => {
 	return [
 		{
 			type: PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS,
