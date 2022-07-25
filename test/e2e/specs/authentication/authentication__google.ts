@@ -1,7 +1,6 @@
 /**
  * @group authentication
  *
- *
  * Google blocks Chrome-based browsers that are controlled via automation
  * from performing login to their services.
  * The workaround is to use a non-Google browser, such as Firefox.
