@@ -52,7 +52,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const { saveSiteTitle } = useDispatch( SITE_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
-	const getSiteTitle = ( intent: SiteIntent ) => {
+	const getSiteTitle = ( intent: Onboard.SiteIntent ) => {
 		if ( intent === SiteIntent.Write ) {
 			return translate( 'My blog' );
 		}
