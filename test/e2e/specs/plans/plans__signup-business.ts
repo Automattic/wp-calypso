@@ -1,4 +1,5 @@
 /**
+ * @group calypso-release
  */
 
 import {
@@ -7,7 +8,6 @@ import {
 	SignupPickPlanPage,
 	StartSiteFlow,
 	SidebarComponent,
-	PlansPage,
 	RestAPIClient,
 	CartCheckoutPage,
 	TestAccount,
@@ -15,14 +15,16 @@ import {
 	MediaPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { apiDeleteSite } from '../shared';
 import type { SiteDetails } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
 describe(
-	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com Pro site as exising user' ),
+	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com Business site as exising user' ),
 	function () {
 		const blogName = DataHelper.getBlogName();
+		const planName = 'Business';
 
 		let testAccount: TestAccount;
 		let page: Page;
@@ -53,16 +55,16 @@ describe(
 				await domainSearchComponent.selectDomain( '.wordpress.com' );
 			} );
 
-			it( 'Select WordPress.com Pro plan', async function () {
+			it( `Select WordPress.com ${ planName } plan`, async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				siteDetails = await signupPickPlanPage.selectPlan( 'Premium' ); // Placeholder
+				siteDetails = await signupPickPlanPage.selectPlan( planName );
 
 				siteCreatedFlag = true;
 			} );
 
 			it( 'See secure checkout', async function () {
 				cartCheckoutPage = new CartCheckoutPage( page );
-				await cartCheckoutPage.validateCartItem( 'WordPress.com Pro' );
+				await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 			} );
 
 			it( 'Enter payment details', async function () {
@@ -82,29 +84,19 @@ describe(
 			} );
 		} );
 
-		describe( 'Validate WordPress.com Pro functionality', function () {
+		describe( `Validate WordPress.com ${ planName } functionality`, function () {
 			let sidebarComponent: SidebarComponent;
 
-			it( 'Sidebar states user is on WordPress.com Pro plan', async function () {
+			it( `Sidebar states user is on WordPress.com ${ planName } plan`, async function () {
 				sidebarComponent = new SidebarComponent( page );
-				const plan = await sidebarComponent.getCurrentPlanName();
-				expect( plan ).toBe( 'Pro' );
-			} );
-
-			it( 'Navigate to Upgrades > Plans', async function () {
-				sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Upgrades', 'Plans' );
-			} );
-
-			it( 'Plans page states user is on WordPress.com Pro plan', async function () {
-				const plansPage = new PlansPage( page );
-				await plansPage.validateActivePlan( 'Premium' ); // Placeholder
+				const currentPlan = await sidebarComponent.getCurrentPlanName();
+				expect( currentPlan ).toBe( planName );
 			} );
 
 			it( 'Validate storage capacity', async function () {
 				await sidebarComponent.navigate( 'Media' );
 				const mediaPage = new MediaPage( page );
-				expect( await mediaPage.hasStorageCapacity( 50 ) ).toBe( true );
+				expect( await mediaPage.hasStorageCapacity( 200 ) ).toBe( true );
 			} );
 		} );
 
@@ -118,21 +110,7 @@ describe(
 				password: testAccount.credentials.password,
 			} );
 
-			const response = await restAPIClient.deleteSite( siteDetails );
-
-			// If the response is `null` then no action has been
-			// performed.
-			if ( response ) {
-				// The only correct response is the string
-				// "deleted".
-				if ( response.status !== 'deleted' ) {
-					console.warn(
-						`Failed to delete siteID ${ siteDetails.id }.\nExpected: "deleted", Got: ${ response.status }`
-					);
-				} else {
-					console.log( `Successfully deleted siteID ${ siteDetails.id }.` );
-				}
-			}
+			await apiDeleteSite( restAPIClient, siteDetails );
 		} );
 	}
 );

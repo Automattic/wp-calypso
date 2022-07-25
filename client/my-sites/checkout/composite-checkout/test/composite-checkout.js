@@ -130,33 +130,14 @@ describe( 'CompositeCheckout', () => {
 		} );
 	} );
 
-	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
-		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
-		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
-		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
-		const removeProductButton = await within( activeSection ).findByLabelText(
-			'Remove WordPress.com Personal from cart'
-		);
-		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
-		fireEvent.click( removeProductButton );
-		const confirmModal = await screen.findByRole( 'dialog' );
-		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
-		await waitFor( () => {
-			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
-		} );
-	} );
-
-	it( 'removes a product from the cart after clicking to remove it outside of edit mode', async () => {
+	it( 'removes a product from the cart after clicking to remove it', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
-		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
+		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
 		fireEvent.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
@@ -169,8 +150,6 @@ describe( 'CompositeCheckout', () => {
 	it( 'redirects to the plans page if the cart is empty after removing the last product', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
@@ -352,7 +331,7 @@ describe( 'CompositeCheckout', () => {
 			screen
 				.getAllByLabelText( 'WordPress.com Personal' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
-			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
 			screen
 				.getAllByLabelText( 'bar.com' )
 				.map( ( element ) => expect( element ).toHaveTextContent( 'R$0' ) );
@@ -381,8 +360,8 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( async () => {
-			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
+			expect( screen.getAllByText( 'foo.cash' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -394,8 +373,8 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( async () => {
-			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 3 );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 2 );
 		} );
 	} );
 
@@ -410,9 +389,9 @@ describe( 'CompositeCheckout', () => {
 			container
 		);
 		await waitFor( () => {
-			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 2 );
-			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 6 );
+			expect( screen.getAllByText( 'Domain Mapping: billed annually' ) ).toHaveLength( 1 );
+			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
+			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
 		} );
 	} );
 
