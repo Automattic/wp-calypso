@@ -417,6 +417,20 @@
 		max-height: none;
 		border: none;
 	}
+
+	.generated-design-thumbnail__image {
+		height: auto;
+		padding-top: 0;
+		flex: 1;
+	}
+
+	.components-button:focus::before {
+		box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color );
+	}
+
+	.components-button.is-pressed:active:hover {
+		color: var( --theme-base-color );
+	}
 }
 
 // layout with categories

@@ -249,7 +249,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {
-		const designTitle = selectedDesign.title;
+		let designTitle;
+		if ( selectedDesign.design_type === 'vertical' ) {
+			const designIndex = generatedDesigns.findIndex(
+				( design ) => design.slug === selectedDesign.slug
+			);
+			designTitle = translate( 'Generated design option #%(designNumber)s', {
+				args: { designNumber: designIndex + 1 },
+			} );
+		} else {
+			designTitle = selectedDesign.title;
+		}
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
