@@ -12,7 +12,7 @@ const DesignSetup: Step = ( props ) => {
 		return <AnchorFmDesignPicker { ...props } />;
 	}
 
-	if ( isEnabled( 'signup/design-picker-generated-designs' ) ) {
+	if ( isEnabled( 'signup/design-picker-unified' ) ) {
 		return <UnifiedDesignPicker { ...props } />;
 	}
 
