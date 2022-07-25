@@ -253,18 +253,19 @@ export default function getThankYouPageUrl( {
 		siteSlug,
 	} );
 
-	if ( cart && hasRenewalItem( cart ) && siteSlug ) {
-		const renewalItem: ResponseCartProduct = getRenewalItems( cart )[ 0 ];
-		if ( renewalItem && renewalItem.subscription_id ) {
-			const managePurchaseUrl = managePurchase( siteSlug, renewalItem.subscription_id );
-			debug(
-				'renewal item in cart',
-				renewalItem,
-				'so returning managePurchaseUrl',
-				managePurchaseUrl
-			);
-			return managePurchaseUrl;
-		}
+	// Manual renewals usually have a `redirectTo` but if they do not, return to
+	// the manage purchases page.
+	const firstRenewalInCart =
+		cart && hasRenewalItem( cart ) ? getRenewalItems( cart )[ 0 ] : undefined;
+	if ( siteSlug && firstRenewalInCart?.subscription_id ) {
+		const managePurchaseUrl = managePurchase( siteSlug, firstRenewalInCart.subscription_id );
+		debug(
+			'renewal item in cart',
+			firstRenewalInCart,
+			'so returning managePurchaseUrl',
+			managePurchaseUrl
+		);
+		return managePurchaseUrl;
 	}
 
 	const signupFlowName = getSignupCompleteFlowName();
