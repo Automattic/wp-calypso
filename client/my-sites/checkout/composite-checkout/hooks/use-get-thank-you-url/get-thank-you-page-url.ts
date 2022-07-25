@@ -276,19 +276,22 @@ export default function getThankYouPageUrl( {
 	const urlFromCookie = getUrlFromCookie();
 	debug( 'cookie url is', urlFromCookie );
 
-	// Domain only flow
 	if ( ( cart?.create_new_blog || signupFlowName === 'domain' ) && ! isDomainOnly ) {
 		clearSignupCompleteFlowName();
-		const newBlogReceiptUrl = getNewBlogReceiptUrl(
-			urlFromCookie,
-			receiptIdOrPlaceholder,
-			fallbackUrl
-		);
-		debug( 'new blog created, so returning', newBlogReceiptUrl );
-		// Skip composed url if we have to redirect to intent flow
-		if ( ! newBlogReceiptUrl.includes( '/start/setup-site' ) ) {
+
+		if (
+			urlFromCookie &&
+			receiptIdOrPlaceholder &&
+			// Skip composed url if we have to redirect to intent flow.
+			! urlFromCookie.includes( '/start/setup-site' )
+		) {
+			const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
+			debug( 'new blog created, so returning', newBlogReceiptUrl );
 			return newBlogReceiptUrl;
 		}
+
+		debug( 'new blog created, but using fallback', fallbackUrl );
+		return fallbackUrl;
 	}
 
 	const redirectUrlForPostCheckoutUpsell = receiptIdOrPlaceholder
@@ -369,16 +372,6 @@ function updateUrlInCookie( {
 	}
 
 	modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug );
-}
-
-function getNewBlogReceiptUrl(
-	urlFromCookie: string | undefined,
-	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined,
-	fallbackUrl: string
-): string {
-	return urlFromCookie && receiptIdOrPlaceholder
-		? `${ urlFromCookie }/${ receiptIdOrPlaceholder }`
-		: fallbackUrl;
 }
 
 function getReceiptIdOrPlaceholder(
