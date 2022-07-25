@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Onboard } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -11,12 +10,10 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
-import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { SITE_STORE } from '../../../../stores';
 import SiteVerticalForm from './form';
 import type { Step } from '../../types';
 import type { Vertical } from 'calypso/components/select-vertical/types';
-
-const { goalsToIntent } = Onboard.utils;
 
 const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
@@ -27,8 +24,6 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const siteVertical = useSelect(
 		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site?.ID ) ) || undefined
 	);
-	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
-	const intent = goalsToIntent( goals );
 	const translate = useTranslate();
 	const headerText = translate( 'What’s your website about?' );
 	const subHeaderText = translate( 'Choose a category that defines your website the best.' );
@@ -36,18 +31,6 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const isSkipSynonyms = useQuery().get( 'isSkipSynonyms' ) ?? ! isEnglishLocale;
 	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
-
-	const siteTitleText = React.useMemo( () => {
-		if ( intent === 'write' ) {
-			return translate( 'My blog' );
-		}
-
-		if ( intent === 'sell' ) {
-			return translate( 'My store' );
-		}
-
-		return translate( 'My site' );
-	}, [ intent, translate ] );
 
 	const handleSiteVerticalSelect = ( vertical: Vertical ) => {
 		setVertical( vertical );
@@ -60,15 +43,14 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 			const { value = '', label = '' } = vertical || {};
 
 			setIsBusy( true );
-			await saveSiteSettings( site.ID, {
-				site_vertical_id: value,
-				blogname: siteTitleText,
-			} );
+			await saveSiteSettings( site.ID, { site_vertical_id: value } );
+
 			recordTracksEvent( 'calypso_signup_site_vertical_submit', {
 				user_input: userInput,
 				vertical_id: value,
 				vertical_title: label,
 			} );
+
 			setIsBusy( false );
 			submit?.();
 		}

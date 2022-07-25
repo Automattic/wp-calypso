@@ -4,9 +4,10 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { useSite } from '../../../../hooks/use-site';
 import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
@@ -27,6 +28,7 @@ type TracksGoalsSelectEventProperties = {
 };
 
 const SiteGoal = Onboard.SiteGoal;
+const SiteIntent = Onboard.SiteIntent;
 const { serializeGoals, goalsToIntent } = Onboard.utils;
 
 const displayAllGoals = isEnabled( 'signup/goals-step-2' );
@@ -46,7 +48,22 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal, resetIntent } =
 		useDispatch( ONBOARD_STORE );
+
+	const site = useSite();
+	const { saveSiteTitle } = useDispatch( SITE_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
+
+	const getSiteTitle = ( intent: SiteIntent ) => {
+		if ( intent === SiteIntent.Write ) {
+			return translate( 'My blog' );
+		}
+
+		if ( intent === SiteIntent.Sell ) {
+			return translate( 'My store' );
+		}
+
+		return translate( 'My site' );
+	};
 
 	useEffect( () => {
 		if ( ! displayAllGoals ) {
@@ -61,10 +78,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const recordGoalsSelectTracksEvent = (
-		goals: Onboard.SiteGoal[],
-		intent: Onboard.SiteIntent
-	) => {
+	const recordGoalsSelectTracksEvent = ( goals: SiteGoal[], intent: SiteIntent ) => {
 		const eventProperties: TracksGoalsSelectEventProperties = {
 			goals: serializeGoals( goals ),
 			combo: goals.sort().join( ',' ),
@@ -83,10 +97,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_goals_select', eventProperties );
 	};
 
-	const recordIntentSelectTracksEvent = (
-		submittedGoals: Onboard.SiteGoal[],
-		intent: Onboard.SiteIntent
-	) => {
+	const recordIntentSelectTracksEvent = ( submittedGoals: SiteGoal[], intent: SiteIntent ) => {
 		const hasImportGoal = submittedGoals.includes( SiteGoal.Import );
 
 		const eventProperties = {
@@ -97,11 +108,14 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
 	};
 
-	const handleSubmit = ( submittedGoals: Onboard.SiteGoal[] ) => {
+	const handleSubmit = async ( submittedGoals: SiteGoal[] ) => {
 		setGoals( submittedGoals );
 
 		const intent = goalsToIntent( submittedGoals );
 		setIntent( intent );
+		if ( site ) {
+			await saveSiteTitle( site.ID, getSiteTitle( intent ) );
+		}
 
 		recordGoalsSelectTracksEvent( submittedGoals, intent );
 		recordIntentSelectTracksEvent( submittedGoals, intent );
