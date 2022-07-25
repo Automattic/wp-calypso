@@ -224,21 +224,8 @@ export default function getThankYouPageUrl( {
 	// is clicked on a concierge upsell nudge opened by a direct link to
 	// /checkout/offer-support-session.
 	if ( noPurchaseMade ) {
-		const fallbackUrl = getFallbackDestination( {
-			receiptIdOrPlaceholder,
-			orderId,
-			noPurchaseMade,
-			siteSlug,
-			adminUrl,
-			feature,
-			cart,
-			isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
-			productAliasFromUrl,
-			adminPageRedirect,
-			redirectTo,
-		} );
-		debug( 'there was no purchase, so returning: ', fallbackUrl );
-		return fallbackUrl;
+		debug( 'there was no purchase, so returning calypso root' );
+		return '/';
 	}
 
 	// Manual renewals usually have a `redirectTo` but if they do not, return to
@@ -264,7 +251,6 @@ export default function getThankYouPageUrl( {
 		getUrlFromCookie,
 		isInModal,
 		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
-		noPurchaseMade,
 		orderId,
 		productAliasFromUrl,
 		receiptIdOrPlaceholder,
@@ -346,7 +332,6 @@ export default function getThankYouPageUrl( {
 	const fallbackUrl = getFallbackDestination( {
 		receiptIdOrPlaceholder,
 		orderId,
-		noPurchaseMade,
 		siteSlug,
 		adminUrl,
 		feature,
@@ -368,7 +353,6 @@ function updateUrlInCookie( {
 	getUrlFromCookie,
 	isInModal,
 	isJetpackNotAtomic,
-	noPurchaseMade,
 	orderId,
 	productAliasFromUrl,
 	receiptIdOrPlaceholder,
@@ -383,7 +367,6 @@ function updateUrlInCookie( {
 	getUrlFromCookie: GetUrlFromCookie;
 	isInModal?: boolean;
 	isJetpackNotAtomic?: boolean;
-	noPurchaseMade?: boolean;
 	orderId?: number | string;
 	productAliasFromUrl?: string;
 	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined;
@@ -405,7 +388,6 @@ function updateUrlInCookie( {
 			cart,
 			feature,
 			isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
-			noPurchaseMade,
 			orderId,
 			productAliasFromUrl,
 			receiptIdOrPlaceholder,
@@ -447,7 +429,6 @@ function getReceiptIdOrPlaceholder(
 function getFallbackDestination( {
 	receiptIdOrPlaceholder,
 	orderId,
-	noPurchaseMade,
 	siteSlug,
 	adminUrl,
 	feature,
@@ -459,7 +440,6 @@ function getFallbackDestination( {
 }: {
 	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined;
 	orderId?: string | number;
-	noPurchaseMade?: boolean;
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
 	feature: string | undefined;
@@ -472,11 +452,6 @@ function getFallbackDestination( {
 	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
 	const isReceiptEmpty =
 		':receiptId' === receiptIdOrPlaceholder || receiptIdOrPlaceholder === undefined;
-
-	if ( noPurchaseMade ) {
-		debug( 'fallback is just root' );
-		return '/';
-	}
 
 	// We will show the Thank You page if there's a site slug and either one of the following is true:
 	// - has a receipt number (or a pending order).
