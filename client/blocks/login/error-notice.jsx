@@ -84,7 +84,7 @@ class ErrorNotice extends Component {
 							<a
 								href={ signupUrl }
 								onClick={ this.props.recordTracksEvent(
-									'calypso_login_social_unknown_signup_link_click'
+									'calypso_login_social_unknown_user_signup_link_click'
 								) }
 							/>
 						),
