@@ -725,7 +725,6 @@ export default function CompositeCheckout( {
 					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
-					isJetpackNotAtomic={ isJetpackNotAtomic }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
