@@ -22,8 +22,8 @@ import { buildConnection } from '../src';
 import { buildConnectionForCheckingAvailability } from '../src/connection';
 import { HappychatAuth } from '../src/types';
 
-const getConnection = () =>
-	buildConnection( {
+const getConnection = ( { autoClose = false } = {} ) => {
+	const options = {
 		receiveAccept,
 		receiveConnect,
 		receiveDisconnect,
@@ -38,7 +38,14 @@ const getConnection = () =>
 		receiveToken,
 		receiveUnauthorized,
 		requestTranscript,
-	} );
+	};
+
+	if ( autoClose ) {
+		return buildConnectionForCheckingAvailability( options );
+	}
+
+	return buildConnection( options );
+};
 
 const buildUserData = () => {
 	const signer_user_id = 12;
@@ -62,9 +69,15 @@ const buildUserData = () => {
 	};
 };
 
-const setupFixture = ( { config }: { config: Promise< HappychatAuth > } ) => {
+interface FixtureOptions {
+	config: Promise< HappychatAuth >;
+	autoClose?: boolean;
+}
+
+const setupFixture = ( options: FixtureOptions ) => {
+	const { autoClose, config } = options;
 	const dispatch = jest.fn();
-	const connection = getConnection();
+	const connection = getConnection( { autoClose } );
 	const openSocket = connection.init( dispatch, config );
 
 	return {
@@ -349,21 +362,17 @@ describe( 'connection', () => {
 describe( 'connection for checking availability', () => {
 	let socket;
 	let dispatch;
-	let connection;
 	let openSocket;
 
 	beforeEach( () => {
 		socket = new EventEmitter();
-		dispatch = jest.fn();
-		connection = buildConnectionForCheckingAvailability( {
-			receiveAccept,
-			receiveUnauthorized,
-		} );
-		const config = Promise.resolve( {
-			url: socket,
-			...buildUserData(),
-		} );
-		openSocket = connection.init( dispatch, config );
+		( { dispatch, openSocket } = setupFixture( {
+			autoClose: true,
+			config: Promise.resolve( {
+				url: socket,
+				...buildUserData(),
+			} ),
+		} ) );
 	} );
 
 	test( 'unauthorized event and closing of connection', async () => {
