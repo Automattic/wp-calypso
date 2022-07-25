@@ -9,6 +9,7 @@ import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-
 import withActiveTheme from 'calypso/data/themes/with-active-theme';
 import { getTaskList } from 'calypso/lib/checklist';
 import { navigate } from 'calypso/lib/navigate';
+import { isActiveThemeFSEEnabled } from 'calypso/lib/theme/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { resetVerifyEmailState } from 'calypso/state/current-user/email-verification/actions';
@@ -342,7 +343,7 @@ const SiteSetupList = ( {
 const ConnectedSiteSetupList = connect( ( state, props ) => {
 	const { activeThemeData } = props;
 
-	const isFSEActive = activeThemeData?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
+	const isFSEActive = isActiveThemeFSEEnabled( activeThemeData );
 	const siteId = getSelectedSiteId( state );
 	const user = getCurrentUser( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );

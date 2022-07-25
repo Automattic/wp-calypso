@@ -4,12 +4,13 @@ import customizeImage from 'calypso/assets/images/illustrations/dashboard.svg';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import withActiveTheme from 'calypso/data/themes/with-active-theme';
+import { isActiveThemeFSEEnabled } from 'calypso/lib/theme/utils';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const CustomizeTheme = ( { translate, activeThemeData, isActiveThemeDataLoading } ) => {
-	const isFSEActive = activeThemeData?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
+	const isFSEActive = isActiveThemeFSEEnabled( activeThemeData );
 	const siteId = useSelector( getSelectedSiteId );
 	const currentThemeId = useSelector( ( state ) => getActiveTheme( state, siteId ) );
 	const customizeLink = useSelector( ( state ) =>

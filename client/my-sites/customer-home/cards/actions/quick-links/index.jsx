@@ -8,6 +8,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
+import { isActiveThemeFSEEnabled } from 'calypso/lib/theme/utils';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -61,9 +62,8 @@ export const QuickLinks = ( {
 } ) => {
 	const userLoggedIn = useSelector( isUserLoggedIn );
 	const activeThemeQueryResult = useActiveThemeQuery( siteId, userLoggedIn );
-	const isFSEActive =
-		activeThemeQueryResult?.data?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
 
+	const isFSEActive = isActiveThemeFSEEnabled( activeThemeQueryResult?.data );
 	const translate = useTranslate();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,

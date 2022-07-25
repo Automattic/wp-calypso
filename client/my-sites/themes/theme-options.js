@@ -3,6 +3,7 @@ import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import withActiveTheme from 'calypso/data/themes/with-active-theme';
+import { isActiveThemeFSEEnabled } from 'calypso/lib/theme/utils';
 import { localizeThemesPath } from 'calypso/my-sites/themes/helpers';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -31,7 +32,7 @@ import {
 const identity = ( theme ) => theme;
 
 function getAllThemeOptions( { translate, activeThemeData } ) {
-	const isFSEActive = activeThemeData?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
+	const isFSEActive = isActiveThemeFSEEnabled( activeThemeData );
 	const purchase = {
 		label: translate( 'Purchase', {
 			context: 'verb',
