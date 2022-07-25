@@ -15,8 +15,12 @@ import {
 	NewPostResponse,
 	PublishedPostPage,
 	NavbarComponent,
+	MediaHelper,
+	TestFile,
+	MediaPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { TEST_IMAGE_PATH } from '../constants';
 import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
@@ -30,12 +34,14 @@ describe(
 		const blogName = DataHelper.getBlogName();
 		const planName = 'Premium';
 		const publishedPosts: NewPostResponse[] = [];
+		let testMediaFile: TestFile;
 		let siteCreatedFlag: boolean;
 		let newSiteDetails: NewSiteResponse;
 		let restAPIClient: RestAPIClient;
 		let page: Page;
 
-		beforeAll( async function () {
+		// beforeAll( async function () {
+		it( 'alkjewr', async function () {
 			// Set up the test site programmatically against simpleSiteFreePlanUser.
 			const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 
@@ -45,7 +51,7 @@ describe(
 				name: blogName,
 				title: blogName,
 			} );
-
+			console.info( `New site created: ${ newSiteDetails.blog_details.url }` );
 			siteCreatedFlag = true;
 
 			// Add posts to site.
@@ -57,6 +63,26 @@ describe(
 					} )
 				);
 			}
+
+			// -------------------------------
+
+			// newSiteDetails = {
+			// 	success: true,
+			// 	blog_details: {
+			// 		blogid: 207291850,
+			// 		blogname: 'some_blog',
+			// 		url: 'http://e2eflowtesting1653434109632835.wordpress.com/',
+			// 		site_slug: '',
+			// 	},
+			// };
+
+			console.info( 'Adding test image to site.' );
+			testMediaFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
+			await restAPIClient.uploadMedia( newSiteDetails.blog_details.blogid, {
+				media: testMediaFile,
+			} );
+
+			// -------------------------------
 
 			// Launch browser.
 			page = await browser.newPage();
@@ -119,6 +145,12 @@ describe(
 		} );
 
 		describe( 'Validate site content is intact', function () {
+			let testPage: Page;
+
+			beforeAll( async function () {
+				testPage = await browser.newPage();
+			} );
+
 			it.each( postTitles )( 'Post %s is preserved', async function ( postTitle: string ) {
 				// Locate the new post response for the post in question.
 				const postResponse = publishedPosts.find(
@@ -126,9 +158,15 @@ describe(
 				) as NewPostResponse;
 
 				// Visit the page and validate.
-				await page.goto( postResponse.URL );
-				const publishedPostPage = new PublishedPostPage( page );
+				await testPage.goto( postResponse.URL );
+				const publishedPostPage = new PublishedPostPage( testPage );
 				await publishedPostPage.validateTitle( postTitle );
+			} );
+
+			it( 'Uploaded media is preserved', async function () {
+				const mediaPage = new MediaPage( page );
+				await mediaPage.visit( newSiteDetails.blog_details.site_slug );
+				await mediaPage.selectItem( { name: testMediaFile.basename } );
 			} );
 		} );
 
