@@ -87,7 +87,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hideDesignTitle,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable = false,
-	onCheckout = undefined,
+	onCheckout,
 	verticalId,
 } ) => {
 	const { __ } = useI18n();
@@ -336,7 +336,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	previewOnly = false,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable,
-	onCheckout = undefined,
+	onCheckout,
 	verticalId,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
@@ -435,7 +435,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	previewOnly = false,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable,
-	onCheckout = undefined,
+	onCheckout,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const translate = useTranslate();
@@ -465,14 +465,14 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 						onPreview={ onPreview }
 						verticalId={ verticalId }
 					/>
+					<div>
+						<h3> { translate( 'Selected themes for you' ) } </h3>
+						<p className="unified-design-picker__subtitle">
+							{ translate( 'Choose a starting theme. You can change it later.' ) }
+						</p>
+					</div>
 				</>
 			) }
-			<div>
-				<h3> { translate( 'Selected themes for you' ) } </h3>
-				<p className="unified-design-picker__subtitle">
-					{ translate( 'Choose a starting theme. You can change it later.' ) }
-				</p>
-			</div>
 			<StaticDesignPicker
 				locale={ locale }
 				onSelect={ onSelect }
