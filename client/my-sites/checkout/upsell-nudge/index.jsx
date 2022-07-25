@@ -378,7 +378,8 @@ export class UpsellNudge extends Component {
 			clearSignupDestinationCookie();
 		}
 
-		if ( isURL( url ) ) {
+		// The URL "/setup" is not registered as a page so redirect won't work
+		if ( isURL( url ) || url.startsWith( '/setup' ) ) {
 			window.location.href = url;
 		} else {
 			page.redirect( url );
