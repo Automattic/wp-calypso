@@ -41,7 +41,7 @@ function createTestStore( is_refundable, is_automated_transfer ) {
 			currentUser: {
 				id: 1,
 				user: {
-					primary_blog: 'test',
+					primary_blog: 'example',
 				},
 			},
 			purchases: {
@@ -56,7 +56,7 @@ function createTestStore( is_refundable, is_automated_transfer ) {
 			},
 			sites: {
 				items: {
-					'example.com': {
+					1234: {
 						ID: '1234',
 						URL: 'http://example.com',
 						is_wpcom_atomic: true,
