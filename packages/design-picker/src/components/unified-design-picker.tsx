@@ -4,8 +4,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
+import { sprintf, hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -111,15 +110,21 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		let text: any = __( 'Free' );
 
 		if ( design.is_premium ) {
-			text = createInterpolateElement(
-				shouldUpgrade
-					? __( '<button>Included in the Pro plan</button>' )
-					: __( 'Included in the Pro plan' ),
-				{
-					button: (
-						<Button isLink={ true } className="design-picker__button-link" onClick={ onCheckout } />
-					),
-				}
+			text = shouldUpgrade ? (
+				<Button
+					isLink={ true }
+					className="design-picker__button-link"
+					onClick={ ( e: any ) => {
+						e.stopPropagation();
+						onCheckout?.();
+					} }
+				>
+					{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
+						? __( 'Included in WordPress.com Premium' )
+						: __( 'Upgrade to Premium' ) }
+				</Button>
+			) : (
+				__( 'Included in your plan' )
 			);
 		}
 
