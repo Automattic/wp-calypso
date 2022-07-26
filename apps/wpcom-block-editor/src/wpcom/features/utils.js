@@ -223,19 +223,66 @@ const buildGlobalStylesEventProps = ( keyMap, value ) => {
 };
 
 /**
+ * Creates an array from all object properties, recursively.
+ *
+ * @param {Object} obj	Any object.
+ * @returns {Array}		Array of all object properties.
+ */
+function propertiesToArray( obj ) {
+	const isObject = ( val ) => val && typeof val === 'object' && ! Array.isArray( val );
+	const addDelimiter = ( a, b ) => ( a ? `${ a }.${ b }` : b );
+	const paths = ( object = {}, head = '' ) => {
+		return Object.entries( object ).reduce( ( product, [ key, value ] ) => {
+			const fullPath = addDelimiter( head, key );
+			return isObject( value )
+				? product.concat( paths( value, fullPath ) )
+				: product.concat( fullPath );
+		}, [] );
+	};
+	return paths( obj );
+}
+
+/**
+ * Records Tracks events for global styles updates.
+ *
+ * @param {Object} updated   The updated global styles content object.
+ * @param {Object} original	 The original global styles content object.
+ * @param {string} eventName Name of the tracks event to send.
+ * @returns {void}
+ */
+const trackGlobalStylesEvents = ( updated, original, eventName ) => {
+	findUpdates( updated, original )?.forEach( ( { keyMap, value } ) => {
+		tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
+	} );
+};
+
+/**
+ * Debounce wrapper for trackGlobalStylesEvent().
+ */
+const debounceTrackGlobalStylesEvents = debounce( trackGlobalStylesEvents, 300 );
+
+/**
  * Builds and sends tracks events for global styles changes.
  *
  * @param {Object} updated   The updated global styles content object.
  * @param {Object} original	 The original global styles content object.
  * @param {string} eventName Name of the tracks event to send.
  */
-export const buildGlobalStylesContentEvents = debounce( ( updated, original, eventName ) => {
-	// Debouncing is necessary to avoid spamming tracks events with updates when sliding inputs
-	// such as a color picker are in use.
-	return findUpdates( updated, original )?.forEach( ( { keyMap, value } ) => {
-		tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
-	} );
-}, 100 );
+export const buildGlobalStylesContentEvents = ( updated, original, eventName ) => {
+	const originalProperties = propertiesToArray( original );
+	const updatedProperties = propertiesToArray( updated );
+
+	// Debouncing is necessary to avoid spamming tracks events when
+	// using continuous controls like sliders or color pickers.
+	// We do it conditionally so we only debounce recurring updates
+	// to the same controls/styles. Some controls update multiple
+	// styles at once, in which case we do not want to debounce.
+	if ( isEqual( originalProperties, updatedProperties ) ) {
+		debounceTrackGlobalStylesEvents( updated, original, eventName );
+	} else {
+		trackGlobalStylesEvents( updated, original, eventName );
+	}
+};
 
 export const getFlattenedBlockNames = ( block ) => {
 	const blockNames = [];
