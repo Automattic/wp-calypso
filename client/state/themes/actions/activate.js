@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
@@ -31,6 +32,17 @@ export function activate(
 	keepCurrentHomepage = false
 ) {
 	return ( dispatch, getState ) => {
+		let showModalCondition =
+			! isJetpackSite( getState(), siteId ) && ! isSiteAtomic( getState(), siteId );
+
+		if ( isEnabled( 'themes/atomic-homepage-replace' ) ) {
+			showModalCondition =
+				! isJetpackSite( getState(), siteId ) || isSiteAtomic( getState(), siteId );
+		} else {
+			// Keep default behaviour on Atomic. See https://github.com/Automattic/wp-calypso/pull/65846#issuecomment-1192650587
+			keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
+		}
+
 		/**
 		 * Let's check if the theme will change the homepage of the site,
 		 * before to definitely start the theme-activating process,
@@ -38,14 +50,11 @@ export function activate(
 		 */
 		if (
 			themeHasAutoLoadingHomepage( getState(), themeId, siteId ) &&
-			! isJetpackSite( getState(), siteId ) &&
-			! isSiteAtomic( getState(), siteId ) &&
+			showModalCondition &&
 			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
 		}
-
-		keepCurrentHomepage = isSiteAtomic( getState(), siteId ) ? true : keepCurrentHomepage;
 
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
 			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
