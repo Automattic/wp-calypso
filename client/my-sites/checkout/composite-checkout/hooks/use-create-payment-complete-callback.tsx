@@ -34,6 +34,7 @@ import normalizeTransactionResponse from '../lib/normalize-transaction-response'
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
+import type { PostCheckoutUrlArguments } from './use-get-thank-you-url/get-thank-you-page-url';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
@@ -114,11 +115,10 @@ export default function useCreatePaymentCompleteCallback( {
 					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
 			}
 
-			const getThankYouPageUrlArguments = {
+			const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
 				siteSlug: siteSlug || undefined,
 				adminUrl,
 				receiptId: transactionResult.receipt_id,
-				orderId: transactionResult.order_id,
 				redirectTo,
 				purchaseId,
 				feature,

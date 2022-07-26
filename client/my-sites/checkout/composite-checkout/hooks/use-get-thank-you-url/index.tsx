@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getThankYouPageUrl from './get-thank-you-page-url';
+import type { PostCheckoutUrlArguments } from './get-thank-you-page-url';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -41,7 +42,7 @@ export default function useGetThankYouUrl( {
 	const adminUrl = selectedSiteData?.options?.admin_url;
 
 	const getThankYouUrl = useCallback( () => {
-		const getThankYouPageUrlArguments = {
+		const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
 			siteSlug,
 			adminUrl,
 			redirectTo,
