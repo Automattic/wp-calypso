@@ -141,7 +141,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					// Set a default site title in case users have not set one during the onboarding flow.
-					if ( site && site.name.trim() === '' ) {
+					if ( site && site.name?.trim() === '' ) {
 						let siteTitle = translate( 'My site ' );
 						switch ( intent ) {
 							case SiteIntent.Write:
