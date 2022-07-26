@@ -694,7 +694,8 @@
 	.two-factor-authentication__actions,
 	.two-factor-authentication__verification-code-form,
 	.step-wrapper__header,
-	.magic-login__form .logged-out-form {
+	.magic-login__form .logged-out-form,
+	.magic-login__request-link {
 		padding-left: $woo-form-whitespace;
 		padding-right: $woo-form-whitespace;
 		@media screen and ( max-width: 660px ) {
@@ -720,6 +721,10 @@
 				margin: 0 auto 24px;
 			}
 		}
+	}
+
+	.magic-login__request-link .magic-login__form > p {
+		text-align: center;
 	}
 
 	.two-factor-authentication__verification-code-form {
