@@ -97,7 +97,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', eventProperties );
 	};
 
-	const handleSubmit = async ( submittedGoals: Onboard.SiteGoal[] ) => {
+	const handleSubmit = ( submittedGoals: Onboard.SiteGoal[] ) => {
 		setGoals( submittedGoals );
 
 		const intent = goalsToIntent( submittedGoals );
