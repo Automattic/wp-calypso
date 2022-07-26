@@ -26,7 +26,6 @@
 			align-self: center;
 		}
 
-
 		&, & p {
 			font-size: 1rem;
 		}
@@ -38,11 +37,32 @@
 		align-items: stretch;
 		background: var( --studio-gray-0 );
 		border: 0;
+		padding: 12px 24px;
 
 		a {
 			margin-right: auto;
 			font-weight: 600;
 			text-decoration: underline;
+		}
+
+		.button {
+			margin-bottom: 16px;
+		}
+
+		/**
+		 * .dialog__action-buttons has flex-direction to column-reverse on mobile
+		 * so with this the button on the bottom has no margin on the bottom,
+		 * but it is the first element on the tree
+		 **/
+		.button:first-child {
+			margin-bottom: 0;
+		}
+
+		@include break-mobile {
+			.button {
+				margin-bottom: 0;
+				margin-left: 10px;
+			}
 		}
 
 
