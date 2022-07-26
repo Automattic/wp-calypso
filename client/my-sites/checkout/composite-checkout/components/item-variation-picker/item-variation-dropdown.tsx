@@ -203,10 +203,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				role="button"
 			>
 				{ selectedVariantIndex !== null ? (
-					<ItemVariantPrice
-						variant={ variants[ selectedVariantIndex ] }
-						selectedVariant={ variants[ selectedVariantIndex ] }
-					/>
+					<ItemVariantPrice variant={ variants[ selectedVariantIndex ] } />
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
 				) }
@@ -240,14 +237,14 @@ function ItemVariantOptionList( {
 			{ variants.map( ( variant, index ) => (
 				<ItemVariantOption
 					key={ variant.productSlug + variant.variantLabel }
-					variant={ variant }
+					isSelected={ index === highlightedVariantIndex }
+					onSelect={ () =>
+						handleChange( selectedItem.uuid, variant.productSlug, variant.productId )
+					}
 					selectedVariant={
 						highlightedVariantIndex ? variants[ highlightedVariantIndex ] : undefined
 					}
-					highlightedVariantIndex={ highlightedVariantIndex }
-					index={ index }
-					selectedItem={ selectedItem }
-					handleChange={ handleChange }
+					variant={ variant }
 				/>
 			) ) }
 		</OptionList>
@@ -255,22 +252,17 @@ function ItemVariantOptionList( {
 }
 
 function ItemVariantOption( {
-	variant,
-	highlightedVariantIndex,
+	isSelected,
+	onSelect,
 	selectedVariant,
-	index,
-	selectedItem,
-	handleChange,
+	variant,
 }: {
+	isSelected: boolean;
+	onSelect: () => void;
+	selectedVariant?: WPCOMProductVariant;
 	variant: WPCOMProductVariant;
-	selectedVariant: WPCOMProductVariant | undefined;
-	highlightedVariantIndex: number | null;
-	index: number;
-	selectedItem: ResponseCartProduct;
-	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
-	const isSelected = index === highlightedVariantIndex;
 	return (
 		<Option
 			id={ productId.toString() }
@@ -278,7 +270,7 @@ function ItemVariantOption( {
 			aria-label={ variantLabel }
 			data-product-slug={ productSlug }
 			role="option"
-			onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
+			onClick={ onSelect }
 			selected={ isSelected }
 		>
 			<ItemVariantPrice variant={ variant } selectedVariant={ selectedVariant } />
