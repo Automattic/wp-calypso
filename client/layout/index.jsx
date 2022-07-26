@@ -371,13 +371,16 @@ export default withCurrentRoute(
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		const isEditor = getSectionName( state ) === 'gutenberg-editor';
+		const isCheckout = getSectionName( state ) === 'checkout';
 		const userAllowedToHelpCenter = shouldShowHelpCenterToUser(
 			getCurrentUserId( state ),
 			getCurrentLocaleSlug( state )
 		);
 
 		const disableFAB =
-			isEditor && config.isEnabled( 'editor/help-center' ) && userAllowedToHelpCenter;
+			( ( isEditor && config.isEnabled( 'editor/help-center' ) ) ||
+				( isCheckout && config.isEnabled( 'checkout/help-center' ) ) ) &&
+			userAllowedToHelpCenter;
 
 		return {
 			masterbarIsHidden,

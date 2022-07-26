@@ -1,6 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { filter, forEach, compact, partition, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
+import wpcomRequest from 'wpcom-proxy-request';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -35,16 +36,20 @@ function fetchForKey( postKey, isHelpCenter = false, isSimpleSite = true ) {
 
 	if ( postKey.blogId ) {
 		if ( isHelpCenter ) {
-			return apiFetch( {
-				global: true,
-				path: isSimpleSite
-					? `/wpcom/v2/help/article/${ encodeURIComponent( postKey.blogId ) }/${ encodeURIComponent(
+			return isSimpleSite
+				? wpcomRequest( {
+						path: `help/article/${ encodeURIComponent( postKey.blogId ) }/${ encodeURIComponent(
 							postKey.postId
-					  ) }`
-					: `/wpcom/v2/help-center/fetch-post?post_id=${ encodeURIComponent(
+						) }`,
+						apiNamespace: 'wpcom/v2/',
+						apiVersion: '2',
+				  } )
+				: apiFetch( {
+						global: true,
+						path: `/wpcom/v2/help-center/fetch-post?post_id=${ encodeURIComponent(
 							postKey.postId
-					  ) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
-			} );
+						) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
+				  } );
 		}
 
 		return wpcom.req.get(

@@ -35,7 +35,7 @@ interface ArticleFetchingContent {
 const ArticleFetchingContent = ( { postId, blogId, articleUrl }: ArticleFetchingContent ) => {
 	const postKey = useSupportArticleAlternatePostKey( +( blogId ?? SUPPORT_BLOG_ID ), postId );
 	const post = useSelector( ( state ) => getPostByKey( state, postKey ) );
-	const isLoading = ! post || ! postKey;
+	const isLoading = ! post?.content || ! postKey;
 	const siteId = post?.site_ID;
 	const shouldQueryReaderPost = ! post && postKey;
 
