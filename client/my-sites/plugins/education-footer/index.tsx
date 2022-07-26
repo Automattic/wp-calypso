@@ -1,4 +1,4 @@
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+// import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import FeatureItem from 'calypso/components/feature-item';
@@ -27,7 +27,7 @@ const EducationFooterContainer = styled.div`
 
 const EducationFooter = () => {
 	const { __ } = useI18n();
-	const localizeUrl = useLocalizeUrl();
+	const localizeUrl = ( text: string ) => text; //useLocalizeUrl();
 
 	return (
 		<EducationFooterContainer>

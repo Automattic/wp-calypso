@@ -1,6 +1,6 @@
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+// import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -42,7 +42,7 @@ const PluginsBrowserListElement = ( props ) => {
 
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const localizeUrl = useLocalizeUrl();
+	const localizeUrl = ( text ) => text; //useLocalizeUrl();
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );

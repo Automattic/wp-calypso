@@ -56,6 +56,7 @@ function renderPluginsBrowser( context ) {
 		path: context.path,
 		category,
 		search: searchTerm,
+		store: context.store,
 	};
 
 	context.primary = <LoggedOutComponent { ...props } />;

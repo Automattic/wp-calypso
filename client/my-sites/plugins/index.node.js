@@ -1,5 +1,5 @@
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
-import { navigation, siteSelection } from 'calypso/my-sites/controller';
+import { navigation } from 'calypso/my-sites/controller';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
@@ -33,7 +33,6 @@ export default function ( router ) {
 	router(
 		'/plugins/browse/:category/:site?',
 		ssrSetupLocale,
-		siteSelection,
 		navigation,
 		browsePlugins,
 		makeLayout
@@ -73,7 +72,7 @@ export default function ( router ) {
 	// 	clientRender
 	// );
 
-	router( '/plugins/:plugin', ssrSetupLocale, navigation, browsePluginsOrPlugin, makeLayout );
+	router( '/plugins/:plugin', ssrSetupLocale, browsePluginsOrPlugin, makeLayout );
 
 	// router(
 	// 	'/plugins/:plugin/eligibility/:site_id',

@@ -1,8 +1,14 @@
-import Main from 'calypso/components/main';
-// import PluginBrowser from './plugins-browser';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider as ReduxProvider } from 'react-redux';
+import PluginBrowser from './plugins-browser';
 
-export default () => (
-	<Main fullWidthLayout className="plugins">
-		<h1>Test</h1>
-	</Main>
-);
+export default ( { store, ...props } ) => {
+	const queryClient = new QueryClient();
+	return (
+		<ReduxProvider store={ store }>
+			<QueryClientProvider client={ queryClient }>
+				<PluginBrowser { ...props } />
+			</QueryClientProvider>
+		</ReduxProvider>
+	);
+};
