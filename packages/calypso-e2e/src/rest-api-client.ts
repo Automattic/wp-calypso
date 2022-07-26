@@ -129,14 +129,8 @@ export class RestAPIClient {
 	 *
 	 * @returns {string} Content-Type header string.
 	 */
-	private getContentTypeHeader( value: 'json' | 'formdata' ): string {
-		if ( value === 'json' ) {
-			return `application/${ value }`;
-		}
-		if ( value === 'formdata' ) {
-			return 'multipart/form-data';
-		}
-		return '';
+	private getContentTypeHeader( value: 'json' ): string {
+		return `application/${ value }`;
 	}
 
 	/**
