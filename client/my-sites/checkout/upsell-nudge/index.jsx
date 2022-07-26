@@ -378,7 +378,8 @@ export class UpsellNudge extends Component {
 			clearSignupDestinationCookie();
 		}
 
-		// The URL "/setup" is not registered as a page so redirect won't work
+		// The section "/setup" is not defined as a page.js routing path, so page.redirect won't work.
+		// See: https://github.com/Automattic/wp-calypso/blob/trunk/client/sections.js
 		if ( isURL( url ) || url.startsWith( '/setup' ) ) {
 			window.location.href = url;
 		} else {
