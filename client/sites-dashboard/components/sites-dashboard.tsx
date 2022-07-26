@@ -104,7 +104,9 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 				<SitesTableFilterTabs
 					tabs={ tabs }
 					initialTabName={ selectedTabName }
-					onSelect={ ( newTab ) => handleQueryParamChange( 'status', newTab, 'all' ) }
+					onSelect={ ( newTab ) =>
+						handleQueryParamChange( 'status', 'all' !== newTab ? newTab : '' )
+					}
 				>
 					{ () =>
 						selectedTabHasSites ? (
@@ -140,18 +142,16 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
  *
  * @param paramName name of the param being updated
  * @param paramValue new value for the param
- * @param defaultValue if the new param matches the default it'll be removed
  */
 function handleQueryParamChange(
 	paramName: keyof SitesDashboardQueryParams,
-	paramValue: string | null,
-	defaultValue = ''
+	paramValue: string | null
 ) {
 	// Ensure we keep existing query params by appending `.search`
 	const pathWithQuery = window.location.pathname + window.location.search;
 
 	const trimmedValue = paramValue?.trim();
-	if ( trimmedValue && trimmedValue !== defaultValue ) {
+	if ( trimmedValue ) {
 		page( addQueryArgs( pathWithQuery, { [ paramName ]: trimmedValue } ) );
 	} else {
 		page( removeQueryArgs( pathWithQuery, paramName ) );
