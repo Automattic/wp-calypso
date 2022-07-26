@@ -18,6 +18,7 @@ import {
 import { isPartnerPortal } from 'calypso/state/partner-portal/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -36,8 +37,11 @@ export default function PortalNav( { className = '' }: Props ): ReactElement | n
 	const currentRoute = useSelector( getCurrentRoute );
 	const showDashboard = useSelector( showAgencyDashboard );
 	const isPartnerPortalRoute = useSelector( isPartnerPortal );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	// Route belongs dashboard when it starts with /dashboard or /plugins and no site is selected(multi-site view).
 	const isDashboardRoute =
-		currentRoute.startsWith( '/dashboard' ) || currentRoute.startsWith( '/plugins' );
+		currentRoute.startsWith( '/dashboard' ) ||
+		( ! selectedSiteId && currentRoute.startsWith( '/plugins' ) );
 	const show = partnerFetched && partner;
 
 	if ( ! isSectionNameEnabled( 'jetpack-cloud-partner-portal' ) ) {
