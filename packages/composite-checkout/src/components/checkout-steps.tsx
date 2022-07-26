@@ -543,7 +543,7 @@ export function CheckoutFormSubmit( {
 	submitButtonFooter,
 	disableSubmitButton,
 }: {
-	validateForm?: () => boolean;
+	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;

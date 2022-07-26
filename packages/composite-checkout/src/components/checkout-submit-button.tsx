@@ -16,7 +16,7 @@ export default function CheckoutSubmitButton( {
 	disabled,
 	onLoadError,
 }: {
-	validateForm?: () => boolean;
+	validateForm?: () => Promise< boolean >;
 	className?: string;
 	disabled?: boolean;
 	onLoadError?: ( error: Error ) => void;
@@ -27,11 +27,18 @@ export default function CheckoutSubmitButton( {
 	const paymentMethod = usePaymentMethod();
 	const onClick = useProcessPayment( paymentMethod?.paymentProcessorId ?? '' );
 	const onClickWithValidation = ( processorData: PaymentProcessorSubmitData ) => {
-		// If no validation callback or success validation, call onClick
-		if ( ! validateForm || validateForm() ) {
-			return onClick( processorData );
+		if ( validateForm ) {
+			validateForm().then( ( validationResult: boolean ) => {
+				if ( validationResult ) {
+					onClick( processorData );
+				}
+				// Take no action if the form is not valid. User notification must be
+				// handled elsewhere.
+			} );
+			return;
 		}
-		// If invalid, ignore onClick
+		// Always run if there is no validation callback.
+		return onClick( processorData );
 	};
 
 	if ( ! paymentMethod ) {
