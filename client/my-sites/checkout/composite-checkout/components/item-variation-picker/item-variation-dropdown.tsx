@@ -232,6 +232,9 @@ function ItemVariantOptionList( {
 	selectedItem: ResponseCartProduct;
 	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
 } ) {
+	const selectedVariant = variants.find(
+		( variant ) => variant.productId === selectedItem.product_id
+	);
 	return (
 		<OptionList role="listbox" tabIndex={ -1 }>
 			{ variants.map( ( variant, index ) => (
@@ -241,9 +244,7 @@ function ItemVariantOptionList( {
 					onSelect={ () =>
 						handleChange( selectedItem.uuid, variant.productSlug, variant.productId )
 					}
-					selectedVariant={
-						highlightedVariantIndex ? variants[ highlightedVariantIndex ] : undefined
-					}
+					selectedVariant={ selectedVariant }
 					variant={ variant }
 				/>
 			) ) }
