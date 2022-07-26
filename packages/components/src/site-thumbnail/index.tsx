@@ -1,13 +1,13 @@
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
-import { useMshotsImg } from './use-mshots-img';
+import { MShotsOptions, useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
-const MSHOTS_OPTION = {
+const MSHOTS_OPTION: MShotsOptions = {
 	vpw: 1200,
 	vph: 1200,
-	w: 374,
+	w: 374 * 2,
 };
 
 type Props = {
@@ -15,17 +15,21 @@ type Props = {
 	mShotsUrl?: string;
 	size?: 'small' | 'medium';
 	children?: ReactNode;
+	alt?: string;
+	mshotsOption?: MShotsOptions;
 };
 
 export const SiteThumbnail = ( {
 	backgroundColor,
 	children,
+	alt,
 	mShotsUrl,
 	size = 'small',
+	mshotsOption = MSHOTS_OPTION,
 }: Props ) => {
-	const maybeImage = useMshotsImg( mShotsUrl ?? '', MSHOTS_OPTION );
+	const maybeImage = useMshotsImg( mShotsUrl ?? '', mshotsOption );
 
-	const src: string = maybeImage?.src || '';
+	const src = maybeImage?.src || '';
 	const visible = !! src && mShotsUrl;
 	const textColor = backgroundColor && getTextColorFromBackground( backgroundColor );
 
@@ -38,12 +42,8 @@ export const SiteThumbnail = ( {
 	const loader = mShotsUrl ? 'site-thumbnail-loader' : '';
 
 	return (
-		<div className={ className } style={ { backgroundColor: backgroundColor, color: textColor } }>
-			{ ! visible ? (
-				<div className={ loader }>{ children }</div>
-			) : (
-				<img src={ src } alt="site thumbnail" />
-			) }
+		<div className={ className } style={ { backgroundColor, color: textColor } }>
+			{ ! visible ? <div className={ loader }>{ children }</div> : <img src={ src } alt={ alt } /> }
 		</div>
 	);
 };

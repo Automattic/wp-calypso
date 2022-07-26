@@ -15,12 +15,13 @@ export function mshotsUrl( targetUrl: string, options: MShotsOptions, count = 0 
 
 const MAXTRIES = 10;
 
-type MShotsOptions = {
+export type MShotsOptions = {
 	vpw: number;
 	vph: number;
 	w: number;
 	h?: number;
 	screen_height?: number;
+	requeue?: boolean;
 };
 
 // This custom react hook returns undefined while the image is loading and
