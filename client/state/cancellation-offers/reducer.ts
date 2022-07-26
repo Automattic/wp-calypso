@@ -37,7 +37,7 @@ const createCancellationOfferMap = ( payload: CancellationOfferAPIResponse[] ) =
 	return payload.map( mapResponseObject );
 };
 
-const isFetching = ( state = false, action: AnyAction ) => {
+const isFetching = ( state = null, action: AnyAction ) => {
 	switch ( action.type ) {
 		case PURCHASE_CANCELLATION_OFFER_REQUEST:
 			return true;
