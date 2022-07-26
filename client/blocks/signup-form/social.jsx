@@ -57,7 +57,7 @@ class SocialSignupForm extends Component {
 		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
 	};
 
-	trackSocialLogin = ( service ) => {
+	trackSocialSignup = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
 		} );
@@ -103,7 +103,7 @@ class SocialSignupForm extends Component {
 							responseHandler={ this.handleGoogleResponse }
 							uxMode={ uxMode }
 							redirectUri={ redirectUri }
-							onClick={ () => this.trackSocialLogin( 'google' ) }
+							onClick={ () => this.trackSocialSignup( 'google' ) }
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
@@ -116,7 +116,7 @@ class SocialSignupForm extends Component {
 							responseHandler={ this.handleAppleResponse }
 							uxMode={ uxModeApple }
 							redirectUri={ redirectUri }
-							onClick={ () => this.trackSocialLogin( 'apple' ) }
+							onClick={ () => this.trackSocialSignup( 'apple' ) }
 							socialServiceResponse={
 								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 							}
