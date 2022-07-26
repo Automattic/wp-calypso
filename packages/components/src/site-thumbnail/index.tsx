@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
-import { useMshotsImg } from './use-mshots';
+import { useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
 const MSHOTS_OPTION = {
