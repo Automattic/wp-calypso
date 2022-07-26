@@ -1,8 +1,8 @@
-import { shouldTargetWpcom } from '@automattic/help-center';
 import apiFetch from '@wordpress/api-fetch';
 import { useQueryClient, useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import { SearchResult } from '../types';
+import { shouldTargetWpcom } from '../utils';
 
 interface APIFetchOptions {
 	global: boolean;
