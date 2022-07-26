@@ -203,7 +203,10 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				role="button"
 			>
 				{ selectedVariantIndex !== null ? (
-					<ItemVariantPrice variant={ variants[ selectedVariantIndex ] } />
+					<ItemVariantPrice
+						variant={ variants[ selectedVariantIndex ] }
+						selectedVariant={ variants[ selectedVariantIndex ] }
+					/>
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
 				) }
@@ -238,6 +241,9 @@ function ItemVariantOptionList( {
 				<ItemVariantOption
 					key={ variant.productSlug + variant.variantLabel }
 					variant={ variant }
+					selectedVariant={
+						highlightedVariantIndex ? variants[ highlightedVariantIndex ] : undefined
+					}
 					highlightedVariantIndex={ highlightedVariantIndex }
 					index={ index }
 					selectedItem={ selectedItem }
@@ -251,11 +257,13 @@ function ItemVariantOptionList( {
 function ItemVariantOption( {
 	variant,
 	highlightedVariantIndex,
+	selectedVariant,
 	index,
 	selectedItem,
 	handleChange,
 }: {
 	variant: WPCOMProductVariant;
+	selectedVariant: WPCOMProductVariant | undefined;
 	highlightedVariantIndex: number | null;
 	index: number;
 	selectedItem: ResponseCartProduct;
@@ -273,7 +281,7 @@ function ItemVariantOption( {
 			onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
 			selected={ isSelected }
 		>
-			<ItemVariantPrice variant={ variant } />
+			<ItemVariantPrice variant={ variant } selectedVariant={ selectedVariant } />
 		</Option>
 	);
 }
