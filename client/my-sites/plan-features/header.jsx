@@ -242,7 +242,7 @@ export class PlanFeaturesHeader extends Component {
 		const rawPrice = relatedMonthlyPlan.raw_price;
 
 		const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
-		const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+		const discountRate = Math.floor( 100 * ( ( rawPrice - annualPricePerMonth ) / rawPrice ) );
 
 		const isLoading = typeof rawPrice !== 'number';
 		const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
