@@ -38,6 +38,8 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import getSiteGutenbergVersion from 'calypso/state/selectors/get-site-gutenberg-version';
+import version_compare from '../../lib/version-compare';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -812,6 +814,7 @@ const mapStateToProps = (
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
+	const gutenbergVersion = getSiteGutenbergVersion( state, siteId );
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -855,10 +858,28 @@ const mapStateToProps = (
 	if ( notice ) {
 		queryArgs.notice = notice;
 	}
+	console.debug( 'here it goes' );
+	console.debug( state );
+	debugger;
+
+	const getSiteEditorRoute = () => {
+		const oldRoute = 'themes.php?page=gutenberg-edit-site';
+		const newRoute = 'site-editor.php';
+
+		if ( gutenbergVersion === 'dev' ) return newRoute;
+
+		if ( gutenbergVersion ) {
+			return version_compare( gutenbergVersion, '13.7', '>=' ) ? newRoute : oldRoute;
+		}
+
+		return oldRoute;
+	};
+
+	debugger;
 
 	const siteAdminUrl =
 		editorType === 'site'
-			? getSiteAdminUrl( state, siteId, 'themes.php?page=gutenberg-edit-site' )
+			? getSiteAdminUrl( state, siteId, getSiteEditorRoute() )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl ?? '' );

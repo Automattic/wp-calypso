@@ -63,6 +63,7 @@ export function receiveSite( site ) {
  * @returns {object}         Action object
  */
 export function receiveSites( sites ) {
+	debugger;
 	return {
 		type: SITES_RECEIVE,
 		sites,
