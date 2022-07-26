@@ -35,7 +35,7 @@ export const defaultFallbackLinks = [
 	},
 	{
 		get link() {
-			return localizeUrl( 'https://wordpress.com/support/pro-plan/' );
+			return localizeUrl( 'https://wordpress.com/support/business-plan/' );
 		},
 		post_id: 134940,
 		get title() {
@@ -376,9 +376,9 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/manage-your-account/' );
+				return localizeUrl( 'https://wordpress.com/support/video-tutorials/manage-your-account/' );
 			},
-			post_id: 130826,
+			post_id: 185309,
 			get title() {
 				return __( 'Manage Your Account', __i18n_text_domain__ );
 			},
@@ -825,7 +825,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/pro-plan/' );
+				return localizeUrl( 'https://wordpress.com/support/business-plan/' );
 			},
 			post_id: 134940,
 			get title() {
@@ -1409,7 +1409,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 			intent: SELL_INTENT,
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/',
+					'https://wordpress.com/support/video-tutorials/video-tutorials-add-payments-features-to-your-site-with-our-guides/',
 					__i18n_text_domain__
 				);
 			},
@@ -1801,7 +1801,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/transfer-domain-registration/',
+					'https://wordpress.com/support/domains/transfer-domain-registration/',
 					__i18n_text_domain__
 				);
 			},
