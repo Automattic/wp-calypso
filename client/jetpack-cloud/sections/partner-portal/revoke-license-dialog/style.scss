@@ -2,8 +2,30 @@
 @import '@wordpress/base-styles/_mixins.scss';
 
 .revoke-license-dialog {
+	&.dialog.card {
+		max-height: 100vh;
+		max-width: 100vh;
+		margin: 0;
+		align-self: stretch;
+
+
+		@include break-small {
+			max-height: 90%;
+			max-width: 90%;
+			margin: auto 0;
+			align-self: center;
+		}
+	}
+
 	.dialog__content {
 		max-width: 628px;
+		align-self: stretch;
+		height: 100%;
+
+		@include break-small {
+			align-self: center;
+		}
+
 
 		&, & p {
 			font-size: 1rem;
@@ -17,7 +39,6 @@
 		background: var( --studio-gray-0 );
 		border: 0;
 
-
 		a {
 			margin-right: auto;
 			font-weight: 600;
@@ -25,24 +46,22 @@
 		}
 
 
-		@break-small() {
+		@include break-small {
 			align-items: center;
 		}
 	}
 
 	&__heading {
 		margin: -16px -16px 16px;
-		padding: 9px 16px;
+		padding: 24px;
 		font-size: 1.125rem; /* stylelint-disable */
 		font-weight: 600;
 		line-height: 20px;
-		color: var( --studio-red-60 );
+		color: var( --studio-gray-60 );
 		border-bottom: 1px solid var( --studio-gray-5 );
 
-		@include break-mobile() {
+		@include break-mobile {
 			margin: -24px -24px 24px;
-			padding: 9px 24px;
-			line-height: 36px;
 		}
 	}
 
