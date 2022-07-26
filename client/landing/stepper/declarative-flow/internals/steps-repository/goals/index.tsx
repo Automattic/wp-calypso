@@ -4,10 +4,9 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { useSite } from '../../../../hooks/use-site';
 import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
@@ -47,22 +46,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 	const { setGoals, setIntent, clearImportGoal, clearDIFMGoal, resetIntent } =
 		useDispatch( ONBOARD_STORE );
-
-	const site = useSite();
-	const { saveSiteTitle } = useDispatch( SITE_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
-
-	const getSiteTitle = ( intent: Onboard.SiteIntent ) => {
-		if ( intent === Onboard.SiteIntent.Write ) {
-			return translate( 'My blog' );
-		}
-
-		if ( intent === Onboard.SiteIntent.Sell ) {
-			return translate( 'My store' );
-		}
-
-		return translate( 'My site' );
-	};
 
 	useEffect( () => {
 		if ( ! displayAllGoals ) {
@@ -118,9 +102,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 
 		const intent = goalsToIntent( submittedGoals );
 		setIntent( intent );
-		if ( site ) {
-			await saveSiteTitle( site.ID, getSiteTitle( intent ) );
-		}
 
 		recordGoalsSelectTracksEvent( submittedGoals, intent );
 		recordIntentSelectTracksEvent( submittedGoals, intent );
