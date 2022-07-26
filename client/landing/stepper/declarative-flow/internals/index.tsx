@@ -40,13 +40,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const stepNavigation = flow.useStepNavigation( currentRoute, async ( path, extraData = null ) => {
 		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
-		if ( ! extraData ) {
-			setStepData( {
-				path: path,
-				intent: intent,
-				extras: extraData,
-			} );
-		}
+		setStepData( {
+			path: path,
+			intent: intent,
+			extraData,
+		} );
 
 		const _path = path.includes( '?' ) // does path contain search params
 			? generatePath( '/' + path )
