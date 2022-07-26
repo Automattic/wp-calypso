@@ -7,7 +7,7 @@ import { getTextColorFromBackground } from './utils';
 const MSHOTS_OPTION = {
 	vpw: 1200,
 	vph: 1200,
-	w: 300,
+	w: 374,
 };
 
 type Props = {
@@ -37,11 +37,13 @@ export const SiteThumbnail = ( {
 
 	const loader = mShotsUrl ? 'site-thumbnail-loader' : '';
 
-	return ! visible ? (
+	return (
 		<div className={ className } style={ { backgroundColor: backgroundColor, color: textColor } }>
-			<div className={ loader }>{ children }</div>
+			{ ! visible ? (
+				<div className={ loader }>{ children }</div>
+			) : (
+				<img src={ src } alt="site thumbnail" />
+			) }
 		</div>
-	) : (
-		<img className={ className } src={ src } alt="site thumbnail" />
 	);
 };
