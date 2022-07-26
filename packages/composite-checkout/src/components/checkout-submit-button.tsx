@@ -1,14 +1,9 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { cloneElement } from 'react';
 import joinClasses from '../lib/join-classes';
-import {
-	useFormStatus,
-	FormStatus,
-	usePaymentMethod,
-	useProcessPayment,
-	PaymentProcessorSubmitData,
-} from '../public-api';
+import { useFormStatus, FormStatus, usePaymentMethod, useProcessPayment } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
+import type { PaymentProcessorSubmitData } from '../types';
 
 export default function CheckoutSubmitButton( {
 	validateForm,
