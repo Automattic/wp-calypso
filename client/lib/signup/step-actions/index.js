@@ -903,6 +903,48 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	} );
 }
 
+export function createVideomakerSite( callback, dependencies, stepData, reduxStore ) {
+	const { site, siteTitle } = stepData;
+
+	const locale = getLocaleSlug();
+
+	const data = {
+		blog_name: site,
+		blog_title: siteTitle,
+		options: {
+			theme: 'premium/videomaker',
+			template: 'premium/blockbase-premium', // TODO not working to use premium theme?
+			use_patterns: true,
+			enable_fse: true,
+			timezone_string: guessTimezone(),
+			...( stepData.campaign && { videopress_signup_campaign: stepData.campaign } ),
+		},
+		validate: false,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	};
+
+	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
+		let providedDependencies;
+		let siteSlug;
+
+		if ( response && response.blog_details ) {
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
+			siteSlug = parsedBlogURL.hostname;
+
+			providedDependencies = { siteSlug };
+		}
+
+		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
+			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
+		} else {
+			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
+		}
+	} );
+}
+
 function recordExcludeStepEvent( step, value ) {
 	recordTracksEvent( 'calypso_signup_actions_exclude_step', {
 		step,
