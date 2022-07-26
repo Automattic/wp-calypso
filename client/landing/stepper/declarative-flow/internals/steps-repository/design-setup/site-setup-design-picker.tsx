@@ -29,6 +29,7 @@ import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-f
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
+import DesignPickerDesignTitle from './design-picker-design-title';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
@@ -369,15 +370,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
-
-		let headerDesignTitle = <div>{ designTitle }</div>;
-		if ( selectedDesign.is_premium ) {
-			headerDesignTitle = (
-				<div>
-					{ designTitle } <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
-				</div>
-			);
-		}
+		const headerDesignTitle = (
+			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
+		);
 
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
