@@ -28,12 +28,20 @@ import type { ProductListItem } from 'calypso/state/products-list/selectors/get-
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
-function myFormatCurrency( price: number, code: string, options = {} ) {
+export function myFormatCurrency( price: number, code: string, options = {} ): string {
 	const precision = CURRENCIES[ code ].precision;
 	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
 
 	const hasCents = Math.abs( price % 1 ) >= EPSILON;
-	return formatCurrency( price, code, hasCents ? options : { ...options, precision: 0 } );
+	const formatted = formatCurrency(
+		price,
+		code,
+		hasCents ? options : { ...options, precision: 0 }
+	);
+	if ( ! formatted ) {
+		throw new Error( `Failed to format price '${ price }' in currency '${ code }'` );
+	}
+	return formatted;
 }
 
 export interface AvailableProductVariant {
