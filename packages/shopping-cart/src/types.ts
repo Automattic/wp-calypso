@@ -403,7 +403,7 @@ export interface ResponseCartProduct {
 	cost_before_coupon?: number;
 
 	/**
-	 * The cart item's price before a coupon (if any) was applied.
+	 * The difference between `cost_before_coupon` and the actual price.
 	 *
 	 * Note that the difference may be caused by many factors, not just coupons.
 	 * It's best not to rely on it.
