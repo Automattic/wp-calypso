@@ -389,32 +389,42 @@ export interface ResponseCartProduct {
 	cost: number;
 
 	/**
-	 * The cart item's original price.
+	 * The cart item's price before a coupon (if any) was applied.
 	 *
-	 * @deprecated This is a float and is unreliable. Use item_original_subtotal_integer or item_original_subtotal_display.
+	 * This is slightly misleading because although this is the product's cost
+	 * before a coupon was applied, it already includes sale coupons (which are
+	 * actually discounts), and other discounts and does not include certain
+	 * other price changes (eg: domain discounts). It's best not to rely on it.
+	 *
+	 * @deprecated This is a float and is unreliable. Use
+	 * item_original_subtotal_integer or item_original_subtotal_display if you
+	 * can, although those have slightly different meanings.
 	 */
 	cost_before_coupon?: number;
 
 	/**
-	 * The difference between the original price and the actual price.
+	 * The cart item's price before a coupon (if any) was applied.
 	 *
 	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
 	 *
 	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer or coupon_savings_display.
 	 */
 	coupon_savings?: number;
 
 	/**
-	 * The difference between the original subtotal and the actual subtotal formatted for the locale with currency.
+	 * The difference between `cost_before_coupon` and the actual price formatted for the locale with currency.
 	 *
 	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
 	 */
 	coupon_savings_display?: string;
 
 	/**
-	 * The difference between the original price and the actual price in the currency's smallest unit.
+	 * The difference between `cost_before_coupon` and the actual price in the currency's smallest unit.
 	 *
 	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
 	 */
 	coupon_savings_integer?: number;
 
