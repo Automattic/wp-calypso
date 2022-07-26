@@ -115,6 +115,9 @@ const sections = [
 		paths: [ '/plugins' ],
 		module: 'calypso/my-sites/plugins',
 		group: 'sites',
+		enableLoggedOut: true,
+		isomorphic: true,
+		title: 'Plugins',
 	},
 	{
 		name: 'marketplace',

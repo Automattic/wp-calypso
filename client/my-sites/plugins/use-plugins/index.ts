@@ -78,7 +78,7 @@ const usePlugins = ( {
 			: useWPORGInfinitePlugins;
 
 	const wporgPluginsOptions = {
-		locale,
+		locale: locale || 'en',
 		category,
 		tag,
 		searchTerm: search,

@@ -53,8 +53,8 @@ import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	getProductsList,
 } from 'calypso/state/products-list/selectors';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+// import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+// import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -103,10 +103,11 @@ function PluginDetails( props ) {
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
-	const userCanManagePlugins = useSelector( ( state ) =>
-		selectedSite?.ID
-			? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
-			: canCurrentUserManagePlugins( state )
+	const userCanManagePlugins = useSelector(
+		() => true
+		// ( state ) => selectedSite?.ID
+		// 	? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
+		// 	: canCurrentUserManagePlugins( state )
 	);
 
 	const isPluginInstalledOnsite =
