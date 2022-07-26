@@ -276,7 +276,7 @@ export class PlanFeaturesHeader extends Component {
 
 		if ( ( isInSignup || isLoggedInMonthlyPricing ) && isMonthlyPlan && relatedYearlyPlan ) {
 			const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
-			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+			const discountRate = Math.floor( 100 * ( ( rawPrice - annualPricePerMonth ) / rawPrice ) );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
