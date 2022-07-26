@@ -484,6 +484,8 @@ export default function CompositeCheckout( {
 			'full-credits': () => fullCreditsProcessor( dataForProcessor ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
+			'existing-card-ebanx': ( transactionData: unknown ) =>
+				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: () => payPalProcessor( dataForProcessor ),
 		} ),
 		[ dataForProcessor ]
@@ -725,7 +727,6 @@ export default function CompositeCheckout( {
 					countriesList={ countriesList }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					infoMessage={ infoMessage }
-					isJetpackNotAtomic={ isJetpackNotAtomic }
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }

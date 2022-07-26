@@ -1,14 +1,14 @@
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
-import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
@@ -368,28 +368,22 @@ export class UserStep extends Component {
 			return translate( 'Sign up for Crowdsignal' );
 		}
 
-		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+		if ( isWooOAuth2Client( oauth2Client ) ) {
+			if ( 'cart' === wccomFrom ) {
+				return <WooCommerceConnectCartHeader />;
+			}
+
 			return (
-				<Fragment>
-					{ 'cart' === wccomFrom ? (
-						<WooCommerceConnectCartHeader />
-					) : (
-						<div className={ classNames( 'signup-form__woocommerce-wrapper' ) }>
-							<div className={ classNames( 'signup-form__woocommerce-logo' ) }>
-								<svg width={ 200 } viewBox={ '0 0 1270 170' }>
-									<AsyncLoad
-										require="calypso/components/jetpack-header/woocommerce"
-										darkColorScheme={ false }
-										placeholder={ null }
-									/>
-								</svg>
-							</div>
-						</div>
-					) }
-					<div className={ classNames( 'signup-form__woocommerce-heading' ) }>
-						{ translate( 'Create a WordPress.com account' ) }
-					</div>
-				</Fragment>
+				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
+					<Gridicon icon="my-sites" size={ 72 } />
+					<h3>
+						{ translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
+							args: { clientTitle: oauth2Client.title },
+							comment:
+								"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
+						} ) }
+					</h3>
+				</div>
 			);
 		}
 

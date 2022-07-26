@@ -1,5 +1,6 @@
 import { Page } from 'playwright';
 import { clickNavTab, reloadAndRetry } from '../../element-helper';
+import { NoticeComponent } from '../components';
 
 export type PeoplePageTabs = 'Team' | 'Followers' | 'Email Followers' | 'Invites';
 
@@ -163,6 +164,8 @@ export class PeoplePage {
 		await this.waitUntilLoaded();
 
 		await this.page.click( selectors.revokeInviteButton );
-		await this.page.waitForSelector( selectors.inviteRevokedMessage );
+
+		const noticeComponent = new NoticeComponent( this.page );
+		await noticeComponent.noticeShown( 'Invite deleted' );
 	}
 }
