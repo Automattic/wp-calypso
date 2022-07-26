@@ -44,13 +44,3 @@ export interface SearchResult {
 	post_id?: number;
 	blog_id?: number;
 }
-
-export interface SupportTicket {
-	id?: number;
-	status: string;
-	subject: string;
-	time: Date;
-	type: string;
-	url: string;
-	when: string;
-}

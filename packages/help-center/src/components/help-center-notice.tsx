@@ -2,8 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { SupportTicket } from '../types';
-import type { AnalysisReport } from '@automattic/data-stores';
+import type { AnalysisReport, SupportTicket } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
 
 type Props = {
