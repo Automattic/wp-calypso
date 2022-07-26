@@ -27,7 +27,6 @@ import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
 import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
-import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
 import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actions';
@@ -151,7 +150,6 @@ export default function CheckoutHelpLink() {
 		happyChatAvailable,
 		presalesChatAvailable,
 		section,
-		locale,
 		userId,
 		supportVariationDetermined,
 		supportVariation,
@@ -160,7 +158,6 @@ export default function CheckoutHelpLink() {
 			happyChatAvailable: isHappychatAvailable( state ),
 			presalesChatAvailable: isPresalesChatAvailable( state ),
 			section: getSectionName( state ),
-			locale: getCurrentLocaleSlug( state ),
 			userId: getCurrentUserId( state ),
 			supportVariationDetermined: isSupportVariationDetermined( state ),
 			supportVariation: getSupportVariation( state ),
@@ -172,7 +169,7 @@ export default function CheckoutHelpLink() {
 	const userAllowedToHelpCenter = !! (
 		userId &&
 		config.isEnabled( 'checkout/help-center' ) &&
-		shouldShowHelpCenterToUser( userId, locale )
+		shouldShowHelpCenterToUser( userId )
 	);
 
 	const handleHelpButtonClicked = () => {

@@ -215,6 +215,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			@include break-mobile {
 				margin: 12px 0 24px;
 				transform: translateY( -58px );
+				min-height: 42px;
 			}
 		}
 

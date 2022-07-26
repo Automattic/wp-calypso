@@ -1,3 +1,4 @@
+import { shouldTargetWpcom } from '@automattic/help-center';
 import apiFetch from '@wordpress/api-fetch';
 import { filter, forEach, compact, partition, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
@@ -36,7 +37,7 @@ function fetchForKey( postKey, isHelpCenter = false, isSimpleSite = true ) {
 
 	if ( postKey.blogId ) {
 		if ( isHelpCenter ) {
-			return isSimpleSite
+			return shouldTargetWpcom( isSimpleSite )
 				? wpcomRequest( {
 						path: `help/article/${ encodeURIComponent( postKey.blogId ) }/${ encodeURIComponent(
 							postKey.postId

@@ -38,6 +38,7 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -52,6 +53,7 @@ import CheckoutNextSteps from './checkout-next-steps';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
+import ThirdPartyDevsAccount from './third-party-plugins-developer-account';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
@@ -224,6 +226,21 @@ export default function WPCheckout( {
 		} );
 
 	const { transactionStatus } = useTransactionStatus();
+
+	const hasMarketplaceProduct = useSelector( ( state ) => {
+		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
+	} );
+
+	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
+	const [ isSubmitted, setIsSubmitted ] = useState( false );
+
+	const validateForm = async () => {
+		setIsSubmitted( true );
+		if ( hasMarketplaceProduct && ! is3PDAccountConsentAccepted ) {
+			return false;
+		}
+		return true;
+	};
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
@@ -407,7 +424,15 @@ export default function WPCheckout( {
 				validatingButtonAriaLabel={ validatingButtonText }
 				isCompleteCallback={ () => false }
 			/>
+			{ hasMarketplaceProduct && (
+				<ThirdPartyDevsAccount
+					isAccepted={ is3PDAccountConsentAccepted }
+					onChange={ setIs3PDAccountConsentAccepted }
+					isSubmitted={ isSubmitted }
+				/>
+			) }
 			<CheckoutFormSubmit
+				validateForm={ validateForm }
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				submitButtonFooter={ <SubmitButtonFooter /> }
 			/>

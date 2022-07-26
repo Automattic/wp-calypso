@@ -93,7 +93,7 @@
 					font-weight: normal;
 					line-height: 1.4;
 					display: flex;
-
+					
 					span {
 						flex-grow: 2;
 					}
@@ -117,7 +117,6 @@
 					}
 
 					&:focus {
-						background: var( --color-primary );
 						color: var( --color-text-inverted );
 
 						.gridicon {
