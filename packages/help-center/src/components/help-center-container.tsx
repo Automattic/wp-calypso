@@ -5,7 +5,7 @@ import { Spinner } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import classnames from 'classnames';
-import { useState, useRef, FC } from 'react';
+import { useState, useRef, useEffect, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
 import { MemoryRouter } from 'react-router-dom';
 /**
@@ -26,6 +26,15 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 		return <>{ props.children }</>;
 	}
 	return <Draggable { ...props } />;
+};
+
+const useCloseOnUnmount = ( handleClose: () => void ) => {
+	useEffect( () => {
+		return () => {
+			handleClose();
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 };
 
 const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } ) => {
@@ -56,6 +65,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, isLoading } 
 	// This is a workaround for an issue with Draggable in StrictMode
 	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
 	const nodeRef = useRef( null );
+	useCloseOnUnmount( handleClose );
 
 	return (
 		<MemoryRouter>
