@@ -406,13 +406,13 @@ class PurchaseItem extends Component {
 	}
 
 	getPaymentMethod() {
-		const { purchase } = this.props;
+		const { purchase, translate } = this.props;
 
 		if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
 			return (
 				<div className={ 'purchase-item__no-payment-method' }>
 					<Icon icon={ warningIcon } />
-					<span>You don’t have a payment method to renew this subscription</span>
+					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
 				</div>
 			);
 		}
