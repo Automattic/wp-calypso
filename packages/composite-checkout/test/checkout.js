@@ -5,6 +5,8 @@ import {
 	queryByText as queryByTextInNode,
 	fireEvent,
 	act,
+	screen,
+	waitFor,
 } from '@testing-library/react';
 import { createContext, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
@@ -18,6 +20,7 @@ import {
 	CheckoutFormSubmit,
 	CheckoutStepGroup,
 	useSetStepComplete,
+	makeManualResponse,
 } from '../src/public-api';
 import { PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
@@ -595,13 +598,12 @@ describe( 'Checkout', () => {
 		} );
 	} );
 
-	describe( 'with validation', function () {
+	describe( 'submitting the form', function () {
 		let MyCheckout;
-		const submitButton = <MockSubmitButtonSimple />;
-		const mockMethod = createMockMethod( submitButton );
+		const submitButtonComponent = <MockSubmitButtonSimple />;
+		const mockMethod = createMockMethod( submitButtonComponent );
 		const { items, total } = createMockItems();
 		const steps = createMockStepObjects();
-		const validateForm = jest.fn();
 
 		beforeEach( () => {
 			MyCheckout = ( props ) => {
@@ -615,40 +617,70 @@ describe( 'Checkout', () => {
 							items={ items }
 							total={ total }
 							paymentMethods={ [ mockMethod ] }
-							paymentProcessors={ getMockPaymentProcessors() }
+							paymentProcessors={ { mock: props.paymentProcessor } }
 							initiallySelectedPaymentMethodId={ mockMethod.id }
 						>
 							<CheckoutStepGroup>
 								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
-								<CheckoutFormSubmit validateForm={ validateForm } />
+								<CheckoutFormSubmit validateForm={ props.validateForm } />
 							</CheckoutStepGroup>
 						</CheckoutProvider>
 					</myContext.Provider>
 				);
 			};
 		} );
-		it( 'does not trigger the onClick event of the button if validateForm callback is falsy', async () => {
-			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ] ] } /> );
-			const firstStepContinue = getByText( 'Pay Please' );
-			validateForm.mockReturnValue( true );
 
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
+		it( 'does not call the payment processor function if the validateForm callback is falsy', async () => {
+			const validateForm = jest.fn();
+			validateForm.mockResolvedValue( false );
+			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			render(
+				<MyCheckout
+					steps={ [ steps[ 0 ] ] }
+					validateForm={ validateForm }
+					paymentProcessor={ processor }
+				/>
+			);
+			const submitButton = screen.getByText( 'Pay Please' );
+
+			await waitFor( () => {
+				fireEvent.click( submitButton );
 			} );
 
-			expect( getByText( 'Pay Please' ) ).toBeDisabled();
+			expect( processor ).not.toHaveBeenCalled();
 		} );
-		it( 'does trigger the onClick event of the button if validateForm callback is truthy', async () => {
-			const { getByText } = render( <MyCheckout steps={ [ steps[ 0 ] ] } /> );
-			const firstStepContinue = getByText( 'Pay Please' );
-			validateForm.mockReturnValue( false );
 
-			await act( async () => {
-				return fireEvent.click( firstStepContinue );
+		it( 'calls the payment processor function if the validateForm callback is truthy', async () => {
+			const validateForm = jest.fn();
+			validateForm.mockResolvedValue( true );
+			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			render(
+				<MyCheckout
+					steps={ [ steps[ 0 ] ] }
+					validateForm={ validateForm }
+					paymentProcessor={ processor }
+				/>
+			);
+			const submitButton = screen.getByText( 'Pay Please' );
+
+			await waitFor( () => {
+				fireEvent.click( submitButton );
 			} );
 
-			expect( getByText( 'Pay Please' ) ).not.toBeDisabled();
+			expect( processor ).toHaveBeenCalled();
+		} );
+
+		it( 'calls the payment processor function if the validateForm callback undefined', async () => {
+			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			render( <MyCheckout steps={ [ steps[ 0 ] ] } paymentProcessor={ processor } /> );
+			const submitButton = screen.getByText( 'Pay Please' );
+
+			await waitFor( () => {
+				fireEvent.click( submitButton );
+			} );
+
+			expect( processor ).toHaveBeenCalled();
 		} );
 	} );
 } );
