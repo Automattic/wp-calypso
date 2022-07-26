@@ -1,17 +1,17 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 
+interface Params {
+	token: string;
+	useAsPrimaryPaymentMethod: boolean;
+	stripeSetupIntentId: string;
+}
+
 export async function saveCreditCard( {
 	token,
 	useAsPrimaryPaymentMethod,
-}: {
-	token: string;
-	useAsPrimaryPaymentMethod: boolean;
-} ): Promise< unknown > {
-	const additionalData = getParamsForApi( {
-		useAsPrimaryPaymentMethod,
-	} );
-
+	stripeSetupIntentId,
+}: Params ): Promise< unknown > {
 	const response = await wpcomJpl.req.post(
 		{
 			apiNamespace: 'wpcom/v2',
@@ -19,9 +19,11 @@ export async function saveCreditCard( {
 		},
 		{
 			payment_method_id: token,
-			...( additionalData ?? {} ),
+			use_as_primary_payment_method: useAsPrimaryPaymentMethod,
+			stripe_setup_intent_id: stripeSetupIntentId,
 		}
 	);
+
 	if ( response.error ) {
 		recordTracksEvent( 'calypso_partner_portal_add_new_credit_card_error' );
 		throw new Error( response );
@@ -29,10 +31,4 @@ export async function saveCreditCard( {
 
 	recordTracksEvent( 'calypso_partner_portal_add_new_credit_card' );
 	return response;
-}
-
-function getParamsForApi( { useAsPrimaryPaymentMethod }: { useAsPrimaryPaymentMethod: boolean } ) {
-	return {
-		use_as_primary_payment_method: useAsPrimaryPaymentMethod,
-	};
 }

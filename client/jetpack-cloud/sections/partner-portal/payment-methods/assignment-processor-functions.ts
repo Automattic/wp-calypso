@@ -63,6 +63,7 @@ export async function assignNewCardProcessor(
 		const result = await saveCreditCard( {
 			token,
 			useAsPrimaryPaymentMethod: Boolean( useAsPrimaryPaymentMethod ),
+			stripeSetupIntentId,
 		} );
 
 		return makeSuccessResponse( result );
