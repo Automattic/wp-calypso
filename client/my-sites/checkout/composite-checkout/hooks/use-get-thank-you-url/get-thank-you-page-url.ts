@@ -63,6 +63,27 @@ type ReceiptId = number;
 type ReceiptIdPlaceholder = ':receiptId';
 type ReceiptIdOrPlaceholder = ReceiptIdPlaceholder | PurchaseId | ReceiptId;
 
+export interface PostCheckoutUrlArguments {
+	siteSlug?: string;
+	adminUrl?: string;
+	redirectTo?: string;
+	receiptId?: number | string;
+	noPurchaseMade?: boolean;
+	purchaseId?: number | string;
+	feature?: string;
+	cart?: ResponseCart;
+	isJetpackNotAtomic?: boolean;
+	productAliasFromUrl?: string;
+	getUrlFromCookie?: GetUrlFromCookie;
+	saveUrlToCookie?: SaveUrlToCookie;
+	hideNudge?: boolean;
+	isInModal?: boolean;
+	isJetpackCheckout?: boolean;
+	jetpackTemporarySiteId?: string;
+	adminPageRedirect?: string;
+	domains?: ResponseDomain[];
+}
+
 /**
  * Determine where to send the user after checkout is complete.
  *
@@ -97,26 +118,7 @@ export default function getThankYouPageUrl( {
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
-}: {
-	siteSlug?: string;
-	adminUrl?: string;
-	redirectTo?: string;
-	receiptId?: number | string;
-	noPurchaseMade?: boolean;
-	purchaseId?: number | string;
-	feature?: string;
-	cart?: ResponseCart;
-	isJetpackNotAtomic?: boolean;
-	productAliasFromUrl?: string;
-	getUrlFromCookie?: GetUrlFromCookie;
-	saveUrlToCookie?: SaveUrlToCookie;
-	hideNudge?: boolean;
-	isInModal?: boolean;
-	isJetpackCheckout?: boolean;
-	jetpackTemporarySiteId?: string;
-	adminPageRedirect?: string;
-	domains?: ResponseDomain[];
-} ): string {
+}: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
