@@ -40,8 +40,7 @@ describe(
 		let restAPIClient: RestAPIClient;
 		let page: Page;
 
-		// beforeAll( async function () {
-		it( 'alkjewr', async function () {
+		beforeAll( async function () {
 			// Set up the test site programmatically against simpleSiteFreePlanUser.
 			const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 
