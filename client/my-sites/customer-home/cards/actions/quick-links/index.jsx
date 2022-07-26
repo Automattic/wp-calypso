@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -40,6 +41,7 @@ export const QuickLinks = ( {
 	menusUrl,
 	trackEditHomepageAction,
 	trackWritePostAction,
+	trackPromotePostAction,
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
@@ -64,6 +66,7 @@ export const QuickLinks = ( {
 		,
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
+	const isPromotePostActive = config.isEnabled( 'promote-post' );
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (
@@ -96,6 +99,15 @@ export const QuickLinks = ( {
 				label={ translate( 'Write blog post' ) }
 				materialIcon="edit"
 			/>
+			{ isPromotePostActive && (
+				<ActionBox
+					href={ `/todo/campaigns/all` }
+					hideLinkIndicator
+					onClick={ trackPromotePostAction }
+					label={ translate( 'Promote post' ) }
+					gridicon="speaker"
+				/>
+			) }
 			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
 					href={ `/comments/${ siteSlug }` }
@@ -251,6 +263,17 @@ const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
+const trackPromotePostAction = ( isStaticHomePage ) => ( dispatch ) => {
+	dispatch(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_customer_home_my_site_promote_post_click', {
+				is_static_home_page: isStaticHomePage,
+			} ),
+			bumpStat( 'calypso_customer_home', 'my_site_promote_post' )
+		)
+	);
+};
+
 const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
@@ -401,6 +424,7 @@ const mapStateToProps = ( state ) => {
 const mapDispatchToProps = {
 	trackEditHomepageAction,
 	trackWritePostAction,
+	trackPromotePostAction,
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
@@ -423,6 +447,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...dispatchProps,
 		trackEditHomepageAction: () => dispatchProps.trackEditHomepageAction( isStaticHomePage ),
 		trackWritePostAction: () => dispatchProps.trackWritePostAction( isStaticHomePage ),
+		trackPromotePostAction: () => dispatchProps.trackPromotePostAction( isStaticHomePage ),
 		trackAddPageAction: () => dispatchProps.trackAddPageAction( isStaticHomePage ),
 		trackManageCommentsAction: () => dispatchProps.trackManageCommentsAction( isStaticHomePage ),
 		trackEditMenusAction: () => dispatchProps.trackEditMenusAction( isStaticHomePage ),
