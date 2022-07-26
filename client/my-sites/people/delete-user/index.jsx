@@ -224,7 +224,10 @@ class DeleteUser extends Component {
 		const { translate, isJetpack, siteOwner, user } = this.props;
 
 		// A user should not be able to remove the site owner.
-		if ( ! isJetpack && user.ID === siteOwner ) {
+		if (
+			( ! isJetpack && user.ID === siteOwner ) ||
+			( isJetpack && user.linked_user_ID === siteOwner )
+		) {
 			return (
 				<Card className="delete-user__single-site">
 					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>

@@ -98,10 +98,14 @@ class EditUserForm extends Component {
 		}
 
 		/*
-		 * If this is not a Jetpack site and the current user is not viewing their own profile,
+		 * If the current user is not viewing their own profile,
 		 * the user should not be able to edit the site owner's details.
 		 */
-		if ( ! isJetpack && user.ID === siteOwner && user.ID !== currentUser.ID ) {
+		if (
+			( ( ! isJetpack && user.ID === siteOwner ) ||
+				( isJetpack && user.linked_user_ID === siteOwner ) ) &&
+			user.ID !== currentUser.ID
+		) {
 			return [];
 		}
 
