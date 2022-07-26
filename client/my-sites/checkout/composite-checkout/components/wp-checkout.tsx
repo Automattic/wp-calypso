@@ -264,7 +264,7 @@ export default function WPCheckout( {
 	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 
-	const validateForm = () => {
+	const validateForm = async () => {
 		setIsSubmitted( true );
 		if ( hasMarketplaceProduct && ! is3PDAccountConsentAccepted ) {
 			return false;
