@@ -257,12 +257,12 @@ export class Theme extends Component {
 	};
 
 	getUpsellMessage() {
-		const { isPremiumThemesAvaiable, theme, price, translate } = this.props;
+		const { isPremiumThemesAvailable, theme, price, translate } = this.props;
 		const hasPrice = /\d/g.test( price );
 
-		if ( ! hasPrice && theme.price && ! isPremiumThemesAvaiable ) {
+		if ( ! hasPrice && theme.price && ! isPremiumThemesAvailable ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
-		} else if ( isPremiumThemesAvaiable ) {
+		} else if ( isPremiumThemesAvailable ) {
 			return translate( 'The premium theme is included in your plan.' );
 		}
 
@@ -283,7 +283,7 @@ export class Theme extends Component {
 	}
 
 	render() {
-		const { active, price, theme, translate, upsellUrl, isPremiumThemesAvaiable } = this.props;
+		const { active, price, theme, translate, upsellUrl, isPremiumThemesAvailable } = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -366,7 +366,7 @@ export class Theme extends Component {
 						! isEnabled( 'signup/seller-upgrade-modal' )
 							? 'theme__upsell-icon'
 							: 'theme__upsell-popover',
-						isPremiumThemesAvaiable || showPremiumBadge ? 'active' : null
+						isPremiumThemesAvailable || showPremiumBadge ? 'active' : null
 					) }
 					position={ ! isEnabled( 'signup/seller-upgrade-modal' ) ? 'top left' : 'top' }
 				>
@@ -463,7 +463,7 @@ export class Theme extends Component {
 }
 
 export default connect(
-	( state, { theme, siteId, isPremiumThemesAvaiable } ) => {
+	( state, { theme, siteId, isPremiumThemesAvailable } ) => {
 		const {
 			themes: { themesUpdate },
 		} = state;
@@ -472,8 +472,8 @@ export default connect(
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
-			isPremiumThemesAvaiable:
-				isPremiumThemesAvaiable?.() ||
+			isPremiumThemesAvailable:
+				isPremiumThemesAvailable?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			siteSlug: getSiteSlug( state, siteId ),
 		};
