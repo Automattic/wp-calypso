@@ -858,14 +858,12 @@ const mapStateToProps = (
 	if ( notice ) {
 		queryArgs.notice = notice;
 	}
-	console.debug( 'here it goes' );
-	console.debug( state );
-	debugger;
 
 	const getSiteEditorRoute = () => {
 		const oldRoute = 'themes.php?page=gutenberg-edit-site';
 		const newRoute = 'site-editor.php';
 
+		// temp, for dev testing
 		if ( gutenbergVersion === 'dev' ) return newRoute;
 
 		if ( gutenbergVersion ) {
@@ -874,8 +872,6 @@ const mapStateToProps = (
 
 		return oldRoute;
 	};
-
-	debugger;
 
 	const siteAdminUrl =
 		editorType === 'site'
