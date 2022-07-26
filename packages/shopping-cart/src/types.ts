@@ -224,28 +224,95 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	create_new_blog: boolean;
 	cart_key: CartKey;
 	products: P[];
+
 	/**
+	 * The amount of tax collected.
+	 *
 	 * @deprecated This is a float and is unreliable. Use total_tax_integer or total_tax_display.
 	 */
 	total_tax: string;
-	total_tax_integer: number;
-	total_tax_display: string;
-	total_tax_breakdown: TaxBreakdownItem[];
+
 	/**
+	 * The amount of tax collected in the currency's smallest unit.
+	 */
+	total_tax_integer: number;
+
+	/**
+	 * The amount of tax collected formatted for the locale and currency.
+	 */
+	total_tax_display: string;
+
+	/**
+	 * The amount of tax collected per product.
+	 */
+	total_tax_breakdown: TaxBreakdownItem[];
+
+	/**
+	 * The cart's total cost.
+	 *
 	 * @deprecated This is a float and is unreliable. Use total_cost_integer or total_cost_display.
 	 */
 	total_cost: number;
+
+	/**
+	 * The cart's total cost in the currency's smallest unit.
+	 */
 	total_cost_integer: number;
+
+	/**
+	 * The cart's total cost formatted for the locale and currency.
+	 */
 	total_cost_display: string;
+
+	/**
+	 * The difference between `cost_before_coupon` and the actual price for all
+	 * products in the currency's smallest unit.
+	 *
+	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
+	 */
 	coupon_savings_total_integer: number;
+
+	/**
+	 * The difference between `cost_before_coupon` and the actual price for all
+	 * products formatted for the locale and currency.
+	 *
+	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
+	 */
 	coupon_savings_total_display: string;
+
+	/**
+	 * The subtotal with taxes included in the currency's smallest unit.
+	 */
 	sub_total_with_taxes_integer: number;
+
+	/**
+	 * The subtotal with taxes included formatted for the locale and currency.
+	 */
 	sub_total_with_taxes_display: string;
+
+	/**
+	 * The subtotal without taxes included in the currency's smallest unit.
+	 */
 	sub_total_integer: number;
+
+	/**
+	 * The subtotal without taxes included formatted for the locale and currency.
+	 */
 	sub_total_display: string;
-	currency: string;
+
+	/**
+	 * The number of credits available in the currency's smallest unit.
+	 */
 	credits_integer: number;
+
+	/**
+	 * The number of credits available formatted for the locale and currency.
+	 */
 	credits_display: string;
+
+	currency: string;
 	allowed_payment_methods: string[];
 	coupon: string;
 	is_coupon_applied: boolean;
