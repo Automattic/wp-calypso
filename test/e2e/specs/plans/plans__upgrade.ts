@@ -64,25 +64,11 @@ describe(
 				);
 			}
 
-			// -------------------------------
-
-			// newSiteDetails = {
-			// 	success: true,
-			// 	blog_details: {
-			// 		blogid: 207291850,
-			// 		blogname: 'some_blog',
-			// 		url: 'http://e2eflowtesting1653434109632835.wordpress.com/',
-			// 		site_slug: '',
-			// 	},
-			// };
-
 			console.info( 'Adding test image to site.' );
 			testMediaFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 			await restAPIClient.uploadMedia( newSiteDetails.blog_details.blogid, {
 				media: testMediaFile,
 			} );
-
-			// -------------------------------
 
 			// Launch browser.
 			page = await browser.newPage();
