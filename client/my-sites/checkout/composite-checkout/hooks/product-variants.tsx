@@ -92,27 +92,23 @@ export function useGetProductVariants(
 	}, [ shouldFetchProducts, haveFetchedProducts, reduxDispatch ] );
 
 	const getProductVariantFromAvailableVariant = useCallback(
-		( variant: AvailableProductVariantAndCompared ): WPCOMProductVariant => {
+		( variant: AvailableProductVariant ): WPCOMProductVariant => {
 			const currentPrice =
 				variant.introductoryOfferPrice !== null
 					? variant.introductoryOfferPrice
 					: variant.priceFinal || variant.priceFull;
-			// extremely low "discounts" are possible if the price of the longer term has been rounded
-			// if they cannot be rounded to at least a percentage point we should not show them
-			const discountPercentage = Math.floor(
-				100 - ( currentPrice / variant.priceFullBeforeDiscount ) * 100
-			);
+
+			const termIntervalInMonths = getBillingMonthsForTerm( variant.plan.term );
+			const currentPricePerMonth = currentPrice / termIntervalInMonths;
 
 			return {
 				variantLabel: getTermText( variant.plan.term, translate ),
 				productSlug: variant.planSlug,
 				productId: variant.product.product_id,
-				discountPercentage,
-				formattedPriceBeforeDiscount: myFormatCurrency(
-					variant.priceFullBeforeDiscount,
-					variant.product.currency_code
-				),
-				formattedCurrentPrice: myFormatCurrency( currentPrice, variant.product.currency_code ),
+				currentPrice,
+				termIntervalInMonths: getBillingMonthsForTerm( variant.plan.term ),
+				currentPricePerMonth,
+				currency: variant.product.currency_code,
 			};
 		},
 		[ translate ]
@@ -124,50 +120,10 @@ export function useGetProductVariants(
 		);
 	}, [ activePlan?.interval, variantsWithPrices ] );
 
-	const variantsWithComparativeDiscounts = useMemo(
-		() => addComparativeDiscountsToVariants( filteredVariants ),
-		[ filteredVariants ]
-	);
-
 	return useMemo( () => {
-		debug( 'found filtered variants', variantsWithComparativeDiscounts );
-		return variantsWithComparativeDiscounts.map( getProductVariantFromAvailableVariant );
-	}, [ getProductVariantFromAvailableVariant, variantsWithComparativeDiscounts ] );
-}
-
-function addComparativeDiscountsToVariants(
-	variants: AvailableProductVariant[]
-): AvailableProductVariantAndCompared[] {
-	return variants.map( ( variant ) => {
-		return {
-			...variant,
-			priceFullBeforeDiscount: getLowestPriceTimesVariantInterval( variant, variants ),
-		};
-	} );
-}
-
-function getLowestPriceTimesVariantInterval(
-	variant: AvailableProductVariant,
-	allVariants: AvailableProductVariant[]
-): number {
-	if ( allVariants.length < 1 ) {
-		throw new Error(
-			'There must be at least one variant to compare against when generating relative prices'
-		);
-	}
-
-	allVariants.sort( ( variantA, variantB ) => {
-		const variantAInterval = getTermDuration( variantA.plan.term ) ?? 0;
-		const variantBInterval = getTermDuration( variantB.plan.term ) ?? 0;
-		return variantAInterval - variantBInterval;
-	} );
-	const lowestVariant = allVariants[ 0 ];
-
-	const monthsInVariant = getBillingMonthsForTerm( variant.plan.term );
-	const monthsInLowestVariant = getBillingMonthsForTerm( lowestVariant.plan.term );
-	const lowestVariantIntervalsInVariantTerm = Math.round( monthsInVariant / monthsInLowestVariant );
-
-	return lowestVariant.priceFull * lowestVariantIntervalsInVariantTerm;
+		debug( 'found filtered variants', filteredVariants );
+		return filteredVariants.map( getProductVariantFromAvailableVariant );
+	}, [ getProductVariantFromAvailableVariant, filteredVariants ] );
 }
 
 function isVariantAllowed(
