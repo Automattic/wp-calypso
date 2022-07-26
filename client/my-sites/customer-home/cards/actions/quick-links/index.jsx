@@ -1,16 +1,14 @@
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
-import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
-import { isActiveThemeFSEEnabled } from 'calypso/lib/theme/utils';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -30,7 +28,6 @@ import ActionBox from './action-box';
 import './style.scss';
 
 export const QuickLinks = ( {
-	siteId,
 	canEditPages,
 	canCustomize,
 	canSwitchThemes,
@@ -59,11 +56,8 @@ export const QuickLinks = ( {
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
+	isFSEActive,
 } ) => {
-	const userLoggedIn = useSelector( isUserLoggedIn );
-	const activeThemeQueryResult = useActiveThemeQuery( siteId, userLoggedIn );
-
-	const isFSEActive = isActiveThemeFSEEnabled( activeThemeQueryResult?.data );
 	const translate = useTranslate();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
@@ -447,6 +441,6 @@ const ConnectedQuickLinks = connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( QuickLinks );
+)( withIsFSEActive( QuickLinks ) );
 
 export default ConnectedQuickLinks;

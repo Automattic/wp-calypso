@@ -6,10 +6,9 @@ import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
-import withActiveTheme from 'calypso/data/themes/with-active-theme';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getTaskList } from 'calypso/lib/checklist';
 import { navigate } from 'calypso/lib/navigate';
-import { isActiveThemeFSEEnabled } from 'calypso/lib/theme/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { resetVerifyEmailState } from 'calypso/state/current-user/email-verification/actions';
@@ -341,9 +340,8 @@ const SiteSetupList = ( {
 };
 
 const ConnectedSiteSetupList = connect( ( state, props ) => {
-	const { activeThemeData } = props;
+	const { isFSEActive } = props;
 
-	const isFSEActive = isActiveThemeFSEEnabled( activeThemeData );
 	const siteId = getSelectedSiteId( state );
 	const user = getCurrentUser( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
@@ -377,4 +375,4 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 	};
 } )( SiteSetupList );
 
-export default withActiveTheme( ConnectedSiteSetupList );
+export default withIsFSEActive( ConnectedSiteSetupList );
