@@ -35,7 +35,7 @@ export const defaultFallbackLinks = [
 	},
 	{
 		get link() {
-			return localizeUrl( 'https://wordpress.com/support/pro-plan/' );
+			return localizeUrl( 'https://wordpress.com/support/business-plan/' );
 		},
 		post_id: 134940,
 		get title() {
@@ -825,7 +825,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/pro-plan/' );
+				return localizeUrl( 'https://wordpress.com/support/business-plan/' );
 			},
 			post_id: 134940,
 			get title() {
