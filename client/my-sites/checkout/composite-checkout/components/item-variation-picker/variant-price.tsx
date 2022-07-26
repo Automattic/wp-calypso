@@ -83,7 +83,7 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 
 export const ItemVariantPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
-	selectedVariant: WPCOMProductVariant;
+	selectedVariant?: WPCOMProductVariant;
 } > = ( { variant, selectedVariant } ) => {
 	const isMobile = useMobileBreakpoint();
 	// This is the price that the selectedVariant would be if it was using the
@@ -92,14 +92,16 @@ export const ItemVariantPrice: FunctionComponent< {
 	// month, then `priceOfSelectedVariantForThisTerm` would be (120 / 12) * 1,
 	// or 10 (per month). In this case, selecting the variant would save the user
 	// 50% (5 / 10).
-	const priceOfSelectedVariantForThisTerm =
-		selectedVariant.currentPricePerMonth * variant.termIntervalInMonths;
-	const discountPercentage = variant.currentPrice / priceOfSelectedVariantForThisTerm;
+	const priceOfSelectedVariantForThisTerm = selectedVariant
+		? selectedVariant.currentPricePerMonth * variant.termIntervalInMonths
+		: undefined;
+	const discountPercentage = priceOfSelectedVariantForThisTerm
+		? variant.currentPrice / priceOfSelectedVariantForThisTerm
+		: 0;
 	const formattedCurrentPrice = myFormatCurrency( variant.currentPrice, variant.currency );
-	const formattedSelectedPriceForTerm = myFormatCurrency(
-		priceOfSelectedVariantForThisTerm,
-		variant.currency
-	);
+	const formattedSelectedPriceForTerm = priceOfSelectedVariantForThisTerm
+		? myFormatCurrency( priceOfSelectedVariantForThisTerm, variant.currency )
+		: undefined;
 
 	return (
 		<Variant>
