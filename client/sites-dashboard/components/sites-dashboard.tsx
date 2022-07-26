@@ -114,7 +114,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 								<SearchWrapper>
 									<SitesSearch
 										searchIcon={ <SitesSearchIcon /> }
-										onSearch={ ( term ) => handleQueryParamChange( 'search', term ) }
+										onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
 										isReskinned
 										placeholder={ __( 'Search by name or domain…' ) }
 										defaultValue={ search }
@@ -150,9 +150,8 @@ function handleQueryParamChange(
 	// Ensure we keep existing query params by appending `.search`
 	const pathWithQuery = window.location.pathname + window.location.search;
 
-	const trimmedValue = paramValue?.trim();
-	if ( trimmedValue ) {
-		page( addQueryArgs( pathWithQuery, { [ paramName ]: trimmedValue } ) );
+	if ( paramValue ) {
+		page( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
 	} else {
 		page( removeQueryArgs( pathWithQuery, paramName ) );
 	}
