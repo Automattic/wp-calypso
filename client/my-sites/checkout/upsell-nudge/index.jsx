@@ -2,6 +2,7 @@ import { isMonthly, getPlanByPathSlug, TERM_MONTHLY } from '@automattic/calypso-
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
+import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
@@ -363,12 +364,12 @@ export class UpsellNudge extends Component {
 		return getThankYouPageUrl( getThankYouPageUrlArguments );
 	};
 
-	handleClickDecline = () => {
-		const { trackUpsellButtonClick, upsellType, siteSlug } = this.props;
+	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
+		const { trackUpsellButtonClick, upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
 
-		const url = `/home/${ siteSlug }`;
+		const url = this.getThankYouPageUrlForIncomingCart( shouldHideUpsellNudges );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
 		// (e.g. if the destination is an upsell nudge, it does not remove the cookie).
@@ -377,7 +378,13 @@ export class UpsellNudge extends Component {
 			clearSignupDestinationCookie();
 		}
 
-		window.location.href = url;
+		// The section "/setup" is not defined as a page.js routing path, so page.redirect won't work.
+		// See: https://github.com/Automattic/wp-calypso/blob/trunk/client/sections.js
+		if ( isURL( url ) || url.startsWith( '/setup' ) ) {
+			window.location.href = url;
+		} else {
+			page.redirect( url );
+		}
 	};
 
 	handleClickAccept = ( buttonAction ) => {

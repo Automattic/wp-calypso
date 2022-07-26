@@ -6,21 +6,8 @@ import classnames from 'classnames';
 import type { FC } from 'react';
 import './back-to-top-button.scss';
 
-const getScrollParent = ( el: HTMLElement | null ) => {
-	let node = el;
-
-	while ( node !== null ) {
-		if ( node.scrollHeight > node.clientHeight ) {
-			return node;
-		}
-		node = node.parentElement;
-	}
-
-	return null;
-};
-
 export const BackToTopButton: FC = () => {
-	const elementRef = useRef( null );
+	const elementRef = useRef< HTMLButtonElement | null >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
 	const { __ } = useI18n();
 
@@ -41,7 +28,7 @@ export const BackToTopButton: FC = () => {
 
 	useEffect( () => {
 		if ( elementRef.current ) {
-			scrollParentRef.current = getScrollParent( elementRef.current );
+			scrollParentRef.current = elementRef.current.parentElement;
 		}
 	}, [ elementRef ] );
 
