@@ -93,14 +93,14 @@ export const ItemVariantPrice: FunctionComponent< {
 	// or 10 (per month). In this case, selecting the variant would save the user
 	// 50% (5 / 10).
 	const priceOfSelectedVariantForThisTerm = selectedVariant
-		? selectedVariant.currentPricePerMonth * variant.termIntervalInMonths
+		? selectedVariant.pricePerMonth * variant.termIntervalInMonths
 		: undefined;
 	// Extremely low "discounts" are possible if the price of the longer term has been rounded
 	// if they cannot be rounded to at least a percentage point we should not show them.
 	const discountPercentage = priceOfSelectedVariantForThisTerm
-		? Math.floor( 100 - ( variant.currentPrice / priceOfSelectedVariantForThisTerm ) * 100 )
+		? Math.floor( 100 - ( variant.price / priceOfSelectedVariantForThisTerm ) * 100 )
 		: 0;
-	const formattedCurrentPrice = myFormatCurrency( variant.currentPrice, variant.currency );
+	const formattedCurrentPrice = myFormatCurrency( variant.price, variant.currency );
 	const formattedSelectedPriceForTerm = priceOfSelectedVariantForThisTerm
 		? myFormatCurrency( priceOfSelectedVariantForThisTerm, variant.currency )
 		: undefined;

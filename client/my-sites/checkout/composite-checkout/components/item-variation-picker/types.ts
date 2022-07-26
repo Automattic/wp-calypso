@@ -3,8 +3,8 @@ import type { ResponseCartProduct } from '@automattic/shopping-cart';
 export type WPCOMProductSlug = string;
 
 export type WPCOMProductVariant = {
-	currentPrice: number;
-	currentPricePerMonth: number;
+	price: number;
+	pricePerMonth: number;
 	termIntervalInMonths: number;
 	currency: string;
 	productId: number;

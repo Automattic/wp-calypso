@@ -101,21 +101,21 @@ export function useGetProductVariants(
 
 	const getProductVariantFromAvailableVariant = useCallback(
 		( variant: AvailableProductVariant ): WPCOMProductVariant => {
-			const currentPrice =
+			const price =
 				variant.introductoryOfferPrice !== null
 					? variant.introductoryOfferPrice
 					: variant.priceFinal || variant.priceFull;
 
 			const termIntervalInMonths = getBillingMonthsForTerm( variant.plan.term );
-			const currentPricePerMonth = currentPrice / termIntervalInMonths;
+			const pricePerMonth = price / termIntervalInMonths;
 
 			return {
 				variantLabel: getTermText( variant.plan.term, translate ),
 				productSlug: variant.planSlug,
 				productId: variant.product.product_id,
-				currentPrice,
+				price,
 				termIntervalInMonths: getBillingMonthsForTerm( variant.plan.term ),
-				currentPricePerMonth,
+				pricePerMonth,
 				currency: variant.product.currency_code,
 			};
 		},
