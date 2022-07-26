@@ -13,14 +13,20 @@
 	.dialog__action-buttons {
 		display: flex;
 		justify-content: flex-end;
-		align-items: center;
+		align-items: stretch;
 		background: var( --studio-gray-0 );
 		border: 0;
+
 
 		a {
 			margin-right: auto;
 			font-weight: 600;
 			text-decoration: underline;
+		}
+
+
+		@break-small() {
+			align-items: center;
 		}
 	}
 
