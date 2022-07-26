@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { ItemVariantPrice } from './variant-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
@@ -101,14 +101,11 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	const [ open, setOpen ] = useState( false );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
-	const selectedVariantIndex = useMemo( () => {
-		for ( let i = 0; i < variants.length; ++i ) {
-			if ( variants[ i ].productId === selectedItem.product_id ) {
-				return i;
-			}
-		}
-		return null;
-	}, [ selectedItem.product_id, variants ] );
+	const selectedVariantIndexRaw = variants.findIndex(
+		( variant ) => variant.productId === selectedItem.product_id
+	);
+	// findIndex returns -1 if it fails and we want null.
+	const selectedVariantIndex = selectedVariantIndexRaw > 0 ? selectedVariantIndexRaw : null;
 
 	// reset the dropdown highlight when the selected product changes
 	useEffect( () => {
