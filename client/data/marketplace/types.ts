@@ -23,7 +23,8 @@ export type Plugin = {
 	last_updated?: string;
 	short_description?: string;
 	download_link?: string;
-	icons?: Record< string, string >;
+	icon?: string;
+	railcar: Railcar;
 };
 
 export type ESIndexResult = {
@@ -35,26 +36,37 @@ export type ESIndexResult = {
 	like_count: number;
 	modified_gmt: string;
 	author: string;
-	excerpt_html: string;
-	'title.default': string;
 	'permalink.url.raw': string;
 	post_id: number;
 	title_html: string;
 	blog_icon_url: string;
 	modified: string;
 	post_type: string;
-	'excerpt.default': string;
 	date_gmt: string;
 	'plugin.stable_tag'?: string;
 	'plugin.tested'?: string;
-	'plugin.rating'?: number;
-	'plugin.num_ratings'?: number;
 	'plugin.support_threads'?: number;
 	'plugin.support_threads_resolved'?: number;
 	'plugin.active_installs'?: number;
+	plugin: {
+		title: string;
+		excerpt: string;
+		icons: string;
+		rating: number;
+		num_ratings: number;
+	};
 };
 
-export type ESHits = Array< { fields: ESIndexResult } >;
+export type Icon = {
+	filename: string;
+	revision: string;
+	resolution: string;
+	location: string;
+};
+
+export type Railcar = Record< string, string | number >;
+
+export type ESHits = Array< { fields: ESIndexResult; railcar: Railcar } >;
 
 export type ESResponse = { data: { results: ESHits; total: number; page_handle: string } };
 

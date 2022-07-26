@@ -1,9 +1,4 @@
-import {
-	isWpComAnnualPlan,
-	PLAN_BUSINESS,
-	PLAN_WPCOM_PRO,
-	WPCOM_FEATURES_NO_WPCOM_BRANDING,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS, WPCOM_FEATURES_NO_WPCOM_BRANDING } from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -49,6 +44,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import Masterbar from './masterbar';
 import SiteIconSetting from './site-icon-setting';
 import wrapSettingsForm from './wrap-settings-form';
 
@@ -165,6 +161,24 @@ export class SiteSettingsFormGeneral extends Component {
 							</Button>
 						</div>
 					</div>
+				) }
+			</>
+		);
+	}
+
+	toolbarOption() {
+		const { isRequestingSettings, isSavingSettings, siteIsJetpack, siteIsAtomic } = this.props;
+
+		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
+
+		return (
+			<>
+				{ isNonAtomicJetpackSite && (
+					// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
+					<Masterbar
+						isSavingSettings={ isSavingSettings }
+						isRequestingSettings={ isRequestingSettings }
+					/>
 				) }
 			</>
 		);
@@ -614,9 +628,6 @@ export class SiteSettingsFormGeneral extends Component {
 			'is-loading': isRequestingSettings,
 		} );
 
-		// We currently don't have a monthly or a biennial pro plan, hence keeping the business plan upsell for those cases.
-		const upsellPlan = isWpComAnnualPlan( site.plan.product_slug ) ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
-
 		return (
 			<div className={ classNames( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
@@ -665,8 +676,10 @@ export class SiteSettingsFormGeneral extends Component {
 						{ ! hasNoWpcomBranding && (
 							<UpsellNudge
 								feature={ WPCOM_FEATURES_NO_WPCOM_BRANDING }
-								plan={ upsellPlan }
-								title={ translate( 'Remove the footer credit entirely with WordPress.com Pro' ) }
+								plan={ PLAN_BUSINESS }
+								title={ translate(
+									'Remove the footer credit entirely with WordPress.com Business'
+								) }
 								description={ translate(
 									'Upgrade to remove the footer credit, use advanced SEO tools and more'
 								) }
@@ -675,6 +688,8 @@ export class SiteSettingsFormGeneral extends Component {
 						) }
 					</div>
 				) }
+
+				{ this.toolbarOption() }
 			</div>
 		);
 	}

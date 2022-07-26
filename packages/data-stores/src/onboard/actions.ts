@@ -108,6 +108,12 @@ export const resetFonts = () => ( {
 
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
+	skipFlags: [] as string[],
+} );
+
+export const resetOnboardStoreWithSkipFlags = ( skipFlags: string[] ) => ( {
+	type: 'RESET_ONBOARD_STORE' as const,
+	skipFlags,
 } );
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
@@ -287,6 +293,7 @@ export type OnboardAction = ReturnType<
 	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
+	| typeof resetOnboardStoreWithSkipFlags
 	| typeof setStoreType
 	| typeof setDomain
 	| typeof setDomainCategory

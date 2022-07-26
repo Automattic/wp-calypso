@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_THEMES,
-	PLAN_WPCOM_PRO,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
@@ -53,6 +54,7 @@ import {
 	isThemePremium,
 	isPremiumThemeAvailable,
 	isWpcomTheme as isThemeWpcom,
+	isWporgTheme,
 	getCanonicalTheme,
 	getPremiumThemePrice,
 	getThemeDetailsUrl,
@@ -443,8 +445,8 @@ class ThemeSheet extends Component {
 			return null;
 		}
 
-		const description = this.props.isPremium
-			? this.props.translate( 'Get in touch with the theme author' )
+		const description = this.props.isWporg
+			? this.props.translate( 'Get help from the theme author and WordPress.org community' )
 			: this.props.translate( 'Get help from volunteers and staff' );
 
 		return (
@@ -456,27 +458,8 @@ class ThemeSheet extends Component {
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
-					href={ this.props.forumUrl }
+					href={ localizeUrl( this.props.forumUrl ) }
 					onClick={ this.trackThemeForumClick }
-				>
-					{ this.props.translate( 'Visit forum' ) }
-				</Button>
-			</Card>
-		);
-	};
-
-	renderSupportCssCard = ( buttonCount ) => {
-		return (
-			<Card className="theme__sheet-card-support">
-				<Gridicon icon="briefcase" size={ 48 } />
-				<div className="theme__sheet-card-support-details">
-					{ this.props.translate( 'Need CSS help? ' ) }
-					<small>{ this.props.translate( 'Get help from the experts in our CSS forum' ) }</small>
-				</div>
-				<Button
-					primary={ buttonCount === 1 }
-					href="//en.forums.wordpress.com/forum/css-customization"
-					onClick={ this.trackCssClick }
 				>
 					{ this.props.translate( 'Visit forum' ) }
 				</Button>
@@ -505,7 +488,6 @@ class ThemeSheet extends Component {
 						! isStandaloneJetpack &&
 						this.renderSupportContactUsCard( buttonCount++ ) }
 					{ forumUrl && this.renderSupportThemeForumCard( buttonCount++ ) }
-					{ isWpcomTheme && this.renderSupportCssCard( buttonCount++ ) }
 				</div>
 			);
 
@@ -727,9 +709,9 @@ class ThemeSheet extends Component {
 		if ( hasWpComThemeUpsellBanner ) {
 			pageUpsellBanner = (
 				<UpsellNudge
-					plan={ PLAN_WPCOM_PRO }
+					plan={ PLAN_PREMIUM }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Pro plan!' ) }
+					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
 					description={ preventWidows(
 						translate(
 							'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
@@ -747,9 +729,9 @@ class ThemeSheet extends Component {
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
 			pageUpsellBanner = (
 				<UpsellNudge
-					plan={ PLAN_WPCOM_PRO }
+					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Pro plan!' ) }
+					title={ translate( 'Access this theme for FREE with a Business plan!' ) }
 					description={ preventWidows(
 						translate(
 							'Instantly unlock thousands of different themes and install your own when you upgrade.'
@@ -826,14 +808,14 @@ const ThemeSheetWithOptions = ( props ) => {
 		isLoggedIn,
 		isPremium,
 		isPurchased,
-		isJetpack,
+		isStandaloneJetpack,
 		demoUrl,
 		showTryAndCustomize,
 	} = props;
 
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
-	const needsJetpackPlanUpgrade = isJetpack && isPremium && ! isPurchased;
+	const needsJetpackPlanUpgrade = isStandaloneJetpack && isPremium && ! isPurchased;
 
 	if ( ! showTryAndCustomize ) {
 		secondaryOption = null;
@@ -890,6 +872,7 @@ export default connect(
 			backPath,
 			isCurrentUserPaid,
 			isWpcomTheme,
+			isWporg: isWporgTheme( state, id ),
 			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, id, siteId ),
 			isJetpack,

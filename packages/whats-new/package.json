@@ -4,7 +4,7 @@
 	"description": "A WordPress Guide component that highlights recently-added WordPress.com features.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
+	"calypso:src": "src/index.tsx",
 	"types": "./types.d.ts",
 	"sideEffects": [
 		"*.css",
@@ -37,10 +37,15 @@
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@wordpress/components": "^19.11.0",
+		"@wordpress/components": "^19.15.0",
+		"@wordpress/element": "^4.7.0",
+		"@wordpress/i18n": "^4.10.0",
+		"@wordpress/keycodes": "^3.10.0",
 		"@wordpress/react-i18n": "^3.7.0",
+		"classnames": "^2.3.1",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},

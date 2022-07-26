@@ -49,7 +49,7 @@ const ImportReady: Step = function ImportStep( props ) {
 	 ↓ Renders
 	 */
 	return (
-		<ImportWrapper { ...props }>
+		<ImportWrapper { ...props } stepName="ready">
 			<ReadyStep
 				platform={ urlData?.platform }
 				goToImporterPage={ goToImporterPage }

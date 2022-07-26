@@ -12,7 +12,10 @@ export function setupGoogleAnalyticsGtag( params ) {
 	GA4.setup( params );
 
 	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAnalyticsGtag, params );
-	window.gtag( 'config', TRACKING_IDS.jetpackGoogleAnalyticsGtag, params );
+
+	if ( isJetpackCloud() ) {
+		window.gtag( 'config', TRACKING_IDS.jetpackGoogleAnalyticsGtag, params );
+	}
 }
 
 /**

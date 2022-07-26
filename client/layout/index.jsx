@@ -33,7 +33,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite, isSimpleSite as getIsSimpleSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -371,16 +371,15 @@ export default withCurrentRoute(
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		const isEditor = getSectionName( state ) === 'gutenberg-editor';
-		const isSimpleSite = getIsSimpleSite( state );
+		const isCheckout = getSectionName( state ) === 'checkout';
 		const userAllowedToHelpCenter = shouldShowHelpCenterToUser(
 			getCurrentUserId( state ),
 			getCurrentLocaleSlug( state )
 		);
 
 		const disableFAB =
-			isSimpleSite &&
-			isEditor &&
-			config.isEnabled( 'editor/help-center' ) &&
+			( ( isEditor && config.isEnabled( 'editor/help-center' ) ) ||
+				( isCheckout && config.isEnabled( 'checkout/help-center' ) ) ) &&
 			userAllowedToHelpCenter;
 
 		return {
@@ -411,7 +410,7 @@ export default withCurrentRoute(
 			// authorization, it would remove the newly connected site that has been fetched separately.
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-			sidebarIsCollapsed: getSidebarIsCollapsed( state ),
+			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			disableFAB,
 		};
 	} )( Layout )

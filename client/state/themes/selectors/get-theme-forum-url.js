@@ -4,8 +4,8 @@ import { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';
 import 'calypso/state/themes/init';
 
 /**
- * Returns the URL for a premium theme's dedicated forum, or for the general themes
- * forum for a free theme.
+ * Returns the URL for the general support forum for a free theme.
+ * or the WordPress.org theme forum for a WordPress.org theme.
  *
  * @param  {object}  state   Global state tree
  * @param  {string}  themeId Theme ID
@@ -13,7 +13,7 @@ import 'calypso/state/themes/init';
  */
 export function getThemeForumUrl( state, themeId ) {
 	if ( isWpcomTheme( state, themeId ) ) {
-		return '//en.forums.wordpress.com/forum/themes';
+		return '//wordpress.com/forums/';
 	}
 	if ( isWporgTheme( state, themeId ) ) {
 		return '//wordpress.org/support/theme/' + themeId;

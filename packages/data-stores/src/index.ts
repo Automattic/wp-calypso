@@ -26,6 +26,7 @@ export { useSupportAvailability } from './support-queries/use-support-availabili
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
 export { useStarterDesignsGeneratedQuery } from './starter-designs-queries/use-starter-designs-generated-query';
+export { useStarterDesignsQuery } from './starter-designs-queries/use-starter-designs-query';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 
@@ -55,4 +56,6 @@ export {
  */
 export * from './mapped-types';
 export { getContextResults } from './contextual-help/contextual-help';
+export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
+export * from './contextual-help/constants';

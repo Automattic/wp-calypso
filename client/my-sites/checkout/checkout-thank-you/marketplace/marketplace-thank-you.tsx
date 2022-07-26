@@ -1,24 +1,35 @@
+import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { ThemeProvider, Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import page from 'page';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import { ThankYou } from 'calypso/components/thank-you';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import MasterbarStyled from 'calypso/my-sites/marketplace/components/masterbar-styled';
+import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
+import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
-import { requestLatestAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
-import { getLatestAtomicTransfer } from 'calypso/state/atomic/transfers/selectors';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import {
+	getAutomatedTransferStatus,
+	isFetchingAutomatedTransferStatus,
+} from 'calypso/state/automated-transfer/selectors';
 import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import { MARKETPLACE_ASYNC_PROCESS_STATUS } from 'calypso/state/marketplace/types';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin, isFetched } from 'calypso/state/plugins/wporg/selectors';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const ThankYouContainer = styled.div`
@@ -39,8 +50,6 @@ const ThankYouContainer = styled.div`
 	}
 `;
 
-const AtomicTransferComplete = 'completed';
-
 const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -51,17 +60,35 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const { transfer } = useSelector( ( state ) => getLatestAtomicTransfer( state, siteId ) );
+	const isFetchingTransferStatus = useSelector( ( state ) =>
+		isFetchingAutomatedTransferStatus( state, siteId )
+	);
+	const transferStatus = useSelector( ( state ) => getAutomatedTransferStatus( state, siteId ) );
+	const hasManagePluginsFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_MANAGE_PLUGINS )
+	);
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+	const isJetpackSelfHosted = isJetpack && ! isAtomic;
+
 	const [ pluginIcon, setPluginIcon ] = useState( '' );
+	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ showProgressBar, setShowProgressBar ] = useState(
+		! new URLSearchParams( document.location.search ).has( 'hide-progress-bar' )
+	);
+
+	const isPluginOnSite = !! pluginOnSite;
 
 	// Site is transferring to Atomic.
 	// Poll the transfer status.
 	useEffect( () => {
-		if ( ! siteId || transfer?.status === AtomicTransferComplete ) {
+		if ( ! siteId || transferStatus === transferStates.COMPLETE || isJetpackSelfHosted ) {
 			return;
 		}
-		waitFor( 2 ).then( () => dispatch( requestLatestAtomicTransfer( siteId ) ) );
-	}, [ siteId, dispatch, transfer ] );
+		if ( ! isFetchingTransferStatus ) {
+			waitFor( 2 ).then( () => dispatch( fetchAutomatedTransferStatus( siteId ) ) );
+		}
+	}, [ siteId, dispatch, transferStatus, isFetchingTransferStatus, isJetpackSelfHosted ] );
 
 	useEffect( () => {
 		dispatch(
@@ -96,12 +123,68 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
-		if ( transfer?.status === AtomicTransferComplete && ! pluginOnSite && ! isRequestingPlugins ) {
+		if ( ! siteId || ( ! isJetpackSelfHosted && transferStatus !== transferStates.COMPLETE ) ) {
+			return;
+		}
+
+		// Update the menu after the plugin has been installed, since that might change some menu items.
+		if ( isPluginOnSite ) {
+			dispatch( requestAdminMenu( siteId ) );
+			return;
+		}
+
+		if ( ! isRequestingPlugins ) {
 			waitFor( 1 ).then( () => dispatch( fetchSitePlugins( siteId ) ) );
 		}
-		// Do not add retries in dependencies to avoid infinite loop.
+	}, [
+		isRequestingPlugins,
+		isPluginOnSite,
+		dispatch,
+		siteId,
+		transferStatus,
+		isJetpackSelfHosted,
+	] );
+
+	// Set progressbar (currentStep) depending on transfer/plugin status.
+	useEffect( () => {
+		// We don't want to show the progress bar again when it is hidden.
+		if ( ! showProgressBar ) {
+			return;
+		}
+
+		setShowProgressBar( ! isPluginOnSite );
+
+		// Sites already transferred to Atomic or self-hosted Jetpack sites no longer need to change the current step.
+		if ( isJetpack ) {
+			return;
+		}
+
+		if ( transferStatus === transferStates.ACTIVE ) {
+			setCurrentStep( 0 );
+		} else if ( transferStatus === transferStates.PROVISIONED ) {
+			setCurrentStep( 1 );
+		} else if ( transferStatus === transferStates.RELOCATING ) {
+			setCurrentStep( 2 );
+		} else if ( transferStatus === transferStates.COMPLETE ) {
+			setCurrentStep( 3 );
+		}
+	}, [ transferStatus, isPluginOnSite, showProgressBar, isJetpack ] );
+
+	const steps = useMemo(
+		() =>
+			isJetpack
+				? [ translate( 'Installing plugin' ) ]
+				: [
+						translate( 'Activating the plugin feature' ), // Transferring to Atomic
+						translate( 'Setting up plugin installation' ), // Transferring to Atomic
+						translate( 'Installing plugin' ), // Transferring to Atomic
+						translate( 'Activating plugin' ),
+				  ],
+		// We intentionally don't set `isJetpack` as dependency to keep the same steps after the Atomic transfer.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isRequestingPlugins, pluginOnSite, dispatch, siteId, transfer ] );
+		[ translate ]
+	);
+	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const thankYouImage = {
 		alt: '',
@@ -116,9 +199,11 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 		| { action_links?: { Settings?: string }; name?: string };
 
 	const fallbackSetupUrl = wpComPluginData?.setup_url && siteAdminUrl + wpComPluginData?.setup_url;
+	const managePluginsUrl = hasManagePluginsFeature
+		? `${ siteAdminUrl }plugins.php`
+		: `/plugins/${ productSlug }/${ siteSlug } `;
 
-	const setupURL =
-		pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || `${ siteAdminUrl }plugins.php`;
+	const setupURL = pluginOnSiteData?.action_links?.Settings || fallbackSetupUrl || managePluginsUrl;
 
 	const documentationURL = wpComPluginData?.documentation_url;
 
@@ -133,11 +218,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					'Get to know your plugin and customize it, so you can hit the ground running.'
 				),
 				stepCta: (
-					<FullWidthButton
-						href={ setupURL }
-						primary
-						busy={ ! pluginOnSite || transfer?.status !== AtomicTransferComplete }
-					>
+					<FullWidthButton href={ setupURL } primary busy={ ! isPluginOnSite }>
 						{ translate( 'Manage plugin' ) }
 					</FullWidthButton>
 				),
@@ -165,12 +246,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 					'Take your site to the next level. We have all the solutions to help you grow and thrive.'
 				),
 				stepCta: (
-					<FullWidthButton
-						onClick={ () =>
-							// Force reload the page.
-							( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
-						}
-					>
+					<FullWidthButton href={ `/plugins/${ siteSlug }` }>
 						{ translate( 'Explore plugins' ) }
 					</FullWidthButton>
 				),
@@ -193,23 +269,34 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 				` }
 			/>
 			<MasterbarStyled
-				onClick={ () =>
-					( document.location.href = `${ document.location.origin }/plugins/${ siteSlug }` )
-				}
+				onClick={ () => page( `/plugins/${ siteSlug }` ) }
 				backText={ translate( 'Back to plugins' ) }
+				canGoBack={ isPluginOnSite }
 			/>
-			<ThankYouContainer>
-				<ThankYou
-					containerClassName="marketplace-thank-you"
-					sections={ [ setupSection ] }
-					showSupportSection={ true }
-					thankYouImage={ thankYouImage }
-					thankYouTitle={ translate( 'All ready to go!' ) }
-					thankYouSubtitle={ pluginOnSite && thankYouSubtitle }
-					headerBackgroundColor="#fff"
-					headerTextColor="#000"
-				/>
-			</ThankYouContainer>
+			{ showProgressBar && (
+				// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+				<div className="marketplace-plugin-install__root">
+					<MarketplaceProgressBar
+						steps={ steps }
+						currentStep={ currentStep }
+						additionalSteps={ additionalSteps }
+					/>
+				</div>
+			) }
+			{ ! showProgressBar && (
+				<ThankYouContainer>
+					<ThankYou
+						containerClassName="marketplace-thank-you"
+						sections={ [ setupSection ] }
+						showSupportSection={ true }
+						thankYouImage={ thankYouImage }
+						thankYouTitle={ translate( 'All ready to go!' ) }
+						thankYouSubtitle={ isPluginOnSite ? thankYouSubtitle : '' }
+						headerBackgroundColor="#fff"
+						headerTextColor="#000"
+					/>
+				</ThankYouContainer>
+			) }
 		</ThemeProvider>
 	);
 };

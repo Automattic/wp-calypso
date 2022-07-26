@@ -77,10 +77,10 @@ yarn remove -w lodash
 Run
 
 ```
-yarn upgrade <package>
+yarn up <package>
 
 # Example
-# yarn upgrade react-query
+# yarn up react-query
 ```
 
 Note that this won't change the required range of `react-query` (i.e. it won't modify `package.json`). Instead, it will try to update `react-query` and any of its dependencies to the highest version that satisfies the specified range.
@@ -91,10 +91,10 @@ For example, if we declare a dependency on `react-query@^2.24.0` it may update r
 Run
 
 ```
-yarn upgrade <package>@^<semver-range>
+yarn up <package>@^<semver-range>
 
 # Example
-# yarn upgrade react-query@^3.0.0
+# yarn up react-query@^3.0.0
 ```
 
 As before, it will update `react-query` and all its dependencies. But in this case, it _will_ change the required range (i.e. it will modify `package.json`)

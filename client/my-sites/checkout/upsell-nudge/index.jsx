@@ -378,9 +378,9 @@ export class UpsellNudge extends Component {
 			clearSignupDestinationCookie();
 		}
 
-		// If url starts with http, use browser redirect.
-		// If url is a route, use page router.
-		if ( isURL( url ) ) {
+		// The section "/setup" is not defined as a page.js routing path, so page.redirect won't work.
+		// See: https://github.com/Automattic/wp-calypso/blob/trunk/client/sections.js
+		if ( isURL( url ) || url.startsWith( '/setup' ) ) {
 			window.location.href = url;
 		} else {
 			page.redirect( url );

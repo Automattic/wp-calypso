@@ -469,6 +469,9 @@ class DomainsStep extends Component {
 			get( this.props, 'queryObject.new', '' ) ||
 			get( this.props, 'signupDependencies.suggestedDomain' );
 
+		// Search using the initial query but do not show the query on the search input field.
+		const hideInitialQuery = get( this.props, 'queryObject.hide_initial_query', false ) === 'yes';
+
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
 			initialQuery &&
@@ -479,6 +482,7 @@ class DomainsStep extends Component {
 				initialState.searchResults = null;
 				initialState.subdomainSearchResults = null;
 				initialState.loadingResults = true;
+				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
 
@@ -749,6 +753,9 @@ class DomainsStep extends Component {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backUrl = `/settings/general/${ siteSlug }`;
 				backLabelText = translate( 'Back to General Settings' );
+			} else if ( 'sites-dashboard' === source ) {
+				backUrl = '/sites-dashboard';
+				backLabelText = translate( 'Back to My Sites' );
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = '/sites/';
 				backLabelText = translate( 'Back to My Sites' );

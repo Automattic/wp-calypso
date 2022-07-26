@@ -55,15 +55,23 @@ export async function waitForElementEnabled(
  * @param {string} name Name of the tab to be clicked.
  * @throws {Error} If the tab name is not the active tab.
  */
-export async function clickNavTab( page: Page, name: string ): Promise< void > {
-	const selectedTabLocator = page.locator( selectors.navTabItem( { selected: true } ) );
-	const selectedTabName = await selectedTabLocator.innerText();
-
+export async function clickNavTab(
+	page: Page,
+	name: string,
+	{ force }: { force?: boolean } = {}
+): Promise< void > {
 	// Short circuit operation if the active tab and target tabs are the same.
 	// Strip numerals from the extracted tab name to account for the slightly
 	// different implementation in PostsPage.
+	const selectedTabLocator = page.locator( selectors.navTabItem( { selected: true } ) );
+	const selectedTabName = await selectedTabLocator.innerText();
 	if ( selectedTabName.replace( /[0-9]/g, '' ) === name ) {
 		return;
+	}
+
+	// If force option is specified, force click using a `dispatchEvent`.
+	if ( force ) {
+		return await page.dispatchEvent( selectors.navTabItem( { name: name } ), 'click' );
 	}
 
 	// Mobile view - navtabs become a dropdown and thus it must be opened first.

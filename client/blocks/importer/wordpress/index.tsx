@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
@@ -51,10 +52,12 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 ↓ Methods
 	 */
 	function installJetpack() {
+		recordTracksEvent( 'calypso_site_importer_install_jetpack' );
 		window.open( `/jetpack/connect/?url=${ fromSite }`, '_blank' );
 	}
 
 	function switchToMigrationScreen() {
+		recordTracksEvent( 'calypso_site_importer_start_everything_import' );
 		updateCurrentPageQueryParam( { option: WPImportOption.EVERYTHING } );
 	}
 

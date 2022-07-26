@@ -19,12 +19,12 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import editorReducer from 'calypso/state/editor/reducer';
+import jetpackReducer from 'calypso/state/jetpack/reducer';
 import mediaReducer from 'calypso/state/media/reducer';
 import siteSettingsReducer from 'calypso/state/site-settings/reducer';
 import timezonesReducer from 'calypso/state/timezones/reducer';
@@ -55,6 +55,7 @@ const initialState = {
 		byContinents: {},
 	},
 	ui: {},
+	jetpack: {},
 };
 
 function renderWithRedux( ui ) {
@@ -66,6 +67,7 @@ function renderWithRedux( ui ) {
 			siteSettings: siteSettingsReducer,
 			timezones: timezonesReducer,
 			ui: uiReducer,
+			jetpack: jetpackReducer,
 		},
 	} );
 }
@@ -103,7 +105,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					/>
 				);
 				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
-				expect( screen.queryByTestId( 'upsell-nudge' ).textContent ).toBe( PLAN_WPCOM_PRO );
+				expect( screen.queryByTestId( 'upsell-nudge' ).textContent ).toBe( PLAN_BUSINESS );
 			} );
 		} );
 

@@ -32,7 +32,17 @@ interface Props {
 	targetSiteEligibleForProPlan: boolean;
 	stepNavigator?: StepNavigator;
 }
+
+interface State {
+	migrationStatus: string;
+	percent: number | null;
+}
 export class ImportEverything extends SectionMigrate {
+	componentDidUpdate( prevProps: any, prevState: State ) {
+		super.componentDidUpdate( prevProps, prevState );
+		this.recordMigrationStatusChange( prevState );
+	}
+
 	goToCart = () => {
 		const { stepNavigator } = this.props;
 
@@ -68,6 +78,36 @@ export class ImportEverything extends SectionMigrate {
 		this.props.requestSite( targetSiteId );
 
 		this.requestMigrationReset( targetSiteId );
+	};
+
+	recordMigrationStatusChange = ( prevState: State ) => {
+		if (
+			prevState.migrationStatus !== MigrationStatus.BACKING_UP &&
+			this.state.migrationStatus === MigrationStatus.BACKING_UP
+		) {
+			this.props.recordTracksEvent( 'calypso_site_importer_import_progress_backing_up' );
+		}
+
+		if (
+			prevState.migrationStatus !== MigrationStatus.RESTORING &&
+			this.state.migrationStatus === MigrationStatus.RESTORING
+		) {
+			this.props.recordTracksEvent( 'calypso_site_importer_import_progress_restoring' );
+		}
+
+		if (
+			prevState.migrationStatus !== MigrationStatus.ERROR &&
+			this.state.migrationStatus === MigrationStatus.ERROR
+		) {
+			this.props.recordTracksEvent( 'calypso_site_importer_import_failure' );
+		}
+
+		if (
+			prevState.migrationStatus !== MigrationStatus.DONE &&
+			this.state.migrationStatus === MigrationStatus.DONE
+		) {
+			this.props.recordTracksEvent( 'calypso_site_importer_import_success' );
+		}
 	};
 
 	renderLoading() {
@@ -144,7 +184,12 @@ export class ImportEverything extends SectionMigrate {
 					<SubTitle>
 						{ translate( 'Congratulations. Your content was successfully imported.' ) }
 					</SubTitle>
-					<DoneButton onSiteViewClick={ stepNavigator?.goToSiteViewPage } />
+					<DoneButton
+						onSiteViewClick={ () => {
+							this.props.recordTracksEvent( 'calypso_site_importer_view_site' );
+							stepNavigator?.goToSiteViewPage?.();
+						} }
+					/>
 				</Hooray>
 				<GettingStartedVideo />
 			</>

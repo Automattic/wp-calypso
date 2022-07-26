@@ -15,6 +15,7 @@ import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
@@ -211,6 +212,7 @@ export class SiteSelector extends Component {
 	};
 
 	onAllSitesSelect = ( event ) => {
+		this.props.recordTracksEvent( 'calypso_all_my_sites_click' );
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
@@ -478,7 +480,16 @@ const navigateToSite =
 				const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
 
 				// There is currently no "all sites" version of the insights page
-				return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
+				if ( path.match( /^\/stats\/insights\/?/ ) ) {
+					return '/stats/day';
+				}
+
+				// Jetpack Cloud: default to /backups/ when in the details of a particular backup
+				if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+					return '/backup';
+				}
+
+				return path;
 			} else if ( siteBasePath ) {
 				const base = getSiteBasePath();
 
@@ -562,5 +573,5 @@ const mapState = ( state ) => {
 export default flow(
 	localize,
 	searchSites,
-	connect( mapState, { navigateToSite } )
+	connect( mapState, { navigateToSite, recordTracksEvent } )
 )( SiteSelector );

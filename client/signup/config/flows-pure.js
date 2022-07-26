@@ -14,6 +14,7 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
+	getAddOnsStep = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -69,7 +70,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'free',
-			steps: [ 'user', 'domains' ],
+			steps: getAddOnsStep( [ 'user', 'domains' ] ),
 			destination: getSignupDestination,
 			description: 'Create an account and a blog and default to the free plan.',
 			lastModified: '2020-08-11',
@@ -100,17 +101,30 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding',
-			steps: isEnabled( 'signup/professional-email-step' )
-				? [ 'user', 'domains', 'emails', 'plans' ]
-				: [ 'user', 'domains', 'plans' ],
+			steps: getAddOnsStep(
+				isEnabled( 'signup/professional-email-step' )
+					? [ 'user', 'domains', 'emails', 'plans' ]
+					: [ 'user', 'domains', 'plans' ]
+			),
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
 			showRecaptcha: true,
 		},
 		{
+			name: 'with-add-ons',
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ 'user', 'domains', 'emails', 'plans', 'add-ons' ]
+				: [ 'user', 'domains', 'plans', 'add-ons' ],
+			destination: getSignupDestination,
+			description:
+				'Copy of the onboarding flow that includes an add-ons step; the flow is used for AB testing (ExPlat) add-ons in signup',
+			lastModified: '2022-07-07',
+			showRecaptcha: true,
+		},
+		{
 			name: 'onboarding-with-email',
-			steps: [ 'user', 'domains', 'emails', 'plans' ],
+			steps: getAddOnsStep( [ 'user', 'domains', 'emails', 'plans' ] ),
 			destination: getSignupDestination,
 			description:
 				'Copy of the onboarding flow that always includes an email step; the flow is used by the Professional Email landing page',
@@ -119,7 +133,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-registrationless',
-			steps: [ 'domains', 'plans-new', 'user-new' ],
+			steps: getAddOnsStep( [ 'domains', 'plans-new', 'user-new' ] ),
 			destination: getSignupDestination,
 			description: 'Checkout without user account or site. Read more https://wp.me/pau2Xa-1hW',
 			lastModified: '2020-06-26',
@@ -389,16 +403,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'website-design-services',
-			steps: [
-				'choose-service',
-				'difm-options',
-				'social-profiles',
-				'difm-design-setup-site',
-				'difm-page-picker',
-			],
+			steps: [ 'difm-options', 'social-profiles', 'difm-design-setup-site', 'difm-page-picker' ],
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
+			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2022-05-02',
 		},
 

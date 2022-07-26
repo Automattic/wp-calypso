@@ -18,7 +18,7 @@ export class SignupPickPlanPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-		this.plansPage = new PlansPage( page, 'current' );
+		this.plansPage = new PlansPage( page );
 	}
 
 	/**

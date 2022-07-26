@@ -31,3 +31,4 @@ export * from './full-site-editor-page';
 export * from './checkout-thank-you-page';
 
 export * from './me';
+export * from './external';

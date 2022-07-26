@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import {
 	DELTA_ACTIVITIES,
 	getDeltaActivitiesByType,
@@ -13,7 +14,7 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { useFirstMatchingBackupAttempt, useMatchingBackupAttemptsInRange } from '../hooks';
 
-const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } = {} ) => {
+export const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } = {} ) => {
 	return useFirstMatchingBackupAttempt( siteId, {
 		before,
 		after,
@@ -138,7 +139,7 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		successOnly: true,
 	} );
 
-	const activityLog = useActivityLogQuery(
+	const activityLog = useRewindableActivityLogQuery(
 		siteId,
 		{
 			before: moment( selectedDate ).endOf( 'day' ).toISOString(),

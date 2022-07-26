@@ -5,6 +5,8 @@ import {
 	queryByText as queryByTextInNode,
 	fireEvent,
 	act,
+	screen,
+	waitFor,
 } from '@testing-library/react';
 import { createContext, useState, useContext } from 'react';
 import '@testing-library/jest-dom/extend-expect';
@@ -18,7 +20,9 @@ import {
 	CheckoutFormSubmit,
 	CheckoutStepGroup,
 	useSetStepComplete,
+	makeManualResponse,
 } from '../src/public-api';
+import { PaymentProcessorResponseType } from '../src/types';
 import { DefaultCheckoutSteps } from './utils/default-checkout-steps';
 
 const myContext = createContext();
@@ -177,6 +181,7 @@ describe( 'Checkout', () => {
 		const mockMethod = createMockMethod();
 		const { items, total } = createMockItems();
 		const steps = createMockStepObjects();
+		let validateForm;
 
 		beforeEach( () => {
 			MyCheckout = ( props ) => {
@@ -196,7 +201,7 @@ describe( 'Checkout', () => {
 							<CheckoutStepGroup>
 								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
-								<CheckoutFormSubmit />
+								<CheckoutFormSubmit validateForm={ validateForm } />
 							</CheckoutStepGroup>
 						</CheckoutProvider>
 					</myContext.Provider>
@@ -592,14 +597,101 @@ describe( 'Checkout', () => {
 			expect( getByText( 'Possibly Complete isComplete true' ) ).toBeInTheDocument();
 		} );
 	} );
+
+	describe( 'submitting the form', function () {
+		let MyCheckout;
+		const submitButtonComponent = <MockSubmitButtonSimple />;
+		const mockMethod = createMockMethod( submitButtonComponent );
+		const { items, total } = createMockItems();
+		const steps = createMockStepObjects();
+
+		beforeEach( () => {
+			MyCheckout = ( props ) => {
+				const [ paymentData, setPaymentData ] = useState( {} );
+				const { stepObjectsWithStepNumber, stepObjectsWithoutStepNumber } =
+					createStepsFromStepObjects( props.steps || steps );
+				const createStepFromStepObject = createStepObjectConverter( paymentData );
+				return (
+					<myContext.Provider value={ [ paymentData, setPaymentData ] }>
+						<CheckoutProvider
+							items={ items }
+							total={ total }
+							paymentMethods={ [ mockMethod ] }
+							paymentProcessors={ { mock: props.paymentProcessor } }
+							initiallySelectedPaymentMethodId={ mockMethod.id }
+						>
+							<CheckoutStepGroup>
+								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
+								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
+								<CheckoutFormSubmit validateForm={ props.validateForm } />
+							</CheckoutStepGroup>
+						</CheckoutProvider>
+					</myContext.Provider>
+				);
+			};
+		} );
+
+		it( 'does not call the payment processor function if the validateForm callback is falsy', async () => {
+			const validateForm = jest.fn();
+			validateForm.mockResolvedValue( false );
+			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			render(
+				<MyCheckout
+					steps={ [ steps[ 0 ] ] }
+					validateForm={ validateForm }
+					paymentProcessor={ processor }
+				/>
+			);
+			const submitButton = screen.getByText( 'Pay Please' );
+
+			await waitFor( () => {
+				fireEvent.click( submitButton );
+			} );
+
+			expect( processor ).not.toHaveBeenCalled();
+		} );
+
+		it( 'calls the payment processor function if the validateForm callback is truthy', async () => {
+			const validateForm = jest.fn();
+			validateForm.mockResolvedValue( true );
+			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			render(
+				<MyCheckout
+					steps={ [ steps[ 0 ] ] }
+					validateForm={ validateForm }
+					paymentProcessor={ processor }
+				/>
+			);
+			const submitButton = screen.getByText( 'Pay Please' );
+
+			await waitFor( () => {
+				fireEvent.click( submitButton );
+			} );
+
+			expect( processor ).toHaveBeenCalled();
+		} );
+
+		it( 'calls the payment processor function if the validateForm callback undefined', async () => {
+			const processor = jest.fn().mockResolvedValue( makeManualResponse( 'good' ) );
+			render( <MyCheckout steps={ [ steps[ 0 ] ] } paymentProcessor={ processor } /> );
+			const submitButton = screen.getByText( 'Pay Please' );
+
+			await waitFor( () => {
+				fireEvent.click( submitButton );
+			} );
+
+			expect( processor ).toHaveBeenCalled();
+		} );
+	} );
 } );
 
-function createMockMethod() {
+function createMockMethod( submitButton = <MockSubmitButton /> ) {
 	return {
 		id: 'mock',
+		paymentProcessorId: 'mock',
 		label: <span data-testid="mock-label">Mock Label</span>,
 		activeContent: <MockPaymentForm />,
-		submitButton: <MockSubmitButton />,
+		submitButton,
 		inactiveContent: 'Mock Method',
 		getAriaLabel: () => 'Mock Method',
 	};
@@ -631,6 +723,13 @@ function MockPaymentForm( { summary } ) {
 	);
 }
 
+function MockSubmitButtonSimple( { disabled, onClick } ) {
+	return (
+		<button disabled={ disabled } onClick={ onClick }>
+			Pay Please
+		</button>
+	);
+}
 function createMockItems() {
 	const items = [
 		{
@@ -804,6 +903,6 @@ function StepWithEditableField() {
 
 function getMockPaymentProcessors() {
 	return {
-		mock: async () => ( { success: true } ),
+		mock: async () => ( { success: true, type: PaymentProcessorResponseType.SUCCESS } ),
 	};
 }

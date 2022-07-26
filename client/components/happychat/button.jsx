@@ -13,6 +13,7 @@ import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat
 import isHappychatConnectionUninitialized from 'calypso/state/happychat/selectors/is-happychat-connection-uninitialized';
 import { openChat } from 'calypso/state/happychat/ui/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
+import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actions';
 import './button.scss';
 
 const noop = () => {};
@@ -32,6 +33,8 @@ export class HappychatButton extends Component {
 		onClick: PropTypes.func,
 		openChat: PropTypes.func,
 		translate: PropTypes.func,
+		openHelpCenter: PropTypes.bool,
+		setHelpCenterVisible: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -47,10 +50,14 @@ export class HappychatButton extends Component {
 		isConnectionUninitialized: false,
 		onClick: noop,
 		openChat: noop,
+		openHelpCenter: false,
+		setHelpCenterVisible: noop,
 	};
 
 	onClick = ( event ) => {
-		if ( this.props.allowMobileRedirect && isMobile() ) {
+		if ( this.props.openHelpCenter ) {
+			this.props.setHelpCenterVisible( true );
+		} else if ( this.props.allowMobileRedirect && isMobile() ) {
 			// For mobile clients, happychat will always use the
 			// page component instead of the sidebar.
 			page( '/me/chat' );
@@ -116,5 +123,6 @@ export default connect(
 	{
 		openChat,
 		initConnection,
+		setHelpCenterVisible,
 	}
 )( localize( HappychatButton ) );

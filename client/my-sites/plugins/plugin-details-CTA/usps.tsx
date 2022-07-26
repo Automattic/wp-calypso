@@ -1,13 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
-import {
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_BUSINESS,
-	PLAN_WPCOM_PRO,
-	PLAN_WPCOM_STARTER,
-	isBlogger,
-	isPersonal,
-	isPremium,
-} from '@automattic/calypso-products';
+import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -66,17 +57,7 @@ const USPS: React.FC< Props > = ( {
 			return '';
 		}
 
-		const plan = selectedSite?.plan;
-		let isLegacyPlan = false;
-		if ( typeof plan !== 'undefined' ) {
-			isLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
-		}
-
-		if ( ! isLegacyPlan && isMarketplaceProduct && isEnabled( 'marketplace-starter-plan' ) ) {
-			return PLAN_WPCOM_STARTER;
-		}
-
-		if ( ! isLegacyPlan && isEligibleForProPlan( state, selectedSite?.ID ) ) {
+		if ( isEligibleForProPlan( state, selectedSite?.ID ) ) {
 			return PLAN_WPCOM_PRO;
 		}
 
@@ -88,11 +69,6 @@ const USPS: React.FC< Props > = ( {
 	} );
 	let planText;
 	switch ( requiredPlan ) {
-		case PLAN_WPCOM_STARTER:
-			planText = translate( 'Included in the Starter plan (%s):', {
-				args: [ planDisplayCost ],
-			} );
-			break;
 		case PLAN_WPCOM_PRO:
 			planText = translate( 'Included in the Pro plan (%s):', {
 				args: [ planDisplayCost ],
@@ -151,27 +127,7 @@ const USPS: React.FC< Props > = ( {
 					},
 			  ]
 			: [] ),
-		...( shouldUpgrade && requiredPlan === PLAN_WPCOM_STARTER
-			? [
-					{
-						id: 'collect-payments',
-						image: <Gridicon icon="money" size={ 16 } />,
-						text: translate( 'Payments collection' ),
-						eligibilities: [ 'needs-upgrade' ],
-					},
-			  ]
-			: [] ),
-		...( shouldUpgrade && requiredPlan === PLAN_WPCOM_STARTER
-			? [
-					{
-						id: 'storage',
-						image: <Gridicon icon="product" size={ 16 } />,
-						text: translate( '6GB of storage' ),
-						eligibilities: [ 'needs-upgrade' ],
-					},
-			  ]
-			: [] ),
-		...( shouldUpgrade && requiredPlan !== PLAN_WPCOM_STARTER
+		...( shouldUpgrade
 			? [
 					{
 						id: 'hosting',
@@ -181,7 +137,7 @@ const USPS: React.FC< Props > = ( {
 					},
 			  ]
 			: [] ),
-		...( shouldUpgrade && requiredPlan !== PLAN_WPCOM_STARTER
+		...( shouldUpgrade
 			? [
 					{
 						id: 'support',

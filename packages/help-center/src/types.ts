@@ -7,10 +7,6 @@ export interface Container {
 	isLoading?: boolean;
 }
 
-export interface Content {
-	isMinimized: boolean;
-}
-
 export interface Header {
 	isMinimized?: boolean;
 	onMinimize?: () => void;
@@ -38,4 +34,13 @@ export interface Article {
 
 export interface FeatureFlags {
 	loadNextStepsTutorial: boolean;
+}
+
+export interface SearchResult {
+	link: string;
+	title: string | React.ReactChild;
+	content?: string;
+	icon?: string;
+	post_id?: number;
+	blog_id?: number;
 }

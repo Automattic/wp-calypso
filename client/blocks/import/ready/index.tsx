@@ -1,8 +1,11 @@
+import { Onboard } from '@automattic/data-stores';
 import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { UrlData, GoToStep, RecordTracksEvent, ImporterPlatform } from '../types';
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
@@ -113,6 +116,8 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
+	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+	const { setGoals } = useDispatch( ONBOARD_STORE );
 
 	const recordReadyScreenEvent = () => {
 		recordTracksEvent( trackEventName, {
@@ -133,6 +138,14 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 		goToStep( 'capture' );
 	};
 
+	const onStartBuildingBtnClick = () => {
+		// clean up the import goal
+		const goalSet = new Set( goals );
+		goalSet.delete( Onboard.SiteGoal.Import );
+		setGoals( Array.from( goalSet ) );
+		goToStep( 'intent', '', 'setup-site' );
+	};
+
 	useEffect( recordReadyScreenEvent, [] );
 
 	return (
@@ -147,9 +160,7 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ () => goToStep( 'intent', '', 'setup-site' ) }>
-							{ __( 'Start building' ) }
-						</NextButton>
+						<NextButton onClick={ onStartBuildingBtnClick }>{ __( 'Start building' ) }</NextButton>
 						<div>
 							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>
@@ -180,7 +191,18 @@ const ReadyStep: React.FunctionComponent< ReadyProps > = ( props ) => {
 		} );
 	};
 
+	const recordImportGuideEvent = () => {
+		if ( ! isModalDetailsOpen ) return;
+
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'guide-modal',
+			platform,
+		} );
+	};
+
 	useEffect( recordReadyScreenEvent, [] );
+	useEffect( recordImportGuideEvent, [ isModalDetailsOpen ] );
 
 	return (
 		<div className="import-layout__center">
@@ -236,6 +258,8 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
+	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+	const { setGoals } = useDispatch( ONBOARD_STORE );
 
 	const recordReadyScreenEvent = () => {
 		recordTracksEvent( trackEventName, {
@@ -252,9 +276,26 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 		} );
 	};
 
+	const recordStartBuildingEvent = () => {
+		recordTracksEvent( trackEventName, {
+			...trackEventParams,
+			action: 'start-building',
+		} );
+	};
+
 	const onBackBtnClick = () => {
 		recordBackToStartEvent();
 		goToStep( 'capture' );
+	};
+
+	const onStartBuildingBtnClick = () => {
+		// event tracking
+		recordStartBuildingEvent();
+		// clean up the import goal
+		const goalSet = new Set( goals );
+		goalSet.delete( Onboard.SiteGoal.Import );
+		setGoals( Array.from( goalSet ) );
+		goToStep( 'intent', '', 'setup-site' );
 	};
 
 	useEffect( recordReadyScreenEvent, [] );
@@ -280,9 +321,7 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 					</SubTitle>
 
 					<div className="import__buttons-group">
-						<NextButton onClick={ () => goToStep( 'intent', '', 'setup-site' ) }>
-							{ __( 'Start building' ) }
-						</NextButton>
+						<NextButton onClick={ onStartBuildingBtnClick }>{ __( 'Start building' ) }</NextButton>
 						<div>
 							<BackButton onClick={ onBackBtnClick }>{ __( 'Back to start' ) }</BackButton>
 						</div>

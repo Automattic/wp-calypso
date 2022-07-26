@@ -19,6 +19,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	TEST_ON_ATOMIC: false,
 	TEST_ON_JETPACK: false,
 	CALYPSO_BASE_URL: 'https://wordpress.com',
+	BROWSER_NAME: 'chromium',
 };
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {

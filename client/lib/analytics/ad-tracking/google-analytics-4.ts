@@ -1,3 +1,4 @@
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { GaPurchase } from '../utils/jetpack-cart-to-ga-purchase';
 import { GaItem } from '../utils/jetpack-product-to-ga-item';
 import { TRACKING_IDS } from './constants';
@@ -6,7 +7,11 @@ import { TRACKING_IDS } from './constants';
 import './setup';
 
 export function setup( params: Gtag.ConfigParams ) {
-	window.gtag( 'config', TRACKING_IDS.jetpackGoogleGA4Gtag, params );
+	// TODO: GA4 properties for WPCOM will be here
+
+	if ( isJetpackCloud() ) {
+		window.gtag( 'config', TRACKING_IDS.jetpackGoogleGA4Gtag, params );
+	}
 }
 
 export function fireJetpackEcommercePurchase( purchase: GaPurchase ) {

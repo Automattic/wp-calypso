@@ -17,6 +17,8 @@ export interface Category {
 export interface DesignRecipe {
 	stylesheet?: string;
 	pattern_ids?: number[];
+	header_pattern_ids?: number[];
+	footer_pattern_ids?: number[];
 }
 
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
@@ -62,8 +64,8 @@ export interface Design {
 
 export interface DesignPreviewOptions {
 	language?: string;
-	verticalId?: string;
-	siteTitle?: string;
+	vertical_id?: string;
+	site_title?: string;
 	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;

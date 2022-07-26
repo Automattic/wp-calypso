@@ -158,6 +158,7 @@
 	"sections": {
 		"jetpack-cloud": false,
 		"jetpack-cloud-agency-dashboard": false,
+		"jetpack-cloud-plugin-management": false,
 		"jetpack-cloud-agency-signup": false,
 		"jetpack-cloud-auth": false,
 		"jetpack-cloud-partner-portal": false,
@@ -180,6 +181,7 @@
 		"launch-site",
 		"onboarding",
 		"onboarding-with-email",
+		"with-add-ons",
 		"setup-site",
 		"account",
 		"do-it-for-me",

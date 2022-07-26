@@ -96,10 +96,15 @@ export function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
+	const allSitesPath =
+		config.isEnabled( 'build/sites-dashboard' ) && basePath === '/home'
+			? '/sites-dashboard'
+			: basePath;
+
 	return (
 		<NavigationComponent
 			path={ context.path }
-			allSitesPath={ basePath }
+			allSitesPath={ allSitesPath }
 			siteBasePath={ basePath }
 		/>
 	);
@@ -458,7 +463,11 @@ export function siteSelection( context, next ) {
 	}
 
 	// If the path fragment does not resemble a site, set all sites to visible
-	if ( ! ( typeof siteFragment === 'string' && siteFragment.length ) ) {
+	const typeOfSiteFragment = typeof siteFragment;
+	if (
+		! ( typeOfSiteFragment === 'string' && siteFragment.length ) &&
+		typeOfSiteFragment !== 'number'
+	) {
 		dispatch( setAllSitesSelected() );
 		return next();
 	}

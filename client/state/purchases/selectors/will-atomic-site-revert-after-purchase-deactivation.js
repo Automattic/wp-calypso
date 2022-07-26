@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -39,7 +38,7 @@ export const willAtomicSiteRevertAfterPurchaseDeactivation = (
 	}
 
 	const isAtomicSupportedProduct = ( productSlug ) => {
-		if ( isEnabled( 'marketplace-starter-plan' ) && isMarketplaceProduct( state, productSlug ) ) {
+		if ( isMarketplaceProduct( state, productSlug ) ) {
 			return true;
 		}
 

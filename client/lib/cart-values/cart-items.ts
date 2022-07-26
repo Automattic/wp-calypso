@@ -31,6 +31,7 @@ import {
 	isRenewable,
 	isSiteRedirect,
 	isSpaceUpgrade,
+	isStarter,
 	isTitanMail,
 	isTrafficGuide,
 	isUnlimitedSpace,
@@ -54,7 +55,7 @@ import type {
 	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
 
-export function getAllCartItems( cart: ResponseCart ): ResponseCartProduct[] {
+export function getAllCartItems( cart?: ResponseCart ): ResponseCartProduct[] {
 	return ( cart && cart.products ) || [];
 }
 
@@ -115,6 +116,10 @@ export function hasProPlan( cart: ResponseCart ): boolean {
 
 export function hasBusinessPlan( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isBusiness );
+}
+
+export function hasStarterPlan( cart: ResponseCart ): boolean {
+	return getAllCartItems( cart ).some( isStarter );
 }
 
 export function hasDomainCredit( cart: ResponseCart ): boolean {

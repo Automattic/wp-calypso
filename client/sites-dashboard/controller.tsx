@@ -17,7 +17,12 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
 			<Global styles={ globalStyles } />
-			<SitesDashboard />
+			<SitesDashboard
+				queryParams={ {
+					search: context.query.search,
+					status: context.query.status,
+				} }
+			/>
 		</>
 	);
 	next();

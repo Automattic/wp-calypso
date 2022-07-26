@@ -14,6 +14,7 @@ import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
+import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -246,7 +247,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 				page.redirect(
 					`/marketplace/thank-you/${
 						installedPlugin?.slug || productSlug || uploadedPluginSlug
-					}/${ selectedSiteSlug }`
+					}/${ selectedSiteSlug }?hide-progress-bar`
 				)
 			);
 		}
@@ -263,24 +264,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		],
 		[ isUploadFlow, translate ]
 	);
-
-	const additionalSteps = useMemo(
-		() => [
-			translate( 'Connecting the dots' ),
-			translate( 'Still working' ),
-			translate( 'Wheels are in motion' ),
-			translate( 'Working magic' ),
-			translate( 'Putting the pieces together' ),
-			translate( 'Assembling the parts' ),
-			translate( 'Stacking the building blocks' ),
-			translate( 'Getting our ducks in a row' ),
-			translate( 'Initiating countdown' ),
-			translate( 'Flipping the switches' ),
-			translate( 'Unlocking potential' ),
-			translate( 'Gears are turning' ),
-		],
-		[ translate ]
-	);
+	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
@@ -290,10 +274,10 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 					illustration="/calypso/images/illustrations/error.svg"
 					title={ null }
 					line={ translate(
-						"Your current plan doesn't allow plugin installation. Please upgrade to Pro plan first."
+						"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
 					) }
-					action={ translate( 'Upgrade to Pro Plan' ) }
-					actionURL={ `/checkout/${ selectedSite?.slug }/pro?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
+					action={ translate( 'Upgrade to Business Plan' ) }
+					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/${ productSlug }/install/${ selectedSite?.slug }#step2` }
 				/>
 			);
 		}

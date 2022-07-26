@@ -29,6 +29,9 @@ export { default as error } from './error-step';
 export { default as wooConfirm } from './woo-confirm';
 export { default as wooVerifyEmail } from './woo-verify-email';
 export { default as editEmail } from './edit-email';
+export { default as difmStartingPoint } from './difm-starting-point';
+export { default as letsGetStarted } from './lets-get-started';
+export { default as chooseADomain } from './choose-a-domain';
 
 export type StepPath =
 	| 'courses'
@@ -61,4 +64,7 @@ export type StepPath =
 	| 'error'
 	| 'wooConfirm'
 	| 'wooVerifyEmail'
-	| 'editEmail';
+	| 'editEmail'
+	| 'difmStartingPoint'
+	| 'letsGetStarted'
+	| 'chooseADomain';

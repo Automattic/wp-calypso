@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -120,6 +121,11 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		return checkProgress() || checkIsSuccess();
 	}
 
+	function onSiteViewClick() {
+		recordTracksEvent( 'calypso_site_importer_view_site' );
+		stepNavigator?.goToSiteViewPage?.();
+	}
+
 	return (
 		<>
 			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
@@ -140,7 +146,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 								siteSlug={ siteSlug }
 								job={ job as ImportJob }
 								resetImport={ resetImport }
-								onSiteViewClick={ stepNavigator?.goToSiteViewPage }
+								onSiteViewClick={ onSiteViewClick }
 							/>
 						);
 					}

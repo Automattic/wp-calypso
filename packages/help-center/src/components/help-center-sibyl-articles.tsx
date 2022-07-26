@@ -6,12 +6,13 @@ import {
 	useSiteIntent,
 	getContextResults,
 } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { Article } from '../types';
@@ -21,6 +22,17 @@ export const SITE_STORE = 'automattic/site' as const;
 type Props = {
 	message?: string;
 	supportSite?: SiteDetails;
+};
+
+const ConfigurableLink: React.FC< { external: boolean; fullUrl: string } & LinkProps > = ( {
+	external,
+	fullUrl,
+	...props
+} ) => {
+	if ( external ) {
+		return <a href={ fullUrl } target="_blank" rel="noreferrer noopener" { ...props } />;
+	}
+	return <Link { ...props } />;
 };
 
 function getPostUrl( article: Article, query: string ) {
@@ -49,6 +61,7 @@ function getPostUrl( article: Article, query: string ) {
 
 export function SibylArticles( { message = '', supportSite }: Props ) {
 	const { __ } = useI18n();
+	const locale = useLocale();
 
 	const isAtomic = Boolean(
 		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
@@ -81,10 +94,14 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 			>
 				{ articles.map( ( article ) => (
 					<li key={ article.link }>
-						<Link to={ getPostUrl( article as Article, message ) }>
+						<ConfigurableLink
+							to={ getPostUrl( article as Article, message ) }
+							external={ 'en' !== locale }
+							fullUrl={ article.link }
+						>
 							<Icon icon={ page } />
 							{ article.title }
-						</Link>
+						</ConfigurableLink>
 					</li>
 				) ) }
 			</ul>

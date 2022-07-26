@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import { LocaleProvider } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -73,7 +74,9 @@ registerPlugin( 'etk-help-center', {
 		return (
 			<QueryClientProvider client={ whatsNewQueryClient }>
 				<CalypsoStateProvider>
-					<HelpCenterContent />
+					<LocaleProvider localeSlug={ window.helpCenterLocale }>
+						<HelpCenterContent />
+					</LocaleProvider>
 				</CalypsoStateProvider>
 			</QueryClientProvider>
 		);

@@ -104,7 +104,7 @@ class GoogleLoginButton extends Component {
 	}
 
 	async loadGoogleIdentityServicesAPI() {
-		if ( ! window.google?.accounts.oauth2 ) {
+		if ( ! window.google?.accounts?.oauth2 ) {
 			await loadScript( 'https://accounts.google.com/gsi/client' );
 		}
 
@@ -206,7 +206,7 @@ class GoogleLoginButton extends Component {
 			const { code: error_code } = getErrorFromHTTPError( httpError );
 
 			if ( error_code ) {
-				this.props.recordTracksEvent( 'calypso_login_auth_code_exchange_failure', {
+				this.props.recordTracksEvent( 'calypso_login_social_auth_code_exchange_failure', {
 					social_account_type: 'google',
 					error_code,
 				} );

@@ -1,12 +1,16 @@
 import { ScreenReaderText } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
 import Badge from 'calypso/components/badge';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
-import { useDailyBackupStatus } from 'calypso/my-sites/backup/status/hooks';
+import { useLatestBackupAttempt } from 'calypso/my-sites/backup/status/hooks';
 
 const BackupBadge = ( { siteId } ) => {
 	const translate = useTranslate();
-	const backupStatus = useDailyBackupStatus( siteId, 'today' );
+	const lastAttemptOnDate = useLatestBackupAttempt( siteId, {
+		after: moment( 'today' ).startOf( 'day' ),
+		before: moment( 'today' ).endOf( 'day' ),
+	} );
 
 	let numWarningCache = null;
 
@@ -32,7 +36,7 @@ const BackupBadge = ( { siteId } ) => {
 		return numWarnings;
 	};
 
-	if ( backupStatus.isLoading || numBackupWarnings( backupStatus.lastBackupAttemptOnDate ) === 0 ) {
+	if ( lastAttemptOnDate.isLoading || numBackupWarnings( lastAttemptOnDate.backupAttempt ) === 0 ) {
 		return <></>;
 	}
 
@@ -43,9 +47,9 @@ const BackupBadge = ( { siteId } ) => {
 					'%(number)d {{span}}warning{{/span}}',
 					'%(number)d {{span}}warnings{{/span}}',
 					{
-						count: numBackupWarnings( backupStatus.lastBackupAttemptOnDate ),
+						count: numBackupWarnings( lastAttemptOnDate.backupAttempt ),
 						args: {
-							number: numBackupWarnings( backupStatus.lastBackupAttemptOnDate ),
+							number: numBackupWarnings( lastAttemptOnDate.backupAttempt ),
 						},
 						components: {
 							span: <span className="backup-badge__words" />,
@@ -55,9 +59,9 @@ const BackupBadge = ( { siteId } ) => {
 			</span>
 			<ScreenReaderText>
 				{ translate( '%(number)d warning', '%(number)d warnings', {
-					count: numBackupWarnings( backupStatus.lastBackupAttemptOnDate ),
+					count: numBackupWarnings( lastAttemptOnDate.backupAttempt ),
 					args: {
-						number: numBackupWarnings( backupStatus.lastBackupAttemptOnDate ),
+						number: numBackupWarnings( lastAttemptOnDate.backupAttempt ),
 					},
 				} ) }
 			</ScreenReaderText>

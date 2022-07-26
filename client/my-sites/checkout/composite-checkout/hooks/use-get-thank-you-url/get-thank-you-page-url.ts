@@ -9,6 +9,7 @@ import {
 	isPlan,
 	isWpComPremiumPlan,
 	isTitanMail,
+	isDomainRegistration,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -35,6 +36,7 @@ import {
 	hasTrafficGuide,
 	hasDIFMProduct,
 	hasProPlan,
+	hasStarterPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
@@ -164,7 +166,7 @@ export default function getThankYouPageUrl( {
 			return sanitizedRedirectTo;
 		}
 
-		if ( hostname === 'cloud.jetpack.com' ) {
+		if ( hostname === 'cloud.jetpack.com' || hostname === 'jetpack.cloud.localhost' ) {
 			debug( 'returning Jetpack cloud redirectTo', redirectTo );
 			return redirectTo;
 		}
@@ -281,9 +283,11 @@ export default function getThankYouPageUrl( {
 	}
 
 	const signupFlowName = getSignupCompleteFlowName();
+	const isDomainOnly =
+		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
 
 	// Domain only flow
-	if ( cart?.create_new_blog || signupFlowName === 'domain' ) {
+	if ( ( cart?.create_new_blog || signupFlowName === 'domain' ) && ! isDomainOnly ) {
 		clearSignupCompleteFlowName();
 		const newBlogReceiptUrl = urlFromCookie
 			? `${ urlFromCookie }/${ pendingOrReceiptId }`
@@ -298,11 +302,11 @@ export default function getThankYouPageUrl( {
 	if ( isReceiptIdOrPlaceholder( pendingOrReceiptId ) ) {
 		const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
 			receiptId: pendingOrReceiptId,
-			orderId: orderId ? Number( orderId ) : undefined,
 			cart,
 			siteSlug,
 			hideUpsell: Boolean( hideNudge ),
 			domains,
+			isDomainOnly,
 		} );
 
 		if ( redirectUrlForPostCheckoutUpsell ) {
@@ -496,17 +500,11 @@ function getPlanUpgradeUpsellUrl( {
 	receiptId,
 	cart,
 	siteSlug,
-	orderId,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
-	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 } ): string | undefined {
-	if ( orderId ) {
-		return;
-	}
-
 	if ( cart && hasPremiumPlan( cart ) ) {
 		const upgradeItem = getNextHigherPlanSlug( cart );
 
@@ -520,18 +518,18 @@ function getPlanUpgradeUpsellUrl( {
 
 function getRedirectUrlForPostCheckoutUpsell( {
 	receiptId,
-	orderId,
 	cart,
 	siteSlug,
 	hideUpsell,
 	domains,
+	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
-	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
 	domains: ResponseDomain[] | undefined;
+	isDomainOnly?: boolean;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -539,9 +537,9 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {
 		receiptId,
 		cart,
-		orderId,
 		siteSlug,
 		domains,
+		isDomainOnly,
 	} );
 
 	if ( professionalEmailUpsellUrl ) {
@@ -562,7 +560,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		const planUpgradeUpsellUrl = getPlanUpgradeUpsellUrl( {
 			receiptId,
 			cart,
-			orderId,
 			siteSlug,
 		} );
 
@@ -576,16 +573,16 @@ function getProfessionalEmailUpsellUrl( {
 	receiptId,
 	cart,
 	siteSlug,
-	orderId,
 	domains,
+	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	orderId: number | undefined;
 	domains: ResponseDomain[] | undefined;
+	isDomainOnly?: boolean;
 } ): string | undefined {
-	if ( orderId || ! cart ) {
+	if ( ! cart ) {
 		return;
 	}
 
@@ -598,11 +595,13 @@ function getProfessionalEmailUpsellUrl( {
 	}
 
 	if (
+		! isDomainOnly &&
 		! hasBloggerPlan( cart ) &&
 		! hasPersonalPlan( cart ) &&
 		! hasBusinessPlan( cart ) &&
 		! hasEcommercePlan( cart ) &&
-		! hasProPlan( cart )
+		! hasProPlan( cart ) &&
+		! hasStarterPlan( cart )
 	) {
 		return;
 	}
