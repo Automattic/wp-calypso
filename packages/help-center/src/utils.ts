@@ -34,7 +34,7 @@ export function shouldShowHelpCenterToUser( userId: number ) {
  * @param origin
  * @returns
  */
-export function iAllowedOrigin( origin: string ) {
+export function isAllowedOrigin( origin: string ) {
 	// sites in the allow-list and some subdomains of "calypso.live" and "wordpress.com"
 	// are allowed without further check
 	return (
@@ -45,5 +45,5 @@ export function iAllowedOrigin( origin: string ) {
 }
 
 export function shouldTargetWpcom( isSimpleSite: boolean ) {
-	return isSimpleSite || iAllowedOrigin( window.location.origin );
+	return isSimpleSite || isAllowedOrigin( window.location.origin );
 }
