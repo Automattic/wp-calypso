@@ -31,6 +31,7 @@
 		"storybook": "start-storybook"
 	},
 	"dependencies": {
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",

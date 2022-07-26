@@ -252,11 +252,11 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	renderCheckout() {
-		const { isCheckoutPending, previousPath, siteSlug, isJetpackNotAtomic, title, user, locale } =
+		const { isCheckoutPending, previousPath, siteSlug, isJetpackNotAtomic, title, user } =
 			this.props;
 
 		const userAllowedToHelpCenter =
-			config.isEnabled( 'checkout/help-center' ) && shouldShowHelpCenterToUser( user.ID, locale );
+			config.isEnabled( 'checkout/help-center' ) && shouldShowHelpCenterToUser( user.ID );
 
 		return (
 			<AsyncLoad
@@ -497,7 +497,7 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, user, locale } = this.props;
+		const { isInEditor, isCheckout, isCheckoutPending, user } = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending ) {
@@ -506,7 +506,7 @@ class MasterbarLoggedIn extends Component {
 		if ( isMobile ) {
 			if (
 				config.isEnabled( 'editor/help-center' ) &&
-				shouldShowHelpCenterToUser( user.ID, locale ) &&
+				shouldShowHelpCenterToUser( user.ID ) &&
 				isInEditor
 			) {
 				return (
