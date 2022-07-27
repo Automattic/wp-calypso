@@ -505,9 +505,9 @@ class MasterbarLoggedIn extends Component {
 		}
 		if ( isMobile ) {
 			if (
+				isInEditor &&
 				config.isEnabled( 'editor/help-center' ) &&
-				shouldShowHelpCenterToUser( user.ID ) &&
-				isInEditor
+				shouldShowHelpCenterToUser( user.ID )
 			) {
 				return (
 					<Masterbar>
@@ -533,7 +533,7 @@ class MasterbarLoggedIn extends Component {
 							{ this.renderCart() }
 							{ this.renderNotifications() }
 							{ config.isEnabled( 'calypso/help-center' ) &&
-								shouldShowHelpCenterToUser( user.ID, locale ) &&
+								shouldShowHelpCenterToUser( user.ID ) &&
 								this.renderHelpCenter() }
 							{ this.renderMenu() }
 						</div>
@@ -559,7 +559,7 @@ class MasterbarLoggedIn extends Component {
 						{ this.renderCart() }
 						{ this.renderMe() }
 						{ config.isEnabled( 'calypso/help-center' ) &&
-							shouldShowHelpCenterToUser( user.ID, locale ) &&
+							shouldShowHelpCenterToUser( user.ID ) &&
 							this.renderHelpCenter() }
 						{ this.renderNotifications() }
 					</div>
