@@ -40,13 +40,14 @@ const redirectToPrimarySiteLanding = ( context, next ) => {
 
 	if ( isAgency && isAgencyEnabled ) {
 		page.redirect( dashboardRedirectLink );
-		next();
 		return;
 	}
 
 	isPrimarySiteJetpackSite
 		? page( `/landing/${ currentUser.primarySiteSlug }` )
 		: page( `/landing` );
+
+	next();
 };
 
 const landingController = ( context, next ) => {
