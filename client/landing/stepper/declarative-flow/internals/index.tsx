@@ -91,7 +91,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					<Route key={ path } path={ `/${ path }` }>
 						<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
 							<ProgressBar
-								className={ classnames( 'flow-progress' ) }
+								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+								className="flow-progress"
 								value={ progressValue * 100 }
 								total={ 100 }
 							/>
