@@ -330,6 +330,13 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	has_pending_payment?: boolean;
 }
 
+export interface ProductCostOverride {
+	price: number;
+	reason: string;
+	user_facing_reason: string;
+	discount: number;
+}
+
 export interface ResponseCartTaxData {
 	location: {
 		country_code?: string;
@@ -514,6 +521,7 @@ export interface ResponseCartProduct {
 	is_renewal?: boolean;
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
+	cost_overrides?: ProductCostOverride[];
 
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;
