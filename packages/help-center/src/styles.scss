@@ -276,32 +276,8 @@ button.button.back-button__help-center.is-borderless {
 	}
 }
 
-.is-section-checkout,
-.is-section-home,
-.is-section-stats,
-.is-section-plans,
-.is-section-add-ons,
-.is-section-domains,
-.is-section-email,
-.is-section-site-purchases,
-.is-section-inbox,
-.is-section-posts,
-.is-section-settings,
-.is-section-media,
-.is-section-pages,
-.is-section-comments,
-.is-section-activity,
-.is-section-backup,
-.is-section-jetpack-search,
-.is-section-woocommerce-installation,
-.is-section-themes,
-.is-section-plugins,
-.is-section-people,
-.is-section-me,
-.is-section-marketing,
-.is-section-earn,
-.is-section-import,
-.is-section-export {
+body[class*='is-section-'],
+body[class^='is-section-'] {
 	.help-center {
 		button,
 		input,
