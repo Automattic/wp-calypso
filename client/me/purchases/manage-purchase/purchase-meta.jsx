@@ -28,6 +28,7 @@ import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/us
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	getName,
+	hasPaymentMethod,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
@@ -455,7 +456,7 @@ function PurchaseMetaExpiration( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
-	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
+	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
@@ -469,7 +470,7 @@ function PurchaseMetaExpiration( {
 			? translate( 'Auto-renew is ON' )
 			: translate( 'Auto-renew is OFF' );
 		const subsBillingText =
-			isAutorenewalEnabled && ! hideAutoRenew
+			isAutorenewalEnabled && ! hideAutoRenew && hasPaymentMethod( purchase )
 				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
 						args: {
 							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),

@@ -2,26 +2,38 @@ import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { ReactElement, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
 import PluginsMain from 'calypso/my-sites/plugins/main';
+import PluginDetails from 'calypso/my-sites/plugins/plugin-details';
 import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
 	isFetchingPartner,
 	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 
 import './style.scss';
 
 interface Props {
-	filter: string;
-	search: string;
+	filter?: string;
+	search?: string;
+	site?: string;
+	pluginSlug?: string;
+	path?: string;
 }
 
-export default function PluginOverview( { filter, search }: Props ): ReactElement {
+export default function PluginsOverview( {
+	filter,
+	search,
+	site,
+	pluginSlug,
+	path,
+}: Props ): ReactElement {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const hasFetched = useSelector( hasFetchedPartner );
@@ -39,6 +51,15 @@ export default function PluginOverview( { filter, search }: Props ): ReactElemen
 		}
 	}, [ hasFetched, isAgency, isPluginManagementEnabled ] );
 
+	// Reset selected site id for multi-site view since it is never reset
+	// and the <PluginsMain /> component behaves differently when there
+	// is a selected site which is incorrect for multi-site view
+	useEffect( () => {
+		if ( ! site ) {
+			dispatch( setSelectedSiteId( null ) );
+		}
+	}, [ dispatch, site ] );
+
 	if ( hasFetched && ! hasActiveKey ) {
 		return <SelectPartnerKey />;
 	}
@@ -47,7 +68,11 @@ export default function PluginOverview( { filter, search }: Props ): ReactElemen
 		return (
 			<div className="plugins-overview__container">
 				<SidebarNavigation sectionTitle={ translate( 'Plugins' ) } />
-				<PluginsMain isJetpackCloud filter={ filter } search={ search } />
+				{ pluginSlug ? (
+					<PluginDetails isJetpackCloud siteUrl={ site } pluginSlug={ pluginSlug } path={ path } />
+				) : (
+					<PluginsMain isJetpackCloud filter={ filter } search={ search } />
+				) }
 			</div>
 		);
 	}

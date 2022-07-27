@@ -82,6 +82,33 @@ export interface AccountClosureResponse {
 	success: boolean;
 }
 
+export interface NewInviteResponse {
+	sent: string[];
+	errors: string[];
+}
+
+export interface Invite {
+	invite_key: string;
+	role: string;
+	is_pending: boolean;
+	user: {
+		email: string; // Email address for the invited user.
+	};
+	invited_by: {
+		ID: number;
+		login: string;
+		site_ID: number; // Target site the user is invited to.
+	};
+}
+
+// Export as Array to expose function calls of arrays.
+export type AllInvitesResponse = Array< Invite >;
+
+export interface DeleteInvitesResponse {
+	deleted: string[];
+	invalid: string[];
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {

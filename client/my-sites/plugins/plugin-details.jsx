@@ -380,7 +380,6 @@ function LegacyPluginDetails( props ) {
 		selectedSite,
 		selectedOrAllSites,
 		isWide,
-		breadcrumbs,
 		isMarketplaceProduct,
 		requestingPluginsForSites,
 		isPluginInstalledOnsite,
@@ -393,14 +392,32 @@ function LegacyPluginDetails( props ) {
 		isJetpackSelfHosted,
 		isWpcom,
 		isPreinstalledPremiumPluginUpgraded,
+		pluginSlug,
+		isJetpackCloud,
 	} = props;
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const showBillingIntervalSwitcher =
-		! isPreinstalledPremiumPluginUpgraded ||
-		( isMarketplaceProduct && ! requestingPluginsForSites && ! isPluginInstalledOnsite );
+		! isJetpackCloud &&
+		( ! isPreinstalledPremiumPluginUpgraded ||
+			( isMarketplaceProduct && ! requestingPluginsForSites && ! isPluginInstalledOnsite ) );
+
+	const breadcrumbs = isJetpackCloud
+		? [
+				{
+					label: translate( 'Plugins' ),
+					href: `/plugins/manage/${ selectedSite?.slug || '' }`,
+					id: 'plugins',
+				},
+				{
+					label: fullPlugin.name,
+					href: `/plugins/${ pluginSlug }/${ selectedSite?.slug || '' }`,
+					id: `plugin-${ pluginSlug }`,
+				},
+		  ]
+		: props.breadcrumbs;
 
 	return (
 		<MainComponent wideLayout>
@@ -448,7 +465,11 @@ function LegacyPluginDetails( props ) {
 			<div className="plugin-details__page legacy">
 				<div className="plugin-details__layout plugin-details__top-section">
 					<div className="plugin-details__layout-col-left">
-						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+						<PluginDetailsHeader
+							plugin={ fullPlugin }
+							isPlaceholder={ showPlaceholder }
+							isJetpackCloud={ isJetpackCloud }
+						/>
 					</div>
 
 					<div className="plugin-details__layout-col-right">

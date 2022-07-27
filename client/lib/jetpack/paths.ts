@@ -39,3 +39,10 @@ export const socialPath = ( siteSlug?: string ): string =>
 export const partnerPortalBasePath = ( path = '' ) => `/partner-portal${ path }`;
 
 export const agencySignupBasePath = () => '/agency/signup';
+
+const pluginsBasePath = '/plugins/manage';
+
+export const pluginsPath = ( siteSlug?: string, query = {} ): string => {
+	const path = siteSlug ? `${ pluginsBasePath }/${ siteSlug }` : pluginsBasePath;
+	return addQueryArgs( query, path );
+};

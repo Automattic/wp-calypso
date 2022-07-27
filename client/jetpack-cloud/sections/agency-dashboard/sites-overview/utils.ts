@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import type {
 	AllowedTypes,
@@ -249,6 +250,12 @@ const getLinks = (
 		case 'plugin': {
 			link = `https://wordpress.com/plugins/updates/${ siteUrl }`;
 			isExternalLink = true;
+			// FIXME: Remove this condition when we enable plugin management in production
+			if ( config.isEnabled( 'jetpack/plugin-management' ) ) {
+				link =
+					status === 'warning' ? `/plugin/updates/${ siteUrl }` : `/plugins/manage/${ siteUrl }`;
+				isExternalLink = false;
+			}
 			break;
 		}
 	}

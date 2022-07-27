@@ -5,7 +5,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import GoogleLoginButton from 'calypso/components/social-buttons/google';
+import GoogleSocialButton from 'calypso/components/social-buttons/google';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { connectSocialUser, disconnectSocialUser } from 'calypso/state/login/actions';
 import { isRequesting } from 'calypso/state/login/selectors';
@@ -34,6 +35,37 @@ class SocialLoginActionButton extends Component {
 		this.setState( { fetchingUser: false } );
 	};
 
+	recordLoginSuccess = ( service ) => {
+		this.props.recordTracksEvent( 'calypso_account_social_connect_success', {
+			social_account_type: service,
+		} );
+	};
+
+	handleButtonClick = async () => {
+		const { isConnected, service } = this.props;
+
+		if ( isConnected ) {
+			this.props.recordTracksEvent( 'calypso_account_social_disconnect_button_click', {
+				social_account_type: service,
+			} );
+			try {
+				await this.disconnectFromSocialService();
+				this.props.recordTracksEvent( 'calypso_account_social_disconnect_success', {
+					social_account_type: service,
+				} );
+			} catch ( error ) {
+				this.props.recordTracksEvent( 'calypso_account_social_disconnect_failure', {
+					error_code: error.code,
+					social_account_type: service,
+				} );
+			}
+		} else {
+			this.props.recordTracksEvent( 'calypso_account_social_connect_button_click', {
+				social_account_type: service,
+			} );
+		}
+	};
+
 	handleSocialServiceResponse = ( response ) => {
 		const { service } = this.props;
 
@@ -50,6 +82,8 @@ class SocialLoginActionButton extends Component {
 				return;
 			}
 
+			this.recordLoginSuccess( service );
+
 			socialInfo = {
 				...socialInfo,
 				access_token: tokens.access_token,
@@ -61,6 +95,8 @@ class SocialLoginActionButton extends Component {
 			if ( ! response.id_token ) {
 				return;
 			}
+
+			this.recordLoginSuccess( service );
 
 			const userData = response.user || {};
 
@@ -77,7 +113,7 @@ class SocialLoginActionButton extends Component {
 
 	disconnectFromSocialService = () => {
 		const { service } = this.props;
-		this.props.disconnectSocialUser( service ).then( this.refreshUser );
+		return this.props.disconnectSocialUser( service ).then( this.refreshUser );
 	};
 
 	render() {
@@ -94,7 +130,7 @@ class SocialLoginActionButton extends Component {
 				disabled={ disabled }
 				compact={ true }
 				isPrimary={ ! isConnected }
-				onClick={ isConnected && this.disconnectFromSocialService }
+				onClick={ this.handleButtonClick }
 			>
 				{ buttonLabel }
 			</FormButton>
@@ -106,12 +142,14 @@ class SocialLoginActionButton extends Component {
 
 		if ( service === 'google' ) {
 			return (
-				<GoogleLoginButton
+				<GoogleSocialButton
 					clientId={ config( 'google_oauth_client_id' ) }
+					onClick={ this.handleButtonClick }
 					responseHandler={ this.handleSocialServiceResponse }
+					startingPoint={ 'account-social-connect' }
 				>
 					{ actionButton }
-				</GoogleLoginButton>
+				</GoogleSocialButton>
 			);
 		}
 
@@ -121,6 +159,7 @@ class SocialLoginActionButton extends Component {
 				<AppleLoginButton
 					clientId={ config( 'apple_oauth_client_id' ) }
 					uxMode={ uxMode }
+					onClick={ this.handleButtonClick }
 					responseHandler={ this.handleSocialServiceResponse }
 					redirectUri={ redirectUri }
 					socialServiceResponse={ this.props.socialServiceResponse }
@@ -142,5 +181,6 @@ export default connect(
 		connectSocialUser,
 		disconnectSocialUser,
 		fetchCurrentUser,
+		recordTracksEvent,
 	}
 )( localize( SocialLoginActionButton ) );

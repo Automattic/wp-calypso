@@ -300,7 +300,7 @@ export default connect(
 			theme: installingThemeId && getCanonicalTheme( state, siteId, installingThemeId ),
 			isActivating: !! isActivatingTheme( state, siteId ),
 			hasActivated: !! hasActivatedTheme( state, siteId ),
-			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId ),
+			hasAutoLoadingHomepage: themeHasAutoLoadingHomepage( state, installingThemeId, siteId ),
 			isCurrentTheme: isThemeActive( state, installingThemeId, siteId ),
 			isVisible: shouldShowHomepageWarning( state, installingThemeId ),
 		};
