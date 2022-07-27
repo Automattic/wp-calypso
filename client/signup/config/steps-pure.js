@@ -800,6 +800,12 @@ export function generateSteps( {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
 		},
+
+		'videopress-site': {
+			stepName: 'videopress-site',
+			apiRequestFunction: createWpForTeamsSite,
+			providesDependencies: [ 'siteSlug' ],
+		},
 	};
 }
 

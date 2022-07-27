@@ -480,7 +480,7 @@ export class UserStep extends Component {
 				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 					args: {
 						currentStep: 1,
-						totalSteps: 1, // TODO: change as we add more steps.
+						totalSteps: 2, // TODO: change as we add more steps.
 					},
 				} ) }
 			>
