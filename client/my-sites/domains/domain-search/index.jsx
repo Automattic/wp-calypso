@@ -246,7 +246,9 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
-							{ ! hasPlanInCart && <NewDomainsRedirectionNoticeUpsell /> }
+							{ ! hasPlanInCart && ! this.props.domainAndPlanUpsellFlow && (
+								<NewDomainsRedirectionNoticeUpsell />
+							) }
 							<RegisterDomainStep
 								suggestion={ this.getInitialSuggestion() }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
