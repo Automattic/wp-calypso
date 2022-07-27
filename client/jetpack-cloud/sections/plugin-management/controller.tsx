@@ -19,3 +19,14 @@ export function pluginManagementContext( context: PageJS.Context, next: VoidFunc
 	);
 	next();
 }
+
+export function pluginDetailsContext( context: PageJS.Context, next: VoidFunction ): void {
+	const { plugin, site } = context.params;
+	context.header = <Header />;
+	// Set secondary context only on multi-site view
+	if ( ! site ) {
+		context.secondary = <DashboardSidebar path={ context.path } />;
+	}
+	context.primary = <PluginsOverview pluginSlug={ plugin } site={ site } path={ context.path } />;
+	next();
+}
