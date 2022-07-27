@@ -75,8 +75,8 @@ const domainSearch = ( context, next ) => {
 					basePath={ sectionify( context.path ) }
 					context={ context }
 					domainAndPlanUpsellFlow={
-						context.query.addDomainFlow !== undefined
-							? context.query.addDomainFlow === 'true'
+						context.query.domainAndPlanPackage !== undefined
+							? context.query.domainAndPlanPackage === 'true'
 							: undefined
 					}
 				/>
