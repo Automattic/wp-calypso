@@ -28,6 +28,7 @@ export default function CTAButton( {
 	billingPeriod,
 	isJetpackSelfHosted,
 	isSiteConnected,
+	disabled,
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -139,7 +140,9 @@ export default function CTAButton( {
 						preinstalledPremiumPluginProduct,
 					} );
 				} }
-				disabled={ ( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false }
+				disabled={
+					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
+				}
 			>
 				{
 					// eslint-disable-next-line no-nested-ternary

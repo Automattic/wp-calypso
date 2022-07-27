@@ -363,7 +363,6 @@ function PluginDetails( props ) {
 							isSiteConnected={ isSiteConnected }
 						/>
 
-						<br />
 						{ ! showPlaceholder && <PluginDetailsSidebar plugin={ fullPlugin } /> }
 					</div>
 				</div>
