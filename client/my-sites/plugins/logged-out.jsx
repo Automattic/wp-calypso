@@ -1,9 +1,8 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import PluginBrowser from './plugins-browser';
 
-export default ( { store, ...props } ) => {
-	const queryClient = new QueryClient();
+export default ( { queryClient, store, ...props } ) => {
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>

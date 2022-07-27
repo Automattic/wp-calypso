@@ -1,8 +1,9 @@
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
-import { navigation } from 'calypso/my-sites/controller';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
+	fetchPlugins,
+	fetchCategoryPlugins,
 	// renderPluginWarnings,
 	// renderProvisionPlugins,
 	// jetpackCanUpdate,
@@ -31,9 +32,9 @@ export default function ( router ) {
 	// );
 
 	router(
-		'/plugins/browse/:category/:site?',
+		'/plugins/browse/:category',
 		ssrSetupLocale,
-		navigation,
+		fetchCategoryPlugins,
 		browsePlugins,
 		makeLayout
 	);
@@ -49,7 +50,7 @@ export default function ( router ) {
 	// 	clientRender
 	// );
 
-	router( '/plugins', ssrSetupLocale, browsePlugins, makeLayout );
+	router( '/plugins', ssrSetupLocale, fetchPlugins, browsePlugins, makeLayout );
 
 	// router(
 	// 	'/plugins/manage/:site?',

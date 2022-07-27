@@ -1,8 +1,13 @@
 import { includes } from 'lodash';
 // import page from 'page';
 import { createElement } from 'react';
-// import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { BASE_STALE_TIME, WPORG_CACHE_KEY } from 'calypso/data/marketplace/constants';
+import { getPluginsListKey } from 'calypso/data/marketplace/utils';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
+import { fetchPluginsList } from 'calypso/lib/wporg';
+// import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { createQueryClient } from 'calypso/state/query-client';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
@@ -48,7 +53,7 @@ function getCategoryForPluginsBrowser( context ) {
 	return context.params.category;
 }
 
-function renderPluginsBrowser( context ) {
+function getProps( context ) {
 	const searchTerm = context.query.s;
 	const category = getCategoryForPluginsBrowser( context );
 
@@ -56,10 +61,19 @@ function renderPluginsBrowser( context ) {
 		path: context.path,
 		category,
 		search: searchTerm,
-		store: context.store,
+	};
+	return props;
+}
+
+function renderPluginsBrowser( context ) {
+	const props = {
+		...getProps( context ),
+		...context.plugins,
 	};
 
-	context.primary = <LoggedOutComponent { ...props } />;
+	context.primary = (
+		<LoggedOutComponent { ...props } queryClient={ context.queryClient } store={ context.store } />
+	);
 }
 
 export function renderPluginWarnings( context, next ) {
@@ -149,3 +163,103 @@ export function browsePlugins( context, next ) {
 // 	}
 // 	next();
 // }
+
+function prefetchPluginsData( queryClient, options, infinite ) {
+	const queryType = infinite ? 'fetchInfiniteQuery' : 'fetchQuery';
+	const isFeatured = 'featured' === options.category;
+	const isPaid = 'paid' === options.category;
+	const cacheKeys = {
+		featured: 'plugins-featured-list',
+		paid: [ 'wpcom-plugins', 'all' + 'undefined' + 'enabled' ],
+	};
+
+	const cacheKey =
+		cacheKeys[ options.category ] || getPluginsListKey( WPORG_CACHE_KEY, options, infinite );
+
+	return queryClient[ queryType ](
+		cacheKey,
+		() => {
+			const featuredPluginsApiBase = '/plugins/featured';
+			const pluginsApiNamespace = 'wpcom/v2';
+			const plugisApiBase = '/marketplace/products';
+			if ( isFeatured ) {
+				return wpcom.req.get( {
+					path: featuredPluginsApiBase,
+					apiNamespace: pluginsApiNamespace,
+				} );
+			}
+			if ( isPaid ) {
+				return wpcom.req.get(
+					{
+						path: plugisApiBase,
+						apiNamespace: pluginsApiNamespace,
+					},
+					{
+						type: 'all',
+					}
+				);
+			}
+			return fetchPluginsList( {
+				pageSize: options.pageSize,
+				page: options.page,
+				category: options.category,
+				locale: options.locale || 'en',
+				// tag: options.tag && ! search ? options.tag : null,
+			} );
+		},
+		{
+			enabled: true,
+			staleTime: BASE_STALE_TIME,
+			refetchOnMount: false,
+		}
+	);
+}
+
+export async function fetchPlugins( context, next ) {
+	if ( ! context.isServerSide ) {
+		return next();
+	}
+
+	const options = {
+		...getProps( context ),
+		locale: 'en',
+	};
+
+	const queryClient = await createQueryClient();
+	const queryCache = queryClient.getQueryCache();
+	queryCache.clear();
+
+	await Promise.all( [
+		// prefetchPluginsData( queryClient, { ...options, category: 'paid' } ),
+		prefetchPluginsData( queryClient, { ...options, category: 'featured' } ),
+		prefetchPluginsData( queryClient, { ...options, category: 'popular' } ),
+
+		// prefetchPluginsData( queryClient, { ...options, category: '' }, true ),
+		prefetchPluginsData( queryClient, { ...options, category: 'paid' } ),
+		// prefetchPluginsData( queryClient, { ...options, category: 'featured' }, true ),
+		// prefetchPluginsData( queryClient, { ...options, category: 'popular' }, true ),
+	] );
+
+	context.queryClient = queryClient;
+
+	next();
+}
+
+export async function fetchCategoryPlugins( context, next ) {
+	if ( ! context.isServerSide ) {
+		return next();
+	}
+
+	const options = {
+		...getProps( context ),
+		locale: 'en',
+	};
+
+	const queryClient = await createQueryClient();
+
+	await prefetchPluginsData( queryClient, options, true );
+
+	context.queryClient = queryClient;
+
+	next();
+}
