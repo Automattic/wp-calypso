@@ -478,11 +478,11 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 				designs={ staticDesigns }
 				premiumBadge={ premiumBadge }
 				categorization={ categorization }
+				verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
 				previewOnly={ previewOnly }
 				hasDesignOptionHeader={ hasDesignOptionHeader }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				onCheckout={ onCheckout }
-				verticalId={ verticalId }
 			/>
 		</div>
 	);
