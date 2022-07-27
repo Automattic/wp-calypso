@@ -311,13 +311,13 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			} );
 		}
 
-		const data: { is_fse_active: boolean } = yield wpcomRequest( {
-			path: `/sites/${ siteSlug }/block-editor`,
-			apiNamespace: 'wpcom/v2',
+		const data: { theme_supports: { [ index: string ]: boolean } }[] = yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/themes?status=active`,
+			apiNamespace: 'wp/v2',
 			method: 'GET',
 		} );
 
-		return data?.is_fse_active ?? false;
+		return data?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
 	}
 
 	const setSiteSetupError = ( error: string, message: string ) => ( {
