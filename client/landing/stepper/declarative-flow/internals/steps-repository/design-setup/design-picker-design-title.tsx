@@ -5,6 +5,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
 import type { Design } from '@automattic/design-picker';
 import type { FC } from 'react';
+import './design-picker-design-title.scss';
 
 type Props = {
 	designTitle: string;
@@ -23,8 +24,9 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 
 	if ( selectedDesign.is_premium ) {
 		return (
-			<div>
-				{ designTitle } <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
+			<div className="design-picker-design-title__container">
+				{ designTitle }
+				<PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
 			</div>
 		);
 	}
