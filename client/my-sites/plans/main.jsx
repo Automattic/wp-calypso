@@ -2,11 +2,12 @@ import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, getIntervalTypeForTerm, PLAN_FREE } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { addQueryArgs } from '@wordpress/url';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -68,6 +69,14 @@ const ProfessionalEmailPromotionWrapper = ( props ) => {
 		/>
 	);
 };
+
+function DomainAndPlanUpsellNotice() {
+	const translate = useTranslate();
+	const noticeText = translate(
+		'Almost there! Select an annual plan below to get your free domain.'
+	);
+	return <Banner description={ noticeText } icon="star" showIcon disableHref />;
+}
 
 class Plans extends Component {
 	static propTypes = {
@@ -182,7 +191,8 @@ class Plans extends Component {
 	}
 
 	render() {
-		const { selectedSite, translate, canAccessPlans, currentPlan } = this.props;
+		const { selectedSite, translate, canAccessPlans, currentPlan, domainAndPlanPackage } =
+			this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() || ! currentPlan ) {
 			return this.renderPlaceholder();
@@ -213,6 +223,7 @@ class Plans extends Component {
 								subHeaderText={ description }
 								align="left"
 							/>
+							{ domainAndPlanPackage && <DomainAndPlanUpsellNotice /> }
 							<div id="plans" className="plans plans__has-sidebar">
 								<PlansNavigation path={ this.props.context.path } />
 								{ this.renderPlansMain() }
