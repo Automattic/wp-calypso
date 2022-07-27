@@ -24,6 +24,7 @@ import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginPrice } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import CTAButton from './CTA-button';
+import { ActivationButton } from './activation-button';
 import PluginDetailsCTAPreinstalledPremiumPlugins from './preinstalled-premium-plugins-CTA';
 import USPS from './usps';
 import './style.scss';
@@ -155,7 +156,7 @@ const PluginDetailsCTA = ( props ) => {
 						},
 					} ) }
 				</div>
-				<Button>{ active ? translate( 'Deactivate' ) : translate( 'Activate' ) }</Button>
+				<ActivationButton plugin={ plugin } active={ active } />
 			</div>
 		);
 	}
