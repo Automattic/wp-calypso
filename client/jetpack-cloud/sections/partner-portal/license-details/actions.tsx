@@ -4,6 +4,7 @@ import { ReactElement, useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/revoke-license-dialog';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import UnassignLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/unassign-license-dialog';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -27,6 +28,7 @@ export default function LicenseDetailsActions( {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
+	const [ unassignDialog, setUnassignDialog ] = useState( false );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
@@ -37,6 +39,16 @@ export default function LicenseDetailsActions( {
 		setRevokeDialog( false );
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_revoke_dialog_close' ) );
 	}, [ dispatch, setRevokeDialog ] );
+
+	const openUnassignDialog = useCallback( () => {
+		setUnassignDialog( true );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_unassign_dialog_open' ) );
+	}, [ dispatch, setUnassignDialog ] );
+
+	const closeUnassignDialog = useCallback( () => {
+		setUnassignDialog( false );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_details_unassign_dialog_close' ) );
+	}, [ dispatch, setUnassignDialog ] );
 
 	return (
 		<div className="license-details__actions">
@@ -52,12 +64,27 @@ export default function LicenseDetailsActions( {
 				</Button>
 			) }
 
+			{ licenseState === LicenseState.Attached && (
+				<Button onClick={ openUnassignDialog } scary>
+					{ translate( 'Unassign License' ) }
+				</Button>
+			) }
+
 			{ revokeDialog && (
 				<RevokeLicenseDialog
 					licenseKey={ licenseKey }
 					product={ product }
 					siteUrl={ siteUrl }
 					onClose={ closeRevokeDialog }
+				/>
+			) }
+
+			{ unassignDialog && (
+				<UnassignLicenseDialog
+					licenseKey={ licenseKey }
+					product={ product }
+					siteUrl={ siteUrl }
+					onClose={ closeUnassignDialog }
 				/>
 			) }
 		</div>
