@@ -31,6 +31,7 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
+import { PriceOverrideList } from './price-override-list';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -893,6 +894,7 @@ function WPLineItem( {
 					<FirstTermDiscountCallout product={ product } />
 					<CouponDiscountCallout product={ product } />
 					<IntroductoryOfferCallout product={ product } />
+					<PriceOverrideList product={ product } />
 				</LineItemMeta>
 			) }
 
