@@ -1,4 +1,4 @@
-import { isPremium } from '@automattic/calypso-products';
+import { isJetpackPurchasableItem, isPremium } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import {
 	canItemBeRemovedFromCart,
@@ -82,6 +82,9 @@ export function WPOrderReviewLineItems( {
 		coupon: responseCart.coupon,
 		products: responseCart.products,
 	} );
+	const isJetpack = responseCart.products.some( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
@@ -113,6 +116,7 @@ export function WPOrderReviewLineItems( {
 									isDisabled={ isDisabled }
 									siteId={ siteId }
 									productSlug={ product.product_slug }
+									type={ isJetpack ? 'dropdown' : 'radio' }
 								/>
 							) }
 						</LineItem>
