@@ -47,13 +47,12 @@ const onFetchError = ( action: { purchaseId: number }, error: unknown ) => {
 };
 
 const applyCancellationOffer = ( action: { siteId: number; purchaseId: number } ) => {
-	// placeholder for apply api call
 	return http(
 		{
-			method: 'GET',
-			path: `/cancellation-offers`,
+			method: 'POST',
+			path: `/cancellation-offers/apply`,
 			apiNamespace: 'wpcom/v2',
-			query: {
+			body: {
 				site: action.siteId,
 				purchase: action.purchaseId,
 			},
@@ -67,7 +66,7 @@ const onApplySuccess = ( action: { purchaseId: number }, response: { success: bo
 		{
 			type: PURCHASE_CANCELLATION_OFFER_APPLY_SUCCESS,
 			purchaseId: action.purchaseId,
-			success: response,
+			success: response.success,
 		},
 	];
 };

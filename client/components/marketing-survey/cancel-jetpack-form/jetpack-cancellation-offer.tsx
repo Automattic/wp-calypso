@@ -134,7 +134,7 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 			dispatch( applyCancellationOffer( siteId, purchase.id ) );
 			onGetDiscount(); // Takes care of analytics.
 		}
-	}, [ isApplyingOffer, offerApplySuccess, offerApplyError ] );
+	}, [ isApplyingOffer, offerApplySuccess, offerApplyError, onGetDiscount ] );
 
 	const getErrorOutput = useMemo( () => {
 		if ( offerApplyError ) {
