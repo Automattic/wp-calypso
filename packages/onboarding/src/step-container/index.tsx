@@ -169,24 +169,10 @@ const StepContainer: React.FC< Props > = ( {
 				{ shouldStickyNavButtons && (
 					<WordPressLogo className="step-container__navigation-logo" size={ 24 } />
 				) }
-				{ ! hideBack && (
-					<div className="step-container__navigation-mouse">
-						<BackButton />
-					</div>
-				) }
-				{ ! hideSkip && skipButtonAlign === 'top' && (
-					<div className="step-container__navigation-mouse">
-						<SkipButton />
-					</div>
-				) }
-				{ ! hideNext && (
-					<div className="step-container__navigation-mouse">
-						<NextButton />
-					</div>
-				) }
-				{ customizedActionButtons && (
-					<div className="step-container__navigation-mouse">{ customizedActionButtons }</div>
-				) }
+				{ ! hideBack && <BackButton /> }
+				{ ! hideSkip && skipButtonAlign === 'top' && <SkipButton /> }
+				{ ! hideNext && <NextButton /> }
+				{ customizedActionButtons }
 			</ActionButtons>
 			{ ! hideFormattedHeader && (
 				<div className="step-container__header">
