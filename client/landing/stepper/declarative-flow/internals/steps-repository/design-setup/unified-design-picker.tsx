@@ -344,7 +344,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		<UnifiedDesignPicker
 			generatedDesigns={ generatedDesigns }
 			staticDesigns={ staticDesigns }
-			verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined }
+			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelect={ pickDesign }
 			onPreview={ previewDesign }
