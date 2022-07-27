@@ -826,6 +826,7 @@ class SignupForm extends Component {
 		const userExistsError = this.getUserExistsError( this.props );
 
 		if ( userExistsError ) {
+			const loginLink = this.getLoginLink( { emailAddress: userExistsError.email } );
 			return this.globalNotice(
 				{
 					info: true,
@@ -836,7 +837,24 @@ class SignupForm extends Component {
 						{
 							args: { email: userExistsError.email },
 							components: {
-								a: <a href={ this.getLoginLink( { emailAddress: userExistsError.email } ) } />,
+								a: (
+									<a
+										href={ loginLink }
+										onClick={ ( event ) => {
+											event.preventDefault();
+											page(
+												addQueryArgs(
+													{
+														service: this.props.step?.service,
+														access_token: this.props.step?.access_token,
+														id_token: this.props.step?.id_token,
+													},
+													loginLink
+												)
+											);
+										} }
+									/>
+								),
 							},
 						}
 					),
