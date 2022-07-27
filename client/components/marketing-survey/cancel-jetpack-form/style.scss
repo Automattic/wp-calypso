@@ -105,11 +105,15 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 	}
 
 	&__headline {
-		font-size: 2.25rem;
+		font-size: 1.5rem;
 		color: var( --studio-jetpack-green-60 );
 		font-weight: 700;
 		line-height: 1.15;
 		margin-bottom: 1rem;
+
+		@include break-medium {
+			font-size: 2.25rem;
+		}
 	}
 
 	&__accept-cta {

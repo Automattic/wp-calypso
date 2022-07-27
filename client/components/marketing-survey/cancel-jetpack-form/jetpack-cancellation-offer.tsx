@@ -126,7 +126,7 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 		}
 
 		return { offerHeadline, renewalCopy };
-	}, [ offer, percentDiscount ] );
+	}, [ offer, percentDiscount, purchase ] );
 
 	const onClickAccept = useCallback( () => {
 		// is the offer being claimed/ is there already a success or error
