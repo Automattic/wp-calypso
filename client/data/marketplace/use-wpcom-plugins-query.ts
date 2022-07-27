@@ -9,9 +9,9 @@ import { BASE_STALE_TIME } from './constants';
 
 type Type = 'all' | 'featured';
 
-const plugisApiBase = '/marketplace/products';
+const plugisApiBase = '/products';
 const featuredPluginsApiBase = '/plugins/featured';
-const pluginsApiNamespace = 'wpcom/v2';
+const pluginsApiNamespace = 'wpcom/v4';
 
 const getCacheKey = ( key: string ): QueryKey => [ 'wpcom-plugins', key ];
 
@@ -51,7 +51,7 @@ export const useWPCOMPlugins = (
 		getCacheKey( type + searchTerm + tag + `${ enabled ? 'enabled' : 'disabled' }` ),
 		() => fetchWPCOMPlugins( type, searchTerm, tag ),
 		{
-			select: ( data ) => normalizePluginsList( data.results ),
+			select: ( data ) => normalizePluginsList( data ),
 			enabled: enabled,
 			staleTime: staleTime,
 			refetchOnMount: refetchOnMount,

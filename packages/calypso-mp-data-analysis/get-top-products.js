@@ -37,18 +37,15 @@ const getTopProducts = async () => {
 			},
 		} );
 
-		const { data: wpcomData } = await get(
-			'https://public-api.wordpress.com/wpcom/v2/marketplace/products',
-			{
-				params: {
-					type: 'all',
-					_envelope: 1,
-					q: record.search_term,
-				},
-			}
-		);
+		const { data: wpcomData } = await get( 'https://public-api.wordpress.com/wpcom/v4/products', {
+			params: {
+				type: 'all',
+				_envelope: 1,
+				q: record.search_term,
+			},
+		} );
 
-		const wpcomPlugins = Object.values( wpcomData.body.results );
+		const wpcomPlugins = Object.values( wpcomData.body );
 		const wporgPlugins = Object.values( wporgData.plugins );
 
 		const plugins = [ ...wpcomPlugins, ...wporgPlugins ].slice( 0, 6 ); // show top 6 plugins
