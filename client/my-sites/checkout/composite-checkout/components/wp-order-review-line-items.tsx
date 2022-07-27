@@ -233,6 +233,7 @@ function LineItemWrapper( {
 						onChangeItemVariant={ onChangePlanLength }
 						isDisabled={ isDisabled }
 						variants={ variants }
+						type={ isJetpack ? 'dropdown' : 'radio' }
 					/>
 				) }
 			</LineItem>
