@@ -101,7 +101,7 @@ export const useWPCOMFeaturedPlugins = ( {
 		() =>
 			wpcom.req.get( {
 				path: featuredPluginsApiBase,
-				apiNamespace: pluginsApiNamespace,
+				apiNamespace: 'wpcom/v2',
 			} ),
 		{
 			select: ( data ) => normalizePluginsList( data ),
