@@ -115,7 +115,7 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 		}
 
 		return { offerHeadline, renewalCopy };
-	}, [ offer, percentDiscount ] );
+	}, [ offer, percentDiscount, purchase ] );
 
 	return (
 		<>
