@@ -241,7 +241,7 @@ function ItemVariantOptionList( {
 					onSelect={ () =>
 						handleChange( selectedItem.uuid, variant.productSlug, variant.productId )
 					}
-					selectedVariant={ selectedVariant }
+					compareTo={ selectedVariant }
 					variant={ variant }
 				/>
 			) ) }
@@ -252,12 +252,12 @@ function ItemVariantOptionList( {
 function ItemVariantOption( {
 	isSelected,
 	onSelect,
-	selectedVariant,
+	compareTo,
 	variant,
 }: {
 	isSelected: boolean;
 	onSelect: () => void;
-	selectedVariant?: WPCOMProductVariant;
+	compareTo?: WPCOMProductVariant;
 	variant: WPCOMProductVariant;
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
@@ -271,7 +271,7 @@ function ItemVariantOption( {
 			onClick={ onSelect }
 			selected={ isSelected }
 		>
-			<ItemVariantPrice variant={ variant } selectedVariant={ selectedVariant } />
+			<ItemVariantPrice variant={ variant } compareTo={ compareTo } />
 		</Option>
 	);
 }
