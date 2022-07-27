@@ -32,7 +32,7 @@ const MasterbarHelpCenter = ( { siteId } ) => {
 			className={ classnames( 'masterbar__item-help', {
 				'is-active': helpCenterVisible,
 			} ) }
-			icon={ <HelpIcon newItems={ newItems } /> }
+			icon={ <HelpIcon tooltip="Help" newItems={ newItems } /> }
 		/>
 	);
 };
