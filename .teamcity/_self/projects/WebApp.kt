@@ -818,7 +818,7 @@ object AuthenticationE2ETests : E2EBuildType(
 	buildTriggers = {
 		schedule {
 			schedulingPolicy = cron {
-				hours = "*/2"
+				hours = "*/3"
 			}
 			branchFilter = "+:<default>"
 			triggerBuild = always()
