@@ -84,8 +84,7 @@ export function HelpCenterActiveTicketNotice( {
 					{ sprintf(
 						/* translators: %s humanized date ex: 2 hours ago */
 						__( 'You submitted a request %s.' ),
-						tickets[ 0 ].when,
-						__i18n_text_domain__
+						tickets[ 0 ].when
 					) }
 				</strong>
 				&nbsp;
