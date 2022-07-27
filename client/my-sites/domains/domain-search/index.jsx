@@ -59,6 +59,7 @@ class DomainSearch extends Component {
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
+		domainAndPlanUpsellFlow: PropTypes.bool,
 	};
 
 	isMounted = false;
@@ -127,6 +128,11 @@ class DomainSearch extends Component {
 		} = suggestion;
 
 		this.props.recordAddDomainButtonClick( domain, 'domains', isPremium );
+
+		if ( this.props.domainAndPlanUpsellFlow ) {
+			page( `/plans/${ this.props.selectedSiteSlug }?withProduct=${ productSlug }:${ domain }` );
+			return;
+		}
 
 		let registration = domainRegistration( {
 			domain,
