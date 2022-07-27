@@ -52,7 +52,7 @@ const ProfessionalEmailPromotionWrapper = ( props ) => {
 	return (
 		<PlansFeaturesMain
 			redirectToAddDomainFlow={ props.redirectToAddDomainFlow }
-			withProduct={ props.withProduct }
+			domainAndPlanPackage={ props.domainAndPlanPackage }
 			hideFreePlan={ props.hideFreePlan }
 			customerType={ props.customerType }
 			intervalType={ props.intervalType }
@@ -73,7 +73,7 @@ class Plans extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
 		redirectToAddDomainFlow: PropTypes.bool,
-		withProduct: PropTypes.string,
+		domainAndPlanPackage: PropTypes.string,
 		intervalType: PropTypes.string,
 		customerType: PropTypes.string,
 		selectedFeature: PropTypes.string,
@@ -165,7 +165,7 @@ class Plans extends Component {
 		return (
 			<ProfessionalEmailPromotionWrapper
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
-				withProduct={ this.props.withProduct }
+				domainAndPlanPackage={ this.props.domainAndPlanPackage }
 				hideFreePlan={ true }
 				customerType={ this.props.customerType }
 				intervalType={ this.props.intervalType }

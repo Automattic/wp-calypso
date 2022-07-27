@@ -178,7 +178,7 @@ export class PlansFeaturesMain extends Component {
 			isInVerticalScrollingPlansExperiment,
 			isProfessionalEmailPromotionAvailable,
 			redirectToAddDomainFlow,
-			withProduct,
+			domainAndPlanPackage,
 			translate,
 			locale,
 		} = this.props;
@@ -227,7 +227,7 @@ export class PlansFeaturesMain extends Component {
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
-					withProduct={ withProduct }
+					domainAndPlanPackage={ domainAndPlanPackage }
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					domainName={ domainName }
@@ -439,8 +439,12 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, redirectToAddDomainFlow, withProduct, shouldShowPlansFeatureComparison } =
-			this.props;
+		const {
+			siteId,
+			redirectToAddDomainFlow,
+			domainAndPlanPackage,
+			shouldShowPlansFeatureComparison,
+		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -452,7 +456,7 @@ export class PlansFeaturesMain extends Component {
 
 		// In the "purchase a plan and free domain" flow we do not want to show
 		// monthly plans because monthly plans do not come with a free domain.
-		if ( redirectToAddDomainFlow !== undefined || withProduct ) {
+		if ( redirectToAddDomainFlow !== undefined || domainAndPlanPackage ) {
 			hidePlanSelector = true;
 		}
 
@@ -491,7 +495,7 @@ export class PlansFeaturesMain extends Component {
 
 PlansFeaturesMain.propTypes = {
 	redirectToAddDomainFlow: PropTypes.bool,
-	withProduct: PropTypes.string,
+	domainAndPlanPackage: PropTypes.string,
 	basePlansPath: PropTypes.string,
 	hideFreePlan: PropTypes.bool,
 	hidePersonalPlan: PropTypes.bool,

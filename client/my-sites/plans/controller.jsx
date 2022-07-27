@@ -39,7 +39,7 @@ export function plans( context, next ) {
 					? context.query.addDomainFlow === 'true'
 					: undefined
 			}
-			withProduct={ context.query.withProduct }
+			domainAndPlanPackage={ context.query.domainAndPlanPackage }
 		/>
 	);
 	next();
