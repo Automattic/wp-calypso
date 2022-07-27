@@ -140,10 +140,10 @@
 	 *	Navigation
 	 */
 	.step-container__navigation {
-		   pointer-events: none;
-	}
-	.step-container__navigation-mouse {
-		   pointer-events: auto;
+		pointer-events: none;
+		* {
+			pointer-events: auto;
+		}
 	}
 	.step-container__navigation.action-buttons {
 		background-color: $white;
