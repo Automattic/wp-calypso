@@ -121,6 +121,18 @@
 	}
 }
 
+.plugin-details-CTA__autoupdate-text {
+	font-size: $font-body-extra-small;
+
+	.plugin-details-CTA__autoupdate-text-main {
+		color: var( --studio-gray-100 );
+	}
+
+	.plugin-details-CTA__autoupdate-text-version {
+		color: var( --studio-gray-60 );
+	}
+}
+
 .legacy {
 	.plugin-details-CTA__t-and-c {
 		margin-bottom: 0;

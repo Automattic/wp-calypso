@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -157,6 +158,27 @@ const PluginDetailsCTA = ( props ) => {
 					} ) }
 				</div>
 				<ActivationButton plugin={ plugin } active={ active } />
+
+				<PluginAutoupdateToggle
+					site={ selectedSite }
+					plugin={ sitePlugin }
+					label={
+						<span className="plugin-details-CTA__autoupdate-text">
+							<span className="plugin-details-CTA__autoupdate-text-main">
+								{ translate( 'Enable autoupdate.' ) }
+							</span>
+							{ sitePlugin.version && (
+								<span className="plugin-details-CTA__autoupdate-text-version">
+									{ translate( ' Currently %(version)s', {
+										args: { version: sitePlugin.version },
+									} ) }
+								</span>
+							) }
+						</span>
+					}
+					isMarketplaceProduct={ plugin.isMarketplaceProduct }
+					wporg
+				/>
 			</div>
 		);
 	}
