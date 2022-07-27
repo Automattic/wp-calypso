@@ -5,6 +5,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import siteVerticalImage from 'calypso/assets/images/onboarding/site-vertical.svg';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
@@ -42,15 +43,14 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 			const { value = '', label = '' } = vertical || {};
 
 			setIsBusy( true );
-			await saveSiteSettings( site.ID, {
-				site_vertical_id: value,
-				blogname: label,
-			} );
+			await saveSiteSettings( site.ID, { site_vertical_id: value } );
+
 			recordTracksEvent( 'calypso_signup_site_vertical_submit', {
 				user_input: userInput,
 				vertical_id: value,
 				vertical_title: label,
 			} );
+
 			setIsBusy( false );
 			submit?.();
 		}
@@ -61,34 +61,37 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	}
 
 	return (
-		<StepContainer
-			stepName={ 'site-vertical' }
-			goBack={ goalsCaptureStepEnabled ? goBack : undefined }
-			goNext={ goNext }
-			headerImageUrl={ siteVerticalImage }
-			skipLabelText={ translate( 'Skip to dashboard' ) }
-			skipButtonAlign={ 'top' }
-			isHorizontalLayout={ true }
-			hideBack={ ! goalsCaptureStepEnabled }
-			formattedHeader={
-				<FormattedHeader
-					id={ 'site-vertical-header' }
-					headerText={ headerText }
-					subHeaderText={ subHeaderText }
-					align={ 'left' }
-				/>
-			}
-			stepContent={
-				<SiteVerticalForm
-					defaultVertical={ siteVertical }
-					isSkipSynonyms={ Boolean( isSkipSynonyms ) }
-					isBusy={ isBusy }
-					onSelect={ handleSiteVerticalSelect }
-					onSubmit={ handleSubmit }
-				/>
-			}
-			recordTracksEvent={ recordTracksEvent }
-		/>
+		<>
+			<DocumentHead title={ headerText } />
+			<StepContainer
+				stepName={ 'site-vertical' }
+				goBack={ goalsCaptureStepEnabled ? goBack : undefined }
+				goNext={ goNext }
+				headerImageUrl={ siteVerticalImage }
+				skipLabelText={ translate( 'Skip to dashboard' ) }
+				skipButtonAlign={ 'top' }
+				isHorizontalLayout={ true }
+				hideBack={ ! goalsCaptureStepEnabled }
+				formattedHeader={
+					<FormattedHeader
+						id={ 'site-vertical-header' }
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+						align={ 'left' }
+					/>
+				}
+				stepContent={
+					<SiteVerticalForm
+						defaultVertical={ siteVertical }
+						isSkipSynonyms={ Boolean( isSkipSynonyms ) }
+						isBusy={ isBusy }
+						onSelect={ handleSiteVerticalSelect }
+						onSubmit={ handleSubmit }
+					/>
+				}
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		</>
 	);
 };
 

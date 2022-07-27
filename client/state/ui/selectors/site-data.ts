@@ -53,5 +53,7 @@ export interface SiteDataOptions {
 	is_domain_only: boolean;
 	difm_lite_site_options?: DIFMLiteSiteOptions;
 	updated_at?: string;
+	is_redirect?: boolean;
+	unmapped_url?: string;
 	// TODO: fill out the rest of this
 }

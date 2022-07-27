@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import { BearerTokenErrorResponse } from './types';
+import { BearerTokenErrorResponse, Invite } from './types';
+import type { Roles } from './lib';
 import type {
 	AccountDetails,
 	SiteDetails,
@@ -14,6 +15,9 @@ import type {
 	AccountCredentials,
 	NewSiteResponse,
 	NewSiteParams,
+	NewInviteResponse,
+	AllInvitesResponse,
+	DeleteInvitesResponse,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -22,7 +26,8 @@ import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 /**
  * Specifies the version of WordPress.com REST API.
  */
-type EndpointVersions = '1' | '1.1' | '1.2' | '1.3';
+type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '2';
+type EndpointNamespace = 'rest' | 'wpcom';
 
 /**
  * Interface defining the request structure to be sent to the API.
@@ -104,7 +109,7 @@ export class RestAPIClient {
 	 * @returns {Promise<string>} Authorization header in the requested scheme.
 	 * @throws {Error} If a scheme not yet implemented is requested.
 	 */
-	private async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
+	async getAuthorizationHeader( scheme: 'bearer' ): Promise< string > {
 		if ( scheme === 'bearer' ) {
 			const bearerToken = await this.getBearerToken();
 			return `Bearer ${ bearerToken }`;
@@ -127,10 +132,15 @@ export class RestAPIClient {
 	 *
 	 * @param {EndpointVersions} version Version of the API to use.
 	 * @param {string} endpoint REST API path.
+	 * @param {EndpointNamespace} [namespace] REST API namespace.
 	 * @returns {URL} Full URL to the endpoint.
 	 */
-	getRequestURL( version: EndpointVersions, endpoint: string ): URL {
-		const path = `/rest/v${ version }/${ endpoint }`.replace( /([^:]\/)\/+/g, '$1' );
+	getRequestURL(
+		version: EndpointVersions,
+		endpoint: string,
+		namespace: EndpointNamespace = 'rest'
+	): URL {
+		const path = `/${ namespace }/v${ version }/${ endpoint }`.replace( /([^:]\/)\/+/g, '$1' );
 		const sanitizedPath = path.trimEnd().replace( /\/$/, '' );
 		return new URL( sanitizedPath, REST_API_BASE_URL );
 	}
@@ -142,7 +152,7 @@ export class RestAPIClient {
 	 * @param {RequestParams} params Parameters for the request.
 	 * @returns {Promise<any>} Decoded JSON response.
 	 */
-	private async sendRequest( url: URL, params: RequestParams | URLSearchParams ): Promise< any > {
+	async sendRequest( url: URL, params: RequestParams | URLSearchParams ): Promise< any > {
 		const response = await fetch( url, params as RequestInit );
 		return response.json();
 	}
@@ -290,6 +300,141 @@ export class RestAPIClient {
 		}
 		// If nothing matches, return that no action was performed.
 		return null;
+	}
+
+	/* Invites */
+
+	/**
+	 * Creates a user invite.
+	 *
+	 * @param {number} siteID ID of the site where a new invite will be created.
+	 * @param param0 Keyed object parameter.
+	 * @param {string[]} param0.email List of emails to send invites to.
+	 * @param {Roles} param0.role Role of the user.
+	 * @param {string} param0.message Message to be sent to the invitee.
+	 * @throws {Error} If API responds with an error, or a list of errors are returned.
+	 */
+	async createInvite(
+		siteID: number,
+		{
+			email,
+			role,
+			message,
+		}: {
+			email: string[];
+			role: Roles;
+			message?: string;
+		}
+	): Promise< NewInviteResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( {
+				invitees: email,
+				role: role,
+				message: message !== undefined ? message : '',
+			} ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/invites/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		if ( response.errors === [] ) {
+			console.log( response );
+			throw new Error( `Failed to create invite: ${ response.errors }` );
+		}
+
+		return response;
+	}
+
+	/**
+	 *
+	 * @param siteID
+	 */
+	async getInvites( siteID: number ): Promise< AllInvitesResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/invites` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response[ 'invites' ];
+	}
+
+	/**
+	 *
+	 * @param siteID
+	 * @param email
+	 */
+	async deleteInvite( siteID: number, email: string ): Promise< boolean > {
+		const invites = await this.getInvites( siteID );
+
+		let inviteID = undefined;
+
+		Object.values( invites ).forEach( ( invite: Invite ) => {
+			if (
+				invite.invited_by.site_ID === siteID &&
+				invite.is_pending &&
+				invite.user.email === email
+			) {
+				inviteID = invite.invite_key;
+			}
+		} );
+
+		if ( inviteID === undefined ) {
+			throw new Error(
+				`Aborting invite deletion: inviteID not found for email: ${ email } and siteID: ${ siteID }}`
+			);
+		}
+
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( {
+				invite_ids: [ inviteID ],
+			} ),
+		};
+
+		const response: DeleteInvitesResponse = await this.sendRequest(
+			this.getRequestURL( '2', `/sites/${ siteID }/invites/delete`, 'wpcom' ),
+			params
+		);
+
+		// This call does not return a traditional error that's in the
+		// format of ErrorResponse, instead returning a
+		// DeleteInvitesResponse which always has the `deleted` and
+		// `invalid` fields.
+		if ( response.deleted.includes( inviteID ) ) {
+			return true;
+		}
+		return false;
 	}
 
 	/* Me */

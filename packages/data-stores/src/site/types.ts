@@ -93,6 +93,7 @@ export interface DifmLiteSiteOptions {
 	selected_page_titles: string[];
 }
 
+// is_fse_active && is_fse_eligible properties have been deprecated and removed from SiteDetails interface
 export interface SiteDetails {
 	ID: number;
 	name: string | undefined;
@@ -100,8 +101,6 @@ export interface SiteDetails {
 	URL: string;
 	launch_status: string;
 	jetpack: boolean;
-	is_fse_eligible: boolean;
-	is_fse_active: boolean;
 	logo: { id: string; sizes: string[]; url: string };
 	options: {
 		admin_url?: string;
