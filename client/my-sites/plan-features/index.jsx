@@ -300,6 +300,7 @@ export class PlanFeatures extends Component {
 	renderMobileView() {
 		const {
 			redirectToAddDomainFlow,
+			withProduct,
 			basePlansPath,
 			canPurchase,
 			isInSignup,
@@ -346,7 +347,7 @@ export class PlanFeatures extends Component {
 		let buttonText = null;
 		let forceDisplayButton = false;
 
-		if ( redirectToAddDomainFlow === true ) {
+		if ( redirectToAddDomainFlow === true || withProduct ) {
 			buttonText = translate( 'Add to Cart' );
 			forceDisplayButton = true;
 		}
@@ -567,6 +568,7 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 			shoppingCartManager,
 			redirectToAddDomainFlow,
+			withProduct,
 		} = this.props;
 
 		const {
@@ -588,6 +590,29 @@ export class PlanFeatures extends Component {
 
 		if ( siteIsPrivateAndGoingAtomic && isInSignup ) {
 			// Let signup do its thing
+			return;
+		}
+
+		if ( withProduct ) {
+			// In this flow we redirect to checkout with both the plan and domain
+			// product in the cart.
+			shoppingCartManager
+				.addProductsToCart( [
+					{
+						product_slug: productSlug,
+						extra: {
+							afterPurchaseUrl: redirectTo ?? undefined,
+						},
+					},
+				] )
+				.then( () => {
+					if ( withDiscount && this.isMounted ) {
+						return shoppingCartManager.applyCoupon( withDiscount );
+					}
+				} )
+				.then( () => {
+					this.isMounted && page( `/checkout/${ selectedSiteSlug }/${ withProduct }` );
+				} );
 			return;
 		}
 
