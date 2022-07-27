@@ -27,22 +27,30 @@ export const SiteThumbnail = ( {
 	size = 'small',
 	mshotsOption = MSHOTS_OPTION,
 }: Props ) => {
-	const { src, isLoading, imgRef } = useMshotsImg( mShotsUrl, mshotsOption );
+	const { src, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, mshotsOption );
 
 	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
 
 	const className = classnames(
 		'site-thumbnail',
-		! isLoading ? 'site-thumbnail-visible' : '',
+		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
 		`site-thumbnail__size-${ size }`
 	);
 
-	const loader = mShotsUrl ? 'site-thumbnail-loader' : '';
+	const loader = mShotsUrl && ! isError ? 'site-thumbnail-loader' : '';
 
 	return (
 		<div className={ className } style={ { backgroundColor, color } }>
 			{ isLoading && <div className={ loader }>{ children }</div> }
-			{ src && <img ref={ imgRef } src={ src } alt={ alt } loading="lazy" /> }
+			{ src && ! isError && (
+				<img
+					className="site-thumbnail__image"
+					ref={ imgRef }
+					src={ src }
+					alt={ alt }
+					loading="lazy"
+				/>
+			) }
 		</div>
 	);
 };

@@ -22,6 +22,13 @@
 	animation: fadein 1.5s;
 }
 
+.site-thumbnail-loading .site-thumbnail__image {
+	width: 0;
+	height: 0;
+	opacity: 0;
+	visibility: hidden;
+}
+
 .site-thumbnail-loader::before {
 	content: '';
     animation-duration: 2.4s;
@@ -58,7 +65,7 @@
         background-position: 0 1200px;
     }
 }
-  
+
 @keyframes fadein {
 	from {
 		opacity: 0;
