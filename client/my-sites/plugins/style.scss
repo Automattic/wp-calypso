@@ -125,7 +125,7 @@ body.is-section-plugins.theme-default.color-scheme {
 	}
 
 	@include display-grid;
-	grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr ) minmax( 300px, 1fr );
+	grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr ) 350px;
 	grid-column-gap: 60px;
 	grid-template-areas: 'header header actions'
 						'content content actions';
@@ -148,7 +148,7 @@ body.is-section-plugins.theme-default.color-scheme {
 	.plugin-details__actions {
 		grid-area: actions;
 		background-color: var( --studio-gray-0 );
-		padding: 20px;
+		padding: 40px;
 
 		@include breakpoint-deprecated( '<960px' ) {
 			margin-top: 40px;

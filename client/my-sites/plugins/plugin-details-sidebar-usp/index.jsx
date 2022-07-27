@@ -12,6 +12,7 @@ const Container = styled( FoldableCard )`
 	width: 100%;
 	margin-bottom: 0;
 	box-shadow: none;
+	${ ( props ) => props.showAsAccordion && ! props.legacy && 'border-bottom: 1px solid #eeeeee' };
 	${ ( props ) => props.showAsAccordion && 'border-top: 1px solid var( --studio-gray-5)' };
 	${ ( props ) => props.showAsAccordion && props.first && 'border-top: 0' };
 	.foldable-card__content {
