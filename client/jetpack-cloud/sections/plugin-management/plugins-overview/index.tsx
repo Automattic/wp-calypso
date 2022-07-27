@@ -26,7 +26,7 @@ interface Props {
 	path?: string;
 }
 
-export default function PluginOverview( {
+export default function PluginsOverview( {
 	filter,
 	search,
 	site,
