@@ -227,6 +227,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const handleBackClick = () => {
 		if ( isPreviewingDesign ) {
+			recordTracksEvent( 'calypso_signup_design_preview_exit', {
+				...getEventPropsByDesign( selectedDesign ),
+			} );
+
 			setSelectedDesign( undefined );
 			setIsPreviewingDesign( false );
 			return;
