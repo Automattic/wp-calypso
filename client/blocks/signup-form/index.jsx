@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { getUrlParts } from '@automattic/calypso-url';
 import { Button, FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -49,8 +48,7 @@ import { isP2Flow } from 'calypso/signup/utils';
 import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { createSocialUserFailed, handoffConnectSocialUser } from 'calypso/state/login/actions';
-import { getSocialAccountIsLinking } from 'calypso/state/login/selectors';
+import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -844,13 +842,16 @@ class SignupForm extends Component {
 										href={ loginLink }
 										onClick={ ( event ) => {
 											event.preventDefault();
-											this.props.handoffConnectSocialUser( userExistsError.email, {
-												service: this.props.step?.service,
-												access_token: this.props.step?.access_token,
-												id_token: this.props.step?.id_token,
-											} );
-											const { pathname, search } = getUrlParts( loginLink );
-											page( pathname + search );
+											page(
+												addQueryArgs(
+													{
+														service: this.props.step?.service,
+														access_token: this.props.step?.access_token,
+														id_token: this.props.step?.id_token,
+													},
+													loginLink
+												)
+											);
 										} }
 									/>
 								),
@@ -1173,7 +1174,6 @@ export default connect(
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		from: get( getCurrentQueryArguments( state ), 'from' ),
-		socialAccountIsLinking: getSocialAccountIsLinking( state ),
 		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
 		isP2Flow:
 			isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
@@ -1181,7 +1181,6 @@ export default connect(
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,
-		handoffConnectSocialUser,
 		redirectToLogout,
 	}
 )( localize( SignupForm ) );

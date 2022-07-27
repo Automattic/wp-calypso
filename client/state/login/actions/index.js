@@ -6,7 +6,6 @@ export { connectSocialUser } from 'calypso/state/login/actions/connect-social-us
 export { createSocialUserFailed } from 'calypso/state/login/actions/create-social-user-failed';
 export { disconnectSocialUser } from 'calypso/state/login/actions/disconnect-social-user';
 export { formUpdate } from 'calypso/state/login/actions/form-update';
-export { handoffConnectSocialUser } from 'calypso/state/login/actions/handoff-connect-social-user';
 export { loginSocialUser } from 'calypso/state/login/actions/login-social-user';
 export { loginUser } from 'calypso/state/login/actions/login-user';
 export { loginUserWithSecurityKey } from 'calypso/state/login/actions/login-user-with-security-key';
