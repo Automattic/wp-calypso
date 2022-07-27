@@ -1,9 +1,16 @@
+import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
+import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import SidebarItem from 'calypso/layout/sidebar/item';
-import { settingsPath, purchasesPath, purchasesBasePath } from 'calypso/lib/jetpack/paths';
+import {
+	settingsPath,
+	purchasesPath,
+	purchasesBasePath,
+	pluginsPath,
+} from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -39,6 +46,8 @@ export default ( { path } ) => {
 		isSectionNameEnabled( 'site-purchases' ) &&
 		useSelector( ( state ) => canCurrentUser( state, siteId, 'own_site' ) );
 
+	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
+
 	return (
 		<>
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
@@ -53,6 +62,18 @@ export default ( { path } ) => {
 					socialClicked: 'calypso_jetpack_sidebar_social_clicked',
 				} }
 			/>
+			{ isPluginManagementEnabled && (
+				<SidebarItem
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+					customIcon={ <Icon className="sidebar__menu-icon" size={ 28 } icon={ plugins } /> }
+					label={ translate( 'Plugins', {
+						comment: 'Jetpack sidebar navigation item',
+					} ) }
+					link={ pluginsPath( siteSlug ) }
+					onNavigate={ onNavigate }
+					selected={ itemLinkMatches( pluginsPath( siteSlug ), path ) }
+				/>
+			) }
 			{ shouldShowSettings && (
 				<SidebarItem
 					customIcon={ <JetpackIcons icon="settings" /> }

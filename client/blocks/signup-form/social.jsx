@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
-import GoogleLoginButton from 'calypso/components/social-buttons/google';
+import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -50,11 +50,15 @@ class SocialSignupForm extends Component {
 			return;
 		}
 
+		this.props.recordTracksEvent( 'calypso_signup_social_button_success', {
+			social_account_type: 'google',
+		} );
+
 		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
 	};
 
-	trackSocialLogin = ( service ) => {
-		this.props.recordTracksEvent( 'calypso_login_social_button_click', {
+	trackSocialSignup = ( service ) => {
+		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
 		} );
 	};
@@ -94,15 +98,16 @@ class SocialSignupForm extends Component {
 					) }
 
 					<div className="signup-form__social-buttons">
-						<GoogleLoginButton
+						<GoogleSocialButton
 							clientId={ config( 'google_oauth_client_id' ) }
 							responseHandler={ this.handleGoogleResponse }
 							uxMode={ uxMode }
 							redirectUri={ redirectUri }
-							onClick={ () => this.trackSocialLogin( 'google' ) }
+							onClick={ () => this.trackSocialSignup( 'google' ) }
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
+							startingPoint={ 'signup' }
 							isReskinned={ this.props.isReskinned }
 						/>
 
@@ -111,7 +116,7 @@ class SocialSignupForm extends Component {
 							responseHandler={ this.handleAppleResponse }
 							uxMode={ uxModeApple }
 							redirectUri={ redirectUri }
-							onClick={ () => this.trackSocialLogin( 'apple' ) }
+							onClick={ () => this.trackSocialSignup( 'apple' ) }
 							socialServiceResponse={
 								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 							}

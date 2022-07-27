@@ -151,7 +151,12 @@ export class SecretsManager {
 				totpUserInboxId: 'FAKE_VALUE',
 			},
 			testAccounts: {
-				defaultUser: { ...fakeAccount },
+				defaultUser: {
+					...fakeAccount,
+					userID: 0,
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+					email: 'FAKE_VALUE',
+				},
 				eCommerceUser: { ...fakeAccount },
 				simpleSiteFreePlanUser: { ...fakeAccount },
 				simpleSitePersonalPlanUser: { ...fakeAccount },

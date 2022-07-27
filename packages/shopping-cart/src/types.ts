@@ -224,28 +224,95 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	create_new_blog: boolean;
 	cart_key: CartKey;
 	products: P[];
+
 	/**
+	 * The amount of tax collected.
+	 *
 	 * @deprecated This is a float and is unreliable. Use total_tax_integer or total_tax_display.
 	 */
 	total_tax: string;
-	total_tax_integer: number;
-	total_tax_display: string;
-	total_tax_breakdown: TaxBreakdownItem[];
+
 	/**
+	 * The amount of tax collected in the currency's smallest unit.
+	 */
+	total_tax_integer: number;
+
+	/**
+	 * The amount of tax collected formatted for the locale and currency.
+	 */
+	total_tax_display: string;
+
+	/**
+	 * The amount of tax collected per product.
+	 */
+	total_tax_breakdown: TaxBreakdownItem[];
+
+	/**
+	 * The cart's total cost.
+	 *
 	 * @deprecated This is a float and is unreliable. Use total_cost_integer or total_cost_display.
 	 */
 	total_cost: number;
+
+	/**
+	 * The cart's total cost in the currency's smallest unit.
+	 */
 	total_cost_integer: number;
+
+	/**
+	 * The cart's total cost formatted for the locale and currency.
+	 */
 	total_cost_display: string;
+
+	/**
+	 * The difference between `cost_before_coupon` and the actual price for all
+	 * products in the currency's smallest unit.
+	 *
+	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
+	 */
 	coupon_savings_total_integer: number;
+
+	/**
+	 * The difference between `cost_before_coupon` and the actual price for all
+	 * products formatted for the locale and currency.
+	 *
+	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
+	 */
 	coupon_savings_total_display: string;
+
+	/**
+	 * The subtotal with taxes included in the currency's smallest unit.
+	 */
 	sub_total_with_taxes_integer: number;
+
+	/**
+	 * The subtotal with taxes included formatted for the locale and currency.
+	 */
 	sub_total_with_taxes_display: string;
+
+	/**
+	 * The subtotal without taxes included in the currency's smallest unit.
+	 */
 	sub_total_integer: number;
+
+	/**
+	 * The subtotal without taxes included formatted for the locale and currency.
+	 */
 	sub_total_display: string;
-	currency: string;
+
+	/**
+	 * The number of credits available in the currency's smallest unit.
+	 */
 	credits_integer: number;
+
+	/**
+	 * The number of credits available formatted for the locale and currency.
+	 */
 	credits_display: string;
+
+	currency: string;
 	allowed_payment_methods: string[];
 	coupon: string;
 	is_coupon_applied: boolean;
@@ -299,22 +366,135 @@ export interface ResponseCartMessage {
 }
 
 export interface ResponseCartProduct {
+	uuid: string;
 	product_name: string;
 	product_slug: string;
 	product_id: number;
 	currency: string;
+
+	/**
+	 * The cart item's original price in the currency's smallest unit.
+	 *
+	 * @deprecated Use item_original_cost_integer or item_original_subtotal_integer.
+	 */
 	product_cost_integer: number;
+
+	/**
+	 * The cart item's original price formatted for the locale with currency.
+	 *
+	 * @deprecated Use item_original_cost_display or item_original_subtotal_display.
+	 */
 	product_cost_display: string;
-	item_original_cost_integer: number; // without discounts or volume, with quantity
-	item_original_cost_display: string; // without discounts or volume, with quantity
+
+	/**
+	 * The cart item's original price without volume in the currency's smallest unit.
+	 *
+	 * Discounts and volume are not included, but quantity is included.
+	 */
+	item_original_cost_integer: number;
+
+	/**
+	 * The cart item's original price without volume formatted for the locale with currency.
+	 *
+	 * Discounts and volume are not included, but quantity is included.
+	 */
+	item_original_cost_display: string;
+
+	/**
+	 * The monthly term subtotal of a cart item formatted for the locale with currency.
+	 */
 	item_subtotal_monthly_cost_display: string;
+
+	/**
+	 * The monthly term subtotal of a cart item in the currency's smallest unit.
+	 */
 	item_subtotal_monthly_cost_integer: number;
-	item_original_subtotal_integer: number; // without discounts, with volume
-	item_original_subtotal_display: string; // without discounts, with volume
-	item_original_cost_for_quantity_one_integer: number; // without discounts or volume, and quantity 1
-	item_original_cost_for_quantity_one_display: string; // without discounts or volume, and quantity 1
+
+	/**
+	 * The cart item's original price with volume in the currency's smallest unit.
+	 *
+	 * Discounts are not included, but volume and quantity are included.
+	 */
+	item_original_subtotal_integer: number;
+
+	/**
+	 * The cart item's original price with volume formatted for the locale with currency.
+	 *
+	 * Discounts are not included, but volume and quantity are included.
+	 */
+	item_original_subtotal_display: string;
+
+	/**
+	 * The cart item's original price for quantity 1 in the currency's smallest unit.
+	 *
+	 * Discounts are not included, but volume is included.
+	 */
+	item_original_cost_for_quantity_one_integer: number;
+
+	/**
+	 * The cart item's original price for quantity 1 formatted for the locale with currency.
+	 *
+	 * Discounts are not included, but volume is included.
+	 */
+	item_original_cost_for_quantity_one_display: string;
+
+	/**
+	 * The cart item's subtotal in the currency's smallest unit.
+	 */
 	item_subtotal_integer: number;
+
+	/**
+	 * The cart item's subtotal formatted for the locale with currency.
+	 */
 	item_subtotal_display: string;
+
+	/**
+	 * The cart item's subtotal without volume.
+	 *
+	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer or item_subtotal_display.
+	 */
+	cost: number;
+
+	/**
+	 * The cart item's price before a coupon (if any) was applied.
+	 *
+	 * This is slightly misleading because although this is the product's cost
+	 * before a coupon was applied, it already includes sale coupons (which are
+	 * actually discounts), and other discounts and does not include certain
+	 * other price changes (eg: domain discounts). It's best not to rely on it.
+	 *
+	 * @deprecated This is a float and is unreliable. Use
+	 * item_original_subtotal_integer or item_original_subtotal_display if you
+	 * can, although those have slightly different meanings.
+	 */
+	cost_before_coupon?: number;
+
+	/**
+	 * The difference between `cost_before_coupon` and the actual price.
+	 *
+	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
+	 *
+	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer or coupon_savings_display.
+	 */
+	coupon_savings?: number;
+
+	/**
+	 * The difference between `cost_before_coupon` and the actual price formatted for the locale with currency.
+	 *
+	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
+	 */
+	coupon_savings_display?: string;
+
+	/**
+	 * The difference between `cost_before_coupon` and the actual price in the currency's smallest unit.
+	 *
+	 * Note that the difference may be caused by many factors, not just coupons.
+	 * It's best not to rely on it.
+	 */
+	coupon_savings_integer?: number;
+
 	price_tier_minimum_units?: number | null;
 	price_tier_maximum_units?: number | null;
 	is_domain_registration: boolean;
@@ -328,18 +508,6 @@ export interface ResponseCartProduct {
 	quantity: number | null;
 	current_quantity: number | null;
 	extra: ResponseCartProductExtra;
-	uuid: string;
-	/**
-	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer or item_subtotal_display.
-	 */
-	cost: number;
-	cost_before_coupon?: number;
-	/**
-	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer or coupon_savings_display.
-	 */
-	coupon_savings?: number;
-	coupon_savings_display?: string;
-	coupon_savings_integer?: number;
 	item_tax: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
