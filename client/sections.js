@@ -543,6 +543,12 @@ const sections = [
 		module: 'calypso/my-sites/add-ons',
 		group: 'sites',
 	},
+	{
+		name: 'promote-post',
+		paths: [ '/promoted-posts', '/promoted-posts/[^\\/]+' ],
+		module: 'calypso/my-sites/promote-post',
+		group: 'sites', // todo what group should this be?
+	},
 ];
 
 module.exports = sections;
