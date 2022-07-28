@@ -28,8 +28,8 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should do not sort sites if unsupported sort is provided', () => {
 		const { sortedSites } = useSitesTableSorting( filteredSites, {
-			sort: 'sort-that-is-not-supported',
-			order: 'asc',
+			sortKey: 'sort-that-is-not-supported',
+			sortOrder: 'asc',
 		} );
 
 		expect( sortedSites.length ).toBe( 3 );
@@ -40,8 +40,8 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should sort sites by updated-at descending', () => {
 		const { sortedSites } = useSitesTableSorting( filteredSites, {
-			sort: 'updated-at',
-			order: 'desc',
+			sortKey: 'updated-at',
+			sortOrder: 'desc',
 		} );
 
 		expect( sortedSites.length ).toBe( 3 );
@@ -52,8 +52,8 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should sort sites by updated-at ascending', () => {
 		const { sortedSites } = useSitesTableSorting( filteredSites, {
-			sort: 'updated-at',
-			order: 'asc',
+			sortKey: 'updated-at',
+			sortOrder: 'asc',
 		} );
 
 		expect( sortedSites.length ).toBe( 3 );
@@ -64,8 +64,8 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should sort sites by updated-at descending if unsupported order is provided', () => {
 		const { sortedSites } = useSitesTableSorting( filteredSites, {
-			sort: 'updated-at',
-			order: 'unsupported-order',
+			sortKey: 'updated-at',
+			sortOrder: 'unsupported-order',
 		} );
 
 		expect( sortedSites.length ).toBe( 3 );
