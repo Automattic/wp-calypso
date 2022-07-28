@@ -59,15 +59,16 @@ export default function LicenseDetailsActions( {
 			) }
 
 			{ licenseState === LicenseState.Detached && (
-				<Button href={ addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' ) }>
+				<Button
+					className="license-details__assign-button"
+					href={ addQueryArgs( { key: licenseKey }, '/partner-portal/assign-license' ) }
+				>
 					{ translate( 'Assign License' ) }
 				</Button>
 			) }
 
 			{ licenseState === LicenseState.Attached && (
-				<Button onClick={ openUnassignDialog } scary>
-					{ translate( 'Unassign License' ) }
-				</Button>
+				<Button onClick={ openUnassignDialog }>{ translate( 'Unassign License' ) }</Button>
 			) }
 
 			{ revokeDialog && (
