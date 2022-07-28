@@ -23,21 +23,6 @@ const Discount = styled.span`
 	}
 `;
 
-const DoNotPayThis = styled.del`
-	text-decoration: line-through;
-	margin-right: 8px;
-	color: #646970;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
-
-	.item-variant-option--selected & {
-		color: #fff;
-	}
-`;
-
 const Price = styled.span`
 	color: #646970;
 
@@ -112,14 +97,9 @@ export const ItemVariantPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
+	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
-	const formattedCurrentPrice = myFormatCurrency( variant.price, variant.currency );
-	const compareToPriceForVariantTerm = compareTo
-		? getVariantPriceForTerm( compareTo, variant.termIntervalInMonths )
-		: undefined;
-	const formattedCompareToPriceForVariantTerm = compareToPriceForVariantTerm
-		? myFormatCurrency( compareToPriceForVariantTerm, variant.currency )
-		: undefined;
+	const formattedMonthlyPrice = myFormatCurrency( variant.pricePerMonth, variant.currency );
 	const discountPercentage = getDiscountPercentageBetweenVariants( variant, compareTo );
 
 	return (
@@ -134,10 +114,11 @@ export const ItemVariantPrice: FunctionComponent< {
 				{ discountPercentage > 0 && ! isMobile && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ discountPercentage > 0 && (
-					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
-				) }
-				<Price>{ formattedCurrentPrice }</Price>
+				<Price>
+					{ translate( '%(monthlyPrice)s/month', {
+						args: { monthlyPrice: formattedMonthlyPrice },
+					} ) }
+				</Price>
 			</span>
 		</Variant>
 	);
