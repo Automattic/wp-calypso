@@ -1,22 +1,13 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
-import {
-	hasRenewalItem,
-	getRenewalItems,
-	hasPlan,
-	hasEcommercePlan,
-} from 'calypso/lib/cart-values/cart-items';
+import { hasPlan, hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
@@ -24,7 +15,7 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { infoNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
@@ -41,6 +32,7 @@ import {
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
+import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
 import type {
@@ -48,7 +40,7 @@ import type {
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
-import type { WPCOMTransactionEndpointResponse, Purchase } from '@automattic/wpcom-checkout';
+import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
@@ -89,7 +81,6 @@ export default function useCreatePaymentCompleteCallback( {
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const siteId = useSelector( getSelectedSiteId );
 	const isDomainOnly =
 		useSelector( ( state ) => siteId && isDomainOnlySite( state, siteId ) ) || false;
@@ -182,17 +173,6 @@ export default function useCreatePaymentCompleteCallback( {
 				clearSignupDestinationCookie();
 			}
 
-			if ( hasRenewalItem( responseCart ) && transactionResult?.purchases ) {
-				debug( 'purchase had a renewal' );
-				displayRenewalSuccessNotice(
-					responseCart,
-					transactionResult.purchases,
-					translate,
-					moment,
-					reduxDispatch
-				);
-			}
-
 			if ( receiptId && transactionResult?.purchases ) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
@@ -219,7 +199,11 @@ export default function useCreatePaymentCompleteCallback( {
 						domainName,
 						() => {
 							reloadCart();
-							performRedirect( url );
+							redirectThroughPending( url, {
+								siteSlug,
+								orderId: transactionResult.order_id,
+								receiptId: transactionResult.receipt_id,
+							} );
 						},
 						reduxStore
 					);
@@ -245,14 +229,23 @@ export default function useCreatePaymentCompleteCallback( {
 					debug( 'error while clearing localStorage cart' );
 				}
 
-				// We use window.location instead of page.redirect() so that the cookies are detected on fresh page load.
-				// Using page.redirect() will take to the log in page which we don't want.
-				window.location.href = url;
+				// We use window.location instead of page() so that the cookies are
+				// detected on fresh page load. Using page(url) will take us to the
+				// log-in page which we don't want.
+				absoluteRedirectThroughPending( url, {
+					siteSlug,
+					orderId: transactionResult.order_id,
+					receiptId: transactionResult.receipt_id,
+				} );
 				return;
 			}
 
 			reloadCart();
-			performRedirect( url );
+			redirectThroughPending( url, {
+				siteSlug,
+				orderId: transactionResult.order_id,
+				receiptId: transactionResult.receipt_id,
+			} );
 		},
 		[
 			reloadCart,
@@ -268,7 +261,6 @@ export default function useCreatePaymentCompleteCallback( {
 			isInModal,
 			reduxStore,
 			isDomainOnly,
-			moment,
 			reduxDispatch,
 			siteId,
 			translate,
@@ -280,86 +272,6 @@ export default function useCreatePaymentCompleteCallback( {
 			adminPageRedirect,
 			domains,
 		]
-	);
-}
-
-function performRedirect( url: string ): void {
-	try {
-		window.scrollTo( 0, 0 );
-		page( url );
-	} catch ( err ) {
-		window.location.href = url;
-	}
-}
-
-function displayRenewalSuccessNotice(
-	responseCart: ResponseCart,
-	purchases: Record< number, Purchase[] >,
-	translate: ReturnType< typeof useTranslate >,
-	moment: ReturnType< typeof useLocalizedMoment >,
-	reduxDispatch: CalypsoDispatch
-): void {
-	const renewalItem = getRenewalItems( responseCart )[ 0 ];
-	// group all purchases into an array
-	const purchasedProducts = Object.values( purchases ?? {} ).reduce(
-		( result: Purchase[], value: Purchase[] ) => [ ...result, ...value ],
-		[]
-	);
-	// and take the first product which matches the product id of the renewalItem
-	const product = purchasedProducts.find( ( item ) => {
-		return String( item.product_id ) === String( renewalItem.product_id );
-	} );
-
-	if ( ! product ) {
-		debug( 'no product found for renewal notice matching', renewalItem, 'in', purchasedProducts );
-		return;
-	}
-
-	if ( product.will_auto_renew ) {
-		debug( 'showing notice for product that will auto-renew' );
-		reduxDispatch(
-			successNotice(
-				translate(
-					'Success! You renewed %(productName)s for %(duration)s, and we sent your receipt to %(email)s. {{a}}Learn more about renewals{{/a}}',
-					{
-						args: {
-							productName: renewalItem.product_name,
-							duration: moment
-								.duration( { days: parseInt( renewalItem.bill_period, 10 ) } )
-								.humanize(),
-							email: product.user_email,
-						},
-						components: {
-							a: (
-								<a href={ localizeUrl( AUTO_RENEWAL ) } target="_blank" rel="noopener noreferrer" />
-							),
-						},
-					}
-				),
-				{ displayOnNextPage: true }
-			)
-		);
-		return;
-	}
-
-	debug( 'showing notice for product that will not auto-renew' );
-	reduxDispatch(
-		successNotice(
-			translate(
-				'Success! You renewed %(productName)s for %(duration)s, until %(date)s. We sent your receipt to %(email)s.',
-				{
-					args: {
-						productName: renewalItem.product_name,
-						duration: moment
-							.duration( { days: parseInt( renewalItem.bill_period, 10 ) } )
-							.humanize(),
-						date: moment( product.expiry ).format( 'LL' ),
-						email: product.user_email,
-					},
-				}
-			),
-			{ displayOnNextPage: true }
-		)
 	);
 }
 
