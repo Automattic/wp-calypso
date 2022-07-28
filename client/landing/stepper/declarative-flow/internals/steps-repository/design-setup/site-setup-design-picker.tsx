@@ -29,6 +29,7 @@ import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-f
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
+import DesignPickerDesignTitle from './design-picker-design-title';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
@@ -369,6 +370,10 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
+		const headerDesignTitle = (
+			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
+		);
+
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
@@ -450,7 +455,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 					formattedHeader={
 						<FormattedHeader
 							id={ 'design-setup-header' }
-							headerText={ designTitle }
+							headerText={ headerDesignTitle }
 							align={ isMobile ? 'left' : 'center' }
 						/>
 					}
