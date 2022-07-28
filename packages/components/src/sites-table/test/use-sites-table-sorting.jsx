@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { renderHook } from '@testing-library/react-hooks';
 import { useSitesTableSorting } from '../use-sites-table-sorting';
 
 describe( 'useSitesTableSorting', () => {
@@ -27,38 +28,44 @@ describe( 'useSitesTableSorting', () => {
 	];
 
 	test( 'should do not sort sites if unsupported sort is provided', () => {
-		const { sortedSites } = useSitesTableSorting( filteredSites, {
-			sortKey: 'sort-that-is-not-supported',
-			sortOrder: 'asc',
-		} );
+		const { result } = renderHook( () =>
+			useSitesTableSorting( filteredSites, {
+				sortKey: 'sort-that-is-not-supported',
+				sortOrder: 'asc',
+			} )
+		);
 
-		expect( sortedSites.length ).toBe( 3 );
-		expect( sortedSites[ 0 ].ID ).toBe( 1 );
-		expect( sortedSites[ 1 ].ID ).toBe( 2 );
-		expect( sortedSites[ 2 ].ID ).toBe( 3 );
+		expect( result.current.sortedSites.length ).toBe( 3 );
+		expect( result.current.sortedSites[ 0 ].ID ).toBe( 1 );
+		expect( result.current.sortedSites[ 1 ].ID ).toBe( 2 );
+		expect( result.current.sortedSites[ 2 ].ID ).toBe( 3 );
 	} );
 
 	test( 'should sort sites by updated-at descending', () => {
-		const { sortedSites } = useSitesTableSorting( filteredSites, {
-			sortKey: 'updated-at',
-			sortOrder: 'desc',
-		} );
+		const { result } = renderHook( () =>
+			useSitesTableSorting( filteredSites, {
+				sortKey: 'updated-at',
+				sortOrder: 'desc',
+			} )
+		);
 
-		expect( sortedSites.length ).toBe( 3 );
-		expect( sortedSites[ 0 ].ID ).toBe( 2 );
-		expect( sortedSites[ 1 ].ID ).toBe( 3 );
-		expect( sortedSites[ 2 ].ID ).toBe( 1 );
+		expect( result.current.sortedSites.length ).toBe( 3 );
+		expect( result.current.sortedSites[ 0 ].ID ).toBe( 2 );
+		expect( result.current.sortedSites[ 1 ].ID ).toBe( 3 );
+		expect( result.current.sortedSites[ 2 ].ID ).toBe( 1 );
 	} );
 
 	test( 'should sort sites by updated-at ascending', () => {
-		const { sortedSites } = useSitesTableSorting( filteredSites, {
-			sortKey: 'updated-at',
-			sortOrder: 'asc',
-		} );
+		const { result } = renderHook( () =>
+			useSitesTableSorting( filteredSites, {
+				sortKey: 'updated-at',
+				sortOrder: 'asc',
+			} )
+		);
 
-		expect( sortedSites.length ).toBe( 3 );
-		expect( sortedSites[ 0 ].ID ).toBe( 1 );
-		expect( sortedSites[ 1 ].ID ).toBe( 3 );
-		expect( sortedSites[ 2 ].ID ).toBe( 2 );
+		expect( result.current.sortedSites.length ).toBe( 3 );
+		expect( result.current.sortedSites[ 0 ].ID ).toBe( 1 );
+		expect( result.current.sortedSites[ 1 ].ID ).toBe( 3 );
+		expect( result.current.sortedSites[ 2 ].ID ).toBe( 2 );
 	} );
 } );
