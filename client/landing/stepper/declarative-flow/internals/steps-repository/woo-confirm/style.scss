@@ -114,18 +114,22 @@ body.is-section-stepper {
 }
 
 .site-setup.woo-confirm {
-		.woo-confirm__info-section {
-			display: flex;
-			justify-content: center;
-			margin-top: 25vh;
+	.woo-confirm__loading-container,
+	.woo-confirm__info-section {
+		display: flex;
+		justify-content: center;
+	}
 
-			@include break-small {
-				margin-top: 45vh;
-			}
+	.woo-confirm__loading-container {
+		margin-top: 25vh;
 
-			.wpcom__loading-ellipsis {
-				display: block;
-				margin: 0 auto;
-			}
+		@include break-small {
+			margin-top: 45vh;
 		}
+
+		.wpcom__loading-ellipsis {
+			display: block;
+			margin: 0 auto;
+		}
+	}
 }
