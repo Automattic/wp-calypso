@@ -429,14 +429,8 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 				body: { trim_content: true },
 			} )
 		)
-		.then( () =>
-			wpcom.req.get( {
-				path: `/sites/${ siteSlug }/themes?status=active`,
-				apiNamespace: 'wp/v2',
-			} )
-		)
-		.then( ( data ) => {
-			callback( null, { isFSEActive: data?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false } );
+		.then( () => {
+			callback();
 		} )
 		.catch( ( errors ) => {
 			callback( [ errors ] );

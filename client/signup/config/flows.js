@@ -125,8 +125,7 @@ function getEditorDestination( dependencies ) {
 }
 
 function getDestinationFromIntent( dependencies ) {
-	const { intent, storeType, startingPoint, siteSlug, isFSEActive } = dependencies;
-
+	const { intent, storeType, startingPoint, siteSlug } = dependencies;
 	// If the user skips starting point, redirect them to My Home
 	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 		if ( startingPoint !== 'write' ) {
@@ -144,14 +143,6 @@ function getDestinationFromIntent( dependencies ) {
 			},
 			`/start/woocommerce-install`
 		);
-	}
-
-	if ( ! isFSEActive && intent === 'sell' ) {
-		return `/page/${ dependencies.siteSlug }/home`;
-	}
-
-	if ( isFSEActive && intent !== 'write' ) {
-		return `/site-editor/${ dependencies.siteSlug }`;
 	}
 
 	return getChecklistThemeDestination( dependencies );

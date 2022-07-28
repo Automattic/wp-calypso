@@ -310,14 +310,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				method: 'POST',
 			} );
 		}
-
-		const data: { theme_supports: { [ index: string ]: boolean } }[] = yield wpcomRequest( {
-			path: `/sites/${ siteSlug }/themes?status=active`,
-			apiNamespace: 'wp/v2',
-			method: 'GET',
-		} );
-
-		return data?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
 	}
 
 	const setSiteSetupError = ( error: string, message: string ) => ( {
