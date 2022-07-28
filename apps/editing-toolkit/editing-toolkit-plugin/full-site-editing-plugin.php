@@ -389,7 +389,7 @@ function load_help_center() {
 	// enable help center for all proxied users.
 	$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
 
-	$current_segment = 10; // segment of existing users that will get the help center in %.
+	$current_segment = 30; // segment of existing users that will get the help center in %.
 	$user_segment    = get_current_user_id() % 100;
 
 	if ( $is_proxied || $user_segment < $current_segment ) {
