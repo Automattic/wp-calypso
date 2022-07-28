@@ -1,5 +1,5 @@
-import { some } from 'lodash';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getThemeNameFromMeta } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
 
@@ -15,5 +15,11 @@ import 'calypso/state/themes/init';
  */
 export function isThemePurchased( state, themeId, siteId ) {
 	const sitePurchases = getSitePurchases( state, siteId );
-	return some( sitePurchases, { productSlug: 'premium_theme', meta: themeId } );
+	return sitePurchases.find( ( purchase ) => {
+		if ( purchase?.productSlug === 'premium_theme' ) {
+			const purchaseThemeId = getThemeNameFromMeta( purchase.meta );
+			return themeId === purchaseThemeId;
+		}
+		return false;
+	} );
 }

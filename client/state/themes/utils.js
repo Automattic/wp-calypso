@@ -242,3 +242,19 @@ export function getThemeTaxonomySlugs( theme, taxonomy ) {
 	const items = get( theme, [ 'taxonomies', taxonomy ], [] );
 	return items.map( ( { slug } ) => slug );
 }
+
+/**
+ * Returns the theme name extract from meta.
+ *
+ * @param  {string}  meta The purchase meta.
+ * @returns {string} The theme name.
+ */
+export function getThemeNameFromMeta( meta ) {
+	const hasBillingPeriod =
+		meta.lastIndexOf( '-monthly' ) > -1 || meta.lastIndexOf( '-yearly' ) > -1;
+
+	if ( ! hasBillingPeriod ) return meta;
+
+	const lastIndex = meta.lastIndexOf( '-' );
+	return meta.slice( 0, lastIndex );
+}

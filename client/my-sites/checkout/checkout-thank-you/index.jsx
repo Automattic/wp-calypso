@@ -70,6 +70,7 @@ import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
 import { requestThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme } from 'calypso/state/themes/selectors';
+import { getThemeNameFromMeta } from 'calypso/state/themes/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import BloggerPlanDetails from './blogger-plan-details';
@@ -275,7 +276,7 @@ export class CheckoutThankYou extends Component {
 			purchases.length > 0 &&
 			purchases.every( isTheme )
 		) {
-			const themeId = purchases[ 0 ].meta;
+			const themeId = getThemeNameFromMeta( purchases[ 0 ].meta );
 			// Mark that we've done the redirect, and do the actual redirect once the state is recorded
 			this.setState( { didThemeRedirect: true }, () => {
 				this.props.requestThenActivate( themeId, this.props.selectedSite.ID, 'calypstore', true );

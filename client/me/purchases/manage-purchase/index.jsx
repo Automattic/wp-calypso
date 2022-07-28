@@ -97,6 +97,7 @@ import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getThemeNameFromMeta } from 'calypso/state/themes/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
@@ -875,6 +876,12 @@ class ManagePurchase extends Component {
 			preventRenewal = ! isRenewable( purchase );
 		}
 
+		let theme = null;
+		if ( isPurchaseTheme ) {
+			const themeId = getThemeNameFromMeta( purchase.meta );
+			theme = <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } />;
+		}
+
 		return (
 			<Fragment>
 				<QueryStoredCards />
@@ -887,7 +894,7 @@ class ManagePurchase extends Component {
 					selectedSiteId={ this.props.selectedSiteId }
 				/>
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
-				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
+				{ theme }
 
 				<HeaderCake backHref={ this.props.purchaseListUrl }>
 					{ this.props.cardTitle || titles.managePurchase }
@@ -1002,6 +1009,11 @@ export default connect(
 		const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
 		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
 		const relatedMonthlyPlanPrice = getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug );
+		let theme;
+		if ( isPurchaseTheme ) {
+			const themeId = getThemeNameFromMeta( purchase.meta );
+			theme = getCanonicalTheme( state, siteId, themeId );
+		}
 		return {
 			hasLoadedDomains,
 			hasLoadedSites,
@@ -1023,7 +1035,7 @@ export default connect(
 			renewableSitePurchases,
 			plan: isPurchasePlan && applyTestFiltersToPlansList( purchase.productSlug, undefined ),
 			isPurchaseTheme,
-			theme: isPurchaseTheme && getCanonicalTheme( state, siteId, purchase.meta ),
+			theme,
 			isAtomicSite: isSiteAtomic( state, siteId ),
 			relatedMonthlyPlanSlug,
 			relatedMonthlyPlanPrice,
