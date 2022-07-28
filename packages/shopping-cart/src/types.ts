@@ -333,6 +333,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	has_bundle_credit?: boolean;
 	terms_of_service?: TermsOfServiceRecord[];
 	has_pending_payment?: boolean;
+	peer_referral_limit: boolean;
 }
 
 export interface ResponseCartTaxData {
