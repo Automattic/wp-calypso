@@ -248,6 +248,7 @@ class DomainSearch extends Component {
 							) }
 							<RegisterDomainStep
 								suggestion={ this.getInitialSuggestion() }
+								domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }
