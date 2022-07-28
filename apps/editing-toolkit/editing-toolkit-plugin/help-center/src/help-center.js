@@ -24,7 +24,7 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
-	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state ) ) || false;
+	const isSimpleSite = useSelector( getIsSimpleSite ) || false;
 
 	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId, isSimpleSite );
 

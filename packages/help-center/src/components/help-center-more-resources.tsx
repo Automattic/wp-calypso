@@ -26,7 +26,7 @@ export const HelpCenterMoreResources = () => {
 	const [ showWhatsNewDot, setShowWhatsNewDot ] = useState( false );
 	const sectionName = useSelector( getSectionName );
 
-	const { isBusinessOrEcomPlanUser, siteId } = useSelector( ( state ) => {
+	const { isBusinessOrEcomPlanUser, siteId, isSimpleSite } = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
 		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
 		const siteId = getSelectedSiteId( state );
@@ -36,10 +36,9 @@ export const HelpCenterMoreResources = () => {
 				( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
 			),
 			siteId: siteId,
+			isSimpleSite: getIsSimpleSite( state ) || false,
 		};
 	} );
-
-	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state ) ) || false;
 
 	const { data, isLoading, setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery(
 		siteId,

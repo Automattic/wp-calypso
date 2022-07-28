@@ -26,7 +26,7 @@ export const useHasSeenWhatsNewModalQuery = ( siteId: number | null, isSimpleSit
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
-			enabled: isSimpleSite,
+			enabled: !! siteId && isSimpleSite,
 			refetchOnWindowFocus: false,
 		}
 	);
