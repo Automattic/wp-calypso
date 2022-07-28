@@ -127,7 +127,6 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	}
 
 	const canUseCredits = canPurchaseWithCredits( responseCart );
-
 	if ( ! canUseCredits ) {
 		return {
 			id: 'credits',
@@ -172,11 +171,6 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 }
 
 export function doesPurchaseHaveFullCredits( responseCart: ResponseCart ): boolean {
-	const canUseCredits = canPurchaseWithCredits( responseCart );
-	if ( ! canUseCredits ) {
-		return false;
-	}
-
 	const credits = responseCart.credits_integer;
 	const subtotal = responseCart.sub_total_integer;
 	const taxes = responseCart.total_tax_integer;
