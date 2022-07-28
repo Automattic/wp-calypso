@@ -129,18 +129,6 @@ class DomainSearch extends Component {
 
 		this.props.recordAddDomainButtonClick( domain, 'domains', isPremium );
 
-		if ( this.props.domainAndPlanUpsellFlow ) {
-			// If we are in the domain + annual plan upsell flow, we need to redirect
-			// to the plans page next and let it know that we are still in that flow.
-			// We also need to provide the slug of the product we are adding so it
-			// can be added once the plan is selected.
-			const productAliasForCheckout = `${ productSlug }:${ domain }`;
-			page(
-				`/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=${ productAliasForCheckout }`
-			);
-			return;
-		}
-
 		let registration = domainRegistration( {
 			domain,
 			productSlug,
@@ -149,6 +137,15 @@ class DomainSearch extends Component {
 
 		if ( supportsPrivacy ) {
 			registration = updatePrivacyForDomain( registration, true );
+		}
+
+		if ( this.props.domainAndPlanUpsellFlow ) {
+			// If we are in the domain + annual plan upsell flow, we need to redirect
+			// to the plans page next and let it know that we are still in that flow.
+			this.props.shoppingCartManager.addProductsToCart( [ registration ] ).then( () => {
+				page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
+			} );
+			return;
 		}
 
 		this.props.shoppingCartManager

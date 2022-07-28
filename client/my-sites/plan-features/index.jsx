@@ -596,7 +596,23 @@ export class PlanFeatures extends Component {
 		if ( domainAndPlanPackage ) {
 			// In this flow we redirect to checkout with both the plan and domain
 			// product in the cart.
-			page( `/checkout/${ selectedSiteSlug }/${ productSlug },${ domainAndPlanPackage }` );
+			shoppingCartManager
+				.addProductsToCart( [
+					{
+						product_slug: productSlug,
+						extra: {
+							afterPurchaseUrl: redirectTo ?? undefined,
+						},
+					},
+				] )
+				.then( () => {
+					if ( withDiscount && this.isMounted ) {
+						return shoppingCartManager.applyCoupon( withDiscount );
+					}
+				} )
+				.then( () => {
+					this.isMounted && page( `/checkout/${ selectedSiteSlug }` );
+				} );
 			return;
 		}
 
