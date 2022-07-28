@@ -116,7 +116,9 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			await startSiteFlow.clickButton( 'View designs' );
 		} );
 
-		it( 'See design picker screen', async function () {
+		// Skipped instead of reworked.
+		// https://github.com/Automattic/wp-calypso/issues/64418
+		it.skip( 'See design picker screen', async function () {
 			await startSiteFlow.validateOnDesignPickerScreen();
 		} );
 
