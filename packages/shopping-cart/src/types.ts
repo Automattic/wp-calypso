@@ -331,10 +331,9 @@ export interface ResponseCart< P = ResponseCartProduct > {
 }
 
 export interface ProductCostOverride {
-	price: number;
+	new_price: number;
+	old_price: number;
 	reason: string;
-	user_facing_reason: string;
-	discount: number;
 }
 
 export interface ResponseCartTaxData {
