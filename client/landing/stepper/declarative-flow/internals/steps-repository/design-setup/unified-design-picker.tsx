@@ -21,7 +21,6 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-from-top';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
@@ -227,6 +226,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const handleBackClick = () => {
 		if ( isPreviewingDesign ) {
+			recordTracksEvent(
+				'calypso_signup_design_preview_exit',
+				getEventPropsByDesign( selectedDesign as Design )
+			);
+
 			setSelectedDesign( undefined );
 			setIsPreviewingDesign( false );
 			return;
@@ -234,9 +238,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		goBack();
 	};
-
-	// Track scroll event to make sure people are scrolling on mobile.
-	useTrackScrollPageFromTop( isMobile && ! isPreviewingDesign, flow || '', STEP_NAME );
 
 	// Make sure people is at the top when entering/leaving preview mode.
 	useEffect( () => {
