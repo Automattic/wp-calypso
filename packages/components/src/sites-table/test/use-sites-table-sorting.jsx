@@ -61,16 +61,4 @@ describe( 'useSitesTableSorting', () => {
 		expect( sortedSites[ 1 ].ID ).toBe( 3 );
 		expect( sortedSites[ 2 ].ID ).toBe( 2 );
 	} );
-
-	test( 'should sort sites by updated-at descending if unsupported order is provided', () => {
-		const { sortedSites } = useSitesTableSorting( filteredSites, {
-			sortKey: 'updated-at',
-			sortOrder: 'unsupported-order',
-		} );
-
-		expect( sortedSites.length ).toBe( 3 );
-		expect( sortedSites[ 0 ].ID ).toBe( 2 );
-		expect( sortedSites[ 1 ].ID ).toBe( 3 );
-		expect( sortedSites[ 2 ].ID ).toBe( 1 );
-	} );
 } );
