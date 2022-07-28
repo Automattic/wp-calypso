@@ -165,7 +165,7 @@
 		"signup/standard-theme-v13n": true,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
-		"themes/atomic-homepage-replace": false,
+		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
 		"titan/iframe-control-panel": false,
 		"upgrades/redirect-payments": true,
