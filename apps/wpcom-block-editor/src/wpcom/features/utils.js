@@ -226,7 +226,7 @@ const buildGlobalStylesEventProps = ( keyMap, value ) => {
 let lastCalled;
 let originalGSObject;
 let functionTimeoutId;
-const debounceTimer = 300;
+const debounceTimer = 500;
 /**
  * Builds and sends tracks events for global styles changes. Debouncing is necessary to avoid
  * spamming tracks events with updates when sliding inputs such as a color picker are in use,
