@@ -127,6 +127,7 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	}
 
 	const canUseCredits = canPurchaseWithCredits( responseCart );
+
 	if ( ! canUseCredits ) {
 		return {
 			id: 'credits',
