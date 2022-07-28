@@ -312,6 +312,11 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	 */
 	credits_display: string;
 
+	/**
+	 * If the use of credit is limited due to prevent Peer Refererral Fraud Abuse
+	 */
+	peer_referral_limit: boolean;
+
 	currency: string;
 	allowed_payment_methods: string[];
 	coupon: string;
@@ -328,7 +333,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	has_bundle_credit?: boolean;
 	terms_of_service?: TermsOfServiceRecord[];
 	has_pending_payment?: boolean;
-	peer_referral_limit: boolean;
 }
 
 export interface ResponseCartTaxData {
