@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -14,12 +15,14 @@ export function useSitesTableSorting(
 	allSites: SiteExcerptData[],
 	{ sortKey, sortOrder = 'asc' }: SitesTableSortOptions
 ): UseSitesTableSortingResult {
-	switch ( sortKey ) {
-		case 'updated-at':
-			return { sortedSites: sortSitesByLastPublish( allSites, sortOrder ) };
-		default:
-			return { sortedSites: allSites };
-	}
+	return useMemo( () => {
+		switch ( sortKey ) {
+			case 'updated-at':
+				return { sortedSites: sortSitesByLastPublish( allSites, sortOrder ) };
+			default:
+				return { sortedSites: allSites };
+		}
+	}, [ allSites, sortKey, sortOrder ] );
 }
 
 function sortSitesByLastPublish( sites: SiteExcerptData[], sortOrder: string ): SiteExcerptData[] {
