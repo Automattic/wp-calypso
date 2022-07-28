@@ -15,7 +15,7 @@ import 'calypso/state/themes/init';
  */
 export function isThemePurchased( state, themeId, siteId ) {
 	const sitePurchases = getSitePurchases( state, siteId );
-	return sitePurchases.find( ( purchase ) => {
+	return !! sitePurchases.find( ( purchase ) => {
 		if ( purchase?.productSlug === 'premium_theme' ) {
 			const purchaseThemeId = getThemeNameFromMeta( purchase.meta );
 			return themeId === purchaseThemeId;
