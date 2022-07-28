@@ -1,5 +1,5 @@
 import { select } from '@wordpress/data';
-import { isEqual, some, debounce } from 'lodash';
+import { isEqual, some } from 'lodash';
 import tracksRecordEvent from './tracking/track-record-event';
 
 /**
@@ -223,20 +223,50 @@ const buildGlobalStylesEventProps = ( keyMap, value ) => {
 	};
 };
 
+let lastCalled;
+let originalGSObject;
+let functionTimeoutId;
+const debounceTimer = 300;
 /**
- * Builds and sends tracks events for global styles changes.
+ * Builds and sends tracks events for global styles changes. Debouncing is necessary to avoid
+ * spamming tracks events with updates when sliding inputs such as a color picker are in use,
+ * however a custom debouncing function is necessary to be able to compare the original global
+ * styles object from the first call.
  *
  * @param {Object} updated   The updated global styles content object.
- * @param {Object} original	 The original global styles content object.
+ * @param {Object} original  The original global styles content object.
  * @param {string} eventName Name of the tracks event to send.
  */
-export const buildGlobalStylesContentEvents = debounce( ( updated, original, eventName ) => {
-	// Debouncing is necessary to avoid spamming tracks events with updates when sliding inputs
-	// such as a color picker are in use.
-	return findUpdates( updated, original )?.forEach( ( { keyMap, value } ) => {
-		tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
-	} );
-}, 100 );
+export const buildGlobalStylesContentEvents = ( updated, original, eventName ) => {
+	// check timing since last call
+	const hasntBeenCalled = ! lastCalled;
+	const timeCalled = new Date().getTime();
+	const recentlyCalled = timeCalled - lastCalled < debounceTimer;
+	lastCalled = timeCalled;
+
+	if ( hasntBeenCalled || ! recentlyCalled ) {
+		// if not called recently -> set original for later reference
+		originalGSObject = original;
+		// put function on a delay
+		functionTimeoutId = setTimeout(
+			() =>
+				findUpdates( updated, originalGSObject )?.forEach( ( { keyMap, value } ) => {
+					tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
+				} ),
+			debounceTimer
+		);
+	} else {
+		// else -> cancel delayed function call - reset it with new updated value
+		clearTimeout( functionTimeoutId );
+		functionTimeoutId = setTimeout(
+			() =>
+				findUpdates( updated, originalGSObject )?.forEach( ( { keyMap, value } ) => {
+					tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
+				} ),
+			debounceTimer
+		);
+	}
+};
 
 export const getFlattenedBlockNames = ( block ) => {
 	const blockNames = [];
