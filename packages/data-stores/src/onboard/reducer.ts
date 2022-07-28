@@ -259,7 +259,10 @@ const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardActio
 	if ( action.type === 'SET_PENDING_ACTION' ) {
 		return action.pendingAction;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		! action.skipFlags.includes( 'skipPendingAction' )
+	) {
 		return undefined;
 	}
 	return state;

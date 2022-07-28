@@ -35,6 +35,10 @@
 			}
 		}
 
+		.sites-overview__row-status {
+			display: block;
+			max-width: fit-content;
+		}
 		a {
 			display: flex;
 		}

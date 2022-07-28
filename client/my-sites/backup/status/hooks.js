@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import {
 	DELTA_ACTIVITIES,
 	getDeltaActivitiesByType,
@@ -169,7 +170,7 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		{ refetchOnWindowFocus: false }
 	);
 
-	const activityLog = useActivityLogQuery(
+	const activityLog = useRewindableActivityLogQuery(
 		siteId,
 		{
 			before: moment( selectedDate ).endOf( 'day' ).toISOString(),

@@ -783,7 +783,7 @@ object PreReleaseE2ETests : E2EBuildType(
 			branchFilter = "+:<default>"
 			buildFailedToStart = true
 			buildFailed = true
-			buildFinishedSuccessfully = true
+			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
 	}
@@ -852,14 +852,6 @@ object QuarantinedE2ETests: E2EBuildType(
 		}
 	},
 	buildTriggers = {
-		schedule {
-			schedulingPolicy = cron {
-				hours = "01"
-			}
-			branchFilter = "+:trunk"
-			triggerBuild = always()
-			withPendingChangesOnly = false
-		}
 	}
 )
 

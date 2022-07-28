@@ -135,6 +135,18 @@ describe( 'getProductSlugFromContext', () => {
 		},
 		{
 			product: undefined,
+			domainOrProduct: subdomainSiteSlug,
+			selectedSite: subdomainSiteSlug,
+			expected: '',
+		},
+		{
+			product: undefined,
+			domainOrProduct: subdomainSiteSlug,
+			selectedSite: domainSiteSlug,
+			expected: '',
+		},
+		{
+			product: undefined,
 			domainOrProduct: undefined,
 			selectedSite: domainSiteSlug,
 			expected: '',

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const SitesBadge = styled.span`
+export const SitesCountBadge = styled.span`
 	font-size: 12px;
 	font-weight: 500;
 	color: var( --studio-gray-80 );
@@ -10,5 +10,3 @@ const SitesBadge = styled.span`
 	border-radius: 4px;
 	line-height: 20px;
 `;
-
-export default SitesBadge;

@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { ViewportName } from '../../types/env-variables.types';
-import { LegacyPlans } from '../pages/plans-page';
+import { Plans } from '../pages/plans-page';
 
 export type Features =
 	| 'Custom domains'
@@ -230,9 +230,9 @@ export class GutenboardingFlow {
 	/**
 	 * Given a name, select a plan matching the name.
 	 *
-	 * @param {string} name Name of the plan.
+	 * @param {Plans} name Name of the plan.
 	 */
-	async selectPlan( name: LegacyPlans ): Promise< void > {
+	async selectPlan( name: Plans ): Promise< void > {
 		// First, expand the accordion.
 		await this.expandAllPlans();
 		await this.page.click( selectors.selectPlanButton( name ) );
@@ -241,9 +241,9 @@ export class GutenboardingFlow {
 	/**
 	 * Checks if the recommended plan matches the expected name.
 	 *
-	 * @param {LegacyPlans} name Name of the plan.
+	 * @param {Plans} name Name of the plan.
 	 */
-	async validateRecommendedPlan( name: LegacyPlans ): Promise< void > {
+	async validateRecommendedPlan( name: Plans ): Promise< void > {
 		// The plan item with the `has-badge` attribute is the one that is recommended based on features.
 		const elementHandle = await this.page.waitForSelector( `${ selectors.planItem }.has-badge` );
 		await elementHandle.waitForSelector( `div:text-is("${ name }")` );

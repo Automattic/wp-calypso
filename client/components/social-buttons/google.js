@@ -21,7 +21,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class GoogleLoginButton extends Component {
+class GoogleSocialButton extends Component {
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
 		fetchBasicProfile: PropTypes.bool,
@@ -31,6 +31,7 @@ class GoogleLoginButton extends Component {
 		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
+		startingPoint: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		uxMode: PropTypes.string,
 	};
@@ -88,8 +89,9 @@ class GoogleLoginButton extends Component {
 			redirect_uri: this.props.redirectUri,
 			callback: ( response ) => {
 				if ( response.error ) {
-					this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+					this.props.recordTracksEvent( 'calypso_social_button_failure', {
 						social_account_type: 'google',
+						starting_point: this.props.startingPoint,
 						error_code: response.error,
 					} );
 
@@ -206,8 +208,9 @@ class GoogleLoginButton extends Component {
 			const { code: error_code } = getErrorFromHTTPError( httpError );
 
 			if ( error_code ) {
-				this.props.recordTracksEvent( 'calypso_login_social_auth_code_exchange_failure', {
+				this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_failure', {
 					social_account_type: 'google',
+					starting_point: this.props.startingPoint,
 					error_code,
 				} );
 			}
@@ -220,6 +223,11 @@ class GoogleLoginButton extends Component {
 
 			return;
 		}
+
+		this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
+			social_account_type: 'google',
+			starting_point: this.props.startingPoint,
+		} );
 
 		const { access_token, id_token } = response.body.data;
 
@@ -261,8 +269,9 @@ class GoogleLoginButton extends Component {
 			.getAuthInstance()
 			.signIn( { prompt: 'select_account' } )
 			.then( responseHandler, ( error ) => {
-				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+				this.props.recordTracksEvent( 'calypso_social_button_failure', {
 					social_account_type: 'google',
+					starting_point: this.props.startingPoint,
 					error_code: error.error,
 				} );
 			} );
@@ -357,4 +366,4 @@ export default connect(
 		recordTracksEvent,
 		showErrorNotice: errorNotice,
 	}
-)( localize( GoogleLoginButton ) );
+)( localize( GoogleSocialButton ) );

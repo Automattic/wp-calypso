@@ -61,12 +61,11 @@ describe(
 			} );
 
 			it( 'View available plans', async function () {
-				plansPage = new PlansPage( page, 'current' );
-				await plansPage.showPlanComparison();
+				plansPage = new PlansPage( page );
 			} );
 
 			it( 'Click button to upgrade to WordPress.com Pro', async function () {
-				await plansPage.selectPlan( 'Pro' );
+				await plansPage.selectPlan( 'Premium' ); // Placeholder
 			} );
 
 			it( 'WordPress.com Pro is added to cart', async function () {
@@ -93,8 +92,8 @@ describe(
 			} );
 
 			it( 'Plans page states user is on WordPress.com Pro plan', async function () {
-				const plansPage = new PlansPage( page, 'current' );
-				await plansPage.validateActivePlan( 'Pro' );
+				const plansPage = new PlansPage( page );
+				await plansPage.validateActivePlan( 'Premium' ); // Placeholder
 			} );
 		} );
 
