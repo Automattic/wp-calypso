@@ -49,17 +49,6 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 
 		beforeAll( async function () {
 			await BrowserManager.setStoreCookie( page, { currency: 'GBP' } );
-
-			// 	// -----------------------------
-			// 	const loginPage = new LoginPage( page );
-			// 	await loginPage.visit();
-			// 	await loginPage.fillUsername( 'e2eflowtestingmanual1638568342' );
-			// 	await loginPage.clickSubmit();
-			// 	await loginPage.fillPassword( 'wTSw9i2MA89LuPrYd3ZD' );
-			// 	await loginPage.clickSubmit();
-			// 	await page.waitForTimeout( 500 );
-			// 	await page.goto( 'https://wordpress.com/start/domains?ref=calypso-selector' );
-			// 	// -----------------------------
 		} );
 
 		it( 'Navigate to Signup page', async function () {
