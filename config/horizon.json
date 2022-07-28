@@ -112,7 +112,7 @@
 		"signup/standard-theme-v13n": false,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
-		"themes/atomic-homepage-replace": false,
+		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,

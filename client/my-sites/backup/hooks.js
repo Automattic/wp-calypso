@@ -59,7 +59,8 @@ export const useMatchingBackupAttemptsInRange = ( siteId, { before, after, sortO
 
 export const useFirstMatchingBackupAttempt = (
 	siteId,
-	{ before, after, successOnly, sortOrder } = {}
+	{ before, after, successOnly, sortOrder } = {},
+	queryOptions = {}
 ) => {
 	const hasRealtimeBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
@@ -69,7 +70,7 @@ export const useFirstMatchingBackupAttempt = (
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )
 		: getDailyAttemptFilter( { before, after, successOnly, sortOrder } );
 
-	const { data, isLoading } = useActivityLogQuery( siteId, filter );
+	const { data, isLoading } = useActivityLogQuery( siteId, filter, queryOptions );
 
 	let backupAttempt = undefined;
 	if ( data ) {

@@ -767,13 +767,13 @@ export function createTestReduxStore() {
 						currency_code: planWithoutDomainBiannual.currency,
 					},
 					[ planLevel2.product_slug ]: {
-						product_id: planWithoutDomain.product_id,
-						product_slug: planWithoutDomain.product_slug,
+						product_id: planLevel2.product_id,
+						product_slug: planLevel2.product_slug,
 						product_type: 'bundle',
 						available: true,
 						is_domain_registration: false,
-						cost_display: planWithoutDomain.item_subtotal_display,
-						currency_code: planWithoutDomain.currency,
+						cost_display: planLevel2.item_subtotal_display,
+						currency_code: planLevel2.currency,
 					},
 					[ planLevel2Monthly.product_slug ]: {
 						product_id: planLevel2Monthly.product_id,
