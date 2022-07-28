@@ -127,7 +127,7 @@
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
 		"ssr/sample-log-cache-misses": true,
-		"themes/atomic-homepage-replace": false,
+		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
