@@ -213,16 +213,14 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
+			const currentVariantItem = await screen.findByRole( 'option', {
+				name: getVariantItemTextForInterval( cartPlan ),
+			} );
 			const variantItem = await screen.findByRole( 'option', {
 				name: getVariantItemTextForInterval( expectedVariant ),
 			} );
-			const variantItems = await screen.findAllByRole( 'option' );
 
-			// The discount does not appear until the item is selected.
-			await user.click( variantItem );
-
-			const lowestVariantItem = variantItems[ 0 ];
-			const lowestVariantSlug = lowestVariantItem.dataset.productSlug;
+			const currentVariantSlug = currentVariantItem.dataset.productSlug;
 			const variantSlug = variantItem.dataset.productSlug;
 
 			const variantData = getPlansItemsState().find(
@@ -230,13 +228,13 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			);
 			const finalPrice = variantData.raw_price;
 			const variantInterval = variantData.bill_period;
-			const lowestVariantData = getPlansItemsState().find(
-				( plan ) => plan.product_slug === lowestVariantSlug
+			const currentVariantData = getPlansItemsState().find(
+				( plan ) => plan.product_slug === currentVariantSlug
 			);
-			const lowestVariantPrice = lowestVariantData.raw_price;
-			const lowestVariantInterval = lowestVariantData.bill_period;
-			const intervalsInVariant = Math.round( variantInterval / lowestVariantInterval );
-			const priceBeforeDiscount = lowestVariantPrice * intervalsInVariant;
+			const currentVariantPrice = currentVariantData.raw_price;
+			const currentVariantInterval = currentVariantData.bill_period;
+			const intervalsInVariant = Math.round( variantInterval / currentVariantInterval );
+			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
 
 			const discountPercentage = Math.floor( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
 			expect( screen.getByText( `Save ${ discountPercentage }%` ) ).toBeInTheDocument();
@@ -259,9 +257,6 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			const variantItem = await screen.findByRole( 'option', {
 				name: getVariantItemTextForInterval( expectedVariant ),
 			} );
-
-			// The discount does not appear until the item is selected.
-			await user.click( variantItem );
 
 			expect( within( variantItem ).queryByText( /Save \d+%/ ) ).not.toBeInTheDocument();
 		}
