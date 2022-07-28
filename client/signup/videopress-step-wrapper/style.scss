@@ -59,11 +59,18 @@
 }
 
 .videopress-step-wrapper__middle {
+	display: flex;
+	flex-direction: column;
+
+	& .step-wrapper {
+		flex: 1;
+	}
+
 	background: var( --videopress-color-background-dark );
 	color: var( --videopress-color-text );
 	box-sizing: border-box;
 	margin: 0 auto;
-	height: 100vh;
+	height: calc( 100vh - 70px );
 	line-height: 1.8;
 	padding: 96px 1.5em 24px;
 
@@ -87,6 +94,10 @@
 	a {
 		color: var( --videopress-color-link );
 		text-decoration: none;
+
+		&:hover {
+			color: var( --videopress-color-link );
+		}
 	}
 
 	.videopress-step-wrapper__header-text {
@@ -150,6 +161,10 @@
 	background: var( --videopress-color-background-button );
 	color: #070707;
 	border-radius: 0;
+
+	&:hover {
+		color: #070707;
+	}
 }
 
 .videopress-step-wrapper__header-text {

@@ -77,7 +77,7 @@ function VideoPressStepWrapper( {
 				/>
 				<div className="videopress-step-wrapper__footer">
 					<img
-						src="/calypso/images/p2/w-logo.png"
+						src="/calypso/images/p2/w-logo-white.png"
 						className="videopress-step-wrapper__w-logo"
 						alt="WP.com logo"
 					/>
