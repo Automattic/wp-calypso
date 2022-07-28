@@ -84,9 +84,11 @@ class ErrorNotice extends Component {
 						a: (
 							<a
 								href={ signupUrl }
-								onClick={ this.props.recordTracksEvent(
-									'calypso_login_social_unknown_user_signup_link_click'
-								) }
+								onClick={ () => {
+									this.props.recordTracksEvent(
+										'calypso_login_social_unknown_user_signup_link_click'
+									);
+								} }
 							/>
 						),
 					},
