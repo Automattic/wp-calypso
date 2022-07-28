@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
-import { Popover, Button } from '@automattic/components';
+import { Button, Popover } from '@automattic/components';
 import { shouldShowHelpCenterToUser } from '@automattic/help-center';
-import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -16,9 +16,9 @@ import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { preload } from 'calypso/sections-helper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
-	getCurrentUserSiteCount,
 	getCurrentUser,
 	getCurrentUserDate,
+	getCurrentUserSiteCount,
 } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isFetchingPreferences } from 'calypso/state/preferences/selectors';
@@ -36,7 +36,7 @@ import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-cur
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSiteId, getSectionName, getSectionGroup } from 'calypso/state/ui/selectors';
+import { getSectionGroup, getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 import { MasterBarMobileMenu } from './masterbar-menu';
@@ -83,6 +83,7 @@ class MasterbarLoggedIn extends Component {
 			( isResponsiveMenu ) => this.setState( { isResponsiveMenu } )
 		);
 	}
+
 	handleLayoutFocus = ( currentSection ) => {
 		if ( currentSection !== this.props.section ) {
 			// When current section is not focused then open the sidebar.
@@ -485,12 +486,13 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderHelpCenter() {
-		const { currentSelectedSiteId } = this.props;
+		const { currentSelectedSiteId, translate } = this.props;
 
 		return (
 			<AsyncLoad
 				require="./masterbar-help-center"
 				siteId={ currentSelectedSiteId }
+				tooltip={ translate( 'Help' ) }
 				placeholder={ null }
 			/>
 		);
