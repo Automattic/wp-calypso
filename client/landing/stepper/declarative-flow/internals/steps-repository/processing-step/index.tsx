@@ -3,10 +3,10 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import { useProcessingLoadingMessages } from 'calypso/landing/stepper/hooks/use-processing-loading-messages';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
+import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import type { Step } from '../../types';
 import './style.scss';
 
