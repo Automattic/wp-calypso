@@ -9,7 +9,7 @@ import 'calypso/state/plans/init';
  * @param  {object}  state     global state
  * @param  {number}  productId the plan productId
  * @param  {boolean} isMonthly if true, returns monthly price
- * @returns {number}  plan price
+ * @returns {number|null}  plan price
  */
 export function getPlanRawPrice( state, productId, isMonthly = false ) {
 	const plan = getPlan( state, productId );
