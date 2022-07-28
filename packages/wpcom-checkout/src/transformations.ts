@@ -138,14 +138,7 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 				// Clamp the credits value to the total
 				value: 0,
 				// translators: The discount amount of the credits line item in checkout
-				displayValue: String(
-					translate( 'Not applicable', {
-						args: {
-							// Clamp the credits display value to the total
-							discountAmount: 0,
-						},
-					} )
-				),
+				displayValue: String( translate( 'Not applicable' ) ),
 			},
 		};
 	}
@@ -178,6 +171,11 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 }
 
 export function doesPurchaseHaveFullCredits( responseCart: ResponseCart ): boolean {
+	const canUseCredits = canPurchaseWithCredits( responseCart );
+	if ( ! canUseCredits ) {
+		return false;
+	}
+
 	const credits = responseCart.credits_integer;
 	const subtotal = responseCart.sub_total_integer;
 	const taxes = responseCart.total_tax_integer;
