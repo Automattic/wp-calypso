@@ -1,5 +1,4 @@
-import { Frame, Page } from 'playwright';
-import envVariables from '../../env-variables';
+import { Page } from 'playwright';
 
 /**
  * Step name in site setup flow.
@@ -22,10 +21,6 @@ const selectors = {
 
 	// Themes
 	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
-	previewThemeButtonDesktop: ( name: string ) => `button:has-text("Preview ${ name }")`,
-	previewThemeButtonMobile: ( name: string ) =>
-		`button.design-picker__design-option:has-text("${ name }")`,
-	themePreviewIframe: 'iframe[title=Preview]',
 
 	// Goals
 	goalButton: ( goal: string ) => `.select-card__container:has-text("${ goal.toLowerCase() }")`,
@@ -171,22 +166,8 @@ export class StartSiteFlow {
 	 *
 	 * @param {string} themeName Name of theme, e.g. "Zoologist".
 	 */
-	async previewTheme( themeName: string ): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await this.page.hover( selectors.individualThemeContainer( themeName ) );
-			await this.page.click( selectors.previewThemeButtonDesktop( themeName ) );
-		} else {
-			await this.page.click( selectors.previewThemeButtonMobile( themeName ) );
-		}
-	}
-
-	/**
-	 * Get a Frame handle for the iframe holding the theme preview.
-	 *
-	 * @returns The Frame handle for the theme preview iframe.
-	 */
-	async getThemePreviewIframe(): Promise< Frame > {
-		const elementHandle = await this.page.waitForSelector( selectors.themePreviewIframe );
-		return ( await elementHandle.contentFrame() ) as Frame;
+	async selectTheme( themeName: string ): Promise< void > {
+		const locator = this.page.locator( selectors.individualThemeContainer( themeName ) );
+		await locator.click();
 	}
 }

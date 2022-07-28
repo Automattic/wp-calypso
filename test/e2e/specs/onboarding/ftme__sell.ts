@@ -1,5 +1,5 @@
 /**
- * @group quarantined
+ * @group calypso-release
  */
 
 import {
@@ -14,7 +14,6 @@ import {
 	StartSiteFlow,
 	SecretsManager,
 	SignupDomainPage,
-	EditorPage,
 	MyHomePage,
 	ComingSoonPage,
 	NewSiteResponse,
@@ -26,7 +25,7 @@ import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'FTME: WordPress.com Personal' ), function () {
+describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 	const planName = 'Personal';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
@@ -149,7 +148,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: WordPress.com Personal' ), functio
 		} );
 
 		it( 'Select "Write" goal', async function () {
-			await startSiteFlow.selectGoal( 'Write' );
+			await startSiteFlow.selectGoal( 'Sell' );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
@@ -166,25 +165,29 @@ describe( DataHelper.createSuiteTitle( 'FTME: WordPress.com Personal' ), functio
 			await startSiteFlow.enterTagline( blogTagLine );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
-
-		it( 'Choose to start writing', async function () {
-			await startSiteFlow.clickButton( 'Start writing' );
-		} );
 	} );
 
-	describe( 'Write', function () {
-		let editorPage: EditorPage;
+	describe( 'Sell', function () {
+		const themeName = 'Dorna';
+		let startSiteFlow: StartSiteFlow;
 
 		beforeAll( async function () {
-			editorPage = new EditorPage( page );
+			startSiteFlow = new StartSiteFlow( page );
 		} );
 
-		it( 'User lands in editor', async function () {
-			await editorPage.waitUntilLoaded();
+		it( 'Continue with simple option', async function () {
+			await page.waitForURL( /.*setup\/storeFeatures.*/ );
+			await startSiteFlow.clickButton( 'Continue' );
 		} );
 
-		it( 'Return to dashboard', async function () {
-			await editorPage.exitEditor();
+		it( 'Select theme', async function () {
+			await startSiteFlow.selectTheme( themeName );
+			await startSiteFlow.clickButton( `Start with ${ themeName }` );
+		} );
+
+		it( 'Land in Home dashboard', async function () {
+			const myHomePage = new MyHomePage( page );
+			await myHomePage.validateTaskHeadingMessage( "Update your site's design" );
 		} );
 	} );
 
