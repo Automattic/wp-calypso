@@ -43,7 +43,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		setStepData( {
 			path: path,
 			intent: intent,
-			extraData,
+			...extraData,
 		} );
 
 		const _path = path.includes( '?' ) // does path contain search params
