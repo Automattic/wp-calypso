@@ -26,6 +26,7 @@ import { PluginPrice } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import CTAButton from './CTA-button';
 import { ActivationButton } from './activation-button';
+import { ManagePluginMenu } from './manage-plugin-menu';
 import PluginDetailsCTAPreinstalledPremiumPlugins from './preinstalled-premium-plugins-CTA';
 import USPS from './usps';
 import './style.scss';
@@ -141,7 +142,7 @@ const PluginDetailsCTA = ( props ) => {
 				span: <span className="plugin-details-CTA__installed-text-active"></span>,
 			},
 		} );
-		const inactiveText = translate( '{{span}}inactive{{/span}}', {
+		const inactiveText = translate( '{{span}}deactivated{{/span}}', {
 			components: {
 				span: <span className="plugin-details-CTA__installed-text-inactive"></span>,
 			},
@@ -150,13 +151,19 @@ const PluginDetailsCTA = ( props ) => {
 
 		return (
 			<div className="plugin-details-CTA__container">
-				<div className="plugin-details-CTA__installed-text">
-					{ translate( 'Installed and {{activation /}}', {
-						components: {
-							activation: active ? activeText : inactiveText,
-						},
-					} ) }
+				<div className="plugin-details-CTA__container-header">
+					<div className="plugin-details-CTA__installed-text">
+						{ translate( 'Installed and {{activation /}}', {
+							components: {
+								activation: active ? activeText : inactiveText,
+							},
+						} ) }
+					</div>
+					<div className="plugin-details-CTA__manage-plugin-menu">
+						<ManagePluginMenu plugin={ plugin } />
+					</div>
 				</div>
+
 				<ActivationButton plugin={ plugin } active={ active } />
 
 				<PluginAutoupdateToggle
