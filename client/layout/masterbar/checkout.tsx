@@ -14,7 +14,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
+import { getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';

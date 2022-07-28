@@ -11,7 +11,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
-import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
+import { getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';

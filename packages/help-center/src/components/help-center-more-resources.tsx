@@ -11,7 +11,7 @@ import { Icon, captureVideo, desktop, formatListNumbered, video, external } from
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
+import { getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NewReleases from '../icons/new-releases';
 
