@@ -743,18 +743,16 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 				</Notice>
 			) }
 
-			{ 'undefined' !== typeof window && (
-				<SearchBoxHeader
-					searchRef={ searchRef }
-					popularSearchesRef={ searchHeaderRef }
-					isSticky={ isAboveElement }
-					doSearch={ ( searchTerm ) => setQueryArgs( '' !== searchTerm ? { s: searchTerm } : {} ) }
-					searchTerm={ search }
-					isSearching={ isFetchingPluginsBySearchTerm }
-					title={ translate( 'Plugins you need to get your projects done' ) }
-					searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
-				/>
-			) }
+			<SearchBoxHeader
+				searchRef={ searchRef }
+				popularSearchesRef={ searchHeaderRef }
+				isSticky={ isAboveElement }
+				doSearch={ ( searchTerm ) => setQueryArgs( '' !== searchTerm ? { s: searchTerm } : {} ) }
+				searchTerm={ search }
+				isSearching={ isFetchingPluginsBySearchTerm }
+				title={ translate( 'Plugins you need to get your projects done' ) }
+				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+			/>
 
 			{ ! search && <Categories selected={ category } /> }
 

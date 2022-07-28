@@ -15,6 +15,7 @@ const ResponsiveToolbarGroup = ( {
 	onClick = () => null,
 	initialActiveIndex = -1,
 	swipeBreakpoint = '<660px',
+	forceSwipe,
 }: {
 	children: ReactChild[];
 	className?: string;
@@ -24,10 +25,11 @@ const ResponsiveToolbarGroup = ( {
 	onClick?: ( index: number ) => void;
 	initialActiveIndex?: number;
 	swipeBreakpoint?: string;
+	forceSwipe?: boolean;
 } ) => {
 	const classes = classnames( 'responsive-toolbar-group', className );
 
-	const shouldSwipe = useBreakpoint( swipeBreakpoint );
+	const shouldSwipe = useBreakpoint( swipeBreakpoint ) || forceSwipe;
 
 	if ( shouldSwipe ) {
 		return (

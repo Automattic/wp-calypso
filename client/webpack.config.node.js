@@ -163,6 +163,7 @@ const webpackConfig = {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
+			__i18n_text_domain__: JSON.stringify( 'default' ),
 		} ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		! isDevelopment && new ExternalModulesWriter(),
