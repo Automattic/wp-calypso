@@ -3,7 +3,7 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesTableSortOptions {
 	sort?: string;
-	order?: string;
+	order?: 'asc' | 'desc';
 }
 
 interface UseSitesTableSortingResult {
