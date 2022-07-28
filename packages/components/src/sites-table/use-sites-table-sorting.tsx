@@ -24,12 +24,18 @@ export function useSitesTableSorting(
 
 function sortSitesByLastPublish( sites: SiteExcerptData[], order: string ): SiteExcerptData[] {
 	return sites.sort( ( a, b ) => {
-		if ( a.options?.updated_at && b.options?.updated_at ) {
-			return (
-				( Date.parse( a.options?.updated_at ) - Date.parse( b.options?.updated_at ) ) *
-				( order === 'asc' ? 1 : -1 )
-			);
+		if ( ! a.options?.updated_at || ! b.options?.updated_at ) {
+			return 0;
 		}
+
+		if ( a.options.updated_at > b.options.updated_at ) {
+			return order === 'asc' ? 1 : -1;
+		}
+
+		if ( a.options.updated_at < b.options.updated_at ) {
+			return order === 'asc' ? -1 : 1;
+		}
+
 		return 0;
 	} );
 }
