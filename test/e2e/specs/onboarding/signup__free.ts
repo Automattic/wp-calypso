@@ -15,10 +15,11 @@ import {
 	ComingSoonPage,
 	MyHomePage,
 	RestAPIClient,
+	NewSiteResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiCloseAccount } from '../shared';
-import type { SiteDetails, NewUserResponse } from '@automattic/calypso-e2e';
+import type { NewUserResponse } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
@@ -30,7 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 
 	let page: Page;
 	let userDetails: NewUserResponse;
-	let siteDetails: SiteDetails;
+	let siteDetails: NewSiteResponse;
 	let userCreatedFlag = false;
 	let domainSearchComponent: DomainSearchComponent;
 	let generalSettingsPage: GeneralSettingsPage;
@@ -79,7 +80,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 			const currentStep = await startSiteFlow.getCurrentStep();
 
 			if ( currentStep === 'goals' ) {
-				await startSiteFlow.selectGoal( 'Write & Publish' );
+				await startSiteFlow.selectGoal( 'Write' );
 				await startSiteFlow.clickButton( 'Continue' );
 			}
 		} );
@@ -165,7 +166,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Free' ), function 
 		it( 'Verify site is not yet launched', async function () {
 			const tmpPage = await browser.newPage();
 			// TODO: make a utility to obtain the blog URL.
-			await tmpPage.goto( siteDetails.url );
+			await tmpPage.goto( siteDetails.blog_details.url );
 
 			// View site as logged out user.
 			const comingSoonPage = new ComingSoonPage( tmpPage );
