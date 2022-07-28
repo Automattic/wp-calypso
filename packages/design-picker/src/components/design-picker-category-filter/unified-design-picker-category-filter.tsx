@@ -1,4 +1,5 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; // eslint-disable-line no-restricted-imports
 import type { Category } from '../../types';
 import type { ReactElement } from 'react';
 import './style.scss';
@@ -16,6 +17,11 @@ export function UnifiedDesignPickerCategoryFilter( {
 }: Props ): ReactElement | null {
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
+
+		recordTracksEvent( 'calypso_signup_unified_design_select_category', {
+			category: category?.slug,
+		} );
+
 		onSelect( category?.slug );
 	};
 	const initialActiveIndex = categories.findIndex( ( { slug } ) => slug === selectedSlug );
