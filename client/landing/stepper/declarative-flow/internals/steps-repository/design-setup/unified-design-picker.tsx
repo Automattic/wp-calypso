@@ -24,6 +24,7 @@ import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
+import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import type { Step, ProvidedDependencies } from '../../types';
@@ -251,6 +252,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	if ( selectedDesign && isPreviewingDesign ) {
 		const designTitle = selectedDesign.design_type !== 'vertical' ? selectedDesign.title : '';
+		const headerDesignTitle = (
+			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
+		);
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
@@ -320,7 +324,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				formattedHeader={
 					<FormattedHeader
 						id={ 'design-setup-header' }
-						headerText={ designTitle }
+						headerText={ headerDesignTitle }
 						align={ isMobile ? 'left' : 'center' }
 					/>
 				}
