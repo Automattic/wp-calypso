@@ -27,6 +27,9 @@ export function useSitesTableFiltering(
 		data: allSites,
 		keys: [ 'URL', 'name', 'slug' ],
 		query: search,
+		options: {
+			shouldSort: false,
+		},
 	} );
 
 	const [ tabs, filteredByStatus ] = useMemo( () => {

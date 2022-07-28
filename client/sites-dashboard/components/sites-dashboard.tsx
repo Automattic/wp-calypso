@@ -88,17 +88,17 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 
 	const { data: allSites = [] } = useSiteExcerptsQuery();
 
-	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( allSites, {
+	const { sortedSites } = useSitesTableSorting( allSites, {
+		sortKey: 'updated-at',
+		sortOrder: 'desc',
+	} );
+
+	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( sortedSites, {
 		search,
 		status,
 	} );
 
 	const selectedTabName = tabs.find( ( tab ) => tab.name === status )?.name;
-
-	const { sortedSites } = useSitesTableSorting( filteredSites, {
-		sortKey: 'updated-at',
-		sortOrder: 'desc',
-	} );
 
 	return (
 		<main>
@@ -129,8 +129,8 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 										defaultValue={ search }
 									/>
 								</SearchWrapper>
-								{ sortedSites.length > 0 ? (
-									<SitesTable sites={ sortedSites } />
+								{ filteredSites.length > 0 ? (
+									<SitesTable sites={ filteredSites } />
 								) : (
 									<h2>{ __( 'No sites match your search.' ) }</h2>
 								) }
