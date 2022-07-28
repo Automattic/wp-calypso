@@ -1,4 +1,4 @@
-import { ListTile } from '@automattic/components';
+import { ListTile, SiteThumbnail } from '@automattic/components';
 import { ClassNames, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -124,6 +124,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 
 	const displayStatusBadge = isComingSoon || site.is_private;
+	const setmShotsUrl = ! isComingSoon && ! site.is_private;
 
 	return (
 		<ClassNames>
@@ -139,7 +140,17 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 									href={ getDashboardUrl( site.slug ) }
 									title={ __( 'Visit Dashboard' ) }
 								>
-									<SiteIcon siteId={ site.ID } size={ 50 } />
+									<SiteThumbnail
+										mShotsUrl={ setmShotsUrl ? site.URL : undefined }
+										alt={ site.name }
+										backgroundColor={ '#' + Math.floor( Math.random() * 16777215 ).toString( 16 ) }
+									>
+										{ site.icon ? (
+											<SiteIcon siteId={ site.ID } size={ 50 } />
+										) : (
+											<h1 style={ { fontSize: 'xx-large' } }>{ site.name.charAt( 0 ) }</h1>
+										) }
+									</SiteThumbnail>
 								</ListTileLeading>
 							}
 							title={
