@@ -202,6 +202,8 @@ export const ERROR_MESSAGE_RESPONSE =
 
 export const REST_API_SITE_DOMAIN_FIRST = {
 	aftermarket_auction: false,
+	aftermarket_auction_start: null,
+	aftermarket_auction_end: null,
 	auto_renewal_date: '2017-02-07T00:00:00+00:00',
 	auto_renewing: 1,
 	admin_email: null,
@@ -274,6 +276,8 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 
 export const REST_API_SITE_DOMAIN_SECOND = {
 	aftermarket_auction: false,
+	aftermarket_auction_start: null,
+	aftermarket_auction_end: null,
 	auto_renewal_date: '',
 	auto_renewing: false,
 	admin_email: null,
