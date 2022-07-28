@@ -17,7 +17,7 @@ const selectors = {
 	blogNameInput: 'input[name="siteTitle"]:not(:disabled)',
 	taglineInput: 'input[name="tagline"]:not(:disabled)',
 	verticalInput: '.select-vertical__suggestion-input input',
-	vertical: ( target: string ) => `.suggestions__item :text("${ target }")`,
+	verticalSelectItem: ( target: string ) => `.suggestions__item :text("${ target }")`,
 
 	// Themes
 	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
@@ -102,7 +102,7 @@ export class StartSiteFlow {
 		const input = this.page.locator( selectors.verticalInput );
 		await input.fill( vertical );
 
-		const targetVerticalLocator = this.page.locator( selectors.vertical( vertical ) );
+		const targetVerticalLocator = this.page.locator( selectors.verticalSelectItem( vertical ) );
 		await targetVerticalLocator.click();
 
 		const readBack = await input.inputValue();
