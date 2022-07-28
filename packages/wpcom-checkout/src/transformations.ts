@@ -114,11 +114,11 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 }
 
 export function canPurchaseWithCredits( responseCart: ResponseCart ): boolean {
-	return false;
+	if ( responseCart.peer_referral_limit === true ) {
+		return false;
+	}
 
-	/** Real eligibility */
-	const credits = responseCart.credits_integer;
-	return credits === 0;
+	return true;
 }
 
 export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineItem | null {
