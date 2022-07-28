@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
-import { PlansPage, Plans } from './plans-page';
-import type { SiteDetails } from '../../types/rest-api-client.types';
+import { PlansPage, Plans } from '../plans-page';
+import type { SiteDetails, NewSiteResponse } from '../../../types/rest-api-client.types';
 
 /**
  * Represents the Signup > Pick a Plan page.
@@ -27,7 +27,7 @@ export class SignupPickPlanPage {
 	 * @param {Plans} name Name of the plan.
 	 * @returns {Promise<SiteDetails>} Details of the newly created site.
 	 */
-	async selectPlan( name: Plans ): Promise< SiteDetails > {
+	async selectPlan( name: Plans ): Promise< NewSiteResponse > {
 		const [ response ] = await Promise.all( [
 			this.page.waitForResponse( /.*sites\/new\?.*/ ),
 			this.plansPage.selectPlan( name ),
@@ -38,11 +38,6 @@ export class SignupPickPlanPage {
 		}
 
 		const responseJSON = await response.json();
-
-		return {
-			id: responseJSON[ 'body' ].blog_details.blogid,
-			url: responseJSON[ 'body' ].blog_details.url,
-			name: responseJSON[ 'body' ].blog_details.blogname,
-		};
+		return responseJSON.body;
 	}
 }

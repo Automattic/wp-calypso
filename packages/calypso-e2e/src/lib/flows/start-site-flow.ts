@@ -7,6 +7,7 @@ import envVariables from '../../env-variables';
  * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
 export type StepName = 'goals' | 'vertical' | 'intent' | 'designSetup' | 'options';
+type Goals = 'Write' | 'Promote' | 'Import Site' | 'Sell' | 'DIFM' | 'Other';
 
 const selectors = {
 	// Generic
@@ -17,6 +18,7 @@ const selectors = {
 	blogNameInput: 'input[name="siteTitle"]:not(:disabled)',
 	taglineInput: 'input[name="tagline"]:not(:disabled)',
 	verticalInput: '.select-vertical__suggestion-input input',
+	vertical: ( target: string ) => `.suggestions__item :text("${ target }")`,
 
 	// Themes
 	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
@@ -26,7 +28,7 @@ const selectors = {
 	themePreviewIframe: 'iframe[title=Preview]',
 
 	// Goals
-	goalButton: ( goal: string ) => `.select-card__container:has-text("${ goal }")`,
+	goalButton: ( goal: string ) => `.select-card__container:has-text("${ goal.toLowerCase() }")`,
 	selectedGoalButton: ( goal: string ) => `.select-card__container.selected:has-text("${ goal }")`,
 
 	// Step containers
@@ -89,7 +91,7 @@ export class StartSiteFlow {
 	 *
 	 * @param {string} goal The goal to select
 	 */
-	async selectGoal( goal: string ): Promise< void > {
+	async selectGoal( goal: Goals ): Promise< void > {
 		await this.page.click( selectors.goalButton( goal ) );
 		await this.page.waitForSelector( selectors.selectedGoalButton( goal ) );
 	}
@@ -104,6 +106,9 @@ export class StartSiteFlow {
 
 		const input = this.page.locator( selectors.verticalInput );
 		await input.fill( vertical );
+
+		const targetVerticalLocator = this.page.locator( selectors.vertical( vertical ) );
+		await targetVerticalLocator.click();
 
 		const readBack = await input.inputValue();
 		if ( readBack !== vertical ) {
