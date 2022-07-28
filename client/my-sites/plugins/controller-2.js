@@ -1,15 +1,20 @@
 import { includes } from 'lodash';
 // import page from 'page';
 import { createElement } from 'react';
-import { BASE_STALE_TIME, WPORG_CACHE_KEY } from 'calypso/data/marketplace/constants';
-import { getPluginsListKey } from 'calypso/data/marketplace/utils';
+import { BASE_STALE_TIME } from 'calypso/data/marketplace/constants';
+import {
+	getFetchWPCOMFeaturedPlugins,
+	getFetchWPCOMPlugins,
+} from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import {
+	getFetchWPORGPlugins,
+	getFetchWPORGInfinitePlugins,
+} from 'calypso/data/marketplace/use-wporg-plugin-query';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
-import wpcom from 'calypso/lib/wp';
-import { fetchPluginsList } from 'calypso/lib/wporg';
 // import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { createQueryClient } from 'calypso/state/query-client';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { ALLOWED_CATEGORIES } from './categories/use-categories';
+import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
 import LoggedOutComponent from './logged-out';
 import PluginListComponent from './main';
@@ -61,6 +66,8 @@ function getProps( context ) {
 		path: context.path,
 		category,
 		search: searchTerm,
+		locale: context.lang,
+		tag: category || '',
 	};
 	return props;
 }
@@ -164,55 +171,14 @@ export function browsePlugins( context, next ) {
 // 	next();
 // }
 
-function prefetchPluginsData( queryClient, options, infinite ) {
+function prefetchPluginsData( queryClient, fetchParams, infinite ) {
 	const queryType = infinite ? 'fetchInfiniteQuery' : 'fetchQuery';
-	const isFeatured = 'featured' === options.category;
-	const isPaid = 'paid' === options.category;
-	const cacheKeys = {
-		featured: 'plugins-featured-list',
-		paid: [ 'wpcom-plugins', 'all' + 'undefined' + 'enabled' ],
-	};
 
-	const cacheKey =
-		cacheKeys[ options.category ] || getPluginsListKey( WPORG_CACHE_KEY, options, infinite );
-
-	return queryClient[ queryType ](
-		cacheKey,
-		() => {
-			const featuredPluginsApiBase = '/plugins/featured';
-			const pluginsApiNamespace = 'wpcom/v2';
-			const plugisApiBase = '/marketplace/products';
-			if ( isFeatured ) {
-				return wpcom.req.get( {
-					path: featuredPluginsApiBase,
-					apiNamespace: pluginsApiNamespace,
-				} );
-			}
-			if ( isPaid ) {
-				return wpcom.req.get(
-					{
-						path: plugisApiBase,
-						apiNamespace: pluginsApiNamespace,
-					},
-					{
-						type: 'all',
-					}
-				);
-			}
-			return fetchPluginsList( {
-				pageSize: options.pageSize,
-				page: options.page,
-				category: options.category,
-				locale: options.locale || 'en',
-				// tag: options.tag && ! search ? options.tag : null,
-			} );
-		},
-		{
-			enabled: true,
-			staleTime: BASE_STALE_TIME,
-			refetchOnMount: false,
-		}
-	);
+	return queryClient[ queryType ]( ...fetchParams, {
+		enabled: true,
+		staleTime: BASE_STALE_TIME,
+		refetchOnMount: false,
+	} );
 }
 
 export async function fetchPlugins( context, next ) {
@@ -222,26 +188,19 @@ export async function fetchPlugins( context, next ) {
 
 	const options = {
 		...getProps( context ),
-		locale: 'en',
 	};
-
 	const queryClient = await createQueryClient();
-	const queryCache = queryClient.getQueryCache();
-	queryCache.clear();
 
 	await Promise.all( [
-		// prefetchPluginsData( queryClient, { ...options, category: 'paid' } ),
-		prefetchPluginsData( queryClient, { ...options, category: 'featured' } ),
-		prefetchPluginsData( queryClient, { ...options, category: 'popular' } ),
-
-		// prefetchPluginsData( queryClient, { ...options, category: '' }, true ),
-		prefetchPluginsData( queryClient, { ...options, category: 'paid' } ),
-		// prefetchPluginsData( queryClient, { ...options, category: 'featured' }, true ),
-		// prefetchPluginsData( queryClient, { ...options, category: 'popular' }, true ),
+		prefetchPluginsData(
+			queryClient,
+			getFetchWPCOMPlugins( true, 'all', options.search, options.tag )
+		),
+		prefetchPluginsData( queryClient, getFetchWPORGPlugins( { ...options, category: 'popular' } ) ),
+		prefetchPluginsData( queryClient, getFetchWPCOMFeaturedPlugins() ),
 	] );
 
 	context.queryClient = queryClient;
-
 	next();
 }
 
@@ -252,12 +211,20 @@ export async function fetchCategoryPlugins( context, next ) {
 
 	const options = {
 		...getProps( context ),
-		locale: 'en',
 	};
+	const categories = getCategories();
+	const categoryTags = categories[ options.category || '' ]?.tags || [ options.category ];
+	options.tag = categoryTags.join( ',' );
 
 	const queryClient = await createQueryClient();
 
-	await prefetchPluginsData( queryClient, options, true );
+	await Promise.all( [
+		prefetchPluginsData(
+			queryClient,
+			getFetchWPCOMPlugins( true, 'all', options.search, options.tag )
+		),
+		prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true ),
+	] );
 
 	context.queryClient = queryClient;
 
