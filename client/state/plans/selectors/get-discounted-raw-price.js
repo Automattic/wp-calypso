@@ -1,5 +1,4 @@
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
-import { get } from 'lodash';
 import { getPlan } from './plan';
 
 import 'calypso/state/plans/init';
@@ -14,7 +13,9 @@ import 'calypso/state/plans/init';
  */
 export function getDiscountedRawPrice( state, productId, isMonthly = false ) {
 	const plan = getPlan( state, productId );
-	if ( get( plan, 'raw_price', -1 ) < 0 || get( plan, 'orig_cost', -1 ) < 0 ) {
+	const rawPrice = plan?.raw_price ?? -1;
+	const origCost = plan?.orig_cost ?? -1;
+	if ( rawPrice < 0 || origCost < 0 ) {
 		return null;
 	}
 
