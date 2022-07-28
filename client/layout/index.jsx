@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { shouldShowHelpCenterToUser } from '@automattic/help-center';
+import { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
@@ -173,34 +173,7 @@ class Layout extends Component {
 		);
 	}
 
-	shouldLoadInlineHelp() {
-		if ( ! config.isEnabled( 'inline-help' ) ) {
-			return false;
-		}
-
-		if ( isWpMobileApp() ) {
-			return false;
-		}
-
-		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help', 'home' ];
-		const exemptedRoutes = [ '/log-in/jetpack' ];
-		const exemptedRoutesStartingWith = [
-			'/start/p2',
-			'/start/setup-site',
-			'/plugins/domain',
-			'/plugins/marketplace/setup',
-		];
-
-		return (
-			! exemptedSections.includes( this.props.sectionName ) &&
-			! exemptedRoutes.includes( this.props.currentRoute ) &&
-			! exemptedRoutesStartingWith.some( ( startsWithString ) =>
-				this.props.currentRoute.startsWith( startsWithString )
-			)
-		);
-	}
-
-	renderMasterbar() {
+	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
@@ -213,6 +186,7 @@ class Layout extends Component {
 				section={ this.props.sectionGroup }
 				isCheckout={ this.props.sectionName === 'checkout' }
 				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
+				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
 		);
 	}
@@ -245,7 +219,14 @@ class Layout extends Component {
 			};
 		};
 
-		const loadInlineHelp = this.shouldLoadInlineHelp() && ! this.props.userAllowedToHelpCenter;
+		const loadHelpCenter =
+			shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) &&
+			this.props.userAllowedToHelpCenter;
+
+		const loadInlineHelp =
+			config.isEnabled( 'inline-help' ) &&
+			shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) &&
+			! loadHelpCenter;
 
 		return (
 			<div className={ sectionClass }>
@@ -269,7 +250,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				{ this.renderMasterbar() }
+				{ this.renderMasterbar( loadHelpCenter ) }
 				<LayoutLoader />
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
@@ -315,7 +296,7 @@ class Layout extends Component {
 						withOffset={ loadInlineHelp }
 					/>
 				) }
-				{ this.props.userAllowedToHelpCenter && this.props.isShowingHelpCenter && (
+				{ loadHelpCenter && this.props.isShowingHelpCenter && (
 					<AsyncLoad
 						require="@automattic/help-center"
 						placeholder={ null }

@@ -25,7 +25,7 @@ interface Props {
 	previousPath?: string;
 	siteSlug?: string;
 	isLeavingAllowed?: boolean;
-	userAllowedToHelpCenter?: boolean;
+	loadHelpCenterIcon?: boolean;
 }
 
 const CheckoutMasterbar = ( {
@@ -34,7 +34,7 @@ const CheckoutMasterbar = ( {
 	previousPath,
 	siteSlug,
 	isLeavingAllowed,
-	userAllowedToHelpCenter,
+	loadHelpCenterIcon,
 }: Props ) => {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
@@ -97,7 +97,7 @@ const CheckoutMasterbar = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
-			{ userAllowedToHelpCenter && (
+			{ loadHelpCenterIcon && (
 				<Item
 					onClick={ () => dispatch( setHelpCenterVisible( ! isShowingHelpCenter ) ) }
 					className={ classnames( 'masterbar__item-help', {

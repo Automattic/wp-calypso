@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { Popover, Button } from '@automattic/components';
-import { shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -71,6 +70,7 @@ class MasterbarLoggedIn extends Component {
 		isInEditor: PropTypes.bool,
 		hasDismissedThePopover: PropTypes.bool,
 		isUserNewerThanNewNavigation: PropTypes.bool,
+		loadHelpCenterIcon: PropTypes.bool,
 	};
 
 	subscribeToViewPortChanges() {
@@ -252,11 +252,14 @@ class MasterbarLoggedIn extends Component {
 	};
 
 	renderCheckout() {
-		const { isCheckoutPending, previousPath, siteSlug, isJetpackNotAtomic, title, user } =
-			this.props;
-
-		const userAllowedToHelpCenter =
-			config.isEnabled( 'checkout/help-center' ) && shouldShowHelpCenterToUser( user.ID );
+		const {
+			isCheckoutPending,
+			previousPath,
+			siteSlug,
+			isJetpackNotAtomic,
+			title,
+			loadHelpCenterIcon,
+		} = this.props;
 
 		return (
 			<AsyncLoad
@@ -267,7 +270,7 @@ class MasterbarLoggedIn extends Component {
 				previousPath={ previousPath }
 				siteSlug={ siteSlug }
 				isLeavingAllowed={ ! isCheckoutPending }
-				userAllowedToHelpCenter={ userAllowedToHelpCenter }
+				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
 		);
 	}
@@ -497,18 +500,15 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	render() {
-		const { isInEditor, isCheckout, isCheckoutPending, user } = this.props;
+		const { isInEditor, isCheckout, isCheckoutPending, loadHelpCenterIcon } = this.props;
 		const { isMobile } = this.state;
 
 		if ( isCheckout || isCheckoutPending ) {
 			return this.renderCheckout();
 		}
+
 		if ( isMobile ) {
-			if (
-				isInEditor &&
-				config.isEnabled( 'editor/help-center' ) &&
-				shouldShowHelpCenterToUser( user.ID )
-			) {
+			if ( isInEditor && loadHelpCenterIcon ) {
 				return (
 					<Masterbar>
 						<div className="masterbar__section masterbar__section--left">
@@ -532,9 +532,7 @@ class MasterbarLoggedIn extends Component {
 						<div className="masterbar__section masterbar__section--right">
 							{ this.renderCart() }
 							{ this.renderNotifications() }
-							{ config.isEnabled( 'calypso/help-center' ) &&
-								shouldShowHelpCenterToUser( user.ID ) &&
-								this.renderHelpCenter() }
+							{ loadHelpCenterIcon && this.renderHelpCenter() }
 							{ this.renderMenu() }
 						</div>
 					</Masterbar>
@@ -558,9 +556,7 @@ class MasterbarLoggedIn extends Component {
 					<div className="masterbar__section masterbar__section--right">
 						{ this.renderCart() }
 						{ this.renderMe() }
-						{ config.isEnabled( 'calypso/help-center' ) &&
-							shouldShowHelpCenterToUser( user.ID ) &&
-							this.renderHelpCenter() }
+						{ loadHelpCenterIcon && this.renderHelpCenter() }
 						{ this.renderNotifications() }
 					</div>
 				</Masterbar>
