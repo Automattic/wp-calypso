@@ -1,7 +1,7 @@
 import {
 	Button,
 	Gridicon,
-	TabPanel,
+	SitesTableTabPanel,
 	useSitesTableFiltering,
 	useSitesTableSorting,
 } from '@automattic/components';
@@ -71,7 +71,7 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-const SitesTableFilterTabs = styled( TabPanel )`
+const PositionedFilterTabs = styled( SitesTableTabPanel )`
 	${ wideCentered }
 	position: relative;
 	top: -48px;
@@ -112,7 +112,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<SitesTableFilterTabs
+				<PositionedFilterTabs
 					tabs={ tabs }
 					initialTabName={ selectedTabName }
 					onSelect={ ( newTab ) =>
@@ -141,7 +141,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 							<NoSitesMessage status={ selectedTabName } />
 						)
 					}
-				</SitesTableFilterTabs>
+				</PositionedFilterTabs>
 			</PageBodyWrapper>
 		</main>
 	);
