@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { includes } from 'lodash';
 // import page from 'page';
 import { createElement } from 'react';
@@ -16,6 +17,7 @@ import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { fetchPluginInformation } from 'calypso/lib/wporg';
 import { PLUGINS_WPORG_PLUGIN_RECEIVE } from 'calypso/state/action-types';
 // import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { createQueryClient } from 'calypso/state/query-client';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -204,11 +206,27 @@ export async function fetchPlugin( context, next ) {
 		// fetchPluginData( pluginSlug )( store.dispatch, store.getState ),
 		fetchPluginInformation( pluginSlug, context.lang ).then(
 			( data ) => {
+				const fullPlugin = normalizePluginData( { detailsFetched: Date.now() }, data );
 				store.dispatch( {
 					type: PLUGINS_WPORG_PLUGIN_RECEIVE,
 					pluginSlug,
-					data: normalizePluginData( { detailsFetched: Date.now() }, data ),
+					data: fullPlugin,
 				} );
+				store.dispatch(
+					appendBreadcrumb( {
+						label: __( 'Plugins' ),
+						href: `/plugins`,
+						id: 'plugins',
+						helpBubble: __( 'Add new functionality and integrations to your site with plugins.' ),
+					} )
+				);
+				store.dispatch(
+					appendBreadcrumb( {
+						label: fullPlugin.name,
+						href: `/plugins/${ pluginSlug }`,
+						id: `plugin-${ pluginSlug }`,
+					} )
+				);
 			},
 			() => {}
 		),
@@ -229,6 +247,7 @@ export async function fetchPlugins( context, next ) {
 		...getProps( context ),
 	};
 	const queryClient = await createQueryClient();
+	const store = context.store;
 
 	await Promise.all( [
 		prefetchPluginsData(
@@ -241,6 +260,25 @@ export async function fetchPlugins( context, next ) {
 		prefetchPluginsData( queryClient, getFetchWPORGPlugins( { ...options, category: 'popular' } ) ),
 		prefetchPluginsData( queryClient, getFetchWPCOMFeaturedPlugins() ),
 	] );
+
+	store.dispatch(
+		appendBreadcrumb( {
+			label: __( 'Plugins' ),
+			href: `/plugins`,
+			id: 'plugins',
+			helpBubble: __( 'Add new functionality and integrations to your site with plugins.' ),
+		} )
+	);
+
+	if ( options.search ) {
+		store.dispatch(
+			appendBreadcrumb( {
+				label: __( 'Search Results' ),
+				href: `/plugins?s=${ options.search }`,
+				id: 'plugins-search',
+			} )
+		);
+	}
 
 	context.queryClient = queryClient;
 	next();
@@ -259,6 +297,7 @@ export async function fetchCategoryPlugins( context, next ) {
 	options.tag = categoryTags.join( ',' );
 
 	const queryClient = await createQueryClient();
+	const store = context.store;
 
 	await Promise.all( [
 		prefetchPluginsData(
@@ -270,6 +309,25 @@ export async function fetchCategoryPlugins( context, next ) {
 			: Promise.resolve(),
 		prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true ),
 	] );
+
+	store.dispatch(
+		appendBreadcrumb( {
+			label: __( 'Plugins' ),
+			href: `/plugins`,
+			id: 'plugins',
+			helpBubble: __( 'Add new functionality and integrations to your site with plugins.' ),
+		} )
+	);
+
+	if ( options.category ) {
+		store.dispatch(
+			appendBreadcrumb( {
+				label: options.category,
+				href: `/plugins/browse/${ options.category }`,
+				id: 'category',
+			} )
+		);
+	}
 
 	context.queryClient = queryClient;
 

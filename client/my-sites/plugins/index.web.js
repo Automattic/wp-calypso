@@ -1,6 +1,6 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
@@ -10,6 +10,7 @@ import {
 	plugins,
 	scrollTopIfNoHash,
 	upload,
+	navigationIfLoggedIn,
 } from './controller';
 
 export default function () {
@@ -35,7 +36,7 @@ export default function () {
 		'/plugins/browse/:category/:site?',
 		scrollTopIfNoHash,
 		siteSelection,
-		navigation,
+		navigationIfLoggedIn,
 		browsePlugins,
 		makeLayout,
 		clientRender
@@ -46,7 +47,7 @@ export default function () {
 		'/plugins/upload/:site_id',
 		scrollTopIfNoHash,
 		siteSelection,
-		navigation,
+		navigationIfLoggedIn,
 		upload,
 		makeLayout,
 		clientRender
@@ -56,7 +57,7 @@ export default function () {
 		'/plugins',
 		scrollTopIfNoHash,
 		siteSelection,
-		navigation,
+		navigationIfLoggedIn,
 		browsePlugins,
 		makeLayout,
 		clientRender
@@ -66,7 +67,7 @@ export default function () {
 		'/plugins/manage/:site?',
 		scrollTopIfNoHash,
 		siteSelection,
-		navigation,
+		navigationIfLoggedIn,
 		plugins,
 		makeLayout,
 		clientRender
@@ -76,7 +77,7 @@ export default function () {
 		'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 		scrollTopIfNoHash,
 		siteSelection,
-		navigation,
+		navigationIfLoggedIn,
 		jetpackCanUpdate,
 		plugins,
 		makeLayout,
@@ -87,7 +88,7 @@ export default function () {
 		'/plugins/:plugin/:site_id?',
 		scrollTopIfNoHash,
 		siteSelection,
-		navigation,
+		navigationIfLoggedIn,
 		browsePluginsOrPlugin,
 		makeLayout,
 		clientRender
@@ -97,7 +98,7 @@ export default function () {
 		'/plugins/:plugin/eligibility/:site_id',
 		scrollTopIfNoHash,
 		siteSelection,
-		navigation,
+		navigationIfLoggedIn,
 		renderPluginWarnings,
 		makeLayout,
 		clientRender
