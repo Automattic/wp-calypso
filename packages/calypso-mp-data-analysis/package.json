@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "Extracts data snapshots from the top 100 searches.",
 	"author": "Automattic Inc.",
-	"license": "MIT",
+	"license": "GPL-2.0-or-later",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/Automattic/wp-calypso.git",
