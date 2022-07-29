@@ -126,6 +126,7 @@ function itemToSelectorProduct(
 		}
 
 		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
+		const features = buildCardFeaturesFromItem( item );
 
 		return {
 			productSlug: item.product_slug,
@@ -144,9 +145,9 @@ function itemToSelectorProduct(
 				item.product_slug
 			),
 			features: {
-				items: buildCardFeaturesFromItem( item ),
+				items: features,
 			},
-			disclaimer: getJetpackProductDisclaimer( item, getDisclaimerLink() ),
+			disclaimer: getJetpackProductDisclaimer( item.product_slug, features, getDisclaimerLink() ),
 		};
 	}
 
@@ -161,6 +162,7 @@ function itemToSelectorProduct(
 		}
 		const isResetPlan = ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
+		const features = buildCardFeaturesFromItem( item );
 		return {
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
@@ -175,6 +177,7 @@ function itemToSelectorProduct(
 			features: {
 				items: buildCardFeaturesFromItem( item ),
 			},
+			disclaimer: getJetpackProductDisclaimer( item.getStoreSlug(), features, getDisclaimerLink() ),
 			legacy: ! isResetPlan,
 		};
 	}
