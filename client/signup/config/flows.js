@@ -166,7 +166,7 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 }
 
 function getStepperFlowDestination( dependencies, stepperFlow ) {
-	return `/setup?flow=${ stepperFlow }&=${ dependencies.siteSlug }`;
+	return `/setup?flow=${ stepperFlow }&siteSlug=${ dependencies.siteSlug }`;
 }
 
 const flows = generateFlows( {
