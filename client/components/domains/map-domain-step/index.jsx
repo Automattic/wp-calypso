@@ -100,7 +100,9 @@ class MapDomainStep extends Component {
 							this.props.selectedSite,
 							this.props.cart,
 							suggestion,
-							false
+							false, // isDomainOnly
+							'', // flowName
+							false // domainAndPlanUpsellFlow
 						) }
 						price={ suggestion.cost }
 						isMappingProduct={ true }

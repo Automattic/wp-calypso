@@ -127,6 +127,7 @@ class RegisterDomainStep extends Component {
 		onSkip: PropTypes.func,
 		promoTlds: PropTypes.array,
 		showAlreadyOwnADomain: PropTypes.bool,
+		domainAndPlanUpsellFlow: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -1349,6 +1350,7 @@ class RegisterDomainStep extends Component {
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
 				isReskinned={ this.props.isReskinned }
+				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&
