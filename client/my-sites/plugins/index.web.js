@@ -35,7 +35,7 @@ export default function () {
 		'/plugins/browse/:category/:site?',
 		scrollTopIfNoHash,
 		siteSelection,
-		// navigation,
+		navigation,
 		browsePlugins,
 		makeLayout,
 		clientRender
@@ -56,7 +56,7 @@ export default function () {
 		'/plugins',
 		scrollTopIfNoHash,
 		siteSelection,
-		// navigation,
+		navigation,
 		browsePlugins,
 		makeLayout,
 		clientRender
@@ -87,7 +87,7 @@ export default function () {
 		'/plugins/:plugin/:site_id?',
 		scrollTopIfNoHash,
 		siteSelection,
-		// navigation,
+		navigation,
 		browsePluginsOrPlugin,
 		makeLayout,
 		clientRender
