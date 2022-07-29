@@ -34,7 +34,6 @@ import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -631,8 +630,7 @@ export function createAccount(
 		recaptchaDidntLoad,
 		recaptchaFailed,
 		recaptchaToken,
-	},
-	reduxStore
+	}
 ) {
 	const flowToCheck = flowName || lastKnownFlow;
 
@@ -646,10 +644,6 @@ export function createAccount(
 			return defer( () => callback( undefined, providedDependencies ) );
 		}
 	}
-
-	const state = reduxStore.getState();
-
-	const surveySiteType = getSurveySiteType( state ).trim();
 
 	const SIGNUP_TYPE_SOCIAL = 'social';
 	const SIGNUP_TYPE_DEFAULT = 'default';
@@ -765,7 +759,6 @@ export function createAccount(
 				{
 					validate: false,
 					signup_flow_name: flowName,
-					nux_q_site_type: surveySiteType,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 					locale: getLocaleSlug(),

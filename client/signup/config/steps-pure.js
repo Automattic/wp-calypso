@@ -28,7 +28,6 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	currentPage = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
@@ -48,15 +47,6 @@ export function generateSteps( {
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		survey: {
-			stepName: 'survey',
-			props: {
-				surveySiteType:
-					currentPage && currentPage.toString().match( /\/start\/blog/ ) ? 'blog' : 'site',
-			},
-			providesDependencies: [ 'surveySiteType', 'surveyQuestion' ],
-		},
-
 		themes: {
 			stepName: 'themes',
 			dependencies: [ 'siteSlug' ],

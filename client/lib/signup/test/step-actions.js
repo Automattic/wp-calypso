@@ -34,60 +34,6 @@ describe( 'createSiteWithCart()', () => {
 			} );
 	} );
 
-	test( 'should use the vertical field in the survey tree if the site topic one is empty.', () => {
-		const vertical = 'foo topic';
-		const fakeStore = {
-			getState: () => ( {
-				signup: {
-					steps: {
-						survey: {
-							vertical,
-						},
-					},
-				},
-			} ),
-		};
-
-		createSiteWithCart(
-			( response ) => {
-				expect( response.requestBody.options.site_vertical ).toBeUndefined();
-			},
-			[],
-			[],
-			fakeStore
-		);
-	} );
-
-	test( 'should use the site topic state if it is not empty.', () => {
-		const verticalId = 'meh';
-		const siteTopicSlug = 'foo topic';
-		const fakeStore = {
-			getState: () => ( {
-				signup: {
-					steps: {
-						siteType: 'blog',
-						siteVertical: {
-							id: verticalId,
-							slug: siteTopicSlug,
-						},
-						survey: {
-							vertical: 'should not use this',
-						},
-					},
-				},
-			} ),
-		};
-
-		createSiteWithCart(
-			( response ) => {
-				expect( response.requestBody.options.site_vertical ).toEqual( verticalId );
-			},
-			[],
-			[],
-			fakeStore
-		);
-	} );
-
 	test( 'should find available url if siteUrl is empty and enable auto generated blog name', () => {
 		const fakeStore = {
 			getState: () => ( {
