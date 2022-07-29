@@ -72,10 +72,17 @@ const ProfessionalEmailPromotionWrapper = ( props ) => {
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
-	const noticeText = translate(
-		'Almost there! Select an annual plan below to get your free domain.'
+	const noticeTitle = translate( 'Almost done' );
+	const noticeDescription = translate( 'Upgrade today to claim your free domain name!' );
+	return (
+		<Banner
+			title={ noticeTitle }
+			description={ noticeDescription }
+			icon="star"
+			showIcon
+			disableHref
+		/>
 	);
-	return <Banner description={ noticeText } icon="star" showIcon disableHref />;
 }
 
 class Plans extends Component {
