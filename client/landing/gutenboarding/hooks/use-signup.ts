@@ -13,7 +13,6 @@ import { USER_STORE } from '../stores/user';
  * @property { boolean } showSignupDialog use to open the Signup modal
  * @property { Function } onSignupDialogOpen call to open the modal
  * @property { Function } onSignupDialogClose call when closing the modal
- *
  * @returns { SignupDialog } An object to handle signup dialog rendering
  */
 

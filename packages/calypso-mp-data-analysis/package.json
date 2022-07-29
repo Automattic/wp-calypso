@@ -1,7 +1,14 @@
 {
 	"name": "@automattic/calypso-mp-data-analysis",
 	"version": "1.0.0",
+	"description": "Extracts data snapshots from the top 100 searches.",
 	"author": "Automattic Inc.",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-mp-data-analysis"
+	},
 	"dependencies": {
 		"axios": "^0.27.2",
 		"csv-parse": "^5.1.0",

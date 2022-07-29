@@ -11,7 +11,6 @@
  *
  * // output
  * import { map as _map } from 'lodash'
- *
  * @param file
  * @param api
  * @returns {string}
