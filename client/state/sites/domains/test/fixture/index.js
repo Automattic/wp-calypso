@@ -20,6 +20,8 @@ export const DOMAIN_EXPIRED_ERROR_MESSAGE = 'Domain expired message';
 // testing primary-domain
 export const DOMAIN_PRIMARY = {
 	aftermarketAuction: false,
+	aftermarketAuctionEnd: '',
+	aftermarketAuctionStart: '',
 	aRecordsRequiredForMapping: undefined,
 	autoRenewalDate: '2017-02-07T00:00:00+00:00',
 	autoRenewing: true,
@@ -108,6 +110,8 @@ export const DOMAIN_PRIMARY = {
 // testing not-primary-domain
 export const DOMAIN_NOT_PRIMARY = {
 	aftermarketAuction: false,
+	aftermarketAuctionEnd: '',
+	aftermarketAuctionStart: '',
 	aRecordsRequiredForMapping: undefined,
 	autoRenewalDate: '',
 	autoRenewing: false,
