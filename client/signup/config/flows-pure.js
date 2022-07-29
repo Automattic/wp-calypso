@@ -14,7 +14,7 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
-	getNewsletterDestination = noop,
+	getStepperFlowDestination = noop,
 	getAddOnsStep = noop,
 } = {} ) {
 	const flows = [
@@ -119,7 +119,7 @@ export function generateFlows( {
 					? [ 'user', 'domains', 'emails', 'plans' ]
 					: [ 'user', 'domains', 'plans' ]
 			),
-			destination: getNewsletterDestination,
+			destination: ( dependencies ) => getStepperFlowDestination( dependencies, 'newsletters' ),
 			description: 'Beginning of the flow to create a newsletter',
 			lastModified: '2022-07-28',
 			showRecaptcha: true,

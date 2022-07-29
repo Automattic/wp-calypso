@@ -165,8 +165,8 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getNewsletterDestination( { siteSlug } ) {
-	return `/setup/hello?siteSlug=${ siteSlug }`;
+function getStepperFlowDestination( dependencies, stepperFlow ) {
+	return `/setup?flow=${ stepperFlow }&=${ dependencies.siteSlug }`;
 }
 
 const flows = generateFlows( {
@@ -182,7 +182,7 @@ const flows = generateFlows( {
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
 	getAddOnsStep,
-	getNewsletterDestination,
+	getStepperFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {
