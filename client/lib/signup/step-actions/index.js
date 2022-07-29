@@ -818,16 +818,21 @@ export function createAccount(
 }
 
 export function createSite( callback, dependencies, stepData, reduxStore ) {
-	const { themeSlugWithRepo } = dependencies;
-	const { site } = stepData;
+	const { site, themeSlugWithRepo } = stepData;
+	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
 	const locale = getLocaleSlug();
+
+	const theme =
+		dependencies?.themeSlugWithRepo ||
+		themeSlugWithRepo ||
+		get( signupDependencies, 'themeSlugWithRepo', false );
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
 		public: Visibility.PublicNotIndexed,
 		options: {
-			theme: themeSlugWithRepo,
+			theme,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
 		},
