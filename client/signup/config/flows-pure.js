@@ -123,6 +123,7 @@ export function generateFlows( {
 			description: 'Beginning of the flow to create a newsletter',
 			lastModified: '2022-07-28',
 			showRecaptcha: true,
+			hideBackButton: true,
 			get pageTitle() {
 				return translate( 'Newsletters' );
 			},
@@ -138,6 +139,7 @@ export function generateFlows( {
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-07-28',
 			showRecaptcha: true,
+			hideBackButton: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
