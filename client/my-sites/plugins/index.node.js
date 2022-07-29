@@ -3,6 +3,7 @@ import {
 	browsePlugins,
 	browsePluginsOrPlugin,
 	fetchPlugins,
+	fetchPlugin,
 	fetchCategoryPlugins,
 	// renderPluginWarnings,
 	// renderProvisionPlugins,
@@ -64,16 +65,12 @@ export default function ( router ) {
 
 	// router(
 	// 	'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
-	// 	scrollTopIfNoHash,
-	// 	siteSelection,
-	// 	navigation,
-	// 	jetpackCanUpdate,
+	// 	ssrSetupLocale,
 	// 	plugins,
-	// 	makeLayout,
-	// 	clientRender
+	// 	makeLayout
 	// );
 
-	router( '/plugins/:plugin', ssrSetupLocale, browsePluginsOrPlugin, makeLayout );
+	router( '/plugins/:plugin', ssrSetupLocale, fetchPlugin, browsePluginsOrPlugin, makeLayout );
 
 	// router(
 	// 	'/plugins/:plugin/eligibility/:site_id',

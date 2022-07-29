@@ -95,7 +95,9 @@ export const useWPCOMPlugin = (
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult< any > => {
 	return useQuery( ...getFetchWPCOMPlugin( slug ), {
-		select: ( data ) => normalizePluginData( { detailsFetched: Date.now() }, data ),
+		select: ( data ) => {
+			return normalizePluginData( { detailsFetched: Date.now() }, data );
+		},
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,

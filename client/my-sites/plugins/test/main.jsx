@@ -4,7 +4,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { setStore } from 'calypso/state/redux-store';
 import PluginDetails from '../plugin-details';
-import PluginBrowser from '../plugins-browser';
+import PluginsBrowser from '../plugins-browser';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
@@ -39,7 +39,31 @@ describe( 'PluginBrowser', () => {
 		expect( () => {
 			renderToString(
 				<TestComponent store={ store }>
-					<PluginBrowser { ...props } />
+					<PluginsBrowser { ...props } />
+				</TestComponent>
+			);
+		} ).not.toThrow();
+	} );
+} );
+
+describe( 'Searching for plugin', () => {
+	afterEach( () => {
+		queryClient.clear();
+	} );
+	test( "doesn't throw an exception without theme data", () => {
+		const store = createReduxStore();
+		setStore( store );
+
+		const props = {
+			path: '/plugins?s=seo',
+			search: 'seo',
+			locale: 'en',
+			tag: '',
+		};
+		expect( () => {
+			renderToString(
+				<TestComponent store={ store }>
+					<PluginsBrowser { ...props } />
 				</TestComponent>
 			);
 		} ).not.toThrow();

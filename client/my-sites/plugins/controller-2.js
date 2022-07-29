@@ -5,22 +5,26 @@ import { BASE_STALE_TIME } from 'calypso/data/marketplace/constants';
 import {
 	getFetchWPCOMFeaturedPlugins,
 	getFetchWPCOMPlugins,
+	getFetchWPCOMPlugin,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import {
 	getFetchWPORGPlugins,
 	getFetchWPORGInfinitePlugins,
 } from 'calypso/data/marketplace/use-wporg-plugin-query';
+import { normalizePluginData } from 'calypso/lib/plugins/utils';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import { fetchPluginInformation } from 'calypso/lib/wporg';
+import { PLUGINS_WPORG_PLUGIN_RECEIVE } from 'calypso/state/action-types';
 // import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { requestProductsList } from 'calypso/state/products-list/actions';
 import { createQueryClient } from 'calypso/state/query-client';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
-import LoggedOutComponent from './logged-out';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
-// import PluginUpload from './plugin-upload';
+import PluginsBrowser from './plugins-browser';
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -36,12 +40,14 @@ function renderSinglePlugin( context, siteUrl ) {
 function renderPluginList( context, basePath ) {
 	const search = context.query.s;
 
-	context.primary = createElement( PluginListComponent, {
+	const props = {
 		path: basePath,
 		context,
 		filter: context.params.pluginFilter,
 		search,
-	} );
+	};
+
+	context.primary = <PluginListComponent { ...props } />;
 
 	// if ( search ) {
 	// 	gaRecordEvent( 'Plugins', 'Search', 'Search term', search );
@@ -62,9 +68,14 @@ function getProps( context ) {
 	const searchTerm = context.query.s;
 	const category = getCategoryForPluginsBrowser( context );
 
+	if ( searchTerm && ! context.serverSideRender ) {
+		context.serverSideRender = true;
+	}
+
 	const props = {
 		path: context.path,
 		category,
+		searchTerm,
 		search: searchTerm,
 		locale: context.lang,
 		tag: category || '',
@@ -75,12 +86,9 @@ function getProps( context ) {
 function renderPluginsBrowser( context ) {
 	const props = {
 		...getProps( context ),
-		...context.plugins,
 	};
 
-	context.primary = (
-		<LoggedOutComponent { ...props } queryClient={ context.queryClient } store={ context.store } />
-	);
+	context.primary = <PluginsBrowser { ...props } />;
 }
 
 export function renderPluginWarnings( context, next ) {
@@ -178,7 +186,38 @@ function prefetchPluginsData( queryClient, fetchParams, infinite ) {
 		enabled: true,
 		staleTime: BASE_STALE_TIME,
 		refetchOnMount: false,
-	} );
+	} ).catch( () => {} );
+}
+
+export async function fetchPlugin( context, next ) {
+	if ( ! context.isServerSide ) {
+		return next();
+	}
+
+	const queryClient = await createQueryClient();
+	const store = context.store;
+
+	const pluginSlug = context.params?.plugin;
+	await Promise.all( [
+		prefetchPluginsData( queryClient, getFetchWPCOMPlugin( pluginSlug ) ),
+		requestProductsList( { type: 'all', presist: true } )( store.dispatch ),
+		// fetchPluginData( pluginSlug )( store.dispatch, store.getState ),
+		fetchPluginInformation( pluginSlug, context.lang ).then(
+			( data ) => {
+				store.dispatch( {
+					type: PLUGINS_WPORG_PLUGIN_RECEIVE,
+					pluginSlug,
+					data: normalizePluginData( { detailsFetched: Date.now() }, data ),
+				} );
+			},
+			() => {}
+		),
+	] );
+
+	// const data = await fetchPluginInformation( pluginSlug, context.lang );
+
+	context.queryClient = queryClient;
+	next();
 }
 
 export async function fetchPlugins( context, next ) {
@@ -196,6 +235,9 @@ export async function fetchPlugins( context, next ) {
 			queryClient,
 			getFetchWPCOMPlugins( true, 'all', options.search, options.tag )
 		),
+		options.search
+			? prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true )
+			: Promise.resolve(),
 		prefetchPluginsData( queryClient, getFetchWPORGPlugins( { ...options, category: 'popular' } ) ),
 		prefetchPluginsData( queryClient, getFetchWPCOMFeaturedPlugins() ),
 	] );
@@ -223,6 +265,9 @@ export async function fetchCategoryPlugins( context, next ) {
 			queryClient,
 			getFetchWPCOMPlugins( true, 'all', options.search, options.tag )
 		),
+		options.search
+			? prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true )
+			: Promise.resolve(),
 		prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true ),
 	] );
 
