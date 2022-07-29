@@ -21,11 +21,14 @@ async function overridePreviewButtonUrl() {
 					// it with our own window opening logic. Overriding the href directly
 					// doesn't work because the custom href we apply is overridden somewhere
 					// upstream.
-					previewButton.onclick = function ( e ) {
-						e.preventDefault();
-						e.stopPropagation();
-						window.open( `${ previewButton.href }&logmein=direct` );
-					};
+
+					if ( previewButton ) {
+						previewButton.onclick = function ( e ) {
+							e.preventDefault();
+							e.stopPropagation();
+							window.open( `${ previewButton.href }&logmein=direct` );
+						};
+					}
 				}
 			}
 		}
