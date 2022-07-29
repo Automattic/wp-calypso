@@ -6,6 +6,7 @@ import Badge from 'calypso/components/badge';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PreinstalledPremiumPluginPriceDisplay from '../plugin-price/preinstalled-premium-plugin-price-display';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
 export default function PreinstalledPremiumPluginBrowserItemPricing( { plugin } ) {
@@ -59,12 +60,12 @@ export default function PreinstalledPremiumPluginBrowserItemPricing( { plugin } 
 					isFetching ? (
 						<div className="plugins-browser-item__pricing-placeholder">...</div>
 					) : (
-						translate( '{{span}}From{{/span}} %(price)s {{span}}%(period)s{{/span}}', {
-							args: { price, period },
-							components: { span: <span className="plugins-browser-item__period" /> },
-							comment:
-								'`price` already includes the currency symbol; `period` can be monthly or yearly. Example: "From $100 monthly"',
-						} )
+						<PreinstalledPremiumPluginPriceDisplay
+							className="plugins-browser-item__period"
+							period={ period }
+							pluginSlug={ plugin.slug }
+							price={ price }
+						/>
 					)
 				}
 			</PluginPrice>

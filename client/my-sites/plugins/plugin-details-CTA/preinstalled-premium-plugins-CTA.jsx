@@ -14,6 +14,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import { PluginPrice } from '../plugin-price';
+import PreinstalledPremiumPluginPriceDisplay from '../plugin-price/preinstalled-premium-plugin-price-display';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import CTAButton from './CTA-button';
 
@@ -53,12 +54,12 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 						isFetching ? (
 							<div className="plugin-details-CTA__price-placeholder">...</div>
 						) : (
-							translate( '{{span}}From{{/span}} %(price)s {{span}}%(period)s{{/span}}', {
-								args: { price, period },
-								components: { span: <span className="plugin-details-CTA__period" /> },
-								comment:
-									'`price` already includes the currency symbol; `period` can be monthly or yearly. Example: "From $100 monthly"',
-							} )
+							<PreinstalledPremiumPluginPriceDisplay
+								className="plugin-details-CTA__period"
+								period={ period }
+								pluginSlug={ plugin.slug }
+								price={ price }
+							/>
 						)
 					}
 				</PluginPrice>
