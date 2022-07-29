@@ -59,7 +59,11 @@ export default function PromotedPosts() {
 				// hasScreenOptions
 			/>
 
-			{ isLoading && <LoadingEllipsis /> }
+			{ isLoading && (
+				<div className="promote-post__loading-container">
+					<LoadingEllipsis />
+				</div>
+			) }
 			{ ! isLoading && (
 				<>
 					<PromotedPostFilter
