@@ -13,6 +13,7 @@ export default class SignupHeader extends Component {
 	};
 
 	render() {
+		const { pageTitle } = this.props;
 		const logoClasses = classnames( 'wordpress-logo', {
 			'is-large': this.props.shouldShowLoadingScreen && ! this.props.isReskinned,
 		} );
@@ -20,7 +21,7 @@ export default class SignupHeader extends Component {
 		return (
 			<div className="signup-header">
 				<WordPressLogo size={ 120 } className={ logoClasses } />
-				<h1>{ this.props.pageTitle }</h1>
+				{ pageTitle && <h1>{ pageTitle }</h1> }
 				{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
 				<div className="signup-header__right">
