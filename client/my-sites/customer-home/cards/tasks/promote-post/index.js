@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import megaphoneIllustration from 'calypso/assets/images/customer-home/illustration--megaphone.svg';
-import { loadDSPWidgetJS, showDSPWidgetModal } from 'calypso/lib/dsp';
+import { loadDSPWidgetJS, showDSPWidgetModal } from 'calypso/lib/promote-post';
 import { TASK_PROMOTE_POST } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
