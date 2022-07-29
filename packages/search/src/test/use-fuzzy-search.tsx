@@ -12,7 +12,7 @@ const TestComponent = < T, >( props: UseFuzzySearchOptions< T > ) => {
 	return (
 		<>
 			<Search onSearch={ setQuery } />
-			{ results.map( ( result ) => JSON.stringify( result ) ) }
+			{ results.map( ( result ) => JSON.stringify( result.item ) ) }
 		</>
 	);
 };

@@ -1,4 +1,4 @@
-import { useFuzzySearch } from '@automattic/search';
+import { useFuzzySearch, UseFuzzySearchResult } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { SitesCountBadge } from './sites-count-badge';
@@ -12,7 +12,7 @@ interface SitesTableFilterOptions {
 }
 
 interface UseSitesTableFilteringResult {
-	filteredSites: SiteExcerptData[];
+	filteredSites: UseFuzzySearchResult< SiteExcerptData >[];
 	tabs: Tab[];
 	selectedTabHasSites: boolean;
 }
@@ -27,6 +27,7 @@ export function useSitesTableFiltering(
 		data: allSites,
 		keys: [ 'URL', 'name', 'slug' ],
 		query: search,
+		options: { includeMatches: true },
 	} );
 
 	const [ tabs, filteredByStatus ] = useMemo( () => {
@@ -39,7 +40,7 @@ export function useSitesTableFiltering(
 
 		const filteredByStatus = tabs.reduce(
 			( acc, { name } ) => ( { ...acc, [ name ]: filterSites( filteredSites, name ) } ),
-			{} as { [ name: string ]: SiteExcerptData[] }
+			{} as { [ name: string ]: UseFuzzySearchResult< SiteExcerptData >[] }
 		);
 
 		for ( const tab of tabs ) {
@@ -56,13 +57,18 @@ export function useSitesTableFiltering(
 	// If there are no sites, we need to know whether that's due to
 	// there being no sites in the selected tab or because the search has
 	// found no sites.
-	const selectedTabHasSites = !! filterSites( allSites, status ).length;
+	const selectedTabHasSites = !! filteredByStatus[ status ].length;
 
 	return { filteredSites: filteredByStatus[ status ], tabs, selectedTabHasSites };
 }
 
-function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {
-	return sites.filter( ( site ) => {
+function filterSites(
+	siteSearchResults: UseFuzzySearchResult< SiteExcerptData >[],
+	filterType: string
+): UseFuzzySearchResult< SiteExcerptData >[] {
+	return siteSearchResults.filter( ( result ) => {
+		const { item: site } = result;
+
 		const isComingSoon =
 			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 

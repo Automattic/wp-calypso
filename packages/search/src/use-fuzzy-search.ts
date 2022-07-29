@@ -20,12 +20,14 @@ export type UseFuzzySearchOptions< T > = {
 	query?: string;
 } & KeysProp< T >;
 
+export type UseFuzzySearchResult< T > = Fuse.FuseResult< T >;
+
 export const useFuzzySearch = < T >( {
 	data,
 	keys = [],
 	query = '',
 	options = defaultOptions,
-}: UseFuzzySearchOptions< T > ) => {
+}: UseFuzzySearchOptions< T > ): UseFuzzySearchResult< T >[] => {
 	/**
 	 * We want to re-use the `Fuse` instance because creating one every time
 	 * the dataset changes is an expensive operation.
@@ -42,14 +44,14 @@ export const useFuzzySearch = < T >( {
 
 	const results = useMemo( () => {
 		if ( ! query ) {
-			return data;
+			return data.map( ( item, refIndex ) => ( { item, refIndex } ) );
 		}
 
 		// Every time the query or the data changes, we update the collection
 		// This assignment takes less than 1ms for thousands of items
 		fuseInstance.setCollection( data );
 
-		return fuseInstance.search( query ).map( ( { item } ) => item );
+		return fuseInstance.search( query );
 	}, [ fuseInstance, query, data ] );
 
 	return results;

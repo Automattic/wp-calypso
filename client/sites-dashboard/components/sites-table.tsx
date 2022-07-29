@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import SitesTableRow from './sites-table-row';
+import SitesTableRow, { SiteTableRowMatch } from './sites-table-row';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesTableProps {
 	className?: string;
-	sites: SiteExcerptData[];
+	sites: { item: SiteExcerptData; matches?: ReadonlyArray< SiteTableRowMatch > }[];
 }
 
 const Table = styled.table`
@@ -47,7 +47,11 @@ export function SitesTable( { className, sites }: SitesTableProps ) {
 			</thead>
 			<tbody>
 				{ sites.map( ( site ) => (
-					<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
+					<SitesTableRow
+						site={ site.item }
+						key={ site.item.ID }
+						matches={ site.matches }
+					></SitesTableRow>
 				) ) }
 			</tbody>
 		</Table>
