@@ -383,7 +383,7 @@ export default class WebPreviewContent extends Component {
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
 								title={ this.props.iframeTitle || translate( 'Preview' ) }
-								fetchPriority={ fetchPriority ? fetchPriority : undefined }
+								fetchpriority={ fetchPriority ? fetchPriority : undefined }
 								scrolling={ autoHeight ? 'no' : undefined }
 							/>
 						</div>

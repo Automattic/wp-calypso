@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useStarterDesignsQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	PremiumBadge,
@@ -31,6 +31,8 @@ import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
 
+const SiteGoal = Onboard.SiteGoal;
+
 /**
  * The unified design picker
  */
@@ -51,6 +53,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
+	const siteDescription = site?.description;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	useEffect( () => {
 		if ( isAtomic ) {
@@ -256,10 +259,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
 		);
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
+		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
+		const shouldCustomizeText = intent === SiteGoal.Write || intent === SiteGoal.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
-			// If the user fills out the site title with write intent, we show it on the design preview
-			site_title: intent === 'write' ? siteTitle : undefined,
+			site_title: shouldCustomizeText ? siteTitle : undefined,
+			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
 		} );
 
@@ -372,7 +377,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			hideFormattedHeader
 			backLabelText={ translate( 'Back' ) }
 			skipLabelText={
-				intent === 'write' ? translate( 'Skip and draft first post' ) : translate( 'Skip for now' )
+				intent === SiteGoal.Write
+					? translate( 'Skip and draft first post' )
+					: translate( 'Skip for now' )
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
