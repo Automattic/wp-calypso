@@ -742,6 +742,13 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
+		const showPageTitle = () => {
+			if ( this.props.flowName === 'newsletters' ) {
+				return this.props.pageTitle;
+			}
+			return false;
+		};
+
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
@@ -758,7 +765,7 @@ class Signup extends Component {
 						<SignupHeader
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
-							pageTitle={ this.props.pageTitle }
+							pageTitle={ showPageTitle() }
 							rightComponent={
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator
