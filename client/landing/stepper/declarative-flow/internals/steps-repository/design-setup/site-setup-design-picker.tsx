@@ -38,7 +38,7 @@ import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
 
-const SiteGoal = Onboard.SiteGoal;
+const SiteIntent = Onboard.SiteIntent;
 // The distance from top when sticky should be 109px and it's aligned with thumbnails and previews
 const STICKY_OPTIONS = {
 	rootMargin: '-109px 0px 0px',
@@ -106,7 +106,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const enabledGeneratedDesigns =
 		verticalsStepEnabled &&
 		isEnabled( 'signup/design-picker-generated-designs' ) &&
-		( intent === SiteGoal.Build || intent === SiteGoal.Write );
+		( intent === SiteIntent.Build || intent === SiteIntent.Write );
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
 		useStarterDesignsGeneratedQuery(
@@ -378,7 +378,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
-		const shouldCustomizeText = intent === SiteGoal.Write || intent === SiteGoal.Sell;
+		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
@@ -576,7 +576,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				isPreviewingGeneratedDesign ? translate( 'Pick another' ) : translate( 'Back' )
 			}
 			skipLabelText={
-				intent === SiteGoal.Write ? translate( 'Skip and draft first post' ) : undefined
+				intent === SiteIntent.Write ? translate( 'Skip and draft first post' ) : undefined
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }

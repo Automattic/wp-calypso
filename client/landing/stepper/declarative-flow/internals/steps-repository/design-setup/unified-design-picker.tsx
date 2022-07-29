@@ -31,7 +31,7 @@ import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
 
-const SiteGoal = Onboard.SiteGoal;
+const SiteIntent = Onboard.SiteIntent;
 
 /**
  * The unified design picker
@@ -260,7 +260,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		);
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
 		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
-		const shouldCustomizeText = intent === SiteGoal.Write || intent === SiteGoal.Sell;
+		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
@@ -377,7 +377,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			hideFormattedHeader
 			backLabelText={ translate( 'Back' ) }
 			skipLabelText={
-				intent === SiteGoal.Write
+				intent === SiteIntent.Write
 					? translate( 'Skip and draft first post' )
 					: translate( 'Skip for now' )
 			}
