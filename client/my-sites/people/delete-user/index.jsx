@@ -22,6 +22,7 @@ import useRemoveExternalContributorMutation from 'calypso/data/external-contribu
 import accept from 'calypso/lib/accept';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSite } from 'calypso/state/sites/selectors';
 import withDeleteUser from './with-delete-user';
 
@@ -32,6 +33,7 @@ class DeleteUser extends Component {
 
 	static propTypes = {
 		isMultisite: PropTypes.bool,
+		isAtomic: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		siteId: PropTypes.number,
 		user: PropTypes.object,
@@ -221,12 +223,12 @@ class DeleteUser extends Component {
 	};
 
 	renderSingleSite = () => {
-		const { translate, isJetpack, siteOwner, user } = this.props;
+		const { translate, isAtomic, isJetpack, siteOwner, user } = this.props;
 
-		// A user should not be able to remove the site owner.
+		// A user should not be able to remove the Atomic or non-Jetpack site owner.
 		if (
 			( ! isJetpack && user.ID === siteOwner ) ||
-			( isJetpack && user.linked_user_ID === siteOwner )
+			( isAtomic && user.linked_user_ID === siteOwner )
 		) {
 			return (
 				<Card className="delete-user__single-site">
@@ -384,6 +386,7 @@ export default localize(
 			return {
 				siteOwner: site?.site_owner,
 				currentUser: getCurrentUser( state ),
+				isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			};
 		},
 		{ recordGoogleEvent }

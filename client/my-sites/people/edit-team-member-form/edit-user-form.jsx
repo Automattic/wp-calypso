@@ -15,6 +15,7 @@ import ContractorSelect from 'calypso/my-sites/people/contractor-select';
 import RoleSelect from 'calypso/my-sites/people/role-select';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -85,6 +86,7 @@ class EditUserForm extends Component {
 		const {
 			currentUser,
 			user,
+			isAtomic,
 			isJetpack,
 			hasWPCOMAccountLinked,
 			isVip,
@@ -98,12 +100,12 @@ class EditUserForm extends Component {
 		}
 
 		/*
-		 * If the current user is not viewing their own profile,
+		 * On Atomic and non-Jetpack sites, if the current user is not viewing their own profile,
 		 * the user should not be able to edit the site owner's details.
 		 */
 		if (
 			( ( ! isJetpack && user.ID === siteOwner ) ||
-				( isJetpack && user.linked_user_ID === siteOwner ) ) &&
+				( isAtomic && user.linked_user_ID === siteOwner ) ) &&
 			user.ID !== currentUser.ID
 		) {
 			return [];
@@ -362,6 +364,7 @@ export default localize(
 			return {
 				siteOwner: site?.site_owner,
 				currentUser: getCurrentUser( state ),
+				isAtomic: isSiteAutomatedTransfer( state, siteId ),
 				isVip: isVipSite( state, siteId ),
 				isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 				hasWPCOMAccountLinked: false !== user?.linked_user_ID,
