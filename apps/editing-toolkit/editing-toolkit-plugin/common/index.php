@@ -242,3 +242,18 @@ function enqueue_disable_heic_images_script() {
 	}
 }
 add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_disable_heic_images_script' );
+
+/**
+ * Overrides the block editor preview button url with one that accounts for third party cookie
+ * blocking.
+ */
+function enqueue_override_preview_button_url() {
+	wp_enqueue_style(
+		'a8c_override_preview_button_url',
+		plugins_url( 'dist/override-preview-button-url.min.js', __FILE__ ),
+		array(),
+		filemtime( plugin_dir_path( __FILE__ ) . 'dist/override-preview-button-url.min.js' )
+	);
+}
+
+add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_override_preview_button_url' );
