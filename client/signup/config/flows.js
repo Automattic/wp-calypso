@@ -165,6 +165,10 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
+function getNewsletterDestination( { siteSlug } ) {
+	return `/setup/hello?siteSlug=${ siteSlug }`;
+}
+
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -178,6 +182,7 @@ const flows = generateFlows( {
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
 	getAddOnsStep,
+	getNewsletterDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

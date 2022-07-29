@@ -339,6 +339,7 @@ export class PlansStep extends Component {
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
+					hideBack={ this.props.flowName === 'newsletters' }
 					isWideLayout={ true }
 					stepContent={ this.plansFeaturesList() }
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
