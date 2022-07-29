@@ -38,7 +38,6 @@ import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actio
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
 	getSelectedSiteId,
-	getSectionName,
 	masterbarIsVisible,
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
@@ -359,13 +358,8 @@ export default withCurrentRoute(
 			const sidebarIsHidden = ! secondary || isWcMobileApp();
 			const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
-			const isEditor = getSectionName( state ) === 'gutenberg-editor';
-			const isCheckout = getSectionName( state ) === 'checkout';
-
 			const userAllowedToHelpCenter =
-				( ( isEditor && config.isEnabled( 'editor/help-center' ) ) ||
-					( isCheckout && config.isEnabled( 'checkout/help-center' ) ) ||
-					( ! isEditor && ! isCheckout && config.isEnabled( 'calypso/help-center' ) ) ) &&
+				config.isEnabled( 'calypso/help-center' ) &&
 				shouldShowHelpCenterToUser( getCurrentUserId( state ) );
 
 			return {
