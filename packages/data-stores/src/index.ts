@@ -13,8 +13,6 @@ import * as Reader from './reader';
 import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
 import * as User from './user';
-import * as Verticals from './verticals';
-import * as VerticalsTemplates from './verticals-templates';
 import * as WPCOMFeatures from './wpcom-features';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useHas3PC } from './queries/use-has-3rd-party-cookies';
@@ -38,8 +36,6 @@ export {
 	HelpCenter,
 	I18n,
 	Site,
-	Verticals,
-	VerticalsTemplates,
 	Plans,
 	Launch,
 	WPCOMFeatures,
