@@ -138,8 +138,7 @@ module.exports = {
 		{
 			// This lints the codeblocks marked as `javascript`, `js`, `cjs` or `ejs`, all valid aliases
 			// See:
-			// eslint-disable-next-line inclusive-language/use-inclusive-words
-			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
+			//  * https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md)
 			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files
 			files: [
 				'*.md.js',
