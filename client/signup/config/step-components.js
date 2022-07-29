@@ -45,8 +45,6 @@ const stepNameToModuleName = {
 	'site-options': 'site-options',
 	'store-options': 'site-options',
 	'store-features': 'store-features',
-	'site-topic': 'site-topic',
-	'site-topic-with-theme': 'site-topic',
 	'site-type-with-theme': 'site-type',
 	'starting-point': 'starting-point',
 	survey: 'survey',

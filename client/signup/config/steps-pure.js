@@ -40,7 +40,6 @@ export function generateSteps( {
 	isAddOnsFulfilled = noop,
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
-	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
 	setDIFMLiteDesign = noop,
@@ -573,19 +572,6 @@ export function generateSteps( {
 			stepName: 'site-type',
 			providesDependencies: [ 'siteType' ],
 			fulfilledStepCallback: isSiteTypeFulfilled,
-		},
-
-		'site-topic': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
-		'site-topic-with-theme': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
 		},
 
 		launch: {
