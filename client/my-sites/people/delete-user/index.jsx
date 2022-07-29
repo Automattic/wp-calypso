@@ -309,7 +309,8 @@ class DeleteUser extends Component {
 	};
 
 	render() {
-		const { translate, isJetpack, isMultisite, siteOwner, user, currentUser } = this.props;
+		const { translate, isAtomic, isJetpack, isMultisite, siteOwner, user, currentUser } =
+			this.props;
 
 		// A user should not be able to remove themself.
 		if ( ! isJetpack && user.ID === currentUser.ID ) {
@@ -319,10 +320,10 @@ class DeleteUser extends Component {
 			return null;
 		}
 
-		// A user should not be able to remove the site owner.
+		// A user should not be able to remove the Atomic or non-Jetpack site owner.
 		if (
 			( ! isJetpack && user.ID === siteOwner ) ||
-			( isJetpack && user.linked_user_ID === siteOwner )
+			( isAtomic && user.linked_user_ID === siteOwner )
 		) {
 			return (
 				<Card className="delete-user__single-site">
