@@ -9,6 +9,7 @@ export default class SignupHeader extends Component {
 		shouldShowLoadingScreen: PropTypes.bool,
 		isReskinned: PropTypes.bool,
 		rightComponent: PropTypes.node,
+		pageTitle: PropTypes.string,
 	};
 
 	render() {
@@ -19,11 +20,7 @@ export default class SignupHeader extends Component {
 		return (
 			<div className="signup-header">
 				<WordPressLogo size={ 120 } className={ logoClasses } />
-
-				{ /* Ideally, this is where the back button
-			   would live. But thats hard to move, it seems. */ }
-				<div className="signup-header__left" />
-
+				<h1>{ this.props.pageTitle }</h1>
 				{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
 				<div className="signup-header__right">
