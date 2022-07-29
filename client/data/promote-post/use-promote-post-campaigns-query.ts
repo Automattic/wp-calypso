@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { requestDSP } from 'calypso/lib/dsp';
+import { requestDSP } from 'calypso/lib/promote-post';
 
 export enum CampaignStatus {
 	ALL = -1,
