@@ -1,4 +1,10 @@
-import { Button, Gridicon, TabPanel, useSitesTableFiltering } from '@automattic/components';
+import {
+	Button,
+	Gridicon,
+	TabPanel,
+	useSitesTableFiltering,
+	useSitesTableSorting,
+} from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -82,7 +88,12 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 
 	const { data: allSites = [] } = useSiteExcerptsQuery();
 
-	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( allSites, {
+	const { sortedSites } = useSitesTableSorting( allSites, {
+		sortKey: 'updated-at',
+		sortOrder: 'desc',
+	} );
+
+	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( sortedSites, {
 		search,
 		status,
 	} );
