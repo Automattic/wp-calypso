@@ -804,8 +804,7 @@ export function generateSteps( {
 		'videopress-site': {
 			stepName: 'videopress-site',
 			apiRequestFunction: createSite,
-			providesDependencies: [ 'siteSlug' ],
-			dependencies: [ 'themeSlugWithRepo' ],
+			providesDependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		},
 	};
 }
