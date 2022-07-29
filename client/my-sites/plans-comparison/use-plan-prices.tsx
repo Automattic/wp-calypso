@@ -1,5 +1,4 @@
 import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '@automattic/calypso-products';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelector } from 'react-redux';
 import { getPlanRawPrice, getDiscountedRawPrice } from 'calypso/state/plans/selectors';
 import type { WPComPlan } from '@automattic/calypso-products';
@@ -30,11 +29,9 @@ export default function usePlanPrices( plans: WPComPlan[] ): PlanPrices[] {
 		return plans.map( ( plan ) => {
 			const productId = plan.getProductId();
 			const [ price, discountPrice ] = [
-				getPlanRawPrice( state, productId ),
-				getDiscountedRawPrice( state, productId ),
-			]
-				.filter( isValueTruthy )
-				.map( toMonthlyPrice( plan ) );
+				getPlanRawPrice( state, productId ) ?? 0,
+				getDiscountedRawPrice( state, productId ) ?? 0,
+			].map( toMonthlyPrice( plan ) );
 
 			if ( ! discountPrice ) {
 				return { price };
