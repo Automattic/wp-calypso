@@ -38,12 +38,12 @@ export const getDesignPreviewUrl = (
 	// parentheses in the URL break it. `addQueryArgs` and `encodeURIComponent` don't escape
 	// parentheses so we've got to do it ourselves.
 	const siteTitle = options.site_title || design.title;
-	const siteTagline = options.site_tagline || design.tagline;
 	if ( siteTitle ) {
 		url += `&site_title=${ encodeParenthesesInText( siteTitle ) }`;
 	}
-	if ( siteTagline ) {
-		url += `&site_tagline=${ encodeParenthesesInText( siteTagline ) }`;
+
+	if ( options.site_tagline ) {
+		url += `&site_tagline=${ encodeParenthesesInText( options.site_tagline ) }`;
 	}
 
 	return url;
