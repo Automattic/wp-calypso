@@ -5,6 +5,9 @@
 
 	.promoted-post__main {
 		flex: 1;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 
 		.promoted-post__title {
 			color: var( --color-neutral-70 );
@@ -18,6 +21,14 @@
 			font-size: 0.875rem;
 		}
 
+		.promoted-post__image-container {
+			margin: 0 20px;
+			flex-shrink: 0;
+
+			.promoted-post__image {
+				height: 80px;
+			}
+		}
 	}
 }
 
