@@ -27,7 +27,7 @@ describe( 'useSitesTableSorting', () => {
 		},
 	];
 
-	test( 'should do not sort sites if unsupported sort is provided', () => {
+	test( 'should not sort sites if unsupported sortKey is provided', () => {
 		const { result } = renderHook( () =>
 			useSitesTableSorting( filteredSites, {
 				sortKey: 'sort-that-is-not-supported',
