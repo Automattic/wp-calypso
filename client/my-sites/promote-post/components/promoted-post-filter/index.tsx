@@ -3,8 +3,8 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import './style.scss';
+import { CampaignStatus } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { SmartStatuses } from 'calypso/my-sites/promote-post/components/promoted-post-list';
-import { CampaignStatus } from 'calypso/state/promote-post/selectors';
 
 type Props = {
 	statuses: { status: CampaignStatus; count: number }[];

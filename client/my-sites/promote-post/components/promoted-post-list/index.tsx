@@ -4,16 +4,19 @@ import megaphoneIllustration from 'calypso/assets/images/customer-home/illustrat
 import EmptyContent from 'calypso/components/empty-content';
 import ListEnd from 'calypso/components/list-end';
 import SectionHeader from 'calypso/components/section-header';
+import {
+	Campaign,
+	CampaignStatus,
+} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import PromotedPost from 'calypso/my-sites/promote-post/components/promoted-post';
 import './style.scss';
-import { Campaign, CampaignStatus } from 'calypso/state/promote-post/selectors';
 
 type Props = {
 	campaigns: Campaign[];
 };
 
 // todo: use actual value
-export const SmartStatuses: { [ status: CampaignStatus ]: string } = {
+export const SmartStatuses: { [ status in CampaignStatus ]: string } = {
 	'-1': 'All',
 	0: 'pending',
 	1: 'active',

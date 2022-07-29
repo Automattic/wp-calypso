@@ -1,17 +1,16 @@
 import './style.scss';
 
 import { translate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
+import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import PromotedPostFilter from 'calypso/my-sites/promote-post/components/promoted-post-filter';
 import PromotedPostList from 'calypso/my-sites/promote-post/components/promoted-post-list';
-import { fetchCampaigns } from 'calypso/state/promote-post/actions';
-import { getCampaigns, getIsFetching } from 'calypso/state/promote-post/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export default function PromotedPosts() {
@@ -19,25 +18,9 @@ export default function PromotedPosts() {
 	const [ selectedStatus, setSelectedStatus ] = useState( -1 );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const campaigns = useSelector( ( state ) => {
-		if ( ! selectedSiteId ) {
-			return [];
-		}
-		return getCampaigns( state, selectedSiteId );
-	} );
-	const isFetching = useSelector( ( state ) => {
-		if ( ! selectedSiteId ) {
-			return false;
-		}
-		return getIsFetching( state, selectedSiteId );
-	} );
 
-	const dispatch = useDispatch();
-	useEffect( () => {
-		if ( selectedSiteId ) {
-			dispatch( fetchCampaigns( selectedSiteId ) );
-		}
-	}, [ dispatch, selectedSiteId ] );
+	const { isLoading, data } = useCampaignsQuery( selectedSiteId ?? 0 );
+	const campaigns = useMemo( () => data || [], [ data ] );
 
 	const filteredCampaigns = useMemo( () => {
 		return campaigns.filter( ( campaign ) => {
@@ -76,8 +59,8 @@ export default function PromotedPosts() {
 				// hasScreenOptions
 			/>
 
-			{ isFetching && <LoadingEllipsis /> }
-			{ ! isFetching && (
+			{ isLoading && <LoadingEllipsis /> }
+			{ ! isLoading && (
 				<>
 					<PromotedPostFilter
 						statuses={ statuses }
