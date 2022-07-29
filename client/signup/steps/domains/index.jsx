@@ -784,7 +784,7 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				hideBack={ this.props.flowName === 'newsletters' }
+				hideBack={ this.props.flowName === 'newsletters' || this.props.flowName === 'link-in-bio' }
 				stepContent={
 					<div>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }

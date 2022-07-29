@@ -128,6 +128,21 @@ export function generateFlows( {
 			},
 		},
 		{
+			name: 'link-in-bio',
+			steps: getAddOnsStep(
+				isEnabled( 'signup/professional-email-step' )
+					? [ 'user', 'domains', 'emails', 'plans' ]
+					: [ 'user', 'domains', 'plans' ]
+			),
+			destination: ( dependencies ) => getStepperFlowDestination( dependencies, 'link-in-bio' ),
+			description: 'Beginning of the flow to create a link in bio',
+			lastModified: '2022-07-28',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Link in Bio' );
+			},
+		},
+		{
 			name: 'with-add-ons',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans', 'add-ons' ]

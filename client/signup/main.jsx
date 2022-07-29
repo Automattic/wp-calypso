@@ -743,7 +743,7 @@ class Signup extends Component {
 		}
 
 		const showPageTitle = () => {
-			if ( this.props.flowName === 'newsletters' ) {
+			if ( this.props.flowName === 'newsletters' || this.props.flowName === 'link-in-bio' ) {
 				return this.props.pageTitle;
 			}
 			return false;
