@@ -39,28 +39,26 @@ const ProviderWrappedLoggedOutLayout = ( {
 	redirectUri,
 	i18n,
 	showGdprBanner,
-} ) => {
-	return (
-		<CalypsoI18nProvider i18n={ i18n }>
-			<RouteProvider
-				currentSection={ currentSection }
-				currentRoute={ currentRoute }
-				currentQuery={ currentQuery }
-			>
-				<QueryClientProvider client={ queryClient }>
-					<ReduxProvider store={ store }>
-						<LayoutLoggedOut
-							primary={ primary }
-							secondary={ secondary }
-							redirectUri={ redirectUri }
-							showGdprBanner={ showGdprBanner }
-						/>
-					</ReduxProvider>
-				</QueryClientProvider>
-			</RouteProvider>
-		</CalypsoI18nProvider>
-	);
-};
+} ) => (
+	<CalypsoI18nProvider i18n={ i18n }>
+		<RouteProvider
+			currentSection={ currentSection }
+			currentRoute={ currentRoute }
+			currentQuery={ currentQuery }
+		>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<LayoutLoggedOut
+						primary={ primary }
+						secondary={ secondary }
+						redirectUri={ redirectUri }
+						showGdprBanner={ showGdprBanner }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		</RouteProvider>
+	</CalypsoI18nProvider>
+);
 
 /**
  * @param { object } context -- Middleware context

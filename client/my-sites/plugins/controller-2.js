@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import { includes } from 'lodash';
-// import page from 'page';
 import { createElement } from 'react';
 import { BASE_STALE_TIME } from 'calypso/data/marketplace/constants';
 import {
@@ -13,17 +12,15 @@ import {
 	getFetchWPORGInfinitePlugins,
 } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import { normalizePluginData } from 'calypso/lib/plugins/utils';
-import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import { getSiteFragment } from 'calypso/lib/route';
 import { fetchPluginInformation } from 'calypso/lib/wporg';
 import { PLUGINS_WPORG_PLUGIN_RECEIVE } from 'calypso/state/action-types';
-// import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { createQueryClient } from 'calypso/state/query-client';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
-import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginsBrowser from './plugins-browser';
@@ -38,24 +35,6 @@ function renderSinglePlugin( context, siteUrl ) {
 		siteUrl,
 	} );
 }
-
-function renderPluginList( context, basePath ) {
-	const search = context.query.s;
-
-	const props = {
-		path: basePath,
-		context,
-		filter: context.params.pluginFilter,
-		search,
-	};
-
-	context.primary = <PluginListComponent { ...props } />;
-
-	// if ( search ) {
-	// 	gaRecordEvent( 'Plugins', 'Search', 'Search term', search );
-	// }
-}
-
 // The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
 // the `:plugin` param is actually the side ID or category.
 function getCategoryForPluginsBrowser( context ) {
@@ -112,15 +91,6 @@ export function renderProvisionPlugins( context, next ) {
 	next();
 }
 
-export function plugins( context, next ) {
-	const { pluginFilter: filter = 'all' } = context.params;
-	const basePath = sectionify( context.path ).replace( '/' + filter, '' );
-
-	context.params.pluginFilter = filter;
-	renderPluginList( context, basePath );
-	next();
-}
-
 function plugin( context, next ) {
 	const siteUrl = getSiteFragment( context.path );
 	renderSinglePlugin( context, siteUrl );
@@ -147,39 +117,6 @@ export function browsePlugins( context, next ) {
 	renderPluginsBrowser( context );
 	next();
 }
-
-// export function upload( context, next ) {
-// 	context.primary = <PluginUpload />;
-// 	next();
-// }
-
-// export function jetpackCanUpdate( context, next ) {
-// 	const selectedSites = getSelectedOrAllSitesWithPlugins( context.store.getState() );
-// 	let redirectToPlugins = false;
-
-// 	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
-// 		redirectToPlugins = ! some( selectedSites, function ( site ) {
-// 			return site && site.jetpack && site.canUpdateFiles;
-// 		} );
-
-// 		if ( redirectToPlugins ) {
-// 			if ( context.params && context.params.site_id ) {
-// 				page.redirect( `/plugins/manage/${ context.params.site_id }` );
-// 				return;
-// 			}
-// 			page.redirect( '/plugins/manage' );
-// 			return;
-// 		}
-// 	}
-// 	next();
-// }
-
-// export function scrollTopIfNoHash( context, next ) {
-// 	if ( typeof window !== 'undefined' && ! window.location.hash ) {
-// 		window.scrollTo( 0, 0 );
-// 	}
-// 	next();
-// }
 
 function prefetchPluginsData( queryClient, fetchParams, infinite ) {
 	const queryType = infinite ? 'fetchInfiniteQuery' : 'fetchQuery';
@@ -231,8 +168,6 @@ export async function fetchPlugin( context, next ) {
 			() => {}
 		),
 	] );
-
-	// const data = await fetchPluginInformation( pluginSlug, context.lang );
 
 	context.queryClient = queryClient;
 	next();

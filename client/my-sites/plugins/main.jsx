@@ -71,7 +71,7 @@ export class PluginsMain extends Component {
 		currentPlugins.map( ( plugin ) => {
 			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
 			if ( ! pluginData ) {
-				// this.props.wporgFetchPluginData( plugin.slug );
+				this.props.wporgFetchPluginData( plugin.slug );
 			}
 		} );
 

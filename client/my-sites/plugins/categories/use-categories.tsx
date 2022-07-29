@@ -34,7 +34,6 @@ export const ALLOWED_CATEGORIES = [
 ];
 
 export function getCategories( allowed = ALLOWED_CATEGORIES ): Record< string, Category > {
-	__;
 	const categories = {
 		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
 		paid: { name: __( 'Top paid plugins' ), slug: 'paid', tags: [] },
