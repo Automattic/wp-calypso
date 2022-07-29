@@ -28,6 +28,7 @@ import {
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
 } from './constants';
+import type { SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 // Translatable strings
@@ -261,7 +262,24 @@ export const getJetpackProductsTaglines = (): Record<
 	};
 };
 
-export const getJetpackProductDisclaimers = ( link: string ): Record< string, TranslateResult > => {
+export const getJetpackProductDisclaimers = (
+	features: SelectorProductFeaturesItem[],
+	link: string
+): Record< string, TranslateResult > => {
+	const backupDisclaimerFeatureSlugs = [
+		'jetpack-1-year-archive-activity-log',
+		'jetpack-30-day-archive-activity-log',
+	];
+
+	const featureSlugs = features.map( ( feature ) => feature.slug );
+
+	/* Checks if any slugs of featues on the current Product match a set of slugs provided to this function. This determines whether or not to show the disclaimer based on whether the features the disclaimer is for is present */
+	const doesProductHaveCompatibleSlug = ( slugsToCheckFor: string[] ) => {
+		const combinedFeatureSlugs = featureSlugs.concat( slugsToCheckFor );
+
+		return new Set( combinedFeatureSlugs ).size !== combinedFeatureSlugs.length;
+	};
+
 	const getLink = () => {
 		if ( link[ 0 ] === '#' ) {
 			return <a href={ link }></a>;
@@ -270,21 +288,23 @@ export const getJetpackProductDisclaimers = ( link: string ): Record< string, Tr
 		return <a href={ link } target="_blank" rel="noreferrer"></a>;
 	};
 
-	const backupT1Disclaimer = translate(
-		'* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.',
-		{
+	const backupT1Disclaimer = doesProductHaveCompatibleSlug( backupDisclaimerFeatureSlugs ) ? (
+		translate( '* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
 			components: {
 				link: getLink(),
 			},
-		}
+		} )
+	) : (
+		<></>
 	);
-	const backupT2Disclaimer = translate(
-		'* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.',
-		{
+	const backupT2Disclaimer = doesProductHaveCompatibleSlug( backupDisclaimerFeatureSlugs ) ? (
+		translate( '* Subject to your usage and storage limit. {{link}}Learn more{{/link}}.', {
 			components: {
 				link: getLink(),
 			},
-		}
+		} )
+	) : (
+		<></>
 	);
 
 	return {
@@ -292,6 +312,10 @@ export const getJetpackProductDisclaimers = ( link: string ): Record< string, Tr
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1Disclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2Disclaimer,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2Disclaimer,
+		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupT1Disclaimer,
+		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupT1Disclaimer,
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupT2Disclaimer,
+		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupT2Disclaimer,
 	};
 };
 

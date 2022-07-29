@@ -1,14 +1,15 @@
 import { getJetpackProductDisclaimers } from './translations';
-import type { Product } from './types';
+import { ProductSlug, PlanSlug, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export function getJetpackProductDisclaimer(
-	product: Product,
+	product_slug: ProductSlug | PlanSlug,
+	features: SelectorProductFeaturesItem[],
 	link: string
 ): TranslateResult | undefined {
-	const jetpackProductDisclaimers = getJetpackProductDisclaimers( link ) as Record<
+	const jetpackProductDisclaimers = getJetpackProductDisclaimers( features, link ) as Record<
 		string,
 		TranslateResult
 	>;
-	return jetpackProductDisclaimers[ product.product_slug ];
+	return jetpackProductDisclaimers[ product_slug ];
 }
