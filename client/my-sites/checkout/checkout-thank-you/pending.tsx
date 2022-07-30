@@ -65,7 +65,6 @@ function CheckoutPending( {
 	redirectTo,
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
-	const translate = useTranslate();
 
 	useRedirectOnTransactionSuccess( {
 		orderId,
@@ -86,13 +85,20 @@ function CheckoutPending( {
 				title="Checkout Pending"
 				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
 			/>
-			<EmptyContent
-				illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
-				illustrationWidth={ 500 }
-				title={ translate( 'Processing…' ) }
-				line={ translate( "Almost there – we're currently finalizing your order." ) }
-			/>
+			<PendingContent />
 		</Main>
+	);
+}
+
+function PendingContent() {
+	const translate = useTranslate();
+	return (
+		<EmptyContent
+			illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
+			illustrationWidth={ 500 }
+			title={ translate( 'Processing…' ) }
+			line={ translate( "Almost there – we're currently finalizing your order." ) }
+		/>
 	);
 }
 
