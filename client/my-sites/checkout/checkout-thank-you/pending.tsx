@@ -1,11 +1,12 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
-import EmptyContent from 'calypso/components/empty-content';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
@@ -90,15 +91,30 @@ function CheckoutPending( {
 	);
 }
 
+const PendingContentWrapper = styled.div`
+	padding: 1em;
+	max-width: 540px;
+	text-align: center;
+	margin: 32vh auto;
+`;
+
+const PendingContentTitle = styled.h1`
+	font-size: 1.625rem;
+	line-height: 40px;
+	text-align: center;
+	vertical-align: middle;
+	margin: 0;
+`;
+
 function PendingContent() {
 	const translate = useTranslate();
 	return (
-		<EmptyContent
-			illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
-			illustrationWidth={ 500 }
-			title={ translate( 'Processing…' ) }
-			line={ translate( "Almost there – we're currently finalizing your order." ) }
-		/>
+		<PendingContentWrapper>
+			<PendingContentTitle>
+				{ translate( "Almost there – we're currently finalizing your order." ) }
+			</PendingContentTitle>
+			<LoadingEllipsis />
+		</PendingContentWrapper>
 	);
 }
 
