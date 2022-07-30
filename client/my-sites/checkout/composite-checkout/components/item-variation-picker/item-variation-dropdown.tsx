@@ -229,7 +229,7 @@ function ItemVariantOptionList( {
 	selectedItem: ResponseCartProduct;
 	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
 } ) {
-	const compareTo = variants.find( ( variant ) => variant.productId === selectedItem.product_id );
+	const compareTo = variants[ 0 ];
 	return (
 		<OptionList role="listbox" tabIndex={ -1 }>
 			{ variants.map( ( variant, index ) => (
