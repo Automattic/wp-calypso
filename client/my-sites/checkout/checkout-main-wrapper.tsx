@@ -11,8 +11,8 @@ import Recaptcha from 'calypso/signup/recaptcha';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
+import CheckoutMain from './composite-checkout/components/checkout-main';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
-import CompositeCheckout from './composite-checkout/composite-checkout';
 
 const logCheckoutError = ( error: Error ) => {
 	logToLogstash( {
@@ -98,7 +98,7 @@ export default function CheckoutMainWrapper( {
 			>
 				<CalypsoShoppingCartProvider>
 					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-						<CompositeCheckout
+						<CheckoutMain
 							siteSlug={ siteSlug }
 							siteId={ selectedSiteId }
 							productAliasFromUrl={ productAliasFromUrl }
