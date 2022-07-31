@@ -25,6 +25,8 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
 	"olark_chat_identity": "7089-503-10-5123",
+	"dsp_stripe_pub_key": "pk_test_51L5t7gJQesStQBzSgKblr83WK7rNUtB2d3ZWo2Xii87EUfdmGV6Ap0OeWH15PzUgEE3Q6s4fWCXzYNsgu4n9G28K00ODec4RxO",
+	"dsp_widget_js_src": "http://localhost:3004/widget.js",
 	"features": {
 		"ad-tracking": false,
 		"build/sites-dashboard": true,
@@ -124,6 +126,7 @@
 		"plugins/plugin-details-layout": false,
 		"post-editor/checkout-overlay": true,
 		"press-this": true,
+		"promote-post": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
