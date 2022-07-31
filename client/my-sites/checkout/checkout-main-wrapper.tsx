@@ -14,7 +14,7 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 
-const logCheckoutError = ( error ) => {
+const logCheckoutError = ( error: Error ) => {
 	logToLogstash( {
 		feature: 'calypso_client',
 		message: 'composite checkout load error',
@@ -28,7 +28,7 @@ const logCheckoutError = ( error ) => {
 	captureException( error );
 };
 
-export default function CheckoutSystemDecider( {
+export default function CheckoutMainWrapper( {
 	productAliasFromUrl,
 	productSourceFromUrl,
 	purchaseId,
@@ -44,10 +44,26 @@ export default function CheckoutSystemDecider( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+}: {
+	productAliasFromUrl?: string;
+	productSourceFromUrl?: string;
+	purchaseId?: number;
+	selectedFeature?: string;
+	couponCode?: string;
+	isComingFromUpsell?: boolean;
+	plan?: string;
+	selectedSite?: { slug?: string };
+	redirectTo?: string;
+	isLoggedOutCart?: boolean;
+	isNoSiteCart?: boolean;
+	isJetpackCheckout?: boolean;
+	jetpackSiteSlug?: string;
+	jetpackPurchaseToken?: string;
+	isUserComingFromLoginForm?: boolean;
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 
 	const prepurchaseNotices = <PrePurchaseNotices />;
 
@@ -55,7 +71,7 @@ export default function CheckoutSystemDecider( {
 		if ( productAliasFromUrl ) {
 			logToLogstash( {
 				feature: 'calypso_client',
-				message: 'CheckoutSystemDecider saw productSlug to add',
+				message: 'CheckoutMainWrapper saw productSlug to add',
 				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 				extra: {
 					productSlug: productAliasFromUrl,
