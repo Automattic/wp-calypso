@@ -1,6 +1,6 @@
-import config from '@automattic/calypso-config';
 import { Component } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SitePicker from 'calypso/my-sites/picker';
 
 class MySitesNavigation extends Component {
@@ -19,7 +19,7 @@ class MySitesNavigation extends Component {
 		};
 
 		let asyncSidebar = null;
-		if ( config.isEnabled( 'jetpack-cloud' ) ) {
+		if ( isJetpackCloud() ) {
 			asyncSidebar = <AsyncLoad require="calypso/components/jetpack/sidebar" { ...asyncProps } />;
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
