@@ -5,16 +5,25 @@ import {
 	getTrendingThemes as getTrendingThemesSelector,
 	areTrendingThemesLoading,
 } from 'calypso/state/themes/selectors';
+import { TrendingTheme, TrendingThemesFilter } from 'calypso/types';
 import { ConnectedThemesSelection } from './themes-selection';
 
-class TrendingThemes extends Component {
+interface TrendingThemesProps {
+	customizedThemesList: TrendingTheme[];
+	filter: TrendingThemesFilter;
+	getTrendingThemes: () => Promise< void >;
+	isLoading: boolean;
+	scrollToSearchInput: () => void;
+}
+
+class TrendingThemes extends Component< TrendingThemesProps > {
 	componentDidMount() {
 		if ( ! this.props.customizedThemesList.length ) {
 			this.fetchThemes();
 		}
 	}
 
-	componentDidUpdate( prevProps ) {
+	componentDidUpdate( prevProps: TrendingThemesProps ) {
 		// Wait until rec themes to be loaded to scroll to search input if its in use.
 		const { isLoading, scrollToSearchInput, filter } = this.props;
 		if ( prevProps.isLoading !== isLoading && isLoading === false ) {
@@ -26,7 +35,7 @@ class TrendingThemes extends Component {
 	}
 
 	fetchThemes() {
-		this.props.getTrendingThemes( this.props.filter );
+		this.props.getTrendingThemes();
 	}
 
 	render() {
