@@ -1,3 +1,4 @@
+import cx from 'classnames';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import Intro from './intro';
@@ -5,25 +6,25 @@ import type { Step } from '../../types';
 
 import './styles.scss';
 
-const LinkInBioIntro: Step = function LinkInBioIntro( { navigation } ) {
+const intro: Step = function intro( { navigation, flow } ) {
 	const { goNext, goBack } = navigation;
 
 	const handleGetStarted = () => {
-		//neeeds to be implemented
+		// needs to be implemented
 		goNext();
 	};
 	return (
 		<StepContainer
-			stepName={ 'linkInBioIntro' }
+			stepName={ cx( 'intro', { 'is-newsletters': flow === 'newsletters' } ) }
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
-			stepContent={ <Intro goNext={ handleGetStarted } /> }
+			stepContent={ <Intro flowName={ flow } goNext={ handleGetStarted } /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
 };
 
-export default LinkInBioIntro;
+export default intro;
