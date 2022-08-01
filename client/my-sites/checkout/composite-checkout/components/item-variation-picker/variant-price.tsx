@@ -96,7 +96,8 @@ export function getDiscountPercentageBetweenVariants(
 export const ItemVariantPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
-} > = ( { variant, compareTo } ) => {
+	showPrice?: boolean;
+} > = ( { variant, compareTo, showPrice } ) => {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 	const formattedMonthlyPrice = myFormatCurrency( variant.pricePerMonth, variant.currency );
@@ -106,19 +107,21 @@ export const ItemVariantPrice: FunctionComponent< {
 		<Variant>
 			<Label>
 				{ variant.variantLabel }
-				{ discountPercentage > 0 && isMobile && (
+				{ showPrice && discountPercentage > 0 && isMobile && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
 			</Label>
 			<span>
-				{ discountPercentage > 0 && ! isMobile && (
+				{ showPrice && discountPercentage > 0 && ! isMobile && (
 					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				<Price>
-					{ translate( '%(monthlyPrice)s/month', {
-						args: { monthlyPrice: formattedMonthlyPrice },
-					} ) }
-				</Price>
+				{ showPrice && (
+					<Price>
+						{ translate( '%(monthlyPrice)s/month', {
+							args: { monthlyPrice: formattedMonthlyPrice },
+						} ) }
+					</Price>
+				) }
 			</span>
 		</Variant>
 	);
