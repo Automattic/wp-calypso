@@ -596,21 +596,36 @@ function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct }
 
 		const options = {
 			args: {
-				sublabel,
+				productLabel: sublabel,
+				monthlyPrice: product.item_subtotal_monthly_cost_display,
 				price: product.item_original_subtotal_display,
 			},
 		};
 
 		if ( isMonthlyProduct( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
+			return <>{ translate( '%(productLabel)s: %(price)s per month', options ) }</>;
 		}
 
 		if ( isYearly( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per year', options ) }</>;
+			return (
+				<>
+					{ translate(
+						'%(productLabel)s: %(monthlyPrice)s/month, billed %(price)s per year',
+						options
+					) }
+				</>
+			);
 		}
 
 		if ( isBiennially( product ) ) {
-			return <>{ translate( '%(sublabel)s: %(price)s per two years', options ) }</>;
+			return (
+				<>
+					{ translate(
+						'%(productLabel)s: %(monthlyPrice)s/month, billed %(price)s every two years',
+						options
+					) }
+				</>
+			);
 		}
 	}
 
