@@ -1,4 +1,5 @@
-import { shallow } from 'enzyme';
+/** @jest-environment jsdom */
+import { render, screen } from '@testing-library/react';
 import { CheckoutThankYouHeader } from '../header';
 
 jest.unmock( '@automattic/calypso-products' );
@@ -26,34 +27,38 @@ describe( 'CheckoutThankYouHeader', () => {
 		primaryPurchase: {
 			product_slug: 'business-bundle',
 		},
+		recordTracksEvent: () => {},
+		recordStartTransferClickInThankYou: () => {},
+		titanAppsUrlPrefix: '',
 	};
 	describe( 'Basic tests', () => {
 		test( "Should display a loading indicator while data isn't loaded yet", () => {
-			const comp = shallow( <CheckoutThankYouHeader isDataLoaded={ false } { ...defaultProps } /> );
-			expect( comp.find( '.checkout-thank-you__header-heading' ).text() ).toBe( 'Loading…' );
+			render( <CheckoutThankYouHeader isDataLoaded={ false } { ...defaultProps } /> );
+			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent( 'Loading…' );
 		} );
+
 		test( 'Should display getText()-based success message when isSimplified=false (default)', () => {
-			const comp = shallow( <CheckoutThankYouHeader isDataLoaded={ true } { ...defaultProps } /> );
-			expect( comp.find( '.checkout-thank-you__header-heading' ).text() ).toEqual(
+			render( <CheckoutThankYouHeader isDataLoaded={ true } { ...defaultProps } /> );
+			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
 				'Congratulations on your purchase!'
 			);
-			expect( comp.find( '.checkout-thank-you__header-text' ).text() ).toEqual(
-				"Your site is now on the {{strong}}%(productName)s{{/strong}} plan. It's doing somersaults in excitement!"
+			expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveTextContent(
+				"Your site is now on the {{strong}}%(productName)s{{/strong}} plan. It's doing somersaults in excitement!"
 			);
 		} );
 		test( 'Should display an alternative success message when isSimplified=true', () => {
-			const comp = shallow(
+			render(
 				<CheckoutThankYouHeader isDataLoaded={ true } isSimplified={ true } { ...defaultProps } />
 			);
-			expect( comp.find( '.checkout-thank-you__header-heading' ).text() ).toEqual(
+			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
 				'Congratulations on your purchase!'
 			);
-			expect( comp.find( '.checkout-thank-you__header-text' ).text() ).toEqual(
+			expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveTextContent(
 				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. Enjoy your powerful new features!'
 			);
 		} );
 		test( 'Should display a list of success messages when siteUnlaunchedBeforeUpgrade=true', () => {
-			const comp = shallow(
+			render(
 				<CheckoutThankYouHeader
 					isDataLoaded={ true }
 					isSimplified={ true }
@@ -61,15 +66,18 @@ describe( 'CheckoutThankYouHeader', () => {
 					{ ...defaultProps }
 				/>
 			);
-			expect( comp.find( '.checkout-thank-you__header-heading' ).text() ).toEqual(
+			expect( screen.getByRole( 'heading', { level: 1 } ) ).toHaveTextContent(
 				'Congratulations on your purchase!'
 			);
-			expect( comp.find( '.checkout-thank-you__header-text' ).length ).toBe( 0 );
-			expect( comp.find( '.checkout-thank-you__success-message-item' ).length ).toEqual( 2 );
-			expect(
-				comp.find( '.checkout-thank-you__success-message-item:last-child div' ).text()
-			).toEqual(
-				"Your site has been launched. You can share it with the world whenever you're ready."
+			expect( screen.queryByRole( 'heading', { level: 2 } ) ).not.toBeInTheDocument();
+
+			const messages = screen.queryAllByRole( 'listitem' );
+
+			expect( messages[ 0 ] ).toHaveTextContent(
+				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. Enjoy your powerful new features!'
+			);
+			expect( messages[ 1 ] ).toHaveTextContent(
+				"Your site has been launched. You can share it with the world whenever you're ready."
 			);
 		} );
 	} );
