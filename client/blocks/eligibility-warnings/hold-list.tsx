@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -9,27 +10,35 @@ import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages(
 	context: string | null,
 	translate: LocalizeProps[ 'translate' ],
-	eligibleForProPlan: boolean,
-	billingPeriod?: string
+	billingPeriod?: string,
+	isMarketplace?: boolean
 ) {
 	return {
 		NO_BUSINESS_PLAN: {
-			title: eligibleForProPlan
-				? translate( 'Upgrade to a Pro plan' )
-				: translate( 'Upgrade to a Business plan' ),
+			title: ( function () {
+				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+					return translate( 'Upgrade to a Personal plan' );
+				}
+
+				return translate( 'Upgrade to a Business plan' );
+			} )(),
 			description: ( function () {
 				if ( context === 'themes' ) {
 					return translate(
 						"You'll also get to install custom plugins, have more storage, and access live support."
+					);
+				}
+
+				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+					return translate(
+						"You'll also get a free domain for one year, get to collect payments, and access email support."
 					);
 				}
 
@@ -160,6 +169,7 @@ export function getBlockingMessages(
 interface ExternalProps {
 	context: string | null;
 	holds: string[];
+	isMarketplace?: boolean;
 	isPlaceholder: boolean;
 }
 
@@ -203,14 +213,9 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( { context, holds, isPlaceholder, translate }: Props ) => {
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
+export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
 	const billingPeriod = useSelector( getBillingInterval );
-	const holdMessages = getHoldMessages( context, translate, eligibleForProPlan, billingPeriod );
+	const holdMessages = getHoldMessages( context, translate, billingPeriod, isMarketplace );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
