@@ -43,6 +43,7 @@ import {
 	getStepSectionName,
 	getValidPath,
 	getFlowPageTitle,
+	getFlowHideBack,
 	shouldForceLogin,
 	isReskinnedFlow,
 } from './utils';
@@ -313,6 +314,7 @@ export default {
 			stepSectionName,
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
+			hideBackButton: getFlowHideBack( flowName, userLoggedIn ),
 			isManageSiteFlow,
 		} );
 

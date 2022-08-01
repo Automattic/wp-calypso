@@ -242,6 +242,11 @@ describe( 'getDomainPriceRule()', () => {
 	} );
 
 	describe( 'general', () => {
+		test( 'should return FREE_WITH_PLAN for the domain and plan upsell flow', () => {
+			expect(
+				getDomainPriceRule( false, null, null, { product_slug: 'hi', cost: '14' }, false, '', true )
+			).toBe( 'FREE_WITH_PLAN' );
+		} );
 		test( 'should return FREE_DOMAIN when product slug is empty', () => {
 			expect( getDomainPriceRule( false, null, null, { product_slug: null, cost: '14' } ) ).toBe(
 				'FREE_DOMAIN'

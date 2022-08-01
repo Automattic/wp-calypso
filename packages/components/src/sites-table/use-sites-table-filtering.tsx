@@ -2,7 +2,7 @@ import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { SitesCountBadge } from './sites-count-badge';
-import type { Tab } from '../tab-panel';
+import type { SitesTableTab } from './sites-table-tab-panel';
 // eslint-disable-next-line no-restricted-imports
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -13,7 +13,7 @@ interface SitesTableFilterOptions {
 
 interface UseSitesTableFilteringResult {
 	filteredSites: SiteExcerptData[];
-	tabs: Tab[];
+	tabs: SitesTableTab[];
 	selectedTabHasSites: boolean;
 }
 
@@ -30,7 +30,7 @@ export function useSitesTableFiltering(
 	} );
 
 	const [ tabs, filteredByStatus ] = useMemo( () => {
-		const tabs: Tab[] = [
+		const tabs: SitesTableTab[] = [
 			{ name: 'all', title: __( 'All' ) },
 			{ name: 'launched', title: __( 'Launched' ) },
 			{ name: 'private', title: __( 'Private' ) },

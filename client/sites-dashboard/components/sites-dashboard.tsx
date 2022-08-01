@@ -1,4 +1,10 @@
-import { Button, Gridicon, TabPanel, useSitesTableFiltering } from '@automattic/components';
+import {
+	Button,
+	Gridicon,
+	SitesTableTabPanel,
+	useSitesTableFiltering,
+	useSitesTableSorting,
+} from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -65,7 +71,7 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-const SitesTableFilterTabs = styled( TabPanel )`
+const PositionedFilterTabs = styled( SitesTableTabPanel )`
 	${ wideCentered }
 	position: relative;
 	top: -48px;
@@ -82,7 +88,12 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 
 	const { data: allSites = [] } = useSiteExcerptsQuery();
 
-	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( allSites, {
+	const { sortedSites } = useSitesTableSorting( allSites, {
+		sortKey: 'updated-at',
+		sortOrder: 'desc',
+	} );
+
+	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( sortedSites, {
 		search,
 		status,
 	} );
@@ -101,7 +112,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<SitesTableFilterTabs
+				<PositionedFilterTabs
 					tabs={ tabs }
 					initialTabName={ selectedTabName }
 					onSelect={ ( newTab ) =>
@@ -130,7 +141,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 							<NoSitesMessage status={ selectedTabName } />
 						)
 					}
-				</SitesTableFilterTabs>
+				</PositionedFilterTabs>
 			</PageBodyWrapper>
 		</main>
 	);

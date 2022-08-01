@@ -8,7 +8,7 @@ import { getSectionName } from 'calypso/state/ui/selectors';
 import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';
 import Item from './item';
 
-const MasterbarHelpCenter = ( { siteId } ) => {
+const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
 	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
 	const sectionName = useSelector( getSectionName );
 
@@ -32,6 +32,7 @@ const MasterbarHelpCenter = ( { siteId } ) => {
 			className={ classnames( 'masterbar__item-help', {
 				'is-active': helpCenterVisible,
 			} ) }
+			tooltip={ tooltip }
 			icon={ <HelpIcon newItems={ newItems } /> }
 		/>
 	);

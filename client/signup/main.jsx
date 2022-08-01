@@ -142,6 +142,7 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
+		hideBackButton: PropTypes.bool,
 		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
 	};
@@ -758,6 +759,7 @@ class Signup extends Component {
 						<SignupHeader
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
+							pageTitle={ this.props.hideBackButton && this.props.pageTitle }
 							rightComponent={
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator
