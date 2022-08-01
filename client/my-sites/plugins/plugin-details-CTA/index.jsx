@@ -172,7 +172,7 @@ const PluginDetailsCTA = ( props ) => {
 					label={
 						<span className="plugin-details-CTA__autoupdate-text">
 							<span className="plugin-details-CTA__autoupdate-text-main">
-								{ translate( 'Enable autoupdate.' ) }
+								{ translate( 'Enable autoupdates.' ) }
 							</span>
 							{ sitePlugin.version && (
 								<span className="plugin-details-CTA__autoupdate-text-version">
