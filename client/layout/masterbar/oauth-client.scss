@@ -606,7 +606,6 @@
 		}
 	}
 
-	.login__form-action,
 	.magic-login__form-action {
 		text-align: center;
 		margin-top: 25px;
@@ -625,8 +624,10 @@
 		}
 
 		.login__social-tos {
-			margin: 2.5em auto 0;
+			margin: 0 auto 2.5em;
 			max-width: 100%;
+			order: -1;
+
 			a {
 				font-size: inherit;
 			}
@@ -778,6 +779,7 @@
 		border-top: $woo-form-divider-border;
 		border-bottom: $woo-form-divider-border;
 		padding-top: 44px;
+		padding-bottom: 44px;
 		text-align: center;
 	}
 
@@ -838,8 +840,7 @@
 		font-size: $woo-font-size-small;
 		line-height: 28px;
 		color: $woo-gray-40;
-		margin: 8px;
-		order: 1;
+		margin: 25px 8px 8px;
 		a {
 			font-size: inherit;
 		}
