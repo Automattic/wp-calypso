@@ -250,8 +250,7 @@ export function getThemeTaxonomySlugs( theme, taxonomy ) {
  * @returns {string} The theme name.
  */
 export function getThemeNameFromMeta( meta ) {
-	const hasBillingPeriod =
-		meta.endsWith( '-monthly' ) || meta.endsWith( '-yearly' );
+	const hasBillingPeriod = meta.endsWith( '-monthly' ) || meta.endsWith( '-yearly' );
 
 	if ( ! hasBillingPeriod ) return meta;
 
