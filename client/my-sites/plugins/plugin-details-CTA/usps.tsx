@@ -132,7 +132,7 @@ export const PlanUSPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, billin
 	}
 
 	const filteredUSPS = [
-		...( isFreePlan ? [ translate( 'Free domain for one year' ) ] : [] ),
+		...( isFreePlan && isAnnualPeriod ? [ translate( 'Free domain for one year' ) ] : [] ),
 		translate( 'Best-in-class hosting' ),
 		supportText,
 	];
@@ -214,7 +214,7 @@ function LegacyUSPS( { shouldUpgrade, isFreePlan, isMarketplaceProduct, billingP
 					},
 			  ]
 			: [] ),
-		...( isFreePlan
+		...( isFreePlan && isAnnualPeriod
 			? [
 					{
 						id: 'domain',
