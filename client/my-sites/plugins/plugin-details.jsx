@@ -363,7 +363,9 @@ function PluginDetails( props ) {
 							isSiteConnected={ isSiteConnected }
 						/>
 
-						{ ! showPlaceholder && <PluginDetailsSidebar plugin={ fullPlugin } /> }
+						{ ! showPlaceholder && ! requestingPluginsForSites && (
+							<PluginDetailsSidebar plugin={ fullPlugin } />
+						) }
 					</div>
 				</div>
 			</div>

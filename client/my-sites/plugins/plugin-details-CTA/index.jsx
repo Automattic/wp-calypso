@@ -127,7 +127,7 @@ const PluginDetailsCTA = ( props ) => {
 		);
 	}
 
-	if ( isPlaceholder ) {
+	if ( isPlaceholder || requestingPluginsForSites ) {
 		return <PluginDetailsCTAPlaceholder />;
 	}
 
@@ -253,7 +253,7 @@ const PluginDetailsCTA = ( props ) => {
 					billingPeriod={ billingPeriod }
 					shouldUpgrade={ shouldUpgrade }
 					isSiteConnected={ isSiteConnected }
-					disabled={ requestingPluginsForSites || incompatiblePlugin || userCantManageTheSite }
+					disabled={ incompatiblePlugin || userCantManageTheSite }
 				/>
 			</div>
 			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
