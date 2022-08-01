@@ -317,22 +317,6 @@ class MasterbarLoggedIn extends Component {
 		return null;
 	}
 
-	renderPlanUpsell() {
-		const { domainOnlySite, translate, isMigrationInProgress } = this.props;
-		if ( ! domainOnlySite && ! isMigrationInProgress ) {
-			return (
-				<AsyncLoad
-					require="./plan-upsell"
-					className="masterbar__item-upsell button is-primary"
-					tooltip={ translate( 'Upgrade your plan' ) }
-				>
-					{ translate( 'Upgrade' ) }
-				</AsyncLoad>
-			);
-		}
-		return null;
-	}
-
 	renderPublish() {
 		const { domainOnlySite, translate, isMigrationInProgress } = this.props;
 		if ( ! domainOnlySite && ! isMigrationInProgress ) {
@@ -549,7 +533,6 @@ class MasterbarLoggedIn extends Component {
 						{ this.renderSearch() }
 					</div>
 					<div className="masterbar__section masterbar__section--center">
-						{ this.renderPlanUpsell() }
 						{ this.renderPublish() }
 					</div>
 					<div className="masterbar__section masterbar__section--right">
