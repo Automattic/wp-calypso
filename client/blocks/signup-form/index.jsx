@@ -195,8 +195,8 @@ class SignupForm extends Component {
 
 	/**
 	 * If the step is invalid because we had an error that the user exists,
-	 * we should prompt user with a request to connect his social account
-	 * to his existing WPCOM account.
+	 * we should prompt user with a request to connect their social account
+	 * to their existing WPCOM account.
 	 *
 	 * That can be done either by redirecting or only suggesting. If it's done
 	 * by suggesting, bail out of redirecting and display the error.
