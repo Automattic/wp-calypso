@@ -315,7 +315,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	/**
 	 * If the use of credit is limited due to prevent Peer Refererral Fraud Abuse
 	 */
-	peer_referral_limit: boolean;
+	peer_referral_limit?: boolean;
 
 	currency: string;
 	allowed_payment_methods: string[];
