@@ -228,10 +228,27 @@ let originalGSObject;
 let functionTimeoutId;
 const debounceTimer = 500;
 /**
- * Builds and sends tracks events for global styles changes. Debouncing is necessary to avoid
- * spamming tracks events with updates when sliding inputs such as a color picker are in use,
- * however a custom debouncing function is necessary to be able to compare the original global
- * styles object from the first call.
+ * Creates the Tracks events for global styles changes. The logic is wrapped
+ * in a setTimeout to allow for custom debouncing when invoked.
+ *
+ * @param {Object} updated   The updated global styles content object.
+ * @param {string} eventName Name of the tracks event to send.
+ */
+const trackEventsWithTimer = ( updated, eventName ) => {
+	functionTimeoutId = setTimeout(
+		() =>
+			findUpdates( updated, originalGSObject )?.forEach( ( { keyMap, value } ) => {
+				tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
+			} ),
+		debounceTimer
+	);
+};
+
+/**
+ * Builds and sends tracks events for global styles changes. We set and use
+ * some timing variables to allow for custom debouncing. This is needed
+ * to avoid spamming tracks events when using continuous inputs such as a
+ * slider or color picker.
  *
  * @param {Object} updated   The updated global styles content object.
  * @param {Object} original  The original global styles content object.
@@ -247,24 +264,11 @@ export const buildGlobalStylesContentEvents = ( updated, original, eventName ) =
 	if ( hasntBeenCalled || ! recentlyCalled ) {
 		// if not called recently -> set original for later reference
 		originalGSObject = original;
-		// put function on a delay
-		functionTimeoutId = setTimeout(
-			() =>
-				findUpdates( updated, originalGSObject )?.forEach( ( { keyMap, value } ) => {
-					tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
-				} ),
-			debounceTimer
-		);
+		trackEventsWithTimer( updated, eventName );
 	} else {
 		// else -> cancel delayed function call - reset it with new updated value
 		clearTimeout( functionTimeoutId );
-		functionTimeoutId = setTimeout(
-			() =>
-				findUpdates( updated, originalGSObject )?.forEach( ( { keyMap, value } ) => {
-					tracksRecordEvent( eventName, buildGlobalStylesEventProps( keyMap, value ) );
-				} ),
-			debounceTimer
-		);
+		trackEventsWithTimer( updated, eventName );
 	}
 };
 
