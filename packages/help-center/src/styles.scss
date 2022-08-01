@@ -276,42 +276,45 @@ button.button.back-button__help-center.is-borderless {
 	}
 }
 
-.help-center {
-	button,
-	input,
-	textarea,
-	select {
-		box-sizing: border-box;
-	}
-
-	h1 {
-		font-weight: 600;
-		margin: 0.67em 0;
-
-		&.site-picker__site-title {
-			font-weight: 400;
-			margin: 0;
+body[class*='is-section-'],
+body[class^='is-section-'] {
+	.help-center {
+		button,
+		input,
+		textarea,
+		select {
+			box-sizing: border-box;
 		}
-	}
 
-	h2,
-	h3 {
-		color: #1d2327;
-		margin: 1em 0;
-	}
+		h1 {
+			font-weight: 600;
+			margin: 0.67em 0;
 
-	label {
-		cursor: pointer;
-	}
+			&.site-picker__site-title {
+				font-weight: 400;
+				margin: 0;
+			}
+		}
 
-	.help-center__container.is-desktop {
-		position: fixed;
-		top: calc( var( --masterbar-height ) + 16px );
-	}
+		h2,
+		h3 {
+			color: #1d2327;
+			margin: 1em 0;
+		}
 
-	.search-card {
-		.search {
-			border: none;
+		label {
+			cursor: pointer;
+		}
+
+		.help-center__container.is-desktop {
+			position: fixed;
+			top: calc( var( --masterbar-height ) + 16px );
+		}
+
+		.search-card {
+			.search {
+				border: none;
+			}
 		}
 	}
 }
