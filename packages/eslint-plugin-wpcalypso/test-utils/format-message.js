@@ -10,7 +10,6 @@
  * terms object.
  *
  * @see https://github.com/eslint/eslint/blob/v2.12.0/lib/eslint.js#L964-L971
- *
  * @param  {string} message Message template
  * @param  {object} terms   Terms
  * @returns {string}         Formatted message

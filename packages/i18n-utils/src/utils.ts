@@ -187,7 +187,6 @@ export function removeLocaleFromPath( path: string ): string {
  * Filter out unexpected values from the given language revisions object.
  *
  * @param {object} languageRevisions A candidate language revisions object for filtering.
- *
  * @returns {object} A valid language revisions object derived from the given one.
  */
 export function filterLanguageRevisions( languageRevisions: Record< string, string > ) {

@@ -65,7 +65,6 @@ function pickUrlParts(
  * Returns the various available URL parts.
  *
  * @param url the URL to analyze
- *
  * @returns   the URL parts
  */
 export function getUrlParts( url: string | URL ): UrlParts {
@@ -111,7 +110,6 @@ export function getUrlParts( url: string | URL ): UrlParts {
  * Returns a URL object built from the provided URL parts.
  *
  * @param parts the provided URL parts.
- *
  * @returns the generated URL object.
  */
 export function getUrlFromParts( parts: OptionalUrlParts ): URL {
