@@ -251,7 +251,7 @@ export function getThemeTaxonomySlugs( theme, taxonomy ) {
  */
 export function getThemeNameFromMeta( meta ) {
 	const hasBillingPeriod =
-		meta.lastIndexOf( '-monthly' ) > -1 || meta.lastIndexOf( '-yearly' ) > -1;
+		meta.endsWith( '-monthly' ) || meta.endsWith( '-yearly' );
 
 	if ( ! hasBillingPeriod ) return meta;
 
