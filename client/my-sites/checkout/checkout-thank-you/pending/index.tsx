@@ -5,7 +5,7 @@ import page from 'page';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
-import EmptyContent from 'calypso/components/empty-content';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
@@ -25,12 +25,16 @@ import type {
 } from 'calypso/state/selectors/get-order-transaction';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
+import './style.scss';
+
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
 	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
 }
+
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
  * A page that polls the orders endpoint for a processing transaction and
@@ -65,7 +69,6 @@ function CheckoutPending( {
 	redirectTo,
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
-	const translate = useTranslate();
 
 	useRedirectOnTransactionSuccess( {
 		orderId,
@@ -86,13 +89,20 @@ function CheckoutPending( {
 				title="Checkout Pending"
 				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
 			/>
-			<EmptyContent
-				illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
-				illustrationWidth={ 500 }
-				title={ translate( 'Processing…' ) }
-				line={ translate( "Almost there – we're currently finalizing your order." ) }
-			/>
+			<PendingContent />
 		</Main>
+	);
+}
+
+function PendingContent() {
+	const translate = useTranslate();
+	return (
+		<div className="pending-content__wrapper">
+			<div className="pending-content__title">
+				{ translate( "Almost there – we're currently finalizing your order." ) }
+			</div>
+			<LoadingEllipsis />
+		</div>
 	);
 }
 
@@ -240,7 +250,7 @@ function triggerPostRedirectNotices( {
 		);
 		reduxDispatch(
 			errorNotice( defaultFailErrorNotice, {
-				displayOnNextPage: true,
+				isPersistent: true,
 			} )
 		);
 		return;
@@ -250,7 +260,7 @@ function triggerPostRedirectNotices( {
 		const unknownNotice = translate( 'Oops! Something went wrong. Please try again later.' );
 		reduxDispatch(
 			errorNotice( unknownNotice, {
-				displayOnNextPage: true,
+				isPersistent: true,
 			} )
 		);
 		return;
