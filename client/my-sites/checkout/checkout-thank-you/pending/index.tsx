@@ -250,7 +250,7 @@ function triggerPostRedirectNotices( {
 		);
 		reduxDispatch(
 			errorNotice( defaultFailErrorNotice, {
-				displayOnNextPage: true,
+				isPersistent: true,
 			} )
 		);
 		return;
@@ -260,7 +260,7 @@ function triggerPostRedirectNotices( {
 		const unknownNotice = translate( 'Oops! Something went wrong. Please try again later.' );
 		reduxDispatch(
 			errorNotice( unknownNotice, {
-				displayOnNextPage: true,
+				isPersistent: true,
 			} )
 		);
 		return;
