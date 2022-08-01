@@ -189,6 +189,9 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	if ( variants.length < 2 ) {
 		return null;
 	}
+	const selectedVariant =
+		selectedVariantIndex !== null ? variants[ selectedVariantIndex ] : undefined;
+	const compareTo = variants[ 0 ];
 
 	return (
 		<Dropdown aria-expanded={ open } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
@@ -199,8 +202,8 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				open={ open }
 				role="button"
 			>
-				{ selectedVariantIndex !== null ? (
-					<ItemVariantPrice variant={ variants[ selectedVariantIndex ] } />
+				{ selectedVariant ? (
+					<ItemVariantPrice variant={ selectedVariant } compareTo={ compareTo } />
 				) : (
 					<span>{ translate( 'Pick a product term' ) }</span>
 				) }
