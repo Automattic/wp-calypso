@@ -1,6 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef } from 'react';
@@ -26,12 +25,16 @@ import type {
 } from 'calypso/state/selectors/get-order-transaction';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
+import './style.scss';
+
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
 	receiptId: number | undefined;
 	siteSlug?: string;
 	redirectTo?: string;
 }
+
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
  * A page that polls the orders endpoint for a processing transaction and
@@ -91,30 +94,15 @@ function CheckoutPending( {
 	);
 }
 
-const PendingContentWrapper = styled.div`
-	padding: 1em;
-	max-width: 540px;
-	text-align: center;
-	margin: 32vh auto;
-`;
-
-const PendingContentTitle = styled.h1`
-	font-size: 1.625rem;
-	line-height: 40px;
-	text-align: center;
-	vertical-align: middle;
-	margin: 0;
-`;
-
 function PendingContent() {
 	const translate = useTranslate();
 	return (
-		<PendingContentWrapper>
-			<PendingContentTitle>
+		<div className="pending-content__wrapper">
+			<div className="pending-content__title">
 				{ translate( "Almost there – we're currently finalizing your order." ) }
-			</PendingContentTitle>
+			</div>
 			<LoadingEllipsis />
-		</PendingContentWrapper>
+		</div>
 	);
 }
 
