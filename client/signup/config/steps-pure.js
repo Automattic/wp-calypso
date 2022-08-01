@@ -723,20 +723,13 @@ export function generateSteps( {
 			apiRequestFunction: setDIFMLiteDesign,
 			delayApiRequestUntilComplete: true,
 			providesDependencies: [
-				'isFSEActive',
 				'selectedDesign',
 				'selectedSiteCategory',
 				'isLetUsChooseSelected',
 				'cartItem',
 				'siteSlug',
 			],
-			optionalDependencies: [
-				'isFSEActive',
-				'selectedDesign',
-				'isLetUsChooseSelected',
-				'cartItem',
-				'siteSlug',
-			],
+			optionalDependencies: [ 'selectedDesign', 'isLetUsChooseSelected', 'cartItem', 'siteSlug' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
