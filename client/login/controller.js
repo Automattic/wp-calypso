@@ -18,19 +18,19 @@ const enhanceContextWithLogin = ( context ) => {
 	} = context;
 
 	// Process a social login handoff from /start/user.
-	if ( query?.email_address && query?.source && query?.access_token && query?.id_token ) {
+	if ( query?.email_address && query?.service && query?.access_token && query?.id_token ) {
 		context.store.dispatch( {
 			type: SOCIAL_HANDOFF_CONNECT_ACCOUNT,
 			email: query.email_address,
 			authInfo: {
-				source: query.source,
+				service: query.service,
 				access_token: query.access_token,
 				id_token: query.id_token,
 			},
 		} );
 		const params = new URLSearchParams( new URL( window.location.href ).search );
 		// Remove state-related data from URL but leave 'email_address'.
-		params.delete( 'source' );
+		params.delete( 'service' );
 		params.delete( 'access_token' );
 		params.delete( 'id_token' );
 		page.redirect( window.location.pathname + '?' + params.toString() );
