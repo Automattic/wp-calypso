@@ -86,7 +86,7 @@ const JetpackFAQ: FC = () => {
 					className="jetpack-faq__section"
 				>
 					{ translate(
-						"If your site's Backup storage limit is reached, your older backups will be deleted. Depending on the size of your site and your site's Backup storage limit, your site's backup retention period may be reduced down to 7 days of your most recent backups. You will still be able to restore existing backups, but new site updates will not be backed up until you free up storage or upgrade your storage limit here"
+						"If your site's Backup storage limit is reached, your older backups will be deleted. Depending on the size of your site and your site's Backup storage limit, your site's backup retention period may be reduced down to 7 days of your most recent backups. You will still be able to restore existing backups, but new site updates will not be backed up until you free up storage or upgrade your storage limit."
 					) }
 				</FoldableFAQ>
 				<FoldableFAQ
