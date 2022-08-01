@@ -30,6 +30,7 @@
 	"features": {
 		"ad-tracking": false,
 		"build/sites-dashboard": true,
+		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cloudflare": true,
 		"comments/filters-in-posts": true,
@@ -53,8 +54,6 @@
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
-		"editor/help-center": true,
-		"checkout/help-center": true,
 		"email-accounts/enabled": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,

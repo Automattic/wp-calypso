@@ -4,11 +4,11 @@
 
 import {
 	DataHelper,
-	TestAccount,
 	SupportComponent,
+	TestAccount,
 	TestAccountName,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
@@ -41,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 
 		it( 'Search results are shown with a valid search keyword', async function () {
 			const results = await supportComponent.getResults( 'article' );
-			expect( results.length ).toBeGreaterThan( 0 );
+			expect( await results.count() ).toBeGreaterThan( 0 );
 		} );
 
 		it( 'Clear keyword', async function () {

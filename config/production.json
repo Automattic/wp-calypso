@@ -18,6 +18,7 @@
 	"features": {
 		"ad-tracking": true,
 		"bilmur-script": true,
+		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"cloudflare": true,
@@ -32,8 +33,6 @@
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
-		"editor/help-center": true,
-		"checkout/help-center": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,

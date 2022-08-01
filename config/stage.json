@@ -16,6 +16,7 @@
 	"dsp_widget_js_src": "http://todo",
 	"features": {
 		"ad-tracking": false,
+		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"cloudflare": true,
@@ -31,8 +32,6 @@
 		"domains/kracken-ui/pagination": true,
 		"domains/new-status-design": true,
 		"domains/premium-domain-purchases": true,
-		"editor/help-center": true,
-		"checkout/help-center": true,
 		"external-media": true,
 		"external-media/free-photo-library": true,
 		"external-media/google-photos": true,

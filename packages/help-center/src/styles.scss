@@ -260,7 +260,8 @@ button.button.back-button__help-center.is-borderless {
 	padding-top: 0;
 }
 
-.help-center-container__loading, .help-center-contact-page__loading {
+.help-center-container__loading,
+.help-center-contact-page__loading {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -275,87 +276,85 @@ button.button.back-button__help-center.is-borderless {
 	}
 }
 
-.is-section-checkout {
-	.help-center {
-		button,
-		input,
-		textarea,
-		select {
-			box-sizing: border-box;
-		}
+.help-center {
+	button,
+	input,
+	textarea,
+	select {
+		box-sizing: border-box;
+	}
 
-		h1 {
-			font-weight: 600;
-			margin: 0.67em 0;
+	h1 {
+		font-weight: 600;
+		margin: 0.67em 0;
 
-			&.site-picker__site-title {
-				font-weight: 400;
-				margin: 0;
-			}
-		}
-
-		h2,
-		h3 {
-			color: #1d2327;
-			margin: 1em 0;
-		}
-
-		label {
-			cursor: pointer;
-		}
-
-		.help-center__container.is-desktop {
-			position: fixed;
-			top: calc( var( --masterbar-height ) + 16px );
-		}
-
-		.search-card {
-			.search {
-				border: none;
-			}
+		&.site-picker__site-title {
+			font-weight: 400;
+			margin: 0;
 		}
 	}
 
-	.help-center-contact-form {
-		.button:not( .back-button__help-center ) {
-			line-height: 2.71428571;
-			min-height: 40px;
-			margin-bottom: 4px;
-			vertical-align: middle;
-		}
-	}
-
-	.help-center-contact-form__label,
-	.site-picker__label {
-		font-size: $font-body-small;
-	}
-
-	.help-center-sibyl-articles__list {
-		margin: 0;
-	}
-
-	.help-center-header__text {
+	h2,
+	h3 {
+		color: #1d2327;
 		margin: 1em 0;
 	}
 
-	.wp-block-embed__wrapper {
-		position: relative;
+	label {
+		cursor: pointer;
+	}
 
-		&::before {
-			content: '';
-			display: block;
-			padding-top: 56.25%;
-		}
+	.help-center__container.is-desktop {
+		position: fixed;
+		top: calc( var( --masterbar-height ) + 16px );
+	}
 
-		iframe {
-			bottom: 0;
-			height: 100%;
-			left: 0;
-			position: absolute;
-			right: 0;
-			top: 0;
-			width: 100%;
+	.search-card {
+		.search {
+			border: none;
 		}
+	}
+}
+
+.help-center-contact-form {
+	.button:not( .back-button__help-center ) {
+		line-height: 2.71428571;
+		min-height: 40px;
+		margin-bottom: 4px;
+		vertical-align: middle;
+	}
+}
+
+.help-center-contact-form__label,
+.site-picker__label {
+	font-size: $font-body-small;
+}
+
+.help-center-sibyl-articles__list {
+	margin: 0;
+}
+
+.help-center-header__text {
+	margin: 1em 0;
+}
+
+.wp-block-embed__wrapper {
+	position: relative;
+
+	&::before {
+		content: '';
+		display: block;
+		padding-top: 56.25%;
+	}
+
+	iframe {
+		bottom: 0;
+		height: 100%;
+		left: 0;
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: 100%;
 	}
 }
 

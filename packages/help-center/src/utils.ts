@@ -1,3 +1,6 @@
+/* eslint-disable no-restricted-imports */
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
+
 // list of valid origins for wpcom requests.
 // taken from wpcom-proxy-request (rest-proxy/provider-v2.0.js)
 const wpcomAllowedOrigins = [
@@ -46,4 +49,27 @@ export function isAllowedOrigin( origin: string ) {
 
 export function shouldTargetWpcom( isSimpleSite: boolean ) {
 	return isSimpleSite || isAllowedOrigin( window.location.origin );
+}
+
+export function shouldLoadInlineHelp( sectionName: string, currentRoute: string ) {
+	if ( isWpMobileApp() ) {
+		return false;
+	}
+
+	const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help', 'home' ];
+	const exemptedRoutes = [ '/log-in/jetpack' ];
+	const exemptedRoutesStartingWith = [
+		'/start/p2',
+		'/start/setup-site',
+		'/plugins/domain',
+		'/plugins/marketplace/setup',
+	];
+
+	return (
+		! exemptedSections.includes( sectionName ) &&
+		! exemptedRoutes.includes( currentRoute ) &&
+		! exemptedRoutesStartingWith.some( ( startsWithString ) =>
+			currentRoute.startsWith( startsWithString )
+		)
+	);
 }
