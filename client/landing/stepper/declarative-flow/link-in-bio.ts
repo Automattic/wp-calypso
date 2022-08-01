@@ -10,7 +10,7 @@ export const linkInBio: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'letsGetStarted', 'chooseADomain' ] as StepPath[];
+		return [ 'linkInBioIntro' ] as StepPath[];
 	},
 
 	useStepNavigation( currentStep, navigate ) {
@@ -23,7 +23,6 @@ export const linkInBio: Flow = {
 		};
 
 		const goNext = () => {
-			navigate( 'chooseADomain' );
 			return;
 		};
 

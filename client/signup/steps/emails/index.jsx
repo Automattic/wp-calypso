@@ -145,6 +145,7 @@ class EmailsStep extends Component {
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ translate( 'Back' ) }
 				hideSkip={ false }
+				hideBack={ this.props.flowName === 'newsletters' }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Buy an email later' ) }

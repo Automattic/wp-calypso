@@ -39,6 +39,8 @@
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"olark_chat_identity": false,
+	"dsp_stripe_pub_key": "pk_test_todo",
+	"dsp_widget_js_src": "http://todo/widget.js",
 	"upwork_support_locales": [
 		"de",
 		"de-at",
@@ -182,6 +184,7 @@
 		"onboarding",
 		"onboarding-with-email",
 		"with-add-ons",
+		"newsletters",
 		"setup-site",
 		"account",
 		"do-it-for-me",

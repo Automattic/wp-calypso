@@ -71,7 +71,15 @@ const domainSearch = ( context, next ) => {
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
 			<DocumentHead title={ translate( 'Domain Search' ) } />
 			<CalypsoShoppingCartProvider>
-				<DomainSearch basePath={ sectionify( context.path ) } context={ context } />
+				<DomainSearch
+					basePath={ sectionify( context.path ) }
+					context={ context }
+					domainAndPlanUpsellFlow={
+						context.query.domainAndPlanPackage !== undefined
+							? context.query.domainAndPlanPackage === 'true'
+							: undefined
+					}
+				/>
 			</CalypsoShoppingCartProvider>
 		</Main>
 	);
