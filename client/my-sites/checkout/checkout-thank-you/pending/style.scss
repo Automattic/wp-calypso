@@ -6,6 +6,7 @@
 }
 
 .pending-content__title {
+	@extend .wp-brand-font;
 	/* stylelint-disable-next-line scales/font-sizes */
 	font-size: 1.625rem;
 	line-height: 40px;
