@@ -13,9 +13,10 @@ export default class SignupHeader extends Component {
 	};
 
 	render() {
-		const { pageTitle } = this.props;
+		const { pageTitle, shouldShowLoadingScreen, isReskinned, rightComponent } = this.props;
+
 		const logoClasses = classnames( 'wordpress-logo', {
-			'is-large': this.props.shouldShowLoadingScreen && ! this.props.isReskinned,
+			'is-large': shouldShowLoadingScreen && ! isReskinned,
 		} );
 
 		return (
@@ -24,9 +25,7 @@ export default class SignupHeader extends Component {
 				{ pageTitle && <h1>{ pageTitle }</h1> }
 				{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
-				<div className="signup-header__right">
-					{ ! this.props.shouldShowLoadingScreen && this.props.rightComponent }
-				</div>
+				<div className="signup-header__right">{ ! shouldShowLoadingScreen && rightComponent }</div>
 			</div>
 		);
 	}
