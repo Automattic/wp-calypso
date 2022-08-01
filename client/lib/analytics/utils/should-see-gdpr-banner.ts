@@ -8,7 +8,6 @@ import isCountryInGdprZone from './is-country-in-gdpr-zone';
  *
  * @param countryCode Country code determined either from cookie or from a special header
  * @param sensitivePixelOption Value of the `sensitive_pixel_option` cookie
- *
  * @returns Whether the current user could be in the GDPR zone. When the `countryCode` is
  * `undefined`, we return `null` which has a meaning of "result unknown".
  */

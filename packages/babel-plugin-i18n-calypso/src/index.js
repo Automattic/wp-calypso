@@ -80,7 +80,6 @@ const REGEXP_TRANSLATOR_COMMENT = /^\s*translators:\s*([\s\S]+)/im;
  * @param {object} path              Traversal path.
  * @param {number} _originalNodeLine Private: In recursion, line number of
  *                                     the original node passed.
- *
  * @returns {?string} Extracted comment.
  */
 function getExtractedComment( path, _originalNodeLine ) {
@@ -136,7 +135,6 @@ function getExtractedComment( path, _originalNodeLine ) {
  * represenation of that node's value.
  *
  * @param {object} node AST node.
- *
  * @returns {string} String value.
  */
 function getNodeAsString( node ) {
@@ -165,7 +163,6 @@ function getNodeAsString( node ) {
  * Returns true if the specified funciton name is valid translate function name
  *
  * @param {string} name Function name to test.
- *
  * @returns {boolean} Whether function name is valid translate function name.
  */
 function isValidFunctionName( name ) {
@@ -177,7 +174,6 @@ function isValidFunctionName( name ) {
  * the translation object.
  *
  * @param {string} key Key to test.
- *
  * @returns {boolean} Whether key is valid for assignment.
  */
 function isValidTranslationKey( key ) {
@@ -191,7 +187,6 @@ function isValidTranslationKey( key ) {
  *
  * @param   {object} source left-hand string object
  * @param   {object} target right-hand string object
- *
  * @returns {void}
  */
 function mergeStrings( source, target ) {

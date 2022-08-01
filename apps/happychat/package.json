@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/happychat-app",
 	"version": "1.0.0",
-	"description": "WordPress.com Happychat Panel",
+	"description": "WordPress.com Happychat Panel.",
 	"main": "dist/build.min.js",
 	"sideEffects": true,
 	"repository": {

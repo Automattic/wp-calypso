@@ -55,7 +55,6 @@ export type KeyedReducerAction< TAction extends Action > = TAction | CalypsoInit
  *         title: 'grunt',
  *     }
  * }
- *
  * @param {string} keyPath lodash-style path to the key in action referencing item in state map
  * @param {Function} reducer applied to referenced item in state map
  * @returns {Function} super-reducer applying reducer over map of keyed items

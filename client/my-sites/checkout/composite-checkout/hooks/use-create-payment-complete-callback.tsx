@@ -19,7 +19,6 @@ import { infoNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -35,6 +34,7 @@ import normalizeTransactionResponse from '../lib/normalize-transaction-response'
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
+import type { PostCheckoutUrlArguments } from './use-get-thank-you-url/get-thank-you-page-url';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
@@ -87,7 +87,6 @@ export default function useCreatePaymentCompleteCallback( {
 	const reduxStore = useStore();
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) =>
@@ -116,18 +115,16 @@ export default function useCreatePaymentCompleteCallback( {
 					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
 			}
 
-			const getThankYouPageUrlArguments = {
+			const getThankYouPageUrlArguments: PostCheckoutUrlArguments = {
 				siteSlug: siteSlug || undefined,
 				adminUrl,
 				receiptId: transactionResult.receipt_id,
-				orderId: transactionResult.order_id,
 				redirectTo,
 				purchaseId,
 				feature,
 				cart: responseCart,
 				isJetpackNotAtomic,
 				productAliasFromUrl,
-				isEligibleForSignupDestinationResult,
 				hideNudge: isComingFromUpsell,
 				isInModal,
 				isJetpackCheckout,
@@ -256,7 +253,6 @@ export default function useCreatePaymentCompleteCallback( {
 			feature,
 			isJetpackNotAtomic,
 			productAliasFromUrl,
-			isEligibleForSignupDestinationResult,
 			isComingFromUpsell,
 			isInModal,
 			reduxStore,
