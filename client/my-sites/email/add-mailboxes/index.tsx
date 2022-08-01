@@ -45,6 +45,7 @@ import {
 	emailManagementInbox,
 	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -227,6 +228,7 @@ const MailboxesForm = ( {
 	emailProduct: ProductListItem | null;
 	goToEmail: () => void;
 } ): JSX.Element => {
+	const userEmail = useSelector( getCurrentUserEmail );
 	const [ isAddingToCart, setIsAddingToCart ] = useState( false );
 	const [ isValidating, setIsValidating ] = useState( false );
 	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
@@ -306,6 +308,7 @@ const MailboxesForm = ( {
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
 					hiddenFieldNames={ hiddenFieldNames }
+					initialFieldValues={ { [ FIELD_ALTERNATIVE_EMAIL ]: userEmail } }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }

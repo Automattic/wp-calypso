@@ -17,6 +17,7 @@ import {
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { emailManagementTitanSetUpThankYou } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
@@ -112,6 +113,7 @@ const TitanSetUpMailboxForm = ( {
 	selectedDomainName,
 }: TitanSetUpMailboxFormProps ) => {
 	const translate = useTranslate();
+	const userEmail = useSelector( getCurrentUserEmail );
 	const [ isValidating, setIsValidating ] = useState( false );
 	const handleCompleteSetup = useHandleCompleteSetup( selectedDomainName, setIsValidating );
 	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
@@ -133,6 +135,7 @@ const TitanSetUpMailboxForm = ( {
 			<NewMailBoxList
 				areButtonsBusy={ isValidating }
 				hiddenFieldNames={ hiddenFieldNames }
+				initialFieldValues={ { [ FIELD_ALTERNATIVE_EMAIL ]: userEmail } }
 				isAutoFocusEnabled
 				onSubmit={ handleCompleteSetup }
 				provider={ EmailProvider.Titan }
