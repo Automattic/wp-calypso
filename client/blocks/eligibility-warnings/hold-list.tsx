@@ -38,7 +38,7 @@ function getHoldMessages(
 
 				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
 					return translate(
-						"You'll also get a free domain for one year, get to collect payments, and access email support."
+						"You'll also get a free domain for one year, and access email support."
 					);
 				}
 
