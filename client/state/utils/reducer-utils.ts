@@ -18,7 +18,7 @@ export interface CombinedReducer extends SerializableReducer {
  * @param origReducer Original reducer to copy `storageKey` and other flags from
  * @param reducers Object with reducer names as keys and reducer functions as values that
  *   is used as parameter to `combineReducers` (the original Redux one and our extension, too).
- * @returns The function to be attached as `addResducer` method to the
+ * @returns The function to be attached as `addReducer` method to the
  *   result of `combineReducers`.
  */
 export function addReducer(
