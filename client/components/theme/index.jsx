@@ -15,6 +15,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
+import PremiumThemeBadge from './premium-theme-badge';
 
 import './style.scss';
 
@@ -367,11 +368,18 @@ export class Theme extends Component {
 								} ) }
 							</span>
 						) }
+
+						<PremiumThemeBadge theme={ theme } />
+						{ /*
+
 						{ showPremiumBadge && (
 							<span className="theme__badge-premium">{ translate( 'Premium' ) }</span>
 						) }
 						<span className={ priceClass }>{ price }</span>
 						{ upsell }
+
+						*/ }
+
 						{ ! isEmpty( this.props.buttonContents ) ? (
 							<ThemeMoreButton
 								index={ this.props.index }
