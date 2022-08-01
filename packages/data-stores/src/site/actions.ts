@@ -297,7 +297,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		 */
 		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
 		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
-			yield wpcomRequest( {
+			const response: { blog: string } = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
 				body: {
@@ -309,6 +309,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				},
 				method: 'POST',
 			} );
+			return response;
 		}
 	}
 
