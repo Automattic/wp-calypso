@@ -7,6 +7,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
 import PluginsMain from 'calypso/my-sites/plugins/main';
+import PluginDetails from 'calypso/my-sites/plugins/plugin-details';
 import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
@@ -18,12 +19,20 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import './style.scss';
 
 interface Props {
-	filter: string;
-	search: string;
-	site: string;
+	filter?: string;
+	search?: string;
+	site?: string;
+	pluginSlug?: string;
+	path?: string;
 }
 
-export default function PluginOverview( { filter, search, site }: Props ): ReactElement {
+export default function PluginsOverview( {
+	filter,
+	search,
+	site,
+	pluginSlug,
+	path,
+}: Props ): ReactElement {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -59,7 +68,11 @@ export default function PluginOverview( { filter, search, site }: Props ): React
 		return (
 			<div className="plugins-overview__container">
 				<SidebarNavigation sectionTitle={ translate( 'Plugins' ) } />
-				<PluginsMain isJetpackCloud filter={ filter } search={ search } />
+				{ pluginSlug ? (
+					<PluginDetails isJetpackCloud siteUrl={ site } pluginSlug={ pluginSlug } path={ path } />
+				) : (
+					<PluginsMain isJetpackCloud filter={ filter } search={ search } />
+				) }
 			</div>
 		);
 	}
