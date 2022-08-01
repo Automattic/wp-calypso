@@ -15,6 +15,7 @@ const enhanceContextWithLogin = ( context ) => {
 		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType },
 		path,
 		query,
+		isServerSide,
 	} = context;
 
 	// Process a social login handoff from /start/user.
@@ -28,12 +29,15 @@ const enhanceContextWithLogin = ( context ) => {
 				id_token: query.id_token,
 			},
 		} );
-		const params = new URLSearchParams( new URL( window.location.href ).search );
+
 		// Remove state-related data from URL but leave 'email_address'.
-		params.delete( 'service' );
-		params.delete( 'access_token' );
-		params.delete( 'id_token' );
-		page.redirect( window.location.pathname + '?' + params.toString() );
+		if ( ! isServerSide ) {
+			const params = new URLSearchParams( new URL( window.location.href ).search );
+			params.delete( 'service' );
+			params.delete( 'access_token' );
+			params.delete( 'id_token' );
+			page.redirect( window.location.pathname + '?' + params.toString() );
+		}
 	}
 
 	const previousHash = context.state || {};
