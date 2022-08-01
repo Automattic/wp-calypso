@@ -10,6 +10,11 @@ const selectors = {
 	clearSearch: '[aria-label="Close Search"]',
 	supportCard: '.card.help-search',
 	closeButton: '[aria-label="Close Help Center"]',
+	backButton: 'button:has-text("Back")',
+	backToTopButton: 'button:has-text("Back to top")',
+	stillNeedHelpButton: 'a:has-text("Still need help?")',
+	article: 'article',
+	emailLink: 'div[role="button"]:has-text("Email")',
 
 	// Results
 	resultsPlaceholder: '.inline-help__results-placeholder-item',
@@ -178,5 +183,69 @@ export class SupportComponent {
 	 */
 	async clearSearch(): Promise< void > {
 		await this.page.click( selectors.clearSearch );
+	}
+
+	/**
+	 * Clears the back button in the help center.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickBack(): Promise< void > {
+		await this.page.click( selectors.backButton );
+	}
+
+	/**
+	 * Scrolls a support article
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async scrollOpenArticle(): Promise< void > {
+		await this.waitForQueryComplete();
+
+		const elementHandle = await this.page.waitForSelector( selectors.article );
+		await elementHandle.waitForElementState( 'stable' );
+
+		await this.page.evaluate( ( element: SVGElement | HTMLElement ) => {
+			return element.scrollIntoView( false );
+		}, elementHandle );
+	}
+
+	/**
+	 * Checks if back to top button is visible
+	 *
+	 * @returns {Promise<boolean>}
+	 */
+	async backToTopVisible( isVisible: boolean ): Promise< boolean > {
+		if ( isVisible ) {
+			return this.page.isVisible( selectors.backToTopButton );
+		}
+		return this.page.isHidden( selectors.backToTopButton );
+	}
+
+	/**
+	 * Click back to top button
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickBackToTop(): Promise< void > {
+		await this.page.click( selectors.backToTopButton );
+	}
+
+	/**
+	 * Click still need help button
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async getStillNeedHelpButton(): Promise< Locator > {
+		return this.page.locator( selectors.stillNeedHelpButton );
+	}
+
+	/**
+	 * Click Email support button
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickEmailSupportButton(): Promise< void > {
+		await this.page.click( selectors.emailLink );
 	}
 }

@@ -6,6 +6,7 @@ import type { Secrets } from '.';
 export const TEST_ACCOUNT_NAMES = [
 	'defaultUser',
 	'eCommerceUser',
+	'atomicUser10percent',
 	'simpleSiteFreePlanUser',
 	'simpleSitePersonalPlanUser',
 	'gutenbergSimpleSiteUser',
@@ -157,6 +158,7 @@ export class SecretsManager {
 					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
 					email: 'FAKE_VALUE',
 				},
+				atomicUser10percent: { ...fakeAccount },
 				eCommerceUser: { ...fakeAccount },
 				simpleSiteFreePlanUser: { ...fakeAccount },
 				simpleSitePersonalPlanUser: { ...fakeAccount },

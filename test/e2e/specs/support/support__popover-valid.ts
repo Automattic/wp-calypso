@@ -18,7 +18,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 	describe.each( [
 		{ siteType: 'Simple', accountName: 'defaultUser' as TestAccountName },
-		{ siteType: 'Atomic', accountName: 'eCommerceUser' as TestAccountName },
+		{ siteType: 'Atomic', accountName: 'atomicUser10percent' as TestAccountName },
 	] )( 'Search and view a support article ($siteType)', function ( { accountName } ) {
 		let supportComponent: SupportComponent;
 
@@ -44,7 +44,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 		} );
 
 		it( 'Enter search keyword', async function () {
-			const keyword = 'theme';
+			const keyword = 'choose a theme';
 			await supportComponent.search( keyword );
 		} );
 
@@ -55,6 +55,29 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 		it( 'Click on first search result', async function () {
 			await supportComponent.clickResult( 'article', 1 );
+		} );
+
+		it( 'Scroll article', async function () {
+			await supportComponent.scrollOpenArticle();
+		} );
+
+		it( 'Back to top button is shown', async function () {
+			await supportComponent.backToTopVisible( true );
+		} );
+
+		it( 'Click back to top', async function () {
+			await supportComponent.clickBackToTop();
+		} );
+
+		it( 'Back to top button is hidden', async function () {
+			await supportComponent.backToTopVisible( false );
+		} );
+
+		it( 'Click on back button brings back the results', async function () {
+			await supportComponent.clickBack();
+
+			const results = await supportComponent.getResults( 'article' );
+			expect( await results.count() ).toBeGreaterThan( 0 );
 		} );
 
 		it( 'Close popover', async function () {
