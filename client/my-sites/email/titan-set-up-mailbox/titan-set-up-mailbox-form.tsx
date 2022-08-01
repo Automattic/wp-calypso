@@ -1,11 +1,19 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCreateTitanMailboxMutation } from 'calypso/data/emails/use-create-titan-mailbox-mutation';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/add-mailboxes/add-users-placeholder';
-import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
+import {
+	HiddenFieldNames,
+	NewMailBoxList,
+} from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
+import PasswordResetTipField from 'calypso/my-sites/email/form/mailboxes/components/password-reset-tip-field';
+import {
+	FIELD_ALTERNATIVE_EMAIL,
+	FIELD_NAME,
+} from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { emailManagementTitanSetUpThankYou } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -106,21 +114,35 @@ const TitanSetUpMailboxForm = ( {
 	const translate = useTranslate();
 	const [ isValidating, setIsValidating ] = useState( false );
 	const handleCompleteSetup = useHandleCompleteSetup( selectedDomainName, setIsValidating );
+	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
+		FIELD_NAME,
+		FIELD_ALTERNATIVE_EMAIL,
+	] );
 
 	if ( ! areSiteDomainsLoaded ) {
 		return <AddEmailAddressesCardPlaceholder />;
 	}
 
+	const showAlternateEmailField = ( event: MouseEvent< HTMLElement > ) => {
+		event.preventDefault();
+		setHiddenFieldNames( [ FIELD_NAME ] );
+	};
+
 	return (
 		<Card>
 			<NewMailBoxList
 				areButtonsBusy={ isValidating }
+				hiddenFieldNames={ hiddenFieldNames }
 				isAutoFocusEnabled
 				onSubmit={ handleCompleteSetup }
 				provider={ EmailProvider.Titan }
 				selectedDomainName={ selectedDomainName }
 				submitActionText={ translate( 'Complete setup' ) }
-			/>
+			>
+				{ hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) && (
+					<PasswordResetTipField tipClickHandler={ showAlternateEmailField } />
+				) }
+			</NewMailBoxList>
 		</Card>
 	);
 };
