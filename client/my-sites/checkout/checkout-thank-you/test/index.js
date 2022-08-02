@@ -29,9 +29,9 @@ jest.mock( '../domain-registration-details', () => () => 'component--domain-regi
 jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
 jest.mock( '../jetpack-plan-details', () => () => 'component--jetpack-plan-details' );
 jest.mock( '../atomic-store-thank-you-card', () => () => (
-	<div data-testid="AtomicStoreThankYouCard" />
+	<div data-testid="atomic-store-thank-you-card" />
 ) );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'PageViewTracker' );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
 jest.mock( '../header', () =>
 	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
 );
@@ -39,9 +39,9 @@ jest.mock( 'calypso/components/happiness-support', () => () => (
 	<div data-testid="happiness-support" />
 ) );
 jest.mock( 'calypso/components/wordpress-logo', () => () => <div data-testid="wordpress-logo" /> );
-jest.mock( '../premium-plan-details', () => () => 'PremiumPlanDetails' );
+jest.mock( '../premium-plan-details', () => () => 'premium-plan-details' );
 jest.mock( '../business-plan-details', () => () => <div data-testid="business-plan-details" /> );
-jest.mock( '../transfer-pending/', () => () => 'TransferPending' );
+jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
 jest.mock( 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you', () => () => (
 	<div data-testid="difm-lite-thank-you" />
 ) );
@@ -172,17 +172,17 @@ describe( 'CheckoutThankYou', () => {
 
 		test( 'Should be there for AT', () => {
 			render( <CheckoutThankYou { ...props } transferComplete={ true } /> );
-			expect( screen.queryByTestId( 'AtomicStoreThankYouCard' ) ).toBeVisible();
+			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).toBeVisible();
 		} );
 
 		test( 'Should not be there for AT', () => {
 			const { rerender } = render( <CheckoutThankYou { ...props } transferComplete={ false } /> );
-			expect( screen.queryByTestId( 'AtomicStoreThankYouCard' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).not.toBeInTheDocument();
 
 			isDotComPlan.mockImplementation( () => true );
 
 			rerender( <CheckoutThankYou { ...props } /> );
-			expect( screen.queryByTestId( 'AtomicStoreThankYouCard' ) ).not.toBeInTheDocument( 0 );
+			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
