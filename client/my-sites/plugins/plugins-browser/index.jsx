@@ -57,7 +57,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	//  another temporary solution until phase 4 is merged
 	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 
-	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { localizePath } = useLocalizedPlugins();
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );

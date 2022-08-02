@@ -1,10 +1,8 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useDispatch, useSelector } from 'react-redux';
-import { localizePluginsPath } from 'calypso/my-sites/plugins/utils';
+import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
@@ -23,8 +21,7 @@ const Categories = ( { selected }: { selected?: string } ) => {
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const { localeSlug } = useTranslate();
-	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { localizePath } = useLocalizedPlugins();
 
 	// We hide these special categories from the category selector
 	const displayCategories = ALLOWED_CATEGORIES.filter(
@@ -48,7 +45,7 @@ const Categories = ( { selected }: { selected?: string } ) => {
 			url = `/plugins/${ domain || '' }`;
 		}
 
-		page( localizePluginsPath( url, localeSlug, ! isLoggedIn ) );
+		page( localizePath( url ) );
 	};
 
 	if ( selected && ! displayCategories.includes( selected ) ) {
