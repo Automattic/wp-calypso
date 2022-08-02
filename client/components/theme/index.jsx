@@ -259,11 +259,11 @@ export class Theme extends Component {
 	};
 
 	getUpsellMessage() {
-		const { isPremiumThemesAvailable, theme, didPurchaseTheme, translate } = this.props;
+		const { hasPremiumThemesFeature, theme, didPurchaseTheme, translate } = this.props;
 
-		if ( didPurchaseTheme && ! isPremiumThemesAvailable ) {
+		if ( didPurchaseTheme && ! hasPremiumThemesFeature ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
-		} else if ( isPremiumThemesAvailable ) {
+		} else if ( hasPremiumThemesFeature ) {
 			return translate( 'The premium theme is included in your plan.' );
 		}
 
@@ -290,7 +290,7 @@ export class Theme extends Component {
 			theme,
 			translate,
 			upsellUrl,
-			isPremiumThemesAvailable,
+			hasPremiumThemesFeature,
 			isPremiumTheme,
 			didPurchaseTheme,
 		} = this.props;
@@ -301,7 +301,7 @@ export class Theme extends Component {
 			'is-actionable': isActionable,
 		} );
 
-		const themeNeedsPurchase = isPremiumTheme && ! isPremiumThemesAvailable && ! didPurchaseTheme;
+		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
 		const showUpsell = ! isEnabled( 'signup/seller-upgrade-modal' )
 			? themeNeedsPurchase && upsellUrl
 			: upsellUrl && theme.price && ! active;
@@ -364,7 +364,7 @@ export class Theme extends Component {
 						! isEnabled( 'signup/seller-upgrade-modal' )
 							? 'theme__upsell-icon'
 							: 'theme__upsell-popover',
-						isPremiumThemesAvailable || showPremiumBadge ? 'active' : null
+						hasPremiumThemesFeature || showPremiumBadge ? 'active' : null
 					) }
 					position={ ! isEnabled( 'signup/seller-upgrade-modal' ) ? 'top left' : 'top' }
 				>
@@ -461,7 +461,7 @@ export class Theme extends Component {
 }
 
 export default connect(
-	( state, { theme, siteId, isPremiumThemesAvailable } ) => {
+	( state, { theme, siteId, hasPremiumThemesFeature } ) => {
 		const {
 			themes: { themesUpdate },
 		} = state;
@@ -471,8 +471,8 @@ export default connect(
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isPremiumTheme: getIsThemePremium( state, theme.id ),
-			isPremiumThemesAvailable:
-				isPremiumThemesAvailable?.() ||
+			hasPremiumThemesFeature:
+				hasPremiumThemesFeature?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			siteSlug: getSiteSlug( state, siteId ),
 			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
