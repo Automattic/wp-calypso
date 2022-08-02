@@ -41,8 +41,7 @@ $masterbar-color-secondary: #101517;
 		border-bottom: 1px solid var( --studio-orange-60 );
 	}
 
-	.is-section-checkout.is-jetpack-site &,
-	.is-section-checkout-pending.is-jetpack-site & {
+	&.masterbar--is-checkout.masterbar--is-jetpack {
 		background-color: var( --color-jetpack-masterbar-background );
 		border-bottom: 1px solid var( --color-jetpack-masterbar-border );
 		color: var( --color-jetpack-masterbar-text );
