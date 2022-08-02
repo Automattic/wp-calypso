@@ -1,6 +1,4 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { ReactElement, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -12,7 +10,6 @@ import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
 	isFetchingPartner,
-	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 
@@ -39,17 +36,6 @@ export default function PluginsOverview( {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const hasActiveKey = useSelector( hasActivePartnerKey );
-	const isAgency = useSelector( isAgencyUser );
-	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
-
-	useEffect( () => {
-		if ( hasFetched ) {
-			if ( ! isAgency || ! isPluginManagementEnabled ) {
-				page.redirect( '/' );
-				return;
-			}
-		}
-	}, [ hasFetched, isAgency, isPluginManagementEnabled ] );
 
 	// Reset selected site id for multi-site view since it is never reset
 	// and the <PluginsMain /> component behaves differently when there
