@@ -138,26 +138,6 @@ describe( 'createSiteWithCart()', () => {
 			fakeStore
 		);
 	} );
-
-	test( "use site vertical for blog_name if username, title, and site type isn't available and enable auto generated blog name", () => {
-		const fakeStore = {
-			getState: () => ( {
-				signup: {
-					steps: { siteVertical: { name: 'art' } },
-					dependencyStore: { shouldHideFreePlan: true },
-				},
-			} ),
-		};
-
-		createSiteWithCart(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'art' );
-			},
-			[],
-			{ siteUrl: undefined },
-			fakeStore
-		);
-	} );
 } );
 
 describe( 'isDomainFulfilled', () => {
