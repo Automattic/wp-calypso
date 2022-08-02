@@ -28,12 +28,14 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 			<form>
 				<FormattedHeader align={ 'center' } headerText={ __( 'Set up Link in Bio' ) } />
 				<div className="link-in-bio-setup__form">
+					{ /* replace this component, align with newsletter flow */ }
 					<div className="link-in-bio-setup-form-icon__container">
 						<div className="link-in-bio-setup-form__icon">
 							<Gridicon key={ 'blue' } icon="share-ios" size={ 18 } />
 						</div>
 						<label htmlFor="">{ __( 'Upload site icon' ) }</label>{ ' ' }
 					</div>
+					{ /*  */ }
 					<FormInput
 						inputValue={ '' } // get value from store?
 						isValid={ true }

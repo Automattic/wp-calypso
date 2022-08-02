@@ -41,10 +41,10 @@ $padding: 12px 16px;
 
         .link-in-bio-setup-form__icon {
             cursor: pointer;
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             border-color: $gray-color;
-            border-radius: '100px';
+            border-radius: 100%; /* stylelint-disable-line */
             border-style: dashed;
             border-width: 1px;
             text-align: center;
