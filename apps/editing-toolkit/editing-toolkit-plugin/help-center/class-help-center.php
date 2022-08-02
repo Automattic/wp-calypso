@@ -134,9 +134,9 @@ class Help_Center {
 
 		wp_localize_script(
 			'help-center-script',
-			'helpCenter',
+			'helpCenterAdminBar',
 			array(
-				'isHelpCenterAdminBarLoaded' => true,
+				'isLoaded' => true,
 			)
 		);
 
