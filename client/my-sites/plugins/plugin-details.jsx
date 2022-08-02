@@ -484,12 +484,14 @@ function LegacyPluginDetails( props ) {
 							</Notice>
 						) }
 
-						<SitesListArea
-							fullPlugin={ fullPlugin }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							billingPeriod={ billingPeriod }
-							{ ...props }
-						/>
+						{ isLoggedIn && (
+							<SitesListArea
+								fullPlugin={ fullPlugin }
+								isPluginInstalledOnsite={ isPluginInstalledOnsite }
+								billingPeriod={ billingPeriod }
+								{ ...props }
+							/>
+						) }
 
 						<PluginDetailsBody
 							fullPlugin={ fullPlugin }
