@@ -16,10 +16,7 @@ function PurchaseNotice() {
 			hasPaymentNotice.current = true;
 			createNotice(
 				'info',
-				__(
-					'Welcome to the Pro plan! Premium blocks are now available to use.',
-					'full-site-editing'
-				),
+				__( 'Congrats! Premium blocks are now available to use.', 'full-site-editing' ),
 				{
 					isDismissible: true,
 					type: 'snackbar',
