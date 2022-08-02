@@ -6958,6 +6958,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/offscreencanvas@npm:^2019.6.4":
+  version: 2019.7.0
+  resolution: "@types/offscreencanvas@npm:2019.7.0"
+  checksum: f10647cf8abf5c5313ac39a688866e824f04207b18fd03c2fa986a2d856f1c26dd11b04b3692fe64e6f1467b0d52579e8f4d0e532377d5c9065214bff4ebc0e7
+  languageName: node
+  linkType: hard
+
 "@types/ora@npm:^3.2.0":
   version: 3.2.0
   resolution: "@types/ora@npm:3.2.0"
@@ -17445,10 +17452,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-average-color@npm:^6.4.2":
-  version: 6.4.2
-  resolution: "fast-average-color@npm:6.4.2"
-  checksum: 427f8058868b4c1c07f4ae1a984d70a408ea6392f229f78d33a790ee2439b51341ac313f9b8b12dfb813c3bee48d768a94aa9ea3e11bdb248f81ba6a2090fbfa
+"fast-average-color@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "fast-average-color@npm:7.1.0"
+  dependencies:
+    "@types/offscreencanvas": ^2019.6.4
+  checksum: 772452ea5b8c3dac2feb3a775ddacd12beedff9cf22dd76d85b476ab23e84a9fdaafb5870a99badc82bdf7b02f6ca6ca85b36bcf6232d78383bcb39e0922b2cf
   languageName: node
   linkType: hard
 
@@ -28111,13 +28120,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quantize@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "quantize@npm:1.0.2"
-  checksum: fcecd3ac3279ca54492067633b823aa3b66150ab71e9171f7983b858c328ab85fca6c36f40956914ef7540e50cceb28049d30853221dc288aa67a867ae71351a
-  languageName: node
-  linkType: hard
-
 "querystring-es3@npm:^0.2.0":
   version: 0.2.1
   resolution: "querystring-es3@npm:0.2.1"
@@ -35740,7 +35742,7 @@ swiper@4.5.1:
     eslint-plugin-react-hooks: ^4.3.0
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
-    fast-average-color: ^6.4.2
+    fast-average-color: ^7.1.0
     fsevents: ^2.3.2
     gettext-parser: ^4.0.3
     glob: ^7.1.6
@@ -35766,7 +35768,6 @@ swiper@4.5.1:
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
     prettier: "npm:wp-prettier@2.6.2"
-    quantize: ^1.0.2
     react: ^17.0.2
     react-dom: ^17.0.2
     readline-sync: ^1.4.10
