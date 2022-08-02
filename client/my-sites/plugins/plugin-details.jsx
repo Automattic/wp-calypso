@@ -420,6 +420,7 @@ function LegacyPluginDetails( props ) {
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const { localizePath } = useLocalizedPlugins();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const showBillingIntervalSwitcher =
