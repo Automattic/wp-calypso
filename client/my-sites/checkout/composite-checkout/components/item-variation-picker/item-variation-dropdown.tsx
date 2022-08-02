@@ -105,7 +105,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		( variant ) => variant.productId === selectedItem.product_id
 	);
 	// findIndex returns -1 if it fails and we want null.
-	const selectedVariantIndex = selectedVariantIndexRaw > 0 ? selectedVariantIndexRaw : null;
+	const selectedVariantIndex = selectedVariantIndexRaw > -1 ? selectedVariantIndexRaw : null;
 
 	// reset the dropdown highlight when the selected product changes
 	useEffect( () => {
