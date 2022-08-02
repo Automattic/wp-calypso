@@ -32,12 +32,12 @@ describe( 'formatCurrency', () => {
 	} );
 
 	test( 'formats a number to localized currency for smallest unit', () => {
-		const money = formatCurrency( 9932, 'USD', { smallestUnit: true } );
+		const money = formatCurrency( 9932, 'USD', { isSmallestUnit: true } );
 		expect( money ).toBe( '$99.32' );
 	} );
 
 	test( 'formats a number to localized currency for smallest unit for non-decimal currency', () => {
-		const money = formatCurrency( 9932, 'JPY', { smallestUnit: true } );
+		const money = formatCurrency( 9932, 'JPY', { isSmallestUnit: true } );
 		expect( money ).toBe( '¥9,932' );
 	} );
 
@@ -149,7 +149,7 @@ describe( 'formatCurrency', () => {
 		} );
 
 		test( 'handles a number in the smallest unit', () => {
-			const money = getCurrencyObject( 9932, 'USD', { smallestUnit: true } );
+			const money = getCurrencyObject( 9932, 'USD', { isSmallestUnit: true } );
 			expect( money ).toEqual( {
 				symbol: '$',
 				integer: '99',
@@ -159,7 +159,7 @@ describe( 'formatCurrency', () => {
 		} );
 
 		test( 'handles a number in the smallest unit for non-decimal currency', () => {
-			const money = getCurrencyObject( 9932, 'JPY', { smallestUnit: true } );
+			const money = getCurrencyObject( 9932, 'JPY', { isSmallestUnit: true } );
 			expect( money ).toEqual( {
 				symbol: '¥',
 				integer: '9,932',

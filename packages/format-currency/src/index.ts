@@ -11,7 +11,7 @@ export * from './types';
 /**
  * Formats money with a given currency code
  *
- * @param   {number}     number              number to format; assumed to be a float unless isInSmallestUnit is set.
+ * @param   {number}     number              number to format; assumed to be a float unless isSmallestUnit is set.
  * @param   {string}     code                currency code e.g. 'USD'
  * @param   {object}     options             options object
  * @param   {string}     options.decimal     decimal symbol e.g. ','
@@ -19,7 +19,7 @@ export * from './types';
  * @param   {number}     options.precision   decimal digits
  * @param   {string}     options.symbol      currency symbol e.g. 'A$'
  * @param   {boolean}    options.stripZeros  whether to remove trailing zero cents
- * @param   {boolean}    options.smallestUnit  true if the number is an integer in the currency's smallest unit.
+ * @param   {boolean}    options.isSmallestUnit  true if the number is an integer in the currency's smallest unit.
  * @returns {?string}                        A formatted string.
  */
 export default function formatCurrency(
@@ -31,12 +31,12 @@ export default function formatCurrency(
 	if ( ! currencyDefaults || isNaN( number ) ) {
 		return null;
 	}
-	const { decimal, grouping, precision, symbol, smallestUnit } = {
+	const { decimal, grouping, precision, symbol, isSmallestUnit } = {
 		...currencyDefaults,
 		...options,
 	};
 	const sign = number < 0 ? '-' : '';
-	if ( smallestUnit ) {
+	if ( isSmallestUnit ) {
 		if ( ! Number.isInteger( number ) ) {
 			return null;
 		}
@@ -54,14 +54,14 @@ export default function formatCurrency(
 /**
  * Returns a formatted price object.
  *
- * @param   {number}     number              number to format; assumed to be a float unless isInSmallestUnit is set.
+ * @param   {number}     number              number to format; assumed to be a float unless isSmallestUnit is set.
  * @param   {string}     code                currency code e.g. 'USD'
  * @param   {object}     options             options object
  * @param   {string}     options.decimal     decimal symbol e.g. ','
  * @param   {string}     options.grouping    thousands separator
  * @param   {number}     options.precision   decimal digits
  * @param   {string}     options.symbol      currency symbol e.g. 'A$'
- * @param   {boolean}    options.smallestUnit  true if the number is an integer in the currency's smallest unit.
+ * @param   {boolean}    options.isSmallestUnit  true if the number is an integer in the currency's smallest unit.
  * @returns {?CurrencyObject}                        A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */
 export function getCurrencyObject(
@@ -73,12 +73,12 @@ export function getCurrencyObject(
 	if ( ! currencyDefaults || isNaN( number ) ) {
 		return null;
 	}
-	const { decimal, grouping, precision, symbol, smallestUnit } = {
+	const { decimal, grouping, precision, symbol, isSmallestUnit } = {
 		...currencyDefaults,
 		...options,
 	};
 	const sign = number < 0 ? '-' : '';
-	if ( smallestUnit ) {
+	if ( isSmallestUnit ) {
 		if ( ! Number.isInteger( number ) ) {
 			return null;
 		}
