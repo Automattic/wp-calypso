@@ -1,8 +1,9 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
+import page from 'page';
 import {
 	makeLayout,
-	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
+	redirectLoggedOut,
 	render as clientRender,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -14,18 +15,14 @@ import {
 	jetpackCanUpdate,
 	plugins,
 	scrollTopIfNoHash,
-	navigationIfLoggedIn,
-	maybeRedirectLoggedOut,
 } from './controller';
 import { upload } from './controller-logged-in';
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
-	router(
-		`/${ langParam }/plugins/setup`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
+	page(
+		'/plugins/setup',
 		scrollTopIfNoHash,
 		siteSelection,
 		renderProvisionPlugins,
@@ -33,10 +30,8 @@ export default function ( router ) {
 		clientRender
 	);
 
-	router(
-		`/${ langParam }/plugins/setup/:site`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
+	page(
+		'/plugins/setup/:site',
 		scrollTopIfNoHash,
 		siteSelection,
 		renderProvisionPlugins,
@@ -44,32 +39,9 @@ export default function ( router ) {
 		clientRender
 	);
 
-	router(
-		`/${ langParam }/plugins/browse/:category/:site?`,
-		maybeRedirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
-		siteSelection,
-		navigationIfLoggedIn,
-		browsePlugins,
-		makeLayout,
-		clientRender
-	);
-
-	router(
-		`/${ langParam }/plugins/upload`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
-		siteSelection,
-		sites,
-		makeLayout,
-		clientRender
-	);
-	router(
-		`/${ langParam }/plugins/upload/:site_id`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
+	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/plugins/upload/:site_id',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -79,20 +51,45 @@ export default function ( router ) {
 	);
 
 	router(
-		`/${ langParam }/plugins`,
+		`/${ langParam }/plugins/:plugin`,
 		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
-		siteSelection,
-		navigationIfLoggedIn,
-		browsePlugins,
-		makeLayout,
-		clientRender
+		browsePluginsOrPlugin,
+		makeLayout
 	);
 
 	router(
-		`/${ langParam }/plugins/manage/:site?`,
-		redirectLoggedOut,
+		`/${ langParam }/plugins/:plugin/:site_id`,
 		redirectWithoutLocaleParamIfLoggedIn,
+		redirectLoggedOut,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigation,
+		browsePluginsOrPlugin,
+		makeLayout
+	);
+
+	router(
+		[ `/${ langParam }/plugins`, `/${ langParam }/plugins/browse/:category` ],
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		browsePlugins,
+		makeLayout
+	);
+
+	router(
+		[ `/${ langParam }/plugins/:site_id`, `/${ langParam }/plugins/browse/:category/:site` ],
+		redirectWithoutLocaleParamIfLoggedIn,
+		redirectLoggedOut,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigation,
+		browsePlugins,
+		makeLayout
+	);
+
+	page(
+		'/plugins/manage/:site?',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -101,10 +98,8 @@ export default function ( router ) {
 		clientRender
 	);
 
-	router(
-		`/${ langParam }/plugins/:pluginFilter(active|inactive|updates)/:site_id?`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
+	page(
+		'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -114,22 +109,8 @@ export default function ( router ) {
 		clientRender
 	);
 
-	router(
-		`/${ langParam }/plugins/:plugin/:site_id?`,
-		maybeRedirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
-		siteSelection,
-		navigationIfLoggedIn,
-		browsePluginsOrPlugin,
-		makeLayout,
-		clientRender
-	);
-
-	router(
-		`/${ langParam }/plugins/:plugin/eligibility/:site_id`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
+	page(
+		'/plugins/:plugin/eligibility/:site_id',
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -137,6 +118,4 @@ export default function ( router ) {
 		makeLayout,
 		clientRender
 	);
-
-	router( [ `/${ langParam }/plugins`, `/${ langParam }/plugins/*` ], redirectLoggedOut );
 }
