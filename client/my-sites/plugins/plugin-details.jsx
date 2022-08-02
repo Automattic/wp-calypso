@@ -25,7 +25,7 @@ import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sideba
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds, localizePluginsPath } from 'calypso/my-sites/plugins/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -33,6 +33,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -86,6 +87,7 @@ function PluginDetails( props ) {
 		isRequestingForSites( state, siteIds )
 	);
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	// Plugin information.
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
@@ -144,7 +146,7 @@ function PluginDetails( props ) {
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
 		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
-			dispatch( wporgFetchPluginData( props.pluginSlug ) );
+			dispatch( wporgFetchPluginData( props.pluginSlug, translate.localeSlug ) );
 		}
 	}, [
 		isProductListFetched,
@@ -152,6 +154,7 @@ function PluginDetails( props ) {
 		isWporgPluginFetched,
 		props.pluginSlug,
 		dispatch,
+		translate.localeSlug,
 	] );
 
 	// Fetch WPcom plugin data if needed
@@ -216,7 +219,11 @@ function PluginDetails( props ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: translate( 'Plugins' ),
-					href: `/plugins/${ selectedSite?.slug || '' }`,
+					href: localizePluginsPath(
+						`/plugins/${ selectedSite?.slug || '' }`,
+						translate.localeSlug,
+						! isLoggedIn
+					),
 					id: 'plugins',
 					helpBubble: translate(
 						'Add new functionality and integrations to your site with plugins.'
@@ -229,7 +236,11 @@ function PluginDetails( props ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: fullPlugin.name,
-					href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
+					href: localizePluginsPath(
+						`/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
+						translate.localeSlug,
+						! isLoggedIn
+					),
 					id: `plugin-${ props.pluginSlug }`,
 				} )
 			);
@@ -401,6 +412,7 @@ function LegacyPluginDetails( props ) {
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const showBillingIntervalSwitcher =
 		! isJetpackCloud &&
@@ -411,12 +423,20 @@ function LegacyPluginDetails( props ) {
 		? [
 				{
 					label: translate( 'Plugins' ),
-					href: `/plugins/manage/${ selectedSite?.slug || '' }`,
+					href: localizePluginsPath(
+						`/plugins/manage/${ selectedSite?.slug || '' }`,
+						translate.localeSlug,
+						! isLoggedIn
+					),
 					id: 'plugins',
 				},
 				{
 					label: fullPlugin.name,
-					href: `/plugins/${ pluginSlug }/${ selectedSite?.slug || '' }`,
+					href: localizePluginsPath(
+						`/plugins/${ pluginSlug }/${ selectedSite?.slug || '' }`,
+						translate.localeSlug,
+						! isLoggedIn
+					),
 					id: `plugin-${ pluginSlug }`,
 				},
 		  ]

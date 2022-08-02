@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Plugin } from 'calypso/data/marketplace/types';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
@@ -77,8 +78,9 @@ const usePlugins = ( {
 			? useESPluginsInfinite
 			: useWPORGInfinitePlugins;
 
+	const { localeSlug = '' } = useTranslate();
 	const wporgPluginsOptions = {
-		locale,
+		locale: locale || localeSlug,
 		category,
 		tag,
 		searchTerm: search,
