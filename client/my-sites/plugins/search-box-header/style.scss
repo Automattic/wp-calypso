@@ -105,7 +105,8 @@
 			position: fixed;
 			z-index: 20;
 			top: var( --masterbar-height );
-			width: calc( 100% - var( --sidebar-width-max ) - 1px );
+			left: 0;
+			width: 100%;
 			max-width: 100%;
 			padding: 10px 32px;
 			box-sizing: border-box;
@@ -114,6 +115,7 @@
 
 			.layout__secondary ~ .layout__primary & {
 				left: calc( var( --sidebar-width-max ) + 1px );
+				width: calc( 100% - var( --sidebar-width-max ) - 1px );
 			}
 		}
 
