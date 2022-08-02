@@ -1,0 +1,134 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+$gray-color: var( --studio-gray-20 );
+$light-gray-color: var( --studio-gray-0 );
+$light-blue-color: var( --studio-blue-5 );
+$dark-blue-color: var( --studio-blue-80 );
+$input-error-color: var( --studio-red-60 );
+$input-border-color: var( --studio-gray-10 );
+$get-started-button-primary-color: var( --studio-blue-50 );
+$white: var( --color-surface );
+$padding: 12px 16px;
+
+
+.link-in-bio-setup {
+
+    .progress-bar {
+		display: none;
+	}
+
+    .step-container {
+        max-width: 368px;
+        margin: 0 auto;
+        padding-top: 20%;
+
+        @include break-xlarge {
+            padding-top: 10%;
+        }
+    }
+
+    .link-in-bio-setup__form {
+        margin-top: 32px;
+        .link-in-bio-setup-form-icon__container {
+            text-align: center;
+            color: $gray-color;
+
+            label {
+                font-size: '12px';
+            }
+        }
+
+        .link-in-bio-setup-form__icon {
+            cursor: pointer;
+            width: 80px;
+            height: 80px;
+            border-color: $gray-color;
+            border-radius: '100px';
+            border-style: dashed;
+            border-width: 1px;
+            text-align: center;
+            margin: 0 auto;
+
+            svg {
+                position: relative;
+                top: calc( 50% - 10px );
+            }
+        }
+
+        .link-in-bio-setup-form__field {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+
+            .link-in-bio-setup-form__label {
+                font-size: '16px';
+                font-weight: 400;
+            }
+
+            .link-in-bio-setup-form__input {
+                border: solid 1px var( --studio-gray-10 );
+                outline: none;
+                width: 100%;
+                margin: 8px 0;
+                display: flex;
+
+                input {
+                    border: none;
+                    font-size: '14px';
+                    outline: none;
+                    width: 80%;
+                    padding: 12px 16px;
+                    line-height: 20px;
+                }
+
+                &.error {
+                    border: solid 1px $input-error-color;
+                }
+            }
+
+            .link-in-bio-setup-form-input__success {
+                margin: 0 auto;
+                padding-top: 2%;
+            }
+        }
+
+        .link-in-bio-setup-form-field__container {
+            background-color: $light-gray-color;
+            padding: $padding;
+            margin: 8px 0;
+            font-size: '14px';
+
+            .link-in-bio-setup-form-container__address {
+                display: flex;
+                justify-content: space-between;
+                
+                .link-in-bio-setup-form__button {
+                    border-radius: 4px;
+                    color: $dark-blue-color;
+                    background: $light-blue-color;
+                    width: 65px;
+                    height: 20px;
+                    padding: 0 10px;
+                    font-size: '12px';
+                    font-weight: 500;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
+    .link-in-bio-setup-form__submit {
+        color: $white;
+        background-color: $get-started-button-primary-color;
+        font-weight: 500;
+        border: none;
+        width: 100%;
+        margin-top: 30px;
+        height: 40px;
+        
+        &:hover {
+            background-color: $get-started-button-primary-color;
+        }
+    }
+}
