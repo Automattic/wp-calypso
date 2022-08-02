@@ -26,6 +26,7 @@ class Help_Center {
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
 		add_action( 'admin_head', array( $this, 'admin_bar_menu' ), 110 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ), 100 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wp_components_styles' ), 100 );
 	}
 
 	/**
@@ -52,6 +53,19 @@ class Help_Center {
 		);
 	}
 
+	/**
+	 * Enqueue wp-component styles because they're not enqueued in wp-admin outside of the editor
+	 */
+	public function enqueue_wp_components_styles() {
+		if ( function_exists( 'gutenberg_url' ) ) {
+			wp_enqueue_style(
+				'wp-components',
+				gutenberg_url( 'build/components/style'. ( is_rtl() ? '.rtl.css' : '.css' )),
+				array( 'dashicons' ),
+				$version
+			);
+		}
+	}
 	/**
 	 * Enqueue block editor assets.
 	 */
