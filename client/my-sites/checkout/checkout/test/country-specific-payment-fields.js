@@ -2,7 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
+import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import { CountrySpecificPaymentFields } from '../country-specific-payment-fields';
 
 const defaultProps = {
@@ -21,23 +24,38 @@ const defaultProps = {
 };
 
 describe( '<CountrySpecificPaymentFields />', () => {
-	test( 'should render', () => {
-		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-	} );
+	test( 'should call this.props.handleFieldChange when updating field', async () => {
+		const user = userEvent.setup();
 
-	test( 'should call this.props.handleFieldChange when updating field', () => {
-		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
-		const documentInput = wrapper.find( '[name="document"]' );
-		const event = { target: { name: 'document', value: 'spam' } };
-		documentInput.simulate( 'change', event );
-		expect( defaultProps.handleFieldChange ).toBeCalledWith( 'document', 'spam' );
+		const WrappedCountrySpecificPaymentFields = ( props ) => {
+			const [ fields, setFields ] = useState( {} );
+
+			props.getFieldValue.mockImplementation( ( name ) => {
+				return fields[ name ];
+			} );
+
+			props.handleFieldChange.mockImplementation( ( name, value ) => {
+				setFields( { ...fields, [ name ]: value } );
+			} );
+
+			return <CountrySpecificPaymentFields { ...props } />;
+		};
+
+		render( <WrappedCountrySpecificPaymentFields { ...defaultProps } /> );
+
+		const box = screen.getByRole( 'textbox', { name: /taxpayer identification number/i } );
+		await user.type( box, 'spam' );
+
+		expect( defaultProps.handleFieldChange ).toHaveBeenNthCalledWith( 4, 'document', 'spam' );
 	} );
 
 	test( 'should disable fields', () => {
-		const wrapper = shallow( <CountrySpecificPaymentFields { ...defaultProps } /> );
-		expect( wrapper.find( 'Input' ).first().props().disabled ).toEqual( false );
-		wrapper.setProps( { disableFields: true } );
-		expect( wrapper.find( 'Input' ).first().props().disabled ).toEqual( true );
+		const { rerender } = render( <CountrySpecificPaymentFields { ...defaultProps } /> );
+
+		const [ input ] = screen.getAllByRole( 'textbox' );
+		expect( input ).not.toBeDisabled();
+
+		rerender( <CountrySpecificPaymentFields { ...defaultProps } disableFields /> );
+		expect( input ).toBeDisabled();
 	} );
 } );
