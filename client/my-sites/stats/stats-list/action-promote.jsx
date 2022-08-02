@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -22,6 +23,8 @@ const PromotePost = ( props ) => {
 			'Stats',
 			'Clicked on Promote Post Widget Button in ' + moduleName + ' List Action Menu'
 		);
+
+		recordTracksEvent( 'calypso_mysites_stats_posts_pages_promote_posts_clicked' );
 	};
 
 	return (
