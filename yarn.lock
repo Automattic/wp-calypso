@@ -17445,6 +17445,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-average-color@npm:^6.4.2":
+  version: 6.4.2
+  resolution: "fast-average-color@npm:6.4.2"
+  checksum: 427f8058868b4c1c07f4ae1a984d70a408ea6392f229f78d33a790ee2439b51341ac313f9b8b12dfb813c3bee48d768a94aa9ea3e11bdb248f81ba6a2090fbfa
+  languageName: node
+  linkType: hard
+
 "fast-deep-equal@npm:^3.1.1, fast-deep-equal@npm:^3.1.3":
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
@@ -28104,6 +28111,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"quantize@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "quantize@npm:1.0.2"
+  checksum: fcecd3ac3279ca54492067633b823aa3b66150ab71e9171f7983b858c328ab85fca6c36f40956914ef7540e50cceb28049d30853221dc288aa67a867ae71351a
+  languageName: node
+  linkType: hard
+
 "querystring-es3@npm:^0.2.0":
   version: 0.2.1
   resolution: "querystring-es3@npm:0.2.1"
@@ -35726,6 +35740,7 @@ swiper@4.5.1:
     eslint-plugin-react-hooks: ^4.3.0
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
+    fast-average-color: ^6.4.2
     fsevents: ^2.3.2
     gettext-parser: ^4.0.3
     glob: ^7.1.6
@@ -35751,6 +35766,7 @@ swiper@4.5.1:
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
     prettier: "npm:wp-prettier@2.6.2"
+    quantize: ^1.0.2
     react: ^17.0.2
     react-dom: ^17.0.2
     readline-sync: ^1.4.10
