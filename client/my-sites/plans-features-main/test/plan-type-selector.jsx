@@ -33,7 +33,7 @@ describe( '<PlanTypeSelector />', () => {
 		expect( radios[ 0 ] ).toHaveTextContent( 'Blogs and personal sites' );
 		expect( radios[ 1 ] ).toHaveTextContent( 'Business sites and online stores' );
 
-		expect( screen.queryByRole( 'radio', { checked: true } ) ).toBe( radios[ 0 ] );
+		expect( radios[ 0 ] ).toBeChecked();
 	} );
 
 	test( 'Should show IntervalTypeToggle when kind is set to `interval`', () => {
@@ -53,7 +53,7 @@ describe( '<PlanTypeSelector />', () => {
 		expect( radios[ 0 ] ).toHaveTextContent( 'Pay monthly' );
 		expect( radios[ 1 ] ).toHaveTextContent( 'Pay annually' );
 
-		expect( screen.queryByRole( 'radio', { checked: true } ) ).toBe( radios[ 0 ] );
+		expect( radios[ 0 ] ).toBeChecked();
 	} );
 } );
 
@@ -71,6 +71,8 @@ describe( '<CustomerTypeToggle />', () => {
 		render( <CustomerTypeToggle { ...props } /> );
 
 		const radios = screen.getAllByRole( 'radio' );
+
+		expect( radios ).toHaveLength( 2 );
 
 		expect( radios[ 0 ] ).toHaveAttribute( 'href', '?customerType=personal&plan=free_plan' );
 		expect( radios[ 0 ] ).toHaveAttribute( 'aria-checked', 'true' );
