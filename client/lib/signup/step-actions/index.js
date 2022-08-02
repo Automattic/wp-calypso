@@ -429,14 +429,8 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 				body: { trim_content: true },
 			} )
 		)
-		.then( () =>
-			wpcom.req.get( {
-				path: `/sites/${ siteSlug }/block-editor`,
-				apiNamespace: 'wpcom/v2',
-			} )
-		)
-		.then( ( data ) => {
-			callback( null, { isFSEActive: data?.is_fse_active ?? false } );
+		.then( () => {
+			callback();
 		} )
 		.catch( ( errors ) => {
 			callback( [ errors ] );

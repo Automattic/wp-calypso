@@ -48,7 +48,6 @@ function isFeatureSupported( feature, browsers ) {
  * and the world will be a better place.
  *
  * @param {Array<string>} browsers The list of supported browsers.
- *
  * @returns {number} The maximum supported ECMAScript version.
  */
 function chooseTerserEcmaVersion( browsers ) {

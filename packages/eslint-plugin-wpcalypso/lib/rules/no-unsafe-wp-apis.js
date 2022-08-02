@@ -34,7 +34,6 @@ module.exports = {
  * @param {Object} _ options
  * @param {AllowedImportsMap} _.allowedImports Allowed imports
  * @param {import('eslint').Rule.RuleContext} _.context Context
- *
  * @returns {(node: Node) => void} Listener function
  */
 function makeListener( { allowedImports, context } ) {

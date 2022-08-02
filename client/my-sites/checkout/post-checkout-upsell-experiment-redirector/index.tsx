@@ -2,7 +2,6 @@ import page from 'page';
 import { useCallback, useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
-import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 
 /* When adding future upsells, you can use the following approach:
 
@@ -26,8 +25,6 @@ export default function PostCheckoutUpsellExperimentRedirector( {
 	upsellExperimentName,
 	upsellUrl,
 }: PostCheckoutUpsellRedirectorProps ): null {
-	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( {} );
-
 	const [ isLoadingExperimentAssignment, experimentAssignment ] =
 		useExperiment( upsellExperimentName );
 
@@ -36,11 +33,10 @@ export default function PostCheckoutUpsellExperimentRedirector( {
 			siteSlug,
 			receiptId: receiptId ? parseInt( receiptId, 10 ) : undefined,
 			hideNudge: true,
-			isEligibleForSignupDestinationResult,
 		};
 
 		return getThankYouPageUrl( getThankYouPageUrlArguments );
-	}, [ isEligibleForSignupDestinationResult, receiptId, siteSlug ] );
+	}, [ receiptId, siteSlug ] );
 
 	useEffect( () => {
 		if ( isLoadingExperimentAssignment ) {

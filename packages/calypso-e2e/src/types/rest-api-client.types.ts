@@ -8,13 +8,19 @@ export interface AccountDetails {
 
 export interface SiteDetails {
 	url: string;
-	id: string;
+	id: number;
 	name: string;
 }
 
 export interface NewSiteParams {
 	name: string;
 	title: string;
+}
+
+export interface NewPostParams {
+	date?: Date;
+	title: string;
+	content?: string;
 }
 
 /* Response Interfaces */
@@ -63,15 +69,17 @@ export interface NewUserResponse {
 		bearer_token: string;
 	};
 }
+
 export interface NewSiteResponse {
 	success: boolean;
 	blog_details: {
 		url: string;
-		blogid: string;
+		blogid: number;
 		blogname: string;
 		site_slug: string;
 	};
 }
+
 export interface SiteDeletionResponse {
 	ID: number;
 	name: string;
@@ -107,6 +115,17 @@ export type AllInvitesResponse = Array< Invite >;
 export interface DeleteInvitesResponse {
 	deleted: string[];
 	invalid: string[];
+}
+
+export interface NewPostResponse {
+	URL: string;
+	title: string;
+}
+
+export interface NewMediaResponse {
+	URL: string;
+	title: string;
+	file: string;
 }
 
 /* Error Responses */

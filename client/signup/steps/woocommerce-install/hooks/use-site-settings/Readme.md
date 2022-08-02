@@ -11,6 +11,7 @@ const { get, save, update } = useSiteSettings( <site-id> );
 ### countriesList
 
 A countries list with payment context.
+
 ### get(<key>)
 
 Simple getter helper.
@@ -18,6 +19,7 @@ Simple getter helper.
 ### update(<key>, <value>)
 
 Helper to 'update' site options in the redux store.
+
 ### save(<key>, <value>)
 
 Helper to 'save' site options permanently on the server-side.

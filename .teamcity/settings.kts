@@ -207,6 +207,11 @@ object CheckCodeStyle : BuildType({
 		checkstyle_results => checkstyle_results
 	""".trimIndent()
 
+	params {
+		param("env.NODE_ENV", "test")
+		param("env.TIMING", "1")
+	}
+
 	vcs {
 		root(WpCalypso)
 		cleanCheckout = true
@@ -216,8 +221,6 @@ object CheckCodeStyle : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				export NODE_ENV="test"
-
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
@@ -226,8 +229,6 @@ object CheckCodeStyle : BuildType({
 			name = "Run linters"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				export NODE_ENV="test"
-
 				# Lint files
 				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 			"""
