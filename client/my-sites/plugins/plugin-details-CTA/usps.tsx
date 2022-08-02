@@ -12,7 +12,9 @@ import { useSelector } from 'react-redux';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import { IAppState } from 'calypso/state/types';
 
 const StyledUl = styled.ul`
 	margin-top: 20px;
@@ -48,24 +50,27 @@ const GreenGridicon = styled( Gridicon )`
 	color: var( --studio-green-50 );
 `;
 
+const useRequiredPlan = ( shouldUpgrade: boolean ) => {
+	return useSelector( ( state: IAppState ) => {
+		if ( ! shouldUpgrade ) {
+			return '';
+		}
+		const billingPeriod = getBillingInterval( state );
+		const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+		if ( config.isEnabled( 'marketplace-personal-premium' ) ) {
+			return isAnnualPeriod ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;
+		}
+
+		return isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
+	} );
+};
+
 interface Props {
 	shouldUpgrade: boolean;
 	isFreePlan: boolean;
 	isMarketplaceProduct: boolean;
 	billingPeriod: IntervalLength;
 }
-
-const requiredPlanForSite = ( shouldUpgrade: boolean, isAnnualPeriod: boolean ) => {
-	if ( ! shouldUpgrade ) {
-		return '';
-	}
-
-	if ( config.isEnabled( 'marketplace-personal-premium' ) ) {
-		return isAnnualPeriod ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;
-	}
-
-	return isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
-};
 
 export const USPS: React.FC< Props > = ( {
 	shouldUpgrade,
@@ -122,7 +127,7 @@ export const PlanUSPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, billin
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const supportText = usePluginsSupportText();
-	const requiredPlan = requiredPlanForSite( shouldUpgrade, isAnnualPeriod );
+	const requiredPlan = useRequiredPlan( shouldUpgrade );
 	const planDisplayCost = useSelector( ( state ) => {
 		return getProductDisplayCost( state, requiredPlan || '' );
 	} );
@@ -176,7 +181,7 @@ function LegacyUSPS( { shouldUpgrade, isFreePlan, isMarketplaceProduct, billingP
 	const translate = useTranslate();
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
-	const requiredPlan = requiredPlanForSite( shouldUpgrade, isAnnualPeriod );
+	const requiredPlan = useRequiredPlan( shouldUpgrade );
 	const planDisplayCost = useSelector( ( state ) => {
 		return getProductDisplayCost( state, requiredPlan || '' );
 	} );
