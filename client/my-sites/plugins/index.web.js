@@ -1,5 +1,11 @@
+import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import page from 'page';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectWithoutLocaleParamIfLoggedIn,
+	redirectLoggedOut,
+	render as clientRender,
+} from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	browsePlugins,
@@ -9,10 +15,12 @@ import {
 	jetpackCanUpdate,
 	plugins,
 	scrollTopIfNoHash,
-	upload,
 } from './controller';
+import { upload } from './controller-logged-in';
 
-export default function () {
+export default function ( router ) {
+	const langParam = getLanguageRouteParam();
+
 	page(
 		'/plugins/setup',
 		scrollTopIfNoHash,
@@ -31,16 +39,6 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		'/plugins/browse/:category/:site?',
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		browsePlugins,
-		makeLayout,
-		clientRender
-	);
-
 	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/plugins/upload/:site_id',
@@ -52,14 +50,42 @@ export default function () {
 		clientRender
 	);
 
-	page(
-		'/plugins',
+	router(
+		`/${ langParam }/plugins/:plugin`,
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		browsePluginsOrPlugin,
+		makeLayout
+	);
+
+	router(
+		`/${ langParam }/plugins/:plugin/:site_id`,
+		redirectWithoutLocaleParamIfLoggedIn,
+		redirectLoggedOut,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigation,
+		browsePluginsOrPlugin,
+		makeLayout
+	);
+
+	router(
+		[ `/${ langParam }/plugins`, `/${ langParam }/plugins/browse/:category` ],
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		browsePlugins,
+		makeLayout
+	);
+
+	router(
+		[ `/${ langParam }/plugins/:site_id`, `/${ langParam }/plugins/browse/:category/:site` ],
+		redirectWithoutLocaleParamIfLoggedIn,
+		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
 		browsePlugins,
-		makeLayout,
-		clientRender
+		makeLayout
 	);
 
 	page(
@@ -79,16 +105,6 @@ export default function () {
 		navigation,
 		jetpackCanUpdate,
 		plugins,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/plugins/:plugin/:site_id?',
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		browsePluginsOrPlugin,
 		makeLayout,
 		clientRender
 	);
