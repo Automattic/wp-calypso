@@ -4,6 +4,7 @@ export interface FormatCurrencyOptions {
 	precision?: number;
 	symbol?: string;
 	stripZeros?: boolean;
+	smallestUnit?: boolean;
 }
 
 export interface CurrencyObject {
