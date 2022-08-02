@@ -1,4 +1,5 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
