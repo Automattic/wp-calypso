@@ -803,8 +803,8 @@ export function generateSteps( {
 
 		'videopress-site': {
 			stepName: 'videopress-site',
-			apiRequestFunction: createWpForTeamsSite,
-			providesDependencies: [ 'siteSlug' ],
+			apiRequestFunction: createSite,
+			providesDependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		},
 	};
 }

@@ -501,7 +501,7 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
 	const { emailItem, siteSlug } = dependencies;
-	const { cartItem } = stepProvidedItems;
+	const { cartItem, lastKnownFlow } = stepProvidedItems;
 	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		defer( callback );
@@ -512,7 +512,16 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const providedDependencies = { cartItem };
 	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart(
+		providedDependencies,
+		newCartItems,
+		callback,
+		reduxStore,
+		siteSlug,
+		null,
+		null,
+		lastKnownFlow
+	);
 }
 export function addAddOnsToCart(
 	callback,
@@ -534,7 +543,16 @@ export function addAddOnsToCart(
 	}
 
 	const newCartItems = cartItem.filter( ( item ) => item );
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
+	processItemCart(
+		providedDependencies,
+		newCartItems,
+		callback,
+		reduxStore,
+		slug,
+		null,
+		null,
+		null
+	);
 }
 
 export function addDomainToCart(
@@ -551,7 +569,16 @@ export function addDomainToCart(
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
+	processItemCart(
+		providedDependencies,
+		newCartItems,
+		callback,
+		reduxStore,
+		slug,
+		null,
+		null,
+		null
+	);
 }
 
 function processItemCart(
@@ -561,14 +588,15 @@ function processItemCart(
 	reduxStore,
 	siteSlug,
 	isFreeThemePreselected,
-	themeSlugWithRepo
+	themeSlugWithRepo,
+	lastKnownFlow
 ) {
 	const addToCartAndProceed = async () => {
 		debug( 'preparing to add cart items (if any) from', newCartItems );
 		const reduxState = reduxStore.getState();
 		const newCartItemsToAdd = newCartItems
 			.map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
-			.map( ( item ) => prepareItemForAddingToCart( item ) );
+			.map( ( item ) => prepareItemForAddingToCart( item, lastKnownFlow ) );
 
 		if ( newCartItemsToAdd.length ) {
 			debug( 'adding products to cart', newCartItemsToAdd );
@@ -608,12 +636,13 @@ function processItemCart(
 	}
 }
 
-function prepareItemForAddingToCart( item ) {
+function prepareItemForAddingToCart( item, lastKnownFlow = null ) {
 	return {
 		...item,
 		extra: {
 			...item.extra,
 			context: 'signup',
+			...( lastKnownFlow && { signup_flow: lastKnownFlow } ),
 		},
 	};
 }
@@ -818,16 +847,21 @@ export function createAccount(
 }
 
 export function createSite( callback, dependencies, stepData, reduxStore ) {
-	const { themeSlugWithRepo } = dependencies;
-	const { site } = stepData;
+	const { site, themeSlugWithRepo } = stepData;
+	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
 	const locale = getLocaleSlug();
+
+	const theme =
+		dependencies?.themeSlugWithRepo ||
+		themeSlugWithRepo ||
+		get( signupDependencies, 'themeSlugWithRepo', false );
 
 	const data = {
 		blog_name: site,
 		blog_title: '',
 		public: Visibility.PublicNotIndexed,
 		options: {
-			theme: themeSlugWithRepo,
+			theme,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
 		},

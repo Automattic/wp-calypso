@@ -336,7 +336,7 @@ class VideoPressSite extends Component {
 				stepData.campaign = EMAIL_TRUCE_CAMPAIGN_ID;
 			}
 
-			this.props.submitSignupStep( stepData );
+			this.props.submitSignupStep( stepData, { themeSlugWithRepo: 'premium/videomaker' } );
 
 			this.props.goToNextStep();
 		} );
@@ -620,7 +620,7 @@ class VideoPressSite extends Component {
 					stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 						args: {
 							currentStep: 2,
-							totalSteps: 2, // TODO: change as we add more steps.
+							totalSteps: 4, // TODO: change as we add more steps.
 						},
 					} ) }
 					positionInFlow={ this.props.positionInFlow }
