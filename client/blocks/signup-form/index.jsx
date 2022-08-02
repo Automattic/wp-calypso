@@ -843,6 +843,7 @@ class SignupForm extends Component {
 										href={ loginLink }
 										onClick={ ( event ) => {
 											event.preventDefault();
+											recordTracksEvent( 'calypso_signup_social_existing_user_login_link_click' );
 											page(
 												addQueryArgs(
 													{
