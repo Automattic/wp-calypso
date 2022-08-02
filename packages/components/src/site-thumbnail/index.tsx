@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
+import useDominantColor from './use-dominant-color';
 import { MShotsOptions, useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
@@ -16,6 +17,7 @@ type Props = {
 	size?: 'small' | 'medium';
 	children?: ReactNode;
 	alt?: string;
+	bgColorImgUrl?: string;
 	mshotsOption?: MShotsOptions;
 };
 
@@ -24,10 +26,15 @@ export const SiteThumbnail = ( {
 	children,
 	alt,
 	mShotsUrl = '',
+	bgColorImgUrl,
 	size = 'small',
 	mshotsOption = MSHOTS_OPTION,
 }: Props ) => {
 	const { src, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, mshotsOption );
+
+	const primary = useDominantColor( bgColorImgUrl );
+
+	backgroundColor = primary?.hexa || backgroundColor;
 
 	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
 

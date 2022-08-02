@@ -143,7 +143,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 									<SiteThumbnail
 										mShotsUrl={ setmShotsUrl ? site.URL : undefined }
 										alt={ site.name }
-										backgroundColor={ '#' + Math.floor( Math.random() * 16777215 ).toString( 16 ) }
+										bgColorImgUrl={ site.icon?.img }
 									>
 										{ site.icon ? (
 											<SiteIcon siteId={ site.ID } size={ 50 } />
