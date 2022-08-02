@@ -6,6 +6,8 @@ export { getCurrencyDefaults };
 
 export { CURRENCIES } from './currencies';
 
+export * from './types';
+
 /**
  * Formats money with a given currency code
  *
