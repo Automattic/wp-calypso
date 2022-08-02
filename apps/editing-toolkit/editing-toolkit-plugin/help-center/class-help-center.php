@@ -24,7 +24,7 @@ class Help_Center {
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
-		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 110 );
+		add_action( 'admin_head', array( $this, 'admin_bar_menu' ), 110 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ), 100 );
 	}
 
@@ -126,9 +126,19 @@ class Help_Center {
 	public function admin_bar_menu() {
 		global $wp_admin_bar;
 
-		if ( ! is_object( $wp_admin_bar ) ) {
+		$current_screen = get_current_screen();
+		$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+		if ( ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor() ) {
 			return;
 		}
+
+		wp_localize_script(
+			'help-center-script',
+			'helpCenter',
+			array(
+				'isHelpCenterAdminBarLoaded' => true,
+			)
+		);
 
 		$wp_admin_bar->add_menu(
 			array(
@@ -136,7 +146,7 @@ class Help_Center {
 				'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 				'parent' => 'top-secondary',
 				'meta'   => array(
-					'html' => '<div id="help-center" />',
+					'html' => '<div id="help-center-masterbar" />',
 				),
 			)
 		);

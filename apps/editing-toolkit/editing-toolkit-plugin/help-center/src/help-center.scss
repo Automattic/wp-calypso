@@ -42,7 +42,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		margin: auto;
+		padding: 4px 6px;
 
 		// Need to set this up for notifications
 		#has-notification {
@@ -63,7 +63,6 @@
 			svg {
 				fill: currentColor;
 			}
-
 		}
 	}
 }

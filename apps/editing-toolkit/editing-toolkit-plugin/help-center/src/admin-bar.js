@@ -12,9 +12,9 @@ function AdminHelpCenterContent() {
 
 	const handleToggleHelpCenter = () => {
 		if ( show ) {
-			recordTracksEvent( 'calypso_inlinehelp_close', { location: 'help-center-desktop' } );
+			recordTracksEvent( 'calypso_inlinehelp_close', { location: 'help-center-dashboard' } );
 		} else {
-			recordTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center-desktop' } );
+			recordTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center-dashboard' } );
 		}
 		setShowHelpCenter( ! show );
 	};
@@ -31,5 +31,5 @@ ReactDOM.render(
 			<AdminHelpCenterContent />
 		</CalypsoStateProvider>
 	</QueryClientProvider>,
-	document.getElementById( 'help-center' )
+	document.getElementById( 'help-center-masterbar' )
 );
