@@ -2,6 +2,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
+import { myFormatCurrency } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -82,25 +83,44 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 
 export const ItemVariantPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
-} > = ( { variant } ) => {
+	compareTo?: WPCOMProductVariant;
+} > = ( { variant, compareTo } ) => {
 	const isMobile = useMobileBreakpoint();
+	// This is the price that the compareTo variant would be if it was using the
+	// billing term of the variant. For example, if the price of the compareTo
+	// variant was 120 per year, and the variant we are displaying here is 5 per
+	// month, then `compareToPriceForVariantTerm` would be (120 / 12) * 1,
+	// or 10 (per month). In this case, selecting the variant would save the user
+	// 50% (5 / 10).
+	const compareToPriceForVariantTerm = compareTo
+		? compareTo.pricePerMonth * variant.termIntervalInMonths
+		: undefined;
+	// Extremely low "discounts" are possible if the price of the longer term has been rounded
+	// if they cannot be rounded to at least a percentage point we should not show them.
+	const discountPercentage = compareToPriceForVariantTerm
+		? Math.floor( 100 - ( variant.price / compareToPriceForVariantTerm ) * 100 )
+		: 0;
+	const formattedCurrentPrice = myFormatCurrency( variant.price, variant.currency );
+	const formattedCompareToPriceForVariantTerm = compareToPriceForVariantTerm
+		? myFormatCurrency( compareToPriceForVariantTerm, variant.currency )
+		: undefined;
 
 	return (
 		<Variant>
 			<Label>
 				{ variant.variantLabel }
-				{ variant.discountPercentage > 0 && isMobile && (
-					<DiscountPercentage percent={ variant.discountPercentage } />
+				{ discountPercentage > 0 && isMobile && (
+					<DiscountPercentage percent={ discountPercentage } />
 				) }
 			</Label>
 			<span>
-				{ variant.discountPercentage > 0 && ! isMobile && (
-					<DiscountPercentage percent={ variant.discountPercentage } />
+				{ discountPercentage > 0 && ! isMobile && (
+					<DiscountPercentage percent={ discountPercentage } />
 				) }
-				{ variant.discountPercentage > 0 && (
-					<DoNotPayThis>{ variant.formattedPriceBeforeDiscount }</DoNotPayThis>
+				{ discountPercentage > 0 && (
+					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
 				) }
-				<Price>{ variant.formattedCurrentPrice }</Price>
+				<Price>{ formattedCurrentPrice }</Price>
 			</span>
 		</Variant>
 	);

@@ -297,7 +297,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		 */
 		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
 		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
-			yield wpcomRequest( {
+			const response: { blog: string } = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
 				body: {
@@ -309,15 +309,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				},
 				method: 'POST',
 			} );
+			return response;
 		}
-
-		const data: { is_fse_active: boolean } = yield wpcomRequest( {
-			path: `/sites/${ siteSlug }/block-editor`,
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-		} );
-
-		return data?.is_fse_active ?? false;
 	}
 
 	const setSiteSetupError = ( error: string, message: string ) => ( {

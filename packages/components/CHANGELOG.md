@@ -24,9 +24,9 @@
 - Add Jetpack VideoPress Product icon and configs (#56103)
 - Move Gridicon to @automattic/components (#56056)
 - Update a8c deps (#55907)
-	- Update @automattic/react-virtualized to ^9.22.3
-	- Update gridicons to ^3.4.0
-	- Update social-logos to ^2.4.0
+  - Update @automattic/react-virtualized to ^9.22.3
+  - Update gridicons to ^3.4.0
+  - Update social-logos to ^2.4.0
 - Move Popover to @automattic/components (#55238)
 - Update dependency classnames to ^2.3.1 (#54370)
 - Themes Thanks Modal: render link buttons as anchor elements (#53577)
@@ -39,7 +39,7 @@
 - Refactor Card to TypeScript (#50863)
 - Buttons: Ensure pointer-events are disabled for busy buttons (#50906)
 - Migrate Dialog to TypeScript (#50093)
-- Refactor away from _.noop() - take 2 (#50755)
+- Refactor away from \_.noop() - take 2 (#50755)
 - Refactor logic that turns Nav Unification on (#50711)
 - Convert Suggestions to TypeScript (#50135)
 - Convert ProductIcon to TypeScript (#49837)
@@ -48,7 +48,7 @@
 - Convert Button to Typescript (#49833)
 - Update Our Color Palette to the Most Recent Version (#49489)
 - Add jetpack_scan_realtime and jetpack_scan_realtime_monthly to jetpack-scan in product-icon config. (#49044)
-- Add nav-unifcation class to dialog__backdrop so that masterbar-height used is the correct. (#48873)
+- Add nav-unifcation class to dialog\_\_backdrop so that masterbar-height used is the correct. (#48873)
 - Update font weights and sizes on buttons to better match Gutenberg (#47164)
 - Update product-icon for wpcom-premium (#46466)
 - Update product-icon config for Jetpack CRO (#46608)

@@ -47,7 +47,6 @@ function rectIsZero( rect: NullableDOMRect ) {
  * Uses throttling on the events, to avoid making changes too often.
  *
  * @param callback The function to call back on changes. Takes a single parameter: `boundingClientRect`.
- *
  * @returns The ref to be set on the consumer component.
  */
 export function useWindowResizeCallback(

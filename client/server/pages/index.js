@@ -485,12 +485,14 @@ const render404 =
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
 	};
 
-/* We don't use `next` but need to add it for express.js to
-   recognize this function as an error handler, hence the
-	 eslint-disable. */
-// eslint-disable-next-line no-unused-vars
+/*
+We don't use `next` but need to add it for express.js to
+recognize this function as an error handler, hence the
+eslint-disable.
+*/
 const renderServerError =
 	( entrypoint = 'entry-main' ) =>
+	// eslint-disable-next-line no-unused-vars
 	( err, req, res, next ) => {
 		// If the response is not writable it means someone else already rendered a page, do nothing
 		// Hopefully they logged the error as well.
