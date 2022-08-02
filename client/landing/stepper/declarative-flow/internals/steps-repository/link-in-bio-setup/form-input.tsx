@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
 import { Icon, check } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 
 type FormInputProps = {
@@ -9,16 +8,19 @@ type FormInputProps = {
 	errorMessage: string;
 	isValid: boolean;
 	inputValue: string;
+	label: string;
 };
 
-export const FormInput = ( { onChange, errorMessage, isValid, inputValue }: FormInputProps ) => {
-	const { __ } = useI18n();
-
+export const FormInput = ( {
+	onChange,
+	errorMessage,
+	isValid,
+	inputValue,
+	label,
+}: FormInputProps ) => {
 	return (
 		<div className="link-in-bio-setup-form__field">
-			<label className="link-in-bio-setup-form__label" htmlFor="linkInBioSiteName">
-				{ __( 'Site name' ) }
-			</label>
+			<label className="link-in-bio-setup-form__label">{ label }</label>
 			<div
 				className={ classNames( 'link-in-bio-setup-form__input', {
 					error: ! isValid,

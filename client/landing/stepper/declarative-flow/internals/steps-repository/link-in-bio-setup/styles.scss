@@ -35,7 +35,7 @@ $padding: 12px 16px;
             color: $gray-color;
 
             label {
-                font-size: '12px';
+                font-size: $font-body-extra-small;
             }
         }
 
@@ -62,7 +62,7 @@ $padding: 12px 16px;
             width: 100%;
 
             .link-in-bio-setup-form__label {
-                font-size: '16px';
+                font-size: $font-body;
                 font-weight: 400;
             }
 
@@ -75,7 +75,7 @@ $padding: 12px 16px;
 
                 input {
                     border: none;
-                    font-size: '14px';
+                    font-size: $font-body-small;
                     outline: none;
                     width: 80%;
                     padding: 12px 16px;
@@ -97,7 +97,7 @@ $padding: 12px 16px;
             background-color: $light-gray-color;
             padding: $padding;
             margin: 8px 0;
-            font-size: '14px';
+            font-size: $font-body-small;
 
             .link-in-bio-setup-form-container__address {
                 display: flex;
@@ -110,7 +110,7 @@ $padding: 12px 16px;
                     width: 65px;
                     height: 20px;
                     padding: 0 10px;
-                    font-size: '12px';
+                    font-size: $font-body-extra-small;
                     font-weight: 500;
                     cursor: pointer;
                 }

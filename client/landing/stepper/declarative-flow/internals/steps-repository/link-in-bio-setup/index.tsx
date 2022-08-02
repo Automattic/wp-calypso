@@ -10,10 +10,13 @@ import './styles.scss';
 
 const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const { goNext } = navigation;
-	const siteNameErrorMsg = 'Your site needs a name so your subscribers can identify you.';
-	const siteBriefDescriptionErrorMsg =
-		'Your site needs a brief description so your subscribers can identify you.';
 	const { __ } = useI18n();
+	const siteNameErrorMsg = __(
+		'Your site needs a name so your subscribers can identify you.'
+	) as string;
+	const siteBriefDescriptionErrorMsg = __(
+		'Your site needs a brief description so your subscribers can identify you.'
+	) as string;
 
 	const onChangeSiteName = () => {
 		return;
@@ -33,7 +36,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						<div className="link-in-bio-setup-form__icon">
 							<Gridicon key={ 'blue' } icon="share-ios" size={ 18 } />
 						</div>
-						<label htmlFor="">{ __( 'Upload site icon' ) }</label>{ ' ' }
+						<label>{ __( 'Upload site icon' ) }</label>
 					</div>
 					{ /*  */ }
 					<FormInput
@@ -41,17 +44,17 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						isValid={ true }
 						onChange={ onChangeSiteName }
 						errorMessage={ siteNameErrorMsg }
+						label={ __( 'Site name' ) }
 					/>
 					<FormInput
 						inputValue={ '' } // get value from store?
 						isValid={ true }
 						onChange={ onChangeSiteDescription }
 						errorMessage={ siteBriefDescriptionErrorMsg }
+						label={ __( 'Brief description' ) }
 					/>
 					<div className="link-in-bio-setup-form__field">
-						<label className="link-in-bio-setup-form__label" htmlFor="linkInBioSiteName">
-							{ __( 'Publication address' ) }
-						</label>
+						<label className="link-in-bio-setup-form__label">{ __( 'Publication address' ) }</label>
 						<div className="link-in-bio-setup-form-field__container">
 							<div className="link-in-bio-setup-form-container__address">
 								{ 'www.test.link ' }
