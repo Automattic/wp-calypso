@@ -10,7 +10,6 @@ import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
-import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
 
 function renderSinglePlugin( context, siteUrl ) {
@@ -112,11 +111,6 @@ export function browsePluginsOrPlugin( context, next ) {
 
 export function browsePlugins( context, next ) {
 	renderPluginsBrowser( context );
-	next();
-}
-
-export function upload( context, next ) {
-	context.primary = <PluginUpload />;
 	next();
 }
 

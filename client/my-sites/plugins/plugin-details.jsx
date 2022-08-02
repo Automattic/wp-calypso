@@ -103,10 +103,12 @@ function PluginDetails( props ) {
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
-	const userCanManagePlugins = useSelector( ( state ) =>
-		selectedSite?.ID
-			? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
-			: canCurrentUserManagePlugins( state )
+	const userCanManagePlugins = useSelector(
+		( state ) =>
+			! selectedSite ||
+			( selectedSite?.ID
+				? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
+				: canCurrentUserManagePlugins( state ) )
 	);
 
 	const isPluginInstalledOnsite =
