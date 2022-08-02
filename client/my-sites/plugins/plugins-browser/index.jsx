@@ -35,7 +35,7 @@ import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
-import { siteObjectsToSiteIds, localizePluginsPath } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,
@@ -43,7 +43,6 @@ import {
 } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
@@ -290,7 +289,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
-	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { localizePath } = useLocalizedPlugins();
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
@@ -380,11 +379,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		const items = [
 			{
 				label: translate( 'Plugins' ),
-				href: localizePluginsPath(
-					`/plugins/${ siteSlug || '' }`,
-					translate.localeSlug,
-					! isLoggedIn
-				),
+				href: localizePath( `/plugins/${ siteSlug || '' }` ),
 				id: 'plugins',
 				helpBubble: translate(
 					'Add new functionality and integrations to your site with plugins.'
@@ -395,11 +390,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		if ( category ) {
 			items.push( {
 				label: categoryName,
-				href: localizePluginsPath(
-					`/plugins/browse/${ category }/${ siteSlug || '' }`,
-					translate.localeSlug,
-					! isLoggedIn
-				),
+				href: localizePath( `/plugins/browse/${ category }/${ siteSlug || '' }` ),
 				id: 'category',
 			} );
 		}
@@ -407,11 +398,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		if ( search ) {
 			items.push( {
 				label: translate( 'Search Results' ),
-				href: localizePluginsPath(
-					`/plugins/${ siteSlug || '' }?s=${ search }`,
-					translate.localeSlug,
-					! isLoggedIn
-				),
+				href: localizePath( `/plugins/${ siteSlug || '' }?s=${ search }` ),
 				id: 'plugins-search',
 			} );
 		}

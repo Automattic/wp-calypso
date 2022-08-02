@@ -25,7 +25,7 @@ import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sideba
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
-import { siteObjectsToSiteIds, localizePluginsPath } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -87,7 +87,7 @@ function PluginDetails( props ) {
 		isRequestingForSites( state, siteIds )
 	);
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
-	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
@@ -219,11 +219,7 @@ function PluginDetails( props ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: translate( 'Plugins' ),
-					href: localizePluginsPath(
-						`/plugins/${ selectedSite?.slug || '' }`,
-						translate.localeSlug,
-						! isLoggedIn
-					),
+					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
 					helpBubble: translate(
 						'Add new functionality and integrations to your site with plugins.'
@@ -236,16 +232,12 @@ function PluginDetails( props ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: fullPlugin.name,
-					href: localizePluginsPath(
-						`/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
-						translate.localeSlug,
-						! isLoggedIn
-					),
+					href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
 					id: `plugin-${ props.pluginSlug }`,
 				} )
 			);
 		}
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite ] );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite, localizePath ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -410,6 +402,7 @@ function LegacyPluginDetails( props ) {
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const { localizePath } = useLocalizedPlugins();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const showBillingIntervalSwitcher =
@@ -421,20 +414,12 @@ function LegacyPluginDetails( props ) {
 		? [
 				{
 					label: translate( 'Plugins' ),
-					href: localizePluginsPath(
-						`/plugins/manage/${ selectedSite?.slug || '' }`,
-						translate.localeSlug,
-						! isLoggedIn
-					),
+					href: localizePath( `/plugins/manage/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
 				},
 				{
 					label: fullPlugin.name,
-					href: localizePluginsPath(
-						`/plugins/${ pluginSlug }/${ selectedSite?.slug || '' }`,
-						translate.localeSlug,
-						! isLoggedIn
-					),
+					href: localizePath( `/plugins/${ pluginSlug }/${ selectedSite?.slug || '' }` ),
 					id: `plugin-${ pluginSlug }`,
 				},
 		  ]
