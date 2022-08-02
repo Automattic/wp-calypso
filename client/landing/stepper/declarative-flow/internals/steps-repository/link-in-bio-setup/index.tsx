@@ -3,7 +3,7 @@
 import { Gridicon, Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormInput from './form-input';
+import LinkInBioInput from './link-in-bio-input';
 import type { Step } from '../../types';
 
 import './styles.scss';
@@ -39,15 +39,17 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						<label>{ __( 'Upload site icon' ) }</label>
 					</div>
 					{ /*  */ }
-					<FormInput
-						inputValue={ '' } // get value from store?
-						isValid={ true }
+					<LinkInBioInput
+						inputId={ 'link-in-bio-input-name' }
+						inputValue={ 'Invalid input data' } // get value from store?
+						isValid={ false }
 						onChange={ onChangeSiteName }
 						errorMessage={ siteNameErrorMsg }
 						label={ __( 'Site name' ) }
 					/>
-					<FormInput
-						inputValue={ '' } // get value from store?
+					<LinkInBioInput
+						inputId={ 'link-in-bio-input-description' }
+						inputValue={ 'Valid input data' } // get value from store?
 						isValid={ true }
 						onChange={ onChangeSiteDescription }
 						errorMessage={ siteBriefDescriptionErrorMsg }
