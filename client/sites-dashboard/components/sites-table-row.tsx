@@ -2,8 +2,8 @@ import { ListTile, SiteThumbnail } from '@automattic/components';
 import { ClassNames, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import SiteIcon from 'calypso/blocks/site-icon';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import Image from 'calypso/components/image';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import TimeSince from 'calypso/components/time-since';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
@@ -125,7 +125,6 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 
 	const displayStatusBadge = isComingSoon || site.is_private;
 	const setmShotsUrl = ! isComingSoon && ! site.is_private;
-
 	return (
 		<ClassNames>
 			{ ( { css } ) => (
@@ -146,7 +145,12 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 										bgColorImgUrl={ site.icon?.img }
 									>
 										{ site.icon ? (
-											<SiteIcon siteId={ site.ID } size={ 50 } />
+											<Image
+												src={ site.icon.img }
+												alt={ site.name }
+												style={ { height: '50px', width: '50px' } }
+												className={ undefined }
+											/>
 										) : (
 											<h1 style={ { fontSize: 'xx-large' } }>{ site.name.charAt( 0 ) }</h1>
 										) }
