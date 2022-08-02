@@ -3,7 +3,6 @@ import page from 'page';
 import {
 	makeLayout,
 	redirectWithoutLocaleParamIfLoggedIn,
-	redirectLoggedOut,
 	render as clientRender,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
@@ -15,10 +14,15 @@ import {
 	jetpackCanUpdate,
 	plugins,
 	scrollTopIfNoHash,
+	navigationIfLoggedIn,
 } from './controller';
 import { upload } from './controller-logged-in';
 
 export default function ( router ) {
+	const siteId =
+		'\\d+' + // numeric site id
+		'|' + // or
+		'[^\\\\/.]+\\.[^\\\\/]+'; // one-or-more non-slash-or-dot chars, then a dot, then one-or-more non-slashes
 	const langParam = getLanguageRouteParam();
 
 	page(
@@ -39,6 +43,17 @@ export default function ( router ) {
 		clientRender
 	);
 
+	router(
+		`/${ langParam }/plugins/browse/:category/:site(${ siteId })?`,
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigationIfLoggedIn,
+		browsePlugins,
+		makeLayout,
+		clientRender
+	);
+
 	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
 	page(
 		'/plugins/upload/:site_id',
@@ -51,41 +66,14 @@ export default function ( router ) {
 	);
 
 	router(
-		`/${ langParam }/plugins/:plugin`,
+		`/${ langParam }/plugins`,
 		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
-		browsePluginsOrPlugin,
-		makeLayout
-	);
-
-	router(
-		`/${ langParam }/plugins/:plugin/:site_id`,
-		redirectWithoutLocaleParamIfLoggedIn,
-		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
-		navigation,
-		browsePluginsOrPlugin,
-		makeLayout
-	);
-
-	router(
-		[ `/${ langParam }/plugins`, `/${ langParam }/plugins/browse/:category` ],
-		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
+		navigationIfLoggedIn,
 		browsePlugins,
-		makeLayout
-	);
-
-	router(
-		[ `/${ langParam }/plugins/:site_id`, `/${ langParam }/plugins/browse/:category/:site` ],
-		redirectWithoutLocaleParamIfLoggedIn,
-		redirectLoggedOut,
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		browsePlugins,
-		makeLayout
+		makeLayout,
+		clientRender
 	);
 
 	page(
@@ -105,6 +93,17 @@ export default function ( router ) {
 		navigation,
 		jetpackCanUpdate,
 		plugins,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		`/${ langParam }/plugins/:plugin/:site_id(${ siteId })?`,
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigationIfLoggedIn,
+		browsePluginsOrPlugin,
 		makeLayout,
 		clientRender
 	);

@@ -3,6 +3,8 @@ import page from 'page';
 import { createElement } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import { navigation } from 'calypso/my-sites/controller';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
@@ -139,5 +141,14 @@ export function scrollTopIfNoHash( context, next ) {
 	if ( typeof window !== 'undefined' && ! window.location.hash ) {
 		window.scrollTo( 0, 0 );
 	}
+	next();
+}
+
+export function navigationIfLoggedIn( context, next ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		navigation( context, next );
+		return;
+	}
+
 	next();
 }
