@@ -13,6 +13,7 @@ import {
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { PREINSTALLED_PREMIUM_PLUGINS } from 'calypso/my-sites/plugins/constants';
 import { sanitizeSectionContent } from './sanitize-section-content';
@@ -371,3 +372,15 @@ export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
 				: PLAN_BUSINESS_MONTHLY;
 	}
 }
+
+/**
+ * Determines the URL to use for managing a connection.
+ *
+ * @param {string} siteSlug The site slug to use in the URL.
+ * @returns The URL to use for managing a connection.
+ */
+export const getManageConnectionHref = ( siteSlug ) => {
+	return isJetpackCloud()
+		? `https://wordpress.com/settings/manage-connection/${ siteSlug }`
+		: `/settings/manage-connection/${ siteSlug }`;
+};
