@@ -17,7 +17,8 @@ import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibilit
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { localizePluginsPath, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
@@ -46,6 +47,7 @@ const PluginsBrowserListElement = ( props ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const localizeUrl = useLocalizeUrl();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -166,7 +168,7 @@ const PluginsBrowserListElement = ( props ) => {
 	return (
 		<li className={ classNames }>
 			<a
-				href={ pluginLink }
+				href={ localizePluginsPath( pluginLink, translate.localeSlug, ! isLoggedIn ) }
 				className="plugins-browser-item__link"
 				onClick={ trackPluginLinkClick }
 			>

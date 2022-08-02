@@ -7,12 +7,15 @@ import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getPluginAuthorKeyword } from 'calypso/lib/plugins/utils';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
+import { localizePluginsPath } from 'calypso/my-sites/plugins/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
@@ -38,9 +41,13 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 								components: {
 									author: (
 										<a
-											href={ `/plugins/${
-												selectedSite?.slug || ''
-											}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"` }
+											href={ localizePluginsPath(
+												`/plugins/${
+													selectedSite?.slug || ''
+												}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"`,
+												translate.localeSlug,
+												! isLoggedIn
+											) }
 										>
 											{ plugin.author_name }
 										</a>
@@ -95,6 +102,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -122,9 +130,13 @@ function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 							plugin.author_name
 						) : (
 							<a
-								href={ `/plugins/${
-									selectedSite?.slug || ''
-								}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"` }
+								href={ localizePluginsPath(
+									`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthorKeyword(
+										plugin
+									) }"`,
+									translate.localeSlug,
+									! isLoggedIn
+								) }
 							>
 								{ plugin.author_name }
 							</a>
@@ -157,6 +169,8 @@ function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 const LIMIT_OF_TAGS = 3;
 function Tags( { plugin } ) {
 	const selectedSite = useSelector( getSelectedSite );
+	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	if ( ! plugin?.tags ) {
 		return null;
@@ -170,7 +184,11 @@ function Tags( { plugin } ) {
 				<a
 					key={ `badge-${ tagKey.replace( ' ', '' ) }` }
 					className="plugin-details-header__tag-badge"
-					href={ `/plugins/browse/${ tagKey }/${ selectedSite?.slug || '' }` }
+					href={ localizePluginsPath(
+						`/plugins/browse/${ tagKey }/${ selectedSite?.slug || '' }`,
+						translate.localeSlug,
+						! isLoggedIn
+					) }
 				>
 					<Badge type="info">{ plugin.tags[ tagKey ] }</Badge>
 				</a>
