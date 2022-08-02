@@ -26,7 +26,7 @@ import 'calypso/state/plugins/init';
 
 const PLUGINS_LIST_DEFAULT_SIZE = 24;
 
-export function fetchPluginData( pluginSlug ) {
+export function fetchPluginData( pluginSlug, locale = '' ) {
 	return async ( dispatch, getState ) => {
 		if ( isFetching( getState(), pluginSlug ) ) {
 			return;
@@ -38,7 +38,10 @@ export function fetchPluginData( pluginSlug ) {
 		} );
 
 		try {
-			const data = await fetchPluginInformation( pluginSlug, getCurrentUserLocale( getState() ) );
+			const data = await fetchPluginInformation(
+				pluginSlug,
+				getCurrentUserLocale( getState() ) || locale
+			);
 
 			dispatch( {
 				type: PLUGINS_WPORG_PLUGIN_RECEIVE,
