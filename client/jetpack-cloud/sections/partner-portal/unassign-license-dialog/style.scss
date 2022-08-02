@@ -30,24 +30,13 @@
 		font-size: 1.125rem; /* stylelint-disable */
 		font-weight: 600;
 		line-height: 20px;
-		color: var( --studio-red-60 );
+		color: var( --color-text );
 		border-bottom: 1px solid var( --studio-gray-5 );
 
 		@include break-mobile() {
 			margin: -24px -24px 24px;
 			padding: 9px 24px;
 			line-height: 36px;
-		}
-	}
-
-	&__warning {
-		font-weight: 500;
-		color: var( --studio-red-60 );
-
-		.gridicon {
-			position: relative;
-			top: 2px;
-			margin-right: 7px;
 		}
 	}
 
