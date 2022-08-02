@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useStarterDesignsGeneratedQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignsGeneratedQuery } from '@automattic/data-stores';
 import DesignPicker, {
 	GeneratedDesignPicker,
 	PremiumBadge,
@@ -29,6 +29,7 @@ import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-f
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
+import DesignPickerDesignTitle from './design-picker-design-title';
 import GeneratedDesignPickerWebPreview from './generated-design-picker-web-preview';
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
@@ -37,6 +38,7 @@ import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
 
+const SiteIntent = Onboard.SiteIntent;
 // The distance from top when sticky should be 109px and it's aligned with thumbnails and previews
 const STICKY_OPTIONS = {
 	rootMargin: '-109px 0px 0px',
@@ -65,6 +67,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
+	const siteDescription = site?.description;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	useEffect( () => {
 		if ( isAtomic ) {
@@ -103,7 +106,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const enabledGeneratedDesigns =
 		verticalsStepEnabled &&
 		isEnabled( 'signup/design-picker-generated-designs' ) &&
-		( intent === 'build' || intent === 'write' );
+		( intent === SiteIntent.Build || intent === SiteIntent.Write );
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
 		useStarterDesignsGeneratedQuery(
@@ -369,11 +372,17 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	if ( selectedDesign && isPreviewingDesign && ! showGeneratedDesigns ) {
 		const isBlankCanvas = isBlankCanvasDesign( selectedDesign );
 		const designTitle = isBlankCanvas ? translate( 'Blank Canvas' ) : selectedDesign.title;
+		const headerDesignTitle = (
+			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
+		);
+
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
+		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
+		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
-			// If the user fills out the site title with write intent, we show it on the design preview
-			site_title: intent === 'write' ? siteTitle : undefined,
+			site_title: shouldCustomizeText ? siteTitle : undefined,
+			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
 		} );
 
@@ -450,7 +459,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 					formattedHeader={
 						<FormattedHeader
 							id={ 'design-setup-header' }
-							headerText={ designTitle }
+							headerText={ headerDesignTitle }
 							align={ isMobile ? 'left' : 'center' }
 						/>
 					}
@@ -566,7 +575,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			backLabelText={
 				isPreviewingGeneratedDesign ? translate( 'Pick another' ) : translate( 'Back' )
 			}
-			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
+			skipLabelText={
+				intent === SiteIntent.Write ? translate( 'Skip and draft first post' ) : undefined
+			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ isPreviewingGeneratedDesign ? pickDesign : handleSubmit }

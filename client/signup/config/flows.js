@@ -125,8 +125,7 @@ function getEditorDestination( dependencies ) {
 }
 
 function getDestinationFromIntent( dependencies ) {
-	const { intent, storeType, startingPoint, siteSlug, isFSEActive } = dependencies;
-
+	const { intent, storeType, startingPoint, siteSlug } = dependencies;
 	// If the user skips starting point, redirect them to My Home
 	if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 		if ( startingPoint !== 'write' ) {
@@ -146,14 +145,6 @@ function getDestinationFromIntent( dependencies ) {
 		);
 	}
 
-	if ( ! isFSEActive && intent === 'sell' ) {
-		return `/page/${ dependencies.siteSlug }/home`;
-	}
-
-	if ( isFSEActive && intent !== 'write' ) {
-		return `/site-editor/${ dependencies.siteSlug }`;
-	}
-
 	return getChecklistThemeDestination( dependencies );
 }
 
@@ -163,6 +154,10 @@ function getDIFMSignupDestination( { siteSlug } ) {
 
 function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
+}
+
+function getStepperFlowDestination( dependencies, stepperFlow ) {
+	return `/setup?flow=${ stepperFlow }&siteSlug=${ dependencies.siteSlug }`;
 }
 
 const flows = generateFlows( {
@@ -178,6 +173,7 @@ const flows = generateFlows( {
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
 	getAddOnsStep,
+	getStepperFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

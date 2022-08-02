@@ -148,7 +148,7 @@ export function useCategories(
 			description: __( 'Design' ),
 			icon: 'grid',
 			slug: 'design',
-			tags: [ 'design' ],
+			tags: [ 'design', 'blocks', 'editor' ],
 		},
 		photo: {
 			name: __( 'Photo & Video' ),

@@ -1,19 +1,31 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
-import EmptyContent from 'calypso/components/empty-content';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { SUCCESS } from 'calypso/state/order-transactions/constants';
+import { fetchReceipt } from 'calypso/state/receipts/actions';
+import { getReceiptById } from 'calypso/state/receipts/selectors';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
-import type { OrderTransaction } from 'calypso/state/selectors/get-order-transaction';
+import type { RedirectInstructions } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
+import type {
+	OrderTransaction,
+	OrderTransactionSuccess,
+} from 'calypso/state/selectors/get-order-transaction';
+import type { CalypsoDispatch } from 'calypso/state/types';
+
+import './style.scss';
 
 interface CheckoutPendingProps {
 	orderId: number | ':orderId';
@@ -21,6 +33,8 @@ interface CheckoutPendingProps {
 	siteSlug?: string;
 	redirectTo?: string;
 }
+
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 /**
  * A page that polls the orders endpoint for a processing transaction and
@@ -55,7 +69,6 @@ function CheckoutPending( {
 	redirectTo,
 }: CheckoutPendingProps ) {
 	const orderId = isValidOrderId( orderIdOrPlaceholder ) ? orderIdOrPlaceholder : undefined;
-	const translate = useTranslate();
 
 	useRedirectOnTransactionSuccess( {
 		orderId,
@@ -76,13 +89,20 @@ function CheckoutPending( {
 				title="Checkout Pending"
 				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
 			/>
-			<EmptyContent
-				illustration={ '/calypso/images/illustrations/illustration-shopping-bags.svg' }
-				illustrationWidth={ 500 }
-				title={ translate( 'Processing…' ) }
-				line={ translate( "Almost there – we're currently finalizing your order." ) }
-			/>
+			<PendingContent />
 		</Main>
+	);
+}
+
+function PendingContent() {
+	const translate = useTranslate();
+	return (
+		<div className="pending-content__wrapper">
+			<div className="pending-content__title">
+				{ translate( "Almost there – we're currently finalizing your order." ) }
+			</div>
+			<LoadingEllipsis />
+		</div>
 	);
 }
 
@@ -113,12 +133,37 @@ function useRedirectOnTransactionSuccess( {
 	const transaction: OrderTransaction | null = useSelector( ( state ) =>
 		orderId ? getOrderTransaction( state, orderId ) : null
 	);
+	const transactionReceiptId = isTransactionSuccessful( transaction )
+		? transaction.receiptId
+		: undefined;
+	const finalReceiptId = receiptId ?? transactionReceiptId;
+	const receipt = useSelector( ( state ) => getReceiptById( state, finalReceiptId ) );
+	const isReceiptLoaded = receipt.hasLoadedFromServer;
 	const error: Error | null = useSelector( ( state ) =>
 		orderId ? getOrderTransactionError( state, orderId ) : null
 	);
 	const reduxDispatch = useDispatch();
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
+
+	const firstPurchase = receipt.data?.purchases[ 0 ];
+	const isRenewal = firstPurchase?.isRenewal ?? false;
+	const productName = firstPurchase?.productName ?? '';
+	const willAutoRenew = firstPurchase?.willAutoRenew ?? false;
+
+	// Fetch receipt data once we have a receipt Id.
+	const didFetchReceipt = useRef( false );
+	useEffect( () => {
+		if ( didFetchReceipt.current ) {
+			return;
+		}
+		if ( ! isReceiptLoaded && finalReceiptId ) {
+			didFetchReceipt.current = true;
+			reduxDispatch( fetchReceipt( finalReceiptId ) );
+		}
+	}, [ finalReceiptId, isReceiptLoaded, reduxDispatch ] );
+
+	// Redirect and display notices.
 	const didRedirect = useRef( false );
 	useEffect( () => {
 		if ( didRedirect.current ) {
@@ -130,6 +175,12 @@ function useRedirectOnTransactionSuccess( {
 		// get an updated cached cart and future pages will show the cart correctly
 		// as empty.
 		reloadCart();
+
+		// Wait for the receipt to load before redirecting so we can display the
+		// correct notification and possibly run analytics.
+		if ( finalReceiptId && ! isReceiptLoaded ) {
+			return;
+		}
 
 		const redirectInstructions = getRedirectFromPendingPage( {
 			error,
@@ -144,39 +195,134 @@ function useRedirectOnTransactionSuccess( {
 			return;
 		}
 
-		if ( redirectInstructions.isError ) {
-			const defaultFailErrorNotice = translate(
-				"Sorry, we couldn't process your payment. Please try again later."
-			);
-			reduxDispatch(
-				errorNotice( defaultFailErrorNotice, {
-					isPersistent: true,
-				} )
-			);
-		}
-
-		if ( redirectInstructions.isUnknown ) {
-			const unknownNotice = translate( 'Oops! Something went wrong. Please try again later.' );
-			reduxDispatch(
-				errorNotice( unknownNotice, {
-					isPersistent: true,
-				} )
-			);
-		}
-
 		didRedirect.current = true;
+		triggerPostRedirectNotices( {
+			redirectInstructions,
+			isRenewal,
+			productName,
+			willAutoRenew,
+			translate,
+			reduxDispatch,
+		} );
 		performRedirect( redirectInstructions.url );
 	}, [
 		error,
+		finalReceiptId,
+		isReceiptLoaded,
+		isRenewal,
+		orderId,
+		productName,
+		receiptId,
 		redirectTo,
 		reduxDispatch,
+		reloadCart,
 		siteSlug,
 		transaction,
 		translate,
-		reloadCart,
-		orderId,
-		receiptId,
+		willAutoRenew,
 	] );
+}
+
+function isTransactionSuccessful(
+	transaction: OrderTransaction | null
+): transaction is OrderTransactionSuccess {
+	return transaction?.processingStatus === SUCCESS;
+}
+
+function triggerPostRedirectNotices( {
+	redirectInstructions,
+	isRenewal,
+	productName,
+	willAutoRenew,
+	translate,
+	reduxDispatch,
+}: {
+	redirectInstructions: RedirectInstructions;
+	isRenewal: boolean;
+	productName: string;
+	willAutoRenew: boolean;
+	translate: ReturnType< typeof useTranslate >;
+	reduxDispatch: CalypsoDispatch;
+} ): void {
+	if ( redirectInstructions.isError ) {
+		const defaultFailErrorNotice = translate(
+			"Sorry, we couldn't process your payment. Please try again later."
+		);
+		reduxDispatch(
+			errorNotice( defaultFailErrorNotice, {
+				isPersistent: true,
+			} )
+		);
+		return;
+	}
+
+	if ( redirectInstructions.isUnknown ) {
+		const unknownNotice = translate( 'Oops! Something went wrong. Please try again later.' );
+		reduxDispatch(
+			errorNotice( unknownNotice, {
+				isPersistent: true,
+			} )
+		);
+		return;
+	}
+
+	if ( isRenewal ) {
+		displayRenewalSuccessNotice( {
+			productName,
+			willAutoRenew,
+			translate,
+			reduxDispatch,
+		} );
+		return;
+	}
+
+	reduxDispatch(
+		successNotice( translate( 'Your purchase has been completed!' ), {
+			displayOnNextPage: true,
+		} )
+	);
+}
+
+function displayRenewalSuccessNotice( {
+	productName,
+	willAutoRenew,
+	translate,
+	reduxDispatch,
+}: {
+	productName: string;
+	willAutoRenew: boolean;
+	translate: ReturnType< typeof useTranslate >;
+	reduxDispatch: CalypsoDispatch;
+} ): void {
+	if ( willAutoRenew ) {
+		// showing notice for product that will auto-renew
+		reduxDispatch(
+			successNotice(
+				translate( 'Success! You renewed %(productName)s. {{a}}Learn more about renewals{{/a}}', {
+					args: {
+						productName,
+					},
+					components: {
+						a: <a href={ localizeUrl( AUTO_RENEWAL ) } target="_blank" rel="noopener noreferrer" />,
+					},
+				} ),
+				{ displayOnNextPage: true }
+			)
+		);
+		return;
+	}
+
+	// showing notice for product that will not auto-renew
+	reduxDispatch(
+		successNotice(
+			translate( 'Success! You renewed %(productName)s.', {
+				args: {
+					productName,
+				},
+			} ),
+			{ displayOnNextPage: true }
+		)
+	);
 }
 
 export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {

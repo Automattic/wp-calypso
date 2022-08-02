@@ -11,6 +11,8 @@ export async function apiDeleteSite(
 	client: RestAPIClient,
 	siteDetails: SiteDetails
 ): Promise< void > {
+	console.info( `Deleting siteID ${ siteDetails.id }` );
+
 	const response = await client.deleteSite( siteDetails );
 
 	// If the response is `null` then no action has been

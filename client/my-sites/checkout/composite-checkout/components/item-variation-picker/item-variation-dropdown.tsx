@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { ItemVariantPrice } from './variant-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
@@ -101,14 +101,11 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	const [ open, setOpen ] = useState( false );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
-	const selectedVariantIndex = useMemo( () => {
-		for ( let i = 0; i < variants.length; ++i ) {
-			if ( variants[ i ].productId === selectedItem.product_id ) {
-				return i;
-			}
-		}
-		return null;
-	}, [ selectedItem.product_id, variants ] );
+	const selectedVariantIndexRaw = variants.findIndex(
+		( variant ) => variant.productId === selectedItem.product_id
+	);
+	// findIndex returns -1 if it fails and we want null.
+	const selectedVariantIndex = selectedVariantIndexRaw > 0 ? selectedVariantIndexRaw : null;
 
 	// reset the dropdown highlight when the selected product changes
 	useEffect( () => {
@@ -232,16 +229,18 @@ function ItemVariantOptionList( {
 	selectedItem: ResponseCartProduct;
 	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
 } ) {
+	const compareTo = variants.find( ( variant ) => variant.productId === selectedItem.product_id );
 	return (
 		<OptionList role="listbox" tabIndex={ -1 }>
 			{ variants.map( ( variant, index ) => (
 				<ItemVariantOption
 					key={ variant.productSlug + variant.variantLabel }
+					isSelected={ index === highlightedVariantIndex }
+					onSelect={ () =>
+						handleChange( selectedItem.uuid, variant.productSlug, variant.productId )
+					}
+					compareTo={ compareTo }
 					variant={ variant }
-					highlightedVariantIndex={ highlightedVariantIndex }
-					index={ index }
-					selectedItem={ selectedItem }
-					handleChange={ handleChange }
 				/>
 			) ) }
 		</OptionList>
@@ -249,20 +248,17 @@ function ItemVariantOptionList( {
 }
 
 function ItemVariantOption( {
+	isSelected,
+	onSelect,
+	compareTo,
 	variant,
-	highlightedVariantIndex,
-	index,
-	selectedItem,
-	handleChange,
 }: {
+	isSelected: boolean;
+	onSelect: () => void;
+	compareTo?: WPCOMProductVariant;
 	variant: WPCOMProductVariant;
-	highlightedVariantIndex: number | null;
-	index: number;
-	selectedItem: ResponseCartProduct;
-	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
 } ) {
 	const { variantLabel, productId, productSlug } = variant;
-	const isSelected = index === highlightedVariantIndex;
 	return (
 		<Option
 			id={ productId.toString() }
@@ -270,10 +266,10 @@ function ItemVariantOption( {
 			aria-label={ variantLabel }
 			data-product-slug={ productSlug }
 			role="option"
-			onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
+			onClick={ onSelect }
 			selected={ isSelected }
 		>
-			<ItemVariantPrice variant={ variant } />
+			<ItemVariantPrice variant={ variant } compareTo={ compareTo } />
 		</Option>
 	);
 }

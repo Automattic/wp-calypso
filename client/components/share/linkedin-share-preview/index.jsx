@@ -31,6 +31,7 @@ export class LinkedinSharePreview extends PureComponent {
 					<div className="linkedin-share-preview__header">
 						<div className="linkedin-share-preview__profile-picture-part">
 							<img
+								alt="Preview of LinkedIn profile"
 								className="linkedin-share-preview__profile-picture"
 								src={ externalProfilePicture }
 							/>
@@ -47,7 +48,11 @@ export class LinkedinSharePreview extends PureComponent {
 						{ imageUrl && (
 							<div className="linkedin-share-preview__image-wrapper">
 								<a href={ articleUrl }>
-									<img className="linkedin-share-preview__image" src={ imageUrl } />
+									<img
+										alt="Preview when shared to LinkedIn"
+										className="linkedin-share-preview__image"
+										src={ imageUrl }
+									/>
 								</a>
 							</div>
 						) }
