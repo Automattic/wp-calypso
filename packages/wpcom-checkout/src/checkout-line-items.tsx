@@ -22,6 +22,7 @@ import {
 	Theme,
 	LineItem as LineItemType,
 } from '@automattic/composite-checkout';
+import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
@@ -31,6 +32,7 @@ import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
 import IonosLogo from './partner-logo-ionos';
+import type { FormatCurrencyOptions } from '@automattic/format-currency';
 import type {
 	GSuiteProductUser,
 	ResponseCart,
@@ -594,23 +596,35 @@ function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct }
 			);
 		}
 
+		const monthlyPriceInteger = ( () => {
+			if ( product.bill_period === '730' ) {
+				return Math.floor( product.item_original_subtotal_integer / 24 );
+			}
+			if ( product.bill_period === '365' ) {
+				return Math.floor( product.item_original_subtotal_integer / 12 );
+			}
+			return product.item_original_subtotal_integer;
+		} )();
+
 		const options = {
 			args: {
-				productLabel: sublabel,
-				monthlyPrice: product.item_subtotal_monthly_cost_display,
+				sublabel: sublabel,
+				monthlyPrice: formatCurrencyForLineItem( monthlyPriceInteger, product.currency, {
+					smallestUnit: true,
+				} ),
 				price: product.item_original_subtotal_display,
 			},
 		};
 
 		if ( isMonthlyProduct( product ) ) {
-			return <>{ translate( '%(productLabel)s: %(price)s per month', options ) }</>;
+			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
 		}
 
 		if ( isYearly( product ) ) {
 			return (
 				<>
 					{ translate(
-						'%(productLabel)s: %(monthlyPrice)s/month, billed %(price)s per year',
+						'%(sublabel)s: %(monthlyPrice)s/month, billed %(price)s per year',
 						options
 					) }
 				</>
@@ -621,7 +635,7 @@ function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct }
 			return (
 				<>
 					{ translate(
-						'%(productLabel)s: %(monthlyPrice)s/month, billed %(price)s every two years',
+						'%(sublabel)s: %(monthlyPrice)s/month, billed %(price)s every two years',
 						options
 					) }
 				</>
@@ -684,6 +698,18 @@ function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct }
 	}
 
 	return <>{ sublabel || null }</>;
+}
+
+function formatCurrencyForLineItem(
+	price: number,
+	code: string,
+	options: FormatCurrencyOptions
+): string {
+	const formatted = formatCurrency( price, code, options );
+	if ( ! formatted ) {
+		throw new Error( `Failed to format price '${ price }' in currency '${ code }'` );
+	}
+	return formatted;
 }
 
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
