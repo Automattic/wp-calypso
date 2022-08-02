@@ -4,6 +4,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
 	PLAN_BLOGGER,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_BUSINESS_2_YEARS,
@@ -350,7 +351,8 @@ export function getPluginAuthorProfileKeyword( plugin ) {
  */
 export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
 	if ( isEnabled( 'marketplace-personal-premium' ) ) {
-		return PLAN_PERSONAL;
+		// Site is free - doesn't have a plan.
+		return pluginBillingPeriod === IntervalLength.ANNUALLY ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;
 	}
 	// Legacy plans always upgrade to business.
 	switch ( currentPlan.product_slug ) {
