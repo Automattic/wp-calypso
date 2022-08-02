@@ -1,26 +1,42 @@
-import FastAverageColor, { IFastAverageColorResult } from 'fast-average-color';
+import FastAverageColor, { FastAverageColorResult } from 'fast-average-color';
 import { useEffect, useState } from 'react';
 
 export default function useDominantColor(
 	url?: string,
-	elementRef?: React.MutableRefObject< HTMLImageElement >
+	imageRef?: React.RefObject< HTMLImageElement >
 ) {
-	const [ color, setColor ] = useState< IFastAverageColorResult >();
+	const [ color, setColor ] = useState< FastAverageColorResult >();
 
 	useEffect( () => {
 		const fac = new FastAverageColor();
-		const resource = url || elementRef?.current;
-		if ( ! resource ) {
-			return;
-		}
-		fac
-			.getColorAsync( resource, {
+		//get the dominant color of a loaded image
+		if ( imageRef && imageRef.current ) {
+			const color = fac.getColor( imageRef.current, {
 				ignoredColor: [
 					[ 255, 255, 255, 255 ], // white
 					[ 0, 0, 0, 255 ], // black
 				],
-			} )
-			.then( ( color ) => setColor( color ) );
-	}, [ url, elementRef ] );
+				width: 50,
+				height: 50,
+			} );
+			setColor( color );
+		}
+
+		//get the dominant color of image from url
+		if ( url && url.length > 0 ) {
+			fac
+				.getColorAsync( url, {
+					ignoredColor: [
+						[ 255, 255, 255, 255 ], // white
+						[ 0, 0, 0, 255 ], // black
+					],
+					crossOrigin: 'anonymous',
+				} )
+				.then( ( color ) => setColor( color ) )
+				.catch( () => {
+					return;
+				} );
+		}
+	}, [ url, imageRef ] );
 	return color;
 }
