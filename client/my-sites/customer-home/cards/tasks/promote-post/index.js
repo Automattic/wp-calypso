@@ -2,9 +2,9 @@ import config from '@automattic/calypso-config';
 import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import megaphoneIllustration from 'calypso/assets/images/customer-home/illustration--megaphone.svg';
-import { loadDSPWidgetJS, showDSPWidgetModal } from 'calypso/lib/promote-post';
+import { loadDSPWidgetJS, showDSPWidgetModal, recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import { TASK_PROMOTE_POST } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -13,6 +13,7 @@ const PromotePost = () => {
 	const [ isLoading, setIsLoading ] = useState( false );
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const showPromotePost = config.isEnabled( 'promote-post' );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -23,6 +24,7 @@ const PromotePost = () => {
 		}
 		setIsLoading( true );
 		await showDSPWidgetModal( selectedSiteId );
+		dispatch( recordDSPEntryPoint( TASK_PROMOTE_POST ) );
 		setIsLoading( false );
 	};
 
