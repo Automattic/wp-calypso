@@ -31,7 +31,7 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getSelectedOrPrimarySiteId from 'calypso/state/selectors/get-selected-or-primary-site-id';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -325,14 +325,13 @@ export default withCurrentRoute(
 		( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
 			const sectionGroup = currentSection?.group ?? null;
 			const sectionName = currentSection?.name ?? null;
-			// Falls back to using the user's primary site if no site has been selected
-			// by the user yet
-			const currentSelectedSiteId = getSelectedSiteId( state );
-			const siteId = currentSelectedSiteId || getPrimarySiteId( state );
+			const selectedOrPrimarySiteId = getSelectedOrPrimarySiteId( state );
+			const siteId = getSelectedSiteId( state );
 			const sectionJitmPath = getMessagePathForJITM( currentRoute );
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
 			const isJetpack =
-				( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
+				( isJetpackSite( state, selectedOrPrimarySiteId ) &&
+					! isAtomicSite( state, selectedOrPrimarySiteId ) ) ||
 				currentRoute.startsWith( '/checkout/jetpack' );
 			const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
 			const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
