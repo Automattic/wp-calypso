@@ -71,8 +71,19 @@ export default function UnassignLicenseDialog( {
 				{ translate( 'Are you sure you want to unassign this license?' ) }
 			</h2>
 			<p>
+				<strong>{ licenseKey }</strong>
+			</p>
+			<p>
+				{ translate( 'Unassigning this license means that the site' ) }
+				&nbsp;
+				{ siteUrl && <strong>{ siteUrl }</strong> }
+				&nbsp;
+				{ translate( 'will no longer have access to' ) }
+				&nbsp;
+				<strong>{ product }.</strong>
+				&nbsp;
 				{ translate(
-					'A unassigned license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
+					'Once this action is completed, you will be able to assign the license to another site. You will continue to be billed.'
 				) }
 				&nbsp;
 				<a
@@ -85,24 +96,6 @@ export default function UnassignLicenseDialog( {
 					&nbsp;
 					<Gridicon icon="external" size={ 18 } />
 				</a>
-			</p>
-			<ul>
-				{ siteUrl && (
-					<li>
-						<strong>{ translate( 'Site:' ) }</strong> { siteUrl }
-					</li>
-				) }
-				<li>
-					<strong>{ translate( 'Product:' ) }</strong> { product }
-				</li>
-				<li>
-					<strong>{ translate( 'License:' ) }</strong> <code>{ licenseKey }</code>
-				</li>
-			</ul>
-			<p className="unassign-license-dialog__warning">
-				<Gridicon icon="info-outline" size={ 18 } />
-
-				{ translate( 'Please note this action cannot be undone.' ) }
 			</p>
 		</Dialog>
 	);
