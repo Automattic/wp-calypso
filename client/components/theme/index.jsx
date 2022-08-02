@@ -284,8 +284,16 @@ export class Theme extends Component {
 	}
 
 	render() {
-		const { active, price, theme, translate, upsellUrl, isPremiumThemesAvailable, isPremiumTheme } =
-			this.props;
+		const {
+			active,
+			price,
+			theme,
+			translate,
+			upsellUrl,
+			isPremiumThemesAvailable,
+			isPremiumTheme,
+			didPurchaseTheme,
+		} = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -293,12 +301,12 @@ export class Theme extends Component {
 			'is-actionable': isActionable,
 		} );
 
-		const hasPrice = /\d/g.test( price );
+		const themeNeedsPurchase = isPremiumTheme && ! isPremiumThemesAvailable && ! didPurchaseTheme;
 		const showUpsell = ! isEnabled( 'signup/seller-upgrade-modal' )
-			? hasPrice && upsellUrl
+			? themeNeedsPurchase && upsellUrl
 			: upsellUrl && theme.price && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
-			'theme__badge-price-upgrade': ! hasPrice,
+			'theme__badge-price-upgrade': ! themeNeedsPurchase,
 			'theme__badge-price-upsell': showUpsell,
 		} );
 
@@ -306,7 +314,7 @@ export class Theme extends Component {
 		 * Only show the Premium badge if we're not already showing the price
 		 * and the theme isn't the active theme.
 		 */
-		const showPremiumBadge = isPremiumTheme && ! hasPrice && ! active;
+		const showPremiumBadge = isPremiumTheme && ! themeNeedsPurchase && ! active;
 
 		const themeDescription = decodeEntities( description );
 
