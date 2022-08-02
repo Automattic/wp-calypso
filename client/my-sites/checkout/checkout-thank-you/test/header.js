@@ -73,6 +73,7 @@ describe( 'CheckoutThankYouHeader', () => {
 
 			const messages = screen.queryAllByRole( 'listitem' );
 
+			expect( messages ).toHaveLength( 2 );
 			expect( messages[ 0 ] ).toHaveTextContent(
 				'Your site is now on the {{strong}}%(productName)s{{/strong}} plan. Enjoy your powerful new features!'
 			);
