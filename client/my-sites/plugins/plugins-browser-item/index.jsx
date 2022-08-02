@@ -31,6 +31,18 @@ import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
 
+function getHighlightedText( markedText ) {
+	if ( ! markedText ) {
+		return '';
+	}
+
+	const regEx = /<mark>(?<hg>.+)<\/mark>/;
+	const highlightedText = markedText.match( regEx );
+	if ( ! highlightedText ) return '';
+
+	return highlightedText.groups?.hg || '';
+}
+
 const PluginsBrowserListElement = ( props ) => {
 	const {
 		isPlaceholder,
@@ -161,6 +173,8 @@ const PluginsBrowserListElement = ( props ) => {
 		window.location.href = localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' );
 	};
 
+	const highlightText = getHighlightedText( plugin.highlight?.title?.[ 0 ] );
+
 	return (
 		<li className={ classNames }>
 			<a
@@ -172,7 +186,7 @@ const PluginsBrowserListElement = ( props ) => {
 					<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
 					{ /* TODO add the actual highlight coming from the API to the components */ }
 					<div className="plugins-browser-item__title">
-						<TextHighlight text={ plugin.name } highlight="woocommerce" />
+						<TextHighlight text={ plugin.name } highlight={ highlightText } />
 					</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<>

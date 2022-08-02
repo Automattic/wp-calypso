@@ -25,6 +25,7 @@ export type Plugin = {
 	download_link?: string;
 	icon?: string;
 	railcar: Railcar;
+	highlight?: Highlight;
 };
 
 export type ESIndexResult = {
@@ -66,7 +67,9 @@ export type Icon = {
 
 export type Railcar = Record< string, string | number >;
 
-export type ESHits = Array< { fields: ESIndexResult; railcar: Railcar } >;
+export type Highlight = Record< string, string >;
+
+export type ESHits = Array< { fields: ESIndexResult; railcar: Railcar; highlight: Highlight } >;
 
 export type ESResponse = { data: { results: ESHits; total: number; page_handle: string } };
 
@@ -75,10 +78,12 @@ export type ESTermFilter = { term: Record< string, string > };
 export type ESDateRangeFilter = { range: Record< string, { gte: string; lt: string } > };
 
 export type SearchParams = {
+	fields: string[];
 	query: string | undefined;
 	author: string | undefined;
 	groupId: string;
 	pageHandle: string | undefined;
 	pageSize: number;
 	locale: string;
+	highlight_fields: string;
 };

@@ -48,6 +48,7 @@ function generateApiQueryString( {
 		group_id: string;
 		from?: number;
 		lang: string;
+		highlight_fields: string;
 	} = {
 		fields: [ ...RETURNABLE_FIELDS ],
 		page_handle: pageHandle,
@@ -56,6 +57,7 @@ function generateApiQueryString( {
 		size: pageSize,
 		lang: locale,
 		group_id: groupId,
+		highlight_fields: 'title',
 	};
 
 	if ( author ) {
