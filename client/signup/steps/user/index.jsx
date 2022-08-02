@@ -102,6 +102,11 @@ export class UserStep extends Component {
 	};
 
 	componentDidUpdate() {
+		if ( this.props.step?.status === 'completed' ) {
+			this.props.goToNextStep();
+			return;
+		}
+
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			// It looks like the user just completed the User Registartion Step
 			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
@@ -115,6 +120,11 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
+		if ( this.props.step?.status === 'completed' ) {
+			this.props.goToNextStep();
+			return;
+		}
+
 		if ( flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha ) {
 			this.initGoogleRecaptcha();
 		}
@@ -263,8 +273,6 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
-
-		this.props.goToNextStep();
 	};
 
 	submitForm = async ( form, userData, analyticsData ) => {
@@ -455,6 +463,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
+					shouldDisplayUserExistsError
 				/>
 				<div id="g-recaptcha"></div>
 			</>
