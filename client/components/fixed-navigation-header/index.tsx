@@ -6,12 +6,15 @@ const Header = styled.header`
 	position: fixed;
 	z-index: 10;
 	top: var( --masterbar-height );
-	left: calc( var( --sidebar-width-max ) + 1px ); // 1px is the sidebar border.
 	width: calc( 100% - var( --sidebar-width-max ) - 1px ); // 1px is the sidebar border.
 	padding: 0 32px;
 	box-sizing: border-box;
 	border-bottom: 1px solid var( --studio-gray-5 );
 	background-color: var( --studio-white );
+
+	.layout__secondary ~ .layout__primary & {
+		left: calc( var( --sidebar-width-max ) + 1px ); // 1px is the sidebar border.
+	}
 
 	@media ( max-width: 960px ) {
 		// Account for jetpack sites with the old sidebar.
