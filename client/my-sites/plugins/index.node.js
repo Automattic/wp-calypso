@@ -5,6 +5,23 @@ import { browsePlugins, browsePluginsOrPlugin } from './controller';
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
+	router(
+		`/${ langParam }/plugins/browse/:category`,
+		ssrSetupLocale,
+		setHrefLangLinks,
+		setLocalizedCanonicalUrl,
+		browsePlugins,
+		makeLayout
+	);
+
+	router(
+		`/${ langParam }/plugins`,
+		ssrSetupLocale,
+		setHrefLangLinks,
+		setLocalizedCanonicalUrl,
+		browsePlugins,
+		makeLayout
+	);
 
 	router(
 		`/${ langParam }/plugins/:plugin`,
@@ -12,15 +29,6 @@ export default function ( router ) {
 		setHrefLangLinks,
 		setLocalizedCanonicalUrl,
 		browsePluginsOrPlugin,
-		makeLayout
-	);
-
-	router(
-		[ `/${ langParam }/plugins`, `/${ langParam }/plugins/browse/:category` ],
-		ssrSetupLocale,
-		setHrefLangLinks,
-		setLocalizedCanonicalUrl,
-		browsePlugins,
 		makeLayout
 	);
 
