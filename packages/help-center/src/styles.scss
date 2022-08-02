@@ -316,6 +316,26 @@ body[class^='is-section-'] {
 				border: none;
 			}
 		}
+
+		.wp-block-embed__wrapper {
+			position: relative;
+
+			&::before {
+				content: '';
+				display: block;
+				padding-top: 56.25%;
+			}
+
+			iframe {
+				bottom: 0;
+				height: 100%;
+				left: 0;
+				position: absolute;
+				right: 0;
+				top: 0;
+				width: 100%;
+			}
+		}
 	}
 }
 
@@ -339,26 +359,6 @@ body[class^='is-section-'] {
 
 .help-center-header__text {
 	margin: 1em 0;
-}
-
-.wp-block-embed__wrapper {
-	position: relative;
-
-	&::before {
-		content: '';
-		display: block;
-		padding-top: 56.25%;
-	}
-
-	iframe {
-		bottom: 0;
-		height: 100%;
-		left: 0;
-		position: absolute;
-		right: 0;
-		top: 0;
-		width: 100%;
-	}
 }
 
 .components-base-control__label {
