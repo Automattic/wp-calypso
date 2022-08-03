@@ -175,8 +175,9 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 		} );
 
 		it( 'Land in Home dashboard', async function () {
-			const myHomePage = new MyHomePage( page );
-			await myHomePage.validateTaskHeadingMessage( "Update your site's design" );
+			await page.waitForURL(
+				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
+			);
 		} );
 	} );
 
