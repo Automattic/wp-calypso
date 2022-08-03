@@ -45,7 +45,7 @@ const SiteName = styled.a`
 	white-space: nowrap;
 	margin-right: 8px;
 	font-weight: 500;
-	font-size: 16px;
+	font-size: 14px;
 	letter-spacing: -0.4px;
 
 	&:hover {

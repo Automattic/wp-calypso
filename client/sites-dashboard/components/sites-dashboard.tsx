@@ -25,7 +25,7 @@ interface SitesDashboardQueryParams {
 	search?: string;
 }
 
-const MAX_PAGE_WIDTH = '1184px';
+const MAX_PAGE_WIDTH = '1280px';
 
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
