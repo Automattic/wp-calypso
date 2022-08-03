@@ -93,7 +93,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 		sortOrder: 'desc',
 	} );
 
-	const { filteredSites, statuses, selectedStatusHasSites } = useSitesTableFiltering( sortedSites, {
+	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
 		search,
 		status,
 	} );
@@ -112,7 +112,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				{ selectedStatusHasSites ? (
+				{ selectedStatus.count ? (
 					<>
 						<FilterBar>
 							<SearchWrapper>

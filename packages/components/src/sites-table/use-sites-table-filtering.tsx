@@ -18,7 +18,6 @@ interface Status {
 interface UseSitesTableFilteringResult {
 	filteredSites: SiteExcerptData[];
 	statuses: Status[];
-	selectedStatusHasSites: boolean;
 }
 
 export function useSitesTableFiltering(
@@ -26,12 +25,6 @@ export function useSitesTableFiltering(
 	{ status = 'all', search }: SitesTableFilterOptions
 ): UseSitesTableFilteringResult {
 	const { __ } = useI18n();
-
-	const filteredSites = useFuzzySearch( {
-		data: allSites,
-		keys: [ 'URL', 'name', 'slug' ],
-		query: search,
-	} );
 
 	const [ statuses, filteredByStatus ] = useMemo( () => {
 		const statuses = [
@@ -42,7 +35,7 @@ export function useSitesTableFiltering(
 		];
 
 		const filteredByStatus = statuses.reduce(
-			( acc, { name } ) => ( { ...acc, [ name ]: filterSites( filteredSites, name ) } ),
+			( acc, { name } ) => ( { ...acc, [ name ]: filterSites( allSites, name ) } ),
 			{} as { [ name: string ]: SiteExcerptData[] }
 		);
 
@@ -51,14 +44,15 @@ export function useSitesTableFiltering(
 		}
 
 		return [ statuses, filteredByStatus ];
-	}, [ filteredSites, __ ] );
+	}, [ allSites, __ ] );
 
-	// If there are no sites, we need to know whether that's due to
-	// there being no sites in the selected tab or because the search has
-	// found no sites.
-	const selectedStatusHasSites = !! filterSites( allSites, status ).length;
+	const filteredSites = useFuzzySearch( {
+		data: filteredByStatus[ status ],
+		keys: [ 'URL', 'name', 'slug' ],
+		query: search,
+	} );
 
-	return { filteredSites: filteredByStatus[ status ], statuses, selectedStatusHasSites };
+	return { filteredSites, statuses };
 }
 
 function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {
