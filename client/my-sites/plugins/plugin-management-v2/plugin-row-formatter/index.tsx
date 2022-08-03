@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 import { ReactElement } from 'react';
 import type { Plugin } from '../types';
 
@@ -28,6 +28,15 @@ export default function PluginRowFormatter( { item, columnKey }: Props ): ReactE
 				</span>
 			);
 		case 'sites':
-			return Object.keys( item.sites ).length;
+			return (
+				<Button
+					className="plugin-row-formatter__sites-count-button"
+					borderless
+					compact
+					href={ `/plugins/${ item.slug }` }
+				>
+					{ Object.keys( item.sites ).length }
+				</Button>
+			);
 	}
 }

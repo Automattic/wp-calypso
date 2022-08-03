@@ -31,3 +31,8 @@
 	inset-block-start: -14px;
 	inset-inline-end: 0;
 }
+.plugin-row-formatter__sites-count-button {
+	&:hover {
+		text-decoration: underline;
+	}
+}

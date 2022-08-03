@@ -346,7 +346,7 @@ body.is-section-plugins header .select-dropdown__item {
 	// We need these negative margin values because we want to make the container full-width,
 	// but our element is inside a limited-width parent.
 	margin: 0 -32px -32px;
-	padding: 8px 48px;
+	padding: 16px 48px;
 	min-height: 100vh;
 	background: rgba( 255, 255, 255, 0.5 );
 }
