@@ -46,7 +46,7 @@ describe( '<CountrySpecificPaymentFields />', () => {
 		const box = screen.getByRole( 'textbox', { name: /taxpayer identification number/i } );
 		await user.type( box, 'spam' );
 
-		expect( defaultProps.handleFieldChange ).toHaveBeenNthCalledWith( 4, 'document', 'spam' );
+		expect( defaultProps.handleFieldChange ).toHaveBeenCalledWith( 'document', 'spam' );
 	} );
 
 	test( 'should disable fields', () => {
