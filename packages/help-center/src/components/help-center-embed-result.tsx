@@ -22,20 +22,18 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	const postId = state?.post_id ?? params.get( 'postId' );
 	const blogId = state?.blog_id ?? params.get( 'blogId' );
 	const link = state?.link ?? params.get( 'link' );
+	const query = state?.query ?? params.get( 'query' );
 
 	useEffect( () => {
-		if ( state ) {
-			const { query, link } = state;
-			const tracksData = {
-				search_query: query,
-				location: 'help-center',
-				section: sectionName,
-				result_url: link,
-			};
+		const tracksData = {
+			search_query: query,
+			location: 'help-center',
+			section: sectionName,
+			result_url: link,
+		};
 
-			recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
-		}
-	}, [ state, sectionName ] );
+		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
+	}, [ query, link, sectionName ] );
 
 	const redirectToSearchOrHome = () => {
 		if ( state?.query ) {

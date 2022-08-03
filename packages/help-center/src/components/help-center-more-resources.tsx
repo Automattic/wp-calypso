@@ -11,7 +11,7 @@ import { Icon, captureVideo, desktop, formatListNumbered, video, external } from
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
-import { getSite } from 'calypso/state/sites/selectors';
+import { getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NewReleases from '../icons/new-releases';
 
@@ -30,18 +30,21 @@ export const HelpCenterMoreResources = () => {
 		const purchases = getUserPurchases( state );
 		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
 		const siteId = getSelectedSiteId( state );
-		const site = getSite( state, siteId );
-
 		return {
 			isBusinessOrEcomPlanUser: !! (
 				purchaseSlugs &&
 				( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
 			),
-			isSimpleSite: site && ! site.is_wpcom_atomic,
 			siteId: siteId,
+			isSimpleSite: getIsSimpleSite( state ) || false,
 		};
 	} );
-	const { data, isLoading, setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery( siteId );
+
+	const { data, isLoading, setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery(
+		siteId,
+		isSimpleSite
+	);
+
 	useEffect( () => {
 		if ( ! isLoading && data ) {
 			setShowWhatsNewDot( ! data.has_seen_whats_new_modal );

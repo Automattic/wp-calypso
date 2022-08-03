@@ -13,7 +13,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import CompositeCheckout from '../composite-checkout';
+import CheckoutMain from '../components/checkout-main';
 import {
 	siteId,
 	domainProduct,
@@ -39,7 +39,7 @@ jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
 
-describe( 'CompositeCheckout', () => {
+describe( 'CheckoutMain', () => {
 	let container;
 	let MyCheckout;
 
@@ -84,7 +84,7 @@ describe( 'CompositeCheckout', () => {
 						{ ...additionalCartProps }
 					>
 						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-							<CompositeCheckout
+							<CheckoutMain
 								siteId={ siteId }
 								siteSlug={ 'foo.com' }
 								getStoredCards={ async () => [] }

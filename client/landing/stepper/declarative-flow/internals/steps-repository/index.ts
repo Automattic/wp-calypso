@@ -31,6 +31,7 @@ export { default as wooVerifyEmail } from './woo-verify-email';
 export { default as editEmail } from './edit-email';
 export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
+export { default as intro } from './intro';
 export { default as chooseADomain } from './choose-a-domain';
 
 export type StepPath =
@@ -67,4 +68,5 @@ export type StepPath =
 	| 'editEmail'
 	| 'difmStartingPoint'
 	| 'letsGetStarted'
-	| 'chooseADomain';
+	| 'chooseADomain'
+	| 'intro';

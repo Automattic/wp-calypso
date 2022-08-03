@@ -4,6 +4,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -109,22 +110,43 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		let text: any = __( 'Free' );
 
 		if ( design.is_premium ) {
-			text = shouldUpgrade ? (
-				<Button
-					isLink={ true }
-					className="design-picker__button-link"
-					onClick={ ( e: any ) => {
-						e.stopPropagation();
-						onCheckout?.();
-					} }
-				>
-					{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
-						? __( 'Included in WordPress.com Premium' )
-						: __( 'Upgrade to Premium' ) }
-				</Button>
-			) : (
-				__( 'Included in your plan' )
-			);
+			text = shouldUpgrade
+				? ( ! isEnabled( 'signup/seller-upgrade-modal' ) && (
+						<Button
+							isLink={ true }
+							className="design-picker__button-link"
+							onClick={ ( e: any ) => {
+								e.stopPropagation();
+								onCheckout?.();
+							} }
+						>
+							{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
+								? __( 'Included in WordPress.com Premium' )
+								: __( 'Upgrade to Premium' ) }
+						</Button>
+				  ) ) ||
+				  createInterpolateElement(
+						sprintf(
+							/* translators: %(price)s - the price of the theme */
+							__( '%(price)s per year or <button>included in WordPress.com Premium</button>' ),
+							{
+								price: design.price,
+							}
+						),
+						{
+							button: (
+								<Button
+									isLink={ true }
+									className="design-picker__button-link"
+									onClick={ ( e: any ) => {
+										e.stopPropagation();
+										onCheckout?.();
+									} }
+								/>
+							),
+						}
+				  )
+				: __( 'Included in your plan' );
 		}
 
 		return <div className="design-picker__pricing-description">{ text }</div>;

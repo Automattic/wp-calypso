@@ -1,14 +1,15 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
 	PLAN_BLOGGER,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_WPCOM_PRO,
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
@@ -346,10 +347,13 @@ export function getPluginAuthorProfileKeyword( plugin ) {
 /**
  * @param currentPlan
  * @param pluginBillingPeriod
- * @param eligibleForProPlan
- * @returns the correct business plan slug depending on current plan and pluginBillingPeriod
+ * @returns the correct plan slug depending on current plan and pluginBillingPeriod
  */
-export function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleForProPlan ) {
+export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
+	if ( isEnabled( 'marketplace-personal-premium' ) ) {
+		// Site is free - doesn't have a plan.
+		return pluginBillingPeriod === IntervalLength.ANNUALLY ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;
+	}
 	// Legacy plans always upgrade to business.
 	switch ( currentPlan.product_slug ) {
 		case PLAN_PERSONAL_2_YEARS:
@@ -361,9 +365,6 @@ export function businessPlanToAdd( currentPlan, pluginBillingPeriod, eligibleFor
 		case PLAN_BLOGGER:
 			return PLAN_BUSINESS;
 		default:
-			if ( eligibleForProPlan ) {
-				return PLAN_WPCOM_PRO;
-			}
 			// Return annual plan if selected, monthly otherwise.
 			return pluginBillingPeriod === IntervalLength.ANNUALLY
 				? PLAN_BUSINESS

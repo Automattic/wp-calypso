@@ -13,10 +13,10 @@ import {
 	TestAccount,
 	DomainSearchComponent,
 	MediaPage,
+	NewSiteResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiDeleteSite } from '../shared';
-import type { SiteDetails } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
@@ -29,7 +29,7 @@ describe(
 		let testAccount: TestAccount;
 		let page: Page;
 		let siteCreatedFlag = false;
-		let siteDetails: SiteDetails;
+		let newSiteDetails: NewSiteResponse;
 
 		beforeAll( async function () {
 			page = await browser.newPage();
@@ -57,7 +57,7 @@ describe(
 
 			it( `Select WordPress.com ${ planName } plan`, async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				siteDetails = await signupPickPlanPage.selectPlan( planName );
+				newSiteDetails = await signupPickPlanPage.selectPlan( planName );
 
 				siteCreatedFlag = true;
 			} );
@@ -110,7 +110,11 @@ describe(
 				password: testAccount.credentials.password,
 			} );
 
-			await apiDeleteSite( restAPIClient, siteDetails );
+			await apiDeleteSite( restAPIClient, {
+				url: newSiteDetails.blog_details.url,
+				id: newSiteDetails.blog_details.blogid,
+				name: newSiteDetails.blog_details.blogname,
+			} );
 		} );
 	}
 );

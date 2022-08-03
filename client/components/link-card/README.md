@@ -1,6 +1,7 @@
 # Link Card (TSX)
 
 This component displays a card with a custom background, a label, a title and cta.
+
 ## How to use
 
 ```js

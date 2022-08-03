@@ -12,6 +12,7 @@ const treeify = require( 'object-treeify' );
  *	- node_modules
  *
  * @param {string} packagePath Package path used as seed for the traversal
+ * @yields Path to `node_modules`.
  */
 const candidates = function* ( packagePath ) {
 	const parts = packagePath.split( path.sep );

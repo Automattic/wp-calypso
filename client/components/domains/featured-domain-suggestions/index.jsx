@@ -19,6 +19,7 @@ export class FeaturedDomainSuggestions extends Component {
 		showPlaceholders: PropTypes.bool,
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
+		domainAndPlanUpsellFlow: PropTypes.bool,
 	};
 
 	getChildProps() {
@@ -33,6 +34,7 @@ export class FeaturedDomainSuggestions extends Component {
 			'selectedSite',
 			'pendingCheckSuggestion',
 			'unavailableDomains',
+			'domainAndPlanUpsellFlow',
 		];
 		return pick( this.props, childKeys );
 	}
