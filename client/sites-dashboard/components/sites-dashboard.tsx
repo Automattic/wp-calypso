@@ -162,8 +162,8 @@ function handleQueryParamChange(
 	const pathWithQuery = window.location.pathname + window.location.search;
 
 	if ( paramValue ) {
-		page( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
+		page.replace( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
 	} else {
-		page( removeQueryArgs( pathWithQuery, paramName ) );
+		page.replace( removeQueryArgs( pathWithQuery, paramName ) );
 	}
 }
