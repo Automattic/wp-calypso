@@ -1,4 +1,4 @@
-import { useI18n } from '@wordpress/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -33,24 +33,7 @@ export const ALLOWED_CATEGORIES = [
 	'paid',
 ];
 
-export function useCategories(
-	allowedCategories = ALLOWED_CATEGORIES
-): Record< string, Category > {
-	const { __ } = useI18n();
-	const siteId = useSelector( getSelectedSiteId ) as number;
-
-	const isJetpack = useSelector(
-		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
-	);
-
-	// Only showing these top level categories for now
-	const allowed = allowedCategories.slice();
-
-	// Jetpack sites shouldn't see paid plugins
-	if ( isJetpack && allowed.indexOf( 'paid' ) >= 0 ) {
-		allowed.splice( allowed.indexOf( 'paid' ), 1 );
-	}
-
+export function getCategories( allowed = ALLOWED_CATEGORIES ): Record< string, Category > {
 	const categories = {
 		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
 		paid: {
@@ -168,7 +151,7 @@ export function useCategories(
 			),
 			icon: 'grid',
 			slug: 'design',
-			tags: [ 'design', 'blocks', 'editor' ],
+			tags: [ 'design' ],
 		},
 		photo: {
 			name: __( 'Photo & Video' ),
@@ -226,4 +209,24 @@ export function useCategories(
 	return Object.fromEntries(
 		Object.entries( categories ).filter( ( [ key ] ) => allowed.includes( key ) )
 	);
+}
+
+export function useCategories(
+	allowedCategories = ALLOWED_CATEGORIES
+): Record< string, Category > {
+	const siteId = useSelector( getSelectedSiteId ) as number;
+
+	const isJetpack = useSelector(
+		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+	);
+
+	// Only showing these top level categories for now
+	const allowed = allowedCategories.slice();
+
+	// Jetpack sites shouldn't see paid plugins
+	if ( isJetpack && allowed.indexOf( 'paid' ) >= 0 ) {
+		allowed.splice( allowed.indexOf( 'paid' ), 1 );
+	}
+
+	return getCategories( allowed );
 }
