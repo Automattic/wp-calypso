@@ -58,7 +58,7 @@ describe( 'Theme', () => {
 
 		test( 'Premium site', async () => {
 			const { container } = renderWithState(
-				<Theme { ...props } isPremiumThemesAvailable={ () => true } />
+				<Theme { ...props } hasPremiumThemesFeature={ () => true } />
 			);
 			const popoverTrigger = container.getElementsByClassName( 'theme__upsell-popover' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
