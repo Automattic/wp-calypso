@@ -32,35 +32,35 @@ import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selectors';
-import WPCheckout from './components/wp-checkout';
-import useActOnceOnStrings from './hooks/use-act-once-on-strings';
-import useAddProductsFromUrl from './hooks/use-add-products-from-url';
-import useCheckoutFlowTrackKey from './hooks/use-checkout-flow-track-key';
-import useCountryList from './hooks/use-country-list';
-import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
-import useCreatePaymentMethods from './hooks/use-create-payment-methods';
-import useDetectedCountryCode from './hooks/use-detected-country-code';
-import useGetThankYouUrl from './hooks/use-get-thank-you-url';
-import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
-import useRecordCartLoaded from './hooks/use-record-cart-loaded';
-import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
-import useRemoveFromCartAndRedirect from './hooks/use-remove-from-cart-and-redirect';
-import useStoredCards from './hooks/use-stored-cards';
-import { useWpcomStore } from './hooks/wpcom-store';
-import { logStashLoadErrorEvent, logStashEvent } from './lib/analytics';
-import existingCardProcessor from './lib/existing-card-processor';
-import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
-import freePurchaseProcessor from './lib/free-purchase-processor';
-import fullCreditsProcessor from './lib/full-credits-processor';
-import genericRedirectProcessor from './lib/generic-redirect-processor';
-import getContactDetailsType from './lib/get-contact-details-type';
-import multiPartnerCardProcessor from './lib/multi-partner-card-processor';
-import payPalProcessor from './lib/paypal-express-processor';
-import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
-import weChatProcessor from './lib/we-chat-processor';
-import webPayProcessor from './lib/web-pay-processor';
-import { StoredCard } from './types/stored-cards';
-import type { PaymentProcessorOptions } from './types/payment-processors';
+import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
+import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
+import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import useCountryList from '../hooks/use-country-list';
+import useCreatePaymentCompleteCallback from '../hooks/use-create-payment-complete-callback';
+import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
+import useDetectedCountryCode from '../hooks/use-detected-country-code';
+import useGetThankYouUrl from '../hooks/use-get-thank-you-url';
+import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
+import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
+import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
+import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
+import useStoredCards from '../hooks/use-stored-cards';
+import { useWpcomStore } from '../hooks/wpcom-store';
+import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
+import existingCardProcessor from '../lib/existing-card-processor';
+import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
+import freePurchaseProcessor from '../lib/free-purchase-processor';
+import fullCreditsProcessor from '../lib/full-credits-processor';
+import genericRedirectProcessor from '../lib/generic-redirect-processor';
+import getContactDetailsType from '../lib/get-contact-details-type';
+import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
+import payPalProcessor from '../lib/paypal-express-processor';
+import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
+import weChatProcessor from '../lib/we-chat-processor';
+import webPayProcessor from '../lib/web-pay-processor';
+import { StoredCard } from '../types/stored-cards';
+import WPCheckout from './wp-checkout';
+import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type {
 	ManagedContactDetails,
@@ -73,7 +73,7 @@ const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
 const wpcomGetStoredCards = (): StoredCard[] => wp.req.get( { path: '/me/stored-cards' } );
 
-export default function CompositeCheckout( {
+export default function CheckoutMain( {
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
@@ -354,7 +354,7 @@ export default function CompositeCheckout( {
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
-	// Once we pass paymentMethods into CompositeCheckout, we should try to avoid
+	// Once we pass paymentMethods into CheckoutMain, we should try to avoid
 	// changing them because it can cause awkward UX. Here we try to wait for
 	// them to be all finished loading before we pass them along.
 	const arePaymentMethodsLoading =

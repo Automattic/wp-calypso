@@ -7,7 +7,6 @@ import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -19,6 +18,7 @@ import getCancellationOfferApplySuccess from 'calypso/state/cancellation-offers/
 import isApplyingCancellationOffer from 'calypso/state/cancellation-offers/selectors/is-applying-cancellation-offer';
 import { CancellationOffer } from 'calypso/state/cancellation-offers/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
+import type { FC } from 'react';
 
 interface Props {
 	purchase: Purchase;
@@ -28,7 +28,7 @@ interface Props {
 	onGetDiscount: () => void;
 }
 
-const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
+const JetpackCancellationOffer: FC< Props > = ( props ) => {
 	const { siteId, offer, purchase, percentDiscount, onGetDiscount } = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -58,6 +58,9 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 				renewalPrice,
 				fullPrice,
 			},
+			components: {
+				strong: <strong />,
+			},
 		};
 
 		let offerHeadline;
@@ -65,61 +68,67 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 
 		switch ( purchase.billPeriodDays ) {
 			case PLAN_BIENNIAL_PERIOD:
+				/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 				offerHeadline = translate(
 					'Get %(discount)d%% off %(name)s for your next %(periods)d two-year renewals',
 					headlineOptions
 				);
 				renewalCopy = translate(
-					'Your biennial subscription renews every two years. It will automatically renew at %(renewalPrice)s/biennium for the next %(periods)d bienniums and then %(fullPrice)s/biennium for each following biennium.',
+					'Your biennial subscription renews every two years. It will renew at {{strong}}%(renewalPrice)s/biennium{{/strong}} for the next %(periods)d bienniums. It will then renew at {{strong}}%(fullPrice)s/biennium{{/strong}} each following biennium.',
 					renewalCopyOptions
 				);
 				if ( 1 === periods ) {
+					/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 					offerHeadline = translate(
 						'Get %(discount)d%% off %(name)s for your next two-year renewal',
 						headlineOptions
 					);
 					renewalCopy = translate(
-						'Your biennial subscription renews every two years. It will automatically renew at %(renewalPrice)s/biennium for the next biennium and then %(fullPrice)s/biennium for each following biennium.',
+						'Your biennial subscription renews every two years. It will renew at {{strong}}%(renewalPrice)s/biennium{{/strong}} for the next biennium. It will then renew at {{strong}}%(fullPrice)s/biennium{{/strong}} each following biennium.',
 						renewalCopyOptions
 					);
 				}
 				break;
 			case PLAN_ANNUAL_PERIOD:
+				/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 				offerHeadline = translate(
 					'Get %(discount)d%% off %(name)s for the next %(periods)d years',
 					headlineOptions
 				);
 				renewalCopy = translate(
-					'Your annual subscription will automatically renew at %(renewalPrice)s/year for the next %(periods)d years and then %(fullPrice)s/year for each following year.',
+					'Your annual subscription will renew at {{strong}}%(renewalPrice)s/year{{/strong}} for the next %(periods)d years. It will then renew at {{strong}}%(fullPrice)s/year{{/strong}} each following year.',
 					renewalCopyOptions
 				);
 				if ( 1 === periods ) {
+					/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 					offerHeadline = translate(
 						'Get %(discount)d%% off %(name)s for the next year',
 						headlineOptions
 					);
 					renewalCopy = translate(
-						'Your annual subscription will automatically renew at %(renewalPrice)s/year for the next year and then %(fullPrice)s/year for each following year.',
+						'Your annual subscription will renew at {{strong}}%(renewalPrice)s/year{{/strong}} for the next year. It will then renew at {{strong}}%(fullPrice)s/year{{/strong}} each following year.',
 						renewalCopyOptions
 					);
 				}
 				break;
 			case PLAN_MONTHLY_PERIOD:
+				/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 				offerHeadline = translate(
 					'Get %(discount)d%% off %(name)s for the next %(periods)d months',
 					headlineOptions
 				);
 				renewalCopy = translate(
-					'Your monthly subscription will automatically renew at %(renewalPrice)s/month for the next %(periods)d months and then %(fullPrice)s/month for each following month.',
+					'Your monthly subscription will renew at {{strong}}%(renewalPrice)s/month{{/strong}} for the next %(periods)d months. It will then renew at {{strong}}%(fullPrice)s/month{{/strong}} each following month.',
 					renewalCopyOptions
 				);
 				if ( 1 === periods ) {
+					/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 					offerHeadline = translate(
 						'Get %(discount)d%% off %(name)s for the next year',
 						headlineOptions
 					);
 					renewalCopy = translate(
-						'Your monthly subscription will automatically renew at %(renewalPrice)s/month for the next month and then %(fullPrice)s/month for each following month.',
+						'Your monthly subscription will renew at {{strong}}%(renewalPrice)s/month{{/strong}} for the next month. It will then renew at {{strong}}%(fullPrice)s/month{{/strong}} each following month.',
 						renewalCopyOptions
 					);
 				}
@@ -174,14 +183,20 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 				<JetpackLogo className="jetpack-cancellation-offer__logo" full size={ 36 } />
 				<p className="jetpack-cancellation-offer__headline">{ offerHeadline }</p>
 				<p>
-					{ translate(
-						'%(percentDiscount)d%% discount will be applied next time you are billed. ',
-						{
-							args: {
-								percentDiscount,
-							},
-						}
-					) }
+					{
+						/* Translators: %(percentDiscount)d%% is a discount percentage like 15% or 20% */
+						translate(
+							'{{strong}}%(percentDiscount)d%%{{/strong}} discount will be applied next time you are billed. ',
+							{
+								args: {
+									percentDiscount,
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+						)
+					}
 				</p>
 				<p>{ renewalCopy }</p>
 				<p className="jetpack-cancellation-offer__tos">
@@ -197,10 +212,18 @@ const JetpackCancellationOffer: React.FC< Props > = ( props ) => {
 									/>
 								),
 								autoRenewalSupportPage: (
-									<InlineSupportLink supportContext="autorenewal" showIcon={ false } />
+									<InlineSupportLink
+										supportContext="autorenewal"
+										showIcon={ false }
+										showSupportModal={ false }
+									/>
 								),
 								faqCancellingSupportPage: (
-									<InlineSupportLink supportContext="cancel_purchase" showIcon={ false } />
+									<InlineSupportLink
+										supportContext="cancel_purchase"
+										showIcon={ false }
+										showSupportModal={ false }
+									/>
 								),
 							},
 						}

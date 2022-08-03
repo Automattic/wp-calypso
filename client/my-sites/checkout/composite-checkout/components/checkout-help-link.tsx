@@ -168,7 +168,7 @@ export default function CheckoutHelpLink() {
 
 	const userAllowedToHelpCenter = !! (
 		userId &&
-		config.isEnabled( 'checkout/help-center' ) &&
+		config.isEnabled( 'calypso/help-center' ) &&
 		shouldShowHelpCenterToUser( userId )
 	);
 

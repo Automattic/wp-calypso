@@ -513,16 +513,6 @@ $masterbar-color-secondary: #101517;
 	}
 }
 
-.masterbar__item-upsell {
-	height: 24px;
-	margin-top: 4px;
-
-	@media only screen and ( max-width: 782px ) {
-		height: 34px;
-		margin-top: 6px;
-	}
-}
-
 .masterbar__item-me {
 	.gravatar {
 		position: absolute;

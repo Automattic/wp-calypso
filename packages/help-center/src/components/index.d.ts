@@ -125,3 +125,5 @@ declare module 'calypso/state/analytics/actions' {
 declare module '@automattic/state-utils' {
 	export const createSelector = unknown;
 }
+
+declare module 'calypso/lib/mobile-app';

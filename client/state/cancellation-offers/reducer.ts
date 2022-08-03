@@ -20,7 +20,6 @@ const mapResponseObject = ( {
 	discount_percentage,
 	discounted_periods,
 	formatted_price,
-	offer_code,
 	original_price,
 	raw_price,
 }: CancellationOfferAPIResponse ): CancellationOffer => ( {
@@ -28,7 +27,6 @@ const mapResponseObject = ( {
 	discountPercentage: discount_percentage,
 	discountedPeriods: discounted_periods,
 	formattedPrice: formatted_price,
-	offerCode: offer_code,
 	originalPrice: original_price,
 	rawPrice: raw_price,
 } );

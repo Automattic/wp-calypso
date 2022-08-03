@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useStarterDesignsQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	PremiumBadge,
@@ -21,15 +21,17 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-from-top';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
+import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
+
+const SiteIntent = Onboard.SiteIntent;
 
 /**
  * The unified design picker
@@ -51,6 +53,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
+	const siteDescription = site?.description;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	useEffect( () => {
 		if ( isAtomic ) {
@@ -227,6 +230,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const handleBackClick = () => {
 		if ( isPreviewingDesign ) {
+			recordTracksEvent(
+				'calypso_signup_design_preview_exit',
+				getEventPropsByDesign( selectedDesign as Design )
+			);
+
 			setSelectedDesign( undefined );
 			setIsPreviewingDesign( false );
 			return;
@@ -234,9 +242,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		goBack();
 	};
-
-	// Track scroll event to make sure people are scrolling on mobile.
-	useTrackScrollPageFromTop( isMobile && ! isPreviewingDesign, flow || '', STEP_NAME );
 
 	// Make sure people is at the top when entering/leaving preview mode.
 	useEffect( () => {
@@ -250,11 +255,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	if ( selectedDesign && isPreviewingDesign ) {
 		const designTitle = selectedDesign.design_type !== 'vertical' ? selectedDesign.title : '';
+		const headerDesignTitle = (
+			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
+		);
 		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
+		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
+		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
-			// If the user fills out the site title with write intent, we show it on the design preview
-			site_title: intent === 'write' ? siteTitle : undefined,
+			site_title: shouldCustomizeText ? siteTitle : undefined,
+			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
 		} );
 
@@ -319,7 +329,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				formattedHeader={
 					<FormattedHeader
 						id={ 'design-setup-header' }
-						headerText={ designTitle }
+						headerText={ headerDesignTitle }
 						align={ isMobile ? 'left' : 'center' }
 					/>
 				}
@@ -367,7 +377,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			hideFormattedHeader
 			backLabelText={ translate( 'Back' ) }
 			skipLabelText={
-				intent === 'write' ? translate( 'Skip and draft first post' ) : translate( 'Skip for now' )
+				intent === SiteIntent.Write
+					? translate( 'Skip and draft first post' )
+					: translate( 'Skip for now' )
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }

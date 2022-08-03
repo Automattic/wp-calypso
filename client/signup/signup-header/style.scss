@@ -1,7 +1,10 @@
+@import '@automattic/onboarding/styles/mixins';
+
 // A masterbar-like header just for
 // the signup flow.
 .signup-header {
 	position: absolute;
+	margin-top: 8px;
 	inset-block-start: 0;
 	inset-inline-start: 0;
 	inset-inline-end: 0;
@@ -30,10 +33,14 @@
 		}
 	}
 
-	.signup-header__left {
+	h1 {
+		@include onboarding-font-recoleta;
 		position: absolute;
-		inset-block-start: 12px;
-		inset-inline-start: 16px;
+		color: var( --color-text );
+		top: 20px;
+		left: 56px;
+		font-size: 18;
+		font-family: 'Recoleta';
 	}
 
 	.signup-header__right {

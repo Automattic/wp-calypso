@@ -14,7 +14,6 @@ describe( 'reducer', () => {
 							discount_percentage: 20,
 							discounted_periods: 1,
 							formatted_price: '$99.95',
-							offer_code: 'CODE',
 						},
 					],
 				} as AnyAction );
@@ -25,7 +24,6 @@ describe( 'reducer', () => {
 						discountPercentage: 20,
 						discountedPeriods: 1,
 						formattedPrice: '$99.95',
-						offerCode: 'CODE',
 					},
 				] );
 			} );

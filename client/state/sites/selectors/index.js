@@ -14,6 +14,7 @@ export { default as getSeoTitle } from './get-seo-title';
 export { default as getSeoTitleFormats } from './get-seo-title-formats';
 export { default as getSeoTitleFormatsForSite } from './get-seo-title-formats-for-site';
 export { default as getSite } from './get-site';
+export { default as getIsSimpleSite } from './is-simple-site';
 export { default as getSiteAdminPage } from './get-site-admin-page';
 export { default as getSiteAdminUrl } from './get-site-admin-url';
 export { default as getSiteBySlug } from './get-site-by-slug';

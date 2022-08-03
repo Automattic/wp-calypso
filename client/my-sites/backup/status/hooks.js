@@ -14,13 +14,21 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { useFirstMatchingBackupAttempt, useMatchingBackupAttemptsInRange } from '../hooks';
 
-export const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } = {} ) => {
-	return useFirstMatchingBackupAttempt( siteId, {
-		before,
-		after,
-		successOnly,
-		sortOrder: 'desc',
-	} );
+export const useLatestBackupAttempt = (
+	siteId,
+	{ before, after, successOnly = false } = {},
+	queryOptions = {}
+) => {
+	return useFirstMatchingBackupAttempt(
+		siteId,
+		{
+			before,
+			after,
+			successOnly,
+			sortOrder: 'desc',
+		},
+		queryOptions
+	);
 };
 
 const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled = true ) => {
@@ -35,6 +43,7 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled
 
 	const { data, isLoading } = useActivityLogQuery( siteId, filter, {
 		enabled: isValidRequest && enabled,
+		refetchOnWindowFocus: false,
 	} );
 
 	return {
@@ -97,14 +106,27 @@ export const useDatesWithNoSuccessfulBackups = ( siteId, startDate, endDate ) =>
 export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 	const moment = useLocalizedMoment();
 
-	const lastBackupBeforeDate = useLatestBackupAttempt( siteId, {
-		before: moment( selectedDate ).startOf( 'day' ),
-		successOnly: true,
-	} );
-	const lastAttemptOnDate = useLatestBackupAttempt( siteId, {
-		after: moment( selectedDate ).startOf( 'day' ),
-		before: moment( selectedDate ).endOf( 'day' ),
-	} );
+	const isToday = useMemo(
+		() => moment().isSame( moment( selectedDate ), 'day' ),
+		[ moment, selectedDate ]
+	);
+
+	const lastBackupBeforeDate = useLatestBackupAttempt(
+		siteId,
+		{
+			before: moment( selectedDate ).startOf( 'day' ),
+			successOnly: true,
+		},
+		{ refetchOnWindowFocus: false }
+	);
+	const lastAttemptOnDate = useLatestBackupAttempt(
+		siteId,
+		{
+			after: moment( selectedDate ).startOf( 'day' ),
+			before: moment( selectedDate ).endOf( 'day' ),
+		},
+		{ refetchOnWindowFocus: isToday }
+	);
 
 	const hasPreviousBackup = ! lastBackupBeforeDate.isLoading && lastBackupBeforeDate.backupAttempt;
 	const successfulLastAttempt =
@@ -131,13 +153,22 @@ export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 	const moment = useLocalizedMoment();
 
+	const isToday = useMemo(
+		() => moment().isSame( moment( selectedDate ), 'day' ),
+		[ moment, selectedDate ]
+	);
+
 	// This is the last attempt irrespective of date
 	const lastBackupAttempt = useLatestBackupAttempt( siteId );
 
-	const lastBackupBeforeDate = useLatestBackupAttempt( siteId, {
-		before: moment( selectedDate ).startOf( 'day' ),
-		successOnly: true,
-	} );
+	const lastBackupBeforeDate = useLatestBackupAttempt(
+		siteId,
+		{
+			before: moment( selectedDate ).startOf( 'day' ),
+			successOnly: true,
+		},
+		{ refetchOnWindowFocus: false }
+	);
 
 	const activityLog = useRewindableActivityLogQuery(
 		siteId,
@@ -148,6 +179,7 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		{
 			select: ( data ) =>
 				data.filter( ( a ) => isActivityBackup( a ) || isSuccessfulRealtimeBackup( a ) ),
+			refetchOnWindowFocus: isToday,
 		}
 	);
 
