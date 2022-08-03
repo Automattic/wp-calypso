@@ -66,11 +66,6 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-const SearchWrapper = styled.div`
-	width: 390px;
-	max-width: 100%;
-`;
-
 const FilterBar = styled.div`
 	display: flex;
 	align-items: center;
@@ -108,16 +103,14 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 			<PageBodyWrapper>
 				<>
 					<FilterBar>
-						<SearchWrapper>
-							<SitesSearch
-								searchIcon={ <SitesSearchIcon /> }
-								onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
-								isReskinned
-								placeholder={ __( 'Search by name or domain…' ) }
-								disableAutocorrect={ true }
-								defaultValue={ search }
-							/>
-						</SearchWrapper>
+						<SitesSearch
+							searchIcon={ <SitesSearchIcon /> }
+							onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
+							isReskinned
+							placeholder={ __( 'Search by name or domain…' ) }
+							disableAutocorrect={ true }
+							defaultValue={ search }
+						/>
 						<SelectDropdown selectedText={ selectedStatus.title }>
 							{ statuses.map( ( { name, title, count } ) => (
 								<SelectDropdown.Item
