@@ -1,0 +1,64 @@
+.plugins-discovery-page__billling-interval-switcher {
+	margin-right: 15px;
+}
+
+.plugins-discovery-page__main-buttons {
+	display: flex;
+	align-items: center;
+
+	@media screen and ( max-width: 960px ) {
+		.plugins-discovery-page__button {
+			border: none;
+		}
+	}
+
+	.plugins-discovery-page__button {
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		height: 32px;
+
+		.plugins-discovery-page__button-icon {
+			margin-right: 5px;
+		}
+
+		&:not( :last-child ) {
+			@include breakpoint-deprecated( '>480px' ) {
+				margin-right: 10px;
+			}
+		}
+	}
+}
+
+.plugins-discovery-page__clear-filters, .plugins-discovery-page__clear-filters:visited {
+	text-decoration: underline;
+	color: var( --studio-black );
+}
+
+.plugins-discovery-page__no-results {
+	@include breakpoint-deprecated('<660px') {
+		margin: 0 16px;
+	}
+}
+.plugins-discovery-page__main-container {
+	&::before {
+		box-sizing: border-box;
+		content: '';
+		background-color: #fdfdfd;
+		position: absolute;
+		height: 100%;
+		width: 200vw;
+		left: -100vw;
+		z-index: -1;
+		border-top: 1px solid #eeeeee;
+	}
+}
+
+.plugins-discovery-page__upgrade-banner {
+	display: table;
+	width: 100%;
+
+	.banner.card {
+		margin: 48px 0 0;
+	}
+}
