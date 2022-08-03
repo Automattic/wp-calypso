@@ -33,6 +33,7 @@ export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
 export { default as chooseADomain } from './choose-a-domain';
+export { default as launchpad } from './launchpad';
 
 export type StepPath =
 	| 'courses'
@@ -69,4 +70,5 @@ export type StepPath =
 	| 'difmStartingPoint'
 	| 'letsGetStarted'
 	| 'chooseADomain'
-	| 'intro';
+	| 'intro'
+	| 'launchpad';

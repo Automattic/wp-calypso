@@ -37,6 +37,7 @@ export const siteSetupFlow: Flow = {
 		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 
 		return [
+			'launchpad',
 			...( isEnabled( 'signup/goals-step' ) && isEnabledFTM ? [ 'goals' ] : [] ),
 			...( isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM ? [ 'vertical' ] : [] ),
 			'intent',
