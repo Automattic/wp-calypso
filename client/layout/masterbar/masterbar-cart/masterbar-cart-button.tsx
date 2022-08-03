@@ -56,7 +56,7 @@ export function MasterbarCartButton( {
 	};
 
 	const handleRemoveProduct = ( uuid: string ) => {
-		if ( responseCart.products.length == 1 ) {
+		if ( responseCart.products.length === 1 ) {
 			setIsActive( false );
 		}
 
