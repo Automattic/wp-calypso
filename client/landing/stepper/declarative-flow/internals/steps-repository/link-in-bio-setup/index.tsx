@@ -11,12 +11,6 @@ import './styles.scss';
 const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const { goNext } = navigation;
 	const { __ } = useI18n();
-	const siteNameErrorMsg = __(
-		'Your site needs a name so your subscribers can identify you.'
-	) as string;
-	const siteBriefDescriptionErrorMsg = __(
-		'Your site needs a brief description so your subscribers can identify you.'
-	) as string;
 
 	const onChangeSiteName = () => {
 		return;
@@ -44,7 +38,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						inputValue={ 'Invalid input data' } // get value from store?
 						isValid={ false }
 						onChange={ onChangeSiteName }
-						errorMessage={ siteNameErrorMsg }
+						errorMessage={ __( 'Your site needs a name so your subscribers can identify you.' ) }
 						label={ __( 'Site name' ) }
 					/>
 					<LinkInBioInput
@@ -52,7 +46,9 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						inputValue={ 'Valid input data' } // get value from store?
 						isValid={ true }
 						onChange={ onChangeSiteDescription }
-						errorMessage={ siteBriefDescriptionErrorMsg }
+						errorMessage={ __(
+							'Your site needs a brief description so your subscribers can identify you.'
+						) }
 						label={ __( 'Brief description' ) }
 					/>
 					<div className="link-in-bio-setup-form__field">
