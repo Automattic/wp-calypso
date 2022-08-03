@@ -157,17 +157,29 @@ class SocialLoginForm extends Component {
 			return (
 				<>
 					<p className="login__social-tos">
-						{ translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
-							components: {
-								a: (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						} ) }
+						{ translate(
+							'By continuing, you agree to our {{tosLink}}Terms of' +
+								' Service{{/tosLink}} and acknowledge that you have read our' +
+								' {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+							{
+								components: {
+									tosLink: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									privacyLink: (
+										<a
+											href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
 					</p>
 					<p className="login__social-tos">
 						{ translate(
@@ -182,13 +194,21 @@ class SocialLoginForm extends Component {
 			<p className="login__social-tos">
 				{ translate(
 					"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-						' are creating an account and you agree to our' +
-						' {{a}}Terms of Service{{/a}}.',
+						' are creating an account, you agree to our' +
+						' {{tosLink}}Terms of Service{{/tosLink}}, and acknowledge that you have' +
+						' read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 					{
 						components: {
-							a: (
+							tosLink: (
 								<a
 									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+							privacyLink: (
+								<a
+									href={ localizeUrl( 'https://automattic.com/privacy/' ) }
 									target="_blank"
 									rel="noopener noreferrer"
 								/>

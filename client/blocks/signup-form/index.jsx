@@ -783,42 +783,35 @@ class SignupForm extends Component {
 		recordTracksEvent( 'calypso_signup_tos_link_click' );
 	};
 
-	getTermsOfServiceUrl() {
-		return localizeUrl( 'https://wordpress.com/tos/' );
-	}
+	handleOnClickPrivacy = () => {
+		recordTracksEvent( 'calypso_signup_privacy_link_click' );
+	};
 
 	termsOfServiceLink = () => {
-		const tosLink = (
-			<a
-				href={ this.getTermsOfServiceUrl() }
-				onClick={ this.handleOnClickTos }
-				target="_blank"
-				rel="noopener noreferrer"
-			/>
-		);
 		const tosText = this.props.translate(
-			'By creating an account you agree to our {{a}}Terms of Service{{/a}}.',
+			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
+				' acknowledge that you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			{
 				components: {
-					a: tosLink,
+					tosLink: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							onClick={ this.handleOnClickTos }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					privacyLink: (
+						<a
+							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+							onClick={ this.handleOnClickPrivacy }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
 				},
 			}
 		);
-
-		if ( this.props.isSocialSignupEnabled ) {
-			return (
-				<p className="signup-form__terms-of-service-link">
-					{ this.props.translate(
-						'By creating an account, you agree to our {{a}}Terms of Service{{/a}}.',
-						{
-							components: {
-								a: tosLink,
-							},
-						}
-					) }
-				</p>
-			);
-		}
 
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
