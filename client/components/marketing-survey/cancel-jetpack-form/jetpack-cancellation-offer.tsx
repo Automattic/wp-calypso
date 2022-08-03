@@ -143,26 +143,22 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 			dispatch( applyCancellationOffer( siteId, purchase.id ) );
 			onGetDiscount(); // Takes care of analytics.
 		}
-	}, [ isApplyingOffer, offerApplySuccess, offerApplyError, onGetDiscount ] );
+	}, [ isApplyingOffer, offerApplySuccess, offerApplyError, siteId, purchase.id, onGetDiscount ] );
 
 	const getErrorOutput = useMemo( () => {
 		if ( offerApplyError ) {
-			switch ( offerApplyError.code ) {
-				case 'invalid_offer':
-					return (
-						<p className="jetpack-cancellation-offer__error-text">
-							{ translate(
-								'This discount appears to be invalid, please try reloading the purchase page.'
-							) }
-						</p>
-					);
-				default:
-					return (
-						<p className="jetpack-cancellation-offer__error-text">
-							{ translate( 'There was an error getting the discount!' ) }
-						</p>
-					);
-			}
+			const getErrorMessage = () => {
+				switch ( offerApplyError.code ) {
+					case 'invalid_offer':
+						return translate(
+							'This discount appears to be invalid, please try reloading the purchase page.'
+						);
+					default:
+						return translate( 'There was an error getting the discount!' );
+				}
+			};
+
+			return <p className="jetpack-cancellation-offer__error-text">{ getErrorMessage() }</p>;
 		}
 
 		return null;

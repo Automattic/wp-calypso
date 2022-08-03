@@ -20,6 +20,7 @@ import {
 	isPurchaseCancelable,
 } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { isOutsideCalypso } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCancellationOfferApplySuccess from 'calypso/state/cancellation-offers/selectors/get-cancellation-offer-apply-success';
 import getCancellationOffers from 'calypso/state/cancellation-offers/selectors/get-cancellation-offers';
@@ -85,11 +86,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	} );
 
 	const fetchingCancellationOffers = useSelector( ( state ) =>
-		isFetchingCancellationOffers( state )
+		isFetchingCancellationOffers( state, purchase.id )
 	);
 
 	const applyingCancellationOffer = useSelector( ( state ) =>
-		isApplyingCancellationOffer( state )
+		isApplyingCancellationOffer( state, purchase.id )
 	);
 
 	const cancellationOfferApplySuccess = useSelector( ( state ) =>
@@ -211,7 +212,10 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		recordEvent( 'calypso_purchases_cancel_form_close' );
 
 		// When an offer has been accepted, redirect back to the purchases page.
-		if ( cancellationOfferApplySuccess || steps.OFFER_ACCEPTED_STEP === cancellationStep ) {
+		if (
+			( cancellationOfferApplySuccess || steps.OFFER_ACCEPTED_STEP === cancellationStep ) &&
+			! isOutsideCalypso( props.purchaseListUrl )
+		) {
 			page.redirect( props.purchaseListUrl );
 		} else {
 			resetSurveyState();
@@ -324,18 +328,18 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				{ translate( 'Loading' ) }
 			</Button>
 		);
-		const backToSite = {
+		const backToPurchases = {
 			action: 'close',
 			isPrimary: true,
 			disabled: disabled,
-			label: translate( 'Back to my website' ),
+			label: translate( 'Back to my purchases' ),
 		};
 
 		const firstButtons: [ ButtonType ] = [ close ];
 
 		// Offer accepted screen only provides back to site button.
 		if ( steps.OFFER_ACCEPTED_STEP === cancellationStep ) {
-			return [ backToSite ];
+			return [ backToPurchases ];
 		}
 
 		// on the last step or the offer step

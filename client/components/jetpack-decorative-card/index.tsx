@@ -1,7 +1,7 @@
-import * as React from 'react';
 import cloudIcon from 'calypso/assets/images/jetpack/cloud-icon.svg';
 import decorativeCardBackground from 'calypso/assets/images/jetpack/decorative-card-background.jpg';
 import decorativeCardIcon from 'calypso/assets/images/jetpack/decorative-card-icon.svg';
+import type { FC } from 'react';
 
 interface Props {
 	iconPath: string;
@@ -9,7 +9,7 @@ interface Props {
 
 import './style.scss';
 
-const JetpackDecorativeCard: React.FC< Props > = ( props ) => {
+const JetpackDecorativeCard: FC< Props > = ( props ) => {
 	const { iconPath } = props;
 
 	return (

@@ -3,7 +3,7 @@
  *
  * @param state
  * @param purchaseId
- * @returns {any}
+ * @returns boolean
  */
 export default function getCancellationOfferApplySuccess( state, purchaseId ) {
 	return state.cancellationOffers?.[ purchaseId ]?.applySuccess ?? false;
