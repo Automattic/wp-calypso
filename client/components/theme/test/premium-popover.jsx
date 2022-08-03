@@ -71,7 +71,7 @@ describe( 'Theme', () => {
 		} );
 
 		test( 'Purchased a premium theme', async () => {
-			const { container } = renderWithState( <Theme { ...props } price={ null } /> );
+			const { container } = renderWithState( <Theme { ...props } didPurchaseTheme={ true } /> );
 			const popoverTrigger = container.getElementsByClassName( 'theme__upsell-popover' )[ 0 ];
 			await userEvent.hover( popoverTrigger );
 

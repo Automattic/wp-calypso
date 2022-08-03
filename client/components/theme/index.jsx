@@ -21,6 +21,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import { isThemePremium as getIsThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
+import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -258,10 +259,9 @@ export class Theme extends Component {
 	};
 
 	getUpsellMessage() {
-		const { isPremiumThemesAvailable, theme, price, translate } = this.props;
-		const hasPrice = /\d/g.test( price );
+		const { isPremiumThemesAvailable, theme, didPurchaseTheme, translate } = this.props;
 
-		if ( ! hasPrice && theme.price && ! isPremiumThemesAvailable ) {
+		if ( didPurchaseTheme && ! isPremiumThemesAvailable ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
 		} else if ( isPremiumThemesAvailable ) {
 			return translate( 'The premium theme is included in your plan.' );
@@ -467,6 +467,7 @@ export default connect(
 				isPremiumThemesAvailable?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			siteSlug: getSiteSlug( state, siteId ),
+			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
