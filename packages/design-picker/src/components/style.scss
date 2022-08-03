@@ -388,6 +388,7 @@
 	}
 	.design-picker__grid {
 		@supports ( display: grid ) {
+			row-gap: 40px;
 			@include break-medium {
 				grid-template-columns: 1fr 1fr 1fr;
 				column-gap: 24px;
