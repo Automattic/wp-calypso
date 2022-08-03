@@ -128,9 +128,7 @@ export default class WebPreviewContent extends Component {
 				return;
 			case 'page-dimensions-on-load':
 			case 'page-dimensions-on-resize':
-				if ( this.props.autoHeight || this.props.fixedViewportWidth ) {
-					this.setState( { viewport: data.payload } );
-				}
+				this.setState( { viewport: data.payload } );
 				return;
 		}
 	};
