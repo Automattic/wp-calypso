@@ -52,10 +52,10 @@ describe( '<CountrySpecificPaymentFields />', () => {
 	test( 'should disable fields', () => {
 		const { rerender } = render( <CountrySpecificPaymentFields { ...defaultProps } /> );
 
-		const [ input ] = screen.getAllByRole( 'textbox' );
-		expect( input ).not.toBeDisabled();
+		const fields = screen.getAllByRole( 'textbox' );
+		fields.forEach( ( field ) => expect( field ).not.toBeDisabled() );
 
 		rerender( <CountrySpecificPaymentFields { ...defaultProps } disableFields /> );
-		expect( input ).toBeDisabled();
+		fields.forEach( ( field ) => expect( field ).toBeDisabled() );
 	} );
 } );
