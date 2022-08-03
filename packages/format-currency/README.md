@@ -2,7 +2,14 @@
 
 A library for formatting currency.
 
-Exports two functions:
+Exports two functions, `formatCurrency` and `getCurrencyObject`.
+
+`formatCurrency` is also the default export so either of these imports will work:
+
+```
+import { formatCurrency } from '@automattic/format-currency';`
+import formatCurrency from '@automattic/format-currency';`
+```
 
 ## formatCurrency()
 
