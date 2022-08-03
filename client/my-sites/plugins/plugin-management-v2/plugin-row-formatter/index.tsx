@@ -9,7 +9,7 @@ interface Props {
 	columnKey: string;
 }
 
-export default function PluginRowFormatter( { item, columnKey }: Props ): ReactElement | null {
+export default function PluginRowFormatter( { item, columnKey }: Props ): ReactElement | any {
 	switch ( columnKey ) {
 		case 'plugin':
 			return (

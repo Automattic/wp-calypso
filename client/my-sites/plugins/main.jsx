@@ -501,17 +501,9 @@ export class PluginsMain extends Component {
 						</div>
 					</div>
 				</div>
-				<div
-					className={ classNames( {
-						'plugins__main-content': isJetpackCloud,
-					} ) }
-				>
-					<div
-						className={ classNames( {
-							'plugins__content-wrapper': isJetpackCloud,
-						} ) }
-					>
-						{ isJetpackCloud && (
+				{ isJetpackCloud ? (
+					<div className="plugins__main-content">
+						<div className="plugins__content-wrapper">
 							<div className="plugins__search">
 								<Search
 									hideFocus
@@ -524,10 +516,12 @@ export class PluginsMain extends Component {
 									placeholder={ this.props.translate( 'Search plugins' ) }
 								/>
 							</div>
-						) }
-						{ this.renderPluginsContent() }
+							{ this.renderPluginsContent() }
+						</div>
 					</div>
-				</div>
+				) : (
+					this.renderPluginsContent()
+				) }
 			</>
 		);
 
