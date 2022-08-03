@@ -5,7 +5,6 @@ $input-height: 44px;
 $border-radius: 4px;
 
 .newsletter-setup {
-
 	.step-container {
 		padding-top: 44px;
 	}
@@ -44,11 +43,11 @@ $border-radius: 4px;
 		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		position: relative;
 		border: 1px dashed var( --studio-gray-60 );
+		background-size: contain;
+		margin-bottom: 40px;
 
-		&.has-icon {
+		&.has-icon-or-image {
 			border: none;
-			padding: 6px 12px;
-			margin-bottom: 20px;
 		}
 
 		img {
@@ -56,13 +55,19 @@ $border-radius: 4px;
 			width: 80px;
 			border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
-
+		svg {
+			width: 80px;
+			height: 80px;
+			padding: 26px;
+			box-sizing: border-box;
+		}
 		span {
 			position: absolute;
-			top: calc( 100% + 10px );
-			left: 50%;
-			transform: translateX( -50% );
-			text-decoration: underline;
+			width: 200px;
+			display: block;
+			text-align: center;
+			margin-top: 10px;
+			margin-left: -75%;
 		}
 	}
 
@@ -79,11 +84,13 @@ $border-radius: 4px;
 			width: 368px;
 		}
 
-		.form-fieldset, .newsletter-setup__submit-button {
+		.form-fieldset,
+		.newsletter-setup__submit-button {
 			width: 100%;
 		}
 
-		label, input {
+		label,
+		input {
 			font-family: $font-family;
 			font-weight: 400;
 		}
@@ -135,6 +142,17 @@ $border-radius: 4px;
 
 		.newsletter-setup__submit-button {
 			border-radius: $border-radius;
+		}
+	}
+	.newsletter-setup__image-editor {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 2;
+
+		use {
+			fill: white;
 		}
 	}
 }
