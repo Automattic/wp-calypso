@@ -31,18 +31,6 @@ import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
 
-function getHighlightedText( markedText ) {
-	if ( ! markedText ) {
-		return '';
-	}
-
-	const regEx = /<mark>(?<hg>.+)<\/mark>/;
-	const highlightedText = markedText.match( regEx );
-	if ( ! highlightedText ) return '';
-
-	return highlightedText.groups?.hg || '';
-}
-
 const PluginsBrowserListElement = ( props ) => {
 	const {
 		isPlaceholder,
@@ -51,6 +39,7 @@ const PluginsBrowserListElement = ( props ) => {
 		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
+		search,
 	} = props;
 
 	const translate = useTranslate();
@@ -173,8 +162,6 @@ const PluginsBrowserListElement = ( props ) => {
 		window.location.href = localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' );
 	};
 
-	const highlightText = getHighlightedText( plugin.highlight?.title?.[ 0 ] );
-
 	return (
 		<li className={ classNames }>
 			<a
@@ -186,14 +173,14 @@ const PluginsBrowserListElement = ( props ) => {
 					<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
 					{ /* TODO add the actual highlight coming from the API to the components */ }
 					<div className="plugins-browser-item__title">
-						<TextHighlight text={ plugin.name } highlight={ highlightText } />
+						<TextHighlight text={ plugin.name } highlight={ search } />
 					</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<>
 							<div className="plugins-browser-item__author">
 								{ translate( 'by ' ) }
 								<span className="plugins-browser-item__author-name">
-									<TextHighlight text={ plugin.author_name } highlight="woocommerce" />
+									<TextHighlight text={ plugin.author_name } highlight={ search } />
 								</span>
 							</div>
 
@@ -210,7 +197,7 @@ const PluginsBrowserListElement = ( props ) => {
 						</>
 					) }
 					<div className="plugins-browser-item__description">
-						<TextHighlight text={ plugin.short_description } highlight="woocommerce" />
+						<TextHighlight text={ plugin.short_description } highlight={ search } />
 					</div>
 				</div>
 				{ isUntestedVersion && (
