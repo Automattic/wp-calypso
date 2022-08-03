@@ -3,33 +3,41 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import LaunchpadList from './list';
+import LaunchpadPreview from './preview';
 import type { Step } from '../../types';
-// import './style.scss';
 
-function PlaceHolderChecklist() {
-	return (
-		<ul style={ { textAlign: 'center' } }>
-			<li>Item 1</li>
-			<li>Item 2</li>
-			<li>Item 3</li>
-			<li>Item 4</li>
-		</ul>
-	);
-}
+import './style.scss';
 
-function PlaceHolderPreview() {
-	return <div style={ { textAlign: 'center' } }>Preview here</div>;
-}
+const tasks = [
+	{
+		id: 101,
+		isCompleted: true,
+		linkTo: '#',
+		title: 'Free Plan',
+	},
+	{
+		id: 102,
+		isCompleted: true,
+		linkTo: '#',
+		title: 'Set up Newsletter',
+	},
+	{
+		id: 103,
+		isCompleted: false,
+		linkTo: '#',
+		title: 'Add Subscribers',
+	},
+];
 
 const Launchpad: Step = ( { navigation } ) => {
 	const translate = useTranslate();
-	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
+	const almostReadyToLaunchText = translate( 'Voilà! Your Newsletter is up and running' );
 
-	// TODO: Replace inline styling with classname and scss styling
 	const stepContent = (
-		<div style={ { display: 'flex', flexDirection: 'column', justifyContent: 'center' } }>
-			<PlaceHolderChecklist />
-			<PlaceHolderPreview />
+		<div className="launchpad">
+			<LaunchpadList tasks={ tasks } />
+			<LaunchpadPreview />
 		</div>
 	);
 
