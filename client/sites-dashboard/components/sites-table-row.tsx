@@ -6,7 +6,6 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import TimeSince from 'calypso/components/time-since';
-import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -123,7 +122,13 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 	const isP2Site = site.options?.is_wpforteams_site;
 
-	const displayStatusBadge = isComingSoon || site.is_private;
+	let siteStatusLabel = __( 'Live' );
+
+	if ( isComingSoon ) {
+		siteStatusLabel = __( 'Coming soon' );
+	} else if ( site.is_private ) {
+		siteStatusLabel = __( 'Private' );
+	}
 
 	return (
 		<ClassNames>
@@ -152,13 +157,6 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							}
 							subtitle={
 								<ListTileSubtitle>
-									{ displayStatusBadge && (
-										<div style={ { marginRight: '8px' } }>
-											<SitesLaunchStatusBadge>
-												{ isComingSoon ? __( 'Coming soon' ) : __( 'Private' ) }
-											</SitesLaunchStatusBadge>
-										</div>
-									) }
 									<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
 										{ displaySiteUrl( site.URL ) }
 									</SiteUrl>
@@ -170,6 +168,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 					<Column mobileHidden>
 						{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 					</Column>
+					<Column mobileHidden>{ siteStatusLabel }</Column>
 					<Column style={ { width: '20px' } }>
 						<EllipsisMenu>
 							<VisitDashboardItem site={ site } />
