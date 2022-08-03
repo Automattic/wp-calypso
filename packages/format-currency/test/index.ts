@@ -41,6 +41,11 @@ describe( 'formatCurrency', () => {
 		expect( money ).toBe( '¥9,932' );
 	} );
 
+	test( 'returns null if the number is a float and smallest unit is true', () => {
+		const money = formatCurrency( 9932.1, 'USD', { isSmallestUnit: true } );
+		expect( money ).toBe( null );
+	} );
+
 	test( 'returns no trailing zero cents when stripZeros set to true (USD)', () => {
 		const money = formatCurrency( 9800900, 'USD', { precision: 2 } );
 		expect( money ).toBe( '$9,800,900.00' );
@@ -166,6 +171,11 @@ describe( 'formatCurrency', () => {
 				fraction: '',
 				sign: '',
 			} );
+		} );
+
+		test( 'returns null if the number is a float and the smallest unit is set', () => {
+			const money = getCurrencyObject( 9932.1, 'USD', { isSmallestUnit: true } );
+			expect( money ).toEqual( null );
 		} );
 
 		describe( 'supported currencies', () => {
