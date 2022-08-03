@@ -107,7 +107,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
 					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
 						<Gridicon icon="plus" />
-						<span>{ __( 'New Site' ) }</span>
+						<span>{ __( 'New site' ) }</span>
 					</Button>
 				</HeaderControls>
 			</PageHeader>
