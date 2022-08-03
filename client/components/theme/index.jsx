@@ -20,6 +20,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
+import { isThemePremium as getIsThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -283,7 +284,8 @@ export class Theme extends Component {
 	}
 
 	render() {
-		const { active, price, theme, translate, upsellUrl, isPremiumThemesAvailable } = this.props;
+		const { active, price, theme, translate, upsellUrl, isPremiumThemesAvailable, isPremiumTheme } =
+			this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -299,18 +301,6 @@ export class Theme extends Component {
 			'theme__badge-price-upgrade': ! hasPrice,
 			'theme__badge-price-upsell': showUpsell,
 		} );
-
-		/*
-		 * Check the theme object (not the price prop) for the true price.
-		 * Sometimes it will be an object, other times it will be a string.
-		 * Check both cases to ensure we have a non-zero price.
-		 */
-		let isPremiumTheme = false;
-		if ( typeof theme.price === 'object' && 0 !== theme.price.value ) {
-			isPremiumTheme = true;
-		} else if ( typeof theme.price === 'string' && '' !== theme.price ) {
-			isPremiumTheme = true;
-		}
 
 		/*
 		 * Only show the Premium badge if we're not already showing the price
@@ -472,6 +462,7 @@ export default connect(
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
+			isPremiumTheme: getIsThemePremium( state, theme.id ),
 			isPremiumThemesAvailable:
 				isPremiumThemesAvailable?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
