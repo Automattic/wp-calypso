@@ -50,7 +50,7 @@ export interface FormatCurrencyOptions {
 }
 
 export interface CurrencyObject {
-	sign: string;
+	sign: '-' | '';
 	symbol: string;
 	integer: string;
 	fraction: string;
