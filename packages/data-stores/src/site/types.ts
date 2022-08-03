@@ -102,6 +102,7 @@ export interface SiteDetails {
 	launch_status: string;
 	jetpack: boolean;
 	logo: { id: string; sizes: string[]; url: string };
+	icon?: { ico: string; img: string; media_id: number };
 	options: {
 		admin_url?: string;
 		advanced_seo_front_page_description?: string;
@@ -384,6 +385,7 @@ export enum AtomicSoftwareInstallStatus {
 	SUCCESS = 'success',
 	FAILURE = 'failure',
 }
+
 export type AtomicSoftwareInstallState = Record<
 	string,
 	{
@@ -391,6 +393,7 @@ export type AtomicSoftwareInstallState = Record<
 		error: AtomicSoftwareInstallError | undefined;
 	}
 >;
+
 export interface AtomicSoftwareInstallError {
 	name: string;
 	status: number;
