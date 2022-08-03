@@ -21,13 +21,14 @@ const Table = styled.table`
 const Row = styled.tr`
 	line-height: 2em;
 	border-bottom: 1px solid #eee;
-	td {
+	th {
 		padding-top: 12px;
 		padding-bottom: 12px;
 		vertical-align: middle;
 		font-size: 14px;
 		line-height: 20px;
 		letter-spacing: -0.24px;
+		font-weight: normal;
 		color: var( --studio-gray-60 );
 	}
 `;
