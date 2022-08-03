@@ -37,7 +37,7 @@ export * from './types';
  * @param      {FormatCurrencyOptions}    options    options object
  * @returns    {?string}                  A formatted string.
  */
-export default function formatCurrency(
+export function formatCurrency(
 	number: number,
 	code: string,
 	options: FormatCurrencyOptions = {}
@@ -150,3 +150,5 @@ function convertPriceForSmallestUnit( price: number, precision: number ): number
 function getSmallestUnitDivisor( precision: number ): number {
 	return 10 ** precision;
 }
+
+export default formatCurrency;
