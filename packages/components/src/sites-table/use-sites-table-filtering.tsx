@@ -35,10 +35,10 @@ export function useSitesTableFiltering(
 
 	const [ statuses, filteredByStatus ] = useMemo( () => {
 		const statuses = [
-			{ name: 'all', title: __( 'All' ), count: 0 },
+			{ name: 'all', title: __( 'All Sites' ), count: 0 },
 			{ name: 'launched', title: __( 'Launched' ), count: 0 },
 			{ name: 'private', title: __( 'Private' ), count: 0 },
-			{ name: 'coming-soon', title: __( 'Coming soon' ), count: 0 },
+			{ name: 'coming-soon', title: __( 'Coming Soon' ), count: 0 },
 		];
 
 		const filteredByStatus = statuses.reduce(
