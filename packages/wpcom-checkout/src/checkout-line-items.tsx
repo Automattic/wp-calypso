@@ -610,7 +610,7 @@ function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct }
 			args: {
 				sublabel: sublabel,
 				monthlyPrice: formatCurrencyForLineItem( monthlyPriceInteger, product.currency, {
-					smallestUnit: true,
+					isSmallestUnit: true,
 				} ),
 				price: product.item_original_subtotal_display,
 			},
