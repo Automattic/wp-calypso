@@ -9,7 +9,6 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
-	const { goNext } = navigation;
 	const { __ } = useI18n();
 
 	const onChangeSiteName = () => {
@@ -20,9 +19,15 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 		return;
 	};
 
+	const handleSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
+		// Temporary preventDefault.
+		e.preventDefault();
+		navigation.submit?.();
+	};
+
 	return (
 		<div className="step-container">
-			<form>
+			<form onSubmit={ ( e ) => handleSubmit( e ) }>
 				<FormattedHeader align={ 'center' } headerText={ __( 'Set up Link in Bio' ) } />
 				<div className="link-in-bio-setup__form">
 					{ /* replace this component, align with newsletter flow */ }
@@ -61,7 +66,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						</div>
 					</div>
 				</div>
-				<Button className="link-in-bio-setup-form__submit" primary onClick={ goNext }>
+				<Button className="link-in-bio-setup-form__submit" primary type="submit">
 					{ __( 'Continue' ) }
 				</Button>
 			</form>

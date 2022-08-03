@@ -117,7 +117,7 @@ $padding: 12px 16px;
     }
 
     .link-in-bio-setup-form__submit {
-        color: --color-surface;
+        color: var( --color-surface );
         background-color: var( --studio-blue-50 );
         font-weight: 500;
         border: none;
