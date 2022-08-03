@@ -968,27 +968,35 @@ export function createVideoPressSite( callback, dependencies, stepData, reduxSto
 		let providedDependencies;
 		let siteSlug;
 
-		if ( response && response.blog_details ) {
+		if ( !! response && response.blog_details ) {
 			const parsedBlogURL = getUrlParts( response.blog_details.url );
 			siteSlug = parsedBlogURL.hostname;
 
 			providedDependencies = { siteSlug };
 		}
 
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
+		const callbackWithErrorChecking = ( e ) =>
+			callback( isEmpty( e ) ? undefined : [ e ], providedDependencies );
 
-			if ( siteDescription ) {
-				wpcom.req.post(
-					`/sites/${ siteSlug }/settings`,
-					{ apiVersion: '1.4' },
-					{
-						blogdescription: siteDescription,
+		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
+			fetchSitesAndUser(
+				siteSlug,
+				( err ) => {
+					if ( siteDescription ) {
+						wpcom.req.post(
+							`/sites/${ siteSlug }/settings`,
+							{ apiVersion: '1.4' },
+							{ blogdescription: siteDescription },
+							callbackWithErrorChecking
+						);
+					} else {
+						callbackWithErrorChecking( err );
 					}
-				);
-			}
+				},
+				reduxStore
+			);
 		} else {
-			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
+			callbackWithErrorChecking( errors );
 		}
 	} );
 }
