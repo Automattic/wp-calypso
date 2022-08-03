@@ -27,7 +27,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 
 	return (
 		<div className="step-container">
-			<form onSubmit={ ( e ) => handleSubmit( e ) }>
+			<form onSubmit={ handleSubmit }>
 				<FormattedHeader align={ 'center' } headerText={ __( 'Set up Link in Bio' ) } />
 				<div className="link-in-bio-setup__form">
 					{ /* replace this component, align with newsletter flow */ }
