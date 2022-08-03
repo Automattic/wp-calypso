@@ -4,6 +4,7 @@ import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-
 import PluginRowFormatter from '../plugin-row-formatter';
 import UpdatePlugin from '../update-plugin';
 import type { PluginColumns, Plugin } from '../types';
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactElement } from 'react';
 
 import './style.scss';
@@ -12,7 +13,7 @@ interface Props {
 	isLoading: boolean;
 	columns: PluginColumns;
 	items: Array< Plugin >;
-	selectedSite: any;
+	selectedSite: SiteData;
 }
 
 export default function PluginsTable( {

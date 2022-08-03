@@ -2,13 +2,14 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import PluginsTable from './plugins-table';
 import type { Plugin } from './types';
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
 
 interface Props {
 	plugins: Array< Plugin >;
 	isLoading: boolean;
-	selectedSite: any;
+	selectedSite: SiteData;
 	searchTerm: string;
 }
 export default function PluginManagementV2( {

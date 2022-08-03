@@ -7,14 +7,15 @@ import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
-import type { PluginSite, Plugin } from '../types';
+import type { Plugin } from '../types';
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactElement } from 'react';
 
 import './style.scss';
 
 interface Props {
 	plugin: Plugin;
-	selectedSite: any;
+	selectedSite: SiteData;
 	className?: string;
 }
 
@@ -28,7 +29,7 @@ export default function UpdatePlugin( {
 	const state = useSelector( ( state ) => state );
 
 	const getPluginSites = ( plugin: Plugin ) => {
-		return Object.keys( plugin.sites ).map( ( siteId: any ) => {
+		return Object.keys( plugin.sites ).map( ( siteId ) => {
 			const site = allSites.find( ( s ) => s?.ID === parseInt( siteId ) );
 			return {
 				...site,
@@ -42,7 +43,7 @@ export default function UpdatePlugin( {
 	const pluginsOnSites: any = getPluginOnSites( state, siteIds, plugin?.slug );
 
 	const updated_versions = sites
-		.map( ( site: PluginSite ) => {
+		.map( ( site ) => {
 			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
 			return sitePlugin?.update?.new_version;
 		} )

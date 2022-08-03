@@ -8,12 +8,12 @@ export type PluginColumns = Array< {
 	colSpan?: number;
 } >;
 
-export type PluginSite = { ID: string | number; canUpdateFiles: any };
+export type PluginSite = { [ key: string ]: { ID: number; canUpdateFiles: boolean } };
 
 export interface Plugin {
 	id: number;
 	last_updated: MomentInput;
-	sites: Array< PluginSite >;
+	sites: PluginSite;
 	icon: string;
 	name: string;
 	pluginsOnSites: Array< any >;
