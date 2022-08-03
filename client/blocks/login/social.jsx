@@ -153,6 +153,22 @@ class SocialLoginForm extends Component {
 			redirectTo &&
 			redirectTo.includes( 'jetpack/connect' ) &&
 			config.isEnabled( 'jetpack/magic-link-signup' );
+
+		const privacyLink = (
+			<a
+				href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		);
+		const tosLink = (
+			<a
+				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		);
+
 		if ( isJetpackMagicLinkSignUpFlow ) {
 			return (
 				<>
@@ -163,20 +179,8 @@ class SocialLoginForm extends Component {
 								' {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 							{
 								components: {
-									tosLink: (
-										<a
-											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									privacyLink: (
-										<a
-											href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
+									tosLink,
+									privacyLink,
 								},
 							}
 						) }
@@ -199,20 +203,8 @@ class SocialLoginForm extends Component {
 						' read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 					{
 						components: {
-							tosLink: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
-							privacyLink: (
-								<a
-									href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
+							tosLink,
+							privacyLink,
 						},
 					}
 				) }

@@ -779,11 +779,11 @@ class SignupForm extends Component {
 		);
 	}
 
-	handleOnClickTos = () => {
+	handleTosClick = () => {
 		recordTracksEvent( 'calypso_signup_tos_link_click' );
 	};
 
-	handleOnClickPrivacy = () => {
+	handlePrivacyClick = () => {
 		recordTracksEvent( 'calypso_signup_privacy_link_click' );
 	};
 
@@ -796,7 +796,7 @@ class SignupForm extends Component {
 					tosLink: (
 						<a
 							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							onClick={ this.handleOnClickTos }
+							onClick={ this.handleTosClick }
 							target="_blank"
 							rel="noopener noreferrer"
 						/>
@@ -804,7 +804,7 @@ class SignupForm extends Component {
 					privacyLink: (
 						<a
 							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-							onClick={ this.handleOnClickPrivacy }
+							onClick={ this.handlePrivacyClick }
 							target="_blank"
 							rel="noopener noreferrer"
 						/>
