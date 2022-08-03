@@ -54,6 +54,16 @@ export function MasterbarCartButton( {
 			return ! active;
 		} );
 	};
+
+	const handleRemoveProduct = ( uuid: string ) => {
+		if ( responseCart.products.length == 1 ) {
+			setIsActive( false );
+		}
+
+		if ( onRemoveProduct ) {
+			onRemoveProduct( uuid );
+		}
+	};
 	const onClose = () => setIsActive( false );
 	const tooltip = String( translate( 'My shopping cart' ) );
 
@@ -81,7 +91,7 @@ export function MasterbarCartButton( {
 						cartKey={ selectedSiteId }
 						goToCheckout={ goToCheckout }
 						closeCart={ onClose }
-						onRemoveProduct={ onRemoveProduct }
+						onRemoveProduct={ handleRemoveProduct }
 						onRemoveCoupon={ onRemoveCoupon }
 					/>
 				</CheckoutErrorBoundary>
