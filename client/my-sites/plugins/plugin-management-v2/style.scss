@@ -1,0 +1,15 @@
+.has-opacity {
+	opacity: 0.3;
+}
+.is-loading {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	opacity: 0.3;
+}
+.plugin-management-v2__main-content-container {
+	margin-top: 8px;
+}
+.plugin-management-v2__no-sites {
+	text-align: center;
+	font-size: 1.5rem;
+	margin-top: 16px;
+}
