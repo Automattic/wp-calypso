@@ -1,7 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-$padding: 12px 16px;
 
 
 .link-in-bio-setup {
@@ -93,7 +92,7 @@ $padding: 12px 16px;
 
         .link-in-bio-setup-form-field__container {
             background-color: var( --studio-gray-0 );
-            padding: $padding;
+            padding: 12px 16px;
             margin: 8px 0;
             font-size: $font-body-small;
 
