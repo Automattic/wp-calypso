@@ -8275,10 +8275,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/base-styles@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "@wordpress/base-styles@npm:4.5.0"
-  checksum: 3553d08575c4b4bb116363610403bb1b3f3335e50fbb857c3d0c47eb47ff64d84be5c8edcc295c59b0f2fcfb9ed6414289ee97a22cc017fa8b8ae75f30edc427
+"@wordpress/base-styles@npm:^4.5.0, @wordpress/base-styles@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "@wordpress/base-styles@npm:4.7.0"
+  checksum: c6e35d60a373875f4e9059547fcbe6292a951e6a270de9afe8d355714efa08cc2a941a092d45da53eadc1028d240df071875b10b53f47210f3f0896584df88a5
   languageName: node
   linkType: hard
 
@@ -12450,7 +12450,7 @@ __metadata:
     "@types/jest": ^27.4.0
     "@wordpress/a11y": ^3.9.0
     "@wordpress/api-fetch": ^6.6.0
-    "@wordpress/base-styles": ^4.5.0
+    "@wordpress/base-styles": ^4.7.0
     "@wordpress/block-editor": ^9.1.0
     "@wordpress/blocks": ^11.8.0
     "@wordpress/components": ^19.15.0
