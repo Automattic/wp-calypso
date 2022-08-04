@@ -40,7 +40,7 @@ const WhatsNewGuide: React.FC< Props > = ( { onClose, isSimpleSite = false } ) =
 				  } )
 				: await apiFetch( {
 						global: true,
-						path: `/wpcom/v2/block-editor/whats-new-list`,
+						path: `/wpcom/v2/block-editor/whats-new-list?_locale=${ locale }`,
 				  } as APIFetchOptions ),
 		{
 			refetchOnWindowFocus: false,
