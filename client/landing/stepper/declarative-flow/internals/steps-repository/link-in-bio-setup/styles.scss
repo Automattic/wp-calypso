@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-
+$font-family: 'SF Pro Text', $sans;
 
 .link-in-bio-setup {
 
@@ -20,6 +20,12 @@
     }
 
     .link-in-bio-setup__form {
+        input, 
+        label {
+			font-family: $font-family;
+			font-weight: 400;
+            font-size: $font-body;
+		}
         margin-top: 32px;
         .link-in-bio-setup-form-icon__container {
             text-align: center;
@@ -51,11 +57,6 @@
             display: flex;
             flex-direction: column;
             width: 100%;
-
-            label {
-                font-size: $font-body;
-                font-weight: 400;
-            }
 
             .link-in-bio-setup-form__input {
                 border: solid 1px var( --studio-gray-10 );

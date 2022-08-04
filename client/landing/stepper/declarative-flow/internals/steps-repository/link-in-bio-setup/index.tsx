@@ -3,6 +3,8 @@
 import { Gridicon, Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import FormattedHeader from 'calypso/components/formatted-header';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import LinkInBioInput from './link-in-bio-input';
 import type { Step } from '../../types';
 
@@ -56,15 +58,15 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						) }
 						label={ __( 'Brief description' ) }
 					/>
-					<div className="link-in-bio-setup-form__field">
-						<label className="link-in-bio-setup-form__label">{ __( 'Publication address' ) }</label>
+					<FormFieldset disabled={ false }>
+						<FormLabel htmlFor="inputId">{ __( 'Publication address' ) }</FormLabel>
 						<div className="link-in-bio-setup-form-field__container">
 							<div className="link-in-bio-setup-form-container__address">
 								{ 'www.test.link ' }
 								<button className="link-in-bio-setup-form__button">{ __( 'Change' ) }</button>
 							</div>
 						</div>
-					</div>
+					</FormFieldset>
 				</div>
 				<Button className="link-in-bio-setup-form__submit" primary type="submit">
 					{ __( 'Continue' ) }
