@@ -44,6 +44,7 @@ const SelectVertical: React.FC< Props > = ( {
 	const mapOneSiteVerticalsResponseToVertical = ( vertical: SiteVerticalsResponse ): Vertical => ( {
 		value: vertical.id,
 		label: vertical.title,
+		name: vertical.name,
 		category: String( translate( 'Suggestions' ) ),
 	} );
 
