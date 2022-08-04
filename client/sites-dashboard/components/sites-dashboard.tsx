@@ -112,39 +112,38 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				{ selectedStatus.count ? (
-					<>
-						<FilterBar>
-							<SearchWrapper>
-								<SitesSearch
-									searchIcon={ <SitesSearchIcon /> }
-									onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
-									isReskinned
-									placeholder={ __( 'Search by name or domain…' ) }
-									defaultValue={ search }
-								/>
-							</SearchWrapper>
-							<SelectDropdown selectedText={ selectedStatus.title }>
-								{ statuses.map( ( { name, title, count } ) => (
-									<SelectDropdown.Item
-										selected={ name === selectedStatus.name }
-										count={ count }
-										onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
-									>
-										{ title }
-									</SelectDropdown.Item>
-								) ) }
-							</SelectDropdown>
-						</FilterBar>
-						{ filteredSites.length > 0 ? (
-							<SitesTable sites={ filteredSites } />
-						) : (
-							<h2>{ __( 'No sites match your search.' ) }</h2>
-						) }
-					</>
-				) : (
-					<NoSitesMessage status={ selectedStatus.name } />
-				) }
+				<>
+					<FilterBar>
+						<SearchWrapper>
+							<SitesSearch
+								searchIcon={ <SitesSearchIcon /> }
+								onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
+								isReskinned
+								placeholder={ __( 'Search by name or domain…' ) }
+								defaultValue={ search }
+							/>
+						</SearchWrapper>
+						<SelectDropdown selectedText={ selectedStatus.title }>
+							{ statuses.map( ( { name, title, count } ) => (
+								<SelectDropdown.Item
+									selected={ name === selectedStatus.name }
+									count={ count }
+									onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
+								>
+									{ title }
+								</SelectDropdown.Item>
+							) ) }
+						</SelectDropdown>
+					</FilterBar>
+					{ filteredSites.length > 0 ? (
+						<SitesTable sites={ filteredSites } />
+					) : (
+						<NoSitesMessage
+							status={ selectedStatus.name }
+							statusSiteCount={ selectedStatus.count }
+						/>
+					) }
+				</>
 			</PageBodyWrapper>
 		</main>
 	);
