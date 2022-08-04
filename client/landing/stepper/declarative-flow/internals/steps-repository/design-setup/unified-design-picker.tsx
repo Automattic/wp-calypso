@@ -20,6 +20,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
@@ -82,6 +83,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	useQuerySitePurchases( site ? site.ID : -1 );
 
+	const purchasedThemes = useSelector( ( state ) =>
+		site ? getPurchasedThemes( state, site.ID ) : []
+	);
 	const selectedDesignThemeId = selectedDesign ? getThemeIdFromDesign( selectedDesign ) : null;
 	const didPurchaseSelectedTheme = useSelector( ( state ) =>
 		site && selectedDesignThemeId
@@ -384,6 +388,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
+			purchasedThemes={ purchasedThemes }
 		/>
 	);
 
