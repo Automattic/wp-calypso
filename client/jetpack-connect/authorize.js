@@ -714,9 +714,15 @@ export class JetpackAuthorize extends Component {
 	getRedirectionTarget() {
 		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
 		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
+
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if ( 'pressable' === partnerSlug ) {
-			return `/start/pressable-nux?blogid=${ clientId }`;
+			const pressableTarget = `/start/pressable-nux?blogid=${ clientId }`;
+			debug(
+				'authorization-form: getRedirectionTarget -> This is a Pressable site, redirection target is: %s',
+				pressableTarget
+			);
+			return pressableTarget;
 		}
 
 		// If the redirect is part of a Jetpack plan or product go to the checkout page
@@ -724,21 +730,32 @@ export class JetpackAuthorize extends Component {
 			productSlug.includes( 'jetpack' )
 		);
 		if ( jetpackCheckoutSlugs.includes( selectedPlanSlug ) ) {
+			const checkoutTarget = `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 			// Once we decide we want to redirect the user to the checkout page and that there is a
 			// valid plan, we can safely remove it from the session storage
 			clearPlan();
+			debug(
+				'authorization-form: getRedirectionTarget -> Valid plan retrived from localStorage, redirection target is: %s',
+				checkoutTarget
+			);
 			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 		}
 
 		// If the site has a Jetpack paid product send the user back to wp-admin rather than to the Plans page.
 		if ( siteHasJetpackPaidProduct ) {
+			debug(
+				'authorization-form: getRedirectionTarget -> Site already has a paid product, redirection target is: %s',
+				redirectAfterAuth
+			);
 			return redirectAfterAuth;
 		}
 
-		return addQueryArgs(
+		const jpcTarget = addQueryArgs(
 			{ redirect: redirectAfterAuth },
 			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
 		);
+		debug( 'authorization-form: getRedirectionTarget -> Redirection target is: %s', jpcTarget );
+		return jpcTarget;
 	}
 
 	renderFooterLinks() {

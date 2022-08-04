@@ -40,7 +40,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 		event.preventDefault();
 
 		if ( site ) {
-			const { value = '', label = '' } = vertical || {};
+			const { value = '', name = '' } = vertical || {};
 
 			setIsBusy( true );
 			await saveSiteSettings( site.ID, { site_vertical_id: value } );
@@ -48,7 +48,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 			recordTracksEvent( 'calypso_signup_site_vertical_submit', {
 				user_input: userInput,
 				vertical_id: value,
-				vertical_title: label,
+				vertical_title: name,
 			} );
 
 			setIsBusy( false );

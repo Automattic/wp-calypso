@@ -1,5 +1,7 @@
 import { useQuery, UseQueryResult } from 'react-query';
+import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 
 interface ThemeSupports {
 	[ index: string ]: boolean;
@@ -13,7 +15,8 @@ export const useActiveThemeQuery = (
 	siteId: number,
 	isEnabled = false
 ): UseQueryResult< ActiveTheme[] > => {
-	const queryKey = [ 'activeTheme', siteId ];
+	const themeSlug = useSelector( ( state ) => getSiteOption( state, siteId, 'theme_slug' ) );
+	const queryKey = [ 'activeTheme', siteId, themeSlug ];
 
 	return useQuery< ActiveTheme[] >(
 		queryKey,

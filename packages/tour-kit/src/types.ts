@@ -69,9 +69,11 @@ export interface Options {
 	callbacks?: Callbacks;
 	/** An object to enable/disable/combine various tour effects, such as spotlight, overlay, and autoscroll */
 	effects?: {
-		/** Adds a semi-transparent overlay and highlights the reference element
+		/**
+		 * Adds a semi-transparent overlay and highlights the reference element
 		 * 	when provided with a transparent box over it. The existence of this configuration
-		 *  key implies enabling the spotlight effect. */
+		 *  key implies enabling the spotlight effect.
+		 */
 		spotlight?: {
 			/** An object that configures whether the user is allowed to interact with the referenced element during the tour */
 			interactivity?: SpotlightInteractivityConfiguration;
@@ -80,10 +82,12 @@ export interface Options {
 		};
 		/** Shows a little triangle that points to the referenced element. Defaults to true */
 		arrowIndicator?: boolean;
-		/** Includes the semi-transparent overlay for all the steps Also blocks interactions for everything except the tour dialogues,
+		/**
+		 * Includes the semi-transparent overlay for all the steps Also blocks interactions for everything except the tour dialogues,
 		 *  including the referenced elements. Refer to spotlight interactivity configuration to affect this.
 		 *
-		 *  Defaults to false, but if spotlight is enabled it implies this is enabled as well. */
+		 *  Defaults to false, but if spotlight is enabled it implies this is enabled as well.
+		 */
 		overlay?: boolean;
 		/** Configures the autoscroll behaviour. Defaults to False. More information about the configuration at: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView */
 		autoScroll?: ScrollIntoViewOptions | boolean;

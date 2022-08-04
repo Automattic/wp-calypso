@@ -8,7 +8,7 @@ import {
 	TestAccount,
 	TestAccountName,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
@@ -33,7 +33,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 			await supportComponent.showSupportCard();
 			await supportComponent.search( 'create a site' );
 			const results = await supportComponent.getResults( 'article' );
-			expect( results.length ).toBeGreaterThan( 0 );
+			expect( await results.count() ).toBeGreaterThan( 0 );
 		} );
 
 		it( 'Click on result under Show me where', async function () {

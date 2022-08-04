@@ -33,7 +33,7 @@ const SiteVerticalForm: React.FC< Props > = ( {
 		// Reset the vertical selection if input field is empty.
 		// This is so users don't need to explicitly select "Something else" to clear previous selection.
 		if ( value.trim().length === 0 ) {
-			onSelect?.( { value: '', label: '' } );
+			onSelect?.( { name: '', value: '', label: '' } );
 		}
 	};
 

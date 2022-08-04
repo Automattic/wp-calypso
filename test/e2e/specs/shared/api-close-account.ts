@@ -16,6 +16,7 @@ export async function apiCloseAccount(
 	client: RestAPIClient,
 	accountDetails: AccountDetails
 ): Promise< void > {
+	console.log( `Closing account ${ accountDetails.userID }.` );
 	const response: AccountClosureResponse = await client.closeAccount( accountDetails );
 
 	if ( response.success !== true ) {

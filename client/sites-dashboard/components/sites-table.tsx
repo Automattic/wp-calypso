@@ -21,13 +21,14 @@ const Table = styled.table`
 const Row = styled.tr`
 	line-height: 2em;
 	border-bottom: 1px solid #eee;
-	td {
+	th {
 		padding-top: 12px;
 		padding-bottom: 12px;
 		vertical-align: middle;
 		font-size: 14px;
 		line-height: 20px;
 		letter-spacing: -0.24px;
+		font-weight: normal;
 		color: var( --studio-gray-60 );
 	}
 `;
@@ -42,6 +43,7 @@ export function SitesTable( { className, sites }: SitesTableProps ) {
 					<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
 					<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
 					<th>{ __( 'Last Publish' ) }</th>
+					<th>{ __( 'Status' ) }</th>
 					<th style={ { width: '20px' } }></th>
 				</Row>
 			</thead>

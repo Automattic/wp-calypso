@@ -48,6 +48,8 @@ export type TransferStatus = keyof typeof transferStatus | null;
 export type ResponseDomain = {
 	adminEmail: string | null | undefined;
 	aftermarketAuction: boolean;
+	aftermarketAuctionEnd: string | null;
+	aftermarketAuctionStart: string | null;
 	aRecordsRequiredForMapping?: Array< string >;
 	autoRenewalDate: string;
 	autoRenewing: boolean;

@@ -9,6 +9,7 @@ export default class extends PureComponent {
 			<Card className="devdocs__welcome">
 				<h1 className="devdocs__welcome-title">Welcome to WP Calypso!</h1>
 				<img
+					alt=""
 					className="devdocs__welcome-illustration"
 					src="/calypso/images/illustrations/illustration-nosites.svg"
 				/>

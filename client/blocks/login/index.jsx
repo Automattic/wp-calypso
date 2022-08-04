@@ -496,7 +496,7 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client } = this.props;
+		const { isJetpack, oauth2Client, locale, isGutenboarding } = this.props;
 		return (
 			<div
 				className={ classNames( 'login', {
@@ -506,7 +506,7 @@ class Login extends Component {
 			>
 				{ this.renderHeader() }
 
-				<ErrorNotice />
+				<ErrorNotice locale={ locale } isGutenboarding={ isGutenboarding } />
 
 				{ this.renderNotice() }
 

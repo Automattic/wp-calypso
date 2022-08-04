@@ -59,6 +59,7 @@ class DomainSearch extends Component {
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
+		domainAndPlanUpsellFlow: PropTypes.bool,
 	};
 
 	isMounted = false;
@@ -136,6 +137,15 @@ class DomainSearch extends Component {
 
 		if ( supportsPrivacy ) {
 			registration = updatePrivacyForDomain( registration, true );
+		}
+
+		if ( this.props.domainAndPlanUpsellFlow ) {
+			// If we are in the domain + annual plan upsell flow, we need to redirect
+			// to the plans page next and let it know that we are still in that flow.
+			this.props.shoppingCartManager.addProductsToCart( [ registration ] ).then( () => {
+				page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
+			} );
+			return;
 		}
 
 		this.props.shoppingCartManager
@@ -233,9 +243,12 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
-							{ ! hasPlanInCart && <NewDomainsRedirectionNoticeUpsell /> }
+							{ ! hasPlanInCart && ! this.props.domainAndPlanUpsellFlow && (
+								<NewDomainsRedirectionNoticeUpsell />
+							) }
 							<RegisterDomainStep
 								suggestion={ this.getInitialSuggestion() }
+								domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }
