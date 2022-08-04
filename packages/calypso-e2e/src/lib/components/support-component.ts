@@ -260,12 +260,21 @@ export class SupportComponent {
 	}
 
 	/**
+	 * Get still need help button
+	 *
+	 * @returns {Locator} button locator.
+	 */
+	getStillNeedHelpButton(): Locator {
+		return this.content.locator( selectors.stillNeedHelpButton );
+	}
+
+	/**
 	 * Click still need help button
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
-	async getStillNeedHelpButton(): Promise< Locator > {
-		return this.page.locator( selectors.stillNeedHelpButton );
+	async clickStillNeedHelpButton(): Promise< void > {
+		await this.content.locator( selectors.stillNeedHelpButton ).click();
 	}
 
 	/**
@@ -274,6 +283,6 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickEmailSupportButton(): Promise< void > {
-		await this.page.click( selectors.emailLink );
+		await this.content.locator( selectors.emailLink ).click();
 	}
 }

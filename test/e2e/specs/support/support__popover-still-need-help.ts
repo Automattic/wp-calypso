@@ -17,31 +17,35 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 	let page: Page;
 	let supportComponent: SupportComponent;
 
-	describe( 'Still need help Simple', function () {
-		beforeAll( async () => {
-			page = await browser.newPage();
+	describe.each( [
+		{ sectionItem: 'Tools', sectionSubItem: 'Marketing' },
+		{ sectionItem: 'Appearance', sectionSubItem: 'Editor' },
+	] )( 'In section $sectionItem -> $sectionSubItem', function ( { sectionItem, sectionSubItem } ) {
+		describe( 'Still need help Simple', function () {
+			beforeAll( async () => {
+				page = await browser.newPage();
 
-			const testAccount = new TestAccount( 'defaultUser' );
-			await testAccount.authenticate( page );
-		} );
+				const testAccount = new TestAccount( 'defaultUser' );
+				await testAccount.authenticate( page );
+			} );
 
-		it( 'Navigate to Tools > Marketing', async function () {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Tools', 'Marketing' );
-		} );
+			it( 'Navigate to Tools > Marketing', async function () {
+				const sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.navigate( sectionItem, sectionSubItem );
+			} );
 
-		it( 'Open support popover', async function () {
-			supportComponent = new SupportComponent( page );
-			await supportComponent.openPopover();
-		} );
+			it( 'Open support popover', async function () {
+				supportComponent = new SupportComponent( page, { inIFrame: sectionSubItem === 'Editor' } );
+				await supportComponent.openPopover();
+			} );
 
-		it( 'Click still need help', async function () {
-			const button = await supportComponent.getStillNeedHelpButton();
-			await button.click();
-		} );
+			it( 'Click still need help', async function () {
+				await supportComponent.clickStillNeedHelpButton();
+			} );
 
-		it( 'Click on Email support', async function () {
-			await supportComponent.clickEmailSupportButton();
+			it( 'Click on Email support', async function () {
+				await supportComponent.clickEmailSupportButton();
+			} );
 		} );
 	} );
 
@@ -64,7 +68,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 		} );
 
 		it( 'Still need help button should open in new tab', async function () {
-			const button = await supportComponent.getStillNeedHelpButton();
+			const button = supportComponent.getStillNeedHelpButton();
 			await expect( await button.getAttribute( 'target' ) ).toBe( '_blank' );
 		} );
 	} );
