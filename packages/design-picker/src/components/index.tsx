@@ -26,6 +26,11 @@ import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
 
+const wasThemePurchased = ( purchasedThemes: string[] | undefined, design: Design ) =>
+	purchasedThemes
+		? purchasedThemes.some( ( themeId ) => design?.recipe?.stylesheet?.endsWith( '/' + themeId ) )
+		: false;
+
 interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
@@ -70,6 +75,7 @@ interface DesignButtonProps {
 	hideBadge?: boolean;
 	hasDesignOptionHeader?: boolean;
 	isPremiumThemeAvailable?: boolean;
+	hasPurchasedTheme?: boolean;
 	onCheckout?: any;
 	verticalId?: string;
 }
@@ -86,6 +92,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hideBadge,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable = false,
+	hasPurchasedTheme = false,
 	onCheckout = undefined,
 	verticalId,
 } ) => {
@@ -105,7 +112,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		<BadgeContainer badgeType={ badgeType } isPremiumThemeAvailable={ isPremiumThemeAvailable } />
 	);
 
-	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
+	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
 		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
@@ -119,22 +126,29 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		let text: any = __( 'Free' );
 
 		if ( design.is_premium ) {
-			text = shouldUpgrade ? (
-				<Button
-					isLink={ true }
-					className="design-picker__button-link"
-					onClick={ ( e: any ) => {
-						e.stopPropagation();
-						onCheckout?.();
-					} }
-				>
-					{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
-						? __( 'Included in WordPress.com Premium' )
-						: __( 'Upgrade to Premium' ) }
-				</Button>
-			) : (
-				__( 'Included in your plan' )
-			);
+			if ( shouldUpgrade ) {
+				text = (
+					<Button
+						isLink={ true }
+						className="design-picker__button-link"
+						onClick={ ( e: any ) => {
+							e.stopPropagation();
+							onCheckout?.();
+						} }
+					>
+						{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
+							? __( 'Included in WordPress.com Premium' )
+							: __( 'Upgrade to Premium' ) }
+					</Button>
+				);
+			} else if ( hasPurchasedTheme ) {
+				// Premium, does not need upgrade
+				// TODO: How to figure out if it's annual or monthly?
+				text = __( 'Purchased on an annual subscription' );
+			} else {
+				// ! shouldUpgrade && ! hasPurchasedTheme
+				text = __( 'Included in your plan' );
+			}
 		}
 
 		return <div className="design-picker__pricing-description">{ text }</div>;
@@ -247,6 +261,7 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 
 interface DesignButtonContainerProps extends DesignButtonProps {
 	isPremiumThemeAvailable?: boolean;
+	hasPurchasedTheme?: boolean;
 	onPreview?: ( design: Design ) => void;
 	onUpgrade?: () => void;
 	previewOnly?: boolean;
@@ -326,6 +341,7 @@ export interface DesignPickerProps {
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
 	verticalId?: string;
+	purchasedThemes?: string[];
 }
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
@@ -355,6 +371,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	hasDesignOptionHeader = true,
 	onCheckout = undefined,
 	verticalId,
+	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
@@ -403,6 +420,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						hasDesignOptionHeader={ hasDesignOptionHeader }
 						onCheckout={ onCheckout }
 						verticalId={ verticalId }
+						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 					/>
 				) ) }
 			</div>
