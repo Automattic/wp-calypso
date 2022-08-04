@@ -428,7 +428,7 @@ export class PluginsMain extends Component {
 				attr.count = this.props.pluginUpdateCount;
 			}
 			if ( 'all' === filterItem.id ) {
-				attr.count = this.props.currentPlugins.length;
+				attr.count = this.props.allPluginsCount;
 			}
 			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
 		} );
@@ -540,6 +540,7 @@ export default flow(
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			const allPlugins = getPlugins( state, siteIds, 'all' );
 			const jetpackNonAtomic =
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
 			const hasManagePlugins =
@@ -565,6 +566,7 @@ export default flow(
 				currentPlugins: getPlugins( state, siteIds, filter ),
 				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
+				allPluginsCount: allPlugins && allPlugins.length,
 				requestingPluginsForSites: isRequestingForSites( state, siteIds ),
 				updateableJetpackSites: getUpdateableJetpackSites( state ),
 				userCanManagePlugins: selectedSiteId
