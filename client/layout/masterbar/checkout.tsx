@@ -44,8 +44,7 @@ const CheckoutMasterbar = ( {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 	const siteId = useSelector( getSelectedSiteId );
-	const isSimpleSite = useSelector( getIsSimpleSite ) || false;
-	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId, isSimpleSite );
+	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
 
 	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
 	const isJetpack = isJetpackCheckout || isJetpackNotAtomic;

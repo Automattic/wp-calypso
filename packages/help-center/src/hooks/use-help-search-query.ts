@@ -1,6 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { useQueryClient, useQuery } from 'react-query';
-import wpcomRequest, { shouldTargetWpcom } from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { SearchResult } from '../types';
 
 interface APIFetchOptions {
@@ -11,7 +11,6 @@ interface APIFetchOptions {
 export const useHelpSearchQuery = (
 	search: string,
 	locale = 'en',
-	isSimpleSite = true,
 	queryOptions: Record< string, unknown > = {}
 ) => {
 	const queryClient = useQueryClient();
@@ -19,7 +18,7 @@ export const useHelpSearchQuery = (
 	return useQuery< SearchResult[] >(
 		[ 'help', search ],
 		() =>
-			shouldTargetWpcom( isSimpleSite )
+			canAccessWpcomApis()
 				? wpcomRequest( {
 						path: `help/search/wpcom?query=${ search }&locale=${ locale }`,
 						apiNamespace: 'wpcom/v2/',
@@ -34,7 +33,7 @@ export const useHelpSearchQuery = (
 				if ( ! data[ 0 ].content ) {
 					const newData = await Promise.all(
 						data.map( async ( result: SearchResult ) => {
-							const article: { [ content: string ]: string } = shouldTargetWpcom( isSimpleSite )
+							const article: { [ content: string ]: string } = canAccessWpcomApis()
 								? await wpcomRequest( {
 										path: `help/article/${ result.blog_id }/${ result.post_id }`,
 										apiNamespace: 'wpcom/v2/',
