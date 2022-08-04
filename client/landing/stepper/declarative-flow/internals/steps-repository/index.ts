@@ -33,6 +33,7 @@ export { default as newsletterSetup } from './newsletter-setup';
 export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
+export { default as linkInBioSetup } from './link-in-bio-setup';
 export { default as chooseADomain } from './choose-a-domain';
 
 export type StepPath =
@@ -70,5 +71,6 @@ export type StepPath =
 	| 'difmStartingPoint'
 	| 'letsGetStarted'
 	| 'chooseADomain'
+	| 'linkInBioSetup'
 	| 'newsletterSetup'
 	| 'intro';
