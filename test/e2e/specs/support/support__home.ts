@@ -35,8 +35,8 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 		} );
 
 		it( 'Enter valid search keyword', async function () {
-			const keyword = 'Domain';
-			await supportComponent.search( keyword );
+			const keyword = 'create a site';
+			await supportComponent.searchForceResults( keyword );
 		} );
 
 		it( 'Search results are shown with a valid search keyword', async function () {

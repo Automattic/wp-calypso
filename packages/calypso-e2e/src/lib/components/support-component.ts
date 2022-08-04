@@ -3,22 +3,22 @@ import { Locator, Page, Response } from 'playwright';
 type SupportResultType = 'article' | 'where';
 
 const selectors = {
-	// Components
-	supportPopoverButton: ( { isActive }: { isActive?: boolean } = {} ) =>
-		`button[title="Help"]${ isActive ? '.is-active' : '' }`,
+	editorIframe: `iframe.is-loaded[src*="wp-admin"]`,
+	supportPopoverButton: 'button[title="Help"], button[aria-label="Help"]',
 	searchInput: '[aria-label="Search"]',
+	searchResults: '[aria-label="Search Results"]',
 	clearSearch: '[aria-label="Close Search"]',
 	supportCard: '.card.help-search',
 	closeButton: '[aria-label="Close Help Center"]',
-	backButton: 'button:has-text("Back")',
+	backButton: 'button.back-button__help-center',
 	backToTopButton: 'button:has-text("Back to top")',
 	stillNeedHelpButton: 'a:has-text("Still need help?")',
-	article: 'article',
+	article: '.help-center-article-content__story-content',
 	emailLink: 'div[role="button"]:has-text("Email")',
 
 	// Results
-	resultsPlaceholder: '.inline-help__results-placeholder-item',
-	resultsPlaceholderHelpCenter: '.placeholder-lines__help-center-item',
+	resultsPlaceholder: '.inline-help__results-placeholder',
+	resultsPlaceholderHelpCenter: '.placeholder-lines__help-center',
 	results: ( category: string ) => `[aria-labelledby="${ category }"] a`,
 	defaultResultsMessage: 'h3:text("Recommended resources")',
 	successfulSearchResponse: ( response: Response ) =>
@@ -27,7 +27,7 @@ const selectors = {
 	// Result types
 	supportCategory: 'inline-search--api_help',
 	whereCategory: 'inline-search--admin_section',
-	emptyResults: ':has-text("Sorry, there were no matches.")',
+	emptyResults: 'p:has-text("Sorry, there were no matches.")',
 };
 
 /**
@@ -35,23 +35,31 @@ const selectors = {
  */
 export class SupportComponent {
 	private page: Page;
+	private content: Locator;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
+	 * @param { inIframe boolean } options Support component options.
 	 */
-	constructor( page: Page ) {
+	constructor( page: Page, { inIFrame }: { inIFrame?: boolean } = {} ) {
 		this.page = page;
+
+		if ( inIFrame ) {
+			this.content = page.frameLocator( selectors.editorIframe ).locator( 'body' );
+		} else {
+			this.content = page.locator( 'body' );
+		}
 	}
 
 	/**
-	 *
+	 * Waits for placeholders (spinners) to be hidden
 	 */
 	async waitForQueryComplete(): Promise< void > {
 		await Promise.all( [
-			this.page.waitForSelector( selectors.resultsPlaceholderHelpCenter, { state: 'hidden' } ),
-			this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'hidden' } ),
+			this.content.locator( selectors.resultsPlaceholderHelpCenter ).waitFor( { state: 'hidden' } ),
+			this.content.locator( selectors.resultsPlaceholder ).waitFor( { state: 'hidden' } ),
 		] );
 	}
 
@@ -61,20 +69,13 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openPopover(): Promise< void > {
-		if ( await this.page.isVisible( selectors.supportPopoverButton( { isActive: true } ) ) ) {
-			return;
-		}
-
 		// This Promise.all wrapper contains many calls due to a certain level of uncertainty
 		// when the support popover is launched.
 		await Promise.all( [
 			// Waits for all placeholder CSS elements to be removed from the DOM.
 			this.waitForQueryComplete(),
-			this.page.waitForSelector( selectors.supportPopoverButton() ),
-			this.page.click( selectors.supportPopoverButton() ),
+			this.content.locator( selectors.supportPopoverButton ).click(),
 		] );
-
-		await this.page.waitForSelector( selectors.supportPopoverButton( { isActive: true } ) );
 	}
 
 	/**
@@ -83,11 +84,15 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async closePopover(): Promise< void > {
-		if ( await this.page.isHidden( selectors.closeButton ) ) {
-			return;
+		const closeButton = await this.content.locator( selectors.closeButton ).elementHandle();
+
+		if ( closeButton ) {
+			if ( await closeButton.isHidden() ) {
+				return;
+			}
+			await closeButton.click();
+			await closeButton.isHidden();
 		}
-		await this.page.click( selectors.closeButton );
-		await this.page.waitForSelector( selectors.closeButton, { state: 'hidden' } );
 	}
 
 	/**
@@ -96,9 +101,11 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async showSupportCard(): Promise< void > {
-		const elementHandle = await this.page.waitForSelector( selectors.supportCard );
-		await elementHandle.waitForElementState( 'stable' );
-		await elementHandle.scrollIntoViewIfNeeded();
+		const elementHandle = await this.content.locator( selectors.supportCard ).elementHandle();
+		if ( elementHandle ) {
+			await elementHandle.waitForElementState( 'stable' );
+			await elementHandle.scrollIntoViewIfNeeded();
+		}
 	}
 
 	/* Result methods */
@@ -107,7 +114,7 @@ export class SupportComponent {
 	 * Checks whether the Support popover/card is in a default state (ie. no search keyword).
 	 */
 	async defaultStateShown(): Promise< void > {
-		await this.page.waitForSelector( selectors.defaultResultsMessage );
+		await this.content.locator( selectors.defaultResultsMessage ).elementHandle();
 	}
 
 	/**
@@ -120,11 +127,13 @@ export class SupportComponent {
 	async getResults( category: SupportResultType ): Promise< Locator > {
 		await this.waitForQueryComplete();
 
-		const selector = selectors.results(
-			category === 'article' ? selectors.supportCategory : selectors.whereCategory
+		await this.content.locator( selectors.searchResults ).waitFor( { state: 'visible' } );
+
+		return this.content.locator(
+			selectors.results(
+				category === 'article' ? selectors.supportCategory : selectors.whereCategory
+			)
 		);
-		await this.page.waitForSelector( selector );
-		return this.page.locator( selector );
 	}
 
 	/**
@@ -135,7 +144,7 @@ export class SupportComponent {
 	async noResultsShown(): Promise< void > {
 		// Note that even for a search query like ;;;ppp;;; that produces no search results,
 		// some links are shown in the popover under the heading `Helpful resources for this section`.
-		await this.page.waitForSelector( selectors.emptyResults );
+		await this.content.locator( selectors.emptyResults ).elementHandle();
 	}
 
 	/* Interaction with results */
@@ -155,7 +164,7 @@ export class SupportComponent {
 			selector = selectors.results( selectors.whereCategory );
 		}
 
-		await this.page.click( `:nth-match(${ selector }, ${ target })` );
+		await this.content.locator( `:nth-match(${ selector }, ${ target })` ).click();
 	}
 
 	/* Search input */
@@ -167,13 +176,30 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async search( text: string ): Promise< void > {
-		// Wait for the response to the request and ensure the status is HTTP 200.
-		await Promise.all( [
-			this.page.waitForResponse( selectors.successfulSearchResponse ),
-			this.page.fill( selectors.searchInput, text ),
-			this.waitForQueryComplete(),
-		] );
-		await this.page.waitForLoadState( 'load' );
+		await this.content.locator( selectors.searchInput ).fill( text );
+		await this.page.waitForResponse( selectors.successfulSearchResponse );
+		await this.waitForQueryComplete();
+	}
+
+	/**
+	 * Search word by word until the results appear
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async searchForceResults( text: string ): Promise< void > {
+		const resultsSelector = selectors.results( selectors.supportCategory );
+
+		for ( let i = 0; i < text.length; i++ ) {
+			const nextPosition = i + 1;
+			const nextChar = text.charAt( nextPosition );
+			if ( nextPosition === text.length || nextChar === ' ' ) {
+				await this.search( text.substring( 0, i + 1 ) );
+				const results = await this.content.locator( resultsSelector ).count();
+				if ( results > 0 ) {
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -182,7 +208,7 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clearSearch(): Promise< void > {
-		await this.page.click( selectors.clearSearch );
+		await this.content.locator( selectors.clearSearch ).click();
 	}
 
 	/**
@@ -191,7 +217,7 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickBack(): Promise< void > {
-		await this.page.click( selectors.backButton );
+		await this.content.locator( selectors.backButton ).click();
 	}
 
 	/**
@@ -200,14 +226,17 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async scrollOpenArticle(): Promise< void > {
+		const locator = this.content.locator( selectors.article );
+
 		await this.waitForQueryComplete();
+		const elementHandle = await locator.elementHandle();
 
-		const elementHandle = await this.page.waitForSelector( selectors.article );
-		await elementHandle.waitForElementState( 'stable' );
-
-		await this.page.evaluate( ( element: SVGElement | HTMLElement ) => {
-			return element.scrollIntoView( false );
-		}, elementHandle );
+		if ( elementHandle ) {
+			await elementHandle.waitForElementState( 'stable' );
+			await locator.evaluate( ( element: SVGElement | HTMLElement ) => {
+				return element.scrollIntoView( false );
+			}, elementHandle );
+		}
 	}
 
 	/**
@@ -215,11 +244,10 @@ export class SupportComponent {
 	 *
 	 * @returns {Promise<boolean>}
 	 */
-	async backToTopVisible( isVisible: boolean ): Promise< boolean > {
-		if ( isVisible ) {
-			return this.page.isVisible( selectors.backToTopButton );
-		}
-		return this.page.isHidden( selectors.backToTopButton );
+	async backToTopVisible( isVisible: boolean ): Promise< void > {
+		return await this.content
+			.locator( selectors.backToTopButton )
+			.waitFor( { state: isVisible ? 'visible' : 'hidden' } );
 	}
 
 	/**
@@ -228,7 +256,7 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickBackToTop(): Promise< void > {
-		await this.page.click( selectors.backToTopButton );
+		await this.content.locator( selectors.backToTopButton ).click();
 	}
 
 	/**

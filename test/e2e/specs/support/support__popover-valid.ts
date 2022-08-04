@@ -17,71 +17,77 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 	let page: Page;
 
 	describe.each( [
-		{ siteType: 'Simple', accountName: 'defaultUser' as TestAccountName },
-		{ siteType: 'Atomic', accountName: 'atomicUser10percent' as TestAccountName },
-	] )( 'Search and view a support article ($siteType)', function ( { accountName } ) {
-		let supportComponent: SupportComponent;
+		{ sectionItem: 'Tools', sectionSubItem: 'Marketing' },
+		{ sectionItem: 'Appearance', sectionSubItem: 'Editor' },
+	] )( 'In section $sectionItem -> $sectionSubItem', function ( { sectionItem, sectionSubItem } ) {
+		describe.each( [
+			{ siteType: 'Simple', accountName: 'defaultUser' as TestAccountName },
+			{ siteType: 'Atomic', accountName: 'atomicUser10percent' as TestAccountName },
+		] )( 'Search and view a support article ($siteType)', function ( { siteType, accountName } ) {
+			let supportComponent: SupportComponent;
 
-		beforeAll( async () => {
-			page = await browser.newPage();
+			beforeAll( async () => {
+				page = await browser.newPage();
 
-			const testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( page );
-		} );
+				const testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+			} );
 
-		it( 'Navigate to Tools > Marketing', async function () {
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Tools', 'Marketing' );
-		} );
+			it( 'Navigate to Tools > Marketing', async function () {
+				const sidebarComponent = new SidebarComponent( page );
+				await sidebarComponent.navigate( sectionItem, sectionSubItem );
+			} );
 
-		it( 'Open support popover', async function () {
-			supportComponent = new SupportComponent( page );
-			await supportComponent.openPopover();
-		} );
+			it( 'Open support popover', async function () {
+				const inIFrame = siteType === 'Simple' && sectionSubItem === 'Editor';
+				supportComponent = new SupportComponent( page, { inIFrame } );
+				await supportComponent.openPopover();
+			} );
 
-		it( 'Displays default entries', async function () {
-			await supportComponent.defaultStateShown();
-		} );
+			it( 'Displays default entries', async function () {
+				await supportComponent.defaultStateShown();
+			} );
 
-		it( 'Enter search keyword', async function () {
-			const keyword = 'choose a theme';
-			await supportComponent.search( keyword );
-		} );
+			it( 'Enter search keyword', async function () {
+				const keyword = 'choose a theme';
+				await supportComponent.searchForceResults( keyword );
+			} );
 
-		it( 'Search results are shown', async function () {
-			const results = await supportComponent.getResults( 'article' );
-			expect( await results.count() ).toBeGreaterThan( 0 );
-		} );
+			it( 'Search results are shown', async function () {
+				const results = await supportComponent.getResults( 'article' );
+				expect( await results.count() ).toBeGreaterThan( 0 );
+			} );
 
-		it( 'Click on first search result', async function () {
-			await supportComponent.clickResult( 'article', 1 );
-		} );
+			it( 'Click on first search result', async function () {
+				await supportComponent.clickResult( 'article', 1 );
+			} );
 
-		it( 'Scroll article', async function () {
-			await supportComponent.scrollOpenArticle();
-		} );
+			it( 'Scroll article', async function () {
+				await supportComponent.scrollOpenArticle();
+			} );
 
-		it( 'Back to top button is shown', async function () {
-			await supportComponent.backToTopVisible( true );
-		} );
+			it( 'Back to top button is shown', async function () {
+				await supportComponent.backToTopVisible( true );
+			} );
 
-		it( 'Click back to top', async function () {
-			await supportComponent.clickBackToTop();
-		} );
+			it( 'Click back to top', async function () {
+				await supportComponent.clickBackToTop();
+			} );
 
-		it( 'Back to top button is hidden', async function () {
-			await supportComponent.backToTopVisible( false );
-		} );
+			it( 'Back to top button is hidden', async function () {
+				await supportComponent.backToTopVisible( false );
+			} );
 
-		it( 'Click on back button brings back the results', async function () {
-			await supportComponent.clickBack();
+			it( 'Click on back button brings back the results', async function () {
+				await supportComponent.clickBack();
 
-			const results = await supportComponent.getResults( 'article' );
-			expect( await results.count() ).toBeGreaterThan( 0 );
-		} );
+				const results = await supportComponent.getResults( 'article' );
+				expect( await results.count() ).toBeGreaterThan( 0 );
+			} );
 
-		it( 'Close popover', async function () {
-			await supportComponent.closePopover();
+			it( 'Close popover', async function () {
+				await supportComponent.closePopover();
+			} );
 		} );
 	} );
 } );
