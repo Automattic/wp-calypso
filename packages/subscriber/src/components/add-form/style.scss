@@ -81,7 +81,7 @@
 	.add-subscriber__form-skip-btn {
 		display: block;
 		width: 100%;
-		margin-bottom: 0.5rem;
+		margin-bottom: 2rem;
 	}
 
 	.add-subscriber__form-skip-btn {
@@ -101,6 +101,17 @@
 		position: absolute;
 		top: 5px;
 		right: 10px;
+	}
+
+	.add-subscriber__form--disclaimer {
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+		color: var( --studio-gray-50 );
+
+		a, button {
+			color: var( --studio-gray-100 );
+			text-decoration: underline;
+		}
 	}
 }
 

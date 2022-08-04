@@ -126,6 +126,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							Not yet
 						</SkipButton>
 					) }
+					<p className={ 'add-subscriber__form--disclaimer' }>
+						By adding a mailing list CSV, you are confirming that you have the rights to share
+						newsletters with the people within your list.{ ' ' }
+						<Button isLink={ true }>Learn more</Button>
+					</p>
 				</form>
 			</div>
 		</div>
