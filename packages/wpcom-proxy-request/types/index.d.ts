@@ -23,6 +23,8 @@ export interface WpcomRequestParams {
 
 export function reloadProxy(): void;
 
+export function shouldTargetWpcom( isSimpleSite: boolean ): boolean;
+
 export function requestAllBlogsAccess(): ReturnType< typeof request >;
 
 export default function request(
