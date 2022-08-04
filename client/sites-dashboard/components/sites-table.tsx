@@ -1,11 +1,13 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import SitesTableRow from './sites-table-row';
+import SitesTableRowLoading from './sites-table-row-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesTableProps {
 	className?: string;
 	sites: SiteExcerptData[];
+	isLoading?: boolean;
 }
 
 const Table = styled.table`
@@ -33,7 +35,7 @@ const Row = styled.tr`
 	}
 `;
 
-export function SitesTable( { className, sites }: SitesTableProps ) {
+export function SitesTable( { className, sites, isLoading = false }: SitesTableProps ) {
 	const { __ } = useI18n();
 
 	return (
@@ -48,6 +50,13 @@ export function SitesTable( { className, sites }: SitesTableProps ) {
 				</Row>
 			</thead>
 			<tbody>
+				{ isLoading && (
+					<>
+						<SitesTableRowLoading />
+						<SitesTableRowLoading />
+						<SitesTableRowLoading />
+					</>
+				) }
 				{ sites.map( ( site ) => (
 					<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
 				) ) }

@@ -81,7 +81,7 @@ const FilterBar = styled.div`
 export function SitesDashboard( { queryParams: { search, status = 'all' } }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 
-	const { data: allSites = [] } = useSiteExcerptsQuery();
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
 	const { sortedSites } = useSitesTableSorting( allSites, {
 		sortKey: 'updated-at',
@@ -131,8 +131,8 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 							) ) }
 						</SelectDropdown>
 					</FilterBar>
-					{ filteredSites.length > 0 ? (
-						<SitesTable sites={ filteredSites } />
+					{ filteredSites.length > 0 || isLoading ? (
+						<SitesTable isLoading={ isLoading } sites={ filteredSites } />
 					) : (
 						<NoSitesMessage
 							status={ selectedStatus.name }
