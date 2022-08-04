@@ -7,3 +7,4 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 };
 
 export * from './types';
+export * from './item-variation-discount-sublabel';

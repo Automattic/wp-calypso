@@ -13,7 +13,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
-import { ItemVariationPicker } from './item-variation-picker';
+import { ItemVariationPicker, ItemVariationDiscountSublabel } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
@@ -106,6 +106,9 @@ export function WPOrderReviewLineItems( {
 							onRemoveProductClick={ onRemoveProductClick }
 							onRemoveProductCancel={ onRemoveProductCancel }
 						>
+							{ shouldShowVariantSelector && (
+								<ItemVariationDiscountSublabel product={ product } siteId={ siteId } />
+							) }
 							{ shouldShowVariantSelector && (
 								<ItemVariationPicker
 									selectedItem={ product }
