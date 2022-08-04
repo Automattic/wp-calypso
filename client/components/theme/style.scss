@@ -158,6 +158,12 @@ $theme-info-height: 54px;
 	text-align: center;
 }
 
+.card.is-clickable {
+	.theme__upsell-popover {
+		cursor: pointer;
+	}
+}
+
 .theme__upsell-cta {
 	margin-top: 10px;
 }
