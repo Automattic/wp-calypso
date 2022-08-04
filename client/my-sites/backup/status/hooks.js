@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import {
 	DELTA_ACTIVITIES,
@@ -41,7 +40,7 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { data, isLoading } = useActivityLogQuery( siteId, filter, {
+	const { data, isLoading } = useRewindableActivityLogQuery( siteId, filter, {
 		enabled: isValidRequest && enabled,
 		refetchOnWindowFocus: false,
 	} );
