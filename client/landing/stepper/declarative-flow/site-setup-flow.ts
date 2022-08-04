@@ -3,7 +3,6 @@ import { Onboard } from '@automattic/data-stores';
 import { useDesignsBySite } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useTranslate } from 'i18n-calypso';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -77,7 +76,6 @@ export const siteSetupFlow: Flow = {
 		useDesignsBySite( site );
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const translate = useTranslate();
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -105,8 +103,7 @@ export const siteSetupFlow: Flow = {
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite, saveSiteTitle } =
-			useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
@@ -138,23 +135,6 @@ export const siteSetupFlow: Flow = {
 
 					if ( intent === SiteIntent.Write && ! selectedDesign ) {
 						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
-					}
-
-					// Set a default site title in case users have not set one during the onboarding flow.
-					if ( site && site.name?.trim() === '' ) {
-						let siteTitle = '';
-						switch ( intent ) {
-							case SiteIntent.Write:
-								siteTitle = translate( 'My blog' );
-								break;
-							case SiteIntent.Sell:
-								siteTitle = translate( 'My store' );
-								break;
-							default:
-								siteTitle = translate( 'My site' );
-						}
-
-						pendingActions.push( saveSiteTitle( site.ID, siteTitle ) );
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.replace( to ) );

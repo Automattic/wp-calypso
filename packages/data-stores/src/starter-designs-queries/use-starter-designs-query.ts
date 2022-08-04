@@ -6,6 +6,7 @@ import type { Category, Design, DesignRecipe } from '@automattic/design-picker/s
 
 interface StarterDesignsQueryParams {
 	vertical_id: string;
+	intent: string;
 	seed?: string;
 	_locale: string;
 }

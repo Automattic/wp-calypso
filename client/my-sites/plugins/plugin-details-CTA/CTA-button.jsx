@@ -5,7 +5,7 @@ import page from 'page';
 import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { businessPlanToAdd } from 'calypso/lib/plugins/utils';
+import { marketplacePlanToAdd } from 'calypso/lib/plugins/utils';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -217,7 +217,7 @@ function onClickInstallPlugin( {
 		if ( upgradeAndInstall ) {
 			// We also need to add a business plan to the cart.
 			return page(
-				`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
+				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod,
 					eligibleForProPlan
@@ -243,7 +243,7 @@ function onClickInstallPlugin( {
 	if ( upgradeAndInstall ) {
 		// We also need to add a business plan to the cart.
 		return page(
-			`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
+			`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 				selectedSite?.plan,
 				billingPeriod,
 				eligibleForProPlan

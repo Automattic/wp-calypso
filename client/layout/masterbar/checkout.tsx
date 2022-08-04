@@ -7,13 +7,13 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';
@@ -26,7 +26,7 @@ interface Props {
 	previousPath?: string;
 	siteSlug?: string;
 	isLeavingAllowed?: boolean;
-	showHelpCenter?: boolean;
+	loadHelpCenterIcon?: boolean;
 }
 
 const CheckoutMasterbar = ( {
@@ -35,13 +35,13 @@ const CheckoutMasterbar = ( {
 	previousPath,
 	siteSlug,
 	isLeavingAllowed,
-	showHelpCenter,
+	loadHelpCenterIcon,
 }: Props ) => {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 	const siteId = useSelector( getSelectedSiteId );
-
-	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
+	const isSimpleSite = useSelector( getIsSimpleSite ) || false;
+	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId, isSimpleSite );
 
 	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
 	const isJetpack = isJetpackCheckout || isJetpackNotAtomic;
@@ -82,7 +82,9 @@ const CheckoutMasterbar = ( {
 	const showCloseButton = isLeavingAllowed && ! isJetpack;
 
 	return (
-		<Masterbar>
+		<Masterbar
+			className={ classnames( 'masterbar--is-checkout', { 'masterbar--is-jetpack': isJetpack } ) }
+		>
 			<div className="masterbar__secure-checkout">
 				{ showCloseButton && (
 					<Item
@@ -98,7 +100,7 @@ const CheckoutMasterbar = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
-			{ showHelpCenter && (
+			{ loadHelpCenterIcon && (
 				<Item
 					onClick={ () => dispatch( setHelpCenterVisible( ! isShowingHelpCenter ) ) }
 					className={ classnames( 'masterbar__item-help', {
@@ -119,13 +121,6 @@ const CheckoutMasterbar = ( {
 				secondaryButtonCTA={ modalSecondaryText }
 				secondaryAction={ clearCartAndLeave }
 			/>
-			{ showHelpCenter && isShowingHelpCenter && (
-				<AsyncLoad
-					require="@automattic/help-center"
-					placeholder={ null }
-					handleClose={ () => dispatch( setHelpCenterVisible( false ) ) }
-				/>
-			) }
 		</Masterbar>
 	);
 };

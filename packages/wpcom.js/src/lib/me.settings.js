@@ -20,7 +20,7 @@ export default function MeSettings( wpcom ) {
 /**
  * Get settings for the current user.
  *
- * *Example:*
+ * Example:
  *    // Get settings for the current user
  *    wpcom
  *    .me()
@@ -52,7 +52,7 @@ MeSettings.prototype.update = function ( query, body, fn ) {
 /**
  * Return `MeProfileLinks` instance
  *
- * *Example:*
+ * Example:
  *    // Create a MeProfileLinks instance
  *    var profile_links = wpcom.me().settings().profileLinks();
  *

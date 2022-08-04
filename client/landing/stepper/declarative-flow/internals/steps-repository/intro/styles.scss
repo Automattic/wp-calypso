@@ -1,0 +1,77 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/onboarding/styles/mixins';
+
+$design-button-primary-color: var( --color-primary );
+$get-started-button-primary-color: var( --studio-blue-50 );
+$white: var( --color-surface );
+
+.intro {
+	background: url( 'calypso/assets/images/onboarding/link-in-bio-intro-background.svg' ),
+		url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
+
+	&.is-newsletters {
+		background: url( 'calypso/assets/images/onboarding/paper-texture.jpg' ),
+			linear-gradient( 123deg, rgba( 7, 116, 195, 1 ) 0%, rgba( 255, 255, 255, 0 ) 100% ),
+			url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
+		background-size: cover;
+	}
+	background-blend-mode: color-burn;
+	min-height: 100%;
+	min-width: 100%;
+	width: 100%;
+	height: auto;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-size: cover;
+	box-sizing: border-box;
+	padding: 60px 0 0;
+
+	.wordpress-logo {
+		inset-block-start: 20px;
+		inset-inline-start: 20px;
+		position: absolute;
+		transform-origin: 0 0;
+	}
+
+	.progress-bar {
+		display: none;
+	}
+
+	.step-container {
+		&.intro {
+			margin: 0;
+
+			.step-container__navigation {
+				display: none;
+			}
+		}
+	}
+
+	.intro__content {
+		width: 100%;
+		text-align: center;
+		position: absolute;
+		top: 50%;
+		transform: translateY( -50% );
+	}
+
+	.intro__title {
+		@include onboarding-font-recoleta;
+		color: $white;
+		font-weight: 500;
+		line-height: 40px;
+		padding-bottom: 40px;
+
+		span {
+			display: block;
+		}
+	}
+
+	.intro__button {
+		color: $get-started-button-primary-color;
+		background-color: $white;
+		border: none;
+		font-weight: 500;
+	}
+}

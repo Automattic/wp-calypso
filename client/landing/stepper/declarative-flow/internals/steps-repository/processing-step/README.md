@@ -2,14 +2,17 @@
 
 This step can be used when there are background tasks to be done after submitting a step.
 It works together with `ONBOARD_STORE` and some of its state:
-- `pendingAction` -  an `async function` that does the background work and returns when done.
+
+- `pendingAction` - an `async function` that does the background work and returns when done.
 - (optional) `progress` - a `number` >=0 and <=1 describing the progress.
 - (optional) `progressTitle` - a `string` describing to the user the action being performed.
 
 ## How to use it
+
 ### Basic example
+
 1. Identify the step that requires background work, let's call it the **"main step"**.
-3. Add `processing` to the flow's  step list (`useSteps()`)
+2. Add `processing` to the flow's step list (`useSteps()`)
 3. Configure your flow in a way that the `processing` step is called after submitting the main step, something like:
 
 ```
@@ -86,6 +89,7 @@ setPendingAction( async () => {
 
 submit?.();
 ```
+
 ![image](https://user-images.githubusercontent.com/3801502/164059226-d8869c1b-038b-4eef-bf98-41191668109f.png)
 
 ### Progress bar + personalized text example
@@ -114,4 +118,5 @@ setPendingAction( async () => {
 
 submit?.();
 ```
+
 ![image](https://user-images.githubusercontent.com/3801502/164059891-2d99c8ca-834b-46ca-a2c3-5752b5fe5507.png)

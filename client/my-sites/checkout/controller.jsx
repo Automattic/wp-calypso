@@ -31,7 +31,7 @@ import {
 	LEGACY_TO_RECOMMENDED_MAP,
 } from '../plans/jetpack-plans/plan-upgrade/constants';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-import CheckoutSystemDecider from './checkout-system-decider';
+import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
@@ -65,7 +65,7 @@ export function checkoutSiteless( context, next ) {
 		<>
 			<CheckoutSitelessDocumentTitle />
 
-			<CheckoutSystemDecider
+			<CheckoutMainWrapper
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }
@@ -158,7 +158,7 @@ export function checkout( context, next ) {
 		<>
 			<CheckoutDocumentTitle />
 
-			<CheckoutSystemDecider
+			<CheckoutMainWrapper
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				purchaseId={ purchaseId }

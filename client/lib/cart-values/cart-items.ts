@@ -810,7 +810,8 @@ export function getDomainPriceRule(
 		is_premium?: boolean;
 	},
 	isDomainOnly: boolean,
-	flowName: string
+	flowName: string,
+	domainAndPlanUpsellFlow: boolean
 ): string {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
@@ -822,6 +823,10 @@ export function getDomainPriceRule(
 
 	if ( isMonthlyOrFreeFlow( flowName ) ) {
 		return 'PRICE';
+	}
+
+	if ( domainAndPlanUpsellFlow ) {
+		return 'FREE_WITH_PLAN';
 	}
 
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {

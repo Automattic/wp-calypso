@@ -12,7 +12,7 @@ export const incrementCounter =
 			return;
 		}
 
-		dispatch(
+		return dispatch(
 			savePreference(
 				PREFERENCE_BASE_NAME,
 				incrementPreference( getState(), counterName, keyedToSiteId )
