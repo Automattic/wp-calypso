@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-imports */
 import { useHas3PC, useSupportAvailability } from '@automattic/data-stores';
-import { shouldTargetWpcom } from '@automattic/help-center';
 import { useSelector } from 'react-redux';
 import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
+import { shouldTargetWpcom } from '../utils';
 
 export function useStillNeedHelpURL() {
 	const { hasCookies } = useHas3PC();
