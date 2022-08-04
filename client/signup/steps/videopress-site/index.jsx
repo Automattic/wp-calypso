@@ -304,6 +304,7 @@ class VideoPressSite extends Component {
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			const site = formState.getFieldValue( this.state.form, 'site' );
 			const siteTitle = formState.getFieldValue( this.state.form, 'siteTitle' );
+			const siteDescription = formState.getFieldValue( this.state.form, 'siteDescription' );
 
 			this.setState( { submitting: false } );
 
@@ -323,6 +324,7 @@ class VideoPressSite extends Component {
 				form: this.state.form,
 				site,
 				siteTitle,
+				siteDescription,
 			};
 
 			const refParameter =

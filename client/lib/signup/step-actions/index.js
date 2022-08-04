@@ -937,6 +937,70 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	} );
 }
 
+// Similar to createSite but also sets the site title and description
+export function createVideoPressSite( callback, dependencies, stepData, reduxStore ) {
+	const { site, themeSlugWithRepo, siteTitle = '', siteDescription = '' } = stepData;
+	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
+	const locale = getLocaleSlug();
+
+	const theme =
+		dependencies?.themeSlugWithRepo ||
+		themeSlugWithRepo ||
+		get( signupDependencies, 'themeSlugWithRepo', false );
+
+	const data = {
+		blog_name: site,
+		blog_title: siteTitle,
+		public: Visibility.PublicNotIndexed,
+		options: {
+			theme,
+			timezone_string: guessTimezone(),
+			wpcom_public_coming_soon: 1,
+		},
+		validate: false,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	};
+
+	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
+		let providedDependencies;
+		let siteSlug;
+
+		if ( !! response && response.blog_details ) {
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
+			siteSlug = parsedBlogURL.hostname;
+
+			providedDependencies = { siteSlug };
+		}
+
+		const callbackWithErrorChecking = ( e ) =>
+			callback( isEmpty( e ) ? undefined : [ e ], providedDependencies );
+
+		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
+			fetchSitesAndUser(
+				siteSlug,
+				() => {
+					if ( siteDescription ) {
+						wpcom.req.post(
+							`/sites/${ siteSlug }/settings`,
+							{ apiVersion: '1.4' },
+							{ blogdescription: siteDescription },
+							callbackWithErrorChecking
+						);
+					} else {
+						callbackWithErrorChecking( undefined );
+					}
+				},
+				reduxStore
+			);
+		} else {
+			callbackWithErrorChecking( errors );
+		}
+	} );
+}
+
 function recordExcludeStepEvent( step, value ) {
 	recordTracksEvent( 'calypso_signup_actions_exclude_step', {
 		step,
