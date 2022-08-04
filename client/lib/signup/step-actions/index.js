@@ -981,7 +981,7 @@ export function createVideoPressSite( callback, dependencies, stepData, reduxSto
 		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
 			fetchSitesAndUser(
 				siteSlug,
-				( err ) => {
+				() => {
 					if ( siteDescription ) {
 						wpcom.req.post(
 							`/sites/${ siteSlug }/settings`,
@@ -990,7 +990,7 @@ export function createVideoPressSite( callback, dependencies, stepData, reduxSto
 							callbackWithErrorChecking
 						);
 					} else {
-						callbackWithErrorChecking( err );
+						callbackWithErrorChecking( undefined );
 					}
 				},
 				reduxStore
