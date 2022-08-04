@@ -18,10 +18,26 @@ import type { Step } from '../../types';
 
 import './style.scss';
 
+/**
+ * Generates an inline SVG for the color picker swatch
+ *
+ * @param color the color in HEX
+ * @returns a value for background-image
+ */
+function generateSwatchSVG( color: string | undefined ) {
+	return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23ccc' stroke-width='1' fill='${ encodeURIComponent(
+		color || '#fff'
+	) }'%3E%3C/circle%3E${
+		// render a line when a color isn't selected
+		! color
+			? `%3Cline x1='18' y1='4' x2='7' y2='20' stroke='%23ccc' stroke-width='1'%3E%3C/line%3E`
+			: ''
+	}%3C/svg%3E`;
+}
 const NewsletterSetup: Step = ( { navigation } ) => {
 	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
-	const colorAccentRef = React.useRef< HTMLInputElement >( null );
+	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
 	const site = useSite();
 
@@ -29,7 +45,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
-	const [ colorAccent, setAccentColor ] = React.useState( '#000000' );
+	const [ accentColor, setAccentColor ] = React.useState< string | undefined >();
 	const [ url, setUrl ] = React.useState( '' );
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const { mutateAsync: setSiteLogo, isLoading: isUploadingIcon } = useSiteLogoMutation( site?.ID );
@@ -107,13 +123,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 				/>
 				<Popover
 					isVisible={ colorPickerOpen }
-					context={ colorAccentRef.current }
+					context={ accentColorRef.current }
 					position="top left"
 					onClose={ () => setColorPickerOpen( false ) }
 				>
 					<ColorPicker
 						disableAlpha
-						color={ colorAccent }
+						color={ accentColor || '#000000' }
 						onChangeComplete={ ( value ) => setAccentColor( value.hex ) }
 					/>
 				</Popover>
@@ -137,14 +153,17 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 				<FormFieldset disabled={ isLoading }>
 					<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
 					<FormInput
-						inputRef={ colorAccentRef }
+						inputRef={ accentColorRef }
 						className="newsletter-setup__accent-color"
+						style={ {
+							backgroundImage: generateSwatchSVG( accentColor ),
+						} }
 						type="text"
 						name="accentColor"
 						id="accentColor"
 						onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
 						readOnly
-						value={ colorAccent }
+						value={ accentColor || '#000000' }
 					/>
 				</FormFieldset>
 
