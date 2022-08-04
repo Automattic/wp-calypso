@@ -269,7 +269,7 @@ function ItemVariantOption( {
 			onClick={ onSelect }
 			selected={ isSelected }
 		>
-			<ItemVariantPrice variant={ variant } compareTo={ compareTo } />
+			<ItemVariantPrice variant={ variant } compareTo={ compareTo } showPrice />
 		</Option>
 	);
 }
