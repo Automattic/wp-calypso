@@ -34,9 +34,7 @@ class GoogleSocialButton extends Component {
 	};
 
 	static defaultProps = {
-		scope: config.isEnabled( 'migration/sign-in-with-google' )
-			? 'openid profile email'
-			: 'https://www.googleapis.com/auth/userinfo.profile',
+		scope: 'openid profile email',
 		fetchBasicProfile: true,
 		onClick: noop,
 	};
@@ -58,20 +56,14 @@ class GoogleSocialButton extends Component {
 	}
 
 	componentDidMount() {
-		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
-			if ( this.props.authCodeFromRedirect ) {
-				this.handleAuthorizationCode( {
-					auth_code: this.props.authCodeFromRedirect,
-					redirect_uri: this.props.redirectUri,
-				} );
-			}
-
-			this.initializeGoogleSignIn();
-
-			return;
+		if ( this.props.authCodeFromRedirect ) {
+			this.handleAuthorizationCode( {
+				auth_code: this.props.authCodeFromRedirect,
+				redirect_uri: this.props.redirectUri,
+			} );
 		}
 
-		this.initialize();
+		this.initializeGoogleSignIn();
 	}
 
 	async initializeGoogleSignIn() {
@@ -171,25 +163,7 @@ class GoogleSocialButton extends Component {
 			return;
 		}
 
-		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
-			this.client.requestCode();
-			return;
-		}
-
-		const { responseHandler } = this.props;
-
-		// Options are documented here:
-		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		window.gapi.auth2
-			.getAuthInstance()
-			.signIn( { prompt: 'select_account' } )
-			.then( responseHandler, ( error ) => {
-				this.props.recordTracksEvent( 'calypso_social_button_failure', {
-					social_account_type: 'google',
-					starting_point: this.props.startingPoint,
-					error_code: error.error,
-				} );
-			} );
+		this.client.requestCode();
 	}
 
 	showError( event ) {
