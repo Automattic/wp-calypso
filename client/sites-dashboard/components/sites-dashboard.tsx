@@ -126,6 +126,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 						<SelectDropdown selectedText={ selectedStatus.title }>
 							{ statuses.map( ( { name, title, count } ) => (
 								<SelectDropdown.Item
+									key={ name }
 									selected={ name === selectedStatus.name }
 									count={ count }
 									onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
