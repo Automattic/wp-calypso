@@ -171,7 +171,6 @@ const PluginsBrowserListElement = ( props ) => {
 			>
 				<div className="plugins-browser-item__info">
 					<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					{ /* TODO add the actual highlight coming from the API to the components */ }
 					<div className="plugins-browser-item__title">
 						<TextHighlight text={ plugin.name } highlight={ search } />
 					</div>
