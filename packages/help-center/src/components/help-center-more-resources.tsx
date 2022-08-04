@@ -145,26 +145,22 @@ export const HelpCenterMoreResources = () => {
 						</a>
 					</div>
 				</li>
-				{ isSimpleSite && (
-					<li className="inline-help__resource-item">
-						<div className="inline-help__resource-cell">
-							<Button
-								isLink
-								onClick={ () => handleWhatsNewClick() }
-								className="inline-help__new-releases"
-							>
-								<Icon icon={ <NewReleases /> } size={ 24 } />
-								<span>{ __( "What's new", __i18n_text_domain__ ) }</span>
-								{ showWhatsNewDot && (
-									<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
-								) }
-								<Icon icon={ external } size={ 20 } />
-							</Button>
-						</div>
-					</li>
-				) }
+				<li className="inline-help__resource-item">
+					<div className="inline-help__resource-cell">
+						<Button isLink onClick={ handleWhatsNewClick } className="inline-help__new-releases">
+							<Icon icon={ <NewReleases /> } size={ 24 } />
+							<span>{ __( "What's new", __i18n_text_domain__ ) }</span>
+							{ showWhatsNewDot && (
+								<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
+							) }
+							<Icon icon={ external } size={ 20 } />
+						</Button>
+					</div>
+				</li>
 			</ul>
-			{ showGuide && <WhatsNewGuide onClose={ () => setShowGuide( false ) } /> }
+			{ showGuide && (
+				<WhatsNewGuide onClose={ () => setShowGuide( false ) } isSimpleSite={ isSimpleSite } />
+			) }
 		</>
 	);
 };
