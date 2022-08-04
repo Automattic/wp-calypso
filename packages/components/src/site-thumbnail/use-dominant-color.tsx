@@ -18,12 +18,12 @@ export default function useDominantColor(
 				],
 				width: 50,
 				height: 50,
+				crossOrigin: 'Anonymous',
 			} );
 			setColor( color );
 		}
-
 		//get the dominant color of image from url
-		if ( url && url.length > 0 ) {
+		else if ( url && url.length > 0 ) {
 			fac
 				.getColorAsync( url, {
 					ignoredColor: [

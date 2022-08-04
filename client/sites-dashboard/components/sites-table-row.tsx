@@ -2,6 +2,7 @@ import { ListTile, SiteThumbnail } from '@automattic/components';
 import { ClassNames, css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useRef } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import Image from 'calypso/components/image';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -119,6 +120,8 @@ const VisitDashboardItem = ( { site }: { site: SiteExcerptData } ) => {
 export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 
+	const logoRef = useRef< HTMLImageElement >( null );
+
 	const isComingSoon =
 		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 	const isP2Site = site.options?.is_wpforteams_site;
@@ -143,9 +146,11 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 										mShotsUrl={ setmShotsUrl ? site.URL : undefined }
 										alt={ site.name }
 										bgColorImgUrl={ site.icon?.img }
+										logoRef={ logoRef }
 									>
 										{ site.icon ? (
 											<Image
+												ref={ logoRef }
 												src={ site.icon.img }
 												alt={ site.name }
 												style={ { height: '50px', width: '50px' } }
