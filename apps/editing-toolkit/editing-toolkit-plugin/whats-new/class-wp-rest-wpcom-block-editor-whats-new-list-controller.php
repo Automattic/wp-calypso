@@ -34,6 +34,12 @@ class WP_REST_WPCOM_Block_Editor_Whats_New_List_Controller extends \WP_REST_Cont
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_whats_new' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
+					'args'                => array(
+						'_locale' => array(
+							'type'    => 'string',
+							'default' => 'en',
+						),
+					),
 				),
 			)
 		);
@@ -51,12 +57,19 @@ class WP_REST_WPCOM_Block_Editor_Whats_New_List_Controller extends \WP_REST_Cont
 	/**
 	 * Should return the whats new modal content
 	 *
+	 * @param \WP_REST_Request $request    The request sent to the API.
+	 *
 	 * @return WP_REST_Response
 	 */
-	public function get_whats_new() {
+	public function get_whats_new( \WP_REST_Request $request ) {
+		$locale = $request['locale'];
+
+		$query_parameters = array(
+			'locale' => $locale,
+		);
 
 		$body = Client::wpcom_json_api_request_as_user(
-			'/whats-new/list'
+			'/whats-new/list?' . http_build_query( $query_parameters )
 		);
 		if ( is_wp_error( $body ) ) {
 			return $body;
