@@ -7,7 +7,7 @@
 	vertical-align: middle;
 	margin-inline-end: 16px;
 }
-.plugin-row-formatter__plugin-name {
+a.button.plugin-row-formatter__plugin-name {
 	display: inline-block;
 	font-weight: 500;
 	white-space: nowrap;
@@ -17,6 +17,7 @@
 	color: var( --studio-gray-100 );
 	width: calc( 100% - 55px );
 	font-size: 0.875rem;
+	text-align: left;
 }
 .plugin-row-formatter__overlay {
 	display: block;

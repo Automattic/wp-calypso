@@ -1,6 +1,6 @@
 import { Gridicon, Button } from '@automattic/components';
-import { ReactElement } from 'react';
 import type { Plugin } from '../types';
+import type { ReactChild, ReactElement } from 'react';
 
 import './style.scss';
 
@@ -10,6 +10,10 @@ interface Props {
 }
 
 export default function PluginRowFormatter( { item, columnKey }: Props ): ReactElement | any {
+	const PluginDetailsButton = ( props: { className: string; children: ReactChild } ) => {
+		return <Button borderless compact href={ `/plugins/${ item.slug }` } { ...props } />;
+	};
+
 	switch ( columnKey ) {
 		case 'plugin':
 			return (
@@ -23,20 +27,17 @@ export default function PluginRowFormatter( { item, columnKey }: Props ): ReactE
 					) : (
 						<Gridicon className="plugin-row-formatter__plugin-icon has-opacity" icon="plugins" />
 					) }
-					<span className="plugin-row-formatter__plugin-name">{ item.name }</span>
+					<PluginDetailsButton className="plugin-row-formatter__plugin-name">
+						{ item.name }
+					</PluginDetailsButton>
 					<span className="plugin-row-formatter__overlay"></span>
 				</span>
 			);
 		case 'sites':
 			return (
-				<Button
-					className="plugin-row-formatter__sites-count-button"
-					borderless
-					compact
-					href={ `/plugins/${ item.slug }` }
-				>
+				<PluginDetailsButton className="plugin-row-formatter__sites-count-button">
 					{ Object.keys( item.sites ).length }
-				</Button>
+				</PluginDetailsButton>
 			);
 	}
 }

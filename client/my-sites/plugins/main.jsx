@@ -470,7 +470,7 @@ export class PluginsMain extends Component {
 													selectedSite: this.props.selectedSite.domain,
 												},
 										  } )
-										: this.props.translate( 'All sites' ) }
+										: this.props.translate( 'Manage plugins installed on all sites' ) }
 								</div>
 							</div>
 						) }
