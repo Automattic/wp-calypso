@@ -24,7 +24,9 @@ class Help_Center {
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
-		add_action( 'admin_head', array( $this, 'admin_bar_menu' ), 110 );
+		// Crazy high number inorder to prevent Jetpack removing it
+		// https://github.com/Automattic/jetpack/blob/30213ee594cd06ca27199f73b2658236fda24622/projects/plugins/jetpack/modules/masterbar/masterbar/class-masterbar.php#L196.
+		add_action( 'wp_before_admin_bar_render', array( $this, 'admin_bar_menu' ), 100000 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_script' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wp_components_styles' ), 100 );
 	}
@@ -57,10 +59,13 @@ class Help_Center {
 	 * Enqueue wp-component styles because they're not enqueued in wp-admin outside of the editor
 	 */
 	public function enqueue_wp_components_styles() {
+		$asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
+		$version    = $asset_file['version'];
+
 		if ( function_exists( 'gutenberg_url' ) ) {
 			wp_enqueue_style(
 				'wp-components',
-				gutenberg_url( 'build/components/style'. ( is_rtl() ? '.rtl.css' : '.css' )),
+				gutenberg_url( 'build/components/style' . ( is_rtl() ? '.rtl.css' : '.css' ) ),
 				array( 'dashicons' ),
 				$version
 			);
@@ -95,20 +100,18 @@ class Help_Center {
 			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
 		);
 
-		// Adds feature flags for development.
 		wp_add_inline_script(
 			'help-center-script',
-			'const helpCenterFeatureFlags = ' . wp_json_encode(
-				array(
-					'loadNextStepsTutorial' => self::is_next_steps_tutorial_enabled(),
-				)
+			'helpCenterFeatureFlags',
+			array(
+				'loadNextStepsTutorial' => self::is_next_steps_tutorial_enabled(),
 			),
 			'before'
 		);
 
 		wp_localize_script(
 			'help-center-script',
-			'helpCenter',
+			'helpCenterData',
 			array(
 				'currentSiteId' => get_current_blog_id(),
 			)
@@ -156,7 +159,7 @@ class Help_Center {
 
 		$wp_admin_bar->add_menu(
 			array(
-				'id'     => 'help',
+				'id'     => 'help-center',
 				'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 				'parent' => 'top-secondary',
 				'meta'   => array(

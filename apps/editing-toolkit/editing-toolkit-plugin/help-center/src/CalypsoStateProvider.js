@@ -37,10 +37,10 @@ const store = createStore(
 
 setStore( store );
 
-const helpCenter = window.helpCenter;
+const helpCenterData = window.helpCenterData;
 
 store.dispatch( setSection( { name: 'gutenberg-editor' } ) );
-store.dispatch( setSelectedSiteId( helpCenter.currentSiteId ) );
+store.dispatch( setSelectedSiteId( helpCenterData.currentSiteId ) );
 i18n.configure( { defaultLocaleSlug: window.helpCenterLocale } );
 
 rawCurrentUserFetch()
@@ -56,7 +56,7 @@ export default function CalypsoStateProvider( { children } ) {
 	return (
 		<Provider store={ store }>
 			<>
-				<QuerySites siteId={ helpCenter.currentSiteId } />
+				<QuerySites siteId={ helpCenterData.currentSiteId } />
 				{ children }
 			</>
 		</Provider>
