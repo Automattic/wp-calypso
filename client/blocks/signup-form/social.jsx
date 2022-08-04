@@ -37,15 +37,7 @@ class SocialSignupForm extends Component {
 		this.props.handleResponse( 'apple', null, response.id_token, extraUserData );
 	};
 
-	handleGoogleResponse = ( response, triggeredByUser = true ) => {
-		const tokens = config.isEnabled( 'migration/sign-in-with-google' )
-			? response // The `response` object itself holds the tokens, no need for any other method calls.
-			: response.getAuthResponse?.();
-
-		if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
-			return;
-		}
-
+	handleGoogleResponse = ( tokens, triggeredByUser = true ) => {
 		if ( ! triggeredByUser && this.props.socialService !== 'google' ) {
 			return;
 		}
