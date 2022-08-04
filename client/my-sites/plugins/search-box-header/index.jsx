@@ -1,6 +1,7 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
+import { useCurrentRoute } from 'calypso/components/route';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
@@ -31,6 +32,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef, isSearching 
 
 const SearchLink = ( { searchTerm, currentTerm, onSelect } ) => {
 	const classes = [ 'search-box-header__recommended-searches-list-item' ];
+	const route = useCurrentRoute();
 
 	if ( searchTerm === currentTerm ) {
 		classes.push( 'search-box-header__recommended-searches-list-item-selected' );
@@ -40,7 +42,7 @@ const SearchLink = ( { searchTerm, currentTerm, onSelect } ) => {
 
 	return (
 		<a
-			href={ `/plugins?s=${ searchTerm }` }
+			href={ `${ route.currentRoute }?s=${ searchTerm }` }
 			className={ classes.join( ' ' ) }
 			onClick={ onSelect }
 			onKeyPress={ onSelect }
