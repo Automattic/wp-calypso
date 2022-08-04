@@ -87,14 +87,14 @@
 			@include break-medium {
 				grid-template-columns: 1fr 1fr;
 				column-gap: 24px;
-				row-gap: 40px;
+				row-gap: 20px;
 			}
 		}
 
 		.design-picker__grid-minimal {
 			display: grid;
 			grid-template-columns: 1fr;
-			row-gap: 48px;
+			row-gap: 28px;
 			margin: 0 0 30px;
 
 			@include break-medium {
@@ -231,8 +231,6 @@
 	.design-picker__pricing-description {
 		text-align: left;
 		color: #50575e;
-		z-index: 1;
-		position: absolute;
 	}
 
 
@@ -388,7 +386,6 @@
 	}
 	.design-picker__grid {
 		@supports ( display: grid ) {
-			row-gap: 40px;
 			@include break-medium {
 				grid-template-columns: 1fr 1fr 1fr;
 				column-gap: 24px;
@@ -445,7 +442,6 @@
 			@include break-medium {
 				grid-template-columns: 1fr;
 				column-gap: 24px;
-				row-gap: 40px;
 			}
 
 			@include break-large {
