@@ -1,8 +1,6 @@
 import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import { SitesCountBadge } from './sites-count-badge';
-import type { SitesTableTab } from './sites-table-tab-panel';
 // eslint-disable-next-line no-restricted-imports
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -11,10 +9,15 @@ interface SitesTableFilterOptions {
 	search?: string;
 }
 
+interface Status {
+	title: React.ReactChild;
+	name: string;
+	count: number;
+}
+
 interface UseSitesTableFilteringResult {
 	filteredSites: SiteExcerptData[];
-	tabs: SitesTableTab[];
-	selectedTabHasSites: boolean;
+	statuses: Status[];
 }
 
 export function useSitesTableFiltering(
@@ -23,42 +26,33 @@ export function useSitesTableFiltering(
 ): UseSitesTableFilteringResult {
 	const { __ } = useI18n();
 
+	const [ statuses, filteredByStatus ] = useMemo( () => {
+		const statuses = [
+			{ name: 'all', title: __( 'All Sites' ), count: 0 },
+			{ name: 'launched', title: __( 'Launched' ), count: 0 },
+			{ name: 'private', title: __( 'Private' ), count: 0 },
+			{ name: 'coming-soon', title: __( 'Coming Soon' ), count: 0 },
+		];
+
+		const filteredByStatus = statuses.reduce(
+			( acc, { name } ) => ( { ...acc, [ name ]: filterSites( allSites, name ) } ),
+			{} as { [ name: string ]: SiteExcerptData[] }
+		);
+
+		for ( const status of statuses ) {
+			status.count = filteredByStatus[ status.name ].length;
+		}
+
+		return [ statuses, filteredByStatus ];
+	}, [ allSites, __ ] );
+
 	const filteredSites = useFuzzySearch( {
-		data: allSites,
+		data: filteredByStatus[ status ],
 		keys: [ 'URL', 'name', 'slug' ],
 		query: search,
 	} );
 
-	const [ tabs, filteredByStatus ] = useMemo( () => {
-		const tabs: SitesTableTab[] = [
-			{ name: 'all', title: __( 'All' ) },
-			{ name: 'launched', title: __( 'Launched' ) },
-			{ name: 'private', title: __( 'Private' ) },
-			{ name: 'coming-soon', title: __( 'Coming soon' ) },
-		];
-
-		const filteredByStatus = tabs.reduce(
-			( acc, { name } ) => ( { ...acc, [ name ]: filterSites( filteredSites, name ) } ),
-			{} as { [ name: string ]: SiteExcerptData[] }
-		);
-
-		for ( const tab of tabs ) {
-			tab.title = (
-				<>
-					{ tab.title } <SitesCountBadge>{ filteredByStatus[ tab.name ].length }</SitesCountBadge>
-				</>
-			);
-		}
-
-		return [ tabs, filteredByStatus ];
-	}, [ filteredSites, __ ] );
-
-	// If there are no sites, we need to know whether that's due to
-	// there being no sites in the selected tab or because the search has
-	// found no sites.
-	const selectedTabHasSites = !! filterSites( allSites, status ).length;
-
-	return { filteredSites: filteredByStatus[ status ], tabs, selectedTabHasSites };
+	return { filteredSites, statuses };
 }
 
 function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {
