@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Title, SubTitle, NextButton, SkipButton } from '@automattic/onboarding';
+import { Title, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -10,7 +10,6 @@ import React, { ChangeEvent, FormEvent, FunctionComponent, useState } from 'reac
 import './style.scss';
 
 interface Props {
-	showTitle?: boolean;
 	showTitleEmoji?: boolean;
 	showSkipBtn?: boolean;
 	onSkipBtnClick?: () => void;
@@ -18,7 +17,7 @@ interface Props {
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const __ = useTranslate();
-	const { showTitle, showTitleEmoji, showSkipBtn, onSkipBtnClick } = props;
+	const { showTitleEmoji, showSkipBtn, onSkipBtnClick } = props;
 
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ emails, setEmails ] = useState< string[] >( [] );
@@ -58,8 +57,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			<Notice isDismissible={ false }>You have 1 email list importing...</Notice>
 			<div className={ 'add-subscriber__title-container' }>
 				{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
-				{ showTitle && <Title>Add subscribers</Title> }
-				<SubTitle>You can invite some people to your list.</SubTitle>
+				<Title>Add subscribers to build your audience</Title>
 			</div>
 			<div className={ 'add-subscriber__form--container' }>
 				<form onSubmit={ onFormSubmit }>
