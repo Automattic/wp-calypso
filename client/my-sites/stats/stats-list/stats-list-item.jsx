@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -14,9 +15,11 @@ import { recordTrack } from 'calypso/reader/stats';
 import Follow from './action-follow';
 import OpenLink from './action-link';
 import Page from './action-page';
+import Promote from './action-promote';
 import Spam from './action-spam';
 
 const debug = debugFactory( 'calypso:stats:list-item' );
+const showPromotePost = config.isEnabled( 'promote-post' );
 
 class StatsListItem extends Component {
 	static displayName = 'StatsListItem';
@@ -170,6 +173,12 @@ class StatsListItem extends Component {
 					actionItems.push( actionItem );
 				}
 			}, this );
+
+			if ( showPromotePost ) {
+				actionItems.push(
+					<Promote postId={ data.id } key={ 'promote-post-' + data.id } moduleName={ moduleName } />
+				);
+			}
 
 			if ( actionItems.length > 0 ) {
 				actionList = <ul className={ actionClassSet }>{ actionItems }</ul>;

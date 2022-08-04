@@ -103,6 +103,15 @@
 	}
 }
 
+.plugin-details-CTA__container-header {
+	display: flex;
+	justify-content: space-between;
+}
+
+.plugin-details-CTA__manage-plugin-menu {
+	margin-top: -12px;
+}
+
 .plugin-details-CTA__installed-text {
 	color: var( --studio-gray-100 );
 	font-size: $font-body;
@@ -118,6 +127,18 @@
 
 	.plugin-details-CTA__installed-text-inactive {
 		color: var( --studio-red-60 );
+	}
+}
+
+.plugin-details-CTA__autoupdate-text {
+	font-size: $font-body-extra-small;
+
+	.plugin-details-CTA__autoupdate-text-main {
+		color: var( --studio-gray-100 );
+	}
+
+	.plugin-details-CTA__autoupdate-text-version {
+		color: var( --studio-gray-60 );
 	}
 }
 

@@ -1,54 +1,63 @@
-import { shallow } from 'enzyme';
+/** @jest-environment jsdom */
+import { render, screen } from '@testing-library/react';
 import PurchaseDetail from '..';
 import PurchaseButton from '../purchase-button';
 import TipInfo from '../tip-info';
 
+jest.mock( '../tip-info', () => jest.fn( () => <div data-testid="tip-info" /> ) );
+jest.mock( '../purchase-button', () => jest.fn( () => <div data-testid="purchase-button" /> ) );
+
 const noop = () => {};
 
 describe( 'PurchaseDetail', () => {
-	let wrapper;
-
 	test( 'should be a placeholder if in need', () => {
-		wrapper = shallow( <PurchaseDetail /> );
-		expect( wrapper.hasClass( 'is-placeholder' ) ).toBe( false );
+		const { container, rerender } = render( <PurchaseDetail /> );
+		expect( container.firstChild ).not.toHaveClass( 'is-placeholder' );
 
-		wrapper = shallow( <PurchaseDetail isPlaceholder={ true } /> );
-		expect( wrapper.hasClass( 'is-placeholder' ) ).toBe( true );
+		rerender( <PurchaseDetail isPlaceholder /> );
+		expect( container.firstChild ).toHaveClass( 'is-placeholder' );
 	} );
 
 	test( 'should render given title and description', () => {
-		wrapper = shallow( <PurchaseDetail title="test:title" description="test:description" /> );
-		expect( wrapper.find( '.purchase-detail__title' ).props().children ).toEqual( 'test:title' );
-		expect( wrapper.find( '.purchase-detail__description' ).props().children ).toEqual(
-			'test:description'
-		);
+		render( <PurchaseDetail title="test:title" description="test:description" /> );
+
+		const title = screen.queryByText( 'test:title' );
+		expect( title ).toBeVisible();
+		expect( title ).toHaveClass( 'purchase-detail__title' );
+
+		const description = screen.queryByText( 'test:description' );
+		expect( description ).toBeVisible();
+		expect( description ).toHaveClass( 'purchase-detail__description' );
 	} );
 
 	test( 'should render given notice text', () => {
-		wrapper = shallow( <PurchaseDetail requiredText="test:notice" /> );
+		render( <PurchaseDetail requiredText="test:notice" /> );
 
-		const notice = wrapper.find( '.purchase-detail__required-notice > em' );
-		expect( notice ).toHaveLength( 1 );
-		expect( notice.props().children ).toEqual( 'test:notice' );
+		const notice = screen.queryByText( 'test:notice' );
+		expect( notice ).toBeVisible();
+		expect( notice.parentNode ).toHaveClass( 'purchase-detail__required-notice' );
 	} );
 
 	test( 'should render given body text', () => {
-		wrapper = shallow( <PurchaseDetail body="test:body" /> );
+		render( <PurchaseDetail body="test:body" /> );
 
-		const body = wrapper.find( '.purchase-detail__body' );
-		expect( body ).toHaveLength( 1 );
-		expect( body.props().children ).toEqual( 'test:body' );
+		const body = screen.queryByText( 'test:body' );
+		expect( body ).toBeVisible();
+		expect( body ).toHaveClass( 'purchase-detail__body' );
 	} );
 
 	test( 'should render a <TipInfo /> with given tip info unless the body text is passed', () => {
-		wrapper = shallow( <PurchaseDetail info="test:tip-info" /> );
+		const { rerender } = render( <PurchaseDetail info="test:tip-info" /> );
 
-		const tipInfo = wrapper.find( TipInfo );
-		expect( tipInfo ).toHaveLength( 1 );
-		expect( tipInfo.prop( 'info' ) ).toEqual( 'test:tip-info' );
+		const tipInfo = screen.queryByTestId( 'tip-info' );
+		expect( tipInfo ).toBeVisible();
+		expect( TipInfo ).toHaveBeenCalledWith(
+			expect.objectContaining( { info: 'test:tip-info' } ),
+			expect.anything()
+		);
 
-		wrapper = shallow( <PurchaseDetail info="test:tip-info" body="test:body" /> );
-		expect( wrapper.find( TipInfo ) ).toHaveLength( 0 );
+		rerender( <PurchaseDetail info="test:tip-info" body="test:body" /> );
+		expect( screen.queryByTestId( 'tip-info' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render a <PurchaseButton> with given info unless the body text is passed', () => {
@@ -61,18 +70,24 @@ describe( 'PurchaseDetail', () => {
 			buttonText: 'test:button-text',
 		};
 
-		wrapper = shallow( <PurchaseDetail { ...buttonProps } /> );
+		const { rerender } = render( <PurchaseDetail { ...buttonProps } /> );
 
-		const purchaseButton = wrapper.find( PurchaseButton );
-		expect( purchaseButton ).toHaveLength( 1 );
-		expect( purchaseButton.prop( 'disabled' ) ).toBe( false );
-		expect( purchaseButton.prop( 'href' ) ).toEqual( 'https://wordpress.com/test/url' );
-		expect( purchaseButton.prop( 'onClick' ) ).toEqual( noop );
-		expect( purchaseButton.prop( 'target' ) ).toEqual( 'test:target' );
-		expect( purchaseButton.prop( 'rel' ) ).toEqual( 'test:rel' );
-		expect( purchaseButton.prop( 'text' ) ).toEqual( buttonProps.buttonText );
+		const purchaseButton = screen.queryByTestId( 'purchase-button' );
+		expect( purchaseButton ).toBeVisible();
 
-		wrapper = shallow( <PurchaseDetail { ...buttonProps } body="test:body" /> );
-		expect( wrapper.find( PurchaseButton ) ).toHaveLength( 0 );
+		expect( PurchaseButton ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				disabled: false,
+				href: 'https://wordpress.com/test/url',
+				onClick: noop,
+				target: 'test:target',
+				rel: 'test:rel',
+				text: buttonProps.buttonText,
+			} ),
+			expect.anything()
+		);
+
+		rerender( <PurchaseDetail { ...buttonProps } body="test:body" /> );
+		expect( screen.queryByTestId( 'purchase-button' ) ).not.toBeInTheDocument();
 	} );
 } );

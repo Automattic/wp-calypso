@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 declare global {
 	interface Window {
@@ -47,4 +48,20 @@ export async function showDSPWidgetModal( siteId: number, postId?: number ) {
 			urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 		} );
 	}
+}
+
+/**
+ * Add tracking when launching the DSP widget, in both tracks event and MC stats.
+ *
+ * @param {string} entryPoint - A slug describing the entry point.
+ */
+export function recordDSPEntryPoint( entryPoint: string ) {
+	const eventProps = {
+		entry_point: entryPoint,
+	};
+
+	return composeAnalytics(
+		recordTracksEvent( 'calypso_dsp_widget_start', eventProps ),
+		bumpStat( 'calypso_dsp_widget_start', entryPoint )
+	);
 }

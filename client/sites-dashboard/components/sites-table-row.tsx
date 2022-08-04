@@ -1,12 +1,11 @@
 import { ListTile } from '@automattic/components';
-import { ClassNames, css } from '@emotion/react';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import SiteIcon from 'calypso/blocks/site-icon';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import TimeSince from 'calypso/components/time-since';
-import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -46,7 +45,7 @@ const SiteName = styled.a`
 	white-space: nowrap;
 	margin-right: 8px;
 	font-weight: 500;
-	font-size: 16px;
+	font-size: 14px;
 	letter-spacing: -0.4px;
 
 	&:hover {
@@ -123,60 +122,56 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 	const isP2Site = site.options?.is_wpforteams_site;
 
-	const displayStatusBadge = isComingSoon || site.is_private;
+	let siteStatusLabel = __( 'Live' );
+
+	if ( isComingSoon ) {
+		siteStatusLabel = __( 'Coming soon' );
+	} else if ( site.is_private ) {
+		siteStatusLabel = __( 'Private' );
+	}
 
 	return (
-		<ClassNames>
-			{ ( { css } ) => (
-				<Row>
-					<Column>
-						<SiteListTile
-							contentClassName={ css`
-								min-width: 0;
-							` }
-							leading={
-								<ListTileLeading
-									href={ getDashboardUrl( site.slug ) }
-									title={ __( 'Visit Dashboard' ) }
-								>
-									<SiteIcon siteId={ site.ID } size={ 50 } />
-								</ListTileLeading>
-							}
-							title={
-								<ListTileTitle>
-									<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
-										{ site.name ? site.name : __( '(No Site Title)' ) }
-									</SiteName>
-									{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-								</ListTileTitle>
-							}
-							subtitle={
-								<ListTileSubtitle>
-									{ displayStatusBadge && (
-										<div style={ { marginRight: '8px' } }>
-											<SitesLaunchStatusBadge>
-												{ isComingSoon ? __( 'Coming soon' ) : __( 'Private' ) }
-											</SitesLaunchStatusBadge>
-										</div>
-									) }
-									<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
-										{ displaySiteUrl( site.URL ) }
-									</SiteUrl>
-								</ListTileSubtitle>
-							}
-						/>
-					</Column>
-					<Column mobileHidden>{ site.plan.product_name_short }</Column>
-					<Column mobileHidden>
-						{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
-					</Column>
-					<Column style={ { width: '20px' } }>
-						<EllipsisMenu>
-							<VisitDashboardItem site={ site } />
-						</EllipsisMenu>
-					</Column>
-				</Row>
-			) }
-		</ClassNames>
+		<Row>
+			<Column>
+				<SiteListTile
+					contentClassName={ css`
+						min-width: 0;
+					` }
+					leading={
+						<ListTileLeading
+							href={ getDashboardUrl( site.slug ) }
+							title={ __( 'Visit Dashboard' ) }
+						>
+							<SiteIcon siteId={ site.ID } size={ 50 } />
+						</ListTileLeading>
+					}
+					title={
+						<ListTileTitle>
+							<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
+								{ site.name ? site.name : __( '(No Site Title)' ) }
+							</SiteName>
+							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
+						</ListTileTitle>
+					}
+					subtitle={
+						<ListTileSubtitle>
+							<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
+								{ displaySiteUrl( site.URL ) }
+							</SiteUrl>
+						</ListTileSubtitle>
+					}
+				/>
+			</Column>
+			<Column mobileHidden>{ site.plan.product_name_short }</Column>
+			<Column mobileHidden>
+				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
+			</Column>
+			<Column mobileHidden>{ siteStatusLabel }</Column>
+			<Column style={ { width: '20px' } }>
+				<EllipsisMenu>
+					<VisitDashboardItem site={ site } />
+				</EllipsisMenu>
+			</Column>
+		</Row>
 	);
 }

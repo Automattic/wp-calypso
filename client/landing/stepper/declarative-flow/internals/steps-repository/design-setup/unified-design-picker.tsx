@@ -79,6 +79,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
 			vertical_id: siteVerticalId,
+			intent,
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
 		},
@@ -265,7 +266,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
-			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
+			vertical_id:
+				selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
+					? siteVerticalId
+					: undefined,
 		} );
 
 		const stepContent = (

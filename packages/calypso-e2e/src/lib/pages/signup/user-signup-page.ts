@@ -1,7 +1,7 @@
 import { Page } from 'playwright';
-import { getCalypsoURL } from '../../data-helper';
-import envVariables from '../../env-variables';
-import type { NewUserResponse } from '../../types/rest-api-client.types';
+import { getCalypsoURL } from '../../../data-helper';
+import envVariables from '../../../env-variables';
+import type { NewUserResponse } from '../../../types/rest-api-client.types';
 
 const selectors = {
 	// Fields
