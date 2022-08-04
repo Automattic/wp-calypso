@@ -12,12 +12,13 @@ import './style.scss';
 interface Props {
 	showTitleEmoji?: boolean;
 	showSkipBtn?: boolean;
+	submitBtnName?: string;
 	onSkipBtnClick?: () => void;
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const __ = useTranslate();
-	const { showTitleEmoji, showSkipBtn, onSkipBtnClick } = props;
+	const { showTitleEmoji, showSkipBtn, submitBtnName, onSkipBtnClick } = props;
 
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ emails, setEmails ] = useState< string[] >( [] );
@@ -114,7 +115,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					) }
 
 					<NextButton type={ 'submit' } className={ 'add-subscriber__form-submit-btn' }>
-						Add subscribers
+						{ submitBtnName || 'Add subscribers' }
 					</NextButton>
 					{ showSkipBtn && (
 						<SkipButton
