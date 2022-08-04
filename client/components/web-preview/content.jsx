@@ -1,4 +1,4 @@
-import { isWithinBreakpoint } from '@automattic/viewport';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import page from 'page';
@@ -30,6 +30,7 @@ export default class WebPreviewContent extends Component {
 		iframeScaleRatio: 1,
 		loaded: false,
 		isLoadingSubpage: false,
+		isMobile: isWithinBreakpoint( '<660px' ),
 	};
 
 	setIframeInstance = ( ref ) => {
@@ -50,11 +51,16 @@ export default class WebPreviewContent extends Component {
 		}
 
 		this.props.onDeviceUpdate( this.state.device );
+
+		this.unsubscribeMobileBreakpoint = subscribeIsWithinBreakpoint( '<660px', ( isMobile ) => {
+			this.setState( { isMobile } );
+		} );
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'message', this.handleMessage );
 		window.removeEventListener( 'resize', this.handleResize );
+		this.unsubscribeMobileBreakpoint();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -128,7 +134,9 @@ export default class WebPreviewContent extends Component {
 				return;
 			case 'page-dimensions-on-load':
 			case 'page-dimensions-on-resize':
-				this.setState( { viewport: data.payload } );
+				if ( this.props.autoHeight || this.props.fixedViewportWidth ) {
+					this.setState( { viewport: data.payload } );
+				}
 				return;
 		}
 	};
@@ -347,7 +355,7 @@ export default class WebPreviewContent extends Component {
 					{ ...this.props }
 					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
 					showEditHeaderLink={ this.props.showEditHeaderLink }
-					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
+					showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this.state.isMobile }
 					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
