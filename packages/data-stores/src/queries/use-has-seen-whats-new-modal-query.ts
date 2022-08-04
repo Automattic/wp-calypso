@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { useCallback } from 'react';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import wpcomRequest, { shouldTargetWpcom } from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 interface HasSeenWhatsNewModal {
 	hasSeenWhatsNewModal: boolean;
@@ -21,13 +21,13 @@ interface APIFetchOptions {
 	path: string;
 }
 
-export const useHasSeenWhatsNewModalQuery = ( siteId: number | null, isSimpleSite: boolean ) => {
+export const useHasSeenWhatsNewModalQuery = ( siteId: number | null ) => {
 	const queryKey = 'has-seen-whats-new-modal';
 
 	const { data, isLoading } = useQuery< { has_seen_whats_new_modal: boolean } >(
 		queryKey,
 		() =>
-			shouldTargetWpcom( isSimpleSite )
+			canAccessWpcomApis()
 				? wpcomRequest( {
 						path: `/block-editor/has-seen-whats-new-modal`,
 						apiNamespace: 'wpcom/v2',
@@ -45,7 +45,7 @@ export const useHasSeenWhatsNewModalQuery = ( siteId: number | null, isSimpleSit
 	const queryClient = useQueryClient();
 	const mutation = useMutation< HasSeenWhatsNewModalResult, UpdateError, HasSeenWhatsNewModal >(
 		( { hasSeenWhatsNewModal } ) =>
-			shouldTargetWpcom( isSimpleSite )
+			canAccessWpcomApis()
 				? wpcomRequest( {
 						path: `/block-editor/has-seen-whats-new-modal`,
 						apiNamespace: 'wpcom/v2',

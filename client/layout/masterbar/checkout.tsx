@@ -13,7 +13,6 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';
@@ -40,8 +39,7 @@ const CheckoutMasterbar = ( {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 	const siteId = useSelector( getSelectedSiteId );
-	const isSimpleSite = useSelector( getIsSimpleSite ) || false;
-	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId, isSimpleSite );
+	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
 
 	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
 	const isJetpack = isJetpackCheckout || isJetpackNotAtomic;

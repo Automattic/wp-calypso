@@ -9,14 +9,11 @@ import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { useState } from 'react';
 import { QueryClientProvider } from 'react-query';
-import { useSelector } from 'react-redux';
-import { getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 
 function WhatsNewMenuItem() {
 	const [ showGuide, setShowGuide ] = useState( false );
 	const { setHasSeenWhatsNewModal } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
-	const isSimpleSite = useSelector( getIsSimpleSite );
 
 	const openWhatsNew = () => {
 		setHasSeenWhatsNewModal( true ).finally( () => setShowGuide( true ) );
@@ -35,7 +32,7 @@ function WhatsNewMenuItem() {
 			<Fill name="ToolsMoreMenuGroup">
 				<MenuItem onClick={ openWhatsNew }>{ __( "What's new", 'full-site-editing' ) }</MenuItem>
 			</Fill>
-			{ showGuide && <WhatsNewGuide onClose={ closeWhatsNew } isSimpleSite={ isSimpleSite } /> }
+			{ showGuide && <WhatsNewGuide onClose={ closeWhatsNew } /> }
 		</>
 	);
 }

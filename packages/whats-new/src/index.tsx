@@ -2,14 +2,13 @@
 import { useLocale } from '@automattic/i18n-utils';
 import apiFetch from '@wordpress/api-fetch';
 import { useQuery } from 'react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import Guide from './components/guide';
 import WhatsNewPage from './whats-new-page';
 import './style.scss';
 
 interface Props {
 	onClose: () => void;
-	isSimpleSite?: boolean;
 }
 
 interface WhatsNewAnnouncement {
@@ -27,13 +26,13 @@ interface APIFetchOptions {
 	path: string;
 }
 
-const WhatsNewGuide: React.FC< Props > = ( { onClose, isSimpleSite = false } ) => {
+const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 	const locale = useLocale();
 
 	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >(
 		'WhatsNewAnnouncements',
 		async () =>
-			isSimpleSite
+			canAccessWpcomApis()
 				? await wpcomRequest( {
 						path: `/whats-new/list?_locale=${ locale }`,
 						apiNamespace: 'wpcom/v2',

@@ -541,12 +541,12 @@ function isAllowedOrigin( urlOrigin ) {
 	);
 }
 
-function shouldTargetWpcom( isSimpleSite ) {
-	return isSimpleSite || isAllowedOrigin( window.location.origin );
+function canAccessWpcomApis() {
+	return isAllowedOrigin( window.location.origin );
 }
 
 /**
  * Export `request` function.
  */
 export default request;
-export { reloadProxy, shouldTargetWpcom };
+export { reloadProxy, canAccessWpcomApis };
