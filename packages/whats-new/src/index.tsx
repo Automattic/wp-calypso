@@ -1,4 +1,6 @@
+/* eslint-disable no-restricted-imports */
 import { useLocale } from '@automattic/i18n-utils';
+import apiFetch from '@wordpress/api-fetch';
 import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import Guide from './components/guide';
@@ -7,6 +9,7 @@ import './style.scss';
 
 interface Props {
 	onClose: () => void;
+	isSimpleSite?: boolean;
 }
 
 interface WhatsNewAnnouncement {
@@ -19,16 +22,26 @@ interface WhatsNewAnnouncement {
 	responseLocale: string;
 }
 
-const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
+interface APIFetchOptions {
+	global: boolean;
+	path: string;
+}
+
+const WhatsNewGuide: React.FC< Props > = ( { onClose, isSimpleSite = false } ) => {
 	const locale = useLocale();
 
 	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >(
 		'WhatsNewAnnouncements',
 		async () =>
-			await wpcomRequest( {
-				path: `/whats-new/list?_locale=${ locale }`,
-				apiNamespace: 'wpcom/v2',
-			} ),
+			isSimpleSite
+				? await wpcomRequest( {
+						path: `/whats-new/list?_locale=${ locale }`,
+						apiNamespace: 'wpcom/v2',
+				  } )
+				: await apiFetch( {
+						global: true,
+						path: `/wpcom/v2/block-editor/whats-new-list`,
+				  } as APIFetchOptions ),
 		{
 			refetchOnWindowFocus: false,
 		}
