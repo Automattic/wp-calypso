@@ -1,9 +1,4 @@
-import {
-	Button,
-	Gridicon,
-	useSitesTableFiltering,
-	useSitesTableSorting,
-} from '@automattic/components';
+import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -106,8 +101,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 				<HeaderControls>
 					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
 					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
-						<Gridicon icon="plus" />
-						<span>{ __( 'New site' ) }</span>
+						<span>{ __( 'Add new site' ) }</span>
 					</Button>
 				</HeaderControls>
 			</PageHeader>
