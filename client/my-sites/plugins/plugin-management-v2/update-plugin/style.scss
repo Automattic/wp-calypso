@@ -1,10 +1,18 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .update-plugin__badge {
 	font-size: 0.75rem !important;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	vertical-align: middle;
-	max-width: fit-content;
+	@include break-xlarge() {
+		max-width: 70px;
+	}
+	@include break-huge() {
+		max-width: 80px;
+	}
 }
 a.button.update-plugin__plugin-update-button {
 	color: var( --color-primary-80 );

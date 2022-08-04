@@ -22,15 +22,12 @@
 	td {
 		font-size: 0.875rem;
 		height: 50px;
-		width: 162px;
+		width: 175px;
 		box-sizing: border-box;
 		&:nth-child( 1 ) {
 			max-width: 200px;
 			@include break-wide() {
 				max-width: 300px;
-			}
-			@include break-huge() {
-				max-width: 350px;
 			}
 		}
 		a {
@@ -78,6 +75,12 @@ td.plugins-table__actions {
 }
 .plugins-table__small-column {
 	max-width: 100px;
+	@include break-wide() {
+		max-width: 120px;
+	}
+	@include break-huge() {
+		max-width: 150px;
+	}
 }
 .components-form-toggle.is-checked .components-form-toggle__track {
 	background-color: var( --studio-jetpack-green-50 );
