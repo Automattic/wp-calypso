@@ -2,6 +2,7 @@
 import { Title, SubTitle, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
@@ -82,22 +83,21 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					/>
 
 					{ selectedFile && (
-						<label>
+						<label className={ 'add-subscriber__form-label-links' }>
 							{ createInterpolateElement(
-								__(
-									'Or bring your mailing list from other newsletters.<selectedFileName /><removeBtn>Remove selected file</removeBtn>'
+								sprintf(
+									/* translators: the first string variable shows a selected file name, Replace and Remove are links" */
+									__(
+										'<strong>%s</strong> <uploadBtn>Replace</uploadBtn> | <removeBtn>Remove</removeBtn>'
+									),
+									selectedFile?.name
 								),
 								{
+									strong: createElement( 'strong' ),
+									uploadBtn: formFileUploadElement,
 									removeBtn: createElement( Button, {
+										isLink: true,
 										onClick: () => setSelectedFile( undefined ),
-									} ),
-									selectedFileName: createElement( TextControl, {
-										onChange: () => undefined,
-										disabled: true,
-										value: selectedFile?.name,
-										help: createElement( Icon, {
-											icon: check,
-										} ),
 									} ),
 								}
 							) }
@@ -108,7 +108,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						<label>
 							{ createInterpolateElement(
 								__(
-									'Or bring your mailing list from other newsletters by <uploadBtn>uploading a CSV file.</uploadBtn>'
+									'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
 								),
 								{ uploadBtn: formFileUploadElement }
 							) }

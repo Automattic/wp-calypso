@@ -37,7 +37,7 @@
 		width: 100%;
 		font-size: 0.875rem;
 		line-height: 1.25rem;
-		margin: 1.5rem 0;
+		margin: 0.75rem 0 1.5rem;
 
 		.components-base-control__field {
 			margin: 0.5rem auto;
@@ -49,6 +49,12 @@
 			font-size: 1em; /* stylelint-disable-line */
 			color: var( --color-text );
 			text-decoration: underline;
+		}
+
+		&.add-subscriber__form-label-links {
+			.components-button {
+				margin: 0 0.2rem;
+			}
 		}
 	}
 
