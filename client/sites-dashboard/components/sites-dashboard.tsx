@@ -1,7 +1,6 @@
 import {
 	Button,
 	Gridicon,
-	SitesTableTabPanel,
 	useSitesTableFiltering,
 	useSitesTableSorting,
 } from '@automattic/components';
@@ -10,6 +9,7 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
 import { SitesSearch } from './sites-search';
@@ -44,15 +44,15 @@ const PageHeader = styled.div`
 	${ pagePadding }
 
 	background-color: var( --studio-white );
-	padding-top: 32px;
+	padding-top: 24px;
+	padding-bottom: 24px;
 	box-shadow: inset 0px -1px 0px rgba( 0, 0, 0, 0.05 );
-
-	// Leave enough space for the height of the TabPanel buttons (48px)
-	padding-bottom: calc( 19px + 48px );
 `;
 
 const PageBodyWrapper = styled.div`
 	${ pagePadding }
+	max-width: ${ MAX_PAGE_WIDTH };
+	margin: 0 auto;
 `;
 
 const HeaderControls = styled.div`
@@ -71,19 +71,19 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-const PositionedFilterTabs = styled( SitesTableTabPanel )`
-	${ wideCentered }
-	position: relative;
-	top: -48px;
-`;
-
 const SearchWrapper = styled.div`
-	margin: 32px 0;
-	width: 286px;
+	width: 390px;
 	max-width: 100%;
 `;
 
-export function SitesDashboard( { queryParams: { search, status } }: SitesDashboardProps ) {
+const FilterBar = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 32px 0;
+`;
+
+export function SitesDashboard( { queryParams: { search, status = 'all' } }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 
 	const { data: allSites = [] } = useSiteExcerptsQuery();
@@ -93,12 +93,12 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 		sortOrder: 'desc',
 	} );
 
-	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( sortedSites, {
+	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
 		search,
 		status,
 	} );
 
-	const selectedTabName = tabs.find( ( tab ) => tab.name === status )?.name;
+	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	return (
 		<main>
@@ -112,36 +112,39 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<PositionedFilterTabs
-					tabs={ tabs }
-					initialTabName={ selectedTabName }
-					onSelect={ ( newTab ) =>
-						handleQueryParamChange( 'status', 'all' !== newTab ? newTab : '' )
-					}
-				>
-					{ () =>
-						selectedTabHasSites ? (
-							<>
-								<SearchWrapper>
-									<SitesSearch
-										searchIcon={ <SitesSearchIcon /> }
-										onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
-										isReskinned
-										placeholder={ __( 'Search by name or domain…' ) }
-										defaultValue={ search }
-									/>
-								</SearchWrapper>
-								{ filteredSites.length > 0 ? (
-									<SitesTable sites={ filteredSites } />
-								) : (
-									<h2>{ __( 'No sites match your search.' ) }</h2>
-								) }
-							</>
-						) : (
-							<NoSitesMessage status={ selectedTabName } />
-						)
-					}
-				</PositionedFilterTabs>
+				<>
+					<FilterBar>
+						<SearchWrapper>
+							<SitesSearch
+								searchIcon={ <SitesSearchIcon /> }
+								onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
+								isReskinned
+								placeholder={ __( 'Search by name or domain…' ) }
+								defaultValue={ search }
+							/>
+						</SearchWrapper>
+						<SelectDropdown selectedText={ selectedStatus.title }>
+							{ statuses.map( ( { name, title, count } ) => (
+								<SelectDropdown.Item
+									key={ name }
+									selected={ name === selectedStatus.name }
+									count={ count }
+									onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
+								>
+									{ title }
+								</SelectDropdown.Item>
+							) ) }
+						</SelectDropdown>
+					</FilterBar>
+					{ filteredSites.length > 0 ? (
+						<SitesTable sites={ filteredSites } />
+					) : (
+						<NoSitesMessage
+							status={ selectedStatus.name }
+							statusSiteCount={ selectedStatus.count }
+						/>
+					) }
+				</>
 			</PageBodyWrapper>
 		</main>
 	);
