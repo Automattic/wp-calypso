@@ -1,8 +1,7 @@
-import { shouldTargetWpcom } from '@automattic/help-center';
 import apiFetch from '@wordpress/api-fetch';
 import { useCallback } from 'react';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { shouldTargetWpcom } from 'wpcom-proxy-request';
 
 interface HasSeenWhatsNewModal {
 	hasSeenWhatsNewModal: boolean;

@@ -1,8 +1,7 @@
-import { shouldTargetWpcom } from '@automattic/help-center';
 import apiFetch from '@wordpress/api-fetch';
 import { filter, forEach, compact, partition, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { shouldTargetWpcom } from 'wpcom-proxy-request';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
