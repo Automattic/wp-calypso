@@ -163,9 +163,12 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		}
 		return availableSteps;
 	}, [
+		CANCEL_FLOW_TYPE,
 		flowType,
 		steps,
 		purchase,
+		isPurchaseCancelable,
+		canReenableAutoRenewal,
 		cancellationOffer,
 		shouldProvideCancellationOffer,
 		isOfferPriceSameOrLowerThanPurchasePrice,

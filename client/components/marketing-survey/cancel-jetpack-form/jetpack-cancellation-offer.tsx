@@ -113,7 +113,7 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 				if ( 1 === periods ) {
 					/* Translators: %(discount)d%% is a discount percentage like 15% or 20% */
 					offerHeadline = translate(
-						'Get %(discount)d%% off %(name)s for the next year',
+						'Get %(discount)d%% off %(name)s for the next month',
 						headlineOptions
 					);
 					renewalCopy = translate(
@@ -124,7 +124,7 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 		}
 
 		return { offerHeadline, renewalCopy };
-	}, [ offer, percentDiscount, purchase ] );
+	}, [ offer, percentDiscount, purchase, translate ] );
 
 	return (
 		<>

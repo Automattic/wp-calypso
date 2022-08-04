@@ -10,7 +10,7 @@ export interface CancellationOffer {
 export interface CancellationOfferAPIResponse {
 	currency_code: string;
 	discount_percentage: number;
-	discounted_periods: 1;
+	discounted_periods: number;
 	formatted_price: string;
 	original_price: number;
 	raw_price: number;
