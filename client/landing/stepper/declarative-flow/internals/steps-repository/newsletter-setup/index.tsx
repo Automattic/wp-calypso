@@ -1,18 +1,17 @@
 import { Button, FormInputValidation } from '@automattic/components';
 import { useSiteLogoMutation } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
-import { FormFileUpload } from '@wordpress/components';
+import { ColorPicker } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { Icon, upload } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
 import React, { FormEvent, useEffect } from 'react';
-import ImageEditor from 'calypso/blocks/image-editor';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
@@ -27,15 +26,12 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const site = useSite();
 
 	const [ formTouched, setFormTouched ] = React.useState( false );
-	const [ siteIconUrl, setSiteIconUrl ] = React.useState( '' );
+	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
+	const [ colorAccent, setAccentColor ] = React.useState( '#000000' );
 	const [ url, setUrl ] = React.useState( '' );
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
-	const [ selectedFileUrl, setSelectedFileUrl ] = React.useState< string | undefined >();
-	const [ editingFileName, setEditingFileName ] = React.useState< string >();
-	const [ editingFile, setEditingFile ] = React.useState< string >();
-	const [ imageEditorOpen, setImageEditorOpen ] = React.useState< boolean >( false );
 	const { mutateAsync: setSiteLogo, isLoading: isUploadingIcon } = useSiteLogoMutation( site?.ID );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const isLoading = ! site || isUploadingIcon;
@@ -49,7 +45,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			return;
 		}
 
-		setSiteIconUrl( site.icon?.img || '' );
 		setSiteTitle( site.name || '' );
 		setTagline( site.description );
 		setUrl( new URL( site.URL ).host );
@@ -87,6 +82,8 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					return setSiteTitle( event.currentTarget.value );
 				case 'tagline':
 					return setTagline( event.currentTarget.value );
+				case 'accentColor':
+					return setAccentColor( event.currentTarget.value );
 			}
 		}
 	};
@@ -102,54 +99,21 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	const stepContent = (
 		<>
-			{ site && editingFile && imageEditorOpen && (
-				<ImageEditor
-					className="newsletter-setup__image-editor"
-					siteId={ site.ID }
-					media={ {
-						src: editingFile,
-					} }
-					allowedAspectRatios={ [ 'ASPECT_1X1' ] }
-					onDone={ ( _error: Error | null, image: Blob ) => {
-						setSelectedFile( new File( [ image ], editingFileName || 'site-logo.png' ) );
-						setSelectedFileUrl( URL.createObjectURL( image ) );
-						setImageEditorOpen( false );
-					} }
-					onCancel={ () => {
-						setEditingFile( undefined );
-						setEditingFileName( undefined );
-						setImageEditorOpen( false );
-					} }
-				/>
-			) }
 			<form className="newsletter-setup__form" onSubmit={ onSubmit }>
-				<FormFieldset className="newsletter-setup__publication-icon" disabled={ isLoading }>
-					<FormFileUpload
-						className={ classNames( 'newsletter-setup__publication-button', {
-							'has-icon-or-image': selectedFile || siteIconUrl,
-						} ) }
-						accept=".jpg,.jpeg,.gif,.png"
-						onChange={ ( event ) => {
-							if ( event.target.files?.[ 0 ] ) {
-								setEditingFileName( event.target.files?.[ 0 ].name );
-								setEditingFile( URL.createObjectURL( event.target.files?.[ 0 ] ) );
-								setImageEditorOpen( true );
-								// onChange won't fire if the user picks the same file again
-								// delete the value so users can reselect the same file again
-								event.target.value = '';
-							}
-						} }
-					>
-						{ selectedFileUrl || siteIconUrl ? (
-							<img src={ selectedFileUrl || siteIconUrl } alt={ site?.name } />
-						) : (
-							<Icon icon={ upload } />
-						) }
-						<span>
-							{ selectedFileUrl || siteIconUrl ? __( 'Replace' ) : __( 'Upload publication icon' ) }
-						</span>
-					</FormFileUpload>
-				</FormFieldset>
+				<SiteIconWithPicker
+					site={ site }
+					onSelect={ setSelectedFile }
+					selectedFile={ selectedFile }
+				/>
+				{ colorPickerOpen && (
+					<div className="newsletter-setup__color-picker-backdrop">
+						<ColorPicker
+							disableAlpha
+							color={ colorAccent }
+							onChangeComplete={ ( value ) => setAccentColor( value.hex ) }
+						/>
+					</div>
+				) }
 
 				<FormFieldset disabled={ isLoading }>
 					<FormLabel htmlFor="siteTitle">{ __( 'Publication name*' ) }</FormLabel>
@@ -170,7 +134,17 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 				<FormFieldset disabled={ isLoading }>
 					<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
-					<FormInput value={ '' } name="accentColor" id="accentColor" onChange={ onChange } />
+					<FormTextInputWithAffixes
+						style={ { backgroundColor: colorAccent } }
+						prefix={
+							<span className="newsletter-setup__accent-color-prefix">{ colorAccent }</span>
+						}
+						type="text"
+						name="accentColor"
+						id="accentColor"
+						onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
+						readOnly
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ isLoading }>
