@@ -1,11 +1,33 @@
 import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 class ReskinSideExplainer extends Component {
+	_isMounted = false;
+	constructor( props ) {
+		super( props );
+		this.state = {
+			experiment: null,
+		};
+	}
+	componentDidMount() {
+		this._isMounted = true;
+
+		loadExperimentAssignment( 'domain_step_cta_copy_test' ).then( ( experimentName ) => {
+			if ( this._isMounted ) {
+				this.setState( { experiment: experimentName } );
+			}
+		} );
+	}
+
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+
 	getStrings() {
 		const { type, translate } = this.props;
 
@@ -74,9 +96,10 @@ class ReskinSideExplainer extends Component {
 				}
 
 				ctaText =
-					i18n.hasTranslation( 'Choose my domain later' ) || isEnLocale
-						? translate( 'Choose my domain later' )
-						: false;
+					this.state.experiment?.variationName === 'treatment'
+						? translate( 'View plans' )
+						: translate( 'Choose my domain later' );
+
 				break;
 
 			case 'use-your-domain':
