@@ -246,6 +246,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	}, [ cancellationOfferApplySuccess, setSurveyStep ] );
 
 	const onSubmit = () => {
+		// If applying an offer, don't attempt cancellation.
+		if ( applyingCancellationOffer ) {
+			return;
+		}
+
 		if ( surveyAnswerId ) {
 			const surveyData = {
 				'why-cancel': {
@@ -319,7 +324,13 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		const cancellingText =
 			flowType === CANCEL_FLOW_TYPE.REMOVE ? translate( 'Removing' ) : translate( 'Cancelling' );
 		const cancel = (
-			<Button disabled={ disabled } busy={ disabled } onClick={ onSubmit } primary scary>
+			<Button
+				disabled={ disabled || applyingOffer }
+				busy={ disabled }
+				onClick={ onSubmit }
+				primary
+				scary
+			>
 				{ disabled ? cancellingText : cancelText }
 			</Button>
 		);

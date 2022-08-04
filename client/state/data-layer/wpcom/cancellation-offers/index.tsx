@@ -8,6 +8,7 @@ import {
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 // API request to get the cancellation offers
@@ -21,6 +22,7 @@ const fetchCancellationOffers = ( action: { siteId: number; purchaseId: number }
 				site: action.siteId,
 				purchase: action.purchaseId,
 			},
+			retryPolicy: noRetry(),
 		},
 		action
 	);
