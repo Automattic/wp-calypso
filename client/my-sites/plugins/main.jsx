@@ -140,8 +140,10 @@ export class PluginsMain extends Component {
 	}
 
 	getFilters() {
-		const { translate } = this.props;
-		const siteFilter = this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
+		const { translate, search } = this.props;
+		const siteFilter = `${ this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' }${
+			search ? '?s=' + search : ''
+		}`;
 
 		return [
 			{
