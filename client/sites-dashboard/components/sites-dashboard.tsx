@@ -25,7 +25,7 @@ interface SitesDashboardQueryParams {
 	search?: string;
 }
 
-const MAX_PAGE_WIDTH = '1184px';
+const MAX_PAGE_WIDTH = '1280px';
 
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
@@ -107,7 +107,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
 					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
 						<Gridicon icon="plus" />
-						<span>{ __( 'New Site' ) }</span>
+						<span>{ __( 'New site' ) }</span>
 					</Button>
 				</HeaderControls>
 			</PageHeader>
@@ -165,8 +165,8 @@ function handleQueryParamChange(
 	const pathWithQuery = window.location.pathname + window.location.search;
 
 	if ( paramValue ) {
-		page( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
+		page.replace( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
 	} else {
-		page( removeQueryArgs( pathWithQuery, paramName ) );
+		page.replace( removeQueryArgs( pathWithQuery, paramName ) );
 	}
 }

@@ -20,6 +20,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
+import { isThemePremium as getIsThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
+import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
 
@@ -257,12 +259,11 @@ export class Theme extends Component {
 	};
 
 	getUpsellMessage() {
-		const { isPremiumThemesAvailable, theme, price, translate } = this.props;
-		const hasPrice = /\d/g.test( price );
+		const { hasPremiumThemesFeature, theme, didPurchaseTheme, translate } = this.props;
 
-		if ( ! hasPrice && theme.price && ! isPremiumThemesAvailable ) {
+		if ( didPurchaseTheme && ! hasPremiumThemesFeature ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
-		} else if ( isPremiumThemesAvailable ) {
+		} else if ( hasPremiumThemesFeature ) {
 			return translate( 'The premium theme is included in your plan.' );
 		}
 
@@ -283,7 +284,16 @@ export class Theme extends Component {
 	}
 
 	render() {
-		const { active, price, theme, translate, upsellUrl, isPremiumThemesAvailable } = this.props;
+		const {
+			active,
+			price,
+			theme,
+			translate,
+			upsellUrl,
+			hasPremiumThemesFeature,
+			isPremiumTheme,
+			didPurchaseTheme,
+		} = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
 		const themeClass = classNames( 'theme', {
@@ -291,32 +301,20 @@ export class Theme extends Component {
 			'is-actionable': isActionable,
 		} );
 
-		const hasPrice = /\d/g.test( price );
+		const themeNeedsPurchase = isPremiumTheme && ! hasPremiumThemesFeature && ! didPurchaseTheme;
 		const showUpsell = ! isEnabled( 'signup/seller-upgrade-modal' )
-			? hasPrice && upsellUrl
+			? themeNeedsPurchase && upsellUrl
 			: upsellUrl && theme.price && ! active;
 		const priceClass = classNames( 'theme__badge-price', {
-			'theme__badge-price-upgrade': ! hasPrice,
+			'theme__badge-price-upgrade': ! themeNeedsPurchase,
 			'theme__badge-price-upsell': showUpsell,
 		} );
-
-		/*
-		 * Check the theme object (not the price prop) for the true price.
-		 * Sometimes it will be an object, other times it will be a string.
-		 * Check both cases to ensure we have a non-zero price.
-		 */
-		let isPremiumTheme = false;
-		if ( typeof theme.price === 'object' && 0 !== theme.price.value ) {
-			isPremiumTheme = true;
-		} else if ( typeof theme.price === 'string' && '' !== theme.price ) {
-			isPremiumTheme = true;
-		}
 
 		/*
 		 * Only show the Premium badge if we're not already showing the price
 		 * and the theme isn't the active theme.
 		 */
-		const showPremiumBadge = isPremiumTheme && ! hasPrice && ! active;
+		const showPremiumBadge = isPremiumTheme && ! themeNeedsPurchase && ! active;
 
 		const themeDescription = decodeEntities( description );
 
@@ -366,7 +364,7 @@ export class Theme extends Component {
 						! isEnabled( 'signup/seller-upgrade-modal' )
 							? 'theme__upsell-icon'
 							: 'theme__upsell-popover',
-						isPremiumThemesAvailable || showPremiumBadge ? 'active' : null
+						hasPremiumThemesFeature || showPremiumBadge ? 'active' : null
 					) }
 					position={ ! isEnabled( 'signup/seller-upgrade-modal' ) ? 'top left' : 'top' }
 				>
@@ -463,7 +461,7 @@ export class Theme extends Component {
 }
 
 export default connect(
-	( state, { theme, siteId, isPremiumThemesAvailable } ) => {
+	( state, { theme, siteId, hasPremiumThemesFeature } ) => {
 		const {
 			themes: { themesUpdate },
 		} = state;
@@ -472,10 +470,12 @@ export default connect(
 			errorOnUpdate: themesUpdateFailed && themesUpdateFailed.indexOf( theme.id ) > -1,
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
-			isPremiumThemesAvailable:
-				isPremiumThemesAvailable?.() ||
+			isPremiumTheme: getIsThemePremium( state, theme.id ),
+			hasPremiumThemesFeature:
+				hasPremiumThemesFeature?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			siteSlug: getSiteSlug( state, siteId ),
+			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }
