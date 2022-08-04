@@ -62,6 +62,18 @@
 				margin: 0 0.2rem;
 			}
 		}
+
+		&.add-subscriber__form-label-error {
+			span, svg {
+				color: var( --color-error );
+				fill: var( --color-error );
+			}
+
+			svg {
+				position: relative;
+				top: 4px;
+			}
+		}
 	}
 
 	.components-text-control__input {

@@ -3,7 +3,7 @@ import { Title, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { Icon, check } from '@wordpress/icons';
+import { Icon, check, info } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import React, { ChangeEvent, FormEvent, FunctionComponent, useState } from 'react';
@@ -21,6 +21,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const { showTitleEmoji, showSkipBtn, submitBtnName, onSkipBtnClick } = props;
 
 	const [ selectedFile, setSelectedFile ] = useState< File >();
+	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
 	const [ emails, setEmails ] = useState< string[] >( [] );
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
 	const [ formFileUploadElement ] = useState(
@@ -48,9 +49,23 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		setIsValidEmails( _isValidEmails );
 	}
 
+	function isValidExtension( fileName: string ) {
+		const extensionRgx = new RegExp( /[^\\]*\.(?<extension>\w+)$/ );
+		const validExtensions = [ 'csv' ];
+		const match = extensionRgx.exec( fileName );
+
+		return validExtensions.includes( match?.groups?.extension.toLowerCase() as string );
+	}
+
 	function onFileInputChange( e: ChangeEvent< HTMLInputElement > ) {
 		const f = e.target.files;
-		f && f.length && setSelectedFile( f[ 0 ] );
+		if ( ! f || ! f.length ) return;
+
+		const file = f[ 0 ];
+		const isValid = isValidExtension( file.name );
+
+		setIsSelectedFileValid( isValid );
+		isValid && setSelectedFile( file );
 	}
 
 	return (
@@ -81,7 +96,22 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						onChange={ ( value ) => setEmail( value, 2 ) }
 					/>
 
-					{ selectedFile && (
+					{ ! isSelectedFileValid && (
+						<label className={ 'add-subscriber__form-label-error' }>
+							{ createInterpolateElement(
+								__(
+									'<span><icon /> Sorry, you can only upload a CSV file.</span><uploadBtn>Select another file</uploadBtn>'
+								),
+								{
+									span: createElement( 'span' ),
+									icon: createElement( Icon, { icon: info, size: 20 } ),
+									uploadBtn: formFileUploadElement,
+								}
+							) }
+						</label>
+					) }
+
+					{ isSelectedFileValid && selectedFile && (
 						<label className={ 'add-subscriber__form-label-links' }>
 							{ createInterpolateElement(
 								sprintf(
@@ -103,7 +133,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						</label>
 					) }
 
-					{ ! selectedFile && (
+					{ isSelectedFileValid && ! selectedFile && (
 						<label>
 							{ createInterpolateElement(
 								__(
