@@ -317,7 +317,7 @@ const MailboxesForm = ( {
 					showCancelButton
 					submitActionText={ translate( 'Continue' ) }
 				>
-					{ hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) && (
+					{ isTitan( provider ) && hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) && (
 						<PasswordResetTipField tipClickHandler={ showAlternateEmailField } />
 					) }
 				</NewMailBoxList>
