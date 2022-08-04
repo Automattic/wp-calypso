@@ -62,10 +62,10 @@ class WP_REST_WPCOM_Block_Editor_Whats_New_List_Controller extends \WP_REST_Cont
 	 * @return WP_REST_Response
 	 */
 	public function get_whats_new( \WP_REST_Request $request ) {
-		$locale = $request['locale'];
+		$locale = $request['_locale'];
 
 		$query_parameters = array(
-			'locale' => $locale,
+			'_locale' => $locale,
 		);
 
 		$body = Client::wpcom_json_api_request_as_user(
