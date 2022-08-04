@@ -1,4 +1,4 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, Popover } from '@automattic/components';
 import { useSiteLogoMutation } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
@@ -10,7 +10,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
-import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -22,6 +21,7 @@ import './style.scss';
 const NewsletterSetup: Step = ( { navigation } ) => {
 	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
+	const colorAccentRef = React.useRef< HTMLInputElement >( null );
 
 	const site = useSite();
 
@@ -105,16 +105,18 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					onSelect={ setSelectedFile }
 					selectedFile={ selectedFile }
 				/>
-				{ colorPickerOpen && (
-					<div className="newsletter-setup__color-picker-backdrop">
-						<ColorPicker
-							disableAlpha
-							color={ colorAccent }
-							onChangeComplete={ ( value ) => setAccentColor( value.hex ) }
-						/>
-					</div>
-				) }
-
+				<Popover
+					isVisible={ colorPickerOpen }
+					context={ colorAccentRef.current }
+					position="top left"
+					onClose={ () => setColorPickerOpen( false ) }
+				>
+					<ColorPicker
+						disableAlpha
+						color={ colorAccent }
+						onChangeComplete={ ( value ) => setAccentColor( value.hex ) }
+					/>
+				</Popover>
 				<FormFieldset disabled={ isLoading }>
 					<FormLabel htmlFor="siteTitle">{ __( 'Publication name*' ) }</FormLabel>
 					<FormInput
@@ -134,16 +136,15 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 				<FormFieldset disabled={ isLoading }>
 					<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
-					<FormTextInputWithAffixes
-						style={ { backgroundColor: colorAccent } }
-						prefix={
-							<span className="newsletter-setup__accent-color-prefix">{ colorAccent }</span>
-						}
+					<FormInput
+						inputRef={ colorAccentRef }
+						className="newsletter-setup__accent-color"
 						type="text"
 						name="accentColor"
 						id="accentColor"
 						onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
 						readOnly
+						value={ colorAccent }
 					/>
 				</FormFieldset>
 
