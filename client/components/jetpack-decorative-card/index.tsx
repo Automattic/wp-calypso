@@ -15,8 +15,9 @@ const JetpackDecorativeCard: FC< Props > = ( props ) => {
 	return (
 		<div className="jetpack-decorative-card">
 			<div className="jetpack-decorative-card__header">
+				{ /* This is a decorative image */ }
 				<img
-					alt="" // This is a decorative image
+					alt=""
 					src={ decorativeCardBackground }
 					className="jetpack-decorative-card__header-background"
 				/>
