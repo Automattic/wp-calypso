@@ -120,6 +120,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 								onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
 								isReskinned
 								placeholder={ __( 'Search by name or domain…' ) }
+								disableAutocorrect={ true }
 								defaultValue={ search }
 							/>
 						</SearchWrapper>
