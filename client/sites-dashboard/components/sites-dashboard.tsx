@@ -1,6 +1,5 @@
 import {
 	Button,
-	Gridicon,
 	SitesTableTabPanel,
 	useSitesTableFiltering,
 	useSitesTableSorting,
@@ -106,8 +105,7 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 				<HeaderControls>
 					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
 					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
-						<Gridicon icon="plus" />
-						<span>{ __( 'New site' ) }</span>
+						{ __( 'Add new site' ) }
 					</Button>
 				</HeaderControls>
 			</PageHeader>
