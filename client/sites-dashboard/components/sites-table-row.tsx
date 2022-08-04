@@ -1,5 +1,5 @@
 import { ListTile } from '@automattic/components';
-import { ClassNames, css } from '@emotion/react';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -131,51 +131,47 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	}
 
 	return (
-		<ClassNames>
-			{ ( { css } ) => (
-				<Row>
-					<Column>
-						<SiteListTile
-							contentClassName={ css`
-								min-width: 0;
-							` }
-							leading={
-								<ListTileLeading
-									href={ getDashboardUrl( site.slug ) }
-									title={ __( 'Visit Dashboard' ) }
-								>
-									<SiteIcon siteId={ site.ID } size={ 50 } />
-								</ListTileLeading>
-							}
-							title={
-								<ListTileTitle>
-									<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
-										{ site.name ? site.name : __( '(No Site Title)' ) }
-									</SiteName>
-									{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-								</ListTileTitle>
-							}
-							subtitle={
-								<ListTileSubtitle>
-									<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
-										{ displaySiteUrl( site.URL ) }
-									</SiteUrl>
-								</ListTileSubtitle>
-							}
-						/>
-					</Column>
-					<Column mobileHidden>{ site.plan.product_name_short }</Column>
-					<Column mobileHidden>
-						{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
-					</Column>
-					<Column mobileHidden>{ siteStatusLabel }</Column>
-					<Column style={ { width: '20px' } }>
-						<EllipsisMenu>
-							<VisitDashboardItem site={ site } />
-						</EllipsisMenu>
-					</Column>
-				</Row>
-			) }
-		</ClassNames>
+		<Row>
+			<Column>
+				<SiteListTile
+					contentClassName={ css`
+						min-width: 0;
+					` }
+					leading={
+						<ListTileLeading
+							href={ getDashboardUrl( site.slug ) }
+							title={ __( 'Visit Dashboard' ) }
+						>
+							<SiteIcon siteId={ site.ID } size={ 50 } />
+						</ListTileLeading>
+					}
+					title={
+						<ListTileTitle>
+							<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
+								{ site.name ? site.name : __( '(No Site Title)' ) }
+							</SiteName>
+							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
+						</ListTileTitle>
+					}
+					subtitle={
+						<ListTileSubtitle>
+							<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
+								{ displaySiteUrl( site.URL ) }
+							</SiteUrl>
+						</ListTileSubtitle>
+					}
+				/>
+			</Column>
+			<Column mobileHidden>{ site.plan.product_name_short }</Column>
+			<Column mobileHidden>
+				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
+			</Column>
+			<Column mobileHidden>{ siteStatusLabel }</Column>
+			<Column style={ { width: '20px' } }>
+				<EllipsisMenu>
+					<VisitDashboardItem site={ site } />
+				</EllipsisMenu>
+			</Column>
+		</Row>
 	);
 }
