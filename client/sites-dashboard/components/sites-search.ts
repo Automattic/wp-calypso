@@ -6,7 +6,5 @@ export const SitesSearch = styled( Search )`
 	height: 42px;
 	overflow: hidden;
 	border: 1px solid #c3c4c7;
-
-	width: 390px !important; // <Search /> CSS specificity is getting in the way, so we need to prioritize our changes.
-	max-width: 100%;
+	flex: 0 1 390px;
 `;
