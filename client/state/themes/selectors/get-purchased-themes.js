@@ -13,8 +13,10 @@ import 'calypso/state/themes/init';
  */
 export function getPurchasedThemes( state, siteId ) {
 	const sitePurchases = getSitePurchases( state, siteId );
+	// TODO: productSlug check can be removed after the backend is changed to return productType
 	return sitePurchases
-		.filter( ( purchase ) => purchase?.productSlug === 'premium_theme' )
+		.filter(
+			( purchase ) => purchase?.productSlug === 'premium_theme' || purchase?.productType === 'theme'
+		)
 		.map( ( purchase ) => purchase.meta );
-	// TODO: Return getThemeNameFromMeta( purchase.meta ) after #66048 is merged
 }

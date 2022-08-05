@@ -2288,6 +2288,36 @@ describe( 'themes selectors', () => {
 			);
 			expect( purchases ).toEqual( [] );
 		} );
+
+		/*
+		Uncomment with https://github.com/Automattic/wp-calypso/pull/66285
+		test( 'given 2 purchased themes, return 2 theme names [new-style]', () => {
+			const purchases = getPurchasedThemes(
+				{
+					purchases: {
+						data: [
+							{
+								ID: 1234567,
+								blog_id: 2916284,
+								meta: 'mood',
+								product_slug: 'wp_premium_theme_mood_yearly',
+								product_type: 'theme',
+							},
+							{
+								ID: 1234568,
+								blog_id: 2916284,
+								meta: 'skivers',
+								product_slug: 'wp_premium_theme_skivers_yearly',
+								product_type: 'theme',
+							},
+						],
+					},
+				},
+				2916284
+			);
+			expect( purchases ).toEqual( [ 'mood', 'skivers' ] );
+		} );
+		*/
 	} );
 
 	describe( '#isPremiumThemeAvailable', () => {
