@@ -10,6 +10,7 @@ const SitesLaunchStatusBadge = styled.span`
 	line-height: 20px;
 	display: inline-block;
 	white-space: nowrap;
+	height: fit-content;
 `;
 
 export default SitesLaunchStatusBadge;
