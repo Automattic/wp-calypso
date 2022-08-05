@@ -15,7 +15,7 @@ const LoadingPlaceholder = styled.div< LoadingPlaceholderProps >`
 	background-color: var( --color-neutral-10 );
 	min-height: 18px;
 	width: 100%;
-	animation-delay: ${ ( props ) => props.delayMS }ms;
+	animation-delay: ${ ( { delayMS = 0 } ) => delayMS }ms;
 `;
 
 export default LoadingPlaceholder;
