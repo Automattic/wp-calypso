@@ -99,7 +99,7 @@ const ListTileSubtitle = styled.div`
 `;
 
 const NoIcon = styled.div`
-	fontsize: 'xx-large';
+	font-size: xx-large;
 `;
 
 const getDashboardUrl = ( slug: string ) => {
