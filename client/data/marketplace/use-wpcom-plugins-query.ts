@@ -42,10 +42,7 @@ export const getFetchWPCOMPlugins = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string
-): [
-	QueryKey,
-	QueryFunction< { results: { plugins: Plugin[]; info: { page: number } } }, QueryKey >
-] => {
+): [ QueryKey, QueryFunction< { results: Array< { [ plugin: string ]: Plugin } > } > ] => {
 	const cacheKey = getCacheKey( type + searchTerm + tag + `${ enabled ? 'enabled' : 'disabled' }` );
 	const fetchFn = () => fetchWPCOMPlugins( type, searchTerm, tag );
 	return [ cacheKey, fetchFn ];
@@ -109,10 +106,7 @@ export const useWPCOMPlugin = (
 	} );
 };
 
-export const getFetchWPCOMFeaturedPlugins = (): [
-	QueryKey,
-	QueryFunction< { plugins: Plugin[]; info: { page: number } }, QueryKey >
-] => {
+export const getFetchWPCOMFeaturedPlugins = (): [ QueryKey, QueryFunction< Plugin[] > ] => {
 	const cacheKey = 'plugins-featured-list';
 	const fetchFn = () =>
 		wpcom.req.get( {
