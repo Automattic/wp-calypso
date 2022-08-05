@@ -103,11 +103,8 @@ class EditUserForm extends Component {
 		 * On Atomic and non-Jetpack sites, if the current user is not viewing their own profile,
 		 * the user should not be able to edit the site owner's details.
 		 */
-		if (
-			( ( ! isJetpack && user.ID === siteOwner ) ||
-				( isAtomic && user.linked_user_ID === siteOwner ) ) &&
-			user.ID !== currentUser.ID
-		) {
+		const userId = user.linked_user_ID || user.ID;
+		if ( ( ! isJetpack || isAtomic ) && userId === siteOwner && userId !== currentUser.ID ) {
 			return [];
 		}
 
