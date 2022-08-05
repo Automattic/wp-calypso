@@ -43,6 +43,18 @@ type SitesDisplayMode = 'tile' | 'list' | 'none';
 
 const PREFERENCE_NAME = 'sites-management-dashboard-display-mode';
 
+export const useSitesDisplayMode = () => {
+	const displayMode: SitesDisplayMode = useSelector( ( state ) => {
+		if ( ! hasReceivedRemotePreferences( state ) ) {
+			return 'none';
+		}
+
+		return getPreference( state, PREFERENCE_NAME ) ?? 'tile';
+	} );
+
+	return displayMode;
+};
+
 export const SitesDisplayModeSwitcher = () => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -51,13 +63,7 @@ export const SitesDisplayModeSwitcher = () => {
 		dispatch( savePreference( PREFERENCE_NAME, value ) );
 	};
 
-	const displayMode: SitesDisplayMode = useSelector( ( state ) => {
-		if ( ! hasReceivedRemotePreferences( state ) ) {
-			return 'none';
-		}
-
-		return getPreference( state, PREFERENCE_NAME ) ?? 'tile';
-	} );
+	const displayMode = useSitesDisplayMode();
 
 	return (
 		<div className={ container } role="radiogroup" aria-label={ __( 'Sites display mode' ) }>

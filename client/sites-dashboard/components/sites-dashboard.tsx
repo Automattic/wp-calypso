@@ -5,7 +5,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
 import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
+import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesTable } from './sites-table';
+import { SitesTileGrid } from './sites-tile-grid';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
@@ -74,6 +76,16 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
+	const displayMode = useSitesDisplayMode();
+
+	const content =
+		// eslint-disable-next-line no-nested-ternary
+		displayMode === 'list' ? (
+			<SitesTable isLoading={ isLoading } sites={ filteredSites } />
+		) : displayMode === 'tile' ? (
+			<SitesTileGrid sites={ filteredSites } />
+		) : null;
+
 	return (
 		<main>
 			<PageHeader>
@@ -94,7 +106,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 						/>
 					) }
 					{ filteredSites.length > 0 || isLoading ? (
-						<SitesTable isLoading={ isLoading } sites={ filteredSites } />
+						content
 					) : (
 						<NoSitesMessage
 							status={ selectedStatus.name }
