@@ -7,7 +7,11 @@ interface LoadingLogoProps {
 	height: cssSize;
 }
 
-interface SitesTableRowLoadingProps {
+interface LoadingProps {
+	delayMS?: number;
+}
+
+interface SitesTableRowLoadingProps extends LoadingProps {
 	columns?: number;
 	logoProps?: LoadingLogoProps;
 }
@@ -24,11 +28,12 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	vertical-align: top;
 `;
 
-const Loading = styled.div`
+const Loading = styled.div< LoadingProps >`
 	animation: pulse-light 1.8s ease-in-out infinite;
 	background-color: var( --color-neutral-10 );
 	height: 18px;
 	max-width: 70px;
+	animation-delay: ${ ( props ) => props.delayMS }ms;
 `;
 
 const TitleRow = styled.div`
@@ -59,21 +64,22 @@ const LoadingDomain = styled( Loading )`
 export default function SitesTableRowLoading( {
 	columns = 2,
 	logoProps = { width: 50, height: 50 },
+	delayMS = 0,
 }: SitesTableRowLoadingProps ) {
 	return (
 		<Row>
 			<Column>
 				<TitleRow>
-					<LoadingLogo { ...logoProps } />
+					<LoadingLogo { ...logoProps } delayMS={ delayMS } />
 					<FullWidth>
-						<LoadingTitle />
-						<LoadingDomain />
+						<LoadingTitle delayMS={ delayMS } />
+						<LoadingDomain delayMS={ delayMS } />
 					</FullWidth>
 				</TitleRow>
 			</Column>
 			{ Array( columns - 1 ).fill(
 				<Column mobileHidden>
-					<Loading />
+					<Loading delayMS={ delayMS } />
 				</Column>
 			) }
 		</Row>
