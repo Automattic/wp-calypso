@@ -74,16 +74,12 @@ export default function UnassignLicenseDialog( {
 				<strong>{ licenseKey }</strong>
 			</p>
 			<p>
-				{ translate( 'Unassigning this license means that the site' ) }
-				&nbsp;
-				{ siteUrl && <strong>{ siteUrl }</strong> }
-				&nbsp;
-				{ translate( 'will no longer have access to' ) }
-				&nbsp;
-				<strong>{ product }.</strong>
-				&nbsp;
 				{ translate(
-					'Once this action is completed, you will be able to assign the license to another site. You will continue to be billed.'
+					'Unassigning this license means that the site {{bold}}%(siteUrl)s{{/bold}} will no longer have access to {{bold}}%(product)s{{/bold}}. Once this action is completed, you will be able to assign the license to another site. You will continue to be billed.',
+					{
+						components: { bold: <strong /> },
+						args: { siteUrl, product },
+					}
 				) }
 				&nbsp;
 				<a
