@@ -6,9 +6,6 @@ $font-family: 'SF Pro Text', $sans;
     form {
         padding: 0 20px;
     }
-	.step-container {
-		padding-top: 44px;
-	}
 
 	.step-container__content {
 		display: flex;
@@ -27,44 +24,13 @@ $font-family: 'SF Pro Text', $sans;
 			}
 		}
 	}
+
     .link-in-bio-setup-form__field, fieldset {
         display: flex;
         flex-direction: column;
         width: 100%;
-
-        .link-in-bio-setup-form__input {
-            border: solid 1px var( --studio-gray-10 );
-            outline: none;
-            width: 100%;
-            margin: 8px 0;
-            display: flex;
-
-            input {
-                border: none;
-                font-size: $font-body-small;
-                width: 90%;
-                padding: 12px 16px;
-                line-height: 20px;
-
-                &:hover {
-                    box-shadow: unset;
-                }
-                &:focus {
-                    box-shadow: unset;
-                }
-            }
-
-            &.error {
-                border: solid 1px var( --studio-red-60 );
-            }
-        }
-        .link-in-bio-setup-form-input__success {
-            svg {
-                position: relative;
-                top: calc( 50% - 15px );
-            }
-        }
     }
+
 	.link-in-bio-setup__form {
 		display: flex;
 		flex-direction: column;
@@ -81,7 +47,17 @@ $font-family: 'SF Pro Text', $sans;
 			font-family: $font-family;
 			font-weight: 400;
 		}
+        input {
+            height: 44px;
+
+            &.is-error {
+                background-image: unset;
+            }
+        }
+
+        
     }
+
     .link-in-bio-setup-form__submit {
         color: var( --color-surface );
         background-color: var( --studio-blue-50 );
