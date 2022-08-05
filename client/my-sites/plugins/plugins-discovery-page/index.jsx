@@ -180,11 +180,7 @@ const PluginsDiscoveryPage = ( props ) => {
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 			/>
-			<PopularPluginsSection
-				{ ...props }
-				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-			/>
+			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
 		</>
 	);
 };
