@@ -489,6 +489,12 @@
 		text-decoration: underline;
 	}
 
+	.signup-form__terms-of-service-link {
+		a {
+			font-size: inherit;
+		}
+	}
+
 	background: #e6e6e6;
 	min-height: 100%;
 
@@ -677,7 +683,7 @@
 		}
 	}
 
-	$woo-form-whitespace: 90px;
+	$woo-form-whitespace: 85px;
 	$woo-form-whitespace-660: 20px;
 
 	.card {
