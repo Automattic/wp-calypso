@@ -23,13 +23,13 @@ const FilterBar = styled.div`
 type Statuses = ReturnType< typeof useSitesTableFiltering >[ 'statuses' ];
 
 interface SitesContentControlsProps {
-	inintialSearch?: string;
+	initialSearch?: string;
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
 }
 
 export const SitesContentControls = ( {
-	inintialSearch,
+	initialSearch,
 	statuses,
 	selectedStatus,
 }: SitesContentControlsProps ) => {
@@ -43,7 +43,7 @@ export const SitesContentControls = ( {
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
-				defaultValue={ inintialSearch }
+				defaultValue={ initialSearch }
 			/>
 			<SelectDropdown selectedText={ selectedStatus.title }>
 				{ statuses.map( ( { name, title, count } ) => (

@@ -88,7 +88,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 				<>
 					{ allSites.length > 0 && (
 						<SitesContentControls
-							inintialSearch={ search }
+							initialSearch={ search }
 							statuses={ statuses }
 							selectedStatus={ selectedStatus }
 						/>
