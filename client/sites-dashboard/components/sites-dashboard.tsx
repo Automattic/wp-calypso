@@ -102,28 +102,30 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 			</PageHeader>
 			<PageBodyWrapper>
 				<>
-					<FilterBar>
-						<SitesSearch
-							searchIcon={ <SitesSearchIcon /> }
-							onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
-							isReskinned
-							placeholder={ __( 'Search by name or domain…' ) }
-							disableAutocorrect={ true }
-							defaultValue={ search }
-						/>
-						<SelectDropdown selectedText={ selectedStatus.title }>
-							{ statuses.map( ( { name, title, count } ) => (
-								<SelectDropdown.Item
-									key={ name }
-									selected={ name === selectedStatus.name }
-									count={ count }
-									onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
-								>
-									{ title }
-								</SelectDropdown.Item>
-							) ) }
-						</SelectDropdown>
-					</FilterBar>
+					{ allSites.length > 0 && (
+						<FilterBar>
+							<SitesSearch
+								searchIcon={ <SitesSearchIcon /> }
+								onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
+								isReskinned
+								placeholder={ __( 'Search by name or domain…' ) }
+								disableAutocorrect={ true }
+								defaultValue={ search }
+							/>
+							<SelectDropdown selectedText={ selectedStatus.title }>
+								{ statuses.map( ( { name, title, count } ) => (
+									<SelectDropdown.Item
+										key={ name }
+										selected={ name === selectedStatus.name }
+										count={ count }
+										onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
+									>
+										{ title }
+									</SelectDropdown.Item>
+								) ) }
+							</SelectDropdown>
+						</FilterBar>
+					) }
 					{ filteredSites.length > 0 ? (
 						<SitesTable sites={ filteredSites } />
 					) : (
