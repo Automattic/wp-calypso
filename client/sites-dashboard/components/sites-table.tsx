@@ -4,6 +4,8 @@ import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
+const N_LOADING_ROWS = 5;
+
 interface SitesTableProps {
 	className?: string;
 	sites: SiteExcerptData[];
@@ -50,13 +52,10 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 				</Row>
 			</thead>
 			<tbody>
-				{ isLoading && (
-					<>
-						<SitesTableRowLoading />
-						<SitesTableRowLoading />
-						<SitesTableRowLoading />
-					</>
-				) }
+				{ isLoading &&
+					Array( N_LOADING_ROWS ).fill(
+						<SitesTableRowLoading columns={ 5 } logoProps={ { width: 200, height: 50 } } />
+					) }
 				{ sites.map( ( site ) => (
 					<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
 				) ) }

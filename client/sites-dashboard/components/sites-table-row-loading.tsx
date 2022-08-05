@@ -1,5 +1,17 @@
 import styled from '@emotion/styled';
 
+type cssSize = number | string;
+
+interface LoadingLogoProps {
+	width: cssSize;
+	height: cssSize;
+}
+
+interface SitesTableRowLoadingProps {
+	columns?: number;
+	logoProps?: LoadingLogoProps;
+}
+
 const Row = styled.tr`
 	line-height: 2em;
 	border-bottom: 1px solid #eee;
@@ -27,9 +39,11 @@ const FullWidth = styled.div`
 	width: 100%;
 `;
 
-const LoadingLogo = styled( Loading )`
-	width: 50px;
-	height: 50px;
+const LoadingLogo = styled( Loading )< LoadingLogoProps >`
+	${ ( { width, height } ) => ( {
+		width,
+		height,
+	} ) }
 	margin-right: 10px;
 `;
 
@@ -42,28 +56,26 @@ const LoadingDomain = styled( Loading )`
 	max-width: 40%;
 `;
 
-export default function SitesTableRowLoading() {
+export default function SitesTableRowLoading( {
+	columns = 2,
+	logoProps = { width: 50, height: 50 },
+}: SitesTableRowLoadingProps ) {
 	return (
 		<Row>
 			<Column>
 				<TitleRow>
-					<LoadingLogo />
+					<LoadingLogo { ...logoProps } />
 					<FullWidth>
 						<LoadingTitle />
 						<LoadingDomain />
 					</FullWidth>
 				</TitleRow>
 			</Column>
-			<Column mobileHidden>
-				<Loading />
-			</Column>
-			<Column mobileHidden>
-				<Loading />
-			</Column>
-			<Column mobileHidden>
-				<Loading />
-			</Column>
-			<Column />
+			{ Array( columns - 1 ).fill(
+				<Column mobileHidden>
+					<Loading />
+				</Column>
+			) }
 		</Row>
 	);
 }
