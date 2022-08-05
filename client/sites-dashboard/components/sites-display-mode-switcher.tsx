@@ -36,7 +36,17 @@ const SiteSwitcherButton = styled( Button )< ComponentProps< typeof Button > >(
 	}
 );
 
-export const SitesDisplayModeSwitcher = () => {
+type DisplayMode = 'tile' | 'list';
+
+interface SitesDisplayModeSwitcherProps {
+	onModeChange( value: DisplayMode ): void;
+	mode?: DisplayMode;
+}
+
+export const SitesDisplayModeSwitcher = ( {
+	onModeChange,
+	mode = 'tile',
+}: SitesDisplayModeSwitcherProps ) => {
 	const { __ } = useI18n();
 
 	return (
@@ -44,14 +54,16 @@ export const SitesDisplayModeSwitcher = () => {
 			<SiteSwitcherButton
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
+				onClick={ () => onModeChange( 'tile' ) }
 				icon={ <SitesTilesIcon /> }
-				isPressed={ false }
+				isPressed={ mode === 'tile' }
 			/>
 			<SiteSwitcherButton
 				role="radio"
 				aria-label={ __( 'List view' ) }
 				icon={ <SitesListIcon /> }
-				isPressed
+				onClick={ () => onModeChange( 'list' ) }
+				isPressed={ mode === 'list' }
 			/>
 		</div>
 	);
