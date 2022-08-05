@@ -100,11 +100,13 @@ class Help_Center {
 			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
 		);
 
+		// Adds feature flags for development.
 		wp_add_inline_script(
 			'help-center-script',
-			'helpCenterFeatureFlags',
-			array(
-				'loadNextStepsTutorial' => self::is_next_steps_tutorial_enabled(),
+			'const helpCenterFeatureFlags = ' . wp_json_encode(
+				array(
+					'loadNextStepsTutorial' => self::is_next_steps_tutorial_enabled(),
+				)
 			),
 			'before'
 		);
@@ -141,11 +143,11 @@ class Help_Center {
 	 * Add icon to WP-ADMIN admin bar
 	 */
 	public function admin_bar_menu() {
-		global $wp_admin_bar;
+		require_once ABSPATH . 'wp-admin/includes/screen.php';
+		global $wp_admin_bar, $current_screen;
 
-		$current_screen = get_current_screen();
 		$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
-		if ( ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor() ) {
+		if ( ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) {
 			return;
 		}
 
