@@ -24,6 +24,7 @@ const PluginsBrowserList = ( {
 	listName,
 	expandedListLink,
 	size,
+	search,
 } ) => {
 	const { __ } = useI18n();
 
@@ -44,6 +45,7 @@ const PluginsBrowserList = ( {
 					variant={
 						extended ? PluginsBrowserElementVariant.Extended : PluginsBrowserElementVariant.Compact
 					}
+					search={ search }
 				/>
 			);
 		} );

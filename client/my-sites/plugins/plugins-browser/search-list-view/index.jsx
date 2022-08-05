@@ -109,6 +109,7 @@ const SearchListView = ( {
 					currentSites={ sites }
 					variant={ PluginsBrowserListVariant.Paginated }
 					extended
+					search={ searchTerm }
 				/>
 				<InfiniteScroll nextPageMethod={ fetchNextPage } />
 			</>
