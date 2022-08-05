@@ -23,7 +23,7 @@ const WhatsNewPage: React.FC< Props > = ( {
 	const __ = useI18n().__;
 
 	useEffect( () => {
-		recordTracksEvent( 'wpcom_whats_new_slide_view', {
+		recordTracksEvent( 'calypso_whats_new_slide_view', {
 			slide_number: pageNumber,
 			is_last_slide: isLastPage,
 		} );
