@@ -1,5 +1,7 @@
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
+import { ComponentProps } from 'react';
 import { SitesRowsIcon } from './sites-rows-icon';
 import { SitesTileIcon } from './sites-tile-icon';
 
@@ -9,30 +11,34 @@ const container = css( {
 	gap: '10px',
 } );
 
-const SiteSwitcherIcon = styled.svg< { active: boolean } >(
-	{
-		padding: '5px',
-		borderRadius: '4px',
-	},
-	( props ) => {
-		if ( props.active ) {
-			return {
-				color: '#FFF',
-				background: '#101517',
-			};
-		}
-
+const SiteSwitcherButton = styled( Button )<
+	ComponentProps< typeof Button > & { active: boolean }
+>( { borderRadius: '4px' }, ( props ) => {
+	if ( props.active ) {
 		return {
-			color: '#50575E',
+			color: '#FFF',
+			background: '#101517',
+
+			'&:hover': {
+				color: '#FFF !important',
+			},
 		};
 	}
-);
+
+	return {
+		color: '#50575E',
+
+		'&:hover': {
+			background: '#F6F7F7',
+		},
+	};
+} );
 
 export const SitesDisplayModeSwitcher = () => {
 	return (
 		<div className={ container }>
-			<SiteSwitcherIcon as={ SitesTileIcon } active={ false } />
-			<SiteSwitcherIcon as={ SitesRowsIcon } active />
+			<SiteSwitcherButton icon={ <SitesTileIcon /> } active={ false } />
+			<SiteSwitcherButton icon={ <SitesRowsIcon /> } active />
 		</div>
 	);
 };
