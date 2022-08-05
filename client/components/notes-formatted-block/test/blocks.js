@@ -1,4 +1,9 @@
-import { shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import * as Blocks from '../blocks';
 
@@ -28,20 +33,23 @@ expect.extend( {
 describe( 'Link block', () => {
 	beforeEach( () => jest.resetAllMocks() );
 
-	test( 'on Calypso, relativizes links to WordPress.com', () => {
+	test.only( 'on Calypso, relativizes links to WordPress.com', () => {
 		isJetpackCloud.mockImplementation( () => false );
 
 		const pathAbsoluteUrl = '/my/test/link?with=params&more=stuff+plus%20junk';
 		const text = 'my link text';
-		const link = shallow(
+
+		render(
 			<Blocks.Link
 				content={ { url: `https://wordpress.com${ pathAbsoluteUrl }` } }
 				children={ text }
 			/>
 		);
 
-		expect( link.prop( 'href' ) ).toEqual( pathAbsoluteUrl );
-		expect( link.text() ).toEqual( text );
+		const link = screen.getByRole( 'link' );
+
+		expect( link ).toHaveAttribute( 'href', pathAbsoluteUrl );
+		expect( link ).toHaveTextContent( text );
 	} );
 
 	test( 'on Jetpack Cloud, does not render links to WordPress.com', () => {

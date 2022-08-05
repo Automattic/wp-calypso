@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import FormattedBlock from 'calypso/components/notes-formatted-block';
+import * as Blocks from 'calypso/components/notes-formatted-block/blocks';
 import { Activity } from 'calypso/state/activity-log/types';
 
 interface Props {
@@ -13,11 +13,15 @@ const ActivityDescription: FunctionComponent< Props > = ( {
 		{ activityDescription.map( ( description, index ) => {
 			const { intent, section } = description;
 
+			console.debug( 'oo', description );
+
+			// TODO revert all of this! This is currently being used as a playground for the
+			// notes-formatted-block tests.
 			return (
-				<FormattedBlock
-					content={ description }
-					key={ index }
-					meta={ { activity: activityName, intent, section } }
+				<Blocks.Link
+					onClick={ 'foo' }
+					content={ { url: `https://wordpress.com${ 'bar' }` } }
+					children={ 'fooo' }
 				/>
 			);
 		} ) }

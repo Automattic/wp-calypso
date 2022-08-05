@@ -20,9 +20,9 @@ export const Link = ( { content, onClick, children } ) => {
 	const isWordPressLink = startsWith( originalUrl, 'https://wordpress.com' );
 
 	// Don't render links to WordPress.com inside Jetpack Cloud
-	if ( isWordPressLink && isJetpackCloud() ) {
+	/*if ( isWordPressLink && isJetpackCloud() ) {
 		return children;
-	}
+	}*/
 
 	// On Calypso, relativize links to WordPress.com;
 	// for other destinations, render a link with the URL as-is
