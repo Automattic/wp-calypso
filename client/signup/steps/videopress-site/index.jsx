@@ -19,7 +19,6 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
-import { getValueFromProgressStore } from 'calypso/signup/utils';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -44,9 +43,6 @@ const SITE_TAKEN_ERROR_CODES = [
 ];
 
 const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'video', 'tube' ];
-
-const EMAIL_TRUCE_CAMPAIGN_REF = 'videopress-email-truce';
-const EMAIL_TRUCE_CAMPAIGN_ID = 'videopress-email-truce';
 
 /**
  * Module variables
@@ -327,17 +323,6 @@ class VideoPressSite extends Component {
 				siteDescription,
 			};
 
-			const refParameter =
-				this.props.refParameter ||
-				getValueFromProgressStore( {
-					signupProgress: this.props.progress,
-					stepName: 'p2-confirm-email',
-					fieldName: 'storedRefParameter',
-				} );
-			if ( refParameter === EMAIL_TRUCE_CAMPAIGN_REF ) {
-				stepData.campaign = EMAIL_TRUCE_CAMPAIGN_ID;
-			}
-
 			this.props.submitSignupStep( stepData, { themeSlugWithRepo: 'premium/videomaker' } );
 
 			this.props.goToNextStep();
@@ -567,7 +552,6 @@ class VideoPressSite extends Component {
 					</FormLabel>
 					<FormTextarea
 						id="site-description"
-						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						autoCapitalize={ 'off' }
 						className="videopress-site__site-description"
 						disabled={ submitting }
