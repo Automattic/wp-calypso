@@ -98,37 +98,48 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	);
 }
 
+const PaidPluginsSection = ( props ) => {
+	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
+		category: 'paid',
+	} );
+
+	return (
+		<SingleListView
+			{ ...props }
+			category="paid"
+			paidPlugins={ paidPlugins }
+			isFetchingPaidPlugins={ isFetchingPaidPlugins }
+		/>
+	);
+};
+
+const PopularPluginsSection = ( props ) => {
+	const { plugins: popularPlugins = [], isFetching: isFetchingPluginsByCategoryPopular } =
+		usePlugins( {
+			category: 'popular',
+		} );
+
+	const pluginsByCategoryPopular = filterPopularPlugins(
+		popularPlugins,
+		props.pluginsByCategoryFeatured
+	);
+
+	return (
+		<SingleListView
+			{ ...props }
+			category="popular"
+			pluginsByCategoryPopular={ pluginsByCategoryPopular }
+			isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
+		/>
+	);
+};
+
 const PluginsDiscoveryPage = ( props ) => {
 	const {
 		plugins: pluginsByCategoryFeatured = [],
 		isFetching: isFetchingPluginsByCategoryFeatured,
 	} = usePlugins( {
 		category: 'featured',
-	} );
-
-	const { plugins: popularPlugins = [], isFetching: isFetchingPluginsByCategoryPopular } =
-		usePlugins( {
-			category: 'popular',
-		} );
-
-	const {
-		plugins: pluginsBySearchTerm = [],
-		isFetching: isFetchingPluginsBySearchTerm,
-		pagination: pluginsPagination,
-		fetchNextPage,
-	} = usePlugins( {
-		infinite: true,
-		wpcomEnabled: false,
-		wporgEnabled: false,
-	} );
-
-	const pluginsByCategoryPopular = filterPopularPlugins(
-		popularPlugins,
-		pluginsByCategoryFeatured
-	);
-
-	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
-		category: 'paid',
 	} );
 
 	const requiredPlansPurchasedPlugins = useSelector( ( state ) =>
@@ -159,46 +170,20 @@ const PluginsDiscoveryPage = ( props ) => {
 							<UpgradeNudge { ...props } />
 						) }
 					</div>
-					<SingleListView
-						{ ...props }
-						category="paid"
-						pluginsByCategoryPopular={ pluginsByCategoryPopular }
-						isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
-						pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-						isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-						pluginsBySearchTerm={ pluginsBySearchTerm }
-						isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
-						pluginsPagination={ pluginsPagination }
-						fetchNextPage={ fetchNextPage }
-						paidPlugins={ paidPlugins }
-						isFetchingPaidPlugins={ isFetchingPaidPlugins }
-					/>
+					<PaidPluginsSection { ...props } />
 				</>
 			) }
 			{ ( hasInstallPurchasedPlugins || lowerPlanAvailable ) && <UpgradeNudge { ...props } /> }
 			<SingleListView
 				{ ...props }
 				category="featured"
-				pluginsByCategoryPopular={ pluginsByCategoryPopular }
-				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-				paidPlugins={ paidPlugins }
-				isFetchingPaidPlugins={ isFetchingPaidPlugins }
 			/>
-			<SingleListView
+			<PopularPluginsSection
 				{ ...props }
-				category="popular"
-				pluginsByCategoryPopular={ pluginsByCategoryPopular }
-				isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-				pluginsBySearchTerm={ pluginsBySearchTerm }
-				isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
-				pluginsPagination={ pluginsPagination }
-				fetchNextPage={ fetchNextPage }
-				paidPlugins={ paidPlugins }
-				isFetchingPaidPlugins={ isFetchingPaidPlugins }
 			/>
 		</>
 	);
