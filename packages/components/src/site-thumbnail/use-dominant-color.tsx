@@ -17,11 +17,12 @@ export default function useDominantColor( url?: string ) {
 					],
 					crossOrigin: 'anonymous',
 				} )
-				.then( ( color ) => setColor( color ) )
-				.catch( () => {
-					return;
-				} );
+				.then( ( color ) => setColor( color ) );
 		}
+
+		return () => {
+			fac.destroy();
+		};
 	}, [ url ] );
 	return color;
 }
