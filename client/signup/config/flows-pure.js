@@ -247,7 +247,7 @@ export function generateFlows( {
 		{
 			name: 'videopress',
 			steps: [ 'user', 'videopress-site', 'plans-premium' ],
-			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
+			destination: ( dependencies ) => `/site-editor/${ dependencies.siteSlug }`,
 			description: 'VideoPress signup flow',
 			lastModified: '2022-07-06',
 			showRecaptcha: true,
