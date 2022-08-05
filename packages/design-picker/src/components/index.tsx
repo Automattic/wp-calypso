@@ -123,32 +123,29 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			return null;
 		}
 
-		let text: any = __( 'Free' );
+		let text: React.ReactNode = null;
 
-		if ( design.is_premium ) {
-			if ( shouldUpgrade ) {
-				text = (
-					<Button
-						isLink={ true }
-						className="design-picker__button-link"
-						onClick={ ( e: any ) => {
-							e.stopPropagation();
-							onCheckout?.();
-						} }
-					>
-						{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
-							? __( 'Included in WordPress.com Premium' )
-							: __( 'Upgrade to Premium' ) }
-					</Button>
-				);
-			} else if ( hasPurchasedTheme ) {
-				// Premium, does not need upgrade
-				// TODO: How to figure out if it's annual or monthly?
-				text = __( 'Purchased on an annual subscription' );
-			} else {
-				// ! shouldUpgrade && ! hasPurchasedTheme
-				text = __( 'Included in your plan' );
-			}
+		if ( design.is_premium && shouldUpgrade ) {
+			text = (
+				<Button
+					isLink={ true }
+					className="design-picker__button-link"
+					onClick={ ( e: any ) => {
+						e.stopPropagation();
+						onCheckout?.();
+					} }
+				>
+					{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
+						? __( 'Included in WordPress.com Premium' )
+						: __( 'Upgrade to Premium' ) }
+				</Button>
+			);
+		} else if ( design.is_premium && ! shouldUpgrade && hasPurchasedTheme ) {
+			text = __( 'Purchased on an annual subscription' );
+		} else if ( design.is_premium && ! shouldUpgrade && ! hasPurchasedTheme ) {
+			text = __( 'Included in your plan' );
+		} else if ( ! design.is_premium ) {
+			text = __( 'Free' );
 		}
 
 		return <div className="design-picker__pricing-description">{ text }</div>;
