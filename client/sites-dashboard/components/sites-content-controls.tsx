@@ -4,6 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 
@@ -56,6 +57,7 @@ export const SitesContentControls = ( {
 					</SelectDropdown.Item>
 				) ) }
 			</SelectDropdown>
+			<SitesDisplayModeSwitcher />
 		</FilterBar>
 	);
 };
