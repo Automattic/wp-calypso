@@ -1,16 +1,17 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { showDSPWidgetModal } from 'calypso/lib/promote-post';
+import { recordDSPEntryPoint, showDSPWidgetModal } from 'calypso/lib/promote-post';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PromotePost = ( props ) => {
 	const { moduleName, postId } = props;
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
 	const showPromotePost = config.isEnabled( 'promote-post' );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -24,7 +25,7 @@ const PromotePost = ( props ) => {
 			'Clicked on Promote Post Widget Button in ' + moduleName + ' List Action Menu'
 		);
 
-		recordTracksEvent( 'calypso_mysites_stats_posts_pages_promote_posts_clicked' );
+		dispatch( recordDSPEntryPoint( 'mysites_stats_posts-and-pages_speaker-button' ) );
 	};
 
 	return (
