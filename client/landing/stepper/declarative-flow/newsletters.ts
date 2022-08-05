@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { StepPath } from './internals/steps-repository';
@@ -10,7 +11,11 @@ export const newsletters: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'newsletterSetup', 'launchpad' ] as StepPath[];
+		return [
+			'intro',
+			'newsletterSetup',
+			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
+		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {

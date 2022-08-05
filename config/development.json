@@ -166,6 +166,7 @@
 		"signup/woo-verify-email": false,
 		"signup/theme-preview-screen": true,
 		"signup/standard-theme-v13n": true,
+		"signup/launchpad": true,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
 		"themes/atomic-homepage-replace": true,
