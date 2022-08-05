@@ -10,7 +10,7 @@ export function useStillNeedHelpURL() {
 	// TODO: check purchases instead
 	const isFreeUser = ! supportAvailability?.is_user_eligible_for_tickets;
 
-	if ( ! canUseWpcomApis ) {
+	if ( ! canAccessWpcomApis() ) {
 		return 'https://wordpress.com/help/contact';
 	}
 
