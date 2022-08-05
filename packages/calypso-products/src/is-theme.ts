@@ -1,6 +1,6 @@
-import { camelOrSnakeSlug } from './camel-or-snake-slug';
-import type { WithCamelCaseSlug, WithSnakeCaseSlug } from './types';
+import { camelOrSnakeProductType } from './camel-or-snake-product-type';
+import type { WithCamelCaseProductType, WithSnakeCaseProductType } from './types';
 
-export function isTheme( product: WithSnakeCaseSlug | WithCamelCaseSlug ): boolean {
-	return 'premium_theme' === camelOrSnakeSlug( product );
+export function isTheme( product: WithSnakeCaseProductType | WithCamelCaseProductType ): boolean {
+	return 'theme' === camelOrSnakeProductType( product );
 }
