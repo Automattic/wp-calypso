@@ -27,8 +27,8 @@ const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 export const useSiteExcerptsQuery = () => {
 	const store = useStore();
 
-	const result = useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
-		staleTime: 1000 * 60 * 5, // 5 minutes
+	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
+		staleTime: 1000,
 		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
@@ -37,13 +37,7 @@ export const useSiteExcerptsQuery = () => {
 			const reduxData = getSites( store.getState() ).filter( notNullish );
 			return reduxData.length ? { sites: reduxData } : undefined;
 		},
-		placeholderData: {
-			sites: [],
-		},
 	} );
-
-	// usQuery isLoading is false, so we need to check isFetching for the first time
-	return { ...result, isLoading: result.isFetching && ! result.data?.length };
 };
 
 // This "null" check also does the type assertion that allows TypeScript to
