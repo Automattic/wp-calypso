@@ -8,23 +8,23 @@ This component renders the plugins browser discovery page.
 import PluginsDiscoveryPage from 'calypso/my-sites/plugins/discovery-page';
 
 function render() {
-    return (
-        <div>
-            <PluginsDiscoveryPage
-                clearSearch={ clearSearch }
-                search={ search }
-                category={ category }
-                sites={ sites }
-                searchTitle={ searchTitle }
-                siteSlug={ siteSlug }
-                siteId={ siteId }
-                jetpackNonAtomic={ jetpackNonAtomic }
-                selectedSite={ selectedSite }
-                sitePlan={ sitePlan }
-                isVip={ isVip }
-            />
-        </div>
-    );
+	return (
+		<div>
+			<PluginsDiscoveryPage
+				clearSearch={ clearSearch }
+				search={ search }
+				category={ category }
+				sites={ sites }
+				searchTitle={ searchTitle }
+				siteSlug={ siteSlug }
+				siteId={ siteId }
+				jetpackNonAtomic={ jetpackNonAtomic }
+				selectedSite={ selectedSite }
+				sitePlan={ sitePlan }
+				isVip={ isVip }
+			/>
+		</div>
+	);
 }
 ```
 

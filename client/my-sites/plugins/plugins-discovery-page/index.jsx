@@ -113,6 +113,10 @@ const PaidPluginsSection = ( props ) => {
 	);
 };
 
+const FeaturedPluginsSection = ( props ) => {
+	return <SingleListView { ...props } category="featured" />;
+};
+
 const PopularPluginsSection = ( props ) => {
 	const { plugins: popularPlugins = [], isFetching: isFetchingPluginsByCategoryPopular } =
 		usePlugins( {
@@ -174,9 +178,8 @@ const PluginsDiscoveryPage = ( props ) => {
 				</>
 			) }
 			{ ( hasInstallPurchasedPlugins || lowerPlanAvailable ) && <UpgradeNudge { ...props } /> }
-			<SingleListView
+			<FeaturedPluginsSection
 				{ ...props }
-				category="featured"
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 			/>
