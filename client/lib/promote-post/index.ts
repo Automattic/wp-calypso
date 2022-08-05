@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 declare global {
 	interface Window {
