@@ -28,7 +28,7 @@ export const useSiteExcerptsQuery = () => {
 	const store = useStore();
 
 	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
-		staleTime: 1000 * 60 * 5, // 5 minutes,
+		staleTime: 1000 * 60 * 5, // 5 minutes
 		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
