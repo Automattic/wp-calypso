@@ -439,6 +439,13 @@
 
 // layout with categories
 .design-picker--has-categories {
+	.responsive-toolbar-group__swipe {
+		.responsive-toolbar-group__swipe-list {
+			padding: 0;
+			margin-left: -8px;
+		}
+	}
+
 	@supports ( display: grid ) {
 		.design-picker__grid {
 			@include break-medium {
