@@ -102,7 +102,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 			</PageHeader>
 			<PageBodyWrapper>
 				<>
-					{ allSites.length > 0 ? (
+					{ allSites.length > 0 && (
 						<FilterBar>
 							<SitesSearch
 								searchIcon={ <SitesSearchIcon /> }
@@ -125,8 +125,6 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 								) ) }
 							</SelectDropdown>
 						</FilterBar>
-					) : (
-						''
 					) }
 					{ filteredSites.length > 0 ? (
 						<SitesTable sites={ filteredSites } />
