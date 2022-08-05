@@ -242,7 +242,7 @@ export function serverRender( req, res ) {
 
 		// And cache on the server, too.
 		if ( cacheKey ) {
-			const cacheableServerState = pick( context.store.getState(), cacheableReduxSubtrees );
+			const cacheableServerState = pick( context.store.getState(), reduxSubtrees );
 			const serverState = serialize( context.store.getCurrentReducer(), cacheableServerState );
 			stateCache.set( cacheKey, serverState.get() );
 		}
