@@ -3,7 +3,7 @@
  *
  * @param state
  * @param purchaseId
- * @returns {any}
+ * @returns array
  */
 export default function getCancellationOffers( state, purchaseId ) {
 	return state.cancellationOffers?.[ purchaseId ]?.offers ?? [];

@@ -8,9 +8,14 @@ import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { applyCancellationOffer } from 'calypso/state/cancellation-offers/actions';
+import getCancellationOfferApplyError from 'calypso/state/cancellation-offers/selectors/get-cancellation-offer-apply-error';
+import getCancellationOfferApplySuccess from 'calypso/state/cancellation-offers/selectors/get-cancellation-offer-apply-success';
+import isApplyingCancellationOffer from 'calypso/state/cancellation-offers/selectors/is-applying-cancellation-offer';
 import { CancellationOffer } from 'calypso/state/cancellation-offers/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { FC } from 'react';
@@ -20,16 +25,22 @@ interface Props {
 	siteId: number;
 	offer: CancellationOffer;
 	percentDiscount: number;
+	onGetDiscount: () => void;
 }
 
 const JetpackCancellationOffer: FC< Props > = ( props ) => {
-	const { offer, purchase, percentDiscount } = props;
+	const { siteId, offer, purchase, percentDiscount, onGetDiscount } = props;
 	const translate = useTranslate();
-
-	const onClickAccept = useCallback( () => {
-		return;
-	}, [] );
-
+	const dispatch = useDispatch();
+	const isApplyingOffer = useSelector( ( state ) =>
+		isApplyingCancellationOffer( state, purchase.id )
+	);
+	const offerApplySuccess = useSelector( ( state ) =>
+		getCancellationOfferApplySuccess( state, purchase.id )
+	);
+	const offerApplyError = useSelector( ( state ) =>
+		getCancellationOfferApplyError( state, purchase.id )
+	);
 	const { offerHeadline, renewalCopy } = useMemo( () => {
 		const periods = offer.discountedPeriods;
 		const renewalPrice = formatCurrency( offer.rawPrice, offer.currencyCode );
@@ -126,6 +137,33 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 		return { offerHeadline, renewalCopy };
 	}, [ offer, percentDiscount, purchase, translate ] );
 
+	const onClickAccept = useCallback( () => {
+		// is the offer being claimed/ is there already a success or error
+		if ( ! isApplyingOffer && offerApplySuccess === false && ! offerApplyError ) {
+			dispatch( applyCancellationOffer( siteId, purchase.id ) );
+			onGetDiscount(); // Takes care of analytics.
+		}
+	}, [ isApplyingOffer, offerApplySuccess, offerApplyError, siteId, purchase.id, onGetDiscount ] );
+
+	const getErrorOutput = useMemo( () => {
+		if ( offerApplyError ) {
+			const getErrorMessage = () => {
+				switch ( offerApplyError.code ) {
+					case 'invalid_offer':
+						return translate(
+							'This discount appears to be invalid, please try reloading the purchase page.'
+						);
+					default:
+						return translate( 'There was an error getting the discount!' );
+				}
+			};
+
+			return <p className="jetpack-cancellation-offer__error-text">{ getErrorMessage() }</p>;
+		}
+
+		return null;
+	}, [ offerApplyError ] );
+
 	return (
 		<>
 			<FormattedHeader
@@ -191,9 +229,12 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 					className="jetpack-cancellation-offer__accept-cta"
 					primary
 					onClick={ onClickAccept }
+					disabled={ isApplyingOffer || offerApplyError }
+					busy={ isApplyingOffer }
 				>
-					{ translate( 'Get discount' ) }
+					{ isApplyingOffer ? translate( 'Getting Discount' ) : translate( 'Get discount' ) }
 				</Button>
+				{ getErrorOutput }
 			</div>
 		</>
 	);

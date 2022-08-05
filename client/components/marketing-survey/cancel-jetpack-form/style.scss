@@ -134,6 +134,10 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 			outline: solid 2px var( --studio-gray-100 );
 			outline-offset: 2px;
 		}
+
+		&.is-busy {
+			background-image: linear-gradient( -45deg, var( --studio-gray-60 ) 28%, var( --studio-gray-100 ) 28%, var( --studio-gray-100 ) 72%, var( --studio-gray-60 ) 72% ) !important;
+		}
 	}
 
 	&__tos {
@@ -148,5 +152,10 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 				color: var( --studio-jetpack-green-70 );
 			}
 		}
+	}
+
+	&__error-text {
+		color: var( --studio-red-0 );
+		font-weight: 700;
 	}
 }

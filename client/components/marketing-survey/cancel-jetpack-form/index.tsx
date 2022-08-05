@@ -2,12 +2,14 @@ import config from '@automattic/calypso-config';
 import { Button, Dialog } from '@automattic/components';
 import { Button as ButtonType } from '@automattic/components/dist/types/dialog/button-bar';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
+import page from 'page';
 import { useState, useEffect, useMemo } from 'react';
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPurchaseCancellationOffers from 'calypso/components/data/query-purchase-cancellation-offers';
 import JetpackBenefitsStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-benefits-step';
 import JetpackCancellationOfferStep from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer';
+import JetpackCancellationOfferAccepted from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-offer-accepted';
 import JetpackCancellationSurvey from 'calypso/components/marketing-survey/cancel-jetpack-form/jetpack-cancellation-survey';
 import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
@@ -18,8 +20,11 @@ import {
 	isPurchaseCancelable,
 } from 'calypso/lib/purchases';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { isOutsideCalypso } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getCancellationOfferApplySuccess from 'calypso/state/cancellation-offers/selectors/get-cancellation-offer-apply-success';
 import getCancellationOffers from 'calypso/state/cancellation-offers/selectors/get-cancellation-offers';
+import isApplyingCancellationOffer from 'calypso/state/cancellation-offers/selectors/is-applying-cancellation-offer';
 import isFetchingCancellationOffers from 'calypso/state/cancellation-offers/selectors/is-fetching-cancellation-offers';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import nextStep from '../cancel-purchase-form/next-step';
@@ -34,12 +39,12 @@ import './style.scss';
 interface Props {
 	disableButtons?: boolean;
 	purchase: Purchase;
+	purchaseListUrl: string; // The URL of the purchase page to redirect to.
 	isVisible: boolean;
 	onClose: () => void;
 	onClickFinalConfirm: () => void;
 	flowType: string;
 	translate?: () => void;
-	recordTracksEvent: ( name: string, data: Record< string, unknown > ) => void;
 }
 
 const CancelJetpackForm: React.FC< Props > = ( {
@@ -81,7 +86,15 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	} );
 
 	const fetchingCancellationOffers = useSelector( ( state ) =>
-		isFetchingCancellationOffers( state )
+		isFetchingCancellationOffers( state, purchase.id )
+	);
+
+	const applyingCancellationOffer = useSelector( ( state ) =>
+		isApplyingCancellationOffer( state, purchase.id )
+	);
+
+	const cancellationOfferApplySuccess = useSelector( ( state ) =>
+		getCancellationOfferApplySuccess( state, purchase.id )
 	);
 
 	const isOfferPriceSameOrLowerThanPurchasePrice = useMemo( () => {
@@ -159,6 +172,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 				offerDiscountBasedFromPurchasePrice >= 10
 			) {
 				availableSteps.push( steps.CANCELLATION_OFFER_STEP );
+				availableSteps.push( steps.OFFER_ACCEPTED_STEP );
 			}
 		}
 		return availableSteps;
@@ -196,11 +210,19 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	const handleCloseDialog = () => {
 		props.onClose();
-		resetSurveyState();
-
 		// record tracks event
 		// sends the same event name as the main product cancellation form
 		recordEvent( 'calypso_purchases_cancel_form_close' );
+
+		// When an offer has been accepted, redirect back to the purchases page.
+		if (
+			( cancellationOfferApplySuccess || steps.OFFER_ACCEPTED_STEP === cancellationStep ) &&
+			! isOutsideCalypso( props.purchaseListUrl )
+		) {
+			page.redirect( props.purchaseListUrl );
+		} else {
+			resetSurveyState();
+		}
 	};
 
 	const setSurveyStep = ( stepFunction: ( step: string, steps: string[] ) => string ) => {
@@ -217,7 +239,21 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		setSurveyStep( nextStep );
 	};
 
+	// When an offer is successfully applied, move to the offer accepted step.
+	useEffect( () => {
+		if ( true === cancellationOfferApplySuccess ) {
+			setSurveyStep( () => {
+				return steps.OFFER_ACCEPTED_STEP;
+			} );
+		}
+	}, [ cancellationOfferApplySuccess, setSurveyStep ] );
+
 	const onSubmit = () => {
+		// If applying an offer, don't attempt cancellation.
+		if ( applyingCancellationOffer ) {
+			return;
+		}
+
 		if ( surveyAnswerId ) {
 			const surveyData = {
 				'why-cancel': {
@@ -259,6 +295,10 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		setSurveyAnswerText( answerText );
 	};
 
+	const onGetCancellationOffer = () => {
+		recordEvent( 'calypso_purchases_cancel_get_discount' );
+	};
+
 	/**
 	 * Render the dialog buttons for the current step
 	 */
@@ -266,10 +306,12 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		const { disableButtons } = props;
 		const disabled = disableButtons;
 		const loadingOffers = shouldProvideCancellationOffer && fetchingCancellationOffers;
+		const applyingOffer = shouldProvideCancellationOffer && applyingCancellationOffer;
 		const close = {
 			action: 'close',
-			disabled: disabled,
-			isPrimary: lastStep !== cancellationStep,
+			disabled: disabled || applyingOffer,
+			isPrimary:
+				lastStep !== cancellationStep && steps.CANCELLATION_OFFER_STEP !== cancellationStep,
 			label: translate( "I'll keep it" ),
 		};
 		const next = {
@@ -285,21 +327,38 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		const cancellingText =
 			flowType === CANCEL_FLOW_TYPE.REMOVE ? translate( 'Removing' ) : translate( 'Cancelling' );
 		const cancel = (
-			<Button disabled={ disabled } busy={ disabled } onClick={ onSubmit } primary scary>
+			<Button
+				disabled={ disabled || applyingOffer }
+				busy={ disabled }
+				onClick={ onSubmit }
+				primary
+				scary
+			>
 				{ disabled ? cancellingText : cancelText }
 			</Button>
 		);
-		const firstButtons: [ ButtonType ] = [ close ];
-
 		const loading = (
 			<Button disabled={ true } busy={ true } primary>
 				{ translate( 'Loading' ) }
 			</Button>
 		);
+		const backToPurchases = {
+			action: 'close',
+			isPrimary: true,
+			disabled: disabled,
+			label: translate( 'Back to my purchases' ),
+		};
 
-		// on the last step
-		// show the cancel button
-		if ( lastStep === cancellationStep ) {
+		const firstButtons: [ ButtonType ] = [ close ];
+
+		// Offer accepted screen only provides back to site button.
+		if ( steps.OFFER_ACCEPTED_STEP === cancellationStep ) {
+			return [ backToPurchases ];
+		}
+
+		// on the last step or the offer step
+		// show the cancel button here
+		if ( lastStep === cancellationStep || steps.CANCELLATION_OFFER_STEP === cancellationStep ) {
 			// If loading offers, show a "loading" button in place of the remove button.
 			// The steps may change if an offer is available and this may no longer be the last step.
 			if ( loadingOffers ) {
@@ -356,6 +415,19 @@ const CancelJetpackForm: React.FC< Props > = ( {
 					purchase={ purchase }
 					offer={ cancellationOffer }
 					percentDiscount={ offerDiscountBasedFromPurchasePrice }
+					onGetDiscount={ onGetCancellationOffer }
+				/>
+			);
+		}
+
+		// Step 4: Offer Accepted
+		if ( steps.OFFER_ACCEPTED_STEP === cancellationStep ) {
+			// Show after an offer discount has been accepted
+			return (
+				<JetpackCancellationOfferAccepted
+					siteId={ purchase.siteId }
+					percentDiscount={ offerDiscountBasedFromPurchasePrice }
+					productName={ productName }
 				/>
 			);
 		}
