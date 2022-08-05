@@ -11,28 +11,31 @@ const container = css( {
 	gap: '10px',
 } );
 
-const SiteSwitcherButton = styled( Button )<
-	ComponentProps< typeof Button > & { active: boolean }
->( { borderRadius: '4px' }, ( props ) => {
-	if ( props.active ) {
+const SiteSwitcherButton = styled( Button, {
+	shouldForwardProp: ( prop ) => prop !== 'active',
+} )< ComponentProps< typeof Button > & { active: boolean } >(
+	{ borderRadius: '4px' },
+	( props ) => {
+		if ( props.active ) {
+			return {
+				color: '#FFF',
+				background: '#101517',
+
+				'&:hover': {
+					color: '#FFF !important',
+				},
+			};
+		}
+
 		return {
-			color: '#FFF',
-			background: '#101517',
+			color: '#50575E',
 
 			'&:hover': {
-				color: '#FFF !important',
+				background: '#F6F7F7',
 			},
 		};
 	}
-
-	return {
-		color: '#50575E',
-
-		'&:hover': {
-			background: '#F6F7F7',
-		},
-	};
-} );
+);
 
 export const SitesDisplayModeSwitcher = () => {
 	return (
