@@ -545,7 +545,7 @@ const sections = [
 	},
 	{
 		name: 'promote-post',
-		paths: [ '/promoted-posts', '/promoted-posts/[^\\/]+' ],
+		paths: [ '/advertising', '/advertising/[^\\/]+' ],
 		module: 'calypso/my-sites/promote-post',
 		group: 'sites', // todo what group should this be?
 	},

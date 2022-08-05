@@ -7,7 +7,7 @@ import { promotedPosts } from './controller';
 export default () => {
 	if ( isEnabled( 'promote-post' ) ) {
 		page(
-			'/promoted-posts/:site?',
+			'/advertising/:site?',
 			siteSelection,
 			navigation,
 			promotedPosts,
