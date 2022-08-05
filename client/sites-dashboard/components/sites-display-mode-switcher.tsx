@@ -3,6 +3,9 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { SitesListIcon } from './sites-list-icon';
 import { SitesTilesIcon } from './sites-tiles-icon';
 
@@ -36,34 +39,41 @@ const SiteSwitcherButton = styled( Button )< ComponentProps< typeof Button > >(
 	}
 );
 
-type DisplayMode = 'tile' | 'list';
+type SitesDisplayMode = 'tile' | 'list' | 'none';
 
-interface SitesDisplayModeSwitcherProps {
-	onModeChange( value: DisplayMode ): void;
-	mode?: DisplayMode;
-}
+const PREFERENCE_NAME = 'sites-management-dashboard-display-mode';
 
-export const SitesDisplayModeSwitcher = ( {
-	onModeChange,
-	mode = 'tile',
-}: SitesDisplayModeSwitcherProps ) => {
+export const SitesDisplayModeSwitcher = () => {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
+
+	const onDisplayModeChange = ( value: SitesDisplayMode ) => {
+		dispatch( savePreference( PREFERENCE_NAME, value ) );
+	};
+
+	const displayMode: SitesDisplayMode = useSelector( ( state ) => {
+		if ( ! hasReceivedRemotePreferences( state ) ) {
+			return 'none';
+		}
+
+		return getPreference( state, PREFERENCE_NAME ) ?? 'list';
+	} );
 
 	return (
 		<div className={ container } role="radiogroup" aria-label={ __( 'Sites display mode' ) }>
 			<SiteSwitcherButton
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
-				onClick={ () => onModeChange( 'tile' ) }
+				onClick={ () => onDisplayModeChange( 'tile' ) }
 				icon={ <SitesTilesIcon /> }
-				isPressed={ mode === 'tile' }
+				isPressed={ displayMode === 'tile' }
 			/>
 			<SiteSwitcherButton
 				role="radio"
 				aria-label={ __( 'List view' ) }
+				onClick={ () => onDisplayModeChange( 'list' ) }
 				icon={ <SitesListIcon /> }
-				onClick={ () => onModeChange( 'list' ) }
-				isPressed={ mode === 'list' }
+				isPressed={ displayMode === 'list' }
 			/>
 		</div>
 	);
