@@ -154,16 +154,16 @@ class SocialLoginForm extends Component {
 			redirectTo.includes( 'jetpack/connect' ) &&
 			config.isEnabled( 'jetpack/magic-link-signup' );
 
-		const privacyLink = (
+		const tosLink = (
 			<a
-				href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
 				target="_blank"
 				rel="noopener noreferrer"
 			/>
 		);
-		const tosLink = (
+		const privacyLink = (
 			<a
-				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+				href={ localizeUrl( 'https://automattic.com/privacy/' ) }
 				target="_blank"
 				rel="noopener noreferrer"
 			/>
