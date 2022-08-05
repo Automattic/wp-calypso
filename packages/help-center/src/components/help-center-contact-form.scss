@@ -48,6 +48,7 @@
 				padding: 15.5px !important;
 				border: 1px solid var( --studio-gray-10 ) !important;
 				border-radius: 4px !important;
+				box-sizing: border-box;
 			}
 		}
 	}
@@ -64,6 +65,7 @@
 	border-radius: 4px;
 	width: 100%;
 	display: block;
+	box-sizing: border-box;
 
 	&:focus {
 		box-shadow: none;
