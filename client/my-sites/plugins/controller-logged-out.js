@@ -1,4 +1,3 @@
-import { __ } from '@wordpress/i18n';
 import { BASE_STALE_TIME } from 'calypso/data/marketplace/constants';
 import {
 	getFetchWPCOMFeaturedPlugins,
@@ -9,23 +8,15 @@ import {
 	getFetchWPORGPlugins,
 	getFetchWPORGInfinitePlugins,
 } from 'calypso/data/marketplace/use-wporg-plugin-query';
-import { normalizePluginData } from 'calypso/lib/plugins/utils';
-import { fetchPluginInformation } from 'calypso/lib/wporg';
-import { PLUGINS_WPORG_PLUGIN_RECEIVE } from 'calypso/state/action-types';
-import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import { createQueryClient } from 'calypso/state/query-client';
-import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
-
-// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
-// the `:plugin` param is actually the side ID or category.
-function getCategoryForPluginsBrowser( context ) {
-	if ( context.params.plugin && ALLOWED_CATEGORIES.includes( context.params.plugin ) ) {
-		return context.params.plugin;
-	}
-
-	return context.params.category;
-}
+import {
+	getProductsList,
+	isMarketplaceProduct as isMarketplaceProductSelector,
+} from 'calypso/state/products-list/selectors';
+import { getCategories } from './categories/use-categories';
+import { getCategoryForPluginsBrowser } from './controller';
 
 function getProps( context ) {
 	const searchTerm = context.query.s;
@@ -61,41 +52,28 @@ export async function fetchPlugin( context, next ) {
 		return next();
 	}
 
-	const queryClient = await createQueryClient();
+	const options = {
+		...getProps( context ),
+	};
+
+	const { queryClient } = context;
 	const store = context.store;
 
 	const pluginSlug = context.params?.plugin;
-	await Promise.all( [
-		prefetchPluginsData( queryClient, getFetchWPCOMPlugin( pluginSlug ) ),
-		requestProductsList( { type: 'all', presist: true } )( store.dispatch ),
-		// fetchPluginData( pluginSlug )( store.dispatch, store.getState ),
-		fetchPluginInformation( pluginSlug, context.lang ).then(
-			( data ) => {
-				const fullPlugin = normalizePluginData( { detailsFetched: Date.now() }, data );
-				store.dispatch( {
-					type: PLUGINS_WPORG_PLUGIN_RECEIVE,
-					pluginSlug,
-					data: fullPlugin,
-				} );
-				store.dispatch(
-					appendBreadcrumb( {
-						label: __( 'Plugins' ),
-						href: `/plugins`,
-						id: 'plugins',
-						helpBubble: __( 'Add new functionality and integrations to your site with plugins.' ),
-					} )
-				);
-				store.dispatch(
-					appendBreadcrumb( {
-						label: fullPlugin.name,
-						href: `/plugins/${ pluginSlug }`,
-						id: `plugin-${ pluginSlug }`,
-					} )
-				);
-			},
-			() => {}
-		),
-	] );
+	const productsList = getProductsList( store.getState() );
+	if ( Object.values( productsList ).length === 0 ) {
+		await requestProductsList( { type: 'all', presist: true } )( store.dispatch );
+	}
+
+	const isMarketplaceProduct = isMarketplaceProductSelector( store.getState(), pluginSlug );
+
+	let data = getWporgPluginSelector( store.getState(), pluginSlug );
+	if ( isMarketplaceProduct ) {
+		data = await prefetchPluginsData( queryClient, getFetchWPCOMPlugin( pluginSlug ) );
+	} else if ( ! data ) {
+		await store.dispatch( wporgFetchPluginData( pluginSlug, options.locale ) );
+		data = getWporgPluginSelector( store.getState(), pluginSlug );
+	}
 
 	context.queryClient = queryClient;
 	next();
@@ -109,8 +87,8 @@ export async function fetchPlugins( context, next ) {
 	const options = {
 		...getProps( context ),
 	};
-	const queryClient = await createQueryClient();
-	const store = context.store;
+
+	const { queryClient } = context;
 
 	await Promise.all( [
 		prefetchPluginsData(
@@ -123,25 +101,6 @@ export async function fetchPlugins( context, next ) {
 		prefetchPluginsData( queryClient, getFetchWPORGPlugins( { ...options, category: 'popular' } ) ),
 		prefetchPluginsData( queryClient, getFetchWPCOMFeaturedPlugins() ),
 	] );
-
-	store.dispatch(
-		appendBreadcrumb( {
-			label: __( 'Plugins' ),
-			href: `/plugins`,
-			id: 'plugins',
-			helpBubble: __( 'Add new functionality and integrations to your site with plugins.' ),
-		} )
-	);
-
-	if ( options.search ) {
-		store.dispatch(
-			appendBreadcrumb( {
-				label: __( 'Search Results' ),
-				href: `/plugins?s=${ options.search }`,
-				id: 'plugins-search',
-			} )
-		);
-	}
 
 	context.queryClient = queryClient;
 	next();
@@ -159,8 +118,7 @@ export async function fetchCategoryPlugins( context, next ) {
 	const categoryTags = categories[ options.category || '' ]?.tags || [ options.category ];
 	options.tag = categoryTags.join( ',' );
 
-	const queryClient = await createQueryClient();
-	const store = context.store;
+	const { queryClient } = context;
 
 	await Promise.all( [
 		prefetchPluginsData(
@@ -172,25 +130,6 @@ export async function fetchCategoryPlugins( context, next ) {
 			: Promise.resolve(),
 		prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true ),
 	] );
-
-	store.dispatch(
-		appendBreadcrumb( {
-			label: __( 'Plugins' ),
-			href: `/plugins`,
-			id: 'plugins',
-			helpBubble: __( 'Add new functionality and integrations to your site with plugins.' ),
-		} )
-	);
-
-	if ( options.category ) {
-		store.dispatch(
-			appendBreadcrumb( {
-				label: options.category,
-				href: `/plugins/browse/${ options.category }`,
-				id: 'category',
-			} )
-		);
-	}
 
 	context.queryClient = queryClient;
 
