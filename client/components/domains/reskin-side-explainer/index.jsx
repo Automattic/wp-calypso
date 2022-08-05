@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { getLocaleSlug, localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -12,16 +12,18 @@ class ReskinSideExplainer extends Component {
 		super( props );
 		this.state = {
 			experiment: null,
+			isExperimentLoading: [ 'en', 'en-gb' ].includes( getLocaleSlug() ),
 		};
 	}
 	componentDidMount() {
 		this._isMounted = true;
 
-		loadExperimentAssignment( 'domain_step_cta_copy_test' ).then( ( experimentName ) => {
-			if ( this._isMounted ) {
-				this.setState( { experiment: experimentName } );
-			}
-		} );
+		[ 'en', 'en-gb' ].includes( getLocaleSlug() ) &&
+			loadExperimentAssignment( 'domain_step_cta_copy_test' ).then( ( experimentName ) => {
+				if ( this._isMounted ) {
+					this.setState( { experiment: experimentName, isExperimentLoading: false } );
+				}
+			} );
 	}
 
 	componentWillUnmount() {
@@ -68,19 +70,22 @@ class ReskinSideExplainer extends Component {
 
 				title = isPaidPlan ? paidTitle : freeTitle;
 
-				freeSubtitle =
-					this.state.experiment?.variationName === 'treatment'
-						? translate( 'You can claim your free custom domain later if you aren’t ready yet.' )
-						: translate(
-								'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
-						  );
+				freeSubtitle = (
+					<span className={ this.state.isExperimentLoading ? 'is-loading' : '' }>
+						{ this.state.experiment?.variationName === 'treatment'
+							? translate( 'You can claim your free custom domain later if you aren’t ready yet.' )
+							: translate(
+									'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
+							  ) }
+					</span>
+				);
 
 				paidSubtitle = translate( 'Use the search tool on this page to find a domain you love.' );
 
 				subtitle = isPaidPlan ? paidSubtitle : freeSubtitle;
 
 				subtitle2 =
-					this.state.experiment?.variationName === 'treatment'
+					this.state.isExperimentLoading || this.state.experiment?.variationName === 'treatment'
 						? null
 						: translate(
 								'We’ll pay the first year’s domain registration fees for you, simple as that!'
@@ -91,11 +96,13 @@ class ReskinSideExplainer extends Component {
 					subtitle2 = null;
 				}
 
-				ctaText =
-					this.state.experiment?.variationName === 'treatment'
-						? translate( 'View plans' )
-						: translate( 'Choose my domain later' );
-
+				ctaText = (
+					<span className={ this.state.isExperimentLoading ? 'is-loading' : '' }>
+						{ this.state.experiment?.variationName === 'treatment'
+							? translate( 'View plans' )
+							: translate( 'Choose my domain later' ) }
+					</span>
+				);
 				break;
 
 			case 'use-your-domain':
