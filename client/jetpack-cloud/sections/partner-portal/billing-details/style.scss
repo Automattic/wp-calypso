@@ -5,8 +5,6 @@
 	&__row {
 		display: grid;
 		grid-template-columns: calc( 66% - 12px ) calc( 34% - 12px );
-		direction: rtl;
-		transform: rotate( 180deg );
 		grid-template-areas:
 			'product assigned'
 			'subtotal unassigned';
@@ -15,8 +13,7 @@
 		font-size: 1.25rem;
 
 		@include break-xlarge() {
-			direction: ltr;
-			transform: rotate( 0 );
+
 			grid-template-columns: 1fr 150px 150px 150px;
 			grid-template-areas: 'product assigned unassigned subtotal';
 		}
@@ -24,15 +21,6 @@
 		&--summary {
 			grid-template-areas: none;
 			grid-gap: 8px 24px;
-		}
-
-		> * {
-			direction: ltr;
-			transform: rotate( 180deg );
-
-			@include break-xlarge() {
-				transform: rotate( 0 );
-			}
 		}
 
 		> :nth-child( even ) {
