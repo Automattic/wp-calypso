@@ -4,7 +4,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
-// import './style.scss';
+import './style.scss';
 
 function PlaceHolderChecklist() {
 	return (
@@ -25,9 +25,8 @@ const Launchpad: Step = ( { navigation } ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 
-	// TODO: Replace inline styling with classname and scss styling
 	const stepContent = (
-		<div style={ { display: 'flex', flexDirection: 'column', justifyContent: 'center' } }>
+		<div className="launchpad__content">
 			<PlaceHolderChecklist />
 			<PlaceHolderPreview />
 		</div>
@@ -39,6 +38,7 @@ const Launchpad: Step = ( { navigation } ) => {
 			<StepContainer
 				stepName={ 'launchpad' }
 				goNext={ navigation.goNext }
+				isWideLayout={ true }
 				skipLabelText={ translate( 'Go to Admin' ) }
 				skipButtonAlign={ 'top' }
 				hideBack={ true }
