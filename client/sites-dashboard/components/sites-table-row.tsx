@@ -98,6 +98,10 @@ const ListTileSubtitle = styled.div`
 	align-items: center;
 `;
 
+const NoIcon = styled.div`
+	fontsize: 'xx-large';
+`;
+
 const getDashboardUrl = ( slug: string ) => {
 	return '/home/' + slug;
 };
@@ -151,12 +155,13 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 								{ site.icon ? (
 									<Image
 										src={ site.icon.img }
-										alt={ site.name }
+										alt={ __( 'Site Icon' ) }
 										style={ { height: '50px', width: '50px' } }
-										className={ undefined }
 									/>
 								) : (
-									<h1 style={ { fontSize: 'xx-large' } }>{ site.name.charAt( 0 ) }</h1>
+									<NoIcon role={ 'img' } aria-label={ __( 'Site Icon' ) }>
+										{ site.name.charAt( 0 ) }
+									</NoIcon>
 								) }
 							</SiteThumbnail>
 						</ListTileLeading>

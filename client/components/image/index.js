@@ -5,6 +5,9 @@ const hideImageOnError = ( event ) => {
 	event.target.style.display = 'none';
 };
 
+/**
+ * @param {import('react').ImgHTMLAttributes} props
+ */
 export default function Image( { alt, className, src, ...restProps } ) {
 	return (
 		<img
