@@ -162,17 +162,18 @@
 	}
 
 	.plugin-site-jetpack__container {
+		height: 40px;
 		border: 0;
 		border-top: 1px solid var( --studio-gray-0 );
 		color: var( --studio-gray-100 );
-		padding: 2px;
+		padding: 0;
 	}
 
 	.plugin-action .components-toggle-control .components-base-control__field {
 		margin-bottom: 0;
 	}
 
-	.manage-site-plugins-dialog__installed-on {
+	.manage-site-plugins-dialog__plugin-list {
 		margin-bottom: 16px;
 	}
 
@@ -197,4 +198,8 @@
 	.plugin-details-CTA__t-and-c {
 		@extend %placeholder;
 	}
+}
+
+.ellipsis-menu__menu.popover {
+	z-index: 100201; // dialog overlay + 1
 }
