@@ -34,9 +34,9 @@ export const SiteThumbnail = ( {
 
 	const primary = useDominantColor( bgColorImgUrl );
 
-	backgroundColor = primary?.hexa || backgroundColor;
+	const thumbnailBackground = primary?.hexa || backgroundColor;
 
-	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
+	const color = thumbnailBackground && getTextColorFromBackground( thumbnailBackground );
 
 	const className = classnames(
 		'site-thumbnail',
@@ -47,7 +47,7 @@ export const SiteThumbnail = ( {
 	const loader = mShotsUrl && ! isError ? 'site-thumbnail-loader' : '';
 
 	return (
-		<div className={ className } style={ { backgroundColor, color } }>
+		<div className={ className } style={ { backgroundColor: thumbnailBackground, color } }>
 			{ isLoading && <div className={ loader }>{ children }</div> }
 			{ src && ! isError && (
 				<img

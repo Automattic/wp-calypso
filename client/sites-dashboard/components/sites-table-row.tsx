@@ -98,9 +98,9 @@ const ListTileSubtitle = styled.div`
 	align-items: center;
 `;
 
-const NoIcon = styled.div`
-	font-size: xx-large;
-`;
+const NoIcon = styled.div( {
+	fontSize: 'xx-large',
+} );
 
 const getDashboardUrl = ( slug: string ) => {
 	return '/home/' + slug;
@@ -133,7 +133,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	} else if ( site.is_private ) {
 		siteStatusLabel = __( 'Private' );
 	}
-	const setmShotsUrl = ! isComingSoon && ! site.is_private;
+	const shouldUseScreenshot = ! isComingSoon && ! site.is_private;
 
 	return (
 		<Row>
@@ -148,7 +148,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							title={ __( 'Visit Dashboard' ) }
 						>
 							<SiteThumbnail
-								mShotsUrl={ setmShotsUrl ? site.URL : undefined }
+								mShotsUrl={ shouldUseScreenshot ? site.URL : undefined }
 								alt={ site.name }
 								bgColorImgUrl={ site.icon?.img }
 							>
