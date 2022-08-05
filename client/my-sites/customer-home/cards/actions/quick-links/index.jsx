@@ -9,6 +9,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
+import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -101,7 +102,7 @@ export const QuickLinks = ( {
 			/>
 			{ isPromotePostActive && (
 				<ActionBox
-					href={ `/todo/campaigns/all` }
+					href={ `/advertising/${ siteSlug }` }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
 					label={ translate( 'Promote post' ) }
@@ -263,15 +264,8 @@ const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
-const trackPromotePostAction = ( isStaticHomePage ) => ( dispatch ) => {
-	dispatch(
-		composeAnalytics(
-			recordTracksEvent( 'calypso_customer_home_my_site_promote_post_click', {
-				is_static_home_page: isStaticHomePage,
-			} ),
-			bumpStat( 'calypso_customer_home', 'my_site_promote_post' )
-		)
-	);
+const trackPromotePostAction = () => ( dispatch ) => {
+	dispatch( recordDSPEntryPoint( 'myhome_quick-links' ) );
 };
 
 const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {

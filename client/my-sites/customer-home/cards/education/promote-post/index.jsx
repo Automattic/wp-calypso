@@ -1,25 +1,24 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import megaphoneIllustration from 'calypso/assets/images/customer-home/illustration--megaphone.svg';
 import { EDUCATION_PROMOTE_POST } from 'calypso/my-sites/customer-home/cards/constants';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import EducationalContent from '../educational-content';
 
 const PromotePost = () => {
-	const { localeSlug } = useTranslate();
-	const isEnglish = config( 'english_locales' ).includes( localeSlug );
-
-	if ( ! isEnglish ) {
-		return null;
-	}
-
+	const translate = useTranslate();
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	// todo no tracks here yet
 	return (
 		<EducationalContent
-			title="Promote your Posts"
-			description="Reach more people promoting a post to larger WordPress.com and Tumblr community of blogs and sites."
+			title={ translate( 'Promote your posts' ) }
+			description={ translate(
+				'Reach more people promoting a post to the larger WordPress.com community of blogs and sites with our ad delivery system.'
+			) }
 			links={ [
 				{
-					externalLink: true,
-					url: 'https://todo/', // todo
+					calypsoLink: true,
+					url: `/advertising/${ siteSlug }`, // todo
 					text: 'Learn more',
 				},
 			] }
