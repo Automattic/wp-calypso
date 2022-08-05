@@ -6,10 +6,22 @@ import ListEnd from 'calypso/components/list-end';
 import SectionHeader from 'calypso/components/section-header';
 import PromotedPost from 'calypso/my-sites/promote-post/components/promoted-post';
 import './style.scss';
+import { Campaign, CampaignStatus } from 'calypso/state/promote-post/selectors';
 
-export default function PromotedPostList() {
-	const isEmpty = false;
-	const posts = [ 1, 2, 3 ];
+type Props = {
+	campaigns: Campaign[];
+};
+
+// todo: use actual value
+export const SmartStatuses: { [ status: CampaignStatus ]: string } = {
+	'-1': 'All',
+	0: 'pending',
+	1: 'active',
+	2: 'todo',
+};
+
+export default function PromotedPostList( { campaigns }: Props ) {
+	const isEmpty = ! campaigns.length;
 	return (
 		<>
 			{ isEmpty && (
@@ -30,8 +42,8 @@ export default function PromotedPostList() {
 							{ translate( 'Promote new post' ) }
 						</Button>
 					</SectionHeader>
-					{ posts.map( function () {
-						return <PromotedPost />;
+					{ campaigns.map( function ( campaign ) {
+						return <PromotedPost key={ campaign.campaign_id } campaign={ campaign } />;
 					} ) }
 					<ListEnd />
 				</>

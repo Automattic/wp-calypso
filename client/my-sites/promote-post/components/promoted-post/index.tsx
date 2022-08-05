@@ -1,15 +1,23 @@
 import { CompactCard } from '@automattic/components';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import './style.scss';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { SmartStatuses } from 'calypso/my-sites/promote-post/components/promoted-post-list';
+import { Campaign } from 'calypso/state/promote-post/selectors';
 
-export default function PromotedPost() {
+type Props = {
+	campaign: Campaign;
+};
+
+export default function PromotedPost( { campaign }: Props ) {
 	return (
 		<CompactCard className="promoted-post__card">
 			<div className="promoted-post__main">
-				<div className="promoted-post__subtitle">Draft</div>
-				<div className="promoted-post__title">Title</div>
+				<div className="promoted-post__subtitle">{ SmartStatuses[ campaign.status_smart ] }</div>
+				<div className="promoted-post__title">{ campaign.content_config.title }</div>
 				<div className="promoted-post__subtitle">
-					July 2022 - July 2022 562 Reached, 10 Clicks, Spent $11 in 5 days
+					{ campaign.start_date } - { campaign.end_date }
+					todo stats 562 Reached, 10 Clicks, Spent $11 in 5 days
 				</div>
 			</div>
 			<EllipsisMenu
@@ -17,8 +25,8 @@ export default function PromotedPost() {
 				position="bottom left"
 				// onToggle=
 			>
-				<div>Cancel</div>
-				<div>...</div>
+				<PopoverMenuItem icon="cross">Cancel</PopoverMenuItem>
+				<PopoverMenuItem icon="add">TODO</PopoverMenuItem>
 			</EllipsisMenu>
 		</CompactCard>
 	);
