@@ -48,17 +48,9 @@ class SocialLoginForm extends Component {
 		} );
 	};
 
-	handleGoogleResponse = ( response, triggeredByUser = true ) => {
+	handleGoogleResponse = ( tokens, triggeredByUser = true ) => {
 		const { onSuccess, socialService } = this.props;
 		let redirectTo = this.props.redirectTo;
-
-		const tokens = config.isEnabled( 'migration/sign-in-with-google' )
-			? response // The `response` object itself holds the tokens, no need for any other method calls.
-			: response.getAuthResponse?.();
-
-		if ( ! tokens || ! tokens.access_token || ! tokens.id_token ) {
-			return;
-		}
 
 		// ignore response if the user did not click on the google button
 		// and did not follow the redirect flow
@@ -153,21 +145,37 @@ class SocialLoginForm extends Component {
 			redirectTo &&
 			redirectTo.includes( 'jetpack/connect' ) &&
 			config.isEnabled( 'jetpack/magic-link-signup' );
+
+		const tosLink = (
+			<a
+				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		);
+		const privacyLink = (
+			<a
+				href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			/>
+		);
+
 		if ( isJetpackMagicLinkSignUpFlow ) {
 			return (
 				<>
 					<p className="login__social-tos">
-						{ translate( 'By continuing, you agree to our {{a}}Terms of Service{{/a}}.', {
-							components: {
-								a: (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						} ) }
+						{ translate(
+							'By continuing, you agree to our {{tosLink}}Terms of' +
+								' Service{{/tosLink}} and acknowledge that you have read our' +
+								' {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+							{
+								components: {
+									tosLink,
+									privacyLink,
+								},
+							}
+						) }
 					</p>
 					<p className="login__social-tos">
 						{ translate(
@@ -182,17 +190,13 @@ class SocialLoginForm extends Component {
 			<p className="login__social-tos">
 				{ translate(
 					"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-						' are creating an account and you agree to our' +
-						' {{a}}Terms of Service{{/a}}.',
+						' are creating an account, you agree to our' +
+						' {{tosLink}}Terms of Service{{/tosLink}}, and acknowledge that you have' +
+						' read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 					{
 						components: {
-							a: (
-								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-									target="_blank"
-									rel="noopener noreferrer"
-								/>
-							),
+							tosLink,
+							privacyLink,
 						},
 					}
 				) }

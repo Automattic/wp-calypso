@@ -489,6 +489,12 @@
 		text-decoration: underline;
 	}
 
+	.signup-form__terms-of-service-link {
+		a {
+			font-size: inherit;
+		}
+	}
+
 	background: #e6e6e6;
 	min-height: 100%;
 
@@ -573,6 +579,10 @@
 		}
 	}
 
+	.login__form-header {
+		margin-bottom: 8px;
+	}
+
 	.form-password-input .form-password-input__toggle-visibility {
 		top: 18px;
 	}
@@ -606,29 +616,35 @@
 		}
 	}
 
-	.login__form-action,
 	.magic-login__form-action {
 		text-align: center;
 		margin-top: 25px;
 	}
 
 	.login__social-buttons {
-		$woo-social-button-spacing: 8px;
+		$woo-social-button-spacing: 6px;
 		margin-top: 0;
 
 		.social-buttons__button {
 			border-color: $woo-label-color;
 			color: $woo-label-color;
-			padding: 4px 35px;
+			padding: 4px 6px;
 			font-size: $woo-font-size-base;
 			width: 100%;
 		}
 
+		.social-buttons__service-name {
+			margin-left: 7px;
+		}
+
 		.login__social-tos {
-			margin: 2.5em auto 0;
+			margin: 0 auto 2.5em;
 			max-width: 100%;
+			order: -1;
+
 			a {
 				font-size: inherit;
+				line-height: inherit;
 			}
 		}
 
@@ -645,12 +661,12 @@
 					width: calc( 50% - #{$woo-social-button-spacing} );
 				}
 
-				:first-child {
+				> :first-child {
 					margin-left: auto;
 					margin-right: $woo-social-button-spacing;
 				}
 
-				:last-child {
+				> :last-child {
 					margin-left: $woo-social-button-spacing;
 					margin-right: auto;
 				}
@@ -658,12 +674,17 @@
 		}
 	}
 
+	.step-wrapper,
 	.wp-login__main.main,
 	.magic-login.main {
-		max-width: 778px;
+		max-width: 96%;
+
+		@media screen and ( min-width: 600px ) {
+			max-width: 570px;
+		}
 	}
 
-	$woo-form-whitespace: 40px;
+	$woo-form-whitespace: 85px;
 	$woo-form-whitespace-660: 20px;
 
 	.card {
@@ -682,8 +703,25 @@
 	.step-wrapper {
 		background: #fff;
 		box-sizing: border-box;
-		padding: 40px 0 20px;
+		padding: 30px 0;
 		width: 100%;
+	}
+
+	.login__social-connect-prompt-logo {
+		height: 58px;
+		width: 58px;
+
+		&:first-child {
+			width: 48px;
+			height: 48px;
+			margin-right: 3px;
+		}
+
+		// move apple icon slightly to the top so it looks more centered
+		&.is-apple {
+			position: relative;
+			top: -3px;
+		}
 	}
 
 	.login__form,
@@ -694,7 +732,7 @@
 	.two-factor-authentication__actions,
 	.two-factor-authentication__verification-code-form,
 	.step-wrapper__header,
-	.magic-login__form .logged-out-form,
+	.login__social-connect-prompt,
 	.magic-login__request-link {
 		padding-left: $woo-form-whitespace;
 		padding-right: $woo-form-whitespace;
@@ -702,6 +740,10 @@
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
+	}
+	.magic-login__form .logged-out-form {
+		padding-left: 0;
+		padding-right: 0;
 	}
 
 	.magic-login__form-header {
@@ -745,7 +787,6 @@
 
 	.step-wrapper {
 		margin: 0 auto 50px;
-		max-width: 778px;
 	}
 
 	.logged-out-form {
@@ -778,6 +819,7 @@
 		border-top: $woo-form-divider-border;
 		border-bottom: $woo-form-divider-border;
 		padding-top: 44px;
+		padding-bottom: 44px;
 		text-align: center;
 	}
 
@@ -796,7 +838,7 @@
 			line-height: 28px;
 			text-align: center;
 			color: $woo-purple-60;
-			padding: 16px 24px;
+			padding: 8px 24px;
 			text-decoration: none;
 			&:hover {
 				text-decoration: underline;
@@ -836,12 +878,13 @@
 	.login__form-terms {
 		font-weight: 400;
 		font-size: $woo-font-size-small;
-		line-height: 28px;
+		line-height: 20px;
 		color: $woo-gray-40;
-		margin: 8px;
-		order: 1;
+		margin: 4px 8px 16px;
+
 		a {
 			font-size: inherit;
+			line-height: inherit;
 		}
 	}
 

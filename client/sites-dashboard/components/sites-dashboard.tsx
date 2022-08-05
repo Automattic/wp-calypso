@@ -66,11 +66,6 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-const SearchWrapper = styled.div`
-	width: 390px;
-	max-width: 100%;
-`;
-
 const FilterBar = styled.div`
 	display: flex;
 	align-items: center;
@@ -107,8 +102,8 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 			</PageHeader>
 			<PageBodyWrapper>
 				<>
-					<FilterBar>
-						<SearchWrapper>
+					{ allSites.length > 0 && (
+						<FilterBar>
 							<SitesSearch
 								searchIcon={ <SitesSearchIcon /> }
 								onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
@@ -117,20 +112,20 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 								disableAutocorrect={ true }
 								defaultValue={ search }
 							/>
-						</SearchWrapper>
-						<SelectDropdown selectedText={ selectedStatus.title }>
-							{ statuses.map( ( { name, title, count } ) => (
-								<SelectDropdown.Item
-									key={ name }
-									selected={ name === selectedStatus.name }
-									count={ count }
-									onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
-								>
-									{ title }
-								</SelectDropdown.Item>
-							) ) }
-						</SelectDropdown>
-					</FilterBar>
+							<SelectDropdown selectedText={ selectedStatus.title }>
+								{ statuses.map( ( { name, title, count } ) => (
+									<SelectDropdown.Item
+										key={ name }
+										selected={ name === selectedStatus.name }
+										count={ count }
+										onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
+									>
+										{ title }
+									</SelectDropdown.Item>
+								) ) }
+							</SelectDropdown>
+						</FilterBar>
+					) }
 					{ filteredSites.length > 0 || isLoading ? (
 						<SitesTable isLoading={ isLoading } sites={ filteredSites } />
 					) : (

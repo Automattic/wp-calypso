@@ -7,7 +7,7 @@ import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
-import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
+import useUnassignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-unassign-license-mutation';
 import './style.scss';
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 	onClose: ( action?: string ) => void;
 }
 
-export default function RevokeLicenseDialog( {
+export default function UnassignLicenseDialog( {
 	licenseKey,
 	product,
 	siteUrl,
@@ -28,7 +28,7 @@ export default function RevokeLicenseDialog( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const refreshLicenceList = useRefreshLicenseList( LicenseListContext );
-	const mutation = useRevokeLicenseMutation( {
+	const mutation = useUnassignLicenseMutation( {
 		onSuccess: () => {
 			close();
 			dispatch( refreshLicenceList() );
@@ -44,8 +44,8 @@ export default function RevokeLicenseDialog( {
 		}
 	}, [ onClose, mutation.isLoading ] );
 
-	const revoke = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_revoke_dialog_revoke' ) );
+	const unassign = useCallback( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_unassign_dialog_unassign' ) );
 		mutation.mutate( { licenseKey } );
 	}, [ licenseKey, mutation.mutate ] );
 
@@ -54,8 +54,8 @@ export default function RevokeLicenseDialog( {
 			{ translate( 'Go back' ) }
 		</Button>,
 
-		<Button primary scary busy={ mutation.isLoading } onClick={ revoke }>
-			{ translate( 'Revoke License' ) }
+		<Button primary scary busy={ mutation.isLoading } onClick={ unassign }>
+			{ translate( 'Unassign License' ) }
 		</Button>,
 	];
 
@@ -63,46 +63,35 @@ export default function RevokeLicenseDialog( {
 		<Dialog
 			isVisible={ true }
 			buttons={ buttons }
-			additionalClassNames="revoke-license-dialog"
+			additionalClassNames="unassign-license-dialog"
 			onClose={ close }
 			{ ...rest }
 		>
-			<h2 className="revoke-license-dialog__heading">
-				{ translate( 'Are you sure you want to revoke this license?' ) }
+			<h2 className="unassign-license-dialog__heading">
+				{ translate( 'Are you sure you want to unassign this license?' ) }
 			</h2>
 			<p>
+				<strong>{ licenseKey }</strong>
+			</p>
+			<p>
 				{ translate(
-					'A revoked license cannot be reused, and the associated site will no longer have access to the provisioned product. You will stop being billed for this license immediately.'
+					'Unassigning this license means that the site {{bold}}%(siteUrl)s{{/bold}} will no longer have access to {{bold}}%(product)s{{/bold}}. Once this action is completed, you will be able to assign the license to another site. You will continue to be billed.',
+					{
+						components: { bold: <strong /> },
+						args: { siteUrl, product },
+					}
 				) }
 				&nbsp;
 				<a
-					className="revoke-license-dialog__learn-more"
+					className="unassign-license-dialog__learn-more"
 					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/"
 					target="_blank"
 					rel="noreferrer noopener"
 				>
-					{ translate( 'Learn more about revoking licenses' ) }
+					{ translate( 'Learn more about unassigning licenses' ) }
 					&nbsp;
 					<Gridicon icon="external" size={ 18 } />
 				</a>
-			</p>
-			<ul>
-				{ siteUrl && (
-					<li>
-						<strong>{ translate( 'Site:' ) }</strong> { siteUrl }
-					</li>
-				) }
-				<li>
-					<strong>{ translate( 'Product:' ) }</strong> { product }
-				</li>
-				<li>
-					<strong>{ translate( 'License:' ) }</strong> <code>{ licenseKey }</code>
-				</li>
-			</ul>
-			<p className="revoke-license-dialog__warning">
-				<Gridicon icon="info-outline" size={ 18 } />
-
-				{ translate( 'Please note this action cannot be undone.' ) }
 			</p>
 		</Dialog>
 	);

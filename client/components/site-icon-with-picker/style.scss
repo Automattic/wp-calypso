@@ -15,11 +15,8 @@
 	text-align: center;
 }
 
-.form-fieldset.site-icon-with-picker__site-icon {
-	width: 80px;
-}
-
 button.components-button.site-icon-with-picker__upload-button {
+	cursor: pointer;
 	display: inline-block;
 	height: 80px;
 	width: 80px;
