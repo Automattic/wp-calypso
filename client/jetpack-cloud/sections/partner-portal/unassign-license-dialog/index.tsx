@@ -84,7 +84,7 @@ export default function UnassignLicenseDialog( {
 				&nbsp;
 				<a
 					className="unassign-license-dialog__learn-more"
-					href="https://github.com/Automattic/jetpack-licensing-api/tree/master/integration-docs#glossary"
+					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/"
 					target="_blank"
 					rel="noreferrer noopener"
 				>
