@@ -61,7 +61,7 @@
 	width: 100%;
 
 	.responsive-toolbar-group__swipe-list {
-		padding: 0 8px;
+		padding: 0;
 		display: flex;
 		flex-wrap: nowrap;
 		overflow-x: scroll;
@@ -77,6 +77,10 @@
 
 		.responsive-toolbar-group__swipe-item {
 			font-size: 0.875rem;
+
+			&:first-of-type {
+				margin-left: -8px;
+			}
 		}
 
 		// Core override - prevent buttons from wordwrapping content
