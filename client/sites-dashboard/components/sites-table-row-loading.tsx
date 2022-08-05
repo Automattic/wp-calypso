@@ -1,3 +1,5 @@
+import { LoadingPlaceholderProps, LoadingPlaceholder } from '@automattic/components';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 
 type cssSize = number | string;
@@ -7,11 +9,7 @@ interface LoadingLogoProps {
 	height: cssSize;
 }
 
-interface LoadingProps {
-	delayMS?: number;
-}
-
-interface SitesTableRowLoadingProps extends LoadingProps {
+interface SitesTableRowLoadingProps extends LoadingPlaceholderProps {
 	columns?: number;
 	logoProps?: LoadingLogoProps;
 }
@@ -28,14 +26,6 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	vertical-align: top;
 `;
 
-const Loading = styled.div< LoadingProps >`
-	animation: pulse-light 1.8s ease-in-out infinite;
-	background-color: var( --color-neutral-10 );
-	height: 18px;
-	max-width: 70px;
-	animation-delay: ${ ( props ) => props.delayMS }ms;
-`;
-
 const TitleRow = styled.div`
 	display: flex;
 `;
@@ -44,20 +34,20 @@ const FullWidth = styled.div`
 	width: 100%;
 `;
 
-const LoadingLogo = styled( Loading )< LoadingLogoProps >`
+const LoadingLogo = styled( LoadingPlaceholder )< LoadingLogoProps >`
 	${ ( { width, height } ) => ( {
-		width,
+		maxWidth: width,
 		height,
 	} ) }
 	margin-right: 10px;
 `;
 
-const LoadingTitle = styled( Loading )`
+const LoadingTitle = styled( LoadingPlaceholder )`
 	max-width: 80%;
 	margin-bottom: 10px;
 `;
 
-const LoadingDomain = styled( Loading )`
+const LoadingDomain = styled( LoadingPlaceholder )`
 	max-width: 40%;
 `;
 
@@ -70,7 +60,11 @@ export default function SitesTableRowLoading( {
 		<Row>
 			<Column>
 				<TitleRow>
-					<LoadingLogo { ...logoProps } delayMS={ delayMS } />
+					<LoadingLogo
+						className={ css( { borderRadius: 4 } ) }
+						{ ...logoProps }
+						delayMS={ delayMS }
+					/>
 					<FullWidth>
 						<LoadingTitle delayMS={ delayMS } />
 						<LoadingDomain delayMS={ delayMS } />
@@ -79,7 +73,7 @@ export default function SitesTableRowLoading( {
 			</Column>
 			{ Array( columns - 1 ).fill(
 				<Column mobileHidden>
-					<Loading delayMS={ delayMS } />
+					<LoadingPlaceholder className={ css( { maxWidth: 70 } ) } delayMS={ delayMS } />
 				</Column>
 			) }
 		</Row>

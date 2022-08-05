@@ -59,7 +59,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 							<SitesTableRowLoading
 								columns={ 5 }
 								delayMS={ i * 150 }
-								logoProps={ { width: 200, height: 50 } }
+								logoProps={ { width: 108, height: 78 } }
 							/>
 						) ) }
 				{ sites.map( ( site ) => (
