@@ -1,31 +1,30 @@
 
-.promoted-post__card {
+.post-item__card {
 	display: flex;
 	align-items: center;
 
-	.promoted-post__main {
+	.post-item__main {
 		flex: 1;
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
 
-		.promoted-post__title {
+		.post-item__title {
 			color: var( --color-neutral-70 );
 			font-weight: 600;
 			font-size: 1rem;
 		}
 
 
-		.promoted-post__subtitle {
+		.post-item__subtitle {
 			color: var( --color-neutral-50 );
 			font-size: 0.875rem;
 		}
 
-		.promoted-post__image-container {
+		.post-item__image-container {
 			margin: 0 20px;
 			flex-shrink: 0;
 
-			.promoted-post__image {
+			.post-item__image {
 				height: 80px;
 			}
 		}
