@@ -51,20 +51,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await pluginsPage.validateHasSection( 'Top paid plugins' );
 		} );
 
-		it( 'Can browse all paid plugins', async function () {
-			await pluginsPage.clickBrowseAllPaid();
-			await pluginsPage.validateHasSubtitle( 'Top paid plugins' );
-		} );
-
-		it( 'Can return via breadcrumb from paid plugins', async function () {
-			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
-				await pluginsPage.clickPluginsBreadcrumb();
-			} else {
-				await pluginsPage.clickBackBreadcrumb();
-			}
-			await pluginsPage.validateHasSection( 'Top paid plugins' );
-		} );
-
 		it.each( [
 			'WooCommerce',
 			'Yoast SEO',

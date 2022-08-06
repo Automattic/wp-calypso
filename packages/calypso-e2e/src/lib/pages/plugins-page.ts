@@ -16,7 +16,6 @@ const selectors = {
 		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-browser-list__title',
 	browseAllPopular: 'a[href^="/plugins/browse/popular"]',
-	browseAllPaid: 'a[href^="/plugins/browse/paid"]',
 	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
@@ -123,17 +122,10 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Click Browse All popular
+	 * Click Browse All
 	 */
 	async clickBrowseAllPopular(): Promise< void > {
 		await this.page.click( selectors.browseAllPopular );
-	}
-
-	/**
-	 * Click Browse All paid
-	 */
-	async clickBrowseAllPaid(): Promise< void > {
-		await this.page.click( selectors.browseAllPaid );
 	}
 
 	/**
