@@ -604,9 +604,9 @@ class Signup extends Component {
 	}
 
 	getInteractiveStepsCount() {
-		const flowStepsSlugs = flows.getFlow( this.props.flowName, this.props.isLoggedIn ).steps;
-		const flowSteps = flowStepsSlugs.filter( ( step ) => ! steps[ step ].props?.nonInteractive );
-		return flowSteps.length;
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const flowSteps = flow.steps.filter( ( step ) => ! steps[ step ].props?.nonInteractive );
+		return flow.totalSteps ? flow.totalSteps : flowSteps.length;
 	}
 
 	renderProcessingScreen( isReskinned ) {
@@ -746,13 +746,15 @@ class Signup extends Component {
 			'onboarding' === this.props.flowName &&
 			[ 'en', 'en-gb' ].includes( this.props.localeSlug ) &&
 			this.props.existingSiteCount < 1;
-
 		return (
 			<>
 				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 					<DocumentHead title={ this.props.pageTitle } />
 					{ ! isP2Flow( this.props.flowName ) && (
 						<SignupHeader
+							positionInFlow={ this.getPositionInFlow() }
+							flowLength={ this.getInteractiveStepsCount() }
+							flowName={ this.props.flowName }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							pageTitle={ this.props.hideBackButton && this.props.pageTitle }

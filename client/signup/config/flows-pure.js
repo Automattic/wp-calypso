@@ -113,32 +113,26 @@ export function generateFlows( {
 		},
 		{
 			name: 'newsletters',
-			steps: getAddOnsStep(
-				isEnabled( 'signup/professional-email-step' )
-					? [ 'user', 'domains', 'emails', 'plans' ]
-					: [ 'user', 'domains', 'plans' ]
-			),
+			steps: getAddOnsStep( [ 'user', 'domains', 'plans' ] ),
 			destination: ( dependencies ) => getStepperFlowDestination( dependencies, 'newsletters' ),
 			description: 'Beginning of the flow to create a newsletter',
 			lastModified: '2022-07-28',
 			showRecaptcha: true,
 			hideBackButton: true,
+			totalSteps: 5,
 			get pageTitle() {
 				return translate( 'Newsletters' );
 			},
 		},
 		{
 			name: 'link-in-bio',
-			steps: getAddOnsStep(
-				isEnabled( 'signup/professional-email-step' )
-					? [ 'user', 'domains', 'emails', 'plans' ]
-					: [ 'user', 'domains', 'plans' ]
-			),
+			steps: getAddOnsStep( [ 'user', 'domains', 'plans' ] ),
 			destination: ( dependencies ) => getStepperFlowDestination( dependencies, 'link-in-bio' ),
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-07-28',
 			showRecaptcha: true,
 			hideBackButton: true,
+			totalSteps: 5,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},

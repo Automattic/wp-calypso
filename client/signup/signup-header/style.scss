@@ -43,6 +43,17 @@
 		font-family: 'Recoleta';
 	}
 
+	.progress-bar .progress-bar__progress {
+		border-radius: 0;
+	}
+	
+	.progress-bar {
+		position: absolute;
+		top: -8px;
+		left: 0;
+		background-color: transparent;
+	}
+
 	.signup-header__right {
 		position: absolute;
 		inset-block-start: 12px;

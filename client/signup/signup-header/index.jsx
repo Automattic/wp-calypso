@@ -1,3 +1,4 @@
+import { ProgressBar } from '@automattic/components';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -10,10 +11,21 @@ export default class SignupHeader extends Component {
 		isReskinned: PropTypes.bool,
 		rightComponent: PropTypes.node,
 		pageTitle: PropTypes.string,
+		positionInFlow: PropTypes.number,
+		flowLength: PropTypes.number,
+		flowName: PropTypes.string,
 	};
 
 	render() {
-		const { pageTitle, shouldShowLoadingScreen, isReskinned, rightComponent } = this.props;
+		const {
+			pageTitle,
+			shouldShowLoadingScreen,
+			isReskinned,
+			rightComponent,
+			positionInFlow,
+			flowLength,
+			flowName,
+		} = this.props;
 
 		const logoClasses = classnames( 'wordpress-logo', {
 			'is-large': shouldShowLoadingScreen && ! isReskinned,
@@ -21,6 +33,8 @@ export default class SignupHeader extends Component {
 
 		return (
 			<div className="signup-header">
+				<ProgressBar className={ flowName } value={ positionInFlow + 1 } total={ flowLength } />
+
 				<WordPressLogo size={ 120 } className={ logoClasses } />
 				{ pageTitle && <h1>{ pageTitle }</h1> }
 				{ /* This should show a sign in link instead of
