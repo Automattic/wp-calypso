@@ -57,7 +57,6 @@ const fromApi = ( payload ) => {
 		designType: data.designType,
 		phase2: data.phase2,
 		segment: data.segment,
-		verticals: data.verticals,
 		tasks: data.tasks.filter( ( task ) =>
 			Object.values( CHECKLIST_KNOWN_TASKS ).includes( task.id )
 		),

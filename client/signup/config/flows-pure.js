@@ -91,7 +91,6 @@ export function generateFlows( {
 				'template-first-themes',
 				'user',
 				'site-type-with-theme',
-				'site-topic-with-theme',
 				'site-title',
 				'domains',
 				'plans',
