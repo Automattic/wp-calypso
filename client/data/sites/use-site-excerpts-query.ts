@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useCallback, useEffect } from 'react';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { useStore } from 'react-redux';
 import { getJetpackSiteCollisions, getUnmappedUrl } from 'calypso/lib/site/utils';
 import { urlToSlug, withoutHttp } from 'calypso/lib/url';
@@ -26,24 +25,10 @@ const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	} );
 };
 
-export const useInvalidateSiteExcerptsQuery = () => {
-	const queryClient = useQueryClient();
-	return useCallback( () => {
-		queryClient.invalidateQueries( [ SITE_EXCERPT_QUERY_KEY ] );
-	}, [ queryClient ] );
-};
-
 export const useSiteExcerptsQuery = () => {
 	const store = useStore();
 
-	const invalidateSiteExcerptsQuery = useInvalidateSiteExcerptsQuery();
-
-	useEffect( () => {
-		invalidateSiteExcerptsQuery();
-	}, [ invalidateSiteExcerptsQuery ] );
-
 	return useQuery( [ SITE_EXCERPT_QUERY_KEY ], fetchSites, {
-		staleTime: 1000 * 60 * 5, // 5 minutes
 		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
@@ -55,7 +40,6 @@ export const useSiteExcerptsQuery = () => {
 		placeholderData: {
 			sites: [],
 		},
-		refetchOnWindowFocus: 'always',
 	} );
 };
 
