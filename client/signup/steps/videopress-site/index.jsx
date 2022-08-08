@@ -620,6 +620,11 @@ class VideoPressSite extends Component {
 								{ this.buttonText() }
 							</FormButton>
 						</div>
+						<div className="videopress-site__payment-detail">
+							{ this.props.translate(
+								'The Premium Plan is required to upload your videos. We offer a 100% refund within 14 days of purchase, no questions asked.'
+							) }
+						</div>
 					</form>
 
 					<div className="videopress-site__learn-more">

@@ -254,3 +254,9 @@
 	border-bottom: 1px solid currentColor;
 	padding-bottom: 2px;
 }
+
+.videopress-site__payment-detail {
+	color: var( --color-text-subtle );
+	font-size: var( --p2-font-size-form-xxs );
+	text-align: center;
+}
