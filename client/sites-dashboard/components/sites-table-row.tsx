@@ -5,8 +5,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import Image from 'calypso/components/image';
 import TimeSince from 'calypso/components/time-since';
+import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
-import { SiteStatusBadge } from './site-status-badge';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteName } from './sites-site-name';
@@ -70,13 +70,11 @@ const NoIcon = styled.div( {
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
+	const { status, translatedStatus } = useSiteStatus( site );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 
-	const isComingSoon =
-		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
-
-	const shouldUseScreenshot = ! isComingSoon && ! site.is_private;
+	const shouldUseScreenshot = status === 'public';
 
 	return (
 		<Row>
@@ -136,9 +134,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<Column mobileHidden>
-				<SiteStatusBadge site={ site } />
-			</Column>
+			<Column mobileHidden>{ translatedStatus }</Column>
 			<Column style={ { width: '20px' } }>
 				<SitesEllipsisMenu site={ site } />
 			</Column>

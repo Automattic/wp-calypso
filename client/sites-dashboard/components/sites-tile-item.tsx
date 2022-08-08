@@ -1,8 +1,8 @@
 import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
-import { SiteStatusBadge } from './site-status-badge';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
@@ -52,6 +52,7 @@ export const SitesTileItem = ( { site }: SitesTileItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
+	const { status, translatedStatus } = useSiteStatus( site );
 
 	return (
 		<div className={ container }>
@@ -67,7 +68,9 @@ export const SitesTileItem = ( { site }: SitesTileItemProps ) => {
 
 				<div className={ badges }>
 					{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-					<SiteStatusBadge hideLive site={ site } as={ SitesLaunchStatusBadge } />
+					{ status !== 'public' && (
+						<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
+					) }
 					<SitesEllipsisMenu className={ ellipsis } site={ site } />
 				</div>
 			</div>
