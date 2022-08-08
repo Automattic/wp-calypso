@@ -64,7 +64,8 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const isEnglishLocale = useIsEnglishLocale();
 	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const site = useSite();
-	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setSelectedDesign, setPendingAction, setIsGeneratedDesignsView } =
+		useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
@@ -165,6 +166,8 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				generated_designs: generatedDesigns?.map( ( design ) => design.slug ).join( ',' ),
 			} );
 		}
+
+		setIsGeneratedDesignsView( showGeneratedDesigns );
 	}, [ showGeneratedDesigns, hasTrackedView, generatedDesigns ] );
 
 	function headerText() {
@@ -295,6 +298,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( 'calypso_signup_design_view_more_select' );
 
 		setSelectedDesign( undefined );
+		setIsGeneratedDesignsView( showGeneratedDesigns );
 		setIsPreviewingDesign( false );
 		setIsForceStaticDesigns( true );
 	}
@@ -360,6 +364,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			return;
 		}
 
+		setIsGeneratedDesignsView( showGeneratedDesigns );
 		goBack();
 	};
 

@@ -69,6 +69,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
+	const isGeneratedDesignsView = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getIsGeneratedDesignsView()
+	);
 
 	const renderStep = ( path: StepPath ) => {
 		switch ( assertCondition.state ) {
@@ -92,7 +95,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 						<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
 							<ProgressBar
 								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-								className="flow-progress"
+								className={ classnames( 'flow-progress', {
+									'is-fixed': isGeneratedDesignsView && path === 'designSetup',
+								} ) }
 								value={ progressValue * 100 }
 								total={ 100 }
 							/>

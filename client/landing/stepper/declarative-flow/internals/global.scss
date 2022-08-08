@@ -83,6 +83,11 @@ button {
 		height: 8px;
 		background-color: transparent;
 
+		&.is-fixed {
+            position: fixed;
+            background-color: #fff;
+        }
+
 		.progress-bar__progress {
 			background-color: $onboarding-accent-blue;
 			border-radius: 0;
