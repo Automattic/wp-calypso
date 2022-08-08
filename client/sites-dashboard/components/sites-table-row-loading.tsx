@@ -5,8 +5,8 @@ import styled from '@emotion/styled';
 type cssSize = number | string;
 
 interface LoadingLogoProps {
-	width: cssSize;
-	height: cssSize;
+	width?: cssSize;
+	height?: cssSize;
 }
 
 interface SitesTableRowLoadingProps {
@@ -54,7 +54,7 @@ const LoadingDomain = styled( LoadingPlaceholder )`
 
 export default function SitesTableRowLoading( {
 	columns = 2,
-	logoProps = { width: 50, height: 50 },
+	logoProps = {},
 	delayMS = 0,
 }: SitesTableRowLoadingProps ) {
 	return (
@@ -63,6 +63,8 @@ export default function SitesTableRowLoading( {
 				<TitleRow>
 					<LoadingLogo
 						className={ css( { borderRadius: 4 } ) }
+						width={ 50 }
+						height={ 50 }
 						{ ...logoProps }
 						delayMS={ delayMS }
 					/>
