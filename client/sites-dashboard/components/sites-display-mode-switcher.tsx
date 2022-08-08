@@ -56,7 +56,7 @@ export const SitesDisplayModeSwitcher = () => {
 			return 'none';
 		}
 
-		return getPreference( state, PREFERENCE_NAME ) ?? 'list';
+		return getPreference( state, PREFERENCE_NAME ) ?? 'tile';
 	} );
 
 	return (
