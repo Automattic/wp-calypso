@@ -72,11 +72,13 @@ export default function SitesTableRowLoading( {
 					</FullWidth>
 				</TitleRow>
 			</Column>
-			{ Array( columns - 1 ).fill(
-				<Column mobileHidden>
-					<LoadingPlaceholder className={ css( { maxWidth: 70 } ) } delayMS={ delayMS } />
-				</Column>
-			) }
+			{ Array( columns - 1 )
+				.fill( null )
+				.map( ( _, i ) => (
+					<Column mobileHidden key={ i }>
+						<LoadingPlaceholder className={ css( { maxWidth: 70 } ) } delayMS={ delayMS } />
+					</Column>
+				) ) }
 		</Row>
 	);
 }
