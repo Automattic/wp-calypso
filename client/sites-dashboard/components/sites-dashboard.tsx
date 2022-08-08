@@ -86,7 +86,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 			</PageHeader>
 			<PageBodyWrapper>
 				<>
-					{ allSites.length > 0 && (
+					{ ( allSites.length > 0 || isLoading ) && (
 						<SitesContentControls
 							initialSearch={ search }
 							statuses={ statuses }
