@@ -165,7 +165,6 @@
 		&.design-picker__image-frame-no-header::after {
 			border-radius: 0; /* stylelint-disable-line scales/radii */
 		}
-
 	}
 
 	// The Aspect ratio trick: padding % is relative to width, so we use
@@ -232,7 +231,6 @@
 		text-align: left;
 		color: #50575e;
 	}
-
 
 	.design-picker__button-link.components-button.is-link {
 		text-decoration: none;
@@ -389,10 +387,22 @@
 			@include break-medium {
 				grid-template-columns: 1fr 1fr 1fr;
 				column-gap: 24px;
+
+				// mobile sized preview mode has narrow designs, so it fits more designs in one row
+				&.is-mobile-sized-preview {
+					grid-template-columns: 1fr 1fr 1fr 1fr;
+				}
+			}
+
+			@include break-large {
+				// mobile sized preview mode has narrow designs, so it fits more designs in one row
+				&.is-mobile-sized-preview {
+					grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+				}
 			}
 		}
 	}
-	
+
 	h3 {
 		font-size: $font-title-small;
 		font-weight: 600;
@@ -499,11 +509,10 @@
 	&:focus-within {
 		.design-picker__image-frame::after {
 			// `!important` is used because there is a default `background-color` with high specificity.
-			background-color: transparent !important; // to override 
+			background-color: transparent !important; // to override
 		}
 	}
 }
-
 
 .generated-design-thumbnail {
 	align-items: stretch;
@@ -542,7 +551,7 @@
 		svg {
 			fill: var( --studio-gray-5 );
 		}
-    }
+	}
 
 	.generated-design-thumbnail__image {
 		position: relative;

@@ -24,7 +24,6 @@ import {
 	sortDesigns,
 } from '../utils';
 import BadgeContainer from './badge-container';
-import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import ThemePreview from './theme-preview';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
@@ -37,6 +36,7 @@ interface DesignPreviewImageProps {
 	locale: string;
 	highRes: boolean;
 	verticalId?: string;
+	isMobile?: boolean;
 }
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
@@ -44,9 +44,8 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	locale,
 	highRes,
 	verticalId,
+	isMobile,
 } ) => {
-	const isMobile = useViewportMatch( 'small', '<' );
-
 	return (
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
@@ -76,6 +75,7 @@ interface DesignButtonProps {
 	hasPurchasedTheme?: boolean;
 	onCheckout?: any;
 	verticalId?: string;
+	isMobileSizedPreview?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -91,6 +91,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hasPurchasedTheme = false,
 	onCheckout,
 	verticalId,
+	isMobileSizedPreview,
 } ) => {
 	const { __ } = useI18n();
 
@@ -103,6 +104,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	);
 
 	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
+
+	const isMobile = useViewportMatch( 'small', '<' );
 
 	function getPricingDescription() {
 		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
@@ -181,7 +184,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				<span
 					className={ classnames(
 						'design-picker__image-frame',
-						'design-picker__image-frame-landscape',
+						{
+							'design-picker__image-frame-portrait': isMobileSizedPreview,
+							'design-picker__image-frame-landscape': ! isMobileSizedPreview,
+						},
 						'design-picker__scrollable',
 						{
 							'design-picker__image-frame-no-header': ! hasDesignOptionHeader,
@@ -194,6 +200,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 							locale={ locale }
 							highRes={ highRes }
 							verticalId={ verticalId }
+							isMobile={ isMobile || isMobileSizedPreview }
 						/>
 					</div>
 				</span>
@@ -265,6 +272,7 @@ interface DesignButtonContainerProps extends DesignButtonProps {
 	onPreview?: ( design: Design ) => void;
 	onUpgrade?: () => void;
 	previewOnly?: boolean;
+	isMobileSizedPreview?: boolean;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
@@ -311,6 +319,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				onSelect={ previewOnly ? onPreview : noop }
 				disabled={ ! isBlankCanvas && ! previewOnly }
+				isMobileSizedPreview={ props.isMobileSizedPreview }
 			/>
 		</div>
 	);
@@ -337,6 +346,7 @@ export interface UnifiedDesignPickerProps {
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
 	purchasedThemes?: string[];
+	isMobileSizedPreview?: boolean;
 }
 
 interface StaticDesignPickerProps {
@@ -353,6 +363,7 @@ interface StaticDesignPickerProps {
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
 	purchasedThemes?: string[];
+	isMobileSizedPreview?: boolean;
 }
 
 interface GeneratedDesignPickerProps {
@@ -376,8 +387,8 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	onCheckout,
 	verticalId,
 	purchasedThemes,
+	isMobileSizedPreview,
 } ) => {
-	const hasCategories = !! categorization?.categories.length;
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
 			? filterDesignsByCategory( designs, categorization.selection )
@@ -388,14 +399,11 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	}, [ designs, categorization?.selection ] );
 	return (
 		<div>
-			{ categorization && hasCategories && (
-				<UnifiedDesignPickerCategoryFilter
-					categories={ categorization.categories }
-					onSelect={ categorization.onSelect }
-					selectedSlug={ categorization.selection }
-				/>
-			) }
-			<div className={ 'design-picker__grid' }>
+			<div
+				className={ classnames( 'design-picker__grid', {
+					'is-mobile-sized-preview': isMobileSizedPreview,
+				} ) }
+			>
 				{ filteredDesigns.map( ( design ) => (
 					<DesignButtonContainer
 						key={ design.slug }
@@ -414,6 +422,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 						onCheckout={ onCheckout }
 						verticalId={ verticalId }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
+						isMobileSizedPreview={ isMobileSizedPreview }
 					/>
 				) ) }
 			</div>
@@ -474,6 +483,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	onCheckout,
 	purchasedThemes,
+	isMobileSizedPreview = false,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const translate = useTranslate();
@@ -525,6 +535,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				onCheckout={ onCheckout }
 				purchasedThemes={ purchasedThemes }
+				isMobileSizedPreview={ isMobileSizedPreview }
 			/>
 		</div>
 	);

@@ -23,7 +23,18 @@ function makeSortCategoryToTop( slug: string ) {
 const sortBlogToTop = makeSortCategoryToTop( CATEGORY_BLOG );
 const sortStoreToTop = makeSortCategoryToTop( CATEGORY_STORE );
 
-export function getCategorizationOptions( intent: string, showAllFilter: boolean ) {
+export function getCategorizationOptions(
+	intent: string,
+	showAllFilter: boolean,
+	flow: string | null
+) {
+	if ( flow === 'link-in-bio' ) {
+		return {
+			defaultSelection: 'link-in-bio',
+			showAllFilter: false,
+			sort: () => 0,
+		};
+	}
 	const result = {
 		showAllFilter,
 		defaultSelection: null,

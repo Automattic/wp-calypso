@@ -134,7 +134,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		} ),
 	} );
 
-	const categorizationOptions = getCategorizationOptions( intent, true );
+	const categorizationOptions = getCategorizationOptions( intent, true, flow );
 
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
@@ -389,6 +389,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
 			purchasedThemes={ purchasedThemes }
+			isMobileSizedPreview
 		/>
 	);
 
