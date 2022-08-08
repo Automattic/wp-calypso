@@ -532,3 +532,42 @@ export function fetchSitePlugins( siteId ) {
 export function fetchPlugins( siteIds ) {
 	return ( dispatch ) => siteIds.map( ( siteId ) => dispatch( fetchSitePlugins( siteId ) ) );
 }
+
+export function fetchAllPlugins( siteIds ) {
+	return ( dispatch ) => {
+		// Before the /me/sites/plugins endpoint, we triggered API requests for each individual site.
+		// In order to keep this changeset small and provide some backward compatibility, we
+		// can reuse the existing reducers and selectors.
+		siteIds.map( ( siteId ) => {
+			dispatch( { ...{ siteId }, type: PLUGINS_REQUEST } );
+		} );
+
+		const receivePluginsDispatchSuccess = ( data ) => {
+			siteIds.map( ( siteId ) => {
+				if ( typeof data?.sites[ siteId ] === 'undefined' ) {
+					return;
+				}
+
+				dispatch( receiveSitePlugins( siteId, data?.sites[ siteId ] ) );
+				dispatch( { ...{ siteId }, type: PLUGINS_REQUEST_SUCCESS } );
+
+				data?.sites[ siteId ].map( ( plugin ) => {
+					if ( plugin.update && plugin.autoupdate ) {
+						updatePlugin( siteId, plugin )( dispatch );
+					}
+				} );
+			} );
+		};
+
+		const receivePluginsDispatchFail = ( error ) => {
+			siteIds.map( ( siteId ) => {
+				dispatch( { ...{ siteId }, type: PLUGINS_REQUEST_FAILURE, error } );
+			} );
+		};
+
+		return wpcom.req
+			.get( `/me/sites/plugins` )
+			.then( receivePluginsDispatchSuccess )
+			.catch( receivePluginsDispatchFail );
+	};
+}

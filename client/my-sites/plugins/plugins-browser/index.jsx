@@ -2,7 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryAllJetpackPlugins from 'calypso/components/data/query-all-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -120,7 +120,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	return (
 		<MainComponent wideLayout>
 			<QueryProductsList persist />
-			<QueryJetpackPlugins siteIds={ siteIds } />
+			<QueryAllJetpackPlugins siteIds={ siteIds } />
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
