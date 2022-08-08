@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 import page from 'page';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
-import { hydrate } from 'react-query';
+// import { hydrate } from 'react-query';
 import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
 import { ProviderWrappedLayout } from 'calypso/controller';
@@ -41,7 +41,7 @@ import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-ha
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
 import {
-	getDehydratedReactQueryState,
+	// getDehydratedReactQueryState,
 	getInitialState,
 	getStateFromCache,
 	persistOnChange,
@@ -431,8 +431,8 @@ const boot = async ( currentUser, registerRoutes ) => {
 	utils();
 
 	const queryClient = await createQueryClient( currentUser?.ID );
-	const dehydratedReactQueryState = getDehydratedReactQueryState();
-	hydrate( queryClient, dehydratedReactQueryState );
+	// const dehydratedReactQueryState = getDehydratedReactQueryState();
+	// hydrate( queryClient, dehydratedReactQueryState );
 
 	await loadPersistedState();
 	const initialState = getInitialState( initialReducer, currentUser?.ID );
