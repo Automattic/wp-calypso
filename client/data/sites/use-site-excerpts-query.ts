@@ -1,11 +1,13 @@
 import config from '@automattic/calypso-config';
-import { useQuery } from 'react-query';
+import { useCallback, useEffect } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import { useStore } from 'react-redux';
 import { getJetpackSiteCollisions, getUnmappedUrl } from 'calypso/lib/site/utils';
 import { urlToSlug, withoutHttp } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import getSites from 'calypso/state/selectors/get-sites';
 import {
+	SITE_EXCERPT_QUERY_KEY,
 	SITE_EXCERPT_REQUEST_FIELDS,
 	SITE_EXCERPT_REQUEST_OPTIONS,
 } from './site-excerpt-constants';
@@ -24,10 +26,23 @@ const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	} );
 };
 
+export const useInvalidateSiteExcerptsQuery = () => {
+	const queryClient = useQueryClient();
+	return useCallback( () => {
+		queryClient.invalidateQueries( [ SITE_EXCERPT_QUERY_KEY ] );
+	}, [ queryClient ] );
+};
+
 export const useSiteExcerptsQuery = () => {
 	const store = useStore();
 
-	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
+	const invalidateSiteExcerptsQuery = useInvalidateSiteExcerptsQuery();
+
+	useEffect( () => {
+		invalidateSiteExcerptsQuery();
+	}, [ invalidateSiteExcerptsQuery ] );
+
+	return useQuery( [ SITE_EXCERPT_QUERY_KEY ], fetchSites, {
 		staleTime: 1000 * 60 * 5, // 5 minutes
 		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
 		initialData: () => {
@@ -40,6 +55,7 @@ export const useSiteExcerptsQuery = () => {
 		placeholderData: {
 			sites: [],
 		},
+		refetchOnWindowFocus: 'always',
 	} );
 };
 
