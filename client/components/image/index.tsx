@@ -5,6 +5,8 @@ const hideImageOnError = ( event: SyntheticEvent< HTMLImageElement > ) => {
 	event.currentTarget.style.display = 'none';
 };
 
+type ImageProps = React.ComponentPropsWithoutRef< 'img' >;
+
 export default function Image( { alt, className, src, ...rest }: ImageProps ) {
 	return (
 		<img
@@ -16,11 +18,3 @@ export default function Image( { alt, className, src, ...rest }: ImageProps ) {
 		/>
 	);
 }
-
-type ImageProps = {
-	alt?: string;
-	className?: string;
-	src: string;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[ x: string ]: any;
-};
