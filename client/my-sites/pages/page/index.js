@@ -486,8 +486,8 @@ class Page extends Component {
 			>
 				{ editItem }
 				{ publishItem }
-				{ promoteItem }
 				{ viewItem }
+				{ promoteItem }
 				{ statsItem }
 				{ copyPageItem }
 				{ copyLinkItem }
