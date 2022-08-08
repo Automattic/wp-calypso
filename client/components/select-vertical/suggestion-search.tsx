@@ -131,7 +131,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 
 		return suggestions.concat( [
 			{
-				value: '',
+				value: '-1',
 				name: 'Something else',
 				label: String( translate( 'Something else' ) ),
 				category: 0 < suggestions.length ? '—' : '',
