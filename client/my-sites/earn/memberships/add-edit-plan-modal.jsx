@@ -3,7 +3,7 @@ import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
@@ -172,6 +172,24 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		setEditedMarkAsDonation( true === newValue ? 'donation' : null );
 	const onNameChange = ( event ) => setEditedProductName( event.target.value );
 	const onSelectSchedule = ( event ) => setEditedSchedule( event.target.value );
+
+	const defaultNames = {
+		'false,1 month': translate( 'Monthly Subscription' ),
+		'true,1 month': translate( 'Monthly Donation' ),
+		'false,1 year': translate( 'Yearly Subscription' ),
+		'true,1 year': translate( 'Yearly Donation' ),
+		'false,one-time': translate( 'Subscription' ),
+		'true,one-time': translate( 'Donation' ),
+	};
+
+	useEffect( () => {
+		// If the user has manually entered a name that should be left as-is, don't overwrite it
+		if ( editedProductName && ! Object.values( defaultNames ).includes( editedProductName ) ) {
+			return;
+		}
+		const name = defaultNames[ [ 'donation' === editedMarkAsDonation, editedSchedule ] ] ?? '';
+		setEditedProductName( name );
+	}, [ editedMarkAsDonation, editedSchedule ] );
 
 	const onClose = ( reason ) => {
 		if ( reason === 'submit' && ! product ) {
