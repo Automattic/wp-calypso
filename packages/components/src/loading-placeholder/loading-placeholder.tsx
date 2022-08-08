@@ -1,7 +1,7 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 
-export interface LoadingPlaceholderProps {
+interface LoadingPlaceholderProps {
 	delayMS?: number;
 }
 

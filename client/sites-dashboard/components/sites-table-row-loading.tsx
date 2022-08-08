@@ -1,4 +1,4 @@
-import { LoadingPlaceholderProps, LoadingPlaceholder } from '@automattic/components';
+import { LoadingPlaceholder } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 
@@ -9,9 +9,10 @@ interface LoadingLogoProps {
 	height: cssSize;
 }
 
-interface SitesTableRowLoadingProps extends LoadingPlaceholderProps {
+interface SitesTableRowLoadingProps {
 	columns?: number;
 	logoProps?: LoadingLogoProps;
+	delayMS?: number;
 }
 
 const Row = styled.tr`
