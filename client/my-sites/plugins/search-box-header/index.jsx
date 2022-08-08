@@ -1,7 +1,7 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
 import { useDispatch } from 'react-redux';
+import { useCurrentRoute } from 'calypso/components/route';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
@@ -30,12 +30,35 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef, isSearching 
 	);
 };
 
+const SearchLink = ( { searchTerm, currentTerm, onSelect } ) => {
+	const classes = [ 'search-box-header__recommended-searches-list-item' ];
+	const route = useCurrentRoute();
+
+	if ( searchTerm === currentTerm ) {
+		classes.push( 'search-box-header__recommended-searches-list-item-selected' );
+
+		return <span className={ classes.join( ' ' ) }>{ searchTerm }</span>;
+	}
+
+	return (
+		<a
+			href={ `${ route.currentRoute }?s=${ searchTerm }` }
+			className={ classes.join( ' ' ) }
+			onClick={ onSelect }
+			onKeyPress={ onSelect }
+		>
+			{ searchTerm }
+		</a>
+	);
+};
+
 const PopularSearches = ( props ) => {
 	const { searchTerms, doSearch, searchedTerm, popularSearchesRef } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const clickHandler = ( searchTerm ) => ( event ) => {
+		event.preventDefault();
 
-	const onClick = ( searchTerm ) => {
 		dispatch(
 			recordTracksEvent( 'calypso_plugins_popular_searches_click', {
 				search_term: searchTerm,
@@ -53,28 +76,12 @@ const PopularSearches = ( props ) => {
 
 			<div className="search-box-header__recommended-searches-list">
 				{ searchTerms.map( ( searchTerm, n ) => (
-					<Fragment key={ 'search-box-item' + n }>
-						{ searchTerm === searchedTerm ? (
-							<span
-								className="search-box-header__recommended-searches-list-item search-box-header__recommended-searches-list-item-selected"
-								key={ 'recommended-search-item-' + n }
-							>
-								{ searchTerm }
-							</span>
-						) : (
-							<span
-								onClick={ () => onClick( searchTerm ) }
-								onKeyPress={ () => onClick( searchTerm ) }
-								role="link"
-								tabIndex={ 0 }
-								className="search-box-header__recommended-searches-list-item"
-								key={ 'recommended-search-item-' + n }
-							>
-								{ searchTerm }
-							</span>
-						) }
-						{ n !== searchTerms.length - 1 && <>,&nbsp;</> }
-					</Fragment>
+					<SearchLink
+						key={ 'search-box-item' + n }
+						onSelect={ clickHandler( searchTerm ) }
+						searchTerm={ searchTerm }
+						currentTerm={ searchedTerm }
+					/>
 				) ) }
 			</div>
 		</div>
