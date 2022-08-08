@@ -74,16 +74,15 @@ const prefetchCategoryPlugins = ( queryClient, options ) =>
 	prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true );
 
 export async function fetchPlugin( context, next ) {
-	if ( ! context.isServerSide ) {
+	const { queryClient, store } = context;
+
+	if ( ! context.isServerSide || context.isLoggedIn ) {
 		return next();
 	}
 
 	const options = {
 		...getProps( context ),
 	};
-
-	const { queryClient } = context;
-	const store = context.store;
 
 	const pluginSlug = context.params?.plugin;
 	const productsList = getProductsList( store.getState() );
@@ -105,15 +104,15 @@ export async function fetchPlugin( context, next ) {
 }
 
 export async function fetchPlugins( context, next ) {
-	if ( ! context.isServerSide ) {
+	const { queryClient } = context;
+
+	if ( ! context.isServerSide || context.isLoggedIn ) {
 		return next();
 	}
 
 	const options = {
 		...getProps( context ),
 	};
-
-	const { queryClient } = context;
 
 	await Promise.all( [
 		...( options.search
@@ -129,7 +128,9 @@ export async function fetchPlugins( context, next ) {
 }
 
 export async function fetchCategoryPlugins( context, next ) {
-	if ( ! context.isServerSide ) {
+	const { queryClient } = context;
+
+	if ( ! context.isServerSide || context.isLoggedIn ) {
 		return next();
 	}
 
@@ -139,8 +140,6 @@ export async function fetchCategoryPlugins( context, next ) {
 	const categories = getCategories();
 	const categoryTags = categories[ options.category || '' ]?.tags || [ options.category ];
 	options.tag = categoryTags.join( ',' );
-
-	const { queryClient } = context;
 
 	await Promise.all( [
 		prefetchPaidPlugins( queryClient, options ),
