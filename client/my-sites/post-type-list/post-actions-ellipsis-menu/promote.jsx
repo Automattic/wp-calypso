@@ -42,6 +42,7 @@ function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpS
 
 PostActionsEllipsisMenuPromote.propTypes = {
 	bumpStatKey: PropTypes.string,
+	globalId: PropTypes.string,
 	isModuleActive: PropTypes.bool,
 	postId: PropTypes.number,
 	siteId: PropTypes.number,
@@ -62,12 +63,4 @@ const mapStateToProps = ( state, { globalId } ) => {
 	};
 };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	return Object.assign( {}, ownProps, stateProps, dispatchProps );
-};
-
-export default connect(
-	mapStateToProps,
-	{},
-	mergeProps
-)( localize( PostActionsEllipsisMenuPromote ) );
+export default connect( mapStateToProps )( localize( PostActionsEllipsisMenuPromote ) );

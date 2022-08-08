@@ -133,7 +133,13 @@ class Page extends Component {
 	}
 
 	getPromoteItem() {
-		return <PostActionsEllipsisMenuPromote key="promote" bumpStatKey={ 'pages-meatball-menu' } />;
+		return (
+			<PostActionsEllipsisMenuPromote
+				globalId={ this.props.page.global_ID }
+				key="promote"
+				bumpStatKey={ 'pages-meatball-menu' }
+			/>
+		);
 	}
 
 	childPageInfo() {
