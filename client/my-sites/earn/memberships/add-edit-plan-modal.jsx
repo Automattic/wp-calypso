@@ -173,6 +173,10 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	const onNameChange = ( event ) => setEditedProductName( event.target.value );
 	const onSelectSchedule = ( event ) => setEditedSchedule( event.target.value );
 
+	// Ideally these values should be kept in sync with the Jetpack equivalents,
+	// though there's no strong technical reason to do so - nothing is going to
+	// break if they fall out of sync.
+	// https://github.com/Automattic/jetpack/blob/trunk/projects/plugins/jetpack/extensions/shared/components/product-management-controls/utils.js#L95
 	const defaultNames = {
 		'false,1 month': translate( 'Monthly Subscription' ),
 		'true,1 month': translate( 'Monthly Donation' ),
