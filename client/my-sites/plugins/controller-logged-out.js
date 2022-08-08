@@ -1,4 +1,5 @@
 import { BASE_STALE_TIME } from 'calypso/data/marketplace/constants';
+import { getFetchESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import {
 	getFetchWPCOMFeaturedPlugins,
 	getFetchWPCOMPlugins,
@@ -8,6 +9,7 @@ import {
 	getFetchWPORGPlugins,
 	getFetchWPORGInfinitePlugins,
 } from 'calypso/data/marketplace/use-wporg-plugin-query';
+import { isEnabled } from 'calypso/server/config';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
 import { requestProductsList } from 'calypso/state/products-list/actions';
@@ -61,14 +63,15 @@ const prefetchPopularPlugins = ( queryClient, options ) =>
 const prefetchFeaturedPlugins = ( queryClient ) =>
 	prefetchPluginsData( queryClient, getFetchWPCOMFeaturedPlugins() );
 
-const prefetchSearchedPlugins = ( queryClient, options ) => [
-	prefetchPluginsData(
-		queryClient,
-		getFetchWPORGInfinitePlugins( { ...options, category: undefined } ),
-		true
-	),
-	prefetchPluginsData( queryClient, getFetchWPCOMPlugins( true, 'all', options.search, '' ) ),
-];
+const prefetchSearchedPlugins = ( queryClient, options ) => {
+	const getFetchFn = isEnabled( 'marketplace-jetpack-plugin-search' )
+		? getFetchESPluginsInfinite
+		: getFetchWPORGInfinitePlugins;
+	return [
+		prefetchPluginsData( queryClient, getFetchFn( { ...options, category: undefined } ), true ),
+		prefetchPluginsData( queryClient, getFetchWPCOMPlugins( true, 'all', options.search, '' ) ),
+	];
+};
 
 const prefetchCategoryPlugins = ( queryClient, options ) =>
 	prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true );
