@@ -78,14 +78,6 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 
 	const displayMode = useSitesDisplayMode();
 
-	const content =
-		// eslint-disable-next-line no-nested-ternary
-		displayMode === 'list' ? (
-			<SitesTable isLoading={ isLoading } sites={ filteredSites } />
-		) : displayMode === 'tile' ? (
-			<SitesTileGrid sites={ filteredSites } />
-		) : null;
-
 	return (
 		<main>
 			<PageHeader>
@@ -106,7 +98,12 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 						/>
 					) }
 					{ filteredSites.length > 0 || isLoading ? (
-						content
+						<>
+							{ displayMode === 'list' && (
+								<SitesTable isLoading={ isLoading } sites={ filteredSites } />
+							) }
+							{ displayMode === 'tile' && <SitesTileGrid sites={ filteredSites } /> }
+						</>
 					) : (
 						<NoSitesMessage
 							status={ selectedStatus.name }
