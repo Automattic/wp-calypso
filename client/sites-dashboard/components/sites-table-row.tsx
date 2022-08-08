@@ -193,10 +193,16 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 }
 
 function getFirstGrapheme( input: string ) {
+	// TODO: once we're on Typescript 4.7 we should be able to add this comment:
+	//    /// <reference lib="es2022.intl" />
+	// to the top of the file to get access to the types for Intl.Segmenter
+	// which where added in microsoft/TypeScript#48800
+	// In the mean time we need to use the `any` type to fix type errors in CI.
+
 	try {
-		const segmenter = new Intl.Segmenter();
+		const segmenter = new ( Intl as any ).Segmenter();
 		const segments = segmenter.segment( input );
-		return Array.from( segments )[ 0 ].segment;
+		return ( Array.from( segments )[ 0 ] as any ).segment;
 	} catch {
 		// Intl.Segmenter is not available in all browsers
 		return input.charAt( 0 );
