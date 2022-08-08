@@ -28,7 +28,7 @@ const siteTitle = css( {
 const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
 
 const siteImage = css( {
-	aspectRatio: '1 / 1',
+	aspectRatio: '16 / 9',
 	width: '100%',
 	background: '#F6F7F7',
 } );
