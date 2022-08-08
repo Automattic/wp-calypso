@@ -1,5 +1,6 @@
 import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
+import { AnchorHTMLAttributes } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
@@ -54,15 +55,18 @@ export const SitesTileItem = ( { site }: SitesTileItemProps ) => {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const { status, translatedStatus } = useSiteStatus( site );
 
+	const siteDashboardUrlProps: AnchorHTMLAttributes< HTMLAnchorElement > = {
+		href: getDashboardUrl( site.slug ),
+		title: __( 'Visit Dashboard' ),
+	};
+
 	return (
 		<div className={ container }>
-			<div className={ siteImage } />
+			<a { ...siteDashboardUrlProps }>
+				<div className={ siteImage } />
+			</a>
 			<div className={ siteTitle }>
-				<SiteName
-					fontSize={ 16 }
-					href={ getDashboardUrl( site.slug ) }
-					title={ __( 'Visit Dashboard' ) }
-				>
+				<SiteName fontSize={ 16 } { ...siteDashboardUrlProps }>
 					{ site.name ? site.name : __( '(No Site Title)' ) }
 				</SiteName>
 
