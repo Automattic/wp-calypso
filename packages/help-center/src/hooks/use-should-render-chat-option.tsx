@@ -1,5 +1,5 @@
 import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
+//import { useHappychatAvailable } from '@automattic/happychat-connection';
 
 type Result = {
 	render: boolean;
@@ -8,8 +8,11 @@ type Result = {
 };
 
 export function useShouldRenderChatOption(): Result {
-	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { available, isLoading } = useHappychatAvailable();
+	const { data: chatStatus, isLoading } = useSupportAvailability( 'CHAT' );
+	//const { available, isLoading } = useHappychatAvailable();
+	// Lock chat to unavailable until we fix the interrupted chat issue
+	// see: p1659971114434329-slack-C02T4NVL4JJ
+	const available = false;
 
 	if ( ! chatStatus?.is_user_eligible ) {
 		return {
