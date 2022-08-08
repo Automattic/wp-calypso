@@ -386,7 +386,6 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  * At the moment we're disabling the help center.
  */
 function load_help_center() {
-	return;
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_help_center' );
 
