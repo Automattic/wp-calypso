@@ -18,6 +18,7 @@ import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
@@ -274,6 +275,7 @@ const InstalledInOrPricing = ( {
 	)?.active;
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	let checkmarkColorClass = 'checkmark--active';
 
 	if ( isPreinstalledPremiumPlugin ) {
@@ -329,7 +331,7 @@ const InstalledInOrPricing = ( {
 							) : (
 								<>
 									{ translate( 'Free' ) }
-									{ ! canInstallPlugins && (
+									{ ! canInstallPlugins && isLoggedIn && (
 										<span className="plugins-browser-item__requires-plan-upgrade">
 											{ translate( 'Requires a plan upgrade' ) }
 										</span>
