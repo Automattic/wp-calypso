@@ -4,19 +4,17 @@ import { useEffect, useState } from 'react';
 const colorMap = new Map< string, FastAverageColorResult >();
 
 export default function useDominantColor( url?: string ) {
-	const [ color, setColor ] = useState< FastAverageColorResult | undefined >(
-		( url && colorMap.get( url ) ) || undefined
-	);
+	const [ color, setColor ] = useState( url ? colorMap.get( url ) : undefined );
 
 	useEffect( () => {
+		if ( url && colorMap.has( url ) ) {
+			return;
+		}
+
 		const fac = new FastAverageColor();
 
 		//get the dominant color of image from url
 		if ( url && url.length > 0 ) {
-			if ( colorMap.has( url ) ) {
-				return;
-			}
-
 			fac
 				.getColorAsync( url, {
 					ignoredColor: [
