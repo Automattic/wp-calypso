@@ -76,6 +76,16 @@
 			text-align: center;
 
 			.search-box-header__recommended-searches-list-item {
+				&::after {
+					content: ',';
+					display: inline-block;
+					width: 0;
+					margin-right: 0.5em;
+				}
+				&:last-child::after {
+					content: none;
+				}
+
 				&:hover:not( .search-box-header__recommended-searches-list-item-selected ) {
 					color: var( --color-link );
 					cursor: pointer;
