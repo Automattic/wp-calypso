@@ -37,9 +37,9 @@ const SiteSwitcherButton = styled( Button )< ComponentProps< typeof Button > >(
 
 export const SitesDisplayModeSwitcher = () => {
 	return (
-		<div className={ container }>
-			<SiteSwitcherButton icon={ <SitesTileIcon /> } isPressed={ false } />
-			<SiteSwitcherButton icon={ <SitesRowsIcon /> } isPressed />
+		<div className={ container } role="radiogroup">
+			<SiteSwitcherButton role="radio" icon={ <SitesTileIcon /> } isPressed={ false } />
+			<SiteSwitcherButton role="radio" icon={ <SitesRowsIcon /> } isPressed />
 		</div>
 	);
 };
