@@ -29,12 +29,7 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	color: var( --studio-gray-60 );
 
 	@media only screen and ( max-width: 781px ) {
-		${ ( props ) =>
-			props.mobileHidden &&
-			css`
-				display: none;
-			` };
-
+		${ ( props ) => props.mobileHidden && 'display: none;' };
 		padding-right: 0;
 	}
 `;

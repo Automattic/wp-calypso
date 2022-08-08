@@ -1,0 +1,14 @@
+.update-plugin__badge {
+	font-size: 0.75rem !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	max-width: fit-content;
+}
+a.button.update-plugin__plugin-update-button {
+	color: var( --color-primary-80 );
+	margin-left: 10px;
+	text-decoration: underline;
+	display: inline-flex;
+}

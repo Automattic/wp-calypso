@@ -347,7 +347,6 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 	const designType = getSiteOption( state, siteId, 'design_type' );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const siteSegment = siteChecklist?.segment;
-	const siteVerticals = siteChecklist?.vertical;
 	const taskStatuses = siteChecklist?.tasks;
 	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
 	const taskList = getTaskList( {
@@ -355,7 +354,6 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 		designType,
 		siteIsUnlaunched,
 		siteSegment,
-		siteVerticals,
 	} );
 	// Existing usage didn't have a global selector, we can tidy this in a follow up.
 	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;

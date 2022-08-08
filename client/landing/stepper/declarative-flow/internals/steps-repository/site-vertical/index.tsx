@@ -47,7 +47,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 
 			recordTracksEvent( 'calypso_signup_site_vertical_submit', {
 				user_input: userInput,
-				vertical_id: value,
+				vertical_id: name === 'Something else' ? -1 : value,
 				vertical_title: name,
 			} );
 

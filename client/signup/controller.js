@@ -17,16 +17,10 @@ import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import {
-	getSiteVerticalId,
-	getSiteVerticalIsUserInput,
-} from 'calypso/state/signup/steps/site-vertical/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
 import {
@@ -375,21 +369,10 @@ export default {
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
 		const state = signupStore.getState();
-		const verticalId = getSiteVerticalId( state );
-		const verticalIsUserInput = getSiteVerticalIsUserInput( state );
 		const siteType = getSiteType( state );
 
 		if ( ! siteType && query.site_type ) {
 			signupStore.dispatch( setSiteType( query.site_type ) );
-		}
-
-		if ( ( ! verticalId || ! verticalIsUserInput ) && query.vertical ) {
-			signupStore.dispatch(
-				setSiteVertical( {
-					id: getDotBlogVerticalId( query.vertical ) || query.vertical,
-					isUserInput: false,
-				} )
-			);
 		}
 
 		next();

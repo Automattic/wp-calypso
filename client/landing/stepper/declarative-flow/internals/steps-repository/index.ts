@@ -35,6 +35,7 @@ export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
 export { default as linkInBioSetup } from './link-in-bio-setup';
 export { default as chooseADomain } from './choose-a-domain';
+export { default as launchpad } from './launchpad';
 
 export type StepPath =
 	| 'courses'
@@ -73,4 +74,5 @@ export type StepPath =
 	| 'chooseADomain'
 	| 'linkInBioSetup'
 	| 'newsletterSetup'
-	| 'intro';
+	| 'intro'
+	| 'launchpad';

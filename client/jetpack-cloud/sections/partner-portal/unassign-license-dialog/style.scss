@@ -1,0 +1,112 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.unassign-license-dialog {
+	&.dialog.card {
+		max-height: 100vh;
+		max-width: 100vh;
+		margin: 0;
+		align-self: stretch;
+
+
+		@include break-small {
+			max-height: 90%;
+			max-width: 90%;
+			margin: auto 0;
+			align-self: center;
+		}
+	}
+
+	.dialog__content {
+		max-width: 628px;
+		align-self: stretch;
+		height: 100%;
+
+		@include break-small {
+			align-self: center;
+		}
+
+		&, & p {
+			font-size: 1rem;
+		}
+	}
+
+	.dialog__action-buttons {
+		display: flex;
+		justify-content: flex-end;
+		align-items: stretch;
+		background: var( --studio-gray-0 );
+		border: 0;
+		padding: 12px 24px;
+
+		a {
+			margin-right: auto;
+			font-weight: 600;
+			text-decoration: underline;
+		}
+
+		.button {
+			margin-bottom: 16px;
+		}
+
+		/**
+		 * .dialog__action-buttons has flex-direction to column-reverse on mobile
+		 * so with this the button on the bottom has no margin on the bottom,
+		 * but it is the first element on the tree
+		 **/
+		.button:first-child {
+			margin-bottom: 0;
+		}
+
+		@include break-mobile {
+			.button {
+				margin-bottom: 0;
+				margin-left: 10px;
+			}
+		}
+
+
+		@include break-small {
+			align-items: center;
+		}
+	}
+
+	&__heading {
+		margin: -16px -16px 16px;
+		padding: 24px;
+		font-size: 1.125rem; /* stylelint-disable */
+		font-weight: 600;
+		line-height: 20px;
+		color: var( --studio-gray-60 );
+		border-bottom: 1px solid var( --studio-gray-5 );
+
+		@include break-mobile {
+			margin: -24px -24px 24px;
+		}
+	}
+
+	&__warning {
+		font-weight: 500;
+		color: var( --studio-red-60 );
+
+		.gridicon {
+			position: relative;
+			top: 2px;
+			margin-right: 7px;
+		}
+	}
+
+	&__learn-more {
+		text-decoration: underline;
+	}
+
+	ul {
+		margin-left: 39px;
+		font-weight: 600;
+		line-height: 30px;
+
+		code {
+			font-size: 0.875rem;
+		}
+	}
+}
