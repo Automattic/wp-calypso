@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 
 const defaultOptions = {
 	threshold: 0.4,
-	distance: 20,
 	ignoreLocation: true,
 };
 
