@@ -15,6 +15,7 @@
 		"build/sites-dashboard": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
+		"cancellation-offers": false,
 		"catch-js-errors": true,
 		"cloudflare": true,
 		"composite-checkout-testing": true,
