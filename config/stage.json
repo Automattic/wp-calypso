@@ -16,7 +16,7 @@
 	"dsp_widget_js_src": "http://todo",
 	"features": {
 		"ad-tracking": false,
-		"calypso/help-center": true,
+		"calypso/help-center": false,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": true,
