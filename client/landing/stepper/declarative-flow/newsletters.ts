@@ -10,10 +10,10 @@ export const newsletters: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'letsGetStarted', 'chooseADomain' ] as StepPath[];
+		return [ 'intro', 'newsletterSetup' ] as StepPath[];
 	},
 
-	useStepNavigation( currentStep, navigate ) {
+	useStepNavigation( _currentStep, navigate ) {
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			return providedDependencies;
 		}
@@ -23,8 +23,12 @@ export const newsletters: Flow = {
 		};
 
 		const goNext = () => {
-			navigate( 'chooseADomain' );
-			return;
+			switch ( _currentStep ) {
+				case 'intro':
+					return navigate( 'newsletterSetup' );
+				default:
+					return navigate( 'intro' );
+			}
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {

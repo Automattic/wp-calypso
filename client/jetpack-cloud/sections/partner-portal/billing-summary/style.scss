@@ -3,33 +3,44 @@
 
 .billing-summary {
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: column;
 
 	@include break-xlarge() {
-		flex-wrap: nowrap;
+		flex-direction: row;
 	}
 
 	&__stat {
+		display: flex;
 		flex: 0 1 0;
+		flex-direction: row;
+		justify-content: space-between;
 		margin-bottom: 18px;
-	}
-
-	&__stat:nth-child( odd ) {
-		flex-basis: calc( 50% - 18px );
-	}
-
-	&__stat:nth-child( even ) {
-		flex-basis: calc( 50% - 1px - 18px );
-		margin-left: 18px;
-		padding-left: 18px;
-		border-left: 1px solid var( --studio-gray-5 );
 	}
 
 	&__stat:nth-last-child( -n + 2 ) {
 		margin-bottom: 0;
 	}
 
+	&__cost.billing-summary__stat {
+		display: none;
+	}
+
 	@include break-xlarge() {
+		&__stat {
+			flex-direction: column;
+		}
+
+		&__stat:nth-child( odd ) {
+			flex-basis: calc( 50% - 18px );
+		}
+
+		&__stat:nth-child( even ) {
+			flex-basis: calc( 50% - 1px - 18px );
+			margin-left: 18px;
+			padding-left: 18px;
+			border-left: 1px solid var( --studio-gray-5 );
+		}
+
 		&__stat {
 			&.billing-summary__stat {
 				flex: 1 1 0;
@@ -44,6 +55,7 @@
 		}
 
 		&__cost.billing-summary__stat {
+			display: block;
 			flex-grow: 1.25;
 			margin-left: auto;
 			border-left: 0;

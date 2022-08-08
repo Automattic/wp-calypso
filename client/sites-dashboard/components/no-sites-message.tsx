@@ -18,11 +18,20 @@ const Title = styled.div`
 	margin-top: 50%;
 `;
 type SitesContainerProps = {
-	status?: string;
+	status: string;
+
+	// The number of sites the user has that match the specified status
+	statusSiteCount: number;
 };
 
-export const NoSitesMessage = ( { status }: SitesContainerProps ) => {
+export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps ) => {
 	const { __ } = useI18n();
+
+	if ( statusSiteCount > 0 ) {
+		// If the user has some number of sites with this status, but the table is
+		// still empty, it means the search query must not match any sites.
+		return <h2>{ __( 'No sites match your search.' ) }</h2>;
+	}
 
 	if ( status === 'launched' ) {
 		return (

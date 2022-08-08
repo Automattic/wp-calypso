@@ -9,7 +9,7 @@ import {
 	TestAccount,
 	TestAccountName,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 

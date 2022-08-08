@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useStarterDesignsQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	PremiumBadge,
@@ -14,10 +14,14 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
+import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -27,9 +31,12 @@ import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
+import getThemeIdFromDesign from './util/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
+
+const SiteIntent = Onboard.SiteIntent;
 
 /**
  * The unified design picker
@@ -51,6 +58,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
+	const siteDescription = site?.description;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	useEffect( () => {
 		if ( isAtomic ) {
@@ -73,9 +81,22 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		)
 	);
 
+	useQuerySitePurchases( site ? site.ID : -1 );
+
+	const purchasedThemes = useSelector( ( state ) =>
+		site ? getPurchasedThemes( state, site.ID ) : []
+	);
+	const selectedDesignThemeId = selectedDesign ? getThemeIdFromDesign( selectedDesign ) : null;
+	const didPurchaseSelectedTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemePurchased( state, selectedDesignThemeId, site.ID )
+			: false
+	);
+
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
 			vertical_id: siteVerticalId,
+			intent,
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
 		},
@@ -255,12 +276,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		const headerDesignTitle = (
 			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
 		);
-		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
+		const shouldUpgrade =
+			selectedDesign.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme;
+		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
+		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
-			// If the user fills out the site title with write intent, we show it on the design preview
-			site_title: intent === 'write' ? siteTitle : undefined,
-			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
+			site_title: shouldCustomizeText ? siteTitle : undefined,
+			site_tagline: shouldCustomizeText ? siteDescription : undefined,
+			vertical_id:
+				selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
+					? siteVerticalId
+					: undefined,
 		} );
 
 		const stepContent = (
@@ -361,6 +388,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
+			purchasedThemes={ purchasedThemes }
 		/>
 	);
 
@@ -372,7 +400,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			hideFormattedHeader
 			backLabelText={ translate( 'Back' ) }
 			skipLabelText={
-				intent === 'write' ? translate( 'Skip and draft first post' ) : translate( 'Skip for now' )
+				intent === SiteIntent.Write
+					? translate( 'Skip and draft first post' )
+					: translate( 'Skip for now' )
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }

@@ -13,14 +13,22 @@
 		font-size: 1.25rem;
 
 		@include break-xlarge() {
+
 			grid-template-columns: 1fr 150px 150px 150px;
-			grid-template-areas:
-				'product assigned unassigned subtotal';
+			grid-template-areas: 'product assigned unassigned subtotal';
 		}
 
 		&--summary {
 			grid-template-areas: none;
 			grid-gap: 8px 24px;
+		}
+
+		> :nth-child( even ) {
+			text-align: right;
+
+			@include break-xlarge() {
+				text-align: left;
+			}
 		}
 	}
 

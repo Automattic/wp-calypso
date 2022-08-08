@@ -149,6 +149,7 @@ body.is-section-plugins.theme-default.color-scheme {
 		grid-area: actions;
 		background-color: var( --studio-gray-0 );
 		padding: 40px;
+		height: fit-content;
 
 		@include breakpoint-deprecated( '<960px' ) {
 			margin-top: 40px;
@@ -312,5 +313,47 @@ body.is-section-plugins header .select-dropdown__item {
 			@include display-grid;
 			@include grid-template-columns( 3, 80px, 1fr );
 		}
+	}
+}
+.plugins__page-title {
+	color: var( --studio-gray-80 );
+	font-weight: 400;
+}
+.plugins__page-subtitle {
+	font-size: 0.875rem;
+	color: var( --studio-gray-60 );
+	margin-bottom: 8px;
+}
+.plugins__jetpack-cloud {
+	.plugins__main-header .section-nav {
+		border-width: 0;
+	}
+	.plugins__main-header {
+		margin: 0;
+	}
+}
+.plugins__top-container {
+	margin: 0 -32px;
+	padding: 0 48px;
+	border-bottom: 1px solid var( --color-primary-5 );
+}
+.plugins__content-wrapper {
+	max-width: 1500px;
+	margin: auto;
+	padding: 0;
+}
+.plugins__main-content {
+	// We need these negative margin values because we want to make the container full-width,
+	// but our element is inside a limited-width parent.
+	margin: 0 -32px -32px;
+	padding: 16px 48px;
+	min-height: 100vh;
+	background: rgba( 255, 255, 255, 0.5 );
+}
+.plugins__search {
+	height: 52px;
+	box-shadow: 0 0 0 1px var( --color-neutral-5 );
+	.search.is-open {
+		box-shadow: none;
 	}
 }

@@ -1,15 +1,10 @@
-import {
-	Button,
-	Gridicon,
-	SitesTableTabPanel,
-	useSitesTableFiltering,
-	useSitesTableSorting,
-} from '@automattic/components';
+import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
 import { SitesSearch } from './sites-search';
@@ -25,7 +20,7 @@ interface SitesDashboardQueryParams {
 	search?: string;
 }
 
-const MAX_PAGE_WIDTH = '1184px';
+const MAX_PAGE_WIDTH = '1280px';
 
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
@@ -44,15 +39,15 @@ const PageHeader = styled.div`
 	${ pagePadding }
 
 	background-color: var( --studio-white );
-	padding-top: 32px;
+	padding-top: 24px;
+	padding-bottom: 24px;
 	box-shadow: inset 0px -1px 0px rgba( 0, 0, 0, 0.05 );
-
-	// Leave enough space for the height of the TabPanel buttons (48px)
-	padding-bottom: calc( 19px + 48px );
 `;
 
 const PageBodyWrapper = styled.div`
 	${ pagePadding }
+	max-width: ${ MAX_PAGE_WIDTH };
+	margin: 0 auto;
 `;
 
 const HeaderControls = styled.div`
@@ -71,19 +66,14 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-const PositionedFilterTabs = styled( SitesTableTabPanel )`
-	${ wideCentered }
-	position: relative;
-	top: -48px;
+const FilterBar = styled.div`
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 32px 0;
 `;
 
-const SearchWrapper = styled.div`
-	margin: 32px 0;
-	width: 286px;
-	max-width: 100%;
-`;
-
-export function SitesDashboard( { queryParams: { search, status } }: SitesDashboardProps ) {
+export function SitesDashboard( { queryParams: { search, status = 'all' } }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 
 	const { data: allSites = [] } = useSiteExcerptsQuery();
@@ -93,12 +83,12 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 		sortOrder: 'desc',
 	} );
 
-	const { filteredSites, tabs, selectedTabHasSites } = useSitesTableFiltering( sortedSites, {
+	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
 		search,
 		status,
 	} );
 
-	const selectedTabName = tabs.find( ( tab ) => tab.name === status )?.name;
+	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	return (
 		<main>
@@ -106,42 +96,45 @@ export function SitesDashboard( { queryParams: { search, status } }: SitesDashbo
 				<HeaderControls>
 					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
 					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
-						<Gridicon icon="plus" />
-						<span>{ __( 'New Site' ) }</span>
+						<span>{ __( 'Add new site' ) }</span>
 					</Button>
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<PositionedFilterTabs
-					tabs={ tabs }
-					initialTabName={ selectedTabName }
-					onSelect={ ( newTab ) =>
-						handleQueryParamChange( 'status', 'all' !== newTab ? newTab : '' )
-					}
-				>
-					{ () =>
-						selectedTabHasSites ? (
-							<>
-								<SearchWrapper>
-									<SitesSearch
-										searchIcon={ <SitesSearchIcon /> }
-										onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
-										isReskinned
-										placeholder={ __( 'Search by name or domain…' ) }
-										defaultValue={ search }
-									/>
-								</SearchWrapper>
-								{ filteredSites.length > 0 ? (
-									<SitesTable sites={ filteredSites } />
-								) : (
-									<h2>{ __( 'No sites match your search.' ) }</h2>
-								) }
-							</>
-						) : (
-							<NoSitesMessage status={ selectedTabName } />
-						)
-					}
-				</PositionedFilterTabs>
+				<>
+					{ allSites.length > 0 && (
+						<FilterBar>
+							<SitesSearch
+								searchIcon={ <SitesSearchIcon /> }
+								onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
+								isReskinned
+								placeholder={ __( 'Search by name or domain…' ) }
+								disableAutocorrect={ true }
+								defaultValue={ search }
+							/>
+							<SelectDropdown selectedText={ selectedStatus.title }>
+								{ statuses.map( ( { name, title, count } ) => (
+									<SelectDropdown.Item
+										key={ name }
+										selected={ name === selectedStatus.name }
+										count={ count }
+										onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
+									>
+										{ title }
+									</SelectDropdown.Item>
+								) ) }
+							</SelectDropdown>
+						</FilterBar>
+					) }
+					{ filteredSites.length > 0 ? (
+						<SitesTable sites={ filteredSites } />
+					) : (
+						<NoSitesMessage
+							status={ selectedStatus.name }
+							statusSiteCount={ selectedStatus.count }
+						/>
+					) }
+				</>
 			</PageBodyWrapper>
 		</main>
 	);
@@ -162,8 +155,8 @@ function handleQueryParamChange(
 	const pathWithQuery = window.location.pathname + window.location.search;
 
 	if ( paramValue ) {
-		page( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
+		page.replace( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
 	} else {
-		page( removeQueryArgs( pathWithQuery, paramName ) );
+		page.replace( removeQueryArgs( pathWithQuery, paramName ) );
 	}
 }

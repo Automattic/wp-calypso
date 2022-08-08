@@ -13,7 +13,6 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
-import formatCurrency, { CURRENCIES } from '@automattic/format-currency';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useCallback } from 'react';
@@ -27,22 +26,6 @@ import type { Plan, Product } from '@automattic/calypso-products';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
-
-export function myFormatCurrency( price: number, code: string, options = {} ): string {
-	const precision = CURRENCIES[ code ].precision;
-	const EPSILON = Math.pow( 10, -precision ) - 0.000000001;
-
-	const hasCents = Math.abs( price % 1 ) >= EPSILON;
-	const formatted = formatCurrency(
-		price,
-		code,
-		hasCents ? options : { ...options, precision: 0 }
-	);
-	if ( ! formatted ) {
-		throw new Error( `Failed to format price '${ price }' in currency '${ code }'` );
-	}
-	return formatted;
-}
 
 export interface AvailableProductVariant {
 	planSlug: string;

@@ -1,31 +1,28 @@
-import { ElementHandle, Page } from 'playwright';
+import { Locator, Page, Response } from 'playwright';
 
 type SupportResultType = 'article' | 'where';
 
 const selectors = {
 	// Components
-	supportPopoverButton: `button[title="Help"]`,
-	supportPopover: '.inline-help__popover',
+	supportPopoverButton: ( { isActive }: { isActive?: boolean } = {} ) =>
+		`button[title="Help"]${ isActive ? '.is-active' : '' }`,
 	searchInput: '[aria-label="Search"]',
 	clearSearch: '[aria-label="Close Search"]',
 	supportCard: '.card.help-search',
-	spinner: '.spinner',
+	closeButton: '[aria-label="Close Help Center"]',
 
 	// Results
 	resultsPlaceholder: '.inline-help__results-placeholder-item',
-	results: ( category: string ) => `[aria-labelledby="${ category }"] .inline-help__results-item`,
+	resultsPlaceholderHelpCenter: '.placeholder-lines__help-center-item',
+	results: ( category: string ) => `[aria-labelledby="${ category }"] a`,
 	defaultResultsMessage: 'h3:text("Recommended resources")',
+	successfulSearchResponse: ( response: Response ) =>
+		response.url().includes( 'search' ) && response.status() === 200,
 
 	// Result types
 	supportCategory: 'inline-search--api_help',
 	whereCategory: 'inline-search--admin_section',
 	emptyResults: ':has-text("Sorry, there were no matches.")',
-
-	// Article
-	readMoreButton: 'text=Read more',
-	supportArticlePlaceholder: 'p.support-article-dialog__placeholder-text',
-	visitArticleButton: 'text="Visit article"',
-	closeButton: 'button:text("Close")',
 };
 
 /**
@@ -48,8 +45,8 @@ export class SupportComponent {
 	 */
 	async waitForQueryComplete(): Promise< void > {
 		await Promise.all( [
+			this.page.waitForSelector( selectors.resultsPlaceholderHelpCenter, { state: 'hidden' } ),
 			this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'hidden' } ),
-			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
 		] );
 	}
 
@@ -59,7 +56,7 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async openPopover(): Promise< void > {
-		if ( await this.page.isVisible( selectors.supportPopover ) ) {
+		if ( await this.page.isVisible( selectors.supportPopoverButton( { isActive: true } ) ) ) {
 			return;
 		}
 
@@ -68,17 +65,11 @@ export class SupportComponent {
 		await Promise.all( [
 			// Waits for all placeholder CSS elements to be removed from the DOM.
 			this.waitForQueryComplete(),
-			this.page.waitForSelector( selectors.supportPopoverButton ),
-			this.page.click( selectors.supportPopoverButton ),
+			this.page.waitForSelector( selectors.supportPopoverButton() ),
+			this.page.click( selectors.supportPopoverButton() ),
 		] );
 
-		// Obtain the element handle for the Support popover, then wait until the `is-active` attribute
-		// is added.
-		const elementHandle = await this.page.waitForSelector( selectors.supportPopoverButton );
-		await this.page.waitForFunction(
-			( element: HTMLElement | SVGElement ) => element.classList.contains( 'is-active' ),
-			elementHandle
-		);
+		await this.page.waitForSelector( selectors.supportPopoverButton( { isActive: true } ) );
 	}
 
 	/**
@@ -87,11 +78,11 @@ export class SupportComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async closePopover(): Promise< void > {
-		if ( await this.page.isHidden( selectors.supportPopover ) ) {
+		if ( await this.page.isHidden( selectors.closeButton ) ) {
 			return;
 		}
-		await this.page.click( selectors.supportPopoverButton );
-		await this.page.waitForSelector( selectors.supportPopover, { state: 'hidden' } );
+		await this.page.click( selectors.closeButton );
+		await this.page.waitForSelector( selectors.closeButton, { state: 'hidden' } );
 	}
 
 	/**
@@ -115,19 +106,20 @@ export class SupportComponent {
 	}
 
 	/**
-	 * Given a selector, returns an array of ElementHandles that match the given selector.
+	 * Given a selector, returns a Locator that match the given selector.
 	 * Prior to selecing the elements, this method will wait for the 'load' event.
 	 *
 	 * @param {SupportResultType} category Type of support result item shown.
-	 * @returns {Promise<ElementHandle[]>} Array of ElementHandles that match the given selector.
+	 * @returns {Promise<Locator>} Locator that matches the given selector.
 	 */
-	async getResults( category: SupportResultType ): Promise< ElementHandle[] > {
+	async getResults( category: SupportResultType ): Promise< Locator > {
 		await this.waitForQueryComplete();
 
-		if ( category === 'article' ) {
-			return await this.page.$$( selectors.results( selectors.supportCategory ) );
-		}
-		return await this.page.$$( selectors.results( selectors.whereCategory ) );
+		const selector = selectors.results(
+			category === 'article' ? selectors.supportCategory : selectors.whereCategory
+		);
+		await this.page.waitForSelector( selector );
+		return this.page.locator( selector );
 	}
 
 	/**
@@ -161,48 +153,6 @@ export class SupportComponent {
 		await this.page.click( `:nth-match(${ selector }, ${ target })` );
 	}
 
-	/**
-	 * Click on the `Read More` button shown on the support popover.
-	 *
-	 * The target button is shown only for Article type results.
-	 */
-	async clickReadMore(): Promise< void > {
-		await Promise.all( [
-			this.page.waitForSelector( selectors.supportArticlePlaceholder, { state: 'hidden' } ),
-			this.page.click( selectors.readMoreButton ),
-		] );
-	}
-
-	/**
-	 * Visit the support article from the inline support popover.
-	 *
-	 * @returns {Promise<Page>} Reference to support page.
-	 */
-	async visitArticle(): Promise< Page > {
-		await this.page.waitForLoadState( 'networkidle' );
-		const visitArticleLocator = this.page.locator( selectors.visitArticleButton );
-
-		const browserContext = this.page.context();
-		// `Visit article` launches a new page.
-		const [ newPage ] = await Promise.all( [
-			browserContext.waitForEvent( 'page' ),
-			visitArticleLocator.click( { force: true } ),
-		] );
-		await newPage.waitForLoadState( 'domcontentloaded' );
-
-		// Return handler to the new tab.
-		return newPage;
-	}
-
-	/**
-	 * Closes the support article displayed on screen.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async closeArticle(): Promise< void > {
-		await this.page.click( selectors.closeButton );
-	}
-
 	/* Search input */
 
 	/**
@@ -214,12 +164,9 @@ export class SupportComponent {
 	async search( text: string ): Promise< void > {
 		// Wait for the response to the request and ensure the status is HTTP 200.
 		await Promise.all( [
-			this.page.waitForResponse(
-				( response ) => response.url().includes( 'search?' ) && response.status() === 200
-			),
-			this.page.waitForSelector( selectors.resultsPlaceholder, { state: 'hidden' } ),
-			this.page.waitForSelector( selectors.spinner, { state: 'hidden' } ),
+			this.page.waitForResponse( selectors.successfulSearchResponse ),
 			this.page.fill( selectors.searchInput, text ),
+			this.waitForQueryComplete(),
 		] );
 		await this.page.waitForLoadState( 'load' );
 	}

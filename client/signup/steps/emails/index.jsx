@@ -118,7 +118,8 @@ class EmailsStep extends Component {
 	}
 
 	render() {
-		const { flowName, translate, stepName, positionInFlow, signupDependencies } = this.props;
+		const { flowName, translate, stepName, positionInFlow, signupDependencies, hideBackButton } =
+			this.props;
 		const backUrl = 'start/domains/';
 		const headerText = translate( 'Add Professional Email' );
 		const domainName = signupDependencies.domainItem?.meta;
@@ -145,7 +146,7 @@ class EmailsStep extends Component {
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ translate( 'Back' ) }
 				hideSkip={ false }
-				hideBack={ this.props.flowName === 'newsletters' }
+				hideBack={ hideBackButton }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Buy an email later' ) }

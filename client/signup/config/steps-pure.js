@@ -28,7 +28,6 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	currentPage = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
@@ -40,7 +39,6 @@ export function generateSteps( {
 	isAddOnsFulfilled = noop,
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
-	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
 	setDIFMLiteDesign = noop,
@@ -49,15 +47,6 @@ export function generateSteps( {
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		survey: {
-			stepName: 'survey',
-			props: {
-				surveySiteType:
-					currentPage && currentPage.toString().match( /\/start\/blog/ ) ? 'blog' : 'site',
-			},
-			providesDependencies: [ 'surveySiteType', 'surveyQuestion' ],
-		},
-
 		themes: {
 			stepName: 'themes',
 			dependencies: [ 'siteSlug' ],
@@ -575,19 +564,6 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
-		'site-topic': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
-		'site-topic-with-theme': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
@@ -683,8 +659,8 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
@@ -723,20 +699,13 @@ export function generateSteps( {
 			apiRequestFunction: setDIFMLiteDesign,
 			delayApiRequestUntilComplete: true,
 			providesDependencies: [
-				'isFSEActive',
 				'selectedDesign',
 				'selectedSiteCategory',
 				'isLetUsChooseSelected',
 				'cartItem',
 				'siteSlug',
 			],
-			optionalDependencies: [
-				'isFSEActive',
-				'selectedDesign',
-				'isLetUsChooseSelected',
-				'cartItem',
-				'siteSlug',
-			],
+			optionalDependencies: [ 'selectedDesign', 'isLetUsChooseSelected', 'cartItem', 'siteSlug' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,

@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useStarterDesignsGeneratedQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignsGeneratedQuery } from '@automattic/data-stores';
 import DesignPicker, {
 	GeneratedDesignPicker,
 	PremiumBadge,
@@ -18,10 +18,14 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
+import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -34,10 +38,12 @@ import GeneratedDesignPickerWebPreview from './generated-design-picker-web-previ
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
 import UpgradeModal from './upgrade-modal';
+import getThemeIdFromDesign from './util/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
 
+const SiteIntent = Onboard.SiteIntent;
 // The distance from top when sticky should be 109px and it's aligned with thumbnails and previews
 const STICKY_OPTIONS = {
 	rootMargin: '-109px 0px 0px',
@@ -66,6 +72,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
+	const siteDescription = site?.description;
 	const isAtomic = useSelect( ( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ) );
 	useEffect( () => {
 		if ( isAtomic ) {
@@ -90,6 +97,17 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				site && select( SITE_STORE ).siteHasFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES )
 		)
 	);
+	useQuerySitePurchases( site ? site.ID : -1 );
+
+	const purchasedThemes = useSelector( ( state ) =>
+		site ? getPurchasedThemes( state, site.ID ) : []
+	);
+	const selectedDesignThemeId = selectedDesign ? getThemeIdFromDesign( selectedDesign ) : null;
+	const didPurchaseSelectedTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemePurchased( state, selectedDesignThemeId, site.ID )
+			: false
+	);
 
 	const { data: themeDesigns = [] } = useDesignsBySite( site );
 
@@ -104,7 +122,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const enabledGeneratedDesigns =
 		verticalsStepEnabled &&
 		isEnabled( 'signup/design-picker-generated-designs' ) &&
-		( intent === 'build' || intent === 'write' );
+		( intent === SiteIntent.Build || intent === SiteIntent.Write );
 
 	const { data: generatedDesigns = [], isLoading: isLoadingGeneratedDesigns } =
 		useStarterDesignsGeneratedQuery(
@@ -374,11 +392,14 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
 		);
 
-		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
+		const shouldUpgrade =
+			selectedDesign.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme;
+		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
+		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
 			language: locale,
-			// If the user fills out the site title with write intent, we show it on the design preview
-			site_title: intent === 'write' ? siteTitle : undefined,
+			site_title: shouldCustomizeText ? siteTitle : undefined,
+			site_tagline: shouldCustomizeText ? siteDescription : undefined,
 			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
 		} );
 
@@ -550,6 +571,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
 			verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined }
+			purchasedThemes={ purchasedThemes }
 		/>
 	);
 
@@ -571,7 +593,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			backLabelText={
 				isPreviewingGeneratedDesign ? translate( 'Pick another' ) : translate( 'Back' )
 			}
-			skipLabelText={ intent === 'write' ? translate( 'Skip and draft first post' ) : undefined }
+			skipLabelText={
+				intent === SiteIntent.Write ? translate( 'Skip and draft first post' ) : undefined
+			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordStepContainerTracksEvent }
 			goNext={ isPreviewingGeneratedDesign ? pickDesign : handleSubmit }

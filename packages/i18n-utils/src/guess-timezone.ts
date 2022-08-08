@@ -64,7 +64,6 @@ const linkedTimezones = {
  * See https://core.trac.wordpress.org/ticket/26656
  *
  * @param timezone A timezone string, like Asia/Calcutta.
- *
  * @returns A potentially rewritten timezone string, like Asia/Kolkata.
  */
 function maybeRewriteTimezone( timezone: string ): string {

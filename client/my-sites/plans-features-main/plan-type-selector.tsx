@@ -233,10 +233,10 @@ function useMaxDiscount( plans: string[] ): number {
 				return 0;
 			}
 
-			const monthlyPlanAnnualCost = getPlanRawPrice( state, monthlyPlan.product_id ) * 12;
+			const monthlyPlanAnnualCost = ( getPlanRawPrice( state, monthlyPlan.product_id ) ?? 0 ) * 12;
 			const rawPrice = getPlanRawPrice( state, yearlyPlan.product_id );
 			const discountPrice = getDiscountedRawPrice( state, yearlyPlan.product_id );
-			const yearlyPlanCost = discountPrice || rawPrice;
+			const yearlyPlanCost = discountPrice || rawPrice || 0;
 
 			return Math.round(
 				( ( monthlyPlanAnnualCost - yearlyPlanCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100

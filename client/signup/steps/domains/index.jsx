@@ -51,7 +51,6 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
 import './style.scss';
@@ -71,7 +70,6 @@ class DomainsStep extends Component {
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
-		vertical: PropTypes.string,
 		isReskinned: PropTypes.bool,
 	};
 
@@ -535,7 +533,6 @@ class DomainsStep extends Component {
 					deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 					selectedSite={ this.props.selectedSite }
 					showSkipButton={ this.props.showSkipButton }
-					vertical={ this.props.vertical }
 					onSkip={ this.handleSkip }
 					hideFreePlan={ this.handleSkip }
 					forceHideFreeDomainExplainerAndStrikeoutUi={
@@ -725,7 +722,7 @@ class DomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned } = this.props;
+		const { isAllDomains, translate, isReskinned, hideBackButton } = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
@@ -784,7 +781,7 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				hideBack={ this.props.flowName === 'newsletters' }
+				hideBack={ hideBackButton }
 				stepContent={
 					<div>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }
@@ -847,7 +844,6 @@ export default connect(
 			productsList,
 			productsLoaded,
 			siteType: getSiteType( state ),
-			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite,
 			sites: getSitesItems( state ),
 			isPlanSelectionAvailableLaterInFlow:

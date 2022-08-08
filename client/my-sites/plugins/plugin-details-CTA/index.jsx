@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -24,6 +25,8 @@ import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginPrice } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 import CTAButton from './CTA-button';
+import { ActivationButton } from './activation-button';
+import { ManagePluginMenu } from './manage-plugin-menu';
 import PluginDetailsCTAPreinstalledPremiumPlugins from './preinstalled-premium-plugins-CTA';
 import USPS from './usps';
 import './style.scss';
@@ -124,7 +127,7 @@ const PluginDetailsCTA = ( props ) => {
 		);
 	}
 
-	if ( isPlaceholder ) {
+	if ( isPlaceholder || requestingPluginsForSites ) {
 		return <PluginDetailsCTAPlaceholder />;
 	}
 
@@ -139,7 +142,7 @@ const PluginDetailsCTA = ( props ) => {
 				span: <span className="plugin-details-CTA__installed-text-active"></span>,
 			},
 		} );
-		const inactiveText = translate( '{{span}}inactive{{/span}}', {
+		const inactiveText = translate( '{{span}}deactivated{{/span}}', {
 			components: {
 				span: <span className="plugin-details-CTA__installed-text-inactive"></span>,
 			},
@@ -148,14 +151,41 @@ const PluginDetailsCTA = ( props ) => {
 
 		return (
 			<div className="plugin-details-CTA__container">
-				<div className="plugin-details-CTA__installed-text">
-					{ translate( 'Installed and {{activation /}}', {
-						components: {
-							activation: active ? activeText : inactiveText,
-						},
-					} ) }
+				<div className="plugin-details-CTA__container-header">
+					<div className="plugin-details-CTA__installed-text">
+						{ translate( 'Installed and {{activation /}}', {
+							components: {
+								activation: active ? activeText : inactiveText,
+							},
+						} ) }
+					</div>
+					<div className="plugin-details-CTA__manage-plugin-menu">
+						<ManagePluginMenu plugin={ plugin } />
+					</div>
 				</div>
-				<Button>{ active ? translate( 'Deactivate' ) : translate( 'Activate' ) }</Button>
+
+				<ActivationButton plugin={ plugin } active={ active } />
+
+				<PluginAutoupdateToggle
+					site={ selectedSite }
+					plugin={ sitePlugin }
+					label={
+						<span className="plugin-details-CTA__autoupdate-text">
+							<span className="plugin-details-CTA__autoupdate-text-main">
+								{ translate( 'Enable autoupdates.' ) }
+							</span>
+							{ sitePlugin.version && (
+								<span className="plugin-details-CTA__autoupdate-text-version">
+									{ translate( ' Currently %(version)s', {
+										args: { version: sitePlugin.version },
+									} ) }
+								</span>
+							) }
+						</span>
+					}
+					isMarketplaceProduct={ plugin.isMarketplaceProduct }
+					wporg
+				/>
 			</div>
 		);
 	}
@@ -223,7 +253,7 @@ const PluginDetailsCTA = ( props ) => {
 					billingPeriod={ billingPeriod }
 					shouldUpgrade={ shouldUpgrade }
 					isSiteConnected={ isSiteConnected }
-					disabled={ requestingPluginsForSites || incompatiblePlugin || userCantManageTheSite }
+					disabled={ incompatiblePlugin || userCantManageTheSite }
 				/>
 			</div>
 			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (

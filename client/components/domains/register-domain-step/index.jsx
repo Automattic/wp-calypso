@@ -121,12 +121,12 @@ class RegisterDomainStep extends Component {
 		deemphasiseTlds: PropTypes.array,
 		recordFiltersSubmit: PropTypes.func.isRequired,
 		recordFiltersReset: PropTypes.func.isRequired,
-		vertical: PropTypes.string,
 		isReskinned: PropTypes.bool,
 		showSkipButton: PropTypes.bool,
 		onSkip: PropTypes.func,
 		promoTlds: PropTypes.array,
 		showAlreadyOwnADomain: PropTypes.bool,
+		domainAndPlanUpsellFlow: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -157,16 +157,6 @@ class RegisterDomainStep extends Component {
 
 		if ( props.initialState ) {
 			this.state = { ...this.state, ...props.initialState };
-
-			if ( this.state.lastVertical && this.state.lastVertical !== props.vertical ) {
-				this.state.loadingResults = true;
-
-				if ( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) {
-					this.state.loadingSubdomainResults = true;
-				}
-
-				delete this.state.lastVertical;
-			}
 
 			if ( props.suggestion ) {
 				this.state.lastQuery = props.suggestion;
@@ -933,7 +923,6 @@ class RegisterDomainStep extends Component {
 			include_dotblogsubdomain: false,
 			tld_weight_overrides: getTldWeightOverrides( this.props.designType ),
 			vendor: this.props.vendor,
-			vertical: this.props.vertical,
 			site_slug: this.props?.selectedSite?.slug,
 			recommendation_context: get( this.props, 'selectedSite.name', '' )
 				.replace( ' ', ',' )
@@ -1054,7 +1043,6 @@ class RegisterDomainStep extends Component {
 			only_wordpressdotcom: this.props.includeDotBlogSubdomain,
 			tld_weight_overrides: null,
 			vendor: 'dot',
-			vertical: this.props.vertical,
 			...this.getActiveFiltersForAPI(),
 		};
 
@@ -1128,7 +1116,6 @@ class RegisterDomainStep extends Component {
 		this.setState(
 			{
 				lastQuery: domain,
-				lastVertical: this.props.vertical,
 				lastFilters: this.state.filters,
 				hideInitialQuery: false,
 			},
@@ -1349,6 +1336,7 @@ class RegisterDomainStep extends Component {
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
 				isReskinned={ this.props.isReskinned }
+				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 			>
 				{ ! this.props.isReskinned &&
 					hasResults &&
