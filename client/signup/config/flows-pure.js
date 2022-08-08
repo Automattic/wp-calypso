@@ -119,7 +119,7 @@ export function generateFlows( {
 			lastModified: '2022-07-28',
 			showRecaptcha: true,
 			hideBackButton: true,
-			totalSteps: 5,
+			totalSteps: 9,
 			get pageTitle() {
 				return translate( 'Newsletters' );
 			},
@@ -132,7 +132,7 @@ export function generateFlows( {
 			lastModified: '2022-07-28',
 			showRecaptcha: true,
 			hideBackButton: true,
-			totalSteps: 5,
+			totalSteps: 9,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},

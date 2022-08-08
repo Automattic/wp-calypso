@@ -34,8 +34,23 @@ $white: var( --color-surface );
 		transform-origin: 0 0;
 	}
 
-	.progress-bar {
+	&:not( .newsletters ) .progress-bar {
 		display: none;
+	}
+
+	&.newsletters,
+	&.link-in-bio {
+		.progress-bar {
+			z-index: 1;
+			background-color: var( --color-surface );
+			border-radius: 0;
+			position: absolute;
+			top: 0;
+
+			.progress-bar__progress {
+				border-radius: 0;
+			}
+		}
 	}
 
 	.step-container {

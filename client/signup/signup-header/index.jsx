@@ -33,7 +33,9 @@ export default class SignupHeader extends Component {
 
 		return (
 			<div className="signup-header">
-				<ProgressBar className={ flowName } value={ positionInFlow + 1 } total={ flowLength } />
+				{ flowLength && (
+					<ProgressBar className={ flowName } value={ positionInFlow + 1 } total={ flowLength } />
+				) }
 
 				<WordPressLogo size={ 120 } className={ logoClasses } />
 				{ pageTitle && <h1>{ pageTitle }</h1> }
