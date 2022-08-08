@@ -473,7 +473,6 @@ function useSiteHasFeature( selectedSite, pluginFeature ) {
 
 	if (
 		! config.isEnabled( 'marketplace-personal-premium' ) &&
-		! shouldUpgrade &&
 		( isPersonalPlan( product_slug ) || isPremiumPlan( product_slug ) )
 	) {
 		return true;
