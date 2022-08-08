@@ -153,7 +153,7 @@ export class SecretsManager {
 			testAccounts: {
 				defaultUser: {
 					...fakeAccount,
-					userID: 0,
+					userID: 99999,
 					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
 					email: 'FAKE_VALUE',
 				},
