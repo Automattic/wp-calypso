@@ -40,7 +40,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 		event.preventDefault();
 
 		if ( site ) {
-			const { value = '', name = '' } = vertical || {};
+			const { value = '', name = '', has_verticalizable_images = false } = vertical || {};
 
 			setIsBusy( true );
 			await saveSiteSettings( site.ID, { site_vertical_id: value } );
@@ -49,6 +49,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 				user_input: userInput,
 				vertical_id: value,
 				vertical_title: name,
+				has_verticalizable_images,
 			} );
 
 			setIsBusy( false );

@@ -3,4 +3,5 @@ export interface Vertical {
 	label: string;
 	name: string;
 	category?: string;
+	has_verticalizable_images?: boolean;
 }
