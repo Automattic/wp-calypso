@@ -2,22 +2,13 @@ import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automatti
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
-import page from 'page';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
-import { SitesSearch } from './sites-search';
-import { SitesSearchIcon } from './sites-search-icon';
+import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
 import { SitesTable } from './sites-table';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
-}
-
-interface SitesDashboardQueryParams {
-	status?: string;
-	search?: string;
 }
 
 const MAX_PAGE_WIDTH = '1280px';
@@ -66,13 +57,6 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-const FilterBar = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	padding: 32px 0;
-`;
-
 export function SitesDashboard( { queryParams: { search, status = 'all' } }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 
@@ -103,28 +87,11 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 			<PageBodyWrapper>
 				<>
 					{ allSites.length > 0 && (
-						<FilterBar>
-							<SitesSearch
-								searchIcon={ <SitesSearchIcon /> }
-								onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
-								isReskinned
-								placeholder={ __( 'Search by name or domain…' ) }
-								disableAutocorrect={ true }
-								defaultValue={ search }
-							/>
-							<SelectDropdown selectedText={ selectedStatus.title }>
-								{ statuses.map( ( { name, title, count } ) => (
-									<SelectDropdown.Item
-										key={ name }
-										selected={ name === selectedStatus.name }
-										count={ count }
-										onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
-									>
-										{ title }
-									</SelectDropdown.Item>
-								) ) }
-							</SelectDropdown>
-						</FilterBar>
+						<SitesContentControls
+							initialSearch={ search }
+							statuses={ statuses }
+							selectedStatus={ selectedStatus }
+						/>
 					) }
 					{ filteredSites.length > 0 || isLoading ? (
 						<SitesTable isLoading={ isLoading } sites={ filteredSites } />
@@ -138,25 +105,4 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 			</PageBodyWrapper>
 		</main>
 	);
-}
-
-/**
- * Updates a query param used by the sites dashboard, causing a page navigation.
- * Param will be removed if it is empty or matches its default value.
- *
- * @param paramName name of the param being updated
- * @param paramValue new value for the param
- */
-function handleQueryParamChange(
-	paramName: keyof SitesDashboardQueryParams,
-	paramValue: string | null
-) {
-	// Ensure we keep existing query params by appending `.search`
-	const pathWithQuery = window.location.pathname + window.location.search;
-
-	if ( paramValue ) {
-		page.replace( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
-	} else {
-		page.replace( removeQueryArgs( pathWithQuery, paramName ) );
-	}
 }

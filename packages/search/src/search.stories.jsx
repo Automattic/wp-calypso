@@ -1,3 +1,4 @@
+import './search.stories.scss';
 import { action } from '@storybook/addon-actions';
 import { Icon } from '@wordpress/components';
 import Search from './search';
@@ -96,3 +97,8 @@ export const WithCustomSearchIcon = () => {
 
 	return <BoxedSearch searchIcon={ <Icon icon={ customIcon } /> } />;
 };
+
+export const WithDifferentColor = () => (
+	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+	<BoxedSearch className="stories__search--with-different-color" />
+);

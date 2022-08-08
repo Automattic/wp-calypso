@@ -32,6 +32,7 @@
 		"build/sites-dashboard": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
+		"cancellation-offers": true,
 		"cloudflare": true,
 		"comments/filters-in-posts": true,
 		"current-site/domain-warning": true,

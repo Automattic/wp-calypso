@@ -32,6 +32,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PluginManagementV2 from '../plugin-management-v2';
 
 import './style.scss';
 
@@ -79,6 +80,10 @@ export class PluginsList extends Component {
 		}
 
 		if ( this.props.isPlaceholder !== nextProps.isPlaceholder ) {
+			return true;
+		}
+
+		if ( this.props.searchTerm !== nextProps.searchTerm ) {
 			return true;
 		}
 
@@ -468,7 +473,7 @@ export class PluginsList extends Component {
 
 		const selectedSiteSlug = this.props.selectedSiteSlug ? this.props.selectedSiteSlug : '';
 
-		if ( this.props.isPlaceholder ) {
+		if ( this.props.isPlaceholder && ! this.props.isJetpackCloud ) {
 			return (
 				<div className="plugins-list">
 					<SectionHeader
@@ -481,7 +486,7 @@ export class PluginsList extends Component {
 			);
 		}
 
-		if ( isEmpty( this.props.plugins ) ) {
+		if ( isEmpty( this.props.plugins ) && ! this.props.isJetpackCloud ) {
 			return null;
 		}
 
@@ -489,34 +494,47 @@ export class PluginsList extends Component {
 			<div className="plugins-list">
 				<QueryProductsList />
 				<PluginNotices sites={ this.getPluginsSites() } plugins={ this.props.plugins } />
-				<PluginsListHeader
-					label={ this.props.header }
-					isBulkManagementActive={ this.state.bulkManagementActive }
-					selectedSiteSlug={ selectedSiteSlug }
-					plugins={ this.props.plugins }
-					selected={ this.getSelected() }
-					toggleBulkManagement={ this.toggleBulkManagement }
-					updateAllPlugins={ this.updateAllPlugins }
-					updateSelected={ this.updateSelected }
-					pluginUpdateCount={ this.props.pluginUpdateCount }
-					activateSelected={ this.activateSelected }
-					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
-					deactivateSelected={ this.deactivateSelected }
-					setAutoupdateSelected={ this.setAutoupdateSelected }
-					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
-					removePluginNotice={ this.removePluginDialog }
-					setSelectionState={ this.setBulkSelectionState }
-					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
-					haveInactiveSelected={ this.props.plugins.some(
-						this.filterSelection.inactive.bind( this )
-					) }
-					haveUpdatesSelected={ this.props.plugins.some(
-						this.filterSelection.updates.bind( this )
-					) }
-				/>
-				<Card className={ itemListClasses }>
-					{ this.orderPluginsByUpdates( this.props.plugins ).map( this.renderPlugin ) }
-				</Card>
+				{ this.props.isJetpackCloud ? (
+					<PluginManagementV2
+						plugins={ this.props.plugins }
+						isLoading={ this.props.isLoading }
+						selectedSite={ this.props.selectedSite }
+						searchTerm={ this.props.searchTerm }
+					/>
+				) : (
+					<>
+						<PluginsListHeader
+							label={ this.props.header }
+							isBulkManagementActive={ this.state.bulkManagementActive }
+							selectedSiteSlug={ selectedSiteSlug }
+							plugins={ this.props.plugins }
+							selected={ this.getSelected() }
+							toggleBulkManagement={ this.toggleBulkManagement }
+							updateAllPlugins={ this.updateAllPlugins }
+							updateSelected={ this.updateSelected }
+							pluginUpdateCount={ this.props.pluginUpdateCount }
+							activateSelected={ this.activateSelected }
+							deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
+							deactivateSelected={ this.deactivateSelected }
+							setAutoupdateSelected={ this.setAutoupdateSelected }
+							unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
+							removePluginNotice={ this.removePluginDialog }
+							setSelectionState={ this.setBulkSelectionState }
+							haveActiveSelected={ this.props.plugins.some(
+								this.filterSelection.active.bind( this )
+							) }
+							haveInactiveSelected={ this.props.plugins.some(
+								this.filterSelection.inactive.bind( this )
+							) }
+							haveUpdatesSelected={ this.props.plugins.some(
+								this.filterSelection.updates.bind( this )
+							) }
+						/>
+						<Card className={ itemListClasses }>
+							{ this.orderPluginsByUpdates( this.props.plugins ).map( this.renderPlugin ) }
+						</Card>
+					</>
+				) }
 			</div>
 		);
 	}
@@ -583,7 +601,6 @@ export class PluginsList extends Component {
 export default connect(
 	( state, { plugins } ) => {
 		const selectedSite = getSelectedSite( state );
-
 		return {
 			allSites: getSites( state ),
 			pluginsOnSites: getPluginsOnSites( state, plugins ),
