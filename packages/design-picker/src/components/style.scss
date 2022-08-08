@@ -441,8 +441,27 @@
 .design-picker--has-categories {
 	.responsive-toolbar-group__swipe {
 		.responsive-toolbar-group__swipe-list {
-			padding: 0;
-			margin-left: -8px;
+			padding: 0 0 24px;
+
+			>div:first-of-type {
+				button {
+					padding-left: 8px;
+
+					&::before {
+						left: 0;
+					}
+				}
+			}
+		
+			>div:last-of-type {
+				button {
+					padding-right: 8px;
+
+					&::before {
+						right: 0;
+					}
+				}
+			}
 		}
 	}
 
