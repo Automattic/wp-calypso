@@ -389,7 +389,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
 			purchasedThemes={ purchasedThemes }
-			isMobileSizedPreview
+			isMobileSizedPreview={ flow === 'link-in-bio' }
 		/>
 	);
 
