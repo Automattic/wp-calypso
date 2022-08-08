@@ -15,10 +15,26 @@ declare global {
  *
  * @module config/index
  */
-if ( 'undefined' === typeof window || ! window.configData ) {
-	throw new ReferenceError(
-		'No configuration was found: please see packages/calypso-config/README.md for more information'
-	);
+if ( 'undefined' === typeof window ) {
+	throw new Error( 'Trying to initialize the configuration outside of a browser context.' );
+}
+
+if ( ! window.configData ) {
+	if ( 'development' === process.env.NODE_ENV ) {
+		// eslint-disable-next-line no-console
+		console.error(
+			'%cNo configuration was found: ' +
+				'%cPlease see ' +
+				'%cpackages/calypso-config/README.md ' +
+				'%cfor more information.',
+			'color: red; font-size: 120%', // error prefix
+			'color: white;', // message
+			'color: #0267ff;', // calypso-config README.md file reference
+			'color: white' // message
+		);
+	}
+
+	window.configData = {};
 }
 
 const isDesktop = window.electron !== undefined;
