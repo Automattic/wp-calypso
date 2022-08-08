@@ -33,16 +33,16 @@ const Container = styled.div`
 		opacity: 0;
 	}
 
-	> div:nth-child( 2 ) {
+	> div:nth-of-type( 2 ) {
 		animation-delay: 8s;
 	}
-	> div:nth-child( 3 ) {
+	> div:nth-of-type( 3 ) {
 		animation-delay: 16s;
 	}
-	> div:nth-child( 4 ) {
+	> div:nth-of-type( 4 ) {
 		animation-delay: 24s;
 	}
-	> div:nth-child( 5 ) {
+	> div:nth-of-type( 5 ) {
 		animation-delay: 32s;
 	}
 `;
