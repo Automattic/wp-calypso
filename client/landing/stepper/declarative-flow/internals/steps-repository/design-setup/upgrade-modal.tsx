@@ -2,9 +2,6 @@ import { Button, Gridicon, Dialog, ScreenReaderText } from '@automattic/componen
 import { useSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormRadio from 'calypso/components/forms/form-radio';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useThemeDetails } from 'calypso/landing/stepper/hooks/use-theme-details';
 import { PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
@@ -22,29 +19,15 @@ interface UpgradeModalProps {
 const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps ) => {
 	const translate = useTranslate();
 	const theme = useThemeDetails( slug );
-	const [ subInterval, setSubInterval ] = useState( 'yearly' );
 	const features = theme.data && theme.data.taxonomies.features;
 	const featuresHeading = translate( 'Theme features' ) as string;
 	const themeYearlyProduct = useSelect(
 		( select ) => select( PRODUCTS_LIST_STORE ).getProductBySlug( 'pro-plan' ) //Pass combination of `slug` and `subInterval` to selector to get theme price
 	);
-	const themeMonthlyProduct = useSelect(
-		( select ) => select( PRODUCTS_LIST_STORE ).getProductBySlug( 'pro-plan-monthly' ) //Pass combination of `slug` and `subInterval` to selector to get theme price
-	);
-	const themePrice =
-		subInterval === 'yearly'
-			? themeYearlyProduct?.combined_cost_display
-			: themeMonthlyProduct?.combined_cost_display;
-
-	let savings = 0;
-	if ( themeMonthlyProduct?.cost && themeYearlyProduct?.cost ) {
-		savings = Math.floor(
-			( 1 - themeYearlyProduct?.cost / ( themeMonthlyProduct?.cost * 12 ) ) * 100
-		);
-	}
+	const themePrice = themeYearlyProduct?.combined_cost_display;
 
 	//Wait until we have theme and product data to show content
-	const isLoading = ! themeYearlyProduct?.cost || ! themeMonthlyProduct?.cost || ! theme.data;
+	const isLoading = ! themeYearlyProduct?.cost || ! theme.data;
 
 	return (
 		<Dialog
@@ -64,40 +47,14 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 							) }
 						</p>
 						<div className="upgrade-modal__theme-price">
-							<span>{ themePrice }</span>
-							{ subInterval === 'yearly' ? translate( 'per year' ) : translate( 'per month' ) }
-						</div>
-						<div className="upgrade-modal__subscription-interval">
-							<FormLabel>
-								<FormRadio
-									id="subscription-interval-monthly"
-									name="subscription-interval"
-									label={ translate( 'Monthly' ) }
-									className="upgrade-modal__radio"
-									value="monthly"
-									checked={ 'monthly' === subInterval }
-									onChange={ () => setSubInterval( 'monthly' ) }
-								/>
-							</FormLabel>
-							<FormLabel>
-								{ /* @TODO: Calculate savings based on annual/monthly price difference */ }
-								<FormRadio
-									id="subscription-interval-yearly"
-									name="subscription-interval"
-									className="upgrade-modal__radio"
-									label={ translate( 'Annually {{span}}(Save %(savings)s%){{/span}}', {
-										args: {
-											savings,
-										},
-										components: {
-											span: <span className="upgrade-modal__subscription-savings" />,
-										},
-									} ) }
-									value="yearly"
-									checked={ 'yearly' === subInterval }
-									onChange={ () => setSubInterval( 'yearly' ) }
-								/>
-							</FormLabel>
+							{ translate( '{{span}}%(themePrice)s{{/span}} per year', {
+								components: {
+									span: <span />,
+								},
+								args: {
+									themePrice,
+								},
+							} ) }
 						</div>
 						<div className="upgrade-modal__actions">
 							<Button className="upgrade-modal__upgrade" primary onClick={ () => checkout() }>
