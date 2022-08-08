@@ -22,7 +22,7 @@ function getProps( context ) {
 	const searchTerm = context.query.s;
 	const category = getCategoryForPluginsBrowser( context );
 
-	if ( searchTerm && ! context.serverSideRender ) {
+	if ( searchTerm && context.isServerSide && ! context.serverSideRender ) {
 		context.serverSideRender = true;
 	}
 
@@ -46,6 +46,32 @@ function prefetchPluginsData( queryClient, fetchParams, infinite ) {
 		refetchOnMount: false,
 	} ).catch( () => {} );
 }
+const prefetchMarketplacePlugin = ( queryClient, pluginSlug ) =>
+	prefetchPluginsData( queryClient, getFetchWPCOMPlugin( pluginSlug ) );
+
+const prefetchPaidPlugins = ( queryClient, options ) =>
+	prefetchPluginsData(
+		queryClient,
+		getFetchWPCOMPlugins( true, 'all', options.search, options.tag )
+	);
+
+const prefetchPopularPlugins = ( queryClient, options ) =>
+	prefetchPluginsData( queryClient, getFetchWPORGPlugins( { ...options, category: 'popular' } ) );
+
+const prefetchFeaturedPlugins = ( queryClient ) =>
+	prefetchPluginsData( queryClient, getFetchWPCOMFeaturedPlugins() );
+
+const prefetchSearchedPlugins = ( queryClient, options ) => [
+	prefetchPluginsData(
+		queryClient,
+		getFetchWPORGInfinitePlugins( { ...options, category: undefined } ),
+		true
+	),
+	prefetchPluginsData( queryClient, getFetchWPCOMPlugins( true, 'all', options.search, '' ) ),
+];
+
+const prefetchCategoryPlugins = ( queryClient, options ) =>
+	prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true );
 
 export async function fetchPlugin( context, next ) {
 	if ( ! context.isServerSide ) {
@@ -69,13 +95,12 @@ export async function fetchPlugin( context, next ) {
 
 	let data = getWporgPluginSelector( store.getState(), pluginSlug );
 	if ( isMarketplaceProduct ) {
-		data = await prefetchPluginsData( queryClient, getFetchWPCOMPlugin( pluginSlug ) );
+		data = await prefetchMarketplacePlugin( queryClient, pluginSlug );
 	} else if ( ! data ) {
 		await store.dispatch( wporgFetchPluginData( pluginSlug, options.locale ) );
 		data = getWporgPluginSelector( store.getState(), pluginSlug );
 	}
 
-	context.queryClient = queryClient;
 	next();
 }
 
@@ -91,18 +116,15 @@ export async function fetchPlugins( context, next ) {
 	const { queryClient } = context;
 
 	await Promise.all( [
-		prefetchPluginsData(
-			queryClient,
-			getFetchWPCOMPlugins( true, 'all', options.search, options.tag )
-		),
-		options.search
-			? prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true )
-			: Promise.resolve(),
-		prefetchPluginsData( queryClient, getFetchWPORGPlugins( { ...options, category: 'popular' } ) ),
-		prefetchPluginsData( queryClient, getFetchWPCOMFeaturedPlugins() ),
+		...( options.search
+			? prefetchSearchedPlugins( queryClient, options )
+			: [
+					prefetchPaidPlugins( queryClient, options ),
+					prefetchPopularPlugins( queryClient, options ),
+					prefetchFeaturedPlugins( queryClient, options ),
+			  ] ),
 	] );
 
-	context.queryClient = queryClient;
 	next();
 }
 
@@ -121,17 +143,11 @@ export async function fetchCategoryPlugins( context, next ) {
 	const { queryClient } = context;
 
 	await Promise.all( [
-		prefetchPluginsData(
-			queryClient,
-			getFetchWPCOMPlugins( true, 'all', options.search, options.tag )
-		),
-		options.search
-			? prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true )
-			: Promise.resolve(),
-		prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true ),
+		prefetchPaidPlugins( queryClient, options ),
+		...( options.search
+			? prefetchSearchedPlugins( queryClient, options )
+			: [ prefetchCategoryPlugins( queryClient, options ) ] ),
 	] );
-
-	context.queryClient = queryClient;
 
 	next();
 }
