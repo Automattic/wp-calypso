@@ -1,6 +1,7 @@
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
+import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps } from 'react';
 import { SitesRowsIcon } from './sites-rows-icon';
 import { SitesTileIcon } from './sites-tile-icon';
@@ -36,10 +37,22 @@ const SiteSwitcherButton = styled( Button )< ComponentProps< typeof Button > >(
 );
 
 export const SitesDisplayModeSwitcher = () => {
+	const { __ } = useI18n();
+
 	return (
-		<div className={ container } role="radiogroup">
-			<SiteSwitcherButton role="radio" icon={ <SitesTileIcon /> } isPressed={ false } />
-			<SiteSwitcherButton role="radio" icon={ <SitesRowsIcon /> } isPressed />
+		<div className={ container } role="radiogroup" aria-label={ __( 'Sites display mode' ) }>
+			<SiteSwitcherButton
+				role="radio"
+				aria-label={ __( 'Tile view' ) }
+				icon={ <SitesTileIcon /> }
+				isPressed={ false }
+			/>
+			<SiteSwitcherButton
+				role="radio"
+				aria-label={ __( 'List view' ) }
+				icon={ <SitesRowsIcon /> }
+				isPressed
+			/>
 		</div>
 	);
 };
