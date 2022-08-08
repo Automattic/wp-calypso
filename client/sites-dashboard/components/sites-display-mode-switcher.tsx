@@ -11,12 +11,10 @@ const container = css( {
 	gap: '10px',
 } );
 
-const SiteSwitcherButton = styled( Button, {
-	shouldForwardProp: ( prop ) => prop !== 'active',
-} )< ComponentProps< typeof Button > & { active: boolean } >(
+const SiteSwitcherButton = styled( Button )< ComponentProps< typeof Button > >(
 	{ borderRadius: '4px' },
 	( props ) => {
-		if ( props.active ) {
+		if ( props.isPressed ) {
 			return {
 				color: '#FFF',
 				background: '#101517',
@@ -40,8 +38,8 @@ const SiteSwitcherButton = styled( Button, {
 export const SitesDisplayModeSwitcher = () => {
 	return (
 		<div className={ container }>
-			<SiteSwitcherButton icon={ <SitesTileIcon /> } active={ false } />
-			<SiteSwitcherButton icon={ <SitesRowsIcon /> } active />
+			<SiteSwitcherButton icon={ <SitesTileIcon /> } isPressed={ false } />
+			<SiteSwitcherButton icon={ <SitesRowsIcon /> } isPressed />
 		</div>
 	);
 };
