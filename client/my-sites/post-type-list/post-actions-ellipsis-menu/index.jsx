@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import { Children, cloneElement } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -6,13 +7,13 @@ import PostActionsEllipsisMenuComments from './comments';
 import PostActionsEllipsisMenuCopyLink from './copy-link';
 import PostActionsEllipsisMenuDuplicate from './duplicate';
 import PostActionsEllipsisMenuEdit from './edit';
+import PostActionsEllipsisMenuPromote from './promote';
 import PostActionsEllipsisMenuPublish from './publish';
 import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuShare from './share';
 import PostActionsEllipsisMenuStats from './stats';
 import PostActionsEllipsisMenuTrash from './trash';
 import PostActionsEllipsisMenuView from './view';
-
 import './style.scss';
 
 export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {
@@ -22,6 +23,9 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 		actions.push(
 			<PostActionsEllipsisMenuEdit key="edit" />,
 			<PostActionsEllipsisMenuView key="view" />,
+			config.isEnabled( 'promote-post' ) && (
+				<PostActionsEllipsisMenuPromote key="promote" bumpStatKey={ 'posts-meatball-menu' } />
+			),
 			<PostActionsEllipsisMenuStats key="stats" />,
 			<PostActionsEllipsisMenuComments key="comments" />,
 			<PostActionsEllipsisMenuPublish key="publish" />,
