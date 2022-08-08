@@ -60,7 +60,7 @@ const DashboardHeading = styled.h1`
 export function SitesDashboard( { queryParams: { search, status = 'all' } }: SitesDashboardProps ) {
 	const { __ } = useI18n();
 
-	const { data: allSites = [] } = useSiteExcerptsQuery();
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
 	const { sortedSites } = useSitesTableSorting( allSites, {
 		sortKey: 'updated-at',
@@ -86,15 +86,15 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 			</PageHeader>
 			<PageBodyWrapper>
 				<>
-					{ allSites.length > 0 && (
+					{ ( allSites.length > 0 || isLoading ) && (
 						<SitesContentControls
 							initialSearch={ search }
 							statuses={ statuses }
 							selectedStatus={ selectedStatus }
 						/>
 					) }
-					{ filteredSites.length > 0 ? (
-						<SitesTable sites={ filteredSites } />
+					{ filteredSites.length > 0 || isLoading ? (
+						<SitesTable isLoading={ isLoading } sites={ filteredSites } />
 					) : (
 						<NoSitesMessage
 							status={ selectedStatus.name }
