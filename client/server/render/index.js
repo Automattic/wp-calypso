@@ -7,6 +7,7 @@ import { get, pick } from 'lodash';
 import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
+import { dehydrate } from 'react-query';
 import superagent from 'superagent';
 import {
 	getLanguageFileUrl,
@@ -236,6 +237,7 @@ export function serverRender( req, res ) {
 		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
+<<<<<<< HEAD
 		context.initialReduxState = pick( context.store.getState(), initialClientStateTrees );
 
 		/**
@@ -249,6 +251,12 @@ export function serverRender( req, res ) {
 		 * the same. And since the locale is encoded into the logged-out route
 		 * (like /es/themes), that applies to every user.
 		 */
+=======
+		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
+		context.dehydratedReactQueryState = dehydrate( context.queryClient );
+
+		// And cache on the server, too.
+>>>>>>> ce75660be2 (Hydrate the react-query client)
 		if ( cacheKey ) {
 			const { documentHead, themes } = context.store.getState();
 			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
