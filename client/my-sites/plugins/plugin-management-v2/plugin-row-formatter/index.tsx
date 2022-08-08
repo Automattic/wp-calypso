@@ -67,18 +67,24 @@ export default function PluginRowFormatter( {
 			);
 		case 'activate':
 			return (
-				canActivate && <PluginActivateToggle hideLabel plugin={ item } site={ selectedSite } />
+				canActivate && (
+					<div className="plugin-row-formatter__toggle">
+						<PluginActivateToggle hideLabel plugin={ item } site={ selectedSite } />
+					</div>
+				)
 			);
 		case 'autoupdate':
 			return (
 				canUpdate && (
-					<PluginAutoupdateToggle
-						hideLabel
-						plugin={ item }
-						site={ selectedSite }
-						wporg={ !! item.wporg }
-						isMarketplaceProduct={ isMarketplaceProduct( state, item?.slug ) }
-					/>
+					<div className="plugin-row-formatter__toggle">
+						<PluginAutoupdateToggle
+							hideLabel
+							plugin={ item }
+							site={ selectedSite }
+							wporg={ !! item.wporg }
+							isMarketplaceProduct={ isMarketplaceProduct( state, item?.slug ) }
+						/>
+					</div>
 				)
 			);
 		case 'last-updated':
