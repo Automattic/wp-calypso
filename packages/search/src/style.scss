@@ -177,7 +177,7 @@ $input-z-index: 20;
 	}
 
 	&.is-open {
-		background-color: $white;
+		background-color: var( --color-surface, $white );
 		width: 100%;
 
 		.search-component__open-icon {
