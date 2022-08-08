@@ -386,6 +386,8 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
  * At the moment we're showing only to 10% of the users. And to all proxied requests.
  */
 function load_help_center() {
+	return;
+	/*
 	// enable help center for all proxied users.
 	$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
 
@@ -395,6 +397,7 @@ function load_help_center() {
 	if ( $is_proxied || $user_segment < $current_segment ) {
 		require_once __DIR__ . '/help-center/class-help-center.php';
 	}
+	*/
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_help_center' );
 

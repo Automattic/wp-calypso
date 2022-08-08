@@ -18,7 +18,7 @@
 	"features": {
 		"ad-tracking": false,
 		"build/sites-dashboard": true,
-		"calypso/help-center": true,
+		"calypso/help-center": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"cloudflare": true,

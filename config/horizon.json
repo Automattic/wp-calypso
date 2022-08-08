@@ -13,7 +13,7 @@
 	"features": {
 		"ad-tracking": false,
 		"build/sites-dashboard": true,
-		"calypso/help-center": true,
+		"calypso/help-center": false,
 		"calypsoify/plugins": true,
 		"cancellation-offers": false,
 		"catch-js-errors": true,
