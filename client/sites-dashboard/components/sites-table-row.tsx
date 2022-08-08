@@ -160,7 +160,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 									/>
 								) : (
 									<NoIcon role={ 'img' } aria-label={ __( 'Site Icon' ) }>
-										{ site.name.charAt( 0 ) }
+										{ getFirstGrapheme( site.name ) }
 									</NoIcon>
 								) }
 							</SiteThumbnail>
@@ -195,4 +195,15 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 			</Column>
 		</Row>
 	);
+}
+
+function getFirstGrapheme( input: string ) {
+	try {
+		const segmenter = new Intl.Segmenter();
+		const segments = segmenter.segment( input );
+		return Array.from( segments )[ 0 ].segment;
+	} catch {
+		// Intl.Segmenter is not available in all browsers
+		return input.charAt( 0 );
+	}
 }
