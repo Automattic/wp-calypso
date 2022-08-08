@@ -77,7 +77,8 @@ class MediaLibraryListNoContent extends Component {
 		const showFreeLibraryButton =
 			config.isEnabled( 'external-media/free-photo-library' ) &&
 			userCan( 'upload_files', this.props.site ) &&
-			! this.props.source;
+			! this.props.source &&
+			( 'images' === this.props.filter || 'undefined' === typeof this.props.filter ); // Filter to where we would allow selecting an image.
 
 		if ( userCan( 'upload_files', this.props.site ) && ! this.props.source ) {
 			line = this.props.translate( 'Would you like to upload something?' );
