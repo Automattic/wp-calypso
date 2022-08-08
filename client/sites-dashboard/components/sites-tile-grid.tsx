@@ -5,7 +5,16 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 const container = css( {
 	display: 'grid',
 	gap: '32px',
-	gridTemplateColumns: 'repeat(3, 1fr)',
+
+	gridTemplateColumns: '1fr',
+
+	'@media screen and (min-width: 660px)': {
+		gridTemplateColumns: 'repeat(2, 1fr)',
+	},
+
+	'@media screen and (min-width: 960px)': {
+		gridTemplateColumns: 'repeat(3, 1fr)',
+	},
 } );
 
 interface SitesTileGridProps {
