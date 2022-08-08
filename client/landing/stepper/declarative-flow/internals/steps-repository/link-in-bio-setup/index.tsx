@@ -33,6 +33,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const { mutateAsync: setSiteLogo, isLoading: isUploadingIcon } = useSiteLogoMutation( site?.ID );
 	const isLoading = ! site || isUploadingIcon;
+	const siteTitleError = formTouched && ! siteTitle.trim();
 
 	useEffect( () => {
 		if ( ! site ) {
@@ -83,12 +84,6 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 			submit?.( { siteTitle, tagline } );
 		}
 	};
-
-	const siteTitleError =
-		formTouched && ! siteTitle.trim()
-			? 'Your publication needs a name so your subscribers can identify you.'
-			: '';
-
 	const steContent = (
 		<div className="step-container">
 			<form onSubmit={ handleSubmit }>
@@ -106,12 +101,12 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 							value={ siteTitle }
 							onChange={ onChange }
 							style={ {
-								backgroundImage: ! siteTitleError ? `url(${ greenCheckmarkImg })` : 'unset',
+								backgroundImage: siteTitle.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
 								backgroundRepeat: 'no-repeat',
 								backgroundPosition: '95%',
 								paddingRight: ' 40px',
 							} }
-							isError={ !! siteTitleError }
+							isError={ siteTitleError }
 						/>
 						{ siteTitleError && (
 							<FormInputValidation
@@ -131,7 +126,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 							value={ tagline }
 							onChange={ onChange }
 							style={ {
-								backgroundImage: tagline ? `url(${ greenCheckmarkImg })` : 'unset',
+								backgroundImage: tagline.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
 								backgroundRepeat: 'no-repeat',
 								backgroundPosition: '95%',
 								paddingRight: ' 40px',
