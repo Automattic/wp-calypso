@@ -133,23 +133,7 @@ class Page extends Component {
 	}
 
 	getPromoteItem() {
-		if ( this.props.page.status !== 'publish' ) {
-			return null;
-		}
-
-		if ( ! this.props.page.ID ) {
-			return null;
-		}
-
-		return (
-			<PostActionsEllipsisMenuPromote
-				siteId={ this.props.siteId }
-				postId={ this.props.page.ID }
-				isModuleActive={ !! config.isEnabled( 'promote-post' ) }
-				key="promote"
-				bumpStatKey={ 'pages-meatball-menu' }
-			/>
-		);
+		return <PostActionsEllipsisMenuPromote key="promote" bumpStatKey={ 'pages-meatball-menu' } />;
 	}
 
 	childPageInfo() {

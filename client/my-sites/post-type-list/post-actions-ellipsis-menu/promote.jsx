@@ -8,7 +8,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { loadDSPWidgetJS, recordDSPEntryPoint, showDSPWidgetModal } from 'calypso/lib/promote-post';
 import { getPost } from 'calypso/state/posts/selectors';
 
-function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpStatKey } ) {
+function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpStatKey, status } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -16,14 +16,22 @@ function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpS
 		loadDSPWidgetJS();
 	}, [] );
 
+	if ( ! isModuleActive ) {
+		return null;
+	}
+
+	if ( ! postId ) {
+		return null;
+	}
+
+	if ( status !== 'publish' ) {
+		return null;
+	}
+
 	const showDSPWidget = async () => {
 		dispatch( recordDSPEntryPoint( bumpStatKey ) );
 		await showDSPWidgetModal( siteId, postId );
 	};
-
-	if ( ! isModuleActive ) {
-		return null;
-	}
 
 	return (
 		<PopoverMenuItem onClick={ showDSPWidget } icon={ 'speaker' }>
