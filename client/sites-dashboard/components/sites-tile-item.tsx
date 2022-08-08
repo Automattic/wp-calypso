@@ -33,14 +33,14 @@ const siteImage = css( {
 } );
 
 const ellipsis = css( {
-	'.button': {
-		padding: '0 !important',
+	'.button.ellipsis-menu__toggle': {
+		padding: 0,
 	},
 
-	'.gridicon': {
-		width: '24px !important',
-		height: '16px !important',
-		top: '4px !important',
+	'.gridicon.ellipsis-menu__toggle-icon': {
+		width: '24px',
+		height: '16px',
+		top: '4px',
 	},
 } );
 
