@@ -6,6 +6,7 @@ import {
 import { Button } from '@automattic/components';
 import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/viewport';
 import { Icon, upload } from '@wordpress/icons';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, find, flow, isEmpty } from 'lodash';
 import page from 'page';
@@ -139,8 +140,10 @@ export class PluginsMain extends Component {
 	}
 
 	getFilters() {
-		const { translate } = this.props;
-		const siteFilter = this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
+		const { translate, search } = this.props;
+		const siteFilter = `${ this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '' }${
+			search ? '?s=' + search : ''
+		}`;
 
 		return [
 			{
@@ -303,10 +306,11 @@ export class PluginsMain extends Component {
 	}
 
 	renderPluginsContent() {
-		const { search } = this.props;
+		const { search, isJetpackCloud } = this.props;
 
 		const currentPlugins = this.getCurrentPlugins();
-		const showInstalledPluginList = ! isEmpty( currentPlugins ) || this.isFetchingPlugins();
+		const showInstalledPluginList =
+			isJetpackCloud || ! isEmpty( currentPlugins ) || this.isFetchingPlugins();
 
 		if ( ! showInstalledPluginList && ! search ) {
 			const emptyContentData = this.getEmptyContentData();
@@ -328,6 +332,9 @@ export class PluginsMain extends Component {
 				plugins={ currentPlugins }
 				pluginUpdateCount={ this.props.pluginUpdateCount }
 				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
+				isLoading={ this.props.requestingPluginsForSites }
+				isJetpackCloud={ this.props.isJetpackCloud }
+				searchTerm={ search }
 			/>
 		);
 
@@ -422,16 +429,23 @@ export class PluginsMain extends Component {
 			if ( 'updates' === filterItem.id ) {
 				attr.count = this.props.pluginUpdateCount;
 			}
+			if ( 'all' === filterItem.id ) {
+				attr.count = this.props.allPluginsCount;
+			}
 			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
 		} );
 
-		return (
-			<Main wideLayout>
-				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
+		const pageTitle = this.props.translate( 'Plugins', { textOnly: true } );
+
+		const { isJetpackCloud } = this.props;
+
+		const content = (
+			<>
+				<DocumentHead title={ pageTitle } />
 				<QueryJetpackPlugins siteIds={ this.props.siteIds } />
 				<QuerySiteFeatures siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
-				{ this.props.shouldDisplayNavigationHeader && (
+				{ ! isJetpackCloud && (
 					<FixedNavigationHeader
 						className="plugins__page-heading"
 						navigationItems={ this.getNavigationItems() }
@@ -442,25 +456,78 @@ export class PluginsMain extends Component {
 						</div>
 					</FixedNavigationHeader>
 				) }
-				<div className="plugins__main">
-					<div className="plugins__main-header">
-						<SectionNav selectedText={ this.getSelectedText() }>
-							<NavTabs>{ navItems }</NavTabs>
-							<Search
-								pinned
-								fitsContainer
-								onSearch={ this.props.doSearch }
-								initialValue={ this.props.search }
-								ref={ `url-search` }
-								analyticsGroup="Plugins"
-								placeholder={ this.getSearchPlaceholder() }
-							/>
-						</SectionNav>
+				<div className={ classNames( { 'plugins__top-container': isJetpackCloud } ) }>
+					<div
+						className={ classNames( {
+							'plugins__content-wrapper': isJetpackCloud,
+						} ) }
+					>
+						{ isJetpackCloud && (
+							<div className="plugins__page-title-container">
+								<h2 className="plugins__page-title">{ pageTitle }</h2>
+								<div className="plugins__page-subtitle">
+									{ this.props.selectedSite
+										? this.props.translate( 'Manage all plugins installed on %(selectedSite)s', {
+												args: {
+													selectedSite: this.props.selectedSite.domain,
+												},
+										  } )
+										: this.props.translate( 'Manage plugins installed on all sites' ) }
+								</div>
+							</div>
+						) }
+						<div
+							className={ classNames( 'plugins__main', {
+								'plugins__jetpack-cloud': isJetpackCloud,
+							} ) }
+						>
+							<div className="plugins__main-header">
+								<SectionNav
+									applyUpdatedStyles={ isJetpackCloud }
+									selectedText={ this.getSelectedText() }
+								>
+									<NavTabs>{ navItems }</NavTabs>
+									{ ! isJetpackCloud && (
+										<Search
+											pinned
+											fitsContainer
+											onSearch={ this.props.doSearch }
+											initialValue={ this.props.search }
+											ref={ `url-search` }
+											analyticsGroup="Plugins"
+											placeholder={ this.getSearchPlaceholder() }
+										/>
+									) }
+								</SectionNav>
+							</div>
+						</div>
 					</div>
 				</div>
-				{ this.renderPluginsContent() }
-			</Main>
+				{ isJetpackCloud ? (
+					<div className="plugins__main-content">
+						<div className="plugins__content-wrapper">
+							<div className="plugins__search">
+								<Search
+									hideFocus
+									isOpen
+									onSearch={ this.props.doSearch }
+									initialValue={ this.props.search }
+									hideClose={ ! this.props.search }
+									ref={ `url-search` }
+									analyticsGroup="Plugins"
+									placeholder={ this.props.translate( 'Search plugins' ) }
+								/>
+							</div>
+							{ this.renderPluginsContent() }
+						</div>
+					</div>
+				) : (
+					this.renderPluginsContent()
+				) }
+			</>
 		);
+
+		return isJetpackCloud ? content : <Main wideLayout>{ content }</Main>;
 	}
 }
 
@@ -475,6 +542,7 @@ export default flow(
 			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
 			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			const allPlugins = getPlugins( state, siteIds, 'all' );
 			const jetpackNonAtomic =
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
 			const hasManagePlugins =
@@ -500,6 +568,7 @@ export default flow(
 				currentPlugins: getPlugins( state, siteIds, filter ),
 				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
+				allPluginsCount: allPlugins && allPlugins.length,
 				requestingPluginsForSites: isRequestingForSites( state, siteIds ),
 				updateableJetpackSites: getUpdateableJetpackSites( state ),
 				userCanManagePlugins: selectedSiteId
@@ -508,7 +577,7 @@ export default flow(
 				hasManagePlugins: hasManagePlugins,
 				hasUploadPlugins: hasUploadPlugins,
 				hasInstallPurchasedPlugins: hasInstallPurchasedPlugins,
-				shouldDisplayNavigationHeader: ! isJetpackCloud,
+				isJetpackCloud,
 			};
 		},
 		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }
