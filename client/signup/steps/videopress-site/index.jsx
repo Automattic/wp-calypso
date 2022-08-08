@@ -622,7 +622,7 @@ class VideoPressSite extends Component {
 						</div>
 						<div className="videopress-site__payment-detail">
 							{ this.props.translate(
-								'The Premium Plan is required to upload your videos. We offer a 100% refund within 14 days of purchase, no questions asked.'
+								'The Premium Plan is required to upload your videos and use the Videomaker theme. We offer a 100% refund within 14 days of purchase, no questions asked.'
 							) }
 						</div>
 					</form>
