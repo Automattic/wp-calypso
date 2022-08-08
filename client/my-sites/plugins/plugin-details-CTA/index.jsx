@@ -3,6 +3,8 @@ import {
 	isFreePlanProduct,
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	isPersonalPlan,
+	isPremiumPlan,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -66,9 +68,7 @@ const PluginDetailsCTA = ( props ) => {
 		getPluginOnSite( state, selectedSite?.ID, pluginSlug )
 	);
 
-	const shouldUpgrade =
-		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
-		! isJetpackSelfHosted;
+	const shouldUpgrade = useSiteHasFeature( selectedSite, pluginFeature ) && ! isJetpackSelfHosted;
 
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
@@ -463,6 +463,23 @@ function LegacyPluginDetailsCTA( {
 			) }
 		</div>
 	);
+}
+
+function useSiteHasFeature( selectedSite, pluginFeature ) {
+	const shouldUpgrade = useSelector(
+		( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature )
+	);
+	const { product_slug } = selectedSite?.plan || {};
+
+	if (
+		! config.isEnabled( 'marketplace-personal-premium' ) &&
+		! shouldUpgrade &&
+		( isPersonalPlan( product_slug ) || isPremiumPlan( product_slug ) )
+	) {
+		return true;
+	}
+
+	return shouldUpgrade;
 }
 
 function PluginDetailsCTAPlaceholder() {
