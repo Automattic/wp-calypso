@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps } from 'react';
-import { SitesRowsIcon } from './sites-rows-icon';
-import { SitesTileIcon } from './sites-tile-icon';
+import { SitesListIcon } from './sites-list-icon';
+import { SitesTilesIcon } from './sites-tiles-icon';
 
 const container = css( {
 	marginLeft: 'auto',
@@ -44,13 +44,13 @@ export const SitesDisplayModeSwitcher = () => {
 			<SiteSwitcherButton
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
-				icon={ <SitesTileIcon /> }
+				icon={ <SitesTilesIcon /> }
 				isPressed={ false }
 			/>
 			<SiteSwitcherButton
 				role="radio"
 				aria-label={ __( 'List view' ) }
-				icon={ <SitesRowsIcon /> }
+				icon={ <SitesListIcon /> }
 				isPressed
 			/>
 		</div>

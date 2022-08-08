@@ -1,4 +1,4 @@
-export const SitesTileIcon = ( { className }: { className?: string } ) => {
+export const SitesTilesIcon = ( { className }: { className?: string } ) => {
 	return (
 		<svg
 			width="21"

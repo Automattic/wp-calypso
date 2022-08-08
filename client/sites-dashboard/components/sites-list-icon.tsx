@@ -1,4 +1,4 @@
-export const SitesRowsIcon = ( { className }: { className?: string } ) => {
+export const SitesListIcon = ( { className }: { className?: string } ) => {
 	return (
 		<svg
 			className={ className }
