@@ -14,6 +14,11 @@
 			background-color: #1e1e1e;
 			color: var( --color-text-inverted );
 		}
+		.responsive-toolbar-group__menu-item:not( .is-selected ):not( .responsive-toolbar-group__more-item ) {
+			&:hover {
+				background: var( --studio-gray-0 );
+			}
+		}
 
 		// Stretch selected item border to page border
 		>div:first-of-type {
@@ -25,7 +30,7 @@
 
 		.responsive-toolbar-group__button-item:not( [class*='is-pressed'] ) {
 			&:hover::before {
-				background: #f6f7f7;
+				background: var( --studio-gray-0 );
 			}
 		}
 	}
@@ -89,5 +94,4 @@
 	.components-toolbar .components-button::before {
 		box-shadow: none;
 	}
-
 }
