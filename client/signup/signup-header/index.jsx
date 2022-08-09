@@ -14,6 +14,7 @@ export default class SignupHeader extends Component {
 		positionInFlow: PropTypes.number,
 		flowLength: PropTypes.number,
 		flowName: PropTypes.string,
+		shouldShowProgressBar: PropTypes.bool,
 	};
 
 	render() {
@@ -25,6 +26,7 @@ export default class SignupHeader extends Component {
 			positionInFlow,
 			flowLength,
 			flowName,
+			shouldShowProgressBar,
 		} = this.props;
 
 		const logoClasses = classnames( 'wordpress-logo', {
@@ -33,7 +35,7 @@ export default class SignupHeader extends Component {
 
 		return (
 			<div className="signup-header">
-				{ flowLength && (
+				{ flowLength && shouldShowProgressBar && (
 					<ProgressBar className={ flowName } value={ positionInFlow + 1 } total={ flowLength } />
 				) }
 				<WordPressLogo size={ 120 } className={ logoClasses } />

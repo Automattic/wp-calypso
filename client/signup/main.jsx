@@ -116,8 +116,14 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function showProgressIndicator( flowName ) {
-	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site', 'importer', 'domain' ];
-
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [
+		'pressable-nux',
+		'setup-site',
+		'importer',
+		'domain',
+		'newsletters',
+		'link-in-bio',
+	];
 	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
 }
 
@@ -604,13 +610,14 @@ class Signup extends Component {
 	}
 
 	getInteractiveStepsCount() {
-		// Only show progress bar for these two flows
-		if ( ! [ 'newsletters', 'link-in-bio' ].includes( this.props.flowName ) ) {
-			return null;
-		}
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
 		const flowSteps = flow.steps.filter( ( step ) => ! steps[ step ].props?.nonInteractive );
 		return flow.totalSteps ? flow.totalSteps : flowSteps.length;
+	}
+
+	shouldShowProgressBar() {
+		// Only show progress bar for these two flows
+		return [ 'newsletters', 'link-in-bio' ].includes( this.props.flowName );
 	}
 
 	renderProcessingScreen( isReskinned ) {
@@ -759,6 +766,7 @@ class Signup extends Component {
 							positionInFlow={ this.getPositionInFlow() }
 							flowLength={ this.getInteractiveStepsCount() }
 							flowName={ this.props.flowName }
+							shouldShowProgressBar={ this.shouldShowProgressBar() }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							pageTitle={ this.props.hideBackButton && this.props.pageTitle }

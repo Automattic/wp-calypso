@@ -34,10 +34,6 @@ $white: var( --color-surface );
 		transform-origin: 0 0;
 	}
 
-	&:not( .newsletters ):not( .link-in-bio ) .progress-bar {
-		display: none;
-	}
-
 	&.newsletters,
 	&.link-in-bio {
 		.progress-bar {
