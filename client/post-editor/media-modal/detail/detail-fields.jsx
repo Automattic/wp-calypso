@@ -81,7 +81,7 @@ class EditorMediaModalDetailFields extends Component {
 	}
 
 	isVideoPress() {
-		return this.getItemValue( 'videopress_guid' ) ? true : false;
+		return !! this.getItemValue( 'videopress_guid' );
 	}
 
 	updateChange( saveImmediately = false ) {
