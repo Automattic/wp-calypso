@@ -330,16 +330,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
 		);
 
-	useEffect( () => {
-		if ( search && searchTitle ) {
-			dispatch(
-				recordTracksEvent( 'calypso_plugins_search_noresults_recommendations_show', {
-					search_query: search,
-				} )
-			);
-		}
-	}, [] );
-
 	if ( ! isRequestingSitesData && noPermissionsError ) {
 		return <NoPermissionsError title={ translate( 'Plugins', { textOnly: true } ) } />;
 	}
