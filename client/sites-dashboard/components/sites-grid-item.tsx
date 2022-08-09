@@ -57,7 +57,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 			primary={
 				<>
 					<SiteName fontSize={ 16 } { ...siteDashboardUrlProps }>
-						{ site.name ? site.name : __( '(No Site Title)' ) }
+						{ site.name }
 					</SiteName>
 
 					<div className={ badges }>
