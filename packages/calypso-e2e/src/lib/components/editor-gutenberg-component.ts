@@ -141,8 +141,9 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<ElementHandle>} ElementHandle of the selected block.
 	 */
 	async getSelectedBlockElementHandle( blockEditorSelector: string ): Promise< ElementHandle > {
+		// Note the partial class match. This is to support both the block API v1 and V2.
 		const locator = this.editor.locator(
-			`:is(${ editorPane } ${ blockEditorSelector }.is-selected, ${ editorPane } ${ blockEditorSelector }.has-child-selected)`
+			`${ editorPane } ${ blockEditorSelector }[class$="-selected"]`
 		);
 		await locator.waitFor();
 		return ( await locator.elementHandle() ) as ElementHandle;
