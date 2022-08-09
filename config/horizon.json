@@ -13,8 +13,9 @@
 	"features": {
 		"ad-tracking": false,
 		"build/sites-dashboard": true,
-		"calypso/help-center": true,
+		"calypso/help-center": false,
 		"calypsoify/plugins": true,
+		"cancellation-offers": false,
 		"catch-js-errors": true,
 		"cloudflare": true,
 		"composite-checkout-testing": true,
@@ -110,6 +111,7 @@
 		"signup/woo-verify-email": false,
 		"signup/theme-preview-screen": true,
 		"signup/standard-theme-v13n": false,
+		"signup/launchpad": false,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
 		"themes/atomic-homepage-replace": true,

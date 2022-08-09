@@ -395,6 +395,7 @@ __metadata:
     "@wordpress/base-styles": ^4.5.0
     classnames: ^2.3.1
     enzyme: ^3.11.0
+    fast-average-color: ^7.1.0
     gridicons: ^3.4.0
     i18n-calypso: "workspace:^"
     lodash: ^4.17.21
@@ -1168,7 +1169,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.3
     "@testing-library/user-event": ^14.2.5
-    "@wordpress/base-styles": ^4.5.0
+    "@wordpress/base-styles": ^4.7.0
     "@wordpress/components": ^19.15.0
     "@wordpress/compose": ^5.7.0
     "@wordpress/data": ^6.9.0
@@ -6983,6 +6984,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/offscreencanvas@npm:^2019.6.4":
+  version: 2019.7.0
+  resolution: "@types/offscreencanvas@npm:2019.7.0"
+  checksum: f10647cf8abf5c5313ac39a688866e824f04207b18fd03c2fa986a2d856f1c26dd11b04b3692fe64e6f1467b0d52579e8f4d0e532377d5c9065214bff4ebc0e7
+  languageName: node
+  linkType: hard
+
 "@types/ora@npm:^3.2.0":
   version: 3.2.0
   resolution: "@types/ora@npm:3.2.0"
@@ -8275,10 +8283,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/base-styles@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "@wordpress/base-styles@npm:4.5.0"
-  checksum: 3553d08575c4b4bb116363610403bb1b3f3335e50fbb857c3d0c47eb47ff64d84be5c8edcc295c59b0f2fcfb9ed6414289ee97a22cc017fa8b8ae75f30edc427
+"@wordpress/base-styles@npm:^4.5.0, @wordpress/base-styles@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "@wordpress/base-styles@npm:4.7.0"
+  checksum: c6e35d60a373875f4e9059547fcbe6292a951e6a270de9afe8d355714efa08cc2a941a092d45da53eadc1028d240df071875b10b53f47210f3f0896584df88a5
   languageName: node
   linkType: hard
 
@@ -12450,7 +12458,7 @@ __metadata:
     "@types/jest": ^27.4.0
     "@wordpress/a11y": ^3.9.0
     "@wordpress/api-fetch": ^6.6.0
-    "@wordpress/base-styles": ^4.5.0
+    "@wordpress/base-styles": ^4.7.0
     "@wordpress/block-editor": ^9.1.0
     "@wordpress/blocks": ^11.8.0
     "@wordpress/components": ^19.15.0
@@ -17468,6 +17476,15 @@ __metadata:
   version: 4.3.0
   resolution: "fast-average-color@npm:4.3.0"
   checksum: ee5a1a938614459963fd71247fbc3acab4c3d098522998677b120ac1c45e44d85ee033af5334aa5d29584a7f4a1885a2063cdc01d04357f6a6254b3748b67605
+  languageName: node
+  linkType: hard
+
+"fast-average-color@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "fast-average-color@npm:7.1.0"
+  dependencies:
+    "@types/offscreencanvas": ^2019.6.4
+  checksum: 772452ea5b8c3dac2feb3a775ddacd12beedff9cf22dd76d85b476ab23e84a9fdaafb5870a99badc82bdf7b02f6ca6ca85b36bcf6232d78383bcb39e0922b2cf
   languageName: node
   linkType: hard
 

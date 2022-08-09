@@ -1,11 +1,4 @@
 import {
-	FEATURE_INSTALL_PLUGINS,
-	findFirstSimilarPlanKey,
-	getPlan,
-	isBlogger,
-	isPersonal,
-	isPremium,
-	TYPE_BUSINESS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_UPLOAD_PLUGINS,
@@ -16,7 +9,6 @@ import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -27,7 +19,6 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
@@ -44,7 +35,6 @@ import {
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -62,76 +52,15 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './style.scss';
+import PluginsDiscoveryPage from '../plugins-discovery-page';
 import usePlugins from '../use-plugins';
 import FullListView from './full-list-view';
 import SearchListView from './search-list-view';
-import SingleListView from './single-list-view';
 
 /**
  * Module variables
  */
 const SHORT_LIST_LENGTH = 6;
-
-const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSlug } ) => {
-	const translate = useTranslate();
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
-
-	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
-		return null;
-	}
-	const isLegacyPlan = isBlogger( sitePlan ) || isPersonal( sitePlan ) || isPremium( sitePlan );
-	const checkoutPlan = eligibleForProPlan && ! isLegacyPlan ? 'pro' : 'business';
-	const bannerURL = `/checkout/${ siteSlug }/${ checkoutPlan }`;
-	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
-		type: TYPE_BUSINESS,
-	} );
-
-	const title =
-		eligibleForProPlan && ! isLegacyPlan
-			? translate( 'Upgrade to the Pro plan to install plugins.' )
-			: translate( 'Upgrade to the Business plan to install plugins.' );
-
-	return (
-		<UpsellNudge
-			event="calypso_plugins_browser_upgrade_nudge"
-			showIcon={ true }
-			href={ bannerURL }
-			feature={ FEATURE_INSTALL_PLUGINS }
-			plan={ plan }
-			title={ title }
-		/>
-	);
-};
-
-const UpgradeNudgePaid = ( props ) => {
-	const translate = useTranslate();
-
-	const requiredPlans = useSelector( ( state ) =>
-		getPlansForFeature( state, props.selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-
-	if ( ! requiredPlans ) {
-		return null;
-	}
-
-	const requiredPlan = getPlan( requiredPlans[ 0 ] );
-
-	return (
-		<UpsellNudge
-			event="calypso_plugins_browser_upgrade_nudge"
-			showIcon={ true }
-			href={ `/checkout/${ props.siteSlug }/${ requiredPlan.getPathSlug() }` }
-			feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
-			plan={ requiredPlan.getStoreSlug() }
-			title={ translate( 'Upgrade to the %(planName)s plan to install premium plugins.', {
-				textOnly: true,
-				args: { planName: requiredPlan.getTitle() },
-			} ) }
-		/>
-	);
-};
 
 const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	const dispatch = useDispatch();
@@ -230,22 +159,6 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 }
 
 const PluginBrowserContent = ( props ) => {
-	const requiredPlansPurchasedPlugins = useSelector( ( state ) =>
-		getPlansForFeature( state, props.selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-	const requiredPlansAllPlugins = useSelector( ( state ) =>
-		getPlansForFeature( state, props.selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
-	);
-
-	const hasInstallPurchasedPlugins = useSelector( ( state ) =>
-		siteHasFeature( state, props.selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-
-	// Whether to show an upgrade banner specific to premium plugins.
-	const lowerPlanAvailable =
-		! hasInstallPurchasedPlugins &&
-		requiredPlansPurchasedPlugins[ 0 ] !== requiredPlansAllPlugins[ 0 ];
-
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
 	}
@@ -253,26 +166,7 @@ const PluginBrowserContent = ( props ) => {
 		return <FullListView { ...props } />;
 	}
 
-	return (
-		<>
-			{ ! props.jetpackNonAtomic && (
-				<>
-					<div className="plugins-browser__upgrade-banner">
-						{ ! hasInstallPurchasedPlugins && lowerPlanAvailable && (
-							<UpgradeNudgePaid { ...props } />
-						) }
-						{ ! hasInstallPurchasedPlugins && ! lowerPlanAvailable && (
-							<UpgradeNudge { ...props } />
-						) }
-					</div>
-					<SingleListView { ...props } category="paid" />
-				</>
-			) }
-			{ ( hasInstallPurchasedPlugins || lowerPlanAvailable ) && <UpgradeNudge { ...props } /> }
-			<SingleListView { ...props } category="featured" />
-			<SingleListView { ...props } category="popular" />
-		</>
-	);
+	return;
 };
 
 const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle, hideHeader } ) => {
@@ -491,32 +385,50 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			/>
 
 			{ ! search && <Categories selected={ category } /> }
+			{ category || search ? (
+				<div className="plugins-browser__main-container">
+					<PluginBrowserContent
+						clearSearch={ clearSearch }
+						pluginsByCategoryPopular={ pluginsByCategoryPopular }
+						isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
+						isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
+						fetchNextPage={ fetchNextPage }
+						pluginsBySearchTerm={ pluginsBySearchTerm }
+						pluginsPagination={ pluginsPagination }
+						pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
+						isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
+						search={ search }
+						category={ category }
+						paidPlugins={ paidPlugins }
+						isFetchingPaidPlugins={ isFetchingPaidPlugins }
+						sites={ sites }
+						searchTitle={ searchTitle }
+						siteSlug={ siteSlug }
+						siteId={ siteId }
+						jetpackNonAtomic={ jetpackNonAtomic }
+						selectedSite={ selectedSite }
+						sitePlan={ sitePlan }
+						isVip={ isVip }
+					/>
+				</div>
+			) : (
+				<div className="plugins-browser__main-container">
+					<PluginsDiscoveryPage
+						clearSearch={ clearSearch }
+						search={ search }
+						category={ category }
+						sites={ sites }
+						searchTitle={ searchTitle }
+						siteSlug={ siteSlug }
+						siteId={ siteId }
+						jetpackNonAtomic={ jetpackNonAtomic }
+						selectedSite={ selectedSite }
+						sitePlan={ sitePlan }
+						isVip={ isVip }
+					/>
+				</div>
+			) }
 
-			<div className="plugins-browser__main-container">
-				<PluginBrowserContent
-					clearSearch={ clearSearch }
-					pluginsByCategoryPopular={ pluginsByCategoryPopular }
-					isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
-					isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
-					fetchNextPage={ fetchNextPage }
-					pluginsBySearchTerm={ pluginsBySearchTerm }
-					pluginsPagination={ pluginsPagination }
-					pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-					isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-					search={ search }
-					category={ category }
-					paidPlugins={ paidPlugins }
-					isFetchingPaidPlugins={ isFetchingPaidPlugins }
-					sites={ sites }
-					searchTitle={ searchTitle }
-					siteSlug={ siteSlug }
-					siteId={ siteId }
-					jetpackNonAtomic={ jetpackNonAtomic }
-					selectedSite={ selectedSite }
-					sitePlan={ sitePlan }
-					isVip={ isVip }
-				/>
-			</div>
 			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>
 	);

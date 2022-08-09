@@ -37,12 +37,25 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			}
 		);
 
-		it( 'Can browse all popular plugins', async function () {
-			await pluginsPage.clickBrowseAllPopular();
+		it( 'Can browse all free plugins', async function () {
+			await pluginsPage.clickBrowseAllFreePlugins();
 			await pluginsPage.validateHasSubtitle( 'Top free plugins' );
 		} );
 
 		it( 'Can return via breadcrumb', async function () {
+			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+				await pluginsPage.clickPluginsBreadcrumb();
+			} else {
+				await pluginsPage.clickBackBreadcrumb();
+			}
+			await pluginsPage.validateHasSection( 'Top paid plugins' );
+		} );
+		it( 'Can browse all paid plugins', async function () {
+			await pluginsPage.clickBrowseAllPaidPlugins();
+			await pluginsPage.validateHasSubtitle( 'Top paid plugins' );
+		} );
+
+		it( 'Can return via breadcrumb from paid plugins', async function () {
 			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 				await pluginsPage.clickPluginsBreadcrumb();
 			} else {

@@ -65,7 +65,13 @@ export default function PluginsTable( {
 											) }
 											key={ `table-data-${ column.key }-${ id }` }
 										>
-											{ <PluginRowFormatter columnKey={ column.key } item={ item } /> }
+											{
+												<PluginRowFormatter
+													columnKey={ column.key }
+													item={ item }
+													selectedSite={ selectedSite }
+												/>
+											}
 										</td>
 									);
 								} ) }

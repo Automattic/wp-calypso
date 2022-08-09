@@ -37,3 +37,10 @@ a.button.plugin-row-formatter__plugin-name {
 		text-decoration: underline;
 	}
 }
+
+.plugin-row-formatter__toggle {
+	.plugin-action .components-toggle-control .components-base-control__field {
+		margin: auto 0;
+	}
+}
+

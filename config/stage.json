@@ -16,8 +16,9 @@
 	"dsp_widget_js_src": "http://todo",
 	"features": {
 		"ad-tracking": false,
-		"calypso/help-center": true,
+		"calypso/help-center": false,
 		"calypsoify/plugins": true,
+		"cancellation-offers": true,
 		"catch-js-errors": true,
 		"cloudflare": true,
 		"current-site/domain-warning": true,
@@ -126,6 +127,7 @@
 		"signup/woo-verify-email": false,
 		"signup/theme-preview-screen": true,
 		"signup/standard-theme-v13n": false,
+		"signup/launchpad": false,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
 		"themes/atomic-homepage-replace": true,

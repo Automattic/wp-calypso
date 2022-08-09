@@ -1,4 +1,5 @@
 import { useDispatch } from '@wordpress/data';
+import { isEnabled } from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE } from '../stores';
@@ -12,7 +13,11 @@ export const newsletters: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'newsletterSetup' ] as StepPath[];
+		return [
+			'intro',
+			'newsletterSetup',
+			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
+		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {

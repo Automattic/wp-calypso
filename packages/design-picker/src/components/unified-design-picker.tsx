@@ -109,55 +109,52 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			return null;
 		}
 
-		let text: any = __( 'Free' );
-
-		if ( design.is_premium ) {
-			if ( shouldUpgrade ) {
-				// Premium, needs upgrade
-				text =
-					( ! isEnabled( 'signup/seller-upgrade-modal' ) && (
-						<Button
-							isLink={ true }
-							className="design-picker__button-link"
-							onClick={ ( e: any ) => {
-								e.stopPropagation();
-								onCheckout?.();
-							} }
-						>
-							{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
-								? __( 'Included in WordPress.com Premium' )
-								: __( 'Upgrade to Premium' ) }
-						</Button>
-					) ) ||
-					createInterpolateElement(
-						sprintf(
-							/* translators: %(price)s - the price of the theme */
-							__( '%(price)s per year or <button>included in WordPress.com Premium</button>' ),
-							{
-								price: design.price,
-							}
-						),
+		let text: React.ReactNode = null;
+		if ( design.is_premium && shouldUpgrade ) {
+			if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
+				text = createInterpolateElement(
+					sprintf(
+						/* translators: %(price)s - the price of the theme */
+						__( '%(price)s per year or <button>included in WordPress.com Premium</button>' ),
 						{
-							button: (
-								<Button
-									isLink={ true }
-									className="design-picker__button-link"
-									onClick={ ( e: any ) => {
-										e.stopPropagation();
-										onCheckout?.();
-									} }
-								/>
-							),
+							price: design.price,
 						}
-					);
-			} else if ( hasPurchasedTheme ) {
-				// Premium, does not need upgrade
-				// TODO: How to figure out if it's annual or monthly?
-				text = __( 'Purchased on an annual subscription' );
+					),
+					{
+						button: (
+							<Button
+								isLink={ true }
+								className="design-picker__button-link"
+								onClick={ ( e: any ) => {
+									e.stopPropagation();
+									onCheckout?.();
+								} }
+							/>
+						),
+					}
+				);
 			} else {
-				// ! shouldUpgrade && ! hasPurchasedTheme
-				text = __( 'Included in your plan' );
+				text = (
+					<Button
+						isLink={ true }
+						className="design-picker__button-link"
+						onClick={ ( e: any ) => {
+							e.stopPropagation();
+							onCheckout?.();
+						} }
+					>
+						{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
+							? __( 'Included in WordPress.com Premium' )
+							: __( 'Upgrade to Premium' ) }
+					</Button>
+				);
 			}
+		} else if ( design.is_premium && ! shouldUpgrade && hasPurchasedTheme ) {
+			text = __( 'Purchased on an annual subscription' );
+		} else if ( design.is_premium && ! shouldUpgrade && ! hasPurchasedTheme ) {
+			text = __( 'Included in your plan' );
+		} else if ( ! design.is_premium ) {
+			text = __( 'Free' );
 		}
 
 		return <div className="design-picker__pricing-description">{ text }</div>;

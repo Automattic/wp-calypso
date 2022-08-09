@@ -231,10 +231,15 @@ const MailboxesForm = ( {
 	const userEmail = useSelector( getCurrentUserEmail );
 	const [ isAddingToCart, setIsAddingToCart ] = useState( false );
 	const [ isValidating, setIsValidating ] = useState( false );
-	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
-		FIELD_NAME,
-		FIELD_ALTERNATIVE_EMAIL,
-	] );
+
+	const isAlternateEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
+	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
+	if ( isAlternateEmailValid ) {
+		defaultHiddenFields.push( FIELD_ALTERNATIVE_EMAIL );
+	}
+
+	const [ hiddenFieldNames, setHiddenFieldNames ] =
+		useState< HiddenFieldNames[] >( defaultHiddenFields );
 
 	const cartKey = useCartKey();
 	const cartManager = useShoppingCart( cartKey );
@@ -308,7 +313,9 @@ const MailboxesForm = ( {
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
 					hiddenFieldNames={ hiddenFieldNames }
-					initialFieldValues={ { [ FIELD_ALTERNATIVE_EMAIL ]: userEmail } }
+					initialFieldValues={ {
+						[ FIELD_ALTERNATIVE_EMAIL ]: isAlternateEmailValid ? userEmail : '',
+					} }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }
@@ -317,7 +324,7 @@ const MailboxesForm = ( {
 					showCancelButton
 					submitActionText={ translate( 'Continue' ) }
 				>
-					{ isTitan( provider ) && hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) && (
+					{ hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) && (
 						<PasswordResetTipField tipClickHandler={ showAlternateEmailField } />
 					) }
 				</NewMailBoxList>
