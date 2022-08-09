@@ -80,6 +80,10 @@ class EditorMediaModalDetailFields extends Component {
 		return getMimePrefix( this.props.item ) === prefix;
 	}
 
+	isVideoPress() {
+		return this.getItemValue( 'videopress_guid' ) ? true : false;
+	}
+
 	updateChange( saveImmediately = false ) {
 		const siteId = this.props.site?.ID;
 		const itemId = this.props.item?.ID;
@@ -170,11 +174,11 @@ class EditorMediaModalDetailFields extends Component {
 	}
 
 	renderVideoPressShortcode = () => {
-		const videopressGuid = this.getItemValue( 'videopress_guid' );
-
-		if ( ! videopressGuid ) {
+		if ( ! this.isVideoPress() ) {
 			return;
 		}
+
+		const videopressGuid = this.getItemValue( 'videopress_guid' );
 
 		return (
 			<EditorMediaModalFieldset legend={ this.props.translate( 'Shortcode' ) }>
@@ -226,6 +230,10 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	renderPrivacySetting = () => {
+		if ( ! this.isVideoPress() ) {
+			return;
+		}
+
 		const privacySetting = this.getItemValue( 'privacy_setting' );
 		return (
 			<EditorMediaModalFieldset legend={ this.props.translate( 'Privacy' ) }>
@@ -270,9 +278,7 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	renderAllowDownloadOption = () => {
-		// Make sure this is actually a VideoPress video
-		const videopressGuid = this.getItemValue( 'videopress_guid' );
-		if ( ! videopressGuid ) {
+		if ( ! this.isVideoPress() ) {
 			return;
 		}
 

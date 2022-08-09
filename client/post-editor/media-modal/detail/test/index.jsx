@@ -8,7 +8,7 @@ import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { EditorMediaModalDetailItem as DetailItem } from '../detail-item';
 
-jest.mock( 'calypso/post-editor/media-modal/detail/detail-fields', () =>
+jest.mock( 'calypso/components/file-picker', () =>
 	require( 'calypso/components/empty-component' )
 );
 
@@ -95,5 +95,17 @@ describe( 'EditorMediaModalDetailItem', () => {
 		);
 
 		expect( screen.queryByRole( 'button', { name: /edit/i } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should not display a Privacy field for an image', () => {
+		renderWithRedux( <DetailItem item={ DUMMY_IMAGE_MEDIA } { ...SHARED_PROPS } /> );
+
+		expect( screen.queryByRole( 'group', { name: 'Privacy' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should display a Privacy field for a video', () => {
+		renderWithRedux( <DetailItem item={ DUMMY_VIDEO_MEDIA } { ...SHARED_PROPS } /> );
+
+		expect( screen.queryByRole( 'group', { name: 'Privacy' } ) ).toBeInTheDocument();
 	} );
 } );
