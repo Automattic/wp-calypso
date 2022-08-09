@@ -18,6 +18,7 @@ import {
 	isFreePlan,
 	isWpComEcommercePlan,
 	getPlanClass,
+	FEATURE_BLANK,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -435,7 +436,9 @@ export class PlanFeatures extends Component {
 
 	renderMobileFeatures( features ) {
 		return map( features, ( currentFeature, index ) => {
-			return currentFeature ? this.renderFeatureItem( currentFeature, index ) : null;
+			return currentFeature?.getSlug() !== FEATURE_BLANK
+				? this.renderFeatureItem( currentFeature, index )
+				: null;
 		} );
 	}
 
@@ -770,7 +773,11 @@ export class PlanFeatures extends Component {
 
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
-			const currentFeature = features[ key ];
+			let currentFeature = features[ key ];
+
+			if ( currentFeature?.getSlug() === FEATURE_BLANK ) {
+				currentFeature = null;
+			}
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
