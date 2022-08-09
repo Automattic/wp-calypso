@@ -540,13 +540,13 @@ export function fetchAllPlugins() {
 	return ( dispatch ) => {
 		dispatch( { type: ALL_PLUGINS_REQUEST } );
 
-		const receivePluginsDispatchSuccess = ( data ) => {
+		const receivePluginsDispatchSuccess = ( { sites } ) => {
 			dispatch( { type: ALL_PLUGINS_REQUEST_SUCCESS } );
 
-			Object.keys( data?.sites ).map( ( siteId ) => {
-				dispatch( receiveSitePlugins( siteId, data?.sites[ siteId ] ) );
+			Object.entries( sites ).map( ( [ siteId, plugins = [] ] ) => {
+				dispatch( receiveSitePlugins( siteId, plugins ) );
 
-				data?.sites[ siteId ].map( ( plugin ) => {
+				plugins.map( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {
 						updatePlugin( siteId, plugin )( dispatch );
 					}
