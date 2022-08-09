@@ -13,12 +13,38 @@ export interface SitesDashboardQueryParams {
 	search?: string;
 }
 
-const FilterBar = styled.div`
-	display: flex;
-	align-items: center;
-	gap: 16px;
-	padding: 32px 0;
-`;
+const FilterBar = styled.div( {
+	display: 'flex',
+	alignItems: 'center',
+	gap: '16px',
+	padding: '32px 0',
+
+	flexDirection: 'column',
+
+	'@media screen and (min-width: 660px)': {
+		flexDirection: 'row',
+	},
+} );
+
+const DisplayControls = styled.div( {
+	gap: '16px',
+	display: 'flex',
+	alignItems: 'center',
+	alignSelf: 'stretch',
+	flex: 1,
+} );
+
+const ControlsSelectDropdown = styled( SelectDropdown )( {
+	width: '100%',
+
+	'.select-dropdown__container': {
+		width: '100%',
+
+		'@media screen and (min-width: 660px)': {
+			width: 'auto',
+		},
+	},
+} );
 
 type Statuses = ReturnType< typeof useSitesTableFiltering >[ 'statuses' ];
 
@@ -45,19 +71,21 @@ export const SitesContentControls = ( {
 				disableAutocorrect={ true }
 				defaultValue={ initialSearch }
 			/>
-			<SelectDropdown selectedText={ selectedStatus.title }>
-				{ statuses.map( ( { name, title, count } ) => (
-					<SelectDropdown.Item
-						key={ name }
-						selected={ name === selectedStatus.name }
-						count={ count }
-						onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
-					>
-						{ title }
-					</SelectDropdown.Item>
-				) ) }
-			</SelectDropdown>
-			<SitesDisplayModeSwitcher />
+			<DisplayControls>
+				<ControlsSelectDropdown selectedText={ selectedStatus.title }>
+					{ statuses.map( ( { name, title, count } ) => (
+						<SelectDropdown.Item
+							key={ name }
+							selected={ name === selectedStatus.name }
+							count={ count }
+							onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
+						>
+							{ title }
+						</SelectDropdown.Item>
+					) ) }
+				</ControlsSelectDropdown>
+				<SitesDisplayModeSwitcher />
+			</DisplayControls>
 		</FilterBar>
 	);
 };
