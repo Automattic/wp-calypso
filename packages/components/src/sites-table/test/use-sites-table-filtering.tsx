@@ -107,7 +107,7 @@ describe( 'useSitesTableFiltering', () => {
 				title: expect.any( String ),
 			},
 			{
-				name: 'launched',
+				name: 'public',
 				count: 2,
 				title: expect.any( String ),
 			},
