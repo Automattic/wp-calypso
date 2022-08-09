@@ -10,6 +10,7 @@ import React, { ChangeEvent, FormEvent, FunctionComponent, useState } from 'reac
 import './style.scss';
 
 interface Props {
+	siteId: number;
 	showTitleEmoji?: boolean;
 	showSkipBtn?: boolean;
 	submitBtnName?: string;
@@ -87,13 +88,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						placeholder={ 'parents@email.com' }
 						value={ emails[ 1 ] || '' }
 						help={ isValidEmails[ 1 ] ? <Icon icon={ check } /> : undefined }
-						onChange={ ( value ) => setEmail( value, 1 ) }
+						onChange={ ( value ) => onEmailChange( value, 1 ) }
 					/>
 					<TextControl
 						placeholder={ 'friend@email.com' }
 						value={ emails[ 2 ] || '' }
 						help={ isValidEmails[ 2 ] ? <Icon icon={ check } /> : undefined }
-						onChange={ ( value ) => setEmail( value, 2 ) }
+						onChange={ ( value ) => onEmailChange( value, 2 ) }
 					/>
 
 					{ ! isSelectedFileValid && (
