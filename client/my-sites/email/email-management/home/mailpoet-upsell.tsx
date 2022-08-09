@@ -1,9 +1,8 @@
-import { Button, Card } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import mailpoetSymbol from 'calypso/assets/images/email-providers/mailpoet-symbol.svg';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -22,20 +21,18 @@ export default function MailPoetUpsell() {
 
 			{ ! isFetchingPlugins && ! mailpoetPlugin && (
 				<div className="mailpoet-upsell">
-					<SectionHeader label={ translate( 'Newsletters' ) } />
-
-					<Card>
+					<CompactCard className="mailpoet-upsell__card">
 						<div className="mailpoet-upsell__icon">
 							<img src={ mailpoetSymbol } alt="MailPoet logo" />
 						</div>
 
 						<div className="mailpoet-upsell__text">
 							<h4>MailPoet</h4>
-							<p>
+							<span>
 								{ translate(
 									'Create and send beautiful newsletters, post notifications, welcome emails and more from WordPress.com.'
 								) }
-							</p>
+							</span>
 						</div>
 
 						<Button
@@ -46,7 +43,7 @@ export default function MailPoetUpsell() {
 						>
 							{ translate( 'Add Plugin' ) }
 						</Button>
-					</Card>
+					</CompactCard>
 				</div>
 			) }
 		</>
