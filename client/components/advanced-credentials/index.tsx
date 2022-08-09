@@ -1,9 +1,9 @@
 import { Button, Card, Gridicon } from '@automattic/components';
-import { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
-import wpcomRequest from 'wpcom-proxy-request';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import Main from 'calypso/components/main';
@@ -90,29 +90,33 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const { protocol } = credentials;
 	const isAtomic = hasCredentials && 'dynamic-ssh' === protocol;
 
-	const testCredentials = async () => {
-		const results: { ok: boolean } = await wpcomRequest( {
-			path: '/sites/' + siteId + '/rewind/credentials/test?role=main',
-			apiNamespace: 'wpcom/v2',
-			method: 'POST',
-		} );
-		const { ok } = results;
-		return { ok };
-	};
+	const [ testCredentialsResult, setTestCredentialsResult ] = useState( false );
+	const [ testCredentialsLoading, setTestCredentialsLoading ] = useState( true );
 
-	testCredentials();
+	useEffect( () => {
+		( async () => {
+			const results: { ok: boolean } = await wpcomRequest( {
+				path: '/sites/' + siteId + '/rewind/credentials/test?role=main',
+				apiNamespace: 'wpcom/v2',
+				method: 'POST',
+			} );
+			const { ok } = results;
+			setTestCredentialsLoading( false );
+			setTestCredentialsResult( ok );
+		} )();
+	}, [] );
 
 	const statusState = useMemo( (): StatusState => {
-		if ( isRequestingCredentials ) {
+		if ( isRequestingCredentials || testCredentialsLoading ) {
 			return StatusState.Loading;
 		}
 
-		if ( hasCredentials ) {
+		if ( hasCredentials && testCredentialsResult ) {
 			return StatusState.Connected;
 		}
 
 		return StatusState.Disconnected;
-	}, [ hasCredentials, isRequestingCredentials ] );
+	}, [ hasCredentials, testCredentialsResult, testCredentialsLoading, isRequestingCredentials ] );
 
 	const currentStep = useMemo( (): Step => {
 		if ( 'unsubmitted' !== formSubmissionStatus ) {
