@@ -96,10 +96,20 @@ export function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
+	let allSitesPath =
+		config.isEnabled( 'build/sites-dashboard' ) && basePath === '/home'
+			? '/sites-dashboard'
+			: basePath;
+
+	// Update allSitesPath if it is plugins page in Jetpack Cloud
+	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {
+		allSitesPath = '/plugins';
+	}
+
 	return (
 		<NavigationComponent
 			path={ context.path }
-			allSitesPath={ basePath }
+			allSitesPath={ allSitesPath }
 			siteBasePath={ basePath }
 		/>
 	);
@@ -343,7 +353,12 @@ function createSitesComponent( context ) {
 	}
 
 	// This path sets the URL to be visited once a site is selected
-	const basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
+	let basePath = filteredPathName === '/sites' ? '/home' : filteredPathName;
+
+	// Update basePath if it is plugins page in Jetpack Cloud
+	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {
+		basePath = '/plugins/manage';
+	}
 
 	recordPageView( contextPath, sitesPageTitleForAnalytics );
 

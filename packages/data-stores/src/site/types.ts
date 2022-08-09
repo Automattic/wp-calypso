@@ -93,6 +93,7 @@ export interface DifmLiteSiteOptions {
 	selected_page_titles: string[];
 }
 
+// is_fse_active && is_fse_eligible properties have been deprecated and removed from SiteDetails interface
 export interface SiteDetails {
 	ID: number;
 	name: string | undefined;
@@ -100,9 +101,8 @@ export interface SiteDetails {
 	URL: string;
 	launch_status: string;
 	jetpack: boolean;
-	is_fse_eligible: boolean;
-	is_fse_active: boolean;
 	logo: { id: string; sizes: string[]; url: string };
+	icon?: { ico: string; img: string; media_id: number };
 	options: {
 		admin_url?: string;
 		advanced_seo_front_page_description?: string;
@@ -385,6 +385,7 @@ export enum AtomicSoftwareInstallStatus {
 	SUCCESS = 'success',
 	FAILURE = 'failure',
 }
+
 export type AtomicSoftwareInstallState = Record<
 	string,
 	{
@@ -392,6 +393,7 @@ export type AtomicSoftwareInstallState = Record<
 		error: AtomicSoftwareInstallError | undefined;
 	}
 >;
+
 export interface AtomicSoftwareInstallError {
 	name: string;
 	status: number;

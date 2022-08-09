@@ -5,7 +5,7 @@ import page from 'page';
 import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { businessPlanToAdd } from 'calypso/lib/plugins/utils';
+import { marketplacePlanToAdd } from 'calypso/lib/plugins/utils';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -28,6 +28,7 @@ export default function CTAButton( {
 	billingPeriod,
 	isJetpackSelfHosted,
 	isSiteConnected,
+	disabled,
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -139,7 +140,9 @@ export default function CTAButton( {
 						preinstalledPremiumPluginProduct,
 					} );
 				} }
-				disabled={ ( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false }
+				disabled={
+					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
+				}
 			>
 				{
 					// eslint-disable-next-line no-nested-ternary
@@ -214,11 +217,10 @@ function onClickInstallPlugin( {
 		if ( upgradeAndInstall ) {
 			// We also need to add a business plan to the cart.
 			return page(
-				`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
+				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod,
-					eligibleForProPlan,
-					true
+					eligibleForProPlan
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
 				}`
@@ -241,7 +243,7 @@ function onClickInstallPlugin( {
 	if ( upgradeAndInstall ) {
 		// We also need to add a business plan to the cart.
 		return page(
-			`/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
+			`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 				selectedSite?.plan,
 				billingPeriod,
 				eligibleForProPlan

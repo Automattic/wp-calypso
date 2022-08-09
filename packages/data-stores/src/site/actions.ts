@@ -272,6 +272,15 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
+	function* setThemeOnSite( siteSlug: string, theme: string ) {
+		yield wpcomRequest( {
+			path: `/sites/${ siteSlug }/themes/mine`,
+			apiVersion: '1.1',
+			body: { theme: theme, dont_change_homepage: true },
+			method: 'POST',
+		} );
+	}
+
 	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId: string ) {
 		const { theme, recipe } = selectedDesign;
 
@@ -288,7 +297,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		 */
 		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
 		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
-			yield wpcomRequest( {
+			const response: { blog: string } = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
 				body: {
@@ -300,15 +309,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				},
 				method: 'POST',
 			} );
+			return response;
 		}
-
-		const data: { is_fse_active: boolean } = yield wpcomRequest( {
-			path: `/sites/${ siteSlug }/block-editor`,
-			apiNamespace: 'wpcom/v2',
-			method: 'GET',
-		} );
-
-		return data?.is_fse_active ?? false;
 	}
 
 	const setSiteSetupError = ( error: string, message: string ) => ( {
@@ -498,6 +500,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveNewSite,
 		receiveNewSiteFailed,
 		resetNewSiteFailed,
+		setThemeOnSite,
 		setDesignOnSite,
 		createSite,
 		receiveSite,

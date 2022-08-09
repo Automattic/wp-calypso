@@ -156,11 +156,10 @@ function createSlideshow() {
 	} );
 }
 
-let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
-
 function embedSlideshow( domNode ) {
 	debug( 'processing slideshow for', domNode );
 
+	let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
 	// set global variable required by JetpackSlideshow
 	window.jetpackSlideshowSettings = {
 		spinner: SLIDESHOW_URLS.SPINNER,

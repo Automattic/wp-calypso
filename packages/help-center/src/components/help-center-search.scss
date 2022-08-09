@@ -117,7 +117,6 @@
 					}
 
 					&:focus {
-						background: var( --color-primary );
 						color: var( --color-text-inverted );
 
 						.gridicon {
@@ -317,6 +316,7 @@
 			h3 {
 				font-size: $font-body;
 				font-weight: 500;
+				margin: 1em 0;
 			}
 		}
 
@@ -327,6 +327,7 @@
 
 			a {
 				text-decoration: none;
+				color: #1d2327;
 			}
 
 			&.is-reversed {

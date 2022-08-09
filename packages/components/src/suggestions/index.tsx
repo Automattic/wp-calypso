@@ -12,7 +12,7 @@ import './style.scss';
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
-type Suggestion = { label: string; category?: string };
+type Suggestion = { name: string; label: string; category?: string };
 
 type CategorizedSuggestions = {
 	category?: string;

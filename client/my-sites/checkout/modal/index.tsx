@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import CheckoutMasterbar from 'calypso/layout/masterbar/checkout';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
+import CheckoutMain from 'calypso/my-sites/checkout/composite-checkout/components/checkout-main';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -86,7 +86,7 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 					fetchStripeConfiguration={ getStripeConfiguration }
 					locale={ translate.localeSlug }
 				>
-					<CompositeCheckout
+					<CheckoutMain
 						siteId={ selectedSiteId ?? undefined }
 						siteSlug={ siteSlug }
 						productAliasFromUrl={ productAliasFromUrl }

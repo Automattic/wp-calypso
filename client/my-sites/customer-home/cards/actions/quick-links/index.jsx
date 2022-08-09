@@ -5,7 +5,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -56,11 +56,8 @@ export const QuickLinks = ( {
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
-	blockEditorSettings,
-	areBlockEditorSettingsLoading,
+	isFSEActive,
 } ) => {
-	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
-
 	const translate = useTranslate();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
@@ -216,10 +213,6 @@ export const QuickLinks = ( {
 			flushDebouncedUpdateHomeQuickLinksToggleStatus();
 		};
 	}, [] );
-
-	if ( areBlockEditorSettingsLoading ) {
-		return null;
-	}
 
 	return (
 		<FoldableCard
@@ -386,6 +379,7 @@ const mapStateToProps = ( state ) => {
 	const canAddEmail = getDomainsThatCanAddEmail( domains ).length > 0;
 
 	return {
+		siteId,
 		canEditPages: canCurrentUser( state, siteId, 'edit_pages' ),
 		canCustomize: canCurrentUser( state, siteId, 'customize' ),
 		canSwitchThemes: canCurrentUser( state, siteId, 'switch_themes' ),
@@ -447,6 +441,6 @@ const ConnectedQuickLinks = connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( QuickLinks );
+)( withIsFSEActive( QuickLinks ) );
 
-export default withBlockEditorSettings( ConnectedQuickLinks );
+export default ConnectedQuickLinks;

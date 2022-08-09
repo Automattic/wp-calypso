@@ -19,7 +19,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import CompositeCheckout from '../composite-checkout';
+import CheckoutMain from '../components/checkout-main';
 import {
 	siteId,
 	domainProduct,
@@ -96,7 +96,7 @@ describe( 'Checkout contact step', () => {
 						{ ...additionalCartProps }
 					>
 						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-							<CompositeCheckout
+							<CheckoutMain
 								siteId={ siteId }
 								siteSlug={ 'foo.com' }
 								getStoredCards={ async () => [] }
@@ -443,16 +443,14 @@ describe( 'Checkout contact step', () => {
 		} );
 	} );
 
-	it( 'removes a product from the cart after clicking to remove it in edit mode', async () => {
+	it( 'removes a product from the cart after clicking to remove', async () => {
 		const cartChanges = { products: [ planWithoutDomain, domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } />, container );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		fireEvent.click( editOrderButton );
 		const activeSection = await screen.findByTestId( 'review-order-step--visible' );
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
-		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 2 );
+		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
 		fireEvent.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );

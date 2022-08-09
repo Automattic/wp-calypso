@@ -20,11 +20,6 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 		$this->namespace                       = 'wpcom/v2';
 		$this->rest_base                       = 'help-center/fetch-post';
 		$this->wpcom_is_site_specific_endpoint = false;
-		$this->is_wpcom                        = false;
-
-		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
-			$this->is_wpcom = true;
-		}
 	}
 
 	/**
@@ -50,7 +45,7 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function permission_callback() {
-		return current_user_can( 'read' );
+		return is_user_logged_in();
 	}
 
 	/**
@@ -64,18 +59,13 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 		$blog_id = $request['blog_id'];
 		$post_id = $request['post_id'];
 
-		if ( $this->is_wpcom ) {
-			require_once WP_CONTENT_DIR . '/lib/reader-site-post/class.wpcom-reader-site-post.php';
-			$response = \WPCOM_Reader_Site_Post::get_site_post( $blog_id, $post_id );
-		} else {
-			$body = Client::wpcom_json_api_request_as_user(
-				'/help/article/' . $blog_id . '/' . $post_id
-			);
-			if ( is_wp_error( $body ) ) {
-				return $body;
-			}
-			$response = json_decode( wp_remote_retrieve_body( $body ) );
+		$body = Client::wpcom_json_api_request_as_user(
+			'/help/article/' . $blog_id . '/' . $post_id
+		);
+		if ( is_wp_error( $body ) ) {
+			return $body;
 		}
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
 		return rest_ensure_response( $response );
 	}

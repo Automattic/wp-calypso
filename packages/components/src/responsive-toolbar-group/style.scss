@@ -1,0 +1,97 @@
+.responsive-toolbar-group__dropdown {
+	position: relative;
+	padding-bottom: 24px;
+
+	.responsive-toolbar-group__grouped-list {
+		justify-content: space-between;
+		flex-wrap: nowrap;
+		display: flex;
+		opacity: 0;
+
+		border-color: rgba( 0, 0, 0, 0 );
+
+		.responsive-toolbar-group__menu-item.is-selected {
+			background-color: #1e1e1e;
+			color: var( --color-text-inverted );
+		}
+		.responsive-toolbar-group__menu-item:not( .is-selected ):not( .responsive-toolbar-group__more-item ) {
+			&:hover {
+				background: var( --studio-gray-0 );
+			}
+		}
+
+		// Stretch selected item border to page border
+		>div:first-of-type {
+			margin-left: -8px;
+		}
+		>div:last-of-type {
+			margin-right: -8px;
+		}
+
+		.responsive-toolbar-group__button-item:not( [class*='is-pressed'] ) {
+			&:hover::before {
+				background: var( --studio-gray-0 );
+			}
+		}
+	}
+
+	.is-visible {
+		opacity: 1;
+	}
+
+	.responsive-toolbar-group__full-list {
+		overflow: hidden;
+		position: absolute;
+		height: 0;
+		visibility: hidden;
+		top: 0;
+		left: 0;
+		right: 0;
+	}
+
+	.responsive-toolbar-group__button-item {
+		flex-basis: max-content;
+		white-space: nowrap;
+
+		font-size: 0.875rem;
+	}
+
+	// Remove on-focus, on-click border
+	.components-toolbar .components-button::before {
+		box-shadow: none;
+	}
+}
+
+.responsive-toolbar-group__swipe {
+	width: 100%;
+
+	.responsive-toolbar-group__swipe-list {
+		padding: 0 8px;
+		display: flex;
+		flex-wrap: nowrap;
+		overflow-x: scroll;
+		overflow-y: hidden;
+		border: none;
+
+		// hides the scrollbar
+		scrollbar-width: none; // hides the scrollbar in firefox
+
+		&::-webkit-scrollbar { // hides the scrollbar in webkit browsers
+			display: none;
+		}
+
+		.responsive-toolbar-group__swipe-item {
+			font-size: 0.875rem;
+		}
+
+		// Core override - prevent buttons from wordwrapping content
+		>div {
+			flex-shrink: 0;
+		}
+	}
+
+	// Remove on-focus, on-click border
+	.components-toolbar .components-button::before {
+		box-shadow: none;
+	}
+}

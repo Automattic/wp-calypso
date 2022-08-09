@@ -1,6 +1,8 @@
+import { shouldTargetWpcom } from '@automattic/help-center';
 import apiFetch from '@wordpress/api-fetch';
 import { filter, forEach, compact, partition, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
+import wpcomRequest from 'wpcom-proxy-request';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -25,7 +27,7 @@ function trackRailcarRender( post ) {
 	tracks.recordTracksEvent( 'calypso_traintracks_render', post.railcar );
 }
 
-function fetchForKey( postKey, isHelpCenter ) {
+function fetchForKey( postKey, isHelpCenter = false, isSimpleSite = true ) {
 	const query = {};
 
 	const contentWidth = readerContentWidth();
@@ -34,19 +36,29 @@ function fetchForKey( postKey, isHelpCenter ) {
 	}
 
 	if ( postKey.blogId ) {
-		return isHelpCenter
-			? apiFetch( {
-					global: true,
-					path: `/wpcom/v2/help-center/fetch-post?post_id=${ encodeURIComponent(
-						postKey.postId
-					) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
-			  } )
-			: wpcom.req.get(
-					`/read/sites/${ encodeURIComponent( postKey.blogId ) }/posts/${ encodeURIComponent(
-						postKey.postId
-					) }`,
-					query
-			  );
+		if ( isHelpCenter ) {
+			return shouldTargetWpcom( isSimpleSite )
+				? wpcomRequest( {
+						path: `help/article/${ encodeURIComponent( postKey.blogId ) }/${ encodeURIComponent(
+							postKey.postId
+						) }`,
+						apiNamespace: 'wpcom/v2/',
+						apiVersion: '2',
+				  } )
+				: apiFetch( {
+						global: true,
+						path: `/wpcom/v2/help-center/fetch-post?post_id=${ encodeURIComponent(
+							postKey.postId
+						) }&blog_id=${ encodeURIComponent( postKey.blogId ) }`,
+				  } );
+		}
+
+		return wpcom.req.get(
+			`/read/sites/${ encodeURIComponent( postKey.blogId ) }/posts/${ encodeURIComponent(
+				postKey.postId
+			) }`,
+			query
+		);
 	}
 	const { postId, feedId, ...params } = postKey;
 	return wpcom.req.get(
@@ -114,26 +126,28 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 };
 
 const requestsInFlight = new Set();
-export const fetchPost = ( postKey, isHelpCenter ) => ( dispatch ) => {
-	const requestKey = keyToString( postKey );
-	if ( requestsInFlight.has( requestKey ) ) {
-		return;
-	}
+export const fetchPost =
+	( postKey, isHelpCenter = false, isSimpleSite = true ) =>
+	( dispatch ) => {
+		const requestKey = keyToString( postKey );
+		if ( requestsInFlight.has( requestKey ) ) {
+			return;
+		}
 
-	requestsInFlight.add( requestKey );
-	function removeKey() {
-		requestsInFlight.delete( requestKey );
-	}
-	return fetchForKey( postKey, isHelpCenter )
-		.then( ( data ) => {
-			removeKey();
-			return dispatch( receivePosts( [ data ] ) );
-		} )
-		.catch( ( error ) => {
-			removeKey();
-			return dispatch( receiveErrorForPostKey( error, postKey ) );
-		} );
-};
+		requestsInFlight.add( requestKey );
+		function removeKey() {
+			requestsInFlight.delete( requestKey );
+		}
+		return fetchForKey( postKey, isHelpCenter, isSimpleSite )
+			.then( ( data ) => {
+				removeKey();
+				return dispatch( receivePosts( [ data ] ) );
+			} )
+			.catch( ( error ) => {
+				removeKey();
+				return dispatch( receiveErrorForPostKey( error, postKey ) );
+			} );
+	};
 
 function receiveErrorForPostKey( error, postKey ) {
 	return {

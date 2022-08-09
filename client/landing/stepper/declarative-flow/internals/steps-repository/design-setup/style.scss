@@ -213,8 +213,9 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 
 			@include break-mobile {
-				margin: 12px 0 24px;
-				transform: translateY( -48px );
+				margin: 16px 0 24px;
+				transform: translateY( -58px );
+				min-height: 42px;
 			}
 		}
 
@@ -274,9 +275,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	.step-container > .step-container__header {
 		.formatted-header {
 			h1.formatted-header__title {
-				font-family: $sans;
-				font-weight: 500;
-				font-size: $font-body;
+				font-size: $font-headline-small;
 			}
 		}
 	}

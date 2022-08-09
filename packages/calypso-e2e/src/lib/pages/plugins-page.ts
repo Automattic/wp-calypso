@@ -15,7 +15,8 @@ const selectors = {
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
 		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-browser-list__title',
-	browseAllPopular: 'a[href^="/plugins/browse/popular"]',
+	browseAllFree: 'a[href^="/plugins/browse/popular"]',
+	browseAllPaid: 'a[href^="/plugins/browse/paid"]',
 	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
@@ -122,10 +123,17 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Click Browse All
+	 * Click Browse All Free Plugins
 	 */
-	async clickBrowseAllPopular(): Promise< void > {
-		await this.page.click( selectors.browseAllPopular );
+	async clickBrowseAllFreePlugins(): Promise< void > {
+		await this.page.click( selectors.browseAllFree );
+	}
+
+	/**
+	 * Click Browse All Paid Plugins
+	 */
+	async clickBrowseAllPaidPlugins(): Promise< void > {
+		await this.page.click( selectors.browseAllPaid );
 	}
 
 	/**

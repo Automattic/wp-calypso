@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { isPlainObject } from 'lodash';
 import { useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import ArrayPreference from './array-preference';
@@ -20,7 +19,7 @@ export default function Preference( { name, value } ) {
 
 	if ( Array.isArray( value ) ) {
 		preferenceHandler = <ArrayPreference name={ name } value={ value } />;
-	} else if ( isPlainObject( value ) ) {
+	} else if ( typeof value === 'object' && value !== null ) {
 		preferenceHandler = <ObjectPreference name={ name } value={ value } />;
 	} else if ( 'string' === typeof value ) {
 		preferenceHandler = <StringPreference name={ name } value={ value } />;

@@ -1,5 +1,3 @@
-import { isPlainObject } from 'lodash';
-
 /**
  * Normalize API Settings
  *
@@ -14,7 +12,7 @@ export function normalizeSettings( settings ) {
 				memo[ key ] = parseInt( settings[ key ] );
 				break;
 			case 'sharing_show':
-				if ( isPlainObject( settings[ key ] ) ) {
+				if ( typeof settings[ key ] === 'object' && settings[ key ] !== null ) {
 					memo[ key ] = Object.values( settings[ key ] );
 				} else {
 					memo[ key ] = settings[ key ];

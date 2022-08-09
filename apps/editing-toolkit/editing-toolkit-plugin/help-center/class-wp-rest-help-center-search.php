@@ -20,11 +20,6 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 		$this->namespace                       = 'wpcom/v2';
 		$this->rest_base                       = 'help-center/search';
 		$this->wpcom_is_site_specific_endpoint = false;
-		$this->is_wpcom                        = false;
-
-		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
-			$this->is_wpcom = true;
-		}
 	}
 
 	/**
@@ -59,7 +54,7 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 	 * @return boolean
 	 */
 	public function permission_callback() {
-		return current_user_can( 'read' );
+		return is_user_logged_in();
 	}
 
 	/**
@@ -73,28 +68,20 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 		$query  = $request['query'];
 		$locale = $request['locale'];
 
-		if ( $this->is_wpcom ) {
-			$response = \WPCOM_Help_Search::search_wpcom_support( $query, $locale );
-		} else {
-			$query_parameters = array(
-				'query'  => $query,
-				'locale' => $locale,
-			);
-			$body             = Client::wpcom_json_api_request_as_user(
-				'/help/search/wpcom?' . http_build_query( $query_parameters )
-			);
+		$query_parameters = array(
+			'query'  => $query,
+			'locale' => $locale,
+		);
+		$body             = Client::wpcom_json_api_request_as_user(
+			'/help/search/wpcom?' . http_build_query( $query_parameters )
+		);
 
-			if ( is_wp_error( $body ) ) {
-				return $body;
-			}
-
-			$response = json_decode( wp_remote_retrieve_body( $body ) );
+		if ( is_wp_error( $body ) ) {
+			return $body;
 		}
 
-		return rest_ensure_response(
-			array(
-				'wordpress_support_links' => $response,
-			)
-		);
+		$response = json_decode( wp_remote_retrieve_body( $body ) );
+
+		return rest_ensure_response( $response );
 	}
 }

@@ -9,18 +9,18 @@ It is meant to be helpful for projects developed inside the [Calypso monorepo](h
 To use stores from the package, import and register the relevant store to obtain its key:
 
 ```tsx
-import { Verticals } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 
-const VERTICALS_STORE = Verticals.register();
+const PLANS_STORE = Plans.register();
 
-export const VerticalSelect = (): React.FunctionComponent<  > => {
-	const verticals = useSelect( ( select ) => select( VERTICALS_STORE ).getVerticals() );
+export const PlansSelect = (): React.FunctionComponent<  > => {
+	const plans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 
 	return (
 		<ul>
-			{ verticals.map( ( vertical ) => (
-				<li key={ vertical.vertical_id }>{ vertical.vertical_name }</li>
+			{ plans.map( ( plan ) => (
+				<li key={ plan.title }>{ plan.description }</li>
 			) ) }
 		</ul>
 	);

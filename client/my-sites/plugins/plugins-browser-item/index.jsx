@@ -1,6 +1,7 @@
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { TextHighlight } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -26,6 +27,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
+import PreinstalledPremiumPluginBrowserItemPricing from './preinstalled-premium-plugin-browser-item-pricing';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
@@ -38,6 +40,7 @@ const PluginsBrowserListElement = ( props ) => {
 		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
+		search,
 	} = props;
 
 	const translate = useTranslate();
@@ -169,12 +172,16 @@ const PluginsBrowserListElement = ( props ) => {
 			>
 				<div className="plugins-browser-item__info">
 					<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					<div className="plugins-browser-item__title">{ plugin.name }</div>
+					<div className="plugins-browser-item__title">
+						<TextHighlight text={ plugin.name } highlight={ search } />
+					</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<>
 							<div className="plugins-browser-item__author">
 								{ translate( 'by ' ) }
-								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
+								<span className="plugins-browser-item__author-name">
+									<TextHighlight text={ plugin.author_name } highlight={ search } />
+								</span>
 							</div>
 
 							<div className="plugins-browser-item__last-updated">
@@ -189,7 +196,9 @@ const PluginsBrowserListElement = ( props ) => {
 							</div>
 						</>
 					) }
-					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
+					<div className="plugins-browser-item__description">
+						<TextHighlight text={ plugin.short_description } highlight={ search } />
+					</div>
 				</div>
 				{ isUntestedVersion && (
 					<div className="plugins-browser-item__untested-notice">
@@ -262,34 +271,15 @@ const InstalledInOrPricing = ( {
 	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
-	const { isPreinstalledPremiumPlugin, isPreinstalledPremiumPluginUpgraded } =
-		usePreinstalledPremiumPlugin( plugin.slug );
+	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
-
 	let checkmarkColorClass = 'checkmark--active';
 
-	if ( isPreinstalledPremiumPluginUpgraded ) {
-		/* eslint-disable wpcalypso/jsx-gridicon-size */
-		return (
-			<div className="plugins-browser-item__installed-and-active-container">
-				<div className="plugins-browser-item__installed ">
-					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
-					{ translate( 'Installed' ) }
-				</div>
-				<div className="plugins-browser-item__active">
-					<Badge type={ active ? 'success' : 'info' }>
-						{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
-					</Badge>
-				</div>
-			</div>
-		);
-		/* eslint-enable wpcalypso/jsx-gridicon-size */
+	if ( isPreinstalledPremiumPlugin ) {
+		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
 	}
 
-	if (
-		( ! isPreinstalledPremiumPlugin && sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
-		isWpcomPreinstalled
-	) {
+	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
 			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';

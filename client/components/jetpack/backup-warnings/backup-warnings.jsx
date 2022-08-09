@@ -7,7 +7,6 @@ import BackupWarningHeader from 'calypso/components/jetpack/backup-warnings/back
 import BackupWarningListHeader from 'calypso/components/jetpack/backup-warnings/backup-warning-list-header';
 import LogItem from 'calypso/components/jetpack/log-item';
 import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
-import { useDailyBackupStatus } from 'calypso/my-sites/backup/status/hooks';
 
 import './style.scss';
 
@@ -131,14 +130,12 @@ const getWarningInfo = ( code, category ) => {
 	return warningInfo;
 };
 
-const BackupWarnings = ( { siteId, selectedDate } ) => {
-	const backupStatus = useDailyBackupStatus( siteId, selectedDate );
-
-	if ( ! backupStatus.lastBackupAttemptOnDate ) {
+const BackupWarnings = ( { lastBackupAttemptOnDate } ) => {
+	if ( ! lastBackupAttemptOnDate ) {
 		return <></>;
 	}
 
-	const backup = backupStatus.lastBackupAttemptOnDate;
+	const backup = lastBackupAttemptOnDate;
 
 	const warnings = getBackupWarnings( backup );
 	const hasWarnings = Object.keys( warnings ).length !== 0;

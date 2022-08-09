@@ -21,6 +21,7 @@ class Starter_Page_Templates {
 
 	/**
 	 * Cache key for templates array.
+	 * Please access with the  ->get_templates_cache_key() getter.
 	 *
 	 * @var string
 	 */
@@ -30,22 +31,32 @@ class Starter_Page_Templates {
 	 * Starter_Page_Templates constructor.
 	 */
 	private function __construct() {
-		$this->templates_cache_key = implode(
-			'_',
-			array(
-				'starter_page_templates',
-				A8C_ETK_PLUGIN_VERSION,
-				get_option( 'site_vertical', 'default' ),
-				$this->get_verticals_locale(),
-			)
-		);
-
 		add_action( 'init', array( $this, 'register_scripts' ) );
 		add_action( 'init', array( $this, 'register_meta_field' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_assets' ) );
 		add_action( 'delete_attachment', array( $this, 'clear_sideloaded_image_cache' ) );
 		add_action( 'switch_theme', array( $this, 'clear_templates_cache' ) );
+	}
+
+	/**
+	 * Gets the cache key for templates array, after setting it if it hasn't been set yet.
+	 *
+	 * @return string
+	 */
+	public function get_templates_cache_key() {
+		if ( empty( $this->templates_cache_key ) ) {
+			$this->templates_cache_key = implode(
+				'_',
+				array(
+					'starter_page_templates',
+					A8C_ETK_PLUGIN_VERSION,
+					get_option( 'site_vertical', 'default' ),
+					$this->get_verticals_locale(),
+				)
+			);
+		}
+		return $this->templates_cache_key;
 	}
 
 	/**
@@ -200,7 +211,7 @@ class Starter_Page_Templates {
 	 * @return array Containing page templates or nothing if an error occurred.
 	 */
 	public function get_page_templates() {
-		$page_template_data = get_transient( $this->templates_cache_key );
+		$page_template_data = get_transient( $this->get_templates_cache_key() );
 
 		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
 
@@ -234,7 +245,7 @@ class Starter_Page_Templates {
 
 			// Only save to cache if we have not overridden the source site.
 			if ( false === $override_source_site ) {
-				set_transient( $this->templates_cache_key, $page_template_data, DAY_IN_SECONDS );
+				set_transient( $this->get_templates_cache_key(), $page_template_data, DAY_IN_SECONDS );
 			}
 
 			return $page_template_data;
@@ -259,7 +270,7 @@ class Starter_Page_Templates {
 	 * Deletes cached templates data when theme switches.
 	 */
 	public function clear_templates_cache() {
-		delete_transient( $this->templates_cache_key );
+		delete_transient( $this->get_templates_cache_key() );
 	}
 
 	/**

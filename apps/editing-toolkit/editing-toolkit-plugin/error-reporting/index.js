@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import apiFetch from '@wordpress/api-fetch';
+import { addAction } from '@wordpress/hooks';
 
 const shouldActivateSentry = window.A8C_ETK_ErrorReporting_Config?.shouldActivateSentry === 'true';
 /**
@@ -16,6 +17,12 @@ function activateSentry() {
 		// of transactions for performance monitoring.
 		// We recommend adjusting this value in production
 		release: 'wpcom-test-01',
+	} );
+
+	// Capture exceptions from Gutenberg React Error Boundaries
+	addAction( 'editor.ErrorBoundary.errorLogged', 'etk/error-reporting', ( error ) => {
+		// error is the exception's error object
+		Sentry.captureException( error );
 	} );
 
 	// We still need to report the head errors, if any.

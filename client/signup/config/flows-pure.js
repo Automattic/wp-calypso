@@ -14,6 +14,7 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
+	getStepperFlowDestination = noop,
 	getAddOnsStep = noop,
 } = {} ) {
 	const flows = [
@@ -90,7 +91,6 @@ export function generateFlows( {
 				'template-first-themes',
 				'user',
 				'site-type-with-theme',
-				'site-topic-with-theme',
 				'site-title',
 				'domains',
 				'plans',
@@ -110,6 +110,38 @@ export function generateFlows( {
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
 			showRecaptcha: true,
+		},
+		{
+			name: 'newsletters',
+			steps: getAddOnsStep(
+				isEnabled( 'signup/professional-email-step' )
+					? [ 'user', 'domains', 'emails', 'plans' ]
+					: [ 'user', 'domains', 'plans' ]
+			),
+			destination: ( dependencies ) => getStepperFlowDestination( dependencies, 'newsletters' ),
+			description: 'Beginning of the flow to create a newsletter',
+			lastModified: '2022-07-28',
+			showRecaptcha: true,
+			hideBackButton: true,
+			get pageTitle() {
+				return translate( 'Newsletters' );
+			},
+		},
+		{
+			name: 'link-in-bio',
+			steps: getAddOnsStep(
+				isEnabled( 'signup/professional-email-step' )
+					? [ 'user', 'domains', 'emails', 'plans' ]
+					: [ 'user', 'domains', 'plans' ]
+			),
+			destination: ( dependencies ) => getStepperFlowDestination( dependencies, 'link-in-bio' ),
+			description: 'Beginning of the flow to create a link in bio',
+			lastModified: '2022-07-28',
+			showRecaptcha: true,
+			hideBackButton: true,
+			get pageTitle() {
+				return translate( 'Link in Bio' );
+			},
 		},
 		{
 			name: 'with-add-ons',

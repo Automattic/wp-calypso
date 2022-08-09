@@ -678,18 +678,23 @@ function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) 
 function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const planSlug = product.product_slug;
-	const origCost = product.item_original_cost_integer;
-	const cost = product.product_cost_integer;
+	const origCost = product.item_original_subtotal_integer;
+	const finalCost = product.item_subtotal_integer;
 	const isRenewal = product.is_renewal;
 
+	// Do not display discount reason if there is an introductory offer.
 	if ( product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
 
 	if (
+		// Do not display discount reason for non-wpcom, non-jetpack products.
 		( ! isWpComPlan( planSlug ) && ! isJetpackProductSlug( planSlug ) ) ||
-		origCost <= cost ||
+		// Do not display discount reason if there is no discount.
+		origCost <= finalCost ||
+		// Do not display discount reason if this is a renewal.
 		isRenewal ||
+		// Do not display discount reason if a coupon is applied.
 		isCouponApplied( product )
 	) {
 		return null;

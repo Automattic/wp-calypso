@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable no-restricted-imports */
 import { useState, useCallback } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useHistory, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
@@ -37,6 +38,7 @@ export const HelpCenterSearch = () => {
 				onSearch={ setSearchQuery }
 				location="help-center"
 				isVisible
+				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
 			/>
 			{ searchQuery && (
 				<HelpCenterSearchResults
