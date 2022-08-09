@@ -123,7 +123,7 @@
 		"plans/starter-plan": false,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
-		"plugins/plugin-details-layout": false,
+		"plugins/plugin-details-layout": true,
 		"post-editor/checkout-overlay": true,
 		"press-this": true,
 		"promote-post": true,
