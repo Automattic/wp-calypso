@@ -17,6 +17,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
+import PostActionsEllipsisMenuPromote from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/promote';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
@@ -128,6 +129,16 @@ class Page extends Component {
 				<Gridicon icon={ isPreviewable ? 'visible' : 'external' } size={ 18 } />
 				{ this.props.translate( 'View page' ) }
 			</PopoverMenuItem>
+		);
+	}
+
+	getPromoteItem() {
+		return (
+			<PostActionsEllipsisMenuPromote
+				globalId={ this.props.page.global_ID }
+				key="promote"
+				bumpStatKey={ 'pages-meatball-menu' }
+			/>
 		);
 	}
 
@@ -449,6 +460,7 @@ class Page extends Component {
 		const canEdit = userCan( 'edit_post', page ) && ! latestPostsPage;
 		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
 		const viewItem = this.getViewItem();
+		const promoteItem = this.getPromoteItem();
 		const publishItem = this.getPublishItem();
 		const editItem = this.getEditItem();
 		const frontPageItem = this.getFrontPageItem();
@@ -463,6 +475,7 @@ class Page extends Component {
 		const hasMenuItems =
 			viewItem ||
 			publishItem ||
+			promoteItem ||
 			editItem ||
 			statsItem ||
 			restoreItem ||
@@ -480,6 +493,7 @@ class Page extends Component {
 				{ editItem }
 				{ publishItem }
 				{ viewItem }
+				{ promoteItem }
 				{ statsItem }
 				{ copyPageItem }
 				{ copyLinkItem }
