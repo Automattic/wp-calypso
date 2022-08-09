@@ -46,7 +46,7 @@ const SelectVertical: React.FC< Props > = ( {
 		label: vertical.title,
 		name: vertical.name,
 		category: String( translate( 'Suggestions' ) ),
-		has_verticalizable_images: !! vertical.has_verticalizable_images,
+		has_vertical_images: !! vertical.has_vertical_images,
 	} );
 
 	const mapManySiteVerticalsResponseToVertical = (

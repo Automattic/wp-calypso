@@ -2,7 +2,7 @@ export interface SiteVerticalsResponse {
 	id: string;
 	name: string;
 	title: string;
-	has_verticalizable_images?: boolean;
+	has_vertical_images?: boolean;
 }
 
 export interface SiteVerticalQueryByIdParams {
