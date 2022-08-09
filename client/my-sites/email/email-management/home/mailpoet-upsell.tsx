@@ -12,7 +12,7 @@ export default function MailPoetUpsell() {
 
 	return (
 		<div className="mailpoet-upsell">
-			<SectionHeader label="Newsletter" />
+			<SectionHeader label={ translate( 'Newsletters' ) } />
 
 			<Card>
 				<div className="mailpoet-upsell__icon">
