@@ -161,6 +161,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		if ( showGeneratedDesigns && ! hasTrackedView.current ) {
 			hasTrackedView.current = true;
 			recordTracksEvent( 'calypso_signup_generated_design_picker_view', {
+				intent,
 				vertical_id: siteVerticalId,
 				generated_designs: generatedDesigns?.map( ( design ) => design.slug ).join( ',' ),
 			} );
