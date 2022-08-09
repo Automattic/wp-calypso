@@ -27,7 +27,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPlugins, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
+import { getPlugins, isRequestingForAllSites } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -460,7 +460,7 @@ export class PluginsMain extends Component {
 		const content = (
 			<>
 				<DocumentHead title={ pageTitle } />
-				<QueryAllJetpackPlugins siteIds={ this.props.siteIds } />
+				<QueryAllJetpackPlugins />
 				<QuerySiteFeatures siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
 				{ ! isJetpackCloud && (
@@ -595,7 +595,7 @@ export default flow(
 				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
 				allPluginsCount: allPlugins && allPlugins.length,
-				requestingPluginsForSites: isRequestingForSites( state, siteIds ),
+				requestingPluginsForSites: isRequestingForAllSites( state ),
 				updateableJetpackSites: getUpdateableJetpackSites( state ),
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )

@@ -13,6 +13,9 @@ import {
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
+	ALL_PLUGINS_REQUEST,
+	ALL_PLUGINS_REQUEST_SUCCESS,
+	ALL_PLUGINS_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -533,23 +536,15 @@ export function fetchPlugins( siteIds ) {
 	return ( dispatch ) => siteIds.map( ( siteId ) => dispatch( fetchSitePlugins( siteId ) ) );
 }
 
-export function fetchAllPlugins( siteIds ) {
+export function fetchAllPlugins() {
 	return ( dispatch ) => {
-		// Before the /me/sites/plugins endpoint, we triggered API requests for each individual site.
-		// In order to keep this changeset small and provide some backward compatibility, we
-		// can reuse the existing reducers and selectors.
-		siteIds.map( ( siteId ) => {
-			dispatch( { ...{ siteId }, type: PLUGINS_REQUEST } );
-		} );
+		dispatch( { type: ALL_PLUGINS_REQUEST } );
 
 		const receivePluginsDispatchSuccess = ( data ) => {
-			siteIds.map( ( siteId ) => {
-				if ( typeof data?.sites[ siteId ] === 'undefined' ) {
-					return;
-				}
+			dispatch( { type: ALL_PLUGINS_REQUEST_SUCCESS } );
 
+			Object.keys( data?.sites ).map( ( siteId ) => {
 				dispatch( receiveSitePlugins( siteId, data?.sites[ siteId ] ) );
-				dispatch( { ...{ siteId }, type: PLUGINS_REQUEST_SUCCESS } );
 
 				data?.sites[ siteId ].map( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {
@@ -560,9 +555,7 @@ export function fetchAllPlugins( siteIds ) {
 		};
 
 		const receivePluginsDispatchFail = ( error ) => {
-			siteIds.map( ( siteId ) => {
-				dispatch( { ...{ siteId }, type: PLUGINS_REQUEST_FAILURE, error } );
-			} );
+			dispatch( { type: ALL_PLUGINS_REQUEST_FAILURE, error } );
 		};
 
 		return wpcom.req

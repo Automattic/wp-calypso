@@ -43,7 +43,7 @@ import {
 	getPluginOnSites,
 	getSiteObjectsWithPlugin,
 	getSiteObjectsWithoutPlugin,
-	isRequestingForSites,
+	isRequestingForAllSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
@@ -85,9 +85,7 @@ function PluginDetails( props ) {
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
 	const isRequestingSites = useSelector( checkRequestingSites );
-	const requestingPluginsForSites = useSelector( ( state ) =>
-		isRequestingForSites( state, siteIds )
-	);
+	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 	const { localizePath } = useLocalizedPlugins();
 
@@ -312,7 +310,7 @@ function PluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryAllJetpackPlugins siteIds={ siteIds } />
+			<QueryAllJetpackPlugins />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
@@ -428,7 +426,7 @@ function LegacyPluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryAllJetpackPlugins siteIds={ siteIds } />
+			<QueryAllJetpackPlugins />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />
