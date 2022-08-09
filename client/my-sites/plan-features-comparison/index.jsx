@@ -9,6 +9,7 @@ import {
 	isFreePlan,
 	isMonthly,
 	TERM_MONTHLY,
+	FEATURE_BLANK,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -260,7 +261,11 @@ export class PlanFeaturesComparison extends Component {
 			const { features, planName } = properties;
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
-			const currentFeature = features[ key ];
+			let currentFeature = features[ key ];
+
+			if ( currentFeature?.getSlug() === FEATURE_BLANK ) {
+				currentFeature = null;
+			}
 
 			const classes = classNames(
 				'plan-features-comparison__table-item',
