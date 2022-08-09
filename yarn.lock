@@ -1268,7 +1268,6 @@ __metadata:
   resolution: "@automattic/subscriber@workspace:packages/subscriber"
   dependencies:
     "@automattic/calypso-color-schemes": "workspace:^"
-    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/viewport": "workspace:^"
