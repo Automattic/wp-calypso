@@ -11,6 +11,7 @@ import {
 	TERM_MONTHLY,
 	FEATURE_BLANK,
 } from '@automattic/calypso-products';
+import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { compact, get, map, reduce } from 'lodash';
@@ -484,8 +485,12 @@ const ConnectedPlanFeaturesComparison = connect(
 )( localize( PlanFeaturesComparison ) );
 
 export default function PlanFeaturesComparisonWrapper( props ) {
+	const locale = useLocale();
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'pricing_packaging_plans_page_quick_improvements'
+		'pricing_packaging_plans_page_quick_improvements',
+		{
+			isEligible: [ 'en-gb', 'en' ].includes( locale ),
+		}
 	);
 
 	if ( isLoadingExperimentAssignment ) {

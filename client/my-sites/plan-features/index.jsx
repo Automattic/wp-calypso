@@ -21,6 +21,7 @@ import {
 	FEATURE_BLANK,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
+import { useLocale } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -1090,8 +1091,12 @@ const ConnectedPlanFeatures = connect(
 /* eslint-enable */
 
 export default function PlanFeaturesWrapper( props ) {
+	const locale = useLocale();
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'pricing_packaging_plans_page_quick_improvements'
+		'pricing_packaging_plans_page_quick_improvements',
+		{
+			isEligible: [ 'en-gb', 'en' ].includes( locale ),
+		}
 	);
 
 	if ( isLoadingExperimentAssignment ) {
