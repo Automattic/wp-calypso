@@ -16,7 +16,7 @@ export default function MailPoetUpsell() {
 
 			<Card>
 				<div className="mailpoet-upsell__icon">
-					<img src={ mailpoetSymbol } alt="MailPoet" />
+					<img src={ mailpoetSymbol } alt="MailPoet logo" />
 				</div>
 
 				<div className="mailpoet-upsell__text">
