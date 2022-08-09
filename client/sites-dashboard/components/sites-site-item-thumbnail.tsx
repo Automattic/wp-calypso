@@ -8,6 +8,8 @@ import { useSiteStatus } from '../hooks/use-site-status';
 
 const NoIcon = styled.div( {
 	fontSize: 'xx-large',
+	textTransform: 'uppercase',
+	userSelect: 'none',
 } );
 
 interface SiteItemThumbnailProps extends ComponentProps< typeof SiteThumbnail > {

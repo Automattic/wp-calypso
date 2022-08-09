@@ -64,9 +64,13 @@ function getSiteSlug( site: SiteExcerptNetworkData, conflictingSites: number[] =
 function computeFields( allSites: SiteExcerptNetworkData[] ) {
 	const conflictingSites = getJetpackSiteCollisions( allSites );
 	return function computeFieldsSite( data: SiteExcerptNetworkData ): SiteExcerptData {
+		const trimmedName = data.name?.trim() ?? '';
+		const slug = getSiteSlug( data, conflictingSites );
+
 		return {
 			...data,
-			slug: getSiteSlug( data, conflictingSites ),
+			name: trimmedName.length > 0 ? trimmedName : slug,
+			slug,
 		};
 	};
 }
