@@ -153,6 +153,38 @@ import {
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_ADDITIONAL_SITES,
 	FEATURE_WOOCOMMERCE,
+	/* WPCOM Plan grid features update experiment */
+	FEATURE_UNLIMITED_TRAFFIC,
+	FEATURE_UNMETERED_BANDWIDTH,
+	FEATURE_SOCIAL_MEDIA_TOOLS,
+	FEATURE_FREE_NEWSLETTER,
+	FEATURE_PAID_NEWSLETTER,
+	FEATURE_BASIC_BACKUPS,
+	FEATURE_MANAGED_HOSTING,
+	FEATURE_CDN,
+	FEATURE_SSL,
+	FEATURE_BURST_SCALING,
+	FEATURE_EDGE_CACHING,
+	WPCOM_FEATURES_CDN,
+	FEATURE_PREMIUM_THEMES_V2,
+	FEATURE_SEO_PREVIEW_TOOLS_V2,
+	FEATURE_VIDEO_UPLOADS_V2,
+	FEATURE_BASIC_DESIGN_V2,
+	FEATURE_ADVANCED_DESIGN_V2,
+	FEATURE_REPUBLICIZE_V2,
+	FEATURE_INSTALL_PLUGINS_V2,
+	FEATURE_UPLOAD_THEMES_V2,
+	FEATURE_WORDADS_INSTANT_V2,
+	FEATURE_FREE_THEMES_V2,
+	FEATURE_SITE_STATS_V2,
+	FEATURE_SPAM_AKISMET_PLUS_V2,
+	FEATURE_SFTP_DATABASE_V2,
+	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS_V2,
+	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2,
+	FEATURE_UNLIMITED_USERS_V2,
+	FEATURE_EMAIL_SUPPORT_V2,
+	FEATURE_COLLECT_PAYMENTS_V3,
+	/* END - WPCOM Plan grid features update experiment */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -1474,6 +1506,230 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'WooCommerce' ),
 	},
 	/* END - New features Flexible and Pro plans introduced. */
+
+	/* WPCOM Plan grid features update experiment */
+	[ FEATURE_UNLIMITED_TRAFFIC ]: {
+		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
+		getTitle: () => i18n.translate( 'Unlimited traffic' ),
+		getDescription: () =>
+			i18n.translate(
+				'All WordPress.com plans include unlimited traffic so you never have to worry about surprise charges.'
+			),
+	},
+	[ FEATURE_UNMETERED_BANDWIDTH ]: {
+		getSlug: () => FEATURE_UNMETERED_BANDWIDTH,
+		getTitle: () => i18n.translate( 'Unmetered bandwidth' ),
+		getDescription: () => i18n.translate( 'Unmetered bandwidth' ),
+	},
+	[ FEATURE_FREE_NEWSLETTER ]: {
+		getSlug: () => FEATURE_FREE_NEWSLETTER,
+		getTitle: () => i18n.translate( 'Offer a free email newsletter (unlimited subscribers)' ),
+		getDescription: () => i18n.translate( 'Offer a free email newsletter (unlimited subscribers)' ),
+	},
+	[ FEATURE_PAID_NEWSLETTER ]: {
+		getSlug: () => FEATURE_PAID_NEWSLETTER,
+		getTitle: () => i18n.translate( 'Sell paid newsletters (unlimited subscribers)' ),
+		getDescription: () => i18n.translate( 'Sell paid newsletters (unlimited subscribers)' ),
+	},
+	[ FEATURE_CDN ]: {
+		getSlug: () => WPCOM_FEATURES_CDN,
+		getTitle: () => i18n.translate( 'Fast CDN' ),
+		getDescription: () => i18n.translate( 'Fast CDN' ),
+	},
+	[ FEATURE_SSL ]: {
+		getSlug: () => FEATURE_SSL,
+		getTitle: () => i18n.translate( 'SSL security' ),
+		getDescription: () => i18n.translate( 'SSL security' ),
+	},
+	[ FEATURE_BURST_SCALING ]: {
+		getSlug: () => FEATURE_BURST_SCALING,
+		getTitle: () => i18n.translate( 'Automated burst scaling' ),
+		getDescription: () => i18n.translate( 'Automated burst scaling' ),
+	},
+	[ FEATURE_EDGE_CACHING ]: {
+		getSlug: () => FEATURE_BURST_SCALING,
+		getTitle: () => i18n.translate( 'Edge caching' ),
+		getDescription: () => i18n.translate( 'Edge caching' ),
+	},
+	[ FEATURE_MANAGED_HOSTING ]: {
+		getSlug: () => FEATURE_MANAGED_HOSTING,
+		getTitle: () => i18n.translate( 'Managed hosting' ),
+		getDescription: () =>
+			i18n.translate(
+				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
+			),
+	},
+	[ FEATURE_PREMIUM_THEMES_V2 ]: {
+		getSlug: () => FEATURE_PREMIUM_THEMES,
+		getTitle: () => i18n.translate( 'Unlimited access to premium themes' ),
+		getDescription: () =>
+			i18n.translate(
+				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
+			),
+	},
+
+	[ FEATURE_SEO_PREVIEW_TOOLS_V2 ]: {
+		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
+		getTitle: () => i18n.translate( 'Basic SEO tools' ),
+		getDescription: () =>
+			i18n.translate(
+				'Edit your page titles and meta descriptions, and preview how your content will appear on social media.'
+			),
+	},
+
+	[ FEATURE_VIDEO_UPLOADS_V2 ]: {
+		getSlug: () => FEATURE_VIDEO_UPLOADS,
+		getTitle: () => i18n.translate( 'High-quality video hosting with VideoPress' ),
+		getDescription: () =>
+			i18n.translate(
+				'The easiest way to upload videos to your website and display them ' +
+					'using a fast, unbranded, customizable player with rich stats.'
+			),
+		getStoreSlug: () => 'videopress',
+	},
+
+	[ FEATURE_BASIC_DESIGN_V2 ]: {
+		getSlug: () => FEATURE_BASIC_DESIGN,
+		getTitle: () => i18n.translate( 'CSS customization available for $2 extra.' ),
+		getDescription: () => i18n.translate( 'CSS customization available for $2 extra.' ),
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
+	},
+
+	[ FEATURE_ADVANCED_DESIGN_V2 ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN,
+		getTitle: () =>
+			i18n.translate( 'CSS customization tools', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.translate(
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+			),
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
+	},
+
+	[ FEATURE_REPUBLICIZE_V2 ]: {
+		getSlug: () => FEATURE_REPUBLICIZE,
+		getTitle: () => i18n.translate( 'Advanced social media tools' ),
+		getDescription: () =>
+			i18n.translate(
+				"Schedule your social media updates in advance and promote your posts when it's best for you."
+			),
+	},
+
+	[ FEATURE_SOCIAL_MEDIA_TOOLS ]: {
+		getSlug: () => FEATURE_SOCIAL_MEDIA_TOOLS,
+		getTitle: () => i18n.translate( 'Basic social media tools' ),
+		getDescription: () => i18n.translate( 'Built in social media tools.' ),
+	},
+
+	[ FEATURE_INSTALL_PLUGINS_V2 ]: {
+		getSlug: () => FEATURE_INSTALL_PLUGINS,
+		getTitle: () => i18n.translate( 'Install WordPress plugins' ),
+		getDescription: () =>
+			i18n.translate(
+				'Access to more than 50,000 WordPress plugins to extend functionality for your site'
+			),
+	},
+
+	[ FEATURE_UPLOAD_THEMES_V2 ]: {
+		getSlug: () => FEATURE_UPLOAD_THEMES,
+		getTitle: () => i18n.translate( 'Upload themes' ),
+		getDescription: () =>
+			i18n.translate(
+				'With the option to upload themes, you can give your site a professional polish ' +
+					'that will help it stand out among the rest.'
+			),
+	},
+
+	[ FEATURE_WORDADS_INSTANT_V2 ]: {
+		getSlug: () => FEATURE_WORDADS_INSTANT,
+		getTitle: () => i18n.translate( 'Earn money from ads' ),
+		getDescription: () =>
+			i18n.translate(
+				'Earn money on your site by displaying ads and collecting payments or donations.'
+			),
+	},
+
+	[ FEATURE_FREE_THEMES_V2 ]: {
+		getSlug: () => FEATURE_FREE_THEMES,
+		getTitle: () => i18n.translate( 'Dozens of free themes and design patterns' ),
+		getDescription: () =>
+			i18n.translate(
+				'Access to a wide range of professional themes ' +
+					"so you can find a design that's just right for your site."
+			),
+	},
+
+	[ FEATURE_SITE_STATS_V2 ]: {
+		getSlug: () => FEATURE_SITE_STATS,
+		getTitle: () => i18n.translate( 'Built-in site stats' ),
+		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
+	},
+
+	[ FEATURE_SPAM_AKISMET_PLUS_V2 ]: {
+		getSlug: () => FEATURE_SPAM_AKISMET_PLUS,
+		getTitle: () => i18n.translate( 'World-class spam protection' ),
+		getDescription: () => i18n.translate( 'State-of-the-art spam defense, powered by Akismet.' ),
+	},
+
+	[ FEATURE_BASIC_BACKUPS ]: {
+		getSlug: () => FEATURE_BASIC_BACKUPS,
+		getTitle: () => i18n.translate( 'Basic backups' ),
+		getDescription: () => i18n.translate( 'Basic backups' ),
+	},
+
+	[ FEATURE_SFTP_DATABASE_V2 ]: {
+		getSlug: () => FEATURE_SFTP_DATABASE,
+		getTitle: () => i18n.translate( 'SFTP and Database Access' ),
+		getDescription: () => {},
+	},
+
+	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS_V2 ]: {
+		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		getTitle: () => i18n.translate( 'Basic live chat support' ),
+		getDescription: () => i18n.translate( 'Basic live chat support' ),
+	},
+
+	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2 ]: {
+		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		getTitle: () => i18n.translate( '24/7 live chat support' ),
+		getDescription: () => i18n.translate( '24/7 live chat support' ),
+	},
+
+	[ FEATURE_UNLIMITED_USERS_V2 ]: {
+		getSlug: () => FEATURE_UNLIMITED_USERS,
+		getTitle: () => i18n.translate( 'Unlimited contributors' ),
+		getDescription: () => i18n.translate( 'Unlimited contributors' ),
+	},
+
+	[ FEATURE_COLLECT_PAYMENTS_V3 ]: {
+		getSlug: () => FEATURE_COLLECT_PAYMENTS_V2,
+		getTitle: () => i18n.translate( 'Collect payments and donations' ),
+		getDescription: () =>
+			i18n.translate(
+				'Accept payments from credit or debit cards via Stripe. Sell products, collect donations, and set up recurring payments for subscriptions or memberships. {{link}}Learn more{{/link}}.',
+				{
+					components: {
+						link: (
+							<ExternalLink
+								icon
+								href="https://jetpack.com/support/jetpack-blocks/payments-block/"
+							/>
+						),
+					},
+				}
+			),
+	},
+	[ FEATURE_EMAIL_SUPPORT_V2 ]: {
+		getSlug: () => FEATURE_EMAIL_SUPPORT,
+		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getDescription: () =>
+			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
+	},
+	/* END - WPCOM Plan grid features update experiment */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
