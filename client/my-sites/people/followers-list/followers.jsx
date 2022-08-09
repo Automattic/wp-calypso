@@ -122,7 +122,7 @@ class Followers extends Component {
 							) }
 							noticeStatus="is-info"
 						>
-							<AddSubscriberForm />
+							<AddSubscriberForm siteId={ this.props.site.ID } />
 						</EmailVerificationGate>
 					</Card>
 				);
