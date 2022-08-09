@@ -18,9 +18,11 @@ const Categories = ( { selected }: { selected?: string } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 
+	// We hide these special categories from the category selector
 	const displayCategories = ALLOWED_CATEGORIES.filter(
 		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
 	);
+
 	const categories = Object.values( useCategories( displayCategories ) );
 	const categoryUrls = categories.map( ( { slug } ) => getCategoryUrl( slug ) );
 	const onClick = ( index: number ) => {
