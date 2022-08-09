@@ -1,5 +1,5 @@
 import { ResponseCart } from '@automattic/shopping-cart';
-import { GaItem, jetpackProductToGaItem } from './jetpack-product-to-ga-item';
+import { GaItem, jetpackProductToGaItem, wpcomProductToGaItem } from './jetpack-product-to-ga-item';
 import { WpcomJetpackCartInfo } from './split-wpcom-jetpack-cart-info';
 
 export type GaPurchase = {
@@ -23,6 +23,22 @@ export function jetpackCartToGaPurchase(
 		value: cartInfo.jetpackCostUSD,
 		items: cartInfo.jetpackProducts.map( ( product ) =>
 			jetpackProductToGaItem( product, cart.currency )
+		),
+	};
+}
+
+export function wpcomCartToGaPurchase(
+	orderId: string,
+	cart: ResponseCart,
+	cartInfo: WpcomJetpackCartInfo
+): GaPurchase {
+	return {
+		transaction_id: orderId,
+		coupon: cart.coupon,
+		currency: 'USD', // we track all prices in USD
+		value: cartInfo.wpcomCostUSD,
+		items: cartInfo.wpcomProducts.map( ( product ) =>
+			wpcomProductToGaItem( product, cart.currency )
 		),
 	};
 }

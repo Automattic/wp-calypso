@@ -1,5 +1,5 @@
 import { ResponseCartProduct } from '@automattic/shopping-cart';
-import { GA_PRODUCT_BRAND_JETPACK } from '../ad-tracking/constants';
+import { GA_PRODUCT_BRAND_JETPACK, GA_PRODUCT_BRAND_WPCOM } from '../ad-tracking/constants';
 import costToUSD from './cost-to-usd';
 
 export type GaItem = {
@@ -17,5 +17,15 @@ export function jetpackProductToGaItem( product: ResponseCartProduct, currency: 
 		quantity: product.volume,
 		price: Number( costToUSD( product.cost, currency ) ),
 		item_brand: GA_PRODUCT_BRAND_JETPACK,
+	};
+}
+
+export function wpcomProductToGaItem( product: ResponseCartProduct, currency: string ): GaItem {
+	return {
+		item_id: product.product_id.toString(),
+		item_name: product.product_name,
+		quantity: product.volume,
+		price: Number( costToUSD( product.cost, currency ) ),
+		item_brand: GA_PRODUCT_BRAND_WPCOM,
 	};
 }

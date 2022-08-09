@@ -14,7 +14,7 @@ export function setup( params: Gtag.ConfigParams ) {
 	}
 }
 
-export function fireJetpackEcommercePurchase( purchase: GaPurchase, shouldSendToJetpack = false ) {
+export function fireEcommercePurchase( purchase: GaPurchase, shouldSendToJetpack = false ) {
 	const send_to = shouldSendToJetpack
 		? TRACKING_IDS.jetpackGoogleGA4Gtag
 		: TRACKING_IDS.wpcomGoogleGA4Gtag;
