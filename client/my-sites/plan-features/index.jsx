@@ -749,11 +749,13 @@ export class PlanFeatures extends Component {
 			'is-available': feature.availableForCurrentPlan,
 		} );
 
+		const hideInfoPopover = feature.hideInfoPopover || ! description;
+
 		return (
 			<PlanFeaturesItem
 				key={ index }
 				description={ description }
-				hideInfoPopover={ feature.hideInfoPopover }
+				hideInfoPopover={ hideInfoPopover }
 				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
 				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>

@@ -286,6 +286,7 @@ $plan-features-sidebar-width: 272px;
 
 			& .plan-features-comparison__item-info-container {
 				display: flex;
+				align-items: flex-start;
 
 				&.plan-features-comparison__item-info-annual-only {
 					margin-top: 10px;
