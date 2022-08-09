@@ -26,7 +26,6 @@ const SearchResultsPage = ( {
 	categoryName,
 	setIsFetchingPluginsBySearchTerm,
 } ) => {
-
 	const {
 		plugins: pluginsBySearchTerm = [],
 		isFetching: isFetchingPluginsBySearchTerm,
