@@ -15,36 +15,33 @@ export default function PostsList() {
 	const query = {
 		// author,
 		// category,
-		// number: 20, // max supported by /me/posts endpoint for all-sites mode
-		order: 'DESC',
-		// search,
+		number: 20, // max supported by /me/posts endpoint for all-sites mode
+		// order: 'DESC',
+		// search: 'world',
 		// site_visibility: ! siteId ? 'visible' : undefined,
-		// status,
+		// status: 'publish',
 		// tag,
 		// type: 'post',
 	};
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const posts = useSelector( ( state ) => {
-		return getPostsForQuery( state, selectedSiteId );
+		return getPostsForQuery( state, selectedSiteId, query );
 	} );
 	const isLoading = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, query )
 	);
 
-	if ( isLoading ) {
-		return (
-			<div className="posts-list__loading-container">
-				<LoadingEllipsis />
-			</div>
-		);
-	}
-
 	const isEmpty = ! posts || ! posts.length;
 	return (
 		<>
-			<QueryPosts siteId={ selectedSiteId } query={ { query } } postId={ null } />
-			{ isEmpty && (
+			<QueryPosts siteId={ selectedSiteId } query={ query } postId={ null } />
+			{ isLoading && (
+				<div className="posts-list__loading-container">
+					<LoadingEllipsis />
+				</div>
+			) }
+			{ ! isLoading && isEmpty && (
 				<EmptyContent
 					title={ translate( 'No promoted posts' ) }
 					line={ 'attributes.line' }
@@ -55,7 +52,7 @@ export default function PostsList() {
 					illustrationWidth={ 150 }
 				/>
 			) }
-			{ ! isEmpty && (
+			{ ! isLoading && ! isEmpty && (
 				<>
 					{ posts.map( function ( post: Post ) {
 						return <PostItem key={ post.ID } post={ post } />;
