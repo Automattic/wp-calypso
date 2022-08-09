@@ -13,8 +13,10 @@ function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpS
 	const translate = useTranslate();
 
 	useEffect( () => {
-		loadDSPWidgetJS();
-	}, [] );
+		if ( isModuleActive ) {
+			loadDSPWidgetJS();
+		}
+	} );
 
 	if ( ! isModuleActive ) {
 		return null;
