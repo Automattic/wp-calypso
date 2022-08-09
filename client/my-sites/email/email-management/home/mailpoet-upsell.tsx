@@ -4,13 +4,11 @@ import { useSelector } from 'react-redux';
 import mailpoetSymbol from 'calypso/assets/images/email-providers/mailpoet-symbol.svg';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { mailPoetPlugin } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export default function MailPoetUpsell() {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
-	const mailPoetPluginUrl = mailPoetPlugin( selectedSite?.slug );
 
 	return (
 		<div className="mailpoet-upsell">
@@ -31,7 +29,7 @@ export default function MailPoetUpsell() {
 				</div>
 
 				<Button
-					href={ mailPoetPluginUrl }
+					href={ `/plugins/mailpoet/${ selectedSite?.slug }` }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_email_management_mailpoet_upsell_click' );
 					} }
