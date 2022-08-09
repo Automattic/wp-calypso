@@ -536,8 +536,8 @@ function isAllowedOrigin( urlOrigin ) {
 	// are allowed without further check
 	return (
 		wpcomAllowedOrigins.includes( urlOrigin ) ||
-		urlOrigin.match( /^https:\/\/[a-z0-9-]+\.calypso\.live$/ ) ||
-		urlOrigin.match( /^https:\/\/([a-z0-9-]+\.)+wordpress\.com$/ )
+		urlOrigin.test( /^https:\/\/[a-z0-9-]+\.calypso\.live$/ ) ||
+		urlOrigin.test( /^https:\/\/([a-z0-9-]+\.)+wordpress\.com$/ )
 	);
 }
 
