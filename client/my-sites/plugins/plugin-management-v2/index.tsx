@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import PluginsTable from './plugins-table';
 import type { Plugin } from './types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -24,12 +24,33 @@ export default function PluginManagementV2( {
 			key: 'plugin',
 			title: translate( 'Installed Plugins' ),
 		},
-		{
-			key: 'sites',
-			title: translate( 'Sites' ),
-			smallColumn: true,
-			colSpan: 2,
-		},
+		...( selectedSite
+			? [
+					{
+						key: 'activate',
+						title: translate( 'Active' ),
+						smallColumn: true,
+					},
+					{
+						key: 'autoupdate',
+						title: translate( 'Autoupdate' ),
+						smallColumn: true,
+					},
+					{
+						key: 'last-updated',
+						title: translate( 'Last updated' ),
+						smallColumn: true,
+						colSpan: 2,
+					},
+			  ]
+			: [
+					{
+						key: 'sites',
+						title: translate( 'Sites' ),
+						smallColumn: true,
+						colSpan: 2,
+					},
+			  ] ),
 	];
 
 	if ( ! plugins.length && ! isLoading ) {
