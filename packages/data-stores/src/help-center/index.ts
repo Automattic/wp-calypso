@@ -26,6 +26,7 @@ export function register(): typeof STORE_KEY {
 				'userDeclaredSite',
 				'userDeclaredSiteUrl',
 				'directlyData',
+				'routerState',
 			],
 		} );
 		isRegistered = true;

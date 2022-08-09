@@ -2,8 +2,8 @@ import { CardHeader, Button, Flex } from '@wordpress/components';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import type { Header, WindowState } from '../types';
 import type { ReactElement } from 'react';
@@ -61,17 +61,11 @@ const HelpCenterHeader: React.FC< Header > = ( {
 		onMaximize?.();
 	}
 
-	// kill the help center when the user closes the popup chat window
-	useEffect( () => {
-		if ( chatWindowStatus === 'ended' ) {
-			onDismiss?.();
-		}
-	}, [ chatWindowStatus, onDismiss ] );
-
 	useHCWindowCommunicator( setChatWindowStatus, setUnreadCount );
 
 	return (
 		<CardHeader className={ classNames }>
+			{ chatWindowStatus === 'ended' && <Redirect to="/"></Redirect> }
 			<Flex>
 				<p id="header-text" className="help-center-header__text">
 					{ isMinimized ? (

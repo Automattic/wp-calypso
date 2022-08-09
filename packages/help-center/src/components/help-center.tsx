@@ -33,14 +33,11 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	} );
 
 	// prefetch the current site and user
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
-	const user = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
+	useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
-	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT', isSimpleSite );
-	const { data: supportData, isLoading: isSupportDataLoading } = useSupportAvailability(
-		'OTHER',
-		isSimpleSite
-	);
+	useSupportAvailability( 'CHAT', isSimpleSite );
+	const { data: supportData } = useSupportAvailability( 'OTHER', isSimpleSite );
 	useStillNeedHelpURL();
 
 	useEffect( () => {
@@ -53,10 +50,6 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 			] );
 		}
 	}, [ supportData, setDirectlyData ] );
-
-	const isLoading = isSimpleSite
-		? [ ! site, ! user, isSupportDataLoading, isLoadingChat ].some( Boolean )
-		: false;
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
@@ -77,10 +70,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 		};
 	}, [ portalParent ] );
 
-	return createPortal(
-		<HelpCenterContainer handleClose={ handleClose } isLoading={ isLoading } />,
-		portalParent
-	);
+	return createPortal( <HelpCenterContainer handleClose={ handleClose } />, portalParent );
 };
 
 export default HelpCenter;
