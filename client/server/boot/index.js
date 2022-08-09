@@ -7,6 +7,7 @@ import api from 'calypso/server/api';
 import config from 'calypso/server/config';
 import analytics from 'calypso/server/lib/analytics';
 import loggerMiddleware from 'calypso/server/middleware/logger';
+import profilerMiddleware from 'calypso/server/middleware/profiler';
 import pages from 'calypso/server/pages';
 import pwa from 'calypso/server/pwa';
 
@@ -24,6 +25,10 @@ export default function setup() {
 	app.use( cookieParser() );
 	app.use( userAgent.express() );
 	app.use( loggerMiddleware() );
+
+	if ( process.env.USE_PROFILER ) {
+		app.use( profilerMiddleware() );
+	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		require( 'calypso/server/bundler' )( app );
