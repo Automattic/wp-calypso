@@ -183,9 +183,11 @@ import {
 	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2,
 	FEATURE_UNLIMITED_USERS_V2,
 	FEATURE_EMAIL_SUPPORT_V2,
+	FEATURE_ADVANCED_SEO_V2,
 	FEATURE_COLLECT_PAYMENTS_V3,
 	/* END - WPCOM Plan grid features update experiment */
 } from '@automattic/calypso-products';
+import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
@@ -1590,8 +1592,17 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_BASIC_DESIGN_V2 ]: {
 		getSlug: () => FEATURE_BASIC_DESIGN,
-		getTitle: () => i18n.translate( 'CSS customization available for $2 extra.' ),
-		getDescription: () => i18n.translate( 'CSS customization available for $2 extra.' ),
+		getTitle: ( meta ) => {
+			return i18n.translate( 'CSS customization available for %(price)s extra.', {
+				args: {
+					price: formatCurrency( meta?.price, meta?.currency, {
+						stripZeros: true,
+					} ),
+				},
+				comment: 'Translators: CSS customization available for $2 extra.',
+			} );
+		},
+		getDescription: '',
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
 	},
 
@@ -1728,6 +1739,14 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Unlimited email support' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
+	},
+	[ FEATURE_ADVANCED_SEO_V2 ]: {
+		getSlug: () => FEATURE_ADVANCED_SEO,
+		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
+		getDescription: () =>
+			i18n.translate(
+				'Boost traffic to your site with tools that make your content more findable on search engines and social media.'
+			),
 	},
 	/* END - WPCOM Plan grid features update experiment */
 };
