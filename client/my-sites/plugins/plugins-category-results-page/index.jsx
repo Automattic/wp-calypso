@@ -1,9 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
-import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
-import ClearSearchButton from '../plugins-browser/clear-search-button';
+import FullListView from '../plugins-browser/full-list-view';
 import usePlugins from '../use-plugins';
 
 const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
@@ -33,25 +31,17 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	}
 
 	return (
-		<>
-			<PluginsBrowserList
-				plugins={ plugins }
-				listName={ category }
-				subtitle={
-					<>
-						{ title }
-						<ClearSearchButton />
-					</>
-				}
-				site={ siteSlug }
-				showPlaceholders={ isFetching }
-				currentSites={ sites }
-				variant={ PluginsBrowserListVariant.InfiniteScroll }
-				extended
-			/>
-
-			<InfiniteScroll nextPageMethod={ fetchNextPage } />
-		</>
+		<FullListView
+			plugins={ plugins }
+			listName={ category }
+			title={ title }
+			site={ siteSlug }
+			showPlaceholders={ isFetching }
+			currentSites={ sites }
+			variant={ PluginsBrowserListVariant.InfiniteScroll }
+			fetchNextPage={ fetchNextPage }
+			extended
+		/>
 	);
 };
 

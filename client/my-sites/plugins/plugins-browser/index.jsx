@@ -381,7 +381,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			/>
 
 			{ ! search && <Categories selected={ category } /> }
-			{ category && (
+			{ category && ! search && (
 				<div className="plugins-browser__main-container">
 					<PluginsCategoryResultsPage category={ category } sites={ sites } siteSlug={ siteSlug } />
 				</div>

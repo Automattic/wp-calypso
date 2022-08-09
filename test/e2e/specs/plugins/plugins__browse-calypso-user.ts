@@ -74,6 +74,18 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		] )( 'Featured Plugins section should show the %s plugin', async function ( plugin: string ) {
 			await pluginsPage.validateHasPluginOnSection( 'featured', plugin );
 		} );
+
+		it( 'Can browse SEO category', async function () {
+			await pluginsPage.clickCategoryButton( 'Search Engine Optimization' );
+			await pluginsPage.validateHasSubtitle( 'Search Engine Optimization' );
+		} );
+
+		it.each( [ 'Yoast SEO' ] )(
+			'SEO category should show the %s plugin',
+			async function ( plugin: string ) {
+				await pluginsPage.validateHasPluginOnSection( 'seo', plugin );
+			}
+		);
 	} );
 
 	describe( 'Plugins page /plugins/:wpcom-site', function () {

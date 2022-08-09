@@ -17,6 +17,8 @@ const selectors = {
 	sectionTitles: '.plugins-browser-list__title',
 	browseAllFree: 'a[href^="/plugins/browse/popular"]',
 	browseAllPaid: 'a[href^="/plugins/browse/paid"]',
+	browseFirstCategory: 'button:has-text("Search Engine Optimization")',
+	categoryButton: ( section: string ) => `button:has-text("${ section }")`,
 	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
@@ -134,6 +136,14 @@ export class PluginsPage {
 	 */
 	async clickBrowseAllPaidPlugins(): Promise< void > {
 		await this.page.click( selectors.browseAllPaid );
+	}
+
+	/**
+	 * Click Category Button
+	 */
+	async clickCategoryButton( category: string ): Promise< void > {
+		const categoryLocator = this.page.locator( selectors.categoryButton( category ) );
+		await categoryLocator.nth( 1 ).click();
 	}
 
 	/**
