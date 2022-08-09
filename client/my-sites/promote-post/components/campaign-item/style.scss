@@ -1,0 +1,24 @@
+.campaign-item__header {
+	display: flex;
+
+	.campaign-item__header-image {
+		height: 80px;
+		width: 80px;
+		margin-right: 20px;
+
+		img {
+			height: 80px;
+			width: 80px;
+		}
+	}
+
+	.campaign-item__header-content {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+
+		.campaign-item__header-title {
+			font-weight: 500;
+		}
+	}
+}

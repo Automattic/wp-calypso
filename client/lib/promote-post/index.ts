@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 declare global {
@@ -65,3 +66,20 @@ export function recordDSPEntryPoint( entryPoint: string ) {
 		bumpStat( 'calypso_dsp_widget_start', entryPoint )
 	);
 }
+
+export const requestDSP = async < T >(
+	siteId: number,
+	apiUri: string,
+	method = 'GET',
+	body: Record< string, any > | undefined = undefined
+): Promise< T > => {
+	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v1`;
+	const path = `${ URL_BASE }${ apiUri }`;
+	await requestAllBlogsAccess();
+	return await request< T >( {
+		path,
+		method,
+		body,
+		apiNamespace: 'wpcom/v2',
+	} );
+};
