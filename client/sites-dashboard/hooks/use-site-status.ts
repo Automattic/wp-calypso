@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import type { SiteStatus } from '@automattic/components/dist/types/sites-table/use-sites-table-filtering';
+import type { SiteStatus } from '@automattic/components';
 
 interface UseSiteStatusResult {
 	status: SiteStatus;

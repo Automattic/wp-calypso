@@ -21,6 +21,7 @@ export { SpinnerExample } from './spinner/example';
 export { default as WordPressLogo } from './wordpress-logo';
 export { ListTile } from './list-tile';
 export { useSitesTableFiltering } from './sites-table/use-sites-table-filtering';
+export type { SiteStatus } from './sites-table/use-sites-table-filtering';
 export { useSitesTableSorting } from './sites-table/use-sites-table-sorting';
 export { SitesTableTabPanel } from './sites-table/sites-table-tab-panel';
 export { LoadingPlaceholder } from './loading-placeholder';
