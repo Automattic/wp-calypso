@@ -19,6 +19,8 @@ import {
 	isWpComEcommercePlan,
 	getPlanClass,
 	FEATURE_BLANK,
+	FEATURE_BASIC_DESIGN,
+	PRODUCT_WPCOM_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
@@ -32,6 +34,7 @@ import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableCard from 'calypso/components/foldable-card';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -54,6 +57,7 @@ import {
 	getPlanSlug,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
+import { getProductCost } from 'calypso/state/products-list/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -126,6 +130,7 @@ export class PlanFeatures extends Component {
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
+				<QueryProductsList />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">
@@ -763,7 +768,7 @@ export class PlanFeatures extends Component {
 			>
 				<span className={ classes }>
 					{ this.renderAnnualPlansFeatureNotice( feature ) }
-					<span className="plan-features__item-title">{ feature.getTitle() }</span>
+					<span className="plan-features__item-title">{ feature.getTitle( feature.meta ) }</span>
 				</span>
 			</PlanFeaturesItem>
 		);
@@ -773,7 +778,8 @@ export class PlanFeatures extends Component {
 		const { planProperties, selectedFeature, withScroll } = this.props;
 
 		return map( planProperties, ( properties ) => {
-			const { availableForPurchase, features, planName } = properties;
+			const { availableForPurchase, features, planName, currencyCode, productCustomDesignCost } =
+				properties;
 
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
@@ -781,6 +787,13 @@ export class PlanFeatures extends Component {
 
 			if ( currentFeature?.getSlug() === FEATURE_BLANK ) {
 				currentFeature = null;
+			}
+
+			if ( currentFeature?.getSlug() === FEATURE_BASIC_DESIGN ) {
+				currentFeature.meta = {
+					price: productCustomDesignCost,
+					currency: currencyCode,
+				};
 			}
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
@@ -950,6 +963,10 @@ const ConnectedPlanFeatures = connect(
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
 				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
+
+				const currencyCode = getCurrentUserCurrencyCode( state );
+				const productCustomDesignCost = getProductCost( state, PRODUCT_WPCOM_CUSTOM_DESIGN ) / 12;
+
 				const newPlan = false;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
@@ -1024,7 +1041,8 @@ const ConnectedPlanFeatures = connect(
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
-					currencyCode: getCurrentUserCurrencyCode( state ),
+					currencyCode,
+					productCustomDesignCost,
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
 					features: planFeatures,

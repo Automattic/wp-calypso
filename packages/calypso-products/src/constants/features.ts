@@ -274,5 +274,6 @@ export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS_V2 = 'live-chat-support-bus
 export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2 = 'live-chat-support-all-days-v2';
 export const FEATURE_UNLIMITED_USERS_V2 = 'unlimited-users-v2';
 export const FEATURE_EMAIL_SUPPORT_V2 = 'email-support-v2';
+export const FEATURE_ADVANCED_SEO_V2 = 'advanced-seo-v2';
 export const FEATURE_COLLECT_PAYMENTS_V3 = 'collect-payments-v3';
 /* END - WPCOM Plan grid features update experiment */
