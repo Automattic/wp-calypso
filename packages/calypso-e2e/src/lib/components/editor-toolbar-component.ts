@@ -36,9 +36,6 @@ const selectors = {
 	// Details popover
 	detailsButton: `${ panel } button[aria-label="Details"]`,
 
-	// Details popover
-	resetSearchButton: `.block-editor-inserter__content button[aria-label="Reset search"]`,
-
 	// Editor settings
 	settingsButton: ( label = settingsButtonLabel ) =>
 		`${ panel } .edit-post-header__settings .interface-pinned-items button[aria-label="${ label }"]`,
