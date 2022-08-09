@@ -2,7 +2,7 @@ import { ResponsiveToolbarGroup } from '@automattic/components';
 import page from 'page';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { ALLOWED_REAL_CATEGORIES, useCategories } from './use-categories';
+import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
 import { useGetCategoryUrl } from './use-get-category-url';
 
 export type Category = {
@@ -17,7 +17,11 @@ export type Category = {
 const Categories = ( { selected }: { selected?: string } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
-	const categories = Object.values( useCategories( ALLOWED_REAL_CATEGORIES ) );
+
+	const displayCategories = ALLOWED_CATEGORIES.filter(
+		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
+	);
+	const categories = Object.values( useCategories( displayCategories ) );
 	const categoryUrls = categories.map( ( { slug } ) => getCategoryUrl( slug ) );
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
@@ -31,12 +35,11 @@ const Categories = ( { selected }: { selected?: string } ) => {
 		page( getCategoryUrl( category.slug ) );
 	};
 
-	if ( selected && ! ALLOWED_REAL_CATEGORIES.includes( selected ) ) {
+	if ( selected && ! displayCategories.includes( selected ) ) {
 		return <div></div>;
 	}
 
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
-	const isBrowser = typeof window !== 'undefined';
 
 	return (
 		<ResponsiveToolbarGroup
@@ -44,7 +47,7 @@ const Categories = ( { selected }: { selected?: string } ) => {
 			initialActiveIndex={ current }
 			onClick={ onClick }
 			hrefList={ categoryUrls }
-			forceMode={ isBrowser ? undefined : 'swipe' }
+			forceSwipe={ 'undefined' === typeof window }
 		>
 			{ categories.map( ( category ) => (
 				<span key={ `category-${ category.slug }` }>{ category.name }</span>

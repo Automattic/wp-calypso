@@ -6,7 +6,18 @@ import SwipeGroup from './swipe-group';
 
 import './style.scss';
 
-interface Props {
+const ResponsiveToolbarGroup = ( {
+	children,
+	className = '',
+	hideRatio = 0.99,
+	showRatio = 1,
+	rootMargin = '0px',
+	onClick = () => null,
+	initialActiveIndex = -1,
+	swipeBreakpoint = '<660px',
+	hrefList = [],
+	forceSwipe = false,
+}: {
 	children: ReactChild[];
 	className?: string;
 	hideRatio?: number;
@@ -24,25 +35,12 @@ interface Props {
 	/**
 	 * Rendering mode
 	 */
-	forceMode?: 'swipe' | 'dropdown';
-}
-
-const ResponsiveToolbarGroup = ( {
-	children,
-	className = '',
-	hideRatio = 0.99,
-	showRatio = 1,
-	rootMargin = '0px',
-	onClick = () => null,
-	initialActiveIndex = -1,
-	swipeBreakpoint = '<660px',
-	hrefList = [],
-	forceMode,
-}: Props ) => {
+	forceSwipe?: boolean;
+} ) => {
 	const classes = classnames( 'responsive-toolbar-group', className );
-	const shouldSwipe = useBreakpoint( swipeBreakpoint );
+	const shouldSwipe = useBreakpoint( swipeBreakpoint ) || forceSwipe;
 
-	if ( forceMode === 'swipe' || ( ! forceMode && shouldSwipe ) ) {
+	if ( shouldSwipe ) {
 		return (
 			<SwipeGroup
 				className={ classes }
