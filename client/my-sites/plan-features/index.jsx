@@ -38,6 +38,7 @@ import SpinnerLine from 'calypso/components/spinner-line';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getDiscountByName } from 'calypso/lib/discounts';
+import { useExperiment } from 'calypso/lib/explat';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -913,6 +914,7 @@ const ConnectedPlanFeatures = connect(
 			visiblePlans,
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
+			isPlansPageQuickImprovements,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -953,7 +955,9 @@ const ConnectedPlanFeatures = connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
-				const features = planConstantObj.getPlanCompareFeatures();
+				const features = isPlansPageQuickImprovements
+					? planConstantObj.getPlanCompareFeaturesV2()
+					: planConstantObj.getPlanCompareFeatures();
 
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
@@ -977,7 +981,7 @@ const ConnectedPlanFeatures = connect(
 
 							break;
 						default:
-							if ( planConstantObj.getSignupFeatures ) {
+							if ( ! isPlansPageQuickImprovements && planConstantObj.getSignupFeatures ) {
 								planFeatures = getPlanFeaturesObject(
 									planConstantObj.getSignupFeatures( currentPlan )
 								);
@@ -1061,6 +1065,7 @@ const ConnectedPlanFeatures = connect(
 			canPurchase,
 			isJetpack,
 			planProperties,
+			isPlansPageQuickImprovements,
 			selectedSiteSlug,
 			purchaseId,
 			siteIsPrivate,
@@ -1085,9 +1090,20 @@ const ConnectedPlanFeatures = connect(
 /* eslint-enable */
 
 export default function PlanFeaturesWrapper( props ) {
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'pricing_packaging_plans_page_quick_improvements'
+	);
+
+	if ( isLoadingExperimentAssignment ) {
+		return null;
+	}
+
 	return (
 		<CalypsoShoppingCartProvider>
-			<ConnectedPlanFeatures { ...props } />
+			<ConnectedPlanFeatures
+				{ ...props }
+				isPlansPageQuickImprovements={ 'treatment' === experimentAssignment?.variationName }
+			/>
 		</CalypsoShoppingCartProvider>
 	);
 }
