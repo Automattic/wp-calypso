@@ -29,7 +29,7 @@ export function useSitesTableFiltering(
 	const [ statuses, filteredByStatus ] = useMemo( () => {
 		const statuses = [
 			{ name: 'all', title: __( 'All Sites' ), count: 0 },
-			{ name: 'launched', title: __( 'Launched' ), count: 0 },
+			{ name: 'public', title: __( 'Public' ), count: 0 },
 			{ name: 'private', title: __( 'Private' ), count: 0 },
 			{ name: 'coming-soon', title: __( 'Coming Soon' ), count: 0 },
 		];
@@ -61,7 +61,7 @@ function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerp
 			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 
 		switch ( filterType ) {
-			case 'launched':
+			case 'public':
 				return ! site.is_private && ! isComingSoon;
 			case 'private':
 				return site.is_private && ! isComingSoon;
