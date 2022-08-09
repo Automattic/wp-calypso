@@ -24,10 +24,12 @@
 	}
 }
 
-.email-list-active__item-icon {
+.email-list-active__item-icon,
+.mailpoet-upsell__icon {
 	align-self: center;
 
 	> img, svg {
+		display: block;
 		height: 36px;
 		margin-right: 16px;
 		min-height: 36px;
@@ -118,7 +120,8 @@
 	}
 }
 
-.email-list-inactive {
+.email-list-inactive,
+.mailpoet-upsell {
 	margin-top: 15px;
 
 	> .card {
@@ -132,6 +135,25 @@
 			flex: 1 1 auto;
 			line-height: 40px;
 		}
+	}
+}
+
+.mailpoet-upsell {
+	margin-top: 15px;
+
+	.button {
+		flex-shrink: 0;
+	}
+}
+
+.mailpoet-upsell__text {
+	flex: 1 1 auto;
+	margin-right: 14px;
+
+	> p {
+		color: var( --color-text-subtle );
+		font-size: 0.875rem;
+		margin-bottom: 0;
 	}
 }
 

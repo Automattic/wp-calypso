@@ -16,6 +16,7 @@ import EmailListActive from 'calypso/my-sites/email/email-management/home/email-
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
+import MailPoetUpsell from 'calypso/my-sites/email/email-management/home/mailpoet-upsell';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-comparison/stacked';
 import { emailManagementTitanSetUpMailbox, emailManagement } from 'calypso/my-sites/email/paths';
@@ -216,6 +217,8 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 					selectedSiteSlug={ selectedSite?.slug }
 					source={ source }
 				/>
+
+				<MailPoetUpsell />
 			</>
 		</ContentWithHeader>
 	);

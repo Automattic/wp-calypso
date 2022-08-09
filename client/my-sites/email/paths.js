@@ -295,6 +295,16 @@ export function emailManagementInbox( siteName = null ) {
 	return `/inbox`;
 }
 
+/**
+ * Retrieves the url of the MailPoet plugin in the marketplace
+ *
+ * @param {string|null|undefined} siteName - slug of the current site
+ * @returns {string} the corresponding url
+ */
+export function mailPoetPlugin( siteName ) {
+	return `/plugins/mailpoet/${ siteName }`;
+}
+
 export function isUnderEmailManagementAll( path ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
