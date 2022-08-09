@@ -96,13 +96,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					subtitle={
 						<ListTileSubtitle>
 							<SiteUrl
-								className={ css( { lineHeight: 1 } ) }
 								href={ site.URL }
 								target="_blank"
-								rel="noreferrer"
+								rel="noopener noreferrer"
 								title={ site.URL }
 							>
 								{ displaySiteUrl( site.URL ) }
+								<ExternalLinkIcon icon={ 'external' } size={ 18 } />
 							</SiteUrl>
 						</ListTileSubtitle>
 					}
