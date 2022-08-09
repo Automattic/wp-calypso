@@ -11,8 +11,9 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import './style.scss';
 
-export function ManageSitePluginsDialog( { isVisible, onClose, plugin } ) {
+export const ManageSitePluginsDialog = ( { isVisible, onClose, plugin } ) => {
 	const translate = useTranslate();
 
 	const billingPeriod = useSelector( getBillingInterval );
@@ -74,8 +75,8 @@ export function ManageSitePluginsDialog( { isVisible, onClose, plugin } ) {
 			/>
 
 			<Button className="manage-site-plugins-dialog__finish-button" onClick={ onClose } primary>
-				{ translate( 'Finished' ) }
+				{ translate( 'Close' ) }
 			</Button>
 		</Dialog>
 	);
-}
+};
