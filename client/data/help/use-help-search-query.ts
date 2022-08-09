@@ -15,7 +15,7 @@ export const useHelpSearchQuery = (
 	if ( search ) {
 		params.append( 'query', search );
 	}
-
+	console.log( 'useHelpSearchQuery: enabled', !! search );
 	return useQuery< { wordpress_support_links: LinksForSection[] } >(
 		[ 'help', search ],
 		() => wpcomRequest( { path: '/help/search', query: params.toString(), apiVersion: '1.1' } ),

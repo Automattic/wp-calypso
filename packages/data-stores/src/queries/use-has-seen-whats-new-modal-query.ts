@@ -22,6 +22,7 @@ interface APIFetchOptions {
 }
 
 export const useHasSeenWhatsNewModalQuery = ( siteId: number | null ) => {
+	console.log( 'useHasSeenWhatsNewModalQuery: enabled', !! siteId );
 	const queryKey = 'has-seen-whats-new-modal';
 
 	const { data, isLoading } = useQuery< { has_seen_whats_new_modal: boolean } >(
