@@ -2,6 +2,8 @@
 
 /* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
+import { HelpCenter } from '@automattic/data-stores';
+import { withSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map, pickBy, flowRight } from 'lodash';
@@ -54,13 +56,14 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isAppBannerDismissed from 'calypso/state/ui/selectors/app-banner-is-dismissed';
-import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';
 import * as T from 'calypso/types';
 import Iframe from './iframe';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { Placeholder } from './placeholder';
 import type { RequestCart } from '@automattic/shopping-cart';
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
@@ -80,6 +83,7 @@ interface Props {
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
 	blockEditorSettings: BlockEditorSettings;
+	isHelpCenterVisible: boolean | undefined;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -171,7 +175,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 	}
 
-	componentDidUpdate( { shouldLoadIframe }: ComponentProps ) {
+	componentDidUpdate( {
+		shouldLoadIframe,
+		isHelpCenterVisible: previousIsHelpCenterVisible,
+	}: ComponentProps ) {
 		// Redirect timer stage 1. Starts when shouldLoadIframe turns to true if
 		// not already triggered in componentDidMount
 		if ( ! this.editorRedirectTimer && ! shouldLoadIframe && this.props.shouldLoadIframe ) {
@@ -182,8 +189,8 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			this.handleAppBannerDismiss();
 		}
 
-		//We check to not sending messages if value has not changed
-		if ( this.state.helpCenterVisible !== this.props.isHelpCenterVisible ) {
+		// We check to not sending messages if value has not changed
+		if ( previousIsHelpCenterVisible !== this.props.isHelpCenterVisible ) {
 			this.handleHelpCenterShowing();
 		}
 	}
@@ -691,7 +698,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 	handleHelpCenterShowing = () => {
 		if ( this.helpCenterPort ) {
-			this.setState( { helpCenterVisible: this.props.isHelpCenterVisible } );
 			this.helpCenterPort.postMessage( {
 				isHelpCenterVisible: this.props.isHelpCenterVisible,
 			} );
@@ -897,7 +903,6 @@ const mapStateToProps = (
 		shouldDisplayAppBanner: displayAppBanner,
 		appBannerDismissed: isAppBannerDismissed( state ),
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
-		isHelpCenterVisible: isHelpCenterVisible( state ),
 	};
 };
 
@@ -915,12 +920,21 @@ const mapDispatchToProps = {
 	clearLastNonEditorRoute,
 };
 
+const ConnectedComponent = connect( mapStateToProps, mapDispatchToProps )( CalypsoifyIframe );
+
+const DataStoresConnectedComponent = withSelect( ( select, ownProps ) => {
+	const isHelpCenterShown = select( HELP_CENTER_STORE ).isHelpCenterShown();
+	return (
+		<ConnectedComponent { ...( ownProps as Props ) } isHelpCenterVisible={ isHelpCenterShown } />
+	);
+} );
+
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
 
 export default flowRight(
 	withStopPerformanceTrackingProp,
 	withBlockEditorSettings,
-	connect( mapStateToProps, mapDispatchToProps ),
+	DataStoresConnectedComponent,
 	localize,
 	protectForm
 )( CalypsoifyIframe );
