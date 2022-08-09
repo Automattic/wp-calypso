@@ -8,12 +8,17 @@ import { setup, firePageView } from '../ad-tracking/google-analytics-4';
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 describe( 'Google Analytics 4 implementation', () => {
-	beforeAll( () => {
+	beforeEach( () => {
 		jest.spyOn( window, 'gtag' ).mockImplementation( () => [] );
+		// window.gtag = jest.fn( () => [] );
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	describe( 'Google Analytics 4 initialization on Jetpack Cloud and WPcom', () => {
-		test( 'Only fire Jetpack Gtag on Jetpack Cloud', () => {
+		test( 'Fire Jetpack Gtag on Jetpack Cloud', () => {
 			// We're on Jetpack Cloud.
 			isJetpackCloud.mockReturnValue( true );
 			const params = {};
@@ -24,10 +29,14 @@ describe( 'Google Analytics 4 implementation', () => {
 				TRACKING_IDS.jetpackGoogleGA4Gtag,
 				params
 			);
+			// Should also init WPcom gtag.
+			expect( window.gtag ).toHaveBeenCalledWith(
+				'config',
+				TRACKING_IDS.wpcomGoogleGA4Gtag,
+				params
+			);
 		} );
 		test( 'Do not fire Jetpack Gtag on WPcom', () => {
-			jest.spyOn( window, 'gtag' ).mockImplementation( () => [] );
-
 			// We're not on Jetpack cloud.
 			isJetpackCloud.mockReturnValue( false );
 			const params = {};
