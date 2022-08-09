@@ -5,30 +5,16 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
+import { SitesGridTile } from './sites-grid-tile';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl } from './sites-site-url';
 
-const container = css( {
-	display: 'flex',
-	width: '100%',
-	flexDirection: 'column',
-	minWidth: 0,
-} );
-
-const siteTitle = css( {
-	display: 'flex',
-	flex: 1,
-	marginTop: '16px',
-	marginBottom: '8px',
-	alignItems: 'center',
-} );
-
 const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
 
-const siteThumbnail = css( {
+export const siteThumbnail = css( {
 	aspectRatio: '16 / 9',
 	width: '100%',
 	height: 'auto',
@@ -46,11 +32,11 @@ const ellipsis = css( {
 	},
 } );
 
-interface SitesTileItemProps {
+interface SitesGridItemProps {
 	site: SiteExcerptData;
 }
 
-export const SitesTileItem = ( { site }: SitesTileItemProps ) => {
+export const SitesGridItem = ( { site }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
@@ -62,26 +48,32 @@ export const SitesTileItem = ( { site }: SitesTileItemProps ) => {
 	};
 
 	return (
-		<div className={ container }>
-			<a { ...siteDashboardUrlProps }>
-				<SiteItemThumbnail className={ siteThumbnail } site={ site } />
-			</a>
-			<div className={ siteTitle }>
-				<SiteName fontSize={ 16 } { ...siteDashboardUrlProps }>
-					{ site.name ? site.name : __( '(No Site Title)' ) }
-				</SiteName>
+		<SitesGridTile
+			leading={
+				<a { ...siteDashboardUrlProps }>
+					<SiteItemThumbnail className={ siteThumbnail } site={ site } />
+				</a>
+			}
+			primary={
+				<>
+					<SiteName fontSize={ 16 } { ...siteDashboardUrlProps }>
+						{ site.name ? site.name : __( '(No Site Title)' ) }
+					</SiteName>
 
-				<div className={ badges }>
-					{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-					{ status !== 'public' && (
-						<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
-					) }
-					<SitesEllipsisMenu className={ ellipsis } site={ site } />
-				</div>
-			</div>
-			<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
-				{ displaySiteUrl( site.URL ) }
-			</SiteUrl>
-		</div>
+					<div className={ badges }>
+						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
+						{ status !== 'public' && (
+							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
+						) }
+						<SitesEllipsisMenu className={ ellipsis } site={ site } />
+					</div>
+				</>
+			}
+			secondary={
+				<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
+					{ displaySiteUrl( site.URL ) }
+				</SiteUrl>
+			}
+		/>
 	);
 };
