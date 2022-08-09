@@ -232,15 +232,23 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
+		const description = feature.getDescription
+			? feature.getDescription( undefined, this.props.domainName )
+			: null;
+
 		const classes = classNames( 'plan-features-comparison__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
 		} );
 
+		const hideInfoPopover = feature.hideInfoPopover || ! description;
+
 		return (
 			<>
 				<PlanFeaturesItem
 					key={ index }
+					description={ description }
+					hideInfoPopover={ hideInfoPopover }
 					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
 					isFeatureAvailable={ feature.availableForCurrentPlan }
 				>
