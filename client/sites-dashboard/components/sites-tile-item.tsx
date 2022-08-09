@@ -7,6 +7,7 @@ import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
+import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl } from './sites-site-url';
 
@@ -27,10 +28,10 @@ const siteTitle = css( {
 
 const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
 
-const siteImage = css( {
+const siteThumbnail = css( {
 	aspectRatio: '16 / 9',
 	width: '100%',
-	background: '#F6F7F7',
+	height: 'auto',
 } );
 
 const ellipsis = css( {
@@ -63,7 +64,7 @@ export const SitesTileItem = ( { site }: SitesTileItemProps ) => {
 	return (
 		<div className={ container }>
 			<a { ...siteDashboardUrlProps }>
-				<div className={ siteImage } />
+				<SiteItemThumbnail className={ siteThumbnail } site={ site } />
 			</a>
 			<div className={ siteTitle }>
 				<SiteName fontSize={ 16 } { ...siteDashboardUrlProps }>

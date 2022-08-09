@@ -1,14 +1,14 @@
-import { ListTile, SiteThumbnail } from '@automattic/components';
+import { ListTile } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
-import Image from 'calypso/components/image';
 import TimeSince from 'calypso/components/time-since';
 import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
+import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl } from './sites-site-url';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -64,17 +64,11 @@ const ListTileSubtitle = styled.div`
 	align-items: center;
 `;
 
-const NoIcon = styled.div( {
-	fontSize: 'xx-large',
-} );
-
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
-	const { status, translatedStatus } = useSiteStatus( site );
+	const { translatedStatus } = useSiteStatus( site );
 
 	const isP2Site = site.options?.is_wpforteams_site;
-
-	const shouldUseScreenshot = status === 'public';
 
 	return (
 		<Row>
@@ -88,23 +82,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteThumbnail
-								mShotsUrl={ shouldUseScreenshot ? site.URL : undefined }
-								alt={ site.name }
-								bgColorImgUrl={ site.icon?.img }
-							>
-								{ site.icon ? (
-									<Image
-										src={ site.icon.img }
-										alt={ __( 'Site Icon' ) }
-										style={ { height: '50px', width: '50px' } }
-									/>
-								) : (
-									<NoIcon role={ 'img' } aria-label={ __( 'Site Icon' ) }>
-										{ getFirstGrapheme( site.name ) }
-									</NoIcon>
-								) }
-							</SiteThumbnail>
+							<SiteItemThumbnail site={ site } />
 						</ListTileLeading>
 					}
 					title={
@@ -141,20 +119,3 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 		</Row>
 	);
 } );
-
-function getFirstGrapheme( input: string ) {
-	// TODO: once we're on Typescript 4.7 we should be able to add this comment:
-	//    /// <reference lib="es2022.intl" />
-	// to the top of the file to get access to the types for Intl.Segmenter
-	// which where added in microsoft/TypeScript#48800
-	// In the mean time we need to use the `any` type to fix type errors in CI.
-
-	try {
-		const segmenter = new ( Intl as any ).Segmenter();
-		const segments = segmenter.segment( input );
-		return ( Array.from( segments )[ 0 ] as any ).segment;
-	} catch {
-		// Intl.Segmenter is not available in all browsers
-		return input.charAt( 0 );
-	}
-}

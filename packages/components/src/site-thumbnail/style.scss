@@ -8,12 +8,12 @@
 	transition: background-color 1s ease-out;
 	border: 1px solid rgb( 238, 238, 238 );
 	box-sizing: border-box;
+	border-radius: 4px;
 }
 
 .site-thumbnail__size-small {
 	width: 108px;
 	height: 78px;
-	border-radius: 4px;
 }
 
 .site-thumbnail__size-medium {
