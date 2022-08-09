@@ -7,10 +7,10 @@ import { TRACKING_IDS } from './constants';
 import './setup';
 
 export function setup( params: Gtag.ConfigParams ) {
+	window.gtag( 'config', TRACKING_IDS.wpcomGoogleGA4Gtag, params );
+
 	if ( isJetpackCloud() ) {
 		window.gtag( 'config', TRACKING_IDS.jetpackGoogleGA4Gtag, params );
-	} else {
-		window.gtag( 'config', TRACKING_IDS.wpcomGoogleGA4Gtag, params );
 	}
 }
 
