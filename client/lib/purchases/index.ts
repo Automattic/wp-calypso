@@ -140,7 +140,7 @@ export function getPartnerName( purchase: Purchase ): string | null {
 export function getSubscriptionEndDate( purchase: Purchase ): string {
 	const localeSlug = i18n.getLocaleSlug();
 	return moment( purchase.expiryDate )
-		.locale( localeSlug ?? 'US' )
+		.locale( localeSlug ?? 'en' )
 		.format( 'LL' );
 }
 
