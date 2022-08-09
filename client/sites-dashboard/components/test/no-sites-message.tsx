@@ -10,8 +10,8 @@ describe( '<NoSitesMessage>', () => {
 		expect( screen.getByRole( 'link' ) ).toHaveTextContent( 'Create your first site' );
 	} );
 
-	test( '"You haven\'t launched a site" message when status filter shows "launched" sites', () => {
-		render( <NoSitesMessage status="launched" statusSiteCount={ 0 } /> );
+	test( '"You haven\'t launched a site" message when status filter shows "public" sites', () => {
+		render( <NoSitesMessage status="public" statusSiteCount={ 0 } /> );
 		expect( screen.getByText( "You haven't launched a site" ) ).toBeInTheDocument();
 	} );
 

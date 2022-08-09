@@ -121,7 +121,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 	const isP2Site = site.options?.is_wpforteams_site;
 
-	let siteStatusLabel = __( 'Live' );
+	let siteStatusLabel = __( 'Public' );
 
 	if ( isComingSoon ) {
 		siteStatusLabel = __( 'Coming soon' );

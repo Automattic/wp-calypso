@@ -33,7 +33,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 		return <h2>{ __( 'No sites match your search.' ) }</h2>;
 	}
 
-	if ( status === 'launched' ) {
+	if ( status === 'public' ) {
 		return (
 			<NoSitesLayout
 				title={ <Title> { __( "You haven't launched a site" ) } </Title> }
