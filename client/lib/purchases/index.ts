@@ -21,66 +21,80 @@ import {
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import i18n from 'i18n-calypso';
-import { find } from 'lodash';
 import moment from 'moment';
 import page from 'page';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { errorNotice } from 'calypso/state/notices/actions';
+import type { Purchase } from './types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type {
+	MembershipSubscription,
+	MembershipSubscriptionsSite,
+} from 'calypso/lib/purchases/types';
+import type { CalypsoDispatch } from 'calypso/state/types';
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { ReactChild } from 'react';
 
 const debug = debugFactory( 'calypso:purchases' );
 
-function getIncludedDomain( purchase ) {
-	return purchase.includedDomain;
+export interface SiteWithPurchases {
+	id: number;
+	name: string;
+	slug: string;
+	isDomainOnly: boolean;
+	title: string;
+	purchases: Purchase[];
+	domain: string;
 }
+export type TracksProps = Record< string, string | number | boolean >;
+export type Thunk = ( dispatch: CalypsoDispatch ) => void;
 
 /**
  * Returns an array of sites objects, each of which contains an array of purchases.
- *
- * @param {Array} purchases An array of purchase objects.
- * @param {Array} sites An array of site objects
- * @returns {Array} An array of sites with purchases attached.
  */
-function getPurchasesBySite( purchases, sites ) {
+export function getPurchasesBySite(
+	purchases: Purchase[],
+	sites: SiteData[]
+): SiteWithPurchases[] {
 	return purchases
-		.reduce( ( result, currentValue ) => {
-			const site = find( result, { id: currentValue.siteId } );
+		.reduce( ( result: SiteWithPurchases[], currentValue ) => {
+			const site = result.find( ( site ) => site.id === currentValue.siteId );
+
 			if ( site ) {
 				site.purchases = site.purchases
 					.concat( currentValue )
 					.sort( ( a, b ) => ( a.id > b.id ? 1 : -1 ) );
-			} else {
-				const siteObject = find( sites, { ID: currentValue.siteId } );
-
-				result = result.concat( {
-					id: currentValue.siteId,
-					name: currentValue.siteName,
-					/* if the purchase is attached to a deleted site,
-					 * there will be no site with this ID in `sites`, so
-					 * we fall back on the domain. */
-					slug: siteObject ? siteObject.slug : currentValue.domain,
-					isDomainOnly: siteObject ? siteObject.options.is_domain_only : false,
-					title: currentValue.siteName || currentValue.domain || '',
-					purchases: [ currentValue ],
-					domain: siteObject ? siteObject.domain : currentValue.domain,
-				} );
+				return result;
 			}
 
-			return result;
+			const siteObject = sites.find( ( site ) => site.ID === currentValue.siteId );
+
+			return result.concat( {
+				id: currentValue.siteId,
+				name: currentValue.siteName,
+				/* if the purchase is attached to a deleted site,
+				 * there will be no site with this ID in `sites`, so
+				 * we fall back on the domain. */
+				slug: siteObject ? siteObject.slug : currentValue.domain,
+				isDomainOnly: siteObject?.options?.is_domain_only ?? false,
+				title: currentValue.siteName || currentValue.domain || '',
+				purchases: [ currentValue ],
+				domain: siteObject ? siteObject.domain : currentValue.domain,
+			} );
 		}, [] )
 		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 ) );
 }
 
 /**
  * Returns an array of sites objects, each of which contains an array of subscriptions.
- *
- * @param {import('calypso/lib/purchases/types').MembershipSubscription[]} subscriptions An array of subscription objects.
- * @returns {import('calypso/lib/purchases/types').MembershipSubscriptionsSite[]} An array of sites with subscriptions attached.
  */
-function getSubscriptionsBySite( subscriptions ) {
+export function getSubscriptionsBySite(
+	subscriptions: MembershipSubscription[]
+): MembershipSubscriptionsSite[] {
 	return subscriptions
-		.reduce( ( result, currentValue ) => {
+		.reduce( ( result: MembershipSubscriptionsSite[], currentValue ) => {
 			const site = result.find( ( subscription ) => subscription.id === currentValue.site_id );
 			if ( ! site ) {
 				return [
@@ -100,14 +114,14 @@ function getSubscriptionsBySite( subscriptions ) {
 		.sort( ( a, b ) => ( a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 ) );
 }
 
-function getName( purchase ) {
+export function getName( purchase: Purchase ): string | undefined {
 	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
 		return purchase.meta;
 	}
 	return purchase.productName;
 }
 
-function getDisplayName( purchase ) {
+export function getDisplayName( purchase: Purchase ): ReactChild | string | undefined {
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
 	if ( jetpackProductsDisplayNames[ purchase.productSlug ] ) {
 		return jetpackProductsDisplayNames[ purchase.productSlug ];
@@ -115,7 +129,7 @@ function getDisplayName( purchase ) {
 	return getName( purchase );
 }
 
-function getPartnerName( purchase ) {
+export function getPartnerName( purchase: Purchase ): string | null {
 	if ( isPartnerPurchase( purchase ) ) {
 		return purchase.partnerName;
 	}
@@ -123,9 +137,11 @@ function getPartnerName( purchase ) {
 }
 
 // TODO: refactor to avoid returning a localized string.
-function getSubscriptionEndDate( purchase ) {
+export function getSubscriptionEndDate( purchase: Purchase ): string {
 	const localeSlug = i18n.getLocaleSlug();
-	return moment( purchase.expiryDate ).locale( localeSlug ).format( 'LL' );
+	return moment( purchase.expiryDate )
+		.locale( localeSlug ?? 'US' )
+		.format( 'LL' );
 }
 
 /**
@@ -137,7 +153,11 @@ function getSubscriptionEndDate( purchase ) {
  * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
  * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewNowClick( purchase, siteSlug, options = {} ) {
+export function handleRenewNowClick(
+	purchase: Purchase,
+	siteSlug: string,
+	options: { redirectTo?: string; tracksProps?: TracksProps } = {}
+): Thunk {
 	return ( dispatch ) => {
 		try {
 			const renewItem = getRenewalItemFromProduct( purchase, { domain: purchase.meta } );
@@ -148,7 +168,7 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 				...options.tracksProps,
 			} );
 
-			if ( ! renewItem.extra.purchaseId ) {
+			if ( ! renewItem.extra?.purchaseId ) {
 				throw new Error( 'Could not find purchase id for renewal.' );
 			}
 			if ( ! renewItem.product_slug ) {
@@ -166,7 +186,7 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 
 			page( isJetpackCloud() ? `https://wordpress.com${ renewalUrl }` : renewalUrl );
 		} catch ( error ) {
-			dispatch( errorNotice( error.message ) );
+			dispatch( errorNotice( ( error as Error ).message ) );
 		}
 	};
 }
@@ -180,7 +200,11 @@ function handleRenewNowClick( purchase, siteSlug, options = {} ) {
  * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
  * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) {
+export function handleRenewMultiplePurchasesClick(
+	purchases: Purchase[],
+	siteSlug: string,
+	options: { redirectTo?: string; tracksProps?: TracksProps } = {}
+): Thunk {
 	return ( dispatch ) => {
 		try {
 			purchases.forEach( ( purchase ) => {
@@ -212,17 +236,17 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) 
 
 			page( renewalUrl );
 		} catch ( error ) {
-			dispatch( errorNotice( error.message ) );
+			dispatch( errorNotice( ( error as Error ).message ) );
 		}
 	};
 }
 
-function getProductSlugsAndPurchaseIds( renewItems ) {
-	const productSlugs = [];
-	const purchaseIds = [];
+function getProductSlugsAndPurchaseIds( renewItems: MinimalRequestCartProduct[] ) {
+	const productSlugs: string[] = [];
+	const purchaseIds: string[] = [];
 
 	renewItems.forEach( ( currentRenewItem ) => {
-		if ( ! currentRenewItem.extra.purchaseId ) {
+		if ( ! currentRenewItem.extra?.purchaseId ) {
 			debug( 'Could not find purchase id for renewal.', currentRenewItem );
 			return null;
 		}
@@ -245,11 +269,11 @@ function getProductSlugsAndPurchaseIds( renewItems ) {
 	return { productSlugs, purchaseIds };
 }
 
-function hasIncludedDomain( purchase ) {
+export function hasIncludedDomain( purchase: Purchase ) {
 	return Boolean( purchase.includedDomain );
 }
 
-function isAutoRenewing( purchase ) {
+export function isAutoRenewing( purchase: Purchase ) {
 	return 'autoRenewing' === purchase.expiryStatus;
 }
 
@@ -258,11 +282,8 @@ function isAutoRenewing( purchase ) {
  * Returns true for purchases that aren't expired
  * Also returns true for purchases whether or not they are after the refund period.
  * Purchases included with a plan can't be cancelled.
- *
- * @param {object} purchase - the purchase with which we are concerned
- * @returns {boolean} whether the purchase is cancelable
  */
-function isCancelable( purchase ) {
+export function isCancelable( purchase: Purchase ) {
 	if ( isIncludedWithPlan( purchase ) ) {
 		return false;
 	}
@@ -282,40 +303,36 @@ function isCancelable( purchase ) {
 	return purchase.canDisableAutoRenew;
 }
 
-function isExpired( purchase ) {
+export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiryStatus;
 }
 
-function isExpiring( purchase ) {
+export function isExpiring( purchase: Purchase ) {
 	return [ 'manualRenew', 'expiring' ].includes( purchase.expiryStatus );
 }
 
-function isIncludedWithPlan( purchase ) {
+export function isIncludedWithPlan( purchase: Purchase ) {
 	return 'included' === purchase.expiryStatus;
 }
 
-function isOneTimePurchase( purchase ) {
+export function isOneTimePurchase( purchase: Purchase ) {
 	return 'oneTimePurchase' === purchase.expiryStatus;
 }
 
-function isPaidWithPaypal( purchase ) {
+export function isPaidWithPaypal( purchase: Purchase ) {
 	return 'paypal' === purchase.payment.type;
 }
 
-function isPaidWithCredits( purchase ) {
+export function isPaidWithCredits( purchase: Purchase ) {
 	return 'undefined' !== typeof purchase.payment && 'credits' === purchase.payment.type;
 }
 
-function hasPaymentMethod( purchase ) {
+export function hasPaymentMethod( purchase: Purchase ) {
 	return 'undefined' !== typeof purchase.payment && null != purchase.payment.type;
 }
 
-function isPendingTransfer( purchase ) {
+function isPendingTransfer( purchase: Purchase ) {
 	return purchase.pendingTransfer;
-}
-
-function isObject( value ) {
-	return value !== null && typeof value === 'object';
 }
 
 /**
@@ -327,16 +344,16 @@ function isObject( value ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean}  True if the provided purchase is monthly, or false if not
  */
-function isMonthlyPurchase( purchase ) {
+export function isMonthlyPurchase( purchase: Purchase ): boolean {
 	const plan = getPlan( purchase.productSlug );
-	if ( isObject( plan ) ) {
+	if ( plan ) {
 		return isMonthlyPlan( purchase.productSlug );
 	}
 
 	// Note that getProductFromSlug() returns a string when given a non-product
 	// slug, so we need to check that it's an object before using it.
 	const product = getProductFromSlug( purchase.productSlug );
-	if ( isObject( product ) ) {
+	if ( product && typeof product !== 'string' ) {
 		return isMonthlyProduct( product );
 	}
 
@@ -353,7 +370,7 @@ function isMonthlyPurchase( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean}  True if the provided purchase is a recent monthy purchase, or false if not
  */
-function isRecentMonthlyPurchase( purchase ) {
+export function isRecentMonthlyPurchase( purchase: Purchase ): boolean {
 	return subscribedWithinPastWeek( purchase ) && isMonthlyPurchase( purchase );
 }
 
@@ -370,7 +387,7 @@ function isRecentMonthlyPurchase( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean}  True if the provided purchase needs to renew soon, or false if not
  */
-function needsToRenewSoon( purchase ) {
+export function needsToRenewSoon( purchase: Purchase ): boolean {
 	// Skip purchases that never need to renew or that can't be renewed.
 	if (
 		isOneTimePurchase( purchase ) ||
@@ -394,7 +411,7 @@ function needsToRenewSoon( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean}  True if the provided purchase is close to expiration, or false if not
  */
-function isCloseToExpiration( purchase ) {
+export function isCloseToExpiration( purchase: Purchase ): boolean {
 	if ( ! purchase.expiryDate ) {
 		return false;
 	}
@@ -422,7 +439,7 @@ function isCloseToExpiration( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean} Whether in refund period.
  */
-function maybeWithinRefundPeriod( purchase ) {
+export function maybeWithinRefundPeriod( purchase: Purchase ): boolean {
 	if ( isRefundable( purchase ) ) {
 		return true;
 	}
@@ -449,7 +466,7 @@ function maybeWithinRefundPeriod( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean} if the purchase can be recharged by us through the bound payment method.
  */
-function isRechargeable( purchase ) {
+export function isRechargeable( purchase: Purchase ): boolean {
 	return purchase.isRechargeable;
 }
 
@@ -462,11 +479,8 @@ function isRechargeable( purchase ) {
  * If this function returns false but you want to see if the subscription may
  * still be within its refund period (and therefore refundable if the user
  * contacts a Happiness Engineer), use maybeWithinRefundPeriod().
- *
- * @param {object} purchase - the purchase with which we are concerned
- * @returns {boolean} if the purchase is refundable
  */
-function isRefundable( purchase ) {
+export function isRefundable( purchase: Purchase ): boolean {
 	return purchase.isRefundable;
 }
 
@@ -478,7 +492,7 @@ function isRefundable( purchase ) {
  * @returns {boolean} if the purchase is refundable with an amount greater than zero
  * @see isRefundable
  */
-function hasAmountAvailableToRefund( purchase ) {
+export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
 	return isRefundable( purchase ) && purchase.refundAmount > 0;
 }
 
@@ -488,7 +502,7 @@ function hasAmountAvailableToRefund( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase can be removed, false otherwise
  */
-function isRemovable( purchase ) {
+export function isRemovable( purchase: Purchase ): boolean {
 	if ( hasAmountAvailableToRefund( purchase ) ) {
 		return false;
 	}
@@ -513,7 +527,7 @@ function isRemovable( purchase ) {
 	);
 }
 
-function isPartnerPurchase( purchase ) {
+export function isPartnerPurchase( purchase: Purchase ): boolean {
 	return !! purchase.partnerName;
 }
 
@@ -524,7 +538,7 @@ function isPartnerPurchase( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase has cancelable flag, false otherwise
  */
-function isPurchaseCancelable( purchase ) {
+export function isPurchaseCancelable( purchase: Purchase ): boolean {
 	return purchase.isCancelable;
 }
 
@@ -536,45 +550,45 @@ function isPurchaseCancelable( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase is renewable per business logic, false otherwise
  */
-function isRenewable( purchase ) {
+export function isRenewable( purchase: Purchase ): boolean {
 	return purchase.isRenewable;
 }
 
-function isRenewal( purchase ) {
+export function isRenewal( purchase: Purchase ): boolean {
 	return purchase.isRenewal;
 }
 
-function isRenewing( purchase ) {
+export function isRenewing( purchase: Purchase ): boolean {
 	return [ 'active', 'autoRenewing' ].includes( purchase.expiryStatus );
 }
 
-function isWithinIntroductoryOfferPeriod( purchase ) {
+export function isWithinIntroductoryOfferPeriod( purchase: Purchase ): boolean {
 	return purchase.introductoryOffer?.isWithinPeriod;
 }
 
-function isIntroductoryOfferFreeTrial( purchase ) {
+export function isIntroductoryOfferFreeTrial( purchase: Purchase ): boolean {
 	return purchase.introductoryOffer?.costPerInterval === 0;
 }
 
-function isSubscription( purchase ) {
+export function isSubscription( purchase: Purchase ): boolean {
 	const nonSubscriptionFunctions = [ isDomainRegistration, isOneTimePurchase ];
 
 	return ! nonSubscriptionFunctions.some( ( fn ) => fn( purchase ) );
 }
 
-function isPaidWithCreditCard( purchase ) {
+export function isPaidWithCreditCard( purchase: Purchase ) {
 	return 'credit_card' === purchase.payment.type && hasCreditCardData( purchase );
 }
 
-function isPaidWithPayPalDirect( purchase ) {
+export function isPaidWithPayPalDirect( purchase: Purchase ) {
 	return 'paypal_direct' === purchase.payment.type && purchase.payment.expiryDate;
 }
 
-function hasCreditCardData( purchase ) {
-	return Boolean( purchase.payment.creditCard.expiryDate );
+function hasCreditCardData( purchase: Purchase ) {
+	return Boolean( purchase.payment.creditCard?.expiryDate );
 }
 
-function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
+export function shouldAddPaymentSourceInsteadOfRenewingNow( purchase: Purchase ) {
 	if ( ! purchase || ! purchase.expiryDate ) {
 		return false;
 	}
@@ -589,7 +603,7 @@ function shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase is capable of explicit renew
  */
-function canExplicitRenew( purchase ) {
+export function canExplicitRenew( purchase: Purchase ): boolean {
 	return purchase.canExplicitRenew;
 }
 
@@ -599,21 +613,21 @@ function canExplicitRenew( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase can have auto renewal re-enabled
  */
-function canReenableAutoRenewal( purchase ) {
+export function canReenableAutoRenewal( purchase: Purchase ): boolean {
 	return purchase.canReenableAutoRenewal;
 }
 
-function creditCardExpiresBeforeSubscription( purchase ) {
+export function creditCardExpiresBeforeSubscription( purchase: Purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
 
 	return (
 		isPaidWithCreditCard( purchase ) &&
 		hasCreditCardData( purchase ) &&
-		moment( creditCard.expiryDate, 'MM/YY' ).isBefore( purchase.expiryDate, 'months' )
+		moment( creditCard?.expiryDate, 'MM/YY' ).isBefore( purchase.expiryDate, 'months' )
 	);
 }
 
-function creditCardHasAlreadyExpired( purchase ) {
+export function creditCardHasAlreadyExpired( purchase: Purchase ) {
 	const creditCard = purchase?.payment?.creditCard;
 
 	return (
@@ -624,7 +638,7 @@ function creditCardHasAlreadyExpired( purchase ) {
 	);
 }
 
-function shouldRenderExpiringCreditCard( purchase ) {
+export function shouldRenderExpiringCreditCard( purchase: Purchase ) {
 	return (
 		! isExpired( purchase ) &&
 		! isExpiring( purchase ) &&
@@ -634,13 +648,13 @@ function shouldRenderExpiringCreditCard( purchase ) {
 	);
 }
 
-function monthsUntilCardExpires( purchase ) {
+function monthsUntilCardExpires( purchase: Purchase ) {
 	const creditCard = purchase.payment.creditCard;
-	const expiry = moment( creditCard.expiryDate, 'MM/YY' );
+	const expiry = moment( creditCard?.expiryDate, 'MM/YY' );
 	return expiry.diff( moment(), 'months' );
 }
 
-function subscribedWithinPastWeek( purchase ) {
+export function subscribedWithinPastWeek( purchase: Purchase ) {
 	// Subscribed date should always be in the past. One week ago would be -7 days.
 	return (
 		'undefined' !== typeof purchase.subscribedDate &&
@@ -654,9 +668,9 @@ function subscribedWithinPastWeek( purchase ) {
  * @param {object} purchase - the purchase with which we are concerned
  * @returns {string|null} the payment logo type, or null if no payment type is set.
  */
-function paymentLogoType( purchase ) {
+export function paymentLogoType( purchase: Purchase ): string | null | undefined {
 	if ( isPaidWithCreditCard( purchase ) ) {
-		return purchase.payment.creditCard.type;
+		return purchase.payment.creditCard?.type;
 	}
 
 	if ( isPaidWithPayPalDirect( purchase ) ) {
@@ -666,7 +680,7 @@ function paymentLogoType( purchase ) {
 	return purchase.payment.type || null;
 }
 
-function purchaseType( purchase ) {
+export function purchaseType( purchase: Purchase ) {
 	if ( isTheme( purchase ) ) {
 		return i18n.translate( 'Premium Theme' );
 	}
@@ -714,11 +728,11 @@ function purchaseType( purchase ) {
 	return null;
 }
 
-function getRenewalPrice( purchase ) {
+export function getRenewalPrice( purchase: Purchase ) {
 	return purchase.saleAmount || purchase.amount;
 }
 
-function showCreditCardExpiringWarning( purchase ) {
+export function showCreditCardExpiringWarning( purchase: Purchase ) {
 	return (
 		! isIncludedWithPlan( purchase ) &&
 		isPaidWithCreditCard( purchase ) &&
@@ -727,11 +741,11 @@ function showCreditCardExpiringWarning( purchase ) {
 	);
 }
 
-function getDomainRegistrationAgreementUrl( purchase ) {
+export function getDomainRegistrationAgreementUrl( purchase: Purchase ) {
 	return purchase.domainRegistrationAgreementUrl;
 }
 
-function shouldRenderMonthlyRenewalOption( purchase ) {
+export function shouldRenderMonthlyRenewalOption( purchase: Purchase ) {
 	if ( ! purchase || ! purchase.expiryDate ) {
 		return false;
 	}
@@ -742,11 +756,11 @@ function shouldRenderMonthlyRenewalOption( purchase ) {
 
 	const plan = getPlan( purchase.productSlug );
 
-	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY ].includes( plan.term ) ) {
+	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY ].includes( plan?.term ?? '' ) ) {
 		return false;
 	}
 
-	if ( TYPE_PRO === plan.type ) {
+	if ( TYPE_PRO === plan?.type ) {
 		return false;
 	}
 
@@ -766,57 +780,3 @@ function shouldRenderMonthlyRenewalOption( purchase ) {
 
 	return false;
 }
-
-export {
-	canExplicitRenew,
-	canReenableAutoRenewal,
-	creditCardExpiresBeforeSubscription,
-	creditCardHasAlreadyExpired,
-	getDomainRegistrationAgreementUrl,
-	getIncludedDomain,
-	getName,
-	getDisplayName,
-	getPartnerName,
-	getPurchasesBySite,
-	getRenewalPrice,
-	getSubscriptionEndDate,
-	getSubscriptionsBySite,
-	handleRenewMultiplePurchasesClick,
-	handleRenewNowClick,
-	hasAmountAvailableToRefund,
-	hasIncludedDomain,
-	isAutoRenewing,
-	isCancelable,
-	isPaidWithCreditCard,
-	isPaidWithPayPalDirect,
-	isPaidWithPaypal,
-	isPaidWithCredits,
-	isPartnerPurchase,
-	isPurchaseCancelable,
-	hasPaymentMethod,
-	isCloseToExpiration,
-	isExpired,
-	isExpiring,
-	isIncludedWithPlan,
-	isMonthlyPurchase,
-	isOneTimePurchase,
-	isRecentMonthlyPurchase,
-	isRechargeable,
-	isRefundable,
-	isRemovable,
-	isRenewable,
-	isRenewal,
-	isRenewing,
-	isSubscription,
-	isWithinIntroductoryOfferPeriod,
-	isIntroductoryOfferFreeTrial,
-	maybeWithinRefundPeriod,
-	needsToRenewSoon,
-	paymentLogoType,
-	purchaseType,
-	showCreditCardExpiringWarning,
-	subscribedWithinPastWeek,
-	shouldAddPaymentSourceInsteadOfRenewingNow,
-	shouldRenderExpiringCreditCard,
-	shouldRenderMonthlyRenewalOption,
-};
