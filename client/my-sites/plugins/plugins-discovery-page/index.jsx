@@ -23,63 +23,84 @@ import usePlugins from '../use-plugins';
  */
 const SHORT_LIST_LENGTH = 6;
 
-const UpgradeNudge = ( { selectedSite, sitePlan, isVip, jetpackNonAtomic, siteSlug } ) => {
+const UpgradeNudge = ( {
+	selectedSite,
+	sitePlan,
+	isVip,
+	jetpackNonAtomic,
+	siteSlug,
+	paidPlugins,
+} ) => {
+	const requiredPlansPurchasedPlugins = useSelector( ( state ) =>
+		getPlansForFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
+	const requiredPlansAllPlugins = useSelector( ( state ) =>
+		getPlansForFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
+	);
+
+	const hasInstallPurchasedPlugins = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
+
+	// Whether to show an upgrade banner specific to premium plugins.
+	const lowerPlanAvailable =
+		! hasInstallPurchasedPlugins &&
+		requiredPlansPurchasedPlugins[ 0 ] !== requiredPlansAllPlugins[ 0 ];
+
 	const translate = useTranslate();
+
 	const eligibleForProPlan = useSelector( ( state ) =>
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
 
-	if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
-		return null;
-	}
-	const isLegacyPlan = isBlogger( sitePlan ) || isPersonal( sitePlan ) || isPremium( sitePlan );
-	const checkoutPlan = eligibleForProPlan && ! isLegacyPlan ? 'pro' : 'business';
-	const bannerURL = `/checkout/${ siteSlug }/${ checkoutPlan }`;
-	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
-		type: TYPE_BUSINESS,
-	} );
+	const requiredPlans = useSelector( ( state ) =>
+		getPlansForFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
 
-	const title =
-		eligibleForProPlan && ! isLegacyPlan
-			? translate( 'Upgrade to the Pro plan to install plugins.' )
-			: translate( 'Upgrade to the Business plan to install plugins.' );
+	let bannerURL;
+	let feature;
+	let plan;
+	let title;
+
+	if ( paidPlugins && lowerPlanAvailable ) {
+		if ( ! requiredPlans ) {
+			return null;
+		}
+
+		const requiredPlan = getPlan( requiredPlans[ 0 ] );
+
+		bannerURL = `/checkout/${ siteSlug }/${ requiredPlan.getPathSlug() }`;
+		feature = WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS;
+		plan = requiredPlan.getStoreSlug();
+		title = translate( 'Upgrade to the %(planName)s plan to install premium plugins.', {
+			textOnly: true,
+			args: { planName: requiredPlan.getTitle() },
+		} );
+	} else {
+		if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
+			return null;
+		}
+		const isLegacyPlan = isBlogger( sitePlan ) || isPersonal( sitePlan ) || isPremium( sitePlan );
+		const checkoutPlan = eligibleForProPlan && ! isLegacyPlan ? 'pro' : 'business';
+		bannerURL = `/checkout/${ siteSlug }/${ checkoutPlan }`;
+		feature = FEATURE_INSTALL_PLUGINS;
+		plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
+			type: TYPE_BUSINESS,
+		} );
+		title =
+			eligibleForProPlan && ! isLegacyPlan
+				? translate( 'Upgrade to the Pro plan to install plugins.' )
+				: translate( 'Upgrade to the Business plan to install plugins.' );
+	}
 
 	return (
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
 			showIcon={ true }
 			href={ bannerURL }
-			feature={ FEATURE_INSTALL_PLUGINS }
+			feature={ feature }
 			plan={ plan }
 			title={ title }
-		/>
-	);
-};
-
-const UpgradeNudgePaid = ( props ) => {
-	const translate = useTranslate();
-
-	const requiredPlans = useSelector( ( state ) =>
-		getPlansForFeature( state, props.selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-
-	if ( ! requiredPlans ) {
-		return null;
-	}
-
-	const requiredPlan = getPlan( requiredPlans[ 0 ] );
-
-	return (
-		<UpsellNudge
-			event="calypso_plugins_browser_upgrade_nudge"
-			showIcon={ true }
-			href={ `/checkout/${ props.siteSlug }/${ requiredPlan.getPathSlug() }` }
-			feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
-			plan={ requiredPlan.getStoreSlug() }
-			title={ translate( 'Upgrade to the %(planName)s plan to install premium plugins.', {
-				textOnly: true,
-				args: { planName: requiredPlan.getTitle() },
-			} ) }
 		/>
 	);
 };
@@ -152,38 +173,17 @@ const PluginsDiscoveryPage = ( props ) => {
 		category: 'featured',
 	} );
 
-	const requiredPlansPurchasedPlugins = useSelector( ( state ) =>
-		getPlansForFeature( state, props.selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-	const requiredPlansAllPlugins = useSelector( ( state ) =>
-		getPlansForFeature( state, props.selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
-	);
-
-	const hasInstallPurchasedPlugins = useSelector( ( state ) =>
-		siteHasFeature( state, props.selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-
-	// Whether to show an upgrade banner specific to premium plugins.
-	const lowerPlanAvailable =
-		! hasInstallPurchasedPlugins &&
-		requiredPlansPurchasedPlugins[ 0 ] !== requiredPlansAllPlugins[ 0 ];
-
 	return (
 		<>
 			{ ! props.jetpackNonAtomic && (
 				<>
 					<div className="plugins-discovery-page__upgrade-banner">
-						{ ! hasInstallPurchasedPlugins && lowerPlanAvailable && (
-							<UpgradeNudgePaid { ...props } />
-						) }
-						{ ! hasInstallPurchasedPlugins && ! lowerPlanAvailable && (
-							<UpgradeNudge { ...props } />
-						) }
+						<UpgradeNudge { ...props } paidPlugins={ true } />
 					</div>
 					<PaidPluginsSection { ...props } />
 				</>
 			) }
-			{ ( hasInstallPurchasedPlugins || lowerPlanAvailable ) && <UpgradeNudge { ...props } /> }
+			{ <UpgradeNudge { ...props } /> }
 			<FeaturedPluginsSection
 				{ ...props }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
