@@ -113,10 +113,36 @@ export function getTaxBreakdownLineItemsFromCart( responseCart: ResponseCart ): 
 	} );
 }
 
+export function canPurchaseWithCredits( responseCart: ResponseCart ): boolean {
+	if ( responseCart.peer_referral_limit === true ) {
+		return false;
+	}
+
+	return true;
+}
+
 export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineItem | null {
 	if ( responseCart.credits_integer <= 0 ) {
 		return null;
 	}
+
+	const canUseCredits = canPurchaseWithCredits( responseCart );
+	if ( ! canUseCredits ) {
+		return {
+			id: 'credits',
+			// translators: The label of the credits line item in checkout
+			label: String( translate( 'Credits' ) ),
+			type: 'credits',
+			amount: {
+				currency: responseCart.currency,
+				// Clamp the credits value to the total
+				value: 0,
+				// translators: The discount amount of the credits line item in checkout
+				displayValue: String( translate( 'Not applicable' ) ),
+			},
+		};
+	}
+
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 	return {
 		id: 'credits',
@@ -144,10 +170,15 @@ export function getCreditsLineItemFromCart( responseCart: ResponseCart ): LineIt
 	};
 }
 
-export function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {
-	const credits = cart.credits_integer;
-	const subtotal = cart.sub_total_integer;
-	const taxes = cart.total_tax_integer;
+export function doesPurchaseHaveFullCredits( responseCart: ResponseCart ): boolean {
+	const canUseCredits = canPurchaseWithCredits( responseCart );
+	if ( ! canUseCredits ) {
+		return false;
+	}
+
+	const credits = responseCart.credits_integer;
+	const subtotal = responseCart.sub_total_integer;
+	const taxes = responseCart.total_tax_integer;
 	const totalBeforeCredits = subtotal + taxes;
 	return credits > 0 && totalBeforeCredits > 0 && credits >= totalBeforeCredits;
 }
