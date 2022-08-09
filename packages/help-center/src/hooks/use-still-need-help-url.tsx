@@ -4,6 +4,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 export function useStillNeedHelpURL() {
 	const { hasCookies } = useHas3PC();
+	console.log( 'canAccessWpcomApis()', canAccessWpcomApis());
 	const { data: supportAvailability } = useSupportAvailability( 'OTHER', canAccessWpcomApis() );
 
 	// email support is available for all non-free users, let's use it as a proxy for free users

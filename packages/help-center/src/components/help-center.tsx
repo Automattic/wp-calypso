@@ -36,6 +36,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 	const user = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
+	console.log( 'isSimpleSite0', isSimpleSite);
 	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT', isSimpleSite );
 	const { data: supportData, isLoading: isSupportDataLoading } = useSupportAvailability(
 		'OTHER',
