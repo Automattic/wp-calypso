@@ -192,6 +192,7 @@
 		"i18n-calypso-cli": "workspace:^",
 		"lodash": "^4.17.21",
 		"photon": "workspace:^",
+		"playwright": "^1.24.2",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"reakit-utils": "^0.15.1",

@@ -46,7 +46,7 @@ const ProfessionalEmailPrice = ( {
 		<PriceWithInterval
 			currencyCode={ currencyCode ?? '' }
 			intervalLength={ intervalLength }
-			isEligibleForFreeTrial={ isEligibleForFreeTrial }
+			isEligibleForIntroductoryOffer={ isEligibleForFreeTrial }
 			product={ product }
 		/>
 	);
