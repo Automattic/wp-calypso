@@ -2,6 +2,7 @@ import { ListTile, SiteThumbnail } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { memo } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import Image from 'calypso/components/image';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -114,7 +115,7 @@ const VisitDashboardItem = ( { site }: { site: SiteExcerptData } ) => {
 	);
 };
 
-export default function SitesTableRow( { site }: SiteTableRowProps ) {
+export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 
 	const isComingSoon =
@@ -190,7 +191,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 			</Column>
 		</Row>
 	);
-}
+} );
 
 function getFirstGrapheme( input: string ) {
 	// TODO: once we're on Typescript 4.7 we should be able to add this comment:
