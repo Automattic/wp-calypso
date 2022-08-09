@@ -7,7 +7,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -51,11 +51,13 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import './style.scss';
 import PluginsCategoryResultsPage from '../plugins-category-results-page';
+import SearchResultsPage from '../plugin-search-results-page';
 import PluginsDiscoveryPage from '../plugins-discovery-page';
 import usePlugins from '../use-plugins';
-import SearchListView from './search-list-view';
+import FullListView from './full-list-view';
+
+import './style.scss';
 
 /**
  * Module variables
@@ -159,9 +161,10 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 }
 
 const PluginBrowserContent = ( props ) => {
-	if ( props.search ) {
-		return <SearchListView { ...props } />;
+	if ( props.category ) {
+		return <FullListView { ...props } />;
 	}
+
 	return;
 };
 
@@ -172,7 +175,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
 	const searchRef = useRef( null );
-
+	//  another temporary solution until phase 4 is merged
+	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 	const clearSearch = useCallback( () => {
 		searchRef?.current?.setKeyword( '' );
 	}, [ searchRef ] );
@@ -226,18 +230,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			category: 'popular',
 		} );
 
-	const {
-		plugins: pluginsBySearchTerm = [],
-		isFetching: isFetchingPluginsBySearchTerm,
-		pagination: pluginsPagination,
-		fetchNextPage,
-	} = usePlugins( {
-		infinite: true,
-		search,
-		wpcomEnabled: !! search,
-		wporgEnabled: !! search,
-	} );
-
 	const pluginsByCategoryPopular = filterPopularPlugins(
 		popularPlugins,
 		pluginsByCategoryFeatured
@@ -256,6 +248,44 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+
+	// this is a temporary hack until we merge Phase 4 of the refactor
+	const renderList = () => {
+		if ( search ) {
+			return (
+				<SearchResultsPage
+					search={ search }
+					setIsFetchingPluginsBySearchTerm={ setIsFetchingPluginsBySearchTerm }
+					siteSlug={ siteSlug }
+					siteId={ siteId }
+					sites={ sites }
+					categoryName={ categoryName }
+				/>
+			);
+		}
+
+		if ( category ) {
+			return (
+				<PluginsCategoryResultsPage category={ category } sites={ sites } siteSlug={ siteSlug } />
+			);
+		}
+
+		return (
+			<PluginsDiscoveryPage
+				clearSearch={ clearSearch }
+				search={ search }
+				category={ category }
+				sites={ sites }
+				searchTitle={ searchTitle }
+				siteSlug={ siteSlug }
+				siteId={ siteId }
+				jetpackNonAtomic={ jetpackNonAtomic }
+				selectedSite={ selectedSite }
+				sitePlan={ sitePlan }
+				isVip={ isVip }
+			/>
+		);
+	};
 
 	useEffect( () => {
 		if ( ! search ) {
@@ -381,55 +411,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			/>
 
 			{ ! search && <Categories selected={ category } /> }
-			{ category && ! search && (
-				<div className="plugins-browser__main-container">
-					<PluginsCategoryResultsPage category={ category } sites={ sites } siteSlug={ siteSlug } />
-				</div>
-			) }
-			{ search && (
-				<div className="plugins-browser__main-container">
-					<PluginBrowserContent
-						clearSearch={ clearSearch }
-						pluginsByCategoryPopular={ pluginsByCategoryPopular }
-						isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
-						isFetchingPluginsBySearchTerm={ isFetchingPluginsBySearchTerm }
-						fetchNextPage={ fetchNextPage }
-						pluginsBySearchTerm={ pluginsBySearchTerm }
-						pluginsPagination={ pluginsPagination }
-						pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
-						isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
-						search={ search }
-						category={ category }
-						paidPlugins={ paidPlugins }
-						isFetchingPaidPlugins={ isFetchingPaidPlugins }
-						sites={ sites }
-						searchTitle={ searchTitle }
-						siteSlug={ siteSlug }
-						siteId={ siteId }
-						jetpackNonAtomic={ jetpackNonAtomic }
-						selectedSite={ selectedSite }
-						sitePlan={ sitePlan }
-						isVip={ isVip }
-					/>
-				</div>
-			) }
-			{ ! category && ! search && (
-				<div className="plugins-browser__main-container">
-					<PluginsDiscoveryPage
-						clearSearch={ clearSearch }
-						search={ search }
-						category={ category }
-						sites={ sites }
-						searchTitle={ searchTitle }
-						siteSlug={ siteSlug }
-						siteId={ siteId }
-						jetpackNonAtomic={ jetpackNonAtomic }
-						selectedSite={ selectedSite }
-						sitePlan={ sitePlan }
-						isVip={ isVip }
-					/>
-				</div>
-			) }
+			<div className="plugins-browser__main-container">{ renderList() }</div>
 			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>
 	);
