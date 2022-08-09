@@ -36,6 +36,9 @@ const selectors = {
 	// Details popover
 	detailsButton: `${ panel } button[aria-label="Details"]`,
 
+	// Details popover
+	resetSearchButton: `${ panel } button[aria-label="Reset search"]`,
+
 	// Editor settings
 	settingsButton: ( label = settingsButtonLabel ) =>
 		`${ panel } .edit-post-header__settings .interface-pinned-items button[aria-label="${ label }"]`,
@@ -116,8 +119,13 @@ export class EditorToolbarComponent {
 	 */
 	async closeBlockInserter(): Promise< void > {
 		if ( await this.targetIsOpen( selectors.blockInserterButton ) ) {
-			const locator = this.editor.locator( selectors.blockInserterButton );
-			await locator.click();
+			// Workaround to make the block inserter dismissible after inserting a block using the block API V2.
+			// See https://github.com/WordPress/gutenberg/issues/43090.
+			const resetSearchButton = this.editor.locator( selectors.resetSearchButton );
+			await resetSearchButton.click();
+
+			const blockInserterButton = this.editor.locator( selectors.blockInserterButton );
+			await blockInserterButton.click();
 		}
 	}
 
