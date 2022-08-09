@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
-import { AnchorHTMLAttributes } from 'react';
+import { AnchorHTMLAttributes, memo } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
@@ -36,7 +36,7 @@ interface SitesGridItemProps {
 	site: SiteExcerptData;
 }
 
-export const SitesGridItem = ( { site }: SitesGridItemProps ) => {
+export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
@@ -76,4 +76,4 @@ export const SitesGridItem = ( { site }: SitesGridItemProps ) => {
 			}
 		/>
 	);
-};
+} );
