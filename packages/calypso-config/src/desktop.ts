@@ -29,7 +29,7 @@ export default ( data: ConfigData ): ConfigData => {
 		data.features = Object.assign( data.features, features );
 	}
 	if ( window.electron && window.electron.features ) {
-		data.features = Object.assign( data.features, window.electron.features );
+		data.features = Object.assign( data.features ?? {}, window.electron.features );
 	}
 
 	return data;
