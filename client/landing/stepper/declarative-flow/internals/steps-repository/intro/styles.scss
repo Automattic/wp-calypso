@@ -14,12 +14,15 @@ $white: var( --color-surface );
 		height: 100%;
 
 		.step-container__content {
-			width: 90%;
-			position: absolute;
-			top: 40%;
-			transform: translateY( -50% );
+		    display: flex;
+			justify-content: center;
+			width: 100%;
+			
+			.processing-step {
+				width: 100%;
+			}
 		}
-
+		
 		.progress-bar {
 			display: none;
 		}
