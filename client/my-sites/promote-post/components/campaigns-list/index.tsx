@@ -1,4 +1,3 @@
-import { Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -6,7 +5,6 @@ import megaphoneIllustration from 'calypso/assets/images/customer-home/illustrat
 import EmptyContent from 'calypso/components/empty-content';
 import ListEnd from 'calypso/components/list-end';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import SectionHeader from 'calypso/components/section-header';
 import useCampaignsQuery, {
 	Campaign,
 	CampaignStatus,
