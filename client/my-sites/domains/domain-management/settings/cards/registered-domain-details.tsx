@@ -76,7 +76,7 @@ const RegisteredDomainDetails = ( {
 		}
 
 		const autoRenewAdditionalText =
-			! isExpiring( purchase ) && ! domain.expired
+			purchase && ! isExpiring( purchase ) && ! domain.expired
 				? translate( 'We will attempt to renew on %(renewalDate)s for %(price)s', {
 						args: {
 							renewalDate: moment( domain.autoRenewalDate ).format( 'LL' ),
