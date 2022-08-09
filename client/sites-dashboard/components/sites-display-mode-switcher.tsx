@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -6,8 +7,6 @@ import { ComponentProps } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { SitesListIcon } from './sites-list-icon';
-import { SitesTilesIcon } from './sites-tiles-icon';
 
 const container = css( {
 	marginLeft: 'auto',
@@ -65,14 +64,14 @@ export const SitesDisplayModeSwitcher = () => {
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
 				onClick={ () => onDisplayModeChange( 'tile' ) }
-				icon={ <SitesTilesIcon /> }
+				icon={ <Gridicon icon="grid" /> }
 				isPressed={ displayMode === 'tile' }
 			/>
 			<SiteSwitcherButton
 				role="radio"
 				aria-label={ __( 'List view' ) }
 				onClick={ () => onDisplayModeChange( 'list' ) }
-				icon={ <SitesListIcon /> }
+				icon={ <Gridicon icon="list-unordered" /> }
 				isPressed={ displayMode === 'list' }
 			/>
 		</div>
