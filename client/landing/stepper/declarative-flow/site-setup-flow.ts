@@ -132,8 +132,7 @@ export const siteSetupFlow: Flow = {
 					if ( goalsStepEnabled ) {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
-
-					if ( intent === SiteIntent.Write && ! selectedDesign ) {
+					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
 					}
 
