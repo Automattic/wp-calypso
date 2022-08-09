@@ -5,7 +5,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { Category } from '.';
 
-export const ALLOWED_CATEGORIES = [
+export const ALLOWED_REAL_CATEGORIES = [
 	'analytics',
 	'booking',
 	'customer',
@@ -25,6 +25,10 @@ export const ALLOWED_CATEGORIES = [
 	'shipping',
 	'social',
 	'widgets',
+];
+
+export const ALLOWED_CATEGORIES = [
+	...ALLOWED_REAL_CATEGORIES,
 
 	// "Top paid plugins", "Editors pick" etc aren't real categories but we
 	// treat them like they are in the UI so include them here

@@ -1,11 +1,9 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
 import page from 'page';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
+import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSiteDomain } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
+import { ALLOWED_REAL_CATEGORIES, useCategories } from './use-categories';
+import { useGetCategoryUrl } from './use-get-category-url';
 
 export type Category = {
 	name: string;
@@ -18,17 +16,9 @@ export type Category = {
 
 const Categories = ( { selected }: { selected?: string } ) => {
 	const dispatch = useDispatch();
-
-	const siteId = useSelector( getSelectedSiteId ) as number;
-	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
-	const { localizePath } = useLocalizedPlugins();
-
-	// We hide these special categories from the category selector
-	const displayCategories = ALLOWED_CATEGORIES.filter(
-		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
-	);
-
-	const categories = Object.values( useCategories( displayCategories ) );
+	const getCategoryUrl = useGetCategoryUrl();
+	const categories = Object.values( useCategories( ALLOWED_REAL_CATEGORIES ) );
+	const categoryUrls = categories.map( ( { slug } ) => getCategoryUrl( slug ) );
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
 
@@ -38,27 +28,23 @@ const Categories = ( { selected }: { selected?: string } ) => {
 			} )
 		);
 
-		let url;
-		if ( category.slug !== 'discover' ) {
-			url = `/plugins/browse/${ category.slug }/${ domain || '' }`;
-		} else {
-			url = `/plugins/${ domain || '' }`;
-		}
-
-		page( localizePath( url ) );
+		page( getCategoryUrl( category.slug ) );
 	};
 
-	if ( selected && ! displayCategories.includes( selected ) ) {
+	if ( selected && ! ALLOWED_REAL_CATEGORIES.includes( selected ) ) {
 		return <div></div>;
 	}
 
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
+	const isBrowser = typeof window !== 'undefined';
 
 	return (
 		<ResponsiveToolbarGroup
 			className="categories__menu"
 			initialActiveIndex={ current }
 			onClick={ onClick }
+			hrefList={ categoryUrls }
+			forceMode={ isBrowser ? undefined : 'swipe' }
 		>
 			{ categories.map( ( category ) => (
 				<span key={ `category-${ category.slug }` }>{ category.name }</span>
