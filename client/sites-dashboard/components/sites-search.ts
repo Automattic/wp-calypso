@@ -6,4 +6,5 @@ export const SitesSearch = styled( Search )`
 	height: 42px;
 	overflow: hidden;
 	border: 1px solid #c3c4c7;
+	flex: 0 1 390px;
 `;

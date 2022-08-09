@@ -1,9 +1,9 @@
-import { ListTile } from '@automattic/components';
+import { ListTile, SiteThumbnail } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import SiteIcon from 'calypso/blocks/site-icon';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import Image from 'calypso/components/image';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import TimeSince from 'calypso/components/time-since';
 import SitesP2Badge from './sites-p2-badge';
@@ -29,12 +29,7 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	color: var( --studio-gray-60 );
 
 	@media only screen and ( max-width: 781px ) {
-		${ ( props ) =>
-			props.mobileHidden &&
-			css`
-				display: none;
-			` };
-
+		${ ( props ) => props.mobileHidden && 'display: none;' };
 		padding-right: 0;
 	}
 `;
@@ -98,6 +93,10 @@ const ListTileSubtitle = styled.div`
 	align-items: center;
 `;
 
+const NoIcon = styled.div( {
+	fontSize: 'xx-large',
+} );
+
 const getDashboardUrl = ( slug: string ) => {
 	return '/home/' + slug;
 };
@@ -129,6 +128,7 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 	} else if ( site.is_private ) {
 		siteStatusLabel = __( 'Private' );
 	}
+	const shouldUseScreenshot = ! isComingSoon && ! site.is_private;
 
 	return (
 		<Row>
@@ -142,7 +142,23 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteIcon siteId={ site.ID } size={ 50 } />
+							<SiteThumbnail
+								mShotsUrl={ shouldUseScreenshot ? site.URL : undefined }
+								alt={ site.name }
+								bgColorImgUrl={ site.icon?.img }
+							>
+								{ site.icon ? (
+									<Image
+										src={ site.icon.img }
+										alt={ __( 'Site Icon' ) }
+										style={ { height: '50px', width: '50px' } }
+									/>
+								) : (
+									<NoIcon role={ 'img' } aria-label={ __( 'Site Icon' ) }>
+										{ getFirstGrapheme( site.name ) }
+									</NoIcon>
+								) }
+							</SiteThumbnail>
 						</ListTileLeading>
 					}
 					title={
@@ -174,4 +190,21 @@ export default function SitesTableRow( { site }: SiteTableRowProps ) {
 			</Column>
 		</Row>
 	);
+}
+
+function getFirstGrapheme( input: string ) {
+	// TODO: once we're on Typescript 4.7 we should be able to add this comment:
+	//    /// <reference lib="es2022.intl" />
+	// to the top of the file to get access to the types for Intl.Segmenter
+	// which where added in microsoft/TypeScript#48800
+	// In the mean time we need to use the `any` type to fix type errors in CI.
+
+	try {
+		const segmenter = new ( Intl as any ).Segmenter();
+		const segments = segmenter.segment( input );
+		return ( Array.from( segments )[ 0 ] as any ).segment;
+	} catch {
+		// Intl.Segmenter is not available in all browsers
+		return input.charAt( 0 );
+	}
 }

@@ -18,10 +18,14 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
+import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -34,6 +38,7 @@ import GeneratedDesignPickerWebPreview from './generated-design-picker-web-previ
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
 import UpgradeModal from './upgrade-modal';
+import getThemeIdFromDesign from './util/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';
@@ -92,6 +97,17 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				site && select( SITE_STORE ).siteHasFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES )
 		)
 	);
+	useQuerySitePurchases( site ? site.ID : -1 );
+
+	const purchasedThemes = useSelector( ( state ) =>
+		site ? getPurchasedThemes( state, site.ID ) : []
+	);
+	const selectedDesignThemeId = selectedDesign ? getThemeIdFromDesign( selectedDesign ) : null;
+	const didPurchaseSelectedTheme = useSelector( ( state ) =>
+		site && selectedDesignThemeId
+			? isThemePurchased( state, selectedDesignThemeId, site.ID )
+			: false
+	);
 
 	const { data: themeDesigns = [] } = useDesignsBySite( site );
 
@@ -145,6 +161,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		if ( showGeneratedDesigns && ! hasTrackedView.current ) {
 			hasTrackedView.current = true;
 			recordTracksEvent( 'calypso_signup_generated_design_picker_view', {
+				intent,
 				vertical_id: siteVerticalId,
 				generated_designs: generatedDesigns?.map( ( design ) => design.slug ).join( ',' ),
 			} );
@@ -376,7 +393,8 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			<DesignPickerDesignTitle designTitle={ designTitle } selectedDesign={ selectedDesign } />
 		);
 
-		const shouldUpgrade = selectedDesign.is_premium && ! isPremiumThemeAvailable;
+		const shouldUpgrade =
+			selectedDesign.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme;
 		// If the user fills out the site title and/or tagline with write or sell intent, we show it on the design preview
 		const shouldCustomizeText = intent === SiteIntent.Write || intent === SiteIntent.Sell;
 		const previewUrl = getDesignPreviewUrl( selectedDesign, {
@@ -554,6 +572,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
 			verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined }
+			purchasedThemes={ purchasedThemes }
 		/>
 	);
 

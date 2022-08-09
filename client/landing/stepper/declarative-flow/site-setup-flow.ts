@@ -403,6 +403,9 @@ export const siteSetupFlow: Flow = {
 					} else if ( intent === 'write' ) {
 						// this means we came from write => blogger staring point => choose a design
 						return navigate( 'bloggerStartingPoint' );
+					} else if ( intent === 'import' ) {
+						// this means we came from non-WP transfers => complete screen => click Pick a design button, we go back to goals
+						return navigate( 'goals' );
 					}
 
 					if ( goalsStepEnabled ) {

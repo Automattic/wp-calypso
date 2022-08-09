@@ -8,5 +8,4 @@ export interface Checklist {
 	designType: string;
 	segment: number;
 	tasks: Task[];
-	verticals: string[];
 }

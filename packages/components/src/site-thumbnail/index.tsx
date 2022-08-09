@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
+import useDominantColor from './use-dominant-color';
 import { MShotsOptions, useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
@@ -16,6 +17,7 @@ type Props = {
 	size?: 'small' | 'medium';
 	children?: ReactNode;
 	alt?: string;
+	bgColorImgUrl?: string;
 	mshotsOption?: MShotsOptions;
 };
 
@@ -24,12 +26,17 @@ export const SiteThumbnail = ( {
 	children,
 	alt,
 	mShotsUrl = '',
+	bgColorImgUrl,
 	size = 'small',
 	mshotsOption = MSHOTS_OPTION,
 }: Props ) => {
 	const { src, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, mshotsOption );
 
-	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
+	const primary = useDominantColor( bgColorImgUrl );
+
+	const thumbnailBackground = primary?.hexa || backgroundColor;
+
+	const color = thumbnailBackground && getTextColorFromBackground( thumbnailBackground );
 
 	const className = classnames(
 		'site-thumbnail',
@@ -40,7 +47,7 @@ export const SiteThumbnail = ( {
 	const loader = mShotsUrl && ! isError ? 'site-thumbnail-loader' : '';
 
 	return (
-		<div className={ className } style={ { backgroundColor, color } }>
+		<div className={ className } style={ { backgroundColor: thumbnailBackground, color } }>
 			{ isLoading && <div className={ loader }>{ children }</div> }
 			{ src && ! isError && (
 				<img

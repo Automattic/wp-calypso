@@ -37,9 +37,6 @@ export const useSiteExcerptsQuery = () => {
 			const reduxData = getSites( store.getState() ).filter( notNullish );
 			return reduxData.length ? { sites: reduxData } : undefined;
 		},
-		placeholderData: {
-			sites: [],
-		},
 	} );
 };
 

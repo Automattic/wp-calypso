@@ -21,7 +21,7 @@ export class SignupDomainPage {
 	 */
 	async skipDomainSelection(): Promise< void > {
 		const locator = this.page.locator(
-			'span[role="button"]:text("Choose my domain later"):visible'
+			'span[role="button"]:has-text("Choose my domain later"):visible'
 		);
 		await locator.click();
 	}
