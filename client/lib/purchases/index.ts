@@ -114,9 +114,9 @@ export function getSubscriptionsBySite(
 		.sort( ( a, b ) => ( a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 ) );
 }
 
-export function getName( purchase: Purchase ): string | undefined {
+export function getName( purchase: Purchase ): string {
 	if ( isDomainRegistration( purchase ) || isDomainMapping( purchase ) ) {
-		return purchase.meta;
+		return purchase.meta ?? '';
 	}
 	return purchase.productName;
 }
