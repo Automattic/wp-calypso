@@ -12,7 +12,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import type { Step } from '../../types';
@@ -29,6 +29,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
 	const [ url, setUrl ] = React.useState( '' );
+	const { setPendingAction, setProgress, setProgressTitle } = useDispatch( ONBOARD_STORE );
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const { mutateAsync: setSiteLogo, isLoading: isUploadingIcon } = useSiteLogoMutation( site?.ID );
@@ -63,26 +64,38 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		if ( site ) {
-			await saveSiteSettings( site.ID, {
-				blogname: siteTitle,
-				blogdescription: tagline,
-			} );
-			recordTracksEvent( 'calypso_signup_site_options_submit', {
-				has_site_title: !! siteTitle,
-				has_tagline: !! tagline,
-			} );
 
-			if ( selectedFile ) {
-				try {
-					await setSiteLogo( selectedFile );
-				} catch ( _error ) {
-					// communicate the error to the user
+		setPendingAction( async () => {
+			if ( site ) {
+				setProgress( 0 );
+				setProgressTitle( __( 'Turning on the lights' ) );
+
+				await saveSiteSettings( site.ID, {
+					blogname: siteTitle,
+					blogdescription: tagline,
+				} );
+
+				setProgress( 0.5 );
+
+				recordTracksEvent( 'calypso_signup_site_options_submit', {
+					has_site_title: !! siteTitle,
+					has_tagline: !! tagline,
+				} );
+
+				setProgress( 0.8 );
+
+				if ( selectedFile ) {
+					try {
+						await setSiteLogo( selectedFile );
+					} catch ( _error ) {
+						// communicate the error to the user
+					}
 				}
+				setProgress( 1 );
+				setProgressTitle( __( 'Done!' ) );
 			}
-
-			submit?.( { siteTitle, tagline } );
-		}
+		} );
+		submit?.( { siteTitle, tagline } );
 	};
 	const steContent = (
 		<div className="step-container">
