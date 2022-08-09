@@ -41,6 +41,7 @@ export type UseAssertConditionsHook = () => AssertConditionResult;
 
 export type Flow = {
 	name: string;
+	title?: string;
 	classnames?: string | [ string ];
 	useSteps: UseStepHook;
 	useStepNavigation: UseStepNavigationHook;

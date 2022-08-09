@@ -96,7 +96,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 								value={ progressValue * 100 }
 								total={ 100 }
 							/>
-							<SignupHeader />
+							<SignupHeader pageTitle={ flow.title } />
 							{ renderStep( path ) }
 						</div>
 					</Route>

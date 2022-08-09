@@ -6,6 +6,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 export const newsletters: Flow = {
 	name: 'newsletters',
+	title: 'Newsletters',
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
