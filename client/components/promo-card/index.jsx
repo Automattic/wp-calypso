@@ -6,7 +6,7 @@ import './style.scss';
 const PromoCard = ( { headerText, contentText, image, ctaText, onClick } ) => {
 	return (
 		<Card className="promo-card">
-			<img src={ image } alt="" aria-hidden="true" />
+			<img src={ image } alt="" />
 			<div className="promo-card__text">
 				<FormattedHeader brandFont headerText={ headerText } align="left" />
 				<p>{ contentText }</p>

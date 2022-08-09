@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -8,6 +9,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
+import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -40,6 +42,7 @@ export const QuickLinks = ( {
 	menusUrl,
 	trackEditHomepageAction,
 	trackWritePostAction,
+	trackPromotePostAction,
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
@@ -64,6 +67,7 @@ export const QuickLinks = ( {
 		,
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
+	const isPromotePostActive = config.isEnabled( 'promote-post' );
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (
@@ -96,6 +100,15 @@ export const QuickLinks = ( {
 				label={ translate( 'Write blog post' ) }
 				materialIcon="edit"
 			/>
+			{ isPromotePostActive && (
+				<ActionBox
+					href={ `/advertising/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackPromotePostAction }
+					label={ translate( 'Promote post' ) }
+					gridicon="speaker"
+				/>
+			) }
 			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
 					href={ `/comments/${ siteSlug }` }
@@ -251,6 +264,10 @@ const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
+const trackPromotePostAction = () => ( dispatch ) => {
+	dispatch( recordDSPEntryPoint( 'myhome_quick-links' ) );
+};
+
 const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
@@ -401,6 +418,7 @@ const mapStateToProps = ( state ) => {
 const mapDispatchToProps = {
 	trackEditHomepageAction,
 	trackWritePostAction,
+	trackPromotePostAction,
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
@@ -423,6 +441,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...dispatchProps,
 		trackEditHomepageAction: () => dispatchProps.trackEditHomepageAction( isStaticHomePage ),
 		trackWritePostAction: () => dispatchProps.trackWritePostAction( isStaticHomePage ),
+		trackPromotePostAction: () => dispatchProps.trackPromotePostAction( isStaticHomePage ),
 		trackAddPageAction: () => dispatchProps.trackAddPageAction( isStaticHomePage ),
 		trackManageCommentsAction: () => dispatchProps.trackManageCommentsAction( isStaticHomePage ),
 		trackEditMenusAction: () => dispatchProps.trackEditMenusAction( isStaticHomePage ),

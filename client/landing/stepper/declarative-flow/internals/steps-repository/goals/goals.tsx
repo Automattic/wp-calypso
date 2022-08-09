@@ -1,4 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import type { Goal } from './types';
 
@@ -9,6 +10,8 @@ const shouldDisplayGoal = ( { key }: Goal ) => ! HIDE_GOALS.includes( key );
 
 export const useGoals = ( displayAllGoals = false ): Goal[] => {
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
+
 	const goals = [
 		{
 			key: SiteGoal.Write,
@@ -36,5 +39,13 @@ export const useGoals = ( displayAllGoals = false ): Goal[] => {
 			title: translate( 'Other' ),
 		},
 	];
-	return displayAllGoals ? goals : goals.filter( shouldDisplayGoal );
+
+	const hideDIFMGoalForNonEN = ( { key }: Goal ) => {
+		if ( key === SiteGoal.DIFM && ! isEnglishLocale ) {
+			return false;
+		}
+		return true;
+	};
+
+	return displayAllGoals ? goals.filter( hideDIFMGoalForNonEN ) : goals.filter( shouldDisplayGoal );
 };

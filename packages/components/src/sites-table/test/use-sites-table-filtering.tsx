@@ -107,7 +107,7 @@ describe( 'useSitesTableFiltering', () => {
 				title: expect.any( String ),
 			},
 			{
-				name: 'launched',
+				name: 'public',
 				count: 2,
 				title: expect.any( String ),
 			},
@@ -122,5 +122,28 @@ describe( 'useSitesTableFiltering', () => {
 				title: expect.any( String ),
 			},
 		] );
+	} );
+
+	test( 'filtering maintains object equality', () => {
+		// Object equality is important for memoizing the site table row
+
+		const mockSite = createMockSite( { name: 'site title 1' } );
+
+		const { result, rerender } = renderHook(
+			( { search } ) => useSitesTableFiltering( [ mockSite ], { search, status: 'all' } ),
+			{ initialProps: { search: 'titl' } }
+		);
+
+		expect( result.current.filteredSites ).toHaveLength( 1 );
+		expect( result.current.filteredSites[ 0 ] ).toBe( mockSite );
+
+		rerender( { search: 'does not match' } );
+
+		expect( result.current.filteredSites ).toHaveLength( 0 );
+
+		rerender( { search: 'title' } );
+
+		expect( result.current.filteredSites ).toHaveLength( 1 );
+		expect( result.current.filteredSites[ 0 ] ).toBe( mockSite );
 	} );
 } );
