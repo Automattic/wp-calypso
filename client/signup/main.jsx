@@ -604,6 +604,10 @@ class Signup extends Component {
 	}
 
 	getInteractiveStepsCount() {
+		// Only show progress bar for these two flows
+		if ( ! [ 'newsletters', 'link-in-bio' ].includes( this.props.flowName ) ) {
+			return null;
+		}
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
 		const flowSteps = flow.steps.filter( ( step ) => ! steps[ step ].props?.nonInteractive );
 		return flow.totalSteps ? flow.totalSteps : flowSteps.length;

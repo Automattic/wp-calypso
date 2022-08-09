@@ -36,7 +36,6 @@ export default class SignupHeader extends Component {
 				{ flowLength && (
 					<ProgressBar className={ flowName } value={ positionInFlow + 1 } total={ flowLength } />
 				) }
-
 				<WordPressLogo size={ 120 } className={ logoClasses } />
 				{ pageTitle && <h1>{ pageTitle }</h1> }
 				{ /* This should show a sign in link instead of
