@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { useExperiment } from 'calypso/lib/explat';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -338,10 +339,18 @@ const hasPlaceholders = ( planProperties ) =>
 	planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
-export default connect(
+const ConnectedPlanFeaturesComparison = connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, isLandingPage, siteId, visiblePlans, popularPlanSpec } =
-			ownProps;
+		const {
+			isInSignup,
+			isPlansPageQuickImprovements,
+			placeholder,
+			plans,
+			isLandingPage,
+			siteId,
+			visiblePlans,
+			popularPlanSpec,
+		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 
@@ -361,13 +370,16 @@ export default connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
-				const features = planConstantObj.getPlanCompareFeatures();
+				const features = isPlansPageQuickImprovements
+					? planConstantObj.getPlanCompareFeaturesV2()
+					: planConstantObj.getPlanCompareFeatures();
+
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject ) {
 					isPlaceholder = true;
 				}
 
-				if ( planConstantObj.getSignupCompareAvailableFeatures ) {
+				if ( ! isPlansPageQuickImprovements && planConstantObj.getSignupCompareAvailableFeatures ) {
 					planFeatures = getPlanFeaturesObject(
 						planConstantObj.getSignupCompareAvailableFeatures()
 					);
@@ -410,6 +422,7 @@ export default connect(
 						return {
 							...feature,
 							availableOnlyForAnnualPlans,
+							hideInfoPopover: ! isPlansPageQuickImprovements,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 						};
 					} );
@@ -469,5 +482,22 @@ export default connect(
 		recordTracksEvent,
 	}
 )( localize( PlanFeaturesComparison ) );
+
+export default function PlanFeaturesComparisonWrapper( props ) {
+	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+		'pricing_packaging_plans_page_quick_improvements'
+	);
+
+	if ( isLoadingExperimentAssignment ) {
+		return null;
+	}
+
+	return (
+		<ConnectedPlanFeaturesComparison
+			{ ...props }
+			isPlansPageQuickImprovements={ 'treatment' === experimentAssignment?.variationName }
+		/>
+	);
+}
 
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
