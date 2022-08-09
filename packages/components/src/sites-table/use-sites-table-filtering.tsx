@@ -47,7 +47,7 @@ export function useSitesTableFiltering(
 	}, [ allSites, __ ] );
 
 	const filteredSites = useFuzzySearch( {
-		data: filteredByStatus[ status ],
+		data: filteredByStatus[ status ] || [],
 		keys: [ 'URL', 'name', 'slug' ],
 		query: search,
 	} );
