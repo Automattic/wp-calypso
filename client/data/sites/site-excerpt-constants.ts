@@ -21,5 +21,3 @@ export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'is_redirect',
 	'unmapped_url',
 ] as const;
-
-export const SITE_EXCERPT_QUERY_KEY = 'sites-dashboard-sites-data';

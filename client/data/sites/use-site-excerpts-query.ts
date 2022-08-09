@@ -6,7 +6,6 @@ import { urlToSlug, withoutHttp } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import getSites from 'calypso/state/selectors/get-sites';
 import {
-	SITE_EXCERPT_QUERY_KEY,
 	SITE_EXCERPT_REQUEST_FIELDS,
 	SITE_EXCERPT_REQUEST_OPTIONS,
 } from './site-excerpt-constants';
@@ -28,7 +27,7 @@ const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 export const useSiteExcerptsQuery = () => {
 	const store = useStore();
 
-	return useQuery( [ SITE_EXCERPT_QUERY_KEY ], fetchSites, {
+	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
 		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
