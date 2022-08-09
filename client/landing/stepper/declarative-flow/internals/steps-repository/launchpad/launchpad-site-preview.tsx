@@ -6,6 +6,7 @@ import PreviewToolbar from 'calypso/signup/steps/design-picker/preview-toolbar';
 const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const translate = useTranslate();
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
+	const defaultDevice = 'phone';
 
 	function formatPreviewUrl() {
 		if ( ! previewUrl ) {
@@ -36,6 +37,7 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 					components: { strong: <strong /> },
 				} ) }
 				translate={ translate }
+				defaultViewportDevice={ defaultDevice }
 			/>
 		</div>
 	);
