@@ -21,8 +21,9 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const theme = useThemeDetails( slug );
 	const features = theme.data && theme.data.taxonomies.features;
 	const featuresHeading = translate( 'Theme features' ) as string;
-	const themeYearlyProduct = useSelect(
-		( select ) => select( PRODUCTS_LIST_STORE ).getProductBySlug( 'pro-plan' ) //Pass combination of `slug` and `subInterval` to selector to get theme price
+	//@TODO This is a placeholder until we have theme products to choose from
+	const themeYearlyProduct = useSelect( ( select ) =>
+		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'value_bundle' )
 	);
 	const themePrice = themeYearlyProduct?.combined_cost_display;
 
