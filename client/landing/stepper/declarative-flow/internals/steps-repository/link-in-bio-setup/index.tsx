@@ -167,6 +167,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered
 		/>
 	);
 };

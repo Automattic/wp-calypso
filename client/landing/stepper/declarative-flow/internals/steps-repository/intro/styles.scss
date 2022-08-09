@@ -36,6 +36,10 @@ $white: var( --color-surface );
 			position: absolute;
 			transform-origin: 0 0;
 		}
+
+		h1 {
+			color: var( --color-surface );
+		}
 	}
 
 	.progress-bar {
@@ -48,6 +52,10 @@ $white: var( --color-surface );
 
 			.step-container__navigation {
 				display: none;
+			}
+
+			.step-container__content {
+				min-height: 80vh;
 			}
 		}
 
