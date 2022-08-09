@@ -1,35 +1,24 @@
-
-.campaign-item__card {
+.campaign-item__header {
 	display: flex;
-	align-items: center;
 
-	.campaign-item__main {
-		flex: 1;
+	.campaign-item__header-image {
+		height: 80px;
+		width: 80px;
+		margin-right: 20px;
+
+		img {
+			height: 80px;
+			width: 80px;
+		}
+	}
+
+	.campaign-item__header-content {
 		display: flex;
-		align-items: center;
+		flex-direction: column;
+		justify-content: space-around;
 
-		.campaign-item__title {
-			color: var( --color-neutral-70 );
-			font-weight: 600;
-			font-size: 1rem;
-		}
-
-
-		.campaign-item__subtitle {
-			color: var( --color-neutral-50 );
-			font-size: 0.875rem;
-		}
-
-		.campaign-item__image-container {
-			margin: 0 20px;
-			flex: 1;
-			flex-shrink: 0;
-
-			.campaign-item__image {
-				height: 80px;
-			}
+		.campaign-item__header-title {
+			font-weight: 500;
 		}
 	}
 }
-
-

@@ -42,6 +42,9 @@ const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
 			...queryOptions,
 			enabled: !! siteId,
 			retryDelay: 3000,
+			meta: {
+				persist: false,
+			},
 		}
 	);
 };

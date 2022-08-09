@@ -1,8 +1,5 @@
-import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import megaphoneIllustration from 'calypso/assets/images/customer-home/illustration--megaphone.svg';
-import EmptyContent from 'calypso/components/empty-content';
 import ListEnd from 'calypso/components/list-end';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useCampaignsQuery, {
@@ -11,6 +8,7 @@ import useCampaignsQuery, {
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import CampaignItem from 'calypso/my-sites/promote-post/components/campaign-item';
 import './style.scss';
+import CampaignsEmpty from 'calypso/my-sites/promote-post/components/campaigns-empty';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 // todo: use actual value
@@ -38,17 +36,7 @@ export default function CampaignsList() {
 
 	return (
 		<>
-			{ isEmpty && (
-				<EmptyContent
-					title={ translate( 'No promoted posts' ) }
-					line={ 'attributes.line' }
-					action={ 'attributes.action' }
-					actionURL={ 'attributes.actionURL' }
-					// actionHoverCallback={ preloadEditor }
-					illustration={ megaphoneIllustration }
-					illustrationWidth={ 150 }
-				/>
-			) }
+			{ isEmpty && <CampaignsEmpty /> }
 			{ ! isEmpty && (
 				<>
 					{ campaigns.map( function ( campaign ) {

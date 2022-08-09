@@ -9,6 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
+import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
 
 export type TabType = 'posts' | 'campaigns';
@@ -54,7 +55,12 @@ export default function PromotedPosts() {
 				selectTab={ ( tab ) => setSelectedTab( tab ) }
 			/>
 			{ selectedTab === 'campaigns' && <CampaignsList /> }
-			{ selectedTab === 'posts' && <PostsList /> }
+			{ selectedTab === 'posts' && (
+				<>
+					<PostsListBanner />
+					<PostsList />
+				</>
+			) }
 		</Main>
 	);
 }
