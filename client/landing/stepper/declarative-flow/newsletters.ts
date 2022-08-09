@@ -1,5 +1,5 @@
-import { useDispatch } from '@wordpress/data';
 import { isEnabled } from '@automattic/calypso-config';
+import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE } from '../stores';
