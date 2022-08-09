@@ -3,10 +3,10 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
-import usePlugins from '../../use-plugins';
-import ClearSearchButton from '../clear-search-button';
+import ClearSearchButton from '../plugins-browser/clear-search-button';
+import usePlugins from '../use-plugins';
 
-const FullListView = ( { category, siteSlug, sites } ) => {
+const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
 		category,
 		infinite: true,
@@ -55,4 +55,4 @@ const FullListView = ( { category, siteSlug, sites } ) => {
 	);
 };
 
-export default FullListView;
+export default PluginsCategoryResultsPage;
