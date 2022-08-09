@@ -49,7 +49,6 @@ export interface SiteWithPurchases {
 	domain: string;
 }
 export type TracksProps = Record< string, string | number | boolean >;
-export type Thunk = ( dispatch: CalypsoDispatch ) => void;
 
 /**
  * Returns an array of sites objects, each of which contains an array of purchases.
@@ -157,8 +156,8 @@ export function handleRenewNowClick(
 	purchase: Purchase,
 	siteSlug: string,
 	options: { redirectTo?: string; tracksProps?: TracksProps } = {}
-): Thunk {
-	return ( dispatch ) => {
+) {
+	return ( dispatch: CalypsoDispatch ) => {
 		try {
 			const renewItem = getRenewalItemFromProduct( purchase, { domain: purchase.meta } );
 
@@ -204,8 +203,8 @@ export function handleRenewMultiplePurchasesClick(
 	purchases: Purchase[],
 	siteSlug: string,
 	options: { redirectTo?: string; tracksProps?: TracksProps } = {}
-): Thunk {
-	return ( dispatch ) => {
+) {
+	return ( dispatch: CalypsoDispatch ) => {
 		try {
 			purchases.forEach( ( purchase ) => {
 				// Track the renew now submit.
