@@ -37,7 +37,7 @@ const selectors = {
 	detailsButton: `${ panel } button[aria-label="Details"]`,
 
 	// Details popover
-	resetSearchButton: `${ panel } button[aria-label="Reset search"]`,
+	resetSearchButton: `.block-editor-inserter__content button[aria-label="Reset search"]`,
 
 	// Editor settings
 	settingsButton: ( label = settingsButtonLabel ) =>
