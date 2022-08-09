@@ -41,7 +41,13 @@ type StyledProps = {
 	theme?: Theme;
 };
 
-const HappychatButton = styled( HappychatButtonUnstyled )`
+type HappychatButtonProps = {
+	onClick: () => void;
+	theme?: Theme;
+	openHelpCenter: boolean;
+};
+
+const HappychatButton: React.FC< HappychatButtonProps > = styled( HappychatButtonUnstyled )`
 	margin: 0;
 	padding: 0;
 
@@ -81,8 +87,10 @@ export function PaymentChatButton( {
 
 	return (
 		<HappychatButton onClick={ chatButtonClicked } openHelpCenter={ openHelpCenter }>
-			<Gridicon icon="chat" />
-			{ translate( 'Need help? Chat with us.' ) }
+			<>
+				<Gridicon icon="chat" />
+				{ translate( 'Need help? Chat with us.' ) }
+			</>
 		</HappychatButton>
 	);
 }
