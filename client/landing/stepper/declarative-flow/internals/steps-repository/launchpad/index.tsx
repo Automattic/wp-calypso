@@ -3,19 +3,10 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import Checklist from './checklist';
+import { tasks } from './tasks';
 import type { Step } from '../../types';
 import './style.scss';
-
-function PlaceHolderChecklist() {
-	return (
-		<ul style={ { textAlign: 'center' } }>
-			<li>Item 1</li>
-			<li>Item 2</li>
-			<li>Item 3</li>
-			<li>Item 4</li>
-		</ul>
-	);
-}
 
 function PlaceHolderPreview() {
 	return <div style={ { textAlign: 'center' } }>Preview here</div>;
@@ -27,7 +18,7 @@ const Launchpad: Step = ( { navigation } ) => {
 
 	const stepContent = (
 		<div className="launchpad__content">
-			<PlaceHolderChecklist />
+			<Checklist tasks={ tasks } />
 			<PlaceHolderPreview />
 		</div>
 	);
