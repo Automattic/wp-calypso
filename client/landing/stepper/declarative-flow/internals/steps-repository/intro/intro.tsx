@@ -22,7 +22,7 @@ const Intro: React.FC< Props > = ( { goNext, flowName } ) => {
 				<span>{ introTitle }</span>
 			</h1>
 			<Button className="intro__button" primary onClick={ goNext }>
-				{ __( 'Get Started' ) }
+				{ __( 'Get started' ) }
 			</Button>
 		</div>
 	);

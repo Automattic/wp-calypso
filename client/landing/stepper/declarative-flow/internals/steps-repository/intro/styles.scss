@@ -1,8 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@automattic/onboarding/styles/mixins';
 
-$design-button-primary-color: var( --color-primary );
-$get-started-button-primary-color: var( --studio-blue-50 );
 $white: var( --color-surface );
 
 .intro {
@@ -26,12 +24,18 @@ $white: var( --color-surface );
 	background-size: cover;
 	box-sizing: border-box;
 	padding: 60px 0 0;
+	color: $white;
+	fill: $white;
 
-	.wordpress-logo {
-		inset-block-start: 20px;
-		inset-inline-start: 20px;
-		position: absolute;
-		transform-origin: 0 0;
+	.signup-header {
+		z-index: 1;
+
+		.wordpress-logo {
+			inset-block-start: 20px;
+			inset-inline-start: 20px;
+			position: absolute;
+			transform-origin: 0 0;
+		}
 	}
 
 	.progress-bar {
@@ -46,6 +50,8 @@ $white: var( --color-surface );
 				display: none;
 			}
 		}
+
+		min-height: inherit;
 	}
 
 	.intro__content {
@@ -58,7 +64,6 @@ $white: var( --color-surface );
 
 	.intro__title {
 		@include onboarding-font-recoleta;
-		color: $white;
 		font-weight: 500;
 		line-height: 40px;
 		padding-bottom: 40px;
@@ -69,9 +74,11 @@ $white: var( --color-surface );
 	}
 
 	.intro__button {
-		color: $get-started-button-primary-color;
+		font-family: 'SF Pro Text', $sans;
+		color: var( --studio-blue-50 );
 		background-color: $white;
 		border: none;
 		font-weight: 500;
+		letter-spacing: 0.32px;
 	}
 }

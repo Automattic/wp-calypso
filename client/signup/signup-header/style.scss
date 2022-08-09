@@ -1,4 +1,5 @@
 @import '@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/fonts';
 
 // A masterbar-like header just for
 // the signup flow.
@@ -39,8 +40,7 @@
 		color: var( --color-text );
 		top: 20px;
 		left: 56px;
-		font-size: 18;
-		font-family: 'Recoleta';
+		font-size: $font-body-large;
 	}
 
 	.signup-header__right {
