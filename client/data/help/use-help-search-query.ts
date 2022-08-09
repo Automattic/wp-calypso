@@ -20,8 +20,8 @@ export const useHelpSearchQuery = (
 		[ 'help', search ],
 		() => wpcomRequest( { path: '/help/search', query: params.toString(), apiVersion: '1.1' } ),
 		{
-			enabled: !! search,
 			...queryOptions,
+			enabled: !! search,
 		}
 	);
 };

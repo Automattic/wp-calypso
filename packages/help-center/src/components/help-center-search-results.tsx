@@ -7,7 +7,7 @@ import {
 	SUPPORT_TYPE_API_HELP,
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from '@automattic/data-stores';
-import { localizeUrl, useLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
 import { __ } from '@wordpress/i18n';
 import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
@@ -111,13 +111,12 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
-	const locale = useLocale();
 	const contextualResults = rawContextualResults.filter(
 		// Unless searching with Inline Help or on the Purchases section, hide the
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery, locale );
+	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery );
 
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
