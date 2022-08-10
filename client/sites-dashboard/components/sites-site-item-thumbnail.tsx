@@ -45,13 +45,12 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 };
 
 function getFirstGrapheme( input: string ) {
-	try {
+	if ( 'Segmenter' in Intl ) {
 		const segmenter = new Intl.Segmenter();
 		const [ firstSegmentData ] = segmenter.segment( input );
 
 		return firstSegmentData.segment;
-	} catch {
-		// Intl.Segmenter is not available in all browsers
-		return input.charAt( 0 );
 	}
+
+	return input.charAt( 0 );
 }
