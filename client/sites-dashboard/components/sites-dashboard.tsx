@@ -67,13 +67,13 @@ const HiddenSitesMessage = styled.span`
 	display: block;
 	font-size: 14px;
 	padding: 16px 16px 24px;
+`;
 
-	a {
-		text-decoration: underline;
+const HiddenSitesMessageLink = styled.a`
+	text-decoration: underline;
 
-		&:hover {
-			text-decoration: none;
-		}
+	&:hover {
+		text-decoration: none;
 	}
 `;
 
@@ -143,7 +143,7 @@ export function SitesDashboard( {
 											components: {
 												br: <br />,
 												a: (
-													<a
+													<HiddenSitesMessageLink
 														href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }
 													/>
 												),
