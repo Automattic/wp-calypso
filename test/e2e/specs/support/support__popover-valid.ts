@@ -13,7 +13,7 @@ import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Support: Popover Calypso' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Support: Popover Calypso' ), function () {
 	let page: Page;
 
 	describe.each( [
