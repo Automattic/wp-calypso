@@ -233,7 +233,7 @@ export function serverRender( req, res ) {
 		attachHead( context );
 
 		const cacheableReduxSubtrees = [ 'documentHead' ];
-		const cacheableLoggedOutReduxSubtrees = ! context.isLoggedIn ? [ 'themes', 'ui' ] : [];
+		const cacheableLoggedOutReduxSubtrees = ! context.user ? [ 'themes', 'ui' ] : [];
 		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
 
 		const reduxSubtrees = [ ...cacheableReduxSubtrees, ...isomorphicSubtrees ];
