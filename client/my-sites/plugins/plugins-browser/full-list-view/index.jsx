@@ -1,56 +1,28 @@
-import { useTranslate } from 'i18n-calypso';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
-import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
-import usePlugins from '../../use-plugins';
 import ClearSearchButton from '../clear-search-button';
 
-const FullListView = ( { category, siteSlug, sites } ) => {
-	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
-		category,
-		infinite: true,
-	} );
-
-	const categories = useCategories();
-	const categoryName = categories[ category ]?.name || category;
-	const translate = useTranslate();
-
-	let title = '';
-	if ( categoryName && pagination ) {
-		title = translate(
-			'Found %(total)s plugin under "%(categoryName)s"',
-			'Found %(total)s plugins under "%(categoryName)s"',
-			{
-				count: pagination.results,
-				textOnly: true,
-				args: {
-					total: pagination.results,
-					categoryName,
-				},
-			}
-		);
-	}
-
+const FullListView = ( props ) => {
 	return (
 		<>
 			<PluginsBrowserList
-				plugins={ plugins }
-				listName={ category }
+				plugins={ props.plugins }
+				listName={ props.listName }
 				subtitle={
 					<>
-						{ title }
+						{ props.title }
 						<ClearSearchButton />
 					</>
 				}
-				site={ siteSlug }
-				showPlaceholders={ isFetching }
-				currentSites={ sites }
+				site={ props.siteSlug }
+				showPlaceholders={ props.isFetching }
+				currentSites={ props.sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
 				extended
 			/>
 
-			<InfiniteScroll nextPageMethod={ fetchNextPage } />
+			<InfiniteScroll nextPageMethod={ props.fetchNextPage } />
 		</>
 	);
 };

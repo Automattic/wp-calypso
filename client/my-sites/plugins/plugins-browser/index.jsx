@@ -52,9 +52,9 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import './style.scss';
+import PluginsCategoryResultsPage from '../plugins-category-results-page';
 import PluginsDiscoveryPage from '../plugins-discovery-page';
 import usePlugins from '../use-plugins';
-import FullListView from './full-list-view';
 import SearchListView from './search-list-view';
 
 /**
@@ -162,10 +162,6 @@ const PluginBrowserContent = ( props ) => {
 	if ( props.search ) {
 		return <SearchListView { ...props } />;
 	}
-	if ( props.category ) {
-		return <FullListView { ...props } />;
-	}
-
 	return;
 };
 
@@ -385,7 +381,12 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 			/>
 
 			{ ! search && <Categories selected={ category } /> }
-			{ category || search ? (
+			{ category && ! search && (
+				<div className="plugins-browser__main-container">
+					<PluginsCategoryResultsPage category={ category } sites={ sites } siteSlug={ siteSlug } />
+				</div>
+			) }
+			{ search && (
 				<div className="plugins-browser__main-container">
 					<PluginBrowserContent
 						clearSearch={ clearSearch }
@@ -411,7 +412,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 						isVip={ isVip }
 					/>
 				</div>
-			) : (
+			) }
+			{ ! category && ! search && (
 				<div className="plugins-browser__main-container">
 					<PluginsDiscoveryPage
 						clearSearch={ clearSearch }
@@ -428,7 +430,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 					/>
 				</div>
 			) }
-
 			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>
 	);
