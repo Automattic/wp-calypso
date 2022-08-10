@@ -10,12 +10,14 @@ function createMockSite( {
 	URL,
 	is_private = false,
 	is_coming_soon = false,
+	visible = true,
 }: {
 	ID?: number;
 	name?: string;
 	URL?: string;
 	is_private?: boolean;
 	is_coming_soon?: boolean;
+	visible?: boolean;
 } = {} ) {
 	return {
 		name: name ?? `site ${ ID }`,
@@ -23,6 +25,7 @@ function createMockSite( {
 		slug: `site${ ID }.io`,
 		is_private,
 		is_coming_soon,
+		visible,
 	};
 }
 
@@ -84,7 +87,7 @@ describe( 'useSitesTableFiltering', () => {
 		const public1 = createMockSite( { is_private: false } );
 		const public2 = createMockSite( { is_private: false } );
 		const private1 = createMockSite( { is_private: true } );
-		const private2 = createMockSite( { is_private: true } );
+		const private2 = createMockSite( { is_private: true, visible: false } );
 		const comingSoon = createMockSite( { is_private: true, is_coming_soon: true } );
 
 		const { result } = renderHook( () =>
@@ -99,21 +102,25 @@ describe( 'useSitesTableFiltering', () => {
 				name: 'all',
 				count: 5,
 				title: expect.any( String ),
+				hiddenCount: 1,
 			},
 			{
 				name: 'public',
 				count: 2,
 				title: expect.any( String ),
+				hiddenCount: 0,
 			},
 			{
 				name: 'private',
 				count: 2,
 				title: expect.any( String ),
+				hiddenCount: 1,
 			},
 			{
 				name: 'coming-soon',
 				count: 1,
 				title: expect.any( String ),
+				hiddenCount: 0,
 			},
 		] );
 	} );
