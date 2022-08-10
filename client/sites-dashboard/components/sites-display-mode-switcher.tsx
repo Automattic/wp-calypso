@@ -49,12 +49,16 @@ export const SitesDisplayModeSwitcher = () => {
 	const displayMode = useSitesDisplayMode();
 
 	return (
-		<div className={ container } role="radiogroup" aria-label={ __( 'Sites display mode' ) }>
+		<div
+			style={ { pointerEvents: isSaving ? 'none' : 'auto' } }
+			className={ container }
+			role="radiogroup"
+			aria-label={ __( 'Sites display mode' ) }
+		>
 			<Button
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
 				onClick={ () => onDisplayModeChange( 'tile' ) }
-				disabled={ isSaving }
 				icon={ <Gridicon icon="grid" /> }
 				isPressed={ displayMode === 'tile' }
 			/>
@@ -62,7 +66,6 @@ export const SitesDisplayModeSwitcher = () => {
 				role="radio"
 				aria-label={ __( 'List view' ) }
 				onClick={ () => onDisplayModeChange( 'list' ) }
-				disabled={ isSaving }
 				icon={ <Gridicon icon="list-unordered" /> }
 				isPressed={ displayMode === 'list' }
 			/>
