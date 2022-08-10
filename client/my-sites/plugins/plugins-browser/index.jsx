@@ -259,7 +259,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 					siteSlug={ siteSlug }
 					siteId={ siteId }
 					sites={ sites }
-					categoryName={ categoryName }
 				/>
 			);
 		}
