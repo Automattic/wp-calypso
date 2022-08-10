@@ -23,7 +23,6 @@ import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
-import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -51,18 +50,11 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import PluginsCategoryResultsPage from '../plugins-category-results-page';
 import SearchResultsPage from '../plugin-search-results-page';
+import PluginsCategoryResultsPage from '../plugins-category-results-page';
 import PluginsDiscoveryPage from '../plugins-discovery-page';
-import usePlugins from '../use-plugins';
-import FullListView from './full-list-view';
 
 import './style.scss';
-
-/**
- * Module variables
- */
-const SHORT_LIST_LENGTH = 6;
 
 const UploadPluginButton = ( { isMobile, siteSlug, hasUploadPlugins } ) => {
 	const dispatch = useDispatch();
@@ -138,36 +130,6 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
 	return null;
 };
 
-/**
- * Filter the popular plugins list.
- *
- * Remove the incompatible plugins and the displayed featured
- * plugins from the popular list to avoid showing them twice.
- *
- * @param {Array} popularPlugins
- * @param {Array} featuredPlugins
- */
-function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
-	const displayedFeaturedSlugsMap = new Map(
-		featuredPlugins
-			.slice( 0, SHORT_LIST_LENGTH ) // only displayed plugins
-			.map( ( plugin ) => [ plugin.slug, plugin.slug ] )
-	);
-
-	return popularPlugins.filter(
-		( plugin ) =>
-			! displayedFeaturedSlugsMap.has( plugin.slug ) && isCompatiblePlugin( plugin.slug )
-	);
-}
-
-const PluginBrowserContent = ( props ) => {
-	if ( props.category ) {
-		return <FullListView { ...props } />;
-	}
-
-	return;
-};
-
 const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle, hideHeader } ) => {
 	const {
 		isAboveElement,
@@ -185,10 +147,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
-
-	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
-		category: 'paid',
-	} );
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const jetpackNonAtomic = useSelector(
@@ -216,23 +174,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	);
 	const hasUploadPlugins = useSelector(
 		( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_UPLOAD_PLUGINS ) || jetpackNonAtomic
-	);
-
-	const {
-		plugins: pluginsByCategoryFeatured = [],
-		isFetching: isFetchingPluginsByCategoryFeatured,
-	} = usePlugins( {
-		category: 'featured',
-	} );
-
-	const { plugins: popularPlugins = [], isFetching: isFetchingPluginsByCategoryPopular } =
-		usePlugins( {
-			category: 'popular',
-		} );
-
-	const pluginsByCategoryPopular = filterPopularPlugins(
-		popularPlugins,
-		pluginsByCategoryFeatured
 	);
 
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite?.ID ) );
