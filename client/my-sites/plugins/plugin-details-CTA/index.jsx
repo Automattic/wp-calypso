@@ -6,9 +6,11 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
+import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -48,6 +50,8 @@ const PluginDetailsCTA = ( props ) => {
 	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
 
 	const requestingPluginsForSites = useSelector( ( state ) =>
 		isRequestingForSites( state, siteIds )
@@ -101,6 +105,10 @@ const PluginDetailsCTA = ( props ) => {
 		! isAtomic && ! isJetpack && ( eligibilityHolds?.length || eligibilityWarnings?.length );
 
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
+
+	const toggleDisplayManageSitePluginsModal = useCallback( () => {
+		setDisplayManageSitePluginsModal( ! displayManageSitePluginsModal );
+	}, [ displayManageSitePluginsModal ] );
 
 	// If we cannot retrieve plugin status through jetpack ( ! isJetpack ) and plugin is preinstalled.
 	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
@@ -194,6 +202,11 @@ const PluginDetailsCTA = ( props ) => {
 		// Check if there is no site selected
 		return (
 			<div className="plugin-details-CTA__container">
+				<ManageSitePluginsDialog
+					plugin={ plugin }
+					isVisible={ displayManageSitePluginsModal }
+					onClose={ () => setDisplayManageSitePluginsModal( false ) }
+				/>
 				<div className="plugin-details-CTA__installed-text">
 					{ !! installedOnSitesQuantity &&
 						translate(
@@ -205,10 +218,13 @@ const PluginDetailsCTA = ( props ) => {
 								components: {
 									span: <span className="plugin-details-CTA__installed-text-quantity"></span>,
 								},
+								count: installedOnSitesQuantity,
 							}
 						) }
 				</div>
-				<Button>{ translate( 'Manage sites' ) }</Button>
+				<Button onClick={ toggleDisplayManageSitePluginsModal }>
+					{ translate( 'Manage sites' ) }
+				</Button>
 			</div>
 		);
 	}
