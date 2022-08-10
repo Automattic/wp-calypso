@@ -20,7 +20,7 @@
 		"bilmur-script": true,
 		"calypso/help-center": false,
 		"calypsoify/plugins": true,
-		"cancellation-offers": false,
+		"cancellation-offers": true,
 		"catch-js-errors": true,
 		"cloudflare": true,
 		"current-site/domain-warning": true,
