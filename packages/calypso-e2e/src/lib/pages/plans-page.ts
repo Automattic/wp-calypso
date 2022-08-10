@@ -112,18 +112,14 @@ export class PlansPage {
 	 * @param {PlansPageTab} targetTab Name of the tab.
 	 */
 	async clickTab( targetTab: PlansPageTab ): Promise< void > {
-		// On mobile viewports, the way PlansPage loads its contents
-		// causes an event to fire which closes all open panes.
-		// As a last resort workaround, forcibly click on the target selector
-		// even if the pane is closed.
+		// The way PlansPage loads its contents is particularly prone to
+		// flakiness outside the control of Playwright auto-retry mechanism.
+		// To work around this, forcibly click on the target selector.
+		// This affects primarily Mobile viewports but also can also occur
+		// on Desktop viewports.
 		// See https://github.com/Automattic/wp-calypso/issues/64389
 		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			// await this.page.dispatchEvent( targetTab, 'click' );
-			await clickNavTab( this.page, targetTab, { force: true } );
-		} else {
-			await clickNavTab( this.page, targetTab );
-		}
+		await clickNavTab( this.page, targetTab, { force: true } );
 	}
 
 	/**
