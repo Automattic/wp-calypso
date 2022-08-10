@@ -11,7 +11,7 @@ const request = () => ( dispatch: CalypsoDispatch, getState: AppState ) => {
 	}
 };
 
-export default function QueryAllJetpackPlugins() {
+export default function QueryAllJetpackSitesPlugins() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {

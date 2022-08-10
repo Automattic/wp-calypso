@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryAllJetpackPlugins from 'calypso/components/data/query-all-jetpack-plugins';
+import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-plugins';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
@@ -310,7 +310,7 @@ function PluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryAllJetpackPlugins />
+			<QueryAllJetpackSitesPlugins />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
@@ -426,7 +426,7 @@ function LegacyPluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryAllJetpackPlugins />
+			<QueryAllJetpackSitesPlugins />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />
