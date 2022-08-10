@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
@@ -27,11 +28,11 @@ import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
 
-const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement => {
+const ContentWithHeader = ( props: { children: ReactNode } ): ReactElement => {
 	const translate = useTranslate();
 	return (
 		<Main wideLayout>
@@ -56,19 +57,8 @@ const NoAccess = (): ReactElement => {
 	);
 };
 
-const LoadingPlaceholder = (): ReactElement => {
-	return (
-		<ContentWithHeader>
-			<>
-				<SectionHeader className="email-home__section-placeholder is-placeholder" />
-				<Card className="email-home__content-placeholder is-placeholder" />
-			</>
-		</ContentWithHeader>
-	);
-};
-
 interface EmailManagementHomeProps {
-	emailListInactiveHeader?: ReactElement;
+	emailListInactiveHeader?: ReactNode;
 	sectionHeaderLabel?: TranslateResult;
 	selectedDomainName: string;
 	selectedEmailProviderSlug: string;
@@ -122,7 +112,14 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
-		return <LoadingPlaceholder />;
+		return (
+			<ContentWithHeader>
+				<QueryJetpackPlugins siteIds={ [ selectedSite?.ID ?? 0 ] } />
+
+				<SectionHeader className="email-home__section-placeholder is-placeholder" />
+				<Card className="email-home__content-placeholder is-placeholder" />
+			</ContentWithHeader>
+		);
 	}
 
 	if ( ! canManageSite ) {
@@ -198,28 +195,26 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	return (
 		<ContentWithHeader>
-			<>
-				{ showActiveDomainList && (
-					<EmailListActive
-						currentRoute={ currentRoute }
-						domains={ domainsWithEmail }
-						selectedSiteId={ selectedSite?.ID }
-						selectedSiteSlug={ selectedSite?.slug }
-						source={ source }
-					/>
-				) }
+			<MailPoetUpsell />
 
-				<EmailListInactive
+			{ showActiveDomainList && (
+				<EmailListActive
 					currentRoute={ currentRoute }
-					domains={ domainsWithNoEmail }
-					headerComponent={ emailListInactiveHeader }
-					sectionHeaderLabel={ sectionHeaderLabel }
+					domains={ domainsWithEmail }
+					selectedSiteId={ selectedSite?.ID }
 					selectedSiteSlug={ selectedSite?.slug }
 					source={ source }
 				/>
+			) }
 
-				<MailPoetUpsell />
-			</>
+			<EmailListInactive
+				currentRoute={ currentRoute }
+				domains={ domainsWithNoEmail }
+				headerComponent={ emailListInactiveHeader }
+				sectionHeaderLabel={ sectionHeaderLabel }
+				selectedSiteSlug={ selectedSite?.slug }
+				source={ source }
+			/>
 		</ContentWithHeader>
 	);
 };

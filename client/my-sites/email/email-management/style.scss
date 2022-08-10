@@ -24,8 +24,7 @@
 	}
 }
 
-.email-list-active__item-icon,
-.mailpoet-upsell__icon {
+.email-list-active__item-icon {
 	align-self: center;
 
 	> img, svg {
@@ -124,8 +123,7 @@
 	margin-top: 15px;
 }
 
-.email-list-inactive__mailbox,
-.mailpoet-upsell__card {
+.email-list-inactive__mailbox {
 	align-items: center;
 	display: flex;
 
@@ -139,17 +137,16 @@
 }
 
 .mailpoet-upsell {
-	margin-top: 30px;
-}
+	margin-top: -16px;
+	margin-bottom: 37px;
 
-.mailpoet-upsell__text {
-	flex: 1 1 auto;
-	margin-right: 14px;
+	.banner__icon-no-circle {
+		padding-right: 0;
 
-	> span {
-		color: var( --color-text-subtle );
-		font-size: 0.875rem;
-		margin-bottom: 0;
+		img {
+			height: 28px;
+			width: 28px;
+		}
 	}
 }
 
