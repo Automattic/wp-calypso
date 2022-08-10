@@ -31,21 +31,15 @@ const UpgradeNudge = ( {
 	siteSlug,
 	paidPlugins,
 } ) => {
+	const hasInstallPurchasedPlugins = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	);
 	const requiredPlansPurchasedPlugins = useSelector( ( state ) =>
 		getPlansForFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
 	);
 	const requiredPlansAllPlugins = useSelector( ( state ) =>
 		getPlansForFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
 	);
-
-	const hasInstallPurchasedPlugins = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-
-	// Whether to show an upgrade banner specific to premium plugins.
-	const lowerPlanAvailable =
-		! hasInstallPurchasedPlugins &&
-		requiredPlansPurchasedPlugins[ 0 ] !== requiredPlansAllPlugins[ 0 ];
 
 	const translate = useTranslate();
 
@@ -57,12 +51,17 @@ const UpgradeNudge = ( {
 		getPlansForFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
 	);
 
+	// Whether to show an upgrade banner specific to premium plugins.
+	const lowerPlanAvailable =
+		! hasInstallPurchasedPlugins &&
+		requiredPlansPurchasedPlugins[ 0 ] !== requiredPlansAllPlugins[ 0 ];
+
 	let bannerURL;
 	let feature;
 	let plan;
 	let title;
 
-	if ( paidPlugins && lowerPlanAvailable ) {
+	if ( paidPlugins && ! hasInstallPurchasedPlugins && lowerPlanAvailable ) {
 		if ( ! requiredPlans ) {
 			return null;
 		}
@@ -76,7 +75,10 @@ const UpgradeNudge = ( {
 			textOnly: true,
 			args: { planName: requiredPlan.getTitle() },
 		} );
-	} else {
+	} else if (
+		( paidPlugins && ! hasInstallPurchasedPlugins && ! lowerPlanAvailable ) ||
+		( ! paidPlugins && ( hasInstallPurchasedPlugins || lowerPlanAvailable ) )
+	) {
 		if ( ! selectedSite?.ID || ! sitePlan || isVip || jetpackNonAtomic ) {
 			return null;
 		}
@@ -91,6 +93,8 @@ const UpgradeNudge = ( {
 			eligibleForProPlan && ! isLegacyPlan
 				? translate( 'Upgrade to the Pro plan to install plugins.' )
 				: translate( 'Upgrade to the Business plan to install plugins.' );
+	} else {
+		return null;
 	}
 
 	return (
