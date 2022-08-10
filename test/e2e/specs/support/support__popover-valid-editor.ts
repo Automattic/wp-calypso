@@ -13,13 +13,13 @@ import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Support: Popover Calypso' ), function () {
+describe( DataHelper.createSuiteTitle( 'Support: Popover Editor' ), function () {
 	let page: Page;
 
 	describe.each( [
 		{ siteType: 'Simple', accountName: 'defaultUser' as TestAccountName },
 		{ siteType: 'Atomic', accountName: 'atomicUser10percent' as TestAccountName },
-	] )( 'Search and view a support article ($siteType)', function ( { accountName } ) {
+	] )( 'Search and view a support article ($siteType)', function ( { siteType, accountName } ) {
 		let supportComponent: SupportComponent;
 
 		beforeAll( async () => {
@@ -31,16 +31,13 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover Calypso' ), function ()
 
 		it( 'Navigate to Tools > Marketing', async function () {
 			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Tools', 'Marketing' );
+			await sidebarComponent.navigate( 'Appearance', 'Editor' );
 		} );
 
 		it( 'Open support popover', async function () {
-			supportComponent = new SupportComponent( page );
+			const inIFrame = siteType === 'Simple';
+			supportComponent = new SupportComponent( page, { inIFrame } );
 			await supportComponent.openPopover();
-		} );
-
-		it( 'Displays default entries', async function () {
-			await supportComponent.defaultStateShown();
 		} );
 
 		it( 'Enter search keyword', async function () {
@@ -55,22 +52,6 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover Calypso' ), function ()
 
 		it( 'Click on first search result', async function () {
 			await supportComponent.clickResult( 'article', 1 );
-		} );
-
-		it( 'Scroll article', async function () {
-			await supportComponent.scrollOpenArticle();
-		} );
-
-		it( 'Back to top button is shown', async function () {
-			await supportComponent.backToTopVisible( true );
-		} );
-
-		it( 'Click back to top', async function () {
-			await supportComponent.clickBackToTop();
-		} );
-
-		it( 'Back to top button is hidden', async function () {
-			await supportComponent.backToTopVisible( false );
 		} );
 
 		it( 'Click on back button brings back the results', async function () {

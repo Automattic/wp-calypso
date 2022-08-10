@@ -1,5 +1,5 @@
 /**
- * @group calypso-pr
+ * @group help-centre
  */
 
 import {
@@ -31,7 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Show me where' ), function () {
 		it( 'Search for help: Create a site', async function () {
 			supportComponent = new SupportComponent( page );
 			await supportComponent.showSupportCard();
-			await supportComponent.searchForceResults( 'create a site' );
+			await supportComponent.search( 'create a site' );
 			const results = await supportComponent.getResults( 'article' );
 			expect( await results.count() ).toBeGreaterThan( 0 );
 		} );

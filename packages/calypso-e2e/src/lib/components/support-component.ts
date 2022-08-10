@@ -182,27 +182,6 @@ export class SupportComponent {
 	}
 
 	/**
-	 * Search word by word until the results appear
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async searchForceResults( text: string ): Promise< void > {
-		const resultsSelector = selectors.results( selectors.supportCategory );
-
-		for ( let i = 0; i < text.length; i++ ) {
-			const nextPosition = i + 1;
-			const nextChar = text.charAt( nextPosition );
-			if ( nextPosition === text.length || nextChar === ' ' ) {
-				await this.search( text.substring( 0, i + 1 ) );
-				const results = await this.content.locator( resultsSelector ).count();
-				if ( results > 0 ) {
-					break;
-				}
-			}
-		}
-	}
-
-	/**
 	 * Clears the search field of all keywords.
 	 *
 	 * @returns {Promise<void>} No return value.
