@@ -302,7 +302,6 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( 'calypso_signup_design_view_more_select' );
 
 		setSelectedDesign( undefined );
-		setStepData( showGeneratedDesigns );
 		setIsPreviewingDesign( false );
 		setIsForceStaticDesigns( true );
 	}
