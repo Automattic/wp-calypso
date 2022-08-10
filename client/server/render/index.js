@@ -233,6 +233,7 @@ export function serverRender( req, res ) {
 		attachHead( context );
 
 		const cacheableReduxSubtrees = [ 'documentHead' ];
+		const cacheableLoggedOutReduxSubtrees = ! context.isLoggedIn ? [ 'themes', 'ui' ] : [];
 		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
 
 		const reduxSubtrees = [ ...cacheableReduxSubtrees, ...isomorphicSubtrees ];
@@ -242,7 +243,10 @@ export function serverRender( req, res ) {
 
 		// And cache on the server, too.
 		if ( cacheKey ) {
-			const cacheableServerState = pick( context.store.getState(), reduxSubtrees );
+			const cacheableServerState = pick( context.store.getState(), [
+				...cacheableReduxSubtrees,
+				...cacheableLoggedOutReduxSubtrees,
+			] );
 			const serverState = serialize( context.store.getCurrentReducer(), cacheableServerState );
 			stateCache.set( cacheKey, serverState.get() );
 		}
