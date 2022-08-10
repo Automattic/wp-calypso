@@ -6,7 +6,8 @@ import NoResults from 'calypso/my-sites/no-results';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import ClearSearchButton from '../clear-search-button';
+import ClearSearchButton from '../plugins-browser/clear-search-button';
+import usePlugins from '../use-plugins';
 
 /**
  * Module variables
@@ -17,20 +18,37 @@ function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
-const SearchListView = ( {
+const SearchResultsPage = ( {
 	search: searchTerm,
-	pluginsPagination,
-	pluginsBySearchTerm,
-	fetchNextPage,
-	isFetchingPluginsBySearchTerm,
 	siteSlug,
 	siteId,
 	sites,
 	categoryName,
+	setIsFetchingPluginsBySearchTerm,
 } ) => {
+	const {
+		plugins: pluginsBySearchTerm = [],
+		isFetching: isFetchingPluginsBySearchTerm,
+		pagination: pluginsPagination,
+		fetchNextPage,
+	} = usePlugins( {
+		infinite: true,
+		search: searchTerm,
+		wpcomEnabled: !! searchTerm,
+		wporgEnabled: !! searchTerm,
+	} );
+
 	const dispatch = useDispatch();
 
 	const translate = useTranslate();
+
+	/*
+	 * Syncs the internal value of is fetching to share it with the search header
+	 * This is a temporary solution until phase 4 of the refactor is implemented.
+	 */
+	useEffect( () => {
+		setIsFetchingPluginsBySearchTerm( isFetchingPluginsBySearchTerm );
+	}, [ setIsFetchingPluginsBySearchTerm, isFetchingPluginsBySearchTerm ] );
 
 	useEffect( () => {
 		if ( searchTerm && pluginsPagination?.page === 1 ) {
@@ -129,4 +147,4 @@ const SearchListView = ( {
 	);
 };
 
-export default SearchListView;
+export default SearchResultsPage;
