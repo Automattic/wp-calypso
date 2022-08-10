@@ -5,6 +5,7 @@ import { ColorPicker } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
+import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -32,7 +33,7 @@ function generateSwatchSVG( color: string | undefined ) {
 		! color
 			? `%3Cline x1='18' y1='4' x2='7' y2='20' stroke='%23ccc' stroke-width='1'%3E%3C/line%3E`
 			: ''
-	}%3C/svg%3E`;
+	}%3C/svg%3E")`;
 }
 const NewsletterSetup: Step = ( { navigation } ) => {
 	const { goBack, submit } = navigation;
@@ -104,6 +105,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 	};
 
+	const getBackgroundImage = ( fieldValue: string | undefined ) => {
+		return fieldValue && fieldValue.trim() ? `url(${ greenCheckmarkImg })` : '';
+	};
+
 	const navigateToDomains = () => {
 		// TODO
 	};
@@ -139,6 +144,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						value={ siteTitle }
 						name="siteTitle"
 						id="siteTitle"
+						style={ {
+							backgroundImage: getBackgroundImage( siteTitle ),
+						} }
 						isError={ !! siteTitleError }
 						onChange={ onChange }
 					/>
@@ -147,7 +155,15 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 				<FormFieldset disabled={ isLoading }>
 					<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
-					<FormInput value={ tagline } name="tagline" id="tagline" onChange={ onChange } />
+					<FormInput
+						value={ tagline }
+						name="tagline"
+						id="tagline"
+						style={ {
+							backgroundImage: getBackgroundImage( tagline ),
+						} }
+						onChange={ onChange }
+					/>
 				</FormFieldset>
 
 				<FormFieldset disabled={ isLoading }>
@@ -156,7 +172,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						inputRef={ accentColorRef }
 						className="newsletter-setup__accent-color"
 						style={ {
-							backgroundImage: generateSwatchSVG( accentColor ),
+							backgroundImage: [
+								generateSwatchSVG( accentColor ),
+								...( accentColor ? [ getBackgroundImage( accentColor ) ] : [] ),
+							].join( ', ' ),
 						} }
 						type="text"
 						name="accentColor"
