@@ -34,6 +34,7 @@ object WebApp : Project({
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
+	buildType(HelpCentreE2ETests)
 	buildType(QuarantinedE2ETests)
 })
 
@@ -796,6 +797,43 @@ object AuthenticationE2ETests : E2EBuildType(
 	buildDescription = "Runs a suite of Authentication E2E tests.",
 	concurrentBuilds = 1,
 	testGroup = "authentication",
+	buildParams = {
+		param("env.VIEWPORT_NAME", "desktop")
+	},
+	buildFeatures = {
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	},
+	buildTriggers = {
+		schedule {
+			schedulingPolicy = cron {
+				hours = "*/3"
+			}
+			branchFilter = "+:<default>"
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+)
+
+object HelpCentreE2ETests : E2EBuildType(
+	buildId = "Calypso_E2E_Help_Centre",
+	buildUuid = "a0e62582-8598-483e-8b82-9de540288f6d",
+	buildName = "Help Centre E2E Tests",
+	buildDescription = "Runs a suite of Help Centre E2E tests.",
+	testGroup = "help-centre",
 	buildParams = {
 		param("env.VIEWPORT_NAME", "desktop")
 	},
