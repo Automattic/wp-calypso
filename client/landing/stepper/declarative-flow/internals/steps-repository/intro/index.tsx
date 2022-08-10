@@ -24,6 +24,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep flowName={ flow } goNext={ handleGetStarted } /> }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered
 		/>
 	);
 };

@@ -233,7 +233,7 @@
 			}
 
 			&.has-sticky-nav-buttons-padding {
-				padding-bottom: 48px;
+				padding-bottom: 40px;
 			}
 		}
 	}
@@ -244,5 +244,24 @@
 	.step-container__content {
 		margin-top: 0;
 		display: block;
+		min-height: 65vh;
+	}
+
+	/**
+	 * Jetpack Powered
+	 */
+	 .step-container__jetpack-powered {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+		text-align: center;
+		font-family: 'SF Pro Text', $sans;
+		font-size: $font-body-extra-small;
+		font-weight: 400;
+		line-height: 20px;
+
+		svg {
+			margin-right: 6px;
+		}
 	}
 }

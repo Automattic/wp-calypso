@@ -28,7 +28,6 @@ export const useSiteExcerptsQuery = () => {
 	const store = useStore();
 
 	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
-		staleTime: 1000 * 60 * 5, // 5 minutes
 		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
@@ -65,9 +64,13 @@ function getSiteSlug( site: SiteExcerptNetworkData, conflictingSites: number[] =
 function computeFields( allSites: SiteExcerptNetworkData[] ) {
 	const conflictingSites = getJetpackSiteCollisions( allSites );
 	return function computeFieldsSite( data: SiteExcerptNetworkData ): SiteExcerptData {
+		const trimmedName = data.name?.trim() ?? '';
+		const slug = getSiteSlug( data, conflictingSites );
+
 		return {
 			...data,
-			slug: getSiteSlug( data, conflictingSites ),
+			name: trimmedName.length > 0 ? trimmedName : slug,
+			slug,
 		};
 	};
 }

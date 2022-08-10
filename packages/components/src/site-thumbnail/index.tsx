@@ -13,6 +13,7 @@ const MSHOTS_OPTION: MShotsOptions = {
 
 type Props = {
 	backgroundColor?: string;
+	className?: string;
 	mShotsUrl?: string;
 	size?: 'small' | 'medium';
 	children?: ReactNode;
@@ -24,6 +25,7 @@ type Props = {
 export const SiteThumbnail = ( {
 	backgroundColor,
 	children,
+	className,
 	alt,
 	mShotsUrl = '',
 	bgColorImgUrl,
@@ -38,8 +40,9 @@ export const SiteThumbnail = ( {
 
 	const color = thumbnailBackground && getTextColorFromBackground( thumbnailBackground );
 
-	const className = classnames(
+	const classes = classnames(
 		'site-thumbnail',
+		className,
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
 		`site-thumbnail__size-${ size }`
 	);
@@ -47,7 +50,7 @@ export const SiteThumbnail = ( {
 	const loader = mShotsUrl && ! isError ? 'site-thumbnail-loader' : '';
 
 	return (
-		<div className={ className } style={ { backgroundColor: thumbnailBackground, color } }>
+		<div className={ classes } style={ { backgroundColor: thumbnailBackground, color } }>
 			{ isLoading && <div className={ loader }>{ children }</div> }
 			{ src && ! isError && (
 				<img

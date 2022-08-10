@@ -4,6 +4,8 @@ import { useMemo } from 'react';
 // eslint-disable-next-line no-restricted-imports
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
+export type SiteStatus = 'all' | 'coming-soon' | 'private' | 'public';
+
 interface SitesTableFilterOptions {
 	status?: string;
 	search?: string;
@@ -11,7 +13,7 @@ interface SitesTableFilterOptions {
 
 interface Status {
 	title: React.ReactChild;
-	name: string;
+	name: SiteStatus;
 	count: number;
 }
 
@@ -28,10 +30,10 @@ export function useSitesTableFiltering(
 
 	const [ statuses, filteredByStatus ] = useMemo( () => {
 		const statuses = [
-			{ name: 'all', title: __( 'All Sites' ), count: 0 },
-			{ name: 'launched', title: __( 'Launched' ), count: 0 },
-			{ name: 'private', title: __( 'Private' ), count: 0 },
-			{ name: 'coming-soon', title: __( 'Coming Soon' ), count: 0 },
+			{ name: 'all' as const, title: __( 'All Sites' ), count: 0 },
+			{ name: 'public' as const, title: __( 'Public' ), count: 0 },
+			{ name: 'private' as const, title: __( 'Private' ), count: 0 },
+			{ name: 'coming-soon' as const, title: __( 'Coming Soon' ), count: 0 },
 		];
 
 		const filteredByStatus = statuses.reduce(
@@ -47,7 +49,7 @@ export function useSitesTableFiltering(
 	}, [ allSites, __ ] );
 
 	const filteredSites = useFuzzySearch( {
-		data: filteredByStatus[ status ],
+		data: filteredByStatus[ status ] || [],
 		keys: [ 'URL', 'name', 'slug' ],
 		query: search,
 	} );
@@ -61,7 +63,7 @@ function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerp
 			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 
 		switch ( filterType ) {
-			case 'launched':
+			case 'public':
 				return ! site.is_private && ! isComingSoon;
 			case 'private':
 				return site.is_private && ! isComingSoon;

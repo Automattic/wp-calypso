@@ -244,6 +244,8 @@ export default function DIFMLanding( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const hasPriceDataLoaded = productCost && currencyCode;
 
+	const [ isLoading, setIsLoading ] = useState( true );
+
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
 		: '';
@@ -266,7 +268,8 @@ export default function DIFMLanding( {
 	useEffect( () => {
 		( async () => {
 			await dispatch( incrementCounter( 'VIEWED_DIFM_LANDING' ) );
-			dispatch( requestProductsList( { type: 'all' } ) );
+			await dispatch( requestProductsList( { type: 'all' } ) );
+			setIsLoading( false );
 		} )();
 	}, [ dispatch ] );
 
@@ -278,7 +281,7 @@ export default function DIFMLanding( {
 		'Hire a professional to set up your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
 		{
 			components: {
-				PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
+				PriceWrapper: isLoading ? <Placeholder /> : <span />,
 				sup: <sup />,
 			},
 			args: {

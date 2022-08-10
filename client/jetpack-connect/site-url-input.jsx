@@ -36,12 +36,26 @@ class JetpackConnectSiteUrlInput extends Component {
 		this.focusInput = () => formInputComponent.focus();
 	};
 
+	beforeUnloadHandler = () => {
+		this.setState( {
+			isUnloading: true,
+		} );
+	};
+
 	componentDidUpdate() {
 		if ( ! this.props.isError ) {
 			return;
 		}
 
 		this.focusInput();
+	}
+
+	componentDidMount() {
+		window.addEventListener( 'beforeunload', this.beforeUnloadHandler );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'beforeunload', this.beforeUnloadHandler );
 	}
 
 	handleKeyPress = ( event ) => {
@@ -79,8 +93,9 @@ class JetpackConnectSiteUrlInput extends Component {
 
 	isFormSubmitBusy() {
 		const { isFetching } = this.props;
+		const { isUnloading } = this.state ?? {};
 
-		return isFetching;
+		return isFetching || isUnloading;
 	}
 
 	renderTermsOfServiceLink() {

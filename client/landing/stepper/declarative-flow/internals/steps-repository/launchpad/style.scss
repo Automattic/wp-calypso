@@ -1,5 +1,116 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+
+.step-container.launchpad {
+	max-width: 1440px;
+    padding-inline-start: 24px;
+    padding-inline-end: 24px;
+
+	@include break-small {
+		padding-inline-start: 48px;
+    	padding-inline-end: 48px;
+	}
+	
+	.spinner-line {
+		display: none;
+	}
+}
+
 .launchpad__content {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	transform: translateY( -48px );
+}
+
+.launchpad__checklist {
+	list-style: none;
+	margin: 20px auto;
+	max-width: 98%;
+	padding: 0;
+	width: 500px;
+}
+
+.launchpad__checklist-item {
+	align-items: center;
+	border: none;
+	display: flex;
+	padding: 16px;
+	width: 100%;
+	margin: 0;
+	color: var( --color-text );
+}
+
+.launchpad__checklist-item-status {
+	margin-right: 8px;
+	width: 20px;
+	.gridicon {
+		top: 2px;
+	}
+}
+
+.launchpad__checklist-item-status-pending {
+	border: 1px solid var( --studio-gray-10 );
+	// stylelint-disable-next-line declaration-property-unit-allowed-list
+	border-radius: 50%;
+	box-sizing: border-box;
+	display: block;
+	height: 12px;
+	margin: 5px;
+	transition: all 0.1s;
+	width: 12px;
+}
+
+.launchpad__checklist-item-status-complete {
+	fill: var( --color-success );
+	vertical-align: text-bottom;
+}
+
+.launchpad__checklist-item-text {
+	flex-grow: 1;
+	font-size: 1rem;
+	line-height: 20px;
+	text-align: left;
+	font-weight: 600;
+	&.completed {
+		opacity: 0.8;
+		font-weight: 400;
+	}
+}
+
+.launchpad__checklist-item-chevron {
+	display: flex;
+	line-height: 20px;
+	text-align: left;
+	width: 30px;
+}
+
+// Launchpad Site Preview Component
+
+.launchpad__site-preview-wrapper {
+
+	height: 600px;
+	
+	.web-preview__frame-wrapper.is-resizable {
+		margin: 0;
+		padding: 0;
+		background-color: transparent;
+	}
+
+	// Will be used to disable interaction with iframe
+	// .web-preview__frame {
+	// 	pointer-events: none;
+	// }
+
+		
+	.web-preview__frame {
+		border: 1px solid rgba( 0, 0, 0, 0.12 );
+		border-top-width: 0;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 0 0 6px 6px;
+		box-sizing: border-box;
+	}
+
+	
+
 }

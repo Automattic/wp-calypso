@@ -26,7 +26,7 @@ export function useSitesTableSorting(
 }
 
 function sortSitesByLastPublish( sites: SiteExcerptData[], sortOrder: string ): SiteExcerptData[] {
-	return sites.sort( ( a, b ) => {
+	return [ ...sites ].sort( ( a, b ) => {
 		if ( ! a.options?.updated_at || ! b.options?.updated_at ) {
 			return 0;
 		}
