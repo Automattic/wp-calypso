@@ -100,8 +100,6 @@ export function SitesDashboard( {
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 
-	const currentUrlWithShowHidden = addQueryArgs( window.location.href, { 'show-hidden': 'true' } );
-
 	return (
 		<main>
 			<DocumentHead title={ __( 'My Sites' ) } />
@@ -144,7 +142,11 @@ export function SitesDashboard( {
 											},
 											components: {
 												br: <br />,
-												a: <a href={ currentUrlWithShowHidden } />,
+												a: (
+													<a
+														href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }
+													/>
+												),
 											},
 										}
 									) }
