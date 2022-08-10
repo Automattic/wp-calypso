@@ -32,17 +32,7 @@ function isNotInstalled( plugin, installedPlugins ) {
 	);
 }
 
-const SingleListView = ( {
-	category,
-	pluginsByCategoryPopular,
-	isFetchingPluginsByCategoryPopular,
-	pluginsByCategoryFeatured,
-	isFetchingPluginsByCategoryFeatured,
-	paidPlugins,
-	isFetchingPaidPlugins,
-	siteSlug,
-	sites,
-} ) => {
+const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
@@ -54,21 +44,6 @@ const SingleListView = ( {
 	const installedPlugins = useSelector( ( state ) =>
 		getPlugins( state, siteObjectsToSiteIds( sites ) )
 	);
-
-	let plugins;
-	let isFetching;
-	if ( category === 'popular' ) {
-		plugins = pluginsByCategoryPopular;
-		isFetching = isFetchingPluginsByCategoryPopular;
-	} else if ( category === 'featured' ) {
-		plugins = pluginsByCategoryFeatured;
-		isFetching = isFetchingPluginsByCategoryFeatured;
-	} else if ( category === 'paid' ) {
-		plugins = paidPlugins;
-		isFetching = isFetchingPaidPlugins;
-	} else {
-		return null;
-	}
 
 	plugins = plugins
 		.filter( isNotBlocked )
