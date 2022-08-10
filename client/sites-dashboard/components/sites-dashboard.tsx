@@ -130,7 +130,7 @@ export function SitesDashboard( {
 							{ displayMode === 'tile' && (
 								<SitesGrid isLoading={ isLoading } sites={ filteredSites } />
 							) }
-							{ selectedStatus.hiddenCount && (
+							{ selectedStatus.hiddenCount > 0 && (
 								<HiddenSitesMessage>
 									{ translate(
 										'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
