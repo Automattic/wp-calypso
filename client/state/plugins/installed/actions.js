@@ -13,9 +13,9 @@ import {
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
-	ALL_PLUGINS_REQUEST,
-	ALL_PLUGINS_REQUEST_SUCCESS,
-	ALL_PLUGINS_REQUEST_FAILURE,
+	PLUGINS_ALL_REQUEST,
+	PLUGINS_ALL_REQUEST_SUCCESS,
+	PLUGINS_ALL_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -538,10 +538,10 @@ export function fetchPlugins( siteIds ) {
 
 export function fetchAllPlugins() {
 	return ( dispatch ) => {
-		dispatch( { type: ALL_PLUGINS_REQUEST } );
+		dispatch( { type: PLUGINS_ALL_REQUEST } );
 
 		const receivePluginsDispatchSuccess = ( { sites } ) => {
-			dispatch( { type: ALL_PLUGINS_REQUEST_SUCCESS } );
+			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
 			Object.entries( sites ).map( ( [ siteId, plugins = [] ] ) => {
 				dispatch( receiveSitePlugins( siteId, plugins ) );
@@ -555,7 +555,7 @@ export function fetchAllPlugins() {
 		};
 
 		const receivePluginsDispatchFail = ( error ) => {
-			dispatch( { type: ALL_PLUGINS_REQUEST_FAILURE, error } );
+			dispatch( { type: PLUGINS_ALL_REQUEST_FAILURE, error } );
 		};
 
 		return wpcom.req
