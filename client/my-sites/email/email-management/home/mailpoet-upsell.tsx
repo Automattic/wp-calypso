@@ -1,23 +1,30 @@
+import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import mailpoetSymbol from 'calypso/assets/images/email-providers/mailpoet-symbol.svg';
 import Banner from 'calypso/components/banner';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export default function MailPoetUpsell() {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = selectedSite?.ID ?? 0;
+
 	const mailpoetPlugin = useSelector( ( state ) =>
-		getPluginOnSite( state, selectedSite?.ID, 'mailpoet' )
+		getPluginOnSite( state, selectedSiteId, 'mailpoet' )
+	);
+	const canInstallPlugins = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PLUGINS )
 	);
 
 	return (
 		<>
-			<QueryJetpackPlugins siteIds={ [ selectedSite?.ID ?? 0 ] } />
+			<QueryJetpackPlugins siteIds={ [ selectedSiteId ] } />
 
-			{ ! mailpoetPlugin && (
+			{ canInstallPlugins && ! mailpoetPlugin && (
 				<Banner
 					className="mailpoet-upsell"
 					callToAction={ translate( 'Add Plugin' ) }
