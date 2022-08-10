@@ -1,7 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
-import { Location } from './types';
 import type { HelpCenterAction } from './actions';
+import type { Location } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {

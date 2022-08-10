@@ -26,7 +26,18 @@ export const HelpCenterSearch = () => {
 				title: preventWidows( decodeEntities( result.title ) ),
 				query: searchQuery,
 			};
-			history.push( `/post/?${ result.slug }`, searchResult );
+			const params = new URLSearchParams( {
+				link: result.link,
+				postId: result.post_id,
+				query: searchQuery,
+				title: preventWidows( decodeEntities( result.title ) ),
+			} );
+
+			if ( result.blog_id ) {
+				params.set( 'blogId', result.blog_id );
+			}
+
+			history.push( `/post/?${ params }`, searchResult );
 		},
 		[ history, searchQuery ]
 	);

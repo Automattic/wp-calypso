@@ -4,12 +4,12 @@ import { useHistory } from 'react-router-dom';
 import { HELP_CENTER_STORE } from '../stores';
 
 export function HistoryRecorder() {
-	const history = useHistory();
+	const { entries, index } = useHistory();
 	const { setRouterState } = useDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {
-		setRouterState( history.entries, history.index );
-	}, [ history, setRouterState ] );
+		setRouterState( entries, index );
+	}, [ entries, index, setRouterState ] );
 
 	return null;
 }
