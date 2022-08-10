@@ -1,4 +1,4 @@
-.promo-card {
+.promo-card-block {
 	display: flex;
 	font-size: $font-body-small;
 	flex-wrap: wrap;
@@ -6,7 +6,7 @@
 	justify-content: center;
 	padding: 30px;
 	margin-top: 25px;
-	
+
 	@media screen and ( max-width: 910px ) {
 		flex-direction: column;
 	}
@@ -23,7 +23,7 @@
 		}
 	}
 
-	.promo-card__text {
+	.promo-card-block__text {
 		flex: 1;
 		max-width: 70%;
 		margin-right: 15px;

@@ -1,18 +1,28 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Card, Button } from '@automattic/components';
 import page from 'page';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
-import PromoCard from 'calypso/components/promo-card';
+import FormattedHeader from 'calypso/components/formatted-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getPluginOnSite, isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-const PromoCardBlock = ( props ) => {
-	const { productSlug, clickEvent, href, impressionEvent } = props;
+import './style.scss';
 
+const PromoCardBlock = ( {
+	clickEvent,
+	contentText,
+	ctaText,
+	headerText,
+	href,
+	image,
+	impressionEvent,
+	productSlug,
+} ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const selectedPlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSiteId, productSlug )
@@ -35,7 +45,17 @@ const PromoCardBlock = ( props ) => {
 			) : (
 				<>
 					<TrackComponentView eventName={ impressionEvent } />
-					<PromoCard { ...{ ...props, onClick } } />
+
+					<Card className="promo-card-block">
+						<img src={ image } alt="" />
+						<div className="promo-card-block__text">
+							<FormattedHeader brandFont headerText={ headerText } align="left" />
+							<p>{ contentText }</p>
+							<Button primary onClick={ onClick } target="_blank">
+								{ ctaText }
+							</Button>
+						</div>
+					</Card>
 				</>
 			) }
 		</>
