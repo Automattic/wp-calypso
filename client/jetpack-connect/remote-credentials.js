@@ -46,6 +46,7 @@ export class OrgCredentialsForm extends Component {
 	state = {
 		username: '',
 		password: '',
+		isUnloading: false,
 	};
 
 	handleSubmit = ( event ) => {
@@ -72,6 +73,12 @@ export class OrgCredentialsForm extends Component {
 		this.props.recordTracksEvent( 'calypso_jpc_remoteinstall_view', {
 			url: siteToConnect,
 		} );
+
+		window.addEventListener( 'beforeunload', this.beforeUnloadHandler );
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener( 'beforeunload', this.beforeUnloadHandler );
 	}
 
 	componentDidUpdate() {
@@ -258,12 +265,15 @@ export class OrgCredentialsForm extends Component {
 
 	formFooter() {
 		const { isRemoteInstalling } = this.props;
+		const { username, password, isUnloading } = this.state;
 		return (
 			<div className="jetpack-connect__creds-form-footer">
-				{ isRemoteInstalling && <Spinner className="jetpack-connect__creds-form-spinner" /> }
+				{ ( isRemoteInstalling || isUnloading ) && (
+					<Spinner className="jetpack-connect__creds-form-spinner" />
+				) }
 				<FormButton
 					className="jetpack-connect__credentials-submit"
-					disabled={ ! this.state.username || ! this.state.password || isRemoteInstalling }
+					disabled={ ! username || ! password || isRemoteInstalling || isUnloading }
 				>
 					{ this.renderButtonLabel() }
 				</FormButton>
@@ -278,6 +288,12 @@ export class OrgCredentialsForm extends Component {
 			return;
 		}
 		page.redirect( '/jetpack/connect' );
+	};
+
+	beforeUnloadHandler = () => {
+		this.setState( {
+			isUnloading: true,
+		} );
 	};
 
 	footerLink() {
