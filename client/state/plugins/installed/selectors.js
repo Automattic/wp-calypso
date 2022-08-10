@@ -53,9 +53,6 @@ export function isRequestingForSites( state, sites ) {
 }
 
 export function isRequestingForAllSites( state ) {
-	if ( typeof state.plugins.installed.isRequestingAll === 'undefined' ) {
-		return false;
-	}
 	return state.plugins.installed.isRequestingAll;
 }
 
