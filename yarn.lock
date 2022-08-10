@@ -395,7 +395,6 @@ __metadata:
     "@wordpress/base-styles": ^4.5.0
     classnames: ^2.3.1
     enzyme: ^3.11.0
-    fast-average-color: ^7.1.0
     gridicons: ^3.4.0
     i18n-calypso: "workspace:^"
     lodash: ^4.17.21
@@ -6981,13 +6980,6 @@ __metadata:
   version: 4.1.2
   resolution: "@types/npmlog@npm:4.1.2"
   checksum: 09a3395759651f0a867b5811ee33147803106684ff1f013ded27c632a2f8071766d95d862229feac112166b8ff9c6f3df49eb1e27875668a4e2e7fb5f579d3dd
-  languageName: node
-  linkType: hard
-
-"@types/offscreencanvas@npm:^2019.6.4":
-  version: 2019.7.0
-  resolution: "@types/offscreencanvas@npm:2019.7.0"
-  checksum: f10647cf8abf5c5313ac39a688866e824f04207b18fd03c2fa986a2d856f1c26dd11b04b3692fe64e6f1467b0d52579e8f4d0e532377d5c9065214bff4ebc0e7
   languageName: node
   linkType: hard
 
@@ -17476,15 +17468,6 @@ __metadata:
   version: 4.3.0
   resolution: "fast-average-color@npm:4.3.0"
   checksum: ee5a1a938614459963fd71247fbc3acab4c3d098522998677b120ac1c45e44d85ee033af5334aa5d29584a7f4a1885a2063cdc01d04357f6a6254b3748b67605
-  languageName: node
-  linkType: hard
-
-"fast-average-color@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "fast-average-color@npm:7.1.0"
-  dependencies:
-    "@types/offscreencanvas": ^2019.6.4
-  checksum: 772452ea5b8c3dac2feb3a775ddacd12beedff9cf22dd76d85b476ab23e84a9fdaafb5870a99badc82bdf7b02f6ca6ca85b36bcf6232d78383bcb39e0922b2cf
   languageName: node
   linkType: hard
 
