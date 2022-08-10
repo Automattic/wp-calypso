@@ -68,7 +68,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 		setPendingAction( async () => {
 			if ( site ) {
 				setProgress( 0 );
-				setProgressTitle( __( 'Turning on the lights' ) );
+				setProgressTitle( __( 'Creating your Link in bio' ) );
 
 				await saveSiteSettings( site.ID, {
 					blogname: siteTitle,
@@ -76,6 +76,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 				} );
 
 				setProgress( 0.5 );
+				setProgressTitle( __( 'Adding your domain' ) );
 
 				recordTracksEvent( 'calypso_signup_site_options_submit', {
 					has_site_title: !! siteTitle,
@@ -83,6 +84,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 				} );
 
 				setProgress( 0.8 );
+				setProgressTitle( __( 'Adding your plan' ) );
 
 				if ( selectedFile ) {
 					try {
@@ -92,7 +94,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					}
 				}
 				setProgress( 1 );
-				setProgressTitle( __( 'Done!' ) );
+				setProgressTitle( __( 'Preparing next steps' ) );
 			}
 		} );
 		submit?.( { siteTitle, tagline } );
