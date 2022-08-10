@@ -170,7 +170,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 
 		setStepData( {
 			...stepData,
-			isGeneratedDesignsView: showGeneratedDesigns && ! isMobile,
+			isGeneratedDesignsView: showGeneratedDesigns,
 		} );
 	}, [ showGeneratedDesigns, hasTrackedView, generatedDesigns ] );
 
@@ -369,7 +369,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 
 		setStepData( {
 			...stepData,
-			isGeneratedDesignsView: showGeneratedDesigns && ! isMobile,
+			isGeneratedDesignsView: showGeneratedDesigns,
 		} );
 		goBack();
 	};
