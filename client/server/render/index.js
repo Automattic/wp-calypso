@@ -222,6 +222,8 @@ export function serverRender( req, res ) {
 		cacheKey = `${ getNormalizedPath( context.pathname, context.query ) }:gdpr=${
 			context.showGdprBanner
 		}`;
+		debug( `SSR render with cache key ${ cacheKey }.` );
+
 		context.renderedLayout = render(
 			context.layout,
 			req.error ? req.error.message : cacheKey,
@@ -232,19 +234,16 @@ export function serverRender( req, res ) {
 	if ( context.store ) {
 		attachHead( context );
 
-		const cacheableReduxSubtrees = [ 'documentHead' ];
 		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
 
-		const reduxSubtrees = [ ...cacheableReduxSubtrees, ...isomorphicSubtrees ];
+		const reduxSubtrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 
 		// And cache on the server, too.
 		if ( cacheKey ) {
-			const cacheableServerState = pick( context.store.getState(), cacheableReduxSubtrees );
-			const serverState = serialize( context.store.getCurrentReducer(), cacheableServerState );
-			stateCache.set( cacheKey, serverState.get() );
+			cacheServerState( cacheKey, context.store );
 		}
 	}
 	context.clientData = config.clientData;
@@ -252,6 +251,15 @@ export function serverRender( req, res ) {
 	attachBuildTimestamp( context );
 
 	res.send( renderJsx( 'index', context ) );
+}
+
+function cacheServerState( cacheKey, store ) {
+	// Only cache data which maps 1:1 to a route. For example, the themes data on
+	// "/themes" is almost always the same (across all users) the next time you
+	// visit the route, so it's a good candidate for the cache.
+	const { documentHead, themes } = store.getState();
+	const serverState = serialize( store.getCurrentReducer(), { documentHead, themes } );
+	stateCache.set( cacheKey, serverState.get() );
 }
 
 /**
