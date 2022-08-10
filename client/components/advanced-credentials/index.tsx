@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import wpcomRequest from 'wpcom-proxy-request';
+import wp from 'calypso/lib/wp';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import Main from 'calypso/components/main';
@@ -95,10 +95,9 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	useEffect( () => {
 		( async () => {
-			const results: { ok: boolean } = await wpcomRequest( {
+			const results: { ok: boolean } = await wp.req.post( {
 				path: '/sites/' + siteId + '/rewind/credentials/test?role=main',
 				apiNamespace: 'wpcom/v2',
-				method: 'POST',
 			} );
 			const { ok } = results;
 			setTestCredentialsLoading( false );
