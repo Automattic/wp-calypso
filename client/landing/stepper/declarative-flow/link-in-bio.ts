@@ -6,6 +6,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 export const linkInBio: Flow = {
 	name: 'link-in-bio',
+	title: 'Link in Bio',
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );

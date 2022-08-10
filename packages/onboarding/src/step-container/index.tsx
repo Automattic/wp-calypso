@@ -1,4 +1,4 @@
-import { WordPressLogo } from '@automattic/components';
+import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, ReactElement } from 'react';
@@ -39,6 +39,7 @@ interface Props {
 	intent?: string;
 	stepProgress?: { count: number; progress: number };
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
+	showJetpackPowered?: boolean;
 }
 
 const StepContainer: React.FC< Props > = ( {
@@ -72,6 +73,7 @@ const StepContainer: React.FC< Props > = ( {
 	intent,
 	stepSectionName,
 	recordTracksEvent,
+	showJetpackPowered,
 } ) => {
 	const translate = useTranslate();
 
@@ -192,6 +194,11 @@ const StepContainer: React.FC< Props > = ( {
 				<div className="step-container__buttons">
 					{ isLargeSkipLayout && <hr className="step-container__skip-hr" /> }
 					{ <SkipButton /> }
+				</div>
+			) }
+			{ showJetpackPowered && (
+				<div className="step-container__jetpack-powered">
+					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
 				</div>
 			) }
 		</div>

@@ -84,7 +84,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 			submit?.( { siteTitle, tagline } );
 		}
 	};
-	const steContent = (
+	const stepContent = (
 		<div className="step-container">
 			<form onSubmit={ handleSubmit }>
 				<div className="link-in-bio-setup__form">
@@ -165,8 +165,9 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					align={ 'center' }
 				/>
 			}
-			stepContent={ steContent }
+			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered
 		/>
 	);
 };
