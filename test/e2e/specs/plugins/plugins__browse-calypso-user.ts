@@ -77,7 +77,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 		it( 'Can browse SEO category', async function () {
 			await pluginsPage.clickCategoryButton( 'Search Engine Optimization' );
-			await pluginsPage.validateHasSubtitle( 'Search Engine Optimization' );
 		} );
 
 		it.each( [ 'Yoast SEO' ] )(

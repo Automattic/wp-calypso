@@ -3,26 +3,26 @@ import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import ClearSearchButton from '../clear-search-button';
 
-const FullListView = ( prop ) => {
+const FullListView = ( props ) => {
 	return (
 		<>
 			<PluginsBrowserList
-				plugins={ prop.plugins }
-				listName={ prop.listName }
+				plugins={ props.plugins }
+				listName={ props.listName }
 				subtitle={
 					<>
-						{ prop.title }
+						{ props.title }
 						<ClearSearchButton />
 					</>
 				}
-				site={ prop.siteSlug }
-				showPlaceholders={ prop.isFetching }
-				currentSites={ prop.sites }
+				site={ props.siteSlug }
+				showPlaceholders={ props.isFetching }
+				currentSites={ props.sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
 				extended
 			/>
 
-			<InfiniteScroll nextPageMethod={ prop.fetchNextPage } />
+			<InfiniteScroll nextPageMethod={ props.fetchNextPage } />
 		</>
 	);
 };

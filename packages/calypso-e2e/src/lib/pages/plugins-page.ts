@@ -144,6 +144,7 @@ export class PluginsPage {
 	async clickCategoryButton( category: string ): Promise< void > {
 		const categoryLocator = this.page.locator( selectors.categoryButton( category ) );
 		await categoryLocator.nth( 1 ).click();
+		await this.page.waitForSelector( selectors.listSubtitle( category ) );
 	}
 
 	/**
