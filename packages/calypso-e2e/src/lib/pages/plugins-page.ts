@@ -141,9 +141,13 @@ export class PluginsPage {
 	/**
 	 * Validate Category Button
 	 */
-	async validateCategoryButton( category: string ): Promise< void > {
+	async validateCategoryButton( category: string, isDesktop: boolean ): Promise< void > {
 		const categoryLocator = this.page.locator( selectors.categoryButton( category ) );
-		await categoryLocator.nth( 1 ).click();
+		if ( isDesktop ) {
+			await categoryLocator.nth( 1 ).click();
+		} else {
+			await categoryLocator.click();
+		}
 		await this.page.waitForSelector( selectors.listSubtitle( category ) );
 	}
 

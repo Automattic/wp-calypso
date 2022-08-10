@@ -76,7 +76,10 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		} );
 
 		it( 'Can browse SEO category', async function () {
-			await pluginsPage.validateCategoryButton( 'Search Engine Optimization' );
+			await pluginsPage.validateCategoryButton(
+				'Search Engine Optimization',
+				envVariables.VIEWPORT_NAME !== 'mobile' ? true : false
+			);
 		} );
 
 		it.each( [ 'Yoast SEO' ] )(
