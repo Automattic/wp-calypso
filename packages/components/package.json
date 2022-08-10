@@ -56,7 +56,7 @@
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.3",
 		"@testing-library/react-hooks": "7.0.2",
-		"typescript": "^4.5.5"
+		"typescript": "^4.7.4"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
