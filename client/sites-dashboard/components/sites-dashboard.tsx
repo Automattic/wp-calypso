@@ -2,6 +2,8 @@ import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automatti
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
@@ -60,8 +62,26 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-export function SitesDashboard( { queryParams: { search, status = 'all' } }: SitesDashboardProps ) {
+const HiddenSitesMessage = styled.span`
+	color: var( --color-text-subtle );
+	display: block;
+	font-size: 14px;
+	padding: 16px 16px 24px;
+
+	a {
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+`;
+
+export function SitesDashboard( {
+	queryParams: { search, showHidden, status = 'all' },
+}: SitesDashboardProps ) {
 	const { __ } = useI18n();
+	const translate = useTranslate();
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
@@ -72,12 +92,15 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 
 	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
 		search,
+		showHidden: search ? true : showHidden,
 		status,
 	} );
 
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
+
+	const currentUrlWithShowHidden = addQueryArgs( window.location.href, { 'show-hidden': 'true' } );
 
 	return (
 		<main>
@@ -108,6 +131,24 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 							) }
 							{ displayMode === 'tile' && (
 								<SitesGrid isLoading={ isLoading } sites={ filteredSites } />
+							) }
+							{ selectedStatus.hiddenCount && (
+								<HiddenSitesMessage>
+									{ translate(
+										'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
+										'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
+										{
+											count: selectedStatus.hiddenCount,
+											args: {
+												hiddenSitesCount: selectedStatus.hiddenCount,
+											},
+											components: {
+												br: <br />,
+												a: <a href={ currentUrlWithShowHidden } />,
+											},
+										}
+									) }
+								</HiddenSitesMessage>
 							) }
 						</>
 					) : (
