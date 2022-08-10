@@ -30,7 +30,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-from-top';
-import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { ONBOARD_STORE, SITE_STORE, STEPPER_INTERNAL_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -65,8 +65,10 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() ) || {};
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -166,6 +168,11 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				generated_designs: generatedDesigns?.map( ( design ) => design.slug ).join( ',' ),
 			} );
 		}
+
+		setStepData( {
+			...stepData,
+			isGeneratedDesignsView: showGeneratedDesigns,
+		} );
 	}, [ showGeneratedDesigns, hasTrackedView, generatedDesigns ] );
 
 	function headerText() {
@@ -361,6 +368,10 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			return;
 		}
 
+		setStepData( {
+			...stepData,
+			isGeneratedDesignsView: showGeneratedDesigns,
+		} );
 		goBack();
 	};
 
