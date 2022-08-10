@@ -83,7 +83,7 @@ interface Props {
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
 	blockEditorSettings: BlockEditorSettings;
-	isHelpCenterVisible: boolean | undefined;
+	isHelpCenterShown: boolean | undefined;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -101,7 +101,6 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	checkoutModalOptions?: CheckoutModalOptions;
-	helpCenterVisible: boolean;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -146,7 +145,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		isIframeLoaded: false,
 		currentIFrameUrl: '',
 		checkoutModalOptions: undefined,
-		helpCenterVisible: false,
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -177,7 +175,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 	componentDidUpdate( {
 		shouldLoadIframe,
-		isHelpCenterVisible: previousIsHelpCenterVisible,
+		isHelpCenterShown: previousIsHelpCenterShown,
 	}: ComponentProps ) {
 		// Redirect timer stage 1. Starts when shouldLoadIframe turns to true if
 		// not already triggered in componentDidMount
@@ -190,7 +188,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		// We check to not sending messages if value has not changed
-		if ( previousIsHelpCenterVisible !== this.props.isHelpCenterVisible ) {
+		if ( previousIsHelpCenterShown !== this.props.isHelpCenterShown ) {
 			this.handleHelpCenterShowing();
 		}
 	}
@@ -507,9 +505,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.GetIsHelpCenterShown === action ) {
-			const isHelpCenterVisible = this.props.isHelpCenterVisible;
+			const isHelpCenterShown = this.props.isHelpCenterShown;
 			ports[ 0 ].postMessage( {
-				isHelpCenterVisible: isHelpCenterVisible,
+				isHelpCenterVisible: isHelpCenterShown,
 			} );
 
 			this.helpCenterPort = ports[ 0 ];
@@ -699,7 +697,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	handleHelpCenterShowing = () => {
 		if ( this.helpCenterPort ) {
 			this.helpCenterPort.postMessage( {
-				isHelpCenterVisible: this.props.isHelpCenterVisible,
+				isHelpCenterVisible: this.props.isHelpCenterShown,
 			} );
 		}
 	};
@@ -920,21 +918,16 @@ const mapDispatchToProps = {
 	clearLastNonEditorRoute,
 };
 
-const ConnectedComponent = connect( mapStateToProps, mapDispatchToProps )( CalypsoifyIframe );
-
-const DataStoresConnectedComponent = withSelect( ( select, ownProps ) => {
-	const isHelpCenterShown = select( HELP_CENTER_STORE ).isHelpCenterShown();
-	return (
-		<ConnectedComponent { ...( ownProps as Props ) } isHelpCenterVisible={ isHelpCenterShown } />
-	);
-} );
+const DataStoresConnectedIframe = withSelect< ComponentProps >( ( select ) => ( {
+	isHelpCenterShown: select( HELP_CENTER_STORE ).isHelpCenterShown(),
+} ) )( CalypsoifyIframe );
 
 type ConnectedProps = ReturnType< typeof mapStateToProps > & typeof mapDispatchToProps;
 
 export default flowRight(
 	withStopPerformanceTrackingProp,
 	withBlockEditorSettings,
-	DataStoresConnectedComponent,
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm
-)( CalypsoifyIframe );
+)( DataStoresConnectedIframe );
