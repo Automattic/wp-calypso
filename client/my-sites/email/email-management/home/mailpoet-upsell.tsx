@@ -29,14 +29,14 @@ export default function MailPoetUpsell() {
 					className="mailpoet-upsell"
 					callToAction={ translate( 'Add Plugin' ) }
 					description={ translate(
-						'Create and send beautiful newsletters, post notifications, welcome emails and more from WordPress.com.'
+						'Collect subscribers, manage your lists and create automatic emails to grow your email marketing reach.'
 					) }
 					disableCircle
 					dismissPreferenceName="email_management_mailpoet_upsell"
 					horizontal
 					href={ `/plugins/mailpoet/${ selectedSite?.slug }` }
 					iconPath={ mailpoetSymbol }
-					title={ translate( 'Send newsletters with MailPoet' ) }
+					title={ translate( 'MailPoet – Send beautiful newsletters from WordPress' ) }
 					tracksClickName="calypso_email_management_mailpoet_upsell_click"
 				/>
 			) }
