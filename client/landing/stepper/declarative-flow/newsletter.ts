@@ -17,6 +17,8 @@ export const newsletter: Flow = {
 		return [
 			'intro',
 			'newsletterSetup',
+			'completingPurchase',
+			'processing',
 			'subscribers',
 			'processingFake',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
@@ -28,6 +30,15 @@ export const newsletter: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			return providedDependencies;
+		function submit() {
+			switch ( _currentStep ) {
+				case 'newsletterSetup':
+					return navigate( 'completingPurchase' );
+				case 'completingPurchase':
+					return navigate( 'processing' );
+				case 'processing':
+					return navigate( 'newsletterAddSubscribers' );
+			}
 		}
 
 		const goBack = () => {

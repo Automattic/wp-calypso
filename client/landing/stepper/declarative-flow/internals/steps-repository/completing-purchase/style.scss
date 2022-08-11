@@ -1,0 +1,34 @@
+.newsletters.processing {
+	.wordpress-logo {
+		position: absolute;
+		inset-inline-start: 20px;
+		inset-block-start: 20px;
+		fill: var( --color-text );
+		stroke: var( --color-text );
+		transform-origin: 0 0;
+	}
+
+	position: fixed;
+	width: 100%;
+	height: 100%;
+
+	background-color: rgb( 162, 218, 254 );
+	//background-image: url( 'calypso/assets/images/onboarding/newsletter-processing-left.svg' ),
+	//url( 'calypso/assets/images/onboarding/newsletter-processing-right.svg' );
+	background-position: left 150%, right -50%;
+	background-repeat: no-repeat, no-repeat;
+	background-size: 28vh, 20vh;
+
+	.step-container {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.step-container__content {
+		width: 50%;
+	}
+
+	.progress-bar {
+		display: none;
+	}
+}
