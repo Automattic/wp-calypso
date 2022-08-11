@@ -268,14 +268,7 @@ function override_preview_button_url( $response ) {
 
 	// logmein is a special URL that logs users into their custom mapped domain and sets up
 	// their log in cookie in a first-party context.
-	$query_params = wp_parse_url( $response->data['link'], PHP_URL_QUERY );
-
-	if ( $query_params ) {
-		$response->data['link'] = $response->data['link'] . '&logmein=direct';
-	} else {
-		$response->data['link'] = $response->data['link'] . '?logmein=direct';
-	}
-
+	$response->data['link'] = add_query_arg( 'logmein', 'direct', $response->data['link'] );
 	return $response;
 }
 
