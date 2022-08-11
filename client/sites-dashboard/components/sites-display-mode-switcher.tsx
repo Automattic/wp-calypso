@@ -2,8 +2,8 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
@@ -18,54 +18,53 @@ type SitesDisplayMode = 'tile' | 'list' | 'none';
 const PREFERENCE_NAME = 'sites-management-dashboard-display-mode';
 
 export const useSitesDisplayMode = () => {
-	const displayMode: SitesDisplayMode = useSelector( ( state ) => {
-		if ( ! hasReceivedRemotePreferences( state ) ) {
+	const store = useStore();
+	const dispatch = useDispatch();
+	const remotePreferencesLoaded = useSelector( hasReceivedRemotePreferences );
+
+	const [ displayMode, setLocalDisplayMode ] = useState< SitesDisplayMode >( () => {
+		if ( ! remotePreferencesLoaded ) {
 			return 'none';
 		}
 
-		return getPreference( state, PREFERENCE_NAME ) ?? 'tile';
+		return getPreference( store.getState(), PREFERENCE_NAME ) ?? 'tile';
 	} );
 
-	return displayMode;
+	useEffect( () => {
+		if ( remotePreferencesLoaded ) {
+			setLocalDisplayMode( getPreference( store.getState(), PREFERENCE_NAME ) ?? 'tile' );
+		}
+	}, [ remotePreferencesLoaded, store ] );
+
+	const setDisplayMode = useCallback(
+		( newValue: SitesDisplayMode ) => {
+			setLocalDisplayMode( newValue );
+			dispatch( savePreference( PREFERENCE_NAME, newValue ) );
+		},
+		[ dispatch ]
+	);
+
+	return [ displayMode, setDisplayMode ] as const;
 };
 
 export const SitesDisplayModeSwitcher = () => {
 	const { __ } = useI18n();
-	const dispatch = useDispatch();
 
-	const [ isSaving, setIsSaving ] = useState( false );
-
-	const onDisplayModeChange = async ( value: SitesDisplayMode ) => {
-		const saveDisplayMode = savePreference( PREFERENCE_NAME, value );
-
-		try {
-			setIsSaving( true );
-			await saveDisplayMode( dispatch );
-		} finally {
-			setIsSaving( false );
-		}
-	};
-
-	const displayMode = useSitesDisplayMode();
+	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 
 	return (
-		<div
-			style={ { pointerEvents: isSaving ? 'none' : 'auto' } }
-			className={ container }
-			role="radiogroup"
-			aria-label={ __( 'Sites display mode' ) }
-		>
+		<div className={ container } role="radiogroup" aria-label={ __( 'Sites display mode' ) }>
 			<Button
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
-				onClick={ () => onDisplayModeChange( 'tile' ) }
+				onClick={ () => setDisplayMode( 'tile' ) }
 				icon={ <Gridicon icon="grid" /> }
 				isPressed={ displayMode === 'tile' }
 			/>
 			<Button
 				role="radio"
 				aria-label={ __( 'List view' ) }
-				onClick={ () => onDisplayModeChange( 'list' ) }
+				onClick={ () => setDisplayMode( 'list' ) }
 				icon={ <Gridicon icon="list-unordered" /> }
 				isPressed={ displayMode === 'list' }
 			/>
