@@ -27,7 +27,7 @@ const selectors = {
 	selectedGoalButton: ( goal: string ) => `.select-card__container.selected:has-text("${ goal }")`,
 
 	// Step containers
-	themePickerContainer: '.design-picker',
+	themePickerContainer: '.generated-design-picker',
 	goalsStepContainer: '.goals-step',
 	verticalsStepContainer: '.site-vertical',
 	intentStepContainer: '.intent-step',
