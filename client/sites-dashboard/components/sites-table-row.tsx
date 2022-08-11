@@ -1,10 +1,9 @@
-import { ListTile } from '@automattic/components';
+import { ListTile, useSiteStatus } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import TimeSince from 'calypso/components/time-since';
-import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';

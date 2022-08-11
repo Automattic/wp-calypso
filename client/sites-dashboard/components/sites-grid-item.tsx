@@ -1,8 +1,8 @@
+import { useSiteStatus } from '@automattic/components';
 import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridTile } from './sites-grid-tile';

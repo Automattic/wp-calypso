@@ -1,13 +1,19 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import type { SiteStatus } from '@automattic/components';
+
+export type SiteStatus = 'all' | 'coming-soon' | 'private' | 'public';
+
+export interface SiteObjectWithStatus {
+	is_coming_soon?: boolean;
+	is_private?: boolean;
+	launch_status?: string;
+}
 
 interface UseSiteStatusResult {
 	status: SiteStatus;
 	translatedStatus: string;
 }
 
-export const useSiteStatus = ( site: SiteExcerptData ): UseSiteStatusResult => {
+export const useSiteStatus = ( site: SiteObjectWithStatus ): UseSiteStatusResult => {
 	const { __ } = useI18n();
 
 	const isComingSoon =

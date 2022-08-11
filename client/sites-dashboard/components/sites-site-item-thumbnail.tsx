@@ -1,10 +1,9 @@
-import { SiteThumbnail } from '@automattic/components';
+import { SiteThumbnail, useSiteStatus } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { useSiteStatus } from '../hooks/use-site-status';
 
 const NoIcon = styled.div( {
 	fontSize: 'xx-large',
