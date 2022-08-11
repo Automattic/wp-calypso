@@ -1,6 +1,7 @@
 import { includes, some } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
+import { redirectLoggedOut } from 'calypso/controller';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation } from 'calypso/my-sites/controller';
@@ -150,5 +151,15 @@ export function navigationIfLoggedIn( context, next ) {
 		return;
 	}
 
+	next();
+}
+
+export function maybeRedirectLoggedOut( context, next ) {
+	const siteFragment =
+		context.params.site || context.params.site_id || getSiteFragment( context.path );
+
+	if ( siteFragment ) {
+		return redirectLoggedOut( context, next );
+	}
 	next();
 }
