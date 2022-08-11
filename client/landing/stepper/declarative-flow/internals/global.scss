@@ -53,6 +53,7 @@ button {
  */
 .site-setup,
 .newsletter-setup,
+.patterns,
 .link-in-bio-setup,
 .anchor-fm {
 	position: relative;
@@ -145,11 +146,17 @@ button {
 		--color-accent-60: #0e64a5;
 	}
 }
+.patterns {
+	padding: 25px 0 0;
+}
 
 @media ( max-width: 660px ) {
 	body.is-section-stepper .wpcom-site {
 		.inline-help {
 			bottom: 74px;
 		}
+	}
+	.patterns {
+		padding: 60px 0 0;
 	}
 }

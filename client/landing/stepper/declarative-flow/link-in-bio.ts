@@ -15,6 +15,7 @@ export const linkInBio: Flow = {
 		return [
 			'intro',
 			'linkInBioSetup',
+			'patterns',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
 		] as StepPath[];
 	},
