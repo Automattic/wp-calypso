@@ -1,10 +1,10 @@
 import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import { SiteStatus, SiteObjectWithStatus } from './site-status';
+import { SiteStatus, SiteObjectWithStatus, getSiteStatus } from './site-status';
 
 interface SitesTableFilterOptions {
-	status?: string;
+	status?: Status[ 'name' ];
 	search?: string;
 }
 
@@ -31,7 +31,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 ): UseSitesTableFilteringResult< T > {
 	const { __ } = useI18n();
 
-	const [ statuses, filteredByStatus ] = useMemo( () => {
+	const [ statuses, groupedByStatus ] = useMemo( () => {
 		const statuses = [
 			{ name: 'all' as const, title: __( 'All Sites' ), count: 0 },
 			{ name: 'public' as const, title: __( 'Public' ), count: 0 },
@@ -39,42 +39,28 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 			{ name: 'coming-soon' as const, title: __( 'Coming Soon' ), count: 0 },
 		];
 
-		const filteredByStatus = statuses.reduce(
-			( acc, { name } ) => ( { ...acc, [ name ]: filterSites( allSites, name ) } ),
-			{} as { [ name: string ]: T[] }
+		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
+			( groups, site ) => {
+				const siteStatus = getSiteStatus( site );
+				groups[ siteStatus ].push( site );
+
+				return groups;
+			},
+			{ all: allSites, 'coming-soon': [], public: [], private: [] }
 		);
 
 		for ( const status of statuses ) {
-			status.count = filteredByStatus[ status.name ].length;
+			status.count = groupedByStatus[ status.name ].length;
 		}
 
-		return [ statuses, filteredByStatus ];
+		return [ statuses, groupedByStatus ];
 	}, [ allSites, __ ] );
 
 	const filteredSites = useFuzzySearch( {
-		data: filteredByStatus[ status ] || [],
+		data: groupedByStatus[ status ],
 		keys: [ 'URL', 'name', 'slug' ],
 		query: search,
 	} );
 
 	return { filteredSites, statuses };
-}
-
-function filterSites< T extends SiteObjectWithStatus >( sites: T[], filterType: string ): T[] {
-	return sites.filter( ( site ) => {
-		const isComingSoon =
-			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
-
-		switch ( filterType ) {
-			case 'public':
-				return ! site.is_private && ! isComingSoon;
-			case 'private':
-				return site.is_private && ! isComingSoon;
-			case 'coming-soon':
-				return isComingSoon;
-			default:
-				// Treat unknown filters the same as 'all'
-				return site;
-		}
-	} );
 }
