@@ -107,14 +107,21 @@ const PaidPluginsSection = ( props ) => {
 		<SingleListView
 			{ ...props }
 			category="paid"
-			paidPlugins={ paidPlugins }
-			isFetchingPaidPlugins={ isFetchingPaidPlugins }
+			plugins={ paidPlugins }
+			isFetching={ isFetchingPaidPlugins }
 		/>
 	);
 };
 
 const FeaturedPluginsSection = ( props ) => {
-	return <SingleListView { ...props } category="featured" />;
+	return (
+		<SingleListView
+			{ ...props }
+			plugins={ props.pluginsByCategoryFeatured }
+			isFetching={ props.isFetchingPluginsByCategoryFeatured }
+			category="featured"
+		/>
+	);
 };
 
 const PopularPluginsSection = ( props ) => {
@@ -132,8 +139,8 @@ const PopularPluginsSection = ( props ) => {
 		<SingleListView
 			{ ...props }
 			category="popular"
-			pluginsByCategoryPopular={ pluginsByCategoryPopular }
-			isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
+			plugins={ pluginsByCategoryPopular }
+			isFetching={ isFetchingPluginsByCategoryPopular }
 		/>
 	);
 };
