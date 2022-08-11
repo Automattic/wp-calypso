@@ -20,10 +20,6 @@ import {
 import { upload } from './controller-logged-in';
 
 export default function ( router ) {
-	const siteId =
-		'\\d+' + // numeric site id
-		'|' + // or
-		'[^\\\\/.]+\\.[^\\\\/]+'; // one-or-more non-slash-or-dot chars, then a dot, then one-or-more non-slashes
 	const langParam = getLanguageRouteParam();
 
 	router(
@@ -47,7 +43,7 @@ export default function ( router ) {
 	);
 
 	router(
-		`/${ langParam }/plugins/browse/:category/:site(${ siteId })?`,
+		`/${ langParam }/plugins/browse/:category/:site?`,
 		maybeRedirectLoggedOut,
 		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
@@ -113,7 +109,7 @@ export default function ( router ) {
 	);
 
 	router(
-		`/${ langParam }/plugins/:plugin/:site_id(${ siteId })?`,
+		`/${ langParam }/plugins/:plugin/:site_id?`,
 		maybeRedirectLoggedOut,
 		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
@@ -134,4 +130,6 @@ export default function ( router ) {
 		makeLayout,
 		clientRender
 	);
+
+	router( [ `/${ langParam }/plugins`, `/${ langParam }/plugins/*` ], redirectLoggedOut );
 }
