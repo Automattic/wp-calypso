@@ -38,6 +38,7 @@ import Notice from 'calypso/components/notice';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import WpAdminAutoLogin from 'calypso/components/wpadmin-auto-login';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
@@ -704,37 +705,42 @@ export class CheckoutThankYou extends Component {
 	};
 }
 
-export default connect(
-	( state, props ) => {
-		const siteId = getSelectedSiteId( state );
-		const activeTheme = getActiveTheme( state, siteId );
+export default withIsFSEActive(
+	connect(
+		( state, props ) => {
+			const siteId = getSelectedSiteId( state );
+			const activeTheme = getActiveTheme( state, siteId );
+			const { isFSEActive } = props;
 
-		return {
-			isProductsListFetching: isProductsListFetching( state ),
-			isHappychatEligible: isHappychatUserEligible( state ),
-			receipt: getReceiptById( state, props.receiptId ),
-			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
-			sitePlans: getPlansBySite( state, props.selectedSite ),
-			upgradeIntent: props.upgradeIntent || getCheckoutUpgradeIntent( state ),
-			isSimplified:
-				[ 'install_theme', 'install_plugin', 'browse_plugins' ].indexOf( props.upgradeIntent ) !==
-				-1,
-			user: getCurrentUser( state ),
-			userDate: getCurrentUserDate( state ),
-			transferComplete: transferStates.COMPLETED === getAtomicTransfer( state, siteId ).status,
-			isEmailVerified: isCurrentUserEmailVerified( state ),
-			selectedSiteSlug: getSiteSlug( state, siteId ),
-			siteHomeUrl: getSiteHomeUrl( state, siteId ),
-			customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId ),
-			site: getSite( state, siteId ),
-		};
-	},
-	{
-		fetchAtomicTransfer,
-		fetchReceipt,
-		fetchSitePlans,
-		refreshSitePlans,
-		recordStartTransferClickInThankYou,
-		requestThenActivate,
-	}
-)( localize( CheckoutThankYou ) );
+			return {
+				isProductsListFetching: isProductsListFetching( state ),
+				isHappychatEligible: isHappychatUserEligible( state ),
+				receipt: getReceiptById( state, props.receiptId ),
+				gsuiteReceipt: props.gsuiteReceiptId
+					? getReceiptById( state, props.gsuiteReceiptId )
+					: null,
+				sitePlans: getPlansBySite( state, props.selectedSite ),
+				upgradeIntent: props.upgradeIntent || getCheckoutUpgradeIntent( state ),
+				isSimplified:
+					[ 'install_theme', 'install_plugin', 'browse_plugins' ].indexOf( props.upgradeIntent ) !==
+					-1,
+				user: getCurrentUser( state ),
+				userDate: getCurrentUserDate( state ),
+				transferComplete: transferStates.COMPLETED === getAtomicTransfer( state, siteId ).status,
+				isEmailVerified: isCurrentUserEmailVerified( state ),
+				selectedSiteSlug: getSiteSlug( state, siteId ),
+				siteHomeUrl: getSiteHomeUrl( state, siteId ),
+				customizeUrl: getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId, isFSEActive ),
+				site: getSite( state, siteId ),
+			};
+		},
+		{
+			fetchAtomicTransfer,
+			fetchReceipt,
+			fetchSitePlans,
+			refreshSitePlans,
+			recordStartTransferClickInThankYou,
+			requestThenActivate,
+		}
+	)( localize( CheckoutThankYou ) )
+);

@@ -30,11 +30,11 @@ function getPageEditorUrl( state, siteId, pageId ) {
 }
 
 export default createSelector(
-	( state, siteId ) => {
+	( state, siteId, isFSEActive ) => {
 		const posts = getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY );
 		const firstPostID = get( find( posts, { type: 'post' } ), [ 0, 'ID' ] );
 		const contactPageUrl = getPageEditorUrl( state, siteId, getContactPage( posts ) );
-		const frontPageUrl = getFrontPageEditorUrl( state, siteId );
+		const frontPageUrl = getFrontPageEditorUrl( state, siteId, isFSEActive );
 
 		return {
 			post_published: getPageEditorUrl( state, siteId, firstPostID ),
@@ -49,8 +49,8 @@ export default createSelector(
 			woocommerce_setup: getSiteUrl( state, siteId ) + '/wp-admin/admin.php?page=wc-admin',
 		};
 	},
-	( state, siteId ) => [
+	( state, siteId, isFSEActive ) => [
 		getPostsForQuery( state, siteId, FIRST_TEN_SITE_POSTS_QUERY ),
-		getFrontPageEditorUrl( state, siteId ),
+		getFrontPageEditorUrl( state, siteId, isFSEActive ),
 	]
 );

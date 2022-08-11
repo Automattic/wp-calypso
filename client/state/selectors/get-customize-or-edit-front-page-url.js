@@ -22,8 +22,7 @@ export default function getCustomizeOrEditFrontPageUrl( state, themeId, siteId, 
 	}
 
 	const shouldUseGutenberg = shouldCustomizeHomepageWithGutenberg( state, siteId );
-	const frontPageEditorUrl = getFrontPageEditorUrl( state, siteId );
-
+	const frontPageEditorUrl = getFrontPageEditorUrl( state, siteId, isFSEActive );
 	// If the theme is not active or getFrontPageEditorUrl has returned 'false', use the other function to preview customization with the theme.
 	if ( frontPageEditorUrl && shouldUseGutenberg && isThemeActive( state, themeId, siteId ) ) {
 		return frontPageEditorUrl;

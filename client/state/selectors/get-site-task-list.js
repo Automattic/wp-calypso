@@ -10,13 +10,13 @@ import getSiteChecklist from './get-site-checklist';
  * @param  {number}  siteId Site ID
  * @returns {object}        Site settings
  */
-export default function getSiteTaskList( state, siteId ) {
+export default function getSiteTaskList( state, siteId, isFSEActive ) {
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const taskList = getTaskList( {
 		taskStatuses: get( siteChecklist, 'tasks' ),
 		siteSegment: get( siteChecklist, 'siteSegment' ),
 	} );
-	const taskUrls = getChecklistTaskUrls( state, siteId );
+	const taskUrls = getChecklistTaskUrls( state, siteId, isFSEActive );
 	taskList.removeTasksWithoutUrls( taskUrls );
 	return taskList;
 }

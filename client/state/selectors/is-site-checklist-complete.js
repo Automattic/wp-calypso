@@ -11,7 +11,7 @@ import { getSiteFrontPage } from 'calypso/state/sites/selectors';
  * @param  {number}  siteId Site ID
  * @returns {string} null if there's no data yet, false if the tasklist is incomplete, true if it's complete.
  */
-export default function isSiteChecklistComplete( state, siteId ) {
+export default function isSiteChecklistComplete( state, siteId, isFSEActive ) {
 	const siteChecklist = getSiteChecklist( state, siteId );
 
 	if (
@@ -61,6 +61,6 @@ export default function isSiteChecklistComplete( state, siteId ) {
 		return false;
 	};
 
-	const taskList = getSiteTaskList( state, siteId );
+	const taskList = getSiteTaskList( state, siteId, isFSEActive );
 	return taskList.getAll().every( isTaskComplete );
 }

@@ -368,7 +368,7 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		tasks: taskList.getAll(),
-		taskUrls: getChecklistTaskUrls( state, siteId ),
+		taskUrls: getChecklistTaskUrls( state, siteId, isFSEActive ),
 		userEmail: user?.email,
 	};
 } )( SiteSetupList );

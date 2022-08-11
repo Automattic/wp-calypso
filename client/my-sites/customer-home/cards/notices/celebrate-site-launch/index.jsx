@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
 import launchedIllustration from 'calypso/assets/images/customer-home/illustration--rocket.svg';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import {
 	NOTICE_CELEBRATE_SITE_LAUNCH,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
@@ -55,18 +56,22 @@ const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, site
 	);
 };
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const isSiteSetupComplete = isSiteChecklistComplete( state, siteId );
-	let pendingSiteSetupTasks = [];
-	if ( ! isSiteSetupComplete ) {
-		const tasks = getSiteTaskList( state, siteId ).getAll();
-		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		pendingSiteSetupTasks = tasks.filter( ( task ) => ! task.isCompleted );
-	}
-	return {
-		isSiteSetupComplete,
-		pendingSiteSetupTasks,
-		siteId,
-	};
-} )( CelebrateSiteLaunch );
+export default withIsFSEActive(
+	connect( ( state, props ) => {
+		const { isFSEActive } = props;
+		const siteId = getSelectedSiteId( state );
+		const isSiteSetupComplete = isSiteChecklistComplete( state, siteId, isFSEActive );
+
+		let pendingSiteSetupTasks = [];
+		if ( ! isSiteSetupComplete ) {
+			const tasks = getSiteTaskList( state, siteId, isFSEActive ).getAll();
+			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+			pendingSiteSetupTasks = tasks.filter( ( task ) => ! task.isCompleted );
+		}
+		return {
+			isSiteSetupComplete,
+			pendingSiteSetupTasks,
+			siteId,
+		};
+	} )( CelebrateSiteLaunch )
+);
