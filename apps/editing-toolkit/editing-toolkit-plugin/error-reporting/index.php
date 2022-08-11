@@ -117,7 +117,7 @@ function enqueue_script() {
 		'A8C_ETK_ErrorReporting_Config',
 		array(
 			'shouldActivateSentry' => should_activate_sentry( get_current_user_id(), get_current_blog_id() ) ? 'true' : 'false',
-			'releaseName'          => defined( WPCOM_DEPLOYED_GIT_HASH ) ? 'WPCOM_' . WPCOM_DEPLOYED_GIT_HASH : 'WPCOM_NO_RELEASE',
+			'releaseName'          => defined( 'WPCOM_DEPLOYED_GIT_HASH' ) ? 'WPCOM_' . WPCOM_DEPLOYED_GIT_HASH : 'WPCOM_NO_RELEASE',
 		)
 	);
 }
