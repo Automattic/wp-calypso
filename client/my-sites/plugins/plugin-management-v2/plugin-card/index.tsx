@@ -31,13 +31,37 @@ export default function PluginCard( { item, selectedSite }: Props ): ReactElemen
 						<PluginRowFormatter isSmallScreen item={ item } columnKey="plugin" />
 						<span className="plugin-card__overlay"></span>
 					</div>
-					<div className="plugin-card__sites-count">
-						{ translate( 'Installed on %(count)d sites', {
-							args: {
-								count: Object.keys( item.sites ).length,
-							},
-						} ) }
-					</div>
+					{ selectedSite ? (
+						<>
+							<div className="plugin-card__site-data">
+								<PluginRowFormatter isSmallScreen columnKey="last-updated" item={ item } />
+							</div>
+							<div className="plugin-card__toggle-container">
+								<div>
+									<PluginRowFormatter
+										isSmallScreen
+										columnKey="activate"
+										item={ item }
+										selectedSite={ selectedSite }
+									/>
+								</div>
+								<div>
+									<PluginRowFormatter
+										isSmallScreen
+										columnKey="autoupdate"
+										item={ item }
+										selectedSite={ selectedSite }
+									/>
+								</div>
+							</div>
+						</>
+					) : (
+						<div className="plugin-card__site-data">
+							{ translate( 'Installed on %(count)d sites', {
+								args: { count: Object.keys( item.sites ).length },
+							} ) }
+						</div>
+					) }
 					<UpdatePlugin
 						plugin={ item }
 						selectedSite={ selectedSite }

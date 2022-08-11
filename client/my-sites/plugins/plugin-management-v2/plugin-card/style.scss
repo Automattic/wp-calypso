@@ -2,6 +2,12 @@
 	display: flex;
   	flex:1;
 }
+.plugin-card__toggle-container {
+	margin-block-start: 16px;
+	& > div {
+		margin: 16px 0;
+	}
+}
 .plugin-card__left-content {
 	min-width: 32px;
 	max-width: 32px;
@@ -39,9 +45,10 @@
 	inset-block-start: 2px;
 	inset-inline-end: 0;
 }
-.plugin-card__sites-count {
+.plugin-card__site-data {
 	color: var( --studio-gray-60 );
 	font-size: 0.75rem;
+	margin: 8px 0;
 }
 .plugin-card__update-plugin {
 	margin-block-start: 16px;
