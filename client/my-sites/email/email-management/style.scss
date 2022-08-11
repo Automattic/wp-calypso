@@ -140,6 +140,10 @@
 	margin-top: -16px;
 	margin-bottom: 37px;
 
+	.banner__icons .banner__icon {
+		display: none;
+	}
+
 	.banner__icons .banner__icon-no-circle {
 		padding-right: 3px;
 
@@ -147,6 +151,10 @@
 			height: 28px;
 			width: 28px;
 		}
+	}
+
+	.banner__content {
+		flex: 1;
 	}
 }
 
