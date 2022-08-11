@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FunctionComponent, useCallback, useMemo, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import wp from 'calypso/lib/wp';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import Main from 'calypso/components/main';
@@ -11,6 +10,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
+import wp from 'calypso/lib/wp';
 import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
@@ -77,45 +77,50 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		getJetpackCredentialsUpdateError( state, siteId )
 	);
 
-	const isRequestingCredentials = useSelector( ( state ) =>
-		isRequestingSiteCredentials( state, siteId as number )
-	);
-
 	const credentials = useSelector( ( state ) =>
 		getJetpackCredentials( state, siteId, role )
 	) as FormState & { abspath: string };
+
+	const [ testCredentialsLoading, setTestCredentialsLoading ] = useState( true );
+	const [ testCredentialsResult, setTestCredentialsResult ] = useState( false );
 
 	const hasCredentials = credentials && Object.keys( credentials ).length > 0;
 
 	const { protocol } = credentials;
 	const isAtomic = hasCredentials && 'dynamic-ssh' === protocol;
 
-	const [ testCredentialsResult, setTestCredentialsResult ] = useState( false );
-	const [ testCredentialsLoading, setTestCredentialsLoading ] = useState( true );
+	const isRequestingCredentials = useSelector(
+		( state ) => isRequestingSiteCredentials( state, siteId as number ) || testCredentialsLoading
+	);
 
 	useEffect( () => {
-		( async () => {
-			const results: { ok: boolean } = await wp.req.post( {
-				path: '/sites/' + siteId + '/rewind/credentials/test?role=main',
-				apiNamespace: 'wpcom/v2',
-			} );
-			const { ok } = results;
+		try {
+			( async () => {
+				const results: { ok: boolean } = await wp.req.post( {
+					path: '/sites/' + siteId + '/rewind/credentials/test?role=main',
+					apiNamespace: 'wpcom/v2',
+				} );
+				const { ok } = results;
+				setTestCredentialsLoading( false );
+				setTestCredentialsResult( ok );
+			} )();
+		} catch ( error: any ) {
 			setTestCredentialsLoading( false );
-			setTestCredentialsResult( ok );
-		} )();
+			setTestCredentialsResult( false );
+		}
 	}, [] );
 
 	const statusState = useMemo( (): StatusState => {
-		if ( isRequestingCredentials || testCredentialsLoading ) {
+		if ( isRequestingCredentials ) {
 			return StatusState.Loading;
 		}
 
-		if ( hasCredentials && testCredentialsResult ) {
+		if ( testCredentialsResult ) {
 			return StatusState.Connected;
 		}
 
 		return StatusState.Disconnected;
-	}, [ hasCredentials, testCredentialsResult, testCredentialsLoading, isRequestingCredentials ] );
+	}, [ testCredentialsResult, isRequestingCredentials ] );
 
 	const currentStep = useMemo( (): Step => {
 		if ( 'unsubmitted' !== formSubmissionStatus ) {
