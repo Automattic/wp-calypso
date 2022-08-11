@@ -38,6 +38,7 @@ export default function MailPoetUpsell() {
 					iconPath={ mailpoetSymbol }
 					title={ translate( 'MailPoet – Send beautiful newsletters from WordPress' ) }
 					tracksClickName="calypso_email_management_mailpoet_upsell_click"
+					tracksImpressionName="calypso_email_management_mailpoet_upsell_view"
 				/>
 			) }
 		</>
