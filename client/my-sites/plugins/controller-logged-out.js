@@ -9,6 +9,7 @@ import {
 	getFetchWPORGPlugins,
 	getFetchWPORGInfinitePlugins,
 } from 'calypso/data/marketplace/use-wporg-plugin-query';
+import { getSiteFragment } from 'calypso/lib/route';
 import { isEnabled } from 'calypso/server/config';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
@@ -154,12 +155,11 @@ export async function fetchCategoryPlugins( context, next ) {
 	next();
 }
 
-export function validatePlugin( { res, params: { lang, plugin } }, next ) {
-	// Make sure we aren't matching a site -- e.g. /plugin/example.wordpress.com or /plugin/1234567
-	if ( plugin.includes( '.' ) || Number.isInteger( parseInt( plugin, 10 ) ) ) {
-		const langParam = lang ? '/' + lang : '';
+export function validatePlugin( { path, params: { plugin } }, next ) {
+	const siteFragment = getSiteFragment( path );
 
-		return res.redirect( `${ langParam }/plugins` );
+	if ( siteFragment || Number.isInteger( parseInt( plugin, 10 ) ) ) {
+		return next( 'route' );
 	}
 	next();
 }
