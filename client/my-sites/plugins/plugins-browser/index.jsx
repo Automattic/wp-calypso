@@ -130,7 +130,7 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
 	return null;
 };
 
-const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle, hideHeader } ) => {
+const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
@@ -212,13 +212,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 
 		return (
 			<PluginsDiscoveryPage
-				clearSearch={ clearSearch }
-				search={ search }
-				category={ category }
-				sites={ sites }
-				searchTitle={ searchTitle }
 				siteSlug={ siteSlug }
-				siteId={ siteId }
 				jetpackNonAtomic={ jetpackNonAtomic }
 				selectedSite={ selectedSite }
 				sitePlan={ sitePlan }
