@@ -3,7 +3,7 @@
 import { Button, FormInputValidation } from '@automattic/components';
 // import { useSiteLogoMutation } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
-import { dispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
@@ -27,8 +27,10 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
-	const [ siteTitle, setSiteTitle ] = React.useState( '' );
+	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
+	const { setSiteTitle, setSiteDescription, setSiteLogo } = useDispatch( ONBOARD_STORE );
+
 	// move to loader step
 	// const { mutateAsync: setSiteLogo } = useSiteLogoMutation( site?.ID );
 	const siteTitleError = formTouched && ! siteTitle.trim();
@@ -41,8 +43,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 		if ( formTouched ) {
 			return;
 		}
-
-		setSiteTitle( site.name || '' );
+		setComponentSiteTitle( site.name || '' );
 		setTagline( site.description );
 	}, [ site, formTouched ] );
 
@@ -51,7 +52,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 			setFormTouched( true );
 			switch ( event.currentTarget.name ) {
 				case 'link-in-bio-input-name':
-					return setSiteTitle( event.currentTarget.value );
+					return setComponentSiteTitle( event.currentTarget.value );
 				case 'link-in-bio-input-description':
 					return setTagline( event.currentTarget.value );
 			}
@@ -93,12 +94,12 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		if ( site ) {
-			dispatch( ONBOARD_STORE ).setSiteDescription( tagline );
-			dispatch( ONBOARD_STORE ).setSiteTitle( siteTitle );
+			setSiteDescription( tagline );
+			setSiteTitle( siteTitle );
 
 			if ( selectedFile && base64Image ) {
 				try {
-					dispatch( ONBOARD_STORE ).setSiteLogo( base64Image );
+					setSiteLogo( base64Image );
 
 					// this should be moved to the loader step
 					// await setSiteLogo( new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' ) );
@@ -122,7 +123,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						} }
 						selectedFile={ selectedFile }
 					/>
-					<FormFieldset disabled={ false }>
+					<FormFieldset>
 						<FormLabel htmlFor="link-in-bio-input-name">{ __( 'Site name' ) }</FormLabel>
 						<FormInput
 							name="link-in-bio-input-name"
@@ -145,7 +146,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						) }
 					</FormFieldset>
 
-					<FormFieldset disabled={ false }>
+					<FormFieldset>
 						<FormLabel htmlFor="link-in-bio-input-description">
 							{ __( 'Brief description' ) }
 						</FormLabel>

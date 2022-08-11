@@ -1,7 +1,7 @@
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
-import { dispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
@@ -39,14 +39,15 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
 	const site = useSite();
+	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
+		useDispatch( ONBOARD_STORE );
 
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
-	const [ siteTitle, setSiteTitle ] = React.useState( '' );
+	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
 	const [ accentColor, setAccentColor ] = React.useState< string | undefined >();
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
-
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 
 	useEffect( () => {
@@ -58,7 +59,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			return;
 		}
 
-		setSiteTitle( site.name || '' );
+		setComponentSiteTitle( site.name || '' );
 		setTagline( site.description );
 	}, [ site, formTouched ] );
 
@@ -72,13 +73,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		if ( site ) {
-			dispatch( ONBOARD_STORE ).setSiteDescription( tagline );
-			dispatch( ONBOARD_STORE ).setSiteTitle( siteTitle );
-			dispatch( ONBOARD_STORE ).setSiteAccentColor( accentColor );
+			setSiteDescription( tagline );
+			setSiteTitle( siteTitle );
+			setSiteAccentColor( accentColor );
 
 			if ( selectedFile && base64Image ) {
 				try {
-					dispatch( ONBOARD_STORE ).setSiteLogo( base64Image );
+					setSiteLogo( base64Image );
 					// this should be moved to the loader step
 					// await setSiteLogo( new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' ) );
 				} catch ( _error ) {
@@ -94,7 +95,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			setFormTouched( true );
 			switch ( event.currentTarget.name ) {
 				case 'siteTitle':
-					return setSiteTitle( event.currentTarget.value );
+					return setComponentSiteTitle( event.currentTarget.value );
 				case 'tagline':
 					return setTagline( event.currentTarget.value );
 				case 'accentColor':
@@ -135,7 +136,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						onChangeComplete={ ( value ) => setAccentColor( value.hex ) }
 					/>
 				</Popover>
-				<FormFieldset disabled={ false }>
+				<FormFieldset>
 					<FormLabel htmlFor="siteTitle">{ __( 'Publication name*' ) }</FormLabel>
 					<FormInput
 						value={ siteTitle }
@@ -150,7 +151,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 				</FormFieldset>
 
-				<FormFieldset disabled={ false }>
+				<FormFieldset>
 					<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
 					<FormInput
 						value={ tagline }
@@ -163,7 +164,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					/>
 				</FormFieldset>
 
-				<FormFieldset disabled={ false }>
+				<FormFieldset>
 					<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
 					<FormInput
 						inputRef={ accentColorRef }
@@ -182,12 +183,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						value={ accentColor || '#000000' }
 					/>
 				</FormFieldset>
-				<Button
-					disabled={ false }
-					className="newsletter-setup__submit-button"
-					type="submit"
-					primary
-				>
+				<Button className="newsletter-setup__submit-button" type="submit" primary>
 					{ __( 'Continue' ) }
 				</Button>
 			</form>
