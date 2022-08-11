@@ -29,6 +29,7 @@ const SecondaryText = styled.p`
 `;
 
 const Title = styled.div`
+	font-family: 'Recoleta';
 	font-size: 32px;
 	margin-bottom: 20px;
 `;
