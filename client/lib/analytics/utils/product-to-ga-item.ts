@@ -10,22 +10,17 @@ export type GaItem = {
 	price: number;
 };
 
-export function jetpackProductToGaItem( product: ResponseCartProduct, currency: string ): GaItem {
+export function productToGaItem(
+	product: ResponseCartProduct,
+	currency: string,
+	sendToJetpack = false
+): GaItem {
+	const item_brand = sendToJetpack ? GA_PRODUCT_BRAND_JETPACK : GA_PRODUCT_BRAND_WPCOM;
 	return {
 		item_id: product.product_id.toString(),
 		item_name: product.product_name,
 		quantity: product.volume,
 		price: Number( costToUSD( product.cost, currency ) ),
-		item_brand: GA_PRODUCT_BRAND_JETPACK,
-	};
-}
-
-export function wpcomProductToGaItem( product: ResponseCartProduct, currency: string ): GaItem {
-	return {
-		item_id: product.product_id.toString(),
-		item_name: product.product_name,
-		quantity: product.volume,
-		price: Number( costToUSD( product.cost, currency ) ),
-		item_brand: GA_PRODUCT_BRAND_WPCOM,
+		item_brand,
 	};
 }

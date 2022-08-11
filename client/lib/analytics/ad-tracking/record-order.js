@@ -4,10 +4,7 @@ import {
 	isAdTrackingAllowed,
 	refreshCountryCodeCookieGdpr,
 } from 'calypso/lib/analytics/utils';
-import {
-	jetpackCartToGaPurchase,
-	wpcomCartToGaPurchase,
-} from '../utils/jetpack-cart-to-ga-purchase';
+import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
 import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
 import {
 	debug,
@@ -508,7 +505,11 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
  */
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		fireEcommercePurchaseGA4( jetpackCartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ) );
+		const sendToJetpack = true;
+		fireEcommercePurchaseGA4(
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, sendToJetpack ),
+			sendToJetpack
+		);
 
 		const jetpackParams = [
 			'event',
@@ -545,7 +546,11 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
  */
 function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		fireEcommercePurchaseGA4( wpcomCartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ) );
+		const sendToJetpack = false;
+		fireEcommercePurchaseGA4(
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, sendToJetpack ),
+			sendToJetpack
+		);
 		debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
 	}
 }

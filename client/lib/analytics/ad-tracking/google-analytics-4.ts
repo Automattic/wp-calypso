@@ -1,6 +1,6 @@
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { GaPurchase } from '../utils/jetpack-cart-to-ga-purchase';
-import { GaItem } from '../utils/jetpack-product-to-ga-item';
+import { GaPurchase } from '../utils/cart-to-ga-purchase';
+import { GaItem } from '../utils/product-to-ga-item';
 import { TRACKING_IDS } from './constants';
 
 // Ensure setup has run.
