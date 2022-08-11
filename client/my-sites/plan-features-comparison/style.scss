@@ -34,6 +34,24 @@ $plan-features-sidebar-width: 272px;
 .plan-features-comparison__table-item.is-top-buttons {
 	padding-top: 8px;
 }
+.plan-features-comparison__table-item.is-dash {
+	text-align: center;
+
+	&::after {
+		content: '-';
+	}
+}
+.plan-features-comparison__table-item.is-blank {
+	height: 35px;
+}
+
+.plan-features-comparison__table-item.is-plans-quick-improvements .info-popover .gridicon {
+	color: #a7aaad;
+
+	&:hover {
+		color: #3c434a;
+	}
+}
 
 .plan-features-comparison__header {
 	position: relative;

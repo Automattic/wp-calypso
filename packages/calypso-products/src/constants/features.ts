@@ -100,6 +100,7 @@ export const FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL = 'free-professional-email-tr
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
+export const FEATURE_DASH = 'blank-feature-dash';
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
 export const FEATURE_SITE_STATS = 'site-stats';
 export const FEATURE_TRAFFIC_TOOLS = 'traffic-tools';

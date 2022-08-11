@@ -19,6 +19,7 @@ import {
 	isWpComEcommercePlan,
 	getPlanClass,
 	FEATURE_BLANK,
+	FEATURE_DASH,
 	FEATURE_BASIC_DESIGN,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
@@ -443,7 +444,7 @@ export class PlanFeatures extends Component {
 
 	renderMobileFeatures( features ) {
 		return map( features, ( currentFeature, index ) => {
-			return currentFeature?.getSlug() !== FEATURE_BLANK
+			return ! [ FEATURE_BLANK, FEATURE_DASH ].includes( currentFeature?.getSlug() )
 				? this.renderFeatureItem( currentFeature, index )
 				: null;
 		} );
@@ -748,6 +749,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
+		const { isPlansPageQuickImprovements } = this.props;
 		const description = feature.getDescription
 			? feature.getDescription( undefined, this.props.domainName )
 			: null;
@@ -756,14 +758,13 @@ export class PlanFeatures extends Component {
 			'is-available': feature.availableForCurrentPlan,
 		} );
 
-		const hideInfoPopover = feature.hideInfoPopover || ! description;
-
 		return (
 			<PlanFeaturesItem
 				key={ index }
 				description={ description }
-				hideInfoPopover={ hideInfoPopover }
-				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
+				hideGridicon={
+					isPlansPageQuickImprovements || ( this.props.isReskinned ? false : this.props.withScroll )
+				}
 				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>
 				<span className={ classes }>
@@ -775,7 +776,8 @@ export class PlanFeatures extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature, withScroll } = this.props;
+		const { planProperties, selectedFeature, withScroll, isPlansPageQuickImprovements } =
+			this.props;
 
 		return map( planProperties, ( properties ) => {
 			const { availableForPurchase, features, planName, currencyCode, productCustomDesignCost } =
@@ -784,12 +786,14 @@ export class PlanFeatures extends Component {
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
 			let currentFeature = features[ key ];
+			const featureSlug = currentFeature?.getSlug();
+			const isFeatureDash = featureSlug === FEATURE_DASH;
 
-			if ( currentFeature?.getSlug() === FEATURE_BLANK ) {
+			if ( isFeatureDash || featureSlug === FEATURE_BLANK ) {
 				currentFeature = null;
 			}
 
-			if ( currentFeature?.getSlug() === FEATURE_BASIC_DESIGN ) {
+			if ( featureSlug === FEATURE_BASIC_DESIGN ) {
 				currentFeature.meta = {
 					price: productCustomDesignCost,
 					currency: currencyCode,
@@ -804,6 +808,7 @@ export class PlanFeatures extends Component {
 					currentFeature &&
 					selectedFeature === currentFeature.getSlug() &&
 					availableForPurchase,
+				'is-plans-quick-improvements': isPlansPageQuickImprovements,
 			} );
 
 			return currentFeature ? (
@@ -811,7 +816,10 @@ export class PlanFeatures extends Component {
 					{ this.renderFeatureItem( currentFeature ) }
 				</td>
 			) : (
-				<td key={ `${ planName }-none` } className="plan-features__table-item" />
+				<td
+					key={ `${ planName }-none` }
+					className={ `plan-features__table-item ${ isFeatureDash ? 'is-dash' : 'is-blank' }` }
+				/>
 			);
 		} );
 	}

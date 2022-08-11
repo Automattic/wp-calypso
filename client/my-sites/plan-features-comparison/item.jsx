@@ -22,7 +22,9 @@ export function PlanFeaturesItem( props ) {
 				</div>
 			) }
 			<div className={ itemInfoClasses }>
-				<Gridicon className={ gridIconClasses } size={ 18 } icon={ icon } />
+				{ props.hideGridicon ? null : (
+					<Gridicon className={ gridIconClasses } size={ 18 } icon={ icon } />
+				) }
 				{ props.children }
 				{ props.hideInfoPopover ? null : (
 					<InfoPopover
