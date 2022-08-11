@@ -76,7 +76,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
-	const displayMode = useSitesDisplayMode();
+	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 
 	return (
 		<main>
@@ -95,6 +95,8 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 							initialSearch={ search }
 							statuses={ statuses }
 							selectedStatus={ selectedStatus }
+							displayMode={ displayMode }
+							onDisplayModeChange={ setDisplayMode }
 						/>
 					) }
 					{ filteredSites.length > 0 || isLoading ? (

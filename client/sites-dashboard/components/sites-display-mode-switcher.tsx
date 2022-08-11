@@ -2,7 +2,8 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useStore, useSelector } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
@@ -12,31 +13,50 @@ const container = css( {
 	gap: '10px',
 } );
 
-type SitesDisplayMode = 'tile' | 'list' | 'none';
+export type SitesDisplayMode = 'tile' | 'list' | 'none';
 
 const PREFERENCE_NAME = 'sites-management-dashboard-display-mode';
 
 export const useSitesDisplayMode = () => {
-	const displayMode: SitesDisplayMode = useSelector( ( state ) => {
-		if ( ! hasReceivedRemotePreferences( state ) ) {
-			return 'none';
-		}
-
-		return getPreference( state, PREFERENCE_NAME ) ?? 'tile';
-	} );
-
-	return displayMode;
-};
-
-export const SitesDisplayModeSwitcher = () => {
-	const { __ } = useI18n();
+	const store = useStore();
 	const dispatch = useDispatch();
 
-	const onDisplayModeChange = ( value: SitesDisplayMode ) => {
-		dispatch( savePreference( PREFERENCE_NAME, value ) );
-	};
+	const reduxHasLoaded = useSelector( hasReceivedRemotePreferences );
 
-	const displayMode = useSitesDisplayMode();
+	const [ displayMode, setDisplayModeInner ] = useState< SitesDisplayMode >( () => {
+		if ( ! reduxHasLoaded ) {
+			return 'none';
+		}
+		return getPreference( store.getState(), PREFERENCE_NAME ) ?? 'tile';
+	} );
+
+	useEffect( () => {
+		if ( reduxHasLoaded ) {
+			setDisplayModeInner( getPreference( store.getState(), PREFERENCE_NAME ) ?? 'tile' );
+		}
+	}, [ reduxHasLoaded, store ] );
+
+	const setDisplayMode = useCallback(
+		( newValue: SitesDisplayMode ) => {
+			setDisplayModeInner( newValue );
+			dispatch( savePreference( PREFERENCE_NAME, newValue ) );
+		},
+		[ dispatch, setDisplayModeInner ]
+	);
+
+	return [ displayMode, setDisplayMode ] as const;
+};
+
+interface SitesDisplayModeSwitcherProps {
+	displayMode: SitesDisplayMode;
+	onDisplayModeChange: ( newMode: SitesDisplayMode ) => void;
+}
+
+export const SitesDisplayModeSwitcher = ( {
+	displayMode,
+	onDisplayModeChange,
+}: SitesDisplayModeSwitcherProps ) => {
+	const { __ } = useI18n();
 
 	return (
 		<div className={ container } role="radiogroup" aria-label={ __( 'Sites display mode' ) }>
