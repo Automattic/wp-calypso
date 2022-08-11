@@ -28,6 +28,7 @@
 	align-self: center;
 
 	> img, svg {
+		display: block;
 		height: 36px;
 		margin-right: 16px;
 		min-height: 36px;
@@ -120,18 +121,40 @@
 
 .email-list-inactive {
 	margin-top: 15px;
+}
 
-	> .card {
-		align-items: center;
-		display: flex;
-		margin-bottom: 0;
-		padding-bottom: 20px;
-		padding-top: 20px;
+.email-list-inactive__mailbox {
+	align-items: center;
+	display: flex;
 
-		> span {
-			flex: 1 1 auto;
-			line-height: 40px;
+	> span {
+		flex: 1;
+	}
+
+	.button {
+		flex-shrink: 0;
+	}
+}
+
+.mailpoet-upsell {
+	margin-top: -16px;
+	margin-bottom: 37px;
+
+	.banner__icons .banner__icon {
+		display: none;
+	}
+
+	.banner__icons .banner__icon-no-circle {
+		padding-right: 3px;
+
+		img {
+			height: 28px;
+			width: 28px;
 		}
+	}
+
+	.banner__content {
+		flex: 1;
 	}
 }
 
