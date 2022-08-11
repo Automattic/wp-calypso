@@ -15,7 +15,6 @@ import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import './style.scss';
 import SingleListView from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
 
