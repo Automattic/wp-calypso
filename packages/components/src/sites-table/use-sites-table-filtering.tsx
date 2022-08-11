@@ -57,7 +57,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	}, [ allSites, __ ] );
 
 	const filteredSites = useFuzzySearch( {
-		data: groupedByStatus[ status ],
+		data: groupedByStatus.hasOwnProperty( status ) ? groupedByStatus[ status ] : [],
 		keys: [ 'URL', 'name', 'slug' ],
 		query: search,
 	} );
