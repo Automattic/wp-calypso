@@ -10,6 +10,7 @@ import {
 	isMonthly,
 	TERM_MONTHLY,
 	FEATURE_BLANK,
+	FEATURE_DASH,
 	FEATURE_BASIC_DESIGN,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
@@ -248,14 +249,15 @@ export class PlanFeaturesComparison extends Component {
 			'is-available': feature.availableForCurrentPlan,
 		} );
 
-		const hideInfoPopover = feature.hideInfoPopover || ! description;
+		const { isPlansPageQuickImprovements } = this.props;
 
 		return (
 			<>
 				<PlanFeaturesItem
 					key={ index }
 					description={ description }
-					hideInfoPopover={ hideInfoPopover }
+					hideInfoPopover={ ! isPlansPageQuickImprovements }
+					hideGridicon={ isPlansPageQuickImprovements }
 					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
 					isFeatureAvailable={ feature.availableForCurrentPlan }
 				>
@@ -270,19 +272,21 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature } = this.props;
+		const { planProperties, selectedFeature, isPlansPageQuickImprovements } = this.props;
 
 		return map( planProperties, ( properties, mapIndex ) => {
 			const { features, planName, currencyCode, productCustomDesignCost } = properties;
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
 			let currentFeature = features[ key ];
+			const featureSlug = currentFeature?.getSlug();
+			const isFeatureDash = featureSlug === FEATURE_DASH;
 
-			if ( currentFeature?.getSlug() === FEATURE_BLANK ) {
+			if ( isFeatureDash || featureSlug === FEATURE_BLANK ) {
 				currentFeature = null;
 			}
 
-			if ( currentFeature?.getSlug() === FEATURE_BASIC_DESIGN ) {
+			if ( featureSlug === FEATURE_BASIC_DESIGN ) {
 				currentFeature.meta = {
 					price: productCustomDesignCost,
 					currency: currencyCode,
@@ -297,6 +301,7 @@ export class PlanFeaturesComparison extends Component {
 					'is-highlighted':
 						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
 					'is-bold': rowIndex === 0,
+					'is-plans-quick-improvements': isPlansPageQuickImprovements,
 				}
 			);
 
@@ -305,7 +310,12 @@ export class PlanFeaturesComparison extends Component {
 					{ this.renderFeatureItem( currentFeature, mapIndex ) }
 				</td>
 			) : (
-				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
+				<td
+					key={ `${ planName }-none` }
+					className={ `plan-features-comparison__table-item ${
+						isFeatureDash ? 'is-dash' : 'is-blank'
+					}` }
+				/>
 			);
 		} );
 	}
@@ -438,7 +448,6 @@ const ConnectedPlanFeaturesComparison = connect(
 						return {
 							...feature,
 							availableOnlyForAnnualPlans,
-							hideInfoPopover: ! isPlansPageQuickImprovements,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 						};
 					} );
@@ -491,6 +500,7 @@ const ConnectedPlanFeaturesComparison = connect(
 		return {
 			planProperties,
 			purchaseId,
+			isPlansPageQuickImprovements,
 			siteType,
 			hasPlaceholders: hasPlaceholders( planProperties ),
 		};

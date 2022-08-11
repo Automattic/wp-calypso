@@ -34,6 +34,7 @@ import {
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
+	FEATURE_DASH,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
@@ -198,6 +199,10 @@ import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 export const FEATURES_LIST = {
 	[ FEATURE_BLANK ]: {
 		getSlug: () => FEATURE_BLANK,
+		getTitle: () => '',
+	},
+	[ FEATURE_DASH ]: {
+		getSlug: () => FEATURE_DASH,
 		getTitle: () => '',
 	},
 
