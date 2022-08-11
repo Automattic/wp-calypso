@@ -3,6 +3,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { addAction } from '@wordpress/hooks';
 
 const shouldActivateSentry = window.A8C_ETK_ErrorReporting_Config?.shouldActivateSentry === 'true';
+
 /**
  * Errors that happened before this script had a chance to load
  * are captured in a global array. See `./index.php`.
@@ -11,12 +12,11 @@ const headErrors = window._jsErr || [];
 const headErrorHandler = window._headJsErrorHandler;
 
 function activateSentry() {
+	const SENTRY_RELEASE_NAME = window.A8C_ETK_ErrorReporting_Config.releaseName;
+
 	Sentry.init( {
 		dsn: 'https://658ae291b00242148af6b76494d4a49a@o248881.ingest.sentry.io/5876245',
-		// Set tracesSampleRate to 1.0 to capture 100%
-		// of transactions for performance monitoring.
-		// We recommend adjusting this value in production
-		release: 'wpcom-test-01',
+		release: SENTRY_RELEASE_NAME,
 	} );
 
 	// Capture exceptions from Gutenberg React Error Boundaries
