@@ -172,9 +172,9 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const setDescription: Reducer< string, OnboardAction > = ( state = '', action ) => {
+const siteDescription: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_DESCRIPTION' ) {
-		return action.setDescription;
+		return action.siteDescription;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
@@ -182,9 +182,9 @@ const setDescription: Reducer< string, OnboardAction > = ( state = '', action ) 
 	return state;
 };
 
-const setSiteLogo: Reducer< null | string, OnboardAction > = ( state = null, action ) => {
+const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action ) => {
 	if ( action.type === 'SET_SITE_LOGO' ) {
-		return action.setLogo;
+		return action.siteLogo;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return null;
@@ -192,9 +192,9 @@ const setSiteLogo: Reducer< null | string, OnboardAction > = ( state = null, act
 	return state;
 };
 
-const setSiteAccentColor: Reducer< string | undefined, OnboardAction > = ( state = '', action ) => {
+const siteAccentColor: Reducer< string | undefined, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
-		return action.setAccentColor;
+		return action.siteAccentColor;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
@@ -383,9 +383,9 @@ const reducer = combineReducers( {
 	stepProgress,
 	goals,
 	editEmail,
-	setDescription,
-	setSiteLogo,
-	setSiteAccentColor,
+	siteDescription,
+	siteLogo,
+	siteAccentColor,
 } );
 
 export type State = ReturnType< typeof reducer >;

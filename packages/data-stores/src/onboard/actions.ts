@@ -188,19 +188,19 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
-export const setSiteDescription = ( setDescription: string ) => ( {
+export const setSiteDescription = ( siteDescription: string ) => ( {
 	type: 'SET_SITE_DESCRIPTION' as const,
-	setDescription,
+	siteDescription,
 } );
 
-export const setSiteLogo = ( setLogo: null | string ) => ( {
+export const setSiteLogo = ( siteLogo: string | null ) => ( {
 	type: 'SET_SITE_LOGO' as const,
-	setLogo,
+	siteLogo,
 } );
 
-export const setSiteAccentColor = ( setAccentColor: string | undefined ) => ( {
+export const setSiteAccentColor = ( siteAccentColor: string | undefined ) => ( {
 	type: 'SET_SITE_ACCENT_COLOR' as const,
-	setAccentColor,
+	siteAccentColor,
 } );
 
 export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
