@@ -47,24 +47,30 @@ export const useSitesDisplayMode = () => {
 	return [ displayMode, setDisplayMode ] as const;
 };
 
-export const SitesDisplayModeSwitcher = () => {
-	const { __ } = useI18n();
+interface SitesDisplayModeSwitcherProps {
+	onDisplayModeChange( newValue: SitesDisplayMode ): void;
+	displayMode: SitesDisplayMode;
+}
 
-	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
+export const SitesDisplayModeSwitcher = ( {
+	displayMode,
+	onDisplayModeChange,
+}: SitesDisplayModeSwitcherProps ) => {
+	const { __ } = useI18n();
 
 	return (
 		<div className={ container } role="radiogroup" aria-label={ __( 'Sites display mode' ) }>
 			<Button
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
-				onClick={ () => setDisplayMode( 'tile' ) }
+				onClick={ () => onDisplayModeChange( 'tile' ) }
 				icon={ <Gridicon icon="grid" /> }
 				isPressed={ displayMode === 'tile' }
 			/>
 			<Button
 				role="radio"
 				aria-label={ __( 'List view' ) }
-				onClick={ () => setDisplayMode( 'list' ) }
+				onClick={ () => onDisplayModeChange( 'list' ) }
 				icon={ <Gridicon icon="list-unordered" /> }
 				isPressed={ displayMode === 'list' }
 			/>
