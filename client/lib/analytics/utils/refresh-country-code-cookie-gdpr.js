@@ -1,7 +1,7 @@
 import cookie from 'cookie';
 import debug from './debug';
 
-let refreshCountryCodeCookieGdprRequest = null;
+let refreshRequest = null;
 
 /**
  * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
@@ -10,22 +10,23 @@ let refreshCountryCodeCookieGdprRequest = null;
  */
 export default async function refreshCountryCodeCookieGdpr() {
 	const cookies = cookie.parse( document.cookie );
-	if ( cookies.country_code ) {
+	if ( cookies.country_code && cookies.region ) {
 		debug( 'refreshCountryCodeCookieGdpr: country_code cookie is fresh: %s', cookies.country_code );
 		return;
 	}
 
-	if ( refreshCountryCodeCookieGdprRequest === null ) {
-		refreshCountryCodeCookieGdprRequest = requestCountryCode().then( ( countryCode ) =>
-			setCountryCodeCookie( countryCode )
-		);
+	if ( refreshRequest === null ) {
+		refreshRequest = requestGeoData().then( ( { countryCode, region } ) => {
+			setCountryCodeCookie( countryCode );
+			setRegionCookie( region );
+		} );
 	}
 
-	await refreshCountryCodeCookieGdprRequest;
-	refreshCountryCodeCookieGdprRequest = null;
+	await refreshRequest;
+	refreshRequest = null;
 }
 
-function requestCountryCode() {
+function requestGeoData() {
 	// cache buster
 	const v = new Date().getTime();
 	return fetch( 'https://public-api.wordpress.com/geo/?v=' + v )
@@ -38,11 +39,11 @@ function requestCountryCode() {
 			return res.json();
 		} )
 		.then( ( json ) => {
-			return json.country_short;
+			return { countryCode: json.country_short, region: json.region };
 		} )
 		.catch( ( err ) => {
 			debug( 'refreshCountryCodeCookieGdpr: error: ', err );
-			return 'unknown';
+			return { country_code: 'unknown', region: 'unknown' };
 		} );
 }
 
@@ -50,4 +51,10 @@ function setCountryCodeCookie( countryCode ) {
 	const maxAge = 6 * 60 * 60; // 6 hours in seconds
 	document.cookie = cookie.serialize( 'country_code', countryCode, { path: '/', maxAge } );
 	debug( 'refreshCountryCodeCookieGdpr: country_code cookie set to %s', countryCode );
+}
+
+function setRegionCookie( region ) {
+	const maxAge = 6 * 60 * 60;
+	document.cookie = cookie.serialize( 'region', region, { path: '/', maxAge } );
+	debug( 'refreshRegionCookieCcpa: region cookie set to %s', region );
 }
