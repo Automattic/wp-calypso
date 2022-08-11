@@ -112,13 +112,10 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'newsletters',
-			steps: getAddOnsStep(
-				isEnabled( 'signup/professional-email-step' )
-					? [ 'user', 'domains', 'emails', 'plans' ]
-					: [ 'user', 'domains', 'plans' ]
-			),
-			destination: ( dependencies ) => getStepperFlowDestination( dependencies, 'newsletters' ),
+			name: 'newsletter',
+			steps: [ 'domains', 'plans' ],
+			destination: ( dependencies ) =>
+				`/setup/subscribers?flow=newsletter&siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a newsletter',
 			lastModified: '2022-07-28',
 			showRecaptcha: true,

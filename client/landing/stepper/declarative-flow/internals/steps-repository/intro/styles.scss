@@ -7,7 +7,7 @@ $white: var( --color-surface );
 	background: url( 'calypso/assets/images/onboarding/link-in-bio-intro-background.svg' ),
 		url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
 
-	&.is-newsletters {
+	&.is-newsletter {
 		background: url( 'calypso/assets/images/onboarding/paper-texture.jpg' ),
 			linear-gradient( 123deg, rgba( 7, 116, 195, 1 ) 0%, rgba( 255, 255, 255, 0 ) 100% ),
 			url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
