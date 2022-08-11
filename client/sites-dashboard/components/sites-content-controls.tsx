@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
+import { ComponentPropsWithoutRef } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
@@ -48,16 +49,18 @@ const ControlsSelectDropdown = styled( SelectDropdown )( {
 
 type Statuses = ReturnType< typeof useSitesTableFiltering >[ 'statuses' ];
 
-interface SitesContentControlsProps {
+type SitesContentControlsProps = {
 	initialSearch?: string;
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
-}
+} & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher >;
 
 export const SitesContentControls = ( {
 	initialSearch,
 	statuses,
 	selectedStatus,
+	displayMode,
+	onDisplayModeChange,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 
@@ -84,7 +87,10 @@ export const SitesContentControls = ( {
 						</SelectDropdown.Item>
 					) ) }
 				</ControlsSelectDropdown>
-				<SitesDisplayModeSwitcher />
+				<SitesDisplayModeSwitcher
+					displayMode={ displayMode }
+					onDisplayModeChange={ onDisplayModeChange }
+				/>
 			</DisplayControls>
 		</FilterBar>
 	);
