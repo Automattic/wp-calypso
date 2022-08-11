@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import debug from './debug';
 import isPiiUrl from './is-pii-url';
 import isUrlExcludedForPerformance from './is-url-excluded-for-performance';
-import mayWeTrackCurrentUserGdpr from './may-we-track-current-user-gdpr';
+import mayWeTrackCurrentUser from './may-we-track-current-user-gdpr';
 /**
  * Returns whether ad tracking is allowed.
  *
@@ -22,7 +22,7 @@ export default function isAdTrackingAllowed() {
 		! getDoNotTrack() &&
 		! isUrlExcludedForPerformance() &&
 		! isPiiUrl() &&
-		mayWeTrackCurrentUserGdpr();
+		mayWeTrackCurrentUser();
 	debug( `isAdTrackingAllowed: ${ result }` );
 	return result;
 }

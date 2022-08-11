@@ -27,7 +27,7 @@ jest.mock( '@automattic/calypso-config', () => {
 jest.mock( 'calypso/lib/analytics/utils', () => ( {
 	isGoogleAnalyticsAllowed: () => true,
 	isPiiUrl: () => false,
-	mayWeTrackCurrentUserGdpr: () => true,
+	mayWeTrackCurrentUser: () => true,
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {

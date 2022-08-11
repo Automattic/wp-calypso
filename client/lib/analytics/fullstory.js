@@ -4,7 +4,7 @@ import debug from 'debug';
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from './ad-tracking/constants';
-import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
+import { mayWeTrackCurrentUser, isPiiUrl } from './utils';
 
 const fullStoryDebug = debug( 'calypso:analytics:fullstory' );
 
@@ -42,7 +42,7 @@ function maybeAddFullStoryScript() {
 		getDoNotTrack() ||
 		isE2ETest() ||
 		isPiiUrl() ||
-		! mayWeTrackCurrentUserGdpr()
+		! mayWeTrackCurrentUser()
 	) {
 		if ( ! fullStoryScriptLoaded ) {
 			fullStoryDebug( 'maybeAddFullStoryScript:', false );

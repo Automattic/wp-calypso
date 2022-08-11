@@ -7,7 +7,7 @@ export { default as hashPii } from './hash-pii';
 export { default as isPiiUrl } from './is-pii-url';
 export { default as isUrlExcludedForPerformance } from './is-url-excluded-for-performance';
 export { default as isAdTrackingAllowed } from './is-ad-tracking-allowed';
-export { default as mayWeTrackCurrentUserGdpr } from './may-we-track-current-user-gdpr';
+export { default as mayWeTrackCurrentUser } from './may-we-track-current-user-gdpr';
 export { default as isCountryInGdprZone } from './is-country-in-gdpr-zone';
 export { default as urlParseAmpCompatible } from './url-parse-amp-compatible';
 export { default as shouldReportOmitBlogId } from './should-report-omit-blog-id';

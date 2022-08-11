@@ -1,6 +1,6 @@
 import { getCurrentUser, getDoNotTrack } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { isPiiUrl, mayWeTrackCurrentUserGdpr } from 'calypso/lib/analytics/utils';
+import { isPiiUrl, mayWeTrackCurrentUser } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isGoogleAnalyticsEnabled, TRACKING_IDS } from './constants';
 import * as GA4 from './google-analytics-4';
@@ -39,7 +39,7 @@ export function isGoogleAnalyticsAllowed() {
 		config.isEnabled( 'ad-tracking' ) &&
 		! getDoNotTrack() &&
 		! isPiiUrl() &&
-		mayWeTrackCurrentUserGdpr()
+		mayWeTrackCurrentUser( 'analytics' )
 	);
 }
 

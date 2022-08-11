@@ -2,7 +2,7 @@ import { getDoNotTrack } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import debug from 'debug';
 import { isE2ETest } from 'calypso/lib/e2e';
-import { mayWeTrackCurrentUserGdpr, isPiiUrl } from './utils';
+import { mayWeTrackCurrentUser, isPiiUrl } from './utils';
 
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 
@@ -15,7 +15,7 @@ export function addHotJarScript() {
 		isE2ETest() ||
 		getDoNotTrack() ||
 		isPiiUrl() ||
-		! mayWeTrackCurrentUserGdpr()
+		! mayWeTrackCurrentUser()
 	) {
 		hotjarDebug( 'Not loading HotJar script' );
 		return;
