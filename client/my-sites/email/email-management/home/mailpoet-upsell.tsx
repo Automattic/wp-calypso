@@ -33,11 +33,13 @@ export default function MailPoetUpsell() {
 					) }
 					disableCircle
 					dismissPreferenceName="email_management_mailpoet_upsell"
+					event="calypso_email_management_mailpoet_upsell"
 					horizontal
 					href={ `/plugins/mailpoet/${ selectedSite?.slug }` }
 					iconPath={ mailpoetSymbol }
 					title={ translate( 'MailPoet – Send beautiful newsletters from WordPress' ) }
 					tracksClickName="calypso_email_management_mailpoet_upsell_click"
+					tracksDismissName="calypso_email_management_mailpoet_upsell_dismiss"
 					tracksImpressionName="calypso_email_management_mailpoet_upsell_view"
 				/>
 			) }
