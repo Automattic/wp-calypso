@@ -10,19 +10,32 @@ interface Props {
 const Intro: React.FC< Props > = ( { goNext, flowName } ) => {
 	const { __ } = useI18n();
 
-	const introTitle =
+	const introContent =
 		flowName === 'link-in-bio'
-			? createInterpolateElement( __( 'Let’s set up your<br />Link in Bio' ), { br: <br /> } )
-			: createInterpolateElement( __( 'Let’s set up your<br />Newsletter' ), { br: <br /> } );
+			? {
+					title: createInterpolateElement(
+						__( 'Your short bio and links,<br />accessible to your<br />audience in minutes' ),
+						{ br: <br /> }
+					),
+					button: __( 'Create your Link in bio' ),
+			  }
+			: {
+					title: createInterpolateElement(
+						__( "Your stories, right into<br />your readers' inbox, now!" ),
+						{
+							br: <br />,
+						}
+					),
+					button: __( 'Create your newsletter' ),
+			  };
 
 	return (
 		<div className="intro__content">
 			<h1 className="intro__title">
-				{ __( 'Hello!' ) }
-				<span>{ introTitle }</span>
+				<span>{ introContent.title }</span>
 			</h1>
 			<Button className="intro__button" primary onClick={ goNext }>
-				{ __( 'Get started' ) }
+				{ introContent.button }
 			</Button>
 		</div>
 	);

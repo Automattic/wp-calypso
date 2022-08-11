@@ -13,6 +13,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 		// needs to be implemented
 		goNext();
 	};
+
 	return (
 		<StepContainer
 			stepName={ 'intro' }

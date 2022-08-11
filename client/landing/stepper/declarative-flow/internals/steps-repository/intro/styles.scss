@@ -1,17 +1,14 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@automattic/onboarding/styles/mixins';
+@import 'assets/stylesheets/gutenberg-base-styles';
 
 $white: var( --color-surface );
 
 .intro {
-	background: url( 'calypso/assets/images/onboarding/link-in-bio-intro-background.svg' ),
-		url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
+	background-color: #e5e5e5;
 
 	&.is-newsletters {
-		background: url( 'calypso/assets/images/onboarding/paper-texture.jpg' ),
-			linear-gradient( 123deg, rgba( 7, 116, 195, 1 ) 0%, rgba( 255, 255, 255, 0 ) 100% ),
-			url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
-		background-size: cover;
+		background-color: #a8daff;
 	}
 	background-blend-mode: color-burn;
 	min-height: 100%;
@@ -72,21 +69,30 @@ $white: var( --color-surface );
 
 	.intro__title {
 		@include onboarding-font-recoleta;
-		font-weight: 500;
-		line-height: 40px;
+		color: var( --studio-black );
+		font-size: $font-title-large;
+		font-weight: 400;
+		letter-spacing: 0.1px;
+		line-height: 52px;
 		padding-bottom: 40px;
 
 		span {
 			display: block;
 		}
+
+		@include break-mobile {
+			font-size: $font-headline-medium;
+		}
 	}
 
 	.intro__button {
 		font-family: 'SF Pro Text', $sans;
-		color: var( --studio-blue-50 );
-		background-color: $white;
+		color: var( --studio-white );
+		background-color: var( --studio-blue-50 );
 		border: none;
+		font-size: $font-body-small;
 		font-weight: 500;
+		line-height: 20px;
 		letter-spacing: 0.32px;
 	}
 }
