@@ -114,11 +114,16 @@ export class PlansPage {
 	async clickTab( targetTab: PlansPageTab ): Promise< void > {
 		// The way PlansPage loads its contents is particularly prone to
 		// flakiness outside the control of Playwright auto-retry mechanism.
-		// To work around this, forcibly click on the target selector.
+		// To work around this, forcibly click on the target selector
+		// once everything has been loaded.
 		// This affects primarily Mobile viewports but also can also occur
 		// on Desktop viewports.
 		// See https://github.com/Automattic/wp-calypso/issues/64389
 		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
+		await Promise.all( [
+			this.page.waitForLoadState( 'networkidle' ),
+			this.page.waitForResponse( /.*plans.*/ ),
+		] );
 		await clickNavTab( this.page, targetTab, { force: true } );
 	}
 
