@@ -21,7 +21,12 @@ export { SpinnerExample } from './spinner/example';
 export { default as WordPressLogo } from './wordpress-logo';
 export { default as JetpackLogo } from './jetpack-logo';
 export { ListTile } from './list-tile';
-export { useSitesTableFiltering } from './sites-table/use-sites-table-filtering';
+export {
+	useSitesTableFiltering,
+	siteStatusFilterValues,
+	DEFAULT_SITE_STATUS_FILTER_VALUE,
+	type FilterableSiteStatuses,
+} from './sites-table/use-sites-table-filtering';
 export { useSitesTableSorting } from './sites-table/use-sites-table-sorting';
 export { getSiteStatus, useTranslatedSiteStatus } from './sites-table/site-status';
 export { SitesTableTabPanel } from './sites-table/sites-table-tab-panel';

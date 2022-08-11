@@ -1,16 +1,25 @@
 import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import { SiteStatus, SiteObjectWithStatus, getSiteStatus } from './site-status';
+import { SiteObjectWithStatus, getSiteStatus, siteStatuses } from './site-status';
+
+export const DEFAULT_SITE_STATUS_FILTER_VALUE = 'all';
+
+export const siteStatusFilterValues = [
+	DEFAULT_SITE_STATUS_FILTER_VALUE,
+	...siteStatuses,
+] as const;
+
+export type FilterableSiteStatuses = typeof siteStatusFilterValues[ number ];
 
 interface SitesTableFilterOptions {
-	status?: Status[ 'name' ];
+	status: FilterableSiteStatuses;
 	search?: string;
 }
 
 interface Status {
 	title: React.ReactChild;
-	name: 'all' | SiteStatus;
+	name: FilterableSiteStatuses;
 	count: number;
 }
 
@@ -27,7 +36,7 @@ type SiteObjectWithBasicInfo = SiteObjectWithStatus & {
 
 export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	allSites: T[],
-	{ status = 'all', search }: SitesTableFilterOptions
+	{ status, search }: SitesTableFilterOptions
 ): UseSitesTableFilteringResult< T > {
 	const { __ } = useI18n();
 
@@ -57,7 +66,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	}, [ allSites, __ ] );
 
 	const filteredSites = useFuzzySearch( {
-		data: groupedByStatus.hasOwnProperty( status ) ? groupedByStatus[ status ] : [],
+		data: groupedByStatus[ status ],
 		keys: [ 'URL', 'name', 'slug' ],
 		query: search,
 	} );

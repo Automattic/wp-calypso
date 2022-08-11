@@ -1,3 +1,4 @@
+import { DEFAULT_SITE_STATUS_FILTER_VALUE, siteStatusFilterValues } from '@automattic/components';
 import { Global, css } from '@emotion/react';
 import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from 'page';
@@ -17,6 +18,12 @@ const globalStyles = css`
 	}
 `;
 
+const getStatusFilterValue = ( status?: string ) => {
+	return (
+		siteStatusFilterValues.find( ( value ) => value === status ) ?? DEFAULT_SITE_STATUS_FILTER_VALUE
+	);
+};
+
 export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
@@ -24,7 +31,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			<SitesDashboard
 				queryParams={ {
 					search: context.query.search,
-					status: context.query.status,
+					status: getStatusFilterValue( context.query.status ),
 				} }
 			/>
 		</>
