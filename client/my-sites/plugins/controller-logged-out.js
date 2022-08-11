@@ -79,7 +79,7 @@ const prefetchCategoryPlugins = ( queryClient, options ) =>
 export async function fetchPlugin( context, next ) {
 	const { queryClient, store } = context;
 
-	if ( ! context.isServerSide || context.isLoggedIn ) {
+	if ( ! context.isServerSide ) {
 		return next();
 	}
 
@@ -109,7 +109,7 @@ export async function fetchPlugin( context, next ) {
 export async function fetchPlugins( context, next ) {
 	const { queryClient } = context;
 
-	if ( ! context.isServerSide || context.isLoggedIn ) {
+	if ( ! context.isServerSide ) {
 		return next();
 	}
 
@@ -133,7 +133,7 @@ export async function fetchPlugins( context, next ) {
 export async function fetchCategoryPlugins( context, next ) {
 	const { queryClient } = context;
 
-	if ( ! context.isServerSide || context.isLoggedIn ) {
+	if ( ! context.isServerSide ) {
 		return next();
 	}
 
@@ -150,6 +150,24 @@ export async function fetchCategoryPlugins( context, next ) {
 			? prefetchSearchedPlugins( queryClient, options )
 			: [ prefetchCategoryPlugins( queryClient, options ) ] ),
 	] );
+
+	next();
+}
+
+export function validatePlugin( { res, params: { lang, plugin } }, next ) {
+	// Make sure we aren't matching a site -- e.g. /plugin/example.wordpress.com or /plugin/1234567
+	if ( plugin.includes( '.' ) || Number.isInteger( parseInt( plugin, 10 ) ) ) {
+		const langParam = lang ? '/' + lang : '';
+
+		return res.redirect( `${ langParam }/plugins` );
+	}
+	next();
+}
+
+export function skipIfLoggedIn( context, next ) {
+	if ( context.isLoggedIn ) {
+		return next( 'route' );
+	}
 
 	next();
 }
