@@ -1,10 +1,7 @@
 import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-// eslint-disable-next-line no-restricted-imports
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-
-export type SiteStatus = 'all' | 'coming-soon' | 'private' | 'public';
+import { SiteStatus, SiteObjectWithStatus } from './use-site-status';
 
 interface SitesTableFilterOptions {
 	status?: string;
@@ -13,19 +10,25 @@ interface SitesTableFilterOptions {
 
 interface Status {
 	title: React.ReactChild;
-	name: SiteStatus;
+	name: 'all' | SiteStatus;
 	count: number;
 }
 
-interface UseSitesTableFilteringResult {
-	filteredSites: SiteExcerptData[];
+interface UseSitesTableFilteringResult< T > {
+	filteredSites: T[];
 	statuses: Status[];
 }
 
-export function useSitesTableFiltering(
-	allSites: SiteExcerptData[],
+type SiteObjectWithBasicInfo = SiteObjectWithStatus & {
+	URL: string;
+	name: string;
+	slug: string;
+};
+
+export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
+	allSites: T[],
 	{ status = 'all', search }: SitesTableFilterOptions
-): UseSitesTableFilteringResult {
+): UseSitesTableFilteringResult< T > {
 	const { __ } = useI18n();
 
 	const [ statuses, filteredByStatus ] = useMemo( () => {
@@ -38,7 +41,7 @@ export function useSitesTableFiltering(
 
 		const filteredByStatus = statuses.reduce(
 			( acc, { name } ) => ( { ...acc, [ name ]: filterSites( allSites, name ) } ),
-			{} as { [ name: string ]: SiteExcerptData[] }
+			{} as { [ name: string ]: T[] }
 		);
 
 		for ( const status of statuses ) {
@@ -57,7 +60,7 @@ export function useSitesTableFiltering(
 	return { filteredSites, statuses };
 }
 
-function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {
+function filterSites< T extends SiteObjectWithStatus >( sites: T[], filterType: string ): T[] {
 	return sites.filter( ( site ) => {
 		const isComingSoon =
 			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );

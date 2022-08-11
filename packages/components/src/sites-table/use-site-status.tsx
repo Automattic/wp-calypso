@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 
-export type SiteStatus = 'all' | 'coming-soon' | 'private' | 'public';
+export type SiteStatus = 'coming-soon' | 'private' | 'public';
 
 export interface SiteObjectWithStatus {
 	is_coming_soon?: boolean;
