@@ -62,11 +62,13 @@ $border-radius: 4px;
 			padding: 12px 16px;
 			height: $input-height;
 			border-radius: $border-radius;
+			background-repeat: no-repeat;
+			background-position: 95%;
 
 			&.newsletter-setup__accent-color {
-				background-size: 25px;
-				background-position: 13px center;
-				background-repeat: no-repeat;
+				background-size: 25px, auto;
+				background-position: 13px center, 95%;
+				background-repeat: no-repeat, no-repeat;
 				padding-left: 50px;
 				color: var( --studio-gray-30 );
 			}

@@ -197,7 +197,7 @@ const JetpackCancellationOffer: FC< Props > = ( props ) => {
 				<p>{ renewalCopy }</p>
 				<p className="jetpack-cancellation-offer__tos">
 					{ translate(
-						'Getting this discount means you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',
+						'Getting this discount means you agree to our {{tosLink}}Terms of Service{{/tosLink}}. If you currently have automatic renewal enabled, you authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{faqCancellingSupportPage}}how to cancel{{/faqCancellingSupportPage}}.',
 						{
 							components: {
 								tosLink: (

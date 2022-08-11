@@ -16,6 +16,24 @@
 	height: 78px;
 }
 
+.site-thumbnail__image-bg {
+	animation: fadein 1s ease-out;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+
+	width: 150%;
+	height: 150%;
+}
+
+.site-thumbnail__image-blur-small {
+	filter: blur( 50px );
+}
+
+.site-thumbnail__image-blur-medium {
+	filter: blur( 150px );
+}
+
 .site-thumbnail__size-medium {
 	width: 374px;
 	height: 304px;

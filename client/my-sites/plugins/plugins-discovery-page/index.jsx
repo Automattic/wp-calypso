@@ -15,7 +15,6 @@ import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import './style.scss';
 import SingleListView from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
 
@@ -107,14 +106,21 @@ const PaidPluginsSection = ( props ) => {
 		<SingleListView
 			{ ...props }
 			category="paid"
-			paidPlugins={ paidPlugins }
-			isFetchingPaidPlugins={ isFetchingPaidPlugins }
+			plugins={ paidPlugins }
+			isFetching={ isFetchingPaidPlugins }
 		/>
 	);
 };
 
 const FeaturedPluginsSection = ( props ) => {
-	return <SingleListView { ...props } category="featured" />;
+	return (
+		<SingleListView
+			{ ...props }
+			plugins={ props.pluginsByCategoryFeatured }
+			isFetching={ props.isFetchingPluginsByCategoryFeatured }
+			category="featured"
+		/>
+	);
 };
 
 const PopularPluginsSection = ( props ) => {
@@ -132,8 +138,8 @@ const PopularPluginsSection = ( props ) => {
 		<SingleListView
 			{ ...props }
 			category="popular"
-			pluginsByCategoryPopular={ pluginsByCategoryPopular }
-			isFetchingPluginsByCategoryPopular={ isFetchingPluginsByCategoryPopular }
+			plugins={ pluginsByCategoryPopular }
+			isFetching={ isFetchingPluginsByCategoryPopular }
 		/>
 	);
 };
