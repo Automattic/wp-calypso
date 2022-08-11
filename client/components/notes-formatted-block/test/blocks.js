@@ -2,102 +2,77 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import {render, screen} from '@testing-library/react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import * as Blocks from '../blocks';
 
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+jest.mock('calypso/lib/jetpack/is-jetpack-cloud');
 
 // NOTE: There's a repeating pattern in these tests that links to WordPress.com
 //       aren't rendered in the context of Jetpack Cloud. Best I can tell, this
 //       is to keep people inside the Jetpack Cloud experience, as opposed to
 //       "booting" them back into Calypso.
 
-expect.extend( {
-	toBeTextNodeWithValue( received, val ) {
-		const pass = received.type() === undefined && received.debug() === val;
+describe('Link block', () => {
+	beforeEach(() => jest.resetAllMocks());
 
-		return pass
-			? {
-					message: () => `expected not to be a text node with value '${ val }'`,
-					pass: true,
-			  }
-			: {
-					message: () => `expected to be a text node with value '${ val }'`,
-					pass: false,
-			  };
-	},
-} );
-
-describe( 'Link block', () => {
-	beforeEach( () => jest.resetAllMocks() );
-
-	test.only( 'on Calypso, relativizes links to WordPress.com', () => {
-		isJetpackCloud.mockImplementation( () => false );
+	test('on Calypso, relativizes links to WordPress.com', () => {
+		isJetpackCloud.mockImplementation(() => false);
 
 		const pathAbsoluteUrl = '/my/test/link?with=params&more=stuff+plus%20junk';
 		const text = 'my link text';
 
 		render(
 			<Blocks.Link
-				content={ { url: `https://wordpress.com${ pathAbsoluteUrl }` } }
-				children={ text }
+				content={{url: `https://wordpress.com${pathAbsoluteUrl}`}}
+				children={text}
 			/>
 		);
 
-		const link = screen.getByRole( 'link' );
+		const link = screen.getByRole('link');
 
-		expect( link ).toHaveAttribute( 'href', pathAbsoluteUrl );
-		expect( link ).toHaveTextContent( text );
-	} );
+		expect(link).toHaveAttribute('href', pathAbsoluteUrl);
+		expect(link).toHaveTextContent(text);
+	});
 
-	test( 'on Jetpack Cloud, does not render links to WordPress.com', () => {
-		isJetpackCloud.mockImplementation( () => true );
+	test('on Jetpack Cloud, does not render links to WordPress.com', () => {
+		isJetpackCloud.mockImplementation(() => true);
 
 		const text = 'link text';
-		const link = shallow(
-			<Blocks.Link content={ { url: 'https://wordpress.com/my/test/link' } } children={ text } />
+
+		render(
+			<Blocks.Link content={{url: 'https://wordpress.com/my/test/link'}} children={text} />
 		);
 
-		expect( link ).toBeTextNodeWithValue( text );
-	} );
+		const unlinkedText = screen.getByText(text);
+		const link = screen.queryByRole('link');
 
-	test.each( [ false, true ] )(
+		expect(link).not.toBeInTheDocument();
+		expect(unlinkedText).toBeInTheDocument();
+	});
+
+	test.each([false, true])(
 		'when isJetpackCloud() === %s, renders links to non-WordPress sites as-is',
-		( val ) => {
-			isJetpackCloud.mockImplementation( () => val );
+		(val) => {
+			isJetpackCloud.mockImplementation(() => val);
 
 			const arbitraryUrl = 'http://iscalypsofastyet.com/p/buildlog?test1=test1';
 			const text = 'my link text';
-			const link = shallow( <Blocks.Link content={ { url: arbitraryUrl } } children={ text } /> );
+			render(<Blocks.Link content={{url: arbitraryUrl}} children={text} />);
 
-			expect( link.prop( 'href' ) ).toEqual( arbitraryUrl );
-			expect( link.text() ).toEqual( text );
+			const link = screen.getByRole('link');
+
+			expect(link).toHaveAttribute('href', arbitraryUrl);
+			expect(link).toHaveTextContent(text);
 		}
 	);
-} );
+});
 
-describe( 'Post block', () => {
-	beforeEach( () => jest.resetAllMocks() );
+describe('Post block', () => {
+	beforeEach(() => jest.resetAllMocks());
 
-	test( 'on Calypso, if the post is in the trash, links to the Trash page', () => {
-		isJetpackCloud.mockImplementation( () => false );
-
-		const content = {
-			siteId: 1,
-			isTrashed: true,
-		};
-
-		const text = 'this is a post';
-		const post = shallow( <Blocks.Post content={ content } children={ text } /> );
-
-		expect( post.prop( 'href' ) ).toEqual( `/posts/${ content.siteId }/trash` );
-		expect( post.text() ).toEqual( text );
-	} );
-
-	test( 'on Jetpack Cloud, if the post is in the trash, shows text but does not link', () => {
-		isJetpackCloud.mockImplementation( () => true );
+	test('on Calypso, if the post is in the trash, links to the Trash page', () => {
+		isJetpackCloud.mockImplementation(() => false);
 
 		const content = {
 			siteId: 1,
@@ -105,13 +80,34 @@ describe( 'Post block', () => {
 		};
 
 		const text = 'this is a post';
-		const post = shallow( <Blocks.Post content={ content } children={ text } /> );
+		render(<Blocks.Post content={content} children={text} />);
 
-		expect( post ).toBeTextNodeWithValue( text );
-	} );
+		const link = screen.getByRole('link');
 
-	test( 'on Calypso, if the post is not trashed, links to the post itself', () => {
-		isJetpackCloud.mockImplementation( () => false );
+		expect(link).toHaveAttribute('href', `/posts/${content.siteId}/trash`);
+		expect(link).toHaveTextContent(text);
+	});
+
+	test('on Jetpack Cloud, if the post is in the trash, shows text but does not link', () => {
+		isJetpackCloud.mockImplementation(() => true);
+
+		const content = {
+			siteId: 1,
+			isTrashed: true,
+		};
+
+		const text = 'this is a post';
+		render(<Blocks.Post content={content} children={text} />);
+
+		const unlinkedText = screen.getByText(text);
+		const link = screen.queryByRole('link');
+
+		expect(link).not.toBeInTheDocument();
+		expect(unlinkedText).toBeInTheDocument();
+	});
+
+	test('on Calypso, if the post is not trashed, links to the post itself', () => {
+		isJetpackCloud.mockImplementation(() => false);
 
 		const content = {
 			siteId: 1,
@@ -120,16 +116,19 @@ describe( 'Post block', () => {
 		};
 
 		const text = 'another post';
-		const post = shallow( <Blocks.Post content={ content } children={ text } /> );
+		render(<Blocks.Post content={content} children={text} />);
 
-		expect( post.prop( 'href' ) ).toEqual(
-			`/read/blogs/${ content.siteId }/posts/${ content.postId }`
+		const link = screen.getByRole('link');
+
+		expect(link).toHaveAttribute(
+			'href',
+			`/read/blogs/${content.siteId}/posts/${content.postId}`
 		);
-		expect( post.text() ).toEqual( text );
-	} );
+		expect(link).toHaveTextContent(text);
+	});
 
-	test( 'on Jetpack Cloud, if the post is not trashed, shows emphasized text but does not link', () => {
-		isJetpackCloud.mockImplementation( () => true );
+	test('on Jetpack Cloud, if the post is not trashed, shows emphasized text but does not link', () => {
+		isJetpackCloud.mockImplementation(() => true);
 
 		const content = {
 			siteId: 1,
@@ -138,35 +137,21 @@ describe( 'Post block', () => {
 		};
 
 		const text = 'another post';
-		const post = shallow( <Blocks.Post content={ content } children={ text } /> );
+		const unlinkedPost = render(<Blocks.Post content={content} children={text} />).container
+			.firstChild;
 
-		expect( post.type() ).toEqual( 'em' );
-		expect( post.text() ).toEqual( text );
-	} );
-} );
+		// @todo I'm not sure about this assertion. I think it is important
+		// to test that the text is emphasized. Adding a role seems
+		// redudant, though, but <em> doens't have a native role.
+		expect(unlinkedPost.tagName).toEqual('EM');
+		expect(unlinkedPost).toHaveTextContent(text);
+	});
+});
 
-describe( 'Comment block', () => {
-	beforeEach( () => jest.resetAllMocks() );
-	test( 'on Calypso, links to the comment itself', () => {
-		isJetpackCloud.mockImplementation( () => false );
-
-		const content = {
-			siteId: 'site_id',
-			postId: 'post_id',
-			commentId: 'comment_id',
-		};
-
-		const text = 'what a cool comment';
-		const comment = shallow( <Blocks.Comment content={ content } children={ text } /> );
-
-		expect( comment.prop( 'href' ) ).toEqual(
-			`/read/blogs/${ content.siteId }/posts/${ content.postId }#comment-${ content.commentId }`
-		);
-		expect( comment.text() ).toEqual( text );
-	} );
-
-	test( 'on Jetpack Cloud, shows text but does not link', () => {
-		isJetpackCloud.mockImplementation( () => true );
+describe('Comment block', () => {
+	beforeEach(() => jest.resetAllMocks());
+	test('on Calypso, links to the comment itself', () => {
+		isJetpackCloud.mockImplementation(() => false);
 
 		const content = {
 			siteId: 'site_id',
@@ -175,17 +160,40 @@ describe( 'Comment block', () => {
 		};
 
 		const text = 'what a cool comment';
-		const comment = shallow( <Blocks.Comment content={ content } children={ text } /> );
+		render(<Blocks.Comment content={content} children={text} />);
 
-		expect( comment ).toBeTextNodeWithValue( text );
-	} );
-} );
+		const link = screen.getByRole('link');
 
-describe( 'Person block', () => {
-	beforeEach( () => jest.resetAllMocks() );
+		expect(link).toHaveAttribute('href', `/read/blogs/${content.siteId}/posts/${content.postId}#comment-${content.commentId}`);
+		expect(link).toHaveTextContent(text);
+	});
 
-	test( 'on Calypso, links to the corresponding Person page', () => {
-		isJetpackCloud.mockImplementation( () => false );
+	test('on Jetpack Cloud, shows text but does not link', () => {
+		isJetpackCloud.mockImplementation(() => true);
+
+		const content = {
+			siteId: 'site_id',
+			postId: 'post_id',
+			commentId: 'comment_id',
+		};
+
+		const text = 'what a cool comment';
+		render(<Blocks.Comment content={content} children={text} />);
+
+		// @todo Not sure if I should use `getByText` or `queryByText` here.
+		// When using `getByText`, the assertion below seems redundant, as it
+		// will fail if it can't find the text.
+		const comment = screen.getByText(text);
+
+		expect(comment).toBeInTheDocument();
+	});
+});
+
+describe('Person block', () => {
+	beforeEach(() => jest.resetAllMocks());
+
+	test('on Calypso, links to the corresponding Person page', () => {
+		isJetpackCloud.mockImplementation(() => false);
 
 		const content = {
 			siteId: 'site_id',
@@ -193,14 +201,16 @@ describe( 'Person block', () => {
 		};
 
 		const text = 'what a unique and wonderful person';
-		const person = shallow( <Blocks.Person content={ content } children={ text } meta={ {} } /> );
+		render(<Blocks.Person content={content} children={text} meta={{}} />);
 
-		expect( person.prop( 'href' ) ).toEqual( `/people/edit/${ content.siteId }/${ content.name }` );
-		expect( person.text() ).toEqual( text );
-	} );
+		const link = screen.getByRole('link');
 
-	test( 'on Jetpack Cloud, shows text but does not link', () => {
-		isJetpackCloud.mockImplementation( () => true );
+		expect(link).toHaveAttribute('href', `/people/edit/${content.siteId}/${content.name}`);
+		expect(link).toHaveTextContent(text);
+	});
+
+	test('on Jetpack Cloud, shows text but does not link', () => {
+		isJetpackCloud.mockImplementation(() => true);
 
 		const content = {
 			siteId: 'site_id',
@@ -208,35 +218,18 @@ describe( 'Person block', () => {
 		};
 
 		const text = 'what a unique and wonderful person';
-		const person = shallow( <Blocks.Person content={ content } children={ text } meta={ {} } /> );
+		const unlinkedPerson = render(<Blocks.Person content={content} children={text} meta={{}} />).container.firstChild;
 
-		expect( person.type() ).toEqual( 'strong' );
-		expect( person.text() ).toEqual( text );
-	} );
-} );
+		expect(unlinkedPerson.tagName).toEqual('STRONG');
+		expect(unlinkedPerson).toHaveTextContent(text);
+	});
+});
 
-describe( 'Plugin block', () => {
-	beforeEach( () => jest.resetAllMocks() );
+describe('Plugin block', () => {
+	beforeEach(() => jest.resetAllMocks());
 
-	test( 'on Calypso, links to the corresponding Plugin page', () => {
-		isJetpackCloud.mockImplementation( () => false );
-
-		const content = {
-			pluginSlug: 'plugin_slug',
-			siteSlug: 'site_slug',
-		};
-
-		const text = 'nifty plugin';
-		const plugin = shallow( <Blocks.Plugin content={ content } children={ text } meta={ {} } /> );
-
-		expect( plugin.prop( 'href' ) ).toEqual(
-			`/plugins/${ content.pluginSlug }/${ content.siteSlug }`
-		);
-		expect( plugin.text() ).toEqual( text );
-	} );
-
-	test( 'on Jetpack Cloud, shows text but does not link', () => {
-		isJetpackCloud.mockImplementation( () => true );
+	test('on Calypso, links to the corresponding Plugin page', () => {
+		isJetpackCloud.mockImplementation(() => false);
 
 		const content = {
 			pluginSlug: 'plugin_slug',
@@ -244,17 +237,36 @@ describe( 'Plugin block', () => {
 		};
 
 		const text = 'nifty plugin';
-		const plugin = shallow( <Blocks.Plugin content={ content } children={ text } meta={ {} } /> );
+		render(<Blocks.Plugin content={content} children={text} meta={{}} />);
 
-		expect( plugin ).toBeTextNodeWithValue( text );
-	} );
-} );
+		const link = screen.getByRole('link');
 
-describe( 'Theme block', () => {
-	beforeEach( () => jest.resetAllMocks() );
+		expect(link).toHaveAttribute('href', `/plugins/${content.pluginSlug}/${content.siteSlug}`);
+		expect(link).toHaveTextContent(text);
+	});
 
-	test( 'on Calypso, if the theme URI is WordPress.com, renders the theme link with a relative URL', () => {
-		isJetpackCloud.mockImplementation( () => false );
+	test('on Jetpack Cloud, shows text but does not link', () => {
+		isJetpackCloud.mockImplementation(() => true);
+
+		const content = {
+			pluginSlug: 'plugin_slug',
+			siteSlug: 'site_slug',
+		};
+
+		const text = 'nifty plugin';
+		render(<Blocks.Plugin content={content} children={text} meta={{}} />);
+
+		const unlinkedText = screen.getByText(text);
+
+		expect(unlinkedText).toBeInTheDocument();
+	});
+});
+
+describe('Theme block', () => {
+	beforeEach(() => jest.resetAllMocks());
+
+	test('on Calypso, if the theme URI is WordPress.com, renders the theme link with a relative URL', () => {
+		isJetpackCloud.mockImplementation(() => false);
 
 		const content = {
 			themeUri: 'https://wordpress.com/noneofthispartmatters',
@@ -263,14 +275,16 @@ describe( 'Theme block', () => {
 		};
 
 		const text = 'oh neato a theme';
-		const theme = shallow( <Blocks.Theme content={ content } meta={ {} } children={ text } /> );
+		render(<Blocks.Theme content={content} meta={{}} children={text} />);
 
-		expect( theme.prop( 'href' ) ).toEqual( `/theme/${ content.themeSlug }/${ content.siteSlug }` );
-		expect( theme.text() ).toEqual( text );
-	} );
+		const link = screen.getByRole('link');
 
-	test( 'on Jetpack Cloud, if the theme URI is WordPress.com, does not render a link', () => {
-		isJetpackCloud.mockImplementation( () => true );
+		expect(link).toHaveAttribute('href', `/theme/${content.themeSlug}/${content.siteSlug}`);
+		expect(link).toHaveTextContent(text);
+	});
+
+	test('on Jetpack Cloud, if the theme URI is WordPress.com, does not render a link', () => {
+		isJetpackCloud.mockImplementation(() => true);
 
 		const content = {
 			themeUri: 'https://wordpress.com/noneofthispartmatters',
@@ -279,15 +293,17 @@ describe( 'Theme block', () => {
 		};
 
 		const text = 'oh neato a theme';
-		const theme = shallow( <Blocks.Theme content={ content } meta={ {} } children={ text } /> );
+		render(<Blocks.Theme content={content} meta={{}} children={text} />);
 
-		expect( theme ).toBeTextNodeWithValue( text );
-	} );
+		const unlinkedText = screen.getByText(text);
 
-	test.each( [ false, true ] )(
+		expect(unlinkedText).toBeInTheDocument();
+	});
+
+	test.each([false, true])(
 		'when isJetpackCloud() === %s, if the theme URI is not WordPress.com, renders a new-tab link to the original theme URI',
-		( val ) => {
-			isJetpackCloud.mockImplementation( () => val );
+		(val) => {
+			isJetpackCloud.mockImplementation(() => val);
 
 			const content = {
 				themeUri: 'https://mycoolthemesite.example/thebestthemeever',
@@ -296,19 +312,23 @@ describe( 'Theme block', () => {
 			};
 
 			const text = 'themes are pretty';
-			const theme = shallow( <Blocks.Theme content={ content } meta={ {} } children={ text } /> );
+			render(<Blocks.Theme content={content} meta={{}} children={text} />);
 
-			expect( theme.prop( 'href' ) ).toEqual( content.themeUri );
-			expect( theme.prop( 'target' ) ).toEqual( '_blank' );
-			expect( theme.prop( 'rel' ) ).toEqual( 'noopener noreferrer' );
-			expect( theme.text() ).toEqual( text );
+			const link = screen.getByRole('link');
+
+			expect(link).toHaveAttribute('href', content.themeUri);
+			expect(link).toHaveAttribute('target', '_blank');
+			expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+			expect(link).toHaveTextContent(text);
 		}
 	);
 
-	test( 'if no theme URI is present, renders text but no link', () => {
+	test('if no theme URI is present, renders text but no link', () => {
 		const text = 'oh no, no url';
-		const theme = shallow( <Blocks.Theme content={ {} } children={ text } /> );
+		render(<Blocks.Theme content={{}} children={text} />);
 
-		expect( theme ).toBeTextNodeWithValue( text );
-	} );
-} );
+		const unlinkedText = screen.getByText(text);
+
+		expect(unlinkedText).toBeInTheDocument();
+	});
+});
