@@ -172,6 +172,36 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const setDescription: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_DESCRIPTION' ) {
+		return action.setDescription;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const setSiteLogo: Reducer< null | string, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_SITE_LOGO' ) {
+		return action.setLogo;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
+const setSiteAccentColor: Reducer< string | undefined, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
+		return action.setAccentColor;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
 		return action.anchorPodcastId;
@@ -353,6 +383,9 @@ const reducer = combineReducers( {
 	stepProgress,
 	goals,
 	editEmail,
+	setDescription,
+	setSiteLogo,
+	setSiteAccentColor,
 } );
 
 export type State = ReturnType< typeof reducer >;

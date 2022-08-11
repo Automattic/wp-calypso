@@ -188,6 +188,21 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
+export const setSiteDescription = ( setDescription: string ) => ( {
+	type: 'SET_SITE_DESCRIPTION' as const,
+	setDescription,
+} );
+
+export const setSiteLogo = ( setLogo: null | string ) => ( {
+	type: 'SET_SITE_LOGO' as const,
+	setLogo,
+} );
+
+export const setSiteAccentColor = ( setAccentColor: string | undefined ) => ( {
+	type: 'SET_SITE_ACCENT_COLOR' as const,
+	setAccentColor,
+} );
+
 export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
 	type: 'SET_ANCHOR_PODCAST_ID' as const,
 	anchorPodcastId,
@@ -327,4 +342,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetIntent
 	| typeof resetSelectedDesign
 	| typeof setEditEmail
+	| typeof setSiteDescription
+	| typeof setSiteLogo
+	| typeof setSiteAccentColor
 >;
