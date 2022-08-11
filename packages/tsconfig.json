@@ -36,6 +36,7 @@
 		{ "path": "./photon" },
 		{ "path": "./plans-grid" },
 		{ "path": "./search" },
+		{ "path": "./sentry" },
 		{ "path": "./shopping-cart" },
 		{ "path": "./state-utils" },
 		{ "path": "./tree-select" },

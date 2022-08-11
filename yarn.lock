@@ -1192,6 +1192,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/sentry@workspace:^, @automattic/sentry@workspace:packages/sentry":
+  version: 0.0.0-use.local
+  resolution: "@automattic/sentry@workspace:packages/sentry"
+  dependencies:
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@sentry/react": ^7.5.1
+  peerDependencies:
+    react: ^17.0.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/shopping-cart@workspace:^, @automattic/shopping-cart@workspace:packages/shopping-cart":
   version: 0.0.0-use.local
   resolution: "@automattic/shopping-cart@workspace:packages/shopping-cart"
@@ -12431,6 +12443,7 @@ __metadata:
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
+    "@automattic/sentry": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"

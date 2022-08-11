@@ -50,6 +50,7 @@
 		"@automattic/react-virtualized": "^9.22.3",
 		"@automattic/request-external-access": "workspace:^",
 		"@automattic/search": "workspace:^",
+		"@automattic/sentry": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
 		"@automattic/social-previews": "workspace:^",
 		"@automattic/state-utils": "workspace:^",

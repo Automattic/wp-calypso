@@ -1,9 +1,10 @@
-// NOTE: This file has been copied mostly verbatim from Redpop/Tumblr. The main
-// purpose is to stub basic Sentry methods so that consumers in Calypso can use
-// them. Then we can async-load Sentry for only a certain percent of requests.
-// Otherwise, we'd add a fair amount to the bundle size when we don't really need
-// it for every single request.
+// The main purpose is to stub basic Sentry methods so that consumers in Calypso
+// can use them. Then we can async-load Sentry for only a certain percent of
+// requests. Otherwise, we'd add a fair amount to the bundle size when we don't
+// really need it for every single request. To use Sentry methods like
+// `captureException` and `addBreadcrumb` see `@automattic/sentry`.
 import config from '@automattic/calypso-config';
+import type { A8cSentryGlobals } from '@automattic/sentry';
 import type * as SentryApi from '@sentry/react';
 
 // Static sentry configuration. We add any dynamic values when initializing Sentry.
@@ -18,25 +19,9 @@ const SENTRY_CONFIG: SentryApi.BrowserOptions = {
 	],
 };
 
-type SupportedMethods =
-	| 'addBreadcrumb'
-	| 'captureEvent'
-	| 'captureException'
-	| 'captureMessage'
-	| 'configureScope'
-	| 'withScope';
-interface QueueDataMethod< Method extends SupportedMethods > {
-	f: Method;
-	a: Parameters< typeof SentryApi[ Method ] >;
-}
-
-let callQueue: Array< Readonly< QueueDataMethod< SupportedMethods > > > = [];
-let errorQueue: Array< Readonly< Parameters< OnErrorEventHandlerNonNull > > > = [];
-let rejectionQueue: Array< PromiseRejectionEvent > = [];
-function clearQueues() {
-	callQueue = [];
-	errorQueue = [];
-	rejectionQueue = [];
+declare global {
+	// eslint-disable-next-line @typescript-eslint/no-empty-interface
+	interface Window extends A8cSentryGlobals {}
 }
 
 type SentryState =
@@ -52,43 +37,33 @@ type SentryState =
 	| { state: 'loaded'; sentry: typeof import('@sentry/react') };
 let state: SentryState = { state: 'initial' };
 
-function dispatchSentryMethodCall< Method extends SupportedMethods >(
-	method: Method,
-	args: Parameters< typeof SentryApi[ Method ] >
-) {
+const dispatchSentryMethodCall: NonNullable< typeof window.a8cDispatchSentryMethodCall > = (
+	method,
+	args
+) => {
 	const { state: status } = state;
 	if ( status === 'loaded' ) {
 		// @ts-expect-error We have a union of tuples and TypeScript wants a Tuple. It's OK.
 		state.sentry[ method ]( ...args );
 		return;
 	}
-	if ( status === 'error' || status === 'disabled' ) {
-		return;
-	}
-	callQueue.push( { f: method, a: args } );
-}
-export function addBreadcrumb( ...args: Parameters< typeof SentryApi.addBreadcrumb > ) {
-	dispatchSentryMethodCall( 'addBreadcrumb', args );
-}
-export function captureEvent( ...args: Parameters< typeof SentryApi.captureEvent > ) {
-	dispatchSentryMethodCall( 'captureEvent', args );
-}
-export function captureException( ...args: Parameters< typeof SentryApi.captureException > ) {
-	dispatchSentryMethodCall( 'captureException', args );
-}
-export function captureMessage( ...args: Parameters< typeof SentryApi.captureMessage > ) {
-	dispatchSentryMethodCall( 'captureMessage', args );
-}
-export function configureScope( ...args: Parameters< typeof SentryApi.configureScope > ) {
-	dispatchSentryMethodCall( 'configureScope', args );
-}
-export function withScope( ...args: Parameters< typeof SentryApi.withScope > ) {
-	dispatchSentryMethodCall( 'withScope', args );
+};
+
+let errorQueue: Array< Readonly< Parameters< OnErrorEventHandlerNonNull > > > = [];
+let rejectionQueue: Array< PromiseRejectionEvent > = [];
+function clearQueues() {
+	window.a8cSentryCallQueue = [];
+	errorQueue = [];
+	rejectionQueue = [];
+
+	// Now that queues are cleared we're ready for `@automattic/sentry` to start
+	// dispatching method calls directly to `dispatchSentryMethodCall`.
+	window.a8cDispatchSentryMethodCall = dispatchSentryMethodCall;
 }
 
 // Replays all calls to the Sentry API
 function processErrorQueue() {
-	for ( const call of callQueue ) {
+	for ( const call of window.a8cSentryCallQueue || [] ) {
 		// @ts-expect-error We have a union of tuples and TypeScript wants a Tuple. It's OK.
 		state.sentry[ call.f ]( ...call.a );
 	}

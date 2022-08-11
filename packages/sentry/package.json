@@ -1,0 +1,45 @@
+{
+	"name": "@automattic/sentry",
+	"version": "1.0.0",
+	"description": "Provides Sentry methods that can be used in Calypso.",
+	"calypso:src": "src/index.ts",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": true,
+	"author": "Automattic Inc.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"private": true,
+	"types": "dist/types",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/your-package"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"dependencies": {
+		"@automattic/calypso-config": "workspace:^"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@sentry/react": "^7.5.1"
+	},
+	"peerDependencies": {
+		"react": "^17.0.2"
+	}
+}
