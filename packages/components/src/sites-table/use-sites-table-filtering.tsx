@@ -1,7 +1,12 @@
 import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import { SiteObjectWithStatus, getSiteStatus, siteStatuses } from './site-status';
+import {
+	SiteObjectWithStatus,
+	getSiteStatus,
+	siteStatuses,
+	getTranslatedStatuses,
+} from './site-status';
 
 export const DEFAULT_SITE_STATUS_FILTER_VALUE = 'all';
 
@@ -41,12 +46,16 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	const { __ } = useI18n();
 
 	const [ statuses, groupedByStatus ] = useMemo( () => {
-		const statuses = [
-			{ name: 'all' as const, title: __( 'All Sites' ), count: 0 },
-			{ name: 'public' as const, title: __( 'Public' ), count: 0 },
-			{ name: 'private' as const, title: __( 'Private' ), count: 0 },
-			{ name: 'coming-soon' as const, title: __( 'Coming Soon' ), count: 0 },
-		];
+		const translatedStatuses = {
+			all: __( 'All Sites' ),
+			...getTranslatedStatuses( __ ),
+		};
+
+		const statuses: Status[] = siteStatusFilterValues.map( ( name ) => ( {
+			name,
+			title: translatedStatuses[ name ],
+			count: 0,
+		} ) );
 
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
 			( groups, site ) => {

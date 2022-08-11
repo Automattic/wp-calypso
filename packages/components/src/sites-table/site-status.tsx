@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 
-export const siteStatuses = [ 'coming-soon', 'private', 'public' ] as const;
+export const siteStatuses = [ 'public', 'private', 'coming-soon' ] as const;
 
 export type SiteStatus = typeof siteStatuses[ number ];
 
@@ -22,16 +22,19 @@ export const getSiteStatus = ( site: SiteObjectWithStatus ): SiteStatus => {
 	return 'public';
 };
 
+export const getTranslatedStatuses = (
+	__: ReturnType< typeof useI18n >[ '__' ]
+): { [ K in SiteStatus ]: string } => {
+	return {
+		'coming-soon': __( 'Coming soon' ),
+		private: __( 'Private' ),
+		public: __( 'Public' ),
+	};
+};
+
 export const useTranslatedSiteStatus = ( site: SiteObjectWithStatus ) => {
 	const { __ } = useI18n();
+	const translatedStatuses = getTranslatedStatuses( __ );
 
-	if ( getSiteStatus( site ) === 'coming-soon' ) {
-		return __( 'Coming soon' );
-	}
-
-	if ( getSiteStatus( site ) === 'private' ) {
-		return __( 'Private' );
-	}
-
-	return __( 'Public' );
+	return translatedStatuses[ getSiteStatus( site ) ];
 };
