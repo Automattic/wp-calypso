@@ -50,9 +50,9 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import SearchResultsPage from '../plugin-search-results-page';
 import PluginsCategoryResultsPage from '../plugins-category-results-page';
 import PluginsDiscoveryPage from '../plugins-discovery-page';
+import PluginsSearchResultPage from '../plugins-search-results-page';
 
 import './style.scss';
 
@@ -194,7 +194,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, searchTitle,
 	const renderList = () => {
 		if ( search ) {
 			return (
-				<SearchResultsPage
+				<PluginsSearchResultPage
 					search={ search }
 					setIsFetchingPluginsBySearchTerm={ setIsFetchingPluginsBySearchTerm }
 					siteSlug={ siteSlug }

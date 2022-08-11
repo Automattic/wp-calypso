@@ -18,7 +18,7 @@ function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
-const SearchResultsPage = ( {
+const PluginsSearchResultPage = ( {
 	search: searchTerm,
 	siteSlug,
 	siteId,
@@ -147,4 +147,4 @@ const SearchResultsPage = ( {
 	);
 };
 
-export default SearchResultsPage;
+export default PluginsSearchResultPage;
