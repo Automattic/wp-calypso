@@ -6,19 +6,12 @@ const defaultOptions = {
 	ignoreLocation: true,
 };
 
-type KeysProp< T > = T extends string
-	? {
-			keys?: never;
-	  }
-	: {
-			keys: Fuse.IFuseOptions< T >[ 'keys' ];
-	  };
-
 export type UseFuzzySearchOptions< T > = {
 	data: T[];
 	options?: Partial< Fuse.IFuseOptions< T > >;
 	query?: string;
-} & KeysProp< T >;
+	keys?: Fuse.IFuseOptions< T >[ 'keys' ];
+};
 
 export const useFuzzySearch = < T >( {
 	data,
