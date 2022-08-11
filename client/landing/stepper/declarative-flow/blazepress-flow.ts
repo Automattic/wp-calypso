@@ -1,8 +1,8 @@
 import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
-export const promoteFlow: Flow = {
-	name: 'promote',
+export const blazePressFlow: Flow = {
+	name: 'blazepress',
 
 	useSteps() {
 		// useEffect( () => {
