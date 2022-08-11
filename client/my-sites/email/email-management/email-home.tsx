@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
@@ -17,7 +16,6 @@ import EmailListActive from 'calypso/my-sites/email/email-management/home/email-
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
-import MailPoetUpsell from 'calypso/my-sites/email/email-management/home/mailpoet-upsell';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-comparison/stacked';
 import { emailManagementTitanSetUpMailbox, emailManagement } from 'calypso/my-sites/email/paths';
@@ -53,6 +51,15 @@ const NoAccess = (): ReactElement => {
 				title={ translate( 'You are not authorized to view this page' ) }
 				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 			/>
+		</ContentWithHeader>
+	);
+};
+
+const LoadingPlaceholder = (): ReactElement => {
+	return (
+		<ContentWithHeader>
+			<SectionHeader className="email-home__section-placeholder is-placeholder" />
+			<Card className="email-home__content-placeholder is-placeholder" />
 		</ContentWithHeader>
 	);
 };
@@ -112,14 +119,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
-		return (
-			<ContentWithHeader>
-				<QueryJetpackPlugins siteIds={ [ selectedSite?.ID ?? 0 ] } />
-
-				<SectionHeader className="email-home__section-placeholder is-placeholder" />
-				<Card className="email-home__content-placeholder is-placeholder" />
-			</ContentWithHeader>
-		);
+		return <LoadingPlaceholder />;
 	}
 
 	if ( ! canManageSite ) {
@@ -195,8 +195,6 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	return (
 		<ContentWithHeader>
-			<MailPoetUpsell />
-
 			{ showActiveDomainList && (
 				<EmailListActive
 					currentRoute={ currentRoute }
