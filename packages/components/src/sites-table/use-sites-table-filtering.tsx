@@ -1,7 +1,7 @@
 import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import { SiteStatus, SiteObjectWithStatus } from './use-site-status';
+import { SiteStatus, SiteObjectWithStatus } from './site-status';
 
 interface SitesTableFilterOptions {
 	status?: string;

@@ -23,6 +23,6 @@ export { default as JetpackLogo } from './jetpack-logo';
 export { ListTile } from './list-tile';
 export { useSitesTableFiltering } from './sites-table/use-sites-table-filtering';
 export { useSitesTableSorting } from './sites-table/use-sites-table-sorting';
-export { useSiteStatus } from './sites-table/use-site-status';
+export { getSiteStatus, useTranslatedSiteStatus } from './sites-table/site-status';
 export { SitesTableTabPanel } from './sites-table/sites-table-tab-panel';
 export { LoadingPlaceholder } from './loading-placeholder';

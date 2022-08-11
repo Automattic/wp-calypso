@@ -1,4 +1,4 @@
-import { useSiteStatus } from '@automattic/components';
+import { useTranslatedSiteStatus, getSiteStatus } from '@automattic/components';
 import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
@@ -40,7 +40,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
-	const { status, translatedStatus } = useSiteStatus( site );
+	const translatedStatus = useTranslatedSiteStatus( site );
 
 	const siteDashboardUrlProps: AnchorHTMLAttributes< HTMLAnchorElement > = {
 		href: getDashboardUrl( site.slug ),
@@ -62,7 +62,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 
 					<div className={ badges }>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-						{ status !== 'public' && (
+						{ getSiteStatus( site ) !== 'public' && (
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 						) }
 						<SitesEllipsisMenu className={ ellipsis } site={ site } />
