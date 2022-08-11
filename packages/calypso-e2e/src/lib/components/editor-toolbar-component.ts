@@ -116,7 +116,10 @@ export class EditorToolbarComponent {
 	 */
 	async closeBlockInserter(): Promise< void > {
 		if ( await this.targetIsOpen( selectors.blockInserterButton ) ) {
-			const locator = this.editor.locator( selectors.blockInserterButton );
+			// We click on the panel instead of on the block inserter button as a workaround for an issue
+			// that disables the block inserter button after inserting a block using the block API V2.
+			// See https://github.com/WordPress/gutenberg/issues/43090.
+			const locator = this.editor.locator( panel );
 			await locator.click();
 		}
 	}
