@@ -32,6 +32,7 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
 import { newsletter } from './declarative-flow/newsletter';
 import { podcasts } from './declarative-flow/podcasts';
+import { promoteFlow } from './declarative-flow/promote-flow';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
@@ -63,6 +64,7 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
+	{ flowName: 'promote', pathToFlow: promoteFlow },
 ];
 
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
