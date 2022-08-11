@@ -1,7 +1,7 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
-import page from 'page';
 import {
 	makeLayout,
+	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
 	render as clientRender,
 } from 'calypso/controller';
@@ -15,6 +15,7 @@ import {
 	plugins,
 	scrollTopIfNoHash,
 	navigationIfLoggedIn,
+	maybeRedirectLoggedOut,
 } from './controller';
 import { upload } from './controller-logged-in';
 
@@ -25,8 +26,9 @@ export default function ( router ) {
 		'[^\\\\/.]+\\.[^\\\\/]+'; // one-or-more non-slash-or-dot chars, then a dot, then one-or-more non-slashes
 	const langParam = getLanguageRouteParam();
 
-	page(
+	router(
 		'/plugins/setup',
+		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
 		renderProvisionPlugins,
@@ -34,8 +36,9 @@ export default function ( router ) {
 		clientRender
 	);
 
-	page(
+	router(
 		'/plugins/setup/:site',
+		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
 		renderProvisionPlugins,
@@ -45,6 +48,7 @@ export default function ( router ) {
 
 	router(
 		`/${ langParam }/plugins/browse/:category/:site(${ siteId })?`,
+		maybeRedirectLoggedOut,
 		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
@@ -54,9 +58,18 @@ export default function ( router ) {
 		clientRender
 	);
 
-	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
-	page(
+	router(
+		'/plugins/upload',
+		redirectLoggedOut,
+		scrollTopIfNoHash,
+		siteSelection,
+		sites,
+		makeLayout,
+		clientRender
+	);
+	router(
 		'/plugins/upload/:site_id',
+		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -76,8 +89,9 @@ export default function ( router ) {
 		clientRender
 	);
 
-	page(
+	router(
 		'/plugins/manage/:site?',
+		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -86,8 +100,9 @@ export default function ( router ) {
 		clientRender
 	);
 
-	page(
+	router(
 		'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
+		maybeRedirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -99,6 +114,7 @@ export default function ( router ) {
 
 	router(
 		`/${ langParam }/plugins/:plugin/:site_id(${ siteId })?`,
+		maybeRedirectLoggedOut,
 		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
@@ -108,8 +124,9 @@ export default function ( router ) {
 		clientRender
 	);
 
-	page(
+	router(
 		'/plugins/:plugin/eligibility/:site_id',
+		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
