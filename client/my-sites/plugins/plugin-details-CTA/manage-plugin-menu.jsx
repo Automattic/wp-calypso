@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
@@ -24,27 +25,30 @@ export const ManagePluginMenu = ( { plugin } ) => {
 	const settingsLink = pluginOnSite?.action_links?.Settings ?? null;
 
 	return (
-		<EllipsisMenu position={ 'bottom' }>
-			{ currentPurchase?.id && (
-				<PopoverMenuItem
-					icon="credit-card"
-					href={ `/me/purchases/${ site.domain }/${ currentPurchase.id }` }
-				>
-					{ translate( 'Manage Subscription' ) }
-				</PopoverMenuItem>
-			) }
-			{ settingsLink && (
-				<PopoverMenuItem icon="cog" href={ settingsLink }>
-					{ translate( 'Settings' ) }
-				</PopoverMenuItem>
-			) }
+		<>
+			{ plugin.isMarketplaceProduct && <QueryUserPurchases /> }
+			<EllipsisMenu position={ 'bottom' }>
+				{ currentPurchase?.id && (
+					<PopoverMenuItem
+						icon="credit-card"
+						href={ `/me/purchases/${ site.domain }/${ currentPurchase.id }` }
+					>
+						{ translate( 'Manage Subscription' ) }
+					</PopoverMenuItem>
+				) }
+				{ settingsLink && (
+					<PopoverMenuItem icon="cog" href={ settingsLink }>
+						{ translate( 'Settings' ) }
+					</PopoverMenuItem>
+				) }
 
-			<PluginRemoveButton
-				plugin={ pluginOnSite }
-				site={ site }
-				menuItem
-				isMarketplaceProduct={ plugin.isMarketplaceProduct }
-			/>
-		</EllipsisMenu>
+				<PluginRemoveButton
+					plugin={ pluginOnSite }
+					site={ site }
+					menuItem
+					isMarketplaceProduct={ plugin.isMarketplaceProduct }
+				/>
+			</EllipsisMenu>
+		</>
 	);
 };
