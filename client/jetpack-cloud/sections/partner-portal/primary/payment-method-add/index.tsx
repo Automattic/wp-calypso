@@ -34,7 +34,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { hasValidPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 
 import './style.scss';
@@ -42,7 +42,7 @@ import './style.scss';
 function PaymentMethodAdd(): ReactElement {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 	const {
 		reload: reloadSetupIntentId,
@@ -73,9 +73,9 @@ function PaymentMethodAdd(): ReactElement {
 		[ window.location.href, getQueryArg ]
 	);
 
-	const [ issueLicense, isSubmitting ] = useLicenseIssuing( null, product );
+	const [ issueLicense, isLoading ] = useLicenseIssuing( product );
 
-	useReturnUrl( !! returnQueryArg && hasPaymentMethod );
+	useReturnUrl( ! paymentMethodRequired );
 
 	const onGoToPaymentMethods = () => {
 		reduxDispatch(
@@ -108,7 +108,7 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const successCallback = useCallback( () => {
-		if ( returnQueryArg || product ) {
+		if ( returnQueryArg ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -116,15 +116,15 @@ function PaymentMethodAdd(): ReactElement {
 				} )
 			);
 		} else {
-			page( '/partner-portal/payment-methods/' );
+			page( partnerPortalBasePath( '/payment-methods' ) );
 		}
 	}, [ page, product, issueLicense ] );
 
 	useEffect( () => {
-		if ( product && hasPaymentMethod ) {
-			issueLicense.mutate( { product } );
+		if ( product && paymentMethodRequired ) {
+			issueLicense();
 		}
-	}, [ hasPaymentMethod, product ] );
+	}, [ paymentMethodRequired, product ] );
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
@@ -209,9 +209,9 @@ function PaymentMethodAdd(): ReactElement {
 									href={
 										product
 											? addQueryArgs( { product }, partnerPortalBasePath( '/issue-license' ) )
-											: '/partner-portal/payment-methods/'
+											: partnerPortalBasePath( '/payment-methods/' )
 									}
-									disabled={ isStripeLoading || issueLicense.isLoading || isSubmitting }
+									disabled={ isStripeLoading || isLoading }
 									onClick={ onGoToPaymentMethods }
 								>
 									{ translate( 'Go back' ) }
