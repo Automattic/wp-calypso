@@ -32,7 +32,7 @@ export const getTranslatedStatuses = (
 	};
 };
 
-export const useTranslatedSiteStatus = ( site: SiteObjectWithStatus ) => {
+export const useSiteStatusLabel = ( site: SiteObjectWithStatus ) => {
 	const { __ } = useI18n();
 	const translatedStatuses = getTranslatedStatuses( __ );
 

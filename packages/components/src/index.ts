@@ -28,6 +28,6 @@ export {
 	type FilterableSiteStatuses,
 } from './sites-table/use-sites-table-filtering';
 export { useSitesTableSorting } from './sites-table/use-sites-table-sorting';
-export { getSiteStatus, useTranslatedSiteStatus } from './sites-table/site-status';
+export { getSiteStatus, useSiteStatusLabel } from './sites-table/site-status';
 export { SitesTableTabPanel } from './sites-table/sites-table-tab-panel';
 export { LoadingPlaceholder } from './loading-placeholder';
