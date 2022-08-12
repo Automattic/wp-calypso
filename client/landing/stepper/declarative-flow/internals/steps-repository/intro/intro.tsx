@@ -1,16 +1,24 @@
 import { Button } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import type { WPElement } from '@wordpress/element';
 
 interface Props {
 	goNext: () => void;
 	flowName: string;
 }
 
+interface IntroContent {
+	[ key: string ]: {
+		content: WPElement;
+		button: string;
+	};
+}
+
 const Intro: React.FC< Props > = ( { goNext, flowName } ) => {
 	const { __ } = useI18n();
 
-	const intro: any = {
+	const intro: IntroContent = {
 		newsletter: {
 			content: createInterpolateElement(
 				__( 'Your stories, right into your<br /> readers’ inbox, now!' ),
