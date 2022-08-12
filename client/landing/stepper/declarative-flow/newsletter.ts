@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { StepPath } from './internals/steps-repository';
-import type { Flow, ProvidedDependencies } from './internals/types';
+import type { Flow } from './internals/types';
 
 export const newsletter: Flow = {
 	name: 'newsletter',
@@ -17,6 +17,8 @@ export const newsletter: Flow = {
 		return [
 			'intro',
 			'newsletterSetup',
+			'completingPurchase',
+			'processing',
 			'subscribers',
 			'processingFake',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
@@ -26,8 +28,11 @@ export const newsletter: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			return providedDependencies;
+		function submit() {
+			switch ( _currentStep ) {
+				case 'completingPurchase':
+					return navigate( 'processing' );
+			}
 		}
 
 		const goBack = () => {

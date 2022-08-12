@@ -76,6 +76,8 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		return () => clearTimeout( timeoutReference );
 	}, [ simulatedProgress, progress, __ ] );
 
+	const isJetpackPowered = props.flow === 'newsletters';
+
 	return (
 		<StepContainer
 			shouldHideNavButtons={ true }
@@ -103,6 +105,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 			}
 			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered={ isJetpackPowered }
 		/>
 	);
 };
