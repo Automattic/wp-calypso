@@ -12,6 +12,7 @@ import {
 import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
@@ -191,6 +192,8 @@ export function useLicenseIssuing(
 
 	const issueLicense = useIssueLicenseMutation( {
 		onSuccess: ( license ) => {
+			dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_submit', { product } ) );
+
 			const licenseKey = license.license_key;
 			const selectedSiteId = selectedSite?.ID;
 

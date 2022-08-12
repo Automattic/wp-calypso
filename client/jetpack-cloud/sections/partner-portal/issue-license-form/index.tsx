@@ -8,7 +8,7 @@ import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import { hasValidPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { APIProductFamily, APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { AssignLicenceProps } from '../types';
 import './style.scss';
@@ -29,7 +29,7 @@ export default function IssueLicenseForm( {
 }: AssignLicenceProps ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );
@@ -67,9 +67,9 @@ export default function IssueLicenseForm( {
 		) );
 
 	const onIssueLicense = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_submit', { product } ) );
+		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_selection_submit', { product } ) );
 
-		if ( hasPaymentMethod ) {
+		if ( ! paymentMethodRequired ) {
 			issueLicense.mutate( { product } );
 		} else {
 			requirePaymentMethod();
