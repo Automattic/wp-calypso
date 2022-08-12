@@ -6,10 +6,10 @@ const Header = styled.header`
 	position: fixed;
 	z-index: 10;
 	top: var( --masterbar-height );
-	left: calc( var( --sidebar-width-max ) + 1px ); // 1px is the sidebar border.
-	width: calc( 100% - var( --sidebar-width-max ) - 1px ); // 1px is the sidebar border.
+	left: 0;
 	padding: 0 32px;
 	box-sizing: border-box;
+	width: 100%;
 	border-bottom: 1px solid var( --studio-gray-5 );
 	background-color: var( --studio-white );
 
