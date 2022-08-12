@@ -24,7 +24,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
 import { getLabel, getSublabelAndPrice } from './checkout-labels';
-import { getItemIntroductoryOfferDisplay } from './get-item-introductory-offer-display';
+import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
