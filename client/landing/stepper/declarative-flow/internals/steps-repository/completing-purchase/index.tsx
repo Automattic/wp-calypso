@@ -15,8 +15,9 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation } ) {
 	useEffect( () => {
 		setPendingAction( async () => {
 			setProgressTitle( __( 'Completing Purchase' ) );
-			setProgress( 1 );
+			setProgress( 0.3 );
 			await wait( 2000 );
+			setProgress( 1 );
 		} );
 
 		submit?.();
