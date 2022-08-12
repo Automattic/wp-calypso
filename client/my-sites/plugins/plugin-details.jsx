@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-plugins';
+import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
