@@ -84,7 +84,7 @@ body.is-section-plugins.theme-default.color-scheme {
 	display: flex;
 	align-items: center;
 
-	@media screen and ( max-width: 960px ) {
+	@media screen and ( max-width: 1040px ) {
 		.plugins__button {
 			border: none;
 		}
@@ -122,7 +122,7 @@ body.is-section-plugins.theme-default.color-scheme {
 .plugin-details__layout {
 	padding-top: 54px;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( '<1040px' ) {
 		padding-top: 0;
 	}
 
@@ -132,7 +132,7 @@ body.is-section-plugins.theme-default.color-scheme {
 	grid-template-areas: 'header header actions'
 						'content content actions';
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( '<1040px' ) {
 		grid-template-areas: 'header header header'
 							'actions actions actions'
 							'content content content';
@@ -153,7 +153,7 @@ body.is-section-plugins.theme-default.color-scheme {
 		padding: 40px;
 		height: fit-content;
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( '<1040px' ) {
 			margin-top: 40px;
 		}
 	}
