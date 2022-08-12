@@ -607,7 +607,10 @@ export class PlanFeatures extends Component {
 				] )
 				.then( () => {
 					if ( withDiscount && this.isMounted ) {
-						return shoppingCartManager.applyCoupon( withDiscount );
+						return shoppingCartManager.applyCoupon( withDiscount ).catch( () => {
+							// If the coupon does not apply, let's continue to checkout anyway.
+							return Promise.resolve();
+						} );
 					}
 				} )
 				.then( () => {
@@ -630,7 +633,10 @@ export class PlanFeatures extends Component {
 				] )
 				.then( () => {
 					if ( withDiscount && this.isMounted ) {
-						return shoppingCartManager.applyCoupon( withDiscount );
+						return shoppingCartManager.applyCoupon( withDiscount ).catch( () => {
+							// If the coupon does not apply, let's continue to the next page anyway.
+							return Promise.resolve();
+						} );
 					}
 				} )
 				.then( () => {
