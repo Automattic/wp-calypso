@@ -1,10 +1,11 @@
-import fs from 'fs';
-import path from 'path';
-import v8Profiler from 'v8-profiler-next';
+const fs = require( 'fs' );
+const path = require( 'path' );
+const v8Profiler = require( 'v8-profiler-next' );
 
-export default () => {
+module.exports = () => {
 	let IS_PROFILING = false;
 
+	// Generates a CPU profile compatible with VS Code's viewer.
 	v8Profiler.setGenerateType( 1 );
 
 	const profilesRoot = path.resolve(
