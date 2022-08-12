@@ -40,6 +40,7 @@ export async function showDSPWidgetModal( siteId: number, postId?: number ) {
 		await loadDSPWidgetJS( async () => await showDSPWidgetModal( siteId, postId ) );
 	} else {
 		await window.BlazePress.render( {
+			domNodeId: 'promote__widget-container',
 			stripeKey: config( 'dsp_stripe_pub_key' ),
 			apiHost: 'https://public-api.wordpress.com',
 			apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,

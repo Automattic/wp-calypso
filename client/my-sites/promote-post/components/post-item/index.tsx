@@ -3,7 +3,9 @@ import './style.scss';
 import { Button } from '@wordpress/components';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import BlazePressPromotion from 'calypso/components/blazepress';
 import { recordDSPEntryPoint, showDSPWidgetModal } from 'calypso/lib/promote-post';
+import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 
 export type Post = {
@@ -30,12 +32,22 @@ export default function PostItem( { post }: Props ) {
 	const [ loading, setLoading ] = useState( false );
 	const dispatch = useDispatch();
 
-	const onClickPromote = async () => {
+	const keyValue = 'post-' + post.ID;
+	const { isModalOpen, value, openModal, closeModal } = useRouteModal( 'blazePress', keyValue );
+	const onClickPromote = () => {
 		setLoading( true );
-		await showDSPWidgetModal( post.site_ID, post.ID );
-		dispatch( recordDSPEntryPoint( 'promoted_posts-post_item' ) );
-		setLoading( false );
+		openModal();
+		( async () => {
+			await showDSPWidgetModal( post.site_ID, post.ID );
+			dispatch( recordDSPEntryPoint( 'promoted_posts-post_item' ) );
+			setLoading( false );
+		} )();
 	};
+
+	const onCloseWidget = () => {
+		closeModal();
+	};
+
 	return (
 		<CompactCard className="post-item__card">
 			<div className="post-item__main">
@@ -52,9 +64,16 @@ export default function PostItem( { post }: Props ) {
 					</div>
 				</div>
 			</div>
-			<Button isBusy={ loading } disabled={ loading } isLink onClick={ onClickPromote }>
-				Promote
-			</Button>
+			<div className="post-item__promote-link">
+				<BlazePressPromotion
+					isVisible={ isModalOpen && value === keyValue }
+					isLoading={ loading }
+					onClose={ onCloseWidget }
+				/>
+				<Button isBusy={ loading } disabled={ loading } isLink onClick={ onClickPromote }>
+					Promote
+				</Button>
+			</div>
 		</CompactCard>
 	);
 }
