@@ -30,8 +30,6 @@ export const newsletter: Flow = {
 
 		function submit() {
 			switch ( _currentStep ) {
-				case 'newsletterSetup':
-					return navigate( 'completingPurchase' );
 				case 'completingPurchase':
 					return navigate( 'processing' );
 				case 'processing':
