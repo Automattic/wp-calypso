@@ -32,8 +32,6 @@ export const newsletter: Flow = {
 			switch ( _currentStep ) {
 				case 'completingPurchase':
 					return navigate( 'processing' );
-				case 'processing':
-					return navigate( 'newsletterAddSubscribers' );
 			}
 		}
 
