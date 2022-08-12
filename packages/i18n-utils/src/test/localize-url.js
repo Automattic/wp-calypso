@@ -349,26 +349,6 @@ describe( '#localizeUrl', () => {
 		expect(
 			localizeUrl( 'https://wordpress.com/themes/free/filter/example-filter/', 'de', false )
 		).toEqual( 'https://wordpress.com/de/themes/free/filter/example-filter/' );
-
-		expect( localizeUrl( '/themes/', 'en', true ) ).toEqual( '/themes/' );
-		expect( localizeUrl( '/themes/', 'de', true ) ).toEqual( '/themes/' );
-		expect( localizeUrl( '/themes/', 'pl', true ) ).toEqual( '/themes/' );
-		expect( localizeUrl( '/themes/', 'en', false ) ).toEqual( '/themes/' );
-		expect( localizeUrl( '/themes/', 'de', false ) ).toEqual( '/de/themes/' );
-
-		expect( localizeUrl( '/details/', 'de', true ) ).toEqual( '/details/' );
-		expect( localizeUrl( '/details/', 'de', false ) ).toEqual( '/de/details/' );
-
-		expect( localizeUrl( '/pl/themes/', 'pl', false ) ).toEqual( '/pl/themes/' );
-		expect( localizeUrl( '/pl/themes/', 'pl', true ) ).toEqual( '/pl/themes/' );
-		expect( localizeUrl( '/themes/free/', 'de', true ) ).toEqual( '/themes/free/' );
-		expect( localizeUrl( '/themes/free/', 'de', false ) ).toEqual( '/de/themes/free/' );
-		expect( localizeUrl( '/themes/free/filter/example-filter/', 'de', true ) ).toEqual(
-			'/themes/free/filter/example-filter/'
-		);
-		expect( localizeUrl( '/themes/free/filter/example-filter/', 'de', false ) ).toEqual(
-			'/de/themes/free/filter/example-filter/'
-		);
 	} );
 
 	test( 'tos', () => {
