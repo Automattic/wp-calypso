@@ -39,8 +39,10 @@ type PriceBadgeExtendedProps = BasicDiscountOrOfferTerms & {
 	intervalLength: IntervalLength;
 };
 
-type GoogleWorkspacePriceProps = PriceBadgeExtendedProps & {
+type GoogleWorkspacePriceProps = {
 	isDomainInCart: boolean;
+	domain?: ResponseDomain;
+	intervalLength: IntervalLength;
 };
 
 const getGoogleWorkspaceProductSlug = ( intervalLength: IntervalLength ): string => {
@@ -87,19 +89,6 @@ const DiscountOrOfferTerms = ( {
 		return null;
 	}
 
-	if ( isDiscounted ) {
-		return (
-			<div className="google-workspace-price__discount-badge badge badge--info-green">
-				{ translate( 'Limited time: %(discount)d%% off', {
-					args: {
-						discount: product?.sale_coupon?.discount,
-					},
-					comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
-				} ) }
-			</div>
-		);
-	}
-
 	const introductoryOffer = product?.introductory_offer;
 	const intervalUnit = String( introductoryOffer?.interval_unit );
 	const intervalCount = Number( introductoryOffer?.interval_count );
@@ -108,42 +97,66 @@ const DiscountOrOfferTerms = ( {
 		return null;
 	}
 
-	if ( isEligibleForIntroductoryOfferFreeTrial ) {
-		return (
-			<div className="google-workspace-price__trial-badge badge badge--info-green">
-				{ intervalUnit === 'month'
-					? translate( '%(numberOfMonths)d month free', '%(numberOfMonths)d months free', {
-							args: {
-								numberOfMonths: intervalCount,
-							},
-							count: intervalCount,
-					  } )
-					: translate( '%(numberOfYears)d year free', '%(numberOfYears)d years free', {
-							args: {
-								numberOfYears: intervalCount,
-							},
-							count: intervalCount,
-					  } ) }
-			</div>
-		);
-	}
-
 	return (
-		<div className="google-workspace-price__trial-badge badge badge--info-green">
-			{ intervalUnit === 'month'
-				? translate( '%(numberOfMonths)d month discount', '%(numberOfMonths)d months discount', {
-						args: {
-							numberOfMonths: intervalCount,
-						},
-						count: intervalCount,
-				  } )
-				: translate( '%(numberOfYears)d year discount', '%(numberOfYears)d years discount', {
-						args: {
-							numberOfYears: intervalCount,
-						},
-						count: intervalCount,
-				  } ) }
-		</div>
+		<>
+			{ isEligibleForIntroductoryOfferFreeTrial && (
+				<div className="google-workspace-price__trial-badge badge badge--info-green">
+					{ intervalUnit === 'month'
+						? translate( '%(numberOfMonths)d month free', '%(numberOfMonths)d months free', {
+								args: {
+									numberOfMonths: intervalCount,
+								},
+								count: intervalCount,
+						  } )
+						: translate( '%(numberOfYears)d year free', '%(numberOfYears)d years free', {
+								args: {
+									numberOfYears: intervalCount,
+								},
+								count: intervalCount,
+						  } ) }
+				</div>
+			) }
+
+			{ isEligibleForIntroductoryOffer && ! isEligibleForIntroductoryOfferFreeTrial && (
+				<div className="google-workspace-price__trial-badge badge badge--info-green">
+					{ intervalUnit === 'month'
+						? translate(
+								'%(numberOfMonths)d month discount',
+								'%(numberOfMonths)d months discount',
+								{
+									args: {
+										numberOfMonths: intervalCount,
+									},
+									count: intervalCount,
+								}
+						  )
+						: translate( '%(numberOfYears)d year discount', '%(numberOfYears)d years discount', {
+								args: {
+									numberOfYears: intervalCount,
+								},
+								count: intervalCount,
+						  } ) }
+				</div>
+			) }
+
+			{ isDiscounted && (
+				<div className="google-workspace-price__discount-badge badge badge--info-green">
+					{ isEligibleForIntroductoryOffer
+						? translate( '+ Extra %(discount)d%% off', {
+								args: {
+									discount: product?.sale_coupon?.discount,
+								},
+								comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
+						  } )
+						: translate( 'Limited time: %(discount)d%% off', {
+								args: {
+									discount: product?.sale_coupon?.discount,
+								},
+								comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
+						  } ) }
+				</div>
+			) }
+		</>
 	);
 };
 
@@ -180,13 +193,6 @@ const GoogleWorkspacePrice = ( {
 		: isDomainInCart && hasIntroductoryOffer( product );
 	const isEligibleForIntroductoryOfferFreeTrial =
 		isEligibleForIntroductoryOffer && hasIntroductoryOfferFreeTrial( product );
-
-	window.console.log( 'ZXX', {
-		isEligibleForIntroductoryOfferFreeTrial,
-		isEligibleForIntroductoryOffer,
-		...( product?.introductory_offer ? { offer: product?.introductory_offer } : {} ),
-		productHasFreeTrial: hasIntroductoryOfferFreeTrial( product ),
-	} );
 
 	return (
 		<>

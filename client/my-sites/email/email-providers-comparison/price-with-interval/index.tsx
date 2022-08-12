@@ -93,8 +93,8 @@ const PriceWithInterval = ( {
 
 	if ( isDiscounted || isEligibleForIntroductoryOffer ) {
 		const salePrice = formatCurrency(
-			isEligibleForIntroductoryOffer
-				? Number( product?.introductory_offer?.cost_per_interval )
+			isEligibleForIntroductoryOffer && ! isDiscounted
+				? ( product?.introductory_offer?.cost_per_interval as number )
 				: product?.sale_cost ?? 0,
 			currencyCode ?? '',
 			{ stripZeros: true }
