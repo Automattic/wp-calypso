@@ -15,6 +15,7 @@ import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -446,7 +447,7 @@ export class PluginsMain extends Component {
 
 		const pageTitle = this.props.translate( 'Plugins', { textOnly: true } );
 
-		const { isJetpackCloud } = this.props;
+		const { isJetpackCloud, selectedSite } = this.props;
 
 		const { title, count } = this.getSelectedText();
 
@@ -460,7 +461,11 @@ export class PluginsMain extends Component {
 		const content = (
 			<>
 				<DocumentHead title={ pageTitle } />
-				<QueryAllJetpackSitesPlugins />
+				{ selectedSite ? (
+					<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
+				) : (
+					<QueryAllJetpackSitesPlugins />
+				) }
 				<QuerySiteFeatures siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
 				{ ! isJetpackCloud && (
