@@ -10,28 +10,28 @@ interface Props {
 
 interface IntroContent {
 	[ key: string ]: {
-		content: WPElement;
-		button: string;
+		title: WPElement;
+		buttonText: string;
 	};
 }
 
 const Intro: React.FC< Props > = ( { goNext, flowName } ) => {
 	const { __ } = useI18n();
 
-	const intro: IntroContent = {
+	const introContent: IntroContent = {
 		newsletter: {
-			content: createInterpolateElement(
+			title: createInterpolateElement(
 				__( 'Your stories, right into your<br /> readers’ inbox, now!' ),
 				{ br: <br /> }
 			),
-			button: __( 'Create your newsletter' ),
+			buttonText: __( 'Create your newsletter' ),
 		},
 		'link-in-bio': {
-			content: createInterpolateElement(
+			title: createInterpolateElement(
 				__( 'Your short bio and links,<br /> accessible to your<br /> audience in minutes' ),
 				{ br: <br /> }
 			),
-			button: __( 'Create your link in bio' ),
+			buttonText: __( 'Create your link in bio' ),
 		},
 	};
 
@@ -40,10 +40,10 @@ const Intro: React.FC< Props > = ( { goNext, flowName } ) => {
 	return (
 		<div className="intro__content">
 			<h1 className="intro__title">
-				<span>{ intro[ flowName ].content }</span>
+				<span>{ introContent[ flowName ].title }</span>
 			</h1>
 			<Button className="intro__button" primary onClick={ goNext }>
-				{ intro[ flowName ].button }
+				{ introContent[ flowName ].buttonText }
 			</Button>
 		</div>
 	);
