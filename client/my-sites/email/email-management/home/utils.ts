@@ -211,12 +211,21 @@ export function recordEmailAppLaunchEvent( {
 	} );
 }
 
+export enum ContextsForInboxNewMailboxUpsellClickEvent {
+	Free = 'free',
+	Paid = 'paid',
+}
+
 /**
  * Tracks an event for the key 'calypso_inbox_new_mailbox_upsell_click'.
  *
  */
-export function recordInboxNewMailboxUpsellClickEvent() {
-	recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {} );
+export function recordInboxNewMailboxUpsellClickEvent(
+	context: ContextsForInboxNewMailboxUpsellClickEvent
+) {
+	recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {
+		context,
+	} );
 }
 
 /**
