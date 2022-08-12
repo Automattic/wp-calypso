@@ -104,6 +104,10 @@ export async function fetchPlugin( context, next ) {
 		data = getWporgPluginSelector( store.getState(), pluginSlug );
 	}
 
+	if ( ! data || data.error ) {
+		return next( 'route' );
+	}
+
 	next();
 }
 
