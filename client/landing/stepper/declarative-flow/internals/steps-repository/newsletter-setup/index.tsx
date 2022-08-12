@@ -34,7 +34,7 @@ function generateSwatchSVG( color: string | undefined ) {
 	}%3C/svg%3E")`;
 }
 const NewsletterSetup: Step = ( { navigation } ) => {
-	const { goBack, goNext, submit } = navigation;
+	const { goBack, goNext } = navigation;
 	const { __ } = useI18n();
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
@@ -184,30 +184,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						value={ accentColor || '#000000' }
 					/>
 				</FormFieldset>
-
-				<FormFieldset disabled={ isLoading }>
-					<FormLabel htmlFor="blogURL">{ __( 'Publication Address' ) }</FormLabel>
-					{ ! url ? (
-						<FormInput value={ url } disabled={ true } />
-					) : (
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						<FormTextInputWithAction
-							id="blogURL"
-							className={ 'newsletter-setup__url' }
-							defaultValue={ url }
-							readOnly={ true }
-							action="Change"
-							onAction={ navigateToDomains }
-						/>
-					) }
-				</FormFieldset>
-				<Button
-					// disabled={ isLoading }
-					className="newsletter-setup__submit-button"
-					type="submit"
-					primary
-				>
+				<Button className="newsletter-setup__submit-button" type="submit" primary>
 					{ __( 'Continue' ) }
 				</Button>
 			</form>
