@@ -7,6 +7,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
+import LinkInBioProcessingContainer from './link-in-bio-procesing-container';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -76,7 +77,13 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		return () => clearTimeout( timeoutReference );
 	}, [ simulatedProgress, progress, __ ] );
 
-	return (
+	return props.flow === 'link-in-bio' ? (
+		<LinkInBioProcessingContainer
+			getCurrentMessage={ getCurrentMessage }
+			simulatedProgress={ simulatedProgress }
+			stepProgress={ stepProgress }
+		/>
+	) : (
 		<StepContainer
 			shouldHideNavButtons={ true }
 			hideFormattedHeader={ true }

@@ -53,3 +53,44 @@ $progress-duration: 800ms;
 .anchor-fm.processing .step-container__content {
 	width: 100%;
 }
+.link-in-bio {
+	&.processing {
+		// improve here
+		.image-right {
+			background-image:  url( 'calypso/assets/images/onboarding/link-in-bio-bg.png' );
+			width: 340px;
+			height: 522px;
+			position: fixed;
+			right: -170px;
+			top: 60px;
+			border-radius: 170px;  /* stylelint-disable-line scales/radii */
+		}
+		.image-left {
+			background-image:  url( 'calypso/assets/images/onboarding/link-in-bio-bg-2.png' );
+			width: 336px;
+			height: 522px;
+			position: fixed;
+			border-radius: 170px;  /* stylelint-disable-line scales/radii */
+			left: -168px;
+		}
+		
+		background: rgb( 162, 218, 254 );
+		position: fixed;
+		width: 100%;
+		height: 100%;
+
+		.step-container__content {
+		    display: flex;
+			justify-content: center;
+			width: 100%;
+			
+			.processing-step {
+				width: 100%;
+			}
+		}
+		
+		.progress-bar {
+			display: none;
+		}
+	}
+}
