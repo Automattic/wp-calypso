@@ -98,7 +98,7 @@ export default function ( router ) {
 
 	router(
 		'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
-		maybeRedirectLoggedOut,
+		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
