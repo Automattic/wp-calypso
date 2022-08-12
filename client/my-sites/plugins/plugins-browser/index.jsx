@@ -217,6 +217,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				selectedSite={ selectedSite }
 				sitePlan={ sitePlan }
 				isVip={ isVip }
+				sites={ sites }
 			/>
 		);
 	};
