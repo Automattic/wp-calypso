@@ -1,6 +1,7 @@
 import { SiteThumbnail } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -22,10 +23,18 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 
 	const shouldUseScreenshot = status === 'public';
 
+	let siteUrl = site.URL;
+	if ( site.options?.updated_at ) {
+		const updatedAt = new Date( site.options.updated_at );
+		updatedAt.setMinutes( 0 );
+		updatedAt.setSeconds( 0 );
+		siteUrl = addQueryArgs( siteUrl, { v: updatedAt.toISOString() } );
+	}
+
 	return (
 		<SiteThumbnail
 			{ ...props }
-			mShotsUrl={ shouldUseScreenshot ? site.URL : undefined }
+			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
 			alt={ site.name }
 			bgColorImgUrl={ site.icon?.img }
 		>
