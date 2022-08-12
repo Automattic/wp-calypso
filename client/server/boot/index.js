@@ -25,7 +25,7 @@ export default function setup() {
 	app.use( userAgent.express() );
 	app.use( loggerMiddleware() );
 
-	if ( process.env.USE_PROFILER ) {
+	if ( process.env.USE_PROFILER === 'true' ) {
 		app.use( require( 'calypso/server/middleware/profiler' )() );
 	}
 
