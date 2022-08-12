@@ -1,17 +1,35 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
+import { NavigationControls } from '../../types';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
-import type { Step } from '../../types';
 import './style.scss';
 
-const ProcessingStep: Step = function ( props ): ReactElement | null {
-	const { submit } = props.navigation;
+interface Props {
+	navigation: NavigationControls;
+	isJetpackPowered?: boolean;
+	hideFormattedHeader?: boolean;
+	isHorizontalLayout?: boolean;
+}
+
+export enum ProcessingResult {
+	NO_ACTION = 'no-action',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}
+
+const ProcessingStepContainer = ( {
+	navigation,
+	isJetpackPowered,
+	hideFormattedHeader,
+	isHorizontalLayout,
+}: Props ) => {
+	const { submit } = navigation;
 
 	const { __ } = useI18n();
 	const loadingMessages = useProcessingLoadingMessages();
@@ -73,9 +91,9 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	return (
 		<StepContainer
 			shouldHideNavButtons={ true }
-			hideFormattedHeader={ true }
+			hideFormattedHeader={ hideFormattedHeader }
 			stepName={ 'processing-step' }
-			isHorizontalLayout={ true }
+			isHorizontalLayout={ isHorizontalLayout }
 			stepContent={
 				<div className={ 'processing-step' }>
 					<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
@@ -97,8 +115,9 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 			}
 			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered={ isJetpackPowered }
 		/>
 	);
 };
 
-export default ProcessingStep;
+export default ProcessingStepContainer;

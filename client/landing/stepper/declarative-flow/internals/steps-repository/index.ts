@@ -39,6 +39,7 @@ export { default as chooseADomain } from './choose-a-domain';
 export { default as launchpad } from './launchpad';
 export { default as processingFake } from './processing-fake';
 export { default as subscribers } from './subscribers';
+export { default as linkInBioProcessingStep } from './link-in-bio-processing-step';
 
 export type StepPath =
 	| 'courses'
@@ -81,4 +82,5 @@ export type StepPath =
 	| 'intro'
 	| 'launchpad'
 	| 'processingFake'
-	| 'subscribers';
+	| 'subscribers'
+	| 'linkInBioProcessingStep';
