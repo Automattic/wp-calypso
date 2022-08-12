@@ -2,6 +2,7 @@ import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automatti
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
 import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
@@ -80,6 +81,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 
 	return (
 		<main>
+			<DocumentHead title={ __( 'My Sites' ) } />
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
