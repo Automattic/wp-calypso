@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	alphabeticallySortedProductOptions,
+	selectAlphaticallySortedProductOptions,
 	ensurePartnerPortalReturnUrl,
 	getProductTitle,
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -133,7 +133,7 @@ export function useLicenseIssuing(
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites ).length;
 	const products = useProductsQuery( {
-		select: alphabeticallySortedProductOptions,
+		select: selectAlphaticallySortedProductOptions,
 	} );
 
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
