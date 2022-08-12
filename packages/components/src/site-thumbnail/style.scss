@@ -16,6 +16,10 @@
 	height: 78px;
 }
 
+.site-thumbnail__image {
+    align-self: start;
+}
+
 .site-thumbnail__image-bg {
 	animation: fadein 1s ease-out;
 	background-position: center;

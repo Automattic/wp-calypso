@@ -4,9 +4,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import Checklist from './checklist';
 import LaunchpadSitePreview from './launchpad-site-preview';
-import { tasks } from './tasks';
+import Sidebar from './sidebar';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -17,7 +16,7 @@ const Launchpad: Step = ( { navigation } ) => {
 
 	const stepContent = (
 		<div className="launchpad__content">
-			<Checklist tasks={ tasks } />
+			<Sidebar />
 			<LaunchpadSitePreview siteSlug={ siteSlug } />
 		</div>
 	);

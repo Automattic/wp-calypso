@@ -1,5 +1,10 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .plugins-overview__container {
-	padding: 6px 0;
+	.current-section {
+		padding: 0 16px;
+	}
 }
 .plugins-overview__logo {
 	fill: var( --color-neutral-10 );

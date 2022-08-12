@@ -1,5 +1,4 @@
 import { Button, FormInputValidation, Popover } from '@automattic/components';
-import { useSiteLogoMutation } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -10,9 +9,8 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
-import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
-import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import type { Step } from '../../types';
@@ -36,22 +34,21 @@ function generateSwatchSVG( color: string | undefined ) {
 	}%3C/svg%3E")`;
 }
 const NewsletterSetup: Step = ( { navigation } ) => {
-	const { goBack, submit } = navigation;
+	const { goBack } = navigation;
 	const { __ } = useI18n();
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
 	const site = useSite();
+	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
+		useDispatch( ONBOARD_STORE );
 
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
-	const [ siteTitle, setSiteTitle ] = React.useState( '' );
+	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
 	const [ accentColor, setAccentColor ] = React.useState< string | undefined >();
-	const [ url, setUrl ] = React.useState( '' );
+	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
-	const { mutateAsync: setSiteLogo, isLoading: isUploadingIcon } = useSiteLogoMutation( site?.ID );
-	const { saveSiteSettings } = useDispatch( SITE_STORE );
-	const isLoading = ! site || isUploadingIcon;
 
 	useEffect( () => {
 		if ( ! site ) {
@@ -62,32 +59,34 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			return;
 		}
 
-		setSiteTitle( site.name || '' );
+		setComponentSiteTitle( site.name || '' );
 		setTagline( site.description );
-		setUrl( new URL( site.URL ).host );
 	}, [ site, formTouched ] );
+
+	const imageFileToBase64 = ( file: Blob ) => {
+		const reader = new FileReader();
+		reader.readAsDataURL( file );
+		reader.onload = () => setBase64Image( reader.result as string );
+		reader.onerror = () => setBase64Image( null );
+	};
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		if ( site ) {
-			await saveSiteSettings( site.ID, {
-				blogname: siteTitle,
-				blogdescription: tagline,
-			} );
-			recordTracksEvent( 'calypso_signup_site_options_submit', {
-				has_site_title: !! siteTitle,
-				has_tagline: !! tagline,
-			} );
+			setSiteDescription( tagline );
+			setSiteTitle( siteTitle );
+			setSiteAccentColor( accentColor );
 
-			if ( selectedFile ) {
+			if ( selectedFile && base64Image ) {
 				try {
-					await setSiteLogo( selectedFile );
+					setSiteLogo( base64Image );
+					// this should be moved to the loader step
+					// await setSiteLogo( new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' ) );
 				} catch ( _error ) {
 					// communicate the error to the user
 				}
 			}
-
-			submit?.( { siteTitle, tagline } );
+			// submit?.( { siteTitle, tagline } );
 		}
 	};
 
@@ -96,7 +95,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			setFormTouched( true );
 			switch ( event.currentTarget.name ) {
 				case 'siteTitle':
-					return setSiteTitle( event.currentTarget.value );
+					return setComponentSiteTitle( event.currentTarget.value );
 				case 'tagline':
 					return setTagline( event.currentTarget.value );
 				case 'accentColor':
@@ -109,10 +108,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		return fieldValue && fieldValue.trim() ? `url(${ greenCheckmarkImg })` : '';
 	};
 
-	const navigateToDomains = () => {
-		// TODO
-	};
-
 	const siteTitleError =
 		formTouched && ! siteTitle.trim()
 			? 'Your publication needs a name so your subscribers can identify you.'
@@ -123,7 +118,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			<form className="newsletter-setup__form" onSubmit={ onSubmit }>
 				<SiteIconWithPicker
 					site={ site }
-					onSelect={ setSelectedFile }
+					onSelect={ ( file ) => {
+						setSelectedFile( file );
+						imageFileToBase64( file );
+					} }
 					selectedFile={ selectedFile }
 				/>
 				<Popover
@@ -138,7 +136,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						onChangeComplete={ ( value ) => setAccentColor( value.hex ) }
 					/>
 				</Popover>
-				<FormFieldset disabled={ isLoading }>
+				<FormFieldset>
 					<FormLabel htmlFor="siteTitle">{ __( 'Publication name*' ) }</FormLabel>
 					<FormInput
 						value={ siteTitle }
@@ -153,7 +151,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 				</FormFieldset>
 
-				<FormFieldset disabled={ isLoading }>
+				<FormFieldset>
 					<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
 					<FormInput
 						value={ tagline }
@@ -166,7 +164,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					/>
 				</FormFieldset>
 
-				<FormFieldset disabled={ isLoading }>
+				<FormFieldset>
 					<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
 					<FormInput
 						inputRef={ accentColorRef }
@@ -185,30 +183,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						value={ accentColor || '#000000' }
 					/>
 				</FormFieldset>
-
-				<FormFieldset disabled={ isLoading }>
-					<FormLabel htmlFor="blogURL">{ __( 'Publication Address' ) }</FormLabel>
-					{ ! url ? (
-						<FormInput value={ url } disabled={ true } />
-					) : (
-						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-						// @ts-ignore
-						<FormTextInputWithAction
-							id="blogURL"
-							className={ 'newsletter-setup__url' }
-							defaultValue={ url }
-							readOnly={ true }
-							action="Change"
-							onAction={ navigateToDomains }
-						/>
-					) }
-				</FormFieldset>
-				<Button
-					disabled={ isLoading }
-					className="newsletter-setup__submit-button"
-					type="submit"
-					primary
-				>
+				<Button className="newsletter-setup__submit-button" type="submit" primary>
 					{ __( 'Continue' ) }
 				</Button>
 			</form>

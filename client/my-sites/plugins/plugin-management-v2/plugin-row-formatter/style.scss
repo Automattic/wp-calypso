@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .plugin-row-formatter__plugin-name-container {
 	position: relative;
 }
@@ -7,7 +10,7 @@
 	vertical-align: middle;
 	margin-inline-end: 16px;
 }
-a.button.plugin-row-formatter__plugin-name {
+.plugin-name {
 	display: inline-block;
 	font-weight: 500;
 	white-space: nowrap;
@@ -15,9 +18,17 @@ a.button.plugin-row-formatter__plugin-name {
 	text-overflow: clip;
 	vertical-align: middle;
 	color: var( --studio-gray-100 );
-	width: calc( 100% - 55px );
 	font-size: 0.875rem;
 	text-align: left;
+}
+
+a.button.plugin-row-formatter__plugin-name {
+	@extend .plugin-name;
+	width: calc( 100% - 55px );
+}
+a.button.plugin-row-formatter__plugin-name-card {
+	@extend .plugin-name;
+	width: calc( 100% - 10px );
 }
 .plugin-row-formatter__overlay {
 	display: block;
@@ -40,7 +51,18 @@ a.button.plugin-row-formatter__plugin-name {
 
 .plugin-row-formatter__toggle {
 	.plugin-action .components-toggle-control .components-base-control__field {
-		margin: auto 0;
+		flex-direction: row-reverse;
+		@include break-xlarge() {
+			margin: auto 0;
+			flex-direction: unset;
+		}
+	}
+	.components-form-toggle {
+		position: absolute;
+		inset-inline-start: 200px;
+		@include break-xlarge() {
+			position: relative;
+			inset-inline-start: unset;
+		}
 	}
 }
-

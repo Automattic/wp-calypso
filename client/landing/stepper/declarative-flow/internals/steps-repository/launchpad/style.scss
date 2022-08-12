@@ -1,39 +1,129 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
+@import '@automattic/typography/styles/variables';
 
-.step-container.launchpad {
-	max-width: 1440px;
-    padding-inline-start: 24px;
-    padding-inline-end: 24px;
-
-	@include break-small {
-		padding-inline-start: 48px;
-    	padding-inline-end: 48px;
-	}
-	
-	.spinner-line {
+// Launchpad - Layout
+// This is styling common parts of stepper page
+.launchpad {
+	.progress-bar,
+	.step-container__header {
 		display: none;
+	}
+	.step-container {
+		background: var( --studio-gray-0 );
+		padding: 0;
+		margin: 0;
+		max-width: none;
+		min-height: 100vh;
+		.step-container__navigation.action-buttons {
+			top: auto;
+			inset-inline-start: 40px;
+			.step-container__skip-wrapper {
+				margin-inline-start: 0;
+			}
+		}
 	}
 }
 
 .launchpad__content {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	transform: translateY( -48px );
+	@include break-large {
+		flex-direction: row;
+	}
 }
+
+// Launchpad - Sidebar
+
+.launchpad__sidebar {
+	width: 440px;
+	padding: 20px 40px;
+	margin: 0 auto;
+	@include break-large {
+		margin: 0;
+	}
+}
+
+.launchpad__sidebar-h1 {
+	color: var( --studio-gray-100 );
+	font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+	font-size: $font-headline-small;
+	font-weight: 400;
+	letter-spacing: 0.2px;
+	line-height: 1.1;
+	margin: 0 0 10px;
+	padding: 0;
+}
+
+.launchpad__sidebar-h5 {
+	font-family: 'Recoleta';
+	font-style: normal;
+	font-weight: 400;
+	font-size: $font-body-large;
+	line-height: 1.3;
+	margin: 0 0 100px;
+}
+
+.launchpad__sidebar-description {
+	font-size: $font-body;
+	line-height: 20px;
+	margin: 10px 0;
+}
+
+.launchpad__url-box {
+	background: var( --studio-white );
+	border: 1px solid var( --studio-gray-0 );
+	border-radius: 4px;
+	height: 48px;
+	line-height: 48px;
+	margin: 30px 0;
+	padding: 0 20px;
+}
+
+// Launchpad - Progress Bar
+
+.launchpad__progress-bar-container {
+	margin: 100px 0 30px;
+}
+
+.launchpad__progress-value {
+	font-size: $font-body-extra-small;
+	font-weight: 700;
+	margin-right: 10px;
+}
+
+.launchpad__progress-bar {
+	background: var( --studio-gray-5 );
+	border-radius: 4px;
+	height: 5px;
+	margin-left: 38px;
+	margin-top: -12px;
+	width: 120px;
+}
+
+.launchpad__progress-bar-completed {
+	background: var( --studio-blue-50 );
+	border-radius: 4px;
+	height: 5px;
+	width: 40px;
+}
+
+// Launchpad - Checklist
 
 .launchpad__checklist {
 	list-style: none;
 	margin: 20px auto;
 	max-width: 98%;
 	padding: 0;
-	width: 500px;
 }
 
 .launchpad__checklist-item {
 	align-items: center;
-	border: none;
+	background-color: transparent;
+	border-bottom: 1px solid var( --studio-gray-5 );
+	border-left: none;
+	border-right: none;
+	border-top: none;
 	display: flex;
 	padding: 16px;
 	width: 100%;
@@ -68,11 +158,11 @@
 
 .launchpad__checklist-item-text {
 	flex-grow: 1;
-	font-size: 1rem;
+	font-size: $font-body;
 	line-height: 20px;
 	text-align: left;
 	font-weight: 600;
-	&.completed {
+	&.is-complete {
 		opacity: 0.8;
 		font-weight: 400;
 	}
@@ -88,9 +178,9 @@
 // Launchpad Site Preview Component
 
 .launchpad__site-preview-wrapper {
-
+	padding: 100px 40px 40px;
 	height: 600px;
-	
+	flex-grow: 1;
 	.web-preview__frame-wrapper.is-resizable {
 		margin: 0;
 		padding: 0;
@@ -102,7 +192,6 @@
 	// 	pointer-events: none;
 	// }
 
-		
 	.web-preview__frame {
 		border: 1px solid rgba( 0, 0, 0, 0.12 );
 		border-top-width: 0;
@@ -110,7 +199,7 @@
 		border-radius: 0 0 6px 6px;
 		box-sizing: border-box;
 	}
-
-	
-
+	.spinner-line {
+		display: none;
+	}
 }
