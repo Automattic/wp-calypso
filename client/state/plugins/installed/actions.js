@@ -543,10 +543,10 @@ export function fetchAllPlugins() {
 		const receivePluginsDispatchSuccess = ( { sites } ) => {
 			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
-			Object.entries( sites ).map( ( [ siteId, plugins = [] ] ) => {
+			Object.entries( sites ).forEach( ( [ siteId, plugins = [] ] ) => {
 				dispatch( receiveSitePlugins( siteId, plugins ) );
 
-				plugins.map( ( plugin ) => {
+				plugins.forEach( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {
 						updatePlugin( siteId, plugin )( dispatch );
 					}
