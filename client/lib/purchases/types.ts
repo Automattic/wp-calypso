@@ -15,15 +15,26 @@ export interface Purchase {
 	currencySymbol: string;
 	description: string;
 	domain: string;
-	domainRegistrationAgreementUrl: any;
-	error: any;
+	domainRegistrationAgreementUrl: string | null;
+	error: null;
 	expiryDate: string;
 	expiryStatus: string;
 	iapPurchaseManagementLink?: string;
 	id: number;
 	includedDomain: string;
 	includedDomainPurchaseAmount: number;
-	introductoryOffer: any;
+	introductoryOffer: {
+		costPerInterval: number;
+		endDate: string;
+		intervalCount: number;
+		intervalUnit: string;
+		isWithinPeriod: boolean;
+		transitionAfterRenewalCount: number;
+		isNextRenewalUsingOffer: boolean;
+		remainingRenewalsUsingOffer: number;
+		shouldProrateWhenOfferEnds: boolean;
+		isNextRenewalProrated: boolean;
+	} | null;
 	isAutoRenewEnabled: boolean;
 	isCancelable: boolean;
 	isDomainRegistration?: boolean;
@@ -44,9 +55,11 @@ export interface Purchase {
 	productId: number;
 	productName: string;
 	productSlug: string;
-	purchaseRenewalQuantity: any;
+	purchaseRenewalQuantity: number | null;
 	refundAmount: number;
-	refundOptions: any;
+	refundOptions:
+		| { to_product_id: number; refund_amount: number; refund_currency_symbol: string }[]
+		| null;
 	refundPeriodInDays: number;
 	refundText: string;
 	regularPriceText: string;
