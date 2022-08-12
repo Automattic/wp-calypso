@@ -57,7 +57,7 @@ $progress-duration: 800ms;
 	&.processing {
 
 		.image-right {
-			background-image:  url( 'calypso/assets/images/onboarding/link-in-bio-bg.png' );
+			background-image:  url( 'calypso/assets/images/onboarding/link-in-bio-loader-right.png' );
 
 			width: 142px;
 			height: 220px;
@@ -74,7 +74,7 @@ $progress-duration: 800ms;
 			}
 		}
 		.image-left {
-			background-image:  url( 'calypso/assets/images/onboarding/link-in-bio-bg-2.png' );
+			background-image:  url( 'calypso/assets/images/onboarding/link-in-bio-loader-left.png' );
 
 			width: 246px;
 			height: 220px;
@@ -93,7 +93,7 @@ $progress-duration: 800ms;
 			
 		}
 		
-		background: rgb( 162, 218, 254 );
+		background: #d0cce3;
 		position: fixed;
 		width: 100%;
 		height: 100%;
