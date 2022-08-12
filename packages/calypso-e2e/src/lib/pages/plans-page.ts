@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
 
@@ -50,6 +51,24 @@ export class PlansPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Visits the Plans page.
+	 *
+	 * @param {PlansPageTab} target Target page.
+	 * @param {string} siteSlug Site slug.
+	 */
+	async visit( target: PlansPageTab, siteSlug: string ): Promise< void > {
+		const sanitized = target.toLowerCase().replace( ' ', '-' );
+
+		if ( target === 'My Plan' ) {
+			await this.page.goto( getCalypsoURL( `plans/${ sanitized }/${ siteSlug }` ) );
+		}
+
+		if ( target === 'Plans' ) {
+			await this.page.goto( getCalypsoURL( `plans/${ siteSlug }` ) );
+		}
 	}
 
 	/* Plans */
@@ -122,7 +141,7 @@ export class PlansPage {
 		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
 		await Promise.all( [
 			this.page.waitForLoadState( 'networkidle' ),
-			this.page.waitForResponse( /.*plans.*/ ),
+			this.page.waitForResponse( /.*active-promotions.*/ ),
 		] );
 		await clickNavTab( this.page, targetTab, { force: true } );
 	}
