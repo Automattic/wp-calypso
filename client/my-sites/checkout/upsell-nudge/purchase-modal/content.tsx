@@ -2,10 +2,11 @@ import { Button, Gridicon } from '@automattic/components';
 import { CheckoutCheckIcon, PaymentLogo } from '@automattic/composite-checkout';
 import {
 	getCreditsLineItemFromCart,
-	getIntroductoryOfferIntervalDisplay,
+	getItemIntroductoryOfferDisplay,
 	getSublabelAndPrice,
 } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback } from 'react';
@@ -34,32 +35,23 @@ function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct }
 	return <>{ sublabelAndPrice }</>;
 }
 
-function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
-	const translate = useTranslate();
+function LineItemIntroductoryOffer( { product }: { product: ResponseCartProduct } ) {
+	const introductoryOffer = getItemIntroductoryOfferDisplay( product );
 
-	if ( product.introductory_offer_terms?.reason ) {
-		return (
-			<span className="purchase-modal__product-offer is-not-applicable">
-				{ translate( 'Order not eligible for introductory discount' ) }
-			</span>
-		);
-	}
-
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	if ( ! introductoryOffer ) {
 		return null;
 	}
 
-	const isFreeTrial = product.item_subtotal_integer === 0;
-	const text = getIntroductoryOfferIntervalDisplay(
-		translate,
-		product.introductory_offer_terms.interval_unit,
-		product.introductory_offer_terms.interval_count,
-		isFreeTrial,
-		'checkout',
-		product.introductory_offer_terms.transition_after_renewal_count
+	return (
+		<span
+			className={ classNames( 'purchase-modal__product-offer', {
+				'is-not-applicable': ! introductoryOffer.enabled,
+				'is-discounted': introductoryOffer.enabled,
+			} ) }
+		>
+			{ introductoryOffer.text }
+		</span>
 	);
-
-	return <span className="purchase-modal__product-offer is-discounted">{ text }</span>;
 }
 
 function OrderStep( { siteSlug, product }: { siteSlug: string; product: ResponseCartProduct } ) {
@@ -92,7 +84,7 @@ function OrderStep( { siteSlug, product }: { siteSlug: string; product: Response
 
 				<div className="purchase-modal__step-content-row">
 					<LineItemSublabelAndPrice product={ product } />
-					<IntroductoryOfferCallout product={ product } />
+					<LineItemIntroductoryOffer product={ product } />
 				</div>
 			</div>
 		</PurchaseModalStep>

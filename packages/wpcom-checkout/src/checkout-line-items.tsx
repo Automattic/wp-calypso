@@ -24,7 +24,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
 import { getLabel, getSublabelAndPrice } from './checkout-labels';
-import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-interval-display';
+import { getItemIntroductoryOfferDisplay } from './get-item-introductory-offer-display';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
@@ -614,27 +614,17 @@ function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct }
 }
 
 function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
-	const translate = useTranslate();
-	if ( product.introductory_offer_terms?.reason ) {
-		return (
-			<NotApplicableCallout>
-				{ translate( 'Order not eligible for introductory discount' ) }
-			</NotApplicableCallout>
-		);
-	}
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	const introductoryOffer = getItemIntroductoryOfferDisplay( product );
+
+	if ( ! introductoryOffer ) {
 		return null;
 	}
-	const isFreeTrial = product.item_subtotal_integer === 0;
-	const text = getIntroductoryOfferIntervalDisplay(
-		translate,
-		product.introductory_offer_terms.interval_unit,
-		product.introductory_offer_terms.interval_count,
-		isFreeTrial,
-		'checkout',
-		product.introductory_offer_terms.transition_after_renewal_count
-	);
-	return <DiscountCallout>{ text }</DiscountCallout>;
+
+	if ( ! introductoryOffer.enabled ) {
+		return <NotApplicableCallout>{ introductoryOffer.text }</NotApplicableCallout>;
+	}
+
+	return <DiscountCallout>{ introductoryOffer.text }</DiscountCallout>;
 }
 
 function PartnerLogo( { className }: { className?: string } ) {

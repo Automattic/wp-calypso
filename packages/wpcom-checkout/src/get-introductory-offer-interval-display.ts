@@ -1,7 +1,6 @@
-import { useTranslate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 export function getIntroductoryOfferIntervalDisplay(
-	translate: ReturnType< typeof useTranslate >,
 	intervalUnit: string,
 	intervalCount: number,
 	isFreeTrial: boolean,
