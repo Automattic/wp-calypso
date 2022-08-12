@@ -22,7 +22,7 @@ export const linkInBio: Flow = {
 		return [
 			'intro',
 			'linkInBioSetup',
-			'processing',
+			'linkInBioProcessingStep',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
 		] as StepPath[];
 	},
@@ -96,7 +96,7 @@ export const linkInBio: Flow = {
 					setProgress( 1 );
 					setProgressTitle( __( 'Preparing next steps' ) );
 				} );
-				navigate( 'processing' );
+				navigate( 'linkInBioProcessingStep' );
 			}
 		};
 
@@ -105,7 +105,7 @@ export const linkInBio: Flow = {
 			switch ( _currentStep ) {
 				case 'linkInBioSetup': //this will be Checkout
 					return flowEnd();
-				case 'processing':
+				case 'linkInBioProcessingStep':
 					return redirect( `/page/${ siteSlug }/home` );
 			}
 			return providedDependencies;
