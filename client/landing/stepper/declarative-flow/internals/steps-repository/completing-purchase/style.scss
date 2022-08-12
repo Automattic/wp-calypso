@@ -1,3 +1,5 @@
+@import '../style';
+
 .newsletters.processing {
 	.wordpress-logo {
 		position: absolute;
@@ -13,22 +15,46 @@
 	height: 100%;
 
 	background-color: rgb( 162, 218, 254 );
-	//background-image: url( 'calypso/assets/images/onboarding/newsletter-processing-left.svg' ),
-	//url( 'calypso/assets/images/onboarding/newsletter-processing-right.svg' );
-	background-position: left 150%, right -50%;
+	background-image: url( 'calypso/assets/images/onboarding/newsletter-processing-left.png' ),
+	url( 'calypso/assets/images/onboarding/newsletter-processing-right.jpg' );
+	background-position: left bottom, right top;
 	background-repeat: no-repeat, no-repeat;
-	background-size: 28vh, 20vh;
+	background-attachment: fixed;
+
+	background-size: auto 25%, auto 25%;
+
+	@include break-medium {
+		background-size: auto 50%, auto 45%;
+	}
+
+	@include break-large {
+		background-size: auto 60%, auto 55%;
+	}
 
 	.step-container {
+		display: flex;
 		flex-direction: column;
 		align-items: center;
+		margin-top: 25vh;
 	}
 
 	.step-container__content {
-		width: 50%;
+		width: 100%;
+
+		@include break-medium {
+			width: 50%;
+		}
 	}
 
 	.progress-bar {
 		display: none;
+	}
+
+	h1.processing-step__progress-step {
+		font-size: $font-title-medium;
+
+		@include break-medium {
+			font-size: $font-title-large;
+		}
 	}
 }
