@@ -19,6 +19,11 @@ import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
+import {
+	getValueFromProgressStore,
+	getVideoPressOnboardingTotalSteps,
+	getVideoPressOnboardingStepNumber,
+} from 'calypso/signup/utils';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -605,8 +610,8 @@ class VideoPressSite extends Component {
 					stepName={ this.props.stepName }
 					stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 						args: {
-							currentStep: 2,
-							totalSteps: 4, // TODO: change as we add more steps.
+							currentStep: getVideoPressOnboardingStepNumber( this.props.stepName ),
+							totalSteps: getVideoPressOnboardingTotalSteps(),
 						},
 					} ) }
 					positionInFlow={ this.props.positionInFlow }

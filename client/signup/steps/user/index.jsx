@@ -31,6 +31,8 @@ import {
 	getStepUrl,
 	isP2Flow,
 	isVideoPressFlow,
+	getVideoPressOnboardingTotalSteps,
+	getVideoPressOnboardingStepNumber,
 } from 'calypso/signup/utils';
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -416,6 +418,10 @@ export class UserStep extends Component {
 			return translate( 'Continue' );
 		}
 
+		if ( isVideoPressFlow( flowName ) ) {
+			return translate( 'Continue' );
+		}
+
 		if ( this.userCreationPending() ) {
 			return translate( 'Creating Your Account…' );
 		}
@@ -485,8 +491,8 @@ export class UserStep extends Component {
 				) }
 				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 					args: {
-						currentStep: 1,
-						totalSteps: 2, // TODO: change as we add more steps.
+						currentStep: getVideoPressOnboardingStepNumber( this.props.stepName ),
+						totalSteps: getVideoPressOnboardingTotalSteps(),
 					},
 				} ) }
 			>
