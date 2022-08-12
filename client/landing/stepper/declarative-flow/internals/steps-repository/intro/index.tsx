@@ -16,13 +16,13 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 	return (
 		<StepContainer
 			stepName={ 'intro' }
-			className={ cx( { 'is-newsletters': flow === 'newsletters' } ) }
+			className={ cx( { 'is-newsletter': flow === 'newsletter' } ) }
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
-			stepContent={ <IntroStep flowName={ flow } goNext={ handleGetStarted } /> }
+			stepContent={ <IntroStep flowName={ flow as string } goNext={ handleGetStarted } /> }
 			recordTracksEvent={ recordTracksEvent }
 			showJetpackPowered
 		/>

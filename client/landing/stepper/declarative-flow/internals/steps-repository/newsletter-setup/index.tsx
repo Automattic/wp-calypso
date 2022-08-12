@@ -34,7 +34,7 @@ function generateSwatchSVG( color: string | undefined ) {
 	}%3C/svg%3E")`;
 }
 const NewsletterSetup: Step = ( { navigation } ) => {
-	const { goBack } = navigation;
+	const { goBack, goNext } = navigation;
 	const { __ } = useI18n();
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
@@ -72,6 +72,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
+		goNext();
 		if ( site ) {
 			setSiteDescription( tagline );
 			setSiteTitle( siteTitle );
