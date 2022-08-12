@@ -13,6 +13,8 @@ $mobile-icon-height: 175px;
 .plugin-details-header__main-info {
 	margin-top: 16px;
 	display: flex;
+	flex-direction: column;
+	align-items: center;
 	flex-wrap: wrap;
 	justify-content: center;
 

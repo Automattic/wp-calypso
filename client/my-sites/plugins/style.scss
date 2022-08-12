@@ -2,6 +2,8 @@
 @import '@wordpress/base-styles/_mixins.scss';
 @import './grid-mixins.scss';
 
+$mobile-layout-grid: repeat( 3, minmax( 0, 1fr ) );
+
 .is-section-plugins .main {
 	padding-top: 35px; // Compensate for the fixed header.
 
@@ -127,7 +129,10 @@ body.is-section-plugins.theme-default.color-scheme {
 	}
 
 	@include display-grid;
-	grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr ) 350px;
+	grid-template-columns: $mobile-layout-grid;
+	@include break-mobile {
+		grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr ) 350px;
+	}
 	grid-column-gap: 60px;
 	grid-template-areas: 'header header actions'
 						'content content actions';
