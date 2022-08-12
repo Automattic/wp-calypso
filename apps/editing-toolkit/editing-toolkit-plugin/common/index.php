@@ -246,8 +246,12 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_disable_hei
 /**
  * Overrides the block editor preview button url with one that accounts for third party cookie
  * blocking.
+ *
+ * @param object $response WordPress rest response object.
+ * @return object $response WordPress rest response object with updated links.
  */
-function enqueue_override_preview_button_url() {
+function override_preview_button_url( $response ) {
+	// We're not seeing custom domain cookie problems for atomic sites, so avoid running the script.
 	if ( ! function_exists( 'is_blog_atomic' ) ) {
 		return;
 	};
@@ -258,13 +262,15 @@ function enqueue_override_preview_button_url() {
 		return;
 	}
 
-	wp_enqueue_script(
-		'a8c_override_preview_button_url',
-		plugins_url( 'dist/override-preview-button-url.min.js', __FILE__ ),
-		array(),
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/override-preview-button-url.min.js' ),
-		true
-	);
+	if ( empty( $response->data ) || empty( $response->data['link'] ) ) {
+		return $response;
+	}
+
+	// logmein is a special URL that logs users into their custom mapped domain and sets up
+	// their log in cookie in a first-party context.
+	$response->data['link'] = add_query_arg( 'logmein', 'direct', $response->data['link'] );
+	return $response;
 }
 
-add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_override_preview_button_url' );
+add_filter( 'rest_prepare_post', __NAMESPACE__ . '\override_preview_button_url', 10, 1 );
+add_filter( 'rest_prepare_page', __NAMESPACE__ . '\override_preview_button_url', 10, 1 );
