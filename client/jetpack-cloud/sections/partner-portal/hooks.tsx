@@ -2,7 +2,7 @@ import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { UseMutationResult, useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	alphabeticallySortedProductOptions,
@@ -16,12 +16,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
-import useIssueLicenseMutation, {
-	MutationIssueLicenseVariables,
-} from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
+import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
-import { APIError, APILicense } from 'calypso/state/partner-portal/types';
+import { APIError } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 
 /**
@@ -128,13 +126,9 @@ export function useCursorPagination(
  *
  */
 export function useLicenseIssuing(
-	selectedSite?: { ID: number; domain: string } | null,
-	product?: string | null
-): [
-	UseMutationResult< APILicense, APIError, MutationIssueLicenseVariables, unknown >,
-	boolean,
-	() => void
-] {
+	product: string,
+	selectedSite?: { ID: number; domain: string } | null
+): [ () => void, boolean ] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites ).length;
@@ -161,18 +155,6 @@ export function useLicenseIssuing(
 		}
 		return page.redirect( '/dashboard' );
 	};
-
-	const requirePaymentMethod = useCallback( () => {
-		if ( paymentMethodRequired ) {
-			const nextStep = addQueryArgs(
-				{
-					product,
-				},
-				partnerPortalBasePath( '/payment-methods/add' )
-			);
-			page( nextStep );
-		}
-	}, [ product, paymentMethodRequired ] );
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
@@ -259,10 +241,29 @@ export function useLicenseIssuing(
 		},
 	} );
 
-	const isSubmitting = useMemo(
+	const isLoading = useMemo(
 		() => assignLicense.isLoading || issueLicense.isLoading,
 		[ issueLicense, assignLicense ]
 	);
 
-	return [ issueLicense, isSubmitting, requirePaymentMethod ];
+	const issue = useCallback( () => {
+		if ( isLoading ) {
+			return;
+		}
+
+		if ( paymentMethodRequired ) {
+			const nextStep = addQueryArgs(
+				{
+					product,
+				},
+				partnerPortalBasePath( '/payment-methods/add' )
+			);
+			page( nextStep );
+			return;
+		}
+
+		issueLicense.mutate( { product } );
+	}, [ product, paymentMethodRequired, issueLicense.mutate ] );
+
+	return [ issue, isLoading ];
 }
