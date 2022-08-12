@@ -1,4 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
+import { useMemo } from 'react';
 
 export const siteLaunchStatuses = [ 'public', 'private', 'coming-soon' ] as const;
 
@@ -22,19 +23,21 @@ export const getSiteLaunchStatus = ( site: SiteObjectWithStatus ): SiteLaunchSta
 	return 'public';
 };
 
-export const getTranslatedSiteLaunchStatuses = (
-	__: ReturnType< typeof useI18n >[ '__' ]
-): { [ K in SiteLaunchStatus ]: string } => {
-	return {
-		'coming-soon': __( 'Coming soon' ),
-		private: __( 'Private' ),
-		public: __( 'Public' ),
-	};
+export const useTranslatedSiteLaunchStatuses = (): { [ K in SiteLaunchStatus ]: string } => {
+	const { __ } = useI18n();
+
+	return useMemo(
+		() => ( {
+			'coming-soon': __( 'Coming soon' ),
+			private: __( 'Private' ),
+			public: __( 'Public' ),
+		} ),
+		[ __ ]
+	);
 };
 
 export const useSiteLaunchStatusLabel = ( site: SiteObjectWithStatus ) => {
-	const { __ } = useI18n();
-	const translatedStatuses = getTranslatedSiteLaunchStatuses( __ );
+	const translatedStatuses = useTranslatedSiteLaunchStatuses();
 
 	return translatedStatuses[ getSiteLaunchStatus( site ) ];
 };

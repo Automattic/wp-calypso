@@ -5,7 +5,7 @@ import {
 	SiteObjectWithStatus,
 	getSiteLaunchStatus,
 	siteLaunchStatuses,
-	getTranslatedSiteLaunchStatuses,
+	useTranslatedSiteLaunchStatuses,
 } from './site-status';
 
 export const DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE = 'all';
@@ -44,16 +44,19 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	{ status, search }: SitesTableFilterOptions
 ): UseSitesTableFilteringResult< T > {
 	const { __ } = useI18n();
+	const translatedSiteLaunchStatuses = useTranslatedSiteLaunchStatuses();
+
+	const filterableSiteLaunchStatuses = useMemo( () => {
+		return {
+			all: __( 'All Sites' ),
+			...translatedSiteLaunchStatuses,
+		};
+	}, [ __, translatedSiteLaunchStatuses ] );
 
 	const [ statuses, groupedByStatus ] = useMemo( () => {
-		const translatedLaunchStatuses = {
-			all: __( 'All Sites' ),
-			...getTranslatedSiteLaunchStatuses( __ ),
-		};
-
 		const statuses: Status[] = siteLaunchStatusFilterValues.map( ( name ) => ( {
 			name,
-			title: translatedLaunchStatuses[ name ],
+			title: filterableSiteLaunchStatuses[ name ],
 			count: 0,
 		} ) );
 
@@ -72,7 +75,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 		}
 
 		return [ statuses, groupedByStatus ];
-	}, [ allSites, __ ] );
+	}, [ allSites, filterableSiteLaunchStatuses ] );
 
 	const filteredSites = useFuzzySearch( {
 		data: groupedByStatus[ status ],
