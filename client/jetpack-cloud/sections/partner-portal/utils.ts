@@ -187,7 +187,7 @@ export function selectProductOptions( families: APIProductFamily[] ): APIProduct
 	return families.flatMap( ( family ) => family.products );
 }
 
-export function alphabeticallySortedProductOptions(
+export function selectAlphaticallySortedProductOptions(
 	families: APIProductFamily[]
 ): APIProductFamilyProduct[] {
 	return sortBy( selectProductOptions( families ), ( product ) => product.name );
