@@ -32,6 +32,10 @@ describe( '#localizePath', () => {
 		let localizePath;
 
 		localizePath = testLocalizePath( 'pt-br' );
+		expect( localizePath( 0, undefined, false ) ).toEqual( 0 );
+		expect( localizePath( undefined, undefined, false ) ).toEqual( undefined );
+		expect( localizePath( '', undefined, false ) ).toEqual( '' );
+		expect( localizePath( 'forums/', undefined, false ) ).toEqual( 'forums/' );
 		expect( localizePath( '/forums/', undefined, false ) ).toEqual( '/pt-br/forums/' );
 		expect( localizePath( '/pt-br/forums/', undefined, false ) ).toEqual( '/pt-br/forums/' );
 		localizePath = testLocalizePath( 'en' );

@@ -13,7 +13,7 @@ export function localizePath(
 	locale: Locale = getDefaultLocale(),
 	isLoggedIn = true
 ): string {
-	if ( ! path.startsWith( '/' ) ) {
+	if ( typeof path !== 'string' || ! path.startsWith( '/' ) ) {
 		return path;
 	}
 	const shouldPrefix =
