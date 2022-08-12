@@ -165,9 +165,14 @@ export function localizeUrl(
 		return fullUrl;
 	}
 
-	// Ignore and passthrough /relative/urls that have no host specified
+	// Localize /relative/urls that have no host specified
 	if ( url.origin === INVALID_URL ) {
-		return fullUrl;
+		const shouldPrefix =
+			! isLoggedIn &&
+			magnificentNonEnLocales.includes( locale ) &&
+			! fullUrl.startsWith( `/${ locale }/` );
+
+		return shouldPrefix ? `/${ locale }${ fullUrl }` : fullUrl;
 	}
 
 	// Let's unify the URL.
