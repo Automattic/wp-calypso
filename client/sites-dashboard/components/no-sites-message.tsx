@@ -14,10 +14,6 @@ const NoSitesLayout = styled( EmptyContent )`
 			marginTop: '10%',
 		} }
 
-	.empty-content__line {
-		margin-bottom: 20px;
-	}
-
 	.empty-content__illustration {
 		margin-bottom: 30px;
 	}
@@ -26,6 +22,7 @@ const NoSitesLayout = styled( EmptyContent )`
 const SecondaryText = styled.p`
 	max-width: 550px;
 	font-size: 14px;
+	margin-bottom: 0px;
 `;
 
 const Title = styled.div`
