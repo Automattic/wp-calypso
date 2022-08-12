@@ -115,18 +115,13 @@
 			position: fixed;
 			z-index: 20;
 			top: var( --masterbar-height );
-			left: 0;
-			width: 100%;
+			left: calc( var( --sidebar-width-max ) + 1px );
+			width: calc( 100% - var( --sidebar-width-max ) - 1px );
 			max-width: 100%;
 			padding: 10px 32px;
 			box-sizing: border-box;
 			border-bottom: 1px solid var( --studio-gray-5 );
 			background-color: var( --studio-white );
-
-			.layout__secondary ~ .layout__primary & {
-				left: calc( var( --sidebar-width-max ) + 1px );
-				width: calc( 100% - var( --sidebar-width-max ) - 1px );
-			}
 		}
 
 	}
