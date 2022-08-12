@@ -52,7 +52,7 @@ export function registerTimelineItemBlock() {
 		icon: TimelineIcon,
 		category: 'widgets',
 		parent: [ 'jetpack/timeline' ],
-		edit: ( { attributes, clientId, setAttributes } ) => {
+		edit: function Edit( { attributes, clientId, setAttributes } ) {
 			const style = {
 				backgroundColor: attributes.background,
 			};
@@ -82,6 +82,7 @@ export function registerTimelineItemBlock() {
 						<InspectorControls>
 							<PanelColorSettings
 								title={ __( 'Color Settings', 'full-site-editing' ) }
+								enableAlpha={ true }
 								colorSettings={ [
 									{
 										value: attributes.background,

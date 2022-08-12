@@ -42,7 +42,6 @@ import {
 } from 'calypso/state/products-list/selectors';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
-import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import {
 	isRequestingSitePlans,
 	getPlansBySiteId,
@@ -358,7 +357,6 @@ export class UpsellNudge extends Component {
 			noPurchaseMade: ! this.props.receiptId,
 			cart: this.props.cart,
 			hideNudge: shouldHideUpsellNudges,
-			isEligibleForSignupDestinationResult: this.props.isEligibleForSignupDestinationResult,
 		};
 
 		return getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -378,9 +376,9 @@ export class UpsellNudge extends Component {
 			clearSignupDestinationCookie();
 		}
 
-		// If url starts with http, use browser redirect.
-		// If url is a route, use page router.
-		if ( isURL( url ) ) {
+		// The section "/setup" is not defined as a page.js routing path, so page.redirect won't work.
+		// See: https://github.com/Automattic/wp-calypso/blob/trunk/client/sections.js
+		if ( isURL( url ) || url.startsWith( '/setup' ) ) {
 			window.location.href = url;
 		} else {
 			page.redirect( url );
@@ -586,7 +584,6 @@ export default connect(
 			siteSlug,
 			selectedSiteId,
 			hasSevenDayRefundPeriod: isMonthly( planSlug ),
-			isEligibleForSignupDestinationResult: isEligibleForSignupDestination( props.cart ),
 			productSlug,
 		};
 	},

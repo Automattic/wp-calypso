@@ -1,4 +1,4 @@
-import { isBlogger, isPersonal, isPremium } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
@@ -10,29 +10,21 @@ import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages(
 	context: string | null,
 	translate: LocalizeProps[ 'translate' ],
-	eligibleForProPlan: boolean,
 	billingPeriod?: string,
-	isMarketplace?: boolean,
-	isLegacyPlan?: boolean
+	isMarketplace?: boolean
 ) {
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
-				if ( ! isLegacyPlan && isMarketplace ) {
-					return translate( 'Upgrade to a Starter plan' );
-				}
-
-				if ( ! isLegacyPlan && eligibleForProPlan ) {
-					return translate( 'Upgrade to a Pro plan' );
+				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+					return translate( 'Upgrade to a Personal plan' );
 				}
 
 				return translate( 'Upgrade to a Business plan' );
@@ -44,8 +36,10 @@ function getHoldMessages(
 					);
 				}
 
-				if ( isMarketplace ) {
-					return translate( "You'll also get to collect payments and have more storage." );
+				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
+					return translate(
+						"You'll also get a free domain for one year, and access email support."
+					);
 				}
 
 				if ( billingPeriod === IntervalLength.MONTHLY ) {
@@ -220,26 +214,8 @@ export const HardBlockingNotice = ( {
 };
 
 export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
-	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
-
-	const plan = selectedSite?.plan;
-	let isLegacyPlan = false;
-	if ( typeof plan !== 'undefined' ) {
-		isLegacyPlan = isBlogger( plan ) || isPersonal( plan ) || isPremium( plan );
-	}
-
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
 	const billingPeriod = useSelector( getBillingInterval );
-	const holdMessages = getHoldMessages(
-		context,
-		translate,
-		eligibleForProPlan,
-		billingPeriod,
-		isMarketplace,
-		isLegacyPlan
-	);
+	const holdMessages = getHoldMessages( context, translate, billingPeriod, isMarketplace );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );

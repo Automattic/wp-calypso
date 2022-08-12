@@ -6,7 +6,7 @@ import { useEffect } from 'react';
  * https://angelos.dev/2019/05/custom-react-hook-to-prevent-window-unload/
  *
  * @param onUnmount The function to be called when the component is unmounted
- **/
+ */
 export const useOnUnmount = ( onUnmount: () => void ) => {
 	const onUnload = () => {
 		onUnmount();

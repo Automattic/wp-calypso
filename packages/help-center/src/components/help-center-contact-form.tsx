@@ -91,18 +91,18 @@ const titles: {
 		buttonLoadingLabel: __( 'Sending email', __i18n_text_domain__ ),
 	},
 	DIRECTLY: {
-		formTitle: __( 'Start live chat with an expert', 'full-site-editing' ),
+		formTitle: __( 'Start live chat with an expert', __i18n_text_domain__ ),
 		formSubtitle: __(
 			'These are others, like yourself, who have been selected because of their WordPress.com knowledge to help answer questions.',
-			'full-site-editing'
+			__i18n_text_domain__
 		),
-		trayText: __( 'An expert user will be with you right away', 'full-site-editing' ),
+		trayText: __( 'An expert user will be with you right away', __i18n_text_domain__ ),
 		formDisclaimer: __(
 			'Please do not provide financial or contact information when submitting this form.',
-			'full-site-editing'
+			__i18n_text_domain__
 		),
-		buttonLabel: __( 'Ask an expert', 'full-site-editing' ),
-		buttonLoadingLabel: __( 'Connecting you to an expert', 'full-site-editing' ),
+		buttonLabel: __( 'Ask an expert', __i18n_text_domain__ ),
+		buttonLoadingLabel: __( 'Connecting you to an expert', __i18n_text_domain__ ),
 	},
 	FORUM: {
 		formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),

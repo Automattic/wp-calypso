@@ -1375,15 +1375,14 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
 		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Live chat support 24X5' ),
-		getDescription: () =>
-			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
+		getTitle: () => i18n.translate( 'Live chat support' ),
+		getDescription: () => i18n.translate( 'Live chat support' ),
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS ]: {
 		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( 'Live chat support 24X7' ),
-		getDescription: () => i18n.translate( 'Live chat is available 24/7.' ),
+		getTitle: () => i18n.translate( 'Live chat support' ),
+		getDescription: () => i18n.translate( 'Live chat support' ),
 	},
 
 	[ FEATURE_JETPACK_VIDEOPRESS ]: {
@@ -1417,11 +1416,11 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG ]: {
 		getSlug: () => FEATURE_JETPACK_30_DAY_ARCHIVE_ACTIVITY_LOG,
-		getTitle: () => i18n.translate( '30-day archive & activity log' ),
+		getTitle: () => i18n.translate( '30-day archive & activity log*' ),
 	},
 	[ FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG ]: {
 		getSlug: () => FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
-		getTitle: () => i18n.translate( '1-year archive & activity log' ),
+		getTitle: () => i18n.translate( '1-year archive & activity log*' ),
 	},
 	[ FEATURE_JETPACK_PRODUCT_BACKUP ]: {
 		getSlug: () => FEATURE_JETPACK_PRODUCT_BACKUP,

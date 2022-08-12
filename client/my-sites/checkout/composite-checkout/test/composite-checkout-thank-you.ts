@@ -75,13 +75,12 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to the thank-you pending page with a order id when a site and orderId is set', () => {
+	it( 'redirects to the receipt page with a placeholder id when a site and orderId is set', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			orderId: samplePurchaseId,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/pending/${ samplePurchaseId }` );
+		expect( url ).toBe( `/checkout/thank-you/foo.bar/:receiptId` );
 	} );
 
 	it( 'redirects to the thank-you page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
@@ -163,9 +162,8 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			feature: 'all-free-features',
-			orderId: samplePurchaseId,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/features/all-free-features/foo.bar` );
+		expect( url ).toBe( `/checkout/thank-you/features/all-free-features/foo.bar/:receiptId` );
 	} );
 
 	it( 'redirects to the thank-you page with a feature when a site and a valid feature is set with no receipt but the cart is not empty', () => {
@@ -579,7 +577,7 @@ describe( 'getThankYouPageUrl', () => {
 		const adminUrl = 'https://my.site/wp-admin/';
 		const redirectTo = 'https://other.site/post.php?post=515';
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
-		expect( url ).toBe( '/checkout/thank-you/foo.bar' );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
 	it( 'redirects to external redirectTo url if it starts with admin_url for site', () => {
@@ -587,6 +585,20 @@ describe( 'getThankYouPageUrl', () => {
 		const redirectTo = adminUrl + 'post.php?post=515';
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
 		expect( url ).toBe( redirectTo + '&action=edit&plan_upgraded=1' );
+	} );
+
+	it( 'redirects to external redirectTo url if the hostame is cloud.jetpack.com', () => {
+		const adminUrl = 'https://my.site/wp-admin/';
+		const redirectTo = 'https://cloud.jetpack.com/backup/foo.bar';
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
+		expect( url ).toBe( redirectTo );
+	} );
+
+	it( 'redirects to external redirectTo url if the hostame is jetpack.cloud.localhost', () => {
+		const adminUrl = 'https://my.site/wp-admin/';
+		const redirectTo = 'http://jetpack.cloud.localhost:3000/backup/foo.bar';
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
+		expect( url ).toBe( redirectTo );
 	} );
 
 	it( 'redirects to manage purchase page if there is a renewal', () => {
@@ -604,14 +616,14 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/me/purchases/foo.bar/123abc' );
 	} );
 
-	it( 'does not redirect to url from cookie if isEligibleForSignupDestinationResult is false', () => {
+	it( 'does not redirect to url from cookie if cart contains a Google Apps product without a domain receipt', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			...getEmptyResponseCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
-					product_slug: 'foo',
+					product_slug: 'wp_google_workspace_business_starter_monthly',
 				},
 			],
 		};
@@ -620,19 +632,41 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestinationResult: false,
 		} );
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
-	it( 'Redirects to root if there is no purchase and isEligibleForSignupDestinationResult is false', () => {
+	it( 'does redirect to url from cookie if cart contains a Google Apps product with a domain receipt', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			...getEmptyResponseCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
-					product_slug: 'foo',
+					product_slug: 'wp_google_workspace_business_starter_monthly',
+					extra: {
+						receipt_for_domain: 1234,
+					},
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			getUrlFromCookie,
+		} );
+		expect( url ).toBe( '/cookie?notice=purchase-success' );
+	} );
+
+	it( 'Redirects to root if there is no purchase and cart contains a Google Apps product without a domain receipt', () => {
+		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const cart = {
+			...getEmptyResponseCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'wp_google_workspace_business_starter_monthly',
 				},
 			],
 		};
@@ -643,7 +677,6 @@ describe( 'getThankYouPageUrl', () => {
 			noPurchaseMade: true,
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestinationResult: false,
 		} );
 		expect( url ).toBe( '/' );
 	} );
@@ -665,12 +698,11 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestinationResult: true,
 		} );
 		expect( url ).toBe( '/after/purchase/url' );
 	} );
 
-	it( 'redirects to url from cookie with notice type set to "purchase-success" if isEligibleForSignupDestination is set', () => {
+	it( 'redirects to url from cookie with notice type set to "purchase-success"', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			...getEmptyResponseCart(),
@@ -686,7 +718,6 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			getUrlFromCookie,
-			isEligibleForSignupDestinationResult: true,
 		} );
 		expect( url ).toBe( '/cookie?notice=purchase-success' );
 	} );
@@ -796,7 +827,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/cookie/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to url from cookie followed by pending order id if create_new_blog is set', () => {
+	it( 'redirects to url from cookie followed by receipt id placeholder if create_new_blog is set', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
 			...getEmptyResponseCart(),
@@ -812,10 +843,9 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
 			cart,
-			orderId: samplePurchaseId,
 			getUrlFromCookie,
 		} );
-		expect( url ).toBe( `/cookie/pending/${ samplePurchaseId }` );
+		expect( url ).toBe( `/cookie/:receiptId` );
 	} );
 
 	it( 'redirects to url from cookie followed by placeholder receiptId if create_new_blog is set and there is no receipt', () => {
@@ -1008,7 +1038,7 @@ describe( 'getThankYouPageUrl', () => {
 		);
 	} );
 
-	it( 'redirects to the thank-you pending page with an order id when the business upgrade nudge would normally be included', () => {
+	it( 'redirects to the business upgrade nudge with a placeholder when jetpack is not in the cart and premium is in the cart but there is no receipt', () => {
 		const cart = {
 			...getEmptyResponseCart(),
 			products: [
@@ -1021,10 +1051,9 @@ describe( 'getThankYouPageUrl', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
-			orderId: samplePurchaseId,
 			cart,
 		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/pending/${ samplePurchaseId }` );
+		expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/:receiptId` );
 	} );
 
 	it( 'redirects to the thank you page if jetpack is not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
@@ -1257,6 +1286,30 @@ describe( 'getThankYouPageUrl', () => {
 
 			expect( url ).toBe(
 				`/checkout/offer-professional-email/domain-from-cart.com/${ samplePurchaseId }/foo.bar`
+			);
+		} );
+
+		it( 'Is displayed if user is buying a domain only registration', () => {
+			const cart = {
+				...getEmptyResponseCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						is_domain_registration: true,
+						meta: 'foo.bar',
+					},
+				],
+			};
+
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: 'no-site',
+				cart,
+				receiptId: samplePurchaseId,
+			} );
+
+			expect( url ).toBe(
+				`/checkout/offer-professional-email/foo.bar/${ samplePurchaseId }/no-site`
 			);
 		} );
 

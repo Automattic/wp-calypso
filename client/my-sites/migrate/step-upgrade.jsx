@@ -1,4 +1,4 @@
-import { getPlan, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
+import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -51,7 +51,9 @@ class StepUpgrade extends Component {
 				<HeaderCake backHref={ backHref }>{ translate( 'Import Everything' ) }</HeaderCake>
 
 				<CompactCard>
-					<CardHeading>{ translate( 'A Pro Plan is required to import everything.' ) }</CardHeading>
+					<CardHeading>
+						{ translate( 'A Business Plan is required to import everything.' ) }
+					</CardHeading>
 					<div>
 						{ translate(
 							'To import your themes, plugins, users, and settings from %(sourceSiteDomain)s we need to upgrade your WordPress.com site.',
@@ -105,7 +107,7 @@ class StepUpgrade extends Component {
 								<ProductIcon slug="business-bundle" />
 							</div>
 							<div className="migrate__plan-upsell-info">
-								<div className="migrate__plan-name">{ translate( 'WordPress.com Pro' ) }</div>
+								<div className="migrate__plan-name">{ translate( 'WordPress.com Business' ) }</div>
 								<div className="migrate__plan-price">
 									<PlanPrice rawPrice={ planPrice } currencyCode={ currency } />
 								</div>
@@ -127,7 +129,7 @@ class StepUpgrade extends Component {
 
 export default connect(
 	( state ) => {
-		const plan = getPlan( PLAN_WPCOM_PRO );
+		const plan = getPlan( PLAN_BUSINESS );
 		const planId = plan.getProductId();
 
 		return {

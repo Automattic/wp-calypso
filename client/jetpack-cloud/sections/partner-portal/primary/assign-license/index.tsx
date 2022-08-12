@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useEffect } from 'react';
+import { ReactElement, useEffect, useLayoutEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -17,6 +17,14 @@ export default function AssignLicense( {
 	search: string;
 } ): ReactElement {
 	const translate = useTranslate();
+
+	const scrollToTop = () => {
+		window.scrollTo( 0, 0 );
+	};
+
+	useLayoutEffect( () => {
+		scrollToTop();
+	}, [] );
 
 	useEffect( () => {
 		const layoutClass = 'layout__content--partner-portal-assign-license';

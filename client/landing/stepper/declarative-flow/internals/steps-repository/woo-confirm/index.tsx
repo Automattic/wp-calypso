@@ -174,7 +174,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),
-		description: __( 'Upgrade to the Pro plan and set up your WooCommerce store.' ),
+		description: __( 'Upgrade to the Business plan and set up your WooCommerce store.' ),
 	};
 
 	const domain = stagingDomain;
@@ -268,7 +268,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	if ( site === null || ! site.ID || ! isDataReady || isReadyToStart ) {
 		return (
-			<div className="woo-confirm__info-section">
+			<div className="woo-confirm__loading-container">
 				<LoadingEllipsis />
 			</div>
 		);

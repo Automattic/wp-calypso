@@ -73,6 +73,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 				elapsed: ( Date.now() - start ) / 1000,
 			} );
 			document.body.removeChild( portalParent );
+			handleClose();
 		};
 	}, [ portalParent ] );
 

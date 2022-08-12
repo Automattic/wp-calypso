@@ -1,14 +1,14 @@
 import config from '@automattic/calypso-config';
+import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEmpty, omit, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import SignupForm from 'calypso/blocks/signup-form';
-import AsyncLoad from 'calypso/components/async-load';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
@@ -106,6 +106,11 @@ export class UserStep extends Component {
 	};
 
 	componentDidUpdate() {
+		if ( this.props.step?.status === 'completed' ) {
+			this.props.goToNextStep();
+			return;
+		}
+
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			// It looks like the user just completed the User Registartion Step
 			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
@@ -119,6 +124,11 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
+		if ( this.props.step?.status === 'completed' ) {
+			this.props.goToNextStep();
+			return;
+		}
+
 		if ( flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha ) {
 			this.initGoogleRecaptcha();
 		}
@@ -267,8 +277,6 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
-
-		this.props.goToNextStep();
 	};
 
 	submitForm = async ( form, userData, analyticsData ) => {
@@ -364,28 +372,22 @@ export class UserStep extends Component {
 			return translate( 'Sign up for Crowdsignal' );
 		}
 
-		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+		if ( isWooOAuth2Client( oauth2Client ) ) {
+			if ( 'cart' === wccomFrom ) {
+				return <WooCommerceConnectCartHeader />;
+			}
+
 			return (
-				<Fragment>
-					{ 'cart' === wccomFrom ? (
-						<WooCommerceConnectCartHeader />
-					) : (
-						<div className={ classNames( 'signup-form__woocommerce-wrapper' ) }>
-							<div className={ classNames( 'signup-form__woocommerce-logo' ) }>
-								<svg width={ 200 } viewBox={ '0 0 1270 170' }>
-									<AsyncLoad
-										require="calypso/components/jetpack-header/woocommerce"
-										darkColorScheme={ false }
-										placeholder={ null }
-									/>
-								</svg>
-							</div>
-						</div>
-					) }
-					<div className={ classNames( 'signup-form__woocommerce-heading' ) }>
-						{ translate( 'Create a WordPress.com account' ) }
-					</div>
-				</Fragment>
+				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
+					<Gridicon icon="my-sites" size={ 72 } />
+					<h3>
+						{ translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
+							args: { clientTitle: oauth2Client.title },
+							comment:
+								"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
+						} ) }
+					</h3>
+				</div>
 			);
 		}
 
@@ -469,6 +471,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
+					shouldDisplayUserExistsError
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -482,7 +485,10 @@ export class UserStep extends Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ this.props.translate( "Let's get started" ) }
-				subHeaderText={ this.props.translate( "First, let's create your account.", {} ) }
+				subHeaderText={ this.props.translate(
+					"We'll build your site with Videomaker, our premium theme for video creators. First, let's create your account.",
+					{}
+				) }
 				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 					args: {
 						currentStep: getVideoPressOnboardingStepNumber( this.props.stepName ),

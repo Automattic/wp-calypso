@@ -60,6 +60,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'site_segment',
 	'software_version',
 	'timezone',
+	'updated_at',
 	'upgraded_filetypes_enabled',
 	'unmapped_url',
 	'verification_services_codes',

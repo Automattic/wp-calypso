@@ -55,15 +55,23 @@ export async function waitForElementEnabled(
  * @param {string} name Name of the tab to be clicked.
  * @throws {Error} If the tab name is not the active tab.
  */
-export async function clickNavTab( page: Page, name: string ): Promise< void > {
-	const selectedTabLocator = page.locator( selectors.navTabItem( { selected: true } ) );
-	const selectedTabName = await selectedTabLocator.innerText();
-
+export async function clickNavTab(
+	page: Page,
+	name: string,
+	{ force }: { force?: boolean } = {}
+): Promise< void > {
 	// Short circuit operation if the active tab and target tabs are the same.
 	// Strip numerals from the extracted tab name to account for the slightly
 	// different implementation in PostsPage.
+	const selectedTabLocator = page.locator( selectors.navTabItem( { selected: true } ) );
+	const selectedTabName = await selectedTabLocator.innerText();
 	if ( selectedTabName.replace( /[0-9]/g, '' ) === name ) {
 		return;
+	}
+
+	// If force option is specified, force click using a `dispatchEvent`.
+	if ( force ) {
+		return await page.dispatchEvent( selectors.navTabItem( { name: name } ), 'click' );
 	}
 
 	// Mobile view - navtabs become a dropdown and thus it must be opened first.
@@ -80,7 +88,18 @@ export async function clickNavTab( page: Page, name: string ): Promise< void > {
 
 	// Click on the intended item and wait for navigation to finish.
 	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
-	await Promise.all( [ page.waitForNavigation(), navTabItem.click() ] );
+	try {
+		await Promise.all( [ page.waitForNavigation( { timeout: 10 * 1000 } ), navTabItem.click() ] );
+	} catch {
+		// In case the initial click fails, try again but this time with the force parameter set.
+		// This is acceptable as typically we are not testing whether the navtab is responsive to clicks.
+		// Failure to click on navtabs will trigger the entire build to fail and is often detrimental to
+		// the overall confidence in test suites.
+		await Promise.all( [
+			page.waitForNavigation( { timeout: 10 * 1000 } ),
+			page.dispatchEvent( selectors.navTabItem( { name: name } ), 'click' ),
+		] );
+	}
 
 	// Final verification.
 	const newSelectedTabLocator = page.locator(

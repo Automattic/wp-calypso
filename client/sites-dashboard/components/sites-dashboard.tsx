@@ -1,18 +1,17 @@
-import { Button, Gridicon } from '@automattic/components';
-import { css, ClassNames } from '@emotion/react';
+import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automattic/components';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'react-redux';
-import getSites from 'calypso/state/selectors/get-sites';
-import { notNullish } from '../util';
+import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { NoSitesMessage } from './no-sites-message';
+import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
 import { SitesTable } from './sites-table';
-import { SitesTableFilterTabs } from './sites-table-filter-tabs';
 
 interface SitesDashboardProps {
-	launchStatus?: string;
+	queryParams: SitesDashboardQueryParams;
 }
 
-const MAX_PAGE_WIDTH = '1184px';
+const MAX_PAGE_WIDTH = '1280px';
 
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
@@ -31,15 +30,15 @@ const PageHeader = styled.div`
 	${ pagePadding }
 
 	background-color: var( --studio-white );
-	padding-top: 32px;
+	padding-top: 24px;
+	padding-bottom: 24px;
 	box-shadow: inset 0px -1px 0px rgba( 0, 0, 0, 0.05 );
-
-	// Leave enough space for the height of the TabPanel buttons (48px)
-	padding-bottom: calc( 19px + 48px );
 `;
 
 const PageBodyWrapper = styled.div`
 	${ pagePadding }
+	max-width: ${ MAX_PAGE_WIDTH };
+	margin: 0 auto;
 `;
 
 const HeaderControls = styled.div`
@@ -58,48 +57,51 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-export function SitesDashboard( { launchStatus }: SitesDashboardProps ) {
+export function SitesDashboard( { queryParams: { search, status = 'all' } }: SitesDashboardProps ) {
 	const { __ } = useI18n();
-	const sites = useSelector( getSites );
+
+	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
+
+	const { sortedSites } = useSitesTableSorting( allSites, {
+		sortKey: 'updated-at',
+		sortOrder: 'desc',
+	} );
+
+	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
+		search,
+		status,
+	} );
+
+	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	return (
 		<main>
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
-					<Button primary href="/start?ref=sites-dashboard">
-						<Gridicon icon="plus" />
-						<span>{ __( 'New Site' ) }</span>
+					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
+						<span>{ __( 'Add new site' ) }</span>
 					</Button>
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<ClassNames>
-					{ ( { css } ) => (
-						<SitesTableFilterTabs
-							allSites={ sites.filter( notNullish ) }
-							className={ css`
-								${ wideCentered }
-								position: relative;
-								top: -48px;
-							` }
-							launchStatus={ launchStatus }
-						>
-							{ ( filteredSites ) => (
-								<ClassNames>
-									{ ( { css } ) => (
-										<SitesTable
-											className={ css`
-												margin-top: 32px;
-											` }
-											sites={ filteredSites }
-										/>
-									) }
-								</ClassNames>
-							) }
-						</SitesTableFilterTabs>
+				<>
+					{ ( allSites.length > 0 || isLoading ) && (
+						<SitesContentControls
+							initialSearch={ search }
+							statuses={ statuses }
+							selectedStatus={ selectedStatus }
+						/>
 					) }
-				</ClassNames>
+					{ filteredSites.length > 0 || isLoading ? (
+						<SitesTable isLoading={ isLoading } sites={ filteredSites } />
+					) : (
+						<NoSitesMessage
+							status={ selectedStatus.name }
+							statusSiteCount={ selectedStatus.count }
+						/>
+					) }
+				</>
 			</PageBodyWrapper>
 		</main>
 	);

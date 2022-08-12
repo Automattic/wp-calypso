@@ -10,6 +10,8 @@ import {
 	isPremiumPlan,
 	isBusinessPlan,
 	isEcommercePlan,
+	isProPlan,
+	isStarterPlan,
 	planMatches,
 	TYPE_FREE,
 	TYPE_BLOGGER,
@@ -24,6 +26,7 @@ import {
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -163,6 +166,7 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
+			isCurrentPlanRetired,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -174,11 +178,28 @@ export class PlansFeaturesMain extends Component {
 			isInVerticalScrollingPlansExperiment,
 			isProfessionalEmailPromotionAvailable,
 			redirectToAddDomainFlow,
+			domainAndPlanPackage,
 			translate,
+			locale,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const legacyText =
+			locale === 'en' ||
+			hasTranslation(
+				'Your current plan is no longer available for new subscriptions. ' +
+					'You’re all set to continue with the plan for as long as you like. ' +
+					'Alternatively, you can switch to any of our current plans by selecting it below. ' +
+					'Please keep in mind that switching plans will be irreversible.'
+			)
+				? translate(
+						'Your current plan is no longer available for new subscriptions. ' +
+							'You’re all set to continue with the plan for as long as you like. ' +
+							'Alternatively, you can switch to any of our current plans by selecting it below. ' +
+							'Please keep in mind that switching plans will be irreversible.'
+				  )
+				: null;
 		return (
 			<div
 				className={ classNames(
@@ -191,7 +212,10 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans="wpcom"
 			>
-				{ currentPurchaseIsInAppPurchase && (
+				{ isCurrentPlanRetired && legacyText && (
+					<Notice showDismiss={ false } status="is-info" text={ legacyText } />
+				) }
+				{ ! isCurrentPlanRetired && currentPurchaseIsInAppPurchase && (
 					<Notice
 						showDismiss={ false }
 						status="is-info"
@@ -203,6 +227,7 @@ export class PlansFeaturesMain extends Component {
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
+					domainAndPlanPackage={ domainAndPlanPackage }
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					domainName={ domainName }
@@ -414,7 +439,12 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, redirectToAddDomainFlow, shouldShowPlansFeatureComparison } = this.props;
+		const {
+			siteId,
+			redirectToAddDomainFlow,
+			domainAndPlanPackage,
+			shouldShowPlansFeatureComparison,
+		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -426,7 +456,7 @@ export class PlansFeaturesMain extends Component {
 
 		// In the "purchase a plan and free domain" flow we do not want to show
 		// monthly plans because monthly plans do not come with a free domain.
-		if ( redirectToAddDomainFlow !== undefined ) {
+		if ( redirectToAddDomainFlow !== undefined || domainAndPlanPackage ) {
 			hidePlanSelector = true;
 		}
 
@@ -465,6 +495,7 @@ export class PlansFeaturesMain extends Component {
 
 PlansFeaturesMain.propTypes = {
 	redirectToAddDomainFlow: PropTypes.bool,
+	domainAndPlanPackage: PropTypes.string,
 	basePlansPath: PropTypes.string,
 	hideFreePlan: PropTypes.bool,
 	hidePersonalPlan: PropTypes.bool,
@@ -531,6 +562,7 @@ export default connect(
 		}
 
 		return {
+			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
 			currentPurchaseIsInAppPurchase: currentPurchase?.isInAppPurchase,
 			customerType,
 			domains: getDomainsBySiteId( state, siteId ),

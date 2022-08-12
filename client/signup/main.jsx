@@ -60,8 +60,6 @@ import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/prog
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteId,
@@ -130,9 +128,7 @@ class Signup extends Component {
 		isLoggedIn: PropTypes.bool,
 		isEmailVerified: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
-		setSurvey: PropTypes.func.isRequired,
 		submitSiteType: PropTypes.func.isRequired,
-		submitSiteVertical: PropTypes.func.isRequired,
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
@@ -142,6 +138,7 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
+		hideBackButton: PropTypes.bool,
 		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
 	};
@@ -758,6 +755,7 @@ class Signup extends Component {
 						<SignupHeader
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
+							pageTitle={ this.props.hideBackButton && this.props.pageTitle }
 							rightComponent={
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator
@@ -823,9 +821,7 @@ export default connect(
 		};
 	},
 	{
-		setSurvey,
 		submitSiteType,
-		submitSiteVertical,
 		submitSignupStep,
 		removeStep,
 		loadTrackingTool,

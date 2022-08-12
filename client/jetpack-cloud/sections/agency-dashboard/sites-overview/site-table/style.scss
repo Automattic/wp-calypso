@@ -35,6 +35,10 @@
 			}
 		}
 
+		.sites-overview__row-status {
+			display: block;
+			max-width: fit-content;
+		}
 		a {
 			display: flex;
 		}
@@ -87,5 +91,5 @@ td.site-table__td-with-error {
 	vertical-align: middle;
 }
 .site-table-site-title {
-	margin-inline-start: 8px;
+	margin-inline-start: 32px;
 }

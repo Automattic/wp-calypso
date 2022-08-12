@@ -67,7 +67,10 @@ function ScanUpsellBody() {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const createProductURL = getPurchaseURLCallback( selectedSiteSlug, {} );
+	const createCheckoutURL = getPurchaseURLCallback( selectedSiteSlug, {
+		// For the Scan upsell in Jetpack Cloud, we want to redirect back here to the Scan page after checkout.
+		redirect_to: window.location.href,
+	} );
 	const dispatch = useDispatch();
 
 	const onClick = useCallback(
@@ -85,7 +88,7 @@ function ScanUpsellBody() {
 				productSlug={ PRODUCT_JETPACK_SCAN }
 				siteId={ siteId }
 				currencyCode={ currencyCode }
-				getButtonURL={ createProductURL }
+				getButtonURL={ createCheckoutURL }
 				onCtaButtonClick={ onClick }
 			/>
 		</>

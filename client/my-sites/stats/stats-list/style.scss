@@ -571,6 +571,16 @@ ul.module-content-list-item-action-submenu {
 		}
 	}
 
+	// Promote post speaker button should look like a link
+	.stats-list__item-action-promote {
+		color: var( --color-link );
+		cursor: pointer;
+
+		&:hover {
+			color: var( --color-link-dark );
+		}
+	}
+
 	// When a button instead of a link is used
 	.button.module-content-list-item-action-wrapper .gridicon {
 		vertical-align: unset;

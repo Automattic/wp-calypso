@@ -50,6 +50,11 @@
 		font-family: inherit;
 	}
 
+	.design-picker__design-option > button {
+		width: 100%;
+		padding: 0;
+	}
+
 	.design-picker__design-option-header {
 		display: flex;
 		align-items: center;
@@ -82,14 +87,14 @@
 			@include break-medium {
 				grid-template-columns: 1fr 1fr;
 				column-gap: 24px;
-				row-gap: 40px;
+				row-gap: 20px;
 			}
 		}
 
 		.design-picker__grid-minimal {
 			display: grid;
 			grid-template-columns: 1fr;
-			row-gap: 48px;
+			row-gap: 28px;
 			margin: 0 0 30px;
 
 			@include break-medium {
@@ -226,8 +231,6 @@
 	.design-picker__pricing-description {
 		text-align: left;
 		color: #50575e;
-		z-index: 1;
-		position: absolute;
 	}
 
 
@@ -375,14 +378,96 @@
 	}
 }
 
+.design-picker.design-picker__unified {
+	display: block;
+	padding-bottom: 200px;
+	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
+		justify-content: flex-start;
+	}
+	.design-picker__grid {
+		@supports ( display: grid ) {
+			@include break-medium {
+				grid-template-columns: 1fr 1fr 1fr;
+				column-gap: 24px;
+			}
+		}
+	}
+	
+	h3 {
+		font-size: $font-title-small;
+		font-weight: 600;
+		margin-top: 40px;
+		margin-bottom: 5px;
+	}
+
+	.design-picker__design-option > button {
+		cursor: pointer;
+	}
+
+	.unified-design-picker__subtitle {
+		color: #50575e;
+		margin-bottom: 30px;
+	}
+
+	.generated-design-thumbnail {
+		height: 500px;
+		min-height: auto;
+		max-height: none;
+		border: none;
+	}
+
+	.generated-design-thumbnail__image {
+		height: auto;
+		padding-top: 0;
+		flex: 1;
+	}
+
+	.components-button:focus::before {
+		box-shadow: none;
+	}
+
+	.components-button:focus-visible::before {
+		box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color );
+	}
+
+	.components-button.is-pressed:active:hover {
+		color: var( --theme-base-color );
+	}
+}
+
 // layout with categories
 .design-picker--has-categories {
+	.responsive-toolbar-group__swipe {
+		.responsive-toolbar-group__swipe-list {
+			padding: 0 0 24px;
+
+			>div:first-of-type {
+				button {
+					padding-left: 8px;
+
+					&::before {
+						left: 0;
+					}
+				}
+			}
+		
+			>div:last-of-type {
+				button {
+					padding-right: 8px;
+
+					&::before {
+						right: 0;
+					}
+				}
+			}
+		}
+	}
+
 	@supports ( display: grid ) {
 		.design-picker__grid {
 			@include break-medium {
 				grid-template-columns: 1fr;
 				column-gap: 24px;
-				row-gap: 40px;
 			}
 
 			@include break-large {

@@ -309,4 +309,13 @@ describe( 'PaymentInfoBlock', () => {
 			} );
 		} );
 	} );
+	it( 'shows warning if auto-renew is enabled without a payment method', () => {
+		const purchase = {
+			isAutoRenewEnabled: true,
+		};
+		render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
+		expect(
+			screen.getByText( 'You don’t have a payment method to renew this subscription' )
+		).toBeInTheDocument();
+	} );
 } );

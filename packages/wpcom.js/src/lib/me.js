@@ -43,7 +43,7 @@ Me.prototype.billingHistory = function ( query, fn ) {
 /**
  * Get a list of posts of from the user's blogs
  *
- * *Example:*
+ * Example:
  *    // Get posts list
  *    wpcom
  *    .me()

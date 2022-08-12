@@ -1,4 +1,4 @@
-import { isMainNetworkSite } from 'calypso/lib/site/utils';
+import { isMainNetworkSite, getJetpackSiteCollisions } from 'calypso/lib/site/utils';
 
 describe( 'Site Utils', () => {
 	describe( 'isMainNetworkSite', () => {
@@ -73,6 +73,44 @@ describe( 'Site Utils', () => {
 				options: {},
 			};
 			expect( isMainNetworkSite( site ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'getJetpackSiteCollisions', () => {
+		test( 'Should return an empty array when the list of sites is empty.', () => {
+			expect( getJetpackSiteCollisions( [] ) ).toEqual( [] );
+		} );
+
+		test( 'Should return an empty array when there are no site collisions.', () => {
+			const sitesNoCollisions = [
+				{
+					ID: 1111111111,
+					URL: 'https://dummy1',
+					jetpack: true,
+				},
+				{
+					ID: 2222222222,
+					URL: 'https://dummy2',
+					jetpack: false,
+				},
+			];
+			expect( getJetpackSiteCollisions( sitesNoCollisions ) ).toEqual( [] );
+		} );
+
+		test( 'Should return an array of IDs with the WP site collisioning with the Jetpack site.', () => {
+			const sitesWithCollision = [
+				{
+					ID: 1111111111,
+					URL: 'https://samedomain',
+					jetpack: true,
+				},
+				{
+					ID: 2222222222,
+					URL: 'https://samedomain',
+					jetpack: false,
+				},
+			];
+			expect( getJetpackSiteCollisions( sitesWithCollision ) ).toEqual( [ 2222222222 ] );
 		} );
 	} );
 } );

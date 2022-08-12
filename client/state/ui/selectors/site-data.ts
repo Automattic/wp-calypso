@@ -7,6 +7,7 @@ export interface SiteData {
 	slug: string;
 	domain: string;
 	locale: string;
+	icon?: SiteDataIcon;
 	options?: SiteDataOptions;
 	wpcom_url?: string;
 	jetpack?: boolean;
@@ -18,6 +19,11 @@ export interface SiteData {
 	is_coming_soon?: boolean;
 	launch_status?: string;
 	// TODO: fill out the rest of this
+}
+
+export interface SiteDataIcon {
+	ico: string;
+	img: string;
 }
 
 export interface SiteDataPlan {
@@ -46,5 +52,8 @@ export interface SiteDataOptions {
 	is_difm_lite_in_progress: boolean;
 	is_domain_only: boolean;
 	difm_lite_site_options?: DIFMLiteSiteOptions;
+	updated_at?: string;
+	is_redirect?: boolean;
+	unmapped_url?: string;
 	// TODO: fill out the rest of this
 }

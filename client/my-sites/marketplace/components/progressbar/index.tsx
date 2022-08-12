@@ -107,7 +107,7 @@ export default function MarketplaceProgressBar( {
 				color="var( --studio-pink-50 )"
 				compact
 			/>
-			<div>{ stepIndication }</div>
+			{ steps.length > 1 && <div>{ stepIndication }</div> }
 		</Container>
 	);
 }

@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	// Common selectors
@@ -30,6 +31,17 @@ export class GeneralSettingsPage {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
+	}
+
+	/**
+	 * Visits the `/settings/general` endpoint.
+	 *
+	 * @param {string} siteSlug Site URL.
+	 */
+	async visit( siteSlug: string ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `settings/general/${ siteSlug }` ), {
+			waitUntil: 'networkidle',
+		} );
 	}
 
 	/**

@@ -10,7 +10,7 @@ import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
+const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
@@ -23,7 +23,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 	}
 
 	if ( legacyVersion ) {
-		return <LegacyPluginDetailsHeader plugin={ plugin } />;
+		return <LegacyPluginDetailsHeader plugin={ plugin } isJetpackCloud={ isJetpackCloud } />;
 	}
 
 	return (
@@ -92,7 +92,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 	);
 };
 
-function LegacyPluginDetailsHeader( { plugin } ) {
+function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
@@ -118,13 +118,17 @@ function LegacyPluginDetailsHeader( { plugin } ) {
 				<div className="plugin-details-header__info">
 					<div className="plugin-details-header__info-title">{ translate( 'Developer' ) }</div>
 					<div className="plugin-details-header__info-value">
-						<a
-							href={ `/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthorKeyword(
-								plugin
-							) }"` }
-						>
-							{ plugin.author_name }
-						</a>
+						{ isJetpackCloud ? (
+							plugin.author_name
+						) : (
+							<a
+								href={ `/plugin/${
+									selectedSite?.slug || ''
+								}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"` }
+							>
+								{ plugin.author_name }
+							</a>
+						) }
 					</div>
 				</div>
 				{ !! plugin.rating && (

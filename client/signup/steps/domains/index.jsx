@@ -51,7 +51,6 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getVerticalForDomainSuggestions } from 'calypso/state/signup/steps/site-vertical/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
 import './style.scss';
@@ -71,7 +70,6 @@ class DomainsStep extends Component {
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
-		vertical: PropTypes.string,
 		isReskinned: PropTypes.bool,
 	};
 
@@ -469,6 +467,9 @@ class DomainsStep extends Component {
 			get( this.props, 'queryObject.new', '' ) ||
 			get( this.props, 'signupDependencies.suggestedDomain' );
 
+		// Search using the initial query but do not show the query on the search input field.
+		const hideInitialQuery = get( this.props, 'queryObject.hide_initial_query', false ) === 'yes';
+
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
 			initialQuery &&
@@ -479,6 +480,7 @@ class DomainsStep extends Component {
 				initialState.searchResults = null;
 				initialState.subdomainSearchResults = null;
 				initialState.loadingResults = true;
+				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
 
@@ -531,7 +533,6 @@ class DomainsStep extends Component {
 					deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 					selectedSite={ this.props.selectedSite }
 					showSkipButton={ this.props.showSkipButton }
-					vertical={ this.props.vertical }
 					onSkip={ this.handleSkip }
 					hideFreePlan={ this.handleSkip }
 					forceHideFreeDomainExplainerAndStrikeoutUi={
@@ -721,7 +722,7 @@ class DomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned } = this.props;
+		const { isAllDomains, translate, isReskinned, hideBackButton } = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
@@ -749,6 +750,9 @@ class DomainsStep extends Component {
 			} else if ( 'general-settings' === source && siteSlug ) {
 				backUrl = `/settings/general/${ siteSlug }`;
 				backLabelText = translate( 'Back to General Settings' );
+			} else if ( 'sites-dashboard' === source ) {
+				backUrl = '/sites-dashboard';
+				backLabelText = translate( 'Back to My Sites' );
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = '/sites/';
 				backLabelText = translate( 'Back to My Sites' );
@@ -777,6 +781,7 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
+				hideBack={ hideBackButton }
 				stepContent={
 					<div>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }
@@ -839,7 +844,6 @@ export default connect(
 			productsList,
 			productsLoaded,
 			siteType: getSiteType( state ),
-			vertical: getVerticalForDomainSuggestions( state ),
 			selectedSite,
 			sites: getSitesItems( state ),
 			isPlanSelectionAvailableLaterInFlow:

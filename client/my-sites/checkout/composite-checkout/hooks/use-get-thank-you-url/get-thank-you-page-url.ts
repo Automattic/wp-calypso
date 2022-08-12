@@ -9,6 +9,7 @@ import {
 	isPlan,
 	isWpComPremiumPlan,
 	isTitanMail,
+	isDomainRegistration,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -19,6 +20,8 @@ import {
 } from '@automattic/calypso-url';
 import debugFactory from 'debug';
 import {
+	getGoogleApps,
+	hasGoogleApps,
 	hasRenewalItem,
 	getAllCartItems,
 	getDomainRegistrations,
@@ -30,11 +33,11 @@ import {
 	hasPremiumPlan,
 	hasBusinessPlan,
 	hasEcommercePlan,
-	hasGoogleApps,
 	hasTitanMail,
 	hasTrafficGuide,
 	hasDIFMProduct,
 	hasProPlan,
+	hasStarterPlan,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
@@ -55,20 +58,30 @@ const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
 
-type OrderId = number;
 type PurchaseId = number;
 type ReceiptId = number;
 type ReceiptIdPlaceholder = ':receiptId';
-type PendingOrderPathFragment = `pending/${ OrderId }`;
-type PendingOrReceiptId = PendingOrderPathFragment | ReceiptIdPlaceholder | PurchaseId | ReceiptId;
+type ReceiptIdOrPlaceholder = ReceiptIdPlaceholder | PurchaseId | ReceiptId;
 
-function isReceiptIdOrPlaceholder(
-	receiptId: PendingOrReceiptId
-): receiptId is ReceiptId | ReceiptIdPlaceholder {
-	if ( Number.isInteger( receiptId ) || receiptId === ':receiptId' ) {
-		return true;
-	}
-	return false;
+export interface PostCheckoutUrlArguments {
+	siteSlug?: string;
+	adminUrl?: string;
+	redirectTo?: string;
+	receiptId?: number | string;
+	noPurchaseMade?: boolean;
+	purchaseId?: number | string;
+	feature?: string;
+	cart?: ResponseCart;
+	isJetpackNotAtomic?: boolean;
+	productAliasFromUrl?: string;
+	getUrlFromCookie?: GetUrlFromCookie;
+	saveUrlToCookie?: SaveUrlToCookie;
+	hideNudge?: boolean;
+	isInModal?: boolean;
+	isJetpackCheckout?: boolean;
+	jetpackTemporarySiteId?: string;
+	adminPageRedirect?: string;
+	domains?: ResponseDomain[];
 }
 
 /**
@@ -92,7 +105,6 @@ export default function getThankYouPageUrl( {
 	redirectTo,
 	receiptId,
 	noPurchaseMade,
-	orderId,
 	purchaseId,
 	feature,
 	cart,
@@ -100,35 +112,13 @@ export default function getThankYouPageUrl( {
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
-	isEligibleForSignupDestinationResult,
 	hideNudge,
 	isInModal,
 	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
-}: {
-	siteSlug?: string;
-	adminUrl?: string;
-	redirectTo?: string;
-	receiptId?: number | string;
-	noPurchaseMade?: boolean;
-	orderId?: number | string;
-	purchaseId?: number | string;
-	feature?: string;
-	cart?: ResponseCart;
-	isJetpackNotAtomic?: boolean;
-	productAliasFromUrl?: string;
-	getUrlFromCookie?: GetUrlFromCookie;
-	saveUrlToCookie?: SaveUrlToCookie;
-	isEligibleForSignupDestinationResult?: boolean;
-	hideNudge?: boolean;
-	isInModal?: boolean;
-	isJetpackCheckout?: boolean;
-	jetpackTemporarySiteId?: string;
-	adminPageRedirect?: string;
-	domains?: ResponseDomain[];
-} ): string {
+}: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
@@ -164,7 +154,7 @@ export default function getThankYouPageUrl( {
 			return sanitizedRedirectTo;
 		}
 
-		if ( hostname === 'cloud.jetpack.com' ) {
+		if ( hostname === 'cloud.jetpack.com' || hostname === 'jetpack.cloud.localhost' ) {
 			debug( 'returning Jetpack cloud redirectTo', redirectTo );
 			return redirectTo;
 		}
@@ -203,8 +193,8 @@ export default function getThankYouPageUrl( {
 	// endpoint (`/me/transactions/order/:orderId`) for the transaction data,
 	// then replaces the `:receiptId` placeholder itself and redirects to the
 	// receipt page.
-	const pendingOrReceiptId = getPendingOrReceiptId( receiptId, orderId, purchaseId );
-	debug( 'pendingOrReceiptId is', pendingOrReceiptId );
+	const receiptIdOrPlaceholder = getReceiptIdOrPlaceholder( receiptId, purchaseId );
+	debug( 'receiptIdOrPlaceholder is', receiptIdOrPlaceholder );
 
 	// jetpack userless & siteless checkout uses a special thank you page
 	if ( isJetpackCheckout ) {
@@ -222,16 +212,124 @@ export default function getThankYouPageUrl( {
 
 		return addQueryArgs(
 			{
-				receiptId: isReceiptIdOrPlaceholder( pendingOrReceiptId ) ? pendingOrReceiptId : undefined,
+				receiptId: receiptIdOrPlaceholder,
 				siteId: jetpackTemporarySiteId && parseInt( jetpackTemporarySiteId ),
 			},
 			thankYouUrl
 		);
 	}
 
+	// If there is no purchase, then send the user to a generic page (not
+	// post-purchase related). For example, this case arises when a Skip button
+	// is clicked on a concierge upsell nudge opened by a direct link to
+	// /checkout/offer-support-session.
+	if ( noPurchaseMade ) {
+		debug( 'there was no purchase, so returning calypso root' );
+		return '/';
+	}
+
+	// Manual renewals usually have a `redirectTo` but if they do not, return to
+	// the manage purchases page.
+	const firstRenewalInCart =
+		cart && hasRenewalItem( cart ) ? getRenewalItems( cart )[ 0 ] : undefined;
+	if ( siteSlug && firstRenewalInCart?.subscription_id ) {
+		const managePurchaseUrl = managePurchase( siteSlug, firstRenewalInCart.subscription_id );
+		debug(
+			'renewal item in cart',
+			firstRenewalInCart,
+			'so returning managePurchaseUrl',
+			managePurchaseUrl
+		);
+		return managePurchaseUrl;
+	}
+
+	updateUrlInCookie( {
+		adminPageRedirect,
+		adminUrl,
+		cart,
+		feature,
+		getUrlFromCookie,
+		isInModal,
+		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
+		productAliasFromUrl,
+		receiptIdOrPlaceholder,
+		redirectTo,
+		saveUrlToCookie,
+		siteSlug,
+	} );
+
+	// Fetch the thank-you page url from a cookie if it is set.
+	const urlFromCookie = getUrlFromCookie();
+	debug( 'cookie url is', urlFromCookie );
+
+	// Use the cookie post-checkout URL followed by the receipt ID if this is a
+	// signup flow that is not only for domain registrations and the cookie
+	// post-checkout URL is not the signup "intent" flow.
+	const signupFlowName = getSignupCompleteFlowName();
+	const isDomainOnly =
+		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
+	if (
+		( cart?.create_new_blog || signupFlowName === 'domain' ) &&
+		! isDomainOnly &&
+		urlFromCookie &&
+		receiptIdOrPlaceholder &&
+		! urlFromCookie.includes( '/start/setup-site' )
+	) {
+		clearSignupCompleteFlowName();
+		const newBlogReceiptUrl = `${ urlFromCookie }/${ receiptIdOrPlaceholder }`;
+		debug( 'new blog created, so returning', newBlogReceiptUrl );
+		return newBlogReceiptUrl;
+	}
+
+	const redirectUrlForPostCheckoutUpsell = receiptIdOrPlaceholder
+		? getRedirectUrlForPostCheckoutUpsell( {
+				receiptId: receiptIdOrPlaceholder,
+				cart,
+				siteSlug,
+				hideUpsell: Boolean( hideNudge ),
+				domains,
+				isDomainOnly,
+		  } )
+		: undefined;
+
+	if ( redirectUrlForPostCheckoutUpsell ) {
+		debug(
+			'redirect for post-checkout upsell exists, so returning',
+			redirectUrlForPostCheckoutUpsell
+		);
+
+		return redirectUrlForPostCheckoutUpsell;
+	}
+
+	// Display the regular receipt thank-you page with specific messaging from
+	// the display mode query param if the purchase includes the traffic-guide.
+	if ( receiptIdOrPlaceholder && cart && hasTrafficGuide( cart ) ) {
+		const thankYouPageUrlForTrafficGuide = getThankYouPageUrlForTrafficGuide( {
+			siteSlug,
+			receiptIdOrPlaceholder,
+		} );
+		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, { d: 'traffic-guide' } );
+	}
+
+	// The display mode query param (eg: `?d=concierge`) is used to show
+	// purchase-specific messaging, for e.g. the Schedule Session button when
+	// purchasing a concierge session or when purchasing the Ultimate Traffic
+	// Guide.
+	const displayModeParam = getDisplayModeParamFromCart( cart );
+
+	// Display the cookie post-checkout URL (with the display mode query param
+	// for special product-specific messaging and a notice param used by
+	// in-editor checkout) if there is one set and the cart does not contain
+	// Google Apps without a domain receipt.
+	if ( cart && ! doesCartContainGoogleAppsWithoutDomainReceipt( cart ) && urlFromCookie ) {
+		debug( 'is eligible for signup destination', urlFromCookie );
+		const noticeType = getNoticeType( cart );
+		const queryParams = { ...displayModeParam, ...noticeType };
+		return getUrlWithQueryParam( urlFromCookie, queryParams );
+	}
+
 	const fallbackUrl = getFallbackDestination( {
-		pendingOrReceiptId,
-		noPurchaseMade,
+		receiptIdOrPlaceholder,
 		siteSlug,
 		adminUrl,
 		feature,
@@ -241,123 +339,90 @@ export default function getThankYouPageUrl( {
 		adminPageRedirect,
 		redirectTo,
 	} );
-	debug( 'fallbackUrl is', fallbackUrl );
+	debug( 'returning fallback url', fallbackUrl );
+	return getUrlWithQueryParam( fallbackUrl, displayModeParam ?? {} );
+}
 
-	// If there is no purchase, then send the user to a generic page (not
-	// post-purchase related). For example, this case arises when a Skip button
-	// is clicked on a concierge upsell nudge opened by a direct link to
-	// /checkout/offer-support-session.
-	if ( noPurchaseMade ) {
-		debug( 'there was no purchase, so returning: ', fallbackUrl );
-		return fallbackUrl;
+function updateUrlInCookie( {
+	adminPageRedirect,
+	adminUrl,
+	cart,
+	feature,
+	getUrlFromCookie,
+	isInModal,
+	isJetpackNotAtomic,
+	productAliasFromUrl,
+	receiptIdOrPlaceholder,
+	redirectTo,
+	saveUrlToCookie,
+	siteSlug,
+}: {
+	adminPageRedirect?: string;
+	adminUrl?: string;
+	cart?: ResponseCart;
+	feature?: string;
+	getUrlFromCookie: GetUrlFromCookie;
+	isInModal?: boolean;
+	isJetpackNotAtomic?: boolean;
+	productAliasFromUrl?: string;
+	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined;
+	redirectTo?: string;
+	saveUrlToCookie: SaveUrlToCookie;
+	siteSlug?: string;
+} ): void {
+	// If there is an ecommerce plan in cart, then irrespective of the signup
+	// flow destination (which tends to be set in a cookie), we will want the
+	// final destination to always be "Thank You" page for the eCommerce plan.
+	// This is because the ecommerce store setup happens in this page. If the
+	// user purchases additional products via upsell nudges, the original saved
+	// receipt ID will be used to display the Thank You page for the eCommerce
+	// plan purchase.
+	if ( cart && hasEcommercePlan( cart ) ) {
+		const fallbackUrl = getFallbackDestination( {
+			adminPageRedirect,
+			adminUrl,
+			cart,
+			feature,
+			isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
+			productAliasFromUrl,
+			receiptIdOrPlaceholder,
+			redirectTo,
+			siteSlug,
+		} );
+
+		saveUrlToCookie( fallbackUrl );
 	}
 
-	saveUrlToCookieIfEcomm( saveUrlToCookie, cart, fallbackUrl );
-
-	// If the user is making a purchase/upgrading within the editor,
-	// we want to return them back to the editor after the purchase is successful.
+	// If the user is making a purchase/upgrading within the editor, we want to
+	// return them back to the editor after the purchase is successful.
 	if ( isInModal && cart && ! hasEcommercePlan( cart ) ) {
 		saveUrlToCookie( window?.location.href );
 	}
 
 	modifyCookieUrlIfAtomic( getUrlFromCookie, saveUrlToCookie, siteSlug );
-
-	// Fetch the thank-you page url from a cookie if it is set
-	const urlFromCookie = getUrlFromCookie();
-	debug( 'cookie url is', urlFromCookie );
-
-	if ( cart && hasRenewalItem( cart ) && siteSlug ) {
-		const renewalItem: ResponseCartProduct = getRenewalItems( cart )[ 0 ];
-		if ( renewalItem && renewalItem.subscription_id ) {
-			const managePurchaseUrl = managePurchase( siteSlug, renewalItem.subscription_id );
-			debug(
-				'renewal item in cart',
-				renewalItem,
-				'so returning managePurchaseUrl',
-				managePurchaseUrl
-			);
-			return managePurchaseUrl;
-		}
-	}
-
-	const signupFlowName = getSignupCompleteFlowName();
-
-	// Domain only flow
-	if ( cart?.create_new_blog || signupFlowName === 'domain' ) {
-		clearSignupCompleteFlowName();
-		const newBlogReceiptUrl = urlFromCookie
-			? `${ urlFromCookie }/${ pendingOrReceiptId }`
-			: fallbackUrl;
-		debug( 'new blog created, so returning', newBlogReceiptUrl );
-		// Skip composed url if we have to redirect to intent flow
-		if ( ! newBlogReceiptUrl.includes( '/start/setup-site' ) ) {
-			return newBlogReceiptUrl;
-		}
-	}
-
-	if ( isReceiptIdOrPlaceholder( pendingOrReceiptId ) ) {
-		const redirectUrlForPostCheckoutUpsell = getRedirectUrlForPostCheckoutUpsell( {
-			receiptId: pendingOrReceiptId,
-			orderId: orderId ? Number( orderId ) : undefined,
-			cart,
-			siteSlug,
-			hideUpsell: Boolean( hideNudge ),
-			domains,
-		} );
-
-		if ( redirectUrlForPostCheckoutUpsell ) {
-			debug(
-				'redirect for post-checkout upsell exists, so returning',
-				redirectUrlForPostCheckoutUpsell
-			);
-
-			return redirectUrlForPostCheckoutUpsell;
-		}
-	}
-
-	// Display mode is used to show purchase specific messaging, for e.g. the Schedule Session button
-	// when purchasing a concierge session or when purchasing the Ultimate Traffic Guide
-	const displayModeParam = getDisplayModeParamFromCart( cart );
-
-	const thankYouPageUrlForTrafficGuide = getThankYouPageUrlForTrafficGuide( {
-		cart,
-		siteSlug,
-		pendingOrReceiptId,
-	} );
-	if ( thankYouPageUrlForTrafficGuide ) {
-		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, displayModeParam );
-	}
-
-	if ( isEligibleForSignupDestinationResult && urlFromCookie ) {
-		debug( 'is eligible for signup destination', urlFromCookie );
-		const noticeType = getNoticeType( cart );
-		const queryParams = { ...displayModeParam, ...noticeType };
-		return getUrlWithQueryParam( urlFromCookie, queryParams );
-	}
-	debug( 'returning fallback url', fallbackUrl );
-	return getUrlWithQueryParam( fallbackUrl, displayModeParam );
 }
 
-function getPendingOrReceiptId(
+function getReceiptIdOrPlaceholder(
 	receiptId: string | number | undefined,
-	orderId: string | number | undefined,
 	purchaseId: string | number | undefined
-): PendingOrReceiptId {
-	if ( receiptId ) {
+): ReceiptIdOrPlaceholder | undefined {
+	if ( receiptId && Number.isInteger( Number( receiptId ) ) ) {
 		return Number( receiptId );
 	}
-	if ( orderId ) {
-		return `pending/${ Number( orderId ) }`;
+	if ( receiptId && ! Number.isInteger( Number( receiptId ) ) ) {
+		return undefined;
 	}
-	if ( purchaseId ) {
+	if ( purchaseId && Number.isInteger( Number( purchaseId ) ) ) {
 		return Number( purchaseId );
+	}
+	if ( purchaseId && ! Number.isInteger( Number( purchaseId ) ) ) {
+		return undefined;
 	}
 	return ':receiptId';
 }
 
 function getFallbackDestination( {
-	pendingOrReceiptId,
-	noPurchaseMade,
+	receiptIdOrPlaceholder,
 	siteSlug,
 	adminUrl,
 	feature,
@@ -367,8 +432,7 @@ function getFallbackDestination( {
 	adminPageRedirect,
 	redirectTo,
 }: {
-	pendingOrReceiptId: PendingOrReceiptId;
-	noPurchaseMade?: boolean;
+	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder | undefined;
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
 	feature: string | undefined;
@@ -378,95 +442,77 @@ function getFallbackDestination( {
 	adminPageRedirect?: string;
 	redirectTo?: string;
 } ): string {
-	const isCartEmpty = cart ? getAllCartItems( cart ).length === 0 : true;
-	const isReceiptEmpty = ':receiptId' === pendingOrReceiptId;
-
-	if ( noPurchaseMade ) {
+	if ( ! siteSlug ) {
 		debug( 'fallback is just root' );
 		return '/';
 	}
 
-	// We will show the Thank You page if there's a site slug and either one of the following is true:
-	// - has a receipt number (or a pending order)
-	// - does not have a receipt number but has an item in cart(as in the case of paying with a redirect payment type)
-	if ( siteSlug && ( ! isReceiptEmpty || ! isCartEmpty ) ) {
-		// If we just purchased a Jetpack product or a Jetpack plan (either Jetpack Security or Jetpack Complete),
-		// redirect to the my plans page. The product being purchased can come from the `product` prop or from the
-		// cart so we need to check both places.
-		const productsWithCustomThankYou = [ ...JETPACK_PRODUCTS_LIST, ...JETPACK_RESET_PLANS ];
+	// If we just purchased a Jetpack product or a Jetpack plan (either Jetpack Security or Jetpack Complete),
+	// redirect to the my plans page. The product being purchased can come from the `product` prop or from the
+	// cart so we need to check both places.
+	const productsWithCustomThankYou = [ ...JETPACK_PRODUCTS_LIST, ...JETPACK_RESET_PLANS ];
 
-		// Check the cart (since our Thank You modal doesn't support multiple products, we only take the first
-		// one found).
-		const productFromCart = cart?.products?.find( ( { product_slug } ) =>
-			( productsWithCustomThankYou as ReadonlyArray< string > ).includes( product_slug )
-		)?.product_slug;
+	// Check the cart (since our Thank You modal doesn't support multiple products, we only take the first
+	// one found).
+	const productFromCart = cart?.products?.find( ( { product_slug } ) =>
+		( productsWithCustomThankYou as ReadonlyArray< string > ).includes( product_slug )
+	)?.product_slug;
 
-		const purchasedProduct =
-			productFromCart ||
-			productsWithCustomThankYou.find(
-				( productWithCustom ) => productWithCustom === productAliasFromUrl
-			);
-		if ( isJetpackNotAtomic && purchasedProduct ) {
-			debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
+	const purchasedProduct =
+		productFromCart ||
+		productsWithCustomThankYou.find(
+			( productWithCustom ) => productWithCustom === productAliasFromUrl
+		);
+	if ( isJetpackNotAtomic && purchasedProduct ) {
+		debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
-			const adminPath =
-				redirectTo || adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
+		const adminPath = redirectTo || adminPageRedirect || 'admin.php?page=jetpack#/recommendations';
 
-			// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
-			// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
-			if ( isJetpackCloud() ) {
-				if ( redirectCheckoutToWpAdmin() && adminUrl ) {
-					debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
-					return adminUrl + adminPath;
-				}
-				debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
-				return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
-					`product=${ purchasedProduct }&thank-you=true`
-				) }`;
+		// Jetpack Cloud will either redirect to wp-admin (if JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN
+		// flag is set), or otherwise will redirect to a Jetpack Redirect API url (source=jetpack-checkout-thankyou)
+		if ( isJetpackCloud() ) {
+			if ( redirectCheckoutToWpAdmin() && adminUrl ) {
+				debug( 'checkout is Jetpack Cloud, returning wp-admin url' );
+				return adminUrl + adminPath;
 			}
-			// Otherwise if not Jetpack Cloud:
-			return redirectCheckoutToWpAdmin() && adminUrl
-				? adminUrl + adminPath
-				: `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
+			debug( 'checkout is Jetpack Cloud, returning Jetpack Redirect API url' );
+			return `${ JETPACK_REDIRECT_URL }&site=${ siteSlug }&query=${ encodeURIComponent(
+				`product=${ purchasedProduct }&thank-you=true`
+			) }`;
 		}
-
-		// If we just purchased a legacy Jetpack plan, redirect to the Jetpack onboarding plugin install flow.
-		if ( isJetpackNotAtomic ) {
-			debug( 'the site is jetpack and has no jetpack product' );
-			return `/plans/my-plan/${ siteSlug }?thank-you=true&install=all`;
-		}
-
-		const getSimpleThankYouUrl = (): string => {
-			debug( 'attempt to add extra information as url query string' );
-			const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
-
-			if ( titanProducts && titanProducts.length > 0 ) {
-				const emails = titanProducts[ 0 ].extra?.email_users;
-
-				if ( emails && emails.length > 0 ) {
-					return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }?email=${ emails[ 0 ].email }`;
-				}
-			}
-			return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
-		};
-
-		if ( feature && isValidFeatureKey( feature ) ) {
-			debug( 'site with receipt or cart; feature is', feature );
-			if ( isReceiptIdOrPlaceholder( pendingOrReceiptId ) ) {
-				return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ pendingOrReceiptId }`;
-			}
-			return `/checkout/thank-you/features/${ feature }/${ siteSlug }`;
-		}
-		return getSimpleThankYouUrl();
+		// Otherwise if not Jetpack Cloud:
+		return redirectCheckoutToWpAdmin() && adminUrl
+			? adminUrl + adminPath
+			: `/plans/my-plan/${ siteSlug }?thank-you=true&product=${ purchasedProduct }`;
 	}
 
-	if ( siteSlug ) {
-		debug( 'just site slug', siteSlug );
+	// If we just purchased a legacy Jetpack plan, redirect to the Jetpack onboarding plugin install flow.
+	if ( isJetpackNotAtomic ) {
+		debug( 'the site is jetpack and has no jetpack product' );
+		return `/plans/my-plan/${ siteSlug }?thank-you=true&install=all`;
+	}
+
+	if ( ! receiptIdOrPlaceholder ) {
+		debug( 'product without receipt or placeholder' );
 		return `/checkout/thank-you/${ siteSlug }`;
 	}
 
-	debug( 'fallback is just root' );
-	return '/';
+	if ( feature && isValidFeatureKey( feature ) ) {
+		debug( 'site with receipt or cart; feature is', feature );
+		return `/checkout/thank-you/features/${ feature }/${ siteSlug }/${ receiptIdOrPlaceholder }`;
+	}
+
+	const titanProducts = cart?.products?.filter( ( product ) => isTitanMail( product ) );
+	if ( titanProducts && titanProducts.length > 0 ) {
+		const emails = titanProducts[ 0 ].extra?.email_users;
+		if ( emails && emails.length > 0 ) {
+			debug( 'site with titan products' );
+			return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }?email=${ emails[ 0 ].email }`;
+		}
+	}
+
+	debug( 'simple thank-you page' );
+	return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 }
 
 /**
@@ -496,17 +542,11 @@ function getPlanUpgradeUpsellUrl( {
 	receiptId,
 	cart,
 	siteSlug,
-	orderId,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
-	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 } ): string | undefined {
-	if ( orderId ) {
-		return;
-	}
-
 	if ( cart && hasPremiumPlan( cart ) ) {
 		const upgradeItem = getNextHigherPlanSlug( cart );
 
@@ -520,18 +560,18 @@ function getPlanUpgradeUpsellUrl( {
 
 function getRedirectUrlForPostCheckoutUpsell( {
 	receiptId,
-	orderId,
 	cart,
 	siteSlug,
 	hideUpsell,
 	domains,
+	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
-	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideUpsell: boolean;
 	domains: ResponseDomain[] | undefined;
+	isDomainOnly?: boolean;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -539,9 +579,9 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	const professionalEmailUpsellUrl = getProfessionalEmailUpsellUrl( {
 		receiptId,
 		cart,
-		orderId,
 		siteSlug,
 		domains,
+		isDomainOnly,
 	} );
 
 	if ( professionalEmailUpsellUrl ) {
@@ -562,7 +602,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 		const planUpgradeUpsellUrl = getPlanUpgradeUpsellUrl( {
 			receiptId,
 			cart,
-			orderId,
 			siteSlug,
 		} );
 
@@ -576,16 +615,16 @@ function getProfessionalEmailUpsellUrl( {
 	receiptId,
 	cart,
 	siteSlug,
-	orderId,
 	domains,
+	isDomainOnly,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	orderId: number | undefined;
 	domains: ResponseDomain[] | undefined;
+	isDomainOnly?: boolean;
 } ): string | undefined {
-	if ( orderId || ! cart ) {
+	if ( ! cart ) {
 		return;
 	}
 
@@ -598,11 +637,13 @@ function getProfessionalEmailUpsellUrl( {
 	}
 
 	if (
+		! isDomainOnly &&
 		! hasBloggerPlan( cart ) &&
 		! hasPersonalPlan( cart ) &&
 		! hasBusinessPlan( cart ) &&
 		! hasEcommercePlan( cart ) &&
-		! hasProPlan( cart )
+		! hasProPlan( cart ) &&
+		! hasStarterPlan( cart )
 	) {
 		return;
 	}
@@ -629,22 +670,25 @@ function getProfessionalEmailUpsellUrl( {
 	return `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteSlug }`;
 }
 
-function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {
+function getDisplayModeParamFromCart(
+	cart: ResponseCart | undefined
+): undefined | { d: 'concierge' | 'traffic-guide' } {
 	if ( cart && hasConciergeSession( cart ) ) {
 		return { d: 'concierge' };
 	}
 	if ( cart && hasTrafficGuide( cart ) ) {
 		return { d: 'traffic-guide' };
 	}
-	return {};
+	return undefined;
 }
 
-function getNoticeType( cart: ResponseCart | undefined ): Record< string, string > {
+function getNoticeType(
+	cart: ResponseCart | undefined
+): undefined | { notice: 'purchase-success' } {
 	if ( cart ) {
 		return { notice: 'purchase-success' };
 	}
-
-	return {};
+	return undefined;
 }
 
 function getUrlWithQueryParam( url = '/', queryParams: Record< string, string > = {} ): string {
@@ -668,26 +712,6 @@ function getUrlWithQueryParam( url = '/', queryParams: Record< string, string > 
 	};
 
 	return formatUrl( getUrlFromParts( urlParts ), urlType );
-}
-
-/**
- * If there is an ecommerce plan in cart, then irrespective of the signup flow destination, the final destination
- * will always be "Thank You" page for the eCommerce plan. This is because the ecommerce store setup happens in this page.
- * If the user purchases additional products via upsell nudges, the original saved receipt ID will be used to
- * display the Thank You page for the eCommerce plan purchase.
- *
- * @param {Function} saveUrlToCookie The function that performs the saving
- * @param {object} cart The cart object
- * @param {string} destinationUrl The url to save
- */
-function saveUrlToCookieIfEcomm(
-	saveUrlToCookie: SaveUrlToCookie,
-	cart: ResponseCart | undefined,
-	destinationUrl: string
-): void {
-	if ( cart && hasEcommercePlan( cart ) ) {
-		saveUrlToCookie( destinationUrl );
-	}
 }
 
 function modifyUrlIfAtomic( siteSlug: string | undefined, url: string ): string {
@@ -715,18 +739,13 @@ function modifyCookieUrlIfAtomic(
 }
 
 function getThankYouPageUrlForTrafficGuide( {
-	cart,
 	siteSlug,
-	pendingOrReceiptId,
+	receiptIdOrPlaceholder,
 }: {
-	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	pendingOrReceiptId: PendingOrReceiptId;
+	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder;
 } ) {
-	if ( ! cart ) return;
-	if ( hasTrafficGuide( cart ) ) {
-		return `/checkout/thank-you/${ siteSlug }/${ pendingOrReceiptId }`;
-	}
+	return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 }
 
 function getRedirectUrlFromCart( cart: ResponseCart ): string | null {
@@ -767,4 +786,16 @@ function isRedirectSameSite( redirectTo: string, siteSlug?: string ) {
 	}
 	// For standard non-subdirectory site, check that hostname matches the siteSlug.
 	return hostname === siteSlug;
+}
+
+function doesCartContainGoogleAppsWithoutDomainReceipt( cart: ResponseCart ): boolean {
+	if ( ! hasGoogleApps( cart ) ) {
+		return false;
+	}
+	const googleAppsProducts = getGoogleApps( cart );
+	const domainReceiptId = googleAppsProducts[ 0 ].extra.receipt_for_domain;
+	if ( ! domainReceiptId ) {
+		return true;
+	}
+	return false;
 }

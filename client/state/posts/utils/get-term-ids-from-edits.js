@@ -1,4 +1,4 @@
-import { isEmpty, isPlainObject, map, mapValues, reduce } from 'lodash';
+import { isEmpty, map, mapValues, reduce } from 'lodash';
 
 /**
  * Takes existing term post edits and updates the `terms_by_id` attribute
@@ -18,7 +18,11 @@ export function getTermIdsFromEdits( post ) {
 		( prev, taxonomyTerms, taxonomyName ) => {
 			// Ensures we are working with an array
 			const termsArray = Object.values( taxonomyTerms );
-			if ( termsArray && termsArray.length && ! isPlainObject( termsArray[ 0 ] ) ) {
+			if (
+				termsArray &&
+				termsArray.length &&
+				! ( typeof termsArray[ 0 ] === 'object' && termsArray[ 0 ] !== null )
+			) {
 				return prev;
 			}
 

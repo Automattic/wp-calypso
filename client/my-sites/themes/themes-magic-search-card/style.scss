@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 /*
  * Search card and text input
  */
@@ -28,7 +31,11 @@
 		flex: 0 1 auto;
 		height: 36px;
 		border: solid 1px var( --color-neutral-10 );
-		margin: 10px;
+		margin: 2rem 10px 10px;
+
+		@include break-mobile() {
+			margin: 10px;
+		}
 
 		&.has-focus,
 		&.has-focus:hover {

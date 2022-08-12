@@ -7,6 +7,7 @@ import ConciergeRefundPolicy from './concierge-refund-policy';
 import DomainRefundPolicy from './domain-refund-policy';
 import DomainRegistrationAgreement from './domain-registration-agreement';
 import DomainRegistrationHsts from './domain-registration-hsts';
+import { EbanxTermsOfService } from './ebanx-terms-of-service';
 import TermsOfService from './terms-of-service';
 import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
 import TitanTermsOfService from './titan-terms-of-service';
@@ -34,6 +35,7 @@ class CheckoutTerms extends Component {
 				<BundledDomainNotice cart={ cart } />
 				<TitanTermsOfService cart={ cart } />
 				<ThirdPartyPluginsTermsOfService cart={ cart } />
+				<EbanxTermsOfService />
 				<AdditionalTermsOfServiceInCart />
 			</Fragment>
 		);

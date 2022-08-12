@@ -92,6 +92,11 @@ export function getFlowPageTitle( flowName, isUserLoggedIn ) {
 	return flow.pageTitle || translate( 'Create a site' );
 }
 
+export function getFlowHideBack( flowName, isUserLoggedIn ) {
+	const flow = flows.getFlow( flowName, isUserLoggedIn );
+	return flow.hideBackButton || false;
+}
+
 export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 	const siteStepProgress = find( signupProgress, ( step ) => step.stepName === stepName );
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;

@@ -24,6 +24,7 @@ import {
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import type { EmailAccount } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { AppState } from 'calypso/types';
 
 export function getNumberOfMailboxesText( domain: ResponseDomain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -69,7 +70,7 @@ export function getNumberOfMailboxesText( domain: ResponseDomain ) {
  * @param domain - domain object
  * @returns the corresponding email purchase, or null if not found
  */
-export function getEmailPurchaseByDomain( state: any, domain: ResponseDomain ) {
+export function getEmailPurchaseByDomain( state: AppState, domain: ResponseDomain ) {
 	const subscriptionId = getEmailSubscriptionIdByDomain( domain );
 
 	return subscriptionId ? getByPurchaseId( state, subscriptionId ) : null;
@@ -219,12 +220,20 @@ export function recordInboxNewMailboxUpsellClickEvent() {
 }
 
 /**
- * Tracks an event for the key 'calypso_inbox_upsell'.
+ * Tracks an event for the key 'calypso_{source}_upsell', where {source} defaults to "email".
  *
+ * Events tracked:
+ * `calypso_inbox_upsell`, when upsell triggered by a CTA click from the Inbox.
+ * `calypso_email_upsell`, when upsell triggered by a CTA click from Upgrades > Emails.
+ *
+ * @param source - source generating the event.
  * @param context context, where this event was logged.
  */
-export function recordInboxUpsellTracksEvent( context: string | null = null ) {
-	recordTracksEvent( 'calypso_inbox_upsell', {
+export function recordEmailUpsellTracksEvent(
+	source: string | null = 'email',
+	context: string | null = null
+) {
+	recordTracksEvent( `calypso_${ source }_upsell`, {
 		context,
 	} );
 }

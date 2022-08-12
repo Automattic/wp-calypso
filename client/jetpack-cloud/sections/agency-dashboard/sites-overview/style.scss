@@ -114,14 +114,14 @@
 	vertical-align: middle;
 	color: var( --studio-gray-100 );
 	@include break-zoomed-in {
-		width: calc( 100% - 90px );
+		width: calc( 100% - 120px );
 		margin-inline-start: 8px;
 		margin-inline-end: 5px;
 		font-size: 1rem;
 	}
 	@include break-large() {
 		width: calc( 100% - 55px );
-		margin-inline-start: 32px;
+		margin-inline-start: 55px;
 		font-size: 0.875rem;
 	}
 }
@@ -135,10 +135,10 @@
 		rgba( 255, 255, 255, 0.8 ) 30%,
 		rgba( 255, 255, 255, 1 ) 100%
 	);
-	top: 0;
-	right: 48px;
+	inset-block-start: 0;
+	inset-inline-end: 75px;
 	@include break-large() {
-		right: 0;
+		inset-inline-end: 0;
 	}
 }
 .sites-overview__vertical-align-middle {
@@ -189,7 +189,7 @@
 	color: #bbbbbb !important;
 	padding: 6px;
 	position: absolute;
-	right: 16px;
+	inset-inline-end: 16px;
 }
 .sites-overview__badge {
 	font-size: 0.75rem !important;
@@ -208,7 +208,7 @@
 	.popover__arrow {
 		&::before {
 			border-bottom-color: var( --studio-gray-60 ) !important;
-			top: 1px !important;
+			inset-block-start: 1px !important;
 		}
 	}
 	.popover__inner {
@@ -221,8 +221,8 @@
 .sites-overview__status-critical {
 	color: var( --studio-red-50 );
 	position: absolute;
-	right: 42px;
-	top: 50%;
+	inset-inline-end: 42px;
+	inset-block-start: 50%;
 	transform: translateY( -50% );
 	display: inline-flex;
 	@include break-large() {
@@ -231,8 +231,8 @@
 }
 .sites-overview__status-count {
 	position: absolute;
-	right: 42px;
-	top: 50%;
+	inset-inline-end: 42px;
+	inset-block-start: 50%;
 	transform: translateY( -50% );
 	border-radius: 50%; /* stylelint-disable-line */
 	border-width: 2px;
@@ -253,30 +253,6 @@
 }
 .sites-overview__status-warning {
 	border-color: var( --studio-yellow-20 );
-}
-.sites-overview__section-nav.section-nav {
-	.is-selected.section-nav-tab .section-nav-tab__link .count {
-		color: var( --color-primary );
-	}
-	.section-nav__mobile-header {
-		.count {
-			margin-inline-start: 8px;
-		}
-		.gridicon {
-			margin-inline-start: auto;
-		}
-	}
-	.count {
-		background: var( --color-primary-5 );
-		border-radius: 3px; // stylelint-disable-line scales/radii
-		border: none;
-		font-weight: normal;
-	}
-	margin-bottom: 0;
-	@include break-large() {
-		background: unset;
-		box-shadow: none;
-	}
 }
 @keyframes highlight-tab-animation {
 	0% {
@@ -302,7 +278,7 @@
 		fill: unset;
 	}
 }
-.site-overview__highlight-tab.section-nav {
+.sites-overview__highlight-tab.section-nav {
 	animation: highlight-tab-animation 0.4s linear;
 	.section-nav__mobile-header-text {
 		animation: highlight-tab-animation-count 0.4s linear;
@@ -310,4 +286,9 @@
 	.section-nav__mobile-header .gridicon {
 		animation: highlight-tab-animation-icon 0.4s linear;
 	}
+}
+.sites-overview__no-sites {
+	text-align: center;
+	font-size: 1.5rem;
+	margin-top: 16px;
 }

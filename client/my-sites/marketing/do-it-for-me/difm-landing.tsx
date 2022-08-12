@@ -12,15 +12,16 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductCost, isProductsListFetching } from 'calypso/state/products-list/selectors';
+import { incrementCounter } from 'calypso/state/persistent-counter/actions';
+import { requestProductsList } from 'calypso/state/products-list/actions';
+import { getProductCost } from 'calypso/state/products-list/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
 const Placeholder = styled.span`
@@ -237,11 +238,14 @@ export default function DIFMLanding( {
 	isInOnboarding: boolean;
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const productCost = useSelector( ( state ) => getProductCost( state, WPCOM_DIFM_LITE ) );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const hasPriceDataLoaded = productCost && currencyCode;
-	const isLoading = useSelector( isProductsListFetching );
+
+	const [ isLoading, setIsLoading ] = useState( true );
+
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
 		: '';
@@ -260,6 +264,14 @@ export default function DIFMLanding( {
 			} );
 		}
 	}, [ isFAQSectionOpen ] );
+
+	useEffect( () => {
+		( async () => {
+			await dispatch( incrementCounter( 'VIEWED_DIFM_LANDING' ) );
+			await dispatch( requestProductsList( { type: 'all' } ) );
+			setIsLoading( false );
+		} )();
+	}, [ dispatch ] );
 
 	const planTitle = isEnabled( 'plans/pro-plan' )
 		? getPlan( PLAN_WPCOM_PRO )?.getTitle()
@@ -280,7 +292,6 @@ export default function DIFMLanding( {
 
 	return (
 		<>
-			{ ! hasPriceDataLoaded && <QueryProductsList /> }
 			<Wrapper>
 				<ContentSection>
 					<Header

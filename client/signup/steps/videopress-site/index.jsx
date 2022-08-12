@@ -49,9 +49,6 @@ const SITE_TAKEN_ERROR_CODES = [
 
 const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'video', 'tube' ];
 
-const EMAIL_TRUCE_CAMPAIGN_REF = 'videopress-email-truce';
-const EMAIL_TRUCE_CAMPAIGN_ID = 'videopress-email-truce';
-
 /**
  * Module variables
  */
@@ -308,6 +305,7 @@ class VideoPressSite extends Component {
 		this.formStateController.handleSubmit( ( hasErrors ) => {
 			const site = formState.getFieldValue( this.state.form, 'site' );
 			const siteTitle = formState.getFieldValue( this.state.form, 'siteTitle' );
+			const siteDescription = formState.getFieldValue( this.state.form, 'siteDescription' );
 
 			this.setState( { submitting: false } );
 
@@ -327,18 +325,8 @@ class VideoPressSite extends Component {
 				form: this.state.form,
 				site,
 				siteTitle,
+				siteDescription,
 			};
-
-			const refParameter =
-				this.props.refParameter ||
-				getValueFromProgressStore( {
-					signupProgress: this.props.progress,
-					stepName: 'p2-confirm-email',
-					fieldName: 'storedRefParameter',
-				} );
-			if ( refParameter === EMAIL_TRUCE_CAMPAIGN_REF ) {
-				stepData.campaign = EMAIL_TRUCE_CAMPAIGN_ID;
-			}
 
 			this.props.submitSignupStep( stepData, { themeSlugWithRepo: 'premium/videomaker' } );
 
@@ -569,7 +557,6 @@ class VideoPressSite extends Component {
 					</FormLabel>
 					<FormTextarea
 						id="site-description"
-						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
 						autoCapitalize={ 'off' }
 						className="videopress-site__site-description"
 						disabled={ submitting }
@@ -637,6 +624,11 @@ class VideoPressSite extends Component {
 							<FormButton disabled={ submitDisabled } className="videopress-site__form-submit-btn">
 								{ this.buttonText() }
 							</FormButton>
+						</div>
+						<div className="videopress-site__payment-detail">
+							{ this.props.translate(
+								'The Premium Plan is required to upload your videos and use the Videomaker theme. We offer a 100% refund within 14 days of purchase, no questions asked.'
+							) }
 						</div>
 					</form>
 

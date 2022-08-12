@@ -36,4 +36,7 @@
             font-weight: 500; /* stylelint-disable-line */
         }
     }
+	.is-loading {
+		@include placeholder( --color-neutral-10 );
+	}
 }

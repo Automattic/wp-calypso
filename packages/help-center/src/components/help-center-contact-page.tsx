@@ -46,7 +46,7 @@ export const HelpCenterContactPage: React.FC = () => {
 		<div className="help-center-contact-page">
 			<BackButton />
 			<div className="help-center-contact-page__content">
-				<h3>{ __( 'Contact our WordPress.com experts' ) }</h3>
+				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
 				<div
 					className={ classnames( 'help-center-contact-page__boxes', {
 						'is-reversed': ! renderChat.render || renderChat.state !== 'AVAILABLE',
@@ -68,11 +68,11 @@ export const HelpCenterContactPage: React.FC = () => {
 									<Icon icon={ comment } />
 								</div>
 								<div>
-									<h2>{ __( 'Live chat' ) }</h2>
+									<h2>{ __( 'Live chat', __i18n_text_domain__ ) }</h2>
 									<p>
 										{ renderChat.state !== 'AVAILABLE'
-											? __( 'Chat is unavailable right now' )
-											: __( 'Get an immediate reply' ) }
+											? __( 'Chat is unavailable right now', __i18n_text_domain__ )
+											: __( 'Get an immediate reply', __i18n_text_domain__ ) }
 									</p>
 								</div>
 							</div>
@@ -89,8 +89,8 @@ export const HelpCenterContactPage: React.FC = () => {
 									<Icon icon={ <Mail /> } />
 								</div>
 								<div>
-									<h2>{ __( 'Email' ) }</h2>
-									<p>{ __( 'An expert will get back to you soon' ) }</p>
+									<h2>{ __( 'Email', __i18n_text_domain__ ) }</h2>
+									<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
 								</div>
 							</div>
 						</Link>
@@ -123,7 +123,7 @@ export const HelpCenterContactButton: React.FC = () => {
 			className="button help-center-contact-page__button"
 		>
 			<Icon icon={ comment } />
-			<span>{ __( 'Still need help?' ) }</span>
+			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
 		</Link>
 	);
 };

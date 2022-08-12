@@ -480,7 +480,16 @@ const navigateToSite =
 				const path = allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
 
 				// There is currently no "all sites" version of the insights page
-				return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
+				if ( path.match( /^\/stats\/insights\/?/ ) ) {
+					return '/stats/day';
+				}
+
+				// Jetpack Cloud: default to /backups/ when in the details of a particular backup
+				if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+					return '/backup';
+				}
+
+				return path;
 			} else if ( siteBasePath ) {
 				const base = getSiteBasePath();
 

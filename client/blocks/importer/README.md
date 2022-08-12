@@ -11,6 +11,7 @@
 There is also a list of additional components and hooks, such as:
 
 Components:
+
 - `complete-screen`
 - `done-button`
 - `error-message`
@@ -18,5 +19,6 @@ Components:
 - etc.
 
 Hooks:
+
 - `use-checkout-url`
 - `use-signup-step-navigator`

@@ -23,7 +23,6 @@ class SiteTitleStep extends Component {
 		stepName: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		siteTitle: PropTypes.string,
-		siteVerticalName: PropTypes.string,
 		shouldFetchVerticalData: PropTypes.bool,
 		siteType: PropTypes.string,
 	};
