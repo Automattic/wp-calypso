@@ -12,6 +12,10 @@ import './style.scss';
 
 interface Props {
 	navigation: NavigationControls;
+	isJetpackPowered?: boolean | false;
+	shouldHideNavButtons?: boolean | true;
+	hideFormattedHeader?: boolean | true;
+	isHorizontalLayout?: boolean | true;
 }
 
 export enum ProcessingResult {
@@ -20,7 +24,13 @@ export enum ProcessingResult {
 	FAILURE = 'failure',
 }
 
-const ProcessingStepContainer = ( { navigation }: Props ) => {
+const ProcessingStepContainer = ( {
+	navigation,
+	isJetpackPowered,
+	shouldHideNavButtons,
+	hideFormattedHeader,
+	isHorizontalLayout,
+}: Props ) => {
 	const { submit } = navigation;
 
 	const { __ } = useI18n();
@@ -82,10 +92,10 @@ const ProcessingStepContainer = ( { navigation }: Props ) => {
 
 	return (
 		<StepContainer
-			shouldHideNavButtons={ true }
-			hideFormattedHeader={ true }
+			shouldHideNavButtons={ shouldHideNavButtons }
+			hideFormattedHeader={ hideFormattedHeader }
 			stepName={ 'processing-step' }
-			isHorizontalLayout={ true }
+			isHorizontalLayout={ isHorizontalLayout }
 			stepContent={
 				<div className={ 'processing-step' }>
 					<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
@@ -107,6 +117,7 @@ const ProcessingStepContainer = ( { navigation }: Props ) => {
 			}
 			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered={ isJetpackPowered }
 		/>
 	);
 };

@@ -8,7 +8,11 @@ const LinkInBioProcessingStep: Step = function ( props ): ReactElement | null {
 		<div>
 			<div className="image-right" />
 			<div className="image-left" />
-			<ProcessingStepContainer navigation={ props.navigation } />
+			<ProcessingStepContainer
+				navigation={ props.navigation }
+				isHorizontalLayout={ false }
+				isJetpackPowered={ true }
+			/>
 		</div>
 	);
 };
