@@ -1,7 +1,7 @@
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { UseMutationResult, useQuery, UseQueryOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -19,10 +19,7 @@ import useIssueLicenseMutation, {
 	MutationIssueLicenseVariables,
 } from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import {
-	doesPartnerRequireAPaymentMethod,
-	hasValidPaymentMethod,
-} from 'calypso/state/partner-portal/partner/selectors';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { APIError, APILicense } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
 
@@ -140,13 +137,11 @@ export function useLicenseIssuing(
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const sites = useSelector( getSites ).length;
-	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const products = useProductsQuery( {
 		select: alphabeticallySortedProductOptions,
 	} );
 
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
-	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
 
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 
@@ -167,7 +162,7 @@ export function useLicenseIssuing(
 	};
 
 	const requirePaymentMethod = useCallback( () => {
-		if ( paymentMethodRequired && ! hasPaymentMethod ) {
+		if ( paymentMethodRequired ) {
 			const nextStep = addQueryArgs(
 				{
 					product,
@@ -176,12 +171,10 @@ export function useLicenseIssuing(
 			);
 			page( nextStep );
 		}
-	}, [ product, hasPaymentMethod, paymentMethodRequired ] );
+	}, [ product, paymentMethodRequired ] );
 
 	const assignLicense = useAssignLicenseMutation( {
 		onSuccess: ( license: any ) => {
-			setIsSubmitting( false );
-
 			if ( fromDashboard ) {
 				handleRedirectToDashboard( license.license_key );
 				return;
@@ -192,7 +185,6 @@ export function useLicenseIssuing(
 			);
 		},
 		onError: ( error: Error ) => {
-			setIsSubmitting( false );
 			dispatch( errorNotice( error.message ) );
 		},
 	} );
@@ -203,7 +195,6 @@ export function useLicenseIssuing(
 			const selectedSiteId = selectedSite?.ID;
 
 			if ( selectedSiteId ) {
-				setIsSubmitting( true );
 				assignLicense.mutate( { licenseKey, selectedSite: selectedSiteId } );
 				return;
 			}
@@ -227,18 +218,6 @@ export function useLicenseIssuing(
 
 			switch ( error.code ) {
 				case 'missing_valid_payment_method':
-					if ( paymentMethodRequired ) {
-						page.redirect(
-							addQueryArgs(
-								{
-									return: addQueryArgs( { product }, partnerPortalBasePath( '/issue-license' ) ),
-								},
-								partnerPortalBasePath( '/payment-methods/add' )
-							)
-						);
-						return;
-					}
-
 					errorMessage = translate(
 						'A primary payment method is required.{{br/}} ' +
 							'{{a}}Try adding a new payment method{{/a}} or contact support.',
@@ -276,6 +255,11 @@ export function useLicenseIssuing(
 			return false;
 		},
 	} );
+
+	const isSubmitting = useMemo(
+		() => assignLicense.isLoading || issueLicense.isLoading,
+		[ issueLicense, assignLicense ]
+	);
 
 	return [ issueLicense, isSubmitting, requirePaymentMethod ];
 }
