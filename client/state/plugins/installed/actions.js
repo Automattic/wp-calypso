@@ -543,7 +543,7 @@ export function fetchAllPlugins() {
 		const receivePluginsDispatchSuccess = ( { sites } ) => {
 			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
-			Object.entries( sites ).forEach( ( [ siteId, plugins = [] ] ) => {
+			Object.entries( sites ).forEach( ( [ siteId, plugins ] ) => {
 				dispatch( receiveSitePlugins( siteId, plugins ) );
 
 				plugins.forEach( ( plugin ) => {
