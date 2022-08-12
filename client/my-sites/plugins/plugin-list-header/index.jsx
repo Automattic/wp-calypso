@@ -111,7 +111,7 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	needsRemoveButton() {
-		return this.props.selected.length && this.canUpdatePlugins() && ! this.isJetpackSelected();
+		return this.props.selected.length && this.canUpdatePlugins();
 	}
 
 	renderCurrentActionButtons() {
@@ -228,18 +228,21 @@ export class PluginsListHeader extends PureComponent {
 					{ autoupdateButtons }
 				</ButtonGroup>
 			);
-			leftSideButtons.push(
-				<ButtonGroup key="plugin-list-header__buttons-remove-button">
-					<Button
-						compact
-						scary
-						disabled={ ! needsRemoveButton }
-						onClick={ this.props.removePluginNotice }
-					>
-						{ translate( 'Remove' ) }
-					</Button>
-				</ButtonGroup>
-			);
+
+			if ( ! ( isJetpackSelected && this.props.selected.length === 1 ) ) {
+				leftSideButtons.push(
+					<ButtonGroup key="plugin-list-header__buttons-remove-button">
+						<Button
+							compact
+							scary
+							disabled={ ! needsRemoveButton }
+							onClick={ this.props.removePluginNotice }
+						>
+							{ translate( 'Remove' ) }
+						</Button>
+					</ButtonGroup>
+				);
+			}
 
 			rightSideButtons.push(
 				<button
@@ -341,14 +344,15 @@ export class PluginsListHeader extends PureComponent {
 				</SelectDropdown.Item>
 
 				<SelectDropdown.Separator />
-
-				<SelectDropdown.Item
-					className="plugin-list-header__actions-remove-item"
-					disabled={ ! needsRemoveButton }
-					onClick={ this.props.removePluginNotice }
-				>
-					{ translate( 'Remove' ) }
-				</SelectDropdown.Item>
+				{ isJetpackOnlySelected && (
+					<SelectDropdown.Item
+						className="plugin-list-header__actions-remove-item"
+						disabled={ ! needsRemoveButton }
+						onClick={ this.props.removePluginNotice }
+					>
+						{ translate( 'Remove' ) }
+					</SelectDropdown.Item>
+				) }
 			</SelectDropdown>
 		);
 	}

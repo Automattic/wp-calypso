@@ -108,10 +108,12 @@ export class PluginsList extends Component {
 
 	componentDidUpdate() {
 		this.maybeShowDisconnectNotice();
+		this.maybeShowRemoveNotice();
 	}
 
 	state = {
 		disconnectJetpackNotice: false,
+		removeJetpackNotice: false,
 		bulkManagementActive: false,
 		selectedPlugins: {},
 	};
@@ -225,14 +227,17 @@ export class PluginsList extends Component {
 	}
 
 	doActionOverSelected( actionName, action ) {
-		const isDeactivatingAndJetpackSelected = ( { slug } ) =>
-			( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
+		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug } ) =>
+			( 'deactivating' === actionName ||
+				'activating' === actionName ||
+				'removing' === actionName ) &&
+			'jetpack' === slug;
 
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginStatuses();
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
-			.filter( ( plugin ) => ! isDeactivatingAndJetpackSelected( plugin ) ) // ignore sites that are deactiving or activating jetpack
+			.filter( ( plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
 					const site = this.props.allSites.find( ( s ) => s.ID === parseInt( siteId ) );
@@ -425,8 +430,17 @@ export class PluginsList extends Component {
 
 	removeSelected = ( accepted ) => {
 		if ( accepted ) {
-			this.doActionOverSelected( 'removing', this.props.removePlugin );
-			this.recordEvent( 'Clicked Remove Plugin(s)', true );
+			let waitForRemove = false;
+
+			this.doActionOverSelected( 'removing', ( site, plugin ) => {
+				waitForRemove = true;
+				this.props.removePlugin( site, plugin );
+			} );
+
+			if ( waitForRemove && this.props.selectedSite ) {
+				this.setState( { removeJetpackNotice: true } );
+				this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
+			}
 		}
 	};
 
@@ -448,6 +462,18 @@ export class PluginsList extends Component {
 					}
 				)
 			);
+		}
+	}
+
+	maybeShowRemoveNotice() {
+		const { translate } = this.props;
+
+		if ( this.state.removeJetpackNotice && ! this.props.inProgressStatuses.length ) {
+			this.setState( {
+				removeJetpackNotice: false,
+			} );
+
+			this.props.warningNotice( translate( 'Jetpack cannot be removed from WordPress.com.' ) );
 		}
 	}
 
