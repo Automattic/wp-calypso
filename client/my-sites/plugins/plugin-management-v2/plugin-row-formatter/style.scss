@@ -7,7 +7,7 @@
 	vertical-align: middle;
 	margin-inline-end: 16px;
 }
-a.button.plugin-row-formatter__plugin-name {
+.plugin-name {
 	display: inline-block;
 	font-weight: 500;
 	white-space: nowrap;
@@ -15,9 +15,17 @@ a.button.plugin-row-formatter__plugin-name {
 	text-overflow: clip;
 	vertical-align: middle;
 	color: var( --studio-gray-100 );
-	width: calc( 100% - 55px );
 	font-size: 0.875rem;
 	text-align: left;
+}
+
+a.button.plugin-row-formatter__plugin-name {
+	@extend .plugin-name;
+	width: calc( 100% - 55px );
+}
+a.button.plugin-row-formatter__plugin-name-card {
+	@extend .plugin-name;
+	width: calc( 100% - 10px );
 }
 .plugin-row-formatter__overlay {
 	display: block;

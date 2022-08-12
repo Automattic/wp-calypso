@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
 @import './grid-mixins.scss';
 
 .is-section-plugins .main {
@@ -324,35 +326,62 @@ body.is-section-plugins header .select-dropdown__item {
 	color: var( --studio-gray-60 );
 	margin-bottom: 8px;
 }
+.plugins__page-title-container {
+	display: none;
+	@include breakpoint-deprecated( '>660px' ) {
+		display: block;
+	}
+}
 .plugins__jetpack-cloud {
 	.plugins__main-header .section-nav {
-		border-width: 0;
+		border-width: 1px;
+		@include breakpoint-deprecated( '>660px' ) {
+			border-width: 0;
+		}
 	}
 	.plugins__main-header {
-		margin: 0;
+		margin: 9px 0;
+		@include breakpoint-deprecated( '>660px' ) {
+			margin: 0;
+		}
 	}
 }
 .plugins__top-container {
 	margin: 0 -32px;
-	padding: 0 48px;
-	border-bottom: 1px solid var( --color-primary-5 );
+	padding: 8px 48px 0;
+	@include breakpoint-deprecated( '>660px' ) {
+		padding: 16px 48px 0;
+		border-bottom: 1px solid var( --color-primary-5 );
+	}
+	@include break-large() {
+		padding: 6px 48px 0;
+	}
 }
 .plugins__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
-	padding: 0;
+	@include break-large() {
+		padding: 0;
+	}
 }
 .plugins__main-content {
 	// We need these negative margin values because we want to make the container full-width,
 	// but our element is inside a limited-width parent.
-	margin: 0 -32px -32px;
-	padding: 16px 48px;
+	margin: 0 -32px;
+	padding: 0 48px;
 	min-height: 100vh;
-	background: rgba( 255, 255, 255, 0.5 );
+	@include breakpoint-deprecated( '>660px' ) {
+    	padding: 16px 48px;
+		background: rgba( 255, 255, 255, 0.5 );
+	}
 }
 .plugins__search {
 	height: 52px;
 	box-shadow: 0 0 0 1px var( --color-neutral-5 );
+	margin-block-end: 8px;
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-block-end: 0;
+	}
 	.search.is-open {
 		box-shadow: none;
 	}

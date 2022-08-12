@@ -15,13 +15,15 @@ import './style.scss';
 interface Props {
 	item: Plugin;
 	columnKey: string;
-	selectedSite: SiteData;
+	selectedSite?: SiteData;
+	isSmallScreen?: boolean;
 }
 
 export default function PluginRowFormatter( {
 	item,
 	columnKey,
 	selectedSite,
+	isSmallScreen,
 }: Props ): ReactElement | any {
 	const PluginDetailsButton = ( props: { className: string; children: ReactChild } ) => {
 		return <Button borderless compact href={ `/plugins/${ item.slug }` } { ...props } />;
@@ -34,15 +36,22 @@ export default function PluginRowFormatter( {
 		return moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
 	};
 
-	const { activation: canActivate, autoupdate: canUpdate } = getAllowedPluginActions(
-		item,
-		state,
-		selectedSite
-	);
+	let canActivate;
+	let canUpdate;
+
+	if ( selectedSite ) {
+		const { activation, autoupdate } = getAllowedPluginActions( item, state, selectedSite );
+		canActivate = activation;
+		canUpdate = autoupdate;
+	}
 
 	switch ( columnKey ) {
 		case 'plugin':
-			return (
+			return isSmallScreen ? (
+				<PluginDetailsButton className="plugin-row-formatter__plugin-name-card">
+					{ item.name }
+				</PluginDetailsButton>
+			) : (
 				<span className="plugin-row-formatter__plugin-name-container">
 					{ item.icon ? (
 						<img
