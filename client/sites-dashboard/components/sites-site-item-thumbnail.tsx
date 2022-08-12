@@ -1,4 +1,4 @@
-import { SiteThumbnail, getSiteStatus } from '@automattic/components';
+import { SiteThumbnail, getSiteLaunchStatus } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentProps } from 'react';
@@ -18,7 +18,7 @@ interface SiteItemThumbnailProps extends ComponentProps< typeof SiteThumbnail > 
 export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) => {
 	const { __ } = useI18n();
 
-	const shouldUseScreenshot = getSiteStatus( site ) === 'public';
+	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
 
 	return (
 		<SiteThumbnail

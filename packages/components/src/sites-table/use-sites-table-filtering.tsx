@@ -3,28 +3,28 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import {
 	SiteObjectWithStatus,
-	getSiteStatus,
-	siteStatuses,
-	getTranslatedStatuses,
+	getSiteLaunchStatus,
+	siteLaunchStatuses,
+	getTranslatedSiteLaunchStatuses,
 } from './site-status';
 
-export const DEFAULT_SITE_STATUS_FILTER_VALUE = 'all';
+export const DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE = 'all';
 
-export const siteStatusFilterValues = [
-	DEFAULT_SITE_STATUS_FILTER_VALUE,
-	...siteStatuses,
+export const siteLaunchStatusFilterValues = [
+	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
+	...siteLaunchStatuses,
 ] as const;
 
-export type FilterableSiteStatuses = typeof siteStatusFilterValues[ number ];
+export type FilterableSiteLaunchStatuses = typeof siteLaunchStatusFilterValues[ number ];
 
 interface SitesTableFilterOptions {
-	status: FilterableSiteStatuses;
+	status: FilterableSiteLaunchStatuses;
 	search?: string;
 }
 
 interface Status {
 	title: React.ReactChild;
-	name: FilterableSiteStatuses;
+	name: FilterableSiteLaunchStatuses;
 	count: number;
 }
 
@@ -46,20 +46,20 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	const { __ } = useI18n();
 
 	const [ statuses, groupedByStatus ] = useMemo( () => {
-		const translatedStatuses = {
+		const translatedLaunchStatuses = {
 			all: __( 'All Sites' ),
-			...getTranslatedStatuses( __ ),
+			...getTranslatedSiteLaunchStatuses( __ ),
 		};
 
-		const statuses: Status[] = siteStatusFilterValues.map( ( name ) => ( {
+		const statuses: Status[] = siteLaunchStatusFilterValues.map( ( name ) => ( {
 			name,
-			title: translatedStatuses[ name ],
+			title: translatedLaunchStatuses[ name ],
 			count: 0,
 		} ) );
 
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
 			( groups, site ) => {
-				const siteStatus = getSiteStatus( site );
+				const siteStatus = getSiteLaunchStatus( site );
 				groups[ siteStatus ].push( site );
 
 				return groups;

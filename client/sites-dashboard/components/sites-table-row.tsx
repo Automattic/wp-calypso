@@ -1,4 +1,4 @@
-import { ListTile, useSiteStatusLabel } from '@automattic/components';
+import { ListTile, useSiteLaunchStatusLabel } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -65,7 +65,7 @@ const ListTileSubtitle = styled.div`
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
-	const translatedStatus = useSiteStatusLabel( site );
+	const translatedStatus = useSiteLaunchStatusLabel( site );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 

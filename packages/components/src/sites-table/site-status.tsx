@@ -1,8 +1,8 @@
 import { useI18n } from '@wordpress/react-i18n';
 
-export const siteStatuses = [ 'public', 'private', 'coming-soon' ] as const;
+export const siteLaunchStatuses = [ 'public', 'private', 'coming-soon' ] as const;
 
-export type SiteStatus = typeof siteStatuses[ number ];
+export type SiteLaunchStatus = typeof siteLaunchStatuses[ number ];
 
 export interface SiteObjectWithStatus {
 	is_coming_soon?: boolean;
@@ -10,7 +10,7 @@ export interface SiteObjectWithStatus {
 	launch_status?: string;
 }
 
-export const getSiteStatus = ( site: SiteObjectWithStatus ): SiteStatus => {
+export const getSiteLaunchStatus = ( site: SiteObjectWithStatus ): SiteLaunchStatus => {
 	if ( site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' ) ) {
 		return 'coming-soon';
 	}
@@ -22,9 +22,9 @@ export const getSiteStatus = ( site: SiteObjectWithStatus ): SiteStatus => {
 	return 'public';
 };
 
-export const getTranslatedStatuses = (
+export const getTranslatedSiteLaunchStatuses = (
 	__: ReturnType< typeof useI18n >[ '__' ]
-): { [ K in SiteStatus ]: string } => {
+): { [ K in SiteLaunchStatus ]: string } => {
 	return {
 		'coming-soon': __( 'Coming soon' ),
 		private: __( 'Private' ),
@@ -32,9 +32,9 @@ export const getTranslatedStatuses = (
 	};
 };
 
-export const useSiteStatusLabel = ( site: SiteObjectWithStatus ) => {
+export const useSiteLaunchStatusLabel = ( site: SiteObjectWithStatus ) => {
 	const { __ } = useI18n();
-	const translatedStatuses = getTranslatedStatuses( __ );
+	const translatedStatuses = getTranslatedSiteLaunchStatuses( __ );
 
-	return translatedStatuses[ getSiteStatus( site ) ];
+	return translatedStatuses[ getSiteLaunchStatus( site ) ];
 };

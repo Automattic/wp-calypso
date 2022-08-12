@@ -1,4 +1,7 @@
-import { DEFAULT_SITE_STATUS_FILTER_VALUE, siteStatusFilterValues } from '@automattic/components';
+import {
+	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
+	siteLaunchStatusFilterValues,
+} from '@automattic/components';
 import { Global, css } from '@emotion/react';
 import { SitesDashboard } from './components/sites-dashboard';
 import type { Context as PageJSContext } from 'page';
@@ -20,7 +23,8 @@ const globalStyles = css`
 
 const getStatusFilterValue = ( status?: string ) => {
 	return (
-		siteStatusFilterValues.find( ( value ) => value === status ) ?? DEFAULT_SITE_STATUS_FILTER_VALUE
+		siteLaunchStatusFilterValues.find( ( value ) => value === status ) ??
+		DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE
 	);
 };
 
