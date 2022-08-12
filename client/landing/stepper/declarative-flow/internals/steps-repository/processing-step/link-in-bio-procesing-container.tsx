@@ -22,7 +22,7 @@ const LinkInBioProcessingContainer: React.FC< Props > = ( {
 			shouldHideNavButtons={ true }
 			hideFormattedHeader={ true }
 			stepName={ 'processing-step' }
-			isHorizontalLayout={ true }
+			isHorizontalLayout={ false }
 			stepContent={
 				<div className={ 'processing-step' }>
 					<div className="image-right"></div>
@@ -42,6 +42,7 @@ const LinkInBioProcessingContainer: React.FC< Props > = ( {
 			}
 			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered={ true }
 		/>
 	);
 };
