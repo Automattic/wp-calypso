@@ -81,7 +81,7 @@ export function SitesDashboard( { queryParams: { search, status = 'all' } }: Sit
 
 	return (
 		<main>
-			<DocumentHead title={ __( 'Sites Management' ) } />
+			<DocumentHead title={ __( 'My Sites' ) } />
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
