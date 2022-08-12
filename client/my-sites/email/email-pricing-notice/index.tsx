@@ -1,6 +1,7 @@
 import { translate as originalTranslate, useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
+import { isUserOnTitanFreeTrial } from 'calypso/lib/titan';
 import type { EmailCost, ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import type { TranslateResult } from 'i18n-calypso';
@@ -51,7 +52,7 @@ function getPriceMessage( {
 	if ( mailboxPurchaseCost === null ) {
 		return '';
 	}
-	return mailboxPurchaseCost.amount === 0
+	return isUserOnTitanFreeTrial( mailboxPurchaseCost )
 		? translate( 'You can add new mailboxes for free until the end of your trial period.' )
 		: translate(
 				'You can purchase new mailboxes at the prorated price of {{strong}}%(proratedPrice)s{{/strong}} per mailbox.',
@@ -84,7 +85,7 @@ function getPriceMessageExplanation( {
 	}
 
 	// We don't need any explanation of the price at this point, because we have already handled it previously.
-	if ( mailboxPurchaseCost.amount === 0 ) {
+	if ( isUserOnTitanFreeTrial( mailboxPurchaseCost ) ) {
 		return '';
 	}
 
