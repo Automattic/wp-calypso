@@ -242,10 +242,10 @@ export function requireSelectedPartnerKeyContext(
 export function requireValidPaymentMethod( context: PageJS.Context, next: () => void ) {
 	const state = context.store.getState();
 	const paymentMethodRequired = doesPartnerRequireAPaymentMethod( state );
-	const { pathname, search } = window.location;
+	const { path } = context;
 
 	if ( paymentMethodRequired ) {
-		const returnUrl = ensurePartnerPortalReturnUrl( pathname + search );
+		const returnUrl = ensurePartnerPortalReturnUrl( path );
 
 		page.redirect(
 			addQueryArgs(
