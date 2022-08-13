@@ -40,4 +40,8 @@ describe( 'snakeToCamelCase', () => {
 	it( 'transforms kebab-case to camelCase for strings with multiple adjacent numbers', () => {
 		expect( snakeToCamelCase( 'hello-1234-thing' ) ).toBe( 'hello1234Thing' );
 	} );
+
+	it( 'transforms undefined to ""', () => {
+		expect( snakeToCamelCase( undefined ) ).toBe( '' );
+	} );
 } );
