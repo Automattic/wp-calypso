@@ -11,6 +11,8 @@ export default function ModalTemplate( {
 	disclaimer,
 	featureClass,
 	icon,
+	iconPath,
+	iconBgColour,
 	message,
 	onClick,
 	onDismiss,
@@ -22,6 +24,11 @@ export default function ModalTemplate( {
 	const translate = useTranslate();
 
 	const getModalImage = () => {
+		// If a direct path is provided, use the referenced image as the JITM artwork.
+		if ( iconPath ) {
+			return iconPath;
+		}
+
 		switch ( icon ) {
 			case 'embedded-inbox':
 				return Inbox;
@@ -85,7 +92,7 @@ export default function ModalTemplate( {
 									<p className="modal__disclaimer">{ line }</p>
 								) ) }
 							</div>
-							<div className="modal__sidebar">
+							<div className="modal__sidebar" style={ { backgroundColor: iconBgColour } }>
 								<img
 									className={ getModalClassName() }
 									src={ getModalImage() }

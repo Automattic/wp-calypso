@@ -33,6 +33,7 @@ const transformApiRequest = ( { data: jitms } ) =>
 		classes: unescapeDecimalEntities( jitm.content.classes || '' ),
 		icon: unescapeDecimalEntities( jitm.content.icon || '' ),
 		iconPath: unescapeDecimalEntities( jitm.content.iconPath || '' ),
+		iconBgColour: unescapeDecimalEntities( jitm.content.iconBgColour || '' ),
 		featureClass: jitm.feature_class,
 		CTA: {
 			message: unescapeDecimalEntities( jitm.CTA.message ),
