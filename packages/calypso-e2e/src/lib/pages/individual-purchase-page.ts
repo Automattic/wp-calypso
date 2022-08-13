@@ -11,7 +11,8 @@ const selectors = {
 	purchasePlaceholder: '.subscriptions__list .purchase-item__placeholder',
 
 	// Purchased item actions: plans
-	renewNowCardButton: 'button.card:has-text("Renew Now")',
+	renewNowCardButton: 'button:has-text("Renew Now")',
+
 	cancelAndRefundButton: 'a:text("Cancel Subscription and Refund")',
 	cancelSubscriptionButton: 'button:text("Cancel Subscription")',
 	upgradeButton: 'a.card:text("Upgrade")',
