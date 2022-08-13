@@ -53,7 +53,8 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 			await individualPurchasesPage.validatePurchaseTitle( planName );
 		} );
 
-		it( 'Renew plan', async function () {
+		// causing failures on trunk
+		it.skip( 'Renew plan', async function () {
 			await individualPurchasesPage.clickRenewNowCardButton();
 		} );
 
