@@ -54,6 +54,7 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 		} );
 
 		// causing failures on trunk
+		/* eslint-disable jest/no-disabled-tests */
 		it.skip( 'Renew plan', async function () {
 			await individualPurchasesPage.clickRenewNowCardButton();
 		} );
