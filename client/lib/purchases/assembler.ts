@@ -122,7 +122,9 @@ function isCreditCardPurchase(
 	return purchase.payment_type === 'credit_card';
 }
 
-export function createPurchasesArray( dataTransferObject: undefined | RawPurchase[] ): Purchase[] {
+export function createPurchasesArray(
+	dataTransferObject: undefined | ( RawPurchase | RawPurchaseCreditCard )[]
+): Purchase[] {
 	if ( ! Array.isArray( dataTransferObject ) ) {
 		return [];
 	}
