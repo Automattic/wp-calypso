@@ -1,7 +1,8 @@
-import { camelCase } from 'lodash';
+import { snakeToCamelCase } from '@automattic/js-utils';
+import type { Purchase, RawPurchase, RawPurchaseCreditCard } from './types';
 
-function createPurchaseObject( purchase ) {
-	const object = {
+function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): Purchase {
+	const object: Purchase = {
 		id: Number( purchase.ID ),
 		active: Boolean( purchase.active ),
 		amount: Number( purchase.amount ),
@@ -26,7 +27,7 @@ function createPurchaseObject( purchase ) {
 		error: null,
 		blogCreatedDate: purchase.blog_created_date,
 		expiryDate: purchase.expiry_date,
-		expiryStatus: camelCase( purchase.expiry_status ),
+		expiryStatus: snakeToCamelCase( purchase.expiry_status ),
 		iapPurchaseManagementLink: purchase.iap_purchase_management_link,
 		includedDomain: purchase.included_domain,
 		includedDomainPurchaseAmount: purchase.included_domain_purchase_amount,
@@ -98,7 +99,7 @@ function createPurchaseObject( purchase ) {
 		isAutoRenewEnabled: purchase.auto_renew === '1',
 	};
 
-	if ( 'credit_card' === purchase.payment_type ) {
+	if ( isCreditCardPurchase( purchase ) ) {
 		object.payment.creditCard = {
 			id: Number( purchase.payment_card_id ),
 			type: purchase.payment_card_type,
@@ -115,7 +116,13 @@ function createPurchaseObject( purchase ) {
 	return object;
 }
 
-export function createPurchasesArray( dataTransferObject ) {
+function isCreditCardPurchase(
+	purchase: RawPurchase | RawPurchaseCreditCard
+): purchase is RawPurchaseCreditCard {
+	return purchase.payment_type === 'credit_card';
+}
+
+export function createPurchasesArray( dataTransferObject: undefined | RawPurchase[] ): Purchase[] {
 	if ( ! Array.isArray( dataTransferObject ) ) {
 		return [];
 	}
