@@ -27,7 +27,8 @@ export async function loadDSPWidgetJS( onLoad?: () => void ) {
 		return;
 	}
 	const script = document.createElement( 'script' );
-	script.src = config( 'dsp_widget_js_src' );
+	// cachebust once per minute
+	script.src = config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / 1000 );
 	script.async = true;
 	if ( onLoad ) {
 		script.onload = onLoad;
