@@ -53,22 +53,20 @@ describe( DataHelper.createSuiteTitle( 'Plans (Legacy): Renew' ), function () {
 			await individualPurchasesPage.validatePurchaseTitle( planName );
 		} );
 
-		// The following tests are causing failures on trunk
-		/* eslint-disable jest/no-disabled-tests */
-		it.skip( 'Renew plan', async function () {
+		it( 'Renew plan', async function () {
 			await individualPurchasesPage.clickRenewNowCardButton();
 		} );
 
-		it.skip( `${ planName } is added to cart`, async function () {
+		it( `${ planName } is added to cart`, async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			await cartCheckoutPage.validateCartItem( planName );
 		} );
 
-		it.skip( `Remove ${ planName } from cart`, async function () {
+		it( `Remove ${ planName } from cart`, async function () {
 			await cartCheckoutPage.removeCartItem( planName );
 		} );
 
-		it.skip( 'Automatically return to purchase page', async function () {
+		it( 'Automatically return to purchase page', async function () {
 			individualPurchasesPage = new IndividualPurchasePage( page );
 			await individualPurchasesPage.validatePurchaseTitle( planName );
 		} );
