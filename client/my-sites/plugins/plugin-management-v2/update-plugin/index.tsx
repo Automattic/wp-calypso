@@ -3,9 +3,10 @@ import { Icon, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import PluginActionStatus from '../plugin-action-status';
@@ -33,6 +34,7 @@ export default function UpdatePlugin( {
 	const translate = useTranslate();
 	const allSites = useSelector( getSites );
 	const state = useSelector( ( state ) => state );
+	const dispatch = useDispatch();
 
 	const getPluginSites = ( plugin: Plugin ) => {
 		return Object.keys( plugin.sites ).map( ( siteId ) => {
@@ -42,6 +44,19 @@ export default function UpdatePlugin( {
 				...plugin.sites[ siteId ],
 			};
 		} );
+	};
+
+	const updateButtonOnClick = () => {
+		if ( updatePlugin ) {
+			updatePlugin( plugin );
+		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_plugin_update_click', {
+				site: selectedSite?.ID,
+				plugin: plugin.slug,
+			} )
+		);
 	};
 
 	const sites = getPluginSites( plugin );
@@ -141,7 +156,7 @@ export default function UpdatePlugin( {
 					<Icon size={ 24 } icon={ arrowRight } />
 				</span>
 				<Button
-					onClick={ () => updatePlugin && updatePlugin( plugin ) }
+					onClick={ updateButtonOnClick }
 					className="update-plugin__new-version"
 					borderless
 					compact

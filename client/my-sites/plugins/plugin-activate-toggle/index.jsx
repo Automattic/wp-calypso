@@ -47,8 +47,17 @@ export class PluginActivateToggle extends Component {
 	};
 
 	trackManageConnectionLink = () => {
-		const { recordGoogleEvent: recordGAEvent } = this.props;
+		const {
+			site,
+			plugin,
+			recordGoogleEvent: recordGAEvent,
+			recordTracksEvent: recordEvent,
+		} = this.props;
 		recordGAEvent( 'Plugins', 'Clicked Manage Jetpack Connection Link', 'Plugin Name', 'jetpack' );
+		recordEvent( 'calypso_plugin_manage_connection_click', {
+			site: site.ID,
+			plugin: plugin.slug,
+		} );
 	};
 
 	manageConnectionLink() {
