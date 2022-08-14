@@ -26803,15 +26803,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.24.2":
-  version: 1.24.2
-  resolution: "playwright-core@npm:1.24.2"
-  bin:
-    playwright: cli.js
-  checksum: ecd60ece818f1d57bf34685dd812c56f3b8cf7d8ca8e14074e1743fac56387f16791121901b34cf519d3ef5f9360968656ab661c7b589e55500144eb2cf69448
-  languageName: node
-  linkType: hard
-
 "playwright@npm:^1.23":
   version: 1.23.2
   resolution: "playwright@npm:1.23.2"
@@ -26820,17 +26811,6 @@ __metadata:
   bin:
     playwright: cli.js
   checksum: 5e4b0df82c23880086f57d1c64c1f0be25887ac7db733c3aa9eae05f77edc50f62bcde36e2084cceae81c39e7934f4a506a64085a4695653234223942d2bb120
-  languageName: node
-  linkType: hard
-
-"playwright@npm:^1.24.2":
-  version: 1.24.2
-  resolution: "playwright@npm:1.24.2"
-  dependencies:
-    playwright-core: 1.24.2
-  bin:
-    playwright: cli.js
-  checksum: c5e4cfd57f8030f15e019c101c867a5ce3f1d12c3a6d8a32a9fb34897746470faced7935d5cc920c85082c0aec0bcf5bb23174ba55f6eabf942d38707a40d1f0
   languageName: node
   linkType: hard
 
@@ -35793,7 +35773,6 @@ swiper@4.5.1:
     node-fetch: ^2.6.6
     npm-run-all: ^4.1.5
     photon: "workspace:^"
-    playwright: ^1.24.2
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
