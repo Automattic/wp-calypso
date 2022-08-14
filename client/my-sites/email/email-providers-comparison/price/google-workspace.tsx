@@ -6,38 +6,14 @@ import {
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
-import { hasIntroductoryOffer, hasIntroductoryOfferFreeTrial } from 'calypso/lib/emails';
-import {
-	hasGSuiteSupportedDomain,
-	isDomainEligibleForGoogleWorkspaceIntroductoryOffer,
-} from 'calypso/lib/gsuite';
+import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import PriceBadge from 'calypso/my-sites/email/email-providers-comparison/price-badge';
-import PriceWithInterval from 'calypso/my-sites/email/email-providers-comparison/price-with-interval';
-import PriceInformation from 'calypso/my-sites/email/email-providers-comparison/price/price-information';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { PriceAndBadgeWithOfferAndDiscountTerms } from 'calypso/my-sites/email/email-providers-comparison/price/price-and-badge-with-offer-and-discount-terms';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 import './style.scss';
-
-type BasicDiscountOrOfferTerms = {
-	isDiscounted: boolean;
-	isEligibleForIntroductoryOffer: boolean;
-	product: ProductListItem | null;
-};
-
-type DiscountOrOfferTermsProps = BasicDiscountOrOfferTerms & {
-	isEligibleForIntroductoryOfferFreeTrial: boolean;
-};
-
-type PriceBadgeExtendedProps = BasicDiscountOrOfferTerms & {
-	domain?: ResponseDomain;
-	intervalLength: IntervalLength;
-};
 
 type GoogleWorkspacePriceProps = {
 	isDomainInCart: boolean;
@@ -49,115 +25,6 @@ const getGoogleWorkspaceProductSlug = ( intervalLength: IntervalLength ): string
 	return intervalLength === IntervalLength.MONTHLY
 		? GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY
 		: GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
-};
-
-const PriceBadgeExtended = ( {
-	domain,
-	intervalLength,
-	isDiscounted,
-	isEligibleForIntroductoryOffer,
-	product,
-}: PriceBadgeExtendedProps ) => {
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-
-	return (
-		<PriceBadge
-			priceInformation={ <PriceInformation domain={ domain } product={ product } /> }
-			price={
-				<PriceWithInterval
-					currencyCode={ currencyCode ?? '' }
-					intervalLength={ intervalLength }
-					isDiscounted={ isDiscounted }
-					isEligibleForIntroductoryOffer={ isEligibleForIntroductoryOffer }
-					product={ product }
-				/>
-			}
-		/>
-	);
-};
-
-const DiscountOrOfferTerms = ( {
-	isDiscounted,
-	isEligibleForIntroductoryOffer,
-	isEligibleForIntroductoryOfferFreeTrial,
-	product,
-}: DiscountOrOfferTermsProps ) => {
-	const translate = useTranslate();
-
-	// This only makes sense if there's some sale discount or introductory offer
-	if ( ! isDiscounted && ! isEligibleForIntroductoryOffer ) {
-		return null;
-	}
-
-	const introductoryOffer = product?.introductory_offer;
-	const intervalUnit = String( introductoryOffer?.interval_unit );
-	const intervalCount = Number( introductoryOffer?.interval_count );
-
-	if ( ! [ 'month', 'year' ].includes( intervalUnit ) || intervalCount < 1 ) {
-		return null;
-	}
-
-	return (
-		<>
-			{ isEligibleForIntroductoryOfferFreeTrial && (
-				<div className="google-workspace-price__trial-badge badge badge--info-green">
-					{ intervalUnit === 'month'
-						? translate( '%(numberOfMonths)d month free', '%(numberOfMonths)d months free', {
-								args: {
-									numberOfMonths: intervalCount,
-								},
-								count: intervalCount,
-						  } )
-						: translate( '%(numberOfYears)d year free', '%(numberOfYears)d years free', {
-								args: {
-									numberOfYears: intervalCount,
-								},
-								count: intervalCount,
-						  } ) }
-				</div>
-			) }
-
-			{ isEligibleForIntroductoryOffer && ! isEligibleForIntroductoryOfferFreeTrial && (
-				<div className="google-workspace-price__trial-badge badge badge--info-green">
-					{ intervalUnit === 'month'
-						? translate(
-								'%(numberOfMonths)d month discount',
-								'%(numberOfMonths)d months discount',
-								{
-									args: {
-										numberOfMonths: intervalCount,
-									},
-									count: intervalCount,
-								}
-						  )
-						: translate( '%(numberOfYears)d year discount', '%(numberOfYears)d years discount', {
-								args: {
-									numberOfYears: intervalCount,
-								},
-								count: intervalCount,
-						  } ) }
-				</div>
-			) }
-
-			{ isDiscounted && (
-				<div className="google-workspace-price__discount-badge badge badge--info-green">
-					{ isEligibleForIntroductoryOffer
-						? translate( '+ Extra %(discount)d%% off', {
-								args: {
-									discount: product?.sale_coupon?.discount,
-								},
-								comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
-						  } )
-						: translate( 'Limited time: %(discount)d%% off', {
-								args: {
-									discount: product?.sale_coupon?.discount,
-								},
-								comment: "%(discount)d is a numeric discount percentage (e.g. '40')",
-						  } ) }
-				</div>
-			) }
-		</>
-	);
 };
 
 const GoogleWorkspacePrice = ( {
@@ -186,30 +53,13 @@ const GoogleWorkspacePrice = ( {
 		);
 	}
 
-	const isDiscounted = hasDiscount( product );
-
-	const isEligibleForIntroductoryOffer = domain
-		? isDomainEligibleForGoogleWorkspaceIntroductoryOffer( domain )
-		: isDomainInCart && hasIntroductoryOffer( product );
-	const isEligibleForIntroductoryOfferFreeTrial =
-		isEligibleForIntroductoryOffer && hasIntroductoryOfferFreeTrial( product );
-
 	return (
-		<>
-			<DiscountOrOfferTerms
-				isDiscounted={ isDiscounted }
-				isEligibleForIntroductoryOffer={ isEligibleForIntroductoryOffer }
-				isEligibleForIntroductoryOfferFreeTrial={ isEligibleForIntroductoryOfferFreeTrial }
-				product={ product }
-			/>
-
-			<PriceBadgeExtended
-				intervalLength={ intervalLength }
-				isDiscounted={ isDiscounted }
-				isEligibleForIntroductoryOffer={ isEligibleForIntroductoryOffer }
-				product={ product }
-			/>
-		</>
+		<PriceAndBadgeWithOfferAndDiscountTerms
+			domain={ domain }
+			intervalLength={ intervalLength }
+			isDomainInCart={ isDomainInCart }
+			product={ product }
+		/>
 	);
 };
 

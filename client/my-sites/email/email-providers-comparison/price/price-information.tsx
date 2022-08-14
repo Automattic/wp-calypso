@@ -6,12 +6,8 @@ import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
-import {
-	getGoogleMailServiceFamily,
-	isDomainEligibleForGoogleWorkspaceFreeTrial,
-} from 'calypso/lib/gsuite';
 import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
-import { isDomainEligibleForTitanFreeTrial, isTitanMonthlyProduct } from 'calypso/lib/titan';
+import useGetDomainIntroductoryOfferEligibility from 'calypso/my-sites/email/email-providers-comparison/price/use-get-domain-introductory-offer-eligibility';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -49,19 +45,11 @@ const DiscountPriceInformation = ( { product }: { product: ProductListItem } ): 
 					"%(discountedPrice)s and %(standardPrice)s are formatted prices with the currency (e.g. '$5')",
 			} ) }
 
-			{ isGoogleWorkspace( product ) && (
-				<InfoPopover position="right" showOnHover>
-					{ translate(
-						'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
-						{
-							args: {
-								googleMailService: getGoogleMailServiceFamily( product.product_slug ),
-							},
-							comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
-						}
-					) }
-				</InfoPopover>
-			) }
+			<InfoPopover position="right" showOnHover>
+				{ translate(
+					'This discount is only available the first time you purchase an account. Any additional mailboxes purchased after that will be at the regular price.'
+				) }
+			</InfoPopover>
 		</div>
 	);
 };
@@ -73,65 +61,139 @@ const FreeTrialPriceInformation = ( {
 } ): ReactElement | null => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
+	const shouldProrate = product.introductory_offer?.should_prorate_when_offer_ends ?? false;
+
 	const translateArguments = {
 		args: {
 			firstRenewalPrice: getFirstRenewalPrice( product, currencyCode ?? '' ),
+			productTerm: product.product_term,
 			standardPrice: formatCurrency( product.cost ?? 0, currencyCode ?? '', { stripZeros: true } ),
 		},
 		comment:
-			"%(firstRenewalPrice)s and %(standardPrice)s are formatted prices with the currency (e.g. '$5')",
+			"%(firstRenewalPrice)s and %(standardPrice)s are formatted prices with the currency (e.g. '$5'). %(productTerm)s is either month or year",
 	};
 
-	if ( isGoogleWorkspace( product ) || ! isTitanMonthlyProduct( product ) ) {
+	if ( shouldProrate ) {
 		return (
 			<div className="price-information__free-trial">
 				{ translate(
-					'Try free today - first renewal at %(firstRenewalPrice)s after trial, regular price %(standardPrice)s per year',
+					'Try free today - first renewal at %(firstRenewalPrice)s after trial, regular price %(standardPrice)s per %(productTerm)s',
 					translateArguments
 				) }
 			</div>
 		);
 	}
 
-	if ( isTitanMonthlyProduct( product ) ) {
+	return (
+		<div className="price-information__free-trial">
+			{ translate(
+				'Try free today - renews at %(standardPrice)s after trial',
+				translateArguments
+			) }
+		</div>
+	);
+};
+
+const IntroductoryOfferPriceInformation = ( { product }: { product: ProductListItem } ) => {
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+
+	const introductoryOffer = product.introductory_offer;
+	const shouldProrate = introductoryOffer?.should_prorate_when_offer_ends ?? false;
+	const transitionAfterRenewal = Number( introductoryOffer?.transition_after_renewal_count );
+
+	const translateArguments = {
+		args: {
+			firstRenewalPrice: getFirstRenewalPrice( product, currencyCode ?? '' ),
+			numberOfDiscountedRenewals: transitionAfterRenewal,
+			productTerm: product.product_term,
+			standardPrice: formatCurrency( product.cost ?? 0, currencyCode ?? '', { stripZeros: true } ),
+		},
+		comment:
+			"%(firstRenewalPrice)s and %(standardPrice)s are formatted prices with the currency (e.g. '$5'). %(productTerm)s is either month or year",
+	};
+
+	if ( shouldProrate ) {
 		return (
 			<div className="price-information__free-trial">
 				{ translate(
-					'Try free today - renews at %(standardPrice)s after trial',
+					'Discounted today - first renewal at %(firstRenewalPrice)s after trial, regular price %(standardPrice)s per %(productTerm)s',
 					translateArguments
 				) }
 			</div>
 		);
 	}
 
-	return null;
+	if ( transitionAfterRenewal > 0 ) {
+		if ( transitionAfterRenewal === 1 ) {
+			return (
+				<div className="price-information__free-trial">
+					{ translate(
+						'Discounted today and the first renewal, regular price %(standardPrice)s per %(productTerm)s',
+						translateArguments
+					) }
+				</div>
+			);
+		}
+
+		return (
+			<div className="price-information__free-trial">
+				{ translate(
+					'Discounted today and the next %(numberOfDiscountedRenewals)d renewals, regular price %(standardPrice)s per %(productTerm)s',
+					translateArguments
+				) }
+			</div>
+		);
+	}
+
+	return (
+		<div className="price-information__free-trial">
+			{ translate(
+				'Discounted today - renews at %(standardPrice)s after trial',
+				translateArguments
+			) }
+		</div>
+	);
 };
 
 const PriceInformation = ( {
 	domain,
+	isDomainInCart = false,
 	product,
 }: {
 	domain?: ResponseDomain;
+	isDomainInCart?: boolean;
 	product: ProductListItem | null;
 } ): ReactElement | null => {
+	const { isEligibleForIntroductoryOffer, isEligibleForIntroductoryOfferFreeTrial } =
+		useGetDomainIntroductoryOfferEligibility( {
+			domain,
+			isDomainInCart,
+			product,
+		} );
+
 	if ( ! product ) {
 		return null;
 	}
 
-	if ( isGoogleWorkspace( product ) && hasDiscount( product ) ) {
+	if ( ! isGoogleWorkspace( product ) && ! isTitanMail( product ) ) {
+		return null;
+	}
+
+	const isDiscounted = hasDiscount( product );
+
+	if ( isDiscounted && ! isEligibleForIntroductoryOffer ) {
 		return <DiscountPriceInformation product={ product } />;
 	}
 
-	if (
-		( isGoogleWorkspace( product ) &&
-			isDomainEligibleForGoogleWorkspaceFreeTrial( domain, product?.introductory_offer ) ) ||
-		( isTitanMail( product ) &&
-			isDomainEligibleForTitanFreeTrial( domain, product?.introductory_offer ) )
-	) {
+	if ( isEligibleForIntroductoryOfferFreeTrial ) {
 		return <FreeTrialPriceInformation product={ product } />;
 	}
 
-	return null;
+	if ( ! isEligibleForIntroductoryOffer ) {
+		return null;
+	}
+
+	return <IntroductoryOfferPriceInformation product={ product } />;
 };
 
 export default PriceInformation;

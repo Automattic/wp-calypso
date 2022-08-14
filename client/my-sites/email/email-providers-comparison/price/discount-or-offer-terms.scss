@@ -1,0 +1,11 @@
+.discount-or-offer-terms__item {
+	margin-bottom: 12px;
+}
+
+.discount-or-offer-terms__discounted_item.badge--info-green {
+	background-color: rgba( 184, 230, 191, 0.24 );
+	border: solid 1px var( --studio-green-30 );
+	color: var( --studio-green-50 );
+	margin-left: 5px;
+	padding: 1px 10px;
+}
