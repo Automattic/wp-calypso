@@ -18,6 +18,8 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import SingleListView from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
 
+import './style.scss';
+
 /**
  * Module variables
  */
