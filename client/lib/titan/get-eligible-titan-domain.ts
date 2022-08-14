@@ -1,15 +1,15 @@
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
-import { isDomainEligibleForTitanFreeTrial } from 'calypso/lib/titan';
+import { isDomainEligibleForTitanIntroductoryOffer } from 'calypso/lib/titan/is-domain-eligible-for-titan-introductory-offer';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 /**
  * Determines whether the specified domain is eligible for Titan.
- *
- * @param {object} domain - domain object
- * @param {boolean} mustBeEligibleForFreeTrial - whether the domain should also be eligible for the 3-month free trial
- * @returns {boolean} - true if the domain is eligible, false otherwise
  */
-function isEligibleTitanDomain( domain, mustBeEligibleForFreeTrial ) {
+function isEligibleTitanDomain(
+	domain: ResponseDomain,
+	mustBeEligibleForIntroductoryOffer = false
+) {
 	if ( domain.expired || domain.isWpcomStagingDomain ) {
 		return false;
 	}
@@ -22,8 +22,8 @@ function isEligibleTitanDomain( domain, mustBeEligibleForFreeTrial ) {
 		return false;
 	}
 
-	if ( mustBeEligibleForFreeTrial ) {
-		return isDomainEligibleForTitanFreeTrial( domain );
+	if ( mustBeEligibleForIntroductoryOffer ) {
+		return isDomainEligibleForTitanIntroductoryOffer( domain );
 	}
 
 	return true;
@@ -35,19 +35,18 @@ function isEligibleTitanDomain( domain, mustBeEligibleForFreeTrial ) {
  *   - The domain from the site currently selected, if eligible
  *   - The primary domain of the site, if eligible
  *   - The most recent non-primary domain eligible found
- *
- * @param {string} selectedDomainName - domain name of the site currently selected by the user
- * @param {import('calypso/lib/domains/types').ResponseDomain[]} domains - list of domain objects
- * @param {boolean} mustBeEligibleForFreeTrial - whether the domain should also be eligible for the 3-month free trial
- * @returns {?import('calypso/lib/domains/types').ResponseDomain} - the first eligible domain found, null otherwise
  */
-export function getEligibleTitanDomain( selectedDomainName, domains, mustBeEligibleForFreeTrial ) {
+export function getEligibleTitanDomain(
+	selectedDomainName: string,
+	domains: ResponseDomain[],
+	mustBeEligibleForIntroductoryOffer = false
+) {
 	if ( ! domains ) {
 		return null;
 	}
 
 	const eligibleDomains = domains.filter( ( domain ) =>
-		isEligibleTitanDomain( domain, mustBeEligibleForFreeTrial )
+		isEligibleTitanDomain( domain, mustBeEligibleForIntroductoryOffer )
 	);
 
 	if ( eligibleDomains.length === 0 ) {
@@ -63,7 +62,8 @@ export function getEligibleTitanDomain( selectedDomainName, domains, mustBeEligi
 	return eligibleDomains
 		.sort(
 			// Orders domains by most recent registration date
-			( a, b ) => new Date( b.registrationDate ) - new Date( a.registrationDate )
+			( a, b ) =>
+				new Date( b.registrationDate ).valueOf() - new Date( a.registrationDate ).valueOf()
 		)
 		.sort(
 			// Moves the primary domain in first position of this list of domains

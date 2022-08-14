@@ -1,12 +1,9 @@
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getEligibleTitanDomain } from '..';
 
 describe( 'getEligibleTitanDomain()', () => {
 	test( 'return null when domains are undefined', () => {
-		expect( getEligibleTitanDomain( 'foo.bar' ) ).toBeNull();
-	} );
-
-	test( 'return null when domains are false', () => {
-		expect( getEligibleTitanDomain( 'foo.bar', false ) ).toBeNull();
+		expect( getEligibleTitanDomain( 'foo.bar', undefined ) ).toBeNull();
 	} );
 
 	test( 'return null when domains are empty', () => {
@@ -21,7 +18,7 @@ describe( 'getEligibleTitanDomain()', () => {
 					currentUserCanAddEmail: true,
 					googleAppsSubscription: { status: 'active' },
 				},
-			] )
+			] as ResponseDomain[] )
 		).toBeNull();
 	} );
 
@@ -33,7 +30,7 @@ describe( 'getEligibleTitanDomain()', () => {
 					currentUserCanAddEmail: true,
 					titanMailSubscription: { status: 'active' },
 				},
-			] )
+			] as ResponseDomain[] )
 		).toBeNull();
 	} );
 
@@ -45,7 +42,7 @@ describe( 'getEligibleTitanDomain()', () => {
 					currentUserCanAddEmail: true,
 					expired: true,
 				},
-			] )
+			] as ResponseDomain[] )
 		).toBeNull();
 	} );
 
@@ -57,7 +54,7 @@ describe( 'getEligibleTitanDomain()', () => {
 					currentUserCanAddEmail: true,
 					isWpcomStagingDomain: true,
 				},
-			] )
+			] as ResponseDomain[] )
 		).toBeNull();
 	} );
 
@@ -68,7 +65,7 @@ describe( 'getEligibleTitanDomain()', () => {
 					name: 'domain.com',
 					currentUserCanAddEmail: false,
 				},
-			] )
+			] as ResponseDomain[] )
 		).toBeNull();
 	} );
 
@@ -76,7 +73,7 @@ describe( 'getEligibleTitanDomain()', () => {
 		const domain = {
 			name: 'domain-eligible.com',
 			currentUserCanAddEmail: true,
-		};
+		} as ResponseDomain;
 
 		expect( getEligibleTitanDomain( 'foo.bar', [ domain ] ) ).toBe( domain );
 	} );
@@ -94,7 +91,7 @@ describe( 'getEligibleTitanDomain()', () => {
 				currentUserCanAddEmail: true,
 			},
 			domain,
-		];
+		] as ResponseDomain[];
 
 		expect( getEligibleTitanDomain( 'foo.bar', domains ) ).toBe( domain );
 	} );
@@ -116,7 +113,7 @@ describe( 'getEligibleTitanDomain()', () => {
 				isPrimary: true,
 			},
 			domain,
-		];
+		] as ResponseDomain[];
 
 		expect( getEligibleTitanDomain( 'domain-eligible-selected.com', domains ) ).toBe( domain );
 	} );
@@ -137,12 +134,12 @@ describe( 'getEligibleTitanDomain()', () => {
 				name: 'foo.bar',
 				currentUserCanAddEmail: true,
 			},
-		];
+		] as ResponseDomain[];
 
 		expect( getEligibleTitanDomain( 'bar.bar', domains ) ).toBe( domain );
 	} );
 
-	test( 'return primary domain eligible for 3-month free trial instead of other eligible domains', () => {
+	test( 'return primary domain eligible for introductory offer instead of other eligible domains', () => {
 		const domain = {
 			name: 'domain-eligible-primary.com',
 			currentUserCanAddEmail: true,
@@ -162,7 +159,7 @@ describe( 'getEligibleTitanDomain()', () => {
 				titanMailSubscription: { isEligibleForIntroductoryOffer: false },
 			},
 			domain,
-		];
+		] as ResponseDomain[];
 
 		expect( getEligibleTitanDomain( 'foo.bar', domains, true ) ).toBe( domain );
 	} );
@@ -186,7 +183,7 @@ describe( 'getEligibleTitanDomain()', () => {
 				registrationDate: '2021-01-26T14:14:43+00:00',
 			},
 			domain,
-		];
+		] as ResponseDomain[];
 
 		expect( getEligibleTitanDomain( 'foo.bar', domains ) ).toBe( domain );
 	} );
@@ -211,7 +208,7 @@ describe( 'getEligibleTitanDomain()', () => {
 				registrationDate: '2021-03-25T10:58:17+00:00',
 			},
 			domain,
-		];
+		] as ResponseDomain[];
 
 		expect( getEligibleTitanDomain( 'foo.bar', domains ) ).toBe( domain );
 	} );
