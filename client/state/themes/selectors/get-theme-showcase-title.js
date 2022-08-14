@@ -1,7 +1,7 @@
+import i18n from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 import { getThemeFilterTerm } from 'calypso/state/themes/selectors/get-theme-filter-term';
-
 import 'calypso/state/themes/init';
 
 export function getThemeShowcaseTitle( state, { filter, tier, vertical } = {} ) {
@@ -26,5 +26,5 @@ export function getThemeShowcaseTitle( state, { filter, tier, vertical } = {} ) 
 		return 'Premium WordPress Themes';
 	}
 
-	return 'WordPress Themes';
+	return i18n.translate( 'WordPress Themes' );
 }
