@@ -29,10 +29,6 @@ const DiscountOrOfferTerms = ( {
 	const transitionAfterRenewal = Number( introductoryOffer?.transition_after_renewal_count );
 	const discountedIntervalCount = intervalCount + transitionAfterRenewal;
 
-	if ( ! [ 'month', 'year' ].includes( intervalUnit ) || intervalCount < 1 ) {
-		return null;
-	}
-
 	return (
 		<>
 			{ isEligibleForIntroductoryOfferFreeTrial && (
