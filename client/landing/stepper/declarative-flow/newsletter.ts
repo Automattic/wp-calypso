@@ -3,6 +3,8 @@ import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSite } from '../hooks/use-site';
+import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
@@ -27,6 +29,15 @@ export const newsletter: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
+
+		let siteSlug: string | null = null;
+		if ( siteSlugParam ) {
+			siteSlug = siteSlugParam;
+		} else if ( site ) {
+			siteSlug = new URL( site.URL ).host;
+		}
 
 		function submit() {
 			switch ( _currentStep ) {
@@ -57,6 +68,10 @@ export const newsletter: Flow = {
 
 				case 'processingFake':
 					return navigate( 'launchpad' );
+
+				case 'launchpad':
+					// TODO: Handle null case
+					return window.location.replace( `/home/${ siteSlug }` );
 
 				default:
 					return navigate( 'intro' );
