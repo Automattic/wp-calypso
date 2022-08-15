@@ -1,19 +1,27 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@automattic/onboarding/styles/mixins';
 
-$white: var( --color-surface );
-
 .intro {
-	background: url( 'calypso/assets/images/onboarding/link-in-bio-intro-background.svg' ),
-		url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
+	&.newsletter {
+		background-color: rgb( 162, 218, 254 );
+		background-image: url( 'calypso/assets/images/onboarding/newsletter-processing-left.png' ),
+		url( 'calypso/assets/images/onboarding/newsletter-intro-right.png' );
+		background-position: -45px bottom, right 90px;
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
 
-	&.is-newsletter {
-		background: url( 'calypso/assets/images/onboarding/paper-texture.jpg' ),
-			linear-gradient( 123deg, rgba( 7, 116, 195, 1 ) 0%, rgba( 255, 255, 255, 0 ) 100% ),
-			url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
-		background-size: cover;
+		background-size: auto 25%, auto 35%;
+
+		@include break-medium {
+			background-size: auto 50%, auto 70%;
+			background-position: -90px bottom, right 124px;
+		}
+
+		@include break-large {
+			background-size: auto 60%, auto 85%;
+		}
 	}
-	background-blend-mode: color-burn;
+
 	min-height: 100%;
 	min-width: 100%;
 	width: 100%;
@@ -21,11 +29,8 @@ $white: var( --color-surface );
 	position: fixed;
 	top: 0;
 	left: 0;
-	background-size: cover;
 	box-sizing: border-box;
 	padding: 60px 0 0;
-	color: $white;
-	fill: $white;
 
 	.signup-header {
 		z-index: 1;
@@ -35,10 +40,8 @@ $white: var( --color-surface );
 			inset-inline-start: 20px;
 			position: absolute;
 			transform-origin: 0 0;
-		}
-
-		h1 {
-			color: var( --color-surface );
+			fill: var( --color-text );
+			stroke: var( --color-text );
 		}
 	}
 
@@ -72,6 +75,11 @@ $white: var( --color-surface );
 
 	.intro__title {
 		@include onboarding-font-recoleta;
+		font-size: $font-title-medium;
+
+		@include break-medium {
+				font-size: $font-title-large;
+		}
 		font-weight: 500;
 		line-height: 40px;
 		padding-bottom: 40px;
@@ -83,8 +91,8 @@ $white: var( --color-surface );
 
 	.intro__button {
 		font-family: 'SF Pro Text', $sans;
-		color: var( --studio-blue-50 );
-		background-color: $white;
+		color: var( --color-surface );
+		background-color: var( --studio-gray-100 );
 		border: none;
 		font-weight: 500;
 		letter-spacing: 0.32px;
