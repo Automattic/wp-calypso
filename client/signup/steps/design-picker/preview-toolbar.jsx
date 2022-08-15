@@ -16,7 +16,7 @@ const DesignPickerPreviewToolbar = ( {
 	setDeviceViewport,
 	translate,
 	showSiteAddressBar,
-	filterDevicesToShow,
+	devicesToShow,
 } ) => {
 	const devices = React.useRef( {
 		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
@@ -25,21 +25,18 @@ const DesignPickerPreviewToolbar = ( {
 	} );
 
 	function filterDevices( selectedDevices ) {
-		// If invalid input, display all possible devices
-		// If valid input, Will filter out any devices that do not exist in the 'possibleDevices' array above
+		// If invalid inputs, display all possible devices
+		// If at least one valid input, Will filter out any devices that do not exist in the 'possibleDevices' array above
+		let filteredPossibleDevices = [];
 		if ( Array.isArray( selectedDevices ) && selectedDevices.length > 0 ) {
-			const filteredPossibleDevices = selectedDevices.filter( ( device ) => {
+			filteredPossibleDevices = selectedDevices.filter( ( device ) => {
 				return possibleDevices.includes( device );
 			} );
-
-			return filteredPossibleDevices;
 		}
-		return possibleDevices;
+		return filteredPossibleDevices.length === 0 ? possibleDevices : filteredPossibleDevices;
 	}
 
-	const filteredPossibleDevices = filterDevicesToShow
-		? filterDevices( filterDevicesToShow )
-		: possibleDevices;
+	const filteredPossibleDevices = filterDevices( devicesToShow );
 
 	return (
 		<div className="preview-toolbar__toolbar">
@@ -91,7 +88,7 @@ DesignPickerPreviewToolbar.propTypes = {
 	// Show iframe site address bar
 	showSiteAddressBar: PropTypes.bool,
 	// Filter devices to show in device switcher
-	filterDevicesToShow: PropTypes.array,
+	devicesToShow: PropTypes.array,
 };
 
 DesignPickerPreviewToolbar.defaultProps = {
