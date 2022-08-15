@@ -10,7 +10,7 @@ import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
-import { SiteUrl } from './sites-site-url';
+import { SiteUrl, Truncated } from './sites-site-url';
 
 const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
 
@@ -70,8 +70,8 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 				</>
 			}
 			secondary={
-				<SiteUrl href={ site.URL } target="_blank" rel="noreferrer" title={ site.URL }>
-					{ displaySiteUrl( site.URL ) }
+				<SiteUrl href={ site.URL } title={ site.URL } className={ css( { lineHeight: 1 } ) }>
+					<Truncated>{ displaySiteUrl( site.URL ) }</Truncated>
 				</SiteUrl>
 			}
 		/>
