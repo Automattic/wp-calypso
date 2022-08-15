@@ -3,7 +3,7 @@ import { ReactElement, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
-const ProcessingFake: Step = function ( { navigation } ): ReactElement | null {
+const PreLaunchpad: Step = function ( { navigation } ): ReactElement | null {
 	useEffect( () => {
 		setTimeout( () => navigation.goNext(), 5000 );
 	}, [] );
@@ -12,12 +12,11 @@ const ProcessingFake: Step = function ( { navigation } ): ReactElement | null {
 		<StepContainer
 			shouldHideNavButtons={ true }
 			hideFormattedHeader={ true }
-			stepName={ 'processing-fake' }
-			flowName={ 'newsletter' }
+			stepName={ 'pre-launchpad' }
 			isHorizontalLayout={ true }
 			stepContent={
-				<div className={ 'processing-fake' }>
-					<h1 className="processing-fake__title">This is the fake processing step</h1>
+				<div className={ 'pre-launchpad' }>
+					<h1 className="pre-launchpad__title">This is the pre-launchpad step</h1>
 					<p>we are pretending to do things...</p>
 				</div>
 			}
@@ -26,4 +25,4 @@ const ProcessingFake: Step = function ( { navigation } ): ReactElement | null {
 	);
 };
 
-export default ProcessingFake;
+export default PreLaunchpad;

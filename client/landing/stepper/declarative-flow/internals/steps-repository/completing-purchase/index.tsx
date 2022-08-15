@@ -81,9 +81,14 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 		}
 	};
 	useEffect( () => {
+		let navigateTo = '';
 		if ( flow === 'link-in-bio' ) {
+			navigateTo = 'launchpad';
+
 			completeLinkInBioFlow();
 		} else {
+			navigateTo = 'subscribers';
+
 			setPendingAction( async () => {
 				setProgressTitle( __( 'Completing Purchase' ) );
 				setProgress( 0.3 );
@@ -91,7 +96,9 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 				setProgress( 1 );
 			} );
 		}
-		submit?.();
+
+		const providedDependencies = { navigateTo };
+		submit?.( providedDependencies, navigateTo );
 	} );
 
 	return null;

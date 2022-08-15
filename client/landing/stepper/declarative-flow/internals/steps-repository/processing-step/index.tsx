@@ -42,7 +42,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 			if ( typeof action === 'function' ) {
 				try {
 					await action();
-					submit?.( {}, ProcessingResult.SUCCESS );
+					submit?.( {}, ProcessingResult.SUCCESS, props.data?.navigateTo );
 				} catch ( e ) {
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
