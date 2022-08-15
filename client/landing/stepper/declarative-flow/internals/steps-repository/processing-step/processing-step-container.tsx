@@ -12,10 +12,9 @@ import './style.scss';
 
 interface Props {
 	navigation: NavigationControls;
-	isJetpackPowered?: boolean | false;
-	shouldHideNavButtons?: boolean | true;
-	hideFormattedHeader?: boolean | true;
-	isHorizontalLayout?: boolean | true;
+	isJetpackPowered?: boolean;
+	hideFormattedHeader?: boolean;
+	isHorizontalLayout?: boolean;
 }
 
 export enum ProcessingResult {
@@ -27,7 +26,6 @@ export enum ProcessingResult {
 const ProcessingStepContainer = ( {
 	navigation,
 	isJetpackPowered,
-	shouldHideNavButtons,
 	hideFormattedHeader,
 	isHorizontalLayout,
 }: Props ) => {
@@ -92,7 +90,7 @@ const ProcessingStepContainer = ( {
 
 	return (
 		<StepContainer
-			shouldHideNavButtons={ shouldHideNavButtons }
+			shouldHideNavButtons={ true }
 			hideFormattedHeader={ hideFormattedHeader }
 			stepName={ 'processing-step' }
 			isHorizontalLayout={ isHorizontalLayout }
