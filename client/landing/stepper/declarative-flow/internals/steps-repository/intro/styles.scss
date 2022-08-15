@@ -22,6 +22,23 @@
 		}
 	}
 
+	&.link-in-bio {
+		background-color: #d0cce3;
+
+		background-image: url( 'calypso/assets/images/onboarding/link-in-bio-intro-left.png' ),
+		url( 'calypso/assets/images/onboarding/link-in-bio-intro-right.png' );
+		background-position-y: 85%, 15%;
+		background-position-x: 0, 100%;
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 15%, auto 15%;
+
+		@include break-large {
+			background-size: auto 25%, auto 25%;
+			background-position-y: 90%, 10%;
+		}
+	}
+
 	min-height: 100%;
 	min-width: 100%;
 	width: 100%;
