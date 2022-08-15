@@ -2,8 +2,6 @@
 @import '@wordpress/base-styles/_mixins.scss';
 @import './grid-mixins.scss';
 
-$mobile-layout-grid: repeat( 3, minmax( 0, 1fr ) );
-
 .is-section-plugins .main {
 	padding-top: 35px; // Compensate for the fixed header.
 
@@ -86,7 +84,7 @@ body.is-section-plugins.theme-default.color-scheme {
 	display: flex;
 	align-items: center;
 
-	@media screen and ( max-width: 1040px ) {
+	@media screen and ( max-width: 1280px ) {
 		.plugins__button {
 			border: none;
 		}
@@ -124,23 +122,18 @@ body.is-section-plugins.theme-default.color-scheme {
 .plugin-details__layout {
 	padding-top: 54px;
 
-	@include breakpoint-deprecated( '<1040px' ) {
-		padding-top: 0;
-	}
-
 	@include display-grid;
-	grid-template-columns: $mobile-layout-grid;
-	@include break-mobile {
-		grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr ) 350px;
-	}
+	grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr ) 350px;
 	grid-column-gap: 60px;
 	grid-template-areas: 'header header actions'
 						'content content actions';
 
-	@include breakpoint-deprecated( '<1040px' ) {
+	@include breakpoint-deprecated( '<1280px' ) {
 		grid-template-areas: 'header header header'
 							'actions actions actions'
 							'content content content';
+		grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+		padding-top: 0;
 	}
 
 	.plugin-details__header {
@@ -158,7 +151,7 @@ body.is-section-plugins.theme-default.color-scheme {
 		padding: 40px;
 		height: fit-content;
 
-		@include breakpoint-deprecated( '<1040px' ) {
+		@include breakpoint-deprecated( '<1280px' ) {
 			margin-top: 40px;
 		}
 	}
