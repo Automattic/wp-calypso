@@ -2,7 +2,7 @@ import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
-import { MinimalRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -62,6 +62,7 @@ import { StoredCard } from '../types/stored-cards';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	ManagedContactDetails,
 	CountryListItem,
