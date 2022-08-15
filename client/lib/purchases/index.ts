@@ -130,7 +130,7 @@ export function getDisplayName( purchase: Purchase ): ReactChild | string | unde
 
 export function getPartnerName( purchase: Purchase ): string | null {
 	if ( isPartnerPurchase( purchase ) ) {
-		return purchase.partnerName;
+		return purchase.partnerName ?? null;
 	}
 	return null;
 }
@@ -562,7 +562,7 @@ export function isRenewing( purchase: Purchase ): boolean {
 }
 
 export function isWithinIntroductoryOfferPeriod( purchase: Purchase ): boolean {
-	return purchase.introductoryOffer?.isWithinPeriod;
+	return purchase.introductoryOffer?.isWithinPeriod ?? false;
 }
 
 export function isIntroductoryOfferFreeTrial( purchase: Purchase ): boolean {

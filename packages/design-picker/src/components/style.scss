@@ -81,20 +81,20 @@
 		.design-picker__grid {
 			display: grid;
 			grid-template-columns: 1fr;
-			row-gap: 24px;
+			row-gap: 32px;
 			margin: 0 0 30px;
 
 			@include break-medium {
 				grid-template-columns: 1fr 1fr;
 				column-gap: 24px;
-				row-gap: 20px;
+				row-gap: 28px;
 			}
 		}
 
 		.design-picker__grid-minimal {
 			display: grid;
 			grid-template-columns: 1fr;
-			row-gap: 28px;
+			row-gap: 36px;
 			margin: 0 0 30px;
 
 			@include break-medium {

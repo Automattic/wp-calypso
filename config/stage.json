@@ -13,7 +13,7 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"olark_chat_identity": "7089-503-10-5123",
 	"dsp_stripe_pub_key": "pk_test_todo",
-	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js?m=1660075754h&ver=1.0.0",
+	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"features": {
 		"ad-tracking": false,
 		"calypso/help-center": false,
