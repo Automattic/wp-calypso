@@ -3,6 +3,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
@@ -64,11 +65,21 @@ const ListTileSubtitle = styled.div`
 	align-items: center;
 `;
 
+const SitePlan = styled.div`
+	display: flex;
+	line-height: 16px;
+`;
+
+const SitePlanIcon = styled.div`
+	margin-right: 6px;
+`;
+
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const { translatedStatus } = useSiteStatus( site );
 
 	const isP2Site = site.options?.is_wpforteams_site;
+	const isAtomicSite = site?.is_wpcom_atomic;
 
 	return (
 		<Row>
@@ -108,7 +119,16 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 				/>
 			</Column>
-			<Column mobileHidden>{ site.plan.product_name_short }</Column>
+			<Column mobileHidden>
+				<SitePlan>
+					{ site.jetpack && ! isAtomicSite && (
+						<SitePlanIcon>
+							<JetpackLogo size={ 16 } />
+						</SitePlanIcon>
+					) }
+					{ site.plan.product_name_short }
+				</SitePlan>
+			</Column>
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
