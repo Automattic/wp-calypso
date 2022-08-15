@@ -47,7 +47,6 @@ const Categories = ( { selected }: { selected?: string } ) => {
 		<ResponsiveToolbarGroup
 			className="categories__menu"
 			initialActiveIndex={ current }
-			forceSwipe={ 'undefined' === typeof window }
 			onClick={ onClick }
 			hrefList={ categoryUrls }
 			forceSwipe={ 'undefined' === typeof window }
