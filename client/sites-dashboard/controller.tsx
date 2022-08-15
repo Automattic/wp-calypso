@@ -23,20 +23,34 @@ const globalStyles = css`
 `;
 
 const getStatusFilterValue = ( status?: string ) => {
-	return (
-		siteLaunchStatusFilterValues.find( ( value ) => value === status ) ??
-		DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE
-	);
+	return siteLaunchStatusFilterValues.find( ( value ) => value === status );
 };
 
 export function sanitizeQueryParameters( context: PageJSContext, next: () => void ) {
-	context.query.status = getStatusFilterValue( context.query.status );
-
-	if ( context.query.status === DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE ) {
-		const pathWithQuery = window.location.pathname + window.location.search;
-		history.replaceState( null, '', removeQueryArgs( pathWithQuery, 'status' ) );
+	/**
+	 * We need a base case because `page.replace` triggers a re-render for every middleware
+	 * in the route.
+	 */
+	if ( context.query.status === undefined ) {
+		context.query.status = DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE;
+		return next();
 	}
 
+	const status = context.query.status.trim();
+
+	if ( status === '' ) {
+		context.page.replace( removeQueryArgs( context.canonicalPath, 'status' ) );
+		return;
+	}
+
+	const chosenStatus = getStatusFilterValue( status );
+
+	if ( ! chosenStatus ) {
+		context.page.replace( removeQueryArgs( context.canonicalPath, 'status' ) );
+		return;
+	}
+
+	context.query.status = chosenStatus;
 	next();
 }
 
