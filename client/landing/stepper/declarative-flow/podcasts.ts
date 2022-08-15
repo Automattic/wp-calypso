@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSite } from '../hooks/use-site';
+import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
@@ -18,7 +20,17 @@ export const podcasts: Flow = {
 		] as StepPath[];
 	},
 
-	useStepNavigation( currentStep, navigate ) {
+	useStepNavigation( _currentStep, navigate ) {
+		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
+
+		let siteSlug: string | null = null;
+		if ( siteSlugParam ) {
+			siteSlug = siteSlugParam;
+		} else if ( site ) {
+			siteSlug = new URL( site.URL ).host;
+		}
+
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			return providedDependencies;
 		}
@@ -28,8 +40,13 @@ export const podcasts: Flow = {
 		};
 
 		const goNext = () => {
-			navigate( 'chooseADomain' );
-			return;
+			switch ( _currentStep ) {
+				case 'letsGetStarted':
+					return navigate( 'chooseADomain' );
+
+				case 'launchpad':
+					return window.location.replace( `/view/${ siteSlug }` );
+			}
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {

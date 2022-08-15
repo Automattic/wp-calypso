@@ -3,7 +3,6 @@ import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import wpcom from 'calypso/lib/wp';
 import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import type { StepPath } from './internals/steps-repository';
@@ -40,20 +39,6 @@ export const newsletter: Flow = {
 			siteSlug = new URL( site.URL ).host;
 		}
 
-		const exitLaunchpad = async ( siteSlug: string | null ) => {
-			// TODO: Handle null case for site slug
-			try {
-				await wpcom.req.post( `/sites/${ siteSlug }/settings`, {
-					apiVersion: '1.1',
-					launchpad_screen: 'off',
-				} );
-
-				window.location.replace( `/home/${ siteSlug }` );
-			} catch ( err: any ) {
-				// TODO: Add error handling
-			}
-		};
-
 		function submit() {
 			switch ( _currentStep ) {
 				case 'completingPurchase':
@@ -85,8 +70,7 @@ export const newsletter: Flow = {
 					return navigate( 'launchpad' );
 
 				case 'launchpad':
-					navigate( 'processingFake' );
-					return exitLaunchpad( siteSlug );
+					return window.location.replace( `/view/${ siteSlug }` );
 
 				default:
 					return navigate( 'intro' );
