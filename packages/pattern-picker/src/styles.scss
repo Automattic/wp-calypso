@@ -14,7 +14,6 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	overflow-x: scroll;
 	scroll-snap-type: x mandatory;
 	scroll-behavior: smooth;
-	padding-bottom: 3%;
 
 	&::-webkit-scrollbar {
 		display: none;
@@ -23,7 +22,7 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 
 .pattern-picker__item {
 	flex: 1;
-	min-width: 220px;
+	min-width: 120px;
 	scroll-snap-align: center;
 	// iPhone aspect ratio
 	aspect-ratio: 0.46;
@@ -103,6 +102,8 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 }
 
 .pattern-picker__select {
+	display: inline-flex;
+	justify-content: center;
 	opacity: 0;
 	pointer-events: none;
 	width: 100%;

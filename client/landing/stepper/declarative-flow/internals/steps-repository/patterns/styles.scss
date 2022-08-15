@@ -1,0 +1,36 @@
+@import '../style';
+
+.link-in-bio.patterns {
+	height: 100vh;
+	padding: 25px 0 0;
+
+	@include break-medium {
+		padding: 40px 0 0;
+	}
+
+	.step-container {
+		.step-container__header {
+			margin-bottom: 20px;
+
+			@include break-medium {
+				margin-bottom: 32px;
+			}
+
+			h1.formatted-header__title {
+				font-size: $font-title-medium;
+
+				@include break-medium {
+					font-size: $font-headline-medium;
+				}
+			}
+		}
+
+		.pattern-picker__item {
+			min-height: calc( 65vh - 50px );
+		}
+
+		.step-container__jetpack-powered {
+			margin-top: 20px;
+		}
+	}
+}
