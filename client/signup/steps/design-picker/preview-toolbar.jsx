@@ -19,9 +19,9 @@ const DesignPickerPreviewToolbar = ( {
 	filterDevicesToShow,
 } ) => {
 	const devices = React.useRef( {
-		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 24 },
+		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
 		tablet: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
-		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 18 },
+		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
 	} );
 
 	function filterDevices( selectedDevices ) {
