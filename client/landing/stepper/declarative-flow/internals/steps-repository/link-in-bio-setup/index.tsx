@@ -20,7 +20,7 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
-	const { goBack } = navigation;
+	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
 
@@ -107,7 +107,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					// communicate the error to the user
 				}
 			}
-			// submit?.( { siteTitle, tagline } );
+			submit?.( { siteTitle, tagline } );
 		}
 	};
 
