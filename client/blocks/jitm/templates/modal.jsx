@@ -12,7 +12,6 @@ export default function ModalTemplate( {
 	featureClass,
 	icon,
 	iconPath,
-	iconBgColour,
 	message,
 	onClick,
 	onDismiss,
@@ -48,7 +47,7 @@ export default function ModalTemplate( {
 		}
 	};
 
-	const getModalClassName = () => {
+	const getModalImageClassName = () => {
 		switch ( icon ) {
 			case 'embedded-inbox':
 				return 'modal__embedded-inbox';
@@ -57,9 +56,13 @@ export default function ModalTemplate( {
 		}
 	};
 
+	const getModalClassName = () => {
+		return `modal__main modal--${ featureClass }`;
+	};
+
 	return isDismissed.includes( featureClass ) ? null : (
 		<Guide
-			className="modal__main"
+			className={ getModalClassName() }
 			contentLabel={ message }
 			onFinish={ () => {
 				onDismiss();
@@ -92,9 +95,9 @@ export default function ModalTemplate( {
 									<p className="modal__disclaimer">{ line }</p>
 								) ) }
 							</div>
-							<div className="modal__sidebar" style={ { backgroundColor: iconBgColour } }>
+							<div className="modal__sidebar">
 								<img
-									className={ getModalClassName() }
+									className={ getModalImageClassName() }
 									src={ getModalImage() }
 									alt={ getModalAltText() }
 								/>
