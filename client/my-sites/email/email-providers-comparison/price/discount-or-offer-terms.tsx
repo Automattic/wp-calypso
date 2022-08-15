@@ -26,8 +26,8 @@ const DiscountOrOfferTerms = ( {
 	const introductoryOffer = product?.introductory_offer;
 	const intervalUnit = String( introductoryOffer?.interval_unit );
 	const intervalCount = Number( introductoryOffer?.interval_count );
-	const transitionAfterRenewal = Number( introductoryOffer?.transition_after_renewal_count );
-	const discountedIntervalCount = intervalCount + transitionAfterRenewal;
+	const numberOfDiscountedRenewals = Number( introductoryOffer?.transition_after_renewal_count );
+	const numberOfDiscountedIntervals = intervalCount + numberOfDiscountedRenewals;
 
 	return (
 		<>
@@ -36,15 +36,15 @@ const DiscountOrOfferTerms = ( {
 					{ intervalUnit === 'month'
 						? translate( '%(numberOfMonths)d month free', '%(numberOfMonths)d months free', {
 								args: {
-									numberOfMonths: discountedIntervalCount,
+									numberOfMonths: numberOfDiscountedIntervals,
 								},
-								count: discountedIntervalCount,
+								count: numberOfDiscountedIntervals,
 						  } )
 						: translate( '%(numberOfYears)d year free', '%(numberOfYears)d years free', {
 								args: {
-									numberOfYears: discountedIntervalCount,
+									numberOfYears: numberOfDiscountedIntervals,
 								},
-								count: discountedIntervalCount,
+								count: numberOfDiscountedIntervals,
 						  } ) }
 				</div>
 			) }
@@ -57,16 +57,16 @@ const DiscountOrOfferTerms = ( {
 								'%(numberOfMonths)d months discount',
 								{
 									args: {
-										numberOfMonths: discountedIntervalCount,
+										numberOfMonths: numberOfDiscountedIntervals,
 									},
-									count: discountedIntervalCount,
+									count: numberOfDiscountedIntervals,
 								}
 						  )
 						: translate( '%(numberOfYears)d year discount', '%(numberOfYears)d years discount', {
 								args: {
-									numberOfYears: discountedIntervalCount,
+									numberOfYears: numberOfDiscountedIntervals,
 								},
-								count: discountedIntervalCount,
+								count: numberOfDiscountedIntervals,
 						  } ) }
 				</div>
 			) }

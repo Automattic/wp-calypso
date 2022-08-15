@@ -99,12 +99,12 @@ const IntroductoryOfferPriceInformation = ( { product }: { product: ProductListI
 
 	const introductoryOffer = product.introductory_offer;
 	const shouldProrate = introductoryOffer?.should_prorate_when_offer_ends ?? false;
-	const transitionAfterRenewal = Number( introductoryOffer?.transition_after_renewal_count );
+	const numberOfDiscountedRenewals = Number( introductoryOffer?.transition_after_renewal_count );
 
 	const translateArguments = {
 		args: {
 			firstRenewalPrice: getFirstRenewalPrice( product, currencyCode ?? '' ),
-			numberOfDiscountedRenewals: transitionAfterRenewal,
+			numberOfDiscountedRenewals,
 			productTerm: product.product_term,
 			standardPrice: formatCurrency( product.cost ?? 0, currencyCode ?? '', { stripZeros: true } ),
 		},
@@ -123,8 +123,8 @@ const IntroductoryOfferPriceInformation = ( { product }: { product: ProductListI
 		);
 	}
 
-	if ( transitionAfterRenewal > 0 ) {
-		if ( transitionAfterRenewal === 1 ) {
+	if ( numberOfDiscountedRenewals > 0 ) {
+		if ( numberOfDiscountedRenewals === 1 ) {
 			return (
 				<div className="price-information__free-trial">
 					{ translate(
