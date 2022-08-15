@@ -17,6 +17,7 @@ export const Truncated = styled.span`
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	max-width: 250px;
+	margin-right: 3px;
 
 	&:hover {
 		text-decoration: underline;
