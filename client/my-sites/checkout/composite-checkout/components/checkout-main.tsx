@@ -2,7 +2,7 @@ import { JETPACK_SEARCH_PRODUCTS } from '@automattic/calypso-products';
 import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { MinimalRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { useIsWebPayAvailable, isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
@@ -408,7 +408,7 @@ export default function CheckoutMain( {
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
-	const addItemAndLog = useCallback(
+	const addItemAndLog: ( item: MinimalRequestCartProduct ) => void = useCallback(
 		( cartItem ) => {
 			try {
 				recordAddEvent( cartItem );
