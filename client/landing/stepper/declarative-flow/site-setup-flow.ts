@@ -16,7 +16,7 @@ import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
-import { ProcessingResult } from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/processing-step-container';
 import {
 	AssertConditionResult,
 	AssertConditionState,
