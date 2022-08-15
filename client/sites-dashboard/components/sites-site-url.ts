@@ -1,25 +1,24 @@
-import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { ExternalLink } from '@wordpress/components';
 
-export const ExternalLinkIcon = styled( Gridicon )`
-	display: none;
-	margin-left: 3px;
-	margin-right: 0px;
-	position: relative;
-	top: 2px;
+export const SiteUrl = styled( ExternalLink )`
+	text-overflow: ellipsis;
+	display: inline-flex;
+	overflow: hidden;
+	font-size: 14px;
+	color: var( --studio-gray-60 ) !important;
+	&:hover {
+		text-decoration: underline;
+	}
 `;
 
-export const SiteUrl = styled.a( {
-	textOverflow: 'ellipsis',
-	overflow: 'hidden',
-	display: 'inline-block',
-	fontSize: '14px',
-	color: 'var( --studio-gray-60 ) !important',
+export const Truncated = styled.span`
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 250px;
 
-	[ `:hover ${ ExternalLinkIcon }` ]: {
-		display: 'inline-block',
-	},
-	'&:hover,&:visited': {
-		fontWeight: 500,
-	},
-} );
+	&:hover {
+		text-decoration: underline;
+	}
+`;

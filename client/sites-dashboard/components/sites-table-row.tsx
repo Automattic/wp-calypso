@@ -10,7 +10,7 @@ import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
-import { ExternalLinkIcon, SiteUrl } from './sites-site-url';
+import { SiteUrl, Truncated } from './sites-site-url';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
@@ -95,15 +95,8 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					subtitle={
 						<ListTileSubtitle>
-							<SiteUrl
-								href={ site.URL }
-								target="_blank"
-								rel="noopener noreferrer"
-								className={ css( { lineHeight: 1 } ) }
-								title={ site.URL }
-							>
-								{ displaySiteUrl( site.URL ) }
-								<ExternalLinkIcon icon={ 'external' } size={ 18 } />
+							<SiteUrl href={ site.URL } className={ css( { lineHeight: 1 } ) } title={ site.URL }>
+								<Truncated>{ displaySiteUrl( site.URL ) }</Truncated>
 							</SiteUrl>
 						</ListTileSubtitle>
 					}
