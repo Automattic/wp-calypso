@@ -59,13 +59,12 @@ export const SftpCard = ( {
 		url: false,
 		port: false,
 		username: false,
-		sshConnection: false,
+		sshConnectString: false,
 	} );
 	// TODO replace with live data.
 	const [ isSshEnabled, setIsSshEnabled ] = useState( false );
 
-	// TODO replace with live data.
-	const sshConnection = 'ssh site.wordpress.com@sftp.wp.com';
+	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
 
 	const onDestroy = () => {
 		if ( password ) {
@@ -79,7 +78,7 @@ export const SftpCard = ( {
 			url: false,
 			port: false,
 			username: false,
-			sshConnection: false,
+			sshConnectString: false,
 		} );
 		setIsCopied( { [ field ]: true } );
 	};
@@ -170,17 +169,17 @@ export const SftpCard = ( {
 					<div class="sftp-card__copy-field">
 						<FormTextInput
 							className="sftp-card__copy-input"
-							value={ sshConnection }
+							value={ sshConnectString }
 							onChange={ noop }
 						/>
 						<ClipboardButton
 							className="sftp-card__copy-button"
-							text={ sshConnection }
-							onCopy={ () => onCopy( 'sshConnection' ) }
+							text={ sshConnectString }
+							onCopy={ () => onCopy( 'sshConnectString' ) }
 							compact
 						>
-							{ isCopied.sshConnection && <Gridicon icon="checkmark" /> }
-							{ isCopied.sshConnection
+							{ isCopied.sshConnectString && <Gridicon icon="checkmark" /> }
+							{ isCopied.sshConnectString
 								? translate( 'Copied!' )
 								: translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
