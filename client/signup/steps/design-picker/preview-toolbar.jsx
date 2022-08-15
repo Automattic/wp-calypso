@@ -15,18 +15,37 @@ const DesignPickerPreviewToolbar = ( {
 	showDeviceSwitcher,
 	setDeviceViewport,
 	translate,
+	showSiteAddressBar,
+	filterDevicesToShow,
 } ) => {
 	const devices = React.useRef( {
-		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
+		computer: { title: translate( 'Desktop' ), icon: computer, iconSize: 24 },
 		tablet: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
-		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
+		phone: { title: translate( 'Phone' ), icon: phone, iconSize: 18 },
 	} );
+
+	function filterDevices( selectedDevices ) {
+		// If invalid input, display all possible devices
+		// If valid input, Will filter out any devices that do not exist in the 'possibleDevices' array above
+		if ( Array.isArray( selectedDevices ) && selectedDevices.length > 0 ) {
+			const filteredPossibleDevices = selectedDevices.filter( ( device ) => {
+				return possibleDevices.includes( device );
+			} );
+
+			return filteredPossibleDevices;
+		}
+		return possibleDevices;
+	}
+
+	const filteredPossibleDevices = filterDevicesToShow
+		? filterDevices( filterDevicesToShow )
+		: possibleDevices;
 
 	return (
 		<div className="preview-toolbar__toolbar">
 			{ showDeviceSwitcher && (
 				<div className="preview-toolbar__devices">
-					{ possibleDevices.map( ( device ) => (
+					{ filteredPossibleDevices.map( ( device ) => (
 						<Button
 							key={ device }
 							borderless
@@ -44,16 +63,18 @@ const DesignPickerPreviewToolbar = ( {
 					) ) }
 				</div>
 			) }
-			<div className="preview-toolbar__browser-header">
-				<svg width="40" height="8">
-					<g>
-						<rect width="8" height="8" rx="4" />
-						<rect x="16" width="8" height="8" rx="4" />
-						<rect x="32" width="8" height="8" rx="4" />
-					</g>
-				</svg>
-				{ externalUrl && <span className="preview-toolbar__browser-url">{ externalUrl }</span> }
-			</div>
+			{ showSiteAddressBar && (
+				<div className="preview-toolbar__browser-header">
+					<svg width="40" height="8">
+						<g>
+							<rect width="8" height="8" rx="4" />
+							<rect x="16" width="8" height="8" rx="4" />
+							<rect x="32" width="8" height="8" rx="4" />
+						</g>
+					</svg>
+					{ externalUrl && <span className="preview-toolbar__browser-url">{ externalUrl }</span> }
+				</div>
+			) }
 		</div>
 	);
 };
@@ -67,6 +88,14 @@ DesignPickerPreviewToolbar.propTypes = {
 	showDeviceSwitcher: PropTypes.bool,
 	// Called when a device button is clicked
 	setDeviceViewport: PropTypes.func,
+	// Show iframe site address bar
+	showSiteAddressBar: PropTypes.bool,
+	// Filter devices to show in device switcher
+	filterDevicesToShow: PropTypes.array,
+};
+
+DesignPickerPreviewToolbar.defaultProps = {
+	showSiteAddressBar: true,
 };
 
 export default localize( DesignPickerPreviewToolbar );
