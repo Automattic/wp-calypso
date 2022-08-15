@@ -10,14 +10,16 @@ export const SiteUrl = styled( ExternalLink )`
 	&:hover {
 		text-decoration: underline;
 	}
+
+	.components-external-link__icon {
+		margin-left: 4px;
+	}
 `;
 
 export const Truncated = styled.span`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 250px;
-	margin-right: 4px;
 
 	&:hover {
 		text-decoration: underline;
