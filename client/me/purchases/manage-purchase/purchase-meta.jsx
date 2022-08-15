@@ -1,7 +1,6 @@
 import {
-	getPlan,
-	getProductFromSlug,
 	isConciergeSession,
+	isDIFMProduct,
 	isDomainRegistration,
 	isDomainTransfer,
 	isEmailMonthly,
@@ -10,6 +9,7 @@ import {
 	JETPACK_LEGACY_PLANS,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
+	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -20,6 +20,7 @@ import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import formatCurrency from 'calypso/../packages/format-currency/src';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -44,6 +45,7 @@ import {
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
@@ -224,11 +226,42 @@ function PurchaseMetaOwner( { owner } ) {
 
 function PurchaseMetaPrice( { purchase } ) {
 	const translate = useTranslate();
-	const { productSlug, productDisplayPrice } = purchase;
-	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
+	const { productDisplayPrice } = purchase;
+	const productsList = useSelector( getProductsList );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
+		if ( isDIFMProduct( purchase ) ) {
+			const productDetails = productsList[ WPCOM_DIFM_LITE ];
+			const [ tier0, tier1 ] = productDetails.price_tier_list;
+			const perExtraPagePrice = ( tier1.minimum_price - tier0.minimum_price ) / 100;
+			const { maximum_units: noOfBaselinePagesIncluded } = tier0;
+			const { amount: totalPrice, purchaseRenewalQuantity: noOfPages, currencyCode } = purchase;
+			const extraPageCount = noOfPages - noOfBaselinePagesIncluded;
+			const costOfExtraPages = extraPageCount * perExtraPagePrice;
+			const oneTimeFee = totalPrice - costOfExtraPages;
+
+			return (
+				<div>
+					<div>
+						{ translate( 'One Time Fee : %(oneTimeFee)s', {
+							args: {
+								oneTimeFee: formatCurrency( oneTimeFee, currencyCode ),
+							},
+						} ) }
+					</div>
+					<div>
+						{ translate( 'Cost for %(extraPageCount)d extra pages : %(costOfExtraPages)s', {
+							args: {
+								extraPageCount: extraPageCount,
+								costOfExtraPages: formatCurrency( costOfExtraPages, currencyCode ),
+							},
+						} ) }
+					</div>
+				</div>
+			);
+		}
+
 		// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10")
 		return translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
 			components: {

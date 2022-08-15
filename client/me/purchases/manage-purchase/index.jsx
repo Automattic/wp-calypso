@@ -27,6 +27,8 @@ import {
 	isP2Plus,
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
+	isDIFMProduct,
+	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -582,8 +584,7 @@ class ManagePurchase extends Component {
 	}
 
 	getPurchaseDescription() {
-		const { plan, purchase, theme, translate } = this.props;
-
+		const { plan, purchase, theme, translate, productsList } = this.props;
 		if ( isPlan( purchase ) ) {
 			return plan.getDescription();
 		}
@@ -646,8 +647,40 @@ class ManagePurchase extends Component {
 					</>
 				);
 			}
-
 			return description;
+		}
+
+		if ( isDIFMProduct( purchase ) ) {
+			const productDetails = productsList[ WPCOM_DIFM_LITE ];
+			const [ tier0 ] = productDetails.price_tier_list;
+			const { maximum_units: noOfBaselinePagesIncluded } = tier0;
+
+			const description = translate(
+				'Hire a professional to set up your %(noOfBaselinePagesIncluded)d page website.',
+				{
+					args: {
+						noOfBaselinePagesIncluded: noOfBaselinePagesIncluded,
+					},
+				}
+			);
+
+			if ( purchase.purchaseRenewalQuantity ) {
+				return (
+					<>
+						{ description }{ ' ' }
+						{ translate(
+							'This purchase includes %(numberOfPages)d extra page.',
+							'This purchase includes %(numberOfPages)d extra pages.',
+							{
+								count: purchase.purchaseRenewalQuantity,
+								args: {
+									numberOfPages: purchase.purchaseRenewalQuantity - noOfBaselinePagesIncluded,
+								},
+							}
+						) }
+					</>
+				);
+			}
 		}
 
 		return purchaseType( purchase );

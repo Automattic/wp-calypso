@@ -323,7 +323,11 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
 	const extra = buildDIFMCartExtrasObject( dependencies );
-	const cartItem = { product_slug: WPCOM_DIFM_LITE, extra };
+	const cartItem = {
+		product_slug: WPCOM_DIFM_LITE,
+		extra,
+		quantity: dependencies.selectedPageTitles.length,
+	};
 	const providedDependencies = {
 		selectedDesign,
 		selectedSiteCategory,
