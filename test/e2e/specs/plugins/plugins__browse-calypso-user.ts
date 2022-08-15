@@ -30,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await pluginsPage.visit();
 		} );
 
-		it.each( [ 'Top paid plugins', 'Editor’s pick', 'Top free plugins' ] )(
+		it.each( [ 'Top premium plugins', 'Editor’s pick', 'Top free plugins' ] )(
 			'Plugins page loads %s section',
 			async function ( section: string ) {
 				await pluginsPage.validateHasSection( section );
@@ -48,20 +48,20 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			} else {
 				await pluginsPage.clickBackBreadcrumb();
 			}
-			await pluginsPage.validateHasSection( 'Top paid plugins' );
+			await pluginsPage.validateHasSection( 'Top premium plugins' );
 		} );
-		it( 'Can browse all paid plugins', async function () {
+		it( 'Can browse all premium plugins', async function () {
 			await pluginsPage.clickBrowseAllPaidPlugins();
-			await pluginsPage.validateHasSubtitle( 'Top paid plugins' );
+			await pluginsPage.validateHasSubtitle( 'Top premium plugins' );
 		} );
 
-		it( 'Can return via breadcrumb from paid plugins', async function () {
+		it( 'Can return via breadcrumb from premium plugins', async function () {
 			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 				await pluginsPage.clickPluginsBreadcrumb();
 			} else {
 				await pluginsPage.clickBackBreadcrumb();
 			}
-			await pluginsPage.validateHasSection( 'Top paid plugins' );
+			await pluginsPage.validateHasSection( 'Top premium plugins' );
 		} );
 
 		it.each( [
@@ -96,7 +96,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await pluginsPage.visit( credentials.testSites?.primary.url as string );
 		} );
 
-		it.each( [ 'Top paid plugins', 'Editor’s pick', 'Top free plugins' ] )(
+		it.each( [ 'Top premium plugins', 'Editor’s pick', 'Top free plugins' ] )(
 			'Plugins page loads %s section',
 			async function ( section: string ) {
 				await pluginsPage.validateHasSection( section );
