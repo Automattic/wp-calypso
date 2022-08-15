@@ -1,14 +1,11 @@
 import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { IAppState } from 'calypso/state/types';
 
 /**
  * Returns true if site is a Jetpack site, false if the site is hosted on
  * WordPress.com, or null if the site is unknown.
- *
- * @param  {object}   state  Global state tree
- * @param  {?number}   siteId Site ID
- * @returns {?boolean}        Whether site is a Jetpack site
  */
-export default function isJetpackSite( state, siteId ) {
+export default function isJetpackSite( state: IAppState, siteId: number | null ) {
 	const site = getRawSite( state, siteId );
 	if ( ! site ) {
 		return null;

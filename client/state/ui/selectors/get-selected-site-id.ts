@@ -1,3 +1,4 @@
+import { IAppState } from 'calypso/state/types';
 import 'calypso/state/ui/init';
 
 /**
@@ -6,6 +7,6 @@ import 'calypso/state/ui/init';
  * @param  {object}  state Global state tree
  * @returns {?number}       Selected site ID
  */
-export default function getSelectedSiteId( state ) {
+export default function getSelectedSiteId( state: IAppState ): number | null {
 	return state.ui.selectedSiteId;
 }
