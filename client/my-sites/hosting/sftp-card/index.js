@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { FEATURE_SSH } from '@automattic/calypso-products';
 import { Card, Button, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { PanelBody, ToggleControl } from '@wordpress/components';
@@ -27,6 +28,7 @@ import {
 	updateAtomicSftpUser,
 } from 'calypso/state/hosting/actions';
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -46,6 +48,7 @@ export const SftpCard = ( {
 	requestSftpUsers,
 	createSftpUser,
 	resetSftpPassword,
+	siteHasSshFeature,
 	removePasswordFromState,
 } ) => {
 	// State for clipboard copy button for both username and password data
@@ -60,8 +63,6 @@ export const SftpCard = ( {
 	} );
 	// TODO replace with live data.
 	const [ isSshEnabled, setIsSshEnabled ] = useState( false );
-
-	const isSshAvailable = config.isEnabled( 'launch-wpcom-ssh' );
 
 	// TODO replace with live data.
 	const sshConnection = 'ssh site.wordpress.com@sftp.wp.com';
@@ -191,7 +192,7 @@ export const SftpCard = ( {
 
 	const displayQuestionsAndButton = ! ( username || isLoading );
 
-	const featureExplanation = isSshAvailable
+	const featureExplanation = siteHasSshFeature
 		? translate(
 				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line."
 		  )
@@ -203,7 +204,9 @@ export const SftpCard = ( {
 		<Card className="sftp-card">
 			<MaterialIcon icon="cloud" size={ 32 } />
 			<CardHeading>
-				{ isSshAvailable ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' ) }
+				{ siteHasSshFeature
+					? translate( 'SFTP/SSH credentials' )
+					: translate( 'SFTP credentials' ) }
 			</CardHeading>
 			<div className="sftp-card__body">
 				<p>
@@ -245,7 +248,7 @@ export const SftpCard = ( {
 							}
 						) }
 					</PanelBody>
-					{ isSshAvailable && (
+					{ siteHasSshFeature && (
 						<PanelBody title={ translate( 'What is SSH?' ) } initialOpen={ false }>
 							{ translate(
 								'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. ' +
@@ -332,10 +335,10 @@ export const SftpCard = ( {
 					</div>
 					<FormLabel>{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
-					{ isSshAvailable && (
+					{ siteHasSshFeature && (
 						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
 					) }
-					{ isSshAvailable && renderSshField() }
+					{ siteHasSshFeature && renderSshField() }
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
@@ -393,12 +396,15 @@ export default connect(
 			currentUserId,
 			username,
 			password,
+			siteHasSshFeature:
+				config.isEnabled( 'launch-wpcom-ssh' ) && siteHasFeature( state, siteId, FEATURE_SSH ),
 		};
 	},
 	{
 		requestSftpUsers: requestAtomicSftpUsers,
 		createSftpUser,
 		resetSftpPassword,
+
 		removePasswordFromState: ( siteId, username ) =>
 			updateAtomicSftpUser( siteId, [ { username, password: null } ] ),
 	}
