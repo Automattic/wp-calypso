@@ -1,6 +1,7 @@
+import config from '@automattic/calypso-config';
 import { Card, Button, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { PanelBody } from '@wordpress/components';
+import { PanelBody, ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -55,7 +56,15 @@ export const SftpCard = ( {
 		url: false,
 		port: false,
 		username: false,
+		sshConnection: false,
 	} );
+	// TODO replace with live data.
+	const [ isSshEnabled, setIsSshEnabled ] = useState( false );
+
+	const isSshAvailable = config.isEnabled( 'launch-wpcom-ssh' );
+
+	// TODO replace with live data.
+	const sshConnection = 'ssh site.wordpress.com@sftp.wp.com';
 
 	const onDestroy = () => {
 		if ( password ) {
@@ -64,7 +73,13 @@ export const SftpCard = ( {
 	};
 
 	const onCopy = ( field ) => {
-		setIsCopied( { password: false, url: false, port: false, username: false } );
+		setIsCopied( {
+			password: false,
+			url: false,
+			port: false,
+			username: false,
+			sshConnection: false,
+		} );
 		setIsCopied( { [ field ]: true } );
 	};
 
@@ -141,12 +156,55 @@ export const SftpCard = ( {
 		);
 	};
 
+	const renderSshField = () => {
+		return (
+			<div className="sftp-card__ssh-field">
+				<ToggleControl
+					disabled={ isLoading }
+					checked={ isSshEnabled }
+					onChange={ () => setIsSshEnabled( ! isSshEnabled ) }
+					label={ translate( 'Enable SSH access to this site.' ) }
+				/>
+				{ isSshEnabled && (
+					<div class="sftp-card__copy-field">
+						<FormTextInput
+							className="sftp-card__copy-input"
+							value={ sshConnection }
+							onChange={ noop }
+						/>
+						<ClipboardButton
+							className="sftp-card__copy-button"
+							text={ sshConnection }
+							onCopy={ () => onCopy( 'sshConnection' ) }
+							compact
+						>
+							{ isCopied.sshConnection && <Gridicon icon="checkmark" /> }
+							{ isCopied.sshConnection
+								? translate( 'Copied!' )
+								: translate( 'Copy', { context: 'verb' } ) }
+						</ClipboardButton>
+					</div>
+				) }
+			</div>
+		);
+	};
+
 	const displayQuestionsAndButton = ! ( username || isLoading );
+
+	const featureExplanation = isSshAvailable
+		? translate(
+				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line."
+		  )
+		: translate(
+				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
+		  );
 
 	return (
 		<Card className="sftp-card">
 			<MaterialIcon icon="cloud" size={ 32 } />
-			<CardHeading>{ translate( 'SFTP credentials' ) }</CardHeading>
+			<CardHeading>
+				{ isSshAvailable ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' ) }
+			</CardHeading>
 			<div className="sftp-card__body">
 				<p>
 					{ username
@@ -164,9 +222,7 @@ export const SftpCard = ( {
 									},
 								}
 						  )
-						: translate(
-								"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
-						  ) }
+						: featureExplanation }
 				</p>
 			</div>
 			{ displayQuestionsAndButton && (
@@ -189,6 +245,25 @@ export const SftpCard = ( {
 							}
 						) }
 					</PanelBody>
+					{ isSshAvailable && (
+						<PanelBody title={ translate( 'What is SSH?' ) } initialOpen={ false }>
+							{ translate(
+								'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. ' +
+									'For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}}.',
+								{
+									components: {
+										supportLink: (
+											<ExternalLink
+												icon
+												target="_blank"
+												href={ localizeUrl( 'https://wordpress.com/support/sftp/' ) }
+											/>
+										),
+									},
+								}
+							) }
+						</PanelBody>
+					) }
 				</div>
 			) }
 			{ displayQuestionsAndButton && (
@@ -204,7 +279,7 @@ export const SftpCard = ( {
 						) }
 					</p>
 					<Button onClick={ createUser } primary className="sftp-card__create-credentials-button">
-						{ translate( 'Create SFTP credentials' ) }
+						{ translate( 'Create credentials' ) }
 					</Button>
 				</>
 			) }
@@ -257,6 +332,10 @@ export const SftpCard = ( {
 					</div>
 					<FormLabel>{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
+					{ isSshAvailable && (
+						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
+					) }
+					{ isSshAvailable && renderSshField() }
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
