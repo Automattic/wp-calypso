@@ -124,7 +124,6 @@ class StartOver extends Component {
 			this.props.errorNotice(
 				this.props.translate( 'Looks like something went wrong. Try again or contact support.' )
 			);
-			throw error;
 		}
 	};
 
