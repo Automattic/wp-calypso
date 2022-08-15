@@ -16,35 +16,28 @@ function createMockSite( {
 	URL?: string;
 	is_private?: boolean;
 	is_coming_soon?: boolean;
-} = {} ): Parameters< typeof useSitesTableFiltering >[ 0 ][ number ] {
+} = {} ) {
 	return {
-		ID,
 		name: name ?? `site ${ ID }`,
 		URL: URL ?? `https://site${ ID }.io`,
 		slug: `site${ ID }.io`,
 		is_private,
 		is_coming_soon,
-		plan: {
-			product_id: 1,
-			product_slug: 'product_slug',
-			product_name_short: 'product_name_short',
-			expired: false,
-			user_is_owner: true,
-			is_free: true,
-		},
 	};
 }
 
+const status = 'all';
+
 describe( 'useSitesTableFiltering', () => {
 	test( 'no sites to filter', () => {
-		const { result } = renderHook( () => useSitesTableFiltering( [], { search: '' } ) );
+		const { result } = renderHook( () => useSitesTableFiltering( [], { search: '', status } ) );
 		expect( result.current.filteredSites ).toEqual( [] );
 	} );
 
 	test( 'empty search query returns the same list', () => {
 		const sites = [ createMockSite(), createMockSite(), createMockSite() ];
 
-		const { result } = renderHook( () => useSitesTableFiltering( sites, { search: '' } ) );
+		const { result } = renderHook( () => useSitesTableFiltering( sites, { search: '', status } ) );
 
 		expect( result.current.filteredSites ).toEqual( sites );
 	} );
@@ -54,7 +47,7 @@ describe( 'useSitesTableFiltering', () => {
 		const dogSite = createMockSite( { name: 'dog' } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c' } )
+			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c', status } )
 		);
 
 		expect( result.current.filteredSites ).toEqual( [ catSite ] );
@@ -65,7 +58,7 @@ describe( 'useSitesTableFiltering', () => {
 		const dogSite = createMockSite( { URL: 'https://dog.io' } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c' } )
+			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c', status } )
 		);
 
 		expect( result.current.filteredSites ).toEqual( [ catSite ] );
@@ -97,6 +90,7 @@ describe( 'useSitesTableFiltering', () => {
 		const { result } = renderHook( () =>
 			useSitesTableFiltering( [ public1, public2, private1, private2, comingSoon ], {
 				search: '',
+				status,
 			} )
 		);
 

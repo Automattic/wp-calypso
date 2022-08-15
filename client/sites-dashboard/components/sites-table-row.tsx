@@ -1,10 +1,9 @@
-import { ListTile } from '@automattic/components';
+import { ListTile, useSiteLaunchStatusLabel } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import TimeSince from 'calypso/components/time-since';
-import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
@@ -66,7 +65,7 @@ const ListTileSubtitle = styled.div`
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
-	const { translatedStatus } = useSiteStatus( site );
+	const translatedStatus = useSiteLaunchStatusLabel( site );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 
