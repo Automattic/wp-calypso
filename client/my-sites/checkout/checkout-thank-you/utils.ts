@@ -5,7 +5,10 @@ import {
 } from '@automattic/calypso-products';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 
-export function getDomainManagementUrl( { slug }, domain ) {
+export function getDomainManagementUrl(
+	{ slug }: { slug: string },
+	domain: string | undefined
+): string {
 	return domain ? domainManagementEdit( slug, domain ) : domainManagementList( slug );
 }
 
@@ -17,22 +20,35 @@ export function getDomainManagementUrl( { slug }, domain ) {
  * @param siteSlug string|null – The slug of a site.
  * @param wpAdminUrl string|null – The URL of a site's WP Admin.
  */
-export function getActivationCompletedLink( productSlug, siteSlug, wpAdminUrl ) {
+export function getActivationCompletedLink(
+	productSlug: string,
+	siteSlug: string | null | undefined,
+	wpAdminUrl: string | null | undefined
+): string {
 	const baseJetpackCloudUrl = 'https://cloud.jetpack.com';
 
 	if ( ! siteSlug ) {
 		return `${ baseJetpackCloudUrl }/landing`;
 	}
 
-	if ( productSlug && JETPACK_BACKUP_PRODUCTS.includes( productSlug ) ) {
+	if (
+		productSlug &&
+		( JETPACK_BACKUP_PRODUCTS as ReadonlyArray< string > ).includes( productSlug )
+	) {
 		return `${ baseJetpackCloudUrl }/backup/${ siteSlug }`;
 	}
 
-	if ( productSlug && JETPACK_SEARCH_PRODUCTS.includes( productSlug ) ) {
+	if (
+		productSlug &&
+		( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( productSlug )
+	) {
 		return `${ baseJetpackCloudUrl }/jetpack-search/${ siteSlug }`;
 	}
 
-	if ( productSlug && JETPACK_SCAN_PRODUCTS.includes( productSlug ) ) {
+	if (
+		productSlug &&
+		( JETPACK_SCAN_PRODUCTS as ReadonlyArray< string > ).includes( productSlug )
+	) {
 		return `${ baseJetpackCloudUrl }/scan/${ siteSlug }`;
 	}
 
