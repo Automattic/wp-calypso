@@ -80,4 +80,7 @@ export type StepPath =
 	| 'newsletterSetup'
 	| 'completingPurchase'
 	| 'intro'
-	| 'launchpad';
+	| 'launchpad'
+	| 'linkInBioProcessingStep'
+	| 'processingFake'
+	| 'subscribers';
