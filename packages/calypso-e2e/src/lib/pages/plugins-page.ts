@@ -29,6 +29,7 @@ const selectors = {
 	// Search
 	searchIcon: '.search-component__open-icon',
 	searchInput: 'input.search-component__input',
+	searchInputValue: ( text: string ) => `input.search-component__input[value='${ text }']`,
 	searchResult: ( text: string ) => `.plugins-browser-item__title:text("${ text }")`,
 	// eslint-disable-next-line no-useless-escape
 	searchResultTitle: ( text: string ) => `:text('plugins for "${ text }"')`,
@@ -39,6 +40,7 @@ const selectors = {
 		`.plugin-site-jetpack__container .components-toggle-control:has(span:text("${ target }")) span.components-form-toggle`,
 	installButton: 'button:text("Install and activate")',
 	removeButton: 'button.plugin-remove-button__remove-button',
+	developerLink: 'a[href*="?s=developer:"]',
 
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
@@ -227,6 +229,13 @@ export class PluginsPage {
 		await this.page.waitForSelector( selectors.searchResult( expectedResult ) );
 	}
 
+	/**
+	 * Validate Search input value.
+	 */
+	async validateSearchInputValue( value: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.searchInputValue( value ) );
+	}
+
 	/* Plugin View */
 
 	/**
@@ -306,5 +315,12 @@ export class PluginsPage {
 			this.page.waitForResponse( /.*delete\?.*/ ),
 			confirmDialogButton.click(),
 		] );
+	}
+
+	/**
+	 * Clicks on the developer link under `Developer`.
+	 */
+	async clickDeveloperLink(): Promise< void > {
+		await this.page.click( selectors.developerLink );
 	}
 }
