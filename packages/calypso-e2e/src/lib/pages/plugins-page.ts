@@ -18,7 +18,8 @@ const selectors = {
 	browseAllFree: 'a[href^="/plugins/browse/popular"]',
 	browseAllPaid: 'a[href^="/plugins/browse/paid"]',
 	browseFirstCategory: 'button:has-text("Search Engine Optimization")',
-	categoryButton: ( section: string ) => `button:has-text("${ section }")`,
+	categoryButton: ( section: string ) =>
+		`button:has-text("${ section }"),a:has-text("${ section }")`,
 	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
