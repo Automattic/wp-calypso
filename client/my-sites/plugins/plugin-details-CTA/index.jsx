@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import config from '@automattic/calypso-config';
 import {
 	isFreePlanProduct,
@@ -5,6 +6,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -14,6 +16,7 @@ import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-pl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import {
 	isRequestingForSites,
@@ -66,6 +69,7 @@ const PluginDetailsCTA = ( props ) => {
 		: FEATURE_INSTALL_PLUGINS;
 	const incompatiblePlugin = ! isJetpackSelfHosted && ! isCompatiblePlugin( pluginSlug );
 	const userCantManageTheSite = ! userCan( 'manage_options', selectedSite );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, pluginSlug )
 	);
@@ -198,7 +202,7 @@ const PluginDetailsCTA = ( props ) => {
 		);
 	}
 
-	if ( ! selectedSite ) {
+	if ( ! selectedSite && isLoggedIn ) {
 		// Check if there is no site selected
 		return (
 			<div className="plugin-details-CTA__container">
@@ -259,18 +263,29 @@ const PluginDetailsCTA = ( props ) => {
 				/>
 			) }
 			<div className="plugin-details-CTA__install">
-				<CTAButton
-					plugin={ plugin }
-					isPluginInstalledOnsite={ isPluginInstalledOnsite }
-					isJetpackSelfHosted={ isJetpackSelfHosted }
-					selectedSite={ selectedSite }
-					hasEligibilityMessages={ hasEligibilityMessages }
-					isMarketplaceProduct={ isMarketplaceProduct }
-					billingPeriod={ billingPeriod }
-					shouldUpgrade={ shouldUpgrade }
-					isSiteConnected={ isSiteConnected }
-					disabled={ incompatiblePlugin || userCantManageTheSite }
-				/>
+				{ isLoggedIn ? (
+					<CTAButton
+						plugin={ plugin }
+						isPluginInstalledOnsite={ isPluginInstalledOnsite }
+						isJetpackSelfHosted={ isJetpackSelfHosted }
+						selectedSite={ selectedSite }
+						hasEligibilityMessages={ hasEligibilityMessages }
+						isMarketplaceProduct={ isMarketplaceProduct }
+						billingPeriod={ billingPeriod }
+						shouldUpgrade={ shouldUpgrade }
+						isSiteConnected={ isSiteConnected }
+						disabled={ incompatiblePlugin || userCantManageTheSite }
+					/>
+				) : (
+					<Button
+						type="a"
+						className="plugin-details-CTA__install-button"
+						primary
+						href={ localizeUrl( 'https://wordpress.com/pricing/' ) }
+					>
+						{ translate( 'View plans' ) }
+					</Button>
+				) }
 			</div>
 			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-CTA__t-and-c">
@@ -293,7 +308,7 @@ const PluginDetailsCTA = ( props ) => {
 					) }
 				</div>
 			) }
-			{ shouldUpgrade && (
+			{ shouldUpgrade && isLoggedIn && (
 				<div className="plugin-details-CTA__upgrade-required">
 					<span className="plugin-details-CTA__upgrade-required-icon">
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
