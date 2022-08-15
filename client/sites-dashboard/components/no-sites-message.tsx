@@ -26,7 +26,7 @@ const SecondaryText = styled.p`
 `;
 
 const Title = styled.div`
-	font-family: 'Recoleta';
+	font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 	font-size: 32px;
 	margin-bottom: 20px;
 `;
