@@ -5,7 +5,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function useGetCategoryUrl() {
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) || '';
+	let domain = useSelector( ( state ) => getSiteDomain( state, siteId ) ) || '';
+	domain = domain.replace( /\//, '::' );
 	const { localizePath } = useLocalizedPlugins();
 
 	return ( slug: string ): string => {
