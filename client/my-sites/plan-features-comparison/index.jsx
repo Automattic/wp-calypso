@@ -256,7 +256,7 @@ export class PlanFeaturesComparison extends Component {
 				<PlanFeaturesItem
 					key={ index }
 					description={ description }
-					hideInfoPopover={ ! isPlansPageQuickImprovements }
+					hideInfoPopover={ true }
 					hideGridicon={ isPlansPageQuickImprovements }
 					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
 					isFeatureAvailable={ feature.availableForCurrentPlan }
