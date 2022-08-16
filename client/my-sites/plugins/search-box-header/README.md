@@ -1,4 +1,4 @@
-# Plugins List
+# Search Box Header
 
 This component is used to render the heading of the plugin marketplace, a search bar and a list of recommended searches.
 
