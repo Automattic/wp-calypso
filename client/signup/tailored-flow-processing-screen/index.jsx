@@ -101,36 +101,38 @@ export default function ReskinnedProcessingScreen( props ) {
 	}, [] );
 
 	return (
-		<div
-			className={ classnames( 'reskinned-processing-screen', {
-				'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
-			} ) }
-		>
-			<h1 className="reskinned-processing-screen__progress-step">
-				{ steps.current[ currentStep ]?.title }
-			</h1>
-			{ shouldShowNewSpinner && <LoadingEllipsis /> }
-			{ ! shouldShowNewSpinner && (
-				<>
-					<div
-						className="reskinned-processing-screen__progress-bar"
-						style={ {
-							'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-						} }
-					/>
-					{ totalSteps > 1 && (
-						<p className="reskinned-processing-screen__progress-numbered-steps">
-							{
-								// translators: these are progress steps. Eg: step 1 of 4.
-								sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-									currentStep: currentStep + 1,
-									totalSteps,
-								} )
-							}
-						</p>
-					) }
-				</>
-			) }
+		<div className="reskinned-processing-screen__container">
+			<div
+				className={ classnames( 'reskinned-processing-screen', {
+					'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
+				} ) }
+			>
+				<h1 className="reskinned-processing-screen__progress-step">
+					{ steps.current[ currentStep ]?.title }
+				</h1>
+				{ shouldShowNewSpinner && <LoadingEllipsis /> }
+				{ ! shouldShowNewSpinner && (
+					<>
+						<div
+							className="reskinned-processing-screen__progress-bar"
+							style={ {
+								'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
+							} }
+						/>
+						{ totalSteps > 1 && (
+							<p className="reskinned-processing-screen__progress-numbered-steps">
+								{
+									// translators: these are progress steps. Eg: step 1 of 4.
+									sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+										currentStep: currentStep + 1,
+										totalSteps,
+									} )
+								}
+							</p>
+						) }
+					</>
+				) }
+			</div>
 		</div>
 	);
 }
