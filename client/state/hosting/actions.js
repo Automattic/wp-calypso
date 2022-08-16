@@ -5,6 +5,7 @@ import {
 	HOSTING_SFTP_PASSWORD_RESET,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
+	HOSTING_SSH_ACCESS_REQUEST,
 	HOSTING_SSH_ACCESS_SET,
 	HOSTING_SSH_ACCESS_ENABLE,
 	HOSTING_SSH_ACCESS_DISABLE,
@@ -55,6 +56,11 @@ export const resetAtomicSftpPassword = ( siteId, sshUsername ) => ( {
 	type: HOSTING_SFTP_PASSWORD_RESET,
 	siteId,
 	sshUsername,
+} );
+
+export const requestAtomicSshAccess = ( siteId ) => ( {
+	type: HOSTING_SSH_ACCESS_REQUEST,
+	siteId,
 } );
 
 export const setAtomicSshAccess = ( siteId, status ) => ( {

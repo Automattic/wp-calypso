@@ -25,6 +25,7 @@ import {
 	requestAtomicSftpUsers,
 	createAtomicSftpUser,
 	resetAtomicSftpPassword,
+	requestAtomicSshAccess,
 	updateAtomicSftpUser,
 	enableAtomicSshAccess,
 	disableAtomicSshAccess,
@@ -53,6 +54,7 @@ export const SftpCard = ( {
 	resetSftpPassword,
 	siteHasSshFeature,
 	isSshAccessEnabled,
+	requestSshAccess,
 	enableSshAccess,
 	disableSshAccess,
 	removePasswordFromState,
@@ -111,9 +113,12 @@ export const SftpCard = ( {
 		if ( ! disabled ) {
 			setIsLoading( true );
 			requestSftpUsers( siteId );
+			if ( siteHasSshFeature ) {
+				requestSshAccess( siteId );
+			}
 		}
 		return onDestroy();
-	}, [ disabled, siteId ] );
+	}, [ disabled, siteId, siteHasSshFeature ] );
 
 	useEffect( () => {
 		if ( username === null || username || password ) {
@@ -440,6 +445,7 @@ export default connect(
 		requestSftpUsers: requestAtomicSftpUsers,
 		createSftpUser,
 		resetSftpPassword,
+		requestSshAccess: requestAtomicSshAccess,
 		enableSshAccess,
 		disableSshAccess,
 
