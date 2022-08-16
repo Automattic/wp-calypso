@@ -3,7 +3,7 @@ import { CheckoutCheckIcon, PaymentLogo } from '@automattic/composite-checkout';
 import {
 	getCreditsLineItemFromCart,
 	getItemIntroductoryOfferDisplay,
-	getSublabelAndPrice,
+	LineItemSublabelAndPrice,
 } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
@@ -27,12 +27,6 @@ function PurchaseModalStep( { children, id }: { children: ReactNode; id: string 
 			{ children }
 		</div>
 	);
-}
-
-function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
-	const sublabelAndPrice = getSublabelAndPrice( product );
-
-	return <>{ sublabelAndPrice }</>;
 }
 
 function LineItemIntroductoryOffer( { product }: { product: ResponseCartProduct } ) {

@@ -1,9 +1,11 @@
 import {
+	isAddOn,
 	isDomainRegistration,
 	isPlan,
 	isMonthlyProduct,
 	isYearly,
 	isBiennially,
+	isP2Plus,
 	isWpComPlan,
 	isJetpackSearch,
 	isGoogleWorkspaceProductSlug,
@@ -23,7 +25,7 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
-import { getLabel, getSublabelAndPrice } from './checkout-labels';
+import { getLabel, getSublabel } from './checkout-labels';
 import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
@@ -563,10 +565,110 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	return null;
 }
 
-function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
-	const sublabelAndPrice = getSublabelAndPrice( product );
+export function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+	const productSlug = product.product_slug;
+	const sublabel = getSublabel( product );
 
-	return <>{ sublabelAndPrice }</>;
+	if ( isPlan( product ) || isAddOn( product ) || isJetpackProductSlug( productSlug ) ) {
+		if ( isP2Plus( product ) ) {
+			// This is the price for one item for products with a quantity (eg. seats in a license).
+			const itemPrice = product.item_original_cost_for_quantity_one_display;
+			const members = product?.current_quantity || 1;
+			const p2Options = {
+				args: {
+					itemPrice,
+					members,
+				},
+				count: members,
+			};
+
+			return (
+				<>
+					{ translate(
+						'Monthly subscription: %(itemPrice)s x %(members)s member',
+						'Monthly subscription: %(itemPrice)s x %(members)s members',
+						p2Options
+					) }
+				</>
+			);
+		}
+
+		const options = {
+			args: {
+				sublabel,
+				price: product.item_original_subtotal_display,
+			},
+		};
+
+		if ( isMonthlyProduct( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;
+		}
+
+		if ( isYearly( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per year', options ) }</>;
+		}
+
+		if ( isBiennially( product ) ) {
+			return <>{ translate( '%(sublabel)s: %(price)s per two years', options ) }</>;
+		}
+	}
+
+	if (
+		isGoogleWorkspaceProductSlug( productSlug ) ||
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) ||
+		isTitanMail( product )
+	) {
+		let billingInterval = null;
+
+		if ( product.months_per_bill_period === 12 || product.months_per_bill_period === null ) {
+			billingInterval = translate( 'billed annually' );
+		}
+
+		if ( product.months_per_bill_period === 1 ) {
+			billingInterval = translate( 'billed monthly' );
+		}
+
+		if ( billingInterval === null ) {
+			return <>{ sublabel }</>;
+		}
+
+		return (
+			<>
+				{ translate( '%(productDescription)s: %(billingInterval)s', {
+					args: {
+						productDescription: sublabel,
+						billingInterval,
+					},
+					comment:
+						"Product description and billing interval (already translated) separated by a colon (e.g. 'Mailboxes and Productivity Tools: billed annually')",
+				} ) }
+			</>
+		);
+	}
+
+	const isDomainRegistration = product.is_domain_registration;
+	const isDomainMapping = productSlug === 'domain_map';
+
+	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
+		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : null;
+
+		return (
+			<>
+				{ translate( '%(premiumLabel)s %(sublabel)s: %(interval)s', {
+					args: {
+						premiumLabel,
+						sublabel: sublabel,
+						interval: translate( 'billed annually' ),
+					},
+					comment:
+						'premium label, product type and billing interval, separated by a colon. ex: ".blog domain registration: billed annually" or "Premium .blog domain registration: billed annually"',
+				} ) }
+			</>
+		);
+	}
+
+	return <>{ sublabel || null }</>;
 }
 
 function isCouponApplied( { coupon_savings_integer = 0 }: ResponseCartProduct ) {
