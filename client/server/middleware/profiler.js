@@ -14,8 +14,8 @@ const v8Profiler = require( 'v8-profiler-next' );
  */
 module.exports = () => {
 	console.info(
-		chalk.cyan(
-			'\nRunning server with CPU profiler enabled. Profiles for each request are written to ./profiles'
+		chalk.blueBright(
+			'\nRunning server with CPU profiler enabled. Profiles for each request are written to ./profiles\n'
 		)
 	);
 
@@ -25,14 +25,7 @@ module.exports = () => {
 	// Generates a CPU profile compatible with VS Code's viewer.
 	v8Profiler.setGenerateType( 1 );
 
-	const profilesRoot = path.resolve(
-		path.join( __dirname, '../../../profiles', new Date().toISOString() )
-	);
-	try {
-		fs.accessSync( profilesRoot );
-	} catch {
-		fs.mkdirSync( profilesRoot, { recursive: true } );
-	}
+	const profilesRoot = path.resolve( path.join( __dirname, '../../../profiles' ) );
 
 	return ( req, res, next ) => {
 		// Avoid profiling certain requests (like for static files) and don't
@@ -63,14 +56,32 @@ module.exports = () => {
 
 			profile.export( ( error, result ) => {
 				if ( error ) {
+					console.error( chalk.red( 'Something wrent wrong generating the CPU profile.' ) );
 					console.error( error );
 					return;
 				}
-				fs.writeFile( `${ profilesRoot }/${ profileName }.cpuprofile`, result, ( err ) => {
+
+				const requestProfileDir = path.join( profilesRoot, profileName );
+				try {
+					fs.accessSync( requestProfileDir );
+				} catch {
+					fs.mkdirSync( requestProfileDir, { recursive: true } );
+				}
+
+				const profileFileName = path.join(
+					requestProfileDir,
+					`${ profileName }-${ new Date().toISOString() }.cpuprofile`
+				);
+
+				fs.writeFile( profileFileName, result, ( err ) => {
 					if ( err ) {
-						console.error( 'Something wrent wrong writing the CPU profile file.' );
-						console.log( err );
+						console.error( chalk.red( 'Something wrent wrong writing the CPU profile file.' ) );
+						console.error( err );
+						return;
 					}
+					console.log(
+						chalk.blueBright( `Successfully wrote CPU profile to ${ profileFileName }` )
+					);
 				} );
 			} );
 			profile.delete();
