@@ -1,5 +1,6 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
+const chalk = require( 'chalk' );
 const v8Profiler = require( 'v8-profiler-next' );
 
 /**
@@ -12,7 +13,14 @@ const v8Profiler = require( 'v8-profiler-next' );
  * to avoid importing v8-profiler-next in production environments.
  */
 module.exports = () => {
-	let IS_PROFILING = false;
+	console.info(
+		chalk.cyan(
+			'\nRunning server with CPU profiler enabled. Profiles for each request are written to ./profiles'
+		)
+	);
+
+	// Log about request.
+	let isProfiling = false;
 
 	// Generates a CPU profile compatible with VS Code's viewer.
 	v8Profiler.setGenerateType( 1 );
@@ -30,17 +38,18 @@ module.exports = () => {
 		// Avoid profiling certain requests (like for static files) and don't
 		// start profiling if we already are.
 		if (
-			IS_PROFILING ||
+			isProfiling ||
 			! req.originalUrl.startsWith( '/' ) ||
 			req.originalUrl.startsWith( '/calypso/' ) ||
 			req.originalUrl.startsWith( '/service-worker' ) ||
 			req.originalUrl.startsWith( '/nostats.js' ) ||
-			req.originalUrl.startsWith( '/version' )
+			req.originalUrl.startsWith( '/version' ) ||
+			req.originalUrl.startsWith( '/__webpack_hmr' )
 		) {
 			next();
 			return;
 		}
-		IS_PROFILING = true;
+		isProfiling = true;
 
 		// Replace slash with underscore:
 		const profileName = req.originalUrl.replace( /\//g, '_' );
@@ -49,7 +58,7 @@ module.exports = () => {
 
 		// Once the request finishes, save the profile data to a file.
 		res.on( 'close', () => {
-			IS_PROFILING = false;
+			isProfiling = false;
 			const profile = v8Profiler.stopProfiling( profileName );
 
 			profile.export( ( error, result ) => {
