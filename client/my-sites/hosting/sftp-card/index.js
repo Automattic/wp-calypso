@@ -186,7 +186,7 @@ export const SftpCard = ( {
 					disabled={ isLoading || isSshAccessLoading }
 					checked={ isSshAccessEnabled }
 					onChange={ () => toggleSshAccess() }
-					label={ translate( 'Enable SSH access to this site.' ) }
+					label={ translate( 'Enable SSH access for this site.' ) }
 				/>
 				{ isSshAccessEnabled && (
 					<div className="sftp-card__copy-field">
