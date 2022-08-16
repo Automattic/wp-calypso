@@ -25,11 +25,10 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	min-width: 120px;
 	scroll-snap-align: center;
 	// iPhone aspect ratio
-	aspect-ratio: 0.46;
+	aspect-ratio: 0.48;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: #ccc;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 20px;
 	background-size: 100%;
@@ -39,12 +38,8 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 		opacity 0.1s ease-in-out;
 	border: 5px solid white;
 	margin: 20px 0;
-	background-position: center 0;
+	background-position: contain;
 	background-repeat: no-repeat;
-
-	&:hover {
-		background-position: center 100%;
-	}
 
 	opacity: 0.5;
 	filter: blur( 2px );
@@ -102,18 +97,32 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 }
 
 .pattern-picker__select {
-	display: inline-flex;
+	display: flex;
 	justify-content: center;
-	opacity: 0;
-	pointer-events: none;
-	width: 100%;
 	text-align: center;
+	width: 100%;
+	max-width: 320px;
 	margin: 10px;
-	box-sizing: border-box;
-	transition: opacity 0.3s ease-in-out !important;
+
+	svg {
+		display: none;
+	}
+
+	use {
+		fill: white;
+	}
+
+	&:not( :disabled ):hover {
+		svg {
+			display: inline;
+		}
+		span {
+			display: none;
+		}
+	}
 }
 
-.pattern-picker__item.is-active + .pattern-picker__select {
-	opacity: 1;
-	pointer-events: all;
+.pattern-picker__cta {
+	text-align: center;
+	margin: 10px;
 }

@@ -1,5 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
 import { Item } from './item';
@@ -23,12 +26,17 @@ const patterns = [
 ];
 
 function width( el: HTMLDivElement | null ) {
-	return el?.getBoundingClientRect().width ?? 1;
+	return Math.floor( el?.getBoundingClientRect().width ?? 1 );
 }
 
-export function PatternPicker() {
+type Props = { onPick: ( pattern: string ) => void };
+
+export function PatternPicker( { onPick }: Props ) {
 	const [ index, setIndex ] = React.useState( 0 );
+	const [ selectedItem, setSelectedItem ] = React.useState< string | null >( null );
 	const [ currentRef, setRef ] = React.useState< HTMLDivElement >();
+	const [ timeoutRef, setTimeoutRef ] = React.useState( 0 );
+	const { __ } = useI18n();
 
 	useEffect( () => {
 		if ( currentRef ) {
@@ -42,13 +50,22 @@ export function PatternPicker() {
 	}, [ index, currentRef ] );
 
 	function onScroll( event: React.UIEvent< HTMLDivElement > ) {
-		const itemWidth = width( event.currentTarget?.firstChild as HTMLDivElement );
-		const itemWidthWithGap = itemWidth + 20;
-		const index = ( event.currentTarget.scrollLeft - itemWidth / 2 ) / itemWidthWithGap;
-		// if index is an integer, it means the scrolling transition is over
-		if ( index - Math.floor( index ) === 0 && index >= 0 && index < patterns.length - 1 ) {
-			setIndex( index );
-		}
+		const { currentTarget } = event;
+		clearTimeout( timeoutRef );
+		// we're only interested in this event after snapping animation is done
+		setTimeoutRef(
+			setTimeout( () => {
+				if ( timeoutRef ) {
+					const itemWidth = width( currentTarget.firstChild as HTMLDivElement );
+					const itemWidthWithGap = itemWidth + 20;
+					const scrollLeft = currentTarget.scrollLeft;
+					const index = Math.floor( ( scrollLeft - itemWidth / 2 ) / itemWidthWithGap );
+					setIndex( index );
+					setTimeoutRef( 0 );
+					setSelectedItem( patterns[ index ] );
+				}
+			}, 100 )
+		);
 	}
 
 	return (
@@ -62,24 +79,41 @@ export function PatternPicker() {
 					<Item
 						className={ classNames( `pattern-${ pattern }`, { 'is-active': index === i } ) }
 						key={ pattern }
-						onClick={ () => setIndex( i ) }
+						onClick={ () => {
+							setIndex( i );
+							setSelectedItem( pattern );
+						} }
 					/>
 				) ) }
 			</div>
-			<button
-				className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--back"
-				onClick={ () => setIndex( index - 1 ) }
-				disabled={ index === 0 }
-			>
-				<Icon icon={ chevronLeft } />
-			</button>
-			<button
-				className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--next"
-				onClick={ () => setIndex( index + 1 ) }
-				disabled={ index === patterns.length - 1 }
-			>
-				<Icon icon={ chevronRight } />
-			</button>
+			{ index > 0 && (
+				<button
+					className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--back"
+					onClick={ () => setIndex( index - 1 ) }
+				>
+					<Icon icon={ chevronLeft } />
+				</button>
+			) }
+			{ index < patterns.length - 1 && (
+				<button
+					className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--next"
+					onClick={ () => setIndex( index + 1 ) }
+				>
+					<Icon icon={ chevronRight } />
+				</button>
+			) }
+			<div className="pattern-picker__cta">
+				<Button
+					disabled={ ! selectedItem || !! timeoutRef }
+					style={ { opacity: selectedItem ? 1 : 0 } }
+					className="pattern-picker__select"
+					isPrimary
+					onClick={ () => onPick( selectedItem as string ) }
+				>
+					<span>{ __( 'Continue' ) }</span>
+					<Gridicon icon="heart" size={ 18 } />
+				</Button>
+			</div>
 		</div>
 	);
 }

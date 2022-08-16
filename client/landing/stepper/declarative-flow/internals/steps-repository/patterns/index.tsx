@@ -8,7 +8,7 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const Intro: Step = function Intro( { navigation } ) {
-	const { goNext, goBack } = navigation;
+	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 
 	return (
@@ -18,7 +18,13 @@ const Intro: Step = function Intro( { navigation } ) {
 			goNext={ goNext }
 			shouldHideNavButtons
 			isFullLayout={ true }
-			stepContent={ <PatternPicker /> }
+			stepContent={
+				<PatternPicker
+					onPick={ ( pattern: string ) => {
+						submit?.( { pattern } );
+					} }
+				/>
+			}
 			recordTracksEvent={ recordTracksEvent }
 			formattedHeader={
 				<FormattedHeader
@@ -27,7 +33,6 @@ const Intro: Step = function Intro( { navigation } ) {
 					align={ 'center' }
 				/>
 			}
-			showJetpackPowered
 		/>
 	);
 };
