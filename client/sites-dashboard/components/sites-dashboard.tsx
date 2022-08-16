@@ -154,7 +154,7 @@ export function SitesDashboard( {
 										) }
 									</HiddenSitesMessage>
 									<Button href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }>
-										Show all
+										{ __( 'Show all' ) }
 									</Button>
 								</HiddenSitesMessageContainer>
 							) }
