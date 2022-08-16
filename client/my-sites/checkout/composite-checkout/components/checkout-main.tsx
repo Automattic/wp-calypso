@@ -62,6 +62,7 @@ import { StoredCard } from '../types/stored-cards';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	ManagedContactDetails,
 	CountryListItem,
@@ -408,7 +409,7 @@ export default function CheckoutMain( {
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
-	const addItemAndLog = useCallback(
+	const addItemAndLog: ( item: MinimalRequestCartProduct ) => void = useCallback(
 		( cartItem ) => {
 			try {
 				recordAddEvent( cartItem );

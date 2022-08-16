@@ -18,14 +18,16 @@ export const siteLaunchStatusFilterValues = [
 export type FilterableSiteLaunchStatuses = typeof siteLaunchStatusFilterValues[ number ];
 
 interface SitesTableFilterOptions {
-	status: FilterableSiteLaunchStatuses;
 	search?: string;
+	showHidden?: boolean;
+	status: FilterableSiteLaunchStatuses;
 }
 
 interface Status {
 	title: React.ReactChild;
 	name: FilterableSiteLaunchStatuses;
 	count: number;
+	hiddenCount: number;
 }
 
 interface UseSitesTableFilteringResult< T > {
@@ -37,11 +39,12 @@ type SiteObjectWithBasicInfo = SiteObjectWithStatus & {
 	URL: string;
 	name: string;
 	slug: string;
+	visible?: boolean;
 };
 
 export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	allSites: T[],
-	{ status, search }: SitesTableFilterOptions
+	{ status, showHidden = false, search }: SitesTableFilterOptions
 ): UseSitesTableFilteringResult< T > {
 	const { __ } = useI18n();
 	const translatedSiteLaunchStatuses = useTranslatedSiteLaunchStatuses();
@@ -58,24 +61,43 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 			name,
 			title: filterableSiteLaunchStatuses[ name ],
 			count: 0,
+			hiddenCount: 0,
 		} ) );
+
+		const hiddenCounts = {
+			all: 0,
+			'coming-soon': 0,
+			public: 0,
+			private: 0,
+		};
 
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
 			( groups, site ) => {
 				const siteStatus = getSiteLaunchStatus( site );
-				groups[ siteStatus ].push( site );
+
+				if ( ! site.visible && ! showHidden ) {
+					hiddenCounts.all++;
+					hiddenCounts[ siteStatus ]++;
+				}
+				if ( site.visible || showHidden ) {
+					groups[ siteStatus ].push( site );
+				}
+				if ( site.visible && ! showHidden ) {
+					groups.all.push( site );
+				}
 
 				return groups;
 			},
-			{ all: allSites, 'coming-soon': [], public: [], private: [] }
+			{ all: showHidden ? allSites : [], 'coming-soon': [], public: [], private: [] }
 		);
 
 		for ( const status of statuses ) {
 			status.count = groupedByStatus[ status.name ].length;
+			status.hiddenCount = hiddenCounts[ status.name ];
 		}
 
 		return [ statuses, groupedByStatus ];
-	}, [ allSites, filterableSiteLaunchStatuses ] );
+	}, [ allSites, filterableSiteLaunchStatuses, showHidden ] );
 
 	const filteredSites = useFuzzySearch( {
 		data: groupedByStatus[ status ],

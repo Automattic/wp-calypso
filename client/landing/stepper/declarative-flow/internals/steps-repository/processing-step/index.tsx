@@ -76,7 +76,8 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		return () => clearTimeout( timeoutReference );
 	}, [ simulatedProgress, progress, __ ] );
 
-	const isJetpackPowered = props.flow === 'newsletters';
+	const flowName = props.flow || '';
+	const isJetpackPowered = [ 'link-in-bio', 'newsletters' ].includes( flowName );
 
 	return (
 		<StepContainer

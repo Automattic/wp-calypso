@@ -94,6 +94,7 @@ describe( 'reducer', () => {
 			12345678: {
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
+				sshAccess: null,
 				staticFile404: null,
 			},
 		} );
@@ -104,6 +105,7 @@ describe( 'reducer', () => {
 			12345678: {
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
+				sshAccess: null,
 				staticFile404: null,
 			},
 		};
@@ -117,11 +119,13 @@ describe( 'reducer', () => {
 			12345678: {
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
+				sshAccess: null,
 				staticFile404: null,
 			},
 			9876543: {
 				phpVersion: null,
 				sftpUsers: [ 9, 8, 7 ],
+				sshAccess: null,
 				staticFile404: null,
 			},
 		} );

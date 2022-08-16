@@ -10,8 +10,9 @@ import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 
 export interface SitesDashboardQueryParams {
-	status: FilterableSiteLaunchStatuses;
 	search?: string;
+	showHidden?: boolean;
+	status: FilterableSiteLaunchStatuses;
 }
 
 const FilterBar = styled.div( {

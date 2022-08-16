@@ -5,6 +5,10 @@ import {
 	HOSTING_SFTP_PASSWORD_RESET,
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
+	HOSTING_SSH_ACCESS_REQUEST,
+	HOSTING_SSH_ACCESS_SET,
+	HOSTING_SSH_ACCESS_ENABLE,
+	HOSTING_SSH_ACCESS_DISABLE,
 	HOSTING_PHP_VERSION_REQUEST,
 	HOSTING_PHP_VERSION_SET_REQUEST,
 	HOSTING_CLEAR_CACHE_REQUEST,
@@ -14,6 +18,7 @@ import {
 
 import 'calypso/state/data-layer/wpcom/sites/hosting/restore-database-password';
 import 'calypso/state/data-layer/wpcom/sites/hosting/sftp-user';
+import 'calypso/state/data-layer/wpcom/sites/hosting/ssh-access';
 import 'calypso/state/data-layer/wpcom/sites/hosting/php-version';
 import 'calypso/state/data-layer/wpcom/sites/hosting/static-file-404';
 import 'calypso/state/data-layer/wpcom/sites/hosting/clear-cache';
@@ -51,6 +56,27 @@ export const resetAtomicSftpPassword = ( siteId, sshUsername ) => ( {
 	type: HOSTING_SFTP_PASSWORD_RESET,
 	siteId,
 	sshUsername,
+} );
+
+export const requestAtomicSshAccess = ( siteId ) => ( {
+	type: HOSTING_SSH_ACCESS_REQUEST,
+	siteId,
+} );
+
+export const setAtomicSshAccess = ( siteId, status ) => ( {
+	type: HOSTING_SSH_ACCESS_SET,
+	siteId,
+	status,
+} );
+
+export const enableAtomicSshAccess = ( siteId ) => ( {
+	type: HOSTING_SSH_ACCESS_ENABLE,
+	siteId,
+} );
+
+export const disableAtomicSshAccess = ( siteId ) => ( {
+	type: HOSTING_SSH_ACCESS_DISABLE,
+	siteId,
 } );
 
 export const updateAtomicPhpVersion = ( siteId, version ) => ( {
