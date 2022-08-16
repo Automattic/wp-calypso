@@ -14,8 +14,6 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import MainComponent from 'calypso/components/main';
-import Notice from 'calypso/components/notice';
-import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
@@ -26,16 +24,11 @@ import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import {
-	recordTracksEvent,
-	recordGoogleEvent,
-	composeAnalytics,
-} from 'calypso/state/analytics/actions';
+import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
-import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -52,6 +45,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import PluginsCategoryResultsPage from '../plugins-category-results-page';
 import PluginsDiscoveryPage from '../plugins-discovery-page';
+import PluginsNoticeSection from '../plugins-notice-section';
 import PluginsSearchResultPage from '../plugins-search-results-page';
 
 import './style.scss';
@@ -153,9 +147,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		( state ) =>
 			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
 	);
-	const isSiteConnected = useSelector( ( state ) =>
-		getSiteConnectionStatus( state, selectedSite?.ID )
-	);
+
 	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
 	const isRequestingSitesData = useSelector( isRequestingSites );
 	const noPermissionsError = useSelector(
@@ -259,12 +251,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		dispatch( updateBreadcrumbs( items ) );
 	}, [ siteSlug, search, category, categoryName, dispatch, translate ] );
 
-	const trackSiteDisconnect = () =>
-		composeAnalytics(
-			recordGoogleEvent( 'Jetpack', 'Clicked in site indicator to start Jetpack Disconnect flow' ),
-			recordTracksEvent( 'calypso_jetpack_site_indicator_disconnect_start' )
-		);
-
 	if ( ! isRequestingSitesData && noPermissionsError ) {
 		return <NoPermissionsError title={ translate( 'Plugins', { textOnly: true } ) } />;
 	}
@@ -305,25 +291,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 					</div>
 				</FixedNavigationHeader>
 			) }
-			{ isSiteConnected === false && (
-				<Notice
-					icon="notice"
-					showDismiss={ false }
-					status="is-warning"
-					text={ translate( '%(siteName)s cannot be accessed.', {
-						textOnly: true,
-						args: { siteName: selectedSite.title },
-					} ) }
-				>
-					<NoticeAction
-						onClick={ trackSiteDisconnect }
-						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
-					>
-						{ translate( 'I’d like to fix this now' ) }
-					</NoticeAction>
-				</Notice>
-			) }
-
+			<PluginsNoticeSection />
 			<SearchBoxHeader
 				searchRef={ searchRef }
 				popularSearchesRef={ searchHeaderRef }
