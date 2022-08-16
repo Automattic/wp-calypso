@@ -63,7 +63,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/hosting/ssh-access.js', {
 			fetch: enableSshAccess,
 			onSuccess: setSshAccess,
 			onError: () => {},
-			fromApi: ( setting ) => setting,
+			fromApi: ( { setting } ) => setting,
 		} ),
 	],
 	[ HOSTING_SSH_ACCESS_DISABLE ]: [
@@ -71,7 +71,7 @@ registerHandlers( 'state/data-layer/wpcom/sites/hosting/ssh-access.js', {
 			fetch: disableSshAccess,
 			onSuccess: setSshAccess,
 			onError: () => {},
-			fromApi: ( setting ) => setting,
+			fromApi: ( { setting } ) => setting,
 		} ),
 	],
 } );
