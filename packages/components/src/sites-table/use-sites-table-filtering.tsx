@@ -64,24 +64,36 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 			hiddenCount: 0,
 		} ) );
 
+		const hiddenCounts = {
+			all: 0,
+			'coming-soon': 0,
+			public: 0,
+			private: 0,
+		};
+
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
 			( groups, site ) => {
 				const siteStatus = getSiteLaunchStatus( site );
-				groups[ siteStatus ].push( site );
+
+				if ( ! site.visible && ! showHidden ) {
+					hiddenCounts.all++;
+					hiddenCounts[ siteStatus ]++;
+				}
+				if ( site.visible || showHidden ) {
+					groups[ siteStatus ].push( site );
+				}
+				if ( site.visible && ! showHidden ) {
+					groups.all.push( site );
+				}
 
 				return groups;
 			},
-			{ all: allSites, 'coming-soon': [], public: [], private: [] }
+			{ all: showHidden ? allSites : [], 'coming-soon': [], public: [], private: [] }
 		);
 
 		for ( const status of statuses ) {
 			status.count = groupedByStatus[ status.name ].length;
-			if ( ! showHidden ) {
-				groupedByStatus[ status.name ] = [ ...groupedByStatus[ status.name ] ].filter(
-					( site ) => site.visible
-				);
-				status.hiddenCount = status.count - groupedByStatus[ status.name ].length;
-			}
+			status.hiddenCount = hiddenCounts[ status.name ];
 		}
 
 		return [ statuses, groupedByStatus ];
