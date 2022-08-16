@@ -8,13 +8,12 @@
 		url( 'calypso/assets/images/onboarding/newsletter-intro-right.png' );
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
-    	background-position-x: -35px, 100%;
+    	background-position-x: 0%, 100%;
     	background-position-y: 100%, 100px;
     	background-size: auto 30%, auto 50%;
 
 		@include break-large {
 			background-size: auto 55%, auto 80%;
-			background-position-x: -80px, 100%;
 			background-position-y: 100%, 136px;
 		}
 	}
