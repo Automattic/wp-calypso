@@ -1,6 +1,5 @@
 import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automattic/components';
-import { css as cssClassName } from '@emotion/css';
-import { css } from '@emotion/react';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -22,61 +21,56 @@ const MAX_PAGE_WIDTH = '1280px';
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
 // want there to be some padding that extends all around the page, but the header's
 // background color and border needs to be able to extend into that padding.
-const pagePadding = css`
-	padding-left: 32px;
-	padding-right: 32px;
-`;
+const pagePadding = {
+	paddingLeft: '32px',
+	paddingRight: '32px',
+};
 
-const wideCentered = css`
-	max-width: ${ MAX_PAGE_WIDTH };
-	margin: 0 auto;
-`;
+const PageHeader = styled.div( {
+	...pagePadding,
 
-const PageHeader = styled.div`
-	${ pagePadding }
+	backgroundColor: 'var( --studio-white )',
+	paddingTop: '24px',
+	paddingBottom: '24px',
+	boxShadow: 'inset 0px -1px 0px rgba( 0, 0, 0, 0.05 )',
+} );
 
-	background-color: var( --studio-white );
-	padding-top: 24px;
-	padding-bottom: 24px;
-	box-shadow: inset 0px -1px 0px rgba( 0, 0, 0, 0.05 );
-`;
+const PageBodyWrapper = styled.div( {
+	...pagePadding,
+	maxWidth: MAX_PAGE_WIDTH,
+	margin: '0 auto',
+} );
 
-const PageBodyWrapper = styled.div`
-	${ pagePadding }
-	max-width: ${ MAX_PAGE_WIDTH };
-	margin: 0 auto;
-`;
+const HeaderControls = styled.div( {
+	maxWidth: MAX_PAGE_WIDTH,
+	margin: '0 auto',
+	display: 'flex',
+	flexDirection: 'row',
+	alignItems: 'center',
+} );
 
-const HeaderControls = styled.div`
-	${ wideCentered }
+const DashboardHeading = styled.h1( {
+	fontWeight: 500,
+	fontSize: '20px',
+	lineHeight: '26px',
+	color: 'var( --studio-gray-100 )',
+	flex: 1,
+} );
 
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-`;
-
-const DashboardHeading = styled.h1`
-	font-weight: 500;
-	font-size: 20px;
-	line-height: 26px;
-	color: var( --studio-gray-100 );
-	flex: 1;
-`;
-
-const sitesMargin = cssClassName( {
+const sitesMargin = css( {
 	margin: '0 0 1.5em',
 } );
 
-const HiddenSitesMessageContainer = styled.div`
-	color: var( --color-text-subtle );
-	font-size: 14px;
-	padding: 16px 0 24px 0;
-	text-align: center;
-`;
+const HiddenSitesMessageContainer = styled.div( {
+	color: 'var( --color-text-subtle )',
+	fontSize: '14px',
+	padding: '16px 0 24px 0',
+	textAlign: 'center',
+} );
 
-const HiddenSitesMessage = styled.div`
-	margin-bottom: 1em;
-`;
+const HiddenSitesMessage = styled.div( {
+	marginBottom: '1em',
+} );
 
 export function SitesDashboard( {
 	queryParams: { search, showHidden, status = 'all' },
