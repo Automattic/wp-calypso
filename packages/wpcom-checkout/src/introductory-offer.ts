@@ -1,7 +1,8 @@
-import { useTranslate } from 'i18n-calypso';
+import i18n from 'i18n-calypso';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export function getIntroductoryOfferIntervalDisplay(
-	translate: ReturnType< typeof useTranslate >,
+	translate: typeof i18n.translate,
 	intervalUnit: string,
 	intervalCount: number,
 	isFreeTrial: boolean,
@@ -105,4 +106,30 @@ export function getIntroductoryOfferIntervalDisplay(
 		}
 	}
 	return text;
+}
+
+export function getItemIntroductoryOfferDisplay(
+	translate: typeof i18n.translate,
+	product: ResponseCartProduct
+) {
+	if ( product.introductory_offer_terms?.reason ) {
+		const text = translate( 'Order not eligible for introductory discount' );
+		return { enabled: false, text };
+	}
+
+	if ( ! product.introductory_offer_terms?.enabled ) {
+		return null;
+	}
+
+	const isFreeTrial = product.item_subtotal_integer === 0;
+	const text = getIntroductoryOfferIntervalDisplay(
+		translate,
+		product.introductory_offer_terms.interval_unit,
+		product.introductory_offer_terms.interval_count,
+		isFreeTrial,
+		'checkout',
+		product.introductory_offer_terms.transition_after_renewal_count
+	);
+
+	return { enabled: true, text };
 }

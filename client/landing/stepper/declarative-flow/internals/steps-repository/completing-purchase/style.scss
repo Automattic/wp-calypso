@@ -1,6 +1,6 @@
 @import '../style';
 
-.newsletter.processing {
+.processing {
 	.wordpress-logo {
 		position: absolute;
 		inset-inline-start: 20px;
@@ -10,27 +10,49 @@
 		transform-origin: 0 0;
 	}
 
-	position: fixed;
-	width: 100%;
-	height: 100%;
-
-	background-color: rgb( 162, 218, 254 );
-	background-image: url( 'calypso/assets/images/onboarding/newsletter-processing-left.png' ),
-	url( 'calypso/assets/images/onboarding/newsletter-processing-right.jpg' );
-	background-position: left bottom, right top;
-	background-repeat: no-repeat, no-repeat;
-	background-attachment: fixed;
-
-	background-size: auto 25%, auto 25%;
-
-	@include break-medium {
-		background-size: auto 50%, auto 45%;
+	&.newsletter {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+	
+		background-color: rgb( 162, 218, 254 );
+		background-image: url( 'calypso/assets/images/onboarding/newsletter-processing-left.png' ),
+		url( 'calypso/assets/images/onboarding/newsletter-processing-right.jpg' );
+		background-position: left bottom, right top;
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+	
+		background-size: auto 25%, auto 25%;
+	
+		@include break-medium {
+			background-size: auto 50%, auto 45%;
+		}
+	
+		@include break-large {
+			background-size: auto 60%, auto 55%;
+		}
 	}
 
-	@include break-large {
-		background-size: auto 60%, auto 55%;
+	&.link-in-bio {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+	
+		background-color: #d0cce3;
+		background-image: url( 'calypso/assets/images/onboarding/link-in-bio-processing-left.png' ),
+		url( 'calypso/assets/images/onboarding/link-in-bio-processing-right.png' );
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 30%, auto 30%;
+		background-position-x: 0%, 100%;
+		background-position-y: 90%, 10%;
+		
+	
+		@include break-large {
+			background-size: auto 50%, auto 50%;
+		}
 	}
-
+	
 	.step-container {
 		display: flex;
 		flex-direction: column;
@@ -40,10 +62,6 @@
 
 	.step-container__content {
 		width: 100%;
-
-		@include break-medium {
-			width: 50%;
-		}
 	}
 
 	.progress-bar {

@@ -10,6 +10,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
@@ -39,6 +40,8 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
 	const site = useSite();
+	const usesSite = !! useSiteSlugParam();
+
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
 		useDispatch( ONBOARD_STORE );
 
@@ -73,35 +76,32 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		goNext();
-		if ( site ) {
-			setSiteDescription( tagline );
-			setSiteTitle( siteTitle );
-			setSiteAccentColor( accentColor );
 
-			if ( selectedFile && base64Image ) {
-				try {
-					setSiteLogo( base64Image );
-					// this should be moved to the loader step
-					// await setSiteLogo( new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' ) );
-				} catch ( _error ) {
-					// communicate the error to the user
-				}
+		setSiteDescription( tagline );
+		setSiteTitle( siteTitle );
+		setSiteAccentColor( accentColor );
+
+		if ( selectedFile && base64Image ) {
+			try {
+				setSiteLogo( base64Image );
+				// this should be moved to the loader step
+				// await setSiteLogo( new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' ) );
+			} catch ( _error ) {
+				// communicate the error to the user
 			}
-			// submit?.( { siteTitle, tagline } );
 		}
+		// submit?.( { siteTitle, tagline } );
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		if ( site ) {
-			setFormTouched( true );
-			switch ( event.currentTarget.name ) {
-				case 'siteTitle':
-					return setComponentSiteTitle( event.currentTarget.value );
-				case 'tagline':
-					return setTagline( event.currentTarget.value );
-				case 'accentColor':
-					return setAccentColor( event.currentTarget.value );
-			}
+		setFormTouched( true );
+		switch ( event.currentTarget.name ) {
+			case 'siteTitle':
+				return setComponentSiteTitle( event.currentTarget.value );
+			case 'tagline':
+				return setTagline( event.currentTarget.value );
+			case 'accentColor':
+				return setAccentColor( event.currentTarget.value );
 		}
 	};
 
@@ -119,6 +119,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			<form className="newsletter-setup__form" onSubmit={ onSubmit }>
 				<SiteIconWithPicker
 					site={ site }
+					disabled={ usesSite ? ! site : false }
 					onSelect={ ( file ) => {
 						setSelectedFile( file );
 						imageFileToBase64( file );

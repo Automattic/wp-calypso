@@ -10,12 +10,14 @@ function createMockSite( {
 	URL,
 	is_private = false,
 	is_coming_soon = false,
+	visible = true,
 }: {
 	ID?: number;
 	name?: string;
 	URL?: string;
 	is_private?: boolean;
 	is_coming_soon?: boolean;
+	visible?: boolean;
 } = {} ) {
 	return {
 		name: name ?? `site ${ ID }`,
@@ -23,6 +25,7 @@ function createMockSite( {
 		slug: `site${ ID }.io`,
 		is_private,
 		is_coming_soon,
+		visible,
 	};
 }
 
@@ -80,11 +83,33 @@ describe( 'useSitesTableFiltering', () => {
 		expect( result.current.filteredSites ).toEqual( [ private1, private2 ] );
 	} );
 
+	test( 'does not return hidden sites by default', () => {
+		const visible = createMockSite( { visible: true } );
+		const hidden = createMockSite( { visible: false } );
+
+		const { result } = renderHook( () =>
+			useSitesTableFiltering( [ visible, hidden ], { status } )
+		);
+
+		expect( result.current.filteredSites ).toEqual( [ visible ] );
+	} );
+
+	test( 'returns hidden sites when asked', () => {
+		const visible = createMockSite( { visible: true } );
+		const hidden = createMockSite( { visible: false } );
+
+		const { result } = renderHook( () =>
+			useSitesTableFiltering( [ visible, hidden ], { status, showHidden: true } )
+		);
+
+		expect( result.current.filteredSites ).toEqual( [ visible, hidden ] );
+	} );
+
 	test( 'returns counts for each status type', () => {
 		const public1 = createMockSite( { is_private: false } );
 		const public2 = createMockSite( { is_private: false } );
 		const private1 = createMockSite( { is_private: true } );
-		const private2 = createMockSite( { is_private: true } );
+		const private2 = createMockSite( { is_private: true, visible: false } );
 		const comingSoon = createMockSite( { is_private: true, is_coming_soon: true } );
 
 		const { result } = renderHook( () =>
@@ -97,23 +122,70 @@ describe( 'useSitesTableFiltering', () => {
 		expect( result.current.statuses ).toEqual( [
 			{
 				name: 'all',
-				count: 5,
+				count: 4, // hidden site not included in count
 				title: expect.any( String ),
+				hiddenCount: 1,
 			},
 			{
 				name: 'public',
 				count: 2,
 				title: expect.any( String ),
+				hiddenCount: 0,
 			},
 			{
 				name: 'private',
-				count: 2,
+				count: 1, // hidden site not included in count
 				title: expect.any( String ),
+				hiddenCount: 1,
 			},
 			{
 				name: 'coming-soon',
 				count: 1,
 				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+		] );
+	} );
+
+	test( 'showHidden option includes hidden sites in `count`, but not `hiddenCount`', () => {
+		const public1 = createMockSite( { is_private: false } );
+		const public2 = createMockSite( { is_private: false, visible: false } );
+		const private1 = createMockSite( { is_private: true } );
+		const private2 = createMockSite( { is_private: true, visible: false } );
+		const comingSoon = createMockSite( { is_private: true, is_coming_soon: true } );
+
+		const { result } = renderHook( () =>
+			useSitesTableFiltering( [ public1, public2, private1, private2, comingSoon ], {
+				search: '',
+				showHidden: true,
+				status,
+			} )
+		);
+
+		expect( result.current.statuses ).toEqual( [
+			{
+				name: 'all',
+				count: 5,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'public',
+				count: 2,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'private',
+				count: 2,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'coming-soon',
+				count: 1,
+				title: expect.any( String ),
+				hiddenCount: 0,
 			},
 		] );
 	} );

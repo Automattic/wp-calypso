@@ -126,7 +126,7 @@
 		"signup/design-picker-use-featured-picks-buttons": true,
 		"signup/design-picker-premium-themes-checkout": true,
 		"signup/design-picker-generated-designs": true,
-		"signup/design-picker-unified": false,
+		"signup/design-picker-unified": true,
 		"signup/inline-help": false,
 		"signup/goals-step": true,
 		"signup/goals-step-2": true,
