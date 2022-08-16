@@ -302,6 +302,7 @@ function PurchaseMetaIntroductoryOfferDetail( { purchase } ) {
 	}
 
 	const text = getIntroductoryOfferIntervalDisplay(
+		translate,
 		purchase.introductoryOffer.intervalUnit,
 		purchase.introductoryOffer.intervalCount,
 		isIntroductoryOfferFreeTrial( purchase ),
