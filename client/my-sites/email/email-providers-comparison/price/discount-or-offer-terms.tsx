@@ -74,7 +74,7 @@ const DiscountOrOfferTerms = ( {
 			{ isDiscounted && (
 				<div className="discount-or-offer-terms__discount-badge discount-or-offer-terms__item discount-or-offer-terms__discounted_item badge badge--info-green">
 					{ isEligibleForIntroductoryOffer
-						? translate( '+ Extra %(discount)d%% off', {
+						? translate( 'Extra %(discount)d%% off', {
 								args: {
 									discount: product?.sale_coupon?.discount,
 								},
