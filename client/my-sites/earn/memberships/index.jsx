@@ -440,6 +440,12 @@ class MembershipsSection extends Component {
 		}
 	}
 	renderSubscriberActions( subscriber ) {
+		let buttonText;
+		if ( subscriber.plan.renew_interval === 'one-time' ) {
+			buttonText = this.props.translate( 'Remove' );
+		} else {
+			buttonText = this.props.translate( 'Cancel Subscription' );
+		}
 		return (
 			<EllipsisMenu position="bottom left" className="memberships__subscriber-actions">
 				<PopoverMenuItem
@@ -452,7 +458,7 @@ class MembershipsSection extends Component {
 				</PopoverMenuItem>
 				<PopoverMenuItem onClick={ () => this.setState( { cancelledSubscriber: subscriber } ) }>
 					<Gridicon size={ 18 } icon={ 'cross' } />
-					{ this.props.translate( 'Cancel Subscription' ) }
+					{ buttonText }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
