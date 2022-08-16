@@ -1607,7 +1607,10 @@ export const FEATURES_LIST = {
 				comment: 'Translators: CSS customization available for $2 extra.',
 			} );
 		},
-		getDescription: '',
+		getDescription: () =>
+			i18n.translate(
+				'You can add CSS customization to your plan at any time for an additional charge.'
+			),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
 	},
 
