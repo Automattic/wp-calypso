@@ -66,7 +66,9 @@ export const WithOverlayStyling = () => {
 	return <BoxedSearch overlayStyling={ overlayStyling } />;
 };
 
-export const WithDefaultValue = () => <BoxedSearch defaultValue="a default search value" />;
+export const WithDefaultValue = () => (
+	<BoxedSearch defaultValue="a default search value overflowing the input box" />
+);
 
 export const WithCustomSearchIcon = () => {
 	const customIcon = (

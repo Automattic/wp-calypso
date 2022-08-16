@@ -198,6 +198,23 @@ $input-z-index: 20;
 			display: block;
 		}
 
+		// Removes the fade overlay when the search is open and focused
+		&.has-focus {
+			.search-component__input-fade {
+
+				&::before {
+					@include long-content-fade( $size: 0 );
+				}
+
+				&.ltr {
+					/*!rtl:ignore*/
+					&::before {
+						@include long-content-fade( $size: 0 );
+					}
+				}
+			}
+		}
+
 		.search-component__input-fade {
 			display: flex;
 			align-items: center;
