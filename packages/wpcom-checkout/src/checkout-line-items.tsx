@@ -716,7 +716,8 @@ function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct }
 }
 
 function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
-	const introductoryOffer = getItemIntroductoryOfferDisplay( product );
+	const translate = useTranslate();
+	const introductoryOffer = getItemIntroductoryOfferDisplay( translate, product );
 
 	if ( ! introductoryOffer ) {
 		return null;

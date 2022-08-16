@@ -1,4 +1,5 @@
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { translate } from 'i18n-calypso';
 import { getItemIntroductoryOfferDisplay } from '../src';
 
 const emptyIntroductoryOffer = getEmptyResponseCartProduct();
@@ -40,15 +41,17 @@ const enabledIntroductoryOffer = {
 
 describe( 'getItemIntroductoryOfferDisplay', () => {
 	test( 'should return null when introductory offer is empty', () => {
-		expect( getItemIntroductoryOfferDisplay( emptyIntroductoryOffer ) ).toBeNull();
+		expect( getItemIntroductoryOfferDisplay( translate, emptyIntroductoryOffer ) ).toBeNull();
 	} );
 
 	test( 'should return null when introductory offer is disabled', () => {
-		expect( getItemIntroductoryOfferDisplay( disabledIntroductoryOffer ) ).toBeNull();
+		expect( getItemIntroductoryOfferDisplay( translate, disabledIntroductoryOffer ) ).toBeNull();
 	} );
 
 	test( 'should return an object when introductory offer is disabled and reason is given', () => {
-		expect( getItemIntroductoryOfferDisplay( disabledIntroductoryOfferForAReason ) ).toEqual(
+		expect(
+			getItemIntroductoryOfferDisplay( translate, disabledIntroductoryOfferForAReason )
+		).toEqual(
 			expect.objectContaining( {
 				enabled: false,
 				text: expect.any( String ),
@@ -57,7 +60,7 @@ describe( 'getItemIntroductoryOfferDisplay', () => {
 	} );
 
 	test( 'should return an object when introductory offer is enabled', () => {
-		expect( getItemIntroductoryOfferDisplay( enabledIntroductoryOffer ) ).toEqual(
+		expect( getItemIntroductoryOfferDisplay( translate, enabledIntroductoryOffer ) ).toEqual(
 			expect.objectContaining( {
 				enabled: true,
 				text: expect.any( String ),
