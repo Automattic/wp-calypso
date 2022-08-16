@@ -1,4 +1,5 @@
 import { css } from '@emotion/css';
+import classnames from 'classnames';
 import { SitesGridItem } from './sites-grid-item';
 import { SitesGridItemLoading } from './sites-grid-item-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -21,13 +22,14 @@ const container = css( {
 } );
 
 interface SitesGridProps {
-	sites: SiteExcerptData[];
+	className?: string;
 	isLoading: boolean;
+	sites: SiteExcerptData[];
 }
 
-export const SitesGrid = ( { sites, isLoading }: SitesGridProps ) => {
+export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => {
 	return (
-		<div className={ container }>
+		<div className={ classnames( container, className ) }>
 			{ isLoading
 				? Array( N_LOADING_ROWS )
 						.fill( null )

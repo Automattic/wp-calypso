@@ -5,12 +5,14 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'URL',
 	'is_coming_soon',
 	'is_private',
+	'visible',
 	'launch_status',
 	'icon',
 	'name',
 	'options',
 	'plan',
 	'jetpack',
+	'is_wpcom_atomic',
 ] as const;
 
 export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;

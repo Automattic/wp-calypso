@@ -1,4 +1,4 @@
-import { useSitesTableFiltering } from '@automattic/components';
+import { FilterableSiteLaunchStatuses, useSitesTableFiltering } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
@@ -10,8 +10,9 @@ import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 
 export interface SitesDashboardQueryParams {
-	status?: string;
 	search?: string;
+	showHidden?: boolean;
+	status: FilterableSiteLaunchStatuses;
 }
 
 const FilterBar = styled.div( {
