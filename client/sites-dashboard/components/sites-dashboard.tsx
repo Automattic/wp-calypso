@@ -1,9 +1,9 @@
 import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
@@ -62,26 +62,21 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
-const HiddenSitesMessage = styled.span`
+const HiddenSitesMessageContainer = styled.div`
 	color: var( --color-text-subtle );
-	display: block;
 	font-size: 14px;
-	padding: 16px 16px 24px;
+	padding: 16px 0 24px 0;
+	text-align: center;
 `;
 
-const HiddenSitesMessageLink = styled.a`
-	text-decoration: underline;
-
-	&:hover {
-		text-decoration: none;
-	}
+const HiddenSitesMessage = styled.div`
+	margin-bottom: 1em;
 `;
 
 export function SitesDashboard( {
 	queryParams: { search, showHidden, status = 'all' },
 }: SitesDashboardProps ) {
-	const { __ } = useI18n();
-	const translate = useTranslate();
+	const { __, _n } = useI18n();
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
@@ -131,26 +126,24 @@ export function SitesDashboard( {
 								<SitesGrid isLoading={ isLoading } sites={ filteredSites } />
 							) }
 							{ selectedStatus.hiddenCount > 0 && (
-								<HiddenSitesMessage>
-									{ translate(
-										'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
-										'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
-										{
-											count: selectedStatus.hiddenCount,
-											args: {
+								<HiddenSitesMessageContainer>
+									<HiddenSitesMessage>
+										{ sprintf(
+											/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
+											_n(
+												'%(hiddenSitesCount)d more hidden site. Use search to access it.',
+												'%(hiddenSitesCount)d more hidden sites. Use search to access them.',
+												selectedStatus.hiddenCount
+											),
+											{
 												hiddenSitesCount: selectedStatus.hiddenCount,
-											},
-											components: {
-												br: <br />,
-												a: (
-													<HiddenSitesMessageLink
-														href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }
-													/>
-												),
-											},
-										}
-									) }
-								</HiddenSitesMessage>
+											}
+										) }
+									</HiddenSitesMessage>
+									<Button href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }>
+										Show all
+									</Button>
+								</HiddenSitesMessageContainer>
 							) }
 						</>
 					) : (
