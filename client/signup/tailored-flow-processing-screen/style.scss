@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 
-.signup.is-newsletter {
+.signup.is-newsletter, .signup.is-link-in-bio {
 	.signup-header {
 		z-index: 1;
 
@@ -10,7 +10,6 @@
 		}
 	}
 
-
 	.reskinned-processing-screen__container {
 		height: 100vh;
 		width: 100vw;
@@ -18,6 +17,18 @@
 		top: 0;
 		left: 0;
 
+		h1.reskinned-processing-screen__progress-step {
+			font-size: $font-title-medium;
+
+			@include break-medium {
+				font-size: $font-title-large;
+			}
+		}
+	}
+}
+
+.signup.is-newsletter {
+	.reskinned-processing-screen__container {
 		background-color: rgb( 162, 218, 254 );
 		background-image: url( 'calypso/assets/images/onboarding/newsletter-processing-left.png' ),
 		url( 'calypso/assets/images/onboarding/newsletter-processing-right.jpg' );
@@ -34,13 +45,23 @@
 		@include break-large {
 			background-size: auto 55%, auto 45%;
 		}
+	}
+}
 
-		h1.reskinned-processing-screen__progress-step {
-			font-size: $font-title-medium;
+.signup.is-link-in-bio {
+	.reskinned-processing-screen__container {
+		background-color: #d0cce3;
+		background-image: url( 'calypso/assets/images/onboarding/link-in-bio-processing-left.png' ),
+		url( 'calypso/assets/images/onboarding/link-in-bio-processing-right.png' );
+		background-position-y: 92%, 8%;
+		background-position-x: 0, 100%;
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 25%, auto 25%;
 
-			@include break-medium {
-				font-size: $font-title-large;
-			}
+		@include break-large {
+			background-size: auto 55%, auto 55%;
+			background-position-y: 90%, 10%;
 		}
 	}
 }

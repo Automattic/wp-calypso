@@ -615,7 +615,7 @@ class Signup extends Component {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
-		if ( this.props.flowName === 'newsletter' ) {
+		if ( [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName ) ) {
 			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
 		}
 
