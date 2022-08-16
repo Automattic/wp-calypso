@@ -60,6 +60,7 @@ export const SftpCard = ( {
 	// State for clipboard copy button for both username and password data
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
+	const [ isSshAccessLoading, setSshAccessLoading ] = useState( false );
 	const [ isCopied, setIsCopied ] = useState( {
 		password: false,
 		url: false,
@@ -98,6 +99,7 @@ export const SftpCard = ( {
 	};
 
 	const toggleSshAccess = () => {
+		setSshAccessLoading( true );
 		if ( isSshAccessEnabled ) {
 			disableSshAccess( siteId );
 		} else {
@@ -119,6 +121,10 @@ export const SftpCard = ( {
 			setPasswordLoading( false );
 		}
 	}, [ username, password ] );
+
+	useEffect( () => {
+		setSshAccessLoading( false );
+	}, [ isSshAccessEnabled ] );
 
 	const renderPasswordField = () => {
 		if ( disabled ) {
@@ -172,7 +178,7 @@ export const SftpCard = ( {
 		return (
 			<div className="sftp-card__ssh-field">
 				<ToggleControl
-					disabled={ isLoading }
+					disabled={ isLoading || isSshAccessLoading }
 					checked={ isSshAccessEnabled }
 					onChange={ () => toggleSshAccess() }
 					label={ translate( 'Enable SSH access to this site.' ) }
