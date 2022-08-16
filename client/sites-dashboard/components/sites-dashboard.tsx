@@ -1,4 +1,5 @@
 import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automattic/components';
+import { css as cssClassName } from '@emotion/css';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
@@ -62,6 +63,10 @@ const DashboardHeading = styled.h1`
 	flex: 1;
 `;
 
+const sitesMargin = cssClassName( {
+	margin: '0 0 1.5em',
+} );
+
 const HiddenSitesMessageContainer = styled.div`
 	color: var( --color-text-subtle );
 	font-size: 14px;
@@ -120,10 +125,18 @@ export function SitesDashboard( {
 					{ filteredSites.length > 0 || isLoading ? (
 						<>
 							{ displayMode === 'list' && (
-								<SitesTable isLoading={ isLoading } sites={ filteredSites } />
+								<SitesTable
+									isLoading={ isLoading }
+									sites={ filteredSites }
+									className={ sitesMargin }
+								/>
 							) }
 							{ displayMode === 'tile' && (
-								<SitesGrid isLoading={ isLoading } sites={ filteredSites } />
+								<SitesGrid
+									isLoading={ isLoading }
+									sites={ filteredSites }
+									className={ sitesMargin }
+								/>
 							) }
 							{ selectedStatus.hiddenCount > 0 && (
 								<HiddenSitesMessageContainer>
