@@ -138,8 +138,8 @@ export function SitesDashboard( {
 										{ sprintf(
 											/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
 											_n(
-												'%(hiddenSitesCount)d more hidden site. Use search to access it.',
-												'%(hiddenSitesCount)d more hidden sites. Use search to access them.',
+												'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
+												'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
 												selectedStatus.hiddenCount
 											),
 											{
@@ -148,7 +148,7 @@ export function SitesDashboard( {
 										) }
 									</HiddenSitesMessage>
 									<Button href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }>
-										Show all
+										{ __( 'Show all' ) }
 									</Button>
 								</HiddenSitesMessageContainer>
 							) }
