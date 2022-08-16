@@ -101,8 +101,12 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	justify-content: center;
 	text-align: center;
 	width: 100%;
-	max-width: 320px;
-	margin: 10px;
+
+	@include break-small {
+		// seems like a magic number, but the button should be as wide as the designs
+		// and the designs width is tied to the viewport height
+		width: 28vh;
+	}
 
 	svg {
 		display: none;
@@ -124,5 +128,5 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 
 .pattern-picker__cta {
 	text-align: center;
-	margin: 10px;
+	margin: 10px 20px;
 }

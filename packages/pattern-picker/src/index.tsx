@@ -33,7 +33,6 @@ type Props = { onPick: ( pattern: string ) => void };
 
 export function PatternPicker( { onPick }: Props ) {
 	const [ index, setIndex ] = React.useState( 0 );
-	const [ selectedItem, setSelectedItem ] = React.useState< string | null >( null );
 	const [ currentRef, setRef ] = React.useState< HTMLDivElement >();
 	const [ timeoutRef, setTimeoutRef ] = React.useState( 0 );
 	const { __ } = useI18n();
@@ -62,7 +61,6 @@ export function PatternPicker( { onPick }: Props ) {
 					const index = Math.floor( ( scrollLeft - itemWidth / 2 ) / itemWidthWithGap );
 					setIndex( index );
 					setTimeoutRef( 0 );
-					setSelectedItem( patterns[ index ] );
 				}
 			}, 100 )
 		);
@@ -81,7 +79,6 @@ export function PatternPicker( { onPick }: Props ) {
 						key={ pattern }
 						onClick={ () => {
 							setIndex( i );
-							setSelectedItem( pattern );
 						} }
 					/>
 				) ) }
@@ -104,11 +101,9 @@ export function PatternPicker( { onPick }: Props ) {
 			) }
 			<div className="pattern-picker__cta">
 				<Button
-					disabled={ ! selectedItem }
-					style={ { opacity: selectedItem ? 1 : 0 } }
 					className="pattern-picker__select"
 					isPrimary
-					onClick={ () => onPick( selectedItem as string ) }
+					onClick={ () => onPick( patterns[ index ] as string ) }
 				>
 					<span>{ __( 'Continue' ) }</span>
 					<Gridicon icon="heart" size={ 18 } />
