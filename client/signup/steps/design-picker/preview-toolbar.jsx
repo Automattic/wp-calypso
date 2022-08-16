@@ -15,7 +15,7 @@ const DesignPickerPreviewToolbar = ( {
 	showDeviceSwitcher,
 	setDeviceViewport,
 	translate,
-	showSiteAddressBar,
+	showSiteAddressBar = true,
 	devicesToShow,
 } ) => {
 	const devices = React.useRef( {
@@ -89,10 +89,6 @@ DesignPickerPreviewToolbar.propTypes = {
 	showSiteAddressBar: PropTypes.bool,
 	// Filter devices to show in device switcher
 	devicesToShow: PropTypes.array,
-};
-
-DesignPickerPreviewToolbar.defaultProps = {
-	showSiteAddressBar: true,
 };
 
 export default localize( DesignPickerPreviewToolbar );
