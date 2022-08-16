@@ -26,8 +26,11 @@ import {
 	createAtomicSftpUser,
 	resetAtomicSftpPassword,
 	updateAtomicSftpUser,
+	enableAtomicSshAccess,
+	disableAtomicSshAccess,
 } from 'calypso/state/hosting/actions';
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
+import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -49,6 +52,9 @@ export const SftpCard = ( {
 	createSftpUser,
 	resetSftpPassword,
 	siteHasSshFeature,
+	isSshAccessEnabled,
+	enableSshAccess,
+	disableSshAccess,
 	removePasswordFromState,
 } ) => {
 	// State for clipboard copy button for both username and password data
@@ -61,8 +67,6 @@ export const SftpCard = ( {
 		username: false,
 		sshConnectString: false,
 	} );
-	// TODO replace with live data.
-	const [ isSshEnabled, setIsSshEnabled ] = useState( false );
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
 
@@ -91,6 +95,14 @@ export const SftpCard = ( {
 	const createUser = () => {
 		setIsLoading( true );
 		createSftpUser( siteId, currentUserId );
+	};
+
+	const toggleSshAccess = () => {
+		if ( isSshAccessEnabled ) {
+			disableSshAccess( siteId );
+		} else {
+			enableSshAccess( siteId );
+		}
 	};
 
 	useEffect( () => {
@@ -161,12 +173,12 @@ export const SftpCard = ( {
 			<div className="sftp-card__ssh-field">
 				<ToggleControl
 					disabled={ isLoading }
-					checked={ isSshEnabled }
-					onChange={ () => setIsSshEnabled( ! isSshEnabled ) }
+					checked={ isSshAccessEnabled }
+					onChange={ () => toggleSshAccess() }
 					label={ translate( 'Enable SSH access to this site.' ) }
 				/>
-				{ isSshEnabled && (
-					<div class="sftp-card__copy-field">
+				{ isSshAccessEnabled && (
+					<div className="sftp-card__copy-field">
 						<FormTextInput
 							className="sftp-card__copy-input"
 							value={ sshConnectString }
@@ -397,12 +409,15 @@ export default connect(
 			password,
 			siteHasSshFeature:
 				config.isEnabled( 'launch-wpcom-ssh' ) && siteHasFeature( state, siteId, FEATURE_SSH ),
+			isSshAccessEnabled: 'ssh' === getAtomicHostingSshAccess( state, siteId ),
 		};
 	},
 	{
 		requestSftpUsers: requestAtomicSftpUsers,
 		createSftpUser,
 		resetSftpPassword,
+		enableSshAccess: enableAtomicSshAccess,
+		disableSshAccess: disableAtomicSshAccess,
 
 		removePasswordFromState: ( siteId, username ) =>
 			updateAtomicSftpUser( siteId, [ { username, password: null } ] ),
