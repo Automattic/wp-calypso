@@ -104,7 +104,7 @@ export function PatternPicker( { onPick }: Props ) {
 			) }
 			<div className="pattern-picker__cta">
 				<Button
-					disabled={ ! selectedItem || !! timeoutRef }
+					disabled={ ! selectedItem }
 					style={ { opacity: selectedItem ? 1 : 0 } }
 					className="pattern-picker__select"
 					isPrimary
