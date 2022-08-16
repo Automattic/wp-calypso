@@ -3,7 +3,7 @@ import { FormFileUpload } from '@wordpress/components';
 import { Icon, upload } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ImageEditor from 'calypso/blocks/image-editor';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import './style.scss';
@@ -14,6 +14,7 @@ export type SiteIconWithPickerProps = {
 	site: SiteDetails | null;
 	imageEditorClassName?: string;
 	uploadFieldClassName?: string;
+	disabled?: boolean;
 };
 export function SiteIconWithPicker( {
 	selectedFile,
@@ -21,6 +22,7 @@ export function SiteIconWithPicker( {
 	site,
 	imageEditorClassName,
 	uploadFieldClassName,
+	disabled,
 }: SiteIconWithPickerProps ) {
 	const { __ } = useI18n();
 
@@ -28,8 +30,15 @@ export function SiteIconWithPicker( {
 	const [ editingFileName, setEditingFileName ] = React.useState< string >();
 	const [ editingFile, setEditingFile ] = React.useState< string >();
 	const [ imageEditorOpen, setImageEditorOpen ] = React.useState< boolean >( false );
-	const isLoading = ! site;
 	const siteIconUrl = site?.icon?.img;
+
+	useEffect( () => {
+		if ( ! site && editingFile ) {
+			onSelect( new File( [ editingFile ], editingFileName || 'site-logo.png' ) );
+			setSelectedFileUrl( editingFile );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ editingFile ] );
 
 	return (
 		<>
@@ -55,7 +64,7 @@ export function SiteIconWithPicker( {
 			) }
 			<FormFieldset
 				className={ classNames( 'site-icon-with-picker__site-icon', uploadFieldClassName ) }
-				disabled={ isLoading }
+				disabled={ disabled }
 			>
 				<FormFileUpload
 					className={ classNames( 'site-icon-with-picker__upload-button', {
