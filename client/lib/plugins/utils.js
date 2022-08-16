@@ -332,7 +332,7 @@ export function getPluginAuthorKeyword( plugin ) {
 export const WPORG_PROFILE_URL = 'https://profiles.wordpress.org/';
 
 /**
- * Get the author keywrod from author_profile property
+ * Get the author keyword from author_profile property
  *
  * @param plugin
  * @returns {string|null} the author keyword
