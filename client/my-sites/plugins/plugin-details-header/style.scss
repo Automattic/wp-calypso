@@ -15,11 +15,13 @@ $mobile-icon-height: 175px;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
+	text-align: center;
 
 	@include break-mobile {
 		flex-wrap: nowrap;
 		align-items: flex-start;
 		justify-content: flex-start;
+		text-align: initial;
 	}
 	
 	.plugin-details-header__icon {
@@ -34,6 +36,10 @@ $mobile-icon-height: 175px;
 		width: $mobile-icon-height;
 		height: $mobile-icon-height;
 	}
+}
+
+.legacy .plugin-details-header__main-info {
+	text-align: initial;
 }
 
 .plugin-details-header__title-container {
