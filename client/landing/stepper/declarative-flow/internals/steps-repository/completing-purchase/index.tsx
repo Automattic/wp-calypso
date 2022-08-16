@@ -92,8 +92,9 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 			setPendingAction( async () => {
 				setProgressTitle( __( 'Completing Purchase' ) );
 				setProgress( 0.3 );
-				await wait( 2000 );
+				await wait( 1000 );
 				setProgress( 1 );
+				await wait( 2000 );
 			} );
 		}
 

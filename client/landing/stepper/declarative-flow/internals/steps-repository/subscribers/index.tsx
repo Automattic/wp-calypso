@@ -23,7 +23,7 @@ const Subscribers: Step = function ( { navigation } ): ReactElement | null {
 			await wait( 1500 );
 			setProgress( 1 );
 			setProgressTitle( __( 'Preparing Next Steps' ) );
-			await wait( 3000 );
+			await wait( 2000 );
 		} );
 
 		submit?.( providedDependencies, navigateTo );

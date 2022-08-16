@@ -35,7 +35,7 @@ function generateSwatchSVG( color: string | undefined ) {
 	}%3C/svg%3E")`;
 }
 const NewsletterSetup: Step = ( { navigation } ) => {
-	const { goBack, goNext } = navigation;
+	const { goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
@@ -75,22 +75,20 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		goNext();
+		if ( siteTitle ) {
+			setSiteDescription( tagline );
+			setSiteTitle( siteTitle );
+			setSiteAccentColor( accentColor );
 
-		setSiteDescription( tagline );
-		setSiteTitle( siteTitle );
-		setSiteAccentColor( accentColor );
-
-		if ( selectedFile && base64Image ) {
-			try {
-				setSiteLogo( base64Image );
-				// this should be moved to the loader step
-				// await setSiteLogo( new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' ) );
-			} catch ( _error ) {
-				// communicate the error to the user
+			if ( selectedFile && base64Image ) {
+				try {
+					setSiteLogo( base64Image );
+				} catch ( _error ) {
+					// communicate the error to the user
+				}
 			}
+			submit?.( { siteTitle, tagline } );
 		}
-		// submit?.( { siteTitle, tagline } );
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {

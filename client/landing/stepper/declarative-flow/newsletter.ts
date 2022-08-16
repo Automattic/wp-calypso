@@ -36,6 +36,17 @@ export const newsletter: Flow = {
 			recordSubmitStep( providedDependencies, '', _currentStep );
 
 			switch ( _currentStep ) {
+				case 'intro':
+					if ( userIsLoggedIn ) {
+						return navigate( 'newsletterSetup' );
+					}
+					return window.location.replace(
+						'/start/account?redirect_to=/setup/newsletterSetup?flow=newsletter'
+					);
+
+				case 'newsletterSetup':
+					return window.location.replace( '/start/newsletter/domains' );
+
 				case 'completingPurchase':
 					return navigate( 'processing', { navigateTo: 'subscribers' } );
 
@@ -54,23 +65,6 @@ export const newsletter: Flow = {
 
 		const goNext = () => {
 			switch ( _currentStep ) {
-				case 'intro':
-					if ( userIsLoggedIn ) {
-						return navigate( 'newsletterSetup' );
-					}
-					return window.location.replace(
-						'/start/account?redirect_to=/setup/newsletterSetup?flow=newsletter'
-					);
-
-				case 'newsletterSetup':
-					return window.location.replace( '/start/newsletter/domains' );
-
-				case 'subscribers':
-					return navigate( 'preLaunchpad' );
-
-				case 'preLaunchpad':
-					return navigate( 'launchpad' );
-
 				case 'launchpad':
 					return window.location.replace( `/view/${ siteSlug }` );
 
