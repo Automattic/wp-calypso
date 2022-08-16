@@ -61,7 +61,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			<SitesDashboard
 				queryParams={ {
 					search: context.query.search,
-					showHidden: context.query[ 'show-hidden' ],
+					showHidden: context.query[ 'show-hidden' ] === 'true',
 					status: context.query.status,
 				} }
 			/>
