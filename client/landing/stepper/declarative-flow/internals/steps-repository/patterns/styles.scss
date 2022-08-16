@@ -27,6 +27,10 @@
 
 		.pattern-picker__item {
 			min-height: calc( 65vh - 50px );
+
+			@supports ( min-height: 60svh ) {
+				min-height: calc( 65svh - 50px );
+			}
 		}
 
 		.step-container__jetpack-powered {

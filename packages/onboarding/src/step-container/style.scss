@@ -245,12 +245,16 @@
 		margin-top: 0;
 		display: block;
 		min-height: 65vh;
+
+		@supports ( min-height: 65svh ) {
+			min-height: calc( 65svh - 50px );
+		}
 	}
 
 	/**
 	 * Jetpack Powered
 	 */
-	 .step-container__jetpack-powered {
+	.step-container__jetpack-powered {
 		display: flex;
 		justify-content: center;
 		width: 100%;
