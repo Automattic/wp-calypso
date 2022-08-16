@@ -157,10 +157,6 @@ const replacementFor = ( node ) => {
  * @returns {string} sanitized HTML
  */
 export const sanitizeSectionContent = ( content ) => {
-	if ( ! root?.DOMParser ) {
-		return content;
-	}
-
 	const parser = new root.DOMParser();
 	const doc = parser.parseFromString( content, 'text/html' );
 
