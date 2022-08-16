@@ -43,6 +43,7 @@ export const SiteThumbnail = ( {
 	);
 
 	const loader = mShotsUrl && ! isError ? 'site-thumbnail-loader' : '';
+	const removeMshotsDefaultLoader = isLoading ? 'site-thumbnail__image' : '';
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
@@ -57,6 +58,11 @@ export const SiteThumbnail = ( {
 					className={ loader }
 					style={ {
 						position: 'absolute',
+						width: '100%',
+						height: '100%',
+						alignItems: 'center',
+						justifyContent: 'center',
+						display: 'flex',
 					} }
 				>
 					{ children }
@@ -64,7 +70,7 @@ export const SiteThumbnail = ( {
 			) }
 			{ src && ! isError && (
 				<img
-					className="site-thumbnail__image"
+					className={ removeMshotsDefaultLoader }
 					ref={ imgRef }
 					src={ src }
 					alt={ alt }

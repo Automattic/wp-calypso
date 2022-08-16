@@ -38,7 +38,7 @@ export const useMshotsImg = (
 		[ src, options, retryCount ]
 	);
 	const imgRef = useRef< HTMLImageElement >( null );
-	const [ isLoading, setIsLoading ] = useState( true );
+	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isError, setIsError ] = useState( false );
 
 	useEffect( () => {
@@ -51,7 +51,11 @@ export const useMshotsImg = (
 					imgRef?.current?.naturalWidth === 400 && imgRef?.current.naturalHeight === 300;
 				if ( ! hasLoadingImgDimensions ) {
 					setIsLoading( false );
-				} else if ( retryCount < MAXTRIES ) {
+				} else {
+					setIsLoading( true );
+				}
+
+				if ( retryCount < MAXTRIES ) {
 					// Only refresh 10 times
 					timeout = setTimeout(
 						() => setRetryCount( ( retryCount ) => retryCount + 1 ),
