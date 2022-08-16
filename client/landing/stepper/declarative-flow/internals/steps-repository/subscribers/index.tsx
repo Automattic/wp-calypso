@@ -21,9 +21,9 @@ const Subscribers: Step = function ( { navigation } ): ReactElement | null {
 			setProgressTitle( __( 'Creating your Newsletter' ) );
 			setProgress( 0.3 );
 			await wait( 1500 );
-			setProgressTitle( __( 'Preparing Next Steps' ) );
-			await wait( 1000 );
 			setProgress( 1 );
+			setProgressTitle( __( 'Preparing Next Steps' ) );
+			await wait( 3000 );
 		} );
 
 		submit?.( providedDependencies, navigateTo );

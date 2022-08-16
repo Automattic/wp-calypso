@@ -43,6 +43,7 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
+import TailoredFlowProcessingScreen from 'calypso/signup/tailored-flow-processing-screen';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -612,6 +613,10 @@ class Signup extends Component {
 	renderProcessingScreen( isReskinned ) {
 		if ( isP2Flow( this.props.flowName ) ) {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
+		}
+
+		if ( this.props.flowName === 'newsletter' ) {
+			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
 		}
 
 		if ( isReskinned ) {
