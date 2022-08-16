@@ -16,6 +16,8 @@ export const linkInBio: Flow = {
 		return [
 			'intro',
 			'linkInBioSetup',
+			'completingPurchase',
+			'processing',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
 		] as StepPath[];
 	},
@@ -24,6 +26,12 @@ export const linkInBio: Flow = {
 		const siteSlug = useSiteSlug();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			switch ( _currentStep ) {
+				case 'linkInBioSetup':
+					return navigate( 'completingPurchase' );
+				case 'completingPurchase':
+					return navigate( 'processing' );
+			}
 			return providedDependencies;
 		}
 
