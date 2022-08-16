@@ -386,6 +386,24 @@ const createSftpUser = ( siteId, currentUserId ) =>
 		createAtomicSftpUser( siteId, currentUserId )
 	);
 
+const enableSshAccess = ( siteId ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_hosting_configuration_enable_ssh_access' ),
+			bumpStat( 'hosting-config', 'enable-ssh-access' )
+		),
+		enableAtomicSshAccess( siteId )
+	);
+
+const disableSshAccess = ( siteId ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_hosting_configuration_disable_ssh_access' ),
+			bumpStat( 'hosting-config', 'disable-ssh-access' )
+		),
+		disableAtomicSshAccess( siteId )
+	);
+
 export default connect(
 	( state, { disabled } ) => {
 		const siteId = getSelectedSiteId( state );
@@ -422,8 +440,8 @@ export default connect(
 		requestSftpUsers: requestAtomicSftpUsers,
 		createSftpUser,
 		resetSftpPassword,
-		enableSshAccess: enableAtomicSshAccess,
-		disableSshAccess: disableAtomicSshAccess,
+		enableSshAccess,
+		disableSshAccess,
 
 		removePasswordFromState: ( siteId, username ) =>
 			updateAtomicSftpUser( siteId, [ { username, password: null } ] ),
