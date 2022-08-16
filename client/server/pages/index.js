@@ -52,20 +52,24 @@ const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
 
+let branchName;
 function getCurrentBranchName() {
-	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
+	if ( ! branchName ) {
+		try {
+			branchName = execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
+		} catch ( err ) {}
 	}
+	return branchName;
 }
 
+let commitChecksum;
 function getCurrentCommitShortChecksum() {
-	try {
-		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
+	if ( ! commitChecksum ) {
+		try {
+			commitChecksum = execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
+		} catch ( err ) {}
 	}
+	return commitChecksum;
 }
 
 /*
