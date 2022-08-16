@@ -7,7 +7,7 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -17,7 +17,6 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { setQueryArgs } from 'calypso/lib/query-args';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
@@ -139,9 +138,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const searchRef = useRef( null );
 	//  another temporary solution until phase 4 is merged
 	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
-	const clearSearch = useCallback( () => {
-		searchRef?.current?.setKeyword( '' );
-	}, [ searchRef ] );
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
@@ -221,12 +217,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			/>
 		);
 	};
-
-	useEffect( () => {
-		if ( ! search ) {
-			clearSearch();
-		}
-	}, [ clearSearch, search ] );
 
 	useEffect( () => {
 		const items = [
@@ -328,7 +318,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				searchRef={ searchRef }
 				popularSearchesRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
-				doSearch={ ( searchTerm ) => setQueryArgs( '' !== searchTerm ? { s: searchTerm } : {} ) }
 				searchTerm={ search }
 				isSearching={ isFetchingPluginsBySearchTerm }
 				title={ translate( 'Plugins you need to get your projects done' ) }
