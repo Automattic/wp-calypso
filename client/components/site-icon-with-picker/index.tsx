@@ -14,7 +14,7 @@ export type SiteIconWithPickerProps = {
 	site: SiteDetails | null;
 	imageEditorClassName?: string;
 	uploadFieldClassName?: string;
-	disabled: boolean;
+	disabled?: boolean;
 };
 export function SiteIconWithPicker( {
 	selectedFile,
