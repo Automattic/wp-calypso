@@ -1,17 +1,9 @@
 import { SiteDetails } from '../site';
-import { Location } from './types';
 
 export const setShowHelpCenter = ( show: boolean ) =>
 	( {
 		type: 'HELP_CENTER_SET_SHOW',
 		show,
-	} as const );
-
-export const setRouterState = ( history: Location[], index: number ) =>
-	( {
-		type: 'HELP_CENTER_SET_ROUTER_STATE',
-		history,
-		index,
 	} as const );
 
 export const resetRouterState = () =>

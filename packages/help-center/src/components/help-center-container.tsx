@@ -3,7 +3,6 @@
  */
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
@@ -12,12 +11,10 @@ import { MemoryRouter } from 'react-router-dom';
  * Internal Dependencies
  */
 import { FeatureFlagProvider } from '../contexts/FeatureFlagContext';
-import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
-import { HistoryRecorder } from './history-recorder';
 
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
@@ -37,10 +34,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose } ) => {
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
-	const { history, index } = useSelect( ( select ) =>
-		select( HELP_CENTER_STORE ).getRouterState()
-	);
-	const { resetRouterState } = useDispatch( HELP_CENTER_STORE );
 
 	const onDismiss = () => {
 		setIsVisible( false );
@@ -49,8 +42,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose } ) => {
 	const toggleVisible = () => {
 		if ( ! isVisible ) {
 			handleClose();
-			// reset nav history when the help center is closed by the user
-			resetRouterState();
 		}
 	};
 
@@ -65,8 +56,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose } ) => {
 	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
 	const nodeRef = useRef( null );
 	return (
-		<MemoryRouter initialEntries={ history } initialIndex={ index }>
-			<HistoryRecorder />
+		<MemoryRouter>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile }

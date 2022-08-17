@@ -1,24 +1,12 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
-import type { Location } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW':
 			return action.show;
-	}
-	return state;
-};
-
-const routerState: Reducer< { history: Location[] | undefined; index: number | undefined } > = (
-	state = { history: undefined, index: undefined },
-	action
-) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_ROUTER_STATE':
-			return { history: action.history, index: action.index };
 	}
 	return state;
 };
@@ -90,7 +78,6 @@ const reducer = combineReducers( {
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
-	routerState,
 } );
 
 export type State = ReturnType< typeof reducer >;
