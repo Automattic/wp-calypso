@@ -47,10 +47,8 @@
 	animation: fadein 1.5s;
 }
 
-.site-thumbnail-loading .site-thumbnail__image {
-	width: 0;
+.site-thumbnail__mshot_default_hidden {
 	height: 0;
-	opacity: 0;
 	visibility: hidden;
 }
 
@@ -70,6 +68,16 @@
 	top: 0;
 	z-index: 1;
 	display: inline-table;
+}
+
+.site-thumbnail-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 2;
 }
 
 

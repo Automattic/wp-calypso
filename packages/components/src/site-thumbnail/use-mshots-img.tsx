@@ -47,6 +47,7 @@ export const useMshotsImg = (
 			imgRef.current.onload = () => {
 				// MShot Loading image is 400x300px.
 				// MShot 404 image is 748×561px
+				setIsLoading( true );
 				const hasLoadingImgDimensions =
 					imgRef?.current?.naturalWidth === 400 && imgRef?.current.naturalHeight === 300;
 				if ( ! hasLoadingImgDimensions ) {
