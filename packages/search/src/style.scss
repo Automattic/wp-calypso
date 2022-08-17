@@ -203,13 +203,13 @@ $input-z-index: 20;
 			.search-component__input-fade {
 
 				&::before {
-					@include long-content-fade( $size: 0 );
+					display: none;
 				}
 
 				&.ltr {
 					/*!rtl:ignore*/
 					&::before {
-						@include long-content-fade( $size: 0 );
+						display: none;
 					}
 				}
 			}
