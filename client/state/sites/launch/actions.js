@@ -16,6 +16,10 @@ export const launchSite = ( siteId ) => ( {
 	},
 } );
 
+/**
+ * @param {number} siteId
+ * @param {string?} source
+ */
 export const launchSiteOrRedirectToLaunchSignupFlow =
 	( siteId, source = null ) =>
 	( dispatch, getState ) => {
