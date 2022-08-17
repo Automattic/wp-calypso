@@ -1,11 +1,12 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Fragment, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { setQueryArgs } from 'calypso/lib/query-args';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
-const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef, isSearching } ) => {
+const SearchBox = ( { isMobile, searchTerm, doSearch, searchBoxRef, isSearching } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -82,22 +83,28 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchBoxHeader = ( props ) => {
-	const {
-		doSearch,
-		searchTerm,
-		title,
-		searchTerms,
-		isSticky,
-		popularSearchesRef,
-		isSearching,
-		searchRef,
-	} = props;
+	const { searchTerm, title, searchTerms, isSticky, popularSearchesRef, isSearching, searchRef } =
+		props;
+
+	const doSearch = useCallback( ( receivedSearch ) => {
+		setQueryArgs( '' !== receivedSearch ? { s: receivedSearch } : {} );
+	}, [] );
 
 	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
 	const updateSearchBox = ( keyword ) => {
 		searchRef.current.setKeyword( keyword );
 		doSearch( keyword );
 	};
+
+	const clearSearch = useCallback( () => {
+		setQueryArgs( {} );
+	}, [] );
+
+	useEffect( () => {
+		if ( ! searchTerm ) {
+			clearSearch();
+		}
+	}, [ clearSearch, searchTerm ] );
 
 	return (
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
