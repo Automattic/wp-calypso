@@ -1,17 +1,21 @@
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import MainComponent from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
+import JetpackDisconnectedNotice from 'calypso/my-sites/plugins/jetpack-disconnected-notice';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
+import PluginsCategoryResultsPage from 'calypso/my-sites/plugins/plugins-category-results-page';
+import PluginsDiscoveryPage from 'calypso/my-sites/plugins/plugins-discovery-page';
+import PluginsNavigationHeader from 'calypso/my-sites/plugins/plugins-navigation-header';
+import PluginsPageViewTracker from 'calypso/my-sites/plugins/plugins-page-view-tracker';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -19,33 +23,9 @@ import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-s
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSiteId,
-	getSelectedSite,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
-import JetpackDisconnectedNotice from '../jetpack-disconnected-notice';
-import PluginsCategoryResultsPage from '../plugins-category-results-page';
-import PluginsDiscoveryPage from '../plugins-discovery-page';
-import PluginsNavigationHeader from '../plugins-navigation-header';
-import PluginsSearchResultPage from '../plugins-search-results-page';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
-
-const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) => {
-	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
-	let analyticsPath = category ? `/plugins/browse/${ category }` : '/plugins';
-
-	if ( selectedSiteId ) {
-		analyticsPath += '/:site';
-	}
-
-	if ( trackPageViews ) {
-		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
-	}
-
-	return null;
-};
 
 const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader } ) => {
 	const {
@@ -54,8 +34,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
 	const searchRef = useRef( null );
-	//  another temporary solution until phase 4 is merged
-	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
@@ -72,7 +50,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			!! selectedSite?.ID && ! canCurrentUser( state, selectedSite?.ID, 'manage_options' )
 	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 
@@ -83,18 +60,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
-		if ( search ) {
-			return (
-				<PluginsSearchResultPage
-					search={ search }
-					setIsFetchingPluginsBySearchTerm={ setIsFetchingPluginsBySearchTerm }
-					siteSlug={ siteSlug }
-					siteId={ siteId }
-					sites={ sites }
-				/>
-			);
-		}
-
 		if ( category ) {
 			return (
 				<PluginsCategoryResultsPage category={ category } sites={ sites } siteSlug={ siteSlug } />
@@ -121,7 +86,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		<MainComponent wideLayout>
 			<QueryProductsList persist />
 			<QueryJetpackPlugins siteIds={ siteIds } />
-			<PageViewTrackerWrapper
+			<PluginsPageViewTracker
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
 				trackPageViews={ trackPageViews }
@@ -143,7 +108,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				popularSearchesRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
 				searchTerm={ search }
-				isSearching={ isFetchingPluginsBySearchTerm }
 				title={ translate( 'Plugins you need to get your projects done' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
