@@ -1,7 +1,7 @@
 // import { Button } from '@automattic/components';
 // import { createInterpolateElement } from '@wordpress/element';
 import { useDispatch } from '@wordpress/data';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { usePostIdParam } from 'calypso/landing/stepper/hooks/use-post-id-param';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
@@ -18,23 +18,23 @@ const Promote: React.FC< Props > = () => {
 	const postIdParam = usePostIdParam();
 	const { setStepProgress } = useDispatch( ONBOARD_STORE );
 	const [ isLoading, setIsLoading ] = useState( true );
-	const widgetWrapperId = 'promote__widget-container';
+	const widgetWrapperRef = useRef< HTMLDivElement | null >( null );
 
 	useEffect( () => {
 		( async () => {
-			if ( siteIdParam === null || postIdParam === null ) {
+			if ( siteIdParam === null || postIdParam === null || widgetWrapperRef.current === null ) {
 				return;
 			}
-			await showDSP( siteIdParam, postIdParam, widgetWrapperId );
+			await showDSP( siteIdParam, postIdParam, widgetWrapperRef.current );
 			setIsLoading( false );
 			setStepProgress( { count: 4, progress: 1 } );
 		} )();
-	}, [] );
+	}, [ widgetWrapperRef.current ] );
 
 	return (
 		<div className="promote__content">
 			{ isLoading && <LoadingEllipsis /> }
-			<div id={ widgetWrapperId }></div>
+			<div ref={ widgetWrapperRef }></div>
 		</div>
 	);
 };

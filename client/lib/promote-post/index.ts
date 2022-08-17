@@ -7,6 +7,7 @@ declare global {
 	interface Window {
 		BlazePress?: {
 			render: ( params: {
+				domNode?: HTMLElement;
 				domNodeId?: string;
 				stripeKey: string;
 				apiHost: string;
@@ -34,13 +35,14 @@ export async function loadDSPWidgetJS(): Promise< void > {
 export async function showDSP(
 	siteId: number | string,
 	postId: number | string,
-	domNodeId?: string
+	domNodeOrId?: HTMLElement | string
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
 		if ( window.BlazePress ) {
 			window.BlazePress.render( {
-				domNodeId: domNodeId ?? '',
+				domNode: typeof domNodeOrId !== 'string' ? domNodeOrId : undefined,
+				domNodeId: typeof domNodeOrId === 'string' ? domNodeOrId : undefined,
 				stripeKey: config( 'dsp_stripe_pub_key' ),
 				apiHost: 'https://public-api.wordpress.com',
 				apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,
