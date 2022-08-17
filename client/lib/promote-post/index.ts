@@ -32,12 +32,12 @@ function loadDSP() {
 	} );
 }
 
-export async function showDSP( siteId: number | string, postId?: number ) {
+export async function showDSP( siteId: number | string, postId?: number, domNodeId?: string ) {
 	await loadDSP();
 	return new Promise( ( resolve, reject ) => {
 		if ( window.BlazePress ) {
 			window.BlazePress.render( {
-				domNodeId: 'promote__widget-container',
+				domNodeId: domNodeId ?? '',
 				stripeKey: config( 'dsp_stripe_pub_key' ),
 				apiHost: 'https://public-api.wordpress.com',
 				apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,
@@ -72,12 +72,11 @@ export async function loadDSPWidgetJS( onLoad?: () => void ) {
 	document.body.appendChild( script );
 }
 
-export async function showDSPWidgetModal( siteId: number | string, postId?: number ) {
+export async function showDSPWidgetModal( siteId: number, postId?: number ) {
 	if ( ! window.BlazePress ) {
 		await loadDSPWidgetJS( async () => await showDSPWidgetModal( siteId, postId ) );
 	} else {
 		await window.BlazePress.render( {
-			domNodeId: 'promote__widget-container',
 			stripeKey: config( 'dsp_stripe_pub_key' ),
 			apiHost: 'https://public-api.wordpress.com',
 			apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,

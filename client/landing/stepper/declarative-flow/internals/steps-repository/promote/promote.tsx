@@ -16,13 +16,14 @@ const Promote: React.FC< Props > = () => {
 	const siteIdParam = useSiteIdParam();
 	const { setStepProgress } = useDispatch( ONBOARD_STORE );
 	const [ isLoading, setIsLoading ] = useState( true );
+	const widgetWrapperId = 'promote__widget-container';
 
 	useEffect( () => {
 		( async () => {
 			if ( siteIdParam === null ) {
 				return;
 			}
-			await showDSP( siteIdParam, 200 );
+			await showDSP( siteIdParam, 200, widgetWrapperId );
 			setIsLoading( false );
 			setStepProgress( { count: 4, progress: 1 } );
 		} )();
@@ -31,7 +32,7 @@ const Promote: React.FC< Props > = () => {
 	return (
 		<div className="promote__content">
 			{ isLoading && <LoadingEllipsis /> }
-			<div id="promote__widget-container"></div>
+			<div id={ widgetWrapperId }></div>
 		</div>
 	);
 };
