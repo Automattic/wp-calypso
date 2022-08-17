@@ -33,7 +33,11 @@ const Promote: React.FC< Props > = () => {
 
 	return (
 		<div className="promote__content">
-			{ isLoading && <LoadingEllipsis /> }
+			{ isLoading && (
+				<div style={ { textAlign: 'center' } }>
+					<LoadingEllipsis />
+				</div>
+			) }
 			<div ref={ widgetWrapperRef }></div>
 		</div>
 	);
