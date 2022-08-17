@@ -48,14 +48,14 @@ export const newsletter: Flow = {
 					return window.location.replace( '/start/newsletter/domains' );
 
 				case 'completingPurchase':
-					return navigate( 'processing', { navigateTo: 'subscribers' } );
+					return navigate( 'processing' );
 
 				case 'processing': {
 					return navigate( providedDependencies?.destination as StepPath );
 				}
 
 				case 'subscribers':
-					return navigate( 'processing', { navigateTo: 'launchpad' } );
+					return navigate( 'processing' );
 			}
 		}
 
