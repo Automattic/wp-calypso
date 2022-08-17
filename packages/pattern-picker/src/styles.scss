@@ -1,0 +1,130 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+$patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', 'purple', 'yellow',
+	'biba', 'chloe-currie', 'emily', 'luis-carvelleda', 'mesh-gradient', 'paul-nyberg', 'tengfai';
+
+.pattern-picker__carousel {
+	scrollbar-width: none; /* Firefox */
+	display: flex;
+	gap: 20px;
+	box-sizing: border-box;
+	padding-left: 50%;
+	padding-right: 50%;
+	overflow-x: scroll;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+.pattern-picker__item {
+	flex: 1;
+	scroll-snap-align: center;
+	// iPhone aspect ratio
+	aspect-ratio: 0.48;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 20px;
+	background-size: 100%;
+	box-shadow: 2px 2px 10px 0 rgba( 66, 68, 90, 0.23 );
+	transition: background-position 1s ease-in-out, transform 0.2s ease-in-out,
+		opacity 0.1s ease-in-out;
+	border: 5px solid white;
+	margin: 20px 0;
+	background-position: contain;
+	background-repeat: no-repeat;
+
+	opacity: 0.5;
+	filter: blur( 2px );
+
+	&.is-active {
+		opacity: 1;
+		filter: blur( 0 );
+	}
+}
+
+@each $pattern in $patterns {
+	.pattern-picker__item.pattern-#{$pattern} {
+		background-image: url( 'calypso/assets/images/link-in-bio-pattern-previews/#{$pattern}.png' );
+	}
+}
+
+.pattern-picker__carousel-nav-button {
+	width: 40px;
+	height: 40px;
+	background: white;
+	border: 1px solid #eee;
+	align-items: center;
+	// stylelint-disable-next-line scales/radii
+	// stylelint-disable-next-line declaration-property-unit-allowed-list
+	border-radius: 50%;
+	opacity: 0.5;
+	position: absolute;
+	top: 50%;
+	box-shadow: 1px 1px 3px 0 rgba( 0, 0, 0, 0.18 );
+	transition: opacity 0.3s ease-in-out;
+	display: none;
+	cursor: pointer;
+
+	&--back {
+		left: 20px;
+	}
+
+	&--next {
+		right: 20px;
+	}
+
+	&:hover {
+		opacity: 1;
+	}
+
+	@include break-small {
+		display: flex;
+	}
+}
+
+.pattern-picker:hover {
+	.pattern-picker__carousel-nav-button {
+		opacity: 0.8;
+	}
+}
+
+.pattern-picker__select {
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	width: 100%;
+
+	@include break-small {
+		// seems like a magic number, but the button should be as wide as the designs
+		// and the designs width is tied to the viewport height
+		width: 28vh;
+	}
+
+	svg {
+		display: none;
+	}
+
+	use {
+		fill: white;
+	}
+
+	&:not( :disabled ):hover {
+		svg {
+			display: inline;
+		}
+		span {
+			display: none;
+		}
+	}
+}
+
+.pattern-picker__cta {
+	text-align: center;
+	margin: 10px 20px;
+}

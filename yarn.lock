@@ -1087,6 +1087,34 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/pattern-picker@workspace:^, @automattic/pattern-picker@workspace:packages/pattern-picker":
+  version: 0.0.0-use.local
+  resolution: "@automattic/pattern-picker@workspace:packages/pattern-picker"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/onboarding": "workspace:^"
+    classnames: ^2.3.1
+    postcss: ^8.4.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    redux: ^4.1.2
+    tslib: ^2.3.0
+    typescript: ^4.7.4
+    utility-types: ^3.10.0
+    webpack: ^5.68.0
+  peerDependencies:
+    "@wordpress/data": ^6.7.0
+    "@wordpress/element": ^4.5.0
+    "@wordpress/i18n": ^4.7.0
+    debug: ^4.3.3
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/plans-grid@workspace:^, @automattic/plans-grid@workspace:packages/plans-grid":
   version: 0.0.0-use.local
   resolution: "@automattic/plans-grid@workspace:packages/plans-grid"
@@ -12419,6 +12447,7 @@ __metadata:
     "@automattic/mini-cart": "workspace:^"
     "@automattic/notifications": "workspace:^"
     "@automattic/onboarding": "workspace:^"
+    "@automattic/pattern-picker": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
     "@automattic/react-virtualized": ^9.22.3
     "@automattic/request-external-access": "workspace:^"

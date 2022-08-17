@@ -39,6 +39,7 @@ export { default as chooseADomain } from './choose-a-domain';
 export { default as launchpad } from './launchpad';
 export { default as processingFake } from './processing-fake';
 export { default as subscribers } from './subscribers';
+export { default as patterns } from './patterns';
 
 export type StepPath =
 	| 'courses'
@@ -63,6 +64,7 @@ export type StepPath =
 	| 'importerWordpress'
 	| 'businessInfo'
 	| 'storeAddress'
+	| 'patterns'
 	| 'processing'
 	| 'login'
 	| 'vertical'

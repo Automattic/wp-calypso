@@ -53,11 +53,17 @@ button {
  */
 .site-setup,
 .newsletter-setup,
+.patterns,
 .link-in-bio-setup,
 .anchor-fm {
 	position: relative;
 	padding: 60px 0 0;
 	box-sizing: border-box;
+
+	// very narrow wide screens (mobile landscape)
+	@media screen and ( max-height: 512px ) {
+		padding: 5px 0 0;
+	}
 
 	&.courses {
 		padding: 0;
@@ -145,7 +151,6 @@ button {
 		--color-accent-60: #0e64a5;
 	}
 }
-
 @media ( max-width: 660px ) {
 	body.is-section-stepper .wpcom-site {
 		.inline-help {

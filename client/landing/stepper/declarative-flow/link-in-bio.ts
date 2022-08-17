@@ -16,6 +16,7 @@ export const linkInBio: Flow = {
 		return [
 			'intro',
 			'linkInBioSetup',
+			'patterns',
 			'completingPurchase',
 			'processing',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
