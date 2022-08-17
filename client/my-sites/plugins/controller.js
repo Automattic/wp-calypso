@@ -12,6 +12,7 @@ import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
+import PluginsSearchResultPage from './plugins-search-results-page';
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -56,6 +57,15 @@ function renderPluginsBrowser( context ) {
 	context.primary = createElement( PluginBrowser, {
 		path: context.path,
 		category,
+		search: searchTerm,
+	} );
+}
+
+function renderPluginsSearchPage( context ) {
+	const searchTerm = context.query.s;
+
+	context.primary = createElement( PluginsSearchResultPage, {
+		path: context.path,
 		search: searchTerm,
 	} );
 }
@@ -111,6 +121,14 @@ export function browsePluginsOrPlugin( context, next ) {
 }
 
 export function browsePlugins( context, next ) {
+	const searchTerm = context.query.s;
+
+	if ( searchTerm ) {
+		renderPluginsSearchPage( context );
+
+		return next();
+	}
+
 	renderPluginsBrowser( context );
 	next();
 }
