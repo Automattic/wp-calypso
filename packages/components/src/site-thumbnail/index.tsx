@@ -42,8 +42,7 @@ export const SiteThumbnail = ( {
 		`site-thumbnail__size-${ size }`
 	);
 
-	const loader = mShotsUrl && ! isError ? 'site-thumbnail-loader' : '';
-	const removeMshotsDefaultLoader = isLoading ? 'site-thumbnail__image' : '';
+	const showLoader = mShotsUrl && ! isError;
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
@@ -55,22 +54,16 @@ export const SiteThumbnail = ( {
 			) }
 			{ isLoading && (
 				<div
-					className={ loader }
-					style={ {
-						position: 'absolute',
-						width: '100%',
-						height: '100%',
-						alignItems: 'center',
-						justifyContent: 'center',
-						display: 'flex',
-					} }
+					className={ classnames( { 'site-thumbnail-loader': showLoader }, 'site-thumbnail-icon' ) }
 				>
 					{ children }
 				</div>
 			) }
 			{ src && ! isError && (
 				<img
-					className={ removeMshotsDefaultLoader }
+					className={ classnames( 'site-thumbnail__image', {
+						'site-thumbnail__mshot_default_hidden': isLoading,
+					} ) }
 					ref={ imgRef }
 					src={ src }
 					alt={ alt }
