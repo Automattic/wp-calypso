@@ -114,11 +114,10 @@ function compose( ...functions ) {
 }
 
 export function getNormalizedPath( pathname, query ) {
-	if ( ! pathname ) {
-		console.log( '\nNO PATH\n' );
-	}
 	// Make sure that paths like "/themes" and "/themes/" are considered the same.
-	if ( pathname.endsWith( '/' ) ) {
+	// Checks for longer lengths to avoid removing the "starting" slash for the
+	// base route.
+	if ( pathname.length > 1 && pathname.endsWith( '/' ) ) {
 		pathname = pathname.slice( 0, -1 );
 	}
 
