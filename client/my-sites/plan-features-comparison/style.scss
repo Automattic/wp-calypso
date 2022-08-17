@@ -211,6 +211,7 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features-comparison__header-annual-discount {
 		color: var( --studio-green-60 );
+		padding: 0 7px;
 		&-is-loading {
 			@include placeholder();
 		}
