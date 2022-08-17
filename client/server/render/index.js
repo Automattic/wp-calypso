@@ -241,9 +241,21 @@ export function serverRender( req, res ) {
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 
-		// And cache on the server, too.
+		/**
+		 * Cache redux state to speedup future renders. For example, some network
+		 * requests are skipped if the data is already in the store. Note that
+		 * cacheKey is only defined when SSR is enabled, which means the cache
+		 * is only set in logged-out contexts.
+		 *
+		 * Also note that we should only cache data which maps 1:1 to a route.
+		 * For example, the themes data on the logged-out "/themes" route is always
+		 * the same. And since the locale is encoded into the logged-out route
+		 * (like /es/themes), that applies to every user.
+		 */
 		if ( cacheKey ) {
-			cacheServerState( cacheKey, context.store );
+			const { documentHead, themes } = context.store.getState();
+			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
+			stateCache.set( cacheKey, serverState.get() );
 		}
 	}
 	context.clientData = config.clientData;
@@ -251,15 +263,6 @@ export function serverRender( req, res ) {
 	attachBuildTimestamp( context );
 
 	res.send( renderJsx( 'index', context ) );
-}
-
-function cacheServerState( cacheKey, store ) {
-	// Only cache data which maps 1:1 to a route. For example, the themes data on
-	// "/themes" is almost always the same (across all users) the next time you
-	// visit the route, so it's a good candidate for the cache.
-	const { documentHead, themes } = store.getState();
-	const serverState = serialize( store.getCurrentReducer(), { documentHead, themes } );
-	stateCache.set( cacheKey, serverState.get() );
 }
 
 /**

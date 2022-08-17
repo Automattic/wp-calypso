@@ -103,7 +103,16 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	}
 
 	const cacheKey = `${ getNormalizedPath( request.path, request.query ) }:gdpr=${ showGdprBanner }`;
-	const cachedServerState = stateCache.get( cacheKey ) || {};
+
+	/**
+	 * A cache object can be written for an SSR route like /themes when a request
+	 * is logged out. To avoid using that logged-out data for an authenticated
+	 * request, we should not utilize the state cache for logged-in requests.
+	 * Note that in dev mode (when the user is not bootstrapped), all requests
+	 * are considered logged out. This shouldn't cause issues because only one
+	 * user is using the cache in dev mode -- so cross-pollination won't happen.
+	 */
+	const cachedServerState = request.context.isLoggedIn ? {} : stateCache.get( cacheKey ) || {};
 	const getCachedState = ( reducer, storageKey ) => {
 		const storedState = cachedServerState[ storageKey ];
 		if ( ! storedState ) {
