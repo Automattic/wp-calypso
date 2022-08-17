@@ -1,5 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
+import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import type { StepPath } from './internals/steps-repository';
@@ -19,17 +21,18 @@ export const linkInBio: Flow = {
 			'patterns',
 			'completingPurchase',
 			'processing',
+			'chooseADesign',
+			'processingFake',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
 		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
 		const siteSlug = useSiteSlug();
+		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
-				case 'linkInBioSetup':
-					return navigate( 'completingPurchase' );
 				case 'completingPurchase':
 					return navigate( 'processing' );
 			}
@@ -43,14 +46,30 @@ export const linkInBio: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'intro':
+					if ( userIsLoggedIn ) {
+						return navigate( 'chooseADesign' );
+					}
+					return window.location.replace(
+						'/start/account?redirect_to=/setup/linkInBioSetup?flow=link-in-bio'
+					);
+				case 'chooseADesign':
 					return navigate( 'linkInBioSetup' );
+
+				case 'linkInBioSetup':
+					return window.location.replace( '/start/link-in-bio/domains' );
+
+				case 'processingFake':
+					return navigate( 'completingPurchase' );
+
+				case 'processing':
+					return navigate( 'launchpad' );
 
 				case 'launchpad':
 					return window.location.replace( `/view/${ siteSlug }` );
-			}
 
-			navigate( 'linkInBioSetup' );
-			return;
+				default:
+					return navigate( 'intro' );
+			}
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {

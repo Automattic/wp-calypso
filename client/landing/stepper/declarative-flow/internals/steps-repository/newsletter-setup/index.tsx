@@ -35,7 +35,7 @@ function generateSwatchSVG( color: string | undefined ) {
 	}%3C/svg%3E")`;
 }
 const NewsletterSetup: Step = ( { navigation } ) => {
-	const { goBack, submit } = navigation;
+	const { submit } = navigation;
 	const { __ } = useI18n();
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
@@ -195,7 +195,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName={ 'newsletter-setup' }
-			goBack={ goBack }
 			isWideLayout={ true }
 			hideBack={ true }
 			flowName={ 'newsletter' }

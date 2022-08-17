@@ -20,7 +20,7 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
-	const { goBack, submit } = navigation;
+	const { goNext } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
 
@@ -75,7 +75,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 				// communicate the error to the user
 			}
 		}
-		submit?.( { siteTitle, tagline } );
+		goNext();
 	};
 
 	const stepContent = (
@@ -143,7 +143,6 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	return (
 		<StepContainer
 			stepName={ 'link-in-bio-setup' }
-			goBack={ goBack }
 			isWideLayout={ true }
 			hideBack={ true }
 			flowName={ 'linkInBio' }
