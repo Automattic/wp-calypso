@@ -1530,13 +1530,14 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_FREE_NEWSLETTER ]: {
 		getSlug: () => FEATURE_FREE_NEWSLETTER,
-		getTitle: () => i18n.translate( 'Offer a free email newsletter (unlimited subscribers)' ),
-		getDescription: () => i18n.translate( 'Offer a free email newsletter (unlimited subscribers)' ),
+		getTitle: () => i18n.translate( 'Free newsletter w/ unlimited subscribers' ),
+		getDescription: () =>
+			i18n.translate( 'Offer a free email newsletter with unlimited subscribers.' ),
 	},
 	[ FEATURE_PAID_NEWSLETTER ]: {
 		getSlug: () => FEATURE_PAID_NEWSLETTER,
-		getTitle: () => i18n.translate( 'Sell paid newsletters (unlimited subscribers)' ),
-		getDescription: () => i18n.translate( 'Sell paid newsletters (unlimited subscribers)' ),
+		getTitle: () => i18n.translate( 'Paid newsletter w/ unlimited subscribers' ),
+		getDescription: () => i18n.translate( 'Sell paid newsletters with unlimited subscribers.' ),
 	},
 	[ FEATURE_CDN ]: {
 		getSlug: () => WPCOM_FEATURES_CDN,
@@ -1560,7 +1561,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_MANAGED_HOSTING ]: {
 		getSlug: () => FEATURE_MANAGED_HOSTING,
-		getTitle: () => i18n.translate( 'Managed hosting' ),
+		getTitle: () => i18n.translate( 'Managed hosting & CDN' ),
 		getDescription: () =>
 			i18n.translate(
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
@@ -1568,7 +1569,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_PREMIUM_THEMES_V2 ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited access to premium themes' ),
+		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
 		getDescription: () =>
 			i18n.translate(
 				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
@@ -1744,7 +1745,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_EMAIL_SUPPORT_V2 ]: {
 		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
+		getTitle: () => i18n.translate( 'Email support' ),
 		getDescription: () =>
 			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
