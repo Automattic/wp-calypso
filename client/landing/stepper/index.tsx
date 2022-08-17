@@ -28,6 +28,7 @@ import { requestSites } from 'calypso/state/sites/actions';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
+import { blazePressFlow } from './declarative-flow/blazepress-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
 import { newsletter } from './declarative-flow/newsletter';
@@ -63,6 +64,7 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
+	{ flowName: 'blazepress', pathToFlow: blazePressFlow },
 ];
 
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {

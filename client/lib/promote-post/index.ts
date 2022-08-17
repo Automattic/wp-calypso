@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { loadScript } from '@automattic/load-script';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -13,34 +14,52 @@ declare global {
 				authToken: string;
 				template: string;
 				urn: string;
+				onLoaded?: () => void;
+				showDialog?: boolean;
 			} ) => void;
 		};
 	}
 }
 
-export async function loadDSPWidgetJS( onLoad?: () => void ) {
+export async function loadDSPWidgetJS(): Promise< void > {
 	// check if already loaded
 	if ( window.BlazePress ) {
-		if ( onLoad ) {
-			await onLoad();
-		}
 		return;
 	}
-	const script = document.createElement( 'script' );
-	// cachebust once per hour for now, we will reduce this rate once we're out of beta
-	script.src =
+	const src =
 		config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
-	script.async = true;
-	if ( onLoad ) {
-		script.onload = onLoad;
-	}
-	document.body.appendChild( script );
+	await loadScript( src );
+}
+
+export async function showDSP(
+	siteId: number | string,
+	postId: number | string,
+	domNodeId?: string
+) {
+	await loadDSPWidgetJS();
+	return new Promise( ( resolve, reject ) => {
+		if ( window.BlazePress ) {
+			window.BlazePress.render( {
+				domNodeId: domNodeId ?? '',
+				stripeKey: config( 'dsp_stripe_pub_key' ),
+				apiHost: 'https://public-api.wordpress.com',
+				apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,
+				// todo fetch rlt somehow
+				authToken: 'wpcom-proxy-request',
+				template: 'article',
+				onLoaded: () => resolve( true ),
+				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+			} );
+		} else {
+			reject( false );
+		}
+	} );
 }
 
 export async function showDSPWidgetModal( siteId: number, postId?: number ) {
-	if ( ! window.BlazePress ) {
-		await loadDSPWidgetJS( async () => await showDSPWidgetModal( siteId, postId ) );
-	} else {
+	await loadDSPWidgetJS();
+
+	if ( window.BlazePress ) {
 		await window.BlazePress.render( {
 			stripeKey: config( 'dsp_stripe_pub_key' ),
 			apiHost: 'https://public-api.wordpress.com',
@@ -49,6 +68,7 @@ export async function showDSPWidgetModal( siteId: number, postId?: number ) {
 			authToken: 'wpcom-proxy-request',
 			template: 'article',
 			urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+			showDialog: true, // for now
 		} );
 	}
 }
