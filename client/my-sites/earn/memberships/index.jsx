@@ -162,11 +162,7 @@ class MembershipsSection extends Component {
 			this.props.requestSubscriptionStop(
 				this.props.siteId,
 				this.state.cancelledSubscriber,
-				this.props.translate( 'Subscription cancelled for %(email)s', {
-					args: {
-						email: this.state.cancelledSubscriber.user.user_email,
-					},
-				} )
+				this.getWording( this.state.cancelledSubscriber ).success
 			);
 		}
 		this.setState( { cancelledSubscriber: null } );
@@ -222,6 +218,7 @@ class MembershipsSection extends Component {
 	}
 
 	renderSubscriberList() {
+		const wording = this.getWording( this.state.cancelledSubscriber );
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Customers and Subscribers' ) } />
@@ -267,7 +264,7 @@ class MembershipsSection extends Component {
 									action: 'back',
 								},
 								{
-									label: this.props.translate( 'Cancel Subscription' ),
+									label: wording.button,
 									isPrimary: true,
 									action: 'cancel',
 								},
@@ -275,20 +272,8 @@ class MembershipsSection extends Component {
 							onClose={ this.onCloseCancelSubscription }
 						>
 							<h1>{ this.props.translate( 'Confirmation' ) }</h1>
-							<p>{ this.props.translate( 'Do you want to cancel this subscription?' ) }</p>
-							<Notice
-								text={ this.props.translate(
-									'Canceling the subscription will mean the subscriber %(email)s will no longer be charged.',
-									{
-										args: {
-											email: this.state.cancelledSubscriber
-												? this.state.cancelledSubscriber.user.user_email
-												: '',
-										},
-									}
-								) }
-								showDismiss={ false }
-							/>
+							<p>{ wording.confirmation_subheading }</p>
+							<Notice text={ wording.confirmation_info } showDismiss={ false } />
 						</Dialog>
 						<div className="memberships__module-footer">
 							<Button onClick={ this.downloadSubscriberList }>
@@ -299,6 +284,62 @@ class MembershipsSection extends Component {
 				) }
 			</div>
 		);
+	}
+
+	getWording( subscriber ) {
+		const isOneTime = subscriber?.plan?.renew_interval === 'one-time';
+		const subscriber_email = subscriber?.user.user_email ?? '';
+		const wording = {
+			donation: {
+				button: isOneTime
+					? this.props.translate( 'Remove' )
+					: this.props.translate( 'Cancel Donation' ),
+				confirmation_subheading: this.props.translate( 'Do you want to remove this donation?' ),
+				confirmation_info:
+					this.props.translate(
+						'Removing this donation means that the user %(subscriber_email)s will no longer have access to any service granted by this plan, such as restricted premium content or digital subscription.',
+						{ args: { subscriber_email: subscriber_email } }
+					) +
+					' ' +
+					( isOneTime
+						? this.props.translate( 'The donation will not be refunded.' )
+						: this.props.translate(
+								'Donations already made will not be refunded to the user but any scheduled future donations will not be made.'
+						  ) ),
+				success: this.props.translate( 'Donation cancelled for %(subscriber_email)s.', {
+					args: { subscriber_email: subscriber_email },
+				} ),
+			},
+			purchase: {
+				button: isOneTime
+					? this.props.translate( 'Remove' )
+					: this.props.translate( 'Cancel Subscription' ),
+				confirmation_subheading: this.props.translate( 'Do you want to remove this purchase?' ),
+				confirmation_info:
+					this.props.translate(
+						'Removing this purchase means that the user %(subscriber_email)s will no longer have access to any service granted by this plan, such as restricted premium content or digital subscription.',
+						{ args: { subscriber_email: subscriber?.user.user_email ?? '' } }
+					) +
+					' ' +
+					( isOneTime
+						? this.props.translate( 'The purchase will not be refunded.' )
+						: this.props.translate(
+								'Payments already made will not be refunded to the user but any scheduled future payments will not be made.'
+						  ) ),
+				success: this.props.translate( 'Subscription cancelled for %(subscriber_email)s.', {
+					args: { subscriber_email: subscriber_email },
+				} ),
+			},
+		};
+
+		// plan.type is null for non-donations, it's not known what they are, so they're called purchase here.
+		// That is also used as the fallback in case other plan types are added in the future without updating
+		// this function.
+		let productType = subscriber?.plan?.type ?? 'purchase';
+		if ( ! ( productType in wording ) ) {
+			productType = 'purchase';
+		}
+		return wording[ productType ];
 	}
 
 	renderManagePlans() {
@@ -440,12 +481,6 @@ class MembershipsSection extends Component {
 		}
 	}
 	renderSubscriberActions( subscriber ) {
-		let buttonText;
-		if ( subscriber.plan.renew_interval === 'one-time' ) {
-			buttonText = this.props.translate( 'Remove' );
-		} else {
-			buttonText = this.props.translate( 'Cancel Subscription' );
-		}
 		return (
 			<EllipsisMenu position="bottom left" className="memberships__subscriber-actions">
 				<PopoverMenuItem
@@ -458,7 +493,7 @@ class MembershipsSection extends Component {
 				</PopoverMenuItem>
 				<PopoverMenuItem onClick={ () => this.setState( { cancelledSubscriber: subscriber } ) }>
 					<Gridicon size={ 18 } icon={ 'cross' } />
-					{ buttonText }
+					{ this.getWording( subscriber ).button }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
