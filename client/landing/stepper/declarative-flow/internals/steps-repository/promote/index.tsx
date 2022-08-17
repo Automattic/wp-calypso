@@ -15,17 +15,15 @@ const Promote: Step = function Promote( { navigation, flow } ) {
 		// needs to be implemented
 		goNext();
 	};
+
 	return (
 		<StepContainer
 			stepName={ 'promote' }
 			goBack={ goBack }
 			isHorizontalLayout={ false }
 			formattedHeader={ <FormattedHeader headerText={ headerText } align={ 'center' } /> }
-			// isWideLayout={ true }
-			// isLargeSkipLayout={ false }
 			stepContent={ <PromoteStep flowName={ flow } goNext={ handleGetStarted } /> }
 			recordTracksEvent={ recordTracksEvent }
-			// showJetpackPowered
 		/>
 	);
 };

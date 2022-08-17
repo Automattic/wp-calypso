@@ -5,10 +5,6 @@ export const blazePressFlow: Flow = {
 	name: 'blazepress',
 
 	useSteps() {
-		// useEffect( () => {
-		// 	recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-		// }, [] );
-
 		return [ 'promote' ] as StepPath[];
 	},
 
@@ -16,37 +12,17 @@ export const blazePressFlow: Flow = {
 		// function submit( providedDependencies: ProvidedDependencies = {} ) {
 		function submit() {
 			switch ( currentStep ) {
-				case 'processing':
+				case 'promote':
 					return navigate( 'promote' );
 			}
 		}
 
 		const goBack = () => {
 			return;
-			// switch ( currentStep ) {
-			// 	case 'designSetup':
-			// 		return navigate( 'podcastTitle' );
-			// 	default:
-			// 		return navigate( 'podcastTitle' );
-			// }
 		};
 
 		const goNext = () => {
 			return;
-			// const siteSlug = siteSlugParam || getNewSite()?.site_slug;
-
-			// switch ( currentStep ) {
-			// 	case 'login':
-			// 		return navigate( 'podcastTitle' );
-			// 	case 'podcastTitle':
-			// 		return navigate( 'designSetup' );
-			// 	case 'designSetup':
-			// 		return navigate( 'processing' );
-			// 	case 'processing':
-			// 		return redirect( `/page/${ siteSlug }/home` );
-			// 	default:
-			// 		return navigate( 'podcastTitle' );
-			// }
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
