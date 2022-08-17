@@ -235,11 +235,10 @@ export function serverRender( req, res ) {
 		attachHead( context );
 
 		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
-
-		const reduxSubtrees = [ 'documentHead', ...isomorphicSubtrees ];
+		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
-		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
+		context.initialReduxState = pick( context.store.getState(), initialClientStateTrees );
 
 		/**
 		 * Cache redux state to speedup future renders. For example, some network
