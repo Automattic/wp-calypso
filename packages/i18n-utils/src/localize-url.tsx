@@ -148,10 +148,56 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/themes/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
+	'/theme/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
+	'/themes/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
 	'wordpress.com/log-in/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
 };
+
+function lookupUrl( fullUrl: string, locale: string, isLoggedIn: boolean, url: URL ) {
+	if ( ! url.pathname.endsWith( '.php' ) ) {
+		// Essentially a trailingslashit.
+		url.pathname = ( url.pathname + '/' ).replace( /\/+$/, '/' );
+	}
+
+	const firstPathSegment = url.pathname.substr( 0, 1 + url.pathname.indexOf( '/', 1 ) );
+	if ( '/' + locale + '/' === firstPathSegment ) {
+		return fullUrl;
+	}
+	const host = url.origin === INVALID_URL ? '' : url.host;
+
+	// Lookup is checked back to front.
+	const lookup = [ host, host + firstPathSegment, host + url.pathname ];
+
+	for ( let i = lookup.length - 1; i >= 0; i-- ) {
+		if ( lookup[ i ] in urlLocalizationMapping ) {
+			return urlLocalizationMapping[ lookup[ i ] ]( url, locale, isLoggedIn ).href;
+		}
+	}
+
+	// Nothing needed to be changed, just return it unmodified.
+	return fullUrl;
+}
+
+function localizePath(
+	fullUrl: string,
+	locale: Locale = getDefaultLocale(),
+	isLoggedIn = true,
+	url: URL
+): string {
+	const result = lookupUrl( fullUrl, locale, isLoggedIn, url );
+
+	if ( 'string' === typeof result ) {
+		return result.replace( url.origin, '' );
+	}
+
+	return result;
+}
 
 export function localizeUrl(
 	fullUrl: string,
@@ -165,9 +211,8 @@ export function localizeUrl(
 		return fullUrl;
 	}
 
-	// Ignore and passthrough /relative/urls that have no host specified
 	if ( url.origin === INVALID_URL ) {
-		return fullUrl;
+		return localizePath( fullUrl, locale, isLoggedIn, url );
 	}
 
 	// Let's unify the URL.
@@ -175,32 +220,11 @@ export function localizeUrl(
 	// Let's use `host` for everything.
 	url.hostname = '';
 
-	if ( ! url.pathname.endsWith( '.php' ) ) {
-		// Essentially a trailingslashit.
-		url.pathname = ( url.pathname + '/' ).replace( /\/+$/, '/' );
-	}
-
-	const firstPathSegment = url.pathname.substr( 0, 1 + url.pathname.indexOf( '/', 1 ) );
-
 	if ( 'en.wordpress.com' === url.host ) {
 		url.host = 'wordpress.com';
 	}
 
-	if ( '/' + locale + '/' === firstPathSegment ) {
-		return fullUrl;
-	}
-
-	// Lookup is checked back to front.
-	const lookup = [ url.host, url.host + firstPathSegment, url.host + url.pathname ];
-
-	for ( let i = lookup.length - 1; i >= 0; i-- ) {
-		if ( lookup[ i ] in urlLocalizationMapping ) {
-			return urlLocalizationMapping[ lookup[ i ] ]( url, locale, isLoggedIn ).href;
-		}
-	}
-
-	// Nothing needed to be changed, just return it unmodified.
-	return fullUrl;
+	return lookupUrl( fullUrl, locale, isLoggedIn, url );
 }
 
 export function useLocalizeUrl() {
