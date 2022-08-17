@@ -79,7 +79,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		setFormTouched( true );
+		// setFormTouched( true );
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
@@ -93,9 +93,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			}
 		}
 
-		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline } );
-		}
+		// if ( siteTitle.trim().length ) {
+		submit?.( { siteTitle, tagline } );
+		// }
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
