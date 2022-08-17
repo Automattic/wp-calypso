@@ -139,6 +139,7 @@ export function SitesDashboard( {
 							{ displayMode === 'tile' && (
 								<>
 									<SitesGrid
+										showVisibilityIndicator={ showHidden }
 										isLoading={ isLoading }
 										sites={ sitesList }
 										className={ sitesMargin }

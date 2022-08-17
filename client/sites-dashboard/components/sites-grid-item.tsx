@@ -1,4 +1,4 @@
-import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/components';
+import { useSiteLaunchStatusLabel, getSiteLaunchStatus, Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
@@ -34,9 +34,10 @@ const ellipsis = css( {
 
 interface SitesGridItemProps {
 	site: SiteExcerptData;
+	showVisibilityIndicator: boolean;
 }
 
-export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
+export const SitesGridItem = memo( ( { site, showVisibilityIndicator }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
@@ -61,6 +62,13 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 					</SiteName>
 
 					<div className={ badges }>
+						{ showVisibilityIndicator && (
+							<Gridicon
+								size={ 16 }
+								title={ site.visible ? __( 'Visible' ) : __( 'Hidden' ) }
+								icon={ site.visible ? 'visible' : 'not-visible' }
+							/>
+						) }
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 						{ getSiteLaunchStatus( site ) !== 'public' && (
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>

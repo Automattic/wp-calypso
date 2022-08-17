@@ -25,16 +25,28 @@ interface SitesGridProps {
 	className?: string;
 	isLoading: boolean;
 	sites: SiteExcerptData[];
+	showVisibilityIndicator: boolean;
 }
 
-export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => {
+export const SitesGrid = ( {
+	sites,
+	isLoading,
+	className,
+	showVisibilityIndicator,
+}: SitesGridProps ) => {
 	return (
 		<div className={ classnames( container, className ) }>
 			{ isLoading
 				? Array( N_LOADING_ROWS )
 						.fill( null )
 						.map( ( _, i ) => <SitesGridItemLoading key={ i } delayMS={ i * 150 } /> )
-				: sites.map( ( site ) => <SitesGridItem site={ site } key={ site.ID } /> ) }
+				: sites.map( ( site ) => (
+						<SitesGridItem
+							site={ site }
+							key={ site.ID }
+							showVisibilityIndicator={ showVisibilityIndicator }
+						/>
+				  ) ) }
 		</div>
 	);
 };
