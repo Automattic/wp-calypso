@@ -22,7 +22,6 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 
 .pattern-picker__item {
 	flex: 1;
-	min-width: 120px;
 	scroll-snap-align: center;
 	// iPhone aspect ratio
 	aspect-ratio: 0.48;
@@ -33,7 +32,6 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	border-radius: 20px;
 	background-size: 100%;
 	box-shadow: 2px 2px 10px 0 rgba( 66, 68, 90, 0.23 );
-	background-image: url( 'calypso/assets/images/link-in-bio-pattern-previews/biba.png' );
 	transition: background-position 1s ease-in-out, transform 0.2s ease-in-out,
 		opacity 0.1s ease-in-out;
 	border: 5px solid white;
@@ -46,7 +44,7 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 
 	&.is-active {
 		opacity: 1;
-		filter: none;
+		filter: blur( 0 );
 	}
 }
 

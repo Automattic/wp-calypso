@@ -60,6 +60,11 @@ button {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
+	// very narrow wide screens (mobile landscape)
+	@media screen and ( max-height: 512px ) {
+		padding: 5px 0 0;
+	}
+
 	&.courses {
 		padding: 0;
 
