@@ -32,7 +32,11 @@ function loadDSP() {
 	} );
 }
 
-export async function showDSP( siteId: number | string, postId?: number, domNodeId?: string ) {
+export async function showDSP(
+	siteId: number | string,
+	postId?: number | string,
+	domNodeId?: string
+) {
 	await loadDSP();
 	return new Promise( ( resolve, reject ) => {
 		if ( window.BlazePress ) {
