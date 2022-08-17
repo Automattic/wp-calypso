@@ -7,7 +7,7 @@ import { AppState } from 'calypso/types';
  * WordPress.com, or null if the site is unknown.
  *
  * @param  {AppState} state  Global state tree
- * @param  {number}   siteId Site ID
+ * @param  {?number}   siteId Site ID
  * @param  {boolean}  considerStandaloneProducts Whether to consider sites with Jetpack standalone plugins installed
  * @returns {boolean | null} Whether site is a Jetpack site
  */
