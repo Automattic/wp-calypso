@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { loadScript } from '@automattic/load-script';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -20,17 +21,14 @@ declare global {
 	}
 }
 
-function loadDSP() {
-	return new Promise( function ( resolve, reject ) {
-		const script = document.createElement( 'script' );
-		// cachebust once per hour for now, we will reduce this rate once we're out of beta
-		script.src =
-			config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
-
-		script.onload = resolve;
-		script.onerror = reject;
-		document.body.appendChild( script );
-	} );
+export async function loadDSPWidgetJS(): Promise< void > {
+	// check if already loaded
+	if ( window.BlazePress ) {
+		return;
+	}
+	const src =
+		config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
+	await loadScript( src );
 }
 
 export async function showDSP(
@@ -38,7 +36,7 @@ export async function showDSP(
 	postId: number | string,
 	domNodeId?: string
 ) {
-	await loadDSP();
+	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
 		if ( window.BlazePress ) {
 			window.BlazePress.render( {
@@ -58,29 +56,10 @@ export async function showDSP(
 	} );
 }
 
-export async function loadDSPWidgetJS( onLoad?: () => void ) {
-	// check if already loaded
-	if ( window.BlazePress ) {
-		if ( onLoad ) {
-			await onLoad();
-		}
-		return;
-	}
-	const script = document.createElement( 'script' );
-	// cachebust once per hour for now, we will reduce this rate once we're out of beta
-	script.src =
-		config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
-	script.async = true;
-	if ( onLoad ) {
-		script.onload = onLoad;
-	}
-	document.body.appendChild( script );
-}
-
 export async function showDSPWidgetModal( siteId: number, postId?: number ) {
-	if ( ! window.BlazePress ) {
-		await loadDSPWidgetJS( async () => await showDSPWidgetModal( siteId, postId ) );
-	} else {
+	await loadDSPWidgetJS();
+
+	if ( window.BlazePress ) {
 		await window.BlazePress.render( {
 			stripeKey: config( 'dsp_stripe_pub_key' ),
 			apiHost: 'https://public-api.wordpress.com',
