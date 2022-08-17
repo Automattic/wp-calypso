@@ -77,7 +77,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	}, [ simulatedProgress, progress, __ ] );
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = [ 'link-in-bio', 'newsletters' ].includes( flowName );
+	const isJetpackPowered = [ 'link-in-bio', 'newsletter' ].includes( flowName );
 
 	return (
 		<StepContainer
