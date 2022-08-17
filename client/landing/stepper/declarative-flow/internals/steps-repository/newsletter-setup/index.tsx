@@ -54,7 +54,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const siteTitleError =
 		formTouched && ! siteTitle.trim()
-			? 'Your publication needs a name so your subscribers can identify you.'
+			? __( 'Your publication needs a name so your subscribers can identify you.' )
 			: '';
 
 	useEffect( () => {
