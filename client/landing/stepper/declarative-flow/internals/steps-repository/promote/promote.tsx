@@ -22,7 +22,7 @@ const Promote: React.FC< Props > = () => {
 
 	useEffect( () => {
 		( async () => {
-			if ( siteIdParam === null ) {
+			if ( siteIdParam === null || postIdParam === null ) {
 				return;
 			}
 			await showDSP( siteIdParam, postIdParam, widgetWrapperId );

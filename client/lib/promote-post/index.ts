@@ -34,7 +34,7 @@ function loadDSP() {
 
 export async function showDSP(
 	siteId: number | string,
-	postId?: number | string,
+	postId: number | string,
 	domNodeId?: string
 ) {
 	await loadDSP();
