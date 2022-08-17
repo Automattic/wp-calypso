@@ -15,16 +15,25 @@ interface SitesTableProps {
 const Table = styled.table`
 	border-collapse: collapse;
 	table-layout: fixed;
-	@media only screen and ( max-width: 781px ) {
-		.sites-table__mobile-hidden {
-			display: none;
-		}
-	}
+	position: relative;
 `;
+
+const THead = styled.thead( {
+	'@media only screen and ( max-width: 781px )': {
+		display: 'none',
+	},
+
+	position: 'sticky',
+	zIndex: 1,
+	top: '32px',
+
+	background: '#fdfdfd',
+} );
 
 const Row = styled.tr`
 	line-height: 2em;
 	border-bottom: 1px solid #eee;
+
 	th {
 		padding-top: 12px;
 		padding-bottom: 12px;
@@ -32,7 +41,7 @@ const Row = styled.tr`
 		font-size: 14px;
 		line-height: 20px;
 		letter-spacing: -0.24px;
-		font-weight: normal;
+		font-weight: 500;
 		color: var( --studio-gray-60 );
 	}
 `;
@@ -42,7 +51,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 
 	return (
 		<Table className={ className }>
-			<thead className="sites-table__mobile-hidden">
+			<THead>
 				<Row>
 					<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
 					<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
@@ -50,7 +59,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 					<th>{ __( 'Status' ) }</th>
 					<th style={ { width: '20px' } }></th>
 				</Row>
-			</thead>
+			</THead>
 			<tbody>
 				{ isLoading &&
 					Array( N_LOADING_ROWS )
