@@ -64,10 +64,16 @@ class PostByline extends Component {
 		recordPermalinkClick( 'timestamp_card', this.props.post );
 	};
 
+	recordStubClick = () => {
+		recordPermalinkClick( 'stub_url_card', this.props.post );
+	};
+
 	render() {
 		const { post, site, feed, isDiscoverPost, showSiteName, showAvatar } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
+		const siteSlug = get( site, 'slug' );
+		const siteUrl = get( site, 'URL' );
 		const siteName = getSiteName( { site, feed, post } );
 		const hasAuthorName = !! get( post, 'author.name', null );
 		const hasMatchingAuthorAndSiteNames =
@@ -128,6 +134,16 @@ class PostByline extends Component {
 					<div className="reader-post-card__timestamp-and-tag">
 						{ post.date && post.URL && (
 							<span className="reader-post-card__timestamp">
+								<a
+									className="reader-post-card__timestamp-slug"
+									onClick={ this.recordStubClick }
+									href={ siteUrl }
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{ siteSlug }
+								</a>
+								<span className="reader-post-card__timestamp-bullet">·</span>
 								<a
 									className="reader-post-card__timestamp-link"
 									onClick={ this.recordDateClick }
