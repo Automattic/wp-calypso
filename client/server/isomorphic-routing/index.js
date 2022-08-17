@@ -114,9 +114,22 @@ function compose( ...functions ) {
 }
 
 export function getNormalizedPath( pathname, query ) {
+	if ( ! pathname ) {
+		console.log( '\nNO PATH\n' );
+	}
+	// Make sure that paths like "/themes" and "/themes/" are considered the same.
+	if ( pathname.endsWith( '/' ) ) {
+		pathname = pathname.slice( 0, -1 );
+	}
+
 	if ( isEmpty( query ) ) {
 		return pathname;
 	}
 
 	return pathname + '?' + stringify( query, { sort: ( a, b ) => a.localeCompare( b ) } );
+}
+
+// Given an Express request object, return a cache key.
+export function getCacheKey( { path, query, context } ) {
+	return `${ getNormalizedPath( path, query ) }:gdpr=${ context.showGdprBanner }`;
 }
