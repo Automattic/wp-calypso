@@ -129,6 +129,7 @@ export function SitesDashboard( {
 							{ displayMode === 'list' && (
 								<>
 									<SitesTable
+										showVisibilityColumn={ showHidden }
 										isLoading={ isLoading }
 										sites={ sitesList }
 										className={ sitesMargin }

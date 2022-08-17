@@ -10,6 +10,7 @@ interface SitesTableProps {
 	className?: string;
 	sites: SiteExcerptData[];
 	isLoading?: boolean;
+	showVisibilityColumn: boolean;
 }
 
 const Table = styled.table`
@@ -46,7 +47,12 @@ const Row = styled.tr`
 	}
 `;
 
-export function SitesTable( { className, sites, isLoading = false }: SitesTableProps ) {
+export function SitesTable( {
+	className,
+	sites,
+	isLoading = false,
+	showVisibilityColumn,
+}: SitesTableProps ) {
 	const { __ } = useI18n();
 
 	return (
@@ -57,6 +63,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 					<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
 					<th>{ __( 'Last Publish' ) }</th>
 					<th>{ __( 'Status' ) }</th>
+					{ showVisibilityColumn && <th>{ __( 'Visibility' ) }</th> }
 					<th style={ { width: '20px' } }></th>
 				</Row>
 			</THead>
@@ -67,13 +74,13 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 						.map( ( _, i ) => (
 							<SitesTableRowLoading
 								key={ i }
-								columns={ 5 }
+								columns={ showVisibilityColumn ? 6 : 5 }
 								delayMS={ i * 150 }
 								logoProps={ { width: 108, height: 78 } }
 							/>
 						) ) }
 				{ sites.map( ( site ) => (
-					<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
+					<SitesTableRow site={ site } key={ site.ID } displayVisibility={ showVisibilityColumn } />
 				) ) }
 			</tbody>
 		</Table>

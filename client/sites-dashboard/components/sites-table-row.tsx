@@ -15,6 +15,7 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
 	site: SiteExcerptData;
+	displayVisibility: boolean;
 }
 
 const Row = styled.tr`
@@ -73,7 +74,7 @@ const SitePlanIcon = styled.div`
 	margin-right: 6px;
 `;
 
-export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
+export default memo( function SitesTableRow( { site, displayVisibility }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 
@@ -126,6 +127,9 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
 			<Column mobileHidden>{ translatedStatus }</Column>
+			{ displayVisibility && (
+				<Column mobileHidden>{ site.visible ? __( 'Visible' ) : __( 'Hidden' ) }</Column>
+			) }
 			<Column style={ { width: '20px' } }>
 				<SitesEllipsisMenu site={ site } />
 			</Column>
