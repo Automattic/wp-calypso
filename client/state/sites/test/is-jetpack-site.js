@@ -1,4 +1,4 @@
-import isJetpackProductSite from '../selectors/is-jetpack-product-site';
+import isJetpackSite from '../selectors/is-jetpack-site';
 
 const siteId = 1;
 const getSiteState = ( siteData = {} ) => {
@@ -14,16 +14,16 @@ const getSiteState = ( siteData = {} ) => {
 	};
 };
 
-describe( 'isJetpackProductSite', () => {
+describe( 'isJetpackSite', () => {
 	test( 'should return null if no site is found', () => {
-		expect( isJetpackProductSite( getSiteState() ) ).toEqual( null );
-		expect( isJetpackProductSite( getSiteState(), siteId + 1 ) ).toEqual( null );
+		expect( isJetpackSite( getSiteState() ) ).toEqual( null );
+		expect( isJetpackSite( getSiteState(), siteId + 1 ) ).toEqual( null );
 	} );
 
 	test( 'should return false if the site is hosted on WordPress.com, even if a product plugin is installed', () => {
-		expect( isJetpackProductSite( getSiteState( { jetpack: false } ), siteId ) ).toEqual( false );
+		expect( isJetpackSite( getSiteState( { jetpack: false } ), siteId ) ).toEqual( false );
 		expect(
-			isJetpackProductSite(
+			isJetpackSite(
 				getSiteState( {
 					options: {
 						is_automated_transfer: true,
@@ -35,23 +35,20 @@ describe( 'isJetpackProductSite', () => {
 		).toEqual( false );
 	} );
 
-	test( 'should return false if the site has the full Jetpack plugin installed', () => {
+	test( 'should return true if the site has the full Jetpack plugin installed', () => {
 		expect(
-			isJetpackProductSite(
+			isJetpackSite(
 				getSiteState( {
 					jetpack: true,
-					options: {
-						jetpack_connection_active_plugins: [ 'jetpack' ],
-					},
 				} ),
 				siteId
 			)
-		).toEqual( false );
+		).toEqual( true );
 	} );
 
-	test( 'should return true if the site has a standalone Jetpack plugin installed', () => {
+	test( 'should return true if the site has full and a standalone Jetpack plugin installed', () => {
 		expect(
-			isJetpackProductSite(
+			isJetpackSite(
 				getSiteState( {
 					jetpack: true,
 					options: {
@@ -65,7 +62,7 @@ describe( 'isJetpackProductSite', () => {
 
 	test( 'should return true if the site has a standalone Jetpack plugin installed, but not the full plugin', () => {
 		expect(
-			isJetpackProductSite(
+			isJetpackSite(
 				getSiteState( {
 					jetpack: false,
 					options: {
@@ -75,5 +72,20 @@ describe( 'isJetpackProductSite', () => {
 				siteId
 			)
 		).toEqual( true );
+	} );
+
+	test( 'should return false if the site has a standalone Jetpack plugin installed, but not the full plugin with considerStandaloneProducts set to false', () => {
+		expect(
+			isJetpackSite(
+				getSiteState( {
+					jetpack: false,
+					options: {
+						jetpack_connection_active_plugins: [ 'jetpack-backup' ],
+					},
+				} ),
+				siteId,
+				false
+			)
+		).toEqual( false );
 	} );
 } );
