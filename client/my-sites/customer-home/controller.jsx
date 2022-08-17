@@ -20,9 +20,20 @@ export default async function ( context, next ) {
 export function maybeRedirect( context, next ) {
 	const state = context.store.getState();
 	const slug = getSelectedSiteSlug( state );
+
 	if ( ! canCurrentUserUseCustomerHome( state ) ) {
 		page.redirect( `/stats/day/${ slug }` );
 		return;
+	}
+
+	const launchpadEnabled = true;
+	const launchpadFlow = 'newsletter';
+
+	if ( launchpadEnabled ) {
+		// The new stepper onboarding flow isn't registered within the "page" client-side
+		// router, so page.redirect won't work. We need to use the traditional
+		// window.location Web API.
+		window.location.replace( `/setup/launchpad?flow=${ launchpadFlow }&siteSlug=${ slug }` );
 	}
 	next();
 }
