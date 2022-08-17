@@ -14,6 +14,7 @@ declare global {
 				template: string;
 				urn: string;
 				onLoaded?: () => void;
+				showDialog?: boolean;
 			} ) => void;
 		};
 	}
@@ -88,6 +89,7 @@ export async function showDSPWidgetModal( siteId: number, postId?: number ) {
 			authToken: 'wpcom-proxy-request',
 			template: 'article',
 			urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+			showDialog: true, // for now
 		} );
 	}
 }
