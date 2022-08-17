@@ -19,7 +19,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
 	const blogName = 'e2eflowtestingtos1.wordpress.com';
-	const cartItemForProPlan = 'WordPress.com Pro';
+	const cartItemForBusinessPlan = 'WordPress.com Business';
 	let page: Page;
 	let plansPage: PlansPage;
 
@@ -80,13 +80,13 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 			await plansPage.clickTab( 'Plans' );
 		} );
 
-		it( 'Click on "Upgrade" button for WordPress.com Premium plan', async function () {
-			await plansPage.selectPlan( 'Premium' );
+		it( 'Click on "Upgrade" button for WordPress.com Business plan', async function () {
+			await plansPage.selectPlan( 'Business' );
 		} );
 
-		it( 'WordPress.com Pro is added to cart', async function () {
+		it( 'WordPress.com Business is added to cart', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( cartItemForProPlan );
+			await cartCheckoutPage.validateCartItem( cartItemForBusinessPlan );
 		} );
 
 		it( 'Screenshot checkout page for all en and non-en locales', async function () {
