@@ -15,7 +15,7 @@ const FullListView = ( props ) => {
 						<ClearSearchButton />
 					</>
 				}
-				site={ props.siteSlug }
+				site={ props.site }
 				showPlaceholders={ props.isFetching }
 				currentSites={ props.sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
