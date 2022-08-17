@@ -17,9 +17,13 @@ export const siteLaunchStatusFilterValues = [
 
 export type FilterableSiteLaunchStatuses = typeof siteLaunchStatusFilterValues[ number ];
 
+type SitesByVisibility< T > = {
+	visible: T[];
+	hidden: T[];
+};
+
 interface SitesTableFilterOptions {
 	search?: string;
-	showHidden?: boolean;
 	status: FilterableSiteLaunchStatuses;
 }
 
@@ -27,11 +31,10 @@ interface Status {
 	title: React.ReactChild;
 	name: FilterableSiteLaunchStatuses;
 	count: number;
-	hiddenCount: number;
 }
 
 interface UseSitesTableFilteringResult< T > {
-	filteredSites: T[];
+	filteredSites: SitesByVisibility< T >;
 	statuses: Status[];
 }
 
@@ -44,7 +47,7 @@ type SiteObjectWithBasicInfo = SiteObjectWithStatus & {
 
 export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	allSites: T[],
-	{ status, showHidden = false, search }: SitesTableFilterOptions
+	{ status, search }: SitesTableFilterOptions
 ): UseSitesTableFilteringResult< T > {
 	const { __ } = useI18n();
 	const translatedSiteLaunchStatuses = useTranslatedSiteLaunchStatuses();
@@ -61,49 +64,51 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 			name,
 			title: filterableSiteLaunchStatuses[ name ],
 			count: 0,
-			hiddenCount: 0,
 		} ) );
 
-		const hiddenCounts = {
-			all: 0,
-			'coming-soon': 0,
-			public: 0,
-			private: 0,
-		};
-
-		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
+		const groupedByStatus = allSites.reduce< {
+			[ K in Status[ 'name' ] ]: SitesByVisibility< T >;
+		} >(
 			( groups, site ) => {
 				const siteStatus = getSiteLaunchStatus( site );
 
-				if ( ! site.visible && ! showHidden ) {
-					hiddenCounts.all++;
-					hiddenCounts[ siteStatus ]++;
-				}
-				if ( site.visible || showHidden ) {
-					groups[ siteStatus ].push( site );
-				}
-				if ( site.visible && ! showHidden ) {
-					groups.all.push( site );
-				}
+				const groupToAdd = site.visible ? 'visible' : 'hidden';
+
+				groups.all[ groupToAdd ].push( site );
+				groups[ siteStatus ][ groupToAdd ].push( site );
 
 				return groups;
 			},
-			{ all: showHidden ? allSites : [], 'coming-soon': [], public: [], private: [] }
+			{
+				all: { visible: [], hidden: [] },
+				'coming-soon': { visible: [], hidden: [] },
+				public: { visible: [], hidden: [] },
+				private: { visible: [], hidden: [] },
+			}
 		);
 
 		for ( const status of statuses ) {
-			status.count = groupedByStatus[ status.name ].length;
-			status.hiddenCount = hiddenCounts[ status.name ];
+			status.count =
+				groupedByStatus[ status.name ].visible.length +
+				groupedByStatus[ status.name ].hidden.length;
 		}
 
 		return [ statuses, groupedByStatus ];
-	}, [ allSites, filterableSiteLaunchStatuses, showHidden ] );
+	}, [ allSites, filterableSiteLaunchStatuses ] );
 
-	const filteredSites = useFuzzySearch( {
-		data: groupedByStatus[ status ],
-		keys: [ 'URL', 'name', 'slug' ],
-		query: search,
-	} );
-
-	return { filteredSites, statuses };
+	return {
+		filteredSites: {
+			visible: useFuzzySearch( {
+				data: groupedByStatus[ status ].visible,
+				keys: [ 'URL', 'name', 'slug' ],
+				query: search,
+			} ),
+			hidden: useFuzzySearch( {
+				data: groupedByStatus[ status ].hidden,
+				keys: [ 'URL', 'name', 'slug' ],
+				query: search,
+			} ),
+		},
+		statuses,
+	};
 }

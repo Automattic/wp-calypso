@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { NoSitesMessage } from './no-sites-message';
@@ -86,13 +87,20 @@ export function SitesDashboard( {
 
 	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
 		search,
-		showHidden: search ? true : showHidden,
 		status,
 	} );
 
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
+
+	const hasSites = filteredSites.hidden.length > 0 || filteredSites.visible.length > 0;
+
+	const sitesList = useMemo( () => {
+		return showHidden
+			? [ ...filteredSites.visible, ...filteredSites.hidden ]
+			: filteredSites.visible;
+	}, [ showHidden, filteredSites ] );
 
 	return (
 		<main>
@@ -116,23 +124,27 @@ export function SitesDashboard( {
 							onDisplayModeChange={ setDisplayMode }
 						/>
 					) }
-					{ filteredSites.length > 0 || isLoading ? (
+					{ hasSites || isLoading ? (
 						<>
 							{ displayMode === 'list' && (
-								<SitesTable
-									isLoading={ isLoading }
-									sites={ filteredSites }
-									className={ sitesMargin }
-								/>
+								<>
+									<SitesTable
+										isLoading={ isLoading }
+										sites={ sitesList }
+										className={ sitesMargin }
+									/>
+								</>
 							) }
 							{ displayMode === 'tile' && (
-								<SitesGrid
-									isLoading={ isLoading }
-									sites={ filteredSites }
-									className={ sitesMargin }
-								/>
+								<>
+									<SitesGrid
+										isLoading={ isLoading }
+										sites={ sitesList }
+										className={ sitesMargin }
+									/>
+								</>
 							) }
-							{ selectedStatus.hiddenCount > 0 && (
+							{ ! showHidden && filteredSites.hidden.length > 0 && (
 								<HiddenSitesMessageContainer>
 									<HiddenSitesMessage>
 										{ sprintf(
@@ -140,10 +152,10 @@ export function SitesDashboard( {
 											_n(
 												'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
 												'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
-												selectedStatus.hiddenCount
+												filteredSites.hidden.length
 											),
 											{
-												hiddenSitesCount: selectedStatus.hiddenCount,
+												hiddenSitesCount: filteredSites.hidden.length,
 											}
 										) }
 									</HiddenSitesMessage>
