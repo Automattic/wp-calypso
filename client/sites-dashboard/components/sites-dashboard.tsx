@@ -94,8 +94,6 @@ export function SitesDashboard( {
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 
-	const hasSites = filteredSites.hidden.length > 0 || filteredSites.visible.length > 0;
-
 	const sitesList = useMemo( () => {
 		return showHidden
 			? [ ...filteredSites.visible, ...filteredSites.hidden ]
@@ -117,6 +115,7 @@ export function SitesDashboard( {
 				<>
 					{ ( allSites.length > 0 || isLoading ) && (
 						<SitesContentControls
+							includeHiddenOnSiteCount={ showHidden }
 							initialSearch={ search }
 							statuses={ statuses }
 							selectedStatus={ selectedStatus }
@@ -124,7 +123,7 @@ export function SitesDashboard( {
 							onDisplayModeChange={ setDisplayMode }
 						/>
 					) }
-					{ hasSites || isLoading ? (
+					{ sitesList.length > 0 || isLoading ? (
 						<>
 							{ displayMode === 'list' && (
 								<>
@@ -170,7 +169,11 @@ export function SitesDashboard( {
 					) : (
 						<NoSitesMessage
 							status={ selectedStatus.name }
-							statusSiteCount={ selectedStatus.count }
+							statusSiteCount={
+								showHidden
+									? selectedStatus.visibleCount + selectedStatus.hiddenCount
+									: selectedStatus.visibleCount
+							}
 						/>
 					) }
 				</>

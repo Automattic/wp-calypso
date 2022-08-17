@@ -54,6 +54,7 @@ type SitesContentControlsProps = {
 	initialSearch?: string;
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
+	includeHiddenOnSiteCount: boolean;
 } & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher >;
 
 export const SitesContentControls = ( {
@@ -62,6 +63,7 @@ export const SitesContentControls = ( {
 	selectedStatus,
 	displayMode,
 	onDisplayModeChange,
+	includeHiddenOnSiteCount,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 
@@ -77,11 +79,11 @@ export const SitesContentControls = ( {
 			/>
 			<DisplayControls>
 				<ControlsSelectDropdown selectedText={ selectedStatus.title }>
-					{ statuses.map( ( { name, title, count } ) => (
+					{ statuses.map( ( { name, title, visibleCount, hiddenCount } ) => (
 						<SelectDropdown.Item
 							key={ name }
 							selected={ name === selectedStatus.name }
-							count={ count }
+							count={ includeHiddenOnSiteCount ? visibleCount + hiddenCount : visibleCount }
 							onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
 						>
 							{ title }

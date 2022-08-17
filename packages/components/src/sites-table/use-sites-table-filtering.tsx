@@ -30,7 +30,8 @@ interface SitesTableFilterOptions {
 interface Status {
 	title: React.ReactChild;
 	name: FilterableSiteLaunchStatuses;
-	count: number;
+	visibleCount: number;
+	hiddenCount: number;
 }
 
 interface UseSitesTableFilteringResult< T > {
@@ -60,12 +61,6 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	}, [ __, translatedSiteLaunchStatuses ] );
 
 	const [ statuses, groupedByStatus ] = useMemo( () => {
-		const statuses: Status[] = siteLaunchStatusFilterValues.map( ( name ) => ( {
-			name,
-			title: filterableSiteLaunchStatuses[ name ],
-			count: 0,
-		} ) );
-
 		const groupedByStatus = allSites.reduce< {
 			[ K in Status[ 'name' ] ]: SitesByVisibility< T >;
 		} >(
@@ -87,11 +82,12 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 			}
 		);
 
-		for ( const status of statuses ) {
-			status.count =
-				groupedByStatus[ status.name ].visible.length +
-				groupedByStatus[ status.name ].hidden.length;
-		}
+		const statuses: Status[] = siteLaunchStatusFilterValues.map( ( name ) => ( {
+			name,
+			title: filterableSiteLaunchStatuses[ name ],
+			visibleCount: groupedByStatus[ name ].visible.length,
+			hiddenCount: groupedByStatus[ name ].hidden.length,
+		} ) );
 
 		return [ statuses, groupedByStatus ];
 	}, [ allSites, filterableSiteLaunchStatuses ] );
