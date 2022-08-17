@@ -87,6 +87,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 
 			await postSiteLogo();
 			setProgress( 1 );
+			return 'launchpad';
 		} );
 	};
 
@@ -100,6 +101,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 
 			await postSiteLogo();
 			setProgress( 1 );
+			return 'subscribers';
 		} );
 	};
 
@@ -108,18 +110,13 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 			return;
 		}
 
-		let navigateTo;
-
 		if ( flow === 'link-in-bio' ) {
-			navigateTo = 'launchpad';
 			completeLinkInBioFlow();
 		} else {
-			navigateTo = 'subscribers';
 			completeNewsletterFlow();
 		}
 
-		const providedDependencies = { navigateTo };
-		submit?.( providedDependencies, navigateTo );
+		submit?.();
 	}, [ site ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return null;

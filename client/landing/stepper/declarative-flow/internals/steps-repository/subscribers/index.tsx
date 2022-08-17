@@ -14,9 +14,6 @@ const Subscribers: Step = function ( { navigation } ): ReactElement | null {
 	const { setPendingAction, setProgressTitle, setProgress } = useDispatch( ONBOARD_STORE );
 
 	const handleSubmit = () => {
-		const navigateTo = 'launchpad';
-		const providedDependencies = { navigateTo };
-
 		setPendingAction( async () => {
 			setProgressTitle( __( 'Creating your Newsletter' ) );
 			setProgress( 0.3 );
@@ -24,9 +21,10 @@ const Subscribers: Step = function ( { navigation } ): ReactElement | null {
 			setProgress( 1 );
 			setProgressTitle( __( 'Preparing Next Steps' ) );
 			await wait( 2000 );
+			return 'launchpad';
 		} );
 
-		submit?.( providedDependencies, navigateTo );
+		submit?.();
 	};
 
 	return (

@@ -32,7 +32,7 @@ export const newsletter: Flow = {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
 
-		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', _currentStep );
 
 			switch ( _currentStep ) {
@@ -51,7 +51,7 @@ export const newsletter: Flow = {
 					return navigate( 'processing', { navigateTo: 'subscribers' } );
 
 				case 'processing': {
-					return navigate( params[ 1 ] as StepPath );
+					return navigate( providedDependencies?.destination as StepPath );
 				}
 
 				case 'subscribers':
