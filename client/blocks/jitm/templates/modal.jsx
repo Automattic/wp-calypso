@@ -11,6 +11,7 @@ export default function ModalTemplate( {
 	disclaimer,
 	featureClass,
 	icon,
+	iconPath,
 	message,
 	onClick,
 	onDismiss,
@@ -22,6 +23,11 @@ export default function ModalTemplate( {
 	const translate = useTranslate();
 
 	const getModalImage = () => {
+		// If a direct path is provided, use the referenced image as the JITM artwork.
+		if ( iconPath ) {
+			return iconPath;
+		}
+
 		switch ( icon ) {
 			case 'embedded-inbox':
 				return Inbox;
@@ -41,7 +47,7 @@ export default function ModalTemplate( {
 		}
 	};
 
-	const getModalClassName = () => {
+	const getModalImageClassName = () => {
 		switch ( icon ) {
 			case 'embedded-inbox':
 				return 'modal__embedded-inbox';
@@ -50,9 +56,13 @@ export default function ModalTemplate( {
 		}
 	};
 
+	const getModalClassName = () => {
+		return `modal__main modal--${ featureClass }`;
+	};
+
 	return isDismissed.includes( featureClass ) ? null : (
 		<Guide
-			className="modal__main"
+			className={ getModalClassName() }
 			contentLabel={ message }
 			onFinish={ () => {
 				onDismiss();
@@ -87,7 +97,7 @@ export default function ModalTemplate( {
 							</div>
 							<div className="modal__sidebar">
 								<img
-									className={ getModalClassName() }
+									className={ getModalImageClassName() }
 									src={ getModalImage() }
 									alt={ getModalAltText() }
 								/>

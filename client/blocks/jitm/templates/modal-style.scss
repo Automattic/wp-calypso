@@ -36,6 +36,18 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		}
 	}
 
+	// Colour scheme for Google Workspace sale JITM
+	&.modal--google_workspace_engagement_customers {
+		.modal__sidebar {
+			background: var( --color-surface );
+			margin-right: 20px;
+		}
+
+		.components-button:hover svg {
+			fill: var( --color-neutral-20 );
+		}
+	}
+
 	.components-modal__header {
 		display: flex;
 		position: absolute;
