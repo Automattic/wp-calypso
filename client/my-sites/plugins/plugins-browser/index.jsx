@@ -43,9 +43,9 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import JetpackDisconnectedNotice from '../jetpack-disconnected-notice';
 import PluginsCategoryResultsPage from '../plugins-category-results-page';
 import PluginsDiscoveryPage from '../plugins-discovery-page';
-import PluginsNoticeSection from '../plugins-notice-section';
 import PluginsSearchResultPage from '../plugins-search-results-page';
 
 import './style.scss';
@@ -291,7 +291,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 					</div>
 				</FixedNavigationHeader>
 			) }
-			<PluginsNoticeSection />
+			<JetpackDisconnectedNotice />
 			<SearchBoxHeader
 				searchRef={ searchRef }
 				popularSearchesRef={ searchHeaderRef }

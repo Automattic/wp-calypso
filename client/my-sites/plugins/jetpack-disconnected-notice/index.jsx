@@ -10,7 +10,7 @@ import {
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const PluginsNoticeSection = () => {
+const JetpackDisconnectedNotice = () => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const isSiteConnected = useSelector( ( state ) =>
@@ -49,4 +49,4 @@ const PluginsNoticeSection = () => {
 	);
 };
 
-export default PluginsNoticeSection;
+export default JetpackDisconnectedNotice;
