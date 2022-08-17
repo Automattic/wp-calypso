@@ -29,7 +29,7 @@ const Launchpad: Step = ( { navigation } ) => {
 				goNext={ navigation.goNext }
 				isWideLayout={ true }
 				skipLabelText={ translate( 'Go to Admin' ) }
-				skipButtonAlign={ 'top' }
+				skipButtonAlign={ 'bottom' }
 				hideBack={ true }
 				stepContent={ stepContent }
 				formattedHeader={

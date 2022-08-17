@@ -23,6 +23,17 @@
 			}
 		}
 	}
+
+	.step-container__buttons {
+		padding: 0 0 40px 40px;
+		margin: 0;
+		text-align: left;
+
+		@media ( max-width: $break-mobile ) {
+			text-align: center;
+			padding: 0 0 34px;
+		}
+	}
 }
 
 .launchpad__content {
@@ -37,13 +48,18 @@
 
 .launchpad__sidebar {
 	width: 440px;
-	margin: 0 auto;
-	@include break-large {
-		margin: 0;
-	}
+	margin: 24px 20px 24px 40px;
 
-	@media ( min-width: $break-mobile ) {
-		padding: 20px 40px;
+	@media ( max-width: $break-mobile ) {
+		margin: 24px 16px 16px;
+	}
+}
+
+.launchpad__sidebar-content-container {
+	margin-left: 16px;
+
+	@media ( max-width: $break-mobile ) {
+		margin-left: 0;
 	}
 }
 
@@ -58,13 +74,23 @@
 	padding: 0;
 }
 
-.launchpad__sidebar-h5 {
+.launchpad__sidebar-header {
+	@media ( max-width: $break-mobile ) {
+		margin-left: 8px;
+	}
+}
+
+.launchpad__sidebar-header-logo {
+	vertical-align: text-bottom;
+}
+
+.launchpad__sidebar-header-flow-name {
 	font-family: 'Recoleta';
 	font-style: normal;
 	font-weight: 400;
 	font-size: $font-body-large;
 	line-height: 1.3;
-	margin: 0 0 100px;
+	margin: 0 0 100px 12px;
 }
 
 .launchpad__sidebar-description {
@@ -74,19 +100,19 @@
 }
 
 .launchpad__url-box {
-	background: var( --studio-white );
+	background: #f6f7f7;
 	border: 1px solid var( --studio-gray-0 );
 	border-radius: 4px;
 	height: 48px;
 	line-height: 48px;
-	margin: 30px 0;
+	margin: 32px 0;
 	padding: 0 20px;
 }
 
 // Launchpad - Progress Bar
 
 .launchpad__progress-bar-container {
-	margin: 100px 0 30px;
+	margin: 100px 0 32px;
 }
 
 .launchpad__progress-value {
@@ -116,8 +142,11 @@
 .launchpad__checklist {
 	list-style: none;
 	margin: 20px auto;
-	max-width: 98%;
 	padding: 0;
+
+	@media ( max-width: $break-mobile ) {
+		margin: 0;
+	}
 }
 
 .launchpad__checklist-item {
@@ -181,7 +210,7 @@
 // Launchpad Site Preview Component
 
 .launchpad__site-preview-wrapper {
-	padding: 73px 40px 96px 20px;
+	margin: 73px 40px 12px 20px;
 	height: 900px;
 	flex-grow: 1;
 
@@ -193,7 +222,6 @@
 		box-shadow: inset 0 0 1px #e1e1e1;
 		max-width: 375px;
 		border-radius: 50px; /* stylelint-disable-line scales/radii */
-		// filter: drop-shadow(60px 60px 80px rgba(126, 126, 126, 0.15));
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
@@ -202,18 +230,17 @@
 		background-color: transparent;
 	}
 
-	// Will be used to disable interaction with iframe
-	// .web-preview__frame {
-	// 	pointer-events: none;
-	// }
-
 	.web-preview__frame {
 		border: 10px solid var( --color-print );
 		border-radius: 20px; /* stylelint-disable-line scales/radii */
 		box-sizing: border-box;
-	    // filter: drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.05)) drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.03));
 		height: 812px;
-		width: 100%;
+		width: 95%;
+		filter: drop-shadow( 0 3px 8px rgba( 0, 0, 0, 0.05 ) ) drop-shadow( 0 3px 3px rgba( 0, 0, 0, 0.03 ) );
+
+		@media ( max-width: $break-mobile ) {
+			width: 100%;
+		}
 	}
 
 	.spinner-line {
@@ -221,12 +248,12 @@
 	}
 
 	@media ( max-width: $break-mobile ) {
-		padding: 0 16px;
+		margin: 16px;
 		height: 850px;
 
 		.web-preview__frame-wrapper.is-resizable .web-preview__frame {
 			max-width: 100%;
-			margin-top: 12px;
+			margin-top: 0;
 			box-shadow: inset 0 0 1px #e1e1e1;
 			filter: none;
 			border-radius: 50px; /* stylelint-disable-line scales/radii */
