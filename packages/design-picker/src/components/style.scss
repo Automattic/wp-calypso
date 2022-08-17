@@ -404,6 +404,12 @@
 		cursor: pointer;
 	}
 
+	.unified-design-picker__generated-designs {
+		.design-picker__grid {
+			padding-bottom: 32px;
+		}
+	}
+
 	.unified-design-picker__subtitle {
 		color: #50575e;
 		margin-bottom: 30px;

@@ -490,7 +490,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 		>
 			{ heading }
 			{ generatedDesigns.length > 0 && (
-				<>
+				<div className="unified-design-picker__generated-designs">
 					<div>
 						<h3> { translate( 'Custom designs for your site' ) } </h3>
 						<p className="unified-design-picker__subtitle">
@@ -509,7 +509,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 							{ translate( 'Choose a starting theme. You can change it later.' ) }
 						</p>
 					</div>
-				</>
+				</div>
 			) }
 			<StaticDesignPicker
 				locale={ locale }
