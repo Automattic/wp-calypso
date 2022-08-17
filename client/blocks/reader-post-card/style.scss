@@ -258,6 +258,7 @@
 
 // Need .reader__content to override .reader__content a
 .reader__content .reader-post-card__timestamp-link,
+.reader__content .reader-post-card__timestamp-slug,
 .reader__content .reader-post-card__tag-link {
 	color: var(--color-text-subtle);
 	margin-top: 2px;
@@ -265,6 +266,12 @@
 	&:hover {
 		color: var(--color-primary);
 	}
+}
+
+.reader-post-card__timestamp-bullet {
+	color: var( --color-text-subtle );
+	display: inline-block;
+	margin: 0 4px;
 }
 
 .reader-post-card__byline-details {
