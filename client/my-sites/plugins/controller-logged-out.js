@@ -77,6 +77,13 @@ const prefetchSearchedPlugins = ( queryClient, options ) => {
 const prefetchCategoryPlugins = ( queryClient, options ) =>
 	prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true );
 
+const prefetchProductList = ( store ) => {
+	const productsList = getProductsList( store.getState() );
+	if ( Object.values( productsList ).length === 0 ) {
+		return requestProductsList( { type: 'all' } )( store.dispatch );
+	}
+};
+
 export async function fetchPlugin( context, next ) {
 	const { queryClient, store } = context;
 
@@ -89,10 +96,8 @@ export async function fetchPlugin( context, next ) {
 	};
 
 	const pluginSlug = context.params?.plugin;
-	const productsList = getProductsList( store.getState() );
-	if ( Object.values( productsList ).length === 0 ) {
-		await requestProductsList( { type: 'all', presist: true } )( store.dispatch );
-	}
+
+	await prefetchProductList( store );
 
 	const isMarketplaceProduct = isMarketplaceProductSelector( store.getState(), pluginSlug );
 
@@ -112,7 +117,7 @@ export async function fetchPlugin( context, next ) {
 }
 
 export async function fetchPlugins( context, next ) {
-	const { queryClient } = context;
+	const { queryClient, store } = context;
 
 	if ( ! context.isServerSide ) {
 		return next();
@@ -123,6 +128,7 @@ export async function fetchPlugins( context, next ) {
 	};
 
 	await Promise.all( [
+		prefetchProductList( store ),
 		...( options.search
 			? prefetchSearchedPlugins( queryClient, options )
 			: [
@@ -136,7 +142,7 @@ export async function fetchPlugins( context, next ) {
 }
 
 export async function fetchCategoryPlugins( context, next ) {
-	const { queryClient } = context;
+	const { queryClient, store } = context;
 
 	if ( ! context.isServerSide ) {
 		return next();
@@ -150,6 +156,7 @@ export async function fetchCategoryPlugins( context, next ) {
 	options.tag = categoryTags.join( ',' );
 
 	await Promise.all( [
+		prefetchProductList( store ),
 		prefetchPaidPlugins( queryClient, options ),
 		...( options.search
 			? prefetchSearchedPlugins( queryClient, options )
