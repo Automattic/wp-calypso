@@ -1,7 +1,7 @@
 import { useSiteLogoMutation } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -19,6 +19,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 	const { mutateAsync: setSiteLogo } = useSiteLogoMutation( site?.ID );
 
 	const { getState } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const state = getState();
 
 	const base64ImageToBlob = ( base64String: string ) => {
 		// extract content type and base64 payload from original string
@@ -39,68 +40,87 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 		}
 
 		// convert ArrayBuffer to Blob
-		const blob = new Blob( [ buffer ], { type: type } );
-
-		return blob;
+		return new Blob( [ buffer ], { type: type } );
 	};
+
+	const postSiteSettings = useCallback( async () => {
+		if ( ! site ) {
+			return;
+		}
+
+		await saveSiteSettings( site.ID, {
+			blogname: state.siteTitle,
+			blogdescription: state.siteDescription,
+		} );
+
+		recordTracksEvent( 'calypso_signup_site_options_submit', {
+			has_site_title: !! state.siteTitle,
+			has_tagline: !! state.siteDescription,
+		} );
+	}, [ site, saveSiteSettings, state ] );
+
+	const postSiteLogo = useCallback( async () => {
+		if ( ! state.siteLogo ) {
+			return;
+		}
+
+		try {
+			await setSiteLogo( new File( [ base64ImageToBlob( state.siteLogo ) ], 'site-logo.png' ) );
+		} catch ( _error ) {
+			// communicate the error to the user
+		}
+	}, [ setSiteLogo, state ] );
 
 	const completeLinkInBioFlow = () => {
-		if ( site ) {
-			setPendingAction( async () => {
-				setProgress( 0 );
-				setProgressTitle( __( 'Completing Purchase' ) );
-				const state = getState();
-				await saveSiteSettings( site.ID, {
-					blogname: state.siteTitle,
-					blogdescription: state.siteDescription,
-				} );
+		setPendingAction( async () => {
+			setProgress( 0 );
+			setProgressTitle( __( 'Completing Purchase' ) );
+			await postSiteSettings();
 
-				recordTracksEvent( 'calypso_signup_site_options_submit', {
-					has_site_title: !! state.siteTitle,
-					has_tagline: !! state.siteDescription,
-				} );
-				setProgress( 0.5 );
-				setProgressTitle( __( 'Creating your Link in Bio' ) );
+			setProgress( 0.5 );
+			setProgressTitle( __( 'Creating your Link in Bio' ) );
 
-				await wait( 1000 );
+			await wait( 1000 );
 
-				setProgress( 0.8 );
-				setProgressTitle( __( 'Preparing Next Steps' ) );
+			setProgress( 0.8 );
+			setProgressTitle( __( 'Preparing Next Steps' ) );
 
-				if ( state.siteLogo ) {
-					try {
-						await setSiteLogo(
-							new File( [ base64ImageToBlob( state.siteLogo ) ], 'site-logo.png' )
-						);
-					} catch ( _error ) {
-						// communicate the error to the user
-					}
-				}
-				setProgress( 1 );
-			} );
-		}
+			await postSiteLogo();
+			setProgress( 1 );
+		} );
 	};
+
+	const completeNewsletterFlow = () => {
+		setPendingAction( async () => {
+			setProgressTitle( __( 'Completing Purchase' ) );
+			setProgress( 0 );
+			await postSiteSettings();
+			setProgress( 0.3 );
+			await wait( 1000 );
+
+			await postSiteLogo();
+			setProgress( 1 );
+		} );
+	};
+
 	useEffect( () => {
-		let navigateTo = '';
+		if ( ! site ) {
+			return;
+		}
+
+		let navigateTo;
+
 		if ( flow === 'link-in-bio' ) {
 			navigateTo = 'launchpad';
-
 			completeLinkInBioFlow();
 		} else {
 			navigateTo = 'subscribers';
-
-			setPendingAction( async () => {
-				setProgressTitle( __( 'Completing Purchase' ) );
-				setProgress( 0.3 );
-				await wait( 1000 );
-				setProgress( 1 );
-				await wait( 2000 );
-			} );
+			completeNewsletterFlow();
 		}
 
 		const providedDependencies = { navigateTo };
 		submit?.( providedDependencies, navigateTo );
-	} );
+	}, [ site ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return null;
 };
