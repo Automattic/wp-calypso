@@ -21,7 +21,7 @@ export const linkInBio: Flow = {
 			'patterns',
 			'completingPurchase',
 			'processing',
-			'chooseADesign',
+			'patterns',
 			'processingFake',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
 		] as StepPath[];
@@ -35,6 +35,8 @@ export const linkInBio: Flow = {
 			switch ( _currentStep ) {
 				case 'completingPurchase':
 					return navigate( 'processing' );
+				case 'patterns':
+					return navigate( 'linkInBioSetup' );
 			}
 			return providedDependencies;
 		}
@@ -47,13 +49,11 @@ export const linkInBio: Flow = {
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
-						return navigate( 'chooseADesign' );
+						return navigate( 'patterns' );
 					}
 					return window.location.replace(
 						'/start/account?redirect_to=/setup/linkInBioSetup?flow=link-in-bio'
 					);
-				case 'chooseADesign':
-					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
 					return window.location.replace( '/start/link-in-bio/domains' );
