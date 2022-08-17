@@ -208,15 +208,14 @@ $input-z-index: 20;
 			font-size: $font-body;
 
 			&::before {
-				@include long-content-fade( $size: 32px, $z-index: $input-z-index + 2, $color: var( --color-surface ) );
+				@include long-content-fade( $direction: right, $size: 32px, $z-index: $input-z-index + 2, $color: var( --color-surface ) );
 				border-radius: inherit;
 			}
 
-			&.ltr {
-				/*!rtl:ignore*/
+			&.rtl {
 				&::before {
 					@include long-content-fade(
-						$direction: right,
+						$direction: left,
 						$size: 32px,
 						$z-index: $input-z-index + 2,
 						$color: var( --color-surface )
