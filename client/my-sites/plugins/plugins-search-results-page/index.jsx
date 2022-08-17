@@ -22,6 +22,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
+// We should break this styles in a subsequent PR
 import '../plugins-browser/style.scss';
 
 /**
