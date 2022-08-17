@@ -52,6 +52,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ accentColor, setAccentColor ] = React.useState< string | undefined >();
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
+	const siteTitleError =
+		formTouched && ! siteTitle.trim()
+			? 'Your publication needs a name so your subscribers can identify you.'
+			: '';
 
 	useEffect( () => {
 		if ( ! site ) {
@@ -75,18 +79,21 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		if ( siteTitle ) {
-			setSiteDescription( tagline );
-			setSiteTitle( siteTitle );
-			setSiteAccentColor( accentColor );
+		setFormTouched( true );
 
-			if ( selectedFile && base64Image ) {
-				try {
-					setSiteLogo( base64Image );
-				} catch ( _error ) {
-					// communicate the error to the user
-				}
+		setSiteDescription( tagline );
+		setSiteTitle( siteTitle );
+		setSiteAccentColor( accentColor );
+
+		if ( selectedFile && base64Image ) {
+			try {
+				setSiteLogo( base64Image );
+			} catch ( _error ) {
+				// communicate the error to the user
 			}
+		}
+
+		if ( siteTitle.trim().length ) {
 			submit?.( { siteTitle, tagline } );
 		}
 	};
@@ -106,11 +113,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const getBackgroundImage = ( fieldValue: string | undefined ) => {
 		return fieldValue && fieldValue.trim() ? `url(${ greenCheckmarkImg })` : '';
 	};
-
-	const siteTitleError =
-		formTouched && ! siteTitle.trim()
-			? 'Your publication needs a name so your subscribers can identify you.'
-			: '';
 
 	const stepContent = (
 		<>
