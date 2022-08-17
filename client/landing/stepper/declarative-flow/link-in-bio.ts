@@ -61,7 +61,7 @@ export const linkInBio: Flow = {
 				case 'processingFake':
 					return navigate( 'completingPurchase' );
 
-				case 'processing':
+				case 'completingPurchase':
 					return navigate( 'launchpad' );
 
 				case 'launchpad':
