@@ -88,6 +88,20 @@ describe( 'useSitesTableFiltering', () => {
 		expect( result.current.filteredSites.hidden ).toEqual( [] );
 	} );
 
+	test( 'splits by visibility status', () => {
+		const private1 = createMockSite( { is_private: true } );
+		const hidden1 = createMockSite( { is_private: true, visible: false } );
+
+		const { result } = renderHook( () =>
+			useSitesTableFiltering( [ private1, hidden1 ], {
+				status: 'private',
+			} )
+		);
+
+		expect( result.current.filteredSites.visible ).toEqual( [ private1 ] );
+		expect( result.current.filteredSites.hidden ).toEqual( [ hidden1 ] );
+	} );
+
 	test( 'returns counts for each status type', () => {
 		const public1 = createMockSite( { is_private: false } );
 		const public2 = createMockSite( { is_private: false } );
