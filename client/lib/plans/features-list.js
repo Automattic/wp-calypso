@@ -983,7 +983,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_AND_RESTORE,
 		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
-		getDescription: () => {},
+		getDescription: () => i18n.translate( 'Automated site backups and one-click restore' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
@@ -1409,7 +1409,7 @@ export const FEATURES_LIST = {
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
 		getSlug: () => PREMIUM_DESIGN_FOR_STORES,
 		getTitle: () => i18n.translate( 'Premium design options customized for online stores' ),
-		getDescription: () => {},
+		getDescription: () => i18n.translate( 'Premium design options customized for online stores' ),
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
@@ -1700,7 +1700,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_SFTP_DATABASE_V2 ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
 		getTitle: () => i18n.translate( 'SFTP and Database Access' ),
-		getDescription: () => {},
+		getDescription: () => i18n.translate( 'SFTP and Database Access' ),
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS_V2 ]: {
