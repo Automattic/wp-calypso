@@ -34,7 +34,8 @@ const status = 'all';
 describe( 'useSitesTableFiltering', () => {
 	test( 'no sites to filter', () => {
 		const { result } = renderHook( () => useSitesTableFiltering( [], { search: '', status } ) );
-		expect( result.current.filteredSites ).toEqual( [] );
+		expect( result.current.filteredSites.visible ).toEqual( [] );
+		expect( result.current.filteredSites.hidden ).toEqual( [] );
 	} );
 
 	test( 'empty search query returns the same list', () => {
@@ -42,7 +43,8 @@ describe( 'useSitesTableFiltering', () => {
 
 		const { result } = renderHook( () => useSitesTableFiltering( sites, { search: '', status } ) );
 
-		expect( result.current.filteredSites ).toEqual( sites );
+		expect( result.current.filteredSites.visible ).toEqual( sites );
+		expect( result.current.filteredSites.hidden ).toEqual( [] );
 	} );
 
 	test( 'search by query matches site name', () => {
@@ -53,7 +55,8 @@ describe( 'useSitesTableFiltering', () => {
 			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c', status } )
 		);
 
-		expect( result.current.filteredSites ).toEqual( [ catSite ] );
+		expect( result.current.filteredSites.visible ).toEqual( [ catSite ] );
+		expect( result.current.filteredSites.hidden ).toEqual( [] );
 	} );
 
 	test( 'search by query matches site URL', () => {
@@ -64,7 +67,8 @@ describe( 'useSitesTableFiltering', () => {
 			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c', status } )
 		);
 
-		expect( result.current.filteredSites ).toEqual( [ catSite ] );
+		expect( result.current.filteredSites.visible ).toEqual( [ catSite ] );
+		expect( result.current.filteredSites.hidden ).toEqual( [] );
 	} );
 
 	test( 'filter by "private"', () => {
@@ -80,7 +84,8 @@ describe( 'useSitesTableFiltering', () => {
 			} )
 		);
 
-		expect( result.current.filteredSites ).toEqual( [ private1, private2 ] );
+		expect( result.current.filteredSites.visible ).toEqual( [ private1, private2 ] );
+		expect( result.current.filteredSites.hidden ).toEqual( [] );
 	} );
 
 	test( 'returns counts for each status type', () => {
@@ -100,26 +105,26 @@ describe( 'useSitesTableFiltering', () => {
 		expect( result.current.statuses ).toEqual( [
 			{
 				name: 'all',
-				count: 4, // hidden site not included in count
 				title: expect.any( String ),
+				visibleCount: 4,
 				hiddenCount: 1,
 			},
 			{
 				name: 'public',
-				count: 2,
 				title: expect.any( String ),
+				visibleCount: 2,
 				hiddenCount: 0,
 			},
 			{
 				name: 'private',
-				count: 1, // hidden site not included in count
 				title: expect.any( String ),
+				visibleCount: 1,
 				hiddenCount: 1,
 			},
 			{
 				name: 'coming-soon',
-				count: 1,
 				title: expect.any( String ),
+				visibleCount: 1,
 				hiddenCount: 0,
 			},
 		] );
@@ -135,16 +140,19 @@ describe( 'useSitesTableFiltering', () => {
 			{ initialProps: { search: 'titl' } }
 		);
 
-		expect( result.current.filteredSites ).toHaveLength( 1 );
-		expect( result.current.filteredSites[ 0 ] ).toBe( mockSite );
+		expect( result.current.filteredSites.visible ).toHaveLength( 1 );
+		expect( result.current.filteredSites.visible[ 0 ] ).toBe( mockSite );
+		expect( result.current.filteredSites.hidden ).toHaveLength( 0 );
 
 		rerender( { search: 'does not match' } );
 
-		expect( result.current.filteredSites ).toHaveLength( 0 );
+		expect( result.current.filteredSites.visible ).toHaveLength( 0 );
+		expect( result.current.filteredSites.hidden ).toHaveLength( 0 );
 
 		rerender( { search: 'title' } );
 
-		expect( result.current.filteredSites ).toHaveLength( 1 );
-		expect( result.current.filteredSites[ 0 ] ).toBe( mockSite );
+		expect( result.current.filteredSites.visible ).toHaveLength( 1 );
+		expect( result.current.filteredSites.visible[ 0 ] ).toBe( mockSite );
+		expect( result.current.filteredSites.hidden ).toHaveLength( 0 );
 	} );
 } );
