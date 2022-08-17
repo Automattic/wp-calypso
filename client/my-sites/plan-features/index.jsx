@@ -366,7 +366,6 @@ export class PlanFeatures extends Component {
 				availableForPurchase,
 				currencyCode,
 				current,
-				features,
 				planConstantObj,
 				planName,
 				popular,
@@ -435,16 +434,26 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 					/>
 					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
-						{ this.renderMobileFeatures( features ) }
+						{ this.renderMobileFeatures( properties ) }
 					</FoldableCard>
 				</div>
 			);
 		} );
 	}
 
-	renderMobileFeatures( features ) {
+	renderMobileFeatures( properties ) {
+		const { features, currencyCode, productCustomDesignCost } = properties;
+
 		return map( features, ( currentFeature, index ) => {
-			return ! [ FEATURE_BLANK, FEATURE_DASH ].includes( currentFeature?.getSlug() )
+			const featureSlug = currentFeature?.getSlug();
+
+			if ( featureSlug === FEATURE_BASIC_DESIGN ) {
+				currentFeature.meta = {
+					price: productCustomDesignCost,
+					currency: currencyCode,
+				};
+			}
+			return ! [ FEATURE_BLANK, FEATURE_DASH ].includes( featureSlug )
 				? this.renderFeatureItem( currentFeature, index )
 				: null;
 		} );
