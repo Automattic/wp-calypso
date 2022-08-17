@@ -3,6 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
@@ -104,6 +105,10 @@ export default function ReskinnedProcessingScreen( props ) {
 						) }
 					</>
 				) }
+			</div>
+
+			<div className="reskinned-processing-screen__jetpack-powered">
+				<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
 			</div>
 		</div>
 	);
