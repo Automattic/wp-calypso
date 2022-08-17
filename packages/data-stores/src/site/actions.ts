@@ -210,6 +210,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	function* saveSiteSettings(
 		siteId: number,
 		settings: {
+			accent_color?: string;
 			blogname?: string;
 			blogdescription?: string;
 			site_vertical_id?: string;
