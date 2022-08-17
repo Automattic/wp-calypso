@@ -62,4 +62,8 @@ describe( 'getNormalizedPath', () => {
 			getNormalizedPath( '/', { 'key=val': '' } )
 		);
 	} );
+
+	test( 'should consider paths with trailing slashses the same as paths without', () => {
+		expect( getNormalizedPath( '/hello/' ) ).toBe( getNormalizedPath( '/hello' ) );
+	} );
 } );
