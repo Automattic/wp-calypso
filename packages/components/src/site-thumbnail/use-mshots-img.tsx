@@ -38,7 +38,7 @@ export const useMshotsImg = (
 		[ src, options, retryCount ]
 	);
 	const imgRef = useRef< HTMLImageElement >( null );
-	const [ isLoading, setIsLoading ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isError, setIsError ] = useState( false );
 
 	useEffect( () => {
@@ -47,15 +47,12 @@ export const useMshotsImg = (
 			imgRef.current.onload = () => {
 				// MShot Loading image is 400x300px.
 				// MShot 404 image is 748×561px
+				setIsLoading( true );
 				const hasLoadingImgDimensions =
 					imgRef?.current?.naturalWidth === 400 && imgRef?.current.naturalHeight === 300;
 				if ( ! hasLoadingImgDimensions ) {
 					setIsLoading( false );
-				} else {
-					setIsLoading( true );
-				}
-
-				if ( retryCount < MAXTRIES ) {
+				} else if ( retryCount < MAXTRIES ) {
 					// Only refresh 10 times
 					timeout = setTimeout(
 						() => setRetryCount( ( retryCount ) => retryCount + 1 ),
