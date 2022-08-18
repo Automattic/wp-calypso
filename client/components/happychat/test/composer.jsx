@@ -72,8 +72,8 @@ describe( '<Composer />', () => {
 					translate={ noop }
 				/>
 			);
-			const btn = screen.getByRole( 'button' );
-			await user.click( btn );
+			const el = screen.getByRole( 'textbox', { name: /support request/i } );
+			await user.type( el, '{Enter}' );
 			expect( onSendMessage ).toHaveBeenCalled();
 			expect( onSendNotTyping ).toHaveBeenCalled();
 		} );
@@ -91,8 +91,8 @@ describe( '<Composer />', () => {
 					translate={ noop }
 				/>
 			);
-			const btn = screen.getByRole( 'button' );
-			await user.click( btn );
+			const el = screen.getByRole( 'textbox', { name: /support request/i } );
+			await user.type( el, '{Enter}' );
 			expect( onSendMessage ).not.toHaveBeenCalled();
 			expect( onSendNotTyping ).not.toHaveBeenCalled();
 		} );

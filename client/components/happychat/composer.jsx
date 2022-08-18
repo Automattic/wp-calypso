@@ -41,8 +41,7 @@ class Composer extends Component {
 	};
 
 	onKeyDown = ( event ) => {
-		const RETURN_KEYCODE = 13;
-		if ( event.which === RETURN_KEYCODE ) {
+		if ( event.key === 'Enter' ) {
 			event.preventDefault();
 			this.sendMessage();
 		}
