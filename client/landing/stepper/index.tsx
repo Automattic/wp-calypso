@@ -32,6 +32,7 @@ import { blazePressFlow } from './declarative-flow/blazepress-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
 import { newsletter } from './declarative-flow/newsletter';
+import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
@@ -65,6 +66,7 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'blazepress', pathToFlow: blazePressFlow },
+	{ flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow },
 ];
 
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
@@ -72,8 +74,6 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 	const flowName = useQuery().get( 'flow' );
 
 	let flow = siteSetupFlow;
-
-	// TODO - We need some mechanism to tell if we're using the pluginBundleFlow. Maybe a query string param or something from the data store?
 
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
