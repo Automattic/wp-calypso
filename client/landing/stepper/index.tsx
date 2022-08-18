@@ -66,8 +66,10 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'blazepress', pathToFlow: blazePressFlow },
-	{ flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow },
-];
+	config.isEnabled( 'themes/plugin-bundling' )
+		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
+		: null,
+].filter( ( item ) => item !== null ) as Array< configurableFlows >;
 
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
 	const { anchorFmPodcastId } = useAnchorFmParams();
