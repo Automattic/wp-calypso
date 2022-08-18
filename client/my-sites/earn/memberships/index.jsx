@@ -162,7 +162,7 @@ class MembershipsSection extends Component {
 			this.props.requestSubscriptionStop(
 				this.props.siteId,
 				this.state.cancelledSubscriber,
-				this.getWording( this.state.cancelledSubscriber ).success
+				this.getIntervalDependantWording( this.state.cancelledSubscriber ).success
 			);
 		}
 		this.setState( { cancelledSubscriber: null } );
@@ -218,7 +218,7 @@ class MembershipsSection extends Component {
 	}
 
 	renderSubscriberList() {
-		const wording = this.getWording( this.state.cancelledSubscriber );
+		const wording = this.getIntervalDependantWording( this.state.cancelledSubscriber );
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Customers and Subscribers' ) } />
@@ -286,7 +286,7 @@ class MembershipsSection extends Component {
 		);
 	}
 
-	getWording( subscriber ) {
+	getIntervalDependantWording( subscriber ) {
 		const subscriber_email = subscriber?.user.user_email ?? '';
 		const plan_name = subscriber?.plan.title ?? '';
 
@@ -467,7 +467,7 @@ class MembershipsSection extends Component {
 				</PopoverMenuItem>
 				<PopoverMenuItem onClick={ () => this.setState( { cancelledSubscriber: subscriber } ) }>
 					<Gridicon size={ 18 } icon={ 'cross' } />
-					{ this.getWording( subscriber ).button }
+					{ this.getIntervalDependantWording( subscriber ).button }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
