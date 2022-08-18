@@ -229,20 +229,18 @@ export class PluginsListHeader extends PureComponent {
 				</ButtonGroup>
 			);
 
-			if ( ! ( isJetpackSelected && this.props.selected.length === 1 ) ) {
-				leftSideButtons.push(
-					<ButtonGroup key="plugin-list-header__buttons-remove-button">
-						<Button
-							compact
-							scary
-							disabled={ ! needsRemoveButton }
-							onClick={ this.props.removePluginNotice }
-						>
-							{ translate( 'Remove' ) }
-						</Button>
-					</ButtonGroup>
-				);
-			}
+			leftSideButtons.push(
+				<ButtonGroup key="plugin-list-header__buttons-remove-button">
+					<Button
+						compact
+						scary
+						disabled={ ! needsRemoveButton }
+						onClick={ this.props.removePluginNotice }
+					>
+						{ translate( 'Remove' ) }
+					</Button>
+				</ButtonGroup>
+			);
 
 			rightSideButtons.push(
 				<button
@@ -344,15 +342,13 @@ export class PluginsListHeader extends PureComponent {
 				</SelectDropdown.Item>
 
 				<SelectDropdown.Separator />
-				{ isJetpackOnlySelected && (
-					<SelectDropdown.Item
-						className="plugin-list-header__actions-remove-item"
-						disabled={ ! needsRemoveButton }
-						onClick={ this.props.removePluginNotice }
-					>
-						{ translate( 'Remove' ) }
-					</SelectDropdown.Item>
-				) }
+				<SelectDropdown.Item
+					className="plugin-list-header__actions-remove-item"
+					disabled={ ! needsRemoveButton }
+					onClick={ this.props.removePluginNotice }
+				>
+					{ translate( 'Remove' ) }
+				</SelectDropdown.Item>
 			</SelectDropdown>
 		);
 	}

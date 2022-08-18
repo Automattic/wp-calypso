@@ -95,6 +95,10 @@ export class PluginsList extends Component {
 			return true;
 		}
 
+		if ( this.state.removeJetpackNotice !== nextState.removeJetpackNotice ) {
+			return true;
+		}
+
 		if ( ! isEqual( this.state.selectedPlugins, nextState.selectedPlugins ) ) {
 			return true;
 		}
@@ -412,7 +416,7 @@ export class PluginsList extends Component {
 	}
 
 	removePluginDialog = () => {
-		const { translate } = this.props;
+		const { plugins, translate } = this.props;
 
 		const message = (
 			<div>
@@ -421,25 +425,47 @@ export class PluginsList extends Component {
 			</div>
 		);
 
+		let isJetpackIncluded = false;
+
+		plugins.filter( this.isSelected ).forEach( ( plugin ) => {
+			if ( plugin.slug === 'jetpack' ) {
+				isJetpackIncluded = true;
+			}
+		} );
+
 		acceptDialog(
 			message,
-			this.removeSelected,
+			isJetpackIncluded ? this.removeSelectedWithJetpack : this.removeSelected,
 			translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } )
 		);
 	};
 
 	removeSelected = ( accepted ) => {
 		if ( accepted ) {
-			let waitForRemove = false;
+			this.doActionOverSelected( 'removing', this.props.removePlugin );
+			this.recordEvent( 'Clicked Remove Plugin(s)', true );
+		}
+	};
 
-			this.doActionOverSelected( 'removing', ( site, plugin ) => {
-				waitForRemove = true;
-				this.props.removePlugin( site, plugin );
-			} );
+	removeSelectedWithJetpack = ( accepted ) => {
+		if ( accepted ) {
+			const { plugins } = this.props;
 
-			if ( waitForRemove && this.props.selectedSite ) {
+			if ( plugins.filter( this.isSelected ).length === 1 ) {
 				this.setState( { removeJetpackNotice: true } );
 				this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
+			} else {
+				let waitForRemove = false;
+
+				this.doActionOverSelected( 'removing', ( site, plugin ) => {
+					waitForRemove = true;
+					this.props.removePlugin( site, plugin );
+				} );
+
+				if ( waitForRemove && this.props.selectedSite ) {
+					this.setState( { removeJetpackNotice: true } );
+					this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
+				}
 			}
 		}
 	};
