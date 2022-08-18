@@ -35,6 +35,20 @@
 	color: var( --studio-black );
 }
 
+.plugins-browser__clear-search-button {
+	text-decoration: underline;
+	color: var( --studio-black );
+
+	&:hover {
+		color: var( --color-link );
+		cursor: pointer;
+	}
+
+	&:focus {
+		outline: none;
+	}
+}
+
 .plugins-browser__no-results {
 	@include breakpoint-deprecated('<660px') {
 		margin: 0 16px;
