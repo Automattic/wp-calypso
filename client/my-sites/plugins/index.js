@@ -3,6 +3,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	browsePlugins,
+	browsePluginsByCategory,
 	browsePluginsOrPlugin,
 	renderPluginWarnings,
 	renderProvisionPlugins,
@@ -10,6 +11,7 @@ import {
 	plugins,
 	scrollTopIfNoHash,
 	upload,
+	redirectOnSearchQuery,
 } from './controller';
 
 export default function () {
@@ -36,7 +38,8 @@ export default function () {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
-		browsePlugins,
+		redirectOnSearchQuery,
+		browsePluginsByCategory,
 		makeLayout,
 		clientRender
 	);

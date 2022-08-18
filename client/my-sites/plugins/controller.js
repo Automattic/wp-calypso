@@ -12,6 +12,7 @@ import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginUpload from './plugin-upload';
 import PluginBrowser from './plugins-browser';
+import PluginsCategoryResultsPage from './plugins-category-results-page';
 import PluginsSearchResultPage from './plugins-search-results-page';
 
 function renderSinglePlugin( context, siteUrl ) {
@@ -70,6 +71,15 @@ function renderPluginsSearchPage( context ) {
 	} );
 }
 
+function renderPluginsCategoriesPage( context ) {
+	const category = context.params.category;
+
+	context.primary = createElement( PluginsCategoryResultsPage, {
+		path: context.path,
+		category,
+	} );
+}
+
 export function renderPluginWarnings( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
@@ -104,6 +114,30 @@ function plugin( context, next ) {
 	next();
 }
 
+export function redirectOnSearchQuery( context, next ) {
+	const searchTerm = context.query.s;
+	const site = context.params.site;
+
+	if ( searchTerm ) {
+		const redirectionUrl = `/plugins/${ site || '' }?s=${ searchTerm }`;
+		page.redirect( redirectionUrl );
+	}
+
+	next();
+}
+
+export function redirectOnUnsupportedCategory( context, next ) {
+	const searchTerm = context.query.s;
+	const site = context.params.site;
+
+	if ( searchTerm ) {
+		const redirectionUrl = `/plugins/${ site || '' }?s=${ searchTerm }`;
+		page.redirect( redirectionUrl );
+	}
+
+	next();
+}
+
 // The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route.
 // If the "plugin" part of the route is actually a site,
 // render the plugin browser for that site. Otherwise render plugin.
@@ -118,6 +152,21 @@ export function browsePluginsOrPlugin( context, next ) {
 	}
 
 	plugin( context, next );
+}
+
+export function browsePluginsByCategory( context, next ) {
+	const category = context.params.category;
+	const site = context.params.category;
+
+	if ( includes( ALLOWED_CATEGORIES, category ) ) {
+		renderPluginsCategoriesPage( context );
+
+		return next();
+	}
+
+	// if the provided category is not supported redirect user to the discovery one, until we can handle dynamic categories.
+	page.redirect( `/plugins/${ site || '' }` );
+	next();
 }
 
 export function browsePlugins( context, next ) {
