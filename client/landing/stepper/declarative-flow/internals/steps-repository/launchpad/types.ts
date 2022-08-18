@@ -1,4 +1,4 @@
-export interface Task {
+export interface LaunchpadTask {
 	id: string;
 	isCompleted: boolean;
 	actionUrl: string;

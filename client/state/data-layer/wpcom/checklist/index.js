@@ -29,6 +29,12 @@ export const CHECKLIST_KNOWN_TASKS = {
 	THEMES_BROWSED: 'themes_browsed',
 	FIRST_POST_PUBLISHED: 'first_post_published',
 	POST_SHARING_ENABLED: 'post_sharing_enabled',
+	NEWSLETTER_SETUP: 'newsletter_setup',
+	LINKINBIO_SETUP: 'linkinbio_setup',
+	PODCAST_SETUP: 'podcast_setup',
+	PLAN_SELECTED: 'plan_selected',
+	SUBSCRIBERS_ADDED: 'subscribers_added',
+	LINKS_ADDED: 'links_added',
 };
 
 // Transform the response to a data / schema calypso understands, eg filter out unknown tasks
