@@ -15,7 +15,8 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/blocks/upsell-nudge', () => 'upsell-nudge' );
 
-let mockPlugins = [];
+const mockPlugins = [];
+
 jest.mock( 'calypso/data/marketplace/use-wporg-plugin-query', () => ( {
 	useWPORGPlugins: jest.fn( () => ( { data: { plugins: mockPlugins } } ) ),
 	useWPORGInfinitePlugins: jest.fn( () => ( {
@@ -108,22 +109,6 @@ function mountWithRedux( ui, overrideState ) {
 	);
 	return mount( <Provider store={ store }>{ ui }</Provider> );
 }
-
-describe( 'Search view', () => {
-	const myProps = {
-		search: 'searchterm',
-	};
-
-	test( 'should show NoResults when there are no results', () => {
-		const comp = mountWithRedux( <PluginsBrowser { ...myProps } /> );
-		expect( comp.find( 'NoResults' ).length ).toBe( 1 );
-	} );
-	test( 'should show plugin list when there are results', () => {
-		mockPlugins = [ {} ];
-		const comp = mountWithRedux( <PluginsBrowser { ...myProps } /> );
-		expect( comp.find( 'PluginsBrowserList' ).length ).toBe( 1 );
-	} );
-} );
 
 describe( 'Upsell Nudge should get appropriate plan constant', () => {
 	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( product_slug ) => {
