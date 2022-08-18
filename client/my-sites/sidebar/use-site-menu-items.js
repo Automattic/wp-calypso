@@ -2,9 +2,11 @@ import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import domainOnlyFallbackMenu from 'calypso/my-sites/sidebar/static-data/domain-only-fallback-menu';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -46,6 +48,7 @@ const useSiteMenuItems = () => {
 	);
 
 	const isP2 = useSelector( ( state ) => !! isSiteWPForTeams( state, selectedSiteId ) );
+	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, selectedSiteId ) );
 
 	const shouldShowInbox = ! isP2;
 
@@ -63,6 +66,13 @@ const useSiteMenuItems = () => {
 	 */
 	if ( isJetpack && ! isAtomic && ! menuItems ) {
 		return jetpackMenu( { siteDomain } );
+	}
+
+	/**
+	 * When we have a domain-only site & we cannot retrieve the dynamic menu from that site.
+	 */
+	if ( isDomainOnly && ! menuItems ) {
+		return domainOnlyFallbackMenu( { siteDomain } );
 	}
 
 	/**
