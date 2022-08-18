@@ -25,13 +25,13 @@
 	}
 
 	.step-container__buttons {
-		padding: 0 0 40px 40px;
+		padding: 0 0 34px;
 		margin: 0;
-		text-align: left;
+		text-align: center;
 
-		@media ( max-width: $break-mobile ) {
-			text-align: center;
-			padding: 0 0 34px;
+		@include break-large {
+			text-align: left;
+			padding: 0 0 40px 40px;
 		}
 	}
 }
@@ -47,19 +47,20 @@
 // Launchpad - Sidebar
 
 .launchpad__sidebar {
-	width: 440px;
-	margin: 24px 20px 24px 40px;
+	max-width: 100%;
+	margin: 24px 16px 16px;
 
-	@media ( max-width: $break-mobile ) {
-		margin: 24px 16px 16px;
+	@include break-large {
+		max-width: 440px;
+		margin: 24px 20px 24px 40px;
 	}
 }
 
 .launchpad__sidebar-content-container {
-	margin-left: 16px;
+	margin-left: 0;
 
-	@media ( max-width: $break-mobile ) {
-		margin-left: 0;
+	@include break-large {
+		margin-left: 16px;
 	}
 }
 
@@ -75,8 +76,9 @@
 }
 
 .launchpad__sidebar-header {
-	@media ( max-width: $break-mobile ) {
-		margin-left: 8px;
+	margin-left: 8px;
+	@include break-large {
+		margin-left: 0;
 	}
 }
 
@@ -141,11 +143,11 @@
 
 .launchpad__checklist {
 	list-style: none;
-	margin: 20px auto;
+	margin: 0;
 	padding: 0;
 
-	@media ( max-width: $break-mobile ) {
-		margin: 0;
+	@include break-large {
+		margin: 20px auto;
 	}
 }
 
@@ -210,18 +212,34 @@
 // Launchpad Site Preview Component
 
 .launchpad__site-preview-wrapper {
-	margin: 73px 40px 12px 20px;
-	height: 900px;
+	margin: 16px;
+	height: 850px;
 	flex-grow: 1;
+
+	@include break-large {
+		margin: 73px 40px 12px 20px;
+		height: 900px;
+	}
+
+	.preview-toolbar__toolbar {
+		display: none;
+		@include break-large {
+			display: block;
+		}
+	}
 
 	.preview-toolbar__devices {
 		margin-bottom: 6px;
 	}
 
 	.is-phone .web-preview__frame-wrapper.is-resizable .web-preview__frame {
-		box-shadow: inset 0 0 1px #e1e1e1;
-		max-width: 375px;
-		border-radius: 50px; /* stylelint-disable-line scales/radii */
+		max-width: 100%;
+
+		@include break-large {
+			box-shadow: inset 0 0 1px #e1e1e1;
+			max-width: 375px;
+			border-radius: 50px; /* stylelint-disable-line scales/radii */
+		}
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
@@ -235,32 +253,20 @@
 		border-radius: 20px; /* stylelint-disable-line scales/radii */
 		box-sizing: border-box;
 		height: 812px;
-		width: 95%;
-		filter: drop-shadow( 0 3px 8px rgba( 0, 0, 0, 0.05 ) ) drop-shadow( 0 3px 3px rgba( 0, 0, 0, 0.03 ) );
+		width: 100%;
+		filter: none;
 
-		@media ( max-width: $break-mobile ) {
-			width: 100%;
+		@include break-large {
+			max-width: 95%;
+			margin-top: 0;
+			box-shadow: inset 0 0 1px #e1e1e1;
+			filter: drop-shadow( 0 3px 8px rgba( 0, 0, 0, 0.05 ) ) drop-shadow( 0 3px 3px rgba( 0, 0, 0, 0.03 ) );
+			border-radius: 50px; /* stylelint-disable-line scales/radii */
 		}
+		
 	}
 
 	.spinner-line {
 		display: none;
-	}
-
-	@media ( max-width: $break-mobile ) {
-		margin: 16px;
-		height: 850px;
-
-		.web-preview__frame-wrapper.is-resizable .web-preview__frame {
-			max-width: 100%;
-			margin-top: 0;
-			box-shadow: inset 0 0 1px #e1e1e1;
-			filter: none;
-			border-radius: 50px; /* stylelint-disable-line scales/radii */
-		}
-
-		.is-phone .web-preview__frame-wrapper.is-resizable .web-preview__frame {
-			max-width: 100%;
-		}
 	}
 }
