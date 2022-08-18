@@ -964,7 +964,10 @@ const ConnectedPlanFeatures = connect(
 		let planProperties = compact(
 			map( plans, ( plan ) => {
 				let isPlaceholder = false;
-				const planConstantObj = applyTestFiltersToPlansList( plan, undefined, {
+				const experiment = isPlansPageQuickImprovements
+					? 'pricing_packaging_plans_page_quick_improvements_v2'
+					: '';
+				const planConstantObj = applyTestFiltersToPlansList( plan, experiment, {
 					isLoggedInMonthlyPricing,
 					isProfessionalEmailPromotionAvailable,
 				} );
@@ -990,9 +993,8 @@ const ConnectedPlanFeatures = connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
-				const features = isPlansPageQuickImprovements
-					? planConstantObj.getPlanCompareFeaturesV2()
-					: planConstantObj.getPlanCompareFeatures();
+
+				const features = planConstantObj.getPlanCompareFeatures( experiment );
 
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
@@ -1128,7 +1130,7 @@ const ConnectedPlanFeatures = connect(
 export default function PlanFeaturesWrapper( props ) {
 	const locale = useLocale();
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'pricing_packaging_plans_page_quick_improvements',
+		'pricing_packaging_plans_page_quick_improvements_v2',
 		{
 			isEligible: [ 'en-gb', 'en' ].includes( locale ),
 		}
