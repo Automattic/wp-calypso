@@ -131,7 +131,7 @@ export function generateFlows( {
 			name: 'link-in-bio',
 			steps: [ 'domains', 'plans' ],
 			destination: ( dependencies ) =>
-				`/setup/processingFake?flow=link-in-bio&siteSlug=${ dependencies.siteSlug }`,
+				`/setup/completingPurchase?flow=link-in-bio&siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-08-16',
 			showRecaptcha: true,

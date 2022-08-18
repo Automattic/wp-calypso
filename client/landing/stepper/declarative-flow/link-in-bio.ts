@@ -33,10 +33,26 @@ export const linkInBio: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
-				case 'completingPurchase':
-					return navigate( 'processing' );
+				case 'intro':
+					if ( userIsLoggedIn ) {
+						return navigate( 'patterns' );
+					}
+					return window.location.replace(
+						'/start/account?redirect_to=/setup/patterns?flow=link-in-bio'
+					);
+
 				case 'patterns':
 					return navigate( 'linkInBioSetup' );
+
+				case 'linkInBioSetup':
+					return window.location.replace( '/start/link-in-bio/domains' );
+
+				case 'completingPurchase':
+					return navigate( 'processing' );
+
+				case 'processing': {
+					return navigate( providedDependencies?.destination as StepPath );
+				}
 			}
 			return providedDependencies;
 		}
@@ -47,23 +63,6 @@ export const linkInBio: Flow = {
 
 		const goNext = () => {
 			switch ( _currentStep ) {
-				case 'intro':
-					if ( userIsLoggedIn ) {
-						return navigate( 'patterns' );
-					}
-					return window.location.replace(
-						'/start/account?redirect_to=/setup/linkInBioSetup?flow=link-in-bio'
-					);
-
-				case 'linkInBioSetup':
-					return window.location.replace( '/start/link-in-bio/domains' );
-
-				case 'processingFake':
-					return navigate( 'completingPurchase' );
-
-				case 'completingPurchase':
-					return navigate( 'launchpad' );
-
 				case 'launchpad':
 					return window.location.replace( `/view/${ siteSlug }` );
 
