@@ -282,14 +282,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 			<div className="plugin-details-cta__install">
 				<CTAButton
 					plugin={ plugin }
-					isPluginInstalledOnsite={ isPluginInstalledOnsite }
-					isJetpackSelfHosted={ isJetpackSelfHosted }
-					selectedSite={ selectedSite }
 					hasEligibilityMessages={ hasEligibilityMessages }
-					isMarketplaceProduct={ isMarketplaceProduct }
-					billingPeriod={ billingPeriod }
-					shouldUpgrade={ shouldUpgrade }
-					isSiteConnected={ isSiteConnected }
 					disabled={ incompatiblePlugin || userCantManageTheSite }
 				/>
 			</div>
@@ -337,7 +330,6 @@ function LegacyPluginDetailsCTA( {
 	siteIds,
 	billingPeriod,
 	isMarketplaceProduct,
-	isSiteConnected,
 } ) {
 	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
@@ -456,17 +448,7 @@ function LegacyPluginDetailsCTA( {
 				</PluginPrice>
 			</div>
 			<div className="plugin-details-cta__install">
-				<CTAButton
-					plugin={ plugin }
-					isPluginInstalledOnsite={ isPluginInstalledOnsite }
-					isJetpackSelfHosted={ isJetpackSelfHosted }
-					selectedSite={ selectedSite }
-					hasEligibilityMessages={ hasEligibilityMessages }
-					isMarketplaceProduct={ isMarketplaceProduct }
-					billingPeriod={ billingPeriod }
-					shouldUpgrade={ shouldUpgrade }
-					isSiteConnected={ isSiteConnected }
-				/>
+				<CTAButton plugin={ plugin } hasEligibilityMessages={ hasEligibilityMessages } />
 			</div>
 			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-cta__t-and-c">
