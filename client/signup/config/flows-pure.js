@@ -117,7 +117,7 @@ export function generateFlows( {
 			destination: ( dependencies, localeSlug, goesThroughCheckout ) => {
 				return goesThroughCheckout
 					? `/setup/completingPurchase?flow=newsletter&siteSlug=${ dependencies.siteSlug }`
-					: `/setup/subscribers?flow=newsletter&siteSlug=${ dependencies.siteSlug }`;
+					: `/setup/subscribers?flow=newsletter&complete-setup=true&siteSlug=${ dependencies.siteSlug }`;
 			},
 			description: 'Beginning of the flow to create a newsletter',
 			lastModified: '2022-08-15',
