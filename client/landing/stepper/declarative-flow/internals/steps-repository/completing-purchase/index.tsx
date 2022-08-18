@@ -87,7 +87,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 
 			await postSiteLogo();
 			setProgress( 1 );
-			return 'launchpad';
+			return { destination: 'launchpad' };
 		} );
 	};
 
@@ -97,11 +97,12 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 			setProgress( 0 );
 			await postSiteSettings();
 			setProgress( 0.3 );
-			await wait( 1000 );
+			await wait( 1500 );
 
 			await postSiteLogo();
 			setProgress( 1 );
-			return 'subscribers';
+			await wait( 2000 );
+			return { destination: 'subscribers' };
 		} );
 	};
 

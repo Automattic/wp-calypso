@@ -23,7 +23,7 @@ const Subscribers: Step = function ( { navigation } ): ReactElement | null {
 			setProgress( 1 );
 			setProgressTitle( __( 'Preparing Next Steps' ) );
 			await wait( 2000 );
-			return 'launchpad';
+			return { destination: 'launchpad' };
 		} );
 
 		submit?.();

@@ -1,17 +1,14 @@
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
 // Default estimated time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => {
+const useSteps = ( flowName ) => {
 	const { __ } = useI18n();
 	let steps = [];
 
@@ -27,9 +24,6 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 			break;
 		default:
 			steps = [
-				! isDestinationSetupSiteFlow && { title: __( 'Building your site' ) },
-				hasPaidDomain && { title: __( 'Getting your domain' ) },
-				! isDestinationSetupSiteFlow && { title: __( 'Applying design' ) },
 				{ title: __( 'Turning on the lights' ) },
 				{ title: __( 'Making you cookies' ) },
 				{ title: __( 'Planning the next chess move' ) },
@@ -39,15 +33,9 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 	return useRef( steps.filter( Boolean ) );
 };
 
-// This component is cloned from the CreateSite component of Gutenboarding flow
-// to work with the onboarding signup flow.
-export default function ReskinnedProcessingScreen( props ) {
-	const { __ } = useI18n();
-
-	const steps = useSteps( props );
-	const { isDestinationSetupSiteFlow } = props;
+export default function TailoredFlowProcessingScreen( { flowName } ) {
+	const steps = useSteps( flowName );
 	const totalSteps = steps.current.length;
-	const shouldShowNewSpinner = isDestinationSetupSiteFlow;
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 
@@ -75,36 +63,16 @@ export default function ReskinnedProcessingScreen( props ) {
 
 	return (
 		<div className="reskinned-processing-screen__container">
-			<div
-				className={ classnames( 'reskinned-processing-screen', {
-					'is-force-centered': shouldShowNewSpinner && totalSteps === 0,
-				} ) }
-			>
+			<div className={ 'reskinned-processing-screen' }>
 				<h1 className="reskinned-processing-screen__progress-step">
 					{ steps.current[ currentStep ]?.title }
 				</h1>
-				{ shouldShowNewSpinner && <LoadingEllipsis /> }
-				{ ! shouldShowNewSpinner && (
-					<>
-						<div
-							className="reskinned-processing-screen__progress-bar"
-							style={ {
-								'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-							} }
-						/>
-						{ totalSteps > 1 && (
-							<p className="reskinned-processing-screen__progress-numbered-steps">
-								{
-									// translators: these are progress steps. Eg: step 1 of 4.
-									sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-										currentStep: currentStep + 1,
-										totalSteps,
-									} )
-								}
-							</p>
-						) }
-					</>
-				) }
+				<div
+					className="reskinned-processing-screen__progress-bar"
+					style={ {
+						'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
+					} }
+				/>
 			</div>
 
 			<div className="reskinned-processing-screen__jetpack-powered">
@@ -114,8 +82,6 @@ export default function ReskinnedProcessingScreen( props ) {
 	);
 }
 
-ReskinnedProcessingScreen.propTypes = {
+TailoredFlowProcessingScreen.propTypes = {
 	flowName: PropTypes.string,
-	hasPaidDomain: PropTypes.bool,
-	isDestinationSetupSiteFlow: PropTypes.bool,
 };
