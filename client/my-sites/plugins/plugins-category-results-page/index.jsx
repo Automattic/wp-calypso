@@ -36,7 +36,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 				listName={ category }
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
-				currentSites={ sites }
+				sites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
 				fetchNextPage={ fetchNextPage }
 				extended
