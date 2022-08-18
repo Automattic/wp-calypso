@@ -4,7 +4,6 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useState } from 'react';
 import Composer from '../composer';
 
 const noop = () => {};
@@ -37,13 +36,9 @@ describe( '<Composer />', () => {
 			const onSendNotTyping = jest.fn();
 			const onSendTyping = jest.fn();
 			const onSetCurrentMessage = jest.fn();
-			const WrappedWithMessageState = ( props ) => {
-				const [ message, setMessage ] = useState( 'x' );
-				props.onSetCurrentMessage.mockImplementation( ( value ) => setMessage( value ) );
-				return <Composer { ...props } message={ message } />;
-			};
 			render(
-				<WrappedWithMessageState
+				<Composer
+					message=" "
 					onSetCurrentMessage={ onSetCurrentMessage }
 					onSendTyping={ onSendTyping }
 					onSendNotTyping={ onSendNotTyping }
@@ -51,8 +46,7 @@ describe( '<Composer />', () => {
 				/>
 			);
 			const el = screen.getByRole( 'textbox', { name: /support request/i } );
-			await user.click( el );
-			await user.keyboard( '{Backspace}' );
+			await user.clear( el );
 			expect( onSetCurrentMessage ).toHaveBeenCalled();
 			expect( onSendTyping ).not.toHaveBeenCalled();
 			expect( onSendNotTyping ).toHaveBeenCalled();
