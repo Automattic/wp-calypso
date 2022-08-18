@@ -28,10 +28,10 @@ export function maybeRedirect( context, next ) {
 		return;
 	}
 
-	const launchpadTasksIncomplete = false;
+	const launchpadTasksComplete = false;
 	const launchpadFlow = 'newsletter';
 
-	if ( launchpadTasksIncomplete && isEnabled( 'signup/launchpad' ) ) {
+	if ( ! launchpadTasksComplete && isEnabled( 'signup/launchpad' ) ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.

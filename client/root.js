@@ -51,7 +51,7 @@ async function handleLoggedIn( context ) {
 	const state = context.store.getState();
 	const siteSlug = getSiteSlug( state, primarySiteId );
 	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );
-	const launchpadEnabled = true;
+	const launchpadTasksComplete = false;
 	const launchpadFlow = 'newsletter';
 
 	let redirectPath;
@@ -59,13 +59,17 @@ async function handleLoggedIn( context ) {
 	if ( ! siteSlug ) {
 		// there is no primary site or the site info couldn't be fetched. Redirect to Reader.
 		redirectPath = '/read';
-	} else if ( isCustomerHomeEnabled && ! launchpadEnabled ) {
-		redirectPath = `/home/${ siteSlug }`;
-	} else if ( isCustomerHomeEnabled && launchpadEnabled ) {
-		// The new stepper onboarding flow isn't registered within the "page" client-side
-		// router, so page.redirect won't work. We need to use the traditional
-		// window.location Web API.
+	} else if (
+		isCustomerHomeEnabled &&
+		! launchpadTasksComplete &&
+		config.isEnabled( 'signup/launchpad' )
+	) {
+		// The new stepper launchpad onboarding flow isn't registered within the "page"
+		// client-side router, so page.redirect won't work. We need to use the
+		// traditional window.location Web API.
 		redirectToLaunchpad( siteSlug, launchpadFlow );
+	} else if ( isCustomerHomeEnabled ) {
+		redirectPath = `/home/${ siteSlug }`;
 	} else {
 		redirectPath = `/stats/${ siteSlug }`;
 	}
