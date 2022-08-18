@@ -9,6 +9,7 @@ import DesignPicker, {
 	isBlankCanvasDesign,
 	getDesignPreviewUrl,
 	useDesignsBySite,
+	isDesignAvailableForV13N,
 } from '@automattic/design-picker';
 import { useLocale, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -265,9 +266,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				setDesignOnSite(
 					siteSlugOrId,
 					_selectedDesign,
-					_selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-						? siteVerticalId
-						: ''
+					isDesignAvailableForV13N( _selectedDesign ) ? siteVerticalId : undefined
 				).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 			);
 
@@ -403,7 +402,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
-			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
+			vertical_id: isDesignAvailableForV13N( selectedDesign ) ? siteVerticalId : undefined,
 		} );
 
 		const stepContent = (
@@ -573,7 +572,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
-			verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined }
+			verticalId={ siteVerticalId }
 			purchasedThemes={ purchasedThemes }
 		/>
 	);

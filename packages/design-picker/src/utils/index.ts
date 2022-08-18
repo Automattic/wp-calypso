@@ -2,7 +2,8 @@ export * from './available-designs-config';
 export * from './available-designs';
 export * from './designs';
 export * from './fonts';
-import { SHOW_ALL_SLUG } from '../constants';
+import { isEnabled } from '@automattic/calypso-config';
+import { SHOW_ALL_SLUG, STANDARD_THEMES_V13N_WHITELIST } from '../constants';
 import type { Category, Design } from '../types';
 
 export function gatherCategories( designs: Design[] ): Category[] {
@@ -44,4 +45,18 @@ export function sortDesigns( a: Design, b: Design ): number {
 		return -1;
 	}
 	return 1;
+}
+
+export function isDesignAvailableForV13N( design: Design ): boolean {
+	if ( design.design_type === 'vertical' ) {
+		return true;
+	}
+
+	return (
+		isEnabled( 'signup/standard-theme-v13n' ) &&
+		!! design.recipe?.stylesheet &&
+		!! STANDARD_THEMES_V13N_WHITELIST.find( ( theme ) =>
+			design.recipe?.stylesheet?.startsWith( theme )
+		)
+	);
 }

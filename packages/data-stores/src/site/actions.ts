@@ -281,7 +281,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId: string ) {
+	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId?: string ) {
 		const { theme, recipe } = selectedDesign;
 
 		yield wpcomRequest( {

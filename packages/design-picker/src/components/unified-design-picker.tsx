@@ -22,6 +22,7 @@ import {
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
 	sortDesigns,
+	isDesignAvailableForV13N,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PremiumBadge from './premium-badge';
@@ -424,7 +425,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 						previewOnly={ previewOnly }
 						hasDesignOptionHeader={ hasDesignOptionHeader }
 						onCheckout={ onCheckout }
-						verticalId={ verticalId }
+						verticalId={ isDesignAvailableForV13N( design ) ? verticalId : undefined }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 					/>
 				) ) }
@@ -534,7 +535,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onUpgrade={ onUpgrade }
 					designs={ staticDesigns }
 					categorization={ categorization }
-					verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
+					verticalId={ verticalId }
 					previewOnly={ previewOnly }
 					hasDesignOptionHeader={ hasDesignOptionHeader }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }

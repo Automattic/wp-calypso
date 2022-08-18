@@ -6,6 +6,7 @@ import {
 	UnifiedDesignPicker,
 	useCategorization,
 	getDesignPreviewUrl,
+	isDesignAvailableForV13N,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
@@ -175,9 +176,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				setDesignOnSite(
 					siteSlugOrId,
 					_selectedDesign,
-					_selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-						? siteVerticalId
-						: ''
+					isDesignAvailableForV13N( _selectedDesign ) ? siteVerticalId : undefined
 				).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 			);
 			recordTracksEvent( 'calypso_signup_select_design', {
@@ -285,10 +284,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
-			vertical_id:
-				selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-					? siteVerticalId
-					: undefined,
+			vertical_id: isDesignAvailableForV13N( selectedDesign ) ? siteVerticalId : undefined,
 		} );
 
 		const stepContent = (
