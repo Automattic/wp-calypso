@@ -287,59 +287,33 @@ class MembershipsSection extends Component {
 	}
 
 	getWording( subscriber ) {
-		const isOneTime = subscriber?.plan?.renew_interval === 'one-time';
 		const subscriber_email = subscriber?.user.user_email ?? '';
-		const wording = {
-			donation: {
-				button: isOneTime
-					? this.props.translate( 'Remove' )
-					: this.props.translate( 'Cancel Donation' ),
-				confirmation_subheading: this.props.translate( 'Do you want to remove this donation?' ),
-				confirmation_info:
-					this.props.translate(
-						'Removing this donation means that the user %(subscriber_email)s will no longer have access to any service granted by this plan, such as restricted premium content or digital subscription.',
-						{ args: { subscriber_email: subscriber_email } }
-					) +
-					' ' +
-					( isOneTime
-						? this.props.translate( 'The donation will not be refunded.' )
-						: this.props.translate(
-								'Donations already made will not be refunded to the user but any scheduled future donations will not be made.'
-						  ) ),
-				success: this.props.translate( 'Donation cancelled for %(subscriber_email)s.', {
-					args: { subscriber_email: subscriber_email },
-				} ),
-			},
-			purchase: {
-				button: isOneTime
-					? this.props.translate( 'Remove' )
-					: this.props.translate( 'Cancel Subscription' ),
-				confirmation_subheading: this.props.translate( 'Do you want to remove this purchase?' ),
-				confirmation_info:
-					this.props.translate(
-						'Removing this purchase means that the user %(subscriber_email)s will no longer have access to any service granted by this plan, such as restricted premium content or digital subscription.',
-						{ args: { subscriber_email: subscriber?.user.user_email ?? '' } }
-					) +
-					' ' +
-					( isOneTime
-						? this.props.translate( 'The purchase will not be refunded.' )
-						: this.props.translate(
-								'Payments already made will not be refunded to the user but any scheduled future payments will not be made.'
-						  ) ),
-				success: this.props.translate( 'Subscription cancelled for %(subscriber_email)s.', {
-					args: { subscriber_email: subscriber_email },
-				} ),
-			},
-		};
+		const plan_name = subscriber?.plan.title ?? '';
 
-		// plan.type is null for non-donations, it's not known what they are, so they're called purchase here.
-		// That is also used as the fallback in case other plan types are added in the future without updating
-		// this function.
-		let productType = subscriber?.plan?.type ?? 'purchase';
-		if ( ! ( productType in wording ) ) {
-			productType = 'purchase';
+		if ( subscriber?.plan?.renew_interval === 'one-time' ) {
+			return {
+				button: this.props.translate( 'Remove payment' ),
+				confirmation_subheading: this.props.translate( 'Do you want to remove this payment?' ),
+				confirmation_info: this.props.translate(
+					'Removing this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. The payment will not be refunded.',
+					{ args: { subscriber_email, plan_name } }
+				),
+				success: this.props.translate( 'Payment removed for %(subscriber_email)s.', {
+					args: { subscriber_email },
+				} ),
+			};
 		}
-		return wording[ productType ];
+		return {
+			button: this.props.translate( 'Cancel payment' ),
+			confirmation_subheading: this.props.translate( 'Do you want to cancel this payment?' ),
+			confirmation_info: this.props.translate(
+				'Cancelling this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. Payments already made will not be refunded but any scheduled future payments will not be made.',
+				{ args: { subscriber_email, plan_name } }
+			),
+			success: this.props.translate( 'Payment cancelled for %(subscriber_email)s.', {
+				args: { subscriber_email },
+			} ),
+		};
 	}
 
 	renderManagePlans() {
