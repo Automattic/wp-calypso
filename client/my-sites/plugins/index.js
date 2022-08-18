@@ -38,6 +38,7 @@ export default function () {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
+		// we don't search on category yet!
 		redirectOnSearchQuery,
 		browsePluginsByCategory,
 		makeLayout,
