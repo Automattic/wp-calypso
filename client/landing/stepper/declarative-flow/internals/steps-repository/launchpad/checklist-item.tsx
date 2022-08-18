@@ -6,7 +6,12 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 	const { id, isCompleted, actionUrl, title } = task;
 	return (
 		<li className={ `launchpad__task-${ id }` }>
-			<Button className="launchpad__checklist-item" href={ actionUrl } data-task={ id }>
+			<Button
+				className="launchpad__checklist-item"
+				disabled={ task.isCompleted }
+				href={ actionUrl }
+				data-task={ id }
+			>
 				<div className="launchpad__checklist-item-status">
 					{ task.isCompleted ? (
 						<Gridicon

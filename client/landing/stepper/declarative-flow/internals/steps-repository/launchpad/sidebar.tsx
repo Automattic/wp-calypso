@@ -1,7 +1,7 @@
 import Checklist from './checklist';
 import { tasks } from './tasks';
 
-const Sidebar = () => (
+const Sidebar = ( { siteSlug, flow }: { siteSlug: string | null; flow: string | null } ) => (
 	<div className="launchpad__sidebar">
 		<h5 className="launchpad__sidebar-h5">Newsletter</h5>
 		<div className="launchpad__progress-bar-container">
@@ -14,7 +14,7 @@ const Sidebar = () => (
 		<h1 className="launchpad__sidebar-h1">Voilà! Your Newsletter is up and running!</h1>
 		<p className="launchpad__sidebar-description">Keep up the momentum with these next steps.</p>
 		<div className="launchpad__url-box">lorcaletters.blog</div>
-		<Checklist tasks={ tasks } />
+		<Checklist siteSlug={ siteSlug } tasks={ tasks } flow={ flow } />
 	</div>
 );
 
