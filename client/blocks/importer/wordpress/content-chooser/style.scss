@@ -3,6 +3,7 @@
 .content-chooser {
 	.formatted-header__title {
 		max-width: none;
+		word-break: break-word;
 
 		@include break-medium {
 			max-width: 390px;
