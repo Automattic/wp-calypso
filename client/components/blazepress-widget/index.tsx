@@ -20,6 +20,13 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 
+	// Scroll to top on initial load regardless of previous page position
+	useEffect( () => {
+		if ( isVisible ) {
+			window.scrollTo( 0, 0 );
+		}
+	}, [ isVisible ] );
+
 	useEffect( () => {
 		isVisible &&
 			( async () => {

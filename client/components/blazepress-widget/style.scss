@@ -4,6 +4,7 @@
 .blazepress-widget {
     display: flex;
     flex-direction: column;
+    z-index: 1001;
 
     .blazepress-widget__header-bar {
         align-items: center;
