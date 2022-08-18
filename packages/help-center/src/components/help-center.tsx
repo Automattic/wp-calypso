@@ -22,12 +22,12 @@ import HelpCenterContainer from './help-center-container';
 
 import '../styles.scss';
 
-const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
+const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 	const { data } = useHappychatAvailable();
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 
-	useEffect( (): void => {
+	useEffect( () => {
 		if ( data?.status === 'assigned' ) {
 			setShowHelpCenter( true );
 		}
@@ -78,7 +78,10 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 		};
 	}, [ portalParent ] );
 
-	return createPortal( <HelpCenterContainer handleClose={ handleClose } />, portalParent );
+	return createPortal(
+		<HelpCenterContainer handleClose={ handleClose } hidden={ hidden } />,
+		portalParent
+	);
 };
 
 export default HelpCenter;

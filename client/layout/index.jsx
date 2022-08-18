@@ -194,6 +194,8 @@ class Layout extends Component {
 	}
 
 	render() {
+		const { sectionName } = this.props;
+
 		const sectionClass = classnames( 'layout', `focus-${ this.props.currentLayoutFocus }`, {
 			[ 'is-group-' + this.props.sectionGroup ]: this.props.sectionGroup,
 			[ 'is-section-' + this.props.sectionName ]: this.props.sectionName,
@@ -300,11 +302,13 @@ class Layout extends Component {
 				) }
 				{ loadHelpCenter && (
 					<AsyncLoad
+						sectionName={ sectionName !== 'gutenberg-editor' }
 						require="@automattic/help-center"
 						placeholder={ null }
 						handleClose={ () => {
 							this.props.setShowHelpCenter( false );
 						} }
+						hidden={ sectionName === 'gutenberg-editor' }
 					/>
 				) }
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
