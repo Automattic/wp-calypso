@@ -156,7 +156,7 @@ export function browsePluginsOrPlugin( context, next ) {
 
 export function browsePluginsByCategory( context, next ) {
 	const category = context.params.category;
-	const site = context.params.category;
+	const site = context.params.site;
 
 	if ( includes( ALLOWED_CATEGORIES, category ) ) {
 		renderPluginsCategoriesPage( context );
@@ -165,8 +165,7 @@ export function browsePluginsByCategory( context, next ) {
 	}
 
 	// if the provided category is not supported redirect user to the discovery one, until we can handle dynamic categories.
-	page.redirect( `/plugins/${ site || '' }` );
-	next();
+	return page.redirect( `/plugins/${ site || '' }` );
 }
 
 export function browsePlugins( context, next ) {

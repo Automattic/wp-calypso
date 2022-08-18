@@ -12,7 +12,6 @@ import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import JetpackDisconnectedNotice from 'calypso/my-sites/plugins/jetpack-disconnected-notice';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
-import PluginsCategoryResultsPage from 'calypso/my-sites/plugins/plugins-category-results-page';
 import PluginsDiscoveryPage from 'calypso/my-sites/plugins/plugins-discovery-page';
 import PluginsNavigationHeader from 'calypso/my-sites/plugins/plugins-navigation-header';
 import PluginsPageViewTracker from 'calypso/my-sites/plugins/plugins-page-view-tracker';
@@ -58,26 +57,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
 
-	// this is a temporary hack until we merge Phase 4 of the refactor
-	const renderList = () => {
-		if ( category ) {
-			return (
-				<PluginsCategoryResultsPage category={ category } sites={ sites } siteSlug={ siteSlug } />
-			);
-		}
-
-		return (
-			<PluginsDiscoveryPage
-				siteSlug={ siteSlug }
-				jetpackNonAtomic={ jetpackNonAtomic }
-				selectedSite={ selectedSite }
-				sitePlan={ sitePlan }
-				isVip={ isVip }
-				sites={ sites }
-			/>
-		);
-	};
-
 	if ( ! isRequestingSitesData && noPermissionsError ) {
 		return <NoPermissionsError title={ translate( 'Plugins', { textOnly: true } ) } />;
 	}
@@ -112,9 +91,18 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
 
-			{ ! search && <Categories selected={ category } /> }
-			<div className="plugins-browser__main-container">{ renderList() }</div>
-			{ ! category && ! search && <EducationFooter /> }
+			<Categories selected={ category } />
+			<div className="plugins-browser__main-container">
+				<PluginsDiscoveryPage
+					siteSlug={ siteSlug }
+					jetpackNonAtomic={ jetpackNonAtomic }
+					selectedSite={ selectedSite }
+					sitePlan={ sitePlan }
+					isVip={ isVip }
+					sites={ sites }
+				/>
+			</div>
+			<EducationFooter />
 		</MainComponent>
 	);
 };
