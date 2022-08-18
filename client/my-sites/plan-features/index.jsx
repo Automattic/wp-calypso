@@ -1129,7 +1129,7 @@ const ConnectedPlanFeatures = connect(
 
 export default function PlanFeaturesWrapper( props ) {
 	const locale = useLocale();
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+	const [ isLoadingExperimentAssignment ] = useExperiment(
 		'pricing_packaging_plans_page_quick_improvements_v2',
 		{
 			isEligible: [ 'en-gb', 'en' ].includes( locale ),
@@ -1144,7 +1144,7 @@ export default function PlanFeaturesWrapper( props ) {
 		<CalypsoShoppingCartProvider>
 			<ConnectedPlanFeatures
 				{ ...props }
-				isPlansPageQuickImprovements={ 'treatment' === experimentAssignment?.variationName }
+				isPlansPageQuickImprovements={ 'treatment' === 'treatment' }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

@@ -514,7 +514,7 @@ const ConnectedPlanFeaturesComparison = connect(
 
 export default function PlanFeaturesComparisonWrapper( props ) {
 	const locale = useLocale();
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
+	const [ isLoadingExperimentAssignment ] = useExperiment(
 		'pricing_packaging_plans_page_quick_improvements_v2',
 		{
 			isEligible: [ 'en-gb', 'en' ].includes( locale ),
@@ -528,7 +528,7 @@ export default function PlanFeaturesComparisonWrapper( props ) {
 	return (
 		<ConnectedPlanFeaturesComparison
 			{ ...props }
-			isPlansPageQuickImprovements={ 'treatment' === experimentAssignment?.variationName }
+			isPlansPageQuickImprovements={ 'treatment' === 'treatment' }
 		/>
 	);
 }
