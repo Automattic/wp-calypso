@@ -1,11 +1,10 @@
-import { includes, some } from 'lodash';
+import { some } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
@@ -41,24 +40,9 @@ function renderPluginList( context, basePath ) {
 	}
 }
 
-// The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
-// the `:plugin` param is actually the side ID or category.
-function getCategoryForPluginsBrowser( context ) {
-	if ( context.params.plugin && includes( ALLOWED_CATEGORIES, context.params.plugin ) ) {
-		return context.params.plugin;
-	}
-
-	return context.params.category;
-}
-
 function renderPluginsBrowser( context ) {
-	const searchTerm = context.query.s;
-	const category = getCategoryForPluginsBrowser( context );
-
 	context.primary = createElement( PluginBrowser, {
 		path: context.path,
-		category,
-		search: searchTerm,
 	} );
 }
 
@@ -71,13 +55,15 @@ function renderPluginsSearchPage( context ) {
 	} );
 }
 
-function renderPluginsCategoriesPage( context ) {
+function renderPluginsCategoriesPage( context, next ) {
 	const category = context.params.category;
 
 	context.primary = createElement( PluginsCategoryResultsPage, {
 		path: context.path,
 		category,
 	} );
+
+	next();
 }
 
 export function renderPluginWarnings( context, next ) {
@@ -126,18 +112,6 @@ export function redirectOnSearchQuery( context, next ) {
 	next();
 }
 
-export function redirectOnUnsupportedCategory( context, next ) {
-	const searchTerm = context.query.s;
-	const site = context.params.site;
-
-	if ( searchTerm ) {
-		const redirectionUrl = `/plugins/${ site || '' }?s=${ searchTerm }`;
-		page.redirect( redirectionUrl );
-	}
-
-	next();
-}
-
 // The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route.
 // If the "plugin" part of the route is actually a site,
 // render the plugin browser for that site. Otherwise render plugin.
@@ -155,17 +129,7 @@ export function browsePluginsOrPlugin( context, next ) {
 }
 
 export function browsePluginsByCategory( context, next ) {
-	const category = context.params.category;
-	const site = context.params.site;
-
-	if ( includes( ALLOWED_CATEGORIES, category ) ) {
-		renderPluginsCategoriesPage( context );
-
-		return next();
-	}
-
-	// if the provided category is not supported redirect user to the discovery one, until we can handle dynamic categories.
-	return page.redirect( `/plugins/${ site || '' }` );
+	renderPluginsCategoriesPage( context, next );
 }
 
 export function browsePlugins( context, next ) {
