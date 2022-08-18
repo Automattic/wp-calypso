@@ -62,7 +62,7 @@ describe( 'ActionButtons', () => {
 		render( <ActionButtons rewindId={ rewindId } /> );
 		const restoreButton = screen.getByRole( 'link', { name: /restore/i } );
 
-		expect( restoreButton ).toHaveProperty(
+		expect( restoreButton ).toHaveAttribute(
 			'href',
 			expect.stringMatching( `/restore/${ rewindId }` )
 		);
