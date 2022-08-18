@@ -477,6 +477,8 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const translate = useTranslate();
+	const hasGeneratedDesigns = generatedDesigns.length > 0;
+
 	return (
 		<div
 			className={ classnames(
@@ -489,7 +491,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			) }
 		>
 			{ heading }
-			{ generatedDesigns.length > 0 && (
+			{ hasGeneratedDesigns && (
 				<div className="unified-design-picker__generated-designs">
 					<div>
 						<h3> { translate( 'Custom designs for your site' ) } </h3>
@@ -503,29 +505,33 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 						onPreview={ onPreview }
 						verticalId={ verticalId }
 					/>
+				</div>
+			) }
+			<div className="unified-design-picker__standard-designs">
+				{ hasGeneratedDesigns && (
 					<div>
 						<h3> { translate( 'Selected themes for you' ) } </h3>
 						<p className="unified-design-picker__subtitle">
 							{ translate( 'Choose a starting theme. You can change it later.' ) }
 						</p>
 					</div>
-				</div>
-			) }
-			<StaticDesignPicker
-				locale={ locale }
-				onSelect={ onSelect }
-				onPreview={ onPreview }
-				onUpgrade={ onUpgrade }
-				designs={ staticDesigns }
-				premiumBadge={ premiumBadge }
-				categorization={ categorization }
-				verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
-				previewOnly={ previewOnly }
-				hasDesignOptionHeader={ hasDesignOptionHeader }
-				isPremiumThemeAvailable={ isPremiumThemeAvailable }
-				onCheckout={ onCheckout }
-				purchasedThemes={ purchasedThemes }
-			/>
+				) }
+				<StaticDesignPicker
+					locale={ locale }
+					onSelect={ onSelect }
+					onPreview={ onPreview }
+					onUpgrade={ onUpgrade }
+					designs={ staticDesigns }
+					premiumBadge={ premiumBadge }
+					categorization={ categorization }
+					verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
+					previewOnly={ previewOnly }
+					hasDesignOptionHeader={ hasDesignOptionHeader }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					onCheckout={ onCheckout }
+					purchasedThemes={ purchasedThemes }
+				/>
+			</div>
 		</div>
 	);
 };
