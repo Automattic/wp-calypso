@@ -1,35 +1,11 @@
-import { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 class ReskinSideExplainer extends Component {
-	_isMounted = false;
-	constructor( props ) {
-		super( props );
-		this.state = {
-			experiment: null,
-			isExperimentLoading: [ 'en', 'en-gb' ].includes( getLocaleSlug() ),
-		};
-	}
-	componentDidMount() {
-		this._isMounted = true;
-
-		[ 'en', 'en-gb' ].includes( getLocaleSlug() ) &&
-			loadExperimentAssignment( 'domain_step_cta_copy_test' ).then( ( experimentName ) => {
-				if ( this._isMounted ) {
-					this.setState( { experiment: experimentName, isExperimentLoading: false } );
-				}
-			} );
-	}
-
-	componentWillUnmount() {
-		this._isMounted = false;
-	}
-
 	getStrings() {
 		const { type, translate } = this.props;
 
@@ -52,6 +28,8 @@ class ReskinSideExplainer extends Component {
 			'domain',
 		].includes( this.props.flowName );
 
+		const isLaunchFlow = 'launch-site' === this.props.flowName;
+
 		switch ( type ) {
 			case 'free-domain-explainer':
 				freeTitle = translate(
@@ -71,12 +49,10 @@ class ReskinSideExplainer extends Component {
 				title = isPaidPlan ? paidTitle : freeTitle;
 
 				freeSubtitle = (
-					<span className={ this.state.isExperimentLoading ? 'is-loading' : '' }>
-						{ this.state.experiment?.variationName === 'treatment'
-							? translate( 'You can claim your free custom domain later if you aren’t ready yet.' )
-							: translate(
-									'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
-							  ) }
+					<span>
+						{ translate(
+							'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
+						) }
 					</span>
 				);
 
@@ -84,25 +60,16 @@ class ReskinSideExplainer extends Component {
 
 				subtitle = isPaidPlan ? paidSubtitle : freeSubtitle;
 
-				subtitle2 =
-					this.state.isExperimentLoading || this.state.experiment?.variationName === 'treatment'
-						? null
-						: translate(
-								'We’ll pay the first year’s domain registration fees for you, simple as that!'
-						  );
+				subtitle2 = translate(
+					'We’ll pay the first year’s domain registration fees for you, simple as that!'
+				);
 
 				if ( ! subtitle ) {
 					subtitle = subtitle2;
 					subtitle2 = null;
 				}
 
-				ctaText = (
-					<span className={ this.state.isExperimentLoading ? 'is-loading' : '' }>
-						{ this.state.experiment?.variationName === 'treatment'
-							? translate( 'View plans' )
-							: translate( 'Choose my domain later' ) }
-					</span>
-				);
+				ctaText = isLaunchFlow ? null : <span>{ translate( 'Choose my domain later' ) }</span>;
 				break;
 
 			case 'use-your-domain':

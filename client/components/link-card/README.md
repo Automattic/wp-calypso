@@ -8,7 +8,15 @@ This component displays a card with a custom background, a label, a title and ct
 import LinkCard from 'calypso/components/link-card';
 
 function render() {
-	return <LinkCard background={ background } label={ label } title={ title } cta={ cta } />;
+	return (
+		<LinkCard
+			background={ background }
+			label={ label }
+			title={ title }
+			cta={ cta }
+			onClick={ onClick }
+		/>
+	);
 }
 ```
 
@@ -19,3 +27,4 @@ function render() {
 - `title` (`ReactChild`) - The string rendered in the middle of the card with the larger size, it can also be a component.
 - `cta` (`ReactChild`) - The string rendered in the bottom of the card with the middle size, it can also be a component.
 - `url` (`string`) - The url the component points to.
+- `onClick` (`() => void`) - The callback called when the card is clicked.
