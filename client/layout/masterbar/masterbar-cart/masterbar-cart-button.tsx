@@ -38,7 +38,9 @@ export function MasterbarCartButton( {
 	useEffect( () => {
 		if ( shouldShowCart ) {
 			reduxDispatch( recordTracksEvent( 'calypso_masterbar_cart_shown' ) );
-		}
+		} else {
+            setIsActive( false );
+        }
 	}, [ shouldShowCart, reduxDispatch ] );
 
 	if ( ! shouldShowCart ) {
