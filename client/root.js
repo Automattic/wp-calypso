@@ -4,6 +4,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
 import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { redirectToLaunchpad } from './utils';
 
 export default function () {
 	page( '/', ( context ) => {
@@ -50,14 +51,21 @@ async function handleLoggedIn( context ) {
 	const state = context.store.getState();
 	const siteSlug = getSiteSlug( state, primarySiteId );
 	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );
+	const launchpadEnabled = true;
+	const launchpadFlow = 'newsletter';
 
 	let redirectPath;
 
 	if ( ! siteSlug ) {
 		// there is no primary site or the site info couldn't be fetched. Redirect to Reader.
 		redirectPath = '/read';
-	} else if ( isCustomerHomeEnabled ) {
+	} else if ( isCustomerHomeEnabled && ! launchpadEnabled ) {
 		redirectPath = `/home/${ siteSlug }`;
+	} else if ( isCustomerHomeEnabled && launchpadEnabled ) {
+		// The new stepper onboarding flow isn't registered within the "page" client-side
+		// router, so page.redirect won't work. We need to use the traditional
+		// window.location Web API.
+		redirectToLaunchpad( siteSlug, launchpadFlow );
 	} else {
 		redirectPath = `/stats/${ siteSlug }`;
 	}
