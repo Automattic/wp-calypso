@@ -20,6 +20,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Categories from '../categories';
 import FullListView from '../plugins-browser/full-list-view';
 
+// We should break this styles in a subsequent PR
+import '../plugins-browser/style.scss';
+
 const PluginsCategoryResultList = ( { category, categoryName, selectedSite, sites } ) => {
 	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
 		category,
