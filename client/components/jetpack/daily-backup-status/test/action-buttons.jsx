@@ -48,7 +48,7 @@ describe( 'ActionButtons', () => {
 		render( <ActionButtons rewindId={ rewindId } /> );
 		const downloadButton = screen.getByRole( 'link', { name: /download/i } );
 
-		expect( downloadButton ).toHaveProperty(
+		expect( downloadButton ).toHaveAttribute(
 			'href',
 			expect.stringMatching( `/download/${ rewindId }` )
 		);
