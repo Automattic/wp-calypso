@@ -88,19 +88,19 @@ const PluginsSearchResultList = ( {
 				</>
 			);
 		}
-
-		return (
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<div className="plugins-browser__no-results">
-				<NoResults
-					text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
-						textOnly: true,
-						components: { searchTerm: <em>{ searchTerm }</em> },
-					} ) }
-				/>
-			</div>
-		);
 	}
+
+	return (
+		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+		<div className="plugins-browser__no-results">
+			<NoResults
+				text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
+					textOnly: true,
+					components: { searchTerm: <em>{ searchTerm }</em> },
+				} ) }
+			/>
+		</div>
+	);
 };
 
 const PluginsSearchResultPage = ( { trackPageViews = true, category, search, hideHeader } ) => {
