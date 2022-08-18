@@ -84,7 +84,7 @@ describe( 'isJetpackSite', () => {
 					},
 				} ),
 				siteId,
-				false
+				{ considerStandaloneProducts: false }
 			)
 		).toEqual( false );
 	} );
