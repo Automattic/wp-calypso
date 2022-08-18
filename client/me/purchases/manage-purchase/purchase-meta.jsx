@@ -244,19 +244,28 @@ function PurchaseMetaPrice( { purchase } ) {
 			return (
 				<div>
 					<div>
-						{ translate( 'One Time Fee : %(oneTimeFee)s', {
+						{ translate( 'Service : %(oneTimeFee)s {{period}}(one-time){{/period}}', {
 							args: {
 								oneTimeFee: formatCurrency( oneTimeFee, currencyCode ),
+							},
+							components: {
+								period: <span className="manage-purchase__time-period" />,
 							},
 						} ) }
 					</div>
 					<div>
-						{ translate( 'Cost for %(extraPageCount)d extra pages : %(costOfExtraPages)s', {
-							args: {
-								extraPageCount: extraPageCount,
-								costOfExtraPages: formatCurrency( costOfExtraPages, currencyCode ),
-							},
-						} ) }
+						{ translate(
+							'%(extraPageCount)d extra pages : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
+							{
+								args: {
+									extraPageCount: extraPageCount,
+									costOfExtraPages: formatCurrency( costOfExtraPages, currencyCode ),
+								},
+								components: {
+									period: <span className="manage-purchase__time-period" />,
+								},
+							}
+						) }
 					</div>
 				</div>
 			);
