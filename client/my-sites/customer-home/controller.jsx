@@ -1,6 +1,7 @@
 import page from 'page';
 import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
 export default async function ( context, next ) {
@@ -33,7 +34,7 @@ export function maybeRedirect( context, next ) {
 		// The new stepper onboarding flow isn't registered within the "page" client-side
 		// router, so page.redirect won't work. We need to use the traditional
 		// window.location Web API.
-		window.location.replace( `/setup/launchpad?flow=${ launchpadFlow }&siteSlug=${ slug }` );
+		redirectToLaunchpad( slug, launchpadFlow );
 	}
 	next();
 }
