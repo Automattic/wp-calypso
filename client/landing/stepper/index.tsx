@@ -32,7 +32,6 @@ import { blazePressFlow } from './declarative-flow/blazepress-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
 import { newsletter } from './declarative-flow/newsletter';
-import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';

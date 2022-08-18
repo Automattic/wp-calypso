@@ -20,6 +20,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
+import pluginBundleSteps from './plugin-bundle-data';
 import type { StepPath } from './internals/steps-repository';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
@@ -33,14 +34,10 @@ export const pluginBundleFlow: Flow = {
 			return [];
 		}
 
-		return [
-			'storeAddress',
-			'businessInfo',
-			'wooConfirm',
-			'processing',
-			'error',
-			// 'wooInstallPlugins', // TODO - Do we need this?
-		] as StepPath[];
+		// TODO - This needs to come from somewhere else eventually
+		const pluginSlug = 'woocommerce';
+
+		return pluginBundleSteps[ pluginSlug ] as StepPath[];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
