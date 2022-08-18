@@ -38,12 +38,14 @@ export class Connection {
 	receiveUnauthorized?: ( message: string ) => void;
 	requestTranscript?: () => void;
 	closeAfterAccept: boolean;
+	closeAfterStatus: boolean;
 	dispatch?: Dispatch;
 	openSocket?: Promise< Socket >;
 
-	constructor( props: ConnectionProps = {}, closeAfterAccept = false ) {
+	constructor( props: ConnectionProps = {}, closeAfterAccept = false, closeAfterStatus = false ) {
 		Object.assign( this, props );
 		this.closeAfterAccept = closeAfterAccept;
+		this.closeAfterStatus = closeAfterStatus;
 	}
 
 	/**
@@ -90,7 +92,12 @@ export class Connection {
 							dispatch( this.receiveDisconnect?.( reason ) )
 						)
 						.on( 'reconnecting', () => dispatch( this.receiveReconnecting?.() ) )
-						.on( 'status', ( status: string ) => dispatch( this.receiveStatus?.( status ) ) )
+						.on( 'status', ( status: string ) => {
+							dispatch( this.receiveStatus?.( status ) );
+							if ( this.closeAfterStatus ) {
+								socket.close();
+							}
+						} )
 						.on( 'accept', ( accept: boolean ) => {
 							dispatch( this.receiveAccept?.( accept ) );
 							if ( this.closeAfterAccept ) {
@@ -213,6 +220,6 @@ export class Connection {
 // Used by the Help Center, it closes the socket after receiving 'accept' or 'unauthorized'
 export const buildConnectionForCheckingAvailability = (
 	connectionProps: AvailabilityConnectionProps
-) => new Connection( connectionProps, true );
+) => new Connection( connectionProps, false, true );
 
 export default ( connectionProps: ConnectionProps ) => new Connection( connectionProps );

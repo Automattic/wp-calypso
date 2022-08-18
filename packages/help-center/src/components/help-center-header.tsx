@@ -3,7 +3,7 @@ import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@w
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useState } from 'react';
-import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import type { Header, WindowState } from '../types';
 import type { ReactElement } from 'react';
@@ -53,7 +53,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 } ) => {
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
-	const [ chatWindowStatus, setChatWindowStatus ] = useState< WindowState >( 'closed' );
+	const [ , setChatWindowStatus ] = useState< WindowState >( 'closed' );
 	const [ unreadCount, setUnreadCount ] = useState< number >( 0 );
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
@@ -65,7 +65,6 @@ const HelpCenterHeader: React.FC< Header > = ( {
 
 	return (
 		<CardHeader className={ classNames }>
-			{ chatWindowStatus === 'ended' && <Redirect to="/"></Redirect> }
 			<Flex>
 				<p id="header-text" className="help-center-header__text">
 					{ isMinimized ? (

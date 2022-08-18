@@ -1,10 +1,10 @@
 /* eslint-disable no-restricted-imports */
-/* eslint-disable no-console */
 /**
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
+import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
@@ -24,6 +24,14 @@ import '../styles.scss';
 
 const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
+	const { data } = useHappychatAvailable();
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+
+	useEffect( (): void => {
+		if ( data?.status === 'assigned' ) {
+			setShowHelpCenter( true );
+		}
+	}, [ data, setShowHelpCenter ] );
 
 	const { siteId, isSimpleSite } = useSelector( ( state ) => {
 		return {
