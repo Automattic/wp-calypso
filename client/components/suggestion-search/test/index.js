@@ -1,4 +1,6 @@
-import { shallow } from 'enzyme';
+/** @jest-environment jsdom */
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SuggestionSearch from '..';
 
@@ -12,9 +14,10 @@ describe( 'SuggestionSearch', () => {
 			recordTracksEvent.mockReset();
 		} );
 
-		test( 'rendering fires traintracks render events', () => {
+		test( 'rendering fires traintracks render events', async () => {
+			const user = userEvent.setup();
 			const suggestions = [ { label: 'My Label', value: 'My Value' } ];
-			const wrapper = shallow(
+			render(
 				<SuggestionSearch
 					suggestions={ suggestions }
 					railcar={ {
@@ -25,8 +28,9 @@ describe( 'SuggestionSearch', () => {
 					} }
 				/>
 			);
+			const input = screen.getByRole( 'textbox' );
+			await user.type( input, 'My' );
 
-			wrapper.instance().onSuggestionItemMount( { index: 0, suggestionIndex: 0 } );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_traintracks_render', {
 				fetch_algo: 'THE_FETCH_ALGO',
 				fetch_position: 0,
@@ -36,9 +40,10 @@ describe( 'SuggestionSearch', () => {
 			} );
 		} );
 
-		test( 'mousedown fires traintracks mousedown events', () => {
+		test( 'mousedown fires traintracks mousedown events', async () => {
+			const user = userEvent.setup();
 			const suggestions = [ { label: 'My Label', value: 'My Value' } ];
-			const wrapper = shallow(
+			render(
 				<SuggestionSearch
 					suggestions={ suggestions }
 					railcar={ {
@@ -50,7 +55,12 @@ describe( 'SuggestionSearch', () => {
 				/>
 			);
 
-			wrapper.instance().handleSuggestionMouseDown( suggestions[ 0 ], 0 );
+			const input = screen.getByRole( 'textbox' );
+			await user.type( input, 'My' );
+
+			const btn = screen.getByRole( 'button', { name: 'My Label' } );
+			await user.click( btn );
+
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_traintracks_interact', {
 				action: 'THE_ACTION',
 				railcar: 'RAILCAR-ID-0',
