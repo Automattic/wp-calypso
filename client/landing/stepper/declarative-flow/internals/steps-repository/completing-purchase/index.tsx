@@ -48,17 +48,10 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 			return;
 		}
 
-		const siteSettings = {
+		await saveSiteSettings( site.ID, {
 			blogname: state.siteTitle,
 			blogdescription: state.siteDescription,
-			accent_color: state.siteAccentColor,
-		};
-
-		if ( state.siteAccentColor ) {
-			siteSettings.accent_color = state.siteAccentColor;
-		}
-
-		await saveSiteSettings( site.ID, siteSettings );
+		} );
 
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
 			has_site_title: !! state.siteTitle,

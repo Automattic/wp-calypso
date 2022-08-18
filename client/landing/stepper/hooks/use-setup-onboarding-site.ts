@@ -30,7 +30,6 @@ const base64ImageToBlob = ( base64String: string ) => {
 interface OnboardingSite {
 	siteTitle: string;
 	siteDescription: string;
-	siteAccentColor: string | undefined;
 	siteLogo: string | null;
 }
 
@@ -46,12 +45,7 @@ export function useSetupOnboardingSite() {
 		const siteSettings = {
 			blogname: state.siteTitle,
 			blogdescription: state.siteDescription,
-			accent_color: state.siteAccentColor,
 		};
-
-		if ( state.siteAccentColor ) {
-			siteSettings.accent_color = state.siteAccentColor;
-		}
 
 		return saveSiteSettings( site.ID, siteSettings );
 	};
