@@ -7,7 +7,7 @@ declare global {
 	interface Window {
 		BlazePress?: {
 			render: ( params: {
-				domNode?: HTMLElement;
+				domNode?: HTMLElement | null;
 				domNodeId?: string;
 				stripeKey: string;
 				apiHost: string;
@@ -35,7 +35,7 @@ export async function loadDSPWidgetJS(): Promise< void > {
 export async function showDSP(
 	siteId: number | string,
 	postId: number | string,
-	domNodeOrId?: HTMLElement | string
+	domNodeOrId?: HTMLElement | string | null
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {

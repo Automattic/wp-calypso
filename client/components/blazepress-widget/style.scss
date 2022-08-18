@@ -1,0 +1,44 @@
+@import '@automattic/typography/styles/variables';
+@import '@automattic/onboarding/styles/mixins.scss';
+
+.blazepress-widget {
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+
+    .blazepress-widget__header-bar {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        min-height: 72px;
+        padding: 0 20px;
+
+        h2 {
+            @include onboarding-font-recoleta;
+            font-size: $font-title-small;
+            letter-spacing: 0;
+            flex: 1;
+        }
+
+        .wordpress-logo {
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: var( --color-text );
+            margin: 0 1.5rem 0 0;
+        }
+
+        .blazepress-widget__cross {
+            height: 24px;
+            cursor: pointer;
+        }
+    }
+    .blazepress-widget__content {
+        display: flex;
+        flex-direction: column;
+    }
+    .blazepress-widget__content.loading {
+        justify-content: center;
+        align-items: center;
+        flex: auto;
+    }
+}
