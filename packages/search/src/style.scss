@@ -198,23 +198,6 @@ $input-z-index: 20;
 			display: block;
 		}
 
-		// Removes the fade overlay when the search is open and focused
-		&.has-focus {
-			.search-component__input-fade {
-
-				&::before {
-					display: none;
-				}
-
-				&.ltr {
-					/*!rtl:ignore*/
-					&::before {
-						display: none;
-					}
-				}
-			}
-		}
-
 		.search-component__input-fade {
 			display: flex;
 			align-items: center;
@@ -242,6 +225,23 @@ $input-z-index: 20;
 			}
 
 			padding-left: 8px;
+		}
+
+		// Removes the fade overlay when the search is open and focused
+		&.has-focus {
+			.search-component__input-fade {
+
+				&::before {
+					display: none;
+				}
+
+				&.ltr {
+					/*!rtl:ignore*/
+					&::before {
+						display: none;
+					}
+				}
+			}
 		}
 	}
 
