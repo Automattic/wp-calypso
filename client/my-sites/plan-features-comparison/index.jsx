@@ -9,12 +9,7 @@ import {
 	isFreePlan,
 	isMonthly,
 	TERM_MONTHLY,
-	FEATURE_BLANK,
-	FEATURE_DASH,
-	FEATURE_BASIC_DESIGN,
-	PRODUCT_WPCOM_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
-import { useLocale } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { compact, get, map, reduce } from 'lodash';
@@ -22,10 +17,8 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { useExperiment } from 'calypso/lib/explat';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -36,7 +29,6 @@ import {
 	getPlanSlug,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
-import { getProductCost } from 'calypso/state/products-list/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import {
@@ -73,7 +65,6 @@ export class PlanFeaturesComparison extends Component {
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
-				<QueryProductsList />
 				<div className={ planClasses }>
 					<div ref={ this.contentRef } className="plan-features-comparison__content">
 						<div>
@@ -240,30 +231,21 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
-		const description = feature.getDescription
-			? feature.getDescription( undefined, this.props.domainName )
-			: null;
-
 		const classes = classNames( 'plan-features-comparison__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
 		} );
 
-		const { isPlansPageQuickImprovements } = this.props;
-
 		return (
 			<>
 				<PlanFeaturesItem
 					key={ index }
-					description={ description }
-					hideInfoPopover={ ! isPlansPageQuickImprovements }
-					hideGridicon={ isPlansPageQuickImprovements }
 					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
 					isFeatureAvailable={ feature.availableForCurrentPlan }
 				>
 					<span className={ classes }>
 						<span className="plan-features-comparison__item-title">
-							{ feature.getTitle( this.props.domainName || feature.meta ) }
+							{ feature.getTitle( this.props.domainName ) }
 						</span>
 					</span>
 				</PlanFeaturesItem>
@@ -272,26 +254,13 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature, isPlansPageQuickImprovements } = this.props;
+		const { planProperties, selectedFeature } = this.props;
 
 		return map( planProperties, ( properties, mapIndex ) => {
-			const { features, planName, currencyCode, productCustomDesignCost } = properties;
+			const { features, planName } = properties;
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
-			let currentFeature = features[ key ];
-			const featureSlug = currentFeature?.getSlug();
-			const isFeatureDash = featureSlug === FEATURE_DASH;
-
-			if ( isFeatureDash || featureSlug === FEATURE_BLANK ) {
-				currentFeature = null;
-			}
-
-			if ( featureSlug === FEATURE_BASIC_DESIGN ) {
-				currentFeature.meta = {
-					price: productCustomDesignCost,
-					currency: currencyCode,
-				};
-			}
+			const currentFeature = features[ key ];
 
 			const classes = classNames(
 				'plan-features-comparison__table-item',
@@ -301,7 +270,6 @@ export class PlanFeaturesComparison extends Component {
 					'is-highlighted':
 						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
 					'is-bold': rowIndex === 0,
-					'is-plans-quick-improvements': isPlansPageQuickImprovements,
 				}
 			);
 
@@ -310,12 +278,7 @@ export class PlanFeaturesComparison extends Component {
 					{ this.renderFeatureItem( currentFeature, mapIndex ) }
 				</td>
 			) : (
-				<td
-					key={ `${ planName }-none` }
-					className={ `plan-features-comparison__table-item ${
-						isFeatureDash ? 'is-dash' : 'is-blank'
-					}` }
-				/>
+				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
 			);
 		} );
 	}
@@ -362,18 +325,10 @@ const hasPlaceholders = ( planProperties ) =>
 	planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
-const ConnectedPlanFeaturesComparison = connect(
+export default connect(
 	( state, ownProps ) => {
-		const {
-			isInSignup,
-			isPlansPageQuickImprovements,
-			placeholder,
-			plans,
-			isLandingPage,
-			siteId,
-			visiblePlans,
-			popularPlanSpec,
-		} = ownProps;
+		const { isInSignup, placeholder, plans, isLandingPage, siteId, visiblePlans, popularPlanSpec } =
+			ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 
@@ -391,21 +346,15 @@ const ConnectedPlanFeaturesComparison = connect(
 					: null;
 				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
 
-				const productCustomDesignCost = getProductCost( state, PRODUCT_WPCOM_CUSTOM_DESIGN ) / 12;
-				const currencyCode = getCurrentUserCurrencyCode( state );
-
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
-				const features = isPlansPageQuickImprovements
-					? planConstantObj.getPlanCompareFeaturesV2()
-					: planConstantObj.getPlanCompareFeatures();
-
+				const features = planConstantObj.getPlanCompareFeatures();
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject ) {
 					isPlaceholder = true;
 				}
 
-				if ( ! isPlansPageQuickImprovements && planConstantObj.getSignupCompareAvailableFeatures ) {
+				if ( planConstantObj.getSignupCompareAvailableFeatures ) {
 					planFeatures = getPlanFeaturesObject(
 						planConstantObj.getSignupCompareAvailableFeatures()
 					);
@@ -468,8 +417,7 @@ const ConnectedPlanFeaturesComparison = connect(
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
-					currencyCode,
-					productCustomDesignCost,
+					currencyCode: getCurrentUserCurrencyCode( state ),
 					discountPrice,
 					features: planFeatures,
 					isLandingPage,
@@ -500,7 +448,6 @@ const ConnectedPlanFeaturesComparison = connect(
 		return {
 			planProperties,
 			purchaseId,
-			isPlansPageQuickImprovements,
 			siteType,
 			hasPlaceholders: hasPlaceholders( planProperties ),
 		};
@@ -509,26 +456,5 @@ const ConnectedPlanFeaturesComparison = connect(
 		recordTracksEvent,
 	}
 )( localize( PlanFeaturesComparison ) );
-
-export default function PlanFeaturesComparisonWrapper( props ) {
-	const locale = useLocale();
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'pricing_packaging_plans_page_quick_improvements',
-		{
-			isEligible: [ 'en-gb', 'en' ].includes( locale ),
-		}
-	);
-
-	if ( isLoadingExperimentAssignment ) {
-		return null;
-	}
-
-	return (
-		<ConnectedPlanFeaturesComparison
-			{ ...props }
-			isPlansPageQuickImprovements={ 'treatment' === experimentAssignment?.variationName }
-		/>
-	);
-}
 
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
