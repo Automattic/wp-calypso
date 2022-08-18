@@ -22,7 +22,6 @@ export function register(): typeof STORE_KEY {
 			persist: [
 				'site',
 				'message',
-				'showHelpCenter',
 				'userDeclaredSite',
 				'userDeclaredSiteUrl',
 				'directlyData',
