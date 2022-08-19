@@ -202,7 +202,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function upgradePlan() {
-		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
+		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) && ! isEnabled( 'themes/plugin-bundling' ) ) {
 			return goToCheckout();
 		}
 
@@ -217,7 +217,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
+		if ( isEnabled( 'signup/seller-upgrade-modal' ) || isEnabled( 'themes/plugin-bundling' ) ) {
 			recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
 				theme: selectedDesign?.slug,
 			} );
