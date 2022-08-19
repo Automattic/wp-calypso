@@ -1,90 +1,77 @@
-import { shallow } from 'enzyme';
+/** @jest-environment jsdom */
+import { render, screen } from '@testing-library/react';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
+
+const Loading = <div data-testid="loading" />;
+const Query = <div data-testid="query" />;
+const TrueComponent = <div data-testid="true" />;
+const FalseComponent = <div data-testid="false" />;
 
 describe( 'RenderSwitch', () => {
 	test( 'if loadingCondition is true, renders the loading and query components', () => {
-		const loading = <span>loading</span>;
-		const query = <span>query</span>;
-
-		const renderSwitch = shallow(
+		render(
 			<RenderSwitch
 				loadingCondition={ () => true }
-				loadingComponent={ loading }
-				queryComponent={ query }
+				loadingComponent={ Loading }
+				queryComponent={ Query }
 			/>
 		);
 
-		expect( renderSwitch.contains( query ) ).toEqual( true );
-		expect( renderSwitch.contains( loading ) ).toEqual( true );
+		expect( screen.queryByTestId( 'query' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'loading' ) ).toBeVisible();
 	} );
 
 	test( 'if loadingCondition is true but loadingComponent is undefined, skip rendering it', () => {
-		const query = <span>query</span>;
-
-		const renderSwitch = shallow(
-			<RenderSwitch loadingCondition={ () => true } queryComponent={ query } />
-		);
-
-		expect( renderSwitch.contains( query ) ).toEqual( true );
+		render( <RenderSwitch loadingCondition={ () => true } queryComponent={ Query } /> );
+		expect( screen.queryByTestId( 'query' ) ).toBeVisible();
 	} );
 
 	test( 'if loadingCondition is true but queryComponent is undefined, skip rendering it', () => {
-		const loading = <span>loading</span>;
-
-		const renderSwitch = shallow(
-			<RenderSwitch loadingCondition={ () => true } loadingComponent={ loading } />
-		);
-
-		expect( renderSwitch.contains( loading ) ).toEqual( true );
+		render( <RenderSwitch loadingCondition={ () => true } loadingComponent={ Loading } /> );
+		expect( screen.queryByTestId( 'loading' ) ).toBeVisible();
 	} );
 
 	test( 'if loadingCondition is false and renderCondition is true, renders only trueComponent', () => {
-		const trueComponent = <span>true</span>;
-		const falseComponent = <span>false</span>;
-
-		const renderSwitch = shallow(
+		render(
 			<RenderSwitch
 				loadingCondition={ () => false }
 				renderCondition={ () => true }
-				trueComponent={ trueComponent }
-				falseComponent={ falseComponent }
+				trueComponent={ TrueComponent }
+				falseComponent={ FalseComponent }
 			/>
 		);
 
-		expect( renderSwitch.contains( trueComponent ) ).toEqual( true );
-		expect( renderSwitch.contains( falseComponent ) ).toEqual( false );
+		expect( screen.queryByTestId( 'true' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'false' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'if loadingCondition is false and renderCondition is false, renders only falseComponent', () => {
-		const trueComponent = <span>true</span>;
-		const falseComponent = <span>false</span>;
-
-		const renderSwitch = shallow(
+		render(
 			<RenderSwitch
 				loadingCondition={ () => false }
 				renderCondition={ () => false }
-				trueComponent={ trueComponent }
-				falseComponent={ falseComponent }
+				trueComponent={ TrueComponent }
+				falseComponent={ FalseComponent }
 			/>
 		);
 
-		expect( renderSwitch.contains( trueComponent ) ).toEqual( false );
-		expect( renderSwitch.contains( falseComponent ) ).toEqual( true );
+		expect( screen.queryByTestId( 'true' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'false' ) ).toBeVisible();
 	} );
 
 	test( 'if trueComponent should render but is undefined, return null', () => {
-		const renderSwitch = shallow(
+		const { container } = render(
 			<RenderSwitch loadingCondition={ () => false } renderCondition={ () => true } />
 		);
 
-		expect( renderSwitch.html() ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'if falseComponent should render but is undefined, return null', () => {
-		const renderSwitch = shallow(
+		const { container } = render(
 			<RenderSwitch loadingCondition={ () => false } renderCondition={ () => false } />
 		);
 
-		expect( renderSwitch.html() ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 } );
