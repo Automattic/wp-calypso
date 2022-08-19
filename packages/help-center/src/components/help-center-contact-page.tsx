@@ -10,7 +10,7 @@ import classnames from 'classnames';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
-import useActiveSupportTicketsQuery from 'calypso/data/help/use-active-support-tickets-query';
+import { useActiveSupportTicketsQuery } from 'calypso/data/help/use-active-support-tickets-query';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
