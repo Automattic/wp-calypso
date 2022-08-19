@@ -21,7 +21,6 @@ export const linkInBio: Flow = {
 			'patterns',
 			'completingPurchase',
 			'processing',
-			'patterns',
 			'processingFake',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
 		] as StepPath[];
