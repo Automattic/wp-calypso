@@ -96,10 +96,10 @@ export function SitesDashboard( {
 
 	return (
 		<main>
-			<DocumentHead title={ __( 'My Sites' ) } />
+			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
 				<HeaderControls>
-					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
+					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
 					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
 						<span>{ __( 'Add new site' ) }</span>
 					</Button>
