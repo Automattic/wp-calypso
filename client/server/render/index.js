@@ -233,11 +233,12 @@ export function serverRender( req, res ) {
 	if ( context.store ) {
 		attachHead( context );
 
-		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
+		const isomorphicSubtrees = context.section?.isomorphic
+			? [ 'themes', 'ui', 'productsList' ]
+			: [];
 		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
-<<<<<<< HEAD
 		context.initialReduxState = pick( context.store.getState(), initialClientStateTrees );
 
 		/**
@@ -251,12 +252,6 @@ export function serverRender( req, res ) {
 		 * the same. And since the locale is encoded into the logged-out route
 		 * (like /es/themes), that applies to every user.
 		 */
-=======
-		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
-		context.dehydratedReactQueryState = dehydrate( context.queryClient );
-
-		// And cache on the server, too.
->>>>>>> ce75660be2 (Hydrate the react-query client)
 		if ( cacheKey ) {
 			const { documentHead, themes } = context.store.getState();
 			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
