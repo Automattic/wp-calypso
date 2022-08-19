@@ -8,6 +8,7 @@ import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -83,6 +84,11 @@ export const siteSetupFlow: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
+		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
+		const currentTheme = useSelector( ( state ) =>
+			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
+		);
+
 		const isEnglishLocale = useIsEnglishLocale();
 		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
@@ -189,6 +195,14 @@ export const siteSetupFlow: Flow = {
 						}
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
+
+					// Check current theme
+					// Does it have a plugin bundled?
+					// If so, send them to the plugin-bundle flow
+					console.log( 'submit() sees the currentTheme: ', currentTheme );
+					// debugger()
+					// if ( theme has plugin bundled ) { send to plugin-bundle }
+					// TODO: The currentTheme doesn't have the taxonomy information available
 
 					return exitFlow( `/home/${ siteSlug }` );
 				}
