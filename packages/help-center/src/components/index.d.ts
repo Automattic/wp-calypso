@@ -50,6 +50,15 @@ declare module 'calypso/data/support-article-alternates/use-support-article-alte
 	export default useSupportArticleAlternatesQuery;
 }
 
+declare module 'calypso/data/help/use-active-support-tickets-query' {
+	import { SupportTicket } from '../types';
+	const useActiveSupportTicketsQuery: (
+		email: string,
+		queryOptions?: unknown
+	) => { isLoading: boolean; data?: SupportTicket[] };
+	export default useActiveSupportTicketsQuery;
+}
+
 declare module 'calypso/state/reader/posts/selectors' {
 	export const getPostByKey;
 }

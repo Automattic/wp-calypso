@@ -4,13 +4,13 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner } from '@automattic/components';
-import { useActiveSupportTicketsQuery } from '@automattic/data-stores';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
+import useActiveSupportTicketsQuery from 'calypso/data/help/use-active-support-tickets-query';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**

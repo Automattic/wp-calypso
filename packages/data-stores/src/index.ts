@@ -26,8 +26,6 @@ export { useSupportAvailability } from './support-queries/use-support-availabili
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
-export { useActiveSupportTicketsQuery } from './support-queries/use-active-support-tickets-query';
-export type { SupportTicket } from './support-queries/types';
 export { useStarterDesignsGeneratedQuery } from './starter-designs-queries/use-starter-designs-generated-query';
 export { useStarterDesignsQuery } from './starter-designs-queries/use-starter-designs-query';
 export * from './site/types';

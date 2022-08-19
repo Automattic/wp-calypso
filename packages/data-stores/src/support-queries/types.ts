@@ -27,14 +27,3 @@ export interface OtherSupportAvailability {
 	is_user_eligible_for_directly: boolean;
 	is_user_eligible_for_chat: boolean;
 }
-
-export interface SupportTicket {
-	id?: number;
-	status: string;
-	subject: string;
-	time: Date;
-	timestamp: number;
-	type: string;
-	url: string;
-	when: string;
-}

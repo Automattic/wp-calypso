@@ -2,7 +2,8 @@ import { localizeUrl, useLocale, getRelativeTimeString } from '@automattic/i18n-
 import { ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import type { AnalysisReport, SupportTicket } from '@automattic/data-stores';
+import type { SupportTicket } from '../types';
+import type { AnalysisReport } from '@automattic/data-stores';
 import type { ReactNode } from 'react';
 
 type Props = {
@@ -87,7 +88,7 @@ export function HelpCenterActiveTicketNotice( {
 						/* translators: %s humanized date ex: 2 hours ago */
 						__( 'You submitted a request %s.', __i18n_text_domain__ ),
 						getRelativeTimeString( {
-							timestamp: tickets[ 0 ].timestamp,
+							timestamp: tickets[ 0 ].timestamp * 1000,
 							locale,
 							style: 'long',
 						} )
