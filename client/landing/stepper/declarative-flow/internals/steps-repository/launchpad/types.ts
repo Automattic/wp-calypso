@@ -1,7 +1,7 @@
 export interface Task {
 	id: string;
 	isCompleted: boolean;
-	actionUrl: string | undefined;
+	actionUrl: string;
 	taskType: string;
 	title: string;
 	displayBadge: boolean;
