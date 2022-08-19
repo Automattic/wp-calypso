@@ -1,4 +1,4 @@
-import { isDomainEligibleForTitanIntroductoryOffer } from 'calypso/lib/titan/is-domain-eligible-for-titan-introductory-offer';
+import { isDomainEligibleForTitanIntroductoryOffer } from 'calypso/lib/titan';
 import { ProductIntroductoryOffer } from 'calypso/state/products-list/selectors/get-products-list';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 

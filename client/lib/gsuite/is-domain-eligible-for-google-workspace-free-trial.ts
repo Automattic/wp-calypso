@@ -1,4 +1,4 @@
-import { isDomainEligibleForGoogleWorkspaceIntroductoryOffer } from 'calypso/lib/gsuite/is-domain-eligible-for-google-workspace-introductory-offer';
+import { isDomainEligibleForGoogleWorkspaceIntroductoryOffer } from 'calypso/lib/gsuite';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductIntroductoryOffer } from 'calypso/state/products-list/selectors/get-products-list';
 
