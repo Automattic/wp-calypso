@@ -19,14 +19,14 @@ export class Facebook extends SharingService {
 					this.props.translate(
 						'The Facebook connection could not be made because this account does not have access to any Pages.',
 						{
-							context: 'Sharing: Publicize connection error',
+							context: 'Sharing: Jetpack Social connection error',
 						}
 					),
 					// Append temporary message to inform of Facebook API change
 					' ',
 					this.props.translate(
-						'Facebook supports Publicize connections to Facebook Pages, but not to Facebook Profiles. ' +
-							'{{a}}Learn More about Publicize for Facebook{{/a}}',
+						'Facebook supports Jetpack Social connections to Facebook Pages, but not to Facebook Profiles. ' +
+							'{{a}}Learn More about Jetpack Social for Facebook{{/a}}',
 						{
 							components: {
 								a: (
