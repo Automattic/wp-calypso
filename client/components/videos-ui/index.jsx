@@ -20,9 +20,9 @@ const VideosUi = ( {
 	FooterBar,
 	areVideosTranslated = true,
 	intent = undefined,
-	title,
-	subtitle,
-	options,
+	title = false,
+	subtitle = false,
+	options = false,
 } ) => {
 	const translate = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
