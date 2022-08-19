@@ -23,8 +23,9 @@ export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
 	router(
-		'/plugins/setup',
+		`/${ langParam }/plugins/setup`,
 		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
 		renderProvisionPlugins,
@@ -33,8 +34,9 @@ export default function ( router ) {
 	);
 
 	router(
-		'/plugins/setup/:site',
+		`/${ langParam }/plugins/setup/:site`,
 		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
 		renderProvisionPlugins,
@@ -55,8 +57,9 @@ export default function ( router ) {
 	);
 
 	router(
-		'/plugins/upload',
+		`/${ langParam }/plugins/upload`,
 		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
 		sites,
@@ -64,8 +67,9 @@ export default function ( router ) {
 		clientRender
 	);
 	router(
-		'/plugins/upload/:site_id',
+		`/${ langParam }/plugins/upload/:site_id`,
 		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -86,8 +90,9 @@ export default function ( router ) {
 	);
 
 	router(
-		'/plugins/manage/:site?',
+		`/${ langParam }/plugins/manage/:site?`,
 		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -97,8 +102,9 @@ export default function ( router ) {
 	);
 
 	router(
-		'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
+		`/${ langParam }/plugins/:pluginFilter(active|inactive|updates)/:site_id?`,
 		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
@@ -121,8 +127,9 @@ export default function ( router ) {
 	);
 
 	router(
-		'/plugins/:plugin/eligibility/:site_id',
+		`/${ langParam }/plugins/:plugin/eligibility/:site_id`,
 		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
