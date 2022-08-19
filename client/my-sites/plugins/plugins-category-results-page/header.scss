@@ -1,6 +1,8 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .plugin-category-results-header {
 	padding: 48px 16px 0;
-	margin-bottom: 48px;
 }
 
 .plugin-category-results-header__title {
@@ -15,9 +17,9 @@
 
 .plugin-category-results-header__subtitle {
 	color: var( --studio-gray-80 );
-	width: 527px;
+	margin: 8px 0;
 
-	@media screen and ( max-width: 543px ) {
-		width: 100%;
+	@include break-small {
+		width: 527px;
 	}
 }
