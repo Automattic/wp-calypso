@@ -499,7 +499,7 @@ export class PluginsList extends Component {
 				removeJetpackNotice: false,
 			} );
 
-			this.props.warningNotice( translate( 'Jetpack cannot be removed from WordPress.com.' ) );
+			this.props.warningNotice( translate( 'Jetpack must be removed via wp-admin.' ) );
 		}
 	}
 
