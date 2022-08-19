@@ -20,9 +20,9 @@ const VideosUi = ( {
 	FooterBar,
 	areVideosTranslated = true,
 	intent = undefined,
-	title = false,
-	subtitle = false,
-	options = false,
+	headerTitle = false,
+	headerSubtitle = false,
+	headerOptionsList = false,
 } ) => {
 	const translate = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
@@ -38,6 +38,14 @@ const VideosUi = ( {
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
 	const currentVideo = course?.videos?.[ currentVideoKey || 0 ];
+	const headerOptions = headerOptionsList
+		? headerOptionsList
+		: [
+				translate( 'Learn the basics of blogging' ),
+				translate( 'Familiarize yourself with WordPress' ),
+				translate( 'Familiarize yourself with WordPress' ),
+				translate( 'Set yourself up for blogging success' ),
+		  ];
 
 	const onVideoPlayClick = ( videoSlug ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
@@ -121,39 +129,18 @@ const VideosUi = ( {
 				) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
-						<h2>{ title ? title : translate( 'Watch five videos.' ) }</h2>
-						<h2>{ subtitle ? subtitle : translate( 'Save yourself hours.' ) }</h2>
+						<h2>{ headerTitle ? headerTitle : translate( 'Watch five videos.' ) }</h2>
+						<h2>{ headerSubtitle ? headerSubtitle : translate( 'Save yourself hours.' ) }</h2>
 					</div>
 					<div className="videos-ui__summary">
 						<ul>
-							{ ( ! options || options[ 0 ] ) && (
-								<li>
-									<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-									{ options[ 0 ] ? options[ 0 ] : translate( 'Learn the basics of blogging' ) }
-								</li>
-							) }
-							{ ( ! options || options[ 1 ] ) && (
-								<li>
-									<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-									{ options[ 1 ]
-										? options[ 1 ]
-										: translate( 'Familiarize yourself with WordPress' ) }
-								</li>
-							) }
-							{ ( ! options || options[ 2 ] ) && (
-								<li>
-									<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-									{ options[ 2 ] ? options[ 2 ] : translate( 'Upskill and save hours' ) }
-								</li>
-							) }
-							{ ( ! options || options[ 3 ] ) && (
-								<li>
-									<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-									{ options[ 3 ]
-										? options[ 3 ]
-										: translate( 'Set yourself up for blogging success' ) }
-								</li>
-							) }
+							{ headerOptions.map( function ( text ) {
+								return (
+									<li>
+										<Gridicon icon="checkmark" size={ 18 } /> { text }
+									</li>
+								);
+							} ) }
 						</ul>
 					</div>
 				</div>
