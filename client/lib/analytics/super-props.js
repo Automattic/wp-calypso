@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { shouldReportOmitBlogId } from 'calypso/lib/analytics/utils';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
@@ -16,9 +17,9 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 
 	const omitSelectedSite = shouldReportOmitBlogId( eventProperties.path );
 	const selectedSite = omitSelectedSite ? null : getSelectedSite( state );
-	const isDomainOnlySite = selectedSite?.options?.is_domain_only ?? false;
 
 	if ( selectedSite ) {
+		const siteSlug = isDomainOnly( state, selectedSite?.ID ) ? 'no-site' : selectedSite?.slug;
 		Object.assign( superProps, {
 			// Tracks expects a blog_id property to identify the blog which is
 			// why we use it here instead of calling the property site_id
@@ -30,8 +31,7 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 
 			site_id_label: selectedSite.jetpack ? 'jetpack' : 'wpcom',
 			site_plan_id: selectedSite.plan ? selectedSite.plan.product_id : null,
-
-			site: isDomainOnlySite ? 'no-site' : selectedSite?.slug,
+			site: siteSlug,
 		} );
 	}
 
