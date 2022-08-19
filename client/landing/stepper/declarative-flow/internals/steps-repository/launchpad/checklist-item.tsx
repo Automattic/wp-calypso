@@ -1,9 +1,10 @@
 import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { Task } from './types';
+import { LaunchpadTask } from './types';
 
-const ChecklistItem = ( { task }: { task: Task } ) => {
-	const { id, isCompleted, actionUrl, title } = task;
+const ChecklistItem = ( { task }: { task: LaunchpadTask } ) => {
+	const { id, isCompleted, actionUrl, actionText } = task;
+
 	return (
 		<li className={ `launchpad__task-${ id }` }>
 			<Button className="launchpad__checklist-item" href={ actionUrl } data-task={ id }>
@@ -24,7 +25,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 					) }
 				</div>
 				<p className={ `launchpad__checklist-item-text ${ isCompleted && 'is-complete' }` }>
-					{ title }
+					{ actionText }
 				</p>
 				<Gridicon className="launchpad__checklist-item-chevron" icon="chevron-right" size={ 18 } />
 			</Button>

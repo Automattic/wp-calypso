@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import useSiteChecklist from 'calypso/data/site-checklist/use-site-checklist';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { getTask } from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list/get-task';
 import ChecklistItem from './checklist-item';
-import { transformTasks } from './transform-tasks';
 import { LaunchpadTask } from './types';
 
 interface ChecklistProps {
@@ -10,11 +11,14 @@ interface ChecklistProps {
 
 const Checklist = ( { siteId }: ChecklistProps ) => {
 	const [ checklist, setChecklist ] = useState< LaunchpadTask[] >( [] );
+	const siteSlug = useSiteSlugParam();
 	const rawChecklist = useSiteChecklist( siteId.toString() );
 
 	useEffect( () => {
 		if ( rawChecklist ) {
-			const enhancedChecklist = transformTasks( rawChecklist.tasks );
+			const enhancedChecklist = rawChecklist.tasks.map( ( rawTask ) =>
+				getTask( rawTask, { siteSlug } )
+			);
 			setChecklist( enhancedChecklist );
 		}
 	}, [ rawChecklist ] );

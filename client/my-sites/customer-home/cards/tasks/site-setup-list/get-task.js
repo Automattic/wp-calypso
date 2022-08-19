@@ -293,6 +293,42 @@ export const getTask = (
 				isSkippable: true,
 			};
 			break;
+		case CHECKLIST_KNOWN_TASKS.NEWSLETTER_SETUP:
+			taskData = {
+				actionText: translate( 'Set up Newsletter' ),
+				actionUrl: '',
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.LINKINBIO_SETUP:
+			taskData = {
+				actionText: translate( 'Set up Link-in-Bio' ),
+				actionUrl: '',
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.PODCAST_SETUP:
+			taskData = {
+				actionText: translate( 'Setup Podcast' ),
+				actionUrl: '',
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.PLAN_SELECTED:
+			taskData = {
+				actionText: translate( 'Choose Plan' ),
+				actionUrl: '',
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.SUBSCRIBERS_ADDED:
+			taskData = {
+				actionText: translate( 'Add Subscribers' ),
+				actionUrl: '',
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.LINKS_ADDED:
+			taskData = {
+				actionText: translate( 'Add Links' ),
+				actionUrl: '',
+			};
+			break;
 	}
 
 	const enhancedTask = {

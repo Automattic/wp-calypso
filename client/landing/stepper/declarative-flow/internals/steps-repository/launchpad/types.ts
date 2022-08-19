@@ -3,5 +3,5 @@ export interface LaunchpadTask {
 	isCompleted: boolean;
 	actionUrl: string;
 	taskType: string;
-	title: string;
+	actionText: string;
 }
