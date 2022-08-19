@@ -1,4 +1,5 @@
 import { Button, Card, Spinner } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { useState } from 'react';
 import { connect } from 'react-redux';
@@ -119,7 +120,7 @@ const WebServerSettingsCard = ( {
 							components: {
 								button: (
 									<Button
-										href="https://wordpress.com/support/php-version-switching/"
+										href={ localizeUrl( 'https://wordpress.com/support/php-version-switching/' ) }
 										borderless
 										compact
 									/>
