@@ -22,7 +22,7 @@ const VideosUi = ( {
 	intent = undefined,
 	headerTitle = false,
 	headerSubtitle = false,
-	headerOptionsList = false,
+	headerOptionsList = [],
 } ) => {
 	const translate = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
@@ -38,7 +38,7 @@ const VideosUi = ( {
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
 	const currentVideo = course?.videos?.[ currentVideoKey || 0 ];
-	const headerOptions = headerOptionsList
+	const headerOptions = headerOptionsList.length
 		? headerOptionsList
 		: [
 				translate( 'Learn the basics of blogging' ),
@@ -134,7 +134,7 @@ const VideosUi = ( {
 					</div>
 					<div className="videos-ui__summary">
 						<ul>
-							{ headerOptions.map( function ( text ) {
+							{ headerOptions.map( ( text ) => {
 								return (
 									<li>
 										<Gridicon icon="checkmark" size={ 18 } /> { text }
