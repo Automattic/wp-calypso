@@ -24,12 +24,12 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import PostByline from './byline';
 import ConversationPost from './conversation-post';
 import GalleryPost from './gallery';
 import PhotoPost from './photo';
 import StandardPost from './standard';
-
 import './style.scss';
 
 const noop = () => {};
@@ -52,6 +52,7 @@ class ReaderPostCard extends Component {
 		postKey: PropTypes.object,
 		compact: PropTypes.bool,
 		isWPForTeamsItem: PropTypes.bool,
+		teams: PropTypes.array,
 		hasOrganization: PropTypes.bool,
 	};
 
@@ -132,6 +133,7 @@ class ReaderPostCard extends Component {
 			compact,
 			hasOrganization,
 			isWPForTeamsItem,
+			teams,
 		} = this.props;
 
 		let isSeen = false;
@@ -173,9 +175,7 @@ class ReaderPostCard extends Component {
 				site={ site }
 				visitUrl={ post.URL }
 				showVisit={ true }
-				showMenu={ true }
 				fullPost={ false }
-				showMenuFollow={ ! isDiscover }
 				onCommentClick={ onCommentClick }
 				showEdit={ false }
 				className="ignore-click"
@@ -195,7 +195,13 @@ class ReaderPostCard extends Component {
 				primary_tag: post.primary_tag,
 			} );
 			postByline = (
-				<PostByline post={ postForByline } site={ discoverSite } showSiteName={ true } />
+				<PostByline
+					post={ postForByline }
+					site={ discoverSite }
+					showSiteName={ true }
+					teams={ teams }
+					showFollow={ ! isDiscover }
+				/>
 			);
 		} else {
 			postByline = (
@@ -205,6 +211,8 @@ class ReaderPostCard extends Component {
 					feed={ feed }
 					showSiteName={ showSiteName || isDiscover }
 					showAvatar={ ! compact }
+					teams={ teams }
+					showFollow={ ! isDiscover }
 				/>
 			);
 		}
@@ -295,6 +303,7 @@ export default connect(
 			ownProps.postKey.blogId
 		),
 		isExpanded: isReaderCardExpanded( state, ownProps.postKey ),
+		teams: getReaderTeams( state ),
 	} ),
 	{ expandCard: expandCardAction }
 )( ReaderPostCard );

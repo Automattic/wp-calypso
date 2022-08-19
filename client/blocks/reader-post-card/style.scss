@@ -3,6 +3,16 @@
 	border-top: 1px solid var( --color-neutral-10 );
 }
 
+.reader-post-options-menu__ellipsis-menu {
+	.ellipsis-menu__toggle {
+		padding: 0;
+		height: 24px;
+		.ellipsis-menu__toggle-icon {
+			top: 0;
+		}
+	}
+}
+
 .reader-post-card.card {
 	border-bottom: 1px solid var( --color-neutral-10 );
 	box-shadow: none;
@@ -381,7 +391,7 @@
 	.site-icon {
 		width: 32px !important;
 		height: 32px !important;
-		/* stylelint-disable-next-line scales/font-size */
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 32px !important;
 		line-height: 32px !important;
 	}
