@@ -1,17 +1,18 @@
+import { hasIntroductoryOfferFreeTrial } from 'calypso/lib/emails';
 import { isDomainEligibleForTitanIntroductoryOffer } from 'calypso/lib/titan';
-import { ProductIntroductoryOffer } from 'calypso/state/products-list/selectors/get-products-list';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
-export function isDomainEligibleForTitanFreeTrial(
-	domain?: ResponseDomain,
-	introductoryOffer?: ProductIntroductoryOffer
-): boolean {
+export function isDomainEligibleForTitanFreeTrial( {
+	domain,
+	product,
+}: {
+	domain?: ResponseDomain;
+	product: ProductListItem | null;
+} ): boolean {
 	if ( ! isDomainEligibleForTitanIntroductoryOffer( domain ) ) {
 		return false;
 	}
 
-	if ( ! introductoryOffer ) {
-		return false;
-	}
-	return introductoryOffer.cost_per_interval === 0;
+	return hasIntroductoryOfferFreeTrial( product );
 }
