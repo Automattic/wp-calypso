@@ -14,7 +14,6 @@ import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
 import * as User from './user';
 import * as WPCOMFeatures from './wpcom-features';
-
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useHas3PC } from './queries/use-has-3rd-party-cookies';
 export { useSiteAnalysis } from './queries/use-site-analysis';
@@ -25,9 +24,9 @@ export { useSiteLogoMutation } from './queries/use-site-logo-mutation';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
-export { useSibylQuery } from './support-queries/use-sibyl-query';
 export { useStarterDesignsGeneratedQuery } from './starter-designs-queries/use-starter-designs-generated-query';
 export { useStarterDesignsQuery } from './starter-designs-queries/use-starter-designs-query';
+export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 
 export {
