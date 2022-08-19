@@ -747,6 +747,21 @@ class Signup extends Component {
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
+		const progressBar = () => {
+			if ( [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName ) ) {
+				return { flowName: this.props.flowName, stepName: this.props.stepName };
+			}
+			if (
+				[ 'newsletter', 'link-in-bio' ].includes( this.props.initialContext?.query?.flowName )
+			) {
+				return {
+					flowName: this.props.initialContext?.query?.flowName,
+					stepName: this.props.stepName,
+				};
+			}
+			return null;
+		};
+
 		const isEligibleForOlarkChat =
 			'onboarding' === this.props.flowName &&
 			[ 'en', 'en-gb' ].includes( this.props.localeSlug ) &&
@@ -758,6 +773,7 @@ class Signup extends Component {
 					<DocumentHead title={ this.props.pageTitle } />
 					{ ! isP2Flow( this.props.flowName ) && (
 						<SignupHeader
+							progressBar={ progressBar() }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							pageTitle={ this.props.hideBackButton && this.props.pageTitle }
