@@ -77,7 +77,7 @@ export const tasks = [
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
-	linkInBio: [
+	'link-in-bio': [
 		'design_selected',
 		'setup_link_in_bio',
 		'plan_selected',
