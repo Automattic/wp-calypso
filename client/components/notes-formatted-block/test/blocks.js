@@ -53,7 +53,7 @@ describe( 'Link block', () => {
 		const link = screen.queryByRole( 'link' );
 
 		expect( link ).not.toBeInTheDocument();
-		expect( unlinkedText ).toBeInTheDocument();
+		expect( unlinkedText ).toBeVisible();
 	} );
 
 	test.each( [ false, true ] )(
@@ -108,7 +108,7 @@ describe( 'Post block', () => {
 		const link = screen.queryByRole( 'link' );
 
 		expect( link ).not.toBeInTheDocument();
-		expect( unlinkedText ).toBeInTheDocument();
+		expect( unlinkedText ).toBeVisible();
 	} );
 
 	test( 'on Calypso, if the post is not trashed, links to the post itself', () => {
@@ -145,9 +145,6 @@ describe( 'Post block', () => {
 		const unlinkedPost = render( <Blocks.Post content={ content } children={ text } /> ).container
 			.firstChild;
 
-		// @todo I'm not sure about this assertion. I think it is important
-		// to test that the text is emphasized. Adding a role seems
-		// redudant, though, but <em> doens't have a native role.
 		expect( unlinkedPost.tagName ).toEqual( 'EM' );
 		expect( unlinkedPost ).toHaveTextContent( text );
 	} );
@@ -188,12 +185,9 @@ describe( 'Comment block', () => {
 		const text = 'what a cool comment';
 		render( <Blocks.Comment content={ content } children={ text } /> );
 
-		// @todo Not sure if I should use `getByText` or `queryByText` here.
-		// When using `getByText`, the assertion below seems redundant, as it
-		// will fail if it can't find the text.
 		const comment = screen.getByText( text );
 
-		expect( comment ).toBeInTheDocument();
+		expect( comment ).toBeVisible();
 	} );
 } );
 
@@ -271,7 +265,7 @@ describe( 'Plugin block', () => {
 
 		const unlinkedText = screen.getByText( text );
 
-		expect( unlinkedText ).toBeInTheDocument();
+		expect( unlinkedText ).toBeVisible();
 	} );
 } );
 
@@ -310,7 +304,7 @@ describe( 'Theme block', () => {
 
 		const unlinkedText = screen.getByText( text );
 
-		expect( unlinkedText ).toBeInTheDocument();
+		expect( unlinkedText ).toBeVisible();
 	} );
 
 	test.each( [ false, true ] )(
@@ -342,6 +336,6 @@ describe( 'Theme block', () => {
 
 		const unlinkedText = screen.getByText( text );
 
-		expect( unlinkedText ).toBeInTheDocument();
+		expect( unlinkedText ).toBeVisible();
 	} );
 } );
