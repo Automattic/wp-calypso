@@ -10,7 +10,7 @@
 		display: none;
 	}
 	.step-container {
-		background: var( --studio-gray-0 );
+		background: #fdfdfd;
 		padding: 0;
 		margin: 0;
 		max-width: none;
@@ -21,6 +21,17 @@
 			.step-container__skip-wrapper {
 				margin-inline-start: 0;
 			}
+		}
+	}
+
+	.step-container__buttons {
+		padding: 0 0 34px;
+		margin: 0;
+		text-align: center;
+
+		@include break-large {
+			text-align: left;
+			padding: 0 0 40px 40px;
 		}
 	}
 }
@@ -36,11 +47,20 @@
 // Launchpad - Sidebar
 
 .launchpad__sidebar {
-	width: 440px;
-	padding: 20px 40px;
-	margin: 0 auto;
+	max-width: 100%;
+	margin: 24px 16px 16px;
+
 	@include break-large {
-		margin: 0;
+		max-width: 440px;
+		margin: 24px 20px 24px 40px;
+	}
+}
+
+.launchpad__sidebar-content-container {
+	margin-left: 0;
+
+	@include break-large {
+		margin-left: 16px;
 	}
 }
 
@@ -55,13 +75,24 @@
 	padding: 0;
 }
 
-.launchpad__sidebar-h5 {
+.launchpad__sidebar-header {
+	margin-left: 8px;
+	@include break-large {
+		margin-left: 0;
+	}
+}
+
+.launchpad__sidebar-header-logo {
+	vertical-align: text-bottom;
+}
+
+.launchpad__sidebar-header-flow-name {
 	font-family: 'Recoleta';
 	font-style: normal;
 	font-weight: 400;
 	font-size: $font-body-large;
 	line-height: 1.3;
-	margin: 0 0 100px;
+	margin: 0 0 100px 12px;
 }
 
 .launchpad__sidebar-description {
@@ -71,19 +102,19 @@
 }
 
 .launchpad__url-box {
-	background: var( --studio-white );
+	background: #f6f7f7;
 	border: 1px solid var( --studio-gray-0 );
 	border-radius: 4px;
 	height: 48px;
 	line-height: 48px;
-	margin: 30px 0;
+	margin: 32px 0;
 	padding: 0 20px;
 }
 
 // Launchpad - Progress Bar
 
 .launchpad__progress-bar-container {
-	margin: 100px 0 30px;
+	margin: 100px 0 32px;
 }
 
 .launchpad__progress-value {
@@ -112,9 +143,12 @@
 
 .launchpad__checklist {
 	list-style: none;
-	margin: 20px auto;
-	max-width: 98%;
+	margin: 0;
 	padding: 0;
+
+	@include break-large {
+		margin: 20px auto;
+	}
 }
 
 .launchpad__checklist-item {
@@ -178,27 +212,60 @@
 // Launchpad Site Preview Component
 
 .launchpad__site-preview-wrapper {
-	padding: 100px 40px 40px;
-	height: 600px;
+	margin: 16px;
+	height: 850px;
 	flex-grow: 1;
+
+	@include break-large {
+		margin: 73px 40px 12px 20px;
+		height: 900px;
+	}
+
+	.preview-toolbar__toolbar {
+		display: none;
+		@include break-large {
+			display: block;
+		}
+	}
+
+	.preview-toolbar__devices {
+		margin-bottom: 6px;
+	}
+
+	.is-phone .web-preview__frame-wrapper.is-resizable .web-preview__frame {
+		max-width: 100%;
+
+		@include break-large {
+			box-shadow: inset 0 0 1px #e1e1e1;
+			max-width: 375px;
+			border-radius: 50px; /* stylelint-disable-line scales/radii */
+		}
+	}
+
 	.web-preview__frame-wrapper.is-resizable {
 		margin: 0;
 		padding: 0;
 		background-color: transparent;
 	}
 
-	// Will be used to disable interaction with iframe
-	// .web-preview__frame {
-	// 	pointer-events: none;
-	// }
-
 	.web-preview__frame {
-		border: 1px solid rgba( 0, 0, 0, 0.12 );
-		border-top-width: 0;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 0 0 6px 6px;
+		border: 10px solid var( --color-print );
+		border-radius: 20px; /* stylelint-disable-line scales/radii */
 		box-sizing: border-box;
+		height: 812px;
+		width: 100%;
+		filter: none;
+
+		@include break-large {
+			max-width: 95%;
+			margin-top: 0;
+			box-shadow: inset 0 0 1px #e1e1e1;
+			filter: drop-shadow( 0 3px 8px rgba( 0, 0, 0, 0.05 ) ) drop-shadow( 0 3px 3px rgba( 0, 0, 0, 0.03 ) );
+			border-radius: 50px; /* stylelint-disable-line scales/radii */
+		}
+		
 	}
+
 	.spinner-line {
 		display: none;
 	}

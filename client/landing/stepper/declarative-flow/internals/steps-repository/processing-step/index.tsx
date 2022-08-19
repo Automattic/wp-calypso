@@ -41,8 +41,8 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		( async () => {
 			if ( typeof action === 'function' ) {
 				try {
-					await action();
-					submit?.( {}, ProcessingResult.SUCCESS );
+					const destination = await action();
+					submit?.( destination, ProcessingResult.SUCCESS );
 				} catch ( e ) {
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
@@ -77,7 +77,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	}, [ simulatedProgress, progress, __ ] );
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = [ 'link-in-bio', 'newsletters' ].includes( flowName );
+	const isJetpackPowered = [ 'link-in-bio', 'newsletter' ].includes( flowName );
 
 	return (
 		<StepContainer

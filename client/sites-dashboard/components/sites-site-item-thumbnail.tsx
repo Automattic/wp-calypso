@@ -26,7 +26,14 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 		const updatedAt = new Date( site.options.updated_at );
 		updatedAt.setMinutes( 0 );
 		updatedAt.setSeconds( 0 );
-		siteUrl = addQueryArgs( siteUrl, { v: updatedAt.getTime() / 1000 } );
+		siteUrl = addQueryArgs( siteUrl, {
+			v: updatedAt.getTime() / 1000,
+
+			// This combination of flags stops free site headers and cookie banners from appearing.
+			iframe: true,
+			preview: true,
+			hide_banners: true,
+		} );
 	}
 
 	return (
