@@ -1,4 +1,5 @@
 import { Gridicon, Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
@@ -15,14 +16,18 @@ import './style.scss';
 interface Props {
 	item: Plugin;
 	columnKey: string;
-	selectedSite: SiteData;
+	selectedSite?: SiteData;
+	isSmallScreen?: boolean;
 }
 
 export default function PluginRowFormatter( {
 	item,
 	columnKey,
 	selectedSite,
+	isSmallScreen,
 }: Props ): ReactElement | any {
+	const translate = useTranslate();
+
 	const PluginDetailsButton = ( props: { className: string; children: ReactChild } ) => {
 		return <Button borderless compact href={ `/plugins/${ item.slug }` } { ...props } />;
 	};
@@ -34,15 +39,22 @@ export default function PluginRowFormatter( {
 		return moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
 	};
 
-	const { activation: canActivate, autoupdate: canUpdate } = getAllowedPluginActions(
-		item,
-		state,
-		selectedSite
-	);
+	let canActivate;
+	let canUpdate;
+
+	if ( selectedSite ) {
+		const { activation, autoupdate } = getAllowedPluginActions( item, state, selectedSite );
+		canActivate = activation;
+		canUpdate = autoupdate;
+	}
 
 	switch ( columnKey ) {
 		case 'plugin':
-			return (
+			return isSmallScreen ? (
+				<PluginDetailsButton className="plugin-row-formatter__plugin-name-card">
+					{ item.name }
+				</PluginDetailsButton>
+			) : (
 				<span className="plugin-row-formatter__plugin-name-container">
 					{ item.icon ? (
 						<img
@@ -69,7 +81,11 @@ export default function PluginRowFormatter( {
 			return (
 				canActivate && (
 					<div className="plugin-row-formatter__toggle">
-						<PluginActivateToggle hideLabel plugin={ item } site={ selectedSite } />
+						<PluginActivateToggle
+							hideLabel={ ! isSmallScreen }
+							plugin={ item }
+							site={ selectedSite }
+						/>
 					</div>
 				)
 			);
@@ -78,7 +94,7 @@ export default function PluginRowFormatter( {
 				canUpdate && (
 					<div className="plugin-row-formatter__toggle">
 						<PluginAutoupdateToggle
-							hideLabel
+							hideLabel={ ! isSmallScreen }
 							plugin={ item }
 							site={ selectedSite }
 							wporg={ !! item.wporg }
@@ -89,7 +105,13 @@ export default function PluginRowFormatter( {
 			);
 		case 'last-updated':
 			if ( item.last_updated ) {
-				return <div>{ ago( item.last_updated ) }</div>;
+				return isSmallScreen
+					? translate( 'Last updated %(ago)s', {
+							args: {
+								ago: ago( item.last_updated ),
+							},
+					  } )
+					: ago( item.last_updated );
 			}
 			return null;
 	}

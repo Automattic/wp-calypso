@@ -1,16 +1,16 @@
-import { ListTile } from '@automattic/components';
+import { ListTile, useSiteLaunchStatusLabel } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { useSiteStatus } from '../hooks/use-site-status';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
-import { SiteUrl } from './sites-site-url';
+import { SiteUrl, Truncated } from './sites-site-url';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
@@ -64,11 +64,21 @@ const ListTileSubtitle = styled.div`
 	align-items: center;
 `;
 
+const SitePlan = styled.div`
+	display: flex;
+	line-height: 16px;
+`;
+
+const SitePlanIcon = styled.div`
+	margin-right: 6px;
+`;
+
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
-	const { translatedStatus } = useSiteStatus( site );
+	const translatedStatus = useSiteLaunchStatusLabel( site );
 
 	const isP2Site = site.options?.is_wpforteams_site;
+	const isAtomicSite = site?.is_wpcom_atomic;
 
 	return (
 		<Row>
@@ -95,20 +105,23 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					subtitle={
 						<ListTileSubtitle>
-							<SiteUrl
-								className={ css( { lineHeight: 1 } ) }
-								href={ site.URL }
-								target="_blank"
-								rel="noreferrer"
-								title={ site.URL }
-							>
-								{ displaySiteUrl( site.URL ) }
+							<SiteUrl href={ site.URL } className={ css( { lineHeight: 1 } ) } title={ site.URL }>
+								<Truncated>{ displaySiteUrl( site.URL ) }</Truncated>
 							</SiteUrl>
 						</ListTileSubtitle>
 					}
 				/>
 			</Column>
-			<Column mobileHidden>{ site.plan.product_name_short }</Column>
+			<Column mobileHidden>
+				<SitePlan>
+					{ site.jetpack && ! isAtomicSite && (
+						<SitePlanIcon>
+							<JetpackLogo size={ 16 } />
+						</SitePlanIcon>
+					) }
+					{ site.plan.product_name_short }
+				</SitePlan>
+			</Column>
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>

@@ -122,7 +122,7 @@ function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 							plugin.author_name
 						) : (
 							<a
-								href={ `/plugin/${
+								href={ `/plugins/${
 									selectedSite?.slug || ''
 								}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"` }
 							>

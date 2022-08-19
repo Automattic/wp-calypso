@@ -7,19 +7,13 @@ import userEvent from '@testing-library/user-event';
 import * as record from 'calypso/state/analytics/actions/record';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import ActionButtons from '../action-buttons';
 
 jest.mock( 'calypso/state/ui/selectors' );
 jest.mock( 'calypso/state/selectors/get-does-rewind-need-credentials' );
 
 const recordTracksEvent = jest.spyOn( record, 'recordTracksEvent' );
-
-function renderWithRedux( ui ) {
-	return renderWithProvider( ui, {
-		initialState: {},
-	} );
-}
 
 describe( 'ActionButtons', () => {
 	beforeAll( () => {
@@ -31,50 +25,66 @@ describe( 'ActionButtons', () => {
 		jest.clearAllMocks();
 	} );
 
-	test( "disables all buttons when 'rewindId' is not provided", async () => {
-		renderWithRedux( <ActionButtons /> );
+	test( "disables all buttons when 'rewindId' is not provided", () => {
+		render( <ActionButtons /> );
+		const downloadButton = screen.getByRole( 'button', { name: /download/i } );
+		const restoreButton = screen.getByRole( 'button', { name: /restore/i } );
 
-		expect( screen.getByText( 'Download backup' ) ).toHaveAttribute( 'disabled' );
-		expect( screen.getByText( 'Restore to this point' ) ).toHaveAttribute( 'disabled' );
+		expect( downloadButton ).toBeDisabled();
+		expect( restoreButton ).toBeDisabled();
 	} );
 
-	test( "disables all buttons when 'disabled' is true", async () => {
-		renderWithRedux( <ActionButtons disabled rewindId="test" /> );
+	test( "disables all buttons when 'disabled' is true", () => {
+		render( <ActionButtons disabled rewindId="test" /> );
+		const downloadButton = screen.getByRole( 'button', { name: /download/i } );
+		const restoreButton = screen.getByRole( 'button', { name: /restore/i } );
 
-		expect( screen.getByText( 'Download backup' ) ).toHaveAttribute( 'disabled' );
-		expect( screen.getByText( 'Restore to this point' ) ).toHaveAttribute( 'disabled' );
+		expect( downloadButton ).toBeDisabled();
+		expect( restoreButton ).toBeDisabled();
 	} );
 
-	test( "enables the download button when 'rewindId' is provided'", async () => {
-		renderWithRedux( <ActionButtons rewindId="test" /> );
+	test( "enables the download button when 'rewindId' is provided'", () => {
+		const rewindId = 'test';
+		render( <ActionButtons rewindId={ rewindId } /> );
+		const downloadButton = screen.getByRole( 'link', { name: /download/i } );
 
-		expect( screen.getByText( 'Download backup' ) ).not.toHaveAttribute( 'disabled' );
-		expect( screen.getByText( 'Download backup' ) ).toHaveAttribute( 'href' );
+		expect( downloadButton ).toHaveAttribute(
+			'href',
+			expect.stringMatching( `/download/${ rewindId }` )
+		);
+		expect( downloadButton ).not.toBeDisabled();
 	} );
 
 	test( 'enables the restore button when credentials are not needed', async () => {
 		getDoesRewindNeedCredentials.mockImplementation( () => false );
+		const rewindId = 'test';
 
-		renderWithRedux( <ActionButtons rewindId="test" /> );
+		render( <ActionButtons rewindId={ rewindId } /> );
+		const restoreButton = screen.getByRole( 'link', { name: /restore/i } );
 
-		expect( screen.getByText( 'Restore to this point' ) ).toHaveAttribute( 'href' );
-		expect( screen.getByText( 'Restore to this point' ) ).not.toHaveAttribute( 'disabled' );
+		expect( restoreButton ).toHaveAttribute(
+			'href',
+			expect.stringMatching( `/restore/${ rewindId }` )
+		);
+		expect( restoreButton ).not.toBeDisabled();
 	} );
 
 	test( 'disables the restore button when credentials are needed', async () => {
 		getDoesRewindNeedCredentials.mockImplementation( () => true );
 
-		renderWithRedux( <ActionButtons rewindId="test" /> );
+		render( <ActionButtons rewindId="test" /> );
+		const restoreButton = screen.getByRole( 'button', { name: /restore/i } );
 
-		expect( screen.getByText( 'Restore to this point' ) ).toHaveAttribute( 'disabled' );
+		expect( restoreButton ).toBeDisabled();
 	} );
 
 	test( 'emits a Tracks event when the download button is enabled and clicked', async () => {
 		const user = userEvent.setup();
 		const rewindId = 'test';
-		renderWithRedux( <ActionButtons rewindId={ rewindId } /> );
+		render( <ActionButtons rewindId={ rewindId } /> );
+		const downloadButton = screen.getByRole( 'link', { name: /download/i } );
 
-		await user.click( screen.getByText( 'Download backup' ) );
+		await user.click( downloadButton );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_jetpack_backup_download', {
 			rewind_id: rewindId,
@@ -83,12 +93,12 @@ describe( 'ActionButtons', () => {
 
 	test( 'emits a Tracks event when the restore button is enabled and clicked', async () => {
 		const user = userEvent.setup();
-
 		getDoesRewindNeedCredentials.mockImplementation( () => false );
 		const rewindId = 'test';
-		renderWithRedux( <ActionButtons rewindId={ rewindId } /> );
+		render( <ActionButtons rewindId={ rewindId } /> );
 
-		await user.click( screen.getByText( 'Restore to this point' ) );
+		const restoreButton = screen.getByRole( 'link', { name: /restore/i } );
+		await user.click( restoreButton );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_jetpack_backup_restore', {
 			rewind_id: rewindId,

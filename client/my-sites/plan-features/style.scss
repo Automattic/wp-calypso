@@ -251,7 +251,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__table-item.has-partial-border {
-	&::after {
+	&::after, &::before {
 		content: '';
 		display: block;
 		height: 1px;
@@ -265,6 +265,10 @@ $plan-features-sidebar-width: 272px;
 			margin: 0 12px;
 			width: calc( 100% - 24px );
 		}
+	}
+	&::before {
+		top: -2px;
+		bottom: auto;
 	}
 }
 
@@ -282,6 +286,45 @@ $plan-features-sidebar-width: 272px;
 		position: absolute;
 		top: -3px;
 		width: 100%;
+	}
+}
+.plan-features__table-item.is-dash {
+	text-align: center;
+
+	&::after {
+		content: '-';
+	}
+}
+.plan-features__table-item.is-blank {
+	height: 35px;
+	z-index: 1;
+
+	&::after, &::before {
+		content: '';
+		display: block;
+		height: 1px;
+		width: calc( 100% - 48px );
+		border-bottom: 1px solid #fff;
+		position: absolute;
+		bottom: 0;
+		margin: 0 24px;
+
+		@include breakpoint-deprecated( '<1040px' ) {
+			margin: 0 12px;
+			width: calc( 100% - 24px );
+		}
+	}
+	&::before {
+		top: -2px;
+		bottom: auto;
+	}
+}
+
+.plan-features__table-item.is-plans-quick-improvements .info-popover .gridicon {
+	color: #a7aaad;
+
+	&:hover {
+		color: #3c434a;
 	}
 }
 

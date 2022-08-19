@@ -12,6 +12,7 @@ import { capitalize, find, flow, isEmpty } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
@@ -147,7 +148,10 @@ export class PluginsMain extends Component {
 
 		return [
 			{
-				title: translate( 'All', { context: 'Filter label for plugins list' } ),
+				title:
+					isWithinBreakpoint( '<480px' ) && this.props.isJetpackCloud
+						? translate( 'All Plugins', { context: 'Filter label for plugins list' } )
+						: translate( 'All', { context: 'Filter label for plugins list' } ),
 				path: '/plugins/manage' + siteFilter,
 				id: 'all',
 			},
@@ -173,10 +177,20 @@ export class PluginsMain extends Component {
 		return this.props.requestingPluginsForSites;
 	}
 
+	getPluginCount( filterId ) {
+		if ( 'updates' === filterId ) {
+			return this.props.pluginUpdateCount;
+		}
+		if ( 'all' === filterId ) {
+			return this.props.allPluginsCount;
+		}
+	}
+
 	getSelectedText() {
 		const found = find( this.getFilters(), ( filterItem ) => this.props.filter === filterItem.id );
 		if ( 'undefined' !== typeof found ) {
-			return found.title;
+			const count = this.getPluginCount( found.id );
+			return { title: found.title, count };
 		}
 		return '';
 	}
@@ -424,20 +438,24 @@ export class PluginsMain extends Component {
 				key: filterItem.id,
 				path: filterItem.path,
 				selected: filterItem.id === this.props.filter,
+				count: this.getPluginCount( filterItem.id ),
 			};
 
-			if ( 'updates' === filterItem.id ) {
-				attr.count = this.props.pluginUpdateCount;
-			}
-			if ( 'all' === filterItem.id ) {
-				attr.count = this.props.allPluginsCount;
-			}
 			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
 		} );
 
 		const pageTitle = this.props.translate( 'Plugins', { textOnly: true } );
 
 		const { isJetpackCloud } = this.props;
+
+		const { title, count } = this.getSelectedText();
+
+		const selectedTextContent = (
+			<span>
+				{ title }
+				{ isJetpackCloud && count ? <Count count={ count } compact={ true } /> : null }
+			</span>
+		);
 
 		const content = (
 			<>
@@ -484,9 +502,17 @@ export class PluginsMain extends Component {
 							<div className="plugins__main-header">
 								<SectionNav
 									applyUpdatedStyles={ isJetpackCloud }
-									selectedText={ this.getSelectedText() }
+									selectedText={ selectedTextContent }
+									className={ classNames( {
+										'is-jetpack-cloud': isJetpackCloud,
+									} ) }
 								>
-									<NavTabs>{ navItems }</NavTabs>
+									<NavTabs
+										selectedText={ isJetpackCloud && title }
+										selectedCount={ isJetpackCloud && count }
+									>
+										{ navItems }
+									</NavTabs>
 									{ ! isJetpackCloud && (
 										<Search
 											pinned

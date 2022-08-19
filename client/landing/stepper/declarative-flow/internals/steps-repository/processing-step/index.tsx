@@ -41,8 +41,8 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		( async () => {
 			if ( typeof action === 'function' ) {
 				try {
-					await action();
-					submit?.( {}, ProcessingResult.SUCCESS );
+					const destination = await action();
+					submit?.( destination, ProcessingResult.SUCCESS );
 				} catch ( e ) {
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
@@ -76,6 +76,9 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		return () => clearTimeout( timeoutReference );
 	}, [ simulatedProgress, progress, __ ] );
 
+	const flowName = props.flow || '';
+	const isJetpackPowered = [ 'link-in-bio', 'newsletter' ].includes( flowName );
+
 	return (
 		<StepContainer
 			shouldHideNavButtons={ true }
@@ -103,6 +106,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 			}
 			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered={ isJetpackPowered }
 		/>
 	);
 };

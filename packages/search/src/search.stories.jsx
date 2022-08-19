@@ -102,3 +102,5 @@ export const WithDifferentColor = () => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<BoxedSearch className="stories__search--with-different-color" />
 );
+
+export const RTLMode = () => <BoxedSearch dir="rtl" />;

@@ -151,8 +151,24 @@
 		font-weight: normal;
 	}
 	margin-bottom: 0;
-	@include break-large() {
+	@include breakpoint-deprecated( '>660px' ) {
 		background: var( --color-primary-0 );
 		box-shadow: none;
+	}
+}
+.is-jetpack-cloud {
+	@include breakpoint-deprecated( '>660px' ) {
+		.section-nav-tabs.is-dropdown {
+			margin: 8px 0;
+			z-index: 99;
+			.select-dropdown__header .count {
+				top: unset;
+				margin-inline-end: 20px;
+			}
+			.select-dropdown__item-count .count {
+				position: static;
+				color: var( --color-primary );
+			}
+		}
 	}
 }

@@ -8,15 +8,29 @@ const NoSitesLayout = styled( EmptyContent )`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+
+	${ ( { illustration } ) =>
+		! illustration && {
+			marginTop: '10%',
+		} }
+
+	.empty-content__illustration {
+		margin-bottom: 30px;
+	}
 `;
 
 const SecondaryText = styled.p`
-	max-width: 650px;
+	max-width: 550px;
+	font-size: 14px;
+	margin-bottom: 0px;
 `;
 
 const Title = styled.div`
-	margin-top: 50%;
+	font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+	font-size: 32px;
+	margin-bottom: 20px;
 `;
+
 type SitesContainerProps = {
 	status: string;
 
@@ -116,13 +130,17 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 
 	return (
 		<NoSitesLayout
-			title={ __( 'Create your first site' ) }
-			line={ __(
-				"It's time to get your ideas online. We'll guide you through the process of creating a site that best suits your needs."
-			) }
+			title={ <Title> { __( 'Create your first site' ) } </Title> }
+			line={
+				<SecondaryText>
+					{ __(
+						"It's time to get your ideas online. We'll guide you through the process of creating a site that best suits your needs."
+					) }
+				</SecondaryText>
+			}
 			action={ __( 'Create your first site' ) }
 			actionURL={ '/start?source=sites-dashboard&ref=calypso-nosites' }
-			illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+			illustration={ '/calypso/images/illustrations/illustration-empty-sites.svg' }
 		/>
 	);
 };

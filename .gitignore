@@ -112,3 +112,6 @@ desktop/.yarn/*
 !.yarn/versions
 .pnp.*
 yarn-json-output.json
+
+# Profile results:
+/profiles/

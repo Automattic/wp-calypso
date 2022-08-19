@@ -17,6 +17,7 @@ export interface SiteData {
 	is_wpcom_atomic?: boolean;
 	is_private?: boolean;
 	is_coming_soon?: boolean;
+	visible?: boolean;
 	launch_status?: string;
 	// TODO: fill out the rest of this
 }

@@ -195,6 +195,12 @@ module.exports = {
 					},
 				},
 				{
+					files: [ './config/*.json' ],
+					rules: {
+						'sort-keys': 'warn',
+					},
+				},
+				{
 					// These files don't have the `@automattic` prefix in the name
 					files: [
 						'./package.json',

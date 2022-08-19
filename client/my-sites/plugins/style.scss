@@ -1,3 +1,5 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
 @import './grid-mixins.scss';
 
 .is-section-plugins .main {
@@ -82,7 +84,7 @@ body.is-section-plugins.theme-default.color-scheme {
 	display: flex;
 	align-items: center;
 
-	@media screen and ( max-width: 960px ) {
+	@media screen and ( max-width: 1280px ) {
 		.plugins__button {
 			border: none;
 		}
@@ -120,20 +122,18 @@ body.is-section-plugins.theme-default.color-scheme {
 .plugin-details__layout {
 	padding-top: 54px;
 
-	@include breakpoint-deprecated( '<960px' ) {
-		padding-top: 0;
-	}
-
 	@include display-grid;
 	grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr ) 350px;
 	grid-column-gap: 60px;
 	grid-template-areas: 'header header actions'
 						'content content actions';
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( '<1280px' ) {
 		grid-template-areas: 'header header header'
 							'actions actions actions'
 							'content content content';
+		grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+		padding-top: 0;
 	}
 
 	.plugin-details__header {
@@ -151,7 +151,7 @@ body.is-section-plugins.theme-default.color-scheme {
 		padding: 40px;
 		height: fit-content;
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( '<1280px' ) {
 			margin-top: 40px;
 		}
 	}
@@ -190,23 +190,45 @@ body.is-section-plugins.theme-default.color-scheme {
 		}
 	}
 
+	.section-nav-tabs__list {
+		box-shadow: inset 0 -1px 0 rgba( 0, 0, 0, 0.05 );
+	}
+
 	.section-nav-tab {
+		border: none;
+
+		&:first-child .section-nav-tab__link {
+			padding-left: 0;
+		}
+
 		&.is-selected,
 		&:hover:not( .is-selected ) {
 			border-bottom-color: transparent;
 		}
 
 		.section-nav-tab__link {
-			font-size: $font-body-small;
+			font-size: $font-body;
+			color: var( --studio-gray-60 );
+			padding: 8px 8px 12px;
 
 			&:hover {
 				background-color: transparent;
+				color: var( --studio-gray-100 );
 			}
 		}
 
 		&.is-selected .section-nav-tab__link {
-			font-weight: bold;
 			border-bottom: none;
+			color: var( --studio-gray-100 );
+
+			&:hover {
+				color: var( --studio-gray-100 );
+			}
+			
+			.section-nav-tab__text {
+				padding-bottom: 10px;
+				border-bottom: 1.5px solid var( --studio-gray-100 );
+			}
 		}
 	}
 
@@ -324,36 +346,110 @@ body.is-section-plugins header .select-dropdown__item {
 	color: var( --studio-gray-60 );
 	margin-bottom: 8px;
 }
+.plugins__page-title-container {
+	display: none;
+	@include breakpoint-deprecated( '>660px' ) {
+		display: block;
+	}
+}
 .plugins__jetpack-cloud {
 	.plugins__main-header .section-nav {
-		border-width: 0;
+		border-width: 1px;
+		@include breakpoint-deprecated( '>660px' ) {
+			border-width: 0;
+		}
 	}
 	.plugins__main-header {
-		margin: 0;
+		margin: 9px 0;
+		@include breakpoint-deprecated( '>660px' ) {
+			margin: 0;
+		}
 	}
 }
 .plugins__top-container {
 	margin: 0 -32px;
-	padding: 0 48px;
-	border-bottom: 1px solid var( --color-primary-5 );
+	padding: 8px 48px 0;
+	@include breakpoint-deprecated( '>660px' ) {
+		padding: 16px 48px 0;
+		border-bottom: 1px solid var( --color-primary-5 );
+	}
+	@include break-large() {
+		padding: 6px 48px 0;
+	}
 }
 .plugins__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
-	padding: 0;
+	@include break-large() {
+		padding: 0;
+	}
 }
 .plugins__main-content {
 	// We need these negative margin values because we want to make the container full-width,
 	// but our element is inside a limited-width parent.
-	margin: 0 -32px -32px;
-	padding: 16px 48px;
+	margin: 0 -32px;
+	padding: 0 48px;
 	min-height: 100vh;
-	background: rgba( 255, 255, 255, 0.5 );
+	@include breakpoint-deprecated( '>660px' ) {
+    	padding: 16px 48px;
+		background: rgba( 255, 255, 255, 0.5 );
+	}
 }
 .plugins__search {
 	height: 52px;
 	box-shadow: 0 0 0 1px var( --color-neutral-5 );
+	margin-block-end: 8px;
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-block-end: 0;
+	}
 	.search.is-open {
 		box-shadow: none;
+	}
+}
+
+.legacy {
+	.plugin-details__body {
+		.section-nav-tabs__list {
+			box-shadow: none;
+		}
+
+		.section-nav-tab {
+			border-bottom: 2px solid transparent;
+
+			&.is-selected,
+			&:hover:not( .is-selected ) {
+				border-bottom-color: transparent;
+			}
+
+			&:first-child .section-nav-tab__link {
+				padding-left: 0;
+			}
+
+			.section-nav-tab__link {
+				font-size: $font-body-small;
+				color: var( --color-primary );
+				padding: 16px 16px 14px;
+
+				&:hover {
+					background-color: transparent;
+					color: var( --color-primary );
+				}
+
+				.section-nav-tab__text {
+					padding-bottom: 0;
+					border-bottom: none;
+				}
+			}
+
+			&.is-selected .section-nav-tab__link {
+				font-weight: bold;
+				border-bottom: none;
+				color: var( --color-neutral-70 );
+
+				&:hover {
+					color: var( --color-neutral-70 );
+				}
+			}
+		}
 	}
 }
