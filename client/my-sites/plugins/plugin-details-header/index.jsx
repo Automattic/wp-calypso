@@ -22,7 +22,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 		return <PluginDetailsHeaderPlaceholder />;
 	}
 
-	if ( legacyVersion ) {
+	if ( legacyVersion || isJetpackCloud ) {
 		return <LegacyPluginDetailsHeader plugin={ plugin } isJetpackCloud={ isJetpackCloud } />;
 	}
 
@@ -104,7 +104,7 @@ function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 
 	return (
 		<div className="plugin-details-header__container">
-			<div className="plugin-details-header__tags">{ tags }</div>
+			{ ! isJetpackCloud && <div className="plugin-details-header__tags">{ tags }</div> }
 			<div className="plugin-details-header__main-info">
 				<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
 				<div className="plugin-details-header__title-container">
