@@ -52,6 +52,8 @@ export default function PluginRowFormatter( {
 	}
 
 	switch ( columnKey ) {
+		case 'site-name':
+			return selectedSite?.domain;
 		case 'plugin':
 			return isSmallScreen ? (
 				<PluginDetailsButton className="plugin-row-formatter__plugin-name-card">

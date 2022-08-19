@@ -54,7 +54,7 @@ export default function UpdatePlugin( {
 		return sitePlugin?.update && site.canUpdateFiles;
 	} );
 
-	const allowedActions = selectedSite && getAllowedPluginActions( plugin, state, selectedSite );
+	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
 
 	let content;
 
