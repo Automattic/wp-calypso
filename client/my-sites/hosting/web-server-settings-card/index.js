@@ -112,6 +112,22 @@ const WebServerSettingsCard = ( {
 						);
 					} ) }
 				</FormSelect>
+				<FormSettingExplanation className="web-server-settings-card__php-version-explanation">
+					{ translate(
+						'The version of PHP that powers your website. See {{button}}frequently asked questions{{/button}} for more information.',
+						{
+							components: {
+								button: (
+									<Button
+										href="https://wordpress.com/support/php-version-switching/"
+										borderless
+										compact
+									/>
+								),
+							},
+						}
+					) }
+				</FormSettingExplanation>
 				{ ! isPhpVersionButtonDisabled && (
 					<Button
 						className="web-server-settings-card__php-set-version"
