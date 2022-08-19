@@ -55,27 +55,11 @@ describe( '#localizeUrl', () => {
 		} );
 	} );
 
-	test( 'should only change non-whitelisted relative URLs', () => {
+	test( 'should not change relative URLs', () => {
 		[ '/me/account', '/settings' ].forEach( ( fullUrl ) => {
 			expect( localizeUrl( fullUrl, 'en' ) ).toEqual( fullUrl );
 			expect( localizeUrl( fullUrl, 'fr' ) ).toEqual( fullUrl );
 		} );
-
-		expect( localizeUrl( '/fr/themes', 'es', true ) ).toEqual( '/fr/themes' );
-		expect( localizeUrl( '/fr/themes', 'es', false ) ).toEqual( '/fr/themes' );
-		expect( localizeUrl( '/some/path', 'es', true ) ).toEqual( '/some/path' );
-		expect( localizeUrl( '/some/path', 'es', false ) ).toEqual( '/some/path' );
-		expect( localizeUrl( 'https://example.com', 'es', true ) ).toEqual( 'https://example.com' );
-		expect( localizeUrl( 'https://example.com', 'es', false ) ).toEqual( 'https://example.com' );
-		expect( localizeUrl( 'https://wordpress.com/themes', 'es', false ) ).toEqual(
-			'https://wordpress.com/es/themes/'
-		);
-		expect( localizeUrl( localizeUrl( '/themes', 'de', false ), 'de', false ) ).toEqual(
-			'/de/themes/'
-		);
-		expect( localizeUrl( localizeUrl( '/me/account', 'de', false ), 'de', false ) ).toEqual(
-			'/me/account'
-		);
 	} );
 
 	test( 'handles invalid URLs', () => {
@@ -341,7 +325,6 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://wordpress.com/themes/', 'de', true ) ).toEqual(
 			'https://wordpress.com/themes/'
 		);
-		expect( localizeUrl( '/themes/', 'de', false ) ).toEqual( '/de/themes/' );
 		expect( localizeUrl( 'https://wordpress.com/themes/', 'pl', true ) ).toEqual(
 			'https://wordpress.com/themes/'
 		);
