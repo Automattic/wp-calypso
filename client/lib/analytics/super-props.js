@@ -16,6 +16,7 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 
 	const omitSelectedSite = shouldReportOmitBlogId( eventProperties.path );
 	const selectedSite = omitSelectedSite ? null : getSelectedSite( state );
+	const isDomainOnlySite = selectedSite?.options?.is_domain_only ?? false;
 
 	if ( selectedSite ) {
 		Object.assign( superProps, {
@@ -29,6 +30,8 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 
 			site_id_label: selectedSite.jetpack ? 'jetpack' : 'wpcom',
 			site_plan_id: selectedSite.plan ? selectedSite.plan.product_id : null,
+
+			site: isDomainOnlySite ? 'no-site' : selectedSite?.slug,
 		} );
 	}
 
