@@ -53,8 +53,18 @@ export function useCategories(
 
 	const categories = {
 		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
-		paid: { name: __( 'Top premium plugins' ), slug: 'paid', tags: [] },
-		popular: { name: __( 'Top free plugins' ), slug: 'popular', tags: [] },
+		paid: {
+			name: __( 'Top premium plugins' ),
+			categoryDescription: __( 'A collection of the most popular premium plugins on offer.' ),
+			slug: 'paid',
+			tags: [],
+		},
+		popular: {
+			name: __( 'Top free plugins' ),
+			categoryDescription: __( 'The most popular free plugins to extend your WordPress site.' ),
+			slug: 'popular',
+			tags: [],
+		},
 		featured: { name: __( 'Editor’s pick' ), slug: 'featured', tags: [] },
 		seo: {
 			name: __( 'Search Engine Optimization' ),
