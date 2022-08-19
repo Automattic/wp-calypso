@@ -63,6 +63,14 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
+export const addVideoPressSignupClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'is-videopress-signup' );
+};
+
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -100,6 +108,10 @@ export default {
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
 			addP2SignupClassName();
+			removeWhiteBackground();
+			next();
+		} else if ( context.pathname.includes( 'videopress' ) ) {
+			addVideoPressSignupClassName();
 			removeWhiteBackground();
 			next();
 		} else {
