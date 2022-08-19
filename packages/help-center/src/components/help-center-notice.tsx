@@ -87,7 +87,7 @@ export function HelpCenterActiveTicketNotice( {
 						/* translators: %s humanized date ex: 2 hours ago */
 						__( 'You submitted a request %s.', __i18n_text_domain__ ),
 						getRelativeTimeString( {
-							timestamp: new Date( tickets[ 0 ].time ).getTime(),
+							timestamp: tickets[ 0 ].timestamp,
 							locale,
 							style: 'long',
 						} )

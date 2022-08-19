@@ -33,6 +33,7 @@ export interface SupportTicket {
 	status: string;
 	subject: string;
 	time: Date;
+	timestamp: number;
 	type: string;
 	url: string;
 	when: string;
