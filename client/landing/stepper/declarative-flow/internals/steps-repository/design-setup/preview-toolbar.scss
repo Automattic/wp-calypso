@@ -84,7 +84,7 @@
 		border: 1px solid rgba( 0, 0, 0, 0.12 );
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px 6px 0 0;
-		box-sizing: border-box;
+		box-sizing: content-box;
 	}
 }
 
