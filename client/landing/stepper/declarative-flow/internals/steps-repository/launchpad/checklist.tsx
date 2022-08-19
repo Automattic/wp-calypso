@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import useSiteChecklist from 'calypso/data/site-checklist/use-site-checklist';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -13,6 +14,7 @@ const Checklist = ( { siteId }: ChecklistProps ) => {
 	const [ checklist, setChecklist ] = useState< LaunchpadTask[] >( [] );
 	const siteSlug = useSiteSlugParam();
 	const rawChecklist = useSiteChecklist( siteId.toString() );
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( rawChecklist ) {
@@ -25,9 +27,9 @@ const Checklist = ( { siteId }: ChecklistProps ) => {
 
 	return (
 		<ul className="launchpad__checklist" aria-label="Launchpad Checklist">
-			{ checklist.map( ( task ) => (
-				<ChecklistItem key={ task.id } task={ task } />
-			) ) }
+			{ checklist.length > 0
+				? checklist.map( ( task ) => <ChecklistItem key={ task.id } task={ task } /> )
+				: translate( 'Loading steps.' ) }
 		</ul>
 	);
 };
