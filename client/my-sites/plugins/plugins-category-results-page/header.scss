@@ -1,5 +1,5 @@
 .plugin-category-results-header {
-	padding-top: 48px;
+	padding: 48px 16px 0;
 	margin-bottom: 48px;
 }
 
@@ -16,4 +16,8 @@
 .plugin-category-results-header__subtitle {
 	color: var( --studio-gray-80 );
 	width: 527px;
+
+	@media screen and ( max-width: 543px ) {
+		width: 100%;
+	}
 }
