@@ -13,8 +13,7 @@ import './style.scss';
 const Launchpad: Step = ( { navigation } ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
-	const siteSlugParam = useSiteSlugParam();
-	const siteSlug: string | null = siteSlugParam;
+	const siteSlug = useSiteSlugParam();
 	const flowParam: string | null = useFlowParam();
 
 	const stepContent = (
