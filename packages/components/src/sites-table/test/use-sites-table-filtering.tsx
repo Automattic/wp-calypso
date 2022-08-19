@@ -11,6 +11,10 @@ function createMockSite( {
 	is_private = false,
 	is_coming_soon = false,
 	visible = true,
+	options = {
+		is_redirect: false,
+		unmapped_url: '',
+	},
 }: {
 	ID?: number;
 	name?: string;
@@ -18,6 +22,10 @@ function createMockSite( {
 	is_private?: boolean;
 	is_coming_soon?: boolean;
 	visible?: boolean;
+	options?: {
+		is_redirect?: boolean;
+		unmapped_url?: string;
+	};
 } = {} ) {
 	return {
 		name: name ?? `site ${ ID }`,
@@ -26,6 +34,7 @@ function createMockSite( {
 		is_private,
 		is_coming_soon,
 		visible,
+		options,
 	};
 }
 
@@ -111,18 +120,27 @@ describe( 'useSitesTableFiltering', () => {
 		const private1 = createMockSite( { is_private: true } );
 		const private2 = createMockSite( { is_private: true, visible: false } );
 		const comingSoon = createMockSite( { is_private: true, is_coming_soon: true } );
+		const redirect1 = createMockSite( {
+			options: { is_redirect: true, unmapped_url: 'http://redirect1.com' },
+		} );
+		const redirect2 = createMockSite( {
+			options: { is_redirect: true, unmapped_url: 'http://redirect2.com' },
+		} );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ public1, public2, private1, private2, comingSoon ], {
-				search: '',
-				status,
-			} )
+			useSitesTableFiltering(
+				[ public1, public2, private1, private2, comingSoon, redirect1, redirect2 ],
+				{
+					search: '',
+					status,
+				}
+			)
 		);
 
 		expect( result.current.statuses ).toEqual( [
 			{
 				name: 'all',
-				count: 4, // hidden site not included in count
+				count: 6, // hidden site not included in count
 				title: expect.any( String ),
 				hiddenCount: 1,
 			},
@@ -141,6 +159,12 @@ describe( 'useSitesTableFiltering', () => {
 			{
 				name: 'coming-soon',
 				count: 1,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'redirect',
+				count: 2,
 				title: expect.any( String ),
 				hiddenCount: 0,
 			},
@@ -184,6 +208,12 @@ describe( 'useSitesTableFiltering', () => {
 			{
 				name: 'coming-soon',
 				count: 1,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'redirect',
+				count: 0,
 				title: expect.any( String ),
 				hiddenCount: 0,
 			},

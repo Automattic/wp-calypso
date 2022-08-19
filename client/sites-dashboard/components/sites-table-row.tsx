@@ -80,6 +80,11 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isAtomicSite = site?.is_wpcom_atomic;
 
+	let siteUrl = site.URL;
+	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
+		siteUrl = site.options?.unmapped_url;
+	}
+
 	return (
 		<Row>
 			<Column>
@@ -105,8 +110,8 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					subtitle={
 						<ListTileSubtitle>
-							<SiteUrl href={ site.URL } className={ css( { lineHeight: 1 } ) } title={ site.URL }>
-								<Truncated>{ displaySiteUrl( site.URL ) }</Truncated>
+							<SiteUrl href={ siteUrl } className={ css( { lineHeight: 1 } ) } title={ siteUrl }>
+								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</SiteUrl>
 						</ListTileSubtitle>
 					}

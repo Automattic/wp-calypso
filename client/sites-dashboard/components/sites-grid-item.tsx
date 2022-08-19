@@ -47,6 +47,11 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 		title: __( 'Visit Dashboard' ),
 	};
 
+	let siteUrl = site.URL;
+	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
+		siteUrl = site.options?.unmapped_url;
+	}
+
 	return (
 		<SitesGridTile
 			leading={
@@ -70,8 +75,8 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 				</>
 			}
 			secondary={
-				<SiteUrl href={ site.URL } title={ site.URL } className={ css( { lineHeight: 1 } ) }>
-					<Truncated>{ displaySiteUrl( site.URL ) }</Truncated>
+				<SiteUrl href={ siteUrl } title={ siteUrl } className={ css( { lineHeight: 1 } ) }>
+					<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 				</SiteUrl>
 			}
 		/>

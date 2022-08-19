@@ -69,6 +69,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 			'coming-soon': 0,
 			public: 0,
 			private: 0,
+			redirect: 0,
 		};
 
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
@@ -88,7 +89,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 
 				return groups;
 			},
-			{ all: showHidden ? allSites : [], 'coming-soon': [], public: [], private: [] }
+			{ all: showHidden ? allSites : [], 'coming-soon': [], public: [], private: [], redirect: [] }
 		);
 
 		for ( const status of statuses ) {
