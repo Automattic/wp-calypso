@@ -1,4 +1,4 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale, getRelativeTimeString } from '@automattic/i18n-utils';
 import { ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -73,6 +73,8 @@ export function HelpCenterActiveTicketNotice( {
 }: {
 	tickets: SupportTicket[] | undefined;
 } ) {
+	const locale = useLocale();
+
 	if ( ! tickets || ! tickets.length ) {
 		return null;
 	}
@@ -83,12 +85,19 @@ export function HelpCenterActiveTicketNotice( {
 				<strong>
 					{ sprintf(
 						/* translators: %s humanized date ex: 2 hours ago */
-						__( 'You submitted a request %s.' ),
-						tickets[ 0 ].when
+						__( 'You submitted a request %s.', __i18n_text_domain__ ),
+						getRelativeTimeString( {
+							timestamp: new Date( tickets[ 0 ].time ).getTime(),
+							locale,
+							style: 'long',
+						} )
 					) }
 				</strong>
 				&nbsp;
-				{ __( `Rest assured that we got your message and we'll be in touch as soon as we can.` ) }
+				{ __(
+					`Rest assured that we got your message and we'll be in touch as soon as we can.`,
+					__i18n_text_domain__
+				) }
 			</p>
 		</HelpCenterNotice>
 	);
