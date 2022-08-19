@@ -20,6 +20,9 @@ const VideosUi = ( {
 	FooterBar,
 	areVideosTranslated = true,
 	intent = undefined,
+	title,
+	subtitle,
+	options,
 } ) => {
 	const translate = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
@@ -118,26 +121,39 @@ const VideosUi = ( {
 				) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
-						<h2>{ translate( 'Watch five videos.' ) }</h2>
-						<h2>{ translate( 'Save yourself hours.' ) }</h2>
+						<h2>{ title ? title : translate( 'Watch five videos.' ) }</h2>
+						<h2>{ subtitle ? subtitle : translate( 'Save yourself hours.' ) }</h2>
 					</div>
 					<div className="videos-ui__summary">
 						<ul>
-							<li>
-								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-								{ translate( 'Learn the basics of blogging' ) }
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-								{ translate( 'Familiarize yourself with WordPress' ) }
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size={ 18 } /> { translate( 'Upskill and save hours' ) }
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-								{ translate( 'Set yourself up for blogging success' ) }
-							</li>
+							{ ( ! options || options[ 0 ] ) && (
+								<li>
+									<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
+									{ options[ 0 ] ? options[ 0 ] : translate( 'Learn the basics of blogging' ) }
+								</li>
+							) }
+							{ ( ! options || options[ 1 ] ) && (
+								<li>
+									<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
+									{ options[ 1 ]
+										? options[ 1 ]
+										: translate( 'Familiarize yourself with WordPress' ) }
+								</li>
+							) }
+							{ ( ! options || options[ 2 ] ) && (
+								<li>
+									<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
+									{ options[ 2 ] ? options[ 2 ] : translate( 'Upskill and save hours' ) }
+								</li>
+							) }
+							{ ( ! options || options[ 3 ] ) && (
+								<li>
+									<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
+									{ options[ 3 ]
+										? options[ 3 ]
+										: translate( 'Set yourself up for blogging success' ) }
+								</li>
+							) }
 						</ul>
 					</div>
 				</div>
