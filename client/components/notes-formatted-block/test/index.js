@@ -24,11 +24,7 @@ describe( 'FormattedBlock', () => {
 
 	test( 'renders string content without using a custom block if content type is undefined', () => {
 		const MockBlockMapping = FormattedBlockRenderer( {
-			myBlock: ( props ) => (
-				<div type="myfakeblock" { ...props }>
-					MyFakeBlock
-				</div>
-			),
+			myBlock: ( props ) => <div { ...props }>MyFakeBlock</div>,
 		} );
 
 		const children = [
@@ -58,11 +54,7 @@ describe( 'FormattedBlock', () => {
 		userEvent.setup();
 
 		const MockBlockMapping = FormattedBlockRenderer( {
-			myBlock: ( props ) => (
-				<div type="myfakeblock" { ...props }>
-					MyFakeBlock
-				</div>
-			),
+			myBlock: ( props ) => <div { ...props }>MyFakeBlock</div>,
 		} );
 
 		const content = { type: 'myBlock', children: [ 'children1', 'children2' ] };
@@ -79,7 +71,7 @@ describe( 'FormattedBlock', () => {
 	test( 'renders the correct block if the content type is supported', () => {
 		const MockBlockMapping = FormattedBlockRenderer( {
 			myBlock: ( props ) => (
-				<div type="myfakeblock" { ...props }>
+				<div { ...props }>
 					MyFakeBlock
 					{ props.children }
 				</div>
