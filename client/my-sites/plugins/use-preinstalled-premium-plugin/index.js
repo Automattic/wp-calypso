@@ -25,9 +25,10 @@ export default function usePreinstalledPremiumPlugin( pluginSlug ) {
 	);
 
 	const isPreinstalledPremiumPluginActive = useSelector( ( state ) => {
-		if ( ! preinstalledPremiumPlugin || ! selectedSiteId ) {
-			return false;
+		if ( preinstalledPremiumPlugin && selectedSiteId ) {
+			return true;
 		}
+
 		// Always active on simple sites
 		if (
 			! isSiteAutomatedTransfer( state, selectedSiteId ) &&
