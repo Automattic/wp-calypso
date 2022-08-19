@@ -1,13 +1,13 @@
 interface FlowProgress {
-	stepName: string;
-	flowName: string;
+	stepName: string | null;
+	flowName: string | null;
 }
 
-export const useFlowProgress = ( props: FlowProgress | null ) => {
-	if ( ! props ) {
-		return { position: 0, count: 0 };
+export const useFlowProgress = ( { stepName, flowName }: FlowProgress ) => {
+	if ( ! stepName || ! flowName ) {
+		return;
 	}
-	const { stepName, flowName } = props;
+
 	const flows: Record< string, { [ step: string ]: number } > = {
 		newsletter: {
 			intro: 0,

@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
 
-interface Progress {
+interface ProgressBarData {
 	flowName: string;
 	stepName: string;
 }
@@ -14,7 +14,7 @@ interface Props {
 	isReskinned: boolean;
 	rightComponent: Node;
 	pageTitle: string;
-	progressBar: Progress;
+	progressBar: ProgressBarData;
 }
 
 const SignupHeader = ( {
@@ -27,15 +27,15 @@ const SignupHeader = ( {
 	const logoClasses = classnames( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
 	} );
-	const flowProgress = useFlowProgress( progressBar );
+	const hasFlowProgress = useFlowProgress( progressBar );
 
 	return (
 		<div className="signup-header">
-			{ progressBar && (
+			{ hasFlowProgress && (
 				<ProgressBar
 					className={ progressBar.flowName }
-					value={ flowProgress.position }
-					total={ flowProgress.count }
+					value={ hasFlowProgress.position }
+					total={ hasFlowProgress.count }
 				/>
 			) }
 			<WordPressLogo size={ 120 } className={ logoClasses } />
