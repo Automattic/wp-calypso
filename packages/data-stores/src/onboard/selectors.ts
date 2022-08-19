@@ -48,3 +48,5 @@ export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 	hasSelectedDesign( state ) && ! state.selectedFonts;
 
 export const getEditEmail = ( state: State ) => state.editEmail;
+
+export const getBundledPluginSlug = ( state: State ) => state.bundledPluginSlug;
