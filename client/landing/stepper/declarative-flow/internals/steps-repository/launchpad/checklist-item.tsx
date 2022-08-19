@@ -31,7 +31,13 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				<p className={ `launchpad__checklist-item-text ${ isCompleted && 'is-complete' }` }>
 					{ title }
 				</p>
-				<Gridicon className="launchpad__checklist-item-chevron" icon="chevron-right" size={ 18 } />
+				{ ! task.isCompleted && (
+					<Gridicon
+						className="launchpad__checklist-item-chevron"
+						icon="chevron-right"
+						size={ 18 }
+					/>
+				) }
 			</Button>
 		</li>
 	);
