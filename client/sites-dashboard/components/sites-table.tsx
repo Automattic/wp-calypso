@@ -25,7 +25,7 @@ const THead = styled.thead< { top: number } >( ( { top } ) => ( {
 	},
 
 	position: 'sticky',
-	zIndex: 1,
+	zIndex: 3,
 	top: `${ top }px`,
 
 	background: '#fdfdfd',
