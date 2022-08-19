@@ -110,7 +110,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	 * request, we should not utilize the state cache for logged-in requests.
 	 * Note that in dev mode (when the user is not bootstrapped), all requests
 	 * are considered logged out. This shouldn't cause issues because only one
-	 * user is using the cache in dev mode -- so cross-pollination won't happen.
+	 * user is using the cache in dev mode -- so cross-request pollution won't happen.
 	 */
 	const cachedServerState = request.context.isLoggedIn ? {} : stateCache.get( cacheKey ) || {};
 	const getCachedState = ( reducer, storageKey ) => {
