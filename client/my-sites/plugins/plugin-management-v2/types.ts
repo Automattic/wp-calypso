@@ -1,9 +1,10 @@
+import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { MomentInput } from 'moment';
 import type { ReactChild } from 'react';
 
 export type PluginColumns = Array< {
 	key: string;
-	title: ReactChild;
+	title?: ReactChild;
 	smallColumn?: boolean;
 	colSpan?: number;
 } >;
@@ -11,7 +12,7 @@ export type PluginColumns = Array< {
 export type PluginSite = { [ key: string ]: { ID: number; canUpdateFiles: boolean } };
 
 export interface Plugin {
-	id: number;
+	id: string;
 	last_updated: MomentInput;
 	sites: PluginSite;
 	icon: string;
@@ -19,4 +20,12 @@ export interface Plugin {
 	pluginsOnSites: Array< any >;
 	slug: string;
 	wporg: string;
+}
+
+export interface PluginRowFormatterArgs {
+	item: any;
+	columnKey: string;
+	isSmallScreen?: boolean;
+	className?: string;
+	selectedSite?: SiteData;
 }

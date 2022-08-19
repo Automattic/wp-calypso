@@ -1,36 +1,39 @@
 import { Gridicon, Button } from '@automattic/components';
 import classNames from 'classnames';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import PluginRowFormatter from '../plugin-row-formatter';
-import UpdatePlugin from '../update-plugin';
-import type { PluginColumns, Plugin } from '../types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
-import type { ReactElement } from 'react';
+import type { PluginColumns, PluginRowFormatterArgs } from '../types';
+import type { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
 
 interface Props {
 	isLoading: boolean;
 	columns: PluginColumns;
-	items: Array< Plugin >;
-	selectedSite: SiteData;
+	items: Array< any >;
+	rowFormatter: ( args: PluginRowFormatterArgs ) => ReactNode;
+	hasMoreActions: boolean;
+	primaryKey: string;
 }
 
 export default function PluginsTable( {
 	isLoading,
 	columns,
 	items,
-	selectedSite,
+	rowFormatter,
+	hasMoreActions,
+	primaryKey,
 }: Props ): ReactElement {
 	return (
 		<table className="plugins-table__table">
 			<thead>
 				<tr>
-					{ columns.map( ( column ) => (
-						<th colSpan={ column.colSpan || 1 } key={ column.key }>
-							{ column.title }
-						</th>
-					) ) }
+					{ columns
+						.filter( ( column ) => column.title )
+						.map( ( column ) => (
+							<th colSpan={ column.colSpan || 1 } key={ column.key }>
+								{ column.title }
+							</th>
+						) ) }
 					<th></th>
 				</tr>
 			</thead>
@@ -48,13 +51,10 @@ export default function PluginsTable( {
 						<td>
 							<TextPlaceholder />
 						</td>
-						<td>
-							<TextPlaceholder />
-						</td>
 					</tr>
 				) : (
 					items.map( ( item ) => {
-						const id = item.id;
+						const id = item[ primaryKey ];
 						return (
 							<tr key={ `table-row-${ id }` } className="plugins-table__table-row">
 								{ columns.map( ( column ) => {
@@ -65,20 +65,11 @@ export default function PluginsTable( {
 											) }
 											key={ `table-data-${ column.key }-${ id }` }
 										>
-											{
-												<PluginRowFormatter
-													columnKey={ column.key }
-													item={ item }
-													selectedSite={ selectedSite }
-												/>
-											}
+											{ rowFormatter( { columnKey: column.key, item } ) }
 										</td>
 									);
 								} ) }
-								<td>
-									<UpdatePlugin plugin={ item } selectedSite={ selectedSite } />
-								</td>
-								{
+								{ hasMoreActions && (
 									<td className={ classNames( 'plugins-table__actions' ) }>
 										<Button borderless compact>
 											<Gridicon
@@ -88,7 +79,7 @@ export default function PluginsTable( {
 											/>
 										</Button>
 									</td>
-								}
+								) }
 							</tr>
 						);
 					} )
