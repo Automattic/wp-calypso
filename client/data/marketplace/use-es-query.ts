@@ -1,7 +1,10 @@
 import languages, { LanguageSlug } from '@automattic/languages';
 import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 'react-query';
 import { useSelector } from 'react-redux';
-import { extractSearchInformation } from 'calypso/lib/plugins/utils';
+import {
+	extractSearchInformation,
+	getPreinstalledPremiumPluginsVariations,
+} from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
 import { search } from './search-api';
@@ -62,7 +65,7 @@ const mapStarRatingToPercent = ( starRating?: number ) => ( ( starRating ?? 0 ) 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) return [];
 	return results.map( ( { fields: hit, railcar } ) => {
-		const plugin = {
+		const plugin: Plugin = {
 			name: hit.plugin.title, // TODO: add localization
 			slug: hit.slug,
 			version: hit[ 'plugin.stable_tag' ],
@@ -80,6 +83,11 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			icon: createIconUrl( hit.slug, hit.plugin.icons ),
 			railcar,
 		};
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		plugin.variations = getPreinstalledPremiumPluginsVariations( plugin );
+
 		return plugin;
 	} );
 };

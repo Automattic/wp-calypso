@@ -184,15 +184,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 export function normalizePluginData( plugin, pluginData ) {
 	plugin = getAllowedPluginData( { ...plugin, ...pluginData } );
 
-	// Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
-	// but require a paid upgrade to function.
-	if ( !! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] && ! plugin.variations ) {
-		const { monthly, yearly } = PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products;
-		plugin.variations = {
-			monthly: { product_slug: monthly },
-			yearly: { product_slug: yearly },
-		};
-	}
+	plugin.variations = getPreinstalledPremiumPluginsVariations( plugin );
 
 	return Object.entries( plugin ).reduce( ( returnData, [ key, item ] ) => {
 		switch ( key ) {
@@ -384,3 +376,21 @@ export const getManageConnectionHref = ( siteSlug ) => {
 		? `https://wordpress.com/settings/manage-connection/${ siteSlug }`
 		: `/settings/manage-connection/${ siteSlug }`;
 };
+
+/**
+ * Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
+ * but require a paid upgrade to function.
+ *
+ * @param {object} plugin
+ * @returns {object}
+ */
+export function getPreinstalledPremiumPluginsVariations( plugin ) {
+	if ( ! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] || !! plugin.variations ) {
+		return plugin.variations;
+	}
+	const { monthly, yearly } = PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products;
+	return {
+		monthly: { product_slug: monthly },
+		yearly: { product_slug: yearly },
+	};
+}
