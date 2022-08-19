@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import Badge from 'calypso/components/badge';
 import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
@@ -12,25 +13,20 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				href={ actionUrl }
 				data-task={ id }
 			>
-				<div className="launchpad__checklist-item-status">
-					{ task.isCompleted ? (
+				{ task.isCompleted && (
+					<div className="launchpad__checklist-item-status">
 						<Gridicon
 							aria-label={ translate( 'Task complete' ) }
 							className="launchpad__checklist-item-status-complete"
 							icon="checkmark"
 							size={ 18 }
 						/>
-					) : (
-						<div
-							role="img"
-							aria-label={ translate( 'Task incomplete' ) }
-							className="launchpad__checklist-item-status-pending"
-						/>
-					) }
-				</div>
+					</div>
+				) }
 				<p className={ `launchpad__checklist-item-text ${ isCompleted && 'is-complete' }` }>
 					{ title }
 				</p>
+				{ task.displayBadge ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
 				{ ! task.isCompleted && (
 					<Gridicon
 						className="launchpad__checklist-item-chevron"

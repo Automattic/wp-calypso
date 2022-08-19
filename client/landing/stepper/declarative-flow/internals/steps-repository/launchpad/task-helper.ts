@@ -1,7 +1,8 @@
+import { translate } from 'i18n-calypso';
 import { Task } from './types';
 
-export function getEnhancedTasks( tasks: Task[], siteSlug: string | null, translate ) {
-	const enhancedTaskList: any = [];
+export function getEnhancedTasks( tasks: Task[], siteSlug: string | null ) {
+	const enhancedTaskList: Task[] = [];
 	tasks &&
 		tasks.map( ( task ) => {
 			let taskData = {};

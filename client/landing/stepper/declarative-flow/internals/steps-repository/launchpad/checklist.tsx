@@ -1,7 +1,6 @@
-import { translate } from 'i18n-calypso';
 import ChecklistItem from './checklist-item';
 import { getEnhancedTasks } from './task-helper';
-import { launchpad_flow_tasks } from './tasks';
+import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
 
 const Checklist = ( {
@@ -13,23 +12,25 @@ const Checklist = ( {
 	siteSlug: string | null;
 	flow: string | null;
 } ) => {
-	const currentFlowTasksIds = flow ? launchpad_flow_tasks[ flow ] : null;
+	const currentFlowTasksIds = flow ? launchpadFlowTasks[ flow ] : null;
 
-	const arrayOfFilteredTasks =
+	const arrayOfFilteredTasks: Task[] | null =
 		currentFlowTasksIds &&
-		currentFlowTasksIds.map( ( taskId: string ) => {
-			return tasks.find( ( task ) => {
-				return task.id === taskId;
+		currentFlowTasksIds.reduce( ( accumulator, currentTaskId ) => {
+			tasks.find( ( task ) => {
+				if ( task.id === currentTaskId ) {
+					accumulator.push( task );
+				}
 			} );
-		} );
+			return accumulator;
+		}, [] as Task[] );
 
-	const enhancedTasks = getEnhancedTasks( arrayOfFilteredTasks, siteSlug, translate );
+	const enhancedTasks = arrayOfFilteredTasks && getEnhancedTasks( arrayOfFilteredTasks, siteSlug );
 
 	return (
 		<ul className="launchpad__checklist" aria-label="Launchpad Checklist">
-			{ enhancedTasks.map( ( task: any ) => (
-				<ChecklistItem key={ task.id } task={ task } />
-			) ) }
+			{ enhancedTasks &&
+				enhancedTasks.map( ( task: Task ) => <ChecklistItem key={ task.id } task={ task } /> ) }
 		</ul>
 	);
 };

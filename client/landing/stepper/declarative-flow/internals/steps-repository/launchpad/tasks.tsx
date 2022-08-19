@@ -1,3 +1,5 @@
+import { LaunchpadFlowTaskList } from './types';
+
 export const tasks = [
 	{
 		id: 'setup_newsletter',
@@ -5,6 +7,8 @@ export const tasks = [
 		actionUrl: '#',
 		title: 'Set up Newsletter',
 		taskType: 'blog',
+		displayBadge: false,
+		badgeText: '',
 	},
 	{
 		id: 'plan_selected',
@@ -12,13 +16,17 @@ export const tasks = [
 		taskType: 'blog',
 		actionUrl: '#',
 		title: 'Free Plan',
+		displayBadge: true,
+		badgeText: 'Personal',
 	},
 	{
 		id: 'subscribers_added',
-		isCompleted: false,
+		isCompleted: true,
 		actionUrl: '#',
 		title: 'Add Subscribers',
 		taskType: 'blog',
+		displayBadge: false,
+		badgeText: '',
 	},
 	{
 		id: 'first_post_published',
@@ -26,6 +34,8 @@ export const tasks = [
 		actionUrl: '#',
 		title: 'Write your first post',
 		taskType: 'blog',
+		displayBadge: false,
+		badgeText: '',
 	},
 	{
 		id: 'design_selected',
@@ -33,6 +43,8 @@ export const tasks = [
 		actionUrl: '#',
 		title: 'Write your first post',
 		taskType: 'blog',
+		displayBadge: false,
+		badgeText: '',
 	},
 	{
 		id: 'setup_link_in_bio',
@@ -40,6 +52,8 @@ export const tasks = [
 		actionUrl: '#',
 		title: 'Write your first post',
 		taskType: 'blog',
+		displayBadge: false,
+		badgeText: '',
 	},
 	{
 		id: 'links_added',
@@ -47,6 +61,8 @@ export const tasks = [
 		actionUrl: '#',
 		title: 'Write your first post',
 		taskType: 'blog',
+		displayBadge: false,
+		badgeText: '',
 	},
 	{
 		id: 'link_in_bio_launched',
@@ -54,10 +70,12 @@ export const tasks = [
 		actionUrl: '#',
 		title: 'Write your first post',
 		taskType: 'blog',
+		displayBadge: false,
+		badgeText: '',
 	},
 ];
 
-export const launchpad_flow_tasks: any = {
+export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
 	linkInBio: [
 		'design_selected',

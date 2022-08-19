@@ -3,7 +3,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import Checklist from './checklist';
 import { tasks } from './tasks';
 
-const Sidebar = () => {
+const Sidebar = ( { siteSlug, flow }: { siteSlug: string | null; flow: string | null } ) => {
 	const site = useSite();
 	const url = site?.URL?.replace( /^https?:\/\//, '' );
 
@@ -26,7 +26,7 @@ const Sidebar = () => {
 					Keep up the momentum with these next steps.
 				</p>
 				<div className="launchpad__url-box">{ url }</div>
-				<Checklist tasks={ tasks } />
+				<Checklist siteSlug={ siteSlug } tasks={ tasks } flow={ flow } />
 			</div>
 		</div>
 	);
