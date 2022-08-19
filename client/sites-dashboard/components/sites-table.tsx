@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useLayoutEffect, useState } from 'react';
 import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -18,17 +19,17 @@ const Table = styled.table`
 	position: relative;
 `;
 
-const THead = styled.thead( {
+const THead = styled.thead< { top: number } >( ( { top } ) => ( {
 	'@media only screen and ( max-width: 781px )': {
 		display: 'none',
 	},
 
 	position: 'sticky',
 	zIndex: 1,
-	top: '32px',
+	top: `${ top }px`,
 
 	background: '#fdfdfd',
-} );
+} ) );
 
 const Row = styled.tr`
 	line-height: 2em;
@@ -49,9 +50,43 @@ const Row = styled.tr`
 export function SitesTable( { className, sites, isLoading = false }: SitesTableProps ) {
 	const { __ } = useI18n();
 
+	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
+
+	useLayoutEffect( () => {
+		const masterbarElement = document.querySelector< HTMLDivElement >( 'header.masterbar' );
+
+		if ( ! masterbarElement ) {
+			return;
+		}
+
+		if ( ! window.ResizeObserver ) {
+			setMasterbarHeight( masterbarElement.offsetHeight );
+			return;
+		}
+
+		let lastHeight = masterbarElement.offsetHeight;
+
+		const observer = new ResizeObserver(
+			( [ masterbar ]: Parameters< ResizeObserverCallback >[ 0 ] ) => {
+				const currentHeight = masterbar.contentRect.height;
+
+				if ( currentHeight !== lastHeight ) {
+					setMasterbarHeight( currentHeight );
+					lastHeight = currentHeight;
+				}
+			}
+		);
+
+		observer.observe( masterbarElement );
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [] );
+
 	return (
 		<Table className={ className }>
-			<THead>
+			<THead top={ masterbarHeight }>
 				<Row>
 					<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
 					<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
