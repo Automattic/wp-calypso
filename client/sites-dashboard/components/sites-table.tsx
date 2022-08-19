@@ -92,7 +92,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 					<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
 					<th>{ __( 'Last Publish' ) }</th>
 					<th>{ __( 'Status' ) }</th>
-					<th style={ { width: '20px' } }></th>
+					<th style={ { width: '24px' } }></th>
 				</Row>
 			</THead>
 			<tbody>

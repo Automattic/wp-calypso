@@ -126,7 +126,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
 			<Column mobileHidden>{ translatedStatus }</Column>
-			<Column style={ { width: '20px' } }>
+			<Column style={ { width: '24px' } }>
 				<SitesEllipsisMenu site={ site } />
 			</Column>
 		</Row>
