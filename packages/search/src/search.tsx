@@ -133,7 +133,7 @@ const InnerSearch = (
 		inputLabel,
 		disableAutocorrect = false,
 		className,
-		dir = 'ltr',
+		dir,
 		fitsContainer = false,
 		searching = false,
 		compact = false,
