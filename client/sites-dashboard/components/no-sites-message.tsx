@@ -128,6 +128,33 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 		);
 	}
 
+	if ( status === 'redirect' ) {
+		return (
+			<NoSitesLayout
+				title={ <Title> { __( 'You have no redirected sites' ) } </Title> }
+				line={
+					<SecondaryText>
+						{ createInterpolateElement(
+							__(
+								'Redirected sites send a visitor directly to the mapped domain. Read more about them <a>here</a>.'
+							),
+							{
+								a: (
+									<a
+										href={ 'https://wordpress.com/support/site-redirect/' }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							}
+						) }
+					</SecondaryText>
+				}
+				illustration={ '' }
+			/>
+		);
+	}
+
 	return (
 		<NoSitesLayout
 			title={ <Title> { __( 'Create your first site' ) } </Title> }
