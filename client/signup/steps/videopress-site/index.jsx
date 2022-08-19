@@ -20,7 +20,6 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { login } from 'calypso/lib/paths';
 import wpcom from 'calypso/lib/wp';
 import {
-	getValueFromProgressStore,
 	getVideoPressOnboardingTotalSteps,
 	getVideoPressOnboardingStepNumber,
 } from 'calypso/signup/utils';
