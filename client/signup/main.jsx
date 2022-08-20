@@ -759,7 +759,7 @@ class Signup extends Component {
 					stepName: this.props.stepName,
 				};
 			}
-			return { flowName: null, stepName: null };
+			return;
 		};
 
 		const isEligibleForOlarkChat =

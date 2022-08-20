@@ -1,18 +1,19 @@
 interface FlowProgress {
-	stepName: string | null;
-	flowName: string | null;
+	stepName: string;
+	flowName: string;
 }
 
-export const useFlowProgress = ( { stepName, flowName }: FlowProgress ) => {
-	if ( ! stepName || ! flowName ) {
+export const useFlowProgress = ( props: FlowProgress | undefined ) => {
+	if ( ! props ) {
 		return;
 	}
+	const { stepName, flowName } = props;
 
 	const flows: Record< string, { [ step: string ]: number } > = {
 		newsletter: {
 			intro: 0,
 			user: 1,
-			'newsletter-setup': 2,
+			newsletterSetup: 2,
 			domains: 3,
 			plans: 4,
 			subscriber: 5,
@@ -30,5 +31,5 @@ export const useFlowProgress = ( { stepName, flowName }: FlowProgress ) => {
 	};
 	const flow = flows[ flowName ];
 
-	return { position: flow[ stepName ], count: Object.keys( flow ).length };
+	return { progress: flow[ stepName ], count: Object.keys( flow ).length };
 };

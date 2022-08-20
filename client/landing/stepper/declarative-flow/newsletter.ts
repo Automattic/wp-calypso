@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useSelect } from '@wordpress/data';
+import { useFlowProgress } from '@automattic/onboarding';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
+import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
@@ -31,6 +32,9 @@ export const newsletter: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: this.name } );
+		setStepProgress( flowProgress );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', _currentStep );

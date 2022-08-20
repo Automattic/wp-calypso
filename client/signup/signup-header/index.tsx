@@ -10,11 +10,11 @@ interface ProgressBarData {
 }
 
 interface Props {
-	shouldShowLoadingScreen: boolean;
-	isReskinned: boolean;
-	rightComponent: Node;
-	pageTitle: string;
-	progressBar: ProgressBarData;
+	shouldShowLoadingScreen?: boolean;
+	isReskinned?: boolean;
+	rightComponent?: Node;
+	pageTitle?: string;
+	progressBar?: ProgressBarData;
 }
 
 const SignupHeader = ( {
@@ -31,10 +31,10 @@ const SignupHeader = ( {
 
 	return (
 		<div className="signup-header">
-			{ hasFlowProgress && (
+			{ progressBar && hasFlowProgress && (
 				<ProgressBar
 					className={ progressBar.flowName }
-					value={ hasFlowProgress.position }
+					value={ hasFlowProgress.progress }
 					total={ hasFlowProgress.count }
 				/>
 			) }
