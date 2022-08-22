@@ -20,9 +20,6 @@ const VideosUi = ( {
 	FooterBar,
 	areVideosTranslated = true,
 	intent = undefined,
-	headerTitle = false,
-	headerSubtitle = false,
-	headerOptionsList = [],
 } ) => {
 	const translate = useTranslate();
 	const isEnglish = config( 'english_locales' ).includes( translate.localeSlug );
@@ -38,14 +35,6 @@ const VideosUi = ( {
 	const [ currentVideoKey, setCurrentVideoKey ] = useState( null );
 	const [ isPlaying, setIsPlaying ] = useState( false );
 	const currentVideo = course?.videos?.[ currentVideoKey || 0 ];
-	const headerOptions = headerOptionsList.length
-		? headerOptionsList
-		: [
-				translate( 'Learn the basics of blogging' ),
-				translate( 'Familiarize yourself with WordPress' ),
-				translate( 'Upskill and save hours' ),
-				translate( 'Set yourself up for blogging success' ),
-		  ];
 
 	const onVideoPlayClick = ( videoSlug ) => {
 		recordTracksEvent( 'calypso_courses_play_click', {
@@ -108,6 +97,33 @@ const VideosUi = ( {
 		}
 	}, [ course ] );
 
+	let headerTitle;
+	let headerSubtitle;
+	let headerSummary;
+
+	switch ( courseSlug ) {
+		case COURSE_SLUGS.BLOGGING_QUICK_START:
+			headerTitle = translate( 'Watch five videos.' );
+			headerSubtitle = translate( 'Save yourself hours.' );
+			headerSummary = [
+				translate( 'Learn the basics of blogging' ),
+				translate( 'Familiarize yourself with WordPress' ),
+				translate( 'Upskill and save hours' ),
+				translate( 'Set yourself up for blogging success' ),
+			];
+			break;
+		case COURSE_SLUGS.PAYMENTS_FEATURES:
+			headerTitle = translate( 'Add Payments Features' );
+			headerSubtitle = translate( 'Make Money on Your Website' );
+			headerSummary = [
+				translate( 'Making Money with Payments Features' ),
+				translate( 'Premium Membership Blog' ),
+				translate( 'Paid Subscription Newsletter' ),
+				translate( 'Run a Crowdfunding Campaign' ),
+			];
+			break;
+	}
+
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
@@ -134,7 +150,7 @@ const VideosUi = ( {
 					</div>
 					<div className="videos-ui__summary">
 						<ul>
-							{ headerOptions.map( ( text ) => {
+							{ headerSummary.map( ( text ) => {
 								return (
 									<li>
 										<Gridicon icon="checkmark" size={ 18 } /> { text }
