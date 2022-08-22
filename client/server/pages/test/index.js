@@ -1145,11 +1145,19 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( `Route /home`, () => {
+		assertSection( {
+			url: '/home',
+			sectionName: 'home',
+			sectionGroup: 'sites',
+		} );
+	} );
+
 	describe( `Route /sites`, () => {
 		assertSection( {
 			url: '/sites',
-			sectionName: 'sites',
-			sectionGroup: 'sites',
+			sectionName: 'sites-dashboard',
+			sectionGroup: 'sites-dashboard',
 		} );
 	} );
 
