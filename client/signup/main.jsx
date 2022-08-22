@@ -748,7 +748,10 @@ class Signup extends Component {
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
 		const progressBar = () => {
-			if ( [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName ) ) {
+			if (
+				[ 'newsletter', 'link-in-bio' ].includes( this.props.flowName ) &&
+				! this.state.shouldShowLoadingScreen
+			) {
 				return { flowName: this.props.flowName, stepName: this.props.stepName };
 			}
 			if (

@@ -22,7 +22,7 @@ export const useFlowProgress = ( props: FlowProgress | undefined ) => {
 		'link-in-bio': {
 			intro: 0,
 			user: 1,
-			pattern: 2,
+			patterns: 2,
 			'link-in-bio': 3,
 			domains: 4,
 			plans: 5,
