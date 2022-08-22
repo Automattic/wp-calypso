@@ -35,8 +35,14 @@ const PageHeader = styled.div( {
 	...pagePadding,
 
 	backgroundColor: 'var( --studio-white )',
+
 	paddingTop: '24px',
 	paddingBottom: '24px',
+
+	'@media only screen and ( max-width: 781px )': {
+		padding: '16px',
+	},
+
 	boxShadow: 'inset 0px -1px 0px rgba( 0, 0, 0, 0.05 )',
 } );
 

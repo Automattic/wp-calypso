@@ -26,6 +26,10 @@ const FilterBar = styled.div( {
 	'@media screen and (min-width: 660px)': {
 		flexDirection: 'row',
 	},
+
+	'@media screen and (max-width: 781px)': {
+		padding: '16px 0',
+	},
 } );
 
 const DisplayControls = styled.div( {
