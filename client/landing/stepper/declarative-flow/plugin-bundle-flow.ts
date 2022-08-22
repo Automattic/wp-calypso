@@ -38,27 +38,17 @@ export const pluginBundleFlow: Flow = {
 
 		const steps: StepPath[] = [ 'getCurrentBundledPlugins' ];
 		let bundlePluginSteps: StepPath[] = [];
+
 		// Temp for testing baxter
 		if ( pluginSlug === 'test-plugin' ) {
 			pluginSlug = 'woocommerce';
 		}
+
 		if ( pluginSlug ) {
 			bundlePluginSteps = pluginBundleSteps[ pluginSlug ] as StepPath[];
 		}
-		console.log( { siteSlugParam, pluginSlug, bundlePluginSteps } );
+
 		return steps.concat( bundlePluginSteps );
-		return [ 'getCurrentBundledPlugins' ];
-		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
-			// TODO - Need to handle this better
-			return [];
-		}
-
-		if ( ! pluginSlug || ! pluginBundleSteps.hasOwnProperty( pluginSlug ) ) {
-			// TODO - Need to handle this better
-			return [];
-		}
-
-		return pluginBundleSteps[ pluginSlug ] as StepPath[];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );

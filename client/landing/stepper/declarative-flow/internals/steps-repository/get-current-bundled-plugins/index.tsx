@@ -1,9 +1,7 @@
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
-// import { StepContainer } from '@automattic/onboarding';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-// import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { useSite } from '../../../../hooks/use-site';
@@ -21,9 +19,10 @@ const GetCurrentBundledPlugins: Step = function GetCurrentBundledPluginsStep( { 
 	}
 
 	const reduxDispatch = useReduxDispatch();
-	const { goBack, goNext, submit } = navigation;
+	const { goNext } = navigation;
 	useEffect( () => {
 		reduxDispatch( requestActiveTheme( site?.ID || -1 ) );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ site?.ID ] );
 	const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 	const currentTheme = useSelector( ( state ) =>
@@ -35,21 +34,14 @@ const GetCurrentBundledPlugins: Step = function GetCurrentBundledPluginsStep( { 
 			const theme_plugin = currentTheme?.taxonomies?.theme_plugin;
 			if ( theme_plugin && siteSlug ) {
 				setBundledPluginSlug( siteSlug, theme_plugin[ 0 ].slug ); // only install first plugin
+				goNext();
+			} else {
+				// Current theme has no bundled plugins; they shouldn't be in this flow
+				window.location.replace( `/home/${ siteSlug }` );
 			}
-			goNext();
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ currentTheme?.id ] );
-	console.log( { currentTheme } );
 	return null;
-	/*
-	return (
-		<StepContainer
-			stepName={ 'get-current-bundled-plugins' }
-			stepContent={
-				<div>hi</div>
-			}
-		/>
-	);
-	 */
 };
 export default GetCurrentBundledPlugins;
