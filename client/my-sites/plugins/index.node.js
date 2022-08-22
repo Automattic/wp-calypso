@@ -17,15 +17,6 @@ export default function ( router ) {
 
 	overrideSanitizeSectionRoot( getServerRoot() );
 
-	router( [
-		`/${ langParam }/plugins/setup/:site?`,
-		`/${ langParam }/plugins/upload/:site?`,
-		`/${ langParam }/plugins/manage/:site?`,
-		`/${ langParam }/plugins/:plugin/eligibility/:site?`,
-		`/${ langParam }/plugins/:pluginFilter(active|inactive|updates)/:site_id?`,
-		`/${ langParam }/plugins/browse/:category/:site`,
-	] );
-
 	router(
 		`/${ langParam }/plugins/browse/:category`,
 		skipIfLoggedIn,
