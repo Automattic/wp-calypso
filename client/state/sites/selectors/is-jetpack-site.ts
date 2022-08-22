@@ -17,7 +17,7 @@ const defaultOptions = {
 export default function isJetpackSite(
 	state: AppState,
 	siteId: number | undefined | null,
-	options?: { considerStandaloneProducts?: boolean }
+	options?: Partial< typeof defaultOptions >
 ): boolean | null {
 	if ( ! siteId ) {
 		return null;
