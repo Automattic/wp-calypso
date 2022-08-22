@@ -1,11 +1,13 @@
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import Checklist from './checklist';
 import { tasks } from './tasks';
 
-const Sidebar = ( { siteSlug, flow }: { siteSlug: string | null; flow: string | null } ) => {
+const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const site = useSite();
 	const url = site?.URL?.replace( /^https?:\/\//, '' );
+	const flow = useFlowParam();
 
 	return (
 		<div className="launchpad__sidebar">

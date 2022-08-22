@@ -2,7 +2,6 @@ import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import LaunchpadSitePreview from './launchpad-site-preview';
@@ -14,11 +13,10 @@ const Launchpad: Step = ( { navigation } ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 	const siteSlug = useSiteSlugParam();
-	const flowParam: string | null = useFlowParam();
 
 	const stepContent = (
 		<div className="launchpad__content">
-			<Sidebar siteSlug={ siteSlug } flow={ flowParam } />
+			<Sidebar siteSlug={ siteSlug } />
 			<LaunchpadSitePreview siteSlug={ siteSlug } />
 		</div>
 	);
