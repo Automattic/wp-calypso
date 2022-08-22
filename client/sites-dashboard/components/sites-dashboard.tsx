@@ -24,6 +24,11 @@ const MAX_PAGE_WIDTH = '1280px';
 const pagePadding = {
 	paddingLeft: '32px',
 	paddingRight: '32px',
+
+	'@media only screen and ( max-width: 781px )': {
+		paddingLeft: '16px',
+		paddingRight: '16px',
+	},
 };
 
 const PageHeader = styled.div( {
