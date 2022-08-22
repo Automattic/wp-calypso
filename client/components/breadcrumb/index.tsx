@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { Key } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 
@@ -114,6 +115,12 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
+	function gotoLink( href: string | undefined ) {
+		if ( href !== undefined ) {
+			page( href );
+		}
+	}
+
 	if ( items.length > 1 ) {
 		return (
 			<StyledUl>
@@ -121,7 +128,13 @@ const Breadcrumb: React.FunctionComponent< Props > = ( props ) => {
 					<StyledLi key={ index }>
 						{ index !== 0 && <StyledGridicon icon="chevron-right" size={ 14 } /> }
 						{ item.href && index !== items.length - 1 ? (
-							<a href={ item.href }>{ item.label }</a>
+							<button
+								tabIndex={ 0 }
+								style={ { cursor: 'pointer' } }
+								onClick={ () => gotoLink( item.href ) }
+							>
+								{ item.label }
+							</button>
 						) : (
 							<span>{ item.label }</span>
 						) }
