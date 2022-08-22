@@ -46,6 +46,8 @@ export function fetchThemeData( context, next ) {
 		return next();
 	}
 
+	debug( 'Fetching theme data...' );
+
 	const siteId = 'wpcom';
 	const query = {
 		search: context.query.s,
@@ -53,18 +55,21 @@ export function fetchThemeData( context, next ) {
 		filter: [ context.params.filter, context.params.vertical ].filter( Boolean ).join( ',' ),
 		page: 1,
 		number: DEFAULT_THEME_QUERY.number,
+		locale: context.lang,
 	};
-
+	debug( query );
 	const themes = getThemesForQuery( context.store.getState(), siteId, query );
 	if ( themes ) {
 		debug( 'found theme data in cache' );
 		return next();
 	}
 
-	context.store.dispatch( requestThemes( siteId, query, context.lang ) ).then( next ).catch( next );
+	context.store.dispatch( requestThemes( siteId, query ) ).then( next ).catch( next );
 }
 
 export function fetchThemeFilters( context, next ) {
+	// TODO: Avoid execution if not server side?
+	debug( 'Fetching theme filters...' );
 	const { store } = context;
 
 	if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {

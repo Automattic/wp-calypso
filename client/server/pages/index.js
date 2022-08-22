@@ -263,6 +263,8 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
+	debug( `setting up logged in route: ${ req.path }.` );
+	const startTime = Date.now();
 	let redirectUrl;
 	let start;
 
@@ -389,7 +391,12 @@ function setUpLoggedInRoute( req, res, next ) {
 	}
 
 	Promise.all( setupRequests )
-		.then( () => next() )
+		.then( () => {
+			const endTime = Date.now();
+			const totalTime = endTime - startTime;
+			console.log( `\nTIME FOR SETUP REQUESTS: ${ totalTime }\n` );
+			next();
+		} )
 		.catch( ( error ) => next( error ) );
 }
 
@@ -775,6 +782,8 @@ export default function pages() {
 		} );
 
 		if ( ! section.isomorphic ) {
+			debug( 'Server router ~781' );
+
 			app.get( pathRegex, setUpRoute, serverRender );
 		}
 	}
@@ -791,6 +800,8 @@ export default function pages() {
 				// TODO: section initialization is async function since #28301. At the moment when
 				// some isomorphic section really starts doing something async, we should start
 				// awaiting the result here. Will be solved together with server-side dynamic reducers.
+				debug( `Server router ~799, ${ section.name }` );
+				debug( section );
 				section.load().default( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
