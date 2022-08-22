@@ -14,7 +14,6 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
-	// getStepperFlowDestination = noop,
 	getAddOnsStep = noop,
 } = {} ) {
 	const flows = [
@@ -131,7 +130,9 @@ export function generateFlows( {
 			name: 'link-in-bio',
 			steps: [ 'domains', 'plans' ],
 			destination: ( dependencies ) =>
-				`/setup/completingPurchase?flow=link-in-bio&siteSlug=${ dependencies.siteSlug }`,
+				`/setup/completingPurchase?flow=link-in-bio&siteSlug=${ encodeURIComponent(
+					dependencies.siteSlug
+				) }`,
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-08-16',
 			showRecaptcha: true,
