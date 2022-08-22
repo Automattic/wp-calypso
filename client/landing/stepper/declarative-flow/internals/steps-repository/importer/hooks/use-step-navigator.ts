@@ -14,7 +14,7 @@ export function useStepNavigator(
 	siteSlug: string,
 	fromSite: string
 ): StepNavigator {
-	const checkoutUrl = useCheckoutUrl( siteId as number, siteSlug as string );
+	const checkoutUrl = useCheckoutUrl( siteId, siteSlug );
 
 	function navigator( path: string ) {
 		const stepPath = removeLeadingSlash( path.replace( BASE_STEPPER_ROUTE, '' ) );
@@ -53,7 +53,7 @@ export function useStepNavigator(
 	function goToWpAdminWordPressPluginPage() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: getWpOrgImporterUrl( siteSlug as string, 'wordpress' ),
+			url: getWpOrgImporterUrl( siteSlug, 'wordpress' ),
 		} );
 	}
 
