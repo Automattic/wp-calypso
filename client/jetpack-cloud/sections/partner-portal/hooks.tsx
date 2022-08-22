@@ -248,6 +248,8 @@ export function useLicenseIssuing(
 			return;
 		}
 
+		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_selection_submit', { product } ) );
+
 		if ( paymentMethodRequired ) {
 			const nextStep = addQueryArgs(
 				{
