@@ -24,6 +24,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
+//import { getStepUrl } from 'calypso/signup/utils';
 import type { StepPath } from './internals/steps-repository';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
@@ -107,8 +108,12 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
-			useDispatch( ONBOARD_STORE );
+		const {
+			setPendingAction,
+			setStepProgress,
+			resetOnboardStoreWithSkipFlags,
+			setBundledPluginSlug,
+		} = useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
@@ -198,11 +203,15 @@ export const siteSetupFlow: Flow = {
 
 					// Check current theme
 					// Does it have a plugin bundled?
-					// If so, send them to the plugin-bundle flow
-					console.log( 'submit() sees the currentTheme: ', currentTheme );
-					// debugger()
-					// if ( theme has plugin bundled ) { send to plugin-bundle }
-					// TODO: The currentTheme doesn't have the taxonomy information available
+					console.log( 'Checking for plugin bundle' );
+					const theme_plugin = currentTheme?.taxonomies?.theme_plugin;
+					if ( isEnabled( 'themes/plugin-bundling' ) && theme_plugin && theme_plugin.length > 0 ) {
+						setBundledPluginSlug( theme_plugin[ 0 ].slug ); // only install first plugin
+						console.log( 'setting bundled plugin slug to ', theme_plugin[ 0 ].slug );
+						// TODO: Should we remove this and set plugin-bundle to check currentTheme?.taxonomies?.theme_plugin directly?
+						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
+						// return exitFlow( getStepUrl( 'plugin-bundle', false, false, false ) );
+					}
 
 					return exitFlow( `/home/${ siteSlug }` );
 				}
