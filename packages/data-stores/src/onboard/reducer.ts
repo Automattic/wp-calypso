@@ -354,12 +354,18 @@ const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const bundledPluginSlug: Reducer< string, OnboardAction > = ( state = '', action ) => {
+const bundledPluginSlug: Reducer< { [ key: string ]: string | undefined }, OnboardAction > = (
+	state = {},
+	action
+) => {
 	if ( action.type === 'SET_BUNDLED_PLUGIN_SLUG' ) {
-		return action.slug;
+		return {
+			...state,
+			[ action.siteSlug ]: action.pluginSlug,
+		};
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
+		return {};
 	}
 	return state;
 };
