@@ -145,8 +145,8 @@ const VideosUi = ( {
 				) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
-						<h2>{ headerTitle ? headerTitle : translate( 'Watch five videos.' ) }</h2>
-						<h2>{ headerSubtitle ? headerSubtitle : translate( 'Save yourself hours.' ) }</h2>
+						<h2>{ headerTitle }</h2>
+						<h2>{ headerSubtitle }</h2>
 					</div>
 					<div className="videos-ui__summary">
 						<ul>
