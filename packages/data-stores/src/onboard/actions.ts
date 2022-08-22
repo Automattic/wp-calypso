@@ -303,9 +303,10 @@ export const setEditEmail = ( email: string ) => ( {
 	email,
 } );
 
-export const setBundledPluginSlug = ( slug: string ) => ( {
+export const setBundledPluginSlug = ( siteSlug: string, pluginSlug: string ) => ( {
 	type: 'SET_BUNDLED_PLUGIN_SLUG' as const,
-	slug,
+	siteSlug,
+	pluginSlug,
 } );
 
 export type OnboardAction = ReturnType<
