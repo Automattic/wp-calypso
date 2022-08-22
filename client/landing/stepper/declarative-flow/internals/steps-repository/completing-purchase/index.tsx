@@ -15,7 +15,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 	const { setPendingAction, setProgressTitle, setProgress } = useDispatch( ONBOARD_STORE );
 	const site = useSite();
 
-	const siteSetup = useSetupOnboardingSite( { ignoreUrl: true, site } );
+	const siteSetup = useSetupOnboardingSite( { ignoreUrl: true, site, flow } );
 
 	const completeLinkInBioFlow = () => {
 		setPendingAction( async () => {
