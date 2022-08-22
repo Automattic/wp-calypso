@@ -199,7 +199,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			{ siteId && enableUserLicensesDialog && <QueryJetpackUserLicenses /> }
 			{ siteId && enableUserLicensesDialog && <QueryJetpackUserLicensesCounts /> }
 
-			{ siteId && enableUserLicensesDialog && <LicensingPromptDialog siteId={ siteId } /> }
+			{
+				// LicensingPromptDialog has been moved to ProductStore component with jetpack/pricing-page-rework-v1
+				! isEnabled( 'jetpack/pricing-page-rework-v1' ) && siteId && enableUserLicensesDialog && (
+					<LicensingPromptDialog siteId={ siteId } />
+				)
+			}
 
 			{ nav }
 
@@ -216,7 +221,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				/>
 
 				{ isEnabled( 'jetpack/pricing-page-rework-v1' ) ? (
-					<ProductStore />
+					<ProductStore enableUserLicensesDialog={ enableUserLicensesDialog } />
 				) : (
 					<>
 						{ siteId && enableUserLicensesDialog && (

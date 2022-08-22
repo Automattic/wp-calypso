@@ -1,12 +1,8 @@
+import { UserLicensesDialog } from './user-licenses-dialog';
 import type { ProductStoreProps } from './types';
 
-const ProductStore: React.FC< ProductStoreProps > = () => {
-	return (
-		<div>
-			<p>{ 'Hello there! 👋' }</p>
-			<p>{ 'Something cool coming up soon' }</p>
-		</div>
-	);
+const ProductStore: React.FC< ProductStoreProps > = ( { enableUserLicensesDialog } ) => {
+	return <div>{ ( enableUserLicensesDialog || 'ok' ) && <UserLicensesDialog /> }</div>;
 };
 
 export default ProductStore;
