@@ -115,13 +115,15 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		name,
 		label,
 		value,
+		has_vertical_images,
 	}: {
 		name: string;
 		label: string;
 		value?: string;
+		has_vertical_images?: boolean;
 	} ) => {
 		hideSuggestions();
-		onSelect?.( { name, label, value } as Vertical );
+		onSelect?.( { name, label, value, has_vertical_images } as Vertical );
 	};
 
 	const getSuggestions = useMemo( () => {
