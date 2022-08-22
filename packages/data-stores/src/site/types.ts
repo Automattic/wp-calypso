@@ -123,28 +123,28 @@ export interface SiteDetails {
 }
 
 export interface SiteDetailsCapabilities {
+	activate_plugins: boolean;
+	activate_wordads: boolean;
+	delete_others_posts: boolean;
+	delete_posts: boolean;
+	delete_users: boolean;
+	edit_others_pages: boolean;
+	edit_others_posts: boolean;
 	edit_pages: boolean;
 	edit_posts: boolean;
-	edit_others_posts: boolean;
-	edit_others_pages: boolean;
-	delete_posts: boolean;
-	delete_others_posts: boolean;
 	edit_theme_options: boolean;
 	edit_users: boolean;
 	list_users: boolean;
 	manage_categories: boolean;
 	manage_options: boolean;
 	moderate_comments: boolean;
-	activate_wordads: boolean;
+	own_site: boolean;
 	promote_users: boolean;
 	publish_posts: boolean;
-	upload_files: boolean;
-	delete_users: boolean;
 	remove_users: boolean;
-	own_site: boolean;
+	upload_files: boolean;
 	view_hosting: boolean;
 	view_stats: boolean;
-	activate_plugins: boolean;
 }
 
 export interface SiteDetailsOptions {
