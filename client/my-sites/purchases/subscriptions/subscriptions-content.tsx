@@ -30,7 +30,10 @@ function SubscriptionsContent( {
 	isFetchingPurchases: boolean;
 	hasLoadedPurchases: boolean;
 	selectedSiteId: number | null;
-	selectedSite: null | { ID: number; name: string; domain: string; slug: string };
+	selectedSite:
+		| undefined
+		| null
+		| { ID: number; name: string | undefined; domain: string; slug: string };
 	purchases: Purchase[];
 	cards: StoredCard[];
 } ) {
