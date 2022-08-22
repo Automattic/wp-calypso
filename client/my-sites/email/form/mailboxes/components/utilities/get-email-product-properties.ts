@@ -7,7 +7,7 @@ import { ProductListItem } from 'calypso/state/products-list/selectors/get-produ
 type EmailProperties = {
 	existingItemsCount: number;
 	isAdditionalMailboxesPurchase: boolean;
-	emailProduct: ProductListItem | undefined | null;
+	emailProduct: ProductListItem;
 	newQuantity: number | undefined;
 	quantity: number;
 };
