@@ -200,19 +200,23 @@ export const siteSetupFlow: Flow = {
 
 					// Check current theme: Does it have a plugin bundled?
 					// If so, send them to the plugin-bundle flow.
-					console.log( 'Checking for plugin bundle' );
 					const theme_plugin = currentTheme?.taxonomies?.theme_plugin;
-					if ( isEnabled( 'themes/plugin-bundling' ) && theme_plugin && theme_plugin.length > 0 ) {
-						setBundledPluginSlug( siteSlug || '', theme_plugin[ 0 ].slug ); // only install first plugin
-						console.log( 'setting bundled plugin slug:', {
-							siteSlug,
-							bundledPluginSlug: theme_plugin[ 0 ].slug,
-						} );
+					if (
+						isEnabled( 'themes/plugin-bundling' ) &&
+						theme_plugin &&
+						theme_plugin.length > 0 &&
+						siteSlug
+					) {
+						setBundledPluginSlug( siteSlug, theme_plugin[ 0 ].slug ); // only install first plugin
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
 						// return exitFlow( getStepUrl( 'plugin-bundle', false, false, false ) );
 					}
 
-					// Possibly clear setBundledPluginSlug here?
+					// We know this theme doesn't have a plugin bundled, so clear it in the store
+					if ( siteSlug ) {
+						setBundledPluginSlug( siteSlug, '' );
+					}
+
 					return exitFlow( `/home/${ siteSlug }` );
 				}
 

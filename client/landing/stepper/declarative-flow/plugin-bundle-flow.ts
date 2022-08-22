@@ -36,7 +36,6 @@ export const pluginBundleFlow: Flow = {
 			select( SITE_STORE ).getBundledPluginSlug( siteSlugParam || '' )
 		) as BundledPlugin;
 
-		console.log( { siteSlugParam, pluginSlug } );
 		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
 			window.location.replace( `/home/${ siteSlugParam }` );
 		}
@@ -45,7 +44,6 @@ export const pluginBundleFlow: Flow = {
 			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
-		console.log( 'plugin bundle steps', pluginBundleSteps[ pluginSlug ] );
 		return pluginBundleSteps[ pluginSlug ] as StepPath[];
 	},
 	useStepNavigation( currentStep, navigate ) {
