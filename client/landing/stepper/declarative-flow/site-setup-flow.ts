@@ -108,12 +108,9 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const {
-			setPendingAction,
-			setStepProgress,
-			resetOnboardStoreWithSkipFlags,
-			setBundledPluginSlug,
-		} = useDispatch( ONBOARD_STORE );
+		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
+			useDispatch( ONBOARD_STORE );
+		const { setBundledPluginSlug } = useDispatch( SITE_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
