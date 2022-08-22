@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { displaySiteUrl, getDashboardUrl } from '../utils';
+import { displaySiteUrl, getDashboardUrl, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
@@ -32,7 +32,7 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
 
-	@media only screen and ( max-width: 781px ) {
+	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
 		padding-right: 0;
 	}
@@ -42,13 +42,13 @@ const SiteListTile = styled( ListTile )`
 	line-height: initial;
 	margin-right: 0;
 
-	@media only screen and ( max-width: 781px ) {
+	${ MEDIA_QUERIES.mediumOrSmaller } {
 		margin-right: 12px;
 	}
 `;
 
 const ListTileLeading = styled.a`
-	@media only screen and ( max-width: 781px ) {
+	${ MEDIA_QUERIES.mediumOrSmaller } {
 		margin-right: 12px;
 	}
 `;

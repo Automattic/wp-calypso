@@ -6,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
 import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
@@ -25,7 +26,7 @@ const pagePadding = {
 	paddingLeft: '32px',
 	paddingRight: '32px',
 
-	'@media only screen and ( max-width: 781px )': {
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		paddingLeft: '16px',
 		paddingRight: '16px',
 	},
@@ -39,7 +40,7 @@ const PageHeader = styled.div( {
 	paddingTop: '24px',
 	paddingBottom: '24px',
 
-	'@media only screen and ( max-width: 781px )': {
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		padding: '16px',
 	},
 

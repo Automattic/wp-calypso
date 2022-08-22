@@ -5,6 +5,7 @@ import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
 import { ComponentPropsWithoutRef } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
@@ -23,11 +24,11 @@ const FilterBar = styled.div( {
 
 	flexDirection: 'column',
 
-	'@media screen and (min-width: 660px)': {
+	[ MEDIA_QUERIES.mediumOrLarger ]: {
 		flexDirection: 'row',
 	},
 
-	'@media screen and (max-width: 781px)': {
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		padding: '16px 0',
 	},
 } );
@@ -46,7 +47,7 @@ const ControlsSelectDropdown = styled( SelectDropdown )( {
 	'.select-dropdown__container': {
 		width: '100%',
 
-		'@media screen and (min-width: 660px)': {
+		[ MEDIA_QUERIES.mediumOrLarger ]: {
 			width: 'auto',
 		},
 	},
