@@ -1,3 +1,6 @@
 export type ProductStoreProps = {
-	//coming soon
+	/**
+	 * Whether to show the licence activation dialog
+	 */
+	enableUserLicensesDialog?: boolean;
 };

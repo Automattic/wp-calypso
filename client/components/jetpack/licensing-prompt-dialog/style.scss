@@ -20,6 +20,12 @@
 		padding: 24px;
 	}
 }
+.licensing-prompt-dialog {
+	// Add ".dialog__backdrop" to override the default dialog backdrop
+	&__backdrop.dialog__backdrop {
+		background-color: rgba( var( --color-neutral-100-rgb ), 0.6 );
+	}
+}
 
 .licensing-prompt-dialog .licensing-prompt-dialog__title {
 	font-size: $font-title-medium;
@@ -46,6 +52,7 @@
 
 .licensing-prompt-dialog .licensing-prompt-dialog__instructions {
 	font-size: $font-body;
+	margin-bottom: 1.5em;
 }
 
 .licensing-prompt-dialog__actions {

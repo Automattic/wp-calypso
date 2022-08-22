@@ -234,7 +234,7 @@ const MailboxesForm = ( {
 
 	const isAlternateEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
 	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
-	if ( isAlternateEmailValid ) {
+	if ( isAlternateEmailValid && isTitan( provider ) ) {
 		defaultHiddenFields.push( FIELD_ALTERNATIVE_EMAIL );
 	}
 

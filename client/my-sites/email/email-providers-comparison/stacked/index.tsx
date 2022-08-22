@@ -86,12 +86,10 @@ const EmailProvidersStackedComparison = ( {
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
 
-	const shouldPromoteGoogleWorkspace = isGSuiteSupported && source === 'google-sale';
+	const shouldPromoteGoogleWorkspace = isGSuiteSupported && hasDiscount( gSuiteProduct );
 
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
-		const hasDiscountForGSuite = hasDiscount( gSuiteProduct );
-
-		if ( shouldPromoteGoogleWorkspace && ! selectedEmailProviderSlug && hasDiscountForGSuite ) {
+		if ( shouldPromoteGoogleWorkspace && ! selectedEmailProviderSlug ) {
 			return {
 				google: true,
 				titan: false,

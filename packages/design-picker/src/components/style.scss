@@ -384,6 +384,9 @@
 	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
 		justify-content: flex-start;
 	}
+	.design-picker__grid:last-child {
+		min-height: 100vh;
+	}
 	.design-picker__grid {
 		@supports ( display: grid ) {
 			@include break-medium {

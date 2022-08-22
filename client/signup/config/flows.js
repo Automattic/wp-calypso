@@ -156,10 +156,6 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getStepperFlowDestination( dependencies, stepperFlow ) {
-	return `/setup?flow=${ stepperFlow }&siteSlug=${ dependencies.siteSlug }`;
-}
-
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -173,7 +169,6 @@ const flows = generateFlows( {
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
 	getAddOnsStep,
-	getStepperFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

@@ -31,8 +31,9 @@ export const pluginBundleFlow: Flow = {
 	name: 'plugin-bundle',
 
 	useSteps() {
+		const siteSlugParam = useSiteSlugParam();
 		const pluginSlug = useSelect( ( select ) =>
-			select( ONBOARD_STORE ).getBundledPluginSlug()
+			select( ONBOARD_STORE ).getBundledPluginSlug( siteSlugParam || '' )
 		) as BundledPlugin;
 
 		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {

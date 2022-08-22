@@ -27,6 +27,7 @@ export function register(): typeof STORE_KEY {
 			'anchorPodcastId',
 			'anchorEpisodeId',
 			'anchorSpotifyUrl',
+			'bundledPluginSlug',
 			'domain',
 			'domainSearch',
 			'goals',
