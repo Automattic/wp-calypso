@@ -37,8 +37,8 @@ describe( 'MediaLibraryDataSource', () => {
 				</ReduxProvider>
 			);
 
-			expect( screen.getByText( 'Google Photos' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Pexels free photos' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Google Photos' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Pexels free photos' ) ).toBeInTheDocument();
 		} );
 
 		test( 'excludes data sources listed in disabledSources', () => {
@@ -54,8 +54,8 @@ describe( 'MediaLibraryDataSource', () => {
 					/>
 				</ReduxProvider>
 			);
-			expect( screen.getByText( 'Google Photos' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Pexels free photos' ) ).toBe( null );
+			expect( screen.queryByText( 'Google Photos' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Pexels free photos' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
