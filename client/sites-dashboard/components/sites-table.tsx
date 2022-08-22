@@ -42,7 +42,7 @@ const Row = styled.tr`
 		font-size: 14px;
 		line-height: 20px;
 		letter-spacing: -0.24px;
-		font-weight: 500;
+		font-weight: normal;
 		color: var( --studio-gray-60 );
 	}
 `;
