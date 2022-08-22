@@ -38,15 +38,14 @@ export const pluginBundleFlow: Flow = {
 
 		console.log( { siteSlugParam, pluginSlug } );
 		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
-			// TODO - Need to handle this better
-			return [];
+			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
 		if ( ! pluginSlug || ! pluginBundleSteps.hasOwnProperty( pluginSlug ) ) {
-			// TODO - Need to handle this better
-			return [];
+			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
+		console.log( 'plugin bundle steps', pluginBundleSteps[ pluginSlug ] );
 		return pluginBundleSteps[ pluginSlug ] as StepPath[];
 	},
 	useStepNavigation( currentStep, navigate ) {
