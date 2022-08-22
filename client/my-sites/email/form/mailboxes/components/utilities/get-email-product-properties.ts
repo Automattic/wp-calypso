@@ -7,7 +7,7 @@ import { ProductListItem } from 'calypso/state/products-list/selectors/get-produ
 type EmailProperties = {
 	existingItemsCount: number;
 	isAdditionalMailboxesPurchase: boolean;
-	emailProduct: ProductListItem;
+	emailProduct: ProductListItem | undefined | null;
 	newQuantity: number | undefined;
 	quantity: number;
 };
@@ -15,7 +15,7 @@ type EmailProperties = {
 const getEmailProductProperties = (
 	provider: EmailProvider,
 	domain: ResponseDomain,
-	emailProduct: ProductListItem,
+	emailProduct: ProductListItem | undefined | null,
 	newMailboxesCount = 1
 ): EmailProperties => {
 	const isTitanProvider = provider === EmailProvider.Titan;

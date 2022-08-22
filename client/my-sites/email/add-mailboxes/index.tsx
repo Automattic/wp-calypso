@@ -71,8 +71,8 @@ interface AddMailboxesAdditionalProps {
 	provider: EmailProvider;
 	selectedDomain: ResponseDomain;
 	selectedDomainName: string;
-	selectedSite: SiteDetails;
-	selectedSiteId: number;
+	selectedSite: SiteDetails | undefined | null;
+	selectedSiteId: number | undefined | null;
 	source: string;
 	translate: typeof translate;
 }
@@ -84,14 +84,18 @@ const useAdditionalProps = ( {
 	selectedDomainName,
 	source = '',
 }: AddMailboxesProps ): AddMailboxesAdditionalProps => {
-	const selectedSite = useSelector( getSelectedSite ) as SiteDetails;
-	const selectedSiteId: number = selectedSite.ID;
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = selectedSite?.ID;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ) );
-	const isLoadingDomains = useSelector(
-		( state ) =>
+	const isLoadingDomains = useSelector( ( state ) => {
+		if ( ! selectedSiteId ) {
+			return true;
+		}
+		return (
 			! hasLoadedSiteDomains( state, selectedSiteId ) ||
 			isRequestingSiteDomains( state, selectedSiteId )
-	);
+		);
+	} );
 
 	const selectedDomain = getSelectedDomain( {
 		domains,
@@ -181,7 +185,7 @@ const MailboxNotices = ( {
 	const { existingItemsCount } = getEmailProductProperties(
 		provider,
 		selectedDomain,
-		emailProduct as ProductListItem
+		emailProduct
 	);
 
 	const handleUnusedMailboxFinishSetupClick = (): void => {
@@ -191,6 +195,10 @@ const MailboxNotices = ( {
 			selectedDomainName,
 			source,
 		} );
+
+		if ( ! selectedSite ) {
+			throw new Error( 'Cannot finish unused mailbox setup without selected site' );
+		}
 
 		page( emailManagementTitanSetUpMailbox( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
@@ -300,7 +308,7 @@ const MailboxesForm = ( {
 		cartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )
 			.then( () => {
-				page( '/checkout/' + selectedSite.slug );
+				page( '/checkout/' + selectedSite?.slug ?? '' );
 			} )
 			.finally( () => setIsAddingToCart( false ) );
 	};
@@ -358,14 +366,14 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 	const goToEmail = (): void => {
 		let url = emailManagement(
-			selectedSite.slug,
+			selectedSite?.slug,
 			isSelectedDomainNameValid ? selectedDomainName : null,
 			currentRoute,
 			{ source }
 		);
 
 		if ( source === INBOX_SOURCE ) {
-			url = emailManagementInbox( selectedSite.slug );
+			url = emailManagementInbox( selectedSite?.slug );
 		}
 
 		page( url );
