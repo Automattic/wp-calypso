@@ -93,7 +93,7 @@ interface WordpressMediaUploadProps {
 	onMediaUploadFailed?: ( imageData: MediaUploadData ) => void;
 	onRemoveImage: ( imageData: MediaUploadData ) => void;
 	mediaIndex: number;
-	site: SiteDetails;
+	site?: SiteDetails;
 	initialUrl: string;
 	initialCaption?: string;
 }
