@@ -132,7 +132,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		function renderStepContent() {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
-			} else if ( ! siteSlug ) {
+			} else if ( ! siteSlug || ! siteItem || ! siteId ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {
 				return (
@@ -147,9 +147,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				<Importer
 					job={ getImportJob( importer ) }
 					run={ runImportInitially }
-					siteId={ siteId as number }
+					siteId={ siteId }
 					site={ siteItem }
-					siteSlug={ siteSlug as string }
+					siteSlug={ siteSlug }
 					fromSite={ fromSite }
 					urlData={ fromSiteData }
 					stepNavigator={ stepNavigator }
