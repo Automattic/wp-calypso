@@ -1,7 +1,7 @@
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useQuery, UseQueryOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -241,10 +241,7 @@ export function useLicenseIssuing(
 		},
 	} );
 
-	const isLoading = useMemo(
-		() => assignLicense.isLoading || issueLicense.isLoading,
-		[ issueLicense, assignLicense ]
-	);
+	const isLoading = assignLicense.isLoading || issueLicense.isLoading;
 
 	const issue = useCallback( () => {
 		if ( isLoading ) {
