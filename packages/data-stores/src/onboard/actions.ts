@@ -303,12 +303,6 @@ export const setEditEmail = ( email: string ) => ( {
 	email,
 } );
 
-export const setBundledPluginSlug = ( siteSlug: string, pluginSlug: string ) => ( {
-	type: 'SET_BUNDLED_PLUGIN_SLUG' as const,
-	siteSlug,
-	pluginSlug,
-} );
-
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -351,5 +345,4 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor
-	| typeof setBundledPluginSlug
 >;

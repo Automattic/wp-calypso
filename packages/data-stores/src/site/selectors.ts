@@ -144,3 +144,6 @@ export function isEligibleForProPlan( state: State, siteId?: number ): boolean {
 
 	return true;
 }
+
+export const getBundledPluginSlug = ( state: State, siteSlug: string ) =>
+	state.bundledPluginSlug[ siteSlug ];
