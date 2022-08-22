@@ -8,13 +8,13 @@ const PluginNavbarFooterAutomattic = () => {
 	);
 
 	return (
-		<div class="lpc-footer-automattic-nav">
-			<div class="lpc-footer-automattic-nav-wrapper">
-				<a class="lp-logo-label" href="https://automattic.com/">
+		<div className="lpc-footer-automattic-nav">
+			<div className="lpc-footer-automattic-nav-wrapper">
+				<a className="lp-logo-label" href="https://automattic.com/">
 					{ translate( 'An' ) }
-					<span class="lp-hidden">Automattic</span>
+					<span className="lp-hidden">Automattic</span>
 					<svg
-						class="lp-icon lp-icon--custom-automattic-footer"
+						className="lp-icon lp-icon--custom-automattic-footer"
 						xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 126 11"
 						aria-hidden="true"
@@ -23,9 +23,9 @@ const PluginNavbarFooterAutomattic = () => {
 					</svg>
 					{ automatticRoger.split( /(\s+)/ )[ Math.floor( Math.random() * ( 10 - 0 + 1 ) + 0 ) ] }
 				</a>
-				<div class="lp-logo-label-spacer"></div>
+				<div className="lp-logo-label-spacer"></div>
 				<a href="https://automattic.com/work-with-us/">
-					<span class="lp-link-chevron-external">{ translate( 'Work With Us' ) }</span>
+					<span className="lp-link-chevron-external">{ translate( 'Work With Us' ) }</span>
 				</a>
 			</div>
 		</div>

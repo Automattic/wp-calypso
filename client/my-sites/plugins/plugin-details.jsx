@@ -20,6 +20,8 @@ import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/bil
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
+import PluginNavbarFooter from 'calypso/my-sites/plugins/plugin-navbar-footer';
+import PluginNavbarFooterAutomattic from 'calypso/my-sites/plugins/plugin-navbar-footer-automattic';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
@@ -285,96 +287,100 @@ function PluginDetails( props ) {
 	}
 
 	return (
-		<MainComponent wideLayout>
-			<DocumentHead title={ getPageTitle() } />
-			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryJetpackPlugins siteIds={ siteIds } />
-			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
-			<QueryProductsList persist={ ! wporgPluginNotFound } />
-			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
+		<>
+			<MainComponent wideLayout>
+				<DocumentHead title={ getPageTitle() } />
+				<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
+				<QueryJetpackPlugins siteIds={ siteIds } />
+				<QueryEligibility siteId={ selectedSite?.ID } />
+				<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
+				<QueryProductsList persist={ ! wporgPluginNotFound } />
+				<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 
-			<PluginNotices
-				pluginId={ fullPlugin.id }
-				sites={ sitesWithPlugins }
-				plugins={ [ fullPlugin ] }
-			/>
+				<PluginNotices
+					pluginId={ fullPlugin.id }
+					sites={ sitesWithPlugins }
+					plugins={ [ fullPlugin ] }
+				/>
 
-			{ isSiteConnected === false && (
-				<Notice
-					icon="notice"
-					showDismiss={ false }
-					status="is-warning"
-					text={ translate( '%(siteName)s cannot be accessed.', {
-						textOnly: true,
-						args: { siteName: selectedSite.title },
-					} ) }
-				>
-					<NoticeAction
-						onClick={ trackSiteDisconnect }
-						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+				{ isSiteConnected === false && (
+					<Notice
+						icon="notice"
+						showDismiss={ false }
+						status="is-warning"
+						text={ translate( '%(siteName)s cannot be accessed.', {
+							textOnly: true,
+							args: { siteName: selectedSite.title },
+						} ) }
 					>
-						{ translate( 'I’d like to fix this now' ) }
-					</NoticeAction>
-				</Notice>
-			) }
+						<NoticeAction
+							onClick={ trackSiteDisconnect }
+							href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+						>
+							{ translate( 'I’d like to fix this now' ) }
+						</NoticeAction>
+					</Notice>
+				) }
 
-			<div className="plugin-details__page">
-				<div className="plugin-details__layout">
-					<div className="plugin-details__header">
-						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
-					</div>
-					<div className="plugin-details__content">
-						{ ! showPlaceholder && (
-							<div className="plugin-details__body">
-								{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
-									<Notice
-										text={ translate(
-											'Incompatible plugin: This plugin is not supported on WordPress.com.'
-										) }
-										status="is-warning"
-										showDismiss={ false }
-									>
-										<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
-											{ translate( 'More info' ) }
-										</NoticeAction>
-									</Notice>
-								) }
+				<div className="plugin-details__page">
+					<div className="plugin-details__layout">
+						<div className="plugin-details__header">
+							<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+						</div>
+						<div className="plugin-details__content">
+							{ ! showPlaceholder && (
+								<div className="plugin-details__body">
+									{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
+										<Notice
+											text={ translate(
+												'Incompatible plugin: This plugin is not supported on WordPress.com.'
+											) }
+											status="is-warning"
+											showDismiss={ false }
+										>
+											<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+												{ translate( 'More info' ) }
+											</NoticeAction>
+										</Notice>
+									) }
 
-								{ fullPlugin.wporg || isMarketplaceProduct ? (
-									<PluginSections
-										className="plugin-details__plugins-sections"
-										plugin={ fullPlugin }
-										isWpcom={ isWpcom }
-										addBanner
-										removeReadMore
-									/>
-								) : (
-									<PluginSectionsCustom plugin={ fullPlugin } />
-								) }
-							</div>
-						) }
-					</div>
+									{ fullPlugin.wporg || isMarketplaceProduct ? (
+										<PluginSections
+											className="plugin-details__plugins-sections"
+											plugin={ fullPlugin }
+											isWpcom={ isWpcom }
+											addBanner
+											removeReadMore
+										/>
+									) : (
+										<PluginSectionsCustom plugin={ fullPlugin } />
+									) }
+								</div>
+							) }
+						</div>
 
-					<div className="plugin-details__actions">
-						<PluginDetailsCTA
-							plugin={ fullPlugin }
-							siteIds={ siteIds }
-							selectedSite={ selectedSite }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							isPlaceholder={ showPlaceholder }
-							billingPeriod={ billingPeriod }
-							isMarketplaceProduct={ isMarketplaceProduct }
-							isSiteConnected={ isSiteConnected }
-						/>
+						<div className="plugin-details__actions">
+							<PluginDetailsCTA
+								plugin={ fullPlugin }
+								siteIds={ siteIds }
+								selectedSite={ selectedSite }
+								isPluginInstalledOnsite={ isPluginInstalledOnsite }
+								isPlaceholder={ showPlaceholder }
+								billingPeriod={ billingPeriod }
+								isMarketplaceProduct={ isMarketplaceProduct }
+								isSiteConnected={ isSiteConnected }
+							/>
 
-						{ ! showPlaceholder && ! requestingPluginsForSites && (
-							<PluginDetailsSidebar plugin={ fullPlugin } />
-						) }
+							{ ! showPlaceholder && ! requestingPluginsForSites && (
+								<PluginDetailsSidebar plugin={ fullPlugin } />
+							) }
+						</div>
 					</div>
 				</div>
-			</div>
-		</MainComponent>
+				<PluginNavbarFooter />
+			</MainComponent>
+			<PluginNavbarFooterAutomattic />
+		</>
 	);
 }
 
@@ -428,119 +434,123 @@ function LegacyPluginDetails( props ) {
 		: props.breadcrumbs;
 
 	return (
-		<MainComponent wideLayout>
-			<DocumentHead title={ getPageTitle() } />
-			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryJetpackPlugins siteIds={ siteIds } />
-			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
-			<QueryProductsList persist />
-			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs }>
-				{ showBillingIntervalSwitcher && (
-					<BillingIntervalSwitcher
-						billingPeriod={ billingPeriod }
-						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
-						compact={ ! isWide }
-						plugin={ fullPlugin }
-					/>
-				) }
-			</FixedNavigationHeader>
-			<PluginNotices
-				pluginId={ fullPlugin.id }
-				sites={ sitesWithPlugins }
-				plugins={ [ fullPlugin ] }
-			/>
-
-			{ isSiteConnected === false && (
-				<Notice
-					icon="notice"
-					showDismiss={ false }
-					status="is-warning"
-					text={ translate( '%(siteName)s cannot be accessed.', {
-						textOnly: true,
-						args: { siteName: selectedSite.title },
-					} ) }
-				>
-					<NoticeAction
-						onClick={ trackSiteDisconnect }
-						href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
-					>
-						{ translate( 'I’d like to fix this now' ) }
-					</NoticeAction>
-				</Notice>
-			) }
-
-			<div className="plugin-details__page legacy">
-				<div className="plugin-details__layout plugin-details__top-section">
-					<div className="plugin-details__layout-col-left">
-						<PluginDetailsHeader
-							plugin={ fullPlugin }
-							isPlaceholder={ showPlaceholder }
-							isJetpackCloud={ isJetpackCloud }
-						/>
-					</div>
-
-					<div className="plugin-details__layout-col-right">
-						<PluginDetailsCTA
-							plugin={ fullPlugin }
-							siteIds={ siteIds }
-							selectedSite={ selectedSite }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							isPlaceholder={ showPlaceholder }
+		<>
+			<MainComponent wideLayout>
+				<DocumentHead title={ getPageTitle() } />
+				<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
+				<QueryJetpackPlugins siteIds={ siteIds } />
+				<QueryEligibility siteId={ selectedSite?.ID } />
+				<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
+				<QueryProductsList persist />
+				<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs }>
+					{ showBillingIntervalSwitcher && (
+						<BillingIntervalSwitcher
 							billingPeriod={ billingPeriod }
-							isMarketplaceProduct={ isMarketplaceProduct }
-							isSiteConnected={ isSiteConnected }
+							onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
+							compact={ ! isWide }
+							plugin={ fullPlugin }
 						/>
-					</div>
-				</div>
+					) }
+				</FixedNavigationHeader>
+				<PluginNotices
+					pluginId={ fullPlugin.id }
+					sites={ sitesWithPlugins }
+					plugins={ [ fullPlugin ] }
+				/>
 
-				{ ! showPlaceholder && (
-					<>
-						{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
-							<Notice
-								text={ translate(
-									'Incompatible plugin: This plugin is not supported on WordPress.com.'
-								) }
-								status="is-warning"
-								showDismiss={ false }
-							>
-								<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
-									{ translate( 'More info' ) }
-								</NoticeAction>
-							</Notice>
-						) }
-
-						{ isLoggedIn && (
-							<SitesListArea
-								fullPlugin={ fullPlugin }
-								isPluginInstalledOnsite={ isPluginInstalledOnsite }
-								billingPeriod={ billingPeriod }
-								{ ...props }
-							/>
-						) }
-
-						<div className="plugin-details__layout plugin-details__body">
-							<div className="plugin-details__layout-col-left">
-								{ fullPlugin.wporg || isMarketplaceProduct ? (
-									<PluginSections
-										className="plugin-details__plugins-sections"
-										plugin={ fullPlugin }
-										isWpcom={ isWpcom }
-										addBanner
-										removeReadMore
-									/>
-								) : (
-									<PluginSectionsCustom plugin={ fullPlugin } />
-								) }
-							</div>
-							<div className="plugin-details__layout-col-right">
-								<PluginDetailsSidebar plugin={ fullPlugin } />
-							</div>
-						</div>
-					</>
+				{ isSiteConnected === false && (
+					<Notice
+						icon="notice"
+						showDismiss={ false }
+						status="is-warning"
+						text={ translate( '%(siteName)s cannot be accessed.', {
+							textOnly: true,
+							args: { siteName: selectedSite.title },
+						} ) }
+					>
+						<NoticeAction
+							onClick={ trackSiteDisconnect }
+							href={ `/settings/disconnect-site/${ selectedSite.slug }?type=down` }
+						>
+							{ translate( 'I’d like to fix this now' ) }
+						</NoticeAction>
+					</Notice>
 				) }
-			</div>
-		</MainComponent>
+
+				<div className="plugin-details__page legacy">
+					<div className="plugin-details__layout plugin-details__top-section">
+						<div className="plugin-details__layout-col-left">
+							<PluginDetailsHeader
+								plugin={ fullPlugin }
+								isPlaceholder={ showPlaceholder }
+								isJetpackCloud={ isJetpackCloud }
+							/>
+						</div>
+
+						<div className="plugin-details__layout-col-right">
+							<PluginDetailsCTA
+								plugin={ fullPlugin }
+								siteIds={ siteIds }
+								selectedSite={ selectedSite }
+								isPluginInstalledOnsite={ isPluginInstalledOnsite }
+								isPlaceholder={ showPlaceholder }
+								billingPeriod={ billingPeriod }
+								isMarketplaceProduct={ isMarketplaceProduct }
+								isSiteConnected={ isSiteConnected }
+							/>
+						</div>
+					</div>
+
+					{ ! showPlaceholder && (
+						<>
+							{ ! isJetpackSelfHosted && ! isCompatiblePlugin( props.pluginSlug ) && (
+								<Notice
+									text={ translate(
+										'Incompatible plugin: This plugin is not supported on WordPress.com.'
+									) }
+									status="is-warning"
+									showDismiss={ false }
+								>
+									<NoticeAction href="https://wordpress.com/support/incompatible-plugins/">
+										{ translate( 'More info' ) }
+									</NoticeAction>
+								</Notice>
+							) }
+
+							{ isLoggedIn && (
+								<SitesListArea
+									fullPlugin={ fullPlugin }
+									isPluginInstalledOnsite={ isPluginInstalledOnsite }
+									billingPeriod={ billingPeriod }
+									{ ...props }
+								/>
+							) }
+
+							<div className="plugin-details__layout plugin-details__body">
+								<div className="plugin-details__layout-col-left">
+									{ fullPlugin.wporg || isMarketplaceProduct ? (
+										<PluginSections
+											className="plugin-details__plugins-sections"
+											plugin={ fullPlugin }
+											isWpcom={ isWpcom }
+											addBanner
+											removeReadMore
+										/>
+									) : (
+										<PluginSectionsCustom plugin={ fullPlugin } />
+									) }
+								</div>
+								<div className="plugin-details__layout-col-right">
+									<PluginDetailsSidebar plugin={ fullPlugin } />
+								</div>
+							</div>
+						</>
+					) }
+				</div>
+				<PluginNavbarFooter />
+			</MainComponent>
+			<PluginNavbarFooterAutomattic />
+		</>
 	);
 }
 
@@ -649,15 +659,19 @@ function PluginDoesNotExistView() {
 	const action = translate( 'Browse all plugins' );
 
 	return (
-		<MainComponent wideLayout>
-			<EmptyContent
-				title={ translate( "Oops! We can't find this plugin!" ) }
-				line={ translate( "The plugin you are looking for doesn't exist." ) }
-				actionURL={ actionUrl }
-				action={ action }
-				illustration="/calypso/images/illustrations/illustration-404.svg"
-			/>
-		</MainComponent>
+		<>
+			<MainComponent wideLayout>
+				<EmptyContent
+					title={ translate( "Oops! We can't find this plugin!" ) }
+					line={ translate( "The plugin you are looking for doesn't exist." ) }
+					actionURL={ actionUrl }
+					action={ action }
+					illustration="/calypso/images/illustrations/illustration-404.svg"
+				/>
+				<PluginNavbarFooter />
+			</MainComponent>
+			<PluginNavbarFooterAutomattic />
+		</>
 	);
 }
 

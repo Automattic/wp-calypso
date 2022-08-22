@@ -9,15 +9,10 @@ const PluginNavbarFooter = () => {
 
 	return (
 		<>
-			<section
-				id="lpc-footer-nav"
-				data-vars-ev-id="lpc-footer-nav"
-				class="lpc lpc-footer-nav"
-				data-vars-ev-class="lpc lpc-footer-nav"
-			>
-				<h2 class="lp-hidden">WordPress.com</h2>
-				<div class="lpc-footer-nav-wrapper">
-					<div class="lpc-footer-nav-container">
+			<section id="lpc-footer-nav" data-vars-ev-id="lpc-footer-nav" className="lpc lpc-footer-nav">
+				<h2 className="lp-hidden">WordPress.com</h2>
+				<div className="lpc-footer-nav-wrapper">
+					<div className="lpc-footer-nav-container">
 						<div>
 							<h3>{ translate( 'Products' ) }</h3>
 							<ul>
@@ -48,7 +43,7 @@ const PluginNavbarFooter = () => {
 								<li>
 									<a href="https://wpvip.com/" data-is_external="1">
 										{ translate( 'Enterprise' ) }{ ' ' }
-										<span class="lp-link-chevron-external">{ translate( 'Solutions' ) }</span>
+										<span className="lp-link-chevron-external">{ translate( 'Solutions' ) }</span>
 									</a>
 								</li>
 								<li>
@@ -118,7 +113,7 @@ const PluginNavbarFooter = () => {
 								<li>
 									<a href="https://developer.wordpress.com/" data-is_external="1">
 										{ translate( 'Developer' ) }{ ' ' }
-										<span class="lp-link-chevron-external">{ translate( 'Resources' ) }</span>
+										<span className="lp-link-chevron-external">{ translate( 'Resources' ) }</span>
 									</a>
 								</li>
 							</ul>
@@ -134,7 +129,7 @@ const PluginNavbarFooter = () => {
 								</li>
 								<li>
 									<a href="https://automattic.com/press/" data-is_external="1">
-										<span class="lp-link-chevron-external">{ translate( 'Press' ) }</span>
+										<span className="lp-link-chevron-external">{ translate( 'Press' ) }</span>
 									</a>
 								</li>
 								<li>
@@ -143,20 +138,20 @@ const PluginNavbarFooter = () => {
 								<li>
 									<a href="https://automattic.com/privacy/" data-is_external="1">
 										{ translate( 'Privacy' ) }{ ' ' }
-										<span class="lp-link-chevron-external">{ translate( 'Policy' ) }</span>
+										<span className="lp-link-chevron-external">{ translate( 'Policy' ) }</span>
 									</a>
 								</li>
 							</ul>
 						</div>
 					</div>
-					<div class="lpc-footer-subnav-container">
-						<div class="lp-footer-language">
-							<h2 class="lp-hidden">{ translate( 'Language' ) }</h2>
-							<div class="lp-language-picker">
-								<div class="lp-language-picker__icon"></div>
-								<div class="lp-language-picker__chevron"></div>
+					<div className="lpc-footer-subnav-container">
+						<div className="lp-footer-language">
+							<h2 className="lp-hidden">{ translate( 'Language' ) }</h2>
+							<div className="lp-language-picker">
+								<div className="lp-language-picker__icon"></div>
+								<div className="lp-language-picker__chevron"></div>
 								<select
-									class="lp-language-picker__content"
+									className="lp-language-picker__content"
 									title={ translate( 'Change Language' ) }
 									on=""
 									field_signature="4203909268"
@@ -224,37 +219,37 @@ const PluginNavbarFooter = () => {
 								</select>
 							</div>
 						</div>
-						<div class="lpc-footer-mobile-apps">
-							<h2 class="lp-hidden">{ translate( 'Mobile Apps' ) }</h2>
-							<ul class="lp-footer-mobile-icons">
+						<div className="lpc-footer-mobile-apps">
+							<h2 className="lp-hidden">{ translate( 'Mobile Apps' ) }</h2>
+							<ul className="lp-footer-mobile-icons">
 								<li>
 									<a
-										class="lp-app-button lp-app-button--type-google-play"
+										className="lp-app-button lp-app-button--type-google-play"
 										href="https://play.google.com/store/apps/details?id=org.wordpress.android"
 									>
-										<span class="lp-app-button__content">
+										<span className="lp-app-button__content">
 											<svg
-												class="lp-app-button__content__icon"
+												className="lp-app-button__content__icon"
 												xmlns="http://www.w3.org/2000/svg"
 												viewBox="0 0 23 25"
 												aria-hidden="true"
 											>
 												<defs>
 													<linearGradient id="lp-gp-a" x1="50%" x2="40%" y1="25%" y2="50%">
-														<stop offset="0%" stop-color="#00c4ff"></stop>
-														<stop offset="100%" stop-color="#00e3ff"></stop>
+														<stop offset="0%" stopColor="#00c4ff"></stop>
+														<stop offset="100%" stopColor="#00e3ff"></stop>
 													</linearGradient>
 													<linearGradient id="lp-gp-b" x1="0%" x2="100%" y1="50%" y2="50%">
-														<stop offset="0%" stop-color="#fb0"></stop>
-														<stop offset="100%" stop-color="#fd0"></stop>
+														<stop offset="0%" stopColor="#fb0"></stop>
+														<stop offset="100%" stopColor="#fd0"></stop>
 													</linearGradient>
 													<linearGradient id="lp-gp-c" x1="100%" x2="0%" y1="20%" y2="80%">
-														<stop offset="0%" stop-color="#df2454"></stop>
-														<stop offset="100%" stop-color="#ff3a44"></stop>
+														<stop offset="0%" stopColor="#df2454"></stop>
+														<stop offset="100%" stopColor="#ff3a44"></stop>
 													</linearGradient>
 													<linearGradient id="lp-gp-d" x1="0%" x2="100%" y1="20%" y2="80%">
-														<stop offset="0%" stop-color="#13d375"></stop>
-														<stop offset="100%" stop-color="#00f076"></stop>
+														<stop offset="0%" stopColor="#13d375"></stop>
+														<stop offset="100%" stopColor="#00f076"></stop>
 													</linearGradient>
 												</defs>
 												<path
@@ -274,11 +269,11 @@ const PluginNavbarFooter = () => {
 													d="M16.66 8.4 2.46.32C1.63-.15.88-.08.44.4l12.11 12.1 4.1-4.1z"
 												></path>
 											</svg>
-											<span class="lp-app-button__content__label">
-												<span class="lp-app-button__line lp-app-button__line--top">
+											<span className="lp-app-button__content__label">
+												<span className="lp-app-button__line lp-app-button__line--top">
 													{ translate( 'Get it on' ) }
 												</span>
-												<span class="lp-app-button__line lp-app-button__line--bottom">
+												<span className="lp-app-button__line lp-app-button__line--bottom">
 													{ translate( 'Google Play' ) }
 												</span>
 											</span>
@@ -287,12 +282,12 @@ const PluginNavbarFooter = () => {
 								</li>
 								<li>
 									<a
-										class="lp-app-button lp-app-button--type-app-store"
+										className="lp-app-button lp-app-button--type-app-store"
 										href="https://apps.apple.com/us/app/wordpress/id335703880"
 									>
-										<span class="lp-app-button__content">
+										<span className="lp-app-button__content">
 											<svg
-												class="lp-app-button__content__icon"
+												className="lp-app-button__content__icon"
 												xmlns="http://www.w3.org/2000/svg"
 												viewBox="0 0 18 23"
 												aria-hidden="true"
@@ -302,11 +297,11 @@ const PluginNavbarFooter = () => {
 													d="m12.88 5.97.28.02c1.6.05 3.08.85 4 2.16a4.95 4.95 0 0 0-2.36 4.15 4.78 4.78 0 0 0 2.92 4.4 10.96 10.96 0 0 1-1.52 3.1c-.9 1.33-1.83 2.64-3.32 2.66-1.45.04-1.94-.85-3.6-.85-1.67 0-2.19.83-3.57.89-1.42.05-2.5-1.43-3.43-2.76-1.85-2.7-3.3-7.63-1.36-10.97a5.32 5.32 0 0 1 4.47-2.73C6.81 6 8.13 7 9 7c.86 0 2.48-1.18 4.16-1zm.3-5.25a4.87 4.87 0 0 1-1.11 3.49 4.1 4.1 0 0 1-3.24 1.53 4.64 4.64 0 0 1 1.14-3.36A4.96 4.96 0 0 1 13.18.72z"
 												></path>
 											</svg>
-											<span class="lp-app-button__content__label">
-												<span class="lp-app-button__line lp-app-button__line--top">
+											<span className="lp-app-button__content__label">
+												<span className="lp-app-button__line lp-app-button__line--top">
 													{ translate( 'Download on the' ) }
 												</span>
-												<span class="lp-app-button__line lp-app-button__line--bottom">
+												<span className="lp-app-button__line lp-app-button__line--bottom">
 													{ translate( 'App Store' ) }
 												</span>
 											</span>
@@ -316,14 +311,14 @@ const PluginNavbarFooter = () => {
 							</ul>
 						</div>
 
-						<div class="lp-footer-social-media">
-							<h2 class="lp-hidden">{ translate( 'Social Media' ) }</h2>
-							<ul class="lp-footer-social-icons">
+						<div className="lp-footer-social-media">
+							<h2 className="lp-hidden">{ translate( 'Social Media' ) }</h2>
+							<ul className="lp-footer-social-icons">
 								<li>
 									<a href="https://twitter.com/wordpressdotcom" title="WordPress.com on Twitter">
-										<span class="lp-hidden">{ translate( 'WordPress.com on Twitter' ) }</span>
+										<span className="lp-hidden">{ translate( 'WordPress.com on Twitter' ) }</span>
 										<svg
-											class="lp-icon"
+											className="lp-icon"
 											xmlns="http://www.w3.org/2000/svg"
 											viewBox="0 0 24 24"
 											aria-hidden="true"
@@ -337,9 +332,9 @@ const PluginNavbarFooter = () => {
 										href="https://www.facebook.com/WordPresscom/"
 										title="WordPress.com on Facebook"
 									>
-										<span class="lp-hidden">{ translate( 'WordPress.com on Facebook' ) }</span>
+										<span className="lp-hidden">{ translate( 'WordPress.com on Facebook' ) }</span>
 										<svg
-											class="lp-icon"
+											className="lp-icon"
 											xmlns="http://www.w3.org/2000/svg"
 											viewBox="0 0 24 24"
 											aria-hidden="true"
@@ -353,9 +348,9 @@ const PluginNavbarFooter = () => {
 										href="https://www.instagram.com/wordpressdotcom/"
 										title="WordPress.com on Instagram"
 									>
-										<span class="lp-hidden">{ translate( 'WordPress.com on Instagram' ) }</span>
+										<span className="lp-hidden">{ translate( 'WordPress.com on Instagram' ) }</span>
 										<svg
-											class="lp-icon"
+											className="lp-icon"
 											xmlns="http://www.w3.org/2000/svg"
 											viewBox="0 0 24 24"
 											aria-hidden="true"
@@ -369,9 +364,9 @@ const PluginNavbarFooter = () => {
 										href="https://www.youtube.com/WordPressdotcom"
 										title="WordPress.com on YouTube"
 									>
-										<span class="lp-hidden">{ translate( 'WordPress.com on YouTube' ) }</span>
+										<span className="lp-hidden">{ translate( 'WordPress.com on YouTube' ) }</span>
 										<svg
-											class="lp-icon"
+											className="lp-icon"
 											xmlns="http://www.w3.org/2000/svg"
 											viewBox="0 0 24 24"
 											aria-hidden="true"
