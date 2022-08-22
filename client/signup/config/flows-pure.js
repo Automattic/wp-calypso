@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
 const noop = () => {};
 
@@ -14,7 +15,6 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
-	getStepperFlowDestination = noop,
 	getAddOnsStep = noop,
 } = {} ) {
 	const flows = [
@@ -129,14 +129,13 @@ export function generateFlows( {
 		},
 		{
 			name: 'link-in-bio',
-			steps: getAddOnsStep(
-				isEnabled( 'signup/professional-email-step' )
-					? [ 'user', 'domains', 'emails', 'plans' ]
-					: [ 'user', 'domains', 'plans' ]
-			),
-			destination: ( dependencies ) => getStepperFlowDestination( dependencies, 'link-in-bio' ),
+			steps: [ 'domains', 'plans' ],
+			destination: ( dependencies ) =>
+				`/setup/completingPurchase?flow=link-in-bio&siteSlug=${ encodeURIComponent(
+					dependencies.siteSlug
+				) }`,
 			description: 'Beginning of the flow to create a link in bio',
-			lastModified: '2022-07-28',
+			lastModified: '2022-08-16',
 			showRecaptcha: true,
 			hideBackButton: true,
 			get pageTitle() {
@@ -274,6 +273,14 @@ export function generateFlows( {
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'P2 signup flow',
 			lastModified: '2020-09-01',
+			showRecaptcha: true,
+		},
+		{
+			name: 'videopress',
+			steps: VIDEOPRESS_ONBOARDING_FLOW_STEPS,
+			destination: ( dependencies ) => `/site-editor/${ dependencies.siteSlug }`,
+			description: 'VideoPress signup flow',
+			lastModified: '2022-07-06',
 			showRecaptcha: true,
 		},
 		{

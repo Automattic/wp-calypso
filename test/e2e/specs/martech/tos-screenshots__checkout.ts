@@ -106,7 +106,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 					type: 'jpeg',
 					quality: 20,
 				} );
-				page.setViewportSize( { width: 410, height: 820 } );
+				page.setViewportSize( { width: 410, height: 1620 } );
 				await page.screenshot( {
 					path: `tos_checkout_mobile_${ locale }.png`,
 					fullPage: true,

@@ -95,8 +95,8 @@ export default function CTAButton( {
 				closeDialog={ () => setShowAddCustomDomain( false ) }
 			/>
 			<Dialog
-				additionalClassNames={ 'plugin-details-CTA__dialog-content' }
-				additionalOverlayClassNames={ 'plugin-details-CTA__modal-overlay' }
+				additionalClassNames={ 'plugin-details-cta__dialog-content' }
+				additionalOverlayClassNames={ 'plugin-details-cta__modal-overlay' }
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
@@ -119,7 +119,7 @@ export default function CTAButton( {
 				/>
 			</Dialog>
 			<Button
-				className="plugin-details-CTA__install-button"
+				className="plugin-details-cta__install-button"
 				primary
 				onClick={ () => {
 					if ( pluginRequiresCustomPrimaryDomain ) {
@@ -154,8 +154,8 @@ export default function CTAButton( {
 				}
 			</Button>
 			{ isJetpackSelfHosted && isMarketplaceProduct && (
-				<div className="plugin-details-CTA__not-available">
-					<p className="plugin-details-CTA__not-available-text">
+				<div className="plugin-details-cta__not-available">
+					<p className="plugin-details-cta__not-available-text">
 						{ translate( 'Thanks for your interest. ' ) }
 						{ translate(
 							'Paid plugins are not yet available for Jetpack Sites but we can notify you when they are ready.'
@@ -163,7 +163,7 @@ export default function CTAButton( {
 					</p>
 					{ hasPreferences && (
 						<ToggleControl
-							className="plugin-details-CTA__follow-toggle"
+							className="plugin-details-cta__follow-toggle"
 							label={ translate( 'Keep me updated' ) }
 							checked={ keepMeUpdatedPreference }
 							onChange={ updatedKeepMeUpdatedPreference }

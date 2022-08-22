@@ -31,7 +31,7 @@
 
 		@include break-large {
 			background-size: auto 25%, auto 25%;
-			background-position-y: 90%, 10%;
+			background-position-y: 85%, 10%;
 		}
 	}
 
@@ -50,7 +50,7 @@
 
 		.wordpress-logo {
 			inset-block-start: 20px;
-			inset-inline-start: 20px;
+			inset-inline-start: 24px;
 			position: absolute;
 			transform-origin: 0 0;
 			fill: var( --color-text );
@@ -71,11 +71,19 @@
 			}
 
 			.step-container__content {
-				min-height: 80vh;
+				min-height: 81vh;
 			}
 		}
 
 		min-height: inherit;
+
+		.step-container__header {
+			margin-bottom: 0;
+		}
+	
+		.step-container__jetpack-powered {
+			margin: 20px 0 60px;
+		}
 	}
 
 	.intro__content {

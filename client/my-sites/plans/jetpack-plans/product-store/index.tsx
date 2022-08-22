@@ -1,11 +1,11 @@
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
+import { UserLicensesDialog } from './user-licenses-dialog';
 import type { ProductStoreProps } from './types';
 
-const ProductStore: React.FC< ProductStoreProps > = () => {
+const ProductStore: React.FC< ProductStoreProps > = ( { enableUserLicensesDialog } ) => {
 	return (
 		<div>
-			<p>{ 'Hello there! 👋' }</p>
-			<p>{ 'Something cool coming up soon' }</p>
+			{ enableUserLicensesDialog && <UserLicensesDialog /> }
 			<StoreFooter />
 		</div>
 	);

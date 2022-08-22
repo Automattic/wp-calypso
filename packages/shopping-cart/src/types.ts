@@ -558,6 +558,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
 	privacy_available?: boolean;
+	signup_flow?: string;
 }
 
 export interface GSuiteProductUser {

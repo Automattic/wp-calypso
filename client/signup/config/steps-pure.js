@@ -28,6 +28,7 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
+	createVideoPressSite = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
@@ -768,6 +769,12 @@ export function generateSteps( {
 		transfer: {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
+		},
+
+		'videopress-site': {
+			stepName: 'videopress-site',
+			apiRequestFunction: createVideoPressSite,
+			providesDependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		},
 	};
 }
