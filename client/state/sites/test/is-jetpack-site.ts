@@ -16,7 +16,7 @@ const getSiteState = ( siteData = {} ) => {
 
 describe( 'isJetpackSite', () => {
 	test( 'should return null if no site is found', () => {
-		expect( isJetpackSite( getSiteState() ) ).toEqual( null );
+		expect( isJetpackSite( getSiteState(), null ) ).toEqual( null );
 		expect( isJetpackSite( getSiteState(), siteId + 1 ) ).toEqual( null );
 	} );
 

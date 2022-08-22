@@ -1,20 +1,31 @@
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import type { AppState } from 'calypso/types';
+
+const defaultOptions = {
+	considerStandaloneProducts: true,
+};
 
 /**
  * Returns true if site is a Jetpack site, false if the site is hosted on
  * WordPress.com, or null if the site is unknown.
  *
- * @param {import('calypso/types').AppState} state Global state tree
- * @param  {?number}   siteId Site ID
- * @param  {?{ considerStandaloneProducts?: boolean }}  options Whether to consider sites with Jetpack standalone plugins installed
- * @returns {boolean | null} Whether site is a Jetpack site
+ * When options.considerStandaloneProducts is true (the default), sites with
+ * Jetpack standalone plugins will also be considered Jetpack sites for the
+ * purposes of this function.
  */
 export default function isJetpackSite(
-	state,
-	siteId,
-	options = { considerStandaloneProducts: true }
-) {
+	state: AppState,
+	siteId: number | undefined | null,
+	options?: Partial< typeof defaultOptions >
+): boolean | null {
+	if ( ! siteId ) {
+		return null;
+	}
+
+	// Merge default options with options.
+	options = options ? { ...defaultOptions, ...options } : defaultOptions;
+
 	const site = getRawSite( state, siteId );
 	if ( ! site ) {
 		return null;
