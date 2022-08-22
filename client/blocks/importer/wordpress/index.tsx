@@ -126,7 +126,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							url={ fromSite }
 							sourceSiteId={ fromSiteItem?.ID as number }
 							sourceUrlAnalyzedData={ fromSiteAnalyzedData }
-							targetSite={ siteItem }
+							targetSite={ siteItem ?? undefined }
 							targetSiteId={ siteId }
 							targetSiteSlug={ siteSlug }
 							stepNavigator={ stepNavigator }
