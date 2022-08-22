@@ -2,7 +2,7 @@ import { stepSlug, useMyDomainInputMode } from '../constants';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type ValueOf< T > = T[ keyof T ];
-export type Maybe< T > = T | null;
+export type Maybe< T > = T | null | undefined;
 
 type PossibleSlugs = ValueOf< typeof stepSlug >;
 type PossibleInitialModes = ValueOf< typeof useMyDomainInputMode >;
