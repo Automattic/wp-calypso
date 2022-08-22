@@ -15,7 +15,7 @@ type EmailProperties = {
 const getEmailProductProperties = (
 	provider: EmailProvider,
 	domain: ResponseDomain,
-	emailProduct: ProductListItem | undefined | null,
+	emailProduct: ProductListItem,
 	newMailboxesCount = 1
 ): EmailProperties => {
 	const isTitanProvider = provider === EmailProvider.Titan;
