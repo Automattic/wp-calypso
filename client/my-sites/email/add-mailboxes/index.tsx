@@ -182,11 +182,10 @@ const MailboxNotices = ( {
 		return null;
 	}
 
-	const { existingItemsCount } = getEmailProductProperties(
-		provider,
-		selectedDomain,
-		emailProduct
-	);
+	const emailProductProperties = emailProduct
+		? getEmailProductProperties( provider, selectedDomain, emailProduct )
+		: { existingItemsCount: 0 };
+	const { existingItemsCount } = emailProductProperties;
 
 	const handleUnusedMailboxFinishSetupClick = (): void => {
 		recordClickEvent( {
