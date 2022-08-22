@@ -1,0 +1,51 @@
+$lp-font-stack-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+$lp-font-stack-default: -apple-system, 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif, $lp-font-stack-emoji;
+
+@mixin text-16() {
+	@include text-props(16, 26);
+}
+
+@mixin text-props($font-size, $line-height, $letter-spacing: 0) {
+	font-size: $font-size * 0.1rem;
+	line-height: $line-height * 0.1rem;
+	letter-spacing: if( $letter-spacing == 0, 0, $letter-spacing / $font-size * 1em );
+}
+
+.lpc-footer-automattic-nav {
+	padding: 1.25rem;
+	@include text-16;
+	font-family: $lp-font-stack-default;
+	background: #fff;
+	margin: 80px -32px -32px;
+	font-size: 1rem;
+}
+
+.lpc-footer-nav-wrapper,
+.lpc-footer-automattic-nav-wrapper {
+	max-width: 1056px;
+	margin: 0 auto;
+}
+
+.lpc-footer-automattic-nav-wrapper {
+	display: grid;
+	grid-template-columns: repeat( 4, 1fr );
+	color: #2c3338;
+
+	a {
+		display: block;
+		padding: 5px 0;
+		text-decoration: underline;
+		color: inherit;
+	}
+
+	.lp-logo-label-spacer {
+		grid-column: span 2;
+	}
+
+	.lp-logo-label {
+		white-space: nowrap;
+		text-decoration: none;
+		margin-right: 18px;
+		color: #0675c4;
+	}
+}
