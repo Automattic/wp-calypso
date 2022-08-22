@@ -2,9 +2,12 @@ import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-plugin';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import type { Plugin } from '../types';
@@ -44,6 +47,11 @@ export default function PluginRowFormatter( {
 
 	let canActivate;
 	let canUpdate;
+
+	const installInProgress = useSelector(
+		( state ) =>
+			selectedSite && isPluginActionInProgress( state, selectedSite.ID, item.id, INSTALL_PLUGIN )
+	);
 
 	if ( selectedSite ) {
 		const { activation, autoupdate } = getAllowedPluginActions( item, state, selectedSite );
@@ -125,5 +133,17 @@ export default function PluginRowFormatter( {
 			return null;
 		case 'update':
 			return <UpdatePlugin plugin={ item } selectedSite={ selectedSite } className={ className } />;
+		case 'install':
+			return (
+				<div className="plugin-row-formatter__install-plugin">
+					<PluginInstallButton
+						isEmbed
+						isJetpackCloud
+						selectedSite={ selectedSite }
+						plugin={ item }
+						isInstalling={ installInProgress }
+					/>
+				</div>
+			);
 	}
 }

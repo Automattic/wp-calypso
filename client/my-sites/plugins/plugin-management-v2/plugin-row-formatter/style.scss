@@ -66,3 +66,12 @@ a.button.plugin-row-formatter__plugin-name-card {
 		}
 	}
 }
+.plugin-row-formatter__install-plugin {
+	@include break-xlarge() {
+		display: flex;
+		justify-content: end;
+		.plugin-install-button__install.embed {
+			margin: 0;
+		}
+	}
+}
