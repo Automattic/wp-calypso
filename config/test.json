@@ -44,6 +44,7 @@
 		"importers/substack": true,
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
+		"jetpack/app-branding": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,
