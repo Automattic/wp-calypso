@@ -2,16 +2,21 @@ import './style.scss';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import useCampaignsQuery, {
+	Campaign,
+} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
@@ -29,6 +34,12 @@ export default function PromotedPosts() {
 	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
 		page( '/' );
 	}
+
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const { isLoading, data } = useCampaignsQuery( selectedSiteId ?? 0 );
+	const campaigns = useMemo< Campaign[] >( () => data || [], [ data ] );
+
+	const firstCampaign = ! campaigns.length;
 
 	return (
 		<Main className="promote-post">
@@ -62,7 +73,7 @@ export default function PromotedPosts() {
 			{ selectedTab === 'campaigns' && <CampaignsList /> }
 			{ selectedTab === 'posts' && (
 				<>
-					<PostsListBanner />
+					{ ! isLoading && firstCampaign && <PostsListBanner /> }
 					<PostsList />
 				</>
 			) }
