@@ -15,6 +15,10 @@ const globalStyles = css`
 			// The page header background extends all the way to the edge of the screen
 			padding: 32px 0;
 
+			@media only screen and ( max-width: 781px ) {
+				padding-top: 46px;
+			}
+
 			// Prevents the status dropdown from being clipped when the page content
 			// isn't tall enough
 			overflow: inherit;
