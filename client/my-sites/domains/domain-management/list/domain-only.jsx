@@ -44,11 +44,7 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 
 	return (
 		<div>
-			<PageViewTracker
-				path="/view/:domain"
-				properties={ { site: 'no-site' } }
-				title="Domain only"
-			/>
+			<PageViewTracker path="/view/:site" title="Domain only" />
 			<EmptyContent
 				title={ translate( '%(domainName)s is ready when you are.', { args: { domainName } } ) }
 				line={
