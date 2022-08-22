@@ -58,12 +58,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 
 		const fromSite = currentSearchParams.get( 'from' );
 		const fromSiteData = useSelector( getUrlData );
-		const stepNavigator = useStepNavigator(
-			navigation,
-			siteId ?? 0,
-			siteSlug ?? '',
-			fromSite ?? ''
-		);
+		const stepNavigator = useStepNavigator( navigation, siteId, siteSlug, fromSite );
 
 		/**
 	 	↓ Effects
