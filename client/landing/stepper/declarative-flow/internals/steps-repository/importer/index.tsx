@@ -2,7 +2,7 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
@@ -31,7 +31,6 @@ import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-q
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
 import type { ImporterCompType } from './types';
-import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 interface Props {
 	importer: Importer;
@@ -149,7 +148,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					job={ getImportJob( importer ) }
 					run={ runImportInitially }
 					siteId={ siteId as number }
-					site={ siteItem as SitesItem }
+					site={ siteItem }
 					siteSlug={ siteSlug as string }
 					fromSite={ fromSite }
 					urlData={ fromSiteData }
