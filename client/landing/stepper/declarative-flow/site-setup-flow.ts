@@ -206,7 +206,7 @@ export const siteSetupFlow: Flow = {
 					console.log( 'Checking for plugin bundle' );
 					const theme_plugin = currentTheme?.taxonomies?.theme_plugin;
 					if ( isEnabled( 'themes/plugin-bundling' ) && theme_plugin && theme_plugin.length > 0 ) {
-						setBundledPluginSlug( siteSlug | '', theme_plugin[ 0 ].slug ); // only install first plugin
+						setBundledPluginSlug( siteSlug || '', theme_plugin[ 0 ].slug ); // only install first plugin
 						console.log( 'setting bundled plugin slug:', {
 							siteSlug,
 							bundledPluginSlug: theme_plugin[ 0 ].slug,
