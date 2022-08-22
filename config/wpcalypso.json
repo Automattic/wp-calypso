@@ -56,7 +56,7 @@
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/api-cache": true,
-		"jetpack/app-branding": false,
+		"jetpack/app-branding": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/features-section/atomic": true,
