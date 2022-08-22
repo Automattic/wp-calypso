@@ -17,7 +17,6 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
 import type { PageData } from 'calypso/state/signup/steps/website-content/schema';
-import type { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
 import type { TranslateResult } from 'i18n-calypso';
 
 export const CONTENT_SUFFIX = 'Content';
@@ -36,7 +35,7 @@ export function PageDetails( {
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const site = useSelector( getSelectedSite );
+	const site = useSelector( getSelectedSite ) ?? undefined;
 	const pageTitle = page.title;
 	const pageID = page.id;
 
@@ -119,7 +118,7 @@ export function PageDetails( {
 					<WordpressMediaUpload
 						key={ image.uploadID ?? i }
 						mediaIndex={ i }
-						site={ site as SiteData }
+						site={ site }
 						onMediaUploadStart={ onMediaUploadStart }
 						onMediaUploadFailed={ onMediaUploadFailed }
 						onMediaUploadComplete={ onMediaUploadComplete }
