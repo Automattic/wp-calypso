@@ -54,8 +54,8 @@ import {
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { HiddenFieldNames } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { translate } from 'i18n-calypso';
 
 interface AddMailboxesProps {
@@ -71,7 +71,7 @@ interface AddMailboxesAdditionalProps {
 	provider: EmailProvider;
 	selectedDomain: ResponseDomain;
 	selectedDomainName: string;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	selectedSiteId: number;
 	source: string;
 	translate: typeof translate;
@@ -84,7 +84,7 @@ const useAdditionalProps = ( {
 	selectedDomainName,
 	source = '',
 }: AddMailboxesProps ): AddMailboxesAdditionalProps => {
-	const selectedSite = useSelector( getSelectedSite ) as SiteData;
+	const selectedSite = useSelector( getSelectedSite ) as SiteDetails;
 	const selectedSiteId: number = selectedSite.ID;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ) );
 	const isLoadingDomains = useSelector(
