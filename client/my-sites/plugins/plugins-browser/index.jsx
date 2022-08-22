@@ -12,6 +12,8 @@ import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
+import PluginNavbarFooter from 'calypso/my-sites/plugins/plugin-navbar-footer';
+import PluginNavbarFooterAutomattic from 'calypso/my-sites/plugins/plugin-navbar-footer-automattic';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -117,44 +119,48 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	}
 
 	return (
-		<MainComponent wideLayout>
-			<QueryProductsList persist />
-			{ selectedSite ? (
-				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
-			) : (
-				<QueryAllJetpackSitesPlugins />
-			) }
-			<PageViewTrackerWrapper
-				category={ category }
-				selectedSiteId={ selectedSite?.ID }
-				trackPageViews={ trackPageViews }
-			/>
-			<DocumentHead title={ translate( 'Plugins' ) } />
-
-			<PluginsAnnouncementModal />
-			{ ! hideHeader && (
-				<PluginsNavigationHeader
-					navigationHeaderRef={ navigationHeaderRef }
-					categoryName={ categoryName }
+		<>
+			<MainComponent wideLayout>
+				<QueryProductsList persist />
+				{ selectedSite ? (
+					<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
+				) : (
+					<QueryAllJetpackSitesPlugins />
+				) }
+				<PageViewTrackerWrapper
 					category={ category }
-					search={ search }
+					selectedSiteId={ selectedSite?.ID }
+					trackPageViews={ trackPageViews }
 				/>
-			) }
-			<JetpackDisconnectedNotice />
-			<SearchBoxHeader
-				searchRef={ searchRef }
-				popularSearchesRef={ searchHeaderRef }
-				isSticky={ isAboveElement }
-				searchTerm={ search }
-				isSearching={ isFetchingPluginsBySearchTerm }
-				title={ translate( 'Plugins you need to get your projects done' ) }
-				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
-			/>
+				<DocumentHead title={ translate( 'Plugins' ) } />
 
-			{ ! search && <Categories selected={ category } /> }
-			<div className="plugins-browser__main-container">{ renderList() }</div>
-			{ ! category && ! search && <EducationFooter /> }
-		</MainComponent>
+				<PluginsAnnouncementModal />
+				{ ! hideHeader && (
+					<PluginsNavigationHeader
+						navigationHeaderRef={ navigationHeaderRef }
+						categoryName={ categoryName }
+						category={ category }
+						search={ search }
+					/>
+				) }
+				<JetpackDisconnectedNotice />
+				<SearchBoxHeader
+					searchRef={ searchRef }
+					popularSearchesRef={ searchHeaderRef }
+					isSticky={ isAboveElement }
+					searchTerm={ search }
+					isSearching={ isFetchingPluginsBySearchTerm }
+					title={ translate( 'Plugins you need to get your projects done' ) }
+					searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+				/>
+
+				{ ! search && <Categories selected={ category } /> }
+				<div className="plugins-browser__main-container">{ renderList() }</div>
+				{ ! category && ! search && <EducationFooter /> }
+				<PluginNavbarFooter />
+			</MainComponent>
+			<PluginNavbarFooterAutomattic />
+		</>
 	);
 };
 
