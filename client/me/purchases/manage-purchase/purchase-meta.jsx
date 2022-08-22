@@ -34,6 +34,7 @@ import {
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	isRechargeable,
 	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
@@ -469,24 +470,40 @@ function PurchaseMetaExpiration( {
 		const subsRenewText = isAutorenewalEnabled
 			? translate( 'Auto-renew is ON' )
 			: translate( 'Auto-renew is OFF' );
-		const subsBillingText =
-			isAutorenewalEnabled && ! hideAutoRenew && hasPaymentMethod( purchase )
-				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
-						args: {
-							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
-						},
-						components: {
-							dateSpan,
-						},
-				  } )
-				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
-						args: {
-							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
-						},
-						components: {
-							dateSpan,
-						},
-				  } );
+		let subsBillingText;
+		if (
+			isAutorenewalEnabled &&
+			! hideAutoRenew &&
+			hasPaymentMethod( purchase ) &&
+			isRechargeable( purchase )
+		) {
+			subsBillingText = translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
+				args: {
+					renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
+				},
+				components: {
+					dateSpan,
+				},
+			} );
+		} else if ( ! isRechargeable( purchase ) && hasPaymentMethod( purchase ) ) {
+			subsBillingText = translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
+				args: {
+					expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+				},
+				components: {
+					dateSpan,
+				},
+			} );
+		} else {
+			subsBillingText = translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
+				args: {
+					expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+				},
+				components: {
+					dateSpan,
+				},
+			} );
+		}
 
 		const shouldRenderToggle = site && isProductOwner;
 

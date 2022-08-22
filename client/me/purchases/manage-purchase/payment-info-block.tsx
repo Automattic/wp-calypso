@@ -31,6 +31,16 @@ export default function PaymentInfoBlock( {
 			card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
 	);
 
+	if ( ! isRechargeable( purchase ) && hasPaymentMethod( purchase ) ) {
+		return (
+			<PaymentInfoBlockWrapper>
+				<div className={ 'manage-purchase__no-payment-method' }>
+					<Icon icon={ warning } />
+					{ translate( 'You don’t have a supporting payment method to renew this subscription' ) }
+				</div>
+			</PaymentInfoBlockWrapper>
+		);
+	}
 	if ( isIncludedWithPlan( purchase ) ) {
 		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
 	}
