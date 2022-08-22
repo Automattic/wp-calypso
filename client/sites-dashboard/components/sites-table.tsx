@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useState } from 'react';
+import { MEDIA_QUERIES } from '../utils';
 import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -20,7 +21,7 @@ const Table = styled.table`
 `;
 
 const THead = styled.thead< { top: number } >( ( { top } ) => ( {
-	'@media only screen and ( max-width: 781px )': {
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		display: 'none',
 	},
 
