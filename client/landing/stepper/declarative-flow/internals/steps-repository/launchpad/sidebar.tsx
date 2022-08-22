@@ -3,9 +3,25 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import Checklist from './checklist';
 import { tasks } from './tasks';
 
+function getUrlInfo( url: string ) {
+	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
+
+	// Ex. mytest.wordpress.com matches mytest
+	const siteName = urlWithoutProtocol.match( /^[^.]*/ );
+	// Ex. mytest.wordpress.com matches .wordpress.com
+	const topLevelDomain = urlWithoutProtocol.match( /\..*/ ) || [];
+
+	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
+}
+
 const Sidebar = () => {
 	const site = useSite();
-	const url = site?.URL?.replace( /^https?:\/\//, '' );
+	let siteName = '';
+	let topLevelDomain = '';
+
+	if ( site?.URL ) {
+		[ siteName, topLevelDomain ] = getUrlInfo( site.URL );
+	}
 
 	return (
 		<div className="launchpad__sidebar">
@@ -25,7 +41,10 @@ const Sidebar = () => {
 				<p className="launchpad__sidebar-description">
 					Keep up the momentum with these next steps.
 				</p>
-				<div className="launchpad__url-box">{ url }</div>
+				<div className="launchpad__url-box">
+					<span>{ siteName }</span>
+					<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+				</div>
 				<Checklist tasks={ tasks } />
 			</div>
 		</div>
