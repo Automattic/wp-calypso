@@ -31,7 +31,7 @@ const SignupHeader = ( {
 
 	return (
 		<div className="signup-header">
-			{ progressBar && hasFlowProgress && (
+			{ progressBar && hasFlowProgress && ! shouldShowLoadingScreen && (
 				<ProgressBar
 					className={ progressBar.flowName }
 					value={ hasFlowProgress.progress }
