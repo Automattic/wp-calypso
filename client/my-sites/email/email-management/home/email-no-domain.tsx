@@ -22,7 +22,7 @@ const EmailNoDomain = ( {
 		hasDomainCredit( state, selectedSite.ID )
 	);
 
-	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? null );
+	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? '' );
 
 	const trackEvent = () => {
 		recordEmailUpsellTracksEvent( source, isFreePlanProduct ? 'plan' : 'domain' );
