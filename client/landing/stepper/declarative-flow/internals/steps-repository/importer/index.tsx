@@ -51,20 +51,18 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const [ siteId, setSiteId ] = useState( site?.ID );
 		! siteId && site?.ID && setSiteId( site?.ID );
 		const runImportInitially = useInitialQueryRun( siteId );
-		const canImport = useSelector( ( state ) =>
-			canCurrentUser( state, siteId as number, 'manage_options' )
-		);
-		const siteItem = useSelector( ( state ) => getSite( state, siteId as number ) );
+		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
+		const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 
-		const fromSite = currentSearchParams.get( 'from' ) as string;
+		const fromSite = currentSearchParams.get( 'from' ) ?? '';
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator(
 			navigation,
-			siteId as number,
-			siteSlug as string,
-			fromSite
+			siteId ?? 0,
+			siteSlug ?? '',
+			fromSite ?? ''
 		);
 
 		/**
@@ -82,7 +80,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	 	↓ Methods
 		 */
 		function onGoBack() {
-			resetImportJob( getImportJob( importer as Importer ) );
+			resetImportJob( getImportJob( importer ) );
 			navigation.goBack();
 		}
 
