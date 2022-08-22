@@ -45,7 +45,7 @@ export const newsletter: Flow = {
 						return navigate( 'newsletterSetup' );
 					}
 					return window.location.replace(
-						'/start/account?redirect_to=/setup/newsletterSetup?flow=newsletter'
+						'/start/account?flowName=newsletter&redirect_to=/setup/newsletterSetup?flow=newsletter'
 					);
 
 				case 'newsletterSetup':

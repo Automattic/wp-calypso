@@ -1,9 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useSelect } from '@wordpress/data';
+import { useFlowProgress } from '@automattic/onboarding';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
+import { USER_STORE, ONBOARD_STORE } from '../stores';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
@@ -26,6 +28,10 @@ export const linkInBio: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
+		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: this.name } );
+		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 

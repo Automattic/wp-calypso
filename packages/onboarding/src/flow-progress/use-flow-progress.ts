@@ -16,7 +16,7 @@ export const useFlowProgress = ( props: FlowProgress | undefined ) => {
 			newsletterSetup: 2,
 			domains: 3,
 			plans: 4,
-			subscriber: 5,
+			subscribers: 5,
 			launchpad: 6,
 		},
 		'link-in-bio': {

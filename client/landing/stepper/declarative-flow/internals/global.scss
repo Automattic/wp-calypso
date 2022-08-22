@@ -148,6 +148,19 @@ button {
 		--color-accent-60: #0e64a5;
 	}
 }
+
+.newsletter,
+.link-in-bio {
+	.progress-bar {
+		background-color: #fff;
+		position: absolute;
+
+		.progress-bar__progress {
+			border-radius: 0;
+		}
+	}
+}
+
 @media ( max-width: 660px ) {
 	body.is-section-stepper .wpcom-site {
 		.inline-help {
