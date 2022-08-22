@@ -41,6 +41,7 @@ export { default as preLaunchpad } from './pre-launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
 export { default as promote } from './promote';
+export { default as getCurrentBundledPlugins } from './get-current-bundled-plugins';
 
 export type StepPath =
 	| 'courses'
@@ -84,4 +85,5 @@ export type StepPath =
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'
-	| 'promote';
+	| 'promote'
+	| 'getCurrentBundledPlugins';
