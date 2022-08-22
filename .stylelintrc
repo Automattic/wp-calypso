@@ -1,21 +1,21 @@
 {
-	"plugins": ["@signal-noise/stylelint-scales"],
+	"plugins": [ "@signal-noise/stylelint-scales" ],
 	"rules": {
 		"declaration-property-unit-allowed-list": {
-			"/^font-size$|^font$/": ["rem"],
-			"/radius$/": ["px"]
+			"/^font-size$|^font$/": [ "rem" ],
+			"/radius$/": [ "px" ]
 		},
-		"scales/font-weights": [400, 500, 600, 700],
+		"scales/font-weights": [ 400, 500, 600, 700 ],
 		"scales/font-sizes": [
 			{
-				"scale": [0.75, 0.875, 1, 1.25, 1.5, 2, 2.25, 3, 3.375],
-				"units": ["rem"]
+				"scale": [ 0.75, 0.875, 1, 1.25, 1.5, 2, 2.25, 3, 3.375 ],
+				"units": [ "rem" ]
 			}
 		],
 		"scales/radii": [
 			{
-				"scale": [2, 4],
-				"units": ["px"]
+				"scale": [ 2, 4 ],
+				"units": [ "px" ]
 			}
 		],
 		"color-hex-case": "lower",
@@ -39,8 +39,8 @@
 		"string-quotes": "single",
 
 		"unit-case": "lower",
-		"unit-no-unknown": true,
-		"unit-allowed-list": [ "%", "deg", "em", "fr", "ms", "px", "rem", "s", "vh", "vw" ],
+		"unit-no-unknown": [ true, { "ignoreUnits": [ "svh" ] } ],
+		"unit-allowed-list": [ "%", "deg", "em", "fr", "ms", "px", "rem", "s", "vh", "vw", "svh" ],
 
 		"value-list-comma-space-after": "always-single-line",
 		"value-list-comma-space-before": "never",
@@ -49,7 +49,10 @@
 
 		"property-case": "lower",
 
-		"declaration-block-no-duplicate-properties": [ true, { "ignore": [ "consecutive-duplicates" ] } ],
+		"declaration-block-no-duplicate-properties": [
+			true,
+			{ "ignore": [ "consecutive-duplicates" ] }
+		],
 		"declaration-block-trailing-semicolon": "always",
 		"declaration-block-single-line-max-declarations": 0,
 		"declaration-block-semicolon-space-before": "never",

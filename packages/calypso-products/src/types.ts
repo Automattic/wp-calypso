@@ -12,6 +12,7 @@ import type {
 	JETPACK_PRODUCT_CATEGORIES,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
+import type { ReactElement } from 'react';
 
 export type Feature = string;
 
@@ -35,6 +36,7 @@ export interface WPComPlan extends Plan {
 	getPortfolioSignupFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
+	getAnnualPlansOnlyFeatures?: () => string[];
 }
 
 export type IncompleteWPcomPlan = Partial< WPComPlan > &
@@ -51,6 +53,21 @@ export type JetpackPlanSlug =
 export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
+
+export type SelectorProductFeaturesItem = {
+	slug: string;
+	icon?:
+		| string
+		| {
+				icon: string;
+				component?: ReactElement;
+		  };
+	text: TranslateResult;
+	description?: TranslateResult;
+	subitems?: SelectorProductFeaturesItem[];
+	isHighlighted?: boolean;
+	isDifferentiator?: boolean;
+};
 
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;

@@ -238,7 +238,7 @@ export function resolveDomainStatus(
 					status: statusMessage,
 					icon: 'info',
 					noticeText: translate(
-						'This domain expired more than 30 days ago and is no longer available to manage or renew. We may be able to restore it after {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Learn more{{/a}}',
+						'This domain expired more than 30 days ago and is no longer available to manage or renew. We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}. {{a}}Learn more{{/a}}',
 						{
 							components: {
 								strong: <strong />,
@@ -251,7 +251,7 @@ export function resolveDomainStatus(
 								),
 							},
 							args: {
-								renewableUntil: moment.utc( domain.renewableUntil ).format( 'LL' ),
+								aftermarketAuctionEnd: moment.utc( domain.aftermarketAuctionEnd ).format( 'LL' ),
 							},
 						}
 					),

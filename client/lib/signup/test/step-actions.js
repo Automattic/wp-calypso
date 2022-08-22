@@ -8,7 +8,6 @@ import {
 	createSiteWithCart,
 	isDomainFulfilled,
 	isPlanFulfilled,
-	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
 } from '../step-actions';
 
@@ -33,60 +32,6 @@ describe( 'createSiteWithCart()', () => {
 					requestBody,
 				};
 			} );
-	} );
-
-	test( 'should use the vertical field in the survey tree if the site topic one is empty.', () => {
-		const vertical = 'foo topic';
-		const fakeStore = {
-			getState: () => ( {
-				signup: {
-					steps: {
-						survey: {
-							vertical,
-						},
-					},
-				},
-			} ),
-		};
-
-		createSiteWithCart(
-			( response ) => {
-				expect( response.requestBody.options.site_vertical ).toBeUndefined();
-			},
-			[],
-			[],
-			fakeStore
-		);
-	} );
-
-	test( 'should use the site topic state if it is not empty.', () => {
-		const verticalId = 'meh';
-		const siteTopicSlug = 'foo topic';
-		const fakeStore = {
-			getState: () => ( {
-				signup: {
-					steps: {
-						siteType: 'blog',
-						siteVertical: {
-							id: verticalId,
-							slug: siteTopicSlug,
-						},
-						survey: {
-							vertical: 'should not use this',
-						},
-					},
-				},
-			} ),
-		};
-
-		createSiteWithCart(
-			( response ) => {
-				expect( response.requestBody.options.site_vertical ).toEqual( verticalId );
-			},
-			[],
-			[],
-			fakeStore
-		);
 	} );
 
 	test( 'should find available url if siteUrl is empty and enable auto generated blog name', () => {
@@ -187,26 +132,6 @@ describe( 'createSiteWithCart()', () => {
 		createSiteWithCart(
 			( response ) => {
 				expect( response.requestBody.blog_name ).toBe( 'blog' );
-			},
-			[],
-			{ siteUrl: undefined },
-			fakeStore
-		);
-	} );
-
-	test( "use site vertical for blog_name if username, title, and site type isn't available and enable auto generated blog name", () => {
-		const fakeStore = {
-			getState: () => ( {
-				signup: {
-					steps: { siteVertical: { name: 'art' } },
-					dependencyStore: { shouldHideFreePlan: true },
-				},
-			} ),
-		};
-
-		createSiteWithCart(
-			( response ) => {
-				expect( response.requestBody.blog_name ).toBe( 'art' );
 			},
 			[],
 			{ siteUrl: undefined },
@@ -377,115 +302,5 @@ describe( 'isSiteTypeFulfilled()', () => {
 
 		expect( submitSiteType ).not.toHaveBeenCalled();
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
-	} );
-} );
-
-describe( 'isSiteTopicFulfilled()', () => {
-	const setSurvey = jest.fn();
-	const submitSignupStep = jest.fn();
-	const submitSiteVertical = jest.fn();
-
-	beforeEach( () => {
-		flows.excludeStep.mockClear();
-		setSurvey.mockClear();
-		submitSignupStep.mockClear();
-		submitSiteVertical.mockClear();
-	} );
-
-	test( 'should remove a step fulfilled', () => {
-		const flowName = 'flowWithSiteTopic';
-		const stepName = 'site-topic';
-		const initialContext = { query: { vertical: 'verticalSlug' } };
-		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-
-		isSiteTopicFulfilled( stepName, undefined, nextProps );
-
-		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic' );
-	} );
-
-	test( 'should not remove any step unfulfilled', () => {
-		const flowName = 'flowWithSiteTopicAndTitle';
-		const stepName = 'site-topic-and-title';
-		const initialContext = { query: { vertical: 'verticalSlug' } };
-		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-
-		isSiteTopicFulfilled( stepName, undefined, nextProps );
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-	} );
-
-	test( 'should call both setSurvey() and submitSiteVertical() when vertical query param passed', () => {
-		const flowName = 'flowWithSiteTopic';
-		const stepName = 'site-topic';
-		const initialContext = { query: { vertical: 'verticalSlug' } };
-		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
-
-		expect( setSurvey ).not.toHaveBeenCalled();
-		expect( submitSiteVertical ).not.toHaveBeenCalled();
-
-		isSiteTopicFulfilled( stepName, undefined, nextProps );
-
-		expect( setSurvey ).toHaveBeenCalled();
-		expect( submitSiteVertical ).toHaveBeenCalled();
-	} );
-
-	test( 'should call neither setSurvey() nor submitSiteVertical() when no vertical query param passed', () => {
-		const flowName = 'flowWithSiteTopic';
-		const stepName = 'site-topic';
-		const initialContext = { query: {} };
-		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
-
-		expect( setSurvey ).not.toHaveBeenCalled();
-		expect( submitSiteVertical ).not.toHaveBeenCalled();
-
-		isSiteTopicFulfilled( stepName, undefined, nextProps );
-
-		expect( setSurvey ).not.toHaveBeenCalled();
-		expect( submitSiteVertical ).not.toHaveBeenCalled();
-	} );
-
-	test( 'should call neither setSurvey() nor submitSiteVertical() when the flow contains survey step', () => {
-		const flowName = 'flowWithSiteTopicAndSurvey';
-		const stepName = 'site-topic';
-		const initialContext = { query: { vertical: 'verticalSlug' } };
-		const nextProps = { initialContext, flowName, submitSiteVertical, setSurvey };
-
-		expect( setSurvey ).not.toHaveBeenCalled();
-		expect( submitSiteVertical ).not.toHaveBeenCalled();
-
-		isSiteTopicFulfilled( stepName, undefined, nextProps );
-
-		expect( setSurvey ).not.toHaveBeenCalled();
-		expect( submitSiteVertical ).not.toHaveBeenCalled();
-	} );
-
-	test( 'should remove a step with optional dependency not met', () => {
-		const flowName = 'flowWithSiteTopicWithOptionalTheme';
-		const stepName = 'site-topic-with-optional-theme';
-		const initialContext = { query: { vertical: 'verticalSlug' } };
-		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-
-		isSiteTopicFulfilled( stepName, undefined, nextProps );
-
-		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-theme' );
-	} );
-
-	test( 'should remove a step with optional dependency met', () => {
-		const flowName = 'flowWithSiteTopicWithOptionalSurveyQuestion';
-		const stepName = 'site-topic-with-optional-survey-question';
-		const initialContext = { query: { vertical: 'verticalSlug' } };
-		const nextProps = { initialContext, flowName, submitSignupStep, submitSiteVertical, setSurvey };
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-
-		isSiteTopicFulfilled( stepName, undefined, nextProps );
-
-		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-topic-with-optional-survey-question' );
 	} );
 } );

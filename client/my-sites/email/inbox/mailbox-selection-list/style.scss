@@ -139,64 +139,6 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 			}
 		}
 
-		.mailbox-selection-list__new-mailbox-upsell-container {
-			align-items: center;
-			background: #f9f9f9;
-			box-sizing: border-box;
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-			margin: 48px auto 0;
-			padding: 16px;
-			position: relative;
-
-			@include break-medium {
-				flex-direction: unset;
-			}
-
-			& > * {
-				max-width: none;
-				align-self: normal;
-
-				@include break-medium {
-					max-width: 50%;
-					align-self: unset;
-				}
-			}
-
-			.mailbox-selection-list__new-mailbox-upsell-messages {
-				font-size: $font-body-small;
-				line-height: 28px;
-
-				h2 {
-					font-size: $font-body;
-					font-weight: bold;
-					line-height: 30px;
-					margin-bottom: 0;
-
-					@include break-medium {
-						line-height: 34px;
-					}
-				}
-
-				div {
-					padding-right: 10px;
-				}
-			}
-
-			.mailbox-selection-list__new-mailbox-upsell-cta {
-				margin-top: 20px;
-
-				@include break-medium {
-					margin-top: 0;
-				}
-
-				.button {
-					font-weight: bold;
-				}
-			}
-		}
-
 		.mailbox-selection-list__item {
 			align-items: center;
 			border-color: var( --p2-color-border-light );

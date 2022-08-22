@@ -101,6 +101,7 @@ class SignupForm extends Component {
 		suggestedUsername: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		horizontal: PropTypes.bool,
+		shouldDisplayUserExistsError: PropTypes.bool,
 
 		// Connected props
 		oauth2Client: PropTypes.object,
@@ -114,6 +115,7 @@ class SignupForm extends Component {
 		isPasswordless: false,
 		isSocialSignupEnabled: false,
 		horizontal: false,
+		shouldDisplayUserExistsError: false,
 	};
 
 	constructor( props ) {
@@ -193,17 +195,25 @@ class SignupForm extends Component {
 
 	/**
 	 * If the step is invalid because we had an error that the user exists,
-	 * we should prompt user with a request to connect his social account
-	 * to his existing WPCOM account
+	 * we should prompt user with a request to connect their social account
+	 * to their existing WPCOM account.
+	 *
+	 * That can be done either by redirecting or only suggesting. If it's done
+	 * by suggesting, bail out of redirecting and display the error.
 	 */
 	maybeRedirectToSocialConnect() {
+		if ( this.props.shouldDisplayUserExistsError ) {
+			return;
+		}
+
 		const userExistsError = this.getUserExistsError( this.props );
 
 		if ( userExistsError ) {
 			const { service, id_token, access_token } = this.props.step;
 			const socialInfo = { service, id_token, access_token };
 
-			this.props.createSocialUserFailed( socialInfo, userExistsError );
+			this.props.createSocialUserFailed( socialInfo, userExistsError, 'signup' );
+
 			page( login( { redirectTo: this.props.redirectToAfterLoginUrl } ) );
 		}
 	}
@@ -439,8 +449,9 @@ class SignupForm extends Component {
 		return this.props.from;
 	}
 
-	getLoginLink() {
+	getLoginLink( { emailAddress } = {} ) {
 		return login( {
+			emailAddress,
 			isJetpack: this.isJetpack(),
 			from: this.getLoginLinkFrom(),
 			redirectTo: this.props.redirectToAfterLoginUrl,
@@ -768,51 +779,85 @@ class SignupForm extends Component {
 		);
 	}
 
-	handleOnClickTos = () => {
+	handleTosClick = () => {
 		recordTracksEvent( 'calypso_signup_tos_link_click' );
 	};
 
-	getTermsOfServiceUrl() {
-		return localizeUrl( 'https://wordpress.com/tos/' );
-	}
+	handlePrivacyClick = () => {
+		recordTracksEvent( 'calypso_signup_privacy_link_click' );
+	};
 
 	termsOfServiceLink = () => {
-		const tosLink = (
-			<a
-				href={ this.getTermsOfServiceUrl() }
-				onClick={ this.handleOnClickTos }
-				target="_blank"
-				rel="noopener noreferrer"
-			/>
-		);
 		const tosText = this.props.translate(
-			'By creating an account you agree to our {{a}}Terms of Service{{/a}}.',
+			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
+				' acknowledge that you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			{
 				components: {
-					a: tosLink,
+					tosLink: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							onClick={ this.handleTosClick }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					privacyLink: (
+						<a
+							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+							onClick={ this.handlePrivacyClick }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
 				},
 			}
 		);
-
-		if ( this.props.isSocialSignupEnabled ) {
-			return (
-				<p className="signup-form__terms-of-service-link">
-					{ this.props.translate(
-						'By creating an account, you agree to our {{a}}Terms of Service{{/a}}.',
-						{
-							components: {
-								a: tosLink,
-							},
-						}
-					) }
-				</p>
-			);
-		}
 
 		return <p className="signup-form__terms-of-service-link">{ tosText }</p>;
 	};
 
 	getNotice() {
+		const userExistsError = this.getUserExistsError( this.props );
+
+		if ( userExistsError ) {
+			const loginLink = this.getLoginLink( { emailAddress: userExistsError.email } );
+			return this.globalNotice(
+				{
+					info: true,
+					message: this.props.translate(
+						'We found a WordPress.com account with the email address "%(email)s". ' +
+							'{{a}}Log in to this account{{/a}} to connect it to your profile, ' +
+							'or sign up with a different email address.',
+						{
+							args: { email: userExistsError.email },
+							components: {
+								a: (
+									<a
+										href={ loginLink }
+										onClick={ ( event ) => {
+											event.preventDefault();
+											recordTracksEvent( 'calypso_signup_social_existing_user_login_link_click' );
+											page(
+												addQueryArgs(
+													{
+														service: this.props.step?.service,
+														access_token: this.props.step?.access_token,
+														id_token: this.props.step?.id_token,
+													},
+													loginLink
+												)
+											);
+										} }
+									/>
+								),
+							},
+						}
+					),
+				},
+				'is-info'
+			);
+		}
+
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			return this.globalNotice( this.props.step.errors[ 0 ], 'is-error' );
 		}
@@ -934,7 +979,7 @@ class SignupForm extends Component {
 	};
 
 	render() {
-		if ( this.getUserExistsError( this.props ) ) {
+		if ( this.getUserExistsError( this.props ) && ! this.props.shouldDisplayUserExistsError ) {
 			return null;
 		}
 

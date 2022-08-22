@@ -1,72 +1,91 @@
-import { render, shallow } from 'enzyme';
+/**
+ * @jest-environment jsdom
+ */
+
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import FormattedBlock, { FormattedBlockRenderer } from '..';
 
 describe( 'FormattedBlock', () => {
 	beforeEach( () => jest.resetAllMocks() );
 
-	test( 'displays string content as-is', () => {
+	test( 'renders string content as-is', () => {
 		const content = 'my content';
-		const block = render( <FormattedBlock content={ content } /> );
 
-		expect( block.html() ).toEqual( content );
+		render( <FormattedBlock content={ content } /> );
+
+		const block = screen.getByText( content );
+
+		expect( block ).toBeInTheDocument();
+
+		// Test it's rendered as a raw string
+		expect( block.innerHTML ).toEqual( content );
 	} );
 
-	test( 'displays content text as-is if there is no nested content and the content type is undefined', () => {
-		const text = 'my content text';
-		const block = render( <FormattedBlock content={ { text } } /> );
+	test( 'renders string content without using a custom block if content type is undefined', () => {
+		const MockBlockMapping = FormattedBlockRenderer( {
+			myBlock: ( props ) => <div { ...props }>MyFakeBlock</div>,
+		} );
 
-		expect( block.html() ).toEqual( text );
-	} );
-
-	test( 'displays nested content as FormattedBlocks if content type is not supported', () => {
-		const onClick = jest.fn();
-		const meta = {};
 		const children = [
 			'example1',
 			{
-				text: 'example2',
+				text: 'main',
 			},
 			{
-				children: [ 'example3a', 'example3b' ],
+				children: [ 'children1', 'children2' ],
 			},
 		];
 
-		const block = shallow(
-			<FormattedBlock content={ { children } } onClick={ onClick } meta={ meta } />
-		);
+		render( <MockBlockMapping content={ { children } } meta={ {} } /> );
 
-		expect( block.children().length ).toEqual( children.length );
+		const customBlock = screen.queryByText( 'MyFakeBlock' );
+		const block = screen.getByText( /example1/ );
 
-		expect(
-			block
-				.children()
-				.everyWhere(
-					( child ) =>
-						child.type() === FormattedBlock &&
-						child.prop( 'onClick' ) === onClick &&
-						child.prop( 'meta' ) === meta
-				)
-		).toEqual( true );
+		expect( customBlock ).not.toBeInTheDocument();
+
+		expect( block ).toBeInTheDocument();
+		expect( block ).toHaveTextContent( 'main' );
+		expect( block ).toHaveTextContent( 'children1' );
+		expect( block ).toHaveTextContent( 'children2' );
 	} );
 
-	test( 'displays the correct block with correct props if the content type is supported', () => {
+	test( 'handles a click if `onClick` prop is passed', async () => {
+		userEvent.setup();
+
 		const MockBlockMapping = FormattedBlockRenderer( {
-			myBlock: ( props ) => <div type="myfakeblock" { ...props }></div>,
+			myBlock: ( props ) => <div { ...props }>MyFakeBlock</div>,
 		} );
 
+		const content = { type: 'myBlock', children: [ 'children1', 'children2' ] };
+
 		const onClick = jest.fn();
-		const meta = {};
-		const children = [ {}, {}, {} ];
-		const content = { type: 'myBlock', children };
 
-		const block = shallow(
-			<MockBlockMapping content={ content } onClick={ onClick } meta={ meta } />
-		);
+		render( <MockBlockMapping content={ content } onClick={ onClick } /> );
 
-		expect( block.type() ).toEqual( 'div' );
-		expect( block.prop( 'content' ) ).toEqual( content );
-		expect( block.prop( 'onClick' ) ).toEqual( onClick );
-		expect( block.prop( 'meta' ) ).toEqual( meta );
-		expect( block.children().length ).toEqual( children.length );
+		await userEvent.click( screen.getByText( /MyFakeBlock/ ) );
+
+		expect( onClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'renders the correct block if the content type is supported', () => {
+		const MockBlockMapping = FormattedBlockRenderer( {
+			myBlock: ( props ) => (
+				<div { ...props }>
+					MyFakeBlock
+					{ props.children }
+				</div>
+			),
+		} );
+
+		const content = { type: 'myBlock', children: [ 'children1', 'children2' ] };
+
+		render( <MockBlockMapping content={ content } meta={ {} } /> );
+
+		const block = screen.getByText( /MyFakeBlock/ );
+
+		expect( block ).toBeInTheDocument();
+		expect( block ).toHaveTextContent( 'children1' );
+		expect( block ).toHaveTextContent( 'children2' );
 	} );
 } );

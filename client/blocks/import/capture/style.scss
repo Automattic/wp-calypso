@@ -1,93 +1,53 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+.import-light__capture {
+	.form-label {
+		font-size: 1em; /* stylelint-disable-line */
+		font-weight: 500;
+		color: var( --studio-gray-60 );
 
-$placeholder-color: #909398;
-
-.import__onboarding-page {
-	.capture__content {
-		min-height: 80px;
+		span {
+			font-weight: normal;
+			color: var( --studio-gray-40 );
+		}
 	}
 
-	.capture__input-wrapper {
-		position: relative;
-		margin: auto;
-		max-width: 500px;
+	.form-fieldset {
+		margin-bottom: 2em;
+	}
 
-		@include break-medium {
-			max-width: 700px;
+	input[type=text].form-text-input {
+		font-size: 0.875rem;
+		line-height: 2rem;
+		color: var( --studio-gray-90 );
+		border-radius: 4px;
+		border-color: var( --studio-gray-50 );
+	}
+
+	input[type=text].form-text-input::placeholder {
+		color: var( --studio-gray-30 );
+	}
+
+	.form-setting-explanation {
+		font-style: normal;
+
+		svg {
+			position: relative;
+			top: 4px;
 		}
 
-		.components-button.action-buttons__next.is-primary {
-			position: absolute;
-			min-width: auto;
-			padding: 0.625em;
-			top: 2px;
-			right: 0;
+		.is-error {
+			color: var( --color-error );
 
-			@include break-small {
-				top: 4px;
+			svg {
+				fill: var( --color-error );
+				transform: rotate( 180deg );
 			}
 		}
 	}
 
-	.capture__input-wrapper-padding {
-		max-width: 450px;
-
-		@include break-medium {
-			max-width: 650px;
-		}
-
-		padding-right: 50px;
-	}
-
-	.capture__input {
-		width: 100%;
-
-		font-size: 2rem;
-		font-family: $brand-serif;
-		font-weight: 400;
-		line-height: 1.1818em;
-		letter-spacing: -0.4px;
-
-		height: auto;
-		background: transparent;
-		border: none;
-		padding: 0;
+	.action-buttons__importer-list {
+		font-weight: 500;
+		text-decoration: underline;
 		color: var( --studio-gray-100 );
-
-		&:focus {
-			box-shadow: none;
-			outline: none;
-		}
-
-		&::-ms-clear {
-			display: none;
-		}
-
-		@include break-medium {
-			font-size: 2.75rem; /* stylelint-disable-line */
-		}
-
-		&::placeholder {
-			color: $placeholder-color;
-			line-height: normal;
-		}
-
-		&::-ms-clear {
-			display: none;
-		}
-	}
-
-	.capture__input-error-msg {
-		color: var( --studio-red-60 );
-		font-size: 0.875rem;
-		line-height: 1.4286em;
-		margin-top: 8px;
-	}
-
-	.capture__next-button-icon {
-		.rtl & {
-			transform: scaleX( -1 );
-		}
+		margin-top: 1em;
 	}
 }

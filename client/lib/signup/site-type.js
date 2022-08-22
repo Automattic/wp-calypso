@@ -17,13 +17,6 @@ const getSiteTypePropertyDefaults = ( propertyKey ) =>
 				'This will appear at the top of your site and can be changed at anytime.'
 			),
 			siteTitlePlaceholder: i18n.translate( "E.g., Vail Renovations or Stevie's blog" ),
-			// Site topic step
-			siteTopicHeader: i18n.translate( 'What is your site about?' ),
-			siteTopicLabel: i18n.translate( 'What is your site about?' ),
-			siteTopicSubheader: i18n.translate(
-				"We'll add relevant content to your site to help you get started."
-			),
-			siteTopicInputPlaceholder: i18n.translate( 'Enter a topic or choose one from below.' ),
 			// Domains step
 			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your site a domain!" ),
 			signUpFlowDomainsStepSubheader: i18n.translate(
@@ -77,11 +70,6 @@ export function getAllSiteTypes() {
 			siteTitleSubheader: i18n.translate(
 				'This will appear at the top of your blog and can be changed at anytime.'
 			),
-			siteTopicHeader: i18n.translate( 'What is your blog about?' ),
-			siteTopicLabel: i18n.translate( 'What will your blog be about?' ),
-			siteTopicSubheader: i18n.translate(
-				"We'll add relevant content to your blog to help you get started."
-			),
 			siteMockupHelpTipCopy: i18n.translate(
 				'Scroll down to see your blog. Once you complete setup you’ll be able to customize it further.'
 			),
@@ -101,9 +89,6 @@ export function getAllSiteTypes() {
 			designType: 'page',
 			siteTitleLabel: i18n.translate( 'Tell us your business’s name' ),
 			siteTitlePlaceholder: i18n.translate( 'E.g., Vail Renovations' ),
-			siteTopicHeader: i18n.translate( 'What does your business do?' ),
-			siteTopicLabel: i18n.translate( 'What type of business do you have?' ),
-
 			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your business a domain!" ),
 			signUpFlowDomainsStepSubheader: i18n.translate(
 				"Tell us your business's name or a few keywords, and we'll come up with some suggestions."
@@ -122,9 +107,6 @@ export function getAllSiteTypes() {
 			siteTitlePlaceholder: i18n.translate( 'E.g., John Appleseed', {
 				comment: "An example of a person's name, use something appropriate for the locale",
 			} ),
-			siteTopicHeader: i18n.translate( 'What type of work do you do?' ),
-			siteTopicLabel: i18n.translate( 'What type of work do you do?' ),
-			siteTopicInputPlaceholder: i18n.translate( 'Enter your job title or choose one from below.' ),
 			domainsStepSubheader: i18n.translate(
 				'Enter your name or some keywords that describe yourself to get started.'
 			),
@@ -139,8 +121,6 @@ export function getAllSiteTypes() {
 			designType: 'store',
 			siteTitleLabel: i18n.translate( 'What is the name of your store?' ),
 			siteTitlePlaceholder: i18n.translate( "E.g., Mel's Diner" ),
-			siteTopicHeader: i18n.translate( 'What type of products do you sell?' ),
-			siteTopicLabel: i18n.translate( 'What type of products do you sell?' ),
 			customerType: 'business',
 			purchaseRequired: true,
 			signUpFlowDomainsStepHeader: i18n.translate( "Let's get your store a domain!" ),

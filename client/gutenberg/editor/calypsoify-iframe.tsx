@@ -658,6 +658,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 			: `Block Editor > ${ postTypeText } > New`;
 	};
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	handleCheckoutSuccess = () => {
 		if ( this.checkoutPort ) {
 			this.checkoutPort.postMessage( 'checkout complete' );
@@ -855,7 +858,7 @@ const mapStateToProps = (
 
 	const siteAdminUrl =
 		editorType === 'site'
-			? getSiteAdminUrl( state, siteId, 'themes.php?page=gutenberg-edit-site' )
+			? getSiteAdminUrl( state, siteId, 'site-editor.php' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl ?? '' );

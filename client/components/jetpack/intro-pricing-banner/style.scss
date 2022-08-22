@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+
 .intro-pricing-banner,
 .intro-pricing-banner__sticky,
 .intro-pricing-banner__loading {
@@ -8,33 +11,49 @@
 	justify-content: center;
 
 	.intro-pricing-banner__discount,
-	.intro-pricing-banner__guarantee {
+	.intro-pricing-banner__guarantee,
+	.intro-pricing-banner__agencies {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 
 		font-size: $font-body;
+
+		a {
+			color: var( --color-primary-100 );
+			text-decoration: underline;
+			// This works in all major browsers except for Firefox for Android. It is also not imperative that this works
+			text-underline-offset: 3px;
+		}
 	}
 
 	> :not( :last-child ) {
 		margin-right: 16px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include break-large {
 		flex-direction: row;
 	}
 }
 
 .intro-pricing-banner,
 .intro-pricing-banner__loading {
-	height: 54px;
-	margin-bottom: 32px;
+	height: 120px;
+	margin-bottom: 2rem;
+
+	gap: 1.25rem;
+
+	@include break-large {
+		height: 54px;
+	}
 }
 
 .intro-pricing-banner__loading {
 	.intro-pricing-banner__discount,
-	.intro-pricing-banner__guarantee {
-		span {
+	.intro-pricing-banner__guarantee,
+	.intro-pricing-banner__agencies, {
+		span,
+		a {
 			@include placeholder();
 		}
 	}
@@ -52,7 +71,15 @@
 	z-index: 2;
 	height: 74px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	.intro-pricing-banner__agencies {
+		display: none;
+
+		@include break-large {
+			display: flex;
+		}
+	}
+
+	@include break-large {
 		height: 52px;
 	}
 }

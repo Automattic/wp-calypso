@@ -1,7 +1,12 @@
 /** @jest-environment jsdom */
-jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
-jest.mock( 'calypso/components/notice', () => 'Notice' );
-jest.mock( 'calypso/components/notice/notice-action', () => 'NoticeAction' );
+jest.mock( 'calypso/blocks/upsell-nudge', () =>
+	jest.fn( () => <div data-testid="UpsellNudge" /> )
+);
+jest.mock( 'calypso/components/data/query-site-settings', () => () => 'QuerySiteSettings' );
+jest.mock( 'calypso/components/data/query-jetpack-modules', () => () => 'QueryJetpackModules' );
+jest.mock( 'calypso/components/seo/meta-title-editor', () => () => (
+	<div data-testid="MetaTitleEditor" />
+) );
 
 import {
 	PLAN_FREE,
@@ -12,13 +17,14 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_WPCOM_PRO,
+	PLAN_BUSINESS,
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { SiteSettingsFormSEO as SeoForm } from '../form';
 
 const props = {
@@ -31,29 +37,34 @@ const props = {
 };
 
 describe( 'SeoForm basic tests', () => {
+	afterEach( () => {
+		UpsellNudge.mockClear();
+	} );
+
 	test( 'should not blow up and have proper CSS class', () => {
-		const comp = shallow( <SeoForm { ...props } /> );
-		expect( comp.find( '.seo-settings__seo-form' ) ).toHaveLength( 1 );
+		render( <SeoForm { ...props } /> );
+		expect( screen.queryByRole( 'form', { name: /seo site settings/i } ) ).toBeVisible();
 	} );
 
 	test( 'should render conflicted SEO notice when conflictedSeoPlugin is set', () => {
-		const comp = shallow( <SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } /> );
-		expect( comp.find( 'Notice' ) ).toHaveLength( 1 );
-		expect( comp.find( 'Notice' ).props().text ).toContain( 'Your SEO settings' );
+		render( <SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } /> );
+		const notice = screen.queryByRole( 'status', { name: 'Notice' } );
+		expect( notice ).toBeVisible();
+		expect( notice ).toHaveTextContent( 'Your SEO settings' );
 	} );
 
 	test( 'should not render conflicted SEO notice when conflictedSeoPlugin is not set', () => {
-		const comp = shallow( <SeoForm { ...props } /> );
-		expect( comp.find( 'Notice' ) ).toHaveLength( 0 );
+		render( <SeoForm { ...props } /> );
+		expect( screen.queryByRole( 'status', { name: 'Notice' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should not render Jetpack unsupported notice when is not jetpack site or supports seo', () => {
-		const comp = shallow( <SeoForm { ...props } /> );
-		expect( comp.find( 'Notice' ) ).toHaveLength( 0 );
+		render( <SeoForm { ...props } /> );
+		expect( screen.queryByRole( 'status', { name: 'Notice' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render optimize SEO nudge when has no SEO features', () => {
-		const comp = shallow(
+		render(
 			<SeoForm
 				{ ...props }
 				hasSeoPreviewFeature={ false }
@@ -61,33 +72,26 @@ describe( 'SeoForm basic tests', () => {
 				selectedSite={ { plan: { product_slug: 'free' } } }
 			/>
 		);
-		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
-		expect( comp.find( 'UpsellNudge' ).props().event ).toContain(
-			'calypso_seo_settings_upgrade_nudge'
+		expect( screen.queryByTestId( 'UpsellNudge' ) ).toBeVisible();
+		expect( UpsellNudge ).toHaveBeenCalledWith(
+			expect.objectContaining( { event: 'calypso_seo_settings_upgrade_nudge' } ),
+			expect.anything()
 		);
 	} );
 
 	test( 'should not render Jetpack unsupported notice when has any SEO features', () => {
-		const comp = shallow( <SeoForm { ...props } hasSeoPreviewFeature={ true } /> );
-		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
+		const { rerender } = render( <SeoForm { ...props } hasSeoPreviewFeature={ true } /> );
+		expect( screen.queryByTestId( 'UpsellNudge' ) ).not.toBeInTheDocument();
 
-		comp.setProps( {
-			...props,
-			hasSeoPreviewFeature: false,
-			hasAdvancedSEOFeature: true,
-		} );
-		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
+		rerender( <SeoForm { ...props } hasSeoPreviewFeature={ false } hasAdvancedSEOFeature /> );
+		expect( screen.queryByTestId( 'UpsellNudge' ) ).not.toBeInTheDocument();
 
-		comp.setProps( {
-			...props,
-			hasSeoPreviewFeature: true,
-			hasAdvancedSEOFeature: true,
-		} );
-		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
+		rerender( <SeoForm { ...props } hasSeoPreviewFeature hasAdvancedSEOFeature /> );
+		expect( screen.queryByTestId( 'UpsellNudge' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should not render Jetpack unsupported notice when has no site', () => {
-		const comp = shallow(
+		render(
 			<SeoForm
 				{ ...props }
 				selectedSite={ { plan: null } }
@@ -95,52 +99,44 @@ describe( 'SeoForm basic tests', () => {
 				hasAdvancedSEOFeature={ false }
 			/>
 		);
-		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
+		expect( screen.queryByTestId( 'UpsellNudge' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render SEO editor when has advanced seo and there is no conflicted SEO plugin', () => {
-		const comp = shallow( <SeoForm { ...props } showAdvancedSeo={ true } /> );
-		expect( comp.find( '.seo-settings__page-title-header' ) ).toHaveLength( 1 );
+		render( <SeoForm { ...props } showAdvancedSeo={ true } /> );
+		expect( screen.queryByTestId( 'MetaTitleEditor' ) ).toBeVisible();
 	} );
 
 	test( 'should not render SEO editor when doesnt have advanced seo or there is a conflicted SEO plugin', () => {
-		let comp;
+		const { rerender } = render( <SeoForm { ...props } showAdvancedSeo={ false } /> );
+		expect( screen.queryByTestId( 'MetaTitleEditor' ) ).not.toBeInTheDocument();
 
-		comp = shallow( <SeoForm { ...props } hasAdvancedSEOFeature={ false } /> );
-		expect( comp.find( '.seo-settings__page-title-header' ) ).toHaveLength( 0 );
-
-		comp = shallow(
-			<SeoForm
-				{ ...props }
-				hasAdvancedSEOFeature={ true }
-				conflictedSeoPlugin={ { name: 'test' } }
-			/>
-		);
-		expect( comp.find( '.seo-settings__page-title-header' ) ).toHaveLength( 0 );
+		rerender( <SeoForm { ...props } showAdvanedSeo conflictedSeoPlugin={ { name: 'test' } } /> );
+		expect( screen.queryByTestId( 'MetaTitleEditor' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render website meta editor when appropriate', () => {
-		let comp;
+		const editorName = /Front Page Meta Description/i;
+		const { rerender } = render( <SeoForm { ...props } showAdvancedSeo={ true } /> );
+		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).toBeVisible();
 
-		comp = shallow( <SeoForm { ...props } showAdvancedSeo={ true } /> );
-		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 1 );
-
-		comp = shallow( <SeoForm { ...props } showWebsiteMeta={ true } /> );
-		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 1 );
+		rerender( <SeoForm { ...props } showWebsiteMeta={ true } /> );
+		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).toBeVisible();
 	} );
 
 	test( 'should not render SEO editor when appropriate', () => {
-		let comp;
+		const editorName = /Front Page Meta Description/i;
+		const { rerender } = render(
+			<SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } />
+		);
+		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).not.toBeInTheDocument();
 
-		comp = shallow( <SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } /> );
-		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 0 );
-
-		comp = shallow(
+		rerender(
 			<SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } showAdvancedSeo={ true } />
 		);
-		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 0 );
+		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).not.toBeInTheDocument();
 
-		comp = shallow(
+		rerender(
 			<SeoForm
 				{ ...props }
 				conflictedSeoPlugin={ { name: 'test' } }
@@ -148,50 +144,51 @@ describe( 'SeoForm basic tests', () => {
 				showWebsiteMeta={ true }
 			/>
 		);
-		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 0 );
+		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).not.toBeInTheDocument();
 	} );
 } );
 
 describe( 'UpsellNudge should get appropriate plan constant', () => {
-	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( product_slug ) => {
-		test( `Business 1 year for (${ product_slug })`, () => {
-			const comp = shallow(
+	test.each( [ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ] )(
+		`Business 1 year for (%s)`,
+		( product_slug ) => {
+			render(
 				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
 			);
-			expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
-			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_WPCOM_PRO );
-		} );
-	} );
-
-	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach(
-		( product_slug ) => {
-			test( `Business 2 year for (${ product_slug })`, () => {
-				const comp = shallow(
-					<SeoForm
-						{ ...props }
-						siteIsJetpack={ false }
-						selectedSite={ { plan: { product_slug } } }
-					/>
-				);
-				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
-				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
-			} );
+			const nudge = screen.getByTestId( 'UpsellNudge' );
+			expect( nudge ).toBeVisible();
+			expect( UpsellNudge ).toHaveBeenCalledWith(
+				expect.objectContaining( { plan: PLAN_BUSINESS } ),
+				expect.anything()
+			);
 		}
 	);
 
-	[ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ].forEach(
+	test.each( [ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ] )(
+		`Business 2 year for (%s)`,
 		( product_slug ) => {
-			test( `Jetpack Security Daily for (${ product_slug })`, () => {
-				const comp = shallow(
-					<SeoForm
-						{ ...props }
-						siteIsJetpack={ true }
-						selectedSite={ { plan: { product_slug } } }
-					/>
-				);
-				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
-				expect( comp.find( 'UpsellNudge' ).props().href ).toContain( PLAN_JETPACK_SECURITY_DAILY );
-			} );
+			render(
+				<SeoForm { ...props } siteIsJetpack={ false } selectedSite={ { plan: { product_slug } } } />
+			);
+			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
+			expect( UpsellNudge ).toHaveBeenCalledWith(
+				expect.objectContaining( { plan: PLAN_BUSINESS_2_YEARS } ),
+				expect.anything()
+			);
+		}
+	);
+
+	test.each( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ] )(
+		`Jetpack Security Daily for (%s)`,
+		( product_slug ) => {
+			render(
+				<SeoForm { ...props } siteIsJetpack={ true } selectedSite={ { plan: { product_slug } } } />
+			);
+			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
+			expect( UpsellNudge ).toHaveBeenCalledWith(
+				expect.objectContaining( { href: expect.stringContaining( PLAN_JETPACK_SECURITY_DAILY ) } ),
+				expect.anything()
+			);
 		}
 	);
 } );

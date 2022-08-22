@@ -6,7 +6,7 @@ const useHasSeenSellerCelebrationModal = () => {
 
 	useEffect( () => {
 		fetchHasSeenSellerCelebrationModal();
-	} );
+	}, [] );
 
 	function fetchHasSeenSellerCelebrationModal() {
 		apiFetch( { path: '/wpcom/v2/block-editor/has-seen-seller-celebration-modal' } )

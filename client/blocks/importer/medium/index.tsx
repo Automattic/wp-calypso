@@ -1,3 +1,5 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -77,6 +79,16 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 		return checkProgress() || checkIsSuccess();
 	}
 
+	function onSiteViewClick() {
+		if ( isEnabled( 'onboarding/import-redirect-to-themes' ) ) {
+			recordTracksEvent( 'calypso_site_importer_pick_a_design' );
+			stepNavigator?.navigate?.( 'designSetup' );
+		} else {
+			recordTracksEvent( 'calypso_site_importer_view_site' );
+			stepNavigator?.goToSiteViewPage?.();
+		}
+	}
+
 	return (
 		<>
 			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
@@ -90,7 +102,7 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 								siteSlug={ siteSlug }
 								job={ job as ImportJob }
 								resetImport={ resetImport }
-								onSiteViewClick={ stepNavigator?.goToSiteViewPage }
+								onSiteViewClick={ onSiteViewClick }
 							/>
 						);
 					} else if ( checkIsFailed() ) {

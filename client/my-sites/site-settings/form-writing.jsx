@@ -12,7 +12,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
-import Masterbar from './masterbar';
 import MediaSettingsWriting from './media-settings-writing';
 import PressThis from './press-this';
 import PublishingTools from './publishing-tools';
@@ -35,7 +34,6 @@ class SiteSettingsFormWriting extends Component {
 			handleAutosavingRadio,
 			handleSubmitForm,
 			isPodcastingSupported,
-			isMasterbarSectionVisible,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -141,13 +139,6 @@ class SiteSettingsFormWriting extends Component {
 						<PressThis />
 					</div>
 				) }
-
-				{ isMasterbarSectionVisible && (
-					<Masterbar
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-					/>
-				) }
 			</form>
 		);
 	}
@@ -163,10 +154,6 @@ const connectComponent = connect(
 		return {
 			siteIsJetpack,
 			siteId,
-			isMasterbarSectionVisible:
-				siteIsJetpack &&
-				// Masterbar can't be turned off on Atomic sites - don't show the toggle in that case
-				! isAtomic,
 			isPodcastingSupported,
 			isAtomic,
 		};

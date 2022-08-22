@@ -5,16 +5,14 @@ import CustomerHome from './main';
 
 export default async function ( context, next ) {
 	const state = await context.store.getState();
-	const siteId = await getSelectedSiteId( state );
-
-	const noticeType = context.query.notice;
+	const siteId = getSelectedSiteId( state );
 
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome key={ siteId } noticeType={ noticeType } />;
+	context.primary = <CustomerHome key={ siteId } />;
 
 	next();
 }

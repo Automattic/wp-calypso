@@ -40,8 +40,8 @@ this case `onClose` and `onBackClick`).
 
 - `HeaderBar` a component representing the top bar of the Video UI. Props received:
   - `course` the course information.
-- `FooterBar` a component representing the fotter of the Video UI. Props received:
+- `FooterBar` a component representing the footer of the Video UI. Props received:
   - `course` the course information.
-  - `isCourseComplete` wheter the course was viewed completely by the user.
-- `areVideosTranslated` a boolean flag indicating wheter the videos are translated from English. If they
-are not, a banner displaying this situation is shown to the user.
+  - `isCourseComplete` whether the course was viewed completely by the user.
+- `areVideosTranslated` a boolean flag indicating whether the videos are translated from English. If they
+  are not, a banner displaying this situation is shown to the user.

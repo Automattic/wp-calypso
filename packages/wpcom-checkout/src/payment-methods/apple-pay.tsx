@@ -7,20 +7,26 @@ import PaymentRequestButton from '../payment-request-button';
 import { usePaymentRequestOptions, useStripePaymentRequest } from './web-pay-utils';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { CartKey } from '@automattic/shopping-cart';
 import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'composite-checkout:apple-pay-payment-method' );
 
 export function createApplePayMethod(
 	stripe: Stripe,
-	stripeConfiguration: StripeConfiguration
+	stripeConfiguration: StripeConfiguration,
+	cartKey: CartKey
 ): PaymentMethod {
 	return {
 		id: 'apple-pay',
 		paymentProcessorId: 'apple-pay',
 		label: <ApplePayLabel />,
 		submitButton: (
-			<ApplePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
+			<ApplePaySubmitButton
+				stripe={ stripe }
+				stripeConfiguration={ stripeConfiguration }
+				cartKey={ cartKey }
+			/>
 		),
 		inactiveContent: <ApplePaySummary />,
 		getAriaLabel: ( __ ) => __( 'Apple Pay' ),
@@ -45,13 +51,15 @@ export function ApplePaySubmitButton( {
 	onClick,
 	stripe,
 	stripeConfiguration,
+	cartKey,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
+	cartKey: CartKey;
 } ) {
-	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
+	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration, cartKey );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );

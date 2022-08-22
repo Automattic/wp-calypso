@@ -291,7 +291,7 @@ const ConnectedThanksModal = connect(
 
 		const isAtomic = isSiteAtomic( state, siteId );
 		const isJetpack = isJetpackSite( state, siteId );
-		const hasAutoLoadingHomepage = themeHasAutoLoadingHomepage( state, currentThemeId );
+		const hasAutoLoadingHomepage = themeHasAutoLoadingHomepage( state, currentThemeId, siteId );
 
 		// Atomic & Jetpack do not have auto-loading-homepage behavior, so we trigger the layout picker for them.
 		const customizeUrl =

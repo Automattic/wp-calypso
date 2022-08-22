@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { ACTIVATE_PLUGIN, DEACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { getManageConnectionHref } from 'calypso/lib/plugins/utils';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
@@ -72,14 +73,14 @@ export class PluginActivateToggle extends Component {
 				<a
 					className="plugin-activate-toggle__icon"
 					onClick={ this.trackManageConnectionLink }
-					href={ '/settings/manage-connection/' + site.slug }
+					href={ getManageConnectionHref( site.slug ) }
 				>
 					<Gridicon icon="cog" size={ 18 } />
 				</a>
 				<a
 					className="plugin-activate-toggle__label"
 					onClick={ this.trackManageConnectionLink }
-					href={ '/settings/manage-connection/' + site.slug }
+					href={ getManageConnectionHref( site.slug ) }
 				>
 					{ translate( 'Manage Connection', {
 						comment: 'manage Jetpack connnection settings link',

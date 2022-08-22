@@ -10,6 +10,7 @@ import {
 	SiteSettings,
 	AtomicTransferStatus,
 	LatestAtomicTransferStatus,
+	GlobalStyles,
 } from './types';
 import {
 	AtomicTransferState,
@@ -161,6 +162,23 @@ export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action >
 			},
 		};
 	}
+	return state;
+};
+
+export const sitesGlobalStyles: Reducer< { [ key: number ]: GlobalStyles }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_SITE_GLOBAL_STYLES' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				...state?.[ action.siteId ],
+				...action.globalStyles,
+			},
+		};
+	}
+
 	return state;
 };
 
@@ -387,6 +405,7 @@ const reducer = combineReducers( {
 	launchStatus,
 	sitesDomains,
 	sitesSettings,
+	sitesGlobalStyles,
 	siteSetupErrors,
 	atomicTransferStatus,
 	latestAtomicTransferStatus,

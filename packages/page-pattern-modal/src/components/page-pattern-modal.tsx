@@ -18,7 +18,7 @@ interface PagePatternModalProps {
 	areTipsEnabled?: boolean;
 	hideWelcomeGuide: () => void;
 	insertPattern: ( title: string | null, blocks: unknown[] ) => void;
-	instanceId: number;
+	instanceId: string | number;
 	isOpen: boolean;
 	isWelcomeGuideActive?: boolean;
 	locale?: string;

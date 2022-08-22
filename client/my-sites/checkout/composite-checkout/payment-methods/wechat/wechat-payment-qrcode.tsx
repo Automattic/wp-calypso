@@ -10,7 +10,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/constants';
+import { SUCCESS, ERROR, UNKNOWN, FAILURE } from 'calypso/state/order-transactions/constants';
 import getOrderTransaction from 'calypso/state/selectors/get-order-transaction';
 import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -44,11 +44,7 @@ export class WeChatPaymentQRcode extends Component< WeChatQRProps > {
 		} = this.props;
 
 		// HTTP errors + Transaction errors
-		if (
-			transactionError ||
-			transactionStatus === ORDER_TRANSACTION_STATUS.ERROR ||
-			transactionStatus === ORDER_TRANSACTION_STATUS.UNKNOWN
-		) {
+		if ( transactionError || transactionStatus === ERROR || transactionStatus === UNKNOWN ) {
 			reset();
 
 			showErrorNotice(
@@ -59,7 +55,7 @@ export class WeChatPaymentQRcode extends Component< WeChatQRProps > {
 			);
 
 			page( slug ? `/checkout/${ slug }` : '/plans' );
-		} else if ( transactionStatus === ORDER_TRANSACTION_STATUS.FAILURE ) {
+		} else if ( transactionStatus === FAILURE ) {
 			reset();
 
 			showErrorNotice(
@@ -70,7 +66,7 @@ export class WeChatPaymentQRcode extends Component< WeChatQRProps > {
 			);
 
 			page( slug ? `/checkout/${ slug }` : '/plans' );
-		} else if ( transactionStatus === ORDER_TRANSACTION_STATUS.SUCCESS ) {
+		} else if ( transactionStatus === SUCCESS ) {
 			reset();
 
 			if ( transactionReceiptId ) {
@@ -137,13 +133,13 @@ export default connect(
 			| 'translate'
 		>
 	) => {
-		const { receiptId, processingStatus } =
-			getOrderTransaction( storeState, ownProps.orderId ) || {};
+		const transaction = getOrderTransaction( storeState, ownProps.orderId );
 		const transactionError = getOrderTransactionError( storeState, ownProps.orderId );
 
 		return {
-			transactionReceiptId: receiptId,
-			transactionStatus: processingStatus,
+			transactionReceiptId:
+				transaction?.processingStatus === SUCCESS ? transaction?.receiptId : undefined,
+			transactionStatus: transaction?.processingStatus,
 			transactionError: !! transactionError,
 		};
 	},

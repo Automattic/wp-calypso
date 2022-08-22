@@ -169,7 +169,6 @@ const PostScheduleExample = localize(
 											position: 'relative',
 										} }
 										onClick={ this.clearState.bind( this, 'timezone' ) }
-										href="#"
 									>
 										clean timezone
 									</button>
@@ -188,7 +187,6 @@ const PostScheduleExample = localize(
 									<button
 										className="card__property-action"
 										onClick={ this.clearState.bind( this, 'gmtOffset' ) }
-										href="#"
 									>
 										clean gmtOffset
 									</button>
@@ -205,7 +203,6 @@ const PostScheduleExample = localize(
 									<button
 										className="card__property-action"
 										onClick={ this.clearState.bind( this, 'date' ) }
-										href="#"
 									>
 										clean selectedDay
 									</button>

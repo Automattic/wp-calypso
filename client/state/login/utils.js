@@ -181,11 +181,17 @@ export async function postLoginRequest( action, bodyObj ) {
  * https://woocommerce.com/partner-signup uses a wp.com branded login and signup flow
  * while using woocommerces's oauth client id.
  *
- * This function detects this situation by checking for a redirect back to that page.
+ * This function check for is_partner_signup query or detects this situation by checking
+ * for a redirect back to that page.
  */
 export function isPartnerSignupQuery( currentQuery ) {
 	if ( ! currentQuery ) {
 		return false;
+	}
+
+	// Check for is_partner_signup query
+	if ( currentQuery?.is_partner_signup ) {
+		return true;
 	}
 
 	// Handles login through /log-in/?redirect_to=...

@@ -1,4 +1,8 @@
-export default function isSurveyFilledIn( survey, isImport = false ) {
+export default function isSurveyFilledIn( survey, isImport = false, isPlan = true ) {
+	if ( ! isPlan ) {
+		// We only show an optional question when cancelling a non-plan.
+		return true;
+	}
 	const answeredBothQuestions = survey.questionOneRadio && survey.questionTwoRadio;
 
 	if ( survey.questionOneRadio === 'anotherReasonOne' && survey.questionOneText === '' ) {

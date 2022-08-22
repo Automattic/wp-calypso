@@ -1,13 +1,7 @@
-import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import getSites from 'calypso/state/selectors/get-sites';
-
-const matches = ( item, term, keys ) =>
-	keys.some( ( key ) => get( item, key, '' ).toLowerCase().indexOf( term ) > -1 );
-
-const searchCollection = ( collection, term, keys ) =>
-	collection.filter( ( item ) => matches( item, term, keys ) );
+import { searchCollection } from './utils';
 
 const mapState = ( state ) => ( {
 	sites: getSites( state ),

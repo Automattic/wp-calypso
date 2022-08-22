@@ -243,7 +243,7 @@ function getConfig( args: ImporterConfigArgs = { siteTitle: '' } ): {
 				},
 			}
 		),
-		uploadDescription: translate( 'Enter the URL of your existing site. ' + '{{supportLink/}}', {
+		uploadDescription: translate( 'Enter the URL of your Wix site. ' + '{{supportLink/}}', {
 			components: {
 				supportLink: (
 					<InlineSupportLink supportContext="importers-wix" showIcon={ false }>

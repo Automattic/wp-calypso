@@ -31,17 +31,17 @@ import {
 	LEGACY_TO_RECOMMENDED_MAP,
 } from '../plans/jetpack-plans/plan-upgrade/constants';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-import CheckoutSystemDecider from './checkout-system-decider';
+import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
-import CheckoutPendingComponent from './checkout-thank-you/pending';
+import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
 	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
-import { getDomainOrProductFromContext } from './utils';
+import { getProductSlugFromContext } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -65,7 +65,7 @@ export function checkoutSiteless( context, next ) {
 		<>
 			<CheckoutSitelessDocumentTitle />
 
-			<CheckoutSystemDecider
+			<CheckoutMainWrapper
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }
@@ -118,7 +118,7 @@ export function checkout( context, next ) {
 
 	const product = isJetpackCheckout
 		? context.params.productSlug
-		: getDomainOrProductFromContext( context );
+		: getProductSlugFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -158,7 +158,7 @@ export function checkout( context, next ) {
 		<>
 			<CheckoutDocumentTitle />
 
-			<CheckoutSystemDecider
+			<CheckoutMainWrapper
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				purchaseId={ purchaseId }
@@ -182,7 +182,7 @@ export function checkout( context, next ) {
 }
 
 export function redirectJetpackLegacyPlans( context, next ) {
-	const product = getDomainOrProductFromContext( context );
+	const product = getProductSlugFromContext( context );
 
 	if ( isJetpackLegacyItem( product ) ) {
 		const state = context.store.getState();
@@ -202,16 +202,32 @@ export function redirectJetpackLegacyPlans( context, next ) {
 }
 
 export function checkoutPending( context, next ) {
-	const orderId = Number( context.params.orderId );
+	const orderId = Number.isInteger( Number( context.params.orderId ) )
+		? Number( context.params.orderId )
+		: ':orderId';
+
+	/**
+	 * @type {string|undefined}
+	 */
 	const siteSlug = context.params.site;
+
+	/**
+	 * @type {string|undefined}
+	 */
+	const redirectTo = context.query.redirectTo;
+
+	const receiptId = Number.isInteger( Number( context.query.receiptId ) )
+		? Number( context.query.receiptId )
+		: undefined;
 
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
-		<CheckoutPendingComponent
+		<CheckoutPending
 			orderId={ orderId }
 			siteSlug={ siteSlug }
-			redirectTo={ context.query.redirectTo }
+			redirectTo={ redirectTo }
+			receiptId={ receiptId }
 		/>
 	);
 
@@ -219,7 +235,19 @@ export function checkoutPending( context, next ) {
 }
 
 export function checkoutThankYou( context, next ) {
-	const receiptId = Number( context.params.receiptId );
+	// This route requires a numeric receipt ID like
+	// `/checkout/thank-you/example.com/1234` but it also operates as a fallback
+	// if something goes wrong with the "pending" page and will respond to a URL
+	// like `/checkout/thank-you/example.com/pending`. In that case, the word
+	// `pending` is a placeholder for the receipt ID that never got properly
+	// replaced (perhaps it could not find the receipt ID, for example).
+	//
+	// In that case, we still want to display a generic thank-you page (because
+	// the transaction was probably still successful), so we set `receiptId` to
+	// `undefined`.
+	const receiptId = Number.isInteger( Number( context.params.receiptId ) )
+		? Number( context.params.receiptId )
+		: undefined;
 	const gsuiteReceiptId = Number( context.params.gsuiteReceiptId ) || 0;
 
 	const state = context.store.getState();

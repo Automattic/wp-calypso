@@ -4,6 +4,7 @@
 
 import { render } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { siteColumns } from '../../utils';
@@ -27,6 +28,7 @@ describe( '<SiteTable>', () => {
 		latest_backup_status: '',
 		is_connection_healthy: true,
 		awaiting_plugin_updates: [],
+		is_favorite: false,
 	};
 	const items: Array< SiteData > = [
 		{
@@ -78,10 +80,13 @@ describe( '<SiteTable>', () => {
 	const initialState = {};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
+	const queryClient = new QueryClient();
 
 	const { getByTestId } = render(
 		<Provider store={ store }>
-			<SiteTable { ...props } />
+			<QueryClientProvider client={ queryClient }>
+				<SiteTable { ...props } />
+			</QueryClientProvider>
 		</Provider>
 	);
 

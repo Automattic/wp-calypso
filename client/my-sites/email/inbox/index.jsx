@@ -95,6 +95,7 @@ const InboxManagement = ( { selectedIntervalLength } ) => {
 		canCurrentUser( state, selectedSiteId, 'manage_options' )
 	);
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ) );
+
 	const isLoadingDomains = useSelector(
 		( state ) => ! hasLoadedSiteDomains( state, selectedSiteId )
 	);
@@ -117,7 +118,7 @@ const InboxManagement = ( { selectedIntervalLength } ) => {
 	const nonWPCOMDomains = domains.filter( ( domain ) => ! domain.isWPCOMDomain );
 
 	if ( hasAtLeastOneMailbox( nonWPCOMDomains ) ) {
-		return <MailboxSelectionList />;
+		return <MailboxSelectionList domains={ nonWPCOMDomains } />;
 	}
 
 	return (

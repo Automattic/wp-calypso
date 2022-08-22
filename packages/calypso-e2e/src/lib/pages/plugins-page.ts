@@ -15,7 +15,10 @@ const selectors = {
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
 		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-browser-list__title',
-	browseAllPopular: 'a[href^="/plugins/browse/popular"]',
+	browseAllFree: 'a[href^="/plugins/browse/popular"]',
+	browseAllPaid: 'a[href^="/plugins/browse/paid"]',
+	browseFirstCategory: 'button:has-text("Search Engine Optimization")',
+	categoryButton: ( section: string ) => `button:has-text("${ section }")`,
 	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
@@ -122,10 +125,30 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Click Browse All
+	 * Click Browse All Free Plugins
 	 */
-	async clickBrowseAllPopular(): Promise< void > {
-		await this.page.click( selectors.browseAllPopular );
+	async clickBrowseAllFreePlugins(): Promise< void > {
+		await this.page.click( selectors.browseAllFree );
+	}
+
+	/**
+	 * Click Browse All Paid Plugins
+	 */
+	async clickBrowseAllPaidPlugins(): Promise< void > {
+		await this.page.click( selectors.browseAllPaid );
+	}
+
+	/**
+	 * Validate Category Button
+	 */
+	async validateCategoryButton( category: string, isDesktop: boolean ): Promise< void > {
+		const categoryLocator = this.page.locator( selectors.categoryButton( category ) );
+		if ( isDesktop ) {
+			await categoryLocator.nth( 1 ).click();
+		} else {
+			await categoryLocator.click();
+		}
+		await this.page.waitForSelector( selectors.listSubtitle( category ) );
 	}
 
 	/**

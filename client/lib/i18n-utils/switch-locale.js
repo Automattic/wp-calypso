@@ -516,15 +516,17 @@ export function switchWebpackCSS( isRTL ) {
 	forEach( currentLinks, async ( currentLink ) => {
 		const currentHref = currentLink.getAttribute( 'href' );
 		const newHref = setRTLFlagOnCSSLink( currentHref, isRTL );
-		if ( currentHref === newHref ) {
+		const isNewHrefAdded = currentLink.parentElement?.querySelector( `[href = '${ newHref }']` );
+
+		if ( currentHref === newHref || isNewHrefAdded ) {
 			return;
 		}
 
 		const newLink = await loadCSS( newHref, currentLink );
-		newLink.setAttribute( 'data-webpack', true );
 
-		if ( currentLink.parentElement ) {
-			currentLink.parentElement.removeChild( currentLink );
+		if ( newLink ) {
+			newLink.setAttribute( 'data-webpack', true );
+			currentLink.parentElement?.removeChild( currentLink );
 		}
 	} );
 }
@@ -538,6 +540,15 @@ export function switchWebpackCSS( isRTL ) {
  */
 function loadCSS( cssUrl, currentLink ) {
 	return new Promise( ( resolve ) => {
+		// While looping the current links the RTL state might have changed
+		// This is a double-check to ensure the value of isRTL
+		const isRTL = i18n.isRtl();
+		const isRTLHref = currentLink.getAttribute( 'href' ).endsWith( '.rtl.css' );
+
+		if ( isRTL === isRTLHref ) {
+			return resolve( null );
+		}
+
 		const link = document.createElement( 'link' );
 		link.rel = 'stylesheet';
 		link.type = 'text/css';

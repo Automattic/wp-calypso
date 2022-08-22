@@ -242,7 +242,7 @@ class SitePost {
 	/**
 	 * Return a `Subscriber` instance.
 	 *
-	 * *Example:*
+	 * Example:
 	 *    // Create a Subscriber instance of a post
 	 *    var post = wpcom.site( 'en.blog.wordpress.com' ).post( 1234 );
 	 *    var subs = post.subscriber();

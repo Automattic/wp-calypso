@@ -1,8 +1,8 @@
+import { PLAN_WPCOM_PRO_MONTHLY, WPComPlan } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
-import { intersection } from 'lodash';
+import { intersection, difference } from 'lodash';
 import { PlansComparisonRowHeader } from './plans-comparison-row-header';
 import type { PlanComparisonFeature } from './plans-comparison-features';
-import type { WPComPlan } from '@automattic/calypso-products';
 
 interface Props {
 	feature: PlanComparisonFeature;
@@ -78,10 +78,14 @@ export const PlansComparisonRow: React.FunctionComponent< Props > = ( {
 				description={ feature.description }
 			/>
 			{ plans.map( ( plan ) => {
-				const includedFeature = intersection(
-					plan.getPlanCompareFeatures?.() || [],
-					feature.features
-				)[ 0 ];
+				let planCompareFeatures = plan.getPlanCompareFeatures?.() || [];
+
+				if ( PLAN_WPCOM_PRO_MONTHLY === plan.getStoreSlug() ) {
+					const annualPlanFeatures = plan.getAnnualPlansOnlyFeatures?.() || [];
+					planCompareFeatures = difference( planCompareFeatures, annualPlanFeatures );
+				}
+
+				const includedFeature = intersection( planCompareFeatures, feature.features )[ 0 ];
 
 				return (
 					<td key={ plan.getProductId() }>

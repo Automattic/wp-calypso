@@ -23,6 +23,7 @@ class Help_Center {
 	 */
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
+		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
 	}
 
 	/**
@@ -35,6 +36,18 @@ class Help_Center {
 			self::$instance = new self();
 		}
 		return self::$instance;
+	}
+
+	/**
+	 * Acts as a feature flag, returning a boolean for whether we should show the next steps tutorial UI.
+	 *
+	 * @return boolean
+	 */
+	public static function is_next_steps_tutorial_enabled() {
+		return apply_filters(
+			'help_center_should_enable_next_steps_tutorial',
+			false
+		);
 	}
 
 	/**
@@ -66,7 +79,35 @@ class Help_Center {
 			\A8C\FSE\Common\get_iso_639_locale( determine_locale() )
 		);
 
+		// Adds feature flags for development.
+		wp_add_inline_script(
+			'help-center-script',
+			'const helpCenterFeatureFlags = ' . wp_json_encode(
+				array(
+					'loadNextStepsTutorial' => self::is_next_steps_tutorial_enabled(),
+				)
+			),
+			'before'
+		);
+
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
+	}
+
+	/**
+	 * Register the Help Center endpoints.
+	 */
+	public function register_rest_api() {
+		require_once __DIR__ . '/class-wp-rest-help-center-support-availability.php';
+		$controller = new WP_REST_Help_Center_Support_Availability();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-search.php';
+		$controller = new WP_REST_Help_Center_Search();
+		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-fetch-post.php';
+		$controller = new WP_REST_Help_Center_Fetch_Post();
+		$controller->register_rest_route();
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Help_Center', 'init' ) );

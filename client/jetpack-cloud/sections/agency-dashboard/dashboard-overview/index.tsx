@@ -1,12 +1,11 @@
-import config from '@automattic/calypso-config';
-import page from 'page';
-import { ReactElement, useEffect } from 'react';
+import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
 import {
+	hasActivePartnerKey,
 	hasFetchedPartner,
 	isFetchingPartner,
-	isAgencyUser,
 } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverview from '../sites-overview';
 import SitesOverviewContext from '../sites-overview/context';
@@ -21,19 +20,13 @@ export default function DashboardOverview( {
 }: SitesOverviewContextInterface ): ReactElement {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
-	const isAgency = useSelector( isAgencyUser );
-	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
+	const hasActiveKey = useSelector( hasActivePartnerKey );
 
-	useEffect( () => {
-		if ( hasFetched ) {
-			if ( ! isAgency || ! isAgencyEnabled ) {
-				page.redirect( '/' );
-				return;
-			}
-		}
-	}, [ hasFetched, isAgency, isAgencyEnabled ] );
+	if ( hasFetched && ! hasActiveKey ) {
+		return <SelectPartnerKey />;
+	}
 
-	if ( isAgencyEnabled && hasFetched && isAgency ) {
+	if ( hasFetched ) {
 		const context = {
 			search,
 			currentPage,

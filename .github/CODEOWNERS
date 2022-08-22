@@ -12,9 +12,6 @@
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
 
-# Customer Home
-/client/my-sites/customer-home @Automattic/manage
-
 # Email services
 /client/components/data/query-gsuite-users @Automattic/letero
 /client/components/domains/contact-details-form-fields/index.jsx @Automattic/letero

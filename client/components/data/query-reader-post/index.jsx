@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 import { isPostKeyLike } from 'calypso/reader/post-key';
 import { fetchPost } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 
 class QueryReaderPost extends Component {
 	static propTypes = {
 		postKey: PropTypes.object.isRequired,
+		isHelpCenter: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -19,10 +21,9 @@ class QueryReaderPost extends Component {
 	}
 
 	maybeFetch = () => {
-		const { post, postKey } = this.props;
-
+		const { post, postKey, isHelpCenter, isSimpleSite } = this.props;
 		if ( isPostKeyLike( postKey ) && ( ! post || post._state === 'minimal' ) ) {
-			this.props.fetchPost( postKey );
+			this.props.fetchPost( postKey, isHelpCenter, isSimpleSite );
 		}
 	};
 
@@ -34,6 +35,8 @@ class QueryReaderPost extends Component {
 export default connect(
 	( state, ownProps ) => ( {
 		post: getPostByKey( state, ownProps.postKey ),
+		isHelpCenter: ownProps.isHelpCenter,
+		isSimpleSite: getIsSimpleSite( state ),
 	} ),
 	{ fetchPost }
 )( QueryReaderPost );

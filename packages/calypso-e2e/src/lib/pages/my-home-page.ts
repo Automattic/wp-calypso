@@ -4,7 +4,8 @@ const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
 
 	// Task card (topmost card)
-	taskHeadingMessage: ( message: string ) => `div.task h2:has-text("${ message }")`,
+	taskHeadingMessage: ( message: string ) =>
+		`.primary__customer-home-location-content :text("${ message }")`,
 };
 
 /**

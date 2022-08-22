@@ -21,6 +21,25 @@
 	}
 }
 
+.profile__gravatar-fieldset-is-loading {
+	.components-form-toggle {
+		> * {
+			visibility: hidden;
+		}
+		.components-form-toggle__track {
+			visibility: visible;
+			border: none;
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+	.components-toggle-control__label {
+		@include placeholder();
+		a {
+			color: inherit;
+		}
+	}
+}
+
 .profile__submit-button-wrapper {
 	margin-bottom: 0;
 }

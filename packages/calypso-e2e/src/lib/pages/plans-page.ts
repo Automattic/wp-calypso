@@ -1,15 +1,9 @@
 import { Page } from 'playwright';
-import { toTitleCase } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
 
-// Differentiates between the legacy and current (overhauled) plans.
-type PlansGridVersion = 'current' | 'legacy';
-type PlansComparisonAction = 'show' | 'hide';
-
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
-export type Plans = 'Free' | 'Pro';
-export type LegacyPlans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
+export type Plans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
 export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
@@ -17,6 +11,14 @@ const selectors = {
 	// Generic
 	placeholder: `.is-placeholder`,
 	managePlanButton: `a:has-text("Manage plan")`,
+	selectPlanButton: ( name: Plans ) => {
+		if ( name === 'Free' ) {
+			// Free plan is a pseudo-button presented as a
+			// link.
+			return `button:text-matches("${ name }", "i")`;
+		}
+		return `button.is-${ name.toLowerCase() }-plan:visible`;
+	},
 
 	// Navigation
 	mobileNavTabsToggle: `button.section-nav__mobile-header`,
@@ -25,23 +27,14 @@ const selectors = {
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
 
 	// Legacy plans view
-	legacyPlansGrid: '.plans-features-main',
-	actionButton: ( { plan, buttonText }: { plan: LegacyPlans; buttonText: PlanActionButton } ) => {
+	PlansGrid: '.plans-features-main',
+	actionButton: ( { plan, buttonText }: { plan: Plans; buttonText: PlanActionButton } ) => {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
 
-	// Overhauled plans view
-	selectPlanButton: ( type: Plans ) =>
-		`.formatted-header button.button:has-text("${ type }"), tr th button.button:has-text("${ type }")`,
-	planComparisonActionButton: ( action: PlansComparisonAction ) => {
-		const buttonText = `${ toTitleCase( action ) } full plan comparison`;
-		return `button:text("${ buttonText }")`;
-	},
-
 	// My Plans view
-	myPlanTitle: ( planName: LegacyPlans | Plans ) =>
-		`.my-plan-card__title:has-text("${ planName }")`,
+	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
 };
 
 /**
@@ -49,16 +42,28 @@ const selectors = {
  */
 export class PlansPage {
 	private page: Page;
-	private version: PlansGridVersion;
 
 	/**
 	 * Constructs an instance of the Plans POM.
 	 *
 	 * @param {Page} page Instance of the Playwright page
 	 */
-	constructor( page: Page, version: PlansGridVersion ) {
+	constructor( page: Page ) {
 		this.page = page;
-		this.version = version;
+	}
+
+	/* Plans */
+
+	/**
+	 * Selects the target plan on the plans grid.
+	 *
+	 * @param {Plans} plan Plan to select.
+	 */
+	async selectPlan( plan: Plans ): Promise< void > {
+		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
+		// In the /plans view, there are two buttons for "Upgrade" on the
+		// plan comparison chart.
+		await Promise.all( [ this.page.waitForNavigation(), locator.first().click() ] );
 	}
 
 	/* Generic */
@@ -66,10 +71,10 @@ export class PlansPage {
 	/**
 	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
 	 *
-	 * @param {LegacyPlans} expectedPlan Name of the expected plan.
+	 * @param {Plans} expectedPlan Name of the expected plan.
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
-	async validateActivePlan( expectedPlan: LegacyPlans | Plans ): Promise< void > {
+	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
 		const expectedPlanLocator = this.page.locator( selectors.myPlanTitle( expectedPlan ) );
 		await expectedPlanLocator.waitFor();
 	}
@@ -79,44 +84,6 @@ export class PlansPage {
 	 */
 	async clickManagePlan(): Promise< void > {
 		await this.page.click( selectors.managePlanButton );
-	}
-
-	/* Current Plans */
-
-	/**
-	 * Selects the target plan on the plans grid.
-	 *
-	 * @param {Plans} plan Plan to select.
-	 */
-	async selectPlan( plan: Plans ): Promise< void > {
-		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
-		await Promise.all( [ this.page.waitForNavigation(), locator.click() ] );
-	}
-
-	/**
-	 * Shows the full Plan comparison table.
-	 *
-	 * This method is applicable only to the overhauled plans.
-	 */
-	async showPlanComparison(): Promise< void > {
-		const buttonLocator = this.page.locator( selectors.planComparisonActionButton( 'show' ) );
-		await buttonLocator.click();
-
-		const hideButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'hide' ) );
-		await hideButtonLocator.waitFor();
-	}
-
-	/**
-	 * Hides the full Plan comparison table.
-	 *
-	 * This method is applicable only to the overhauled plans.
-	 */
-	async hidePlanComparison(): Promise< void > {
-		const buttonLocator = this.page.locator( selectors.planComparisonActionButton( 'hide' ) );
-		await buttonLocator.click();
-
-		const showButtonLocator = this.page.locator( selectors.planComparisonActionButton( 'show' ) );
-		await showButtonLocator.waitFor();
 	}
 
 	/**
@@ -139,47 +106,34 @@ export class PlansPage {
 		}
 	}
 
-	/* Legacy Plans */
-
 	/**
 	 * Clicks on the navigation tab (desktop) or dropdown (mobile).
 	 *
 	 * @param {PlansPageTab} targetTab Name of the tab.
 	 */
 	async clickTab( targetTab: PlansPageTab ): Promise< void > {
-		// Plans page against the current WordPress.com Plans do not
-		// require any clicking of navigation tabs.
-		if ( this.version === 'current' ) {
-			return;
-		}
-
-		// On mobile viewports, the way PlansPage loads its contents
-		// causes an event to fire which closes all open panes.
-		// Waiting for one of the last SVGs to load on the page is
-		// a hacky but effective workaround.
+		// The way PlansPage loads its contents is particularly prone to
+		// flakiness outside the control of Playwright auto-retry mechanism.
+		// To work around this, forcibly click on the target selector.
+		// This affects primarily Mobile viewports but also can also occur
+		// on Desktop viewports.
 		// See https://github.com/Automattic/wp-calypso/issues/64389
 		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
-		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.page.waitForResponse( ( response ) =>
-				response.url().includes( '/images/wpcom-ecommerce' )
-			);
-		}
-
-		await clickNavTab( this.page, targetTab );
+		await clickNavTab( this.page, targetTab, { force: true } );
 	}
 
 	/**
 	 * Click a plan action button (on the plan cards on the "Plans" tab) based on expected plan name and button text.
 	 *
 	 * @param {object} param0 Object containing plan name and button text
-	 * @param {LegacyPlans} param0.plan Name of the plan (e.g. "Premium")
+	 * @param {Plans} param0.plan Name of the plan (e.g. "Premium")
 	 * @param {PlanActionButton} param0.buttonText Expected action button text (e.g. "Upgrade")
 	 */
 	async clickPlanActionButton( {
 		plan,
 		buttonText,
 	}: {
-		plan: LegacyPlans;
+		plan: Plans;
 		buttonText: PlanActionButton;
 	} ): Promise< void > {
 		const selector = selectors.actionButton( {

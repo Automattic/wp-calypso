@@ -39,7 +39,7 @@ const GoogleAnalyticsSimpleForm = ( {
 } ) => {
 	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
 	const nudgeTitle = translate(
-		'Connect your site to Google Analytics in seconds with the Pro plan'
+		'Connect your site to Google Analytics in seconds with the Premium plan'
 	);
 
 	useEffect( () => {
@@ -79,7 +79,11 @@ const GoogleAnalyticsSimpleForm = ( {
 			/>
 		);
 		return (
-			<form id="analytics" onSubmit={ handleSubmitForm }>
+			<form
+				aria-label="Google Analytics Site Settings"
+				id="analytics"
+				onSubmit={ handleSubmitForm }
+			>
 				<SettingsSectionHeader
 					disabled={ isSubmitButtonDisabled }
 					isSaving={ isSavingSettings }

@@ -25,6 +25,7 @@ type TitanSetUpThankYouProps = {
 	containerClassName?: string;
 	domainName: string;
 	emailAddress?: string;
+	isDomainOnlySite?: boolean;
 	title?: string;
 	subtitle?: string;
 };
@@ -33,12 +34,13 @@ const TitanSetUpThankYou = ( {
 	containerClassName,
 	domainName,
 	emailAddress,
+	isDomainOnlySite = false,
 	subtitle,
 	title,
 }: TitanSetUpThankYouProps ) => {
 	const currentRoute = useSelector( getCurrentRoute );
 	const selectedSite = useSelector( getSelectedSite );
-	const selectedSiteSlug = selectedSite?.slug ?? null;
+	const selectedSiteSlug = selectedSite?.slug ?? ( isDomainOnlySite ? domainName : null );
 	const titanAppsUrlPrefix = useTitanAppsUrlPrefix();
 	const translate = useTranslate();
 

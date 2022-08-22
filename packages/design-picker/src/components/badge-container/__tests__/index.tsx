@@ -30,13 +30,11 @@ describe( '<BadgeContainer /> integration', () => {
 		expect( premiumBadge ).toBeTruthy();
 	} );
 
-	it( 'should not render badges, but the svg', async () => {
+	it( 'should not render badges', async () => {
 		const renderedContent = render( <BadgeContainer /> );
 
-		const foundSvg = renderedContent.container.querySelector( 'svg' );
 		const premiumBadge = renderedContent.container.querySelector( '.premium-badge' );
 
-		expect( foundSvg ).toBeTruthy();
 		expect( premiumBadge ).toBeFalsy();
 	} );
 } );

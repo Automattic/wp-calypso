@@ -6,6 +6,7 @@ const defaults = {
 	term: '',
 	limit: 10,
 	skip_synonyms: false,
+	include_weighted_roots: true,
 };
 
 const useSiteVerticalsQuery = (

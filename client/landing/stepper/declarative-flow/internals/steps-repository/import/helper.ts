@@ -25,9 +25,11 @@ export function getFinalImporterUrl(
 	if ( isAtomicSite && platform !== 'wordpress' ) {
 		importerUrl = getWpOrgImporterUrl( targetSlug, platform );
 	} else if (
-		[ 'blogger', 'medium', 'squarespace', 'wix', 'wordpress' ].some( ( platform ) =>
-			isEnabled( `onboarding/import-from-${ platform }` )
-		)
+		[ 'blogger', 'medium', 'squarespace', 'wix', 'wordpress' ].some( ( targetPlatform ) => {
+			return (
+				platform === targetPlatform && isEnabled( `onboarding/import-from-${ targetPlatform }` )
+			);
+		} )
 	) {
 		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite, framework );
 		if ( platform === 'wordpress' && ! fromSite ) {

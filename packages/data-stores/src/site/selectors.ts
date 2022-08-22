@@ -62,6 +62,10 @@ export const getSiteSettings = ( state: State, siteId: number ) => {
 	return state.sitesSettings[ siteId ];
 };
 
+export const getSiteGlobalStyles = ( state: State, siteId: number ) => {
+	return state.sitesGlobalStyles[ siteId ];
+};
+
 export const getSiteSetupError = ( state: State ) => {
 	return state.siteSetupErrors;
 };

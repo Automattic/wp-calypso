@@ -251,7 +251,7 @@ export class LoginLinks extends Component {
 	}
 
 	renderQrCodeLoginLink() {
-		if ( ! config.isEnabled( 'login/qr-code-login' ) || this.props.twoFactorAuthType ) {
+		if ( this.props.twoFactorAuthType ) {
 			return null;
 		}
 		if ( this.props.isLoggedIn ) {

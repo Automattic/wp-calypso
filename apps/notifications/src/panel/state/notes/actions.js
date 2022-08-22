@@ -40,7 +40,6 @@ export const likeNote = ( noteId, isLiked ) => ( {
  * an incorrect state and cause a flash of the approval status.
  *
  * @see approveNote
- *
  * @param {number} noteId
  * @returns {object} action object
  */
@@ -58,7 +57,6 @@ export const resetLocalApproval = ( noteId ) => ( {
  * an incorrect state and cause a flash of the like status.
  *
  * @see likeNote
- *
  * @param {number} noteId
  * @returns {object} action object
  */

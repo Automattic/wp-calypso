@@ -1,13 +1,22 @@
 /**
  * @jest-environment jsdom
  */
-
-import { Card } from '@automattic/components';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import moment from 'moment';
+import invites from 'calypso/state/invites/reducer';
+import siteSettings from 'calypso/state/site-settings/reducer';
+import { reducer as ui } from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+
+const render = ( el, options ) =>
+	renderWithProvider( el, { ...options, reducers: { invites, siteSettings, ui } } );
 
 const mockGoBack = jest.fn();
 jest.mock( 'page', () => ( { back: mockGoBack } ) );
+jest.mock( 'calypso/my-sites/people/people-list-item', () => ( { user } ) => (
+	<div data-testid="people-list-item">{ user?.ID }</div>
+) );
 
 describe( 'PeopleInviteDetails', () => {
 	let PeopleInviteDetails;
@@ -67,10 +76,11 @@ describe( 'PeopleInviteDetails', () => {
 		mockGoBack.mockReset();
 	} );
 
-	it( 'should trigger deletion upon clicking Revoke Invite (pending invite)', () => {
+	it( 'should trigger deletion upon clicking Revoke Invite (pending invite)', async () => {
+		const user = userEvent.setup();
 		const mockDeleteInvite = jest.fn();
 
-		const inviteDetails = shallow(
+		render(
 			<PeopleInviteDetails
 				site={ siteObject }
 				requesting={ false }
@@ -85,21 +95,19 @@ describe( 'PeopleInviteDetails', () => {
 			/>
 		);
 
-		const revokeInviteButton = inviteDetails.find( 'ForwardRef(Button)' );
-		expect( revokeInviteButton ).toHaveLength( 1 );
-		expect( revokeInviteButton.children() ).toHaveLength( 1 );
-		expect( revokeInviteButton.children().text() ).toEqual( 'Revoke invite' );
+		const revokeInviteButton = screen.getByRole( 'button', { name: /^Revoke invite$/i } );
+		expect( revokeInviteButton ).toBeVisible();
 
 		expect( mockDeleteInvite ).not.toHaveBeenCalled();
-		revokeInviteButton.simulate( 'click' );
+		await user.click( revokeInviteButton );
 		expect( mockDeleteInvite ).toHaveBeenCalledTimes( 1 );
 		expect( mockDeleteInvite ).toHaveBeenCalledWith( siteObject.ID, pendingInviteObject.key );
 	} );
 
-	it( 'should trigger deletion upon clicking Clear Invite (accepted invite)', () => {
+	it( 'should trigger deletion upon clicking Clear Invite (accepted invite)', async () => {
 		const mockDeleteInvite = jest.fn();
 
-		const inviteDetails = shallow(
+		render(
 			<PeopleInviteDetails
 				site={ siteObject }
 				requesting={ false }
@@ -114,49 +122,43 @@ describe( 'PeopleInviteDetails', () => {
 			/>
 		);
 
-		const clearInviteButton = inviteDetails.find( 'ForwardRef(Button)' );
-		expect( clearInviteButton ).toHaveLength( 1 );
-		expect( clearInviteButton.children() ).toHaveLength( 1 );
-		expect( clearInviteButton.children().text() ).toEqual( 'Clear invite' );
+		const clearInviteButton = screen.getByRole( 'button', { name: /^Clear invite$/i } );
+		expect( clearInviteButton ).toBeVisible();
 
 		expect( mockDeleteInvite ).not.toHaveBeenCalled();
-		clearInviteButton.simulate( 'click' );
+		await userEvent.click( clearInviteButton );
 		expect( mockDeleteInvite ).toHaveBeenCalledTimes( 1 );
 		expect( mockDeleteInvite ).toHaveBeenCalledWith( siteObject.ID, acceptedInviteObject.key );
 	} );
 
 	it( 'should navigate back (to the invite list) when an invite is deleted', () => {
-		const inviteDetails = shallow(
-			<PeopleInviteDetails
-				site={ siteObject }
-				requesting={ false }
-				deleting={ true }
-				deleteSuccess={ false }
-				inviteKey={ acceptedInviteObject.key }
-				invite={ acceptedInviteObject }
-				translate={ mockTranslate }
-				moment={ moment }
-				canViewPeople={ true }
-			/>
-		);
+		const props = {
+			site: siteObject,
+			requesting: false,
+			deleting: true,
+			deleteSuccess: false,
+			inviteKey: acceptedInviteObject.key,
+			invite: acceptedInviteObject,
+			translate: mockTranslate,
+			moment,
+			canViewPeople: true,
+		};
+		const { rerender } = render( <PeopleInviteDetails { ...props } /> );
 
 		expect( mockGoBack ).not.toHaveBeenCalled();
 
 		// Verify that `page.back` is called when the invite deletion succeeds.
-		inviteDetails.setProps( { deleting: false, deleteSuccess: true } );
+		rerender( <PeopleInviteDetails { ...props } deleting={ false } deleteSuccess /> );
 		expect( mockGoBack ).toHaveBeenCalledTimes( 1 );
 		expect( mockGoBack ).toHaveBeenCalledWith( '/people/invites/' + siteObject.slug );
 
 		// Verify that a placeholder is rendered while waiting for `page.back`
 		// to take effect.
-		const placeholderContainer = inviteDetails.find( Card );
-		expect( placeholderContainer ).toHaveLength( 1 );
-		expect( placeholderContainer.children() ).toHaveLength( 1 );
-		const placeholder = placeholderContainer.childAt( 0 );
-		expect( placeholder.key() ).toEqual( 'people-list-item-placeholder' );
+		const peopleListItem = screen.queryByTestId( 'people-list-item' );
+		expect( peopleListItem ).toBeEmptyDOMElement();
 
 		// Change another prop and verify that `page.back` isn't called again.
-		inviteDetails.setProps( { invite: Object.assign( {}, acceptedInviteObject ) } );
+		rerender( <PeopleInviteDetails { ...props } invite={ { ...acceptedInviteObject } } /> );
 		expect( mockGoBack ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

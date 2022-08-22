@@ -1,10 +1,11 @@
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { TextHighlight } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -25,6 +26,8 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
+import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
+import PreinstalledPremiumPluginBrowserItemPricing from './preinstalled-premium-plugin-browser-item-pricing';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
@@ -37,6 +40,7 @@ const PluginsBrowserListElement = ( props ) => {
 		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
+		search,
 	} = props;
 
 	const translate = useTranslate();
@@ -72,6 +76,22 @@ const PluginsBrowserListElement = ( props ) => {
 		return url;
 	}, [ plugin, site ] );
 
+	useEffect(
+		function trackPluginItemRender() {
+			if ( plugin.railcar ) {
+				recordTracksEvent( 'calypso_marketplace_search_traintracks_render', {
+					site: site,
+					plugin: plugin.slug,
+					blog_id: selectedSite?.ID,
+					ui_algo: props.listName, // this can also be used to test different layouts eg. list/grid
+					ui_position: props.gridPosition,
+					...plugin.railcar,
+				} );
+			}
+		},
+		[ plugin.railcar ]
+	);
+
 	const trackPluginLinkClick = useCallback( () => {
 		recordTracksEvent( 'calypso_plugin_browser_item_click', {
 			site: site,
@@ -80,6 +100,13 @@ const PluginsBrowserListElement = ( props ) => {
 			grid_position: props.gridPosition,
 			blog_id: selectedSite?.ID,
 		} );
+		if ( plugin.railcar ) {
+			recordTracksEvent( 'calypso_marketplace_search_traintracks_interact', {
+				railcar: plugin.railcar.railcar,
+				action: 'product_opened',
+				blog_id: selectedSite?.ID,
+			} );
+		}
 	}, [ site, plugin, selectedSite, props.listName ] );
 
 	const isWpcomPreinstalled = useMemo( () => {
@@ -145,12 +172,16 @@ const PluginsBrowserListElement = ( props ) => {
 			>
 				<div className="plugins-browser-item__info">
 					<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					<div className="plugins-browser-item__title">{ plugin.name }</div>
+					<div className="plugins-browser-item__title">
+						<TextHighlight text={ plugin.name } highlight={ search } />
+					</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<>
 							<div className="plugins-browser-item__author">
 								{ translate( 'by ' ) }
-								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
+								<span className="plugins-browser-item__author-name">
+									<TextHighlight text={ plugin.author_name } highlight={ search } />
+								</span>
 							</div>
 
 							<div className="plugins-browser-item__last-updated">
@@ -165,7 +196,9 @@ const PluginsBrowserListElement = ( props ) => {
 							</div>
 						</>
 					) }
-					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
+					<div className="plugins-browser-item__description">
+						<TextHighlight text={ plugin.short_description } highlight={ search } />
+					</div>
 				</div>
 				{ isUntestedVersion && (
 					<div className="plugins-browser-item__untested-notice">
@@ -235,12 +268,16 @@ const InstalledInOrPricing = ( {
 } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const isPluginAtive = useSelector( ( state ) =>
+	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
-	const active = isWpcomPreinstalled || isPluginAtive;
-
+	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
+	const active = isWpcomPreinstalled || isPluginActive;
 	let checkmarkColorClass = 'checkmark--active';
+
+	if ( isPreinstalledPremiumPlugin ) {
+		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
+	}
 
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */

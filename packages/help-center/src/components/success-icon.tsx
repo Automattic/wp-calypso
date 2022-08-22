@@ -7,16 +7,16 @@ export const SuccessIcon: React.FC = () => (
 		<path
 			d="M68.6745 34.9922C68.6745 43.9211 65.1275 52.4843 58.8139 58.798C52.5002 65.1116 43.9371 68.6586 35.0082 68.6586C26.0793 68.6586 17.5162 65.1116 11.2025 58.798C4.88884 52.4843 1.34188 43.9211 1.34188 34.9922C1.33725 32.9271 1.52752 30.866 1.91011 28.8366C3.44563 20.5851 8.00795 13.2047 14.7026 8.14248C21.3972 3.08021 29.7414 0.701285 38.0991 1.47185C46.4568 2.24242 54.2252 6.10701 59.8814 12.308C65.5376 18.509 68.6736 26.5991 68.6745 34.9922V34.9922Z"
 			stroke="#003A5F"
-			stroke-width="1.68"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="1.68"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		/>
 		<path
 			d="M23.334 37.9118L31.5091 45.0617L47.1664 23.675"
 			stroke="#003A5F"
-			stroke-width="3"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeWidth="3"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		/>
 	</svg>
 );

@@ -1,9 +1,12 @@
-const mockUseDispatch = () => () => null;
-const mockUseSelector = ( func ) => func();
+/**
+ * @jest-environment jsdom
+ */
+
+const mockDispatch = jest.fn();
 
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn(),
+	useDispatch: () => mockDispatch,
 	useSelector: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
@@ -14,35 +17,22 @@ jest.mock( '../hooks', () => ( {
 	useCanGoToDate: jest.fn(),
 } ) );
 
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import moment from 'moment';
-import { useDispatch, useSelector } from 'react-redux';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import DateButton from '../date-button';
-
-const getTracksEventName = ( event ) => event.meta.analytics[ 0 ].payload.name;
 
 describe( 'Test Backup Date Picker', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-
-		useDispatch.mockImplementation( mockUseDispatch );
-		useSelector.mockImplementation( mockUseSelector );
 	} );
+	test( 'Records a tracks event when the date picker is opened', async () => {
+		render( <DateButton selectedDate={ moment() }></DateButton> );
 
-	test( 'Records a tracks event when the date picker is opened', () =>
-		new Promise( ( done ) => {
-			const checkTracksEvent = ( event ) => {
-				const name = getTracksEventName( event );
-				expect( name ).toEqual( 'calypso_jetpack_backup_date_picker_open' );
-				done();
-			};
-
-			// mock the useDispatch hook that will pick up the tracks event
-			useDispatch.mockImplementation( () => checkTracksEvent );
-
-			// shallow render
-			const DatePicker = shallow( <DateButton selectedDate={ moment() } /> );
-			// simulate a click on the button
-			DatePicker.find( '.backup-date-picker__date-button-button' ).simulate( 'click' );
-		} ) );
+		await userEvent.click( screen.getByText( 'Select Date' ) );
+		expect( mockDispatch ).toHaveBeenCalledWith(
+			recordTracksEvent( 'calypso_jetpack_backup_date_picker_open' )
+		);
+	} );
 } );

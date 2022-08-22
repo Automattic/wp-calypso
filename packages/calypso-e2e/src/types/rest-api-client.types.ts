@@ -6,15 +6,24 @@ export interface AccountDetails {
 	email: string;
 }
 
+/**
+ * @deprecated This interface should not be used. Instead, use `NewSiteResponse`.
+ */
 export interface SiteDetails {
 	url: string;
-	id: string;
+	id: number;
 	name: string;
 }
 
 export interface NewSiteParams {
 	name: string;
 	title: string;
+}
+
+export interface NewPostParams {
+	date?: Date;
+	title: string;
+	content?: string;
 }
 
 /* Response Interfaces */
@@ -63,15 +72,17 @@ export interface NewUserResponse {
 		bearer_token: string;
 	};
 }
+
 export interface NewSiteResponse {
 	success: boolean;
 	blog_details: {
 		url: string;
-		blogid: string;
+		blogid: number;
 		blogname: string;
 		site_slug: string;
 	};
 }
+
 export interface SiteDeletionResponse {
 	ID: number;
 	name: string;
@@ -80,6 +91,44 @@ export interface SiteDeletionResponse {
 
 export interface AccountClosureResponse {
 	success: boolean;
+}
+
+export interface NewInviteResponse {
+	sent: string[];
+	errors: string[];
+}
+
+export interface Invite {
+	invite_key: string;
+	role: string;
+	is_pending: boolean;
+	user: {
+		email: string; // Email address for the invited user.
+	};
+	invited_by: {
+		ID: number;
+		login: string;
+		site_ID: number; // Target site the user is invited to.
+	};
+}
+
+// Export as Array to expose function calls of arrays.
+export type AllInvitesResponse = Array< Invite >;
+
+export interface DeleteInvitesResponse {
+	deleted: string[];
+	invalid: string[];
+}
+
+export interface NewPostResponse {
+	URL: string;
+	title: string;
+}
+
+export interface NewMediaResponse {
+	URL: string;
+	title: string;
+	file: string;
 }
 
 /* Error Responses */

@@ -467,15 +467,15 @@ workflows:
                 - trunk
                 - /release\/.*/
                 - /desktop\/.*/
-      - wp-desktop-mac:
-          requires:
-            - wp-desktop-assets
-          filters:
-            branches:
-              only:
-                - trunk
-                - /release\/.*/
-                - /desktop\/.*/
+#     - wp-desktop-mac:
+#         requires:
+#           - wp-desktop-assets
+#         filters:
+#           branches:
+#             only:
+#               - trunk
+#               - /release\/.*/
+#               - /desktop\/.*/
       - wp-desktop-linux:
           requires:
             - wp-desktop-assets

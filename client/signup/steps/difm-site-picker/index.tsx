@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config/';
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -51,7 +52,7 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	const filterSites = ( site: SiteData ) => {
 		return !! (
 			site.capabilities?.manage_options &&
-			! site.jetpack &&
+			( isEnabled( 'difm/allow-woa-sites' ) || ! site.jetpack ) &&
 			! site.options?.is_wpforteams_site &&
 			! site.options?.is_difm_lite_in_progress
 		);

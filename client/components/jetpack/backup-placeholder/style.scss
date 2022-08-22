@@ -22,8 +22,6 @@
 
 /* Jetpack.com-only changes */
 .is_jetpackcom .backup-placeholder {
-	margin-left: -16px;
-	margin-right: -16px;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		background: var( --studio-white );

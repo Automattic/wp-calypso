@@ -29,6 +29,18 @@ export { default as error } from './error-step';
 export { default as wooConfirm } from './woo-confirm';
 export { default as wooVerifyEmail } from './woo-verify-email';
 export { default as editEmail } from './edit-email';
+export { default as newsletterSetup } from './newsletter-setup';
+export { default as difmStartingPoint } from './difm-starting-point';
+export { default as letsGetStarted } from './lets-get-started';
+export { default as intro } from './intro';
+export { default as linkInBioSetup } from './link-in-bio-setup';
+export { default as completingPurchase } from './completing-purchase';
+export { default as chooseADomain } from './choose-a-domain';
+export { default as launchpad } from './launchpad';
+export { default as preLaunchpad } from './pre-launchpad';
+export { default as subscribers } from './subscribers';
+export { default as patterns } from './patterns';
+export { default as promote } from './promote';
 
 export type StepPath =
 	| 'courses'
@@ -53,6 +65,7 @@ export type StepPath =
 	| 'importerWordpress'
 	| 'businessInfo'
 	| 'storeAddress'
+	| 'patterns'
 	| 'processing'
 	| 'login'
 	| 'vertical'
@@ -61,4 +74,14 @@ export type StepPath =
 	| 'error'
 	| 'wooConfirm'
 	| 'wooVerifyEmail'
-	| 'editEmail';
+	| 'editEmail'
+	| 'difmStartingPoint'
+	| 'letsGetStarted'
+	| 'chooseADomain'
+	| 'linkInBioSetup'
+	| 'newsletterSetup'
+	| 'completingPurchase'
+	| 'intro'
+	| 'launchpad'
+	| 'subscribers'
+	| 'promote';

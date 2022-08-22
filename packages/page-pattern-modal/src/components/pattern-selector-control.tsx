@@ -8,7 +8,7 @@ import type { PatternDefinition } from '../pattern-definition';
 const noop = () => undefined;
 
 interface PatternSelectorControlProps {
-	instanceId: number;
+	instanceId: string | number;
 	label: string;
 	legendLabel?: string;
 	locale?: string;

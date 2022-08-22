@@ -1,5 +1,5 @@
 /**
- * @group calypso-release
+ * @group authentication
  */
 
 import { DataHelper, EmailClient, LoginPage, SecretsManager } from '@automattic/calypso-e2e';

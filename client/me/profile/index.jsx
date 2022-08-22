@@ -1,5 +1,6 @@
 import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
@@ -21,6 +22,8 @@ import withFormBase from 'calypso/me/form-base/with-form-base';
 import ProfileLinks from 'calypso/me/profile-links';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
+import UpdatedGravatarString from './updated-gravatar-string';
 
 import './style.scss';
 
@@ -115,29 +118,16 @@ class Profile extends Component {
 							/>
 						</FormFieldset>
 
-						<FormFieldset>
+						<FormFieldset
+							className={ classnames( {
+								'profile__gravatar-fieldset-is-loading': this.props.isFetchingUserSettings,
+							} ) }
+						>
 							<ToggleControl
+								disabled={ this.props.isFetchingUserSettings }
 								checked={ this.props.getSetting( 'gravatar_profile_hidden' ) }
 								onChange={ this.toggleGravatarHidden }
-								label={ this.props.translate(
-									'{{spanLead}}Hide my Gravatar profile.{{/spanLead}} {{spanExtra}}This will prevent your {{profileLink}}Gravatar profile{{/profileLink}} and photo from appearing on any site. It may take some time for the changes to take effect. Gravatar profiles can be deleted at {{deleteLink}}Gravatar.com{{/deleteLink}}.{{/spanExtra}}',
-									{
-										components: {
-											spanLead: <strong className="profile__link-destination-label-lead" />,
-											spanExtra: <span className="profile__link-destination-label-extra" />,
-											profileLink: (
-												<a href={ gravatarProfileLink } target="_blank" rel="noreferrer" />
-											),
-											deleteLink: (
-												<a
-													href="https://gravatar.com/account/disable/"
-													target="_blank"
-													rel="noreferrer"
-												/>
-											),
-										},
-									}
-								) }
+								label={ <UpdatedGravatarString gravatarProfileLink={ gravatarProfileLink } /> }
 							/>
 						</FormFieldset>
 
@@ -161,7 +151,12 @@ class Profile extends Component {
 }
 
 export default compose(
-	connect( null, { recordGoogleEvent } ),
+	connect(
+		( state ) => ( {
+			isFetchingUserSettings: isFetchingUserSettings( state ),
+		} ),
+		{ recordGoogleEvent }
+	),
 	protectForm,
 	localize,
 	withFormBase

@@ -3,6 +3,7 @@
  */
 
 import { render, fireEvent } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { siteColumns } from '../../utils';
@@ -23,6 +24,7 @@ describe( '<SiteCard>', () => {
 			latest_backup_status: '',
 			is_connection_healthy: true,
 			awaiting_plugin_updates: [],
+			is_favorite: false,
 		};
 		const rows: SiteData = {
 			site: {
@@ -43,10 +45,13 @@ describe( '<SiteCard>', () => {
 		const initialState = {};
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
+		const queryClient = new QueryClient();
 
 		const { container } = render(
 			<Provider store={ store }>
-				<SiteCard rows={ rows } columns={ siteColumns } />
+				<QueryClientProvider client={ queryClient }>
+					<SiteCard rows={ rows } columns={ siteColumns } />
+				</QueryClientProvider>
 			</Provider>
 		);
 

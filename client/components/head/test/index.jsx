@@ -2,22 +2,18 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import Head from '../';
 
 describe( 'Head', () => {
 	test( 'should render default title', () => {
-		const wrapper = shallow( <Head /> );
-
-		expect( wrapper.find( 'title' ).text() ).toBe( 'WordPress.com' );
-		expect( wrapper ).toMatchSnapshot();
+		render( <Head /> );
+		expect( screen.queryByText( 'WordPress.com' ) ).toBeInTheDocument();
 	} );
 
 	test( 'should render custom title', () => {
 		const title = 'Arbitrary Custom Title';
-		const wrapper = shallow( <Head title={ title } /> );
-
-		expect( wrapper.find( 'title' ).text() ).toBe( title );
-		expect( wrapper ).toMatchSnapshot();
+		render( <Head title={ title } /> );
+		expect( screen.queryByText( title ) ).toBeInTheDocument();
 	} );
 } );

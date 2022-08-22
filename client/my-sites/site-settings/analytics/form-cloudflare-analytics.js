@@ -1,6 +1,6 @@
 import {
 	findFirstSimilarPlanKey,
-	TYPE_PRO,
+	TYPE_PREMIUM,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_GOOGLE_ANALYTICS,
 } from '@automattic/calypso-products';
@@ -117,10 +117,10 @@ export function CloudflareAnalyticsSettings( {
 	const renderForm = () => {
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
 
-		const nudgeTitle = translate( 'Available with the Pro plan' );
+		const nudgeTitle = translate( 'Available with Premium plans or higher' );
 
 		const plan = findFirstSimilarPlanKey( site.plan.product_slug, {
-			type: TYPE_PRO,
+			type: TYPE_PREMIUM,
 		} );
 
 		const nudge = (

@@ -17,7 +17,7 @@ import EmailListInactive from 'calypso/my-sites/email/email-management/home/emai
 import EmailNoDomain from 'calypso/my-sites/email/email-management/home/email-no-domain';
 import EmailPlan from 'calypso/my-sites/email/email-management/home/email-plan';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-stacked-comparison';
+import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-comparison/stacked';
 import { emailManagementTitanSetUpMailbox, emailManagement } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -26,11 +26,11 @@ import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
 
-const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement => {
+const ContentWithHeader = ( props: { children: ReactNode } ): ReactElement => {
 	const translate = useTranslate();
 	return (
 		<Main wideLayout>
@@ -58,16 +58,14 @@ const NoAccess = (): ReactElement => {
 const LoadingPlaceholder = (): ReactElement => {
 	return (
 		<ContentWithHeader>
-			<>
-				<SectionHeader className="email-home__section-placeholder is-placeholder" />
-				<Card className="email-home__content-placeholder is-placeholder" />
-			</>
+			<SectionHeader className="email-home__section-placeholder is-placeholder" />
+			<Card className="email-home__content-placeholder is-placeholder" />
 		</ContentWithHeader>
 	);
 };
 
 interface EmailManagementHomeProps {
-	emailListInactiveHeader?: ReactElement;
+	emailListInactiveHeader?: ReactNode;
 	sectionHeaderLabel?: TranslateResult;
 	selectedDomainName: string;
 	selectedEmailProviderSlug: string;
@@ -197,26 +195,24 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	return (
 		<ContentWithHeader>
-			<>
-				{ showActiveDomainList && (
-					<EmailListActive
-						currentRoute={ currentRoute }
-						domains={ domainsWithEmail }
-						selectedSiteId={ selectedSite?.ID }
-						selectedSiteSlug={ selectedSite?.slug }
-						source={ source }
-					/>
-				) }
-
-				<EmailListInactive
+			{ showActiveDomainList && (
+				<EmailListActive
 					currentRoute={ currentRoute }
-					domains={ domainsWithNoEmail }
-					headerComponent={ emailListInactiveHeader }
-					sectionHeaderLabel={ sectionHeaderLabel }
+					domains={ domainsWithEmail }
+					selectedSiteId={ selectedSite?.ID }
 					selectedSiteSlug={ selectedSite?.slug }
 					source={ source }
 				/>
-			</>
+			) }
+
+			<EmailListInactive
+				currentRoute={ currentRoute }
+				domains={ domainsWithNoEmail }
+				headerComponent={ emailListInactiveHeader }
+				sectionHeaderLabel={ sectionHeaderLabel }
+				selectedSiteSlug={ selectedSite?.slug }
+				source={ source }
+			/>
 		</ContentWithHeader>
 	);
 };

@@ -6,6 +6,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
+import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -19,18 +20,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	const { submit } = props.navigation;
 
 	const { __ } = useI18n();
-	const loadingMessages = [
-		{ title: __( 'Laying the foundations' ), duration: 2000 },
-		{ title: __( 'Turning on the lights' ), duration: 3000 },
-		{ title: __( 'Making it beautiful' ), duration: 2000 },
-		{ title: __( 'Personalizing your site' ), duration: 4000 },
-		{ title: __( 'Sprinkling some magic' ), duration: 4000 },
-		{ title: __( 'Securing your data' ), duration: 5000 },
-		{ title: __( 'Enabling encryption' ), duration: 3000 },
-		{ title: __( 'Optimizing your content' ), duration: 6000 },
-		{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
-		{ title: __( 'Closing the loop' ), duration: 5000 },
-	];
+	const loadingMessages = useProcessingLoadingMessages();
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 
@@ -51,8 +41,8 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		( async () => {
 			if ( typeof action === 'function' ) {
 				try {
-					await action();
-					submit?.( {}, ProcessingResult.SUCCESS );
+					const destination = await action();
+					submit?.( destination, ProcessingResult.SUCCESS );
 				} catch ( e ) {
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
@@ -86,6 +76,9 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		return () => clearTimeout( timeoutReference );
 	}, [ simulatedProgress, progress, __ ] );
 
+	const flowName = props.flow || '';
+	const isJetpackPowered = [ 'link-in-bio', 'newsletter' ].includes( flowName );
+
 	return (
 		<StepContainer
 			shouldHideNavButtons={ true }
@@ -113,6 +106,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 			}
 			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered={ isJetpackPowered }
 		/>
 	);
 };

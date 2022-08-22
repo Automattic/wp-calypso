@@ -36,6 +36,7 @@
 
 .jetpack-product-card__header {
 	display: flex;
+	align-items: center;
 
 	box-sizing: border-box;
 	width: 100%;
@@ -239,5 +240,12 @@
 		.not-highlighted {
 			font-weight: initial;
 		}
+	}
+}
+
+.jetpack-product-card__disclaimer {
+	a {
+		color: var( --studio-jetpack-green-30 );
+		text-decoration: underline;
 	}
 }

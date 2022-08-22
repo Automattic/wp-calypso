@@ -1,4 +1,3 @@
-
 # SelectAltItem
 
 This is the final item in IntentScreen and does not have a button or icon.

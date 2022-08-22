@@ -1,9 +1,11 @@
 import config from '@automattic/calypso-config';
+import debugModule from 'debug';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
@@ -15,16 +17,10 @@ import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import {
-	getSiteVerticalId,
-	getSiteVerticalIsUserInput,
-} from 'calypso/state/signup/steps/site-vertical/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
-import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
 import {
@@ -41,9 +37,12 @@ import {
 	getStepSectionName,
 	getValidPath,
 	getFlowPageTitle,
+	getFlowHideBack,
 	shouldForceLogin,
 	isReskinnedFlow,
 } from './utils';
+
+const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -62,6 +61,14 @@ const removeWhiteBackground = function () {
 	}
 
 	document.body.classList.remove( 'is-white-signup' );
+};
+
+export const addVideoPressSignupClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.add( 'is-videopress-signup' );
 };
 
 export const addP2SignupClassName = () => {
@@ -101,6 +108,10 @@ export default {
 			next();
 		} else if ( context.pathname.includes( 'p2' ) ) {
 			addP2SignupClassName();
+			removeWhiteBackground();
+			next();
+		} else if ( context.pathname.includes( 'videopress' ) ) {
+			addVideoPressSignupClassName();
 			removeWhiteBackground();
 			next();
 		} else {
@@ -284,18 +295,32 @@ export default {
 			context.store.dispatch( updateDependencies( { refParameter } ) );
 		}
 
+		let actualFlowName = flowName;
+		if ( 'onboarding' === flowName ) {
+			const experimentAssignment = await loadExperimentAssignment( 'wpcom_calypso_signup_addons' );
+
+			debug(
+				`wpcom_calypso_signup_addons experiment variation: ${ experimentAssignment?.variationName }`
+			);
+
+			if ( 'treatment' === experimentAssignment?.variationName ) {
+				actualFlowName = 'with-add-ons';
+			}
+		}
+
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName,
+			flowName: actualFlowName,
 			queryObject: query,
 			refParameter,
 			stepName,
 			stepSectionName,
 			stepComponent,
 			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
+			hideBackButton: getFlowHideBack( flowName, userLoggedIn ),
 			isManageSiteFlow,
 		} );
 
@@ -356,21 +381,10 @@ export default {
 	},
 	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
 		const state = signupStore.getState();
-		const verticalId = getSiteVerticalId( state );
-		const verticalIsUserInput = getSiteVerticalIsUserInput( state );
 		const siteType = getSiteType( state );
 
 		if ( ! siteType && query.site_type ) {
 			signupStore.dispatch( setSiteType( query.site_type ) );
-		}
-
-		if ( ( ! verticalId || ! verticalIsUserInput ) && query.vertical ) {
-			signupStore.dispatch(
-				setSiteVertical( {
-					id: getDotBlogVerticalId( query.vertical ) || query.vertical,
-					isUserInput: false,
-				} )
-			);
 		}
 
 		next();

@@ -1,4 +1,6 @@
 @import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 body.is-section-stepper {
 	// Two column layout.
@@ -112,13 +114,22 @@ body.is-section-stepper {
 }
 
 .site-setup.woo-confirm {
-		.woo-confirm__info-section {
-			display: flex;
-			justify-content: center;
+	.woo-confirm__loading-container,
+	.woo-confirm__info-section {
+		display: flex;
+		justify-content: center;
+	}
 
-			.wpcom__loading-ellipsis {
-				display: block;
-				margin: 0 auto;
-			}
+	.woo-confirm__loading-container {
+		margin-top: 25vh;
+
+		@include break-small {
+			margin-top: 45vh;
 		}
+
+		.wpcom__loading-ellipsis {
+			display: block;
+			margin: 0 auto;
+		}
+	}
 }

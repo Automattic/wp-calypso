@@ -1,34 +1,12 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.more-info-box__more-container {
-	background-color: var( --color-surface );
-
-	margin: 24px 0;
-	padding: 30px 15px 26px;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-
-	text-align: center;
-
-	@include break-small {
-		margin: 0 30px;
-
-		border-radius: 0 0 8px 8px; /* stylelint-disable-line scales/radii */
-	}
-}
-
-.more-info-box__more-headline {
-	padding-bottom: 15px;
-	font-size: 1.5rem;
-	font-weight: 700;
-	line-height: inherit;
-}
-
 .more-info-box__more-button.button {
 	display: inline-flex;
 	align-items: center;
 
-	margin: 0 auto;
+	padding-left: 1rem;
+	padding-right: 0.875rem;
 
 	border: solid 2px currentColor;
 	border-radius: 4px;
@@ -40,7 +18,7 @@
 .more-info-box__icon.gridicon {
 	top: 2px;
 
-	margin-left: 8px;
+	margin-left: 0.625rem;
 }
 
 .is-section-jetpack-cloud-pricing {

@@ -17,7 +17,6 @@ import {
 	ADROLL_PURCHASE_PIXEL_URL_2,
 	TRACKING_IDS,
 } from './constants';
-import { setupGtag } from './setup-gtag';
 
 if ( typeof window !== 'undefined' ) {
 	setupGtag();
@@ -197,12 +196,21 @@ function setupAdRollGlobal() {
 	}
 }
 
+function setupGtag() {
+	if ( window.dataLayer && window.gtag ) {
+		return;
+	}
+	window.dataLayer = window.dataLayer || [];
+	window.gtag = function () {
+		window.dataLayer.push( arguments );
+	};
+	window.gtag( 'js', new Date() );
+}
+
 function setupWpcomGoogleAdsGtag() {
-	setupGtag();
 	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
 }
 
 function setupWpcomFloodlightGtag() {
-	setupGtag();
 	window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
 }

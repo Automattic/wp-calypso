@@ -62,13 +62,17 @@ export default function AssignLicenseForm( {
 	const siteCards = paginate( results, currentPage ).map( ( site: any ) => {
 		if ( -1 !== site.domain.search( search ) || null === search ) {
 			return (
-				<Card key={ site.ID } className="assign-license-form__site-card">
+				<Card
+					key={ site.ID }
+					className="assign-license-form__site-card"
+					onClick={ () => onSelectSite( site.ID ) }
+				>
 					<FormRadio
 						className="assign-license-form__site-card-radio"
 						label={ site.domain }
 						name="site_select"
 						disabled={ isSubmitting }
-						onClick={ () => onSelectSite( site.ID ) }
+						checked={ selectedSite === site.ID }
 					/>
 				</Card>
 			);

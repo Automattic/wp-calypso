@@ -1,4 +1,5 @@
 import { makeRedirectResponse, makeErrorResponse } from '@automattic/composite-checkout';
+import { addUrlToPendingPageRedirect } from '../lib/pending-page';
 import prepareRedirectTransaction from '../lib/prepare-redirect-transaction';
 import { recordTransactionBeginAnalytics } from './analytics';
 import getDomainDetails from './get-domain-details';
@@ -45,12 +46,10 @@ export default async function genericRedirectProcessor(
 		search = '',
 	} = typeof window !== 'undefined' ? window.location : {};
 	const thankYouUrl = getThankYouUrl() || 'https://wordpress.com';
-	const successUrlPath = `/checkout/thank-you/${ siteSlug || 'no-site' }/pending`;
-	const successUrlBase = `${ origin }${ successUrlPath }`;
-
-	const successUrlObject = new URL( successUrlBase );
-	successUrlObject.searchParams.set( 'redirectTo', thankYouUrl );
-	const successUrl = successUrlObject.href;
+	const successUrl = addUrlToPendingPageRedirect( thankYouUrl, {
+		siteSlug,
+		urlType: 'absolute',
+	} );
 	const cancelUrl = `${ origin }${ pathname }${ search }`;
 
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );

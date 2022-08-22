@@ -4,7 +4,6 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isExpiring } from 'calypso/lib/purchases';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -241,7 +240,7 @@ class AutoRenewToggle extends Component {
 export default connect(
 	( state, { purchase, siteSlug } ) => ( {
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
-		isEnabled: ! isExpiring( purchase ),
+		isEnabled: purchase.isAutoRenewEnabled,
 		currentUserId: getCurrentUserId( state ),
 		isAtomicSite: isSiteAtomic( state, purchase.siteId ),
 		siteSlug: siteSlug || getSelectedSiteSlug( state ),

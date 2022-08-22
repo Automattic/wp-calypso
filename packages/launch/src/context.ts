@@ -7,6 +7,9 @@ export interface LaunchContextProps {
 	openCheckout: (
 		siteSlug?: string,
 		isEcommerce?: boolean,
+		// IMPORTANT NOTE: onSuccessCallback will not be called for redirect payment
+		// methods like PayPal. They will redirect directly to the post-checkout
+		// page decided by `getThankYouUrl`.
 		onSuccessCallback?: () => void
 	) => void;
 	getCurrentLaunchFlowUrl: () => string;

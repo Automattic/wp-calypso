@@ -1,64 +1,98 @@
+import languages, { LanguageSlug } from '@automattic/languages';
 import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 'react-query';
 import { useSelector } from 'react-redux';
 import { extractSearchInformation } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
 import { search } from './search-api';
-import { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
 import { getPluginsListKey } from './utils';
+import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './types';
 
-// /**
-//  *
-//  * @param pluginSlug
-//  * @param iconsArray
-//  * @returns An object containing a resolution -> icon url map
-//  */
-// const createIconsObject = ( pluginSlug: string, iconsArray: string ) => {
-// 	type Icon = {
-// 		resolution: string;
-// 		filename: string;
-// 		location: string;
-// 		revision: string;
-// 	};
-// 	const icons: Record< string, Icon > = phpUnserialize( iconsArray );
-// 	return Object.values( icons ).reduce(
-// 		( prev: Record< string, string >, { resolution, filename, location, revision } ) => {
-// 			prev[
-// 				resolution
-// 			] = `https://ps.w.org/${ pluginSlug }/${ location }/${ filename }?rev=${ revision }`;
-// 			return prev;
-// 		},
-// 		{}
-// 	);
-// };
+/**
+ *
+ * @param pluginSlug
+ * @param icons
+ * @returns A string containing an icon url or
+ * 	a default generated url Icon if icons param is falsy, it is not JSON or it does not contain a valid resolution
+ */
+const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
+	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
+	if ( ! icons ) return defaultIconUrl;
 
-// const createAuthorUrl = ( headerAuthor: string, headerAuthorUri: string ) =>
-// 	`<a href="${ headerAuthorUri }">${ headerAuthor }</a>`;
+	let iconsObject: Record< string, Icon > = {};
+	try {
+		iconsObject = JSON.parse( icons );
+	} catch ( error ) {
+		return defaultIconUrl;
+	}
+
+	// Transform Icon response for easier handling
+	const iconByResolution = Object.values( iconsObject ).reduce(
+		( iconByResolution, currentIcon ) => {
+			const newKey = currentIcon.resolution;
+			iconByResolution[ newKey ] = currentIcon;
+			return iconByResolution;
+		},
+		{} as Record< string, Icon >
+	);
+
+	const icon =
+		iconByResolution[ '256x256' ] ||
+		iconByResolution[ '128x128' ] ||
+		iconByResolution[ '2x' ] ||
+		iconByResolution[ '1x' ] ||
+		iconByResolution.svg ||
+		iconByResolution.default;
+
+	if ( ! icon ) return defaultIconUrl;
+
+	return buildIconUrl( pluginSlug, icon.location, icon.filename, icon.revision );
+};
+
+function buildIconUrl( pluginSlug: string, location: string, filename: string, revision: string ) {
+	return `https://ps.w.org/${ pluginSlug }/${ location }/${ filename }?rev=${ revision }`;
+}
+
+function buildDefaultIconUrl( pluginSlug: string ) {
+	return `https://s.w.org/plugins/geopattern-icon/${ pluginSlug }.svg`;
+}
 
 const mapStarRatingToPercent = ( starRating?: number ) => ( starRating ?? 0 / 5 ) * 100;
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) return [];
-	return results.map( ( { fields: hit } ) => {
+	return results.map( ( { fields: hit, railcar } ) => {
 		const plugin = {
-			name: hit[ 'title.default' ], // TODO: add localization
+			name: hit.plugin.title, // TODO: add localization
 			slug: hit.slug,
 			version: hit[ 'plugin.stable_tag' ],
 			author: hit.author,
 			author_name: hit.author,
 			author_profile: '', // TODO: get author profile URL
 			tested: hit[ 'plugin.tested' ],
-			rating: mapStarRatingToPercent( hit[ 'plugin.rating' ] ),
-			num_ratings: hit[ 'plugin.num_ratings' ],
+			rating: mapStarRatingToPercent( hit.plugin.rating ),
+			num_ratings: hit.plugin.num_ratings,
 			support_threads: hit[ 'plugin.support_threads' ],
 			support_threads_resolved: hit[ 'plugin.support_threads_resolved' ],
 			active_installs: hit[ 'plugin.active_installs' ],
 			last_updated: hit.modified,
-			short_description: hit[ 'excerpt.default' ], // TODO: add localization
-			// icons: createIconsObject( slug, hit.blog_icon_url ),
+			short_description: hit.plugin.excerpt, // TODO: add localization
+			icon: createIconUrl( hit.slug, hit.plugin.icons ),
+			railcar,
 		};
 		return plugin;
 	} );
+};
+
+const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
+	const defaultLanguage = 'en';
+
+	// the wpLocale for `en` would be `en_US`, but the server uses `en` too
+	if ( defaultLanguage === slug ) {
+		return slug;
+	}
+
+	return languages.find( ( l ) => l.langSlug === slug )?.wpLocale || defaultLanguage;
 };
 
 export const useESPluginsInfinite = (
@@ -78,7 +112,7 @@ export const useESPluginsInfinite = (
 				groupId: 'wporg',
 				pageHandle: pageParam,
 				pageSize,
-				locale: options.locale || locale,
+				locale: getWpLocaleBySlug( options.locale || locale ),
 			} ),
 		{
 			select: ( data: InfiniteData< ESResponse > ) => {

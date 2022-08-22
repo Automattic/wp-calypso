@@ -5,6 +5,5 @@ export const items = {
 		designType: { type: 'string' },
 		segment: { type: 'integer' },
 		tasks: { type: 'array' },
-		verticals: { type: 'array' },
 	},
 };

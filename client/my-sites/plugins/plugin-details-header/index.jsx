@@ -10,30 +10,24 @@ import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
+const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	const selectedSite = useSelector( getSelectedSite );
-	const banner = plugin.banners?.high || plugin.banners?.low;
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
 	}
 
 	if ( legacyVersion ) {
-		return <LegacyPluginDetailsHeader plugin={ plugin } />;
+		return <LegacyPluginDetailsHeader plugin={ plugin } isJetpackCloud={ isJetpackCloud } />;
 	}
 
 	return (
 		<div className="plugin-details-header__container">
-			{ Boolean( banner ) && (
-				<div className="plugin-details-header__banner">
-					<img className="plugin-details-header__banner-image" alt={ plugin.name } src={ banner } />
-				</div>
-			) }
 			<div className="plugin-details-header__main-info">
 				<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
 				<div className="plugin-details-header__title-container">
@@ -98,7 +92,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 	);
 };
 
-const LegacyPluginDetailsHeader = ( { plugin } ) => {
+function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
@@ -124,13 +118,17 @@ const LegacyPluginDetailsHeader = ( { plugin } ) => {
 				<div className="plugin-details-header__info">
 					<div className="plugin-details-header__info-title">{ translate( 'Developer' ) }</div>
 					<div className="plugin-details-header__info-value">
-						<a
-							href={ `/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthorKeyword(
-								plugin
-							) }"` }
-						>
-							{ plugin.author_name }
-						</a>
+						{ isJetpackCloud ? (
+							plugin.author_name
+						) : (
+							<a
+								href={ `/plugins/${
+									selectedSite?.slug || ''
+								}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"` }
+							>
+								{ plugin.author_name }
+							</a>
+						) }
 					</div>
 				</div>
 				{ !! plugin.rating && (
@@ -154,10 +152,10 @@ const LegacyPluginDetailsHeader = ( { plugin } ) => {
 			</div>
 		</div>
 	);
-};
+}
 
 const LIMIT_OF_TAGS = 3;
-const Tags = ( { plugin } ) => {
+function Tags( { plugin } ) {
 	const selectedSite = useSelector( getSelectedSite );
 
 	if ( ! plugin?.tags ) {
@@ -179,9 +177,9 @@ const Tags = ( { plugin } ) => {
 			) ) }
 		</span>
 	);
-};
+}
 
-const PluginDetailsHeaderPlaceholder = () => {
+function PluginDetailsHeaderPlaceholder() {
 	return (
 		<div className="plugin-details-header__wrapper is-placeholder">
 			<div className="plugin-details-header__tags">...</div>
@@ -192,6 +190,6 @@ const PluginDetailsHeaderPlaceholder = () => {
 			</div>
 		</div>
 	);
-};
+}
 
 export default PluginDetailsHeader;

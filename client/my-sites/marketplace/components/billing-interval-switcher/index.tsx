@@ -36,7 +36,6 @@ const PluginAnnualSavingLabelDesktop = styled.span`
 
 const BillingIntervalSwitcherContainer = styled.div`
 	display: flex;
-	justify-content: space-between;
 	margin-top: -4px;
 	margin-bottom: 16px;
 `;
@@ -49,6 +48,10 @@ const RadioButton = styled( FormRadio )`
 
 const RadioButtonLabel = styled( FormLabel )`
 	color: var( --studio-gray-60 );
+
+	&:first-child {
+		margin-right: 15px;
+	}
 `;
 
 type Props = {

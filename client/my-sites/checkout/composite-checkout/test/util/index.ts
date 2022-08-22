@@ -492,6 +492,42 @@ function convertRequestProductToResponseProduct(
 					volume: 1,
 					extra: {},
 				};
+			case planLevel2.product_slug:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: planLevel2.product_id,
+					product_name: planLevel2.product_name,
+					product_slug: planLevel2.product_slug,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: planLevel2.item_original_cost_integer,
+					item_original_cost_display: planLevel2.item_original_cost_display,
+					item_subtotal_integer: planLevel2.item_subtotal_integer,
+					item_subtotal_display: planLevel2.item_subtotal_display,
+					months_per_bill_period: 12,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
+			case planLevel2Biannual.product_slug:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: planLevel2Biannual.product_id,
+					product_name: planLevel2Biannual.product_name,
+					product_slug: planLevel2Biannual.product_slug,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: planLevel2Biannual.item_original_cost_integer,
+					item_original_cost_display: planLevel2Biannual.item_original_cost_display,
+					item_subtotal_integer: planLevel2Biannual.item_subtotal_integer,
+					item_subtotal_display: planLevel2Biannual.item_subtotal_display,
+					months_per_bill_period: 24,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {},
+				};
 		}
 
 		return {
@@ -731,13 +767,13 @@ export function createTestReduxStore() {
 						currency_code: planWithoutDomainBiannual.currency,
 					},
 					[ planLevel2.product_slug ]: {
-						product_id: planWithoutDomain.product_id,
-						product_slug: planWithoutDomain.product_slug,
+						product_id: planLevel2.product_id,
+						product_slug: planLevel2.product_slug,
 						product_type: 'bundle',
 						available: true,
 						is_domain_registration: false,
-						cost_display: planWithoutDomain.item_subtotal_display,
-						currency_code: planWithoutDomain.currency,
+						cost_display: planLevel2.item_subtotal_display,
+						currency_code: planLevel2.currency,
 					},
 					[ planLevel2Monthly.product_slug ]: {
 						product_id: planLevel2Monthly.product_id,

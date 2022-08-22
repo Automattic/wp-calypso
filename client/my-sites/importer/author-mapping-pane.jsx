@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -110,6 +111,10 @@ class AuthorMappingPane extends PureComponent {
 			);
 		}
 	};
+
+	componentDidMount() {
+		recordTracksEvent( 'calypso_site_importer_map_authors_single' );
+	}
 
 	render() {
 		const {

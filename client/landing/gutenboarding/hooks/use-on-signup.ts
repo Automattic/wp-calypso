@@ -9,7 +9,7 @@ import { useNewSiteVisibility } from './use-selected-plan';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
- **/
+ */
 
 export default function useOnSignup(): void {
 	const locale = useLocale();

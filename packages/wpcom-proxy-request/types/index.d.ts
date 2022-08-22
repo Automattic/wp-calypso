@@ -18,6 +18,7 @@ export interface WpcomRequestParams {
 		accessAllUsersBlogs?: boolean;
 	};
 	apiNamespace?: string;
+	formData?: ( string | File )[][];
 }
 
 export function reloadProxy(): void;

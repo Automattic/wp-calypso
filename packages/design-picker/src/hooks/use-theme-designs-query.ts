@@ -72,6 +72,7 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet, price }: any ): D
 		is_featured_picks: isFeaturedPicks,
 		showFirst: isFeaturedPicks,
 		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
+		design_type: is_premium ? 'premium' : 'standard',
 		price,
 
 		// Deprecated; used for /start flow

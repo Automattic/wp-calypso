@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import CheckoutMasterbar from 'calypso/layout/masterbar/checkout';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
+import CheckoutMain from 'calypso/my-sites/checkout/composite-checkout/components/checkout-main';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -21,6 +21,9 @@ export interface Props {
 	title?: string;
 	productAliasFromUrl?: string;
 	redirectTo?: string;
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	checkoutOnSuccessCallback?: () => void;
 	onClose?: () => void;
 }
@@ -54,6 +57,9 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 		page( previousRoute );
 	};
 
+	// IMPORTANT NOTE: This will not be called for redirect payment methods like
+	// PayPal. They will redirect directly to the post-checkout page decided by
+	// `getThankYouUrl`.
 	const handleAfterPaymentComplete = () => {
 		checkoutOnSuccessCallback?.();
 		handleRequestClose();
@@ -80,7 +86,7 @@ const CheckoutModal: FunctionComponent< Props > = ( {
 					fetchStripeConfiguration={ getStripeConfiguration }
 					locale={ translate.localeSlug }
 				>
-					<CompositeCheckout
+					<CheckoutMain
 						siteId={ selectedSiteId ?? undefined }
 						siteSlug={ siteSlug }
 						productAliasFromUrl={ productAliasFromUrl }

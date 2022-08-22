@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getTaskList } from 'calypso/lib/checklist';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -346,15 +346,13 @@ const SiteSetupList = ( {
 };
 
 const ConnectedSiteSetupList = connect( ( state, props ) => {
-	const { blockEditorSettings } = props;
+	const { isFSEActive } = props;
 
-	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
 	const siteId = getSelectedSiteId( state );
 	const user = getCurrentUser( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
 	const siteChecklist = getSiteChecklist( state, siteId );
 	const siteSegment = siteChecklist?.segment;
-	const siteVerticals = siteChecklist?.vertical;
 	const taskStatuses = siteChecklist?.tasks;
 	const siteIsUnlaunched = isUnlaunchedSite( state, siteId );
 	const taskList = getTaskList( {
@@ -362,7 +360,6 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 		designType,
 		siteIsUnlaunched,
 		siteSegment,
-		siteVerticals,
 	} );
 	// Existing usage didn't have a global selector, we can tidy this in a follow up.
 	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;
@@ -395,4 +392,4 @@ const withUserPurchases = createHigherOrderComponent(
 	'withUserPurchases'
 );
 
-export default withUserPurchases( withBlockEditorSettings( ConnectedSiteSetupList ) );
+export default withUserPurchases( withIsFSEActive( ConnectedSiteSetupList ) );

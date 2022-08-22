@@ -129,8 +129,8 @@ export const EligibilityWarnings = ( {
 					<HoldList
 						context={ context }
 						holds={ listHolds }
-						isMarketplace={ isMarketplace }
 						isPlaceholder={ isPlaceholder }
+						isMarketplace={ isMarketplace }
 					/>
 				</CompactCard>
 			) }

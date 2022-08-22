@@ -76,28 +76,71 @@ describe( 'useProductsQuery', () => {
 		);
 		const unexpected = [
 			{
+				name: 'Jetpack Backup',
+				slug: 'jetpack-backup',
+				products: [
+					{
+						name: 'Jetpack Backup (Daily)',
+						product_id: 2100,
+						slug: 'jetpack-backup-daily',
+					},
+					{
+						name: 'Jetpack Backup (Real-time)',
+						product_id: 2102,
+						slug: 'jetpack-backup-realtime',
+					},
+					{
+						name: 'Jetpack Backup (1GB)',
+						product_id: 2120,
+						slug: 'jetpack-backup-t0',
+					},
+				],
+			},
+			{
 				name: 'Jetpack Plans',
 				slug: 'jetpack-plans',
 				products: [
 					{
-						name: 'Free',
-						product_id: 0,
-						slug: 'free',
-					},
-					{
-						name: 'Personal',
-						product_id: 0,
+						name: 'Jetpack Personal',
+						product_id: 2005,
 						slug: 'personal',
 					},
 					{
-						name: 'Premium',
-						product_id: 0,
+						name: 'Jetpack Premium',
+						product_id: 2000,
 						slug: 'premium',
 					},
 					{
-						name: 'Professional',
-						product_id: 0,
+						name: 'Jetpack Professional',
+						product_id: 2001,
 						slug: 'professional',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Packs',
+				slug: 'jetpack-packs',
+				products: [
+					{
+						name: 'Jetpack Security Daily',
+						product_id: 2010,
+						slug: 'jetpack-security-daily',
+					},
+					{
+						name: 'Jetpack Security Real-time',
+						product_id: 2012,
+						slug: 'jetpack-security-realtime',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Boost',
+				slug: 'jetpack-boost',
+				products: [
+					{
+						name: 'Jetpack Boost',
+						product_id: 2401,
+						slug: 'jetpack-boost',
 					},
 				],
 			},
@@ -111,8 +154,6 @@ describe( 'useProductsQuery', () => {
 						name: 'Jetpack Scan Daily',
 						product_id: 2106,
 						slug: 'jetpack-scan',
-						currency: 'us',
-						amount: 1,
 					},
 				],
 			},
@@ -121,18 +162,57 @@ describe( 'useProductsQuery', () => {
 				slug: 'jetpack-backup',
 				products: [
 					{
-						name: 'Jetpack Backup (Daily)',
-						product_id: 2100,
-						slug: 'jetpack-backup-daily',
-						currency: 'us',
-						amount: 1.99,
+						name: 'Jetpack Backup (10GB)',
+						product_id: 2112,
+						slug: 'jetpack-backup-t1',
 					},
 					{
-						name: 'Jetpack Backup (Real-time)',
-						product_id: 2102,
-						slug: 'jetpack-backup-realtime',
-						currency: 'us',
-						amount: 3.49,
+						name: 'Jetpack Backup (1TB)',
+						product_id: 2114,
+						slug: 'jetpack-backup-t2',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Anti Spam',
+				slug: 'jetpack-anti-spam',
+				products: [
+					{
+						name: 'Jetpack Anti-Spam',
+						product_id: 2110,
+						slug: 'jetpack-anti-spam',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Videopress',
+				slug: 'jetpack-videopress',
+				products: [
+					{
+						name: 'Jetpack VideoPress',
+						product_id: 2116,
+						slug: 'jetpack-videopress',
+					},
+				],
+			},
+			{
+				name: 'Jetpack Packs',
+				slug: 'jetpack-packs',
+				products: [
+					{
+						name: 'Jetpack Complete',
+						product_id: 2014,
+						slug: 'jetpack-complete',
+					},
+					{
+						name: 'Jetpack Security (10GB)',
+						product_id: 2016,
+						slug: 'jetpack-security-t1',
+					},
+					{
+						name: 'Jetpack Security (1TB)',
+						product_id: 2019,
+						slug: 'jetpack-security-t2',
 					},
 				],
 			},

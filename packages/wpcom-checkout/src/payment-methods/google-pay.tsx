@@ -7,20 +7,26 @@ import PaymentRequestButton from '../payment-request-button';
 import { usePaymentRequestOptions, useStripePaymentRequest } from './web-pay-utils';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { CartKey } from '@automattic/shopping-cart';
 import type { Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'wpcom-checkout:google-pay-payment-method' );
 
 export function createGooglePayMethod(
 	stripe: Stripe,
-	stripeConfiguration: StripeConfiguration
+	stripeConfiguration: StripeConfiguration,
+	cartKey: CartKey
 ): PaymentMethod {
 	return {
 		id: 'google-pay',
 		paymentProcessorId: 'google-pay',
 		label: <GooglePayLabel />,
 		submitButton: (
-			<GooglePaySubmitButton stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
+			<GooglePaySubmitButton
+				stripe={ stripe }
+				stripeConfiguration={ stripeConfiguration }
+				cartKey={ cartKey }
+			/>
 		),
 		inactiveContent: <GooglePaySummary />,
 		getAriaLabel: () => 'Google Pay',
@@ -43,13 +49,15 @@ export function GooglePaySubmitButton( {
 	onClick,
 	stripe,
 	stripeConfiguration,
+	cartKey,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	stripe: Stripe;
 	stripeConfiguration: StripeConfiguration;
+	cartKey: CartKey;
 } ) {
-	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
+	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration, cartKey );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );

@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
+import { FEATURE_SSH } from '@automattic/calypso-products';
 import { Card, Button, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { PanelBody } from '@wordpress/components';
+import { PanelBody, ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -23,9 +25,14 @@ import {
 	requestAtomicSftpUsers,
 	createAtomicSftpUser,
 	resetAtomicSftpPassword,
+	requestAtomicSshAccess,
 	updateAtomicSftpUser,
+	enableAtomicSshAccess,
+	disableAtomicSshAccess,
 } from 'calypso/state/hosting/actions';
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
+import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -45,17 +52,26 @@ export const SftpCard = ( {
 	requestSftpUsers,
 	createSftpUser,
 	resetSftpPassword,
+	siteHasSshFeature,
+	isSshAccessEnabled,
+	requestSshAccess,
+	enableSshAccess,
+	disableSshAccess,
 	removePasswordFromState,
 } ) => {
 	// State for clipboard copy button for both username and password data
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isPasswordLoading, setPasswordLoading ] = useState( false );
+	const [ isSshAccessLoading, setSshAccessLoading ] = useState( false );
 	const [ isCopied, setIsCopied ] = useState( {
 		password: false,
 		url: false,
 		port: false,
 		username: false,
+		sshConnectString: false,
 	} );
+
+	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
 
 	const onDestroy = () => {
 		if ( password ) {
@@ -64,7 +80,13 @@ export const SftpCard = ( {
 	};
 
 	const onCopy = ( field ) => {
-		setIsCopied( { password: false, url: false, port: false, username: false } );
+		setIsCopied( {
+			password: false,
+			url: false,
+			port: false,
+			username: false,
+			sshConnectString: false,
+		} );
 		setIsCopied( { [ field ]: true } );
 	};
 
@@ -78,13 +100,25 @@ export const SftpCard = ( {
 		createSftpUser( siteId, currentUserId );
 	};
 
+	const toggleSshAccess = () => {
+		setSshAccessLoading( true );
+		if ( isSshAccessEnabled ) {
+			disableSshAccess( siteId );
+		} else {
+			enableSshAccess( siteId );
+		}
+	};
+
 	useEffect( () => {
 		if ( ! disabled ) {
 			setIsLoading( true );
 			requestSftpUsers( siteId );
+			if ( siteHasSshFeature ) {
+				requestSshAccess( siteId );
+			}
 		}
 		return onDestroy();
-	}, [ disabled, siteId ] );
+	}, [ disabled, siteId, siteHasSshFeature ] );
 
 	useEffect( () => {
 		if ( username === null || username || password ) {
@@ -92,6 +126,10 @@ export const SftpCard = ( {
 			setPasswordLoading( false );
 		}
 	}, [ username, password ] );
+
+	useEffect( () => {
+		setSshAccessLoading( false );
+	}, [ isSshAccessEnabled ] );
 
 	const renderPasswordField = () => {
 		if ( disabled ) {
@@ -141,12 +179,64 @@ export const SftpCard = ( {
 		);
 	};
 
+	const renderSshField = () => {
+		return (
+			<div className="sftp-card__ssh-field">
+				<ToggleControl
+					disabled={ isLoading || isSshAccessLoading }
+					checked={ isSshAccessEnabled }
+					onChange={ () => toggleSshAccess() }
+					label={ translate(
+						'Enable SSH access for this site. {{em}}This feature is currently in beta.{{/em}}',
+						{
+							components: {
+								em: <em />,
+							},
+						}
+					) }
+				/>
+				{ isSshAccessEnabled && (
+					<div className="sftp-card__copy-field">
+						<FormTextInput
+							className="sftp-card__copy-input"
+							value={ sshConnectString }
+							onChange={ noop }
+						/>
+						<ClipboardButton
+							className="sftp-card__copy-button"
+							text={ sshConnectString }
+							onCopy={ () => onCopy( 'sshConnectString' ) }
+							compact
+						>
+							{ isCopied.sshConnectString && <Gridicon icon="checkmark" /> }
+							{ isCopied.sshConnectString
+								? translate( 'Copied!' )
+								: translate( 'Copy', { context: 'verb' } ) }
+						</ClipboardButton>
+					</div>
+				) }
+			</div>
+		);
+	};
+
 	const displayQuestionsAndButton = ! ( username || isLoading );
+
+	const featureExplanation = siteHasSshFeature
+		? translate(
+				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client. Optionally, enable SSH to perform advanced site operations using the command line."
+		  )
+		: translate(
+				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
+		  );
 
 	return (
 		<Card className="sftp-card">
 			<MaterialIcon icon="cloud" size={ 32 } />
-			<CardHeading>{ translate( 'SFTP credentials' ) }</CardHeading>
+			<CardHeading>
+				{ siteHasSshFeature
+					? translate( 'SFTP/SSH credentials' )
+					: translate( 'SFTP credentials' ) }
+			</CardHeading>
 			<div className="sftp-card__body">
 				<p>
 					{ username
@@ -164,9 +254,7 @@ export const SftpCard = ( {
 									},
 								}
 						  )
-						: translate(
-								"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
-						  ) }
+						: featureExplanation }
 				</p>
 			</div>
 			{ displayQuestionsAndButton && (
@@ -189,6 +277,26 @@ export const SftpCard = ( {
 							}
 						) }
 					</PanelBody>
+					{ siteHasSshFeature && (
+						<PanelBody title={ translate( 'What is SSH?' ) } initialOpen={ false }>
+							{ translate(
+								'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. ' +
+									'{{em}}This feature is currently in beta.{{/em}} For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}}.',
+								{
+									components: {
+										supportLink: (
+											<ExternalLink
+												icon
+												target="_blank"
+												href={ localizeUrl( 'https://wordpress.com/support/sftp/' ) }
+											/>
+										),
+										em: <em />,
+									},
+								}
+							) }
+						</PanelBody>
+					) }
 				</div>
 			) }
 			{ displayQuestionsAndButton && (
@@ -204,7 +312,7 @@ export const SftpCard = ( {
 						) }
 					</p>
 					<Button onClick={ createUser } primary className="sftp-card__create-credentials-button">
-						{ translate( 'Create SFTP credentials' ) }
+						{ translate( 'Create credentials' ) }
 					</Button>
 				</>
 			) }
@@ -257,6 +365,10 @@ export const SftpCard = ( {
 					</div>
 					<FormLabel>{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
+					{ siteHasSshFeature && (
+						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
+					) }
+					{ siteHasSshFeature && renderSshField() }
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
@@ -287,6 +399,24 @@ const createSftpUser = ( siteId, currentUserId ) =>
 		createAtomicSftpUser( siteId, currentUserId )
 	);
 
+const enableSshAccess = ( siteId ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_hosting_configuration_enable_ssh_access' ),
+			bumpStat( 'hosting-config', 'enable-ssh-access' )
+		),
+		enableAtomicSshAccess( siteId )
+	);
+
+const disableSshAccess = ( siteId ) =>
+	withAnalytics(
+		composeAnalytics(
+			recordTracksEvent( 'calypso_hosting_configuration_disable_ssh_access' ),
+			bumpStat( 'hosting-config', 'disable-ssh-access' )
+		),
+		disableAtomicSshAccess( siteId )
+	);
+
 export default connect(
 	( state, { disabled } ) => {
 		const siteId = getSelectedSiteId( state );
@@ -314,12 +444,19 @@ export default connect(
 			currentUserId,
 			username,
 			password,
+			siteHasSshFeature:
+				config.isEnabled( 'launch-wpcom-ssh' ) && siteHasFeature( state, siteId, FEATURE_SSH ),
+			isSshAccessEnabled: 'ssh' === getAtomicHostingSshAccess( state, siteId ),
 		};
 	},
 	{
 		requestSftpUsers: requestAtomicSftpUsers,
 		createSftpUser,
 		resetSftpPassword,
+		requestSshAccess: requestAtomicSshAccess,
+		enableSshAccess,
+		disableSshAccess,
+
 		removePasswordFromState: ( siteId, username ) =>
 			updateAtomicSftpUser( siteId, [ { username, password: null } ] ),
 	}

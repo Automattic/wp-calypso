@@ -44,7 +44,9 @@ const SelectVertical: React.FC< Props > = ( {
 	const mapOneSiteVerticalsResponseToVertical = ( vertical: SiteVerticalsResponse ): Vertical => ( {
 		value: vertical.id,
 		label: vertical.title,
+		name: vertical.name,
 		category: String( translate( 'Suggestions' ) ),
+		has_vertical_images: !! vertical.has_vertical_images,
 	} );
 
 	const mapManySiteVerticalsResponseToVertical = (
@@ -76,7 +78,6 @@ const SelectVertical: React.FC< Props > = ( {
 						: []
 				}
 				isLoading={ isDebouncing || isLoadingDefaultVertical || isLoadingSuggestions }
-				isShowSkipOption={ hasUserInput }
 				isDisableInput={ isLoadingDefaultVertical }
 				onInputChange={ ( searchTerm: string ) => {
 					setHasUserInput( searchTerm !== '' );

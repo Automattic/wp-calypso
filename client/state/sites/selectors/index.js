@@ -14,6 +14,7 @@ export { default as getSeoTitle } from './get-seo-title';
 export { default as getSeoTitleFormats } from './get-seo-title-formats';
 export { default as getSeoTitleFormatsForSite } from './get-seo-title-formats-for-site';
 export { default as getSite } from './get-site';
+export { default as getIsSimpleSite } from './is-simple-site';
 export { default as getSiteAdminPage } from './get-site-admin-page';
 export { default as getSiteAdminUrl } from './get-site-admin-url';
 export { default as getSiteBySlug } from './get-site-by-slug';
@@ -48,7 +49,6 @@ export { default as isJetpackConnectionPluginActive } from './is-jetpack-connect
 export { default as isJetpackMinimumVersion } from './is-jetpack-minimum-version';
 export { default as isJetpackModuleActive } from './is-jetpack-module-active';
 export { default as isJetpackSite } from './is-jetpack-site';
-export { default as isJetpackProductSite } from './is-jetpack-product-site';
 export { default as isJetpackSiteMainNetworkSite } from './is-jetpack-site-main-network-site';
 export { default as isJetpackSiteMultiSite } from './is-jetpack-site-multi-site';
 export { default as isJetpackSiteSecondaryNetworkSite } from './is-jetpack-site-secondary-network-site';
@@ -67,3 +67,4 @@ export { default as getSiteWooCommerceWizardUrl } from './get-site-woocommerce-w
 export { default as getJetpackSearchCustomizeUrl } from './get-jetpack-search-customize-url';
 export { default as getJetpackSearchDashboardUrl } from './get-jetpack-search-dashboard-url';
 export { default as getJetpackVersion } from './get-jetpack-version';
+export { default as isSimpleSite } from './is-simple-site';

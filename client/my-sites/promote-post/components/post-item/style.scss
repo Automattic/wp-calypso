@@ -1,0 +1,43 @@
+
+.post-item__card {
+	display: flex;
+	align-items: center;
+
+	.post-item__main {
+		flex: 1;
+		display: flex;
+		align-items: center;
+
+		.post-item__body {
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+			height: 70px;
+		}
+
+		.post-item__title {
+			color: var( --color-neutral-70 );
+			font-weight: 600;
+			font-size: 1rem;
+		}
+
+
+		.post-item__subtitle {
+			color: var( --color-neutral-50 );
+			font-size: 0.875rem;
+		}
+
+		.post-item__image-container {
+			margin: 0 20px 0 0;
+			flex-shrink: 0;
+			width: 80px;
+			height: 80px;
+
+			.post-item__image {
+				height: 80px;
+			}
+		}
+	}
+}
+
+

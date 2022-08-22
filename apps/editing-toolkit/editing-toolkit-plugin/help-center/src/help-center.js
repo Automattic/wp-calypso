@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import { LocaleProvider } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -10,6 +11,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
+import { getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
@@ -22,7 +24,10 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
-	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
+	const isSimpleSite = useSelector( getIsSimpleSite ) || false;
+
+	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId, isSimpleSite );
+
 	useEffect( () => {
 		if ( ! isLoading && data ) {
 			setShowHelpIconDot( ! data.has_seen_whats_new_modal );
@@ -30,7 +35,7 @@ function HelpCenterContent() {
 	}, [ data, isLoading ] );
 
 	const handleToggleHelpCenter = () => {
-		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'open' }`, {
+		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -73,7 +78,9 @@ registerPlugin( 'etk-help-center', {
 		return (
 			<QueryClientProvider client={ whatsNewQueryClient }>
 				<CalypsoStateProvider>
-					<HelpCenterContent />
+					<LocaleProvider localeSlug={ window.helpCenterLocale }>
+						<HelpCenterContent />
+					</LocaleProvider>
 				</CalypsoStateProvider>
 			</QueryClientProvider>
 		);

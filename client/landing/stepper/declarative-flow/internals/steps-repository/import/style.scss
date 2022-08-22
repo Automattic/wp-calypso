@@ -4,4 +4,9 @@
 	.import__onboarding-page {
 		@include onboarding-block-margin;
 	}
+
+	.step-container__content {
+		max-width: 960px;
+		margin: auto;
+	}
 }

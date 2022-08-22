@@ -4,17 +4,18 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
 	PLAN_BLOGGER,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_2_YEARS,
-	PLAN_WPCOM_PRO,
-	PLAN_WPCOM_STARTER,
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { PREINSTALLED_PREMIUM_PLUGINS } from 'calypso/my-sites/plugins/constants';
 import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
@@ -183,6 +184,16 @@ export function normalizeCompatibilityList( compatibilityList ) {
 export function normalizePluginData( plugin, pluginData ) {
 	plugin = getAllowedPluginData( { ...plugin, ...pluginData } );
 
+	// Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
+	// but require a paid upgrade to function.
+	if ( !! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] && ! plugin.variations ) {
+		const { monthly, yearly } = PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products;
+		plugin.variations = {
+			monthly: { product_slug: monthly },
+			yearly: { product_slug: yearly },
+		};
+	}
+
 	return Object.entries( plugin ).reduce( ( returnData, [ key, item ] ) => {
 		switch ( key ) {
 			case 'short_description':
@@ -321,7 +332,7 @@ export function getPluginAuthorKeyword( plugin ) {
 export const WPORG_PROFILE_URL = 'https://profiles.wordpress.org/';
 
 /**
- * Get the author keywrod from author_profile property
+ * Get the author keyword from author_profile property
  *
  * @param plugin
  * @returns {string|null} the author keyword
@@ -337,16 +348,13 @@ export function getPluginAuthorProfileKeyword( plugin ) {
 /**
  * @param currentPlan
  * @param pluginBillingPeriod
- * @param eligibleForProPlan
- * @param isMarketplace
- * @returns the correct business plan slug depending on current plan and pluginBillingPeriod
+ * @returns the correct plan slug depending on current plan and pluginBillingPeriod
  */
-export function businessPlanToAdd(
-	currentPlan,
-	pluginBillingPeriod,
-	eligibleForProPlan,
-	isMarketplace = false
-) {
+export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
+	if ( isEnabled( 'marketplace-personal-premium' ) ) {
+		// Site is free - doesn't have a plan.
+		return pluginBillingPeriod === IntervalLength.ANNUALLY ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;
+	}
 	// Legacy plans always upgrade to business.
 	switch ( currentPlan.product_slug ) {
 		case PLAN_PERSONAL_2_YEARS:
@@ -358,16 +366,21 @@ export function businessPlanToAdd(
 		case PLAN_BLOGGER:
 			return PLAN_BUSINESS;
 		default:
-			// Not on a legacy plan: Can upgrade to Starter, Pro, or Business depending on settings.
-			if ( isMarketplace && isEnabled( 'marketplace-starter-plan' ) ) {
-				return PLAN_WPCOM_STARTER;
-			}
-			if ( eligibleForProPlan ) {
-				return PLAN_WPCOM_PRO;
-			}
 			// Return annual plan if selected, monthly otherwise.
 			return pluginBillingPeriod === IntervalLength.ANNUALLY
 				? PLAN_BUSINESS
 				: PLAN_BUSINESS_MONTHLY;
 	}
 }
+
+/**
+ * Determines the URL to use for managing a connection.
+ *
+ * @param {string} siteSlug The site slug to use in the URL.
+ * @returns The URL to use for managing a connection.
+ */
+export const getManageConnectionHref = ( siteSlug ) => {
+	return isJetpackCloud()
+		? `https://wordpress.com/settings/manage-connection/${ siteSlug }`
+		: `/settings/manage-connection/${ siteSlug }`;
+};

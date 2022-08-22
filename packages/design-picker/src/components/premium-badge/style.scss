@@ -19,6 +19,7 @@
 	.premium-badge__logo {
 		margin-top: -1px;
 		margin-right: 3px;
+		fill: currentColor;
 	}
 
 	.components-tooltip .components-popover__content {
@@ -33,5 +34,34 @@
 			padding: 8px 10px;
 			text-align: start;
 		}
+	}
+}
+
+.premium-badge__popover {
+	max-width: 300px;
+	outline: none;
+	.popover__inner {
+		background-color: #000;
+		color: #eee;
+		padding: 0.25rem;
+		border-radius: 4px;
+		border: 0;
+	}
+	&.is-bottom-left {
+		.popover__arrow {
+			&::before {
+				border-bottom-color: #000 !important;
+			}
+		}
+	}
+	&.is-top-left {
+		.popover__arrow {
+			&::before {
+				border-top-color: #000 !important;
+			}
+		}
+	}
+	.popover__arrow {
+		border: 10px dashed transparent;
 	}
 }

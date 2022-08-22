@@ -327,9 +327,9 @@ object P2E2ETests : E2EBuildType(
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = "trunk"
-			buildFailed = true
-			buildFinishedSuccessfully = true
 			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
 		notifications {

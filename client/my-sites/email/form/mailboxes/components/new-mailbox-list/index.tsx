@@ -25,6 +25,7 @@ import {
 	MailboxFormFieldBase,
 	MutableFormFieldNames,
 } from 'calypso/my-sites/email/form/mailboxes/types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -80,7 +81,7 @@ interface MailboxListProps {
 }
 
 const NewMailBoxList = (
-	props: MailboxListProps & { children?: JSX.Element }
+	props: MailboxListProps & { children?: ReactNode }
 ): JSX.Element | null => {
 	const translate = useTranslate();
 

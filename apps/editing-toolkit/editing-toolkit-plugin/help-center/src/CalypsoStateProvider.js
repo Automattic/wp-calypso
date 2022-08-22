@@ -2,6 +2,7 @@
  * Global polyfills
  */
 import '@automattic/calypso-polyfills';
+import i18n from 'i18n-calypso';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
@@ -39,6 +40,7 @@ setStore( store );
 // For the moment we have the help center only in the editor
 store.dispatch( setSection( { name: 'gutenberg-editor' } ) );
 store.dispatch( setSelectedSiteId( window._currentSiteId ) );
+i18n.configure( { defaultLocaleSlug: window.helpCenterLocale } );
 
 rawCurrentUserFetch()
 	.then( filterUserObject )

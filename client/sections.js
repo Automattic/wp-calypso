@@ -470,6 +470,12 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-cloud-plugin-management',
+		paths: [ '/plugins' ],
+		module: 'calypso/jetpack-cloud/sections/plugin-management',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-cloud-settings',
 		paths: [ '/settings' ],
 		module: 'calypso/jetpack-cloud/sections/settings',
@@ -530,6 +536,18 @@ const sections = [
 		paths: [ '/store' ],
 		module: 'calypso/my-sites/store',
 		group: 'sites',
+	},
+	{
+		name: 'add-ons',
+		paths: [ '/add-ons', '/add-ons/[^\\/]+' ],
+		module: 'calypso/my-sites/add-ons',
+		group: 'sites',
+	},
+	{
+		name: 'promote-post',
+		paths: [ '/advertising', '/advertising/[^\\/]+' ],
+		module: 'calypso/my-sites/promote-post',
+		group: 'sites', // todo what group should this be?
 	},
 ];
 

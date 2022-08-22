@@ -69,7 +69,8 @@ export class SectionMigrate extends Component {
 		this.updateFromAPI();
 	}
 
-	componentDidUpdate( prevProps ) {
+	/* eslint-disable no-unused-vars */
+	componentDidUpdate( prevProps, prevState ) {
 		if ( this.isNonAtomicJetpack() ) {
 			return page( `/import/${ this.props.targetSiteSlug }` );
 		}
@@ -471,7 +472,7 @@ export class SectionMigrate extends Component {
 					{ this.renderStartTime() }
 					{ this.renderProgressBar() }
 					{ this.renderProgressList() }
-					<p class="migrate__note">
+					<p className="migrate__note">
 						{ translate(
 							"You can safely navigate away from this page if you need to; we'll send you a notification when it's done."
 						) }

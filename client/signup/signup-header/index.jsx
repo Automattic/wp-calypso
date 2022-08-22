@@ -9,26 +9,23 @@ export default class SignupHeader extends Component {
 		shouldShowLoadingScreen: PropTypes.bool,
 		isReskinned: PropTypes.bool,
 		rightComponent: PropTypes.node,
+		pageTitle: PropTypes.string,
 	};
 
 	render() {
+		const { pageTitle, shouldShowLoadingScreen, isReskinned, rightComponent } = this.props;
+
 		const logoClasses = classnames( 'wordpress-logo', {
-			'is-large': this.props.shouldShowLoadingScreen && ! this.props.isReskinned,
+			'is-large': shouldShowLoadingScreen && ! isReskinned,
 		} );
 
 		return (
 			<div className="signup-header">
 				<WordPressLogo size={ 120 } className={ logoClasses } />
-
-				{ /* Ideally, this is where the back button
-			   would live. But thats hard to move, it seems. */ }
-				<div className="signup-header__left" />
-
+				{ pageTitle && <h1>{ pageTitle }</h1> }
 				{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
-				<div className="signup-header__right">
-					{ ! this.props.shouldShowLoadingScreen && this.props.rightComponent }
-				</div>
+				<div className="signup-header__right">{ ! shouldShowLoadingScreen && rightComponent }</div>
 			</div>
 		);
 	}

@@ -1,9 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { SVG, Path } from '@wordpress/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { createElement, ReactNode, useEffect, useRef } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import starIcon from './assets/star.svg';
+import HintButton from 'calypso/my-sites/plans/jetpack-plans/product-lightbox/hint-button';
 import DisplayPrice from './display-price';
 import JetpackProductCardFeatures from './features';
 import type {
@@ -46,6 +48,7 @@ type OwnProps = {
 	showAbovePriceText?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
+	onLearnMoreClick?: React.MouseEventHandler;
 };
 
 type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
@@ -87,6 +90,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	aboveButtonText = null,
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
+	onLearnMoreClick,
 } ) => {
 	const isFree = item.isFree;
 
@@ -115,6 +119,17 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 		  } )
 		: null;
 
+	const starIcon = (
+		// Safari has problems rendering SVGs in retina screens when used inside an img tag, so we should use inline SVG instead.
+		// See details on this PR: https://github.com/Automattic/wp-calypso/pull/65304
+		<SVG className="jetpack-product-card__header-icon" width="16" height="16" viewBox="0 0 16 16">
+			<Path
+				d="M8 11.513 12.12 14l-1.093-4.687 3.64-3.153-4.793-.407-1.873-4.42-1.874 4.42-4.793.407 3.64 3.153L3.881 14 8 11.513Z"
+				fill="currentColor"
+			/>
+		</SVG>
+	);
+
 	useEffect( () => {
 		// The <DisplayPrice /> appearance changes the layout of the page and breaks the scroll into view behavior. Therefore, we will only scroll the element into view once the price is fully loaded.
 		if ( anchorRef && anchorRef.current && originalPrice ) {
@@ -136,7 +151,7 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 			<div className="jetpack-product-card__scroll-anchor" ref={ anchorRef }></div>
 			{ isFeatured && (
 				<div className="jetpack-product-card__header">
-					<img className="jetpack-product-card__header-icon" src={ starIcon } alt="" />
+					{ starIcon }
 					<span>{ featuredLabel || translate( 'Recommended' ) }</span>
 				</div>
 			) }
@@ -218,6 +233,12 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						features={ item.features }
 						collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
 					/>
+				) }
+				{ item.disclaimer && (
+					<span className="jetpack-product-card__disclaimer">{ item.disclaimer }</span>
+				) }
+				{ isEnabled( 'jetpack/pricing-page-product-lightbox' ) && (
+					<HintButton onClick={ onLearnMoreClick } />
 				) }
 			</div>
 		</div>

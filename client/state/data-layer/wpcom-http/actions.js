@@ -13,6 +13,7 @@ import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
  * @property {object}   [onFailure] Redux action to call when request fails
  * @property {object}   [onProgress] Redux action to call on progress events from an upload
  * @property {object}   [onStreamRecord] callback for each record of a streamed response
+ * @property {object}   [retryPolicy] how to handle retries on request failure
  * @property {object}   [options] extra options to send to the middleware, e.g. retry policy or offline policy
  */
 

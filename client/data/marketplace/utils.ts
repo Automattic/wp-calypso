@@ -1,6 +1,8 @@
 import { QueryKey } from 'react-query';
 import { PluginQueryOptions } from './types';
 
+const PLUGINS_CACHE_VERSION = 1;
+
 export const getPluginsListKey = (
 	key: QueryKey,
 	options: PluginQueryOptions,
@@ -16,5 +18,5 @@ export const getPluginsListKey = (
 		options.tag && ! options.searchTerm ? options.tag : '',
 	];
 
-	return [ key, ...keyParams ];
+	return [ PLUGINS_CACHE_VERSION.toString(), key, ...keyParams ];
 };

@@ -108,6 +108,12 @@ export const resetFonts = () => ( {
 
 export const resetOnboardStore = () => ( {
 	type: 'RESET_ONBOARD_STORE' as const,
+	skipFlags: [] as string[],
+} );
+
+export const resetOnboardStoreWithSkipFlags = ( skipFlags: string[] ) => ( {
+	type: 'RESET_ONBOARD_STORE' as const,
+	skipFlags,
 } );
 
 export const setDomain = ( domain: DomainSuggestion | undefined ) => ( {
@@ -180,6 +186,21 @@ export const setShowSignupDialog = ( showSignup: boolean ) => ( {
 export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: 'SET_SITE_TITLE' as const,
 	siteTitle,
+} );
+
+export const setSiteDescription = ( siteDescription: string ) => ( {
+	type: 'SET_SITE_DESCRIPTION' as const,
+	siteDescription,
+} );
+
+export const setSiteLogo = ( siteLogo: string | null ) => ( {
+	type: 'SET_SITE_LOGO' as const,
+	siteLogo,
+} );
+
+export const setSiteAccentColor = ( siteAccentColor: string | undefined ) => ( {
+	type: 'SET_SITE_ACCENT_COLOR' as const,
+	siteAccentColor,
 } );
 
 export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
@@ -282,11 +303,17 @@ export const setEditEmail = ( email: string ) => ( {
 	email,
 } );
 
+export const setBundledPluginSlug = ( slug: string ) => ( {
+	type: 'SET_BUNDLED_PLUGIN_SLUG' as const,
+	slug,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
 	| typeof resetFonts
 	| typeof resetOnboardStore
+	| typeof resetOnboardStoreWithSkipFlags
 	| typeof setStoreType
 	| typeof setDomain
 	| typeof setDomainCategory
@@ -320,4 +347,8 @@ export type OnboardAction = ReturnType<
 	| typeof resetIntent
 	| typeof resetSelectedDesign
 	| typeof setEditEmail
+	| typeof setSiteDescription
+	| typeof setSiteLogo
+	| typeof setSiteAccentColor
+	| typeof setBundledPluginSlug
 >;

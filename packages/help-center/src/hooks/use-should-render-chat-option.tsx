@@ -11,12 +11,12 @@ export function useShouldRenderChatOption(): Result {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
 	const { available, isLoading } = useHappychatAvailable();
 
-	if ( ! chatStatus?.isUserEligible ) {
+	if ( ! chatStatus?.is_user_eligible ) {
 		return {
 			render: false,
 			isLoading,
 		};
-	} else if ( chatStatus?.isClosed ) {
+	} else if ( chatStatus?.is_chat_closed ) {
 		return {
 			render: true,
 			state: 'CLOSED',

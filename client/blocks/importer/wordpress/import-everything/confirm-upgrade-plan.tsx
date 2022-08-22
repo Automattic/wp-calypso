@@ -1,9 +1,10 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
 import { sprintf } from '@wordpress/i18n';
 import { check, plus, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
@@ -61,6 +62,10 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 			</ul>
 		);
 	}
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_site_importer_migration_plan_display' );
+	}, [] );
 
 	return (
 		<div className={ classnames( 'import__upgrade-plan' ) }>

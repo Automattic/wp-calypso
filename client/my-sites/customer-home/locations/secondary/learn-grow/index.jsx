@@ -12,11 +12,13 @@ import {
 	EDUCATION_FIND_SUCCESS,
 	EDUCATION_RESPOND_TO_CUSTOMER_FEEDBACK,
 	EDUCATION_BLOGGING_QUICK_START,
+	EDUCATION_PROMOTE_POST,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import BloggingQuickStart from 'calypso/my-sites/customer-home/cards/education/blogging-quick-start';
 import EducationEarn from 'calypso/my-sites/customer-home/cards/education/earn';
 import FindSuccess from 'calypso/my-sites/customer-home/cards/education/find-success';
 import FreePhotoLibrary from 'calypso/my-sites/customer-home/cards/education/free-photo-library';
+import PromotePost from 'calypso/my-sites/customer-home/cards/education/promote-post';
 // eslint-disable-next-line inclusive-language/use-inclusive-words
 import RespondToCustomerFeedback from 'calypso/my-sites/customer-home/cards/education/respond-to-customer-feedback';
 import EducationStore from 'calypso/my-sites/customer-home/cards/education/store';
@@ -29,6 +31,7 @@ const cardComponents = {
 	[ EDUCATION_EARN ]: EducationEarn,
 	[ EDUCATION_STORE ]: EducationStore,
 	[ EDUCATION_WPCOURSES ]: WpCourses,
+	[ EDUCATION_PROMOTE_POST ]: config.isEnabled( 'promote-post' ) && PromotePost,
 	[ EDUCATION_FIND_SUCCESS ]: FindSuccess,
 	[ EDUCATION_RESPOND_TO_CUSTOMER_FEEDBACK ]: RespondToCustomerFeedback,
 	[ EDUCATION_BLOGGING_QUICK_START ]: BloggingQuickStart,

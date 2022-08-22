@@ -60,7 +60,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
-	isJetpackCheckout,
 }: {
 	className?: string;
 	siteId?: number | undefined;
@@ -74,7 +73,6 @@ export function WPOrderReviewLineItems( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
-	isJetpackCheckout: boolean;
 } ) {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
@@ -115,7 +113,6 @@ export function WPOrderReviewLineItems( {
 									isDisabled={ isDisabled }
 									siteId={ siteId }
 									productSlug={ product.product_slug }
-									type={ isJetpackCheckout ? 'dropdown' : 'buttons' }
 								/>
 							) }
 						</LineItem>
@@ -127,7 +124,7 @@ export function WPOrderReviewLineItems( {
 					<CouponLineItem
 						lineItem={ couponLineItem }
 						isSummary={ isSummary }
-						hasDeleteButton={ ! isSummary }
+						hasDeleteButton
 						removeProductFromCart={ removeCoupon }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						isPwpoUser={ isPwpoUser }

@@ -22,6 +22,7 @@ import {
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS,
+	SOCIAL_HANDOFF_CONNECT_ACCOUNT,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
@@ -386,6 +387,12 @@ export const socialAccountLink = ( state = { isLinking: false }, action ) => {
 	switch ( action.type ) {
 		case SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE:
 			return userExistsErrorHandler( state, action );
+		case SOCIAL_HANDOFF_CONNECT_ACCOUNT:
+			return {
+				isLinking: true,
+				email: action.email,
+				authInfo: action.authInfo,
+			};
 		case SOCIAL_LOGIN_REQUEST_FAILURE:
 			return userExistsErrorHandler( state, action );
 		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:

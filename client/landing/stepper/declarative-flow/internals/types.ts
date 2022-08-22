@@ -33,7 +33,7 @@ export type UseStepHook = () => StepPath[];
 
 export type UseStepNavigationHook = (
 	currentStep: StepPath,
-	navigate: ( stepName: StepPath | `${ StepPath }?${ string }` ) => void,
+	navigate: ( stepName: StepPath | `${ StepPath }?${ string }`, extraData?: any ) => void,
 	steps?: StepPath[]
 ) => NavigationControls;
 
@@ -41,6 +41,7 @@ export type UseAssertConditionsHook = () => AssertConditionResult;
 
 export type Flow = {
 	name: string;
+	title?: string;
 	classnames?: string | [ string ];
 	useSteps: UseStepHook;
 	useStepNavigation: UseStepNavigationHook;
@@ -53,7 +54,9 @@ export type Flow = {
 
 export type StepProps = {
 	navigation: NavigationControls;
+	stepName?: string | null;
 	flow: string | null;
+	data?: Record< string, unknown >;
 };
 
 export type Step = React.FC< StepProps >;

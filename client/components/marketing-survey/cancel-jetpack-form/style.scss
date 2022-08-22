@@ -90,3 +90,72 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 	padding: 0;
 	margin-left: 1rem;
 }
+
+// Cancellation offer step
+.jetpack-cancellation-offer {
+	&__card {
+		background: var( --studio-white );
+		padding: 2rem;
+		box-shadow: 0 10px 40px rgb( 0 0 0 / 8% );
+		border-radius: 4px;
+	}
+
+	&__logo {
+		margin-bottom: 1.5rem;
+	}
+
+	&__headline {
+		font-size: 1.5rem;
+		color: var( --studio-jetpack-green-60 );
+		font-weight: 700;
+		line-height: 1.15;
+		margin-bottom: 1rem;
+		max-width: 600px;
+
+		@include break-medium {
+			font-size: 2.25rem;
+		}
+	}
+
+	&__accept-cta {
+		padding: 0.5rem 1.25rem;
+		font-size: 1rem;
+		background-color: var( --studio-gray-100 ) !important;
+		border: none !important;
+		margin-bottom: 1rem;
+
+		&:hover,
+		&:active {
+			background-color: var( --studio-gray-80 ) !important;
+		}
+
+		&:focus {
+			box-shadow: none !important;
+			outline: solid 2px var( --studio-gray-100 );
+			outline-offset: 2px;
+		}
+
+		&.is-busy {
+			background-image: linear-gradient( -45deg, var( --studio-gray-60 ) 28%, var( --studio-gray-100 ) 28%, var( --studio-gray-100 ) 72%, var( --studio-gray-60 ) 72% ) !important;
+		}
+	}
+
+	&__tos {
+		a {
+			font-weight: 600;
+			text-decoration: underline;
+			color: var( --studio-jetpack-green-60 );
+
+			&:hover,
+			&:focus {
+				text-decoration-thickness: 3px;
+				color: var( --studio-jetpack-green-70 );
+			}
+		}
+	}
+
+	&__error-text {
+		color: var( --studio-red-0 );
+		font-weight: 700;
+	}
+}

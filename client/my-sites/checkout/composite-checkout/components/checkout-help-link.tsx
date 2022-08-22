@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
@@ -6,7 +7,12 @@ import {
 	isPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
-import { SUPPORT_HAPPYCHAT, SUPPORT_FORUM, SUPPORT_DIRECTLY } from '@automattic/help-center';
+import {
+	SUPPORT_HAPPYCHAT,
+	SUPPORT_FORUM,
+	SUPPORT_DIRECTLY,
+	shouldShowHelpCenterToUser,
+} from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -16,12 +22,15 @@ import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-supp
 import HappychatButtonUnstyled from 'calypso/components/happychat/button';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
 import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
+import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actions';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import type { Theme } from '@automattic/composite-checkout';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -44,22 +53,31 @@ const HappychatButton = styled( HappychatButtonUnstyled )`
 	}
 `;
 
-export function PaymentChatButton( { plan }: { plan: string | undefined } ) {
+export function PaymentChatButton( {
+	plan,
+	openHelpCenter,
+}: {
+	plan: string | undefined;
+	openHelpCenter: boolean;
+} ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const supportLevel = useSelector( getSupportLevel );
+	const section = useSelector( getSectionName );
 
 	const chatButtonClicked = () => {
 		reduxDispatch(
 			recordTracksEvent( 'calypso_presales_chat_click', {
 				plan,
 				support_level: supportLevel,
+				location: openHelpCenter ? 'help-center' : 'inline-help-popover',
+				section,
 			} )
 		);
 	};
 
 	return (
-		<HappychatButton onClick={ chatButtonClicked }>
+		<HappychatButton onClick={ chatButtonClicked } openHelpCenter={ openHelpCenter }>
 			<Gridicon icon="chat" />
 			{ translate( 'Need help? Chat with us.' ) }
 		</HappychatButton>
@@ -128,17 +146,42 @@ export default function CheckoutHelpLink() {
 	const { responseCart } = useShoppingCart( cartKey );
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 
-	const supportVariationDetermined = useSelector( isSupportVariationDetermined );
-	const supportVariation = useSelector( getSupportVariation );
-
-	const happyChatAvailable = useSelector( isHappychatAvailable );
-	const presalesChatAvailable = useSelector( isPresalesChatAvailable );
+	const {
+		happyChatAvailable,
+		presalesChatAvailable,
+		section,
+		userId,
+		supportVariationDetermined,
+		supportVariation,
+	} = useSelector( ( state ) => {
+		return {
+			happyChatAvailable: isHappychatAvailable( state ),
+			presalesChatAvailable: isPresalesChatAvailable( state ),
+			section: getSectionName( state ),
+			userId: getCurrentUserId( state ),
+			supportVariationDetermined: isSupportVariationDetermined( state ),
+			supportVariation: getSupportVariation( state ),
+		};
+	} );
 	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
 	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
 
+	const userAllowedToHelpCenter = !! (
+		userId &&
+		config.isEnabled( 'calypso/help-center' ) &&
+		shouldShowHelpCenterToUser( userId )
+	);
+
 	const handleHelpButtonClicked = () => {
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_composite_summary_help_click' ) );
-		reduxDispatch( showInlineHelpPopover() );
+		reduxDispatch(
+			userAllowedToHelpCenter ? setHelpCenterVisible( true ) : showInlineHelpPopover()
+		);
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_composite_summary_help_click', {
+				location: userAllowedToHelpCenter ? 'help-center' : 'inline-help-popover',
+				section,
+			} )
+		);
 	};
 
 	// If chat is available and the cart has a pre-sales plan or is already eligible for chat.
@@ -154,7 +197,10 @@ export default function CheckoutHelpLink() {
 			<QuerySupportTypes />
 			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
 			{ shouldRenderPaymentChatButton ? (
-				<PaymentChatButton plan={ presalesEligiblePlanLabel } />
+				<PaymentChatButton
+					plan={ presalesEligiblePlanLabel }
+					openHelpCenter={ userAllowedToHelpCenter }
+				/>
 			) : (
 				supportVariationDetermined && (
 					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>

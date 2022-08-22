@@ -6,7 +6,6 @@ import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availabi
 import {
 	getMappingFreeText,
 	getTransferFreeText,
-	getTransferPriceText,
 	getTransferRestrictionMessage,
 	getTransferSalePriceText,
 	isFreeTransfer,
@@ -78,15 +77,7 @@ export function getOptionInfo( {
 		productsList,
 	} );
 
-	const transferPriceText = getTransferPriceText( {
-		cart,
-		currencyCode,
-		domain,
-		productsList,
-	} );
-
 	const transferPricing = {
-		cost: transferPriceText,
 		isFree: isFreeTransfer( { cart, domain } ),
 		sale: transferSalePriceText,
 		text: transferFreeText,

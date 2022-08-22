@@ -25,12 +25,26 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 			min-width: 90vw;
 			left: 5vw;
 			right: 5vw;
+			height: auto;
+			min-height: unset;
 		}
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			width: 720px;
 			height: $wpcom-modal-content-min-height;
 			top: calc( 50% - #{$wpcom-modal-footer-height * 0.5} );
+		}
+	}
+
+	// Colour scheme for Google Workspace sale JITM
+	&.modal--google_workspace_engagement_customers {
+		.modal__sidebar {
+			background: var( --color-surface );
+			margin-right: 20px;
+		}
+
+		.components-button:hover svg {
+			fill: var( --color-neutral-20 );
 		}
 	}
 
@@ -55,6 +69,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 	.components-guide__container {
 		margin-top: 0;
+		min-height: unset;
 	}
 
 	.components-guide__footer {
@@ -62,11 +77,9 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 
 	.components-guide__page {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		justify-content: start;
-		flex-direction: row;
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			flex-direction: row;
+		}
 	}
 
 	.components-guide__page-control {
@@ -106,9 +119,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	flex-direction: column;
 	justify-content: space-between;
 	background: var( --studio-white );
-	width: 100%;
 	height: 100%;
-	padding-left: 7%;
+	padding: 0 7%;
 
 	:last-child {
 		margin-bottom: 5%;
@@ -121,9 +133,9 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		flex-direction: column;
 		justify-content: flex-end;
-		max-width: 60%;
 		min-height: $wpcom-modal-content-min-height;
 		bottom: 0;
+		padding: 0 2% 0 7%;
 	}
 }
 
@@ -131,19 +143,24 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .modal__visual {
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		flex: 1 auto;
-		min-width: 290px;
 	}
 }
 
 .modal__text {
-	padding: 1em 2em 1em 0;
+	padding: 1em 0;
 	margin: 0;
 	font-family: $sans;
 	font-size: $font-body-small;
+	display: flex;
+	flex-direction: column;
 
 	button,a {
 		margin-top: 13%;
 		padding: 10px 24px;
+	}
+
+	.components-button {
+		align-self: flex-start;
 	}
 }
 
@@ -186,7 +203,6 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 	font-size: $font-title-medium;
 	line-height: 1;
-	margin: 0 5% 0 0;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		font-size: $font-headline-small;
@@ -208,8 +224,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		display: block;
 		background-color: var( --studio-blue-5 );
-		height: 100%;
-		width: 90%;
+		min-width: 45%;
 		position: relative;
 		overflow: hidden;
 	}

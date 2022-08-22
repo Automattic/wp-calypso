@@ -538,10 +538,12 @@ export function CheckoutStepArea( {
 }
 
 export function CheckoutFormSubmit( {
+	validateForm,
 	submitButtonHeader,
 	submitButtonFooter,
 	disableSubmitButton,
 }: {
+	validateForm?: () => Promise< boolean >;
 	submitButtonHeader?: ReactNode;
 	submitButtonFooter?: ReactNode;
 	disableSubmitButton?: boolean;
@@ -564,6 +566,7 @@ export function CheckoutFormSubmit( {
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
 			{ submitButtonHeader || null }
 			<CheckoutSubmitButton
+				validateForm={ validateForm }
 				disabled={ isThereAnotherNumberedStep || disableSubmitButton }
 				onLoadError={ onSubmitButtonLoadError }
 			/>

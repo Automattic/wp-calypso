@@ -72,6 +72,10 @@ export default function AgencySignupForm(): ReactElement {
 		}
 	} );
 
+	useEffect( () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_agency_signup_start' ) );
+	}, [] );
+
 	return (
 		<Card className="agency-signup-form">
 			<svg

@@ -278,7 +278,7 @@ class PostTypeList extends Component {
 				{ posts.slice( 0, 10 ).map( this.renderPost ) }
 				{ showUpgradeNudge && (
 					<UpsellNudge
-						title={ translate( 'No Ads with WordPress.com Pro' ) }
+						title={ translate( 'No Ads with WordPress.com Premium' ) }
 						description={ translate( 'Prevent ads from showing on your site.' ) }
 						feature={ WPCOM_FEATURES_NO_ADVERTS }
 						event="published_posts_no_ads"

@@ -1,5 +1,5 @@
 import { extendAction } from '@automattic/state-utils';
-import { camelCase, isPlainObject, map, reduce, set, snakeCase } from 'lodash';
+import { camelCase, map, reduce, set, snakeCase } from 'lodash';
 
 const doBypassDataLayer = {
 	meta: {
@@ -23,7 +23,7 @@ export function convertKeysBy( obj, fn ) {
 		return map( obj, ( v ) => convertKeysBy( v, fn ) );
 	}
 
-	if ( isPlainObject( obj ) ) {
+	if ( typeof obj === 'object' && obj !== null ) {
 		return reduce(
 			obj,
 			( result, value, key ) => {

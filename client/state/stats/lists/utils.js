@@ -385,6 +385,7 @@ export const normalizers = {
 			}
 
 			return {
+				id: item.id,
 				label: item.title,
 				value: item.views,
 				page: detailPage,

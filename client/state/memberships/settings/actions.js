@@ -10,7 +10,8 @@ export const requestSettings = ( siteId ) => ( {
 	type: MEMBERSHIPS_SETTINGS,
 } );
 
-export const requestDisconnectStripeAccount = (
+const requestDisconnectStripeAccountByUrl = (
+	url,
 	siteId,
 	connectedAccountId,
 	noticeTextOnProcessing,
@@ -24,7 +25,7 @@ export const requestDisconnectStripeAccount = (
 		);
 
 		return wpcom.req
-			.get( `/me/connected_account/stripe/${ connectedAccountId }/disconnect` )
+			.get( `/sites/${ siteId }/connected_account/stripe/${ connectedAccountId }/disconnect` )
 			.then( () => {
 				dispatch( requestSettings( siteId ) );
 				dispatch(
@@ -41,4 +42,34 @@ export const requestDisconnectStripeAccount = (
 				);
 			} );
 	};
+};
+
+export const requestDisconnectSiteStripeAccount = (
+	siteId,
+	connectedAccountId,
+	noticeTextOnProcessing,
+	noticeTextOnSuccess
+) => {
+	return requestDisconnectStripeAccountByUrl(
+		`/sites/${ siteId }/connected_account/stripe/${ connectedAccountId }/disconnect`,
+		siteId,
+		connectedAccountId,
+		noticeTextOnProcessing,
+		noticeTextOnSuccess
+	);
+};
+
+export const requestDisconnectStripeAccount = (
+	siteId,
+	connectedAccountId,
+	noticeTextOnProcessing,
+	noticeTextOnSuccess
+) => {
+	return requestDisconnectStripeAccountByUrl(
+		`/me/connected_account/stripe/${ connectedAccountId }/disconnect`,
+		siteId,
+		connectedAccountId,
+		noticeTextOnProcessing,
+		noticeTextOnSuccess
+	);
 };

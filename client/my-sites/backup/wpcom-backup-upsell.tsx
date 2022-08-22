@@ -126,9 +126,9 @@ const BackupUpsellBody: FunctionComponent = () => {
 				{ isAdmin && isWPcomSite && (
 					<PromoCardCTA
 						cta={ {
-							text: translate( 'Upgrade to Pro Plan' ),
+							text: translate( 'Upgrade to Business Plan' ),
 							action: {
-								url: `/checkout/${ siteSlug }/pro`,
+								url: `/checkout/${ siteSlug }/business`,
 								onClick: onUpgradeClick,
 								selfTarget: true,
 							},
@@ -153,7 +153,9 @@ const BackupUpsellBody: FunctionComponent = () => {
 
 			{ isWPcomSite && ! hasFullActivityLogFeature && (
 				<>
-					<h2 className="backup__subheader">{ translate( 'Also included in the Pro Plan' ) }</h2>
+					<h2 className="backup__subheader">
+						{ translate( 'Also included in the Business Plan' ) }
+					</h2>
 
 					<PromoSection { ...promos } />
 				</>

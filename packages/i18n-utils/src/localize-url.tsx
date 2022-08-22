@@ -1,6 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { getLocaleSlug } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, ComponentType } from 'react';
 import { useLocale } from './locale-context';
 import {
 	localesWithBlog,
@@ -217,12 +217,17 @@ export function useLocalizeUrl() {
 	);
 }
 
-export const withLocalizeUrl = createHigherOrderComponent< {
-	localizeUrl: ReturnType< typeof useLocalizeUrl >;
-} >( ( InnerComponent ) => {
-	return ( props ) => {
-		const localizeUrl = useLocalizeUrl();
-		const innerProps = { ...props, localizeUrl } as React.ComponentProps< typeof InnerComponent >;
-		return <InnerComponent { ...innerProps } />;
-	};
-}, 'withLocalizeUrl' );
+export const withLocalizeUrl = createHigherOrderComponent(
+	< OuterProps, >(
+		InnerComponent: ComponentType<
+			OuterProps & { localizeUrl: ReturnType< typeof useLocalizeUrl > }
+		>
+	) => {
+		return ( props: OuterProps ) => {
+			const localizeUrl = useLocalizeUrl();
+			const innerProps = { ...props, localizeUrl };
+			return <InnerComponent { ...innerProps } />;
+		};
+	},
+	'withLocalizeUrl'
+);

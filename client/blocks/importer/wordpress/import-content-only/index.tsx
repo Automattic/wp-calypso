@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -87,6 +88,13 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ HTML Renders
 	 */
 	function renderHooray() {
+		function onSiteViewClick() {
+			if ( isEnabled( 'onboarding/import-redirect-to-themes' ) ) {
+				stepNavigator?.navigate?.( 'designSetup' );
+			} else {
+				stepNavigator?.goToSiteViewPage?.();
+			}
+		}
 		return (
 			<CompleteScreen
 				siteId={ siteItem?.ID as number }
@@ -95,7 +103,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 				resetImport={ () => {
 					dispatch( resetImport( siteItem?.ID, job?.importerId ) );
 				} }
-				onSiteViewClick={ stepNavigator?.goToSiteViewPage }
+				onSiteViewClick={ onSiteViewClick }
 			/>
 		);
 	}

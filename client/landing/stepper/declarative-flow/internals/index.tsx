@@ -1,9 +1,13 @@
+import { ProgressBar } from '@automattic/components';
+import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import SignupHeader from 'calypso/signup/signup-header';
+import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
 import * as Steps from './steps-repository';
 import { AssertConditionState, Flow } from './types';
@@ -32,13 +36,24 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const currentRoute = location.pathname.substring( 1 ).replace( /\/+$/, '' ) as StepPath;
 	const history = useHistory();
 	const { search } = useLocation();
-	const stepNavigation = flow.useStepNavigation( currentRoute, ( path ) => {
+	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
+	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const stepNavigation = flow.useStepNavigation( currentRoute, async ( path, extraData = null ) => {
+		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
+		setStepData( {
+			path: path,
+			intent: intent,
+			...extraData,
+		} );
+
 		const _path = path.includes( '?' ) // does path contain search params
 			? generatePath( '/' + path )
 			: generatePath( '/' + path + search );
 
 		history.push( _path, stepPaths );
 	} );
+	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
+	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
 
 	flow.useSideEffect?.();
 
@@ -47,10 +62,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	}, [ location ] );
 
 	useEffect( () => {
-		recordStepStart( flow.name, kebabCase( currentRoute ) );
-	}, [ flow.name, currentRoute ] );
+		recordStepStart( flow.name, kebabCase( currentRoute ), { intent } );
+	}, [ flow.name, currentRoute, intent ] );
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
+
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
 
 	const renderStep = ( path: StepPath ) => {
 		switch ( assertCondition.state ) {
@@ -63,7 +81,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 
 		const StepComponent = Steps[ path ];
-		return <StepComponent navigation={ stepNavigation } flow={ flow.name } />;
+		return <StepComponent navigation={ stepNavigation } flow={ flow.name } data={ stepData } />;
 	};
 
 	return (
@@ -72,7 +90,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				return (
 					<Route key={ path } path={ `/${ path }` }>
 						<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
-							<SignupHeader />
+							<ProgressBar
+								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+								className="flow-progress"
+								value={ progressValue * 100 }
+								total={ 100 }
+							/>
+							<SignupHeader pageTitle={ flow.title } />
 							{ renderStep( path ) }
 						</div>
 					</Route>

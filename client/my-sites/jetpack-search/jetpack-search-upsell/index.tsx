@@ -39,7 +39,10 @@ export default function JetpackSearchUpsell(): ReactElement {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const createProductURL = getPurchaseURLCallback( selectedSiteSlug, {} );
+	const createCheckoutURL = getPurchaseURLCallback( selectedSiteSlug, {
+		// For the Search upsell in Jetpack Cloud, we want to redirect back here to the Search page after checkout.
+		redirect_to: window.location.href,
+	} );
 
 	const WPComUpgradeUrl =
 		'https://jetpack.com/upgrade/search/?utm_campaign=my-sites-jetpack-search&utm_source=calypso&site=' +
@@ -66,7 +69,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 						productSlug={ PRODUCT_JETPACK_SEARCH }
 						siteId={ siteId }
 						currencyCode={ currencyCode }
-						getButtonURL={ createProductURL }
+						getButtonURL={ createCheckoutURL }
 						onCtaButtonClick={ onClick }
 					/>
 				</div>

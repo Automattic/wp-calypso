@@ -416,7 +416,7 @@ class P2Site extends Component {
 		const { isFetchingDefaultSuggestion } = this.state;
 
 		return (
-			<div class="p2-site__wordpress-domain-default-container">
+			<div className="p2-site__wordpress-domain-default-container">
 				<span
 					className="p2-site__wordpress-domain-default"
 					title={ site ? `https://${ site }.wordpress.com` : '' }

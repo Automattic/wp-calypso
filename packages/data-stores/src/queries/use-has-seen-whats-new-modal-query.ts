@@ -15,7 +15,7 @@ interface UpdateError {
 	error: string;
 }
 
-export const useHasSeenWhatsNewModalQuery = ( siteId: number | null ) => {
+export const useHasSeenWhatsNewModalQuery = ( siteId: number | null, isSimpleSite: boolean ) => {
 	const queryKey = 'has-seen-whats-new-modal';
 
 	const { data, isLoading } = useQuery< { has_seen_whats_new_modal: boolean } >(
@@ -26,7 +26,7 @@ export const useHasSeenWhatsNewModalQuery = ( siteId: number | null ) => {
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
-			enabled: !! siteId,
+			enabled: !! siteId && isSimpleSite,
 			refetchOnWindowFocus: false,
 		}
 	);

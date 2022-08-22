@@ -1,10 +1,10 @@
+import { ResponsiveToolbarGroup } from '@automattic/components';
 import page from 'page';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import ResponsiveToolbarGroup from './responsive-toolbar-group';
-import { useCategories } from './use-categories';
+import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
 
 export type Category = {
 	name: string;
@@ -15,34 +15,18 @@ export type Category = {
 	separator?: boolean;
 };
 
-const ALLOWED_CATEGORIES = [
-	'discover',
-	'analytics',
-	'booking',
-	'customer',
-	'design',
-	'donations',
-	'ecommerce',
-	'education',
-	'finance',
-	'marketing',
-	'seo',
-	'photo',
-	'social',
-	'widgets',
-	'email',
-	'security',
-	'shipping',
-	'posts',
-];
-
 const Categories = ( { selected }: { selected?: string } ) => {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
-	const categories = Object.values( useCategories( ALLOWED_CATEGORIES ) );
+	// We hide these special categories from the category selector
+	const displayCategories = ALLOWED_CATEGORIES.filter(
+		( v ) => [ 'paid', 'popular', 'featured' ].indexOf( v ) < 0
+	);
+
+	const categories = Object.values( useCategories( displayCategories ) );
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
 
@@ -62,7 +46,7 @@ const Categories = ( { selected }: { selected?: string } ) => {
 		page( url );
 	};
 
-	if ( selected && ! ALLOWED_CATEGORIES.includes( selected ) ) {
+	if ( selected && ! displayCategories.includes( selected ) ) {
 		return <div></div>;
 	}
 

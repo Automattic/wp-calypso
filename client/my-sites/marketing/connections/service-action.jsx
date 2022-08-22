@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -38,7 +38,6 @@ const SharingServiceAction = ( {
 		label = translate( 'Reconnecting…', {
 			context: 'Sharing: Publicize reconnect pending button label',
 		} );
-		warning = true;
 	} else if ( isConnecting ) {
 		label = translate( 'Connecting…', {
 			context: 'Sharing: Publicize connect pending button label',
@@ -51,14 +50,11 @@ const SharingServiceAction = ( {
 		} else {
 			label = translate( 'Disconnect', { context: 'Sharing: Publicize disconnect button label' } );
 		}
-		if ( 'must-disconnect' === status ) {
-			warning = true;
-		}
+		warning = true;
 	} else if ( 'reconnect' === status || 'refresh-failed' === status ) {
 		label = translate( 'Reconnect', {
 			context: 'Sharing: Publicize reconnect pending button label',
 		} );
-		warning = true;
 	} else {
 		label = translate( 'Connect', { context: 'Sharing: Publicize connect pending button label' } );
 	}
@@ -111,7 +107,10 @@ const SharingServiceAction = ( {
 
 	return (
 		<Button scary={ warning } compact onClick={ onClick } disabled={ isPending }>
-			{ label }
+			{ 'reconnect' === status || 'refresh-failed' === status || isRefreshing ? (
+				<Gridicon icon="notice-outline" size={ 16 } />
+			) : null }
+			<span>{ label }</span>
 		</Button>
 	);
 };

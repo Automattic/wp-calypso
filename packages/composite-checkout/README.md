@@ -97,6 +97,11 @@ The main wrapper component for Checkout. It has the following props.
 
 An element that will display a [CheckoutSubmitButton](#CheckoutSubmitButton) when placed inside a [CheckoutStepGroup](#CheckoutStepGroup).
 
+- `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
+- `submitButtonFooter: React.ReactNode`. Displays with the Checkout submit button.
+- `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
+- `validateForm?`: `() => Promise< boolean >`. A callback that will be called when the `onClick` event is triggered. If the callback is passed and its Promise resolves to a falsy value, the `onClick` handler will **not** be triggered. **No notification will be given to the user if this happens.**
+
 ### CheckoutCheckIcon
 
 An icon that is displayed for each complete step.
@@ -169,12 +174,6 @@ This component's props are:
 
 Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects. Should be a direct child of [Checkout](#Checkout).
 
-This component's props are:
-
-- `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
-- `submitButtonFooter: React.ReactNode`. Displays with the Checkout submit button.
-- `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
-
 ### CheckoutStepAreaWrapper
 
 A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the [CheckoutStepArea](#CheckoutStepArea) component. You shouldn't need to use this manually.
@@ -226,6 +225,7 @@ The props you can provide to this component are as follows.
 - `className?: string`. An optional className.
 - `disabled?: boolean`. The button will automatically be disabled if the [form status](#useFormStatus) is not `ready`, but you can disable it for other cases as well.
 - `onLoadError?: ( error: string ) => void`. A callback that will be called if the error boundary is triggered.
+- `validateForm?`: `() => Promise< boolean >`. A callback that will be called when the `onClick` event is triggered. If the callback is passed and its Promise resolves to a falsy value, the `onClick` handler will **not** be triggered. **No notification will be given to the user if this happens.**
 
 ### CheckoutSummaryArea
 

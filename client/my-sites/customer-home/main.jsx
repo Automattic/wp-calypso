@@ -2,8 +2,8 @@ import { Button } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
@@ -18,9 +18,9 @@ import { preventWidows } from 'calypso/lib/formatting';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
+import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
-import { successNotice } from 'calypso/state/notices/actions';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import {
@@ -37,31 +37,12 @@ const Home = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
-	noticeType,
 	sitePlanSlug,
 	isNew7DUser,
 } ) => {
 	const translate = useTranslate();
-	const reduxDispatch = useDispatch();
 
 	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
-
-	const shouldShowNotice = Boolean( canUserUseCustomerHome && layout && noticeType );
-	const lastShownNotice = useRef( null );
-	useEffect( () => {
-		if ( ! shouldShowNotice || lastShownNotice.current === noticeType ) {
-			return;
-		}
-
-		if ( noticeType === 'purchase-success' ) {
-			lastShownNotice.current = noticeType;
-			const successMessage = translate( 'Your purchase has been completed!' );
-			reduxDispatch( successNotice( successMessage ) );
-			return;
-		}
-
-		return;
-	}, [ shouldShowNotice, translate, reduxDispatch, noticeType ] );
 
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	useEffect( () => {
@@ -137,6 +118,7 @@ const Home = ( {
 			) : (
 				<>
 					<Primary cards={ layout.primary } />
+					<PluginsAnnouncementModal />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
 							<Secondary cards={ layout.secondary } />

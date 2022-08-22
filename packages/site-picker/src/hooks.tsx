@@ -2,6 +2,7 @@ import { focus } from '@wordpress/dom';
 import { useCallback, useEffect } from 'react';
 
 export const useArrowNavigation = (
+	enabled: boolean,
 	element: HTMLElement | null,
 	open: boolean,
 	onOpen: () => void
@@ -38,10 +39,12 @@ export const useArrowNavigation = (
 	);
 
 	useEffect( () => {
-		document.addEventListener( 'keydown', handleTrapFocus );
+		if ( enabled ) {
+			document.addEventListener( 'keydown', handleTrapFocus );
+		}
 
 		return () => {
 			document.removeEventListener( 'keydown', handleTrapFocus );
 		};
-	}, [ handleTrapFocus ] );
+	}, [ handleTrapFocus, enabled ] );
 };

@@ -21,6 +21,7 @@ import './style.scss';
 const IntentStep: Step = function IntentStep( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const isEnglishLocale = useIsEnglishLocale();
+	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const translate = useTranslate();
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
@@ -53,7 +54,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 			goNext={ goNext }
 			skipLabelText={ translate( 'Skip to dashboard' ) }
 			skipButtonAlign={ 'top' }
-			hideBack={ ! ( isEnabled( 'signup/site-vertical-step' ) && isEnglishLocale ) }
+			hideBack={ ! ( isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM ) }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader

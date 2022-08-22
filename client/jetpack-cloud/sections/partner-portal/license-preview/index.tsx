@@ -77,7 +77,7 @@ export default function LicensePreview( {
 				'/partner-portal/payment-methods/add'
 			);
 			const errorMessage = translate(
-				'We could not find a valid payment method.{{br/}} ' +
+				'A primary payment method is required.{{br/}} ' +
 					'{{a}}Try adding a new payment method{{/a}} or contact support.',
 				{
 					components: {

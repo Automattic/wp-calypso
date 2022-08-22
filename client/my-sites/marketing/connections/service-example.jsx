@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 
 const SharingServiceExample = ( { image, label, single } ) => (
 	<div className={ classNames( 'sharing-service-example', { 'is-single': single } ) }>
-		<div className="sharing-service-example-screenshot">
-			<img src={ image.src } alt={ image.alt } />
-		</div>
-		<div className="sharing-service-example-screenshot-label">{ label }</div>
+		{ image ? (
+			<div className="service-example__screenshot">
+				<img src={ image.src } alt={ image.alt } />
+			</div>
+		) : null }
+		<div className="service-example__screenshot-label">{ label }</div>
 	</div>
 );
 

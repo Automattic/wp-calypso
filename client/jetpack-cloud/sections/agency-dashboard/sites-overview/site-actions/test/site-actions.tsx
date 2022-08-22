@@ -22,6 +22,7 @@ describe( '<SiteActions>', () => {
 			latest_backup_status: '',
 			is_connection_healthy: true,
 			awaiting_plugin_updates: [],
+			is_favorite: false,
 		};
 		const site: SiteNode = {
 			value: siteObj,

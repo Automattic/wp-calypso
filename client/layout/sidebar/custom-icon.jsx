@@ -6,7 +6,7 @@
  *
  *   Purpose: To display a custom icon in the sidebar when using a
  *   source other than grid icons or material icons.
- **/
+ */
 
 const SidebarCustomIcon = ( { icon, ...rest } ) => {
 	if ( ! icon ) {

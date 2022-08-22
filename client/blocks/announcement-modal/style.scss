@@ -28,7 +28,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 		}
 
 		@media ( min-width: $modal-breakpoint ) {
-			width: 740px;
+			width: 720px;
 			max-height: 80vh;
 		}
 
@@ -79,7 +79,6 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	@media ( min-width: $modal-breakpoint ) {
 		flex-direction: row;
 		justify-content: flex-start;
-		min-height: $modal-content-min-height;
 		height: 100%;
 	}
 
@@ -98,7 +97,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .announcement-modal__visual {
 	@media ( min-width: $modal-breakpoint ) {
 		flex: 1 auto;
-		min-width: 355px;
+		min-width: 310px;
 	}
 }
 
@@ -143,17 +142,11 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	@include onboarding-font-recoleta;
 	color: var( --studio-gray-90 );
 	font-size: 24px;
-
-	h2 {
-		line-height: 1.19;
-	}
+	line-height: 1.19;
+	margin: 12px 0;
 
 	@media ( min-width: $modal-breakpoint ) {
-		font-size: 24px;
-
-		h2 {
-			margin: 12px 0;
-		}
+		font-size: 32px;
 	}
 }
 

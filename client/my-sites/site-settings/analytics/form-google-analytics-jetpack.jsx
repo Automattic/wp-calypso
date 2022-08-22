@@ -75,7 +75,11 @@ const GoogleAnalyticsJetpackForm = ( {
 
 	const renderForm = () => {
 		return (
-			<form id="analytics" onSubmit={ handleSubmitForm }>
+			<form
+				aria-label="Google Analytics Site Settings"
+				id="analytics"
+				onSubmit={ handleSubmitForm }
+			>
 				<QueryJetpackModules siteId={ siteId } />
 
 				<SettingsSectionHeader
