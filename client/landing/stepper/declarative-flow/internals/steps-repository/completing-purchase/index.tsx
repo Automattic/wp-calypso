@@ -80,13 +80,15 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 			setProgress( 0.5 );
 			setProgressTitle( __( 'Creating your Link in Bio' ) );
 
-			await wait( 1000 );
+			await wait( 1500 );
 
 			setProgress( 0.8 );
 			setProgressTitle( __( 'Preparing Next Steps' ) );
+			await wait( 1500 );
 
 			await postSiteLogo();
 			setProgress( 1 );
+			await wait( 1500 );
 			return { destination: 'launchpad' };
 		} );
 	};

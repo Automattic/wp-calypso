@@ -38,6 +38,7 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	margin: 20px 0;
 	background-position: contain;
 	background-repeat: no-repeat;
+	cursor: pointer;
 
 	opacity: 0.5;
 	filter: blur( 2px );
@@ -81,6 +82,7 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 
 	&:hover {
 		opacity: 1;
+		fill: var( --studio-blue-50 );
 	}
 
 	@include break-small {

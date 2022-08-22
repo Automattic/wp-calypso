@@ -1,7 +1,8 @@
 import type { SitePlan } from '../sites/selectors/get-site-plan';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { AppState } from 'calypso/types';
 
-const EMPTY_SITES: SitesItem = Object.freeze( {} );
+const EMPTY_SITES = Object.freeze( {} );
 
 export interface SitesItem {
 	ID?: number;
@@ -27,6 +28,6 @@ export interface SitesItem {
 /**
  * Returns site items object or empty object.
  */
-export default function getSitesItems( state: AppState ): Record< number, SitesItem > {
+export default function getSitesItems( state: AppState ): Record< number, SiteDetails > {
 	return state.sites.items || EMPTY_SITES;
 }

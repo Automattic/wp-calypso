@@ -22,6 +22,7 @@ import {
 } from './internals/types';
 import pluginBundleSteps from './plugin-bundle-data';
 import type { StepPath } from './internals/steps-repository';
+import type { BundledPlugin } from './plugin-bundle-data';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const SiteIntent = Onboard.SiteIntent;
@@ -30,13 +31,15 @@ export const pluginBundleFlow: Flow = {
 	name: 'plugin-bundle',
 
 	useSteps() {
+		const siteSlugParam = useSiteSlugParam();
+		const pluginSlug = useSelect( ( select ) =>
+			select( ONBOARD_STORE ).getBundledPluginSlug( siteSlugParam || '' )
+		) as BundledPlugin;
+
 		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
 			// TODO - Need to handle this better
 			return [];
 		}
-
-		// TODO - This needs to come from somewhere else eventually. Maybe a query string parameter but data-store might be better
-		const pluginSlug = 'woocommerce';
 
 		if ( ! pluginSlug || ! pluginBundleSteps.hasOwnProperty( pluginSlug ) ) {
 			// TODO - Need to handle this better
