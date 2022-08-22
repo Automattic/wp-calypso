@@ -45,7 +45,7 @@ export const Connections = ( { siteId, translate } ) => {
 			/>
 			<SharingServicesGroup
 				type="publicize"
-				title={ translate( 'Jetpack Social posts {{learnMoreLink/}}', {
+				title={ translate( 'Share posts with Jetpack Social {{learnMoreLink/}}', {
 					components: { learnMoreLink },
 				} ) }
 			/>
