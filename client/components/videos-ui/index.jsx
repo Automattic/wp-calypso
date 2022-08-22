@@ -112,16 +112,6 @@ const VideosUi = ( {
 				translate( 'Set yourself up for blogging success' ),
 			];
 			break;
-		case COURSE_SLUGS.PAYMENTS_FEATURES:
-			headerTitle = translate( 'Add Payments Features' );
-			headerSubtitle = translate( 'Make Money on Your Website' );
-			headerSummary = [
-				translate( 'Making Money with Payments Features' ),
-				translate( 'Premium Membership Blog' ),
-				translate( 'Paid Subscription Newsletter' ),
-				translate( 'Run a Crowdfunding Campaign' ),
-			];
-			break;
 	}
 
 	return (
