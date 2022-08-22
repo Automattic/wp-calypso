@@ -7,7 +7,10 @@ import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-plugin';
-import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import {
+	isPluginActionInProgress,
+	getPluginOnSite,
+} from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import type { Plugin } from '../types';
@@ -59,6 +62,10 @@ export default function PluginRowFormatter( {
 		canUpdate = autoupdate;
 	}
 
+	const pluginOnSite = useSelector(
+		( state ) => selectedSite && getPluginOnSite( state, selectedSite.ID, item.slug )
+	);
+
 	switch ( columnKey ) {
 		case 'site-name':
 			return selectedSite?.domain;
@@ -100,7 +107,7 @@ export default function PluginRowFormatter( {
 					<div className="plugin-row-formatter__toggle">
 						<PluginActivateToggle
 							hideLabel={ ! isSmallScreen }
-							plugin={ item }
+							plugin={ pluginOnSite }
 							site={ selectedSite }
 						/>
 					</div>
@@ -112,7 +119,7 @@ export default function PluginRowFormatter( {
 					<div className="plugin-row-formatter__toggle">
 						<PluginAutoupdateToggle
 							hideLabel={ ! isSmallScreen }
-							plugin={ item }
+							plugin={ pluginOnSite }
 							site={ selectedSite }
 							wporg={ !! item.wporg }
 							isMarketplaceProduct={ isMarketplaceProduct( state, item?.slug ) }
