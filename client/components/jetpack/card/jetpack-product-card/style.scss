@@ -249,3 +249,15 @@
 		text-decoration: underline;
 	}
 }
+
+button.jetpack-product-card__learn-more {
+	color: var( --studio-gray-100 );
+	text-decoration: underline;
+	cursor: pointer;
+	font-size: 0.875rem;
+	line-height: 24px;
+	letter-spacing: -0.02em;
+	&:hover {
+		text-decoration: none;
+	}
+}

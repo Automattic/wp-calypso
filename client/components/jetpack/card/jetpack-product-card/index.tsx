@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { createElement, ReactNode, useEffect, useRef } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import HintButton from 'calypso/my-sites/plans/jetpack-plans/product-lightbox/hint-button';
 import DisplayPrice from './display-price';
 import JetpackProductCardFeatures from './features';
 import type {
@@ -226,7 +225,32 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 					</Button>
 				) }
 
-				{ description && <p className="jetpack-product-card__description">{ description }</p> }
+				{ description && (
+					<p className="jetpack-product-card__description">
+						{ description }
+						{ isEnabled( 'jetpack/pricing-page-product-lightbox' ) &&
+							! isFree &&
+							! isDisabled &&
+							! isOwned &&
+							! isDeprecated &&
+							! isIncludedInPlan && (
+								<>
+									<br />
+									<Button
+										className="jetpack-product-card__learn-more"
+										onClick={ onLearnMoreClick }
+										plain
+									>
+										{ translate( 'More about %(productName)s', {
+											args: {
+												productName: item.displayName,
+											},
+										} ) }
+									</Button>
+								</>
+							) }
+					</p>
+				) }
 				{ item.features && item.features.items.length > 0 && (
 					<JetpackProductCardFeatures
 						productSlug={ item.productSlug }
@@ -236,9 +260,6 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				) }
 				{ item.disclaimer && (
 					<span className="jetpack-product-card__disclaimer">{ item.disclaimer }</span>
-				) }
-				{ isEnabled( 'jetpack/pricing-page-product-lightbox' ) && (
-					<HintButton onClick={ onLearnMoreClick } />
 				) }
 			</div>
 		</div>
