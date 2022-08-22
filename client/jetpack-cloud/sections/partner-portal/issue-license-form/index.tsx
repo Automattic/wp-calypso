@@ -61,11 +61,6 @@ export default function IssueLicenseForm( {
 			/>
 		) );
 
-	const onIssueLicense = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_selection_submit', { product } ) );
-		issueLicense();
-	}, [ dispatch, product, issueLicense ] );
-
 	const selectedSiteDomain = selectedSite?.domain;
 
 	return (
@@ -94,7 +89,7 @@ export default function IssueLicenseForm( {
 								className="issue-license-form__select-license"
 								disabled={ ! product }
 								busy={ isLoading }
-								onClick={ onIssueLicense }
+								onClick={ issueLicense }
 							>
 								{ translate( 'Select License' ) }
 							</Button>
