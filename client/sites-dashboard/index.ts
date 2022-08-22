@@ -5,9 +5,9 @@ import { sanitizeQueryParameters, sitesDashboard } from './controller';
 
 export default function () {
 	if ( ! isEnabled( 'build/sites-dashboard' ) ) {
-		page( '/sites-dashboard', '/sites' );
+		page( '/sites', '/home' );
 		return;
 	}
 
-	page( '/sites-dashboard', sanitizeQueryParameters, sitesDashboard, makeLayout, clientRender );
+	page( '/sites', sanitizeQueryParameters, sitesDashboard, makeLayout, clientRender );
 }
