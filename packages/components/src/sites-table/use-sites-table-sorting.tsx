@@ -1,7 +1,10 @@
 import { useMemo } from 'react';
-import type { SiteDetails } from '@automattic/data-stores';
 
-export type SiteDetailsForSorting = Partial< Pick< SiteDetails, 'options' > >;
+export interface SiteDetailsForSorting {
+	options?: {
+		updated_at?: string;
+	};
+}
 
 interface SitesTableSortOptions {
 	sortKey?: string;
