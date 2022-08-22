@@ -31,6 +31,7 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	line-height: 20px;
 	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
+	white-space: nowrap;
 
 	@media only screen and ( max-width: 781px ) {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
