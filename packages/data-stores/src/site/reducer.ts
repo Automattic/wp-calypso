@@ -391,7 +391,7 @@ export const atomicSoftwareInstallStatus: Reducer<
 	return state;
 };
 
-const bundledPluginSlug: Reducer< { [ key: string ]: string | undefined }, OnboardAction > = (
+const bundledPluginSlug: Reducer< { [ key: string ]: string | undefined }, Action > = (
 	state = {},
 	action
 ) => {
@@ -401,7 +401,7 @@ const bundledPluginSlug: Reducer< { [ key: string ]: string | undefined }, Onboa
 			[ action.siteSlug ]: action.pluginSlug,
 		};
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'RESET_SITE_STORE' ) {
 		return {};
 	}
 	return state;
