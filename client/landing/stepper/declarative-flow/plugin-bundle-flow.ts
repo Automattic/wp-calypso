@@ -32,11 +32,22 @@ export const pluginBundleFlow: Flow = {
 
 	useSteps() {
 		const siteSlugParam = useSiteSlugParam();
-		const pluginSlug = useSelect( ( select ) =>
+		let pluginSlug = useSelect( ( select ) =>
 			select( ONBOARD_STORE ).getBundledPluginSlug( siteSlugParam || '' )
 		) as BundledPlugin;
 
-		console.log( { siteSlugParam, pluginSlug } );
+		const steps: StepPath[] = [ 'getCurrentBundledPlugins' ];
+		let bundlePluginSteps: StepPath[] = [];
+		// Temp for testing baxter
+		if ( pluginSlug === 'test-plugin' ) {
+			pluginSlug = 'woocommerce';
+		}
+		if ( pluginSlug ) {
+			bundlePluginSteps = pluginBundleSteps[ pluginSlug ] as StepPath[];
+		}
+		console.log( { siteSlugParam, pluginSlug, bundlePluginSteps } );
+		return steps.concat( bundlePluginSteps );
+		return [ 'getCurrentBundledPlugins' ];
 		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
 			// TODO - Need to handle this better
 			return [];

@@ -212,6 +212,7 @@ export const siteSetupFlow: Flow = {
 							bundledPluginSlug: theme_plugin[ 0 ].slug,
 						} );
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
+						//return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
 						// return exitFlow( getStepUrl( 'plugin-bundle', false, false, false ) );
 					}
 
