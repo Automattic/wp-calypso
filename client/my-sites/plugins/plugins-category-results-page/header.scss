@@ -2,7 +2,9 @@
 @import '@wordpress/base-styles/mixins';
 
 .plugin-category-results-header {
-	padding: 48px 16px 0;
+	position: relative;
+	top: 36px;
+	padding: 12px 16px 0;
 }
 
 .plugin-category-results-header__title {
