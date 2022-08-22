@@ -1,33 +1,74 @@
 /**
  * @jest-environment jsdom
  */
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { EditGravatar } from 'calypso/blocks/edit-gravatar';
 import ImageEditor from 'calypso/blocks/image-editor';
-import DropZone from 'calypso/components/drop-zone';
-import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 import FilePicker from 'calypso/components/file-picker';
-import Gravatar from 'calypso/components/gravatar';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
-jest.mock( 'calypso/lib/oauth-token', () => ( {
-	getToken: () => 'bearerToken',
+jest.mock( 'calypso/components/email-verification/email-verification-dialog', () => () => (
+	<div data-testid="verify-email-dialog" />
+) );
+jest.mock( 'calypso/components/drop-zone', () => ( { children } ) => (
+	<div data-testid="dropzone">{ children }</div>
+) );
+jest.mock( 'calypso/blocks/image-editor', () =>
+	jest.fn( ( { onDone } ) => (
+		<div data-testid="image-editor">
+			<button data-testid="image-editor-done" onClick={ () => onDone() }>
+				Done
+			</button>
+		</div>
+	) )
+);
+jest.mock( 'calypso/components/gravatar', () => () => <div data-testid="gravatar" /> );
+jest.mock( 'calypso/components/file-picker', () =>
+	jest.fn( ( { onPick, children } ) => (
+		<div data-testid="file-picker">
+			{ children }
+			<input
+				data-testid="file-picker-input"
+				type="file"
+				onChange={ ( e ) => {
+					onPick( e.target.files );
+				} }
+			/>
+		</div>
+	) )
+);
+jest.mock( '@automattic/components', () => ( {
+	__esModule: true,
+	Dialog: ( { children } ) => <div>{ children }</div>,
+	Gridicon: () => <div>gridicon</div>,
+	Spinner: () => <div>spinner</div>,
+	Button: () => <div>button</div>,
 } ) );
+
+const render = ( el, options ) => renderWithProvider( el, { ...options } );
 
 const noop = () => {};
 
+const props = {
+	translate: ( i ) => i,
+	user: {
+		email_verified: false,
+	},
+	recordClickButtonEvent: noop,
+	recordReceiveImageEvent: noop,
+	resetAllImageEditorState: noop,
+};
+
 describe( 'EditGravatar', () => {
 	let originalUrl;
-	const user = {
-		email_verified: false,
-	};
 
 	beforeAll( () => {
 		originalUrl = global.URL;
 		global.URL = {
-			revokeObjectURL: jest.fn(),
-			createObjectURL: jest.fn(),
+			revokeObjectURL: noop,
+			createObjectURL: noop,
 		};
 	} );
 
@@ -37,172 +78,147 @@ describe( 'EditGravatar', () => {
 
 	describe( 'component rendering', () => {
 		test( 'displays a Gravatar', () => {
-			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
-			expect( wrapper.find( Gravatar ).length ).toEqual( 1 );
+			render( <EditGravatar { ...props } /> );
+			expect( screen.queryByTestId( 'gravatar' ) ).toBeVisible();
 		} );
 
 		test( 'contains a file picker that accepts images', () => {
-			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
-			const filePicker = wrapper.find( FilePicker );
-			expect( filePicker.length ).toEqual( 1 );
-			expect( filePicker.prop( 'accept' ) ).toEqual( 'image/*' );
+			render( <EditGravatar { ...props } /> );
+			expect( screen.queryByTestId( 'file-picker' ) ).toBeVisible();
+			expect( FilePicker ).toHaveBeenCalledWith(
+				expect.objectContaining( { accept: 'image/*' } ),
+				expect.anything()
+			);
 		} );
 
 		test( 'does not display the image editor by default', () => {
-			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
-			expect( wrapper.find( ImageEditor ).length ).toEqual( 0 );
+			render( <EditGravatar { ...props } /> );
+			expect( screen.queryByTestId( 'image-editor' ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'indicates when Gravatar is hidden', () => {
-			const wrapper = shallow(
-				<EditGravatar translate={ noop } user={ user } isGravatarProfileHidden={ true } />
-			);
-			expect( wrapper.find( '.edit-gravatar .edit-gravatar__gravatar-is-hidden' ) ).toHaveLength(
-				1
-			);
+			render( <EditGravatar { ...props } isGravatarProfileHidden={ true } /> );
+			expect( screen.queryByText( /Your profile photo is hidden/ ) ).toBeInTheDocument();
 		} );
 
 		describe( 'drag and drop', () => {
 			test( 'does not contain a drop zone for unverified users', () => {
-				const wrapper = shallow(
-					<EditGravatar
-						translate={ noop }
-						user={ {
-							email_verified: false,
-						} }
-					/>
-				);
-				expect( wrapper.find( DropZone ) ).toHaveLength( 0 );
+				render( <EditGravatar { ...props } /> );
+				expect( screen.queryByTestId( 'dropzone' ) ).not.toBeInTheDocument();
 			} );
 
 			test( 'contains a drop zone for verified users', () => {
-				const wrapper = shallow(
-					<EditGravatar
-						translate={ noop }
-						user={ {
-							email_verified: true,
-						} }
-					/>
-				);
-				expect( wrapper.find( DropZone ) ).toHaveLength( 1 );
+				render( <EditGravatar { ...props } user={ { email_verified: true } } /> );
+				expect( screen.queryByTestId( 'dropzone' ) ).toBeVisible();
 			} );
 		} );
 	} );
 
 	describe( 'getting a file from user', () => {
 		describe( 'accepted file type', () => {
-			test( 'displays the image editor with square allowed aspect ratio', () => {
-				const wrapper = shallow(
-					<EditGravatar translate={ noop } user={ user } recordReceiveImageEvent={ noop } />
+			test( 'displays the image editor with square allowed aspect ratio', async () => {
+				const user = userEvent.setup();
+				render( <EditGravatar { ...props } /> );
+				const files = [ { name: 'filename.png' } ];
+				const fileInput = screen.queryByTestId( 'file-picker-input' );
+
+				await user.upload( fileInput, files );
+
+				expect( screen.queryByTestId( 'image-editor' ) ).toBeVisible();
+				expect( ImageEditor ).toHaveBeenCalledWith(
+					expect.objectContaining( { allowedAspectRatios: [ AspectRatios.ASPECT_1X1 ] } ),
+					expect.anything()
 				);
-				const files = [
-					{
-						name: 'filename.png',
-					},
-				];
-
-				wrapper.instance().onReceiveFile( files );
-
-				const imageEditor = wrapper.update().find( ImageEditor );
-				expect( imageEditor.length ).toEqual( 1 );
-
-				const aspectRatioResult = imageEditor.prop( 'allowedAspectRatios' );
-				expect( aspectRatioResult ).toEqual( [ AspectRatios.ASPECT_1X1 ] );
 			} );
 		} );
 
 		describe( 'bad file type', () => {
-			test( 'does not display editor, and calls error action creator', () => {
+			test( 'does not display editor, and calls error action creator', async () => {
+				const user = userEvent.setup();
 				const receiveGravatarImageFailedSpy = jest.fn();
-				const wrapper = shallow(
-					<EditGravatar
-						receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
-						translate={ noop }
-						user={ user }
-						recordReceiveImageEvent={ noop }
-					/>
+				render(
+					<EditGravatar { ...props } receiveGravatarImageFailed={ receiveGravatarImageFailedSpy } />
 				);
-				const files = [
-					{
-						name: 'filename.tiff',
-					},
-				];
+				const files = [ { name: 'filename.tiff' } ];
+				const fileInput = screen.queryByTestId( 'file-picker-input' );
 
-				wrapper.instance().onReceiveFile( files );
+				await user.upload( fileInput, files );
 
-				expect( wrapper.update().find( ImageEditor ).length ).toEqual( 0 );
+				expect( screen.queryByTestId( 'image-editor' ) ).not.toBeInTheDocument();
 				expect( receiveGravatarImageFailedSpy ).toHaveBeenCalledTimes( 1 );
 			} );
 		} );
 	} );
 
 	describe( 'after editing image', () => {
-		const imageEditorProps = {
-			resetAllImageEditorState: noop,
-		};
-		const files = [
-			{
-				name: 'filename.png',
-			},
-		];
+		const files = [ { name: 'filename.png' } ];
 
-		test( 'given no error, hides image editor and calls upload gravatar action creator', () => {
+		test( 'given no error, hides image editor and calls upload gravatar action creator', async () => {
+			const user = userEvent.setup();
 			const receiveGravatarImageFailedSpy = jest.fn();
 			const uploadGravatarSpy = jest.fn();
-			const wrapper = shallow(
+			render(
 				<EditGravatar
+					{ ...props }
 					receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
-					resetAllImageEditorState={ noop }
-					translate={ noop }
 					uploadGravatar={ uploadGravatarSpy }
-					user={ user }
-					recordReceiveImageEvent={ noop }
 				/>
 			);
+			const fileInput = screen.queryByTestId( 'file-picker-input' );
+			await user.upload( fileInput, files );
 
-			wrapper.instance().onReceiveFile( files );
-			wrapper.instance().onImageEditorDone( null, 'image', imageEditorProps );
+			expect( screen.queryByTestId( 'image-editor' ) ).toBeVisible();
+			await user.click( screen.getByTestId( 'image-editor-done' ) );
 
-			expect( wrapper.update().find( ImageEditor ).length ).toEqual( 0 );
+			expect( screen.queryByTestId( 'image-editor' ) ).not.toBeInTheDocument();
 			expect( uploadGravatarSpy ).toHaveBeenCalledTimes( 1 );
-			expect( receiveGravatarImageFailedSpy.mock.calls ).toHaveLength( 0 );
+			expect( receiveGravatarImageFailedSpy ).not.toHaveBeenCalled();
 		} );
 
-		test( 'given an error, hides image editor and calls error notice action creator', () => {
-			const error = new Error();
+		test( 'given an error, hides image editor and calls error notice action creator', async () => {
+			const user = userEvent.setup();
 			const receiveGravatarImageFailedSpy = jest.fn();
 			const uploadGravatarSpy = jest.fn();
-			const wrapper = shallow(
+			render(
 				<EditGravatar
+					{ ...props }
 					receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
-					resetAllImageEditorState={ noop }
-					translate={ noop }
 					uploadGravatar={ uploadGravatarSpy }
-					user={ user }
-					recordReceiveImageEvent={ noop }
 				/>
 			);
 
-			wrapper.instance().onReceiveFile( files );
-			wrapper.instance().onImageEditorDone( error, 'image', imageEditorProps );
+			ImageEditor.mockImplementationOnce( ( { onDone } ) => (
+				<div data-testid="image-editor">
+					<button
+						data-testid="image-editor-done"
+						onClick={ () => onDone( 'some arbitrary error occured' ) }
+					>
+						Done
+					</button>
+				</div>
+			) );
 
-			expect( wrapper.update().find( ImageEditor ).length ).toEqual( 0 );
+			const fileInput = screen.queryByTestId( 'file-picker-input' );
+			await user.upload( fileInput, files );
+
+			expect( screen.queryByTestId( 'image-editor' ) ).toBeVisible();
+			await user.click( screen.getByTestId( 'image-editor-done' ) );
+
+			expect( screen.queryByTestId( 'image-editor' ) ).not.toBeInTheDocument();
 			expect( receiveGravatarImageFailedSpy ).toHaveBeenCalledTimes( 1 );
-			expect( uploadGravatarSpy.mock.calls ).toHaveLength( 0 );
+			expect( uploadGravatarSpy ).not.toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'unverified user', () => {
-		test( 'shows email verification dialog when clicked', () => {
-			const wrapper = shallow(
-				<EditGravatar translate={ noop } user={ user } recordClickButtonEvent={ noop } />
-			);
-			// Enzyme requires simulate() to be called directly on the element with the click handler
-			const clickableWrapper = wrapper.find( '.edit-gravatar > div' ).first();
+		test( 'shows email verification dialog when clicked', async () => {
+			const user = userEvent.setup();
+			const { container } = render( <EditGravatar { ...props } /> );
 
-			clickableWrapper.simulate( 'click' );
-			wrapper.update(); // make sure the state has been updated
-			expect( wrapper.find( VerifyEmailDialog ) ).toHaveLength( 1 );
+			expect( screen.queryByTestId( 'verify-email-dialog' ) ).not.toBeInTheDocument();
+
+			await user.click( container.firstChild.firstChild );
+			expect( screen.queryByTestId( 'verify-email-dialog' ) ).toBeVisible();
 		} );
 	} );
 } );
