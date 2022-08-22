@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import PluginNotices from 'calypso/my-sites/plugins/notices';
 import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginAvailableOnSitesList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details/plugin-available-on-sites-list';
@@ -72,6 +73,11 @@ export default function PluginDetailsV2( {
 				className="plugin-details__header"
 				compactBreadcrumb={ false }
 				navigationItems={ breadcrumbs }
+			/>
+			<PluginNotices
+				pluginId={ fullPlugin.id }
+				sites={ sitesWithPlugins }
+				plugins={ [ fullPlugin ] }
 			/>
 			<div className="plugin-details__page legacy">
 				<div className="plugin-details__layout plugin-details__top-section">
