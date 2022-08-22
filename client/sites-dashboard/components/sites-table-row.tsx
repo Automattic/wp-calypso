@@ -111,7 +111,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					subtitle={
 						<ListTileSubtitle>
-							<SiteUrl href={ siteUrl } className={ css( { lineHeight: 1 } ) } title={ siteUrl }>
+							<SiteUrl href={ siteUrl } title={ siteUrl }>
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</SiteUrl>
 						</ListTileSubtitle>

@@ -75,7 +75,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 				</>
 			}
 			secondary={
-				<SiteUrl href={ siteUrl } title={ siteUrl } className={ css( { lineHeight: 1 } ) }>
+				<SiteUrl href={ siteUrl } title={ siteUrl }>
 					<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 				</SiteUrl>
 			}
