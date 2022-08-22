@@ -43,7 +43,7 @@ const VideosUi = ( {
 		: [
 				translate( 'Learn the basics of blogging' ),
 				translate( 'Familiarize yourself with WordPress' ),
-				translate( 'Familiarize yourself with WordPress' ),
+				translate( 'Upskill and save hours' ),
 				translate( 'Set yourself up for blogging success' ),
 		  ];
 
