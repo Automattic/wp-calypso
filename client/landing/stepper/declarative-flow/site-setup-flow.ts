@@ -24,7 +24,6 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-//import { getStepUrl } from 'calypso/signup/utils';
 import type { StepPath } from './internals/steps-repository';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
@@ -209,7 +208,6 @@ export const siteSetupFlow: Flow = {
 					) {
 						setBundledPluginSlug( siteSlug, theme_plugin[ 0 ].slug ); // only install first plugin
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
-						// return exitFlow( getStepUrl( 'plugin-bundle', false, false, false ) );
 					}
 
 					// We know this theme doesn't have a plugin bundled, so clear it in the store
