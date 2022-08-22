@@ -32,8 +32,6 @@ const ellipsis = css( {
 	},
 } );
 
-const siteUrlClassName = css( { display: 'flex', alignItems: 'center' } );
-
 interface SitesGridItemProps {
 	site: SiteExcerptData;
 }
@@ -77,7 +75,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 				</>
 			}
 			secondary={
-				<SiteUrl href={ siteUrl } title={ siteUrl } className={ siteUrlClassName }>
+				<SiteUrl href={ siteUrl } title={ siteUrl }>
 					<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 				</SiteUrl>
 			}

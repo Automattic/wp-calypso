@@ -73,8 +73,6 @@ const SitePlanIcon = styled.div`
 	margin-right: 6px;
 `;
 
-const siteUrlClassName = css( { display: 'flex', alignItems: 'center' } );
-
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
@@ -112,7 +110,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					subtitle={
 						<ListTileSubtitle>
-							<SiteUrl href={ siteUrl } className={ siteUrlClassName } title={ siteUrl }>
+							<SiteUrl href={ siteUrl } title={ siteUrl }>
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</SiteUrl>
 						</ListTileSubtitle>
