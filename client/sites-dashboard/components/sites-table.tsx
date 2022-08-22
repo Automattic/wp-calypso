@@ -33,7 +33,7 @@ const THead = styled.thead< { top: number } >( ( { top } ) => ( {
 } ) );
 
 const headerShadow: React.CSSProperties = {
-	boxShadow: '0 0 13px -9px #000',
+	boxShadow: '0 0 13px -9px rgba(0, 0, 0, 0.45)',
 	clipPath: 'inset( 0 0 -10px 0 )',
 };
 
