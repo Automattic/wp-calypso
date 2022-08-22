@@ -125,7 +125,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
 					) }
-					{ site.plan.product_name_short }
+					{ site.plan?.product_name_short }
 				</SitePlan>
 			</Column>
 			<Column mobileHidden>
