@@ -13,27 +13,12 @@ import {
 } from './controller';
 
 export default function () {
-	page(
-		'/plugins/setup',
-		scrollTopIfNoHash,
-		siteSelection,
-		renderProvisionPlugins,
-		makeLayout,
-		clientRender
-	);
+	page( '/plugins/setup', siteSelection, renderProvisionPlugins, makeLayout, clientRender );
 
-	page(
-		'/plugins/setup/:site',
-		scrollTopIfNoHash,
-		siteSelection,
-		renderProvisionPlugins,
-		makeLayout,
-		clientRender
-	);
+	page( '/plugins/setup/:site', siteSelection, renderProvisionPlugins, makeLayout, clientRender );
 
 	page(
 		'/plugins/browse/:category/:site?',
-		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
 		browsePlugins,
@@ -41,40 +26,15 @@ export default function () {
 		clientRender
 	);
 
-	page( '/plugins/upload', scrollTopIfNoHash, siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/plugins/upload/:site_id',
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		upload,
-		makeLayout,
-		clientRender
-	);
+	page( '/plugins/upload', siteSelection, sites, makeLayout, clientRender );
+	page( '/plugins/upload/:site_id', siteSelection, navigation, upload, makeLayout, clientRender );
 
-	page(
-		'/plugins',
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		browsePlugins,
-		makeLayout,
-		clientRender
-	);
+	page( '/plugins', siteSelection, navigation, browsePlugins, makeLayout, clientRender );
 
-	page(
-		'/plugins/manage/:site?',
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		plugins,
-		makeLayout,
-		clientRender
-	);
+	page( '/plugins/manage/:site?', siteSelection, navigation, plugins, makeLayout, clientRender );
 
 	page(
 		'/plugins/:pluginFilter(active|inactive|updates)/:site_id?',
-		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
 		jetpackCanUpdate,
@@ -95,7 +55,6 @@ export default function () {
 
 	page(
 		'/plugins/:plugin/eligibility/:site_id',
-		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
 		renderPluginWarnings,

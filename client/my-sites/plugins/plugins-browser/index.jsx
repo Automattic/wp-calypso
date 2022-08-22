@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -48,6 +48,16 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
 };
 
 const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader } ) => {
+	useEffect( () => {
+		switch ( category ) {
+			// Scroll back to top if user is coming from "Discover".
+			case 'popular':
+			case 'featured':
+			case 'paid':
+				window.scroll( 0, 0 );
+		}
+	}, [ category ] );
+
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,

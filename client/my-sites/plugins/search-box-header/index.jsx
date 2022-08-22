@@ -7,6 +7,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import './style.scss';
 
 function pageToSearch( s ) {
+	window.scroll( 0, 0 );
 	setQueryArgs( '' !== s ? { s } : {} );
 }
 
