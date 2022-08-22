@@ -5,7 +5,7 @@ import VideosUi from 'calypso/components/videos-ui';
 import ModalFooterBar from 'calypso/components/videos-ui/modal-footer-bar';
 import ModalHeaderBar from 'calypso/components/videos-ui/modal-header-bar';
 import { COURSE_SLUGS } from 'calypso/data/courses';
-import './style.scss';
+import '../blogging-quick-start/style.scss';
 
 const PaymentsFeaturesModal = ( props ) => {
 	const { isVisible = false, onClose = () => {} } = props;
@@ -20,7 +20,7 @@ const PaymentsFeaturesModal = ( props ) => {
 
 	return (
 		isVisible && (
-			<BlankCanvas className={ 'payments-features-modal' }>
+			<BlankCanvas className={ 'blogging-quick-start-modal' }>
 				<BlankCanvas.Content>
 					<VideosUi
 						courseSlug={ COURSE_SLUGS.PAYMENTS_FEATURES }
@@ -31,9 +31,9 @@ const PaymentsFeaturesModal = ( props ) => {
 							<ModalFooterBar onBackClick={ onClose } { ...footerProps } />
 						) }
 						areVideosTranslated={ false }
-						title={ translate( 'Add Payments Features to Your Site' ) }
-						subtitle={ translate( 'Make Money' ) }
-						options={ [
+						headerTitle={ translate( 'Add Payments Features' ) }
+						headerSubtitle={ translate( 'Make Money on Your Website' ) }
+						headerOptionsList={ [
 							translate( 'Making Money with Payments Features' ),
 							translate( 'Premium Membership Blog' ),
 							translate( 'Paid Subscription Newsletter' ),
