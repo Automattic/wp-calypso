@@ -31,7 +31,6 @@ import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-q
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
 import type { ImporterCompType } from './types';
-import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 interface Props {
 	importer: Importer;
@@ -133,7 +132,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		function renderStepContent() {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
-			} else if ( ! siteSlug ) {
+			} else if ( ! siteSlug || ! siteItem || ! siteId ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {
 				return (
@@ -148,9 +147,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				<Importer
 					job={ getImportJob( importer ) }
 					run={ runImportInitially }
-					siteId={ siteId as number }
-					site={ siteItem as SitesItem }
-					siteSlug={ siteSlug as string }
+					siteId={ siteId }
+					site={ siteItem }
+					siteSlug={ siteSlug }
 					fromSite={ fromSite }
 					urlData={ fromSiteData }
 					stepNavigator={ stepNavigator }
