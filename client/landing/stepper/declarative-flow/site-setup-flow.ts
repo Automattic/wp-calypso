@@ -201,18 +201,21 @@ export const siteSetupFlow: Flow = {
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
-					// Check current theme
-					// Does it have a plugin bundled?
+					// Check current theme: Does it have a plugin bundled?
+					// If so, send them to the plugin-bundle flow.
 					console.log( 'Checking for plugin bundle' );
 					const theme_plugin = currentTheme?.taxonomies?.theme_plugin;
 					if ( isEnabled( 'themes/plugin-bundling' ) && theme_plugin && theme_plugin.length > 0 ) {
-						setBundledPluginSlug( theme_plugin[ 0 ].slug ); // only install first plugin
-						console.log( 'setting bundled plugin slug to ', theme_plugin[ 0 ].slug );
-						// TODO: Should we remove this and set plugin-bundle to check currentTheme?.taxonomies?.theme_plugin directly?
+						setBundledPluginSlug( siteSlug | '', theme_plugin[ 0 ].slug ); // only install first plugin
+						console.log( 'setting bundled plugin slug:', {
+							siteSlug,
+							bundledPluginSlug: theme_plugin[ 0 ].slug,
+						} );
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
 						// return exitFlow( getStepUrl( 'plugin-bundle', false, false, false ) );
 					}
 
+					// Possibly clear setBundledPluginSlug here?
 					return exitFlow( `/home/${ siteSlug }` );
 				}
 

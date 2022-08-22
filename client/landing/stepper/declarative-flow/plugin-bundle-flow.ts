@@ -36,7 +36,7 @@ export const pluginBundleFlow: Flow = {
 			select( SITE_STORE ).getBundledPluginSlug( siteSlugParam || '' )
 		) as BundledPlugin;
 
-		console.log( { pluginSlug } );
+		console.log( { siteSlugParam, pluginSlug } );
 		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
 			// TODO - Need to handle this better
 			return [];
