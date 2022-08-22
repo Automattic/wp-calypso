@@ -42,20 +42,20 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		usePreinstalledPremiumPlugin( plugin.slug );
 
 	const managedPluginMessage = (
-		<span className="plugin-details-CTA__preinstalled">
+		<span className="plugin-details-cta__preinstalled">
 			{ translate( '%s is automatically managed for you.', { args: plugin.name } ) }
 		</span>
 	);
 	const pluginPrice = (
 		<>
-			<div className="plugin-details-CTA__price">
+			<div className="plugin-details-cta__price">
 				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 					{ ( { isFetching, price, period } ) =>
 						isFetching ? (
-							<div className="plugin-details-CTA__price-placeholder">...</div>
+							<div className="plugin-details-cta__price-placeholder">...</div>
 						) : (
 							<PreinstalledPremiumPluginPriceDisplay
-								className="plugin-details-CTA__period"
+								className="plugin-details-cta__period"
 								period={ period }
 								pluginSlug={ plugin.slug }
 								price={ price }
@@ -75,9 +75,9 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	);
 
 	const upgradeButton = (
-		<div className="plugin-details-CTA__install">
+		<div className="plugin-details-cta__install">
 			<Button
-				className="plugin-details-CTA__install-button"
+				className="plugin-details-cta__install-button"
 				href={ `/checkout/${ selectedSiteSlug }/${ preinstalledPremiumPluginProduct }` }
 				primary
 			>
@@ -86,7 +86,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		</div>
 	);
 	const activateButton = (
-		<div className="plugin-details-CTA__install">
+		<div className="plugin-details-cta__install">
 			<CTAButton
 				billingPeriod={ billingPeriod }
 				isJetpackSelfHosted={ isJetpackSelfHosted }
