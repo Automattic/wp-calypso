@@ -174,7 +174,7 @@ export function useLicenseIssuing(
 
 	const issueLicense = useIssueLicenseMutation( {
 		onSuccess: ( license ) => {
-			dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_submit', { product } ) );
+			dispatch( recordTracksEvent( 'calypso_partner_portal_lincese_issued', { product } ) );
 
 			const licenseKey = license.license_key;
 			const selectedSiteId = selectedSite?.ID;
@@ -260,7 +260,7 @@ export function useLicenseIssuing(
 		}
 
 		issueLicense.mutate( { product } );
-	}, [ product, paymentMethodRequired, issueLicense.mutate ] );
+	}, [ isLoading, product, paymentMethodRequired, issueLicense.mutate ] );
 
 	return [ issue, isLoading ];
 }
