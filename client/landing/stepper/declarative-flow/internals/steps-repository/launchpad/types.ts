@@ -3,6 +3,7 @@ export interface Task {
 	isCompleted: boolean;
 	actionUrl: string;
 	taskType: string;
+	title?: string;
 	displayBadge: boolean;
 	badgeText: string;
 }
