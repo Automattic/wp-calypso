@@ -65,6 +65,8 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
+		setFormTouched( true );
+
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
 
@@ -75,7 +77,10 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 				// communicate the error to the user
 			}
 		}
-		submit?.();
+
+		if ( siteTitle.trim().length ) {
+			submit?.( { siteTitle, tagline } );
+		}
 	};
 
 	const stepContent = (
@@ -107,7 +112,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 				{ siteTitleError && (
 					<FormInputValidation
 						isError
-						text={ __( 'Your site needs a name so your subscribers can identify you.' ) }
+						text={ __( `Oops. Looks like your Link in Bio doesn't have a name yet.` ) }
 					/>
 				) }
 			</FormFieldset>
@@ -144,7 +149,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id={ 'link-in-bio-setup-header' }
-					headerText={ __( 'Set up Link in Bio' ) }
+					headerText={ __( 'Pencil in a few details' ) }
 					align={ 'center' }
 				/>
 			}

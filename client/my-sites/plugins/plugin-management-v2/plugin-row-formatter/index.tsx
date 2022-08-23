@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-plugin';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import type { Plugin } from '../types';
@@ -18,6 +19,7 @@ interface Props {
 	columnKey: string;
 	selectedSite?: SiteData;
 	isSmallScreen?: boolean;
+	className?: string;
 }
 
 export default function PluginRowFormatter( {
@@ -25,6 +27,7 @@ export default function PluginRowFormatter( {
 	columnKey,
 	selectedSite,
 	isSmallScreen,
+	className,
 }: Props ): ReactElement | any {
 	const translate = useTranslate();
 
@@ -72,7 +75,11 @@ export default function PluginRowFormatter( {
 				</span>
 			);
 		case 'sites':
-			return (
+			return isSmallScreen ? (
+				translate( 'Installed on %(count)d sites', {
+					args: { count: Object.keys( item.sites ).length },
+				} )
+			) : (
 				<PluginDetailsButton className="plugin-row-formatter__sites-count-button">
 					{ Object.keys( item.sites ).length }
 				</PluginDetailsButton>
@@ -114,5 +121,7 @@ export default function PluginRowFormatter( {
 					: ago( item.last_updated );
 			}
 			return null;
+		case 'update':
+			return <UpdatePlugin plugin={ item } selectedSite={ selectedSite } className={ className } />;
 	}
 }
