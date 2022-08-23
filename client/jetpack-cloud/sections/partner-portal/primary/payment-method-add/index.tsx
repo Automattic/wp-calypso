@@ -108,7 +108,12 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const successCallback = useCallback( () => {
-		if ( product ) {
+		// returnQueryArg - will make sure the license issuing flow will be resumed
+		// when the user already has a license issued but not assigned, and will
+		// assign the license after adding a payment method.
+		//
+		// product - will make sure there will be a license issuing for that product
+		if ( returnQueryArg || product ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -118,7 +123,7 @@ function PaymentMethodAdd(): ReactElement {
 		} else {
 			page( partnerPortalBasePath( '/payment-methods' ) );
 		}
-	}, [ page, product, reduxDispatch, partnerPortalBasePath ] );
+	}, [ page, product, reduxDispatch, partnerPortalBasePath, returnQueryArg ] );
 
 	useEffect( () => {
 		if ( product && ! paymentMethodRequired ) {
