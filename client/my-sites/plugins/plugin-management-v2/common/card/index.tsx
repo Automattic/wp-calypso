@@ -14,7 +14,7 @@ interface Props {
 	hasMoreActions: boolean;
 }
 
-export default function PluginCard( {
+export default function Card( {
 	item,
 	selectedSite,
 	rowFormatter,

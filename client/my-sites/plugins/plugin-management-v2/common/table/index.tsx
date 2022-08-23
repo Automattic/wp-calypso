@@ -15,7 +15,7 @@ interface Props {
 	primaryKey: string;
 }
 
-export default function PluginsTable( {
+export default function Table( {
 	isLoading,
 	columns,
 	items,
