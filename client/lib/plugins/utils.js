@@ -386,7 +386,7 @@ export const getManageConnectionHref = ( siteSlug ) => {
  */
 export function getPreinstalledPremiumPluginsVariations( plugin ) {
 	if ( ! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] || !! plugin.variations ) {
-		return plugin.variations;
+		return plugin?.variations;
 	}
 	const { monthly, yearly } = PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products;
 	return {
