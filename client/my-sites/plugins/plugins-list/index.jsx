@@ -232,10 +232,7 @@ export class PluginsList extends Component {
 
 	doActionOverSelected( actionName, action ) {
 		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug } ) =>
-			( 'deactivating' === actionName ||
-				'activating' === actionName ||
-				'removing' === actionName ) &&
-			'jetpack' === slug;
+			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginStatuses();
@@ -425,13 +422,9 @@ export class PluginsList extends Component {
 			</div>
 		);
 
-		let isJetpackIncluded = false;
-
-		plugins.filter( this.isSelected ).forEach( ( plugin ) => {
-			if ( plugin.slug === 'jetpack' ) {
-				isJetpackIncluded = true;
-			}
-		} );
+		const isJetpackIncluded = plugins
+			.filter( this.isSelected )
+			.some( ( { slug } ) => slug === 'jetpack' );
 
 		acceptDialog(
 			message,
