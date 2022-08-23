@@ -40,7 +40,6 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	return (
 		<div className="jetpack-product-store">
 			{ enableUserLicensesDialog && <UserLicensesDialog siteId={ siteId } /> }
-			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 
 			<div className="jetpack-product-store__pricing-banner">
 				<IntroPricingBanner
@@ -48,6 +47,8 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 					siteId={ siteId ?? 'none' }
 				/>
 			</div>
+
+			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 
 			<Recommendations />
 
