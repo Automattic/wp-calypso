@@ -9,6 +9,7 @@ import {
 	useCourseData,
 	useUpdateUserCourseProgressionMutation,
 } from 'calypso/data/courses';
+import { COURSE_DETAILS } from 'calypso/data/courses/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import VideoChapters from './video-chapters';
 import VideoPlayer from './video-player';
@@ -97,23 +98,6 @@ const VideosUi = ( {
 		}
 	}, [ course ] );
 
-	let headerTitle;
-	let headerSubtitle;
-	let headerSummary;
-
-	switch ( courseSlug ) {
-		case COURSE_SLUGS.BLOGGING_QUICK_START:
-			headerTitle = translate( 'Watch five videos.' );
-			headerSubtitle = translate( 'Save yourself hours.' );
-			headerSummary = [
-				translate( 'Learn the basics of blogging' ),
-				translate( 'Familiarize yourself with WordPress' ),
-				translate( 'Upskill and save hours' ),
-				translate( 'Set yourself up for blogging success' ),
-			];
-			break;
-	}
-
 	return (
 		<div className="videos-ui">
 			<div className="videos-ui__header">
@@ -135,12 +119,12 @@ const VideosUi = ( {
 				) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
-						<h2>{ headerTitle }</h2>
-						<h2>{ headerSubtitle }</h2>
+						<h2>{ COURSE_DETAILS[ courseSlug ].headerTitle }</h2>
+						<h2>{ COURSE_DETAILS[ courseSlug ].headerSubtitle }</h2>
 					</div>
 					<div className="videos-ui__summary">
 						<ul>
-							{ headerSummary.map( ( text ) => {
+							{ COURSE_DETAILS[ courseSlug ].headerSummary.map( ( text ) => {
 								return (
 									<li>
 										<Gridicon icon="checkmark" size={ 18 } /> { text }
