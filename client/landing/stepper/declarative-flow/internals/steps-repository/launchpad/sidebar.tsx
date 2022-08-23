@@ -1,6 +1,5 @@
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import Checklist from './checklist';
 import { tasks } from './tasks';
 
@@ -18,10 +17,12 @@ function getUrlInfo( url: string ) {
 const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
 	let siteName = '';
 	let topLevelDomain = '';
-  const flow = useFlowParam();
+	const flow = useFlowParam();
 
-  [ siteName, topLevelDomain ] = getUrlInfo( siteSlug );
- 
+	if ( siteSlug ) {
+		[ siteName, topLevelDomain ] = getUrlInfo( siteSlug );
+	}
+
 	return (
 		<div className="launchpad__sidebar">
 			<div className="launchpad__sidebar-header">
