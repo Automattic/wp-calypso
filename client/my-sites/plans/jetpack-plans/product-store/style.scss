@@ -3,6 +3,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin: 3em 0;
+        padding: 0 1.5em;
 
         &--headline {
             font-size: $font-title-large;
