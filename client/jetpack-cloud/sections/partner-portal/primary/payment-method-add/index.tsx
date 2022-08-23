@@ -108,7 +108,7 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const successCallback = useCallback( () => {
-		if ( returnQueryArg ) {
+		if ( product ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -118,10 +118,10 @@ function PaymentMethodAdd(): ReactElement {
 		} else {
 			page( partnerPortalBasePath( '/payment-methods' ) );
 		}
-	}, [ page, product, issueLicense ] );
+	}, [ page, product, reduxDispatch, partnerPortalBasePath ] );
 
 	useEffect( () => {
-		if ( product && paymentMethodRequired ) {
+		if ( product && ! paymentMethodRequired ) {
 			issueLicense();
 		}
 	}, [ paymentMethodRequired, product ] );
