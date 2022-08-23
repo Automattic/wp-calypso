@@ -20,7 +20,8 @@ const FilterBar = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: '16px',
-	padding: '32px 0',
+	paddingBlock: '32px',
+	paddingInline: 0,
 
 	flexDirection: 'column',
 
@@ -29,7 +30,7 @@ const FilterBar = styled.div( {
 	},
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
-		padding: '16px 0',
+		paddingBlock: '16px',
 	},
 } );
 
