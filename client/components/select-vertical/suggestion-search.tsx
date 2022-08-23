@@ -111,19 +111,14 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		inputRef.current?.focus();
 	};
 
-	const handleSuggestionsSelect = ( {
-		name,
-		label,
-		value,
-		has_vertical_images,
-	}: {
+	const handleSuggestionsSelect = ( suggestion: {
 		name: string;
 		label: string;
 		value?: string;
 		has_vertical_images?: boolean;
 	} ) => {
 		hideSuggestions();
-		onSelect?.( { name, label, value, has_vertical_images } as Vertical );
+		onSelect?.( suggestion as Vertical );
 	};
 
 	const getSuggestions = useMemo( () => {
