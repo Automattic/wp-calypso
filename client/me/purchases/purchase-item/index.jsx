@@ -22,6 +22,7 @@ import {
 	getDisplayName,
 	isExpired,
 	isExpiring,
+	isRechargeable,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
@@ -409,6 +410,15 @@ class PurchaseItem extends Component {
 		const { purchase, translate } = this.props;
 
 		if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
+			return (
+				<div className={ 'purchase-item__no-payment-method' }>
+					<Icon icon={ warningIcon } />
+					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+				</div>
+			);
+		}
+
+		if ( ! isRechargeable( purchase ) && hasPaymentMethod( purchase ) ) {
 			return (
 				<div className={ 'purchase-item__no-payment-method' }>
 					<Icon icon={ warningIcon } />
