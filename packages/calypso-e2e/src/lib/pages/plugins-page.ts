@@ -17,8 +17,7 @@ const selectors = {
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
 		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-browser-list__title',
-	browseAllFree: 'a[href^="/plugins/browse/popular"]',
-	browseAllPaid: 'a[href^="/plugins/browse/paid"]',
+	browseAllBtn: ( section: string ) => `text=${ section }Browse All >> button`,
 	browseFirstCategory: 'button:has-text("Search Engine Optimization")',
 	categoryButton: ( section: string ) => `button:has-text("${ section }")`,
 	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
@@ -134,25 +133,10 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Validate category has the plugin
+	 * Click Browse All Plugins
 	 */
-	async validateHasPluginInCategory( section: string, plugin: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.headerTitle( section ) );
-		await this.page.waitForSelector( selectors.pluginTitle( plugin ) );
-	}
-
-	/**
-	 * Click Browse All Free Plugins
-	 */
-	async clickBrowseAllFreePlugins(): Promise< void > {
-		await this.page.click( selectors.browseAllFree );
-	}
-
-	/**
-	 * Click Browse All Paid Plugins
-	 */
-	async clickBrowseAllPaidPlugins(): Promise< void > {
-		await this.page.click( selectors.browseAllPaid );
+	async clickBrowseAllPlugins( section: string ): Promise< void > {
+		await this.page.click( selectors.browseAllBtn( section ) );
 	}
 
 	/**
