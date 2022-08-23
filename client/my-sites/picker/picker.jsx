@@ -4,9 +4,20 @@ import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import SiteSelector from 'calypso/components/site-selector';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { hasTouch } from 'calypso/lib/touch-detect';
+import { isJetpackSitePred } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+
+/**
+ * In order to decide whether to show the site in site selector,
+ * we need to know if the site has full Jetpack plugin installed,
+ * or if we are on Jetpack Cloud and the site has a Jetpack Standalone plugin installed.
+ */
+const isJetpackSiteOrJetpackCloud = isJetpackSitePred( {
+	considerStandaloneProducts: isJetpackCloud(),
+} );
 
 const noop = () => {};
 
@@ -92,6 +103,7 @@ class SitePicker extends Component {
 					autoFocus={ this.state.isAutoFocused }
 					onClose={ this.onClose }
 					groups={ true }
+					filter={ isJetpackSiteOrJetpackCloud }
 				/>
 			</div>
 		);
