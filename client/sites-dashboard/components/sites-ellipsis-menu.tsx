@@ -116,6 +116,14 @@ const SiteMenuGroup = styled( MenuGroup )( {
 	},
 } );
 
+const SiteDropdownMenu = styled( DropdownMenu )( {
+	'> .components-button': {
+		padding: '0px',
+		minWidth: '0px',
+		color: 'var( --color-text-subtle )',
+	},
+} );
+
 export const SitesEllipsisMenu = ( {
 	className,
 	site,
@@ -133,7 +141,7 @@ export const SitesEllipsisMenu = ( {
 	};
 
 	return (
-		<DropdownMenu
+		<SiteDropdownMenu
 			icon={ <Gridicon icon="ellipsis" /> }
 			className={ className }
 			label={ __( 'Site Actions' ) }
@@ -147,6 +155,6 @@ export const SitesEllipsisMenu = ( {
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }
-		</DropdownMenu>
+		</SiteDropdownMenu>
 	);
 };
