@@ -1,6 +1,5 @@
 import ChecklistItem from './checklist-item';
-import { getEnhancedTasks } from './task-helper';
-import { launchpadFlowTasks } from './tasks';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { Task } from './types';
 
 const Checklist = ( {
@@ -12,18 +11,7 @@ const Checklist = ( {
 	siteSlug: string | null;
 	flow: string | null;
 } ) => {
-	const currentFlowTasksIds = flow ? launchpadFlowTasks[ flow ] : null;
-
-	const arrayOfFilteredTasks: Task[] | null =
-		currentFlowTasksIds &&
-		currentFlowTasksIds.reduce( ( accumulator, currentTaskId ) => {
-			tasks.find( ( task ) => {
-				if ( task.id === currentTaskId ) {
-					accumulator.push( task );
-				}
-			} );
-			return accumulator;
-		}, [] as Task[] );
+	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 
 	const enhancedTasks = arrayOfFilteredTasks && getEnhancedTasks( arrayOfFilteredTasks, siteSlug );
 
