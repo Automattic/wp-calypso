@@ -1,11 +1,19 @@
 import type { SiteDetails } from '@automattic/data-stores';
 
 export type IsJetpackSitePredOptions = {
+	/**
+	 * When true, the sites with Jetpack standalone plugins will also be considered Jetpack sites
+	 */
 	considerStandaloneProducts?: boolean;
+	/**
+	 * When true, the Atomic site will also be considered as Jetpack site
+	 */
+	treatAtomicAsJetpackSite?: boolean;
 };
 
 const DEFAULT_OPTIONS: IsJetpackSitePredOptions = {
 	considerStandaloneProducts: true,
+	treatAtomicAsJetpackSite: false,
 };
 
 /**
@@ -16,8 +24,6 @@ const DEFAULT_OPTIONS: IsJetpackSitePredOptions = {
  * When options.considerStandaloneProducts is true (the default), sites with
  * Jetpack standalone plugins will also be considered Jetpack sites for the
  * purposes of this function.
- *
- * CAUTION: It does not consider whether the site is an Atomic site.
  */
 export default function isJetpackSitePred( options?: IsJetpackSitePredOptions ) {
 	return function isJetpackSite( site: SiteDetails | null ): boolean | null {
@@ -25,13 +31,18 @@ export default function isJetpackSitePred( options?: IsJetpackSitePredOptions ) 
 			return null;
 		}
 
+		// Merge default options with options.
+		const mergedOptions = options ? { ...DEFAULT_OPTIONS, ...options } : DEFAULT_OPTIONS;
+
+		// If the site is an Atomic site, but we should not treat it as Jetpack site, return false.
+		if ( ! mergedOptions.treatAtomicAsJetpackSite && site.options?.is_wpcom_atomic ) {
+			return false;
+		}
+
 		// Sites with full Jetpack plugin have a boolean `jetpack` property.
 		if ( site.jetpack ) {
 			return true;
 		}
-
-		// Merge default options with options.
-		const mergedOptions = options ? { ...DEFAULT_OPTIONS, ...options } : DEFAULT_OPTIONS;
 
 		// If we should not consider standalone products
 		if ( ! mergedOptions.considerStandaloneProducts ) {
