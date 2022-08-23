@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslate } from 'calypso/../packages/i18n-calypso';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryJetpackUserLicenses from 'calypso/components/data/query-jetpack-user-licenses';
@@ -15,6 +16,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import LicensingActivationBanner from 'calypso/components/jetpack/licensing-activation-banner';
 import LicensingPromptDialog from 'calypso/components/jetpack/licensing-prompt-dialog';
 import Main from 'calypso/components/main';
+import PricingHeader from 'calypso/jetpack-cloud/sections/pricing/header';
 import { MAIN_CONTENT_ID } from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useExperiment } from 'calypso/lib/explat';
@@ -59,6 +61,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 	const legacyPlan = planRecommendation ? planRecommendation[ 0 ] : null;
+	const translate = useTranslate();
 
 	const [ isLoadingUpsellPageExperiment, experimentAssignment ] = useExperiment(
 		'calypso_jetpack_upsell_page_2022_06'
@@ -221,10 +224,17 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				/>
 
 				{ isEnabled( 'jetpack/pricing-page-rework-v1' ) ? (
-					<ProductStore
-						enableUserLicensesDialog={ enableUserLicensesDialog }
-						urlQueryArgs={ urlQueryArgs }
-					/>
+					<>
+						<PricingHeader
+							urlQueryArgs={ urlQueryArgs }
+							title={ translate( 'Best-in-class products for your WordPress site' ) }
+						/>
+
+						<ProductStore
+							enableUserLicensesDialog={ enableUserLicensesDialog }
+							urlQueryArgs={ urlQueryArgs }
+						/>
+					</>
 				) : (
 					<>
 						{ siteId && enableUserLicensesDialog && (
