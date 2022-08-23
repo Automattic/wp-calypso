@@ -27,7 +27,7 @@ Finally, this lib exposes a utility method for your React application:
 
 The following attributes can be set in the options object to alter the translation type. The attributes can be combined as needed for a particular case.
 
-- **options.args** [string, array, or object] arguments you would pass into sprintf to be run against the text for string substitution. [See docs](http://www.diveintojavascript.com/projects/javascript-sprintf)
+- **options.args** [string, array, or object] arguments you would pass into sprintf to be run against the text for string substitution. [See docs](https://www.npmjs.com/package/@tannin/sprintf#readme)
 - **options.components** [object] markup must be added as React components and not with string substitution. See [mixing strings and markup](#mixing-strings-and-markup).
 - **options.comment** [string] comment that will be shown to the translator for anything that may need to be explained about the translation.
 - **options.context** [string] provides the ability for the translator to provide a different translation for the same text in two locations (_dependent on context_). Usually context should only be used after a string has been discovered to require different translations. If you want to provide help on how to translate (which is highly appreciated!), please use a comment.
@@ -73,7 +73,7 @@ const translation4 = i18n.translate(
 
 ### String Substitution
 
-The `translate()` method uses sprintf interpolation for string substitution ([see docs for syntax details](http://www.diveintojavascript.com/projects/javascript-sprintf)). The `option.args` value is used to inject variable content into the string.
+The `translate()` method uses sprintf interpolation for string substitution ([see docs for syntax details](https://www.npmjs.com/package/@tannin/sprintf#readme)). The `option.args` value is used to inject variable content into the string.
 
 ```js
 // named arguments (preferred approach)
