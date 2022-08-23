@@ -1,4 +1,4 @@
-import { Gridicon, Card, Button } from '@automattic/components';
+import { Gridicon, Card as CardComponent, Button } from '@automattic/components';
 import classNames from 'classnames';
 import type { Columns, RowFormatterArgs } from '../../types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
@@ -29,7 +29,7 @@ export default function Card( {
 	const showLeftContent = columnKeys[ 'plugin' ];
 
 	return (
-		<Card className="card__card" compact>
+		<CardComponent className="card__card" compact>
 			<div className="card__columns">
 				{ showLeftContent && (
 					<div className="card__left-content">
@@ -109,6 +109,6 @@ export default function Card( {
 					</div>
 				) }
 			</div>
-		</Card>
+		</CardComponent>
 	);
 }
