@@ -240,7 +240,7 @@ export function serverRender( req, res ) {
 
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), initialClientStateTrees );
-
+		context.dehydratedReactQueryState = dehydrate( context.queryClient );
 		/**
 		 * Cache redux state to speedup future renders. For example, some network
 		 * requests are skipped if the data is already in the store. Note that
