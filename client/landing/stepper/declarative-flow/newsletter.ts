@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { USER_STORE } from 'calypso/landing/stepper/stores';
+import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -31,6 +31,7 @@ export const newsletter: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
+		const { getState } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', _currentStep );
@@ -45,7 +46,9 @@ export const newsletter: Flow = {
 					);
 
 				case 'newsletterSetup':
-					return window.location.replace( '/start/newsletter/domains' );
+					return window.location.replace(
+						`/start/newsletter/domains?new=${ getState().siteTitle ?? '' }&search=yes`
+					);
 
 				case 'completingPurchase':
 					return navigate( 'processing' );
