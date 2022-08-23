@@ -26,6 +26,7 @@ import {
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PremiumBadge from './premium-badge';
 import ThemePreview from './theme-preview';
+import ThemeStyleVariationsButtons from './theme-style-variations-buttons';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
 import './style.scss';
@@ -91,11 +92,13 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	verticalId,
 } ) => {
 	const { __ } = useI18n();
-	const { is_premium: isPremium = false } = design;
+	const { style_variations = [], is_premium: isPremium = false } = design;
+	const isEnableThemePreviewScreen = isEnabled( 'signup/theme-preview-screen' );
+	const isEnableThemeStyleVariations = isEnableThemePreviewScreen && isEnabled( 'signup/design-picker-style-selection' );
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
-		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
+		if ( ! isEnableThemePreviewScreen ) {
 			return null;
 		}
 
@@ -202,8 +205,13 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						{ ! hideDesignTitle && (
 							<span className="design-picker__option-name">{ design.title }</span>
 						) }
-						{ ! isEnabled( 'signup/theme-preview-screen' ) && isPremium && (
+						{ ! isEnableThemePreviewScreen && isPremium && (
 							<PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
+						) }
+						{ isEnableThemeStyleVariations && style_variations.length > 0 && (
+							<div className="design-picker__options-style-variations">
+								<ThemeStyleVariationsButtons tagName="span" variations={ style_variations } />
+							</div>
 						) }
 					</span>
 				</span>
@@ -389,6 +397,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 		result.sort( sortDesigns );
 		return result;
 	}, [ designs, categorization?.selection ] );
+
 	return (
 		<div>
 			{ categorization && hasCategories && (
