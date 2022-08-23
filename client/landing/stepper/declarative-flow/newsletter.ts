@@ -55,7 +55,7 @@ export const newsletter: Flow = {
 				}
 
 				case 'subscribers':
-					return navigate( 'processing' );
+					return navigate( 'launchpad' );
 			}
 		}
 
