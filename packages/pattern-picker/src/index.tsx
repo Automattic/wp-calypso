@@ -80,7 +80,7 @@ export function PatternPicker( { onPick }: Props ) {
 						onClick={ () => {
 							setIndex( i );
 						} }
-						style={ { filter: `blur(${ Math.abs( index - i ) * 2 }px)` } }
+						style={ { filter: `blur(${ Math.pow( Math.abs( index - i ), 1.5 ) }px)` } }
 					/>
 				) ) }
 			</div>
