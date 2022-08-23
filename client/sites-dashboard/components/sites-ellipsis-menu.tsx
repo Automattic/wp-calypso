@@ -15,23 +15,19 @@ interface SitesMenuItemProps {
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
 }
 
-const SiteMenuItem = styled( MenuItem )( {
-	display: 'block',
-} );
-
 const LaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
 	return (
-		<SiteMenuItem
+		<MenuItem
 			onClick={ () => {
 				dispatch( launchSiteOrRedirectToLaunchSignupFlow( site.ID, 'sites-dashboard' ) );
 				recordTracks( 'calypso_sites_dashboard_site_action_launch_click' );
 			} }
 		>
 			{ __( 'Launch site' ) }
-		</SiteMenuItem>
+		</MenuItem>
 	);
 };
 
@@ -39,12 +35,12 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
-		<SiteMenuItem
+		<MenuItem
 			href={ getSettingsUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_settings_click' ) }
 		>
 			{ __( 'Settings' ) }
-		</SiteMenuItem>
+		</MenuItem>
 	);
 };
 
@@ -61,7 +57,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 		: [ getPluginsUrl( site.slug ), __( 'Plugins' ) ];
 
 	return (
-		<SiteMenuItem
+		<MenuItem
 			href={ href }
 			onClick={ () =>
 				recordTracks( 'calypso_sites_dashboard_site_action_plugins_click', {
@@ -70,7 +66,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			}
 		>
 			{ label }
-		</SiteMenuItem>
+		</MenuItem>
 	);
 };
 
@@ -78,12 +74,12 @@ const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
-		<SiteMenuItem
+		<MenuItem
 			href={ getHostingConfigUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
 		>
 			{ __( 'Hosting configuration' ) }
-		</SiteMenuItem>
+		</MenuItem>
 	);
 };
 
@@ -97,14 +93,21 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
-		<SiteMenuItem
+		<MenuItem
 			href={ site.options?.admin_url }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
 			{ __( 'Visit WP Admin' ) } <ExternalGridIcon icon="external" size={ 18 } />
-		</SiteMenuItem>
+		</MenuItem>
 	);
 };
+
+const SiteMenuGroup = styled( MenuGroup )( {
+	'> div[role="group"]': {
+		display: 'flex',
+		flexDirection: 'column',
+	},
+} );
 
 export const SitesEllipsisMenu = ( {
 	className,
@@ -129,13 +132,13 @@ export const SitesEllipsisMenu = ( {
 			label={ __( 'Site Actions' ) }
 		>
 			{ () => (
-				<MenuGroup>
+				<SiteMenuGroup>
 					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					<ManagePluginsItem { ...props } />
 					<HostingConfigItem { ...props } />
 					<WpAdminItem { ...props } />
-				</MenuGroup>
+				</SiteMenuGroup>
 			) }
 		</DropdownMenu>
 	);
