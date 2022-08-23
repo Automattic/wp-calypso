@@ -8,7 +8,7 @@ import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isJetpackSitePred } from 'calypso/state/sites/selectors';
+import { getJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
 
 /**
  * In order to decide whether to show the site in site selector,
@@ -38,8 +38,9 @@ class Sites extends Component {
 	}
 
 	filterSites = ( site ) => {
-		// only show Jetpack sites with the full plugin or Jetpack Cloud with the standalone plugin
-		if ( ! isJetpackSiteOrJetpackCloud( site ) ) {
+		// Filter out the sites on WPCOM that don't have full Jetpack plugin installed
+		// Such sites should work fine on Jetpack Cloud
+		if ( getJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
 			return false;
 		}
 		const path = this.props.siteBasePath;
