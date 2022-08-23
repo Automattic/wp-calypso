@@ -1,4 +1,4 @@
-# Plugins Discovery Page
+# Plugins Category Results Page
 
 This component renders the plugins browser category results page.
 

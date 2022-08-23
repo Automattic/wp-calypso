@@ -1,11 +1,27 @@
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import Checklist from './checklist';
 import { tasks } from './tasks';
 
-const Sidebar = () => {
-	const site = useSite();
-	const url = site?.URL?.replace( /^https?:\/\//, '' );
+function getUrlInfo( url: string ) {
+	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
+
+	// Ex. mytest.wordpress.com matches mytest
+	const siteName = urlWithoutProtocol.match( /^[^.]*/ );
+	// Ex. mytest.wordpress.com matches .wordpress.com
+	const topLevelDomain = urlWithoutProtocol.match( /\..*/ ) || [];
+
+	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
+}
+
+const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
+	let siteName = '';
+	let topLevelDomain = '';
+	const flow = useFlowParam();
+
+	if ( siteSlug ) {
+		[ siteName, topLevelDomain ] = getUrlInfo( siteSlug );
+	}
 
 	return (
 		<div className="launchpad__sidebar">
@@ -25,8 +41,11 @@ const Sidebar = () => {
 				<p className="launchpad__sidebar-description">
 					Keep up the momentum with these next steps.
 				</p>
-				<div className="launchpad__url-box">{ url }</div>
-				<Checklist tasks={ tasks } />
+				<div className="launchpad__url-box">
+					<span>{ siteName }</span>
+					<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+				</div>
+				<Checklist siteSlug={ siteSlug } tasks={ tasks } flow={ flow } />
 			</div>
 		</div>
 	);
