@@ -2,7 +2,7 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { MomentInput } from 'moment';
 import type { ReactChild } from 'react';
 
-export type PluginColumns = Array< {
+export type Columns = Array< {
 	key: string;
 	title?: ReactChild;
 	smallColumn?: boolean;
@@ -20,12 +20,16 @@ export interface Plugin {
 	pluginsOnSites: Array< any >;
 	slug: string;
 	wporg: string;
+	[ key: string ]: any;
 }
 
-export interface PluginRowFormatterArgs {
+export interface RowFormatterArgs {
 	item: any;
 	columnKey: string;
 	isSmallScreen?: boolean;
 	className?: string;
 	selectedSite?: SiteData;
+}
+export interface PluginRowFormatterArgs extends RowFormatterArgs {
+	item: Plugin;
 }

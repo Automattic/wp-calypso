@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import PluginRowFormatter from './plugin-row-formatter';
 import PluginsList from './plugins-list';
-import type { Plugin, PluginRowFormatterArgs } from './types';
+import type { Plugin } from './types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactElement } from 'react';
 
@@ -67,10 +66,6 @@ export default function PluginManagementV2( {
 
 	const title = translate( 'Installed Plugins' );
 
-	const rowFormatter = ( props: PluginRowFormatterArgs ) => {
-		return <PluginRowFormatter { ...props } selectedSite={ selectedSite } />;
-	};
-
 	return (
 		<div className="plugin-management-v2__main-content-container">
 			<PluginsList
@@ -79,7 +74,6 @@ export default function PluginManagementV2( {
 				isLoading={ isLoading }
 				selectedSite={ selectedSite }
 				title={ title }
-				rowFormatter={ rowFormatter }
 				primaryKey="id"
 			/>
 		</div>
