@@ -220,7 +220,7 @@ function PluginDetails( props ) {
 		const items = [
 			{
 				label: translate( 'Plugins' ),
-				href: `/plugins/${ selectedSite?.slug || '' }`,
+				href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 				id: 'plugins',
 				helpBubble: translate(
 					'Add new functionality and integrations to your site with plugins.'
@@ -231,13 +231,13 @@ function PluginDetails( props ) {
 		if ( fullPlugin.name && props.pluginSlug ) {
 			items.push( {
 				label: fullPlugin.name,
-				href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
+				href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
 				id: `plugin-${ props.pluginSlug }`,
 			} );
 		}
 
 		dispatch( updateBreadcrumbs( items ) );
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite?.slug, dispatch, translate ] );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite?.slug, dispatch, translate, localizePath ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
