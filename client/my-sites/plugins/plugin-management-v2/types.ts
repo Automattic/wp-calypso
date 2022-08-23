@@ -32,9 +32,11 @@ export interface RowFormatterArgs {
 	className?: string;
 	selectedSite?: SiteData;
 }
+
 export interface PluginRowFormatterArgs extends RowFormatterArgs {
 	item: Plugin;
 }
+
 export interface SiteRowFormatterArgs extends RowFormatterArgs {
 	item: SiteData;
 }
