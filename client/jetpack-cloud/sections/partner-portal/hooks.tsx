@@ -14,7 +14,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
@@ -196,6 +196,20 @@ export function useLicenseIssuing(
 				);
 			}
 
+			dispatch(
+				successNotice(
+					translate( `Your %(product)s license was successfuly issued `, {
+						args: {
+							product:
+								products.data?.find( ( productOption ) => productOption.slug === product )?.name ||
+								'',
+						},
+					} ),
+					{
+						displayOnNextPage: true,
+					}
+				)
+			);
 			page.redirect( nextStep );
 		},
 		onError: ( error: APIError ) => {
