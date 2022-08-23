@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { useState } from 'react';
@@ -37,7 +36,6 @@ type Props = ExternalProps & LocalizeProps;
 
 function ThirdPartyDevsAccount( { isAccepted, isSubmitted, onChange, translate }: Props ) {
 	const [ touched, setTouched ] = useState( false );
-	const theme = useTheme();
 	const displayErrorMessage = ( isSubmitted || touched ) && ! isAccepted;
 
 	const message = translate(
@@ -51,9 +49,7 @@ function ThirdPartyDevsAccount( { isAccepted, isSubmitted, onChange, translate }
 	return (
 		<CheckboxTermsWrapper
 			style={
-				displayErrorMessage
-					? { border: `3px solid ${ theme.colors.highlight }`, borderRadius: '3px' }
-					: {}
+				displayErrorMessage ? { border: '3px solid var( --color-error )', borderRadius: '3px' } : {}
 			}
 		>
 			<StyledFormCheckbox
