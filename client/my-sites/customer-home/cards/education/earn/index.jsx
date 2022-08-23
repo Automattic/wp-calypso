@@ -12,7 +12,7 @@ export const EDUCATION_EARN = 'home-education-earn';
 const EducationEarn = () => {
 	const translate = useTranslate();
 	const { isModalOpen, openModal, closeModal } = useRouteModal(
-		'courseSlug',
+		'coursePaymentsModal',
 		COURSE_SLUGS.PAYMENTS_FEATURES
 	);
 
