@@ -121,6 +121,8 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 		padding: '0px',
 		minWidth: '0px',
 		color: 'var( --color-text-subtle )',
+		height: 'auto',
+		verticalAlign: 'middle',
 	},
 } );
 
