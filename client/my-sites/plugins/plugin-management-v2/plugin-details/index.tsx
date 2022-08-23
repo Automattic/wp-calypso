@@ -1,5 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
@@ -12,6 +16,7 @@ import {
 	getSiteObjectsWithoutPlugin,
 } from 'calypso/state/plugins/installed/selectors';
 import { isFetching as isWporgPluginFetchingSelector } from 'calypso/state/plugins/wporg/selectors';
+import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import type { Plugin } from '../types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactElement } from 'react';
@@ -39,13 +44,14 @@ export default function PluginDetailsV2( {
 }: Props ): ReactElement {
 	const translate = useTranslate();
 
-	const siteIds = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
+	const siteIds: any = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
 	);
 	const sitesWithoutPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithoutPlugin( state, siteIds, pluginSlug )
 	);
+	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
 
 	const isLoading = useSelector( ( state ) => isWporgPluginFetchingSelector( state, pluginSlug ) );
 
@@ -64,6 +70,10 @@ export default function PluginDetailsV2( {
 
 	return (
 		<div className="plugin-details">
+			<QueryJetpackPlugins siteIds={ siteIds } />
+			<QueryEligibility siteId={ selectedSite?.ID } />
+			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site?.ID ) } />
+			<QueryProductsList persist />
 			<FixedNavigationHeader
 				className="plugin-details__header"
 				compactBreadcrumb={ false }
@@ -97,11 +107,13 @@ export default function PluginDetailsV2( {
 				isLoading={ isLoading }
 				plugin={ fullPlugin }
 			/>
-			<PluginDetailsBody
-				fullPlugin={ fullPlugin }
-				isMarketplaceProduct={ isMarketplaceProduct }
-				isWpcom={ isWpcom }
-			/>
+			{ fullPlugin.fetched && (
+				<PluginDetailsBody
+					fullPlugin={ fullPlugin }
+					isMarketplaceProduct={ isMarketplaceProduct }
+					isWpcom={ isWpcom }
+				/>
+			) }
 		</div>
 	);
 }
