@@ -1,8 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { updateDependencies } from 'calypso/state/signup/actions';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
@@ -31,6 +33,7 @@ export const newsletter: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
+		const dispatch = useDispatch();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', _currentStep );
@@ -45,6 +48,7 @@ export const newsletter: Flow = {
 					);
 
 				case 'newsletterSetup':
+					dispatch( updateDependencies( { accentColor: '#ffff' } ) );
 					return window.location.replace( '/start/newsletter/domains' );
 
 				case 'completingPurchase':

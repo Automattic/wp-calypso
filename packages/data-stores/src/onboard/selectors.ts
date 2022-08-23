@@ -50,3 +50,5 @@ export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 export const getEditEmail = ( state: State ) => state.editEmail;
 
 export const getBundledPluginSlug = ( state: State ) => state.bundledPluginSlug;
+
+export const getSiteAccentColor = ( state: State ) => state.siteAccentColor;

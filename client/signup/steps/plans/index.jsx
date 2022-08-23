@@ -6,7 +6,9 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
+import { Onboard } from '@automattic/data-stores';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
+import { withSelect } from '@wordpress/data';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -32,10 +34,13 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { setSiteAccentColor } from 'calypso/state/signup/optional-dependencies/actions';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
+
+const ONBOARD_STORE = Onboard.register();
 
 export class PlansStep extends Component {
 	state = {
@@ -47,6 +52,12 @@ export class PlansStep extends Component {
 			this.setState( { isDesktop: matchesDesktop } )
 		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+
+		// Site accent color is passed via Onboard store from @automattic/data-stores package (local storage)
+		// The accent color is set in Newsletter flow
+		if ( this.props.siteAccentColor ) {
+			this.props.setSiteAccentColor( this.props.siteAccentColor );
+		}
 	}
 
 	componentWillUnmount() {
@@ -406,30 +417,45 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 	return is_domain_registration && getTld( meta ) === 'blog';
 };
 
-export default connect(
-	(
-		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
-	) => ( {
-		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
-		disableBloggerPlanWithNonBlogDomain:
-			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
-		// This step could be used to set up an existing site, in which case
-		// some descendants of this component may display discounted prices if
-		// they apply to the given site.
-		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
-		customerType: parseQs( path.split( '?' ).pop() ).customerType,
-		siteType: getSiteType( state ),
-		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		showTreatmentPlansReorderTest:
-			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
-		isLoadingExperiment: false,
-		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
-		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
-		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
-		isInVerticalScrollingPlansExperiment: true,
-		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-	} ),
-	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
-)( localize( PlansStep ) );
+export default withSelect( ( select, ownProps ) => {
+	const siteAccentColor = select( ONBOARD_STORE ).getSiteAccentColor();
+	return {
+		...ownProps,
+		...( siteAccentColor && { siteAccentColor } ),
+	};
+} )(
+	connect(
+		(
+			state,
+			{
+				path,
+				signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation },
+				// ...rest
+			}
+		) => ( {
+			state,
+			// Blogger plan is only available if user chose either a free domain or a .blog domain registration
+			disableBloggerPlanWithNonBlogDomain:
+				domainItem &&
+				! isSubdomain( domainItem.meta ) &&
+				! isDotBlogDomainRegistration( domainItem ),
+			// This step could be used to set up an existing site, in which case
+			// some descendants of this component may display discounted prices if
+			// they apply to the given site.
+			selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+			customerType: parseQs( path.split( '?' ).pop() ).customerType,
+			siteType: getSiteType( state ),
+			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+			showTreatmentPlansReorderTest:
+				'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
+			isLoadingExperiment: false,
+			// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
+			// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
+			// treatment for the `vertical_plan_listing_v2` experiment is implemented.
+			isInVerticalScrollingPlansExperiment: true,
+			plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+			eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
+		} ),
+		{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice, setSiteAccentColor }
+	)( localize( PlansStep ) )
+);

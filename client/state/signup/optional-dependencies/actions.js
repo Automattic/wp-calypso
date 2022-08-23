@@ -1,12 +1,20 @@
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import wpcom from 'calypso/lib/wp';
-import { SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET } from 'calypso/state/action-types';
+import {
+	SIGNUP_OPTIONAL_DEPENDENCY_SITE_ACCENT_COLOR,
+	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
+} from 'calypso/state/action-types';
 
 import 'calypso/state/signup/init';
 
 export const setUsernameSuggestion = ( data ) => ( {
 	type: SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME_SET,
 	data,
+} );
+
+export const setSiteAccentColor = ( color ) => ( {
+	type: SIGNUP_OPTIONAL_DEPENDENCY_SITE_ACCENT_COLOR,
+	data: color,
 } );
 
 /**

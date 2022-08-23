@@ -31,6 +31,7 @@ import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getSiteAccentColor } from 'calypso/state/signup/optional-dependencies/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
@@ -119,6 +120,8 @@ function getNewSiteParams( {
 	siteUrl,
 	state,
 } ) {
+	const siteAccentColor = getSiteAccentColor( state );
+
 	const signupDependencies = getSignupDependencyStore( state );
 	const designType = getDesignType( state ).trim();
 	const siteTitle = getSiteTitle( state ).trim() || ( signupDependencies?.siteTitle || '' ).trim();
@@ -160,6 +163,7 @@ function getNewSiteParams( {
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
+			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 		},
 		validate: false,
 	};
