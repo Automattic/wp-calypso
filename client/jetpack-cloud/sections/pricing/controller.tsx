@@ -25,7 +25,7 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 			title={
 				isEnabled( 'jetpack/pricing-page-rework-v1' )
 					? translate( 'Best-in-class products for your WordPress site' )
-					: undefined
+					: translate( 'Security, performance, and marketing tools made for WordPress' )
 			}
 		/>
 	);
