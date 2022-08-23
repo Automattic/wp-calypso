@@ -24,16 +24,17 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	const { availableProducts, purchasedProducts, includedInPlanProducts } =
 		useGetPlansGridProducts( siteId );
 
-	const allItems = useMemo(
-		() => [
-			...getProductsToDisplay( {
-				duration,
-				availableProducts,
-				purchasedProducts,
-				includedInPlanProducts,
-			} ),
-			...getPlansToDisplay( { duration, currentPlanSlug } ),
-		],
+	const productSlugs = useMemo(
+		() =>
+			[
+				...getProductsToDisplay( {
+					duration,
+					availableProducts,
+					purchasedProducts,
+					includedInPlanProducts,
+				} ),
+				...getPlansToDisplay( { duration, currentPlanSlug } ),
+			].map( ( { productSlug } ) => productSlug ),
 		[ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ]
 	);
 
@@ -42,10 +43,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			{ enableUserLicensesDialog && <UserLicensesDialog siteId={ siteId } /> }
 
 			<div className="jetpack-product-store__pricing-banner">
-				<IntroPricingBanner
-					productSlugs={ allItems.map( ( { productSlug } ) => productSlug ) }
-					siteId={ siteId ?? 'none' }
-				/>
+				<IntroPricingBanner productSlugs={ productSlugs } siteId={ siteId ?? 'none' } />
 			</div>
 
 			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
