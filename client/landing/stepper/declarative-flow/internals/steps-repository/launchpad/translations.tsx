@@ -5,6 +5,7 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 	const translatedStrings = {
 		flowName: translate( 'WordPress' ),
 		sidebarTitle: translate( 'Voilà! Your website is up and running!' ),
+		sidebarSubtitle: translate( 'Keep up the momentum with these next steps.' ),
 	};
 
 	switch ( flow ) {

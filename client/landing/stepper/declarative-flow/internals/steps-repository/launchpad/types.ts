@@ -13,6 +13,7 @@ export interface LaunchpadFlowTaskList {
 }
 
 export interface TranslatedLaunchpadStrings {
-	sidebarTitle: string;
 	flowName: string;
+	sidebarTitle: string;
+	sidebarSubtitle: string;
 }

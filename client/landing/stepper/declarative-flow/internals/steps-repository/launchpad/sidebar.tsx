@@ -1,4 +1,3 @@
-import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -7,7 +6,6 @@ import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 
 const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
-	const translate = useTranslate();
 	const site = useSite();
 	const url = site?.URL?.replace( /^https?:\/\//, '' );
 	const flow = useFlowParam();
@@ -28,9 +26,7 @@ const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
 				</div>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
 				<h1 className="launchpad__sidebar-h1">{ translatedStrings.sidebarTitle }</h1>
-				<p className="launchpad__sidebar-description">
-					{ translate( 'Keep up the momentum with these next steps.' ) }
-				</p>
+				<p className="launchpad__sidebar-description">{ translatedStrings.sidebarSubtitle }</p>
 				<div className="launchpad__url-box">{ url }</div>
 				<Checklist siteSlug={ siteSlug } tasks={ tasks } flow={ flow } />
 			</div>
