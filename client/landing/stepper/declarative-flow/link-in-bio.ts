@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
-import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
+import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import type { StepPath } from './internals/steps-repository';
@@ -28,7 +28,6 @@ export const linkInBio: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const { getState } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
@@ -45,7 +44,9 @@ export const linkInBio: Flow = {
 
 				case 'linkInBioSetup':
 					return window.location.replace(
-						`/start/newsletter/domains?new=${ getState().siteTitle ?? '' }&search=yes`
+						`/start/newsletter/domains?new=${ encodeURIComponent(
+							providedDependencies.siteTitle as string
+						) }&search=yes`
 					);
 
 				case 'completingPurchase':
