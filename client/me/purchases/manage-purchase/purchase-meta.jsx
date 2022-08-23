@@ -485,15 +485,6 @@ function PurchaseMetaExpiration( {
 					dateSpan,
 				},
 			} );
-		} else if ( ! isRechargeable( purchase ) && hasPaymentMethod( purchase ) ) {
-			subsBillingText = translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
-				args: {
-					expireDate: moment( purchase.expiryDate ).format( 'LL' ),
-				},
-				components: {
-					dateSpan,
-				},
-			} );
 		} else {
 			subsBillingText = translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
 				args: {
