@@ -117,7 +117,7 @@ export function redirectOnUnknownCategory( context, next ) {
 	const category = context.params.category;
 	const site = context.params.site;
 
-	if ( ALLOWED_CATEGORIES.indexOf( category ) < 0 ) {
+	if ( ! ALLOWED_CATEGORIES.includes( category ) ) {
 		const redirectionUrl = `/plugins/${ site || '' }`;
 		page.redirect( redirectionUrl );
 	}
