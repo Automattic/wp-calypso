@@ -1,6 +1,6 @@
-import { LaunchpadFlowTaskList } from './types';
+import { LaunchpadFlowTaskList, Task } from './types';
 
-export const tasks = [
+export const tasks: Task[] = [
 	{
 		id: 'setup_newsletter',
 		isCompleted: true,
