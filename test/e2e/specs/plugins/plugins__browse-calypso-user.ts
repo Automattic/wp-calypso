@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 		it( 'Can browse all free plugins', async function () {
 			await pluginsPage.clickBrowseAllPlugins( 'Top free plugins' );
-			await pluginsPage.validateHasSubtitle( 'Top free plugins' );
+			await pluginsPage.validateHasHeaderTitle( 'Top free plugins' );
 		} );
 
 		it( 'Can return via breadcrumb', async function () {
@@ -52,7 +52,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		} );
 		it( 'Can browse all premium plugins', async function () {
 			await pluginsPage.clickBrowseAllPlugins( 'Top premium plugins' );
-			await pluginsPage.validateHasSubtitle( 'Top premium plugins' );
+			await pluginsPage.validateHasHeaderTitle( 'Top premium plugins' );
 		} );
 
 		it( 'Can return via breadcrumb from premium plugins', async function () {

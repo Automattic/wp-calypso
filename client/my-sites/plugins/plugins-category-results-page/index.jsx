@@ -19,11 +19,18 @@ import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-s
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import Categories from '../categories';
 import FullListView from '../plugins-browser/full-list-view';
+import Header from './header';
 
 // We should break this styles in a subsequent PR
 import '../plugins-browser/style.scss';
 
-const PluginsCategoryResultList = ( { category, categoryName, selectedSite, sites } ) => {
+const PluginsCategoryResultList = ( {
+	category,
+	categoryName,
+	categoryDescription,
+	selectedSite,
+	sites,
+} ) => {
 	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
 		category,
 		infinite: true,
@@ -42,17 +49,20 @@ const PluginsCategoryResultList = ( { category, categoryName, selectedSite, site
 	}
 
 	return (
-		<FullListView
-			plugins={ plugins }
-			listName={ category }
-			title={ title }
-			site={ selectedSite?.slug }
-			showPlaceholders={ isFetching }
-			sites={ sites }
-			variant={ PluginsBrowserListVariant.InfiniteScroll }
-			fetchNextPage={ fetchNextPage }
-			extended
-		/>
+		<>
+			<Header title={ categoryName } count={ title } subtitle={ categoryDescription } />
+			<FullListView
+				plugins={ plugins }
+				listName={ category }
+				title={ title }
+				site={ selectedSite?.slug }
+				showPlaceholders={ isFetching }
+				sites={ sites }
+				variant={ PluginsBrowserListVariant.InfiniteScroll }
+				fetchNextPage={ fetchNextPage }
+				extended
+			/>
+		</>
 	);
 };
 
@@ -72,6 +82,7 @@ const PluginsCategoryResultsPage = ( { trackPageViews = true, category, hideHead
 	const categories = useCategories();
 
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+	const categoryDescription = categories[ category ]?.categoryDescription;
 
 	return (
 		<MainComponent wideLayout>
@@ -107,6 +118,7 @@ const PluginsCategoryResultsPage = ( { trackPageViews = true, category, hideHead
 					<PluginsCategoryResultList
 						selectedSite={ selectedSite }
 						categoryName={ categoryName }
+						categoryDescription={ categoryDescription }
 						category={ category }
 						sites={ sites }
 					/>
