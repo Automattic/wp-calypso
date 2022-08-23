@@ -15,7 +15,7 @@ import './style.scss';
 
 interface Props {
 	plugin: Plugin;
-	selectedSite: SiteData;
+	selectedSite?: SiteData;
 	className?: string;
 }
 
@@ -58,7 +58,7 @@ export default function UpdatePlugin( {
 
 	let content;
 
-	if ( ! allowedActions.autoupdate ) {
+	if ( ! allowedActions?.autoupdate ) {
 		content = <div>{ translate( 'Auto-managed on this site' ) }</div>;
 	} else if ( hasUpdate ) {
 		content = (
