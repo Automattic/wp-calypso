@@ -3,6 +3,7 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { ComponentType } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -14,6 +15,12 @@ interface SitesMenuItemProps {
 	site: SiteExcerptData;
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
 }
+
+interface MenuItemLinkProps extends Omit< MenuItem.Props, 'href' > {
+	href?: string;
+}
+
+const MenuItemLink = MenuItem as ComponentType< MenuItemLinkProps >;
 
 const LaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
@@ -35,12 +42,12 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
-		<MenuItem
+		<MenuItemLink
 			href={ getSettingsUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_settings_click' ) }
 		>
 			{ __( 'Settings' ) }
-		</MenuItem>
+		</MenuItemLink>
 	);
 };
 
@@ -57,7 +64,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 		: [ getPluginsUrl( site.slug ), __( 'Plugins' ) ];
 
 	return (
-		<MenuItem
+		<MenuItemLink
 			href={ href }
 			onClick={ () =>
 				recordTracks( 'calypso_sites_dashboard_site_action_plugins_click', {
@@ -66,7 +73,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			}
 		>
 			{ label }
-		</MenuItem>
+		</MenuItemLink>
 	);
 };
 
@@ -74,12 +81,12 @@ const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
-		<MenuItem
+		<MenuItemLink
 			href={ getHostingConfigUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
 		>
 			{ __( 'Hosting configuration' ) }
-		</MenuItem>
+		</MenuItemLink>
 	);
 };
 
@@ -93,12 +100,12 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
-		<MenuItem
+		<MenuItemLink
 			href={ site.options?.admin_url }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
 			{ __( 'Visit WP Admin' ) } <ExternalGridIcon icon="external" size={ 18 } />
-		</MenuItem>
+		</MenuItemLink>
 	);
 };
 
