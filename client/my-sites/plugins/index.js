@@ -12,6 +12,7 @@ import {
 	scrollTopIfNoHash,
 	upload,
 	redirectOnSearchQuery,
+	redirectOnUnknownCategory,
 } from './controller';
 
 export default function () {
@@ -38,7 +39,7 @@ export default function () {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
-		// we don't search on category yet!
+		redirectOnUnknownCategory,
 		redirectOnSearchQuery,
 		browsePluginsByCategory,
 		makeLayout,

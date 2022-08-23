@@ -3,6 +3,7 @@ import page from 'page';
 import { createElement } from 'react';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import { ALLOWED_CATEGORIES } from 'calypso/my-sites/plugins/categories/use-categories';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PlanSetup from './jetpack-plugins-setup';
@@ -106,6 +107,18 @@ export function redirectOnSearchQuery( context, next ) {
 
 	if ( searchTerm ) {
 		const redirectionUrl = `/plugins/${ site || '' }?s=${ searchTerm }`;
+		page.redirect( redirectionUrl );
+	}
+
+	next();
+}
+
+export function redirectOnUnknownCategory( context, next ) {
+	const category = context.params.category;
+	const site = context.params.site;
+
+	if ( ALLOWED_CATEGORIES.indexOf( category ) < 0 ) {
+		const redirectionUrl = `/plugins/${ site || '' }`;
 		page.redirect( redirectionUrl );
 	}
 
