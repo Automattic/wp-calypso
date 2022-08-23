@@ -133,6 +133,14 @@ export class PluginsPage {
 	}
 
 	/**
+	 * Validate category has the plugin
+	 */
+	async validateHasPluginInCategory( section: string, plugin: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.headerTitle( section ) );
+		await this.page.waitForSelector( selectors.pluginTitle( plugin ) );
+	}
+
+	/**
 	 * Click Browse All Plugins
 	 */
 	async clickBrowseAllPlugins( section: string ): Promise< void > {
