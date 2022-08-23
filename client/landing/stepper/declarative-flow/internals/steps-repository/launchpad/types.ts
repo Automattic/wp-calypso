@@ -4,4 +4,10 @@ export interface Task {
 	actionUrl: string;
 	taskType: string;
 	title: string;
+	displayBadge: boolean;
+	badgeText: string;
+}
+
+export interface LaunchpadFlowTaskList {
+	[ string: string ]: string[];
 }

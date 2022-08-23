@@ -165,11 +165,21 @@
 	color: var( --color-text );
 }
 
+.launchpad__checklist-item .badge {
+	background-color: var( --studio-blue-5 );
+	color: var( --studio-blue-80 );
+}
+ 
+.launchpad__checklist-item[disabled] {
+	background-color: transparent;
+}
+
 .launchpad__checklist-item-status {
 	margin-right: 8px;
 	width: 20px;
 	.gridicon {
 		top: 2px;
+		fill: var( --studio-gray-50 );
 	}
 }
 
