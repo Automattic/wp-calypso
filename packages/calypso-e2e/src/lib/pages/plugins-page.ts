@@ -17,7 +17,7 @@ const selectors = {
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
 		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-browser-list__title',
-	browseAllBtn: ( section: string ) => `text=${ section }Browse All >> button`,
+	browseAllBtn: ( section: string ) => `text=${ section }Browse All >> a`,
 	browseFirstCategory: 'button:has-text("Search Engine Optimization")',
 	categoryButton: ( section: string ) => `button:has-text("${ section }")`,
 	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,

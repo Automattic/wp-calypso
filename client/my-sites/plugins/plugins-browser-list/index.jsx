@@ -2,7 +2,6 @@ import { Card, Gridicon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { times } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import AsyncLoad from 'calypso/components/async-load';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
@@ -86,12 +85,6 @@ const PluginsBrowserList = ( {
 		}
 	};
 
-	const gotoLink = ( href ) => {
-		if ( href !== undefined ) {
-			page( href );
-		}
-	};
-
 	return (
 		<div className="plugins-browser-list">
 			<div className="plugins-browser-list__header">
@@ -103,15 +96,10 @@ const PluginsBrowserList = ( {
 				) }
 				<div className="plugins-browser-list__actions">
 					{ expandedListLink && (
-						<button
-							tabIndex={ 0 }
-							style={ { cursor: 'pointer' } }
-							onClick={ () => gotoLink( expandedListLink ) }
-							className="plugins-browser-list__browse-all"
-						>
+						<a className="plugins-browser-list__browse-all" href={ expandedListLink }>
 							{ __( 'Browse All' ) }
 							<Gridicon icon="arrow-right" size="18" />
-						</button>
+						</a>
 					) }
 				</div>
 			</div>
