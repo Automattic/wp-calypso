@@ -7,6 +7,7 @@ import {
 	disconnectSite,
 	disconnectSiteConfirm,
 	general,
+	versioning,
 	legacyRedirects,
 	manageConnection,
 	redirectIfCantDeleteSite,
@@ -18,6 +19,17 @@ import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings
 
 export default function () {
 	page( '/settings', '/settings/general' );
+
+	page(
+		'/settings/versioning/:site_id',
+		siteSelection,
+		navigation,
+		setScroll,
+		siteSettings,
+		versioning,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/settings/general/:site_id',

@@ -11,6 +11,7 @@ import DisconnectSite from './disconnect-site';
 import ConfirmDisconnection from './disconnect-site/confirm';
 import ManageConnection from './manage-connection';
 import StartOver from './start-over';
+import SiteVersioning from './versioning';
 
 function canDeleteSite( state, siteId ) {
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
@@ -40,6 +41,11 @@ export function redirectIfCantDeleteSite( context, next ) {
 		return page.redirect( '/settings/general/' + getSelectedSiteSlug( state ) );
 	}
 
+	next();
+}
+
+export function versioning( context, next ) {
+	context.primary = <SiteVersioning />;
 	next();
 }
 
