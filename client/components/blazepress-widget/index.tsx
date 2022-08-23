@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { showDSP } from 'calypso/lib/promote-post';
+import { showDSP, usePromoteWidgetVersion } from 'calypso/lib/promote-post';
 
 import './style.scss';
 
@@ -19,6 +19,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const { isVisible = false, onClose = () => {} } = props;
 	const [ isLoading, setIsLoading ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
+	const widgetVersion = usePromoteWidgetVersion();
 
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
@@ -34,7 +35,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					return;
 				}
 
-				await showDSP( props.siteId, props.postId, widgetContainer.current );
+				await showDSP( props.siteId, props.postId, widgetContainer.current, widgetVersion );
 				setIsLoading( false );
 			} )();
 	}, [ isVisible ] );

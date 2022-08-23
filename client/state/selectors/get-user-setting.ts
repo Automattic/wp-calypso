@@ -2,7 +2,7 @@ import type { AppState } from 'calypso/types';
 
 import 'calypso/state/user-settings/init';
 
-export type UserSettingValue = boolean | number | string;
+export type UserSettingValue = boolean | number | string | Record< string, any >;
 
 /**
  * Given a settingName, returns the value of that setting if it exists or null

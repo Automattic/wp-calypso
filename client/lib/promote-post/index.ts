@@ -24,22 +24,23 @@ declare global {
 	}
 }
 
-export async function loadDSPWidgetJS(): Promise< void > {
+export async function loadDSPWidgetJS( version?: string | null ): Promise< void > {
 	// check if already loaded
 	if ( window.BlazePress ) {
 		return;
 	}
-	const src =
-		config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
+	const ver = version ?? Math.round( Date.now() / ( 1000 * 60 * 60 ) );
+	const src = config( 'dsp_widget_js_src' ) + '?ver=' + ver;
 	await loadScript( src );
 }
 
 export async function showDSP(
 	siteId: number | string,
 	postId: number | string,
-	domNodeOrId?: HTMLElement | string | null
+	domNodeOrId?: HTMLElement | string | null,
+	version?: string | null
 ) {
-	await loadDSPWidgetJS();
+	await loadDSPWidgetJS( version );
 	return new Promise( ( resolve, reject ) => {
 		if ( window.BlazePress ) {
 			window.BlazePress.render( {
@@ -127,12 +128,31 @@ export const usePromoteWidget = (): PromoteWidgetStatus => {
 		if ( settings ) {
 			const originalSetting = settings[ 'has_promote_widget' ];
 			if ( originalSetting !== undefined ) {
-				return originalSetting === true
+				return originalSetting[ 'enabled' ] === true
 					? PromoteWidgetStatus.ENABLED
 					: PromoteWidgetStatus.DISABLED;
 			}
 		}
 		return PromoteWidgetStatus.FETCHING;
+	} );
+	return value;
+};
+
+/**
+ * Hook to get the widget version
+ *
+ * @returns string | null
+ */
+export const usePromoteWidgetVersion = (): string | null => {
+	const value = useSelector( ( state ) => {
+		const settings = getUserSettings( state );
+		if ( settings ) {
+			const originalSetting = settings[ 'has_promote_widget' ];
+			if ( originalSetting !== undefined ) {
+				return originalSetting[ 'ver' ];
+			}
+		}
+		return null;
 	} );
 	return value;
 };
