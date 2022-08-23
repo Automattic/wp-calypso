@@ -1,6 +1,6 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect } from 'react';
+import { Fragment, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -20,6 +20,7 @@ const SearchBox = ( { isMobile, searchTerm, doSearch, searchBoxRef, isSearching 
 				pinned={ isMobile }
 				fitsContainer={ isMobile }
 				onSearch={ doSearch }
+				onSearchClose={ () => setQueryArgs( {} ) }
 				defaultValue={ searchTerm }
 				searchMode="on-enter"
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
@@ -95,16 +96,6 @@ const SearchBoxHeader = ( props ) => {
 		searchRef.current.setKeyword( keyword );
 		doSearch( keyword );
 	};
-
-	const clearSearch = useCallback( () => {
-		setQueryArgs( {} );
-	}, [] );
-
-	useEffect( () => {
-		if ( ! searchTerm ) {
-			clearSearch();
-		}
-	}, [ clearSearch, searchTerm ] );
 
 	return (
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
