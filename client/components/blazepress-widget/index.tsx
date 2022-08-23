@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { showDSP } from 'calypso/lib/promote-post';
+import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 
 import './style.scss';
 
@@ -38,6 +38,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				setIsLoading( false );
 			} )();
 	}, [ isVisible ] );
+
+	const promoteWidgetStatus = usePromoteWidget();
+	if ( promoteWidgetStatus === PromoteWidgetStatus.DISABLED ) {
+		return <></>;
+	}
+
 	return (
 		<>
 			{ isVisible && (
