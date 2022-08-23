@@ -16,7 +16,7 @@ const Launchpad: Step = ( { navigation } ) => {
 
 	const stepContent = (
 		<div className="launchpad__content">
-			<Sidebar />
+			<Sidebar siteSlug={ siteSlug } />
 			<LaunchpadSitePreview siteSlug={ siteSlug } />
 		</div>
 	);

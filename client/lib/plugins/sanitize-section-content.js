@@ -79,6 +79,12 @@ const isAllowedAttr = ( tagName, attrName ) => {
 					return false;
 			}
 
+		case 'div':
+			switch ( attrName ) {
+				case 'class':
+					return true;
+			}
+
 		default:
 			return false;
 	}

@@ -487,6 +487,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	const setBundledPluginSlug = ( siteSlug: string, pluginSlug: string ) => ( {
+		type: 'SET_BUNDLED_PLUGIN_SLUG' as const,
+		siteSlug,
+		pluginSlug,
+	} );
+
 	return {
 		receiveSiteDomains,
 		receiveSiteSettings,
@@ -536,6 +542,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		atomicSoftwareInstallStart,
 		atomicSoftwareInstallSuccess,
 		atomicSoftwareInstallFailure,
+		setBundledPluginSlug,
 	};
 }
 
@@ -573,6 +580,7 @@ export type Action =
 			| ActionCreators[ 'atomicSoftwareInstallStart' ]
 			| ActionCreators[ 'atomicSoftwareInstallSuccess' ]
 			| ActionCreators[ 'atomicSoftwareInstallFailure' ]
+			| ActionCreators[ 'setBundledPluginSlug' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
