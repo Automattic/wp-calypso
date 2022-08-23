@@ -54,7 +54,7 @@ export const newsletter: Flow = {
 					);
 
 				case 'newsletterSetup':
-					return handleNewsletterSetupSubmit( providedDependencies );
+					window.location.replace( `/start/newsletter/domains?siteAccentColor=${ encodeURIComponent( providedDependencies.siteAccentColor ?? '' ) }` )
 
 				case 'completingPurchase':
 					return navigate( 'processing' );
