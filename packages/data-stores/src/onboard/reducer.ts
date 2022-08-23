@@ -354,27 +354,10 @@ const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const bundledPluginSlug: Reducer< { [ key: string ]: string | undefined }, OnboardAction > = (
-	state = {},
-	action
-) => {
-	if ( action.type === 'SET_BUNDLED_PLUGIN_SLUG' ) {
-		return {
-			...state,
-			[ action.siteSlug ]: action.pluginSlug,
-		};
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return {};
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
 	anchorSpotifyUrl,
-	bundledPluginSlug,
 	domain,
 	domainSearch,
 	domainCategory,

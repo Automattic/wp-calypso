@@ -33,7 +33,7 @@ export const pluginBundleFlow: Flow = {
 	useSteps() {
 		const siteSlugParam = useSiteSlugParam();
 		const pluginSlug = useSelect( ( select ) =>
-			select( ONBOARD_STORE ).getBundledPluginSlug( siteSlugParam || '' )
+			select( SITE_STORE ).getBundledPluginSlug( siteSlugParam || '' )
 		) as BundledPlugin;
 
 		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
