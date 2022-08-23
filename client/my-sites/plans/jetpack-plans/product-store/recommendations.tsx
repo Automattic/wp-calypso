@@ -7,19 +7,19 @@ import WordpressDotComLogo from 'calypso/assets/images/illustrations/wordpress.c
 const details = [
 	{
 		logo: WordpressDotComLogo,
-		alt: 'wordpress.com',
+		alt: 'WordPress.com',
 	},
 	{
 		logo: BlueHostLogo,
-		alt: 'bluehost.com',
+		alt: 'Bluehost',
 	},
 	{
 		logo: HostGatorLogo,
-		alt: 'hostgator.com',
+		alt: 'HostGator',
 	},
 	{
 		logo: DreamHostLogo,
-		alt: 'dreamhost.com',
+		alt: 'DreamHost',
 	},
 ];
 
