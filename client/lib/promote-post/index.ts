@@ -128,7 +128,7 @@ export const usePromoteWidget = (): PromoteWidgetStatus => {
 		if ( settings ) {
 			const originalSetting = settings[ 'has_promote_widget' ];
 			if ( originalSetting !== undefined ) {
-				return originalSetting[ 'enabled' ] === true
+				return originalSetting === true
 					? PromoteWidgetStatus.ENABLED
 					: PromoteWidgetStatus.DISABLED;
 			}
@@ -147,9 +147,9 @@ export const usePromoteWidgetVersion = (): string | null => {
 	const value = useSelector( ( state ) => {
 		const settings = getUserSettings( state );
 		if ( settings ) {
-			const originalSetting = settings[ 'has_promote_widget' ];
+			const originalSetting = settings[ 'promote_widget_version' ];
 			if ( originalSetting !== undefined ) {
-				return originalSetting[ 'ver' ];
+				return originalSetting;
 			}
 		}
 		return null;
