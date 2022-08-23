@@ -253,7 +253,7 @@ const getLinks = (
 			// FIXME: Remove this condition when we enable plugin management in production
 			if ( config.isEnabled( 'jetpack/plugin-management' ) ) {
 				link =
-					status === 'warning' ? `/plugin/updates/${ siteUrl }` : `/plugins/manage/${ siteUrl }`;
+					status === 'warning' ? `/plugins/updates/${ siteUrl }` : `/plugins/manage/${ siteUrl }`;
 				isExternalLink = false;
 			}
 			break;
