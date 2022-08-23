@@ -233,6 +233,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 						<ProductStore
 							enableUserLicensesDialog={ enableUserLicensesDialog }
 							urlQueryArgs={ urlQueryArgs }
+							duration={ currentDuration }
 						/>
 					</>
 				) : (
