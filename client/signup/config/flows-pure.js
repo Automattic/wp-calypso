@@ -113,7 +113,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'newsletter',
-			steps: [ 'domains', 'plans' ],
+			steps: [ 'domains', 'plans-newsletter' ],
 			destination: ( dependencies, localeSlug, goesThroughCheckout ) => {
 				return goesThroughCheckout
 					? `/setup/completingPurchase?flow=newsletter&siteSlug=${ dependencies.siteSlug }`

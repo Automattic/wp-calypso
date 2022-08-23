@@ -783,6 +783,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 	.signup__step.is-domains,
 	.signup__step.is-emails,
+	.signup__step.is-plans-newsletter,
 	.signup__step.is-plans {
 		.formatted-header {
 			.formatted-header__title {
@@ -820,6 +821,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
+	.signup__step.is-plans-newsletter,
 	.signup__step.is-plans {
 		.formatted-header__title {
 			font-weight: 500; /* stylelint-disable-line */
@@ -870,6 +872,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
  * and the current back button is redundent.
 */
 body.is-section-signup.is-white-signup {
+	.signup__step.is-plans-newsletter .step-wrapper__navigation,
 	.signup__step.is-plans .step-wrapper__navigation,
 	.signup__step.is-domains .step-wrapper__navigation {
 		@include breakpoint-deprecated( '<660px' ) {
