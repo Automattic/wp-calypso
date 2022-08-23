@@ -47,7 +47,8 @@ export const newsletter: Flow = {
 				case 'newsletterSetup':
 					window.location.replace(
 						'/start/newsletter/domains' +
-							( typeof providedDependencies.siteAccentColor === 'string'
+							( typeof providedDependencies.siteAccentColor === 'string' &&
+							providedDependencies.siteAccentColor !== ''
 								? `?siteAccentColor=${ encodeURIComponent( providedDependencies.siteAccentColor ) }`
 								: '' )
 					);
