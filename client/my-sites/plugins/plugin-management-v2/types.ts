@@ -35,3 +35,6 @@ export interface RowFormatterArgs {
 export interface PluginRowFormatterArgs extends RowFormatterArgs {
 	item: Plugin;
 }
+export interface SiteRowFormatterArgs extends RowFormatterArgs {
+	item: SiteData;
+}

@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
-import PluginsList from '../plugins-list';
-import type { PluginRowFormatterArgs } from '../types';
+import SitesList from '../sites-list';
+import type { Plugin } from '../types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -12,7 +12,7 @@ interface Props {
 	sites: Array< SiteData | null | undefined >;
 	selectedSite: SiteData;
 	isLoading: boolean;
-	rowFormatter: ( args: PluginRowFormatterArgs ) => ReactNode;
+	plugin: Plugin;
 }
 
 export default function SitesWithInstalledPluginsList( props: Props ): ReactElement | null {
@@ -55,11 +55,10 @@ export default function SitesWithInstalledPluginsList( props: Props ): ReactElem
 					},
 				} ) }
 			</div>
-			<PluginsList
+			<SitesList
 				{ ...props }
 				items={ sitesWithSecondarySites.map( ( site ) => site.site ) }
 				columns={ columns }
-				primaryKey="ID"
 			/>
 		</>
 	);

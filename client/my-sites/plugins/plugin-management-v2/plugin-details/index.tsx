@@ -6,14 +6,13 @@ import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginAvailableOnSitesList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details/plugin-available-on-sites-list';
 import SitesWithInstalledPluginsList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details/sites-with-installed-plugin-list';
-import PluginRowFormatter from 'calypso/my-sites/plugins/plugin-management-v2/plugin-row-formatter';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
 	getSiteObjectsWithPlugin,
 	getSiteObjectsWithoutPlugin,
 } from 'calypso/state/plugins/installed/selectors';
 import { isFetching as isWporgPluginFetchingSelector } from 'calypso/state/plugins/wporg/selectors';
-import type { Plugin, PluginRowFormatterArgs } from '../types';
+import type { Plugin } from '../types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactElement } from 'react';
 
@@ -63,10 +62,6 @@ export default function PluginDetailsV2( {
 		},
 	];
 
-	const rowFormatter = ( { item, ...rest }: PluginRowFormatterArgs ) => {
-		return <PluginRowFormatter { ...rest } item={ fullPlugin } selectedSite={ item } />;
-	};
-
 	return (
 		<div className="plugin-details">
 			<FixedNavigationHeader
@@ -94,13 +89,13 @@ export default function PluginDetailsV2( {
 				sites={ sitesWithPlugin }
 				selectedSite={ selectedSite }
 				isLoading={ isLoading }
-				rowFormatter={ rowFormatter }
+				plugin={ fullPlugin }
 			/>
 			<PluginAvailableOnSitesList
 				sites={ sitesWithoutPlugin }
 				selectedSite={ selectedSite }
 				isLoading={ isLoading }
-				rowFormatter={ rowFormatter }
+				plugin={ fullPlugin }
 			/>
 			<PluginDetailsBody
 				fullPlugin={ fullPlugin }
