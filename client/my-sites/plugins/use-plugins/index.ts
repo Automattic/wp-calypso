@@ -23,6 +23,7 @@ interface WPORGResponse {
 	};
 	isLoading: boolean;
 	fetchNextPage?: () => void;
+	hasNextPage?: boolean;
 }
 
 interface WPCOMResponse {
@@ -98,6 +99,7 @@ const usePlugins = ( {
 		data: { plugins: wporgPluginsInfinite = [], pagination: wporgPaginationInfinite } = {},
 		isLoading: isFetchingWPORGInfinite,
 		fetchNextPage,
+		hasNextPage,
 	} = searchHook( wporgPluginsOptions, {
 		enabled:
 			infinite &&
@@ -157,12 +159,7 @@ const usePlugins = ( {
 	}
 
 	function fetchNextPageAndStop() {
-		if (
-			infinite &&
-			dotOrgPagination?.page &&
-			dotOrgPagination?.pages &&
-			dotOrgPagination.page >= dotOrgPagination.pages
-		) {
+		if ( ! hasNextPage ) {
 			return;
 		}
 
