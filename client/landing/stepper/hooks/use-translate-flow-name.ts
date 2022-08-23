@@ -14,6 +14,6 @@ export function useTranslateFlowName( flow: string | null ): string {
 			return translate( 'Podcast' );
 			break;
 		default:
-			return translate( 'WordPress' );
+			return translate( 'Website' );
 	}
 }
