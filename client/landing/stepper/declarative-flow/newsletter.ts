@@ -9,6 +9,15 @@ import { ProvidedDependencies } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
+type NewsletterSetupSubmitDeps = { siteAccentColor?: string };
+const handleNewsletterSetupSubmit = ( { siteAccentColor }: NewsletterSetupSubmitDeps ) => {
+	let newsletterSignupFlowUrl = '/start/newsletter/domains';
+	if ( siteAccentColor ) {
+		newsletterSignupFlowUrl += `?siteAccentColor=${ encodeURIComponent( siteAccentColor ) }`;
+	}
+	return window.location.replace( newsletterSignupFlowUrl );
+};
+
 export const newsletter: Flow = {
 	name: 'newsletter',
 	title: 'Newsletters',
@@ -45,7 +54,7 @@ export const newsletter: Flow = {
 					);
 
 				case 'newsletterSetup':
-					return window.location.replace( '/start/newsletter/domains' );
+					return handleNewsletterSetupSubmit( providedDependencies );
 
 				case 'completingPurchase':
 					return navigate( 'processing' );

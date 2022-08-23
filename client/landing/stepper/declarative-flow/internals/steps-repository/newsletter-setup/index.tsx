@@ -94,7 +94,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline } );
+			submit?.( { siteTitle, tagline, siteAccentColor: accentColor } );
 		}
 	};
 
