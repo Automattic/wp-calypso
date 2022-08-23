@@ -12,7 +12,17 @@ import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 
-const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
+const badges = css( {
+	display: 'flex',
+	gap: '8px',
+	alignItems: 'center',
+	'html:not( [dir="rtl"] ) &': {
+		marginLeft: 'auto',
+	},
+	'html[dir="rtl"] &': {
+		marginRight: 'auto',
+	},
+} );
 
 export const siteThumbnail = css( {
 	aspectRatio: '16 / 9',

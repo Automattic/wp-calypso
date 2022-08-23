@@ -27,3 +27,17 @@ export const MEDIA_QUERIES = {
 	mediumOrLarger: '@media screen and ( min-width: 660px )',
 	large: '@media screen and ( min-width: 960px )',
 };
+
+const spaceRight = ( spaceType: 'margin' | 'padding', value: string ) => {
+	return `
+		html:not( [dir="rtl" ] ) & {
+			${ spaceType }-right: ${ value };
+		}
+		html[dir="rtl"] & {
+			${ spaceType }-left: ${ value };
+		}
+	`;
+};
+
+export const paddingRight = ( value: string ) => spaceRight( 'padding', value );
+export const marginRight = ( value: string ) => spaceRight( 'margin', value );

@@ -5,7 +5,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { displaySiteUrl, getDashboardUrl, MEDIA_QUERIES } from '../utils';
+import {
+	displaySiteUrl,
+	getDashboardUrl,
+	MEDIA_QUERIES,
+	paddingRight,
+	marginRight,
+} from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
@@ -25,7 +31,7 @@ const Row = styled.tr`
 const Column = styled.td< { mobileHidden?: boolean } >`
 	padding-top: 12px;
 	padding-bottom: 12px;
-	padding-right: 24px;
+	${ paddingRight( '24px' ) }
 	vertical-align: middle;
 	font-size: 14px;
 	line-height: 20px;
@@ -35,22 +41,21 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
-		padding-right: 0;
-	}
+		${ paddingRight( '0' ) }
 `;
 
 const SiteListTile = styled( ListTile )`
 	line-height: initial;
-	margin-right: 0;
+	${ marginRight( '0' ) }
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
-		margin-right: 12px;
+		${ marginRight( '12px' ) }
 	}
 `;
 
 const ListTileLeading = styled.a`
 	${ MEDIA_QUERIES.mediumOrSmaller } {
-		margin-right: 12px;
+		${ marginRight( '12px' ) }
 	}
 `;
 
