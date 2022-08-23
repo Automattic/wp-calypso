@@ -55,9 +55,15 @@
 			margin: 0;
 		}
 	}
-}
-.plugin-details-v2__page {
-	padding: 0;
+	.plugin-details__page {
+		padding: 0;
+	}
+	.plugin-details__body {
+		padding-top: 0;
+		background: var( --color-surface );
+		margin: 16px -72px -32px;
+		padding: 0 72px;
+	}
 }
 .plugin-details-v2__header {
 	border-bottom: none !important;
@@ -78,10 +84,4 @@
 	font-size: 0.875rem;
 	color: var( --color-text );
 	margin: 16px 0;
-}
-.plugin-details-v2__body {
-	padding-top: 0;
-	background: var( --color-surface );
-	margin: 16px -72px -32px;
-	padding: 0 72px;
 }

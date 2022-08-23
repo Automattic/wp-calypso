@@ -48,7 +48,7 @@ export default function SitesWithInstalledPluginsList( props: Props ): ReactElem
 
 	return (
 		<>
-			<div className="plugin-details__title">
+			<div className="plugin-details-v2__title">
 				{ translate( 'Installed on %(count)d sites', {
 					args: {
 						count: sitesWithSecondarySites.length,

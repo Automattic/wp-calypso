@@ -84,9 +84,9 @@ export default function PluginDetailsV2( {
 				sites={ sitesWithPlugins }
 				plugins={ [ fullPlugin ] }
 			/>
-			<div className="plugin-details-v2__page legacy">
-				<div className="plugin-details-v2__layout plugin-details-v2__top-section">
-					<div className="plugin-details-v2__layout-col-left">
+			<div className="plugin-details__page legacy">
+				<div className="plugin-details__layout plugin-details__top-section">
+					<div className="plugin-details__layout-col-left">
 						<PluginDetailsHeader
 							isJetpackCloud
 							plugin={ fullPlugin }

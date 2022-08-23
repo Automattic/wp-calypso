@@ -36,7 +36,7 @@ export default function PluginAvailableOnSitesList( props: Props ): ReactElement
 
 	return (
 		<div>
-			<div className="plugin-details__title">{ translate( 'Available on' ) }</div>
+			<div className="plugin-details-v2__title">{ translate( 'Available on' ) }</div>
 			<SitesList
 				{ ...props }
 				items={ sitesWithSecondarySites.map( ( site ) => site.site ) }
