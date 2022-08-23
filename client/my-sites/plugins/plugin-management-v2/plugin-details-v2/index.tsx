@@ -8,8 +8,8 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
-import PluginAvailableOnSitesList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details/plugin-available-on-sites-list';
-import SitesWithInstalledPluginsList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details/sites-with-installed-plugin-list';
+import PluginAvailableOnSitesList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
+import SitesWithInstalledPluginsList from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2/sites-with-installed-plugin-list';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import {
 	getSiteObjectsWithPlugin,
@@ -69,13 +69,13 @@ export default function PluginDetailsV2( {
 	];
 
 	return (
-		<div className="plugin-details">
+		<div className="plugin-details-v2">
 			<QueryJetpackPlugins siteIds={ siteIds } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site?.ID ) } />
 			<QueryProductsList persist />
 			<FixedNavigationHeader
-				className="plugin-details__header"
+				className="plugin-details-v2__header"
 				compactBreadcrumb={ false }
 				navigationItems={ breadcrumbs }
 			/>
@@ -84,9 +84,9 @@ export default function PluginDetailsV2( {
 				sites={ sitesWithPlugins }
 				plugins={ [ fullPlugin ] }
 			/>
-			<div className="plugin-details__page legacy">
-				<div className="plugin-details__layout plugin-details__top-section">
-					<div className="plugin-details__layout-col-left">
+			<div className="plugin-details-v2__page legacy">
+				<div className="plugin-details-v2__layout plugin-details-v2__top-section">
+					<div className="plugin-details-v2__layout-col-left">
 						<PluginDetailsHeader
 							isJetpackCloud
 							plugin={ fullPlugin }
