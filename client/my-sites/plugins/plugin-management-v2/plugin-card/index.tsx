@@ -1,4 +1,4 @@
-import Card from '../common/card';
+import PluginCommonCard from '../plugin-common/plugin-common-card';
 import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactElement, ReactNode } from 'react';
@@ -12,5 +12,5 @@ interface Props {
 }
 
 export default function PluginCard( props: Props ): ReactElement {
-	return <Card { ...props } />;
+	return <PluginCommonCard { ...props } />;
 }

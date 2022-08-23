@@ -1,4 +1,4 @@
-import Table from '../common/table';
+import PluginCommonTable from '../plugin-common/plugin-common-table';
 import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -12,5 +12,5 @@ interface Props {
 }
 
 export default function PluginsTable( props: Props ): ReactElement {
-	return <Table { ...props } />;
+	return <PluginCommonTable { ...props } />;
 }

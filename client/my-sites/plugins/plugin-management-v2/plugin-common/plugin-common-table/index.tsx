@@ -15,7 +15,7 @@ interface Props {
 	primaryKey: string;
 }
 
-export default function Table( {
+export default function PluginCommonTable( {
 	isLoading,
 	columns,
 	items,
@@ -24,7 +24,7 @@ export default function Table( {
 	primaryKey,
 }: Props ): ReactElement {
 	return (
-		<table className="table__table">
+		<table className="plugin-common-table__table">
 			<thead>
 				<tr>
 					{ columns
@@ -43,7 +43,10 @@ export default function Table( {
 						{ columns.map( ( column ) => (
 							<td key={ column.key }>
 								{ column.key === 'plugin' && (
-									<Gridicon className="table__plugin-icon is-loading" icon="plugins" />
+									<Gridicon
+										className="plugin-common-table__plugin-icon is-loading"
+										icon="plugins"
+									/>
 								) }
 								<TextPlaceholder />
 							</td>
@@ -56,11 +59,13 @@ export default function Table( {
 					items.map( ( item ) => {
 						const id = item[ primaryKey ];
 						return (
-							<tr key={ `table-row-${ id }` } className="table__table-row">
+							<tr key={ `table-row-${ id }` } className="plugin-common-table__table-row">
 								{ columns.map( ( column ) => {
 									return (
 										<td
-											className={ classNames( column.smallColumn && 'table__small-column' ) }
+											className={ classNames(
+												column.smallColumn && 'plugin-common-table__small-column'
+											) }
 											key={ `table-data-${ column.key }-${ id }` }
 										>
 											{ rowFormatter( { columnKey: column.key, item } ) }
@@ -68,9 +73,13 @@ export default function Table( {
 									);
 								} ) }
 								{ hasMoreActions && (
-									<td className={ classNames( 'table__actions' ) }>
+									<td className={ classNames( 'plugin-common-table__actions' ) }>
 										<Button borderless compact>
-											<Gridicon icon="ellipsis" size={ 18 } className="table__all-actions" />
+											<Gridicon
+												icon="ellipsis"
+												size={ 18 }
+												className="plugin-common-table__all-actions"
+											/>
 										</Button>
 									</td>
 								) }

@@ -74,7 +74,6 @@ export default function PluginManagementV2( {
 				isLoading={ isLoading }
 				selectedSite={ selectedSite }
 				title={ title }
-				primaryKey="id"
 			/>
 		</div>
 	);

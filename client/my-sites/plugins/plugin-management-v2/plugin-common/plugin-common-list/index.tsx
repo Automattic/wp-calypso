@@ -1,7 +1,7 @@
-import { Card as CardComponent } from '@automattic/components';
+import { Card } from '@automattic/components';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import Card from '../card';
-import Table from '../table';
+import PluginCommonCard from '../plugin-common-card';
+import PluginCommonTable from '../plugin-common-table';
 import type { Columns, RowFormatterArgs } from '../../types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactElement, ReactNode } from 'react';
@@ -19,7 +19,7 @@ interface Props {
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;
 }
 
-export default function List( {
+export default function PluginCommonList( {
 	items,
 	title,
 	isLoading,
@@ -29,22 +29,27 @@ export default function List( {
 }: Props ): ReactElement {
 	return (
 		<>
-			<Table { ...rest } items={ items } isLoading={ isLoading } primaryKey={ primaryKey } />
-			<div className="list__mobile-view">
+			<PluginCommonTable
+				{ ...rest }
+				items={ items }
+				isLoading={ isLoading }
+				primaryKey={ primaryKey }
+			/>
+			<div className="plugin-common-list__mobile-view">
 				<>
 					{ title && (
-						<CardComponent className="list__content-header">
+						<Card className="plugin-common-list__content-header">
 							<div>{ title }</div>
-						</CardComponent>
+						</Card>
 					) }
 
 					{ isLoading ? (
-						<CardComponent>
+						<Card>
 							<TextPlaceholder />
-						</CardComponent>
+						</Card>
 					) : (
 						items.map( ( item ) => (
-							<Card
+							<PluginCommonCard
 								{ ...rest }
 								selectedSite={ selectedSite }
 								key={ item[ primaryKey ] }

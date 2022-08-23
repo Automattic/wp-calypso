@@ -2,7 +2,7 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 
-.table__table {
+.plugin-common-table__table {
 	display: none;
 	@include break-xlarge() {
 		display: table;
@@ -52,13 +52,13 @@
 		vertical-align: middle;
 	}
 }
-td.table__actions {
+td.plugin-common-table__actions {
 	padding: 0;
 	width: 50px;
 	text-align: right;
 	padding-right: 16px;
 }
-.table__table-row {
+.plugin-common-table__table-row {
 	&:hover {
 		background: var( --studio-gray-0 );
 		.plugin-row-formatter__overlay {
@@ -66,14 +66,14 @@ td.table__actions {
 		}
 	}
 }
-.table__all-actions {
+.plugin-common-table__all-actions {
 	vertical-align: middle;
 	display: inline-flex;
 	color: var( --studio-gray-40 );
 	margin: 0 0.1em;
 	height: 100%;
 }
-.table__small-column {
+.plugin-common-table__small-column {
 	max-width: 100px;
 	@include break-wide() {
 		max-width: 120px;
@@ -85,7 +85,7 @@ td.table__actions {
 .components-form-toggle.is-checked .components-form-toggle__track {
 	background-color: var( --studio-jetpack-green-50 );
 }
-.table__plugin-icon {
+.plugin-common-table__plugin-icon {
 	width: 24px;
 	height: 24px;
 	vertical-align: middle;

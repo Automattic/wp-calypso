@@ -1,4 +1,4 @@
-import List from '../common/list';
+import PluginCommonList from '../plugin-common/plugin-common-list';
 import PluginRowFormatter from '../plugin-row-formatter';
 import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
@@ -11,7 +11,6 @@ interface Props {
 	columns: Columns;
 	title?: ReactNode;
 	hasMoreActions?: boolean;
-	primaryKey: string;
 }
 
 export default function PluginsList( {
@@ -24,11 +23,12 @@ export default function PluginsList( {
 	};
 
 	return (
-		<List
+		<PluginCommonList
 			{ ...rest }
 			selectedSite={ selectedSite }
 			hasMoreActions={ hasMoreActions }
 			rowFormatter={ rowFormatter }
+			primaryKey="id"
 		/>
 	);
 }
