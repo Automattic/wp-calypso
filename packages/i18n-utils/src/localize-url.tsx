@@ -156,7 +156,8 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 export function localizeUrl(
 	fullUrl: string,
 	locale: Locale = getDefaultLocale(),
-	isLoggedIn = true
+	isLoggedIn = true,
+	skipHostLookup = false
 ): string {
 	let url;
 	try {
@@ -172,8 +173,6 @@ export function localizeUrl(
 
 	// Let's unify the URL.
 	url.protocol = 'https:';
-	// Let's use `host` for everything.
-	url.hostname = '';
 
 	if ( ! url.pathname.endsWith( '.php' ) ) {
 		// Essentially a trailingslashit.
@@ -191,7 +190,11 @@ export function localizeUrl(
 	}
 
 	// Lookup is checked back to front.
-	const lookup = [ url.host, url.host + firstPathSegment, url.host + url.pathname ];
+	const lookup = [
+		skipHostLookup ? '' : url.host,
+		url.host + firstPathSegment,
+		url.host + url.pathname,
+	];
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {

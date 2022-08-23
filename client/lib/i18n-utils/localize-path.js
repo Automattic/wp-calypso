@@ -21,7 +21,7 @@ export function localizePath( path, locale = getDefaultLocale(), isLoggedIn ) {
 		return path;
 	}
 
-	url = localizeUrl( url.toString(), locale, isLoggedIn );
+	url = localizeUrl( url.toString(), locale, isLoggedIn, true );
 
 	return url.toString().replace( new RegExp( DEFAULT_ORIGIN ), '' );
 }
