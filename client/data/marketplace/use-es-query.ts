@@ -57,7 +57,7 @@ function buildDefaultIconUrl( pluginSlug: string ) {
 	return `https://s.w.org/plugins/geopattern-icon/${ pluginSlug }.svg`;
 }
 
-const mapStarRatingToPercent = ( starRating?: number ) => ( starRating ?? 0 / 5 ) * 100;
+const mapStarRatingToPercent = ( starRating?: number ) => ( ( starRating ?? 0 ) / 5 ) * 100;
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) return [];
