@@ -5,7 +5,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
 
-const Header: React.FC< Props > = ( { title }: Props ) => {
+const Header: React.FC< Props > = ( { title } ) => {
 	const translate = useTranslate();
 
 	return (
