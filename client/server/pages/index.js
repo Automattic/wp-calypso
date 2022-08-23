@@ -263,7 +263,6 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	debug( `setting up logged in route: ${ req.path }.` );
 	const startTime = Date.now();
 	let redirectUrl;
 	let start;
@@ -491,13 +490,34 @@ function setUpCSP( req, res, next ) {
 	next();
 }
 
-function setUpRoute( req, res, next ) {
+const setUpRoute = ( req, res, next ) => {
+	// In rare situations, it's possible for a request to be processed under
+	// multiple route definitions, if those definitions are too generic. This
+	// avoids doing a significant amount of extra work in that scenario. If this
+	// happens, it is very likely that the route definition in question should be
+	// improved and fixed to avoid other uneccessary work.
+	if ( req.context.setupComplete === true ) {
+		debug( 'Request was already set up. No need to run setUpRoute again.' );
+		// TODO: Add some kind of reporting?
+		return next();
+	}
+	debug(
+		`Setting up route for "${ req.path }". Request is logged ${
+			req.context.isLoggedIn ? 'in' : 'out'
+		}.`
+	);
+
+	const setupComplete = ( ...args ) => {
+		req.context.setupComplete = true;
+		next( ...args );
+	};
+
 	setUpCSP( req, res, () =>
 		req.context.isLoggedIn
-			? setUpLoggedInRoute( req, res, next )
-			: setUpLoggedOutRoute( req, res, next )
+			? setUpLoggedInRoute( req, res, setupComplete )
+			: setUpLoggedOutRoute( req, res, setupComplete )
 	);
-}
+};
 
 const render404 =
 	( entrypoint = 'entry-main' ) =>
@@ -782,8 +802,6 @@ export default function pages() {
 		} );
 
 		if ( ! section.isomorphic ) {
-			debug( 'Server router ~781' );
-
 			app.get( pathRegex, setUpRoute, serverRender );
 		}
 	}
