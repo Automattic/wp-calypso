@@ -29,6 +29,11 @@ button.components-button.site-icon-with-picker__upload-button {
 
 	&.has-icon-or-image {
 		border: none;
+
+		span {
+			text-decoration: underline;
+			text-underline-position: under;
+		}
 	}
 
 	img {
