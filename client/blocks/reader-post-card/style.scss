@@ -265,6 +265,7 @@
 .reader-post-card__byline {
 	display: flex;
 	font-size: $font-body-small;
+	align-items: space-between;
 }
 
 .reader-post-card__author::after {
