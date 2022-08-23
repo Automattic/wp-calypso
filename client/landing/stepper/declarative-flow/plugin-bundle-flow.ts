@@ -37,13 +37,11 @@ export const pluginBundleFlow: Flow = {
 		) as BundledPlugin;
 
 		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
-			// TODO - Need to handle this better
-			return [];
+			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
 		if ( ! pluginSlug || ! pluginBundleSteps.hasOwnProperty( pluginSlug ) ) {
-			// TODO - Need to handle this better
-			return [];
+			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
 		return pluginBundleSteps[ pluginSlug ] as StepPath[];
