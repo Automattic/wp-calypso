@@ -86,7 +86,7 @@ export function useCategories(
 		booking: {
 			name: __( 'Booking & Scheduling' ),
 			description: __( 'Booking' ),
-			categoryDescription: __( 'Add a fully functionality booking system to your site.' ),
+			categoryDescription: __( 'Add a fully functional booking system to your site.' ),
 			icon: 'grid',
 			slug: 'booking',
 			tags: [ 'booking', 'scheduling', 'appointment', 'reservation', 'booking-calendar' ],
