@@ -1,9 +1,9 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
-import { css } from '@emotion/css';
+import { Gridicon } from '@automattic/components';
+import styled from '@emotion/styled';
+import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDispatch, useSelector } from 'react-redux';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
@@ -15,19 +15,23 @@ interface SitesMenuItemProps {
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
 }
 
+const SiteMenuItem = styled( MenuItem )( {
+	display: 'block',
+} );
+
 const LaunchItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
 	return (
-		<PopoverMenuItem
+		<SiteMenuItem
 			onClick={ () => {
 				dispatch( launchSiteOrRedirectToLaunchSignupFlow( site.ID, 'sites-dashboard' ) );
 				recordTracks( 'calypso_sites_dashboard_site_action_launch_click' );
 			} }
 		>
 			{ __( 'Launch site' ) }
-		</PopoverMenuItem>
+		</SiteMenuItem>
 	);
 };
 
@@ -35,12 +39,12 @@ const SettingsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
-		<PopoverMenuItem
+		<SiteMenuItem
 			href={ getSettingsUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_settings_click' ) }
 		>
 			{ __( 'Settings' ) }
-		</PopoverMenuItem>
+		</SiteMenuItem>
 	);
 };
 
@@ -57,7 +61,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 		: [ getPluginsUrl( site.slug ), __( 'Plugins' ) ];
 
 	return (
-		<PopoverMenuItem
+		<SiteMenuItem
 			href={ href }
 			onClick={ () =>
 				recordTracks( 'calypso_sites_dashboard_site_action_plugins_click', {
@@ -66,7 +70,7 @@ const ManagePluginsItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 			}
 		>
 			{ label }
-		</PopoverMenuItem>
+		</SiteMenuItem>
 	);
 };
 
@@ -74,33 +78,31 @@ const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
-		<PopoverMenuItem
+		<SiteMenuItem
 			href={ getHostingConfigUrl( site.slug ) }
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_hosting_config_click' ) }
 		>
 			{ __( 'Hosting configuration' ) }
-		</PopoverMenuItem>
+		</SiteMenuItem>
 	);
 };
 
-const alignExternalIcon = css`
-	.gridicons-external {
-		top: 0px;
-	}
-`;
+const ExternalGridIcon = styled( Gridicon )( {
+	top: '-1px',
+	marginLeft: '4px',
+	position: 'relative',
+} );
 
 const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	const { __ } = useI18n();
 
 	return (
-		<PopoverMenuItem
-			className={ alignExternalIcon }
+		<SiteMenuItem
 			href={ site.options?.admin_url }
-			isExternalLink
 			onClick={ () => recordTracks( 'calypso_sites_dashboard_site_action_wpadmin_click' ) }
 		>
-			{ __( 'Visit WP Admin' ) }
-		</PopoverMenuItem>
+			{ __( 'Visit WP Admin' ) } <ExternalGridIcon icon="external" size={ 18 } />
+		</SiteMenuItem>
 	);
 };
 
@@ -112,6 +114,7 @@ export const SitesEllipsisMenu = ( {
 	site: SiteExcerptData;
 } ) => {
 	const dispatch = useDispatch();
+	const { __ } = useI18n();
 	const props: SitesMenuItemProps = {
 		site,
 		recordTracks: ( eventName, extraProps = {} ) => {
@@ -120,12 +123,20 @@ export const SitesEllipsisMenu = ( {
 	};
 
 	return (
-		<EllipsisMenu className={ className }>
-			{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
-			<SettingsItem { ...props } />
-			<ManagePluginsItem { ...props } />
-			<HostingConfigItem { ...props } />
-			<WpAdminItem { ...props } />
-		</EllipsisMenu>
+		<DropdownMenu
+			icon={ <Gridicon icon="ellipsis" /> }
+			className={ className }
+			label={ __( 'Site Actions' ) }
+		>
+			{ () => (
+				<MenuGroup>
+					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
+					<SettingsItem { ...props } />
+					<ManagePluginsItem { ...props } />
+					<HostingConfigItem { ...props } />
+					<WpAdminItem { ...props } />
+				</MenuGroup>
+			) }
+		</DropdownMenu>
 	);
 };
