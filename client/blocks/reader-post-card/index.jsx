@@ -14,7 +14,6 @@ import {
 	getDiscoverBlogName,
 	getSourceFollowUrl as getDiscoverFollowUrl,
 } from 'calypso/reader/discover/helper';
-import FollowButton from 'calypso/reader/follow-button';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
 import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
@@ -201,6 +200,8 @@ class ReaderPostCard extends Component {
 					showSiteName={ true }
 					teams={ teams }
 					showFollow={ ! isDiscover }
+					showPrimaryFollowButton={ showPrimaryFollowButton }
+					followSource={ followSource }
 				/>
 			);
 		} else {
@@ -213,6 +214,8 @@ class ReaderPostCard extends Component {
 					showAvatar={ ! compact }
 					teams={ teams }
 					showFollow={ ! isDiscover }
+					showPrimaryFollowButton={ showPrimaryFollowButton }
+					followSource={ followSource }
 				/>
 			);
 		}
@@ -271,18 +274,10 @@ class ReaderPostCard extends Component {
 			);
 		}
 
-		const followUrl = feed ? feed.feed_URL : post.site_URL;
 		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
 				{ ! compact && postByline }
-				{ showPrimaryFollowButton && followUrl && (
-					<FollowButton
-						siteUrl={ followUrl }
-						followSource={ followSource }
-						railcar={ post.railcar }
-					/>
-				) }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>
