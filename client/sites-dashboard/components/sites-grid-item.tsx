@@ -3,7 +3,7 @@ import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { displaySiteUrl, getDashboardUrl } from '../utils';
+import { displaySiteUrl, getDashboardUrl, sitePreviewHoverClass } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridTile } from './sites-grid-tile';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
@@ -55,7 +55,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	return (
 		<SitesGridTile
 			leading={
-				<a { ...siteDashboardUrlProps }>
+				<a { ...siteDashboardUrlProps } className={ sitePreviewHoverClass }>
 					<SiteItemThumbnail className={ siteThumbnail } site={ site } size={ 'medium' } />
 				</a>
 			}
