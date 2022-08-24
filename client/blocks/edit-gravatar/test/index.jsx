@@ -97,8 +97,8 @@ describe( 'EditGravatar', () => {
 		} );
 
 		test( 'indicates when Gravatar is hidden', () => {
-			render( <EditGravatar { ...props } isGravatarProfileHidden={ true } /> );
-			expect( screen.queryByText( /Your profile photo is hidden/ ) ).toBeInTheDocument();
+			render( <EditGravatar { ...props } isGravatarProfileHidden /> );
+			expect( screen.queryByText( 'Your profile photo is hidden.' ) ).toBeInTheDocument();
 		} );
 
 		describe( 'drag and drop', () => {
