@@ -33,6 +33,8 @@ export const ALLOWED_CATEGORIES = [
 	'paid',
 ];
 
+export const DISCOVERY_CATEGORIES = [ 'popular', 'featured', 'paid' ];
+
 export function useCategories(
 	allowedCategories = ALLOWED_CATEGORIES
 ): Record< string, Category > {

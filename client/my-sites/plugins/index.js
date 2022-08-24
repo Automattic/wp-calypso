@@ -10,6 +10,8 @@ import {
 	plugins,
 	scrollTopIfNoHash,
 	upload,
+	redirectOnUnknownCategory,
+	redirectOnSearchInDiscoveryCategories,
 } from './controller';
 
 export default function () {
@@ -36,6 +38,8 @@ export default function () {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
+		redirectOnUnknownCategory,
+		redirectOnSearchInDiscoveryCategories,
 		browsePlugins,
 		makeLayout,
 		clientRender

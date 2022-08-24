@@ -5,7 +5,7 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { ALLOWED_CATEGORIES } from './categories/use-categories';
+import { ALLOWED_CATEGORIES, DISCOVERY_CATEGORIES } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
@@ -145,5 +145,30 @@ export function scrollTopIfNoHash( context, next ) {
 	if ( typeof window !== 'undefined' && ! window.location.hash ) {
 		window.scrollTo( 0, 0 );
 	}
+	next();
+}
+
+export function redirectOnUnknownCategory( context, next ) {
+	const category = context.params.category;
+	const site = context.params.site;
+
+	if ( ! ALLOWED_CATEGORIES.includes( category ) ) {
+		const redirectionUrl = `/plugins/${ site || '' }`;
+		page.redirect( redirectionUrl );
+	}
+
+	next();
+}
+
+export function redirectOnSearchInDiscoveryCategories( context, next ) {
+	const category = context.params.category;
+	const searchTerm = context.query.s;
+	const site = context.params.site;
+
+	if ( searchTerm && DISCOVERY_CATEGORIES.includes( category ) ) {
+		const redirectionUrl = `/plugins/${ site || '' }?s=${ searchTerm }`;
+		page.redirect( redirectionUrl );
+	}
+
 	next();
 }
