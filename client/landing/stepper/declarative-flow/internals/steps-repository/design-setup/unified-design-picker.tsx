@@ -14,6 +14,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
+import blankCanvasImageUrl from 'calypso/assets/images/onboarding/blank-canvas.svg';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
@@ -46,7 +47,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
-	const { goBack, submit, exitFlow } = navigation;
+	const { goBack, goToStep, submit, exitFlow } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
@@ -371,6 +372,31 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		/>
 	);
 
+	const buildYourOwnCta = isEnabled( 'signup/design-picker-build-your-own' ) && (
+		<div className="build-your-own-cta-wrapper">
+			<div className="build-your-own-cta__image-wrapper">
+				<img
+					className="build-your-own-cta__image"
+					src={ blankCanvasImageUrl }
+					alt="Blank Canvas Header"
+				/>
+			</div>
+			<h3 className="build-your-own-cta__title"> { translate( 'Start with a blank canvas' ) } </h3>
+			<p className="build-your-own-cta__subtitle">
+				{ translate(
+					"Can't find something you like? Create something of your own by mixing and matching patterns."
+				) }
+			</p>
+			<Button
+				className="build-your-own-cta__button"
+				onClick={ () => goToStep?.( 'buildYourOwnLayout' ) }
+				primary
+			>
+				{ translate( 'Get Started' ) }
+			</Button>
+		</div>
+	);
+
 	const newDesignEnabled = isEnabled( 'signup/theme-preview-screen' );
 
 	const stepContent = (
@@ -384,6 +410,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
 			heading={ heading }
+			buildYourOwnCta={ buildYourOwnCta }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			previewOnly={ newDesignEnabled }

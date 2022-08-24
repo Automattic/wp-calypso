@@ -111,6 +111,7 @@
 		"sign-in-with-apple/redirect": true,
 		"signup/add-ons": false,
 		"signup/anchor-fm": true,
+		"signup/design-picker-build-your-own": false,
 		"signup/design-picker-categories": true,
 		"signup/design-picker-generated-designs": true,
 		"signup/design-picker-premium-themes-checkout": true,

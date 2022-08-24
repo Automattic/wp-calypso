@@ -43,6 +43,7 @@ export const siteSetupFlow: Flow = {
 			'intent',
 			'options',
 			'designSetup',
+			'buildYourOwnLayout',
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
@@ -449,6 +450,9 @@ export const siteSetupFlow: Flow = {
 					}
 
 					return navigate( 'intent' );
+
+				case 'buildYourOwnLayout':
+					return navigate( 'designSetup' );
 
 				case 'editEmail':
 					return navigate( 'wooVerifyEmail' );

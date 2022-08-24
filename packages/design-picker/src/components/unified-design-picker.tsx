@@ -10,7 +10,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { noop } from 'lodash';
-import { useMemo } from 'react';
+import { useMemo, Fragment } from 'react';
 import {
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
@@ -337,6 +337,7 @@ export interface UnifiedDesignPickerProps {
 	staticDesigns: Design[];
 	categorization?: Categorization;
 	heading?: React.ReactNode;
+	buildYourOwnCta?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
@@ -351,6 +352,7 @@ interface StaticDesignPickerProps {
 	onPreview: ( design: Design ) => void;
 	onUpgrade?: () => void;
 	designs: Design[];
+	buildYourOwnCta?: React.ReactNode;
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
@@ -372,6 +374,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	onPreview,
 	onUpgrade,
 	designs,
+	buildYourOwnCta,
 	categorization,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
@@ -399,24 +402,28 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 				/>
 			) }
 			<div className={ 'design-picker__grid' }>
-				{ filteredDesigns.map( ( design ) => (
-					<DesignButtonContainer
-						key={ design.slug }
-						design={ design }
-						locale={ locale }
-						onSelect={ onSelect }
-						onPreview={ onPreview }
-						onUpgrade={ onUpgrade }
-						highRes={ false }
-						hideFullScreenPreview={ false }
-						hideDesignTitle={ false }
-						isPremiumThemeAvailable={ isPremiumThemeAvailable }
-						previewOnly={ previewOnly }
-						hasDesignOptionHeader={ hasDesignOptionHeader }
-						onCheckout={ onCheckout }
-						verticalId={ verticalId }
-						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
-					/>
+				{ filteredDesigns.map( ( design, index ) => (
+					<Fragment key={ design.slug }>
+						<DesignButtonContainer
+							design={ design }
+							locale={ locale }
+							onSelect={ onSelect }
+							onPreview={ onPreview }
+							onUpgrade={ onUpgrade }
+							highRes={ false }
+							hideFullScreenPreview={ false }
+							hideDesignTitle={ false }
+							isPremiumThemeAvailable={ isPremiumThemeAvailable }
+							previewOnly={ previewOnly }
+							hasDesignOptionHeader={ hasDesignOptionHeader }
+							onCheckout={ onCheckout }
+							verticalId={ verticalId }
+							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
+						/>
+						{ ( ( filteredDesigns.length < 3 && index === filteredDesigns.length - 1 ) ||
+							index === 2 ) &&
+							buildYourOwnCta }
+					</Fragment>
 				) ) }
 			</div>
 		</div>
@@ -469,6 +476,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	staticDesigns,
 	generatedDesigns,
 	heading,
+	buildYourOwnCta,
 	categorization,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
@@ -523,6 +531,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onPreview={ onPreview }
 					onUpgrade={ onUpgrade }
 					designs={ staticDesigns }
+					buildYourOwnCta={ buildYourOwnCta }
 					categorization={ categorization }
 					verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
 					previewOnly={ previewOnly }
