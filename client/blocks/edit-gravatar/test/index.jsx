@@ -3,6 +3,7 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import Modal from 'react-modal';
 import { EditGravatar } from 'calypso/blocks/edit-gravatar';
 import ImageEditor from 'calypso/blocks/image-editor';
 import FilePicker from 'calypso/components/file-picker';
@@ -39,13 +40,6 @@ jest.mock( 'calypso/components/file-picker', () =>
 		</div>
 	) )
 );
-jest.mock( '@automattic/components', () => ( {
-	__esModule: true,
-	Dialog: ( { children } ) => <div>{ children }</div>,
-	Gridicon: () => <div>gridicon</div>,
-	Spinner: () => <div>spinner</div>,
-	Button: () => <div>button</div>,
-} ) );
 
 const render = ( el, options ) => renderWithProvider( el, { ...options } );
 
@@ -118,7 +112,8 @@ describe( 'EditGravatar', () => {
 		describe( 'accepted file type', () => {
 			test( 'displays the image editor with square allowed aspect ratio', async () => {
 				const user = userEvent.setup();
-				render( <EditGravatar { ...props } /> );
+				const { container } = render( <EditGravatar { ...props } /> );
+				Modal.setAppElement( container );
 				const files = [ { name: 'filename.png' } ];
 				const fileInput = screen.queryByTestId( 'file-picker-input' );
 
@@ -157,13 +152,14 @@ describe( 'EditGravatar', () => {
 			const user = userEvent.setup();
 			const receiveGravatarImageFailedSpy = jest.fn();
 			const uploadGravatarSpy = jest.fn();
-			render(
+			const { container } = render(
 				<EditGravatar
 					{ ...props }
 					receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
 					uploadGravatar={ uploadGravatarSpy }
 				/>
 			);
+			Modal.setAppElement( container );
 			const fileInput = screen.queryByTestId( 'file-picker-input' );
 			await user.upload( fileInput, files );
 
@@ -179,13 +175,14 @@ describe( 'EditGravatar', () => {
 			const user = userEvent.setup();
 			const receiveGravatarImageFailedSpy = jest.fn();
 			const uploadGravatarSpy = jest.fn();
-			render(
+			const { container } = render(
 				<EditGravatar
 					{ ...props }
 					receiveGravatarImageFailed={ receiveGravatarImageFailedSpy }
 					uploadGravatar={ uploadGravatarSpy }
 				/>
 			);
+			Modal.setAppElement( container );
 
 			ImageEditor.mockImplementationOnce( ( { onDone } ) => (
 				<div data-testid="image-editor">
