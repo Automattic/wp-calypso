@@ -1,12 +1,13 @@
 import './style.scss';
-
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
 import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
@@ -24,6 +25,10 @@ export default function PromotedPosts() {
 		{ id: 'posts', name: translate( 'Ready to promote' ) },
 		{ id: 'campaigns', name: translate( 'Campaigns' ) },
 	];
+
+	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
+		page( '/' );
+	}
 
 	return (
 		<Main className="promote-post">

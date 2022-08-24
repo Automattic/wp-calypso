@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -9,7 +8,11 @@ import FoldableCard from 'calypso/components/foldable-card';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
-import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
+import {
+	recordDSPEntryPoint,
+	usePromoteWidget,
+	PromoteWidgetStatus,
+} from 'calypso/lib/promote-post';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -67,7 +70,7 @@ export const QuickLinks = ( {
 		,
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
-	const isPromotePostActive = config.isEnabled( 'promote-post' );
+	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (

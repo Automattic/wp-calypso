@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -19,7 +18,6 @@ import Promote from './action-promote';
 import Spam from './action-spam';
 
 const debug = debugFactory( 'calypso:stats:list-item' );
-const showPromotePost = config.isEnabled( 'promote-post' );
 
 class StatsListItem extends Component {
 	static displayName = 'StatsListItem';
@@ -174,11 +172,9 @@ class StatsListItem extends Component {
 				}
 			}, this );
 
-			if ( showPromotePost ) {
-				actionItems.push(
-					<Promote postId={ data.id } key={ 'promote-post-' + data.id } moduleName={ moduleName } />
-				);
-			}
+			actionItems.push(
+				<Promote postId={ data.id } key={ 'promote-post-' + data.id } moduleName={ moduleName } />
+			);
 
 			if ( actionItems.length > 0 ) {
 				actionList = <ul className={ actionClassSet }>{ actionItems }</ul>;
