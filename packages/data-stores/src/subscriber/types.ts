@@ -8,9 +8,11 @@ export interface SubscriberState {
 	};
 	import?: {
 		inProgress: boolean;
+		job?: ImportJob;
 		error?: ImportSubscribersError;
 	};
 	imports?: ImportJob[];
+	hydrated?: boolean;
 }
 
 export type ImportJobStatus = 'pending' | 'importing' | 'imported' | 'failed';
@@ -18,9 +20,9 @@ export type ImportJobStatus = 'pending' | 'importing' | 'imported' | 'failed';
 export type ImportJob = {
 	id: number;
 	status: ImportJobStatus;
-	email_count: number;
-	scheduled_at: string;
-	subscribed_count: number;
+	email_count?: number;
+	scheduled_at?: string;
+	subscribed_count?: number;
 };
 
 export type GenericError = {
@@ -28,11 +30,7 @@ export type GenericError = {
 	message: string;
 };
 
-export type AddSubscriberError =
-	| {
-			email: string;
-	  }
-	| GenericError;
+export type AddSubscriberError = { email: string } | GenericError;
 
 export type AddSubscribersResponse = {
 	subscribed: number;
@@ -41,7 +39,10 @@ export type AddSubscribersResponse = {
 
 export type ImportSubscribersError = Record< string, unknown > | GenericError;
 
-export type ImportSubscribersResponse = Record< string, unknown >;
+export type ImportSubscribersResponse = {
+	id: number;
+	success: boolean;
+};
 
 export type GetSubscribersImportResponse = ImportJob;
 export type GetSubscribersImportsResponse = ImportJob[];
