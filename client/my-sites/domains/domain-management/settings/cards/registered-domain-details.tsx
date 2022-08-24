@@ -88,7 +88,7 @@ const RegisteredDomainDetails = ( {
 		return (
 			<>
 				<AutoRenewToggle
-					planName={ selectedSite.plan.product_name_short }
+					planName={ selectedSite.plan?.product_name_short }
 					siteDomain={ selectedSite.domain }
 					purchase={ purchase }
 					withTextStatus={ true }

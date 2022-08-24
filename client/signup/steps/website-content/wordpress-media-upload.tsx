@@ -7,7 +7,7 @@ import placeholder from 'calypso/assets/images/difm/placeholder.svg';
 import FilePicker from 'calypso/components/file-picker';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
 import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 
 const debug = debugFactory( 'difm:website-content' );
 
@@ -93,7 +93,7 @@ interface WordpressMediaUploadProps {
 	onMediaUploadFailed?: ( imageData: MediaUploadData ) => void;
 	onRemoveImage: ( imageData: MediaUploadData ) => void;
 	mediaIndex: number;
-	site: SiteData;
+	site?: SiteDetails | null;
 	initialUrl: string;
 	initialCaption?: string;
 }

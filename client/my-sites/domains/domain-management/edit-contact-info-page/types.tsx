@@ -1,10 +1,9 @@
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
-
+import type { SiteDetails } from '@automattic/data-stores';
 export type EditContactInfoPageProps = {
 	currentRoute: string;
 	domains: ResponseDomain[];
 	isRequestingWhois: boolean;
 	selectedDomainName: string;
-	selectedSite: SiteData | null;
+	selectedSite: SiteDetails | null;
 };

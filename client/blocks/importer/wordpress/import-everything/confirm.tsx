@@ -10,15 +10,15 @@ import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import SiteIcon from 'calypso/blocks/site-icon';
 import ConfirmModal from './confirm-modal';
 import ConfirmUpgradePlan from './confirm-upgrade-plan';
-import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 interface Props {
-	sourceSite: SitesItem | null;
+	sourceSite: SiteDetails | null;
 	sourceSiteUrl: string;
 	sourceUrlAnalyzedData: UrlData;
-	targetSite: SitesItem | null;
+	targetSite: SiteDetails | null;
 	targetSiteSlug: string;
 	isTargetSitePlanCompatible: boolean;
 	startImport: () => void;

@@ -1,7 +1,7 @@
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { DnsRequest, ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 type WhoisData = {
 	fname: string;
@@ -25,7 +25,7 @@ export type SettingsPagePassedProps = {
 	currentRoute: string;
 	domains: ResponseDomain[] | null;
 	selectedDomainName: string;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 };
 
 export type SettingsPageConnectedProps = {
