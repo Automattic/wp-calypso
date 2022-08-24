@@ -2,10 +2,6 @@
 @import '@wordpress/base-styles/_mixins.scss';
 
 .plugin-common-list__mobile-view {
-	margin: 0 -16px;
-	@include breakpoint-deprecated( '>660px' ) {
-		margin: unset;
-	}
 	@include break-xlarge() {
 		display: none;
 	}

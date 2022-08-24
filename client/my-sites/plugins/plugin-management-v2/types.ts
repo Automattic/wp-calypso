@@ -4,7 +4,7 @@ import type { ReactChild } from 'react';
 
 export type Columns = Array< {
 	key: string;
-	title?: ReactChild;
+	header?: ReactChild;
 	smallColumn?: boolean;
 	colSpan?: number;
 } >;
