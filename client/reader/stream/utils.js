@@ -1,4 +1,4 @@
-import { flatMap, last } from 'lodash';
+import flatMap from 'lodash';
 import moment from 'moment';
 import { isDiscoverBlog, isDiscoverFeed } from 'calypso/reader/discover/helper';
 
@@ -42,51 +42,6 @@ export function sameXPost( postKey1, postKey2 ) {
 		postKey1.xPostMetadata.postId === postKey2.xPostMetadata.postId
 	);
 }
-
-/**
- * Takes two postKeys and combines them into a ReaderCombinedCard postKey.
- * Note: This only makes sense for postKeys from the same site
- *
- * @param {object} postKey1 must be either a ReaderCombinedCard postKey or a regular postKey
- * @param {object} postKey2 can only be a regular postKey. May not be a combinedCard postKey or a recommendations postKey
- * @returns {object} A ReaderCombinedCard postKey
- */
-export function combine( postKey1, postKey2 ) {
-	if ( ! postKey1 || ! postKey2 ) {
-		return null;
-	}
-
-	const combined = {
-		isCombination: true,
-		date:
-			postKey1.date && postKey1.date < postKey2.date // keep the earliest moment
-				? postKey1.date
-				: postKey2.date,
-		postIds: [
-			...( postKey1.postIds || [ postKey1.postId ] ),
-			...( postKey2.postIds || [ postKey2.postId ] ),
-		],
-	};
-	postKey1.blogId && ( combined.blogId = postKey1.blogId );
-	postKey1.feedId && ( combined.feedId = postKey1.feedId );
-
-	return combined;
-}
-
-export const combineCards = ( postKeys ) =>
-	postKeys.reduce( ( accumulator, postKey ) => {
-		const lastPostKey = last( accumulator );
-		if (
-			sameSite( lastPostKey, postKey ) &&
-			sameDay( lastPostKey, postKey ) &&
-			! isDiscoverPostKey( postKey )
-		) {
-			accumulator[ accumulator.length - 1 ] = combine( last( accumulator ), postKey );
-		} else {
-			accumulator.push( postKey );
-		}
-		return accumulator;
-	}, [] );
 
 export function injectRecommendations( posts, recs = [], itemsBetweenRecs ) {
 	if ( ! recs || recs.length === 0 ) {
