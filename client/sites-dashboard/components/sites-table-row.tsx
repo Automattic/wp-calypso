@@ -19,13 +19,13 @@ interface SiteTableRowProps {
 
 const Row = styled.tr`
 	line-height: 2em;
-	border-bottom: 1px solid #eee;
+	border-block-end: 1px solid #eee;
 `;
 
 const Column = styled.td< { mobileHidden?: boolean } >`
-	padding-top: 12px;
-	padding-bottom: 12px;
-	padding-right: 24px;
+	padding-block-start: 12px;
+	padding-block-end: 12px;
+	padding-inline-end: 24px;
 	vertical-align: middle;
 	font-size: 14px;
 	line-height: 20px;
@@ -35,29 +35,29 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
-		padding-right: 0;
+		padding-inline-end: 0;
 	}
 `;
 
 const SiteListTile = styled( ListTile )`
 	line-height: initial;
-	margin-right: 0;
+	margin-inline-end: 0;
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
-		margin-right: 12px;
+		margin-inline-end: 12px;
 	}
 `;
 
 const ListTileLeading = styled.a`
 	${ MEDIA_QUERIES.mediumOrSmaller } {
-		margin-right: 12px;
+		margin-inline-end: 12px;
 	}
 `;
 
 const ListTileTitle = styled.div`
 	display: flex;
 	align-items: center;
-	margin-bottom: 8px;
+	margin-block-end: 8px;
 `;
 
 const ListTileSubtitle = styled.div`
@@ -71,7 +71,7 @@ const SitePlan = styled.div`
 `;
 
 const SitePlanIcon = styled.div`
-	margin-right: 6px;
+	margin-inline-end: 6px;
 `;
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {

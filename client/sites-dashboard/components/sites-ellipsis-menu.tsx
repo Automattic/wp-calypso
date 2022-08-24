@@ -85,7 +85,7 @@ const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 
 const alignExternalIcon = css`
 	.gridicons-external {
-		top: 0px;
+		inset-block-start: 0px;
 	}
 `;
 
