@@ -11,7 +11,7 @@ export const ThumbnailLink = styled.a( {
 		height: '100%',
 		width: '100%',
 		opacity: 0,
-		boxShadow: '0 5px 15px -13px #000',
+		boxShadow: '0 7px 30px -10px rgba( 0, 0, 0, 0.2 )',
 		transition: 'opacity 0.3s',
 	},
 	':hover': {
