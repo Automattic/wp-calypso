@@ -7,7 +7,7 @@ const ProductFilter: React.FC< ProductFilterProps > = ( { filterType, setFilterT
 
 	return (
 		<div className="jetpack-product-store__product-filter">
-			<SegmentedControl className="jetpack-product-store__product-filter-toggle" compact primary>
+			<SegmentedControl className="jetpack-product-store__product-filter--toggle" compact primary>
 				<SegmentedControl.Item
 					onClick={ () => setFilterType( 'products' ) }
 					selected={ filterType === 'products' }
