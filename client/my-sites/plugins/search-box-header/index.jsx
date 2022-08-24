@@ -36,7 +36,7 @@ const SearchBox = ( { isMobile, searchTerm, searchBoxRef, isSearching } ) => {
 };
 
 const PopularSearches = ( props ) => {
-	const { searchTerms, searchedTerm, searchRef, popularSearchesRef } = props;
+	const { searchTerms, searchedTerm, searchBoxRef, popularSearchesRef } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -49,7 +49,7 @@ const PopularSearches = ( props ) => {
 
 		// When loading a search via click instead of interacting with the search
 		// box input directly we need to set the search term separately.
-		searchRef?.current?.setKeyword( searchTerm );
+		searchBoxRef?.current?.setKeyword( searchTerm );
 		pageToSearch( searchTerm );
 	};
 
@@ -114,8 +114,8 @@ const SearchBoxHeader = ( props ) => {
 				/>
 			</div>
 			<PopularSearches
-				searchedTerm={ searchTerm }
 				searchBoxRef={ searchRef }
+				searchedTerm={ searchTerm }
 				searchTerms={ searchTerms }
 				popularSearchesRef={ popularSearchesRef }
 			/>
