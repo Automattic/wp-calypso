@@ -22,7 +22,6 @@ jest.mock( 'calypso/blocks/image-editor', () =>
 		</div>
 	) )
 );
-jest.mock( 'calypso/components/gravatar', () => () => <div data-testid="gravatar" /> );
 jest.mock( 'calypso/components/file-picker', () =>
 	jest.fn( ( { onPick, children } ) => (
 		<div data-testid="file-picker">
@@ -46,6 +45,7 @@ const props = {
 	translate: ( i ) => i,
 	user: {
 		email_verified: false,
+		display_name: 'arbitrary-user-display-name',
 	},
 	recordClickButtonEvent: noop,
 	recordReceiveImageEvent: noop,
@@ -53,24 +53,23 @@ const props = {
 };
 
 describe( 'EditGravatar', () => {
-	let originalUrl;
+	const originalCreateObjectURL = global.URL.createObjectURL;
+	const originalRevokeObjectURL = global.URL.revokeObjectURL;
 
 	beforeAll( () => {
-		originalUrl = global.URL;
-		global.URL = {
-			revokeObjectURL: noop,
-			createObjectURL: noop,
-		};
+		global.URL.createObjectURL = noop;
+		global.URL.revokeObjectURL = noop;
 	} );
 
 	afterAll( () => {
-		global.URL = originalUrl;
+		global.URL.createObjectURL = originalCreateObjectURL;
+		global.URL.revokeObjectURL = originalRevokeObjectURL;
 	} );
 
 	describe( 'component rendering', () => {
 		test( 'displays a Gravatar', () => {
 			render( <EditGravatar { ...props } /> );
-			expect( screen.queryByTestId( 'gravatar' ) ).toBeVisible();
+			expect( screen.queryByAltText( props.user.display_name ) ).toBeVisible();
 		} );
 
 		test( 'contains a file picker that accepts images', () => {
