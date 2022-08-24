@@ -1,9 +1,5 @@
 import treeSelect from '@automattic/tree-select';
-import {
-	injectRecommendations,
-	getDistanceBetweenRecs,
-	combineCards,
-} from 'calypso/reader/stream/utils';
+import { injectRecommendations, getDistanceBetweenRecs } from 'calypso/reader/stream/utils';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import getReaderStream from 'calypso/state/reader/streams/selectors/get-reader-stream';
 
@@ -11,9 +7,9 @@ import 'calypso/state/reader/init';
 
 /*
  * getTransformedStreamItems performs the transformations from raw state to data suitable for
- * Reader cards. That means injecting recs and combining cards.
+ * Reader cards. That means injecting recs.
  * Signature is:
- * function( state, { streamKey: string, recsStreamKey: string, shouldCombine: boolean }): Array
+ * function( state, { streamKey: string, recsStreamKey: string }): Array
  */
 export const getTransformedStreamItems = treeSelect(
 	( state, { streamKey, recsStreamKey } ) => [
@@ -21,7 +17,7 @@ export const getTransformedStreamItems = treeSelect(
 		getReaderStream( state, recsStreamKey ).items,
 		getReaderFollows( state ),
 	],
-	( [ items, recs, follows ], { shouldCombine } ) => {
+	( [ items, recs, follows ] ) => {
 		if ( items.length === 0 ) {
 			return [];
 		}
@@ -30,15 +26,10 @@ export const getTransformedStreamItems = treeSelect(
 			items = injectRecommendations( items, recs, getDistanceBetweenRecs( follows.length ) );
 		}
 
-		if ( shouldCombine ) {
-			items = combineCards( items );
-		}
-
 		return items;
 	},
 	{
-		getCacheKey: ( { streamKey, recsStreamKey, shouldCombine } ) =>
-			`${ streamKey }${ recsStreamKey }${ shouldCombine }`,
+		getCacheKey: ( { streamKey, recsStreamKey } ) => `${ streamKey }${ recsStreamKey }`,
 	}
 );
 
