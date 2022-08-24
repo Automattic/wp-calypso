@@ -50,11 +50,9 @@ export const newsletter: Flow = {
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes` +
 							( typeof providedDependencies.siteAccentColor === 'string' &&
-								providedDependencies.siteAccentColor !== '' )
-							? `&siteAccentColor=${ encodeURIComponent(
-									providedDependencies.siteAccentColor as string
-							  ) }`
-							: ''
+							providedDependencies.siteAccentColor !== ''
+								? `&siteAccentColor=${ encodeURIComponent( providedDependencies.siteAccentColor ) }`
+								: '' )
 					);
 
 				case 'completingPurchase':
