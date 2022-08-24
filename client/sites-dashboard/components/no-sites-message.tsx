@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -60,7 +61,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/' }
+										href={ localizeUrl( 'https://wordpress.com/support/' ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -87,7 +88,9 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/settings/privacy-settings/' }
+										href={ localizeUrl(
+											'https://wordpress.com/support/settings/privacy-settings/'
+										) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -114,7 +117,9 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/settings/privacy-settings/' }
+										href={ localizeUrl(
+											'https://wordpress.com/support/settings/privacy-settings/'
+										) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -141,7 +146,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/site-redirect/' }
+										href={ localizeUrl( 'https://wordpress.com/support/site-redirect/' ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
