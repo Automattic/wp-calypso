@@ -43,7 +43,11 @@ export const linkInBio: Flow = {
 					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
-					return window.location.replace( '/start/link-in-bio/domains' );
+					return window.location.replace(
+						`/start/newsletter/domains?new=${ encodeURIComponent(
+							providedDependencies.siteTitle as string
+						) }&search=yes&hide_initial_query=yes`
+					);
 
 				case 'completingPurchase':
 					return navigate( 'processing' );
