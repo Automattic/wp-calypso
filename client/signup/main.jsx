@@ -140,7 +140,6 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
-		hideBackButton: PropTypes.bool,
 		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
 	};
@@ -151,11 +150,16 @@ class Signup extends Component {
 		resumingStep: undefined,
 		previousFlowName: null,
 		signupSiteName: null,
+		progressBar: false,
+		isTailoredFlow: false,
 	};
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		this.progressBar( flow.name );
+		this.isTailoredFlow( flow.name );
+
 		const queryObject = this.props.initialContext?.query ?? {};
 
 		let providedDependencies;
@@ -345,6 +349,16 @@ class Signup extends Component {
 		if ( siteType === 'business' ) {
 			this.props.loadTrackingTool( 'HotJar' );
 		}
+	}
+
+	progressBar( flowName ) {
+		this.setState( {
+			progressBar: { flowName, stepName: this.props.stepName },
+		} );
+	}
+
+	isTailoredFlow( flowName ) {
+		this.setState( { isTailoredFlow: [ 'newsletter', 'link-in-bio' ].includes( flowName ) } );
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
@@ -748,14 +762,6 @@ class Signup extends Component {
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
-		const progressBar = () => {
-			const flowName = this.props.initialContext?.query?.flowName || this.props.flowName;
-			if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
-				return { flowName, stepName: this.props.stepName };
-			}
-			return;
-		};
-
 		const isEligibleForOlarkChat =
 			'onboarding' === this.props.flowName &&
 			[ 'en', 'en-gb' ].includes( this.props.localeSlug ) &&
@@ -767,10 +773,10 @@ class Signup extends Component {
 					<DocumentHead title={ this.props.pageTitle } />
 					{ ! isP2Flow( this.props.flowName ) && (
 						<SignupHeader
-							progressBar={ progressBar() }
+							progressBar={ this.state.isTailoredFlow && this.state.progressBar }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
-							pageTitle={ this.props.hideBackButton && this.props.pageTitle }
+							pageTitle={ this.state.isTailoredFlow && this.props.pageTitle }
 							rightComponent={
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator

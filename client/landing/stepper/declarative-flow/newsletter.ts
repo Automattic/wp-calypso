@@ -24,7 +24,6 @@ export const newsletter: Flow = {
 			'completingPurchase',
 			'processing',
 			'subscribers',
-			'preLaunchpad',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
 		] as StepPath[];
 	},
