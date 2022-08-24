@@ -1,5 +1,4 @@
 import getRawSite from 'calypso/state/selectors/get-raw-site';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isJetpackSitePred, { IsJetpackSitePredOptions } from './is-jetpack-site-pred';
 import type { AppState } from 'calypso/types';
 
@@ -18,11 +17,6 @@ export default function isJetpackSite(
 ): boolean | null {
 	if ( ! siteId ) {
 		return null;
-	}
-
-	// if it's an atomic site, return false
-	if ( isAtomicSite( state, siteId ) ) {
-		return false;
 	}
 
 	const site = getRawSite( state, siteId );

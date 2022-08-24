@@ -13,7 +13,7 @@ export type IsJetpackSitePredOptions = {
 
 const DEFAULT_OPTIONS: IsJetpackSitePredOptions = {
 	considerStandaloneProducts: true,
-	treatAtomicAsJetpackSite: false,
+	treatAtomicAsJetpackSite: true,
 };
 
 /**
