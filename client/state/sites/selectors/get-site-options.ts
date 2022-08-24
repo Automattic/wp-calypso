@@ -1,15 +1,13 @@
 import getRawSite from 'calypso/state/selectors/get-raw-site';
+import type { SiteDetailsOptions } from '@automattic/data-stores';
+import type { AppState } from 'calypso/types';
 
 const EMPTY_OPTIONS = Object.freeze( {} );
 
 /**
  * Returns the site options
- *
- * @param    {object}    state    Global state tree
- * @param    {number}    siteId   Site ID
- * @returns  {?object}            Site options or null
  */
-export default ( state, siteId ) => {
+export default ( state: AppState, siteId: number ): SiteDetailsOptions | null => {
 	const site = getRawSite( state, siteId );
 	if ( ! site ) {
 		return null;
