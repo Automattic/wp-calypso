@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Ribbon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -47,9 +47,16 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 	return (
 		<div className="new-mailbox-upsell__container">
 			<div className="new-mailbox-upsell">
+				{ isFreeTrialNow && <Ribbon color="green">FREE</Ribbon> }
 				<div className="new-mailbox-upsell__messages">
 					<h2>{ translate( 'Need another mailbox?' ) }</h2>
-					<div>{ translate( 'Create a new one and activate it immediately.' ) }</div>
+					<div>
+						{ isFreeTrialNow
+							? translate(
+									'Create a new one for free during your trial to experience multiple mailbox efficiency.'
+							  )
+							: translate( 'Create a new one now to experience multiple mailbox efficiency.' ) }
+					</div>
 				</div>
 				<div className="new-mailbox-upsell__cta">
 					<Button
