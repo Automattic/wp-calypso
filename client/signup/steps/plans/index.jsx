@@ -102,6 +102,13 @@ export class PlansStep extends Component {
 					this.props.goToNextStep();
 				}
 			);
+		} else if ( flowName === 'newsletter' ) {
+			// newsletter flow always uses pub/lettre
+			this.props.submitSignupStep( step, {
+				cartItem,
+				themeSlugWithRepo: 'pub/lettre',
+			} );
+			this.props.goToNextStep();
 		} else {
 			this.props.submitSignupStep( step, {
 				cartItem,
