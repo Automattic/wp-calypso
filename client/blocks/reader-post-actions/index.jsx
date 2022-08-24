@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import CommentButton from 'calypso/blocks/comment-button';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import PostEditButton from 'calypso/blocks/post-edit-button';
-import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
@@ -22,8 +21,6 @@ const ReaderPostActions = ( props ) => {
 		onCommentClick,
 		showEdit,
 		showVisit,
-		showMenu,
-		showMenuFollow,
 		iconSize,
 		className,
 		visitUrl,
@@ -100,15 +97,6 @@ const ReaderPostActions = ( props ) => {
 					/>
 				</li>
 			) }
-			{ showMenu && (
-				<li className="reader-post-actions__item">
-					<ReaderPostOptionsMenu
-						className="ignore-click"
-						showFollow={ showMenuFollow }
-						post={ post }
-					/>
-				</li>
-			) }
 		</ul>
 	);
 	/* eslint-enable react/jsx-no-target-blank, wpcalypso/jsx-classname-namespace */
@@ -120,8 +108,6 @@ ReaderPostActions.propTypes = {
 	onCommentClick: PropTypes.func,
 	showEdit: PropTypes.bool,
 	iconSize: PropTypes.number,
-	showMenu: PropTypes.bool,
-	showMenuFollow: PropTypes.bool,
 	visitUrl: PropTypes.string,
 	fullPost: PropTypes.bool,
 };
@@ -129,9 +115,7 @@ ReaderPostActions.propTypes = {
 ReaderPostActions.defaultProps = {
 	showEdit: true,
 	showVisit: false,
-	showMenu: false,
 	iconSize: 24,
-	showMenuFollow: true,
 };
 
 export default localize( ReaderPostActions );

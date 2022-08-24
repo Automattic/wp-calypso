@@ -3,6 +3,16 @@
 	border-top: 1px solid var(--color-neutral-10);
 }
 
+.reader-post-options-menu__ellipsis-menu {
+	.ellipsis-menu__toggle {
+		padding: 0;
+		height: 24px;
+		.ellipsis-menu__toggle-icon {
+			top: -1px;
+		}
+	}
+}
+
 .reader-post-card.card {
 	border-bottom: 1px solid var(--color-neutral-10);
 	box-shadow: none;
@@ -250,6 +260,7 @@
 .reader-post-card__byline {
 	display: flex;
 	font-size: $font-body-small;
+	align-items: space-between;
 }
 
 .reader-post-card__author::after {
@@ -262,6 +273,7 @@
 .reader__content .reader-post-card__tag-link {
 	color: var(--color-text-subtle);
 	margin-top: 2px;
+	white-space: nowrap;
 	cursor: pointer;
 	&:hover {
 		color: var(--color-primary);
@@ -277,6 +289,7 @@
 .reader-post-card__byline-details {
 	color: var(--color-primary);
 	width: 100%;
+	overflow: hidden;
 }
 
 // Fix for IE11 unable to handle nested flexbox min-height.
@@ -320,6 +333,7 @@
 	flex-direction: row;
 	height: 20px;
 	margin-left: 10px;
+	margin-right: 12px;
 	overflow: hidden;
 	position: relative;
 	width: calc(100% - 140px);
@@ -523,14 +537,6 @@
 		margin-top: 0;
 	}
 
-	.like-button .gridicon {
-		top: 5px;
-	}
-
-	.like-button__label {
-		margin: -3px 0 0 -5px;
-	}
-
 	.comment-button {
 		align-items: flex-start;
 	}
@@ -538,6 +544,19 @@
 	.comment-button .gridicon {
 		top: 4px;
 		margin-right: 2px;
+	}
+
+	.like-button {
+		display: inline-block;
+		padding: 4px 0 4px 4px;
+		text-align: left;
+		vertical-align: top;
+		.like-button__like-icons {
+			height: 18px;
+			width: 18px;
+			display: inline-block;
+			vertical-align: top;
+		}
 	}
 
 	.reader-share__button-label,
@@ -555,13 +574,10 @@
 
 // Follow button for stream cards
 .reader-post-card.card .follow-button {
-	border: 0;
-	border-radius: 0;
-	float: right;
-	padding: 0;
-	position: absolute;
-	right: 0;
-	top: 16px;
+	flex-shrink: 0;
+	align-self: flex-start;
+	margin-right: 20px;
+	margin-top: -1px;
 
 	.gridicon {
 		fill: var(--color-primary);

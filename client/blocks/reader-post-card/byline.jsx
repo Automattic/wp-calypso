@@ -4,9 +4,11 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import FollowButton from 'calypso/reader/follow-button';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { getStreamUrl } from 'calypso/reader/route';
@@ -53,6 +55,10 @@ class PostByline extends Component {
 		isDiscoverPost: PropTypes.bool,
 		showSiteName: PropTypes.bool,
 		showAvatar: PropTypes.bool,
+		teams: PropTypes.array,
+		showFollow: PropTypes.bool,
+		showPrimaryFollowButton: PropTypes.bool,
+		followSource: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -69,7 +75,19 @@ class PostByline extends Component {
 	};
 
 	render() {
-		const { post, site, feed, isDiscoverPost, showSiteName, showAvatar } = this.props;
+		const {
+			post,
+			site,
+			feed,
+			isDiscoverPost,
+			showSiteName,
+			showAvatar,
+			teams,
+			showFollow,
+			showPrimaryFollowButton,
+			followSource,
+		} = this.props;
+		const followUrl = feed ? feed.feed_URL : post.site_URL;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const siteSlug = get( site, 'slug' );
@@ -163,6 +181,19 @@ class PostByline extends Component {
 						) }
 					</div>
 				</div>
+				{ showPrimaryFollowButton && followUrl && (
+					<FollowButton
+						siteUrl={ followUrl }
+						followSource={ followSource }
+						railcar={ post.railcar }
+					/>
+				) }
+				<ReaderPostEllipsisMenu
+					site={ site }
+					teams={ teams }
+					post={ post }
+					showFollow={ showFollow }
+				/>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */
