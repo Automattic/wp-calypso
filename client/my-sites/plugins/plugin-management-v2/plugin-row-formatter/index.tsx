@@ -8,7 +8,7 @@ import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-p
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import type { Plugin } from '../types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { MomentInput } from 'moment';
 import type { ReactElement, ReactChild } from 'react';
 
@@ -17,7 +17,7 @@ import './style.scss';
 interface Props {
 	item: Plugin;
 	columnKey: string;
-	selectedSite?: SiteData;
+	selectedSite?: SiteDetails;
 	isSmallScreen?: boolean;
 	className?: string;
 }

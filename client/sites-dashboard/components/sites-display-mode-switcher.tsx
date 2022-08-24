@@ -8,7 +8,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
 const container = css( {
-	marginLeft: 'auto',
+	marginInlineStart: 'auto',
 	display: 'flex',
 	gap: '10px',
 } );
