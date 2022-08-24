@@ -45,14 +45,16 @@ export const newsletter: Flow = {
 					);
 
 				case 'newsletterSetup':
-          return window.location.replace(
-						'/start/newsletter/domains?new=${ encodeURIComponent(
+					return window.location.replace(
+						`/start/newsletter/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
-						) }&search=yes&hide_initial_query=yes' +
+						) }&search=yes&hide_initial_query=yes` +
 							( typeof providedDependencies.siteAccentColor === 'string' &&
-							providedDependencies.siteAccentColor !== ''
-								? `&siteAccentColor=${ encodeURIComponent( providedDependencies.siteAccentColor ) }`
-								: '' );
+								providedDependencies.siteAccentColor !== '' )
+							? `&siteAccentColor=${ encodeURIComponent(
+									providedDependencies.siteAccentColor as string
+							  ) }`
+							: ''
 					);
 
 				case 'completingPurchase':
