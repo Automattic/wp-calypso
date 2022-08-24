@@ -1,14 +1,14 @@
 import { Gridicon, Card, Button } from '@automattic/components';
 import classNames from 'classnames';
 import type { Columns, RowFormatterArgs } from '../../types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
 
 interface Props {
 	item: any;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;
 	columns: Columns;
 	hasMoreActions: boolean;

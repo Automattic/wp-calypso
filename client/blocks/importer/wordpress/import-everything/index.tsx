@@ -4,7 +4,6 @@ import { sprintf } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import React from 'react';
 import { connect } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { EVERY_TEN_SECONDS, Interval } from 'calypso/lib/interval';
@@ -12,7 +11,6 @@ import { SectionMigrate } from 'calypso/my-sites/migrate/section-migrate';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveSite, requestSite, updateSiteMigrationMeta } from 'calypso/state/sites/actions';
 import { getSite, getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -22,11 +20,12 @@ import NotAuthorized from '../../components/not-authorized';
 import { isTargetSitePlanCompatible } from '../../util';
 import { MigrationStatus } from '../types';
 import { Confirm } from './confirm';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 interface Props {
 	sourceSiteId: number | null;
-	targetSite: SitesItem;
+	targetSite: SiteDetails;
 	targetSiteId: number | null;
 	targetSiteSlug: string;
 	targetSiteEligibleForProPlan: boolean;
@@ -247,7 +246,7 @@ export const connector = connect(
 		return {
 			isTargetSiteAtomic: !! isSiteAutomatedTransfer( state, ownProps.targetSiteId as number ),
 			isTargetSiteJetpack: !! isJetpackSite( state, ownProps.targetSiteId as number ),
-			isTargetSitePlanCompatible: !! isTargetSitePlanCompatible( ownProps.targetSite as SitesItem ),
+			isTargetSitePlanCompatible: !! isTargetSitePlanCompatible( ownProps.targetSite ),
 			sourceSite: ownProps.sourceSiteId && getSite( state, ownProps.sourceSiteId ),
 			startMigration: !! get( getCurrentQueryArguments( state ), 'start', false ),
 			sourceSiteHasJetpack: false,

@@ -51,7 +51,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 				/>
 			) : (
 				<NoIcon role={ 'img' } aria-label={ __( 'Site Icon' ) }>
-					{ getFirstGrapheme( site.name ) }
+					{ getFirstGrapheme( site.name ?? '' ) }
 				</NoIcon>
 			) }
 		</SiteThumbnail>

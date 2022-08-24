@@ -28,13 +28,13 @@ import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { Purchase } from './types';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	MembershipSubscription,
 	MembershipSubscriptionsSite,
 } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactChild } from 'react';
 
 const debug = debugFactory( 'calypso:purchases' );
@@ -55,7 +55,7 @@ export type TracksProps = Record< string, string | number | boolean >;
  */
 export function getPurchasesBySite(
 	purchases: Purchase[],
-	sites: SiteData[]
+	sites: SiteDetails[]
 ): SiteWithPurchases[] {
 	return purchases
 		.reduce( ( result: SiteWithPurchases[], currentValue ) => {
