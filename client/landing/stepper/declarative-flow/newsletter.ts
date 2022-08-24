@@ -48,7 +48,11 @@ export const newsletter: Flow = {
 					return window.location.replace(
 						`/start/newsletter/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
-						) }&search=yes&hide_initial_query=yes`
+						) }&search=yes&hide_initial_query=yes` +
+							( typeof providedDependencies.siteAccentColor === 'string' &&
+							providedDependencies.siteAccentColor !== ''
+								? `&siteAccentColor=${ encodeURIComponent( providedDependencies.siteAccentColor ) }`
+								: '' )
 					);
 
 				case 'completingPurchase':

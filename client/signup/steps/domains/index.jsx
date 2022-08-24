@@ -260,6 +260,9 @@ class DomainsStep extends Component {
 			submitSignupStep: this.props.submitSignupStep,
 		} );
 
+		const siteAccentColor =
+			this.props.flowName === 'newsletter' && this.props.queryObject?.siteAccentColor;
+
 		this.props.submitSignupStep(
 			Object.assign(
 				{
@@ -269,6 +272,7 @@ class DomainsStep extends Component {
 					isPurchasingItem,
 					siteUrl,
 					stepSectionName: this.props.stepSectionName,
+					...( siteAccentColor && { siteAccentColor } ),
 				},
 				this.getThemeArgs()
 			),
