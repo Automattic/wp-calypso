@@ -134,7 +134,9 @@ class Followers extends Component {
 				);
 			}
 
-			const emptyTitle = preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
+			const emptyTitle = preventWidows(
+				this.props.translate( 'No WordPress.com subscribers yet.' )
+			);
 			return <EmptyContent title={ emptyTitle } action={ this.renderInviteFollowersAction() } />;
 		}
 

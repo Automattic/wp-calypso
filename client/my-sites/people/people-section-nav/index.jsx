@@ -61,7 +61,7 @@ class PeopleSectionNav extends Component {
 				id: 'followers',
 			},
 			{
-				title: translate( 'Subscribers', { context: 'Filter label for people list' } ),
+				title: translate( 'Email Subscribers', { context: 'Filter label for people list' } ),
 				path: '/people/email-followers/' + siteFilter,
 				id: 'email-followers',
 			},
