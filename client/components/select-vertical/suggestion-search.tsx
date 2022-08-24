@@ -111,12 +111,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		inputRef.current?.focus();
 	};
 
-	const handleSuggestionsSelect = ( suggestion: {
-		name: string;
-		label: string;
-		value?: string;
-		has_vertical_images?: boolean;
-	} ) => {
+	const handleSuggestionsSelect = ( suggestion: { name: string; label: string } ) => {
 		hideSuggestions();
 		onSelect?.( suggestion as Vertical );
 	};
