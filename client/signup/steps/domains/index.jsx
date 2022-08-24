@@ -376,6 +376,11 @@ class DomainsStep extends Component {
 			return true;
 		}
 
+		// newsletter users should get free .blog domain
+		if ( flowName === 'newsletter' ) {
+			return true;
+		}
+
 		// 'blog' flow, starting with blog themes
 		if ( flowName === 'blog' ) {
 			return true;
