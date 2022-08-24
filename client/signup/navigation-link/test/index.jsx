@@ -1,5 +1,6 @@
-import { Gridicon } from '@automattic/components';
-import { shallow } from 'enzyme';
+/** @jest-environment jsdom */
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { NavigationLink } from '../';
 const signupUtils = require( 'calypso/signup/utils' );
 
@@ -9,6 +10,10 @@ jest.mock( 'calypso/signup/utils', () => ( {
 	getPreviousStepName: jest.fn(),
 	isFirstStepInFlow: jest.fn(),
 } ) );
+
+jest.mock( '@automattic/components/src/gridicon', () => {
+	return ( { icon } ) => <div data-testid={ `gridicon-${ icon }` } />;
+} );
 
 const noop = () => {};
 const { getStepUrl, getFilteredSteps, getPreviousStepName, isFirstStepInFlow } = signupUtils;
@@ -45,42 +50,43 @@ describe( 'NavigationLink', () => {
 	} );
 
 	test( 'should render Button element', () => {
-		const wrapper = shallow( <NavigationLink { ...props } /> );
+		const { container } = render( <NavigationLink { ...props } /> );
 
-		expect( wrapper.find( 'ForwardRef(Button)' ) ).toHaveLength( 1 );
-		expect( wrapper.find( 'ForwardRef(Button)' ).props().className ).toEqual( 'navigation-link' );
+		expect( screen.queryAllByRole( 'button' ) ).toHaveLength( 1 );
+		expect( container.firstChild.nodeName ).toBe( 'BUTTON' );
+		expect( container.firstChild ).toHaveClass( 'navigation-link' );
 	} );
 
 	test( 'should render no icons when the direction prop is undefined', () => {
-		const wrapper = shallow( <NavigationLink { ...props } /> );
-		expect( wrapper.find( Gridicon ).exists() ).toEqual( false );
+		render( <NavigationLink { ...props } /> );
+		expect( screen.queryByTestId( /gridicon-/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should render right-arrow icon when the direction prop is "forward".', () => {
-		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
+		const { container } = render( <NavigationLink { ...props } direction="forward" /> );
 
-		expect( wrapper.find( Gridicon ) ).toHaveLength( 1 );
-		expect( wrapper.childAt( 1 ).props().icon ).toEqual( 'arrow-right' );
-		expect( wrapper.childAt( 0 ).text() ).toEqual( 'translated:Skip for now' );
+		expect( container.firstChild ).toHaveTextContent( 'translated:Skip for now' );
+		expect( screen.queryAllByTestId( /gridicon-/ ) ).toHaveLength( 1 );
+		expect( screen.queryByTestId( 'gridicon-arrow-right' ) ).toBeVisible();
 	} );
 
 	test( 'should render left-arrow icon when the direction prop is "back".', () => {
-		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
+		const { container } = render( <NavigationLink { ...props } direction="back" /> );
 
-		expect( wrapper.find( Gridicon ) ).toHaveLength( 1 );
-		expect( wrapper.childAt( 0 ).props().icon ).toEqual( 'arrow-left' );
-		expect( wrapper.childAt( 1 ).text() ).toEqual( 'translated:Back' );
+		expect( container.firstChild ).toHaveTextContent( 'translated:Back' );
+		expect( screen.queryAllByTestId( /gridicon-/ ) ).toHaveLength( 1 );
+		expect( screen.queryByTestId( 'gridicon-arrow-left' ) ).toBeVisible();
 	} );
 
 	test( 'should set href prop to undefined when the direction is not "back".', () => {
-		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
-		expect( wrapper.props().href ).toBeUndefined();
+		const { container } = render( <NavigationLink { ...props } direction="forward" /> );
+		expect( container.firstChild ).not.toHaveAttribute( 'href' );
 	} );
 
 	test( 'should set a proper url as href prop when the direction is "back".', () => {
 		expect( getStepUrl ).not.toHaveBeenCalled();
 
-		const wrapper = shallow(
+		const { rerender, container } = render(
 			// We're mocking a logged-out user to ensure locale is being considered
 			<NavigationLink { ...props } userLoggedIn={ false } direction="back" />
 		);
@@ -102,44 +108,58 @@ describe( 'NavigationLink', () => {
 		getFilteredSteps.mockReturnValue( [
 			{ stepName: 'test:step1', stepSectionName: 'test:section1', wasSkipped: false },
 		] );
-		wrapper.setProps( { stepName: 'test:step1' } ); // set the first step
+
+		rerender(
+			<NavigationLink { ...props } userLoggedIn={ false } direction="back" stepName="test:step1" />
+		);
 		expect( getStepUrl ).toHaveBeenCalled();
 		expect( getStepUrl ).toHaveBeenCalledWith( 'test:flow', null, '', 'en', undefined );
 
 		// The href should be backUrl when exist.
-		wrapper.setProps( { backUrl: 'test:back-url' } );
-		expect( wrapper.props().href ).toEqual( 'test:back-url' );
+		rerender(
+			<NavigationLink
+				{ ...props }
+				userLoggedIn={ false }
+				direction="back"
+				backUrl="test:back-url"
+			/>
+		);
+		expect( container.firstChild ).toHaveAttribute( 'href', 'test:back-url' );
 	} );
 
-	test( 'should call goToNextStep() only when the direction is forward and clicked', () => {
-		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
+	test( 'should call goToNextStep() only when the direction is forward and clicked', async () => {
+		const user = userEvent.setup();
+		const { container } = render( <NavigationLink { ...props } direction="forward" /> );
 
 		expect( props.goToNextStep ).not.toHaveBeenCalled();
-		wrapper.simulate( 'click' );
+		await user.click( container.firstChild );
 		expect( props.goToNextStep ).toHaveBeenCalled();
 	} );
 
-	test( 'should not call goToNextStep() when the direction is back', () => {
-		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
+	test( 'should not call goToNextStep() when the direction is back', async () => {
+		const user = userEvent.setup();
+		const { container } = render( <NavigationLink { ...props } direction="back" /> );
 
 		expect( props.goToNextStep ).not.toHaveBeenCalled();
-		wrapper.simulate( 'click' );
+		await user.click( container.firstChild );
 		expect( props.goToNextStep ).not.toHaveBeenCalled();
 	} );
 
-	test( 'should call goToPreviousStep() only when the direction is back and clicked', () => {
-		const wrapper = shallow( <NavigationLink { ...props } direction="back" /> );
+	test( 'should call goToPreviousStep() only when the direction is back and clicked', async () => {
+		const user = userEvent.setup();
+		const { container } = render( <NavigationLink { ...props } direction="back" /> );
 
 		expect( props.goToPreviousStep ).not.toHaveBeenCalled();
-		wrapper.simulate( 'click' );
+		await user.click( container.firstChild );
 		expect( props.goToPreviousStep ).toHaveBeenCalled();
 	} );
 
-	test( 'should not call goToPreviousStep() when the direction is forward', () => {
-		const wrapper = shallow( <NavigationLink { ...props } direction="forward" /> );
+	test( 'should not call goToPreviousStep() when the direction is forward', async () => {
+		const user = userEvent.setup();
+		const { container } = render( <NavigationLink { ...props } direction="forward" /> );
 
 		expect( props.goToPreviousStep ).not.toHaveBeenCalled();
-		wrapper.simulate( 'click' );
+		await user.click( container.firstChild );
 		expect( props.goToPreviousStep ).not.toHaveBeenCalled();
 	} );
 
