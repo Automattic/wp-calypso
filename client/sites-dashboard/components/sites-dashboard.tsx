@@ -150,7 +150,7 @@ export function SitesDashboard( {
 									className={ sitesMargin }
 								/>
 							) }
-							{ selectedStatus.hiddenCount > 0 && (
+							{ selectedStatus.hiddenCount > 0 && displayMode !== 'none' && (
 								<HiddenSitesMessageContainer>
 									<HiddenSitesMessage>
 										{ sprintf(
