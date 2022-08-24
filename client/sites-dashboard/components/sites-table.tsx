@@ -20,27 +20,22 @@ const Table = styled.table`
 	position: relative;
 `;
 
-const THead = styled.thead< { blockOffset: number; displayShadow: boolean } >(
-	( { blockOffset } ) => ( {
-		[ MEDIA_QUERIES.mediumOrSmaller ]: {
-			display: 'none',
-		},
+const THead = styled.thead< { blockOffset: number } >( ( { blockOffset } ) => ( {
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
+		display: 'none',
+	},
 
-		position: 'sticky',
-		zIndex: 3,
-		insetBlockStart: `${ blockOffset }px`,
+	position: 'sticky',
+	zIndex: 3,
+	insetBlockStart: `${ blockOffset }px`,
 
-		background: '#fdfdfd',
-	} ),
-	( { displayShadow } ) => {
-		if ( displayShadow ) {
-			return {
-				boxShadow: '0 0 13px -9px rgba(0, 0, 0, 0.45)',
-				clipPath: 'inset( 0 0 -10px 0 )',
-			};
-		}
-	}
-);
+	background: '#fdfdfd',
+} ) );
+
+const headerShadow: React.CSSProperties = {
+	boxShadow: '0 0 13px -9px rgba(0, 0, 0, 0.45)',
+	clipPath: 'inset( 0 0 -10px 0 )',
+};
 
 const Row = styled.tr`
 	line-height: 2em;
@@ -121,7 +116,11 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 
 	return (
 		<Table className={ className }>
-			<THead blockOffset={ masterbarHeight } ref={ headerRef } displayShadow={ isHeaderStuck }>
+			<THead
+				blockOffset={ masterbarHeight }
+				ref={ headerRef }
+				style={ isHeaderStuck ? headerShadow : undefined }
+			>
 				<Row>
 					<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
 					<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
