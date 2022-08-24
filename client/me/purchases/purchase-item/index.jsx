@@ -418,7 +418,11 @@ class PurchaseItem extends Component {
 			);
 		}
 
-		if ( ! isRechargeable( purchase ) && hasPaymentMethod( purchase ) ) {
+		if (
+			! isRechargeable( purchase ) &&
+			hasPaymentMethod( purchase ) &&
+			purchase.isAutoRenewEnabled
+		) {
 			return (
 				<div className={ 'purchase-item__no-payment-method' }>
 					<Icon icon={ warningIcon } />

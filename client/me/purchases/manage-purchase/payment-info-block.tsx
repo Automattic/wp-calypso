@@ -108,7 +108,11 @@ export default function PaymentInfoBlock( {
 		);
 	}
 
-	if ( ! isRechargeable( purchase ) && hasPaymentMethod( purchase ) ) {
+	if (
+		! isRechargeable( purchase ) &&
+		hasPaymentMethod( purchase ) &&
+		purchase.isAutoRenewEnabled
+	) {
 		return (
 			<PaymentInfoBlockWrapper>
 				<div className={ 'manage-purchase__no-payment-method' }>
