@@ -16,7 +16,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	duration,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const productSlugs = useProductSlugs( siteId, duration );
+	const productSlugs = useProductSlugs( { siteId, duration } );
 
 	return (
 		<div className="jetpack-product-store">

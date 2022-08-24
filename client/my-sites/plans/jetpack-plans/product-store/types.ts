@@ -13,3 +13,5 @@ export interface ProductStoreProps extends Pick< BasePageProps, 'urlQueryArgs' >
 }
 
 export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & ProductStoreBaseProps;
+
+export type ProductSlugProps = Pick< ProductStoreProps, 'duration' > & ProductStoreBaseProps;
