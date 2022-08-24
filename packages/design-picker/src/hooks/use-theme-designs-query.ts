@@ -1,6 +1,6 @@
+import { isDesignAvailableForV13N } from '@automattic/data-stores';
 import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
-import { isDesignAvailableForV13N } from '../utils';
 import type { Design } from '../types';
 
 // Ideally this data should come from the themes API, maybe by a tag that's applied to

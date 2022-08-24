@@ -2,8 +2,7 @@ export * from './available-designs-config';
 export * from './available-designs';
 export * from './designs';
 export * from './fonts';
-import { isEnabled } from '@automattic/calypso-config';
-import { SHOW_ALL_SLUG, STANDARD_THEMES_V13N_WHITELIST } from '../constants';
+import { SHOW_ALL_SLUG } from '../constants';
 import type { Category, Design } from '../types';
 
 export function gatherCategories( designs: Design[] ): Category[] {
@@ -45,12 +44,4 @@ export function sortDesigns( a: Design, b: Design ): number {
 		return -1;
 	}
 	return 1;
-}
-
-export function isDesignAvailableForV13N( stylesheet: string ): boolean {
-	return (
-		isEnabled( 'signup/standard-theme-v13n' ) &&
-		!! stylesheet &&
-		!! STANDARD_THEMES_V13N_WHITELIST.find( ( theme ) => stylesheet?.startsWith( theme ) )
-	);
 }

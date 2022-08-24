@@ -1,7 +1,7 @@
-import { isDesignAvailableForV13N } from '@automattic/design-picker';
 import { stringify } from 'qs';
 import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { isDesignAvailableForV13N } from './utils';
 import type { StarterDesigns } from './types';
 import type {
 	Category,

@@ -12,7 +12,6 @@ export {
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
 	getMShotOptions,
-	isDesignAvailableForV13N,
 } from './utils';
 export {
 	FONT_PAIRINGS,
