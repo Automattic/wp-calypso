@@ -1,4 +1,5 @@
 export { Title, SubTitle } from './titles';
+export { useFlowProgress } from './flow-progress/use-flow-progress';
 export {
 	default as ActionButtons,
 	BackButton,
