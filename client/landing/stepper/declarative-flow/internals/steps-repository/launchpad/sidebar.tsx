@@ -1,11 +1,12 @@
 import { ProgressBar } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
+import { Task } from './types';
 
 function getUrlInfo( url: string ) {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
@@ -17,7 +18,6 @@ function getUrlInfo( url: string ) {
 
 	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
 }
-import { Task } from './types';
 
 function getChecklistCompletionProgress( tasks: Task[] ) {
 	if ( ! tasks ) {
@@ -35,15 +35,15 @@ const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	const flow = useFlowParam();
+	const translate = useTranslate();
 	const translatedStrings = getLaunchpadTranslations( flow );
+	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
+	const taskCompletionProgress =
+		arrayOfFilteredTasks && getChecklistCompletionProgress( arrayOfFilteredTasks );
 
 	if ( siteSlug ) {
 		[ siteName, topLevelDomain ] = getUrlInfo( siteSlug );
 	}
-	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
-
-	const taskCompletionProgress =
-		arrayOfFilteredTasks && getChecklistCompletionProgress( arrayOfFilteredTasks );
 
 	return (
 		<div className="launchpad__sidebar">
