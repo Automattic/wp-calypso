@@ -26,7 +26,12 @@ class UpworkBanner extends PureComponent {
 				forceDisplay //Upwork banner has its own logic for showing/hiding
 				className="upwork-banner__troubleshooting"
 				showIcon
-				onClick={ () => window.open( 'https://wordpress.com/built-by-wordpress-com/', '_blank' ) }
+				onClick={ () =>
+					window.open(
+						'https://builtbywp.com/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=design-picker-cta',
+						'_blank'
+					)
+				}
 				callToAction={ translate( 'Find your expert' ) }
 				dismissPreferenceName={ 'upwork-dismissible-banner' }
 				tracksClickName={ 'calypso_upwork_banner_start_now_button_click' }
