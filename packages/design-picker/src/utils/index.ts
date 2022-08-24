@@ -47,16 +47,10 @@ export function sortDesigns( a: Design, b: Design ): number {
 	return 1;
 }
 
-export function isDesignAvailableForV13N( design: Design ): boolean {
-	if ( design.design_type === 'vertical' ) {
-		return true;
-	}
-
+export function isDesignAvailableForV13N( stylesheet: string ): boolean {
 	return (
 		isEnabled( 'signup/standard-theme-v13n' ) &&
-		!! design.recipe?.stylesheet &&
-		!! STANDARD_THEMES_V13N_WHITELIST.find( ( theme ) =>
-			design.recipe?.stylesheet?.startsWith( theme )
-		)
+		!! stylesheet &&
+		!! STANDARD_THEMES_V13N_WHITELIST.find( ( theme ) => stylesheet?.startsWith( theme ) )
 	);
 }

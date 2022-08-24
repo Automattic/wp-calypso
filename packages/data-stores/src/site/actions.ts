@@ -302,7 +302,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				apiNamespace: 'wpcom/v2',
 				body: {
 					trim_content: true,
-					vertical_id: siteVerticalId || undefined,
+					vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 					pattern_ids: recipe?.pattern_ids,
 					header_pattern_ids: recipe?.header_pattern_ids || [],
 					footer_pattern_ids: recipe?.footer_pattern_ids || [],

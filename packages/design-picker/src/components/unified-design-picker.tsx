@@ -22,7 +22,6 @@ import {
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
 	sortDesigns,
-	isDesignAvailableForV13N,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PremiumBadge from './premium-badge';
@@ -53,7 +52,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
 				language: locale,
-				vertical_id: verticalId,
+				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
@@ -425,7 +424,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 						previewOnly={ previewOnly }
 						hasDesignOptionHeader={ hasDesignOptionHeader }
 						onCheckout={ onCheckout }
-						verticalId={ isDesignAvailableForV13N( design ) ? verticalId : undefined }
+						verticalId={ verticalId }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 					/>
 				) ) }

@@ -9,7 +9,6 @@ import DesignPicker, {
 	isBlankCanvasDesign,
 	getDesignPreviewUrl,
 	useDesignsBySite,
-	isDesignAvailableForV13N,
 } from '@automattic/design-picker';
 import { useLocale, useIsEnglishLocale } from '@automattic/i18n-utils';
 import { shuffle } from '@automattic/js-utils';
@@ -260,14 +259,10 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				? generatedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
 				: -1;
 
-			// Send vertical_id only if the current design is generated design or we enabled the v13n of standard themes.
-			// We cannot check the config inside `setDesignOnSite` action. See https://github.com/Automattic/wp-calypso/pull/65531#issuecomment-1190850273
 			setPendingAction( () =>
-				setDesignOnSite(
-					siteSlugOrId,
-					_selectedDesign,
-					isDesignAvailableForV13N( _selectedDesign ) ? siteVerticalId : undefined
-				).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+				setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ).then( () =>
+					reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
+				)
 			);
 
 			recordTracksEvent( 'calypso_signup_select_design', {
@@ -402,7 +397,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
-			vertical_id: isDesignAvailableForV13N( selectedDesign ) ? siteVerticalId : undefined,
+			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
 		const stepContent = (

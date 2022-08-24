@@ -1,3 +1,4 @@
+import { isDesignAvailableForV13N } from '@automattic/design-picker';
 import { stringify } from 'qs';
 import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -85,6 +86,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		price,
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
+		verticalizable: isDesignAvailableForV13N( recipe.stylesheet ),
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',
@@ -105,5 +107,6 @@ function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
 		template: '',
 		theme: '',
 		design_type: 'vertical',
+		verticalizable: true,
 	};
 }
