@@ -1,5 +1,5 @@
 import { UrlData } from 'calypso/blocks/import/types';
-import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
+import type { SiteDetails } from '@automattic/data-stores';
 
 export type Importer = 'blogger' | 'medium' | 'squarespace' | 'wix' | 'wordpress';
 export type QueryObject = {
@@ -57,7 +57,7 @@ export interface ImporterBaseProps {
 	job?: ImportJob;
 	run: boolean;
 	siteId: number;
-	site: SitesItem;
+	site: SiteDetails;
 	siteSlug: string;
 	fromSite: string;
 	urlData: UrlData;

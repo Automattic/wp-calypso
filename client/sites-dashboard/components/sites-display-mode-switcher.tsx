@@ -8,7 +8,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
 const container = css( {
-	marginLeft: 'auto',
+	marginInlineStart: 'auto',
 	display: 'flex',
 	gap: '10px',
 } );
@@ -63,6 +63,7 @@ export const SitesDisplayModeSwitcher = ( {
 			<Button
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
+				title={ __( 'Switch to tile view' ) }
 				onClick={ () => onDisplayModeChange( 'tile' ) }
 				icon={ <Gridicon icon="grid" /> }
 				isPressed={ displayMode === 'tile' }
@@ -70,6 +71,7 @@ export const SitesDisplayModeSwitcher = ( {
 			<Button
 				role="radio"
 				aria-label={ __( 'List view' ) }
+				title={ __( 'Switch to list view' ) }
 				onClick={ () => onDisplayModeChange( 'list' ) }
 				icon={ <Gridicon icon="list-unordered" /> }
 				isPressed={ displayMode === 'list' }

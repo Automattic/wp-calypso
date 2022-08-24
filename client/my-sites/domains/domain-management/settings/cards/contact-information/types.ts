@@ -4,8 +4,8 @@ import {
 	discloseDomainContactInfo,
 	redactDomainContactInfo,
 } from 'calypso/state/sites/domains/actions';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 export type ContactsInfoConnectedProps = {
 	currentRoute: string;
@@ -16,13 +16,13 @@ export type ContactsInfoPassedProps = {
 	domains: ResponseDomain[];
 
 	selectedDomainName: string;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 };
 
 export type ContactsInfoProps = ContactsInfoPassedProps & ContactsInfoConnectedProps;
 
 export type ContactsCardPassedProps = {
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	selectedDomainName: string;
 
 	privateDomain: boolean;

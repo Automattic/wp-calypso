@@ -9,15 +9,15 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 import './style.scss';
 
 type SettingsHeaderProps = {
 	domain: ResponseDomain;
-	site: SiteData;
+	site: SiteDetails;
 	purchase: Purchase | null;
 };
 

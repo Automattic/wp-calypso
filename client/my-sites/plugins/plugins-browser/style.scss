@@ -41,6 +41,8 @@
 	}
 }
 .plugins-browser__main-container {
+	display: inline-block;
+
 	&::before {
 		box-sizing: border-box;
 		content: '';
