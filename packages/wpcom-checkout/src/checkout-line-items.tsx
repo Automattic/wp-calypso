@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	isAddOn,
 	isDomainRegistration,
@@ -649,7 +650,7 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		);
 	}
 
-	if ( isDIFMProduct( product ) ) {
+	if ( isEnabled( 'difm/allow-extra-pages' ) && isDIFMProduct( product ) ) {
 		const numberOfExtraPages =
 			product.quantity && product.price_tier_maximum_units
 				? product.quantity - product.price_tier_maximum_units

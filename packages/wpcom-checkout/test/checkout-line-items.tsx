@@ -4,6 +4,14 @@ import React from 'react';
 import { LineItemSublabelAndPrice } from '../src/checkout-line-items';
 import '@testing-library/jest-dom/extend-expect';
 
+jest.mock( '@automattic/calypso-config', () => ( {
+	isEnabled: () => true,
+	__esModule: true,
+	default: function config( key: string ) {
+		return key;
+	},
+} ) );
+
 describe( 'LineItemSublabelAndPrice', () => {
 	describe( 'DIFM product', () => {
 		const emptyDIFMProduct = {
