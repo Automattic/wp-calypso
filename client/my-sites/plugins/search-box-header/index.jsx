@@ -20,7 +20,6 @@ const SearchBox = ( { isMobile, searchTerm, doSearch, searchBoxRef, isSearching 
 				pinned={ isMobile }
 				fitsContainer={ isMobile }
 				onSearch={ doSearch }
-				onSearchClose={ () => setQueryArgs( {} ) }
 				defaultValue={ searchTerm }
 				searchMode="on-enter"
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
