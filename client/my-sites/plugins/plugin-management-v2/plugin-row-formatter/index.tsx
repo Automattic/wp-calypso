@@ -73,6 +73,8 @@ export default function PluginRowFormatter( {
 		( state ) => selectedSite && getPluginOnSite( state, selectedSite.ID, item.slug )
 	);
 
+	const siteCount = item?.sites && Object.keys( item.sites ).length;
+
 	switch ( columnKey ) {
 		case 'site-name':
 			return selectedSite?.domain;
@@ -100,12 +102,17 @@ export default function PluginRowFormatter( {
 			);
 		case 'sites':
 			return isSmallScreen ? (
-				translate( 'Installed on %(count)d sites', {
-					args: { count: Object.keys( item.sites ).length },
-				} )
+				translate(
+					'Installed on %(count)d site',
+					'Installed on %(count)d sites', // plural version of the string
+					{
+						count: siteCount,
+						args: { count: siteCount },
+					}
+				)
 			) : (
 				<PluginDetailsButton className="plugin-row-formatter__sites-count-button">
-					{ Object.keys( item.sites ).length }
+					{ siteCount }
 				</PluginDetailsButton>
 			);
 		case 'activate':

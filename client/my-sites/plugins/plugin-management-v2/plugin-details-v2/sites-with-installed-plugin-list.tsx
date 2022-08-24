@@ -46,14 +46,19 @@ export default function SitesWithInstalledPluginsList( props: Props ): ReactElem
 		return null;
 	}
 
+	const siteCount = sitesWithSecondarySites.length;
+
 	return (
 		<>
 			<div className="plugin-details-v2__title">
-				{ translate( 'Installed on %(count)d sites', {
-					args: {
-						count: sitesWithSecondarySites.length,
-					},
-				} ) }
+				{ translate(
+					'Installed on %(count)d site',
+					'Installed on %(count)d sites', // plural version of the string
+					{
+						count: siteCount,
+						args: { count: siteCount },
+					}
+				) }
 			</div>
 			<SitesList
 				{ ...props }
