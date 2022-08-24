@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Title, NextButton, SkipButton } from '@automattic/onboarding';
-import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
+import { TextControl, FormFileUpload, Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -136,8 +136,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			{ inProgress && <AddSubscribersProgressScreen /> }
 			{ ! inProgress && (
 				<>
-					<Notice isDismissible={ false }>You have 1 email list importing...</Notice>
-
 					<div className={ 'add-subscriber__title-container' }>
 						{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
 						<Title>Add subscribers to build your audience</Title>
