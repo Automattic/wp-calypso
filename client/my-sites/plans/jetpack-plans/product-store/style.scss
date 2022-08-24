@@ -45,21 +45,10 @@
 	height: 120px;
 
 	margin-bottom: 1.25rem;
-    display: flex;
-    justify-content: center;
 
 	@include break-large {
 		height: 54px;
 
 		margin-bottom: 0;
 	}
-
-    .intro-pricing-banner, .intro-pricing-banner__sticky, .intro-pricing-banner__loading {
-        align-items: flex-start;
-
-        img {
-            min-width: 2em;
-            margin-inline-end: 0.5em;
-        }
-    }
 }
