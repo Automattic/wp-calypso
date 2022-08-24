@@ -5,7 +5,7 @@
 // Launchpad - Layout
 // This is styling common parts of stepper page
 .launchpad {
-	.step-container__header {
+	.flow-progress, .step-container__header {
 		display: none;
 	}
 
@@ -132,6 +132,11 @@
 	vertical-align: middle;
 }
 
+.launchpad__progress-bar.progress-bar.is-compact {
+	background-color: #dcdcde;
+	position: relative;
+}
+
 // Launchpad - Checklist
 
 .launchpad__checklist {
@@ -158,9 +163,11 @@
 	color: var( --color-text );
 }
 
-.button.launchpad__checklist-item:hover {
+.button.launchpad__checklist-item:hover:not( [disabled] ),
+.button.launchpad__checklist-item:focus:not( [disabled] ) {
 	fill: var( --studio-blue-50 );
 	color: var( --studio-blue-50 );
+	border-bottom: 1px solid var( --studio-gray-5 );
 }
 
 .launchpad__checklist-item .badge {
@@ -168,8 +175,9 @@
 	color: var( --studio-blue-80 );
 }
  
-.launchpad__checklist-item[disabled] {
+.launchpad__checklist-item[disabled],  .launchpad__checklist-item[disabled]:focus {
 	background-color: transparent;
+	pointer-events: none;
 }
 
 .launchpad__checklist-item-status {
