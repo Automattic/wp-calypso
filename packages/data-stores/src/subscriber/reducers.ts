@@ -4,7 +4,7 @@ import type { Action } from './actions';
 import type { SubscriberState } from './types';
 import type { Reducer } from 'redux';
 
-const subscriber: Reducer< SubscriberState, Action > = ( state = {}, action ) => {
+export const subscriber: Reducer< SubscriberState, Action > = ( state = {}, action ) => {
 	/**
 	 * ↓ Import subscribers
 	 */
