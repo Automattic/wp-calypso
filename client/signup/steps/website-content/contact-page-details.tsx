@@ -36,7 +36,7 @@ export function ContactPageDetails( {
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const site = useSelector( getSelectedSite ) ?? undefined;
+	const site = useSelector( getSelectedSite );
 	const pageTitle = page.title;
 	const pageID = page.id;
 

@@ -29,7 +29,7 @@ export function LogoUploadSection( {
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const site = useSelector( getSelectedSite ) ?? undefined;
+	const site = useSelector( getSelectedSite );
 
 	const onMediaUploadComplete = ( { URL }: MediaUploadData ) => {
 		dispatch( logoUploadCompleted( URL as string ) );
