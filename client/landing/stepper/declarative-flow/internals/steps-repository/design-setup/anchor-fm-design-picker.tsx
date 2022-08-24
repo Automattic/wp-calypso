@@ -4,9 +4,11 @@ import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../../stores';
 import { ANCHOR_FM_THEMES } from './anchor-fm-themes';
 import { STEP_NAME } from './constants';
@@ -18,6 +20,7 @@ const AnchorFmDesignPicker: Step = ( { navigation, flow } ) => {
 	const { goBack, submit, goToStep } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
+	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction, createSite } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -64,7 +67,9 @@ const AnchorFmDesignPicker: Step = ( { navigation, flow } ) => {
 				return;
 			}
 
-			return setDesignOnSite( newSite.site_slug, _selectedDesign, '' );
+			return setDesignOnSite( newSite.site_slug, _selectedDesign, '' ).then( () =>
+				reduxDispatch( requestActiveTheme( newSite.blogid ) )
+			);
 		} );
 
 		recordTracksEvent( 'calypso_signup_design_type_submit', {

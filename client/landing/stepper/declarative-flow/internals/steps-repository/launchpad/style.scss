@@ -110,6 +110,9 @@
 	margin: 32px 0;
 	padding: 0 20px;
 }
+.launchpad__url-box-top-level-domain {
+	font-weight: 500;
+}
 
 // Launchpad - Progress Bar
 
@@ -270,10 +273,10 @@
 			max-width: 95%;
 			margin-top: 0;
 			box-shadow: inset 0 0 1px #e1e1e1;
-			filter: drop-shadow( 0 3px 8px rgba( 0, 0, 0, 0.05 ) ) drop-shadow( 0 3px 3px rgba( 0, 0, 0, 0.03 ) );
+			filter: drop-shadow( 0 3px 8px rgba( 0, 0, 0, 0.05 ) )
+				drop-shadow( 0 3px 3px rgba( 0, 0, 0, 0.03 ) );
 			border-radius: 50px; /* stylelint-disable-line scales/radii */
 		}
-		
 	}
 
 	.spinner-line {

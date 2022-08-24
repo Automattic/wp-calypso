@@ -5,6 +5,11 @@
 	position: relative;
 	top: 36px;
 	padding: 12px 16px 0;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-left: 0;
+		padding-right: 0;
+	}
 }
 
 .plugin-category-results-header__title {

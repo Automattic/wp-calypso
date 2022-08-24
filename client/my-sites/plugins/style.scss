@@ -1,6 +1,7 @@
 @import '@wordpress/base-styles/_breakpoints.scss';
 @import '@wordpress/base-styles/_mixins.scss';
 @import './grid-mixins.scss';
+@import './woocommerce-box.scss';
 
 .is-section-plugins .main {
 	padding-top: 35px; // Compensate for the fixed header.
