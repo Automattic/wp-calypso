@@ -9,14 +9,33 @@
 }
 
 .add-subscriber__title-container,
-.add-subscriber__form--container {
+.add-subscriber__form--container,
+.add-subscriber__progress--container {
 	margin: auto;
+}
+
+.add-subscriber__progress--container {
+	max-width: 520px;
+	text-align: center;
+
+	.onboarding-title {
+		font-size: 2rem;
+		margin-bottom: 1rem;
+	}
+
+	.onboarding-subtitle {
+		font-size: 0.875rem;
+	}
+
+	.onboarding-progress .progress-bar {
+		margin-bottom: 1rem;
+	}
 }
 
 .add-subscriber__title-container {
 	text-align: center;
 	margin-bottom: 1rem;
-	width: 376px;
+	max-width: 376px;
 
 	.add-subscriber__title-emoji {
 		font-size: 2.5rem; /* stylelint-disable-line */
