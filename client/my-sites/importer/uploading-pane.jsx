@@ -12,7 +12,7 @@ import TextInput from 'calypso/components/forms/form-text-input';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import { startMappingAuthors, startUpload } from 'calypso/state/imports/actions';
+import { startMappingAuthors, startUpload, failPreUpload } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
@@ -130,6 +130,14 @@ export class UploadingPane extends PureComponent {
 
 	setupUpload = ( file ) => {
 		this.setState( { fileToBeUploaded: file } );
+		const { importerStatus } = this.props;
+		const fileExtension = file?.name?.split( '.' ).pop()?.toLowerCase?.() ?? '';
+
+		// fail fast if a user tries to upload a .wpress file to improve the user experience
+		if ( fileExtension === 'wpress' ) {
+			this.props.failPreUpload( importerStatus.importerId );
+			return;
+		}
 
 		// uploads are initiated by a button if a URL field is present.
 		if ( this.props.optionalUrl ) {
@@ -265,5 +273,5 @@ export default connect(
 		filename: getUploadFilename( state ),
 		percentComplete: getUploadPercentComplete( state ),
 	} ),
-	{ startMappingAuthors, startUpload }
+	{ startMappingAuthors, startUpload, failPreUpload }
 )( localize( UploadingPane ) );

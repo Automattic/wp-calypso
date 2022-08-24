@@ -18,7 +18,6 @@ class ImporterError extends PureComponent {
 		description: PropTypes.string.isRequired,
 		type: PropTypes.string.isRequired,
 		retryImport: PropTypes.func,
-		fileName: PropTypes.string,
 		siteSlug: PropTypes.string,
 	};
 
@@ -60,27 +59,7 @@ class ImporterError extends PureComponent {
 		const defaultError = this.props.translate(
 			'Oops! We ran into an unexpected error while uploading your file.'
 		);
-		const { description = '', fileName } = this.props;
-		const fileExtension = fileName?.split( '.' ).pop()?.toLowerCase?.() ?? '';
-
-		if ( fileExtension === 'wpress' ) {
-			return this.props.translate(
-				'%(errorDescription)s{{br/}}You have uploaded a .wpress file that works with the All-in-One WP Migration plugin. You can either {{ip}}install that plugin{{/ip}}, or {{ei}}try out Everything Import{{/ei}}. {{cs}}Still need help{{/cs}}?',
-				{
-					args: {
-						errorDescription: description.length ? description : defaultError,
-					},
-					components: {
-						br: <br />,
-						ip: <Button className="importer__error-pane is-link" onClick={ this.installPlugin } />,
-						ei: (
-							<Button className="importer__error-pane is-link" onClick={ this.everythingImport } />
-						),
-						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
-					},
-				}
-			);
-		}
+		const { description = '' } = this.props;
 
 		return this.props.translate(
 			'%(errorDescription)s{{br/}}Make sure you are using a valid WordPress export file in XML or ZIP format. {{cs}}Still need help{{/cs}}?',
@@ -90,6 +69,20 @@ class ImporterError extends PureComponent {
 				},
 				components: {
 					br: <br />,
+					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+				},
+			}
+		);
+	};
+
+	getPreUploadError = () => {
+		return this.props.translate(
+			'You have uploaded a .wpress file that works with the All-in-One WP Migration plugin. You can either {{ip}}install that plugin{{/ip}}, or {{ei}}try out Everything Import{{/ei}}. {{cs}}Still need help{{/cs}}?',
+			{
+				components: {
+					br: <br />,
+					ip: <Button className="importer__error-pane is-link" onClick={ this.installPlugin } />,
+					ei: <Button className="importer__error-pane is-link" onClick={ this.everythingImport } />,
 					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
 				},
 			}
@@ -112,6 +105,10 @@ class ImporterError extends PureComponent {
 				actionMessage = this.props.description
 					? this.props.description
 					: this.props.translate( 'Data you entered are not valid' );
+				break;
+
+			case 'preUploadError':
+				actionMessage = this.getPreUploadError();
 				break;
 		}
 

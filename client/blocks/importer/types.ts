@@ -41,7 +41,6 @@ export interface ImportJob {
 		comment: { completed: number; total: number };
 		attachment: { completed: number; total: number };
 	};
-	filename?: string;
 }
 
 export interface ImportJobParams {

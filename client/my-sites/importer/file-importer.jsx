@@ -74,7 +74,7 @@ class FileImporter extends PureComponent {
 		const { title, icon, description, overrideDestination, uploadDescription, optionalUrl } =
 			this.props.importerData;
 		const { importerStatus, site } = this.props;
-		const { errorData, importerState, filename } = importerStatus;
+		const { errorData, importerState } = importerStatus;
 		const isEnabled = appStates.DISABLED !== importerState;
 		const showStart = includes( compactStates, importerState );
 		const cardClasses = classNames( 'importer__file-importer-card', {
@@ -109,7 +109,6 @@ class FileImporter extends PureComponent {
 					<ErrorPane
 						type={ errorData.type }
 						description={ errorData.description }
-						fileName={ filename }
 						siteSlug={ site.slug }
 					/>
 				) }
