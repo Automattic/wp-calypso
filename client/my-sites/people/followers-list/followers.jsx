@@ -3,6 +3,7 @@
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
@@ -122,7 +123,12 @@ class Followers extends Component {
 							) }
 							noticeStatus="is-info"
 						>
-							<AddSubscriberForm siteId={ this.props.site.ID } />
+							<AddSubscriberForm
+								siteId={ this.props.site.ID }
+								onImportFinished={ () => {
+									page.redirect( `/people/email-followers/${ this.props.site.slug }` );
+								} }
+							/>
 						</EmailVerificationGate>
 					</Card>
 				);

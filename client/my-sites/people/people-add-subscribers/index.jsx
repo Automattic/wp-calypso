@@ -70,7 +70,12 @@ class PeopleInvites extends PureComponent {
 						noticeText={ this.props.translate( 'You must verify your email to add subscribers.' ) }
 						noticeStatus="is-info"
 					>
-						<AddSubscriberForm siteId={ this.props.site.ID } />
+						<AddSubscriberForm
+							siteId={ this.props.site.ID }
+							onImportFinished={ () => {
+								page.redirect( `/people/email-followers/${ this.props.site.slug }` );
+							} }
+						/>
 					</EmailVerificationGate>
 				</Card>
 			</Main>

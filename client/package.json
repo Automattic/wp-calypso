@@ -51,6 +51,7 @@
 		"@automattic/request-external-access": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
+		"@automattic/subscriber": "workspace:^",
 		"@automattic/social-previews": "workspace:^",
 		"@automattic/state-utils": "workspace:^",
 		"@automattic/tree-select": "workspace:^",
