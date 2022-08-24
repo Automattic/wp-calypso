@@ -748,16 +748,9 @@ class Signup extends Component {
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
 		const progressBar = () => {
-			if ( [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName ) ) {
-				return { flowName: this.props.flowName, stepName: this.props.stepName };
-			}
-			if (
-				[ 'newsletter', 'link-in-bio' ].includes( this.props.initialContext?.query?.flowName )
-			) {
-				return {
-					flowName: this.props.initialContext?.query?.flowName,
-					stepName: this.props.stepName,
-				};
+			const flowName = this.props.initialContext?.query?.flowName || this.props.flowName;
+			if ( [ 'newsletter', 'link-in-bio' ].includes( flowName ) ) {
+				return { flowName, stepName: this.props.stepName };
 			}
 			return;
 		};
