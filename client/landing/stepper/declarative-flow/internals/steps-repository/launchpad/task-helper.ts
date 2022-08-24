@@ -1,4 +1,5 @@
 import { translate } from 'i18n-calypso';
+import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
 
 export function getEnhancedTasks( tasks: Task[], siteSlug: string | null ) {
@@ -53,4 +54,20 @@ export function getEnhancedTasks( tasks: Task[], siteSlug: string | null ) {
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
 	return enhancedTaskList;
+}
+
+// Returns list of tasks/checklist items for a specific flow
+export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
+	const currentFlowTasksIds = flow ? launchpadFlowTasks[ flow ] : null;
+	return (
+		currentFlowTasksIds &&
+		currentFlowTasksIds.reduce( ( accumulator, currentTaskId ) => {
+			tasks.find( ( task ) => {
+				if ( task.id === currentTaskId ) {
+					accumulator.push( task );
+				}
+			} );
+			return accumulator;
+		}, [] as Task[] )
+	);
 }

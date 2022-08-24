@@ -5,7 +5,7 @@
 // Launchpad - Layout
 // This is styling common parts of stepper page
 .launchpad {
-	.progress-bar,
+	.flow-progress,
 	.step-container__header {
 		display: none;
 	}
@@ -58,7 +58,8 @@
 
 .launchpad__sidebar-content-container {
 	margin-left: 0;
-
+	margin-top: 100px;
+	
 	@include break-large {
 		margin-left: 16px;
 	}
@@ -117,7 +118,7 @@
 // Launchpad - Progress Bar
 
 .launchpad__progress-bar-container {
-	margin: 100px 0 32px;
+	margin-bottom: 32px;
 }
 
 .launchpad__progress-value {
@@ -127,19 +128,8 @@
 }
 
 .launchpad__progress-bar {
-	background: var( --studio-gray-5 );
-	border-radius: 4px;
-	height: 5px;
-	margin-left: 38px;
-	margin-top: -12px;
 	width: 120px;
-}
-
-.launchpad__progress-bar-completed {
-	background: var( --studio-blue-50 );
-	border-radius: 4px;
-	height: 5px;
-	width: 40px;
+	vertical-align: middle;
 }
 
 // Launchpad - Checklist
