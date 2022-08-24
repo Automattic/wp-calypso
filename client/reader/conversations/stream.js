@@ -13,6 +13,7 @@ export default function ( props ) {
 		<Stream
 			key="conversations"
 			streamKey={ props.streamKey }
+			shouldCombineCards={ false }
 			className="conversations__stream"
 			followSource="conversations"
 			useCompactCards={ true }

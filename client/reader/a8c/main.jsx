@@ -23,7 +23,7 @@ export default function A8CFollowing( props ) {
 	};
 
 	return (
-		<Stream { ...props }>
+		<Stream { ...props } shouldCombineCards={ false }>
 			<SectionHeader label={ translate( 'Followed A8C Sites' ) }>
 				<Button compact onClick={ markAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
 					{ translate( 'Mark all as seen' ) }
