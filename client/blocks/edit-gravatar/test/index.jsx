@@ -10,9 +10,6 @@ import FilePicker from 'calypso/components/file-picker';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( 'calypso/components/email-verification/email-verification-dialog', () => () => (
-	<div data-testid="verify-email-dialog" />
-) );
 jest.mock( 'calypso/components/drop-zone', () => ( { children } ) => (
 	<div data-testid="dropzone">{ children }</div>
 ) );
@@ -212,10 +209,11 @@ describe( 'EditGravatar', () => {
 			const user = userEvent.setup();
 			const { container } = render( <EditGravatar { ...props } /> );
 
-			expect( screen.queryByTestId( 'verify-email-dialog' ) ).not.toBeInTheDocument();
+			const modal = screen.queryByRole( 'dialog', { name: 'Email Verification Dialog' } );
+			expect( modal ).not.toBeInTheDocument();
 
 			await user.click( container.firstChild.firstChild );
-			expect( screen.queryByTestId( 'verify-email-dialog' ) ).toBeVisible();
+			expect( screen.queryByRole( 'dialog', { name: 'Email Verification Dialog' } ) ).toBeVisible();
 		} );
 	} );
 } );
