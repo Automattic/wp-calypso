@@ -12,20 +12,40 @@ const subscriber: Reducer< SubscriberState, Action > = ( state = {}, action ) =>
 		return Object.assign( {}, state, {
 			import: {
 				inProgress: true,
-				error: '',
 			},
 		} );
-	} else if ( action.type === 'IMPORT_CSV_SUBSCRIBERS_SUCCESS' ) {
+	} else if ( action.type === 'IMPORT_CSV_SUBSCRIBERS_START_SUCCESS' ) {
+		const imports = Array.from( state.imports || [] );
+		imports.push( {
+			id: action.jobId,
+			status: 'pending',
+		} );
 		return Object.assign( {}, state, {
 			import: {
-				inProgress: false,
+				inProgress: true,
+				job: { id: action.jobId },
 			},
+			imports,
 		} );
-	} else if ( action.type === 'IMPORT_CSV_SUBSCRIBERS_FAILED' ) {
+	} else if ( action.type === 'IMPORT_CSV_SUBSCRIBERS_START_FAILED' ) {
 		return Object.assign( {}, state, {
 			import: {
 				inProgress: false,
 				error: action.error,
+			},
+		} );
+	} else if ( action.type === 'IMPORT_CSV_SUBSCRIBERS_UPDATE' ) {
+		if ( action.job )
+			return Object.assign( {}, state, {
+				import: {
+					inProgress: true,
+					job: action.job,
+				},
+			} );
+
+		return Object.assign( {}, state, {
+			import: {
+				inProgress: false,
 			},
 		} );
 	}
@@ -69,6 +89,7 @@ const subscriber: Reducer< SubscriberState, Action > = ( state = {}, action ) =>
 	if ( action.type === 'GET_SUBSCRIBERS_IMPORTS_SUCCESS' ) {
 		return Object.assign( {}, state, {
 			imports: action.imports,
+			hydrated: true,
 		} );
 	}
 

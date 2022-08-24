@@ -18,16 +18,21 @@ export function createActions() {
 		siteId,
 	} );
 
-	const importCsvSubscribersSuccess = ( siteId: number, data: ImportSubscribersResponse ) => ( {
-		type: 'IMPORT_CSV_SUBSCRIBERS_SUCCESS' as const,
+	const importCsvSubscribersStartSuccess = ( siteId: number, jobId: number ) => ( {
+		type: 'IMPORT_CSV_SUBSCRIBERS_START_SUCCESS' as const,
 		siteId,
-		data,
+		jobId,
 	} );
 
-	const importCsvSubscribersFailed = ( siteId: number, error: ImportSubscribersError ) => ( {
-		type: 'IMPORT_CSV_SUBSCRIBERS_FAILED' as const,
+	const importCsvSubscribersStartFailed = ( siteId: number, error: ImportSubscribersError ) => ( {
+		type: 'IMPORT_CSV_SUBSCRIBERS_START_FAILED' as const,
 		siteId,
 		error,
+	} );
+
+	const importCsvSubscribersUpdate = ( job: ImportJob | undefined ) => ( {
+		type: 'IMPORT_CSV_SUBSCRIBERS_UPDATE' as const,
+		job,
 	} );
 
 	function* importCsvSubscribers( siteId: number, file: File ) {
@@ -43,9 +48,9 @@ export function createActions() {
 				formData: [ [ 'import', file, file.name ] ],
 			} );
 
-			yield importCsvSubscribersSuccess( siteId, data );
+			yield importCsvSubscribersStartSuccess( siteId, data.id );
 		} catch ( error ) {
-			yield importCsvSubscribersFailed( siteId, error as ImportSubscribersError );
+			yield importCsvSubscribersStartFailed( siteId, error as ImportSubscribersError );
 		}
 	}
 
@@ -94,7 +99,7 @@ export function createActions() {
 		importJob,
 	} );
 
-	function* getSubscribersImport( siteId: number, importId: string ) {
+	function* getSubscribersImport( siteId: number, importId: number ) {
 		try {
 			const data: GetSubscribersImportResponse = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import/${ importId }`,
@@ -131,8 +136,9 @@ export function createActions() {
 
 	return {
 		importCsvSubscribersStart,
-		importCsvSubscribersSuccess,
-		importCsvSubscribersFailed,
+		importCsvSubscribersStartSuccess,
+		importCsvSubscribersStartFailed,
+		importCsvSubscribersUpdate,
 		importCsvSubscribers,
 		addSubscribersStart,
 		addSubscribersSuccess,
@@ -149,8 +155,9 @@ export type ActionCreators = ReturnType< typeof createActions >;
 
 export type Action = ReturnType<
 	| ActionCreators[ 'importCsvSubscribersStart' ]
-	| ActionCreators[ 'importCsvSubscribersSuccess' ]
-	| ActionCreators[ 'importCsvSubscribersFailed' ]
+	| ActionCreators[ 'importCsvSubscribersStartSuccess' ]
+	| ActionCreators[ 'importCsvSubscribersStartFailed' ]
+	| ActionCreators[ 'importCsvSubscribersUpdate' ]
 	| ActionCreators[ 'addSubscribersStart' ]
 	| ActionCreators[ 'addSubscribersSuccess' ]
 	| ActionCreators[ 'addSubscribersFailed' ]
