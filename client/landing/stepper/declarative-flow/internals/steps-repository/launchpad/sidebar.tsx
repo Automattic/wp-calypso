@@ -2,10 +2,21 @@ import { ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks } from './task-helper';
 import { tasks } from './tasks';
+import { getLaunchpadTranslations } from './translations';
+
+function getUrlInfo( url: string ) {
+	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
+
+	// Ex. mytest.wordpress.com matches mytest
+	const siteName = urlWithoutProtocol.match( /^[^.]*/ );
+	// Ex. mytest.wordpress.com matches .wordpress.com
+	const topLevelDomain = urlWithoutProtocol.match( /\..*/ ) || [];
+
+	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
+}
 import { Task } from './types';
 
 function getChecklistCompletionProgress( tasks: Task[] ) {
@@ -21,9 +32,14 @@ function getChecklistCompletionProgress( tasks: Task[] ) {
 }
 
 const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
-	const site = useSite();
-	const url = site?.URL?.replace( /^https?:\/\//, '' );
+	let siteName = '';
+	let topLevelDomain = '';
 	const flow = useFlowParam();
+	const translatedStrings = getLaunchpadTranslations( flow );
+
+	if ( siteSlug ) {
+		[ siteName, topLevelDomain ] = getUrlInfo( siteSlug );
+	}
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 
 	const taskCompletionProgress =
@@ -33,7 +49,7 @@ const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
 		<div className="launchpad__sidebar">
 			<div className="launchpad__sidebar-header">
 				<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
-				<span className="launchpad__sidebar-header-flow-name">Newsletter</span>
+				<span className="launchpad__sidebar-header-flow-name">{ translatedStrings.flowName }</span>
 			</div>
 			<div className="launchpad__sidebar-content-container">
 				{ taskCompletionProgress && (
@@ -48,11 +64,12 @@ const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
 					</div>
 				) }
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
-				<h1 className="launchpad__sidebar-h1">Voilà! Your Newsletter is up and running!</h1>
-				<p className="launchpad__sidebar-description">
-					Keep up the momentum with these next steps.
-				</p>
-				<div className="launchpad__url-box">{ url }</div>
+				<h1 className="launchpad__sidebar-h1">{ translatedStrings.sidebarTitle }</h1>
+				<p className="launchpad__sidebar-description">{ translatedStrings.sidebarSubtitle }</p>
+				<div className="launchpad__url-box">
+					<span>{ siteName }</span>
+					<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+				</div>
 				<Checklist siteSlug={ siteSlug } tasks={ tasks } flow={ flow } />
 			</div>
 		</div>

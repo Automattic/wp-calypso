@@ -74,16 +74,16 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 	const completeLinkInBioFlow = () => {
 		setPendingAction( async () => {
 			setProgress( 0 );
-			setProgressTitle( __( 'Completing Purchase' ) );
+			setProgressTitle( __( 'Completing your purchase' ) );
 			await postSiteSettings();
 
 			setProgress( 0.5 );
-			setProgressTitle( __( 'Creating your Link in Bio' ) );
+			setProgressTitle( __( 'Cutting the ribbon. Popping a cork.' ) );
 
 			await wait( 1500 );
 
 			setProgress( 0.8 );
-			setProgressTitle( __( 'Preparing Next Steps' ) );
+			setProgressTitle( __( 'Flinging the doors open' ) );
 			await wait( 1500 );
 
 			await postSiteLogo();
@@ -95,7 +95,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 
 	const completeNewsletterFlow = () => {
 		setPendingAction( async () => {
-			setProgressTitle( __( 'Completing Purchase' ) );
+			setProgressTitle( __( 'Applying the last few stamps' ) );
 			setProgress( 0 );
 			await postSiteSettings();
 			setProgress( 0.3 );
@@ -103,6 +103,8 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 
 			await postSiteLogo();
 			setProgress( 1 );
+
+			setProgressTitle( __( 'Crisply folding your Newsletter' ) );
 			await wait( 2000 );
 			return { destination: 'subscribers' };
 		} );

@@ -56,6 +56,7 @@ jest.mock( 'calypso/login', () => {
 jest.mock( 'calypso/server/isomorphic-routing', () => ( {
 	serverRouter: jest.fn(),
 	getNormalizedPath: jest.fn(),
+	getCacheKey: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/server/render', () => ( {

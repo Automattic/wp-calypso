@@ -87,6 +87,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 		<form className="link-in-bio-setup__form" onSubmit={ handleSubmit }>
 			<SiteIconWithPicker
 				site={ site }
+				placeholderText={ __( 'Upload a profile image' ) }
 				onSelect={ ( file ) => {
 					setSelectedFile( file );
 					imageFileToBase64( file );

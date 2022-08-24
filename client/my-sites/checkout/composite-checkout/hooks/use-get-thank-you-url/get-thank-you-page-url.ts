@@ -34,7 +34,6 @@ import {
 	hasBusinessPlan,
 	hasEcommercePlan,
 	hasTitanMail,
-	hasTrafficGuide,
 	hasDIFMProduct,
 	hasProPlan,
 	hasStarterPlan,
@@ -301,20 +300,9 @@ export default function getThankYouPageUrl( {
 		return redirectUrlForPostCheckoutUpsell;
 	}
 
-	// Display the regular receipt thank-you page with specific messaging from
-	// the display mode query param if the purchase includes the traffic-guide.
-	if ( receiptIdOrPlaceholder && cart && hasTrafficGuide( cart ) ) {
-		const thankYouPageUrlForTrafficGuide = getThankYouPageUrlForTrafficGuide( {
-			siteSlug,
-			receiptIdOrPlaceholder,
-		} );
-		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, { d: 'traffic-guide' } );
-	}
-
 	// The display mode query param (eg: `?d=concierge`) is used to show
 	// purchase-specific messaging, for e.g. the Schedule Session button when
-	// purchasing a concierge session or when purchasing the Ultimate Traffic
-	// Guide.
+	// purchasing a concierge session
 	const displayModeParam = getDisplayModeParamFromCart( cart );
 
 	// Display the cookie post-checkout URL (with the display mode query param
@@ -672,12 +660,9 @@ function getProfessionalEmailUpsellUrl( {
 
 function getDisplayModeParamFromCart(
 	cart: ResponseCart | undefined
-): undefined | { d: 'concierge' | 'traffic-guide' } {
+): undefined | { d: 'concierge' } {
 	if ( cart && hasConciergeSession( cart ) ) {
 		return { d: 'concierge' };
-	}
-	if ( cart && hasTrafficGuide( cart ) ) {
-		return { d: 'traffic-guide' };
 	}
 	return undefined;
 }
@@ -736,16 +721,6 @@ function modifyCookieUrlIfAtomic(
 	if ( updatedUrl !== urlFromCookie ) {
 		saveUrlToCookie( updatedUrl );
 	}
-}
-
-function getThankYouPageUrlForTrafficGuide( {
-	siteSlug,
-	receiptIdOrPlaceholder,
-}: {
-	siteSlug: string | undefined;
-	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder;
-} ) {
-	return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 }
 
 function getRedirectUrlFromCart( cart: ResponseCart ): string | null {

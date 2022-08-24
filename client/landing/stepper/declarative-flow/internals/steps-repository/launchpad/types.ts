@@ -3,11 +3,17 @@ export interface Task {
 	isCompleted: boolean;
 	actionUrl: string;
 	taskType: string;
-	title: string;
+	title?: string;
 	displayBadge: boolean;
 	badgeText: string;
 }
 
 export interface LaunchpadFlowTaskList {
 	[ string: string ]: string[];
+}
+
+export interface TranslatedLaunchpadStrings {
+	flowName: string;
+	sidebarTitle: string;
+	sidebarSubtitle: string;
 }
