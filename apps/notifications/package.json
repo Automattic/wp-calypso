@@ -26,6 +26,7 @@
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-polyfills": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"autoprefixer": "^10.2.5",
 		"calypso": "workspace:^",
