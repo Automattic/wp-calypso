@@ -5,14 +5,14 @@ import type { AppState } from 'calypso/types';
 /**
  * Returns a site option for a site
  */
-export default function getSiteOption< T extends keyof SiteDetailsOptions >(
+export default function getSiteOption(
 	state: AppState,
 	siteId: number | undefined | null,
-	optionName: T
-): SiteDetailsOptions[ T ] | null {
+	optionName: string
+): SiteDetailsOptions[ keyof SiteDetailsOptions ] | null {
 	if ( ! siteId ) {
 		return null;
 	}
 	const options = getSiteOptions( state, siteId );
-	return options?.[ optionName ] ?? null;
+	return options?.[ optionName as keyof SiteDetailsOptions ] ?? null;
 }
