@@ -118,6 +118,7 @@ function getNewSiteParams( {
 	themeSlugWithRepo,
 	siteUrl,
 	state,
+	siteAccentColor,
 } ) {
 	const signupDependencies = getSignupDependencyStore( state );
 	const designType = getDesignType( state ).trim();
@@ -160,6 +161,7 @@ function getNewSiteParams( {
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
 			wpcom_public_coming_soon: 1,
+			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 		},
 		validate: false,
 	};
@@ -224,6 +226,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		siteUrl,
 		themeSlugWithRepo,
 		themeItem,
+		siteAccentColor,
 	} = stepData;
 
 	// flowName isn't always passed in
@@ -253,6 +256,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		themeSlugWithRepo,
 		siteUrl,
 		state,
+		siteAccentColor,
 	} );
 
 	if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
