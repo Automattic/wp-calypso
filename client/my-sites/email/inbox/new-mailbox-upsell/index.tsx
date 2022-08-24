@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
-import { recordInboxNewMailboxUpsellClickEvent } from 'calypso/my-sites/email/email-management/home/utils';
+import { hasTitanMailWithUs, isUserOnTitanFreeTrial } from 'calypso/lib/titan';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import { emailManagement, emailManagementEdit } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -22,6 +22,8 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 	// By default, upsell CTA links to the email management landing page.
 	let upsellURL = emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } );
 
+	let isFreeTrialNow = false;
+
 	// User has one single domain, determine / email addition page URL based on subscribed email provider.
 	if ( domains.length === 1 ) {
 		const domainItem = domains[ 0 ];
@@ -29,6 +31,8 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 		let slug = '';
 		if ( hasTitanMailWithUs( domainItem ) ) {
 			slug = 'titan/new';
+
+			isFreeTrialNow = isUserOnTitanFreeTrial( domainItem );
 		} else if ( hasGSuiteWithUs( domainItem ) ) {
 			slug = 'google-workspace/add-users';
 		}
@@ -48,7 +52,14 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 					<div>{ translate( 'Create a new one and activate it immediately.' ) }</div>
 				</div>
 				<div className="new-mailbox-upsell__cta">
-					<Button onClick={ recordInboxNewMailboxUpsellClickEvent } href={ upsellURL }>
+					<Button
+						onClick={ () =>
+							recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {
+								context: isFreeTrialNow ? 'free' : 'paid',
+							} )
+						}
+						href={ upsellURL }
+					>
 						{ translate( 'Create a new mailbox' ) }
 					</Button>
 				</div>
