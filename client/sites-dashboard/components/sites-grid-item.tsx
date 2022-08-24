@@ -20,7 +20,7 @@ const badges = css( {
 } );
 
 export const siteThumbnail = css( {
-	aspectRatio: '16 / 9',
+	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
 } );
