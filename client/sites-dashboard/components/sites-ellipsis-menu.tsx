@@ -102,8 +102,8 @@ const HostingConfigItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 };
 
 const ExternalGridIcon = styled( Gridicon )( {
-	top: '-1px',
-	marginLeft: '4px',
+	insetBlockStart: '-1px',
+	marginInlineStart: '4px',
 	position: 'relative',
 } );
 
