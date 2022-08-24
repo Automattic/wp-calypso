@@ -24,6 +24,9 @@ const DEFAULT_OPTIONS: IsJetpackSitePredOptions = {
  * When options.considerStandaloneProducts is true (the default), sites with
  * Jetpack standalone plugins will also be considered Jetpack sites for the
  * purposes of this function.
+ *
+ * When options.treatAtomicAsJetpackSite is true (the default), Atomic sites with
+ * Jetpack will also be considered Jetpack sites for the purposes of this function.
  */
 export default function isJetpackSitePred( options?: IsJetpackSitePredOptions ) {
 	return function isJetpackSite( site: SiteDetails | null ): boolean | null {
