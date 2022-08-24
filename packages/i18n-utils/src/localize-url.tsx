@@ -157,7 +157,7 @@ export function localizeUrl(
 	fullUrl: string,
 	locale: Locale = getDefaultLocale(),
 	isLoggedIn = true,
-	skipHostLookup = false
+	skipHostLookup = false // Set to true to avoid matching the hostname with the paths from urlLocalizationMapping.
 ): string {
 	let url;
 	try {
