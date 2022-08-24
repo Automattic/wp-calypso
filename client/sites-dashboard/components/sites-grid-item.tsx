@@ -3,7 +3,7 @@ import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { displaySiteUrl, getDashboardUrl, sitePreviewHoverClass } from '../utils';
+import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridTile } from './sites-grid-tile';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
@@ -11,6 +11,7 @@ import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import { ThumbnailLink } from './thumbnail-link';
 
 const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
 
@@ -55,9 +56,9 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	return (
 		<SitesGridTile
 			leading={
-				<a { ...siteDashboardUrlProps } className={ sitePreviewHoverClass }>
+				<ThumbnailLink { ...siteDashboardUrlProps }>
 					<SiteItemThumbnail className={ siteThumbnail } site={ site } size={ 'medium' } />
-				</a>
+				</ThumbnailLink>
 			}
 			primary={
 				<>

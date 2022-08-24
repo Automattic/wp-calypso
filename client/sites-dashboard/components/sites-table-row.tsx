@@ -5,12 +5,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { displaySiteUrl, getDashboardUrl, MEDIA_QUERIES, sitePreviewHoverClass } from '../utils';
+import { displaySiteUrl, getDashboardUrl, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import { ThumbnailLink } from './thumbnail-link';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
@@ -48,7 +49,7 @@ const SiteListTile = styled( ListTile )`
 	}
 `;
 
-const ListTileLeading = styled.a`
+const ListTileLeading = styled( ThumbnailLink )`
 	${ MEDIA_QUERIES.mediumOrSmaller } {
 		margin-right: 12px;
 	}
@@ -97,7 +98,6 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						<ListTileLeading
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
-							className={ sitePreviewHoverClass }
 						>
 							<SiteItemThumbnail site={ site } />
 						</ListTileLeading>
