@@ -61,7 +61,6 @@ class ReaderStream extends Component {
 		placeholderFactory: PropTypes.func,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
-		shouldCombineCards: PropTypes.bool,
 		useCompactCards: PropTypes.bool,
 		isMain: PropTypes.bool,
 		intro: PropTypes.object,
@@ -78,7 +77,6 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: true,
 		showPrimaryFollowButtonOnCards: true,
 		isDiscoverStream: false,
-		shouldCombineCards: true,
 		isMain: true,
 		useCompactCards: false,
 		intro: null,
@@ -473,7 +471,7 @@ class ReaderStream extends Component {
 }
 
 export default connect(
-	( state, { streamKey, recsStreamKey, shouldCombineCards = true } ) => {
+	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
 
@@ -482,7 +480,6 @@ export default connect(
 			items: getTransformedStreamItems( state, {
 				streamKey,
 				recsStreamKey,
-				shouldCombine: shouldCombineCards,
 			} ),
 			notificationsOpen: isNotificationsOpen( state ),
 			stream,

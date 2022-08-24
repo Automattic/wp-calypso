@@ -54,7 +54,6 @@ class FeedStream extends Component {
 				emptyContent={ emptyContent }
 				showPostHeader={ false }
 				showSiteNameOnCards={ false }
-				shouldCombineCards={ false }
 			>
 				<DocumentHead
 					title={ this.props.translate( '%s ‹ Reader', {
