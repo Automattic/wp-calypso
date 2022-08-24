@@ -156,7 +156,7 @@ export interface SiteDetailsOptions {
 	anchor_podcast?: boolean;
 	background_color?: boolean;
 	blog_public?: number;
-	created_at?: Date;
+	created_at?: string;
 	default_category?: number;
 	default_comment_status?: boolean;
 	default_likes_enabled?: boolean;
