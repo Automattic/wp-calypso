@@ -15,3 +15,13 @@ export interface ProductStoreProps extends Pick< BasePageProps, 'urlQueryArgs' >
 export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & ProductStoreBaseProps;
 
 export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductStoreBaseProps;
+
+export type FilterType = 'products' | 'bundles';
+export interface ProductFilterProps {
+	filterType: FilterType;
+	setFilterType: ( filterType: FilterType ) => void;
+}
+
+export interface ProductProps {
+	type: FilterType;
+}
