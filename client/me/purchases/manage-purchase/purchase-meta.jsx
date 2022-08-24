@@ -1,4 +1,6 @@
 import {
+	getPlan,
+	getProductFromSlug,
 	isConciergeSession,
 	isDIFMProduct,
 	isDomainRegistration,
@@ -224,29 +226,44 @@ function PurchaseMetaOwner( { owner } ) {
 	);
 }
 
+const formatPurchasePrice = ( price, currency ) =>
+	formatCurrency( price, currency, {
+		isSmallestUnit: true,
+	} );
+
+function getDIFMPriceDetails( purchase, productsList ) {
+	const productDetails = productsList[ WPCOM_DIFM_LITE ];
+
+	const [ tier0, tier1 ] = productDetails.price_tier_list;
+	const perExtraPagePrice = tier1.minimum_price - tier0.minimum_price;
+
+	const { maximum_units: noOfBaselinePagesIncluded } = tier0;
+	const { amount: totalPrice, purchaseRenewalQuantity: noOfPages, currencyCode } = purchase;
+	const extraPageCount = noOfPages - noOfBaselinePagesIncluded;
+	const costOfExtraPages = formatPurchasePrice( extraPageCount * perExtraPagePrice, currencyCode );
+	const oneTimeFee = formatPurchasePrice( totalPrice - costOfExtraPages, currencyCode );
+	return { extraPageCount, costOfExtraPages, oneTimeFee };
+}
+
 function PurchaseMetaPrice( { purchase } ) {
 	const translate = useTranslate();
-	const { productDisplayPrice } = purchase;
 	const productsList = useSelector( getProductsList );
+	const { productSlug, productDisplayPrice } = purchase;
+	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 		if ( isDIFMProduct( purchase ) ) {
-			const productDetails = productsList[ WPCOM_DIFM_LITE ];
-			const [ tier0, tier1 ] = productDetails.price_tier_list;
-			const perExtraPagePrice = ( tier1.minimum_price - tier0.minimum_price ) / 100;
-			const { maximum_units: noOfBaselinePagesIncluded } = tier0;
-			const { amount: totalPrice, purchaseRenewalQuantity: noOfPages, currencyCode } = purchase;
-			const extraPageCount = noOfPages - noOfBaselinePagesIncluded;
-			const costOfExtraPages = extraPageCount * perExtraPagePrice;
-			const oneTimeFee = totalPrice - costOfExtraPages;
-
+			const { extraPageCount, costOfExtraPages, oneTimeFee } = getDIFMPriceDetails(
+				purchase,
+				productsList
+			);
 			return (
 				<div>
 					<div>
 						{ translate( 'Service : %(oneTimeFee)s {{period}}(one-time){{/period}}', {
 							args: {
-								oneTimeFee: formatCurrency( oneTimeFee, currencyCode ),
+								oneTimeFee,
 							},
 							components: {
 								period: <span className="manage-purchase__time-period" />,
@@ -258,8 +275,8 @@ function PurchaseMetaPrice( { purchase } ) {
 							'%(extraPageCount)d extra pages : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
 							{
 								args: {
-									extraPageCount: extraPageCount,
-									costOfExtraPages: formatCurrency( costOfExtraPages, currencyCode ),
+									extraPageCount,
+									costOfExtraPages,
 								},
 								components: {
 									period: <span className="manage-purchase__time-period" />,
