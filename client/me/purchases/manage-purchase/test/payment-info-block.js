@@ -66,9 +66,11 @@ describe( 'PaymentInfoBlock', () => {
 		describe( 'when the purchase a non-rechargable payment method', () => {
 			const purchase = { expiryStatus, payment: { type: 'ideal' }, isRechargeable: false };
 
-			it( 'renders "None"', () => {
+			it( 'renders "You don’t have a payment method to renew this subscription"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+					'You don’t have a payment method to renew this subscription'
+				);
 			} );
 
 			it( 'does not render "will not be billed"', () => {
