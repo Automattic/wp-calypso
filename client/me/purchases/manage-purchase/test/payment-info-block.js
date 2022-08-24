@@ -64,7 +64,12 @@ describe( 'PaymentInfoBlock', () => {
 		} );
 
 		describe( 'when the purchase a non-rechargable payment method', () => {
-			const purchase = { expiryStatus, payment: { type: 'ideal' }, isRechargeable: false };
+			const purchase = {
+				expiryStatus,
+				payment: { type: 'ideal' },
+				isRechargeable: false,
+				isAutoRenewEnabled: true,
+			};
 
 			it( 'renders "You don’t have a payment method to renew this subscription"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
