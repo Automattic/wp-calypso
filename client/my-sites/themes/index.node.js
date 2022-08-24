@@ -28,6 +28,7 @@ export default function ( router ) {
 
 	const langParam = getLanguageRouteParam();
 
+	// TODO: change ":vertical" to only match verticals and not sites.
 	const showcaseRoutes = [
 		`/${ langParam }/themes/:tier(free|premium)?`,
 		`/${ langParam }/themes/:tier(free|premium)?/filter/:filter`,
@@ -43,9 +44,7 @@ export default function ( router ) {
 			// that every site includes a period, and every vertical does not. If
 			// we're processing a site, skip this middleware chain.
 			// TODO: Is it possible to handle this in the route definition above?
-			if ( vertical?.includes( '.' ) ) {
-				next( 'route' );
-			}
+			next( vertical?.includes( '.' ) ? 'route' : undefined );
 		},
 		middlewarelogger( 'showcase' ),
 		ssrSetupLocale,
@@ -76,7 +75,8 @@ export default function ( router ) {
 
 		redirectFilterAndType
 	);
-	// NOTE!!! Matches /themes/:site as well.
+
+	// TODO: change ":theme" to only match themes, and not sites.
 	router(
 		[ '/themes/:theme/:section(support)?', '/themes/:site/:theme/:section(support)?' ],
 		middlewarelogger( 'support' ),
