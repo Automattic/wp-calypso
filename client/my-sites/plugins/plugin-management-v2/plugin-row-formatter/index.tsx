@@ -38,7 +38,14 @@ export default function PluginRowFormatter( {
 	const translate = useTranslate();
 
 	const PluginDetailsButton = ( props: { className: string; children: ReactChild } ) => {
-		return <Button borderless compact href={ `/plugins/${ item.slug }` } { ...props } />;
+		return (
+			<Button
+				borderless
+				compact
+				href={ `/plugins/${ item.slug }${ selectedSite ? `/${ selectedSite.domain }` : '' }` }
+				{ ...props }
+			/>
+		);
 	};
 
 	const moment = useLocalizedMoment();
