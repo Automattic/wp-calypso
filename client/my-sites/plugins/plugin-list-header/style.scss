@@ -2,8 +2,6 @@
 @import '@wordpress/base-styles/_mixins.scss';
 
 .plugin-list-header.section-header.card {
-	padding-right: 8px;
-
 	.section-header__actions {
 		flex-grow: 1;
 		display: flex;
@@ -87,10 +85,6 @@
 }
 
 .plugin-list-header-new {
-	@include break-mobile() {
-		margin-top: 8px;
-		margin-bottom: 0;
-	}
 	&.section-header.card {
 		&:not( .is-bulk-editing ) {
 			@include break-xlarge() {
@@ -115,6 +109,9 @@
 			}
 		}
 	}
+	.section-header__label { 
+		flex-basis: auto;
+	}
 	.section-header__actions {
 		margin-left: 0;
 	}
@@ -129,11 +126,9 @@
 		}
 	}
 	.plugin-list-header__action-buttons {
-		justify-content: end;
-	}
-	.plugin-list-header__mode-buttons {
-		flex-grow: 0;
-		margin-inline-start: 36px;
+		@include break-wide() {
+			justify-content: end;
+		}
 	}
 	.plugin-list-header__bulk-select-wrapper {
 		display: flex;
@@ -149,5 +144,8 @@
 				display: inline;
 			}
 		}
+	}
+	.plugin-list-header__actions-dropdown {
+		margin-inline-start: 38px;
 	}
 }
