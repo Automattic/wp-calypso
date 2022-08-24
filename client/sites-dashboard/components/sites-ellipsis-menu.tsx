@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { DropdownMenu, MenuGroup, MenuItem as CoreMenuItem } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { ComponentType } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,9 +16,20 @@ interface SitesMenuItemProps {
 	recordTracks: ( eventName: string, extraProps?: Record< string, any > ) => void;
 }
 
-interface MenuItemLinkProps extends Omit< MenuItem.Props, 'href' > {
+interface MenuItemLinkProps extends Omit< CoreMenuItem.Props, 'href' > {
 	href?: string;
 }
+
+// Work around changes to core button styles done in _wp-components-overrides.scss
+// which don't take menu item buttons into account.
+const MenuItem = styled( CoreMenuItem )`
+	&:visited {
+		color: var( --color-neutral-70 );
+	}
+	&:hover:not( :disabled ) {
+		color: var( --color-accent-60 );
+	}
+`;
 
 const MenuItemLink = MenuItem as ComponentType< MenuItemLinkProps >;
 
