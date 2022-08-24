@@ -110,6 +110,9 @@
 	margin: 32px 0;
 	padding: 0 20px;
 }
+.launchpad__url-box-top-level-domain {
+	font-weight: 500;
+}
 
 // Launchpad - Progress Bar
 
@@ -293,7 +296,6 @@
 				0 6px 6px rgba( 0, 0, 0, 0.02 );
 			border-radius: 20px; /* stylelint-disable-line scales/radii */
 		}
-		
 	}
 
 	.spinner-line {

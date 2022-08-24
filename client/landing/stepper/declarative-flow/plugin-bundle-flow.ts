@@ -172,7 +172,8 @@ export const pluginBundleFlow: Flow = {
 					return exitFlow( `/home/${ siteSlug }` );
 				}
 
-				// TODO - Do we need this?
+				case 'wooTransfer':
+					return navigate( 'processing' );
 				case 'wooInstallPlugins':
 					return navigate( 'processing' );
 			}

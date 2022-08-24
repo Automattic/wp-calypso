@@ -3,3 +3,4 @@ export { LocaleProvider, useLocale, withLocale, useIsEnglishLocale } from './loc
 export * from './locales';
 export { default as guessTimezone } from './guess-timezone';
 export * from './utils';
+export * from './date-utils';
