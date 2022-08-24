@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
-	PremiumBadge,
 	useCategorization,
 	getDesignPreviewUrl,
 } from '@automattic/design-picker';
@@ -384,7 +383,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onPreview={ previewDesign }
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
-			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
