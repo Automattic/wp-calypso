@@ -59,7 +59,7 @@ class PeopleInvites extends PureComponent {
 			<Main>
 				<PageViewTracker path="/people/add-subscribers/:site_id" title="People > Add Subscribers" />
 				<HeaderCake isCompact onClick={ this.goBack }>
-					{ translate( 'Add Subscribers to %(sitename)s', {
+					{ translate( 'Add subscribers to %(sitename)s', {
 						args: {
 							sitename: site.name,
 						},
