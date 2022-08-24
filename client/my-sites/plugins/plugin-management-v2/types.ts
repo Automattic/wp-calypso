@@ -1,4 +1,4 @@
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { MomentInput } from 'moment';
 import type { ReactChild } from 'react';
 
@@ -28,7 +28,7 @@ export interface RowFormatterArgs {
 	columnKey: string;
 	isSmallScreen?: boolean;
 	className?: string;
-	selectedSite?: SiteData;
+	selectedSite?: SiteDetails;
 }
 export interface PluginRowFormatterArgs extends RowFormatterArgs {
 	item: Plugin;

@@ -1,11 +1,11 @@
 import PluginCommonList from '../plugin-common/plugin-common-list';
 import PluginRowFormatter from '../plugin-row-formatter';
 import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement, ReactNode } from 'react';
 
 interface Props {
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	items: Array< Plugin >;
 	isLoading: boolean;
 	columns: Columns;
