@@ -67,7 +67,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			slug: hit.slug,
 			version: hit[ 'plugin.stable_tag' ],
 			author: hit.author,
-			author_name: hit.author,
+			author_name: hit.plugin.author,
 			author_profile: '', // TODO: get author profile URL
 			tested: hit[ 'plugin.tested' ],
 			rating: mapStarRatingToPercent( hit.plugin.rating ),
