@@ -507,10 +507,9 @@ class DomainsStep extends Component {
 			showExampleSuggestions = true;
 		}
 
-		let includeWordPressDotCom = this.props.includeWordPressDotCom;
-		if ( 'undefined' === typeof includeWordPressDotCom ) {
-			includeWordPressDotCom = ! this.props.isDomainOnly;
-		}
+		const includeWordPressDotCom =
+			this.props.includeWordPressDotCom ??
+			( ! this.props.isDomainOnly && this.props.flowName !== 'onboarding-with-email' );
 
 		return (
 			<CalypsoShoppingCartProvider>
