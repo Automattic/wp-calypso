@@ -129,7 +129,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'link-in-bio',
-			steps: [ 'domains', 'plans' ],
+			steps: [ 'domains', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
 				`/setup/completingPurchase?flow=link-in-bio&siteSlug=${ encodeURIComponent(
 					dependencies.siteSlug
