@@ -1,4 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
+import { AddSubscriberForm } from '@automattic/subscriber';
 import { ReactElement } from 'react';
 import { useSetupOnboardingSite } from 'calypso/landing/stepper/hooks/use-setup-onboarding-site';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -21,12 +22,17 @@ const Subscribers: Step = function ( { navigation, flow } ): ReactElement | null
 			hideFormattedHeader={ true }
 			stepName={ 'subscribers' }
 			flowName={ 'newsletter' }
-			isHorizontalLayout={ true }
+			isHorizontalLayout={ false }
+			showJetpackPowered={ true }
 			stepContent={
 				<div className={ 'subscribers' }>
-					<h1 className="subscribers__title">This is the subscribers step</h1>
-					<p>Content here...</p>
-					<button onClick={ handleSubmit }>Go to the next step</button>
+					{ site?.ID && (
+						<AddSubscriberForm
+							siteId={ site.ID }
+							onImportFinished={ handleSubmit }
+							showCsvUpload={ false }
+						/>
+					) }
 				</div>
 			}
 			recordTracksEvent={ recordTracksEvent }
