@@ -35,15 +35,17 @@ interface OnboardingSite {
 interface SetupOnboardingSiteOptions {
 	ignoreUrl?: boolean;
 	site: SiteDetails | null;
+	flow: string | null;
 }
 
 export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
-	const { ignoreUrl, site } = options;
+	const { ignoreUrl, site, flow } = options;
 	const siteIsLoaded = !! site;
 
 	const { getState } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const state = getState();
-	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
+
 	const { mutateAsync: setSiteLogo } = useSiteLogoMutation( site?.ID );
 
 	const postSiteSettings = ( site: SiteDetails, state: OnboardingSite ) => {
@@ -62,17 +64,29 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 		return setSiteLogo( new File( [ base64ImageToBlob( state.siteLogo ) ], 'site-logo.png' ) );
 	};
 
+	const setIntent = ( site: SiteDetails, flow: string | null ) => {
+		if ( site && flow && [ 'newsletter', 'link-in-bio' ].includes( flow ) ) {
+			return setIntentOnSite( site.ID.toString(), flow );
+		}
+		return Promise.resolve();
+	};
+
 	return useMemo( () => {
-		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site ) {
-			return Promise.all( [ postSiteSettings( site, state ), postSiteLogo( state ) ] ).then( () => {
+		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site && flow ) {
+			return Promise.all( [
+				postSiteSettings( site, state ),
+				postSiteLogo( state ),
+				setIntent( site, flow ),
+			] ).then( () => {
 				recordTracksEvent( 'calypso_signup_site_options_submit', {
 					has_site_title: !! state.siteTitle,
 					has_tagline: !! state.siteDescription,
 				} );
 			} );
 		}
+		// we want this to run once, ignore other deps
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteIsLoaded ] );
+	}, [ siteIsLoaded, flow ] );
 }
 
 export function shouldSetupOnboardingSite() {
