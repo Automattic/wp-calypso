@@ -55,6 +55,14 @@ export default function TailoredFlowProcessingScreen( { flowName } ) {
 	const progress = ( currentStep + 1 ) / totalSteps;
 	const isComplete = progress >= 1;
 
+	// Temporarily override document styles to prevent scrollbars from showing
+	useEffect( () => {
+		document.documentElement.classList.add( 'no-scroll' );
+		return () => {
+			document.documentElement.classList.remove( 'no-scroll' );
+		};
+	}, [] );
+
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),
 		// Enable the interval when progress is incomplete.
