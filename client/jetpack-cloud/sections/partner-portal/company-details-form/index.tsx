@@ -30,6 +30,8 @@ interface Props {
 	onSubmit: ( payload: PartnerDetailsPayload ) => void;
 	initialValues?: {
 		name?: string;
+		contactPerson?: string;
+		companyWebsite?: string;
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -58,6 +60,8 @@ export default function CompanyDetailsForm( {
 	const [ line2, setLine2 ] = useState( initialValues.line2 ?? '' );
 	const [ postalCode, setPostalCode ] = useState( initialValues.postalCode ?? '' );
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
+	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
+	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap.hasOwnProperty( country )
@@ -65,6 +69,8 @@ export default function CompanyDetailsForm( {
 		: false;
 	const payload: PartnerDetailsPayload = {
 		name,
+		contactPerson,
+		companyWebsite,
 		city,
 		line1,
 		line2,
@@ -97,6 +103,28 @@ export default function CompanyDetailsForm( {
 						name="name"
 						value={ name }
 						onChange={ ( event: any ) => setName( event.target.value ) }
+						disabled={ isLoading }
+					/>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="name">{ translate( 'Contact First and Last Name' ) }</FormLabel>
+					<FormTextInput
+						id="contactPerson"
+						name="contactPerson"
+						value={ contactPerson }
+						onChange={ ( event: any ) => setContactPerson( event.target.value ) }
+						disabled={ isLoading }
+					/>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="name">{ translate( 'Company website' ) }</FormLabel>
+					<FormTextInput
+						id="companyWebsite"
+						name="companyWebsite"
+						value={ companyWebsite }
+						onChange={ ( event: any ) => setCompanyWebsite( event.target.value ) }
 						disabled={ isLoading }
 					/>
 				</FormFieldset>
