@@ -67,7 +67,7 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 			<div className={ `intro-pricing-banner ${ classModifier }` }>
 				{ ( discountPercentage > 0 || isLoading ) && (
 					<>
-						<div className="intro-pricing-banner__discount">
+						<div className="intro-pricing-banner__item">
 							<img
 								src={ rocket }
 								alt={ translate( 'Rocket representing %(percent)d%% sale', {
@@ -85,7 +85,7 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 								) }
 							</span>
 						</div>
-						<div className="intro-pricing-banner__guarantee">
+						<div className="intro-pricing-banner__item">
 							<img src={ guaranteeBadge } alt="" />
 							<span>
 								{ preventWidows(
@@ -95,7 +95,7 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 								) }
 							</span>
 						</div>
-						<div className="intro-pricing-banner__agencies">
+						<div className="intro-pricing-banner__item is-agencies">
 							<img src={ people } alt="" />
 							<a
 								onClick={ () =>
