@@ -52,6 +52,7 @@ button {
  * Site Setup
  */
 .site-setup,
+.plugin-bundle,
 .newsletter-setup,
 .patterns,
 .link-in-bio-setup,
@@ -91,13 +92,6 @@ button {
 		z-index: 99;
 		height: 8px;
 		background-color: transparent;
-
-		@include break-small {
-			&.is-fixed {
-				position: fixed;
-				background-color: #fff;
-			}
-		}
 
 		.progress-bar__progress {
 			background-color: $onboarding-accent-blue;
@@ -154,6 +148,19 @@ button {
 		--color-accent-60: #0e64a5;
 	}
 }
+
+.newsletter,
+.link-in-bio {
+	.progress-bar {
+		background-color: #fff;
+		position: absolute;
+
+		.progress-bar__progress {
+			border-radius: 0;
+		}
+	}
+}
+
 @media ( max-width: 660px ) {
 	body.is-section-stepper .wpcom-site {
 		.inline-help {

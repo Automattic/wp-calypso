@@ -12,6 +12,8 @@ const selectors = {
 
 	listTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
 	listSubtitle: ( section: string ) => `.plugins-browser-list__subtitle:text("${ section }")`,
+	headerTitle: ( section: string ) => `.plugin-category-results-header__title:text("${ section }")`,
+	pluginTitle: ( plugin: string ) => `.plugins-browser-item__title:text("${ plugin }")`,
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
 		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-browser-list__title',
@@ -104,6 +106,13 @@ export class PluginsPage {
 	}
 
 	/**
+	 * Validate page has a header title containing text
+	 */
+	async validateHasHeaderTitle( section: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.headerTitle( section ) );
+	}
+
+	/**
 	 * Validate section is not present on page
 	 */
 	async validateNotHasSection( section: string ): Promise< void > {
@@ -122,6 +131,14 @@ export class PluginsPage {
 	 */
 	async validateHasPluginOnSection( section: string, plugin: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.pluginTitleOnSection( section, plugin ) );
+	}
+
+	/**
+	 * Validate category has the plugin
+	 */
+	async validateHasPluginInCategory( section: string, plugin: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.headerTitle( section ) );
+		await this.page.waitForSelector( selectors.pluginTitle( plugin ) );
 	}
 
 	/**
@@ -148,7 +165,7 @@ export class PluginsPage {
 		} else {
 			await categoryLocator.click();
 		}
-		await this.page.waitForSelector( selectors.listSubtitle( category ) );
+		await this.page.waitForSelector( selectors.headerTitle( category ) );
 	}
 
 	/**

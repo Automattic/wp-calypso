@@ -5,6 +5,7 @@ import {
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import { SitesDashboard } from './components/sites-dashboard';
+import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from 'page';
 
 const globalStyles = css`
@@ -13,7 +14,12 @@ const globalStyles = css`
 
 		.layout__content {
 			// The page header background extends all the way to the edge of the screen
-			padding: 32px 0;
+			padding-block: 32px;
+			padding-inline: 0;
+
+			${ MEDIA_QUERIES.mediumOrSmaller } {
+				padding-block-start: 46px;
+			}
 
 			// Prevents the status dropdown from being clipped when the page content
 			// isn't tall enough

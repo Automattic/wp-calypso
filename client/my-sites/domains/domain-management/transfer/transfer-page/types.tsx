@@ -1,4 +1,4 @@
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { NoticeActionCreator } from 'calypso/state/notices/types';
 import type { ReactNode } from 'react';
@@ -15,7 +15,7 @@ export type TransferPageProps = {
 	isPrimaryDomain: boolean;
 	isSupportSession: boolean;
 	selectedDomainName: string;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	successNotice: ( notice: string, options: Record< string, unknown > ) => NoticeActionCreator;
 	updateDomainLock: ( selectedDomainName: string, lock: boolean ) => void;
 };

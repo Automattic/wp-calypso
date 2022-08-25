@@ -8,6 +8,7 @@ export { default as canJetpackSiteAutoUpdateCore } from './can-jetpack-site-auto
 export { default as canJetpackSiteAutoUpdateFiles } from './can-jetpack-site-auto-update-files';
 export { default as canJetpackSiteUpdateFiles } from './can-jetpack-site-update-files';
 export { default as getCustomizerUrl } from './get-customizer-url';
+export { default as getJetpackActivePlugins } from './get-jetpack-active-plugins';
 export { default as getJetpackCheckoutRedirectUrl } from './get-jetpack-checkout-redirect-url';
 export { default as getJetpackComputedAttributes } from './get-jetpack-computed-attributes';
 export { default as getSeoTitle } from './get-seo-title';
@@ -49,6 +50,7 @@ export { default as isJetpackConnectionPluginActive } from './is-jetpack-connect
 export { default as isJetpackMinimumVersion } from './is-jetpack-minimum-version';
 export { default as isJetpackModuleActive } from './is-jetpack-module-active';
 export { default as isJetpackSite } from './is-jetpack-site';
+export { default as isJetpackSitePred } from './is-jetpack-site-pred';
 export { default as isJetpackSiteMainNetworkSite } from './is-jetpack-site-main-network-site';
 export { default as isJetpackSiteMultiSite } from './is-jetpack-site-multi-site';
 export { default as isJetpackSiteSecondaryNetworkSite } from './is-jetpack-site-secondary-network-site';

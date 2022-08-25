@@ -5,12 +5,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { displaySiteUrl, getDashboardUrl } from '../utils';
+import { displaySiteUrl, getDashboardUrl, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import { ThumbnailLink } from './thumbnail-link';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
@@ -19,44 +20,45 @@ interface SiteTableRowProps {
 
 const Row = styled.tr`
 	line-height: 2em;
-	border-bottom: 1px solid #eee;
+	border-block-end: 1px solid #eee;
 `;
 
 const Column = styled.td< { mobileHidden?: boolean } >`
-	padding-top: 12px;
-	padding-bottom: 12px;
-	padding-right: 24px;
+	padding-block-start: 12px;
+	padding-block-end: 12px;
+	padding-inline-end: 24px;
 	vertical-align: middle;
 	font-size: 14px;
 	line-height: 20px;
 	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
+	white-space: nowrap;
 
-	@media only screen and ( max-width: 781px ) {
+	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
-		padding-right: 0;
+		padding-inline-end: 0;
 	}
 `;
 
 const SiteListTile = styled( ListTile )`
 	line-height: initial;
-	margin-right: 0;
+	margin-inline-end: 0;
 
-	@media only screen and ( max-width: 781px ) {
-		margin-right: 12px;
+	${ MEDIA_QUERIES.mediumOrSmaller } {
+		margin-inline-end: 12px;
 	}
 `;
 
-const ListTileLeading = styled.a`
-	@media only screen and ( max-width: 781px ) {
-		margin-right: 12px;
+const ListTileLeading = styled( ThumbnailLink )`
+	${ MEDIA_QUERIES.mediumOrSmaller } {
+		margin-inline-end: 12px;
 	}
 `;
 
 const ListTileTitle = styled.div`
 	display: flex;
 	align-items: center;
-	margin-bottom: 8px;
+	margin-block-end: 8px;
 `;
 
 const ListTileSubtitle = styled.div`
@@ -70,7 +72,7 @@ const SitePlan = styled.div`
 `;
 
 const SitePlanIcon = styled.div`
-	margin-right: 6px;
+	margin-inline-end: 6px;
 `;
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
@@ -110,7 +112,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					subtitle={
 						<ListTileSubtitle>
-							<SiteUrl href={ siteUrl } className={ css( { lineHeight: 1 } ) } title={ siteUrl }>
+							<SiteUrl href={ siteUrl } title={ siteUrl }>
 								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</SiteUrl>
 						</ListTileSubtitle>
@@ -124,7 +126,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
 					) }
-					{ site.plan.product_name_short }
+					{ site.plan?.product_name_short }
 				</SitePlan>
 			</Column>
 			<Column mobileHidden>

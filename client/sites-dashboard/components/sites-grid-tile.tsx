@@ -11,8 +11,8 @@ const container = css( {
 const primaryContainer = css( {
 	display: 'flex',
 	flex: 1,
-	marginTop: '16px',
-	marginBottom: '8px',
+	marginBlockStart: '16px',
+	marginBlockEnd: '8px',
 	alignItems: 'center',
 } );
 

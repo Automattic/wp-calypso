@@ -1,12 +1,26 @@
 import ChecklistItem from './checklist-item';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { Task } from './types';
 
-const Checklist = ( { tasks }: { tasks: Task[] } ) => (
-	<ul className="launchpad__checklist" aria-label="Launchpad Checklist">
-		{ tasks.map( ( task ) => (
-			<ChecklistItem key={ task.id } task={ task } />
-		) ) }
-	</ul>
-);
+const Checklist = ( {
+	tasks,
+	siteSlug,
+	flow,
+}: {
+	tasks: Task[];
+	siteSlug: string | null;
+	flow: string | null;
+} ) => {
+	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
+
+	const enhancedTasks = arrayOfFilteredTasks && getEnhancedTasks( arrayOfFilteredTasks, siteSlug );
+
+	return (
+		<ul className="launchpad__checklist" aria-label="Launchpad Checklist">
+			{ enhancedTasks &&
+				enhancedTasks.map( ( task: Task ) => <ChecklistItem key={ task.id } task={ task } /> ) }
+		</ul>
+	);
+};
 
 export default Checklist;

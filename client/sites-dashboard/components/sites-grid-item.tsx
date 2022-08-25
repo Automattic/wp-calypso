@@ -11,11 +11,17 @@ import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import { ThumbnailLink } from './thumbnail-link';
 
-const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
+const badges = css( {
+	display: 'flex',
+	gap: '8px',
+	alignItems: 'center',
+	marginInlineStart: 'auto',
+} );
 
 export const siteThumbnail = css( {
-	aspectRatio: '16 / 9',
+	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
 } );
@@ -28,7 +34,7 @@ const ellipsis = css( {
 	'.gridicon.ellipsis-menu__toggle-icon': {
 		width: '24px',
 		height: '16px',
-		top: '4px',
+		insetBlockStart: '4px',
 	},
 } );
 
@@ -55,9 +61,9 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	return (
 		<SitesGridTile
 			leading={
-				<a { ...siteDashboardUrlProps }>
+				<ThumbnailLink { ...siteDashboardUrlProps }>
 					<SiteItemThumbnail className={ siteThumbnail } site={ site } size={ 'medium' } />
-				</a>
+				</ThumbnailLink>
 			}
 			primary={
 				<>
@@ -75,7 +81,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 				</>
 			}
 			secondary={
-				<SiteUrl href={ siteUrl } title={ siteUrl } className={ css( { lineHeight: 1 } ) }>
+				<SiteUrl href={ siteUrl } title={ siteUrl }>
 					<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 				</SiteUrl>
 			}

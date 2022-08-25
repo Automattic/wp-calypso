@@ -31,7 +31,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
+import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
@@ -210,29 +210,27 @@ function PluginDetails( props ) {
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
 	useEffect( () => {
-		if ( breadcrumbs.length === 0 ) {
-			dispatch(
-				appendBreadcrumb( {
-					label: translate( 'Plugins' ),
-					href: `/plugins/${ selectedSite?.slug || '' }`,
-					id: 'plugins',
-					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins.'
-					),
-				} )
-			);
-		}
+		const items = [
+			{
+				label: translate( 'Plugins' ),
+				href: `/plugins/${ selectedSite?.slug || '' }`,
+				id: 'plugins',
+				helpBubble: translate(
+					'Add new functionality and integrations to your site with plugins.'
+				),
+			},
+		];
 
 		if ( fullPlugin.name && props.pluginSlug ) {
-			dispatch(
-				appendBreadcrumb( {
-					label: fullPlugin.name,
-					href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
-					id: `plugin-${ props.pluginSlug }`,
-				} )
-			);
+			items.push( {
+				label: fullPlugin.name,
+				href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
+				id: `plugin-${ props.pluginSlug }`,
+			} );
 		}
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite ] );
+
+		dispatch( updateBreadcrumbs( items ) );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite?.slug, dispatch, translate ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -352,16 +350,7 @@ function PluginDetails( props ) {
 					</div>
 
 					<div className="plugin-details__actions">
-						<PluginDetailsCTA
-							plugin={ fullPlugin }
-							siteIds={ siteIds }
-							selectedSite={ selectedSite }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							isPlaceholder={ showPlaceholder }
-							billingPeriod={ billingPeriod }
-							isMarketplaceProduct={ isMarketplaceProduct }
-							isSiteConnected={ isSiteConnected }
-						/>
+						<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 
 						{ ! showPlaceholder && ! requestingPluginsForSites && (
 							<PluginDetailsSidebar plugin={ fullPlugin } />
@@ -474,16 +463,7 @@ function LegacyPluginDetails( props ) {
 					</div>
 
 					<div className="plugin-details__layout-col-right">
-						<PluginDetailsCTA
-							plugin={ fullPlugin }
-							siteIds={ siteIds }
-							selectedSite={ selectedSite }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							isPlaceholder={ showPlaceholder }
-							billingPeriod={ billingPeriod }
-							isMarketplaceProduct={ isMarketplaceProduct }
-							isSiteConnected={ isSiteConnected }
-						/>
+						<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 					</div>
 				</div>
 

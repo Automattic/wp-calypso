@@ -7,8 +7,8 @@ export const SitesSearchIcon = () => {
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			style={ {
-				paddingLeft: '16px',
-				paddingRight: '10px',
+				paddingInlineStart: '16px',
+				paddingInlineEnd: '10px',
 				height: '100%',
 				backgroundColor: 'var( --color-surface )',
 			} }

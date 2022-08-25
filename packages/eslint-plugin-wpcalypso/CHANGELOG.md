@@ -1,9 +1,10 @@
 #### Unreleased
 
-#### v6.0.1 (unreleased)
+#### v6.1.0 (2022-08-24)
 
 - Add missing optional peer dependency on `eslint-plugin-react`.
 - Mark the peer dependency on `eslint-plugin-react-hooks` as optional to match that on `eslint-plugin-react`.
+- Update `jsx-classname-namespace` rule to check only for BEM convention.
 
 #### v6.0.0 (2022-05-13)
 

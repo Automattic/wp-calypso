@@ -1,3 +1,7 @@
+import {
+	FEATURE_INSTALL_PLUGINS,
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+} from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -9,31 +13,51 @@ import { marketplacePlanToAdd } from 'calypso/lib/plugins/utils';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
-export default function CTAButton( {
-	plugin,
-	selectedSite,
-	shouldUpgrade,
-	hasEligibilityMessages,
-	isMarketplaceProduct,
-	billingPeriod,
-	isJetpackSelfHosted,
-	isSiteConnected,
-	disabled,
-} ) {
+export default function CTAButton( { plugin, hasEligibilityMessages, disabled } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
 	const [ showAddCustomDomain, setShowAddCustomDomain ] = useState( false );
+
+	const billingPeriod = useSelector( getBillingInterval );
+
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug )
+	);
+
+	// Site type
+	const selectedSite = useSelector( getSelectedSite );
+
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
+	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const pluginFeature = isMarketplaceProduct
+		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
+		: FEATURE_INSTALL_PLUGINS;
+	const isSiteConnected = useSelector( ( state ) =>
+		getSiteConnectionStatus( state, selectedSite?.ID )
+	);
+
+	const shouldUpgrade =
+		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
+		! isJetpackSelfHosted;
 
 	// Keep me updated
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
@@ -95,8 +119,8 @@ export default function CTAButton( {
 				closeDialog={ () => setShowAddCustomDomain( false ) }
 			/>
 			<Dialog
-				additionalClassNames={ 'plugin-details-CTA__dialog-content' }
-				additionalOverlayClassNames={ 'plugin-details-CTA__modal-overlay' }
+				additionalClassNames={ 'plugin-details-cta__dialog-content' }
+				additionalOverlayClassNames={ 'plugin-details-cta__modal-overlay' }
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
@@ -119,7 +143,7 @@ export default function CTAButton( {
 				/>
 			</Dialog>
 			<Button
-				className="plugin-details-CTA__install-button"
+				className="plugin-details-cta__install-button"
 				primary
 				onClick={ () => {
 					if ( pluginRequiresCustomPrimaryDomain ) {
@@ -154,8 +178,8 @@ export default function CTAButton( {
 				}
 			</Button>
 			{ isJetpackSelfHosted && isMarketplaceProduct && (
-				<div className="plugin-details-CTA__not-available">
-					<p className="plugin-details-CTA__not-available-text">
+				<div className="plugin-details-cta__not-available">
+					<p className="plugin-details-cta__not-available-text">
 						{ translate( 'Thanks for your interest. ' ) }
 						{ translate(
 							'Paid plugins are not yet available for Jetpack Sites but we can notify you when they are ready.'
@@ -163,7 +187,7 @@ export default function CTAButton( {
 					</p>
 					{ hasPreferences && (
 						<ToggleControl
-							className="plugin-details-CTA__follow-toggle"
+							className="plugin-details-cta__follow-toggle"
 							label={ translate( 'Keep me updated' ) }
 							checked={ keepMeUpdatedPreference }
 							onChange={ updatedKeepMeUpdatedPreference }

@@ -8,14 +8,14 @@ import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import type { Plugin } from '../types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 import './style.scss';
 
 interface Props {
 	plugin: Plugin;
-	selectedSite: SiteData;
+	selectedSite?: SiteDetails;
 	className?: string;
 }
 
@@ -58,7 +58,7 @@ export default function UpdatePlugin( {
 
 	let content;
 
-	if ( ! allowedActions.autoupdate ) {
+	if ( ! allowedActions?.autoupdate ) {
 		content = <div>{ translate( 'Auto-managed on this site' ) }</div>;
 	} else if ( hasUpdate ) {
 		content = (

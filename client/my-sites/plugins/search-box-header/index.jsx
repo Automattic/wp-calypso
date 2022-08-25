@@ -1,12 +1,16 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useCallback, useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
-const SearchBox = ( { isMobile, searchTerm, doSearch, searchBoxRef, isSearching } ) => {
+function pageToSearch( s ) {
+	setQueryArgs( '' !== s ? { s } : {} );
+}
+
+const SearchBox = ( { isMobile, searchTerm, searchBoxRef, isSearching } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -19,7 +23,7 @@ const SearchBox = ( { isMobile, searchTerm, doSearch, searchBoxRef, isSearching 
 				ref={ searchBoxRef }
 				pinned={ isMobile }
 				fitsContainer={ isMobile }
-				onSearch={ doSearch }
+				onSearch={ pageToSearch }
 				defaultValue={ searchTerm }
 				searchMode="on-enter"
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
@@ -32,7 +36,7 @@ const SearchBox = ( { isMobile, searchTerm, doSearch, searchBoxRef, isSearching 
 };
 
 const PopularSearches = ( props ) => {
-	const { searchTerms, doSearch, searchedTerm, popularSearchesRef } = props;
+	const { searchTerms, searchedTerm, searchBoxRef, popularSearchesRef } = props;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -43,7 +47,10 @@ const PopularSearches = ( props ) => {
 			} )
 		);
 
-		doSearch( searchTerm );
+		// When loading a search via click instead of interacting with the search
+		// box input directly we need to set the search term separately.
+		searchBoxRef?.current?.setKeyword( searchTerm );
+		pageToSearch( searchTerm );
 	};
 
 	return (
@@ -86,39 +93,28 @@ const SearchBoxHeader = ( props ) => {
 	const { searchTerm, title, searchTerms, isSticky, popularSearchesRef, isSearching, searchRef } =
 		props;
 
-	const doSearch = useCallback( ( receivedSearch ) => {
-		setQueryArgs( '' !== receivedSearch ? { s: receivedSearch } : {} );
-	}, [] );
-
-	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
-	const updateSearchBox = ( keyword ) => {
-		searchRef.current.setKeyword( keyword );
-		doSearch( keyword );
-	};
-
-	const clearSearch = useCallback( () => {
-		setQueryArgs( {} );
-	}, [] );
-
+	// Clear the keyword in search box on PluginsBrowser load if required.
+	// Required when navigating to a new plugins browser location
+	// without using close search ("X") to clear. e.g. When clicking
+	// clear in the search results header.
 	useEffect( () => {
 		if ( ! searchTerm ) {
-			clearSearch();
+			searchRef?.current?.setKeyword( '' );
 		}
-	}, [ clearSearch, searchTerm ] );
+	}, [ searchRef, searchTerm ] );
 
 	return (
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
 			<div className="search-box-header__header">{ title }</div>
 			<div className="search-box-header__search">
 				<SearchBox
-					doSearch={ doSearch }
 					searchTerm={ searchTerm }
 					searchBoxRef={ searchRef }
 					isSearching={ isSearching }
 				/>
 			</div>
 			<PopularSearches
-				doSearch={ updateSearchBox }
+				searchBoxRef={ searchRef }
 				searchedTerm={ searchTerm }
 				searchTerms={ searchTerms }
 				popularSearchesRef={ popularSearchesRef }

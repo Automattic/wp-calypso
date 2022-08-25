@@ -26,7 +26,7 @@ export type PurchaseURLCallback = (
 export type DurationChangeCallback = ( arg0: Duration ) => void;
 export type ScrollCardIntoViewCallback = ( arg0: HTMLDivElement, arg1: string ) => void;
 
-interface BasePageProps {
+export interface BasePageProps {
 	rootUrl: string;
 	urlQueryArgs: QueryArgs;
 	nav?: ReactNode;

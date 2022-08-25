@@ -30,6 +30,8 @@ const stepNameToModuleName = {
 	'plans-starter': 'plans',
 	'plans-import': 'plans',
 	'plans-launch': 'plans',
+	'plans-newsletter': 'plans',
+	'plans-link-in-bio': 'plans',
 	'plans-personal': 'plans',
 	'plans-premium': 'plans',
 	'plans-site-selected': 'plans',

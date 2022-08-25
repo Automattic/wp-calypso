@@ -2,8 +2,8 @@
 @import '@wordpress/base-styles/breakpoints';
 
 .signup {
-	&.is-newsletter, &.is-link-in-bio {
-
+	&.is-newsletter,
+	&.is-link-in-bio {
 		.signup-header {
 			z-index: 1;
 
@@ -13,9 +13,9 @@
 		}
 
 		.reskinned-processing-screen__container {
-			height: 100vh;
-			width: 100vw;
-			position: absolute;
+			height: 100%;
+			width: 100%;
+			position: fixed;
 			top: 0;
 			left: 0;
 			display: flex;
@@ -59,7 +59,7 @@
 		.reskinned-processing-screen__container {
 			background-color: rgb( 162, 218, 254 );
 			background-image: url( 'calypso/assets/images/onboarding/newsletter-processing-left.png' ),
-			url( 'calypso/assets/images/onboarding/newsletter-processing-right.jpg' );
+				url( 'calypso/assets/images/onboarding/newsletter-processing-right.jpg' );
 			background-position: left bottom, right top;
 			background-repeat: no-repeat, no-repeat;
 			background-attachment: fixed;
@@ -80,7 +80,7 @@
 		.reskinned-processing-screen__container {
 			background-color: #d0cce3;
 			background-image: url( 'calypso/assets/images/onboarding/link-in-bio-processing-left.png' ),
-			url( 'calypso/assets/images/onboarding/link-in-bio-processing-right.png' );
+				url( 'calypso/assets/images/onboarding/link-in-bio-processing-right.png' );
 			background-position-y: 92%, 8%;
 			background-position-x: 0, 100%;
 			background-repeat: no-repeat, no-repeat;
