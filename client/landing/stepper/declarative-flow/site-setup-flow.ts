@@ -431,6 +431,11 @@ export const siteSetupFlow: Flow = {
 
 				case 'designSetup':
 					if ( intent === 'sell' ) {
+						// For theme/plugin bundling, we skip the store features step because we use the theme to decide if they're going through "Start simple" or "More power"
+						if ( isEnabled( 'themes/plugin-bundling' ) ) {
+							return navigate( 'options' );
+						}
+
 						// this means we came from sell => store-features => start simple, we go back to store features
 						return navigate( 'storeFeatures' );
 					} else if ( intent === 'write' ) {
