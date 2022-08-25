@@ -221,6 +221,16 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
+		// the only unique thing about plans-link-in-bio is that it provides themeSlugWithRepo dependency
+		'plans-link-in-bio': {
+			stepName: 'plans',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
 		'plans-new': {
 			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
