@@ -6,7 +6,7 @@ function mutationTOSConsent(): Promise< APIPartner > {
 	return wpcom.req.post( {
 		method: 'PUT',
 		apiNamespace: 'wpcom/v2',
-		path: '/jetpack-licensing/partner',
+		path: '/jetpack-licensing/partner/tos',
 		body: { tos: ToSConsent.Consented },
 	} );
 }
