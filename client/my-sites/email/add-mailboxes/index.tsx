@@ -54,8 +54,8 @@ import {
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { HiddenFieldNames } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { translate } from 'i18n-calypso';
 
 interface AddMailboxesProps {
@@ -71,8 +71,8 @@ interface AddMailboxesAdditionalProps {
 	provider: EmailProvider;
 	selectedDomain: ResponseDomain;
 	selectedDomainName: string;
-	selectedSite: SiteData;
-	selectedSiteId: number;
+	selectedSite: SiteDetails | undefined | null;
+	selectedSiteId: number | undefined | null;
 	source: string;
 	translate: typeof translate;
 }
@@ -84,14 +84,18 @@ const useAdditionalProps = ( {
 	selectedDomainName,
 	source = '',
 }: AddMailboxesProps ): AddMailboxesAdditionalProps => {
-	const selectedSite = useSelector( getSelectedSite ) as SiteData;
-	const selectedSiteId: number = selectedSite.ID;
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = selectedSite?.ID;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ) );
-	const isLoadingDomains = useSelector(
-		( state ) =>
+	const isLoadingDomains = useSelector( ( state ) => {
+		if ( ! selectedSiteId ) {
+			return true;
+		}
+		return (
 			! hasLoadedSiteDomains( state, selectedSiteId ) ||
 			isRequestingSiteDomains( state, selectedSiteId )
-	);
+		);
+	} );
 
 	const selectedDomain = getSelectedDomain( {
 		domains,
@@ -178,11 +182,10 @@ const MailboxNotices = ( {
 		return null;
 	}
 
-	const { existingItemsCount } = getEmailProductProperties(
-		provider,
-		selectedDomain,
-		emailProduct as ProductListItem
-	);
+	const emailProductProperties = emailProduct
+		? getEmailProductProperties( provider, selectedDomain, emailProduct )
+		: { existingItemsCount: 0 };
+	const { existingItemsCount } = emailProductProperties;
 
 	const handleUnusedMailboxFinishSetupClick = (): void => {
 		recordClickEvent( {
@@ -191,6 +194,10 @@ const MailboxNotices = ( {
 			selectedDomainName,
 			source,
 		} );
+
+		if ( ! selectedSite ) {
+			throw new Error( 'Cannot finish unused mailbox setup without selected site' );
+		}
 
 		page( emailManagementTitanSetUpMailbox( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
@@ -300,7 +307,7 @@ const MailboxesForm = ( {
 		cartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )
 			.then( () => {
-				page( '/checkout/' + selectedSite.slug );
+				page( '/checkout/' + selectedSite?.slug ?? '' );
 			} )
 			.finally( () => setIsAddingToCart( false ) );
 	};
@@ -358,14 +365,14 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 	const goToEmail = (): void => {
 		let url = emailManagement(
-			selectedSite.slug,
+			selectedSite?.slug,
 			isSelectedDomainNameValid ? selectedDomainName : null,
 			currentRoute,
 			{ source }
 		);
 
 		if ( source === INBOX_SOURCE ) {
-			url = emailManagementInbox( selectedSite.slug );
+			url = emailManagementInbox( selectedSite?.slug );
 		}
 
 		page( url );

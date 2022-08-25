@@ -948,33 +948,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to thank-you page (with concierge display mode) for a new site with a domain and no failed purchases but concierge is in the cart', () => {
-		const cart = {
-			...getEmptyResponseCart(),
-			products: [
-				{
-					...getEmptyResponseCartProduct(),
-					product_slug: 'concierge-session',
-				},
-				{
-					...getEmptyResponseCartProduct(),
-					product_slug: 'some_domain',
-					is_domain_registration: true,
-					extra: { context: 'signup' },
-					meta: 'my.site',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			receiptId: samplePurchaseId,
-		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=concierge` );
-	} );
-
-	it( 'redirects to thank-you page for a new site with a domain and no failed purchases but neither G Suite nor concierge are in the cart if user is in invalid country', () => {
+	it( 'redirects to thank-you page for a new site with a domain and no failed purchases but G Suite is not in the cart if user is in invalid country', () => {
 		const cart = {
 			...getEmptyResponseCart(),
 			products: [
@@ -1092,25 +1066,6 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: samplePurchaseId,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
-	} );
-
-	it( 'redirects to thank-you page (with concierge display mode) if concierge is in the cart', () => {
-		const cart = {
-			...getEmptyResponseCart(),
-			products: [
-				{
-					...getEmptyResponseCartProduct(),
-					product_slug: 'concierge-session',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			receiptId: samplePurchaseId,
-		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=concierge` );
 	} );
 
 	it( 'redirects to a Jetpack cloud redirectTo', () => {
@@ -1460,7 +1415,7 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to thank you page if concierge and jetpack are not in the cart, personal is in the cart, but hideNudge is true', () => {
+	it( 'redirects to thank you page if jetpack is not in the cart, personal is in the cart, but hideNudge is true', () => {
 		const cart = {
 			...getEmptyResponseCart(),
 			products: [
@@ -1478,45 +1433,6 @@ describe( 'getThankYouPageUrl', () => {
 			hideNudge: true,
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
-	} );
-
-	it( 'redirects to thank you page (with traffic guide display mode) if traffic guide is in cart', () => {
-		const cart = {
-			...getEmptyResponseCart(),
-			products: [
-				{
-					...getEmptyResponseCartProduct(),
-					product_slug: 'traffic-guide',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			receiptId: samplePurchaseId,
-		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=traffic-guide` );
-	} );
-
-	it( 'redirects to thank you page (with traffic guide display mode) if traffic guide is in cart and site has a non-atomic jetpack plan', () => {
-		const cart = {
-			...getEmptyResponseCart(),
-			products: [
-				{
-					...getEmptyResponseCartProduct(),
-					product_slug: 'traffic-guide',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			receiptId: samplePurchaseId,
-			isJetpackNotAtomic: true,
-		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=traffic-guide` );
 	} );
 
 	it( 'redirects to a url on the same site we are checking out', () => {

@@ -26,7 +26,6 @@ import {
 	getAllCartItems,
 	getDomainRegistrations,
 	getRenewalItems,
-	hasConciergeSession,
 	hasJetpackPlan,
 	hasBloggerPlan,
 	hasPersonalPlan,
@@ -34,7 +33,6 @@ import {
 	hasBusinessPlan,
 	hasEcommercePlan,
 	hasTitanMail,
-	hasTrafficGuide,
 	hasDIFMProduct,
 	hasProPlan,
 	hasStarterPlan,
@@ -220,9 +218,7 @@ export default function getThankYouPageUrl( {
 	}
 
 	// If there is no purchase, then send the user to a generic page (not
-	// post-purchase related). For example, this case arises when a Skip button
-	// is clicked on a concierge upsell nudge opened by a direct link to
-	// /checkout/offer-support-session.
+	// post-purchase related).
 	if ( noPurchaseMade ) {
 		debug( 'there was no purchase, so returning calypso root' );
 		return '/';
@@ -301,22 +297,6 @@ export default function getThankYouPageUrl( {
 		return redirectUrlForPostCheckoutUpsell;
 	}
 
-	// Display the regular receipt thank-you page with specific messaging from
-	// the display mode query param if the purchase includes the traffic-guide.
-	if ( receiptIdOrPlaceholder && cart && hasTrafficGuide( cart ) ) {
-		const thankYouPageUrlForTrafficGuide = getThankYouPageUrlForTrafficGuide( {
-			siteSlug,
-			receiptIdOrPlaceholder,
-		} );
-		return getUrlWithQueryParam( thankYouPageUrlForTrafficGuide, { d: 'traffic-guide' } );
-	}
-
-	// The display mode query param (eg: `?d=concierge`) is used to show
-	// purchase-specific messaging, for e.g. the Schedule Session button when
-	// purchasing a concierge session or when purchasing the Ultimate Traffic
-	// Guide.
-	const displayModeParam = getDisplayModeParamFromCart( cart );
-
 	// Display the cookie post-checkout URL (with the display mode query param
 	// for special product-specific messaging and a notice param used by
 	// in-editor checkout) if there is one set and the cart does not contain
@@ -324,8 +304,7 @@ export default function getThankYouPageUrl( {
 	if ( cart && ! doesCartContainGoogleAppsWithoutDomainReceipt( cart ) && urlFromCookie ) {
 		debug( 'is eligible for signup destination', urlFromCookie );
 		const noticeType = getNoticeType( cart );
-		const queryParams = { ...displayModeParam, ...noticeType };
-		return getUrlWithQueryParam( urlFromCookie, queryParams );
+		return getUrlWithQueryParam( urlFromCookie, noticeType );
 	}
 
 	const fallbackUrl = getFallbackDestination( {
@@ -340,7 +319,7 @@ export default function getThankYouPageUrl( {
 		redirectTo,
 	} );
 	debug( 'returning fallback url', fallbackUrl );
-	return getUrlWithQueryParam( fallbackUrl, displayModeParam ?? {} );
+	return getUrlWithQueryParam( fallbackUrl );
 }
 
 function updateUrlInCookie( {
@@ -670,18 +649,6 @@ function getProfessionalEmailUpsellUrl( {
 	return `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteSlug }`;
 }
 
-function getDisplayModeParamFromCart(
-	cart: ResponseCart | undefined
-): undefined | { d: 'concierge' | 'traffic-guide' } {
-	if ( cart && hasConciergeSession( cart ) ) {
-		return { d: 'concierge' };
-	}
-	if ( cart && hasTrafficGuide( cart ) ) {
-		return { d: 'traffic-guide' };
-	}
-	return undefined;
-}
-
 function getNoticeType(
 	cart: ResponseCart | undefined
 ): undefined | { notice: 'purchase-success' } {
@@ -736,16 +703,6 @@ function modifyCookieUrlIfAtomic(
 	if ( updatedUrl !== urlFromCookie ) {
 		saveUrlToCookie( updatedUrl );
 	}
-}
-
-function getThankYouPageUrlForTrafficGuide( {
-	siteSlug,
-	receiptIdOrPlaceholder,
-}: {
-	siteSlug: string | undefined;
-	receiptIdOrPlaceholder: ReceiptIdOrPlaceholder;
-} ) {
-	return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 }
 
 function getRedirectUrlFromCart( cart: ResponseCart ): string | null {

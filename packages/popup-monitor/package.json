@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/popup-monitor",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Utility to facilitate the monitoring of a popup window close action.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",

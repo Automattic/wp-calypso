@@ -12,10 +12,15 @@ import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 
-const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
+const badges = css( {
+	display: 'flex',
+	gap: '8px',
+	alignItems: 'center',
+	marginInlineStart: 'auto',
+} );
 
 export const siteThumbnail = css( {
-	aspectRatio: '16 / 9',
+	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
 } );
@@ -28,7 +33,7 @@ const ellipsis = css( {
 	'.gridicon.ellipsis-menu__toggle-icon': {
 		width: '24px',
 		height: '16px',
-		top: '4px',
+		insetBlockStart: '4px',
 	},
 } );
 

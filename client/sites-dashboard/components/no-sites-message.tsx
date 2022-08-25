@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -11,24 +12,24 @@ const NoSitesLayout = styled( EmptyContent )`
 
 	${ ( { illustration } ) =>
 		! illustration && {
-			marginTop: '10%',
+			marginBlockStart: '10%',
 		} }
 
 	.empty-content__illustration {
-		margin-bottom: 30px;
+		margin-block-end: 30px;
 	}
 `;
 
 const SecondaryText = styled.p`
 	max-width: 550px;
 	font-size: 14px;
-	margin-bottom: 0px;
+	margin-block-end: 0px;
 `;
 
 const Title = styled.div`
 	font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 	font-size: 32px;
-	margin-bottom: 20px;
+	margin-block-end: 20px;
 `;
 
 type SitesContainerProps = {
@@ -60,7 +61,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/' }
+										href={ localizeUrl( 'https://wordpress.com/support/' ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -87,7 +88,9 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/settings/privacy-settings/' }
+										href={ localizeUrl(
+											'https://wordpress.com/support/settings/privacy-settings/'
+										) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -114,7 +117,9 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/settings/privacy-settings/' }
+										href={ localizeUrl(
+											'https://wordpress.com/support/settings/privacy-settings/'
+										) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -141,7 +146,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/site-redirect/' }
+										href={ localizeUrl( 'https://wordpress.com/support/site-redirect/' ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>

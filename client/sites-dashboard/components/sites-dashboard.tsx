@@ -23,12 +23,12 @@ const MAX_PAGE_WIDTH = '1280px';
 // want there to be some padding that extends all around the page, but the header's
 // background color and border needs to be able to extend into that padding.
 const pagePadding = {
-	paddingLeft: '32px',
-	paddingRight: '32px',
+	paddingInlineStart: '32px',
+	paddingInlineEnd: '32px',
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
-		paddingLeft: '16px',
-		paddingRight: '16px',
+		paddingInlineStart: '16px',
+		paddingInlineEnd: '16px',
 	},
 };
 
@@ -37,8 +37,8 @@ const PageHeader = styled.div( {
 
 	backgroundColor: 'var( --studio-white )',
 
-	paddingTop: '24px',
-	paddingBottom: '24px',
+	paddingBlockStart: '24px',
+	paddingBlockEnd: '24px',
 
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		padding: '16px',
@@ -50,12 +50,14 @@ const PageHeader = styled.div( {
 const PageBodyWrapper = styled.div( {
 	...pagePadding,
 	maxWidth: MAX_PAGE_WIDTH,
-	margin: '0 auto',
+	marginBlock: 0,
+	marginInline: 'auto',
 } );
 
 const HeaderControls = styled.div( {
 	maxWidth: MAX_PAGE_WIDTH,
-	margin: '0 auto',
+	marginBlock: 0,
+	marginInline: 'auto',
 	display: 'flex',
 	flexDirection: 'row',
 	alignItems: 'center',
@@ -70,18 +72,22 @@ const DashboardHeading = styled.h1( {
 } );
 
 const sitesMargin = css( {
-	margin: '0 0 1.5em',
+	marginBlockStart: 0,
+	marginInline: 0,
+	marginBlockEnd: '1.5em',
 } );
 
 const HiddenSitesMessageContainer = styled.div( {
 	color: 'var( --color-text-subtle )',
 	fontSize: '14px',
-	padding: '16px 0 24px 0',
+	paddingInline: 0,
+	paddingBlockStart: '16px',
+	paddingBlockEnd: '24px',
 	textAlign: 'center',
 } );
 
 const HiddenSitesMessage = styled.div( {
-	marginBottom: '1em',
+	marginBlockEnd: '1em',
 } );
 
 export function SitesDashboard( {
@@ -144,7 +150,7 @@ export function SitesDashboard( {
 									className={ sitesMargin }
 								/>
 							) }
-							{ selectedStatus.hiddenCount > 0 && (
+							{ selectedStatus.hiddenCount > 0 && 'none' !== displayMode && (
 								<HiddenSitesMessageContainer>
 									<HiddenSitesMessage>
 										{ sprintf(

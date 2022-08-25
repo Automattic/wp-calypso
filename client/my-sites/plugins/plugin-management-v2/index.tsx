@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import PluginsList from './plugins-list';
 import type { Plugin } from './types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 import './style.scss';
@@ -9,7 +9,7 @@ import './style.scss';
 interface Props {
 	plugins: Array< Plugin >;
 	isLoading: boolean;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	searchTerm: string;
 }
 export default function PluginManagementV2( {

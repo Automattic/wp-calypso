@@ -17,13 +17,13 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 type SetAsPrimaryProps = {
 	domain: ResponseDomain;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 };
 
 const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
