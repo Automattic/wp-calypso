@@ -111,7 +111,7 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	needsRemoveButton() {
-		return this.props.selected.length && this.canUpdatePlugins() && ! this.isJetpackSelected();
+		return this.props.selected.length && this.canUpdatePlugins();
 	}
 
 	renderCurrentActionButtons() {
@@ -228,6 +228,7 @@ export class PluginsListHeader extends PureComponent {
 					{ autoupdateButtons }
 				</ButtonGroup>
 			);
+
 			leftSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-remove-button">
 					<Button
@@ -341,7 +342,6 @@ export class PluginsListHeader extends PureComponent {
 				</SelectDropdown.Item>
 
 				<SelectDropdown.Separator />
-
 				<SelectDropdown.Item
 					className="plugin-list-header__actions-remove-item"
 					disabled={ ! needsRemoveButton }
