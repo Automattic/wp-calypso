@@ -368,6 +368,15 @@ export function generateSteps( {
 				isDomainOnly: false,
 			},
 		},
+		'emails-add': {
+			stepName: 'emails-add',
+			dependencies: [ 'domainItem', 'siteSlug' ],
+			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
+			props: {
+				hideSkip: true,
+				isDomainOnly: false,
+			},
+		},
 		'domain-only': {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow

@@ -67,6 +67,7 @@ class EmailSignupTitanCard extends Component {
 		const {
 			addButtonTitle,
 			extraClasses,
+			hideSkip = false,
 			isReskinned,
 			onAddButtonClick,
 			onSkipButtonClick,
@@ -92,12 +93,14 @@ class EmailSignupTitanCard extends Component {
 					{ this.renderEmailSuggestion( domainItem ) }
 					{ wrapDivActionContainer(
 						<>
-							<Button
-								className="email-signup-titan-card__suggestion-action"
-								onClick={ onSkipButtonClick }
-							>
-								{ skipButtonTitle }
-							</Button>
+							{ ! hideSkip && (
+								<Button
+									className="email-signup-titan-card__suggestion-action"
+									onClick={ onSkipButtonClick }
+								>
+									{ skipButtonTitle }
+								</Button>
+							) }
 							<Button
 								className="email-signup-titan-card__suggestion-action"
 								primary

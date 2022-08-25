@@ -14,7 +14,8 @@
 	}
 }
 
-.signup__step.is-emails {
+.signup__step.is-emails,
+.signup__step.is-emails-add {
 	.emails__register-email-step--domain-name {
 		word-break: break-all;
 	}
