@@ -422,6 +422,15 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
+		'domains-with-email': {
+			stepName: 'domains-with-email',
+			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ],
+			props: {
+				includeWordPressDotCom: false,
+				forceHideFreeDomainExplainerAndStrikeoutUi: true,
+			},
+		},
+
 		'oauth2-user': {
 			stepName: 'oauth2-user',
 			apiRequestFunction: createAccount,
