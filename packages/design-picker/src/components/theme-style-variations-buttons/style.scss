@@ -1,8 +1,9 @@
+.theme-style-variations-more-wrapper,
 .theme-style-variation-wrapper {
 	display: inline-block;
-	height: 20px;
+	height: 24px;
 	vertical-align: top;
-	width: 20px;
+	width: 24px;
 
 	> * {
 		align-items: center;
@@ -13,10 +14,16 @@
 		color: var( --studio-gray-80 );
 		cursor: pointer;
 		display: inline-flex;
-		font-size: 10px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 11px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 		height: 100%;
 		justify-content: center;
 		width: 100%;
+	}
+}
+
+.theme-style-variations-more-wrapper {
+	> * {
+		box-shadow: none;
 	}
 }

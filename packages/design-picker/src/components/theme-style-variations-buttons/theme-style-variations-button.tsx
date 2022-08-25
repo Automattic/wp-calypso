@@ -3,13 +3,11 @@ import type { ThemeStyleVariation, ThemeStyleVariationSettingsColorPalette } fro
 import './style.scss';
 
 interface ThemeStyleVariationsButtonProps {
-	text?: string;
 	tagName?: string;
 	variation?: ThemeStyleVariation;
 }
 
 const ThemeStyleVariationsButton: React.FC< ThemeStyleVariationsButtonProps > = ( {
-	text = 'A',
 	tagName = 'button',
 	variation,
 } ) => {
@@ -26,6 +24,10 @@ const ThemeStyleVariationsButton: React.FC< ThemeStyleVariationsButtonProps > = 
 		};
 	}, [ variation ] );
 
+	if ( ! background || ! primary ) {
+		return null;
+	}
+
 	return (
 		<div className="theme-style-variation-wrapper">
 			{ createElement(
@@ -37,7 +39,7 @@ const ThemeStyleVariationsButton: React.FC< ThemeStyleVariationsButtonProps > = 
 					},
 					...( tagName === 'button' && { type: 'button' } ),
 				},
-				text
+				'A'
 			) }
 		</div>
 	);
