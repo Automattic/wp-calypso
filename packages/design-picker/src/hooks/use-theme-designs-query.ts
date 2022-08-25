@@ -1,4 +1,4 @@
-import { isDesignAvailableForV13N } from '@automattic/data-stores';
+import { isThemeVerticalizable } from '@automattic/data-stores';
 import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 import type { Design } from '../types';
@@ -75,7 +75,7 @@ function apiThemeToDesign( { id, name, taxonomies, stylesheet, price }: any ): D
 		...( STATIC_PREVIEWS.includes( id ) && { preview: 'static' } ),
 		design_type: is_premium ? 'premium' : 'standard',
 		price,
-		verticalizable: isDesignAvailableForV13N( stylesheet ),
+		verticalizable: isThemeVerticalizable( stylesheet ),
 
 		// Deprecated; used for /start flow
 		stylesheet,

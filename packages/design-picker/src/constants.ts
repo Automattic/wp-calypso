@@ -63,13 +63,3 @@ export const MOBILE_VIEWPORT_WIDTH = 599;
  * Generated design picker
  */
 export const STICKY_OFFSET_TOP = 109;
-
-/**
- * Vertical standard themes
- */
-export const STANDARD_THEMES_V13N_WHITELIST = [
-	'pub/geologist',
-	'pub/stewart',
-	'pub/arbutus',
-	'pub/zoologist',
-];

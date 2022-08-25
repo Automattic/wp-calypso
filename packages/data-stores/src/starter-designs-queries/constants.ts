@@ -1,7 +1,7 @@
 /**
  * Standard themes that are verticalizable
  */
-export const STANDARD_THEMES_V13N_WHITELIST = [
+export const VERTICALIZABLE_STANDARD_THEMES = [
 	'pub/geologist',
 	'pub/stewart',
 	'pub/arbutus',

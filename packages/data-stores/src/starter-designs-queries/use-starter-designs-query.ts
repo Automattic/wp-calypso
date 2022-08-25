@@ -1,7 +1,7 @@
 import { stringify } from 'qs';
 import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { isDesignAvailableForV13N } from './utils';
+import { isThemeVerticalizable } from './utils';
 import type { StarterDesigns } from './types';
 import type {
 	Category,
@@ -86,7 +86,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		price,
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
-		verticalizable: isDesignAvailableForV13N( recipe.stylesheet ),
+		verticalizable: isThemeVerticalizable( recipe.stylesheet ),
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',
