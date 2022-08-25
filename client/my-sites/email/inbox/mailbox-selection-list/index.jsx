@@ -25,9 +25,8 @@ import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import NewMailboxUpsell from 'calypso/my-sites/email/inbox/new-mailbox-upsell';
 import { emailManagementInbox } from 'calypso/my-sites/email/paths';
-import { recordPageView, enhanceWithSiteMainProduct } from 'calypso/state/analytics/actions';
+import { recordPageView } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { withEnhancers } from 'calypso/state/utils';
 import ProgressLine from './progress-line';
 
 /**
@@ -223,9 +222,8 @@ const MailboxSelectionList = ( { domains } ) => {
 	} );
 
 	useEffect( () => {
-		const recorder = withEnhancers( recordPageView, [ enhanceWithSiteMainProduct ] );
 		dispatch(
-			recorder( emailManagementInbox( ':site' ), 'Inbox', undefined, {
+			recordPageView( emailManagementInbox( ':site' ), 'Inbox', undefined, {
 				has_error: isError,
 				context: 'mailbox-selection-list',
 			} )
