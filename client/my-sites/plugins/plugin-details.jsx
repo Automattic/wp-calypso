@@ -350,16 +350,7 @@ function PluginDetails( props ) {
 					</div>
 
 					<div className="plugin-details__actions">
-						<PluginDetailsCTA
-							plugin={ fullPlugin }
-							siteIds={ siteIds }
-							selectedSite={ selectedSite }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							isPlaceholder={ showPlaceholder }
-							billingPeriod={ billingPeriod }
-							isMarketplaceProduct={ isMarketplaceProduct }
-							isSiteConnected={ isSiteConnected }
-						/>
+						<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 
 						{ ! showPlaceholder && ! requestingPluginsForSites && (
 							<PluginDetailsSidebar plugin={ fullPlugin } />
@@ -472,16 +463,7 @@ function LegacyPluginDetails( props ) {
 					</div>
 
 					<div className="plugin-details__layout-col-right">
-						<PluginDetailsCTA
-							plugin={ fullPlugin }
-							siteIds={ siteIds }
-							selectedSite={ selectedSite }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							isPlaceholder={ showPlaceholder }
-							billingPeriod={ billingPeriod }
-							isMarketplaceProduct={ isMarketplaceProduct }
-							isSiteConnected={ isSiteConnected }
-						/>
+						<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 					</div>
 				</div>
 
