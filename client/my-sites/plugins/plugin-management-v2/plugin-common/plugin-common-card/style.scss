@@ -53,3 +53,8 @@
 .plugin-common-card__update-plugin {
 	margin-block-start: 16px;
 }
+.plugin-common-card__left-checkbox {
+	input[type='checkbox'] {
+		margin-top: 8px;
+	}
+}

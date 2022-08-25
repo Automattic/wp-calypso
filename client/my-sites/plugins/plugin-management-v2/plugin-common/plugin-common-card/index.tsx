@@ -1,5 +1,6 @@
 import { Gridicon, Card, Button } from '@automattic/components';
 import classNames from 'classnames';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import type { Columns, RowFormatterArgs } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement, ReactNode } from 'react';
@@ -32,17 +33,30 @@ export default function PluginCommonCard( {
 		<Card className="plugin-common-card__card" compact>
 			<div className="plugin-common-card__columns">
 				{ showLeftContent && (
-					<div className="plugin-common-card__left-content">
-						{ item.icon ? (
-							<img
-								className="plugin-common-card__plugin-icon"
-								src={ item.icon }
-								alt={ item.name }
-							/>
-						) : (
-							<Gridicon className="plugin-common-card__plugin-icon has-opacity" icon="plugins" />
-						) }
-					</div>
+					<>
+						<div className="plugin-common-card__left-checkbox">
+							{ item?.isSelectable && (
+								<FormInputCheckbox
+									className="plugin-row-formatter__checkbox"
+									id={ item.slug }
+									onClick={ item.onClick }
+									checked={ item.isSelected }
+									readOnly={ true }
+								/>
+							) }
+						</div>
+						<div className="plugin-common-card__left-content">
+							{ item.icon ? (
+								<img
+									className="plugin-common-card__plugin-icon"
+									src={ item.icon }
+									alt={ item.name }
+								/>
+							) : (
+								<Gridicon className="plugin-common-card__plugin-icon has-opacity" icon="plugins" />
+							) }
+						</div>
+					</>
 				) }
 				<div
 					className={ classNames( 'plugin-common-card__main-content', {
