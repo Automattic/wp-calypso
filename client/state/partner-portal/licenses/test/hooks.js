@@ -334,7 +334,7 @@ describe( 'useTOSConsentMutation', () => {
 		};
 
 		nock( 'https://public-api.wordpress.com' )
-			.put( '/wpcom/v2/jetpack-licensing/partner/tos', '{"tos":"consented"}' )
+			.put( '/wpcom/v2/jetpack-licensing/partner', '{"tos":"consented"}' )
 			.reply( 200, stub );
 
 		const { result } = renderHook( () => useTOSConsentMutation(), {
