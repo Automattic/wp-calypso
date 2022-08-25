@@ -7,21 +7,28 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
+import SearchableDropdown from './components/searchable-dropdown';
 import { Option as CountryOption, useCountriesAndStates } from './hooks/use-countries-and-states';
 import './style.scss';
 
-function getCountry( country: string, options: CountryOption[] ): string {
+const defaultCountry: CountryOption = {
+	value: 'US',
+	label: 'United States (US)',
+	isLabel: false,
+};
+
+function getCountry( country: string, options: CountryOption[] ): CountryOption {
 	if ( options.length < 1 ) {
-		return country;
+		return defaultCountry;
 	}
 
 	for ( let i = 0; i < options.length; i++ ) {
 		if ( options[ i ].value === country ) {
-			return country;
+			return options[ i ];
 		}
 	}
 
-	return options[ 0 ].value;
+	return options[ 0 ];
 }
 
 interface Props {
@@ -54,7 +61,7 @@ export default function CompanyDetailsForm( {
 	const showCountryFields = countryOptions.length > 0;
 
 	const [ name, setName ] = useState( initialValues.name ?? '' );
-	const [ countryValue, setCountry ] = useState( initialValues.country ?? '' );
+	const [ countryValue, setCountryValue ] = useState( initialValues.country ?? '' );
 	const [ city, setCity ] = useState( initialValues.city ?? '' );
 	const [ line1, setLine1 ] = useState( initialValues.line1 ?? '' );
 	const [ line2, setLine2 ] = useState( initialValues.line2 ?? '' );
@@ -64,8 +71,8 @@ export default function CompanyDetailsForm( {
 	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 
 	const country = getCountry( countryValue, countryOptions );
-	const stateOptions = stateOptionsMap.hasOwnProperty( country )
-		? stateOptionsMap[ country ]
+	const stateOptions = stateOptionsMap.hasOwnProperty( country.value )
+		? stateOptionsMap[ country.value ]
 		: false;
 	const payload: PartnerDetailsPayload = {
 		name,
@@ -74,7 +81,7 @@ export default function CompanyDetailsForm( {
 		city,
 		line1,
 		line2,
-		country,
+		country: country.value,
 		postalCode,
 		state: addressState,
 		...( includeTermsOfService ? { tos: 'consented' } : {} ),
@@ -134,17 +141,17 @@ export default function CompanyDetailsForm( {
 				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
-						<SelectDropdown
+						<SearchableDropdown
 							className="company-details-form__dropdown"
-							initialSelected={ country }
+							value={ country }
 							options={ countryOptions }
-							onSelect={ ( option: any ) => {
-								setCountry( option.value );
+							isDisabled={ isLoading }
+							isLoading={ countryOptions.length === 0 }
+							onChange={ ( option: any ) => {
+								setCountryValue( option.value );
 								// Reset the value of state since it no longer matches with the selected country.
 								setAddressState( '' );
 							} }
-							disabled={ isLoading }
-							isLoading={ countryOptions.length === 0 }
 						/>
 					) }
 
