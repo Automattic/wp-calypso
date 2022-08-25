@@ -14,7 +14,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
-import blankCanvasImageUrl from 'calypso/assets/images/onboarding/blank-canvas.svg';
+import blankCanvasImageUrl from 'calypso/assets/images/onboarding/blank-canvas.png';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
@@ -372,7 +372,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		/>
 	);
 
-	const buildYourOwnCta = isEnabled( 'signup/design-picker-build-your-own' ) && (
+	const buildYourOwnCta = isEnabled( 'signup/design-picker-patterns-assembler' ) && (
 		<div className="build-your-own-cta-wrapper">
 			<div className="build-your-own-cta__image-wrapper">
 				<img

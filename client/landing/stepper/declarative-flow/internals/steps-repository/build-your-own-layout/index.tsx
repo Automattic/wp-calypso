@@ -2,7 +2,7 @@ import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
-const BuildYourOwnLayout: Step = function BuildYourOwnLayout( { navigation } ) {
+const BuildYourOwnLayout: Step = ( { navigation } ) => {
 	const { goNext, goBack } = navigation;
 
 	return (
