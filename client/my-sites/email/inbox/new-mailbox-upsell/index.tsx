@@ -23,6 +23,7 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 	let upsellURL = emailManagement( selectedSiteSlug, null, null, { source: INBOX_SOURCE } );
 
 	let isFreeTrialNow = false;
+	let provider = '';
 
 	// User has one single domain, determine / email addition page URL based on subscribed email provider.
 	if ( domains.length === 1 ) {
@@ -31,10 +32,12 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 		let slug = '';
 		if ( hasTitanMailWithUs( domainItem ) ) {
 			slug = 'titan/new';
+			provider = 'titan';
 
 			isFreeTrialNow = isUserOnTitanFreeTrial( domainItem );
 		} else if ( hasGSuiteWithUs( domainItem ) ) {
 			slug = 'google-workspace/add-users';
+			provider = 'google';
 		}
 
 		if ( slug ) {
@@ -63,6 +66,7 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 						onClick={ () =>
 							recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {
 								context: isFreeTrialNow ? 'free' : 'paid',
+								provider,
 							} )
 						}
 						href={ upsellURL }
