@@ -18,6 +18,7 @@ export const RETURNABLE_FIELDS = [
 	'modified_gmt',
 	'plugin.title',
 	'author',
+	'plugin.author',
 	'author_login',
 	'blog_id',
 	'date',
