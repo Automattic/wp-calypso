@@ -139,6 +139,9 @@ export const getCampaignEstimatedReach = (
 };
 
 export const getCampaignAudienceString = ( audience_list: AudienceList ) => {
+	if ( ! audience_list ) {
+		return '';
+	}
 	const audience = Object.keys( audience_list )
 		.reduce( ( acc, key ) => {
 			return `${ acc }, ${ audience_list[ key as keyof typeof AudienceListKeys ] }`;
