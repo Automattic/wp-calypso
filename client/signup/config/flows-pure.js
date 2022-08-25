@@ -124,7 +124,7 @@ export function generateFlows( {
 			showRecaptcha: true,
 			hideBackButton: true,
 			get pageTitle() {
-				return translate( 'Newsletters' );
+				return translate( 'Newsletter' );
 			},
 		},
 		{

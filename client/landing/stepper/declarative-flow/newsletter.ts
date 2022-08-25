@@ -12,7 +12,7 @@ import type { Flow } from './internals/types';
 
 export const newsletter: Flow = {
 	name: 'newsletter',
-	title: 'Newsletters',
+	title: 'Newsletter',
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
