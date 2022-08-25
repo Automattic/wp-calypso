@@ -33,7 +33,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					return;
 				}
 
-				await showDSP( props.siteId, props.postId, widgetContainer.current );
+				await showDSP( props.siteId, props.postId, onClose, widgetContainer.current );
 				setIsLoading( false );
 			} )();
 	}, [ isVisible, props.postId, props.siteId ] );

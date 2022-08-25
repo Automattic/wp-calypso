@@ -25,7 +25,7 @@ const Promote: React.FC< Props > = () => {
 			if ( siteIdParam === null || postIdParam === null || widgetWrapperRef.current === null ) {
 				return;
 			}
-			await showDSP( siteIdParam, postIdParam, widgetWrapperRef.current );
+			await showDSP( siteIdParam, postIdParam, () => null, widgetWrapperRef.current );
 			setIsLoading( false );
 			setStepProgress( { count: 4, progress: 1 } );
 		} )();

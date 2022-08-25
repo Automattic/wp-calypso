@@ -8,7 +8,7 @@ import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
-import { getPostType } from 'calypso/my-sites/promote-post/utils';
+import { getPostType, setPhotonImageWidth } from 'calypso/my-sites/promote-post/utils';
 
 export type Post = {
 	ID: number;
@@ -48,7 +48,6 @@ export default function PostItem( { post }: Props ) {
 		openModal();
 		dispatch( recordDSPEntryPoint( 'promoted_posts-post_item' ) );
 	};
-
 	return (
 		<CompactCard className="post-item__card">
 			<div className="post-item__main">
@@ -64,7 +63,11 @@ export default function PostItem( { post }: Props ) {
 				</div>
 			</div>
 			<div className="post-item__image-container">
-				<img className="post-item__image" src={ post.featured_image } alt="" />
+				<img
+					className="post-item__image"
+					src={ setPhotonImageWidth( post.featured_image ) }
+					alt=""
+				/>
 			</div>
 			<div className="post-item__promote-link">
 				<BlazePressWidget
