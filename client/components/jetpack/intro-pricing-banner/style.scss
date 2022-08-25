@@ -1,14 +1,23 @@
 @import '@wordpress/base-styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
 
-.intro-pricing-banner,
-.intro-pricing-banner__sticky,
-.intro-pricing-banner__loading {
+.intro-pricing-banner {
 	display: flex;
 	flex-direction: column;
 
 	align-items: center;
 	justify-content: center;
+
+	&:not( .is-sticky ) {
+		height: 120px;
+		margin-bottom: 2rem;
+
+		gap: 1.25rem;
+
+		@include break-large {
+			height: 54px;
+		}
+	}
 
 	.intro-pricing-banner__discount,
 	.intro-pricing-banner__guarantee,
@@ -36,22 +45,10 @@
 	}
 }
 
-.intro-pricing-banner,
-.intro-pricing-banner__loading {
-	height: 120px;
-	margin-bottom: 2rem;
-
-	gap: 1.25rem;
-
-	@include break-large {
-		height: 54px;
-	}
-}
-
-.intro-pricing-banner__loading {
+.intro-pricing-banner.is-loading {
 	.intro-pricing-banner__discount,
 	.intro-pricing-banner__guarantee,
-	.intro-pricing-banner__agencies, {
+	.intro-pricing-banner__agencies {
 		span,
 		a {
 			@include placeholder();
@@ -59,7 +56,7 @@
 	}
 }
 
-.intro-pricing-banner__sticky {
+.intro-pricing-banner.is-sticky {
 	position: fixed;
 	width: 100%;
 	left: 0;
@@ -85,13 +82,13 @@
 }
 .is-section-jetpack-connect,
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
-	.intro-pricing-banner__sticky {
+	.intro-pricing-banner.is-sticky {
 		top: 0;
 	}
 }
 
 // target Calypso pricing filter bar, not jetpack cloud
-.is-group-sites.is-section-plans .intro-pricing-banner__sticky {
+.is-group-sites.is-section-plans .intro-pricing-banner.is-sticky {
 	// At this screen size, the left sidebar is 228px;
 	@include breakpoint-deprecated( '>660px' ) {
 		width: calc( 100% - 228px );

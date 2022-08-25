@@ -53,20 +53,18 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 	const discountPercentage =
 		fullJetpackSaleDiscount > 0 ? fullJetpackSaleDiscount : highestDiscount;
 
-	let className;
+	let classModifier = '';
 
 	if ( isLoading ) {
-		className = 'intro-pricing-banner__loading';
+		classModifier = 'is-loading';
 	} else if ( hasCrossed ) {
-		className = 'intro-pricing-banner__sticky';
-	} else {
-		className = 'intro-pricing-banner';
+		classModifier = 'is-sticky';
 	}
 
 	return (
 		<>
 			<div className="intro-pricing-banner__viewport-sentinel" { ...outerDivProps }></div>
-			<div className={ className }>
+			<div className={ `intro-pricing-banner ${ classModifier }` }>
 				{ ( discountPercentage > 0 || isLoading ) && (
 					<>
 						<div className="intro-pricing-banner__discount">
