@@ -2,6 +2,7 @@
 	"extends": [ "@wordpress/stylelint-config/scss" ],
 	"plugins": [ "@signal-noise/stylelint-scales" ],
 	"rules": {
+		"at-rule-empty-line-before": [ "always", { "ignore": [ "after-comment", "first-nested" ] } ],
 		"declaration-property-unit-allowed-list": {
 			"/^font-size$|^font$/": [ "rem" ],
 			"line-height": [ "px" ],
@@ -14,6 +15,7 @@
 				"severity": "warning"
 			}
 		],
+		"rule-empty-line-before": [ "always", { "ignore": [ "after-comment", "first-nested" ] } ],
 		"scales/font-weights": [ 400, 500, 600, 700 ],
 		"scales/font-sizes": [
 			{
