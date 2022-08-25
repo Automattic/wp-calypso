@@ -6,23 +6,79 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
 import { Item } from './item';
+import { Pattern } from './types';
 
-const patterns = [
-	'17-2',
-	'black',
-	'ella-d',
-	'link-cloud',
-	'matt-smith',
-	'ose-maiko',
-	'purple',
-	'yellow',
-	'biba',
-	'chloe-currie',
-	'emily',
-	'luis-carvelleda',
-	'mesh-gradient',
-	'paul-nyberg',
-	'tengfai',
+const patterns: Pattern[] = [
+	{
+		id: 5816,
+		siteId: 174455321,
+		name: 'Biba',
+	},
+	{
+		id: 5811,
+		siteId: 174455321,
+		name: 'Chloe Currie',
+	},
+	{
+		id: 5820,
+		siteId: 174455321,
+		name: 'Emily Jennings',
+	},
+	{
+		id: 5822,
+		siteId: 174455321,
+		name: 'Luis Carballeda',
+	},
+	{
+		id: 5829,
+		siteId: 174455321,
+		name: 'Xue Tengfei',
+	},
+	{
+		id: 5837,
+		siteId: 174455321,
+		name: 'Biba',
+	},
+	{
+		id: 5816,
+		siteId: 174455321,
+		name: 'Paul Nyberg',
+	},
+	{
+		id: 5842,
+		siteId: 174455321,
+		name: 'Ella D.',
+	},
+	{
+		id: 5844,
+		siteId: 174455321,
+		name: 'Mesh Gradient',
+	},
+	{
+		id: 5851,
+		siteId: 174455321,
+		name: 'horizontal Split',
+	},
+	{
+		id: 5856,
+		siteId: 174455321,
+		name: 'left-aligned with yellow background',
+	},
+	{
+		id: 5864,
+		siteId: 174455321,
+		name: 'Link Cloud',
+	},
+	{
+		id: 5869,
+		siteId: 174455321,
+		name: 'Two columns and dark background',
+	},
+	{
+		id: 5805,
+		siteId: 174455321,
+		name: 'Yellow background',
+	},
 ];
 
 function width( el: HTMLDivElement | null ) {
@@ -75,11 +131,12 @@ export function PatternPicker( { onPick }: Props ) {
 			>
 				{ patterns.map( ( pattern, i ) => (
 					<Item
-						className={ classNames( `pattern-${ pattern }`, { 'is-active': index === i } ) }
-						key={ pattern }
+						className={ classNames( { 'is-active': index === i } ) }
+						key={ pattern.id }
 						onClick={ () => {
 							setIndex( i );
 						} }
+						pattern={ pattern }
 					/>
 				) ) }
 			</div>
@@ -103,7 +160,7 @@ export function PatternPicker( { onPick }: Props ) {
 				<Button
 					className="pattern-picker__select"
 					isPrimary
-					onClick={ () => onPick( patterns[ index ] as string ) }
+					onClick={ () => onPick( patterns[ index ].name ) }
 				>
 					<span>{ __( 'Continue' ) }</span>
 					<Gridicon icon="heart" size={ 18 } />

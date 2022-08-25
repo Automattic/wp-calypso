@@ -1,24 +1,30 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import './styles.scss';
 import cx from 'classnames';
+import { Pattern } from './types';
 
 type Props = {
 	className?: string;
 	style?: React.CSSProperties;
 	onClick: () => void;
-	autoFocus?: boolean;
+	pattern: Pattern;
 };
 
-export function Item( { className, style, onClick, autoFocus }: Props ) {
+export function Item( { style, onClick, pattern, className }: Props ) {
 	return (
 		<div>
 			<button
 				onClick={ onClick }
 				style={ style }
 				className={ cx( 'pattern-picker__item', className ) }
-				// eslint-disable-next-line jsx-a11y/no-autofocus
-				autoFocus={ autoFocus }
-			></button>
+			>
+				<iframe
+					frameBorder="0"
+					scrolling="no"
+					title={ pattern.name }
+					src={ `https://public-api.wordpress.com/wpcom/v2/block-previews/site?stylesheet=pub%2Fzoologist&pattern_ids=${ pattern.id }-${ pattern.siteId }` }
+				/>
+			</button>
 		</div>
 	);
 }

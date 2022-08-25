@@ -39,6 +39,7 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	background-position: contain;
 	background-repeat: no-repeat;
 	cursor: pointer;
+	padding: 0;
 
 	opacity: 0.5;
 	filter: blur( 3px );
@@ -47,11 +48,12 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 		opacity: 1;
 		filter: blur( 0 );
 	}
-}
 
-@each $pattern in $patterns {
-	.pattern-picker__item.pattern-#{$pattern} {
-		background-image: url( 'calypso/assets/images/link-in-bio-pattern-previews/#{$pattern}.png' );
+	iframe {
+		height: 100%;
+		width: 100%;
+		border: none;
+		pointer-events: none;
 	}
 }
 
