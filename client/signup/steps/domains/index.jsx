@@ -657,6 +657,10 @@ class DomainsStep extends Component {
 		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
 			this.props;
 
+		if ( headerText ) {
+			return headerText;
+		}
+
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
 		}
@@ -667,7 +671,7 @@ class DomainsStep extends Component {
 
 		const headerPropertyName = 'signUpFlowDomainsStepHeader';
 
-		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName ) || headerText;
+		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName );
 	}
 
 	getAnalyticsSection() {

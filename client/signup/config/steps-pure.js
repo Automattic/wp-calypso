@@ -427,6 +427,9 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ],
 			props: {
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
+				get headerText() {
+					return i18n.translate( 'Choose a domain for your Professional Email' );
+				},
 				includeWordPressDotCom: false,
 			},
 		},
