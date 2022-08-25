@@ -5,11 +5,11 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
-const Subscribers: Step = function ( { navigation } ): ReactElement | null {
+const Subscribers: Step = function ( { navigation, flow } ): ReactElement | null {
 	const { submit } = navigation;
 	const site = useSite();
 
-	useSetupOnboardingSite( { site } );
+	useSetupOnboardingSite( { site, flow } );
 
 	const handleSubmit = () => {
 		submit?.();
