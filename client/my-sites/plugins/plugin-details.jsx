@@ -221,8 +221,21 @@ function PluginDetails( props ) {
 			},
 		];
 
+		const pluginsSearchId = 'plugins-search';
+		if ( breadcrumbs.length > 1 && breadcrumbs[ 1 ].id === pluginsSearchId ) {
+			const searchHref = breadcrumbs[ 1 ].href;
+			const searchQuery = searchHref.substring( searchHref.lastIndexOf( '?' ) );
+			items.push( {
+				helpBubble: null,
+				label: 'Search Results',
+				href: `/plugins/${ selectedSite?.slug || '' }${ searchQuery || '' }`,
+				id: pluginsSearchId,
+			} );
+		}
+
 		if ( fullPlugin.name && props.pluginSlug ) {
 			items.push( {
+				helpBubble: null,
 				label: fullPlugin.name,
 				href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
 				id: `plugin-${ props.pluginSlug }`,
