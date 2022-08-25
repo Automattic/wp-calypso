@@ -253,8 +253,12 @@ export function serverRender( req, res ) {
 		 * (like /es/themes), that applies to every user.
 		 */
 		if ( cacheKey ) {
-			const { documentHead, themes } = context.store.getState();
-			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
+			const { documentHead, themes, productsList } = context.store.getState();
+			const serverState = serialize( context.store.getCurrentReducer(), {
+				documentHead,
+				themes,
+				productsList,
+			} );
 			stateCache.set( cacheKey, serverState.get() );
 		}
 	}
