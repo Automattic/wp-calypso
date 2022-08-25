@@ -3,25 +3,53 @@
 
 .intro-pricing-banner {
 	display: flex;
-	flex-direction: column;
-
-	align-items: center;
 	justify-content: center;
 
-	&:not( .is-sticky ) {
-		height: 120px;
-		margin-bottom: 2rem;
+	&.is-sticky {
+		position: fixed;
+		width: 100%;
+		left: 0;
+		top: var( --masterbar-height );
+		background-color: var( --color-surface );
+		box-shadow: 0 4px 4px 0 #00000014;
+		z-index: 2;
+		height: 74px;
 
-		gap: 1.25rem;
+		align-items: center;
 
 		@include break-large {
-			height: 54px;
+			height: 52px;
 		}
 	}
+}
 
-	> :not( :last-child ) {
-		margin-right: 16px;
+.intro-pricing-banner.is-loading .intro-pricing-banner__item-label {
+	@include placeholder();
+}
+
+.intro-pricing-banner.is-sticky .intro-pricing-banner__item.is-agencies {
+	display: none;
+
+	@include break-large {
+		display: flex;
 	}
+}
+
+.intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__content {
+	height: 120px;
+	margin-bottom: 2rem;
+	gap: 1.25rem;
+
+	@include break-large {
+		height: 54px;
+	}
+}
+
+.intro-pricing-banner__content {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
 
 	@include break-large {
 		flex-direction: row;
@@ -33,10 +61,15 @@
 	flex-direction: row;
 	align-items: center;
 	font-size: $font-body;
+
+	&:not( :last-child ) {
+		margin-right: 16px;
+	}
 }
 
-.intro-pricing-banner.is-loading .intro-pricing-banner__item-label {
-	@include placeholder();
+.intro-pricing-banner__item-icon {
+	width: 32px;
+	height: 32px;
 }
 
 .intro-pricing-banner__item-label.is-link {
@@ -46,41 +79,9 @@
 	text-underline-offset: 3px;
 }
 
-.intro-pricing-banner__item-icon {
-	width: 32px;
-	height: 32px;
-}
-
-.intro-pricing-banner.is-sticky {
-	position: fixed;
-	width: 100%;
-	left: 0;
-	top: var( --masterbar-height );
-
-	background-color: var( --color-surface );
-	box-shadow: 0 4px 4px 0 #00000014;
-
-	z-index: 2;
-	height: 74px;
-
-	@include break-large {
-		height: 52px;
-	}
-}
-
-.intro-pricing-banner.is-sticky .intro-pricing-banner__item.is-agencies {
-	display: none;
-
-	@include break-large {
-		display: flex;
-	}
-}
-
-.is-section-jetpack-connect,
-.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
-	.intro-pricing-banner.is-sticky {
-		top: 0;
-	}
+.is-section-jetpack-connect .intro-pricing-banner.is-sticky,
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .intro-pricing-banner.is-sticky {
+	top: 0;
 }
 
 // target Calypso pricing filter bar, not jetpack cloud

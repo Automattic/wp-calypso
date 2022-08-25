@@ -66,7 +66,7 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 			<div className="intro-pricing-banner__viewport-sentinel" { ...outerDivProps }></div>
 			<div className={ `intro-pricing-banner ${ classModifier }` }>
 				{ ( discountPercentage > 0 || isLoading ) && (
-					<>
+					<div className="intro-pricing-banner__content">
 						<div className="intro-pricing-banner__item">
 							<img
 								className="intro-pricing-banner__item-icon"
@@ -110,7 +110,7 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 								{ preventWidows( translate( 'Explore Jetpack for Agencies' ) ) }
 							</a>
 						</div>
-					</>
+					</div>
 				) }
 			</div>
 		</>
