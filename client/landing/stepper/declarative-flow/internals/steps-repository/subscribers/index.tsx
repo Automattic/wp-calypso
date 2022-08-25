@@ -30,6 +30,7 @@ const Subscribers: Step = function ( { navigation, flow } ): ReactElement | null
 					{ site?.ID && (
 						<AddSubscriberForm
 							siteId={ site.ID }
+							submitBtnName={ 'Continue' }
 							onImportFinished={ handleSubmit }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 						/>
