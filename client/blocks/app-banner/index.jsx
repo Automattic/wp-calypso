@@ -150,7 +150,6 @@ export class AppBanner extends Component {
 
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
-		return (
 		const jetpackAppBanner = (
 			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
 				<Card
@@ -192,6 +191,7 @@ export class AppBanner extends Component {
 				</Card>
 			</div>
 		);
+
 		const wordpressAppBanner = (
 			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
 				<Card
@@ -233,6 +233,7 @@ export class AppBanner extends Component {
 				</Card>
 			</div>
 		);
+
 		const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 		return displayJetpackAppBranding ? jetpackAppBanner : wordpressAppBanner;
