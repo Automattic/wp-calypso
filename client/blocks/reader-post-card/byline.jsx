@@ -85,6 +85,7 @@ class PostByline extends Component {
 		const tags = tagsInOccurrenceOrder
 			.slice( 0, TAGS_TO_SHOW )
 			.map( ( tag ) => <TagLink tag={ tag } key={ tag.slug } /> );
+		const extraTags = tagsInOccurrenceOrder.slice( TAGS_TO_SHOW );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
@@ -139,13 +140,15 @@ class PostByline extends Component {
 								</a>
 							</span>
 						) }
-						{ tags.length > 0 && (
-							<span className="reader-post-card__tags">
-								<Gridicon icon="tag" />
-								{ tags }
-							</span>
-						) }
 					</div>
+					{ tags.length > 0 && (
+						<div className="reader-post-card__tags">
+							{ tags }
+							{ extraTags.length > 0 && (
+								<span className="reader-post-card__tag">{ extraTags.length }+</span>
+							) }
+						</div>
+					) }
 				</div>
 			</div>
 		);
