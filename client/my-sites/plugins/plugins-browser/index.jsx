@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useRef } from 'react';
+import { createElement, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -43,7 +43,7 @@ const PluginsBrowser = ( {
 	category,
 	search,
 	hideHeader,
-	pluginsResults,
+	pluginsResultsComponent,
 } ) => {
 	const {
 		isAboveElement,
@@ -51,6 +51,9 @@ const PluginsBrowser = ( {
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
 	const searchRef = useRef( null );
+
+	// temporary solution to use same isFetching in search header & in component.
+	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -97,13 +100,19 @@ const PluginsBrowser = ( {
 				popularSearchesRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
 				searchTerm={ search }
-				isSearching={ false }
+				isSearching={ isFetchingPluginsBySearchTerm }
 				title={ translate( 'Plugins you need to get your projects done' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
 
 			{ ! search && <Categories selected={ category } /> }
-			<div className="plugins-browser__main-container">{ pluginsResults }</div>
+			<div className="plugins-browser__main-container">
+				{ createElement( pluginsResultsComponent, {
+					category,
+					search,
+					setIsFetchingPluginsBySearchTerm,
+				} ) }
+			</div>
 			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>
 	);

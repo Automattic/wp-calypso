@@ -20,7 +20,7 @@ function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
-const PluginsSearchResultPage = ( { search: searchTerm } ) => {
+const PluginsSearchResultPage = ( { search: searchTerm, setIsFetchingPluginsBySearchTerm } ) => {
 	const {
 		plugins: pluginsBySearchTerm = [],
 		isFetching: isFetchingPluginsBySearchTerm = false,
@@ -39,6 +39,10 @@ const PluginsSearchResultPage = ( { search: searchTerm } ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
+
+	useEffect( () => {
+		setIsFetchingPluginsBySearchTerm( isFetchingPluginsBySearchTerm );
+	}, [ setIsFetchingPluginsBySearchTerm, isFetchingPluginsBySearchTerm ] );
 
 	useEffect( () => {
 		if ( searchTerm && pluginsPagination?.page === 1 ) {

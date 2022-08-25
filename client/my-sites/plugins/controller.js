@@ -54,7 +54,7 @@ function getCategoryForPluginsBrowser( context ) {
 	return context.params.category;
 }
 
-function renderPluginsBrowser( context, pluginsResults ) {
+function renderPluginsBrowser( context, pluginsResultsComponent ) {
 	const searchTerm = context.query.s;
 	const category = getCategoryForPluginsBrowser( context );
 
@@ -62,7 +62,7 @@ function renderPluginsBrowser( context, pluginsResults ) {
 		path: context.path,
 		category,
 		search: searchTerm,
-		pluginsResults,
+		pluginsResultsComponent,
 	} );
 }
 
@@ -118,36 +118,24 @@ export function browsePluginsOrPlugin( context, next ) {
 
 export function browsePlugins( context, next ) {
 	const searchTerm = context.query.s;
-	let pluginsResults = null;
-	if ( ! searchTerm ) {
-		pluginsResults = createElement( PluginsDiscoveryPage );
-	} else {
-		pluginsResults = createElement( PluginsSearchResultPage, {
-			search: searchTerm,
-		} );
+	let pluginsResultsComponent = PluginsDiscoveryPage;
+	if ( searchTerm ) {
+		pluginsResultsComponent = PluginsSearchResultPage;
 	}
-
-	renderPluginsBrowser( context, pluginsResults );
+	renderPluginsBrowser( context, pluginsResultsComponent );
 	next();
 }
 
 export function browsePluginsCategory( context, next ) {
-	let pluginsResults = null;
-	const category = getCategoryForPluginsBrowser( context );
+	let pluginsResultsComponent = PluginsCategoryResultsPage;
+
 	// Temporary condition until all searches uses /plugin url
 	const searchTerm = context.query.s;
-	if ( ! searchTerm ) {
-		pluginsResults = createElement( PluginsCategoryResultsPage, {
-			path: context.path,
-			category,
-		} );
-	} else {
-		pluginsResults = createElement( PluginsSearchResultPage, {
-			search: searchTerm,
-		} );
+	if ( searchTerm ) {
+		pluginsResultsComponent = PluginsSearchResultPage;
 	}
 
-	renderPluginsBrowser( context, pluginsResults );
+	renderPluginsBrowser( context, pluginsResultsComponent );
 	next();
 }
 
