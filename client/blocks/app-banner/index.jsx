@@ -182,10 +182,10 @@ export class AppBanner extends Component {
 							onClick={ this.openApp }
 							href={ this.getDeepLink() }
 						>
-							{ translate( 'Open in app' ) }
+							{ translate( 'Open in the Jetpack app' ) }
 						</Button>
 						<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
-							{ translate( 'No thanks' ) }
+							{ translate( 'Continue in browser' ) }
 						</Button>
 					</div>
 				</Card>
