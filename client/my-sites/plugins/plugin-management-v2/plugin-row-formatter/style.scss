@@ -74,9 +74,6 @@ a.button.plugin-row-formatter__plugin-name-card {
 
 // Checkbox for multiselect purposes
 .plugin-row-formatter__checkbox[type='checkbox'] {
-	// position: absolute;
-	// top: 50%;
-	// margin-top: -8px;
 	margin-inline-end: 16px;
 
 	&:checked::before {
