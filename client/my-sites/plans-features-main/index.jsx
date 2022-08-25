@@ -102,6 +102,7 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
+			flowName,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -144,6 +145,7 @@ export class PlansFeaturesMain extends Component {
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ getPopularPlanSpec( {
+						flowName,
 						customerType,
 						isJetpack,
 						availablePlans: visiblePlans,
@@ -277,6 +279,7 @@ export class PlansFeaturesMain extends Component {
 			hidePremiumPlan,
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
+			flowName,
 		} = this.props;
 
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
@@ -309,6 +312,12 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( [ 'newsletter', 'link-in-bio' ].includes( flowName ) ) {
+			plans = plans.filter(
+				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
+			);
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) ) {
