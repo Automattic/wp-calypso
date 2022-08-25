@@ -16,7 +16,7 @@ const ThemeStyleVariationsButtons: React.FC< ThemeStyleVariationsButtonProps > =
 } ) => {
 	const variationsToShow = useMemo(
 		() => variations.slice( 0, maxVariationsToShow ),
-		[ variations ]
+		[ variations, maxVariationsToShow ]
 	);
 
 	return (
