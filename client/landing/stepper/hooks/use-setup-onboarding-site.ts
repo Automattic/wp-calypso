@@ -1,7 +1,6 @@
 import { SiteDetails, useSiteLogoMutation } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useMemo } from 'react';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
@@ -33,9 +32,15 @@ interface OnboardingSite {
 	siteLogo: string | null;
 }
 
-export function useSetupOnboardingSite() {
-	const site = useSite();
+interface SetupOnboardingSiteOptions {
+	ignoreUrl?: boolean;
+	site: SiteDetails | null;
+}
+
+export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
+	const { ignoreUrl, site } = options;
 	const siteIsLoaded = !! site;
+
 	const { getState } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const state = getState();
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
@@ -57,9 +62,9 @@ export function useSetupOnboardingSite() {
 		return setSiteLogo( new File( [ base64ImageToBlob( state.siteLogo ) ], 'site-logo.png' ) );
 	};
 
-	useEffect( () => {
-		if ( shouldSetupOnboardingSite() && site ) {
-			Promise.all( [ postSiteSettings( site, state ), postSiteLogo( state ) ] ).then( () => {
+	return useMemo( () => {
+		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site ) {
+			return Promise.all( [ postSiteSettings( site, state ), postSiteLogo( state ) ] ).then( () => {
 				recordTracksEvent( 'calypso_signup_site_options_submit', {
 					has_site_title: !! state.siteTitle,
 					has_tagline: !! state.siteDescription,
