@@ -229,8 +229,17 @@
 	}
 
 	.design-picker__pricing-description {
-		text-align: left;
+		align-items: flex-start;
 		color: #50575e;
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		line-height: 20px;
+		justify-content: flex-start;
+
+		.premium-badge {
+			margin: 0;
+		}
 	}
 
 
