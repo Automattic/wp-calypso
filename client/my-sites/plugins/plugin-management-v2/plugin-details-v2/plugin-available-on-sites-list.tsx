@@ -3,14 +3,14 @@ import { useSelector } from 'react-redux';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
 import SitesList from '../sites-list';
 import type { Plugin } from '../types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 import './style.scss';
 
 interface Props {
-	sites: Array< SiteData | null | undefined >;
-	selectedSite: SiteData;
+	sites: Array< SiteDetails | null | undefined >;
+	selectedSite: SiteDetails;
 	isLoading: boolean;
 	plugin: Plugin;
 }

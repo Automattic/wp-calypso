@@ -18,16 +18,16 @@ import {
 import { isFetching as isWporgPluginFetchingSelector } from 'calypso/state/plugins/wporg/selectors';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import type { Plugin } from '../types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 import './style.scss';
 
 interface Props {
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	pluginSlug: string;
 	fullPlugin: Plugin;
-	sitesWithPlugins: Array< SiteData >;
+	sitesWithPlugins: Array< SiteDetails >;
 	showPlaceholder: boolean;
 	isMarketplaceProduct: boolean;
 	isWpcom: boolean;
