@@ -11,7 +11,7 @@ interface ThemeStyleVariationsButtonProps {
 
 const ThemeStyleVariationsButtons: React.FC< ThemeStyleVariationsButtonProps > = ( {
 	tagName = 'button',
-	maxVariationsToShow = 4,
+	maxVariationsToShow = 2,
 	variations = [],
 } ) => {
 	const variationsToShow = useMemo(
