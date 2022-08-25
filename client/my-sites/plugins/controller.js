@@ -14,6 +14,9 @@ import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginBrowser from './plugins-browser';
+import PluginsCategoryResultsPage from './plugins-category-results-page';
+import PluginsDiscoveryPage from './plugins-discovery-page';
+import PluginsSearchResultPage from './plugins-search-results-page';
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -51,7 +54,7 @@ function getCategoryForPluginsBrowser( context ) {
 	return context.params.category;
 }
 
-function renderPluginsBrowser( context ) {
+function renderPluginsBrowser( context, pluginsResults ) {
 	const searchTerm = context.query.s;
 	const category = getCategoryForPluginsBrowser( context );
 
@@ -59,6 +62,7 @@ function renderPluginsBrowser( context ) {
 		path: context.path,
 		category,
 		search: searchTerm,
+		pluginsResults,
 	} );
 }
 
@@ -113,7 +117,37 @@ export function browsePluginsOrPlugin( context, next ) {
 }
 
 export function browsePlugins( context, next ) {
-	renderPluginsBrowser( context );
+	const searchTerm = context.query.s;
+	let pluginsResults = null;
+	if ( ! searchTerm ) {
+		pluginsResults = createElement( PluginsDiscoveryPage );
+	} else {
+		pluginsResults = createElement( PluginsSearchResultPage, {
+			search: searchTerm,
+		} );
+	}
+
+	renderPluginsBrowser( context, pluginsResults );
+	next();
+}
+
+export function browsePluginsCategory( context, next ) {
+	let pluginsResults = null;
+	const category = getCategoryForPluginsBrowser( context );
+	// Temporary condition until all searches uses /plugin url
+	const searchTerm = context.query.s;
+	if ( ! searchTerm ) {
+		pluginsResults = createElement( PluginsCategoryResultsPage, {
+			path: context.path,
+			category,
+		} );
+	} else {
+		pluginsResults = createElement( PluginsSearchResultPage, {
+			search: searchTerm,
+		} );
+	}
+
+	renderPluginsBrowser( context, pluginsResults );
 	next();
 }
 

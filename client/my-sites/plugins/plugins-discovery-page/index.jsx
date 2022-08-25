@@ -14,7 +14,12 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
+import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSitePlan, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import SingleListView from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
 
@@ -189,7 +194,7 @@ const PopularPluginsSection = ( props ) => {
 	);
 };
 
-const PluginsDiscoveryPage = ( props ) => {
+const PluginsDiscoveryPage = () => {
 	const {
 		plugins: pluginsByCategoryFeatured = [],
 		isFetching: isFetchingPluginsByCategoryFeatured,
@@ -197,17 +202,51 @@ const PluginsDiscoveryPage = ( props ) => {
 		category: 'featured',
 	} );
 
+	const selectedSite = useSelector( getSelectedSite );
+	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
+
+	const jetpackNonAtomic = useSelector(
+		( state ) =>
+			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
+	);
+
+	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
+
 	return (
 		<>
-			<UpgradeNudge { ...props } paidPlugins={ true } />
-			<PaidPluginsSection { ...props } />
-			<UpgradeNudge { ...props } />
+			<UpgradeNudge
+				selectedSite={ selectedSite }
+				sitePlan={ sitePlan }
+				isVip={ isVip }
+				jetpackNonAtomic={ jetpackNonAtomic }
+				siteSlug={ siteSlug }
+				paidPlugins={ true }
+			/>
+			<PaidPluginsSection
+				jetpackNonAtomic={ jetpackNonAtomic }
+				siteSlug={ siteSlug }
+				sites={ sites }
+			/>
+			<UpgradeNudge
+				selectedSite={ selectedSite }
+				sitePlan={ sitePlan }
+				isVip={ isVip }
+				jetpackNonAtomic={ jetpackNonAtomic }
+				siteSlug={ siteSlug }
+			/>
 			<FeaturedPluginsSection
-				{ ...props }
+				siteSlug={ siteSlug }
+				sites={ sites }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 			/>
-			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
+			<PopularPluginsSection
+				siteSlug={ siteSlug }
+				sites={ sites }
+				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
+			/>
 		</>
 	);
 };

@@ -1,11 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import NoResults from 'calypso/my-sites/no-results';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
 import usePlugins from '../use-plugins';
 
@@ -18,17 +20,10 @@ function isNotBlocked( plugin ) {
 	return PLUGIN_SLUGS_BLOCKLIST.indexOf( plugin.slug ) === -1;
 }
 
-const PluginsSearchResultPage = ( {
-	search: searchTerm,
-	siteSlug,
-	siteId,
-	sites,
-	categoryName,
-	setIsFetchingPluginsBySearchTerm,
-} ) => {
+const PluginsSearchResultPage = ( { search: searchTerm } ) => {
 	const {
 		plugins: pluginsBySearchTerm = [],
-		isFetching: isFetchingPluginsBySearchTerm,
+		isFetching: isFetchingPluginsBySearchTerm = false,
 		pagination: pluginsPagination,
 		fetchNextPage,
 	} = usePlugins( {
@@ -40,15 +35,12 @@ const PluginsSearchResultPage = ( {
 
 	const dispatch = useDispatch();
 
+	// Temporary until we decided to search or not within categories
+	const categoryName = null;
 	const translate = useTranslate();
-
-	/*
-	 * Syncs the internal value of is fetching to share it with the search header
-	 * This is a temporary solution until phase 4 of the refactor is implemented.
-	 */
-	useEffect( () => {
-		setIsFetchingPluginsBySearchTerm( isFetchingPluginsBySearchTerm );
-	}, [ setIsFetchingPluginsBySearchTerm, isFetchingPluginsBySearchTerm ] );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteId = useSelector( getSelectedSiteId );
+	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 
 	useEffect( () => {
 		if ( searchTerm && pluginsPagination?.page === 1 ) {

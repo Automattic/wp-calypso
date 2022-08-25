@@ -1,15 +1,21 @@
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import FullListView from '../plugins-browser/full-list-view';
 import usePlugins from '../use-plugins';
 import Header from './header';
 
-const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
+const PluginsCategoryResultsPage = ( { category } ) => {
 	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
 		category,
 		infinite: true,
 	} );
+
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || category;
