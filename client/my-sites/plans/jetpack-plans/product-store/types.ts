@@ -25,3 +25,9 @@ export interface ProductFilterProps {
 export interface ProductProps {
 	type: FilterType;
 }
+
+export type MostPopularProps = {
+	className?: string;
+	heading: string;
+	items: React.ReactNode;
+};
