@@ -35,8 +35,6 @@ const PluginsSearchResultPage = ( { search: searchTerm } ) => {
 
 	const dispatch = useDispatch();
 
-	// Temporary until we decided to search or not within categories
-	const categoryName = null;
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
@@ -84,22 +82,6 @@ const PluginsSearchResultPage = ( { search: searchTerm } ) => {
 					},
 				}
 			);
-
-			if ( categoryName ) {
-				title = translate(
-					'Found %(total)s plugin for "%(searchTerm)s" under "%(categoryName)s"',
-					'Found %(total)s plugins for "%(searchTerm)s" under "%(categoryName)s"',
-					{
-						count: pluginsPagination.results,
-						textOnly: true,
-						args: {
-							total: pluginsPagination.results,
-							searchTerm,
-							categoryName,
-						},
-					}
-				);
-			}
 		}
 
 		return (
