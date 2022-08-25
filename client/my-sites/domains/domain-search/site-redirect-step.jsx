@@ -123,9 +123,14 @@ class SiteRedirectStep extends Component {
 	};
 
 	addSiteRedirectToCart = ( domain ) => {
-		this.props.shoppingCartManager.addProductsToCart( [ siteRedirect( { domain } ) ] ).then( () => {
-			this.isMounted && page( '/checkout/' + this.props.selectedSite.slug );
-		} );
+		this.props.shoppingCartManager
+			.addProductsToCart( [ siteRedirect( { domain } ) ] )
+			.then( () => {
+				this.isMounted && page( '/checkout/' + this.props.selectedSite.slug );
+			} )
+			.catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 	};
 
 	getValidationErrorMessage = ( domain, error ) => {

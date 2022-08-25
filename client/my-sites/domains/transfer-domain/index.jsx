@@ -69,6 +69,9 @@ export class TransferDomain extends Component {
 			] )
 			.then( () => {
 				page( '/checkout/' + selectedSiteSlug );
+			} )
+			.catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 	};
 
@@ -102,9 +105,14 @@ export class TransferDomain extends Component {
 			transfer = updatePrivacyForDomain( transfer, true );
 		}
 
-		shoppingCartManager.addProductsToCart( [ transfer ] ).then( () => {
-			page( '/checkout/' + selectedSiteSlug );
-		} );
+		shoppingCartManager
+			.addProductsToCart( [ transfer ] )
+			.then( () => {
+				page( '/checkout/' + selectedSiteSlug );
+			} )
+			.catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 	};
 
 	componentDidMount() {

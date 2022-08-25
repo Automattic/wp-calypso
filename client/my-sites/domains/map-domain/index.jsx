@@ -77,6 +77,9 @@ export class MapDomain extends Component {
 			] )
 			.then( () => {
 				this.isMounted && page( '/checkout/' + selectedSiteSlug );
+			} )
+			.catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 	};
 

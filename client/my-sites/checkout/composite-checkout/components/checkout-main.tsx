@@ -413,7 +413,9 @@ export default function CheckoutMain( {
 					error: String( error ),
 				} );
 			}
-			addProductsToCart( [ cartItem ] );
+			addProductsToCart( [ cartItem ] ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		},
 		[ addProductsToCart ]
 	);

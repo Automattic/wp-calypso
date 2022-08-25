@@ -94,6 +94,9 @@ class DomainSearch extends Component {
 			.addProductsToCart( [ domainTransfer( { domain } ) ] )
 			.then( () => {
 				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
+			} )
+			.catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 	};
 
@@ -142,15 +145,23 @@ class DomainSearch extends Component {
 		if ( this.props.domainAndPlanUpsellFlow ) {
 			// If we are in the domain + annual plan upsell flow, we need to redirect
 			// to the plans page next and let it know that we are still in that flow.
-			this.props.shoppingCartManager.addProductsToCart( [ registration ] ).then( () => {
-				page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
-			} );
+			this.props.shoppingCartManager
+				.addProductsToCart( [ registration ] )
+				.then( () => {
+					page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
+				} )
+				.catch( () => {
+					// Nothing needs to be done here. CartMessages will display the error to the user.
+				} );
 			return;
 		}
 
 		this.props.shoppingCartManager
 			.addProductsToCart( [ registration ] )
-			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) );
+			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) )
+			.catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 	}
 
 	removeDomain( suggestion ) {
