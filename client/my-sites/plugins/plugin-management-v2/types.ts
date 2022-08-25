@@ -23,7 +23,7 @@ export interface Plugin {
 	[ key: string ]: any;
 }
 
-export type SiteWithPlugin = { site: SiteData; secondarySites: Array< object > | null };
+export type SiteWithPlugin = { site: SiteDetails; secondarySites: Array< object > | null };
 
 export interface RowFormatterArgs {
 	item: any;
@@ -36,5 +36,5 @@ export interface PluginRowFormatterArgs extends RowFormatterArgs {
 	item: Plugin;
 }
 export interface SiteRowFormatterArgs extends RowFormatterArgs {
-	item: SiteData;
+	item: SiteDetails;
 }

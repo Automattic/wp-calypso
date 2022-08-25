@@ -41,7 +41,7 @@
 		.plugin-details-header__info {
 			padding: 0;
 			@media screen and ( max-width: 1040px ) {
-				padding-bottom: 12px;
+				padding-block-end: 12px;
 			}
 		}
 		.plugin-details-header__info-value {
@@ -59,7 +59,7 @@
 		padding: 0;
 	}
 	.plugin-details__body {
-		padding-top: 0;
+		padding-block-start: 0;
 		background: var( --color-surface );
 		margin: 16px -72px -32px;
 		padding: 0 72px;
@@ -69,15 +69,15 @@
 	border-bottom: none !important;
 	background-color: var( --color-surface-backdrop ) !important;
 	@include breakpoint-deprecated( '>660px' ) {
-		left: calc( var( --sidebar-width-min ) + 1px ) !important;
-		padding-left: 24px !important;
+		inset-inline-start: calc( var( --sidebar-width-min ) + 1px ) !important;
+		padding-inline-start: 24px !important;
 	}
 	@include break-large() {
-		left: calc( var( --sidebar-width-min ) + 45px ) !important;
-		padding-left: 39px !important;
+		inset-inline-start: calc( var( --sidebar-width-min ) + 45px ) !important;
+		padding-inline-start: 39px !important;
 	}
 	@include break-xlarge() {
-		padding-left: 70px !important;
+		padding-inline-start: 70px !important;
 	}
 }
 .plugin-details-v2__title {
