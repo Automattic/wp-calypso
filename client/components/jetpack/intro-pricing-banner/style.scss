@@ -32,22 +32,23 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-
 	font-size: $font-body;
-
-	a {
-		color: var( --color-primary-100 );
-		text-decoration: underline;
-		// This works in all major browsers except for Firefox for Android. It is also not imperative that this works
-		text-underline-offset: 3px;
-	}
 }
 
-.intro-pricing-banner.is-loading .intro-pricing-banner__item {
-	span,
-	a {
-		@include placeholder();
-	}
+.intro-pricing-banner.is-loading .intro-pricing-banner__item-label {
+	@include placeholder();
+}
+
+.intro-pricing-banner__item-label.is-link {
+	color: var( --color-primary-100 );
+	text-decoration: underline;
+	// This works in all major browsers except for Firefox for Android. It is also not imperative that this works
+	text-underline-offset: 3px;
+}
+
+.intro-pricing-banner__item-icon {
+	width: 32px;
+	height: 32px;
 }
 
 .intro-pricing-banner.is-sticky {
@@ -74,7 +75,6 @@
 		display: flex;
 	}
 }
-
 
 .is-section-jetpack-connect,
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {

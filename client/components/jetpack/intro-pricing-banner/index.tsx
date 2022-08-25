@@ -69,13 +69,14 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 					<>
 						<div className="intro-pricing-banner__item">
 							<img
+								className="intro-pricing-banner__item-icon"
 								src={ rocket }
 								alt={ translate( 'Rocket representing %(percent)d%% sale', {
 									args: { percent: discountPercentage },
 									textOnly: true,
 								} ) }
 							/>
-							<span>
+							<span className="intro-pricing-banner__item-label">
 								{ preventWidows(
 									translate( 'Get up to %(percent)d%% off your first year.', {
 										args: {
@@ -86,8 +87,8 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 							</span>
 						</div>
 						<div className="intro-pricing-banner__item">
-							<img src={ guaranteeBadge } alt="" />
-							<span>
+							<img className="intro-pricing-banner__item-icon" src={ guaranteeBadge } alt="" />
+							<span className="intro-pricing-banner__item-label">
 								{ preventWidows(
 									translate( '%(days)d day money back guarantee.', {
 										args: { days: GUARANTEE_DAYS },
@@ -96,8 +97,9 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 							</span>
 						</div>
 						<div className="intro-pricing-banner__item is-agencies">
-							<img src={ people } alt="" />
+							<img className="intro-pricing-banner__item-icon" src={ people } alt="" />
 							<a
+								className="intro-pricing-banner__item-label is-link"
 								onClick={ () =>
 									recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' )
 								}
