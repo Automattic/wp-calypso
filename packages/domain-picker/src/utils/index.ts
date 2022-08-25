@@ -34,12 +34,20 @@ interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
+	flowName?: 'link-in-bio';
 }
-type DomainSuggestionsVendor = 'variation2_front' | 'variation4_front' | 'variation8_front';
+type DomainSuggestionsVendor =
+	| 'variation2_front'
+	| 'variation4_front'
+	| 'variation8_front'
+	| 'link-in-bio';
 
 export function getDomainSuggestionsVendor(
 	options: DomainSuggestionsVendorOptions = {}
 ): DomainSuggestionsVendor {
+	if ( options.flowName === 'link-in-bio' ) {
+		return options.flowName;
+	}
 	if ( options.isSignup && ! options.isDomainOnly ) {
 		return 'variation4_front';
 	}

@@ -538,6 +538,7 @@ class DomainsStep extends Component {
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
 						isDomainOnly: this.props.isDomainOnly,
+						flowName: this.props.flowName,
 					} ) }
 					deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 					selectedSite={ this.props.selectedSite }
