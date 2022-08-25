@@ -25,6 +25,7 @@ interface Props {
 	siteId: number;
 	showTitleEmoji?: boolean;
 	showSkipBtn?: boolean;
+	showCsvUpload?: boolean;
 	submitBtnName?: string;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
@@ -32,8 +33,15 @@ interface Props {
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const __ = useTranslate();
-	const { siteId, showTitleEmoji, showSkipBtn, submitBtnName, onSkipBtnClick, onImportFinished } =
-		props;
+	const {
+		siteId,
+		showTitleEmoji,
+		showSkipBtn,
+		showCsvUpload,
+		submitBtnName,
+		onSkipBtnClick,
+		onImportFinished,
+	} = props;
 
 	const { addSubscribers, importCsvSubscribers, getSubscribersImports } =
 		useDispatch( SUBSCRIBER_STORE );
@@ -199,15 +207,17 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 								</label>
 							) }
 
-							{ isSelectedFileValid && ! selectedFile && (
-								<label>
-									{ createInterpolateElement(
-										__(
-											'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-										),
-										{ uploadBtn: formFileUploadElement }
-									) }
-								</label>
+							{ showCsvUpload && isSelectedFileValid && ! selectedFile && (
+								<>
+									<label>
+										{ createInterpolateElement(
+											__(
+												'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+											),
+											{ uploadBtn: formFileUploadElement }
+										) }
+									</label>
+								</>
 							) }
 
 							<NextButton type={ 'submit' } className={ 'add-subscriber__form-submit-btn' }>
@@ -221,11 +231,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 									Not yet
 								</SkipButton>
 							) }
-							<p className={ 'add-subscriber__form--disclaimer' }>
-								By adding a mailing list CSV, you are confirming that you have the rights to share
-								newsletters with the people within your list.{ ' ' }
-								<Button isLink={ true }>Learn more</Button>
-							</p>
+							{ showCsvUpload && (
+								<p className={ 'add-subscriber__form--disclaimer' }>
+									By adding a mailing list CSV, you are confirming that you have the rights to share
+									newsletters with the people within your list.{ ' ' }
+									<Button isLink={ true }>Learn more</Button>
+								</p>
+							) }
 						</form>
 					</div>
 				</>
