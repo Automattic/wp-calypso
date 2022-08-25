@@ -5,7 +5,7 @@ import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
-import './style.scss';
+import '../style.scss';
 
 interface Props {
 	site: SiteDetails;
@@ -23,7 +23,7 @@ export default function RemovePlugin( { site, plugin }: Props ): ReactElement {
 			menuItem
 			isJetpackCloud
 			isMarketplaceProduct={ plugin.isMarketplaceProduct }
-			classNames="installed-site-actions__remove-button"
+			classNames="plugin-management-v2__actions"
 		/>
 	);
 }

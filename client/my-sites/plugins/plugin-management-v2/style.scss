@@ -25,3 +25,9 @@
 	font-size: 1.5rem;
 	margin-top: 16px;
 }
+.plugin-management-v2__actions {
+	.gridicon {
+		position: absolute !important;
+    	inset-inline-end: 10px;
+	}
+}
