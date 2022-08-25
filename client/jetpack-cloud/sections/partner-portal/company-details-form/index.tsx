@@ -108,7 +108,7 @@ export default function CompanyDetailsForm( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="name">{ translate( 'Contact First and Last Name' ) }</FormLabel>
+					<FormLabel htmlFor="name">{ translate( 'Contact first and last name' ) }</FormLabel>
 					<FormTextInput
 						id="contactPerson"
 						name="contactPerson"
