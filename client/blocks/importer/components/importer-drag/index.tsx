@@ -57,7 +57,7 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 				<ErrorPane
 					type={ errorData.type }
 					description={ errorData.description }
-					siteSlug={ site.slug }
+					siteSlug={ site?.slug }
 					code={ errorData.code }
 				/>
 			) }
