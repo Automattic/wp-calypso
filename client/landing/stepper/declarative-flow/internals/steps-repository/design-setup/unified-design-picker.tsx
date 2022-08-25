@@ -115,7 +115,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			recordTracksEvent( 'calypso_signup_unified_design_picker_view', {
 				vertical_id: siteVerticalId,
 				generated_designs: generatedDesigns.map( ( design ) => design.slug ).join( ',' ),
-				static_designs: staticDesigns.map( ( design ) => design.slug ).join( ',' ),
+				has_vertical_images: generatedDesigns.length > 0,
 			} );
 		}
 	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
