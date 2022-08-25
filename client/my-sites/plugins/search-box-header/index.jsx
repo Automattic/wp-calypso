@@ -111,16 +111,6 @@ const SearchBoxHeader = ( props ) => {
 		}
 	}, [ searchRef, searchTerm ] );
 
-	const clearSearch = useCallback( () => {
-		setQueryArgs( {} );
-	}, [] );
-
-	useEffect( () => {
-		if ( ! searchTerm ) {
-			clearSearch();
-		}
-	}, [ clearSearch, searchTerm ] );
-
 	return (
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
 			<div className="search-box-header__header">{ title }</div>
