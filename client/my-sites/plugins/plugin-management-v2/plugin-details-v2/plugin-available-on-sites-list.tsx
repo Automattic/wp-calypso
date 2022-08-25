@@ -22,6 +22,7 @@ export default function PluginAvailableOnSitesList( props: Props ): ReactElement
 		{
 			key: 'site-name',
 			title: translate( 'Site' ),
+			colSpan: 2,
 		},
 		{ key: 'install' },
 	];
@@ -41,7 +42,6 @@ export default function PluginAvailableOnSitesList( props: Props ): ReactElement
 				{ ...props }
 				items={ sitesWithSecondarySites.map( ( site ) => site.site ) }
 				columns={ columns }
-				hasMoreActions={ false }
 			/>
 		</div>
 	);

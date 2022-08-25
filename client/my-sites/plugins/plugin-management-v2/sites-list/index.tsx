@@ -10,16 +10,11 @@ interface Props {
 	isLoading: boolean;
 	columns: Columns;
 	title?: ReactNode;
-	hasMoreActions?: boolean;
 	plugin: Plugin;
+	renderActions?: ( args: any ) => ReactElement;
 }
 
-export default function SitesList( {
-	hasMoreActions = true,
-	selectedSite,
-	plugin,
-	...rest
-}: Props ): ReactElement {
+export default function SitesList( { selectedSite, plugin, ...rest }: Props ): ReactElement {
 	const rowFormatter = ( { item, ...rest }: SiteRowFormatterArgs ) => {
 		return <PluginRowFormatter { ...rest } item={ plugin } selectedSite={ item } />;
 	};
@@ -28,7 +23,6 @@ export default function SitesList( {
 		<PluginCommonList
 			{ ...rest }
 			selectedSite={ selectedSite }
-			hasMoreActions={ hasMoreActions }
 			rowFormatter={ rowFormatter }
 			primaryKey="ID"
 		/>

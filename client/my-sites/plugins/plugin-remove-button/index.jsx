@@ -4,6 +4,7 @@
 
 import { Button } from '@wordpress/components';
 import { Icon, trash } from '@wordpress/icons';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -157,7 +158,7 @@ class PluginRemoveButton extends Component {
 	renderButton = () => {
 		const disabledInfo = this.getDisabledInfo();
 		const disabled = !! disabledInfo || this.props.disabled;
-		const label = disabled
+		let label = disabled
 			? this.props.translate( 'Removal Disabled', {
 					context:
 						'this goes next to an icon that displays if site is in a state where it can\'t modify has "Removal Disabled" ',
@@ -166,13 +167,15 @@ class PluginRemoveButton extends Component {
 					context: 'Verb. Presented to user as a label for a button.',
 			  } );
 		if ( this.props.inProgress ) {
-			return (
-				<div className="plugin-action">
-					<span className="plugin-remove-button__remove">
-						{ this.props.translate( 'Removing…' ) }
-					</span>
-				</div>
-			);
+			const inProgressText = this.props.translate( 'Removing…' );
+			if ( ! this.props.isJetpackCloud ) {
+				return (
+					<div className="plugin-action">
+						<span className="plugin-remove-button__remove">{ inProgressText }</span>
+					</div>
+				);
+			}
+			label = this.props.translate( 'Removing…' );
 		}
 
 		const handleClick = disabled ? null : this.removeAction;
@@ -182,7 +185,8 @@ class PluginRemoveButton extends Component {
 				<PopoverMenuItem
 					onClick={ handleClick }
 					icon="trash"
-					className="plugin-remove-button__remove-button"
+					disabled={ this.props.inProgress }
+					className={ classNames( 'plugin-remove-button__remove-button', this.props.classNames ) }
 				>
 					{ label }
 				</PopoverMenuItem>

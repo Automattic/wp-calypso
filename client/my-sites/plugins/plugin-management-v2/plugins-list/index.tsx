@@ -9,15 +9,10 @@ interface Props {
 	items: Array< Plugin >;
 	isLoading: boolean;
 	columns: Columns;
-	hasMoreActions?: boolean;
 	className?: string;
 }
 
-export default function PluginsList( {
-	hasMoreActions = true,
-	selectedSite,
-	...rest
-}: Props ): ReactElement {
+export default function PluginsList( { selectedSite, ...rest }: Props ): ReactElement {
 	const rowFormatter = ( props: PluginRowFormatterArgs ) => {
 		return <PluginRowFormatter { ...props } selectedSite={ selectedSite } />;
 	};
@@ -26,7 +21,6 @@ export default function PluginsList( {
 		<PluginCommonList
 			{ ...rest }
 			selectedSite={ selectedSite }
-			hasMoreActions={ hasMoreActions }
 			rowFormatter={ rowFormatter }
 			primaryKey="id"
 		/>
