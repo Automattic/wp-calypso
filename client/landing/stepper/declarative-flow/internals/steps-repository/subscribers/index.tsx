@@ -1,12 +1,15 @@
 import { StepContainer } from '@automattic/onboarding';
 import { ReactElement } from 'react';
 import { useSetupOnboardingSite } from 'calypso/landing/stepper/hooks/use-setup-onboarding-site';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
 const Subscribers: Step = function ( { navigation } ): ReactElement | null {
 	const { submit } = navigation;
-	useSetupOnboardingSite();
+	const site = useSite();
+
+	useSetupOnboardingSite( { site } );
 
 	const handleSubmit = () => {
 		submit?.();
