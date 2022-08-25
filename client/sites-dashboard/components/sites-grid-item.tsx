@@ -11,6 +11,7 @@ import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import { ThumbnailLink } from './thumbnail-link';
 
 const badges = css( {
 	display: 'flex',
@@ -60,9 +61,9 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	return (
 		<SitesGridTile
 			leading={
-				<a { ...siteDashboardUrlProps }>
+				<ThumbnailLink { ...siteDashboardUrlProps }>
 					<SiteItemThumbnail className={ siteThumbnail } site={ site } size={ 'medium' } />
-				</a>
+				</ThumbnailLink>
 			}
 			primary={
 				<>
