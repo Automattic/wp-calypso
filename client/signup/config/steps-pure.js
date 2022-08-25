@@ -426,8 +426,8 @@ export function generateSteps( {
 			stepName: 'domains-with-email',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ],
 			props: {
-				includeWordPressDotCom: false,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
+				includeWordPressDotCom: false,
 			},
 		},
 
