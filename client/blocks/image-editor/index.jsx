@@ -137,7 +137,6 @@ class ImageEditor extends Component {
 				...imageProperties,
 				width: transientImage.width,
 				height: transientImage.height,
-				transientImageUrl,
 			} );
 		};
 
