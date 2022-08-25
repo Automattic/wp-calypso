@@ -132,6 +132,17 @@ export const sites: Reducer< { [ key: number | string ]: SiteDetails | undefined
 				},
 			},
 		};
+	} else if ( action.type === 'RECEIVE_LAUNCHPAD_SCREEN' ) {
+		return {
+			...state,
+			[ action.siteId ]: {
+				...( state[ action.siteId ] as SiteDetails ),
+				options: {
+					...state[ action.siteId ]?.options,
+					launchpad_screen: action.launchpadScreen,
+				},
+			},
+		};
 	}
 	return state;
 };

@@ -77,6 +77,15 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 		return Promise.resolve();
 	};
 
+	const setLaunchpadScreen = ( site: SiteDetails, flow: string ) => {
+		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
+			return saveSiteSettings( site.ID, {
+				launchpad_screen: 'full',
+			} );
+		}
+		return Promise.resolve();
+	};
+
 	const setPattern = async (
 		site: SiteDetails,
 		flow: string,
@@ -112,6 +121,7 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 					setPattern( site, flow, logoUploadResult )
 				),
 				setIntent( site, flow ),
+				setLaunchpadScreen( site, flow ),
 			] ).then( () => {
 				recordTracksEvent( 'calypso_signup_site_options_submit', {
 					has_site_title: !! state.siteTitle,
