@@ -49,10 +49,10 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	justify-content: center;
 
 	@include break-large {
 		flex-direction: row;
+		align-items: center;
 	}
 }
 
@@ -68,8 +68,8 @@
 }
 
 .intro-pricing-banner__item-icon {
-	width: 32px;
-	height: 32px;
+	min-width: 2em;
+	margin-inline-end: 0.5em;
 }
 
 .intro-pricing-banner__item-label.is-link {
