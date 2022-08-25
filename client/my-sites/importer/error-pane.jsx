@@ -19,6 +19,7 @@ class ImporterError extends PureComponent {
 		type: PropTypes.string.isRequired,
 		retryImport: PropTypes.func,
 		siteSlug: PropTypes.string,
+		code: PropTypes.string,
 	};
 
 	contactSupport = ( event ) => {
@@ -76,17 +77,27 @@ class ImporterError extends PureComponent {
 	};
 
 	getPreUploadError = () => {
-		return this.props.translate(
-			'You have uploaded a .wpress file that works with the All-in-One WP Migration plugin. You can either {{ip}}install that plugin{{/ip}}, or {{ei}}try out Everything Import{{/ei}}. {{cs}}Still need help{{/cs}}?',
-			{
-				components: {
-					br: <br />,
-					ip: <Button className="importer__error-pane is-link" onClick={ this.installPlugin } />,
-					ei: <Button className="importer__error-pane is-link" onClick={ this.everythingImport } />,
-					cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
-				},
-			}
+		const defaultError = this.props.translate(
+			'Oops! We ran into an unexpected error while uploading your file.'
 		);
+
+		if ( this.props.code === 'WPRESS_FILE_IS_NOT_SUPPORTED' ) {
+			return this.props.translate(
+				'You have uploaded a .wpress file that works with the All-in-One WP Migration plugin. You can either {{ip}}install that plugin{{/ip}}, or {{ei}}try out Everything Import{{/ei}}. {{cs}}Still need help{{/cs}}?',
+				{
+					components: {
+						br: <br />,
+						ip: <Button className="importer__error-pane is-link" onClick={ this.installPlugin } />,
+						ei: (
+							<Button className="importer__error-pane is-link" onClick={ this.everythingImport } />
+						),
+						cs: <Button className="importer__error-pane is-link" onClick={ this.contactSupport } />,
+					},
+				}
+			);
+		}
+
+		return defaultError;
 	};
 
 	getErrorMessage = () => {

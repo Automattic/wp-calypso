@@ -135,7 +135,7 @@ export class UploadingPane extends PureComponent {
 
 		// fail fast if a user tries to upload a .wpress file to improve the user experience
 		if ( fileExtension === 'wpress' ) {
-			this.props.failPreUpload( importerStatus.importerId );
+			this.props.failPreUpload( importerStatus.importerId, '', 'WPRESS_FILE_IS_NOT_SUPPORTED' );
 			return;
 		}
 

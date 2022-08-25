@@ -110,6 +110,7 @@ class FileImporter extends PureComponent {
 						type={ errorData.type }
 						description={ errorData.description }
 						siteSlug={ site.slug }
+						code={ errorData.code }
 					/>
 				) }
 				{ includes( importingStates, importerState ) && (

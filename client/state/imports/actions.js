@@ -254,8 +254,9 @@ export const startUpload =
 			} );
 	};
 
-export const failPreUpload = ( importerId, message ) => ( {
+export const failPreUpload = ( importerId, message, code ) => ( {
 	type: IMPORTS_PRE_UPLOAD_FAILED,
 	importerId,
 	error: message,
+	errorCode: code,
 } );

@@ -34,6 +34,7 @@ export interface ImportJob {
 	errorData: {
 		type: string;
 		description: string;
+		code?: string;
 	};
 	progress: {
 		page: { completed: number; total: number };
