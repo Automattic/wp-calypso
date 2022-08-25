@@ -1048,7 +1048,7 @@ describe( 'main app', () => {
 				'jetpack-cloud/connect': false,
 			} );
 			const { response } = await app.run( { request: { url: '/plans' } } );
-			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing' );
+			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing/' );
 		} );
 	} );
 

@@ -27,7 +27,7 @@ const SiteLaunchSellerUpsell = () => {
 					  )
 			}
 			actionText={ translate( 'Learn more' ) }
-			actionUrl={ `http://wordpress.com/woocommerce-installation/${ domain }` }
+			actionUrl={ `https://wordpress.com/woocommerce-installation/${ domain }` }
 			actionTarget="_blank"
 			completeOnStart={ false }
 			illustration={ sellerIllustration }
