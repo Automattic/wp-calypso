@@ -94,7 +94,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const { __ } = useI18n();
 	const { style_variations = [], is_premium: isPremium = false } = design;
 	const isEnableThemePreviewScreen = isEnabled( 'signup/theme-preview-screen' );
-	const isEnableThemeStyleVariations = isEnableThemePreviewScreen && isEnabled( 'signup/design-picker-style-selection' );
+	const isEnableThemeStyleVariations =
+		isEnabled( 'signup/design-picker-style-selection' ) && isEnableThemePreviewScreen;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
