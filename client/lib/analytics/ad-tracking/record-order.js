@@ -35,7 +35,10 @@ import {
 } from './constants';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
-import { fireEcommercePurchase as fireEcommercePurchaseGA4 } from './google-analytics-4';
+import {
+	fireEcommercePurchase as fireEcommercePurchaseGA4,
+	TrackingEnvironment,
+} from './google-analytics-4';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
@@ -505,10 +508,9 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
  */
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		const sendToJetpack = true;
 		fireEcommercePurchaseGA4(
-			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, sendToJetpack ),
-			sendToJetpack
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, TrackingEnvironment.JETPACK ),
+			TrackingEnvironment.JETPACK
 		);
 
 		const jetpackParams = [
@@ -546,10 +548,9 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
  */
 function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		const sendToJetpack = false;
 		fireEcommercePurchaseGA4(
-			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, sendToJetpack ),
-			sendToJetpack
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, TrackingEnvironment.WPCOM ),
+			TrackingEnvironment.WPCOM
 		);
 		debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
 	}
