@@ -1480,45 +1480,6 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to thank you page (with traffic guide display mode) if traffic guide is in cart', () => {
-		const cart = {
-			...getEmptyResponseCart(),
-			products: [
-				{
-					...getEmptyResponseCartProduct(),
-					product_slug: 'traffic-guide',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			receiptId: samplePurchaseId,
-		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=traffic-guide` );
-	} );
-
-	it( 'redirects to thank you page (with traffic guide display mode) if traffic guide is in cart and site has a non-atomic jetpack plan', () => {
-		const cart = {
-			...getEmptyResponseCart(),
-			products: [
-				{
-					...getEmptyResponseCartProduct(),
-					product_slug: 'traffic-guide',
-				},
-			],
-		};
-		const url = getThankYouPageUrl( {
-			...defaultArgs,
-			siteSlug: 'foo.bar',
-			cart,
-			receiptId: samplePurchaseId,
-			isJetpackNotAtomic: true,
-		} );
-		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }?d=traffic-guide` );
-	} );
-
 	it( 'redirects to a url on the same site we are checking out', () => {
 		const redirectTo = 'https://foo.bar/some-path?with-args=yes';
 		const url = getThankYouPageUrl( {
