@@ -208,16 +208,14 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							) }
 
 							{ showCsvUpload && isSelectedFileValid && ! selectedFile && (
-								<>
-									<label>
-										{ createInterpolateElement(
-											__(
-												'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-											),
-											{ uploadBtn: formFileUploadElement }
-										) }
-									</label>
-								</>
+								<label>
+									{ createInterpolateElement(
+										__(
+											'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+										),
+										{ uploadBtn: formFileUploadElement }
+									) }
+								</label>
 							) }
 
 							<NextButton type={ 'submit' } className={ 'add-subscriber__form-submit-btn' }>
