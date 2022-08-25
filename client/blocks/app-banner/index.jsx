@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
+import { Player } from '@lottiefiles/react-lottie-player';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -163,6 +164,12 @@ export class AppBanner extends Component {
 						} }
 						statGroup="calypso_mobile_app_banner"
 						statName="impression"
+					/>
+					<Player
+						autoplay
+						keepLastFrame
+						src={ '/calypso/animations/app-promo/wp-to-jp.json' }
+						style={ { height: '47px', width: '92px', paddingBottom: '30px' } }
 					/>
 					<div className="app-banner__text-content">
 						<div className="app-banner__title">
