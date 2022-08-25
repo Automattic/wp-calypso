@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { ReactElement } from 'react';
@@ -30,7 +31,7 @@ const Subscribers: Step = function ( { navigation, flow } ): ReactElement | null
 						<AddSubscriberForm
 							siteId={ site.ID }
 							onImportFinished={ handleSubmit }
-							showCsvUpload={ false }
+							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 						/>
 					) }
 				</div>
