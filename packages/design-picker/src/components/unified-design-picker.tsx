@@ -10,7 +10,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { noop } from 'lodash';
-import { useMemo, Fragment } from 'react';
+import { useMemo } from 'react';
 import {
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
@@ -23,6 +23,7 @@ import {
 	filterDesignsByCategory,
 	sortDesigns,
 } from '../utils';
+import BuildYourOwnCta from './build-your-own-cta';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PremiumBadge from './premium-badge';
 import ThemePreview from './theme-preview';
@@ -337,11 +338,11 @@ export interface UnifiedDesignPickerProps {
 	staticDesigns: Design[];
 	categorization?: Categorization;
 	heading?: React.ReactNode;
-	buildYourOwnCta?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
+	onBuildYouOwnLayoutClick?: any;
 	purchasedThemes?: string[];
 }
 
@@ -352,12 +353,12 @@ interface StaticDesignPickerProps {
 	onPreview: ( design: Design ) => void;
 	onUpgrade?: () => void;
 	designs: Design[];
-	buildYourOwnCta?: React.ReactNode;
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
+	onBuildYouOwnLayoutClick?: any;
 	purchasedThemes?: string[];
 }
 
@@ -374,22 +375,29 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	onPreview,
 	onUpgrade,
 	designs,
-	buildYourOwnCta,
 	categorization,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable,
 	onCheckout,
+	onBuildYouOwnLayoutClick,
 	verticalId,
 	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
+	const blankCanvasDesign = {
+		slug: 'blank-canvas',
+		title: 'Blank Canvas',
+	} as Design;
+
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
 			? filterDesignsByCategory( designs, categorization.selection )
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
+		result.splice( result.length < 3 ? result.length : 3, 0, blankCanvasDesign );
+
 		return result;
 	}, [ designs, categorization?.selection ] );
 	return (
@@ -402,9 +410,10 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 				/>
 			) }
 			<div className={ 'design-picker__grid' }>
-				{ filteredDesigns.map( ( design, index ) => (
-					<Fragment key={ design.slug }>
+				{ filteredDesigns.map( ( design ) =>
+					! isBlankCanvasDesign( design ) ? (
 						<DesignButtonContainer
+							key={ design.slug }
 							design={ design }
 							locale={ locale }
 							onSelect={ onSelect }
@@ -420,11 +429,10 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 							verticalId={ verticalId }
 							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 						/>
-						{ ( ( filteredDesigns.length < 3 && index === filteredDesigns.length - 1 ) ||
-							index === 2 ) &&
-							buildYourOwnCta }
-					</Fragment>
-				) ) }
+					) : (
+						<BuildYourOwnCta key={ design.slug } onButtonClick={ onBuildYouOwnLayoutClick } />
+					)
+				) }
 			</div>
 		</div>
 	);
@@ -476,12 +484,12 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	staticDesigns,
 	generatedDesigns,
 	heading,
-	buildYourOwnCta,
 	categorization,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable,
 	onCheckout,
+	onBuildYouOwnLayoutClick,
 	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
@@ -531,13 +539,13 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onPreview={ onPreview }
 					onUpgrade={ onUpgrade }
 					designs={ staticDesigns }
-					buildYourOwnCta={ buildYourOwnCta }
 					categorization={ categorization }
 					verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
 					previewOnly={ previewOnly }
 					hasDesignOptionHeader={ hasDesignOptionHeader }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					onCheckout={ onCheckout }
+					onBuildYouOwnLayoutClick={ onBuildYouOwnLayoutClick }
 					purchasedThemes={ purchasedThemes }
 				/>
 			</div>

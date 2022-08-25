@@ -188,36 +188,6 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	}
 
 	/**
-	 * Blank Canvas Button
-	 */
-	.build-your-own-cta-wrapper {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 64px;
-		grid-column: 1 / span 3;
-		background-color: #f6f7f7;
-		color: #50575e;
-
-		.build-your-own-cta__title {
-			margin-top: 32px;
-			margin-bottom: 8px;
-		}
-
-		.build-your-own-cta__button {
-			margin-top: 32px;
-			padding: 10px 0;
-			border-radius: 4px;
-			min-width: 234px;
-		}
-
-		.build-your-own-cta__image {
-			mix-blend-mode: multiply;
-		}
-	}
-
-	/**
 	 * Design Preview
 	 */
 	.design-setup__preview {
