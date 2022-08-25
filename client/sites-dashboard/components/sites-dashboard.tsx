@@ -8,6 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
+import { ScrollToTopButton } from './scroll-to-top-button';
 import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
@@ -179,6 +180,7 @@ export function SitesDashboard( {
 					) }
 				</>
 			</PageBodyWrapper>
+			<ScrollToTopButton />
 		</main>
 	);
 }
