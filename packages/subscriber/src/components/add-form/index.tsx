@@ -216,6 +216,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						</label>
 					) }
 
+					{ showCsvUpload && isSelectedFileValid && selectedFile && (
+						<p className={ 'add-subscriber__form--disclaimer' }>
+							By clicking "continue", you represent that you've obtained the appropriate consent to
+							email each person on your list. <Button isLink={ true }>Learn more</Button>
+						</p>
+					) }
+
 					<NextButton
 						type={ 'submit' }
 						className={ 'add-subscriber__form-submit-btn' }
@@ -231,13 +238,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						>
 							Not yet
 						</SkipButton>
-					) }
-					{ showCsvUpload && (
-						<p className={ 'add-subscriber__form--disclaimer' }>
-							By adding a mailing list CSV, you are confirming that you have the rights to share
-							newsletters with the people within your list.{ ' ' }
-							<Button isLink={ true }>Learn more</Button>
-						</p>
 					) }
 				</form>
 			</div>
