@@ -137,6 +137,7 @@ class ImageEditor extends Component {
 				...imageProperties,
 				width: transientImage.width,
 				height: transientImage.height,
+				transientImageUrl,
 			} );
 		};
 
@@ -233,7 +234,7 @@ class ImageEditor extends Component {
 	};
 
 	render() {
-		const { className, siteId, allowedAspectRatios } = this.props;
+		const { className, siteId, allowedAspectRatios, widthLimit } = this.props;
 
 		const { noticeText } = this.state;
 
@@ -246,7 +247,11 @@ class ImageEditor extends Component {
 
 				<figure>
 					<div className="image-editor__content">
-						<ImageEditorCanvas ref={ this.editCanvasRef } onLoadError={ this.onLoadCanvasError } />
+						<ImageEditorCanvas
+							ref={ this.editCanvasRef }
+							widthLimit={ widthLimit }
+							onLoadError={ this.onLoadCanvasError }
+						/>
 						<ImageEditorToolbar
 							onShowNotice={ this.showNotice }
 							allowedAspectRatios={ allowedAspectRatios }
