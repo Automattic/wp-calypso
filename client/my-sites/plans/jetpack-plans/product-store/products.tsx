@@ -7,6 +7,7 @@ const Products: React.FC< ProductProps > = ( { type } ) => {
 			{ type === 'products' && <div>Product Component goes here</div> }
 			{ type === 'bundles' && (
 				<div>
+					Bundle Component goes here
 					<SeeAllFeatures />
 				</div>
 			) }
