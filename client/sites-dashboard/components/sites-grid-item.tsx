@@ -62,7 +62,16 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 		<SitesGridTile
 			leading={
 				<ThumbnailLink { ...siteDashboardUrlProps }>
-					<SiteItemThumbnail className={ siteThumbnail } site={ site } size={ 'medium' } />
+					<SiteItemThumbnail
+						className={ siteThumbnail }
+						site={ site }
+						size={ 'medium' }
+						mshotsOption={ {
+							vpw: 1200,
+							vph: 1200 * ( 11 / 16 ),
+							w: 403 * 2,
+						} }
+					/>
 				</ThumbnailLink>
 			}
 			primary={
