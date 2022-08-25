@@ -1,6 +1,6 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
 import { setQueryArgs } from 'calypso/lib/query-args';
@@ -110,16 +110,6 @@ const SearchBoxHeader = ( props ) => {
 			searchRef?.current?.setKeyword( '' );
 		}
 	}, [ searchRef, searchTerm ] );
-
-	const clearSearch = useCallback( () => {
-		setQueryArgs( {} );
-	}, [] );
-
-	useEffect( () => {
-		if ( ! searchTerm ) {
-			clearSearch();
-		}
-	}, [ clearSearch, searchTerm ] );
 
 	return (
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
