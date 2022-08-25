@@ -125,7 +125,7 @@ body.is-section-signup.is-white-signup {
 
 		.domains__free-domain .reskin-side-explainer__subtitle-2 {
 			display: none;
-			
+
 			@include break-small {
 				display: block;
 			}
@@ -248,27 +248,28 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 	.signup__step.is-domain-only,
-	.signup__step.is-domains {
+	.signup__step.is-domains,
+	.signup__step.is-domains-with-email {
 		padding: 0 20px;
 	}
 }
 
 // blue signup flow-specific styles
 body.is-section-signup:not( .is-white-signup ) {
-	
-    .domains__step-content {
-	
+
+	.domains__step-content {
+
 		a {
 			text-decoration: underline;
 			color: var( --color-text-inverted );
 		}
 
-        .domain-transfer-or-connect {
+		.domain-transfer-or-connect {
 
 			&__content {
-				
+
 				.option-content {
-		
+
 					&__illustration, &__main, &__action, &__header, &__top-text, &__pricing-text {
 						color: var( --color-text-inverted );
 					}
@@ -284,7 +285,7 @@ body.is-section-signup:not( .is-white-signup ) {
 					& + .option-content {
 						border-color: var( --studio-gray-40 );
 					}
-		
+
 				}
 
 			}
