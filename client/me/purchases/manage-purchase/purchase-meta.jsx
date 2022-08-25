@@ -247,18 +247,6 @@ function PurchaseMetaPrice( { purchase } ) {
 		return translate( 'Free with Plan' );
 	}
 
-	if ( plan && plan.term ) {
-		switch ( plan.term ) {
-			case TERM_BIENNIALLY:
-				period = translate( 'two years' );
-				break;
-
-			case TERM_MONTHLY:
-				period = translate( 'month' );
-				break;
-		}
-	}
-
 	if ( isEmailMonthly( purchase ) ) {
 		period = translate( 'month' );
 	}
@@ -276,6 +264,18 @@ function PurchaseMetaPrice( { purchase } ) {
 				break;
 			case 'per day':
 				period = translate( 'day' );
+				break;
+		}
+	}
+
+	if ( plan && plan.term ) {
+		switch ( plan.term ) {
+			case TERM_BIENNIALLY:
+				period = translate( 'two years' );
+				break;
+
+			case TERM_MONTHLY:
+				period = translate( 'month' );
 				break;
 		}
 	}
