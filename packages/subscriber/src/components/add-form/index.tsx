@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Title, NextButton, SkipButton } from '@automattic/onboarding';
-import { TextControl, FormFileUpload, Button } from '@wordpress/components';
+import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -19,7 +19,6 @@ import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition'
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { SUBSCRIBER_STORE } from '../../store';
 import './style.scss';
-import { AddSubscribersProgressScreen } from './progress-screen';
 
 interface Props {
 	siteId: number;
@@ -141,105 +140,107 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 */
 	return (
 		<div className={ 'add-subscriber' }>
-			{ inProgress && <AddSubscribersProgressScreen /> }
-			{ ! inProgress && (
-				<>
-					<div className={ 'add-subscriber__title-container' }>
-						{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
-						<Title>Add subscribers to build your audience</Title>
-					</div>
+			<div className={ 'add-subscriber__title-container' }>
+				{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
+				<Title>Add subscribers to build your audience</Title>
+			</div>
 
-					<div className={ 'add-subscriber__form--container' }>
-						<form onSubmit={ onFormSubmit }>
-							<TextControl
-								placeholder={ 'sibling@email.com' }
-								value={ emails[ 0 ] || '' }
-								help={ isValidEmails[ 0 ] ? <Icon icon={ check } /> : undefined }
-								onChange={ ( value ) => onEmailChange( value, 0 ) }
-							/>
-							<TextControl
-								placeholder={ 'parents@email.com' }
-								value={ emails[ 1 ] || '' }
-								help={ isValidEmails[ 1 ] ? <Icon icon={ check } /> : undefined }
-								onChange={ ( value ) => onEmailChange( value, 1 ) }
-							/>
-							<TextControl
-								placeholder={ 'friend@email.com' }
-								value={ emails[ 2 ] || '' }
-								help={ isValidEmails[ 2 ] ? <Icon icon={ check } /> : undefined }
-								onChange={ ( value ) => onEmailChange( value, 2 ) }
-							/>
+			<div className={ 'add-subscriber__form--container' }>
+				{ inProgress && <Notice isDismissible={ false }>You have email list importing...</Notice> }
 
-							{ ! isSelectedFileValid && (
-								<label className={ 'add-subscriber__form-label-error' }>
-									{ createInterpolateElement(
-										__(
-											'<span><icon /> Sorry, you can only upload a CSV file.</span><uploadBtn>Select another file</uploadBtn>'
-										),
-										{
-											span: createElement( 'span' ),
-											icon: createElement( Icon, { icon: info, size: 20 } ),
-											uploadBtn: formFileUploadElement,
-										}
-									) }
-								</label>
-							) }
+				<form onSubmit={ onFormSubmit }>
+					<TextControl
+						placeholder={ 'sibling@email.com' }
+						value={ emails[ 0 ] || '' }
+						help={ isValidEmails[ 0 ] ? <Icon icon={ check } /> : undefined }
+						onChange={ ( value ) => onEmailChange( value, 0 ) }
+					/>
+					<TextControl
+						placeholder={ 'parents@email.com' }
+						value={ emails[ 1 ] || '' }
+						help={ isValidEmails[ 1 ] ? <Icon icon={ check } /> : undefined }
+						onChange={ ( value ) => onEmailChange( value, 1 ) }
+					/>
+					<TextControl
+						placeholder={ 'friend@email.com' }
+						value={ emails[ 2 ] || '' }
+						help={ isValidEmails[ 2 ] ? <Icon icon={ check } /> : undefined }
+						onChange={ ( value ) => onEmailChange( value, 2 ) }
+					/>
 
-							{ isSelectedFileValid && selectedFile && (
-								<label className={ 'add-subscriber__form-label-links' }>
-									{ createInterpolateElement(
-										sprintf(
-											/* translators: the first string variable shows a selected file name, Replace and Remove are links" */
-											__(
-												'<strong>%s</strong> <uploadBtn>Replace</uploadBtn> | <removeBtn>Remove</removeBtn>'
-											),
-											selectedFile?.name
-										),
-										{
-											strong: createElement( 'strong' ),
-											uploadBtn: formFileUploadElement,
-											removeBtn: createElement( Button, {
-												isLink: true,
-												onClick: () => setSelectedFile( undefined ),
-											} ),
-										}
-									) }
-								</label>
+					{ ! isSelectedFileValid && (
+						<label className={ 'add-subscriber__form-label-error' }>
+							{ createInterpolateElement(
+								__(
+									'<span><icon /> Sorry, you can only upload a CSV file.</span><uploadBtn>Select another file</uploadBtn>'
+								),
+								{
+									span: createElement( 'span' ),
+									icon: createElement( Icon, { icon: info, size: 20 } ),
+									uploadBtn: formFileUploadElement,
+								}
 							) }
+						</label>
+					) }
 
-							{ showCsvUpload && isSelectedFileValid && ! selectedFile && (
-								<label>
-									{ createInterpolateElement(
-										__(
-											'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-										),
-										{ uploadBtn: formFileUploadElement }
-									) }
-								</label>
+					{ isSelectedFileValid && selectedFile && (
+						<label className={ 'add-subscriber__form-label-links' }>
+							{ createInterpolateElement(
+								sprintf(
+									/* translators: the first string variable shows a selected file name, Replace and Remove are links" */
+									__(
+										'<strong>%s</strong> <uploadBtn>Replace</uploadBtn> | <removeBtn>Remove</removeBtn>'
+									),
+									selectedFile?.name
+								),
+								{
+									strong: createElement( 'strong' ),
+									uploadBtn: formFileUploadElement,
+									removeBtn: createElement( Button, {
+										isLink: true,
+										onClick: () => setSelectedFile( undefined ),
+									} ),
+								}
 							) }
+						</label>
+					) }
 
-							<NextButton type={ 'submit' } className={ 'add-subscriber__form-submit-btn' }>
-								{ submitBtnName || 'Add subscribers' }
-							</NextButton>
-							{ showSkipBtn && (
-								<SkipButton
-									className={ 'add-subscriber__form-skip-btn' }
-									onClick={ () => onSkipBtnClick?.() }
-								>
-									Not yet
-								</SkipButton>
+					{ showCsvUpload && isSelectedFileValid && ! selectedFile && (
+						<label>
+							{ createInterpolateElement(
+								__(
+									'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+								),
+								{ uploadBtn: formFileUploadElement }
 							) }
-							{ showCsvUpload && (
-								<p className={ 'add-subscriber__form--disclaimer' }>
-									By adding a mailing list CSV, you are confirming that you have the rights to share
-									newsletters with the people within your list.{ ' ' }
-									<Button isLink={ true }>Learn more</Button>
-								</p>
-							) }
-						</form>
-					</div>
-				</>
-			) }
+						</label>
+					) }
+
+					<NextButton
+						type={ 'submit' }
+						className={ 'add-subscriber__form-submit-btn' }
+						isBusy={ inProgress }
+						disabled={ inProgress }
+					>
+						{ submitBtnName || 'Add subscribers' }
+					</NextButton>
+					{ showSkipBtn && (
+						<SkipButton
+							className={ 'add-subscriber__form-skip-btn' }
+							onClick={ () => onSkipBtnClick?.() }
+						>
+							Not yet
+						</SkipButton>
+					) }
+					{ showCsvUpload && (
+						<p className={ 'add-subscriber__form--disclaimer' }>
+							By adding a mailing list CSV, you are confirming that you have the rights to share
+							newsletters with the people within your list.{ ' ' }
+							<Button isLink={ true }>Learn more</Button>
+						</p>
+					) }
+				</form>
+			</div>
 		</div>
 	);
 };
