@@ -125,7 +125,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		function renderStepContent() {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
-			} else if ( ! siteSlug || ! siteItem || ! siteId || ! fromSite ) {
+			} else if ( ! siteSlug || ! siteItem || ! siteId ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {
 				return (
