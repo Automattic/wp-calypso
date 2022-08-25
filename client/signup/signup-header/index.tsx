@@ -1,5 +1,5 @@
-import { useFlowProgress } from '@automattic//onboarding';
 import { ProgressBar } from '@automattic/components';
+import { useFlowProgress } from '@automattic/onboarding';
 import classnames from 'classnames';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
