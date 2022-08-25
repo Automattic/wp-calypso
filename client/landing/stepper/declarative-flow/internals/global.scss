@@ -154,37 +154,46 @@ button {
  */
 .newsletter,
 .link-in-bio {
-	button.components-button {
-		border-radius: 4px;
-	}
-
-	button.site-icon-with-picker__upload-button {
-		font-family: 'SF Pro Text', $sans;
-		transition: ease 300ms;
-		border: 1px solid var( --studio-gray-10 );
-
-		svg {
-			transition: ease 300ms;
-			fill: var( --studio-blue-50 );
-		}
-
-		span {
-			font-size: $font-body-extra-small;
-		}
-
-		&:hover,
-		&:focus {
-			box-shadow: none;
-			outline: none;
+	button {
+		&[type='submit'] {
+			font-size: $font-body-small;
 			background-color: var( --studio-blue-50 );
+			font-weight: 500;
+		}
 
-			svg {
-				fill: #fff;
-			}
+		&.components-button {
+			border-radius: 4px;
 
-			span {
-				font-size: $font-body-extra-small;
-				color: var( --studio-blue-50 );
+			&.site-icon-with-picker__upload-button {
+				border-radius: 50%; /* stylelint-disable-line */
+				font-family: 'SF Pro Text', $sans;
+				transition: ease 300ms;
+				border: 1px solid var( --studio-gray-10 );
+
+				svg {
+					transition: ease 300ms;
+					fill: var( --studio-blue-50 );
+				}
+
+				span {
+					font-size: $font-body-extra-small;
+				}
+
+				&:hover,
+				&:focus {
+					box-shadow: none;
+					outline: none;
+					background-color: var( --studio-blue-50 );
+
+					svg {
+						fill: #fff;
+					}
+
+					span {
+						font-size: $font-body-extra-small;
+						color: var( --studio-blue-50 );
+					}
+				}
 			}
 		}
 	}
@@ -203,12 +212,6 @@ button {
 			&:focus {
 				box-shadow: 0 0 0 2px #e2eaf1;
 			}
-		}
-
-		button[type='submit'] {
-			font-size: $font-body-small;
-			background-color: var( --studio-blue-50 );
-			font-weight: 500;
 		}
 	}
 
@@ -236,6 +239,7 @@ button {
 				border: none;
 				outline: solid 2px var( --studio-gray-70 );
 				outline-offset: 2px;
+				box-shadow: none;
 			}
 		}
 	}
