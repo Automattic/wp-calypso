@@ -142,11 +142,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		<div className={ 'add-subscriber' }>
 			<div className={ 'add-subscriber__title-container' }>
 				{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
-				<Title>Add subscribers to build your audience</Title>
+				<Title>{ __( 'Add subscribers to build your audience' ) }</Title>
 			</div>
 
 			<div className={ 'add-subscriber__form--container' }>
-				{ inProgress && <Notice isDismissible={ false }>You have email list importing...</Notice> }
+				{ inProgress && (
+					<Notice isDismissible={ false }>{ __( 'You have email list importing' ) }...</Notice>
+				) }
 
 				<form onSubmit={ onFormSubmit }>
 					<TextControl
@@ -218,8 +220,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ showCsvUpload && isSelectedFileValid && selectedFile && (
 						<p className={ 'add-subscriber__form--disclaimer' }>
-							By clicking "continue", you represent that you've obtained the appropriate consent to
-							email each person on your list. <Button isLink={ true }>Learn more</Button>
+							{ createInterpolateElement(
+								__(
+									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to ' +
+										'email each person on your list. <Button>Learn more</Button>'
+								),
+								{ Button: createElement( Button, { isLink: true } ) }
+							) }
 						</p>
 					) }
 
@@ -229,14 +236,14 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						isBusy={ inProgress }
 						disabled={ inProgress }
 					>
-						{ submitBtnName || 'Add subscribers' }
+						{ submitBtnName || __( 'Add subscribers' ) }
 					</NextButton>
 					{ showSkipBtn && (
 						<SkipButton
 							className={ 'add-subscriber__form-skip-btn' }
 							onClick={ () => onSkipBtnClick?.() }
 						>
-							Not yet
+							{ __( 'Not yet' ) }
 						</SkipButton>
 					) }
 				</form>
