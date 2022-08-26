@@ -6,6 +6,7 @@ import { MShotsOptions, useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
 type SizeCss = CSSObject & { width: number; height: number; sizes?: string };
+const ASPECT_RATIO = 16 / 11;
 const SIZES: { [ sizeName: string ]: SizeCss } = {
 	small: {
 		width: 108,
@@ -13,7 +14,7 @@ const SIZES: { [ sizeName: string ]: SizeCss } = {
 	},
 	medium: {
 		width: 401,
-		height: 401 * ( 11 / 16 ),
+		height: 401 / ASPECT_RATIO,
 		sizes: [
 			'(min-width: 1400px) 401px',
 			'(min-width: 960px) calc(33vw - 48px)',
