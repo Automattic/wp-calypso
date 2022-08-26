@@ -40,7 +40,7 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const headerText = translate( 'Choose where you want us to build your site.' );
 	const subHeaderText = translate(
-		'Some unsupported sites may be hidden. Please {{SupportLink}}contact support{{/SupportLink}} if your existing WordPress.com site isn’t listed, or create a {{NewSiteLink}}new site{{/NewSiteLink}} instead.',
+		'Please {{SupportLink}}contact support{{/SupportLink}} if your existing WordPress.com site isn’t listed, or create a {{NewSiteLink}}new site{{/NewSiteLink}} instead.',
 		{
 			components: {
 				SupportLink: <a className="subtitle-link" rel="noopener noreferrer" href="/help/contact" />,
