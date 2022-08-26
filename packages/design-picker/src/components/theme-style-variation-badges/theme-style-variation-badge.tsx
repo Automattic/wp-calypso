@@ -1,14 +1,12 @@
-import { createElement, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { ThemeStyleVariation, ThemeStyleVariationSettingsColorPalette } from '../../types';
 import './style.scss';
 
-interface ThemeStyleVariationsBadgeProps {
-	tagName?: string;
+interface ThemeStyleVariationBadgeProps {
 	variation?: ThemeStyleVariation;
 }
 
-const ThemeStyleVariationsBadge: React.FC< ThemeStyleVariationsBadgeProps > = ( {
-	tagName = 'button',
+const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( {
 	variation,
 } ) => {
 	const { background, primary } = useMemo( () => {
@@ -30,19 +28,14 @@ const ThemeStyleVariationsBadge: React.FC< ThemeStyleVariationsBadgeProps > = ( 
 
 	return (
 		<div className="theme-style-variation-wrapper">
-			{ createElement(
-				tagName,
-				{
-					style: {
-						backgroundColor: background,
-						color: primary,
-					},
-					...( tagName === 'button' && { type: 'button' } ),
-				},
-				'A'
-			) }
+			<span style={ {
+				backgroundColor: background,
+				color: primary,
+			} }>
+				A
+			</span>
 		</div>
 	);
 };
 
-export default ThemeStyleVariationsBadge;
+export default ThemeStyleVariationBadge;

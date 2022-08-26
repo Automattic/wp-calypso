@@ -1,16 +1,14 @@
-import { createElement, useMemo } from 'react';
-import ThemeStyleVariationsBadge from './theme-style-variations-badge';
+import { useMemo } from 'react';
+import ThemeStyleVariationBadge from './theme-style-variation-badge';
 import type { ThemeStyleVariation } from '../../types';
 import './style.scss';
 
-interface ThemeStyleVariationsBadgesProps {
-	tagName?: string;
+interface ThemeStyleVariationBadgesProps {
 	maxVariationsToShow?: number;
 	variations: ThemeStyleVariation[];
 }
 
-const ThemeStyleVariationsBadges: React.FC< ThemeStyleVariationsBadgesProps > = ( {
-	tagName = 'button',
+const ThemeStyleVariationBadges: React.FC< ThemeStyleVariationBadgesProps > = ( {
 	maxVariationsToShow = 4,
 	variations = [],
 } ) => {
@@ -22,19 +20,18 @@ const ThemeStyleVariationsBadges: React.FC< ThemeStyleVariationsBadgesProps > = 
 	return (
 		<>
 			{ variationsToShow.map( ( variation ) => (
-				<ThemeStyleVariationsBadge
+				<ThemeStyleVariationBadge
 					key={ variation.slug }
-					tagName={ tagName }
 					variation={ variation }
 				/>
 			) ) }
 			{ variations.length > variationsToShow.length && (
 				<div className="theme-style-variations-more-wrapper">
-					{ createElement( tagName, null, `+${ variations.length - variationsToShow.length }` ) }
+					<span>{ `+${ variations.length - variationsToShow.length }` }</span>
 				</div>
 			) }
 		</>
 	);
 };
 
-export default ThemeStyleVariationsBadges;
+export default ThemeStyleVariationBadges;
