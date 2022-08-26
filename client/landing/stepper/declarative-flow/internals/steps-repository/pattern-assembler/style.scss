@@ -1,0 +1,88 @@
+$font-family: 'SF Pro Text', $sans;
+
+.pattern-assembler {
+
+    .step-container__content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .pattern-assembler__wrapper {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+    }
+    
+    .pattern-assembler__sidebar {
+        width: 343px;
+        margin-bottom: 0;
+        box-sizing: border-box;
+    }
+    
+    .pattern-assembler__preview {
+        flex-basis: 100%;
+        border: 1px solid #ccc;
+        margin-inline-start: 32px;
+    }
+
+    .patterns-selector {
+        .patterns-selector__button {
+            width: 100%;
+            &:last-child {
+                margin-top: 8px;
+            }
+        }
+
+        .patterns-selector__header h1 {
+            font-family: $font-family;
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 26px;
+        }
+
+        .patterns-selector__body {
+            margin: 32px 0;
+            padding: 2px;
+            overflow: auto;
+            max-height: calc( 100vh - 298px);
+        }
+        
+        .patterns-selector__footer {
+            
+        }
+        
+        .patterns-selector__block-list {
+            iframe {
+                width: 1024px;
+                height: 665px;
+                transform: scale(0.2705);
+                transform-origin: top left;
+                position: absolute;
+                border-radius: 3px;
+                pointer-events: none;
+            }
+            div {
+                margin-bottom: 16px;
+                border: 1px solid rgba(0, 0, 0, 0.05);
+                border-radius: 3px;
+                min-height: 140px;
+                transform: translateZ(0);
+                overflow: hidden;
+                user-select: none;
+                cursor: pointer;
+    
+                &:focus, &:hover {
+                    box-shadow: 0 0 0 2px var(--color-primary-light);
+                    outline: 0;
+                    iframe {
+                        opacity: 0.6;
+                    }
+                }
+                &.--pattern-selected {
+                    outline: 1.5px solid #0675C4;
+                }
+            }
+        }
+    }
+}
