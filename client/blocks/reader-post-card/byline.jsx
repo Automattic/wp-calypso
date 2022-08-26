@@ -63,11 +63,11 @@ class TagsList extends Component {
 				</button>
 			</span>
 		);
-		return ! this.state.showExtraTags && extraTags.length && extraTagsButton;
+		return ! this.state.showExtraTags && extraTags.length > 0 && extraTagsButton;
 	};
 
 	displayExtraTags = ( extraTags ) => {
-		return this.state.showExtraTags && extraTags.length && extraTags;
+		return this.state.showExtraTags && extraTags.length > 0 && extraTags;
 	};
 
 	render() {
