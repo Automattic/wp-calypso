@@ -52,7 +52,6 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		switch ( category ) {
 			// Scroll back to top if user is coming from "Discover".
 			case 'popular':
-			case 'featured':
 			case 'paid':
 				window.scroll( 0, 0 );
 		}
