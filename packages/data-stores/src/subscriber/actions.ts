@@ -78,10 +78,15 @@ export function createActions() {
 
 		try {
 			const data: AddSubscribersResponse = yield wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers`,
+				path: `/sites/${ encodeURIComponent( siteId ) }/invites/new`,
 				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				body: { emails },
+				apiNamespace: 'rest/v1.1',
+				body: {
+					invitees: emails,
+					role: 'follower',
+					source: 'calypso',
+					is_external: false,
+				},
 			} );
 
 			yield addSubscribersSuccess( siteId, data );
