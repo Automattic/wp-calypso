@@ -5,6 +5,7 @@
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
+		align-items: center;
 
 		.campaign-item__header-image {
 			height: 80px;
@@ -18,6 +19,7 @@
 		}
 
 		.campaign-item__header-content {
+			flex: 1;
 			display: flex;
 			flex-direction: column;
 			justify-content: space-around;
