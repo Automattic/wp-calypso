@@ -13,7 +13,6 @@ interface Props {
 	items: Array< any >;
 	isLoading: boolean;
 	columns: Columns;
-	title?: ReactNode;
 	renderActions?: ( args: any ) => ReactElement;
 	primaryKey: string;
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;

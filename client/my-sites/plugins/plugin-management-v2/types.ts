@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 
 export type Columns = Array< {
 	key: string;
-	header?: ReactChild;
+	header?: ReactNode;
 	smallColumn?: boolean;
 	colSpan?: number;
 } >;
