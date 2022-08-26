@@ -142,6 +142,8 @@ function getNewSiteParams( {
 		get( signupDependencies, 'themeSlugWithRepo', false ) ||
 		siteTypeTheme;
 
+	const launchAsComingSoon = get( signupDependencies, 'comingSoon', 1 );
+
 	// We will use the default annotation instead of theme annotation as fallback,
 	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
 	const shouldUseDefaultAnnotationAsFallback = true;
@@ -160,7 +162,7 @@ function getNewSiteParams( {
 			},
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
-			wpcom_public_coming_soon: 1,
+			wpcom_public_coming_soon: launchAsComingSoon,
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 		},
 		validate: false,
