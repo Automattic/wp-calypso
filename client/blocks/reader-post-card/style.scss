@@ -14,14 +14,15 @@
 }
 
 .reader-post-card.card {
-	border-bottom: 1px solid var(--color-neutral-10);
+	border-bottom: 5px solid var( --color-neutral-0 );
 	box-shadow: none;
-	margin: 0 15px;
-	padding: 18px 0 20px;
+	margin: 0;
+	padding: 18px 15px 20px;
 	position: relative;
 
-	@include breakpoint-deprecated( ">660px" ) {
-		margin: 0;
+	@include breakpoint-deprecated( '>660px' ) {
+		border-bottom: 1px solid var( --color-neutral-5 );
+		padding: 18px 0 20px;
 	}
 
 	&.is-selected {
@@ -336,7 +337,6 @@
 	margin-right: 12px;
 	overflow: hidden;
 	position: relative;
-	width: calc(100% - 140px);
 
 	@include breakpoint-deprecated( "<480px" ) {
 		max-width: 500px;
