@@ -57,9 +57,7 @@ export async function showDSP(
 				authToken: 'wpcom-proxy-request',
 				template: 'article',
 				onLoaded: () => resolve( true ),
-				onClose: () => {
-					onClose();
-				},
+				onClose: onClose,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 			} );
 		} else {
@@ -70,6 +68,7 @@ export async function showDSP(
 
 export async function showDSPWidgetModal( siteSlug: string, siteId: number, postId?: number ) {
 	await loadDSPWidgetJS();
+
 	if ( window.BlazePress ) {
 		await window.BlazePress.render( {
 			siteSlug: siteSlug,

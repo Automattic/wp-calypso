@@ -1,4 +1,8 @@
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import ButtonGroup from 'calypso/components/button-group';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import PluginsList from './plugins-list';
 import type { Plugin } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -11,48 +15,88 @@ interface Props {
 	isLoading: boolean;
 	selectedSite: SiteDetails;
 	searchTerm: string;
+	isBulkManagementActive: boolean;
+	pluginUpdateCount: number;
+	toggleBulkManagement: () => void;
+	updateAllPlugins: () => void;
 }
 export default function PluginManagementV2( {
 	plugins,
 	isLoading,
 	selectedSite,
 	searchTerm,
+	isBulkManagementActive,
+	pluginUpdateCount,
+	toggleBulkManagement,
+	updateAllPlugins,
 }: Props ): ReactElement {
 	const translate = useTranslate();
+
+	const renderBulkActionsHeader = () => {
+		if ( isLoading ) {
+			return <TextPlaceholder />;
+		}
+
+		return (
+			<div className="plugin-common-table__bulk-actions">
+				{ !! pluginUpdateCount && (
+					<ButtonGroup>
+						<Button compact primary onClick={ updateAllPlugins }>
+							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
+								context: 'button label',
+								count: pluginUpdateCount,
+								args: {
+									numUpdates: pluginUpdateCount,
+								},
+							} ) }
+						</Button>
+					</ButtonGroup>
+				) }
+				<ButtonGroup>
+					<Button compact onClick={ toggleBulkManagement }>
+						{ translate( 'Edit All', { context: 'button label' } ) }
+					</Button>
+				</ButtonGroup>
+			</div>
+		);
+	};
+
 	const columns = [
 		{
 			key: 'plugin',
-			title: translate( 'Installed Plugins' ),
+			header: translate( 'Installed Plugins' ),
 		},
 		...( selectedSite
 			? [
 					{
 						key: 'activate',
-						title: translate( 'Active' ),
+						header: translate( 'Active' ),
 						smallColumn: true,
 					},
 					{
 						key: 'autoupdate',
-						title: translate( 'Autoupdate' ),
+						header: translate( 'Autoupdate' ),
 						smallColumn: true,
 					},
 					{
 						key: 'last-updated',
-						title: translate( 'Last updated' ),
+						header: translate( 'Last updated' ),
 						smallColumn: true,
-						colSpan: 2,
+						colSpan: 1,
 					},
 			  ]
 			: [
 					{
 						key: 'sites',
-						title: translate( 'Sites' ),
+						header: translate( 'Sites' ),
 						smallColumn: true,
-						colSpan: 2,
+						colSpan: 1,
 					},
 			  ] ),
 		{
 			key: 'update',
+			header: renderBulkActionsHeader(),
+			colSpan: 3,
 		},
 	];
 
@@ -64,16 +108,20 @@ export default function PluginManagementV2( {
 		return <div className="plugin-management-v2__no-sites">{ emptyStateMessage }</div>;
 	}
 
-	const title = translate( 'Installed Plugins' );
-
 	return (
-		<div className="plugin-management-v2__main-content-container">
+		<div
+			className={ classNames( 'plugin-management-v2__main-content-container', {
+				'is-bulk-management-active': isBulkManagementActive,
+			} ) }
+		>
 			<PluginsList
 				items={ plugins }
 				columns={ columns }
 				isLoading={ isLoading }
+				className={ classNames( {
+					'has-bulk-management-active': isBulkManagementActive,
+				} ) }
 				selectedSite={ selectedSite }
-				title={ title }
 			/>
 		</div>
 	);

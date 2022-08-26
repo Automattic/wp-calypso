@@ -9,6 +9,7 @@ import {
 	useCourseData,
 	useUpdateUserCourseProgressionMutation,
 } from 'calypso/data/courses';
+import { COURSE_DETAILS } from 'calypso/data/courses/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import VideoChapters from './video-chapters';
 import VideoPlayer from './video-player';
@@ -118,26 +119,18 @@ const VideosUi = ( {
 				) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
-						<h2>{ translate( 'Watch five videos.' ) }</h2>
-						<h2>{ translate( 'Save yourself hours.' ) }</h2>
+						<h2>{ COURSE_DETAILS[ courseSlug ].headerTitle }</h2>
+						<h2>{ COURSE_DETAILS[ courseSlug ].headerSubtitle }</h2>
 					</div>
 					<div className="videos-ui__summary">
 						<ul>
-							<li>
-								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-								{ translate( 'Learn the basics of blogging' ) }
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-								{ translate( 'Familiarize yourself with WordPress' ) }
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size={ 18 } /> { translate( 'Upskill and save hours' ) }
-							</li>
-							<li>
-								<Gridicon icon="checkmark" size={ 18 } />{ ' ' }
-								{ translate( 'Set yourself up for blogging success' ) }
-							</li>
+							{ COURSE_DETAILS[ courseSlug ].headerSummary.map( ( text ) => {
+								return (
+									<li>
+										<Gridicon icon="checkmark" size={ 18 } /> { text }
+									</li>
+								);
+							} ) }
 						</ul>
 					</div>
 				</div>
