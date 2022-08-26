@@ -44,7 +44,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				);
 				setIsLoading( false );
 			} )();
-	}, [ isVisible, onClose, props.postId, props.siteId ] );
+	}, [ isVisible, props.postId, props.siteId ] );
 
 	const promoteWidgetStatus = usePromoteWidget();
 	if ( promoteWidgetStatus === PromoteWidgetStatus.DISABLED ) {
