@@ -10451,6 +10451,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"allure-js-commons@npm:^2.0.0-beta.19":
+  version: 2.0.0-beta.19
+  resolution: "allure-js-commons@npm:2.0.0-beta.19"
+  dependencies:
+    mkdirp: ^1.0.4
+    properties: ^1.2.1
+    uuid: ^8.3.0
+  checksum: 24d1041668f5d00e608fc65f8190b952e2dfd7455c8739eedef4ea4ac9b332582284ceba66a967b6ddd240eee1e5ddcf4d1ee2e3ed9e7153beb85ea7e6959d30
+  languageName: node
+  linkType: hard
+
 "alphanum-sort@npm:^1.0.2":
   version: 1.0.2
   resolution: "alphanum-sort@npm:1.0.2"
@@ -28041,6 +28052,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"properties@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "properties@npm:1.2.1"
+  checksum: c6ed008981dbe66e5d622064559166924d6bd56a0b9c4dcb41889457c47467683bda4091c69c348bf703051f95d8fa53cac4dc658172f9f752c00b8622dbc708
+  languageName: node
+  linkType: hard
+
 "property-information@npm:^5.0.0, property-information@npm:^5.3.0":
   version: 5.6.0
   resolution: "property-information@npm:5.6.0"
@@ -35801,6 +35819,7 @@ swiper@4.5.1:
     "@wordpress/primitives": ^3.8.0
     "@wordpress/stylelint-config": ^20.0.2
     "@wordpress/url": ^3.10.0
+    allure-js-commons: ^2.0.0-beta.19
     babel-loader: ^8.2.3
     backstopjs: 5.1.0
     browserslist: ^4.16.0
