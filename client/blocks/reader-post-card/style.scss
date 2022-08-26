@@ -264,7 +264,8 @@
 // Need .reader__content to override .reader__content a
 .reader__content .reader-post-card__timestamp-link,
 .reader__content .reader-post-card__tag-link {
-	color: var( --color-text-subtle );
+	color: var( --color-neutral-80 );
+	font-size: 12px;
 	margin-top: 2px;
 	cursor: pointer;
 	&:hover {
@@ -317,13 +318,18 @@
 	display: flex;
 	flex-direction: row;
 	height: 40px;
-	overflow: hidden;
+	overflow-y: scroll;
 	position: relative;
+	-ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
 	width: calc( 100% - 140px );
 	gap: 5px;
+	&::-webkit-scrollbar {
+		display: none;  /* Safari and Chrome */
+	}
 
 	@include breakpoint-deprecated( '<480px' ) {
-		max-width: 500px;
+		width: 88%;
 	}
 
 	&::after {
@@ -334,7 +340,7 @@
 .reader-post-card__tag {
 	white-space: nowrap;
 	border-radius: 4px;
-	padding: 3px 7px;
+	padding: 0 9px 2px;
 	background-color: var( --color-neutral-0 );
 	align-self: center;
 }
