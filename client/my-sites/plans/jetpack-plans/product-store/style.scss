@@ -37,6 +37,23 @@
 		margin-top: 3em;
 	}
 
+	&__most-popular--heading {
+		margin-bottom: 2em;
+	}
+
+	&__most-popular--items {
+		display: flex;
+		justify-content: space-evenly;
+	}
+
+	&__products-list-all {
+		margin-top: 4em;
+	}
+
+	&__products-list-all h3 {
+		margin-bottom: 2.5em;
+	}
+
 	&__see-all-features {
 		display: flex;
 		justify-content: center;
