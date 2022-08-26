@@ -2,14 +2,13 @@ import PluginCommonList from '../plugin-common/plugin-common-list';
 import PluginRowFormatter from '../plugin-row-formatter';
 import type { Columns, SiteRowFormatterArgs, Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement } from 'react';
 
 interface Props {
 	selectedSite: SiteDetails;
 	items: Array< SiteDetails | null | undefined >;
 	isLoading: boolean;
 	columns: Columns;
-	title?: ReactNode;
 	plugin: Plugin;
 	renderActions?: ( args: any ) => ReactElement;
 }

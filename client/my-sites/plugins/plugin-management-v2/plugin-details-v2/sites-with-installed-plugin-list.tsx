@@ -26,16 +26,16 @@ export default function SitesWithInstalledPluginsList( {
 	const columns = [
 		{
 			key: 'site-name',
-			title: translate( 'Site' ),
+			header: translate( 'Site' ),
 		},
 		{
 			key: 'activate',
-			title: translate( 'Active' ),
+			header: translate( 'Active' ),
 			smallColumn: true,
 		},
 		{
 			key: 'autoupdate',
-			title: translate( 'Autoupdate' ),
+			header: translate( 'Autoupdate' ),
 			smallColumn: true,
 			colSpan: 2,
 		},
