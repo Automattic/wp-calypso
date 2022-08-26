@@ -6,7 +6,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useProductSlugs from './hooks/use-product-slugs';
 import { JetpackFree } from './jetpack-free';
 import ProductFilter from './product-filter';
-import Product from './products';
+import Products from './products';
 import { Recommendations } from './recommendations';
 import { UserLicensesDialog } from './user-licenses-dialog';
 import type { FilterType, ProductStoreProps } from './types';
@@ -32,7 +32,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			</div>
 
 			<ProductFilter filterType={ filterType } setFilterType={ setFilterType } />
-			<Product type={ filterType }></Product>
+			<Products type={ filterType } />
 			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 
 			<Recommendations />
