@@ -23,7 +23,11 @@ export interface ViewFilterProps {
 	setCurrentView: ( currentView: ViewType ) => void;
 }
 
-export interface ItemsListProps {
+export type ProductsListProps = ProductStoreBaseProps & Pick< ProductStoreProps, 'duration' >;
+
+export type BundlesListProps = ProductsListProps;
+
+export interface ItemsListProps extends ProductsListProps {
 	currentView: ViewType;
 }
 
