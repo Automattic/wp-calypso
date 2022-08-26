@@ -32,7 +32,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			</div>
 
 			<ViewFilter currentView={ currentView } setCurrentView={ setCurrentView } />
-			<ItemsList currentView={ currentView } />
+			<ItemsList currentView={ currentView } duration={ duration } siteId={ siteId } />
 			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 
 			<Recommendations />
