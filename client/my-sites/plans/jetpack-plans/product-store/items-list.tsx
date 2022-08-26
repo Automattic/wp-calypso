@@ -1,19 +1,19 @@
 import { useTranslate } from 'i18n-calypso';
 import { MostPopular } from './most-popular';
 import { SeeAllFeatures } from './see-all-features';
-import type { ProductProps } from './types';
+import type { ItemsListProps } from './types';
 
-const Products: React.FC< ProductProps > = ( { type } ) => {
+export const ItemsList: React.FC< ItemsListProps > = ( { currentView } ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className="jetpack-product-store__products">
-			{ type === 'products' && (
+		<div className="jetpack-product-store__items-list">
+			{ currentView === 'products' && (
 				<div>
 					<MostPopular heading={ translate( 'Most popular products' ) } items={ <></> } />
 				</div>
 			) }
-			{ type === 'bundles' && (
+			{ currentView === 'bundles' && (
 				<div>
 					<MostPopular heading={ translate( 'Most popular bundles' ) } items={ <></> } />
 					<SeeAllFeatures />
@@ -22,5 +22,3 @@ const Products: React.FC< ProductProps > = ( { type } ) => {
 		</div>
 	);
 };
-
-export default Products;
