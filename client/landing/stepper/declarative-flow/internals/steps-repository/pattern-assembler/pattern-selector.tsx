@@ -25,7 +25,7 @@ const handleKeyboard =
 	};
 
 const PatternsSelector = ( { patterns, onSelect, title, pattern }: PatternsSelectorProps ) => {
-	const [ selectedPattern, setSelectedPattern ] = useState( null );
+	const [ selectedPattern, setSelectedPattern ] = useState< Pattern | null >( null );
 	const translate = useTranslate();
 
 	const handleContinueClick = () => {
@@ -36,7 +36,7 @@ const PatternsSelector = ( { patterns, onSelect, title, pattern }: PatternsSelec
 		onSelect( null );
 	};
 
-	const isSelected = ( id ) => id === ( selectedPattern?.id || pattern?.id );
+	const isSelected = ( id: number ) => id === ( selectedPattern?.id || pattern?.id );
 
 	return (
 		<div className="patterns-selector">
@@ -45,7 +45,7 @@ const PatternsSelector = ( { patterns, onSelect, title, pattern }: PatternsSelec
 			</div>
 			<div className="patterns-selector__body">
 				<div className="patterns-selector__block-list" role="listbox">
-					{ patterns.map( ( item: Pattern ) => (
+					{ patterns?.map( ( item: Pattern ) => (
 						<div
 							key={ item.id }
 							aria-label={ item.name }
@@ -57,7 +57,7 @@ const PatternsSelector = ( { patterns, onSelect, title, pattern }: PatternsSelec
 							onKeyUp={ handleKeyboard( () => setSelectedPattern( item ) ) }
 						>
 							<iframe
-								title={ translate( item.name ) }
+								title={ item.name }
 								src={ getPatternPreviewUrl( item.id ) }
 								frameBorder="0"
 								aria-hidden

@@ -20,9 +20,6 @@ const PatternLayout = ( {
 	onSelectHeader,
 	onSelectSection,
 	onSelectFooter,
-	header,
-	sections,
-	footer,
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
 

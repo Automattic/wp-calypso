@@ -36,7 +36,7 @@ $font-family: 'SF Pro Text', $sans;
 
         .patterns-selector__header h1 {
             font-family: $font-family;
-            font-size: 20px;
+            font-size: $font-title-small;
             font-weight: 500;
             line-height: 26px;
         }
@@ -45,42 +45,38 @@ $font-family: 'SF Pro Text', $sans;
             margin: 32px 0;
             padding: 2px;
             overflow: auto;
-            max-height: calc( 100vh - 298px);
-        }
-        
-        .patterns-selector__footer {
-            
+            max-height: calc( 100vh - 298px );
         }
         
         .patterns-selector__block-list {
             iframe {
                 width: 1024px;
                 height: 665px;
-                transform: scale(0.2705);
+                transform: scale( 0.2705 );
                 transform-origin: top left;
                 position: absolute;
-                border-radius: 3px;
+                border-radius: 4px;
                 pointer-events: none;
             }
             div {
                 margin-bottom: 16px;
-                border: 1px solid rgba(0, 0, 0, 0.05);
-                border-radius: 3px;
+                border: 1px solid rgba( 0, 0, 0, 0.05 );
+                border-radius: 4px;
                 min-height: 140px;
-                transform: translateZ(0);
+                transform: translateZ( 0 );
                 overflow: hidden;
                 user-select: none;
                 cursor: pointer;
     
                 &:focus, &:hover {
-                    box-shadow: 0 0 0 2px var(--color-primary-light);
+                    box-shadow: 0 0 0 2px var( --color-primary-light );
                     outline: 0;
                     iframe {
                         opacity: 0.6;
                     }
                 }
                 &.--pattern-selected {
-                    outline: 1.5px solid #0675C4;
+                    outline: 1.5px solid #0675c4;
                 }
             }
         }
