@@ -93,7 +93,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 }
 
 function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
-	const { slug, title, recipe, style_variations } = design;
+	const { slug, title, recipe } = design;
 
 	return {
 		slug,
@@ -105,6 +105,5 @@ function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
 		template: '',
 		theme: '',
 		design_type: 'vertical',
-		style_variations,
 	};
 }
