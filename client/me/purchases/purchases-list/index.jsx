@@ -14,16 +14,9 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
-import {
-	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
-	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
-	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
-	CONCIERGE_WPCOM_BUSINESS_ID,
-	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
-} from 'calypso/me/concierge/constants';
+import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
 	getUserPurchases,
@@ -31,11 +24,11 @@ import {
 	isFetchingUserPurchases,
 } from 'calypso/state/purchases/selectors';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
-import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
+import getConciergeSites from 'calypso/state/selectors/get-concierge-sites';
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getSites from 'calypso/state/selectors/get-sites';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
-import ConciergeBanner from '../concierge-banner';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
 import PurchasesListHeader from './purchases-list-header';
@@ -50,43 +43,13 @@ class PurchasesList extends Component {
 	}
 
 	renderConciergeBanner() {
-		const { nextAppointment, scheduleId, isUserBlocked } = this.props;
-
-		if ( isUserBlocked ) {
-			return;
-		}
-
-		if ( null === scheduleId ) {
-			return (
-				<ConciergeBanner bannerType={ CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION } showPlaceholder />
-			);
-		}
-
-		let bannerType;
-
-		if ( nextAppointment ) {
-			bannerType = CONCIERGE_HAS_UPCOMING_APPOINTMENT;
-		} else if ( scheduleId ) {
-			switch ( scheduleId ) {
-				case CONCIERGE_WPCOM_BUSINESS_ID:
-					bannerType = CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION;
-					break;
-
-				case CONCIERGE_WPCOM_SESSION_PRODUCT_ID:
-					bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
-					break;
-
-				default:
-					bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
-			}
-		} else {
-			return;
-		}
-
+		const { nextAppointment, conciergeSites, siteId, isUserBlocked } = this.props;
 		return (
-			<ConciergeBanner
-				bannerType={ bannerType }
-				recordTracksEvent={ this.props.recordTracksEvent }
+			<PurchaseListConciergeBanner
+				nextAppointment={ nextAppointment }
+				conciergeSites={ conciergeSites }
+				siteId={ siteId }
+				isUserBlocked={ isUserBlocked }
 			/>
 		);
 	}
@@ -200,17 +163,15 @@ PurchasesList.propTypes = {
 	sites: PropTypes.array,
 };
 
-export default connect(
-	( state ) => ( {
-		cards: getAllStoredCards( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
-		isFetchingUserPurchases: isFetchingUserPurchases( state ),
-		purchases: getUserPurchases( state ),
-		subscriptions: getAllSubscriptions( state ),
-		sites: getSites( state ),
-		nextAppointment: getConciergeNextAppointment( state ),
-		scheduleId: getConciergeScheduleId( state ),
-		isUserBlocked: getConciergeUserBlocked( state ),
-	} ),
-	{ recordTracksEvent }
-)( localize( PurchasesList ) );
+export default connect( ( state ) => ( {
+	cards: getAllStoredCards( state ),
+	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+	isFetchingUserPurchases: isFetchingUserPurchases( state ),
+	purchases: getUserPurchases( state ),
+	subscriptions: getAllSubscriptions( state ),
+	sites: getSites( state ),
+	nextAppointment: getConciergeNextAppointment( state ),
+	isUserBlocked: getConciergeUserBlocked( state ),
+	conciergeSites: getConciergeSites( state ),
+	siteId: getSiteId( state ),
+} ) )( localize( PurchasesList ) );

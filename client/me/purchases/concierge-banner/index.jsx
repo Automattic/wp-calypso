@@ -2,15 +2,13 @@ import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import conciergeImage from 'calypso/assets/images/illustrations/jetpack-concierge.svg';
-import ActionCard from 'calypso/components/action-card';
+import { Banner } from 'calypso/components/banner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
-	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
+	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 } from 'calypso/me/concierge/constants';
-
 import './style.scss';
 
 class ConciergeBanner extends Component {
@@ -20,6 +18,7 @@ class ConciergeBanner extends Component {
 			CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 			CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
 		] ).isRequired,
+		sites: PropTypes.array.isRequired,
 	};
 
 	placeholder() {
@@ -42,86 +41,83 @@ class ConciergeBanner extends Component {
 	getBannerContent() {
 		const { bannerType, translate } = this.props;
 
-		let headerText;
-		let mainText;
+		let title;
+		let description;
 		let buttonText;
-		let buttonHref;
-		let illustrationUrl;
 
 		switch ( bannerType ) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
-				headerText = translate( 'Your appointment is coming up!' );
-				mainText = translate(
-					'Get ready with your questions for your upcoming Quick Start session appointment.',
+				title = translate( 'Your Quick Start session appointment is coming up!' );
+				description = translate(
+					'Get ready with your questions for your upcoming {{supportLink}}Quick Start support session{{/supportLink}} appointment. A Quick Start session is a one-on-one video session between the user and our support staff.',
 					{
-						comment:
-							'Quick Start Session is a one-on-one video session between the user and our support staff.',
+						components: {
+							supportLink: (
+								<a
+									target={ '_blank' }
+									rel={ 'noreferrer' }
+									href="https://wordpress.com/discover-wordpress/2019/03/21/getting-the-most-out-of-our-business-concierge-service/"
+								/>
+							),
+						},
 					}
 				);
 				buttonText = translate( 'Session dashboard' );
-				buttonHref = '/me/quickstart';
-				illustrationUrl = conciergeImage;
 				break;
-
+			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
 			case CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION:
-				headerText = translate( 'Looking for Expert Help?' );
-				mainText = translate(
-					'Get %(durationInMinutes)d minutes dedicated to the success of your site. Schedule your free 1-1 Quick Start Session with a Happiness Engineer!',
+				title = translate( 'You have unused Quick Start support sessions' );
+				description = translate(
+					`You are eligible for one-to-one {{supportLink}}Quick Start support sessions{{/supportLink}} with one of our friendly Happiness Engineers, from our now {{quickStartLink}}retired service{{/quickStartLink}}. You can us these sessions to get expert advice, tips and resources on site setup.`,
 					{
-						comment:
-							'Quick Start Session is a one-on-one video session between the user and our support staff.',
-						args: { durationInMinutes: 30 },
+						components: {
+							supportLink: (
+								<a
+									target={ '_blank' }
+									rel={ 'noreferrer' }
+									href="https://wordpress.com/discover-wordpress/2019/03/21/getting-the-most-out-of-our-business-concierge-service/"
+								/>
+							),
+							quickStartLink: (
+								<a
+									target={ '_blank' }
+									rel={ 'noreferrer' }
+									href="https://wordpress.com/support/quickstart-support/"
+								/>
+							),
+						},
 					}
 				);
-				buttonText = translate( 'Schedule now' );
-				buttonHref = '/me/quickstart';
-				illustrationUrl = conciergeImage;
-				break;
-
-			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
-				headerText = translate( 'Our experts are waiting to help you' );
-				mainText = translate( 'Schedule your 1-1 Quick Start Session with a Happiness Engineer!', {
-					comment:
-						'Quick Start Session is a one-on-one video session between the user and our support staff.',
-				} );
-				buttonText = translate( 'Schedule now' );
-				buttonHref = '/me/quickstart';
-				illustrationUrl = conciergeImage;
+				buttonText = translate( 'Schedule a date' );
 				break;
 		}
 
-		return { headerText, mainText, buttonText, buttonHref, illustrationUrl };
+		return { title, description, buttonText };
 	}
 
 	render() {
-		const { showPlaceholder } = this.props;
+		const { bannerType, showPlaceholder, nextAppointmentSiteId, siteId, sites } = this.props;
+
+		// if no appointment and not on a site then use the first site with a session available
+		// e.g. when viewing at /me/purchases
+		const quickStartSite = nextAppointmentSiteId || siteId || sites[ 0 ];
 
 		if ( showPlaceholder ) {
 			return this.placeholder();
 		}
 
-		const { headerText, mainText, buttonText, buttonHref, illustrationUrl } =
-			this.getBannerContent();
+		const { buttonText, description, title } = this.getBannerContent();
 
 		return (
 			<>
 				<TrackComponentView eventName="calypso_purchases_concierge_banner_view" />
-				<ActionCard
-					headerText={ headerText }
-					mainText={ mainText }
-					buttonText={ buttonText }
-					buttonIcon={ null }
-					buttonPrimary={ true }
-					buttonHref={ buttonHref }
-					buttonTarget={ null }
-					buttonOnClick={ () => {
-						this.props.recordTracksEvent( 'calypso_purchases_concierge_banner_click', {
-							referer: '/me/purchases',
-						} );
-					} }
-					compact={ false }
-					illustration={ illustrationUrl }
-					classNames="concierge-banner"
+				<Banner
+					callToAction={ buttonText }
+					description={ description }
+					dismissPreferenceName={ `quick-start-banner-${ bannerType }` }
+					href={ `/me/quickstart/${ quickStartSite }` }
+					title={ title }
+					tracksClickName={ 'calypso_purchases_concierge_banner_click' }
 				/>
 			</>
 		);

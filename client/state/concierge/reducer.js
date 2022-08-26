@@ -1,4 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
+import conciergeSites from 'calypso/state/concierge/concierge-sites/reducer';
 import { combineReducers } from 'calypso/state/utils';
 import appointmentDetails from './appointment-details/reducer';
 import appointmentTimespan from './appointment-timespan/reducer';
@@ -12,10 +13,11 @@ const combinedReducer = combineReducers( {
 	appointmentDetails,
 	appointmentTimespan,
 	availableTimes,
+	conciergeSites,
+	isUserBlocked,
 	nextAppointment,
 	signupForm,
 	scheduleId,
-	isUserBlocked,
 } );
 
 const conciergeReducer = withStorageKey( 'concierge', combinedReducer );
