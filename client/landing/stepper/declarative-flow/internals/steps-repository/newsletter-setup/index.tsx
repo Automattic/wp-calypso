@@ -143,7 +143,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					<FormLabel htmlFor="siteTitle">{ __( 'Site name' ) }</FormLabel>
 					<FormInput
 						value={ siteTitle }
-						placeholder="My newsletter"
+						placeholder={ __( 'My newsletter' ) }
 						name="siteTitle"
 						id="siteTitle"
 						style={ {
@@ -158,7 +158,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
 					<FormInput
 						value={ tagline }
-						placeholder="Description of the content you publish"
+						placeholder={ __( 'Describe your Newsletter in a line or two' ) }
 						name="tagline"
 						id="tagline"
 						style={ {

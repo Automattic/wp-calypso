@@ -103,7 +103,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					id="link-in-bio-input-name"
 					value={ siteTitle }
 					onChange={ onChange }
-					placeholder="My Link in Bio"
+					placeholder={ __( 'My Link in Bio' ) }
 					style={ {
 						backgroundImage: siteTitle.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
 						backgroundRepeat: 'no-repeat',
@@ -127,7 +127,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					id="link-in-bio-input-description"
 					value={ tagline }
 					onChange={ onChange }
-					placeholder="Add a short biography here"
+					placeholder={ __( 'Add a short biography here' ) }
 					style={ {
 						backgroundImage: tagline.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
 						backgroundRepeat: 'no-repeat',
