@@ -18,19 +18,20 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import useTrackScrollPageFromTop from '../../../../hooks/use-track-scroll-page-from-top';
-import { ONBOARD_STORE, SITE_STORE, STEPPER_INTERNAL_STORE } from '../../../../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -65,10 +66,9 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
-	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
+	const reduxDispatch = useReduxDispatch();
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() ) || {};
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -168,11 +168,6 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				generated_designs: generatedDesigns?.map( ( design ) => design.slug ).join( ',' ),
 			} );
 		}
-
-		setStepData( {
-			...stepData,
-			isGeneratedDesignsView: showGeneratedDesigns,
-		} );
 	}, [ showGeneratedDesigns, hasTrackedView, generatedDesigns ] );
 
 	function headerText() {
@@ -273,7 +268,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 					_selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
 						? siteVerticalId
 						: ''
-				)
+				).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 			);
 
 			recordTracksEvent( 'calypso_signup_select_design', {
@@ -368,10 +363,6 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			return;
 		}
 
-		setStepData( {
-			...stepData,
-			isGeneratedDesignsView: showGeneratedDesigns,
-		} );
 		goBack();
 	};
 

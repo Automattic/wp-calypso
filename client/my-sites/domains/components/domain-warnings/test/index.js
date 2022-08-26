@@ -6,7 +6,11 @@ import moment from 'moment';
 import ReactDom from 'react-dom';
 import TestUtils from 'react-dom/test-utils';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
-import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
+import {
+	MAP_DOMAIN_CHANGE_NAME_SERVERS,
+	MAP_EXISTING_DOMAIN_UPDATE_DNS,
+	MAP_SUBDOMAIN,
+} from 'calypso/lib/url/support';
 import { DomainWarnings } from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
@@ -124,13 +128,7 @@ describe( 'index', () => {
 			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( 'contact your domain registrar' );
-			expect(
-				links.some(
-					( link ) =>
-						link.href ===
-						'https://wordpress.com/support/domains/map-existing-domain/#change-your-domains-name-servers'
-				)
-			).toBeTruthy();
+			expect( links.some( ( link ) => link.href === MAP_DOMAIN_CHANGE_NAME_SERVERS ) ).toBeTruthy();
 		} );
 
 		test( 'should render the correct support url for multiple misconfigured mapped domains', () => {

@@ -23,6 +23,8 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	const loadingMessages = useProcessingLoadingMessages();
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
+	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
+	const [ destinationState, setDestinationState ] = useState( {} );
 
 	useInterval( () => {
 		setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
@@ -41,15 +43,32 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		( async () => {
 			if ( typeof action === 'function' ) {
 				try {
-					await action();
-					submit?.( {}, ProcessingResult.SUCCESS );
+					const destination = await action();
+					// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
+					// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
+					// that is frozen from before we called action().
+					// We can now get the most up to date values from hooks inside the flow creating submit(),
+					// including the values that were updated during the action() running.
+					setDestinationState( destination );
+					setHasActionSuccessfullyRun( true );
 				} catch ( e ) {
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
-			} else submit?.( {}, ProcessingResult.NO_ACTION );
+			} else {
+				submit?.( {}, ProcessingResult.NO_ACTION );
+			}
 		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
+
+	// When the hasActionSuccessfullyRun flag turns on, run submit().
+	useEffect( () => {
+		if ( hasActionSuccessfullyRun ) {
+			submit?.( destinationState, ProcessingResult.SUCCESS );
+		}
+		// A change in submit() doesn't cause this effect to rerun.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ hasActionSuccessfullyRun ] );
 
 	// Progress smoothing, works out to be around 40seconds unless step polling dictates otherwise
 	const [ simulatedProgress, setSimulatedProgress ] = useState( 0 );
@@ -77,7 +96,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	}, [ simulatedProgress, progress, __ ] );
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = [ 'link-in-bio', 'newsletters' ].includes( flowName );
+	const isJetpackPowered = [ 'link-in-bio', 'newsletter' ].includes( flowName );
 
 	return (
 		<StepContainer

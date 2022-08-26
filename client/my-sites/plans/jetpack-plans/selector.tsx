@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { TERM_ANNUALLY } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useCallback, useEffect, useState, useMemo } from 'react';
@@ -26,6 +27,7 @@ import { getPurchaseURLCallback } from './get-purchase-url-callback';
 import getViewTrackerPath from './get-view-tracker-path';
 import { getForCurrentCROIteration, Iterations } from './iterations';
 import ProductGrid from './product-grid';
+import ProductStore from './product-store';
 import type {
 	Duration,
 	ScrollCardIntoViewCallback,
@@ -197,7 +199,12 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			{ siteId && enableUserLicensesDialog && <QueryJetpackUserLicenses /> }
 			{ siteId && enableUserLicensesDialog && <QueryJetpackUserLicensesCounts /> }
 
-			{ siteId && enableUserLicensesDialog && <LicensingPromptDialog siteId={ siteId } /> }
+			{
+				// LicensingPromptDialog has been moved to ProductStore component with jetpack/pricing-page-rework-v1
+				! isEnabled( 'jetpack/pricing-page-rework-v1' ) && siteId && enableUserLicensesDialog && (
+					<LicensingPromptDialog siteId={ siteId } />
+				)
+			}
 
 			{ nav }
 
@@ -213,20 +220,36 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
 				/>
 
-				{ siteId && enableUserLicensesDialog && <LicensingActivationBanner siteId={ siteId } /> }
+				{ isEnabled( 'jetpack/pricing-page-rework-v1' ) ? (
+					<>
+						{ header }
 
-				{ header }
+						<ProductStore
+							enableUserLicensesDialog={ enableUserLicensesDialog }
+							urlQueryArgs={ urlQueryArgs }
+							duration={ currentDuration }
+						/>
+					</>
+				) : (
+					<>
+						{ siteId && enableUserLicensesDialog && (
+							<LicensingActivationBanner siteId={ siteId } />
+						) }
 
-				<ProductGrid
-					duration={ currentDuration }
-					urlQueryArgs={ urlQueryArgs }
-					planRecommendation={ planRecommendation }
-					onSelectProduct={ selectProduct }
-					onDurationChange={ trackDurationChange }
-					scrollCardIntoView={ scrollCardIntoView }
-					createButtonURL={ createProductURL }
-					isLoadingUpsellPageExperiment={ isLoadingUpsellPageExperiment }
-				/>
+						{ header }
+
+						<ProductGrid
+							duration={ currentDuration }
+							urlQueryArgs={ urlQueryArgs }
+							planRecommendation={ planRecommendation }
+							onSelectProduct={ selectProduct }
+							onDurationChange={ trackDurationChange }
+							scrollCardIntoView={ scrollCardIntoView }
+							createButtonURL={ createProductURL }
+							isLoadingUpsellPageExperiment={ isLoadingUpsellPageExperiment }
+						/>
+					</>
+				) }
 
 				<QueryProductsList type="jetpack" />
 				<QueryIntroOffers siteId={ siteId ?? 'none' } />

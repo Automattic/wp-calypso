@@ -356,7 +356,7 @@ export default function DIFMLanding( {
 						</NextButton>
 						{ isInOnboarding && (
 							<SkipButton isLink={ true } onClick={ onSkip }>
-								{ translate( 'Skip for now' ) }
+								{ translate( "I'll do it myself" ) }
 							</SkipButton>
 						) }
 					</CTASectionWrapper>

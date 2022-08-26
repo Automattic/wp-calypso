@@ -35,7 +35,7 @@ function generateSwatchSVG( color: string | undefined ) {
 	}%3C/svg%3E")`;
 }
 const NewsletterSetup: Step = ( { navigation } ) => {
-	const { goBack, goNext } = navigation;
+	const { submit } = navigation;
 	const { __ } = useI18n();
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
@@ -52,6 +52,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ accentColor, setAccentColor ] = React.useState< string | undefined >();
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
+	const siteTitleError =
+		formTouched && ! siteTitle.trim()
+			? __( `Oops. Looks like your Newsletter doesn't have a name yet.` )
+			: '';
 
 	useEffect( () => {
 		if ( ! site ) {
@@ -75,7 +79,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		goNext();
+		setFormTouched( true );
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
@@ -84,13 +88,14 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		if ( selectedFile && base64Image ) {
 			try {
 				setSiteLogo( base64Image );
-				// this should be moved to the loader step
-				// await setSiteLogo( new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' ) );
 			} catch ( _error ) {
 				// communicate the error to the user
 			}
 		}
-		// submit?.( { siteTitle, tagline } );
+
+		if ( siteTitle.trim().length ) {
+			submit?.( { siteTitle, tagline } );
+		}
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
@@ -108,11 +113,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const getBackgroundImage = ( fieldValue: string | undefined ) => {
 		return fieldValue && fieldValue.trim() ? `url(${ greenCheckmarkImg })` : '';
 	};
-
-	const siteTitleError =
-		formTouched && ! siteTitle.trim()
-			? 'Your publication needs a name so your subscribers can identify you.'
-			: '';
 
 	const stepContent = (
 		<>
@@ -139,7 +139,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					/>
 				</Popover>
 				<FormFieldset>
-					<FormLabel htmlFor="siteTitle">{ __( 'Publication name*' ) }</FormLabel>
+					<FormLabel htmlFor="siteTitle">{ __( 'Publication name' ) }</FormLabel>
 					<FormInput
 						value={ siteTitle }
 						name="siteTitle"
@@ -195,14 +195,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName={ 'newsletter-setup' }
-			goBack={ goBack }
 			isWideLayout={ true }
 			hideBack={ true }
 			flowName={ 'newsletter' }
 			formattedHeader={
 				<FormattedHeader
 					id={ 'newsletter-setup-header' }
-					headerText={ __( 'Setup your Newsletter' ) }
+					headerText={ __( 'Pencil in a few details' ) }
 					align={ 'center' }
 				/>
 			}

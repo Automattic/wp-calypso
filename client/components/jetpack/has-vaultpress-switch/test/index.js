@@ -1,4 +1,5 @@
-import { shallow } from 'enzyme';
+/** @jest-environment jsdom */
+import { screen, render } from '@testing-library/react';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
@@ -11,6 +12,12 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( 'calypso/state/selectors/get-rewind-state' );
 jest.mock( 'calypso/state/selectors/get-site-scan-state' );
+jest.mock( 'calypso/components/data/query-rewind-state', () => () => 'query-rewind-state' );
+jest.mock( 'calypso/components/data/query-jetpack-scan', () => () => 'query-jetpack-scan' );
+
+const LoadingComponent = <div data-testid="loading" />;
+const TrueComponent = <div data-testid="true" />;
+const FalseComponent = <div data-testid="false" />;
 
 describe( 'HasVaultPressSwitch', () => {
 	beforeAll( () => {
@@ -25,20 +32,16 @@ describe( 'HasVaultPressSwitch', () => {
 		getSiteScanState.mockImplementation( () => undefined );
 		getRewindState.mockImplementation( () => undefined );
 
-		const loading = <span>loading</span>;
-		const hasVPSwitch = shallow( <HasVaultPressSwitch loadingComponent={ loading } /> );
-
-		expect( hasVPSwitch.dive().contains( loading ) ).toEqual( true );
+		render( <HasVaultPressSwitch loadingComponent={ LoadingComponent } /> );
+		expect( screen.queryByTestId( 'loading' ) ).toBeVisible();
 	} );
 
 	test( 'if both rewindState and scanState show as uninitialized, show loading/query state', () => {
 		getSiteScanState.mockImplementation( () => ( { state: 'uninitialized' } ) );
 		getRewindState.mockImplementation( () => ( { state: 'uninitialized' } ) );
 
-		const loading = <span>loading</span>;
-		const hasVPSwitch = shallow( <HasVaultPressSwitch loadingComponent={ loading } /> );
-
-		expect( hasVPSwitch.dive().contains( loading ) ).toEqual( true );
+		render( <HasVaultPressSwitch loadingComponent={ LoadingComponent } /> );
+		expect( screen.queryByTestId( 'loading' ) ).toBeVisible();
 	} );
 
 	test( 'if rewindState is unavailable with reason=vp_active_on_site, always show trueComponent', () => {
@@ -48,10 +51,8 @@ describe( 'HasVaultPressSwitch', () => {
 			reason: 'vp_active_on_site',
 		} ) );
 
-		const trueComponent = <span>true</span>;
-		const hasVPSwitch = shallow( <HasVaultPressSwitch trueComponent={ trueComponent } /> );
-
-		expect( hasVPSwitch.dive().contains( trueComponent ) ).toEqual( true );
+		render( <HasVaultPressSwitch trueComponent={ TrueComponent } /> );
+		expect( screen.queryByTestId( 'true' ) ).toBeVisible();
 	} );
 
 	test( 'if scanState is unavailable with reason=vp_active_on_site, always show trueComponent', () => {
@@ -61,10 +62,8 @@ describe( 'HasVaultPressSwitch', () => {
 		} ) );
 		getRewindState.mockImplementation( () => undefined );
 
-		const trueComponent = <span>true</span>;
-		const hasVPSwitch = shallow( <HasVaultPressSwitch trueComponent={ trueComponent } /> );
-
-		expect( hasVPSwitch.dive().contains( trueComponent ) ).toEqual( true );
+		render( <HasVaultPressSwitch trueComponent={ TrueComponent } /> );
+		expect( screen.queryByTestId( 'true' ) ).toBeVisible();
 	} );
 
 	test( 'if rewindState is unavailable with reason=host_not_supported, always show trueComponent', () => {
@@ -74,10 +73,8 @@ describe( 'HasVaultPressSwitch', () => {
 			reason: 'host_not_supported',
 		} ) );
 
-		const trueComponent = <span>true</span>;
-		const hasVPSwitch = shallow( <HasVaultPressSwitch trueComponent={ trueComponent } /> );
-
-		expect( hasVPSwitch.dive().contains( trueComponent ) ).toEqual( true );
+		render( <HasVaultPressSwitch trueComponent={ TrueComponent } /> );
+		expect( screen.queryByTestId( 'true' ) ).toBeVisible();
 	} );
 
 	test( 'if scanState is unavailable with reason=host_not_supported, always show trueComponent', () => {
@@ -87,10 +84,8 @@ describe( 'HasVaultPressSwitch', () => {
 		} ) );
 		getRewindState.mockImplementation( () => undefined );
 
-		const trueComponent = <span>true</span>;
-		const hasVPSwitch = shallow( <HasVaultPressSwitch trueComponent={ trueComponent } /> );
-
-		expect( hasVPSwitch.dive().contains( trueComponent ) ).toEqual( true );
+		render( <HasVaultPressSwitch trueComponent={ TrueComponent } /> );
+		expect( screen.queryByTestId( 'true' ) ).toBeVisible();
 	} );
 
 	test( 'if both rewindState and scanState are unavailable with other reasons, show falseComponent', () => {
@@ -103,10 +98,8 @@ describe( 'HasVaultPressSwitch', () => {
 			reason: 'another_weird_reason',
 		} ) );
 
-		const falseComponent = <span>false</span>;
-		const hasVPSwitch = shallow( <HasVaultPressSwitch falseComponent={ falseComponent } /> );
-
-		expect( hasVPSwitch.dive().contains( falseComponent ) ).toEqual( true );
+		render( <HasVaultPressSwitch falseComponent={ FalseComponent } /> );
+		expect( screen.queryByTestId( 'false' ) ).toBeVisible();
 	} );
 
 	test( 'if both rewindState and scanState are not unavailable, show falseComponent', () => {
@@ -119,9 +112,7 @@ describe( 'HasVaultPressSwitch', () => {
 			reason: 'vp_active_on_site',
 		} ) );
 
-		const falseComponent = <span>false</span>;
-		const hasVPSwitch = shallow( <HasVaultPressSwitch falseComponent={ falseComponent } /> );
-
-		expect( hasVPSwitch.dive().contains( falseComponent ) ).toEqual( true );
+		render( <HasVaultPressSwitch falseComponent={ FalseComponent } /> );
+		expect( screen.queryByTestId( 'false' ) ).toBeVisible();
 	} );
 } );

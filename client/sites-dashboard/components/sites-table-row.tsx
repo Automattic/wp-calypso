@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { displaySiteUrl, getDashboardUrl } from '../utils';
+import { displaySiteUrl, getDashboardUrl, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
@@ -31,8 +31,9 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	line-height: 20px;
 	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
+	white-space: nowrap;
 
-	@media only screen and ( max-width: 781px ) {
+	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
 		padding-right: 0;
 	}
@@ -42,13 +43,13 @@ const SiteListTile = styled( ListTile )`
 	line-height: initial;
 	margin-right: 0;
 
-	@media only screen and ( max-width: 781px ) {
+	${ MEDIA_QUERIES.mediumOrSmaller } {
 		margin-right: 12px;
 	}
 `;
 
 const ListTileLeading = styled.a`
-	@media only screen and ( max-width: 781px ) {
+	${ MEDIA_QUERIES.mediumOrSmaller } {
 		margin-right: 12px;
 	}
 `;
@@ -80,6 +81,11 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isAtomicSite = site?.is_wpcom_atomic;
 
+	let siteUrl = site.URL;
+	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
+		siteUrl = site.options?.unmapped_url;
+	}
+
 	return (
 		<Row>
 			<Column>
@@ -105,8 +111,8 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					}
 					subtitle={
 						<ListTileSubtitle>
-							<SiteUrl href={ site.URL } className={ css( { lineHeight: 1 } ) } title={ site.URL }>
-								<Truncated>{ displaySiteUrl( site.URL ) }</Truncated>
+							<SiteUrl href={ siteUrl } title={ siteUrl }>
+								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</SiteUrl>
 						</ListTileSubtitle>
 					}
@@ -126,7 +132,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
 			<Column mobileHidden>{ translatedStatus }</Column>
-			<Column style={ { width: '20px' } }>
+			<Column style={ { width: '24px' } }>
 				<SitesEllipsisMenu site={ site } />
 			</Column>
 		</Row>

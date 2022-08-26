@@ -384,6 +384,9 @@
 	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
 		justify-content: flex-start;
 	}
+	.design-picker__grid:last-child {
+		min-height: 100vh;
+	}
 	.design-picker__grid {
 		@supports ( display: grid ) {
 			@include break-medium {
@@ -432,6 +435,20 @@
 
 	.components-button.is-pressed:active:hover {
 		color: var( --theme-base-color );
+	}
+
+	// Customize styles for generated designs
+	.unified-design-picker__generated-designs {
+		.design-picker__grid {
+			padding-bottom: 32px;
+		}
+	}
+
+	// Customize styles for standard designs
+	.unified-design-picker__standard-designs {
+		.unified-design-picker__subtitle {
+			margin-bottom: 14px;
+		}
 	}
 }
 
@@ -542,7 +559,7 @@
 		svg {
 			fill: var( --studio-gray-5 );
 		}
-    }
+	}
 
 	.generated-design-thumbnail__image {
 		position: relative;

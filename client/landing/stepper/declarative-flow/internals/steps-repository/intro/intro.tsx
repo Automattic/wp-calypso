@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import type { WPElement } from '@wordpress/element';
 
 interface Props {
-	goNext: () => void;
+	onSubmit: () => void;
 	flowName: string;
 }
 
@@ -15,20 +15,20 @@ interface IntroContent {
 	};
 }
 
-const Intro: React.FC< Props > = ( { goNext, flowName } ) => {
+const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 	const { __ } = useI18n();
 
 	const introContent: IntroContent = {
 		newsletter: {
 			title: createInterpolateElement(
-				__( 'Your stories, right into your<br /> readers’ inbox, now!' ),
+				__( 'You’re 3 minutes away from <br /> a launch-ready Newsletter.' ),
 				{ br: <br /> }
 			),
 			buttonText: __( 'Create your newsletter' ),
 		},
 		'link-in-bio': {
 			title: createInterpolateElement(
-				__( 'Your short bio and links,<br /> accessible to your<br /> audience in minutes' ),
+				__( 'You’re 3 minutes away from <br /> a stand-out Link in Bio site.<br /> Ready? ' ),
 				{ br: <br /> }
 			),
 			buttonText: __( 'Create your link in bio' ),
@@ -42,7 +42,7 @@ const Intro: React.FC< Props > = ( { goNext, flowName } ) => {
 			<h1 className="intro__title">
 				<span>{ introContent[ flowName ].title }</span>
 			</h1>
-			<Button className="intro__button" primary onClick={ goNext }>
+			<Button className="intro__button" primary onClick={ onSubmit }>
 				{ introContent[ flowName ].buttonText }
 			</Button>
 		</div>

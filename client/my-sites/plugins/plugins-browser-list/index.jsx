@@ -88,10 +88,12 @@ const PluginsBrowserList = ( {
 	return (
 		<div className="plugins-browser-list">
 			<div className="plugins-browser-list__header">
-				<div className="plugins-browser-list__titles">
-					<div className={ classnames( 'plugins-browser-list__title', listName ) }>{ title }</div>
-					<div className="plugins-browser-list__subtitle">{ subtitle }</div>
-				</div>
+				{ ( title || subtitle ) && (
+					<div className="plugins-browser-list__titles">
+						<div className={ classnames( 'plugins-browser-list__title', listName ) }>{ title }</div>
+						<div className="plugins-browser-list__subtitle">{ subtitle }</div>
+					</div>
+				) }
 				<div className="plugins-browser-list__actions">
 					{ expandedListLink && (
 						<a className="plugins-browser-list__browse-all" href={ expandedListLink }>

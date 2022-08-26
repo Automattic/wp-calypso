@@ -4,8 +4,8 @@ import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
 import type { Step } from '../../types';
 
 import './style.scss';
-
-const DIFMStartingPoint: Step = function ( { navigation } ) {
+const STEP_NAME = 'difmStartingPoint';
+const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 
 	const onSubmit = () => {
@@ -13,12 +13,17 @@ const DIFMStartingPoint: Step = function ( { navigation } ) {
 	};
 
 	const onSkip = () => {
+		recordTracksEvent( 'calypso_signup_skip_step', {
+			flow,
+			step: STEP_NAME,
+		} );
+
 		goNext?.();
 	};
 
 	return (
 		<StepContainer
-			stepName={ 'difmStartingPoint' }
+			stepName={ STEP_NAME }
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ true }

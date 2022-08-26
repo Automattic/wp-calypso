@@ -22,4 +22,5 @@ export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'updated_at',
 	'is_redirect',
 	'unmapped_url',
+	'admin_url',
 ] as const;

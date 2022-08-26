@@ -55,7 +55,10 @@ button {
 .newsletter-setup,
 .patterns,
 .link-in-bio-setup,
-.anchor-fm {
+.completing-purchase,
+.anchor-fm,
+.subscribers,
+.blazepress {
 	position: relative;
 	padding: 60px 0 0;
 	box-sizing: border-box;
@@ -88,13 +91,6 @@ button {
 		z-index: 99;
 		height: 8px;
 		background-color: transparent;
-
-		@include break-small {
-			&.is-fixed {
-				position: fixed;
-				background-color: #fff;
-			}
-		}
 
 		.progress-bar__progress {
 			background-color: $onboarding-accent-blue;

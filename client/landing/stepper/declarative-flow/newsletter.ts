@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
+import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { ProvidedDependencies } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
@@ -21,7 +23,7 @@ export const newsletter: Flow = {
 			'completingPurchase',
 			'processing',
 			'subscribers',
-			'processingFake',
+			'preLaunchpad',
 			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
 		] as StepPath[];
 	},
@@ -30,18 +32,9 @@ export const newsletter: Flow = {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
 
-		function submit() {
-			switch ( _currentStep ) {
-				case 'completingPurchase':
-					return navigate( 'processing' );
-			}
-		}
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			recordSubmitStep( providedDependencies, '', _currentStep );
 
-		const goBack = () => {
-			return;
-		};
-
-		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
@@ -54,12 +47,24 @@ export const newsletter: Flow = {
 				case 'newsletterSetup':
 					return window.location.replace( '/start/newsletter/domains' );
 
+				case 'completingPurchase':
+					return navigate( 'processing' );
+
+				case 'processing': {
+					return navigate( providedDependencies?.destination as StepPath );
+				}
+
 				case 'subscribers':
-					return navigate( 'processingFake' );
-
-				case 'processingFake':
 					return navigate( 'launchpad' );
+			}
+		}
 
+		const goBack = () => {
+			return;
+		};
+
+		const goNext = () => {
+			switch ( _currentStep ) {
 				case 'launchpad':
 					return window.location.replace( `/view/${ siteSlug }` );
 

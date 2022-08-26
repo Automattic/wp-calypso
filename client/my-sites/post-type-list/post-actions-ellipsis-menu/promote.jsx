@@ -2,22 +2,24 @@ import config from '@automattic/calypso-config';
 import { useDispatch } from '@wordpress/data';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { loadDSPWidgetJS, recordDSPEntryPoint, showDSPWidgetModal } from 'calypso/lib/promote-post';
+import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
+import { useRouteModal } from 'calypso/lib/route-modal';
 import { getPost } from 'calypso/state/posts/selectors';
 
-function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpStatKey, status } ) {
+function PostActionsEllipsisMenuPromote( {
+	globalId,
+	postId,
+	isModuleActive,
+	bumpStatKey,
+	status,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	useEffect( () => {
-		if ( isModuleActive ) {
-			loadDSPWidgetJS();
-		}
-	} );
-
+	const keyValue = globalId;
+	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 	if ( ! isModuleActive ) {
 		return null;
 	}
@@ -30,9 +32,9 @@ function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpS
 		return null;
 	}
 
-	const showDSPWidget = async () => {
+	const showDSPWidget = () => {
 		dispatch( recordDSPEntryPoint( bumpStatKey ) );
-		await showDSPWidgetModal( siteId, postId );
+		openModal();
 	};
 
 	return (
@@ -47,7 +49,6 @@ PostActionsEllipsisMenuPromote.propTypes = {
 	globalId: PropTypes.string,
 	isModuleActive: PropTypes.bool,
 	postId: PropTypes.number,
-	siteId: PropTypes.number,
 };
 
 const mapStateToProps = ( state, { globalId } ) => {
@@ -60,7 +61,6 @@ const mapStateToProps = ( state, { globalId } ) => {
 		type: post.type,
 		isModuleActive: config.isEnabled( 'promote-post' ),
 		postId: post.ID,
-		siteId: post.site_ID,
 		status: post.status,
 	};
 };

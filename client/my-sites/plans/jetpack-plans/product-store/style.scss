@@ -1,0 +1,54 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.jetpack-product-store {
+    &__jetpack-free {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 4em 0;
+
+        &--headline {
+            font-size: $font-title-large;
+            margin-bottom: 1em;
+        }
+        &--info {
+            font-size: $font-body-small;
+            text-align: center;
+        }
+    }
+    &__recommendations {
+        padding: 4em 0;
+
+        &--title {
+            text-align: center;
+        }
+        &--logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            list-style-type: none;
+            margin: 0 auto;
+            gap: 1.5em;
+        }
+    }
+    
+    .button {
+        color: var( --color-neutral-100 );
+        border: 1px solid var( --color-neutral-100 );
+        font-weight: 600;
+    }
+}
+
+.jetpack-product-store__pricing-banner {
+	height: 120px;
+
+	margin-bottom: 1.25rem;
+
+	@include break-large {
+		height: 54px;
+
+		margin-bottom: 0;
+	}
+}

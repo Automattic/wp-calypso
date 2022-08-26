@@ -1,8 +1,10 @@
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale, getRelativeTimeString } from '@automattic/i18n-utils';
 import { ExternalLink, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+import type { SupportTicket } from '../types';
 import type { AnalysisReport } from '@automattic/data-stores';
+import type { ReactNode } from 'react';
 
 type Props = {
 	ownershipResult: AnalysisReport[ 'result' ];
@@ -63,12 +65,52 @@ export function HelpCenterOwnershipNotice( {
 		}
 		return null;
 	}
+
+	return <HelpCenterNotice>{ responses[ ownershipResult ] }</HelpCenterNotice>;
+}
+
+export function HelpCenterActiveTicketNotice( {
+	tickets,
+}: {
+	tickets: SupportTicket[] | undefined;
+} ) {
+	const locale = useLocale();
+
+	if ( ! tickets || ! tickets.length ) {
+		return null;
+	}
+
+	return (
+		<HelpCenterNotice>
+			<p>
+				<strong>
+					{ sprintf(
+						/* translators: %s humanized date ex: 2 hours ago */
+						__( 'You submitted a request %s.', __i18n_text_domain__ ),
+						getRelativeTimeString( {
+							timestamp: tickets[ 0 ].timestamp * 1000,
+							locale,
+							style: 'long',
+						} )
+					) }
+				</strong>
+				&nbsp;
+				{ __(
+					`Rest assured that we got your message and we'll be in touch as soon as we can.`,
+					__i18n_text_domain__
+				) }
+			</p>
+		</HelpCenterNotice>
+	);
+}
+
+export function HelpCenterNotice( { children }: { children: ReactNode } ) {
 	return (
 		<div className="help-center-notice__container">
 			<div>
 				<Icon icon="info-outline"></Icon>
 			</div>
-			{ responses[ ownershipResult ] }
+			{ children }
 		</div>
 	);
 }

@@ -24,7 +24,22 @@ const latestAtomicTransferError: LatestAtomicTransferError = {
 	code: 'no_transfer_error',
 };
 
+const siteSlug = 'test.wordpress.com';
+const pluginSlug = 'woocommerce';
+
 describe( 'Site Actions', () => {
+	describe( 'Bundled Plugin Actions', () => {
+		it( 'should return a SET_BUNDLED_PLUGIN_SLUG Action', () => {
+			const { setBundledPluginSlug } = createActions( mockedClientCredentials );
+			const expected = {
+				type: 'SET_BUNDLED_PLUGIN_SLUG',
+				siteSlug,
+				pluginSlug,
+			};
+
+			expect( setBundledPluginSlug( siteSlug, pluginSlug ) ).toEqual( expected );
+		} );
+	} );
 	describe( 'LAUNCH_SITE Actions', () => {
 		it( 'should return a LAUNCH_SITE_START Action', () => {
 			const { launchSiteStart } = createActions( mockedClientCredentials );

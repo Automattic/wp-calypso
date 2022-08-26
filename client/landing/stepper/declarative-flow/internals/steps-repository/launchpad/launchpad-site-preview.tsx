@@ -38,6 +38,8 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 				} ) }
 				translate={ translate }
 				defaultViewportDevice={ defaultDevice }
+				devicesToShow={ [ 'computer', 'phone' ] }
+				showSiteAddressBar={ false }
 			/>
 		</div>
 	);

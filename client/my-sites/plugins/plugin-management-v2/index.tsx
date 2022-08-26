@@ -1,8 +1,5 @@
-import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import PluginCard from './plugin-card';
-import PluginsTable from './plugins-table';
+import PluginsList from './plugins-list';
 import type { Plugin } from './types';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactElement } from 'react';
@@ -54,6 +51,9 @@ export default function PluginManagementV2( {
 						colSpan: 2,
 					},
 			  ] ),
+		{
+			key: 'update',
+		},
 	];
 
 	if ( ! plugins.length && ! isLoading ) {
@@ -64,30 +64,17 @@ export default function PluginManagementV2( {
 		return <div className="plugin-management-v2__no-sites">{ emptyStateMessage }</div>;
 	}
 
+	const title = translate( 'Installed Plugins' );
+
 	return (
 		<div className="plugin-management-v2__main-content-container">
-			<PluginsTable
+			<PluginsList
 				items={ plugins }
 				columns={ columns }
 				isLoading={ isLoading }
 				selectedSite={ selectedSite }
+				title={ title }
 			/>
-			<div className="plugin-management-v2__mobile-view">
-				<>
-					<Card className="plugin-management-v2__content-header">
-						<div>{ translate( 'Installed Plugins' ) }</div>
-					</Card>
-					{ isLoading ? (
-						<Card>
-							<TextPlaceholder />
-						</Card>
-					) : (
-						plugins.map( ( item ) => (
-							<PluginCard key={ item.id } item={ item } selectedSite={ selectedSite } />
-						) )
-					) }
-				</>
-			</div>
 		</div>
 	);
 }

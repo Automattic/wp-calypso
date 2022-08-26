@@ -16,7 +16,7 @@ const Launchpad: Step = ( { navigation } ) => {
 
 	const stepContent = (
 		<div className="launchpad__content">
-			<Sidebar />
+			<Sidebar siteSlug={ siteSlug } />
 			<LaunchpadSitePreview siteSlug={ siteSlug } />
 		</div>
 	);
@@ -29,7 +29,7 @@ const Launchpad: Step = ( { navigation } ) => {
 				goNext={ navigation.goNext }
 				isWideLayout={ true }
 				skipLabelText={ translate( 'Go to Admin' ) }
-				skipButtonAlign={ 'top' }
+				skipButtonAlign={ 'bottom' }
 				hideBack={ true }
 				stepContent={ stepContent }
 				formattedHeader={

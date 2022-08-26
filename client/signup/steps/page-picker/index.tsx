@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -100,7 +101,10 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 	const selectedIndex = selectedPages.indexOf( pageId );
 	const totalSelections = selectedPages.length;
 	const isSelected = Boolean( selectedIndex > -1 );
-	const isDisabled = selectedIndex === -1 && totalSelections >= PAGE_LIMIT;
+	const isDisabled =
+		! isEnabled( 'difm/allow-extra-pages' ) &&
+		selectedIndex === -1 &&
+		totalSelections >= PAGE_LIMIT;
 	const title = useTranslatedPageTitles()[ pageId ];
 
 	return (
@@ -134,7 +138,7 @@ function PageSelector( {
 		if ( pageId !== HOME_PAGE ) {
 			if ( foundIndex > -1 ) {
 				setSelectedPages( selectedPages.filter( ( page, index ) => index !== foundIndex ) );
-			} else if ( selectedPages.length !== PAGE_LIMIT ) {
+			} else if ( isEnabled( 'difm/allow-extra-pages' ) || selectedPages.length !== PAGE_LIMIT ) {
 				setSelectedPages( [ ...selectedPages, pageId ] );
 			}
 		}

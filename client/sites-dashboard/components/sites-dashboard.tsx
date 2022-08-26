@@ -6,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
 import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
@@ -24,14 +25,25 @@ const MAX_PAGE_WIDTH = '1280px';
 const pagePadding = {
 	paddingLeft: '32px',
 	paddingRight: '32px',
+
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
+		paddingLeft: '16px',
+		paddingRight: '16px',
+	},
 };
 
 const PageHeader = styled.div( {
 	...pagePadding,
 
 	backgroundColor: 'var( --studio-white )',
+
 	paddingTop: '24px',
 	paddingBottom: '24px',
+
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
+		padding: '16px',
+	},
+
 	boxShadow: 'inset 0px -1px 0px rgba( 0, 0, 0, 0.05 )',
 } );
 
@@ -96,10 +108,10 @@ export function SitesDashboard( {
 
 	return (
 		<main>
-			<DocumentHead title={ __( 'My Sites' ) } />
+			<DocumentHead title={ __( 'Sites' ) } />
 			<PageHeader>
 				<HeaderControls>
-					<DashboardHeading>{ __( 'My Sites' ) }</DashboardHeading>
+					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
 					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
 						<span>{ __( 'Add new site' ) }</span>
 					</Button>

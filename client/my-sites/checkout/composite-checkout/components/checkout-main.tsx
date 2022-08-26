@@ -31,7 +31,7 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
@@ -126,14 +126,9 @@ export default function CheckoutMain( {
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
-		useSelector(
-			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
-		) ||
-		isJetpackCheckout ||
-		false;
-	const hasJetpackStandalonePlugins =
-		useSelector( ( state ) => siteId && isJetpackProductSite( state, siteId ) ) || false;
-	const usesJetpackProducts = isJetpackNotAtomic || hasJetpackStandalonePlugins;
+		useSelector( ( state ) => {
+			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
+		} ) || isJetpackCheckout;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isLoadingIntroOffers = useSelector( ( state ) =>
 		getIsIntroOfferRequesting( state, siteId )
@@ -176,7 +171,7 @@ export default function CheckoutMain( {
 		productAliasFromUrl,
 		purchaseId,
 		isInModal,
-		usesJetpackProducts,
+		usesJetpackProducts: isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
 		isLoggedOutCart,

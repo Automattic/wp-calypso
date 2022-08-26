@@ -14,6 +14,10 @@
 	line-height: 21px;
 	word-wrap: break-word;
 	hyphens: auto;
+
+	div {
+		margin-bottom: 20px;
+	}
 }
 
 .plugin-sections__content {
@@ -128,7 +132,7 @@
 
 .plugin-details__plugins-sections {
 	.card {
-		padding-top: 44px;
+		padding-top: 32px;
 
 		&.no-header {
 			padding-top: 20px;
@@ -137,5 +141,11 @@
 
 	.plugin-sections__banner {
 		padding-bottom: 50px;
+	}
+}
+
+.legacy {
+	.plugin-details__plugins-sections .card {
+		padding-top: 44px;
 	}
 }
