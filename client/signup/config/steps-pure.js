@@ -368,8 +368,8 @@ export function generateSteps( {
 				isDomainOnly: false,
 			},
 		},
-		'emails-add': {
-			stepName: 'emails-add',
+		mailbox: {
+			stepName: 'mailbox',
 			dependencies: [ 'domainItem', 'siteSlug' ],
 			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
 			props: {
