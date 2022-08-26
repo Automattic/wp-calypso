@@ -387,7 +387,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onPreview={ previewDesign }
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
-			onBuildYouOwnLayoutClick={ goTopatternAssembler }
+			onPatternAssemblerCtaClick={ goTopatternAssembler }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
