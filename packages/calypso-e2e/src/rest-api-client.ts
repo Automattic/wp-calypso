@@ -61,6 +61,9 @@ export class RestAPIClient {
 
 	/**
 	 * Constructs an instance of the API client.
+	 *
+	 * @param {AccountCredentials} credentials User credentials.
+	 * @param {string} [bearerToken] BearerToken for the user.
 	 */
 	constructor( credentials: AccountCredentials, bearerToken?: string ) {
 		this.credentials = credentials;
