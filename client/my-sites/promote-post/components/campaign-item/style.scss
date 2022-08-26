@@ -8,12 +8,13 @@
 		align-items: center;
 
 		.campaign-item__header-image {
-			height: 80px;
+			height: 60px;
 			width: 80px;
 			margin-right: 20px;
 
 			img {
-				height: 80px;
+				object-fit: cover;
+				height: 60px;
 				width: 80px;
 			}
 		}
