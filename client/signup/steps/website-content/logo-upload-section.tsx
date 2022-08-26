@@ -45,7 +45,9 @@ export function LogoUploadSection( {
 
 	return (
 		<LogoUploadSectionContainer>
-			<Label>{ translate( 'Upload your business logo.' ) }</Label>
+			<Label>
+				{ translate( 'Upload a logo for your website, transparent backgrounds work best.' ) }
+			</Label>
 			<HorizontalGrid>
 				<WordpressMediaUpload
 					mediaIndex={ 0 }
