@@ -46,7 +46,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
-	const { goBack, goToStep, submit, exitFlow } = navigation;
+	const { goBack, submit, exitFlow } = navigation;
 	const translate = useTranslate();
 	const locale = useLocale();
 	const site = useSite();
@@ -238,10 +238,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}
 
-	function goTopatternAssembler() {
-		goToStep?.( 'patternAssembler' );
-	}
-
 	function recordStepContainerTracksEvent( eventName: string ) {
 		const tracksProps = {
 			step: 'design-step',
@@ -387,7 +383,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onPreview={ previewDesign }
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
-			onPatternAssemblerCtaClick={ goTopatternAssembler }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
