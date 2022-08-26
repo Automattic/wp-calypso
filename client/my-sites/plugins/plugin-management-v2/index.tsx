@@ -39,7 +39,7 @@ export default function PluginManagementV2( {
 
 		return (
 			<div className="plugin-common-table__bulk-actions">
-				{ pluginUpdateCount && (
+				{ !! pluginUpdateCount && (
 					<ButtonGroup>
 						<Button compact primary onClick={ updateAllPlugins }>
 							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {

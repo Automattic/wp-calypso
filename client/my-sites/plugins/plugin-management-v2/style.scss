@@ -12,12 +12,12 @@
 	padding: 0;
 }
 .plugin-management-v2__main-content-container {
-	margin-top: 0;
+	margin-block-start: 0;
 	@include break-xlarge() {
-		margin-top: 8px;
+		margin-block-start: 8px;
 	}
 	&.is-bulk-management-active {
-		margin-top: 0;
+		margin-block-start: 0;
 	}
 }
 .plugin-management-v2__no-sites {

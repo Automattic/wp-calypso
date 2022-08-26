@@ -378,19 +378,14 @@ export class PluginsListHeader extends PureComponent {
 						/>
 						{ ! isWpcom && (
 							<div className="plugin-list-header__bulk-select-label">
-								{ translate(
-									'%(number)d {{span}}Selected{{/span}}',
-									'%(number)d {{span}}Selected{{/span}}',
-									{
-										count: selected.length,
-										args: {
-											number: selected.length,
-										},
-										components: {
-											span: <span />,
-										},
-									}
-								) }
+								{ translate( '%(number)d {{span}}Selected{{/span}}', {
+									args: {
+										number: selected.length,
+									},
+									components: {
+										span: <span />,
+									},
+								} ) }
 							</div>
 						) }
 					</div>

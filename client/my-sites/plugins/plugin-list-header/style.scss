@@ -86,14 +86,19 @@
 
 .plugin-list-header-new {
 	&.section-header.card {
+		margin-left: 1px;
+		margin-right: 1px;
 		&:not( .is-bulk-editing ) {
 			@include break-xlarge() {
 				display: none;
 			}
 		}
 		&.is-bulk-editing {
-			margin-top: 8px;
-			margin-bottom: 0;
+			margin-block-start: 8px;
+			margin-block-end: 0;
+			.section-header__actions {
+				width: 100%;
+			}
 		}
 		.button-group {
 			margin-inline-start: 14px;
@@ -108,12 +113,11 @@
 				}
 			}
 		}
-	}
-	.section-header__label {
-		flex-basis: auto;
-	}
-	.section-header__actions {
-		margin-left: 0;
+		.section-header__actions {
+			margin-left: 0;
+			flex-grow: 0;
+			justify-content: end;
+		}
 	}
 	.bulk-select {
 		.count {
@@ -126,9 +130,7 @@
 		}
 	}
 	.plugin-list-header__action-buttons {
-		@include break-wide() {
-			justify-content: end;
-		}
+		justify-content: end;
 	}
 	.plugin-list-header__bulk-select-wrapper {
 		display: flex;
@@ -140,12 +142,19 @@
 		
 		span {
 			display: none;
-			@include break-medium() {
+			@include breakpoint-deprecated( '>960px' ) {
 				display: inline;
 			}
 		}
 	}
 	.plugin-list-header__actions-dropdown {
-		margin-inline-start: 38px;
+		margin-inline-start: auto;
+	}
+	.plugin-list-header__mode-buttons {
+		flex-grow: 0;
+		margin-inline-start: 16px;
+		@include break-medium() {
+			margin-inline-start: 32px;
+		}
 	}
 }

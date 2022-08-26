@@ -100,7 +100,9 @@ td.plugin-common-table__actions {
 	display: flex;
 	justify-content: end;
 	.button-group {
-		margin-inline-end: 8px;
+		&:not( :last-child ) {
+			margin-inline-end: 8px;
+		}
 		button {
 			&:first-child,
 			&:last-child {
