@@ -85,9 +85,14 @@
 }
 
 .plugin-list-header-new {
+	margin-block-start: 8px;
 	&.section-header.card {
-		margin-left: 1px;
-		margin-right: 1px;
+		margin-inline-start: 0;
+		margin-inline-end: 0;
+		@include break-wide() {
+			margin-inline-start: 1px;
+			margin-inline-end: 1px;
+		}
 		&:not( .is-bulk-editing ) {
 			@include break-xlarge() {
 				display: none;
@@ -98,6 +103,7 @@
 			margin-block-end: 0;
 			.section-header__actions {
 				width: 100%;
+				flex-wrap: wrap;
 			}
 		}
 		.button-group {
@@ -114,7 +120,7 @@
 			}
 		}
 		.section-header__actions {
-			margin-left: 0;
+			margin-inline-start: 0;
 			flex-grow: 0;
 			justify-content: end;
 		}
@@ -156,5 +162,8 @@
 		@include break-medium() {
 			margin-inline-start: 32px;
 		}
+	}
+	.plugin-list-header__bulk-select-label {
+		margin-inline-end: 16px;
 	}
 }

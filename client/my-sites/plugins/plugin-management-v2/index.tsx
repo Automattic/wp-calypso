@@ -82,7 +82,7 @@ export default function PluginManagementV2( {
 						key: 'last-updated',
 						header: translate( 'Last updated' ),
 						smallColumn: true,
-						colSpan: 2,
+						colSpan: 1,
 					},
 			  ]
 			: [
@@ -96,7 +96,7 @@ export default function PluginManagementV2( {
 		{
 			key: 'update',
 			header: renderBulkActionsHeader(),
-			colSpan: 2,
+			colSpan: 3,
 		},
 	];
 
