@@ -373,7 +373,7 @@ export function generateSteps( {
 			dependencies: [ 'domainItem', 'siteSlug' ],
 			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
 			props: {
-				backUrl: 'domains-with-email/',
+				backUrl: 'mailbox-domain/',
 				hideSkip: true,
 				isDomainOnly: false,
 			},
