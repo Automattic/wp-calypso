@@ -114,12 +114,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		response,
 	} );
 
-	const receiveLaunchpadScreen = ( siteId: number, launchpadScreen: string | undefined ) => ( {
-		type: 'RECEIVE_LAUNCHPAD_SCREEN' as const,
-		siteId,
-		launchpadScreen,
-	} );
-
 	const reset = () => ( {
 		type: 'RESET_SITE_STORE' as const,
 	} );
@@ -244,9 +238,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			}
 			if ( 'site_vertical_id' in settings ) {
 				yield receiveSiteVerticalId( siteId, settings.site_vertical_id );
-			}
-			if ( 'launchpad_screen' in settings ) {
-				yield receiveLaunchpadScreen( siteId, settings.launchpad_screen );
 			}
 			yield updateSiteSettings( siteId, settings );
 		} catch ( e ) {}
@@ -523,7 +514,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSiteFailed,
 		receiveSiteTagline,
 		receiveSiteVerticalId,
-		receiveLaunchpadScreen,
 		updateSiteSettings,
 		saveSiteTagline,
 		reset,
@@ -570,7 +560,6 @@ export type Action =
 			| ActionCreators[ 'receiveNewSiteFailed' ]
 			| ActionCreators[ 'receiveSiteTagline' ]
 			| ActionCreators[ 'receiveSiteVerticalId' ]
-			| ActionCreators[ 'receiveLaunchpadScreen' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'updateSiteSettings' ]
