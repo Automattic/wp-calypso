@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
@@ -37,6 +38,15 @@ export default function PromotedPosts() {
 
 	return (
 		<Main className="promote-post">
+			<DocumentHead title={ translate( 'Advertising' ) } />
+			<SitePreview />
+			<FormattedHeader
+				brandFont
+				className="advertising-page-heading"
+				headerText={ translate( 'Advertising' ) }
+				align="left"
+				hasScreenOptions
+			/>
 			<DocumentHead title={ translate( 'Advertising' ) } />
 			<SitePreview />
 			{ ! campaignsData?.length && ! campaignsIsLoading && <PostsListBanner /> }

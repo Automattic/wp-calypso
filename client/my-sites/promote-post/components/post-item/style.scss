@@ -11,9 +11,9 @@
 
 		.post-item__image {
 			height: 60px;
+			object-fit: cover;
 		}
 	}
-
 
 	.post-item__main {
 		flex: 1;
@@ -24,7 +24,6 @@
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
-			height: 56px;
 		}
 
 		.post-item__title {
