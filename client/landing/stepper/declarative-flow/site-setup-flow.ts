@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { useDesignsBySite } from '@automattic/design-picker';
+import { Design, useDesignsBySite } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
@@ -175,6 +175,10 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup':
+					if ( ( providedDependencies?.selectedDesign as Design )?.slug === 'blank-canvas' ) {
+						return navigate( 'patternAssembler' );
+					}
+
 					return navigate( 'processing' );
 
 				case 'processing': {

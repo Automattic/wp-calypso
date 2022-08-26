@@ -342,7 +342,6 @@ export interface UnifiedDesignPickerProps {
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
-	onPatternAssemblerCtaClick?: any;
 	purchasedThemes?: string[];
 }
 
@@ -358,7 +357,6 @@ interface StaticDesignPickerProps {
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
-	onPatternAssemblerCtaClick?: any;
 	purchasedThemes?: string[];
 }
 
@@ -380,7 +378,6 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable,
 	onCheckout,
-	onPatternAssemblerCtaClick,
 	verticalId,
 	purchasedThemes,
 } ) => {
@@ -430,7 +427,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 						/>
 					) : (
-						<PatternAssemblerCta key={ design.slug } onButtonClick={ onPatternAssemblerCtaClick } />
+						<PatternAssemblerCta key={ design.slug } onButtonClick={ () => onSelect( design ) } />
 					)
 				) }
 			</div>
@@ -489,7 +486,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable,
 	onCheckout,
-	onPatternAssemblerCtaClick,
 	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
@@ -545,7 +541,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					hasDesignOptionHeader={ hasDesignOptionHeader }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					onCheckout={ onCheckout }
-					onPatternAssemblerCtaClick={ onPatternAssemblerCtaClick }
 					purchasedThemes={ purchasedThemes }
 				/>
 			</div>
