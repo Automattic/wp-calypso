@@ -33,10 +33,10 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					return;
 				}
 
-				await showDSP( props.siteId, props.postId, widgetContainer.current );
+				await showDSP( props.siteId, props.postId, widgetContainer.current, onClose );
 				setIsLoading( false );
 			} )();
-	}, [ isVisible, props.postId, props.siteId ] );
+	}, [ isVisible, onClose, props.postId, props.siteId ] );
 
 	const promoteWidgetStatus = usePromoteWidget();
 	if ( promoteWidgetStatus === PromoteWidgetStatus.DISABLED ) {
