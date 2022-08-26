@@ -1,11 +1,12 @@
 import { SiteDetails, useSiteLogoMutation } from '@automattic/data-stores';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
-import { patterns, Pattern } from '@automattic/pattern-picker';
+import { patterns } from '@automattic/pattern-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import type { Pattern } from '@automattic/pattern-picker';
 
 const base64ImageToBlob = ( base64String: string ) => {
 	// extract content type and base64 payload from original string
@@ -64,23 +65,34 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 
 	const postSiteLogo = ( state: OnboardingSite ) => {
 		if ( ! state.siteLogo ) {
-			return;
+			return Promise.resolve();
 		}
 		return setSiteLogo( new File( [ base64ImageToBlob( state.siteLogo ) ], 'site-logo.png' ) );
 	};
 
-	const setIntent = ( site: SiteDetails, flow: string | null ) => {
-		if ( site && flow && isNewsletterOrLinkInBioFlow( flow ) ) {
+	const setIntent = ( site: SiteDetails, flow: string ) => {
+		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
 			return setIntentOnSite( site.ID.toString(), flow );
 		}
 		return Promise.resolve();
 	};
 
-	const setPattern = async ( site: SiteDetails, flow: string | null ) => {
-		if ( site && flow === 'link-in-bio' ) {
+	const setPattern = async (
+		site: SiteDetails,
+		flow: string,
+		logoUploadResult: Awaited< ReturnType< typeof setSiteLogo > > | void
+	) => {
+		if ( flow === 'link-in-bio' ) {
 			const pattern = patterns.find( ( pattern: Pattern ) => pattern.id === selectedPatternId );
 			if ( pattern ) {
-				const content = pattern.content;
+				let content = pattern.content;
+				// replace the pattern logo with the uploaded site logo
+				if ( logoUploadResult?.uploadResult?.media?.[ 0 ] && pattern.avatarUrl ) {
+					content = content.replace(
+						pattern.avatarUrl,
+						logoUploadResult.uploadResult.media[ 0 ].URL
+					);
+				}
 				wpcomRequest( {
 					// since this is a new site, its safe to assume that homepage ID is 2
 					path: `/sites/${ site.ID }/pages/2`,
@@ -96,9 +108,10 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site && flow ) {
 			return Promise.all( [
 				postSiteSettings( site, state ),
-				postSiteLogo( state ),
+				postSiteLogo( state ).then( ( logoUploadResult ) =>
+					setPattern( site, flow, logoUploadResult )
+				),
 				setIntent( site, flow ),
-				setPattern( site, flow ),
 			] ).then( () => {
 				recordTracksEvent( 'calypso_signup_site_options_submit', {
 					has_site_title: !! state.siteTitle,
