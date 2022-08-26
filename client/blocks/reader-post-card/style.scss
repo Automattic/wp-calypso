@@ -238,10 +238,10 @@
 	&::before {
 		content: '';
 		background: linear-gradient(
-			to bottom,
-			rgba( 0, 0, 0, 0 ) 0%,
-			rgba( 0, 0, 0, 0.37 ) 65%,
-			rgba( 0, 0, 0, 1 ) 110%
+				to bottom,
+				rgba( 0, 0, 0, 0 ) 0%,
+				rgba( 0, 0, 0, 0.37 ) 65%,
+				rgba( 0, 0, 0, 1 ) 110%
 		);
 		height: 80px;
 		opacity: 0.4;
@@ -313,14 +313,14 @@
 }
 
 .reader-post-card__tags {
-	color: var( --color-text-subtle );
+	color: var( --color-neutral-70 );
 	display: flex;
 	flex-direction: row;
-	height: 20px;
-	margin-left: 10px;
+	height: 40px;
 	overflow: hidden;
 	position: relative;
 	width: calc( 100% - 140px );
+	gap: 5px;
 
 	@include breakpoint-deprecated( '<480px' ) {
 		max-width: 500px;
@@ -333,23 +333,10 @@
 
 .reader-post-card__tag {
 	white-space: nowrap;
-	margin-right: 3px;
-
-	&::after {
-		content: ', ';
-	}
-
-	&:last-child::after {
-		display: none;
-	}
-}
-
-.reader-post-card__tags .gridicons-tag {
-	height: 18px;
-	fill: var( --color-neutral-light );
-	flex: 0 0 15px;
-	margin-right: 5px;
-	margin-top: 3px;
+	border-radius: 4px;
+	padding: 3px 7px;
+	background-color: var( --color-neutral-0 );
+	align-self: center;
 }
 
 .reader-post-card__byline .reader-avatar {
