@@ -159,7 +159,7 @@ export class PluginsListHeader extends PureComponent {
 					key="plugin-list-header__buttons-update"
 					compact
 					disabled={ ! this.props.haveUpdatesSelected }
-					primary={ this.isWpcom }
+					primary={ isWpcom }
 					onClick={ this.props.updateSelected }
 				>
 					{ ! isWpcom ? translate( 'Update Plugins' ) : translate( 'Update' ) }
