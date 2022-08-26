@@ -317,7 +317,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				{ ...props }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				onSelect={ previewOnly ? onPreview : noop }
-				disabled={ ! isBlankCanvas && ! previewOnly }
+				disabled={ ! previewOnly }
 			/>
 		</div>
 	) : (
@@ -401,7 +401,8 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
-		result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
+		isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+			result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
 
 		return result;
 	}, [ designs, categorization?.selection ] );
