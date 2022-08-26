@@ -13,7 +13,12 @@ export function ssrSetupLocaleMiddleware() {
 		function setLocaleData( localeData ) {
 			const i18n = new I18N();
 			i18n.setLocale( localeData );
-			defaultI18n.setLocaleData( localeData );
+			if ( localeData ) {
+				defaultI18n.setLocaleData( localeData );
+			} else {
+				defaultI18n.resetLocaleData();
+			}
+
 			const localeSlug = i18n.getLocaleSlug();
 			const localeVariant = i18n.getLocaleVariant();
 			context.store.dispatch( { type: LOCALE_SET, localeSlug, localeVariant } );
