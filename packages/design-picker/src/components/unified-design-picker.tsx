@@ -302,9 +302,9 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	}
 
 	// We don't need preview for blank canvas
-	return (
+	return ! isBlankCanvas ? (
 		<div className="design-button-container">
-			{ ! isBlankCanvas && ! previewOnly && (
+			{ ! previewOnly && (
 				<DesignButtonCover
 					design={ props.design }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -320,6 +320,11 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				disabled={ ! isBlankCanvas && ! previewOnly }
 			/>
 		</div>
+	) : (
+		<PatternAssemblerCta
+			key={ props.design.slug }
+			onButtonClick={ () => props.onSelect( props.design ) }
+		/>
 	);
 };
 
@@ -383,7 +388,10 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const blankCanvasDesign = {
-		slug: 'blank-canvas',
+		recipe: {
+			stylesheet: 'pub/blank-canvas-blocks',
+		},
+		slug: 'blank-canvas-blocks',
 		title: 'Blank Canvas',
 	} as Design;
 
@@ -393,7 +401,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
-		result.splice( Math.min(result.length, 3), 0, blankCanvasDesign );
+		result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
 
 		return result;
 	}, [ designs, categorization?.selection ] );
@@ -407,29 +415,25 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 				/>
 			) }
 			<div className={ 'design-picker__grid' }>
-				{ filteredDesigns.map( ( design ) =>
-					! isBlankCanvasDesign( design ) ? (
-						<DesignButtonContainer
-							key={ design.slug }
-							design={ design }
-							locale={ locale }
-							onSelect={ onSelect }
-							onPreview={ onPreview }
-							onUpgrade={ onUpgrade }
-							highRes={ false }
-							hideFullScreenPreview={ false }
-							hideDesignTitle={ false }
-							isPremiumThemeAvailable={ isPremiumThemeAvailable }
-							previewOnly={ previewOnly }
-							hasDesignOptionHeader={ hasDesignOptionHeader }
-							onCheckout={ onCheckout }
-							verticalId={ verticalId }
-							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
-						/>
-					) : (
-						<PatternAssemblerCta key={ design.slug } onButtonClick={ () => onSelect( design ) } />
-					)
-				) }
+				{ filteredDesigns.map( ( design ) => (
+					<DesignButtonContainer
+						key={ design.slug }
+						design={ design }
+						locale={ locale }
+						onSelect={ onSelect }
+						onPreview={ onPreview }
+						onUpgrade={ onUpgrade }
+						highRes={ false }
+						hideFullScreenPreview={ false }
+						hideDesignTitle={ false }
+						isPremiumThemeAvailable={ isPremiumThemeAvailable }
+						previewOnly={ previewOnly }
+						hasDesignOptionHeader={ hasDesignOptionHeader }
+						onCheckout={ onCheckout }
+						verticalId={ verticalId }
+						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
+					/>
+				) ) }
 			</div>
 		</div>
 	);

@@ -175,7 +175,9 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup':
-					if ( ( providedDependencies?.selectedDesign as Design )?.slug === 'blank-canvas' ) {
+					if (
+						( providedDependencies?.selectedDesign as Design )?.slug === 'blank-canvas-blocks'
+					) {
 						return navigate( 'patternAssembler' );
 					}
 
