@@ -1,4 +1,5 @@
 import { SiteDetails, useSiteLogoMutation } from '@automattic/data-stores';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from 'react';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -65,7 +66,7 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 	};
 
 	const setIntent = ( site: SiteDetails, flow: string | null ) => {
-		if ( site && flow && [ 'newsletter', 'link-in-bio' ].includes( flow ) ) {
+		if ( site && flow && isNewsletterOrLinkInBioFlow( flow ) ) {
 			return setIntentOnSite( site.ID.toString(), flow );
 		}
 		return Promise.resolve();
