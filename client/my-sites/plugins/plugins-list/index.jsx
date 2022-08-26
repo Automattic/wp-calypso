@@ -539,42 +539,45 @@ export class PluginsList extends Component {
 			<div className="plugins-list">
 				<QueryProductsList />
 				<PluginNotices sites={ this.getPluginsSites() } plugins={ this.props.plugins } />
+				<PluginsListHeader
+					label={ this.props.header }
+					isBulkManagementActive={ this.state.bulkManagementActive }
+					isWpcom={ ! this.props.isJetpackCloud }
+					selectedSiteSlug={ selectedSiteSlug }
+					plugins={ this.props.plugins }
+					selected={ this.getSelected() }
+					toggleBulkManagement={ this.toggleBulkManagement }
+					updateAllPlugins={ this.updateAllPlugins }
+					updateSelected={ this.updateSelected }
+					pluginUpdateCount={ this.props.pluginUpdateCount }
+					activateSelected={ this.activateSelected }
+					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
+					deactivateSelected={ this.deactivateSelected }
+					setAutoupdateSelected={ this.setAutoupdateSelected }
+					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
+					removePluginNotice={ this.removePluginDialog }
+					setSelectionState={ this.setBulkSelectionState }
+					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
+					haveInactiveSelected={ this.props.plugins.some(
+						this.filterSelection.inactive.bind( this )
+					) }
+					haveUpdatesSelected={ this.props.plugins.some(
+						this.filterSelection.updates.bind( this )
+					) }
+				/>
 				{ this.props.isJetpackCloud ? (
 					<PluginManagementV2
 						plugins={ this.props.plugins }
 						isLoading={ this.props.isLoading }
 						selectedSite={ this.props.selectedSite }
 						searchTerm={ this.props.searchTerm }
+						isBulkManagementActive={ this.state.bulkManagementActive }
+						pluginUpdateCount={ this.props.pluginUpdateCount }
+						toggleBulkManagement={ this.toggleBulkManagement }
+						updateAllPlugins={ this.updateAllPlugins }
 					/>
 				) : (
 					<>
-						<PluginsListHeader
-							label={ this.props.header }
-							isBulkManagementActive={ this.state.bulkManagementActive }
-							selectedSiteSlug={ selectedSiteSlug }
-							plugins={ this.props.plugins }
-							selected={ this.getSelected() }
-							toggleBulkManagement={ this.toggleBulkManagement }
-							updateAllPlugins={ this.updateAllPlugins }
-							updateSelected={ this.updateSelected }
-							pluginUpdateCount={ this.props.pluginUpdateCount }
-							activateSelected={ this.activateSelected }
-							deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
-							deactivateSelected={ this.deactivateSelected }
-							setAutoupdateSelected={ this.setAutoupdateSelected }
-							unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
-							removePluginNotice={ this.removePluginDialog }
-							setSelectionState={ this.setBulkSelectionState }
-							haveActiveSelected={ this.props.plugins.some(
-								this.filterSelection.active.bind( this )
-							) }
-							haveInactiveSelected={ this.props.plugins.some(
-								this.filterSelection.inactive.bind( this )
-							) }
-							haveUpdatesSelected={ this.props.plugins.some(
-								this.filterSelection.updates.bind( this )
-							) }
-						/>
 						<Card className={ itemListClasses }>
 							{ this.orderPluginsByUpdates( this.props.plugins ).map( this.renderPlugin ) }
 						</Card>

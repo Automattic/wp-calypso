@@ -13,6 +13,7 @@ interface Props {
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;
 	hasMoreActions: boolean;
 	primaryKey: string;
+	className?: string;
 }
 
 export default function PluginCommonTable( {
@@ -22,19 +23,19 @@ export default function PluginCommonTable( {
 	rowFormatter,
 	hasMoreActions,
 	primaryKey,
+	className,
 }: Props ): ReactElement {
 	return (
-		<table className="plugin-common-table__table">
+		<table className={ classNames( 'plugin-common-table__table', className ) }>
 			<thead>
 				<tr>
 					{ columns
-						.filter( ( column ) => column.title )
+						.filter( ( column ) => column.header )
 						.map( ( column ) => (
 							<th colSpan={ column.colSpan || 1 } key={ column.key }>
-								{ column.title }
+								{ column.header }
 							</th>
 						) ) }
-					<th></th>
 				</tr>
 			</thead>
 			<tbody>
