@@ -71,4 +71,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_difm_lite_in_progress',
 	'difm_lite_site_options',
 	'site_intent',
+	'launchpad_view',
 ].join();
