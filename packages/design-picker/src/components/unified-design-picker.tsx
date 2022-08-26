@@ -393,7 +393,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
-		result.splice( result.length < 3 ? result.length : 3, 0, blankCanvasDesign );
+		result.splice( Math.min(result.length, 3), 0, blankCanvasDesign );
 
 		return result;
 	}, [ designs, categorization?.selection ] );
