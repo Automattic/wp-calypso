@@ -567,7 +567,7 @@ export class PluginsList extends Component {
 				/>
 				{ this.props.isJetpackCloud ? (
 					<PluginManagementV2
-						plugins={ this.props.plugins }
+						plugins={ this.getPlugins() }
 						isLoading={ this.props.isLoading }
 						selectedSite={ this.props.selectedSite }
 						searchTerm={ this.props.searchTerm }
@@ -585,6 +585,21 @@ export class PluginsList extends Component {
 				) }
 			</div>
 		);
+	}
+
+	getPlugins() {
+		return this.props.plugins.map( ( plugin ) => {
+			const selectThisPlugin = this.togglePlugin.bind( this, plugin );
+			const allowedPluginActions = this.getAllowedPluginActions( plugin );
+			const isSelectable =
+				this.state.bulkManagementActive &&
+				( allowedPluginActions.autoupdate || allowedPluginActions.activation );
+
+			return {
+				...plugin,
+				...{ onClick: selectThisPlugin, isSelected: this.isSelected( plugin ), isSelectable },
+			};
+		} );
 	}
 
 	getAllowedPluginActions( plugin ) {

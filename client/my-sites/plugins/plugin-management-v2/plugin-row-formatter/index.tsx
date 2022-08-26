@@ -1,6 +1,7 @@
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
@@ -91,18 +92,29 @@ export default function PluginRowFormatter( {
 				</PluginDetailsButton>
 			) : (
 				<span className="plugin-row-formatter__row-container">
-					{ item.icon ? (
-						<img
-							className="plugin-row-formatter__plugin-icon"
-							src={ item.icon }
-							alt={ item.name }
-						/>
-					) : (
-						<Gridicon className="plugin-row-formatter__plugin-icon has-opacity" icon="plugins" />
-					) }
-					<PluginDetailsButton className="plugin-row-formatter__plugin-name">
-						{ item.name }
-					</PluginDetailsButton>
+					<span className="plugin-row-formatter__plugin-details">
+						{ item?.isSelectable && (
+							<FormInputCheckbox
+								className="plugin-row-formatter__checkbox"
+								id={ item.slug }
+								onClick={ item.onClick }
+								checked={ item.isSelected }
+								readOnly={ true }
+							/>
+						) }
+						{ item.icon ? (
+							<img
+								className="plugin-row-formatter__plugin-icon"
+								src={ item.icon }
+								alt={ item.name }
+							/>
+						) : (
+							<Gridicon className="plugin-row-formatter__plugin-icon has-opacity" icon="plugins" />
+						) }
+						<PluginDetailsButton className="plugin-row-formatter__plugin-name">
+							{ item.name }
+						</PluginDetailsButton>
+					</span>
 					<span className="plugin-row-formatter__overlay"></span>
 				</span>
 			);

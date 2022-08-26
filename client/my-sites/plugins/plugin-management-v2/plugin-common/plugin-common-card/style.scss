@@ -59,3 +59,11 @@
 		width: fit-content;
 	}
 }
+.plugin-common-card__card.card {
+	padding: 16px;
+}
+.plugin-common-card__left-checkbox {
+	input[type='checkbox'] {
+		margin-top: 8px;
+	}
+}
