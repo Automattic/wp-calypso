@@ -238,8 +238,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}
 
-	function goToBuildYourOwnLayout() {
-		goToStep?.( 'buildYourOwnLayout' );
+	function goTopatternAssembler() {
+		goToStep?.( 'patternAssembler' );
 	}
 
 	function recordStepContainerTracksEvent( eventName: string ) {
@@ -387,7 +387,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onPreview={ previewDesign }
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
-			onBuildYouOwnLayoutClick={ goToBuildYourOwnLayout }
+			onBuildYouOwnLayoutClick={ goTopatternAssembler }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }

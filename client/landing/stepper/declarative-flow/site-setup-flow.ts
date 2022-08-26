@@ -43,7 +43,7 @@ export const siteSetupFlow: Flow = {
 			'intent',
 			'options',
 			'designSetup',
-			'buildYourOwnLayout',
+			'patternAssembler',
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
@@ -451,7 +451,7 @@ export const siteSetupFlow: Flow = {
 
 					return navigate( 'intent' );
 
-				case 'buildYourOwnLayout':
+				case 'patternAssembler':
 					return navigate( 'designSetup' );
 
 				case 'editEmail':

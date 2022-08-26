@@ -2,12 +2,12 @@ import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
-const BuildYourOwnLayout: Step = ( { navigation } ) => {
+const PatternAssembler: Step = ( { navigation } ) => {
 	const { goNext, goBack } = navigation;
 
 	return (
 		<StepContainer
-			stepName={ 'buildYourOwnLayout' }
+			stepName={ 'pattern-assembler' }
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
@@ -19,4 +19,4 @@ const BuildYourOwnLayout: Step = ( { navigation } ) => {
 	);
 };
 
-export default BuildYourOwnLayout;
+export default PatternAssembler;

@@ -23,8 +23,8 @@ import {
 	filterDesignsByCategory,
 	sortDesigns,
 } from '../utils';
-import BuildYourOwnCta from './build-your-own-cta';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
+import PatternAssemblerCta from './pattern-assembler-cta';
 import PremiumBadge from './premium-badge';
 import ThemePreview from './theme-preview';
 import type { Categorization } from '../hooks/use-categorization';
@@ -430,7 +430,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 						/>
 					) : (
-						<BuildYourOwnCta key={ design.slug } onButtonClick={ onBuildYouOwnLayoutClick } />
+						<PatternAssemblerCta key={ design.slug } onButtonClick={ onBuildYouOwnLayoutClick } />
 					)
 				) }
 			</div>
