@@ -151,7 +151,7 @@ export function getCategories( allowed = ALLOWED_CATEGORIES ): Record< string, C
 			),
 			icon: 'grid',
 			slug: 'design',
-			tags: [ 'design' ],
+			tags: [ 'design', 'blocks', 'editor' ],
 		},
 		photo: {
 			name: __( 'Photo & Video' ),
