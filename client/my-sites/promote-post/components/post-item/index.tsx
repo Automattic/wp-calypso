@@ -1,3 +1,4 @@
+import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
@@ -6,9 +7,10 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
-import { getPostType, setPhotonImageWidth } from 'calypso/my-sites/promote-post/utils';
+import { getPostType } from 'calypso/my-sites/promote-post/utils';
 
 export type Post = {
 	ID: number;
@@ -48,6 +50,9 @@ export default function PostItem( { post }: Props ) {
 		openModal();
 		dispatch( recordDSPEntryPoint( 'promoted_posts-post_item' ) );
 	};
+
+	const safeUrl = safeImageUrl( post.featured_image );
+	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
 	return (
 		<CompactCard className="post-item__card">
 			<div className="post-item__main">
@@ -63,11 +68,7 @@ export default function PostItem( { post }: Props ) {
 				</div>
 			</div>
 			<div className="post-item__image-container">
-				<img
-					className="post-item__image"
-					src={ setPhotonImageWidth( post.featured_image ) }
-					alt=""
-				/>
+				{ featuredImage && <img className="post-item__image" src={ featuredImage } alt="" /> }
 			</div>
 			<div className="post-item__promote-link">
 				<BlazePressWidget

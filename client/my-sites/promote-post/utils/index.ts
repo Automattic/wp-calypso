@@ -162,16 +162,3 @@ export const getCampaignAudienceString = ( audience_list: AudienceList ) => {
 export const canCancelCampaign = ( campaignStatus: string ) => {
 	return [ 'created', 'active' ].includes( campaignStatus );
 };
-export const getPhotonThumbnailLink = ( url: string ): string => `https://i0.wp.com/${ url }?w=120`;
-
-export const setPhotonImageWidth = ( url: string, size = 120 ): string => {
-	const lastIndex = url.lastIndexOf( '&w=' );
-	let preUrl = '';
-	if ( lastIndex !== -1 ) {
-		preUrl = url.slice( 0, lastIndex );
-	} else {
-		return getPhotonThumbnailLink( url );
-	}
-
-	return `${ preUrl }&w=${ size }`;
-};

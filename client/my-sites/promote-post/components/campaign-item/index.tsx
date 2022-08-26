@@ -1,4 +1,5 @@
 import './style.scss';
+import { safeImageUrl } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -9,6 +10,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
 import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
 	canCancelCampaign,
 	getCampaignAudienceString,
@@ -78,6 +80,9 @@ export default function CampaignItem( { campaign }: Props ) {
 
 	const audience = useMemo( () => getCampaignAudienceString( audience_list ), [ audience_list ] );
 
+	const safeUrl = safeImageUrl( content_config.imageUrl );
+	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
+
 	const header = (
 		<div className="campaign-item__header">
 			<div className="campaign-item__header-content">
@@ -89,9 +94,11 @@ export default function CampaignItem( { campaign }: Props ) {
 					</Badge>
 				</div>
 			</div>
-			<div className="campaign-item__header-image">
-				<img src={ content_config.imageUrl } alt="" />
-			</div>
+			{ adCreativeUrl && (
+				<div className="campaign-item__header-image">
+					<img src={ adCreativeUrl } alt="" />
+				</div>
+			) }
 		</div>
 	);
 
