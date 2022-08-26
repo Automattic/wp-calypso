@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -225,7 +226,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to ' +
 										'email each person on your list. <Button>Learn more</Button>'
 								),
-								{ Button: createElement( Button, { isLink: true } ) }
+								{
+									Button: createElement( Button, {
+										isLink: true,
+										target: '__blank',
+										href: localizeUrl( 'https://wordpress.com/support/user-roles/' ),
+									} ),
+								}
 							) }
 						</p>
 					) }
