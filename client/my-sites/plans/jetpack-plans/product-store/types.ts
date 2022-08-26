@@ -16,14 +16,15 @@ export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & Produ
 
 export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductStoreBaseProps;
 
-export type FilterType = 'products' | 'bundles';
-export interface ProductFilterProps {
-	filterType: FilterType;
-	setFilterType: ( filterType: FilterType ) => void;
+export type ViewType = 'products' | 'bundles';
+
+export interface ViewFilterProps {
+	currentView: ViewType;
+	setCurrentView: ( currentView: ViewType ) => void;
 }
 
-export interface ProductProps {
-	type: FilterType;
+export interface ItemsListProps {
+	currentView: ViewType;
 }
 
 export type MostPopularProps = {
