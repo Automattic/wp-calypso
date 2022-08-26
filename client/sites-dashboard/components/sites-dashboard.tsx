@@ -1,4 +1,9 @@
-import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automattic/components';
+import {
+	Button,
+	ScrollToTopButton,
+	useSitesTableFiltering,
+	useSitesTableSorting,
+} from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
@@ -8,7 +13,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
-import { ScrollToTopButton } from './scroll-to-top-button';
 import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
