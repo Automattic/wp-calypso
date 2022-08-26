@@ -1,7 +1,9 @@
 import { SiteDetails, useSiteLogoMutation } from '@automattic/data-stores';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { patterns, Pattern } from '@automattic/pattern-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
@@ -43,11 +45,13 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 	const { ignoreUrl, site, flow } = options;
 	const siteIsLoaded = !! site;
 
-	const { getState } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getState, getPatternId } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const state = getState();
 	const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 
 	const { mutateAsync: setSiteLogo } = useSiteLogoMutation( site?.ID );
+
+	const selectedPatternId = getPatternId();
 
 	const postSiteSettings = ( site: SiteDetails, state: OnboardingSite ) => {
 		const siteSettings = {
@@ -72,12 +76,28 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 		return Promise.resolve();
 	};
 
+	const setPattern = async ( site: SiteDetails, flow: string | null ) => {
+		if ( site && flow === 'link-in-bio' ) {
+			const pattern = patterns.find( ( pattern: Pattern ) => pattern.id === selectedPatternId );
+			if ( pattern ) {
+				const content = pattern.content;
+				wpcomRequest( {
+					path: `/sites/${ site.ID }/pages/2`,
+					method: 'POST',
+					apiNamespace: 'wp/v2',
+					body: { content },
+				} );
+			}
+		}
+	};
+
 	return useMemo( () => {
 		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site && flow ) {
 			return Promise.all( [
 				postSiteSettings( site, state ),
 				postSiteLogo( state ),
 				setIntent( site, flow ),
+				setPattern( site, flow ),
 			] ).then( () => {
 				recordTracksEvent( 'calypso_signup_site_options_submit', {
 					has_site_title: !! state.siteTitle,
