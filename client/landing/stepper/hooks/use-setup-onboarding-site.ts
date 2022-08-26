@@ -82,6 +82,7 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 			if ( pattern ) {
 				const content = pattern.content;
 				wpcomRequest( {
+					// since this is a new site, its safe to assume that homepage ID is 2
 					path: `/sites/${ site.ID }/pages/2`,
 					method: 'POST',
 					apiNamespace: 'wp/v2',
