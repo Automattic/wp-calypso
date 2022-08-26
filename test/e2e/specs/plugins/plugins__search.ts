@@ -25,7 +25,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 	it( 'Visit plugins page', async function () {
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.visit();
-		await page.waitForLoadState( 'networkidle' );
 	} );
 
 	it( 'Search for "shipping"', async function () {
