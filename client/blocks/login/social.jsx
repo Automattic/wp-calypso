@@ -30,6 +30,7 @@ class SocialLoginForm extends Component {
 		linkingSocialService: PropTypes.string,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+		socialToS: PropTypes.element,
 	};
 
 	static defaultProps = {
@@ -139,7 +140,11 @@ class SocialLoginForm extends Component {
 	};
 
 	renderSocialTos = () => {
-		const { redirectTo, translate } = this.props;
+		const { redirectTo, translate, socialToS } = this.props;
+
+		if ( socialToS ) {
+			return <p className="login__social-tos">{ socialToS }</p>;
+		}
 
 		const isJetpackMagicLinkSignUpFlow =
 			redirectTo &&
