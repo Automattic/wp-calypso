@@ -20,7 +20,7 @@ const badges = css( {
 	marginInlineStart: 'auto',
 } );
 
-export const siteThumbnailCss: CSSObject = {
+export const siteThumbnail: CSSObject = {
 	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
@@ -62,7 +62,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 		<SitesGridTile
 			leading={
 				<ThumbnailLink { ...siteDashboardUrlProps }>
-					<SiteItemThumbnail style={ siteThumbnailCss } site={ site } size={ 'medium' } />
+					<SiteItemThumbnail style={ siteThumbnail } site={ site } size={ 'medium' } />
 				</ThumbnailLink>
 			}
 			primary={
