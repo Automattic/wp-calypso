@@ -18,6 +18,7 @@ declare global {
 				template: string;
 				urn: string;
 				onLoaded?: () => void;
+				onClose?: () => void;
 				showDialog?: boolean;
 			} ) => void;
 		};
@@ -37,7 +38,8 @@ export async function loadDSPWidgetJS(): Promise< void > {
 export async function showDSP(
 	siteId: number | string,
 	postId: number | string,
-	domNodeOrId?: HTMLElement | string | null
+	domNodeOrId?: HTMLElement | string | null,
+	onClose?: () => void
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
@@ -52,6 +54,7 @@ export async function showDSP(
 				authToken: 'wpcom-proxy-request',
 				template: 'article',
 				onLoaded: () => resolve( true ),
+				onClose: onClose,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 			} );
 		} else {
