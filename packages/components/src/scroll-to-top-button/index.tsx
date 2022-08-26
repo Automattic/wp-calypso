@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useEffect, useState } from 'react';
 import Gridicon from '../gridicon';
@@ -9,7 +10,7 @@ type ScrollButtonProps = {
 	scrollThreshold?: number;
 };
 
-const ScrollButton = styled.button< { visible: boolean } >`
+const ScrollButton = styled( Button )< { visible: boolean } >`
 	position: fixed;
 	display: flex;
 	opacity: ${ ( props ) => ( props.visible ? 1 : 0 ) };
