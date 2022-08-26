@@ -16,7 +16,7 @@ const stepNameToModuleName = {
 	'domains-launch': 'domains',
 	'domains-store': 'domains',
 	'domains-theme-preselected': 'domains',
-	'domains-with-email': 'domains',
+	'mailbox-domain': 'domains',
 	emails: 'emails',
 	'from-url': 'import-url',
 	/* import-url will eventually replace from-url step. Forgive temporary naming. */

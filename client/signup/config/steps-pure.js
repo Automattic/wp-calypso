@@ -422,8 +422,8 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
-		'domains-with-email': {
-			stepName: 'domains-with-email',
+		'mailbox-domain': {
+			stepName: 'mailbox-domain',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ],
 			props: {
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
