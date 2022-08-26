@@ -92,6 +92,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 		validEmails.length && addSubscribers( siteId, validEmails );
 		selectedFile && importCsvSubscribers( siteId, selectedFile );
+
+		! validEmails.length && ! selectedFile && onImportFinished?.();
 	}
 
 	function onEmailChange( value: string, index: number ) {
