@@ -20,10 +20,7 @@ const ThemeStyleVariationBadges: React.FC< ThemeStyleVariationBadgesProps > = ( 
 	return (
 		<>
 			{ variationsToShow.map( ( variation ) => (
-				<ThemeStyleVariationBadge
-					key={ variation.slug }
-					variation={ variation }
-				/>
+				<ThemeStyleVariationBadge key={ variation.slug } variation={ variation } />
 			) ) }
 			{ variations.length > variationsToShow.length && (
 				<div className="theme-style-variations-more-wrapper">

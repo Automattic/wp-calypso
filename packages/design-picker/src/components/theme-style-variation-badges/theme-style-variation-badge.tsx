@@ -6,9 +6,7 @@ interface ThemeStyleVariationBadgeProps {
 	variation?: ThemeStyleVariation;
 }
 
-const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( {
-	variation,
-} ) => {
+const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( { variation } ) => {
 	const { background, primary } = useMemo( () => {
 		const palette = variation?.settings?.color?.palette?.theme || [];
 
@@ -28,10 +26,12 @@ const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( {
 
 	return (
 		<div className="theme-style-variation-wrapper">
-			<span style={ {
-				backgroundColor: background,
-				color: primary,
-			} }>
+			<span
+				style={ {
+					backgroundColor: background,
+					color: primary,
+				} }
+			>
 				A
 			</span>
 		</div>
