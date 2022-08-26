@@ -13,7 +13,11 @@ const PatternAssemblerCta: FC< Props > = ( { onButtonClick } ) => {
 	return (
 		<div className="pattern-assembler-cta-wrapper">
 			<div className="pattern-assembler-cta__image-wrapper">
-				<img className="pattern-assembler-cta__image" src="#" alt="Blank Canvas Header" />
+				<img
+					className="pattern-assembler-cta__image"
+					src="/calypso/images/onboarding/blank-canvas.png"
+					alt="Blank Canvas Header"
+				/>
 			</div>
 			<h3 className="pattern-assembler-cta__title">
 				{ ' ' }

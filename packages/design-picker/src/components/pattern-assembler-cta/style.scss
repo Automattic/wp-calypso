@@ -1,5 +1,8 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .pattern-assembler-cta-wrapper {
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -7,6 +10,10 @@
     grid-column: 1 / span 3;
     background-color: #f6f7f7;
     color: #50575e;
+
+    @include break-mobile {
+        display: flex;
+    }
 
     .pattern-assembler-cta__title {
         margin-top: 32px;
