@@ -657,6 +657,10 @@ class DomainsStep extends Component {
 		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
 			this.props;
 
+		if ( stepSectionName === 'use-your-domain' ) {
+			return '';
+		}
+
 		if ( headerText ) {
 			return headerText;
 		}
