@@ -152,19 +152,19 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 				<form onSubmit={ onFormSubmit }>
 					<TextControl
-						placeholder={ 'sibling@email.com' }
+						placeholder={ __( 'sibling@email.com' ) }
 						value={ emails[ 0 ] || '' }
 						help={ isValidEmails[ 0 ] ? <Icon icon={ check } /> : undefined }
 						onChange={ ( value ) => onEmailChange( value, 0 ) }
 					/>
 					<TextControl
-						placeholder={ 'parents@email.com' }
+						placeholder={ __( 'parents@email.com' ) }
 						value={ emails[ 1 ] || '' }
 						help={ isValidEmails[ 1 ] ? <Icon icon={ check } /> : undefined }
 						onChange={ ( value ) => onEmailChange( value, 1 ) }
 					/>
 					<TextControl
-						placeholder={ 'friend@email.com' }
+						placeholder={ __( 'friend@email.com' ) }
 						value={ emails[ 2 ] || '' }
 						help={ isValidEmails[ 2 ] ? <Icon icon={ check } /> : undefined }
 						onChange={ ( value ) => onEmailChange( value, 2 ) }
