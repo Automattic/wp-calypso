@@ -452,6 +452,8 @@
 
 	// Customize styles for standard designs
 	.unified-design-picker__standard-designs {
+		min-height: 100vh;
+
 		.unified-design-picker__subtitle {
 			margin-bottom: 14px;
 		}
