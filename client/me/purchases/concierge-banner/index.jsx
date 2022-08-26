@@ -68,7 +68,7 @@ class ConciergeBanner extends Component {
 			case CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION:
 				title = translate( 'You have unused Quick Start support sessions' );
 				description = translate(
-					`You are eligible for one-to-one {{supportLink}}Quick Start support sessions{{/supportLink}} with one of our friendly Happiness Engineers, from our now {{quickStartLink}}retired service{{/quickStartLink}}. You can us these sessions to get expert advice, tips and resources on site setup.`,
+					`You are eligible for one-to-one {{supportLink}}Quick Start support sessions{{/supportLink}} with one of our friendly Happiness Engineers, from our now {{quickStartLink}}retired service{{/quickStartLink}}. You can use these sessions to get expert advice, tips and resources on site setup.`,
 					{
 						components: {
 							supportLink: (
