@@ -29,6 +29,10 @@ const PatternSelector = ( {
 		setSelectedPattern( pattern );
 	}, [ pattern ] );
 
+	useEffect( () => {
+		setSelectedPattern( pattern );
+	}, [ pattern ] );
+
 	const handleContinueClick = () => {
 		onSelect( selectedPattern );
 	};
