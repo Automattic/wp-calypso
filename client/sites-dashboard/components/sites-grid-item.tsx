@@ -20,13 +20,11 @@ const badges = css( {
 	marginInlineStart: 'auto',
 } );
 
-const siteThumbnailCss: CSSObject = {
+export const siteThumbnailCss: CSSObject = {
 	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
 };
-
-export const siteThumbnail = css( siteThumbnailCss );
 
 const ellipsis = css( {
 	'.button.ellipsis-menu__toggle': {

@@ -1,4 +1,5 @@
 import { LoadingPlaceholder } from '@automattic/components';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { siteThumbnail } from './sites-grid-item';
 import { SitesGridTile } from './sites-grid-tile';
@@ -15,7 +16,7 @@ const SecondaryPlaceholder = styled( LoadingPlaceholder )( {
 export const SitesGridItemLoading = ( { delayMS }: { delayMS: number } ) => {
 	return (
 		<SitesGridTile
-			leading={ <LoadingPlaceholder className={ siteThumbnail } delayMS={ delayMS } /> }
+			leading={ <LoadingPlaceholder className={ css( siteThumbnail ) } delayMS={ delayMS } /> }
 			primary={ <PrimaryPlaceholder delayMS={ delayMS } /> }
 			secondary={ <SecondaryPlaceholder delayMS={ delayMS } /> }
 		/>
