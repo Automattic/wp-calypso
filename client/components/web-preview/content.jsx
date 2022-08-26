@@ -92,6 +92,14 @@ export default class WebPreviewContent extends Component {
 				window.removeEventListener( 'resize', this.handleResize );
 			}
 		}
+
+		if ( this.props.inlineCss !== prevProps.inlineCss ) {
+			const data = {
+				type: 'inline-css',
+				inline_css: this.props.inlineCss,
+			};
+			this.iframe.contentWindow.postMessage( data, '*' );
+		}
 	}
 
 	handleMessage = ( e ) => {

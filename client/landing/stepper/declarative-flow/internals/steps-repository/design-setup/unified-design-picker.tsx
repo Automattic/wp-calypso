@@ -30,6 +30,7 @@ import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
+import StyleVariationSelector from './style-variation-selector';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './util/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
@@ -138,6 +139,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const categorizationOptions = getCategorizationOptions( intent, true );
 
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
+
+	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState( {
+		inline_css: undefined,
+	} );
 
 	const handleSubmit = ( providedDependencies?: ProvidedDependencies ) => {
 		const _selectedDesign = providedDependencies?.selectedDesign as Design;
@@ -306,6 +311,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					externalUrl={ siteSlug }
 					showExternal={ true }
 					previewUrl={ previewUrl }
+					inlineCss={ selectedStyleVariation.inline_css }
 					loadingMessage={ translate(
 						'{{strong}}One moment, please…{{/strong}} loading your site.',
 						{
@@ -328,6 +334,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		const actionButtons = (
 			<div>
+				<StyleVariationSelector
+					styleVariations={ selectedDesign.style_variations }
+					onSelectStyleVariation={ setSelectedStyleVariation }
+				/>
 				{ shouldUpgrade ? (
 					<Button primary borderless={ false } onClick={ upgradePlan }>
 						{ translate( 'Unlock theme' ) }
