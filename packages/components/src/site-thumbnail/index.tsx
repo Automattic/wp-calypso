@@ -1,45 +1,64 @@
+import { css, CSSObject } from '@emotion/css';
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
 import { MShotsOptions, useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
-const MSHOTS_OPTION: MShotsOptions = {
-	vpw: 1200,
-	vph: 1200,
-	w: 374 * 2,
+type SizeCss = CSSObject & { width: number; height: number };
+const SIZES: { [ sizeName: string ]: SizeCss } = {
+	small: {
+		width: 108,
+		height: 78,
+	},
+	medium: {
+		width: 374,
+		height: 374 * ( 11 / 16 ),
+	},
 };
+
+const VIEWPORT_BASE = 1200;
 
 type Props = {
 	backgroundColor?: string;
-	className?: string;
+	style?: CSSObject;
 	mShotsUrl?: string;
 	size?: 'small' | 'medium';
 	children?: ReactNode;
 	alt?: string;
 	bgColorImgUrl?: string;
+	viewport?: number;
 	mshotsOption?: MShotsOptions;
 };
 
 export const SiteThumbnail = ( {
 	backgroundColor,
 	children,
-	className,
+	style,
 	alt,
 	mShotsUrl = '',
 	bgColorImgUrl,
 	size = 'small',
-	mshotsOption = MSHOTS_OPTION,
+	viewport = VIEWPORT_BASE,
+	mshotsOption,
 }: Props ) => {
-	const { src, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, mshotsOption );
+	const imageSize = SIZES[ size ];
+	const options: MShotsOptions = {
+		vpw: viewport,
+		vph: viewport,
+		w: imageSize.width,
+		h: imageSize.height,
+		...mshotsOption,
+	};
+	const sizesSrcSet = Object.values( SIZES );
+	const { imgProps, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, options, sizesSrcSet );
 
 	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
 
 	const classes = classnames(
 		'site-thumbnail',
-		className,
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
-		`site-thumbnail__size-${ size }`
+		css( imageSize, style )
 	);
 
 	const showLoader = mShotsUrl && ! isError;
@@ -59,15 +78,14 @@ export const SiteThumbnail = ( {
 					{ children }
 				</div>
 			) }
-			{ src && ! isError && (
+			{ imgProps.src && ! isError && (
 				<img
 					className={ classnames( 'site-thumbnail__image', {
 						'site-thumbnail__mshot_default_hidden': isLoading,
 					} ) }
 					ref={ imgRef }
-					src={ src }
 					alt={ alt }
-					loading="lazy"
+					{ ...imgProps }
 				/>
 			) }
 		</div>

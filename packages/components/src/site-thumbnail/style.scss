@@ -11,13 +11,9 @@
 	border-radius: 4px;
 }
 
-.site-thumbnail__size-small {
-	width: 108px;
-	height: 78px;
-}
-
 .site-thumbnail__image {
     align-self: start;
+	width: 100%;
 }
 
 .site-thumbnail__image-bg {
@@ -36,11 +32,6 @@
 
 .site-thumbnail__image-blur-medium {
 	filter: blur( 150px );
-}
-
-.site-thumbnail__size-medium {
-	width: 374px;
-	height: 304px;
 }
 
 .site-thumbnail-visible {

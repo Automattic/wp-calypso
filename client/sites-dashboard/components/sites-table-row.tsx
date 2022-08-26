@@ -99,14 +99,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteItemThumbnail
-								site={ site }
-								mshotsOption={ {
-									vpw: 1200,
-									vph: 1200 * ( 78 / 108 ),
-									w: 108 * 2,
-								} }
-							/>
+							<SiteItemThumbnail site={ site } />
 						</ListTileLeading>
 					}
 					title={

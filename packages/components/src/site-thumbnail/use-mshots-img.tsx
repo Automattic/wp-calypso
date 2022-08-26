@@ -25,18 +25,33 @@ export type MShotsOptions = {
 
 export const useMshotsImg = (
 	src: string,
-	options: MShotsOptions
+	options: MShotsOptions,
+	sizes: Array< { width: number; height: number } > = []
 ): {
-	src: string;
 	isLoading: boolean;
 	isError: boolean;
 	imgRef: React.MutableRefObject< HTMLImageElement | null >;
+	imgProps: Partial< React.ImgHTMLAttributes< HTMLImageElement > >;
 } => {
 	const [ retryCount, setRetryCount ] = useState( 0 );
-	const mshotUrl = useMemo(
-		() => mshotsUrl( src, options, retryCount ),
-		[ src, options, retryCount ]
-	);
+	const { mshotUrl, srcSet } = useMemo( () => {
+		const mshotUrl = mshotsUrl( src, options, retryCount );
+
+		// Calculate source image srcSet for all given sizes and retina 2x.
+		const retinaSize = { width: options.w * 2, height: ( options.h || options.w ) * 2 };
+		const srcSet = [ ...sizes, retinaSize ]
+			.map( ( { width, height } ) => {
+				const resizedUrl = mshotsUrl( src, { ...options, w: width, h: height }, retryCount );
+				let sizeUnit = `${ width } w`;
+				if ( width === options.w * 2 ) {
+					sizeUnit = '2x';
+				}
+				return `${ resizedUrl } ${ sizeUnit }`;
+			} )
+			.join( ', ' );
+		return { mshotUrl, srcSet };
+	}, [ src, options, retryCount, sizes ] );
+
 	const imgRef = useRef< HTMLImageElement >( null );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isError, setIsError ] = useState( false );
@@ -70,9 +85,14 @@ export const useMshotsImg = (
 	}, [ imgRef, mshotUrl, retryCount ] );
 
 	return {
-		src: mshotUrl,
 		isLoading,
 		isError,
 		imgRef,
+		imgProps: {
+			src: mshotUrl,
+			sizes: `${ options.w }px`,
+			srcSet,
+			loading: 'lazy',
+		},
 	};
 };
