@@ -88,8 +88,9 @@ export class UserSignupPage {
 	 *
 	 * @param {string} email Email address of the new user.
 	 * @param {string} password Password of the new user.
+	 * @returns {NewUserResponse} Response from the REST API.
 	 */
-	async signupWPCC( email: string, password: string ): Promise< void > {
+	async signupWPCC( email: string, password: string ): Promise< NewUserResponse > {
 		// On mobile devices, the signup form is not shown by default.
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await this.page.click( selectors.createWPCOMAccountButton );
@@ -100,9 +101,18 @@ export class UserSignupPage {
 		await this.page.fill( selectors.emailInput, email );
 		await this.page.fill( selectors.passwordInput, password );
 
-		await Promise.all( [
+		const [ , response ] = await Promise.all( [
 			this.page.waitForNavigation(),
+			this.page.waitForResponse( /.*new\?.*/ ),
 			this.page.click( selectors.submitButton ),
 		] );
+
+		if ( ! response ) {
+			throw new Error( 'Failed to create new user at CrowdSignal using WPCC.' );
+		}
+
+		const responseBody: NewUserResponse = await response.json();
+
+		return responseBody;
 	}
 }
