@@ -35,7 +35,7 @@ function generateSwatchSVG( color: string | undefined ) {
 	}%3C/svg%3E")`;
 }
 const NewsletterSetup: Step = ( { navigation } ) => {
-	const { goBack, submit } = navigation;
+	const { submit } = navigation;
 	const { __ } = useI18n();
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
 
@@ -54,7 +54,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const siteTitleError =
 		formTouched && ! siteTitle.trim()
-			? __( 'Your publication needs a name so your subscribers can identify you.' )
+			? __( `Oops. Looks like your Newsletter doesn't have a name yet.` )
 			: '';
 
 	useEffect( () => {
@@ -79,7 +79,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		// setFormTouched( true );
+		setFormTouched( true );
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
@@ -93,9 +93,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			}
 		}
 
-		// if ( siteTitle.trim().length ) {
-		submit?.( { siteTitle, tagline } );
-		// }
+		if ( siteTitle.trim().length ) {
+			submit?.( { siteTitle, tagline, siteAccentColor: accentColor } );
+		}
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
@@ -139,7 +139,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					/>
 				</Popover>
 				<FormFieldset>
-					<FormLabel htmlFor="siteTitle">{ __( 'Publication name*' ) }</FormLabel>
+					<FormLabel htmlFor="siteTitle">{ __( 'Publication name' ) }</FormLabel>
 					<FormInput
 						value={ siteTitle }
 						name="siteTitle"
@@ -195,14 +195,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName={ 'newsletter-setup' }
-			goBack={ goBack }
 			isWideLayout={ true }
 			hideBack={ true }
 			flowName={ 'newsletter' }
 			formattedHeader={
 				<FormattedHeader
 					id={ 'newsletter-setup-header' }
-					headerText={ __( 'Setup your Newsletter' ) }
+					headerText={ __( 'Pencil in a few details' ) }
 					align={ 'center' }
 				/>
 			}

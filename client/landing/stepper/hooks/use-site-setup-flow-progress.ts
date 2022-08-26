@@ -99,6 +99,22 @@ export function useSiteSetupFlowProgress(
 						break;
 				}
 			}
+			if ( isEnabled( 'themes/plugin-bundling' ) ) {
+				switch ( currentStep ) {
+					case 'goals':
+						middleProgress = { progress: 1, count: 4 };
+						break;
+					case 'vertical':
+						middleProgress = { progress: 2, count: 4 };
+						break;
+					case 'options':
+						middleProgress = { progress: 3, count: 4 };
+						break;
+					case 'designSetup':
+						middleProgress = { progress: 4, count: 4 };
+						break;
+				}
+			}
 
 			break;
 		}

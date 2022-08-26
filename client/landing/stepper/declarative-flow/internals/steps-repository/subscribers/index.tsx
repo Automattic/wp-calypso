@@ -1,31 +1,17 @@
 import { StepContainer } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement } from 'react';
 import { useSetupOnboardingSite } from 'calypso/landing/stepper/hooks/use-setup-onboarding-site';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
-const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
-
-const Subscribers: Step = function ( { navigation } ): ReactElement | null {
+const Subscribers: Step = function ( { navigation, flow } ): ReactElement | null {
 	const { submit } = navigation;
-	const { __ } = useI18n();
-	const { setPendingAction, setProgressTitle, setProgress } = useDispatch( ONBOARD_STORE );
-	useSetupOnboardingSite();
+	const site = useSite();
+
+	useSetupOnboardingSite( { site, flow } );
 
 	const handleSubmit = () => {
-		setPendingAction( async () => {
-			setProgressTitle( __( 'Creating your Newsletter' ) );
-			setProgress( 0.3 );
-			await wait( 1500 );
-			setProgress( 1 );
-			setProgressTitle( __( 'Preparing Next Steps' ) );
-			await wait( 2000 );
-			return { destination: 'launchpad' };
-		} );
-
 		submit?.();
 	};
 

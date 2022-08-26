@@ -963,6 +963,7 @@ __metadata:
     "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
@@ -1293,6 +1294,37 @@ __metadata:
     redux-thunk: ^2.3.0
     tslib: ^2.3.0
     typescript: ^4.7.4
+  languageName: unknown
+  linkType: soft
+
+"@automattic/subscriber@workspace:packages/subscriber":
+  version: 0.0.0-use.local
+  resolution: "@automattic/subscriber@workspace:packages/subscriber"
+  dependencies:
+    "@automattic/calypso-color-schemes": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/components": "workspace:^"
+    "@automattic/viewport": "workspace:^"
+    "@automattic/viewport-react": "workspace:^"
+    "@popperjs/core": ^2.10.2
+    "@wordpress/base-styles": ^4.5.0
+    "@wordpress/components": ^19.11.0
+    "@wordpress/dom": ^3.9.0
+    "@wordpress/element": ^4.7.0
+    "@wordpress/i18n": ^4.9.0
+    "@wordpress/icons": ^9.0.0
+    "@wordpress/primitives": ^3.7.0
+    "@wordpress/react-i18n": ^3.7.0
+    classnames: ^2.3.1
+    debug: ^4.3.4
+    react-popper: ^2.2.5
+    typescript: ^4.5.5
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
   languageName: unknown
   linkType: soft
 
@@ -34206,7 +34238,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.7.4":
+"typescript@npm:^4.5.5, typescript@npm:^4.7.4":
   version: 4.7.4
   resolution: "typescript@npm:4.7.4"
   bin:
@@ -34216,7 +34248,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
   version: 4.7.4
   resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=493e53"
   bin:

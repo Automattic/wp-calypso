@@ -18,7 +18,7 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
+import { getDomainProductSlug } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -260,6 +260,9 @@ class DomainsStep extends Component {
 			submitSignupStep: this.props.submitSignupStep,
 		} );
 
+		const siteAccentColor =
+			this.props.flowName === 'newsletter' && this.props.queryObject?.siteAccentColor;
+
 		this.props.submitSignupStep(
 			Object.assign(
 				{
@@ -269,6 +272,7 @@ class DomainsStep extends Component {
 					isPurchasingItem,
 					siteUrl,
 					stepSectionName: this.props.stepSectionName,
+					...( siteAccentColor && { siteAccentColor } ),
 				},
 				this.getThemeArgs()
 			),
@@ -373,6 +377,11 @@ class DomainsStep extends Component {
 
 		// 'subdomain' flow coming from .blog landing pages
 		if ( flowName === 'subdomain' ) {
+			return true;
+		}
+
+		// newsletter users should get free .blog domain
+		if ( flowName === 'newsletter' ) {
 			return true;
 		}
 
@@ -494,10 +503,6 @@ class DomainsStep extends Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const trueNamePromoTlds = TRUENAME_COUPONS.includes( this.props?.queryObject?.coupon )
-			? TRUENAME_TLDS
-			: null;
-
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
@@ -507,7 +512,7 @@ class DomainsStep extends Component {
 					onAddDomain={ this.handleAddDomain }
 					products={ this.props.productsList }
 					basePath={ this.props.path }
-					promoTlds={ trueNamePromoTlds }
+					promoTlds={ this.props?.queryObject?.tld?.split( ',' ) }
 					mapDomainUrl={ this.getUseYourDomainUrl() }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
@@ -517,10 +522,8 @@ class DomainsStep extends Component {
 					isDomainOnly={ this.props.isDomainOnly }
 					analyticsSection={ this.getAnalyticsSection() }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
-					includeDotBlogSubdomain={
-						trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
-					}
+					includeWordPressDotCom={ includeWordPressDotCom }
+					includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 					isSignupStep
 					isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
 					showExampleSuggestions={ showExampleSuggestions }
@@ -529,6 +532,7 @@ class DomainsStep extends Component {
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
 						isDomainOnly: this.props.isDomainOnly,
+						flowName: this.props.flowName,
 					} ) }
 					deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 					selectedSite={ this.props.selectedSite }

@@ -17,14 +17,14 @@ interface SitesTableRowLoadingProps {
 
 const Row = styled.tr`
 	line-height: 2em;
-	border-bottom: 1px solid #eee;
+	border-block-end: 1px solid #eee;
 `;
 
 const Column = styled.td< { mobileHidden?: boolean } >`
-	padding-top: 12px;
-	padding-bottom: 12px;
-	padding-right: 24px;
-	vertical-align: top;
+	padding-block-start: 12px;
+	padding-block-end: 12px;
+	padding-inline-end: 24px;
+	vertical-align: block-start;
 `;
 
 const TitleRow = styled.div`
@@ -40,12 +40,12 @@ const LoadingLogo = styled( LoadingPlaceholder )< LoadingLogoProps >`
 		maxWidth: width,
 		height,
 	} ) }
-	margin-right: 10px;
+	margin-inline-end: 10px;
 `;
 
 const LoadingTitle = styled( LoadingPlaceholder )`
 	max-width: 80%;
-	margin-bottom: 10px;
+	margin-block-end: 10px;
 `;
 
 const LoadingDomain = styled( LoadingPlaceholder )`

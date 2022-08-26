@@ -12,6 +12,7 @@ import * as ProductsList from './products-list';
 import * as Reader from './reader';
 import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
+import * as Subscriber from './subscriber';
 import * as User from './user';
 import * as WPCOMFeatures from './wpcom-features';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
@@ -46,6 +47,7 @@ export {
 	ProductsList,
 	AutomatedTransferEligibility,
 	StepperInternal,
+	Subscriber,
 };
 
 /**

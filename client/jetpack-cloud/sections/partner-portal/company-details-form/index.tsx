@@ -121,21 +121,6 @@ export default function CompanyDetailsForm( {
 					{ ! showCountryFields && <TextPlaceholder /> }
 				</FormFieldset>
 
-				{ showCountryFields && stateOptions && (
-					<FormFieldset>
-						<FormLabel>{ translate( 'State' ) }</FormLabel>
-						<SelectDropdown
-							className="company-details-form__dropdown"
-							initialSelected={ addressState }
-							options={ stateOptions }
-							onSelect={ ( option: any ) => {
-								setAddressState( option.value );
-							} }
-							disabled={ isLoading }
-						/>
-					</FormFieldset>
-				) }
-
 				<FormFieldset className="company-details-form__business-address">
 					<FormLabel>{ translate( 'Business address' ) }</FormLabel>
 					<FormTextInput
@@ -157,23 +142,38 @@ export default function CompanyDetailsForm( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
-					<FormTextInput
-						id="postalCode"
-						name="postalCode"
-						value={ postalCode }
-						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
-						disabled={ isLoading }
-					/>
-				</FormFieldset>
-
-				<FormFieldset>
 					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
 					<FormTextInput
 						id="city"
 						name="city"
 						value={ city }
 						onChange={ ( event: any ) => setCity( event.target.value ) }
+						disabled={ isLoading }
+					/>
+				</FormFieldset>
+
+				{ showCountryFields && stateOptions && (
+					<FormFieldset>
+						<FormLabel>{ translate( 'State' ) }</FormLabel>
+						<SelectDropdown
+							className="company-details-form__dropdown"
+							initialSelected={ addressState }
+							options={ stateOptions }
+							onSelect={ ( option: any ) => {
+								setAddressState( option.value );
+							} }
+							disabled={ isLoading }
+						/>
+					</FormFieldset>
+				) }
+
+				<FormFieldset>
+					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
+					<FormTextInput
+						id="postalCode"
+						name="postalCode"
+						value={ postalCode }
+						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
 						disabled={ isLoading }
 					/>
 				</FormFieldset>

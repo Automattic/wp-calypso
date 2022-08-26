@@ -201,7 +201,7 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed, disabled } = this.props;
+		const { translate, isInstalling, isEmbed, disabled, isJetpackCloud } = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
@@ -211,8 +211,12 @@ export class PluginInstallButton extends Component {
 						<span className="plugin-install-button__installing">{ label }</span>
 					) : (
 						<Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
-							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-							<Gridicon icon="plugins" size={ 18 } />
+							{ ! isJetpackCloud && (
+								<>
+									<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
+									<Gridicon icon="plugins" size={ 18 } />
+								</>
+							) }
 							{ translate( 'Install' ) }
 						</Button>
 					) }

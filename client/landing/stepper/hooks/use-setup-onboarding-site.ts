@@ -1,7 +1,6 @@
 import { SiteDetails, useSiteLogoMutation } from '@automattic/data-stores';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useMemo } from 'react';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
@@ -33,12 +32,20 @@ interface OnboardingSite {
 	siteLogo: string | null;
 }
 
-export function useSetupOnboardingSite() {
-	const site = useSite();
+interface SetupOnboardingSiteOptions {
+	ignoreUrl?: boolean;
+	site: SiteDetails | null;
+	flow: string | null;
+}
+
+export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
+	const { ignoreUrl, site, flow } = options;
 	const siteIsLoaded = !! site;
+
 	const { getState } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const state = getState();
-	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
+
 	const { mutateAsync: setSiteLogo } = useSiteLogoMutation( site?.ID );
 
 	const postSiteSettings = ( site: SiteDetails, state: OnboardingSite ) => {
@@ -57,17 +64,29 @@ export function useSetupOnboardingSite() {
 		return setSiteLogo( new File( [ base64ImageToBlob( state.siteLogo ) ], 'site-logo.png' ) );
 	};
 
-	useEffect( () => {
-		if ( shouldSetupOnboardingSite() && site ) {
-			Promise.all( [ postSiteSettings( site, state ), postSiteLogo( state ) ] ).then( () => {
+	const setIntent = ( site: SiteDetails, flow: string | null ) => {
+		if ( site && flow && [ 'newsletter', 'link-in-bio' ].includes( flow ) ) {
+			return setIntentOnSite( site.ID.toString(), flow );
+		}
+		return Promise.resolve();
+	};
+
+	return useMemo( () => {
+		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site && flow ) {
+			return Promise.all( [
+				postSiteSettings( site, state ),
+				postSiteLogo( state ),
+				setIntent( site, flow ),
+			] ).then( () => {
 				recordTracksEvent( 'calypso_signup_site_options_submit', {
 					has_site_title: !! state.siteTitle,
 					has_tagline: !! state.siteDescription,
 				} );
 			} );
 		}
+		// we want this to run once, ignore other deps
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteIsLoaded ] );
+	}, [ siteIsLoaded, flow ] );
 }
 
 export function shouldSetupOnboardingSite() {

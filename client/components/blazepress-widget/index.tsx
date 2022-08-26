@@ -1,9 +1,8 @@
-import { Gridicon } from '@automattic/components';
 import { useEffect, useRef, useState } from 'react';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { showDSP } from 'calypso/lib/promote-post';
+import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 
 import './style.scss';
 
@@ -37,7 +36,13 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				await showDSP( props.siteId, props.postId, widgetContainer.current );
 				setIsLoading( false );
 			} )();
-	}, [ isVisible ] );
+	}, [ isVisible, props.postId, props.siteId ] );
+
+	const promoteWidgetStatus = usePromoteWidget();
+	if ( promoteWidgetStatus === PromoteWidgetStatus.DISABLED ) {
+		return <></>;
+	}
+
 	return (
 		<>
 			{ isVisible && (
@@ -47,12 +52,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						<h2>Promote</h2>
 						<span
 							role="button"
-							className={ 'blazepress-widget__cross' }
+							className={ 'blazepress-widget__cancel' }
 							onKeyDown={ onClose }
 							tabIndex={ 0 }
 							onClick={ onClose }
 						>
-							<Gridicon icon="cross" size={ 24 } />
+							Cancel
 						</span>
 					</div>
 					<div

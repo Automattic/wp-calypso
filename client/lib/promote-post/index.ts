@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
+import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 
 declare global {
 	interface Window {
@@ -106,4 +108,31 @@ export const requestDSP = async < T >(
 		body,
 		apiNamespace: 'wpcom/v2',
 	} );
+};
+
+export enum PromoteWidgetStatus {
+	FETCHING = 'fetching',
+	ENABLED = 'enabled',
+	DISABLED = 'disabled',
+}
+
+/**
+ * Hook to verify if we should enable the promote widget.
+ *
+ * @returns bool
+ */
+export const usePromoteWidget = (): PromoteWidgetStatus => {
+	const value = useSelector( ( state ) => {
+		const settings = getUserSettings( state );
+		if ( settings ) {
+			const originalSetting = settings[ 'has_promote_widget' ];
+			if ( originalSetting !== undefined ) {
+				return originalSetting === true
+					? PromoteWidgetStatus.ENABLED
+					: PromoteWidgetStatus.DISABLED;
+			}
+		}
+		return PromoteWidgetStatus.FETCHING;
+	} );
+	return value;
 };

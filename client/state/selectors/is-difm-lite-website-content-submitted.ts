@@ -1,5 +1,4 @@
 import getRawSite from 'calypso/state/selectors/get-raw-site';
-import { SiteData } from '../ui/selectors/site-data';
 import type { AppState, SiteId } from 'calypso/types';
 
 /**
@@ -17,7 +16,7 @@ export default function isDIFMLiteWebsiteContentSubmitted(
 		return false;
 	}
 
-	const site = getRawSite( state, siteId ) as SiteData;
+	const site = getRawSite( state, siteId );
 
 	if ( ! site ) {
 		return false;

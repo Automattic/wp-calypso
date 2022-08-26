@@ -1,12 +1,14 @@
 import { CompactCard } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
+import { getPostType } from 'calypso/my-sites/promote-post/utils';
 
 export type Post = {
 	ID: number;
@@ -50,18 +52,19 @@ export default function PostItem( { post }: Props ) {
 	return (
 		<CompactCard className="post-item__card">
 			<div className="post-item__main">
-				<div className="post-item__image-container">
-					<img className="post-item__image" src={ post.featured_image } alt="" />
-				</div>
 				<div className="post-item__body">
 					<div className="post-item__title">{ post.title }</div>
 					<div className="post-item__subtitle">
 						<PostRelativeTimeStatus showPublishedStatus={ false } post={ post } />
+						<span className="post-item__posttype">{ getPostType( post.type ) }</span>
 						<Button isLink href={ post.URL }>
-							View
+							{ __( 'View' ) }
 						</Button>
 					</div>
 				</div>
+			</div>
+			<div className="post-item__image-container">
+				<img className="post-item__image" src={ post.featured_image } alt="" />
 			</div>
 			<div className="post-item__promote-link">
 				<BlazePressWidget
@@ -70,8 +73,13 @@ export default function PostItem( { post }: Props ) {
 					postId={ post.ID }
 					onClose={ onCloseWidget }
 				/>
-				<Button isBusy={ loading } disabled={ loading } isLink onClick={ onClickPromote }>
-					Promote
+				<Button
+					isPrimary={ true }
+					isBusy={ loading }
+					disabled={ loading }
+					onClick={ onClickPromote }
+				>
+					{ __( 'Promote' ) }
 				</Button>
 			</div>
 		</CompactCard>

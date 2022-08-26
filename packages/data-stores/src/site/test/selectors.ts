@@ -14,6 +14,7 @@ import {
 	getAtomicSoftwareError,
 	getSiteOptions,
 	getSiteOption,
+	getBundledPluginSlug,
 } from '../selectors';
 import { SiteDetails } from '../types';
 import type { State } from '../reducer';
@@ -33,6 +34,21 @@ beforeAll( () => {
 beforeEach( () => {
 	( wpcomRequest as jest.Mock ).mockReset();
 	dispatch( store ).reset();
+} );
+
+describe( 'getBundledPluginSlug', () => {
+	it( 'retrieves the bundled plugin slug from the store', () => {
+		const siteSlug = 'test.wordpress.com';
+		const pluginSlug = 'woocommerce';
+
+		const state: State = {
+			bundledPluginSlug: {
+				[ siteSlug ]: pluginSlug,
+			},
+		};
+
+		expect( getBundledPluginSlug( state, siteSlug ) ).toEqual( pluginSlug );
+	} );
 } );
 
 describe( 'getSite', () => {

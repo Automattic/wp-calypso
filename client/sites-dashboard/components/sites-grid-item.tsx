@@ -11,11 +11,17 @@ import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import { ThumbnailLink } from './thumbnail-link';
 
-const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
+const badges = css( {
+	display: 'flex',
+	gap: '8px',
+	alignItems: 'center',
+	marginInlineStart: 'auto',
+} );
 
 export const siteThumbnail = css( {
-	aspectRatio: '16 / 9',
+	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
 } );
@@ -28,7 +34,7 @@ const ellipsis = css( {
 	'.gridicon.ellipsis-menu__toggle-icon': {
 		width: '24px',
 		height: '16px',
-		top: '4px',
+		insetBlockStart: '4px',
 	},
 } );
 
@@ -47,12 +53,17 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 		title: __( 'Visit Dashboard' ),
 	};
 
+	let siteUrl = site.URL;
+	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
+		siteUrl = site.options?.unmapped_url;
+	}
+
 	return (
 		<SitesGridTile
 			leading={
-				<a { ...siteDashboardUrlProps }>
+				<ThumbnailLink { ...siteDashboardUrlProps }>
 					<SiteItemThumbnail className={ siteThumbnail } site={ site } size={ 'medium' } />
-				</a>
+				</ThumbnailLink>
 			}
 			primary={
 				<>
@@ -70,8 +81,8 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 				</>
 			}
 			secondary={
-				<SiteUrl href={ site.URL } title={ site.URL } className={ css( { lineHeight: 1 } ) }>
-					<Truncated>{ displaySiteUrl( site.URL ) }</Truncated>
+				<SiteUrl href={ siteUrl } title={ siteUrl }>
+					<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 				</SiteUrl>
 			}
 		/>

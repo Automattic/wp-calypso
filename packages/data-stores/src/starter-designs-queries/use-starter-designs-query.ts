@@ -2,7 +2,12 @@ import { stringify } from 'qs';
 import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { StarterDesigns } from './types';
-import type { Category, Design, DesignRecipe } from '@automattic/design-picker/src/types';
+import type {
+	Category,
+	Design,
+	DesignRecipe,
+	ThemeStyleVariation,
+} from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
 	vertical_id: string;
@@ -26,6 +31,7 @@ interface StaticDesign {
 	title: string;
 	categories: Category[];
 	price?: string;
+	style_variations?: ThemeStyleVariation[];
 }
 
 interface GeneratedDesign {
@@ -66,7 +72,7 @@ function fetchStarterDesigns(
 }
 
 function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
-	const { slug, title, recipe, categories, price } = design;
+	const { slug, title, recipe, categories, price, style_variations } = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
 
@@ -78,6 +84,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		is_premium,
 		price,
 		design_type: is_premium ? 'premium' : 'standard',
+		style_variations,
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',

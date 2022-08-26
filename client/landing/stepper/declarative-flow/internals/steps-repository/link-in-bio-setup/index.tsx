@@ -20,7 +20,7 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
-	const { goBack, submit } = navigation;
+	const { submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
 
@@ -65,6 +65,8 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
+		setFormTouched( true );
+
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
 
@@ -75,82 +77,80 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 				// communicate the error to the user
 			}
 		}
-		submit?.( { siteTitle, tagline } );
+
+		if ( siteTitle.trim().length ) {
+			submit?.( { siteTitle, tagline } );
+		}
 	};
 
 	const stepContent = (
-		<div className="step-container">
-			<form onSubmit={ handleSubmit }>
-				<div className="link-in-bio-setup__form">
-					<SiteIconWithPicker
-						site={ site }
-						onSelect={ ( file ) => {
-							setSelectedFile( file );
-							imageFileToBase64( file );
-						} }
-						disabled={ usesSite ? ! site : false }
-						selectedFile={ selectedFile }
+		<form className="link-in-bio-setup__form" onSubmit={ handleSubmit }>
+			<SiteIconWithPicker
+				site={ site }
+				placeholderText={ __( 'Upload a profile image' ) }
+				onSelect={ ( file ) => {
+					setSelectedFile( file );
+					imageFileToBase64( file );
+				} }
+				disabled={ usesSite ? ! site : false }
+				selectedFile={ selectedFile }
+			/>
+			<FormFieldset>
+				<FormLabel htmlFor="link-in-bio-input-name">{ __( 'Site name' ) }</FormLabel>
+				<FormInput
+					name="link-in-bio-input-name"
+					id="link-in-bio-input-name"
+					value={ siteTitle }
+					onChange={ onChange }
+					style={ {
+						backgroundImage: siteTitle.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
+						backgroundRepeat: 'no-repeat',
+						backgroundPosition: '95%',
+						paddingRight: ' 40px',
+					} }
+					isError={ siteTitleError }
+				/>
+				{ siteTitleError && (
+					<FormInputValidation
+						isError
+						text={ __( `Oops. Looks like your Link in Bio doesn't have a name yet.` ) }
 					/>
-					<FormFieldset>
-						<FormLabel htmlFor="link-in-bio-input-name">{ __( 'Site name' ) }</FormLabel>
-						<FormInput
-							name="link-in-bio-input-name"
-							id="link-in-bio-input-name"
-							value={ siteTitle }
-							onChange={ onChange }
-							style={ {
-								backgroundImage: siteTitle.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
-								backgroundRepeat: 'no-repeat',
-								backgroundPosition: '95%',
-								paddingRight: ' 40px',
-							} }
-							isError={ siteTitleError }
-						/>
-						{ siteTitleError && (
-							<FormInputValidation
-								isError
-								text={ __( 'Your site needs a name so your subscribers can identify you.' ) }
-							/>
-						) }
-					</FormFieldset>
+				) }
+			</FormFieldset>
 
-					<FormFieldset>
-						<FormLabel htmlFor="link-in-bio-input-description">
-							{ __( 'Brief description' ) }
-						</FormLabel>
-						<FormInput
-							name="link-in-bio-input-description"
-							id="link-in-bio-input-description"
-							value={ tagline }
-							onChange={ onChange }
-							style={ {
-								backgroundImage: tagline.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
-								backgroundRepeat: 'no-repeat',
-								backgroundPosition: '95%',
-								paddingRight: ' 40px',
-							} }
-							isError={ false }
-						/>
-					</FormFieldset>
-				</div>
-				<Button className="link-in-bio-setup-form__submit" primary type="submit">
-					{ __( 'Continue' ) }
-				</Button>
-			</form>
-		</div>
+			<FormFieldset>
+				<FormLabel htmlFor="link-in-bio-input-description">{ __( 'Brief description' ) }</FormLabel>
+				<FormInput
+					name="link-in-bio-input-description"
+					id="link-in-bio-input-description"
+					value={ tagline }
+					onChange={ onChange }
+					style={ {
+						backgroundImage: tagline.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
+						backgroundRepeat: 'no-repeat',
+						backgroundPosition: '95%',
+						paddingRight: ' 40px',
+					} }
+					isError={ false }
+				/>
+			</FormFieldset>
+
+			<Button className="link-in-bio-setup-form__submit" primary type="submit">
+				{ __( 'Continue' ) }
+			</Button>
+		</form>
 	);
 
 	return (
 		<StepContainer
 			stepName={ 'link-in-bio-setup' }
-			goBack={ goBack }
 			isWideLayout={ true }
 			hideBack={ true }
 			flowName={ 'linkInBio' }
 			formattedHeader={
 				<FormattedHeader
 					id={ 'link-in-bio-setup-header' }
-					headerText={ __( 'Set up Link in Bio' ) }
+					headerText={ __( 'Pencil in a few details' ) }
 					align={ 'center' }
 				/>
 			}
