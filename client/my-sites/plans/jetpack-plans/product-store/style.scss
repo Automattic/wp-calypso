@@ -123,12 +123,39 @@
 
 .jetpack-product-store__pricing-banner {
 	height: 120px;
-
 	margin-bottom: 1.25rem;
 
 	@include break-large {
 		height: 54px;
-
 		margin-bottom: 0;
 	}
+}
+
+.jetpack-product-store__need-more-info {
+	background-color: var( --color-surface );
+	padding: 5rem 0;
+	text-align: center;
+}
+
+.jetpack-product-store__need-more-info-headline {
+	padding-bottom: 0.9375rem;
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: inherit;
+}
+
+.jetpack-product-store__need-more-info-buttons {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+
+	@include break-medium {
+		justify-content: center;
+		flex-direction: row;
+	}
+}
+
+.jetpack-product-store__need-more-info-buttons .more-info-box__more-button.button {
+	color: var( --color-neutral-100 );
 }
