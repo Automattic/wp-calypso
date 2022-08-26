@@ -26,6 +26,7 @@ import {
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
@@ -314,7 +315,7 @@ export class PlansFeaturesMain extends Component {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
 		}
 
-		if ( [ 'newsletter', 'link-in-bio' ].includes( flowName ) ) {
+		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
 			plans = plans.filter(
 				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
 			);
