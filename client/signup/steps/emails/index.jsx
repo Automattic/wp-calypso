@@ -120,6 +120,7 @@ class EmailsStep extends Component {
 
 	render() {
 		const {
+			backUrl = 'domains/',
 			flowName,
 			hideSkip = false,
 			positionInFlow,
@@ -127,7 +128,6 @@ class EmailsStep extends Component {
 			stepName,
 			translate,
 		} = this.props;
-		const backUrl = 'start/domains/';
 		const headerText = translate( 'Add Professional Email' );
 		const domainName = signupDependencies.domainItem?.meta;
 		const subHeaderText = translate(
