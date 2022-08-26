@@ -77,14 +77,20 @@ export default function PluginRowFormatter( {
 
 	switch ( columnKey ) {
 		case 'site-name':
-			return selectedSite?.domain;
+			return (
+				<span className="plugin-row-formatter__row-container">
+					<span className="plugin-row-formatter__site-name">{ selectedSite?.domain }</span>
+					{ /* Overlay for small screen is added in the card component */ }
+					{ ! isSmallScreen && <span className="plugin-row-formatter__overlay"></span> }
+				</span>
+			);
 		case 'plugin':
 			return isSmallScreen ? (
 				<PluginDetailsButton className="plugin-row-formatter__plugin-name-card">
 					{ item.name }
 				</PluginDetailsButton>
 			) : (
-				<span className="plugin-row-formatter__plugin-name-container">
+				<span className="plugin-row-formatter__row-container">
 					{ item.icon ? (
 						<img
 							className="plugin-row-formatter__plugin-icon"
