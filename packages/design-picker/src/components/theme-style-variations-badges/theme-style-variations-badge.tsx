@@ -2,12 +2,12 @@ import { createElement, useMemo } from 'react';
 import type { ThemeStyleVariation, ThemeStyleVariationSettingsColorPalette } from '../../types';
 import './style.scss';
 
-interface ThemeStyleVariationsButtonProps {
+interface ThemeStyleVariationsBadgeProps {
 	tagName?: string;
 	variation?: ThemeStyleVariation;
 }
 
-const ThemeStyleVariationsButton: React.FC< ThemeStyleVariationsButtonProps > = ( {
+const ThemeStyleVariationsBadge: React.FC< ThemeStyleVariationsBadgeProps > = ( {
 	tagName = 'button',
 	variation,
 } ) => {
@@ -45,4 +45,4 @@ const ThemeStyleVariationsButton: React.FC< ThemeStyleVariationsButtonProps > = 
 	);
 };
 
-export default ThemeStyleVariationsButton;
+export default ThemeStyleVariationsBadge;

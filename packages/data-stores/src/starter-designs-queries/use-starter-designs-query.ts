@@ -38,7 +38,6 @@ interface GeneratedDesign {
 	slug: string;
 	title: string;
 	recipe: DesignRecipe;
-	style_variations?: ThemeStyleVariation[];
 }
 
 export function useStarterDesignsQuery(

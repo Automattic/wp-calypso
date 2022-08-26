@@ -1,15 +1,15 @@
 import { createElement, useMemo } from 'react';
-import ThemeStyleVariationsButton from './theme-style-variations-button';
+import ThemeStyleVariationsBadge from './theme-style-variations-badge';
 import type { ThemeStyleVariation } from '../../types';
 import './style.scss';
 
-interface ThemeStyleVariationsButtonProps {
+interface ThemeStyleVariationsBadgesProps {
 	tagName?: string;
 	maxVariationsToShow?: number;
 	variations: ThemeStyleVariation[];
 }
 
-const ThemeStyleVariationsButtons: React.FC< ThemeStyleVariationsButtonProps > = ( {
+const ThemeStyleVariationsBadges: React.FC< ThemeStyleVariationsBadgesProps > = ( {
 	tagName = 'button',
 	maxVariationsToShow = 4,
 	variations = [],
@@ -22,7 +22,7 @@ const ThemeStyleVariationsButtons: React.FC< ThemeStyleVariationsButtonProps > =
 	return (
 		<>
 			{ variationsToShow.map( ( variation ) => (
-				<ThemeStyleVariationsButton
+				<ThemeStyleVariationsBadge
 					key={ variation.slug }
 					tagName={ tagName }
 					variation={ variation }
@@ -37,4 +37,4 @@ const ThemeStyleVariationsButtons: React.FC< ThemeStyleVariationsButtonProps > =
 	);
 };
 
-export default ThemeStyleVariationsButtons;
+export default ThemeStyleVariationsBadges;

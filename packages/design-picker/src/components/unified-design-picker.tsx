@@ -26,7 +26,7 @@ import {
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PremiumBadge from './premium-badge';
 import ThemePreview from './theme-preview';
-import ThemeStyleVariationsButtons from './theme-style-variations-buttons';
+import ThemeStyleVariationsBadges from './theme-style-variations-badges';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
 import './style.scss';
@@ -211,7 +211,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						) }
 						{ isEnableThemeStyleVariations && style_variations.length > 0 && (
 							<div className="design-picker__options-style-variations">
-								<ThemeStyleVariationsButtons tagName="span" variations={ style_variations } />
+								<ThemeStyleVariationsBadges tagName="span" variations={ style_variations } />
 							</div>
 						) }
 					</span>

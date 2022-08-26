@@ -23,7 +23,6 @@ export interface DesignRecipe {
 
 export interface ThemeStyleVariation {
 	slug: string;
-	title: string;
 	settings: {
 		color: {
 			palette: {
