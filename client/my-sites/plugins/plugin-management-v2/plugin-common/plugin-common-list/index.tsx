@@ -13,7 +13,6 @@ interface Props {
 	items: Array< any >;
 	isLoading: boolean;
 	columns: Columns;
-	title?: ReactNode;
 	hasMoreActions: boolean;
 	primaryKey: string;
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;
@@ -21,7 +20,6 @@ interface Props {
 
 export default function PluginCommonList( {
 	items,
-	title,
 	isLoading,
 	primaryKey,
 	selectedSite,
@@ -37,12 +35,6 @@ export default function PluginCommonList( {
 			/>
 			<div className="plugin-common-list__mobile-view">
 				<>
-					{ title && (
-						<Card className="plugin-common-list__content-header">
-							<div>{ title }</div>
-						</Card>
-					) }
-
 					{ isLoading ? (
 						<Card>
 							<TextPlaceholder />

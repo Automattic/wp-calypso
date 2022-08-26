@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
 .has-opacity {
 	opacity: 0.3;
 }
@@ -9,7 +12,13 @@
 	padding: 0;
 }
 .plugin-management-v2__main-content-container {
-	margin-top: 8px;
+	margin-block-start: 0;
+	@include break-xlarge() {
+		margin-block-start: 8px;
+	}
+	&.is-bulk-management-active {
+		margin-block-start: 0;
+	}
 }
 .plugin-management-v2__no-sites {
 	text-align: center;

@@ -4,12 +4,13 @@ import IntroPricingBanner from 'calypso/components/jetpack/intro-pricing-banner'
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useProductSlugs from './hooks/use-product-slugs';
+import { ItemsList } from './items-list';
 import { JetpackFree } from './jetpack-free';
-import ProductFilter from './product-filter';
-import Product from './products';
+import { NeedMoreInfo } from './need-more-info';
 import { Recommendations } from './recommendations';
 import { UserLicensesDialog } from './user-licenses-dialog';
-import type { FilterType, ProductStoreProps } from './types';
+import { ViewFilter } from './view-filter';
+import type { ViewType, ProductStoreProps } from './types';
 
 import './style.scss';
 
@@ -21,7 +22,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const productSlugs = useProductSlugs( { siteId, duration } );
 
-	const [ filterType, setFilterType ] = useState< FilterType >( 'products' );
+	const [ currentView, setCurrentView ] = useState< ViewType >( 'products' );
 
 	return (
 		<div className="jetpack-product-store">
@@ -31,11 +32,13 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 				<IntroPricingBanner productSlugs={ productSlugs } siteId={ siteId ?? 'none' } />
 			</div>
 
-			<ProductFilter filterType={ filterType } setFilterType={ setFilterType } />
-			<Product type={ filterType }></Product>
+			<ViewFilter currentView={ currentView } setCurrentView={ setCurrentView } />
+			<ItemsList currentView={ currentView } duration={ duration } siteId={ siteId } />
 			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 
 			<Recommendations />
+
+			{ currentView === 'bundles' && <NeedMoreInfo /> }
 
 			<StoreFooter />
 		</div>

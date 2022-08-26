@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import { PageViewTracker } from '../';
 
 describe( 'PageViewTracker', () => {
@@ -17,7 +17,7 @@ describe( 'PageViewTracker', () => {
 	test( 'should immediately fire off event when given no delay', () => {
 		const recorder = jest.fn();
 
-		mount(
+		render(
 			<PageViewTracker path="/test" title="test" recorder={ recorder } hasSelectedSiteLoaded />
 		);
 
@@ -27,7 +27,7 @@ describe( 'PageViewTracker', () => {
 	test( 'should wait for the delay before firing off the event', () => {
 		const recorder = jest.fn();
 
-		mount(
+		render(
 			<PageViewTracker
 				delay={ 500 }
 				path="/test"
@@ -49,7 +49,7 @@ describe( 'PageViewTracker', () => {
 		const properties = {};
 		const options = {};
 
-		mount(
+		render(
 			<PageViewTracker
 				path="/test"
 				title="test"

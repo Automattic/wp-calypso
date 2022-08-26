@@ -21,15 +21,20 @@ import Main from 'calypso/components/main';
 import AssignLicenseStepProgress from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-step-progress';
 import CreditCardLoading from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/credit-card-loading';
 import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/credit-card-fields/payment-method-image';
-import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import {
+	useReturnUrl,
+	useLicenseIssuing,
+} from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { getStripeConfiguration } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-stripe-configuration';
 import { useCreateStoredCreditCardMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/hooks/use-create-stored-credit-card';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
-import { hasValidPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 
 import './style.scss';
@@ -37,7 +42,7 @@ import './style.scss';
 function PaymentMethodAdd(): ReactElement {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const hasPaymentMethod = useSelector( hasValidPaymentMethod );
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 	const {
 		reload: reloadSetupIntentId,
@@ -59,11 +64,18 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const returnQueryArg = useMemo(
-		() => getQueryArg( window.location.href, 'return' ),
+		() => ( getQueryArg( window.location.href, 'return' ) || '' ).toString(),
 		[ window.location.href, getQueryArg ]
 	);
 
-	useReturnUrl( hasPaymentMethod );
+	const product = useMemo(
+		() => ( getQueryArg( window.location.href, 'product' ) || '' ).toString(),
+		[ window.location.href, getQueryArg ]
+	);
+
+	const [ issueLicense, isLoading ] = useLicenseIssuing( product );
+
+	useReturnUrl( ! paymentMethodRequired );
 
 	const onGoToPaymentMethods = () => {
 		reduxDispatch(
@@ -96,7 +108,12 @@ function PaymentMethodAdd(): ReactElement {
 	);
 
 	const successCallback = useCallback( () => {
-		if ( returnQueryArg ) {
+		// returnQueryArg - will make sure the license issuing flow will be resumed
+		// when the user already has a license issued but not assigned, and will
+		// assign the license after adding a payment method.
+		//
+		// product - will make sure there will be a license issuing for that product
+		if ( returnQueryArg || product ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -104,9 +121,15 @@ function PaymentMethodAdd(): ReactElement {
 				} )
 			);
 		} else {
-			page( '/partner-portal/payment-methods/' );
+			page( partnerPortalBasePath( '/payment-methods' ) );
 		}
-	}, [ reduxDispatch, page, window, getQueryArg ] );
+	}, [ page, product, reduxDispatch, partnerPortalBasePath, returnQueryArg ] );
+
+	useEffect( () => {
+		if ( product && ! paymentMethodRequired ) {
+			issueLicense();
+		}
+	}, [ paymentMethodRequired, product ] );
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
@@ -127,7 +150,9 @@ function PaymentMethodAdd(): ReactElement {
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<SidebarNavigation />
 
-			{ returnQueryArg && <AssignLicenseStepProgress currentStep="addPaymentMethod" /> }
+			{ ( !! returnQueryArg || product ) && (
+				<AssignLicenseStepProgress currentStep="addPaymentMethod" />
+			) }
 
 			<div className="payment-method-add__header">
 				<CardHeading size={ 36 }>{ translate( 'Payment Methods' ) }</CardHeading>
@@ -186,8 +211,12 @@ function PaymentMethodAdd(): ReactElement {
 							<div className="payment-method-add__navigation-buttons">
 								<Button
 									className="payment-method-add__back-button"
-									href="/partner-portal/payment-methods/"
-									disabled={ isStripeLoading }
+									href={
+										product
+											? addQueryArgs( { product }, partnerPortalBasePath( '/issue-license' ) )
+											: partnerPortalBasePath( '/payment-methods/' )
+									}
+									disabled={ isStripeLoading || isLoading }
 									onClick={ onGoToPaymentMethods }
 								>
 									{ translate( 'Go back' ) }

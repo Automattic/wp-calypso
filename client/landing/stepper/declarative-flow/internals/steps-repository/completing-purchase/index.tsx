@@ -15,7 +15,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 	const { setPendingAction, setProgressTitle, setProgress } = useDispatch( ONBOARD_STORE );
 	const site = useSite();
 
-	const siteSetup = useSetupOnboardingSite( { ignoreUrl: true, site } );
+	const siteSetup = useSetupOnboardingSite( { ignoreUrl: true, site, flow } );
 
 	const completeLinkInBioFlow = () => {
 		setPendingAction( async () => {
@@ -39,7 +39,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 
 	const completeNewsletterFlow = () => {
 		setPendingAction( async () => {
-			setProgressTitle( __( 'Applying the last few stamps' ) );
+			setProgressTitle( __( 'Ringing up the cash register' ) );
 			setProgress( 0 );
 			await siteSetup;
 
@@ -47,8 +47,8 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 			await wait( 1500 );
 
 			setProgress( 1 );
-			setProgressTitle( __( 'Crisply folding your Newsletter' ) );
-			await wait( 2000 );
+			setProgressTitle( __( 'Completing your purchase' ) );
+			await wait( 1000 );
 			return { destination: 'subscribers' };
 		} );
 	};

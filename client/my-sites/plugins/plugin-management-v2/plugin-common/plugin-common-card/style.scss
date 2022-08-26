@@ -53,3 +53,9 @@
 .plugin-common-card__update-plugin {
 	margin-block-start: 16px;
 }
+.plugin-common-card__install-button {
+	.plugin-install-button__install.embed {
+		position: static;
+		width: fit-content;
+	}
+}
