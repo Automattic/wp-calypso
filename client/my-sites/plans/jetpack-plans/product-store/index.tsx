@@ -6,6 +6,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useProductSlugs from './hooks/use-product-slugs';
 import { ItemsList } from './items-list';
 import { JetpackFree } from './jetpack-free';
+import { NeedMoreInfo } from './need-more-info';
 import { Recommendations } from './recommendations';
 import { UserLicensesDialog } from './user-licenses-dialog';
 import { ViewFilter } from './view-filter';
@@ -36,6 +37,8 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 
 			<Recommendations />
+
+			{ currentView === 'bundles' && <NeedMoreInfo /> }
 
 			<StoreFooter />
 		</div>
