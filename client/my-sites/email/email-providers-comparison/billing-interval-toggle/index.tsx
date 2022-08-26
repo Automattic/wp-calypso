@@ -45,7 +45,7 @@ export const BillingIntervalToggle = ( {
 							context={ payAnnuallyButtonRef.current }
 							className="emails-save-paying-annually__popover"
 						>
-							{ translate( 'Save paying annually' ) }
+							{ translate( 'Save by paying annually' ) }
 						</Popover>
 					) ) }
 				</SegmentedControl.Item>
