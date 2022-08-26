@@ -104,9 +104,11 @@ export class PlansStep extends Component {
 			);
 		} else if ( flowName === 'newsletter' ) {
 			// newsletter flow always uses pub/lettre
+			// newsletter always needs the site launched
 			this.props.submitSignupStep( step, {
 				cartItem,
 				themeSlugWithRepo: 'pub/lettre',
+				comingSoon: 0,
 			} );
 			this.props.goToNextStep();
 		} else if ( flowName === 'link-in-bio' ) {
