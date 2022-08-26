@@ -42,11 +42,7 @@ export const useMshotsImg = (
 		const srcSet = [ ...sizes, retinaSize ]
 			.map( ( { width, height } ) => {
 				const resizedUrl = mshotsUrl( src, { ...options, w: width, h: height }, retryCount );
-				let sizeUnit = `${ width } w`;
-				if ( width === options.w * 2 ) {
-					sizeUnit = '2x';
-				}
-				return `${ resizedUrl } ${ sizeUnit }`;
+				return `${ resizedUrl } ${ width }w`;
 			} )
 			.join( ', ' );
 		return { mshotUrl, srcSet };
@@ -90,7 +86,6 @@ export const useMshotsImg = (
 		imgRef,
 		imgProps: {
 			src: mshotUrl,
-			sizes: `${ options.w }px`,
 			srcSet,
 			loading: 'lazy',
 		},

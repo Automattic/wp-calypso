@@ -5,15 +5,21 @@ import './style.scss';
 import { MShotsOptions, useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
-type SizeCss = CSSObject & { width: number; height: number };
+type SizeCss = CSSObject & { width: number; height: number; sizes?: string };
 const SIZES: { [ sizeName: string ]: SizeCss } = {
 	small: {
 		width: 108,
 		height: 78,
 	},
 	medium: {
-		width: 374,
-		height: 374 * ( 11 / 16 ),
+		width: 401,
+		height: 401 * ( 11 / 16 ),
+		sizes: [
+			'(min-width: 1400px) 401px',
+			'(min-width: 960px) calc(33vw - 48px)',
+			'(min-width: 660px) calc(50vw - 48px)',
+			'calc(100vw - 32px)',
+		].join( ', ' ),
 	},
 };
 
@@ -86,6 +92,7 @@ export const SiteThumbnail = ( {
 					ref={ imgRef }
 					alt={ alt }
 					{ ...imgProps }
+					sizes={ imageSize.sizes || `${ imageSize.width }px` }
 				/>
 			) }
 		</div>
