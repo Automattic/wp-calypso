@@ -298,7 +298,7 @@ export default function DIFMLanding( {
 						align={ 'left' }
 						headerText={ headerText }
 						subHeaderText={ translate(
-							'{{sup}}*{{/sup}}One time fee, plus an additional purchase of the Premium plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+							'{{sup}}*{{/sup}}One time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
 							{
 								args: {
 									plan: planTitle,
