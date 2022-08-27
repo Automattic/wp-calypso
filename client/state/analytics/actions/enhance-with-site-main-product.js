@@ -39,7 +39,8 @@ export function enhanceWithSiteMainProduct( action, getState ) {
 		}
 	}
 
-	const updatedAction = action;
+	// Be sure to return a new copy instead of mutating the original Redux action.
+	const updatedAction = JSON.parse( JSON.stringify( action ) );
 	updatedAction.meta.analytics[ 0 ].payload.site_main_product = mainProduct;
 
 	return updatedAction;
