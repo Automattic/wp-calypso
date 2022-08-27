@@ -1,5 +1,3 @@
-/* eslint-disable wpcalypso/no-unsafe-wp-apis */
-
 import {
 	__unstableIframe as Iframe,
 	__unstableEditorStyles as EditorStyles,
