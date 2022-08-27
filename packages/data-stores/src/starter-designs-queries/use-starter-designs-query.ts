@@ -32,6 +32,7 @@ interface StaticDesign {
 	title: string;
 	description: string;
 	categories: Category[];
+	features: ThemeFeature[];
 	price?: string;
 	style_variations?: StyleVariation[];
 }

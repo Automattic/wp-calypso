@@ -301,6 +301,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
+		const isEnabledStyleSelection =
+			selectedDesign.design_type !== 'vertical' &&
+			isEnabled( 'signup/design-picker-style-selection' );
+
 		const stepContent = (
 			<>
 				<UpgradeModal
@@ -313,6 +317,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					<AsyncLoad
 						require="@automattic/design-preview"
 						placeholder={ null }
+						previewUrl={ previewUrl }
 						title={ designTitle }
 						description={ selectedDesign.description }
 						variations={ selectedDesignDetails?.style_variations }
