@@ -30,6 +30,12 @@ body.app-banner-is-visible {
 	margin-bottom: 0;
 	box-shadow: 3px -2px 24px 4px rgba( 0, 0, 0, 0.29 );
 	overflow: hidden;
+
+	&.jetpack {
+		color: var( --color-neutral-100 );
+		padding: 30px 24px;
+		text-align: center;
+	}
 }
 
 .app-banner__circle {
@@ -63,8 +69,21 @@ body.app-banner-is-visible {
 	}
 }
 
+.app-banner__icon {
+	height: 47px;
+	width: 92px;
+	padding-bottom: 30px;
+	margin: auto;
+}
+
 .app-banner__text-content {
 	width: 100%;
+
+	&.jetpack {
+		letter-spacing: -0.4px;
+		width: 90%;
+		margin: auto;
+	}
 }
 
 .app-banner__title {
@@ -72,17 +91,30 @@ body.app-banner-is-visible {
 	font-size: rem( 22px ); //typography-exception
 	font-family: $brand-serif;
 	line-height: 30px;
+
+	&.jetpack {
+		font-weight: bold;
+		line-height: 22px;
+	}
 }
 
 .app-banner__copy {
 	margin-top: 12px;
 	/* stylelint-disable-next-line */
 	font-size: rem( 15px ); //typography-exception
+
+	&.jetpack {
+		line-height: 20px;
+	}
 }
 
 .app-banner__buttons {
 	width: 100%;
 	margin-top: 20px;
+
+	&.jetpack {
+		margin-top: 30px;
+	}
 }
 
 .button.app-banner__open-button {
@@ -90,10 +122,22 @@ body.app-banner-is-visible {
 	border: 0;
 	border-radius: 4px; /* stylelint-disable-line */
 	margin-right: 10px;
+
+	&.jetpack {
+		background-color: var( --color-jetpack );
+		width: 100%;
+		max-width: 366px;
+	}
 }
 
 .button.app-banner__no-thanks-button {
 	background: none;
 	border: 0;
 	color: var( --color-text-subtle );
+
+	&.jetpack {
+		color: var( --color-text );
+		width: 100%;
+		max-width: 366px;
+	}
 }

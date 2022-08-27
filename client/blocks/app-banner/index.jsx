@@ -46,16 +46,14 @@ export function IconAnimation( props ) {
 
 	useEffect( () => {
 		lottie.loadAnimation( {
-			container: document.querySelector( '#react-logo' ),
+			container: document.querySelector( '.app-banner__icon' ),
 			renderer: 'svg',
 			autoplay: true,
 			path: icon,
 		} );
 	}, [] );
 
-	const bannerIcon = (
-		<div id="react-logo" style={ { height: '47px', width: '92px', paddingBottom: '30px' } }></div>
-	);
+	const bannerIcon = <div className="app-banner__icon"></div>;
 
 	return bannerIcon;
 }
@@ -174,7 +172,7 @@ export class AppBanner extends Component {
 		const jetpackAppBanner = (
 			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
 				<Card
-					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
+					className={ classNames( 'app-banner', 'is-compact', currentSection, 'jetpack' ) }
 					ref={ this.preventNotificationsClose }
 				>
 					<TrackComponentView
@@ -186,24 +184,24 @@ export class AppBanner extends Component {
 						statName="impression"
 					/>
 					<IconAnimation translate={ translate } currentSection={ currentSection } />
-					<div className="app-banner__text-content">
-						<div className="app-banner__title">
+					<div className="app-banner__text-content jetpack">
+						<div className="app-banner__title jetpack">
 							<span> { title } </span>
 						</div>
-						<div className="app-banner__copy">
+						<div className="app-banner__copy jetpack">
 							<span> { copy } </span>
 						</div>
 					</div>
-					<div className="app-banner__buttons">
+					<div className="app-banner__buttons jetpack">
 						<Button
 							primary
-							className="app-banner__open-button"
+							className="app-banner__open-button jetpack"
 							onClick={ this.openApp }
 							href={ this.getDeepLink() }
 						>
 							{ translate( 'Open in the Jetpack app' ) }
 						</Button>
-						<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
+						<Button className="app-banner__no-thanks-button jetpack" onClick={ this.dismiss }>
 							{ translate( 'Continue in browser' ) }
 						</Button>
 					</div>
