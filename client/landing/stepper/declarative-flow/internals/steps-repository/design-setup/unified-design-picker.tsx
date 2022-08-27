@@ -3,6 +3,7 @@ import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
+	ThemePreviewContainer,
 	UnifiedDesignPicker,
 	useCategorization,
 	getDesignPreviewUrl,
@@ -291,6 +292,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					: undefined,
 		} );
 
+		const isEnabledStyleSelection =
+			selectedDesign.design_type !== 'vertical' &&
+			isEnabled( 'signup/design-picker-style-selection' );
 		const stepContent = (
 			<>
 				<UpgradeModal
@@ -299,25 +303,32 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					closeModal={ closeUpgradeModal }
 					checkout={ goToCheckout }
 				/>
-				<WebPreview
-					showPreview
-					showClose={ false }
-					showEdit={ false }
-					externalUrl={ siteSlug }
-					showExternal={ true }
-					previewUrl={ previewUrl }
-					loadingMessage={ translate(
-						'{{strong}}One moment, please…{{/strong}} loading your site.',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-					toolbarComponent={ PreviewToolbar }
-					siteId={ site?.ID }
-					url={ site?.URL }
-					translate={ translate }
-					recordTracksEvent={ recordTracksEvent }
-				/>
+				{ isEnabledStyleSelection ? (
+					<ThemePreviewContainer
+						title={ designTitle }
+						variations={ selectedDesign.style_variations }
+					/>
+				) : (
+					<WebPreview
+						showPreview
+						showClose={ false }
+						showEdit={ false }
+						externalUrl={ siteSlug }
+						showExternal={ true }
+						previewUrl={ previewUrl }
+						loadingMessage={ translate(
+							'{{strong}}One moment, please…{{/strong}} loading your site.',
+							{
+								components: { strong: <strong /> },
+							}
+						) }
+						toolbarComponent={ PreviewToolbar }
+						siteId={ site?.ID }
+						url={ site?.URL }
+						translate={ translate }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
 			</>
 		);
 

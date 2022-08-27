@@ -1,0 +1,39 @@
+@import '@automattic/onboarding/styles/mixins';
+
+.theme-preview-container {
+	display: flex;
+	flex-direction: row;
+}
+
+.theme-preview-container__sidebar {
+	width: 343px;
+
+	> div {
+		margin: 2rem 0 0;
+	}
+
+	.theme-preview-container__sidebar-title {
+		margin: 0 0 16px;
+
+		h1 {
+			@include onboarding-font-recoleta;
+			color: var( --studio-gray-100 );
+			font-size: 2rem; /* stylelint-disable-line */
+			line-height: 2rem;
+		}
+	}
+
+	.theme-preview-container__sidebar-support {
+		h2 {
+			color: var( --studio-gray-100 );
+			font-size: $font-body-small;
+			font-weight: 500;
+			margin-bottom: 0.5rem;
+		}
+
+		p {
+			color: var( --studio-gray-80 );
+			font-size: $font-body-small;
+		}
+	}
+}
