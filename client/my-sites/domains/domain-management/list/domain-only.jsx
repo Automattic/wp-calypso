@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import EmptyContent from 'calypso/components/empty-content';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { canCurrentUserCreateSiteFromDomainOnly } from 'calypso/lib/domains';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
@@ -44,7 +43,6 @@ const DomainOnly = ( { primaryDomain, hasNotice, recordTracks, siteId, slug, tra
 
 	return (
 		<div>
-			<PageViewTracker path="/view/:site" title="Domain only" />
 			<EmptyContent
 				title={ translate( '%(domainName)s is ready when you are.', { args: { domainName } } ) }
 				line={
