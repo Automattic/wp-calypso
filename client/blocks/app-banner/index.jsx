@@ -3,7 +3,7 @@ import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import lottie from 'lottie-web';
+import lottie from 'lottie-web/build/player/lottie_light';
 import PropTypes from 'prop-types';
 import { Component, useEffect } from 'react';
 import ReactDom from 'react-dom';
