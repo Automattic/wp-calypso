@@ -40,24 +40,6 @@ const IOS_REGEX = /iPad|iPod|iPhone/i;
 const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;
 const noop = () => {};
 
-export function IconAnimation( props ) {
-	const { translate, currentSection } = props;
-	const { icon } = getAppBannerData( translate, currentSection );
-
-	useEffect( () => {
-		lottie.loadAnimation( {
-			container: document.querySelector( '.app-banner__icon' ),
-			renderer: 'svg',
-			autoplay: true,
-			path: icon,
-		} );
-	}, [] );
-
-	const bannerIcon = <div className="app-banner__icon"></div>;
-
-	return bannerIcon;
-}
-
 export class AppBanner extends Component {
 	static propTypes = {
 		saveDismissTime: PropTypes.func,
@@ -183,7 +165,7 @@ export class AppBanner extends Component {
 						statGroup="calypso_mobile_app_banner"
 						statName="impression"
 					/>
-					<IconAnimation translate={ translate } currentSection={ currentSection } />
+					<BannerIcon translate={ translate } currentSection={ currentSection } />
 					<div className="app-banner__text-content jetpack">
 						<div className="app-banner__title jetpack">
 							<span> { title } </span>
@@ -255,6 +237,25 @@ export class AppBanner extends Component {
 
 		return displayJetpackAppBranding ? jetpackAppBanner : wordpressAppBanner;
 	}
+}
+
+export function BannerIcon( props ) {
+	const { translate, currentSection } = props;
+	const { icon } = getAppBannerData( translate, currentSection );
+
+	useEffect( () => {
+		lottie.loadAnimation( {
+			container: document.querySelector( '.app-banner__icon' ),
+			renderer: 'svg',
+			loop: false,
+			autoplay: true,
+			path: icon,
+		} );
+	}, [] );
+
+	const bannerIcon = <div className="app-banner__icon"></div>;
+
+	return bannerIcon;
 }
 
 export function getiOSDeepLink( currentRoute, currentSection ) {
