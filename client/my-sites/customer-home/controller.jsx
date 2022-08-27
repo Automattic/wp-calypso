@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
+import getSite from 'calypso/state/sites/selectors/get-site.js';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
@@ -28,14 +29,16 @@ export function maybeRedirect( context, next ) {
 		return;
 	}
 
-	const launchpadTasksComplete = false;
-	const launchpadFlow = 'newsletter';
+	const siteId = getSelectedSiteId( state );
+	const site = getSite( state, siteId );
+	const options = site?.options;
+	const shouldRedirectToLaunchpad = options?.launchpad_screen === 'full';
 
-	if ( ! launchpadTasksComplete && isEnabled( 'signup/launchpad' ) ) {
+	if ( shouldRedirectToLaunchpad && isEnabled( 'signup/launchpad' ) ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.
-		redirectToLaunchpad( slug, launchpadFlow );
+		redirectToLaunchpad( slug, options?.site_intent );
 	}
 	next();
 }
