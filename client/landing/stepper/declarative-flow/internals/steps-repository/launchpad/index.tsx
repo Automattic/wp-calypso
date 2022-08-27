@@ -24,13 +24,13 @@ const Launchpad: Step = ( { navigation } ) => {
 	);
 
 	const site = useSite();
-	const launchpadViewOption = site?.options?.launchpad_view;
+	const launchpadScreenOption = site?.options?.launchpad_screen;
 
 	useEffect( () => {
-		if ( launchpadViewOption === 'off' ) {
+		if ( launchpadScreenOption === 'off' ) {
 			window.location.replace( `/view/${ siteSlug }` );
 		}
-	}, [ launchpadViewOption ] );
+	}, [ launchpadScreenOption ] );
 
 	return (
 		<>
