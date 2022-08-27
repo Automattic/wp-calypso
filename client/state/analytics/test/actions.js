@@ -115,16 +115,150 @@ describe( 'middleware', () => {
 			let dispatchedEvent;
 			const dispatch = ( createdAction ) => ( dispatchedEvent = createdAction );
 
+			let dispatchedPageViewEvent;
+			const dispatchPageViewEvent = ( createdAction ) =>
+				( dispatchedPageViewEvent = createdAction );
+
 			const clientId = 123;
 			const getState = () => ( {
 				oauth2Clients: { ui: { currentClientId: clientId } },
+				sites: {
+					items: {
+						1234567: {
+							options: {
+								is_domain_only: false,
+							},
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 1234567,
+				},
 			} );
+
+			pageViewEvent( dispatchPageViewEvent, getState );
 
 			thunk( dispatch, getState );
 
-			pageViewEvent.meta.analytics[ 0 ].payload.client_id = clientId;
+			dispatchedPageViewEvent.meta.analytics[ 0 ].payload.client_id = clientId;
 
-			expect( dispatchedEvent ).toEqual( pageViewEvent );
+			expect( dispatchedEvent ).toEqual( dispatchedPageViewEvent );
+		} );
+	} );
+
+	describe( 'enhanceWithSiteMainProduct', () => {
+		const pageViewEvent = recordPageView( [ 'https://example-domain.com', 'Site Title' ] );
+
+		let dispatchedEvent;
+		const dispatch = ( createdAction ) => ( dispatchedEvent = createdAction );
+
+		test( 'should report correct site_main_product in page view event for regular sites', () => {
+			const getState = () => ( {
+				sites: {
+					items: {
+						1234567: {
+							options: {
+								is_domain_only: false,
+							},
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 1234567,
+				},
+			} );
+
+			pageViewEvent( dispatch, getState );
+
+			expect( dispatchedEvent.meta.analytics[ 0 ].payload.site_main_product ).toEqual( 'site' );
+		} );
+
+		test( 'should report correct site_main_product in page view event for domain-only sites', () => {
+			const getState = () => ( {
+				sites: {
+					items: {
+						1234567: {
+							options: {
+								is_domain_only: true,
+							},
+						},
+					},
+					domains: {
+						items: {},
+					},
+				},
+				ui: {
+					selectedSiteId: 1234567,
+				},
+			} );
+
+			pageViewEvent( dispatch, getState );
+
+			expect( dispatchedEvent.meta.analytics[ 0 ].payload.site_main_product ).toEqual( 'domain' );
+		} );
+
+		test( 'should report correct site_main_product in page view event for domain-only sites with Professional Email', () => {
+			const getState = () => ( {
+				sites: {
+					items: {
+						1234567: {
+							options: {
+								is_domain_only: true,
+							},
+						},
+					},
+					domains: {
+						items: {
+							1234567: [
+								{
+									titanMailSubscription: {
+										status: 'active',
+									},
+								},
+							],
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 1234567,
+				},
+			} );
+
+			pageViewEvent( dispatch, getState );
+
+			expect( dispatchedEvent.meta.analytics[ 0 ].payload.site_main_product ).toEqual( 'email' );
+		} );
+
+		test( 'should report correct site_main_product in page view event for domain-only sites with Google Workspace', () => {
+			const getState = () => ( {
+				sites: {
+					items: {
+						1234567: {
+							options: {
+								is_domain_only: true,
+							},
+						},
+					},
+					domains: {
+						items: {
+							1234567: [
+								{
+									googleAppsSubscription: {
+										status: 'active',
+									},
+								},
+							],
+						},
+					},
+				},
+				ui: {
+					selectedSiteId: 1234567,
+				},
+			} );
+
+			pageViewEvent( dispatch, getState );
+
+			expect( dispatchedEvent.meta.analytics[ 0 ].payload.site_main_product ).toEqual( 'email' );
 		} );
 	} );
 } );
