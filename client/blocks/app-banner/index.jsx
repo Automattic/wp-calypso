@@ -123,16 +123,19 @@ export class AppBanner extends Component {
 		const { currentRoute, currentSection } = this.props;
 
 		if ( this.isAndroid() ) {
+			const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+			const scheme = displayJetpackAppBranding ? 'jetpack' : 'wordpress';
+
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case GUTENBERG:
-					return 'intent://post/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://post/#Intent;scheme=${ scheme };package=org.wordpress.android;end`;
 				case NOTES:
-					return 'intent://notifications/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://notifications/#Intent;scheme=${ scheme };package=org.wordpress.android;end`;
 				case READER:
-					return 'intent://read/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://read/#Intent;scheme=${ scheme };package=org.wordpress.android;end`;
 				case STATS:
-					return 'intent://stats/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://stats/#Intent;scheme=${ scheme };package=org.wordpress.android;end`;
 			}
 		}
 
