@@ -4346,17 +4346,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lottiefiles/react-lottie-player@npm:^3.4.7":
-  version: 3.4.7
-  resolution: "@lottiefiles/react-lottie-player@npm:3.4.7"
-  dependencies:
-    lottie-web: ^5.7.8
-  peerDependencies:
-    react: 16 - 18
-  checksum: e4f009f2b0f2d856cf742a9b71d9f06daad4a60fbd8a8ddf1caaf161b9b34518148f076fa09fd6f11e8cd982620c8d7b160b9ffb95dc7a96e8bf1a83b8ec7020
-  languageName: node
-  linkType: hard
-
 "@malept/cross-spawn-promise@npm:^1.1.0, @malept/cross-spawn-promise@npm:^1.1.1":
   version: 1.1.1
   resolution: "@malept/cross-spawn-promise@npm:1.1.1"
@@ -23513,7 +23502,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lottie-web@npm:^5.7.8":
+"lottie-web@npm:^5.9.6":
   version: 5.9.6
   resolution: "lottie-web@npm:5.9.6"
   checksum: 694e80629fc839aaafac35cb7cf3589bd3714cb0ffd7ab3594b02d915e18096c64bf074f89edbd727fb3a4b43f176c54e2dc4c1a56d38c7b20918520844946f5
@@ -35908,7 +35897,6 @@ swiper@4.5.1:
     "@babel/register": ^7.17.0
     "@babel/runtime": ^7.17.2
     "@bartekbp/typescript-checkstyle": ^5.0.0
-    "@lottiefiles/react-lottie-player": ^3.4.7
     "@signal-noise/stylelint-scales": ^2.0.3
     "@testing-library/jest-dom": ^5.16.2
     "@types/cookie": ^0.4.1
@@ -35993,6 +35981,7 @@ swiper@4.5.1:
     jest-teamcity: ^1.9.0
     loader-utils: ^1.2.3
     lodash: ^4.17.21
+    lottie-web: ^5.9.6
     lunr: ^2.3.8
     mixedindentlint: ^1.2.0
     mkdirp: ^1.0.4

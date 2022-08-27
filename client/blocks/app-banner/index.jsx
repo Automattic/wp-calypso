@@ -1,11 +1,11 @@
 import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
-import { Player } from '@lottiefiles/react-lottie-player';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import lottie from 'lottie-web';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useEffect } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -39,6 +39,26 @@ import './style.scss';
 const IOS_REGEX = /iPad|iPod|iPhone/i;
 const ANDROID_REGEX = /Android (\d+(\.\d+)?(\.\d+)?)/i;
 const noop = () => {};
+
+export function IconAnimation( props ) {
+	const { translate, currentSection } = props;
+	const { icon } = getAppBannerData( translate, currentSection );
+
+	useEffect( () => {
+		lottie.loadAnimation( {
+			container: document.querySelector( '#react-logo' ),
+			renderer: 'svg',
+			autoplay: true,
+			path: icon,
+		} );
+	}, [] );
+
+	const bannerIcon = (
+		<div id="react-logo" style={ { height: '47px', width: '92px', paddingBottom: '30px' } }></div>
+	);
+
+	return bannerIcon;
+}
 
 export class AppBanner extends Component {
 	static propTypes = {
@@ -165,12 +185,7 @@ export class AppBanner extends Component {
 						statGroup="calypso_mobile_app_banner"
 						statName="impression"
 					/>
-					<Player
-						autoplay
-						keepLastFrame
-						src={ '/calypso/animations/app-promo/wp-to-jp.json' }
-						style={ { height: '47px', width: '92px', paddingBottom: '30px' } }
-					/>
+					<IconAnimation translate={ translate } currentSection={ currentSection } />
 					<div className="app-banner__text-content">
 						<div className="app-banner__title">
 							<span> { title } </span>
