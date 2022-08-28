@@ -19,7 +19,12 @@ const Sidebar: React.FC< SidebarProps > = ( { title, variations = [] } ) => {
 					<h2> { translate( 'Style variations' ) }</h2>
 					<div className="theme-preview-container__sidebar-variations-grid">
 						{ variations.map( ( variation ) => (
-							<div key={ variation.slug } className="theme-preview-container__sidebar-variation">
+							<div
+								key={ variation.slug }
+								className="theme-preview-container__sidebar-variation"
+								tabIndex={ 0 }
+								role="button"
+							>
 								<Variation variation={ variation } />
 							</div>
 						) ) }

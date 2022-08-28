@@ -35,17 +35,26 @@
 			display: grid;
 			gap: 8px;
 			grid-template-columns: repeat( 2, 1fr );
+			margin: 0 -5px;
 		}
 
 		.theme-preview-container__sidebar-variation {
-			border-radius: 3px; /* stylelint-disable-line scales/radii */
-			box-shadow: 0 0 1px rgba( 0, 0, 0, 0.25 );
-			overflow: hidden;
+			border-radius: 5px; /* stylelint-disable-line scales/radii */
+			border: 2px solid transparent;
+			padding: 3px;
+			transition: border-color 0.15s ease-in-out;
+
+			&:hover {
+				border-color: var( --studio-blue-50 );
+			}
 
 			.theme-preview-container__sidebar-variation-iframe {
+				border-radius: 3px; /* stylelint-disable-line scales/radii */
+				box-shadow: 0 0 1px rgba( 0, 0, 0, 0.25 );
 				border: 0;
 				display: block;
 				max-width: 100%;
+				overflow: hidden;
 			}
 		}
 	}
