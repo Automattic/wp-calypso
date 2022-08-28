@@ -1,12 +1,7 @@
-import {
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore TODO: Add type definition by creating a DefinitelyTyped (DT) PR.
-	__unstableIframe as Iframe,
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore TODO: Add type definition by creating a DefinitelyTyped (DT) PR.
-	__unstableEditorStyles as EditorStyles,
-} from '@wordpress/block-editor';
-import { useMemo } from 'react';
+import { useMemo } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
+import { getPreviewStylesFromVariation } from '../theme-style-variation-badges/utils';
+import Iframe from './iframe';
 import type { ThemeStyleVariation } from '../../types';
 
 interface VariationProps {
@@ -14,16 +9,23 @@ interface VariationProps {
 }
 
 const Variation: React.FC< VariationProps > = ( { variation } ) => {
-	const styles = useMemo( () => {
-		return [];
-	}, [ variation ] );
+	const translate = useTranslate();
+	const styles = useMemo(
+		() => variation && getPreviewStylesFromVariation( variation ),
+		[ variation ]
+	);
+
+	if ( ! styles ) {
+		return null;
+	}
 
 	return (
 		<Iframe
 			className="theme-preview-container__sidebar-variation-iframe"
-			head={ <EditorStyles styles={ styles } /> }
-			tabIndex={ -1 }
-		/>
+			title={ translate( 'Style variation' ) }
+		>
+			{ styles.toString() }
+		</Iframe>
 	);
 };
 

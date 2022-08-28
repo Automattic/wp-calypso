@@ -38,6 +38,17 @@ export interface ThemeStyleVariationSettingsColorPalette {
 	slug: string;
 }
 
+export interface ThemeStyleVariationPreview {
+	color: ThemeStyleVariationPreviewColorPalette;
+}
+
+export interface ThemeStyleVariationPreviewColorPalette {
+	background?: string;
+	foreground?: string;
+	primary?: string;
+	secondary?: string;
+}
+
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 /**

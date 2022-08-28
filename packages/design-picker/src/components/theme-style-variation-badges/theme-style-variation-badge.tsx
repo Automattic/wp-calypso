@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import type { ThemeStyleVariation, ThemeStyleVariationSettingsColorPalette } from '../../types';
+import { getPreviewStylesFromVariation } from './utils';
+import type { ThemeStyleVariation } from '../../types';
 import './style.scss';
 
 interface ThemeStyleVariationBadgeProps {
@@ -7,20 +8,12 @@ interface ThemeStyleVariationBadgeProps {
 }
 
 const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( { variation } ) => {
-	const { background, primary } = useMemo( () => {
-		const palette = variation?.settings?.color?.palette?.theme || [];
+	const styles = useMemo(
+		() => variation && getPreviewStylesFromVariation( variation ),
+		[ variation ]
+	);
 
-		return {
-			background: palette.find(
-				( item: ThemeStyleVariationSettingsColorPalette ) => item.slug === 'background'
-			)?.color,
-			primary: palette.find(
-				( item: ThemeStyleVariationSettingsColorPalette ) => item.slug === 'primary'
-			)?.color,
-		};
-	}, [ variation ] );
-
-	if ( ! background || ! primary ) {
+	if ( ! styles ) {
 		return null;
 	}
 
@@ -28,8 +21,8 @@ const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( { 
 		<div className="theme-style-variation-wrapper">
 			<span
 				style={ {
-					backgroundColor: background,
-					color: primary,
+					backgroundColor: styles.color.background,
+					color: styles.color.primary,
 				} }
 			>
 				A

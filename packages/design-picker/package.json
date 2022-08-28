@@ -33,7 +33,6 @@
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@wordpress/block-editor": "^9.1.0",
 		"@wordpress/components": "^19.15.0",
 		"@wordpress/react-i18n": "^3.7.0",
 		"@wordpress/url": "^3.10.0",
