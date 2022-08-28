@@ -5,10 +5,11 @@ import type { ReactNode } from 'react';
 interface IframeProps {
 	title: string;
 	className?: string;
+	style?: React.CSSProperties;
 	children: ReactNode;
 }
 
-const Iframe: React.FC< IframeProps > = ( { title, className, children } ) => {
+const Iframe: React.FC< IframeProps > = ( { title, className, style, children } ) => {
 	const [ iframeDocument, setIframeDocument ] = useState< Document >();
 
 	const setRef = useRefEffect( ( node: HTMLIFrameElement ) => {
@@ -40,6 +41,7 @@ const Iframe: React.FC< IframeProps > = ( { title, className, children } ) => {
 		<iframe
 			ref={ setRef }
 			className={ className }
+			style={ style }
 			title={ title }
 			tabIndex={ -1 }
 			srcDoc="<!doctype html>"
@@ -47,7 +49,9 @@ const Iframe: React.FC< IframeProps > = ( { title, className, children } ) => {
 			{ iframeDocument &&
 				createPortal(
 					<>
-						<head></head>
+						<head>
+							<style>{ 'body{margin:0}' }</style>
+						</head>
 						<body>{ children }</body>
 					</>,
 					iframeDocument.documentElement

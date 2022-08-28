@@ -39,7 +39,8 @@
 
 		.theme-preview-container__sidebar-variation {
 			border-radius: 3px; /* stylelint-disable-line scales/radii */
-			box-shadow: inset 0 0 1px rgba( 0, 0, 0, 0.25 );
+			box-shadow: 0 0 1px rgba( 0, 0, 0, 0.25 );
+			overflow: hidden;
 
 			.theme-preview-container__sidebar-variation-iframe {
 				border: 0;
