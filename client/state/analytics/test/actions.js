@@ -147,10 +147,9 @@ describe( 'middleware', () => {
 	} );
 
 	describe( 'enhanceWithSiteMainProduct', () => {
-		const pageViewEvent = recordPageView( [ 'https://example-domain.com', 'Site Title' ] );
-
 		let dispatchedEvent;
 		const dispatch = ( createdAction ) => ( dispatchedEvent = createdAction );
+		const pageViewRecordAction = recordPageView( 'https://example-domain.com', 'Site Title' );
 
 		test( 'should report correct site_main_product in page view event for regular sites', () => {
 			const getState = () => ( {
@@ -168,7 +167,7 @@ describe( 'middleware', () => {
 				},
 			} );
 
-			pageViewEvent( dispatch, getState );
+			pageViewRecordAction( dispatch, getState );
 
 			expect( dispatchedEvent.meta.analytics[ 0 ].payload.site_main_product ).toEqual( 'site' );
 		} );
@@ -192,7 +191,7 @@ describe( 'middleware', () => {
 				},
 			} );
 
-			pageViewEvent( dispatch, getState );
+			pageViewRecordAction( dispatch, getState );
 
 			expect( dispatchedEvent.meta.analytics[ 0 ].payload.site_main_product ).toEqual( 'domain' );
 		} );
@@ -224,7 +223,7 @@ describe( 'middleware', () => {
 				},
 			} );
 
-			pageViewEvent( dispatch, getState );
+			pageViewRecordAction( dispatch, getState );
 
 			expect( dispatchedEvent.meta.analytics[ 0 ].payload.site_main_product ).toEqual( 'email' );
 		} );
@@ -256,7 +255,7 @@ describe( 'middleware', () => {
 				},
 			} );
 
-			pageViewEvent( dispatch, getState );
+			pageViewRecordAction( dispatch, getState );
 
 			expect( dispatchedEvent.meta.analytics[ 0 ].payload.site_main_product ).toEqual( 'email' );
 		} );
