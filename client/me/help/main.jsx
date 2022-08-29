@@ -198,7 +198,7 @@ class Help extends PureComponent {
 		return (
 			<CompactCard
 				className="help__support-link"
-				href={ localizeUrl( 'https://wordpress.com/webinars' ) }
+				href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
 				onClick={ this.trackCoursesButtonClick }
 				target="__blank"
 			>
