@@ -158,10 +158,6 @@ class RegisterDomainStep extends Component {
 		if ( props.initialState ) {
 			this.state = { ...this.state, ...props.initialState };
 
-			if ( props.suggestion ) {
-				this.state.lastQuery = props.suggestion;
-			}
-
 			if ( props.initialState.searchResults ) {
 				this.state.loadingResults = false;
 				this.state.searchResults = props.initialState.searchResults;
@@ -180,6 +176,11 @@ class RegisterDomainStep extends Component {
 				this.state.lastQuery = props.initialState.lastQuery;
 			} else {
 				this.state.railcarId = this.getNewRailcarId();
+			}
+
+			// If there's a domain name as a query parameter suggestion, we always search for it first when the page loads
+			if ( props.suggestion ) {
+				this.state.lastQuery = getFixedDomainSearch( props.suggestion );
 			}
 		}
 	}
