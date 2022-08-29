@@ -40,7 +40,8 @@ const ProfessionalEmailPrice = ( {
 		return null;
 	}
 
-	const isEligibleForFreeTrial = isDomainInCart || isDomainEligibleForTitanFreeTrial( domain );
+	const isEligibleForFreeTrial =
+		isDomainInCart || isDomainEligibleForTitanFreeTrial( { domain, product } );
 
 	const priceWithInterval = (
 		<PriceWithInterval

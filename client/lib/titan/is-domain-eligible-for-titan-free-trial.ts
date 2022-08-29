@@ -1,16 +1,16 @@
 import { hasIntroductoryOfferFreeTrial } from 'calypso/lib/emails';
-import { isDomainEligibleForGoogleWorkspaceIntroductoryOffer } from 'calypso/lib/gsuite';
+import { isDomainEligibleForTitanIntroductoryOffer } from 'calypso/lib/titan';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
-export function isDomainEligibleForGoogleWorkspaceFreeTrial( {
+export function isDomainEligibleForTitanFreeTrial( {
 	domain,
 	product,
 }: {
 	domain?: ResponseDomain;
 	product: ProductListItem | null;
 } ): boolean {
-	if ( ! isDomainEligibleForGoogleWorkspaceIntroductoryOffer( domain ) ) {
+	if ( ! isDomainEligibleForTitanIntroductoryOffer( domain ) ) {
 		return false;
 	}
 

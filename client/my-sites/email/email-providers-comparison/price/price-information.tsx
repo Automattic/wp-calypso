@@ -123,8 +123,9 @@ const PriceInformation = ( {
 	}
 
 	if (
-		( isGoogleWorkspace( product ) && isDomainEligibleForGoogleWorkspaceFreeTrial( domain ) ) ||
-		( isTitanMail( product ) && isDomainEligibleForTitanFreeTrial( domain ) )
+		( isGoogleWorkspace( product ) &&
+			isDomainEligibleForGoogleWorkspaceFreeTrial( { domain, product } ) ) ||
+		( isTitanMail( product ) && isDomainEligibleForTitanFreeTrial( { domain, product } ) )
 	) {
 		return <FreeTrialPriceInformation product={ product } />;
 	}
