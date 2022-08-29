@@ -28,7 +28,11 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPlugins, isRequestingForAllSites } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPlugins,
+	isRequestingForSites,
+	isRequestingForAllSites,
+} from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -600,7 +604,8 @@ export default flow(
 				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
 				allPluginsCount: allPlugins && allPlugins.length,
-				requestingPluginsForSites: isRequestingForAllSites( state ),
+				requestingPluginsForSites:
+					isRequestingForSites( state, siteIds ) || isRequestingForAllSites( state ),
 				updateableJetpackSites: getUpdateableJetpackSites( state ),
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )
