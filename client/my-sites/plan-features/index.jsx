@@ -579,7 +579,7 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
-	handleUpgradeClick = ( singlePlanProperties ) => {
+	handleUpgradeClick = async ( singlePlanProperties ) => {
 		const {
 			isInSignup,
 			onUpgradeClick: ownPropsOnUpgradeClick,
@@ -614,60 +614,60 @@ export class PlanFeatures extends Component {
 		}
 
 		if ( domainAndPlanPackage ) {
-			// In this flow we redirect to checkout with both the plan and domain
-			// product in the cart.
-			shoppingCartManager
-				.addProductsToCart( [
+			try {
+				// In this flow we redirect to checkout with both the plan and domain
+				// product in the cart.
+				await shoppingCartManager.addProductsToCart( [
 					{
 						product_slug: productSlug,
 						extra: {
 							afterPurchaseUrl: redirectTo ?? undefined,
 						},
 					},
-				] )
-				.then( () => {
-					if ( withDiscount && this.isMounted ) {
-						return shoppingCartManager.applyCoupon( withDiscount ).catch( () => {
-							// If the coupon does not apply, let's continue to checkout anyway.
-							return Promise.resolve();
-						} );
-					}
-				} )
-				.catch( () => {
-					// Nothing needs to be done here. CartMessages will display the error to the user.
-				} )
-				.then( () => {
-					this.isMounted && page( `/checkout/${ selectedSiteSlug }` );
-				} );
+				] );
+			} catch {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+				return;
+			}
+
+			if ( withDiscount && this.isMounted ) {
+				try {
+					await shoppingCartManager.applyCoupon( withDiscount );
+				} catch {
+					// If the coupon does not apply, let's continue to checkout anyway.
+				}
+			}
+
+			this.isMounted && page( `/checkout/${ selectedSiteSlug }` );
 			return;
 		}
 
 		if ( redirectToAddDomainFlow === true ) {
-			// In this flow, we add the product to the cart directly and then
-			// redirect to the "add a domain" page.
-			shoppingCartManager
-				.addProductsToCart( [
+			try {
+				// In this flow, we add the product to the cart directly and then
+				// redirect to the "add a domain" page.
+				await shoppingCartManager.addProductsToCart( [
 					{
 						product_slug: productSlug,
 						extra: {
 							afterPurchaseUrl: redirectTo ?? undefined,
 						},
 					},
-				] )
-				.catch( () => {
-					// Nothing needs to be done here. CartMessages will display the error to the user.
-				} )
-				.then( () => {
-					if ( withDiscount && this.isMounted ) {
-						return shoppingCartManager.applyCoupon( withDiscount ).catch( () => {
-							// If the coupon does not apply, let's continue to the next page anyway.
-							return Promise.resolve();
-						} );
-					}
-				} )
-				.then( () => {
-					this.isMounted && page( `/domains/add/${ selectedSiteSlug }` );
-				} );
+				] );
+			} catch {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+				return;
+			}
+
+			if ( withDiscount && this.isMounted ) {
+				try {
+					await shoppingCartManager.applyCoupon( withDiscount );
+				} catch {
+					// If the coupon does not apply, let's continue to the next page anyway.
+				}
+			}
+
+			this.isMounted && page( `/domains/add/${ selectedSiteSlug }` );
 			return;
 		}
 
