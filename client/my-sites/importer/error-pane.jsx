@@ -86,7 +86,6 @@ class ImporterError extends PureComponent {
 				'You have uploaded a .wpress file that works with the All-in-One WP Migration plugin. You can either {{ip}}install that plugin{{/ip}}, or {{ei}}try out Everything Import{{/ei}}. {{cs}}Still need help{{/cs}}?',
 				{
 					components: {
-						br: <br />,
 						ip: <Button className="importer__error-pane is-link" onClick={ this.installPlugin } />,
 						ei: (
 							<Button className="importer__error-pane is-link" onClick={ this.everythingImport } />
