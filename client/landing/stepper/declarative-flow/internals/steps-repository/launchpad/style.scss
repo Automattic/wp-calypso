@@ -162,9 +162,6 @@
 	width: 100%;
 	margin: 0;
 	color: var( --color-text );
-	&.is-complete {
-		color: var( --color-neutral-20 );
-	}
 }
 
 .button.launchpad__checklist-item:hover:not( [disabled] ),
