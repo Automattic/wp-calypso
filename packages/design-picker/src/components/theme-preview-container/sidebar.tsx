@@ -1,18 +1,31 @@
 import { translate } from 'i18n-calypso';
 import Variation from './variation';
-import type { ThemeStyleVariation } from '../../types';
+import type { ThemeFeature, ThemeStyleVariation } from '../../types';
 
 interface SidebarProps {
 	title?: string;
+	description?: string;
 	variations?: ThemeStyleVariation[];
+	features?: ThemeFeature[];
 }
 
-const Sidebar: React.FC< SidebarProps > = ( { title, variations = [] } ) => {
+const Sidebar: React.FC< SidebarProps > = ( {
+	title,
+	description,
+	variations = [],
+	features = [],
+} ) => {
 	return (
 		<div className="theme-preview-container__sidebar">
 			<div className="theme-preview-container__sidebar-title">
 				<h1>{ title }</h1>
 			</div>
+
+			{ description && (
+				<div className="theme-preview-container__sidebar-description">
+					<p>{ description }</p>
+				</div>
+			) }
 
 			{ variations.length > 0 && (
 				<div className="theme-preview-container__sidebar-variations">
@@ -48,6 +61,17 @@ const Sidebar: React.FC< SidebarProps > = ( { title, variations = [] } ) => {
 					</a>
 				</p>
 			</div>
+
+			{ features.length > 0 && (
+				<div className="theme-preview-container__sidebar-features">
+					<h2>{ translate( 'Features' ) }</h2>
+					<ul className="theme-preview-container__sidebar-features-list">
+						{ features.map( ( feature ) => (
+							<div key={ feature.slug }>{ feature.name }</div>
+						) ) }
+					</ul>
+				</div>
+			) }
 		</div>
 	);
 };

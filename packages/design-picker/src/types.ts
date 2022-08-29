@@ -49,6 +49,11 @@ export interface ThemeStyleVariationPreviewColorPalette {
 	secondary?: string;
 }
 
+export interface ThemeFeature {
+	slug: string;
+	name: string;
+}
+
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 /**

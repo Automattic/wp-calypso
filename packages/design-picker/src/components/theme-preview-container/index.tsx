@@ -1,16 +1,28 @@
 import Sidebar from './sidebar';
-import type { ThemeStyleVariation } from '../../types';
+import type { ThemeFeature, ThemeStyleVariation } from '../../types';
 import './style.scss';
 
 interface ThemePreviewContainerProps {
 	title?: string;
+	description?: string;
 	variations?: ThemeStyleVariation[];
+	features?: ThemeFeature[];
 }
 
-const ThemePreviewContainer: React.FC< ThemePreviewContainerProps > = ( { title, variations } ) => {
+const ThemePreviewContainer: React.FC< ThemePreviewContainerProps > = ( {
+	title,
+	description,
+	variations,
+	features,
+} ) => {
 	return (
 		<div className="theme-preview-container">
-			<Sidebar title={ title } variations={ variations } />
+			<Sidebar
+				title={ title }
+				description={ description }
+				variations={ variations }
+				features={ features }
+			/>
 		</div>
 	);
 };

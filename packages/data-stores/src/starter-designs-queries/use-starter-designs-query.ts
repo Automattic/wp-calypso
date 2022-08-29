@@ -6,6 +6,7 @@ import type {
 	Category,
 	Design,
 	DesignRecipe,
+	ThemeFeature,
 	ThemeStyleVariation,
 } from '@automattic/design-picker/src/types';
 
@@ -29,7 +30,9 @@ interface StaticDesign {
 	recipe: DesignRecipe;
 	slug: string;
 	title: string;
+	description: string;
 	categories: Category[];
+	theme_features: ThemeFeature[];
 	price?: string;
 	style_variations?: ThemeStyleVariation[];
 }
@@ -72,15 +75,26 @@ function fetchStarterDesigns(
 }
 
 function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
-	const { slug, title, recipe, categories, price, style_variations } = design;
+	const {
+		slug,
+		title,
+		description,
+		recipe,
+		categories,
+		features: theme_features,
+		price,
+		style_variations,
+	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
 
 	return {
 		slug,
 		title,
+		description,
 		recipe,
 		categories,
+		theme_features,
 		is_premium,
 		price,
 		design_type: is_premium ? 'premium' : 'standard',

@@ -25,8 +25,16 @@
 		h1 {
 			@include onboarding-font-recoleta;
 			color: var( --studio-gray-100 );
-			font-size: 2rem; /* stylelint-disable-line */
+			font-size: 2rem;
 			line-height: 2rem;
+		}
+	}
+
+	.theme-preview-container__sidebar-description {
+		p {
+			color: var( --studio-gray-80 );
+			font-size: 0.875rem;
+			line-height: 1.25rem;
 		}
 	}
 
@@ -63,6 +71,27 @@
 		p {
 			color: var( --studio-gray-80 );
 			font-size: $font-body-small;
+		}
+	}
+
+	.theme-preview-container__sidebar-features {
+		.theme-preview-container__sidebar-features-list {
+			align-items: flex-start;
+			border-radius: 4px;
+			display: flex;
+			flex-wrap: wrap;
+			gap: 4px;
+
+			> div {
+				background-color: var( --studio-gray-5 );
+				border-radius: 4px;
+				color: var( --studio-gray-80 );
+				font-size: 0.75rem;
+				font-weight: 500;
+				line-height: 1.25rem;
+				padding: 0 10px;
+				text-align: center;
+			}
 		}
 	}
 }

@@ -295,6 +295,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		const isEnabledStyleSelection =
 			selectedDesign.design_type !== 'vertical' &&
 			isEnabled( 'signup/design-picker-style-selection' );
+
 		const stepContent = (
 			<>
 				<UpgradeModal
@@ -306,6 +307,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				{ isEnabledStyleSelection ? (
 					<ThemePreviewContainer
 						title={ designTitle }
+						description={ selectedDesign.description }
+						features={ selectedDesign.theme_features }
 						variations={ selectedDesign.style_variations }
 					/>
 				) : (
@@ -372,6 +375,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			/>
 		);
 	}
+
 	const heading = (
 		<FormattedHeader
 			id={ 'step-header' }
