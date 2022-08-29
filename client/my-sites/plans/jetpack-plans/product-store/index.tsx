@@ -22,10 +22,9 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const productSlugs = useProductSlugs( { siteId, duration } );
 
-	const defaultViewType =
-		urlQueryArgs?.view && [ 'products', 'bundles' ].includes( urlQueryArgs.view )
-			? urlQueryArgs.view
-			: 'products';
+	const isValidViewQuery =
+		!! urlQueryArgs?.view && [ 'products', 'bundles' ].includes( urlQueryArgs.view );
+	const defaultViewType = isValidViewQuery && urlQueryArgs?.view ? urlQueryArgs.view : 'products';
 
 	const [ currentView, setCurrentView ] = useState< ViewType >( defaultViewType );
 
@@ -37,7 +36,11 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 				<IntroPricingBanner productSlugs={ productSlugs } siteId={ siteId ?? 'none' } />
 			</div>
 
-			<ViewFilter currentView={ currentView } setCurrentView={ setCurrentView } />
+			<ViewFilter
+				currentView={ currentView }
+				setCurrentView={ setCurrentView }
+				shouldUpdateUrl={ isValidViewQuery }
+			/>
 			<ItemsList currentView={ currentView } duration={ duration } siteId={ siteId } />
 			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 

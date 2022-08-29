@@ -6,9 +6,9 @@ export interface ProductStoreBaseProps {
 	siteId: number | null;
 }
 
-export interface ProductStoreQueryArgs extends QueryArgs {
-	view: ViewType;
-}
+export type ProductStoreQueryArgs = QueryArgs & {
+	view?: ViewType;
+};
 export interface ProductStoreProps {
 	/**
 	 * Whether to show the licence activation dialog
@@ -25,6 +25,7 @@ export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductS
 export interface ViewFilterProps {
 	currentView: ViewType;
 	setCurrentView: ( currentView: ViewType ) => void;
+	shouldUpdateUrl: boolean;
 }
 
 export type ProductsListProps = ProductStoreBaseProps & Pick< ProductStoreProps, 'duration' >;
