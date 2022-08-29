@@ -11,7 +11,7 @@ export { default as ResponsiveToolbarGroup } from './responsive-toolbar-group';
 export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
 export { default as ScreenReaderText } from './screen-reader-text';
-export { ScrollToTopButton } from './scroll-to-top-button';
+export { useScrollToTop } from './scroll-to-top/use-scroll-to-top';
 export { SiteThumbnail } from './site-thumbnail';
 export { default as Suggestions } from './suggestions';
 export { default as PaginationControl } from './pagination-control';
