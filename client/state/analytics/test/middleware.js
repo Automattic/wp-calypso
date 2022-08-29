@@ -76,20 +76,13 @@ describe( 'middleware', () => {
 		} );
 
 		test( 'should call pageView.record', () => {
-			let pageViewEvent;
-			const actionDispatcher = ( createdAction ) => ( pageViewEvent = createdAction );
-			const getState = () => ( { sites: {}, ui: {} } );
-			const pageViewRecordAction = recordPageView( 'path', 'title', 'default', { name: 'value' } );
-			pageViewRecordAction( actionDispatcher, getState );
-
-			dispatch( pageViewEvent );
+			dispatch( recordPageView( 'path', 'title', 'default', { name: 'value' } ) );
 
 			expect( pageviewRecordPageView ).toHaveBeenCalledWith(
 				'path',
 				'title',
 				{
 					name: 'value',
-					site_main_product: 'site',
 				},
 				{}
 			);
@@ -102,13 +95,7 @@ describe( 'middleware', () => {
 		} );
 
 		test( 'should call ga.recordPageView', () => {
-			let pageViewEvent;
-			const actionDispatcher = ( createdAction ) => ( pageViewEvent = createdAction );
-			const getState = () => ( { sites: {}, ui: {} } );
-			const pageViewRecordAction = recordGooglePageView( 'path', 'title' );
-			pageViewRecordAction( actionDispatcher, getState );
-
-			dispatch( pageViewEvent );
+			dispatch( recordGooglePageView( 'path', 'title' ) );
 
 			expect( gaRecordPageView ).toHaveBeenCalledWith( 'path', 'title' );
 		} );

@@ -1,6 +1,4 @@
 import { ANALYTICS_EVENT_RECORD, ANALYTICS_PAGE_VIEW_RECORD } from 'calypso/state/action-types';
-import { withEnhancers } from 'calypso/state/utils';
-import { enhanceWithSiteMainProduct } from './enhance-with-site-main-product';
 
 export const recordEvent = ( service, args ) => ( {
 	type: ANALYTICS_EVENT_RECORD,
@@ -26,7 +24,7 @@ export const recordCustomFacebookConversionEvent = ( name, properties ) =>
 export const recordCustomAdWordsRemarketingEvent = ( properties ) =>
 	recordEvent( 'adwords', { properties } );
 
-const recordPageViewBase = ( url, title, service, properties = {}, options = {} ) => ( {
+export const recordPageView = ( url, title, service, properties = {}, options = {} ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,
 	meta: {
 		analytics: [
@@ -43,7 +41,5 @@ const recordPageViewBase = ( url, title, service, properties = {}, options = {} 
 		],
 	},
 } );
-
-export const recordPageView = withEnhancers( recordPageViewBase, [ enhanceWithSiteMainProduct ] );
 
 export const recordGooglePageView = ( url, title ) => recordPageView( url, title, 'ga' );
