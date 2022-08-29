@@ -49,12 +49,19 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	/**
 	 * ↓ Fields
 	 */
+	const emailControlMaxNum = 10;
+	const emailControlPlaceholder = [
+		__( 'sibling@email.com' ),
+		__( 'parents@email.com' ),
+		__( 'friend@email.com' ),
+	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
 	const [ emails, setEmails ] = useState< string[] >( [] );
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
+	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
 	const [ formFileUploadElement ] = useState(
 		createElement( FormFileUpload, { name: 'import', onChange: onFileInputChange } )
 	);
@@ -75,6 +82,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}, [ inProgress ] );
 	// run active job recognition process which updates state
 	useActiveJobRecognition( siteId );
+	useEffect( extendEmailFormControls, [ emails ] );
 
 	! inProgress && prevInProgress.current && onImportFinished?.();
 
@@ -138,6 +146,21 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		setSelectedFile( undefined );
 	}
 
+	function extendEmailFormControls() {
+		const validEmailsNum = isValidEmails.filter( ( x ) => x ).length;
+		const currentEmailFormControlsNum = emailFormControls.length;
+
+		if (
+			currentEmailFormControlsNum <= emailControlMaxNum &&
+			currentEmailFormControlsNum === validEmailsNum
+		) {
+			const controls = Array.from( emailFormControls );
+			controls.push( __( 'Add another email' ) );
+
+			setEmailFormControls( controls );
+		}
+	}
+
 	/**
 	 * ↓ Templates
 	 */
@@ -154,24 +177,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 				) }
 
 				<form onSubmit={ onFormSubmit }>
-					<TextControl
-						placeholder={ __( 'sibling@email.com' ) }
-						value={ emails[ 0 ] || '' }
-						help={ isValidEmails[ 0 ] ? <Icon icon={ check } /> : undefined }
-						onChange={ ( value ) => onEmailChange( value, 0 ) }
-					/>
-					<TextControl
-						placeholder={ __( 'parents@email.com' ) }
-						value={ emails[ 1 ] || '' }
-						help={ isValidEmails[ 1 ] ? <Icon icon={ check } /> : undefined }
-						onChange={ ( value ) => onEmailChange( value, 1 ) }
-					/>
-					<TextControl
-						placeholder={ __( 'friend@email.com' ) }
-						value={ emails[ 2 ] || '' }
-						help={ isValidEmails[ 2 ] ? <Icon icon={ check } /> : undefined }
-						onChange={ ( value ) => onEmailChange( value, 2 ) }
-					/>
+					{ emailFormControls.map( ( placeholder, i ) => (
+						<TextControl
+							placeholder={ placeholder }
+							key={ i }
+							value={ emails[ i ] || '' }
+							help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
+							onChange={ ( value ) => onEmailChange( value, i ) }
+						/>
+					) ) }
 
 					{ ! isSelectedFileValid && (
 						<label className={ 'add-subscriber__form-label-error' }>
