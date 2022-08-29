@@ -1,8 +1,10 @@
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'calypso/lib/analytics/track-component-view', () => 'TrackComponentView' );
-jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
+/** @jest-environment jsdom */
+jest.mock( 'calypso/lib/analytics/track-component-view', () => ( props ) => (
+	<div data-testid="track-component-view">{ JSON.stringify( props ) }</div>
+) );
+jest.mock( 'calypso/blocks/upsell-nudge', () => ( props ) => (
+	<div data-testid="upsell-nudge">{ JSON.stringify( props ) }</div>
+) );
 
 import {
 	PLAN_FREE,
@@ -23,7 +25,8 @@ import {
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import { SeoPreviewNudge } from '../index';
 
 const props = {
@@ -32,43 +35,46 @@ const props = {
 
 describe( 'SeoPreviewNudge basic tests', () => {
 	test( 'should not blow up', () => {
-		const comp = shallow( <SeoPreviewNudge { ...props } /> );
-		expect( comp.find( '.preview-upgrade-nudge' ).length ).toBe( 1 );
+		const { container } = render( <SeoPreviewNudge { ...props } /> );
+		expect( container.firstChild ).toHaveClass( 'preview-upgrade-nudge' );
 	} );
 
 	test( 'should track view', () => {
-		const comp = shallow( <SeoPreviewNudge { ...props } /> );
-		expect( comp.find( 'TrackComponentView' ).length ).toBe( 1 );
-		expect( comp.find( 'TrackComponentView' ).props().eventName ).toBe(
-			'calypso_seo_preview_upgrade_nudge_impression'
-		);
+		render( <SeoPreviewNudge { ...props } /> );
+		const track = screen.queryByTestId( 'track-component-view' );
+		expect( track ).toBeVisible();
+		expect( JSON.parse( track.textContent ) ).toMatchObject( {
+			eventName: 'calypso_seo_preview_upgrade_nudge_impression',
+		} );
 	} );
 } );
 
 describe( 'UpsellNudge should get appropriate plan constant', () => {
-	[ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ].forEach( ( product_slug ) => {
-		test( `Pro 1 year for (${ product_slug })`, () => {
-			const comp = shallow(
+	test.each( [ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ] )(
+		`Pro 1 year for (%s)`,
+		( product_slug ) => {
+			render(
 				<SeoPreviewNudge { ...props } isJetpack={ false } site={ { plan: { product_slug } } } />
 			);
-			expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
-			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS );
-		} );
-	} );
-
-	[ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ].forEach(
-		( product_slug ) => {
-			test( `Business 2 year for (${ product_slug })`, () => {
-				const comp = shallow(
-					<SeoPreviewNudge { ...props } isJetpack={ false } site={ { plan: { product_slug } } } />
-				);
-				expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
-				expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_BUSINESS_2_YEARS );
-			} );
+			const nudge = screen.queryByTestId( 'upsell-nudge' );
+			expect( nudge ).toBeVisible();
+			expect( JSON.parse( nudge.textContent ) ).toMatchObject( { plan: PLAN_BUSINESS } );
 		}
 	);
 
-	[
+	test.each( [ PLAN_BLOGGER_2_YEARS, PLAN_PERSONAL_2_YEARS, PLAN_PREMIUM_2_YEARS ] )(
+		`Business 2 year for (%s)`,
+		( product_slug ) => {
+			render(
+				<SeoPreviewNudge { ...props } isJetpack={ false } site={ { plan: { product_slug } } } />
+			);
+			const nudge = screen.queryByTestId( 'upsell-nudge' );
+			expect( nudge ).toBeVisible();
+			expect( JSON.parse( nudge.textContent ) ).toMatchObject( { plan: PLAN_BUSINESS_2_YEARS } );
+		}
+	);
+
+	test.each( [
 		PLAN_JETPACK_FREE,
 		PLAN_JETPACK_PERSONAL,
 		PLAN_JETPACK_PERSONAL_MONTHLY,
@@ -76,13 +82,14 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 		PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	].forEach( ( product_slug ) => {
-		test( `Jetpack Business for (${ product_slug })`, () => {
-			const comp = shallow(
-				<SeoPreviewNudge { ...props } isJetpack={ true } site={ { plan: { product_slug } } } />
-			);
-			expect( comp.find( 'UpsellNudge' ).length ).toBe( 1 );
-			expect( comp.find( 'UpsellNudge' ).props().plan ).toBe( PLAN_JETPACK_SECURITY_DAILY );
+	] )( `Jetpack Business for (%s)`, ( product_slug ) => {
+		render(
+			<SeoPreviewNudge { ...props } isJetpack={ true } site={ { plan: { product_slug } } } />
+		);
+		const nudge = screen.queryByTestId( 'upsell-nudge' );
+		expect( nudge ).toBeVisible();
+		expect( JSON.parse( nudge.textContent ) ).toMatchObject( {
+			plan: PLAN_JETPACK_SECURITY_DAILY,
 		} );
 	} );
 } );
