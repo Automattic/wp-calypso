@@ -418,8 +418,8 @@ class HelpContact extends Component {
 					onSubmit: this.startHappychat,
 					buttonLabel,
 					showSubjectField: false,
-					showHowCanWeHelpField: true,
-					showHowYouFeelField: true,
+					showHowCanWeHelpField: false,
+					showHowYouFeelField: false,
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
 				};
@@ -431,8 +431,8 @@ class HelpContact extends Component {
 					onSubmit: this.submitKayakoTicket,
 					buttonLabel: isSubmitting ? translate( 'Sending email' ) : translate( 'Email us' ),
 					showSubjectField: true,
-					showHowCanWeHelpField: true,
-					showHowYouFeelField: true,
+					showHowCanWeHelpField: false,
+					showHowYouFeelField: false,
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
 				};
