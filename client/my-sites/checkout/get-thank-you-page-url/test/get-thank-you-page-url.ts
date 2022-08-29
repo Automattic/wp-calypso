@@ -18,7 +18,7 @@ import {
 } from '@automattic/calypso-products';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {
