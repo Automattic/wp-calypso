@@ -247,10 +247,6 @@ function PurchaseMetaPrice( { purchase } ) {
 		return translate( 'Free with Plan' );
 	}
 
-	if ( isEmailMonthly( purchase ) ) {
-		period = translate( 'month' );
-	}
-
 	if ( purchase.billPeriodLabel ) {
 		switch ( purchase.billPeriodLabel ) {
 			case 'per year':
@@ -278,6 +274,10 @@ function PurchaseMetaPrice( { purchase } ) {
 				period = translate( 'month' );
 				break;
 		}
+	}
+
+	if ( isEmailMonthly( purchase ) ) {
+		period = translate( 'month' );
 	}
 
 	// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
