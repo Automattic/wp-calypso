@@ -7,12 +7,6 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'sites',
-		paths: [ '/sites' ],
-		module: 'calypso/my-sites',
-		group: 'sites',
-	},
-	{
 		name: 'customize',
 		paths: [ '/customize' ],
 		module: 'calypso/my-sites/customize',
@@ -20,7 +14,7 @@ const sections = [
 	},
 	{
 		name: 'sites-dashboard',
-		paths: [ '/sites-dashboard' ],
+		paths: [ '/sites' ],
 		module: 'calypso/sites-dashboard',
 		group: 'sites-dashboard',
 	},
