@@ -37,7 +37,6 @@ export default function PluginCommonTable( {
 								{ column.header }
 							</th>
 						) ) }
-					{ renderActions && <th></th> }
 				</tr>
 			</thead>
 			<tbody>
@@ -54,11 +53,6 @@ export default function PluginCommonTable( {
 								<TextPlaceholder />
 							</td>
 						) ) }
-						{ renderActions && (
-							<td>
-								<TextPlaceholder />
-							</td>
-						) }
 					</tr>
 				) : (
 					items.map( ( item ) => {
