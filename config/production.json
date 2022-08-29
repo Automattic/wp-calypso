@@ -18,6 +18,7 @@
 	"features": {
 		"ad-tracking": true,
 		"bilmur-script": true,
+		"build/sites-dashboard": true,
 		"calypso/help-center": false,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
