@@ -13,7 +13,7 @@ $modal-breakpoint-mobile: 480px;
 		}
 	}
 
-	background: #ffffff;
+	background: #fff;
 
 	.remove-plan-dialog__close-button {
 		cursor: pointer;
@@ -25,7 +25,7 @@ $modal-breakpoint-mobile: 480px;
 			color: #000;
 		}
 	}
-	
+
 	.remove-plan-dialog__site-screenshot {
 		width: 365px;
 		height: 483px;
@@ -66,7 +66,8 @@ $modal-breakpoint-mobile: 480px;
 			margin-bottom: 0.75em;
 		}
 
-		.formatted-header.is-left-align, .formatted-header.is-right-align {
+		.formatted-header.is-left-align,
+		.formatted-header.is-right-align {
 			margin: 0;
 		}
 
@@ -82,7 +83,6 @@ $modal-breakpoint-mobile: 480px;
 			vertical-align: middle;
 			text-align: center;
 
-	
 			@media ( max-width: $modal-breakpoint-tablet ) {
 				display: block;
 			}
@@ -91,35 +91,35 @@ $modal-breakpoint-mobile: 480px;
 		.remove-plan-dialog__grid-colmn:first-child {
 			background: #f0f0f0;
 			padding-bottom: 0;
-		
+
 			@media ( max-width: $modal-breakpoint-tablet ) {
 				display: none;
 			}
 		}
 
 		& + .dialog__action-buttons {
-			margin-left: calc( 50% + 48px );
+			margin-left: calc(50% + 48px);
 			margin-top: -92px;
 			margin-bottom: 52px;
 			border: none;
 			background: transparent;
 			text-align: left;
 			padding: 0;
-	
+
 			&::before {
-				content:none;
+				content: none;
 			}
-	
+
 			button:first-child {
 				margin-left: 0;
 			}
-	
+
 			@media ( max-width: $modal-breakpoint-tablet ) {
 				margin-left: 48px;
 				margin-top: 0;
 				margin-bottom: 48px;
 			}
-	
+
 			@media ( max-width: $modal-breakpoint-mobile ) {
 				margin-right: 48px;
 			}
