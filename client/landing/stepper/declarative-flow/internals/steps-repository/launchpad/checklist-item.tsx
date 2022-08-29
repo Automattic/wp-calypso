@@ -5,7 +5,6 @@ import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
 	const { id, isCompleted, actionUrl, title } = task;
-
 	return (
 		<li className={ `launchpad__task-${ id }` }>
 			<Button
