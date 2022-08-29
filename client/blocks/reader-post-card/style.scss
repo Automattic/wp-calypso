@@ -342,7 +342,7 @@
 	overflow-y: scroll;
 	position: relative;
 	-ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
+	scrollbar-width: none; /* Firefox */
 	width: calc( 100% - 140px );
 	gap: 5px;
 	&::-webkit-scrollbar {
