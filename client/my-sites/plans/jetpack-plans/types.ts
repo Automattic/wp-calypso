@@ -43,7 +43,7 @@ export interface SelectorPageProps extends BasePageProps {
 	locale?: string;
 }
 
-export interface ProductSmallCardProps {
+export interface ProductSimpleCardProps {
 	item: SelectorProduct;
 }
 

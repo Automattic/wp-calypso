@@ -1,11 +1,11 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import tempIcon from 'calypso/assets/images/illustrations/jetpack-search.svg';
-import { ProductSmallCardProps } from '../types';
+import { ProductSimpleCardProps } from '../../types';
 
 import './style.scss';
 
-export const ProductSmallCard: React.FC< ProductSmallCardProps > = ( { item } ) => {
+const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( { item } ) => {
 	const translate = useTranslate();
 
 	const onMoreLinkClick = () => {
@@ -21,18 +21,18 @@ export const ProductSmallCard: React.FC< ProductSmallCardProps > = ( { item } ) 
 	const { shortName: name, description } = item;
 
 	return (
-		<div className="product-small-card">
-			<div className="product-small-card__icon">
+		<div className="product-simple-card">
+			<div className="product-simple-card__icon">
 				<img alt="" src={ productIcon } />
 			</div>
-			<div className="product-small-card__info">
-				<div className="product-small-card__info-header">
-					<h3 className="product-small-card__info-header-name">
+			<div className="product-simple-card__info">
+				<div className="product-simple-card__info-header">
+					<h3 className="product-simple-card__info-header-name">
 						{ name }
 						<span></span>
 					</h3>
 					<Button
-						className="product-small-card__info-header-checkout"
+						className="product-simple-card__info-header-checkout"
 						onClick={ onCheckoutClick }
 						primary
 						compact
@@ -40,10 +40,10 @@ export const ProductSmallCard: React.FC< ProductSmallCardProps > = ( { item } ) 
 						{ translate( 'Get' ) }
 					</Button>
 				</div>
-				<div className="product-small-card__info-content">
+				<div className="product-simple-card__info-content">
 					{ description }
 					<a
-						className="product-small-card__info-more-link"
+						className="product-simple-card__info-more-link"
 						onClick={ onMoreLinkClick }
 						href="https://jetpack.com/for/agencies/"
 						target="_blank"
@@ -56,3 +56,5 @@ export const ProductSmallCard: React.FC< ProductSmallCardProps > = ( { item } ) 
 		</div>
 	);
 };
+
+export default ProductSimpleCard;

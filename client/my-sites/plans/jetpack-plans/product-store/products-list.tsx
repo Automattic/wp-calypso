@@ -1,12 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ProductSmallCard } from '../product-small-card';
 import { FeaturedItemCard } from './featured-item-card';
 import { HeroImage } from './hero-image';
 import { useCreateCheckout } from './hooks/use-create-checkout';
 import { useProductsToDisplay } from './hooks/use-products-to-display';
 import { MostPopular } from './most-popular';
+import ProductSimpleCard from './product-simple-card';
 import type { ProductsListProps } from './types';
 
 export const ProductsList: React.FC< ProductsListProps > = ( {
@@ -59,7 +59,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 
 				<div className="jetpack-product-store__products-list-all-grid">
 					{ allItems.map( ( item ) => {
-						return <ProductSmallCard key={ item.productSlug } item={ item } />;
+						return <ProductSimpleCard key={ item.productSlug } item={ item } />;
 					} ) }
 				</div>
 			</div>
