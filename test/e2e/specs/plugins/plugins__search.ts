@@ -27,13 +27,13 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 	} );
 
 	it( 'Search for ecommerce', async function () {
-		await pluginsPage.search( 'ecommerce' );
-		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
+		await pluginsPage.search( 'shipping' );
+		await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
 	} );
 
 	it( 'Can click on a search result', async function () {
-		await pluginsPage.clickSearchResult( 'WooCommerce' );
-		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'WooCommerce' );
+		await pluginsPage.clickSearchResult( 'Royal Mail' );
+		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'Royal Mail' );
 	} );
 
 	it( 'Can click on breadcrumbs "Search Results"', async function () {
@@ -42,16 +42,17 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		} else {
 			await pluginsPage.clickBackBreadcrumb();
 		}
-		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
+		await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
 	} );
 
 	it( 'Can click on breadcrumbs "Plugins"', async function () {
-		await pluginsPage.clickSearchResult( 'WooCommerce' );
+		await pluginsPage.clickSearchResult( 'Royal Mail' );
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await pluginsPage.clickPluginsBreadcrumb();
+			await pluginsPage.validateHasSection( 'Top premium plugins' );
 		} else {
 			await pluginsPage.clickBackBreadcrumb();
+			await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
 		}
-		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 	} );
 } );
