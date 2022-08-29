@@ -315,7 +315,7 @@ export class LoginForm extends Component {
 		this.loginUser();
 	};
 
-	renderWooCommerce( showSocialLogin = true ) {
+	renderWooCommerce( { showSocialLogin = true, socialToS } = {} ) {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
 
@@ -404,6 +404,7 @@ export class LoginForm extends Component {
 					</div>
 
 					<div className="login__form-footer">
+						<p className="login__social-tos">{ socialToS }</p>
 						<div className="login__form-action">
 							<Button
 								primary
@@ -430,6 +431,7 @@ export class LoginForm extends Component {
 									socialService={ this.props.socialService }
 									socialServiceResponse={ this.props.socialServiceResponse }
 									uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
+									shouldRenderToS={ false }
 								/>
 							</div>
 						) }
@@ -485,18 +487,6 @@ export class LoginForm extends Component {
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
 
-		if ( isJetpackWooCommerceFlow ) {
-			return this.renderWooCommerce();
-		}
-
-		if ( isJetpackWooDnaFlow ) {
-			return this.renderWooCommerce( !! accountType ); // Only show the social buttons after the user entered an email.
-		}
-
-		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
-			return this.renderWooCommerce();
-		}
-
 		const socialToS = this.props.translate(
 			// To make any changes to this copy please speak to the legal team
 			'By continuing with any of the options below, ' +
@@ -521,6 +511,21 @@ export class LoginForm extends Component {
 				},
 			}
 		);
+
+		if ( isJetpackWooCommerceFlow ) {
+			return this.renderWooCommerce( { socialToS } );
+		}
+
+		if ( isJetpackWooDnaFlow ) {
+			return this.renderWooCommerce( {
+				showSocialLogin: !! accountType, // Only show the social buttons after the user entered an email.
+				socialToS,
+			} );
+		}
+
+		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+			return this.renderWooCommerce( { socialToS } );
+		}
 
 		return (
 			<form onSubmit={ this.onSubmitForm } method="post">
