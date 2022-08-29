@@ -105,7 +105,14 @@ class FileImporter extends PureComponent {
 					title={ title }
 					description={ description }
 				/>
-				{ errorData && <ErrorPane type={ errorData.type } description={ errorData.description } /> }
+				{ errorData && (
+					<ErrorPane
+						type={ errorData.type }
+						description={ errorData.description }
+						siteSlug={ site.slug }
+						code={ errorData.code }
+					/>
+				) }
 				{ includes( importingStates, importerState ) && (
 					<ImportingPane importerStatus={ importerStatus } sourceType={ title } site={ site } />
 				) }
