@@ -11,24 +11,30 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { Browser, BrowserContext, Page } from 'playwright';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
-		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
+		{
+			gutenberg: 'stable',
+			siteType: 'simple',
+			accountName: 'simpleSitePersonalPlanUser',
+		},
 	] );
 
 	const postTitle = `Scheduled Post: ${ DataHelper.getTimestamp() }`;
 	const postContent = DataHelper.getRandomPhrase();
 	let postURL: URL;
 	let editorPage: EditorPage;
+	let context: BrowserContext;
 	let page: Page;
 
 	beforeAll( async function () {
-		page = await browser.newPage();
+		context = await browser.newContext();
+		page = await context.newPage();
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
@@ -65,6 +71,9 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				minutes: 1,
 				meridian: 'am',
 			} );
+		} );
+
+		it( 'Close settings', async () => {
 			// On mobile, the sidebar covers all of the screen.
 			// Dismiss it so publish buttons are available.
 			await editorPage.closeSettings();
@@ -75,27 +84,24 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			await editorPage.closeAllPanels();
 		} );
 
-		it( `View post as ${ accountName }`, async function () {
-			const testPage = await browser.newPage();
+		it( `View post as the author`, async function () {
+			const tmpPage = await context.newPage(); // Calling from context opens new tab (same session)
 
-			const testAccount = new TestAccount( accountName );
-			await testAccount.authenticate( testPage );
+			await tmpPage.goto( postURL.href );
+			await new PublishedPostPage( tmpPage ).validateTextInPost( postContent );
 
-			await testPage.goto( postURL.href );
-			const publishedPostPage = new PublishedPostPage( testPage );
-			await publishedPostPage.validateTextInPost( postContent );
-			await testPage.close();
+			await tmpPage.close();
 		} );
 
 		it( 'View post as public', async function () {
-			const testPage = await browser.newPage();
+			const tmpPage = await browser.newPage(); // Calling from browser opens new incognito window
 
-			await testPage.goto( postURL.href );
-			const publishedPostPage = new PublishedPostPage( testPage );
-			await publishedPostPage.validateTextInPost(
+			await tmpPage.goto( postURL.href );
+			await new PublishedPostPage( tmpPage ).validateTextInPost(
 				'It looks like nothing was found at this location. Maybe try a search?'
 			);
-			await testPage.close();
+
+			await tmpPage.close();
 		} );
 	} );
 
@@ -116,6 +122,9 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				minutes: 59,
 				meridian: 'pm',
 			} );
+		} );
+
+		it( 'Close settings', async () => {
 			// On mobile, the sidebar covers all of the screen.
 			// Dismiss it so publish buttons are available.
 			await editorPage.closeSettings();
@@ -125,22 +134,34 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			postURL = await editorPage.publish();
 		} );
 
-		it.each( [ 'public', accountName, 'defaultUser' ] )(
-			'View post as %s',
-			async function ( user ) {
-				const testPage = await browser.newPage();
+		it( 'View post as the author', async () => {
+			const tmpPage = await context.newPage();
 
-				if ( user !== 'public' ) {
-					const testAccount = new TestAccount( accountName );
-					await testAccount.authenticate( testPage );
-				}
+			await tmpPage.goto( postURL.href );
+			await new PublishedPostPage( tmpPage ).validateTextInPost( postContent );
 
-				await testPage.goto( postURL.href );
-				const publishedPostPage = new PublishedPostPage( testPage );
-				await publishedPostPage.validateTextInPost( postContent );
+			await tmpPage.close();
+		} );
 
-				await testPage.close();
-			}
-		);
+		it( 'View post as a guest', async () => {
+			const tmpPage = await browser.newPage();
+
+			await tmpPage.goto( postURL.href );
+			await new PublishedPostPage( tmpPage ).validateTextInPost( postContent );
+
+			await tmpPage.close();
+		} );
+
+		it( 'View post as another user', async () => {
+			const tmpPage = await browser.newPage();
+
+			const testAccount = new TestAccount( 'defaultUser' );
+			await testAccount.authenticate( tmpPage );
+
+			await tmpPage.goto( postURL.href );
+			await new PublishedPostPage( tmpPage ).validateTextInPost( postContent );
+
+			await tmpPage.close();
+		} );
 	} );
 } );
