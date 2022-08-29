@@ -4,7 +4,30 @@
 .product-small-card {
 	display: flex;
 	flex-direction: row;
-	gap: 1rem;
+
+	@include break-large {
+		gap: 1rem;
+	}
+}
+
+.product-small-card__icon {
+	display: none;
+	box-sizing: border-box;
+	min-width: 52px;
+	max-height: 52px;
+	background: linear-gradient( 159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53% );
+	border-radius: 4px;
+
+	@include break-large {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+}
+
+.product-small-card__icon > img {
+	width: 32px;
+	height: auto;
 }
 
 .product-small-card__info {

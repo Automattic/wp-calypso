@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import tempIcon from 'calypso/assets/images/illustrations/jetpack-search.svg';
 import { ProductSmallCardProps } from '../types';
 
 import './style.scss';
@@ -8,18 +9,22 @@ export const ProductSmallCard: React.FC< ProductSmallCardProps > = ( { item } ) 
 	const translate = useTranslate();
 
 	const onMoreLinkClick = () => {
-		// TO-DO
+		// TO-DO - should display product lightbox
 	};
 
 	const onCheckoutClick = () => {
-		// TO-DO
+		// TO-DO - should redirect to correct checkout page
 	};
+
+	const productIcon = tempIcon; // TO-DO should be pulled from product data
 
 	const { shortName: name, description } = item;
 
 	return (
 		<div className="product-small-card">
-			<div className="product-small-card__icon"></div>
+			<div className="product-small-card__icon">
+				<img alt="" src={ productIcon } />
+			</div>
 			<div className="product-small-card__info">
 				<div className="product-small-card__info-header">
 					<h3 className="product-small-card__info-header-name">
