@@ -6,17 +6,8 @@ import { MShotsOptions, useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
 export type SizeCss = { width: number; height: number };
-const ASPECT_RATIO = 16 / 11;
-export const SITE_THUMBNAIL_DIMENSIONS = {
-	small: {
-		width: 106,
-		height: 76.55,
-	},
-	medium: {
-		width: 401,
-		height: 401 / ASPECT_RATIO,
-	},
-} as const;
+
+const DEFAULT_SIZE = { width: 106, height: 76.55 };
 
 const VIEWPORT_BASE = 1200;
 
@@ -24,7 +15,8 @@ type Props = {
 	backgroundColor?: string;
 	style?: CSSObject;
 	mShotsUrl?: string;
-	dimension?: SizeCss;
+	width?: number;
+	height?: number;
 	dimensionsSrcset?: Array< SizeCss >;
 	sizesAttr?: string;
 	children?: ReactNode;
@@ -41,7 +33,8 @@ export const SiteThumbnail = ( {
 	alt,
 	mShotsUrl = '',
 	bgColorImgUrl,
-	dimension = SITE_THUMBNAIL_DIMENSIONS.small,
+	width = DEFAULT_SIZE.width,
+	height = DEFAULT_SIZE.height,
 	dimensionsSrcset = [],
 	sizesAttr = '',
 	viewport = VIEWPORT_BASE,
@@ -50,13 +43,13 @@ export const SiteThumbnail = ( {
 	const options: MShotsOptions = {
 		vpw: viewport,
 		vph: viewport,
-		w: dimension.width,
-		h: dimension.height,
+		w: width,
+		h: height,
 		...mshotsOption,
 	};
 	const { imgProps, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, options, [
 		...dimensionsSrcset,
-		dimension,
+		{ width, height },
 	] );
 
 	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
@@ -65,12 +58,12 @@ export const SiteThumbnail = ( {
 		'site-thumbnail',
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
 		// default image width, height given by dimension if not specified in style
-		css( dimension, style )
+		css( { width, height }, style )
 	);
 
 	const showLoader = mShotsUrl && ! isError;
 
-	const blurSize = dimension.width >= SITE_THUMBNAIL_DIMENSIONS.medium.width ? 'medium' : 'small';
+	const blurSize = width > DEFAULT_SIZE.width ? 'medium' : 'small';
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
@@ -94,7 +87,7 @@ export const SiteThumbnail = ( {
 					} ) }
 					ref={ imgRef }
 					alt={ alt }
-					sizes={ sizesAttr || `${ dimension.width }px` }
+					sizes={ sizesAttr || `${ width }px` }
 					{ ...imgProps }
 				/>
 			) }

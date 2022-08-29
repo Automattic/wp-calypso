@@ -1,8 +1,4 @@
-import {
-	useSiteLaunchStatusLabel,
-	getSiteLaunchStatus,
-	SITE_THUMBNAIL_DIMENSIONS,
-} from '@automattic/components';
+import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/components';
 import { css, CSSObject } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
@@ -23,6 +19,13 @@ const SIZES_ATTR = [
 	'(min-width: 660px) calc(50vw - 48px)',
 	'calc(100vw - 32px)',
 ].join( ', ' );
+
+const ASPECT_RATIO = 16 / 11;
+
+const THUMBNAIL_DIMENSION = {
+	width: 401,
+	height: 401 / ASPECT_RATIO,
+};
 
 const badges = css( {
 	display: 'flex',
@@ -76,7 +79,8 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 					<SiteItemThumbnail
 						style={ siteThumbnail }
 						site={ site }
-						dimension={ SITE_THUMBNAIL_DIMENSIONS.medium }
+						width={ THUMBNAIL_DIMENSION.width }
+						height={ THUMBNAIL_DIMENSION.height }
 						sizesAttr={ SIZES_ATTR }
 					/>
 				</ThumbnailLink>

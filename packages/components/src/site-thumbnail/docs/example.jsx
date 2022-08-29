@@ -1,5 +1,11 @@
 import WordPressLogo from '../../wordpress-logo';
-import { SiteThumbnail, SITE_THUMBNAIL_DIMENSIONS } from '../index';
+import { SiteThumbnail } from '../index';
+
+const ASPECT_RATIO = 16 / 11;
+const THUMBNAIL_DIMENSION = {
+	width: 401,
+	height: 401 / ASPECT_RATIO,
+};
 
 export default function SiteThumbnailExample() {
 	return (
@@ -79,10 +85,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Public Site</h3>
-					<SiteThumbnail
-						dimension={ SITE_THUMBNAIL_DIMENSIONS.medium }
-						mShotsUrl="https://wpvip.com"
-					/>
+					<SiteThumbnail { ...THUMBNAIL_DIMENSION } mShotsUrl="https://wpvip.com" />
 				</div>
 				<div
 					style={ {
@@ -92,7 +95,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Private Site with Site Icon</h3>
-					<SiteThumbnail dimension={ SITE_THUMBNAIL_DIMENSIONS.medium } backgroundColor="cyan">
+					<SiteThumbnail { ...THUMBNAIL_DIMENSION } backgroundColor="cyan">
 						<div style={ { paddingTop: '25px' } }>
 							<WordPressLogo />
 						</div>
@@ -106,7 +109,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Private Site without Site Icon and Light Background</h3>
-					<SiteThumbnail dimension={ SITE_THUMBNAIL_DIMENSIONS.medium } backgroundColor="#BABABA">
+					<SiteThumbnail { ...THUMBNAIL_DIMENSION } backgroundColor="#BABABA">
 						W
 					</SiteThumbnail>
 				</div>
