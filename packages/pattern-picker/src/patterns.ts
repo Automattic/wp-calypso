@@ -7,7 +7,6 @@ export const patterns: Pattern[] = [
 	/*    not yet merged: https://github.com/Automattic/blockpatterns/issues/245	
 	{
 		id: 5833,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-audio-embed',
 		title: 'Link in Bio with audio embed',
 		content:
@@ -16,7 +15,6 @@ export const patterns: Pattern[] = [
     */
 	{
 		id: 5820,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-background-image',
 		title: 'Link in Bio with background image',
 		content:
@@ -25,7 +23,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5864,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-cloud',
 		title: 'A Link in Bio pattern with link cloud',
 		content:
@@ -33,7 +30,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5805,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-colorful-buttons',
 		title: 'A Link in Bio with colorful buttons',
 		content:
@@ -42,7 +38,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5869,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-columns-dark',
 		title: 'Link in Bio with column layout and dark background',
 		content:
@@ -50,7 +45,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5837,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-dark-background',
 		title: 'Link in Bio with dark background',
 		content:
@@ -59,7 +53,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5829,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-fixed-background',
 		title: 'Link in Bio with fixed background image',
 		content:
@@ -68,7 +61,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5844,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-gradient',
 		title: 'Link in Bio with a gradient background',
 		content:
@@ -77,7 +69,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5851,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-image-bottom',
 		title: 'Link in Bio with image at the bottom',
 		content:
@@ -86,7 +77,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5822,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-large-heading-columns',
 		title: 'Link in Bio with large heading and column layout',
 		content:
@@ -94,7 +84,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5842,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-large-heading',
 		title: 'Link in Bio with a large heading',
 		content:
@@ -102,7 +91,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5856,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-left-aligned-columns',
 		title: 'Link in Bio with left-aligned content',
 		content:
@@ -111,7 +99,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5816,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-media-right',
 		title: 'Link in Bio with media on the right',
 		content:
@@ -120,7 +107,6 @@ export const patterns: Pattern[] = [
 	},
 	{
 		id: 5811,
-		siteId: 174455321,
 		name: 'lynx/link-in-bio-pattern-bg',
 		title: 'A Link in Bio with subtle pattern background',
 		content:

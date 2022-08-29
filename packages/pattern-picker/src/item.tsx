@@ -23,7 +23,7 @@ export function Item( { style, onClick, pattern, className }: Props ) {
 						frameBorder="0"
 						scrolling="no"
 						title={ pattern.name }
-						src={ `https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?stylesheet=pub%2Flynx&pattern_id=${ pattern.id }-${ pattern.siteId }` }
+						src={ `https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?stylesheet=pub%2Flynx&pattern_id=${ pattern.name }` }
 					/>
 				</div>
 			</button>
