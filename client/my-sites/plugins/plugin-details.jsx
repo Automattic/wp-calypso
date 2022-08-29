@@ -27,7 +27,7 @@ import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugi
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -35,6 +35,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -88,6 +89,7 @@ function PluginDetails( props ) {
 		isRequestingForSites( state, siteIds )
 	);
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
@@ -105,10 +107,12 @@ function PluginDetails( props ) {
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
-	const userCanManagePlugins = useSelector( ( state ) =>
-		selectedSite?.ID
-			? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
-			: canCurrentUserManagePlugins( state )
+	const userCanManagePlugins = useSelector(
+		( state ) =>
+			! selectedSite ||
+			( selectedSite?.ID
+				? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
+				: canCurrentUserManagePlugins( state ) )
 	);
 
 	const isPluginInstalledOnsite =
@@ -144,7 +148,7 @@ function PluginDetails( props ) {
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
 		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
-			dispatch( wporgFetchPluginData( props.pluginSlug ) );
+			dispatch( wporgFetchPluginData( props.pluginSlug, translate.localeSlug ) );
 		}
 	}, [
 		isProductListFetched,
@@ -152,6 +156,7 @@ function PluginDetails( props ) {
 		isWporgPluginFetched,
 		props.pluginSlug,
 		dispatch,
+		translate.localeSlug,
 	] );
 
 	// Fetch WPcom plugin data if needed
@@ -215,7 +220,7 @@ function PluginDetails( props ) {
 		const items = [
 			{
 				label: translate( 'Plugins' ),
-				href: `/plugins/${ selectedSite?.slug || '' }`,
+				href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 				id: 'plugins',
 				helpBubble: translate(
 					'Add new functionality and integrations to your site with plugins.'
@@ -226,13 +231,13 @@ function PluginDetails( props ) {
 		if ( fullPlugin.name && props.pluginSlug ) {
 			items.push( {
 				label: fullPlugin.name,
-				href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
+				href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
 				id: `plugin-${ props.pluginSlug }`,
 			} );
 		}
 
 		dispatch( updateBreadcrumbs( items ) );
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite?.slug, dispatch, translate ] );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite?.slug, dispatch, translate, localizePath ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -403,6 +408,7 @@ function LegacyPluginDetails( props ) {
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const showBillingIntervalSwitcher =
 		! isPreinstalledPremiumPluginUpgraded ||
@@ -478,12 +484,14 @@ function LegacyPluginDetails( props ) {
 							</Notice>
 						) }
 
-						<SitesListArea
-							fullPlugin={ fullPlugin }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							billingPeriod={ billingPeriod }
-							{ ...props }
-						/>
+						{ isLoggedIn && (
+							<SitesListArea
+								fullPlugin={ fullPlugin }
+								isPluginInstalledOnsite={ isPluginInstalledOnsite }
+								billingPeriod={ billingPeriod }
+								{ ...props }
+							/>
+						) }
 
 						<PluginDetailsBody
 							fullPlugin={ fullPlugin }

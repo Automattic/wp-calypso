@@ -13,7 +13,7 @@ interface Props {
 	items: Array< any >;
 	isLoading: boolean;
 	columns: Columns;
-	hasMoreActions: boolean;
+	renderActions?: ( args: any ) => ReactElement;
 	primaryKey: string;
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;
 }

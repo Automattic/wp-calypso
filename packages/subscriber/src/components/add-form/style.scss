@@ -32,7 +32,7 @@
 	}
 }
 
-.add-subscriber__title-container {
+.add-subscriber .add-subscriber__title-container {
 	text-align: center;
 	margin-bottom: 1rem;
 	max-width: 376px;
@@ -54,7 +54,7 @@
 	}
 }
 
-.add-subscriber__form--container {
+.add-subscriber .add-subscriber__form--container {
 	max-width: 368px;
 
 	label {
@@ -95,11 +95,15 @@
 		}
 	}
 
+	.components-base-control__field {
+		margin: 1rem auto;
+	}
+
 	.components-text-control__input {
 		border-color: var( --studio-gray-10 );
 		box-sizing: border-box;
 		font-size: 0.875rem;
-		padding: 1rem;
+		padding: 0.875rem 1rem;
 
 		&::placeholder {
 			color: var( --studio-gray-20 );
@@ -148,6 +152,7 @@
 		font-size: 0.875rem;
 		line-height: 1.25rem;
 		color: var( --studio-gray-50 );
+		margin-bottom: 1.5rem;
 
 		a, button {
 			color: var( --studio-gray-100 );

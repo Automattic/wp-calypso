@@ -24,6 +24,7 @@ import {
 	sortDesigns,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
+import PatternAssemblerCta from './pattern-assembler-cta';
 import PremiumBadge from './premium-badge';
 import ThemePreview from './theme-preview';
 import ThemeStyleVariationBadges from './theme-style-variation-badges';
@@ -52,7 +53,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
 				language: locale,
-				vertical_id: verticalId,
+				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
@@ -310,9 +311,9 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	}
 
 	// We don't need preview for blank canvas
-	return (
+	return ! isBlankCanvas ? (
 		<div className="design-button-container">
-			{ ! isBlankCanvas && ! previewOnly && (
+			{ ! previewOnly && (
 				<DesignButtonCover
 					design={ props.design }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -325,9 +326,14 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				{ ...props }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				onSelect={ previewOnly ? onPreview : noop }
-				disabled={ ! isBlankCanvas && ! previewOnly }
+				disabled={ ! previewOnly }
 			/>
 		</div>
+	) : (
+		<PatternAssemblerCta
+			key={ props.design.slug }
+			onButtonClick={ () => props.onSelect( props.design ) }
+		/>
 	);
 };
 
@@ -390,12 +396,25 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
+
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
 			? filterDesignsByCategory( designs, categorization.selection )
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
+
+		if ( isEnabled( 'signup/design-picker-pattern-assembler' ) ) {
+			const blankCanvasDesign = {
+				recipe: {
+					stylesheet: 'pub/blank-canvas-blocks',
+				},
+				slug: 'blank-canvas-blocks',
+				title: 'Blank Canvas',
+			} as Design;
+			result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
+		}
+
 		return result;
 	}, [ designs, categorization?.selection ] );
 
@@ -534,7 +553,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onUpgrade={ onUpgrade }
 					designs={ staticDesigns }
 					categorization={ categorization }
-					verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
+					verticalId={ verticalId }
 					previewOnly={ previewOnly }
 					hasDesignOptionHeader={ hasDesignOptionHeader }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }

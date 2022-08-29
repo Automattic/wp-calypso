@@ -1,4 +1,5 @@
 import './style.scss';
+import { safeImageUrl } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -9,6 +10,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
 import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
 	canCancelCampaign,
 	getCampaignAudienceString,
@@ -57,7 +59,7 @@ export default function CampaignItem( { campaign }: Props ) {
 
 	const clickthroughRate = useMemo(
 		() => getCampaignClickthroughRate( clicks_total, impressions_total ),
-		[ clicks_total, impressions_total ]
+		[ clicks_total || 0, impressions_total ]
 	);
 
 	const durationFormatted = useMemo(
@@ -69,6 +71,7 @@ export default function CampaignItem( { campaign }: Props ) {
 		() => getCampaignBudgetData( budget_cents, spent_budget_cents ),
 		[ budget_cents, spent_budget_cents ]
 	);
+	const totalBudgetLeftString = totalBudgetLeft ? `($${ totalBudgetLeft } ${ __( 'left' ) })` : '';
 
 	const estimatedReach = useMemo(
 		() => getCampaignEstimatedReach( impressions_estimated_total, deliver_margin_multiplier ),
@@ -76,6 +79,9 @@ export default function CampaignItem( { campaign }: Props ) {
 	);
 
 	const audience = useMemo( () => getCampaignAudienceString( audience_list ), [ audience_list ] );
+
+	const safeUrl = safeImageUrl( content_config.imageUrl );
+	const adCreativeUrl = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
 
 	const header = (
 		<div className="campaign-item__header">
@@ -88,9 +94,11 @@ export default function CampaignItem( { campaign }: Props ) {
 					</Badge>
 				</div>
 			</div>
-			<div className="campaign-item__header-image">
-				<img src={ campaign.content_image } alt="" />
-			</div>
+			{ adCreativeUrl && (
+				<div className="campaign-item__header-image">
+					<img src={ adCreativeUrl } alt="" />
+				</div>
+			) }
 		</div>
 	);
 
@@ -147,7 +155,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Clicks' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__clicks-value">
-								{ clicks_total }
+								{ clicks_total || 0 }
 							</div>
 						</div>
 						<div className="campaign-item__placeholder"></div>
@@ -186,9 +194,7 @@ export default function CampaignItem( { campaign }: Props ) {
 							<div className="campaign-item__block_label campaign-item__budget-label">
 								{ __( 'Budget' ) }
 							</div>
-							<div className="campaign-item__block_value campaign-item__budget-value">{ `$${ totalBudget } ($${ totalBudgetLeft } ${ __(
-								'left'
-							) })` }</div>
+							<div className="campaign-item__block_value campaign-item__budget-value">{ `$${ totalBudget } ${ totalBudgetLeftString }` }</div>
 						</div>
 					</div>
 
@@ -207,7 +213,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Ad destination' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__target-value">
-								{ target_url }
+								{ target_url || '-' }
 							</div>
 						</div>
 					</div>

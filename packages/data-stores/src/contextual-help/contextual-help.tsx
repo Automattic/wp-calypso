@@ -1257,7 +1257,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/themes/child-themes',
+					'https://wordpress.com/support/themes/child-themes/',
 					__i18n_text_domain__
 				);
 			},
@@ -1294,7 +1294,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/themes/child-themes',
+					'https://wordpress.com/support/themes/child-themes/',
 					__i18n_text_domain__
 				);
 			},

@@ -595,10 +595,12 @@ export function getPlanTermLabel(
 }
 
 export const getPopularPlanSpec = ( {
+	flowName,
 	customerType,
 	isJetpack,
 	availablePlans,
 }: {
+	flowName: string;
 	customerType: string;
 	isJetpack: boolean;
 	availablePlans: string[];
@@ -619,6 +621,13 @@ export const getPopularPlanSpec = ( {
 	}
 
 	const group = GROUP_WPCOM;
+
+	if ( flowName === 'link-in-bio' ) {
+		return {
+			type: TYPE_PERSONAL,
+			group,
+		};
+	}
 
 	if ( customerType === 'personal' ) {
 		if ( availablePlans.findIndex( isPremiumPlan ) !== -1 ) {

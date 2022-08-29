@@ -1,6 +1,7 @@
-import { Gridicon, Button } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import PluginCommonAction from '../plugin-common-actions';
 import type { Columns, RowFormatterArgs } from '../../types';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -11,8 +12,8 @@ interface Props {
 	columns: Columns;
 	items: Array< any >;
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;
-	hasMoreActions: boolean;
 	primaryKey: string;
+	renderActions?: ( args: any ) => ReactElement;
 	className?: string;
 }
 
@@ -21,8 +22,8 @@ export default function PluginCommonTable( {
 	columns,
 	items,
 	rowFormatter,
-	hasMoreActions,
 	primaryKey,
+	renderActions,
 	className,
 }: Props ): ReactElement {
 	return (
@@ -52,9 +53,6 @@ export default function PluginCommonTable( {
 								<TextPlaceholder />
 							</td>
 						) ) }
-						<td>
-							<TextPlaceholder />
-						</td>
 					</tr>
 				) : (
 					items.map( ( item ) => {
@@ -73,15 +71,9 @@ export default function PluginCommonTable( {
 										</td>
 									);
 								} ) }
-								{ hasMoreActions && (
+								{ renderActions && (
 									<td className={ classNames( 'plugin-common-table__actions' ) }>
-										<Button borderless compact>
-											<Gridicon
-												icon="ellipsis"
-												size={ 18 }
-												className="plugin-common-table__all-actions"
-											/>
-										</Button>
+										<PluginCommonAction item={ item } renderActions={ renderActions } />
 									</td>
 								) }
 							</tr>

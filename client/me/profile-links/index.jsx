@@ -123,7 +123,7 @@ class ProfileLinks extends Component {
 				{ times( 2, ( index ) => (
 					<ProfileLink
 						title="Loading Profile Links"
-						url="http://wordpress.com"
+						url="https://wordpress.com/"
 						slug="A placeholder profile link"
 						isPlaceholder
 						key={ index }

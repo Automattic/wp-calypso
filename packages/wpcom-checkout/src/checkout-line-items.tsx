@@ -969,7 +969,9 @@ function WPLineItem( {
 							setIsModalVisible( false );
 						} }
 						primaryAction={ () => {
-							removeProductFromCart( product.uuid );
+							removeProductFromCart( product.uuid ).catch( () => {
+								// Nothing needs to be done here. CartMessages will display the error to the user.
+							} );
 							onRemoveProduct?.( label );
 						} }
 						cancelAction={ () => {
