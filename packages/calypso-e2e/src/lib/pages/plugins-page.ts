@@ -45,6 +45,10 @@ const selectors = {
 
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
+
+	// Plugin details view
+	pluginDetailsHeaderTitle: ( section: string ) =>
+		`.plugin-details-header__name:text("${ section }")`,
 };
 
 /**
@@ -111,6 +115,13 @@ export class PluginsPage {
 	 */
 	async validateHasHeaderTitle( section: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.headerTitle( section ) );
+	}
+
+	/**
+	 * Validate plugin details page has a header title containing text
+	 */
+	async validatePluginDetailsHasHeaderTitle( section: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.pluginDetailsHeaderTitle( section ) );
 	}
 
 	/**

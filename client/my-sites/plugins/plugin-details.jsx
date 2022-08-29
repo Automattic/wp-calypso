@@ -319,7 +319,11 @@ function PluginDetails( props ) {
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
-			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
+			<FixedNavigationHeader
+				compactBreadcrumb={ ! isWide }
+				navigationItems={ breadcrumbs }
+				className="plugins-browser__header"
+			/>
 
 			<PluginNotices
 				pluginId={ fullPlugin.id }
@@ -438,7 +442,11 @@ function LegacyPluginDetails( props ) {
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />
-			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs }>
+			<FixedNavigationHeader
+				compactBreadcrumb={ ! isWide }
+				navigationItems={ breadcrumbs }
+				className="plugins-browser__header"
+			>
 				{ showBillingIntervalSwitcher && (
 					<BillingIntervalSwitcher
 						billingPeriod={ billingPeriod }

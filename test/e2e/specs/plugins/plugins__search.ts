@@ -20,10 +20,21 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 	it( 'Visit plugins page', async function () {
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.visit();
+		// Ensure page is wide enough to show the breadcrumb details
+		await page.setViewportSize( { width: 1300, height: 1080 } );
 	} );
 
 	it( 'Search for ecommerce', async function () {
 		await pluginsPage.search( 'ecommerce' );
 		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
+	} );
+
+	it( 'Can click on search result', async function () {
+		await pluginsPage.clickSearchResult( 'WooCommerce' );
+		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'WooCommessrce' );
+	} );
+
+	it( 'Can click on breadcrumbs "Plugins"', async function () {
+		await pluginsPage.clickPluginsBreadcrumb();
 	} );
 } );
