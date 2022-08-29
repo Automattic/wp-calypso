@@ -70,7 +70,7 @@ export const SiteThumbnail = ( {
 
 	const showLoader = mShotsUrl && ! isError;
 
-	const blurSize = dimension.width >= SITE_THUMBNAIL_DIMENSIONS.medium.width ? 'large' : 'small';
+	const blurSize = dimension.width >= SITE_THUMBNAIL_DIMENSIONS.medium.width ? 'medium' : 'small';
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
