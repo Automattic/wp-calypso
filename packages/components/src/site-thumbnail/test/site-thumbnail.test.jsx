@@ -55,7 +55,7 @@ describe( 'SiteThumbnail', () => {
 		expect( srcSet.includes( srcSet3xWith ) ).toEqual( true );
 	} );
 
-	test( 'should add dimensionsSrcSet array porp to srcset string attribute', () => {
+	test( 'should add dimensionsSrcSet array prop to srcset string attribute', () => {
 		const alternativeDimensions = [
 			{
 				width: 777,
