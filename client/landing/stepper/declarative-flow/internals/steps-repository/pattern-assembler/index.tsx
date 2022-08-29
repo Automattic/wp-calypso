@@ -103,7 +103,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			hideSkip={ true }
-			stepContent={ <></> }
+			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);
