@@ -360,7 +360,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				stepContent={ stepContent }
 				hideSkip
 				className={ 'design-setup__preview' }
-				shouldStickyNavButtonsOnTop={ isMobile }
 				goBack={ handleBackClick }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>

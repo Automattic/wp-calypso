@@ -30,6 +30,9 @@ export interface ThemeStyleVariation {
 			};
 		};
 	};
+	styles: {
+		color: ThemeStyleVariationStylesColor;
+	};
 }
 
 export interface ThemeStyleVariationSettingsColorPalette {
@@ -47,6 +50,11 @@ export interface ThemeStyleVariationPreviewColorPalette {
 	foreground?: string;
 	primary?: string;
 	secondary?: string;
+}
+
+export interface ThemeStyleVariationStylesColor {
+	background?: string;
+	text?: string;
 }
 
 export interface ThemeFeature {
