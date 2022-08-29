@@ -9,8 +9,8 @@ export type SizeCss = { width: number; height: number };
 const ASPECT_RATIO = 16 / 11;
 export const SITE_THUMBNAIL_DIMENSIONS = {
 	small: {
-		width: 108,
-		height: 78,
+		width: 106,
+		height: 76.55,
 	},
 	medium: {
 		width: 401,
