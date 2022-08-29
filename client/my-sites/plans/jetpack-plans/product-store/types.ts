@@ -1,4 +1,5 @@
-import { BasePageProps, Duration } from '../types';
+import { BasePageProps, Duration, PurchaseCallback, PurchaseURLCallback } from '../types';
+import type { SelectorProduct } from '../types';
 
 export interface ProductStoreBaseProps {
 	siteId: number | null;
@@ -10,6 +11,8 @@ export interface ProductStoreProps extends Pick< BasePageProps, 'urlQueryArgs' >
 	 */
 	enableUserLicensesDialog?: boolean;
 	duration: Duration;
+	createCheckoutURL?: PurchaseURLCallback;
+	onClickPurchase?: PurchaseCallback;
 }
 
 export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & ProductStoreBaseProps;
@@ -23,7 +26,7 @@ export interface ViewFilterProps {
 	setCurrentView: ( currentView: ViewType ) => void;
 }
 
-export type ProductsListProps = ProductStoreBaseProps & Pick< ProductStoreProps, 'duration' >;
+export type ProductsListProps = ProductStoreBaseProps & Omit< ProductStoreProps, 'urlQueryArgs' >;
 
 export type BundlesListProps = ProductsListProps;
 
@@ -35,4 +38,24 @@ export type MostPopularProps = {
 	className?: string;
 	heading: string;
 	items: React.ReactNode;
+};
+
+export type HeroImageProps = {
+	item: SelectorProduct;
+};
+
+export type CreateCheckoutURLProps = ProductStoreBaseProps & {
+	createCheckoutURL?: PurchaseURLCallback;
+	duration: Duration;
+	onClickPurchase?: PurchaseCallback;
+};
+
+export type ItemPriceProps = ProductStoreBaseProps & HeroImageProps;
+
+export type FeaturedItemCardProps = ItemPriceProps & {
+	item: SelectorProduct;
+	hero: React.ReactNode;
+	onClickMore: VoidFunction;
+	checkoutURL?: string;
+	onClickPurchase?: VoidFunction;
 };

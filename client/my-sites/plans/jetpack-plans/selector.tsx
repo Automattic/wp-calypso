@@ -225,9 +225,11 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 						{ header }
 
 						<ProductStore
-							enableUserLicensesDialog={ enableUserLicensesDialog }
-							urlQueryArgs={ urlQueryArgs }
+							createCheckoutURL={ createProductURL }
 							duration={ currentDuration }
+							enableUserLicensesDialog={ enableUserLicensesDialog }
+							onClickPurchase={ selectProduct }
+							urlQueryArgs={ urlQueryArgs }
 						/>
 					</>
 				) : (
