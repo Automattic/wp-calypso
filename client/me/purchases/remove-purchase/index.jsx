@@ -97,7 +97,6 @@ class RemovePurchase extends Component {
 			this.props.onClickTracks( event );
 		}
 		if ( this.shouldShowPlanWarning() && ! this.state.isShowingRemovePlanWarning ) {
-			console.log( 'debug 1: inside openDialog, shouldShowPlanWarning is true' );
 			this.setState( {
 				isShowingRemovePlanWarning: true,
 				isShowingNonPrimaryDomainWarning: false,
@@ -108,7 +107,6 @@ class RemovePurchase extends Component {
 			this.shouldShowNonPrimaryDomainWarning() &&
 			! this.state.isShowingNonPrimaryDomainWarning
 		) {
-			console.log( 'debug 2' );
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: true,
 				isShowingMarketplaceSubscriptionsDialog: false,
@@ -118,14 +116,12 @@ class RemovePurchase extends Component {
 			this.shouldHandleMarketplaceSubscriptions() &&
 			! this.state.isShowingMarketplaceSubscriptionsDialog
 		) {
-			console.log( 'debug 3' );
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: true,
 				isDialogVisible: false,
 			} );
 		} else {
-			console.log( 'debug 4' );
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: false,
