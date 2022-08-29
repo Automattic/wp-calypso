@@ -17,7 +17,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 	const [ popularItems ] = useBundlesToDisplay( { duration, siteId } );
 	const translate = useTranslate();
 
-	const { getCheckoutURL, getOnClickPurchase } = useCreateCheckout( {
+	const { getCheckoutURL, getOnClickPurchase, isOwned } = useCreateCheckout( {
 		createCheckoutURL,
 		onClickPurchase,
 		duration,
@@ -30,6 +30,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 				<FeaturedItemCard
 					hero={ <HeroImage item={ item } /> }
 					item={ item }
+					isOwned={ isOwned( item ) }
 					siteId={ siteId }
 					onClickMore={ () => {
 						recordTracksEvent( 'calypso_product_more_about_product_click', {

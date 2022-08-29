@@ -16,7 +16,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	const [ popularItems, otherItems ] = useProductsToDisplay( { duration, siteId } );
 	const translate = useTranslate();
 
-	const { getCheckoutURL, getOnClickPurchase } = useCreateCheckout( {
+	const { getCheckoutURL, getOnClickPurchase, isOwned } = useCreateCheckout( {
 		createCheckoutURL,
 		onClickPurchase,
 		duration,
@@ -28,6 +28,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 			<FeaturedItemCard
 				key={ item.productSlug }
 				hero={ <HeroImage item={ item } /> }
+				isOwned={ isOwned( item ) }
 				item={ item }
 				siteId={ siteId }
 				onClickMore={ () => {

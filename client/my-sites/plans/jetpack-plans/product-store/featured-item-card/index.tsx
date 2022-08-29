@@ -8,6 +8,7 @@ import './style.scss';
 export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	checkoutURL,
 	hero,
+	isOwned,
 	item,
 	onClickMore,
 	onClickPurchase,
@@ -24,7 +25,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 				<div>
 					<h2 className="featured-item-card--title">{ title }</h2>
 					<div className="featured-item-card--price">
-						<ItemPrice item={ item } siteId={ siteId } />
+						<ItemPrice isOwned={ isOwned } item={ item } siteId={ siteId } />
 					</div>
 					<div className="featured-item-card--desc">
 						<p>

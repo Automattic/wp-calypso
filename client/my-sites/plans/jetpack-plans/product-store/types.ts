@@ -50,12 +50,15 @@ export type CreateCheckoutURLProps = ProductStoreBaseProps & {
 	onClickPurchase?: PurchaseCallback;
 };
 
-export type ItemPriceProps = ProductStoreBaseProps & HeroImageProps;
+export type ItemPriceProps = ProductStoreBaseProps &
+	HeroImageProps & {
+		isOwned?: boolean;
+	};
 
 export type FeaturedItemCardProps = ItemPriceProps & {
-	item: SelectorProduct;
-	hero: React.ReactNode;
-	onClickMore: VoidFunction;
 	checkoutURL?: string;
+	hero: React.ReactNode;
+	item: SelectorProduct;
+	onClickMore: VoidFunction;
 	onClickPurchase?: VoidFunction;
 };

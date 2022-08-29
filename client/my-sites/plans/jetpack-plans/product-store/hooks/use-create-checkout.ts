@@ -94,7 +94,8 @@ export const useCreateCheckout = ( {
 		() => ( {
 			getCheckoutURL,
 			getOnClickPurchase,
+			isOwned,
 		} ),
-		[ getCheckoutURL, getOnClickPurchase ]
+		[ getCheckoutURL, getOnClickPurchase, isOwned ]
 	);
 };

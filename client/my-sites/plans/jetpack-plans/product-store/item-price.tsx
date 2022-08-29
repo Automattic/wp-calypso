@@ -4,7 +4,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import useItemPrice from '../use-item-price';
 import { ItemPriceProps } from './types';
 
-export const ItemPrice: React.FC< ItemPriceProps > = ( { item, siteId } ) => {
+export const ItemPrice: React.FC< ItemPriceProps > = ( { isOwned, item, siteId } ) => {
 	const { originalPrice, discountedPrice, isFetching } = useItemPrice(
 		siteId,
 		item,
@@ -15,6 +15,7 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( { item, siteId } ) => {
 	return (
 		<DisplayPrice
 			isFree={ item.isFree }
+			isOwned={ isOwned }
 			discountedPrice={ discountedPrice }
 			discountedPriceFirst
 			currencyCode={ item.displayCurrency || currencyCode }
