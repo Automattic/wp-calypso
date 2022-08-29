@@ -19,10 +19,7 @@ const PatternAssemblerCta: FC< Props > = ( { onButtonClick } ) => {
 					alt="Blank Canvas Header"
 				/>
 			</div>
-			<h3 className="pattern-assembler-cta__title">
-				{ ' ' }
-				{ translate( 'Start with a blank canvas' ) }{ ' ' }
-			</h3>
+			<h3 className="pattern-assembler-cta__title">{ translate( 'Start with a blank canvas' ) }</h3>
 			<p className="pattern-assembler-cta__subtitle">
 				{ translate(
 					"Can't find something you like? Create something of your own by mixing and matching patterns."
