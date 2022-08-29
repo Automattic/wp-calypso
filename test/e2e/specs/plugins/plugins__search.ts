@@ -29,12 +29,19 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 	} );
 
-	it( 'Can click on search result', async function () {
+	it( 'Can click on a search result', async function () {
 		await pluginsPage.clickSearchResult( 'WooCommerce' );
 		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'WooCommerce' );
 	} );
 
+	it( 'Can click on breadcrumbs "Search Results"', async function () {
+		await pluginsPage.clickSearchResultsBreadcrumb();
+		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
+	} );
+
 	it( 'Can click on breadcrumbs "Plugins"', async function () {
+		await pluginsPage.clickSearchResult( 'WooCommerce' );
 		await pluginsPage.clickPluginsBreadcrumb();
+		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 	} );
 } );

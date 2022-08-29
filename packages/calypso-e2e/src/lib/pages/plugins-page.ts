@@ -181,17 +181,24 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Click the Back breadcrumb
+	 * Click the "Back" breadcrumb
 	 */
 	async clickBackBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Back' ) );
 	}
 
 	/**
-	 * Click the Plugins breadcrumb
+	 * Click the "Plugins" breadcrumb
 	 */
 	async clickPluginsBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Plugins' ) );
+	}
+
+	/**
+	 * Click the "Search Results" breadcrumb
+	 */
+	async clickSearchResultsBreadcrumb(): Promise< void > {
+		await this.page.click( selectors.breadcrumb( 'Search Results' ) );
 	}
 
 	/**
