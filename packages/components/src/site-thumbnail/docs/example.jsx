@@ -1,5 +1,5 @@
 import WordPressLogo from '../../wordpress-logo';
-import { SiteThumbnail } from '../index';
+import { SiteThumbnail, SITE_THUMBNAIL_DIMENSIONS } from '../index';
 
 export default function SiteThumbnailExample() {
 	return (
@@ -79,7 +79,10 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Public Site</h3>
-					<SiteThumbnail size="medium" mShotsUrl="https://wpvip.com" />
+					<SiteThumbnail
+						dimension={ SITE_THUMBNAIL_DIMENSIONS.medium }
+						mShotsUrl="https://wpvip.com"
+					/>
 				</div>
 				<div
 					style={ {
@@ -89,7 +92,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Private Site with Site Icon</h3>
-					<SiteThumbnail size="medium" backgroundColor="cyan">
+					<SiteThumbnail dimension={ SITE_THUMBNAIL_DIMENSIONS.medium } backgroundColor="cyan">
 						<div style={ { paddingTop: '25px' } }>
 							<WordPressLogo />
 						</div>
@@ -103,7 +106,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Private Site without Site Icon and Light Background</h3>
-					<SiteThumbnail size="medium" backgroundColor="#BABABA">
+					<SiteThumbnail dimension={ SITE_THUMBNAIL_DIMENSIONS.medium } backgroundColor="#BABABA">
 						W
 					</SiteThumbnail>
 				</div>
@@ -115,7 +118,7 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Coming Soon Site</h3>
-					<SiteThumbnail size="medium">CS</SiteThumbnail>
+					<SiteThumbnail dimension={ SITE_THUMBNAIL_DIMENSIONS.medium }>CS</SiteThumbnail>
 				</div>
 			</div>
 		</div>

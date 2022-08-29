@@ -5,9 +5,9 @@ import './style.scss';
 import { MShotsOptions, useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
-type SizeCss = CSSObject & { width: number; height: number; sizes?: string };
+export type SizeCss = { width: number; height: number };
 const ASPECT_RATIO = 16 / 11;
-const SIZES: { [ sizeName: string ]: SizeCss } = {
+export const SITE_THUMBNAIL_DIMENSIONS = {
 	small: {
 		width: 108,
 		height: 78,
@@ -15,14 +15,8 @@ const SIZES: { [ sizeName: string ]: SizeCss } = {
 	medium: {
 		width: 401,
 		height: 401 / ASPECT_RATIO,
-		sizes: [
-			'(min-width: 1400px) 401px',
-			'(min-width: 960px) calc(33vw - 48px)',
-			'(min-width: 660px) calc(50vw - 48px)',
-			'calc(100vw - 32px)',
-		].join( ', ' ),
 	},
-};
+} as const;
 
 const VIEWPORT_BASE = 1200;
 
@@ -30,7 +24,9 @@ type Props = {
 	backgroundColor?: string;
 	style?: CSSObject;
 	mShotsUrl?: string;
-	size?: 'small' | 'medium';
+	dimension?: SizeCss;
+	dimensionsSrcset?: Array< SizeCss >;
+	sizesAttr?: string;
 	children?: ReactNode;
 	alt?: string;
 	bgColorImgUrl?: string;
@@ -45,36 +41,42 @@ export const SiteThumbnail = ( {
 	alt,
 	mShotsUrl = '',
 	bgColorImgUrl,
-	size = 'small',
+	dimension = SITE_THUMBNAIL_DIMENSIONS.small,
+	dimensionsSrcset = [],
+	sizesAttr = '',
 	viewport = VIEWPORT_BASE,
 	mshotsOption,
 }: Props ) => {
-	const imageSize = SIZES[ size ];
 	const options: MShotsOptions = {
 		vpw: viewport,
 		vph: viewport,
-		w: imageSize.width,
-		h: imageSize.height,
+		w: dimension.width,
+		h: dimension.height,
 		...mshotsOption,
 	};
-	const sizesSrcSet = Object.values( SIZES );
-	const { imgProps, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, options, sizesSrcSet );
+	const { imgProps, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, options, [
+		...dimensionsSrcset,
+		dimension,
+	] );
 
 	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
 
 	const classes = classnames(
 		'site-thumbnail',
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
-		css( imageSize, style )
+		// default image width, height given by dimension if not specified in style
+		css( dimension, style )
 	);
 
 	const showLoader = mShotsUrl && ! isError;
+
+	const blurSize = dimension.width >= SITE_THUMBNAIL_DIMENSIONS.medium.width ? 'large' : 'small';
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
 			{ bgColorImgUrl && (
 				<div
-					className={ `site-thumbnail__image-bg site-thumbnail__image-blur-${ size }` }
+					className={ `site-thumbnail__image-bg site-thumbnail__image-blur-${ blurSize }` }
 					style={ { backgroundImage: `url(${ bgColorImgUrl })` } }
 				></div>
 			) }
@@ -92,8 +94,8 @@ export const SiteThumbnail = ( {
 					} ) }
 					ref={ imgRef }
 					alt={ alt }
+					sizes={ sizesAttr || `${ dimension.width }px` }
 					{ ...imgProps }
-					sizes={ imageSize.sizes || `${ imageSize.width }px` }
 				/>
 			) }
 		</div>

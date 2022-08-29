@@ -1,4 +1,8 @@
-import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/components';
+import {
+	useSiteLaunchStatusLabel,
+	getSiteLaunchStatus,
+	SITE_THUMBNAIL_DIMENSIONS,
+} from '@automattic/components';
 import { css, CSSObject } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
@@ -12,6 +16,13 @@ import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 import { ThumbnailLink } from './thumbnail-link';
+
+const SIZES_ATTR = [
+	'(min-width: 1400px) 401px',
+	'(min-width: 960px) calc(33vw - 48px)',
+	'(min-width: 660px) calc(50vw - 48px)',
+	'calc(100vw - 32px)',
+].join( ', ' );
 
 const badges = css( {
 	display: 'flex',
@@ -62,7 +73,12 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 		<SitesGridTile
 			leading={
 				<ThumbnailLink { ...siteDashboardUrlProps }>
-					<SiteItemThumbnail style={ siteThumbnail } site={ site } size={ 'medium' } />
+					<SiteItemThumbnail
+						style={ siteThumbnail }
+						site={ site }
+						dimension={ SITE_THUMBNAIL_DIMENSIONS.medium }
+						sizesAttr={ SIZES_ATTR }
+					/>
 				</ThumbnailLink>
 			}
 			primary={
