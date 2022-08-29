@@ -5,6 +5,7 @@ import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
+import { WPImportError } from 'calypso/blocks/importer/wordpress/types';
 import DropZone from 'calypso/components/drop-zone';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -135,7 +136,11 @@ export class UploadingPane extends PureComponent {
 
 		// fail fast if a user tries to upload a .wpress file to improve the user experience
 		if ( fileExtension === 'wpress' ) {
-			this.props.failPreUpload( importerStatus.importerId, '', 'WPRESS_FILE_IS_NOT_SUPPORTED' );
+			this.props.failPreUpload(
+				importerStatus.importerId,
+				'',
+				WPImportError.WPRESS_FILE_IS_NOT_SUPPORTED
+			);
 			return;
 		}
 

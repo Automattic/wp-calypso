@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import Page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
+import { WPImportError } from 'calypso/blocks/importer/wordpress/types';
 import Notice from 'calypso/components/notice';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -81,7 +82,7 @@ class ImporterError extends PureComponent {
 			'Oops! We ran into an unexpected error while uploading your file.'
 		);
 
-		if ( this.props.code === 'WPRESS_FILE_IS_NOT_SUPPORTED' ) {
+		if ( this.props.code === WPImportError.WPRESS_FILE_IS_NOT_SUPPORTED ) {
 			return this.props.translate(
 				'You have uploaded a .wpress file that works with the All-in-One WP Migration plugin. You can either {{ip}}install that plugin{{/ip}}, or {{ei}}try out Everything Import{{/ei}}. {{cs}}Still need help{{/cs}}?',
 				{
