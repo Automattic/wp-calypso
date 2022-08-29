@@ -44,7 +44,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 		rgba( 255, 255, 255, 0.8 ) 30%,
 		rgba( 255, 255, 255, 1 ) 100%
 	);
-	inset-block-start: -14px;
+	inset-block-start: -10px;
 	inset-inline-end: 0;
 }
 .plugin-row-formatter__sites-count-button {
@@ -77,5 +77,28 @@ a.button.plugin-row-formatter__plugin-name-card {
 		.plugin-install-button__install.embed {
 			margin: 0;
 		}
+	}
+}
+.plugin-row-formatter__plugin-details {
+	display: flex;
+	align-items: center;
+}
+
+// Checkbox for multiselect purposes
+.plugin-row-formatter__checkbox[type='checkbox'] {
+	margin-inline-end: 16px;
+
+	&:checked::before {
+		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+	}
+
+	&::after {
+		// Making tap area larger
+		content: '';
+		position: absolute;
+		top: -20px;
+		left: -19px;
+		width: 56px;
+		height: 55px;
 	}
 }

@@ -281,7 +281,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId: string ) {
+	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId?: string ) {
 		const { theme, recipe } = selectedDesign;
 
 		yield wpcomRequest( {
@@ -302,7 +302,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				apiNamespace: 'wpcom/v2',
 				body: {
 					trim_content: true,
-					vertical_id: siteVerticalId || undefined,
+					vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 					pattern_ids: recipe?.pattern_ids,
 					header_pattern_ids: recipe?.header_pattern_ids || [],
 					footer_pattern_ids: recipe?.footer_pattern_ids || [],

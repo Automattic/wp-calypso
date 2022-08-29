@@ -620,7 +620,7 @@ function wpcomPages( app ) {
 			} else {
 				const pricingPageUrl = ref
 					? `https://wordpress.com/pricing/?ref=${ ref }`
-					: 'https://wordpress.com/pricing';
+					: 'https://wordpress.com/pricing/';
 				res.redirect( pricingPageUrl );
 			}
 		} else {

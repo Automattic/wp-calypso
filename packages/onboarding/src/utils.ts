@@ -1,3 +1,6 @@
+export const NEWSLETTER_FLOW = 'newsletter';
+export const LINK_IN_BIO_FLOW = 'link-in-bio';
+
 export const isNewsletterOrLinkInBioFlow = ( flowName: string ) => {
-	return [ 'newsletter', 'link-in-bio' ].includes( flowName );
+	return [ NEWSLETTER_FLOW, LINK_IN_BIO_FLOW ].includes( flowName );
 };

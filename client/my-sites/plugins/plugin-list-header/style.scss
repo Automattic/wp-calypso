@@ -89,6 +89,8 @@
 	&.section-header.card {
 		margin-inline-start: 0;
 		margin-inline-end: 0;
+		padding-inline-start: 16px;
+		padding-inline-end: 16px;
 		@include break-wide() {
 			margin-inline-start: 1px;
 			margin-inline-end: 1px;
@@ -123,6 +125,9 @@
 			margin-inline-start: 0;
 			flex-grow: 0;
 			justify-content: end;
+			.bulk-select__some-checked-icon {
+				color: var( --color-jetpack );
+			}
 		}
 	}
 	.bulk-select {

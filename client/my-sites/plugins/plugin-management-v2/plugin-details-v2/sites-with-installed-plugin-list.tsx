@@ -1,6 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
+import PluginManageConnection from '../plugin-manage-connection';
+import RemovePlugin from '../remove-plugin';
 import SitesList from '../sites-list';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -15,23 +17,28 @@ interface Props {
 	plugin: Plugin;
 }
 
-export default function SitesWithInstalledPluginsList( props: Props ): ReactElement | null {
+export default function SitesWithInstalledPluginsList( {
+	sites,
+	plugin,
+	selectedSite,
+	...rest
+}: Props ): ReactElement | null {
 	const translate = useTranslate();
 	const columns = [
 		{
 			key: 'site-name',
-			title: translate( 'Site' ),
+			header: translate( 'Site' ),
 		},
 		{
 			key: 'activate',
-			title: translate( 'Active' ),
+			header: translate( 'Active' ),
 			smallColumn: true,
 		},
 		{
 			key: 'autoupdate',
-			title: translate( 'Autoupdate' ),
+			header: translate( 'Autoupdate' ),
 			smallColumn: true,
-			colSpan: 2,
+			colSpan: 3,
 		},
 		{
 			key: 'update',
@@ -39,7 +46,7 @@ export default function SitesWithInstalledPluginsList( props: Props ): ReactElem
 	];
 
 	const sitesWithSecondarySites = useSelector( ( state ) =>
-		getSitesWithSecondarySites( state, props.sites )
+		getSitesWithSecondarySites( state, sites )
 	);
 
 	if ( ! sitesWithSecondarySites?.length ) {
@@ -47,6 +54,15 @@ export default function SitesWithInstalledPluginsList( props: Props ): ReactElem
 	}
 
 	const siteCount = sitesWithSecondarySites.length;
+
+	const renderActions = ( site: SiteDetails ) => {
+		return (
+			<>
+				<RemovePlugin site={ site } plugin={ plugin } />
+				<PluginManageConnection site={ site } plugin={ plugin } />
+			</>
+		);
+	};
 
 	return (
 		<>
@@ -61,9 +77,12 @@ export default function SitesWithInstalledPluginsList( props: Props ): ReactElem
 				) }
 			</div>
 			<SitesList
-				{ ...props }
+				{ ...rest }
+				plugin={ plugin }
+				selectedSite={ selectedSite }
 				items={ sitesWithSecondarySites.map( ( site ) => site.site ) }
 				columns={ columns }
+				renderActions={ renderActions }
 			/>
 		</>
 	);

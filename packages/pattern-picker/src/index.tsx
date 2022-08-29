@@ -6,30 +6,14 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
 import { Item } from './item';
-
-const patterns = [
-	'17-2',
-	'black',
-	'ella-d',
-	'link-cloud',
-	'matt-smith',
-	'ose-maiko',
-	'purple',
-	'yellow',
-	'biba',
-	'chloe-currie',
-	'emily',
-	'luis-carvelleda',
-	'mesh-gradient',
-	'paul-nyberg',
-	'tengfai',
-];
+import { patterns } from './patterns';
+import { Pattern } from './types';
 
 function width( el: HTMLDivElement | null ) {
 	return Math.floor( el?.getBoundingClientRect().width ?? 1 );
 }
 
-type Props = { onPick: ( pattern: string ) => void };
+type Props = { onPick: ( pattern: number ) => void };
 
 export function PatternPicker( { onPick }: Props ) {
 	const [ index, setIndex ] = React.useState( 0 );
@@ -75,11 +59,12 @@ export function PatternPicker( { onPick }: Props ) {
 			>
 				{ patterns.map( ( pattern, i ) => (
 					<Item
-						className={ classNames( `pattern-${ pattern }`, { 'is-active': index === i } ) }
-						key={ pattern }
+						className={ classNames( { 'is-active': index === i } ) }
+						key={ pattern.id }
 						onClick={ () => {
 							setIndex( i );
 						} }
+						pattern={ pattern }
 					/>
 				) ) }
 			</div>
@@ -103,7 +88,7 @@ export function PatternPicker( { onPick }: Props ) {
 				<Button
 					className="pattern-picker__select"
 					isPrimary
-					onClick={ () => onPick( patterns[ index ] as string ) }
+					onClick={ () => onPick( patterns[ index ].id ) }
 				>
 					<span>{ __( 'Continue' ) }</span>
 					<Gridicon icon="heart" size={ 18 } />
@@ -112,3 +97,6 @@ export function PatternPicker( { onPick }: Props ) {
 		</div>
 	);
 }
+
+export type { Pattern };
+export { patterns };
