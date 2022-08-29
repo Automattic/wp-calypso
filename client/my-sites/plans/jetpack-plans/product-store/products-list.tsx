@@ -57,9 +57,11 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 			<div className="jetpack-product-store__products-list-all">
 				<h3>{ translate( 'All products' ) }</h3>
 
-				{ allItems.map( ( item ) => {
-					return <ProductSmallCard key={ item.productSlug } item={ item } />;
-				} ) }
+				<div className="jetpack-product-store__products-list-all-grid">
+					{ allItems.map( ( item ) => {
+						return <ProductSmallCard key={ item.productSlug } item={ item } />;
+					} ) }
+				</div>
 			</div>
 		</div>
 	);
