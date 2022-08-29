@@ -187,14 +187,15 @@ const PluginsBrowserListElement = ( props ) => {
 							</div>
 
 							<div className="plugins-browser-item__last-updated">
-								{ dateFromNow && (
-									<>
-										{ translate( 'Last updated ' ) }
-										<span className="plugins-browser-item__last-updated-value">
-											{ dateFromNow }
-										</span>
-									</>
-								) }
+								{ dateFromNow &&
+									translate( 'Last updated {{span}}%(ago)s{{/span}}', {
+										args: {
+											ago: dateFromNow,
+										},
+										components: {
+											span: <span className="plugins-browser-item__last-updated-value" />,
+										},
+									} ) }
 							</div>
 						</>
 					) }
