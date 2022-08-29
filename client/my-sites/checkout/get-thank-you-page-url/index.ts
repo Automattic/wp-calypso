@@ -2,7 +2,7 @@
  * This logic is complex and in many cases quite old. To keep it functional and
  * comprehensible and to prevent regressions, all possible outputs are covered
  * by unit tests in
- * `client/my-sites/checkout/test/get-thank-you-page-url.ts`.
+ * `client/my-sites/checkout/get-thank-you-page-url/test/get-thank-you-page-url.ts`.
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  */
@@ -96,7 +96,7 @@ export interface PostCheckoutUrlArguments {
  * This logic is complex and in many cases quite old. To keep it functional and
  * comprehensible and to prevent regressions, all possible outputs are covered
  * by unit tests in
- * `client/my-sites/checkout/test/get-thank-you-page-url.ts`.
+ * `client/my-sites/checkout/get-thank-you-page-url/test/get-thank-you-page-url.ts`.
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  *
