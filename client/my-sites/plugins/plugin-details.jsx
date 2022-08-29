@@ -33,7 +33,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -217,27 +217,29 @@ function PluginDetails( props ) {
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
 	useEffect( () => {
-		const items = [
-			{
-				label: translate( 'Plugins' ),
-				href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
-				id: 'plugins',
-				helpBubble: translate(
-					'Add new functionality and integrations to your site with plugins.'
-				),
-			},
-		];
-
-		if ( fullPlugin.name && props.pluginSlug ) {
-			items.push( {
-				label: fullPlugin.name,
-				href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
-				id: `plugin-${ props.pluginSlug }`,
-			} );
+		if ( breadcrumbs.length === 0 ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: translate( 'Plugins' ),
+					href: `/plugins/${ selectedSite?.slug || '' }`,
+					id: 'plugins',
+					helpBubble: translate(
+						'Add new functionality and integrations to your site with plugins.'
+					),
+				} )
+			);
 		}
 
-		dispatch( updateBreadcrumbs( items ) );
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite?.slug, dispatch, translate, localizePath ] );
+		if ( fullPlugin.name && props.pluginSlug ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: fullPlugin.name,
+					href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
+					id: `plugin-${ props.pluginSlug }`,
+				} )
+			);
+		}
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
