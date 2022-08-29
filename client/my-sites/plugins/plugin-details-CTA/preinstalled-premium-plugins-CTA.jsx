@@ -110,7 +110,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		);
 	}
 
-	if ( ! isSimple && ! isPluginInstalledOnsite ) {
+	if ( ! isSimple && ! isPluginInstalledOnsite && ! isPreinstalledPremiumPluginUpgraded ) {
 		return (
 			<>
 				{ pluginPrice }

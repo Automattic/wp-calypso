@@ -3,6 +3,7 @@
 import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
@@ -102,6 +103,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					id="link-in-bio-input-name"
 					value={ siteTitle }
 					onChange={ onChange }
+					placeholder={ __( 'My Link in Bio' ) }
 					style={ {
 						backgroundImage: siteTitle.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
 						backgroundRepeat: 'no-repeat',
@@ -125,6 +127,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					id="link-in-bio-input-description"
 					value={ tagline }
 					onChange={ onChange }
+					placeholder={ __( 'Add a short biography here' ) }
 					style={ {
 						backgroundImage: tagline.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
 						backgroundRepeat: 'no-repeat',
@@ -150,7 +153,9 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id={ 'link-in-bio-setup-header' }
-					headerText={ __( 'Pencil in a few details' ) }
+					headerText={ createInterpolateElement( __( 'Personalize your<br />Link in Bio' ), {
+						br: <br />,
+					} ) }
 					align={ 'center' }
 				/>
 			}

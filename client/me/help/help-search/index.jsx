@@ -72,8 +72,8 @@ export default function HelpSearch( props ) {
 		}
 
 		const forumBaseUrl = helpLinks.wordpress_forum_links_localized
-			? localizeUrl( 'https://wordpress.com/forums' )
-			: 'https://wordpress.com/forums';
+			? localizeUrl( 'https://wordpress.com/forums/' )
+			: 'https://wordpress.com/forums/';
 
 		return (
 			<div>

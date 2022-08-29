@@ -8,7 +8,7 @@ import {
 	usePromoteWidget,
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const PromotePost = ( props ) => {
 	const { moduleName, postId } = props;
@@ -19,10 +19,11 @@ const PromotePost = ( props ) => {
 	const showPromotePost = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const showDSPWidget = async ( event ) => {
 		event.stopPropagation();
-		await showDSPWidgetModal( selectedSiteId, postId );
+		await showDSPWidgetModal( selectedSiteSlug, selectedSiteId, postId );
 
 		gaRecordEvent(
 			'Stats',

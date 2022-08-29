@@ -18,7 +18,7 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
+import { getDomainProductSlug } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -503,10 +503,6 @@ class DomainsStep extends Component {
 			includeWordPressDotCom = ! this.props.isDomainOnly;
 		}
 
-		const trueNamePromoTlds = TRUENAME_COUPONS.includes( this.props?.queryObject?.coupon )
-			? TRUENAME_TLDS
-			: null;
-
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
@@ -516,7 +512,7 @@ class DomainsStep extends Component {
 					onAddDomain={ this.handleAddDomain }
 					products={ this.props.productsList }
 					basePath={ this.props.path }
-					promoTlds={ trueNamePromoTlds }
+					promoTlds={ this.props?.queryObject?.tld?.split( ',' ) }
 					mapDomainUrl={ this.getUseYourDomainUrl() }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
@@ -526,10 +522,8 @@ class DomainsStep extends Component {
 					isDomainOnly={ this.props.isDomainOnly }
 					analyticsSection={ this.getAnalyticsSection() }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
-					includeDotBlogSubdomain={
-						trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
-					}
+					includeWordPressDotCom={ includeWordPressDotCom }
+					includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 					isSignupStep
 					isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
 					showExampleSuggestions={ showExampleSuggestions }
@@ -761,7 +755,7 @@ class DomainsStep extends Component {
 				backUrl = `/settings/general/${ siteSlug }`;
 				backLabelText = translate( 'Back to General Settings' );
 			} else if ( 'sites-dashboard' === source ) {
-				backUrl = '/sites-dashboard';
+				backUrl = '/sites';
 				backLabelText = translate( 'Back to My Sites' );
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = '/sites/';

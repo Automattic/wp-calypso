@@ -35,7 +35,7 @@ const OnboardingFooterBar = ( {
 
 	const getStartWritingUrl = () => {
 		if ( ! course?.cta?.url || ! selectedSite?.domain ) {
-			return 'https://wordpress.com/post/';
+			return 'https://wordpress.com/post';
 		}
 		return `${ course.cta.url }/${ selectedSite.domain }`;
 	};

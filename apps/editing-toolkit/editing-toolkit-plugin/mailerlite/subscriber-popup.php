@@ -48,7 +48,7 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 						)
 					),
 					esc_url( admin_url( 'widgets.php' ) ),
-					'https://wordpress.com/support/widgets/mailerlite'
+					'https://wordpress.com/support/widgets/mailerlite/'
 				) . '</p>';
 				echo $args['after_widget']; //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
@@ -110,7 +110,7 @@ class WPCOM_Widget_Mailerlite extends \WP_Widget {
 		echo '
 		<p><label for="' . esc_attr( $this->get_field_id( 'account' ) ) . '">';
 		/* translators: link to documentation */
-		printf( wp_kses_post( __( 'Account ID <a href="%s" target="_blank">(instructions)</a>:', 'full-site-editing' ) ), 'https://wordpress.com/support/widgets/mailerlite' );
+		printf( wp_kses_post( __( 'Account ID <a href="%s" target="_blank">(instructions)</a>:', 'full-site-editing' ) ), 'https://wordpress.com/support/widgets/mailerlite/' );
 		echo '<input class="widefat" id="' . esc_attr( $this->get_field_id( 'account' ) ) . '" name="' . esc_attr( $this->get_field_name( 'account' ) ) . '" type="text" value="' . esc_attr( $instance['account'] ) . '" />
 		</label></p>
 		<p><label for="' . esc_attr( $this->get_field_id( 'shelf' ) ) . '">' . esc_html__( 'UUID:', 'full-site-editing' );

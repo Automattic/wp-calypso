@@ -1,6 +1,7 @@
-.plugin-list-header.section-header.card {
-	padding-right: 8px;
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
 
+.plugin-list-header.section-header.card {
 	.section-header__actions {
 		flex-grow: 1;
 		display: flex;
@@ -81,4 +82,93 @@
 	align-items: center;
 	display: none;
 	flex-grow: 1;
+}
+
+.plugin-list-header-new {
+	margin-block-start: 8px;
+	&.section-header.card {
+		margin-inline-start: 0;
+		margin-inline-end: 0;
+		padding-inline-start: 16px;
+		padding-inline-end: 16px;
+		@include break-wide() {
+			margin-inline-start: 1px;
+			margin-inline-end: 1px;
+		}
+		&:not( .is-bulk-editing ) {
+			@include break-xlarge() {
+				display: none;
+			}
+		}
+		&.is-bulk-editing {
+			margin-block-start: 8px;
+			margin-block-end: 0;
+			.section-header__actions {
+				width: 100%;
+				flex-wrap: wrap;
+			}
+		}
+		.button-group {
+			margin-inline-start: 14px;
+			.button {
+				&:first-child {
+					border-top-left-radius: 4px;
+					border-bottom-left-radius: 4px;
+				}
+				&:last-child {
+					border-top-right-radius: 4px;
+					border-bottom-right-radius: 4px;
+				}
+			}
+		}
+		.section-header__actions {
+			margin-inline-start: 0;
+			flex-grow: 0;
+			justify-content: end;
+			.bulk-select__some-checked-icon {
+				color: var( --color-jetpack );
+			}
+		}
+	}
+	.bulk-select {
+		.count {
+			display: none;
+		}
+		.form-checkbox {
+			&:checked::before {
+				content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+			}
+		}
+	}
+	.plugin-list-header__action-buttons {
+		justify-content: end;
+	}
+	.plugin-list-header__bulk-select-wrapper {
+		display: flex;
+		align-items: center;
+	}
+	.plugin-list-header__bulk-select-label {
+		font-size: 0.75rem;
+		font-weight: bold;
+		
+		span {
+			display: none;
+			@include breakpoint-deprecated( '>960px' ) {
+				display: inline;
+			}
+		}
+	}
+	.plugin-list-header__actions-dropdown {
+		margin-inline-start: auto;
+	}
+	.plugin-list-header__mode-buttons {
+		flex-grow: 0;
+		margin-inline-start: 16px;
+		@include break-medium() {
+			margin-inline-start: 32px;
+		}
+	}
+	.plugin-list-header__bulk-select-label {
+		margin-inline-end: 16px;
+	}
 }

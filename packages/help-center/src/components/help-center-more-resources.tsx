@@ -103,7 +103,7 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://wordpress.com/webinars' ) }
+							href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
 							rel="noreferrer"
 							target="_blank"
 							onClick={ trackWebinairsButtonClick }

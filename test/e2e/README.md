@@ -68,7 +68,7 @@ corepack enable
 git clone https://github.com/Automattic/wp-calypso.git
 ```
 
-7. navigate to top source directory.
+7. navigate to the cloned directory.
 
 ```
 cd wp-calypso
