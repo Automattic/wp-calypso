@@ -81,6 +81,7 @@ const ManageButton = ( {
 const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category, search } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const { localizePath } = useLocalizedPlugins();
 
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -110,7 +111,6 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	const shouldShowManageButton = useMemo( () => {
 		return jetpackNonAtomic || ( isJetpack && ( hasInstallPurchasedPlugins || hasManagePlugins ) );
 	}, [ jetpackNonAtomic, isJetpack, hasInstallPurchasedPlugins, hasManagePlugins ] );
-	const { localizePath } = useLocalizedPlugins();
 
 	const setBreadcrumbs = useCallback( () => {
 		const items = [
