@@ -74,6 +74,10 @@
 			font-size: 1em; /* stylelint-disable-line */
 			color: var( --color-text );
 			text-decoration: underline;
+
+			&:hover {
+				color: var( --color-text-subtle );
+			}
 		}
 
 		&.add-subscriber__form-label-links {
