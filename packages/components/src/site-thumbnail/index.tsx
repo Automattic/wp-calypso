@@ -12,6 +12,7 @@ const DEFAULT_SIZE = { width: 106, height: 76.55 };
 const VIEWPORT_BASE = 1200;
 
 type Props = {
+	alt: string;
 	backgroundColor?: string;
 	style?: CSSObject;
 	mShotsUrl?: string;
@@ -20,7 +21,6 @@ type Props = {
 	dimensionsSrcset?: Array< SizeCss >;
 	sizesAttr?: string;
 	children?: ReactNode;
-	alt?: string;
 	bgColorImgUrl?: string;
 	viewport?: number;
 	mshotsOption?: MShotsOptions;
