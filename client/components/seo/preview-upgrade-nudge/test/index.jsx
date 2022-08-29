@@ -1,9 +1,9 @@
 /** @jest-environment jsdom */
-jest.mock( 'calypso/lib/analytics/track-component-view', () => ( props ) => (
-	<div data-testid="track-component-view">{ JSON.stringify( props ) }</div>
+jest.mock( 'calypso/lib/analytics/track-component-view', () => ( { eventName } ) => (
+	<div data-testid="track-component-view">{ eventName }</div>
 ) );
-jest.mock( 'calypso/blocks/upsell-nudge', () => ( props ) => (
-	<div data-testid="upsell-nudge">{ JSON.stringify( props ) }</div>
+jest.mock( 'calypso/blocks/upsell-nudge', () => ( { plan } ) => (
+	<div data-testid="upsell-nudge">{ plan }</div>
 ) );
 
 import {
@@ -43,9 +43,7 @@ describe( 'SeoPreviewNudge basic tests', () => {
 		render( <SeoPreviewNudge { ...props } /> );
 		const track = screen.queryByTestId( 'track-component-view' );
 		expect( track ).toBeVisible();
-		expect( JSON.parse( track.textContent ) ).toMatchObject( {
-			eventName: 'calypso_seo_preview_upgrade_nudge_impression',
-		} );
+		expect( track ).toHaveTextContent( 'calypso_seo_preview_upgrade_nudge_impression' );
 	} );
 } );
 
@@ -58,7 +56,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 			);
 			const nudge = screen.queryByTestId( 'upsell-nudge' );
 			expect( nudge ).toBeVisible();
-			expect( JSON.parse( nudge.textContent ) ).toMatchObject( { plan: PLAN_BUSINESS } );
+			expect( nudge ).toHaveTextContent( PLAN_BUSINESS );
 		}
 	);
 
@@ -70,7 +68,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 			);
 			const nudge = screen.queryByTestId( 'upsell-nudge' );
 			expect( nudge ).toBeVisible();
-			expect( JSON.parse( nudge.textContent ) ).toMatchObject( { plan: PLAN_BUSINESS_2_YEARS } );
+			expect( nudge ).toHaveTextContent( PLAN_BUSINESS_2_YEARS );
 		}
 	);
 
@@ -83,13 +81,9 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 		PLAN_JETPACK_BUSINESS_MONTHLY,
 		PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	] )( `Jetpack Business for (%s)`, ( product_slug ) => {
-		render(
-			<SeoPreviewNudge { ...props } isJetpack={ true } site={ { plan: { product_slug } } } />
-		);
+		render( <SeoPreviewNudge { ...props } isJetpack site={ { plan: { product_slug } } } /> );
 		const nudge = screen.queryByTestId( 'upsell-nudge' );
 		expect( nudge ).toBeVisible();
-		expect( JSON.parse( nudge.textContent ) ).toMatchObject( {
-			plan: PLAN_JETPACK_SECURITY_DAILY,
-		} );
+		expect( nudge ).toHaveTextContent( PLAN_JETPACK_SECURITY_DAILY );
 	} );
 } );
