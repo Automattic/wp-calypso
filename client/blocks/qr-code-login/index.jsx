@@ -115,6 +115,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 		try {
 			const responseData = await getLoginActionResponse( 'qr-code-token-request-endpoint', {
 				anon_id: anonId,
+				redirect_to: redirectToAfterLoginUrl,
 			} );
 			if ( isStillValidToken( responseData.body.data ) ) {
 				setTokenState( responseData.body.data );
@@ -151,6 +152,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 		try {
 			const responseData = await getLoginActionResponse( 'qr-code-authentication-endpoint', {
 				anon_id: anonId,
+				redirect_to: redirectToAfterLoginUrl,
 				token,
 				data: encrypted,
 			} );
