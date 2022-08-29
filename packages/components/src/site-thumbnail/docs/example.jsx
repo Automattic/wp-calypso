@@ -118,7 +118,18 @@ export default function SiteThumbnailExample() {
 					} }
 				>
 					<h3>Coming Soon Site</h3>
-					<SiteThumbnail dimension={ SITE_THUMBNAIL_DIMENSIONS.medium }>CS</SiteThumbnail>
+					<SiteThumbnail
+						dimension={ { width: 400, height: 275 } }
+						dimensionsSrcset={ [
+							{
+								width: 200,
+								height: 137,
+							},
+						] }
+						sizesAttr="(max-width: 400px) 100vw, 400px"
+					>
+						CS
+					</SiteThumbnail>
 				</div>
 			</div>
 		</div>
