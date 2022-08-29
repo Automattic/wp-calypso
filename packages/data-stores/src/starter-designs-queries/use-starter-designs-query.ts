@@ -1,6 +1,7 @@
 import { stringify } from 'qs';
 import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { isThemeVerticalizable } from './utils';
 import type { StarterDesigns } from './types';
 import type {
 	Category,
@@ -85,6 +86,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		price,
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
+		verticalizable: isThemeVerticalizable( recipe.stylesheet ),
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',
@@ -105,5 +107,6 @@ function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
 		template: '',
 		theme: '',
 		design_type: 'vertical',
+		verticalizable: true,
 	};
 }
