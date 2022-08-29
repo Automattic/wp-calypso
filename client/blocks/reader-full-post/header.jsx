@@ -64,7 +64,7 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 					</span>
 				) : null }
 			</div>
-			<TagsList post={ post } />
+			<TagsList post={ post } tagsToShow={5} />
 		</div>
 	);
 	/* eslint-enable react/jsx-no-target-blank */
