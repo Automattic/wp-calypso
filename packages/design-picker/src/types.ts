@@ -63,6 +63,7 @@ export interface Design {
 	design_type?: DesignType;
 	style_variations?: ThemeStyleVariation[];
 	price?: string;
+	verticalizable?: boolean;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;
