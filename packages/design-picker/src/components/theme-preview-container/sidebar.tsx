@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import Variation from './variation';
+import Variations from './variations';
 import type { ThemeFeature, ThemeStyleVariation } from '../../types';
 
 interface SidebarProps {
@@ -31,16 +31,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 				<div className="theme-preview-container__sidebar-variations">
 					<h2> { translate( 'Style variations' ) }</h2>
 					<div className="theme-preview-container__sidebar-variations-grid">
-						{ variations.map( ( variation ) => (
-							<div
-								key={ variation.slug }
-								className="theme-preview-container__sidebar-variation"
-								tabIndex={ 0 }
-								role="button"
-							>
-								<Variation variation={ variation } />
-							</div>
-						) ) }
+						<Variations variations={ variations } />
 					</div>
 				</div>
 			) }
@@ -48,17 +39,27 @@ const Sidebar: React.FC< SidebarProps > = ( {
 			<div className="theme-preview-container__sidebar-support">
 				<h2>{ translate( 'Support' ) }</h2>
 				<p>
-					<a href="https://wordpress.com/help/contact/" target="_blank" rel="noopener noreferrer">
-						Contact us
-					</a>{ ' ' }
-					or visit the{ ' ' }
-					<a
-						href="https://en.forums.wordpress.com/forum/themes"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						support forum
-					</a>
+					{ translate(
+						'{{contactLink}}Contact us{{/contactLink}} or visit the {{forumLink}}support forum{{/forumLink}}',
+						{
+							components: {
+								contactLink: (
+									<a
+										href="https://wordpress.com/help/contact/"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+								forumLink: (
+									<a
+										href="https://forums.wordpress.com/forum/themes"
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
 				</p>
 			</div>
 

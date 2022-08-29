@@ -88,7 +88,7 @@ const Variation: React.FC< VariationProps > = ( { variation } ) => {
 
 	return (
 		<Iframe
-			className="theme-preview-container__sidebar-variation-iframe"
+			className="theme-preview-container__variation-iframe"
 			style={ { height: IFRAME_HEIGHT } }
 			title={ translate( 'Style variation' ) }
 		>

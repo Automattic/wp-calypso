@@ -354,7 +354,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</div>
 		);
 
-		return (
+		return isEnabledStyleSelection ? (
+			<StepContainer
+				stepName={ STEP_NAME }
+				stepContent={ stepContent }
+				hideSkip
+				className={ 'design-setup__preview' }
+				shouldStickyNavButtonsOnTop={ isMobile }
+				goBack={ handleBackClick }
+				recordTracksEvent={ recordStepContainerTracksEvent }
+			/>
+		) : (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
