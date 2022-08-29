@@ -67,11 +67,11 @@ export class TransferDomain extends Component {
 					domain: suggestion.domain_name,
 				} ),
 			] )
-			.then( () => {
-				page( '/checkout/' + selectedSiteSlug );
-			} )
 			.catch( () => {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} )
+			.then( () => {
+				page( '/checkout/' + selectedSiteSlug );
 			} );
 	};
 

@@ -75,11 +75,11 @@ export class MapDomain extends Component {
 					domain: suggestion.domain_name,
 				} ),
 			] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + selectedSiteSlug );
-			} )
 			.catch( () => {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} )
+			.then( () => {
+				this.isMounted && page( '/checkout/' + selectedSiteSlug );
 			} );
 	};
 

@@ -633,11 +633,11 @@ export class PlanFeatures extends Component {
 						} );
 					}
 				} )
-				.then( () => {
-					this.isMounted && page( `/checkout/${ selectedSiteSlug }` );
-				} )
 				.catch( () => {
 					// Nothing needs to be done here. CartMessages will display the error to the user.
+				} )
+				.then( () => {
+					this.isMounted && page( `/checkout/${ selectedSiteSlug }` );
 				} );
 			return;
 		}
@@ -654,6 +654,9 @@ export class PlanFeatures extends Component {
 						},
 					},
 				] )
+				.catch( () => {
+					// Nothing needs to be done here. CartMessages will display the error to the user.
+				} )
 				.then( () => {
 					if ( withDiscount && this.isMounted ) {
 						return shoppingCartManager.applyCoupon( withDiscount ).catch( () => {
@@ -664,9 +667,6 @@ export class PlanFeatures extends Component {
 				} )
 				.then( () => {
 					this.isMounted && page( `/domains/add/${ selectedSiteSlug }` );
-				} )
-				.catch( () => {
-					// Nothing needs to be done here. CartMessages will display the error to the user.
 				} );
 			return;
 		}

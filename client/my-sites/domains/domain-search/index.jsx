@@ -92,11 +92,11 @@ class DomainSearch extends Component {
 	handleAddTransfer = ( domain ) => {
 		this.props.shoppingCartManager
 			.addProductsToCart( [ domainTransfer( { domain } ) ] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
-			} )
 			.catch( () => {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} )
+			.then( () => {
+				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
 			} );
 	};
 
@@ -147,21 +147,21 @@ class DomainSearch extends Component {
 			// to the plans page next and let it know that we are still in that flow.
 			this.props.shoppingCartManager
 				.addProductsToCart( [ registration ] )
-				.then( () => {
-					page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
-				} )
 				.catch( () => {
 					// Nothing needs to be done here. CartMessages will display the error to the user.
+				} )
+				.then( () => {
+					page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
 				} );
 			return;
 		}
 
 		this.props.shoppingCartManager
 			.addProductsToCart( [ registration ] )
-			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) )
 			.catch( () => {
 				// Nothing needs to be done here. CartMessages will display the error to the user.
-			} );
+			} )
+			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) );
 	}
 
 	removeDomain( suggestion ) {
