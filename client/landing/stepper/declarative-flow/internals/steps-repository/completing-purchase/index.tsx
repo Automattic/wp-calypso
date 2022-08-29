@@ -1,3 +1,4 @@
+import { LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -58,7 +59,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 			return;
 		}
 
-		if ( flow === 'link-in-bio' ) {
+		if ( flow === LINK_IN_BIO_FLOW ) {
 			completeLinkInBioFlow();
 		} else {
 			completeNewsletterFlow();
