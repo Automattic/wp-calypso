@@ -31,7 +31,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 
 	it( 'Can click on search result', async function () {
 		await pluginsPage.clickSearchResult( 'WooCommerce' );
-		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'WooCommessrce' );
+		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'WooCommerce' );
 	} );
 
 	it( 'Can click on breadcrumbs "Plugins"', async function () {
