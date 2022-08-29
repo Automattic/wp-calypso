@@ -499,9 +499,9 @@ export class LoginForm extends Component {
 
 		const socialToS = this.props.translate(
 			// To make any changes to this copy please speak to the legal team
-			'By continuing, ' +
+			'By continuing with any of the options below, ' +
 				'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
-				' acknowledge that you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				' have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			{
 				components: {
 					tosLink: (
@@ -655,7 +655,7 @@ export class LoginForm extends Component {
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-							socialToS={ socialToS }
+							shouldRenderToS={ false }
 						/>
 					</Fragment>
 				) }
