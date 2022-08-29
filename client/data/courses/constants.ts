@@ -3,6 +3,7 @@ import type { CourseSlug } from './types';
 
 export const COURSE_SLUGS: { [ key: string ]: CourseSlug } = Object.freeze( {
 	BLOGGING_QUICK_START: 'blogging-quick-start',
+	PAYMENTS_FEATURES: 'payments-features',
 } );
 
 export const COURSE_DETAILS = {
@@ -14,6 +15,16 @@ export const COURSE_DETAILS = {
 			i18n.translate( 'Familiarize yourself with WordPress' ),
 			i18n.translate( 'Upskill and save hours' ),
 			i18n.translate( 'Set yourself up for blogging success' ),
+		],
+	},
+	[ COURSE_SLUGS.PAYMENTS_FEATURES ]: {
+		headerTitle: i18n.translate( 'Add Payments Features' ),
+		headerSubtitle: i18n.translate( 'Make Money on Your Website' ),
+		headerSummary: [
+			i18n.translate( 'Accept one-time or recurring payments' ),
+			i18n.translate( 'Accept donations or sell services' ),
+			i18n.translate( 'Setup paid, subscriber-only content' ),
+			i18n.translate( 'Run a fully featured ecommerce store' ),
 		],
 	},
 };
