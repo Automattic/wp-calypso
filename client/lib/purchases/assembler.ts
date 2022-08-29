@@ -1,5 +1,5 @@
 import { snakeToCamelCase } from '@automattic/js-utils';
-import type { Purchase, RawPurchase, RawPurchaseCreditCard } from './types';
+import type { PriceTier, Purchase, RawPurchase, RawPurchaseCreditCard } from './types';
 
 function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): Purchase {
 	const object: Purchase = {
@@ -63,6 +63,18 @@ function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): 
 		isRenewal: Boolean( purchase.is_renewal ),
 		meta: purchase.meta,
 		priceText: purchase.price_text,
+		priceTierList: purchase.price_tier_list?.map(
+			( ptRaw ): PriceTier => ( {
+				minimumUnits: ptRaw.minimum_units,
+				maximumUnits: ptRaw.maximum_units,
+				minimumPrice: ptRaw.minimum_price,
+				maximumPrice: ptRaw.maximum_price,
+				minimumPriceDisplay: ptRaw.minimum_price_display,
+				maximumPriceDisplay: ptRaw.maximum_price_display,
+				minimumPriceMonthlyDisplay: ptRaw.minimum_price_monthly_display,
+				maximumPriceMonthlyDisplay: ptRaw.maximum_price_monthly_display,
+			} )
+		),
 		partnerName: purchase.partner_name,
 		partnerSlug: purchase.partner_slug,
 		partnerKeyId: purchase.partner_key_id,

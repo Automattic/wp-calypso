@@ -39,6 +39,7 @@ export interface Purchase {
 	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal;
 	pendingTransfer: boolean;
 	priceText: string;
+	priceTierList?: Array< PriceTier >;
 	productDisplayPrice: string;
 	productId: number;
 	productName: string;
@@ -64,6 +65,28 @@ export interface Purchase {
 	taxText: string | undefined;
 }
 
+export interface PriceTier {
+	minimumUnits: number;
+	maximumUnits: number;
+	minimumPrice: number;
+	maximumPrice: number;
+	minimumPriceDisplay: string;
+	maximumPriceDisplay: string;
+	minimumPriceMonthlyDisplay: string;
+	maximumPriceMonthlyDisplay: string;
+}
+
+export interface PriceTierRaw {
+	minimum_units: number;
+	maximum_units: number;
+	minimum_price: number;
+	maximum_price: number;
+	minimum_price_display: string;
+	maximum_price_display: string;
+	minimum_price_monthly_display: string;
+	maximum_price_monthly_display: string;
+}
+
 export interface RawPurchase {
 	ID: number | string;
 	active: boolean;
@@ -78,6 +101,7 @@ export interface RawPurchase {
 	cost_to_unbundle: undefined | number | string;
 	cost_to_unbundle_display: undefined | string;
 	price_text: string;
+	price_tier_list?: Array< PriceTierRaw >;
 	currency_code: string;
 	currency_symbol: string;
 	description: string;

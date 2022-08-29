@@ -11,7 +11,6 @@ import {
 	JETPACK_LEGACY_PLANS,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
-	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -229,20 +228,24 @@ function PurchaseMetaOwner( { owner } ) {
 const formatPurchasePrice = ( price, currency ) =>
 	formatCurrency( price, currency, {
 		isSmallestUnit: true,
+		stripZeros: true,
 	} );
 
-function getDIFMPriceDetails( purchase, productsList ) {
-	const productDetails = productsList[ WPCOM_DIFM_LITE ];
+function getDIFMPriceDetails( purchase ) {
+	const [ tier0, tier1 ] = purchase.priceTierList;
+	const perExtraPagePrice = tier1.minimumPrice - tier0.minimumPrice;
 
-	const [ tier0, tier1 ] = productDetails.price_tier_list;
-	const perExtraPagePrice = tier1.minimum_price - tier0.minimum_price;
-
-	const { maximum_units: noOfBaselinePagesIncluded } = tier0;
-	const { amount: totalPrice, purchaseRenewalQuantity: noOfPages, currencyCode } = purchase;
+	const { maximumUnits: noOfBaselinePagesIncluded, minimumPriceDisplay: formattedOneTimeFee } =
+		tier0;
+	const { purchaseRenewalQuantity: noOfPages, currencyCode } = purchase;
 	const extraPageCount = noOfPages - noOfBaselinePagesIncluded;
-	const costOfExtraPages = formatPurchasePrice( extraPageCount * perExtraPagePrice, currencyCode );
-	const oneTimeFee = formatPurchasePrice( totalPrice - costOfExtraPages, currencyCode );
-	return { extraPageCount, costOfExtraPages, oneTimeFee };
+	const costOfExtraPages = extraPageCount * perExtraPagePrice;
+	const formattedCostOfExtraPages = formatPurchasePrice( costOfExtraPages, currencyCode );
+	return {
+		extraPageCount,
+		costOfExtraPages: formattedCostOfExtraPages,
+		oneTimeFee: formattedOneTimeFee,
+	};
 }
 
 function PurchaseMetaPrice( { purchase } ) {
