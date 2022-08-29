@@ -387,13 +387,6 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
-	const blankCanvasDesign = {
-		recipe: {
-			stylesheet: 'pub/blank-canvas-blocks',
-		},
-		slug: 'blank-canvas-blocks',
-		title: 'Blank Canvas',
-	} as Design;
 
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
@@ -401,8 +394,17 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
-		isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+
+		if ( isEnabled( 'signup/design-picker-pattern-assembler' ) ) {
+			const blankCanvasDesign = {
+				recipe: {
+					stylesheet: 'pub/blank-canvas-blocks',
+				},
+				slug: 'blank-canvas-blocks',
+				title: 'Blank Canvas',
+			} as Design;
 			result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
+		}
 
 		return result;
 	}, [ designs, categorization?.selection ] );
