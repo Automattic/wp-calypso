@@ -369,7 +369,7 @@ export function generateSteps( {
 		emails: {
 			stepName: 'emails',
 			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
+			providesDependencies: [ 'domainItem', 'emailItem' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -424,7 +424,8 @@ export function generateSteps( {
 
 		'mailbox-domain': {
 			stepName: 'mailbox-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ],
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 			props: {
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 				get headerText() {
@@ -432,6 +433,7 @@ export function generateSteps( {
 				},
 				includeWordPressDotCom: false,
 			},
+			delayApiRequestUntilComplete: true,
 		},
 
 		'oauth2-user': {
