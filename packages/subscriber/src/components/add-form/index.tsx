@@ -63,6 +63,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
 	const [ emails, setEmails ] = useState< string[] >( [] );
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
+	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
 	const [ formFileUploadElement ] = useState(
 		createElement( FormFileUpload, { name: 'import', onChange: onFileInputChange } )
@@ -123,6 +124,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		setIsValidEmails( _isValidEmails );
 	}
 
+	function setIsDirtyEmail( value: string, index: number ) {
+		const _isDirtyEmails = Array.from( isDirtyEmails );
+		_isDirtyEmails[ index ] = !! value;
+		setIsDirtyEmails( _isDirtyEmails );
+	}
+
 	function isValidExtension( fileName: string ) {
 		const extensionRgx = new RegExp( /[^\\]*\.(?<extension>\w+)$/ );
 		const validExtensions = [ 'csv' ];
@@ -179,15 +186,30 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 				) }
 
 				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>
-					{ emailFormControls.map( ( placeholder, i ) => (
-						<TextControl
-							placeholder={ placeholder }
-							key={ i }
-							value={ emails[ i ] || '' }
-							help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
-							onChange={ ( value ) => onEmailChange( value, i ) }
-						/>
-					) ) }
+					{ emailFormControls.map( ( placeholder, i ) => {
+						const showError = isDirtyEmails[ i ] && ! isValidEmails[ i ] && emails[ i ];
+
+						return (
+							<>
+								<TextControl
+									className={ showError ? 'is-error' : '' }
+									placeholder={ placeholder }
+									key={ i }
+									value={ emails[ i ] || '' }
+									help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
+									onChange={ ( value ) => onEmailChange( value, i ) }
+									onBlur={ () => setIsDirtyEmail( emails[ i ], i ) }
+								/>
+
+								{ showError && (
+									<FormInputValidation
+										isError={ true }
+										text={ __( 'The format of the email is invalid' ) }
+									/>
+								) }
+							</>
+						);
+					} ) }
 
 					{ emailControlMaxNum === isValidEmails.filter( ( x ) => x ).length && (
 						<FormInputValidation icon={ 'tip' } isError={ false } isWarning={ true } text={ '' }>

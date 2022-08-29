@@ -99,6 +99,10 @@
 		}
 	}
 
+	.components-base-control.is-error input {
+		border-color: var( --color-error-dark );
+	}
+
 	.components-base-control__field {
 		margin: 1rem auto;
 	}
