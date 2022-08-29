@@ -5,10 +5,10 @@ Renders a SiteThumbnail component.
 ## How to use
 
 ```jsx
-import SiteThumbnail from '@automattic/components';
+import { SiteThumbnail } from '@automattic/components';
 
 function render() {
-   return <SiteThumbnail alt="site thumbnail" />;
+	return <SiteThumbnail alt="site thumbnail" />;
 }
 ```
 
