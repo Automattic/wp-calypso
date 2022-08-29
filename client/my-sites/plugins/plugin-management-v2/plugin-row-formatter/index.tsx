@@ -126,6 +126,7 @@ export default function PluginRowFormatter( {
 				canActivate && (
 					<div className="plugin-row-formatter__toggle">
 						<PluginActivateToggle
+							isJetpackCloud
 							hideLabel={ ! isSmallScreen }
 							plugin={ pluginOnSite }
 							site={ selectedSite }

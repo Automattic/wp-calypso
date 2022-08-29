@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PluginCommonList from '../plugin-common/plugin-common-list';
+import PluginManageConnection from '../plugin-manage-connection';
 import PluginRowFormatter from '../plugin-row-formatter';
 import RemovePlugin from '../remove-plugin';
 import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
@@ -8,6 +9,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
 
 import '../style.scss';
+
 interface Props {
 	selectedSite: SiteDetails;
 	items: Array< Plugin >;
@@ -33,7 +35,12 @@ export default function PluginsList( { selectedSite, ...rest }: Props ): ReactEl
 				>
 					{ translate( 'Manage Plugin' ) }
 				</PopoverMenuItem>
-				{ selectedSite && <RemovePlugin site={ selectedSite } plugin={ plugin } /> }
+				{ selectedSite && (
+					<>
+						<RemovePlugin site={ selectedSite } plugin={ plugin } />
+						<PluginManageConnection site={ selectedSite } plugin={ plugin } />
+					</>
+				) }
 			</>
 		);
 	};

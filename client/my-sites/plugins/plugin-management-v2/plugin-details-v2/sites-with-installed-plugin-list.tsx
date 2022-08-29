@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
+import PluginManageConnection from '../plugin-manage-connection';
 import RemovePlugin from '../remove-plugin';
 import SitesList from '../sites-list';
 import type { Plugin } from '../types';
@@ -37,7 +38,7 @@ export default function SitesWithInstalledPluginsList( {
 			key: 'autoupdate',
 			header: translate( 'Autoupdate' ),
 			smallColumn: true,
-			colSpan: 2,
+			colSpan: 3,
 		},
 		{
 			key: 'update',
@@ -55,7 +56,12 @@ export default function SitesWithInstalledPluginsList( {
 	const siteCount = sitesWithSecondarySites.length;
 
 	const renderActions = ( site: SiteDetails ) => {
-		return <RemovePlugin site={ site } plugin={ plugin } />;
+		return (
+			<>
+				<RemovePlugin site={ site } plugin={ plugin } />
+				<PluginManageConnection site={ site } plugin={ plugin } />
+			</>
+		);
 	};
 
 	return (

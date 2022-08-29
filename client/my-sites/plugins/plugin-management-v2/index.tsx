@@ -94,6 +94,7 @@ export default function PluginManagementV2( {
 		{
 			key: 'update',
 			header: renderBulkActionsHeader(),
+			colSpan: 2,
 		},
 	];
 
