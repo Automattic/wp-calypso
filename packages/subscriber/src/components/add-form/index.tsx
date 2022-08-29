@@ -178,7 +178,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					<Notice isDismissible={ false }>{ __( 'You have email list importing' ) }...</Notice>
 				) }
 
-				<form onSubmit={ onFormSubmit }>
+				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>
 					{ emailFormControls.map( ( placeholder, i ) => (
 						<TextControl
 							placeholder={ placeholder }
