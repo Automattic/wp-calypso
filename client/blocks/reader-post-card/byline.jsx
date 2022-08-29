@@ -1,8 +1,9 @@
-import { get, values } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
@@ -12,84 +13,8 @@ import { getSiteName } from 'calypso/reader/get-helpers';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { getStreamUrl } from 'calypso/reader/route';
 import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
 	recordPermalinkClick,
 } from 'calypso/reader/stats';
-
-const TAGS_TO_SHOW = 3;
-
-class TagLink extends Component {
-	recordSingleTagClick = () => {
-		const tag = this.props.tag;
-		recordAction( 'click_tag' );
-		recordGaEvent( 'Clicked Tag Link' );
-		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
-			tag: tag.slug,
-		} );
-	};
-
-	render() {
-		const tag = this.props.tag;
-		return (
-			<span className="reader-post-card__tag">
-				<a
-					href={ '/tag/' + tag.slug }
-					className="reader-post-card__tag-link ignore-click"
-					onClick={ this.recordSingleTagClick }
-				>
-					{ tag.name }
-				</a>
-			</span>
-		);
-	}
-}
-
-class TagsList extends Component {
-	state = {
-		showExtraTags: false,
-	};
-
-	showExtraTags = () => {
-		this.setState( {
-			showExtraTags: ! this.state.showExtraTags,
-		} );
-	};
-
-	displayExtraTagsButton = ( extraTags ) => {
-		const extraTagsButton = (
-			<span className="reader-post-card__tag show">
-				<button className="reader-post-card__tag-link ignore-click" onClick={ this.showExtraTags }>
-					{ extraTags.length }+
-				</button>
-			</span>
-		);
-		return ! this.state.showExtraTags && extraTags.length > 0 && extraTagsButton;
-	};
-
-	displayExtraTags = ( extraTags ) => {
-		return this.state.showExtraTags && extraTags.length > 0 && extraTags;
-	};
-
-	render() {
-		const tagsInOccurrenceOrder = values( this.props.post.tags );
-		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
-		const tags = tagsInOccurrenceOrder.map( ( tag ) => <TagLink tag={ tag } key={ tag.slug } /> );
-		const defaultTags = tags.slice( 0, TAGS_TO_SHOW );
-		const extraTags = tags.slice( TAGS_TO_SHOW );
-
-		return (
-			defaultTags.length > 0 && (
-				<div className="reader-post-card__tags">
-					{ defaultTags }
-					{ this.displayExtraTagsButton( extraTags ) }
-					{ this.displayExtraTags( extraTags ) }
-				</div>
-			)
-		);
-	}
-}
 
 class PostByline extends Component {
 	static propTypes = {
