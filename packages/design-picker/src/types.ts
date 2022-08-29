@@ -72,6 +72,7 @@ export interface Design {
 	recipe?: DesignRecipe;
 	is_premium: boolean;
 	categories: Category[];
+	theme_features: ThemeFeature[];
 	features: DesignFeatures[];
 	is_featured_picks?: boolean; // Whether this design will be featured in the sidebar. Example: Blank Canvas
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
