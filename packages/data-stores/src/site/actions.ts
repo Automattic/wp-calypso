@@ -253,6 +253,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
+	function* setStaticHomepageOnSite( siteID: number, pageId: number ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteID ) }/homepage`,
+				apiVersion: '1.1',
+				body: { is_page_on_front: true, page_on_front_id: pageId },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
 	function* setGoalsOnSite( siteSlug: string, goals: SiteGoal[] ) {
 		try {
 			yield wpcomRequest( {
@@ -499,6 +510,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		saveSiteTitle,
 		saveSiteSettings,
 		setIntentOnSite,
+		setStaticHomepageOnSite,
 		setGoalsOnSite,
 		receiveSiteTitle,
 		fetchNewSite,
