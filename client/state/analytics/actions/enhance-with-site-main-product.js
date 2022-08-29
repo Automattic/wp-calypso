@@ -7,7 +7,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Enhances any Redux action that denotes the recording of a page view analytics event with an additional property
- * to specifies the main product of this site:
+ * to specify the main product of this site:
  * `domain` - domain only, without email subscription
  * `email` - domain only with email subscription
  * `site` - regular site
@@ -29,7 +29,7 @@ export function enhanceWithSiteMainProduct( action, getState ) {
 	if ( isDomainOnly( state, siteId ) ) {
 		mainProduct = 'domain';
 
-		// Domain only site should only have one single domain non-wpcom domain.
+		// Domain-only sites should only have one non-wpcom domain.
 		const nonWPCOMDomain = getDomainsBySiteId( state, siteId ).find(
 			( domain ) => ! domain.isWPCOMDomain
 		);
@@ -39,8 +39,9 @@ export function enhanceWithSiteMainProduct( action, getState ) {
 		}
 	}
 
-	// Be sure to return a new copy instead of mutating the original Redux action.
 	const updatedAction = JSON.parse( JSON.stringify( action ) );
+
+	// Be sure to return a new copy instead of mutating the original Redux action.
 	updatedAction.meta.analytics[ 0 ].payload.site_main_product = mainProduct;
 
 	return updatedAction;

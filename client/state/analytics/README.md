@@ -86,27 +86,27 @@ const mapDispatchToProps = {
 
 ### Property Enhancers
 
-The above Redux actions denote the analytics data object to be sent to Tracks. Properties to be reported often need to be passed to the actions as arguments. There are times when it would be convenient to enhance the analytics data object with universal properties that are applicable to all sorts of tracking calls. This is when Enhancers come in handy. To enhance any analytics Redux action with additional property:
+The above Redux actions denote the analytics data object to be sent to Tracks. Properties to be reported often need to be passed to the actions as arguments. There are times when it would be convenient to enhance the analytics data object with universal properties that are applicable to all sorts of tracking calls. This is when Enhancers come in handy. To enhance any analytics Redux action with an additional property:
 
 ```
 const recorder = withEnhancer( recordPageView, [ enhancer1, enhancer2, enhancer3,... ] );
 ```
 
-#### [enhanceWithSiteType](https://github.com/Automattic/wp-calypso/tree/06b16874d4e833b62e3ec0a53290650711452fe1/client/state/analytics/actions/enhance-with-site-type.js)
+#### [enhanceWithSiteType](https://github.com/Automattic/wp-calypso/tree/trunk/client/state/analytics/actions/enhance-with-site-type.js)
 - Enhances any analytics Redux action
 - Adds the property `site_type` specifying the selected site's type: `jetpack` or `wpcom`
-- `site_type` is captured by default when tracking calls are handled by [`<PageViewTracker>`](https://github.com/Automattic/wp-calypso/blob/06b16874d4e833b62e3ec0a53290650711452fe1/client/lib/analytics/page-view-tracker/index.jsx#L116)
-- To include the `site_type` property in any other tracking calls, the respective analytics Redux action must be accomponied by `enhanceWithSiteType` ([example](https://github.com/Automattic/wp-calypso/blob/06b16874d4e833b62e3ec0a53290650711452fe1/client/login/magic-login/index.jsx#L167))
+- `site_type` is captured by default when tracking calls are handled by [`<PageViewTracker>`](https://github.com/Automattic/wp-calypso/blob/trunk/client/lib/analytics/page-view-tracker/index.jsx#L116)
+- To include the `site_type` property in any other tracking calls, the respective analytics Redux action must be accompanied by `enhanceWithSiteType` ([example](https://github.com/Automattic/wp-calypso/blob/trunk/client/login/magic-login/index.jsx#L167))
 
-#### [enhanceWithSiteMainProduct](https://github.com/Automattic/wp-calypso/tree/06b16874d4e833b62e3ec0a53290650711452fe1/client/state/analytics/actions/enhance-with-site-main-product.js)
+#### [enhanceWithSiteMainProduct](https://github.com/Automattic/wp-calypso/tree/trunk/client/state/analytics/actions/enhance-with-site-main-product.js)
 - Enhances the `ANALYTICS_PAGE_VIEW_RECORD` action
 - Adds the property `site_main_product` specifying the main product user set up in the current site
  - `site` - User signed up for a website 
- - `domain` - User signed up for a domain-only "site", without email subscription
- - `email` - User signed up for a domain-only "site", with email subscription
+ - `domain` - User signed up for a domain-only "site", without any email subscription
+ - `email` - User signed up for a domain-only "site", with an email subscription
 - `site_main_product` is captured by default in all `calypso_page_view` tracking calls
-- This enhancer has been universally applied to [`<PageViewTracker>`](https://github.com/Automattic/wp-calypso/blob/06b16874d4e833b62e3ec0a53290650711452fe1/client/lib/analytics/page-view-tracker/index.jsx#L116)
-- The original `recordPageView` action has been renamed to `recordPageViewBasic`. [`recordPageView`](https://github.com/Automattic/wp-calypso/blob/06b16874d4e833b62e3ec0a53290650711452fe1/client/state/analytics/actions/record.js#L47) is now the enhanced verison accompanied by `enhanceWithSiteMainProduct` to always report `site_main_product` 
+- This enhancer has been universally applied to [`<PageViewTracker>`](https://github.com/Automattic/wp-calypso/blob/trunk/client/lib/analytics/page-view-tracker/index.jsx#L116)
+- The original `recordPageView` action has been renamed to `recordPageViewBasic`. [`recordPageView`](https://github.com/Automattic/wp-calypso/blob/trunk/client/state/analytics/actions/record.js#L47) is now the enhanced version accompanied by `enhanceWithSiteMainProduct` to always report `site_main_product` 
 
 ### Internal Helpers
 
