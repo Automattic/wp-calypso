@@ -1,10 +1,10 @@
 .hero-image--container {
 	height: 100%;
 	width: 100%;
-  }
+}
   
-  .hero-image--container-inner-small-screen,
-  .hero-image--container-inner-large-screen {
+.hero-image--container-inner-small-screen,
+.hero-image--container-inner-large-screen {
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
@@ -13,24 +13,25 @@
 	position: absolute;
 	right: 0;
 	top: 0;
-  }
+}
   
-  /* Mobile first — "landscape" image */
-  .hero-image--container-inner-small-screen {
+/* Mobile first — "landscape" image */
+.hero-image--container-inner-small-screen {
 	display: block;
-  }
+}
   
-  .hero-image--container-inner-large-screen {
+.hero-image--container-inner-large-screen {
 	display: none;
-  }
+}
   
-  /* Swap at the larger sizes to the "portrait" image */
-  @media only screen and ( min-width: 768px ) {
+/* Swap at the larger sizes to the "portrait" image */
+@media only screen and ( min-width: 768px ) {
 	.hero-image--container-inner-small-screen {
-	  display: none;
+		display: none;
 	}
   
 	.hero-image--container-inner-large-screen {
-	  display: block;
+		display: block;
 	}
-  }
+}
+  
