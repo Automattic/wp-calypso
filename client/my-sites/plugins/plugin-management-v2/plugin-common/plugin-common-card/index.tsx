@@ -1,5 +1,6 @@
-import { Gridicon, Card, Button } from '@automattic/components';
+import { Gridicon, Card } from '@automattic/components';
 import classNames from 'classnames';
+import PluginCommonActions from '../plugin-common-actions';
 import type { Columns, RowFormatterArgs } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement, ReactNode } from 'react';
@@ -11,7 +12,7 @@ interface Props {
 	selectedSite: SiteDetails;
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;
 	columns: Columns;
-	hasMoreActions: boolean;
+	renderActions?: ( args: any ) => ReactElement;
 }
 
 export default function PluginCommonCard( {
@@ -19,7 +20,7 @@ export default function PluginCommonCard( {
 	selectedSite,
 	rowFormatter,
 	columns,
-	hasMoreActions,
+	renderActions,
 }: Props ): ReactElement {
 	const columnKeys: { [ key: string ]: boolean } = columns.reduce(
 		( obj, cur ) => ( { ...obj, [ cur.key ]: true } ),
@@ -120,11 +121,9 @@ export default function PluginCommonCard( {
 						</div>
 					) }
 				</div>
-				{ hasMoreActions && (
+				{ renderActions && (
 					<div className="plugin-common-card__right-content">
-						<Button borderless compact>
-							<Gridicon icon="ellipsis" size={ 18 } className="plugin-common-card__all-actions" />
-						</Button>
+						<PluginCommonActions item={ item } renderActions={ renderActions } />
 					</div>
 				) }
 			</div>

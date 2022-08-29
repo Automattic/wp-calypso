@@ -1,10 +1,10 @@
 import type { SiteDetails } from '@automattic/data-stores';
 import type { MomentInput } from 'moment';
-import type { ReactChild } from 'react';
+import type { ReactNode } from 'react';
 
 export type Columns = Array< {
 	key: string;
-	header?: ReactChild;
+	header?: ReactNode;
 	smallColumn?: boolean;
 	colSpan?: number;
 } >;
