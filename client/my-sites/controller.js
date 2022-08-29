@@ -97,9 +97,7 @@ export function createNavigation( context ) {
 	}
 
 	let allSitesPath =
-		config.isEnabled( 'build/sites-dashboard' ) && basePath === '/home'
-			? '/sites-dashboard'
-			: basePath;
+		config.isEnabled( 'build/sites-dashboard' ) && basePath === '/home' ? '/sites' : basePath;
 
 	// Update allSitesPath if it is plugins page in Jetpack Cloud
 	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {

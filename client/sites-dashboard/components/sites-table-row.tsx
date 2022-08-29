@@ -11,6 +11,7 @@ import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import { ThumbnailLink } from './thumbnail-link';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
@@ -48,7 +49,7 @@ const SiteListTile = styled( ListTile )`
 	}
 `;
 
-const ListTileLeading = styled.a`
+const ListTileLeading = styled( ThumbnailLink )`
 	${ MEDIA_QUERIES.mediumOrSmaller } {
 		margin-inline-end: 12px;
 	}

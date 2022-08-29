@@ -1,11 +1,14 @@
 import { getPlans, getPlanClass } from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
+import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 
 const PLANS_LIST = getPlans();
 
@@ -14,8 +17,21 @@ export class PlanFeaturesComparisonHeader extends Component {
 		return this.renderPlansHeaderNoTabs();
 	}
 
+	getPlanPillText() {
+		const { flow, translate } = this.props;
+
+		switch ( flow ) {
+			case NEWSLETTER_FLOW:
+				return translate( 'Best for Newsletters' );
+			case LINK_IN_BIO_FLOW:
+				return translate( 'Best for Link in Bio' );
+			default:
+				return translate( 'Popular' );
+		}
+	}
+
 	renderPlansHeaderNoTabs() {
-		const { planType, popular, selectedPlan, title, translate } = this.props;
+		const { planType, popular, selectedPlan, title } = this.props;
 
 		const headerClasses = classNames(
 			'plan-features-comparison__header',
@@ -26,7 +42,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 			<span>
 				<div>
 					{ popular && ! selectedPlan && (
-						<PlanPill isInSignup={ true }>{ translate( 'Popular' ) }</PlanPill>
+						<PlanPill isInSignup={ true }>{ this.getPlanPillText() }</PlanPill>
 					) }
 				</div>
 				<header className={ headerClasses }>
@@ -151,10 +167,15 @@ PlanFeaturesComparisonHeader.propTypes = {
 
 	// For Monthly Pricing test
 	annualPricePerMonth: PropTypes.number,
+	flow: PropTypes.string,
 };
 
 PlanFeaturesComparisonHeader.defaultProps = {
 	popular: false,
 };
 
-export default localize( PlanFeaturesComparisonHeader );
+export default connect( ( state ) => {
+	return {
+		flow: getCurrentFlowName( state ),
+	};
+} )( localize( PlanFeaturesComparisonHeader ) );

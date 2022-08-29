@@ -1,3 +1,4 @@
+import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
@@ -13,7 +14,7 @@ const useSteps = ( flowName ) => {
 	let steps = [];
 
 	switch ( flowName ) {
-		case 'link-in-bio':
+		case LINK_IN_BIO_FLOW:
 			steps = [
 				{ title: __( 'Great choices. Nearly there!' ) },
 				{ title: __( 'Shining and polishing your Bio' ) },
@@ -21,7 +22,7 @@ const useSteps = ( flowName ) => {
 				{ title: __( 'Looking good. Time for checkout!' ) },
 			];
 			break;
-		case 'newsletter':
+		case NEWSLETTER_FLOW:
 			steps = [
 				{ title: __( 'Excellent choices. Nearly there!' ) },
 				{ title: __( 'Smoothing down the stationery' ) },
@@ -54,6 +55,14 @@ export default function TailoredFlowProcessingScreen( { flowName } ) {
 	 */
 	const progress = ( currentStep + 1 ) / totalSteps;
 	const isComplete = progress >= 1;
+
+	// Temporarily override document styles to prevent scrollbars from showing
+	useEffect( () => {
+		document.documentElement.classList.add( 'no-scroll' );
+		return () => {
+			document.documentElement.classList.remove( 'no-scroll' );
+		};
+	}, [] );
 
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),

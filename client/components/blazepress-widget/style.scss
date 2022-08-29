@@ -11,25 +11,30 @@
         display: flex;
         justify-content: space-between;
         min-height: 72px;
-        padding: 0 20px;
+        padding: 0 rem( 24px );
 
         h2 {
             @include onboarding-font-recoleta;
-            font-size: $font-title-small;
+            font-size: $font-body-large;
             letter-spacing: 0;
             flex: 1;
+            line-height: 1;
+			padding-top: 3px; // helps align with the logo
         }
 
         .wordpress-logo {
             width: 1.5rem;
             height: 1.5rem;
             fill: var( --color-text );
-            margin: 0 1.5rem 0 0;
+            margin: 0 rem( 10px ) 0 0;
         }
 
-        .blazepress-widget__cross {
+        .blazepress-widget__cancel {
             height: 24px;
             cursor: pointer;
+			font-style: normal;
+			font-weight: 500;
+			font-size: $font-body-extra-small;
         }
     }
     .blazepress-widget__content {

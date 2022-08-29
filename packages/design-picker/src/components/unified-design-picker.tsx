@@ -23,9 +23,11 @@ import {
 	filterDesignsByCategory,
 	sortDesigns,
 } from '../utils';
-import BadgeContainer from './badge-container';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
+import PatternAssemblerCta from './pattern-assembler-cta';
+import PremiumBadge from './premium-badge';
 import ThemePreview from './theme-preview';
+import ThemeStyleVariationBadges from './theme-style-variation-badges';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
 import './style.scss';
@@ -51,7 +53,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
 				language: locale,
-				vertical_id: verticalId,
+				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
@@ -66,7 +68,6 @@ interface DesignButtonProps {
 	design: Design;
 	locale: string;
 	onSelect: ( design: Design ) => void;
-	premiumBadge?: React.ReactNode;
 	highRes: boolean;
 	disabled?: boolean;
 	hideFullScreenPreview?: boolean;
@@ -82,7 +83,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	locale,
 	onSelect,
 	design,
-	premiumBadge = null,
 	highRes,
 	disabled,
 	hideDesignTitle,
@@ -93,24 +93,19 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	verticalId,
 } ) => {
 	const { __ } = useI18n();
-
-	const badgeType = design.is_premium ? 'premium' : 'none';
-
-	const badgeContainer = ! isEnabled( 'signup/theme-preview-screen' ) ? (
-		design.is_premium && premiumBadge
-	) : (
-		<BadgeContainer badgeType={ badgeType } isPremiumThemeAvailable={ isPremiumThemeAvailable } />
-	);
-
-	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
+	const { style_variations = [], is_premium: isPremium = false } = design;
+	const isEnableThemePreviewScreen = isEnabled( 'signup/theme-preview-screen' );
+	const isEnableThemeStyleVariations =
+		isEnabled( 'signup/design-picker-style-selection' ) && isEnableThemePreviewScreen;
+	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
-		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
+		if ( ! isEnableThemePreviewScreen ) {
 			return null;
 		}
 
 		let text: React.ReactNode = null;
-		if ( design.is_premium && shouldUpgrade ) {
+		if ( isPremium && shouldUpgrade ) {
 			if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
 				text = createInterpolateElement(
 					sprintf(
@@ -149,22 +144,32 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					</Button>
 				);
 			}
-		} else if ( design.is_premium && ! shouldUpgrade && hasPurchasedTheme ) {
+		} else if ( isPremium && ! shouldUpgrade && hasPurchasedTheme ) {
 			text = __( 'Purchased on an annual subscription' );
-		} else if ( design.is_premium && ! shouldUpgrade && ! hasPurchasedTheme ) {
+		} else if ( isPremium && ! shouldUpgrade && ! hasPurchasedTheme ) {
 			text = __( 'Included in your plan' );
-		} else if ( ! design.is_premium ) {
+		} else if ( ! isPremium ) {
 			text = __( 'Free' );
 		}
 
-		return <div className="design-picker__pricing-description">{ text }</div>;
+		return (
+			<div className="design-picker__pricing-description">
+				{ isPremium && (
+					<PremiumBadge
+						tooltipPosition="bottom right"
+						isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					/>
+				) }
+				<span>{ text }</span>
+			</div>
+		);
 	}
 
 	return (
 		<div className="design-picker__design-option">
 			<button
 				disabled={ disabled }
-				data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
+				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
 				onClick={ () => onSelect( design ) }
 			>
 				{ hasDesignOptionHeader && (
@@ -202,7 +207,14 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						{ ! hideDesignTitle && (
 							<span className="design-picker__option-name">{ design.title }</span>
 						) }
-						{ badgeContainer }
+						{ ! isEnableThemePreviewScreen && isPremium && (
+							<PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
+						) }
+						{ isEnableThemeStyleVariations && style_variations.length > 0 && (
+							<div className="design-picker__options-style-variations">
+								<ThemeStyleVariationBadges variations={ style_variations } />
+							</div>
+						) }
 					</span>
 				</span>
 			</button>
@@ -289,15 +301,19 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	if ( ! isDesktop ) {
 		return (
 			<div className="design-button-container">
-				<DesignButton { ...props } onSelect={ onPreview } />
+				<DesignButton
+					{ ...props }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					onSelect={ onPreview }
+				/>
 			</div>
 		);
 	}
 
 	// We don't need preview for blank canvas
-	return (
+	return ! isBlankCanvas ? (
 		<div className="design-button-container">
-			{ ! isBlankCanvas && ! previewOnly && (
+			{ ! previewOnly && (
 				<DesignButtonCover
 					design={ props.design }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -310,9 +326,14 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				{ ...props }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				onSelect={ previewOnly ? onPreview : noop }
-				disabled={ ! isBlankCanvas && ! previewOnly }
+				disabled={ ! previewOnly }
 			/>
 		</div>
+	) : (
+		<PatternAssemblerCta
+			key={ props.design.slug }
+			onButtonClick={ () => props.onSelect( props.design ) }
+		/>
 	);
 };
 
@@ -329,7 +350,6 @@ export interface UnifiedDesignPickerProps {
 	onUpgrade?: () => void;
 	generatedDesigns: Design[];
 	staticDesigns: Design[];
-	premiumBadge?: React.ReactNode;
 	categorization?: Categorization;
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
@@ -346,7 +366,6 @@ interface StaticDesignPickerProps {
 	onPreview: ( design: Design ) => void;
 	onUpgrade?: () => void;
 	designs: Design[];
-	premiumBadge?: React.ReactNode;
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
@@ -368,7 +387,6 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	onPreview,
 	onUpgrade,
 	designs,
-	premiumBadge,
 	categorization,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
@@ -378,14 +396,28 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
+
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
 			? filterDesignsByCategory( designs, categorization.selection )
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
+
+		if ( isEnabled( 'signup/design-picker-pattern-assembler' ) ) {
+			const blankCanvasDesign = {
+				recipe: {
+					stylesheet: 'pub/blank-canvas-blocks',
+				},
+				slug: 'blank-canvas-blocks',
+				title: 'Blank Canvas',
+			} as Design;
+			result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
+		}
+
 		return result;
 	}, [ designs, categorization?.selection ] );
+
 	return (
 		<div>
 			{ categorization && hasCategories && (
@@ -404,7 +436,6 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 						onSelect={ onSelect }
 						onPreview={ onPreview }
 						onUpgrade={ onUpgrade }
-						premiumBadge={ premiumBadge }
 						highRes={ false }
 						hideFullScreenPreview={ false }
 						hideDesignTitle={ false }
@@ -466,7 +497,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	verticalId,
 	staticDesigns,
 	generatedDesigns,
-	premiumBadge,
 	heading,
 	categorization,
 	previewOnly = false,
@@ -522,9 +552,8 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onPreview={ onPreview }
 					onUpgrade={ onUpgrade }
 					designs={ staticDesigns }
-					premiumBadge={ premiumBadge }
 					categorization={ categorization }
-					verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
+					verticalId={ verticalId }
 					previewOnly={ previewOnly }
 					hasDesignOptionHeader={ hasDesignOptionHeader }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }

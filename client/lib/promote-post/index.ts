@@ -9,6 +9,7 @@ declare global {
 	interface Window {
 		BlazePress?: {
 			render: ( params: {
+				siteSlug: string | null;
 				domNode?: HTMLElement | null;
 				domNodeId?: string;
 				stripeKey: string;
@@ -18,6 +19,7 @@ declare global {
 				template: string;
 				urn: string;
 				onLoaded?: () => void;
+				onClose?: () => void;
 				showDialog?: boolean;
 			} ) => void;
 		};
@@ -35,14 +37,17 @@ export async function loadDSPWidgetJS(): Promise< void > {
 }
 
 export async function showDSP(
+	siteSlug: string | null,
 	siteId: number | string,
 	postId: number | string,
+	onClose: () => void,
 	domNodeOrId?: HTMLElement | string | null
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
 		if ( window.BlazePress ) {
 			window.BlazePress.render( {
+				siteSlug: siteSlug,
 				domNode: typeof domNodeOrId !== 'string' ? domNodeOrId : undefined,
 				domNodeId: typeof domNodeOrId === 'string' ? domNodeOrId : undefined,
 				stripeKey: config( 'dsp_stripe_pub_key' ),
@@ -52,6 +57,7 @@ export async function showDSP(
 				authToken: 'wpcom-proxy-request',
 				template: 'article',
 				onLoaded: () => resolve( true ),
+				onClose: onClose,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 			} );
 		} else {
@@ -60,11 +66,12 @@ export async function showDSP(
 	} );
 }
 
-export async function showDSPWidgetModal( siteId: number, postId?: number ) {
+export async function showDSPWidgetModal( siteSlug: string, siteId: number, postId?: number ) {
 	await loadDSPWidgetJS();
 
 	if ( window.BlazePress ) {
 		await window.BlazePress.render( {
+			siteSlug: siteSlug,
 			stripeKey: config( 'dsp_stripe_pub_key' ),
 			apiHost: 'https://public-api.wordpress.com',
 			apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,

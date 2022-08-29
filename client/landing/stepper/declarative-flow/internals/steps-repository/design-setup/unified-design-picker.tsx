@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
-	PremiumBadge,
 	useCategorization,
 	getDesignPreviewUrl,
 } from '@automattic/design-picker';
@@ -115,7 +114,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			recordTracksEvent( 'calypso_signup_unified_design_picker_view', {
 				vertical_id: siteVerticalId,
 				generated_designs: generatedDesigns.map( ( design ) => design.slug ).join( ',' ),
-				static_designs: staticDesigns.map( ( design ) => design.slug ).join( ',' ),
+				has_vertical_images: generatedDesigns.length > 0,
 			} );
 		}
 	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
@@ -173,13 +172,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			// Send vertical_id only if the current design is generated design or we enabled the v13n of standard themes.
 			// We cannot check the config inside `setDesignOnSite` action. See https://github.com/Automattic/wp-calypso/pull/65531#issuecomment-1190850273
 			setPendingAction( () =>
-				setDesignOnSite(
-					siteSlugOrId,
-					_selectedDesign,
-					_selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-						? siteVerticalId
-						: ''
-				).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+				setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ).then( () =>
+					reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
+				)
 			);
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign ),
@@ -286,10 +281,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
-			vertical_id:
-				selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-					? siteVerticalId
-					: undefined,
+			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
 		const stepContent = (
@@ -384,7 +376,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onPreview={ previewDesign }
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
-			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }

@@ -1,3 +1,22 @@
+body.is-section-signup {
+	.signup__step.is-difm-site-picker {
+		.formatted-header {
+			a.subtitle-link {
+				text-decoration: underline;
+				cursor: pointer;
+				line-height: 20px;
+				padding-top: 12px;
+				color: var( --studio-gray-90 );
+				letter-spacing: -0.16px;
+				white-space: nowrap;
+				&:hover {
+					color: var( --studio-gray-70 );
+				}
+			}
+		}
+	}
+}
+
 .ReactModalPortal {
 	.difm-site-delete-confirmation {
 		.dialog__action-buttons {

@@ -46,7 +46,6 @@
 	}
 
 	.design-picker__design-option {
-		cursor: pointer;
 		font-family: inherit;
 	}
 
@@ -228,11 +227,28 @@
 		margin-top: -0.1em;
 	}
 
-	.design-picker__pricing-description {
-		text-align: left;
-		color: #50575e;
+	.design-picker__options-style-variations {
+		align-items: center;
+		display: inline-flex;
+		justify-content: flex-end;
+		flex-grow: 1;
+		flex-wrap: wrap;
+		gap: 2px;
 	}
 
+	.design-picker__pricing-description {
+		align-items: flex-start;
+		color: #50575e;
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		line-height: 20px;
+		justify-content: flex-start;
+
+		.premium-badge {
+			margin: 0;
+		}
+	}
 
 	.design-picker__button-link.components-button.is-link {
 		text-decoration: none;
@@ -384,9 +400,6 @@
 	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
 		justify-content: flex-start;
 	}
-	.design-picker__grid:last-child {
-		min-height: 100vh;
-	}
 	.design-picker__grid {
 		@supports ( display: grid ) {
 			@include break-medium {
@@ -446,6 +459,8 @@
 
 	// Customize styles for standard designs
 	.unified-design-picker__standard-designs {
+		min-height: 100vh;
+
 		.unified-design-picker__subtitle {
 			margin-bottom: 14px;
 		}

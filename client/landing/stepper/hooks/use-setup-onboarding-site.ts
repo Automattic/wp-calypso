@@ -1,9 +1,12 @@
 import { SiteDetails, useSiteLogoMutation } from '@automattic/data-stores';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { patterns } from '@automattic/pattern-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useMemo } from 'react';
+import wpcomRequest from 'wpcom-proxy-request';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import type { Pattern } from '@automattic/pattern-picker';
 
 const base64ImageToBlob = ( base64String: string ) => {
 	// extract content type and base64 payload from original string
@@ -33,13 +36,23 @@ interface OnboardingSite {
 	siteLogo: string | null;
 }
 
-export function useSetupOnboardingSite() {
-	const site = useSite();
+interface SetupOnboardingSiteOptions {
+	ignoreUrl?: boolean;
+	site: SiteDetails | null;
+	flow: string | null;
+}
+
+export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
+	const { ignoreUrl, site, flow } = options;
 	const siteIsLoaded = !! site;
-	const { getState } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+
+	const { getState, getPatternId } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const state = getState();
-	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
+
 	const { mutateAsync: setSiteLogo } = useSiteLogoMutation( site?.ID );
+
+	const selectedPatternId = getPatternId();
 
 	const postSiteSettings = ( site: SiteDetails, state: OnboardingSite ) => {
 		const siteSettings = {
@@ -52,22 +65,63 @@ export function useSetupOnboardingSite() {
 
 	const postSiteLogo = ( state: OnboardingSite ) => {
 		if ( ! state.siteLogo ) {
-			return;
+			return Promise.resolve();
 		}
 		return setSiteLogo( new File( [ base64ImageToBlob( state.siteLogo ) ], 'site-logo.png' ) );
 	};
 
-	useEffect( () => {
-		if ( shouldSetupOnboardingSite() && site ) {
-			Promise.all( [ postSiteSettings( site, state ), postSiteLogo( state ) ] ).then( () => {
+	const setIntent = ( site: SiteDetails, flow: string ) => {
+		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
+			return setIntentOnSite( site.ID.toString(), flow );
+		}
+		return Promise.resolve();
+	};
+
+	const setPattern = async (
+		site: SiteDetails,
+		flow: string,
+		logoUploadResult: Awaited< ReturnType< typeof setSiteLogo > > | void
+	) => {
+		if ( flow === 'link-in-bio' ) {
+			const pattern = patterns.find( ( pattern: Pattern ) => pattern.id === selectedPatternId );
+			if ( pattern ) {
+				let content = pattern.content;
+				// replace the pattern logo with the uploaded site logo
+				if ( logoUploadResult?.uploadResult?.media?.[ 0 ] && pattern.avatarUrl ) {
+					content = content.replace(
+						pattern.avatarUrl,
+						logoUploadResult.uploadResult.media[ 0 ].URL
+					);
+				}
+				wpcomRequest( {
+					// since this is a new site, its safe to assume that homepage ID is 2
+					path: `/sites/${ site.ID }/pages/2`,
+					method: 'POST',
+					apiNamespace: 'wp/v2',
+					body: { content },
+				} );
+			}
+		}
+	};
+
+	return useMemo( () => {
+		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site && flow ) {
+			return Promise.all( [
+				postSiteSettings( site, state ),
+				postSiteLogo( state ).then( ( logoUploadResult ) =>
+					setPattern( site, flow, logoUploadResult )
+				),
+				setIntent( site, flow ),
+			] ).then( () => {
 				recordTracksEvent( 'calypso_signup_site_options_submit', {
 					has_site_title: !! state.siteTitle,
 					has_tagline: !! state.siteDescription,
 				} );
 			} );
 		}
+		// we want this to run once, ignore other deps
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteIsLoaded ] );
+	}, [ siteIsLoaded, flow ] );
 }
 
 export function shouldSetupOnboardingSite() {

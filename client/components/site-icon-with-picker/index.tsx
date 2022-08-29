@@ -54,6 +54,7 @@ export function SiteIconWithPicker( {
 						setEditingFileName( undefined );
 						setImageEditorOpen( false );
 					} }
+					widthLimit={ 512 }
 				/>
 			) }
 			<FormFieldset

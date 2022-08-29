@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
+import { LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -104,9 +105,18 @@ export class PlansStep extends Component {
 			);
 		} else if ( flowName === 'newsletter' ) {
 			// newsletter flow always uses pub/lettre
+			// newsletter always needs the site launched
 			this.props.submitSignupStep( step, {
 				cartItem,
 				themeSlugWithRepo: 'pub/lettre',
+				comingSoon: 0,
+			} );
+			this.props.goToNextStep();
+		} else if ( flowName === LINK_IN_BIO_FLOW ) {
+			// newsletter flow always uses pub/lettre
+			this.props.submitSignupStep( step, {
+				cartItem,
+				themeSlugWithRepo: 'pub/lynx',
 			} );
 			this.props.goToNextStep();
 		} else {

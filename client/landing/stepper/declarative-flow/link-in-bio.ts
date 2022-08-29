@@ -48,7 +48,7 @@ export const linkInBio: Flow = {
 
 				case 'linkInBioSetup':
 					return window.location.replace(
-						`/start/newsletter/domains?new=${ encodeURIComponent(
+						`/start/link-in-bio/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes`
 					);

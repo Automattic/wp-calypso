@@ -5,10 +5,11 @@ export function useSiteLogoMutation( siteId: string | number | undefined ) {
 	return useMutation( async ( file: File ) => {
 		const formData = [ [ 'media[]', file ] ];
 		// first upload the image
-		const response = await wpcomRequest< {
+		const uploadResult = await wpcomRequest< {
 			media?: [
 				{
 					ID: number;
+					URL: string;
 				}
 			];
 		} >( {
@@ -18,10 +19,10 @@ export function useSiteLogoMutation( siteId: string | number | undefined ) {
 			method: 'POST',
 		} );
 		// then update the site settings to the uploaded image
-		if ( response.media?.length ) {
-			const imageID = response.media[ 0 ].ID;
-			return await wpcomRequest< {
-				id: 12345;
+		if ( uploadResult.media?.length ) {
+			const imageID = uploadResult.media[ 0 ].ID;
+			const logoResult = await wpcomRequest< {
+				id: number;
 				url: string;
 			} >( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/settings`,
@@ -30,6 +31,8 @@ export function useSiteLogoMutation( siteId: string | number | undefined ) {
 				body: { site_icon: imageID },
 				method: 'POST',
 			} );
+
+			return { logoResult, uploadResult };
 		}
 		throw new Error( 'No image ID returned' );
 	} );

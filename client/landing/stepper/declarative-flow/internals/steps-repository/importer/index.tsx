@@ -56,7 +56,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 
-		const fromSite = currentSearchParams.get( 'from' );
+		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( navigation, siteId, siteSlug, fromSite );
 
@@ -125,7 +125,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		function renderStepContent() {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
-			} else if ( ! siteSlug || ! siteItem || ! siteId || ! fromSite ) {
+			} else if ( ! siteSlug || ! siteItem || ! siteId ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {
 				return (

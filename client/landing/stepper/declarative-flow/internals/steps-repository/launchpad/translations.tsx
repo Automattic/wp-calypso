@@ -1,3 +1,4 @@
+import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { TranslatedLaunchpadStrings } from './types';
 
@@ -9,11 +10,11 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 	};
 
 	switch ( flow ) {
-		case 'newsletter':
+		case NEWSLETTER_FLOW:
 			translatedStrings.flowName = translate( 'Newsletter' );
 			translatedStrings.sidebarTitle = translate( 'Your Newsletter is ready to launch!' );
 			break;
-		case 'link-in-bio':
+		case LINK_IN_BIO_FLOW:
 			translatedStrings.flowName = translate( 'Link in Bio' );
 			translatedStrings.sidebarTitle = translate( 'Your Link in Bio is ready to launch!' );
 			break;
