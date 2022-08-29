@@ -43,6 +43,10 @@ export interface SelectorPageProps extends BasePageProps {
 	locale?: string;
 }
 
+export interface ProductSmallCardProps {
+	item: SelectorProduct;
+}
+
 export interface ProductsGridProps {
 	duration: Duration;
 	urlQueryArgs: QueryArgs;

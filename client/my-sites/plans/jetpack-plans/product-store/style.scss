@@ -124,7 +124,6 @@
 		font-family: 'SF Pro Text', $sans;
 		font-size: $font-body;
 		font-weight: 600;
-		min-width: 225px;
 	}
 	&__items-list .button.is-primary {
 		color: var( --color-text-inverted );
@@ -199,6 +198,12 @@
 		}
 	}
 }
+
+.jetpack-product-store__jetpack-free .button,
+.jetpack-product-store__see-all-features .button {
+	min-width: 225px;
+}
+
 
 .jetpack-product-store__pricing-banner {
 	height: 120px;

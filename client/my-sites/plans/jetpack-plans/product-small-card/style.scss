@@ -1,0 +1,40 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.product-small-card {
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.product-small-card__info {
+	display: flex;
+	flex-direction: column;
+	border-bottom: 1.01132px solid var( --studio-gray-5 );
+	flex-grow: 1;
+}
+
+.product-small-card__info-header {
+	display: flex;
+	flex-direction: row;
+	font-size: $font-body-small;
+	justify-content: space-between;
+}
+
+.product-small-card__info-header-checkout {
+	font-size: $font-body;
+	min-width: 91px;
+	max-height: 40px;
+}
+
+.product-small-card__info-content {
+	font-size: $font-body-small;
+	padding: 8px 0 16px;
+}
+
+.product-small-card__info-more-link {
+	display: block;
+	color: var( --color-neutral-100 )!important;
+	text-decoration: underline;
+	margin-top: 4px;
+}

@@ -1,5 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { ProductSmallCard } from '../product-small-card';
 import { FeaturedItemCard } from './featured-item-card';
 import { HeroImage } from './hero-image';
 import { useCreateCheckout } from './hooks/use-create-checkout';
@@ -43,18 +45,21 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 		);
 	} );
 
+	const allItems = useMemo(
+		() => [ ...popularItems, ...otherItems ],
+		[ popularItems, otherItems ]
+	);
+
 	return (
 		<div className="jetpack-product-store__products-list">
 			<MostPopular heading={ translate( 'Most popular products' ) } items={ mostPopularItems } />
 
 			<div className="jetpack-product-store__products-list-all">
 				<h3>{ translate( 'All products' ) }</h3>
-				<ul>
-					{ otherItems.map( ( item ) => {
-						// TODO relace this with product card
-						return <li key={ item.productSlug }>{ item.displayName }</li>;
-					} ) }
-				</ul>
+
+				{ allItems.map( ( item ) => {
+					return <ProductSmallCard key={ item.productSlug } item={ item } />;
+				} ) }
 			</div>
 		</div>
 	);
