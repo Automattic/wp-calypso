@@ -148,6 +148,22 @@
 		}
 	}
 
+	.form-input-validation {
+		padding: 0;
+		padding-inline-start: 2rem;
+		padding-inline-end: 0;
+		margin-bottom: 1.5rem;
+
+		svg {
+			position: absolute;
+			margin-inline-start: -2rem;
+		}
+
+		&.is-warning {
+			color: var( --studio-gray-40 );
+		}
+	}
+
 	.add-subscriber__form--disclaimer {
 		font-size: 0.875rem;
 		line-height: 1.25rem;

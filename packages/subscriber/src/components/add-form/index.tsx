@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
@@ -19,6 +20,7 @@ import React, {
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { SUBSCRIBER_STORE } from '../../store';
+import { tip } from './icon';
 import './style.scss';
 
 interface Props {
@@ -151,7 +153,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		const currentEmailFormControlsNum = emailFormControls.length;
 
 		if (
-			currentEmailFormControlsNum <= emailControlMaxNum &&
+			currentEmailFormControlsNum < emailControlMaxNum &&
 			currentEmailFormControlsNum === validEmailsNum
 		) {
 			const controls = Array.from( emailFormControls );
@@ -186,6 +188,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							onChange={ ( value ) => onEmailChange( value, i ) }
 						/>
 					) ) }
+
+					{ emailControlMaxNum === isValidEmails.filter( ( x ) => x ).length && (
+						<FormInputValidation icon={ 'tip' } isError={ false } isWarning={ true } text={ '' }>
+							<Icon icon={ tip } />
+							{ __(
+								'Nice start there! If you have more subscribers to add, we’ll help you get them added later.'
+							) }
+						</FormInputValidation>
+					) }
 
 					{ ! isSelectedFileValid && (
 						<label className={ 'add-subscriber__form-label-error' }>
