@@ -3,11 +3,7 @@ import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/route';
 import type { ViewFilterProps } from './types';
 
-export const ViewFilter: React.FC< ViewFilterProps > = ( {
-	currentView,
-	setCurrentView,
-	shouldUpdateUrl,
-} ) => {
+export const ViewFilter: React.FC< ViewFilterProps > = ( { currentView, setCurrentView } ) => {
 	const translate = useTranslate();
 
 	const currentPath = window.location.pathname + window.location.search;
@@ -18,7 +14,7 @@ export const ViewFilter: React.FC< ViewFilterProps > = ( {
 				<SegmentedControl.Item
 					onClick={ () => setCurrentView( 'products' ) }
 					selected={ currentView === 'products' }
-					{ ...( shouldUpdateUrl && { path: addQueryArgs( { view: 'products' }, currentPath ) } ) }
+					path={ addQueryArgs( { view: 'products' }, currentPath ) }
 				>
 					{ translate( 'Products' ) }
 				</SegmentedControl.Item>
@@ -26,7 +22,7 @@ export const ViewFilter: React.FC< ViewFilterProps > = ( {
 				<SegmentedControl.Item
 					onClick={ () => setCurrentView( 'bundles' ) }
 					selected={ currentView === 'bundles' }
-					{ ...( shouldUpdateUrl && { path: addQueryArgs( { view: 'bundles' }, currentPath ) } ) }
+					path={ addQueryArgs( { view: 'bundles' }, currentPath ) }
 				>
 					{ translate( 'Bundles' ) }
 				</SegmentedControl.Item>

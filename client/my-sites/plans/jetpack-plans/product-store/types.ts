@@ -25,7 +25,6 @@ export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductS
 export interface ViewFilterProps {
 	currentView: ViewType;
 	setCurrentView: ( currentView: ViewType ) => void;
-	shouldUpdateUrl: boolean;
 }
 
 export type ProductsListProps = ProductStoreBaseProps & Pick< ProductStoreProps, 'duration' >;
