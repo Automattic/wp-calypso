@@ -1,15 +1,23 @@
 import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
+import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import Badge from 'calypso/components/badge';
 import { Task } from './types';
 
-const ChecklistItem = ( { task }: { task: Task } ) => {
+interface ChecklistItemProps {
+	task: Task;
+	site: SiteDetails | null;
+}
+
+const ChecklistItem = ( { task, site }: ChecklistItemProps ) => {
 	const { id, isCompleted, actionUrl, title } = task;
+	const isFreePlan = task.id === 'plan_selected' && site?.plan?.product_slug === 'free_plan';
+
 	return (
 		<li className={ `launchpad__task-${ id }` }>
 			<Button
-				className="launchpad__checklist-item"
-				disabled={ task.isCompleted }
+				className={ `launchpad__checklist-item ${ isCompleted && 'is-complete' }` }
+				disabled={ task.isCompleted && ! isFreePlan }
 				href={ actionUrl }
 				data-task={ id }
 			>

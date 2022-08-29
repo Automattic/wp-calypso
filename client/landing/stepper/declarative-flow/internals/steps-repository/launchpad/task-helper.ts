@@ -1,8 +1,13 @@
 import { translate } from 'i18n-calypso';
+import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
 
-export function getEnhancedTasks( tasks: Task[], siteSlug: string | null ) {
+export function getEnhancedTasks(
+	tasks: Task[],
+	siteSlug: string | null,
+	site: SiteDetails | null
+) {
 	const enhancedTaskList: Task[] = [];
 	tasks &&
 		tasks.map( ( task ) => {
@@ -15,7 +20,8 @@ export function getEnhancedTasks( tasks: Task[], siteSlug: string | null ) {
 					break;
 				case 'plan_selected':
 					taskData = {
-						title: translate( 'Free Plan' ),
+						title: translate( 'Choose a Plan' ),
+						badgeText: site?.plan?.product_name_short || '',
 					};
 					break;
 				case 'subscribers_added':
