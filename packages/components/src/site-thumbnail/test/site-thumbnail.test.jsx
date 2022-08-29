@@ -3,7 +3,7 @@
  */
 
 import { shallow } from 'enzyme';
-import { SiteThumbnail, SITE_THUMBNAIL_DIMENSIONS } from '..';
+import { SiteThumbnail } from '..';
 
 const CLASS_NAME = 'site-thumbnail__image';
 const IMG_SELECTOR = `.${ CLASS_NAME }`;
@@ -27,9 +27,7 @@ describe( 'SiteThumbnail', () => {
 			width: 100,
 			height: 100,
 		};
-		const siteThumbnail = shallow(
-			<SiteThumbnail mShotsUrl={ MSHOTS_URL } dimension={ dimension } />
-		);
+		const siteThumbnail = shallow( <SiteThumbnail mShotsUrl={ MSHOTS_URL } { ...dimension } /> );
 		const img = siteThumbnail.find( IMG_SELECTOR );
 		expect( img.prop( 'sizes' ) ).toEqual( `${ dimension.width }px` );
 	} );
@@ -44,10 +42,8 @@ describe( 'SiteThumbnail', () => {
 	} );
 
 	test( 'should generate responsive size alternatives 2x and 3x srcset', () => {
-		const dimension = SITE_THUMBNAIL_DIMENSIONS.medium;
-		const siteThumbnail = shallow(
-			<SiteThumbnail mShotsUrl={ MSHOTS_URL } dimension={ dimension } />
-		);
+		const dimension = { width: 200, height: 100 };
+		const siteThumbnail = shallow( <SiteThumbnail mShotsUrl={ MSHOTS_URL } { ...dimension } /> );
 		const srcSet = siteThumbnail.find( IMG_SELECTOR ).prop( 'srcSet' );
 		const srcSet2xWith = ` ${ dimension.width * 2 }w`;
 		expect( srcSet.includes( srcSet2xWith ) ).toEqual( true );
