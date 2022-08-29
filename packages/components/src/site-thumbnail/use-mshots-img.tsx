@@ -23,10 +23,20 @@ export type MShotsOptions = {
 	requeue?: boolean;
 };
 
+function getRetinaSize( multiply: number, { w, h }: MShotsOptions ) {
+	return {
+		width: w * multiply,
+		height: ( h || w ) * multiply,
+	};
+}
+
 export const useMshotsImg = (
 	src: string,
 	options: MShotsOptions,
-	sizes: Array< { width: number; height: number } > = []
+	sizes: Array< {
+		width: number;
+		height?: number;
+	} > = []
 ): {
 	isLoading: boolean;
 	isError: boolean;
@@ -37,9 +47,8 @@ export const useMshotsImg = (
 	const { mshotUrl, srcSet } = useMemo( () => {
 		const mshotUrl = mshotsUrl( src, options, retryCount );
 
-		// Calculate source image srcSet for all given sizes and retina 2x.
-		const retinaSize = { width: options.w * 2, height: ( options.h || options.w ) * 2 };
-		const srcSet = [ ...sizes, retinaSize ]
+		// Add retina sizes 2x and 3x.
+		const srcSet = [ ...sizes, getRetinaSize( 2, options ), getRetinaSize( 3, options ) ]
 			.map( ( { width, height } ) => {
 				const resizedUrl = mshotsUrl( src, { ...options, w: width, h: height }, retryCount );
 				return `${ resizedUrl } ${ width }w`;
