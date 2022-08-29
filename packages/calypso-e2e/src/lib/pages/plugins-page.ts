@@ -45,6 +45,11 @@ const selectors = {
 
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
+
+	// Switch site
+	mySitesButton: 'button:has-text("My Sites")',
+	switchSiteButton: 'button:has-text("Switch Site")',
+	switchSiteSelect: ( site: string ) => `[aria-label="${ site }"] `,
 };
 
 /**
@@ -324,5 +329,27 @@ export class PluginsPage {
 			this.page.waitForResponse( /.*delete\?.*/ ),
 			confirmDialogButton.click(),
 		] );
+	}
+
+	/**
+	 * Switch to site
+	 */
+	async switchToSite( site: string, isDesktop: boolean ): Promise< void > {
+		if ( ! isDesktop ) {
+			await this.page.click( selectors.mySitesButton );
+			await this.page.click( selectors.switchSiteButton );
+			await this.page.click( selectors.switchSiteSelect( site ) );
+			await this.page.click( selectors.mySitesButton );
+		} else {
+			await this.page.click( selectors.switchSiteButton );
+			await this.page.click( selectors.switchSiteSelect( site ) );
+		}
+	}
+
+	/**
+	 * Check for Site on URL
+	 */
+	async checkSiteOnUrl( site: string ): Promise< void > {
+		await this.page.waitForURL( '**/' + site );
 	}
 }

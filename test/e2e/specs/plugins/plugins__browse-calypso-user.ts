@@ -14,13 +14,13 @@ import { Page, Browser } from 'playwright';
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
-	const credentials = SecretsManager.secrets.testAccounts.defaultUser;
+	const credentials = SecretsManager.secrets.testAccounts.multiSiteUser;
 	let page: Page;
 	let pluginsPage: PluginsPage;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		const testAccount = new TestAccount( 'defaultUser' );
+		const testAccount = new TestAccount( 'multiSiteUser' );
 		await testAccount.authenticate( page );
 	} );
 
@@ -93,7 +93,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 	describe( 'Plugins page /plugins/:wpcom-site', function () {
 		it( 'Visit plugins page', async function () {
 			pluginsPage = new PluginsPage( page );
-			await pluginsPage.visit( credentials.testSites?.primary.url as string );
+			await pluginsPage.visit( credentials.primarySite );
 		} );
 
 		it.each( [ 'Top premium plugins', 'Editor’s pick', 'Top free plugins' ] )(
@@ -102,5 +102,23 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 				await pluginsPage.validateHasSection( section );
 			}
 		);
+
+		it( 'Breadcrum update site when switch site', async function () {
+			if ( credentials.otherSites?.length ) {
+				await pluginsPage.clickBrowseAllPaidPlugins();
+				await pluginsPage.switchToSite(
+					credentials.otherSites[ 0 ],
+					envVariables.VIEWPORT_NAME !== 'mobile' ? true : false
+				);
+				if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+					// Ensure the page is wide enough to show the breadcrumb details.
+					await page.setViewportSize( { width: 1300, height: 1080 } );
+					await pluginsPage.clickPluginsBreadcrumb();
+				} else {
+					await pluginsPage.clickBackBreadcrumb();
+				}
+				await pluginsPage.checkSiteOnUrl( credentials.otherSites[ 0 ] );
+			}
+		} );
 	} );
 } );

@@ -28,6 +28,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'notificationsUser',
 	'googleLoginUser',
 	'appleLoginUser',
+	'multiSiteUser',
 ] as const;
 
 /**
@@ -175,6 +176,7 @@ export class SecretsManager {
 				totpUser: { ...fakeAccount, totpKey: 'FAKE_VALUE' },
 				// The following user needs smsNumber
 				smsUser: { ...fakeAccount, smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' } },
+				multiSiteUser: { ...fakeAccount },
 				jetpackUser: { ...fakeAccount },
 				jetpackUserPREMIUM: { ...fakeAccount },
 				jetpackUserJN: { ...fakeAccount },
