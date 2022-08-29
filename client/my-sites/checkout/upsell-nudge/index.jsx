@@ -405,7 +405,9 @@ export class UpsellNudge extends Component {
 				countryCode,
 				postalCode,
 			} );
-			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] );
+			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 			return;
 		}
 
@@ -419,21 +421,26 @@ export class UpsellNudge extends Component {
 				? null
 				: this.getThankYouPageUrlForIncomingCart( true );
 
-			this.props.shoppingCartManager.replaceProductsInCart( [ productToAdd ] ).then( () => {
-				if ( this.props?.cart?.messages ) {
-					const { errors } = this.props.cart.messages;
-					if ( errors && errors.length ) {
-						// Stay on the page to show the relevant error(s)
-						return;
+			this.props.shoppingCartManager
+				.replaceProductsInCart( [ productToAdd ] )
+				.then( () => {
+					if ( this.props?.cart?.messages ) {
+						const { errors } = this.props.cart.messages;
+						if ( errors && errors.length ) {
+							// Stay on the page to show the relevant error(s)
+							return;
+						}
 					}
-				}
 
-				if ( destinationToPersist ) {
-					persistSignupDestination( destinationToPersist );
-				}
+					if ( destinationToPersist ) {
+						persistSignupDestination( destinationToPersist );
+					}
 
-				page( '/checkout/' + siteSlug );
-			} );
+					page( '/checkout/' + siteSlug );
+				} )
+				.catch( () => {
+					// Nothing needs to be done here. CartMessages will display the error to the user.
+				} );
 			return;
 		}
 
