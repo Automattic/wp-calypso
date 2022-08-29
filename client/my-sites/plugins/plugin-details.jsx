@@ -400,7 +400,6 @@ function LegacyPluginDetails( props ) {
 	const {
 		getPageTitle,
 		analyticsPath,
-		siteIds,
 		selectedSite,
 		selectedOrAllSites,
 		isWide,
