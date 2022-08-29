@@ -606,6 +606,28 @@ class DomainsStep extends Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
+		if ( this.isTailoredFlow() ) {
+			const components = {
+				span: (
+					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
+					<span
+						role="button"
+						class="tailored-flow-subtitle__cta-text"
+						onClick={ this.handleDomainExplainerClick }
+					/>
+				),
+			};
+			return flowName === 'newsletter'
+				? translate(
+						'Help your Newsletter stand out with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+						{ components }
+				  )
+				: translate(
+						'Set your Link in Bio apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+						{ components }
+				  );
+		}
+
 		if ( isReskinned ) {
 			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
 		}
@@ -646,6 +668,10 @@ class DomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
+	isTailoredFlow() {
+		return [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName );
+	}
+
 	renderContent() {
 		let content;
 		let sideContent;
@@ -658,7 +684,7 @@ class DomainsStep extends Component {
 			content = this.domainForm();
 		}
 
-		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
+		if ( ! this.props.stepSectionName && this.props.isReskinned && ! this.isTailoredFlow() ) {
 			sideContent = this.getSideContent();
 		}
 
