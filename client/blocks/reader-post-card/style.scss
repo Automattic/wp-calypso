@@ -3,15 +3,26 @@
 	border-top: 1px solid var( --color-neutral-10 );
 }
 
+.reader-post-options-menu__ellipsis-menu {
+	.ellipsis-menu__toggle {
+		padding: 0;
+		height: 24px;
+		.ellipsis-menu__toggle-icon {
+			top: -1px;
+		}
+	}
+}
+
 .reader-post-card.card {
-	border-bottom: 1px solid var( --color-neutral-10 );
+	border-bottom: 5px solid var( --color-neutral-0 );
 	box-shadow: none;
-	margin: 0 15px;
-	padding: 18px 0 20px;
+	margin: 0;
+	padding: 18px 15px 20px;
 	position: relative;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		margin: 0;
+		border-bottom: 1px solid var( --color-neutral-5 );
+		padding: 18px 0 20px;
 	}
 
 	&.is-selected {
@@ -255,6 +266,7 @@
 .reader-post-card__byline {
 	display: flex;
 	font-size: $font-body-small;
+	align-items: space-between;
 }
 
 .reader-post-card__author::after {
@@ -263,19 +275,28 @@
 
 // Need .reader__content to override .reader__content a
 .reader__content .reader-post-card__timestamp-link,
+.reader__content .reader-post-card__timestamp-slug,
 .reader__content .reader-post-card__tag-link {
 	color: var( --color-neutral-80 );
 	font-size: 12px;
 	margin-top: 2px;
+	white-space: nowrap;
 	cursor: pointer;
 	&:hover {
 		color: var( --color-primary );
 	}
 }
 
+.reader-post-card__timestamp-bullet {
+	color: var( --color-text-subtle );
+	display: inline-block;
+	margin: 0 4px;
+}
+
 .reader-post-card__byline-details {
 	color: var( --color-primary );
 	width: 100%;
+	overflow: hidden;
 }
 
 // Fix for IE11 unable to handle nested flexbox min-height.
@@ -367,7 +388,7 @@
 	.site-icon {
 		width: 32px !important;
 		height: 32px !important;
-		/* stylelint-disable-next-line scales/font-size */
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 32px !important;
 		line-height: 32px !important;
 	}
@@ -514,14 +535,6 @@
 		margin-top: 0;
 	}
 
-	.like-button .gridicon {
-		top: 5px;
-	}
-
-	.like-button__label {
-		margin: -3px 0 0 -5px;
-	}
-
 	.comment-button {
 		align-items: flex-start;
 	}
@@ -529,6 +542,19 @@
 	.comment-button .gridicon {
 		top: 4px;
 		margin-right: 2px;
+	}
+
+	.like-button {
+		display: inline-block;
+		padding: 4px 0 4px 4px;
+		text-align: left;
+		vertical-align: top;
+		.like-button__like-icons {
+			height: 18px;
+			width: 18px;
+			display: inline-block;
+			vertical-align: top;
+		}
 	}
 
 	.reader-share__button-label,
@@ -546,13 +572,10 @@
 
 // Follow button for stream cards
 .reader-post-card.card .follow-button {
-	border: 0;
-	border-radius: 0;
-	float: right;
-	padding: 0;
-	position: absolute;
-	right: 0;
-	top: 16px;
+	flex-shrink: 0;
+	align-self: flex-start;
+	margin-right: 20px;
+	margin-top: -1px;
 
 	.gridicon {
 		fill: var( --color-primary );

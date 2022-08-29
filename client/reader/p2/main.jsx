@@ -21,7 +21,7 @@ export default function P2Following( props ) {
 	};
 
 	return (
-		<Stream { ...props } shouldCombineCards={ false }>
+		<Stream { ...props }>
 			<SectionHeader label={ translate( 'Followed P2 Sites' ) }>
 				<Button compact onClick={ markAllAsSeen } disabled={ ! feedsInfo.unseenCount }>
 					{ translate( 'Mark all as seen' ) }
