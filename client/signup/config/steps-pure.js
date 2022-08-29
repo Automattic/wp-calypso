@@ -371,7 +371,7 @@ export function generateSteps( {
 		mailbox: {
 			stepName: 'mailbox',
 			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
+			providesDependencies: [ 'domainItem', 'emailItem' ],
 			props: {
 				backUrl: 'mailbox-domain/',
 				hideSkip: true,
