@@ -30,14 +30,11 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	justify-content: center;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 20px;
-	background-size: 100%;
 	box-shadow: 2px 2px 10px 0 rgba( 66, 68, 90, 0.23 );
 	transition: background-position 1s ease-in-out, transform 0.2s ease-in-out,
 		opacity 0.1s ease-in-out;
 	border: 5px solid white;
 	margin: 20px 0;
-	background-position: contain;
-	background-repeat: no-repeat;
 	cursor: pointer;
 	padding: 0;
 	overflow: hidden;
@@ -57,26 +54,8 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 		filter: blur( 0 );
 	}
 
-	.pattern-picker__item-iframe-wrapper {
-		width: 100%;
-		height: 100%;
-	}
-
-	// for a nicer viewport, make the iframe twice as large then scale it down
-	iframe {
-		border: none;
-		pointer-events: none;
-		height: 200%;
-		width: 200%;
-		transform: scale( 0.5 );
-		transform-origin: 0 0;
-
-		// compensate for the smaller screens by making the iframe viewport even bigger
-		@media screen and ( max-width: 768px ) {
-			height: 300%;
-			width: 300%;
-			transform: scale( 0.33 );
-		}
+	.mshots-image-visible {
+		max-width: 100%;
 	}
 }
 
