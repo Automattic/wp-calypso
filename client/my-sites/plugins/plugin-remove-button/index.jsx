@@ -167,15 +167,14 @@ class PluginRemoveButton extends Component {
 					context: 'Verb. Presented to user as a label for a button.',
 			  } );
 		if ( this.props.inProgress ) {
-			const inProgressText = this.props.translate( 'Removing…' );
+			label = this.props.translate( 'Removing…' );
 			if ( ! this.props.isJetpackCloud ) {
 				return (
 					<div className="plugin-action">
-						<span className="plugin-remove-button__remove">{ inProgressText }</span>
+						<span className="plugin-remove-button__remove">{ label }</span>
 					</div>
 				);
 			}
-			label = this.props.translate( 'Removing…' );
 		}
 
 		const handleClick = disabled ? null : this.removeAction;
