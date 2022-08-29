@@ -98,7 +98,7 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 					path: `/sites/${ site.ID }/pages/2`,
 					method: 'POST',
 					apiNamespace: 'wp/v2',
-					body: { content },
+					body: { content, template: 'blank' },
 				} );
 
 				return setStaticHomepageOnSite( site.ID, 2 );
