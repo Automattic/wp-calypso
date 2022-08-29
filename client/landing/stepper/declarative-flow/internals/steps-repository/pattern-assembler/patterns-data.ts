@@ -42,6 +42,23 @@ const footerPatterns: Pattern[] = [
 	},
 ];
 
-const sectionPatterns: Pattern[] = [];
+const sectionPatterns: Pattern[] = [
+	{
+		id: 5306,
+		name: 'Heading, Three-up, and Paragraph',
+	},
+	{
+		id: 5274,
+		name: 'Call to Action with Cover Block',
+	},
+	{
+		id: 3880,
+		name: 'Two column about me layout',
+	},
+	{
+		id: 54,
+		name: 'Masonry Gallery',
+	},
+];
 
 export { headerPatterns, footerPatterns, sectionPatterns };
