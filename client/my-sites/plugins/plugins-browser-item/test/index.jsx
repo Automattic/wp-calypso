@@ -14,7 +14,7 @@ jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn().mockImplementation( () => {} ),
-	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
+	useSelector: jest.fn().mockImplementation( ( selector ) => selector( {} ) ),
 } ) );
 
 describe( 'PluginsBrowserItem Incompatible Plugins Message', () => {
