@@ -69,6 +69,7 @@ export type DesignType =
 export interface Design {
 	slug: string;
 	title: string;
+	description?: string;
 	recipe?: DesignRecipe;
 	is_premium: boolean;
 	categories: Category[];
