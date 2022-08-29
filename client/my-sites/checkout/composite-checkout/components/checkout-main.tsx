@@ -399,6 +399,8 @@ export default function CheckoutMain( {
 			replaceProductInCart( uuidToReplace, {
 				product_slug: newProductSlug,
 				product_id: newProductId,
+			} ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 		},
 		[ replaceProductInCart, reduxDispatch ]
