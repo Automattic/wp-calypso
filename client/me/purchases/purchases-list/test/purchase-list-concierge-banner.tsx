@@ -11,32 +11,32 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 	test( 'not on specific site but has sites with sessions available', () => {
 		render(
 			<Provider store={ createTestStore() }>
-				<PurchaseListConciergeBanner conciergeSites={ [ 1 ] } isUserBlocked={ false } />
+				<PurchaseListConciergeBanner availableSessions={ [ 1 ] } isUserBlocked={ false } />
 			</Provider>
 		);
 		expect(
-			screen.getByText( 'You have unused Quick Start support sessions' )
+			screen.getByText( 'You still have a Quick Start session available' )
 		).toBeInTheDocument();
 	} );
 	test( 'on specific site and has session available for site', () => {
 		render(
 			<Provider store={ createTestStore() }>
 				<PurchaseListConciergeBanner
-					conciergeSites={ [ 2 ] }
+					availableSessions={ [ 2 ] }
 					siteId={ 2 }
 					isUserBlocked={ false }
 				/>
 			</Provider>
 		);
 		expect(
-			screen.queryByText( 'You have unused Quick Start support sessions' )
+			screen.queryByText( 'You still have a Quick Start session available' )
 		).toBeInTheDocument();
 	} );
 	test( 'on a specific site but no session for that site', () => {
 		render(
 			<Provider store={ createTestStore() }>
 				<PurchaseListConciergeBanner
-					conciergeSites={ [ 1 ] }
+					availableSessions={ [ 1 ] }
 					siteId={ 2 }
 					isUserBlocked={ false }
 				/>
@@ -48,7 +48,7 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 		render(
 			<Provider store={ createTestStore() }>
 				<PurchaseListConciergeBanner
-					conciergeSites={ [ 3 ] }
+					availableSessions={ [ 3 ] }
 					siteId={ 2 }
 					isUserBlocked={ false }
 					nextAppointment={ {
@@ -59,15 +59,13 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 				/>
 			</Provider>
 		);
-		expect(
-			screen.queryByText( 'Your Quick Start session appointment is coming up!' )
-		).toBeInTheDocument();
+		expect( screen.queryByText( 'Your session is coming up soon' ) ).toBeInTheDocument();
 	} );
 	test( 'has appointment scheduled for other site', () => {
 		render(
 			<Provider store={ createTestStore() }>
 				<PurchaseListConciergeBanner
-					conciergeSites={ [ 3 ] }
+					availableSessions={ [ 3 ] }
 					siteId={ 2 }
 					isUserBlocked={ false }
 					nextAppointment={ {
@@ -78,9 +76,7 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 				/>
 			</Provider>
 		);
-		expect(
-			screen.queryByText( 'Your Quick Start session appointment is coming up!' )
-		).toBeInTheDocument();
+		expect( screen.queryByText( 'Your session is coming up soon' ) ).toBeInTheDocument();
 	} );
 } );
 

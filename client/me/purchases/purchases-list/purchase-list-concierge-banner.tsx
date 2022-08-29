@@ -11,21 +11,21 @@ type Props = {
 		siteId: number;
 		scheduleId: number;
 	};
-	conciergeSites: number[];
+	availableSessions: number[];
 	siteId?: number;
 	isUserBlocked: boolean;
 };
 
 export function PurchaseListConciergeBanner( props: Props ) {
-	const { nextAppointment, conciergeSites, siteId, isUserBlocked } = props;
+	const { nextAppointment, availableSessions, siteId, isUserBlocked } = props;
 
 	if ( isUserBlocked ) {
 		return null;
 	}
 
 	const hasAppointment = Boolean( nextAppointment );
-	const hasSiteSelectedAndIsViewingSite = siteId && conciergeSites.includes( siteId );
-	const isNotOnSiteButHasSites = ! siteId && conciergeSites.length;
+	const hasSiteSelectedAndIsViewingSite = siteId && availableSessions.includes( siteId );
+	const isNotOnSiteButHasSites = ! siteId && availableSessions.length;
 	const shouldShowBanner =
 		hasAppointment || hasSiteSelectedAndIsViewingSite || isNotOnSiteButHasSites;
 
@@ -45,7 +45,7 @@ export function PurchaseListConciergeBanner( props: Props ) {
 		<ConciergeBanner
 			bannerType={ bannerType }
 			nextAppointmentSiteId={ nextAppointment?.siteId }
-			sites={ conciergeSites }
+			availableSessions={ availableSessions }
 			siteId={ siteId }
 		/>
 	);

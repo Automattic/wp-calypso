@@ -15,9 +15,13 @@ import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
 import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
+import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getAvailableConciergeSessions from 'calypso/state/selectors/get-available-concierge-sessions';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
+import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
@@ -50,6 +54,10 @@ export function Purchases() {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const logPurchasesError = useLogPurchasesError( 'site level purchases load error' );
+	const nextAppointment = useSelector( getConciergeNextAppointment );
+	const isUserBlocked = useSelector( getConciergeUserBlocked );
+	const availableSessions = useSelector( getAvailableConciergeSessions );
+	const siteId = useSelector( getSelectedSiteId );
 
 	return (
 		<Main wideLayout className="purchases">
@@ -75,7 +83,12 @@ export function Purchases() {
 				section={ isJetpackCloud() ? 'myPlan' : 'activeUpgrades' }
 				siteSlug={ siteSlug }
 			/>
-
+			<PurchaseListConciergeBanner
+				availableSessions={ availableSessions }
+				isUserBlocked={ isUserBlocked }
+				nextAppointment={ nextAppointment }
+				siteId={ siteId ?? undefined }
+			/>
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }

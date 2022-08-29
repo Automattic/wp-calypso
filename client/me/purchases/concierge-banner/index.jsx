@@ -47,9 +47,9 @@ class ConciergeBanner extends Component {
 
 		switch ( bannerType ) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
-				title = translate( 'Your Quick Start session appointment is coming up!' );
+				title = translate( 'Your session is coming up soon' );
 				description = translate(
-					'Get ready with your questions for your upcoming {{supportLink}}Quick Start support session{{/supportLink}} appointment. A Quick Start session is a one-on-one video session between the user and our support staff.',
+					'Your {{supportLink}}Quick Start support session{{/supportLink}} is approaching. Get ready for your one-to-one with our Happiness Engineer.',
 					{
 						components: {
 							supportLink: (
@@ -66,9 +66,9 @@ class ConciergeBanner extends Component {
 				break;
 			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
 			case CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION:
-				title = translate( 'You have unused Quick Start support sessions' );
+				title = translate( 'You still have a Quick Start session available' );
 				description = translate(
-					`You are eligible for one-to-one {{supportLink}}Quick Start support sessions{{/supportLink}} with one of our friendly Happiness Engineers, from our now {{quickStartLink}}retired service{{/quickStartLink}}. You can use these sessions to get expert advice, tips and resources on site setup.`,
+					`Schedule your {{supportLink}}Quick Start support session{{/supportLink}} and get one-on-one guidance from our expert Happiness Engineers to kickstart your site!.`,
 					{
 						components: {
 							supportLink: (
@@ -76,13 +76,6 @@ class ConciergeBanner extends Component {
 									target={ '_blank' }
 									rel={ 'noreferrer' }
 									href="https://wordpress.com/discover-wordpress/2019/03/21/getting-the-most-out-of-our-business-concierge-service/"
-								/>
-							),
-							quickStartLink: (
-								<a
-									target={ '_blank' }
-									rel={ 'noreferrer' }
-									href="https://wordpress.com/support/quickstart-support/"
 								/>
 							),
 						},
@@ -96,11 +89,12 @@ class ConciergeBanner extends Component {
 	}
 
 	render() {
-		const { bannerType, showPlaceholder, nextAppointmentSiteId, siteId, sites } = this.props;
+		const { bannerType, showPlaceholder, nextAppointmentSiteId, siteId, availableSessions } =
+			this.props;
 
 		// if no appointment and not on a site then use the first site with a session available
 		// e.g. when viewing at /me/purchases
-		const quickStartSite = nextAppointmentSiteId || siteId || sites[ 0 ];
+		const quickStartSite = nextAppointmentSiteId || siteId || availableSessions[ 0 ];
 
 		if ( showPlaceholder ) {
 			return this.placeholder();
@@ -112,6 +106,8 @@ class ConciergeBanner extends Component {
 			<>
 				<TrackComponentView eventName="calypso_purchases_concierge_banner_view" />
 				<Banner
+					showIcon={ false }
+					primaryButton={ false }
 					callToAction={ buttonText }
 					description={ description }
 					dismissPreferenceName={ `quick-start-banner-${ bannerType }` }

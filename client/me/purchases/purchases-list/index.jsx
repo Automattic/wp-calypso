@@ -23,8 +23,8 @@ import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 } from 'calypso/state/purchases/selectors';
+import getAvailableConciergeSessions from 'calypso/state/selectors/get-available-concierge-sessions';
 import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
-import getConciergeSites from 'calypso/state/selectors/get-concierge-sites';
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -43,12 +43,11 @@ class PurchasesList extends Component {
 	}
 
 	renderConciergeBanner() {
-		const { nextAppointment, conciergeSites, siteId, isUserBlocked } = this.props;
+		const { nextAppointment, availableSessions, isUserBlocked } = this.props;
 		return (
 			<PurchaseListConciergeBanner
 				nextAppointment={ nextAppointment }
-				conciergeSites={ conciergeSites }
-				siteId={ siteId }
+				availableSessions={ availableSessions }
 				isUserBlocked={ isUserBlocked }
 			/>
 		);
@@ -172,6 +171,6 @@ export default connect( ( state ) => ( {
 	sites: getSites( state ),
 	nextAppointment: getConciergeNextAppointment( state ),
 	isUserBlocked: getConciergeUserBlocked( state ),
-	conciergeSites: getConciergeSites( state ),
+	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state ),
 } ) )( localize( PurchasesList ) );

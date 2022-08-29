@@ -1,4 +1,5 @@
 import page from 'page';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import {
 	Purchases,
@@ -23,7 +24,12 @@ export function redirectToPurchases( context ) {
 }
 
 export const purchases = ( context, next ) => {
-	context.primary = <Purchases />;
+	context.primary = (
+		<>
+			<QueryConciergeInitial />
+			<Purchases />
+		</>
+	);
 	next();
 };
 

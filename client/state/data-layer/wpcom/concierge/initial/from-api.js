@@ -14,7 +14,7 @@ export const transform = ( response ) => {
 		nextAppointment,
 		scheduleId: response.schedule_id,
 		isUserBlocked: response.is_blocked,
-		conciergeSites: response.concierge_sites,
+		availableSessions: response.available_sessions,
 	};
 };
 
