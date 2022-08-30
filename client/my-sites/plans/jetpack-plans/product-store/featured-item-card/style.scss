@@ -57,6 +57,10 @@
 .featured-item-card--title {
 	font-size: $font-title-large;
 	font-weight: 700;
+	
+	@media only screen and ( max-width: 768px ) {
+		font-size: $font-title-medium;
+	}
 }
 
 .featured-item-card--price {
