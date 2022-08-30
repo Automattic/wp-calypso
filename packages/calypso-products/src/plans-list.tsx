@@ -754,9 +754,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getLinkInBioDescription: () =>
 		i18n.translate(
-			'Stand out and unlock earnings with an ad-free site, custom domain, ' +
-				'and the ability to sell subscriptions, take payments, and collect donations. ' +
-				'Backed with email support to help get your site just right.'
+			'Take your site further, faster. Get everything included in Personal, ' +
+				'plus premium design themes, baked-in video uploads, ad monetization, deep visitor ' +
+				'insights from Google Analytics, and live chat support.'
 		),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
