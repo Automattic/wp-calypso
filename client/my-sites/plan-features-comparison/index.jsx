@@ -79,7 +79,7 @@ export class PlanFeaturesComparison extends Component {
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
-									{ this.renderPlanFeatureRows() }
+									{ this.renderPlanFeatureRowsTest() }
 								</tbody>
 							</table>
 						</div>
@@ -216,6 +216,12 @@ export class PlanFeaturesComparison extends Component {
 		} );
 	}
 
+	renderPlanFeatureRowsTest() {
+		return (
+			<tr className="plan-features-comparison__row">{ this.renderPlanFeatureColumnsTest() }</tr>
+		);
+	}
+
 	renderAnnualPlansFeatureNotice( feature ) {
 		const { translate, isInSignup } = this.props;
 
@@ -282,6 +288,45 @@ export class PlanFeaturesComparison extends Component {
 				</td>
 			) : (
 				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
+			);
+		} );
+	}
+
+	renderPlanFeatures( properties, mapIndex ) {
+		const { selectedFeature } = this.props;
+		const { features, planName } = properties;
+
+		return map( features, ( currentFeature, featureIndex ) => {
+			const classes = classNames( '', getPlanClass( planName ), {
+				'is-last-feature': featureIndex + 1 === features.length,
+				'is-highlighted':
+					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
+				'is-bold': featureIndex === 0,
+			} );
+
+			return (
+				<div className={ classes }>{ this.renderFeatureItem( currentFeature, mapIndex ) }</div>
+			);
+		} );
+	}
+
+	renderPlanFeatureColumnsTest() {
+		const { planProperties } = this.props;
+		let previousPlanName = 'Free';
+		let currentPlanName = 'Free';
+
+		return map( planProperties, ( properties, mapIndex ) => {
+			const { planName, planObject } = properties;
+			previousPlanName = currentPlanName;
+			currentPlanName = planObject.product_name_short;
+
+			return (
+				<td key={ `${ planName }-${ mapIndex }` } className="plan-features-comparison__table-item">
+					<div className="plan-features-comparison__item is-bold">
+						Everything in { previousPlanName }, plus:{ ' ' }
+					</div>
+					{ this.renderPlanFeatures( properties, mapIndex ) }
+				</td>
 			);
 		} );
 	}
@@ -363,6 +408,10 @@ export default connect(
 				const featureAccessor = getPlanFeatureAccessor( { flowName, plan: planConstantObj } );
 				if ( featureAccessor ) {
 					planFeatures = getPlanFeaturesObject( featureAccessor() );
+				}
+
+				if ( ! isPlansPageQuickImprovements && planConstantObj.getCondensedExperimentFeatures ) {
+					planFeatures = getPlanFeaturesObject( planConstantObj.getCondensedExperimentFeatures() );
 				}
 
 				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
