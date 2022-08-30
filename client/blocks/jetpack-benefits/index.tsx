@@ -14,6 +14,7 @@ import {
 	productHasBackups,
 	productHasScan,
 	productHasAntiSpam,
+	productHasVideoPress,
 } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import JetpackBenefitsScanHistory from 'calypso/blocks/jetpack-benefits/scan-history';
 import JetpackBenefitsSiteBackups from 'calypso/blocks/jetpack-benefits/site-backups';
@@ -84,6 +85,13 @@ const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
 					description={ translate(
 						'Your 30-day Activity Log archive will revert to the 20 most recent events.'
 					) }
+				/>
+			) }
+			{ productHasVideoPress( productSlug ) && (
+				<JetpackBenefitsCard
+					headline={ translate( 'Videos' ) }
+					description={ translate( 'Videos hosted with VideoPress' ) }
+					stat={ 28 }
 				/>
 			) }
 		</React.Fragment>
