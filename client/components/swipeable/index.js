@@ -88,15 +88,19 @@ export const Swipeable = ( {
 
 	const updateEnabled = hasDynamicHeight && numPages > 1;
 
+	// is used to recalculate height, if other children were received or the same but in a different order
+	const childrenOrder = children.reduce( ( acc, child ) => acc + child.key, '' );
+
 	useLayoutEffect( () => {
 		if ( ! updateEnabled ) {
 			return;
 		}
 		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
+
 		if ( targetHeight && pagesStyle?.height !== targetHeight ) {
 			setPagesStyle( { ...pagesStyle, height: targetHeight } );
 		}
-	}, [ pagesRef, currentPage, pagesStyle, updateEnabled, containerWidth ] );
+	}, [ pagesRef, currentPage, pagesStyle, updateEnabled, containerWidth, childrenOrder ] );
 
 	const handleDragStart = useCallback(
 		( event ) => {
