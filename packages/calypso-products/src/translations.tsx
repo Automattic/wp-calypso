@@ -27,6 +27,8 @@ import {
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 	PRODUCT_JETPACK_BOOST,
 	PRODUCT_JETPACK_BOOST_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 } from './constants';
 import type { SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -395,6 +397,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const antiSpamShortDescription = translate(
 		'Automatically clear spam from your comments and forms.'
 	);
+	const socialShortDescription = translate( 'Write once, post everywhere.' );
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyShortDescription,
@@ -417,6 +420,8 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressShortDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamShortDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialShortDescription,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialShortDescription,
 	};
 };
 
