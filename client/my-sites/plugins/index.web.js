@@ -8,7 +8,6 @@ import {
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	browsePlugins,
-	browsePluginsCategory,
 	browsePluginsOrPlugin,
 	renderPluginWarnings,
 	renderProvisionPlugins,
@@ -52,7 +51,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		siteSelection,
 		navigationIfLoggedIn,
-		browsePluginsCategory,
+		browsePlugins,
 		makeLayout,
 		clientRender
 	);

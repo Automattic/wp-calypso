@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { createElement, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -19,8 +19,10 @@ import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-s
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import JetpackDisconnectedNotice from '../jetpack-disconnected-notice';
+import PluginsCategoryResultsPage from '../plugins-category-results-page';
+import PluginsDiscoveryPage from '../plugins-discovery-page';
 import PluginsNavigationHeader from '../plugins-navigation-header';
-
+import PluginsSearchResultPage from '../plugins-search-results-page';
 import './style.scss';
 
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) => {
@@ -38,22 +40,34 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) 
 	return null;
 };
 
-const PluginsBrowser = ( {
-	trackPageViews = true,
-	category,
-	search,
-	hideHeader,
-	pluginsResultsComponent,
-} ) => {
+const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
-	const searchRef = useRef( null );
 
 	// temporary solution to use same isFetching in search header & in component.
 	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
+
+	const renderList = () => {
+		if ( search ) {
+			return (
+				<PluginsSearchResultPage
+					search={ search }
+					setIsFetchingPluginsBySearchTerm={ setIsFetchingPluginsBySearchTerm }
+				/>
+			);
+		}
+
+		if ( category ) {
+			return <PluginsCategoryResultsPage category={ category } />;
+		}
+
+		return <PluginsDiscoveryPage />;
+	};
+
+	const searchRef = useRef( null );
 
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -106,13 +120,7 @@ const PluginsBrowser = ( {
 			/>
 
 			{ ! search && <Categories selected={ category } /> }
-			<div className="plugins-browser__main-container">
-				{ createElement( pluginsResultsComponent, {
-					category,
-					search,
-					setIsFetchingPluginsBySearchTerm,
-				} ) }
-			</div>
+			<div className="plugins-browser__main-container">{ renderList() }</div>
 			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>
 	);

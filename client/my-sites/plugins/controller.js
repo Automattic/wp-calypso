@@ -14,9 +14,6 @@ import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
 import PluginEligibility from './plugin-eligibility';
 import PluginBrowser from './plugins-browser';
-import PluginsCategoryResultsPage from './plugins-category-results-page';
-import PluginsDiscoveryPage from './plugins-discovery-page';
-import PluginsSearchResultPage from './plugins-search-results-page';
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -54,7 +51,7 @@ function getCategoryForPluginsBrowser( context ) {
 	return context.params.category;
 }
 
-function renderPluginsBrowser( context, pluginsResultsComponent ) {
+function renderPluginsBrowser( context ) {
 	const searchTerm = context.query.s;
 	const category = getCategoryForPluginsBrowser( context );
 
@@ -62,7 +59,6 @@ function renderPluginsBrowser( context, pluginsResultsComponent ) {
 		path: context.path,
 		category,
 		search: searchTerm,
-		pluginsResultsComponent,
 	} );
 }
 
@@ -117,25 +113,7 @@ export function browsePluginsOrPlugin( context, next ) {
 }
 
 export function browsePlugins( context, next ) {
-	const searchTerm = context.query.s;
-	let pluginsResultsComponent = PluginsDiscoveryPage;
-	if ( searchTerm ) {
-		pluginsResultsComponent = PluginsSearchResultPage;
-	}
-	renderPluginsBrowser( context, pluginsResultsComponent );
-	next();
-}
-
-export function browsePluginsCategory( context, next ) {
-	let pluginsResultsComponent = PluginsCategoryResultsPage;
-
-	// Temporary condition until all searches uses /plugin url
-	const searchTerm = context.query.s;
-	if ( searchTerm ) {
-		pluginsResultsComponent = PluginsSearchResultPage;
-	}
-
-	renderPluginsBrowser( context, pluginsResultsComponent );
+	renderPluginsBrowser( context );
 	next();
 }
 
