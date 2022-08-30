@@ -126,7 +126,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	}, [ displayManageSitePluginsModal ] );
 
 	// If we cannot retrieve plugin status through jetpack ( ! isJetpack ) and plugin is preinstalled.
-	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
+	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) && isLoggedIn ) {
 		return (
 			<div className="plugin-details-cta__container">
 				<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
