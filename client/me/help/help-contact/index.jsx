@@ -119,9 +119,9 @@ class HelpContact extends Component {
 	startHappychat = ( contactForm ) => {
 		this.recordCompactSubmit( 'happychat' );
 		this.props.openHappychat();
-		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
+		const { message, site } = contactForm;
 
-		this.props.sendUserInfo( this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } ) );
+		this.props.sendUserInfo( this.props.getUserInfo( { site } ) );
 		this.props.sendHappychatMessage( message, { includeInSummary: true } );
 
 		recordTracksEvent( 'calypso_help_live_chat_begin', {
@@ -418,8 +418,6 @@ class HelpContact extends Component {
 					onSubmit: this.startHappychat,
 					buttonLabel,
 					showSubjectField: false,
-					showHowCanWeHelpField: false,
-					showHowYouFeelField: false,
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
 				};
@@ -431,8 +429,6 @@ class HelpContact extends Component {
 					onSubmit: this.submitKayakoTicket,
 					buttonLabel: isSubmitting ? translate( 'Sending email' ) : translate( 'Email us' ),
 					showSubjectField: true,
-					showHowCanWeHelpField: false,
-					showHowYouFeelField: false,
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
 				};
@@ -457,8 +453,6 @@ class HelpContact extends Component {
 						}
 					),
 					showSubjectField: false,
-					showHowCanWeHelpField: false,
-					showHowYouFeelField: false,
 					showSiteField: false,
 					showQASuggestions: true,
 				};
@@ -498,8 +492,6 @@ class HelpContact extends Component {
 								}
 						  ),
 					showSubjectField: true,
-					showHowCanWeHelpField: false,
-					showHowYouFeelField: false,
 					showSiteField: true,
 					showAlternativeSiteOptionsField: true,
 					showHidingUrlOption: true,
@@ -584,8 +576,6 @@ class HelpContact extends Component {
 		if ( this.props.compact ) {
 			return Object.assign( props, {
 				showSubjectField: false,
-				showHowCanWeHelpField: false,
-				showHowYouFeelField: false,
 				showQASuggestions: false,
 			} );
 		}
