@@ -116,6 +116,12 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 			await editorPage.publish();
 		} );
 
+		it( 'First post congratulatory message is shown', async function () {
+			const locator = editorPage.getLocator( ':text("Your first post is published!")' );
+			await locator.waitFor();
+			await page.keyboard.press( 'Escape' );
+		} );
+
 		it( 'Exit editor', async function () {
 			await editorPage.exitEditor();
 		} );
