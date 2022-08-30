@@ -7,6 +7,7 @@ import type { Pattern } from './types';
 type PatternSelectorProps = {
 	patterns: Pattern[] | null;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
+	onDeselect: ( selectedPattern: Pattern | null ) => void;
 	title: string | null;
 	show: boolean;
 };
