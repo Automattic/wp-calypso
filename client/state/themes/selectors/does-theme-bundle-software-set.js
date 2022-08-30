@@ -5,6 +5,8 @@ import 'calypso/state/themes/init';
 
 export function doesThemeBundleSoftwareSet( state, themeId ) {
 	const theme = getTheme( state, 'wpcom', themeId );
-	const theme_plugin = theme?.taxonomies?.theme_plugin;
-	return isEnabled( 'themes/plugin-bundling' ) && theme_plugin && theme_plugin.length > 0;
+	const theme_software_set = theme?.taxonomies?.theme_software_set;
+	return (
+		isEnabled( 'themes/plugin-bundling' ) && theme_software_set && theme_software_set.length > 0
+	);
 }
