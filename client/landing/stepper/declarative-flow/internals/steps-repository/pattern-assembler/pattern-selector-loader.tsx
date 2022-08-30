@@ -5,6 +5,7 @@ import type { Pattern } from './types';
 
 type PatternSelectorLoaderProps = {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
+	onDeselect: ( selectedPattern: Pattern | null ) => void;
 	pattern: Pattern | null;
 	showPatternSelectorType: string | null;
 };
@@ -13,6 +14,7 @@ const PatternSelectorLoader = ( {
 	showPatternSelectorType,
 	pattern,
 	onSelect,
+	onDeselect,
 }: PatternSelectorLoaderProps ) => {
 	const translate = useTranslate();
 
@@ -22,6 +24,7 @@ const PatternSelectorLoader = ( {
 				show={ showPatternSelectorType === 'header' }
 				patterns={ headerPatterns }
 				onSelect={ onSelect }
+				onDeselect={ onDeselect }
 				title={ translate( 'Choose a header' ) }
 				pattern={ pattern }
 			/>
@@ -29,6 +32,7 @@ const PatternSelectorLoader = ( {
 				show={ showPatternSelectorType === 'footer' }
 				patterns={ footerPatterns }
 				onSelect={ onSelect }
+				onDeselect={ onDeselect }
 				title={ translate( 'Choose a footer' ) }
 				pattern={ pattern }
 			/>
@@ -36,6 +40,7 @@ const PatternSelectorLoader = ( {
 				show={ showPatternSelectorType === 'section' }
 				patterns={ sectionPatterns }
 				onSelect={ onSelect }
+				onDeselect={ onDeselect }
 				title={ translate( 'Choose a section' ) }
 				pattern={ pattern }
 			/>
