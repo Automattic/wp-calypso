@@ -1,10 +1,29 @@
 import formatCurrency from '@automattic/format-currency';
 import { translate } from 'i18n-calypso';
+import { hasIntroductoryOfferFreeTrial } from 'calypso/lib/emails';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import type { ReactElement } from 'react';
 
 import './style.scss';
+
+const getSalePrice = ( {
+	isEligibleForIntroductoryOffer,
+	isDiscounted,
+	product,
+}: {
+	isEligibleForIntroductoryOffer: boolean;
+	isDiscounted: boolean;
+	product: ProductListItem | null;
+} ) => {
+	if ( hasIntroductoryOfferFreeTrial( product ) ) {
+		return 0;
+	}
+	if ( isEligibleForIntroductoryOffer && ! isDiscounted ) {
+		return product?.introductory_offer?.cost_per_interval ?? 0;
+	}
+	return product?.sale_cost ?? 0;
+};
 
 const SalePriceWithInterval = ( {
 	intervalLength,
@@ -91,11 +110,22 @@ const PriceWithInterval = ( {
 		stripZeros: true,
 	} );
 
+	window.console.log( 'ZXX', {
+		cost: product?.cost,
+		isEligibleForIntroductoryOffer,
+		isDiscounted,
+		name: product?.product_name,
+		offerCost: product?.introductory_offer?.cost_per_interval,
+		saleCost: product?.sale_cost,
+	} );
+
 	if ( isDiscounted || isEligibleForIntroductoryOffer ) {
 		const salePrice = formatCurrency(
-			isEligibleForIntroductoryOffer && ! isDiscounted
-				? product?.introductory_offer?.cost_per_interval ?? 0
-				: product?.sale_cost ?? 0,
+			getSalePrice( {
+				isEligibleForIntroductoryOffer,
+				isDiscounted,
+				product,
+			} ),
 			currencyCode ?? '',
 			{ stripZeros: true }
 		);
