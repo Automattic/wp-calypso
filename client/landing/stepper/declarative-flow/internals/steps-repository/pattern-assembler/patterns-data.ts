@@ -82,6 +82,21 @@ const sectionPatterns: Pattern[] = [
 	{
 		id: 3880,
 		name: 'About me',
+<<<<<<< HEAD
+=======
+	},
+	{
+		id: 4691,
+		name: 'Payment Block Media and Text',
+	},
+	{
+		id: 3759,
+		name: 'Coming Soon',
+	},
+	{
+		id: 1400,
+		name: 'Contact',
+>>>>>>> 663114251d (Add section patterns list for testing)
 	},
 	{
 		id: 4691,
@@ -126,6 +141,26 @@ const sectionPatterns: Pattern[] = [
 	{
 		id: 678,
 		name: 'Images with Titles',
+	},
+	{
+		id: 1930,
+		name: 'Intro Section With Text and Spot Images',
+	},
+	{
+		id: 3862,
+		name: 'Alternating Image and Text',
+	},
+	{
+		id: 1826,
+		name: 'Two Images, Text, and Buttons',
+	},
+	{
+		id: 4691,
+		name: 'Payment Block Media and Text',
+	},
+	{
+		id: 1046,
+		name: 'Subscription',
 	},
 ];
 
