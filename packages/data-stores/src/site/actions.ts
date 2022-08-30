@@ -212,6 +212,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		settings: {
 			blogname?: string;
 			blogdescription?: string;
+			launchpad_screen?: string;
 			site_vertical_id?: string;
 			woocommerce_store_address?: string;
 			woocommerce_store_address_2?: string;
