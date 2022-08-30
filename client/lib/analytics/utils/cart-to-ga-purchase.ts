@@ -10,6 +10,7 @@ export type GaPurchase = {
 	transaction_id: string;
 	coupon: string;
 	items: GaItem[];
+	trackingEnvironment: TrackingEnvironment;
 };
 
 export function cartToGaPurchase(
@@ -30,5 +31,6 @@ export function cartToGaPurchase(
 		items: cartItems.map( ( product ) =>
 			productToGaItem( product, cart.currency, trackingEnvironment )
 		),
+		trackingEnvironment,
 	};
 }

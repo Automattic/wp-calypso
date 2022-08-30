@@ -509,8 +509,7 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		fireEcommercePurchaseGA4(
-			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, TrackingEnvironment.JETPACK ),
-			TrackingEnvironment.JETPACK
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, TrackingEnvironment.JETPACK )
 		);
 
 		const jetpackParams = [
@@ -549,8 +548,7 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		fireEcommercePurchaseGA4(
-			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, TrackingEnvironment.WPCOM ),
-			TrackingEnvironment.WPCOM
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, TrackingEnvironment.WPCOM )
 		);
 		debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
 	}
