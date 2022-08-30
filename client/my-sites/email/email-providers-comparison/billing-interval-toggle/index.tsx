@@ -1,5 +1,5 @@
 import { Popover } from '@automattic/components';
-import { useRef } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
@@ -17,7 +17,9 @@ export const BillingIntervalToggle = ( {
 	onIntervalChange,
 }: BillingIntervalToggleProps ): ReactElement => {
 	const translate = useTranslate();
-	const payAnnuallyButtonRef = useRef( null );
+	const [ payAnnuallyButtonRef, setPayAnnuallyButtonRef ] = useState< HTMLSpanElement | null >(
+		null
+	);
 
 	const isMonthlyPlan = intervalLength === IntervalLength.MONTHLY;
 	const isAnnuallyPlan = intervalLength === IntervalLength.ANNUALLY;
@@ -36,13 +38,14 @@ export const BillingIntervalToggle = ( {
 					selected={ isAnnuallyPlan }
 					onClick={ () => onIntervalChange( IntervalLength.ANNUALLY ) }
 				>
-					<span ref={ payAnnuallyButtonRef }>{ translate( 'Pay annually' ) }</span>
+					<span ref={ setPayAnnuallyButtonRef }>{ translate( 'Pay annually' ) }</span>
 					{ [ 'right', 'bottom' ].map( ( pos ) => (
 						<Popover
 							isVisible={ isMonthlyPlan }
 							position={ pos }
+							key={ pos }
 							autoPosition={ false }
-							context={ payAnnuallyButtonRef.current }
+							context={ payAnnuallyButtonRef }
 							className="emails-save-paying-annually__popover"
 						>
 							{ translate( 'Save by paying annually' ) }
