@@ -55,20 +55,23 @@
 }
 
 .featured-item-card--title {
-	font-size: $font-title-medium;
+	font-size: $font-title-large;
 	font-weight: 700;
-	margin: 0.5em 0;
+}
+
+.featured-item-card--price {
+	margin-top: 4px;
+	margin-bottom: 8px;
 }
 
 .featured-item-card--desc {
 	color: var( --gray-70 );
 	line-height: 1.5;
-	margin: 8px 0;
 	p {
 		display: inline-block;
 		max-width: 55ch; // stylelint-disable unit-allowed-list
 		padding-right: 8px;
-		margin: 8px 0;
+		margin: 0;
 		font-style: normal;
 		font-weight: 400;
 		font-size: $font-body-small;
@@ -80,7 +83,6 @@
 	color: var( --gray-100 );
 	display: inline-block;
 	margin-top: 4px;
-	margin-bottom: 8px;
 	text-decoration-line: underline;
 	@media only screen and ( min-width: 768px ) {
 		padding-bottom: 0;
@@ -91,5 +93,5 @@
 	align-items: center;
 	display: flex;
 	justify-content: flex-start;
-	margin-top: 4px;
+	margin-top: 24px;
 }
