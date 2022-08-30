@@ -63,15 +63,33 @@
 		display: flex;
 		align-items: center;
 		.plan-price__currency-symbol, .plan-price__integer, .plan-price__fraction {
-			font-size: $font-body-small;
+			font-size: $font-body;
 			line-height: normal;
 			margin-top: 0;
+		}
+		.plan-price.is-original {
+			.plan-price__currency-symbol, .plan-price__integer, .plan-price__fraction {
+				font-weight: 600;
+			}
 		}
 		.plan-price.is-discounted, .plan-price.is-original {
 			margin-right: 0.1em;
 		}
+		.plan-price.is-discounted {
+			color: var( --studio-gray-100 );
+			font-weight: bold;
+		}
+		.plan-price.is-original {
+			color: var( --studio-gray-100 );
+			font-weight: semibold;
+		}
 		.plan-price.is-original::before, .is-placeholder .plan-price::after {
 			display: none;
+		}
+		&__billing-time-frame, &__expiration-date {
+			color: var( --studio-gray-50 );
+			font-size: 0.75rem;
+			line-height: 24px;
 		}
 	}
 
