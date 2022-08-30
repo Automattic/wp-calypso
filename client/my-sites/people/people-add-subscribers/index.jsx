@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
@@ -72,6 +73,7 @@ class PeopleInvites extends PureComponent {
 					>
 						<AddSubscriberForm
 							siteId={ this.props.site.ID }
+							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							onImportFinished={ () => {
 								page.redirect( `/people/email-followers/${ this.props.site.slug }` );
 							} }

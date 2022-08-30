@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
@@ -125,6 +126,7 @@ class Followers extends Component {
 						>
 							<AddSubscriberForm
 								siteId={ this.props.site.ID }
+								showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 								onImportFinished={ () => {
 									page.redirect( `/people/email-followers/${ this.props.site.slug }` );
 								} }
