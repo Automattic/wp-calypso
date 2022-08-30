@@ -24,6 +24,8 @@
 }
 
 .emails-save-paying-annually__popover {
+	z-index: z-index( 'root', '.masterbar' ) - 1;
+
 	.popover__inner {
 		padding: 10px;
 	}

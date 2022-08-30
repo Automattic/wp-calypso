@@ -39,11 +39,11 @@ export const BillingIntervalToggle = ( {
 					onClick={ () => onIntervalChange( IntervalLength.ANNUALLY ) }
 				>
 					<span ref={ setPayAnnuallyButtonRef }>{ translate( 'Pay annually' ) }</span>
-					{ [ 'right', 'bottom' ].map( ( pos ) => (
+					{ [ 'right', 'bottom' ].map( ( position ) => (
 						<Popover
 							isVisible={ isMonthlyPlan }
-							position={ pos }
-							key={ pos }
+							position={ position }
+							key={ position }
 							autoPosition={ false }
 							context={ payAnnuallyButtonRef }
 							className="emails-save-paying-annually__popover"
