@@ -110,15 +110,6 @@ const PriceWithInterval = ( {
 		stripZeros: true,
 	} );
 
-	window.console.log( 'ZXX', {
-		cost: product?.cost,
-		isEligibleForIntroductoryOffer,
-		isDiscounted,
-		name: product?.product_name,
-		offerCost: product?.introductory_offer?.cost_per_interval,
-		saleCost: product?.sale_cost,
-	} );
-
 	if ( isDiscounted || isEligibleForIntroductoryOffer ) {
 		const salePrice = formatCurrency(
 			getSalePrice( {
