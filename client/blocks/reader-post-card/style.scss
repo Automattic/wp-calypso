@@ -342,14 +342,9 @@
 	position: relative;
 	-ms-overflow-style: none; /* Internet Explorer 10+ */
 	scrollbar-width: none; /* Firefox */
-	width: calc( 100% - 140px );
 	gap: 5px;
 	&::-webkit-scrollbar {
 		display: none;  /* Safari and Chrome */
-	}
-
-	@include breakpoint-deprecated( '<480px' ) {
-		width: 88%;
 	}
 
 	&::after {
