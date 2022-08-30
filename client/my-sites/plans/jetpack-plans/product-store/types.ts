@@ -30,6 +30,10 @@ export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & Produ
 
 export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductStoreBaseProps;
 
+export type productIconProps = {
+	productSlug: string;
+};
+
 export interface ViewFilterProps {
 	currentView: ViewType;
 	setCurrentView: ( currentView: ViewType ) => void;

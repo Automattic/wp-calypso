@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import tempIcon from 'calypso/assets/images/illustrations/jetpack-search.svg';
 import { ProductSimpleCardProps } from '../../types';
+import useProductIcon from '../hooks/use-product-icon';
 
 import './style.scss';
 
@@ -16,7 +16,7 @@ const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( { item } ) => {
 		// TO-DO - should redirect to correct checkout page
 	};
 
-	const productIcon = tempIcon; // TO-DO should be pulled from product data
+	const productIcon = useProductIcon( { productSlug: item.productSlug } );
 
 	const { shortName: name, description } = item;
 
