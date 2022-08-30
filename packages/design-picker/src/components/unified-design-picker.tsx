@@ -130,14 +130,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				);
 			} else {
 				text = (
-					<Button
-						isLink={ true }
-						className="design-picker__button-link"
-						onClick={ ( e: any ) => {
-							e.stopPropagation();
-							onCheckout?.();
-						} }
-					>
+					<Button isLink={ true } className="design-picker__button-link">
 						{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
 							? __( 'Included in WordPress.com Premium' )
 							: __( 'Upgrade to Premium' ) }
@@ -217,8 +210,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						) }
 					</span>
 				</span>
+				{ getPricingDescription() }
 			</button>
-			{ getPricingDescription() }
 		</div>
 	);
 };
