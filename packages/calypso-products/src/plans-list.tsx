@@ -214,13 +214,24 @@ import {
 	FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
 	FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
 	FEATURE_POST_BY_EMAIL,
-	FEATURE_REAL_TIME_ANALYTICS,
 	FEATURE_GOOGLE_ANALYTICS_V2,
 	FEATURE_ADD_UNLIMITED_LINKS,
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 	FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 	FEATURE_TRACK_VIEWS_CLICKS,
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
+	/* START - condensed_plan_features_v1 test */
+	FEATURE_HOSTING_TEST,
+	FEATURE_NO_ADS_TEST,
+	FEATURE_COLLECT_PAYMENTS_TEST,
+	FEATURE_STORE_MARKETING_TOOLS,
+	FEATURE_PREMIUM_THEMES_TEST,
+	FEATURE_REAL_TIME_ANALYTICS,
+	FEATURE_GA_TEST,
+	FEATURE_PRIORITY_SUPPORT_TEST,
+	FEATURE_PLUGINS_TEST,
+	FEATURE_SFTP_DATABASE_TEST,
+	/* END - condensed_plan_features_v1 test */
 } from './constants';
 import type {
 	BillingTerm,
@@ -265,6 +276,7 @@ const getDotcomPlanDetails = () => ( {
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		FEATURE_PRIORITY_SUPPORT_TEST,
 	],
 } );
 
@@ -426,6 +438,13 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 		FEATURE_TRACK_VIEWS_CLICKS,
 	],
+	getCondensedExperimentFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_HOSTING_TEST,
+		FEATURE_NO_ADS_TEST,
+		FEATURE_COLLECT_PAYMENTS_TEST,
+		FEATURE_EMAIL_SUPPORT_SIGNUP,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
@@ -527,6 +546,12 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SHIPPING_CARRIERS,
 			PREMIUM_DESIGN_FOR_STORES,
 		].filter( isValueTruthy ),
+	getCondensedExperimentFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		PREMIUM_DESIGN_FOR_STORES,
+		FEATURE_STORE_MARKETING_TOOLS,
+	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -674,6 +699,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
+	getCondensedExperimentFeatures: () =>
+		[
+			FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES_TEST : null,
+			FEATURE_MONETISE,
+			FEATURE_REAL_TIME_ANALYTICS,
+			FEATURE_GA_TEST,
+		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -771,6 +804,14 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 			FEATURE_SITE_BACKUPS_AND_RESTORE,
 			FEATURE_SFTP_DATABASE,
+		].filter( isValueTruthy ),
+	getCondensedExperimentFeatures: () =>
+		[
+			FEATURE_PRIORITY_SUPPORT_TEST,
+			FEATURE_PLUGINS_TEST,
+			FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+			FEATURE_SITE_BACKUPS_AND_RESTORE,
+			FEATURE_SFTP_DATABASE_TEST,
 		].filter( isValueTruthy ),
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [

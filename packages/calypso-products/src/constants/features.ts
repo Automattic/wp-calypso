@@ -97,6 +97,18 @@ export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
 
+//condensed_plan_features_v1 test
+export const FEATURE_HOSTING_TEST = 'hosting-test';
+export const FEATURE_NO_ADS_TEST = 'no-ads-test';
+export const FEATURE_COLLECT_PAYMENTS_TEST = 'collect-payments-test';
+export const FEATURE_STORE_MARKETING_TOOLS = 'store-marketing-tools';
+export const FEATURE_PREMIUM_THEMES_TEST = 'premium-themes-test';
+export const FEATURE_REAL_TIME_ANALYTICS = 'real-time-analytics';
+export const FEATURE_GA_TEST = 'ga-test';
+export const FEATURE_PRIORITY_SUPPORT_TEST = 'priority-support-test';
+export const FEATURE_PLUGINS_TEST = 'plugins-test';
+export const FEATURE_SFTP_DATABASE_TEST = 'sftp-database-test';
+
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
