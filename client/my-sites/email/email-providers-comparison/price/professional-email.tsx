@@ -61,7 +61,13 @@ const ProfessionalEmailPrice = ( {
 			) }
 
 			<PriceBadge
-				priceInformation={ <PriceInformation domain={ domain } product={ product } /> }
+				priceInformation={
+					<PriceInformation
+						domain={ domain }
+						isDomainInCart={ isDomainInCart }
+						product={ product }
+					/>
+				}
 				price={ priceWithInterval }
 			/>
 		</>
