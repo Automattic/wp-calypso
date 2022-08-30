@@ -390,7 +390,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	const searchShortDescription = translate( 'Help your site visitors find answers instantly.' );
 	const scanShortDescription = translate( 'Automatic malware scanning with one-click fixes.' );
 	const videoPressShortDescription = translate(
-		'High-quality, ad-free video built specifically for WordPress'
+		'High-quality, ad-free video built specifically for WordPress.'
 	);
 	const antiSpamShortDescription = translate(
 		'Automatically clear spam from your comments and forms.'
