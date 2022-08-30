@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		}
 	} );
 
-	it( 'Search for ecommerce', async function () {
+	it( 'Search for shipping', async function () {
 		await pluginsPage.search( 'shipping' );
 		await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
 	} );
