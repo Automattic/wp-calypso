@@ -1,5 +1,5 @@
 import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/components';
-import { css, CSSObject } from '@emotion/css';
+import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -34,11 +34,11 @@ const badges = css( {
 	marginInlineStart: 'auto',
 } );
 
-export const siteThumbnail: CSSObject = {
+export const siteThumbnail = css( {
 	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
-};
+} );
 
 const ellipsis = css( {
 	'.button.ellipsis-menu__toggle': {
@@ -77,7 +77,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 			leading={
 				<ThumbnailLink { ...siteDashboardUrlProps }>
 					<SiteItemThumbnail
-						style={ siteThumbnail }
+						className={ siteThumbnail }
 						site={ site }
 						width={ THUMBNAIL_DIMENSION.width }
 						height={ THUMBNAIL_DIMENSION.height }

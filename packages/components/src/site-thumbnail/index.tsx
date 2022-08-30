@@ -1,4 +1,3 @@
-import { css, CSSObject } from '@emotion/css';
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
@@ -14,7 +13,7 @@ const VIEWPORT_BASE = 1200;
 type Props = {
 	alt: string;
 	backgroundColor?: string;
-	style?: CSSObject;
+	className?: string;
 	mShotsUrl?: string;
 	width?: number;
 	height?: number;
@@ -29,7 +28,7 @@ type Props = {
 export const SiteThumbnail = ( {
 	backgroundColor,
 	children,
-	style,
+	className,
 	alt,
 	mShotsUrl = '',
 	bgColorImgUrl,
@@ -57,8 +56,7 @@ export const SiteThumbnail = ( {
 	const classes = classnames(
 		'site-thumbnail',
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
-		// default image width, height given by dimension if not specified in style
-		css( { width, height }, style )
+		className
 	);
 
 	const showLoader = mShotsUrl && ! isError;
