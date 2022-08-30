@@ -1,0 +1,28 @@
+.block-preview__container {
+	display: flex;
+}
+
+.block-preview__sidebar {
+	margin-right: 60px;
+}
+
+.block-preview__pattern {
+	text-align: center;
+	margin-bottom: 20px;
+	cursor: pointer;
+	transition: opacity 0.15s ease-in-out;
+
+	&:hover {
+		opacity: 0.8;
+	}
+}
+
+.block-preview__content {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+iframe {
+	border: 0;
+}
