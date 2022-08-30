@@ -114,6 +114,9 @@ export const EXTERNAL_PRODUCT_CRM = (): SelectorProduct => ( {
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
+	shortDescription: translate(
+		'Build better relationships with your customers and grow your business.'
+	),
 	buttonLabel: translate( 'Get CRM' ),
 	features: {
 		items: buildCardFeaturesFromItem( [
