@@ -19,6 +19,7 @@ interface Props {
 	pluginUpdateCount: number;
 	toggleBulkManagement: () => void;
 	updateAllPlugins: () => void;
+	removePluginNotice: ( plugin: Plugin ) => void;
 }
 export default function PluginManagementV2( {
 	plugins,
@@ -29,6 +30,7 @@ export default function PluginManagementV2( {
 	pluginUpdateCount,
 	toggleBulkManagement,
 	updateAllPlugins,
+	removePluginNotice,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 
@@ -120,6 +122,7 @@ export default function PluginManagementV2( {
 					'has-bulk-management-active': isBulkManagementActive,
 				} ) }
 				selectedSite={ selectedSite }
+				removePluginNotice={ removePluginNotice }
 			/>
 		</div>
 	);
