@@ -42,7 +42,7 @@ export function fireEcommerceAddToCart( item: GaItem, ga4PropertyGtag: Ga4Proper
 
 export function firePageView( title: string, location: string, ga4PropertyGtag: Ga4PropertyGtag ) {
 	window.gtag( 'event', 'page_view', {
-		send_to: Ga4PropertyGtag[ ga4PropertyGtag ],
+		send_to: ga4Properties[ ga4PropertyGtag ],
 		page_title: title,
 		page_location: location,
 	} );
