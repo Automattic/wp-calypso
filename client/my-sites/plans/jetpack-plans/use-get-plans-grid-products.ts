@@ -8,6 +8,7 @@ import {
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	getPlan,
@@ -98,6 +99,15 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		)
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_VIDEOPRESS_PRODUCTS ];
+	}
+
+	// If Jetpack Social is directly or indirectly owned, continue, otherwise make it available.
+	if (
+		! ownedProducts.some( ( ownedProduct ) =>
+			( JETPACK_SOCIAL_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+		)
+	) {
+		availableProducts = [ ...availableProducts, ...JETPACK_SOCIAL_PRODUCTS ];
 	}
 
 	return {
