@@ -113,7 +113,7 @@ export class PlansStep extends Component {
 			} );
 			this.props.goToNextStep();
 		} else if ( flowName === LINK_IN_BIO_FLOW ) {
-			// newsletter flow always uses pub/lettre
+			// link-in-bio flow always uses pub/lynx
 			this.props.submitSignupStep( step, {
 				cartItem,
 				themeSlugWithRepo: 'pub/lynx',
