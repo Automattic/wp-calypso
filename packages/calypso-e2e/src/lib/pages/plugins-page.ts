@@ -23,6 +23,7 @@ const selectors = {
 	categoryButton: ( section: string ) =>
 		`button:has-text("${ section }"),a:has-text("${ section }")`,
 	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
+	breadcrumbPluginDetail: ( section: string ) => `main > header a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
 	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
@@ -186,6 +187,13 @@ export class PluginsPage {
 	 */
 	async clickPluginsBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Plugins' ) );
+	}
+
+	/**
+	 * Click the Plugin detail breadcrumb
+	 */
+	async clickPluginsDetailBreadcrumb(): Promise< void > {
+		await this.page.click( selectors.breadcrumbPluginDetail( 'Plugins' ) );
 	}
 
 	/**
