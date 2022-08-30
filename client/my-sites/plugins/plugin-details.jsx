@@ -80,7 +80,6 @@ function PluginDetails( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const breadcrumbs = useSelector( getBreadcrumbs );
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	// Site information.
@@ -219,38 +218,42 @@ function PluginDetails( props ) {
 
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
-	useEffect( () => {
-		if ( breadcrumbs.length === 0 ) {
-			dispatch(
-				appendBreadcrumb( {
-					label: translate( 'Plugins' ),
-					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
-					id: 'plugins',
-					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins.'
-					),
-				} )
-			);
-		}
+	const setBreadcrumbs = useCallback(
+		( isEmptyBreadcrumbs ) => {
+			if ( isEmptyBreadcrumbs ) {
+				dispatch(
+					appendBreadcrumb( {
+						label: translate( 'Plugins' ),
+						href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
+						id: 'plugins',
+						helpBubble: translate(
+							'Add new functionality and integrations to your site with plugins.'
+						),
+					} )
+				);
+			}
 
-		if ( fullPlugin.name && props.pluginSlug ) {
-			dispatch(
-				appendBreadcrumb( {
-					label: fullPlugin.name,
-					href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
-					id: `plugin-${ props.pluginSlug }`,
-				} )
-			);
-		}
-	}, [
-		fullPlugin.name,
-		props.pluginSlug,
-		selectedSite,
-		breadcrumbs.length,
-		dispatch,
-		translate,
-		localizePath,
-	] );
+			if ( fullPlugin.name && props.pluginSlug ) {
+				dispatch(
+					appendBreadcrumb( {
+						label: fullPlugin.name,
+						href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
+						id: `plugin-${ props.pluginSlug }`,
+					} )
+				);
+			}
+		},
+		[ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, translate, localizePath ]
+	);
+
+	useServerEffect( setBreadcrumbs );
+
+	// We need to get the breadcrumbs here, after initial append dispatches on server.
+	const breadcrumbs = useSelector( getBreadcrumbs );
+
+	useEffect( () => {
+		setBreadcrumbs( breadcrumbs.length === 0 );
+	}, [ setBreadcrumbs, breadcrumbs.length ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {

@@ -144,6 +144,8 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	}, [ translate, localizePath, selectedSite?.slug, category, search, dispatch, categoryName ] );
 
 	useServerEffect( setBreadcrumbs );
+
+	// We need to get the breadcrumbs here, after initial update dispatch on server.
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	useEffect( () => {
