@@ -412,7 +412,7 @@ const ConnectedPlanFeaturesComparison = connect(
 					isPlaceholder = true;
 				}
 
-				const featureAccessor = getPlanFeatureAccessor( flowName, planConstantObj );
+				const featureAccessor = getPlanFeatureAccessor( { flowName, plan: planConstantObj } );
 				if ( ! isPlansPageQuickImprovements && featureAccessor ) {
 					planFeatures = getPlanFeaturesObject( featureAccessor() );
 				}
