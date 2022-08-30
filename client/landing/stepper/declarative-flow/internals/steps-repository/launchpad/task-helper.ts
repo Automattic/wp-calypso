@@ -1,4 +1,5 @@
 import { translate } from 'i18n-calypso';
+import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
@@ -9,6 +10,9 @@ export function getEnhancedTasks(
 	site: SiteDetails | null
 ) {
 	const enhancedTaskList: Task[] = [];
+	const productSlug = site?.plan?.product_slug;
+	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
+
 	tasks &&
 		tasks.map( ( task ) => {
 			let taskData = {};
@@ -21,7 +25,7 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
-						badgeText: site?.plan?.product_name_short || '',
+						badgeText: translatedPlanName,
 					};
 					break;
 				case 'subscribers_added':
