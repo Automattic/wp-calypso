@@ -1,23 +1,30 @@
 import { localizePath } from '../localize-path';
 
 describe( '#localizePath', () => {
-	test( 'should not change URL for `en`', () => {
-		[ '/', '/de/', '/start/', '/wp-login.php?action=lostpassword' ].forEach( ( fullUrl ) => {
-			expect( localizePath( fullUrl, 'en' ) ).toEqual( fullUrl );
+	test( 'should not change path for `en`', () => {
+		[ '/', '/de/', '/start/', '/wp-login.php?action=lostpassword' ].forEach( ( path ) => {
+			expect( localizePath( path, 'en' ) ).toEqual( path );
 		} );
 	} );
 
-	test( 'should change relative URLs', () => {
-		expect( localizePath( '/fr/themes' ) ).toEqual( '/fr/themes' );
-		expect( localizePath( '/fr/themes', 'en', false ) ).toEqual( '/fr/themes' );
-		expect( localizePath( '/fr/themes', 'fr', false ) ).toEqual( '/fr/themes' );
+	test( 'should change path if specified', () => {
+		expect( localizePath( '/wp-admin', 'en', false ) ).toEqual( '/wp-admin' );
+		expect( localizePath( '/wp-admin', 'de', true ) ).toEqual( '/wp-admin' );
+		expect( localizePath( '/wp-admin', 'de', false ) ).toEqual( '/wp-admin' );
+		expect( localizePath( '/wp-login.php', 'es', false ) ).toEqual( '/wp-login.php' );
+
+		expect( localizePath( '/log-in', 'es' ) ).toEqual( '/log-in/' );
+		expect( localizePath( '/log-in', 'es', false ) ).toEqual( '/log-in/es/' );
+
+		expect( localizePath( '/new', 'es' ) ).toEqual( '/new/' );
+		expect( localizePath( '/new', 'es', false ) ).toEqual( '/new/es/' );
+
+		expect( localizePath( '/setup', 'es' ) ).toEqual( '/setup/' );
+		expect( localizePath( '/setup', 'es', false ) ).toEqual( '/setup/es/' );
+
 		expect( localizePath( '/some/path', 'es', true ) ).toEqual( '/some/path' );
 		expect( localizePath( '/some/path', 'es', false ) ).toEqual( '/some/path' );
-		expect( localizePath( 'https://example.com', 'es', true ) ).toEqual( 'https://example.com/' );
-		expect( localizePath( 'https://example.com', 'es', false ) ).toEqual( 'https://example.com/' );
-		expect( localizePath( 'https://wordpress.com/themes', 'en', true ) ).toEqual( '/themes/' );
-		expect( localizePath( 'https://wordpress.com/themes', 'es', true ) ).toEqual( '/themes/' );
-		expect( localizePath( 'https://wordpress.com/themes', 'es', false ) ).toEqual( '/es/themes/' );
+
 		expect( localizePath( localizePath( '/themes', 'de', false ), 'de', false ) ).toEqual(
 			'/de/themes/'
 		);
@@ -26,7 +33,15 @@ describe( '#localizePath', () => {
 		);
 	} );
 
-	test( 'handles invalid URLs', () => {
+	test( 'handles full wordpress.com URLs', () => {
+		expect( localizePath( 'https://example.com', 'es', true ) ).toEqual( 'https://example.com' );
+		expect( localizePath( 'https://example.com', 'es', false ) ).toEqual( 'https://example.com' );
+		expect( localizePath( 'https://wordpress.com/themes', 'en', true ) ).toEqual( '/themes/' );
+		expect( localizePath( 'https://wordpress.com/themes', 'es', true ) ).toEqual( '/themes/' );
+		expect( localizePath( 'https://wordpress.com/themes', 'es', false ) ).toEqual( '/es/themes/' );
+	} );
+
+	test( 'handles invalid paths', () => {
 		[ undefined, null, [], {}, { href: 'https://test' }, () => {}, 'http://' ].forEach(
 			( fullUrl ) => {
 				expect( localizePath( fullUrl, 'en' ) ).toEqual( fullUrl );
@@ -36,8 +51,8 @@ describe( '#localizePath', () => {
 	} );
 
 	test( 'trailing slash variations', () => {
-		expect( localizePath( '/cookies/', 'de' ) ).toEqual( '/cookies/' );
-		expect( localizePath( '/cookies', 'de' ) ).toEqual( '/cookies' );
+		expect( localizePath( '/theme/', 'de', false ) ).toEqual( '/de/theme/' );
+		expect( localizePath( '/theme', 'de', false ) ).toEqual( '/de/theme/' );
 	} );
 
 	test( 'theme', () => {
@@ -56,6 +71,13 @@ describe( '#localizePath', () => {
 	} );
 
 	test( 'themes', () => {
+		expect( localizePath( '/fr/themes' ) ).toEqual( '/fr/themes' );
+		expect( localizePath( '/fr/themes', 'en', false ) ).toEqual( '/fr/themes' );
+		expect( localizePath( '/fr/themes', 'fr', false ) ).toEqual( '/fr/themes' );
+
+		expect( localizePath( 'themes', 'fr', true ) ).toEqual( '/themes/' );
+		expect( localizePath( 'themes', 'fr', false ) ).toEqual( '/fr/themes/' );
+
 		expect( localizePath( '/themes/', 'en', true ) ).toEqual( '/themes/' );
 		expect( localizePath( '/themes/', 'de', true ) ).toEqual( '/themes/' );
 		expect( localizePath( '/themes/', 'de', false ) ).toEqual( '/de/themes/' );
