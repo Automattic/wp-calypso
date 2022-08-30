@@ -8,10 +8,7 @@ interface BadgesProps {
 	variations: ThemeStyleVariation[];
 }
 
-const Badges: React.FC< BadgesProps > = ( {
-	maxVariationsToShow = 4,
-	variations = [],
-} ) => {
+const Badges: React.FC< BadgesProps > = ( { maxVariationsToShow = 4, variations = [] } ) => {
 	const variationsToShow = useMemo(
 		() => variations.slice( 0, maxVariationsToShow ),
 		[ variations, maxVariationsToShow ]
