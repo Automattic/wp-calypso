@@ -23,12 +23,17 @@
 		font-size: $font-body-small;
 	}
 
+	.credentials-form__buttons.form-fieldset:last-child {
+		margin-bottom: 20px;
+	}
+
 	@include breakpoint-deprecated( '>660px' ) {
 		.credentials-form__intro-text {
 			font-size: $font-body;
 		}
 	}
 }
+
 
 .credentials-form__buttons .credentials-form__buttons-flex {
 	display: flex;
