@@ -76,8 +76,8 @@ export function fireGoogleAnalyticsPageView(
 	useJetpackGoogleAnalytics = false
 ) {
 	const ga4PropertyGtag = useJetpackGoogleAnalytics
-		? GA4.TrackingEnvironment.JETPACK
-		: GA4.TrackingEnvironment.WPCOM;
+		? GA4.Ga4PropertyGtag.JETPACK
+		: GA4.Ga4PropertyGtag.WPCOM;
 	GA4.firePageView( pageTitle, urlPath, ga4PropertyGtag );
 
 	const params = {

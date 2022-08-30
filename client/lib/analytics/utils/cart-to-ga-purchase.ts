@@ -1,5 +1,4 @@
 import { ResponseCart } from '@automattic/shopping-cart';
-import { TrackingEnvironment } from '../ad-tracking/google-analytics-4';
 import { GaItem, productToGaItem } from './product-to-ga-item';
 import { WpcomJetpackCartInfo } from './split-wpcom-jetpack-cart-info';
 
@@ -10,14 +9,12 @@ export type GaPurchase = {
 	transaction_id: string;
 	coupon: string;
 	items: GaItem[];
-	trackingEnvironment: TrackingEnvironment;
 };
 
 export function cartToGaPurchase(
 	orderId: string,
 	cart: ResponseCart,
-	cartInfo: WpcomJetpackCartInfo,
-	trackingEnvironment: TrackingEnvironment
+	cartInfo: WpcomJetpackCartInfo
 ): GaPurchase {
 	const value = cartInfo.containsWpcomProducts ? cartInfo.wpcomCostUSD : cartInfo.jetpackCostUSD;
 	const cartItems = cartInfo.containsWpcomProducts
@@ -28,9 +25,6 @@ export function cartToGaPurchase(
 		coupon: cart.coupon,
 		currency: 'USD', // we track all prices in USD
 		value,
-		items: cartItems.map( ( product ) =>
-			productToGaItem( product, cart.currency, trackingEnvironment )
-		),
-		trackingEnvironment,
+		items: cartItems.map( ( product ) => productToGaItem( product, cart.currency ) ),
 	};
 }

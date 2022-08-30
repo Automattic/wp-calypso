@@ -37,7 +37,7 @@ import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import {
 	fireEcommercePurchase as fireEcommercePurchaseGA4,
-	TrackingEnvironment,
+	Ga4PropertyGtag,
 } from './google-analytics-4';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
@@ -509,7 +509,8 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		fireEcommercePurchaseGA4(
-			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, TrackingEnvironment.JETPACK )
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
+			Ga4PropertyGtag.WPCOM
 		);
 
 		const jetpackParams = [
@@ -546,12 +547,19 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
-		fireEcommercePurchaseGA4(
-			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo, TrackingEnvironment.WPCOM )
-		);
-		debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
+	if (
+		! wpcomJetpackCartInfo.containsWpcomProducts &&
+		! wpcomJetpackCartInfo.containsJetpackProducts
+	) {
+		debug( 'recordOrderInWPcomGA4: [Skipping] No products' );
+		return;
 	}
+	// Firing both Jetpack and WPcom Purchases on WPcom (similar to enhanced ecommerce in UA).
+	fireEcommercePurchaseGA4(
+		cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
+		Ga4PropertyGtag.WPCOM
+	);
+	debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
 }
 
 /**

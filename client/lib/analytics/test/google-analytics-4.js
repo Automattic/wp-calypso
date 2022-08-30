@@ -3,7 +3,7 @@
  */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from '../ad-tracking/constants';
-import { setup, firePageView, TrackingEnvironment } from '../ad-tracking/google-analytics-4';
+import { setup, firePageView, Ga4PropertyGtag } from '../ad-tracking/google-analytics-4';
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
@@ -61,7 +61,7 @@ describe( 'Google Analytics 4 implementation', () => {
 				page_location: '/',
 			};
 
-			firePageView( gtagParams.page_title, gtagParams.page_location, TrackingEnvironment.WPCOM );
+			firePageView( gtagParams.page_title, gtagParams.page_location, Ga4PropertyGtag.WPCOM );
 			expect( window.gtag ).toHaveBeenCalledWith( 'event', 'page_view', gtagParams );
 		} );
 	} );
