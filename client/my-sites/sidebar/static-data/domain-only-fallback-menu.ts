@@ -10,13 +10,6 @@ const domainOnlyFallbackMenu = ( { siteDomain }: { siteDomain: string } ) => {
 			url: `/domains/manage/${ siteDomain }/edit/${ siteDomain }`,
 		},
 		{
-			icon: 'dashicons-admin-settings',
-			slug: 'manage-email',
-			title: translate( 'Manage email' ),
-			type: 'menu-item',
-			url: `/email/${ siteDomain }/manage/${ siteDomain }`,
-		},
-		{
 			icon: 'dashicons-cart',
 			slug: 'manage-purchases',
 			title: translate( 'Manage purchases' ),
