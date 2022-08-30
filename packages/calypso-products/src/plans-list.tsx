@@ -431,6 +431,12 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_COLLECT_PAYMENTS_V2,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
 	],
+	getNewsletterDescription: () =>
+		i18n.translate(
+			'Jumpstart your Newsletter with a custom domain, ad-free experience, ' +
+				'and the ability to sell subscriptions, take payments, and collect donations from ' +
+				'day one. Backed with email support to help get everything just right.'
+		),
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_EMAILS,
@@ -448,6 +454,12 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_UNLIMITED_SUBSCRIBERS,
 		FEATURE_AD_FREE_EXPERIENCE,
 	],
+	getLinkInBioDescription: () =>
+		i18n.translate(
+			'Stand out and unlock earnings with an ad-free site, custom domain, ' +
+				'and the ability to sell subscriptions, take payments, and collect donations. ' +
+				'Backed with email support to help get your site just right.'
+		),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_ADD_UNLIMITED_LINKS,
@@ -710,6 +722,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ADVANCED_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
+	getNewsletterDescription: () =>
+		i18n.translate(
+			'Take your Newsletter further, faster. Get everything included in Personal, ' +
+				'plus premium design themes, baked-in video uploads, ad monetization, deep visitor ' +
+				'insights from Google Analytics, and live chat support.'
+		),
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_EMAILS,
@@ -734,6 +752,12 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_REAL_TIME_ANALYTICS,
 		FEATURE_PREMIUM_THEMES,
 	],
+	getLinkInBioDescription: () =>
+		i18n.translate(
+			'Stand out and unlock earnings with an ad-free site, custom domain, ' +
+				'and the ability to sell subscriptions, take payments, and collect donations. ' +
+				'Backed with email support to help get your site just right.'
+		),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_ADD_UNLIMITED_LINKS,
