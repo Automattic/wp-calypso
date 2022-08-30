@@ -1,9 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { addQueryArgs } from 'calypso/lib/route';
 import type { ViewFilterProps } from './types';
 
 export const ViewFilter: React.FC< ViewFilterProps > = ( { currentView, setCurrentView } ) => {
 	const translate = useTranslate();
+
+	const currentPath = window.location.pathname + window.location.search;
 
 	return (
 		<div className="jetpack-product-store__view-filter">
@@ -11,6 +14,7 @@ export const ViewFilter: React.FC< ViewFilterProps > = ( { currentView, setCurre
 				<SegmentedControl.Item
 					onClick={ () => setCurrentView( 'products' ) }
 					selected={ currentView === 'products' }
+					path={ addQueryArgs( { view: 'products' }, currentPath ) }
 				>
 					{ translate( 'Products' ) }
 				</SegmentedControl.Item>
@@ -18,6 +22,7 @@ export const ViewFilter: React.FC< ViewFilterProps > = ( { currentView, setCurre
 				<SegmentedControl.Item
 					onClick={ () => setCurrentView( 'bundles' ) }
 					selected={ currentView === 'bundles' }
+					path={ addQueryArgs( { view: 'bundles' }, currentPath ) }
 				>
 					{ translate( 'Bundles' ) }
 				</SegmentedControl.Item>

@@ -22,7 +22,11 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	const siteId = useSelector( getSelectedSiteId );
 	const productSlugs = useProductSlugs( { siteId, duration } );
 
-	const [ currentView, setCurrentView ] = useState< ViewType >( 'products' );
+	const [ currentView, setCurrentView ] = useState< ViewType >( () => {
+		return urlQueryArgs?.view && [ 'products', 'bundles' ].includes( urlQueryArgs.view )
+			? urlQueryArgs.view
+			: 'products';
+	} );
 
 	return (
 		<div className="jetpack-product-store">
