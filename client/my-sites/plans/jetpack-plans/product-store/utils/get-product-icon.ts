@@ -26,12 +26,12 @@ const PRODUCT_ICON_MAP: Record< string, string > = {
 	...setProductsIcon( JETPACK_VIDEOPRESS_PRODUCTS, JetpackProductIconVideopress ),
 	...setProductsIcon( JETPACK_SEARCH_PRODUCTS, JetpackProductIconSearch ),
 	...setProductsIcon( JETPACK_BOOST_PRODUCTS, JetpackProductIconBoost ),
-	// TODO - Set Jetpack social product ucon here
+	// TODO - Set Jetpack social product icon here
 	...setProductsIcon( JETPACK_CRM_PRODUCTS, JetpackProductIconCRM ),
 };
 
-const useProductIcon = ( { productSlug }: productIconProps ): string => {
+const getProductIcon = ( { productSlug }: productIconProps ): string => {
 	return PRODUCT_ICON_MAP[ productSlug ];
 };
 
-export default useProductIcon;
+export default getProductIcon;
