@@ -48,6 +48,8 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	const toggleVisible = () => {
 		if ( ! isVisible ) {
 			handleClose();
+			// after calling handleClose, reset the visibility state to default
+			setIsVisible( true );
 		}
 	};
 
