@@ -15,7 +15,8 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	checkoutURL,
 } ) => {
 	const translate = useTranslate();
-	const { shortName: name, description } = item;
+	const { shortName: name } = item;
+	const productDescription = item?.shortDescription || item.description;
 
 	return (
 		<div className="simple-product-card">
@@ -40,7 +41,7 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 					</Button>
 				</div>
 				<div className="simple-product-card__info-content">
-					{ description }
+					{ productDescription }
 					<Button
 						className="simple-product-card__info-more-link"
 						onClick={ onClickMore }
