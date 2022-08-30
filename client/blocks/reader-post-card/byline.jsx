@@ -1,9 +1,9 @@
-import { Gridicon } from '@automattic/components';
-import { get, values } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
@@ -12,40 +12,7 @@ import FollowButton from 'calypso/reader/follow-button';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { getStreamUrl } from 'calypso/reader/route';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
-	recordPermalinkClick,
-} from 'calypso/reader/stats';
-
-const TAGS_TO_SHOW = 3;
-
-class TagLink extends Component {
-	recordSingleTagClick = () => {
-		const tag = this.props.tag;
-		recordAction( 'click_tag' );
-		recordGaEvent( 'Clicked Tag Link' );
-		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
-			tag: tag.slug,
-		} );
-	};
-
-	render() {
-		const tag = this.props.tag;
-		return (
-			<span className="reader-post-card__tag">
-				<a
-					href={ '/tag/' + tag.slug }
-					className="reader-post-card__tag-link ignore-click"
-					onClick={ this.recordSingleTagClick }
-				>
-					{ tag.name }
-				</a>
-			</span>
-		);
-	}
-}
+import { recordPermalinkClick } from 'calypso/reader/stats';
 
 class PostByline extends Component {
 	static propTypes = {
@@ -104,11 +71,6 @@ class PostByline extends Component {
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
-		const tagsInOccurrenceOrder = values( post.tags );
-		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
-		const tags = tagsInOccurrenceOrder
-			.slice( 0, TAGS_TO_SHOW )
-			.map( ( tag ) => <TagLink tag={ tag } key={ tag.slug } /> );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
@@ -173,13 +135,8 @@ class PostByline extends Component {
 								</a>
 							</span>
 						) }
-						{ tags.length > 0 && (
-							<span className="reader-post-card__tags">
-								<Gridicon icon="tag" />
-								{ tags }
-							</span>
-						) }
 					</div>
+					<TagsList post={ post } />
 				</div>
 				{ showPrimaryFollowButton && followUrl && (
 					<FollowButton

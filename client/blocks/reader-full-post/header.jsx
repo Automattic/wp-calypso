@@ -1,13 +1,12 @@
-import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { keys, trim } from 'lodash';
+import { trim } from 'lodash';
 import PropTypes from 'prop-types';
+import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import AutoDirection from 'calypso/components/auto-direction';
 import ExternalLink from 'calypso/components/external-link';
 import TimeSince from 'calypso/components/time-since';
 import { isDiscoverPost } from 'calypso/reader/discover/helper';
 import { recordPermalinkClick } from 'calypso/reader/stats';
-import ReaderFullPostHeaderTags from './header-tags';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
 const ReaderFullPostHeader = ( { post, referralPost } ) => {
@@ -62,14 +61,8 @@ const ReaderFullPostHeader = ( { post, referralPost } ) => {
 						</a>
 					</span>
 				) : null }
-
-				{ post.tags && keys( post.tags ).length > 0 ? (
-					<div className="reader-full-post__header-tags">
-						<Gridicon icon="tag" size={ 18 } />
-						<ReaderFullPostHeaderTags tags={ post.tags } />
-					</div>
-				) : null }
 			</div>
+			<TagsList post={ post } tagsToShow={ 5 } />
 		</div>
 	);
 	/* eslint-enable react/jsx-no-target-blank */
