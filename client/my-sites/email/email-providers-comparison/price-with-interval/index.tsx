@@ -78,22 +78,24 @@ const PriceWithInterval = ( {
 	currencyCode,
 	intervalLength,
 	isDiscounted = false,
-	isEligibleForFreeTrial,
+	isEligibleForIntroductoryOffer,
 	product,
 }: {
 	currencyCode: string | null;
 	intervalLength: IntervalLength;
 	isDiscounted?: boolean;
-	isEligibleForFreeTrial: boolean;
+	isEligibleForIntroductoryOffer: boolean;
 	product: ProductListItem | null;
 } ): ReactElement => {
 	const standardPrice = formatCurrency( product?.cost ?? 0, currencyCode ?? '', {
 		stripZeros: true,
 	} );
 
-	if ( isDiscounted || isEligibleForFreeTrial ) {
+	if ( isDiscounted || isEligibleForIntroductoryOffer ) {
 		const salePrice = formatCurrency(
-			isEligibleForFreeTrial ? 0 : product?.sale_cost ?? 0,
+			isEligibleForIntroductoryOffer && ! isDiscounted
+				? product?.introductory_offer?.cost_per_interval ?? 0
+				: product?.sale_cost ?? 0,
 			currencyCode ?? '',
 			{ stripZeros: true }
 		);
