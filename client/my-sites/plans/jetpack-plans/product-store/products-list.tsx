@@ -60,7 +60,22 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 
 				<div className="jetpack-product-store__products-list-all-grid">
 					{ allItems.map( ( item ) => {
-						return <ProductSimpleCard key={ item.productSlug } item={ item } />;
+						return (
+							<ProductSimpleCard
+								key={ item.productSlug }
+								item={ item }
+								siteId={ siteId }
+								isOwned={ isOwned( item ) }
+								onClickMore={ () => {
+									recordTracksEvent( 'calypso_product_more_about_product_click', {
+										product: item.productSlug,
+									} );
+									// TODO: Open modal
+								} }
+								onClickPurchase={ getOnClickPurchase( item ) }
+								checkoutURL={ getCheckoutURL( item ) }
+							/>
+						);
 					} ) }
 				</div>
 			</div>

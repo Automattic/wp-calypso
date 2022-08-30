@@ -75,3 +75,5 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 	onClickMore: VoidFunction;
 	onClickPurchase?: VoidFunction;
 };
+
+export type ProductSimpleCardProps = Omit< FeaturedItemCardProps, 'hero' >;

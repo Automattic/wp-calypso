@@ -1,20 +1,20 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ProductSimpleCardProps } from '../../types';
 import useProductIcon from '../hooks/use-product-icon';
+import { ItemPrice } from '../item-price';
+import { ProductSimpleCardProps } from '../types';
 
 import './style.scss';
 
-const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( { item } ) => {
+const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( {
+	item,
+	isOwned,
+	siteId,
+	onClickMore,
+	onClickPurchase,
+	checkoutURL,
+} ) => {
 	const translate = useTranslate();
-
-	const onMoreLinkClick = () => {
-		// TO-DO - should display product lightbox
-	};
-
-	const onCheckoutClick = () => {
-		// TO-DO - should redirect to correct checkout page
-	};
 
 	const productIcon = useProductIcon( { productSlug: item.productSlug } );
 
@@ -29,11 +29,13 @@ const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( { item } ) => {
 				<div className="product-simple-card__info-header">
 					<h3 className="product-simple-card__info-header-name">
 						{ name }
-						<span></span>
+
+						<ItemPrice isOwned={ isOwned } item={ item } siteId={ siteId } />
 					</h3>
 					<Button
 						className="product-simple-card__info-header-checkout"
-						onClick={ onCheckoutClick }
+						onClick={ onClickPurchase }
+						href={ checkoutURL }
 						primary
 						compact
 					>
@@ -44,8 +46,8 @@ const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( { item } ) => {
 					{ description }
 					<a
 						className="product-simple-card__info-more-link"
-						onClick={ onMoreLinkClick }
-						href="https://jetpack.com/for/agencies/"
+						onClick={ onClickMore }
+						href="https://jetpack.com/pricing/"
 						target="_blank"
 						rel="noreferrer"
 					>
