@@ -44,6 +44,18 @@ const footerPatterns: Pattern[] = [
 
 const sectionPatterns: Pattern[] = [
 	{
+		id: 3296,
+		name: 'About me',
+	},
+	{
+		id: 2993,
+		name: 'Full-width Image with Text and Button Overlay',
+	},
+	{
+		id: 857,
+		name: 'Image and text side by side',
+	},
+	{
 		id: 5306,
 		name: 'Heading, Three-up, and Paragraph',
 	},
@@ -53,11 +65,43 @@ const sectionPatterns: Pattern[] = [
 	},
 	{
 		id: 3880,
-		name: 'Two column about me layout',
+		name: 'About me',
+	},
+	{
+		id: 4691,
+		name: 'Payment Block Media and Text',
+	},
+	{
+		id: 3759,
+		name: 'Coming Soon',
+	},
+	{
+		id: 1400,
+		name: 'Contact',
 	},
 	{
 		id: 54,
 		name: 'Masonry Gallery',
+	},
+	{
+		id: 1930,
+		name: 'Intro Section With Text and Spot Images',
+	},
+	{
+		id: 3862,
+		name: 'Alternating Image and Text',
+	},
+	{
+		id: 1826,
+		name: 'Two Images, Text, and Buttons',
+	},
+	{
+		id: 4691,
+		name: 'Payment Block Media and Text',
+	},
+	{
+		id: 1046,
+		name: 'Subscription',
 	},
 ];
 
