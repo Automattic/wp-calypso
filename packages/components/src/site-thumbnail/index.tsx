@@ -1,3 +1,4 @@
+import { css } from '@emotion/css';
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
@@ -7,6 +8,8 @@ import { getTextColorFromBackground } from './utils';
 export type SizeCss = { width: number; height: number };
 
 const DEFAULT_SIZE = { width: 106, height: 76.55 };
+
+const DEFAULT_CLASSNAME = css( DEFAULT_SIZE );
 
 const VIEWPORT_BASE = 1200;
 
@@ -28,7 +31,7 @@ type Props = {
 export const SiteThumbnail = ( {
 	backgroundColor,
 	children,
-	className,
+	className = DEFAULT_CLASSNAME,
 	alt,
 	mShotsUrl = '',
 	bgColorImgUrl,
