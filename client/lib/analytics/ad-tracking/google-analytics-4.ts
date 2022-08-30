@@ -31,7 +31,7 @@ export function fireEcommercePurchase( purchase: GaPurchase, ga4PropertyGtag: Ga
 	} );
 }
 
-export function fireJetpackEcommerceAddToCart( item: GaItem, ga4PropertyGtag: Ga4PropertyGtag ) {
+export function fireEcommerceAddToCart( item: GaItem, ga4PropertyGtag: Ga4PropertyGtag ) {
 	window.gtag( 'event', 'add_to_cart', {
 		send_to: Ga4PropertyGtag[ ga4PropertyGtag ],
 		value: item.price,
