@@ -7,6 +7,7 @@ import { useCreateCheckout } from './hooks/use-create-checkout';
 import { useProductsToDisplay } from './hooks/use-products-to-display';
 import { MostPopular } from './most-popular';
 import ProductSimpleCard from './product-simple-card';
+import { getSortedDisplayableProducts } from './utils/get-sorted-displayable-products';
 import type { ProductsListProps } from './types';
 
 export const ProductsList: React.FC< ProductsListProps > = ( {
@@ -46,7 +47,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	} );
 
 	const allItems = useMemo(
-		() => [ ...popularItems, ...otherItems ],
+		() => getSortedDisplayableProducts( [ ...popularItems, ...otherItems ] ),
 		[ popularItems, otherItems ]
 	);
 
