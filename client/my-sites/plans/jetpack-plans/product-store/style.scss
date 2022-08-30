@@ -1,10 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.main.is-wide-layout.jetpack-pricing-page-rework-v1 {
-	max-width: 1192px;
-}
-
 .jetpack-product-store {
 	display: flex;
 	flex-direction: column;
@@ -84,7 +80,7 @@
 		}
 		.plan-price.is-discounted {
 			color: var( --studio-gray-100 );
-			font-weight: bold;
+			font-weight: 700;
 		}
 		.plan-price.is-original {
 			color: var( --studio-gray-100 );
