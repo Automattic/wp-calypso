@@ -150,16 +150,11 @@ class Signup extends Component {
 		resumingStep: undefined,
 		previousFlowName: null,
 		signupSiteName: null,
-		progressBar: false,
-		isTailoredFlow: false,
 	};
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
 		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		this.progressBar( flow.name );
-		this.isTailoredFlow( flow.name );
-
 		const queryObject = this.props.initialContext?.query ?? {};
 
 		let providedDependencies;
@@ -349,16 +344,6 @@ class Signup extends Component {
 		if ( siteType === 'business' ) {
 			this.props.loadTrackingTool( 'HotJar' );
 		}
-	}
-
-	progressBar( flowName ) {
-		this.setState( {
-			progressBar: { flowName, stepName: this.props.stepName },
-		} );
-	}
-
-	isTailoredFlow( flowName ) {
-		this.setState( { isTailoredFlow: [ 'newsletter', 'link-in-bio' ].includes( flowName ) } );
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
@@ -773,10 +758,12 @@ class Signup extends Component {
 					<DocumentHead title={ this.props.pageTitle } />
 					{ ! isP2Flow( this.props.flowName ) && (
 						<SignupHeader
-							progressBar={ this.state.isTailoredFlow && this.state.progressBar }
+							progressBar={ {
+								flowName: this.props.flowName,
+								stepName: this.props.stepName,
+							} }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
-							pageTitle={ this.state.isTailoredFlow && this.props.pageTitle }
 							rightComponent={
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator

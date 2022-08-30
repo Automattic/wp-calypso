@@ -171,16 +171,6 @@ const flows = generateFlows( {
 	getAddOnsStep,
 } );
 
-function updateFlowData( flow, tailoredFlowName ) {
-	return {
-		...flow,
-		name: tailoredFlowName.name,
-		get pageTitle() {
-			return tailoredFlowName.pageTitle;
-		},
-	};
-}
-
 function removeUserStepFromFlow( flow ) {
 	if ( ! flow ) {
 		return;
@@ -239,22 +229,14 @@ const Flows = {
 			return flow;
 		}
 
-		const urlParams = new URLSearchParams( window.location.search );
 		if ( isUserLoggedIn ) {
-			const userCompleted = urlParams.get( 'user_completed' );
+			const urlParams = new URLSearchParams( window.location.search );
+			const param = urlParams.get( 'user_completed' );
 			// Remove the user step unless the user has just completed the step
 			// and then clicked the back button.
-			if ( ! userCompleted && ! detectHistoryNavigation.loadedViaHistory() ) {
+			if ( ! param && ! detectHistoryNavigation.loadedViaHistory() ) {
 				flow = removeUserStepFromFlow( flow );
 			}
-		}
-
-		// We are reusing the Account flow within the Tailored Flows
-		// This adjusts the name and title to match the flow.
-		const tailoredFlowName = urlParams.get( 'flowName' );
-		const tailoredFlow = Flows.getFlows()[ tailoredFlowName ];
-		if ( tailoredFlow ) {
-			flow = updateFlowData( flow, tailoredFlow );
 		}
 
 		if ( flowName === 'p2v1' && isUserLoggedIn ) {

@@ -29,8 +29,7 @@ export const useFlowProgress = ( props: FlowProgress | undefined ) => {
 		return;
 	}
 	const { stepName, flowName } = props;
-
 	const flow = flows[ flowName ];
 
-	return { progress: flow[ stepName ], count: Object.keys( flow ).length };
+	return flow && { progress: flow[ stepName ], count: Object.keys( flow ).length };
 };
