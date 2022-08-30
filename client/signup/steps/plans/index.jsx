@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
+import { englishLocales } from '@automattic/i18n-utils';
 import { LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
@@ -334,9 +335,10 @@ export class PlansStep extends Component {
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
-			backLabelText = i18n.hasTranslation( 'Back to Sites' )
-				? translate( 'Back to Sites' )
-				: translate( 'Back to My Sites' );
+			backLabelText =
+				englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
+					? translate( 'Back to Sites' )
+					: translate( 'Back to My Sites' );
 		}
 
 		let queryParams;

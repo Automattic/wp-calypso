@@ -1,3 +1,4 @@
+import { englishLocales } from '@automattic/i18n-utils';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import i18n, { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -762,9 +763,10 @@ class DomainsStep extends Component {
 		let isExternalBackUrl = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
-		const sitesBackLabelText = i18n.hasTranslation( 'Back to Sites' )
-			? translate( 'Back to Sites' )
-			: translate( 'Back to My Sites' );
+		const sitesBackLabelText =
+			englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
+				? translate( 'Back to Sites' )
+				: translate( 'Back to My Sites' );
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;

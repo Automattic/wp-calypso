@@ -1,3 +1,4 @@
+import { englishLocales } from '@automattic/i18n-utils';
 import i18n, { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -72,9 +73,10 @@ class SiteType extends Component {
 			'This is just a starting point. You can add or change features later.'
 		);
 
-		const backLabelText = i18n.hasTranslation( 'Back to Sites' )
-			? translate( 'Back to Sites' )
-			: translate( 'Back to My Sites' );
+		const backLabelText =
+			englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
+				? translate( 'Back to Sites' )
+				: translate( 'Back to My Sites' );
 
 		return (
 			<StepWrapper
