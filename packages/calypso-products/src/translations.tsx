@@ -377,7 +377,7 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 
 export const getJetpackProductsShortDescriptions = (): Record< string, TranslateResult > => {
 	const backupDailyShortDescription = translate(
-		'Automated daily backup with one-click restores.'
+		'Automated daily backups with one-click restores.'
 	);
 	const backupRealtimeShortDescription = translate(
 		'Real-time cloud backups with one-click restores.'
