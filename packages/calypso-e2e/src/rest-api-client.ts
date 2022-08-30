@@ -290,13 +290,6 @@ export class RestAPIClient {
 				break;
 			}
 
-			if ( site.name !== expectedSiteDetails.name ) {
-				console.info(
-					`Aborting site deletion: site name did not match.\nExpected: ${ site.name }, Got: ${ expectedSiteDetails.name } `
-				);
-				break;
-			}
-
 			const params: RequestParams = {
 				method: 'post',
 				headers: {
