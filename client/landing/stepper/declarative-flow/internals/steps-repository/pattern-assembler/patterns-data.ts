@@ -155,8 +155,8 @@ const sectionPatterns: Pattern[] = [
 		name: 'Two Images, Text, and Buttons',
 	},
 	{
-		id: 4691,
-		name: 'Payment Block Media and Text',
+		id: 5564,
+		name: 'Contact',
 	},
 	{
 		id: 1046,
