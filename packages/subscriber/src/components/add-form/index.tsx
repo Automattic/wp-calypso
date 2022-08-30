@@ -182,7 +182,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 			<div className={ 'add-subscriber__form--container' }>
 				{ inProgress && (
-					<Notice isDismissible={ false }>{ __( 'You have email list importing' ) }...</Notice>
+					<Notice isDismissible={ false }>{ __( 'Your email list is being uploaded' ) }...</Notice>
 				) }
 
 				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>
