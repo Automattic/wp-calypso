@@ -6,7 +6,7 @@ import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/componen
 import { useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { Icon, check, info } from '@wordpress/icons';
+import { Icon, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import React, {
@@ -221,18 +221,16 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					) }
 
 					{ ! isSelectedFileValid && (
-						<label className={ 'add-subscriber__form-label-error' }>
+						<FormInputValidation isError={ true } text={ '' }>
 							{ createInterpolateElement(
 								__(
-									'<span><icon /> Sorry, you can only upload a CSV file.</span><uploadBtn>Select another file</uploadBtn>'
+									'Sorry, you can only upload CSV files right now. ' +
+										'Most providers will let you export this from your settings. ' +
+										'<uploadBtn>Select another file</uploadBtn>'
 								),
-								{
-									span: createElement( 'span' ),
-									icon: createElement( Icon, { icon: info, size: 20 } ),
-									uploadBtn: formFileUploadElement,
-								}
+								{ uploadBtn: formFileUploadElement }
 							) }
-						</label>
+						</FormInputValidation>
 					) }
 
 					{ isSelectedFileValid && selectedFile && (
