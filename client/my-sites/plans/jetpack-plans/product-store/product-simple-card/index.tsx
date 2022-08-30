@@ -27,11 +27,11 @@ const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( {
 			</div>
 			<div className="product-simple-card__info">
 				<div className="product-simple-card__info-header">
-					<h3 className="product-simple-card__info-header-name">
-						{ name }
+					<div className="product-simple-card__info-header-content">
+						<h3 className="product-simple-card__info-header-text">{ name }</h3>
 
 						<ItemPrice isOwned={ isOwned } item={ item } siteId={ siteId } />
-					</h3>
+					</div>
 					<Button
 						className="product-simple-card__info-header-checkout"
 						onClick={ onClickPurchase }

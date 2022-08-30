@@ -44,14 +44,24 @@
 	justify-content: space-between;
 }
 
+.product-simple-card__info-header-text {
+	font-size: $font-title-medium;
+	line-height: rem( 29px );
+	margin-bottom: 0!important;
+}
+
 .product-simple-card__info-header-checkout {
+	align-items: center;
+	justify-content: center;
 	font-size: $font-body;
 	min-width: 91px;
 	max-height: 40px;
+	display: flex;
 }
 
 .product-simple-card__info-content {
 	font-size: $font-body-small;
+	line-height: rem( 24px );
 	padding: 8px 0 16px;
 }
 
