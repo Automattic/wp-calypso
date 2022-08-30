@@ -230,11 +230,10 @@ export class PluginsList extends Component {
 		this.props.removePluginStatuses( 'completed', 'error' );
 	}
 
-	doActionOverSelected(
-		actionName,
-		action,
-		selectedPlugins = this.props.plugins.filter( this.isSelected ) // only use selected sites
-	) {
+	doActionOverSelected( actionName, action, selectedPlugins ) {
+		if ( ! selectedPlugins ) {
+			selectedPlugins = this.props.plugins.filter( this.isSelected );
+		}
 		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug } ) =>
 			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
