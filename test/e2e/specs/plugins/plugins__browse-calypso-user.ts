@@ -103,7 +103,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			}
 		);
 
-		it( 'Breadcrum update site when switch site', async function () {
+		it( 'The site param in each breadcrumb url updates when the user switches between sites', async function () {
 			if ( credentials.otherSites?.length ) {
 				await pluginsPage.clickBrowseAllPaidPlugins();
 				await pluginsPage.switchToSite(
