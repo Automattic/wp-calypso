@@ -15,28 +15,29 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		page = await browser.newPage();
 		const testAccount = new TestAccount( 'defaultUser' );
 		await testAccount.authenticate( page );
-	} );
 
-	it( 'Visit plugins page', async function () {
-		pluginsPage = new PluginsPage( page );
-		await pluginsPage.visit();
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			// Ensure the page is wide enough to show the breadcrumb details.
 			await page.setViewportSize( { width: 1300, height: 1080 } );
 		}
 	} );
 
-	it( 'Search for shipping', async function () {
+	it( 'Visit plugins page', async function () {
+		pluginsPage = new PluginsPage( page );
+		await pluginsPage.visit();
+	} );
+
+	it( 'Search for "shipping"', async function () {
 		await pluginsPage.search( 'shipping' );
 		await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
 	} );
 
-	it( 'Can click on a search result', async function () {
+	it( 'Click on a search result', async function () {
 		await pluginsPage.clickSearchResult( 'Royal Mail' );
 		await pluginsPage.validatePluginDetailsHasHeaderTitle( 'Royal Mail' );
 	} );
 
-	it( 'Can click on breadcrumbs "Search Results"', async function () {
+	it( 'Click on breadcrumbs "Search Results"', async function () {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await pluginsPage.clickSearchResultsBreadcrumb();
 		} else {
@@ -45,7 +46,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
 	} );
 
-	it( 'Can click on breadcrumbs "Plugins"', async function () {
+	it( 'Click on breadcrumbs "Plugins"', async function () {
 		await pluginsPage.clickSearchResult( 'Royal Mail' );
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await pluginsPage.clickPluginsBreadcrumb();
