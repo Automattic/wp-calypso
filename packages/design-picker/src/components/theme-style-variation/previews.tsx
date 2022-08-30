@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { getPreviewStylesFromVariation } from './utils';
 import Preview from './preview';
+import { getPreviewStylesFromVariation } from './utils';
 import type { ThemeStyleVariation } from '../../types';
 
 interface PreviewsProps {

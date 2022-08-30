@@ -1,7 +1,7 @@
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { getPreviewStylesFromVariation } from './utils';
 import Iframe from './preview-iframe';
+import { getPreviewStylesFromVariation } from './utils';
 import type {
 	ThemeStyleVariation,
 	ThemeStyleVariationPreview,
@@ -117,9 +117,9 @@ const Preview: React.FC< PreviewProps > = ( { variation, coreColors } ) => {
 					</div>
 					<FlexBox direction="column" gap={ 8 }>
 						{ highlightedColors &&
-							Object.values( highlightedColors ).slice( 0, 2 ).map( ( color, i ) => (
-								<ColorSwatch key={ i } color={ color } />
-							) ) }
+							Object.values( highlightedColors )
+								.slice( 0, 2 )
+								.map( ( color, i ) => <ColorSwatch key={ i } color={ color } /> ) }
 					</FlexBox>
 				</FlexBox>
 			</div>
