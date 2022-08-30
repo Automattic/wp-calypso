@@ -375,6 +375,51 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 	};
 };
 
+export const getJetpackProductsShortDescriptions = (): Record< string, TranslateResult > => {
+	const backupDailyShortDescription = translate(
+		'Automated daily backup with one-click restores.'
+	);
+	const backupRealtimeShortDescription = translate(
+		'Real-time cloud backups with one-click restores.'
+	);
+	const backupT1ShortDescription = translate( 'Real-time cloud backups with one-click restores.' );
+	const backupT2ShortDescription = translate( 'Real-time cloud backups with one-click restores.' );
+	const boostShortDescription = translate(
+		'Essential tools to speed up your site - no developer required.'
+	);
+	const searchShortDescription = translate( 'Help your site visitors find answers instantly.' );
+	const scanShortDescription = translate( 'Automatic malware scanning with one-click fixes.' );
+	const videoPressShortDescription = translate(
+		'High-quality, ad-free video built specifically for WordPress'
+	);
+	const antiSpamShortDescription = translate(
+		'Automatically clear spam from your comments and forms.'
+	);
+
+	return {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtimeShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtimeShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupT1ShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupT1ShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupT2ShortDescription,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupT2ShortDescription,
+		[ PRODUCT_JETPACK_BOOST ]: boostShortDescription,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostShortDescription,
+		[ PRODUCT_JETPACK_SEARCH ]: searchShortDescription,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchShortDescription,
+		[ PRODUCT_JETPACK_SCAN ]: scanShortDescription,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanShortDescription,
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanShortDescription,
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanShortDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressShortDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressShortDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamShortDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamShortDescription,
+	};
+};
+
 export const useJetpack10GbStorageAmountText = (): TranslateResult => {
 	const _translate = useTranslate();
 
