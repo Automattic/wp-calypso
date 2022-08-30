@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { ItemPrice } from '../item-price';
 import { ProductSimpleCardProps } from '../types';
 import getProductIcon from '../utils/get-product-icon';
@@ -16,18 +15,12 @@ const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( {
 	checkoutURL,
 } ) => {
 	const translate = useTranslate();
-
-	const productIcon = useMemo(
-		() => getProductIcon( { productSlug: item.productSlug } ),
-		[ item ]
-	);
-
 	const { shortName: name, description } = item;
 
 	return (
 		<div className="product-simple-card">
 			<div className="product-simple-card__icon">
-				<img alt="" src={ productIcon } />
+				<img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } />
 			</div>
 			<div className="product-simple-card__info">
 				<div className="product-simple-card__info-header">
