@@ -44,7 +44,7 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 					<Button
 						className="simple-product-card__info-more-link"
 						onClick={ onClickMore }
-						href="https://jetpack.com/pricing/"
+						href="#"
 						plain
 					>
 						{ translate( 'More about %(name)s', { args: { name } } ) }
