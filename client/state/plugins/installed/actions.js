@@ -96,6 +96,11 @@ export function activatePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
+
+		if ( plugin.active ) {
+			return dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data: plugin } );
+		}
+
 		dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST } );
 
 		const afterActivationCallback = ( error, data ) => {
@@ -158,6 +163,15 @@ export function deactivatePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
+
+		if ( ! plugin.active ) {
+			return dispatch( {
+				...defaultAction,
+				type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
+				data: plugin,
+			} );
+		}
+
 		dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST } );
 
 		const afterDeactivationCallback = ( error ) => {
@@ -222,16 +236,17 @@ export function togglePluginActivation( siteId, plugin ) {
 
 export function updatePlugin( siteId, plugin ) {
 	return ( dispatch ) => {
-		if ( ! plugin.update ) {
-			return Promise.reject( 'Error: Plugin already up-to-date.' );
-		}
-
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: UPDATE_PLUGIN,
 			siteId,
 			pluginId,
 		};
+
+		if ( ! plugin.update ) {
+			return dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data: plugin } );
+		}
+
 		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
 
 		const afterUpdateCallback = ( error ) => {
@@ -264,6 +279,14 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
+
+		if ( plugin.autoupdate ) {
+			return dispatch( {
+				...defaultAction,
+				type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS,
+				data: plugin,
+			} );
+		}
 
 		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST } );
 
@@ -299,6 +322,14 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
+
+		if ( ! plugin.autoupdate ) {
+			return dispatch( {
+				...defaultAction,
+				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
+				data: { ...plugin },
+			} );
+		}
 
 		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST } );
 
