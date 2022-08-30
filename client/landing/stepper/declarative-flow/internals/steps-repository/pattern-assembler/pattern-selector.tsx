@@ -21,7 +21,6 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 
 	const handleBackClick = () => {
 		onSelect( null );
-		setSelectedPattern( null );
 	};
 
 	const handleSelectedPattern = ( item: Pattern ) => {
