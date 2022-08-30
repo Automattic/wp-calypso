@@ -1,12 +1,12 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { ItemPrice } from '../item-price';
-import { ProductSimpleCardProps } from '../types';
+import { SimpleProductCardProps } from '../types';
 import getProductIcon from '../utils/get-product-icon';
 
 import './style.scss';
 
-const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( {
+const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	item,
 	isOwned,
 	siteId,
@@ -18,19 +18,19 @@ const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( {
 	const { shortName: name, description } = item;
 
 	return (
-		<div className="product-simple-card">
-			<div className="product-simple-card__icon">
+		<div className="simple-product-card">
+			<div className="simple-product-card__icon">
 				<img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } />
 			</div>
-			<div className="product-simple-card__info">
-				<div className="product-simple-card__info-header">
-					<div className="product-simple-card__info-header-content">
-						<h3 className="product-simple-card__info-header-text">{ name }</h3>
+			<div className="simple-product-card__info">
+				<div className="simple-product-card__info-header">
+					<div className="simple-product-card__info-header-content">
+						<h3 className="simple-product-card__info-header-text">{ name }</h3>
 
 						<ItemPrice isOwned={ isOwned } item={ item } siteId={ siteId } />
 					</div>
 					<Button
-						className="product-simple-card__info-header-checkout"
+						className="simple-product-card__info-header-checkout"
 						onClick={ onClickPurchase }
 						href={ checkoutURL }
 						primary
@@ -39,10 +39,10 @@ const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( {
 						{ translate( 'Get' ) }
 					</Button>
 				</div>
-				<div className="product-simple-card__info-content">
+				<div className="simple-product-card__info-content">
 					{ description }
 					<Button
-						className="product-simple-card__info-more-link"
+						className="simple-product-card__info-more-link"
 						onClick={ onClickMore }
 						href="https://jetpack.com/pricing/"
 						plain
@@ -55,4 +55,4 @@ const ProductSimpleCard: React.FC< ProductSimpleCardProps > = ( {
 	);
 };
 
-export default ProductSimpleCard;
+export default SimpleProductCard;

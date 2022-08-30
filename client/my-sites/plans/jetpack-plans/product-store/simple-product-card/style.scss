@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.product-simple-card {
+.simple-product-card {
 	display: flex;
 	flex-direction: row;
 
@@ -10,7 +10,7 @@
 	}
 }
 
-.product-simple-card__icon {
+.simple-product-card__icon {
 	display: none;
 	box-sizing: border-box;
 	min-width: 52px;
@@ -25,32 +25,32 @@
 	}
 }
 
-.product-simple-card__icon > img {
+.simple-product-card__icon > img {
 	width: 28px;
 	height: auto;
 }
 
-.product-simple-card__info {
+.simple-product-card__info {
 	display: flex;
 	flex-direction: column;
 	border-bottom: 1.01132px solid var( --studio-gray-5 );
 	flex-grow: 1;
 }
 
-.product-simple-card__info-header {
+.simple-product-card__info-header {
 	display: flex;
 	flex-direction: row;
 	font-size: $font-body-small;
 	justify-content: space-between;
 }
 
-.product-simple-card__info-header-text {
+.simple-product-card__info-header-text {
 	font-size: $font-title-medium;
 	line-height: rem( 29px );
 	margin-bottom: 0!important;
 }
 
-.product-simple-card__info-header-checkout {
+.simple-product-card__info-header-checkout {
 	align-items: center;
 	justify-content: center;
 	font-size: $font-body;
@@ -59,13 +59,13 @@
 	display: flex;
 }
 
-.product-simple-card__info-content {
+.simple-product-card__info-content {
 	font-size: $font-body-small;
 	line-height: rem( 24px );
 	padding: 8px 0 16px;
 }
 
-.product-simple-card__info-more-link {
+.simple-product-card__info-more-link {
 	display: block;
 	color: var( --color-neutral-100 )!important;
 	text-decoration: underline;

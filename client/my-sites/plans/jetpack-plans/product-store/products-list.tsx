@@ -6,7 +6,7 @@ import { HeroImage } from './hero-image';
 import { useCreateCheckout } from './hooks/use-create-checkout';
 import { useProductsToDisplay } from './hooks/use-products-to-display';
 import { MostPopular } from './most-popular';
-import ProductSimpleCard from './product-simple-card';
+import SimpleProductCard from './simple-product-card';
 import { getSortedDisplayableProducts } from './utils/get-sorted-displayable-products';
 import type { ProductsListProps } from './types';
 
@@ -61,7 +61,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 				<div className="jetpack-product-store__products-list-all-grid">
 					{ allItems.map( ( item ) => {
 						return (
-							<ProductSimpleCard
+							<SimpleProductCard
 								key={ item.productSlug }
 								item={ item }
 								siteId={ siteId }

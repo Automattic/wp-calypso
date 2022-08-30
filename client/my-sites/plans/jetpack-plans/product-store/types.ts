@@ -76,4 +76,4 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 	onClickPurchase?: VoidFunction;
 };
 
-export type ProductSimpleCardProps = Omit< FeaturedItemCardProps, 'hero' >;
+export type SimpleProductCardProps = Omit< FeaturedItemCardProps, 'hero' >;
