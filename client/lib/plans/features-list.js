@@ -166,6 +166,18 @@ import {
 	FEATURE_TRACK_VIEWS_CLICKS,
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
+	/* START - condensed_plan_features_v1 test */
+	FEATURE_HOSTING_TEST,
+	FEATURE_NO_ADS_TEST,
+	FEATURE_COLLECT_PAYMENTS_TEST,
+	FEATURE_STORE_MARKETING_TOOLS,
+	FEATURE_PREMIUM_THEMES_TEST,
+	FEATURE_REAL_TIME_ANALYTICS,
+	FEATURE_GA_TEST,
+	FEATURE_PRIORITY_SUPPORT_TEST,
+	FEATURE_PLUGINS_TEST,
+	FEATURE_SFTP_DATABASE_TEST,
+	/* END - condensed_plan_features_v1 test */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -1557,6 +1569,60 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
 	},
+	/* START - condensed_plan_features_v1 test */
+	[ FEATURE_HOSTING_TEST ]: {
+		getSlug: () => FEATURE_HOSTING_TEST,
+		getTitle: () => i18n.translate( 'Fully managed web hosting' ),
+		getDescription: () => {},
+	},
+	[ FEATURE_NO_ADS_TEST ]: {
+		getSlug: () => FEATURE_NO_ADS_TEST,
+		getTitle: () => 'Ad-free experience',
+		getDescription: () => {},
+	},
+	[ FEATURE_COLLECT_PAYMENTS_TEST ]: {
+		getSlug: () => FEATURE_COLLECT_PAYMENTS_TEST,
+		getTitle: () => 'Collect payments, subscriptions, and donations.',
+		getDescription: () => {},
+	},
+	[ FEATURE_STORE_MARKETING_TOOLS ]: {
+		getSlug: () => FEATURE_STORE_MARKETING_TOOLS,
+		getTitle: () => 'Marketing tools for your online store',
+		getDescription: () => {},
+	},
+	[ FEATURE_PREMIUM_THEMES_TEST ]: {
+		getSlug: () => FEATURE_PREMIUM_THEMES_TEST,
+		getTitle: () => 'Premium themes for your site',
+		getDescription: () => {},
+	},
+	[ FEATURE_REAL_TIME_ANALYTICS ]: {
+		getSlug: () => FEATURE_REAL_TIME_ANALYTICS,
+		getTitle: () => 'Real-time analytics in your dashboard',
+		getDescription: () => {},
+	},
+	[ FEATURE_GA_TEST ]: {
+		getSlug: () => FEATURE_GA_TEST,
+		getTitle: () =>
+			'Track statistics with Google Analytics for a deeper understanding of your visitors',
+		getDescription: () => {},
+	},
+	[ FEATURE_PRIORITY_SUPPORT_TEST ]: {
+		getSlug: () => FEATURE_PRIORITY_SUPPORT_TEST,
+		getTitle: () => 'Priority chat and email support, 24X7.',
+		getDescription: () => {},
+	},
+	[ FEATURE_PLUGINS_TEST ]: {
+		getSlug: () => FEATURE_PLUGINS_TEST,
+		getTitle: () =>
+			'Install WordPress Plugins. Choose among thousands of plugins to easily add forms, bookings, or custom fields.',
+		getDescription: () => {},
+	},
+	[ FEATURE_SFTP_DATABASE_TEST ]: {
+		getSlug: () => FEATURE_SFTP_DATABASE_TEST,
+		getTitle: () => 'SFTP (Secure File Transfer Protocol) and Database access.',
+		getDescription: () => {},
+	},
+	/* END - condensed_plan_features_v1 test */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
