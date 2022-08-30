@@ -220,6 +220,7 @@
 		"@wordpress/eslint-plugin": "^12.3.0",
 		"babel-loader": "^8.2.3",
 		"bunyan": "^1.8.15",
+		"canvas": "^2.9.3",
 		"capture-website": "^1.0.0",
 		"chalk": "^4.1.2",
 		"check-node-version": "^4.0.2",
