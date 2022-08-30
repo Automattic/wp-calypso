@@ -215,14 +215,14 @@ export const siteSetupFlow: Flow = {
 
 					// Check current theme: Does it have a plugin bundled?
 					// If so, send them to the plugin-bundle flow.
-					const theme_plugin = currentTheme?.taxonomies?.theme_plugin;
+					const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
 					if (
 						isEnabled( 'themes/plugin-bundling' ) &&
-						theme_plugin &&
-						theme_plugin.length > 0 &&
+						theme_software_set &&
+						theme_software_set.length > 0 &&
 						siteSlug
 					) {
-						setBundledPluginSlug( siteSlug, theme_plugin[ 0 ].slug ); // only install first plugin
+						setBundledPluginSlug( siteSlug, theme_software_set[ 0 ].slug ); // only install first plugin
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
 					}
 
