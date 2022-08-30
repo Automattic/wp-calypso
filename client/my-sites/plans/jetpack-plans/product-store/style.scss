@@ -1,6 +1,10 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+.main.is-wide-layout.jetpack-pricing-page-rework-v1 {
+	max-width: 1192px;
+}
+
 .jetpack-product-store {
 	display: flex;
 	flex-direction: column;
