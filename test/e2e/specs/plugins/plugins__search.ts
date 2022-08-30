@@ -34,10 +34,10 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		await pluginsPage.validateExpectedSearchResultFound( 'WooCommerce' );
 	} );
 
-	it( 'The site param in each breadcrumb url updates when the user switches between sites', async function () {
+	it( 'The site param in plugin detail breadcrumb url updates when the user switches between sites', async function () {
 		if ( credentials.otherSites?.length ) {
 			pluginsPage = new PluginsPage( page );
-			await pluginsPage.visit();
+			await pluginsPage.visit( credentials.primarySite );
 			await pluginsPage.clickSearchResult( 'Yoast SEO Premium' );
 			await pluginsPage.switchToSite(
 				credentials.otherSites[ 0 ],
