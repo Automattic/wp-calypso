@@ -1,5 +1,5 @@
 const pluginBundleSteps = {
-	woocommerce: [
+	'woo-on-plans': [
 		'storeAddress',
 		'businessInfo',
 		'wooConfirm',
