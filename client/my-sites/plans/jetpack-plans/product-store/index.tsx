@@ -15,9 +15,11 @@ import type { ViewType, ProductStoreProps } from './types';
 import './style.scss';
 
 const ProductStore: React.FC< ProductStoreProps > = ( {
-	enableUserLicensesDialog,
-	urlQueryArgs,
+	createCheckoutURL,
 	duration,
+	enableUserLicensesDialog,
+	onClickPurchase,
+	urlQueryArgs,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const productSlugs = useProductSlugs( { siteId, duration } );
@@ -37,7 +39,13 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			</div>
 
 			<ViewFilter currentView={ currentView } setCurrentView={ setCurrentView } />
-			<ItemsList currentView={ currentView } duration={ duration } siteId={ siteId } />
+			<ItemsList
+				currentView={ currentView }
+				duration={ duration }
+				siteId={ siteId }
+				createCheckoutURL={ createCheckoutURL }
+				onClickPurchase={ onClickPurchase }
+			/>
 			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 
 			<Recommendations />
