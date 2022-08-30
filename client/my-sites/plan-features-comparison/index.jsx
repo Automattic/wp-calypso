@@ -54,7 +54,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate } = this.props;
+		const { isInSignup, planProperties, translate, isCondensedFeaturesExperiment } = this.props;
 		const tableClasses = classNames(
 			'plan-features-comparison__table',
 			`has-${ planProperties.length }-cols`
@@ -79,7 +79,9 @@ export class PlanFeaturesComparison extends Component {
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
-									{ this.renderPlanFeatureRowsTest() }
+									{ isCondensedFeaturesExperiment
+										? this.renderPlanFeatureRowsTest()
+										: this.renderPlanFeatureRows() }
 								</tbody>
 							</table>
 						</div>
@@ -375,8 +377,16 @@ const hasPlaceholders = ( planProperties ) =>
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, isLandingPage, siteId, visiblePlans, popularPlanSpec } =
-			ownProps;
+		const {
+			isInSignup,
+			placeholder,
+			plans,
+			isLandingPage,
+			siteId,
+			visiblePlans,
+			popularPlanSpec,
+			isCondensedFeaturesExperiment,
+		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
 		const flowName = getCurrentFlowName( state );
@@ -410,7 +420,7 @@ export default connect(
 					planFeatures = getPlanFeaturesObject( featureAccessor() );
 				}
 
-				if ( ! isPlansPageQuickImprovements && planConstantObj.getCondensedExperimentFeatures ) {
+				if ( isCondensedFeaturesExperiment && planConstantObj.getCondensedExperimentFeatures ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getCondensedExperimentFeatures() );
 				}
 
