@@ -2,7 +2,6 @@ import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks } from './task-helper';
 import { tasks } from './tasks';
@@ -35,7 +34,6 @@ function getChecklistCompletionProgress( tasks: Task[] ) {
 const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
 	let siteName = '';
 	let topLevelDomain = '';
-	const site = useSite();
 	const flow = useFlowParam();
 	const translate = useTranslate();
 	const translatedStrings = getLaunchpadTranslations( flow );
@@ -72,7 +70,7 @@ const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
 					<span>{ siteName }</span>
 					<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 				</div>
-				<Checklist site={ site } siteSlug={ siteSlug } tasks={ tasks } flow={ flow } />
+				<Checklist siteSlug={ siteSlug } tasks={ tasks } flow={ flow } />
 			</div>
 		</div>
 	);
