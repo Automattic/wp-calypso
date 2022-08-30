@@ -55,34 +55,6 @@ describe( '#localizeUrl', () => {
 		} );
 	} );
 
-	test( 'should not accept host-only matches if skipHostLookup is true', () => {
-		expect( localizeUrl( 'https://wordpress.com/some/path', 'es', false, false ) ).toEqual(
-			'https://wordpress.com/es/some/path/'
-		);
-		expect( localizeUrl( 'https://wordpress.com/some/path', 'es', false, true ) ).toEqual(
-			'https://wordpress.com/some/path'
-		);
-		expect( localizeUrl( 'https://wordpress.com/some/path', 'es', true, true ) ).toEqual(
-			'https://wordpress.com/some/path'
-		);
-		expect( localizeUrl( 'https://wordpress.com/some/path', 'es', true, false ) ).toEqual(
-			'https://wordpress.com/es/some/path/'
-		);
-
-		expect( localizeUrl( 'https://wordpress.com/themes', 'es', false, true ) ).toEqual(
-			'https://wordpress.com/es/themes/'
-		);
-		expect( localizeUrl( 'https://wordpress.com/themes', 'es', false, false ) ).toEqual(
-			'https://wordpress.com/es/themes/'
-		);
-		expect( localizeUrl( 'https://wordpress.com/themes', 'es', true, true ) ).toEqual(
-			'https://wordpress.com/themes/'
-		);
-		expect( localizeUrl( 'https://wordpress.com/themes', 'es', true, false ) ).toEqual(
-			'https://wordpress.com/themes/'
-		);
-	} );
-
 	test( 'should not change relative URLs', () => {
 		[ '/me/account', '/settings' ].forEach( ( fullUrl ) => {
 			expect( localizeUrl( fullUrl, 'en' ) ).toEqual( fullUrl );
