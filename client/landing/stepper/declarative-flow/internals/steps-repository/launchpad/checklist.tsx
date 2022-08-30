@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import ChecklistItem from './checklist-item';
 import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
@@ -11,15 +10,10 @@ interface ChecklistProps {
 }
 
 const Checklist = ( { tasks, siteSlug, flow }: ChecklistProps ) => {
-	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
-	const [ enhancedTasks, setEnhancedTasks ] = useState< Task[] | null >( null );
 	const site = useSite();
-
-	useEffect( () => {
-		if ( arrayOfFilteredTasks ) {
-			setEnhancedTasks( getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site ) );
-		}
-	}, [ arrayOfFilteredTasks, site, siteSlug ] );
+	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
+	const enhancedTasks =
+		arrayOfFilteredTasks && site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site );
 
 	return (
 		<ul className="launchpad__checklist" aria-label="Launchpad Checklist">
