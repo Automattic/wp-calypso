@@ -2,6 +2,9 @@
 @import '@wordpress/base-styles/mixins';
 
 .jetpack-product-store {
+	display: flex;
+	flex-direction: column;
+
 	&__jetpack-free {
 		display: flex;
 		flex-direction: column;
