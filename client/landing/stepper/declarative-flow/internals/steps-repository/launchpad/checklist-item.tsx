@@ -26,7 +26,9 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				<p className={ `launchpad__checklist-item-text ${ isCompleted && 'is-complete' }` }>
 					{ title }
 				</p>
-				{ task.displayBadge ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
+				{ task.displayBadge && task.badgeText ? (
+					<Badge type="info-blue">{ task.badgeText }</Badge>
+				) : null }
 				{ ! task.isCompleted && (
 					<Gridicon
 						className="launchpad__checklist-item-chevron"
