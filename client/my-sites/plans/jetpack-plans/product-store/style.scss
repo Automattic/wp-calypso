@@ -73,6 +73,7 @@
 		.plan-price.is-original {
 			.plan-price__currency-symbol, .plan-price__integer, .plan-price__fraction {
 				font-weight: 600;
+				margin: 0;
 			}
 		}
 		.plan-price.is-discounted, .plan-price.is-original {
