@@ -222,7 +222,7 @@ export class PlansStep extends Component {
 				<ProvideExperimentData
 					name="calypso_signup_plans_step_optimize_202208_v1"
 					options={ {
-						isEligible: [ 'en-gb', 'en' ].includes( locale ),
+						isEligible: [ 'en-gb', 'en' ].includes( locale ) && 'onboarding' === flowName,
 					} }
 				>
 					{ ( isLoading, experimentAssignment ) => {
