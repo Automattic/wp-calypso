@@ -5,7 +5,7 @@
 	display: flex;
 	flex-direction: row;
 
-	@include break-large {
+	@media only screen and ( min-width: 821px ) {
 		gap: 1rem;
 	}
 }
@@ -18,7 +18,7 @@
 	background: linear-gradient( 159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53% );
 	border-radius: 4px;
 
-	@include break-large {
+	@media only screen and ( min-width: 821px ) {
 		display: flex;
 		align-items: center;
 		justify-content: center;
