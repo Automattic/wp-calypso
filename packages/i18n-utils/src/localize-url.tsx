@@ -110,7 +110,7 @@ interface UrlLocalizationMapping {
 	[ key: string ]: LinkLocalizer;
 }
 
-const urlLocalizationMapping: UrlLocalizationMapping = {
+export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/support/': prefixLocalizedUrlPath( supportSiteLocales ),
 	'wordpress.com/forums/': prefixLocalizedUrlPath( forumLocales ),
 	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),

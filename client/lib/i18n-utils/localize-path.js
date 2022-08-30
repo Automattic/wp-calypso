@@ -1,4 +1,4 @@
-import { isMagnificentLocale } from '@automattic/i18n-utils';
+import { isMagnificentLocale, urlLocalizationMapping } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 
 const DEFAULT_ORIGIN = 'https://wordpress.com';
@@ -7,12 +7,6 @@ function getDefaultLocale() {
 	return i18n.getLocaleSlug?.() ?? 'en';
 }
 
-function prefixLocalizedPath( path, locale ) {
-	if ( ! isMagnificentLocale( locale ) ) {
-		return path;
-	}
-	return `/${ locale }${ path }`;
-}
 function suffixLocalizedPath( path, locale ) {
 	if ( ! isMagnificentLocale( locale ) ) {
 		return path;
@@ -20,16 +14,18 @@ function suffixLocalizedPath( path, locale ) {
 	return `${ path }${ locale }/`;
 }
 
+function normalizePath( urlLocalizationMappingFn ) {
+	return ( path, locale, isLoggedIn ) => {
+		const url = new URL( path, DEFAULT_ORIGIN );
+		const output = urlLocalizationMappingFn( url, locale, isLoggedIn );
+		return output.href.replace( DEFAULT_ORIGIN, '' );
+	};
+}
+
 const pathLocalizationMapping = {
-	'/theme/': ( path, localeSlug, isLoggedIn ) => {
-		return isLoggedIn ? path : prefixLocalizedPath( path, localeSlug );
-	},
-	'/themes/': ( path, localeSlug, isLoggedIn ) => {
-		return isLoggedIn ? path : prefixLocalizedPath( path, localeSlug );
-	},
-	'/log-in/': ( path, localeSlug, isLoggedIn ) => {
-		return isLoggedIn ? path : suffixLocalizedPath( path, localeSlug );
-	},
+	'/theme/': normalizePath( urlLocalizationMapping[ 'wordpress.com/theme/' ] ),
+	'/themes/': normalizePath( urlLocalizationMapping[ 'wordpress.com/themes/' ] ),
+	'/log-in/': normalizePath( urlLocalizationMapping[ 'wordpress.com/log-in/' ] ),
 	'/new/': ( path, localeSlug, isLoggedIn ) => {
 		return isLoggedIn ? path : suffixLocalizedPath( path, localeSlug );
 	},
