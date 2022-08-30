@@ -16,6 +16,7 @@ type PatternsSelectorProps = {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	title: string | null;
 	pattern: Pattern | null;
+	show: boolean;
 };
 
 const handleKeyboard =
@@ -24,7 +25,13 @@ const handleKeyboard =
 		if ( key === 'Enter' || key === ' ' ) callback();
 	};
 
-const PatternsSelector = ( { patterns, onSelect, title, pattern }: PatternsSelectorProps ) => {
+const PatternsSelector = ( {
+	patterns,
+	onSelect,
+	title,
+	pattern,
+	show,
+}: PatternsSelectorProps ) => {
 	const [ selectedPattern, setSelectedPattern ] = useState< Pattern | null >( null );
 	const translate = useTranslate();
 
@@ -39,7 +46,7 @@ const PatternsSelector = ( { patterns, onSelect, title, pattern }: PatternsSelec
 	const isSelected = ( id: number ) => id === ( selectedPattern?.id || pattern?.id );
 
 	return (
-		<div className="patterns-selector">
+		<div className="patterns-selector" style={ show ? {} : { height: 0, overflow: 'hidden' } }>
 			<div className="patterns-selector__header">
 				<h1>{ title }</h1>
 			</div>
