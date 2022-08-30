@@ -257,9 +257,7 @@ export function BannerIcon( props ) {
 		} );
 	}, [] );
 
-	const bannerIcon = <div className="app-banner__icon"></div>;
-
-	return bannerIcon;
+	return <div className="app-banner__icon"></div>;
 }
 
 export function getiOSDeepLink( currentRoute, currentSection ) {

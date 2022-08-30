@@ -70,9 +70,8 @@ body.app-banner-is-visible {
 }
 
 .app-banner__icon {
-	height: 47px;
-	width: 92px;
-	padding-bottom: 30px;
+	height: 50px;
+	width: 93px;
 	margin: auto;
 }
 
@@ -81,8 +80,7 @@ body.app-banner-is-visible {
 
 	&.jetpack {
 		letter-spacing: -0.4px;
-		width: 90%;
-		margin: auto;
+		margin: 30px auto 0;
 	}
 }
 
@@ -93,8 +91,10 @@ body.app-banner-is-visible {
 	line-height: 30px;
 
 	&.jetpack {
+		/* stylelint-disable-next-line */
+		font-size: rem( 28px ); //typography-exception
 		font-weight: bold;
-		line-height: 22px;
+		padding: 0 30px;
 	}
 }
 
@@ -104,7 +104,10 @@ body.app-banner-is-visible {
 	font-size: rem( 15px ); //typography-exception
 
 	&.jetpack {
-		line-height: 20px;
+		/* stylelint-disable-next-line */
+		font-size: rem( 16px ); //typography-exception
+		line-height: 21px;
+		padding: 0 30px;
 	}
 }
 
@@ -121,8 +124,6 @@ body.app-banner-is-visible {
 
 	&.jetpack {
 		background-color: var( --color-jetpack );
-		width: 100%;
-		max-width: 366px;
 	}
 }
 
@@ -133,7 +134,12 @@ body.app-banner-is-visible {
 
 	&.jetpack {
 		color: var( --color-text );
-		width: 100%;
-		max-width: 366px;
 	}
+}
+
+.button.jetpack {
+	width: 100%;
+	max-width: 366px;
+	margin: auto;
+	display: block;
 }
