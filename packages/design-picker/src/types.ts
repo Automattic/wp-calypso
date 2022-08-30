@@ -50,6 +50,7 @@ export interface ThemeStyleVariationPreviewColorPalette {
 	foreground?: string;
 	primary?: string;
 	secondary?: string;
+	tertiary?: string;
 }
 
 export interface ThemeStyleVariationStylesColor {

@@ -6,7 +6,7 @@ import type {
 	ThemeStyleVariationPreviewColorPalette,
 } from '../../types';
 
-const COLOR_PALETTE_SUPPORTS = [ 'background', 'foreground', 'primary', 'secondary' ];
+const COLOR_PALETTE_SUPPORTS = [ 'background', 'foreground', 'primary', 'secondary', 'tertiary' ];
 
 const GLOBAL_STYLES_SUPPORTS: {
 	style: keyof ThemeStyleVariationStylesColor;
@@ -14,15 +14,19 @@ const GLOBAL_STYLES_SUPPORTS: {
 	mapTo: keyof ThemeStyleVariationPreviewColorPalette;
 }[] = [
 	{ style: 'background', infix: 'color', mapTo: 'background' },
-	{ style: 'text', infix: 'color', mapTo: 'primary' },
+	{ style: 'text', infix: 'color', mapTo: 'foreground' },
 ];
 
 export function getPreviewStylesFromVariation(
-	variation: ThemeStyleVariation
+	variation: ThemeStyleVariation,
+	coreColors?: ThemeStyleVariationPreviewColorPalette
 ): ThemeStyleVariationPreview {
-	const globalColors = getValueFromVariationStylesColor( variation );
-	let color: ThemeStyleVariationPreviewColorPalette = {};
+	const globalColors = {
+		...getValueFromVariationStylesColor( variation ),
+		...coreColors,
+	};
 
+	let color: ThemeStyleVariationPreviewColorPalette = {};
 	for ( const key of COLOR_PALETTE_SUPPORTS ) {
 		const value = getValueFromVariationSettingColorPalette( variation, key );
 		color = { ...color, ...( value && { [ key ]: value } ) };

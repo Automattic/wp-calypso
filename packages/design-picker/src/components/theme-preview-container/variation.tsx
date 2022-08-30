@@ -2,7 +2,11 @@ import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { getPreviewStylesFromVariation } from '../theme-style-variation-badges/utils';
 import Iframe from './iframe';
-import type { ThemeStyleVariation, ThemeStyleVariationPreviewColorPalette } from '../../types';
+import type {
+	ThemeStyleVariation,
+	ThemeStyleVariationPreview,
+	ThemeStyleVariationPreviewColorPalette,
+} from '../../types';
 import type { ReactNode } from 'react';
 
 const IFRAME_HEIGHT = 48;
@@ -60,12 +64,13 @@ const ColorSwatch: React.FC< ColorSwatchProps > = ( { color } ) => {
 
 interface VariationProps {
 	variation: ThemeStyleVariation;
+	coreColors?: ThemeStyleVariationPreview;
 }
 
-const Variation: React.FC< VariationProps > = ( { variation } ) => {
+const Variation: React.FC< VariationProps > = ( { variation, coreColors } ) => {
 	const translate = useTranslate();
 	const styles = useMemo(
-		() => variation && getPreviewStylesFromVariation( variation ),
+		() => variation && getPreviewStylesFromVariation( variation, coreColors?.color ),
 		[ variation ]
 	);
 
@@ -73,7 +78,7 @@ const Variation: React.FC< VariationProps > = ( { variation } ) => {
 		() =>
 			styles &&
 			Object.entries( styles.color ).reduce( ( filtered, [ key, color ] ) => {
-				if ( color !== styles.color.background && color !== styles.color.primary ) {
+				if ( color !== styles.color.background && color !== styles.color.foreground ) {
 					filtered[ key as keyof ThemeStyleVariationPreviewColorPalette ] = color;
 				}
 
@@ -103,7 +108,7 @@ const Variation: React.FC< VariationProps > = ( { variation } ) => {
 				<FlexBox gap={ 48 } style={ { height: '100%', overflow: 'hidden' } }>
 					<div
 						style={ {
-							color: styles.color.primary,
+							color: styles.color.foreground,
 							fontSize: 24,
 							fontWeight: 400,
 						} }

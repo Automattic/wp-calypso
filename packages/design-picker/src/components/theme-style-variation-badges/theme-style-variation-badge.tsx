@@ -22,7 +22,7 @@ const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( { 
 			<span
 				style={ {
 					backgroundColor: styles.color.background,
-					color: styles.color.primary,
+					color: styles.color.foreground,
 				} }
 			>
 				A

@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { getPreviewStylesFromVariation } from '../theme-style-variation-badges/utils';
 import Variation from './variation';
 import type { ThemeStyleVariation } from '../../types';
 
@@ -6,6 +8,15 @@ interface VariationsProps {
 }
 
 const Variations: React.FC< VariationsProps > = ( { variations = [] } ) => {
+	const coreColors = useMemo( () => {
+		const defaultVariation = variations.find( ( variation ) => variation.slug === 'default' );
+		if ( ! defaultVariation ) {
+			return undefined;
+		}
+
+		return getPreviewStylesFromVariation( defaultVariation );
+	}, [ variations ] );
+
 	return (
 		<>
 			{ variations.map( ( variation ) => (
@@ -15,7 +26,7 @@ const Variations: React.FC< VariationsProps > = ( { variations = [] } ) => {
 					tabIndex={ 0 }
 					role="button"
 				>
-					<Variation variation={ variation } />
+					<Variation variation={ variation } coreColors={ coreColors } />
 				</div>
 			) ) }
 		</>
