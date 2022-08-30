@@ -1,5 +1,6 @@
+import { englishLocales } from '@automattic/i18n-utils';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -762,6 +763,10 @@ class DomainsStep extends Component {
 		let isExternalBackUrl = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
+		const sitesBackLabelText =
+			englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
+				? translate( 'Back to Sites' )
+				: translate( 'Back to My Sites' );
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;
@@ -783,10 +788,10 @@ class DomainsStep extends Component {
 				backLabelText = translate( 'Back to General Settings' );
 			} else if ( 'sites-dashboard' === source ) {
 				backUrl = '/sites';
-				backLabelText = translate( 'Back to My Sites' );
+				backLabelText = sitesBackLabelText;
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = '/sites/';
-				backLabelText = translate( 'Back to My Sites' );
+				backLabelText = sitesBackLabelText;
 			}
 
 			const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
