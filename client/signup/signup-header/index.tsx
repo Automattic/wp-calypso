@@ -10,10 +10,11 @@ interface ProgressBarData {
 }
 
 interface Props {
-	progressBar: ProgressBarData;
+	progressBar?: ProgressBarData;
 	shouldShowLoadingScreen?: boolean;
 	isReskinned?: boolean;
 	rightComponent?: Node;
+	pageTitle?: string;
 }
 
 const SignupHeader = ( {
@@ -21,13 +22,15 @@ const SignupHeader = ( {
 	isReskinned,
 	rightComponent,
 	progressBar,
+	pageTitle,
 }: Props ) => {
 	const logoClasses = classnames( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
 	} );
 	const params = new URLSearchParams( window.location.search );
 	const variationName = params.get( 'variationName' );
-	const pageTitle = params.get( 'pageTitle' );
+	const variationPageTitle = params.get( 'pageTitle' );
+	const variablePageTitle = variationPageTitle || pageTitle;
 	const flowProgress = useFlowProgress(
 		variationName ? { flowName: variationName, stepName: progressBar.stepName } : progressBar
 	);
@@ -42,7 +45,7 @@ const SignupHeader = ( {
 				/>
 			) }
 			<WordPressLogo size={ 120 } className={ logoClasses } />
-			{ pageTitle && <h1>{ pageTitle as string } </h1> }
+			{ variablePageTitle && <h1>{ variablePageTitle as string } </h1> }
 			{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
 			<div className="signup-header__right">{ ! shouldShowLoadingScreen && rightComponent }</div>

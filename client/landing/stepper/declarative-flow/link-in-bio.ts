@@ -40,7 +40,7 @@ export const linkInBio: Flow = {
 						return navigate( 'patterns' );
 					}
 					return window.location.replace(
-						'/start/account?flowName=link-in-bio&redirect_to=/setup/patterns?flow=link-in-bio'
+						'/start/account/user?variationName=link-in-bio&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=link-in-bio'
 					);
 
 				case 'patterns':
