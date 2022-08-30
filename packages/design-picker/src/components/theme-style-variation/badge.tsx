@@ -3,11 +3,11 @@ import { getPreviewStylesFromVariation } from './utils';
 import type { ThemeStyleVariation } from '../../types';
 import './style.scss';
 
-interface ThemeStyleVariationBadgeProps {
+interface BadgeProps {
 	variation?: ThemeStyleVariation;
 }
 
-const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( { variation } ) => {
+const Badge: React.FC< BadgeProps > = ( { variation } ) => {
 	const styles = useMemo(
 		() => variation && getPreviewStylesFromVariation( variation ),
 		[ variation ]
@@ -18,7 +18,7 @@ const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( { 
 	}
 
 	return (
-		<div className="theme-style-variation-wrapper">
+		<div className="theme-style-variation__badge-wrapper">
 			<span
 				style={ {
 					backgroundColor: styles.color.background,
@@ -31,4 +31,4 @@ const ThemeStyleVariationBadge: React.FC< ThemeStyleVariationBadgeProps > = ( { 
 	);
 };
 
-export default ThemeStyleVariationBadge;
+export default Badge;

@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
-import { getPreviewStylesFromVariation } from '../theme-style-variation-badges/utils';
-import Variation from './variation';
+import { getPreviewStylesFromVariation } from './utils';
+import Preview from './preview';
 import type { ThemeStyleVariation } from '../../types';
 
-interface VariationsProps {
+interface PreviewsProps {
 	variations?: ThemeStyleVariation[];
 }
 
-const Variations: React.FC< VariationsProps > = ( { variations = [] } ) => {
+const Previews: React.FC< PreviewsProps > = ( { variations = [] } ) => {
 	const coreColors = useMemo( () => {
 		const defaultVariation = variations.find( ( variation ) => variation.slug === 'default' );
 		if ( ! defaultVariation ) {
@@ -22,15 +22,15 @@ const Variations: React.FC< VariationsProps > = ( { variations = [] } ) => {
 			{ variations.map( ( variation ) => (
 				<div
 					key={ variation.slug }
-					className="theme-preview-container__variation"
+					className="theme-style-variation__preview"
 					tabIndex={ 0 }
 					role="button"
 				>
-					<Variation variation={ variation } coreColors={ coreColors } />
+					<Preview variation={ variation } coreColors={ coreColors } />
 				</div>
 			) ) }
 		</>
 	);
 };
 
-export default Variations;
+export default Previews;

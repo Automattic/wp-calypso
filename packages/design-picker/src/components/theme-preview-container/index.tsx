@@ -1,5 +1,5 @@
+import { ThemeStyleVariationPreviews } from '../theme-style-variation';
 import Sidebar from './sidebar';
-import Variations from './variations';
 import type { ThemeFeature, ThemeStyleVariation } from '../../types';
 import './style.scss';
 
@@ -27,7 +27,7 @@ const ThemePreviewContainer: React.FC< ThemePreviewContainerProps > = ( {
 
 			{ variations.length > 0 && (
 				<div className="theme-preview-container__sticky-variations">
-					<Variations variations={ variations } />
+					<ThemeStyleVariationPreviews variations={ variations } />
 				</div>
 			) }
 		</div>

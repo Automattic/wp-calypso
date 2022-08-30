@@ -76,26 +76,6 @@
 	}
 }
 
-.theme-preview-container__variation {
-	border-radius: 5px; /* stylelint-disable-line scales/radii */
-	border: 2px solid transparent;
-	padding: 3px;
-	transition: border-color 0.15s ease-in-out;
-
-	&:hover {
-		border-color: var( --studio-blue-50 );
-	}
-
-	.theme-preview-container__variation-iframe {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
-		box-shadow: 0 0 1px rgba( 0, 0, 0, 0.25 );
-		border: 0;
-		display: block;
-		max-width: 100%;
-		overflow: hidden;
-	}
-}
-
 .theme-preview-container__sticky-variations {
 	align-items: center;
 	backdrop-filter: blur( 15px );
@@ -113,7 +93,7 @@
 	top: 0;
 	z-index: 30;
 
-	.theme-preview-container__variation {
+	.theme-style-variation__preview {
 		flex-shrink: 0;
 		width: 100px;
 	}

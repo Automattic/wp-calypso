@@ -1,7 +1,7 @@
 import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { getPreviewStylesFromVariation } from '../theme-style-variation-badges/utils';
-import Iframe from './iframe';
+import { getPreviewStylesFromVariation } from './utils';
+import Iframe from './preview-iframe';
 import type {
 	ThemeStyleVariation,
 	ThemeStyleVariationPreview,
@@ -62,12 +62,12 @@ const ColorSwatch: React.FC< ColorSwatchProps > = ( { color } ) => {
 	);
 };
 
-interface VariationProps {
+interface PreviewProps {
 	variation: ThemeStyleVariation;
 	coreColors?: ThemeStyleVariationPreview;
 }
 
-const Variation: React.FC< VariationProps > = ( { variation, coreColors } ) => {
+const Preview: React.FC< PreviewProps > = ( { variation, coreColors } ) => {
 	const translate = useTranslate();
 	const styles = useMemo(
 		() => variation && getPreviewStylesFromVariation( variation, coreColors?.color ),
@@ -93,7 +93,7 @@ const Variation: React.FC< VariationProps > = ( { variation, coreColors } ) => {
 
 	return (
 		<Iframe
-			className="theme-preview-container__variation-iframe"
+			className="theme-style-variation__preview-iframe"
 			style={ { height: IFRAME_HEIGHT } }
 			title={ translate( 'Style variation' ) }
 		>
@@ -117,7 +117,7 @@ const Variation: React.FC< VariationProps > = ( { variation, coreColors } ) => {
 					</div>
 					<FlexBox direction="column" gap={ 8 }>
 						{ highlightedColors &&
-							Object.values( highlightedColors ).map( ( color, i ) => (
+							Object.values( highlightedColors ).slice( 0, 2 ).map( ( color, i ) => (
 								<ColorSwatch key={ i } color={ color } />
 							) ) }
 					</FlexBox>
@@ -127,4 +127,4 @@ const Variation: React.FC< VariationProps > = ( { variation, coreColors } ) => {
 	);
 };
 
-export default Variation;
+export default Preview;

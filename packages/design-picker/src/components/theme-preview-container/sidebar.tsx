@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import Variations from './variations';
+import { ThemeStyleVariationPreviews } from '../theme-style-variation';
 import type { ThemeFeature, ThemeStyleVariation } from '../../types';
 
 interface SidebarProps {
@@ -31,7 +31,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 				<div className="theme-preview-container__sidebar-variations">
 					<h2> { translate( 'Style variations' ) }</h2>
 					<div className="theme-preview-container__sidebar-variations-grid">
-						<Variations variations={ variations } />
+						<ThemeStyleVariationPreviews variations={ variations } />
 					</div>
 				</div>
 			) }

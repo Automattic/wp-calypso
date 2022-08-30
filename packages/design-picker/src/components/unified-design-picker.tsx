@@ -26,7 +26,7 @@ import {
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PremiumBadge from './premium-badge';
 import ThemePreview from './theme-preview';
-import ThemeStyleVariationBadges from './theme-style-variation-badges';
+import { ThemeStyleVariationBadges } from './theme-style-variation';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
 import './style.scss';
