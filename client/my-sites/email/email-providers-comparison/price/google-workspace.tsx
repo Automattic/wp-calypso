@@ -94,7 +94,7 @@ const GoogleWorkspacePrice = ( {
 		/>
 	);
 
-	const numberOfTrialMonths = product?.introductory_offer?.interval_count ?? 1;
+	const numberOfTrialMonths = product?.introductory_offer?.interval_count ?? 0;
 
 	return (
 		<>
