@@ -1,3 +1,4 @@
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
@@ -606,7 +607,7 @@ class DomainsStep extends Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		if ( this.isTailoredFlow() ) {
+		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
 			const components = {
 				span: (
 					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
