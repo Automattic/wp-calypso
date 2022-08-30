@@ -32,7 +32,7 @@ const PatternsSelector = ( {
 	};
 
 	const handleBackClick = () => {
-		onSelect( null );
+		onSelect( selectedPattern );
 	};
 
 	const isSelected = ( id: number ) => id === selectedPattern?.id;
