@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
 
@@ -8,21 +8,12 @@ type PatternSelectorProps = {
 	patterns: Pattern[] | null;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	title: string | null;
-	pattern: Pattern | null;
 	show: boolean;
 };
 
-const PatternSelector = ( { patterns, onSelect, title, pattern, show }: PatternSelectorProps ) => {
+const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorProps ) => {
 	const [ selectedPattern, setSelectedPattern ] = useState< Pattern | null >( null );
 	const translate = useTranslate();
-
-	useEffect( () => {
-		setSelectedPattern( pattern );
-	}, [ pattern ] );
-
-	useEffect( () => {
-		setSelectedPattern( pattern );
-	}, [ pattern ] );
 
 	const handleContinueClick = () => {
 		onSelect( selectedPattern );
@@ -33,10 +24,7 @@ const PatternSelector = ( { patterns, onSelect, title, pattern, show }: PatternS
 		setSelectedPattern( null );
 	};
 
-	const isSelected = ( id: number ) => id === ( selectedPattern?.id || pattern?.id );
-
 	const handleSelectedPattern = ( item: Pattern ) => {
-		if ( isSelected( item.id ) ) return setSelectedPattern( null );
 		setSelectedPattern( item );
 	};
 
