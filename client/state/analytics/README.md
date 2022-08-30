@@ -99,7 +99,7 @@ const recorder = withEnhancer( recordPageView, [ enhancer1, enhancer2, enhancer3
 - To include the `site_type` property in any other tracking calls, the respective analytics Redux action must be accompanied by `enhanceWithSiteType` ([example](https://github.com/Automattic/wp-calypso/blob/a2cc6fa5ee914e53e75e8eaf147bf1bac549b5e4/client/login/magic-login/index.jsx#L167))
 
 #### [enhanceWithSiteMainProduct]
-- Enhances the `ANALYTICS_PAGE_VIEW_RECORD` action
+- Enhances the `ANALYTICS_PAGE_VIEW_RECORD` action for `calypso_page_view` of email and purchase related pages (i.e. paths with prefix defined in `should-report-omit-site-main-product.js`)
 - Adds the property `site_main_product` specifying the main product user set up in the current site
  - `site` - User signed up for a website 
  - `domain` - User signed up for a domain-only "site", without any email subscription

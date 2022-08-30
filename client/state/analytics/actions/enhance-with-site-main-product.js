@@ -1,3 +1,4 @@
+import { shouldReportOmitSiteMainProduct } from 'calypso/lib/analytics/utils';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import { ANALYTICS_PAGE_VIEW_RECORD } from 'calypso/state/action-types';
@@ -19,6 +20,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  */
 export function enhanceWithSiteMainProduct( action, getState ) {
 	if ( action.type !== ANALYTICS_PAGE_VIEW_RECORD ) {
+		return action;
+	}
+
+	const path = action.meta.analytics[ 0 ].payload.url;
+	if ( shouldReportOmitSiteMainProduct( path ) ) {
 		return action;
 	}
 
