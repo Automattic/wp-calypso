@@ -8,6 +8,7 @@ import type { Pattern } from './types';
 type PatternsSelectorProps = {
 	patterns: Pattern[] | null;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
+	onDeselect: ( selectedPattern: Pattern | null ) => void;
 	title: string | null;
 	pattern: Pattern | null;
 	show: boolean;
@@ -16,6 +17,7 @@ type PatternsSelectorProps = {
 const PatternsSelector = ( {
 	patterns,
 	onSelect,
+	onDeselect,
 	title,
 	pattern,
 	show,
@@ -32,7 +34,13 @@ const PatternsSelector = ( {
 	};
 
 	const handleBackClick = () => {
-		onSelect( selectedPattern );
+		onSelect( null );
+		setSelectedPattern( null );
+	};
+
+	const handleDeleteClick = () => {
+		onDeselect( pattern );
+		setSelectedPattern( null );
 	};
 
 	const isSelected = ( id: number ) => id === selectedPattern?.id;
@@ -85,6 +93,15 @@ const PatternsSelector = ( {
 						primary
 					>
 						{ translate( 'Choose' ) }
+					</Button>
+				) }
+				{ ! selectedPattern && pattern && (
+					<Button
+						className="patterns-selector__button patterns-selector__button-continue"
+						onClick={ handleDeleteClick }
+						primary
+					>
+						{ translate( 'Delete' ) }
 					</Button>
 				) }
 			</div>

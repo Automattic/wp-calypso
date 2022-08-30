@@ -38,11 +38,16 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			if ( 'header' === showPatternSelectorType ) setHeader( pattern );
 			if ( 'footer' === showPatternSelectorType ) setFooter( pattern );
 			if ( 'section' === showPatternSelectorType ) addSection( pattern );
-		} else {
-			// When a pattern is unselected
-			if ( 'header' === showPatternSelectorType && header ) setHeader( null );
-			if ( 'footer' === showPatternSelectorType && footer ) setFooter( null );
-			if ( 'section' === showPatternSelectorType && section ) removeSection( section );
+		}
+		setShowPatternSelectorType( null );
+	};
+
+	const onDeselect = ( pattern: Pattern | null ) => {
+		// When a pattern is unselected
+		if ( pattern ) {
+			if ( 'header' === showPatternSelectorType ) setHeader( null );
+			if ( 'footer' === showPatternSelectorType ) setFooter( null );
+			if ( 'section' === showPatternSelectorType ) removeSection( pattern );
 		}
 
 		setShowPatternSelectorType( null );
@@ -62,6 +67,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 					showPatternSelectorType={ showPatternSelectorType }
 					pattern={ getPatternSelected() }
 					onSelect={ onSelect }
+					onDeselect={ onDeselect }
 				/>
 				{ ! showPatternSelectorType && (
 					<PatternLayout
