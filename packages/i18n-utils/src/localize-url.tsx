@@ -156,8 +156,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 export function localizeUrl(
 	fullUrl: string,
 	locale: Locale = getDefaultLocale(),
-	isLoggedIn = true,
-	skipHostLookup = false // Set to true to avoid matching the hostname with the paths from urlLocalizationMapping.
+	isLoggedIn = true
 ): string {
 	let url;
 	try {
@@ -190,11 +189,7 @@ export function localizeUrl(
 	}
 
 	// Lookup is checked back to front.
-	const lookup = [
-		skipHostLookup ? '' : url.host,
-		url.host + firstPathSegment,
-		url.host + url.pathname,
-	];
+	const lookup = [ url.host, url.host + firstPathSegment, url.host + url.pathname ];
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
