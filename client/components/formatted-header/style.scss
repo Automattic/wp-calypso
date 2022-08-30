@@ -75,6 +75,12 @@
 	.is-right-align & {
 		padding: 0;
 	}
+
+	.tailored-flow-subtitle__cta-text {
+		text-decoration: underline;
+		cursor: pointer;
+		color: var( --studio-gray-80 );
+	}
 }
 
 // Compact header on small screens
