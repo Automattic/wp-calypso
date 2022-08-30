@@ -66,7 +66,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
 	const [ formFileUploadElement ] = useState(
-		createElement( FormFileUpload, { name: 'import', onChange: onFileInputChange } )
+		createElement( FormFileUpload, {
+			name: 'import',
+			onChange: onFileInputChange,
+			disabled: inProgress,
+		} )
 	);
 
 	/**
@@ -79,10 +83,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	useEffect( () => {
 		getSubscribersImports( siteId );
 	}, [] );
-	// reset form when add/import starts
-	useEffect( () => {
-		inProgress && resetForm();
-	}, [ inProgress ] );
 	// run active job recognition process which updates state
 	useActiveJobRecognition( siteId );
 	useEffect( extendEmailFormControls, [ emails ] );
@@ -149,12 +149,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		isValid && setSelectedFile( file );
 	}
 
-	function resetForm() {
-		setEmails( [] );
-		setIsValidEmails( [] );
-		setSelectedFile( undefined );
-	}
-
 	function extendEmailFormControls() {
 		const validEmailsNum = isValidEmails.filter( ( x ) => x ).length;
 		const currentEmailFormControlsNum = emailFormControls.length;
@@ -190,11 +184,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						const showError = isDirtyEmails[ i ] && ! isValidEmails[ i ] && emails[ i ];
 
 						return (
-							<>
+							<div key={ i }>
 								<TextControl
 									className={ showError ? 'is-error' : '' }
+									disabled={ inProgress }
 									placeholder={ placeholder }
-									key={ i }
 									value={ emails[ i ] || '' }
 									help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
 									onChange={ ( value ) => onEmailChange( value, i ) }
@@ -207,7 +201,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 										text={ __( 'The format of the email is invalid' ) }
 									/>
 								) }
-							</>
+							</div>
 						);
 					} ) }
 
