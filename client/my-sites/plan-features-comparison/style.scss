@@ -269,6 +269,7 @@ $plan-features-sidebar-width: 272px;
 		&.plan-features-comparison__item-available {
 			display: flex;
 			flex-direction: column;
+			position: relative;
 
 			& .plan-features-comparison__item-annual-plan-container {
 				display: flex;
@@ -304,6 +305,10 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-features-comparison__item-cross {
 			fill: #a7aaad;
+		}
+
+		&.is-bold {
+			font-weight: bold;
 		}
 	}
 }
