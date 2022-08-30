@@ -162,7 +162,9 @@ class DomainSearch extends Component {
 		);
 		if ( productToRemove ) {
 			const uuidToRemove = productToRemove.uuid;
-			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove );
+			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		}
 	}
 

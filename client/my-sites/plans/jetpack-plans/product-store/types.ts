@@ -1,11 +1,21 @@
-import { BasePageProps, Duration, PurchaseCallback, PurchaseURLCallback } from '../types';
-import type { SelectorProduct } from '../types';
+import type {
+	QueryArgs,
+	SelectorProduct,
+	Duration,
+	PurchaseCallback,
+	PurchaseURLCallback,
+} from '../types';
+
+export type ViewType = 'products' | 'bundles';
 
 export interface ProductStoreBaseProps {
 	siteId: number | null;
 }
 
-export interface ProductStoreProps extends Pick< BasePageProps, 'urlQueryArgs' > {
+export type ProductStoreQueryArgs = QueryArgs & {
+	view?: ViewType;
+};
+export interface ProductStoreProps {
 	/**
 	 * Whether to show the licence activation dialog
 	 */
@@ -13,13 +23,12 @@ export interface ProductStoreProps extends Pick< BasePageProps, 'urlQueryArgs' >
 	duration: Duration;
 	createCheckoutURL?: PurchaseURLCallback;
 	onClickPurchase?: PurchaseCallback;
+	urlQueryArgs: ProductStoreQueryArgs;
 }
 
 export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & ProductStoreBaseProps;
 
 export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductStoreBaseProps;
-
-export type ViewType = 'products' | 'bundles';
 
 export interface ViewFilterProps {
 	currentView: ViewType;

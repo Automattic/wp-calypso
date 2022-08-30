@@ -1,3 +1,11 @@
+/**
+ * This logic is complex and in many cases quite old. To keep it functional and
+ * comprehensible and to prevent regressions, all possible outputs are covered
+ * by unit tests in
+ * `client/my-sites/checkout/get-thank-you-page-url/test/get-thank-you-page-url.ts`.
+ *
+ * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
+ */
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -88,7 +96,7 @@ export interface PostCheckoutUrlArguments {
  * This logic is complex and in many cases quite old. To keep it functional and
  * comprehensible and to prevent regressions, all possible outputs are covered
  * by unit tests in
- * `client/my-sites/checkout/composite-checkout/test/composite-checkout-thank-you`.
+ * `client/my-sites/checkout/get-thank-you-page-url/test/get-thank-you-page-url.ts`.
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  *

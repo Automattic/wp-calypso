@@ -7,3 +7,7 @@ export function pathToRegExp( path ) {
 	}
 	return new RegExp( '^' + path + '(/.*)?$' );
 }
+
+export function redirectToLaunchpad( siteSlug, launchpadFlow ) {
+	window.location.replace( `/setup/launchpad?flow=${ launchpadFlow }&siteSlug=${ siteSlug }` );
+}
