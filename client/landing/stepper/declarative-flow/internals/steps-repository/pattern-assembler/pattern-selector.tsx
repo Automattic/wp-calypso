@@ -1,15 +1,9 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
-
-const patternPreviewUrl =
-	'https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?stylesheet=pub/blank-canvas&pattern_id=';
-
-const sourceSiteId = 174455321; // dotcompatterns
-
-const getPatternPreviewUrl = ( id: number ) => `${ patternPreviewUrl }${ id }-${ sourceSiteId }`;
 
 type PatternsSelectorProps = {
 	patterns: Pattern[] | null;
@@ -18,12 +12,6 @@ type PatternsSelectorProps = {
 	pattern: Pattern | null;
 	show: boolean;
 };
-
-const handleKeyboard =
-	( callback ) =>
-	( { key } ) => {
-		if ( key === 'Enter' || key === ' ' ) callback();
-	};
 
 const PatternsSelector = ( {
 	patterns,
@@ -35,6 +23,10 @@ const PatternsSelector = ( {
 	const [ selectedPattern, setSelectedPattern ] = useState< Pattern | null >( null );
 	const translate = useTranslate();
 
+	useEffect( () => {
+		setSelectedPattern( pattern );
+	}, [ pattern ] );
+
 	const handleContinueClick = () => {
 		onSelect( selectedPattern );
 	};
@@ -43,7 +35,12 @@ const PatternsSelector = ( {
 		onSelect( null );
 	};
 
-	const isSelected = ( id: number ) => id === ( selectedPattern?.id || pattern?.id );
+	const isSelected = ( id: number ) => id === selectedPattern?.id;
+
+	const handleSelectedPattern = ( item: Pattern ) => {
+		if ( isSelected( item.id ) ) return setSelectedPattern( null );
+		setSelectedPattern( item );
+	};
 
 	return (
 		<div className="patterns-selector" style={ show ? {} : { height: 0, overflow: 'hidden' } }>
@@ -60,7 +57,7 @@ const PatternsSelector = ( {
 							role="option"
 							aria-selected={ isSelected( item.id ) }
 							className={ classNames( { '--pattern-selected': isSelected( item.id ) } ) }
-							onClick={ () => setSelectedPattern( item ) }
+							onClick={ () => handleSelectedPattern( item ) }
 							onKeyUp={ handleKeyboard( () => setSelectedPattern( item ) ) }
 						>
 							<iframe

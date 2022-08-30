@@ -20,6 +20,9 @@ const PatternLayout = ( {
 	onSelectHeader,
 	onSelectSection,
 	onSelectFooter,
+	header,
+	sections,
+	footer,
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
 
@@ -31,15 +34,42 @@ const PatternLayout = ( {
 			</div>
 			<div className="pattern-layout__body">
 				<ul>
-					<li className="pattern-layout__list-item" onClick={ onSelectHeader }>
-						+ { translate( 'Choose a header' ) }
-					</li>
-					<li className="pattern-layout__list-item" onClick={ onSelectSection }>
-						+ { translate( 'Add a first section' ) }
-					</li>
-					<li className="pattern-layout__list-item" onClick={ onSelectFooter }>
-						+ { translate( 'Choose a footer' ) }
-					</li>
+					{ header ? (
+						<li className="pattern-layout__list-item" onClick={ onSelectHeader }>
+							{ header.name }
+						</li>
+					) : (
+						<li className="pattern-layout__list-item" onClick={ onSelectHeader }>
+							+ { translate( 'Choose a header' ) }
+						</li>
+					) }
+					{ sections?.map( ( { id, name } ) => (
+						<li
+							key={ id }
+							className="pattern-layout__list-item"
+							onClick={ () => onSelectSection( { id, name } ) }
+						>
+							{ name }
+						</li>
+					) ) }
+					{ sections?.length ? (
+						<li className="pattern-layout__list-item" onClick={ () => onSelectSection() }>
+							+ { translate( 'Add another section' ) }
+						</li>
+					) : (
+						<li className="pattern-layout__list-item" onClick={ () => onSelectSection() }>
+							+ { translate( 'Add a first section' ) }
+						</li>
+					) }
+					{ footer ? (
+						<li className="pattern-layout__list-item" onClick={ onSelectFooter }>
+							{ footer.name }
+						</li>
+					) : (
+						<li className="pattern-layout__list-item" onClick={ onSelectFooter }>
+							+ { translate( 'Choose a footer' ) }
+						</li>
+					) }
 				</ul>
 			</div>
 			<div className="pattern-layout__footer">

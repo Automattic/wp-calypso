@@ -80,8 +80,8 @@ const sectionPatterns: Pattern[] = [
 		name: 'Contact',
 	},
 	{
-		id: 54,
-		name: 'Masonry Gallery',
+		id: 3856,
+		name: 'Organic Gallery With Intro Text',
 	},
 	{
 		id: 1930,
@@ -102,6 +102,14 @@ const sectionPatterns: Pattern[] = [
 	{
 		id: 1046,
 		name: 'Subscription',
+	},
+	{
+		id: 1593,
+		name: 'Header and Three Images',
+	},
+	{
+		id: 687,
+		name: 'Images with Titles',
 	},
 ];
 
