@@ -1,6 +1,6 @@
 interface FlowProgress {
-	stepName: string;
-	flowName: string;
+	stepName?: string;
+	flowName?: string;
 }
 
 const flows: Record< string, { [ step: string ]: number } > = {
@@ -24,12 +24,17 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	},
 };
 
-export const useFlowProgress = ( props: FlowProgress | undefined ) => {
-	if ( ! props ) {
+export const useFlowProgress = ( { stepName, flowName }: FlowProgress = {} ) => {
+	if ( ! stepName || ! flowName ) {
 		return;
 	}
-	const { stepName, flowName } = props;
-	const flow = flows[ flowName ];
 
-	return flow && { progress: flow[ stepName ], count: Object.keys( flow ).length };
+	const flowProgress = flows[ flowName ];
+
+	return (
+		flowProgress && {
+			progress: flowProgress[ stepName ],
+			count: Object.keys( flowProgress ).length,
+		}
+	);
 };

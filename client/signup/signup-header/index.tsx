@@ -5,8 +5,8 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
 
 interface ProgressBarData {
-	flowName: string;
-	stepName: string;
+	flowName?: string;
+	stepName?: string;
 }
 
 interface Props {
@@ -21,7 +21,7 @@ const SignupHeader = ( {
 	shouldShowLoadingScreen,
 	isReskinned,
 	rightComponent,
-	progressBar,
+	progressBar = {},
 	pageTitle,
 }: Props ) => {
 	const logoClasses = classnames( 'wordpress-logo', {
