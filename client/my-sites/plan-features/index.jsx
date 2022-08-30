@@ -877,7 +877,6 @@ PlanFeatures.propTypes = {
 	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isJetpack: PropTypes.bool,
-	isProfessionalEmailPromotionAvailable: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PropTypes.array,
@@ -937,7 +936,6 @@ const ConnectedPlanFeatures = connect(
 	( state, ownProps ) => {
 		const {
 			isInSignup,
-			isProfessionalEmailPromotionAvailable,
 			placeholder,
 			plans,
 			isLandingPage,
@@ -969,7 +967,6 @@ const ConnectedPlanFeatures = connect(
 					: '';
 				const planConstantObj = applyTestFiltersToPlansList( plan, experiment, {
 					isLoggedInMonthlyPricing,
-					isProfessionalEmailPromotionAvailable,
 				} );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
