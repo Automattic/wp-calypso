@@ -67,5 +67,9 @@ function getFirstGrapheme( input: string ) {
 		return firstSegmentData?.segment ?? '';
 	}
 
-	return input.charAt( 0 );
+	const codePoint = input.codePointAt( 0 );
+	if ( codePoint ) {
+		return String.fromCodePoint( codePoint );
+	}
+	return '';
 }
