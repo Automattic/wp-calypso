@@ -140,7 +140,6 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
-		hideBackButton: PropTypes.bool,
 		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
 	};
@@ -748,14 +747,6 @@ class Signup extends Component {
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
-		const progressBar = () => {
-			const flowName = this.props.initialContext?.query?.flowName || this.props.flowName;
-			if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
-				return { flowName, stepName: this.props.stepName };
-			}
-			return;
-		};
-
 		const isEligibleForOlarkChat =
 			'onboarding' === this.props.flowName &&
 			[ 'en', 'en-gb' ].includes( this.props.localeSlug ) &&
@@ -767,10 +758,12 @@ class Signup extends Component {
 					<DocumentHead title={ this.props.pageTitle } />
 					{ ! isP2Flow( this.props.flowName ) && (
 						<SignupHeader
-							progressBar={ progressBar() }
+							progressBar={ {
+								flowName: this.props.flowName,
+								stepName: this.props.stepName,
+							} }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
-							pageTitle={ this.props.hideBackButton && this.props.pageTitle }
 							rightComponent={
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator
