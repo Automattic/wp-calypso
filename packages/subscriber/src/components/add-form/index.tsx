@@ -29,6 +29,7 @@ interface Props {
 	showSkipBtn?: boolean;
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
+	allowEmptyFormSubmit?: boolean;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
 }
@@ -41,6 +42,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showSkipBtn,
 		showCsvUpload,
 		submitBtnName,
+		allowEmptyFormSubmit,
 		onSkipBtnClick,
 		onImportFinished,
 	} = props;
@@ -104,7 +106,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		validEmails.length && addSubscribers( siteId, validEmails );
 		selectedFile && importCsvSubscribers( siteId, selectedFile );
 
-		! validEmails.length && ! selectedFile && onImportFinished?.();
+		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
 	}
 
 	function onEmailChange( value: string, index: number ) {

@@ -34,6 +34,7 @@ const Subscribers: Step = function ( { navigation, flow } ): ReactElement | null
 							siteId={ site.ID }
 							submitBtnName={ __( 'Continue' ) }
 							onImportFinished={ handleSubmit }
+							allowEmptyFormSubmit={ true }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 						/>
 					) }
