@@ -236,7 +236,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/wp-calypso
-      - run: *update-node
       - run:
           name: Install Linux deps
           command: |
