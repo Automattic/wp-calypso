@@ -213,7 +213,13 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Ad destination' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__target-value">
-								{ target_url || '-' }
+								{ target_url ? (
+									<a href={ target_url } target="_blank" rel="noreferrer">
+										{ target_url }
+									</a>
+								) : (
+									'-'
+								) }
 							</div>
 						</div>
 					</div>
