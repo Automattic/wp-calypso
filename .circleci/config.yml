@@ -80,24 +80,9 @@ references:
 
   yarn-install: &yarn-install
     name: Install dependencies
+    # Note that yarn is already available in cimg/node.
     command: |
-      source "$HOME/.nvm/nvm.sh"
-      nvm use
-      npm install -g yarn
       yarn install --immutable --inline-builds
-
-  update-node: &update-node
-    name: Update node
-    command: |
-      set +e
-      set +x
-      export NVM_DIR="$HOME/.nvm" && (
-        git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
-        cd "$NVM_DIR"
-        git checkout v0.35.3
-      ) && \. "$NVM_DIR/nvm.sh" --no-use
-      nvm install
-      nvm use
 
   save-yarn-cache: &save-yarn-cache
     name: 'Save yarn cache'
@@ -151,7 +136,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/wp-calypso
-      - run: *update-node
       - when:
           condition: << pipeline.git.tag >>
           steps:
@@ -177,7 +161,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: /Users/distiller/wp-calypso
-      - run: *update-node
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
       - save_cache: *save-yarn-cache
