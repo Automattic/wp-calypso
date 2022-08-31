@@ -106,6 +106,15 @@ a.post-item__title-link:visited {
 	margin-right: 2px;
 }
 
+/* Force all items in the meta section to be middle-aligned */
+.post-item__meta a,
+.post-item__meta div,
+.post-item__meta li,
+.post-item__meta span,
+.post-item__meta ul {
+	vertical-align: middle;
+}
+
 .post-item__meta-time-status {
 	display: inline-block;
 	margin-right: 16px;

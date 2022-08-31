@@ -212,6 +212,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		settings: {
 			blogname?: string;
 			blogdescription?: string;
+			launchpad_screen?: string;
 			site_vertical_id?: string;
 			woocommerce_store_address?: string;
 			woocommerce_store_address_2?: string;
@@ -248,6 +249,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-intent`,
 				apiNamespace: 'wpcom/v2',
 				body: { site_intent: intent },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
+	function* setStaticHomepageOnSite( siteID: number, pageId: number ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteID ) }/homepage`,
+				apiVersion: '1.1',
+				body: { is_page_on_front: true, page_on_front_id: pageId },
 				method: 'POST',
 			} );
 		} catch ( e ) {}
@@ -499,6 +511,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		saveSiteTitle,
 		saveSiteSettings,
 		setIntentOnSite,
+		setStaticHomepageOnSite,
 		setGoalsOnSite,
 		receiveSiteTitle,
 		fetchNewSite,

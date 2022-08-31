@@ -49,7 +49,7 @@ export const SiteThumbnail = ( {
 		h: height,
 		...mshotsOption,
 	};
-	const { imgProps, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, options, [
+	const { imgProps, isLoading, isError } = useMshotsImg( mShotsUrl, options, [
 		...dimensionsSrcset,
 		{ width, height },
 	] );
@@ -86,7 +86,6 @@ export const SiteThumbnail = ( {
 					className={ classnames( 'site-thumbnail__image', {
 						'site-thumbnail__mshot_default_hidden': isLoading,
 					} ) }
-					ref={ imgRef }
 					alt={ alt }
 					sizes={ sizesAttr || `${ width }px` }
 					{ ...imgProps }

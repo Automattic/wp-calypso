@@ -26,6 +26,7 @@ import {
 	getUrlParts,
 	getUrlFromParts,
 } from '@automattic/calypso-url';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import {
 	getGoogleApps,
@@ -285,16 +286,20 @@ export default function getThankYouPageUrl( {
 		return newBlogReceiptUrl;
 	}
 
-	const redirectUrlForPostCheckoutUpsell = receiptIdOrPlaceholder
-		? getRedirectUrlForPostCheckoutUpsell( {
-				receiptId: receiptIdOrPlaceholder,
-				cart,
-				siteSlug,
-				hideUpsell: Boolean( hideNudge ),
-				domains,
-				isDomainOnly,
-		  } )
-		: undefined;
+	// disable upsell for tailored signup users
+	const isTailoredSignup = isNewsletterOrLinkInBioFlow( signupFlowName );
+
+	const redirectUrlForPostCheckoutUpsell =
+		! isTailoredSignup && receiptIdOrPlaceholder
+			? getRedirectUrlForPostCheckoutUpsell( {
+					receiptId: receiptIdOrPlaceholder,
+					cart,
+					siteSlug,
+					hideUpsell: Boolean( hideNudge ),
+					domains,
+					isDomainOnly,
+			  } )
+			: undefined;
 
 	if ( redirectUrlForPostCheckoutUpsell ) {
 		debug(

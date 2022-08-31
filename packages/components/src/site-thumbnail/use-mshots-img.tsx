@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 
 export function mshotsUrl( targetUrl: string, options: MShotsOptions, countToRefresh = 0 ): string {
 	if ( ! targetUrl ) {
@@ -40,7 +40,6 @@ export const useMshotsImg = (
 ): {
 	isLoading: boolean;
 	isError: boolean;
-	imgRef: React.MutableRefObject< HTMLImageElement | null >;
 	imgProps: Partial< React.ImgHTMLAttributes< HTMLImageElement > >;
 } => {
 	const [ retryCount, setRetryCount ] = useState( 0 );
@@ -57,46 +56,46 @@ export const useMshotsImg = (
 		return { mshotUrl, srcSet };
 	}, [ src, options, retryCount, sizes ] );
 
-	const imgRef = useRef< HTMLImageElement >( null );
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isError, setIsError ] = useState( false );
 
+	const timeout = useRef< ReturnType< typeof setTimeout > >();
+
+	const onLoad = useCallback(
+		( event: React.SyntheticEvent< HTMLImageElement, Event > ) => {
+			if ( ! mshotUrl.length ) {
+				return;
+			}
+
+			// MShot Loading image is 400x300px.
+			// MShot 404 image is 748×561px
+			setIsLoading( true );
+			const hasLoadingImgDimensions =
+				event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300;
+			if ( ! hasLoadingImgDimensions ) {
+				setIsLoading( false );
+			} else if ( retryCount < MAXTRIES ) {
+				// Only refresh 10 times
+				timeout.current = setTimeout(
+					() => setRetryCount( ( retryCount ) => retryCount + 1 ),
+					retryCount * 500
+				);
+			}
+		},
+		[ retryCount, mshotUrl.length ]
+	);
+
+	const onError = useCallback( () => {
+		setIsError( true );
+	}, [] );
+
 	useEffect( () => {
-		let timeout: number;
-		if ( mshotUrl.length > 0 && imgRef?.current && ! imgRef.current.onload ) {
-			imgRef.current.onload = () => {
-				// MShot Loading image is 400x300px.
-				// MShot 404 image is 748×561px
-				setIsLoading( true );
-				const hasLoadingImgDimensions =
-					imgRef?.current?.naturalWidth === 400 && imgRef?.current.naturalHeight === 300;
-				if ( ! hasLoadingImgDimensions ) {
-					setIsLoading( false );
-				} else if ( retryCount < MAXTRIES ) {
-					// Only refresh 10 times
-					timeout = setTimeout(
-						() => setRetryCount( ( retryCount ) => retryCount + 1 ),
-						retryCount * 500
-					);
-				}
-			};
-			imgRef.current.onerror = () => {
-				setIsError( true );
-			};
-		}
-		return () => {
-			clearTimeout( timeout );
-		};
-	}, [ imgRef, mshotUrl, retryCount ] );
+		clearTimeout( timeout.current );
+	}, [ mshotUrl ] );
 
 	return {
 		isLoading,
 		isError,
-		imgRef,
-		imgProps: {
-			src: mshotUrl,
-			srcSet,
-			loading: 'lazy',
-		},
+		imgProps: { onLoad, onError, src: mshotUrl, srcSet, loading: 'lazy' },
 	};
 };
