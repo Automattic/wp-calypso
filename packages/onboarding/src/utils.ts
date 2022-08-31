@@ -8,7 +8,6 @@ export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 
 export const isTailoredSignupFlow = ( flowName: string | null ) => {
 	return Boolean(
-		flowName &&
-			( isNewsletterOrLinkInBioFlow( flowName ) || VIDEOPRESS_FLOW === flowName )
+		flowName && ( isNewsletterOrLinkInBioFlow( flowName ) || VIDEOPRESS_FLOW === flowName )
 	);
 };
