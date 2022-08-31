@@ -41,14 +41,14 @@
 
 .launchpad__sidebar {
 	max-width: 100%;
-	margin: 24px 16px 16px;
+	margin: 24px 16px 32px;
 	display: flex;
 	flex-direction: column;
-	height: 97vh;
 
 	@include break-large {
 		max-width: 440px;
 		margin: 24px 20px 24px 40px;
+		height: 97vh;
 	}
 }
 
