@@ -85,6 +85,34 @@ class FeedHeader extends Component {
 		return (
 			<div className={ classes }>
 				<QueryUserSettings />
+				<Card className="reader-feed-header__site">
+					<a href={ siteUrl } className="reader-feed-header__site-icon">
+						<SiteIcon site={ site } size={ 96 } />
+					</a>
+					<div className="reader-feed-header__site-title">
+						{ site && (
+							<span className="reader-feed-header__site-badge">
+								<ReaderFeedHeaderSiteBadge site={ site } />
+								<BlogStickers blogId={ site.ID } />
+							</span>
+						) }
+						<a className="reader-feed-header__site-title-link" href={ siteUrl }>
+							{ siteTitle }
+						</a>
+					</div>
+					<div className="reader-feed-header__details">
+						<span className="reader-feed-header__description">{ description }</span>
+						{ ownerDisplayName && ! isAuthorNameBlocked( ownerDisplayName ) && (
+							<span className="reader-feed-header__byline">
+								{ translate( 'by %(author)s', {
+									args: {
+										author: ownerDisplayName,
+									},
+								} ) }
+							</span>
+						) }
+					</div>
+				</Card>
 				<div className="reader-feed-header__back-and-follow">
 					{ showBack && <HeaderBack /> }
 					<div className="reader-feed-header__follow">
@@ -129,34 +157,6 @@ class FeedHeader extends Component {
 						</div>
 					</div>
 				</div>
-				<Card className="reader-feed-header__site">
-					<a href={ siteUrl } className="reader-feed-header__site-icon">
-						<SiteIcon site={ site } size={ 96 } />
-					</a>
-					<div className="reader-feed-header__site-title">
-						{ site && (
-							<span className="reader-feed-header__site-badge">
-								<ReaderFeedHeaderSiteBadge site={ site } />
-								<BlogStickers blogId={ site.ID } />
-							</span>
-						) }
-						<a className="reader-feed-header__site-title-link" href={ siteUrl }>
-							{ siteTitle }
-						</a>
-					</div>
-					<div className="reader-feed-header__details">
-						<span className="reader-feed-header__description">{ description }</span>
-						{ ownerDisplayName && ! isAuthorNameBlocked( ownerDisplayName ) && (
-							<span className="reader-feed-header__byline">
-								{ translate( 'by %(author)s', {
-									args: {
-										author: ownerDisplayName,
-									},
-								} ) }
-							</span>
-						) }
-					</div>
-				</Card>
 			</div>
 		);
 	}
