@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { FEATURE_SSH } from '@automattic/calypso-products';
 import { Card, Button, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -455,8 +454,7 @@ export default connect(
 			currentUserId,
 			username,
 			password,
-			siteHasSshFeature:
-				config.isEnabled( 'launch-wpcom-ssh' ) && siteHasFeature( state, siteId, FEATURE_SSH ),
+			siteHasSshFeature: siteHasFeature( state, siteId, FEATURE_SSH ),
 			isSshAccessEnabled: 'ssh' === getAtomicHostingSshAccess( state, siteId ),
 		};
 	},
