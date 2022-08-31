@@ -54,6 +54,25 @@
 	}
 }
 
+.add-subscriber .add-subscriber__form--container label,
+.add-subscriber .add-subscriber__form--container .form-input-validation {
+	.components-base-control__field {
+		margin: 0.5rem auto;
+	}
+
+	.components-button {
+		height: auto;
+		padding: 0;
+		font-size: 1em; /* stylelint-disable-line */
+		color: var( --color-text );
+		text-decoration: underline;
+
+		&:hover {
+			color: var( --color-text-subtle );
+		}
+	}
+}
+
 .add-subscriber .add-subscriber__form--container {
 	max-width: 368px;
 
@@ -64,35 +83,15 @@
 		line-height: 1.25rem;
 		margin: 0.75rem 0 1.5rem;
 
-		.components-base-control__field {
-			margin: 0.5rem auto;
-		}
-
-		.components-button {
-			height: auto;
-			padding: 0;
-			font-size: 1em; /* stylelint-disable-line */
-			color: var( --color-text );
-			text-decoration: underline;
-		}
-
 		&.add-subscriber__form-label-links {
 			.components-button {
 				margin: 0 0.2rem;
 			}
 		}
+	}
 
-		&.add-subscriber__form-label-error {
-			span, svg {
-				color: var( --color-error );
-				fill: var( --color-error );
-			}
-
-			svg {
-				position: relative;
-				top: 4px;
-			}
-		}
+	.components-base-control.is-error input {
+		border-color: var( --color-error );
 	}
 
 	.components-base-control__field {
@@ -145,6 +144,22 @@
 
 		svg {
 			fill: var( --color-success-50 );
+		}
+	}
+
+	.form-input-validation {
+		padding: 0;
+		padding-inline-start: 2rem;
+		padding-inline-end: 0;
+		margin-bottom: 1.5rem;
+
+		svg {
+			position: absolute;
+			margin-inline-start: -2rem;
+		}
+
+		&.is-warning {
+			color: var( --studio-gray-40 );
 		}
 	}
 

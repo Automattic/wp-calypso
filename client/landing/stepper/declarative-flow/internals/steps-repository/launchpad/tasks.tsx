@@ -7,7 +7,6 @@ export const tasks: Task[] = [
 		actionUrl: '#',
 		taskType: 'blog',
 		displayBadge: false,
-		badgeText: '',
 	},
 	{
 		id: 'plan_selected',
@@ -15,7 +14,6 @@ export const tasks: Task[] = [
 		taskType: 'blog',
 		actionUrl: '#',
 		displayBadge: true,
-		badgeText: 'Personal',
 	},
 	{
 		id: 'subscribers_added',
@@ -23,7 +21,6 @@ export const tasks: Task[] = [
 		actionUrl: '#',
 		taskType: 'blog',
 		displayBadge: false,
-		badgeText: '',
 	},
 	{
 		id: 'first_post_published',
@@ -31,7 +28,6 @@ export const tasks: Task[] = [
 		actionUrl: '#',
 		taskType: 'blog',
 		displayBadge: false,
-		badgeText: '',
 	},
 	{
 		id: 'design_selected',
@@ -39,7 +35,6 @@ export const tasks: Task[] = [
 		actionUrl: '#',
 		taskType: 'blog',
 		displayBadge: false,
-		badgeText: '',
 	},
 	{
 		id: 'setup_link_in_bio',
@@ -47,7 +42,6 @@ export const tasks: Task[] = [
 		actionUrl: '#',
 		taskType: 'blog',
 		displayBadge: false,
-		badgeText: '',
 	},
 	{
 		id: 'links_added',
@@ -55,7 +49,6 @@ export const tasks: Task[] = [
 		actionUrl: '#',
 		taskType: 'blog',
 		displayBadge: false,
-		badgeText: '',
 	},
 	{
 		id: 'link_in_bio_launched',
@@ -63,7 +56,6 @@ export const tasks: Task[] = [
 		actionUrl: '#',
 		taskType: 'blog',
 		displayBadge: false,
-		badgeText: '',
 	},
 ];
 

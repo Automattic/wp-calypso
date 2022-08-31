@@ -16,9 +16,14 @@ interface Props {
 	isLoading: boolean;
 	columns: Columns;
 	className?: string;
+	removePluginNotice: ( plugin: Plugin ) => void;
 }
 
-export default function PluginsList( { selectedSite, ...rest }: Props ): ReactElement {
+export default function PluginsList( {
+	selectedSite,
+	removePluginNotice,
+	...rest
+}: Props ): ReactElement {
 	const translate = useTranslate();
 
 	const rowFormatter = ( props: PluginRowFormatterArgs ) => {
@@ -35,12 +40,18 @@ export default function PluginsList( { selectedSite, ...rest }: Props ): ReactEl
 				>
 					{ translate( 'Manage Plugin' ) }
 				</PopoverMenuItem>
-				{ selectedSite && (
-					<>
-						<RemovePlugin site={ selectedSite } plugin={ plugin } />
-						<PluginManageConnection site={ selectedSite } plugin={ plugin } />
-					</>
+				{ selectedSite ? (
+					<RemovePlugin site={ selectedSite } plugin={ plugin } />
+				) : (
+					<PopoverMenuItem
+						onClick={ () => removePluginNotice( plugin ) }
+						icon="trash"
+						className="plugin-management-v2__actions"
+					>
+						{ translate( 'Remove' ) }
+					</PopoverMenuItem>
 				) }
+				{ selectedSite && <PluginManageConnection site={ selectedSite } plugin={ plugin } /> }
 			</>
 		);
 	};

@@ -13,6 +13,9 @@ import {
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
+	PLUGINS_ALL_REQUEST,
+	PLUGINS_ALL_REQUEST_SUCCESS,
+	PLUGINS_ALL_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -531,4 +534,33 @@ export function fetchSitePlugins( siteId ) {
 
 export function fetchPlugins( siteIds ) {
 	return ( dispatch ) => siteIds.map( ( siteId ) => dispatch( fetchSitePlugins( siteId ) ) );
+}
+
+export function fetchAllPlugins() {
+	return ( dispatch ) => {
+		dispatch( { type: PLUGINS_ALL_REQUEST } );
+
+		const receivePluginsDispatchSuccess = ( { sites } ) => {
+			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
+
+			Object.entries( sites ).forEach( ( [ siteId, plugins ] ) => {
+				dispatch( receiveSitePlugins( siteId, plugins ) );
+
+				plugins.forEach( ( plugin ) => {
+					if ( plugin.update && plugin.autoupdate ) {
+						updatePlugin( siteId, plugin )( dispatch );
+					}
+				} );
+			} );
+		};
+
+		const receivePluginsDispatchFail = ( error ) => {
+			dispatch( { type: PLUGINS_ALL_REQUEST_FAILURE, error } );
+		};
+
+		return wpcom.req
+			.get( `/me/sites/plugins` )
+			.then( receivePluginsDispatchSuccess )
+			.catch( receivePluginsDispatchFail );
+	};
 }

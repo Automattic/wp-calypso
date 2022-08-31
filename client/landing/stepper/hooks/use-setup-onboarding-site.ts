@@ -1,5 +1,5 @@
 import { SiteDetails, useSiteLogoMutation } from '@automattic/data-stores';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { patterns } from '@automattic/pattern-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from 'react';
@@ -48,7 +48,7 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 
 	const { getState, getPatternId } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const state = getState();
-	const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
+	const { saveSiteSettings, setIntentOnSite, setStaticHomepageOnSite } = useDispatch( SITE_STORE );
 
 	const { mutateAsync: setSiteLogo } = useSiteLogoMutation( site?.ID );
 
@@ -77,12 +77,21 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 		return Promise.resolve();
 	};
 
+	const setLaunchpadScreen = ( site: SiteDetails, flow: string ) => {
+		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
+			return saveSiteSettings( site.ID, {
+				launchpad_screen: 'full',
+			} );
+		}
+		return Promise.resolve();
+	};
+
 	const setPattern = async (
 		site: SiteDetails,
 		flow: string,
 		logoUploadResult: Awaited< ReturnType< typeof setSiteLogo > > | void
 	) => {
-		if ( flow === 'link-in-bio' ) {
+		if ( flow === LINK_IN_BIO_FLOW ) {
 			const pattern = patterns.find( ( pattern: Pattern ) => pattern.id === selectedPatternId );
 			if ( pattern ) {
 				let content = pattern.content;
@@ -93,13 +102,15 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 						logoUploadResult.uploadResult.media[ 0 ].URL
 					);
 				}
-				wpcomRequest( {
+				await wpcomRequest( {
 					// since this is a new site, its safe to assume that homepage ID is 2
 					path: `/sites/${ site.ID }/pages/2`,
 					method: 'POST',
 					apiNamespace: 'wp/v2',
-					body: { content },
+					body: { content, template: 'blank' },
 				} );
+
+				return setStaticHomepageOnSite( site.ID, 2 );
 			}
 		}
 	};
@@ -112,6 +123,7 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 					setPattern( site, flow, logoUploadResult )
 				),
 				setIntent( site, flow ),
+				setLaunchpadScreen( site, flow ),
 			] ).then( () => {
 				recordTracksEvent( 'calypso_signup_site_options_submit', {
 					has_site_title: !! state.siteTitle,

@@ -1,19 +1,19 @@
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import ChecklistItem from './checklist-item';
 import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { Task } from './types';
 
-const Checklist = ( {
-	tasks,
-	siteSlug,
-	flow,
-}: {
+interface ChecklistProps {
 	tasks: Task[];
 	siteSlug: string | null;
 	flow: string | null;
-} ) => {
-	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
+}
 
-	const enhancedTasks = arrayOfFilteredTasks && getEnhancedTasks( arrayOfFilteredTasks, siteSlug );
+const Checklist = ( { tasks, siteSlug, flow }: ChecklistProps ) => {
+	const site = useSite();
+	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
+	const enhancedTasks =
+		arrayOfFilteredTasks && site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site );
 
 	return (
 		<ul className="launchpad__checklist" aria-label="Launchpad Checklist">
