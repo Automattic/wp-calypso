@@ -63,7 +63,7 @@ function getFirstGrapheme( input: string ) {
 		const segmenter = new Intl.Segmenter();
 		const [ firstSegmentData ] = segmenter.segment( input );
 
-		return firstSegmentData.segment;
+		return firstSegmentData?.segment;
 	}
 
 	return input.charAt( 0 );

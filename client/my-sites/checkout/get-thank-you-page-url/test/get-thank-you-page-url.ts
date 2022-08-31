@@ -16,6 +16,7 @@ import {
 	TITAN_MAIL_MONTHLY_SLUG,
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
+import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -1570,6 +1571,36 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 			} );
 			expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+		} );
+
+		it( 'Does not offers discounted annual business plan for tailored flows (https://wp.me/p58i-cBr).', () => {
+			[ NEWSLETTER_FLOW, LINK_IN_BIO_FLOW ].forEach( ( flowName ) => {
+				const getUrlFromCookie = jest.fn( () => '/cookie' );
+
+				// set a tailored flow name
+				sessionStorage.setItem( 'wpcom_signup_complete_flow_name', flowName );
+
+				const cart = {
+					...getEmptyResponseCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: 'value_bundle',
+							bill_period: '365',
+						},
+					],
+				};
+				const url = getThankYouPageUrl( {
+					...defaultArgs,
+					getUrlFromCookie,
+					cart,
+				} );
+
+				expect( url ).toBe( `/cookie?notice=purchase-success` );
+
+				// clean up the tailored flow name
+				sessionStorage.removeItem( 'wpcom_signup_complete_flow_name' );
+			} );
 		} );
 	} );
 

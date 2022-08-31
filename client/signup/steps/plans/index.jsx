@@ -6,6 +6,7 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
+import { englishLocales } from '@automattic/i18n-utils';
 import { LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
@@ -113,7 +114,7 @@ export class PlansStep extends Component {
 			} );
 			this.props.goToNextStep();
 		} else if ( flowName === LINK_IN_BIO_FLOW ) {
-			// newsletter flow always uses pub/lettre
+			// link-in-bio flow always uses pub/lynx
 			this.props.submitSignupStep( step, {
 				cartItem,
 				themeSlugWithRepo: 'pub/lynx',
@@ -334,7 +335,10 @@ export class PlansStep extends Component {
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
-			backLabelText = translate( 'Back to My Sites' );
+			backLabelText =
+				englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
+					? translate( 'Back to Sites' )
+					: translate( 'Back to My Sites' );
 		}
 
 		let queryParams;
