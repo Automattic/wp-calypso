@@ -312,6 +312,12 @@ export class PlanFeaturesComparison extends Component {
 				'is-bold': featureIndex === 0,
 			} );
 
+			if ( currentFeature.isUniqueFeature ) {
+				return (
+					<li className={ classes }>{ this.renderFeatureItem( currentFeature, mapIndex ) }</li>
+				);
+			}
+
 			return (
 				<div className={ classes }>{ this.renderFeatureItem( currentFeature, mapIndex ) }</div>
 			);
@@ -329,7 +335,7 @@ export class PlanFeaturesComparison extends Component {
 					key={ `${ planName }-unique-${ mapIndex }` }
 					className="plan-features-comparison__table-item plan-features-comparison__unique-features"
 				>
-					{ this.renderPlanFeatures( features, planName, mapIndex ) }
+					<ul>{ this.renderPlanFeatures( features, planName, mapIndex ) }</ul>
 				</td>
 			);
 		} );
@@ -352,7 +358,9 @@ export class PlanFeaturesComparison extends Component {
 
 			return (
 				<td key={ `${ planName }-${ mapIndex }` } className="plan-features-comparison__table-item">
-					<div className="plan-features-comparison__item is-bold">{ planFeatureTitle }</div>
+					<div className="plan-features-comparison__item plan-features-comparison__common-title is-bold">
+						{ planFeatureTitle }
+					</div>
 					{ this.renderPlanFeatures( features, planName, mapIndex ) }
 				</td>
 			);
