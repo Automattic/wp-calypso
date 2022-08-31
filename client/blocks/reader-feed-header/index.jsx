@@ -85,6 +85,7 @@ class FeedHeader extends Component {
 		return (
 			<div className={ classes }>
 				<QueryUserSettings />
+				{ showBack && <HeaderBack /> }
 				<Card className="reader-feed-header__site">
 					<a href={ siteUrl } className="reader-feed-header__site-icon">
 						<SiteIcon site={ site } size={ 116 } />
@@ -114,7 +115,6 @@ class FeedHeader extends Component {
 					</div>
 				</Card>
 				<div className="reader-feed-header__back-and-follow">
-					{ showBack && <HeaderBack /> }
 					<div className="reader-feed-header__follow">
 						{ followerCount && (
 							<span className="reader-feed-header__follow-count">
