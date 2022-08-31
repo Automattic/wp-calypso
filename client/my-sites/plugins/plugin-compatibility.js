@@ -134,7 +134,7 @@ const incompatiblePlugins = new Set( [
 	'really-simple-ssl',
 	'robo-gallery',
 	'speed-contact-bar',
-	'tubeace'
+	'tubeace',
 	'unplug-jetpack',
 	'video-importer',
 	'woozone',
