@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { SiteThumbnail, getSiteLaunchStatus } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -21,6 +22,8 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 
 	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
 
+	console.log( 'getSiteLaunchStatus( site )', getSiteLaunchStatus( site ) );
+
 	let siteUrl = site.URL;
 	if ( site.options?.updated_at ) {
 		const updatedAt = new Date( site.options.updated_at );
@@ -36,8 +39,15 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 		} );
 	}
 
+	console.log( 'SiteItemThumbnail siteID:' + site.ID, {
+		shouldUseScreenshot,
+		siteUrl,
+		state: getSiteLaunchStatus( site ),
+	} );
+
 	return (
 		<SiteThumbnail
+			key={ site.ID }
 			{ ...props }
 			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
 			alt={ site.name }

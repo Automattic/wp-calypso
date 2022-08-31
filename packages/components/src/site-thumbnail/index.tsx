@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
@@ -31,7 +32,7 @@ export const SiteThumbnail = ( {
 	size = 'small',
 	mshotsOption = MSHOTS_OPTION,
 }: Props ) => {
-	const { src, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, mshotsOption );
+	const { isLoading, isError, imgProps } = useMshotsImg( mShotsUrl, mshotsOption );
 
 	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
 
@@ -43,6 +44,8 @@ export const SiteThumbnail = ( {
 	);
 
 	const showLoader = mShotsUrl && ! isError;
+
+	console.log( 'SiteThumbnail Render: ' + mShotsUrl, { isLoading, isError, imgProps } );
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
@@ -59,15 +62,13 @@ export const SiteThumbnail = ( {
 					{ children }
 				</div>
 			) }
-			{ src && ! isError && (
+			{ imgProps.src && ! isError && (
 				<img
 					className={ classnames( 'site-thumbnail__image', {
 						'site-thumbnail__mshot_default_hidden': isLoading,
 					} ) }
-					ref={ imgRef }
-					src={ src }
 					alt={ alt }
-					loading="lazy"
+					{ ...imgProps }
 				/>
 			) }
 		</div>
