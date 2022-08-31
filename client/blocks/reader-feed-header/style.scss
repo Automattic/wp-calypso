@@ -102,11 +102,11 @@
 	.reader-feed-header__follow-count {
 		color: var(--color-text-subtle);
 		font-size: $font-body-small;
-		margin-right: 15px;
 		flex: 0 0 100%;
 		justify-content:center;
+		text-align:center;
 
-		@include breakpoint-deprecated( "<960px" ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			display: none;
 		}
 	}
@@ -115,6 +115,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: flex-start;
+		gap: 20px;
 	}
 
 	.reader-feed-header__follow-button .follow-button {

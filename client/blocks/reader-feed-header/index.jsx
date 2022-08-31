@@ -87,7 +87,7 @@ class FeedHeader extends Component {
 				<QueryUserSettings />
 				<Card className="reader-feed-header__site">
 					<a href={ siteUrl } className="reader-feed-header__site-icon">
-						<SiteIcon site={ site } size={ 96 } />
+						<SiteIcon site={ site } size={ 116 } />
 					</a>
 					<div className="reader-feed-header__site-title">
 						{ site && (
