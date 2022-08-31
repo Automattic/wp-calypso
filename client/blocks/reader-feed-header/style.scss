@@ -75,7 +75,7 @@
 
 	.reader-feed-header__back-and-follow {
 		display: flex;
-		justify-content: flex-end;
+		justify-content: center;
 		height: 0;
 		margin-left: auto;
 
@@ -103,6 +103,8 @@
 		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 		margin-right: 15px;
+		flex: 0 0 100%;
+		justify-content:center;
 
 		@include breakpoint-deprecated( "<960px" ) {
 			display: none;
@@ -111,7 +113,7 @@
 
 	.reader-feed-header__follow-and-settings {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		justify-content: flex-start;
 	}
 
