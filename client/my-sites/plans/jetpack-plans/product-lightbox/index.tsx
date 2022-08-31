@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
 import { SelectorProduct } from '../types';
-import BackupIcon from './icons/backup.svg';
+import { Icons } from './icons/product-icons';
 import { Tags } from './icons/tags';
 import './style.scss';
 
@@ -61,7 +61,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 			<div className="product-lightbox__content-wrapper">
 				<div className="product-lightbox__detail">
 					<div className="product-lightbox__detail-header">
-						<img src={ BackupIcon } alt="Backup" />
+						{ Icons.backup }
 						<h2>{ product.displayName }</h2>
 					</div>
 					<div className="product-lightbox__detail-desc">
