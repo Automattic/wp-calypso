@@ -147,7 +147,6 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 
 	return (
 		<FixedNavigationHeader
-			className="plugins-browser__header"
 			navigationItems={ breadcrumbs }
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }

@@ -22,7 +22,7 @@ const selectors = {
 	browseFirstCategory: 'button:has-text("Search Engine Optimization")',
 	categoryButton: ( section: string ) =>
 		`button:has-text("${ section }"),a:has-text("${ section }")`,
-	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
+	breadcrumb: ( section: string ) => `.fixed-navigation-header__header a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
 	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
