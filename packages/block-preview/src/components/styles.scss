@@ -3,7 +3,25 @@
 }
 
 .block-preview__sidebar {
+	display: flex;
+	flex-direction: column;
+	width: 280px;
 	margin-right: 60px;
+}
+
+.block-preview__style-variations-container {
+	display: flex;
+	flex-direction: column;
+	border-bottom: 1px #aaa;
+	margin-bottom: 30px;
+
+	> :nth-child( 2 ) {
+		display: none;
+	}
+
+	iframe {
+		max-width: 100%;
+	}
 }
 
 .block-preview__pattern {

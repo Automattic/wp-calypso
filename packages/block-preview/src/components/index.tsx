@@ -10,8 +10,10 @@ import {
 } from '@wordpress/block-editor';
 import { registerCoreBlocks } from '@wordpress/block-library';
 import { store as blocksStore } from '@wordpress/blocks';
+import { store as coreStore } from '@wordpress/core-data';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { GlobalStylesProvider } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
+import ScreenStyleVariations from '@wordpress/edit-site/build-module/components/global-styles/screen-style-variations';
 import { useEffect, useState } from 'react';
 import useInitializeBlockSettings from '../hooks/use-initialize-block-settings';
 import useWpcomApiFetch from '../hooks/use-wpcom-api-fetch';
@@ -25,9 +27,11 @@ export interface Props {
 const BlockPreview: React.FC< Props > = ( { siteId } ) => {
 	const { patterns } = useSelect( ( select ) => {
 		const { __experimentalGetAllowedPatterns } = select( blockEditorStore );
-
+		const { __experimentalGetCurrentThemeGlobalStylesVariations } = select( coreStore );
 		return {
 			patterns: __experimentalGetAllowedPatterns(),
+			// Preload style variations to avoid `ScreenStyleVariations` throwing error
+			variations: __experimentalGetCurrentThemeGlobalStylesVariations(),
 		};
 	}, [] );
 
@@ -63,19 +67,26 @@ const BlockPreview: React.FC< Props > = ( { siteId } ) => {
 			<GlobalStylesRenderer />
 			<div className="block-preview__container">
 				<div className="block-preview__sidebar">
-					{ patterns.slice( 0, 10 ).map( ( pattern ) => (
-						<div
-							key={ pattern.name }
-							className="block-preview__pattern"
-							onClick={ () => onPatternSelect( pattern ) }
-						>
-							<BlockEditorBlockPreview
-								blocks={ pattern.blocks }
-								viewportWidth={ pattern.viewportWidth }
-							/>
-							<div>{ pattern.title }</div>
-						</div>
-					) ) }
+					<div className="block-preview__style-variations-container">
+						<div>Select Styles</div>
+						<ScreenStyleVariations />
+					</div>
+					<div className="block-preview__patterns">
+						<div>Select Patterns</div>
+						{ patterns.slice( 0, 10 ).map( ( pattern ) => (
+							<div
+								key={ pattern.name }
+								className="block-preview__pattern"
+								onClick={ () => onPatternSelect( pattern ) }
+							>
+								<BlockEditorBlockPreview
+									blocks={ pattern.blocks }
+									viewportWidth={ pattern.viewportWidth }
+								/>
+								<div>{ pattern.title }</div>
+							</div>
+						) ) }
+					</div>
 				</div>
 				<div className="block-preview__content">
 					{ selectedPatterns.map( ( pattern, i ) => (
