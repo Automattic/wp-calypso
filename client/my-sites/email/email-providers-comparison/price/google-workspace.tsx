@@ -94,24 +94,11 @@ const GoogleWorkspacePrice = ( {
 		/>
 	);
 
-	const numberOfTrialMonths = product?.introductory_offer?.interval_count ?? 0;
-
 	return (
 		<>
 			{ isEligibleForIntroductoryOfferFreeTrial && (
 				<div className="google-workspace-price__trial-badge badge badge--info-green">
-					{ translate(
-						'%(numberOfTrialMonths)d month free',
-						'%(numberOfTrialMonths)d months free',
-						{
-							args: {
-								numberOfTrialMonths: numberOfTrialMonths,
-							},
-							count: numberOfTrialMonths,
-							comment:
-								"%(numberOfTrialMonths)d is the number of months when the trial is active (e.g. '3')",
-						}
-					) }
+					{ translate( '1 month free' ) }
 				</div>
 			) }
 
