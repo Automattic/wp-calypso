@@ -325,7 +325,7 @@ jobs:
           at: C:\Users\circleci\wp-calypso
       - run:
           name: Install NVM
-          command: choco install nvm yarn
+          command: choco install -y nvm yarn
       - run:
           name: Install Node Version
           command: |
