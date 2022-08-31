@@ -115,7 +115,7 @@ const GoogleWorkspacePrice = ( {
 				</div>
 			) }
 
-			{ isEligibleForIntroductoryOffer && ! isEligibleForIntroductoryOfferFreeTrial && (
+			{ ! isEligibleForIntroductoryOfferFreeTrial && isEligibleForIntroductoryOffer && (
 				<div className="google-workspace-price__trial-badge badge badge--info-green">
 					{ translate( '%(approximateDiscountForOffer)d%% off', {
 						args: {
