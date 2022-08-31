@@ -220,7 +220,14 @@ export class PlanFeaturesComparison extends Component {
 
 	renderPlanFeatureRowsTest() {
 		return (
-			<tr className="plan-features-comparison__row">{ this.renderPlanFeatureColumnsTest() }</tr>
+			<>
+				<tr className="plan-features-comparison__row">
+					{ this.renderPlanUniqueFeatureColumnsTest() }
+				</tr>
+				<tr className="plan-features-comparison__row">
+					{ this.renderPlanCommonFeatureColumnsTest() }
+				</tr>
+			</>
 		);
 	}
 
@@ -294,9 +301,8 @@ export class PlanFeaturesComparison extends Component {
 		} );
 	}
 
-	renderPlanFeatures( properties, mapIndex ) {
+	renderPlanFeatures( features, planName, mapIndex ) {
 		const { selectedFeature } = this.props;
-		const { features, planName } = properties;
 
 		return map( features, ( currentFeature, featureIndex ) => {
 			const classes = classNames( '', getPlanClass( planName ), {
@@ -312,7 +318,24 @@ export class PlanFeaturesComparison extends Component {
 		} );
 	}
 
-	renderPlanFeatureColumnsTest() {
+	renderPlanUniqueFeatureColumnsTest() {
+		const { planProperties } = this.props;
+		return map( planProperties, ( properties, mapIndex ) => {
+			const { planName } = properties;
+			const features = properties.features.filter( ( feature ) => feature.isUniqueFeature );
+
+			return (
+				<td
+					key={ `${ planName }-unique-${ mapIndex }` }
+					className="plan-features-comparison__table-item plan-features-comparison__unique-features"
+				>
+					{ this.renderPlanFeatures( features, planName, mapIndex ) }
+				</td>
+			);
+		} );
+	}
+
+	renderPlanCommonFeatureColumnsTest() {
 		const { planProperties } = this.props;
 		let previousPlanName = 'Free';
 		let currentPlanName = 'Free';
@@ -321,13 +344,16 @@ export class PlanFeaturesComparison extends Component {
 			const { planName, planObject } = properties;
 			previousPlanName = currentPlanName;
 			currentPlanName = planObject.product_name_short;
+			const features = properties.features.filter( ( feature ) => ! feature.isUniqueFeature );
+			const planFeatureTitle =
+				mapIndex === 0
+					? `Get basic features with ${ currentPlanName }:`
+					: `Everything in ${ previousPlanName }, plus:`;
 
 			return (
 				<td key={ `${ planName }-${ mapIndex }` } className="plan-features-comparison__table-item">
-					<div className="plan-features-comparison__item is-bold">
-						Everything in { previousPlanName }, plus:{ ' ' }
-					</div>
-					{ this.renderPlanFeatures( properties, mapIndex ) }
+					<div className="plan-features-comparison__item is-bold">{ planFeatureTitle }</div>
+					{ this.renderPlanFeatures( features, planName, mapIndex ) }
 				</td>
 			);
 		} );
@@ -452,16 +478,19 @@ export default connect(
 				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
 				const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
+				const planUniqueFeatures = planConstantObj.getCondensedExperimentUniqueFeatures?.() || [];
 				if ( annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
 						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
 							feature.getSlug()
 						);
+						const isUniqueFeature = planUniqueFeatures.includes( feature.getSlug() );
 
 						return {
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+							isUniqueFeature,
 						};
 					} );
 				}

@@ -222,15 +222,18 @@ import {
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	/* START - condensed_plan_features_v1 test */
 	FEATURE_HOSTING_TEST,
-	FEATURE_NO_ADS_TEST,
-	FEATURE_COLLECT_PAYMENTS_TEST,
-	FEATURE_STORE_MARKETING_TOOLS,
 	FEATURE_PREMIUM_THEMES_TEST,
-	FEATURE_REAL_TIME_ANALYTICS,
-	FEATURE_GA_TEST,
 	FEATURE_PRIORITY_SUPPORT_TEST,
 	FEATURE_PLUGINS_TEST,
 	FEATURE_SFTP_DATABASE_TEST,
+	FEATURE_FREE_NEWSLETTER_V1,
+	FEATURE_SITE_STATS_V2,
+	FEATURE_MONETISE_V2,
+	FEATURE_REPUBLICIZE_V3,
+	FEATURE_PAID_NEWSLETTER_V1,
+	FEATURE_EDGE_CACHING_V2,
+	FEATURE_UPLOAD_THEMES_V3,
+	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
 	/* END - condensed_plan_features_v1 test */
 } from './constants';
 import type {
@@ -441,10 +444,15 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getCondensedExperimentFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_HOSTING_TEST,
-		FEATURE_NO_ADS_TEST,
-		FEATURE_COLLECT_PAYMENTS_TEST,
+		FEATURE_UNLIMITED_TRAFFIC,
+		FEATURE_COLLECT_PAYMENTS_V3,
+		FEATURE_SITE_STATS_V2,
+		FEATURE_FREE_THEMES_V2,
+		FEATURE_FREE_NEWSLETTER_V1,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_6GB_STORAGE,
 	],
+	getCondensedExperimentUniqueFeatures: () => [ FEATURE_6GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
@@ -550,8 +558,10 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ACCEPT_PAYMENTS,
 		FEATURE_SHIPPING_CARRIERS,
 		PREMIUM_DESIGN_FOR_STORES,
-		FEATURE_STORE_MARKETING_TOOLS,
+		FEATURE_ECOMMERCE_MARKETING,
+		FEATURE_200GB_STORAGE,
 	],
+	getCondensedExperimentUniqueFeatures: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -703,10 +713,14 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		[
 			FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES_TEST : null,
-			FEATURE_MONETISE,
-			FEATURE_REAL_TIME_ANALYTICS,
-			FEATURE_GA_TEST,
+			FEATURE_MONETISE_V2,
+			FEATURE_REPUBLICIZE_V3,
+			FEATURE_PAID_NEWSLETTER_V1,
+			FEATURE_NO_ADS,
+			FEATURE_VIDEO_UPLOADS_V2,
+			FEATURE_13GB_STORAGE,
 		].filter( isValueTruthy ),
+	getCondensedExperimentUniqueFeatures: () => [ FEATURE_13GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -809,10 +823,14 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		[
 			FEATURE_PRIORITY_SUPPORT_TEST,
 			FEATURE_PLUGINS_TEST,
-			FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+			FEATURE_UPLOAD_THEMES_V3,
+			FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
 			FEATURE_SITE_BACKUPS_AND_RESTORE,
 			FEATURE_SFTP_DATABASE_TEST,
+			FEATURE_EDGE_CACHING_V2,
+			FEATURE_200GB_STORAGE,
 		].filter( isValueTruthy ),
+	getCondensedExperimentUniqueFeatures: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,

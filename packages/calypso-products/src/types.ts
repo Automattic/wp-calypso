@@ -115,6 +115,7 @@ export type Plan = BillingTerm & {
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
 	getCondensedExperimentFeatures?: () => string[];
+	getCondensedExperimentUniqueFeatures?: () => string[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;

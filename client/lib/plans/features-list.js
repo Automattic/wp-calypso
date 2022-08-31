@@ -168,15 +168,17 @@ import {
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	/* START - condensed_plan_features_v1 test */
 	FEATURE_HOSTING_TEST,
-	FEATURE_NO_ADS_TEST,
-	FEATURE_COLLECT_PAYMENTS_TEST,
-	FEATURE_STORE_MARKETING_TOOLS,
-	FEATURE_PREMIUM_THEMES_TEST,
-	FEATURE_REAL_TIME_ANALYTICS,
-	FEATURE_GA_TEST,
 	FEATURE_PRIORITY_SUPPORT_TEST,
 	FEATURE_PLUGINS_TEST,
 	FEATURE_SFTP_DATABASE_TEST,
+	FEATURE_FREE_NEWSLETTER_V1,
+	FEATURE_PAID_NEWSLETTER_V1,
+	FEATURE_PREMIUM_THEMES_TEST,
+	FEATURE_REPUBLICIZE_V3,
+	FEATURE_MONETISE_V2,
+	FEATURE_EDGE_CACHING_V2,
+	FEATURE_UPLOAD_THEMES_V3,
+	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
 	/* END - condensed_plan_features_v1 test */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -1572,38 +1574,12 @@ export const FEATURES_LIST = {
 	/* START - condensed_plan_features_v1 test */
 	[ FEATURE_HOSTING_TEST ]: {
 		getSlug: () => FEATURE_HOSTING_TEST,
-		getTitle: () => i18n.translate( 'Fully managed web hosting' ),
-		getDescription: () => {},
-	},
-	[ FEATURE_NO_ADS_TEST ]: {
-		getSlug: () => FEATURE_NO_ADS_TEST,
-		getTitle: () => 'Ad-free experience',
-		getDescription: () => {},
-	},
-	[ FEATURE_COLLECT_PAYMENTS_TEST ]: {
-		getSlug: () => FEATURE_COLLECT_PAYMENTS_TEST,
-		getTitle: () => 'Collect payments, subscriptions, and donations.',
-		getDescription: () => {},
-	},
-	[ FEATURE_STORE_MARKETING_TOOLS ]: {
-		getSlug: () => FEATURE_STORE_MARKETING_TOOLS,
-		getTitle: () => 'Marketing tools for your online store',
+		getTitle: () => i18n.translate( 'Fully managed web hosting & CDN' ),
 		getDescription: () => {},
 	},
 	[ FEATURE_PREMIUM_THEMES_TEST ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_TEST,
-		getTitle: () => 'Premium themes for your site',
-		getDescription: () => {},
-	},
-	[ FEATURE_REAL_TIME_ANALYTICS ]: {
-		getSlug: () => FEATURE_REAL_TIME_ANALYTICS,
-		getTitle: () => 'Real-time analytics in your dashboard',
-		getDescription: () => {},
-	},
-	[ FEATURE_GA_TEST ]: {
-		getSlug: () => FEATURE_GA_TEST,
-		getTitle: () =>
-			'Track statistics with Google Analytics for a deeper understanding of your visitors',
+		getTitle: () => 'Unlimited premium themes for your site',
 		getDescription: () => {},
 	},
 	[ FEATURE_PRIORITY_SUPPORT_TEST ]: {
@@ -1620,6 +1596,41 @@ export const FEATURES_LIST = {
 	[ FEATURE_SFTP_DATABASE_TEST ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE_TEST,
 		getTitle: () => 'SFTP (Secure File Transfer Protocol) and Database access.',
+		getDescription: () => {},
+	},
+	[ FEATURE_FREE_NEWSLETTER_V1 ]: {
+		getSlug: () => FEATURE_FREE_NEWSLETTER_V1,
+		getTitle: () => 'Free newsletter w/ unlimited subscribers.',
+		getDescription: () => {},
+	},
+	[ FEATURE_PAID_NEWSLETTER_V1 ]: {
+		getSlug: () => FEATURE_PAID_NEWSLETTER_V1,
+		getTitle: () => 'Paid newsletter w/ unlimited subscribers.',
+		getDescription: () => {},
+	},
+	[ FEATURE_REPUBLICIZE_V3 ]: {
+		getSlug: () => FEATURE_REPUBLICIZE,
+		getTitle: () => 'Advanced social media marketing tools',
+		getDescription: () => {},
+	},
+	[ FEATURE_MONETISE_V2 ]: {
+		getSlug: () => FEATURE_MONETISE,
+		getTitle: () => 'Monetize your website with ads',
+		getDescription: () => {},
+	},
+	[ FEATURE_UPLOAD_THEMES_V3 ]: {
+		getSlug: () => FEATURE_UPLOAD_THEMES_V3,
+		getTitle: () => 'Upload custom WordPress themes.',
+		getDescription: () => {},
+	},
+	[ FEATURE_EDGE_CACHING_V2 ]: {
+		getSlug: () => FEATURE_EDGE_CACHING_V2,
+		getTitle: () => 'High-performance edge caching',
+		getDescription: () => {},
+	},
+	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 ]: {
+		getSlug: () => FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		getTitle: () => i18n.translate( 'Advanced Search Engine Optimisation (SEO) tools' ),
 		getDescription: () => {},
 	},
 	/* END - condensed_plan_features_v1 test */
