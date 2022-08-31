@@ -5,6 +5,8 @@ import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
 	const { id, isCompleted, actionUrl, title } = task;
+
+	const isLinkInBioSiteLaunchSiteTask = task.id === 'link_in_bio_launched';
 	return (
 		<li className={ `launchpad__task-${ id }` }>
 			<Button
@@ -13,7 +15,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				href={ actionUrl }
 				data-task={ id }
 			>
-				{ task.isCompleted && (
+				{ task.isCompleted && ! isLinkInBioSiteLaunchSiteTask && (
 					<div className="launchpad__checklist-item-status">
 						<Gridicon
 							aria-label={ translate( 'Task complete' ) }

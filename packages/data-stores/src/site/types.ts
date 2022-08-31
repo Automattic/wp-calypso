@@ -220,6 +220,7 @@ export interface SiteDetailsOptions {
 	woocommerce_is_active?: boolean;
 	wordads?: boolean;
 	launchpad_screen?: false | 'off' | 'full' | 'minimized';
+	launchpad_checklist_tasks_statuses: LaunchPadCheckListTasksStatuses;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];
@@ -439,4 +440,10 @@ export interface GlobalStyles {
 			};
 		};
 	};
+}
+
+export interface LaunchPadCheckListTasksStatuses {
+	first_post_published?: boolean;
+	links_edited?: boolean;
+	site_launched?: boolean;
 }

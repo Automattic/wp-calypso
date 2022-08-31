@@ -13,6 +13,9 @@ export function getEnhancedTasks(
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
+	const linkInBioLinksEditCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.links_edited;
+
 	tasks &&
 		tasks.map( ( task ) => {
 			let taskData = {};
@@ -53,11 +56,13 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Add links' ),
 						actionUrl: `/site-editor/${ siteSlug }`,
+						isCompleted: linkInBioLinksEditCompleted,
 					};
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
 						title: translate( 'Launch Link in bio' ),
+						isCompleted: ! linkInBioLinksEditCompleted,
 					};
 					break;
 			}
