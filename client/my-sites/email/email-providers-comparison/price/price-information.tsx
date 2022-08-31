@@ -133,7 +133,7 @@ const PriceInformation = ( {
 		return null;
 	}
 
-	if ( isGoogleWorkspaceProduct && hasDiscount( product ) && ! isEligibleForIntroductoryOffer ) {
+	if ( hasDiscount( product ) && ! isEligibleForIntroductoryOffer ) {
 		return <DiscountPriceInformation product={ product } />;
 	}
 
