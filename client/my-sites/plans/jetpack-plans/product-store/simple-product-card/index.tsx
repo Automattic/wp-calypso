@@ -15,7 +15,7 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	checkoutURL,
 } ) => {
 	const translate = useTranslate();
-  
+
 	const { shortName: name } = item;
 	const productDescription = item?.shortDescription || item.description;
 
