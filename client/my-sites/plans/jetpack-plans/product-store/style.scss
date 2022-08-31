@@ -118,14 +118,18 @@
 				margin: 0;
 			}
 		}
-
-		.plan-price.is-discounted,
-		.plan-price.is-original {
+		.plan-price.is-discounted, .plan-price.is-original {
 			margin-right: 0.1em;
 		}
-
-		.plan-price.is-original::before,
-		.is-placeholder .plan-price::after {
+		.plan-price.is-discounted {
+			color: var( --studio-gray-100 );
+			font-weight: 700;
+		}
+		.plan-price.is-original {
+			color: var( --studio-gray-100 );
+			font-weight: semibold;
+		}
+		.plan-price.is-original::before, .is-placeholder .plan-price::after {
 			display: none;
 		}
 
@@ -361,6 +365,21 @@
 
 .jetpack-product-store__products-list-all {
 	margin-bottom: 48px;
+}
+
+.jetpack-product-store__products-list-all-header {
+	margin-top: rem( 32px );
+	margin-bottom: rem( 24px );
+	font-size: $font-title-small;
+	font-weight: 700;
+
+	@include break-medium {
+		margin-top: rem( 72px );
+		margin-bottom: rem( 48px );
+		font-size: $font-title-medium;
+		line-height: rem( 29px );
+		font-weight: 600;
+	}
 }
 
 .jetpack-product-store__products-list-all-grid {
