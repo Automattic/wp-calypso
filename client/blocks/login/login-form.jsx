@@ -431,7 +431,6 @@ export class LoginForm extends Component {
 									socialService={ this.props.socialService }
 									socialServiceResponse={ this.props.socialServiceResponse }
 									uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-									shouldRenderToS={ false }
 								/>
 							</div>
 						) }
@@ -660,7 +659,6 @@ export class LoginForm extends Component {
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-							shouldRenderToS={ false }
 						/>
 					</Fragment>
 				) }
