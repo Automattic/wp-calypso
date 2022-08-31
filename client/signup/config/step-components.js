@@ -38,6 +38,7 @@ const stepNameToModuleName = {
 	'plans-premium': 'plans',
 	'plans-site-selected': 'plans',
 	'plans-store-nux': 'plans-atomic-store',
+	'mailbox-plan': 'plans',
 	'select-domain': 'domains',
 	site: 'site',
 	'rewind-migrate': 'rewind-migrate',

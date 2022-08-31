@@ -150,7 +150,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-with-email',
-			steps: getAddOnsStep( [ 'user', 'mailbox-domain', 'mailbox', 'plans' ] ),
+			steps: getAddOnsStep( [ 'user', 'mailbox-domain', 'mailbox', 'mailbox-plan' ] ),
 			destination: getSignupDestination,
 			description:
 				'Copy of the onboarding flow that includes non-skippable domain and email steps; the flow is used by the Professional Email landing page',

@@ -343,6 +343,22 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'domainItem' ],
 			providesDependencies: [ 'cartItem' ],
 		},
+
+		'mailbox-plan': {
+			stepName: 'mailbox-plan',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug', 'emailItem' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				get headerText() {
+					return i18n.translate( 'Want a website to expand your online presence?' );
+				},
+				hideFreePlan: false,
+				useEmailOnboardingSubheader: true,
+			},
+		},
+
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
