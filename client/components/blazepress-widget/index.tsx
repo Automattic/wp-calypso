@@ -44,7 +44,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					onClose,
 					( original: string, options?: any ): string => {
 						if ( options ) {
-							/* eslint-disable wpcalypso/i18n-no-variables, @typescript-eslint/ban-ts-comment */
+							/* eslint-disable  @typescript-eslint/ban-ts-comment */
 							// @ts-ignore
 							return translate( original, options as TranslateOptionsText );
 							/* eslint-enable wpcalypso/i18n-no-variables, @typescript-eslint/ban-ts-comment */
