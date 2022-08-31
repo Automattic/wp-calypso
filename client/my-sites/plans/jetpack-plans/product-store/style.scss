@@ -5,6 +5,25 @@
 	display: flex;
 	flex-direction: column;
 
+	.header {
+		margin-bottom: 36px;
+	}
+
+	.header .formatted-header {
+		margin: 0;
+	}
+
+	.header .formatted-header__title {
+		margin: 0 auto !important;
+		font-size: $font-title-large !important;
+		line-height: rem( 38px ) !important;
+
+		@include break-large {
+			font-size: $font-headline-small !important;
+			line-height: rem( 40px ) !important;
+		}
+	}
+
 	&__jetpack-free {
 		display: flex;
 		flex-direction: column;

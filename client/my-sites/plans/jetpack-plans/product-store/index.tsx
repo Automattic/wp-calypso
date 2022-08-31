@@ -20,6 +20,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	enableUserLicensesDialog,
 	onClickPurchase,
 	urlQueryArgs,
+	header,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const productSlugs = useProductSlugs( { siteId, duration } );
@@ -32,6 +33,8 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 
 	return (
 		<div className="jetpack-product-store">
+			{ header }
+
 			{ enableUserLicensesDialog && <UserLicensesDialog siteId={ siteId } /> }
 
 			<IntroPricingBanner productSlugs={ productSlugs } siteId={ siteId ?? 'none' } />
