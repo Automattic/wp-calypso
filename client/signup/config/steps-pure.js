@@ -354,7 +354,6 @@ export function generateSteps( {
 				get headerText() {
 					return i18n.translate( 'Want a website to expand your online presence?' );
 				},
-				hideFreePlan: false,
 				useEmailOnboardingSubheader: true,
 			},
 		},
