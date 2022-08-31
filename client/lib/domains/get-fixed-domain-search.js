@@ -7,5 +7,6 @@ export function getFixedDomainSearch( domainName ) {
 		.replace( /^www[0-9]?\./, '' )
 		.replace( /\/$/, '' )
 		.replace( /_/g, '-' )
+		.replace( /[^a-z0-9-]/, '' )
 		.replace( /^\.+|\.+$/, '' );
 }
