@@ -131,10 +131,11 @@ const incompatiblePlugins = new Set( [
 	'plugin-detective',
 	'porn-embed',
 	'propellerads-official',
-	'speed-contact-bar',
-	'unplug-jetpack',
 	'really-simple-ssl',
 	'robo-gallery',
+	'speed-contact-bar',
+	'tubeace'
+	'unplug-jetpack',
 	'video-importer',
 	'woozone',
 	'wp-cleanfix',
