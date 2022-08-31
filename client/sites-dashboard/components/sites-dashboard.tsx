@@ -114,6 +114,10 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 	color: #fff;
 	border-radius: 4px;
 	transition: opacity 0.3s ease-in-out;
+	.gridicon {
+		top: initial;
+		margin-top: initial;
+	}
 `;
 
 export function SitesDashboard( {
