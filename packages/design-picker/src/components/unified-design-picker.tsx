@@ -24,8 +24,10 @@ import {
 	sortDesigns,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
+import PatternAssemblerCta from './pattern-assembler-cta';
 import PremiumBadge from './premium-badge';
 import ThemePreview from './theme-preview';
+import ThemeStyleVariationBadges from './theme-style-variation-badges';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design } from '../types';
 import './style.scss';
@@ -51,7 +53,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
 				language: locale,
-				vertical_id: verticalId,
+				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
@@ -91,11 +93,14 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	verticalId,
 } ) => {
 	const { __ } = useI18n();
-	const { is_premium: isPremium = false } = design;
+	const { style_variations = [], is_premium: isPremium = false } = design;
+	const isEnableThemePreviewScreen = isEnabled( 'signup/theme-preview-screen' );
+	const isEnableThemeStyleVariations =
+		isEnabled( 'signup/design-picker-style-selection' ) && isEnableThemePreviewScreen;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
-		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
+		if ( ! isEnableThemePreviewScreen ) {
 			return null;
 		}
 
@@ -125,14 +130,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				);
 			} else {
 				text = (
-					<Button
-						isLink={ true }
-						className="design-picker__button-link"
-						onClick={ ( e: any ) => {
-							e.stopPropagation();
-							onCheckout?.();
-						} }
-					>
+					<Button isLink={ true } className="design-picker__button-link">
 						{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
 							? __( 'Included in WordPress.com Premium' )
 							: __( 'Upgrade to Premium' ) }
@@ -202,13 +200,18 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						{ ! hideDesignTitle && (
 							<span className="design-picker__option-name">{ design.title }</span>
 						) }
-						{ ! isEnabled( 'signup/theme-preview-screen' ) && isPremium && (
+						{ ! isEnableThemePreviewScreen && isPremium && (
 							<PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
+						) }
+						{ isEnableThemeStyleVariations && style_variations.length > 0 && (
+							<div className="design-picker__options-style-variations">
+								<ThemeStyleVariationBadges variations={ style_variations } />
+							</div>
 						) }
 					</span>
 				</span>
+				{ getPricingDescription() }
 			</button>
-			{ getPricingDescription() }
 		</div>
 	);
 };
@@ -301,9 +304,9 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	}
 
 	// We don't need preview for blank canvas
-	return (
+	return ! isBlankCanvas ? (
 		<div className="design-button-container">
-			{ ! isBlankCanvas && ! previewOnly && (
+			{ ! previewOnly && (
 				<DesignButtonCover
 					design={ props.design }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -316,9 +319,14 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				{ ...props }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				onSelect={ previewOnly ? onPreview : noop }
-				disabled={ ! isBlankCanvas && ! previewOnly }
+				disabled={ ! previewOnly }
 			/>
 		</div>
+	) : (
+		<PatternAssemblerCta
+			key={ props.design.slug }
+			onButtonClick={ () => props.onSelect( props.design ) }
+		/>
 	);
 };
 
@@ -381,14 +389,28 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
+
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
 			? filterDesignsByCategory( designs, categorization.selection )
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
+
+		if ( isEnabled( 'signup/design-picker-pattern-assembler' ) ) {
+			const blankCanvasDesign = {
+				recipe: {
+					stylesheet: 'pub/blank-canvas-blocks',
+				},
+				slug: 'blank-canvas-blocks',
+				title: 'Blank Canvas',
+			} as Design;
+			result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
+		}
+
 		return result;
 	}, [ designs, categorization?.selection ] );
+
 	return (
 		<div>
 			{ categorization && hasCategories && (
@@ -524,7 +546,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onUpgrade={ onUpgrade }
 					designs={ staticDesigns }
 					categorization={ categorization }
-					verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
+					verticalId={ verticalId }
 					previewOnly={ previewOnly }
 					hasDesignOptionHeader={ hasDesignOptionHeader }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }

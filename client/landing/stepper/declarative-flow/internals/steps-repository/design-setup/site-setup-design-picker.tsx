@@ -259,16 +259,10 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				? generatedDesigns.findIndex( ( design ) => design.slug === _selectedDesign.slug )
 				: -1;
 
-			// Send vertical_id only if the current design is generated design or we enabled the v13n of standard themes.
-			// We cannot check the config inside `setDesignOnSite` action. See https://github.com/Automattic/wp-calypso/pull/65531#issuecomment-1190850273
 			setPendingAction( () =>
-				setDesignOnSite(
-					siteSlugOrId,
-					_selectedDesign,
-					_selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-						? siteVerticalId
-						: ''
-				).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+				setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ).then( () =>
+					reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
+				)
 			);
 
 			recordTracksEvent( 'calypso_signup_select_design', {
@@ -276,6 +270,13 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				...( buttonLocation && { button_location: buttonLocation } ),
 				...( showGeneratedDesigns && positionIndex >= 0 && { position_index: positionIndex } ),
 			} );
+
+			if ( _selectedDesign.verticalizable ) {
+				recordTracksEvent(
+					'calypso_signup_select_verticalized_design',
+					getEventPropsByDesign( _selectedDesign )
+				);
+			}
 
 			handleSubmit( {
 				selectedDesign: _selectedDesign,
@@ -403,7 +404,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
-			vertical_id: isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined,
+			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
 		const stepContent = (
@@ -573,7 +574,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
-			verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? siteVerticalId : undefined }
+			verticalId={ siteVerticalId }
 			purchasedThemes={ purchasedThemes }
 		/>
 	);

@@ -5,19 +5,22 @@
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
+		align-items: center;
 
 		.campaign-item__header-image {
-			height: 80px;
+			height: 60px;
 			width: 80px;
 			margin-right: 20px;
 
 			img {
-				height: 80px;
+				object-fit: cover;
+				height: 60px;
 				width: 80px;
 			}
 		}
 
 		.campaign-item__header-content {
+			flex: 1;
 			display: flex;
 			flex-direction: column;
 			justify-content: space-around;
@@ -72,5 +75,7 @@
 		margin-bottom: 10px;
 	}
 
+	.campaign-item__target-value {
+		word-break: break-all;
+	}
 }
-

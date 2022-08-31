@@ -87,6 +87,10 @@ export const getCampaignOverallSpending = (
 	start_date: string,
 	end_date: string
 ) => {
+	if ( ! spent_budget_cents ) {
+		return '-';
+	}
+
 	const totalBudgetUsed = spent_budget_cents / 100;
 	let daysRun = moment().diff( moment( start_date ), 'days' );
 	const campaignDays = moment( end_date ).diff( moment( start_date ), 'days' );
@@ -129,6 +133,10 @@ export const getCampaignEstimatedReach = (
 	impressions_estimated_total: number,
 	deliver_margin_multiplier: number
 ) => {
+	if ( ! impressions_estimated_total ) {
+		return '-';
+	}
+
 	const estimatedReach = `${ formatReachNumber(
 		impressions_estimated_total,
 		true,

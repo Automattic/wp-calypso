@@ -45,7 +45,7 @@ export interface Theme {
 	tags: string[];
 	taxonomies?: {
 		theme_feature?: ThemeFeature[];
-		theme_plugin?: ThemePlugin[];
+		theme_software_set?: ThemeSoftwareSet[];
 	};
 	template: string;
 	theme_uri: string;
@@ -65,7 +65,7 @@ interface ThemeFeature {
 	term_id: string;
 }
 
-interface ThemePlugin {
+interface ThemeSoftwareSet {
 	name: string;
 	slug: string;
 	term_id: string;

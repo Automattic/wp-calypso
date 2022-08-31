@@ -1,6 +1,7 @@
 export { arePremiumThemesEnabled } from 'calypso/state/themes/selectors/are-premium-themes-enabled';
 export { areRecommendedThemesLoading } from 'calypso/state/themes/selectors/are-recommended-themes-loading';
 export { areTrendingThemesLoading } from 'calypso/state/themes/selectors/are-trending-themes-loading';
+export { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
 export { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 export { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 export { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';

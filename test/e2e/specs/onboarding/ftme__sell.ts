@@ -136,7 +136,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 			startSiteFlow = new StartSiteFlow( page );
 		} );
 
-		it( 'Select "Write" goal', async function () {
+		it( 'Select "Sell" goal', async function () {
 			await startSiteFlow.selectGoal( 'Sell' );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );

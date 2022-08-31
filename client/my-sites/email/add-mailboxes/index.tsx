@@ -309,7 +309,10 @@ const MailboxesForm = ( {
 			.then( () => {
 				page( '/checkout/' + selectedSite?.slug ?? '' );
 			} )
-			.finally( () => setIsAddingToCart( false ) );
+			.finally( () => setIsAddingToCart( false ) )
+			.catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 	};
 
 	return (

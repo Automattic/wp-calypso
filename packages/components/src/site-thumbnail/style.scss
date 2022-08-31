@@ -32,10 +32,14 @@
 
 .site-thumbnail__image-blur-small {
 	filter: blur( 50px );
+	// this transformation improves the Safari performance
+	transform: translate3d( 0, 0, 0 );
 }
 
 .site-thumbnail__image-blur-medium {
 	filter: blur( 150px );
+	// this transformation improves the Safari performance
+	transform: translate3d( 0, 0, 0 );
 }
 
 .site-thumbnail__size-medium {

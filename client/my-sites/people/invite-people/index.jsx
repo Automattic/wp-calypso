@@ -380,7 +380,7 @@ class InvitePeople extends Component {
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
-				href="http://wordpress.com/support/user-roles/"
+				href="https://wordpress.com/support/user-roles/"
 				onClick={ this.onClickRoleExplanation }
 			>
 				{ translate( 'Learn more about roles' ) }

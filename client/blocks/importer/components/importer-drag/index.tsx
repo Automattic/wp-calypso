@@ -53,7 +53,14 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 				title={ importerData?.title }
 				description={ importerData?.description }
 			/>
-			{ errorData && <ErrorPane type={ errorData.type } description={ errorData.description } /> }
+			{ errorData && (
+				<ErrorPane
+					type={ errorData.type }
+					description={ errorData.description }
+					siteSlug={ site?.slug }
+					code={ errorData.code }
+				/>
+			) }
 			{ includes( importingStates, importerState ) && (
 				<ImportingPane
 					importerStatus={ importerStatus }

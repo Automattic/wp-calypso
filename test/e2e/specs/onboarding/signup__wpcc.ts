@@ -4,13 +4,14 @@
 
 import {
 	DataHelper,
-	LoginPage,
 	UserSignupPage,
-	CloseAccountFlow,
 	EmailClient,
 	SecretsManager,
+	RestAPIClient,
+	NewUserResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { apiCloseAccount } from '../shared';
 
 declare const browser: Browser;
 
@@ -21,6 +22,7 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 	const emailClient = new EmailClient();
 
 	let page: Page;
+	let newUserDetails: NewUserResponse;
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -32,13 +34,12 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 		it( 'Navigate to CrowdSignal WPCC endpoint', async function () {
 			const calypsoBaseURL = DataHelper.getCalypsoURL();
 			const wpccAuthPath = SecretsManager.secrets.wpccAuthPath;
-			console.log( calypsoBaseURL + wpccAuthPath );
 			await page.goto( calypsoBaseURL + wpccAuthPath );
 		} );
 
 		it( 'Create a new WordPress.com account', async function () {
 			const userSignupPage = new UserSignupPage( page );
-			await userSignupPage.signupWPCC( testUser.email, testUser.password );
+			newUserDetails = await userSignupPage.signupWPCC( testUser.email, testUser.password );
 		} );
 
 		it( 'User lands in CrowdSignal dashboard', async function () {
@@ -73,31 +74,19 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com WPCC' ), function 
 		} );
 	} );
 
-	describe( 'Delete user account', function () {
-		it( 'Close account', async function () {
-			const closeAccountFlow = new CloseAccountFlow( page );
-			await closeAccountFlow.closeAccount();
-		} );
-	} );
+	afterAll( async function () {
+		const restAPIClient = new RestAPIClient(
+			{
+				username: testUser.username,
+				password: testUser.password,
+			},
+			newUserDetails.body.bearer_token
+		);
 
-	describe( 'Ensure account is no longer accessible', function () {
-		let loginPage: LoginPage;
-
-		beforeAll( async () => {
-			loginPage = new LoginPage( page );
-		} );
-
-		it( 'Go to WordPress.com Login page', async function () {
-			await loginPage.visit();
-		} );
-
-		it( 'Ensure user is unable to log in', async function () {
-			await loginPage.fillUsername( testUser.email );
-			await loginPage.clickSubmit();
-			await loginPage.fillPassword( testUser.password );
-			await loginPage.clickSubmit();
-
-			await page.waitForSelector( 'text=This account has been closed' );
+		await apiCloseAccount( restAPIClient, {
+			userID: newUserDetails.body.user_id,
+			username: newUserDetails.body.username,
+			email: testUser.email,
 		} );
 	} );
 } );

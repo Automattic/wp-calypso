@@ -53,6 +53,8 @@ export default function AgencySignupForm(): ReactElement {
 				recordTracksEvent( 'calypso_partner_portal_create_partner_submit', {
 					partner_id: partner?.id,
 					name: payload.name,
+					contact_person: payload.contactPerson,
+					company_website: payload.companyWebsite,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
