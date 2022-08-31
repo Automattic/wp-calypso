@@ -1,4 +1,4 @@
-import { Dialog, getSiteLaunchStatus } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
@@ -40,7 +40,9 @@ export const RemovePlanDialog = ( {
 		},
 	];
 
-	const shouldUseSiteThumbnail = getSiteLaunchStatus( site ) === 'public';
+	const isComingSoon = site.is_coming_soon;
+	const isPrivate = site.is_private;
+	const shouldUseSiteThumbnail = isComingSoon === false && isPrivate === false;
 
 	return (
 		<Dialog
