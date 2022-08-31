@@ -71,11 +71,20 @@
 	}
 
 	&__most-popular--heading {
-		margin-bottom: 2em;
+		margin-bottom: rem( 24px );
+		font-size: $font-title-medium;
+		line-height: rem( 29px );
+
+		@media only screen and ( min-width: 821px ) {
+			margin-bottom: rem( 32px );
+		}
+
+	&__most-popular--items {
+		display: flex;
+		justify-content: space-evenly;
 	}
 
 	&__most-popular--items {
-		justify-content: space-evenly;
 		list-style-type: none;
 		display: grid;
 		grid-template-columns: 1fr;
@@ -350,6 +359,9 @@
 	color: var( --color-neutral-100 );
 }
 
+.jetpack-product-store__products-list-all {
+	margin-bottom: 48px;
+}
 
 .jetpack-product-store__products-list-all-grid {
 	display: grid;
