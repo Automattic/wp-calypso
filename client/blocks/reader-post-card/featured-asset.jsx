@@ -3,6 +3,7 @@ import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 
 const FeaturedAsset = ( {
+	post,
 	canonicalMedia,
 	postUrl,
 	allowVideoPlaying,
@@ -25,16 +26,11 @@ const FeaturedAsset = ( {
 		);
 	}
 
-	return (
-		<ReaderFeaturedImage
-			imageUrl={ canonicalMedia.src }
-			href={ postUrl }
-			fetched={ canonicalMedia.fetched }
-		/>
-	);
+	return <ReaderFeaturedImage post={ post } href={ postUrl } fetched={ canonicalMedia.fetched } />;
 };
 
 FeaturedAsset.propTypes = {
+	post: PropTypes.object,
 	canonicalMedia: PropTypes.object,
 	postUrl: PropTypes.string,
 	allowVideoPlaying: PropTypes.bool,

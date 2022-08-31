@@ -49,19 +49,11 @@
 		.reader-featured-image {
 			flex-basis: auto;
 			flex-grow: 1;
-			margin-right: 20px;
-			max-width: 190px;
 			box-sizing: border-box;
 
-			@include breakpoint-deprecated( '>960px' ) {
-				max-width: 250px;
-			}
-
-			@include breakpoint-deprecated( '<480px' ) {
-				height: 100px;
-				margin: 0 0 15px;
-				max-width: 100%;
-			}
+			height: 100px;
+			margin: 0 0 15px;
+			max-width: 100%;
 		}
 
 		&.is-photo {
@@ -408,12 +400,8 @@
 .reader-post-card__post {
 	clear: both;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	margin-top: 14px;
-
-	@include breakpoint-deprecated( '<480px' ) {
-		flex-direction: column;
-	}
 
 	.reader-post-card__post-details {
 		flex: 1 auto;

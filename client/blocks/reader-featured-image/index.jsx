@@ -1,57 +1,66 @@
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
-import resizeImageUrl from 'calypso/lib/resize-image-url';
 
 import './style.scss';
 
 const noop = () => {};
 
 const ReaderFeaturedImage = ( {
-	imageUrl,
-	imageWidth,
+	post,
 	href,
 	children,
 	onClick,
 	className,
-	fetched,
+	imageWidth,
+	imageHeight,
 } ) => {
+	const imageUrl = post.canonical_media.src;
 	if ( imageUrl === undefined ) {
 		return null;
 	}
 
-	// Don't resize image if it was already fetched.
-	const resizedUrl = fetched ? imageUrl : resizeImageUrl( imageUrl, { w: imageWidth } );
-
-	if ( ! resizedUrl ) {
-		return null;
-	}
+	const imageSize = {
+		height: post.canonical_media.height,
+		width: post.canonical_media.width,
+	};
 
 	const featuredImageStyle = {
-		backgroundImage: 'url(' + cssSafeUrl( resizedUrl ) + ')',
-		backgroundSize: 'cover',
+		backgroundImage: 'url(' + cssSafeUrl( imageUrl ) + ')',
+		backgroundSize: post.isExpanded ? 'contain' : 'cover',
 		backgroundRepeat: 'no-repeat',
-		backgroundPosition: 'center center',
+		backgroundPosition: 'center',
 	};
 
 	const classNames = classnames( className, 'reader-featured-image' );
+	const { width: naturalWidth, height: naturalHeight } = imageSize;
+	const newHeight = Math.min( ( naturalHeight / naturalWidth ) * imageWidth, imageHeight );
+	const newWidth = ( naturalWidth / naturalHeight ) * newHeight;
+
+	featuredImageStyle.height = newHeight;
+	featuredImageStyle.width = newWidth;
+
+	const divStyle = { height: newHeight, width: newWidth, margin: '0 auto' };
 
 	return (
-		<a className={ classNames } href={ href } style={ featuredImageStyle } onClick={ onClick }>
-			{ children }
-		</a>
+		<div style={ divStyle }>
+			<a className={ classNames } href={ href } style={ featuredImageStyle } onClick={ onClick }>
+				{ children }
+			</a>
+		</div>
 	);
 };
 
 ReaderFeaturedImage.propTypes = {
-	imageUrl: PropTypes.string,
+	post: PropTypes.object.isRequired,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
 };
 
 ReaderFeaturedImage.defaultProps = {
 	onClick: noop,
-	imageWidth: 250,
+	imageWidth: 600,
+	imageHeight: 400,
 };
 
 export default ReaderFeaturedImage;
