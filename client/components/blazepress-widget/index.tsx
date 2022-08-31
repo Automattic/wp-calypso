@@ -44,10 +44,10 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					onClose,
 					( original: string, options?: any ): string => {
 						if ( options ) {
-							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-							// @ts-ignore It's not resolving to the correct overload.
-							// eslint-disable-next-line wpcalypso/i18n-no-variables
+							/* eslint-disable wpcalypso/i18n-no-variables, @typescript-eslint/ban-ts-comment */
+							// @ts-ignore
 							return translate( original, options as TranslateOptionsText );
+							/* eslint-enable wpcalypso/i18n-no-variables, @typescript-eslint/ban-ts-comment */
 						}
 						// eslint-disable-next-line wpcalypso/i18n-no-variables
 						return translate( original );
