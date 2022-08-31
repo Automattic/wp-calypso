@@ -1,3 +1,5 @@
+import { PriceTierEntry } from '@automattic/calypso-products';
+
 export interface Purchase {
 	active?: boolean;
 	amount: number;
@@ -65,26 +67,18 @@ export interface Purchase {
 	taxText: string | undefined;
 }
 
-export interface PriceTier {
+export interface PurchasePriceTier {
 	minimumUnits: number;
-	maximumUnits: number;
+	maximumUnits?: undefined | null | number;
 	minimumPrice: number;
 	maximumPrice: number;
 	minimumPriceDisplay: string;
-	maximumPriceDisplay: string;
-	minimumPriceMonthlyDisplay: string;
-	maximumPriceMonthlyDisplay: string;
+	maximumPriceDisplay?: string | null | undefined;
 }
 
-export interface PriceTierRaw {
-	minimum_units: number;
-	maximum_units: number;
-	minimum_price: number;
-	maximum_price: number;
-	minimum_price_display: string;
-	maximum_price_display: string;
-	minimum_price_monthly_display: string;
-	maximum_price_monthly_display: string;
+export interface RawPurchasedPriceTierEntry extends PriceTierEntry {
+	minimum_price_monthly_display: never;
+	maximum_price_monthly_display: never;
 }
 
 export interface RawPurchase {
@@ -101,7 +95,7 @@ export interface RawPurchase {
 	cost_to_unbundle: undefined | number | string;
 	cost_to_unbundle_display: undefined | string;
 	price_text: string;
-	price_tier_list?: Array< PriceTierRaw >;
+	price_tier_list?: Array< RawPurchasedPriceTierEntry >;
 	currency_code: string;
 	currency_symbol: string;
 	description: string;

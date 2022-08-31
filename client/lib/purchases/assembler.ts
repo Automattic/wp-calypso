@@ -1,5 +1,5 @@
 import { snakeToCamelCase } from '@automattic/js-utils';
-import type { PriceTier, Purchase, RawPurchase, RawPurchaseCreditCard } from './types';
+import type { PurchasePriceTier, Purchase, RawPurchase, RawPurchaseCreditCard } from './types';
 
 function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): Purchase {
 	const object: Purchase = {
@@ -64,15 +64,13 @@ function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): 
 		meta: purchase.meta,
 		priceText: purchase.price_text,
 		priceTierList: purchase.price_tier_list?.map(
-			( ptRaw ): PriceTier => ( {
-				minimumUnits: ptRaw.minimum_units,
-				maximumUnits: ptRaw.maximum_units,
-				minimumPrice: ptRaw.minimum_price,
-				maximumPrice: ptRaw.maximum_price,
-				minimumPriceDisplay: ptRaw.minimum_price_display,
-				maximumPriceDisplay: ptRaw.maximum_price_display,
-				minimumPriceMonthlyDisplay: ptRaw.minimum_price_monthly_display,
-				maximumPriceMonthlyDisplay: ptRaw.maximum_price_monthly_display,
+			( rawTier ): PurchasePriceTier => ( {
+				minimumUnits: rawTier.minimum_units,
+				maximumUnits: rawTier.maximum_units,
+				minimumPrice: rawTier.minimum_price,
+				maximumPrice: rawTier.maximum_price,
+				minimumPriceDisplay: rawTier.minimum_price_display,
+				maximumPriceDisplay: rawTier.maximum_price_display,
 			} )
 		),
 		partnerName: purchase.partner_name,

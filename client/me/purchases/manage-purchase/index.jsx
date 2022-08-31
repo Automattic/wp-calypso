@@ -652,19 +652,19 @@ class ManagePurchase extends Component {
 
 		if ( isDIFMProduct( purchase ) ) {
 			const productDetails = productsList[ WPCOM_DIFM_LITE ];
-			const [ tier0 ] = productDetails.price_tier_list;
-			const { maximum_units: noOfBaselinePagesIncluded } = tier0;
+			const [ tier0 ] = productDetails.priceTierList;
+			const { maximum_units: numberOfIncludedPages } = tier0;
 
 			const description = translate(
-				'Hire a professional to set up your %(noOfBaselinePagesIncluded)d page website.',
+				'Hire a professional to set up your %(numberOfIncludedPages)d page website.',
 				{
 					args: {
-						noOfBaselinePagesIncluded: noOfBaselinePagesIncluded,
+						numberOfIncludedPages: numberOfIncludedPages,
 					},
 				}
 			);
 
-			if ( purchase.purchaseRenewalQuantity - noOfBaselinePagesIncluded > 0 ) {
+			if ( purchase.purchaseRenewalQuantity - numberOfIncludedPages > 0 ) {
 				return (
 					<>
 						{ description }{ ' ' }
@@ -672,9 +672,9 @@ class ManagePurchase extends Component {
 							'This purchase includes %(numberOfPages)d extra page.',
 							'This purchase includes %(numberOfPages)d extra pages.',
 							{
-								count: purchase.purchaseRenewalQuantity,
+								count: purchase.purchaseRenewalQuantity - numberOfIncludedPages,
 								args: {
-									numberOfPages: purchase.purchaseRenewalQuantity - noOfBaselinePagesIncluded,
+									numberOfPages: purchase.purchaseRenewalQuantity - numberOfIncludedPages,
 								},
 							}
 						) }

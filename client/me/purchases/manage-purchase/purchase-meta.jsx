@@ -13,6 +13,7 @@ import {
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
@@ -21,7 +22,6 @@ import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import formatCurrency from 'calypso/../packages/format-currency/src';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -234,10 +234,9 @@ function getDIFMPriceDetails( purchase ) {
 	const [ tier0, tier1 ] = purchase.priceTierList;
 	const perExtraPagePrice = tier1.minimumPrice - tier0.minimumPrice;
 
-	const { maximumUnits: noOfBaselinePagesIncluded, minimumPriceDisplay: formattedOneTimeFee } =
-		tier0;
+	const { maximumUnits: numberOfIncludedPages, minimumPriceDisplay: formattedOneTimeFee } = tier0;
 	const { purchaseRenewalQuantity: noOfPages, currencyCode } = purchase;
-	const extraPageCount = noOfPages - noOfBaselinePagesIncluded;
+	const extraPageCount = noOfPages - numberOfIncludedPages;
 	const costOfExtraPages = extraPageCount * perExtraPagePrice;
 	const formattedCostOfExtraPages = formatPurchasePrice( costOfExtraPages, currencyCode );
 	return {
@@ -288,6 +287,17 @@ function PurchaseMetaPrice( { purchase } ) {
 								},
 								components: {
 									period: <span className="manage-purchase__time-period" />,
+								},
+							}
+						) }
+						{ translate(
+							'%(extraPageCount)d extra page : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
+							'%(extraPageCount)d extra pages : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
+							{
+								count: extraPageCount,
+								args: {
+									extraPageCount,
+									costOfExtraPages,
 								},
 							}
 						) }
