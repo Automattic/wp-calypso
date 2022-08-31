@@ -3,12 +3,14 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { DialogSiteThumbnail } from '../dialog-site-thumbnail';
 
 import './style.scss';
 
 class RemovePlanDialog extends Component {
 	static propTypes = {
 		planName: PropTypes.string.isRequired,
+		site: PropTypes.object.isRequired,
 	};
 
 	close = () => {
@@ -20,7 +22,8 @@ class RemovePlanDialog extends Component {
 	};
 
 	render() {
-		const { planName, translate } = this.props;
+		const { planName, site, translate } = this.props;
+
 		const buttons = [
 			{
 				action: 'cancel',
@@ -47,6 +50,14 @@ class RemovePlanDialog extends Component {
 							args: { plan: planName },
 						} ) }
 					</FormSectionHeading>
+
+					{ ! site.isPrivate && (
+						<DialogSiteThumbnail
+							className="remove-plan-dialog__thumbnail"
+							site={ site }
+							size={ 'medium' }
+						/>
+					) }
 
 					<p>
 						{ translate( 'Dialog content' ) }
