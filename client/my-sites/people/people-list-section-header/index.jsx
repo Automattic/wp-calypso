@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -70,6 +71,11 @@ class PeopleListSectionHeader extends Component {
 		const addSubscriberLink = this.getAddSubscriberLink();
 		const classes = classNames( this.props.className, 'people-list-section-header' );
 
+		const showInviteUserBtn =
+			( siteLink && ! this.isSubscribersTab() ) || ! isEnabled( 'subscriber-importer' );
+		const showAddSubscriberBtn =
+			addSubscriberLink && this.isSubscribersTab() && isEnabled( 'subscriber-importer' );
+
 		return (
 			<SectionHeader
 				className={ classes }
@@ -79,15 +85,17 @@ class PeopleListSectionHeader extends Component {
 				popoverText={ this.getPopoverText() }
 			>
 				{ children }
-				{ siteLink && ! this.isSubscribersTab() && (
+				{ showInviteUserBtn && (
 					<Button compact href={ siteLink } className="people-list-section-header__add-button">
 						<Gridicon icon="user-add" />
 						<span>
-							{ translate( 'Add User', { context: 'Verb. Button to invite more users.' } ) }
+							{ isEnabled( 'subscriber-importer' )
+								? translate( 'Add User', { context: 'Verb. Button to invite more users.' } )
+								: translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
 						</span>
 					</Button>
 				) }
-				{ addSubscriberLink && this.isSubscribersTab() && (
+				{ showAddSubscriberBtn && (
 					<Button href={ addSubscriberLink } compact primary>
 						{ translate( 'Add Subscribers', { context: 'Verb. Button to add more subscribers.' } ) }
 					</Button>
