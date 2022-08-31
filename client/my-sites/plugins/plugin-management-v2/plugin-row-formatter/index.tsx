@@ -142,6 +142,7 @@ export default function PluginRowFormatter( {
 							hideLabel={ ! isSmallScreen }
 							plugin={ pluginOnSite }
 							site={ selectedSite }
+							disabled={ !! item?.isSelectable }
 						/>
 					</div>
 				)
@@ -156,6 +157,7 @@ export default function PluginRowFormatter( {
 							site={ selectedSite }
 							wporg={ !! item.wporg }
 							isMarketplaceProduct={ isMarketplaceProduct( state, item?.slug ) }
+							disabled={ !! item?.isSelectable }
 						/>
 					</div>
 				)
