@@ -703,7 +703,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 	sidebarsObserver.observe( body, { childList: true } );
 
 	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
-		const isComponentsPopover = ( node ) => node.classList.contains( 'components-popover' );
+		const isComponentsPopover = ( node ) => node?.classList.contains( 'components-popover' );
 
 		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
 			anchorElem.href = manageReusableBlocksUrl;
@@ -712,6 +712,13 @@ async function openLinksInParentFrame( calypsoPort ) {
 
 		for ( const record of mutations ) {
 			for ( const node of record.addedNodes ) {
+				// For some reason, some nodes might be `undefined`, see:
+				// https://sentry.io/organizations/a8c/issues/3216750319/?project=5876245.
+				// We skip the iteration if that's the case.
+				if ( ! node ) {
+					continue;
+				}
+
 				if ( isComponentsPopover( node ) ) {
 					const manageReusableBlocksAnchorElem = node.querySelector(
 						'a[href$="edit.php?post_type=wp_block"]'
