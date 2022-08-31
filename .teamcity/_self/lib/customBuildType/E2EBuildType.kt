@@ -105,6 +105,7 @@ open class E2EBuildType(
 					E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
 
 					# Build packages
+					yarn workspace @automattic/jest-circus-allure-reporter build
 					yarn workspace @automattic/calypso-e2e build
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
