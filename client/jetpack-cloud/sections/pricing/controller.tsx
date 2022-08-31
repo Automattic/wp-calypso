@@ -1,3 +1,5 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { translate } from 'i18n-calypso';
 import page from 'page';
 import { addQueryArgs } from 'calypso/lib/route';
 import { hideMasterbar } from 'calypso/state/ui/actions';
@@ -17,7 +19,16 @@ export function jetpackPricingContext( context: PageJS.Context, next: () => void
 
 	context.store.dispatch( hideMasterbar() );
 	context.nav = <JetpackComMasterbar pathname={ lang ? path.replace( `/${ lang }`, '' ) : path } />;
-	context.header = <Header urlQueryArgs={ urlQueryArgs } />;
+	context.header = (
+		<Header
+			urlQueryArgs={ urlQueryArgs }
+			title={
+				isEnabled( 'jetpack/pricing-page-rework-v1' )
+					? translate( 'Best-in-class products for your WordPress site' )
+					: translate( 'Security, performance, and marketing tools made for WordPress' )
+			}
+		/>
+	);
 	context.footer = <JetpackComFooter />;
 	next();
 }

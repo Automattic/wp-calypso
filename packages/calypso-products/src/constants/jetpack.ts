@@ -24,6 +24,8 @@ export const PRODUCT_JETPACK_CRM_FREE = 'jetpack_crm_free';
 export const PRODUCT_JETPACK_CRM_FREE_MONTHLY = 'jetpack_crm_free_monthly';
 export const PRODUCT_JETPACK_VIDEOPRESS = 'jetpack_videopress';
 export const PRODUCT_JETPACK_VIDEOPRESS_MONTHLY = 'jetpack_videopress_monthly';
+export const PRODUCT_JETPACK_SOCIAL_BASIC = 'jetpack_social_basic_yearly';
+export const PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY = 'jetpack_social_basic_monthly';
 
 // Legacy Products
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -67,6 +69,12 @@ export const JETPACK_SCAN_PRODUCTS = <const>[
 	PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY,
 ];
 
+// Social
+export const JETPACK_SOCIAL_PRODUCTS = <const>[
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+];
+
 // Anti-spam
 export const JETPACK_ANTI_SPAM_PRODUCTS = <const>[
 	PRODUCT_JETPACK_ANTI_SPAM,
@@ -101,6 +109,7 @@ export const JETPACK_PRODUCTS_LIST = <const>[
 	...JETPACK_ANTI_SPAM_PRODUCTS,
 	...JETPACK_SEARCH_PRODUCTS,
 	...JETPACK_VIDEOPRESS_PRODUCTS,
+	...JETPACK_SOCIAL_PRODUCTS,
 ];
 export const JETPACK_PRODUCTS_BY_TERM = <const>[
 	{
@@ -151,6 +160,10 @@ export const JETPACK_PRODUCTS_BY_TERM = <const>[
 		yearly: PRODUCT_JETPACK_BOOST,
 		monthly: PRODUCT_JETPACK_BOOST_MONTHLY,
 	},
+	{
+		yearly: PRODUCT_JETPACK_SOCIAL_BASIC,
+		monthly: PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	},
 ];
 export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 	[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -171,6 +184,10 @@ export const JETPACK_PRODUCT_PRICE_MATRIX = <const>{
 	},
 	[ PRODUCT_JETPACK_BOOST ]: {
 		relatedProduct: PRODUCT_JETPACK_BOOST_MONTHLY,
+		ratio: 12,
+	},
+	[ PRODUCT_JETPACK_SOCIAL_BASIC ]: {
+		relatedProduct: PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 		ratio: 12,
 	},
 	[ PRODUCT_JETPACK_SEARCH ]: {

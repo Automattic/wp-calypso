@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect, useState } from 'react';
@@ -23,6 +23,8 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	const loadingMessages = useProcessingLoadingMessages();
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
+	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
+	const [ destinationState, setDestinationState ] = useState( {} );
 
 	useInterval( () => {
 		setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
@@ -42,14 +44,31 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 			if ( typeof action === 'function' ) {
 				try {
 					const destination = await action();
-					submit?.( destination, ProcessingResult.SUCCESS );
+					// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
+					// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
+					// that is frozen from before we called action().
+					// We can now get the most up to date values from hooks inside the flow creating submit(),
+					// including the values that were updated during the action() running.
+					setDestinationState( destination );
+					setHasActionSuccessfullyRun( true );
 				} catch ( e ) {
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
-			} else submit?.( {}, ProcessingResult.NO_ACTION );
+			} else {
+				submit?.( {}, ProcessingResult.NO_ACTION );
+			}
 		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
+
+	// When the hasActionSuccessfullyRun flag turns on, run submit().
+	useEffect( () => {
+		if ( hasActionSuccessfullyRun ) {
+			submit?.( destinationState, ProcessingResult.SUCCESS );
+		}
+		// A change in submit() doesn't cause this effect to rerun.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ hasActionSuccessfullyRun ] );
 
 	// Progress smoothing, works out to be around 40seconds unless step polling dictates otherwise
 	const [ simulatedProgress, setSimulatedProgress ] = useState( 0 );
@@ -77,7 +96,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	}, [ simulatedProgress, progress, __ ] );
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = [ 'link-in-bio', 'newsletter' ].includes( flowName );
+	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 
 	return (
 		<StepContainer

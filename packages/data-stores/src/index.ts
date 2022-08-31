@@ -12,6 +12,7 @@ import * as ProductsList from './products-list';
 import * as Reader from './reader';
 import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
+import * as Subscriber from './subscriber';
 import * as User from './user';
 import * as WPCOMFeatures from './wpcom-features';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
@@ -26,6 +27,7 @@ export { useSubmitTicketMutation } from './support-queries/use-submit-support-ti
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
 export { useStarterDesignsGeneratedQuery } from './starter-designs-queries/use-starter-designs-generated-query';
 export { useStarterDesignsQuery } from './starter-designs-queries/use-starter-designs-query';
+export { isThemeVerticalizable } from './starter-designs-queries/utils';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 
@@ -46,6 +48,7 @@ export {
 	ProductsList,
 	AutomatedTransferEligibility,
 	StepperInternal,
+	Subscriber,
 };
 
 /**

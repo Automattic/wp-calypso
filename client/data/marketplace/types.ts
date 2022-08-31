@@ -49,6 +49,7 @@ export type ESIndexResult = {
 	'plugin.support_threads_resolved'?: number;
 	'plugin.active_installs'?: number;
 	plugin: {
+		author: string;
 		title: string;
 		excerpt: string;
 		icons: string;

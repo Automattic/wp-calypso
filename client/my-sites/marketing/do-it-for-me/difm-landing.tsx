@@ -298,7 +298,7 @@ export default function DIFMLanding( {
 						align={ 'left' }
 						headerText={ headerText }
 						subHeaderText={ translate(
-							'{{sup}}*{{/sup}}One time fee, plus a one year subscription of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+							'{{sup}}*{{/sup}}One time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
 							{
 								args: {
 									plan: planTitle,
@@ -455,7 +455,7 @@ export default function DIFMLanding( {
 						<FoldableFAQ id="faq-4" question={ translate( 'How much does the service cost?' ) }>
 							<p>
 								{ translate(
-									'The service costs %(displayCost)s, plus one year of the %(planTitle)s hosting plan. If you choose to use an existing site that already has the plan, you will only be charged for the website design service.',
+									'The service costs %(displayCost)s, plus an additional purchase of the %(planTitle)s hosting plan.',
 									{
 										args: {
 											displayCost,

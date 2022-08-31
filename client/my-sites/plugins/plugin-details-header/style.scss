@@ -11,7 +11,6 @@ $mobile-icon-height: 175px;
 }
 
 .plugin-details-header__main-info {
-	margin-top: 16px;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -167,6 +166,7 @@ $mobile-icon-height: 175px;
 	}
 
 	.plugin-details-header__main-info {
+		margin-top: 16px;
 		margin-bottom: 30px;
 	}
 	

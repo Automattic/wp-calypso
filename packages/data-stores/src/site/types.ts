@@ -156,7 +156,7 @@ export interface SiteDetailsOptions {
 	anchor_podcast?: boolean;
 	background_color?: boolean;
 	blog_public?: number;
-	created_at?: Date;
+	created_at?: string;
 	default_category?: number;
 	default_comment_status?: boolean;
 	default_likes_enabled?: boolean;
@@ -219,6 +219,7 @@ export interface SiteDetailsOptions {
 	was_created_with_blank_canvas_design?: boolean;
 	woocommerce_is_active?: boolean;
 	wordads?: boolean;
+	launchpad_screen?: false | 'off' | 'full' | 'minimized';
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];

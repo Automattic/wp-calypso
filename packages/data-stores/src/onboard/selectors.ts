@@ -21,6 +21,7 @@ export const getProgress = ( state: State ) => state.progress;
 export const getProgressTitle = ( state: State ) => state.progressTitle;
 export const getStepProgress = ( state: State ) => state.stepProgress;
 export const getGoals = ( state: State ) => state.goals;
+export const getPatternId = ( state: State ) => state.patternId;
 export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {
@@ -48,6 +49,3 @@ export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 	hasSelectedDesign( state ) && ! state.selectedFonts;
 
 export const getEditEmail = ( state: State ) => state.editEmail;
-
-export const getBundledPluginSlug = ( state: State, siteSlug: string ) =>
-	state.bundledPluginSlug[ siteSlug ];

@@ -37,7 +37,7 @@ interface UseSitesTableFilteringResult< T > {
 
 type SiteObjectWithBasicInfo = SiteObjectWithStatus & {
 	URL: string;
-	name: string;
+	name: string | undefined;
 	slug: string;
 	visible?: boolean;
 };

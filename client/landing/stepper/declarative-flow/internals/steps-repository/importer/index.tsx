@@ -2,7 +2,7 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
@@ -31,7 +31,6 @@ import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-q
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
 import type { ImporterCompType } from './types';
-import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
 
 interface Props {
 	importer: Importer;
@@ -52,21 +51,14 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		const [ siteId, setSiteId ] = useState( site?.ID );
 		! siteId && site?.ID && setSiteId( site?.ID );
 		const runImportInitially = useInitialQueryRun( siteId );
-		const canImport = useSelector( ( state ) =>
-			canCurrentUser( state, siteId as number, 'manage_options' )
-		);
-		const siteItem = useSelector( ( state ) => getSite( state, siteId as number ) );
+		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
+		const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
 
-		const fromSite = currentSearchParams.get( 'from' ) as string;
+		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
-		const stepNavigator = useStepNavigator(
-			navigation,
-			siteId as number,
-			siteSlug as string,
-			fromSite
-		);
+		const stepNavigator = useStepNavigator( navigation, siteId, siteSlug, fromSite );
 
 		/**
 	 	↓ Effects
@@ -83,7 +75,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 	 	↓ Methods
 		 */
 		function onGoBack() {
-			resetImportJob( getImportJob( importer as Importer ) );
+			resetImportJob( getImportJob( importer ) );
 			navigation.goBack();
 		}
 
@@ -133,7 +125,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		function renderStepContent() {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
-			} else if ( ! siteSlug ) {
+			} else if ( ! siteSlug || ! siteItem || ! siteId ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {
 				return (
@@ -148,9 +140,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				<Importer
 					job={ getImportJob( importer ) }
 					run={ runImportInitially }
-					siteId={ siteId as number }
-					site={ siteItem as SitesItem }
-					siteSlug={ siteSlug as string }
+					siteId={ siteId }
+					site={ siteItem }
+					siteSlug={ siteSlug }
 					fromSite={ fromSite }
 					urlData={ fromSiteData }
 					stepNavigator={ stepNavigator }

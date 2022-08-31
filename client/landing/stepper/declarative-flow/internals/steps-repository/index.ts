@@ -7,6 +7,7 @@ export { default as options } from './site-options';
 export { default as bloggerStartingPoint } from './blogger-starting-point';
 export { default as storeFeatures } from './store-features';
 export { default as designSetup } from './design-setup';
+export { default as patternAssembler } from './pattern-assembler';
 export { default as import } from './import';
 export { default as importLight } from './import-light';
 export { default as importList } from './import-list';
@@ -51,6 +52,7 @@ export type StepPath =
 	| 'bloggerStartingPoint'
 	| 'storeFeatures'
 	| 'designSetup'
+	| 'patternAssembler'
 	| 'import'
 	| 'importList'
 	| 'importLight'

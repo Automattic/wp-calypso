@@ -4,7 +4,6 @@ import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
-	PremiumBadge,
 	useCategorization,
 	getDesignPreviewUrl,
 } from '@automattic/design-picker';
@@ -14,12 +13,13 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useSite } from '../../../../hooks/use-site';
@@ -52,6 +52,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const site = useSite();
 	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
+	const reduxDispatch = useReduxDispatch();
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const siteSlug = useSiteSlugParam();
@@ -113,7 +114,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			recordTracksEvent( 'calypso_signup_unified_design_picker_view', {
 				vertical_id: siteVerticalId,
 				generated_designs: generatedDesigns.map( ( design ) => design.slug ).join( ',' ),
-				static_designs: staticDesigns.map( ( design ) => design.slug ).join( ',' ),
+				has_vertical_images: generatedDesigns.length > 0,
 			} );
 		}
 	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
@@ -171,18 +172,21 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			// Send vertical_id only if the current design is generated design or we enabled the v13n of standard themes.
 			// We cannot check the config inside `setDesignOnSite` action. See https://github.com/Automattic/wp-calypso/pull/65531#issuecomment-1190850273
 			setPendingAction( () =>
-				setDesignOnSite(
-					siteSlugOrId,
-					_selectedDesign,
-					_selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-						? siteVerticalId
-						: ''
+				setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ).then( () =>
+					reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
 				)
 			);
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign ),
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
 			} );
+
+			if ( _selectedDesign.verticalizable ) {
+				recordTracksEvent(
+					'calypso_signup_select_verticalized_design',
+					getEventPropsByDesign( _selectedDesign )
+				);
+			}
 
 			handleSubmit( {
 				selectedDesign: _selectedDesign,
@@ -284,10 +288,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
-			vertical_id:
-				selectedDesign.design_type === 'vertical' || isEnabled( 'signup/standard-theme-v13n' )
-					? siteVerticalId
-					: undefined,
+			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
 		const stepContent = (
@@ -382,7 +383,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onPreview={ previewDesign }
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
-			premiumBadge={ <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } /> }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }

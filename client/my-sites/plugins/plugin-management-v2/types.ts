@@ -1,10 +1,10 @@
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { MomentInput } from 'moment';
-import type { ReactChild } from 'react';
+import type { ReactNode } from 'react';
 
 export type Columns = Array< {
 	key: string;
-	title?: ReactChild;
+	header?: ReactNode;
 	smallColumn?: boolean;
 	colSpan?: number;
 } >;
@@ -23,13 +23,18 @@ export interface Plugin {
 	[ key: string ]: any;
 }
 
+export type SiteWithPlugin = { site: SiteDetails; secondarySites: Array< object > | null };
+
 export interface RowFormatterArgs {
 	item: any;
 	columnKey: string;
 	isSmallScreen?: boolean;
 	className?: string;
-	selectedSite?: SiteData;
+	selectedSite?: SiteDetails;
 }
 export interface PluginRowFormatterArgs extends RowFormatterArgs {
 	item: Plugin;
+}
+export interface SiteRowFormatterArgs extends RowFormatterArgs {
+	item: SiteDetails;
 }

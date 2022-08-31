@@ -1,7 +1,6 @@
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
-
+import type { SiteDetails } from '@automattic/data-stores';
 export type DomainOnlyConnectCardPassedProps = {
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	selectedDomainName: string;
 };
 

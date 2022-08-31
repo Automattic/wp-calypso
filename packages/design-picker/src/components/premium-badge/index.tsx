@@ -7,10 +7,15 @@ import './style.scss';
 
 interface Props {
 	className?: string;
+	tooltipPosition?: string;
 	isPremiumThemeAvailable?: boolean;
 }
 
-const PremiumBadge: FunctionComponent< Props > = ( { className, isPremiumThemeAvailable } ) => {
+const PremiumBadge: FunctionComponent< Props > = ( {
+	className,
+	tooltipPosition = 'bottom left',
+	isPremiumThemeAvailable,
+} ) => {
 	const { __ } = useI18n();
 
 	const tooltipText = isPremiumThemeAvailable
@@ -39,7 +44,7 @@ const PremiumBadge: FunctionComponent< Props > = ( { className, isPremiumThemeAv
 				className="premium-badge__popover"
 				context={ divRef.current }
 				isVisible={ isPopoverVisible }
-				position="bottom left"
+				position={ tooltipPosition }
 			>
 				{ tooltipText }
 			</Popover>

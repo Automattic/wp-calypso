@@ -21,6 +21,23 @@ export interface DesignRecipe {
 	footer_pattern_ids?: number[];
 }
 
+export interface ThemeStyleVariation {
+	slug: string;
+	settings: {
+		color: {
+			palette: {
+				theme: ThemeStyleVariationSettingsColorPalette[];
+			};
+		};
+	};
+}
+
+export interface ThemeStyleVariationSettingsColorPalette {
+	color: string;
+	name: string;
+	slug: string;
+}
+
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 /**
@@ -44,7 +61,9 @@ export interface Design {
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
 	preview?: 'static';
 	design_type?: DesignType;
+	style_variations?: ThemeStyleVariation[];
 	price?: string;
+	verticalizable?: boolean;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;

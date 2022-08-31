@@ -11,11 +11,31 @@ import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import { ThumbnailLink } from './thumbnail-link';
 
-const badges = css( { display: 'flex', gap: '8px', alignItems: 'center', marginLeft: 'auto' } );
+const SIZES_ATTR = [
+	'(min-width: 1400px) 401px',
+	'(min-width: 960px) calc(33vw - 48px)',
+	'(min-width: 660px) calc(50vw - 48px)',
+	'calc(100vw - 32px)',
+].join( ', ' );
+
+const ASPECT_RATIO = 16 / 11;
+
+const THUMBNAIL_DIMENSION = {
+	width: 401,
+	height: 401 / ASPECT_RATIO,
+};
+
+const badges = css( {
+	display: 'flex',
+	gap: '8px',
+	alignItems: 'center',
+	marginInlineStart: 'auto',
+} );
 
 export const siteThumbnail = css( {
-	aspectRatio: '16 / 9',
+	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
 } );
@@ -28,7 +48,7 @@ const ellipsis = css( {
 	'.gridicon.ellipsis-menu__toggle-icon': {
 		width: '24px',
 		height: '16px',
-		top: '4px',
+		insetBlockStart: '4px',
 	},
 } );
 
@@ -55,9 +75,15 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	return (
 		<SitesGridTile
 			leading={
-				<a { ...siteDashboardUrlProps }>
-					<SiteItemThumbnail className={ siteThumbnail } site={ site } size={ 'medium' } />
-				</a>
+				<ThumbnailLink { ...siteDashboardUrlProps }>
+					<SiteItemThumbnail
+						className={ siteThumbnail }
+						site={ site }
+						width={ THUMBNAIL_DIMENSION.width }
+						height={ THUMBNAIL_DIMENSION.height }
+						sizesAttr={ SIZES_ATTR }
+					/>
+				</ThumbnailLink>
 			}
 			primary={
 				<>

@@ -20,14 +20,14 @@ const Table = styled.table`
 	position: relative;
 `;
 
-const THead = styled.thead< { top: number } >( ( { top } ) => ( {
+const THead = styled.thead< { blockOffset: number } >( ( { blockOffset } ) => ( {
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		display: 'none',
 	},
 
 	position: 'sticky',
 	zIndex: 3,
-	top: `${ top }px`,
+	insetBlockStart: `${ blockOffset }px`,
 
 	background: '#fdfdfd',
 } ) );
@@ -39,11 +39,11 @@ const headerShadow: React.CSSProperties = {
 
 const Row = styled.tr`
 	line-height: 2em;
-	border-bottom: 1px solid #eee;
+	border-block-end: 1px solid #eee;
 
 	th {
-		padding-top: 12px;
-		padding-bottom: 12px;
+		padding-block-start: 12px;
+		padding-block-end: 12px;
 		vertical-align: middle;
 		font-size: 14px;
 		line-height: 20px;
@@ -117,7 +117,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 	return (
 		<Table className={ className }>
 			<THead
-				top={ masterbarHeight }
+				blockOffset={ masterbarHeight }
 				ref={ headerRef }
 				style={ isHeaderStuck ? headerShadow : undefined }
 			>

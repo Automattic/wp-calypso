@@ -1,17 +1,19 @@
-import { Gridicon, Card, Button } from '@automattic/components';
+import { Gridicon, Card } from '@automattic/components';
 import classNames from 'classnames';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import PluginCommonActions from '../plugin-common-actions';
 import type { Columns, RowFormatterArgs } from '../../types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
 
 interface Props {
 	item: any;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	rowFormatter: ( args: RowFormatterArgs ) => ReactNode;
 	columns: Columns;
-	hasMoreActions: boolean;
+	renderActions?: ( args: any ) => ReactElement;
 }
 
 export default function PluginCommonCard( {
@@ -19,7 +21,7 @@ export default function PluginCommonCard( {
 	selectedSite,
 	rowFormatter,
 	columns,
-	hasMoreActions,
+	renderActions,
 }: Props ): ReactElement {
 	const columnKeys: { [ key: string ]: boolean } = columns.reduce(
 		( obj, cur ) => ( { ...obj, [ cur.key ]: true } ),
@@ -32,17 +34,30 @@ export default function PluginCommonCard( {
 		<Card className="plugin-common-card__card" compact>
 			<div className="plugin-common-card__columns">
 				{ showLeftContent && (
-					<div className="plugin-common-card__left-content">
-						{ item.icon ? (
-							<img
-								className="plugin-common-card__plugin-icon"
-								src={ item.icon }
-								alt={ item.name }
-							/>
-						) : (
-							<Gridicon className="plugin-common-card__plugin-icon has-opacity" icon="plugins" />
-						) }
-					</div>
+					<>
+						<div className="plugin-common-card__left-checkbox">
+							{ item?.isSelectable && (
+								<FormInputCheckbox
+									className="plugin-row-formatter__checkbox"
+									id={ item.slug }
+									onClick={ item.onClick }
+									checked={ item.isSelected }
+									readOnly={ true }
+								/>
+							) }
+						</div>
+						<div className="plugin-common-card__left-content">
+							{ item.icon ? (
+								<img
+									className="plugin-common-card__plugin-icon"
+									src={ item.icon }
+									alt={ item.name }
+								/>
+							) : (
+								<Gridicon className="plugin-common-card__plugin-icon has-opacity" icon="plugins" />
+							) }
+						</div>
+					</>
 				) }
 				<div
 					className={ classNames( 'plugin-common-card__main-content', {
@@ -52,6 +67,12 @@ export default function PluginCommonCard( {
 					{ columnKeys[ 'plugin' ] && (
 						<div>
 							{ rowFormatter( { columnKey: 'plugin', item, isSmallScreen: true } ) }
+							<span className="plugin-common-card__overlay"></span>
+						</div>
+					) }
+					{ columnKeys[ 'site-name' ] && (
+						<div>
+							{ rowFormatter( { columnKey: 'site-name', item } ) }
 							<span className="plugin-common-card__overlay"></span>
 						</div>
 					) }
@@ -104,12 +125,19 @@ export default function PluginCommonCard( {
 							isSmallScreen: true,
 							className: 'plugin-common-card__update-plugin',
 						} ) }
+					{ columnKeys[ 'install' ] && (
+						<div className="plugin-common-card__install-button">
+							{ rowFormatter( {
+								columnKey: 'install',
+								item,
+								isSmallScreen: true,
+							} ) }
+						</div>
+					) }
 				</div>
-				{ hasMoreActions && (
+				{ renderActions && (
 					<div className="plugin-common-card__right-content">
-						<Button borderless compact>
-							<Gridicon icon="ellipsis" size={ 18 } className="plugin-common-card__all-actions" />
-						</Button>
+						<PluginCommonActions item={ item } renderActions={ renderActions } />
 					</div>
 				) }
 			</div>

@@ -15,6 +15,7 @@ export type SiteIconWithPickerProps = {
 	imageEditorClassName?: string;
 	uploadFieldClassName?: string;
 	disabled?: boolean;
+	placeholderText?: string;
 };
 export function SiteIconWithPicker( {
 	selectedFile,
@@ -23,6 +24,7 @@ export function SiteIconWithPicker( {
 	imageEditorClassName,
 	uploadFieldClassName,
 	disabled,
+	placeholderText,
 }: SiteIconWithPickerProps ) {
 	const { __ } = useI18n();
 
@@ -52,6 +54,7 @@ export function SiteIconWithPicker( {
 						setEditingFileName( undefined );
 						setImageEditorOpen( false );
 					} }
+					widthLimit={ 512 }
 				/>
 			) }
 			<FormFieldset
@@ -80,7 +83,9 @@ export function SiteIconWithPicker( {
 						<Icon icon={ upload } />
 					) }
 					<span>
-						{ selectedFileUrl || siteIconUrl ? __( 'Replace' ) : __( 'Upload publication icon' ) }
+						{ selectedFileUrl || siteIconUrl
+							? __( 'Replace' )
+							: placeholderText || __( 'Add a site icon' ) }
 					</span>
 				</FormFileUpload>
 			</FormFieldset>

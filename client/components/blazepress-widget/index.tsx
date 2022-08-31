@@ -1,11 +1,11 @@
-import { Gridicon } from '@automattic/components';
 import { useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { showDSP } from 'calypso/lib/promote-post';
-
+import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export type BlazePressPromotionProps = {
 	isVisible: boolean;
@@ -19,6 +19,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const { isVisible = false, onClose = () => {} } = props;
 	const [ isLoading, setIsLoading ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
@@ -34,10 +35,22 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					return;
 				}
 
-				await showDSP( props.siteId, props.postId, widgetContainer.current );
+				await showDSP(
+					selectedSiteSlug,
+					props.siteId,
+					props.postId,
+					onClose,
+					widgetContainer.current
+				);
 				setIsLoading( false );
 			} )();
-	}, [ isVisible ] );
+	}, [ isVisible, props.postId, props.siteId ] );
+
+	const promoteWidgetStatus = usePromoteWidget();
+	if ( promoteWidgetStatus === PromoteWidgetStatus.DISABLED ) {
+		return <></>;
+	}
+
 	return (
 		<>
 			{ isVisible && (
@@ -47,12 +60,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						<h2>Promote</h2>
 						<span
 							role="button"
-							className={ 'blazepress-widget__cross' }
+							className={ 'blazepress-widget__cancel' }
 							onKeyDown={ onClose }
 							tabIndex={ 0 }
 							onClick={ onClose }
 						>
-							<Gridicon icon="cross" size={ 24 } />
+							Cancel
 						</span>
 					</div>
 					<div

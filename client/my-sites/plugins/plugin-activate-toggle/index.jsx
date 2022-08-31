@@ -91,13 +91,15 @@ export class PluginActivateToggle extends Component {
 	}
 
 	render() {
-		const { inProgress, site, plugin, disabled, translate, hideLabel } = this.props;
+		const { inProgress, site, plugin, disabled, translate, hideLabel, isJetpackCloud } = this.props;
 
 		if ( ! site ) {
 			return null;
 		}
 
-		if ( plugin && 'jetpack' === plugin.slug ) {
+		const isJetpackPlugin = plugin && 'jetpack' === plugin.slug;
+
+		if ( ! isJetpackCloud && isJetpackPlugin ) {
 			return (
 				<PluginAction
 					className="plugin-activate-toggle"
@@ -109,7 +111,7 @@ export class PluginActivateToggle extends Component {
 		}
 		return (
 			<PluginAction
-				disabled={ disabled }
+				disabled={ disabled || isJetpackPlugin }
 				className="plugin-activate-toggle"
 				label={ translate( 'Active', { context: 'plugin status' } ) }
 				inProgress={ inProgress }

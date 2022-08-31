@@ -1,5 +1,12 @@
 const pluginBundleSteps = {
-	woocommerce: [ 'storeAddress', 'businessInfo', 'wooConfirm', 'processing' ],
+	'woo-on-plans': [
+		'storeAddress',
+		'businessInfo',
+		'wooConfirm',
+		'wooTransfer',
+		'wooInstallPlugins',
+		'processing',
+	],
 };
 
 export type BundledPlugin = keyof typeof pluginBundleSteps;

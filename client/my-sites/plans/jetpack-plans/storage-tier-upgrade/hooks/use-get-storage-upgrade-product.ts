@@ -66,7 +66,7 @@ export const useGetTier1UpgradeProduct = (): StorageUpgradeGetter => {
 
 			return {
 				...product,
-				displayname: storageAmount,
+				displayName: storageAmount,
 				subheader: translate( 'of backup storage' ),
 				buttonLabel: translate( 'Upgrade storage' ),
 				// description: <the default description of the product being upgraded>,

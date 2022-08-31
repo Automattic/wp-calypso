@@ -1,10 +1,14 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { recordDSPEntryPoint, showDSPWidgetModal } from 'calypso/lib/promote-post';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	recordDSPEntryPoint,
+	showDSPWidgetModal,
+	usePromoteWidget,
+	PromoteWidgetStatus,
+} from 'calypso/lib/promote-post';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const PromotePost = ( props ) => {
 	const { moduleName, postId } = props;
@@ -12,13 +16,14 @@ const PromotePost = ( props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const showPromotePost = config.isEnabled( 'promote-post' );
+	const showPromotePost = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const showDSPWidget = async ( event ) => {
 		event.stopPropagation();
-		await showDSPWidgetModal( selectedSiteId, postId );
+		await showDSPWidgetModal( selectedSiteSlug, selectedSiteId, postId );
 
 		gaRecordEvent(
 			'Stats',

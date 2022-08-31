@@ -5,6 +5,7 @@ import {
 	isDomainMapping,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -615,7 +616,7 @@ class Signup extends Component {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
-		if ( [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName ) ) {
+		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
 			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
 		}
 
@@ -747,6 +748,14 @@ class Signup extends Component {
 		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const olarkIdentity = config( 'olark_chat_identity' );
 		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
+		const progressBar = () => {
+			const flowName = this.props.initialContext?.query?.flowName || this.props.flowName;
+			if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+				return { flowName, stepName: this.props.stepName };
+			}
+			return;
+		};
+
 		const isEligibleForOlarkChat =
 			'onboarding' === this.props.flowName &&
 			[ 'en', 'en-gb' ].includes( this.props.localeSlug ) &&
@@ -758,6 +767,7 @@ class Signup extends Component {
 					<DocumentHead title={ this.props.pageTitle } />
 					{ ! isP2Flow( this.props.flowName ) && (
 						<SignupHeader
+							progressBar={ progressBar() }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							pageTitle={ this.props.hideBackButton && this.props.pageTitle }

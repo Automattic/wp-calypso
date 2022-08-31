@@ -8,7 +8,7 @@ import getSiteOption from '../selectors/get-site-option';
  * @param optionName The option you want to query
  * @returns The value of that option or null
  */
-const useSiteOption = < T >( optionName: string ): T | null => {
+const useSiteOption = ( optionName: string ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const siteOption = useSelector( ( state ) =>
 		getSiteOption( state, selectedSiteId || 0, optionName )

@@ -22,7 +22,7 @@ import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
-import { serverRouter, getNormalizedPath } from 'calypso/server/isomorphic-routing';
+import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import analytics from 'calypso/server/lib/analytics';
 import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import {
@@ -102,7 +102,11 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
 
-	const cacheKey = `${ getNormalizedPath( request.path, request.query ) }:gdpr=${ showGdprBanner }`;
+	const cacheKey = getCacheKey( {
+		path: request.path,
+		query: request.query,
+		context: { showGdprBanner },
+	} );
 
 	/**
 	 * A cache object can be written for an SSR route like /themes when a request
@@ -616,7 +620,7 @@ function wpcomPages( app ) {
 			} else {
 				const pricingPageUrl = ref
 					? `https://wordpress.com/pricing/?ref=${ ref }`
-					: 'https://wordpress.com/pricing';
+					: 'https://wordpress.com/pricing/';
 				res.redirect( pricingPageUrl );
 			}
 		} else {

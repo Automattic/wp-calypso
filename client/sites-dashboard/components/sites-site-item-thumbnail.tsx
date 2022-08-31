@@ -12,8 +12,9 @@ const NoIcon = styled.div( {
 	userSelect: 'none',
 } );
 
-interface SiteItemThumbnailProps extends ComponentProps< typeof SiteThumbnail > {
+interface SiteItemThumbnailProps extends Omit< ComponentProps< typeof SiteThumbnail >, 'alt' > {
 	site: SiteExcerptData;
+	alt?: string;
 }
 
 export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) => {
@@ -40,7 +41,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 		<SiteThumbnail
 			{ ...props }
 			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
-			alt={ site.name }
+			alt={ site.name || __( 'Site thumbnail' ) }
 			bgColorImgUrl={ site.icon?.img }
 		>
 			{ site.icon ? (
@@ -51,7 +52,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 				/>
 			) : (
 				<NoIcon role={ 'img' } aria-label={ __( 'Site Icon' ) }>
-					{ getFirstGrapheme( site.name ) }
+					{ getFirstGrapheme( site.name ?? '' ) }
 				</NoIcon>
 			) }
 		</SiteThumbnail>
@@ -63,7 +64,7 @@ function getFirstGrapheme( input: string ) {
 		const segmenter = new Intl.Segmenter();
 		const [ firstSegmentData ] = segmenter.segment( input );
 
-		return firstSegmentData.segment;
+		return firstSegmentData?.segment;
 	}
 
 	return input.charAt( 0 );

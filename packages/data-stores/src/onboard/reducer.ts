@@ -17,6 +17,16 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	return state;
 };
 
+const patternId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_SITE_PATTERN_ID' ) {
+		return action.patternId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
@@ -354,28 +364,12 @@ const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const bundledPluginSlug: Reducer< { [ key: string ]: string | undefined }, OnboardAction > = (
-	state = {},
-	action
-) => {
-	if ( action.type === 'SET_BUNDLED_PLUGIN_SLUG' ) {
-		return {
-			...state,
-			[ action.siteSlug ]: action.pluginSlug,
-		};
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return {};
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
 	anchorSpotifyUrl,
-	bundledPluginSlug,
 	domain,
+	patternId,
 	domainSearch,
 	domainCategory,
 	isRedirecting,

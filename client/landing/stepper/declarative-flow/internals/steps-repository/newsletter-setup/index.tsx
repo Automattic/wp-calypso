@@ -2,6 +2,7 @@ import { Button, FormInputValidation, Popover } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
@@ -49,7 +50,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
-	const [ accentColor, setAccentColor ] = React.useState< string | undefined >();
+	const [ accentColor, setAccentColor ] = React.useState< string | undefined >( '#0675C4' );
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const siteTitleError =
@@ -94,7 +95,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline } );
+			submit?.( { siteTitle, tagline, siteAccentColor: accentColor } );
 		}
 	};
 
@@ -111,7 +112,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	};
 
 	const getBackgroundImage = ( fieldValue: string | undefined ) => {
-		return fieldValue && fieldValue.trim() ? `url(${ greenCheckmarkImg })` : '';
+		return fieldValue && fieldValue.trim() ? `url( ${ greenCheckmarkImg } )` : '';
 	};
 
 	const stepContent = (
@@ -139,9 +140,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					/>
 				</Popover>
 				<FormFieldset>
-					<FormLabel htmlFor="siteTitle">{ __( 'Publication name' ) }</FormLabel>
+					<FormLabel htmlFor="siteTitle">{ __( 'Site name' ) }</FormLabel>
 					<FormInput
 						value={ siteTitle }
+						placeholder={ __( 'My newsletter' ) }
 						name="siteTitle"
 						id="siteTitle"
 						style={ {
@@ -152,11 +154,11 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					/>
 					{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
 					<FormInput
 						value={ tagline }
+						placeholder={ __( 'Describe your Newsletter in a line or two' ) }
 						name="tagline"
 						id="tagline"
 						style={ {
@@ -165,7 +167,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						onChange={ onChange }
 					/>
 				</FormFieldset>
-
 				<FormFieldset>
 					<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
 					<FormInput
@@ -177,12 +178,11 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 								...( accentColor ? [ getBackgroundImage( accentColor ) ] : [] ),
 							].join( ', ' ),
 						} }
-						type="text"
 						name="accentColor"
 						id="accentColor"
 						onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
 						readOnly
-						value={ accentColor || '#000000' }
+						value={ accentColor }
 					/>
 				</FormFieldset>
 				<Button className="newsletter-setup__submit-button" type="submit" primary>
@@ -201,7 +201,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id={ 'newsletter-setup-header' }
-					headerText={ __( 'Pencil in a few details' ) }
+					headerText={ createInterpolateElement( __( 'Personalize your<br />Newsletter' ), {
+						br: <br />,
+					} ) }
 					align={ 'center' }
 				/>
 			}

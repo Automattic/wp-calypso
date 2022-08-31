@@ -95,6 +95,10 @@ export class PluginsList extends Component {
 			return true;
 		}
 
+		if ( this.state.removeJetpackNotice !== nextState.removeJetpackNotice ) {
+			return true;
+		}
+
 		if ( ! isEqual( this.state.selectedPlugins, nextState.selectedPlugins ) ) {
 			return true;
 		}
@@ -108,10 +112,12 @@ export class PluginsList extends Component {
 
 	componentDidUpdate() {
 		this.maybeShowDisconnectNotice();
+		this.maybeShowRemoveNotice();
 	}
 
 	state = {
 		disconnectJetpackNotice: false,
+		removeJetpackNotice: false,
 		bulkManagementActive: false,
 		selectedPlugins: {},
 	};
@@ -224,15 +230,17 @@ export class PluginsList extends Component {
 		this.props.removePluginStatuses( 'completed', 'error' );
 	}
 
-	doActionOverSelected( actionName, action ) {
-		const isDeactivatingAndJetpackSelected = ( { slug } ) =>
-			( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
+	doActionOverSelected( actionName, action, selectedPlugins ) {
+		if ( ! selectedPlugins ) {
+			selectedPlugins = this.props.plugins.filter( this.isSelected );
+		}
+		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug } ) =>
+			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginStatuses();
-		this.props.plugins
-			.filter( this.isSelected ) // only use selected sites
-			.filter( ( plugin ) => ! isDeactivatingAndJetpackSelected( plugin ) ) // ignore sites that are deactiving or activating jetpack
+		selectedPlugins
+			.filter( ( plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
 					const site = this.props.allSites.find( ( s ) => s.ID === parseInt( siteId ) );
@@ -312,14 +320,14 @@ export class PluginsList extends Component {
 		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
 	};
 
-	getConfirmationText() {
+	getConfirmationText( selectedPlugins ) {
 		const pluginsList = {};
 		const sitesList = {};
 		let pluginName;
 		let siteName;
-		const { plugins, translate } = this.props;
+		const { translate } = this.props;
 
-		plugins.filter( this.isSelected ).forEach( ( plugin ) => {
+		selectedPlugins.forEach( ( plugin ) => {
 			pluginsList[ plugin.slug ] = true;
 			pluginName = plugin.name || plugin.slug;
 
@@ -406,27 +414,53 @@ export class PluginsList extends Component {
 		}
 	}
 
-	removePluginDialog = () => {
-		const { translate } = this.props;
+	removePluginDialog = ( selectedPlugin ) => {
+		const { plugins, translate } = this.props;
+
+		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
 
 		const message = (
 			<div>
-				<span>{ this.getConfirmationText() }</span>
+				<span>{ this.getConfirmationText( selectedPlugins ) }</span>
 				<span>{ translate( 'Do you want to continue?' ) }</span>
 			</div>
 		);
 
+		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
+
 		acceptDialog(
 			message,
-			this.removeSelected,
+			isJetpackIncluded
+				? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
+				: ( accepted ) => this.removeSelected( accepted, selectedPlugins ),
 			translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } )
 		);
 	};
 
-	removeSelected = ( accepted ) => {
+	removeSelected = ( accepted, selectedPlugins ) => {
 		if ( accepted ) {
-			this.doActionOverSelected( 'removing', this.props.removePlugin );
+			this.doActionOverSelected( 'removing', this.props.removePlugin, selectedPlugins );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
+		}
+	};
+
+	removeSelectedWithJetpack = ( accepted, selectedPlugins ) => {
+		if ( accepted ) {
+			if ( selectedPlugins.length === 1 ) {
+				this.setState( { removeJetpackNotice: true } );
+				this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
+			} else {
+				let waitForRemove = false;
+				this.doActionOverSelected( 'removing', ( site, plugin ) => {
+					waitForRemove = true;
+					this.props.removePlugin( site, plugin );
+				} );
+
+				if ( waitForRemove && this.props.selectedSite ) {
+					this.setState( { removeJetpackNotice: true } );
+					this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
+				}
+			}
 		}
 	};
 
@@ -448,6 +482,18 @@ export class PluginsList extends Component {
 					}
 				)
 			);
+		}
+	}
+
+	maybeShowRemoveNotice() {
+		const { translate } = this.props;
+
+		if ( this.state.removeJetpackNotice && ! this.props.inProgressStatuses.length ) {
+			this.setState( {
+				removeJetpackNotice: false,
+			} );
+
+			this.props.warningNotice( translate( 'Jetpack must be removed via wp-admin.' ) );
 		}
 	}
 
@@ -494,42 +540,46 @@ export class PluginsList extends Component {
 			<div className="plugins-list">
 				<QueryProductsList />
 				<PluginNotices sites={ this.getPluginsSites() } plugins={ this.props.plugins } />
+				<PluginsListHeader
+					label={ this.props.header }
+					isBulkManagementActive={ this.state.bulkManagementActive }
+					isWpcom={ ! this.props.isJetpackCloud }
+					selectedSiteSlug={ selectedSiteSlug }
+					plugins={ this.props.plugins }
+					selected={ this.getSelected() }
+					toggleBulkManagement={ this.toggleBulkManagement }
+					updateAllPlugins={ this.updateAllPlugins }
+					updateSelected={ this.updateSelected }
+					pluginUpdateCount={ this.props.pluginUpdateCount }
+					activateSelected={ this.activateSelected }
+					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
+					deactivateSelected={ this.deactivateSelected }
+					setAutoupdateSelected={ this.setAutoupdateSelected }
+					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
+					removePluginNotice={ () => this.removePluginDialog() }
+					setSelectionState={ this.setBulkSelectionState }
+					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
+					haveInactiveSelected={ this.props.plugins.some(
+						this.filterSelection.inactive.bind( this )
+					) }
+					haveUpdatesSelected={ this.props.plugins.some(
+						this.filterSelection.updates.bind( this )
+					) }
+				/>
 				{ this.props.isJetpackCloud ? (
 					<PluginManagementV2
-						plugins={ this.props.plugins }
+						plugins={ this.getPlugins() }
 						isLoading={ this.props.isLoading }
 						selectedSite={ this.props.selectedSite }
 						searchTerm={ this.props.searchTerm }
+						isBulkManagementActive={ this.state.bulkManagementActive }
+						pluginUpdateCount={ this.props.pluginUpdateCount }
+						toggleBulkManagement={ this.toggleBulkManagement }
+						updateAllPlugins={ this.updateAllPlugins }
+						removePluginNotice={ this.removePluginDialog }
 					/>
 				) : (
 					<>
-						<PluginsListHeader
-							label={ this.props.header }
-							isBulkManagementActive={ this.state.bulkManagementActive }
-							selectedSiteSlug={ selectedSiteSlug }
-							plugins={ this.props.plugins }
-							selected={ this.getSelected() }
-							toggleBulkManagement={ this.toggleBulkManagement }
-							updateAllPlugins={ this.updateAllPlugins }
-							updateSelected={ this.updateSelected }
-							pluginUpdateCount={ this.props.pluginUpdateCount }
-							activateSelected={ this.activateSelected }
-							deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
-							deactivateSelected={ this.deactivateSelected }
-							setAutoupdateSelected={ this.setAutoupdateSelected }
-							unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
-							removePluginNotice={ this.removePluginDialog }
-							setSelectionState={ this.setBulkSelectionState }
-							haveActiveSelected={ this.props.plugins.some(
-								this.filterSelection.active.bind( this )
-							) }
-							haveInactiveSelected={ this.props.plugins.some(
-								this.filterSelection.inactive.bind( this )
-							) }
-							haveUpdatesSelected={ this.props.plugins.some(
-								this.filterSelection.updates.bind( this )
-							) }
-						/>
 						<Card className={ itemListClasses }>
 							{ this.orderPluginsByUpdates( this.props.plugins ).map( this.renderPlugin ) }
 						</Card>
@@ -537,6 +587,21 @@ export class PluginsList extends Component {
 				) }
 			</div>
 		);
+	}
+
+	getPlugins() {
+		return this.props.plugins.map( ( plugin ) => {
+			const selectThisPlugin = this.togglePlugin.bind( this, plugin );
+			const allowedPluginActions = this.getAllowedPluginActions( plugin );
+			const isSelectable =
+				this.state.bulkManagementActive &&
+				( allowedPluginActions.autoupdate || allowedPluginActions.activation );
+
+			return {
+				...plugin,
+				...{ onClick: selectThisPlugin, isSelected: this.isSelected( plugin ), isSelectable },
+			};
+		} );
 	}
 
 	getAllowedPluginActions( plugin ) {

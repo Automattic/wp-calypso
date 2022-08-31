@@ -113,7 +113,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'newsletter',
-			steps: [ 'domains', 'plans' ],
+			steps: [ 'domains', 'plans-newsletter' ],
 			destination: ( dependencies, localeSlug, goesThroughCheckout ) => {
 				return goesThroughCheckout
 					? `/setup/completingPurchase?flow=newsletter&siteSlug=${ dependencies.siteSlug }`
@@ -124,12 +124,12 @@ export function generateFlows( {
 			showRecaptcha: true,
 			hideBackButton: true,
 			get pageTitle() {
-				return translate( 'Newsletters' );
+				return translate( 'Newsletter' );
 			},
 		},
 		{
 			name: 'link-in-bio',
-			steps: [ 'domains', 'plans' ],
+			steps: [ 'domains', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
 				`/setup/completingPurchase?flow=link-in-bio&siteSlug=${ encodeURIComponent(
 					dependencies.siteSlug

@@ -52,6 +52,7 @@ button {
  * Site Setup
  */
 .site-setup,
+.plugin-bundle,
 .newsletter-setup,
 .patterns,
 .link-in-bio-setup,
@@ -147,6 +148,103 @@ button {
 		--color-accent-60: #0e64a5;
 	}
 }
+
+/**
+ * Tailored flow stylings
+ */
+.newsletter,
+.link-in-bio {
+	button {
+		&[type='submit'] {
+			font-size: $font-body-small;
+			background-color: var( --studio-blue-50 );
+			font-weight: 500;
+		}
+
+		&.components-button {
+			border-radius: 4px;
+
+			&.site-icon-with-picker__upload-button {
+				border-radius: 50%; /* stylelint-disable-line */
+				font-family: 'SF Pro Text', $sans;
+				transition: ease 300ms;
+				border: 1px solid var( --studio-gray-10 );
+
+				svg {
+					transition: ease 300ms;
+					fill: var( --studio-blue-50 );
+				}
+
+				span {
+					font-size: $font-body-extra-small;
+				}
+
+				&:hover,
+				&:focus {
+					box-shadow: none;
+					outline: none;
+					background-color: var( --studio-blue-50 );
+
+					svg {
+						fill: #fff;
+					}
+
+					span {
+						font-size: $font-body-extra-small;
+						color: var( --studio-blue-50 );
+					}
+				}
+			}
+		}
+	}
+
+	fieldset {
+		label {
+			font-size: $font-body;
+			color: var( --studio-gray-60 );
+		}
+
+		input[type='text'].form-text-input {
+			font-size: $font-body-small;
+			border-radius: 4px;
+			border: 1px solid var( --studio-gray-10 );
+
+			&:focus {
+				box-shadow: 0 0 0 2px #e2eaf1;
+			}
+		}
+	}
+
+	.progress-bar {
+		background-color: #fff;
+		position: absolute;
+
+		.progress-bar__progress {
+			border-radius: 0;
+		}
+	}
+
+	&.intro {
+		button.intro__button {
+			border-radius: 4px;
+			background-color: var( --studio-gray-100 );
+			transition: ease 300ms;
+
+			&:hover,
+			&:focus {
+				background-color: var( --studio-gray-70 );
+			}
+
+			&:focus {
+				border: none;
+				outline: solid 2px var( --studio-gray-70 );
+				outline-offset: 2px;
+				box-shadow: none;
+			}
+		}
+	}
+}
+
 @media ( max-width: 660px ) {
 	body.is-section-stepper .wpcom-site {
 		.inline-help {

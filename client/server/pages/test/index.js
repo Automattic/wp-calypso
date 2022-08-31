@@ -56,6 +56,7 @@ jest.mock( 'calypso/login', () => {
 jest.mock( 'calypso/server/isomorphic-routing', () => ( {
 	serverRouter: jest.fn(),
 	getNormalizedPath: jest.fn(),
+	getCacheKey: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/server/render', () => ( {
@@ -1047,7 +1048,7 @@ describe( 'main app', () => {
 				'jetpack-cloud/connect': false,
 			} );
 			const { response } = await app.run( { request: { url: '/plans' } } );
-			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing' );
+			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing/' );
 		} );
 	} );
 
@@ -1144,11 +1145,19 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( `Route /home`, () => {
+		assertSection( {
+			url: '/home',
+			sectionName: 'home',
+			sectionGroup: 'sites',
+		} );
+	} );
+
 	describe( `Route /sites`, () => {
 		assertSection( {
 			url: '/sites',
-			sectionName: 'sites',
-			sectionGroup: 'sites',
+			sectionName: 'sites-dashboard',
+			sectionGroup: 'sites-dashboard',
 		} );
 	} );
 

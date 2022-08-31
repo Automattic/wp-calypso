@@ -7,6 +7,17 @@ import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { getJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
+
+/**
+ * In order to decide whether to show the site in site selector,
+ * we need to know if the site has full Jetpack plugin installed,
+ * or if we are on Jetpack Cloud and the site has a Jetpack Standalone plugin installed.
+ */
+const isJetpackSiteOrJetpackCloud = isJetpackSitePred( {
+	considerStandaloneProducts: isJetpackCloud(),
+} );
 
 import './style.scss';
 
@@ -27,6 +38,11 @@ class Sites extends Component {
 	}
 
 	filterSites = ( site ) => {
+		// Filter out the sites on WPCOM that don't have full Jetpack plugin installed
+		// Such sites should work fine on Jetpack Cloud
+		if ( getJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
+			return false;
+		}
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.

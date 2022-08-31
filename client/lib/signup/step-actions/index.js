@@ -118,6 +118,7 @@ function getNewSiteParams( {
 	themeSlugWithRepo,
 	siteUrl,
 	state,
+	siteAccentColor,
 } ) {
 	const signupDependencies = getSignupDependencyStore( state );
 	const designType = getDesignType( state ).trim();
@@ -141,6 +142,8 @@ function getNewSiteParams( {
 		get( signupDependencies, 'themeSlugWithRepo', false ) ||
 		siteTypeTheme;
 
+	const launchAsComingSoon = get( signupDependencies, 'comingSoon', 1 );
+
 	// We will use the default annotation instead of theme annotation as fallback,
 	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
 	const shouldUseDefaultAnnotationAsFallback = true;
@@ -159,7 +162,8 @@ function getNewSiteParams( {
 			},
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
-			wpcom_public_coming_soon: 1,
+			wpcom_public_coming_soon: launchAsComingSoon,
+			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 		},
 		validate: false,
 	};
@@ -224,6 +228,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		siteUrl,
 		themeSlugWithRepo,
 		themeItem,
+		siteAccentColor,
 	} = stepData;
 
 	// flowName isn't always passed in
@@ -253,6 +258,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		themeSlugWithRepo,
 		siteUrl,
 		state,
+		siteAccentColor,
 	} );
 
 	if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {

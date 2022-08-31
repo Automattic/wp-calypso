@@ -1,7 +1,9 @@
 import { StepContainer } from '@automattic/onboarding';
+import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import LaunchpadSitePreview from './launchpad-site-preview';
@@ -16,10 +18,19 @@ const Launchpad: Step = ( { navigation } ) => {
 
 	const stepContent = (
 		<div className="launchpad__content">
-			<Sidebar />
+			<Sidebar siteSlug={ siteSlug } />
 			<LaunchpadSitePreview siteSlug={ siteSlug } />
 		</div>
 	);
+
+	const site = useSite();
+	const launchpadScreenOption = site?.options?.launchpad_screen;
+
+	useEffect( () => {
+		if ( launchpadScreenOption === 'off' ) {
+			window.location.replace( `/home/${ siteSlug }` );
+		}
+	}, [ launchpadScreenOption, siteSlug ] );
 
 	return (
 		<>

@@ -26,6 +26,10 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
 } );
+export const setPatternId = ( patternId: number ) => ( {
+	type: 'SET_SITE_PATTERN_ID' as const,
+	patternId,
+} );
 
 export interface CreateSiteActionParameters {
 	username: string;
@@ -303,12 +307,6 @@ export const setEditEmail = ( email: string ) => ( {
 	email,
 } );
 
-export const setBundledPluginSlug = ( siteSlug: string, pluginSlug: string ) => ( {
-	type: 'SET_BUNDLED_PLUGIN_SLUG' as const,
-	siteSlug,
-	pluginSlug,
-} );
-
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -329,6 +327,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedDesign
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
+	| typeof setPatternId
 	| typeof setSiteTitle
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId
@@ -351,5 +350,4 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor
-	| typeof setBundledPluginSlug
 >;
