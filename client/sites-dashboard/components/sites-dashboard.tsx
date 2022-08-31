@@ -107,7 +107,6 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 	justify-content: center;
 	inset-block-end: 24px;
 	inset-inline-start: 24px;
-	z-index: 176;
 	height: 42px;
 	width: 42px;
 	background-color: #000;
