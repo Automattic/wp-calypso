@@ -93,6 +93,8 @@ class ThemeSheet extends Component {
 			PropTypes.string,
 			PropTypes.bool, // happens if no content: false
 		] ),
+		seoTitle: PropTypes.string,
+		seoDescription: PropTypes.string,
 		supportDocumentation: PropTypes.string,
 		download: PropTypes.string,
 		taxonomies: PropTypes.object,
@@ -795,11 +797,11 @@ class ThemeSheet extends Component {
 
 		const launchPricing = () => window.open( plansUrl, '_blank' );
 
-		const { canonicalUrl, description, name: themeName } = this.props;
+		const { canonicalUrl, description, seoDescription, name: themeName, seoTitle } = this.props;
 		const title =
-			themeName &&
+			( seoTitle || themeName ) &&
 			translate( '%(themeName)s Theme', {
-				args: { themeName },
+				args: { themeName: seoTitle || themeName },
 			} );
 
 		const metas = [
@@ -810,11 +812,11 @@ class ThemeSheet extends Component {
 			{ property: 'og:site_name', content: 'WordPress.com' },
 		];
 
-		if ( description ) {
+		if ( seoDescription || description ) {
 			metas.push( {
 				name: 'description',
 				property: 'og:description',
-				content: decodeEntities( description ),
+				content: decodeEntities( seoDescription || description ),
 			} );
 		}
 
