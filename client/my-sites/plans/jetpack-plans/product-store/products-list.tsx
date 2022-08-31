@@ -1,10 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { FeaturedItemCard } from './featured-item-card';
 import { HeroImage } from './hero-image';
 import { useCreateCheckout } from './hooks/use-create-checkout';
 import { useProductsToDisplay } from './hooks/use-products-to-display';
 import { MostPopular } from './most-popular';
+import SimpleProductCard from './simple-product-card';
+import { getSortedDisplayableProducts } from './utils/get-sorted-displayable-products';
 import type { ProductsListProps } from './types';
 
 export const ProductsList: React.FC< ProductsListProps > = ( {
@@ -43,18 +46,38 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 		);
 	} );
 
+	const allItems = useMemo(
+		() => getSortedDisplayableProducts( [ ...popularItems, ...otherItems ] ),
+		[ popularItems, otherItems ]
+	);
+
 	return (
 		<div className="jetpack-product-store__products-list">
 			<MostPopular heading={ translate( 'Most popular products' ) } items={ mostPopularItems } />
 
 			<div className="jetpack-product-store__products-list-all">
 				<h3>{ translate( 'All products' ) }</h3>
-				<ul>
-					{ otherItems.map( ( item ) => {
-						// TODO relace this with product card
-						return <li key={ item.productSlug }>{ item.displayName }</li>;
+
+				<div className="jetpack-product-store__products-list-all-grid">
+					{ allItems.map( ( item ) => {
+						return (
+							<SimpleProductCard
+								key={ item.productSlug }
+								item={ item }
+								siteId={ siteId }
+								isOwned={ isOwned( item ) }
+								onClickMore={ () => {
+									recordTracksEvent( 'calypso_product_more_about_product_click', {
+										product: item.productSlug,
+									} );
+									// TODO: Open modal
+								} }
+								onClickPurchase={ getOnClickPurchase( item ) }
+								checkoutURL={ getCheckoutURL( item ) }
+							/>
+						);
 					} ) }
-				</ul>
+				</div>
 			</div>
 		</div>
 	);
