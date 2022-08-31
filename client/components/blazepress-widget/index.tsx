@@ -44,10 +44,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					onClose,
 					( original: string, options?: any ): string => {
 						if ( options ) {
-							/* eslint-disable  @typescript-eslint/ban-ts-comment */
+							/* eslint-disable @typescript-eslint/ban-ts-comment */
+							/* eslint-disable wpcalypso/i18n-no-variables */
 							// @ts-ignore
 							return translate( original, options as TranslateOptionsText );
-							/* eslint-enable wpcalypso/i18n-no-variables, @typescript-eslint/ban-ts-comment */
+							/* eslint-enable wpcalypso/i18n-no-variables */
+							/* eslint-enable @typescript-eslint/ban-ts-comment */
 						}
 						// eslint-disable-next-line wpcalypso/i18n-no-variables
 						return translate( original );
