@@ -472,7 +472,7 @@ workflows:
             branches:
               only:
                 - trunk
-                - /circleci\/.*/
+                - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
 #     - wp-desktop-mac:
@@ -491,7 +491,7 @@ workflows:
             branches:
               only:
                 - trunk
-                - /circleci\/.*/
+                - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
       - wp-desktop-windows:
@@ -501,7 +501,7 @@ workflows:
             branches:
               only:
                 - trunk
-                - /circleci\/.*/
+                - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
   wp-desktop-release:
