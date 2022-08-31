@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useFlowProgress } from '@automattic/onboarding';
+import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -11,7 +11,7 @@ import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
 export const newsletter: Flow = {
-	name: 'newsletter',
+	name: NEWSLETTER_FLOW,
 	title: 'Newsletter',
 	useSteps() {
 		useEffect( () => {
@@ -29,6 +29,7 @@ export const newsletter: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
+		const name = this.name;
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
@@ -44,12 +45,12 @@ export const newsletter: Flow = {
 						return navigate( 'newsletterSetup' );
 					}
 					return window.location.replace(
-						'/start/account/user?variationName=newsletter&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=newsletter'
+						`/start/account/user?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`
 					);
 
 				case 'newsletterSetup':
 					return window.location.replace(
-						`/start/newsletter/domains?new=${ encodeURIComponent(
+						`/start/${ name }/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes` +
 							( typeof providedDependencies.siteAccentColor === 'string' &&

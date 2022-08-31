@@ -17,6 +17,11 @@ interface Props {
 	pageTitle?: string;
 }
 
+const VARIATION_TITLES: Record< string, string > = {
+	newsletter: 'Newsletter',
+	'link-in-bio': 'Link in Bio',
+};
+
 const SignupHeader = ( {
 	shouldShowLoadingScreen,
 	isReskinned,
@@ -29,8 +34,9 @@ const SignupHeader = ( {
 	} );
 	const params = new URLSearchParams( window.location.search );
 	const variationName = params.get( 'variationName' );
-	const variationPageTitle = params.get( 'pageTitle' );
-	const variablePageTitle = variationPageTitle || pageTitle;
+	const variationTitle = variationName && VARIATION_TITLES[ variationName ];
+	const showPageTitle = ( params.has( 'pageTitle' ) && variationTitle ) || Boolean( pageTitle );
+	const variablePageTitle = variationTitle || pageTitle;
 	const flowProgress = useFlowProgress(
 		variationName ? { flowName: variationName, stepName: progressBar.stepName } : progressBar
 	);
@@ -45,7 +51,7 @@ const SignupHeader = ( {
 				/>
 			) }
 			<WordPressLogo size={ 120 } className={ logoClasses } />
-			{ variablePageTitle && <h1>{ variablePageTitle as string } </h1> }
+			{ showPageTitle && <h1>{ variablePageTitle } </h1> }
 			{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
 			<div className="signup-header__right">{ ! shouldShowLoadingScreen && rightComponent }</div>
