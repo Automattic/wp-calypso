@@ -1,3 +1,4 @@
+import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
@@ -20,6 +21,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
 
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
@@ -40,6 +42,14 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					props.siteId,
 					props.postId,
 					onClose,
+					( original: string, options?: any ): string => {
+						if ( options ) {
+							// eslint-disable-next-line wpcalypso/i18n-no-variables
+							return translate( original, options as TranslateOptionsText );
+						}
+						// eslint-disable-next-line wpcalypso/i18n-no-variables
+						return translate( original );
+					},
 					widgetContainer.current
 				);
 				setIsLoading( false );
