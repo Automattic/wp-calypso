@@ -703,7 +703,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 	sidebarsObserver.observe( body, { childList: true } );
 
 	const popoverSlotObserver = new window.MutationObserver( ( mutations ) => {
-		const isComponentsPopover = ( node ) => node?.classList.contains( 'components-popover' );
+		const isComponentsPopover = ( node ) => node.classList.contains( 'components-popover' );
 
 		const replaceWithManageReusableBlocksHref = ( anchorElem ) => {
 			anchorElem.href = manageReusableBlocksUrl;
