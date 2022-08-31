@@ -173,7 +173,7 @@ open class WPComPluginBuild(
 
 					# 3. Check if the current build has changed, and if so, tag it for release.
 					# Note: we exclude asset changes because we only really care if the build files (JS/CSS) change. That file is basically just metadata.
-					if [ "%skip_release_diff%" = "true" ] || ! diff -rq --exclude="*.asset.php" --exclude="build_meta.json" --exclude="README.md" $archiveDir ./release-archive/ ; then
+					if [ "%skip_release_diff%" = "true" ] || ! diff -rq --exclude="*.js.map" --exclude="*.asset.php" --exclude="build_meta.json" --exclude="README.md" $archiveDir ./release-archive/ ; then
 						echo "The build is different from the last release build. Therefore, this can be tagged as a release build."
 
 						echo "DIFF: Start"
