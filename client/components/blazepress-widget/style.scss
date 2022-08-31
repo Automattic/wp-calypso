@@ -1,16 +1,19 @@
 @import '@automattic/typography/styles/variables';
 @import '@automattic/onboarding/styles/mixins.scss';
 
+$headerHeight: 72px;
+
 .blazepress-widget {
     display: flex;
     flex-direction: column;
     z-index: 1001;
+	height: 100%;
 
     .blazepress-widget__header-bar {
         align-items: center;
         display: flex;
         justify-content: space-between;
-        min-height: 72px;
+        min-height: $headerHeight;
         padding: 0 rem( 24px );
 
         h2 {
@@ -40,10 +43,18 @@
     .blazepress-widget__content {
         display: flex;
         flex-direction: column;
+		height: calc( 100% - #{$headerHeight} );
     }
     .blazepress-widget__content.loading {
         justify-content: center;
         align-items: center;
         flex: auto;
     }
+	.blazepress-widget__widget-container {
+		height:100%;
+
+		.wpcom-dsp-widget-shadow-dom {
+			height: 100%;
+		}
+	}
 }
