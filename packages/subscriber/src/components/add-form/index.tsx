@@ -53,9 +53,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 */
 	const emailControlMaxNum = 10;
 	const emailControlPlaceholder = [
-		__( 'sibling@email.com' ),
-		__( 'parents@email.com' ),
-		__( 'friend@email.com' ),
+		__( 'sibling@example.com' ),
+		__( 'parents@example.com' ),
+		__( 'friend@example.com' ),
 	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
