@@ -22,6 +22,12 @@ describe( '#localizePath', () => {
 		expect( localizePath( '/setup', 'es' ) ).toEqual( '/setup/' );
 		expect( localizePath( '/setup', 'es', false ) ).toEqual( '/setup/es/' );
 
+		expect( localizePath( '/start', 'es' ) ).toEqual( '/start/' );
+		expect( localizePath( '/start', 'es', false ) ).toEqual( '/start/es/' );
+
+		expect( localizePath( '/start/user', 'es' ) ).toEqual( '/start/user/' );
+		expect( localizePath( '/start/user', 'es', false ) ).toEqual( '/start/user/es/' );
+
 		expect( localizePath( '/some/path', 'es', true ) ).toEqual( '/some/path' );
 		expect( localizePath( '/some/path', 'es', false ) ).toEqual( '/some/path' );
 

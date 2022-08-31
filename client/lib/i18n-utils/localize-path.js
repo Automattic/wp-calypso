@@ -7,8 +7,8 @@ function getDefaultLocale() {
 	return i18n.getLocaleSlug?.() ?? 'en';
 }
 
-function suffixLocalizedPath( path, locale ) {
-	if ( ! isMagnificentLocale( locale ) ) {
+function suffixLocalizedPath( path, locale, isLoggedIn ) {
+	if ( isLoggedIn || ! isMagnificentLocale( locale ) ) {
 		return path;
 	}
 	return `${ path }${ locale }/`;
@@ -26,12 +26,9 @@ const pathLocalizationMapping = {
 	'/theme/': normalizePath( urlLocalizationMapping[ 'wordpress.com/theme/' ] ),
 	'/themes/': normalizePath( urlLocalizationMapping[ 'wordpress.com/themes/' ] ),
 	'/log-in/': normalizePath( urlLocalizationMapping[ 'wordpress.com/log-in/' ] ),
-	'/new/': ( path, localeSlug, isLoggedIn ) => {
-		return isLoggedIn ? path : suffixLocalizedPath( path, localeSlug );
-	},
-	'/setup/': ( path, localeSlug, isLoggedIn ) => {
-		return isLoggedIn ? path : suffixLocalizedPath( path, localeSlug );
-	},
+	'/new/': suffixLocalizedPath,
+	'/setup/': suffixLocalizedPath,
+	'/start/': suffixLocalizedPath,
 };
 
 export function localizePath( path, locale = getDefaultLocale(), isLoggedIn = true ) {
