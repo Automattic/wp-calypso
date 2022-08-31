@@ -11,14 +11,16 @@ import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
+	doesThemeBundleSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
-	isActivatingTheme,
 	hasActivatedTheme,
+	isActivatingTheme,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
 import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
@@ -52,9 +54,18 @@ class ThanksModal extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		// re-fetch the site to ensure we have the right cusotmizer link for FSE or not
+		// When the theme has finished activating...
 		if ( prevProps.hasActivated === false && this.props.hasActivated === true ) {
+			// re-fetch the site to ensure we have the right cusotmizer link for FSE or not
 			this.props.requestSite( this.props.siteId );
+
+			// Redirect to plugin-bundle flow for themes including software (like woocommerce)
+			const { siteSlug, doesCurrentThemeBundleSoftware } = this.props;
+			if ( doesCurrentThemeBundleSoftware ) {
+				// Need to set pluginbundle
+				const dest = `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle`;
+				window.location.replace( dest );
+			}
 		}
 	}
 
@@ -305,7 +316,9 @@ const ConnectedThanksModal = connect(
 		return {
 			siteId,
 			siteUrl,
+			siteSlug: getSiteSlug( state, siteId ),
 			currentTheme,
+			doesCurrentThemeBundleSoftware: doesThemeBundleSoftwareSet( state, currentThemeId ),
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,
