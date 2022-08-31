@@ -4,8 +4,11 @@ import { useState } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 
-const CheckboxTermsWrapper = styled( FormLabel )`
+const CheckboxTermsWrapper = styled( FormLabel )< { displayErrorMessage: boolean } >`
 	padding: 24px 24px 24px 59px;
+	border: ${ ( props ) =>
+		props.displayErrorMessage ? '3px solid var( --color-error )' : 'initial' };
+	border-radius: ${ ( props ) => ( props.displayErrorMessage ? '3px' : 'initial' ) };
 `;
 
 const StyledFormCheckbox = styled( FormCheckbox )`
@@ -47,11 +50,7 @@ function ThirdPartyDevsAccount( { isAccepted, isSubmitted, onChange, translate }
 	};
 
 	return (
-		<CheckboxTermsWrapper
-			style={
-				displayErrorMessage ? { border: '3px solid var( --color-error )', borderRadius: '3px' } : {}
-			}
-		>
+		<CheckboxTermsWrapper displayErrorMessage={ displayErrorMessage }>
 			<StyledFormCheckbox
 				onChange={ handleChange }
 				onBlur={ () => setTouched( true ) }
