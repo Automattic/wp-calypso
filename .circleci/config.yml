@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@3.4.2
-  win: circleci/windows@2.2.0
+  win: circleci/windows@5.0.0
 
 references:
   defaults: &defaults
@@ -324,14 +324,21 @@ jobs:
       - attach_workspace:
           at: C:\Users\circleci\wp-calypso
       - run:
+          name: Install NVM
+          command: choco install nvm yarn
+      - run:
           name: Install Node Version
           command: |
             $NODE_VERSION = Get-Content .nvmrc
             nvm install $NODE_VERSION
             nvm use $NODE_VERSION
       - run:
-          name: Install Yarn
-          command: npm install -g yarn@1.22.10
+          name: Verify versions
+          shell: bash.exe
+          command: |
+            node --version
+            nvm --version
+            yarn --version
       - run:
           name: Install Make
           command: cinst make
@@ -465,6 +472,7 @@ workflows:
             branches:
               only:
                 - trunk
+                - /circleci\/.*/
                 - /release\/.*/
                 - /desktop\/.*/
 #     - wp-desktop-mac:
@@ -483,6 +491,7 @@ workflows:
             branches:
               only:
                 - trunk
+                - /circleci\/.*/
                 - /release\/.*/
                 - /desktop\/.*/
       - wp-desktop-windows:
@@ -492,6 +501,7 @@ workflows:
             branches:
               only:
                 - trunk
+                - /circleci\/.*/
                 - /release\/.*/
                 - /desktop\/.*/
   wp-desktop-release:
