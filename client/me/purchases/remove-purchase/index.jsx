@@ -24,7 +24,7 @@ import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-surve
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getName, isRemovable } from 'calypso/lib/purchases';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
-import RemovePlanDialog from 'calypso/me/purchases/remove-plan-dialog';
+import { RemovePlanDialog } from 'calypso/me/purchases/remove-plan-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
