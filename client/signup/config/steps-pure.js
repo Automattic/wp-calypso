@@ -327,9 +327,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			props: {
-				get headerText() {
-					return i18n.translate( 'Getting ready to launch your website' );
-				},
 				get subHeaderText() {
 					return i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." );
 				},
