@@ -1763,78 +1763,61 @@ export const FEATURES_LIST = {
 	[ FEATURE_UNLIMITED_EMAILS ]: {
 		getSlug: () => FEATURE_UNLIMITED_EMAILS,
 		getTitle: () => i18n.translate( 'Send unlimited emails' ),
-		getDescription: () => i18n.translate( 'Send unlimited emails' ),
 	},
 	[ FEATURE_UNLIMITED_SUBSCRIBERS ]: {
-		getSlug: () => FEATURE_UNLIMITED_EMAILS,
+		getSlug: () => FEATURE_UNLIMITED_SUBSCRIBERS,
 		getTitle: () => i18n.translate( 'Unlimited subscribers' ),
-		getDescription: () => i18n.translate( 'Unlimited subscribers' ),
 	},
 	[ FEATURE_IMPORT_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_IMPORT_SUBSCRIBERS,
 		getTitle: () => i18n.translate( 'Import subscribers' ),
-		getDescription: () => i18n.translate( 'Import subscribers' ),
 	},
 	[ FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER ]: {
 		getSlug: () => FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
 		getTitle: () => i18n.translate( `Add multiple pages to your Newsletter's website` ),
-		getDescription: () => i18n.translate( `Add multiple pages to your Newsletter's website` ),
 	},
 	[ FEATURE_AD_FREE_EXPERIENCE ]: {
 		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
 		getTitle: () => i18n.translate( 'Ad-free experience' ),
-		getDescription: () => i18n.translate( 'Ad-free experience' ),
 	},
 	[ FEATURE_COLLECT_PAYMENTS_NEWSLETTER ]: {
 		getSlug: () => FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
 		getTitle: () =>
 			i18n.translate( 'Monetize your Newsletter with payments, subscriptions, and donations' ),
-		getDescription: () =>
-			i18n.translate( 'Monetize your Newsletter with payments, subscriptions, and donations' ),
 	},
 	[ FEATURE_POST_BY_EMAIL ]: {
 		getSlug: () => FEATURE_POST_BY_EMAIL,
 		getTitle: () => i18n.translate( 'Post by email' ),
-		getDescription: () => i18n.translate( 'Post by email' ),
 	},
 	[ FEATURE_REAL_TIME_ANALYTICS ]: {
-		getSlug: () => FEATURE_POST_BY_EMAIL,
+		getSlug: () => FEATURE_REAL_TIME_ANALYTICS,
 		getTitle: () => i18n.translate( 'Real-time analytics in your dashboard' ),
-		getDescription: () => i18n.translate( 'Real-time analytics in your dashboard' ),
 	},
 	[ FEATURE_GOOGLE_ANALYTICS_V2 ]: {
-		getSlug: () => FEATURE_POST_BY_EMAIL,
+		getSlug: () => FEATURE_GOOGLE_ANALYTICS_V2,
 		getTitle: () =>
-			i18n.translate( 'Go deeper into site stats and insights with Google Analytics' ),
-		getDescription: () =>
 			i18n.translate( 'Go deeper into site stats and insights with Google Analytics' ),
 	},
 	[ FEATURE_ADD_UNLIMITED_LINKS ]: {
 		getSlug: () => FEATURE_ADD_UNLIMITED_LINKS,
 		getTitle: () => i18n.translate( 'Add unlimited links to your page' ),
-		getDescription: () => i18n.translate( 'Add unlimited links to your page' ),
 	},
 	[ FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS ]: {
 		getSlug: () => FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 		getTitle: () => i18n.translate( 'Customizable themes, buttons, colors' ),
-		getDescription: () => i18n.translate( 'Customizable themes, buttons, colors' ),
 	},
 	[ FEATURE_TRACK_VIEWS_CLICKS ]: {
 		getSlug: () => FEATURE_TRACK_VIEWS_CLICKS,
 		getTitle: () => i18n.translate( 'Track your view and click stats' ),
-		getDescription: () => i18n.translate( 'Track your view and click stats' ),
 	},
 	[ FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO ]: {
 		getSlug: () => FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 		getTitle: () =>
 			i18n.translate( 'Monetize your Link in Bio with payments, subscriptions, and donations' ),
-		getDescription: () =>
-			i18n.translate( 'Monetize your Link in Bio with payments, subscriptions, and donations' ),
 	},
 	[ FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
-		getDescription: () => i18n.translate( 'Advanced link in bio themes and customization' ),
 	},
 	/* END - WPCOM Plan grid features update experiment */
 };
