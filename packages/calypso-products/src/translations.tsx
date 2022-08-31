@@ -444,6 +444,27 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	};
 };
 
+export const getJetpackProductsFeaturedText = (): Record< string, TranslateResult > => {
+	const backupDailyFeaturedText = translate(
+		'Protect your site or store. Save every change with real-time cloud backups, and restore in one click.'
+	);
+	const videoPressFeaturedText = translate(
+		'Own your content. High-quality, ad-free video build specifically for WordPress.'
+	);
+
+	return {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressFeaturedText,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressFeaturedText,
+	};
+};
 export const useJetpack10GbStorageAmountText = (): TranslateResult => {
 	const _translate = useTranslate();
 

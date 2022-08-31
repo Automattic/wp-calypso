@@ -133,6 +133,7 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
+	getFeaturedText?: () => TranslateResult;
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

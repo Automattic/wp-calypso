@@ -18,7 +18,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	siteId,
 } ) => {
 	const translate = useTranslate();
-	const { displayName: title, description } = item;
+	const { displayName: title, featuredDescription } = item;
 
 	return (
 		<div className="featured-item-card">
@@ -37,7 +37,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 					</div>
 					<div className="featured-item-card--desc">
 						<p>
-							<span>{ description }</span>
+							<span>{ featuredDescription }</span>
 							<br />
 							<Button
 								className="featured-item-card--learn-more"
