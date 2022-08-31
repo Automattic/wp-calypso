@@ -16,13 +16,6 @@
 		margin: 0;
 		max-width: none;
 		min-height: 100vh;
-		.step-container__navigation.action-buttons {
-			top: auto;
-			inset-inline-start: 40px;
-			.step-container__skip-wrapper {
-				margin-inline-start: 0;
-			}
-		}
 	}
 
 	.step-container__buttons {
@@ -31,8 +24,7 @@
 		text-align: center;
 
 		@include break-large {
-			text-align: left;
-			padding: 0 0 40px 40px;
+			display: none;
 		}
 	}
 }
@@ -50,6 +42,9 @@
 .launchpad__sidebar {
 	max-width: 100%;
 	margin: 24px 16px 16px;
+	display: flex;
+	flex-direction: column;
+	height: 97vh;
 
 	@include break-large {
 		max-width: 440px;
@@ -60,6 +55,7 @@
 .launchpad__sidebar-content-container {
 	margin-left: 0;
 	margin-top: 100px;
+	flex-grow: 1;
 
 	@include break-large {
 		margin-left: 16px;
@@ -112,8 +108,21 @@
 	margin: 32px 0;
 	padding: 0 20px;
 }
+
 .launchpad__url-box-top-level-domain {
 	font-weight: 500;
+}
+
+.launchpad__sidebar-admin-link {
+	padding: 80px 20px 40px;
+	display: none;
+	button {
+		text-decoration: underline;
+	}
+
+	@include break-large {
+		display: block;
+	}
 }
 
 // Launchpad - Progress Bar
