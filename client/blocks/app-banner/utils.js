@@ -21,9 +21,7 @@ export function getAppBannerData( translate, sectionName, isRTL ) {
 				copy: translate(
 					'A streamlined editor with faster, simpler image uploading? Check and mate.'
 				),
-				icon: isRTL
-					? '/calypso/animations/app-promo/wp-to-jp-rtl.json'
-					: '/calypso/animations/app-promo/wp-to-jp.json',
+				icon: `/calypso/animations/app-promo/wp-to-jp${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case NOTES:
 			return {
@@ -31,25 +29,19 @@ export function getAppBannerData( translate, sectionName, isRTL ) {
 				copy: translate(
 					'Is your new post a hit? With push notifications, see reactions as they roll in.'
 				),
-				icon: isRTL
-					? '/calypso/animations/app-promo/jp-notifications-rtl.json'
-					: '/calypso/animations/app-promo/jp-notifications.json',
+				icon: `/calypso/animations/app-promo/jp-notifications${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case READER:
 			return {
 				title: translate( 'Read posts, even offline.' ),
 				copy: translate( 'Catch up with new posts on the go or save them to read offline.' ),
-				icon: isRTL
-					? '/calypso/animations/app-promo/jp-reader-rtl.json'
-					: '/calypso/animations/app-promo/jp-reader.json',
+				icon: `/calypso/animations/app-promo/jp-reader${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case STATS:
 			return {
 				title: translate( 'Stats at your fingertips.' ),
 				copy: translate( 'See your real-time stats anytime, anywhere.' ),
-				icon: isRTL
-					? '/calypso/animations/app-promo/jp-stats-rtl.json'
-					: '/calypso/animations/app-promo/jp-stats.json',
+				icon: `/calypso/animations/app-promo/jp-stats${ isRTL ? '-rtl' : '' }.json`,
 			};
 		default:
 			return {
