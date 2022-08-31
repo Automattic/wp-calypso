@@ -8,11 +8,9 @@ import type { ReactElement } from 'react';
 import './style.scss';
 
 const getSalePrice = ( {
-	isEligibleForIntroductoryOffer,
 	isDiscounted,
 	product,
 }: {
-	isEligibleForIntroductoryOffer: boolean;
 	isDiscounted: boolean;
 	product: ProductListItem | null;
 } ) => {
@@ -22,10 +20,7 @@ const getSalePrice = ( {
 	if ( isDiscounted ) {
 		return product?.sale_cost ?? 0;
 	}
-	if ( isEligibleForIntroductoryOffer ) {
-		return product?.introductory_offer?.cost_per_interval ?? 0;
-	}
-	return 0;
+	return product?.introductory_offer?.cost_per_interval ?? 0;
 };
 
 const SalePriceWithInterval = ( {
@@ -115,11 +110,7 @@ const PriceWithInterval = ( {
 
 	if ( isDiscounted || isEligibleForIntroductoryOffer ) {
 		const salePrice = formatCurrency(
-			getSalePrice( {
-				isEligibleForIntroductoryOffer,
-				isDiscounted,
-				product,
-			} ),
+			getSalePrice( { isDiscounted, product } ),
 			currencyCode ?? '',
 			{ stripZeros: true }
 		);
