@@ -6,6 +6,7 @@
 	background-color: white;
 	transition: all 0.2s ease-out;
 	font-family: 'Inter', $sans;
+	max-width: 1080px;
 
 	p {
 		margin-bottom: 0.5rem;
@@ -275,6 +276,7 @@
 		border-radius: 0;
 		width: 100%;
 		height: 100%;
+		max-width: 100%;
 	}
 	.product-lightbox__detail {
 		padding: 24px;
