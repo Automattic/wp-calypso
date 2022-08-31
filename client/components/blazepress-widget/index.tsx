@@ -1,3 +1,5 @@
+import { Dialog } from '@automattic/components';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
@@ -18,6 +20,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
 	const { isVisible = false, onClose = () => {} } = props;
 	const [ isLoading, setIsLoading ] = useState( true );
+	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
@@ -44,7 +47,23 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				);
 				setIsLoading( false );
 			} )();
-	}, [ isVisible, props.postId, props.siteId ] );
+	}, [ isVisible, onClose, props.postId, props.siteId, selectedSiteSlug ] );
+
+	const cancelDialogButtons = [
+		{
+			action: 'cancel',
+			label: __( 'No' ),
+		},
+		{
+			action: 'close',
+			isPrimary: true,
+			label: __( 'Yes, cancel' ),
+			onClick: async () => {
+				setShowCancelDialog( false );
+				onClose();
+			},
+		},
+	];
 
 	const promoteWidgetStatus = usePromoteWidget();
 	if ( promoteWidgetStatus === PromoteWidgetStatus.DISABLED ) {
@@ -61,9 +80,9 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						<span
 							role="button"
 							className={ 'blazepress-widget__cancel' }
-							onKeyDown={ onClose }
+							onKeyDown={ () => setShowCancelDialog( true ) }
 							tabIndex={ 0 }
-							onClick={ onClose }
+							onClick={ () => setShowCancelDialog( true ) }
 						>
 							Cancel
 						</span>
@@ -73,6 +92,18 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							isLoading ? 'blazepress-widget__content loading' : 'blazepress-widget__content'
 						}
 					>
+						<Dialog
+							isVisible={ showCancelDialog }
+							buttons={ cancelDialogButtons }
+							onClose={ () => setShowCancelDialog( false ) }
+						>
+							<h1>{ __( 'Cancel the campaign' ) }</h1>
+							<p>
+								{ __(
+									'If you cancel now, you will lose any progress you have made. Are you sure you want to cancel?'
+								) }
+							</p>
+						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
 						<div ref={ widgetContainer }></div>
 					</div>
