@@ -19,7 +19,7 @@ const PaymentsFeaturesModal = ( props ) => {
 	return (
 		isVisible && (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<BlankCanvas className={ 'blogging-quick-start-modal' }>
+			<BlankCanvas className="blogging-quick-start-modal">
 				<BlankCanvas.Content>
 					<VideosUi
 						courseSlug={ COURSE_SLUGS.PAYMENTS_FEATURES }
