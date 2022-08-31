@@ -142,7 +142,7 @@ commands:
 jobs:
   wp-desktop-assets:
     docker:
-      - image: circleci/node:16.17.0-browsers
+      - image: cimg/node:16.17.0-browsers
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
@@ -243,7 +243,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:16.17.0-browsers
+      - image: cimg/node:16.17.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
