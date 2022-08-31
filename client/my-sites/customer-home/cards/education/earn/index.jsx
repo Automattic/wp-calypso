@@ -34,7 +34,7 @@ const EducationEarn = ( { siteSlug } ) => {
 						},
 						courseSlug: COURSE_SLUGS.PAYMENTS_FEATURES,
 					},
-					onClick: () => openModal(),
+					onClick: openModal,
 					text: translate( 'Start making money' ),
 				},
 			] }

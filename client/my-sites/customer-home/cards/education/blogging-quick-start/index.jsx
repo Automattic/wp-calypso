@@ -30,7 +30,7 @@ const BloggingQuickStart = () => {
 						},
 						courseSlug: COURSE_SLUGS.BLOGGING_QUICK_START,
 					},
-					onClick: () => openModal(),
+					onClick: openModal,
 					text: translate( 'Start learning' ),
 				},
 			] }
