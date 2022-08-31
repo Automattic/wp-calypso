@@ -1,9 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
-import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
+import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
-import { getSiteOptions } from '../../state/sites/selectors';
 import CustomerHome from './main';
 
 export default async function ( context, next ) {
