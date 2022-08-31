@@ -131,6 +131,9 @@ export const PlanUSPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, billin
 	const planDisplayCost = useSelector( ( state ) => {
 		return getProductDisplayCost( state, requiredPlan || '' );
 	} );
+	const monthlyLabel = translate( 'Monthly' );
+	const annualLabel = translate( 'Annually' );
+	const periodicityLabel = isAnnualPeriod ? annualLabel : monthlyLabel;
 
 	if ( ! shouldUpgrade ) {
 		return null;
@@ -140,14 +143,20 @@ export const PlanUSPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, billin
 	switch ( requiredPlan ) {
 		case PLAN_PERSONAL:
 		case PLAN_PERSONAL_MONTHLY:
-			planText = translate( 'Included in the Personal plan (%s):', {
-				args: [ planDisplayCost ],
+			planText = translate( 'Included in the Personal plan (%(cost)s/%(periodicity)s):', {
+				args: {
+					cost: planDisplayCost,
+					periodicity: periodicityLabel,
+				},
 			} );
 			break;
 		case PLAN_BUSINESS:
 		case PLAN_BUSINESS_MONTHLY:
-			planText = translate( 'Included in the Business plan (%s):', {
-				args: [ planDisplayCost ],
+			planText = translate( 'Included in the Business plan (%(cost)s/%(periodicity)s):', {
+				args: {
+					cost: planDisplayCost,
+					periodicity: periodicityLabel,
+				},
 			} );
 			break;
 	}
