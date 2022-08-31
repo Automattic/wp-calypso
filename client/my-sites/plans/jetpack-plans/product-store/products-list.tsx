@@ -1,10 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import productButtonLabel from '../product-card/product-button-label';
 import { FeaturedItemCard } from './featured-item-card';
 import { HeroImage } from './hero-image';
-import { useCreateCheckout } from './hooks/use-create-checkout';
 import { useProductsToDisplay } from './hooks/use-products-to-display';
+import { useStoreItemInto } from './hooks/use-store-item-info';
 import { MostPopular } from './most-popular';
 import SimpleProductCard from './simple-product-card';
 import { getSortedDisplayableProducts } from './utils/get-sorted-displayable-products';
@@ -19,7 +20,17 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	const [ popularItems, otherItems ] = useProductsToDisplay( { duration, siteId } );
 	const translate = useTranslate();
 
-	const { getCheckoutURL, getOnClickPurchase, isOwned } = useCreateCheckout( {
+	const {
+		getCheckoutURL,
+		getOnClickPurchase,
+		isIncludedInPlanOrSuperseded,
+		isOwned,
+		isPlanFeature,
+		isSuperseded,
+		isDeprecated,
+		isUpgradeableToYearly,
+		sitePlan,
+	} = useStoreItemInto( {
 		createCheckoutURL,
 		onClickPurchase,
 		duration,
@@ -27,13 +38,29 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	} );
 
 	const mostPopularItems = popularItems.map( ( item ) => {
+		const isItemOwned = isOwned( item );
+		const isItemSuperseded = isSuperseded( item );
+
+		const ctaLabel = productButtonLabel( {
+			product: item,
+			isOwned: isItemOwned,
+			isUpgradeableToYearly: isUpgradeableToYearly( item ),
+			isDeprecated: isDeprecated( item ),
+			isSuperseded: isItemSuperseded,
+			currentPlan: sitePlan,
+			fallbackLabel: translate( 'Get' ),
+		} );
+
 		return (
 			<FeaturedItemCard
-				key={ item.productSlug }
+				checkoutURL={ getCheckoutURL( item ) }
+				ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
+				ctaLabel={ ctaLabel }
 				hero={ <HeroImage item={ item } /> }
-				isOwned={ isOwned( item ) }
+				isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
+				isOwned={ isItemOwned }
 				item={ item }
-				siteId={ siteId }
+				key={ item.productSlug }
 				onClickMore={ () => {
 					recordTracksEvent( 'calypso_product_more_about_product_click', {
 						product: item.productSlug,
@@ -41,7 +68,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 					// TODO: Open modal
 				} }
 				onClickPurchase={ getOnClickPurchase( item ) }
-				checkoutURL={ getCheckoutURL( item ) }
+				siteId={ siteId }
 			/>
 		);
 	} );
@@ -60,12 +87,27 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 
 				<div className="jetpack-product-store__products-list-all-grid">
 					{ allItems.map( ( item ) => {
+						const isItemOwned = isOwned( item );
+						const isItemSuperseded = isSuperseded( item );
+
+						const ctaLabel = productButtonLabel( {
+							product: item,
+							isOwned: isItemOwned,
+							isUpgradeableToYearly: isUpgradeableToYearly( item ),
+							isDeprecated: isDeprecated( item ),
+							isSuperseded: isItemSuperseded,
+							currentPlan: sitePlan,
+							fallbackLabel: translate( 'Get' ),
+						} );
 						return (
 							<SimpleProductCard
-								key={ item.productSlug }
+								checkoutURL={ getCheckoutURL( item ) }
+								ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
+								ctaLabel={ ctaLabel }
+								isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
+								isOwned={ isItemOwned }
 								item={ item }
-								siteId={ siteId }
-								isOwned={ isOwned( item ) }
+								key={ item.productSlug }
 								onClickMore={ () => {
 									recordTracksEvent( 'calypso_product_more_about_product_click', {
 										product: item.productSlug,
@@ -73,7 +115,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 									// TODO: Open modal
 								} }
 								onClickPurchase={ getOnClickPurchase( item ) }
-								checkoutURL={ getCheckoutURL( item ) }
+								siteId={ siteId }
 							/>
 						);
 					} ) }

@@ -1,9 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import productButtonLabel from '../product-card/product-button-label';
 import { FeaturedItemCard } from './featured-item-card';
 import { HeroImage } from './hero-image';
 import { useBundlesToDisplay } from './hooks/use-bundles-to-display';
-import { useCreateCheckout } from './hooks/use-create-checkout';
+import { useStoreItemInto } from './hooks/use-store-item-info';
 import { MostPopular } from './most-popular';
 import { SeeAllFeatures } from './see-all-features';
 import type { BundlesListProps } from './types';
@@ -17,7 +18,17 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 	const [ popularItems ] = useBundlesToDisplay( { duration, siteId } );
 	const translate = useTranslate();
 
-	const { getCheckoutURL, getOnClickPurchase, isOwned } = useCreateCheckout( {
+	const {
+		getCheckoutURL,
+		getOnClickPurchase,
+		isDeprecated,
+		isIncludedInPlanOrSuperseded,
+		isOwned,
+		isPlanFeature,
+		isSuperseded,
+		isUpgradeableToYearly,
+		sitePlan,
+	} = useStoreItemInto( {
 		createCheckoutURL,
 		onClickPurchase,
 		duration,
@@ -25,13 +36,29 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 	} );
 
 	const mostPopularItems = popularItems.map( ( item ) => {
+		const isItemOwned = isOwned( item );
+		const isItemSuperseded = isSuperseded( item );
+
+		const ctaLabel = productButtonLabel( {
+			product: item,
+			isOwned: isItemOwned,
+			isUpgradeableToYearly: isUpgradeableToYearly( item ),
+			isDeprecated: isDeprecated( item ),
+			isSuperseded: isItemSuperseded,
+			currentPlan: sitePlan,
+			fallbackLabel: translate( 'Get' ),
+		} );
+
 		return (
 			<div key={ item.productSlug }>
 				<FeaturedItemCard
+					checkoutURL={ getCheckoutURL( item ) }
+					ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
+					ctaLabel={ ctaLabel }
 					hero={ <HeroImage item={ item } /> }
+					isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
+					isOwned={ isItemOwned }
 					item={ item }
-					isOwned={ isOwned( item ) }
-					siteId={ siteId }
 					onClickMore={ () => {
 						recordTracksEvent( 'calypso_product_more_about_product_click', {
 							product: item.productSlug,
@@ -39,7 +66,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 						// TODO: Open modal
 					} }
 					onClickPurchase={ getOnClickPurchase( item ) }
-					checkoutURL={ getCheckoutURL( item ) }
+					siteId={ siteId }
 				/>
 				{ /* Bundle list goes here */ }
 			</div>
