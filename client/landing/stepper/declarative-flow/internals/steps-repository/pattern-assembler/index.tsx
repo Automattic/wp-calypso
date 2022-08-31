@@ -33,6 +33,26 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		setSections( [ ...sections.slice( 0, sectionIndex ), ...sections.slice( sectionIndex + 1 ) ] );
 	};
 
+	const orderDownSection = ( section: Pattern ) => {
+		const sectionIndex = sections.findIndex( ( { id } ) => id === section.id );
+		setSections( [
+			...sections.slice( 0, sectionIndex ),
+			...sections.slice( sectionIndex + 1, sectionIndex + 2 ),
+			section,
+			...sections.slice( sectionIndex + 2 ),
+		] );
+	};
+
+	const orderUpSection = ( section: Pattern ) => {
+		const sectionIndex = sections.findIndex( ( { id } ) => id === section.id );
+		setSections( [
+			...sections.slice( 0, sectionIndex - 1 ),
+			section,
+			...sections.slice( sectionIndex - 1, sectionIndex ),
+			...sections.slice( sectionIndex + 1 ),
+		] );
+	};
+
 	const onSelect = ( pattern: Pattern | null ) => {
 		if ( pattern ) {
 			if ( 'header' === showPatternSelectorType ) setHeader( pattern );
@@ -43,7 +63,6 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	};
 
 	const onDeselect = ( pattern: Pattern | null ) => {
-		// When a pattern is unselected
 		if ( pattern ) {
 			if ( 'header' === showPatternSelectorType ) setHeader( null );
 			if ( 'footer' === showPatternSelectorType ) setFooter( null );
@@ -77,21 +96,27 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						onSelectHeader={ () => {
 							setShowPatternSelectorType( 'header' );
 						} }
+						onDeleteHeader={ () => {
+							setHeader( null );
+						} }
 						onSelectSection={ ( pattern ) => {
 							setSection( pattern );
 							setShowPatternSelectorType( 'section' );
 						} }
+						onDeleteSection={ ( pattern: Pattern ) => {
+							removeSection( pattern );
+						} }
+						onOrderUpSection={ ( pattern: Pattern ) => {
+							orderUpSection( pattern );
+						} }
+						onOrderDownSection={ ( pattern: Pattern ) => {
+							orderDownSection( pattern );
+						} }
 						onSelectFooter={ () => {
 							setShowPatternSelectorType( 'footer' );
 						} }
-						onDeleteHeader={ () => {
-							// TODO
-						} }
-						onDeleteSection={ () => {
-							// TODO
-						} }
 						onDeleteFooter={ () => {
-							// TODO
+							setFooter( null );
 						} }
 						onContinueClick={ () => {
 							// TODO

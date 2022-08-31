@@ -99,10 +99,23 @@ $font-family: 'SF Pro Text', $sans;
                 line-height: 40px;
                 border-bottom: 1px solid #eeeeee;
                 padding: 0 5px 0 35px;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                max-width: 235px;
-                white-space: nowrap;
+
+                &:hover {
+                    .pattern-layout__list-item-text {
+                        max-width: 154px;
+                    }
+
+                    .pattern-action-bar {
+                        visibility: visible;
+                    }
+                }
+
+                .pattern-layout__list-item-text {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    max-width: 235px;
+                    white-space: nowrap;
+                }
 
                 &:last-child {
                     border-bottom: 0;
@@ -119,6 +132,10 @@ $font-family: 'SF Pro Text', $sans;
             }
 
             .pattern-layout__list-item {
+                position: relative;
+                display: flex;
+                align-items: center;
+
                 &.--type-section-icon {
                     background: url( './images/icon-section.svg' ) no-repeat 5px center;
                 }
@@ -130,12 +147,19 @@ $font-family: 'SF Pro Text', $sans;
                 &.--type-footer-icon {
                     background: url( './images/icon-footer.svg' ) no-repeat 5px center;
                 }
+
+                &.--type-header-icon, &.--type-footer-icon {
+                    &:hover .pattern-layout__list-item-text {
+                        max-width: 185px;
+                    }
+                }
             }
 
             .pattern-layout__add-icon {
-                line-height: 38px;
+                line-height: 8px;
                 vertical-align: top;
-                padding-right: 2px;
+                padding-right: 4px;
+                height: 10px;
             }
         }
 
@@ -205,6 +229,45 @@ $font-family: 'SF Pro Text', $sans;
                 &.--pattern-selected {
                     outline: 2px solid #0675c4;
                 }
+            }
+        }
+    }
+
+    .pattern-action-bar {
+        display: flex;
+        visibility: hidden;
+        align-items: center;
+        position: absolute;
+        background: #fff;
+        height: 27px;
+        right: 0;
+
+        .pattern-action-bar__block {
+            flex-direction: column;
+            padding: 0 3px;
+            display: flex;
+            align-items: center;
+        }
+
+        .pattern-action-bar__action {
+            cursor: pointer;
+            
+            svg {
+                fill: #2c3338;
+            }
+
+            &:hover svg {
+                fill: #0675c4;
+            }
+
+            &.--disabled svg {
+                fill: #c4c4c4;
+            }
+
+            &.--action-order-up, &.--action-order-down {
+                height: 13px;
+                display: flex;
+                align-items: center;
             }
         }
     }
