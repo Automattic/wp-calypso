@@ -46,7 +46,6 @@ import {
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
@@ -248,19 +247,25 @@ function getDIFMPriceDetails( purchase ) {
 	};
 }
 
+function isDIFMPriceBreakdownVisible( purchase ) {
+	// Previous purchases may not have price tier information we do not show a price breakdown in these instances
+	const isPriceTierInfoAvailable = purchase.priceTierList.length > 1;
+
+	const { extraPageCount } = getDIFMPriceDetails( purchase );
+	const isExtraPagesPurchased = extraPageCount > 0;
+
+	return isDIFMProduct( purchase ) && isExtraPagesPurchased && isPriceTierInfoAvailable;
+}
+
 function PurchaseMetaPrice( { purchase } ) {
 	const translate = useTranslate();
-	const productsList = useSelector( getProductsList );
 	const { productSlug, productDisplayPrice } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		if ( isDIFMProduct( purchase ) ) {
-			const { extraPageCount, costOfExtraPages, oneTimeFee } = getDIFMPriceDetails(
-				purchase,
-				productsList
-			);
+		if ( isDIFMPriceBreakdownVisible( purchase ) ) {
+			const { extraPageCount, costOfExtraPages, oneTimeFee } = getDIFMPriceDetails( purchase );
 			return (
 				<div>
 					<div>

@@ -664,7 +664,7 @@ class ManagePurchase extends Component {
 				}
 			);
 
-			if ( purchase.purchaseRenewalQuantity ) {
+			if ( purchase.purchaseRenewalQuantity - noOfBaselinePagesIncluded > 0 ) {
 				return (
 					<>
 						{ description }{ ' ' }
