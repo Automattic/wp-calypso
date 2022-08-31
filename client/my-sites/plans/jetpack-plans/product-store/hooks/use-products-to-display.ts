@@ -1,4 +1,4 @@
-import { JETPACK_BOOST_PRODUCTS, JETPACK_CRM_PRODUCTS } from '@automattic/calypso-products';
+import { JETPACK_CRM_PRODUCTS } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { MOST_POPULAR_PRODUCTS } from '../../constants';
 import { getProductsToDisplay } from '../../product-grid/utils';
@@ -13,8 +13,7 @@ export const useProductsToDisplay = ( { siteId, duration }: ProductsListProps ) 
 		useGetPlansGridProducts( siteId );
 
 	const allAvailableProducts = useMemo( () => {
-		// TODO - need to add Jetpack social product constants and data
-		const moreAvailableProducts = [ ...JETPACK_BOOST_PRODUCTS, ...JETPACK_CRM_PRODUCTS ].map(
+		const moreAvailableProducts = [ ...JETPACK_CRM_PRODUCTS ].map(
 			slugToSelectorProduct
 		) as SelectorProduct[];
 
