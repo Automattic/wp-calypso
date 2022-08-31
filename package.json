@@ -181,7 +181,6 @@
 		"@wordpress/jest-preset-default": "^8.2.0",
 		"@wordpress/primitives": "^3.8.0",
 		"@wordpress/url": "^3.10.0",
-		"allure-js-commons": "^2.0.0-beta.19",
 		"backstopjs": "5.1.0",
 		"browserslist": "^4.16.0",
 		"calypso": "workspace:^",

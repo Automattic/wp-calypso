@@ -26,6 +26,7 @@
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-e2e": "workspace:^",
+		"@automattic/jest-circus-allure-reporter": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@types/archiver": "^5.3.1",
 		"@types/jest": "^27.0.2",

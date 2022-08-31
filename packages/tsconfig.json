@@ -27,6 +27,7 @@
 		{ "path": "./help-center" },
 		{ "path": "./i18n-utils" },
 		{ "path": "./js-utils" },
+		{ "path": "./jest-circus-allure-reporter" },
 		{ "path": "./language-picker" },
 		{ "path": "./languages" },
 		{ "path": "./launch" },
