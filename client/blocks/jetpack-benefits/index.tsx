@@ -89,7 +89,7 @@ const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
 			) }
 			{ productHasVideoPress( productSlug ) && (
 				<JetpackBenefitsCard
-					headline={ translate( 'Videos' ) }
+					headline={ translate( 'Video Hosting' ) }
 					description={ translate( 'Videos hosted with VideoPress' ) }
 					stat={ 28 }
 				/>
