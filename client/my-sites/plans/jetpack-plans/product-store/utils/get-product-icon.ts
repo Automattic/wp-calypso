@@ -5,6 +5,7 @@ import {
 	JETPACK_CRM_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 } from '@automattic/calypso-products';
 import JetpackProductIconAntiSpam from 'calypso/assets/images/jetpack/jetpack-product-icon-antispam.svg';
@@ -13,6 +14,7 @@ import JetpackProductIconBoost from 'calypso/assets/images/jetpack/jetpack-produ
 import JetpackProductIconCRM from 'calypso/assets/images/jetpack/jetpack-product-icon-crm.svg';
 import JetpackProductIconScan from 'calypso/assets/images/jetpack/jetpack-product-icon-scan.svg';
 import JetpackProductIconSearch from 'calypso/assets/images/jetpack/jetpack-product-icon-search.svg';
+import JetpackProductIconSocial from 'calypso/assets/images/jetpack/jetpack-product-icon-social.svg';
 import JetpackProductIconVideopress from 'calypso/assets/images/jetpack/jetpack-product-icon-videopress.svg';
 import { productIconProps } from '../types';
 
@@ -26,7 +28,7 @@ const PRODUCT_ICON_MAP: Record< string, string > = {
 	...setProductsIcon( JETPACK_VIDEOPRESS_PRODUCTS, JetpackProductIconVideopress ),
 	...setProductsIcon( JETPACK_SEARCH_PRODUCTS, JetpackProductIconSearch ),
 	...setProductsIcon( JETPACK_BOOST_PRODUCTS, JetpackProductIconBoost ),
-	// TODO - Set Jetpack social product icon here
+	...setProductsIcon( JETPACK_SOCIAL_PRODUCTS, JetpackProductIconSocial ),
 	...setProductsIcon( JETPACK_CRM_PRODUCTS, JetpackProductIconCRM ),
 };
 
