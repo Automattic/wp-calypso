@@ -2,12 +2,11 @@
 
 import { isGoogleWorkspace, isTitanMail } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
-import { translate, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
-import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 import { isTitanMonthlyProduct } from 'calypso/lib/titan';
 import useGetDomainIntroductoryOfferEligibilities from 'calypso/my-sites/email/email-providers-comparison/price/use-get-domain-introductory-offer-eligibilities';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -32,20 +31,11 @@ const getFirstRenewalPrice = ( product: ProductListItem, currencyCode: string ):
 };
 
 const DiscountPriceInformation = ( { product }: { product: ProductListItem } ): ReactElement => {
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const translate = useTranslate();
 
 	return (
 		<div className="price-information__discount">
-			{ translate( 'Pay only %(discountedPrice)s today - renews at %(standardPrice)s', {
-				args: {
-					discount: product.sale_coupon?.discount,
-					discountedPrice: formatPrice( product.sale_cost ?? 0, currencyCode ?? '' ),
-					standardPrice: formatPrice( product.cost ?? 0, currencyCode ?? '' ),
-				},
-				comment:
-					"%(discount)d is a numeric percentage discount (e.g. '50'), " +
-					"%(discountedPrice)s and %(standardPrice)s are formatted prices with the currency (e.g. '$5')",
-			} ) }
+			{ translate( 'Enjoy first year subscription at the discounted price' ) }
 
 			{ isGoogleWorkspace( product ) && (
 				<InfoPopover position="right" showOnHover>
@@ -70,6 +60,7 @@ const FreeTrialPriceInformation = ( {
 	product: ProductListItem;
 } ): ReactElement | null => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const translate = useTranslate();
 
 	const translateArguments = {
 		args: {
@@ -121,32 +112,20 @@ const PriceInformation = ( {
 			product,
 		} );
 
-	const translate = useTranslate();
-
 	if ( ! product ) {
 		return null;
 	}
 
-	const isGoogleWorkspaceProduct = isGoogleWorkspace( product );
-
-	if ( ! isGoogleWorkspaceProduct && ! isTitanMail( product ) ) {
+	if ( ! isGoogleWorkspace( product ) && ! isTitanMail( product ) ) {
 		return null;
-	}
-
-	if ( hasDiscount( product ) && ! isEligibleForIntroductoryOffer ) {
-		return <DiscountPriceInformation product={ product } />;
 	}
 
 	if ( isEligibleForIntroductoryOfferFreeTrial ) {
 		return <FreeTrialPriceInformation product={ product } />;
 	}
 
-	if ( isGoogleWorkspaceProduct && isEligibleForIntroductoryOffer ) {
-		return (
-			<div className="price-information__free-trial">
-				{ translate( 'Enjoy first year subscription at the discounted price' ) }
-			</div>
-		);
+	if ( hasDiscount( product ) || isEligibleForIntroductoryOffer ) {
+		return <DiscountPriceInformation product={ product } />;
 	}
 
 	return null;
