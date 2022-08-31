@@ -325,13 +325,16 @@ jobs:
           at: C:\Users\circleci\wp-calypso
       - run:
           name: Install NVM
-          command: choco install -y nvm yarn
+          command: choco install -y nvm
       - run:
-          name: Install Node Version
+          name: Install Node environment
           command: |
             $NODE_VERSION = Get-Content .nvmrc
             nvm install $NODE_VERSION
             nvm use $NODE_VERSION
+      - run:
+          name: Install Yarn
+          command: npm install -g yarn
       - run:
           name: Verify versions
           shell: bash.exe
