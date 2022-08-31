@@ -13,6 +13,12 @@ export function getEnhancedTasks(
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
+	const linkInBioLinksEditCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
+
+	const linkInBioSiteLaunchCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
+
 	tasks &&
 		tasks.map( ( task ) => {
 			let taskData = {};
@@ -53,11 +59,14 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Add links' ),
 						actionUrl: `/site-editor/${ siteSlug }`,
+						isCompleted: linkInBioLinksEditCompleted,
 					};
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
 						title: translate( 'Launch Link in bio' ),
+						isCompleted: linkInBioSiteLaunchCompleted,
+						dependencies: [ linkInBioLinksEditCompleted ],
 					};
 					break;
 			}
@@ -80,4 +89,19 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 			return accumulator;
 		}, [] as Task[] )
 	);
+}
+
+// This function will determine whether we want to disable or enable a task on the checklist
+// If a task is completed, we disable it
+// If a task is NOT completed AND the task contains dependencies, we want to want check if all dependencies are set to true:
+//    ^ If all the dependencies are true, then the task is enabled
+//    ^ If all the dependencies are false, then the task is disabled
+export function isTaskDisabled( task: Task ) {
+	if ( task.isCompleted ) {
+		return task.isCompleted;
+	}
+
+	if ( task.dependencies ) {
+		return task.dependencies.every( ( dependency: boolean ) => dependency === false );
+	}
 }
