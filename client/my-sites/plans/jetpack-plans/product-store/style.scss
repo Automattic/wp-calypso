@@ -91,11 +91,14 @@
 
 	&__most-popular--heading {
 		margin-bottom: rem( 24px );
-		font-size: $font-title-medium;
+		font-size: $font-title-small;
+		font-weight: 700;
 		line-height: rem( 29px );
 
 		@media only screen and ( min-width: 821px ) {
 			margin-bottom: rem( 32px );
+			font-size: $font-title-medium;
+			font-weight: 600;
 		}
 
 	&__most-popular--items {
@@ -392,7 +395,7 @@
 	font-size: $font-title-small;
 	font-weight: 700;
 
-	@include break-medium {
+	@media only screen and ( min-width: 821px ) {
 		margin-top: rem( 72px );
 		margin-bottom: rem( 48px );
 		font-size: $font-title-medium;
