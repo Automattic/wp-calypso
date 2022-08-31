@@ -181,6 +181,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
 			} );
 
+			if ( _selectedDesign.verticalizable ) {
+				recordTracksEvent(
+					'calypso_signup_select_verticalized_design',
+					getEventPropsByDesign( _selectedDesign )
+				);
+			}
+
 			handleSubmit( {
 				selectedDesign: _selectedDesign,
 				selectedSiteCategory: categorization.selection,
