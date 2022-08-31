@@ -64,6 +64,5 @@ export function getValueFromVariationSettingColorPalette(
 	name: string
 ): string | undefined {
 	const palette = variation.settings?.color?.palette?.theme || [];
-	return palette.find( ( item: StyleVariationSettingsColorPalette ) => item.slug === name )
-		?.color;
+	return palette.find( ( item: StyleVariationSettingsColorPalette ) => item.slug === name )?.color;
 }

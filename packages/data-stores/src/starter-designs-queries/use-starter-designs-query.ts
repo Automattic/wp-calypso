@@ -6,8 +6,8 @@ import type {
 	Category,
 	Design,
 	DesignRecipe,
+	StyleVariation,
 	ThemeFeature,
-	ThemeStyleVariation,
 } from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
@@ -34,7 +34,7 @@ interface StaticDesign {
 	categories: Category[];
 	features: ThemeFeature[];
 	price?: string;
-	style_variations?: ThemeStyleVariation[];
+	style_variations?: StyleVariation[];
 }
 
 interface GeneratedDesign {
