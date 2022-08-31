@@ -42,7 +42,7 @@
 	font-size: $font-title-large;
 	font-weight: 600;
 	max-height: 16px * 4;
-	margin-bottom: 12px;
+	margin-bottom: 6px;
 	overflow: hidden;
 	position: relative;
 	text-align: center;
@@ -147,10 +147,12 @@
 
 	.reader-feed-header__details {
 		align-self: stretch;
-		font-size: $font-body-small;
+		font-size: 1.0625em;
 		overflow: hidden;
 		text-align: center;
 		position: relative;
+		margin-bottom: 8px;
+		top:-4px;
 
 		.reader-feed-header__description {
 			display: block;
