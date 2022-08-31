@@ -30,7 +30,6 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
-		"@automattic/design-picker": "workspace:^",
 		"@wordpress/block-editor": "^9.8.0",
 		"@wordpress/components": "^19.15.0",
 		"@wordpress/react-i18n": "^3.7.0",
