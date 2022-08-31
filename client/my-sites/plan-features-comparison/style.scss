@@ -142,7 +142,7 @@ $plan-features-sidebar-width: 272px;
 		background-color: var( --color-surface );
 		position: relative;
 
-		&.is-bold {
+		.is-bold, &.is-bold {
 			font-weight: bold;
 		}
 	}

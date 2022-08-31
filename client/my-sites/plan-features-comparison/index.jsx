@@ -9,6 +9,7 @@ import {
 	isFreePlan,
 	isMonthly,
 	TERM_MONTHLY,
+	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -309,7 +310,7 @@ export class PlanFeaturesComparison extends Component {
 				'is-last-feature': featureIndex + 1 === features.length,
 				'is-highlighted':
 					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-				'is-bold': featureIndex === 0,
+				'is-bold': currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN,
 			} );
 
 			if ( currentFeature.isUniqueFeature ) {
