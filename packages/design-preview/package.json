@@ -31,7 +31,7 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@wordpress/components": "^19.15.0",
-		"@wordpress/edit-site": "^4.13.0",
+		"@wordpress/edit-site": "^4.6.0",
 		"@wordpress/react-i18n": "^3.7.0",
 		"tslib": "^2.3.0"
 	},
