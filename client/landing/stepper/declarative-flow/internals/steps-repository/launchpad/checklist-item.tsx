@@ -1,21 +1,22 @@
 import { Button, Gridicon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
+import { isTaskDisabled } from './task-helper';
 import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
 	const { id, isCompleted, actionUrl, title } = task;
 
-	const isLinkInBioSiteLaunchSiteTask = task.id === 'link_in_bio_launched';
+	const taskDisabled = isTaskDisabled( task );
 	return (
 		<li className={ `launchpad__task-${ id }` }>
 			<Button
 				className="launchpad__checklist-item"
-				disabled={ task.isCompleted }
+				disabled={ taskDisabled }
 				href={ actionUrl }
 				data-task={ id }
 			>
-				{ task.isCompleted && ! isLinkInBioSiteLaunchSiteTask && (
+				{ isCompleted && taskDisabled && (
 					<div className="launchpad__checklist-item-status">
 						<Gridicon
 							aria-label={ translate( 'Task complete' ) }
@@ -25,13 +26,13 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 						/>
 					</div>
 				) }
-				<p className={ `launchpad__checklist-item-text ${ isCompleted && 'is-complete' }` }>
+				<p className={ `launchpad__checklist-item-text ${ taskDisabled && 'is-complete' }` }>
 					{ title }
 				</p>
 				{ task.displayBadge && task.badgeText ? (
 					<Badge type="info-blue">{ task.badgeText }</Badge>
 				) : null }
-				{ ! task.isCompleted && (
+				{ ! taskDisabled && (
 					<Gridicon
 						className="launchpad__checklist-item-chevron"
 						icon="chevron-right"
