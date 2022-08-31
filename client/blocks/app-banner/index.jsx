@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import classNames from 'classnames';
-import { localize, useRtl } from 'i18n-calypso';
+import { localize, withRtl } from 'i18n-calypso';
 import { get } from 'lodash';
 import lottie from 'lottie-web/build/player/lottie_light';
 import PropTypes from 'prop-types';
@@ -245,11 +245,7 @@ export class AppBanner extends Component {
 	}
 }
 
-export function BannerIcon( props ) {
-	const { translate, currentSection } = props;
-	const isRTL = useRtl();
-	const { icon } = getAppBannerData( translate, currentSection, isRTL );
-
+function BannerIcon( { icon } ) {
 	useEffect( () => {
 		lottie.loadAnimation( {
 			container: document.querySelector( '.app-banner__icon' ),
@@ -344,4 +340,4 @@ const mapDispatchToProps = {
 	dismissAppBanner,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );
+export default connect( mapStateToProps, mapDispatchToProps )( withRtl( localize( AppBanner ) ) );
