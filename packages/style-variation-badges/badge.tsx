@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { getPreviewStylesFromVariation } from './utils';
-import type { ThemeStyleVariation } from '../../types';
+import type { StyleVariation } from '../../types';
 import './style.scss';
 
 interface BadgeProps {
-	variation?: ThemeStyleVariation;
+	variation?: StyleVariation;
 }
 
 const Badge: React.FC< BadgeProps > = ( { variation } ) => {
@@ -18,7 +18,7 @@ const Badge: React.FC< BadgeProps > = ( { variation } ) => {
 	}
 
 	return (
-		<div className="theme-style-variation__badge-wrapper">
+		<div className="style-variation__badge-wrapper">
 			<span
 				style={ {
 					backgroundColor: styles.color.background,

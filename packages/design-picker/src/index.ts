@@ -3,7 +3,7 @@ export { default as GeneratedDesignPicker } from './components/generated-design-
 export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
 export { default as PremiumBadge } from './components/premium-badge';
 export { default as BadgeContainer } from './components/badge-container';
-export { default as ThemePreviewContainer } from './components/theme-preview-container';
+export { default as StyleVariationBadges } from './components/style-variation-badges';
 export { default as UnifiedDesignPicker } from './components/unified-design-picker';
 export {
 	availableDesignsConfig,
@@ -22,7 +22,17 @@ export {
 	MOBILE_VIEWPORT_WIDTH,
 	STICKY_OFFSET_TOP,
 } from './constants';
-export type { FontPair, Design, Category } from './types';
+export type {
+	FontPair,
+	Design,
+	Category,
+	StyleVariation,
+	StyleVariationSettingsColorPalette,
+	StyleVariationPreview,
+	StyleVariationPreviewColorPalette,
+	StyleVariationStylesColor,
+	ThemeFeature,
+} from './types';
 export { useCategorization } from './hooks/use-categorization';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';
 export { useDesignsBySite } from '././hooks/use-designs-by-site';

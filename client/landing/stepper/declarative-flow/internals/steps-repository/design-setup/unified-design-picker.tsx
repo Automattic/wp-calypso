@@ -3,7 +3,6 @@ import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
-	ThemePreviewContainer,
 	UnifiedDesignPicker,
 	useCategorization,
 	getDesignPreviewUrl,
@@ -15,6 +14,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
@@ -305,7 +305,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					checkout={ goToCheckout }
 				/>
 				{ isEnabledStyleSelection ? (
-					<ThemePreviewContainer
+					<AsyncLoad
+						require="@automattic/design-preview"
+						placeholder={ null }
 						title={ designTitle }
 						description={ selectedDesign.description }
 						features={ selectedDesign.theme_features }

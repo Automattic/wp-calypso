@@ -29,6 +29,7 @@
 		"@automattic/create-calypso-config": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/design-picker": "workspace:^",
+		"@automattic/design-preview": "workspace:^",
 		"@automattic/domain-picker": "workspace:^",
 		"@automattic/domain-utils": "workspace:^",
 		"@automattic/explat-client": "workspace:^",

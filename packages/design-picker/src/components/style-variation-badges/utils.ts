@@ -1,32 +1,32 @@
 import type {
-	ThemeStyleVariation,
-	ThemeStyleVariationSettingsColorPalette,
-	ThemeStyleVariationStylesColor,
-	ThemeStyleVariationPreview,
-	ThemeStyleVariationPreviewColorPalette,
+	StyleVariation,
+	StyleVariationSettingsColorPalette,
+	StyleVariationStylesColor,
+	StyleVariationPreview,
+	StyleVariationPreviewColorPalette,
 } from '../../types';
 
 const COLOR_PALETTE_SUPPORTS = [ 'background', 'foreground', 'primary', 'secondary', 'tertiary' ];
 
 const GLOBAL_STYLES_SUPPORTS: {
-	style: keyof ThemeStyleVariationStylesColor;
+	style: keyof StyleVariationStylesColor;
 	infix: 'color';
-	mapTo: keyof ThemeStyleVariationPreviewColorPalette;
+	mapTo: keyof StyleVariationPreviewColorPalette;
 }[] = [
 	{ style: 'background', infix: 'color', mapTo: 'background' },
 	{ style: 'text', infix: 'color', mapTo: 'foreground' },
 ];
 
 export function getPreviewStylesFromVariation(
-	variation: ThemeStyleVariation,
-	coreColors?: ThemeStyleVariationPreviewColorPalette
-): ThemeStyleVariationPreview {
+	variation: StyleVariation,
+	coreColors?: StyleVariationPreviewColorPalette
+): StyleVariationPreview {
 	const globalColors = {
 		...getValueFromVariationStylesColor( variation ),
 		...coreColors,
 	};
 
-	let color: ThemeStyleVariationPreviewColorPalette = {};
+	let color: StyleVariationPreviewColorPalette = {};
 	for ( const key of COLOR_PALETTE_SUPPORTS ) {
 		const value = getValueFromVariationSettingColorPalette( variation, key );
 		color = { ...color, ...( value && { [ key ]: value } ) };
@@ -39,7 +39,7 @@ export function getPreviewStylesFromVariation(
 			const preset = parsePresetDeclaration(
 				declaration,
 				globalColor.infix
-			) as keyof ThemeStyleVariationPreviewColorPalette;
+			) as keyof StyleVariationPreviewColorPalette;
 			if ( preset && color[ preset ] ) {
 				color[ globalColor.mapTo ] = color[ preset ];
 			}
@@ -54,16 +54,16 @@ export function parsePresetDeclaration( preset: string, infix: string ): string 
 }
 
 export function getValueFromVariationStylesColor(
-	variation: ThemeStyleVariation
-): ThemeStyleVariationStylesColor | undefined {
+	variation: StyleVariation
+): StyleVariationStylesColor | undefined {
 	return variation.styles?.color;
 }
 
 export function getValueFromVariationSettingColorPalette(
-	variation: ThemeStyleVariation,
+	variation: StyleVariation,
 	name: string
 ): string | undefined {
 	const palette = variation.settings?.color?.palette?.theme || [];
-	return palette.find( ( item: ThemeStyleVariationSettingsColorPalette ) => item.slug === name )
+	return palette.find( ( item: StyleVariationSettingsColorPalette ) => item.slug === name )
 		?.color;
 }

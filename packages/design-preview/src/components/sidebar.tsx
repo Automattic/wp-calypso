@@ -1,11 +1,11 @@
 import { translate } from 'i18n-calypso';
-import { ThemeStyleVariationPreviews } from '../theme-style-variation';
-import type { ThemeFeature, ThemeStyleVariation } from '../../types';
+import { StyleVariationPreviews } from './style-variation';
+import type { StyleVariation, ThemeFeature } from '@automattic/design-picker';
 
 interface SidebarProps {
 	title?: string;
 	description?: string;
-	variations?: ThemeStyleVariation[];
+	variations?: StyleVariation[];
 	features?: ThemeFeature[];
 }
 
@@ -16,27 +16,27 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	features = [],
 } ) => {
 	return (
-		<div className="theme-preview-container__sidebar">
-			<div className="theme-preview-container__sidebar-title">
+		<div className="design-preview__sidebar">
+			<div className="design-preview__sidebar-title">
 				<h1>{ title }</h1>
 			</div>
 
 			{ description && (
-				<div className="theme-preview-container__sidebar-description">
+				<div className="design-preview__sidebar-description">
 					<p>{ description }</p>
 				</div>
 			) }
 
 			{ variations.length > 0 && (
-				<div className="theme-preview-container__sidebar-variations">
+				<div className="design-preview__sidebar-variations">
 					<h2> { translate( 'Style variations' ) }</h2>
-					<div className="theme-preview-container__sidebar-variations-grid">
-						<ThemeStyleVariationPreviews variations={ variations } />
+					<div className="design-preview__sidebar-variations-grid">
+						<StyleVariationPreviews variations={ variations } />
 					</div>
 				</div>
 			) }
 
-			<div className="theme-preview-container__sidebar-support">
+			<div className="design-preview__sidebar-support">
 				<h2>{ translate( 'Support' ) }</h2>
 				<p>
 					{ translate(
@@ -64,9 +64,9 @@ const Sidebar: React.FC< SidebarProps > = ( {
 			</div>
 
 			{ features.length > 0 && (
-				<div className="theme-preview-container__sidebar-features">
+				<div className="design-preview__sidebar-features">
 					<h2>{ translate( 'Features' ) }</h2>
-					<ul className="theme-preview-container__sidebar-features-list">
+					<ul className="design-preview__sidebar-features-list">
 						{ features.map( ( feature ) => (
 							<div key={ feature.slug }>{ feature.name }</div>
 						) ) }

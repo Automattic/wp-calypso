@@ -1,5 +1,5 @@
-.theme-style-variation__badge-more-wrapper,
-.theme-style-variation__badge-wrapper {
+.style-variation__badge-more-wrapper,
+.style-variation__badge-wrapper {
 	display: inline-block;
 	height: 24px;
 	vertical-align: top;
@@ -22,28 +22,8 @@
 	}
 }
 
-.theme-style-variations-more-wrapper {
+.style-variations-more-wrapper {
 	> * {
 		box-shadow: none;
-	}
-}
-
-.theme-style-variation__preview {
-	border-radius: 5px; /* stylelint-disable-line scales/radii */
-	border: 2px solid transparent;
-	padding: 3px;
-	transition: border-color 0.15s ease-in-out;
-
-	&:hover {
-		border-color: var( --studio-blue-50 );
-	}
-
-	.theme-style-variation__preview-iframe {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
-		box-shadow: 0 0 1px rgba( 0, 0, 0, 0.25 );
-		border: 0;
-		display: block;
-		max-width: 100%;
-		overflow: hidden;
 	}
 }

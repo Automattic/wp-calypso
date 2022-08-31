@@ -14,38 +14,32 @@ export interface Category {
 	name: string;
 }
 
-export interface DesignRecipe {
-	stylesheet?: string;
-	pattern_ids?: number[];
-	header_pattern_ids?: number[];
-	footer_pattern_ids?: number[];
-}
-
-export interface ThemeStyleVariation {
+export interface StyleVariation {
 	slug: string;
+
 	settings: {
 		color: {
 			palette: {
-				theme: ThemeStyleVariationSettingsColorPalette[];
+				theme: StyleVariationSettingsColorPalette[];
 			};
 		};
 	};
 	styles: {
-		color: ThemeStyleVariationStylesColor;
+		color: StyleVariationStylesColor;
 	};
 }
 
-export interface ThemeStyleVariationSettingsColorPalette {
+export interface StyleVariationSettingsColorPalette {
 	color: string;
 	name: string;
 	slug: string;
 }
 
-export interface ThemeStyleVariationPreview {
-	color: ThemeStyleVariationPreviewColorPalette;
+export interface StyleVariationPreview {
+	color: StyleVariationPreviewColorPalette;
 }
 
-export interface ThemeStyleVariationPreviewColorPalette {
+export interface StyleVariationPreviewColorPalette {
 	background?: string;
 	foreground?: string;
 	primary?: string;
@@ -53,7 +47,7 @@ export interface ThemeStyleVariationPreviewColorPalette {
 	tertiary?: string;
 }
 
-export interface ThemeStyleVariationStylesColor {
+export interface StyleVariationStylesColor {
 	background?: string;
 	text?: string;
 }
@@ -61,6 +55,13 @@ export interface ThemeStyleVariationStylesColor {
 export interface ThemeFeature {
 	slug: string;
 	name: string;
+}
+
+export interface DesignRecipe {
+	stylesheet?: string;
+	pattern_ids?: number[];
+	header_pattern_ids?: number[];
+	footer_pattern_ids?: number[];
 }
 
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
@@ -88,7 +89,7 @@ export interface Design {
 	preview?: 'static';
 	design_type?: DesignType;
 	theme_features?: ThemeFeature[];
-	style_variations?: ThemeStyleVariation[];
+	style_variations?: StyleVariation[];
 	price?: string;
 
 	/** @deprecated used for Gutenboarding (/new flow) */

@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import Preview from './preview';
 import { getPreviewStylesFromVariation } from './utils';
-import type { ThemeStyleVariation } from '../../types';
+import type { StyleVariation } from '@automattic/design-picker';
+import './style.scss';
 
 interface PreviewsProps {
-	variations?: ThemeStyleVariation[];
+	variations?: StyleVariation[];
 }
 
 const Previews: React.FC< PreviewsProps > = ( { variations = [] } ) => {
@@ -22,7 +23,7 @@ const Previews: React.FC< PreviewsProps > = ( { variations = [] } ) => {
 			{ variations.map( ( variation ) => (
 				<div
 					key={ variation.slug }
-					className="theme-style-variation__preview"
+					className="style-variation__preview"
 					tabIndex={ 0 }
 					role="button"
 				>

@@ -1,11 +1,11 @@
 @import '@automattic/onboarding/styles/mixins';
 
-.theme-preview-container {
+.design-preview {
 	display: flex;
 	flex-direction: row;
 }
 
-.theme-preview-container__sidebar {
+.design-preview__sidebar {
 	width: 343px;
 
 	> div {
@@ -19,7 +19,7 @@
 		}
 	}
 
-	.theme-preview-container__sidebar-title {
+	.design-preview__sidebar-title {
 		margin: 0 0 16px;
 
 		h1 {
@@ -30,7 +30,7 @@
 		}
 	}
 
-	.theme-preview-container__sidebar-description {
+	.design-preview__sidebar-description {
 		p {
 			color: var( --studio-gray-80 );
 			font-size: 0.875rem;
@@ -38,8 +38,8 @@
 		}
 	}
 
-	.theme-preview-container__sidebar-variations {
-		.theme-preview-container__sidebar-variations-grid {
+	.design-preview__sidebar-variations {
+		.design-preview__sidebar-variations-grid {
 			display: grid;
 			gap: 8px;
 			grid-template-columns: repeat( 2, 1fr );
@@ -47,15 +47,15 @@
 		}
 	}
 
-	.theme-preview-container__sidebar-support {
+	.design-preview__sidebar-support {
 		p {
 			color: var( --studio-gray-80 );
 			font-size: $font-body-small;
 		}
 	}
 
-	.theme-preview-container__sidebar-features {
-		.theme-preview-container__sidebar-features-list {
+	.design-preview__sidebar-features {
+		.design-preview__sidebar-features-list {
 			align-items: flex-start;
 			border-radius: 4px;
 			display: flex;
@@ -76,7 +76,7 @@
 	}
 }
 
-.theme-preview-container__sticky-variations {
+.design-preview__sticky-variations {
 	align-items: center;
 	backdrop-filter: blur( 15px );
 	background: rgba( 255, 255, 255, 0.9 );
@@ -93,7 +93,7 @@
 	top: 0;
 	z-index: 30;
 
-	.theme-style-variation__preview {
+	.style-variation__preview {
 		flex-shrink: 0;
 		width: 100px;
 	}

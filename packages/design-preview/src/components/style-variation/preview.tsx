@@ -3,11 +3,12 @@ import { useTranslate } from 'i18n-calypso';
 import Iframe from './preview-iframe';
 import { getPreviewStylesFromVariation } from './utils';
 import type {
-	ThemeStyleVariation,
-	ThemeStyleVariationPreview,
-	ThemeStyleVariationPreviewColorPalette,
-} from '../../types';
+	StyleVariation,
+	StyleVariationPreview,
+	StyleVariationPreviewColorPalette,
+} from '@automattic/design-picker';
 import type { ReactNode } from 'react';
+import './style.scss';
 
 const IFRAME_HEIGHT = 48;
 const COLOR_SWATCH_SIZE = 8;
@@ -63,8 +64,8 @@ const ColorSwatch: React.FC< ColorSwatchProps > = ( { color } ) => {
 };
 
 interface PreviewProps {
-	variation: ThemeStyleVariation;
-	coreColors?: ThemeStyleVariationPreview;
+	variation: StyleVariation;
+	coreColors?: StyleVariationPreview;
 }
 
 const Preview: React.FC< PreviewProps > = ( { variation, coreColors } ) => {
@@ -79,11 +80,11 @@ const Preview: React.FC< PreviewProps > = ( { variation, coreColors } ) => {
 			styles &&
 			Object.entries( styles.color ).reduce( ( filtered, [ key, color ] ) => {
 				if ( color !== styles.color.background && color !== styles.color.foreground ) {
-					filtered[ key as keyof ThemeStyleVariationPreviewColorPalette ] = color;
+					filtered[ key as keyof StyleVariationPreviewColorPalette ] = color;
 				}
 
 				return filtered;
-			}, {} as ThemeStyleVariationPreviewColorPalette ),
+			}, {} as StyleVariationPreviewColorPalette ),
 		[ styles ]
 	);
 
@@ -93,7 +94,7 @@ const Preview: React.FC< PreviewProps > = ( { variation, coreColors } ) => {
 
 	return (
 		<Iframe
-			className="theme-style-variation__preview-iframe"
+			className="style-variation__preview-iframe"
 			style={ { height: IFRAME_HEIGHT } }
 			title={ translate( 'Style variation' ) }
 		>
