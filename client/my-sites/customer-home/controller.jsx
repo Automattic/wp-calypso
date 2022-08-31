@@ -1,9 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
-import getSite from 'calypso/state/sites/selectors/get-site.js';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
+import { getSiteOptions } from '../../state/sites/selectors';
 import CustomerHome from './main';
 
 export default async function ( context, next ) {
@@ -30,8 +30,7 @@ export function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
-	const site = getSite( state, siteId );
-	const options = site?.options;
+	const options = getSiteOptions( state, siteId );
 	const shouldRedirectToLaunchpad = options?.launchpad_screen === 'full';
 
 	if ( shouldRedirectToLaunchpad && isEnabled( 'signup/launchpad' ) ) {
