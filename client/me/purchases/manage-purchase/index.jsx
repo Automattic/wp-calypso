@@ -656,7 +656,7 @@ class ManagePurchase extends Component {
 			const { maximum_units: numberOfIncludedPages } = tier0;
 
 			const description = translate(
-				'Hire a professional to set up your %(numberOfIncludedPages)d page website.',
+				'A professionally built %(numberOfIncludedPages)d page website in 4 business days or less',
 				{
 					args: {
 						numberOfIncludedPages: numberOfIncludedPages,

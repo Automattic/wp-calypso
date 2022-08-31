@@ -249,7 +249,6 @@ function getDIFMPriceDetails( purchase ) {
 function isDIFMPriceBreakdownVisible( purchase ) {
 	// Previous purchases may not have price tier information we do not show a price breakdown in these instances
 	const isPriceTierInfoAvailable = purchase.priceTierList.length > 1;
-
 	const { extraPageCount } = getDIFMPriceDetails( purchase );
 	const isExtraPagesPurchased = extraPageCount > 0;
 
@@ -278,18 +277,6 @@ function PurchaseMetaPrice( { purchase } ) {
 						} ) }
 					</div>
 					<div>
-						{ translate(
-							'%(extraPageCount)d extra pages : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
-							{
-								args: {
-									extraPageCount,
-									costOfExtraPages,
-								},
-								components: {
-									period: <span className="manage-purchase__time-period" />,
-								},
-							}
-						) }
 						{ translate(
 							'%(extraPageCount)d extra page : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
 							'%(extraPageCount)d extra pages : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
