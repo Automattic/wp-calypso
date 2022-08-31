@@ -51,12 +51,12 @@ const PatternsSelector = ( {
 	};
 
 	return (
-		<div className="patterns-selector" style={ show ? {} : { height: 0, overflow: 'hidden' } }>
-			<div className="patterns-selector__header">
+		<div className="pattern-selector" style={ show ? {} : { height: 0, overflow: 'hidden' } }>
+			<div className="pattern-selector__header">
 				<h1>{ title }</h1>
 			</div>
-			<div className="patterns-selector__body">
-				<div className="patterns-selector__block-list" role="listbox">
+			<div className="pattern-selector__body">
+				<div className="pattern-selector__block-list" role="listbox">
 					{ patterns?.map( ( item: Pattern ) => (
 						<div
 							key={ item.id }
@@ -79,28 +79,17 @@ const PatternsSelector = ( {
 					) ) }
 				</div>
 			</div>
-			<div className="patterns-selector__footer">
-				<Button
-					className="patterns-selector__button patterns-selector__button-back"
-					onClick={ handleBackClick }
-				>
+			<div className="pattern-selector__footer">
+				<Button className="pattern-assembler__button" onClick={ handleBackClick }>
 					{ translate( 'Back' ) }
 				</Button>
 				{ selectedPattern && (
-					<Button
-						className="patterns-selector__button patterns-selector__button-continue"
-						onClick={ handleContinueClick }
-						primary
-					>
+					<Button className="pattern-assembler__button" onClick={ handleContinueClick } primary>
 						{ translate( 'Choose' ) }
 					</Button>
 				) }
 				{ ! selectedPattern && pattern && (
-					<Button
-						className="patterns-selector__button patterns-selector__button-continue"
-						onClick={ handleDeleteClick }
-						primary
-					>
+					<Button className="pattern-assembler__button" onClick={ handleDeleteClick } primary>
 						{ translate( 'Delete' ) }
 					</Button>
 				) }

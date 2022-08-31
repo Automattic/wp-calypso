@@ -35,49 +35,59 @@ const PatternLayout = ( {
 			<div className="pattern-layout__body">
 				<ul>
 					{ header ? (
-						<li className="pattern-layout__list-item" onClick={ onSelectHeader }>
+						<li className="pattern-layout__list-item --type-header-icon" onClick={ onSelectHeader }>
 							{ header.name }
 						</li>
 					) : (
-						<li className="pattern-layout__list-item" onClick={ onSelectHeader }>
-							+ { translate( 'Choose a header' ) }
+						<li
+							className="pattern-layout__list-item --type-header-icon --action-color"
+							onClick={ onSelectHeader }
+						>
+							<span className="pattern-layout__add-icon">+</span> { translate( 'Choose a header' ) }
 						</li>
 					) }
 					{ sections?.map( ( { id, name } ) => (
 						<li
 							key={ id }
-							className="pattern-layout__list-item"
+							className="pattern-layout__list-item --type-section-icon"
 							onClick={ () => onSelectSection( { id, name } ) }
 						>
 							{ name }
 						</li>
 					) ) }
 					{ sections?.length ? (
-						<li className="pattern-layout__list-item" onClick={ () => onSelectSection() }>
-							+ { translate( 'Add another section' ) }
+						<li
+							className="pattern-layout__list-item --type-section-icon --action-color"
+							onClick={ () => onSelectSection() }
+						>
+							<span className="pattern-layout__add-icon">+</span>{ ' ' }
+							{ translate( 'Add another section' ) }
 						</li>
 					) : (
-						<li className="pattern-layout__list-item" onClick={ () => onSelectSection() }>
-							+ { translate( 'Add a first section' ) }
+						<li
+							className="pattern-layout__list-item --type-section-icon --action-color"
+							onClick={ () => onSelectSection() }
+						>
+							<span className="pattern-layout__add-icon">+</span>{ ' ' }
+							{ translate( 'Add a first section' ) }
 						</li>
 					) }
 					{ footer ? (
-						<li className="pattern-layout__list-item" onClick={ onSelectFooter }>
+						<li className="pattern-layout__list-item --type-footer-icon" onClick={ onSelectFooter }>
 							{ footer.name }
 						</li>
 					) : (
-						<li className="pattern-layout__list-item" onClick={ onSelectFooter }>
-							+ { translate( 'Choose a footer' ) }
+						<li
+							className="pattern-layout__list-item --type-footer-icon --action-color"
+							onClick={ onSelectFooter }
+						>
+							<span className="pattern-layout__add-icon">+</span> { translate( 'Choose a footer' ) }
 						</li>
 					) }
 				</ul>
 			</div>
 			<div className="pattern-layout__footer">
-				<Button
-					className="pattern-layout__button pattern-layout__button-continue"
-					onClick={ onContinueClick }
-					primary
-				>
+				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>

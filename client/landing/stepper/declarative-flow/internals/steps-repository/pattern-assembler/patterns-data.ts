@@ -40,6 +40,22 @@ const footerPatterns: Pattern[] = [
 		id: 5047,
 		name: 'Footer with Navigation, Contact Details, Social Links, and Subscription Form',
 	},
+	{
+		id: 5877,
+		name: 'Centered footer with social links',
+	},
+	{
+		id: 5880,
+		name: 'Footer with background color and three columns',
+	},
+	{
+		id: 5883,
+		name: 'Footer with credit line and navigation',
+	},
+	{
+		id: 5888,
+		name: 'Footer with navigation and credit line',
+	},
 ];
 
 const sectionPatterns: Pattern[] = [
