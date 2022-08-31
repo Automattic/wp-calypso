@@ -219,8 +219,8 @@ function PluginDetails( props ) {
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
 	const setBreadcrumbs = useCallback(
-		( isEmptyBreadcrumbs ) => {
-			if ( isEmptyBreadcrumbs ) {
+		( isBreadcrumbsPopulated ) => {
+			if ( ! isBreadcrumbsPopulated ) {
 				dispatch(
 					appendBreadcrumb( {
 						label: translate( 'Plugins' ),
@@ -252,7 +252,7 @@ function PluginDetails( props ) {
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	useEffect( () => {
-		setBreadcrumbs( breadcrumbs.length === 0 );
+		setBreadcrumbs( breadcrumbs.length !== 0 );
 	}, [ setBreadcrumbs, breadcrumbs.length ] );
 
 	const getPageTitle = () => {
