@@ -151,7 +151,6 @@ export default function PluginRowFormatter( {
 				canUpdate && (
 					<div className="plugin-row-formatter__toggle">
 						<PluginAutoupdateToggle
-							hideLabel={ ! isSmallScreen }
 							plugin={ pluginOnSite }
 							site={ selectedSite }
 							wporg={ !! item.wporg }
