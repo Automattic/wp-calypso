@@ -1,6 +1,8 @@
+import { dispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
+import { SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
 
@@ -67,6 +69,13 @@ export function getEnhancedTasks(
 						title: translate( 'Launch Link in bio' ),
 						isCompleted: linkInBioSiteLaunchCompleted,
 						dependencies: [ linkInBioLinksEditCompleted ],
+						actionDispatch: async () => {
+							if ( site?.ID ) {
+								await dispatch( SITE_STORE ).launchSite( site.ID );
+							}
+
+							window.location.replace( `/home/${ siteSlug }` );
+						},
 					};
 					break;
 			}
