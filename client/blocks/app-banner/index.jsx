@@ -149,15 +149,10 @@ export class AppBanner extends Component {
 		return null;
 	}
 
-	render() {
-		const { translate, currentSection } = this.props;
-		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
-			return null;
-		}
+	getJetpackAppBanner = ( { translate, currentSection, isRtl } ) => {
+		const { title, copy, icon } = getAppBannerData( translate, currentSection, isRtl );
 
-		const { title, copy } = getAppBannerData( translate, currentSection );
-
-		const jetpackAppBanner = (
+		return (
 			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
 				<Card
 					className={ classNames( 'app-banner', 'is-compact', currentSection, 'jetpack' ) }
@@ -171,7 +166,7 @@ export class AppBanner extends Component {
 						statGroup="calypso_mobile_app_banner"
 						statName="impression"
 					/>
-					<BannerIcon translate={ translate } currentSection={ currentSection } />
+					<BannerIcon icon={ icon } />
 					<div className="app-banner__text-content jetpack">
 						<div className="app-banner__title jetpack">
 							<span> { title } </span>
@@ -196,8 +191,12 @@ export class AppBanner extends Component {
 				</Card>
 			</div>
 		);
+	};
 
-		const wordpressAppBanner = (
+	getWordpressAppBanner = ( { translate, currentSection } ) => {
+		const { title, copy } = getAppBannerData( translate, currentSection );
+
+		return (
 			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
 				<Card
 					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
@@ -238,10 +237,18 @@ export class AppBanner extends Component {
 				</Card>
 			</div>
 		);
+	};
+
+	render() {
+		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
+			return null;
+		}
 
 		const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
-		return displayJetpackAppBranding ? jetpackAppBanner : wordpressAppBanner;
+		return displayJetpackAppBranding
+			? this.getJetpackAppBanner( this.props )
+			: this.getWordpressAppBanner( this.props );
 	}
 }
 
