@@ -23,19 +23,39 @@ export type MShotsOptions = {
 	requeue?: boolean;
 };
 
+function getRetinaSize( multiply: number, { w, h }: MShotsOptions ) {
+	return {
+		width: w * multiply,
+		height: ( h || w ) * multiply,
+	};
+}
+
 export const useMshotsImg = (
 	src: string,
-	options: MShotsOptions
+	options: MShotsOptions,
+	sizes: Array< {
+		width: number;
+		height?: number;
+	} > = []
 ): {
 	isLoading: boolean;
 	isError: boolean;
 	imgProps: Partial< React.ImgHTMLAttributes< HTMLImageElement > >;
 } => {
 	const [ retryCount, setRetryCount ] = useState( 0 );
-	const mshotUrl = useMemo(
-		() => mshotsUrl( src, options, retryCount ),
-		[ src, options, retryCount ]
-	);
+	const { mshotUrl, srcSet } = useMemo( () => {
+		const mshotUrl = mshotsUrl( src, options, retryCount );
+
+		// Add retina sizes 2x and 3x.
+		const srcSet = [ ...sizes, getRetinaSize( 2, options ), getRetinaSize( 3, options ) ]
+			.map( ( { width, height } ) => {
+				const resizedUrl = mshotsUrl( src, { ...options, w: width, h: height }, retryCount );
+				return `${ resizedUrl } ${ width }w`;
+			} )
+			.join( ', ' );
+		return { mshotUrl, srcSet };
+	}, [ src, options, retryCount, sizes ] );
+
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isError, setIsError ] = useState( false );
 
@@ -76,6 +96,6 @@ export const useMshotsImg = (
 	return {
 		isLoading,
 		isError,
-		imgProps: { onLoad, onError, src: mshotUrl, loading: 'lazy' },
+		imgProps: { onLoad, onError, src: mshotUrl, srcSet, loading: 'lazy' },
 	};
 };
