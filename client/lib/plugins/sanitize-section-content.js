@@ -129,12 +129,16 @@ const isValidYoutubeEmbed = ( node ) => {
 
 	const link = root.document.createElement( 'a' );
 	link.href = node.getAttribute( 'src' );
-	const url = new URL( link.href );
+	try {
+		const url = new URL( link.href );
 
-	return (
-		validUrl.isWebUri( node.getAttribute( 'src' ) ) &&
-		( url.hostname === 'youtube.com' || url.hostname === 'www.youtube.com' )
-	);
+		return (
+			validUrl.isWebUri( node.getAttribute( 'src' ) ) &&
+			( url.hostname === 'youtube.com' || url.hostname === 'www.youtube.com' )
+		);
+	} catch ( e ) {
+		return false;
+	}
 };
 
 const replacementFor = ( node ) => {
