@@ -8,12 +8,15 @@ export const isolatePopularItems = < Item extends { productSlug: string } >(
 	popularItemSlugs: Array< Item[ 'productSlug' ] >
 ) => {
 	const popularItems: typeof allItems = [];
+	const otherItems: typeof allItems = [];
 
 	for ( const item of allItems ) {
 		if ( popularItemSlugs.includes( item.productSlug ) ) {
 			popularItems.push( item );
+		} else {
+			otherItems.push( item );
 		}
 	}
 
-	return [ popularItems, allItems ] as const;
+	return [ popularItems, otherItems ] as const;
 };
