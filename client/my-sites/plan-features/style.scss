@@ -894,10 +894,10 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	position: relative;
 
 	.is-section-signup & {
-		position: absolute;
-		width: 100%;
-		left: 50%;
-		transform: translateX(-50%);
+		--approximate-viewport-scrollbar-width: 20px;
+
+		width: calc(100vw - var( --approximate-viewport-scrollbar-width ));
+		margin-left: calc(50% - 50vw + var(--approximate-viewport-scrollbar-width) / 2);
 
 		@media ( min-width: 1600px ) {
 			max-width: 1600px;
