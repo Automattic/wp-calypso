@@ -490,7 +490,8 @@ class DomainsStep extends Component {
 			if ( initialState ) {
 				initialState.searchResults = null;
 				initialState.subdomainSearchResults = null;
-				initialState.loadingResults = true;
+				// If length is less than 2 it will not fetch any data.
+				initialState.loadingResults = initialQuery.length >= 2;
 				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
