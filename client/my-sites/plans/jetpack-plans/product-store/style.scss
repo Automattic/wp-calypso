@@ -234,10 +234,6 @@
 		border: none;
 	}
 
-	.jetpack-product-store__view-filter {
-		margin-top: 0.75em;
-	}
-
 	.jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control {
 		display: flex;
 		flex-direction: row;
@@ -248,7 +244,7 @@
 		border-color: var( --studio-gray-5 );
 		border-radius: 8px; /* stylelint-disable-line */
 		color: var( --color-text );
-		margin: 0.5em auto 1em;
+		margin: 0 auto 1em;
 		max-width: 21.4375em;
 
 		.segmented-control__item {
@@ -294,6 +290,19 @@
 				border-color: #0000000a;
 			}
 		}
+	}
+
+	.intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__content {
+		margin-bottom: 40px;
+		height: auto;
+
+		@include break-large {
+			max-height: 32px;
+		}
+	}
+
+	.intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__item {
+		max-height: 32px;
 	}
 }
 
