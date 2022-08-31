@@ -1,9 +1,12 @@
 import { Button, Dialog, Gridicon, ScreenReaderText } from '@automattic/components';
+import { compose } from '@wordpress/compose';
+import { withDispatch } from '@wordpress/data';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import PulsingDot from 'calypso/components/pulsing-dot';
+import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { addQueryArgs } from 'calypso/lib/route';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
@@ -15,6 +18,7 @@ import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
 	doesThemeBundleSoftwareSet,
+	getThemeSoftwareSets,
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeDetailsUrl,
@@ -60,9 +64,13 @@ class ThanksModal extends Component {
 			this.props.requestSite( this.props.siteId );
 
 			// Redirect to plugin-bundle flow for themes including software (like woocommerce)
-			const { siteSlug, doesCurrentThemeBundleSoftware } = this.props;
-			if ( doesCurrentThemeBundleSoftware ) {
-				// Need to set pluginbundle
+			const { currentThemeSoftwareSets } = this.props;
+			if ( Array.isArray( currentThemeSoftwareSets ) && currentThemeSoftwareSets.length > 0 ) {
+				const softwareSet = currentThemeSoftwareSets[ 0 ];
+				const { setBundledPluginSlug, siteSlug } = this.props;
+
+				// Set the bundled plugin slug in the site store, redirect to stepper
+				setBundledPluginSlug( softwareSet );
 				const dest = `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle`;
 				window.location.replace( dest );
 			}
@@ -319,6 +327,7 @@ const ConnectedThanksModal = connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			currentTheme,
 			doesCurrentThemeBundleSoftware: doesThemeBundleSoftwareSet( state, currentThemeId ),
+			currentThemeSoftwareSets: getThemeSoftwareSets( state, currentThemeId ),
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,
@@ -335,4 +344,11 @@ const ConnectedThanksModal = connect(
 	}
 )( localize( ThanksModal ) );
 
-export default ConnectedThanksModal;
+// export default ConnectedThanksModal;
+
+const DoubleConnectedThanksModal = compose(
+	withDispatch( ( dispatch ) => ( {
+		setBundledPluginSlug: dispatch( SITE_STORE ).setBundledPluginSlug,
+	} ) )
+)( ConnectedThanksModal );
+export default DoubleConnectedThanksModal;

@@ -28,6 +28,7 @@ export { getThemeHelpUrl } from 'calypso/state/themes/selectors/get-theme-help-u
 export { getThemePreviewThemeOptions } from 'calypso/state/themes/selectors/get-theme-preview-theme-options';
 export { getThemePurchaseUrl } from 'calypso/state/themes/selectors/get-theme-purchase-url';
 export { getThemeRequestErrors } from 'calypso/state/themes/selectors/get-theme-request-errors';
+export { getThemeSoftwareSets } from 'calypso/state/themes/selectors/get-theme-software-sets';
 export { getThemesForQuery } from 'calypso/state/themes/selectors/get-themes-for-query';
 export { getThemesForQueryIgnoringPage } from 'calypso/state/themes/selectors/get-themes-for-query-ignoring-page';
 export { getThemesFoundForQuery } from 'calypso/state/themes/selectors/get-themes-found-for-query';
