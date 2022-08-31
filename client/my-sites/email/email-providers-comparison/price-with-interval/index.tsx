@@ -19,10 +19,13 @@ const getSalePrice = ( {
 	if ( hasIntroductoryOfferFreeTrial( product ) ) {
 		return 0;
 	}
-	if ( isEligibleForIntroductoryOffer && ! isDiscounted ) {
+	if ( isDiscounted ) {
+		return product?.sale_cost ?? 0;
+	}
+	if ( isEligibleForIntroductoryOffer ) {
 		return product?.introductory_offer?.cost_per_interval ?? 0;
 	}
-	return product?.sale_cost ?? 0;
+	return 0;
 };
 
 const SalePriceWithInterval = ( {
