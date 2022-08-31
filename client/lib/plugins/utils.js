@@ -381,8 +381,13 @@ export const getManageConnectionHref = ( siteSlug ) => {
  * Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
  * but require a paid upgrade to function.
  *
+ * @typedef {object} PluginVariations
+ * @property {object} monthly The plugin's monthly variation
+ * @property {string} monthly.product_slug The plugin's monthly variation's product slug
+ * @property {object} yearly The plugin's yearly variation
+ * @property {string} yearly.product_slug The plugin's yearly variation's product slug
  * @param {object} plugin
- * @returns {object}
+ * @returns {PluginVariations}
  */
 export function getPreinstalledPremiumPluginsVariations( plugin ) {
 	if ( ! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] || !! plugin.variations ) {

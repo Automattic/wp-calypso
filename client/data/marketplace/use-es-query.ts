@@ -84,8 +84,6 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			railcar,
 		};
 
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
 		plugin.variations = getPreinstalledPremiumPluginsVariations( plugin );
 
 		return plugin;
