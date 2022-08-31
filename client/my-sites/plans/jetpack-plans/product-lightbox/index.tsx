@@ -1,8 +1,6 @@
-// import FoldableCard from 'calypso/components/foldable-card';
 import { Button } from '@automattic/components';
 import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
-import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
 import { SelectorProduct } from '../types';
 import BackupIcon from './icons/backup.svg';
 import { Tags } from './icons/tags';
@@ -14,10 +12,43 @@ type Props = {
 	onClose: () => void;
 };
 
+type Option = {
+	value: string;
+	label: string;
+	checked?: boolean;
+};
+type OptionProps = {
+	options: Option[];
+	onChange: ( value: string ) => void;
+};
+
+const Options: React.FC< OptionProps > = ( { options, onChange } ) => {
+	return (
+		<>
+			{ options.map( ( option ) => {
+				return (
+					<label key={ option.value } className="product-lightbox__variants-option-label">
+						<input
+							type="radio"
+							name="variant-select[]"
+							value={ option.value }
+							checked={ option.checked }
+							onChange={ ( el ) => {
+								onChange( el.target.value );
+							} }
+						/>
+						<span>{ option.label }</span>
+					</label>
+				);
+			} ) }
+		</>
+	);
+};
+
 const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 
-	const [ checked, setChecked ] = useState( 1 );
+	const [ checked, setChecked ] = useState( '1' );
 
 	return (
 		<Modal
@@ -36,11 +67,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 					<div className="product-lightbox__detail-desc">
 						<p>
 							Protect your site or store. Save every change with real-time cloud backups, and
-							restore in one click from anywhere. Protect your site or store. Save every change with
-							real-time cloud backups, and restore in one click from anywhere. Protect your site or
-							store. Save every change with real-time cloud backups, and restore in one click from
-							anywhere. Protect your site or store. Save every change with real-time cloud backups,
-							and restore in one click from anywhere.
+							restore in one click from anywhere.
 						</p>
 					</div>
 					<div className="product-lightbox__detail-tags">
@@ -95,17 +122,12 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 					<div className="product-lightbox__variants-content">
 						<p>Choose a storage option:</p>
 						<div className="product-lightbox__variants-option">
-							<MultiCheckbox
+							<Options
 								options={ [
-									{ value: 1, label: '10GB' },
-									{ value: 2, label: '1TB(1,000GB)' },
+									{ value: '1', label: '10GB', checked: checked === '1' },
+									{ value: '2', label: '1TB(1,000GB)', checked: checked === '2' },
 								] }
-								checked={ [ checked ] }
-								// TODO: Fix types of MultiCheckbox to avoid `any`
-								//eslint-disable-next-line @typescript-eslint/no-explicit-any
-								onChange={ ( list: any ) => {
-									setChecked( Number.parseInt( list.value[ list.value.length - 1 ] ) );
-								} }
+								onChange={ setChecked }
 							/>
 						</div>
 
