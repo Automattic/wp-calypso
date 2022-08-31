@@ -57,7 +57,7 @@ export type HeroImageProps = {
 	item: SelectorProduct;
 };
 
-export type CreateCheckoutURLProps = ProductStoreBaseProps & {
+export type UseStoreItemInfoProps = ProductStoreBaseProps & {
 	createCheckoutURL?: PurchaseURLCallback;
 	duration: Duration;
 	onClickPurchase?: PurchaseCallback;
@@ -66,10 +66,13 @@ export type CreateCheckoutURLProps = ProductStoreBaseProps & {
 export type ItemPriceProps = ProductStoreBaseProps &
 	HeroImageProps & {
 		isOwned?: boolean;
+		isIncludedInPlan?: boolean;
 	};
 
 export type FeaturedItemCardProps = ItemPriceProps & {
 	checkoutURL?: string;
+	ctaAsPrimary?: boolean;
+	ctaLabel: React.ReactNode;
 	hero: React.ReactNode;
 	item: SelectorProduct;
 	onClickMore: VoidFunction;
