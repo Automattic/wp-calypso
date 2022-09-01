@@ -53,10 +53,10 @@
 		list-style-type: none;
 		display: grid;
 		grid-template-columns: 1fr;
+		gap: 24px;
 		margin-top: 24px;
 
 		@media only screen and ( min-width: 821px ) {
-			  grid-column-gap: 24px;
 			  grid-template-columns: 1fr 1fr;
 			  margin: 32px auto 0;
 		  }
@@ -105,6 +105,22 @@
 		}
 	}
 
+	.item-price__is-owned {
+		font-size: $font-body-extra-small;
+		color: var( --studio-jetpack-green-50 );
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+	}
+	.item-price__is-owned--dot {
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		background: var( --studio-jetpack-green-50 );
+		border-radius: 50%; // stylelint-disable-line declaration-property-unit-allowed-list
+		margin-inline-end: 4px;
+	}
+
 	&__products-list-all {
 		margin-top: 4em;
 	}
@@ -128,6 +144,7 @@
 	&__items-list .button.is-primary {
 		color: var( --color-text-inverted );
 		min-width: 5.7em;
+		border: none;
 	}
 
 	.jetpack-product-store__view-filter {

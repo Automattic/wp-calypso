@@ -11,14 +11,16 @@ import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSitePlan, getSiteProducts } from 'calypso/state/sites/selectors';
 import { SelectorProduct } from '../../types';
-import { CreateCheckoutURLProps } from '../types';
+import { UseStoreItemInfoProps } from '../types';
 
-export const useCreateCheckout = ( {
+const isDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
+
+export const useStoreItemInfo = ( {
 	createCheckoutURL,
 	duration: selectedTerm,
 	onClickPurchase,
 	siteId,
-}: CreateCheckoutURLProps ) => {
+}: UseStoreItemInfoProps ) => {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
@@ -45,18 +47,25 @@ export const useCreateCheckout = ( {
 		[ isOwned, selectedTerm ]
 	);
 
-	const getPurchase = useCallback(
-		( item: SelectorProduct ) => {
-			const isItemPlanFeature = !! (
-				sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug )
-			);
+	const isPlanFeature = useCallback(
+		( item: SelectorProduct ) =>
+			!! ( sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug ) ),
+		[ sitePlan ]
+	);
 
-			const isDeprecated = Boolean( item.legacy );
-			const isIncludedInPlan = ! isOwned && isItemPlanFeature;
-			const isSuperseded = !! (
-				! isDeprecated &&
-				! isOwned &&
-				! isIncludedInPlan &&
+	const isIncludedInPlan = useCallback(
+		( item: SelectorProduct ) => {
+			return ! isOwned( item ) && isPlanFeature( item );
+		},
+		[ isOwned, isPlanFeature ]
+	);
+
+	const isSuperseded = useCallback(
+		( item: SelectorProduct ) => {
+			return !! (
+				! isDeprecated( item ) &&
+				! isOwned( item ) &&
+				! isIncludedInPlan( item ) &&
 				sitePlan &&
 				item &&
 				isSupersedingJetpackItem(
@@ -64,16 +73,30 @@ export const useCreateCheckout = ( {
 					item.productSlug as JetpackPurchasableItemSlug
 				)
 			);
+		},
+		[ isIncludedInPlan, isOwned, sitePlan ]
+	);
+
+	const isIncludedInPlanOrSuperseded = useCallback(
+		( item: SelectorProduct ) => isIncludedInPlan( item ) || isSuperseded( item ),
+		[ isIncludedInPlan, isSuperseded ]
+	);
+
+	const getPurchase = useCallback(
+		( item: SelectorProduct ) => {
+			const isItemPlanFeature = isPlanFeature( item );
+
+			const isItemSuperseded = isSuperseded( item );
 
 			// If item is a plan feature, use the plan purchase object.
 			const purchase =
-				isItemPlanFeature || isSuperseded
+				isItemPlanFeature || isItemSuperseded
 					? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
 					: getPurchaseByProductSlug( purchases, item.productSlug );
 
 			return purchase;
 		},
-		[ isOwned, purchases, sitePlan ]
+		[ isPlanFeature, isSuperseded, purchases, sitePlan?.product_slug ]
 	);
 
 	const getCheckoutURL = useCallback(
@@ -94,8 +117,25 @@ export const useCreateCheckout = ( {
 		() => ( {
 			getCheckoutURL,
 			getOnClickPurchase,
+			isDeprecated,
+			isIncludedInPlan,
+			isIncludedInPlanOrSuperseded,
 			isOwned,
+			isPlanFeature,
+			isSuperseded,
+			isUpgradeableToYearly,
+			sitePlan,
 		} ),
-		[ getCheckoutURL, getOnClickPurchase, isOwned ]
+		[
+			getCheckoutURL,
+			getOnClickPurchase,
+			isIncludedInPlan,
+			isIncludedInPlanOrSuperseded,
+			isOwned,
+			isPlanFeature,
+			isSuperseded,
+			isUpgradeableToYearly,
+			sitePlan,
+		]
 	);
 };
