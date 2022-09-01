@@ -55,7 +55,6 @@ export class TestAccount {
 		const loginPage = new LoginPage( page );
 
 		await loginPage.visit();
-		await page.context().clearCookies();
 		await loginPage.logInWithCredentials( this.credentials.username, this.credentials.password );
 
 		// Handle possible 2FA.
