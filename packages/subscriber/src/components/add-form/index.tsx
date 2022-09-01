@@ -59,7 +59,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		__( 'parents@example.com' ),
 		__( 'friend@example.com' ),
 	];
-	const inProgress = useInProgressState();
+	const inProgress = useInProgressState( 0 );
 	const prevInProgress = useRef( inProgress );
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
