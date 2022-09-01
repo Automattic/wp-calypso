@@ -250,13 +250,13 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 
 			uploadPluginSourceMaps(
 				slug = "wpcom-block-editor",
-				buildId = "WPComPlugins_WpcomBlockEditor",
+				buildId = "calypso_WPComPlugins_WpcomBlockEditor",
 				wpcomURL = "~/wpcom-block-editor"
 			)
 
 			uploadPluginSourceMaps(
 				slug = "notifications",
-				buildId = "WPComPlugins_Notifications",
+				buildId = "calypso_WPComPlugins_Notifications",
 				wpcomURL = "~/notifications"
 			)
 		}
