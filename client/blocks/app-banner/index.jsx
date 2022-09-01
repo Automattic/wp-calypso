@@ -261,7 +261,7 @@ function BannerIcon( { icon } ) {
 			autoplay: true,
 			path: icon,
 		} );
-	}, [] );
+	}, [ icon ] );
 
 	return <div className="app-banner__icon"></div>;
 }
