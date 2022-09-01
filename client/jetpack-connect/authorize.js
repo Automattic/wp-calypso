@@ -3,6 +3,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
 } from '@automattic/calypso-products';
+import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { Button, Card, Gridicon, Spinner } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -75,6 +76,8 @@ import {
 	isSsoApproved,
 	retrieveMobileRedirect,
 	retrievePlan,
+	retrieveSource,
+	clearSource,
 } from './persistence-utils';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
@@ -719,7 +722,7 @@ export class JetpackAuthorize extends Component {
 
 	getRedirectionTarget() {
 		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
-		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
+		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct, fromSource } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if ( 'pressable' === partnerSlug ) {
@@ -754,6 +757,16 @@ export class JetpackAuthorize extends Component {
 				redirectAfterAuth
 			);
 			return redirectAfterAuth;
+		}
+
+		if ( fromSource === 'import' ) {
+			clearSource();
+			const jpcTarget = getUrlFromParts( {
+				...getUrlParts( homeUrl + '/wp-admin/admin.php' ),
+				search: '?page=jetpack',
+				hash: '/recommendations',
+			} );
+			return jpcTarget;
 		}
 
 		const jpcTarget = addQueryArgs(
@@ -935,6 +948,7 @@ const connectComponent = connect(
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
 		const selectedPlanSlug = retrievePlan();
+		const fromSource = retrieveSource();
 
 		return {
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
@@ -958,6 +972,7 @@ const connectComponent = connect(
 			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
+			fromSource,
 		};
 	},
 	{
