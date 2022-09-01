@@ -56,8 +56,7 @@ const ThemeInfoPopup = ( { slug }: ThemeInfoPopupProps ) => {
 	}
 
 	const { author, author_uri, description } = theme;
-	const features = theme.taxonomies.features;
-
+	const features = theme.taxonomies.theme_feature;
 	return (
 		<div className="theme-info-popup">
 			<ThemeDescription author_uri={ author_uri } author={ author } description={ description } />
