@@ -37,7 +37,7 @@ export default function PromotedPosts() {
 	}
 
 	return (
-		<Main className="promote-post">
+		<Main wideLayout className="promote-post">
 			<DocumentHead title={ translate( 'Advertising' ) } />
 			<SitePreview />
 			<FormattedHeader
