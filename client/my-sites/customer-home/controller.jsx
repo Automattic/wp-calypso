@@ -1,8 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { select } from '@wordpress/data';
 import page from 'page';
-import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
+import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
+import { SITE_STORE } from '../../landing/stepper/stores';
 import CustomerHome from './main';
 
 export default async function ( context, next ) {
@@ -29,7 +31,15 @@ export function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
-	const options = getSiteOptions( state, siteId );
+	const { getSite, getSiteOptions } = select( SITE_STORE );
+	const options = getSiteOptions( siteId );
+
+	console.log( {
+		site: getSite( siteId ),
+		option: getSiteOptions( siteId ),
+		select: select( SITE_STORE ),
+	} );
+
 	const shouldRedirectToLaunchpad = options?.launchpad_screen === 'full';
 
 	if ( shouldRedirectToLaunchpad && isEnabled( 'signup/launchpad' ) ) {
