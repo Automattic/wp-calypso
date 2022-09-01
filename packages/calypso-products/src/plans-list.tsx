@@ -433,9 +433,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getNewsletterDescription: () =>
 		i18n.translate(
-			'Jumpstart your Newsletter with a custom domain, ad-free experience, ' +
-				'and the ability to sell subscriptions, take payments, and collect donations from ' +
-				'day one. Backed with email support to help get everything just right.'
+			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
 		),
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -456,9 +454,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getLinkInBioDescription: () =>
 		i18n.translate(
-			'Stand out and unlock earnings with an ad-free site, custom domain, ' +
-				'and the ability to sell subscriptions, take payments, and collect donations. ' +
-				'Backed with email support to help get your site just right.'
+			'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with email support to help get your site just right.'
 		),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -724,9 +720,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getNewsletterDescription: () =>
 		i18n.translate(
-			'Take your Newsletter further, faster. Get everything included in Personal, ' +
-				'plus premium design themes, baked-in video uploads, ad monetization, deep visitor ' +
-				'insights from Google Analytics, and live chat support.'
+			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
@@ -754,9 +748,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getLinkInBioDescription: () =>
 		i18n.translate(
-			'Take your site further, faster. Get everything included in Personal, ' +
-				'plus premium design themes, baked-in video uploads, ad monetization, deep visitor ' +
-				'insights from Google Analytics, and live chat support.'
+			'Take your site further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
 		),
 	getLinkInBioSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
