@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const NoIcon = styled.div( {
 	fontSize: 'xx-large',
