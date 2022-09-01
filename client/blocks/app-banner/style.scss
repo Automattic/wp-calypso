@@ -94,7 +94,9 @@ body.app-banner-is-visible {
 		/* stylelint-disable-next-line */
 		font-size: rem( 28px ); //typography-exception
 		font-weight: bold;
-		padding: 0 30px;
+		max-width: 18em;
+		margin-left: auto;
+		margin-right: auto;
 	}
 }
 
@@ -107,7 +109,9 @@ body.app-banner-is-visible {
 		/* stylelint-disable-next-line */
 		font-size: rem( 16px ); //typography-exception
 		line-height: 21px;
-		padding: 0 30px;
+		max-width: 18em;
+		margin-left: auto;
+		margin-right: auto;
 	}
 }
 
