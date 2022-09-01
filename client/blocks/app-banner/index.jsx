@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
+import { compose } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { get } from 'lodash';
@@ -348,4 +349,8 @@ const mapDispatchToProps = {
 	dismissAppBanner,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( withRtl( localize( AppBanner ) ) );
+export default compose(
+	connect( mapStateToProps, mapDispatchToProps ),
+	withRtl,
+	localize
+)( AppBanner );
