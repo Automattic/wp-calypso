@@ -3,8 +3,9 @@ import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import Checklist from './checklist';
-import { getArrayOfFilteredTasks } from './task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -25,7 +26,7 @@ function getUrlInfo( url: string ) {
 	return [ siteName ? siteName[ 0 ] : '', topLevelDomain ? topLevelDomain[ 0 ] : '' ];
 }
 
-function getChecklistCompletionProgress( tasks: Task[] ) {
+function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	if ( ! tasks ) {
 		return;
 	}
@@ -42,10 +43,12 @@ const Sidebar = ( { siteSlug, submit }: SidebarProps ) => {
 	let topLevelDomain = '';
 	const flow = useFlowParam();
 	const translate = useTranslate();
+	const site = useSite();
 	const translatedStrings = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
-	const taskCompletionProgress =
-		arrayOfFilteredTasks && getChecklistCompletionProgress( arrayOfFilteredTasks );
+	const enhancedTasks = site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit );
+
+	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 
 	if ( siteSlug ) {
 		[ siteName, topLevelDomain ] = getUrlInfo( siteSlug );
@@ -76,7 +79,7 @@ const Sidebar = ( { siteSlug, submit }: SidebarProps ) => {
 					<span>{ siteName }</span>
 					<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 				</div>
-				<Checklist siteSlug={ siteSlug } tasks={ tasks } flow={ flow } submit={ submit } />
+				<Checklist tasks={ enhancedTasks } />
 			</div>
 		</div>
 	);
