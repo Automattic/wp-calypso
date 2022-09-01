@@ -221,15 +221,8 @@ export const siteSetupFlow: Flow = {
 						theme_software_set.length > 0 &&
 						siteSlug
 					) {
-						// Don't set it, let the new GetCurrentThemeSoftwareSets set it instead
-						// setBundledPluginSlug( siteSlug, theme_software_set[ 0 ].slug ); // only install first plugin
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
 					}
-
-					// We know this theme doesn't have a plugin bundled, so clear it in the store
-					// if ( siteSlug ) {
-					// 	setBundledPluginSlug( siteSlug, '' );
-					// }
 
 					return exitFlow( `/home/${ siteSlug }` );
 				}
