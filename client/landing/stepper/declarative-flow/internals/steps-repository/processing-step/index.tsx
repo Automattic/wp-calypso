@@ -52,6 +52,8 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 					setDestinationState( destination );
 					setHasActionSuccessfullyRun( true );
 				} catch ( e ) {
+					// eslint-disable-next-line no-console
+					console.error( 'ProcessingStep failed:', e );
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
 			} else {
