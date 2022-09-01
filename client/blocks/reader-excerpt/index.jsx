@@ -4,12 +4,7 @@ import AutoDirection from 'calypso/components/auto-direction';
 import './style.scss';
 
 const ReaderExcerpt = ( { post, isDiscover } ) => {
-	let excerpt = post.better_excerpt || post.excerpt;
-
-	// Force post.excerpt for Discover only
-	if ( isDiscover ) {
-		excerpt = post.excerpt;
-	}
+	let excerpt = post.content_no_html || post.excerpt;
 
 	return (
 		<AutoDirection>
