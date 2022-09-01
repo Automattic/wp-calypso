@@ -187,7 +187,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 		if ( authState?.auth_url ) {
 			// if redirect URL is set, append to to the response URL as a query param.
 			if ( redirectToAfterLoginUrl ) {
-				authState.auth_url = addQueryArgs( authState?.auth_url, {
+				authState.auth_url = addQueryArgs( authState.auth_url, {
 					redirect_to: redirectToAfterLoginUrl,
 				} );
 			}
