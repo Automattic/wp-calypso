@@ -191,7 +191,9 @@ private object InlineHelp : WPComPluginBuild(
 
 private object GutenbergUploadSourceMapsToSentry: BuildType() {
 	init {
-		name = "Upload Gutenberg Source Maps to Sentry";
+		name = "Upload Source Maps";
+		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-comment by a WPCOM post-deploy job.";
+
 		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
 
 		// Only needed so that we can test the job in different branches.
