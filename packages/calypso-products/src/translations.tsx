@@ -451,6 +451,21 @@ export const getJetpackProductsFeaturedText = (): Record< string, TranslateResul
 	const videoPressFeaturedText = translate(
 		'Own your content. High-quality, ad-free video build specifically for WordPress.'
 	);
+	const antiSpamFeaturedText = translate(
+		'Stop spam in comments and forms. Save time through automation and get rid of annoying CAPTCHAs.'
+	);
+	const scanFeaturedText = translate(
+		'Stay ahead of security threats. Automattic scanning and one-click fixes give you and your customers peace of mind.'
+	);
+	const searchFeaturedText = translate(
+		'Instant search helps your visitors actually find what they need and improves conversion.'
+	);
+	const boostFeaturedText = translate(
+		'Instant speed and SEO boost. Get the same advantages as the top sites, no developer required.'
+	);
+	const socialFeaturedText = translate(
+		'Write once, post everywhere. Easily share your content on social media from WordPress.'
+	);
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
@@ -463,6 +478,18 @@ export const getJetpackProductsFeaturedText = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressFeaturedText,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressFeaturedText,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamFeaturedText,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamFeaturedText,
+		[ PRODUCT_JETPACK_SCAN ]: scanFeaturedText,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanFeaturedText,
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanFeaturedText,
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanFeaturedText,
+		[ PRODUCT_JETPACK_SEARCH ]: searchFeaturedText,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchFeaturedText,
+		[ PRODUCT_JETPACK_BOOST ]: boostFeaturedText,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialFeaturedText,
 	};
 };
 export const useJetpack10GbStorageAmountText = (): TranslateResult => {
