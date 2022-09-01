@@ -4,10 +4,9 @@ import { CompactCard, Gridicon } from '@automattic/components';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { pick } from 'lodash';
 import page from 'page';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -36,7 +35,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	getProductsList,
 	getProductDisplayCost,
-	getProductCost,
 	getProductBySlug,
 	isProductsListFetching,
 } from 'calypso/state/products-list/selectors';
@@ -59,10 +57,13 @@ import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import PurchaseModal from './purchase-modal';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
+import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { PaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
 import './style.scss';
 
 const debug = debugFactory( 'calypso:upsell-nudge' );
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
 /**
@@ -73,35 +74,46 @@ export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
 
-export class UpsellNudge extends Component {
-	static propTypes = {
-		receiptId: PropTypes.number,
-		upsellType: PropTypes.string,
-		upgradeItem: PropTypes.string,
-		siteSlugParam: PropTypes.string,
+export interface UpsellNudgeManualProps {
+	receiptId?: number;
+	upsellType: string;
+	upgradeItem?: string;
+	siteSlugParam?: string;
+}
 
-		// Below are provided by HOCs
-		currencyCode: PropTypes.string,
-		isLoading: PropTypes.bool,
-		hasProductsList: PropTypes.bool,
-		hasSitePlans: PropTypes.bool,
-		product: PropTypes.object,
-		productCost: PropTypes.number,
-		productDisplayCost: PropTypes.string,
-		planRawPrice: PropTypes.string,
-		planDiscountedRawPrice: PropTypes.string,
-		isLoggedIn: PropTypes.bool,
-		siteSlug: PropTypes.string,
-		selectedSiteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
-		hasSevenDayRefundPeriod: PropTypes.bool,
-		trackUpsellButtonClick: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
-		cards: PropTypes.arrayOf( PropTypes.object ),
-		cart: PropTypes.object,
-		isFetchingStoredCards: PropTypes.bool,
-	};
+// Below are provided by HOCs
+export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
+	currencyCode: string | null;
+	isLoading?: boolean;
+	hasProductsList?: boolean;
+	hasSitePlans?: boolean;
+	product: MinimalRequestCartProduct | undefined;
+	productDisplayCost?: string | null;
+	planRawPrice?: number;
+	planDiscountedRawPrice?: number;
+	isLoggedIn?: boolean;
+	siteSlug?: string | null;
+	selectedSiteId: string | number | undefined | null;
+	hasSevenDayRefundPeriod?: boolean;
+	trackUpsellButtonClick: ( key: string ) => void;
+	translate: ReturnType< typeof useTranslate >;
+	cards: PaymentMethod[];
+	isFetchingStoredCards?: boolean;
+	currentPlanTerm: string;
+}
 
-	state = {
+export type UpsellNudgeProps = UpsellNudgeManualProps & UpsellNudgeAutomaticProps;
+
+interface UpsellNudgeState {
+	cartItem: MinimalRequestCartProduct | null;
+	showPurchaseModal: boolean;
+	isContactInfoValid: boolean;
+}
+
+export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState > {
+	lastCardIds: string[] | undefined = undefined;
+
+	state: UpsellNudgeState = {
 		cartItem: null,
 		showPurchaseModal: false,
 		isContactInfoValid: false,
@@ -132,8 +144,8 @@ export class UpsellNudge extends Component {
 		debug( 'validating contact info' );
 
 		const storedCard = this.props.cards[ 0 ];
-		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
-		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
+		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' ) ?? '';
+		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' ) ?? '';
 
 		const validateContactDetails = async () => {
 			const contactInfo = {
@@ -171,7 +183,7 @@ export class UpsellNudge extends Component {
 			return true;
 		}
 		cardIds.forEach( ( id ) => {
-			if ( ! this.lastCardIds.includes( id ) ) {
+			if ( ! this.lastCardIds?.includes( id ) ) {
 				this.lastCardIds = cardIds;
 				return true;
 			}
@@ -188,7 +200,7 @@ export class UpsellNudge extends Component {
 				<QuerySites siteId={ selectedSiteId } />
 				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
-				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
+				{ ! hasSitePlans && <QuerySitePlans siteId={ parseInt( String( selectedSiteId ), 10 ) } /> }
 				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 				{ this.preloadIconsForPurchaseModal() }
@@ -291,7 +303,6 @@ export class UpsellNudge extends Component {
 			receiptId,
 			currencyCode,
 			currentPlanTerm,
-			productCost,
 			planRawPrice,
 			planDiscountedRawPrice,
 			isLoggedIn,
@@ -332,14 +343,13 @@ export class UpsellNudge extends Component {
 			case PROFESSIONAL_EMAIL_UPSELL:
 				return (
 					<ProfessionalEmailUpsell
-						currencyCode={ currencyCode }
-						domainName={ upgradeItem }
+						currencyCode={ currencyCode ?? 'USD' }
+						domainName={ upgradeItem ?? '' }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						intervalLength={
 							currentPlanTerm === TERM_MONTHLY ? IntervalLength.MONTHLY : IntervalLength.ANNUALLY
 						}
-						productCost={ productCost }
 						/* Use the callback form of setState() to ensure handleClickAccept()
 						 is called after the state update */
 						setCartItem={ ( newCartItem, callback = noop ) =>
@@ -352,7 +362,7 @@ export class UpsellNudge extends Component {
 
 	getThankYouPageUrlForIncomingCart = ( shouldHideUpsellNudges = true ) => {
 		const getThankYouPageUrlArguments = {
-			siteSlug: this.props.siteSlug,
+			siteSlug: this.props.siteSlug ?? undefined,
 			receiptId: this.props.receiptId,
 			noPurchaseMade: ! this.props.receiptId,
 			cart: this.props.cart,
@@ -385,16 +395,19 @@ export class UpsellNudge extends Component {
 		}
 	};
 
-	handleClickAccept = ( buttonAction ) => {
+	handleClickAccept = ( buttonAction: string ) => {
 		const { product, siteSlug, trackUpsellButtonClick, upgradeItem, upsellType } = this.props;
 
 		trackUpsellButtonClick(
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
 
-		const productToAdd = PROFESSIONAL_EMAIL_UPSELL === upsellType ? this.state.cartItem : product;
+		let productToAdd = product;
+		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType && this.state.cartItem ) {
+			productToAdd = this.state.cartItem;
+		}
 
-		if ( this.isEligibleForOneClickUpsell( buttonAction ) ) {
+		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd ) {
 			this.setState( {
 				showPurchaseModal: true,
 			} );
@@ -413,7 +426,7 @@ export class UpsellNudge extends Component {
 
 		// Professional Email needs to add the locally built cartItem to the cart,
 		// as we need to handle validation failures before redirecting to checkout.
-		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType ) {
+		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType && productToAdd ) {
 			// If we don't have an existing destination, calculate the thank you destination for
 			// the original cart contents, and only store it if the cart update succeeds.
 			const destinationFromCookie = retrieveSignupDestination();
@@ -449,7 +462,7 @@ export class UpsellNudge extends Component {
 			: page( `/checkout/${ upgradeItem }` );
 	};
 
-	isEligibleForOneClickUpsell = ( buttonAction ) => {
+	isEligibleForOneClickUpsell = ( buttonAction: string ) => {
 		const { product, cards, siteSlug, upsellType } = this.props;
 		const { cartItem } = this.state;
 
@@ -497,6 +510,10 @@ export class UpsellNudge extends Component {
 			this.setState( { showPurchaseModal: false } );
 		};
 
+		if ( ! this.props.siteSlug ) {
+			return null;
+		}
+
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
 				<PurchaseModal
@@ -519,12 +536,12 @@ export class UpsellNudge extends Component {
 	};
 }
 
-const trackUpsellButtonClick = ( eventName ) => {
+const trackUpsellButtonClick = ( eventName: string ) => {
 	// Track upsell get started / accept / decline events
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
-const getProductSlug = ( upsellType, productAlias, planTerm ) => {
+const getProductSlug = ( upsellType: string, productAlias: string, planTerm: string ) => {
 	switch ( upsellType ) {
 		case BUSINESS_PLAN_UPGRADE_UPSELL:
 			return getPlanByPathSlug( productAlias )?.getStoreSlug();
@@ -540,17 +557,21 @@ const getProductSlug = ( upsellType, productAlias, planTerm ) => {
 };
 
 export default connect(
-	( state, props ) => {
+	( state: UpsellNudgeState, props: UpsellNudgeManualProps ) => {
 		const { siteSlugParam, upgradeItem, upsellType } = props;
 		const selectedSiteId = getSelectedSiteId( state );
 		const productsList = getProductsList( state );
-		const sitePlans = getPlansBySiteId( state ).data;
+		const sitePlans = getPlansBySiteId( state, undefined ).data;
 		const siteSlug = selectedSiteId ? getSiteSlug( state, selectedSiteId ) : siteSlugParam;
-		const planSlug = getUpgradePlanSlugFromPath( state, selectedSiteId, props.upgradeItem );
-		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId, planSlug, {
+		const planSlug = getUpgradePlanSlugFromPath(
+			state,
+			selectedSiteId ?? 0,
+			props.upgradeItem ?? ''
+		);
+		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId ?? 0, planSlug, {
 			isMonthly: false,
 		} );
-		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
+		const annualPrice = getSitePlanRawPrice( state, selectedSiteId ?? 0, planSlug, {
 			isMonthly: false,
 		} );
 
@@ -560,16 +581,19 @@ export default connect(
 		const areStoredCardsLoading = hasLoadedCardsFromServer ? isFetchingCards : true;
 		const cards = getStoredCards( state );
 
-		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ) ?? TERM_MONTHLY;
-		const productSlug = getProductSlug( upsellType, upgradeItem, currentPlanTerm );
-		const productProperties = pick( getProductBySlug( state, productSlug ), [
+		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ?? 0 ) ?? TERM_MONTHLY;
+		const productSlug = getProductSlug( upsellType, upgradeItem ?? '', currentPlanTerm );
+		const productProperties = pick( getProductBySlug( state, productSlug ?? '' ), [
 			'product_slug',
 			'product_id',
 		] );
 		const product =
 			productProperties.product_slug && productProperties.product_id
-				? createRequestCartProduct( productProperties )
-				: null;
+				? createRequestCartProduct( {
+						product_slug: productProperties.product_slug,
+						product_id: productProperties.product_id,
+				  } )
+				: undefined;
 
 		return {
 			isFetchingStoredCards: areStoredCardsLoading,
@@ -583,8 +607,7 @@ export default connect(
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
 			product,
-			productCost: getProductCost( state, productSlug ),
-			productDisplayCost: getProductDisplayCost( state, productSlug ),
+			productDisplayCost: getProductDisplayCost( state, productSlug ?? '' ),
 			planRawPrice: annualPrice,
 			planDiscountedRawPrice: annualDiscountPrice,
 			isLoggedIn: isUserLoggedIn( state ),
