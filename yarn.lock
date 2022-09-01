@@ -523,6 +523,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@wordpress/components": ^19.15.0

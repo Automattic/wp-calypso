@@ -1,5 +1,4 @@
 import Sidebar from './sidebar';
-import StyleVariationPreviews from './style-variation';
 import type { StyleVariation, ThemeFeature } from '@automattic/design-picker';
 import './style.scss';
 
@@ -19,12 +18,6 @@ const Preview: React.FC< PreviewProps > = ( { title, description, variations = [
 				variations={ variations }
 				features={ features }
 			/>
-
-			{ variations.length > 0 && (
-				<div className="design-preview__sticky-variations">
-					<StyleVariationPreviews variations={ variations } />
-				</div>
-			) }
 		</div>
 	);
 };

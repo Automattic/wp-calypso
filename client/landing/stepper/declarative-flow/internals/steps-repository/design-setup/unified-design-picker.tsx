@@ -361,7 +361,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				className={ 'design-setup__preview' }
+				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>

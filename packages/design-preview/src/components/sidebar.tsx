@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import StyleVariationPreviews from './style-variation';
 import type { StyleVariation, ThemeFeature } from '@automattic/design-picker';
@@ -45,14 +46,14 @@ const Sidebar: React.FC< SidebarProps > = ( {
 							components: {
 								contactLink: (
 									<a
-										href="https://wordpress.com/help/contact/"
+										href={ localizeUrl( 'https://wordpress.com/help/contact/' ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
 								),
 								forumLink: (
 									<a
-										href="https://forums.wordpress.com/forum/themes"
+										href={ localizeUrl( 'https://forums.wordpress.com/forum/themes' ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
