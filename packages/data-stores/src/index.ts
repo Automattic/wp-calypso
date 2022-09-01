@@ -25,6 +25,7 @@ export { useSiteLogoMutation } from './queries/use-site-logo-mutation';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
+export { useStarterDesignsGet } from './starter-designs-queries/use-starter-designs-get';
 export { useStarterDesignsGeneratedQuery } from './starter-designs-queries/use-starter-designs-generated-query';
 export { useStarterDesignsQuery } from './starter-designs-queries/use-starter-designs-query';
 export { useSibylQuery } from './support-queries/use-sibyl-query';

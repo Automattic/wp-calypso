@@ -7,9 +7,20 @@ interface PreviewProps {
 	description?: string;
 	variations?: StyleVariation[];
 	features?: ThemeFeature[];
+	isLoading?: boolean;
 }
 
-const Preview: React.FC< PreviewProps > = ( { title, description, variations = [], features } ) => {
+const Preview: React.FC< PreviewProps > = ( {
+	title,
+	description,
+	variations = [],
+	features,
+	isLoading = false,
+} ) => {
+	if ( isLoading ) {
+		return null;
+	}
+
 	return (
 		<div className="design-preview">
 			<Sidebar

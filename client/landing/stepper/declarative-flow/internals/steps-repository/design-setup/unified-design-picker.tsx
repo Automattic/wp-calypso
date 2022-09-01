@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignsGet, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	useCategorization,
@@ -107,6 +107,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const generatedDesigns = allDesigns?.generated?.designs || [];
 	const staticDesigns = allDesigns?.static?.designs || [];
+
+	const { data: selectedDesignDetails, isLoading: isLoadingSelectedDesignDetails } =
+		useStarterDesignsGet( selectedDesign?.slug, {
+			enabled:
+				isPreviewingDesign &&
+				selectedDesign &&
+				selectedDesign.slug !== '' &&
+				selectedDesign.design_type !== 'vertical' &&
+				isEnabled( 'signup/design-picker-style-selection' ),
+		} );
 
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
@@ -309,9 +319,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						require="@automattic/design-preview"
 						placeholder={ null }
 						title={ designTitle }
-						description={ selectedDesign.description }
-						features={ selectedDesign.theme_features }
-						variations={ selectedDesign.style_variations }
+						description={ selectedDesignDetails?.description }
+						features={ selectedDesignDetails?.theme_features }
+						variations={ selectedDesignDetails?.style_variations }
+						isLoading={ isLoadingSelectedDesignDetails }
 					/>
 				) : (
 					<WebPreview
