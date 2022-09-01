@@ -196,6 +196,11 @@
 	}
 }
 
+.reader-feed-header__email-settings {
+	position: relative;
+	top: -2px;
+}
+
 .reader-feed-header__email-settings .reader-site-notification-settings .gridicons-cog {
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -204,6 +209,7 @@
 }
 
 .reader-feed-header__email-settings .reader-site-notification-settings__button-label {
+	display: inline-block;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		display: inline;

@@ -1,9 +1,20 @@
 .reader-site-notification-settings__button {
-	color: var(--color-text-subtle);
+	color: var( --color-text-subtle );
+	&:focus {
+		box-shadow: none;
+		outline: none;
+	}
 
 	&:hover {
 		cursor: pointer;
 	}
+}
+
+.accessible-focus .reader-site-notification-settings__button:focus {
+	border-color: var(--color-primary);
+	border-radius: 2px;
+	box-shadow: 0 0 0 2px var(--color-primary-light);
+	outline: none;
 }
 
 .reader-site-notification-settings__button-label {
