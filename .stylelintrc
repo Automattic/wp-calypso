@@ -14,6 +14,7 @@
 			"line-height": [ "px" ],
 			"/radius$/": [ "px" ]
 		},
+		"function-comma-space-after": "always-single-line",
 		"function-parentheses-space-inside": "always-single-line",
 		"no-descending-specificity": [
 			true,

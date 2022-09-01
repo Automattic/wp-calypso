@@ -57,6 +57,8 @@ export type HeroImageProps = {
 	item: SelectorProduct;
 };
 
+export type FeaturesListProps = HeroImageProps;
+
 export type UseStoreItemInfoProps = ProductStoreBaseProps & {
 	createCheckoutURL?: PurchaseURLCallback;
 	duration: Duration;
