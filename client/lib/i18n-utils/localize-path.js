@@ -56,7 +56,8 @@ export function localizePath( path, locale = getDefaultLocale(), isLoggedIn = tr
 	const fullPath = lookup[ lookup.length - 1 ];
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in pathLocalizationMapping ) {
-			return pathLocalizationMapping[ lookup[ i ] ]( fullPath, locale, isLoggedIn );
+			const localizedPath = pathLocalizationMapping[ lookup[ i ] ]( fullPath, locale, isLoggedIn );
+			return ! path.endsWith( '/' ) ? localizedPath.replace( /\/$/, '' ) : localizedPath;
 		}
 	}
 

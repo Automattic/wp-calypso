@@ -13,26 +13,27 @@ describe( '#localizePath', () => {
 		expect( localizePath( '/wp-admin', 'de', false ) ).toEqual( '/wp-admin' );
 		expect( localizePath( '/wp-login.php', 'es', false ) ).toEqual( '/wp-login.php' );
 
-		expect( localizePath( '/log-in', 'es' ) ).toEqual( '/log-in/' );
-		expect( localizePath( '/log-in', 'es', false ) ).toEqual( '/log-in/es/' );
+		expect( localizePath( '/log-in', 'es' ) ).toEqual( '/log-in' );
+		expect( localizePath( '/log-in', 'es', false ) ).toEqual( '/log-in/es' );
 
-		expect( localizePath( '/new', 'es' ) ).toEqual( '/new/' );
-		expect( localizePath( '/new', 'es', false ) ).toEqual( '/new/es/' );
+		expect( localizePath( '/new', 'es' ) ).toEqual( '/new' );
+		expect( localizePath( '/new', 'es', false ) ).toEqual( '/new/es' );
 
-		expect( localizePath( '/setup', 'es' ) ).toEqual( '/setup/' );
-		expect( localizePath( '/setup', 'es', false ) ).toEqual( '/setup/es/' );
+		expect( localizePath( '/setup', 'es' ) ).toEqual( '/setup' );
+		expect( localizePath( '/setup', 'es', false ) ).toEqual( '/setup/es' );
 
-		expect( localizePath( '/start', 'es' ) ).toEqual( '/start/' );
-		expect( localizePath( '/start', 'es', false ) ).toEqual( '/start/es/' );
+		expect( localizePath( '/start', 'es' ) ).toEqual( '/start' );
+		expect( localizePath( '/start', 'es', false ) ).toEqual( '/start/es' );
 
-		expect( localizePath( '/start/user', 'es' ) ).toEqual( '/start/user/' );
-		expect( localizePath( '/start/user', 'es', false ) ).toEqual( '/start/user/es/' );
+		expect( localizePath( '/start/user', 'es' ) ).toEqual( '/start/user' );
+		expect( localizePath( '/start/user', 'es', false ) ).toEqual( '/start/user/es' );
+		expect( localizePath( '/start/user/', 'es', false ) ).toEqual( '/start/user/es/' );
 
 		expect( localizePath( '/some/path', 'es', true ) ).toEqual( '/some/path' );
 		expect( localizePath( '/some/path', 'es', false ) ).toEqual( '/some/path' );
 
 		expect( localizePath( localizePath( '/themes', 'de', false ), 'de', false ) ).toEqual(
-			'/de/themes/'
+			'/de/themes'
 		);
 		expect( localizePath( localizePath( '/me/account', 'de', false ), 'de', false ) ).toEqual(
 			'/me/account'
@@ -42,9 +43,9 @@ describe( '#localizePath', () => {
 	test( 'handles full wordpress.com URLs', () => {
 		expect( localizePath( 'https://example.com', 'es', true ) ).toEqual( 'https://example.com' );
 		expect( localizePath( 'https://example.com', 'es', false ) ).toEqual( 'https://example.com' );
-		expect( localizePath( 'https://wordpress.com/themes', 'en', true ) ).toEqual( '/themes/' );
-		expect( localizePath( 'https://wordpress.com/themes', 'es', true ) ).toEqual( '/themes/' );
-		expect( localizePath( 'https://wordpress.com/themes', 'es', false ) ).toEqual( '/es/themes/' );
+		expect( localizePath( 'https://wordpress.com/themes', 'en', true ) ).toEqual( '/themes' );
+		expect( localizePath( 'https://wordpress.com/themes', 'es', true ) ).toEqual( '/themes' );
+		expect( localizePath( 'https://wordpress.com/themes', 'es', false ) ).toEqual( '/es/themes' );
 	} );
 
 	test( 'handles invalid paths', () => {
@@ -58,7 +59,7 @@ describe( '#localizePath', () => {
 
 	test( 'trailing slash variations', () => {
 		expect( localizePath( '/theme/', 'de', false ) ).toEqual( '/de/theme/' );
-		expect( localizePath( '/theme', 'de', false ) ).toEqual( '/de/theme/' );
+		expect( localizePath( '/theme', 'de', false ) ).toEqual( '/de/theme' );
 	} );
 
 	test( 'theme', () => {
@@ -68,8 +69,8 @@ describe( '#localizePath', () => {
 		expect( localizePath( '/theme/maywood/', 'en', false ) ).toEqual( '/theme/maywood/' );
 		expect( localizePath( '/theme/maywood/', 'de', false ) ).toEqual( '/de/theme/maywood/' );
 		expect( localizePath( '/theme/maywood/', 'pl', false ) ).toEqual( '/theme/maywood/' );
-		expect( localizePath( '/theme/maywood/setup/99999/', 'de', true ) ).toEqual(
-			'/theme/maywood/setup/99999/'
+		expect( localizePath( '/theme/maywood/setup/99999', 'de', true ) ).toEqual(
+			'/theme/maywood/setup/99999'
 		);
 		expect( localizePath( '/theme/maywood/setup/99999/', 'de', false ) ).toEqual(
 			'/de/theme/maywood/setup/99999/'
@@ -81,8 +82,8 @@ describe( '#localizePath', () => {
 		expect( localizePath( '/fr/themes', 'en', false ) ).toEqual( '/fr/themes' );
 		expect( localizePath( '/fr/themes', 'fr', false ) ).toEqual( '/fr/themes' );
 
-		expect( localizePath( 'themes', 'fr', true ) ).toEqual( '/themes/' );
-		expect( localizePath( 'themes', 'fr', false ) ).toEqual( '/fr/themes/' );
+		expect( localizePath( 'themes', 'fr', true ) ).toEqual( '/themes' );
+		expect( localizePath( 'themes', 'fr', false ) ).toEqual( '/fr/themes' );
 
 		expect( localizePath( '/themes/', 'en', true ) ).toEqual( '/themes/' );
 		expect( localizePath( '/themes/', 'de', true ) ).toEqual( '/themes/' );
