@@ -16,6 +16,7 @@ import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { addQueryArgs } from 'calypso/lib/url';
 import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -478,7 +479,7 @@ export class SiteSelector extends Component {
 				</div>
 				{ this.props.showAllSites && (
 					<Button
-						href={ '/sites' }
+						href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
 						className="site-selector__manage-sites"
 						aria-label={ this.props.translate( 'Go to Sites' ) }
 						title={ this.props.translate( 'Go to Sites' ) }
