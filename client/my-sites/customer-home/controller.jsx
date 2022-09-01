@@ -34,10 +34,11 @@ export function maybeRedirect( context, next ) {
 
 	// Normally, checking the launchpad_screen option in redux state would be enough to decide whether
 	// or not to redirect to launchpad. The option, however, is loading stale data in horizon, and presumably,
-	// in production as well. The forceLoad query param is a temporary patch to circumvent stale data, and
+	// in production as well. The forceLoadLaunchpadData query param is a temporary patch to circumvent stale data, and
 	// will avoid a redirect.
 	const shouldRedirectToLaunchpad =
-		options?.launchpad_screen === 'full' && ! getQueryArg( window.location.href, 'forceLoad' );
+		options?.launchpad_screen === 'full' &&
+		! getQueryArg( window.location.href, 'forceLoadLaunchpadData' );
 
 	if ( shouldRedirectToLaunchpad && isEnabled( 'signup/launchpad' ) ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
