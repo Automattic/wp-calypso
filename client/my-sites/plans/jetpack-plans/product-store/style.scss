@@ -79,12 +79,13 @@
 		list-style-type: none;
 		display: grid;
 		grid-template-columns: 1fr;
-		gap: 24px;
+		gap: 32px;
 		margin-top: 24px;
 
 		@include break-medium {
 			grid-template-columns: 1fr 1fr;
 			margin: 32px auto 0;
+			gap: 24px;
 		}
 	}
 
