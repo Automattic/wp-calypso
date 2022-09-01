@@ -63,7 +63,6 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jitms": true,
 		"lasagna": true,
-		"launch-wpcom-ssh": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
