@@ -62,7 +62,6 @@ class ThanksModal extends Component {
 			// Redirect to plugin-bundle flow for themes including software (like woocommerce)
 			const { siteSlug, doesCurrentThemeBundleSoftware } = this.props;
 			if ( doesCurrentThemeBundleSoftware ) {
-				// Redirect to stepper
 				const dest = `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle`;
 				window.location.replace( dest );
 			}
@@ -237,7 +236,12 @@ class ThanksModal extends Component {
 	);
 
 	getButtons = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive } = this.props;
+		const {
+			shouldEditHomepageWithGutenberg,
+			hasActivated,
+			isFSEActive,
+			doesCurrentThemeBundleSoftware,
+		} = this.props;
 
 		const firstButton = shouldEditHomepageWithGutenberg
 			? {
@@ -257,13 +261,13 @@ class ThanksModal extends Component {
 		return [
 			{
 				...firstButton,
-				disabled: ! hasActivated,
+				disabled: ! hasActivated || doesCurrentThemeBundleSoftware,
 			},
 			{
 				action: 'customizeSite',
 				label: this.getEditSiteLabel(),
 				isPrimary: true,
-				disabled: ! hasActivated,
+				disabled: ! hasActivated || doesCurrentThemeBundleSoftware,
 				onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
 				href: this.props.customizeUrl,
 				target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
@@ -272,9 +276,9 @@ class ThanksModal extends Component {
 	};
 
 	render() {
-		const { currentTheme, hasActivated, isActivating } = this.props;
+		const { currentTheme, hasActivated, isActivating, doesCurrentThemeBundleSoftware } = this.props;
 
-		const shouldDisplayContent = hasActivated && currentTheme;
+		const shouldDisplayContent = hasActivated && currentTheme && ! doesCurrentThemeBundleSoftware;
 
 		return (
 			<Dialog
