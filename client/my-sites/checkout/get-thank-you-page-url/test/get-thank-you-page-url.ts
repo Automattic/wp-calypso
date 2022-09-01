@@ -16,7 +16,7 @@ import {
 	TITAN_MAIL_MONTHLY_SLUG,
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
-import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -1574,7 +1574,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'Does not offers discounted annual business plan for tailored flows (https://wp.me/p58i-cBr).', () => {
-			[ NEWSLETTER_FLOW, LINK_IN_BIO_FLOW ].forEach( ( flowName ) => {
+			[ NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, VIDEOPRESS_FLOW ].forEach( ( flowName ) => {
 				const getUrlFromCookie = jest.fn( () => '/cookie' );
 
 				// set a tailored flow name
