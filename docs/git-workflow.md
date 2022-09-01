@@ -23,7 +23,7 @@ For larger features, keeping branches small requires hiding work-in-progress (WI
 
 ## Keeping Your Branch Up To Date
 
-Feel free to use `git rebase trunk` or `git merge trunk` to keep your branch up to date. Each strategy has its own pros and cons, so the developer can decide which they prefer. Because we "Squash and merge" when landing pull requests, history is collapsed to a single commit in both cases.
+Feel free to use `git rebase trunk` or `git merge trunk` to keep your branch up to date. Each strategy has its own pros and cons (see some conversation in [Automattic/wp-calypso#66167](https://github.com/Automattic/wp-calypso/pull/66167)), so the developer can decide which they prefer. Because we "Squash and merge" when landing pull requests, history is collapsed to a single commit in both cases.
 
 If you have a Pull Request branch that cannot be merged into `trunk` due to a conflict (this can happen for long-running Pull Request discussions), you can rebase the branch (rather than merge) and resolve any conflicts on your local copy. Once you have resolved any conflicts locally you can update the Pull Request with `git push --force-with-lease` (note: we prefer using `--force-with-lease` over `--force` to help protect remote commits).
 
