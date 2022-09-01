@@ -15,6 +15,7 @@ import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -297,9 +298,19 @@ export class SiteSelector extends Component {
 	}
 
 	renderAllSites() {
-		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
+		if (
+			! this.props.showAllSites ||
+			this.props.sitesFound ||
+			! this.props.allSitesPath ||
+			this.props.allSitesPath === '/sites' ||
+			! this.props.selectedSite
+		) {
 			return null;
 		}
+
+		const allSitesMenuTitle = allSitesMenu()
+			.find( ( menu ) => menu.url === this.props.allSitesPath )
+			?.title?.toLocaleLowerCase();
 
 		this.visibleSites.push( ALL_SITES );
 
@@ -313,6 +324,15 @@ export class SiteSelector extends Component {
 				onMouseEnter={ this.onAllSitesHover }
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( ALL_SITES ) }
+				title={
+					allSitesMenuTitle &&
+					/* translators: allSitesMenuTitle is an entity from client/my-sites/sidebar/static-data/all-sites-menu.js */
+					this.props.translate( 'View %(allSitesMenuTitle)s for all sites', {
+						args: {
+							allSitesMenuTitle,
+						},
+					} )
+				}
 			/>
 		);
 	}
