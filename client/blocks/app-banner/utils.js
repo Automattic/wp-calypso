@@ -13,7 +13,7 @@ export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 export const TWO_WEEKS_IN_MILLISECONDS = 1209600000;
 export const ONE_DAY_IN_MILLISECONDS = 86400000;
 
-export function getAppBannerData( translate, sectionName ) {
+export function getAppBannerData( translate, sectionName, isRTL ) {
 	switch ( sectionName ) {
 		case GUTENBERG:
 			return {
@@ -21,6 +21,7 @@ export function getAppBannerData( translate, sectionName ) {
 				copy: translate(
 					'A streamlined editor with faster, simpler image uploading? Check and mate.'
 				),
+				icon: `/calypso/animations/app-promo/wp-to-jp${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case NOTES:
 			return {
@@ -28,21 +29,25 @@ export function getAppBannerData( translate, sectionName ) {
 				copy: translate(
 					'Is your new post a hit? With push notifications, see reactions as they roll in.'
 				),
+				icon: `/calypso/animations/app-promo/jp-notifications${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case READER:
 			return {
 				title: translate( 'Read posts, even offline.' ),
 				copy: translate( 'Catch up with new posts on the go or save them to read offline.' ),
+				icon: `/calypso/animations/app-promo/jp-reader${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case STATS:
 			return {
 				title: translate( 'Stats at your fingertips.' ),
 				copy: translate( 'See your real-time stats anytime, anywhere.' ),
+				icon: `/calypso/animations/app-promo/jp-stats${ isRTL ? '-rtl' : '' }.json`,
 			};
 		default:
 			return {
 				title: '',
 				copy: '',
+				icon: '',
 			};
 	}
 }
