@@ -7,7 +7,10 @@ import './style.scss';
 
 export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	checkoutURL,
+	ctaAsPrimary,
+	ctaLabel,
 	hero,
+	isIncludedInPlan,
 	isOwned,
 	item,
 	onClickMore,
@@ -25,7 +28,12 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 				<div>
 					<h2 className="featured-item-card--title">{ title }</h2>
 					<div className="featured-item-card--price">
-						<ItemPrice isOwned={ isOwned } item={ item } siteId={ siteId } />
+						<ItemPrice
+							isIncludedInPlan={ isIncludedInPlan }
+							isOwned={ isOwned }
+							item={ item }
+							siteId={ siteId }
+						/>
 					</div>
 					<div className="featured-item-card--desc">
 						<p>
@@ -47,8 +55,8 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 					</div>
 				</div>
 				<div className="featured-item-card--footer">
-					<Button primary onClick={ onClickPurchase } href={ checkoutURL }>
-						{ translate( 'Get' ) }
+					<Button primary={ ctaAsPrimary } onClick={ onClickPurchase } href={ checkoutURL }>
+						{ ctaLabel }
 					</Button>
 				</div>
 			</div>
