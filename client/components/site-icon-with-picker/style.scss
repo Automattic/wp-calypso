@@ -43,6 +43,9 @@ button.components-button.site-icon-with-picker__upload-button {
 		height: $icon-size;
 		width: $icon-size;
 		border-radius: $icon-border-radius;
+		position: absolute;
+		top: 0%;
+		left: 0%;
 	}
 	svg {
 		position: absolute;
@@ -58,6 +61,7 @@ button.components-button.site-icon-with-picker__upload-button {
 		margin-top: 50px;
 		margin-left: -75%;
 	}
+	
 }
 
 .site-icon-with-picker__dropzone {
