@@ -113,7 +113,7 @@ const GoogleWorkspacePrice = ( {
 				</div>
 			) }
 
-			{ isDiscounted && ! isEligibleForIntroductoryOfferFreeTrial && (
+			{ ! isEligibleForIntroductoryOfferFreeTrial && isDiscounted && (
 				<div className="google-workspace-price__discount-badge badge badge--info-green">
 					{ isEligibleForIntroductoryOffer
 						? translate( 'Extra %(discount)d%% off', {
