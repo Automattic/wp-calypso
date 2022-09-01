@@ -234,9 +234,13 @@ function PurchaseMetaPrice( { purchase } ) {
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 		if ( isDIFMProduct( purchase ) ) {
-			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( overallState, purchase.ID );
+			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( overallState, purchase.id );
 			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
-				const { extraPageCount, costOfExtraPages, oneTimeFee } = difmTieredPurchaseDetails;
+				const {
+					extraPageCount,
+					formattedCostOfExtraPages: costOfExtraPages,
+					formattedOneTimeFee: oneTimeFee,
+				} = difmTieredPurchaseDetails;
 				return (
 					<div>
 						<div>
@@ -258,6 +262,9 @@ function PurchaseMetaPrice( { purchase } ) {
 									args: {
 										extraPageCount,
 										costOfExtraPages,
+									},
+									components: {
+										period: <span className="manage-purchase__time-period" />,
 									},
 								}
 							) }

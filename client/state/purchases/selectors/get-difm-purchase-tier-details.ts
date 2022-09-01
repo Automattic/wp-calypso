@@ -42,9 +42,9 @@ export const getDIFMTieredPurchaseDetails = (
 	const { purchaseRenewalQuantity: noOfPages, currencyCode } = difmPurchase;
 
 	let formattedCostOfExtraPages: string | null = null;
-	const extraPageCount: number | null = null;
+	let extraPageCount: number | null = null;
 	if ( noOfPages && numberOfIncludedPages ) {
-		const extraPageCount = noOfPages - numberOfIncludedPages;
+		extraPageCount = noOfPages - numberOfIncludedPages;
 		formattedCostOfExtraPages = formatPurchasePrice(
 			extraPageCount * perExtraPagePrice,
 			currencyCode
