@@ -446,6 +446,9 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 
 export const getJetpackProductsFeaturedText = (): Record< string, TranslateResult > => {
 	const backupDailyFeaturedText = translate(
+		'Never lose a word, image, page, or time worrying about your site with automated daily backups & one-click restores.'
+	);
+	const backupFeaturedText = translate(
 		'Protect your site or store. Save every change with real-time cloud backups, and restore in one click.'
 	);
 	const videoPressFeaturedText = translate(
@@ -470,12 +473,12 @@ export const getJetpackProductsFeaturedText = (): Record< string, TranslateResul
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyFeaturedText,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupDailyFeaturedText,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupDailyFeaturedText,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupDailyFeaturedText,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupDailyFeaturedText,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupDailyFeaturedText,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFeaturedText,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressFeaturedText,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressFeaturedText,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamFeaturedText,
