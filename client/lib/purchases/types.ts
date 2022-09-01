@@ -41,7 +41,7 @@ export interface Purchase {
 	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal;
 	pendingTransfer: boolean;
 	priceText: string;
-	priceTierList?: Array< PriceTier >;
+	priceTierList?: Array< PurchasePriceTier >;
 	productDisplayPrice: string;
 	productId: number;
 	productName: string;
