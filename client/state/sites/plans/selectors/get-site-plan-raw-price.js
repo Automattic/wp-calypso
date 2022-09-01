@@ -8,7 +8,7 @@ import { getSitePlan } from 'calypso/state/sites/plans/selectors/get-site-plan';
  * @param  {object}  state         global state
  * @param  {number}  siteId        the site id
  * @param  {string}  productSlug   the plan product slug
- * @param  {boolean} isMonthly     if true, returns monthly price
+ * @param  {{isMonthly?: boolean}} [isMonthly]     if true, returns monthly price
  * @returns {number}                plan raw price
  */
 export function getSitePlanRawPrice( state, siteId, productSlug, { isMonthly = false } = {} ) {

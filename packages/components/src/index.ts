@@ -25,8 +25,8 @@ export {
 	useSitesTableFiltering,
 	siteLaunchStatusFilterValues,
 	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
-	type FilterableSiteLaunchStatuses,
 } from './sites-table/use-sites-table-filtering';
+export type { FilterableSiteLaunchStatuses } from './sites-table/use-sites-table-filtering';
 export { useSitesTableSorting } from './sites-table/use-sites-table-sorting';
 export { getSiteLaunchStatus, useSiteLaunchStatusLabel } from './sites-table/site-status';
 export { SitesTableTabPanel } from './sites-table/sites-table-tab-panel';
