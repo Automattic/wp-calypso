@@ -5,7 +5,7 @@ import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
 
 export function getEnhancedTasks(
-	tasks: Task[],
+	tasks: Task[] | null,
 	siteSlug: string | null,
 	site: SiteDetails | null
 ) {
