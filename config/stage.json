@@ -128,7 +128,7 @@
 		"signup/seller-upgrade-modal": false,
 		"signup/site-vertical-step": true,
 		"signup/social": true,
-		"signup/standard-theme-v13n": true,
+		"signup/standard-theme-v13n": false,
 		"signup/starting-point-courses": true,
 		"signup/stepper-flow": true,
 		"signup/theme-preview-screen": true,
