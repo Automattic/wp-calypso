@@ -19,6 +19,7 @@ import CreditCardLoading from './credit-card-loading';
 import CreditCardNumberField from './credit-card-number-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import type { StripeFieldChangeInput } from './types';
+import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
 
 const StripeFields = styled.div`
 	position: relative;
@@ -67,11 +68,13 @@ export default function CreditCardFields( {
 	const reduxDispatch = useReduxDispatch();
 
 	// We need the countryCode for the country specific payment fields which have
-	// no country selector but require country data during validation and submit
-	// as well as the code that decides which fields to display. Since Ebanx is
-	// only available in BR, we will hard-code it here, but if we ever expand
-	// Ebanx to other countries, this will need to be changed.
-	const contactCountryCode = shouldUseEbanx ? 'BR' : '';
+	// no country selector but require country data for validation as well as the
+	// code that decides which fields to display.
+	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
+		select( 'wpcom-checkout' ).getContactInfo()
+	);
+	const taxCountryCode = contactInfo.countryCode?.value ?? '';
+	const contactCountryCode = shouldUseEbanx ? taxCountryCode : '';
 	useEffect( () => {
 		setFieldValue( 'countryCode', contactCountryCode );
 	}, [ contactCountryCode, setFieldValue ] );
