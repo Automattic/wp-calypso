@@ -35,7 +35,7 @@ export class TestAccount {
 		const browserContext = await page.context();
 		await browserContext.clearCookies();
 
-		if ( ( await this.hasFreshAuthCookies() ) && ! envVariables.TEST_ON_ATOMIC ) {
+		if ( await this.hasFreshAuthCookies() ) {
 			this.log( 'Found fresh cookies, skipping log in' );
 			await browserContext.addCookies( await this.getAuthCookies() );
 			await page.goto( getCalypsoURL( '/' ) );
