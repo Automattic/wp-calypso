@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import productButtonLabel from '../product-card/product-button-label';
 import { FeaturedItemCard } from './featured-item-card';
+import { FeaturesList } from './features-list';
 import { HeroImage } from './hero-image';
 import { useBundlesToDisplay } from './hooks/use-bundles-to-display';
 import { useStoreItemInfo } from './hooks/use-store-item-info';
@@ -50,7 +51,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 		} );
 
 		return (
-			<div key={ item.productSlug }>
+			<div key={ item.productSlug } className="jetpack-product-store__bundles-list--featured-item">
 				<FeaturedItemCard
 					checkoutURL={ getCheckoutURL( item ) }
 					ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
@@ -68,7 +69,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 					onClickPurchase={ getOnClickPurchase( item ) }
 					siteId={ siteId }
 				/>
-				{ /* Bundle list goes here */ }
+				<FeaturesList item={ item } />
 			</div>
 		);
 	} );

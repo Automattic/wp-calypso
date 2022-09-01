@@ -1,6 +1,7 @@
 import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import Checklist from './checklist';
@@ -8,6 +9,11 @@ import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
+
+type SidebarProps = {
+	siteSlug: string | null;
+	submit: NavigationControls[ 'submit' ];
+};
 
 function getUrlInfo( url: string ) {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
@@ -32,7 +38,7 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
 }
 
-const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
+const Sidebar = ( { siteSlug, submit }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	const flow = useFlowParam();
@@ -73,7 +79,7 @@ const Sidebar = ( { siteSlug }: { siteSlug: string | null } ) => {
 					<span>{ siteName }</span>
 					<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 				</div>
-				<Checklist tasks={ enhancedTasks } />
+				<Checklist tasks={ enhancedTasks } submit={ submit } />
 			</div>
 		</div>
 	);
