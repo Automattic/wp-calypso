@@ -37,15 +37,19 @@ button.components-button.site-icon-with-picker__upload-button {
 			text-decoration: underline;
 			text-underline-position: under;
 		}
+
+		&:hover {
+			background-color: transparent;
+		}
 	}
 
 	img {
-		height: $icon-size;
-		width: $icon-size;
+		height: $icon-size - 2;
+		width: $icon-size - 2;
 		border-radius: $icon-border-radius;
 		position: absolute;
-		top: 0%;
-		left: 0%;
+		top: 0;
+		left: 0;
 	}
 	svg {
 		position: absolute;
@@ -61,7 +65,7 @@ button.components-button.site-icon-with-picker__upload-button {
 		margin-top: 50px;
 		margin-left: -75%;
 	}
-	
+
 }
 
 .site-icon-with-picker__dropzone {
