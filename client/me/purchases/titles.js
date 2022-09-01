@@ -13,6 +13,7 @@ const titles = {
 	activeUpgrades: i18n.translate( 'Active Upgrades' ),
 	billingHistory: i18n.translate( 'Billing History' ),
 	paymentMethods: i18n.translate( 'Payment Methods' ),
+	renewalSettings: i18n.translate( 'Renewal Settings' ),
 };
 
 /**

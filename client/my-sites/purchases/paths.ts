@@ -43,3 +43,8 @@ export const getReceiptUrlFor = (
 
 export const getBillingHistoryUrlFor = ( targetSiteSlug: string ): string =>
 	`/purchases/billing-history/${ targetSiteSlug }`;
+
+export const getRenewalSettingsUrlFor = (
+	targetSiteSlug: string,
+	targetPurchaseId: string | number
+) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchaseId }/renewal-settings`;

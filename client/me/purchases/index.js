@@ -128,6 +128,14 @@ export default ( router ) => {
 		clientRender
 	);
 
+	router(
+		paths.renewalSettings( ':site', ':purchaseId' ),
+		sidebar,
+		controller.renewalSettings,
+		makeLayout,
+		clientRender
+	);
+
 	// redirect legacy urls
 	router( '/me/billing', () => page.redirect( paths.billingHistory ) );
 	router( '/me/billing/:receiptId', ( { params: { receiptId } } ) =>

@@ -6,6 +6,7 @@ import {
 	PurchaseCancel,
 	PurchaseCancelDomain,
 	PurchaseChangePaymentMethod,
+	RenewalSettings,
 } from 'calypso/my-sites/purchases/main';
 import {
 	PaymentMethods,
@@ -85,6 +86,16 @@ export const billingHistory = ( context, next ) => {
 export const receiptView = ( context, next ) => {
 	context.primary = (
 		<ReceiptView receiptId={ context.params.receiptId } siteSlug={ context.params.site } />
+	);
+	next();
+};
+
+export const renewalSettings = ( context, next ) => {
+	context.primary = (
+		<RenewalSettings
+			siteSlug={ context.params.site }
+			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+		/>
 	);
 	next();
 };

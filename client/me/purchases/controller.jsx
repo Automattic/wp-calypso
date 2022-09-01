@@ -13,6 +13,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { logToLogstash } from 'calypso/lib/logstash';
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
+import PurchaseRenewalSettings from 'calypso/me/purchases/manage-purchase/renewal-settings';
 import {
 	managePurchase as managePurchaseUrl,
 	purchasesRoot,
@@ -223,5 +224,38 @@ export function changePaymentMethod( context, next ) {
 	};
 
 	context.primary = <ChangePaymentMethodWrapper />;
+	next();
+}
+
+export function renewalSettings( context, next ) {
+	const state = context.store.getState();
+
+	if ( userHasNoSites( state ) ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/renewal-settings' );
+	}
+
+	const RenewalSettingsWrapper = () => {
+		const translate = useTranslate();
+		const logPurchasesError = useLogPurchasesError( 'account level renewal settings load error' );
+		return (
+			<PurchasesWrapper title={ titles.renewalSettings }>
+				<Main wideLayout className="purchases__edit-payment-method">
+					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+					<CheckoutErrorBoundary
+						errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+						onError={ logPurchasesError }
+					>
+						<PurchaseRenewalSettings
+							purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+							siteSlug={ context.params.site }
+							getManagePurchaseUrlFor={ managePurchaseUrl }
+						/>
+					</CheckoutErrorBoundary>
+				</Main>
+			</PurchasesWrapper>
+		);
+	};
+
+	context.primary = <RenewalSettingsWrapper />;
 	next();
 }

@@ -15,6 +15,7 @@ import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
 import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
+import PurchaseRenewalSettings from 'calypso/me/purchases/manage-purchase/renewal-settings';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -24,6 +25,7 @@ import {
 	getConfirmCancelDomainUrlFor,
 	getManagePurchaseUrlFor,
 	getAddNewPaymentMethodUrlFor,
+	getRenewalSettingsUrlFor,
 } from './paths';
 import Subscriptions from './subscriptions';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
@@ -129,6 +131,7 @@ export function PurchaseDetails( {
 					getAddNewPaymentMethodUrlFor={ getAddNewPaymentMethodUrlFor }
 					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					getRenewalSettingsUrlFor={ getRenewalSettingsUrlFor }
 				/>
 			</CheckoutErrorBoundary>
 		</Main>
@@ -243,6 +246,42 @@ export function PurchaseCancelDomain( {
 					siteSlug={ siteSlug }
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+				/>
+			</CheckoutErrorBoundary>
+		</Main>
+	);
+}
+
+export function RenewalSettings( {
+	purchaseId,
+	siteSlug,
+}: {
+	purchaseId: number;
+	siteSlug: string;
+} ) {
+	const translate = useTranslate();
+	const logPurchasesError = useLogPurchasesError( 'site level renewal settings load error' );
+
+	return (
+		<Main wideLayout className="purchases">
+			<DocumentHead title={ titles.renewalSettings } />
+			{ ! isJetpackCloud() && (
+				<FormattedHeader
+					brandFont
+					className="purchases__page-heading"
+					headerText={ titles.sectionTitle }
+					align="left"
+				/>
+			) }
+
+			<CheckoutErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logPurchasesError }
+			>
+				<PurchaseRenewalSettings
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					purchaseId={ purchaseId }
+					siteSlug={ siteSlug }
 				/>
 			</CheckoutErrorBoundary>
 		</Main>

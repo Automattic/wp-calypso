@@ -92,6 +92,10 @@ export function changePaymentMethod( siteName, purchaseId, cardId ) {
 	return managePurchase( siteName, purchaseId ) + `/payment-method/change/${ cardId }`;
 }
 
+export function renewalSettings( siteName, purchaseId ) {
+	return managePurchase( siteName, purchaseId ) + `/renewal-settings`;
+}
+
 export const deprecated = {
 	upcomingCharges: purchasesRoot + '/upcoming',
 	otherPurchases: purchasesRoot + '/other',

@@ -98,7 +98,7 @@ import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
+import { cancelPurchase, managePurchase, purchasesRoot, renewalSettings } from '../paths';
 import PurchaseSiteHeader from '../purchases-site/header';
 import RemovePurchase from '../remove-purchase';
 import {
@@ -120,6 +120,7 @@ class ManagePurchase extends Component {
 		getCancelPurchaseUrlFor: PropTypes.func,
 		getChangePaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
+		getRenewalSettingsUrlFor: PropTypes.func,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
@@ -148,6 +149,7 @@ class ManagePurchase extends Component {
 		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 		getCancelPurchaseUrlFor: cancelPurchase,
 		getManagePurchaseUrlFor: managePurchase,
+		getRenewalSettingsUrlFor: renewalSettings,
 	};
 
 	state = {
@@ -318,6 +320,20 @@ class ManagePurchase extends Component {
 	renderRenewMonthlyNavItem() {
 		const { translate } = this.props;
 		return this.renderRenewalNavItem( translate( 'Renew Monthly' ), this.handleRenewMonthly );
+	}
+
+	renderRenewalSettingsItem() {
+		const { siteSlug, translate, purchaseId, getRenewalSettingsUrlFor } = this.props;
+
+		return (
+			<CompactCard
+				tagName="a"
+				displayAsLink
+				href={ getRenewalSettingsUrlFor( siteSlug, purchaseId ) }
+			>
+				{ translate( 'Manage renewal settings' ) }
+			</CompactCard>
+		);
 	}
 
 	handleUpgradeClick = () => {
@@ -839,6 +855,7 @@ class ManagePurchase extends Component {
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
+						{ ! preventRenewal && this.renderRenewalSettingsItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderCancelPurchaseNavItem() }
 						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }

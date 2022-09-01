@@ -12,6 +12,7 @@ import {
 	receiptView,
 	paymentMethods,
 	addPaymentMethod,
+	renewalSettings,
 } from './controller';
 
 export default ( router ) => {
@@ -78,6 +79,15 @@ export default ( router ) => {
 		siteSelection,
 		navigation,
 		purchaseChangePaymentMethod,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/purchases/subscriptions/:site/:purchaseId/renewal-settings',
+		siteSelection,
+		navigation,
+		renewalSettings,
 		makeLayout,
 		clientRender
 	);
