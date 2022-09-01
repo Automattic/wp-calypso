@@ -37,7 +37,9 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 
 			{ enableUserLicensesDialog && <UserLicensesDialog siteId={ siteId } /> }
 
-			<IntroPricingBanner productSlugs={ productSlugs } siteId={ siteId ?? 'none' } />
+			<div className="jetpack-product-store__pricing-banner">
+				<IntroPricingBanner productSlugs={ productSlugs } siteId={ siteId ?? 'none' } />
+			</div>
 
 			<ViewFilter currentView={ currentView } setCurrentView={ setCurrentView } />
 			<ItemsList

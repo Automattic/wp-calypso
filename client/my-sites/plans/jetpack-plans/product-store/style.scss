@@ -325,34 +325,34 @@
 			}
 		}
 	}
+}
 
 	.intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__content {
 		margin-bottom: 40px;
 		height: auto;
 
-		@include break-large {
-			max-height: 32px;
-		}
+	@include break-large {
+		height: 32px;
 	}
+}
 
-	.intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__item {
+.jetpack-product-store__pricing-banner .intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__content {
+	height: 112px;
+	gap: 12px;
+
+	@include break-large {
+		gap: 32px;
 		max-height: 32px;
 	}
 }
 
-.jetpack-product-store__jetpack-free .button,
-.jetpack-product-store__see-all-features .button {
-	min-width: 225px;
+.jetpack-product-store__pricing-banner .intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__item {
+	max-height: 32px;
+	margin: 0;
 }
 
-.jetpack-product-store__pricing-banner {
-	height: 120px;
-	margin-bottom: 1.25rem;
-
-	@include break-large {
-		height: 54px;
-		margin-bottom: 0;
-	}
+.jetpack-product-store__pricing-banner .intro-pricing-banner__item-icon {
+	margin-right: 10px;
 }
 
 .jetpack-product-store__need-more-info {
