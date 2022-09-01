@@ -5,8 +5,8 @@ import { isTaskDisabled } from './task-helper';
 import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
-	const { id, isCompleted, actionUrl, title } = task;
-
+	const { id, isCompleted, actionUrl, title, actionDispatch } = task;
+	const action = actionDispatch ? { onClick: actionDispatch } : { href: actionUrl };
 	const taskDisabled = isTaskDisabled( task );
 	return (
 		<li className={ `launchpad__task-${ id }` }>
@@ -15,6 +15,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				disabled={ taskDisabled }
 				href={ actionUrl }
 				data-task={ id }
+				{ ...action }
 			>
 				{ isCompleted && taskDisabled && (
 					<div className="launchpad__checklist-item-status">
