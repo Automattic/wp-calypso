@@ -86,28 +86,16 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 		return Promise.resolve();
 	};
 
-	const setPattern = async (
-		site: SiteDetails,
-		flow: string,
-		logoUploadResult: Awaited< ReturnType< typeof setSiteLogo > > | void
-	) => {
+	const setPattern = async ( site: SiteDetails, flow: string ) => {
 		if ( flow === LINK_IN_BIO_FLOW ) {
 			const pattern = patterns.find( ( pattern: Pattern ) => pattern.id === selectedPatternId );
 			if ( pattern ) {
-				let content = pattern.content;
-				// replace the pattern logo with the uploaded site logo
-				if ( logoUploadResult?.uploadResult?.media?.[ 0 ] && pattern.avatarUrl ) {
-					content = content.replace(
-						pattern.avatarUrl,
-						logoUploadResult.uploadResult.media[ 0 ].URL
-					);
-				}
 				await wpcomRequest( {
 					// since this is a new site, its safe to assume that homepage ID is 2
 					path: `/sites/${ site.ID }/pages/2`,
 					method: 'POST',
 					apiNamespace: 'wp/v2',
-					body: { content, template: 'blank' },
+					body: { content: pattern.content, template: 'blank' },
 				} );
 
 				return setStaticHomepageOnSite( site.ID, 2 );
@@ -119,9 +107,8 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site && flow ) {
 			return Promise.all( [
 				postSiteSettings( site, state ),
-				postSiteLogo( state ).then( ( logoUploadResult ) =>
-					setPattern( site, flow, logoUploadResult )
-				),
+				postSiteLogo( state ).then( () => Promise.resolve() ),
+				setPattern( site, flow ),
 				setIntent( site, flow ),
 				setLaunchpadScreen( site, flow ),
 			] ).then( () => {

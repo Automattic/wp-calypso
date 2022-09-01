@@ -11,6 +11,27 @@ type Props = {
 	pattern: Pattern;
 };
 
+const getPatternPreviewUrl = ( pattern: Pattern ): string => {
+	const params = new URLSearchParams();
+
+	params.set( 'stylesheet', 'pub/lynx' );
+	params.set( 'pattern_id', pattern.name );
+
+	if ( pattern.siteTitle ) {
+		params.set( 'site_title', pattern.siteTitle );
+	}
+
+	if ( pattern.siteTagline ) {
+		params.set( 'site_tagline', pattern.siteTagline );
+	}
+
+	if ( pattern.siteLogoUrl ) {
+		params.set( 'site_logo_url', pattern.siteLogoUrl );
+	}
+
+	return `https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?${ params }`;
+};
+
 export function Item( { style, onClick, pattern, className }: Props ) {
 	return (
 		<div>
@@ -21,7 +42,7 @@ export function Item( { style, onClick, pattern, className }: Props ) {
 			>
 				<div className="pattern-picker__item-iframe-wrapper">
 					<MShotsImage
-						url={ `https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?stylesheet=pub%2Flynx&pattern_id=${ pattern.name }` }
+						url={ getPatternPreviewUrl( pattern ) }
 						options={ { w: 512, vpw: 512, vph: 1120 } }
 						alt={ pattern.title }
 						aria-labelledby=""

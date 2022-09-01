@@ -3,5 +3,7 @@ export type Pattern = {
 	name: string;
 	title: string;
 	content: string;
-	avatarUrl?: string;
+	siteLogoUrl?: string;
+	siteTitle?: string;
+	siteTagline?: string;
 };
