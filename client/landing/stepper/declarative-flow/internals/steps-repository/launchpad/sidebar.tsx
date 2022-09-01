@@ -46,7 +46,7 @@ const Sidebar = ( { siteSlug, submit }: SidebarProps ) => {
 	const site = useSite();
 	const translatedStrings = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
-	const enhancedTasks = site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site );
+	const enhancedTasks = site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit );
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 
@@ -79,7 +79,7 @@ const Sidebar = ( { siteSlug, submit }: SidebarProps ) => {
 					<span>{ siteName }</span>
 					<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 				</div>
-				<Checklist tasks={ enhancedTasks } submit={ submit } />
+				<Checklist tasks={ enhancedTasks } />
 			</div>
 		</div>
 	);
