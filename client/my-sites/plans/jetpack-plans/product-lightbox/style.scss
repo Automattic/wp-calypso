@@ -57,6 +57,7 @@
 
 	h2 {
 		font-size: 1.25rem;
+		font-weight: 700;
 	}
 }
 
@@ -128,8 +129,7 @@
 		display: flex;
 
 		.form-label {
-			padding-right: 2rem;
-
+			padding-right: 1.5rem;
 			span {
 				font-weight: 600;
 			}
@@ -234,7 +234,7 @@
 	display: none;
 }
 
-@media screen and ( max-width: 768px ) {
+@media screen and ( max-width: 768px ) and ( orientation: portrait ) {
 	.product-lightbox__modal {
 		display: flex;
 		justify-content: center;
@@ -281,6 +281,16 @@
 	.product-lightbox__detail {
 		padding: 24px;
 		height: auto;
+	}
+}
+
+@media screen and ( max-height: 365px ) and ( orientation: landscape ) {
+	.product-lightbox__variants-option {
+		margin-top: 0.25rem;
+		margin-bottom: 0.5rem;
+	}
+	.product-lightbox__variants {
+		padding: 1.5rem;
 	}
 }
 

@@ -71,7 +71,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 						</p>
 					</div>
 					<div className="product-lightbox__detail-tags">
-						<span className="product-lightbox__detail-tags-label">Best for:</span>
+						<span className="product-lightbox__detail-tags-label">Great for:</span>
 						<span className="product-lightbox__detail-tags-tag">
 							{ Tags.woo.icon }
 							<p>WooCommerce stores</p>
