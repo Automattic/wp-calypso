@@ -76,6 +76,7 @@ open class E2EBuildType(
 			logs.tgz => logs.tgz
 			screenshots => screenshots
 			trace => trace
+			allure-results => allure-results
 		""".trimIndent()
 
 		vcs {
