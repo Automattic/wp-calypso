@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
 import { SelectorProduct } from '../types';
-import { Icons } from './icons/product-icons';
+import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
 import './style.scss';
 
@@ -59,6 +59,9 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 			htmlOpenClassName="ReactModal__Html--open"
 		>
 			<div className="product-lightbox__content-wrapper">
+				<Button className="product-lightbox__close-button" plain onClick={ close }>
+					{ Icons.close }
+				</Button>
 				<div className="product-lightbox__detail">
 					<div className="product-lightbox__detail-header">
 						{ Icons.backup }

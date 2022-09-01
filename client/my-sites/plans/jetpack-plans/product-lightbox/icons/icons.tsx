@@ -21,9 +21,9 @@ export const Icons = {
 					y2="67.2532"
 					gradientUnits="userSpaceOnUse"
 				>
-					<stop stop-color="#F6F6F4"></stop>
-					<stop offset="0.526042" stop-color="#F7F4EA"></stop>
-					<stop offset="1" stop-color="#DDEDD5"></stop>
+					<stop stopColor="#F6F6F4"></stop>
+					<stop offset="0.526042" stopColor="#F7F4EA"></stop>
+					<stop offset="1" stopColor="#DDEDD5"></stop>
 				</linearGradient>
 				<linearGradient
 					id="paint1_linear_722_13653"
@@ -33,11 +33,16 @@ export const Icons = {
 					y2="67.2532"
 					gradientUnits="userSpaceOnUse"
 				>
-					<stop stop-color="#F6F6F4"></stop>
-					<stop offset="0.526042" stop-color="#F7F4EA"></stop>
-					<stop offset="1" stop-color="#DDEDD5"></stop>
+					<stop stopColor="#F6F6F4"></stop>
+					<stop offset="0.526042" stopColor="#F7F4EA"></stop>
+					<stop offset="1" stopColor="#DDEDD5"></stop>
 				</linearGradient>
 			</defs>
+		</svg>
+	),
+	close: (
+		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M5.40456 5L19 19M5 19L18.5954 5" stroke="#1E1E1E" strokeWidth="1.5" />
 		</svg>
 	),
 };
