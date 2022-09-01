@@ -25,7 +25,7 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 
 	useEffect( () => {
 		if ( launchpadScreenOption === 'off' ) {
-			window.location.replace( `/home/${ siteSlug }` );
+			window.location.replace( `/home/${ siteSlug }/?forceLoad=true` );
 		}
 	}, [ launchpadScreenOption, siteSlug ] );
 
