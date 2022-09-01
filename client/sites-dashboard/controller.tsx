@@ -65,7 +65,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
 			<Global styles={ globalStyles } />
-			<PageViewTracker path="/sites" title="Sites Management Page" />
+			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<SitesDashboard
 				queryParams={ {
 					search: context.query.search,
