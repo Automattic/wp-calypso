@@ -72,7 +72,8 @@ class PeopleListSectionHeader extends Component {
 		const classes = classNames( this.props.className, 'people-list-section-header' );
 
 		const showInviteUserBtn =
-			( siteLink && ! this.isSubscribersTab() ) || ! isEnabled( 'subscriber-importer' );
+			( siteLink && ! this.isSubscribersTab() ) ||
+			( siteLink && ! isEnabled( 'subscriber-importer' ) );
 		const showAddSubscriberBtn =
 			addSubscriberLink && this.isSubscribersTab() && isEnabled( 'subscriber-importer' );
 
