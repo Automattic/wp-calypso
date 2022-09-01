@@ -10,16 +10,16 @@ const noop = () => {};
 
 type OptionValue = number | string;
 
-interface Option< T > {
+interface Option< T = OptionValue > {
 	value: T;
 	label: string;
 }
 
-interface ChangeList< T > {
+interface ChangeList< T = OptionValue > {
 	value: T[];
 }
 
-interface Props< T > {
+interface Props< T = OptionValue > {
 	options: Option< T >[];
 	checked?: T[];
 	defaultChecked?: T[];
@@ -30,7 +30,7 @@ interface Props< T > {
 
 type DivProps = Omit< React.ComponentPropsWithoutRef< 'div' >, 'className' >;
 
-export default function MultiCheckbox< T extends OptionValue >( props: Props< T > & DivProps ) {
+export default function MultiCheckbox< T extends string | number >( props: Props< T > & DivProps ) {
 	const {
 		checked,
 		defaultChecked = [],
