@@ -93,15 +93,15 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 
 // This function will determine whether we want to disable or enable a task on the checklist
 // If a task is completed, we disable it
-// If a task is NOT completed AND the task contains dependencies, we want to want check if all dependencies are set to true:
+// If a task is NOT completed AND the task contains dependencies, we want to check if all dependencies are set to true:
 //    ^ If all the dependencies are true, then the task is enabled
-//    ^ If all the dependencies are false, then the task is disabled
+//    ^ If at least one of the dependencies is false, then the task is disabled
 export function isTaskDisabled( task: Task ) {
 	if ( task.isCompleted ) {
 		return task.isCompleted;
 	}
 
 	if ( task.dependencies ) {
-		return task.dependencies.every( ( dependency: boolean ) => dependency === false );
+		return task.dependencies.some( ( dependency: boolean ) => dependency === false );
 	}
 }

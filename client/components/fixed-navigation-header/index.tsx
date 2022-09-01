@@ -67,7 +67,7 @@ interface Props {
 const FixedNavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
 	const { id, className, children, navigationItems, mobileItem, compactBreadcrumb } = props;
 	return (
-		<Header id={ id } className={ className } ref={ ref }>
+		<Header id={ id } className={ 'fixed-navigation-header__header ' + className } ref={ ref }>
 			<Container>
 				<Breadcrumb
 					items={ navigationItems }

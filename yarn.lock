@@ -14627,6 +14627,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cssfontparser@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "cssfontparser@npm:1.2.1"
+  checksum: ceb9b2976d503dbff3ac2aff0229b263affb4fb221a6947b357682cd8a952f6995253646ca5f820020d2fe05b5e29b56dbdd2343388c32203e8dd0ed15bdc1ca
+  languageName: node
+  linkType: hard
+
 "cssnano-preset-default@npm:^5.1.8":
   version: 5.1.8
   resolution: "cssnano-preset-default@npm:5.1.8"
@@ -21352,6 +21359,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-canvas-mock@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "jest-canvas-mock@npm:2.4.0"
+  dependencies:
+    cssfontparser: ^1.2.1
+    moo-color: ^1.0.2
+  checksum: f0bfa05505cca1bcc7169745898bb075ab30b5cd29c3da2f90b289e4c853ac0cfb8d888d8bd3ac2a23d5f558fa9c2171b24cfe0bfad10344cc85e95d2b404b12
+  languageName: node
+  linkType: hard
+
 "jest-changed-files@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-changed-files@npm:27.5.1"
@@ -23446,6 +23463,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lottie-web@npm:^5.9.6":
+  version: 5.9.6
+  resolution: "lottie-web@npm:5.9.6"
+  checksum: 694e80629fc839aaafac35cb7cf3589bd3714cb0ffd7ab3594b02d915e18096c64bf074f89edbd727fb3a4b43f176c54e2dc4c1a56d38c7b20918520844946f5
+  languageName: node
+  linkType: hard
+
 "loud-rejection@npm:^1.0.0":
   version: 1.6.0
   resolution: "loud-rejection@npm:1.6.0"
@@ -24888,6 +24912,15 @@ __metadata:
   version: 2.27.0
   resolution: "moment@npm:2.27.0"
   checksum: ea5b2fd73c8ad9070fc82c21ccb6226f7556c27a6a305e64371a3d1223729e9f9e75da59c3114160f21f9181e74f6d245534093179825eb20bf0f40ec7495d92
+  languageName: node
+  linkType: hard
+
+"moo-color@npm:^1.0.2":
+  version: 1.0.3
+  resolution: "moo-color@npm:1.0.3"
+  dependencies:
+    color-name: ^1.1.4
+  checksum: 778c82f67f638c03a1d0fa78dcd6ea376a9f17b5e78e349c7e34a290b496dbdb43fd0b1c38070e2062d5e784bcf08e57f499015fcbcf52b3a1887d7825ebb80d
   languageName: node
   linkType: hard
 
@@ -35729,10 +35762,12 @@ swiper@4.5.1:
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"
     jest: ^27.3.1
+    jest-canvas-mock: ^2.4.0
     jest-environment-jsdom: ^27.3.1
     jest-teamcity: ^1.9.0
     loader-utils: ^1.2.3
     lodash: ^4.17.21
+    lottie-web: ^5.9.6
     lunr: ^2.3.8
     mixedindentlint: ^1.2.0
     mkdirp: ^1.0.4
