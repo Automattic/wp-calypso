@@ -1,6 +1,6 @@
 import { CONCIERGE_INITIAL_REQUEST, CONCIERGE_INITIAL_UPDATE } from 'calypso/state/action-types';
 
-export const availableSessions = ( state = null, action ) => {
+export const availableSessions = ( state = [], action ) => {
 	switch ( action.type ) {
 		case CONCIERGE_INITIAL_REQUEST:
 			return [];

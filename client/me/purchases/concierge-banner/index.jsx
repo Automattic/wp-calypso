@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { Banner } from 'calypso/components/banner';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION,
 	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
@@ -44,6 +45,7 @@ class ConciergeBanner extends Component {
 		let title;
 		let description;
 		let buttonText;
+		let event;
 
 		switch ( bannerType ) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
@@ -63,12 +65,13 @@ class ConciergeBanner extends Component {
 					}
 				);
 				buttonText = translate( 'Session dashboard' );
+				event = 'view-concierge-dashboard';
 				break;
 			case CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION:
 			case CONCIERGE_HAS_AVAILABLE_INCLUDED_SESSION:
 				title = translate( 'You still have a Quick Start session available' );
 				description = translate(
-					`Schedule your {{supportLink}}Quick Start support session{{/supportLink}} and get one-on-one guidance from our expert Happiness Engineers to kickstart your site!.`,
+					`Schedule your {{supportLink}}Quick Start support session{{/supportLink}} and get one-on-one guidance from our expert Happiness Engineers to kickstart your site.`,
 					{
 						components: {
 							supportLink: (
@@ -82,10 +85,11 @@ class ConciergeBanner extends Component {
 					}
 				);
 				buttonText = translate( 'Schedule a date' );
+				event = 'schedule-concierge-session';
 				break;
 		}
 
-		return { title, description, buttonText };
+		return { title, description, buttonText, event };
 	}
 
 	render() {
@@ -100,7 +104,11 @@ class ConciergeBanner extends Component {
 			return this.placeholder();
 		}
 
-		const { buttonText, description, title } = this.getBannerContent();
+		const { buttonText, description, title, event } = this.getBannerContent();
+
+		const referrer = location.pathname.startsWith( '/me/purchases' )
+			? '/me/purchases'
+			: '/purchases/subscriptions/:site';
 
 		return (
 			<>
@@ -114,6 +122,11 @@ class ConciergeBanner extends Component {
 					href={ `/me/quickstart/${ quickStartSite }` }
 					title={ title }
 					tracksClickName={ 'calypso_purchases_concierge_banner_click' }
+					recordTracksEvent={ recordTracksEvent }
+					event={ event }
+					tracksClickProperties={ {
+						referrer,
+					} }
 				/>
 			</>
 		);
