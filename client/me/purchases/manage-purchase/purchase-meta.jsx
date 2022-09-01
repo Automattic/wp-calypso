@@ -244,27 +244,21 @@ function PurchaseMetaPrice( { purchase } ) {
 				return (
 					<div>
 						<div>
-							{ translate( 'Service : %(oneTimeFee)s {{period}}(one-time){{/period}}', {
+							{ translate( 'Service : %(oneTimeFee)s (one-time)', {
 								args: {
 									oneTimeFee,
-								},
-								components: {
-									period: <span className="manage-purchase__time-period" />,
 								},
 							} ) }
 						</div>
 						<div>
 							{ translate(
-								'%(extraPageCount)d extra page : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
-								'%(extraPageCount)d extra pages : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
+								'%(extraPageCount)d extra page : %(costOfExtraPages)s (one-time)',
+								'%(extraPageCount)d extra pages : %(costOfExtraPages)s (one-time)',
 								{
 									count: extraPageCount,
 									args: {
 										extraPageCount,
 										costOfExtraPages,
-									},
-									components: {
-										period: <span className="manage-purchase__time-period" />,
 									},
 								}
 							) }
