@@ -88,7 +88,7 @@ export const Swipeable = ( {
 
 	const updateEnabled = hasDynamicHeight && numPages > 1;
 
-	// is used to recalculate height, if other children were received or the same but in a different order
+	// Generate a property that denotes the order of the cards, in order to recalculate height whenever the card order changes.
 	const childrenOrder = children.reduce( ( acc, child ) => acc + child.key, '' );
 
 	useLayoutEffect( () => {
