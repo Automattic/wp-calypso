@@ -254,13 +254,14 @@ export class AppBanner extends Component {
 
 function BannerIcon( { icon } ) {
 	useEffect( () => {
-		lottie.loadAnimation( {
+		const animation = lottie.loadAnimation( {
 			container: document.querySelector( '.app-banner__icon' ),
 			renderer: 'svg',
 			loop: false,
 			autoplay: true,
 			path: icon,
 		} );
+		return () => animation.destroy();
 	}, [ icon ] );
 
 	return <div className="app-banner__icon"></div>;
