@@ -326,8 +326,12 @@ function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 	const cartItem = {
 		product_slug: WPCOM_DIFM_LITE,
 		extra,
-		quantity: dependencies.selectedPageTitles.length,
 	};
+
+	if ( config.isEnabled( 'difm/allow-extra-pages' ) ) {
+		cartItem.quantity = dependencies.selectedPageTitles.length;
+	}
+
 	const providedDependencies = {
 		selectedDesign,
 		selectedSiteCategory,

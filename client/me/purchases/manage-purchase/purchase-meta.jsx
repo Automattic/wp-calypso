@@ -13,7 +13,6 @@ import {
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
 import classNames from 'classnames';
@@ -47,6 +46,7 @@ import {
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getDIFMTieredPurchaseDetails } from 'calypso/state/purchases/selectors/get-difm-purchase-tier-details';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { managePurchase } from '../paths';
@@ -224,73 +224,47 @@ function PurchaseMetaOwner( { owner } ) {
 	);
 }
 
-const formatPurchasePrice = ( price, currency ) =>
-	formatCurrency( price, currency, {
-		isSmallestUnit: true,
-		stripZeros: true,
-	} );
-
-function getDIFMPriceDetails( purchase ) {
-	const [ tier0, tier1 ] = purchase.priceTierList;
-	const perExtraPagePrice = tier1.minimumPrice - tier0.minimumPrice;
-
-	const { maximumUnits: numberOfIncludedPages, minimumPriceDisplay: formattedOneTimeFee } = tier0;
-	const { purchaseRenewalQuantity: noOfPages, currencyCode } = purchase;
-	const extraPageCount = noOfPages - numberOfIncludedPages;
-	const costOfExtraPages = extraPageCount * perExtraPagePrice;
-	const formattedCostOfExtraPages = formatPurchasePrice( costOfExtraPages, currencyCode );
-	return {
-		extraPageCount,
-		costOfExtraPages: formattedCostOfExtraPages,
-		oneTimeFee: formattedOneTimeFee,
-	};
-}
-
-function isDIFMPriceBreakdownVisible( purchase ) {
-	// Previous purchases may not have price tier information we do not show a price breakdown in these instances
-	const isPriceTierInfoAvailable = purchase.priceTierList.length > 1;
-	const { extraPageCount } = getDIFMPriceDetails( purchase );
-	const isExtraPagesPurchased = extraPageCount > 0;
-
-	return isDIFMProduct( purchase ) && isExtraPagesPurchased && isPriceTierInfoAvailable;
-}
-
 function PurchaseMetaPrice( { purchase } ) {
 	const translate = useTranslate();
+	const overallState = useSelector( ( state ) => state );
+
 	const { productSlug, productDisplayPrice } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-		if ( isDIFMPriceBreakdownVisible( purchase ) ) {
-			const { extraPageCount, costOfExtraPages, oneTimeFee } = getDIFMPriceDetails( purchase );
-			return (
-				<div>
+		if ( isDIFMProduct( purchase ) ) {
+			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( overallState, purchase.ID );
+			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
+				const { extraPageCount, costOfExtraPages, oneTimeFee } = difmTieredPurchaseDetails;
+				return (
 					<div>
-						{ translate( 'Service : %(oneTimeFee)s {{period}}(one-time){{/period}}', {
-							args: {
-								oneTimeFee,
-							},
-							components: {
-								period: <span className="manage-purchase__time-period" />,
-							},
-						} ) }
-					</div>
-					<div>
-						{ translate(
-							'%(extraPageCount)d extra page : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
-							'%(extraPageCount)d extra pages : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
-							{
-								count: extraPageCount,
+						<div>
+							{ translate( 'Service : %(oneTimeFee)s {{period}}(one-time){{/period}}', {
 								args: {
-									extraPageCount,
-									costOfExtraPages,
+									oneTimeFee,
 								},
-							}
-						) }
+								components: {
+									period: <span className="manage-purchase__time-period" />,
+								},
+							} ) }
+						</div>
+						<div>
+							{ translate(
+								'%(extraPageCount)d extra page : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
+								'%(extraPageCount)d extra pages : %(costOfExtraPages)s {{period}}(one-time){{/period}}',
+								{
+									count: extraPageCount,
+									args: {
+										extraPageCount,
+										costOfExtraPages,
+									},
+								}
+							) }
+						</div>
 					</div>
-				</div>
-			);
+				);
+			}
 		}
 
 		// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10")

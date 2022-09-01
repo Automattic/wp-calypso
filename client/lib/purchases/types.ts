@@ -76,7 +76,7 @@ export interface PurchasePriceTier {
 	maximumPriceDisplay?: string | null | undefined;
 }
 
-export interface RawPurchasedPriceTierEntry extends PriceTierEntry {
+export interface RawPurchasdPriceTierEntry extends PriceTierEntry {
 	minimum_price_monthly_display: never;
 	maximum_price_monthly_display: never;
 }
@@ -95,7 +95,7 @@ export interface RawPurchase {
 	cost_to_unbundle: undefined | number | string;
 	cost_to_unbundle_display: undefined | string;
 	price_text: string;
-	price_tier_list?: Array< RawPurchasedPriceTierEntry >;
+	price_tier_list?: Array< RawPurchasdPriceTierEntry >;
 	currency_code: string;
 	currency_symbol: string;
 	description: string;

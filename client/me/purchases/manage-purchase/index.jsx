@@ -28,7 +28,6 @@ import {
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
 	isDIFMProduct,
-	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -94,6 +93,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import { getDIFMTieredPurchaseDetails } from 'calypso/state/purchases/selectors/get-difm-purchase-tier-details';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
@@ -584,7 +584,7 @@ class ManagePurchase extends Component {
 	}
 
 	getPurchaseDescription() {
-		const { plan, purchase, theme, translate, productsList } = this.props;
+		const { plan, purchase, theme, translate } = this.props;
 		if ( isPlan( purchase ) ) {
 			return plan.getDescription();
 		}
@@ -651,30 +651,26 @@ class ManagePurchase extends Component {
 		}
 
 		if ( isDIFMProduct( purchase ) ) {
-			const productDetails = productsList[ WPCOM_DIFM_LITE ];
-			const [ tier0 ] = productDetails.priceTierList;
-			const { maximum_units: numberOfIncludedPages } = tier0;
-
-			const description = translate(
-				'A professionally built %(numberOfIncludedPages)d page website in 4 business days or less',
-				{
-					args: {
-						numberOfIncludedPages: numberOfIncludedPages,
-					},
-				}
-			);
-
-			if ( purchase.purchaseRenewalQuantity - numberOfIncludedPages > 0 ) {
+			const { difmTieredPurchaseDetails } = this.props;
+			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
+				const { extraPageCount, numberOfIncludedPages } = difmTieredPurchaseDetails;
 				return (
 					<>
-						{ description }{ ' ' }
+						{ translate(
+							'A professionally built %(numberOfIncludedPages)d page website in 4 business days or less',
+							{
+								args: {
+									numberOfIncludedPages: numberOfIncludedPages,
+								},
+							}
+						) }{ ' ' }
 						{ translate(
 							'This purchase includes %(numberOfPages)d extra page.',
 							'This purchase includes %(numberOfPages)d extra pages.',
 							{
-								count: purchase.purchaseRenewalQuantity - numberOfIncludedPages,
+								count: extraPageCount,
 								args: {
-									numberOfPages: purchase.purchaseRenewalQuantity - numberOfIncludedPages,
+									numberOfPages: extraPageCount,
 								},
 							}
 						) }
@@ -1021,6 +1017,7 @@ function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
 export default connect(
 	( state, props ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
+		const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( state, props.purchaseId );
 		const purchaseAttachedTo =
 			purchase && purchase.attachedToPurchaseId
 				? getByPurchaseId( state, purchase.attachedToPurchaseId )
@@ -1051,6 +1048,7 @@ export default connect(
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
 			productsList,
 			purchase,
+			difmTieredPurchaseDetails,
 			purchases,
 			purchaseAttachedTo,
 			siteId,
