@@ -106,7 +106,7 @@ export const pluginBundleFlow: Flow = {
 						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
 					}
 
-					Promise.all( pendingActions ).then( () => window.location.replace( to ) );
+					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
 				} );
 			} );
 
