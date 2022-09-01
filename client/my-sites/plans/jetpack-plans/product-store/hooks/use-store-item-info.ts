@@ -15,7 +15,7 @@ import { UseStoreItemInfoProps } from '../types';
 
 const isDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
 
-export const useStoreItemInto = ( {
+export const useStoreItemInfo = ( {
 	createCheckoutURL,
 	duration: selectedTerm,
 	onClickPurchase,

@@ -4,7 +4,7 @@ import productButtonLabel from '../product-card/product-button-label';
 import { FeaturedItemCard } from './featured-item-card';
 import { HeroImage } from './hero-image';
 import { useBundlesToDisplay } from './hooks/use-bundles-to-display';
-import { useStoreItemInto } from './hooks/use-store-item-info';
+import { useStoreItemInfo } from './hooks/use-store-item-info';
 import { MostPopular } from './most-popular';
 import { SeeAllFeatures } from './see-all-features';
 import type { BundlesListProps } from './types';
@@ -28,7 +28,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 		isSuperseded,
 		isUpgradeableToYearly,
 		sitePlan,
-	} = useStoreItemInto( {
+	} = useStoreItemInfo( {
 		createCheckoutURL,
 		onClickPurchase,
 		duration,

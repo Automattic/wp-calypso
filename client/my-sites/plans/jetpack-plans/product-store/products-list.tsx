@@ -5,7 +5,7 @@ import productButtonLabel from '../product-card/product-button-label';
 import { FeaturedItemCard } from './featured-item-card';
 import { HeroImage } from './hero-image';
 import { useProductsToDisplay } from './hooks/use-products-to-display';
-import { useStoreItemInto } from './hooks/use-store-item-info';
+import { useStoreItemInfo } from './hooks/use-store-item-info';
 import { MostPopular } from './most-popular';
 import SimpleProductCard from './simple-product-card';
 import { getSortedDisplayableProducts } from './utils/get-sorted-displayable-products';
@@ -30,7 +30,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 		isDeprecated,
 		isUpgradeableToYearly,
 		sitePlan,
-	} = useStoreItemInto( {
+	} = useStoreItemInfo( {
 		createCheckoutURL,
 		onClickPurchase,
 		duration,
