@@ -35,12 +35,6 @@ export class TestAccount {
 		const browserContext = await page.context();
 		await browserContext.clearCookies();
 
-		if ( this.credentials.primarySite && envVariables.TEST_ON_ATOMIC ) {
-			await page.goto( `https://${ this.credentials.primarySite }` );
-			await browserContext.clearCookies();
-			await page.goBack();
-		}
-
 		if ( await this.hasFreshAuthCookies() ) {
 			this.log( 'Found fresh cookies, skipping log in' );
 			await browserContext.addCookies( await this.getAuthCookies() );
