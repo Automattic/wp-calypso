@@ -73,6 +73,14 @@ export function SiteIconWithPicker( {
 				className={ classNames( 'site-icon-with-picker__site-icon', uploadFieldClassName ) }
 				disabled={ disabled }
 			>
+				<DropZone
+					className="site-icon-with-picker__dropzone"
+					textLabel={ ' ' }
+					icon={ <Icon icon={ upload } /> }
+					onFilesDrop={ ( files: FileList ) => {
+						handleFileChange( files[ 0 ] );
+					} }
+				/>
 				<FormFileUpload
 					className={ classNames( 'site-icon-with-picker__upload-button', {
 						'has-icon-or-image': selectedFile || siteIconUrl,
@@ -96,13 +104,6 @@ export function SiteIconWithPicker( {
 							: placeholderText || __( 'Add a site icon' ) }
 					</span>
 				</FormFileUpload>
-				<DropZone
-					className="site-icon-with-picker__dropzone"
-					fullScreen
-					onFilesDrop={ ( files: FileList ) => {
-						handleFileChange( files[ 0 ] );
-					} }
-				/>
 			</FormFieldset>
 		</>
 	);
