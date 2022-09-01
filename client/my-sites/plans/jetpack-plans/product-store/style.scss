@@ -174,10 +174,19 @@
 	}
 
 	.features-list {
-		padding: 1rem 1.5rem;
+		padding: 1.5rem;
+
+		@include break-mobile {
+			padding-bottom: 2.5rem;
+			border: 1px solid var( --studio-gray-0 );
+		}
 
 		@media (max-width: $break-mobile) {
 			padding: 0 0.5rem;
+		}
+
+		&__group:not(:first-child) {
+			margin-top: 1rem;
 		}
 
 		&__group--title {
