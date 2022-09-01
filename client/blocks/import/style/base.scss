@@ -162,6 +162,7 @@
 	@include onboarding-heading-padding;
 	display: flex;
 	flex-direction: column;
+	gap: 0 20px;
 
 	@include break-small {
 		flex-direction: row;
