@@ -47,7 +47,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				);
 				setIsLoading( false );
 			} )();
-	}, [ isVisible, onClose, props.postId, props.siteId, selectedSiteSlug ] );
+	}, [ isVisible, props.postId, props.siteId, selectedSiteSlug ] );
 
 	const cancelDialogButtons = [
 		{
