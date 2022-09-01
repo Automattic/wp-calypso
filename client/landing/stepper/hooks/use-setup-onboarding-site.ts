@@ -8,7 +8,7 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Pattern } from '@automattic/pattern-picker';
 
-const base64ImageToBlob = ( base64String: string ) => {
+export const base64ImageToBlob = ( base64String: string ) => {
 	// extract content type and base64 payload from original string
 	const pos = base64String.indexOf( ';base64,' );
 	const type = base64String.substring( 5, pos );

@@ -3,7 +3,7 @@ import { FormFileUpload } from '@wordpress/components';
 import { Icon, upload } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect } from 'react';
 import ImageEditor from 'calypso/blocks/image-editor';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import './style.scss';
@@ -33,6 +33,12 @@ export function SiteIconWithPicker( {
 	const [ editingFile, setEditingFile ] = React.useState< string >();
 	const [ imageEditorOpen, setImageEditorOpen ] = React.useState< boolean >( false );
 	const siteIconUrl = site?.icon?.img;
+
+	useEffect( () => {
+		if ( selectedFile ) {
+			setSelectedFileUrl( URL.createObjectURL( selectedFile ) );
+		}
+	}, [ selectedFile ] );
 
 	return (
 		<>

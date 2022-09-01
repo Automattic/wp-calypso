@@ -1,7 +1,7 @@
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
@@ -11,6 +11,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
+import { base64ImageToBlob } from 'calypso/landing/stepper/hooks/use-setup-onboarding-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -57,6 +58,19 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		formTouched && ! siteTitle.trim()
 			? __( `Oops. Looks like your Newsletter doesn't have a name yet.` )
 			: '';
+
+	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+
+	useEffect( () => {
+		const { siteAccentColor, siteTitle, siteDescription, siteLogo } = state;
+		setAccentColor( siteAccentColor );
+		setTagline( siteDescription );
+		setComponentSiteTitle( siteTitle );
+		if ( siteLogo ) {
+			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
+			setSelectedFile( file );
+		}
+	}, [ state ] );
 
 	useEffect( () => {
 		if ( ! site ) {
