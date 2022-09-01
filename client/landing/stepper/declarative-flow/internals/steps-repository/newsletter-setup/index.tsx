@@ -19,6 +19,8 @@ import type { Step } from '../../types';
 
 import './style.scss';
 
+const DEFAULT_ACCENT_COLOR = '#0675C4';
+
 /**
  * Generates an inline SVG for the color picker swatch
  *
@@ -35,6 +37,7 @@ function generateSwatchSVG( color: string | undefined ) {
 			: ''
 	}%3C/svg%3E")`;
 }
+
 const NewsletterSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
@@ -50,7 +53,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
-	const [ accentColor, setAccentColor ] = React.useState< string | undefined >( '#0675C4' );
+	const [ accentColor, setAccentColor ] = React.useState< string | undefined >();
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const siteTitleError =
@@ -84,7 +87,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
-		setSiteAccentColor( accentColor );
+		setSiteAccentColor( accentColor ?? DEFAULT_ACCENT_COLOR );
 
 		if ( selectedFile && base64Image ) {
 			try {
@@ -95,7 +98,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline, siteAccentColor: accentColor } );
+			submit?.( { siteTitle, tagline, siteAccentColor: accentColor ?? DEFAULT_ACCENT_COLOR } );
 		}
 	};
 
@@ -174,15 +177,16 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						className="newsletter-setup__accent-color"
 						style={ {
 							backgroundImage: [
-								generateSwatchSVG( accentColor ),
-								...( accentColor ? [ getBackgroundImage( accentColor ) ] : [] ),
+								generateSwatchSVG( accentColor ?? DEFAULT_ACCENT_COLOR ),
+								getBackgroundImage( accentColor ?? DEFAULT_ACCENT_COLOR ),
 							].join( ', ' ),
+							...( ! accentColor && { color: 'var( --studio-gray-30 )' } ),
 						} }
 						name="accentColor"
 						id="accentColor"
 						onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
 						readOnly
-						value={ accentColor }
+						value={ accentColor ?? DEFAULT_ACCENT_COLOR }
 					/>
 				</FormFieldset>
 				<Button className="newsletter-setup__submit-button" type="submit" primary>
