@@ -62,8 +62,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	}, [ location ] );
 
 	useEffect( () => {
-		recordStepStart( flow.name, kebabCase( currentRoute ) );
-	}, [ flow.name, currentRoute ] );
+		recordStepStart( flow.name, kebabCase( currentRoute ), { intent } );
+	}, [ flow.name, currentRoute, intent ] );
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
 
@@ -96,7 +96,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 								value={ progressValue * 100 }
 								total={ 100 }
 							/>
-							<SignupHeader />
+							<SignupHeader pageTitle={ flow.title } />
 							{ renderStep( path ) }
 						</div>
 					</Route>

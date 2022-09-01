@@ -22,7 +22,7 @@ import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
-import { serverRouter, getNormalizedPath } from 'calypso/server/isomorphic-routing';
+import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import analytics from 'calypso/server/lib/analytics';
 import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import {
@@ -52,20 +52,24 @@ const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
 
+let branchName;
 function getCurrentBranchName() {
-	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
+	if ( ! branchName ) {
+		try {
+			branchName = execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
+		} catch ( err ) {}
 	}
+	return branchName;
 }
 
+let commitChecksum;
 function getCurrentCommitShortChecksum() {
-	try {
-		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
+	if ( ! commitChecksum ) {
+		try {
+			commitChecksum = execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
+		} catch ( err ) {}
 	}
+	return commitChecksum;
 }
 
 /*
@@ -98,8 +102,21 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
 
-	const cacheKey = `${ getNormalizedPath( request.path, request.query ) }:gdpr=${ showGdprBanner }`;
-	const cachedServerState = stateCache.get( cacheKey ) || {};
+	const cacheKey = getCacheKey( {
+		path: request.path,
+		query: request.query,
+		context: { showGdprBanner },
+	} );
+
+	/**
+	 * A cache object can be written for an SSR route like /themes when a request
+	 * is logged out. To avoid using that logged-out data for an authenticated
+	 * request, we should not utilize the state cache for logged-in requests.
+	 * Note that in dev mode (when the user is not bootstrapped), all requests
+	 * are considered logged out. This shouldn't cause issues because only one
+	 * user is using the cache in dev mode -- so cross-request pollution won't happen.
+	 */
+	const cachedServerState = request.context.isLoggedIn ? {} : stateCache.get( cacheKey ) || {};
 	const getCachedState = ( reducer, storageKey ) => {
 		const storedState = cachedServerState[ storageKey ];
 		if ( ! storedState ) {
@@ -603,7 +620,7 @@ function wpcomPages( app ) {
 			} else {
 				const pricingPageUrl = ref
 					? `https://wordpress.com/pricing/?ref=${ ref }`
-					: 'https://wordpress.com/pricing';
+					: 'https://wordpress.com/pricing/';
 				res.redirect( pricingPageUrl );
 			}
 		} else {

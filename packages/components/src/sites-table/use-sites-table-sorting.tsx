@@ -1,20 +1,24 @@
 import { useMemo } from 'react';
-// eslint-disable-next-line no-restricted-imports
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+
+export interface SiteDetailsForSorting {
+	options?: {
+		updated_at?: string;
+	};
+}
 
 interface SitesTableSortOptions {
 	sortKey?: string;
 	sortOrder?: 'asc' | 'desc';
 }
 
-interface UseSitesTableSortingResult {
-	sortedSites: SiteExcerptData[];
+interface UseSitesTableSortingResult< T extends SiteDetailsForSorting > {
+	sortedSites: T[];
 }
 
-export function useSitesTableSorting(
-	allSites: SiteExcerptData[],
+export function useSitesTableSorting< T extends SiteDetailsForSorting >(
+	allSites: T[],
 	{ sortKey, sortOrder = 'asc' }: SitesTableSortOptions
-): UseSitesTableSortingResult {
+): UseSitesTableSortingResult< T > {
 	return useMemo( () => {
 		switch ( sortKey ) {
 			case 'updated-at':
@@ -25,8 +29,11 @@ export function useSitesTableSorting(
 	}, [ allSites, sortKey, sortOrder ] );
 }
 
-function sortSitesByLastPublish( sites: SiteExcerptData[], sortOrder: string ): SiteExcerptData[] {
-	return sites.sort( ( a, b ) => {
+function sortSitesByLastPublish< T extends SiteDetailsForSorting >(
+	sites: T[],
+	sortOrder: string
+): T[] {
+	return [ ...sites ].sort( ( a, b ) => {
 		if ( ! a.options?.updated_at || ! b.options?.updated_at ) {
 			return 0;
 		}

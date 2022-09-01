@@ -37,7 +37,7 @@ const EmailProvidersInDepthComparison = ( {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
-		if ( selectedSite === null ) {
+		if ( ! selectedSite ) {
 			return;
 		}
 

@@ -1,4 +1,4 @@
-import { Button, Card } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -23,7 +23,7 @@ class EmailListInactive extends Component {
 
 		const emailListItems = domains.map( ( domain ) => {
 			return (
-				<Card key={ domain.name }>
+				<CompactCard className="email-list-inactive__mailbox" key={ domain.name }>
 					<span>{ domain.name }</span>
 					{ canCurrentUserAddEmail( domain ) && (
 						<Button
@@ -37,7 +37,7 @@ class EmailListInactive extends Component {
 							{ translate( 'Add Email' ) }
 						</Button>
 					) }
-				</Card>
+				</CompactCard>
 			);
 		} );
 

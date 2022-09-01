@@ -7,12 +7,6 @@ const sections = [
 		enableLoggedOut: true,
 	},
 	{
-		name: 'sites',
-		paths: [ '/sites' ],
-		module: 'calypso/my-sites',
-		group: 'sites',
-	},
-	{
 		name: 'customize',
 		paths: [ '/customize' ],
 		module: 'calypso/my-sites/customize',
@@ -20,7 +14,7 @@ const sections = [
 	},
 	{
 		name: 'sites-dashboard',
-		paths: [ '/sites-dashboard' ],
+		paths: [ '/sites' ],
 		module: 'calypso/sites-dashboard',
 		group: 'sites-dashboard',
 	},
@@ -112,9 +106,12 @@ const sections = [
 	},
 	{
 		name: 'plugins',
-		paths: [ '/plugins' ],
+		paths: [ '/plugins', `/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/plugins` ],
 		module: 'calypso/my-sites/plugins',
 		group: 'sites',
+		enableLoggedOut: true,
+		isomorphic: true,
+		title: 'Plugins',
 	},
 	{
 		name: 'marketplace',
@@ -542,6 +539,12 @@ const sections = [
 		paths: [ '/add-ons', '/add-ons/[^\\/]+' ],
 		module: 'calypso/my-sites/add-ons',
 		group: 'sites',
+	},
+	{
+		name: 'promote-post',
+		paths: [ '/advertising', '/advertising/[^\\/]+' ],
+		module: 'calypso/my-sites/promote-post',
+		group: 'sites', // todo what group should this be?
 	},
 ];
 

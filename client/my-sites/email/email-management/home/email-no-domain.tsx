@@ -6,17 +6,23 @@ import EmptyContent from 'calypso/components/empty-content';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordEmailUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { AppState } from 'calypso/types';
 
-const EmailNoDomain = ( { selectedSite, source }: { selectedSite: SiteData; source: string } ) => {
+const EmailNoDomain = ( {
+	selectedSite,
+	source,
+}: {
+	selectedSite: SiteDetails;
+	source: string;
+} ) => {
 	const translate = useTranslate();
 
 	const hasAvailableDomainCredit = useSelector( ( state: AppState ) =>
 		hasDomainCredit( state, selectedSite.ID )
 	);
 
-	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? null );
+	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? '' );
 
 	const trackEvent = () => {
 		recordEmailUpsellTracksEvent( source, isFreePlanProduct ? 'plan' : 'domain' );

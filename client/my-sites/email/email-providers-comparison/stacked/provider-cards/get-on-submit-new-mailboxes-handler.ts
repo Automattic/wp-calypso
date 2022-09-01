@@ -98,7 +98,10 @@ const getOnSubmitNewMailboxesHandler =
 			.then( () => {
 				page( '/checkout/' + siteSlug );
 			} )
-			.finally( () => setAddingToCart( false ) );
+			.finally( () => setAddingToCart( false ) )
+			.catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 	};
 
 export default getOnSubmitNewMailboxesHandler;

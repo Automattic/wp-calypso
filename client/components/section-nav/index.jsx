@@ -76,6 +76,7 @@ class SectionNav extends Component {
 
 		className = classNames( 'section-nav', this.props.className, {
 			'is-open': this.state.mobileOpen,
+			'section-nav-updated': this.props.applyUpdatedStyles,
 			'has-pinned-items': this.hasPinnedSearch || this.props.hasPinnedItems,
 		} );
 

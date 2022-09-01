@@ -1,4 +1,4 @@
-import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -14,7 +14,6 @@ class ReskinSideExplainer extends Component {
 		let paidTitle;
 		let subtitle;
 		let freeSubtitle;
-		let hasFreeSubtitle;
 		let paidSubtitle;
 		let subtitle2;
 		let ctaText;
@@ -29,7 +28,7 @@ class ReskinSideExplainer extends Component {
 			'domain',
 		].includes( this.props.flowName );
 
-		const isEnLocale = [ 'en', 'en-gb' ].includes( getLocaleSlug() );
+		const isLaunchFlow = 'launch-site' === this.props.flowName;
 
 		switch ( type ) {
 			case 'free-domain-explainer':
@@ -49,16 +48,13 @@ class ReskinSideExplainer extends Component {
 
 				title = isPaidPlan ? paidTitle : freeTitle;
 
-				hasFreeSubtitle =
-					i18n.hasTranslation(
-						'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
-					) || isEnLocale;
-
-				freeSubtitle = hasFreeSubtitle
-					? translate(
+				freeSubtitle = (
+					<span>
+						{ translate(
 							'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
-					  )
-					: null;
+						) }
+					</span>
+				);
 
 				paidSubtitle = translate( 'Use the search tool on this page to find a domain you love.' );
 
@@ -73,10 +69,7 @@ class ReskinSideExplainer extends Component {
 					subtitle2 = null;
 				}
 
-				ctaText =
-					i18n.hasTranslation( 'Choose my domain later' ) || isEnLocale
-						? translate( 'Choose my domain later' )
-						: false;
+				ctaText = isLaunchFlow ? null : <span>{ translate( 'Choose my domain later' ) }</span>;
 				break;
 
 			case 'use-your-domain':

@@ -82,7 +82,9 @@ const CheckoutMasterbar = ( {
 	const showCloseButton = isLeavingAllowed && ! isJetpack;
 
 	return (
-		<Masterbar>
+		<Masterbar
+			className={ classnames( 'masterbar--is-checkout', { 'masterbar--is-jetpack': isJetpack } ) }
+		>
 			<div className="masterbar__secure-checkout">
 				{ showCloseButton && (
 					<Item

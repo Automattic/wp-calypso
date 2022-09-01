@@ -12,7 +12,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import CompositeCheckout from '../composite-checkout';
+import CheckoutMain from '../components/checkout-main';
 import {
 	siteId,
 	domainProduct,
@@ -40,7 +40,7 @@ jest.mock( 'calypso/state/sites/selectors' );
 
 /* eslint-disable jest/no-conditional-expect */
 
-describe( 'CompositeCheckout with a variant picker', () => {
+describe( 'CheckoutMain with a variant picker', () => {
 	let MyCheckout;
 
 	beforeEach( () => {
@@ -117,7 +117,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 						{ ...additionalCartProps }
 					>
 						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-							<CompositeCheckout
+							<CheckoutMain
 								siteId={ siteId }
 								siteSlug={ 'foo.com' }
 								getStoredCards={ async () => [] }

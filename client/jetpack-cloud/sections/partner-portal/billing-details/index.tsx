@@ -113,23 +113,6 @@ export default function BillingDetails(): ReactElement {
 
 			<Card compact className="billing-details__footer">
 				<div className="billing-details__row billing-details__row--summary">
-					<span className="billing-details__total-label billing-details__cost-label">
-						{ billing.isSuccess &&
-							translate( 'Cost for {{bold}}%(date)s{{/bold}}', {
-								components: { bold: <strong /> },
-								args: { date: moment( billing.data.date ).format( 'MMMM, YYYY' ) },
-							} ) }
-
-						{ billing.isLoading && <TextPlaceholder /> }
-					</span>
-					<strong className="billing-details__cost-amount">
-						{ billing.isSuccess && formatCurrency( billing.data.costs.total, 'USD' ) }
-
-						{ billing.isLoading && <TextPlaceholder /> }
-
-						{ billing.isError && <Gridicon icon="minus" /> }
-					</strong>
-
 					{ billing.isSuccess && ! useDailyPrices && (
 						<>
 							<span className="billing-details__total-label billing-details__line-item-meta">
@@ -151,6 +134,23 @@ export default function BillingDetails(): ReactElement {
 							</span>
 						</>
 					) }
+
+					<span className="billing-details__total-label billing-details__cost-label">
+						{ billing.isSuccess &&
+							translate( 'Cost for {{bold}}%(date)s{{/bold}}', {
+								components: { bold: <strong /> },
+								args: { date: moment( billing.data.date ).format( 'MMMM, YYYY' ) },
+							} ) }
+
+						{ billing.isLoading && <TextPlaceholder /> }
+					</span>
+					<strong className="billing-details__cost-amount">
+						{ billing.isSuccess && formatCurrency( billing.data.costs.total, 'USD' ) }
+
+						{ billing.isLoading && <TextPlaceholder /> }
+
+						{ billing.isError && <Gridicon icon="minus" /> }
+					</strong>
 				</div>
 			</Card>
 

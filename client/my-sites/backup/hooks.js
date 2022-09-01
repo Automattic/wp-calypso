@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
+import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import {
 	SUCCESSFUL_BACKUP_ACTIVITIES,
 	BACKUP_ATTEMPT_ACTIVITIES,
@@ -52,7 +52,7 @@ const getRealtimeAttemptFilter = ( { before, after, sortOrder } = {} ) => {
 // Find all the backup attempts in a given date range
 export const useMatchingBackupAttemptsInRange = ( siteId, { before, after, sortOrder } = {} ) => {
 	const filter = getSuccessfulBackupsFilter( { before, after, sortOrder } );
-	const { data: backups, isLoading } = useActivityLogQuery( siteId, filter );
+	const { data: backups, isLoading } = useRewindableActivityLogQuery( siteId, filter );
 
 	return { isLoading, backups };
 };
@@ -70,7 +70,7 @@ export const useFirstMatchingBackupAttempt = (
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )
 		: getDailyAttemptFilter( { before, after, successOnly, sortOrder } );
 
-	const { data, isLoading } = useActivityLogQuery( siteId, filter, queryOptions );
+	const { data, isLoading } = useRewindableActivityLogQuery( siteId, filter, queryOptions );
 
 	let backupAttempt = undefined;
 	if ( data ) {

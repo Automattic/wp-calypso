@@ -195,6 +195,12 @@ module.exports = {
 					},
 				},
 				{
+					files: [ './config/*.json' ],
+					rules: {
+						'sort-keys': 'warn',
+					},
+				},
+				{
 					// These files don't have the `@automattic` prefix in the name
 					files: [
 						'./package.json',
@@ -387,12 +393,7 @@ module.exports = {
 		'react/forbid-foreign-prop-types': 'error',
 
 		// enforce our classname namespacing rules
-		'wpcalypso/jsx-classname-namespace': [
-			2,
-			{
-				rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
-			},
-		],
+		'wpcalypso/jsx-classname-namespace': 'error',
 
 		// Disallow importing of native node modules, with some exceptions
 		// - url because we use it all over the place to parse and build urls

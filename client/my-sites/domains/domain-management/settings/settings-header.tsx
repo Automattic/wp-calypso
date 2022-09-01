@@ -2,22 +2,23 @@ import { Circle, SVG } from '@wordpress/components';
 import { home, Icon, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { resolveDomainStatus } from 'calypso/lib/domains';
 import { type as DomainType } from 'calypso/lib/domains/constants';
 import TransferConnectedDomainNudge from 'calypso/my-sites/domains/domain-management/components/transfer-connected-domain-nudge';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { TranslateResult } from 'i18n-calypso';
 
 import './style.scss';
 
 type SettingsHeaderProps = {
 	domain: ResponseDomain;
-	site: SiteData;
+	site: SiteDetails;
 	purchase: Purchase | null;
 };
 

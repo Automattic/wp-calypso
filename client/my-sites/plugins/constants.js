@@ -17,6 +17,7 @@ export const PREINSTALLED_PLUGINS = [
 export const PREINSTALLED_PREMIUM_PLUGINS = {
 	'jetpack-search': {
 		feature: WPCOM_FEATURES_INSTANT_SEARCH,
+		jetpack_module: 'search',
 		products: {
 			monthly: PRODUCT_JETPACK_SEARCH_MONTHLY,
 			yearly: PRODUCT_JETPACK_SEARCH,

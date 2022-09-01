@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { getPlugins, isEqualSlugOrId } from 'calypso/state/plugins/installed/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -32,17 +32,7 @@ function isNotInstalled( plugin, installedPlugins ) {
 	);
 }
 
-const SingleListView = ( {
-	category,
-	pluginsByCategoryPopular,
-	isFetchingPluginsByCategoryPopular,
-	pluginsByCategoryFeatured,
-	isFetchingPluginsByCategoryFeatured,
-	paidPlugins,
-	isFetchingPaidPlugins,
-	siteSlug,
-	sites,
-} ) => {
+const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
@@ -50,25 +40,11 @@ const SingleListView = ( {
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+	const { localizePath } = useLocalizedPlugins();
 
 	const installedPlugins = useSelector( ( state ) =>
 		getPlugins( state, siteObjectsToSiteIds( sites ) )
 	);
-
-	let plugins;
-	let isFetching;
-	if ( category === 'popular' ) {
-		plugins = pluginsByCategoryPopular;
-		isFetching = isFetchingPluginsByCategoryPopular;
-	} else if ( category === 'featured' ) {
-		plugins = pluginsByCategoryFeatured;
-		isFetching = isFetchingPluginsByCategoryFeatured;
-	} else if ( category === 'paid' ) {
-		plugins = paidPlugins;
-		isFetching = isFetchingPaidPlugins;
-	} else {
-		return null;
-	}
 
 	plugins = plugins
 		.filter( isNotBlocked )
@@ -89,7 +65,7 @@ const SingleListView = ( {
 			listName={ category }
 			title={ categoryName }
 			site={ siteSlug }
-			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? listLink : false }
+			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
 			size={ SHORT_LIST_LENGTH }
 			showPlaceholders={ isFetching }
 			currentSites={ sites }

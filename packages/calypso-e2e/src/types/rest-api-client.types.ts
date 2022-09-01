@@ -6,6 +6,9 @@ export interface AccountDetails {
 	email: string;
 }
 
+/**
+ * @deprecated This interface should not be used. Instead, use `NewSiteResponse`.
+ */
 export interface SiteDetails {
 	url: string;
 	id: number;

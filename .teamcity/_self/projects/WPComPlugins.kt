@@ -192,12 +192,28 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 		name = "Upload Gutenberg Source Maps to Sentry";
 		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
 
+		// Only needed so that we can test the job in different branches.
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
 		params {
 			text(
 				name = "GUTENBERG_VERSION",
 				value = "",
 				label = "Gutenberg version",
 				description = "The Gutenberg version to upload source maps for (include the whole string, including the `v` prefix)",
+				allowEmpty = false
+			)
+		}
+
+		params {
+			text(
+				name = "SENTRY_RELEASE_NAME",
+				value = "",
+				label = "Sentry release name",
+				description = "The WPCOM Sentry release to upload the source-maps to",
 				allowEmpty = false
 			)
 		}
@@ -216,7 +232,11 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 					cd gutenberg
 
 					# Upload the .js and .js.map files to Sentry (`wpcom-test-01` release)
-					sentry-cli --auth-token %SENTRY_AUTH_TOKEN% releases --org a8c --project wpcom-gutenberg-wp-admin files wpcom-test-01 upload-sourcemaps . --url-prefix "~/wp-content/plugins/gutenberg-core/%GUTENBERG_VERSION%/"
+					sentry-cli releases files %SENTRY_RELEASE_NAME% upload-sourcemaps . \
+							--auth-token %SENTRY_AUTH_TOKEN% \
+							--org a8c \
+							--project wpcom-gutenberg-wp-admin \
+							--url-prefix "~/wp-content/plugins/gutenberg-core/%GUTENBERG_VERSION%/"
 				"""
 			}
 		}

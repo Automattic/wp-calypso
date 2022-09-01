@@ -62,7 +62,7 @@ const GoogleWorkspacePrice = ( {
 	}
 
 	const isDiscounted = hasDiscount( product );
-	const isEligibleForFreeTrial = isDomainEligibleForGoogleWorkspaceFreeTrial( domain );
+	const isEligibleForFreeTrial = isDomainEligibleForGoogleWorkspaceFreeTrial( { domain, product } );
 
 	const priceWithInterval = (
 		<PriceWithInterval

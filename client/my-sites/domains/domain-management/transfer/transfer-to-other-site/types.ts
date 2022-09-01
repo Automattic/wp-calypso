@@ -2,12 +2,12 @@ import { DefaultRootState } from 'react-redux';
 import { LocalizeProps } from 'calypso/../packages/i18n-calypso/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { requestSites } from 'calypso/state/sites/actions';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 type Maybe< T > = T | null;
 // TODO: remove this once the checkout types are further described
-type SiteDataExtraInfo = SiteData & {
+type SiteDataExtraInfo = SiteDetails & {
 	options: {
 		is_automated_transfer: boolean;
 		is_domain_only: boolean;
@@ -33,7 +33,7 @@ export type TransferDomainToOtherSiteStateProps = {
 	hasSiteDomainsLoaded: boolean;
 	isDomainOnly: Maybe< boolean >;
 	isMapping: boolean;
-	sites: SiteData[];
+	sites: SiteDetails[];
 };
 // state props added by redux connect
 export type TransferDomainToOtherSiteStateToProps = (

@@ -7,8 +7,8 @@ import SiteSelector from 'calypso/components/site-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
 import SiteDeleteConfirmationDialog from './site-delete-confirmation-dialog';
+import type { SiteDetails } from '@automattic/data-stores';
 import './styles.scss';
 
 interface Props {
@@ -22,7 +22,7 @@ const DIFMSitePicker = ( {
 	filter,
 	onSiteSelect,
 }: {
-	filter: ( site: SiteData ) => boolean;
+	filter: ( site: SiteDetails ) => boolean;
 	onSiteSelect: ( siteId: number ) => void;
 } ) => {
 	return (
@@ -39,7 +39,21 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 	const [ siteId, setSiteId ] = useState< number | null >( null );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const headerText = translate( 'Choose where you want us to build your site.' );
-	const subHeaderText = translate( 'Some unsupported sites may be hidden.' );
+	const subHeaderText = translate(
+		'Please {{SupportLink}}contact support{{/SupportLink}} if your existing WordPress.com site isn’t listed, or create a {{NewSiteLink}}new site{{/NewSiteLink}} instead.',
+		{
+			components: {
+				SupportLink: <a className="subtitle-link" rel="noopener noreferrer" href="/help/contact" />,
+				NewSiteLink: (
+					<a
+						className="subtitle-link"
+						rel="noopener noreferrer"
+						href="/start/do-it-for-me/difm-options"
+					/>
+				),
+			},
+		}
+	);
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName: props.stepName } ) );
@@ -49,7 +63,7 @@ export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
 		setSiteId( siteId );
 	};
 
-	const filterSites = ( site: SiteData ) => {
+	const filterSites = ( site: SiteDetails ) => {
 		return !! (
 			site.capabilities?.manage_options &&
 			( isEnabled( 'difm/allow-woa-sites' ) || ! site.jetpack ) &&

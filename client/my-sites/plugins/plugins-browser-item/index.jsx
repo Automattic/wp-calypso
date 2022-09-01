@@ -1,6 +1,7 @@
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { TextHighlight } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -16,7 +17,8 @@ import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibilit
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
@@ -26,6 +28,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
+import PreinstalledPremiumPluginBrowserItemPricing from './preinstalled-premium-plugin-browser-item-pricing';
 import { PluginsBrowserElementVariant } from './types';
 
 import './style.scss';
@@ -38,11 +41,13 @@ const PluginsBrowserListElement = ( props ) => {
 		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
+		search,
 	} = props;
 
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const localizeUrl = useLocalizeUrl();
+	const { localizePath } = useLocalizedPlugins();
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -163,33 +168,40 @@ const PluginsBrowserListElement = ( props ) => {
 	return (
 		<li className={ classNames }>
 			<a
-				href={ pluginLink }
+				href={ localizePath( pluginLink ) }
 				className="plugins-browser-item__link"
 				onClick={ trackPluginLinkClick }
 			>
 				<div className="plugins-browser-item__info">
 					<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					<div className="plugins-browser-item__title">{ plugin.name }</div>
+					<div className="plugins-browser-item__title">
+						<TextHighlight text={ plugin.name } highlight={ search } />
+					</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<>
 							<div className="plugins-browser-item__author">
 								{ translate( 'by ' ) }
-								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
+								<span className="plugins-browser-item__author-name">
+									<TextHighlight text={ plugin.author_name } highlight={ search } />
+								</span>
 							</div>
 
 							<div className="plugins-browser-item__last-updated">
-								{ dateFromNow && (
-									<>
-										{ translate( 'Last updated ' ) }
-										<span className="plugins-browser-item__last-updated-value">
-											{ dateFromNow }
-										</span>
-									</>
-								) }
+								{ dateFromNow &&
+									translate( 'Last updated {{span}}%(ago)s{{/span}}', {
+										args: {
+											ago: dateFromNow,
+										},
+										components: {
+											span: <span className="plugins-browser-item__last-updated-value" />,
+										},
+									} ) }
 							</div>
 						</>
 					) }
-					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
+					<div className="plugins-browser-item__description">
+						<TextHighlight text={ plugin.short_description } highlight={ search } />
+					</div>
 				</div>
 				{ isUntestedVersion && (
 					<div className="plugins-browser-item__untested-notice">
@@ -262,34 +274,16 @@ const InstalledInOrPricing = ( {
 	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
 	)?.active;
-	const { isPreinstalledPremiumPlugin, isPreinstalledPremiumPluginUpgraded } =
-		usePreinstalledPremiumPlugin( plugin.slug );
+	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
-
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	let checkmarkColorClass = 'checkmark--active';
 
-	if ( isPreinstalledPremiumPluginUpgraded ) {
-		/* eslint-disable wpcalypso/jsx-gridicon-size */
-		return (
-			<div className="plugins-browser-item__installed-and-active-container">
-				<div className="plugins-browser-item__installed ">
-					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
-					{ translate( 'Installed' ) }
-				</div>
-				<div className="plugins-browser-item__active">
-					<Badge type={ active ? 'success' : 'info' }>
-						{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
-					</Badge>
-				</div>
-			</div>
-		);
-		/* eslint-enable wpcalypso/jsx-gridicon-size */
+	if ( isPreinstalledPremiumPlugin ) {
+		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
 	}
 
-	if (
-		( ! isPreinstalledPremiumPlugin && sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
-		isWpcomPreinstalled
-	) {
+	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
 			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
@@ -338,7 +332,7 @@ const InstalledInOrPricing = ( {
 							) : (
 								<>
 									{ translate( 'Free' ) }
-									{ ! canInstallPlugins && (
+									{ ! canInstallPlugins && isLoggedIn && (
 										<span className="plugins-browser-item__requires-plan-upgrade">
 											{ translate( 'Requires a plan upgrade' ) }
 										</span>

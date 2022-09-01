@@ -1,15 +1,20 @@
 import config from '@automattic/calypso-config';
-import { PLAN_BUSINESS_MONTHLY, PLAN_BUSINESS, PLAN_WPCOM_PRO } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { IAppState } from 'calypso/state/types';
 
 const StyledUl = styled.ul`
 	margin-top: 20px;
@@ -44,6 +49,21 @@ const StyledLi = styled.li`
 const GreenGridicon = styled( Gridicon )`
 	color: var( --studio-green-50 );
 `;
+
+const useRequiredPlan = ( shouldUpgrade: boolean ) => {
+	return useSelector( ( state: IAppState ) => {
+		if ( ! shouldUpgrade ) {
+			return '';
+		}
+		const billingPeriod = getBillingInterval( state );
+		const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
+		if ( config.isEnabled( 'marketplace-personal-premium' ) ) {
+			return isAnnualPeriod ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;
+		}
+
+		return isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
+	} );
+};
 
 interface Props {
 	shouldUpgrade: boolean;
@@ -107,10 +127,13 @@ export const PlanUSPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, billin
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const supportText = usePluginsSupportText();
-	const requiredPlan = useRequiredPlan( shouldUpgrade, isAnnualPeriod );
+	const requiredPlan = useRequiredPlan( shouldUpgrade );
 	const planDisplayCost = useSelector( ( state ) => {
 		return getProductDisplayCost( state, requiredPlan || '' );
 	} );
+	const monthlyLabel = translate( 'Monthly' );
+	const annualLabel = translate( 'Annually' );
+	const periodicityLabel = isAnnualPeriod ? annualLabel : monthlyLabel;
 
 	if ( ! shouldUpgrade ) {
 		return null;
@@ -118,15 +141,22 @@ export const PlanUSPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, billin
 
 	let planText;
 	switch ( requiredPlan ) {
-		case PLAN_WPCOM_PRO:
-			planText = translate( 'Included in the Pro plan (%s):', {
-				args: [ planDisplayCost ],
+		case PLAN_PERSONAL:
+		case PLAN_PERSONAL_MONTHLY:
+			planText = translate( 'Included in the Personal plan (%(cost)s/%(periodicity)s):', {
+				args: {
+					cost: planDisplayCost,
+					periodicity: periodicityLabel,
+				},
 			} );
 			break;
 		case PLAN_BUSINESS:
 		case PLAN_BUSINESS_MONTHLY:
-			planText = translate( 'Included in the Business plan (%s):', {
-				args: [ planDisplayCost ],
+			planText = translate( 'Included in the Business plan (%(cost)s/%(periodicity)s):', {
+				args: {
+					cost: planDisplayCost,
+					periodicity: periodicityLabel,
+				},
 			} );
 			break;
 	}
@@ -160,7 +190,7 @@ function LegacyUSPS( { shouldUpgrade, isFreePlan, isMarketplaceProduct, billingP
 	const translate = useTranslate();
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
-	const requiredPlan = useRequiredPlan( shouldUpgrade, isAnnualPeriod );
+	const requiredPlan = useRequiredPlan( shouldUpgrade );
 	const planDisplayCost = useSelector( ( state ) => {
 		return getProductDisplayCost( state, requiredPlan || '' );
 	} );
@@ -168,8 +198,9 @@ function LegacyUSPS( { shouldUpgrade, isFreePlan, isMarketplaceProduct, billingP
 
 	let planText;
 	switch ( requiredPlan ) {
-		case PLAN_WPCOM_PRO:
-			planText = translate( 'Included in the Pro plan (%s):', {
+		case PLAN_PERSONAL:
+		case PLAN_PERSONAL_MONTHLY:
+			planText = translate( 'Included in the Personal plan (%s):', {
 				args: [ planDisplayCost ],
 			} );
 			break;
@@ -256,22 +287,6 @@ function LegacyUSPS( { shouldUpgrade, isFreePlan, isMarketplaceProduct, billingP
 			) ) }
 		</StyledUl>
 	);
-}
-
-function useRequiredPlan( shouldUpgrade: boolean, isAnnualPeriod: boolean ) {
-	const selectedSite = useSelector( getSelectedSite );
-
-	return useSelector( ( state ) => {
-		if ( ! shouldUpgrade ) {
-			return '';
-		}
-
-		if ( isEligibleForProPlan( state, selectedSite?.ID ) ) {
-			return PLAN_WPCOM_PRO;
-		}
-
-		return isAnnualPeriod ? PLAN_BUSINESS : PLAN_BUSINESS_MONTHLY;
-	} );
 }
 
 export default USPS;

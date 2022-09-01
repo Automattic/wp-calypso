@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
@@ -8,6 +10,7 @@ import QueryOrderTransaction from 'calypso/components/data/query-order-transacti
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/composite-checkout/lib/pending-page';
@@ -325,10 +328,29 @@ function displayRenewalSuccessNotice( {
 	);
 }
 
+const logCheckoutError = ( error: Error ) => {
+	logToLogstash( {
+		feature: 'calypso_client',
+		message: 'checkout pending load error',
+		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+		extra: {
+			env: config( 'env_id' ),
+			type: 'checkout_pending',
+			message: error.message + '; Stack: ' + error.stack,
+		},
+	} );
+};
+
 export default function CheckoutPendingWrapper( props: CheckoutPendingProps ) {
+	const translate = useTranslate();
 	return (
-		<CalypsoShoppingCartProvider>
-			<CheckoutPending { ...props } />
-		</CalypsoShoppingCartProvider>
+		<CheckoutErrorBoundary
+			errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+			onError={ logCheckoutError }
+		>
+			<CalypsoShoppingCartProvider>
+				<CheckoutPending { ...props } />
+			</CalypsoShoppingCartProvider>
+		</CheckoutErrorBoundary>
 	);
 }

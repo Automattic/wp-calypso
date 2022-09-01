@@ -598,12 +598,21 @@ export class LoginForm extends Component {
 					<p className="login__form-terms">
 						{ this.props.translate(
 							// To make any changes to this copy please speak to the legal team
-							'By continuing, ' + 'you agree to our {{tosLink}}Terms of Service{{/tosLink}}.',
+							'By continuing, ' +
+								'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
+								' acknowledge that you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 							{
 								components: {
 									tosLink: (
 										<a
 											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									privacyLink: (
+										<a
+											href={ localizeUrl( 'https://automattic.com/privacy/' ) }
 											target="_blank"
 											rel="noopener noreferrer"
 										/>

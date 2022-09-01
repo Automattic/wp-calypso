@@ -15,6 +15,7 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { SiteDetails } from 'calypso/../packages/data-stores/src';
 import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 import './style.scss';
@@ -30,7 +31,7 @@ function SubscriptionsContent( {
 	isFetchingPurchases: boolean;
 	hasLoadedPurchases: boolean;
 	selectedSiteId: number | null;
-	selectedSite: null | { ID: number; name: string; domain: string; slug: string };
+	selectedSite: undefined | null | SiteDetails;
 	purchases: Purchase[];
 	cards: StoredCard[];
 } ) {

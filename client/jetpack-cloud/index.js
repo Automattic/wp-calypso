@@ -1,12 +1,14 @@
+import config from '@automattic/calypso-config';
 import Debug from 'debug';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { jetpackDashboardRedirectLink } from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 import Landing from './sections/landing';
-import SiteLanding from './sections/site-landing';
 
 const debug = new Debug( 'calypso:jetpack-cloud:controller' );
 
@@ -32,12 +34,19 @@ const redirectToPrimarySiteLanding = ( context, next ) => {
 	const state = context.store.getState();
 	const currentUser = getCurrentUser( state );
 	const isPrimarySiteJetpackSite = getPrimarySiteIsJetpack( state );
-	context.primary = (
-		<SiteLanding
-			primarySiteSlug={ currentUser.primarySiteSlug }
-			isPrimarySiteJetpackSite={ isPrimarySiteJetpackSite }
-		/>
-	);
+	const isAgency = isAgencyUser( state );
+	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
+	const dashboardRedirectLink = jetpackDashboardRedirectLink( state );
+
+	if ( isAgency && isAgencyEnabled ) {
+		page.redirect( dashboardRedirectLink );
+		return;
+	}
+
+	isPrimarySiteJetpackSite
+		? page( `/landing/${ currentUser.primarySiteSlug }` )
+		: page( `/landing` );
+
 	next();
 };
 

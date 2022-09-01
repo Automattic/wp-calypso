@@ -1,81 +1,110 @@
 import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import { SitesCountBadge } from './sites-count-badge';
-import type { SitesTableTab } from './sites-table-tab-panel';
-// eslint-disable-next-line no-restricted-imports
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import {
+	SiteObjectWithStatus,
+	getSiteLaunchStatus,
+	siteLaunchStatuses,
+	useTranslatedSiteLaunchStatuses,
+} from './site-status';
+
+export const DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE = 'all';
+
+export const siteLaunchStatusFilterValues = [
+	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
+	...siteLaunchStatuses,
+] as const;
+
+export type FilterableSiteLaunchStatuses = typeof siteLaunchStatusFilterValues[ number ];
 
 interface SitesTableFilterOptions {
-	status?: string;
 	search?: string;
+	showHidden?: boolean;
+	status: FilterableSiteLaunchStatuses;
 }
 
-interface UseSitesTableFilteringResult {
-	filteredSites: SiteExcerptData[];
-	tabs: SitesTableTab[];
-	selectedTabHasSites: boolean;
+interface Status {
+	title: React.ReactChild;
+	name: FilterableSiteLaunchStatuses;
+	count: number;
+	hiddenCount: number;
 }
 
-export function useSitesTableFiltering(
-	allSites: SiteExcerptData[],
-	{ status = 'all', search }: SitesTableFilterOptions
-): UseSitesTableFilteringResult {
+interface UseSitesTableFilteringResult< T > {
+	filteredSites: T[];
+	statuses: Status[];
+}
+
+type SiteObjectWithBasicInfo = SiteObjectWithStatus & {
+	URL: string;
+	name: string | undefined;
+	slug: string;
+	visible?: boolean;
+};
+
+export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
+	allSites: T[],
+	{ status, showHidden = false, search }: SitesTableFilterOptions
+): UseSitesTableFilteringResult< T > {
 	const { __ } = useI18n();
+	const translatedSiteLaunchStatuses = useTranslatedSiteLaunchStatuses();
+
+	const filterableSiteLaunchStatuses = useMemo( () => {
+		return {
+			all: __( 'All Sites' ),
+			...translatedSiteLaunchStatuses,
+		};
+	}, [ __, translatedSiteLaunchStatuses ] );
+
+	const [ statuses, groupedByStatus ] = useMemo( () => {
+		const statuses: Status[] = siteLaunchStatusFilterValues.map( ( name ) => ( {
+			name,
+			title: filterableSiteLaunchStatuses[ name ],
+			count: 0,
+			hiddenCount: 0,
+		} ) );
+
+		const hiddenCounts = {
+			all: 0,
+			'coming-soon': 0,
+			public: 0,
+			private: 0,
+			redirect: 0,
+		};
+
+		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
+			( groups, site ) => {
+				const siteStatus = getSiteLaunchStatus( site );
+
+				if ( ! site.visible && ! showHidden ) {
+					hiddenCounts.all++;
+					hiddenCounts[ siteStatus ]++;
+				}
+				if ( site.visible || showHidden ) {
+					groups[ siteStatus ].push( site );
+				}
+				if ( site.visible && ! showHidden ) {
+					groups.all.push( site );
+				}
+
+				return groups;
+			},
+			{ all: showHidden ? allSites : [], 'coming-soon': [], public: [], private: [], redirect: [] }
+		);
+
+		for ( const status of statuses ) {
+			status.count = groupedByStatus[ status.name ].length;
+			status.hiddenCount = hiddenCounts[ status.name ];
+		}
+
+		return [ statuses, groupedByStatus ];
+	}, [ allSites, filterableSiteLaunchStatuses, showHidden ] );
 
 	const filteredSites = useFuzzySearch( {
-		data: allSites,
+		data: groupedByStatus[ status ],
 		keys: [ 'URL', 'name', 'slug' ],
 		query: search,
 	} );
 
-	const [ tabs, filteredByStatus ] = useMemo( () => {
-		const tabs: SitesTableTab[] = [
-			{ name: 'all', title: __( 'All' ) },
-			{ name: 'launched', title: __( 'Launched' ) },
-			{ name: 'private', title: __( 'Private' ) },
-			{ name: 'coming-soon', title: __( 'Coming soon' ) },
-		];
-
-		const filteredByStatus = tabs.reduce(
-			( acc, { name } ) => ( { ...acc, [ name ]: filterSites( filteredSites, name ) } ),
-			{} as { [ name: string ]: SiteExcerptData[] }
-		);
-
-		for ( const tab of tabs ) {
-			tab.title = (
-				<>
-					{ tab.title } <SitesCountBadge>{ filteredByStatus[ tab.name ].length }</SitesCountBadge>
-				</>
-			);
-		}
-
-		return [ tabs, filteredByStatus ];
-	}, [ filteredSites, __ ] );
-
-	// If there are no sites, we need to know whether that's due to
-	// there being no sites in the selected tab or because the search has
-	// found no sites.
-	const selectedTabHasSites = !! filterSites( allSites, status ).length;
-
-	return { filteredSites: filteredByStatus[ status ], tabs, selectedTabHasSites };
-}
-
-function filterSites( sites: SiteExcerptData[], filterType: string ): SiteExcerptData[] {
-	return sites.filter( ( site ) => {
-		const isComingSoon =
-			site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
-
-		switch ( filterType ) {
-			case 'launched':
-				return ! site.is_private && ! isComingSoon;
-			case 'private':
-				return site.is_private && ! isComingSoon;
-			case 'coming-soon':
-				return isComingSoon;
-			default:
-				// Treat unknown filters the same as 'all'
-				return site;
-		}
-	} );
+	return { filteredSites, statuses };
 }

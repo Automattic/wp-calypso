@@ -53,8 +53,18 @@ export function useCategories(
 
 	const categories = {
 		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
-		paid: { name: __( 'Top paid plugins' ), slug: 'paid', tags: [] },
-		popular: { name: __( 'Top free plugins' ), slug: 'popular', tags: [] },
+		paid: {
+			name: __( 'Top premium plugins' ),
+			categoryDescription: __( 'A collection of the most popular premium plugins on offer.' ),
+			slug: 'paid',
+			tags: [],
+		},
+		popular: {
+			name: __( 'Top free plugins' ),
+			categoryDescription: __( 'The most popular free plugins to extend your WordPress site.' ),
+			slug: 'popular',
+			tags: [],
+		},
 		featured: { name: __( 'Editor’s pick' ), slug: 'featured', tags: [] },
 		seo: {
 			name: __( 'Search Engine Optimization' ),
@@ -66,6 +76,9 @@ export function useCategories(
 		ecommerce: {
 			name: __( 'Ecommerce & Business' ),
 			description: __( 'Ecommerce' ),
+			categoryDescription: __(
+				'Everything you need to turn your WordPress site into a powerful online store.'
+			),
 			icon: 'grid',
 			slug: 'ecommerce',
 			tags: [ 'ecommerce', 'e-commerce', 'woocommerce', 'business', 'business-directory' ],
@@ -73,6 +86,7 @@ export function useCategories(
 		booking: {
 			name: __( 'Booking & Scheduling' ),
 			description: __( 'Booking' ),
+			categoryDescription: __( 'Add a fully functional booking system to your site.' ),
 			icon: 'grid',
 			slug: 'booking',
 			tags: [ 'booking', 'scheduling', 'appointment', 'reservation', 'booking-calendar' ],
@@ -132,6 +146,9 @@ export function useCategories(
 		analytics: {
 			name: __( 'Analytics' ),
 			description: __( 'Analytics' ),
+			categoryDescription: __(
+				`Tools to help you better understand your site's visitors and performance.`
+			),
 			icon: 'grid',
 			slug: 'analytics',
 			tags: [ 'analytics' ],
@@ -146,6 +163,9 @@ export function useCategories(
 		design: {
 			name: __( 'Design' ),
 			description: __( 'Design' ),
+			categoryDescription: __(
+				'A collection of tools that will give you more control over the design of your site.'
+			),
 			icon: 'grid',
 			slug: 'design',
 			tags: [ 'design', 'blocks', 'editor' ],

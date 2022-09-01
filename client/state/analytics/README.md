@@ -84,6 +84,29 @@ const mapDispatchToProps = {
 `loadTrackingTool :: String -> String -> Object`<br />
 `loadTrackingTool ( trackingTool )`: Creates an action to load a tracking tool that gets attached to the DOM on component mount. Pass tracking tool reference through to middleware and manage loading scripts there.
 
+### Property Enhancers
+
+The above Redux actions denote the analytics data object to be sent to Tracks. Properties to be reported often need to be passed to the actions as arguments. There are times when it would be convenient to enhance the analytics data object with universal properties that are applicable to all sorts of tracking calls. This is when Enhancers come in handy. To enhance any analytics Redux action with an additional property:
+
+```
+const recorder = withEnhancer( recordPageView, [ enhancer1, enhancer2, enhancer3,... ] );
+```
+
+#### [enhanceWithSiteType](https://github.com/Automattic/wp-calypso/tree/a2cc6fa5ee914e53e75e8eaf147bf1bac549b5e4/client/state/analytics/actions/enhance-with-site-type.js)
+- Enhances any analytics Redux action
+- Adds the property `site_type` specifying the selected site's type: `jetpack` or `wpcom`
+- `site_type` is captured by default when tracking calls are handled by [`<PageViewTracker>`](https://github.com/Automattic/wp-calypso/blob/a2cc6fa5ee914e53e75e8eaf147bf1bac549b5e4/client/lib/analytics/page-view-tracker/index.jsx#L116)
+- To include the `site_type` property in any other tracking calls, the respective analytics Redux action must be accompanied by `enhanceWithSiteType` ([example](https://github.com/Automattic/wp-calypso/blob/a2cc6fa5ee914e53e75e8eaf147bf1bac549b5e4/client/login/magic-login/index.jsx#L167))
+
+#### [enhanceWithSiteMainProduct](https://github.com/Automattic/wp-calypso/tree/6ee89756f49d5e44551075aedfb2868e8fd144eb/client/state/analytics/actions/enhance-with-site-main-product.js)
+- Enhances the `ANALYTICS_PAGE_VIEW_RECORD` action for `calypso_page_view` of email and purchase related pages (i.e. paths with prefix defined in `should-report-omit-site-main-product.js`)
+- Adds the property `site_main_product` specifying the main product user set up in the current site
+ - `site` - User signed up for a website 
+ - `domain` - User signed up for a domain-only "site", without any email subscription
+ - `email` - User signed up for a domain-only "site", with an email subscription
+- `site_main_product` is captured by default when tracking calls are handled by [`<PageViewTracker>`](https://github.com/Automattic/wp-calypso/blob/6ee89756f49d5e44551075aedfb2868e8fd144eb/client/lib/analytics/page-view-tracker/index.jsx#L117)
+- To include the `site_main_product` property in any other tracking calls, the respective analytics Redux action must be accompanied by [`enhanceWithSiteMainProduct`](https://github.com/Automattic/wp-calypso/blob/6ee89756f49d5e44551075aedfb2868e8fd144eb/client/my-sites/email/inbox/mailbox-selection-list/index.jsx#L226)
+
 ### Internal Helpers
 
 These can be used in client code but are intended to be used internally within the middleware library to create service-specific handlers for tracking analytics.

@@ -26,6 +26,10 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
 } );
+export const setPatternId = ( patternId: number ) => ( {
+	type: 'SET_SITE_PATTERN_ID' as const,
+	patternId,
+} );
 
 export interface CreateSiteActionParameters {
 	username: string;
@@ -188,6 +192,21 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
+export const setSiteDescription = ( siteDescription: string ) => ( {
+	type: 'SET_SITE_DESCRIPTION' as const,
+	siteDescription,
+} );
+
+export const setSiteLogo = ( siteLogo: string | null ) => ( {
+	type: 'SET_SITE_LOGO' as const,
+	siteLogo,
+} );
+
+export const setSiteAccentColor = ( siteAccentColor: string | undefined ) => ( {
+	type: 'SET_SITE_ACCENT_COLOR' as const,
+	siteAccentColor,
+} );
+
 export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
 	type: 'SET_ANCHOR_PODCAST_ID' as const,
 	anchorPodcastId,
@@ -308,6 +327,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedDesign
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
+	| typeof setPatternId
 	| typeof setSiteTitle
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId
@@ -327,4 +347,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetIntent
 	| typeof resetSelectedDesign
 	| typeof setEditEmail
+	| typeof setSiteDescription
+	| typeof setSiteLogo
+	| typeof setSiteAccentColor
 >;

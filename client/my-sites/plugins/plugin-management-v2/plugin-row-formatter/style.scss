@@ -1,0 +1,104 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.plugin-row-formatter__row-container {
+	position: relative;
+}
+.plugin-row-formatter__plugin-icon {
+	width: 24px;
+	height: 24px;
+	vertical-align: middle;
+	margin-inline-end: 16px;
+}
+.row-data-common-style {
+	display: inline-block;
+	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: clip;
+	vertical-align: middle;
+	color: var( --studio-gray-100 );
+	font-size: 0.875rem;
+	text-align: left;
+}
+
+a.button.plugin-row-formatter__plugin-name {
+	@extend .row-data-common-style;
+	width: calc( 100% - 55px );
+}
+a.button.plugin-row-formatter__plugin-name-card {
+	@extend .row-data-common-style;
+	width: calc( 100% - 10px );
+}
+.plugin-row-formatter__site-name {
+	@extend .row-data-common-style;
+	width: 100%;
+}
+.plugin-row-formatter__overlay {
+	display: block;
+	position: absolute;
+	height: 48px;
+	width: 20px;
+	background: linear-gradient(
+		to right,
+		rgba( 255, 255, 255, 0.8 ) 30%,
+		rgba( 255, 255, 255, 1 ) 100%
+	);
+	inset-block-start: -10px;
+	inset-inline-end: 0;
+}
+.plugin-row-formatter__sites-count-button {
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.plugin-row-formatter__toggle {
+	.plugin-action .components-toggle-control .components-base-control__field {
+		flex-direction: row-reverse;
+		@include break-xlarge() {
+			margin: auto 0;
+			flex-direction: unset;
+		}
+	}
+	.components-form-toggle {
+		position: absolute;
+		inset-inline-start: 200px;
+		@include break-xlarge() {
+			position: relative;
+			inset-inline-start: unset;
+		}
+	}
+}
+.plugin-row-formatter__install-plugin {
+	@include break-xlarge() {
+		display: flex;
+		justify-content: end;
+		.plugin-install-button__install.embed {
+			margin: 0;
+		}
+	}
+}
+.plugin-row-formatter__plugin-details {
+	display: flex;
+	align-items: center;
+}
+
+// Checkbox for multiselect purposes
+.plugin-row-formatter__checkbox[type='checkbox'] {
+	margin-inline-end: 16px;
+
+	&:checked::before {
+		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+	}
+
+	&::after {
+		// Making tap area larger
+		content: '';
+		position: absolute;
+		top: -20px;
+		left: -19px;
+		width: 56px;
+		height: 55px;
+	}
+}

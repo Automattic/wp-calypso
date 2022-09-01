@@ -111,9 +111,9 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		inputRef.current?.focus();
 	};
 
-	const handleSuggestionsSelect = ( { label, value }: { label: string; value?: string } ) => {
+	const handleSuggestionsSelect = ( suggestion: { name: string; label: string } ) => {
 		hideSuggestions();
-		onSelect?.( { label, value } as Vertical );
+		onSelect?.( suggestion as Vertical );
 	};
 
 	const getSuggestions = useMemo( () => {
@@ -124,6 +124,7 @@ const SelectVerticalSuggestionSearch: FC< Props > = ( {
 		return suggestions.concat( [
 			{
 				value: '',
+				name: 'Something else',
 				label: String( translate( 'Something else' ) ),
 				category: 0 < suggestions.length ? '—' : '',
 			},

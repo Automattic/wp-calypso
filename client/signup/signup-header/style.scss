@@ -1,4 +1,5 @@
 @import '@automattic/onboarding/styles/mixins';
+@import '@automattic/typography/styles/fonts';
 
 // A masterbar-like header just for
 // the signup flow.
@@ -16,6 +17,17 @@
 	.layout:not( .dops ) {
 		display: none;
 		pointer-events: none;
+	}
+
+	.newsletter.progress-bar,
+	.link-in-bio.progress-bar {
+		position: absolute;
+		top: -8px;
+		background-color: #fff;
+
+		.progress-bar__progress {
+			border-radius: 0;
+		}
 	}
 
 	.wordpress-logo {
@@ -39,8 +51,7 @@
 		color: var( --color-text );
 		top: 20px;
 		left: 56px;
-		font-size: 18;
-		font-family: 'Recoleta';
+		font-size: $font-body-large;
 	}
 
 	.signup-header__right {

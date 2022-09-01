@@ -1,0 +1,33 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.has-opacity {
+	opacity: 0.3;
+}
+.is-loading {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	opacity: 0.3;
+}
+.no-padding {
+	padding: 0;
+}
+.plugin-management-v2__main-content-container {
+	margin-block-start: 0;
+	@include break-xlarge() {
+		margin-block-start: 8px;
+	}
+	&.is-bulk-management-active {
+		margin-block-start: 0;
+	}
+}
+.plugin-management-v2__no-sites {
+	text-align: center;
+	font-size: 1.5rem;
+	margin-top: 16px;
+}
+.plugin-management-v2__actions {
+	.gridicon {
+		position: absolute !important;
+		inset-inline-end: 10px;
+	}
+}

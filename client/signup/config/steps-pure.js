@@ -28,7 +28,7 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	currentPage = noop,
+	createVideoPressSite = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
@@ -40,7 +40,6 @@ export function generateSteps( {
 	isAddOnsFulfilled = noop,
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
-	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
 	setDIFMLiteDesign = noop,
@@ -49,15 +48,6 @@ export function generateSteps( {
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		survey: {
-			stepName: 'survey',
-			props: {
-				surveySiteType:
-					currentPage && currentPage.toString().match( /\/start\/blog/ ) ? 'blog' : 'site',
-			},
-			providesDependencies: [ 'surveySiteType', 'surveyQuestion' ],
-		},
-
 		themes: {
 			stepName: 'themes',
 			dependencies: [ 'siteSlug' ],
@@ -219,6 +209,25 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			optionalDependencies: [ 'emailItem' ],
 			providesDependencies: [ 'cartItem' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+		// the only unique thing about plans-newsletter is that it provides themeSlugWithRepo and comingSoon dependencies
+		'plans-newsletter': {
+			stepName: 'plans',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'comingSoon' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		// the only unique thing about plans-link-in-bio is that it provides themeSlugWithRepo dependency
+		'plans-link-in-bio': {
+			stepName: 'plans',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
@@ -575,19 +584,6 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
-		'site-topic': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
-		'site-topic-with-theme': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
@@ -792,6 +788,12 @@ export function generateSteps( {
 		transfer: {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
+		},
+
+		'videopress-site': {
+			stepName: 'videopress-site',
+			apiRequestFunction: createVideoPressSite,
+			providesDependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		},
 	};
 }

@@ -140,6 +140,7 @@ export default function SitesOverview(): ReactElement {
 							</div>
 						</div>
 						<SectionNav
+							applyUpdatedStyles
 							selectedText={
 								<span>
 									{ selectedItem.label }
@@ -148,7 +149,6 @@ export default function SitesOverview(): ReactElement {
 							}
 							selectedCount={ selectedItem.count }
 							className={ classNames(
-								'sites-overview__section-nav',
 								isMobile &&
 									highlightTab &&
 									selectedItem.key === 'favorites' &&

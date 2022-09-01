@@ -90,7 +90,7 @@ export const SitePickerDropDown: FC< Props > = ( {
 	const [ open, setOpen ] = useState( false );
 
 	useFocusTrap( { current: ref } );
-	useArrowNavigation( ref, open, () => setOpen( true ) );
+	useArrowNavigation( enabled, ref, open, () => setOpen( true ) );
 
 	const selectedSite = options.find( ( s ) => s?.ID === siteId ) || options[ 0 ];
 

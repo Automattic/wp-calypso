@@ -1,8 +1,8 @@
+import formatCurrency from '@automattic/format-currency';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { myFormatCurrency } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -100,9 +100,11 @@ export const ItemVariantPrice: FunctionComponent< {
 	const discountPercentage = compareToPriceForVariantTerm
 		? Math.floor( 100 - ( variant.price / compareToPriceForVariantTerm ) * 100 )
 		: 0;
-	const formattedCurrentPrice = myFormatCurrency( variant.price, variant.currency );
+	const formattedCurrentPrice = formatCurrency( variant.price, variant.currency, {
+		stripZeros: true,
+	} );
 	const formattedCompareToPriceForVariantTerm = compareToPriceForVariantTerm
-		? myFormatCurrency( compareToPriceForVariantTerm, variant.currency )
+		? formatCurrency( compareToPriceForVariantTerm, variant.currency, { stripZeros: true } )
 		: undefined;
 
 	return (

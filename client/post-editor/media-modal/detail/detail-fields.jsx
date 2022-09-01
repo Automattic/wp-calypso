@@ -16,6 +16,7 @@ import { withUpdateMedia } from 'calypso/data/media/with-update-media';
 import { FormCheckbox } from 'calypso/devdocs/design/playground-scope';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import decodeEntities from 'calypso/lib/formatting/decode/browser';
 import { getMimePrefix, url } from 'calypso/lib/media/utils';
 import versionCompare from 'calypso/lib/version-compare';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -78,6 +79,10 @@ class EditorMediaModalDetailFields extends Component {
 
 	isMimePrefix( prefix ) {
 		return getMimePrefix( this.props.item ) === prefix;
+	}
+
+	isVideoPress() {
+		return !! this.getItemValue( 'videopress_guid' );
 	}
 
 	updateChange( saveImmediately = false ) {
@@ -170,11 +175,11 @@ class EditorMediaModalDetailFields extends Component {
 	}
 
 	renderVideoPressShortcode = () => {
-		const videopressGuid = this.getItemValue( 'videopress_guid' );
-
-		if ( ! videopressGuid ) {
+		if ( ! this.isVideoPress() ) {
 			return;
 		}
+
+		const videopressGuid = this.getItemValue( 'videopress_guid' );
 
 		return (
 			<EditorMediaModalFieldset legend={ this.props.translate( 'Shortcode' ) }>
@@ -226,6 +231,10 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	renderPrivacySetting = () => {
+		if ( ! this.isVideoPress() ) {
+			return;
+		}
+
 		const privacySetting = this.getItemValue( 'privacy_setting' );
 		return (
 			<EditorMediaModalFieldset legend={ this.props.translate( 'Privacy' ) }>
@@ -270,9 +279,7 @@ class EditorMediaModalDetailFields extends Component {
 	};
 
 	renderAllowDownloadOption = () => {
-		// Make sure this is actually a VideoPress video
-		const videopressGuid = this.getItemValue( 'videopress_guid' );
-		if ( ! videopressGuid ) {
+		if ( ! this.isVideoPress() ) {
 			return;
 		}
 
@@ -309,7 +316,7 @@ class EditorMediaModalDetailFields extends Component {
 					<TrackInputChanges onNewValue={ this.bumpTitleStat }>
 						<FormTextInput
 							name="title"
-							value={ this.getItemValue( 'title' ) }
+							value={ decodeEntities( this.getItemValue( 'title' ) ) }
 							onChange={ this.setFieldValue }
 						/>
 					</TrackInputChanges>
@@ -319,7 +326,7 @@ class EditorMediaModalDetailFields extends Component {
 					<TrackInputChanges onNewValue={ this.bumpCaptionStat }>
 						<FormTextarea
 							name="caption"
-							value={ this.getItemValue( 'caption' ) }
+							value={ decodeEntities( this.getItemValue( 'caption' ) ) }
 							onChange={ this.setFieldValue }
 						/>
 					</TrackInputChanges>
@@ -331,7 +338,7 @@ class EditorMediaModalDetailFields extends Component {
 					<TrackInputChanges onNewValue={ this.bumpDescriptionStat }>
 						<FormTextarea
 							name="description"
-							value={ this.getItemValue( 'description' ) }
+							value={ decodeEntities( this.getItemValue( 'description' ) ) }
 							onChange={ this.setFieldValue }
 						/>
 					</TrackInputChanges>

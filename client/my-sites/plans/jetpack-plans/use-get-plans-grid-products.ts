@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_ANTI_SPAM_PRODUCTS,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
@@ -6,8 +7,10 @@ import {
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
+	JETPACK_BOOST_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 	getPlan,
@@ -98,6 +101,26 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		)
 	) {
 		availableProducts = [ ...availableProducts, ...JETPACK_VIDEOPRESS_PRODUCTS ];
+	}
+
+	if ( isEnabled( 'jetpack/pricing-page-rework-v1' ) ) {
+		// If Jetpack Boost is directly or indirectly owned, continue, otherwise make it available.
+		if (
+			! ownedProducts.some( ( ownedProduct ) =>
+				( JETPACK_BOOST_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+			)
+		) {
+			availableProducts = [ ...availableProducts, ...JETPACK_BOOST_PRODUCTS ];
+		}
+
+		// If Jetpack Social is directly or indirectly owned, continue, otherwise make it available.
+		if (
+			! ownedProducts.some( ( ownedProduct ) =>
+				( JETPACK_SOCIAL_PRODUCTS as ReadonlyArray< string > ).includes( ownedProduct )
+			)
+		) {
+			availableProducts = [ ...availableProducts, ...JETPACK_SOCIAL_PRODUCTS ];
+		}
 	}
 
 	return {

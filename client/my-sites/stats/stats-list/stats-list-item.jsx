@@ -14,6 +14,7 @@ import { recordTrack } from 'calypso/reader/stats';
 import Follow from './action-follow';
 import OpenLink from './action-link';
 import Page from './action-page';
+import Promote from './action-promote';
 import Spam from './action-spam';
 
 const debug = debugFactory( 'calypso:stats:list-item' );
@@ -25,6 +26,7 @@ class StatsListItem extends Component {
 		active: this.props.active,
 		actionMenuOpen: false,
 		disabled: false,
+		promoteWidgetOpen: false,
 	};
 
 	addMenuListener = () => {
@@ -78,6 +80,10 @@ class StatsListItem extends Component {
 			return;
 		}
 
+		if ( this.state.promoteWidgetOpen ) {
+			return;
+		}
+
 		debug( 'props', this.props );
 		if ( ! this.state.disabled ) {
 			if ( this.props.children ) {
@@ -123,6 +129,12 @@ class StatsListItem extends Component {
 		const actionClassSet = classNames( 'module-content-list-item-actions', {
 			collapsed: actionMenu && ! this.state.disabled,
 		} );
+
+		const onTogglePromoteWidget = ( visible ) => {
+			this.setState( {
+				promoteWidgetOpen: visible,
+			} );
+		};
 
 		// If we have more than a default action build out actions ul
 		if ( data.actions ) {
@@ -170,6 +182,15 @@ class StatsListItem extends Component {
 					actionItems.push( actionItem );
 				}
 			}, this );
+
+			actionItems.push(
+				<Promote
+					postId={ data.id }
+					key={ 'promote-post-' + data.id }
+					moduleName={ moduleName }
+					onToggleVisibility={ onTogglePromoteWidget }
+				/>
+			);
 
 			if ( actionItems.length > 0 ) {
 				actionList = <ul className={ actionClassSet }>{ actionItems }</ul>;

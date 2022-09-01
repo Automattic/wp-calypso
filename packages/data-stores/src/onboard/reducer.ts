@@ -17,6 +17,16 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	return state;
 };
 
+const patternId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_SITE_PATTERN_ID' ) {
+		return action.patternId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
@@ -165,6 +175,36 @@ const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, act
 const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_TITLE' ) {
 		return action.siteTitle;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const siteDescription: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_DESCRIPTION' ) {
+		return action.siteDescription;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_SITE_LOGO' ) {
+		return action.siteLogo;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
+const siteAccentColor: Reducer< string | undefined, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
+		return action.siteAccentColor;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
@@ -329,6 +369,7 @@ const reducer = combineReducers( {
 	anchorEpisodeId,
 	anchorSpotifyUrl,
 	domain,
+	patternId,
 	domainSearch,
 	domainCategory,
 	isRedirecting,
@@ -353,6 +394,9 @@ const reducer = combineReducers( {
 	stepProgress,
 	goals,
 	editEmail,
+	siteDescription,
+	siteLogo,
+	siteAccentColor,
 } );
 
 export type State = ReturnType< typeof reducer >;

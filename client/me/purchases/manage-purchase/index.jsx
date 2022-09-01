@@ -598,11 +598,15 @@ class ManagePurchase extends Component {
 
 		if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
 			return translate(
-				"Replaces your site's free address, %(domain)s, with the domain, " +
-					'making it easier to remember and easier to share.',
+				"When used with a paid plan, your custom domain can replace your site's free address, {{strong}}%(wpcom_url)s{{/strong}}, " +
+					'with {{strong}}%(domain)s{{/strong}}, making it easier to remember and easier to share.',
 				{
 					args: {
-						domain: purchase.domain,
+						domain: purchase.meta,
+						wpcom_url: purchase.domain,
+					},
+					components: {
+						strong: <strong />,
 					},
 				}
 			);

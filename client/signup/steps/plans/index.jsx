@@ -6,6 +6,8 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
+import { englishLocales } from '@automattic/i18n-utils';
+import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -102,6 +104,22 @@ export class PlansStep extends Component {
 					this.props.goToNextStep();
 				}
 			);
+		} else if ( flowName === 'newsletter' ) {
+			// newsletter flow always uses pub/lettre
+			// newsletter always needs the site launched
+			this.props.submitSignupStep( step, {
+				cartItem,
+				themeSlugWithRepo: 'pub/lettre',
+				comingSoon: 0,
+			} );
+			this.props.goToNextStep();
+		} else if ( flowName === LINK_IN_BIO_FLOW ) {
+			// link-in-bio flow always uses pub/lynx
+			this.props.submitSignupStep( step, {
+				cartItem,
+				themeSlugWithRepo: 'pub/lynx',
+			} );
+			this.props.goToNextStep();
 		} else {
 			this.props.submitSignupStep( step, {
 				cartItem,
@@ -248,7 +266,29 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan, locale } = this.props;
+		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan, locale, flowName } =
+			this.props;
+
+		if ( flowName === NEWSLETTER_FLOW ) {
+			return translate(
+				`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
+				{
+					components: {
+						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+					},
+				}
+			);
+		}
+		if ( flowName === LINK_IN_BIO_FLOW ) {
+			return translate(
+				`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
+				{
+					components: {
+						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+					},
+				}
+			);
+		}
 
 		if ( eligibleForProPlan ) {
 			if ( isStarterPlanEnabled() ) {
@@ -297,15 +337,8 @@ export class PlansStep extends Component {
 	}
 
 	plansFeaturesSelection() {
-		const {
-			flowName,
-			stepName,
-			positionInFlow,
-			translate,
-			hasInitializedSitesBackUrl,
-			steps,
-			hideBackButton,
-		} = this.props;
+		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
+			this.props;
 
 		const headerText = this.getHeaderText();
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
@@ -317,7 +350,10 @@ export class PlansStep extends Component {
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
-			backLabelText = translate( 'Back to My Sites' );
+			backLabelText =
+				englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
+					? translate( 'Back to Sites' )
+					: translate( 'Back to My Sites' );
 		}
 
 		let queryParams;
@@ -346,7 +382,6 @@ export class PlansStep extends Component {
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					hideBack={ hideBackButton }
 					isWideLayout={ true }
 					stepContent={ this.plansFeaturesList() }
 					allowBackFirstStep={ !! hasInitializedSitesBackUrl }

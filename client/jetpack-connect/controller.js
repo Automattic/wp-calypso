@@ -144,6 +144,10 @@ export function offerResetRedirects( context, next ) {
 	const queryRedirect = context.query.redirect;
 	const hasPaidPlan = selectedSite ? isCurrentPlanPaid( state, selectedSite.ID ) : null;
 	const isNotJetpack = selectedSite ? ! isJetpackSite( state, selectedSite.ID ) : null;
+	const canPurchasePlans = selectedSite
+		? canCurrentUser( state, selectedSite.ID, 'manage_options' )
+		: true;
+	const calypsoStartedConnection = isCalypsoStartedConnection( selectedSite.slug );
 
 	// Redirect AT sites back to wp-admin
 	const isAutomatedTransfer = selectedSite
@@ -165,6 +169,31 @@ export function offerResetRedirects( context, next ) {
 		return page.redirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
 	}
 
+	// If current user is not an admin (can't purchase plans), redirect the user to /posts if
+	// the connection was started within Calypso, otherwise redirect the user to wp-admin
+	if ( ! canPurchasePlans ) {
+		if ( calypsoStartedConnection ) {
+			debug(
+				'controller: offerResetRedirects -> redirecting to /posts/ because Calypso initiated the connection and the user role cannot manage options.'
+			);
+			return page.redirect( CALYPSO_REDIRECTION_PAGE );
+		}
+
+		if ( queryRedirect ) {
+			debug(
+				"controller: offerResetRedirects -> redirecting to 'redirect' url query arg because user role cannot manage options.",
+				queryRedirect
+			);
+			return navigate( queryRedirect );
+		} else if ( selectedSite ) {
+			debug(
+				'controller: offerResetRedirects -> redirecting to wp-admin because user role cannot manage options.',
+				selectedSite.URL + JETPACK_ADMIN_PATH
+			);
+			return navigate( selectedSite.URL + JETPACK_ADMIN_PATH );
+		}
+	}
+
 	// If the site already has a paid plan, skip the plans/products page and redirect back to wp-admin.
 	if ( hasPaidPlan ) {
 		debug(
@@ -176,24 +205,6 @@ export function offerResetRedirects( context, next ) {
 			return navigate( queryRedirect );
 		} else if ( selectedSite ) {
 			return navigate( selectedSite.URL + JETPACK_ADMIN_PATH );
-		}
-	}
-
-	// If current user is not an admin (can't purchase plans), redirect the user to /posts if
-	// the connection was started within Calypso, otherwise redirect the user to wp-admin
-	const canPurchasePlans = selectedSite
-		? canCurrentUser( state, selectedSite.ID, 'manage_options' )
-		: true;
-	const calypsoStartedConnection = isCalypsoStartedConnection( selectedSite.slug );
-	if ( ! canPurchasePlans ) {
-		if ( calypsoStartedConnection ) {
-			return page.redirect( CALYPSO_REDIRECTION_PAGE );
-		}
-
-		if ( queryRedirect ) {
-			navigate( queryRedirect );
-		} else if ( selectedSite ) {
-			navigate( selectedSite.URL + JETPACK_ADMIN_PATH );
 		}
 	}
 

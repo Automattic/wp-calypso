@@ -41,7 +41,7 @@ $masterbar-color-secondary: #101517;
 		border-bottom: 1px solid var( --studio-orange-60 );
 	}
 
-	.is-section-checkout.is-jetpack-site & {
+	&.masterbar--is-checkout.masterbar--is-jetpack {
 		background-color: var( --color-jetpack-masterbar-background );
 		border-bottom: 1px solid var( --color-jetpack-masterbar-border );
 		color: var( --color-jetpack-masterbar-text );
@@ -206,7 +206,7 @@ $masterbar-color-secondary: #101517;
 	.gridicon {
 		fill: var( --color-masterbar-text ); // only because safari gets currentColor wrong
 
-		.is-section-checkout.is-jetpack-site & {
+		.masterbar--is-checkout.masterbar--is-jetpack & {
 			fill: var( --color-jetpack-masterbar-text );
 		}
 	}
@@ -220,7 +220,7 @@ $masterbar-color-secondary: #101517;
 			background: var( --color-masterbar-item-hover-background );
 			color: var( --color-masterbar-text );
 
-			.is-section-checkout.is-jetpack-site & {
+			.masterbar--is-checkout.masterbar--is-jetpack & {
 				background: var( --color-jetpack-masterbar-item-hover-background );
 				color: var( --color-jetpack-masterbar-text );
 			}
@@ -235,7 +235,7 @@ $masterbar-color-secondary: #101517;
 			color: var( --color-masterbar-text );
 		}
 
-		.is-section-checkout.is-jetpack-site & {
+		.masterbar--is-checkout.masterbar--is-jetpack & {
 			box-shadow: inset 0 0 0 2px var( --color-jetpack-masterbar-item-hover-background );
 			color: var( --color-jetpack-masterbar-text );
 		}
@@ -267,7 +267,7 @@ $masterbar-color-secondary: #101517;
 		margin-right: 15px;
 		cursor: pointer;
 
-		.is-section-checkout.is-jetpack-site & {
+		.masterbar--is-checkout.masterbar--is-jetpack & {
 			border-right: 1px solid var( --color-jetpack-masterbar-border );
 		}
 
@@ -852,7 +852,7 @@ a.masterbar__quick-language-switcher {
 			margin-left: 0;
 		}
 
-		.is-jetpack-site & {
+		.masterbar--is-jetpack & {
 			color: var( --color-jetpack-masterbar-text );
 			transform: translateY( -1px );
 		}

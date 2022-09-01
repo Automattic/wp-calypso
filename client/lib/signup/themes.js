@@ -13,7 +13,7 @@ export function getDefaultThemes() {
 	return themes.filter( filterByDefault );
 }
 
-export default function getThemes( vertical, designType, quantity = 9 ) {
+export default function getThemes( designType, quantity = 9 ) {
 	const filterByType = ( theme ) => {
 		return Array.isArray( theme.design )
 			? includes( theme.design, designType )

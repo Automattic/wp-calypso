@@ -142,6 +142,7 @@ export class PluginAutoUpdateToggle extends Component {
 			inProgress,
 			site,
 			plugin,
+			label,
 			disabled,
 			translate,
 			hideLabel,
@@ -153,7 +154,7 @@ export class PluginAutoUpdateToggle extends Component {
 		}
 
 		const getDisabledInfo = this.getDisabledInfo();
-		const label = translate( 'Autoupdates', {
+		const defaultLabel = translate( 'Autoupdates', {
 			comment:
 				'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
 		} );
@@ -161,7 +162,7 @@ export class PluginAutoUpdateToggle extends Component {
 		return (
 			<PluginAction
 				disabled={ isMarketplaceProduct ? true : disabled } // Marketplace products are auto-managed.
-				label={ label }
+				label={ label || defaultLabel }
 				className="plugin-autoupdate-toggle"
 				status={ isMarketplaceProduct ? true : plugin.autoupdate } // Marketplace products are auto-managed.
 				action={ this.toggleAutoUpdates }

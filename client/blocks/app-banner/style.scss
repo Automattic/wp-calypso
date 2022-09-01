@@ -30,6 +30,12 @@ body.app-banner-is-visible {
 	margin-bottom: 0;
 	box-shadow: 3px -2px 24px 4px rgba( 0, 0, 0, 0.29 );
 	overflow: hidden;
+
+	&.jetpack {
+		color: var( --color-neutral-100 );
+		padding: 30px 24px;
+		text-align: center;
+	}
 }
 
 .app-banner__circle {
@@ -63,8 +69,19 @@ body.app-banner-is-visible {
 	}
 }
 
+.app-banner__icon {
+	height: 50px;
+	width: 93px;
+	margin: auto;
+}
+
 .app-banner__text-content {
 	width: 100%;
+
+	&.jetpack {
+		letter-spacing: -0.4px;
+		margin: 30px auto 0;
+	}
 }
 
 .app-banner__title {
@@ -72,12 +89,30 @@ body.app-banner-is-visible {
 	font-size: rem( 22px ); //typography-exception
 	font-family: $brand-serif;
 	line-height: 30px;
+
+	&.jetpack {
+		/* stylelint-disable-next-line */
+		font-size: rem( 28px ); //typography-exception
+		font-weight: bold;
+		max-width: 18em;
+		margin-left: auto;
+		margin-right: auto;
+	}
 }
 
 .app-banner__copy {
 	margin-top: 12px;
 	/* stylelint-disable-next-line */
 	font-size: rem( 15px ); //typography-exception
+
+	&.jetpack {
+		/* stylelint-disable-next-line */
+		font-size: rem( 16px ); //typography-exception
+		line-height: 21px;
+		max-width: 18em;
+		margin-left: auto;
+		margin-right: auto;
+	}
 }
 
 .app-banner__buttons {
@@ -90,10 +125,25 @@ body.app-banner-is-visible {
 	border: 0;
 	border-radius: 4px; /* stylelint-disable-line */
 	margin-right: 10px;
+
+	&.jetpack {
+		background-color: var( --color-jetpack );
+	}
 }
 
 .button.app-banner__no-thanks-button {
 	background: none;
 	border: 0;
 	color: var( --color-text-subtle );
+
+	&.jetpack {
+		color: var( --color-text );
+	}
+}
+
+.button.jetpack {
+	width: 100%;
+	max-width: 366px;
+	margin: auto;
+	display: block;
 }

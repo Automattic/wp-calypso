@@ -6,26 +6,31 @@ const Header = styled.header`
 	position: fixed;
 	z-index: 10;
 	top: var( --masterbar-height );
-	left: calc( var( --sidebar-width-max ) + 1px ); // 1px is the sidebar border.
-	width: calc( 100% - var( --sidebar-width-max ) - 1px ); // 1px is the sidebar border.
+	left: 0;
 	padding: 0 32px;
 	box-sizing: border-box;
+	width: 100%;
 	border-bottom: 1px solid var( --studio-gray-5 );
 	background-color: var( --studio-white );
 
-	@media ( max-width: 960px ) {
-		// Account for jetpack sites with the old sidebar.
-		left: calc( var( --sidebar-width-min ) + 1px ); // 1px is the sidebar border.
-		width: calc( 100% - var( --sidebar-width-min ) - 1px ); // 1px is the sidebar border.
-	}
+	.layout__secondary ~ .layout__primary & {
+		left: calc( var( --sidebar-width-max ) + 1px ); // 1px is the sidebar border.
+		width: calc( 100% - var( --sidebar-width-max ) - 1px ); // 1px is the sidebar border.
 
-	@media ( max-width: 782px ) {
-		width: 100%;
-		left: 0;
-	}
+		@media ( max-width: 960px ) {
+			// Account for jetpack sites with the old sidebar.
+			left: calc( var( --sidebar-width-min ) + 1px ); // 1px is the sidebar border.
+			width: calc( 100% - var( --sidebar-width-min ) - 1px ); // 1px is the sidebar border.
+		}
 
-	@media ( max-width: 660px ) {
-		padding: 0 16px;
+		@media ( max-width: 782px ) {
+			width: 100%;
+			left: 0;
+		}
+
+		@media ( max-width: 660px ) {
+			padding: 0 16px;
+		}
 	}
 `;
 
@@ -62,7 +67,7 @@ interface Props {
 const FixedNavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
 	const { id, className, children, navigationItems, mobileItem, compactBreadcrumb } = props;
 	return (
-		<Header id={ id } className={ className } ref={ ref }>
+		<Header id={ id } className={ 'fixed-navigation-header__header ' + className } ref={ ref }>
 			<Container>
 				<Breadcrumb
 					items={ navigationItems }
