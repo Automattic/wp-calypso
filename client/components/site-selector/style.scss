@@ -14,6 +14,9 @@
 	position: static;
 	border: none;
 	z-index: z-index( 'root', '.site-selector' );
+	display: flex;
+	flex-direction: column;
+	height: calc( 100vh - var( --masterbar-height ) );
 
 	&.is-large .search {
 		display: flex;
@@ -138,6 +141,7 @@
 .site-selector .search {
 	margin: 8px;
 	height: 33px;
+	max-height: 33px;
 	border: 1px solid var( --color-neutral-10 );
 	display: block;
 	opacity: 0;
@@ -167,6 +171,7 @@
 
 // The actual list of sites
 .site-selector__sites {
+	flex: 1;
 	max-height: calc( 100% - 93px );
 	overflow-y: auto;
 	background: var( --color-surface );
@@ -180,6 +185,21 @@
 	color: var( --color-neutral-light );
 	font-style: italic;
 	padding: 10px 20px;
+}
+
+.site-selector__manage-sites {
+	background: transparent;
+	border-color: var( --color-surface );
+	margin: 8px;
+
+	&,
+	&:visited {
+		color: var( --color-surface );
+	}
+
+	&:hover {
+		color: var( --color-neutral-20 );
+	}
 }
 
 .site-selector__add-new-site {

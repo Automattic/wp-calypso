@@ -49,9 +49,9 @@ import { handleScroll } from './utils';
 import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
 
-function SidebarScrollSynchronizer() {
+function SidebarScrollSynchronizer( { layoutFocus } ) {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ); // Jetpack cloud hasn't yet aligned with WPCOM.
+	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ) && layoutFocus !== 'sites'; // Jetpack cloud hasn't yet aligned with WPCOM.
 
 	useEffect( () => {
 		if ( active ) {
@@ -229,7 +229,7 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<SidebarScrollSynchronizer />
+				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }

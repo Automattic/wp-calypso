@@ -1,4 +1,5 @@
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
+import { Button } from '@automattic/components';
 import SearchRestyled from '@automattic/search';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -475,6 +476,19 @@ export class SiteSelector extends Component {
 						</span>
 					) }
 				</div>
+				{ this.props.showAllSites && (
+					<Button
+						href={ '/sites' }
+						className="site-selector__manage-sites"
+						aria-label={ this.props.translate( 'Go to Sites' ) }
+						title={ this.props.translate( 'Go to Sites' ) }
+					>
+						{ this.props.translate( 'Manage %(count)d site', 'Manage %(count)d sites', {
+							count: sites.length,
+							args: { count: sites.length },
+						} ) }
+					</Button>
+				) }
 				{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
 			</div>
 		);
