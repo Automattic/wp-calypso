@@ -48,10 +48,6 @@
 	.reader-excerpt__content {
 		margin-top: 2px;
 		width: 100%;
-
-		&::before {
-			@include long-content-fade( $size: 35px );
-		}
 	}
 
 	.comments__comment-author .gravatar {

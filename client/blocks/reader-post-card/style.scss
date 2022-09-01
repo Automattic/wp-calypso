@@ -448,6 +448,7 @@
 }
 
 .reader-post-card .reader-excerpt {
+	font-family: $sans;
 	font-size: $font-body;
 	line-height: 1.55;
 	font-weight: 400;
@@ -456,50 +457,30 @@
 	position: relative;
 
 	p {
+		font-family: $sans;
 		margin: 0;
 	}
 }
 
 // If it's not a discover card, clamp lines
-.reader-post-card.card:not(.is-discover) {
+.reader-post-card.card {
 	.reader-excerpt {
+		display: -webkit-box;
 		overflow: hidden;
-		max-height: 15px * 1.6 * 3.2;
-
-		// Clamp to 2 lines on wider viewports
-		@include breakpoint-deprecated( ">960px" ) {
-			max-height: 15px * 1.6 * 2;
-		}
-
-		&::before {
-			@include long-content-fade( $size: 15px * 1.6 * 5 );
-			top: inherit;
-			height: 15px * 1.6;
-		}
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
 	}
 
 	.reader-excerpt[direction="rtl"] {
 		&::before {
-			@include long-content-fade( $direction: left, $size: 15px * 1.6 * 5 );
 			top: inherit;
-			height: 15px * 1.6;
 		}
 	}
 
 	.reader-excerpt[direction="ltr"] {
 		&::before {
-			@include long-content-fade( $direction: right, $size: 15px * 1.6 * 5 );
 			top: inherit;
-			height: 15px * 1.6;
 		}
-	}
-}
-
-// 3 line excerpt for thumbnail cards
-.reader-post-card.card.has-thumbnail:not(.is-gallery):not(.is-compact) {
-	.reader-excerpt {
-		max-height: 15px * 1.6 * 3.2;
-		overflow: hidden;
 	}
 }
 

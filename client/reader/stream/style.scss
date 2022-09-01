@@ -553,10 +553,6 @@
 		@include breakpoint-deprecated( "<660px" ) {
 			max-height: 207px;
 		}
-
-		.reader-related-card__excerpt {
-			-webkit-line-clamp: initial;
-		}
 	}
 
 	.reader-related-card__featured-image {
