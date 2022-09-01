@@ -109,7 +109,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const staticDesigns = allDesigns?.static?.designs || [];
 
 	const { data: selectedDesignDetails, isLoading: isLoadingSelectedDesignDetails } =
-		useStarterDesignsGet( selectedDesign?.slug, {
+		useStarterDesignsGet( selectedDesign?.slug || '', {
 			enabled:
 				isPreviewingDesign &&
 				selectedDesign &&
