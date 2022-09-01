@@ -224,11 +224,6 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 
 		steps {
 			bashNodeScript {
-				name = "Install Sentry CLI"
-				scriptContent = "curl -sL https://sentry.io/get-cli/ | bash"
-			}
-
-			bashNodeScript {
 				name = "Upload Gutenberg source maps to Sentry"
 				scriptContent = """
 					rm -rf gutenberg gutenberg.zip
