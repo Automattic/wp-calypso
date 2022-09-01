@@ -25,6 +25,7 @@ function normalizePath( urlLocalizationMappingFn ) {
 const pathLocalizationMapping = {
 	'/theme/': normalizePath( urlLocalizationMapping[ 'wordpress.com/theme/' ] ),
 	'/themes/': normalizePath( urlLocalizationMapping[ 'wordpress.com/themes/' ] ),
+	'/plugins/': normalizePath( urlLocalizationMapping[ 'wordpress.com/plugins/' ] ),
 	'/log-in/': normalizePath( urlLocalizationMapping[ 'wordpress.com/log-in/' ] ),
 	'/new/': suffixLocalizedPath,
 	'/setup/': suffixLocalizedPath,
