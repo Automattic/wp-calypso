@@ -76,6 +76,7 @@ export class SiteSelector extends Component {
 		highlightedIndex: -1,
 		showSearch: false,
 		isKeyboardEngaged: false,
+		searchTerm: '',
 	};
 
 	onSearch = ( terms ) => {
@@ -85,6 +86,7 @@ export class SiteSelector extends Component {
 			highlightedIndex: terms ? 0 : -1,
 			showSearch: terms ? true : this.state.showSearch,
 			isKeyboardEngaged: true,
+			searchTerm: terms,
 		} );
 	};
 
@@ -191,6 +193,15 @@ export class SiteSelector extends Component {
 	};
 
 	onSiteSelect = ( event, siteId ) => {
+		if ( siteId !== ALL_SITES ) {
+			const visibleSites = this.visibleSites.filter( ( ID ) => ID !== ALL_SITES );
+			this.props.recordTracksEvent( 'calypso_switch_site_click_item', {
+				position: visibleSites.indexOf( siteId ),
+				list_item_count: visibleSites.length,
+				is_searching: this.state.searchTerm.trim().length > 0,
+			} );
+		}
+
 		const handledByHost = this.props.onSiteSelect( siteId );
 		this.props.onClose( event, siteId );
 
