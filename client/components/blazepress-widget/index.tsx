@@ -105,7 +105,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							</p>
 						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
-						<div ref={ widgetContainer }></div>
+						<div className={ 'blazepress-widget__widget-container' } ref={ widgetContainer }></div>
 					</div>
 				</BlankCanvas>
 			) }
