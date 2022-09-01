@@ -36,9 +36,13 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features-comparison__table-item.plan-features-comparison__unique-features {
+	padding-bottom: 0.5rem;
+	ul {
+		margin-bottom: 0;
+	}
+
 	& .is-last-feature {
 		.plan-features-comparison__item {
-			margin-bottom: 20px;
 			padding-bottom: 0;
 			
 			margin-left: 0;
@@ -281,11 +285,6 @@ $plan-features-sidebar-width: 272px;
 		padding: 0.5rem;
 		margin: 0 15px;
 		text-align: left;
-
-		&.plan-features-comparison__common-title {
-			border-top: solid 1px var( --color-neutral-5 );
-			padding-top: 20px;
-		}
 
 		&.plan-features-comparison__item-available {
 			display: flex;
