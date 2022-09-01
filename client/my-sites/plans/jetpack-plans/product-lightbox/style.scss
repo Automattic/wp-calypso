@@ -79,14 +79,19 @@
 		margin-bottom: 0.5rem;
 		margin-right: 1rem;
 
-		svg {
+		span {
 			margin-right: 4px;
+			top: 1px;
+			display: inline-flex;
+			position: relative;
 		}
 
 		p {
 			color: #3c434a;
 			font-size: 0.75rem;
 			margin: 0;
+			position: relative;
+			top: 1px;
 		}
 	}
 }

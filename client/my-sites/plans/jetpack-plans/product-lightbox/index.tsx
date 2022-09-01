@@ -72,22 +72,22 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 					</div>
 					<div className="product-lightbox__detail-tags">
 						<span className="product-lightbox__detail-tags-label">Great for:</span>
-						<span className="product-lightbox__detail-tags-tag">
-							{ Tags.woo.icon }
+						<div className="product-lightbox__detail-tags-tag">
+							<span>{ Tags.woo.icon }</span>
 							<p>WooCommerce stores</p>
-						</span>
-						<span className="product-lightbox__detail-tags-tag">
-							{ Tags.news.icon }
+						</div>
+						<div className="product-lightbox__detail-tags-tag">
+							<span>{ Tags.news.icon }</span>
 							<p>{ Tags.news.label }</p>
-						</span>
-						<span className="product-lightbox__detail-tags-tag">
-							{ Tags.membership.icon }
+						</div>
+						<div className="product-lightbox__detail-tags-tag">
+							<span>{ Tags.membership.icon }</span>
 							<p>{ Tags.membership.label }</p>
-						</span>
-						<span className="product-lightbox__detail-tags-tag">
-							{ Tags.forum.icon }
+						</div>
+						<div className="product-lightbox__detail-tags-tag">
+							<span>{ Tags.forum.icon }</span>
 							<p>{ Tags.forum.label }</p>
-						</span>
+						</div>
 					</div>
 					{ /* <FoldableCard header="Includes" compact> */ }
 
