@@ -105,7 +105,7 @@ const Primary = ( { cards, trackCard } ) => {
 				( card, index ) =>
 					cardComponents[ card ] &&
 					createElement( cardComponents[ card ], {
-						key: index,
+						key: card + index,
 						isIos: card === 'home-task-go-mobile-ios' ? true : null,
 						card,
 					} )
