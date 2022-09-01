@@ -4368,25 +4368,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mapbox/node-pre-gyp@npm:^1.0.0":
-  version: 1.0.9
-  resolution: "@mapbox/node-pre-gyp@npm:1.0.9"
-  dependencies:
-    detect-libc: ^2.0.0
-    https-proxy-agent: ^5.0.0
-    make-dir: ^3.1.0
-    node-fetch: ^2.6.7
-    nopt: ^5.0.0
-    npmlog: ^5.0.1
-    rimraf: ^3.0.2
-    semver: ^7.3.5
-    tar: ^6.1.11
-  bin:
-    node-pre-gyp: bin/node-pre-gyp
-  checksum: 5b32a2c3bf44e0340a29cc82cbb726bc8f49aa721388fa741afb790035975299a114b907018fc35832896cde7fa11ba2c703e2ccfd1f5a99ffe1c57814f58571
-  languageName: node
-  linkType: hard
-
 "@mdx-js/mdx@npm:^1.6.22":
   version: 1.6.22
   resolution: "@mdx-js/mdx@npm:1.6.22"
@@ -12839,18 +12820,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"canvas@npm:^2.9.3":
-  version: 2.9.3
-  resolution: "canvas@npm:2.9.3"
-  dependencies:
-    "@mapbox/node-pre-gyp": ^1.0.0
-    nan: ^2.15.0
-    node-gyp: latest
-    simple-get: ^3.0.3
-  checksum: b11ab744d2905dd1c463707cfdd42ce80dffeeb927db1e7d43f750e739c88b736af4de8117e1b2e1ff8b25c60ad46cf7f659d35478ffb77185bbcee0474e7529
-  languageName: node
-  linkType: hard
-
 "capture-exit@npm:^2.0.0":
   version: 2.0.0
   resolution: "capture-exit@npm:2.0.0"
@@ -14682,6 +14651,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cssfontparser@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "cssfontparser@npm:1.2.1"
+  checksum: ceb9b2976d503dbff3ac2aff0229b263affb4fb221a6947b357682cd8a952f6995253646ca5f820020d2fe05b5e29b56dbdd2343388c32203e8dd0ed15bdc1ca
+  languageName: node
+  linkType: hard
+
 "cssnano-preset-default@npm:^5.1.8":
   version: 5.1.8
   resolution: "cssnano-preset-default@npm:5.1.8"
@@ -15351,13 +15327,6 @@ __metadata:
   bin:
     detect-libc: ./bin/detect-libc.js
   checksum: 4da0deae9f69e13bc37a0902d78bf7169480004b1fed3c19722d56cff578d16f0e11633b7fbf5fb6249181236c72e90024cbd68f0b9558ae06e281f47326d50d
-  languageName: node
-  linkType: hard
-
-"detect-libc@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "detect-libc@npm:2.0.1"
-  checksum: 153009d0ce4073ea885a97641aa1cc0327ff168b971fa3c770958345ad3ead4618f3747334435dc8edff32c0f56d8ba16dcf5271543c99b24af532b1cf84a61d
   languageName: node
   linkType: hard
 
@@ -21441,6 +21410,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jest-canvas-mock@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "jest-canvas-mock@npm:2.4.0"
+  dependencies:
+    cssfontparser: ^1.2.1
+    moo-color: ^1.0.2
+  checksum: f0bfa05505cca1bcc7169745898bb075ab30b5cd29c3da2f90b289e4c853ac0cfb8d888d8bd3ac2a23d5f558fa9c2171b24cfe0bfad10344cc85e95d2b404b12
+  languageName: node
+  linkType: hard
+
 "jest-changed-files@npm:^27.5.1":
   version: 27.5.1
   resolution: "jest-changed-files@npm:27.5.1"
@@ -25038,6 +25017,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"moo-color@npm:^1.0.2":
+  version: 1.0.3
+  resolution: "moo-color@npm:1.0.3"
+  dependencies:
+    color-name: ^1.1.4
+  checksum: 778c82f67f638c03a1d0fa78dcd6ea376a9f17b5e78e349c7e34a290b496dbdb43fd0b1c38070e2062d5e784bcf08e57f499015fcbcf52b3a1887d7825ebb80d
+  languageName: node
+  linkType: hard
+
 "moo@npm:^0.5.0":
   version: 0.5.1
   resolution: "moo@npm:0.5.1"
@@ -25147,7 +25135,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.12.1, nan@npm:^2.14.0, nan@npm:^2.15.0, nan@npm:^2.16.0":
+"nan@npm:^2.12.1, nan@npm:^2.14.0, nan@npm:^2.16.0":
   version: 2.16.0
   resolution: "nan@npm:2.16.0"
   dependencies:
@@ -35984,7 +35972,6 @@ swiper@4.5.1:
     bunyan: ^1.8.15
     calypso: "workspace:^"
     calypso-codemods: "workspace:^"
-    canvas: ^2.9.3
     capture-website: ^1.0.0
     chalk: ^4.1.2
     check-node-version: ^4.0.2
@@ -36018,6 +36005,7 @@ swiper@4.5.1:
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"
     jest: ^27.3.1
+    jest-canvas-mock: ^2.4.0
     jest-environment-jsdom: ^27.3.1
     jest-teamcity: ^1.9.0
     loader-utils: ^1.2.3
