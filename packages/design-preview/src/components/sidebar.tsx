@@ -1,5 +1,5 @@
 import { translate } from 'i18n-calypso';
-import { StyleVariationPreviews } from './style-variation';
+import StyleVariationPreviews from './style-variation';
 import type { StyleVariation, ThemeFeature } from '@automattic/design-picker';
 
 interface SidebarProps {

@@ -16,7 +16,7 @@ export interface Category {
 
 export interface StyleVariation {
 	slug: string;
-
+	title?: string;
 	settings: {
 		color: {
 			palette: {

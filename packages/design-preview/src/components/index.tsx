@@ -1,5 +1,5 @@
 import Sidebar from './sidebar';
-import { StyleVariationPreviews } from './style-variation';
+import StyleVariationPreviews from './style-variation';
 import type { StyleVariation, ThemeFeature } from '@automattic/design-picker';
 import './style.scss';
 
