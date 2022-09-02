@@ -40,9 +40,11 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 		await testAccount.authenticate( page );
 	} );
 
-	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
-		await editorPage.visit( 'post' );
+	it( 'Go to the new post page via UI', async function () {
+		// editorPage = new EditorPage( page, { target: features.siteType } );
+		// await editorPage.visit( 'post' );
+
+		await page.click( ':text-is("Write")' );
 	} );
 
 	it( 'Enter page title', async function () {
