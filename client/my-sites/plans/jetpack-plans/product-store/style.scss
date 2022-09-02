@@ -5,6 +5,14 @@
 	display: flex;
 	flex-direction: column;
 
+	.header {
+		margin-bottom: 36px;
+	}
+
+	.header .formatted-header {
+		margin: 0;
+	}
+
 	&__jetpack-free {
 		display: flex;
 		flex-direction: column;
@@ -71,16 +79,23 @@
 	}
 
 	&__most-popular--heading {
-		margin-bottom: 2em;
+		margin-bottom: rem( 24px );
+		font-size: $font-title-small;
+		font-weight: 700;
+		line-height: rem( 29px );
+
+		@include break-medium {
+			margin-bottom: rem( 32px );
+			font-size: $font-title-medium;
+			font-weight: 600;
+		}
 	}
 
 	&__most-popular--items {
-		justify-content: space-evenly;
 		list-style-type: none;
 		display: grid;
 		grid-template-columns: 1fr;
-		gap: 32px;
-		margin-top: 24px;
+		grid-gap: 24px;
 
 		@include break-medium {
 			grid-template-columns: 1fr 1fr;
@@ -234,10 +249,6 @@
 		border: none;
 	}
 
-	.jetpack-product-store__view-filter {
-		margin-top: 0.75em;
-	}
-
 	.jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control {
 		display: flex;
 		flex-direction: row;
@@ -248,7 +259,7 @@
 		border-color: var( --studio-gray-5 );
 		border-radius: 8px; /* stylelint-disable-line */
 		color: var( --color-text );
-		margin: 0.5em auto 1em;
+		margin: 0 auto;
 		max-width: 21.4375em;
 
 		.segmented-control__item {
@@ -297,19 +308,32 @@
 	}
 }
 
-.jetpack-product-store__jetpack-free .button,
-.jetpack-product-store__see-all-features .button {
-	min-width: 225px;
-}
-
 .jetpack-product-store__pricing-banner {
-	height: 120px;
-	margin-bottom: 1.25rem;
+	height: 112px;
+	margin-bottom: 40px;
 
 	@include break-large {
-		height: 54px;
-		margin-bottom: 0;
+		height: 32px;
 	}
+}
+
+.jetpack-product-store__pricing-banner .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__content {
+	height: 112px;
+	gap: 12px;
+
+	@include break-large {
+		gap: 32px;
+		max-height: 32px;
+	}
+}
+
+.jetpack-product-store__pricing-banner .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__item {
+	max-height: 32px;
+	margin: 0;
+}
+
+.jetpack-product-store__pricing-banner .intro-pricing-banner__item-icon {
+	margin-right: 10px;
 }
 
 .jetpack-product-store__need-more-info {
@@ -341,6 +365,20 @@
 	color: var( --color-neutral-100 );
 }
 
+.jetpack-product-store__products-list-all-header {
+	margin-top: rem( 32px );
+	margin-bottom: rem( 24px );
+	font-size: $font-title-small;
+	font-weight: 700;
+
+	@include break-medium {
+		margin-top: rem( 72px );
+		margin-bottom: rem( 48px );
+		font-size: $font-title-medium;
+		line-height: rem( 29px );
+		font-weight: 600;
+	}
+}
 
 .jetpack-product-store__products-list-all-grid {
 	display: grid;
@@ -349,5 +387,16 @@
 
 	@include break-medium {
 		grid-template-columns: repeat( 2, 1fr );
+	}
+}
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jetpack-product-store .header .header__main-title .formatted-header__title {
+	margin: 0 auto;
+	font-size: $font-title-large;
+	line-height: rem( 38px );
+
+	@include break-large {
+		font-size: $font-headline-small;
+		line-height: rem( 40px );
 	}
 }

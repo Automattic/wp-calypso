@@ -83,7 +83,9 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 			<MostPopular heading={ translate( 'Most popular products' ) } items={ mostPopularItems } />
 
 			<div className="jetpack-product-store__products-list-all">
-				<h3>{ translate( 'All products' ) }</h3>
+				<h3 className="jetpack-product-store__products-list-all-header">
+					{ translate( 'All products' ) }
+				</h3>
 
 				<div className="jetpack-product-store__products-list-all-grid">
 					{ allItems.map( ( item ) => {
