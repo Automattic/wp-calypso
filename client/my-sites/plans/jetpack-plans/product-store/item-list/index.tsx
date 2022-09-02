@@ -1,5 +1,5 @@
 import { BundlesList } from '../bundle-list';
-import { ProductsList } from '../products-list';
+import { ProductsList } from '../product-list';
 import type { ItemsListProps } from '../types';
 
 import './style.scss';
