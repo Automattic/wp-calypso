@@ -1,5 +1,9 @@
 import { IncompleteWPcomPlan } from '@automattic/calypso-products';
-import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import {
+	NEWSLETTER_FLOW,
+	LINK_IN_BIO_FLOW,
+	isNewsletterOrLinkInBioFlow,
+} from '@automattic/onboarding';
 
 const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return flowName === NEWSLETTER_FLOW && plan.getNewsletterSignupFeatures;
@@ -14,7 +18,7 @@ const signupFlowDefaultFeatures = (
 	plan: IncompleteWPcomPlan,
 	isInVerticalScrollingPlansExperiment: boolean
 ) => {
-	if ( ! flowName || [ LINK_IN_BIO_FLOW, NEWSLETTER_FLOW ].includes( flowName ) ) {
+	if ( ! flowName || isNewsletterOrLinkInBioFlow( flowName ) ) {
 		return;
 	}
 

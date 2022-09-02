@@ -773,7 +773,8 @@ export class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
-		const { isPlansPageQuickImprovements, flowName } = this.props;
+		const { isPlansPageQuickImprovements, isInVerticalScrollingPlansExperiment, flowName } =
+			this.props;
 		const description = feature.getDescription
 			? feature.getDescription( undefined, this.props.domainName )
 			: null;
@@ -790,7 +791,9 @@ export class PlanFeatures extends Component {
 				hideGridicon={
 					isPlansPageQuickImprovements || ( this.props.isReskinned ? false : this.props.withScroll )
 				}
-				hideInfoPopover={ isNewsletterOrLinkInBioFlow( flowName ) }
+				hideInfoPopover={
+					isInVerticalScrollingPlansExperiment && isNewsletterOrLinkInBioFlow( flowName )
+				}
 				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>
 				<span className={ classes }>
