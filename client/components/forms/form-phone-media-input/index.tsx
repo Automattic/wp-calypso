@@ -2,30 +2,33 @@ import { FormInputValidation } from '@automattic/components';
 import classnames from 'classnames';
 import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
-import type { PropsWithChildren, RefObject } from 'react';
+import type { FC, RefObject } from 'react';
 
-type FormPhoneMediaInputProps = {
-	additionalClasses?: string[];
-	label: string;
-	name?: string;
+type FormPhoneMediaValue = {
 	value: string;
 	countryCode: string;
+};
+
+type FormPhoneMediaInputProps = {
+	additionalClasses?: string;
+	label: string;
+	name?: string;
+	value: FormPhoneMediaValue;
 	className?: string;
 	disabled?: boolean;
 	errorMessage?: string;
 	isError?: boolean;
-	onChange: ( _: { value: string; countryCode: string } ) => void;
+	onChange: ( newValueAndCountry: FormPhoneMediaValue ) => void;
 	countriesList: { code: string; name: string }[];
 	enableStickyCountry?: boolean;
 	inputRef?: RefObject< HTMLInputElement >;
 };
 
-export default function FormPhoneMediaInput( {
+const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
 	additionalClasses,
 	label,
 	name,
 	value,
-	countryCode,
 	className,
 	disabled,
 	errorMessage,
@@ -35,7 +38,7 @@ export default function FormPhoneMediaInput( {
 	enableStickyCountry,
 	inputRef,
 	children,
-}: PropsWithChildren< FormPhoneMediaInputProps > ) {
+} ) => {
 	return (
 		<div className={ classnames( additionalClasses, 'phone' ) }>
 			<div>
@@ -44,10 +47,10 @@ export default function FormPhoneMediaInput( {
 					inputRef={ inputRef }
 					name={ name }
 					onChange={ onChange }
-					value={ value }
+					value={ value.value }
 					countriesList={ countriesList }
 					enableStickyCountry={ enableStickyCountry }
-					countryCode={ countryCode.toUpperCase() }
+					countryCode={ value.countryCode.toUpperCase() }
 					className={ className }
 					isError={ isError }
 					disabled={ disabled }
@@ -57,4 +60,6 @@ export default function FormPhoneMediaInput( {
 			{ errorMessage && <FormInputValidation text={ errorMessage } isError /> }
 		</div>
 	);
-}
+};
+
+export default FormPhoneMediaInput;
