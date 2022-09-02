@@ -29,6 +29,7 @@ interface Props {
 	showSkipBtn?: boolean;
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
+	allowEmptyFormSubmit?: boolean;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
 }
@@ -41,6 +42,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showSkipBtn,
 		showCsvUpload,
 		submitBtnName,
+		allowEmptyFormSubmit,
 		onSkipBtnClick,
 		onImportFinished,
 	} = props;
@@ -104,7 +106,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		validEmails.length && addSubscribers( siteId, validEmails );
 		selectedFile && importCsvSubscribers( siteId, selectedFile );
 
-		! validEmails.length && ! selectedFile && onImportFinished?.();
+		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
 	}
 
 	function onEmailChange( value: string, index: number ) {
@@ -218,9 +220,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						<FormInputValidation isError={ true } text={ '' }>
 							{ createInterpolateElement(
 								__(
-									'Sorry, you can only upload CSV files right now. ' +
-										'Most providers will let you export this from your settings. ' +
-										'<uploadBtn>Select another file</uploadBtn>'
+									'Sorry, you can only upload CSV files right now. Most providers will let you export this from your settings. <uploadBtn>Select another file</uploadBtn>'
 								),
 								{ uploadBtn: formFileUploadElement }
 							) }
@@ -264,8 +264,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						<p className={ 'add-subscriber__form--disclaimer' }>
 							{ createInterpolateElement(
 								__(
-									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to ' +
-										'email each person on your list. <Button>Learn more</Button>'
+									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to email each person on your list. <Button>Learn more</Button>'
 								),
 								{
 									Button: createElement( Button, {
