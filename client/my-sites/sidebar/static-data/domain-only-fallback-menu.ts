@@ -9,6 +9,7 @@ const domainOnlyFallbackMenu = ( { siteDomain }: { siteDomain: string } ) => {
 			type: 'menu-item',
 			url: `/domains/manage/${ siteDomain }/edit/${ siteDomain }`,
 		},
+		// Note: A "Manage Email" item will also be surfaced from the backend when the user has email subscriptions
 		{
 			icon: 'dashicons-cart',
 			slug: 'manage-purchases',
