@@ -27,10 +27,6 @@ import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { useExperiment } from 'calypso/lib/explat';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import {
-	getHighlightedFeatures,
-	getPlanFeatureAccessor,
-} from 'calypso/my-sites/plan-features-comparison/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -43,7 +39,6 @@ import {
 import { getProductCost } from 'calypso/state/products-list/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
@@ -51,6 +46,7 @@ import {
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
 import { PlanFeaturesItem } from './item';
+
 import './style.scss';
 
 const noop = () => {};
@@ -304,7 +300,7 @@ export class PlanFeaturesComparison extends Component {
 					'is-last-feature': rowIndex + 1 === featureKeys.length,
 					'is-highlighted':
 						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-					'is-bold': rowIndex === 0 || currentFeature?.isHighlightedFeature,
+					'is-bold': rowIndex === 0,
 					'is-plans-quick-improvements': isPlansPageQuickImprovements,
 				}
 			);
@@ -380,7 +376,6 @@ const ConnectedPlanFeaturesComparison = connect(
 		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
-		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
@@ -412,9 +407,10 @@ const ConnectedPlanFeaturesComparison = connect(
 					isPlaceholder = true;
 				}
 
-				const featureAccessor = getPlanFeatureAccessor( { flowName, plan: planConstantObj } );
-				if ( ! isPlansPageQuickImprovements && featureAccessor ) {
-					planFeatures = getPlanFeaturesObject( featureAccessor() );
+				if ( ! isPlansPageQuickImprovements && planConstantObj.getSignupCompareAvailableFeatures ) {
+					planFeatures = getPlanFeaturesObject(
+						planConstantObj.getSignupCompareAvailableFeatures()
+					);
 				}
 
 				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
@@ -455,16 +451,6 @@ const ConnectedPlanFeaturesComparison = connect(
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-						};
-					} );
-				}
-
-				const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
-				if ( highlightedFeatures.length ) {
-					planFeatures = planFeatures.map( ( feature ) => {
-						return {
-							...feature,
-							isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
 						};
 					} );
 				}
