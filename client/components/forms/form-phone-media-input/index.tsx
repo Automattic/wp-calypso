@@ -4,18 +4,21 @@ import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
 import type { FC, RefObject } from 'react';
 
-type FormPhoneMediaInputProps = {
-	additionalClasses?: string[];
-	label: string;
-	name?: string;
+type FormPhoneMediaValue = {
 	value: string;
 	countryCode: string;
+};
+
+type FormPhoneMediaInputProps = {
+	additionalClasses?: string;
+	label: string;
+	name?: string;
+	value: FormPhoneMediaValue;
 	className?: string;
 	disabled?: boolean;
 	errorMessage?: string;
 	isError?: boolean;
-	// TODO: Change value to include both values to match OnFieldChange; then change all implementations
-	onChange: ( _: { value: string; countryCode: string } ) => void;
+	onChange: ( newValueAndCountry: FormPhoneMediaValue ) => void;
 	countriesList: { code: string; name: string }[];
 	enableStickyCountry?: boolean;
 	inputRef?: RefObject< HTMLInputElement >;
@@ -26,7 +29,6 @@ const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
 	label,
 	name,
 	value,
-	countryCode,
 	className,
 	disabled,
 	errorMessage,
@@ -45,10 +47,10 @@ const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
 					inputRef={ inputRef }
 					name={ name }
 					onChange={ onChange }
-					value={ value }
+					value={ value.value }
 					countriesList={ countriesList }
 					enableStickyCountry={ enableStickyCountry }
-					countryCode={ countryCode.toUpperCase() }
+					countryCode={ value.countryCode.toUpperCase() }
 					className={ className }
 					isError={ isError }
 					disabled={ disabled }
