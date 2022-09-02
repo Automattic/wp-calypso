@@ -23,6 +23,9 @@ class ConciergeBanner extends Component {
 			CONCIERGE_HAS_AVAILABLE_SESSION,
 		] ).isRequired,
 		availableSessions: PropTypes.array.isRequired,
+		showPlaceholder: PropTypes.bool,
+		nextAppointmentSiteId: PropTypes.number,
+		siteId: PropTypes.number,
 	};
 
 	placeholder() {
