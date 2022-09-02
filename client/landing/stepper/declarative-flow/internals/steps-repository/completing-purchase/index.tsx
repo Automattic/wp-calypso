@@ -18,10 +18,15 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 
 	const siteSetup = useSetupOnboardingSite( { ignoreUrl: true, site, flow } );
 
+	const showPurchaseMessage = () => {
+		if ( ! site?.plan?.is_free ) {
+			return setProgressTitle( __( 'Completing your purchase' ) );
+		}
+	};
 	const completeLinkInBioFlow = () => {
 		setPendingAction( async () => {
 			setProgress( 0 );
-			setProgressTitle( __( 'Completing your purchase' ) );
+			showPurchaseMessage();
 			await siteSetup;
 
 			setProgress( 0.5 );
@@ -48,7 +53,7 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 			await wait( 1500 );
 
 			setProgress( 1 );
-			setProgressTitle( __( 'Completing your purchase' ) );
+			showPurchaseMessage();
 			await wait( 1000 );
 			return { destination: 'subscribers' };
 		} );
