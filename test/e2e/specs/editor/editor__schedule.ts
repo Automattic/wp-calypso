@@ -40,11 +40,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 		await testAccount.authenticate( page );
 	} );
 
-	it( 'Should be at the homepage', async () => {
-		await new Promise( ( r ) => setTimeout( r, 4000 ) );
-		expect( true ).toBe( false );
-	} );
-
 	it( 'Go to the new post page', async function () {
 		editorPage = new EditorPage( page, { target: features.siteType } );
 		await editorPage.visit( 'post' );
