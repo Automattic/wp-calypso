@@ -50,9 +50,6 @@
 	}
 }
 
-.banner__action {
-	a,
-	button {
-		white-space: nowrap;
-	}
+.concierge-banner .banner__action .button {
+	min-width: 120px;
 }

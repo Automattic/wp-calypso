@@ -261,8 +261,7 @@
 	margin-top: -8px;
 }
 
-.is-horizontal .dismissible-card__close-button,
-.is-horizontal .banner__close-icon {
+.is-horizontal .dismissible-card__close-button, .is-horizontal .banner__close-icon {
 	top: 50%;
 	margin-top: -12px;
 }
@@ -274,3 +273,4 @@
 	color: var( --color-text-subtle );
 	cursor: pointer;
 }
+

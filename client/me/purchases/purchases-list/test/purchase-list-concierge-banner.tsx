@@ -10,13 +10,17 @@ import { createReduxStore } from 'calypso/state/index';
 describe( 'PurchaseListConciergeBanner tests', () => {
 	test( 'not on specific site but has sites with sessions available', () => {
 		render(
-			<Provider store={ createTestStore( -1 ) }>
+			<Provider store={ createTestStore( 1 ) }>
 				<PurchaseListConciergeBanner availableSessions={ [ 1 ] } isUserBlocked={ false } />
 			</Provider>
 		);
 		expect(
 			screen.getByText( 'You still have a Quick Start session available' )
 		).toBeInTheDocument();
+		expect( screen.getByText( 'Schedule a date' ) ).toHaveAttribute(
+			'href',
+			'/me/quickstart/test.com'
+		);
 	} );
 	test( 'on specific site and has session available for site', () => {
 		render(
@@ -31,6 +35,10 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 		expect(
 			screen.queryByText( 'You still have a Quick Start session available' )
 		).toBeInTheDocument();
+		expect( screen.getByText( 'Schedule a date' ) ).toHaveAttribute(
+			'href',
+			'/me/quickstart/test.com'
+		);
 	} );
 	test( 'on a specific site but no session for that site', () => {
 		render(
@@ -62,6 +70,10 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 		expect(
 			screen.queryByText( 'Your Quick Start session is coming up soon' )
 		).toBeInTheDocument();
+		expect( screen.getByText( 'Session dashboard' ) ).toHaveAttribute(
+			'href',
+			'/me/quickstart/test.com'
+		);
 	} );
 	test( 'has appointment scheduled for other site', () => {
 		render(
@@ -81,6 +93,10 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 		expect(
 			screen.queryByText( 'Your Quick Start session is coming up soon' )
 		).toBeInTheDocument();
+		expect( screen.getByText( 'Session dashboard' ) ).toHaveAttribute(
+			'href',
+			'/me/quickstart/test.com'
+		);
 	} );
 } );
 
@@ -92,7 +108,9 @@ function createTestStore( siteId ) {
 			},
 			sites: {
 				items: {
-					ID: siteId,
+					[ siteId ]: {
+						URL: 'test.com',
+					},
 				},
 			},
 		},

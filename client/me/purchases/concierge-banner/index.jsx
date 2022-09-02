@@ -107,6 +107,7 @@ class ConciergeBanner extends Component {
 			<>
 				<TrackComponentView eventName="calypso_purchases_concierge_banner_view" />
 				<Banner
+					className={ 'concierge-banner' }
 					showIcon={ false }
 					primaryButton={ false }
 					callToAction={ buttonText }
