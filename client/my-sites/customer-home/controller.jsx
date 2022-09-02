@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { getQueryArg } from '@wordpress/url';
 import page from 'page';
-import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
@@ -38,18 +38,13 @@ export function maybeRedirect( context, next ) {
 	// or not to redirect to launchpad. The option, however, is loading stale data in horizon, and presumably,
 	// in production as well. The forceLoadLaunchpadData query param is a temporary patch to circumvent stale data, and
 	// will avoid a redirect.
-	const forceLoadLaunchpadDataParam = getQueryArg( window.location.href, 'forceLoadLaunchpadData' );
+	const forceRequestSiteParam = getQueryArg( window.location.href, 'forceLoadLaunchpadData' );
 
-	if ( forceLoadLaunchpadDataParam ) {
-		dispatch(
-			saveSiteSettings( siteId, {
-				launchpad_screen: 'off',
-			} )
-		);
+	if ( forceRequestSiteParam ) {
+		dispatch( requestSite( siteId ) );
 	}
 
-	const shouldRedirectToLaunchpad =
-		options?.launchpad_screen === 'full' && ! forceLoadLaunchpadDataParam;
+	const shouldRedirectToLaunchpad = options?.launchpad_screen === 'full' && ! forceRequestSiteParam;
 
 	if ( shouldRedirectToLaunchpad && isEnabled( 'signup/launchpad' ) ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
