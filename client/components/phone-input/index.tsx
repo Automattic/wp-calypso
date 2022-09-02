@@ -1,8 +1,6 @@
 import classnames from 'classnames';
 import debugFactory from 'debug';
-import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
-import PropTypes from 'prop-types';
+import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import FormCountrySelect from 'calypso/components/forms/form-country-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -16,28 +14,55 @@ import {
 	getUpdatedCursorPosition,
 	MIN_LENGTH_TO_FORMAT,
 } from 'calypso/components/phone-input/phone-number';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { FC, MutableRefObject, ChangeEvent } from 'react';
 
 import './style.scss';
 
 const debug = debugFactory( 'calypso:phone-input' );
 
-function PhoneInput( {
-	translate,
-	inputRef,
-	onChange,
+export type PhoneInputValue = {
+	value: string;
+	countryCode: string;
+};
+
+export type RefFunction = ( ref: HTMLInputElement | undefined ) => void;
+
+export type PhoneInputProps = {
+	className?: string;
+	countriesList: CountryListItem[];
+	disabled?: boolean;
+	enableStickyCountry?: boolean;
+	inputRef?: MutableRefObject< HTMLInputElement | undefined > | RefFunction;
+	isError?: boolean;
+	name?: string;
+	onChange: ( newValueAndCountry: PhoneInputValue ) => void;
+	value: PhoneInputValue;
+};
+
+type PhoneNumberInputState = {
+	rawValue: string;
+	displayValue: string;
+};
+
+type SetPhoneNumberInputState = React.Dispatch< React.SetStateAction< PhoneNumberInputState > >;
+
+const PhoneInput: FC< PhoneInputProps > = ( {
 	className,
-	isError,
-	disabled,
-	name,
-	value,
-	countryCode,
 	countriesList,
+	disabled,
 	enableStickyCountry = true,
-} ) {
+	inputRef,
+	isError,
+	name,
+	onChange,
+	value,
+} ) => {
+	const translate = useTranslate();
 	const [ freezeSelection, setFreezeSelection ] = useState( enableStickyCountry );
 	const [ phoneNumberState, setPhoneNumberState ] = usePhoneNumberState(
-		value,
-		countryCode,
+		value.value,
+		value.countryCode,
 		countriesList,
 		freezeSelection
 	);
@@ -45,24 +70,24 @@ function PhoneInput( {
 	const { displayValue } = phoneNumberState;
 
 	const numberInputRef = useSharedRef( inputRef );
-	const oldCursorPosition = useRef( [] );
+	const oldCursorPosition = useRef< number[] >( [] );
 
-	useAdjustCursorPosition( displayValue, countryCode, numberInputRef, oldCursorPosition );
+	useAdjustCursorPosition( displayValue, value.countryCode, numberInputRef, oldCursorPosition );
 
 	const handleInput = getInputHandler(
 		setPhoneNumberState,
 		onChange,
-		countryCode,
+		value.countryCode,
 		countriesList,
 		freezeSelection,
 		oldCursorPosition
 	);
-	const handleCursorMove = ( event ) => {
+	const handleCursorMove = ( event: ChangeEvent< HTMLInputElement > ) => {
 		recordCursorPosition( oldCursorPosition, event.target.selectionStart );
 	};
 	const handleCountrySelection = getCountrySelectionHandler(
 		displayValue,
-		countryCode,
+		value.countryCode,
 		countriesList,
 		onChange,
 		setFreezeSelection,
@@ -91,34 +116,25 @@ function PhoneInput( {
 						tabIndex={ -1 }
 						className="phone-input__country-select"
 						onChange={ handleCountrySelection }
-						value={ getCountry( countryCode, countriesList ).isoCode }
+						value={ getCountry( value.countryCode, countriesList ).isoCode }
 						countriesList={ countriesList }
 						disabled={ disabled }
 					/>
 					<CountryFlag
-						countryCode={ getCountry( countryCode, countriesList ).isoCode.toLowerCase() }
+						countryCode={ getCountry( value.countryCode, countriesList ).isoCode.toLowerCase() }
 					/>
 				</div>
 			</div>
 		</div>
 	);
-}
-
-PhoneInput.propTypes = {
-	translate: PropTypes.func.isRequired,
-	inputRef: PropTypes.oneOfType( [ PropTypes.func, PropTypes.object ] ),
-	onChange: PropTypes.func.isRequired,
-	className: PropTypes.string,
-	isError: PropTypes.bool,
-	disabled: PropTypes.bool,
-	name: PropTypes.string,
-	value: PropTypes.string.isRequired,
-	countryCode: PropTypes.string.isRequired,
-	countriesList: PropTypes.array.isRequired,
-	enableStickyCountry: PropTypes.bool,
 };
 
-function useAdjustCursorPosition( displayValue, countryCode, numberInputRef, cursorPositionRef ) {
+function useAdjustCursorPosition(
+	displayValue: string,
+	countryCode: string,
+	numberInputRef: MutableRefObject< HTMLInputElement | undefined >,
+	cursorPositionRef: MutableRefObject< number[] >
+) {
 	const oldValue = useRef( displayValue );
 	const oldCountry = useRef( countryCode );
 	useEffect( () => {
@@ -140,12 +156,12 @@ function useAdjustCursorPosition( displayValue, countryCode, numberInputRef, cur
 		oldCountry.current = countryCode;
 
 		debug( 'moving cursor from', oldCursorPosition, 'to', newCursorPosition );
-		cursorPositionRef.current.push( newCursorPosition );
+		cursorPositionRef.current?.push( newCursorPosition );
 		numberInputRef.current.setSelectionRange( newCursorPosition, newCursorPosition );
 	}, [ displayValue, numberInputRef, countryCode, cursorPositionRef ] );
 }
 
-function getLastCursorPosition( recentPositions ) {
+function getLastCursorPosition( recentPositions: number[] ) {
 	const length = recentPositions.length;
 	let index = length - 1;
 	if ( length === 0 ) {
@@ -158,8 +174,10 @@ function getLastCursorPosition( recentPositions ) {
 	return recentPositions[ index ];
 }
 
-function useSharedRef( inputRef ) {
-	const numberInputRef = useRef();
+function useSharedRef(
+	inputRef: MutableRefObject< HTMLInputElement | undefined > | RefFunction | undefined
+) {
+	const numberInputRef = useRef< HTMLInputElement | undefined >();
 	useEffect( () => {
 		if ( ! inputRef ) {
 			return;
@@ -173,7 +191,12 @@ function useSharedRef( inputRef ) {
 	return numberInputRef;
 }
 
-function usePhoneNumberState( value, countryCode, countriesList, freezeSelection ) {
+function usePhoneNumberState(
+	value: string,
+	countryCode: string,
+	countriesList: CountryListItem[],
+	freezeSelection: boolean
+): [ PhoneNumberInputState, SetPhoneNumberInputState ] {
 	const previousValue = useRef( value );
 	const previousCountry = useRef( countryCode );
 	const [ phoneNumberState, setPhoneNumberState ] = useState( () =>
@@ -188,7 +211,10 @@ function usePhoneNumberState( value, countryCode, countriesList, freezeSelection
 			return;
 		}
 		// No need to update if the prop value is equal to one form of the current value
-		const icannValue = toIcannFormat( displayValue, countries[ countryCode ] );
+		const icannValue = toIcannFormat(
+			displayValue,
+			countries[ countryCode as keyof typeof countries ]
+		);
 		if (
 			previousCountry.current === countryCode &&
 			( value === rawValue || value === displayValue || value === icannValue )
@@ -219,7 +245,12 @@ function usePhoneNumberState( value, countryCode, countriesList, freezeSelection
 	return [ phoneNumberState, setPhoneNumberState ];
 }
 
-function getPhoneNumberStatesFromProp( rawValue, countryCode, countriesList, freezeSelection ) {
+function getPhoneNumberStatesFromProp(
+	rawValue: string,
+	countryCode: string,
+	countriesList: CountryListItem[],
+	freezeSelection: boolean
+) {
 	const { value: displayValue } = calculateInputAndCountryCode(
 		rawValue,
 		countryCode,
@@ -230,14 +261,14 @@ function getPhoneNumberStatesFromProp( rawValue, countryCode, countriesList, fre
 }
 
 function getInputHandler(
-	setPhoneNumberState,
-	onChange,
-	countryCodeValue,
-	countriesList,
-	freezeSelection,
-	oldCursorPosition
+	setPhoneNumberState: SetPhoneNumberInputState,
+	onChange: ( newValueAndCountry: PhoneInputValue ) => void,
+	countryCodeValue: string,
+	countriesList: CountryListItem[],
+	freezeSelection: boolean,
+	oldCursorPosition: MutableRefObject< number[] >
 ) {
-	return function handleInput( event ) {
+	return function handleInput( event: ChangeEvent< HTMLInputElement > ) {
 		event.preventDefault();
 		const rawValue = event.target.value;
 		recordCursorPosition( oldCursorPosition, event.target.selectionStart );
@@ -258,22 +289,24 @@ function getInputHandler(
 	};
 }
 
-function recordCursorPosition( oldCursorPosition, newPosition ) {
+function recordCursorPosition(
+	oldCursorPosition: MutableRefObject< number[] >,
+	newPosition: number | null
+) {
+	if ( ! newPosition ) {
+		return;
+	}
 	oldCursorPosition.current.push( newPosition );
 	oldCursorPosition.current = oldCursorPosition.current.slice( -3 );
 	debug( 'updating oldCursorPosition to', oldCursorPosition.current );
 }
 
-/**
- * Calculates the input and country
- *
- * @param {string} value - Phone number
- * @param {string} countryCode - The country code
- * @param {Array} countriesList - The list of countries
- * @param {boolean} freezeSelection - True if we should never guess the country
- * @returns {{value: string, countryCode: string}} - Result
- */
-function calculateInputAndCountryCode( value, countryCode, countriesList, freezeSelection ) {
+function calculateInputAndCountryCode(
+	value: string,
+	countryCode: string,
+	countriesList: CountryListItem[],
+	freezeSelection: boolean
+): PhoneInputValue {
 	const calculatedCountry = guessCountryFromValueOrGetSelected(
 		value,
 		countryCode,
@@ -295,13 +328,18 @@ function calculateInputAndCountryCode( value, countryCode, countriesList, freeze
  * @param {boolean} freezeSelection - True if we should never guess
  * @returns {boolean} - Whether to guess the country or not
  */
-function shouldGuessCountry( value, countryCode, countriesList, freezeSelection ) {
+function shouldGuessCountry(
+	value: string,
+	countryCode: string,
+	countriesList: CountryListItem[],
+	freezeSelection: boolean
+): boolean {
 	if ( ! value || value.length < MIN_LENGTH_TO_FORMAT || freezeSelection ) {
 		return false;
 	}
+	const countryData = getCountry( countryCode, countriesList );
 	const dialCode =
-		getCountry( countryCode, countriesList ).countryDialCode ||
-		getCountry( countryCode, countriesList ).dialCode;
+		'countryDialCode' in countryData ? countryData.countryDialCode : countryData.dialCode;
 	return value[ 0 ] === '+' || ( value[ 0 ] === '1' && dialCode === '1' );
 }
 
@@ -312,13 +350,12 @@ function shouldGuessCountry( value, countryCode, countriesList, freezeSelection 
  * @param {string} fallbackCountryCode - Fallback country code in case we can't find a match
  * @param {Array} countriesList - The list of countries
  * @param {boolean} freezeSelection - True if we should never guess the country
- * @returns {{isoCode: string, dialCode: string, nationalPrefix: string}} - Country metadata
  */
 function guessCountryFromValueOrGetSelected(
-	value,
-	fallbackCountryCode,
-	countriesList,
-	freezeSelection
+	value: string,
+	fallbackCountryCode: string,
+	countriesList: CountryListItem[],
+	freezeSelection: boolean
 ) {
 	if ( shouldGuessCountry( value, fallbackCountryCode, countriesList, freezeSelection ) ) {
 		return findCountryFromNumber( value ) || getCountry( 'world', countriesList );
@@ -335,7 +372,7 @@ function guessCountryFromValueOrGetSelected(
  * @param {Array} countriesList - The country data
  * @returns {string} The formatted number
  */
-function format( value, countryCode, countriesList ) {
+function format( value: string, countryCode: string, countriesList: CountryListItem[] ): string {
 	return formatNumber( value, getCountry( countryCode, countriesList ) );
 }
 
@@ -344,18 +381,20 @@ function format( value, countryCode, countriesList ) {
  *
  * @param {string} countryCode - The country code
  * @param {Array} countriesList - The country data
- * @returns {{isoCode: string, dialCode: string, nationalPrefix: string}} - Country metadata
  */
-function getCountry( countryCode, countriesList ) {
-	let selectedCountry = countries[ countryCode ];
+function getCountry( countryCode: string, countriesList: CountryListItem[] ) {
+	let selectedCountry = countries[ countryCode as keyof typeof countries ];
 
 	if ( ! selectedCountry ) {
 		// Special cases where the country is in a disputed region and not globally recognized.
 		// At this point this should only be used for: Canary islands, Kosovo, Netherlands Antilles
-		const data = find( countriesList || [], ( { code } ) => code === countryCode );
+		const data = ( countriesList || [] ).find(
+			( { code }: { code: string } ) => code === countryCode
+		);
 
 		selectedCountry = {
 			isoCode: countryCode,
+			// TODO: I don't think numeric_code ever exists.
 			dialCode: ( ( data && data.numeric_code ) || '' ).replace( '+', '' ),
 			nationalPrefix: '',
 		};
@@ -364,14 +403,14 @@ function getCountry( countryCode, countriesList ) {
 }
 
 function getCountrySelectionHandler(
-	value,
-	countryCode,
-	countriesList,
-	onChange,
-	setFreezeSelection,
-	enableStickyCountry
+	value: string,
+	countryCode: string,
+	countriesList: CountryListItem[],
+	onChange: ( newValueAndCountry: PhoneInputValue ) => void,
+	setFreezeSelection: ( shouldFreeze: boolean ) => void,
+	enableStickyCountry: boolean
 ) {
-	return function handleCountrySelection( event ) {
+	return function handleCountrySelection( event: ChangeEvent< HTMLInputElement > ) {
 		const newCountryCode = event.target.value;
 		if ( newCountryCode === countryCode ) {
 			return;
@@ -403,4 +442,4 @@ function getCountrySelectionHandler(
 	};
 }
 
-export default localize( PhoneInput );
+export default PhoneInput;
