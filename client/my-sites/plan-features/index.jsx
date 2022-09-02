@@ -753,12 +753,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
-<<<<<<< HEAD
-		const { isPlansPageQuickImprovements, isInVerticalScrollingPlansExperiment, flowName } =
-			this.props;
-=======
-		const { flowName } = this.props;
->>>>>>> 0936164934 (Initial revert code)
+		const { flowName, isInVerticalScrollingPlansExperiment } = this.props;
 		const description = feature.getDescription
 			? feature.getDescription( undefined, this.props.domainName )
 			: null;
@@ -767,7 +762,8 @@ export class PlanFeatures extends Component {
 			'is-available': feature.availableForCurrentPlan,
 			'is-bold': feature.isHighlightedFeature,
 		} );
-		const isMobileNewsletterLinkinBio = isInVerticalScrollingPlansExperiment && isNewsletterOrLinkInBioFlow( flowName );
+		const isMobileNewsletterLinkinBio =
+			isInVerticalScrollingPlansExperiment && isNewsletterOrLinkInBioFlow( flowName );
 
 		return (
 			<PlanFeaturesItem
