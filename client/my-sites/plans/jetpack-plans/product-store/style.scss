@@ -118,52 +118,6 @@
 		margin-bottom: 2.5em;
 	}
 
-	.features-list {
-		padding: 1.5rem;
-
-		@include break-mobile {
-			padding-bottom: 2.5rem;
-			border: 1px solid var( --studio-gray-0 );
-		}
-
-		@media (max-width: $break-mobile) {
-			padding: 0 0.5rem;
-		}
-
-		&__group:not(:first-child) {
-			margin-top: 1rem;
-		}
-
-		&__group--title {
-			font-size: 1.25rem;
-			padding: 1.25rem 1rem;
-			border-bottom: 1px solid var( --studio-gray-5 );
-			line-height: 24px;
-		}
-
-		&__group--icon {
-			margin-inline-end: 0.5rem;
-		}
-
-		&__group--features {
-			list-style-type: none;
-			margin: 0;
-		}
-
-		&__group--features li {
-			padding: 1rem;
-			font-size: $font-body-small;
-			border-bottom: 1px solid var( --studio-gray-5 );
-			line-height: 24px;
-			display: flex;
-			align-items: center;
-		}
-
-		&__group--features li img {
-			margin-inline-end: 0.5rem;
-		}
-	}
-
 	.button {
 		color: var( --color-neutral-100 );
 		border: 1px solid var( --color-neutral-100 );
