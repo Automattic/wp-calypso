@@ -79,9 +79,7 @@ class StepImportOrMigrate extends Component {
 						{
 							components: {
 								jetpackInstallLink: (
-									<a
-										href={ `https://wordpress.com/jetpack/connect/?url=${ sourceSiteDomain }&source=import` }
-									/>
+									<a href={ `https://wordpress.com/jetpack/connect/?url=${ sourceSiteDomain }` } />
 								),
 							},
 						}

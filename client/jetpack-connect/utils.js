@@ -1,5 +1,4 @@
 import config, { isCalypsoLive } from '@automattic/calypso-config';
-import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { includes, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -168,15 +167,6 @@ export function redirect( type, url, product = null, queryArgs = {} ) {
 	if ( type === 'checkout' ) {
 		urlRedirect = `${ JPC_PATH_CHECKOUT }/${ urlToSlug( url ) }/${ product }`;
 		page.redirect( addQueryArgs( queryArgs, urlRedirect ) );
-	}
-
-	if ( type === 'recommendations' ) {
-		urlRedirect = getUrlFromParts( {
-			...getUrlParts( url + '/wp-admin/admin.php' ),
-			search: '?page=jetpack',
-			hash: '/recommendations',
-		} ).href;
-		navigate( urlRedirect );
 	}
 
 	return urlRedirect;

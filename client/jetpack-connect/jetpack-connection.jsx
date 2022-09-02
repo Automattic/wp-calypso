@@ -110,8 +110,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 					this.redirect( 'checkout', url, currentPlan, queryArgs );
 				} else if ( fromSource === 'import' ) {
 					clearSource();
-					debug( 'Redirecting to recommendations' );
-					this.redirect( 'recommendations', url );
+					debug( `Closing the window because the user has connected` );
+					window.close();
 				} else {
 					debug( 'Redirecting to plans_selection' );
 					this.redirect( 'plans_selection', url );

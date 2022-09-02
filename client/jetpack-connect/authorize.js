@@ -3,7 +3,6 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	WPCOM_FEATURES_BACKUPS,
 } from '@automattic/calypso-products';
-import { getUrlParts, getUrlFromParts } from '@automattic/calypso-url';
 import { Button, Card, Gridicon, Spinner } from '@automattic/components';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -223,7 +222,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	redirect() {
-		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups } = this.props;
+		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups, fromSource } = this.props;
 		const { from, homeUrl, redirectAfterAuth, scope, closeWindowAfterAuthorize } =
 			this.props.authQuery;
 		const { isRedirecting } = this.state;
@@ -243,6 +242,12 @@ export class JetpackAuthorize extends Component {
 			// In these cases, we'll want to automatically close the window when the authorization
 			// step is complete, and have the window opener detect this and re-check user authorization status.
 			debug( 'Closing window after authorize' );
+			window.close();
+		}
+
+		if ( fromSource === 'import' ) {
+			clearSource();
+			debug( 'Closing window after authorize - from migration flow' );
 			window.close();
 		}
 
@@ -722,7 +727,7 @@ export class JetpackAuthorize extends Component {
 
 	getRedirectionTarget() {
 		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
-		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct, fromSource } = this.props;
+		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if ( 'pressable' === partnerSlug ) {
@@ -757,16 +762,6 @@ export class JetpackAuthorize extends Component {
 				redirectAfterAuth
 			);
 			return redirectAfterAuth;
-		}
-
-		if ( fromSource === 'import' ) {
-			clearSource();
-			const jpcTarget = getUrlFromParts( {
-				...getUrlParts( homeUrl + '/wp-admin/admin.php' ),
-				search: '?page=jetpack',
-				hash: '/recommendations',
-			} );
-			return jpcTarget;
 		}
 
 		const jpcTarget = addQueryArgs(
