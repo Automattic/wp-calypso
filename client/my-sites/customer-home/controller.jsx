@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getQueryArg } from '@wordpress/url';
 import page from 'page';
 import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
@@ -40,7 +39,7 @@ export function maybeRedirect( context, next ) {
 		options?.launchpad_screen === 'full' &&
 		! getQueryArg( window.location.href, 'forceLoadLaunchpadData' );
 
-	if ( shouldRedirectToLaunchpad && isEnabled( 'signup/launchpad' ) ) {
+	if ( shouldRedirectToLaunchpad ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.
