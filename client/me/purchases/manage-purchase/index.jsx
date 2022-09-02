@@ -70,6 +70,7 @@ import {
 	purchaseType,
 	getName,
 	shouldRenderMonthlyRenewalOption,
+	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -93,7 +94,6 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
-import { getDIFMTieredPurchaseDetails } from 'calypso/state/purchases/selectors/get-difm-purchase-tier-details';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
@@ -651,7 +651,7 @@ class ManagePurchase extends Component {
 		}
 
 		if ( isDIFMProduct( purchase ) ) {
-			const { difmTieredPurchaseDetails } = this.props;
+			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
 			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
 				const { extraPageCount, numberOfIncludedPages } = difmTieredPurchaseDetails;
 				return (
@@ -1017,7 +1017,6 @@ function PurchasesQueryComponent( { isSiteLevel, selectedSiteId } ) {
 export default connect(
 	( state, props ) => {
 		const purchase = getByPurchaseId( state, props.purchaseId );
-		const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( state, props.purchaseId );
 		const purchaseAttachedTo =
 			purchase && purchase.attachedToPurchaseId
 				? getByPurchaseId( state, purchase.attachedToPurchaseId )
@@ -1048,7 +1047,6 @@ export default connect(
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
 			productsList,
 			purchase,
-			difmTieredPurchaseDetails,
 			purchases,
 			purchaseAttachedTo,
 			siteId,

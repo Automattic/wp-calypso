@@ -42,11 +42,11 @@ import {
 	isRenewable,
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
+	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
-import { getDIFMTieredPurchaseDetails } from 'calypso/state/purchases/selectors/get-difm-purchase-tier-details';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { managePurchase } from '../paths';
@@ -226,15 +226,13 @@ function PurchaseMetaOwner( { owner } ) {
 
 function PurchaseMetaPrice( { purchase } ) {
 	const translate = useTranslate();
-	const overallState = useSelector( ( state ) => state );
-
 	const { productSlug, productDisplayPrice } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 		if ( isDIFMProduct( purchase ) ) {
-			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( overallState, purchase.id );
+			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
 			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
 				const {
 					extraPageCount,
