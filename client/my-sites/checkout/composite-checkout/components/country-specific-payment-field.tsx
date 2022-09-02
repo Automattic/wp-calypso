@@ -36,7 +36,7 @@ export interface CountrySpecificPaymentFieldProps< P > {
 	 * These will override any of the props automatically provided by this
 	 * component. See `componentClass` for details on the automatic props.
 	 */
-	additionalProps: P;
+	additionalProps?: P;
 
 	/**
 	 * A convenience prop for `additionalProps.disabled`.
