@@ -186,10 +186,16 @@
 	padding: 10px 20px;
 }
 
+.site-selector__actions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 8px;
+}
+
 .site-selector__manage-sites {
 	background: transparent;
 	border-color: var( --color-surface );
-	margin: 8px;
 
 	&,
 	&:visited {
