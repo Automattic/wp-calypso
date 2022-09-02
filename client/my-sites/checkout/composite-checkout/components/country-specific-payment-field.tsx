@@ -7,7 +7,7 @@ export type OnFieldChange< V > = ( event: FieldChangeEvent< V > ) => void;
 
 export interface InteriorFieldProps< V extends FieldValue > {
 	value?: string;
-	additionalClasses?: string[];
+	additionalClasses?: string;
 	isError?: boolean;
 	errorMessage?: string;
 	name?: string;
@@ -33,11 +33,14 @@ export interface CountrySpecificPaymentFieldProps<
 	 * This is designed to work with specific components that implement
 	 * `InteriorFieldProps`.
 	 *
-	 * For example, `Input`, but it can be anything. When the component is
-	 * rendered, it will be provided with the props specified in the `additionalProps` prop
-	 * combined with some additional props, listed below. Note that if any of the
-	 * following props are also provided in `additionalProps`, those props will override
-	 * the automatic ones.
+	 * Some styles of the component will be overridden; see
+	 * `CountrySpecificPaymentFields`.
+	 *
+	 * When the component is rendered, it will be provided with the props
+	 * specified in the `additionalProps` prop combined with some additional
+	 * props, listed below. Note that if any of the following props are also
+	 * provided in `additionalProps`, those props will override the automatic
+	 * ones.
 	 *
 	 * - `value` will be provided with getFieldValue(`fieldName`).
 	 * - `errorMessage` will be provided with getErrorMessages(`fieldName`)[0].
@@ -80,7 +83,9 @@ export interface CountrySpecificPaymentFieldProps<
 	getFieldValue: ( fieldName: string ) => V;
 
 	/**
-	 * A function that will be when the field is changed.
+	 * A function that will be called when the field is changed to update the value.
+	 *
+	 * Use this to update the data returned by `getFieldValue`.
 	 */
 	handleFieldChange: ( fieldName: string, newValue: V ) => void;
 }
