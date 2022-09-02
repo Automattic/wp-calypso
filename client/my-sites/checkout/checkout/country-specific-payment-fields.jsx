@@ -49,6 +49,20 @@ export class CountrySpecificPaymentFields extends Component {
 	createField = ( fieldName, componentClass, props ) => {
 		const errorMessage = this.props.getErrorMessage( fieldName ) || [];
 		const isError = ! isEmpty( errorMessage );
+
+		const baseValue = this.props.getFieldValue( fieldName ) || '';
+		let value = baseValue;
+		if ( fieldName === 'phone-number' ) {
+			// If the user has manually selected a country for the phone
+			// number, use that, but otherwise default this to the same
+			// country as the billing address.
+			const phoneCountryCode = this.state.userSelectedPhoneCountryCode || this.props.countryCode;
+			value = {
+				value: baseValue,
+				countryCode: phoneCountryCode,
+			};
+		}
+
 		const fieldProps = Object.assign(
 			{},
 			{
@@ -58,7 +72,7 @@ export class CountrySpecificPaymentFields extends Component {
 				name: fieldName,
 				onBlur: this.onFieldChange,
 				onChange: this.onFieldChange,
-				value: this.props.getFieldValue( fieldName ) || '',
+				value,
 				autoComplete: 'off',
 				labelClass: 'checkout__form-label',
 				disabled: this.props.disableFields,
