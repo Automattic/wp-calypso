@@ -230,20 +230,6 @@ import {
 	FEATURE_COLLECT_PAYMENTS_V3,
 	FEATURE_EMAIL_SUPPORT_V2,
 	FEATURE_ADVANCED_SEO_V2,
-	FEATURE_UNLIMITED_EMAILS,
-	FEATURE_UNLIMITED_SUBSCRIBERS,
-	FEATURE_IMPORT_SUBSCRIBERS,
-	FEATURE_AD_FREE_EXPERIENCE,
-	FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
-	FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
-	FEATURE_POST_BY_EMAIL,
-	FEATURE_REAL_TIME_ANALYTICS,
-	FEATURE_GOOGLE_ANALYTICS_V2,
-	FEATURE_ADD_UNLIMITED_LINKS,
-	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-	FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-	FEATURE_TRACK_VIEWS_CLICKS,
-	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	/* END - WPCOM Plan grid features update experiment */
 } from './constants';
 import type {
@@ -430,47 +416,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_NO_ADS,
 		FEATURE_COLLECT_PAYMENTS_V2,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
-	],
-	getNewsletterDescription: () =>
-		i18n.translate(
-			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
-		),
-	getNewsletterSignupFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UNLIMITED_EMAILS,
-		FEATURE_UNLIMITED_SUBSCRIBERS,
-		FEATURE_IMPORT_SUBSCRIBERS,
-		FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
-		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
-		FEATURE_POST_BY_EMAIL,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
-	],
-	getNewsletterHighlightedFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UNLIMITED_EMAILS,
-		FEATURE_UNLIMITED_SUBSCRIBERS,
-		FEATURE_AD_FREE_EXPERIENCE,
-	],
-	getLinkInBioDescription: () =>
-		i18n.translate(
-			'Stand out and unlock earnings with an ad-free site, custom domain, and the ability to sell subscriptions, take payments, and collect donations. Backed with email support to help get your site just right.'
-		),
-	getLinkInBioSignupFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_ADD_UNLIMITED_LINKS,
-		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_TRACK_VIEWS_CLICKS,
-		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-		FEATURE_POST_BY_EMAIL,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
-	],
-	getLinkInBioHighlightedFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_ADD_UNLIMITED_LINKS,
-		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-		FEATURE_TRACK_VIEWS_CLICKS,
 	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
@@ -717,59 +662,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_ADVANCED_CUSTOMIZATION,
 		FEATURE_ALL_PERSONAL_FEATURES,
-	],
-	getNewsletterDescription: () =>
-		i18n.translate(
-			'Take your Newsletter further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
-		),
-	getNewsletterSignupFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UNLIMITED_EMAILS,
-		FEATURE_UNLIMITED_SUBSCRIBERS,
-		FEATURE_IMPORT_SUBSCRIBERS,
-		FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
-		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
-		FEATURE_POST_BY_EMAIL,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
-		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_REAL_TIME_ANALYTICS,
-		FEATURE_GOOGLE_ANALYTICS_V2,
-		FEATURE_PREMIUM_THEMES,
-	],
-	getNewsletterHighlightedFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UNLIMITED_EMAILS,
-		FEATURE_UNLIMITED_SUBSCRIBERS,
-		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_REAL_TIME_ANALYTICS,
-		FEATURE_PREMIUM_THEMES,
-	],
-	getLinkInBioDescription: () =>
-		i18n.translate(
-			'Take your site further, faster. Get everything included in Personal, plus premium design themes, baked-in video uploads, ad monetization, deep visitor insights from Google Analytics, and live chat support.'
-		),
-	getLinkInBioSignupFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_ADD_UNLIMITED_LINKS,
-		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_TRACK_VIEWS_CLICKS,
-		FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-		FEATURE_POST_BY_EMAIL,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
-		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_REAL_TIME_ANALYTICS,
-		FEATURE_GOOGLE_ANALYTICS_V2,
-		FEATURE_MONETISE,
-		FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
-	],
-	getLinkInBioHighlightedFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_ADD_UNLIMITED_LINKS,
-		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
-		FEATURE_TRACK_VIEWS_CLICKS,
 	],
 	getBlogSignupFeatures: () =>
 		[

@@ -692,10 +692,6 @@ $plan-features-sidebar-width: 272px;
 	flex: 1 0 0;
 	width: 100%;
 
-	&.is-bold {
-		font-weight: bold;
-	}
-
 	&.is-annual-plan-feature:not( .is-available ) {
 		.plan-features__item-title {
 			text-decoration: line-through;
