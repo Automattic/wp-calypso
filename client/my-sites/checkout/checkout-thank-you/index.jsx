@@ -381,7 +381,6 @@ export class CheckoutThankYou extends Component {
 		let showHappinessSupport = ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
-		let domainRegistrationPurchase = false;
 		let wasDomainProduct = false;
 		let wasGSuiteOrGoogleWorkspace = false;
 		let wasTitanEmailOnlyProduct = false;
@@ -398,7 +397,6 @@ export class CheckoutThankYou extends Component {
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
 			delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
-			domainRegistrationPurchase = purchases.find( isDomainRegistration );
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
 					isDomainMapping( purchase ) ||
@@ -476,19 +474,21 @@ export class CheckoutThankYou extends Component {
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
 			);
-		} else if ( domainRegistrationPurchase && selectedFeature === 'email-license' ) {
-			return (
-				<TitanSetUpThankYou
-					domainName={ domainRegistrationPurchase.meta }
-					emailNeedsSetup
-					isDomainOnlySite={ this.props.domainOnlySiteFlow }
-					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
-					title={ translate( 'Congratulations on your purchase!' ) }
-				/>
-			);
 		} else if ( wasDomainProduct ) {
 			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
 			const [ , domainName ] = findPurchaseAndDomain( purchases, predicate );
+
+			if ( selectedFeature === 'email-license' ) {
+				return (
+					<TitanSetUpThankYou
+						domainName={ domainName }
+						emailNeedsSetup
+						isDomainOnlySite={ this.props.domainOnlySiteFlow }
+						subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
+						title={ translate( 'Congratulations on your purchase!' ) }
+					/>
+				);
+			}
 
 			const professionalEmailPurchase = this.getProfessionalEmailPurchaseFromPurchases(
 				predicate,
