@@ -2,24 +2,18 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { SiteThumbnail } from '..';
 
-const CLASS_NAME = 'site-thumbnail__image';
-const IMG_SELECTOR = `.${ CLASS_NAME }`;
 const MSHOTS_URL = 'https://fakeUrl';
+const IMG_ALT = 'test image';
 
 describe( 'SiteThumbnail', () => {
 	test( 'has an image that points to mshot', () => {
-		const siteThumbnail = shallow( <SiteThumbnail mShotsUrl={ MSHOTS_URL } /> );
-		const img = siteThumbnail.find( IMG_SELECTOR );
-		expect( img.exists() ).toEqual( true );
-
-		expect(
-			img
-				.prop( 'src' )
-				.includes( 'https://s0.wp.com/mshots/v1/' + encodeURIComponent( MSHOTS_URL ) )
-		).toEqual( true );
+		render( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } /> );
+		expect( screen.getByAltText( IMG_ALT ).getAttribute( 'src' ) ).toMatch(
+			'https://s0.wp.com/mshots/v1/' + encodeURIComponent( MSHOTS_URL )
+		);
 	} );
 
 	test( 'should show the dimension width for the default sizes', () => {
@@ -27,29 +21,25 @@ describe( 'SiteThumbnail', () => {
 			width: 100,
 			height: 100,
 		};
-		const siteThumbnail = shallow( <SiteThumbnail mShotsUrl={ MSHOTS_URL } { ...dimension } /> );
-		const img = siteThumbnail.find( IMG_SELECTOR );
-		expect( img.prop( 'sizes' ) ).toEqual( `${ dimension.width }px` );
+		render( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } { ...dimension } /> );
+		expect( screen.getByAltText( IMG_ALT ).getAttribute( 'sizes' ) ).toEqual(
+			`${ dimension.width }px`
+		);
 	} );
 
 	test( 'should use the sizesAttr prop as sizes attr', () => {
 		const sizesAttr = '(max-width: 400px) 100vw, 400px';
-		const siteThumbnail = shallow(
-			<SiteThumbnail mShotsUrl={ MSHOTS_URL } sizesAttr={ sizesAttr } />
-		);
-		const img = siteThumbnail.find( IMG_SELECTOR );
-		expect( img.prop( 'sizes' ) ).toEqual( sizesAttr );
+		render( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } sizesAttr={ sizesAttr } /> );
+		expect( screen.getByAltText( IMG_ALT ).getAttribute( 'sizes' ) ).toEqual( sizesAttr );
 	} );
 
 	// eslint-disable-next-line jest/no-disabled-tests
 	test.skip( 'should generate responsive size alternatives 2x and 3x srcset', () => {
 		const dimension = { width: 200, height: 100 };
-		const siteThumbnail = shallow( <SiteThumbnail mShotsUrl={ MSHOTS_URL } { ...dimension } /> );
-		const srcSet = siteThumbnail.find( IMG_SELECTOR ).prop( 'srcSet' );
-		const srcSet2xWith = ` ${ dimension.width * 2 }w`;
-		expect( srcSet.includes( srcSet2xWith ) ).toEqual( true );
-		const srcSet3xWith = ` ${ dimension.width * 3 }w`;
-		expect( srcSet.includes( srcSet3xWith ) ).toEqual( true );
+		render( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } { ...dimension } /> );
+		const srcset = screen.getByAltText( IMG_ALT ).getAttribute( 'srcset' );
+		expect( srcset ).toMatch( ` ${ dimension.width * 2 }w` );
+		expect( srcset ).toMatch( ` ${ dimension.width * 3 }w` );
 	} );
 
 	// eslint-disable-next-line jest/no-disabled-tests
@@ -64,13 +54,16 @@ describe( 'SiteThumbnail', () => {
 				height: 888,
 			},
 		];
-		const siteThumbnail = shallow(
-			<SiteThumbnail mShotsUrl={ MSHOTS_URL } dimensionsSrcset={ alternativeDimensions } />
+		render(
+			<SiteThumbnail
+				mShotsUrl={ MSHOTS_URL }
+				alt={ IMG_ALT }
+				dimensionsSrcset={ alternativeDimensions }
+			/>
 		);
-		const srcSet = siteThumbnail.find( IMG_SELECTOR ).prop( 'srcSet' );
+		const srcset = screen.getByAltText( IMG_ALT ).getAttribute( 'srcset' );
 		alternativeDimensions.forEach( ( dimension ) => {
-			const srcSetWith = ` ${ dimension.width }w`;
-			expect( srcSet.includes( srcSetWith ) ).toEqual( true );
+			expect( srcset ).toMatch( ` ${ dimension.width }w` );
 		} );
 	} );
 } );
