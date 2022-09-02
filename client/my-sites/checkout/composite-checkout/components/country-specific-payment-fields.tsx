@@ -13,7 +13,7 @@ import type { ComponentType } from 'react';
 export type CountrySpecificPaymentFieldsProps = {
 	countriesList: CountryListItem[];
 	countryCode: string;
-	disableFields: boolean;
+	disableFields?: boolean;
 	getErrorMessages: ( fieldName: string ) => string[];
 	getFieldValue: ( fieldName: string ) => string;
 	handleFieldChange: ( fieldName: string, newValue: string ) => void;
@@ -104,7 +104,7 @@ interface CountrySpecificPaymentFieldProps< P > {
 	allowedFieldNames: string[];
 	componentClass: ComponentType< P >;
 	props: P;
-	disabled: boolean;
+	disabled?: boolean;
 	getErrorMessages: ( fieldName: string ) => string[];
 	getFieldValue: ( fieldName: string ) => string;
 	handleFieldChange: ( fieldName: string, newValue: string ) => void;
@@ -131,7 +131,7 @@ function CountrySpecificPaymentField< P >( {
 		value: getFieldValue( fieldName ),
 		errorMessage: errorMessages.length > 0 ? errorMessages[ 0 ] : '',
 		handleFieldChange,
-		disabled,
+		disabled: disabled ?? false,
 	} );
 }
 
