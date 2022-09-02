@@ -35,17 +35,9 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	beforeAll( async function () {
 		context = await browser.newContext();
 		page = await context.newPage();
-		console.log( accountName );
-		// const testAccount = new TestAccount( accountName );
-		// await testAccount.authenticate( page );
-	} );
 
-	// eslint-disable-next-line
-	it.only( 'Check 3rd party cookies', async () => {
-		await page.goto( 'https://www.whatismybrowser.com/detect/are-third-party-cookies-enabled' );
-		await new Promise( ( r ) => setTimeout( r, 4000 ) );
-
-		expect( false ).toBe( true );
+		const testAccount = new TestAccount( accountName );
+		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
