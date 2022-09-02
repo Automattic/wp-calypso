@@ -1,0 +1,41 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+// custom properties for Jetpack
+:root {
+	// border-radius
+	--jetpack-corners-sharp: 0;
+	--jetpack-corners-soft: 4px;
+}
+
+.jetpack-product-store {
+
+	/**
+	 * Import Jetpack cloud styles but make them scoped to jetpack-product-store.
+     * Otherwise it will mess up Calypso Blue styles.
+	 */
+	/* stylelint-disable-next-line no-invalid-position-at-import-rule */
+	@import 'calypso/jetpack-cloud/style';
+
+	h2 {
+		font-size: $font-title-small;
+		font-weight: 600;
+		line-height: 32px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-headline-small;
+			line-height: 40px;
+		}
+	}
+
+	h3 {
+		font-size: $font-body;
+		font-weight: 600;
+		line-height: 23px;
+
+		@include breakpoint-deprecated( '>660px' ) {
+			font-size: $font-title-small;
+			line-height: 23px;
+		}
+	}
+}

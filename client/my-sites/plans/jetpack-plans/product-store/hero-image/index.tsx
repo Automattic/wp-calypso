@@ -5,6 +5,8 @@ import {
 	PLAN_JETPACK_COMPLETE,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
+	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
 } from '@automattic/calypso-products';
 import BackupLg from 'calypso/assets/images/jetpack/hero-backup-lg.png';
 import BackupSm from 'calypso/assets/images/jetpack/hero-backup-sm.png';
@@ -30,6 +32,10 @@ const HERO_IMAGES: Record< string, { lg: string; sm: string } > = {
 		lg: VideoPressLg,
 		sm: VideoPressSm,
 	},
+	[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: {
+		lg: VideoPressLg,
+		sm: VideoPressSm,
+	},
 	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
 		lg: SecurityLg,
 		sm: SecuritySm,
@@ -39,6 +45,10 @@ const HERO_IMAGES: Record< string, { lg: string; sm: string } > = {
 		sm: SecuritySm,
 	},
 	[ PLAN_JETPACK_COMPLETE ]: {
+		lg: CompleteLg,
+		sm: CompleteSm,
+	},
+	[ PLAN_JETPACK_COMPLETE_MONTHLY ]: {
 		lg: CompleteLg,
 		sm: CompleteSm,
 	},
