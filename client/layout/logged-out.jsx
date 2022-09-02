@@ -11,6 +11,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -113,6 +114,9 @@ const LayoutLoggedOut = ( {
 		<div className={ classNames( 'layout', classes ) }>
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			{ masterbar }
+			{ isJetpackCloud() && (
+				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+			) }
 			<div id="content" className="layout__content">
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				{ isCheckout && <AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } /> }
