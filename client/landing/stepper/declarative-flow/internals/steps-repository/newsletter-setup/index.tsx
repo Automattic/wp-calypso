@@ -180,7 +180,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 								generateSwatchSVG( accentColor ?? DEFAULT_ACCENT_COLOR ),
 								getBackgroundImage( accentColor ?? DEFAULT_ACCENT_COLOR ),
 							].join( ', ' ),
-							...( ! accentColor && { color: 'var( --studio-gray-30 )' } ),
+							...( accentColor.default && { color: 'var( --studio-gray-30 )' } ),
 						} }
 						name="accentColor"
 						id="accentColor"
