@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,7 +15,7 @@ import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/p
 import TitanSetUpMailboxForm from 'calypso/my-sites/email/titan-set-up-mailbox/titan-set-up-mailbox-form';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 interface TitanSetUpMailboxProps {
@@ -38,10 +38,6 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 
 	const hasTitanSubscription = hasTitanMailWithUs( selectedDomain );
 
-	const areSiteDomainsLoaded = useSelector( ( state ) =>
-		hasLoadedSiteDomains( state, selectedSiteId )
-	);
-
 	const handleBack = useCallback( () => {
 		page( previousRoute );
 	}, [ previousRoute ] );
@@ -49,18 +45,25 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 	const translate = useTranslate();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
-	if ( areSiteDomainsLoaded && ! hasTitanSubscription ) {
-		page(
-			emailManagementPurchaseNewEmailAccount(
-				selectedSiteSlug ?? '',
-				selectedDomainName,
-				currentRoute,
-				source
-			)
-		);
-
-		return null;
-	}
+	useEffect( () => {
+		if ( selectedDomain && ! hasTitanSubscription ) {
+			page.redirect(
+				emailManagementPurchaseNewEmailAccount(
+					selectedSiteSlug ?? '',
+					selectedDomainName,
+					currentRoute,
+					source
+				)
+			);
+		}
+	}, [
+		selectedDomain,
+		currentRoute,
+		hasTitanSubscription,
+		selectedDomainName,
+		selectedSiteSlug,
+		source,
+	] );
 
 	const title = translate( 'Set up mailbox' );
 
@@ -80,7 +83,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 				<SectionHeader label={ title } className="titan-set-up-mailbox__section-header" />
 
 				<TitanSetUpMailboxForm
-					areSiteDomainsLoaded={ areSiteDomainsLoaded }
+					areSiteDomainsLoaded={ Boolean( selectedDomain ) }
 					selectedDomainName={ selectedDomainName }
 				/>
 			</Main>
