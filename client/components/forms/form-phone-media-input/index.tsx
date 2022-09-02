@@ -2,7 +2,7 @@ import { FormInputValidation } from '@automattic/components';
 import classnames from 'classnames';
 import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
-import type { PropsWithChildren, RefObject } from 'react';
+import type { FC, RefObject } from 'react';
 
 type FormPhoneMediaInputProps = {
 	additionalClasses?: string[];
@@ -14,13 +14,14 @@ type FormPhoneMediaInputProps = {
 	disabled?: boolean;
 	errorMessage?: string;
 	isError?: boolean;
+	// TODO: Change value to include both values to match OnFieldChange; then change all implementations
 	onChange: ( _: { value: string; countryCode: string } ) => void;
 	countriesList: { code: string; name: string }[];
 	enableStickyCountry?: boolean;
 	inputRef?: RefObject< HTMLInputElement >;
 };
 
-export default function FormPhoneMediaInput( {
+const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
 	additionalClasses,
 	label,
 	name,
@@ -35,7 +36,7 @@ export default function FormPhoneMediaInput( {
 	enableStickyCountry,
 	inputRef,
 	children,
-}: PropsWithChildren< FormPhoneMediaInputProps > ) {
+} ) => {
 	return (
 		<div className={ classnames( additionalClasses, 'phone' ) }>
 			<div>
@@ -57,4 +58,6 @@ export default function FormPhoneMediaInput( {
 			{ errorMessage && <FormInputValidation text={ errorMessage } isError /> }
 		</div>
 	);
-}
+};
+
+export default FormPhoneMediaInput;
