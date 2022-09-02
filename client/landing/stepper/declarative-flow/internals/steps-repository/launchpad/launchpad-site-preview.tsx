@@ -16,6 +16,7 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 		return addQueryArgs( previewUrl, {
 			iframe: true,
 			theme_preview: true,
+			// hide the "Create your website with WordPress.com" banner
 			hide_banners: true,
 		} );
 	}
