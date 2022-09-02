@@ -7,6 +7,7 @@
 	transition: all 0.2s ease-out;
 	font-family: 'Inter', $sans;
 	max-width: 1080px;
+	max-height: 100%;
 
 	p {
 		margin-bottom: 0.5rem;
@@ -129,6 +130,31 @@
 		padding-left: 20px;
 		font-weight: 500;
 		font-size: 0.875rem;
+	}
+
+	.foldable-card.card {
+		box-shadow: none;
+	}
+	.foldable-card__content {
+		border: none;
+	}
+	.foldable-card__header {
+		min-height: 0;
+		font-size: 0.875rem;
+		font-weight: 600;
+		font-family: 'Inter', $sans;
+		padding: 0.5rem 0;
+	}
+	.foldable-card.is-expanded .foldable-card__header {
+		min-height: 0;
+	}
+
+	.foldable-card.is-expanded .foldable-card__content {
+		border: none;
+		padding: 0;
+	}
+	.foldable-card.card.is-expanded {
+		margin: 0;
 	}
 }
 

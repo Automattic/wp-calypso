@@ -1,6 +1,8 @@
 import { Button } from '@automattic/components';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
+import FoldableCard from 'calypso/components/foldable-card';
 import { SelectorProduct } from '../types';
 import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
@@ -45,10 +47,34 @@ const Options: React.FC< OptionProps > = ( { options, onChange } ) => {
 	);
 };
 
+const Includes = () => (
+	<ul>
+		<li>Real-time backups as you edit</li>
+		<li>10GB of cloud storage</li>
+		<li>30-day activity log archive</li>
+		<li>Unlimited one-click restores from the last 30 days</li>
+		<li>WooCommerce order and table backups</li>
+		<li>Redundant cloud backups on our global network</li>
+		<li>Priority support</li>
+	</ul>
+);
+
+const Benefits = () => (
+	<ul>
+		<li>Restore your site in one click from desktop or mobile</li>
+		<li>Restore offline sites</li>
+		<li>No developer required</li>
+		<li>Protect Woo order and customer data</li>
+		<li>Best-in-class support from WordPress experts</li>
+	</ul>
+);
+
 const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 
 	const [ checked, setChecked ] = useState( '1' );
+
+	const isMobile = useMobileBreakpoint();
 
 	return (
 		<Modal
@@ -92,34 +118,32 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 							<p>{ Tags.forum.label }</p>
 						</div>
 					</div>
-					{ /* <FoldableCard header="Includes" compact> */ }
 
 					<div className="product-lightbox__detail-list">
-						<p>Includes</p>
-						<ul>
-							<li>Real-time backups as you edit</li>
-							<li>10GB of cloud storage</li>
-							<li>30-day activity log archive</li>
-							<li>Unlimited one-click restores from the last 30 days</li>
-							<li>WooCommerce order and table backups</li>
-							<li>Redundant cloud backups on our global network</li>
-							<li>Priority support</li>
-						</ul>
+						{ isMobile ? (
+							<FoldableCard hideSummary header="Includes" expanded={ false }>
+								<Includes />
+							</FoldableCard>
+						) : (
+							<>
+								<p>Includes</p>
+								<Includes />
+							</>
+						) }
 					</div>
-					{ /* </FoldableCard> */ }
 					<hr />
-					{ /* <FoldableCard header="Benefits" compact> */ }
 					<div className="product-lightbox__detail-list">
-						<p>Benefits</p>
-						<ul>
-							<li>Restore your site in one click from desktop or mobile</li>
-							<li>Restore offline sites</li>
-							<li>No developer required</li>
-							<li>Protect Woo order and customer data</li>
-							<li>Best-in-class support from WordPress experts</li>
-						</ul>
+						{ isMobile ? (
+							<FoldableCard hideSummary header="Benefits" expanded={ false }>
+								<Benefits />
+							</FoldableCard>
+						) : (
+							<>
+								<p>Benefits</p>
+								<Benefits />
+							</>
+						) }
 					</div>
-					{ /* </FoldableCard> */ }
 				</div>
 				<div className="product-lightbox__variants">
 					<div className="product-lightbox__variants-content">
