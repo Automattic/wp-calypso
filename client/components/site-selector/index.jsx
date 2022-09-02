@@ -198,7 +198,7 @@ export class SiteSelector extends Component {
 			this.props.recordTracksEvent( 'calypso_switch_site_click_item', {
 				position: visibleSites.indexOf( siteId ),
 				list_item_count: visibleSites.length,
-				is_searching: this.state.searchTerm.trim().length > 0,
+				is_searching: this.state.searchTerm.length > 0,
 			} );
 		}
 
