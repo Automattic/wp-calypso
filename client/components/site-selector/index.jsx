@@ -300,13 +300,11 @@ export class SiteSelector extends Component {
 	}
 
 	renderAllSites() {
-		if (
-			! this.props.showAllSites ||
-			this.props.sitesFound ||
-			! this.props.allSitesPath ||
-			this.props.allSitesPath === '/sites' ||
-			! this.props.selectedSite
-		) {
+		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
+			return null;
+		}
+
+		if ( this.props.showManageSites && ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -477,7 +475,7 @@ export class SiteSelector extends Component {
 						</span>
 					) }
 				</div>
-				{ this.props.showAllSites && (
+				{ this.props.showManageSites && (
 					<Button
 						href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
 						className="site-selector__manage-sites"
