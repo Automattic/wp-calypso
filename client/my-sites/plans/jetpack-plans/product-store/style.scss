@@ -117,9 +117,6 @@
 		}
 
 		.plan-price.is-original {
-			color: var( --studio-gray-100 );
-			font-weight: 600;
-
 			.plan-price__currency-symbol,
 			.plan-price__integer,
 			.plan-price__fraction {
@@ -131,11 +128,6 @@
 		.plan-price.is-discounted,
 		.plan-price.is-original {
 			margin-right: 0.1em;
-		}
-
-		.plan-price.is-discounted {
-			color: var( --studio-gray-100 );
-			font-weight: 700;
 		}
 
 		.plan-price.is-original::before,
