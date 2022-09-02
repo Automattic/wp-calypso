@@ -19,8 +19,6 @@ import type { Step } from '../../types';
 
 import './style.scss';
 
-const DEFAULT_ACCENT_COLOR = '#0675C4';
-
 /**
  * Generates an inline SVG for the color picker swatch
  *
@@ -53,7 +51,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
-	const [ accentColor, setAccentColor ] = React.useState< { color: string, default?: boolean } >( { color: '#0675C4', default: true} );
+	const [ accentColor, setAccentColor ] = React.useState< { color: string; default?: boolean } >( {
+		color: '#0675C4',
+		default: true,
+	} );
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const siteTitleError =
@@ -87,7 +88,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
-		setSiteAccentColor( accentColor ?? DEFAULT_ACCENT_COLOR );
+		setSiteAccentColor( accentColor.color );
 
 		if ( selectedFile && base64Image ) {
 			try {
@@ -98,7 +99,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline, siteAccentColor: accentColor ?? DEFAULT_ACCENT_COLOR } );
+			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.color } );
 		}
 	};
 
@@ -110,7 +111,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			case 'tagline':
 				return setTagline( event.currentTarget.value );
 			case 'accentColor':
-				return setAccentColor( event.currentTarget.value );
+				return setAccentColor( { color: event.currentTarget.value } );
 		}
 	};
 
@@ -138,8 +139,8 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 				>
 					<ColorPicker
 						disableAlpha
-						color={ accentColor || '#000000' }
-						onChangeComplete={ ( value ) => setAccentColor( value.hex ) }
+						color={ accentColor.color }
+						onChangeComplete={ ( { hex } ) => setAccentColor( { color: hex } ) }
 					/>
 				</Popover>
 				<FormFieldset>
@@ -177,8 +178,8 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						className="newsletter-setup__accent-color"
 						style={ {
 							backgroundImage: [
-								generateSwatchSVG( accentColor ?? DEFAULT_ACCENT_COLOR ),
-								getBackgroundImage( accentColor ?? DEFAULT_ACCENT_COLOR ),
+								generateSwatchSVG( accentColor.color ),
+								getBackgroundImage( accentColor.color ),
 							].join( ', ' ),
 							...( accentColor.default && { color: 'var( --studio-gray-30 )' } ),
 						} }
@@ -186,7 +187,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 						id="accentColor"
 						onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
 						readOnly
-						value={ accentColor ?? DEFAULT_ACCENT_COLOR }
+						value={ accentColor.color }
 					/>
 				</FormFieldset>
 				<Button className="newsletter-setup__submit-button" type="submit" primary>
