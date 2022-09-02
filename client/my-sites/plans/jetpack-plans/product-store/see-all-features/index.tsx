@@ -1,7 +1,9 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { PLAN_COMPARISON_PAGE } from '../constants';
+import { PLAN_COMPARISON_PAGE } from '../../constants';
+
+import './style.scss';
 
 export const SeeAllFeatures: React.FC = () => {
 	const translate = useTranslate();
