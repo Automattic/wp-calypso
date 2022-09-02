@@ -59,6 +59,10 @@ $font-size: rem( 14px );
 			margin: 0 0 11px;
 		}
 
+		.sidebar__separator.sidebar__separator--add-site {
+			margin-top: auto;
+		}
+
 		.site__content {
 			padding: 10px 0 10px 8px;
 		}
@@ -662,6 +666,10 @@ $font-size: rem( 14px );
 
 			.sidebar__separator {
 				margin: 0 0 11px;
+			}
+
+			.sidebar__separator.sidebar__separator--add-site {
+				margin-top: auto;
 			}
 
 			.sidebar__heading,

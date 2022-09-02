@@ -19,7 +19,10 @@ export const AddNewSite = ( { title, icon } ) => {
 
 	return (
 		<Fragment>
-			<SidebarSeparator key={ 'add-new-site-separator' } />
+			<SidebarSeparator
+				extraClassName="sidebar__separator--add-site"
+				key="add-new-site-separator"
+			/>
 			<SidebarItem
 				label={ title }
 				link={ `${ onboardingUrl() }?ref=calypso-sidebar` }
