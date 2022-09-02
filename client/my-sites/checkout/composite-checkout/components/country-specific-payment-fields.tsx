@@ -148,7 +148,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				/>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="nik" allowedFieldNames={ fieldNames }>
 				<CountrySpecificPaymentField
 					fieldName="nik"
 					componentClass={ Input }
@@ -165,7 +165,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				/>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="pan" allowedFieldNames={ fieldNames }>
 				<CountrySpecificPaymentField
 					fieldName="pan"
 					componentClass={ Input }
@@ -185,7 +185,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				/>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="gstin" allowedFieldNames={ fieldNames }>
 				<CountrySpecificPaymentField
 					fieldName="gstin"
 					componentClass={ Input }
@@ -202,7 +202,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				/>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="phone-number" allowedFieldNames={ fieldNames }>
 				<CountrySpecificPaymentField
 					fieldName="phone-number"
 					componentClass={ FormPhoneMediaInput }
@@ -227,7 +227,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				/>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="address-1" allowedFieldNames={ fieldNames }>
 				<CountrySpecificPaymentField
 					fieldName="address-1"
 					componentClass={ Input }
@@ -242,7 +242,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				/>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="street-number" allowedFieldNames={ fieldNames }>
 				<CountrySpecificPaymentField
 					fieldName="street-number"
 					componentClass={ Input }
@@ -259,7 +259,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				/>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="address-2" allowedFieldNames={ fieldNames }>
 				<CountrySpecificPaymentField
 					fieldName="address-2"
 					componentClass={ HiddenInput }
@@ -275,7 +275,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				/>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="city" allowedFieldNames={ fieldNames }>
 				<CountrySpecificPaymentField
 					fieldName="city"
 					componentClass={ Input }
@@ -289,7 +289,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				/>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="state" allowedFieldNames={ fieldNames }>
 				<div className="checkout__form-state-field">
 					<CountrySpecificPaymentField
 						fieldName="state"
@@ -306,7 +306,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				</div>
 			</OnlyAllowedField>
 
-			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
+			<OnlyAllowedField fieldName="postal-code" allowedFieldNames={ fieldNames }>
 				<CountrySpecificPaymentField
 					fieldName="postal-code"
 					componentClass={ Input }
