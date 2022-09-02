@@ -309,7 +309,7 @@ export class SiteSelector extends Component {
 		}
 
 		const allSitesMenuTitle = allSitesMenu()
-			.find( ( menu ) => menu.url === this.props.allSitesPath )
+			.find( ( menu ) => menu.url === this.props.allSitesPath.replace( '/posts/my', '/posts' ) )
 			?.title?.toLocaleLowerCase();
 
 		this.visibleSites.push( ALL_SITES );
