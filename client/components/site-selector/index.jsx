@@ -304,13 +304,19 @@ export class SiteSelector extends Component {
 			return null;
 		}
 
-		if ( this.props.showManageSites && ! this.props.selectedSite ) {
-			return null;
-		}
-
 		const allSitesMenuTitle = allSitesMenu()
 			.find( ( menu ) => menu.url === this.props.allSitesPath.replace( '/posts/my', '/posts' ) )
 			?.title?.toLocaleLowerCase();
+
+		// Let's not display the all sites button if an all-sites section does not exist.
+		if ( this.props.showManageSites && ! allSitesMenuTitle ) {
+			return null;
+		}
+
+		// Let's not display the all sites button if we are already showing an all-sites section.
+		if ( this.props.showManageSites && ! this.props.selectedSite ) {
+			return null;
+		}
 
 		this.visibleSites.push( ALL_SITES );
 
