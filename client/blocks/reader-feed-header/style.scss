@@ -25,7 +25,7 @@
 
 .reader-feed-header__site-icon {
 	align-self: center;
-	padding-bottom: 20px;
+	padding-bottom: 16px;
 }
 
 .reader-feed-header .reader-feed-header__site-badge {
@@ -39,9 +39,10 @@
 .reader-feed-header__site .reader-feed-header__site-title {
 	align-self: stretch;
 	font-family: $serif;
-	font-size: $font-title-small;
+	font-size: $font-title-large;
 	font-weight: 600;
 	max-height: 16px * 4;
+	margin-bottom: 6px;
 	overflow: hidden;
 	position: relative;
 	text-align: center;
@@ -75,8 +76,7 @@
 
 	.reader-feed-header__back-and-follow {
 		display: flex;
-		justify-content: flex-end;
-		height: 0;
+		justify-content: center;
 		margin-left: auto;
 
 		@include breakpoint-deprecated( '<960px' ) {
@@ -102,7 +102,10 @@
 	.reader-feed-header__follow-count {
 		color: var( --color-text-subtle );
 		font-size: $font-body-small;
-		margin-right: 15px;
+		flex: 0 0 100%;
+		margin-bottom: 24px;
+		justify-content:center;
+		text-align:center;
 
 		@include breakpoint-deprecated( '<960px' ) {
 			display: none;
@@ -111,8 +114,10 @@
 
 	.reader-feed-header__follow-and-settings {
 		display: flex;
-		flex-direction: column;
-		justify-content: flex-start;
+		flex-direction: row;
+		justify-content: center;
+		flex: 0 0 100%;
+		gap: 20px;
 	}
 
 	.reader-feed-header__follow-button .follow-button {
@@ -142,10 +147,12 @@
 
 	.reader-feed-header__details {
 		align-self: stretch;
-		font-size: $font-body-small;
+		font-size: 1.0625em;
 		overflow: hidden;
 		text-align: center;
 		position: relative;
+		margin-bottom: 8px;
+		top:-4px;
 
 		.reader-feed-header__description {
 			display: block;
@@ -189,6 +196,11 @@
 	}
 }
 
+.reader-feed-header__email-settings {
+	position: relative;
+	top: -2px;
+}
+
 .reader-feed-header__email-settings .reader-site-notification-settings .gridicons-cog {
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -197,6 +209,7 @@
 }
 
 .reader-feed-header__email-settings .reader-site-notification-settings__button-label {
+	display: inline-block;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		display: inline;
