@@ -962,6 +962,7 @@ const ConnectedPlanFeatures = connect(
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
 			isPlansPageQuickImprovements,
+			isInVerticalScrollingPlansExperiment,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -1020,8 +1021,8 @@ const ConnectedPlanFeatures = connect(
 				if ( isInSignup ) {
 					const featureAccessor = getPlanFeatureAccessor( {
 						flowName,
-						siteType,
 						plan: planConstantObj,
+						isInVerticalScrollingPlansExperiment,
 					} );
 					if ( ! isPlansPageQuickImprovements && featureAccessor ) {
 						planFeatures = getPlanFeaturesObject( featureAccessor() );
