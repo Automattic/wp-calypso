@@ -1,5 +1,6 @@
 import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
@@ -13,6 +14,7 @@ import { Task } from './types';
 type SidebarProps = {
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
+	goNext: NavigationControls[ 'goNext' ];
 };
 
 function getUrlInfo( url: string ) {
@@ -38,7 +40,7 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
 }
 
-const Sidebar = ( { siteSlug, submit }: SidebarProps ) => {
+const Sidebar = ( { siteSlug, submit, goNext }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	const flow = useFlowParam();
@@ -80,6 +82,14 @@ const Sidebar = ( { siteSlug, submit }: SidebarProps ) => {
 					<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 				</div>
 				<Checklist tasks={ enhancedTasks } />
+			</div>
+			<div className="launchpad__sidebar-admin-link">
+				<StepNavigationLink
+					direction="forward"
+					handleClick={ goNext }
+					label={ translate( 'Go to Admin' ) }
+					borderless={ true }
+				/>
 			</div>
 		</div>
 	);
