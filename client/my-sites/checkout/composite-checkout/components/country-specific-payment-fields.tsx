@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { createElement, useState } from 'react';
+import { useState } from 'react';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { paymentMethodName } from 'calypso/lib/cart-values';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
 import { StateSelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import { CountrySpecificPaymentField } from './country-specific-payment-field';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-import type { ComponentType } from 'react';
 
 export type CountrySpecificPaymentFieldsProps = {
 	countriesList: CountryListItem[];
@@ -56,83 +56,6 @@ function getFieldNamesForCountry( countryCode: string ): string[] {
 		return PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ]?.fields ?? [];
 	}
 	return [];
-}
-
-interface CreateFieldArgs< P > {
-	fieldName: string;
-	componentClass: ComponentType< P >;
-	props: P;
-	value: string;
-	errorMessage: string;
-	handleFieldChange: ( fieldName: string, newValue: string ) => void;
-	disabled: boolean;
-}
-
-function createField< P >( {
-	fieldName,
-	componentClass,
-	props,
-	value,
-	errorMessage,
-	handleFieldChange,
-	disabled,
-}: CreateFieldArgs< P > ) {
-	const onFieldChange = ( event: { target: { name: string; value: string } } ) =>
-		handleFieldChange( event.target.name, event.target.value );
-	const fieldProps = Object.assign(
-		{},
-		{
-			additionalClasses: 'checkout__checkout-field',
-			isError: errorMessage.length > 0,
-			errorMessage,
-			name: fieldName,
-			onBlur: onFieldChange,
-			onChange: onFieldChange,
-			value,
-			autoComplete: 'off',
-			labelClass: 'checkout__form-label',
-			disabled,
-		},
-		props
-	);
-
-	return createElement( componentClass, fieldProps );
-}
-
-interface CountrySpecificPaymentFieldProps< P > {
-	fieldName: string;
-	allowedFieldNames: string[];
-	componentClass: ComponentType< P >;
-	props: P;
-	disabled?: boolean;
-	getErrorMessages: ( fieldName: string ) => string[];
-	getFieldValue: ( fieldName: string ) => string;
-	handleFieldChange: ( fieldName: string, newValue: string ) => void;
-}
-
-function CountrySpecificPaymentField< P >( {
-	fieldName,
-	allowedFieldNames,
-	componentClass,
-	props,
-	disabled,
-	getErrorMessages,
-	getFieldValue,
-	handleFieldChange,
-}: CountrySpecificPaymentFieldProps< P > ) {
-	if ( ! allowedFieldNames.includes( fieldName ) ) {
-		return null;
-	}
-	const errorMessages = getErrorMessages( fieldName );
-	return createField( {
-		fieldName,
-		componentClass,
-		props,
-		value: getFieldValue( fieldName ),
-		errorMessage: errorMessages.length > 0 ? errorMessages[ 0 ] : '',
-		handleFieldChange,
-		disabled: disabled ?? false,
-	} );
 }
 
 function CountrySpecificPaymentFieldsUnstyled( {
