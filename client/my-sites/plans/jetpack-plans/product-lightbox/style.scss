@@ -72,21 +72,26 @@
 	}
 
 	h2 {
-		font-size: 1.25rem;
+		font-size: 1.5rem;
 		font-weight: 700;
+		color: #101517;
 	}
 }
 
 .product-lightbox__detail-desc {
 	margin-bottom: 0.5rem;
-	line-height: 1.5;
+	line-height: 1.5rem;
+	color: #2c3338;
+	font-size: 1rem;
 }
 
 .product-lightbox__detail-tags {
+	margin-bottom: 0.25rem;
 	&-label {
 		font-weight: 600;
 		font-size: 0.75rem;
 		margin-right: 6px;
+		color: black;
 	}
 	&-tag {
 		align-items: center;
@@ -97,7 +102,7 @@
 
 		span {
 			margin-right: 4px;
-			top: 1px;
+			top: 2px;
 			display: inline-flex;
 			position: relative;
 		}
@@ -107,18 +112,20 @@
 			font-size: 0.75rem;
 			margin: 0;
 			position: relative;
-			top: 1px;
+			top: 2px;
 		}
 	}
 }
 
 .product-lightbox__detail-list {
 	p {
-		font-size: 0.75rem;
-		font-weight: 600;
+		font-size: 0.875rem;
+		font-weight: 700;
 		width: 100%;
 		padding: 0.5rem 0;
 		margin: 0;
+		line-height: 1.25rem;
+		color: black;
 	}
 	ul {
 		list-style: none;
@@ -128,8 +135,9 @@
 	li {
 		background: url( './icons/check.svg' ) no-repeat 0 2px;
 		padding-left: 20px;
-		font-weight: 500;
+		font-weight: 400;
 		font-size: 0.875rem;
+		color: #3c434a;
 	}
 
 	.foldable-card.card {

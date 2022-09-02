@@ -94,10 +94,8 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 						<h2>{ product.displayName }</h2>
 					</div>
 					<div className="product-lightbox__detail-desc">
-						<p>
-							Protect your site or store. Save every change with real-time cloud backups, and
-							restore in one click from anywhere.
-						</p>
+						Protect your site or store. Save every change with real-time cloud backups, and restore
+						in one click from anywhere.
 					</div>
 					<div className="product-lightbox__detail-tags">
 						<span className="product-lightbox__detail-tags-label">Great for:</span>
