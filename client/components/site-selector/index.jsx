@@ -214,8 +214,8 @@ export class SiteSelector extends Component {
 		}
 	};
 
-	onAllSitesSelect = ( event ) => {
-		this.props.recordTracksEvent( 'calypso_all_my_sites_click' );
+	onAllSitesSelect = ( event, properties ) => {
+		this.props.recordTracksEvent( 'calypso_all_my_sites_click', properties );
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
@@ -304,12 +304,12 @@ export class SiteSelector extends Component {
 			return null;
 		}
 
-		const multiSiteContextTitle = allSitesMenu()
-			.find( ( menu ) => menu.url === this.props.allSitesPath.replace( '/posts/my', '/posts' ) )
-			?.title?.toLocaleLowerCase();
+		const multiSiteContext = allSitesMenu().find(
+			( menu ) => menu.url === this.props.allSitesPath.replace( '/posts/my', '/posts' )
+		);
 
 		// Let's not display the all sites button if there is no multi-site context.
-		if ( this.props.showManageSites && ! multiSiteContextTitle ) {
+		if ( this.props.showManageSites && ! multiSiteContext ) {
 			return null;
 		}
 
@@ -326,16 +326,25 @@ export class SiteSelector extends Component {
 			<AllSites
 				key="selector-all-sites"
 				sites={ this.props.sites }
-				onSelect={ this.onAllSitesSelect }
+				onSelect={ ( event ) =>
+					this.onAllSitesSelect(
+						event,
+						multiSiteContext
+							? {
+									multi_site_context_slug: multiSiteContext.slug,
+							  }
+							: undefined
+					)
+				}
 				onMouseEnter={ this.onAllSitesHover }
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( ALL_SITES ) }
 				title={
-					multiSiteContextTitle &&
+					multiSiteContext &&
 					/* translators: multiSiteContextTitle is an entity from client/my-sites/sidebar/static-data/all-sites-menu.js */
 					this.props.translate( 'View %(multiSiteContextTitle)s for all sites', {
 						args: {
-							multiSiteContextTitle,
+							multiSiteContextTitle: multiSiteContext.title.toLocaleLowerCase(),
 						},
 					} )
 				}
