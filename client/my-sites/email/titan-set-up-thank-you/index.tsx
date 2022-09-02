@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { isFreePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -7,6 +8,7 @@ import thankYouEmail from 'calypso/assets/images/illustrations/thank-you-email.s
 import { ThankYou } from 'calypso/components/thank-you';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_GET_MOBILE_APP } from 'calypso/lib/titan/constants';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordEmailAppLaunchEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import {
 	emailManagement,
@@ -127,6 +129,9 @@ const TitanSetUpThankYou = ( {
 	];
 
 	if ( emailNeedsSetup ) {
+		const siteNeedsSetup =
+			! isDomainOnlySite && ! isFreePlan( selectedSite?.plan?.product_slug ?? '' );
+
 		nextSteps = [
 			{
 				stepKey: 'titan_whats_next_setup_mailbox',
@@ -135,7 +140,7 @@ const TitanSetUpThankYou = ( {
 				stepCta: (
 					<FullWidthButton
 						href={ emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domainName ) }
-						primary
+						primary={ ! siteNeedsSetup && ! isEnabled( 'signup/stepper-flow' ) }
 					>
 						{ translate( 'Set up email' ) }
 					</FullWidthButton>
@@ -143,17 +148,36 @@ const TitanSetUpThankYou = ( {
 			},
 		];
 
-		if ( ! isDomainOnlySite && ! isFreePlan( selectedSite?.plan?.product_slug ?? '' ) ) {
-			nextSteps.push( {
-				stepKey: 'titan_whats_next_setup_site-site',
-				stepTitle: translate( 'Configure your site' ),
-				stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
-				stepCta: (
-					<FullWidthButton href={ `/home/${ selectedSiteSlug }` }>
-						{ translate( 'Go to homepage' ) }
-					</FullWidthButton>
-				),
-			} );
+		if ( siteNeedsSetup ) {
+			if ( isEnabled( 'signup/stepper-flow' ) ) {
+				nextSteps.unshift( {
+					stepKey: 'titan_whats_next_setup_site',
+					stepTitle: translate( 'Configure your site' ),
+					stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
+					stepCta: (
+						<FullWidthButton
+							href={ addQueryArgs(
+								{ siteId: selectedSite?.ID, siteSlug: selectedSiteSlug },
+								'/start/setup-site'
+							) }
+							primary
+						>
+							{ translate( 'Set up site' ) }
+						</FullWidthButton>
+					),
+				} );
+			} else {
+				nextSteps.push( {
+					stepKey: 'titan_whats_next_go_home',
+					stepTitle: translate( 'Configure your site' ),
+					stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
+					stepCta: (
+						<FullWidthButton href={ `/home/${ selectedSiteSlug }` }>
+							{ translate( 'Go to homepage' ) }
+						</FullWidthButton>
+					),
+				} );
+			}
 		}
 	}
 
