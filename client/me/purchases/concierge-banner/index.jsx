@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -46,15 +46,22 @@ class ConciergeBanner extends Component {
 	}
 
 	getBannerContent() {
-		const { bannerType, translate } = this.props;
+		const { bannerType, locale, translate } = this.props;
 
 		let title;
 		let description;
 		let buttonText;
 		let event;
+		let hasTranslations = locale === 'en';
 
 		switch ( bannerType ) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
+				hasTranslations =
+					hasTranslations ||
+					( i18n.hasTranslation( 'Your Quick Start session is coming up soon' ) &&
+						i18n.hasTranslation(
+							'Your {{supportLink}}Quick Start support session{{/supportLink}} is approaching. Get ready for your one-to-one with our Happiness Engineer.'
+						) );
 				title = translate( 'Your Quick Start session is coming up soon' );
 				description = translate(
 					'Your {{supportLink}}Quick Start support session{{/supportLink}} is approaching. Get ready for your one-to-one with our Happiness Engineer.',
@@ -74,6 +81,12 @@ class ConciergeBanner extends Component {
 				event = 'view-concierge-dashboard';
 				break;
 			case CONCIERGE_HAS_AVAILABLE_SESSION:
+				hasTranslations =
+					hasTranslations ||
+					( i18n.hasTranslation( 'You still have a Quick Start session available' ) &&
+						i18n.hasTranslation(
+							'Schedule your {{supportLink}}Quick Start support session{{/supportLink}} and get one-on-one guidance from our expert Happiness Engineers to kickstart your site.'
+						) );
 				title = translate( 'You still have a Quick Start session available' );
 				description = translate(
 					`Schedule your {{supportLink}}Quick Start support session{{/supportLink}} and get one-on-one guidance from our expert Happiness Engineers to kickstart your site.`,
@@ -94,17 +107,21 @@ class ConciergeBanner extends Component {
 				break;
 		}
 
-		return { title, description, buttonText, event };
+		return { title, description, buttonText, event, hasTranslations };
 	}
 
 	render() {
-		const { bannerType, showPlaceholder, quickStartSiteSlug, referrer } = this.props;
+		const { bannerType, quickStartSiteSlug, referrer, showPlaceholder } = this.props;
 
 		if ( showPlaceholder ) {
 			return this.placeholder();
 		}
 
-		const { buttonText, description, title, event } = this.getBannerContent();
+		const { buttonText, description, title, event, hasTranslations } = this.getBannerContent();
+
+		if ( ! hasTranslations ) {
+			return null;
+		}
 
 		return (
 			<>
