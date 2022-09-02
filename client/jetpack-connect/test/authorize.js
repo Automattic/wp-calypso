@@ -4,6 +4,11 @@
 
 import deepFreeze from 'deep-freeze';
 import { shallow } from 'enzyme';
+import documentHeadReducer from 'calypso/state/document-head/reducer';
+import happychatReducer from 'calypso/state/happychat/reducer';
+import purchasesReducer from 'calypso/state/purchases/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from '../../../client/test-helpers/testing-library';
 import { JetpackAuthorize } from '../authorize';
 import { JPC_PATH_PLANS } from '../constants';
 import { OFFER_RESET_FLOW_TYPES } from '../flow-types';
@@ -63,6 +68,17 @@ const DEFAULT_PROPS = deepFreeze( {
 	userHasUnattachedLicenses: false,
 } );
 
+function renderWithRedux( ui ) {
+	return renderWithProvider( ui, {
+		reducers: {
+			ui: uiReducer,
+			documentHead: documentHeadReducer,
+			purchases: purchasesReducer,
+			happychat: happychatReducer,
+		},
+	} );
+}
+
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn( ( featureFlag ) => {
@@ -76,9 +92,9 @@ jest.mock( '@automattic/calypso-config', () => {
 
 describe( 'JetpackAuthorize', () => {
 	test( 'renders as expected', () => {
-		const wrapper = shallow( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
+		const { container } = renderWithRedux( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
 
-		expect( wrapper ).toMatchSnapshot();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	describe( 'isSso', () => {
