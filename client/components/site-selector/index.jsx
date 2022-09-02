@@ -304,16 +304,16 @@ export class SiteSelector extends Component {
 			return null;
 		}
 
-		const allSitesMenuTitle = allSitesMenu()
+		const multiSiteContextTitle = allSitesMenu()
 			.find( ( menu ) => menu.url === this.props.allSitesPath.replace( '/posts/my', '/posts' ) )
 			?.title?.toLocaleLowerCase();
 
-		// Let's not display the all sites button if an all-sites section does not exist.
-		if ( this.props.showManageSites && ! allSitesMenuTitle ) {
+		// Let's not display the all sites button if there is no multi-site context.
+		if ( this.props.showManageSites && ! multiSiteContextTitle ) {
 			return null;
 		}
 
-		// Let's not display the all sites button if we are already showing an all-sites section.
+		// Let's not display the all sites button if we are already displaying a multi-site context page.
 		if ( this.props.showManageSites && ! this.props.selectedSite ) {
 			return null;
 		}
@@ -331,11 +331,11 @@ export class SiteSelector extends Component {
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( ALL_SITES ) }
 				title={
-					allSitesMenuTitle &&
-					/* translators: allSitesMenuTitle is an entity from client/my-sites/sidebar/static-data/all-sites-menu.js */
-					this.props.translate( 'View %(allSitesMenuTitle)s for all sites', {
+					multiSiteContextTitle &&
+					/* translators: multiSiteContextTitle is an entity from client/my-sites/sidebar/static-data/all-sites-menu.js */
+					this.props.translate( 'View %(multiSiteContextTitle)s for all sites', {
 						args: {
-							allSitesMenuTitle,
+							multiSiteContextTitle,
 						},
 					} )
 				}
