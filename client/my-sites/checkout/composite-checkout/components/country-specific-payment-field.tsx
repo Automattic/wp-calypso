@@ -60,13 +60,13 @@ export interface CountrySpecificPaymentFieldProps< P > {
 }
 
 interface CreateFieldArgs< P > {
-	fieldName: string;
-	componentClass: ComponentType< P >;
-	additionalProps: P;
+	fieldName: CountrySpecificPaymentFieldProps< P >[ 'fieldName' ];
+	componentClass: CountrySpecificPaymentFieldProps< P >[ 'componentClass' ];
+	additionalProps: CountrySpecificPaymentFieldProps< P >[ 'additionalProps' ];
+	handleFieldChange: CountrySpecificPaymentFieldProps< P >[ 'handleFieldChange' ];
+	disabled: CountrySpecificPaymentFieldProps< P >[ 'disabled' ];
 	value: string;
 	errorMessage: string;
-	handleFieldChange: ( fieldName: string, newValue: string ) => void;
-	disabled: boolean;
 }
 
 /**
