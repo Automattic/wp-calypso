@@ -13,23 +13,6 @@
 		margin: 0;
 	}
 
-	&__jetpack-free {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin: 4em 0;
-
-		&--headline {
-			font-size: $font-title-large;
-			margin-bottom: 1em;
-		}
-
-		&--info {
-			font-size: $font-body-small;
-			text-align: center;
-		}
-	}
-
 	&__recommendations {
 		padding: 4em 0;
 

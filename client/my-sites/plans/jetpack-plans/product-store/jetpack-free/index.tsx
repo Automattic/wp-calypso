@@ -1,7 +1,9 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import useJetpackFreeButtonProps from '../jetpack-free-card/use-jetpack-free-button-props';
-import { JetpackFreeProps } from './types';
+import useJetpackFreeButtonProps from '../../jetpack-free-card/use-jetpack-free-button-props';
+import { JetpackFreeProps } from '../types';
+
+import './style.scss';
 
 export const JetpackFree: React.FC< JetpackFreeProps > = ( { urlQueryArgs, siteId } ) => {
 	const translate = useTranslate();
