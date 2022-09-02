@@ -22,6 +22,7 @@ import {
 	FormStatus,
 	useFormStatus,
 } from '@automattic/composite-checkout';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
@@ -34,7 +35,9 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import getRefundDays from '../lib/get-refund-days';
 import getRefundText from '../lib/get-refund-text';
@@ -81,7 +84,7 @@ export default function WPCheckoutOrderSummary( {
 				{ isCartUpdating ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
-					<CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
+					<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
 				) }
 			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && plan && hasMonthlyPlanInCart && (
@@ -140,6 +143,21 @@ function SwitchToAnnualPlan( {
 	const text = linkText ?? translate( 'Switch to an annual plan and save!' );
 
 	return <SwitchToAnnualPlanButton onClick={ handleClick }>{ text }</SwitchToAnnualPlanButton>;
+}
+
+function CheckoutSummaryFeaturesWrapper( props: {
+	siteId: number | undefined;
+	nextDomainIsFree: boolean;
+} ) {
+	const { siteId, nextDomainIsFree } = props;
+	const signupFlowName = getSignupCompleteFlowName();
+	const shouldUseFlowFeatureList = isNewsletterOrLinkInBioFlow( signupFlowName );
+
+	if ( signupFlowName && shouldUseFlowFeatureList ) {
+		return <CheckoutSummaryFlowFeaturesList flowName={ signupFlowName } />;
+	}
+
+	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
 }
 
 function CheckoutSummaryFeaturesList( props: {
@@ -216,6 +234,30 @@ function CheckoutSummaryFeaturesList( props: {
 					<CheckoutSummaryFeaturesListItem key={ product.uuid }>
 						<WPCheckoutCheckIcon id="features-list-refund-text" />
 						{ getRefundText( getRefundDays( product ), productName, translate ) }
+					</CheckoutSummaryFeaturesListItem>
+				);
+			} ) }
+		</CheckoutSummaryFeaturesListWrapper>
+	);
+}
+
+function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
+	const planFeatures = getFlowPlanFeatures( flowName, planInCart );
+
+	return (
+		<CheckoutSummaryFeaturesListWrapper>
+			{ planFeatures.map( ( feature ) => {
+				return (
+					<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
+						<WPCheckoutCheckIcon id={ `feature-list-${ feature.getSlug() }-icon` } />
+						{ feature.isHighlightedFeature ? (
+							<strong>{ feature.getTitle() }</strong>
+						) : (
+							feature.getTitle()
+						) }
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
