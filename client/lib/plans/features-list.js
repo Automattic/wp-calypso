@@ -1579,23 +1579,22 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_PREMIUM_THEMES_TEST ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES_TEST,
-		getTitle: () => 'Unlimited premium themes for your site',
+		getTitle: () => 'Unlimited premium themes',
 		getDescription: () => {},
 	},
 	[ FEATURE_PRIORITY_SUPPORT_TEST ]: {
 		getSlug: () => FEATURE_PRIORITY_SUPPORT_TEST,
-		getTitle: () => 'Priority chat and email support, 24X7.',
+		getTitle: () => '24/7 live chat support',
 		getDescription: () => {},
 	},
 	[ FEATURE_PLUGINS_TEST ]: {
 		getSlug: () => FEATURE_PLUGINS_TEST,
-		getTitle: () =>
-			'Install WordPress Plugins. Choose among thousands of plugins to easily add forms, bookings, or custom fields.',
+		getTitle: () => 'Install WordPress plugins',
 		getDescription: () => {},
 	},
 	[ FEATURE_SFTP_DATABASE_TEST ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE_TEST,
-		getTitle: () => 'SFTP (Secure File Transfer Protocol) and Database access.',
+		getTitle: () => 'SFTP and Database Access',
 		getDescription: () => {},
 	},
 	[ FEATURE_FREE_NEWSLETTER_V1 ]: {
@@ -1610,12 +1609,12 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_REPUBLICIZE_V3 ]: {
 		getSlug: () => FEATURE_REPUBLICIZE,
-		getTitle: () => 'Advanced social media marketing tools',
+		getTitle: () => 'Advanced social media tools',
 		getDescription: () => {},
 	},
 	[ FEATURE_MONETISE_V2 ]: {
 		getSlug: () => FEATURE_MONETISE,
-		getTitle: () => 'Monetize your website with ads',
+		getTitle: () => 'Earn money from ads',
 		getDescription: () => {},
 	},
 	[ FEATURE_UPLOAD_THEMES_V3 ]: {
