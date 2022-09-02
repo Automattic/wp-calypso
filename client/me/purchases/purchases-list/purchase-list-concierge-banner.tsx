@@ -1,6 +1,5 @@
-import React from 'react';
 import {
-	CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION,
+	CONCIERGE_HAS_AVAILABLE_SESSION,
 	CONCIERGE_HAS_UPCOMING_APPOINTMENT,
 } from 'calypso/me/concierge/constants';
 import ConciergeBanner from 'calypso/me/purchases/concierge-banner/index';
@@ -38,7 +37,7 @@ export function PurchaseListConciergeBanner( props: Props ) {
 	if ( nextAppointment ) {
 		bannerType = CONCIERGE_HAS_UPCOMING_APPOINTMENT;
 	} else {
-		bannerType = CONCIERGE_HAS_AVAILABLE_PURCHASED_SESSION;
+		bannerType = CONCIERGE_HAS_AVAILABLE_SESSION;
 	}
 
 	return (

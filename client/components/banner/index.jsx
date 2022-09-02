@@ -114,7 +114,7 @@ export class Banner extends Component {
 	handleClick = ( e ) => {
 		const { event, feature, compact, onClick, tracksClickName, tracksClickProperties } = this.props;
 
-		if ( tracksClickName ) {
+		if ( event && tracksClickName ) {
 			this.props.recordTracksEvent?.( tracksClickName, {
 				cta_name: event,
 				cta_feature: feature,

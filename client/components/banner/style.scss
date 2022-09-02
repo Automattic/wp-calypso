@@ -217,11 +217,6 @@
 		}
 	}
 
-	a,
-	button {
-		white-space: nowrap;
-	}
-
 	@include breakpoint-deprecated( '<480px' ) {
 		.button {
 			display: block;

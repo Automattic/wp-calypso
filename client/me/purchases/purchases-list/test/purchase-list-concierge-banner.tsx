@@ -10,7 +10,7 @@ import { createReduxStore } from 'calypso/state/index';
 describe( 'PurchaseListConciergeBanner tests', () => {
 	test( 'not on specific site but has sites with sessions available', () => {
 		render(
-			<Provider store={ createTestStore() }>
+			<Provider store={ createTestStore( -1 ) }>
 				<PurchaseListConciergeBanner availableSessions={ [ 1 ] } isUserBlocked={ false } />
 			</Provider>
 		);
@@ -20,7 +20,7 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 	} );
 	test( 'on specific site and has session available for site', () => {
 		render(
-			<Provider store={ createTestStore() }>
+			<Provider store={ createTestStore( 2 ) }>
 				<PurchaseListConciergeBanner
 					availableSessions={ [ 2 ] }
 					siteId={ 2 }
@@ -34,7 +34,7 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 	} );
 	test( 'on a specific site but no session for that site', () => {
 		render(
-			<Provider store={ createTestStore() }>
+			<Provider store={ createTestStore( 2 ) }>
 				<PurchaseListConciergeBanner
 					availableSessions={ [ 1 ] }
 					siteId={ 2 }
@@ -46,7 +46,7 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 	} );
 	test( 'has appointment scheduled for current site', () => {
 		render(
-			<Provider store={ createTestStore() }>
+			<Provider store={ createTestStore( 2 ) }>
 				<PurchaseListConciergeBanner
 					availableSessions={ [ 3 ] }
 					siteId={ 2 }
@@ -59,11 +59,13 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 				/>
 			</Provider>
 		);
-		expect( screen.queryByText( 'Your session is coming up soon' ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Your Quick Start session is coming up soon' )
+		).toBeInTheDocument();
 	} );
 	test( 'has appointment scheduled for other site', () => {
 		render(
-			<Provider store={ createTestStore() }>
+			<Provider store={ createTestStore( 1 ) }>
 				<PurchaseListConciergeBanner
 					availableSessions={ [ 3 ] }
 					siteId={ 2 }
@@ -76,15 +78,22 @@ describe( 'PurchaseListConciergeBanner tests', () => {
 				/>
 			</Provider>
 		);
-		expect( screen.queryByText( 'Your session is coming up soon' ) ).toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Your Quick Start session is coming up soon' )
+		).toBeInTheDocument();
 	} );
 } );
 
-function createTestStore() {
+function createTestStore( siteId ) {
 	return createReduxStore(
 		{
 			preferences: {
 				remoteValues: {},
+			},
+			sites: {
+				items: {
+					ID: siteId,
+				},
 			},
 		},
 		( state ) => {

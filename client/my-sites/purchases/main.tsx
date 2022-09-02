@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial/index';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -54,13 +55,14 @@ export function Purchases() {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const logPurchasesError = useLogPurchasesError( 'site level purchases load error' );
-	const nextAppointment = useSelector( getConciergeNextAppointment );
-	const isUserBlocked = useSelector( getConciergeUserBlocked );
-	const availableSessions = useSelector( getAvailableConciergeSessions );
+	const nextConciergeAppointment = useSelector( getConciergeNextAppointment );
+	const isConciergeUserBlocked = useSelector( getConciergeUserBlocked );
+	const availableConciergeSessions = useSelector( getAvailableConciergeSessions );
 	const siteId = useSelector( getSelectedSiteId );
 
 	return (
 		<Main wideLayout className="purchases">
+			<QueryConciergeInitial />
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.sectionTitle } />
 			{ ! isJetpackCloud() && (
@@ -84,9 +86,9 @@ export function Purchases() {
 				siteSlug={ siteSlug }
 			/>
 			<PurchaseListConciergeBanner
-				availableSessions={ availableSessions }
-				isUserBlocked={ isUserBlocked }
-				nextAppointment={ nextAppointment }
+				availableSessions={ availableConciergeSessions }
+				isUserBlocked={ isConciergeUserBlocked }
+				nextAppointment={ nextConciergeAppointment }
 				siteId={ siteId ?? undefined }
 			/>
 			<CheckoutErrorBoundary
