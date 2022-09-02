@@ -41,9 +41,9 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 									author: (
 										<a
 											href={ localizePath(
-												`/plugins/${
-													selectedSite?.slug || ''
-												}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"`
+												`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthor(
+													plugin
+												) }"`
 											) }
 										>
 											{ plugin.author_name }
@@ -128,7 +128,7 @@ function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 						) : (
 							<a
 								href={ localizePath(
-									`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthorKeyword(
+									`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthor(
 										plugin
 									) }"`
 								) }
@@ -198,6 +198,12 @@ function PluginDetailsHeaderPlaceholder() {
 			</div>
 		</div>
 	);
+}
+
+function getPluginAuthor( plugin ) {
+	if ( config.isEnabled( 'marketplace-jetpack-plugin-search' ) ) return plugin.author_name;
+
+	return getPluginAuthorKeyword( plugin );
 }
 
 export default PluginDetailsHeader;
