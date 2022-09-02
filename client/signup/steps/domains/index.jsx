@@ -622,7 +622,7 @@ class DomainsStep extends Component {
 					<span
 						role="button"
 						class="tailored-flow-subtitle__cta-text"
-						onClick={ this.handleDomainExplainerClick }
+						onClick={ this.handleSkip }
 					/>
 				),
 			};
