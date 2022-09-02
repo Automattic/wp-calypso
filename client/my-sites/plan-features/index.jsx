@@ -18,13 +18,8 @@ import {
 	isFreePlan,
 	isWpComEcommercePlan,
 	getPlanClass,
-	FEATURE_BLANK,
-	FEATURE_DASH,
-	FEATURE_BASIC_DESIGN,
-	PRODUCT_WPCOM_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
-import { useLocale } from '@automattic/i18n-utils';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
@@ -36,7 +31,6 @@ import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableCard from 'calypso/components/foldable-card';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -44,7 +38,6 @@ import SpinnerLine from 'calypso/components/spinner-line';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getDiscountByName } from 'calypso/lib/discounts';
-import { useExperiment } from 'calypso/lib/explat';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -64,7 +57,6 @@ import {
 	getPlanSlug,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
-import { getProductCost } from 'calypso/state/products-list/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
@@ -137,7 +129,6 @@ export class PlanFeatures extends Component {
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
-				<QueryProductsList />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">
@@ -373,6 +364,7 @@ export class PlanFeatures extends Component {
 				availableForPurchase,
 				currencyCode,
 				current,
+				features,
 				planConstantObj,
 				planName,
 				popular,
@@ -443,28 +435,16 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 					/>
 					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
-						{ this.renderMobileFeatures( properties ) }
+						{ this.renderMobileFeatures( features ) }
 					</FoldableCard>
 				</div>
 			);
 		} );
 	}
 
-	renderMobileFeatures( properties ) {
-		const { features, currencyCode, productCustomDesignCost } = properties;
-
+	renderMobileFeatures( features ) {
 		return map( features, ( currentFeature, index ) => {
-			const featureSlug = currentFeature?.getSlug();
-
-			if ( featureSlug === FEATURE_BASIC_DESIGN ) {
-				currentFeature.meta = {
-					price: productCustomDesignCost,
-					currency: currencyCode,
-				};
-			}
-			return ! [ FEATURE_BLANK, FEATURE_DASH ].includes( featureSlug )
-				? this.renderFeatureItem( currentFeature, index )
-				: null;
+			return currentFeature ? this.renderFeatureItem( currentFeature, index ) : null;
 		} );
 	}
 
@@ -773,8 +753,12 @@ export class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
+<<<<<<< HEAD
 		const { isPlansPageQuickImprovements, isInVerticalScrollingPlansExperiment, flowName } =
 			this.props;
+=======
+		const { flowName } = this.props;
+>>>>>>> 0936164934 (Initial revert code)
 		const description = feature.getDescription
 			? feature.getDescription( undefined, this.props.domainName )
 			: null;
@@ -783,51 +767,32 @@ export class PlanFeatures extends Component {
 			'is-available': feature.availableForCurrentPlan,
 			'is-bold': feature.isHighlightedFeature,
 		} );
+		const isMobileNewsletterLinkinBio = isInVerticalScrollingPlansExperiment && isNewsletterOrLinkInBioFlow( flowName );
 
 		return (
 			<PlanFeaturesItem
 				key={ index }
 				description={ description }
-				hideGridicon={
-					isPlansPageQuickImprovements || ( this.props.isReskinned ? false : this.props.withScroll )
-				}
-				hideInfoPopover={
-					isInVerticalScrollingPlansExperiment && isNewsletterOrLinkInBioFlow( flowName )
-				}
+				hideInfoPopover={ feature.hideInfoPopover || isMobileNewsletterLinkinBio }
+				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
 				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>
 				<span className={ classes }>
 					{ this.renderAnnualPlansFeatureNotice( feature ) }
-					<span className="plan-features__item-title">{ feature.getTitle( feature.meta ) }</span>
+					<span className="plan-features__item-title">{ feature.getTitle() }</span>
 				</span>
 			</PlanFeaturesItem>
 		);
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature, withScroll, isPlansPageQuickImprovements } =
-			this.props;
+		const { planProperties, selectedFeature, withScroll } = this.props;
 
 		return map( planProperties, ( properties ) => {
-			const { availableForPurchase, features, planName, currencyCode, productCustomDesignCost } =
-				properties;
-
+			const { availableForPurchase, features, planName } = properties;
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
-			let currentFeature = features[ key ];
-			const featureSlug = currentFeature?.getSlug();
-			const isFeatureDash = featureSlug === FEATURE_DASH;
-
-			if ( isFeatureDash || featureSlug === FEATURE_BLANK ) {
-				currentFeature = null;
-			}
-
-			if ( featureSlug === FEATURE_BASIC_DESIGN ) {
-				currentFeature.meta = {
-					price: productCustomDesignCost,
-					currency: currencyCode,
-				};
-			}
+			const currentFeature = features[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
@@ -837,7 +802,6 @@ export class PlanFeatures extends Component {
 					currentFeature &&
 					selectedFeature === currentFeature.getSlug() &&
 					availableForPurchase,
-				'is-plans-quick-improvements': isPlansPageQuickImprovements,
 			} );
 
 			return currentFeature ? (
@@ -845,10 +809,7 @@ export class PlanFeatures extends Component {
 					{ this.renderFeatureItem( currentFeature ) }
 				</td>
 			) : (
-				<td
-					key={ `${ planName }-none` }
-					className={ `plan-features__table-item ${ isFeatureDash ? 'is-dash' : 'is-blank' }` }
-				/>
+				<td key={ `${ planName }-none` } className="plan-features__table-item" />
 			);
 		} );
 	}
@@ -964,7 +925,6 @@ const ConnectedPlanFeatures = connect(
 			visiblePlans,
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
-			isPlansPageQuickImprovements,
 			isInVerticalScrollingPlansExperiment,
 		} = ownProps;
 		const selectedSiteId = siteId;
@@ -985,10 +945,7 @@ const ConnectedPlanFeatures = connect(
 		let planProperties = compact(
 			map( plans, ( plan ) => {
 				let isPlaceholder = false;
-				const experiment = isPlansPageQuickImprovements
-					? 'pricing_packaging_plans_page_quick_improvements_v2'
-					: '';
-				const planConstantObj = applyTestFiltersToPlansList( plan, experiment, {
+				const planConstantObj = applyTestFiltersToPlansList( plan, undefined, {
 					isLoggedInMonthlyPricing,
 				} );
 				const planProductId = planConstantObj.getProductId();
@@ -1004,9 +961,6 @@ const ConnectedPlanFeatures = connect(
 					: null;
 				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
 
-				const currencyCode = getCurrentUserCurrencyCode( state );
-				const productCustomDesignCost = getProductCost( state, PRODUCT_WPCOM_CUSTOM_DESIGN ) / 12;
-
 				const newPlan = false;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
@@ -1014,7 +968,7 @@ const ConnectedPlanFeatures = connect(
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
 
-				const features = planConstantObj.getPlanCompareFeatures( experiment );
+				const features = planConstantObj.getPlanCompareFeatures();
 
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
@@ -1028,7 +982,7 @@ const ConnectedPlanFeatures = connect(
 						plan: planConstantObj,
 						isInVerticalScrollingPlansExperiment,
 					} );
-					if ( ! isPlansPageQuickImprovements && featureAccessor ) {
+					if ( featureAccessor ) {
 						planFeatures = getPlanFeaturesObject( featureAccessor() );
 					}
 
@@ -1077,8 +1031,7 @@ const ConnectedPlanFeatures = connect(
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
-					currencyCode,
-					productCustomDesignCost,
+					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
 					features: planFeatures,
@@ -1120,7 +1073,6 @@ const ConnectedPlanFeatures = connect(
 			canPurchase,
 			isJetpack,
 			planProperties,
-			isPlansPageQuickImprovements,
 			selectedSiteSlug,
 			purchaseId,
 			siteIsPrivate,
@@ -1146,24 +1098,9 @@ const ConnectedPlanFeatures = connect(
 /* eslint-enable */
 
 export default function PlanFeaturesWrapper( props ) {
-	const locale = useLocale();
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'pricing_packaging_plans_page_quick_improvements_v2',
-		{
-			isEligible: [ 'en-gb', 'en' ].includes( locale ),
-		}
-	);
-
-	if ( isLoadingExperimentAssignment ) {
-		return null;
-	}
-
 	return (
 		<CalypsoShoppingCartProvider>
-			<ConnectedPlanFeatures
-				{ ...props }
-				isPlansPageQuickImprovements={ 'treatment' === experimentAssignment?.variationName }
-			/>
+			<ConnectedPlanFeatures { ...props } />
 		</CalypsoShoppingCartProvider>
 	);
 }
