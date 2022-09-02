@@ -285,11 +285,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
-	function* setThemeOnSite( siteSlug: string, theme: string, style?: string ) {
+	function* setThemeOnSite( siteSlug: string, theme: string, styleVariationSlug?: string ) {
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: theme, style, dont_change_homepage: true },
+			body: { theme: theme, style_variation_slug: styleVariationSlug, dont_change_homepage: true },
 			method: 'POST',
 		} );
 	}
