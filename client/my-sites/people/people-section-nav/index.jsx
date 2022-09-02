@@ -74,9 +74,7 @@ class PeopleSectionNav extends Component {
 				id: 'viewers',
 			},
 			{
-				title: isEnabled( 'subscriber-importer' )
-					? translate( 'User Invites' )
-					: translate( 'Invites' ),
+				title: translate( 'Invites' ),
 				path: '/people/invites/' + siteFilter,
 				id: 'invites',
 			},
