@@ -1,3 +1,4 @@
+import { isFreePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -11,6 +12,7 @@ import {
 	emailManagement,
 	emailManagementInbox,
 	emailManagementTitanControlPanelRedirect,
+	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
 import { FullWidthButton } from 'calypso/my-sites/marketplace/components';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -23,6 +25,7 @@ import './style.scss';
 
 type TitanSetUpThankYouProps = {
 	containerClassName?: string;
+	emailNeedsSetup?: boolean;
 	domainName: string;
 	emailAddress?: string;
 	isDomainOnlySite?: boolean;
@@ -32,6 +35,7 @@ type TitanSetUpThankYouProps = {
 
 const TitanSetUpThankYou = ( {
 	containerClassName,
+	emailNeedsSetup,
 	domainName,
 	emailAddress,
 	isDomainOnlySite = false,
@@ -61,69 +65,102 @@ const TitanSetUpThankYou = ( {
 		}
 	);
 
+	let nextSteps = [
+		{
+			stepKey: 'titan_whats_next_view_inbox',
+			stepTitle: translate( 'Access your inbox' ),
+			stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
+			stepCta: (
+				<FullWidthButton
+					href={ getTitanEmailUrl(
+						titanAppsUrlPrefix,
+						emailAddress,
+						false,
+						`${ window.location.protocol }//${ window.location.host }${ inboxPath }`
+					) }
+					primary
+					onClick={ () => {
+						recordEmailAppLaunchEvent( {
+							provider: 'titan',
+							app: 'webmail',
+							context: 'checkout-thank-you',
+						} );
+					} }
+				>
+					{ translate( 'Go to Inbox' ) }
+				</FullWidthButton>
+			),
+		},
+		{
+			stepKey: 'titan_whats_next_get_mobile_app',
+			stepTitle: translate( 'Get mobile app' ),
+			stepDescription: translate(
+				"Access your email on the go with Titan's Android and iOS apps."
+			),
+			stepCta: (
+				<FullWidthButton
+					href={ titanControlPanelUrl }
+					target="_blank"
+					onClick={ () => {
+						recordEmailAppLaunchEvent( {
+							provider: 'titan',
+							app: 'app',
+							context: 'checkout-thank-you',
+						} );
+					} }
+				>
+					{ translate( 'Get app' ) }
+					<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
+				</FullWidthButton>
+			),
+		},
+		{
+			stepKey: 'titan_whats_next_manage_email',
+			stepTitle: translate( 'Manage your email' ),
+			stepDescription: translate(
+				'Add or delete mailboxes, migrate existing emails, configure a catch-all email, and much more.'
+			),
+			stepCta: (
+				<FullWidthButton href={ emailManagementPath }>{ translate( 'Manage' ) }</FullWidthButton>
+			),
+		},
+	];
+
+	if ( emailNeedsSetup ) {
+		nextSteps = [
+			{
+				stepKey: 'titan_whats_next_setup_mailbox',
+				stepTitle: translate( 'Set up your email' ),
+				stepDescription: translate( 'Complete the setup by choosing your email address.' ),
+				stepCta: (
+					<FullWidthButton
+						href={ emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domainName ) }
+						primary
+					>
+						{ translate( 'Set up email' ) }
+					</FullWidthButton>
+				),
+			},
+		];
+
+		if ( ! isDomainOnlySite && ! isFreePlan( selectedSite?.plan?.product_slug ?? '' ) ) {
+			nextSteps.push( {
+				stepKey: 'titan_whats_next_setup_site-site',
+				stepTitle: translate( 'Configure your site' ),
+				stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
+				stepCta: (
+					<FullWidthButton href={ `/home/${ selectedSiteSlug }` }>
+						{ translate( 'Go to homepage' ) }
+					</FullWidthButton>
+				),
+			} );
+		}
+	}
+
 	const titanThankYouSection = {
 		sectionKey: 'titan_whats_next',
 		sectionTitle: translate( 'What’s next?' ),
-		nextSteps: [
-			{
-				stepKey: 'titan_whats_next_view_inbox',
-				stepTitle: translate( 'Access your inbox' ),
-				stepDescription: translate( 'Access your email from anywhere with our webmail.' ),
-				stepCta: (
-					<FullWidthButton
-						href={ getTitanEmailUrl(
-							titanAppsUrlPrefix,
-							emailAddress,
-							false,
-							`${ window.location.protocol }//${ window.location.host }${ inboxPath }`
-						) }
-						primary
-						onClick={ () => {
-							recordEmailAppLaunchEvent( {
-								provider: 'titan',
-								app: 'webmail',
-								context: 'checkout-thank-you',
-							} );
-						} }
-					>
-						{ translate( 'Go to Inbox' ) }
-					</FullWidthButton>
-				),
-			},
-			{
-				stepKey: 'titan_whats_next_get_mobile_app',
-				stepTitle: translate( 'Get mobile app' ),
-				stepDescription: translate(
-					"Access your email on the go with Titan's Android and iOS apps."
-				),
-				stepCta: (
-					<FullWidthButton
-						href={ titanControlPanelUrl }
-						target="_blank"
-						onClick={ () => {
-							recordEmailAppLaunchEvent( {
-								provider: 'titan',
-								app: 'app',
-								context: 'checkout-thank-you',
-							} );
-						} }
-					>
-						{ translate( 'Get app' ) }
-						<Gridicon className="titan-set-up-thank-you__icon-external" icon="external" />
-					</FullWidthButton>
-				),
-			},
-			{
-				stepKey: 'titan_whats_next_manage_email',
-				stepTitle: translate( 'Manage your email' ),
-				stepDescription: translate(
-					'Add or delete mailboxes, migrate existing emails, configure a catch-all email, and much more.'
-				),
-				stepCta: (
-					<FullWidthButton href={ emailManagementPath }>{ translate( 'Manage' ) }</FullWidthButton>
-				),
-			},
-		],
+		nextSteps,
 	};
 
 	return (

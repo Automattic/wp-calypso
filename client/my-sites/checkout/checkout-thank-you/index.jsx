@@ -372,7 +372,8 @@ export class CheckoutThankYou extends Component {
 	};
 
 	render() {
-		const { translate, isHappychatEligible, email, domainOnlySiteFlow } = this.props;
+		const { translate, isHappychatEligible, email, domainOnlySiteFlow, selectedFeature } =
+			this.props;
 		let purchases = [];
 		let failedPurchases = [];
 		let wasJetpackPlanPurchased = false;
@@ -380,6 +381,7 @@ export class CheckoutThankYou extends Component {
 		let showHappinessSupport = ! this.props.isSimplified;
 		let wasDIFMProduct = false;
 		let delayedTransferPurchase = false;
+		let domainRegistrationPurchase = false;
 		let wasDomainProduct = false;
 		let wasGSuiteOrGoogleWorkspace = false;
 		let wasTitanEmailOnlyProduct = false;
@@ -395,7 +397,8 @@ export class CheckoutThankYou extends Component {
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
 			wasEcommercePlanPurchased = purchases.some( isEcommerce );
 			showHappinessSupport = showHappinessSupport && ! purchases.some( isStarter ); // Don't show support if Starter was purchased
-			delayedTransferPurchase = find( purchases, isDelayedDomainTransfer );
+			delayedTransferPurchase = purchases.find( isDelayedDomainTransfer );
+			domainRegistrationPurchase = purchases.find( isDomainRegistration );
 			wasDomainProduct = purchases.some(
 				( purchase ) =>
 					isDomainMapping( purchase ) ||
@@ -472,6 +475,16 @@ export class CheckoutThankYou extends Component {
 					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } { ...planProps } />
 				</Main>
+			);
+		} else if ( domainRegistrationPurchase && selectedFeature === 'email-license' ) {
+			return (
+				<TitanSetUpThankYou
+					domainName={ domainRegistrationPurchase.meta }
+					emailNeedsSetup
+					isDomainOnlySite={ this.props.domainOnlySiteFlow }
+					subtitle={ translate( 'You will receive an email confirmation shortly.' ) }
+					title={ translate( 'Congratulations on your purchase!' ) }
+				/>
 			);
 		} else if ( wasDomainProduct ) {
 			const [ purchaseType, predicate ] = this.getDomainPurchaseType( purchases );
