@@ -43,7 +43,7 @@ describe( DataHelper.createSuiteTitle( 'Site Build with "Something else" categor
 	} );
 
 	describe( 'Build', function () {
-		const themeName = 'Geologist - Cream';
+		const themeName = 'Stewart';
 
 		let startSiteFlow: StartSiteFlow;
 
@@ -100,7 +100,7 @@ describe(
 		} );
 
 		describe( 'Build', function () {
-			const themeName = 'Geologist - Cream';
+			const themeName = 'Stewart';
 
 			let startSiteFlow: StartSiteFlow;
 

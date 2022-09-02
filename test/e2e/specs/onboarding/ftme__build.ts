@@ -73,7 +73,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Build with "Something else" catego
 	} );
 
 	describe( 'Build', function () {
-		const themeName = 'Geologist - Cream';
+		const themeName = 'Stewart';
 
 		let startSiteFlow: StartSiteFlow;
 
@@ -168,7 +168,7 @@ describe(
 		} );
 
 		describe( 'Build', function () {
-			const themeName = 'Geologist - Cream';
+			const themeName = 'Stewart';
 
 			let startSiteFlow: StartSiteFlow;
 
