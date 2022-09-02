@@ -156,6 +156,9 @@ open class E2EBuildType(
 
 					mkdir -p trace
 					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+
+					mkdir -p trace
+					find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}

@@ -67,7 +67,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 */
 	private initializeAllureReporter( config: Config.ProjectConfig ): AllureReporter {
 		const allureConfig: AllureConfig = {
-			resultsDir: ( config.testEnvironmentOptions.resultsDir as string ) ?? 'allure-results',
+			resultsDir: env.ALLURE_RESULTS_PATH,
 		};
 
 		return new AllureReporter( {
