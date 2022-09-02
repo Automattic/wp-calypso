@@ -86,7 +86,7 @@
 		"@wordpress/edit-post": "^6.6.0",
 		"@wordpress/editor": "^12.8.0",
 		"@wordpress/element": "^4.7.0",
-		"@wordpress/env": "^4.7.0",
+		"@wordpress/env": "^5.2.0",
 		"@wordpress/escape-html": "^2.9.0",
 		"@wordpress/hooks": "^3.9.0",
 		"@wordpress/html-entities": "^3.9.0",
