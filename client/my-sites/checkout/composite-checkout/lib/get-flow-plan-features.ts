@@ -31,6 +31,7 @@ export default function getFlowPlanFeatures(
 	const featureAccessor = getPlanFeatureAccessor( {
 		flowName,
 		plan: planConstantObj,
+		isInVerticalScrollingPlansExperiment: false,
 	} );
 
 	if ( ! featureAccessor ) {
