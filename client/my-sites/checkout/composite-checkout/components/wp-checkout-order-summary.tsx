@@ -151,10 +151,9 @@ function CheckoutSummaryFeaturesWrapper( props: {
 } ) {
 	const { siteId, nextDomainIsFree } = props;
 	const signupFlowName = getSignupCompleteFlowName();
-	const shouldUseFlowFeatureList =
-		!! signupFlowName && isNewsletterOrLinkInBioFlow( signupFlowName );
+	const shouldUseFlowFeatureList = isNewsletterOrLinkInBioFlow( signupFlowName );
 
-	if ( shouldUseFlowFeatureList ) {
+	if ( signupFlowName && shouldUseFlowFeatureList ) {
 		return <CheckoutSummaryFlowFeaturesList flowName={ signupFlowName } />;
 	}
 
@@ -250,20 +249,18 @@ function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
 
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
-			<>
-				{ planFeatures.map( ( feature ) => {
-					return (
-						<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
-							<WPCheckoutCheckIcon id={ `feature-list-${ feature.getSlug() }-icon` } />
-							{ feature.isHighlightedFeature ? (
-								<strong>{ feature.getTitle() }</strong>
-							) : (
-								feature.getTitle()
-							) }
-						</CheckoutSummaryFeaturesListItem>
-					);
-				} ) }
-			</>
+			{ planFeatures.map( ( feature ) => {
+				return (
+					<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
+						<WPCheckoutCheckIcon id={ `feature-list-${ feature.getSlug() }-icon` } />
+						{ feature.isHighlightedFeature ? (
+							<strong>{ feature.getTitle() }</strong>
+						) : (
+							feature.getTitle()
+						) }
+					</CheckoutSummaryFeaturesListItem>
+				);
+			} ) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
