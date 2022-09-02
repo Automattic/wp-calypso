@@ -19,6 +19,8 @@ import type { Step } from '../../types';
 
 import './style.scss';
 
+type AccentColor = { color: string; default?: boolean };
+
 /**
  * Generates an inline SVG for the color picker swatch
  *
@@ -51,7 +53,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
-	const [ accentColor, setAccentColor ] = React.useState< { color: string; default?: boolean } >( {
+	const [ accentColor, setAccentColor ] = React.useState< AccentColor >( {
 		color: '#0675C4',
 		default: true,
 	} );
@@ -115,8 +117,11 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 	};
 
-	const getBackgroundImage = ( fieldValue: string | undefined ) => {
-		return fieldValue && fieldValue.trim() ? `url( ${ greenCheckmarkImg } )` : '';
+	const getBackgroundImage = ( fieldValue: AccentColor ) => {
+		if ( fieldValue.default ) {
+			return '';
+		}
+		return fieldValue.color.trim() !== '' ? `url( ${ greenCheckmarkImg } )` : '';
 	};
 
 	const stepContent = (
