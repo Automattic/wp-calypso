@@ -1,7 +1,8 @@
 /**
  * Module vars
  */
-export const READER_CONTENT_WIDTH = 800;
+export const READER_CONTENT_WIDTH = 600;
+export const READER_IMAGE_HEIGHT = 300;
 export const PHOTO_ONLY_MIN_WIDTH = 440;
 export const PHOTO_ONLY_MAX_CHARACTER_COUNT = 85;
 export const GALLERY_MIN_IMAGES = 4;

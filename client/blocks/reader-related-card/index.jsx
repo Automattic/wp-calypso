@@ -126,6 +126,7 @@ export function RelatedPostCard( {
 	} else {
 		featuredAsset = (
 			<ReaderFeaturedImage
+				canonicalMedia={ canonicalMedia }
 				imageUrl={ canonicalMedia.src }
 				imageWidth={ RELATED_IMAGE_WIDTH }
 				onClick={ postClickTracker }

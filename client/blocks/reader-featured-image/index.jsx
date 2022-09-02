@@ -1,46 +1,54 @@
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
-
+import resizeImageUrl from 'calypso/lib/resize-image-url';
+import { READER_IMAGE_HEIGHT, READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 import './style.scss';
 
 const noop = () => {};
 
 const ReaderFeaturedImage = ( {
-	post,
+	canonicalMedia,
 	href,
 	children,
 	onClick,
 	className,
+	fetched,
 	imageWidth,
 	imageHeight,
 } ) => {
-	const imageUrl = post.canonical_media.src;
+	const imageUrl = canonicalMedia.src;
 	if ( imageUrl === undefined ) {
 		return null;
 	}
 
-	const imageSize = {
-		height: post.canonical_media.height,
-		width: post.canonical_media.width,
-	};
+	const resizedImageUrl = fetched
+		? imageUrl
+		: resizeImageUrl( imageUrl, { w: imageWidth || READER_CONTENT_WIDTH } );
+	const safeCssUrl = cssSafeUrl( resizedImageUrl );
+	let featuredImageStyle = { background: 'none' };
+	if ( safeCssUrl ) {
+		featuredImageStyle = {
+			backgroundImage: 'url(' + safeCssUrl + ')',
+			backgroundSize: 'cover',
+			backgroundPosition: '50% 50%',
+			backgroundRepeat: 'no-repeat',
+		};
+	}
 
-	const featuredImageStyle = {
-		backgroundImage: 'url(' + cssSafeUrl( imageUrl ) + ')',
-		backgroundSize: post.isExpanded ? 'contain' : 'cover',
-		backgroundRepeat: 'no-repeat',
-		backgroundPosition: 'center',
-	};
-
-	const classNames = classnames( className, 'reader-featured-image' );
-	const { width: naturalWidth, height: naturalHeight } = imageSize;
-	const newHeight = Math.min( ( naturalHeight / naturalWidth ) * imageWidth, imageHeight );
-	const newWidth = ( naturalWidth / naturalHeight ) * newHeight;
+	// const imageSize = {
+	// 	height: post.canonical_media.height,
+	// 	width: post.canonical_media.width,
+	// };
+	//const { width: naturalWidth, height: naturalHeight } = imageSize;
+	//const newHeight = ( naturalHeight / naturalWidth ) * imageWidth;
+	const newHeight = imageHeight || READER_IMAGE_HEIGHT;
 
 	featuredImageStyle.height = newHeight;
-	featuredImageStyle.width = newWidth;
+	featuredImageStyle.width = imageWidth || READER_CONTENT_WIDTH;
 
-	const divStyle = { height: newHeight, width: newWidth, margin: '0 auto' };
+	const divStyle = { height: newHeight, margin: '0 auto' };
+	const classNames = classnames( className, 'reader-featured-image' );
 
 	return (
 		<div style={ divStyle }>
@@ -52,15 +60,13 @@ const ReaderFeaturedImage = ( {
 };
 
 ReaderFeaturedImage.propTypes = {
-	post: PropTypes.object.isRequired,
+	canonicalMedia: PropTypes.object.isRequired,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
 };
 
 ReaderFeaturedImage.defaultProps = {
 	onClick: noop,
-	imageWidth: 600,
-	imageHeight: 400,
 };
 
 export default ReaderFeaturedImage;

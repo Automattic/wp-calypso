@@ -107,6 +107,7 @@ class ReaderCombinedCardPost extends Component {
 		} else if ( post.canonical_media ) {
 			featuredAsset = (
 				<ReaderFeaturedImage
+					canonicalMedia={ post.canonical_media }
 					imageWidth={ 100 }
 					imageUrl={ post.canonical_media.src }
 					href={ post.URL }
