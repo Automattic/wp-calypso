@@ -21,6 +21,13 @@ const EducationEarn = ( { siteSlug } ) => {
 			description={ translate(
 				'Accept credit and debit card payments on your website for just about anything.'
 			) }
+			links={ [
+				{
+					calypsoLink: true,
+					url: `/earn/${ siteSlug }`,
+					text: translate( 'Start making money' ),
+				},
+			] }
 			modalLinks={ [
 				{
 					calypsoLink: true,
@@ -35,7 +42,7 @@ const EducationEarn = ( { siteSlug } ) => {
 						courseSlug: COURSE_SLUGS.PAYMENTS_FEATURES,
 					},
 					onClick: openModal,
-					text: translate( 'Start making money' ),
+					text: translate( 'Learn more' ),
 				},
 			] }
 			illustration={ earnCardPrompt }
