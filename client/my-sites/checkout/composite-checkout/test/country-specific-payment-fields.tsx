@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
-import { CountrySpecificPaymentFields } from '../country-specific-payment-fields';
+import { CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
 
 const defaultProps = {
 	countryCode: 'BR',
@@ -14,13 +14,14 @@ const defaultProps = {
 		{
 			code: 'BR',
 			name: 'Brazil',
+			has_postal_codes: true,
 		},
 	],
-	getErrorMessage: jest.fn(),
+	getErrorMessages: jest.fn(),
 	getFieldValue: jest.fn(),
 	handleFieldChange: jest.fn(),
 	fieldClassName: 'country-brazil',
-	translate: ( string ) => string,
+	translate: ( text: string ) => text,
 };
 
 describe( '<CountrySpecificPaymentFields />', () => {
