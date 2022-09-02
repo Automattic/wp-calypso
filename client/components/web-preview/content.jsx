@@ -95,6 +95,7 @@ export default class WebPreviewContent extends Component {
 
 		if ( this.props.inlineCss !== prevProps.inlineCss ) {
 			const data = {
+				channel: 'preview-' + this.previewId,
 				type: 'inline-css',
 				inline_css: this.props.inlineCss,
 			};
