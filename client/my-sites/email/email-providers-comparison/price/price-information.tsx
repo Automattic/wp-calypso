@@ -30,14 +30,20 @@ const getFirstRenewalPrice = ( product: ProductListItem, currencyCode: string ):
 	return null;
 };
 
-const DiscountPriceInformation = ( { product }: { product: ProductListItem } ): ReactElement => {
+const DiscountPriceInformation = ( {
+	isEligibleForIntroductoryOffer,
+	product,
+}: {
+	isEligibleForIntroductoryOffer: boolean;
+	product: ProductListItem;
+} ): ReactElement => {
 	const translate = useTranslate();
 
 	return (
 		<div className="price-information__discount">
 			{ translate( 'Enjoy first year subscription at the discounted price' ) }
 
-			{ isGoogleWorkspace( product ) && (
+			{ isGoogleWorkspace( product ) && ! isEligibleForIntroductoryOffer && (
 				<InfoPopover position="right" showOnHover>
 					{ translate(
 						'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
@@ -125,7 +131,12 @@ const PriceInformation = ( {
 	}
 
 	if ( hasDiscount( product ) || isEligibleForIntroductoryOffer ) {
-		return <DiscountPriceInformation product={ product } />;
+		return (
+			<DiscountPriceInformation
+				product={ product }
+				isEligibleForIntroductoryOffer={ isEligibleForIntroductoryOffer }
+			/>
+		);
 	}
 
 	return null;
