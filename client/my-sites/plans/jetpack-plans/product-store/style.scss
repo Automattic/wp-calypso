@@ -13,32 +13,6 @@
 		margin: 0;
 	}
 
-	&__bundles-list--featured-item {
-		display: flex;
-		flex-direction: column;
-	}
-
-	&__bundles-list--featured-item .foldable-card {
-		box-shadow: none;
-		width: 100%;
-		margin: 0;
-		border-bottom: 1px solid var( --studio-gray-5 );
-	}
-
-	&__bundles-list--featured-item .foldable-card.is-expanded {
-		margin: 0;
-	}
-
-	&__bundles-list--featured-item .foldable-card.is-expanded .foldable-card__content {
-		padding: 0;
-	}
-
-	&__bundles-list--featured-item .foldable-card__main {
-		font-size: $font-body;
-		line-height: 24px;
-		font-weight: 600;
-	}
-
 	.display-price {
 		display: flex;
 		align-items: center;

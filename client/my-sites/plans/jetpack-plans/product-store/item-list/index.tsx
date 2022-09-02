@@ -1,4 +1,4 @@
-import { BundlesList } from '../bundles-list';
+import { BundlesList } from '../bundle-list';
 import { ProductsList } from '../products-list';
 import type { ItemsListProps } from '../types';
 
