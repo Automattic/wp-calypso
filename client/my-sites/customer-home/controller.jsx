@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { getQueryArg } from '@wordpress/url';
 import page from 'page';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
@@ -22,6 +23,7 @@ export default async function ( context, next ) {
 
 export function maybeRedirect( context, next ) {
 	const state = context.store.getState();
+	const dispatch = context.store.dispatch;
 	const slug = getSelectedSiteSlug( state );
 
 	if ( ! canCurrentUserUseCustomerHome( state ) ) {
@@ -36,9 +38,18 @@ export function maybeRedirect( context, next ) {
 	// or not to redirect to launchpad. The option, however, is loading stale data in horizon, and presumably,
 	// in production as well. The forceLoadLaunchpadData query param is a temporary patch to circumvent stale data, and
 	// will avoid a redirect.
+	const forceLoadLaunchpadDataParam = getQueryArg( window.location.href, 'forceLoadLaunchpadData' );
+
+	if ( forceLoadLaunchpadDataParam ) {
+		dispatch(
+			saveSiteSettings( siteId, {
+				launchpad_screen: 'off',
+			} )
+		);
+	}
+
 	const shouldRedirectToLaunchpad =
-		options?.launchpad_screen === 'full' &&
-		! getQueryArg( window.location.href, 'forceLoadLaunchpadData' );
+		options?.launchpad_screen === 'full' && ! forceLoadLaunchpadDataParam;
 
 	if ( shouldRedirectToLaunchpad && isEnabled( 'signup/launchpad' ) ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
