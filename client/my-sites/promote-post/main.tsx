@@ -1,7 +1,6 @@
 import './style.scss';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -20,8 +19,13 @@ export type TabOption = {
 	id: TabType;
 	name: string;
 };
-export default function PromotedPosts() {
-	const [ selectedTab, setSelectedTab ] = useState< TabType >( 'posts' );
+
+interface Props {
+	tab?: TabType;
+}
+
+export default function PromotedPosts( { tab }: Props ) {
+	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const { isLoading: campaignsIsLoading, data: campaignsData } = useCampaignsQuery(
 		selectedSiteId ?? 0
@@ -50,11 +54,7 @@ export default function PromotedPosts() {
 			<DocumentHead title={ translate( 'Advertising' ) } />
 			<SitePreview />
 			{ ! campaignsData?.length && ! campaignsIsLoading && <PostsListBanner /> }
-			<PromotePostTabBar
-				tabs={ tabs }
-				selectedTab={ selectedTab }
-				selectTab={ ( tab ) => setSelectedTab( tab ) }
-			/>
+			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' && campaignsData && (
 				<CampaignsList isLoading={ campaignsIsLoading } campaigns={ campaignsData } />
 			) }
