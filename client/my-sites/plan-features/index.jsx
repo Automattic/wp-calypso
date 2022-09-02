@@ -25,6 +25,7 @@ import {
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -48,6 +49,11 @@ import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import {
+	getHighlightedFeatures,
+	getPlanDescriptionForMobile,
+	getPlanFeatureAccessor,
+} from 'calypso/my-sites/plan-features-comparison/util';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -64,6 +70,7 @@ import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-p
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
@@ -82,7 +89,6 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesActionsWrapper from './plan-features-action-wrapper';
 import PlanFeaturesScroller from './scroller';
-
 import './style.scss';
 
 const noop = () => {};
@@ -323,6 +329,7 @@ export class PlanFeatures extends Component {
 			showPlanCreditsApplied,
 			isLaunchPage,
 			isInVerticalScrollingPlansExperiment,
+			flowName,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -377,9 +384,11 @@ export class PlanFeatures extends Component {
 				hideMonthly,
 			} = properties;
 			const { rawPrice, discountPrice, isMonthlyPlan } = properties;
-			const planDescription = isInVerticalScrollingPlansExperiment
-				? planConstantObj.getShortDescription()
-				: planConstantObj.getDescription();
+			const planDescription = getPlanDescriptionForMobile( {
+				flowName,
+				plan: planConstantObj,
+				isInVerticalScrollingPlansExperiment,
+			} );
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -764,13 +773,14 @@ export class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
-		const { isPlansPageQuickImprovements } = this.props;
+		const { isPlansPageQuickImprovements, flowName } = this.props;
 		const description = feature.getDescription
 			? feature.getDescription( undefined, this.props.domainName )
 			: null;
 		const classes = classNames( 'plan-features__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
+			'is-bold': feature.isHighlightedFeature,
 		} );
 
 		return (
@@ -780,6 +790,7 @@ export class PlanFeatures extends Component {
 				hideGridicon={
 					isPlansPageQuickImprovements || ( this.props.isReskinned ? false : this.props.withScroll )
 				}
+				hideInfoPopover={ isNewsletterOrLinkInBioFlow( flowName ) }
 				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>
 				<span className={ classes }>
@@ -896,6 +907,7 @@ PlanFeatures.propTypes = {
 	siteId: PropTypes.number,
 	sitePlan: PropTypes.object,
 	kindOfPlanTypeSelector: PropTypes.oneOf( [ 'interval', 'customer' ] ),
+	flowName: PropTypes.string,
 };
 
 PlanFeatures.defaultProps = {
@@ -950,6 +962,7 @@ const ConnectedPlanFeatures = connect(
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
 			isPlansPageQuickImprovements,
+			isInVerticalScrollingPlansExperiment,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -964,6 +977,7 @@ const ConnectedPlanFeatures = connect(
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 		const isLoggedInMonthlyPricing =
 			! isInSignup && ! isJetpack && kindOfPlanTypeSelector === 'interval';
+		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
@@ -1004,28 +1018,25 @@ const ConnectedPlanFeatures = connect(
 					isPlaceholder = true;
 				}
 
+				// Mobile view
 				if ( isInSignup ) {
-					switch ( siteType ) {
-						case 'blog':
-							if ( planConstantObj.getBlogSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject( planConstantObj.getBlogSignupFeatures() );
-							}
+					const featureAccessor = getPlanFeatureAccessor( {
+						flowName,
+						plan: planConstantObj,
+						isInVerticalScrollingPlansExperiment,
+					} );
+					if ( ! isPlansPageQuickImprovements && featureAccessor ) {
+						planFeatures = getPlanFeaturesObject( featureAccessor() );
+					}
 
-							break;
-						case 'grid':
-							if ( planConstantObj.getPortfolioSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getPortfolioSignupFeatures()
-								);
-							}
-
-							break;
-						default:
-							if ( ! isPlansPageQuickImprovements && planConstantObj.getSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupFeatures( currentPlan )
-								);
-							}
+					const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
+					if ( highlightedFeatures.length ) {
+						planFeatures = planFeatures.map( ( feature ) => {
+							return {
+								...feature,
+								isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
+							};
+						} );
 					}
 				}
 
@@ -1121,6 +1132,7 @@ const ConnectedPlanFeatures = connect(
 				planCredits &&
 				! isJetpackNotAtomic &&
 				! isInSignup,
+			flowName,
 		};
 	},
 	{
