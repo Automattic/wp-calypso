@@ -1,5 +1,6 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+/* stylelint-disable scss/at-import-no-partial-leading-underscore */
+@import '@wordpress/base-styles/_breakpoints';
+@import '@wordpress/base-styles/_mixins';
 
 $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', 'purple', 'yellow',
 	'biba', 'chloe-currie', 'emily', 'luis-carvelleda', 'mesh-gradient', 'paul-nyberg', 'tengfai';
@@ -23,6 +24,7 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 .pattern-picker__item {
 	flex: 1;
 	scroll-snap-align: center;
+
 	// iPhone aspect ratio
 	aspect-ratio: 0.48;
 	display: flex;
@@ -30,10 +32,12 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	justify-content: center;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 20px;
-	box-shadow: 2px 2px 10px 0 rgba( 66, 68, 90, 0.23 );
-	transition: background-position 1s ease-in-out, transform 0.2s ease-in-out,
+	box-shadow: 2px 2px 10px 0 rgb( 66 68 90 / 23% );
+	transition:
+		background-position 1s ease-in-out,
+		transform 0.2s ease-in-out,
 		opacity 0.1s ease-in-out;
-	border: 5px solid white;
+	border: 5px solid #fff;
 	margin: 20px 0;
 	cursor: pointer;
 	padding: 0;
@@ -56,13 +60,16 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 
 	.mshots-image-visible {
 		max-width: 100%;
+
+		// compensate for the item border to avoid cropping the image's top.
+		margin-top: 10px;
 	}
 }
 
 .pattern-picker__carousel-nav-button {
 	width: 40px;
 	height: 40px;
-	background: white;
+	background: #fff;
 	border: 1px solid #eee;
 	align-items: center;
 	// stylelint-disable-next-line scales/radii
@@ -71,7 +78,7 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	opacity: 0.5;
 	position: absolute;
 	top: 50%;
-	box-shadow: 1px 1px 3px 0 rgba( 0, 0, 0, 0.18 );
+	box-shadow: 1px 1px 3px 0 rgb( 0 0 0 / 18% );
 	transition: opacity 0.3s ease-in-out;
 	display: none;
 	cursor: pointer;
@@ -117,13 +124,14 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	}
 
 	use {
-		fill: white;
+		fill: #fff;
 	}
 
-	&:not( :disabled ):hover {
+	&:not(:disabled):hover {
 		svg {
 			display: inline;
 		}
+
 		span {
 			display: none;
 		}
