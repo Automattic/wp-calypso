@@ -112,19 +112,11 @@ function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designT
 	return getThankYouNoSiteDestination();
 }
 
-function getEmailSignupFlowDestination( dependencies, localeSlug ) {
-	if ( dependencies.cartItem ) {
-		return getSignupDestination( dependencies, localeSlug );
-	}
-
-	if ( dependencies.domainItem ) {
-		return addQueryArgs(
-			{ siteId: dependencies.siteId },
-			`/checkout/thank-you/features/email-license/${ dependencies.siteSlug }/:receiptId`
-		);
-	}
-
-	return '';
+function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
+	return addQueryArgs(
+		{ siteId },
+		`/checkout/thank-you/features/email-license/${ siteSlug }/:receiptId`
+	);
 }
 
 function getThankYouNoSiteDestination() {
