@@ -5,41 +5,53 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
 
 interface ProgressBarData {
-	flowName: string;
-	stepName: string;
+	flowName?: string;
+	stepName?: string;
 }
 
 interface Props {
+	progressBar?: ProgressBarData;
 	shouldShowLoadingScreen?: boolean;
 	isReskinned?: boolean;
 	rightComponent?: Node;
 	pageTitle?: string;
-	progressBar?: ProgressBarData;
 }
 
+const VARIATION_TITLES: Record< string, string > = {
+	newsletter: 'Newsletter',
+	'link-in-bio': 'Link in Bio',
+};
+
 const SignupHeader = ( {
-	pageTitle,
 	shouldShowLoadingScreen,
 	isReskinned,
 	rightComponent,
-	progressBar,
+	progressBar = {},
+	pageTitle,
 }: Props ) => {
 	const logoClasses = classnames( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
 	} );
-	const hasFlowProgress = useFlowProgress( progressBar );
+	const params = new URLSearchParams( window.location.search );
+	const variationName = params.get( 'variationName' );
+	const variationTitle = variationName && VARIATION_TITLES[ variationName ];
+	const showPageTitle = ( params.has( 'pageTitle' ) && variationTitle ) || Boolean( pageTitle );
+	const variablePageTitle = variationTitle || pageTitle;
+	const flowProgress = useFlowProgress(
+		variationName ? { flowName: variationName, stepName: progressBar.stepName } : progressBar
+	);
 
 	return (
 		<div className="signup-header">
-			{ progressBar && hasFlowProgress && ! shouldShowLoadingScreen && (
+			{ flowProgress && ! shouldShowLoadingScreen && (
 				<ProgressBar
-					className={ progressBar.flowName }
-					value={ hasFlowProgress.progress }
-					total={ hasFlowProgress.count }
+					className={ variationName ? variationName : progressBar.flowName }
+					value={ flowProgress.progress }
+					total={ flowProgress.count }
 				/>
 			) }
 			<WordPressLogo size={ 120 } className={ logoClasses } />
-			{ pageTitle && <h1>{ pageTitle }</h1> }
+			{ showPageTitle && <h1>{ variablePageTitle } </h1> }
 			{ /* This should show a sign in link instead of
 			   the progressIndicator on the account step. */ }
 			<div className="signup-header__right">{ ! shouldShowLoadingScreen && rightComponent }</div>

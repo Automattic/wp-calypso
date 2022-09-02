@@ -27,6 +27,7 @@ import {
 	isP2Plus,
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
+	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -69,6 +70,7 @@ import {
 	purchaseType,
 	getName,
 	shouldRenderMonthlyRenewalOption,
+	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -583,7 +585,6 @@ class ManagePurchase extends Component {
 
 	getPurchaseDescription() {
 		const { plan, purchase, theme, translate } = this.props;
-
 		if ( isPlan( purchase ) ) {
 			return plan.getDescription();
 		}
@@ -646,8 +647,36 @@ class ManagePurchase extends Component {
 					</>
 				);
 			}
-
 			return description;
+		}
+
+		if ( isDIFMProduct( purchase ) ) {
+			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
+			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
+				const { extraPageCount, numberOfIncludedPages } = difmTieredPurchaseDetails;
+				return (
+					<>
+						{ translate(
+							'A professionally built %(numberOfIncludedPages)d page website in 4 business days or less',
+							{
+								args: {
+									numberOfIncludedPages: numberOfIncludedPages,
+								},
+							}
+						) }{ ' ' }
+						{ translate(
+							'This purchase includes %(numberOfPages)d extra page.',
+							'This purchase includes %(numberOfPages)d extra pages.',
+							{
+								count: extraPageCount,
+								args: {
+									numberOfPages: extraPageCount,
+								},
+							}
+						) }
+					</>
+				);
+			}
 		}
 
 		return purchaseType( purchase );

@@ -263,9 +263,10 @@
 		font-size: $font-body-extra-small;
 		font-weight: 400;
 		line-height: 20px;
+		margin: 1rem 0;
 
 		svg {
-			margin-right: 6px;
+			margin-inline-end: 6px;
 		}
 	}
 }

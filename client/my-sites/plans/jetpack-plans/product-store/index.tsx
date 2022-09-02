@@ -15,17 +15,26 @@ import type { ViewType, ProductStoreProps } from './types';
 import './style.scss';
 
 const ProductStore: React.FC< ProductStoreProps > = ( {
-	enableUserLicensesDialog,
-	urlQueryArgs,
+	createCheckoutURL,
 	duration,
+	enableUserLicensesDialog,
+	onClickPurchase,
+	urlQueryArgs,
+	header,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const productSlugs = useProductSlugs( { siteId, duration } );
 
-	const [ currentView, setCurrentView ] = useState< ViewType >( 'products' );
+	const [ currentView, setCurrentView ] = useState< ViewType >( () => {
+		return urlQueryArgs?.view && [ 'products', 'bundles' ].includes( urlQueryArgs.view )
+			? urlQueryArgs.view
+			: 'products';
+	} );
 
 	return (
 		<div className="jetpack-product-store">
+			{ header }
+
 			{ enableUserLicensesDialog && <UserLicensesDialog siteId={ siteId } /> }
 
 			<div className="jetpack-product-store__pricing-banner">
@@ -33,7 +42,13 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			</div>
 
 			<ViewFilter currentView={ currentView } setCurrentView={ setCurrentView } />
-			<ItemsList currentView={ currentView } duration={ duration } siteId={ siteId } />
+			<ItemsList
+				currentView={ currentView }
+				duration={ duration }
+				siteId={ siteId }
+				createCheckoutURL={ createCheckoutURL }
+				onClickPurchase={ onClickPurchase }
+			/>
 			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 
 			<Recommendations />

@@ -179,7 +179,6 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
-			isProfessionalEmailPromotionAvailable,
 			redirectToAddDomainFlow,
 			domainAndPlanPackage,
 			translate,
@@ -238,7 +237,6 @@ export class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
-					isProfessionalEmailPromotionAvailable={ isProfessionalEmailPromotionAvailable }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					redirectTo={ redirectTo }
@@ -516,7 +514,7 @@ PlansFeaturesMain.propTypes = {
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-	isProfessionalEmailPromotionAvailable: PropTypes.bool,
+
 	onUpgradeClick: PropTypes.func,
 	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
@@ -538,7 +536,6 @@ PlansFeaturesMain.defaultProps = {
 	hidePremiumPlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
-	isProfessionalEmailPromotionAvailable: false,
 	showFAQ: true,
 	siteId: null,
 	siteSlug: '',

@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 /* cyrillic-ext */
 @font-face {
 	font-family: 'Inter';
@@ -73,6 +76,14 @@
 
 .jetpack-plans__heading {
 	padding: 1rem 0;
+}
+
+.main.is-wide-layout.jetpack-pricing-page-rework-v1 {
+	max-width: 1192px;
+
+	@include break-wide {
+		padding: 0;
+	}
 }
 
 .jetpack-plans__pricing-header {

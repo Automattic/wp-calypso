@@ -1,4 +1,6 @@
-import { localize } from 'i18n-calypso';
+import { englishLocales } from '@automattic/i18n-utils';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import i18n, { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -606,6 +608,28 @@ class DomainsStep extends Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
+		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+			const components = {
+				span: (
+					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
+					<span
+						role="button"
+						class="tailored-flow-subtitle__cta-text"
+						onClick={ this.handleDomainExplainerClick }
+					/>
+				),
+			};
+			return flowName === 'newsletter'
+				? translate(
+						'Help your Newsletter stand out with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+						{ components }
+				  )
+				: translate(
+						'Set your Link in Bio apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+						{ components }
+				  );
+		}
+
 		if ( isReskinned ) {
 			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
 		}
@@ -646,6 +670,10 @@ class DomainsStep extends Component {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
 	}
 
+	isTailoredFlow() {
+		return [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName );
+	}
+
 	renderContent() {
 		let content;
 		let sideContent;
@@ -658,7 +686,7 @@ class DomainsStep extends Component {
 			content = this.domainForm();
 		}
 
-		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
+		if ( ! this.props.stepSectionName && this.props.isReskinned && ! this.isTailoredFlow() ) {
 			sideContent = this.getSideContent();
 		}
 
@@ -726,7 +754,7 @@ class DomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned, hideBackButton } = this.props;
+		const { isAllDomains, translate, isReskinned } = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
@@ -735,6 +763,10 @@ class DomainsStep extends Component {
 		let isExternalBackUrl = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
+		const sitesBackLabelText =
+			englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
+				? translate( 'Back to Sites' )
+				: translate( 'Back to My Sites' );
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;
@@ -756,10 +788,10 @@ class DomainsStep extends Component {
 				backLabelText = translate( 'Back to General Settings' );
 			} else if ( 'sites-dashboard' === source ) {
 				backUrl = '/sites';
-				backLabelText = translate( 'Back to My Sites' );
+				backLabelText = sitesBackLabelText;
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
 				backUrl = '/sites/';
-				backLabelText = translate( 'Back to My Sites' );
+				backLabelText = sitesBackLabelText;
 			}
 
 			const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
@@ -785,7 +817,6 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				hideBack={ hideBackButton }
 				stepContent={
 					<div>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }

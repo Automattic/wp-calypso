@@ -210,7 +210,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )( spy, getState );
+			deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet', active: true } )(
+				spy,
+				getState
+			);
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_DEACTIVATE_REQUEST,
@@ -221,7 +224,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin deactivate request success action when request completes', async () => {
-			await deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )(
+			await deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet', active: true } )(
 				spy,
 				getState
 			);
@@ -235,7 +238,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', async () => {
-			await deactivatePlugin( 2916284, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
+			await deactivatePlugin( 2916284, { slug: 'fake', id: 'fake/fake', active: true } )(
+				spy,
+				getState
+			);
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_DEACTIVATE_REQUEST_FAILURE,
 				action: DEACTIVATE_PLUGIN,
@@ -332,15 +338,19 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should not dispatch actions when plugin already up-to-date', async () => {
-			const response = updatePlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )(
+		test( 'should dispatch site update actions when plugin already up-to-date', async () => {
+			await updatePlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack', update: true } )(
 				spy,
 				getState
 			);
 
-			// updatePlugin returns a rejected promise here
-			await expect( response ).rejects.toEqual( 'Error: Plugin already up-to-date.' );
-			expect( spy ).not.toHaveBeenCalled();
+			expect( spy ).toHaveBeenCalledWith( {
+				type: PLUGIN_UPDATE_REQUEST_SUCCESS,
+				action: UPDATE_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'jetpack/jetpack',
+				data: jetpackUpdated,
+			} );
 		} );
 	} );
 
@@ -460,10 +470,11 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			disableAutoupdatePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )(
-				spy,
-				getState
-			);
+			disableAutoupdatePlugin( site.ID, {
+				slug: 'akismet',
+				id: 'akismet/akismet',
+				autoupdate: true,
+			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST,
@@ -477,6 +488,7 @@ describe( 'actions', () => {
 			await disableAutoupdatePlugin( site.ID, {
 				slug: 'akismet',
 				id: 'akismet/akismet',
+				autoupdate: true,
 			} )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
@@ -489,7 +501,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', async () => {
-			await disableAutoupdatePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
+			await disableAutoupdatePlugin( site.ID, { slug: 'fake', id: 'fake/fake', autoupdate: true } )(
+				spy,
+				getState
+			);
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE,

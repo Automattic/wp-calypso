@@ -110,8 +110,7 @@ export const siteSetupFlow: Flow = {
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite, setBundledPluginSlug } =
-			useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
@@ -215,20 +214,14 @@ export const siteSetupFlow: Flow = {
 
 					// Check current theme: Does it have a plugin bundled?
 					// If so, send them to the plugin-bundle flow.
-					const theme_plugin = currentTheme?.taxonomies?.theme_plugin;
+					const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
 					if (
 						isEnabled( 'themes/plugin-bundling' ) &&
-						theme_plugin &&
-						theme_plugin.length > 0 &&
+						theme_software_set &&
+						theme_software_set.length > 0 &&
 						siteSlug
 					) {
-						setBundledPluginSlug( siteSlug, theme_plugin[ 0 ].slug ); // only install first plugin
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
-					}
-
-					// We know this theme doesn't have a plugin bundled, so clear it in the store
-					if ( siteSlug ) {
-						setBundledPluginSlug( siteSlug, '' );
 					}
 
 					return exitFlow( `/home/${ siteSlug }` );

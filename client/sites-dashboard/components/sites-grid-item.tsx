@@ -13,6 +13,20 @@ import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 import { ThumbnailLink } from './thumbnail-link';
 
+const SIZES_ATTR = [
+	'(min-width: 1400px) 401px',
+	'(min-width: 960px) calc(33vw - 48px)',
+	'(min-width: 660px) calc(50vw - 48px)',
+	'calc(100vw - 32px)',
+].join( ', ' );
+
+const ASPECT_RATIO = 16 / 11;
+
+const THUMBNAIL_DIMENSION = {
+	width: 401,
+	height: 401 / ASPECT_RATIO,
+};
+
 const badges = css( {
 	display: 'flex',
 	gap: '8px',
@@ -62,7 +76,13 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 		<SitesGridTile
 			leading={
 				<ThumbnailLink { ...siteDashboardUrlProps }>
-					<SiteItemThumbnail className={ siteThumbnail } site={ site } size={ 'medium' } />
+					<SiteItemThumbnail
+						className={ siteThumbnail }
+						site={ site }
+						width={ THUMBNAIL_DIMENSION.width }
+						height={ THUMBNAIL_DIMENSION.height }
+						sizesAttr={ SIZES_ATTR }
+					/>
 				</ThumbnailLink>
 			}
 			primary={

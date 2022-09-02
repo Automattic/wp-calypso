@@ -1,11 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
-import { Icon, check, info } from '@wordpress/icons';
+import { Icon, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import React, {
@@ -19,6 +20,7 @@ import React, {
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
 import { SUBSCRIBER_STORE } from '../../store';
+import { tip } from './icon';
 import './style.scss';
 
 interface Props {
@@ -27,6 +29,7 @@ interface Props {
 	showSkipBtn?: boolean;
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
+	allowEmptyFormSubmit?: boolean;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
 }
@@ -39,6 +42,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showSkipBtn,
 		showCsvUpload,
 		submitBtnName,
+		allowEmptyFormSubmit,
 		onSkipBtnClick,
 		onImportFinished,
 	} = props;
@@ -49,14 +53,26 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	/**
 	 * ↓ Fields
 	 */
+	const emailControlMaxNum = 10;
+	const emailControlPlaceholder = [
+		__( 'sibling@example.com' ),
+		__( 'parents@example.com' ),
+		__( 'friend@example.com' ),
+	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
 	const [ emails, setEmails ] = useState< string[] >( [] );
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
+	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
+	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
 	const [ formFileUploadElement ] = useState(
-		createElement( FormFileUpload, { name: 'import', onChange: onFileInputChange } )
+		createElement( FormFileUpload, {
+			name: 'import',
+			onChange: onFileInputChange,
+			disabled: inProgress,
+		} )
 	);
 
 	/**
@@ -69,12 +85,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	useEffect( () => {
 		getSubscribersImports( siteId );
 	}, [] );
-	// reset form when add/import starts
-	useEffect( () => {
-		inProgress && resetForm();
-	}, [ inProgress ] );
 	// run active job recognition process which updates state
 	useActiveJobRecognition( siteId );
+	useEffect( extendEmailFormControls, [ emails ] );
 
 	! inProgress && prevInProgress.current && onImportFinished?.();
 
@@ -93,7 +106,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		validEmails.length && addSubscribers( siteId, validEmails );
 		selectedFile && importCsvSubscribers( siteId, selectedFile );
 
-		! validEmails.length && ! selectedFile && onImportFinished?.();
+		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
 	}
 
 	function onEmailChange( value: string, index: number ) {
@@ -111,6 +124,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		const _isValidEmails = Array.from( isValidEmails );
 		_isValidEmails[ index ] = emailValidator.validate( value );
 		setIsValidEmails( _isValidEmails );
+	}
+
+	function setIsDirtyEmail( value: string, index: number ) {
+		const _isDirtyEmails = Array.from( isDirtyEmails );
+		_isDirtyEmails[ index ] = !! value;
+		setIsDirtyEmails( _isDirtyEmails );
 	}
 
 	function isValidExtension( fileName: string ) {
@@ -132,10 +151,19 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		isValid && setSelectedFile( file );
 	}
 
-	function resetForm() {
-		setEmails( [] );
-		setIsValidEmails( [] );
-		setSelectedFile( undefined );
+	function extendEmailFormControls() {
+		const validEmailsNum = isValidEmails.filter( ( x ) => x ).length;
+		const currentEmailFormControlsNum = emailFormControls.length;
+
+		if (
+			currentEmailFormControlsNum < emailControlMaxNum &&
+			currentEmailFormControlsNum === validEmailsNum
+		) {
+			const controls = Array.from( emailFormControls );
+			controls.push( __( 'Add another email' ) );
+
+			setEmailFormControls( controls );
+		}
 	}
 
 	/**
@@ -150,42 +178,53 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 			<div className={ 'add-subscriber__form--container' }>
 				{ inProgress && (
-					<Notice isDismissible={ false }>{ __( 'You have email list importing' ) }...</Notice>
+					<Notice isDismissible={ false }>{ __( 'Your email list is being uploaded' ) }...</Notice>
 				) }
 
-				<form onSubmit={ onFormSubmit }>
-					<TextControl
-						placeholder={ __( 'sibling@email.com' ) }
-						value={ emails[ 0 ] || '' }
-						help={ isValidEmails[ 0 ] ? <Icon icon={ check } /> : undefined }
-						onChange={ ( value ) => onEmailChange( value, 0 ) }
-					/>
-					<TextControl
-						placeholder={ __( 'parents@email.com' ) }
-						value={ emails[ 1 ] || '' }
-						help={ isValidEmails[ 1 ] ? <Icon icon={ check } /> : undefined }
-						onChange={ ( value ) => onEmailChange( value, 1 ) }
-					/>
-					<TextControl
-						placeholder={ __( 'friend@email.com' ) }
-						value={ emails[ 2 ] || '' }
-						help={ isValidEmails[ 2 ] ? <Icon icon={ check } /> : undefined }
-						onChange={ ( value ) => onEmailChange( value, 2 ) }
-					/>
+				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>
+					{ emailFormControls.map( ( placeholder, i ) => {
+						const showError = isDirtyEmails[ i ] && ! isValidEmails[ i ] && emails[ i ];
+
+						return (
+							<div key={ i }>
+								<TextControl
+									className={ showError ? 'is-error' : '' }
+									disabled={ inProgress }
+									placeholder={ placeholder }
+									value={ emails[ i ] || '' }
+									help={ isValidEmails[ i ] ? <Icon icon={ check } /> : undefined }
+									onChange={ ( value ) => onEmailChange( value, i ) }
+									onBlur={ () => setIsDirtyEmail( emails[ i ], i ) }
+								/>
+
+								{ showError && (
+									<FormInputValidation
+										isError={ true }
+										text={ __( 'The format of the email is invalid' ) }
+									/>
+								) }
+							</div>
+						);
+					} ) }
+
+					{ emailControlMaxNum === isValidEmails.filter( ( x ) => x ).length && (
+						<FormInputValidation icon={ 'tip' } isError={ false } isWarning={ true } text={ '' }>
+							<Icon icon={ tip } />
+							{ __(
+								'Nice start there! If you have more subscribers to add, we’ll help you get them added later.'
+							) }
+						</FormInputValidation>
+					) }
 
 					{ ! isSelectedFileValid && (
-						<label className={ 'add-subscriber__form-label-error' }>
+						<FormInputValidation isError={ true } text={ '' }>
 							{ createInterpolateElement(
 								__(
-									'<span><icon /> Sorry, you can only upload a CSV file.</span><uploadBtn>Select another file</uploadBtn>'
+									'Sorry, you can only upload CSV files right now. Most providers will let you export this from your settings. <uploadBtn>Select another file</uploadBtn>'
 								),
-								{
-									span: createElement( 'span' ),
-									icon: createElement( Icon, { icon: info, size: 20 } ),
-									uploadBtn: formFileUploadElement,
-								}
+								{ uploadBtn: formFileUploadElement }
 							) }
-						</label>
+						</FormInputValidation>
 					) }
 
 					{ isSelectedFileValid && selectedFile && (
@@ -225,8 +264,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						<p className={ 'add-subscriber__form--disclaimer' }>
 							{ createInterpolateElement(
 								__(
-									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to ' +
-										'email each person on your list. <Button>Learn more</Button>'
+									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to email each person on your list. <Button>Learn more</Button>'
 								),
 								{
 									Button: createElement( Button, {

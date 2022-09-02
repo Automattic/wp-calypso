@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -33,7 +34,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -43,7 +44,7 @@ import {
 	getPluginOnSites,
 	getSiteObjectsWithPlugin,
 	getSiteObjectsWithoutPlugin,
-	isRequestingForSites,
+	isRequestingForAllSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
@@ -85,9 +86,7 @@ function PluginDetails( props ) {
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
 	const isRequestingSites = useSelector( checkRequestingSites );
-	const requestingPluginsForSites = useSelector( ( state ) =>
-		isRequestingForSites( state, siteIds )
-	);
+	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
 	const { localizePath } = useLocalizedPlugins();
 
@@ -217,27 +216,37 @@ function PluginDetails( props ) {
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
 	useEffect( () => {
-		const items = [
-			{
-				label: translate( 'Plugins' ),
-				href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
-				id: 'plugins',
-				helpBubble: translate(
-					'Add new functionality and integrations to your site with plugins.'
-				),
-			},
-		];
-
-		if ( fullPlugin.name && props.pluginSlug ) {
-			items.push( {
-				label: fullPlugin.name,
-				href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
-				id: `plugin-${ props.pluginSlug }`,
-			} );
+		if ( breadcrumbs.length === 0 ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: translate( 'Plugins' ),
+					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
+					id: 'plugins',
+					helpBubble: translate(
+						'Add new functionality and integrations to your site with plugins.'
+					),
+				} )
+			);
 		}
 
-		dispatch( updateBreadcrumbs( items ) );
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite?.slug, dispatch, translate, localizePath ] );
+		if ( fullPlugin.name && props.pluginSlug ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: fullPlugin.name,
+					href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
+					id: `plugin-${ props.pluginSlug }`,
+				} )
+			);
+		}
+	}, [
+		fullPlugin.name,
+		props.pluginSlug,
+		selectedSite,
+		breadcrumbs.length,
+		dispatch,
+		translate,
+		localizePath,
+	] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -302,7 +311,11 @@ function PluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryJetpackPlugins siteIds={ siteIds } />
+			{ selectedSite ? (
+				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
+			) : (
+				<QueryAllJetpackSitesPlugins />
+			) }
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
@@ -387,7 +400,6 @@ function LegacyPluginDetails( props ) {
 	const {
 		getPageTitle,
 		analyticsPath,
-		siteIds,
 		selectedSite,
 		selectedOrAllSites,
 		isWide,
@@ -418,7 +430,11 @@ function LegacyPluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryJetpackPlugins siteIds={ siteIds } />
+			{ selectedSite ? (
+				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
+			) : (
+				<QueryAllJetpackSitesPlugins />
+			) }
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />

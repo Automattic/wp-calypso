@@ -269,7 +269,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackConnectionManager() ||
 			this.isFromJetpackSocialPlugin() ||
 			this.isFromMyJetpack() ||
-			this.isFromJetpackSearchPlugin()
+			this.isFromJetpackSearchPlugin() ||
+			this.isFromJetpackVideoPressPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -370,6 +371,11 @@ export class JetpackAuthorize extends Component {
 	isFromJetpackSocialPlugin( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'jetpack-social' );
+	}
+
+	isFromJetpackVideoPressPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-videopress' );
 	}
 
 	isFromMyJetpack( props = this.props ) {

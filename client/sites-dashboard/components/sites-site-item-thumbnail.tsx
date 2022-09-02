@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const NoIcon = styled.div( {
 	fontSize: 'xx-large',
@@ -12,8 +12,9 @@ const NoIcon = styled.div( {
 	userSelect: 'none',
 } );
 
-interface SiteItemThumbnailProps extends ComponentProps< typeof SiteThumbnail > {
+interface SiteItemThumbnailProps extends Omit< ComponentProps< typeof SiteThumbnail >, 'alt' > {
 	site: SiteExcerptData;
+	alt?: string;
 }
 
 export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) => {
@@ -40,7 +41,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 		<SiteThumbnail
 			{ ...props }
 			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
-			alt={ site.name }
+			alt={ site.name || __( 'Site thumbnail' ) }
 			bgColorImgUrl={ site.icon?.img }
 		>
 			{ site.icon ? (
@@ -63,8 +64,12 @@ function getFirstGrapheme( input: string ) {
 		const segmenter = new Intl.Segmenter();
 		const [ firstSegmentData ] = segmenter.segment( input );
 
-		return firstSegmentData.segment;
+		return firstSegmentData?.segment ?? '';
 	}
 
-	return input.charAt( 0 );
+	const codePoint = input.codePointAt( 0 );
+	if ( codePoint ) {
+		return String.fromCodePoint( codePoint );
+	}
+	return '';
 }

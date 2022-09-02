@@ -48,7 +48,6 @@ import {
 	FEATURE_EMAIL_SUPPORT_SIGNUP,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
-	FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 	FEATURE_FREE_THEMES,
 	FEATURE_FREE_THEMES_SIGNUP,
 	FEATURE_FREE_WORDPRESS_THEMES,
@@ -360,7 +359,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
 				'Unlock unlimited, expert customer support via email.'
 		),
-	getPlanCompareFeatures: ( experiment, { isProfessionalEmailPromotionAvailable } = {} ) =>
+	getPlanCompareFeatures: ( experiment ) =>
 		compact(
 			experiment
 				? [
@@ -374,7 +373,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 						FEATURE_FREE_THEMES_V2,
 						FEATURE_COLLECT_PAYMENTS_V3,
 						FEATURE_BLANK,
-
 						FEATURE_6GB_STORAGE,
 						FEATURE_BASIC_DESIGN_V2,
 						FEATURE_SEO_PREVIEW_TOOLS_V2,
@@ -386,7 +384,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 				: [
 						// pay attention to ordering, shared features should align on /plan page
 						FEATURE_CUSTOM_DOMAIN,
-						isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 						FEATURE_HOSTING,
 						FEATURE_JETPACK_ESSENTIAL,
 						FEATURE_EMAIL_SUPPORT,
@@ -452,10 +449,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
 		),
-	getPlanCompareFeatures: (
-		experiment,
-		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
-	) =>
+	getPlanCompareFeatures: ( experiment, { isLoggedInMonthlyPricing } = {} ) =>
 		compact(
 			experiment
 				? [
@@ -502,7 +496,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				: [
 						// pay attention to ordering, shared features should align on /plan page
 						FEATURE_CUSTOM_DOMAIN,
-						isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 						isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 						isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 						FEATURE_HOSTING,
@@ -609,10 +602,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.'
 		),
-	getPlanCompareFeatures: (
-		experiment,
-		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
-	) =>
+	getPlanCompareFeatures: ( experiment, { isLoggedInMonthlyPricing } = {} ) =>
 		compact(
 			experiment
 				? [
@@ -645,7 +635,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				: [
 						// pay attention to ordering, shared features should align on /plan page
 						FEATURE_CUSTOM_DOMAIN,
-						isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 						isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 						isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 						FEATURE_HOSTING,
@@ -734,10 +723,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
-	getPlanCompareFeatures: (
-		experiment,
-		{ isLoggedInMonthlyPricing, isProfessionalEmailPromotionAvailable } = {}
-	) =>
+	getPlanCompareFeatures: ( experiment, { isLoggedInMonthlyPricing } = {} ) =>
 		compact(
 			experiment
 				? [
@@ -776,7 +762,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 				: [
 						// pay attention to ordering, shared features should align on /plan page
 						FEATURE_CUSTOM_DOMAIN,
-						isProfessionalEmailPromotionAvailable && FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 						isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 						isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 						FEATURE_HOSTING,
@@ -1178,6 +1163,10 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		translate(
 			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
 		),
+	getFeaturedText: () =>
+		translate(
+			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
+		),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_PRODUCT_BACKUP,
 		FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
@@ -1248,6 +1237,10 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 	getDescription: () =>
 		translate(
 			'Get the full power of Jetpack with all Security, Performance, Growth, and Design tools.'
+		),
+	getFeaturedText: () =>
+		translate(
+			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.'
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCardFeatures: () => [

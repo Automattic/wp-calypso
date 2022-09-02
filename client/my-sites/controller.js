@@ -11,6 +11,7 @@ import { composeHandlers } from 'calypso/controller/shared';
 import { render } from 'calypso/controller/web-util';
 import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
@@ -160,7 +161,12 @@ export function renderNoVisibleSites( context ) {
 }
 
 function renderSelectedSiteIsDomainOnly( reactContext, selectedSite ) {
-	reactContext.primary = <DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />;
+	reactContext.primary = (
+		<>
+			<PageViewTracker path="/view/:site" title="Domain Only" />
+			<DomainOnly siteId={ selectedSite.ID } hasNotice={ false } />
+		</>
+	);
 
 	reactContext.secondary = createNavigation( reactContext );
 

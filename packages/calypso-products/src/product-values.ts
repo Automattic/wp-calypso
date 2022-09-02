@@ -2,6 +2,8 @@ export { getDomain } from './get-domain';
 export * from './get-jetpack-item-term-variants';
 export { getJetpackProductCallToAction } from './get-jetpack-product-call-to-action';
 export { getJetpackProductDescription } from './get-jetpack-product-description';
+export { getJetpackProductShortDescription } from './get-jetpack-product-short-description';
+export { getJetpackProductFeaturedText } from './get-jetpack-product-featured-text';
 export { getJetpackProductDisclaimer } from './get-jetpack-product-disclaimer';
 export { getJetpackProductDisplayName } from './get-jetpack-product-display-name';
 export { getJetpackProductShortName } from './get-jetpack-product-short-name';

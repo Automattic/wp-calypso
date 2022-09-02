@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
@@ -111,12 +112,13 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	const shouldShowManageButton = useMemo( () => {
 		return jetpackNonAtomic || ( isJetpack && ( hasInstallPurchasedPlugins || hasManagePlugins ) );
 	}, [ jetpackNonAtomic, isJetpack, hasInstallPurchasedPlugins, hasManagePlugins ] );
+	const { localizePath } = useLocalizedPlugins();
 
 	useEffect( () => {
 		const items = [
 			{
 				label: translate( 'Plugins' ),
-				href: `/plugins/${ selectedSite?.slug || '' }`,
+				href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 				id: 'plugins',
 				helpBubble: translate(
 					'Add new functionality and integrations to your site with plugins.'
@@ -127,7 +129,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 		if ( category ) {
 			items.push( {
 				label: categoryName,
-				href: `/plugins/browse/${ category }/${ selectedSite?.slug || '' }`,
+				href: localizePath( `/plugins/browse/${ category }/${ selectedSite?.slug || '' }` ),
 				id: 'category',
 			} );
 		}
@@ -135,17 +137,16 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 		if ( search ) {
 			items.push( {
 				label: translate( 'Search Results' ),
-				href: `/plugins/${ selectedSite?.slug || '' }?s=${ search }`,
+				href: localizePath( `/plugins/${ selectedSite?.slug || '' }?s=${ search }` ),
 				id: 'plugins-search',
 			} );
 		}
 
 		dispatch( updateBreadcrumbs( items ) );
-	}, [ selectedSite?.slug, search, category, categoryName, dispatch, translate ] );
+	}, [ selectedSite?.slug, search, category, categoryName, dispatch, translate, localizePath ] );
 
 	return (
 		<FixedNavigationHeader
-			className="plugins-browser__header"
 			navigationItems={ breadcrumbs }
 			compactBreadcrumb={ isMobile }
 			ref={ navigationHeaderRef }

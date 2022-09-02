@@ -17,8 +17,6 @@ function wpcom_tutorials() {
 	return WPCom_Tutorials::get_instance();
 }
 
-// phpcs:disable Squiz.Commenting.FunctionComment.ParamCommentFullStop
-// ^ it doesn't like the params for $options, despite this being Core style.
 /**
  * Registers a Tutorial.
  *
@@ -26,13 +24,14 @@ function wpcom_tutorials() {
  * @param array  $options {
  *   Options for the Tutorial with the following shape.
  *
- *   @type string $title The displayed title for this Tutorial
+ *   @type string $title The displayed title for this Tutorial.
  *   @type array  $tasks {
- *     An array of $tasks, each of which has:
- *     {
- *       @type string $id    A unique identifier for the Task
- *       @type string $title What is displayed as the Task
- *     }
+ *      An array of $tasks.
+ *
+ *      @type array $task {
+ *          @type string $id    A unique identifier for the Task.
+ *          @type string $title What is displayed as the Task.
+ *      }
  *   }
  * }
  *
@@ -41,7 +40,6 @@ function wpcom_tutorials() {
 function wpcom_register_tutorial( $tutorial_id, $options ) {
 	return wpcom_tutorials()->register( $tutorial_id, $options );
 }
-// phpcs:enable
 
 /**
  * Retrieves a Tutorial from the registry.

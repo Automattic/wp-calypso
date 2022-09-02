@@ -230,14 +230,16 @@ export class PluginsList extends Component {
 		this.props.removePluginStatuses( 'completed', 'error' );
 	}
 
-	doActionOverSelected( actionName, action ) {
+	doActionOverSelected( actionName, action, selectedPlugins ) {
+		if ( ! selectedPlugins ) {
+			selectedPlugins = this.props.plugins.filter( this.isSelected );
+		}
 		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug } ) =>
 			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginStatuses();
-		this.props.plugins
-			.filter( this.isSelected ) // only use selected sites
+		selectedPlugins
 			.filter( ( plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
@@ -318,14 +320,14 @@ export class PluginsList extends Component {
 		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
 	};
 
-	getConfirmationText() {
+	getConfirmationText( selectedPlugins ) {
 		const pluginsList = {};
 		const sitesList = {};
 		let pluginName;
 		let siteName;
-		const { plugins, translate } = this.props;
+		const { translate } = this.props;
 
-		plugins.filter( this.isSelected ).forEach( ( plugin ) => {
+		selectedPlugins.forEach( ( plugin ) => {
 			pluginsList[ plugin.slug ] = true;
 			pluginName = plugin.name || plugin.slug;
 
@@ -412,44 +414,43 @@ export class PluginsList extends Component {
 		}
 	}
 
-	removePluginDialog = () => {
+	removePluginDialog = ( selectedPlugin ) => {
 		const { plugins, translate } = this.props;
+
+		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
 
 		const message = (
 			<div>
-				<span>{ this.getConfirmationText() }</span>
+				<span>{ this.getConfirmationText( selectedPlugins ) }</span>
 				<span>{ translate( 'Do you want to continue?' ) }</span>
 			</div>
 		);
 
-		const isJetpackIncluded = plugins
-			.filter( this.isSelected )
-			.some( ( { slug } ) => slug === 'jetpack' );
+		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
 		acceptDialog(
 			message,
-			isJetpackIncluded ? this.removeSelectedWithJetpack : this.removeSelected,
+			isJetpackIncluded
+				? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
+				: ( accepted ) => this.removeSelected( accepted, selectedPlugins ),
 			translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } )
 		);
 	};
 
-	removeSelected = ( accepted ) => {
+	removeSelected = ( accepted, selectedPlugins ) => {
 		if ( accepted ) {
-			this.doActionOverSelected( 'removing', this.props.removePlugin );
+			this.doActionOverSelected( 'removing', this.props.removePlugin, selectedPlugins );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
 		}
 	};
 
-	removeSelectedWithJetpack = ( accepted ) => {
+	removeSelectedWithJetpack = ( accepted, selectedPlugins ) => {
 		if ( accepted ) {
-			const { plugins } = this.props;
-
-			if ( plugins.filter( this.isSelected ).length === 1 ) {
+			if ( selectedPlugins.length === 1 ) {
 				this.setState( { removeJetpackNotice: true } );
 				this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
 			} else {
 				let waitForRemove = false;
-
 				this.doActionOverSelected( 'removing', ( site, plugin ) => {
 					waitForRemove = true;
 					this.props.removePlugin( site, plugin );
@@ -555,7 +556,7 @@ export class PluginsList extends Component {
 					deactivateSelected={ this.deactivateSelected }
 					setAutoupdateSelected={ this.setAutoupdateSelected }
 					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
-					removePluginNotice={ this.removePluginDialog }
+					removePluginNotice={ () => this.removePluginDialog() }
 					setSelectionState={ this.setBulkSelectionState }
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some(
@@ -575,6 +576,7 @@ export class PluginsList extends Component {
 						pluginUpdateCount={ this.props.pluginUpdateCount }
 						toggleBulkManagement={ this.toggleBulkManagement }
 						updateAllPlugins={ this.updateAllPlugins }
+						removePluginNotice={ this.removePluginDialog }
 					/>
 				) : (
 					<>

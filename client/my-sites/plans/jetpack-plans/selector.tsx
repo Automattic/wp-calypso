@@ -209,7 +209,9 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			{ nav }
 
 			<Main
-				className={ classNames( 'selector__main', iterationClassName, 'fs-unmask' ) }
+				className={ classNames( 'selector__main', iterationClassName, 'fs-unmask', {
+					'jetpack-pricing-page-rework-v1': isEnabled( 'jetpack/pricing-page-rework-v1' ),
+				} ) }
 				id={ MAIN_CONTENT_ID }
 				wideLayout
 			>
@@ -221,15 +223,14 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				/>
 
 				{ isEnabled( 'jetpack/pricing-page-rework-v1' ) ? (
-					<>
-						{ header }
-
-						<ProductStore
-							enableUserLicensesDialog={ enableUserLicensesDialog }
-							urlQueryArgs={ urlQueryArgs }
-							duration={ currentDuration }
-						/>
-					</>
+					<ProductStore
+						createCheckoutURL={ createProductURL }
+						duration={ currentDuration }
+						enableUserLicensesDialog={ enableUserLicensesDialog }
+						onClickPurchase={ selectProduct }
+						urlQueryArgs={ urlQueryArgs }
+						header={ header }
+					/>
 				) : (
 					<>
 						{ siteId && enableUserLicensesDialog && (
