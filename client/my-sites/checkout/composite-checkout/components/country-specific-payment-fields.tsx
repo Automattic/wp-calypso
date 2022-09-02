@@ -138,7 +138,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						label: translate( 'Taxpayer Identification Number', {
 							comment:
 								'Individual taxpayer registry identification required ' +
@@ -156,7 +156,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						label: translate( 'NIK - Indonesia Identity Card Number', {
 							comment:
 								'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
@@ -173,7 +173,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						placeholder: ' ',
 						label: translate( 'PAN Number {{panNumberPopover/}}', {
 							comment: 'India PAN number ',
@@ -193,7 +193,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						placeholder: ' ',
 						label: translate( 'GSTIN (optional)', {
 							comment: 'India PAN number ',
@@ -210,7 +210,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						// This is the same as what would be automatically provided by
 						// CountrySpecificPaymentField but is required here by TypeScript to
 						// validate the component props.
@@ -235,7 +235,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						maxLength: 40,
 						label: translate( 'Address' ),
 					} }
@@ -250,7 +250,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						inputMode: 'numeric',
 						label: translate( 'Street Number', {
 							comment: 'Street number associated with address on credit card form',
@@ -267,7 +267,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						maxLength: 40,
 						label: translate( 'Address Line 2' ),
 						text: translate( '+ Add Address Line 2' ),
@@ -283,7 +283,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						label: translate( 'City' ),
 					} }
 				/>
@@ -298,7 +298,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 						getErrorMessages={ getErrorMessages }
 						handleFieldChange={ handleFieldChange }
 						disabled={ disableFields }
-						props={ {
+						additionalProps={ {
 							countryCode,
 							label: translate( 'State' ),
 						} }
@@ -314,7 +314,7 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					props={ {
+					additionalProps={ {
 						label: translate( 'Postal Code' ),
 					} }
 				/>

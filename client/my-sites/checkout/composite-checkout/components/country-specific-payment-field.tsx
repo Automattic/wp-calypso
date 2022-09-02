@@ -11,9 +11,9 @@ export interface CountrySpecificPaymentFieldProps< P > {
 	 * The React component to render.
 	 *
 	 * For example, `Input`, but it can be anything. When the component is
-	 * rendered, it will be provided with the props specified in the `props` prop
+	 * rendered, it will be provided with the props specified in the `additionalProps` prop
 	 * combined with some additional props, listed below. Note that if any of the
-	 * following props are also provided in `props`, those props will override
+	 * following props are also provided in `additionalProps`, those props will override
 	 * the automatic ones.
 	 *
 	 * - `value` will be provided with getFieldValue(`fieldName`).
@@ -32,11 +32,14 @@ export interface CountrySpecificPaymentFieldProps< P > {
 
 	/**
 	 * The props for the the `componentClass` element.
+	 *
+	 * These will override any of the props automatically provided by this
+	 * component. See `componentClass` for details on the automatic props.
 	 */
-	props: P;
+	additionalProps: P;
 
 	/**
-	 * A convenience prop for `props.disabled`.
+	 * A convenience prop for `additionalProps.disabled`.
 	 */
 	disabled?: boolean;
 
@@ -59,7 +62,7 @@ export interface CountrySpecificPaymentFieldProps< P > {
 interface CreateFieldArgs< P > {
 	fieldName: string;
 	componentClass: ComponentType< P >;
-	props: P;
+	additionalProps: P;
 	value: string;
 	errorMessage: string;
 	handleFieldChange: ( fieldName: string, newValue: string ) => void;
@@ -77,7 +80,7 @@ interface CreateFieldArgs< P > {
 export function CountrySpecificPaymentField< P >( {
 	fieldName,
 	componentClass,
-	props,
+	additionalProps,
 	disabled,
 	getErrorMessages,
 	getFieldValue,
@@ -87,7 +90,7 @@ export function CountrySpecificPaymentField< P >( {
 	return createField( {
 		fieldName,
 		componentClass,
-		props,
+		additionalProps,
 		value: getFieldValue( fieldName ),
 		errorMessage: errorMessages.length > 0 ? errorMessages[ 0 ] : '',
 		handleFieldChange,
@@ -98,7 +101,7 @@ export function CountrySpecificPaymentField< P >( {
 function createField< P >( {
 	fieldName,
 	componentClass,
-	props,
+	additionalProps,
 	value,
 	errorMessage,
 	handleFieldChange,
@@ -120,7 +123,7 @@ function createField< P >( {
 			labelClass: 'checkout__form-label',
 			disabled,
 		},
-		props
+		additionalProps
 	);
 
 	return createElement( componentClass, fieldProps );
