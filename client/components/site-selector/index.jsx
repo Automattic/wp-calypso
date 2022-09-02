@@ -502,12 +502,7 @@ export class SiteSelector extends Component {
 						aria-label={ this.props.translate( 'Go to Sites' ) }
 						title={ this.props.translate( 'Go to Sites' ) }
 					>
-						{ sites.length > 0
-							? this.props.translate( 'Manage %(count)d site', 'Manage %(count)d sites', {
-									count: sites.length,
-									args: { count: sites.length },
-							  } )
-							: this.props.translate( 'Manage sites' ) }
+						{ this.props.translate( 'Manage sites' ) }
 					</Button>
 				) }
 				{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
