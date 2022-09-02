@@ -4,12 +4,12 @@ import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
 import type { FC, RefObject } from 'react';
 
-type FormPhoneMediaValue = {
+export type FormPhoneMediaValue = {
 	value: string;
 	countryCode: string;
 };
 
-type FormPhoneMediaInputProps = {
+export type FormPhoneMediaInputProps = {
 	additionalClasses?: string;
 	label: string;
 	name?: string;
