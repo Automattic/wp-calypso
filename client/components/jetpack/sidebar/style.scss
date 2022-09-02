@@ -2,6 +2,22 @@
 
 .site-selector__jetpack-cloud {
 	display: block;
+
+	.site-selector__actions {
+		padding: 16px;
+	}
+
+	.site-selector__add-new-site {
+		border-color: var( --color-sidebar-text );
+		border-radius: 2px;
+
+		&,
+		&:hover {
+			box-shadow: 1px solid var( --color-neutral-20 );
+			background-color: var( --color-sidebar-background );
+			color: var( --color-sidebar-text );
+		}
+	}
 }
 
 // Menu links
