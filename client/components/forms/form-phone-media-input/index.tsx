@@ -2,7 +2,8 @@ import { FormInputValidation } from '@automattic/components';
 import classnames from 'classnames';
 import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
-import type { FC, RefObject } from 'react';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { FC, MutableRefObject } from 'react';
 
 export type FormPhoneMediaValue = {
 	value: string;
@@ -19,9 +20,9 @@ export type FormPhoneMediaInputProps = {
 	errorMessage?: string;
 	isError?: boolean;
 	onChange: ( newValueAndCountry: FormPhoneMediaValue ) => void;
-	countriesList: { code: string; name: string }[];
+	countriesList: CountryListItem[];
 	enableStickyCountry?: boolean;
-	inputRef?: RefObject< HTMLInputElement >;
+	inputRef?: MutableRefObject< HTMLInputElement | undefined >;
 };
 
 const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
@@ -47,10 +48,9 @@ const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
 					inputRef={ inputRef }
 					name={ name }
 					onChange={ onChange }
-					value={ value.value }
+					value={ { value: value.value, countryCode: value.countryCode.toUpperCase() } }
 					countriesList={ countriesList }
 					enableStickyCountry={ enableStickyCountry }
-					countryCode={ value.countryCode.toUpperCase() }
 					className={ className }
 					isError={ isError }
 					disabled={ disabled }
