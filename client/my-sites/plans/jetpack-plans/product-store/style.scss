@@ -201,12 +201,6 @@
 		font-size: $font-body;
 		font-weight: 600;
 	}
-
-	&__items-list .button.is-primary {
-		color: var( --color-text-inverted );
-		min-width: 5.7em;
-		border: none;
-	}
 }
 
 .jetpack-product-store__products-list-all-header {
