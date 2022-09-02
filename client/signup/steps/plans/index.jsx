@@ -341,7 +341,7 @@ export class PlansStep extends Component {
 		if ( useEmailOnboardingSubheader ) {
 			if ( this.state.isDesktop ) {
 				return translate(
-					"Pick one that's right for you and unlock features that help you grow. Or {{link}}continue with setting up your Professional Email{{/link}}.",
+					"Pick a plan that's right for you and unlock features that help you grow. Or {{link}}continue with setting up your Professional Email{{/link}}.",
 					{ components: { link: freePlanButton } }
 				);
 			}
