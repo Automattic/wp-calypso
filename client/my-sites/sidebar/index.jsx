@@ -136,15 +136,15 @@ export const MySitesSidebarUnified = ( { path } ) => {
 						/>
 					);
 				} ) }
-				<AddNewSite
-					key="add-new-site"
-					title={ translate( 'Add new site' ) }
-					icon="dashicons-plus-alt"
-				/>
 				<CollapseSidebar
 					key="collapse"
 					title={ translate( 'Collapse menu' ) }
 					icon="dashicons-admin-collapse"
+				/>
+				<AddNewSite
+					key="add-new-site"
+					title={ translate( 'Add new site' ) }
+					icon="dashicons-plus-alt"
 				/>
 			</Sidebar>
 			<AsyncLoad
