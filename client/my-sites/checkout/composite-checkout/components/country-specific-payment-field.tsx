@@ -1,9 +1,11 @@
 import { createElement } from 'react';
 import type { ComponentType } from 'react';
 
-export type OnFieldChange = ( event: { target: { name: string; value: string } } ) => void;
+export type FieldValue = unknown;
+export type FieldChangeEvent< V > = { target: { value: V } };
+export type OnFieldChange< V > = ( event: FieldChangeEvent< V > ) => void;
 
-export interface InteriorFieldProps {
+export interface InteriorFieldProps< V extends FieldValue > {
 	value?: string;
 	additionalClasses?: string[];
 	isError?: boolean;
@@ -12,11 +14,14 @@ export interface InteriorFieldProps {
 	autoComplete?: string;
 	labelClass?: string;
 	disabled?: boolean;
-	onBlur?: OnFieldChange;
-	onChange?: OnFieldChange;
+	onBlur?: OnFieldChange< V >;
+	onChange?: OnFieldChange< V >;
 }
 
-export interface CountrySpecificPaymentFieldProps< P extends InteriorFieldProps > {
+export interface CountrySpecificPaymentFieldProps<
+	P extends InteriorFieldProps< V >,
+	V extends FieldValue
+> {
 	/*
 	 * The name of the field which will be used by the other props.
 	 */
@@ -72,21 +77,21 @@ export interface CountrySpecificPaymentFieldProps< P extends InteriorFieldProps 
 	/**
 	 * A function that will be called to provide the `value` of the component.
 	 */
-	getFieldValue: ( fieldName: string ) => string;
+	getFieldValue: ( fieldName: string ) => V;
 
 	/**
 	 * A function that will be when the field is changed.
 	 */
-	handleFieldChange: ( fieldName: string, newValue: string ) => void;
+	handleFieldChange: ( fieldName: string, newValue: V ) => void;
 }
 
-interface CreateFieldArgs< P extends InteriorFieldProps > {
-	fieldName: CountrySpecificPaymentFieldProps< P >[ 'fieldName' ];
-	componentClass: CountrySpecificPaymentFieldProps< P >[ 'componentClass' ];
-	additionalProps: CountrySpecificPaymentFieldProps< P >[ 'additionalProps' ];
-	handleFieldChange: CountrySpecificPaymentFieldProps< P >[ 'handleFieldChange' ];
-	disabled: CountrySpecificPaymentFieldProps< P >[ 'disabled' ];
-	value: string;
+interface CreateFieldArgs< P extends InteriorFieldProps< V >, V extends FieldValue > {
+	fieldName: CountrySpecificPaymentFieldProps< P, V >[ 'fieldName' ];
+	componentClass: CountrySpecificPaymentFieldProps< P, V >[ 'componentClass' ];
+	additionalProps: CountrySpecificPaymentFieldProps< P, V >[ 'additionalProps' ];
+	handleFieldChange: CountrySpecificPaymentFieldProps< P, V >[ 'handleFieldChange' ];
+	disabled: CountrySpecificPaymentFieldProps< P, V >[ 'disabled' ];
+	value: V;
 	errorMessage: string;
 }
 
@@ -98,7 +103,10 @@ interface CreateFieldArgs< P extends InteriorFieldProps > {
  * `CountrySpecificPaymentFields` so its API is a little awkward. Read the docs
  * for its props to learn more.
  */
-export function CountrySpecificPaymentField< P extends InteriorFieldProps >( {
+export function CountrySpecificPaymentField<
+	P extends InteriorFieldProps< V >,
+	V extends FieldValue
+>( {
 	fieldName,
 	componentClass,
 	additionalProps,
@@ -106,7 +114,7 @@ export function CountrySpecificPaymentField< P extends InteriorFieldProps >( {
 	getErrorMessages,
 	getFieldValue,
 	handleFieldChange,
-}: CountrySpecificPaymentFieldProps< P > ) {
+}: CountrySpecificPaymentFieldProps< P, V > ) {
 	const errorMessages = getErrorMessages( fieldName );
 	return createField( {
 		fieldName,
@@ -119,7 +127,7 @@ export function CountrySpecificPaymentField< P extends InteriorFieldProps >( {
 	} );
 }
 
-function createField< P extends InteriorFieldProps >( {
+function createField< P extends InteriorFieldProps< V >, V extends FieldValue >( {
 	fieldName,
 	componentClass,
 	additionalProps,
@@ -127,9 +135,9 @@ function createField< P extends InteriorFieldProps >( {
 	errorMessage,
 	handleFieldChange,
 	disabled,
-}: CreateFieldArgs< P > ) {
-	const onFieldChange: OnFieldChange = ( event ) =>
-		handleFieldChange( event.target.name, event.target.value );
+}: CreateFieldArgs< P, V > ) {
+	const onFieldChange: OnFieldChange< V > = ( event ) =>
+		handleFieldChange( fieldName, event.target.value );
 	const fieldProps = Object.assign(
 		{},
 		{
