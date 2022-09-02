@@ -196,7 +196,7 @@ export class SiteSelector extends Component {
 		if ( siteId !== ALL_SITES ) {
 			const visibleSites = this.visibleSites.filter( ( ID ) => ID !== ALL_SITES );
 			this.props.recordTracksEvent( 'calypso_switch_site_click_item', {
-				position: visibleSites.indexOf( siteId ),
+				position: visibleSites.indexOf( siteId ) + 1,
 				list_item_count: visibleSites.length,
 				is_searching: this.state.searchTerm.length > 0,
 			} );
