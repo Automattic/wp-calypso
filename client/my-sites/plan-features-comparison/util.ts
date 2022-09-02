@@ -17,6 +17,10 @@ const portfolioFeatures = ( siteType: string, plan: IncompleteWPcomPlan ) => {
 	return siteType === 'grid' && plan.getPortfolioSignupFeatures;
 };
 
+const signupFeatures = ( plan: IncompleteWPcomPlan ) => {
+	return plan.getSignupCompareAvailableFeatures;
+};
+
 export const getPlanFeatureAccessor = ( {
 	flowName = '',
 	siteType = '',
@@ -31,6 +35,7 @@ export const getPlanFeatureAccessor = ( {
 		linkInBioFeatures( flowName, plan ),
 		blogFeatures( siteType, plan ),
 		portfolioFeatures( siteType, plan ),
+		signupFeatures( plan ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
 	} );
