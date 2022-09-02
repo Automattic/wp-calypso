@@ -13,24 +13,6 @@
 		margin: 0;
 	}
 
-	&__recommendations {
-		padding: 4em 0;
-
-		&--title {
-			text-align: center;
-		}
-
-		&--logos {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-wrap: wrap;
-			list-style-type: none;
-			margin: 0 auto;
-			gap: 1.5em;
-		}
-	}
-
 	&__bundles-list--featured-item {
 		display: flex;
 		flex-direction: column;
