@@ -805,7 +805,7 @@ export const getDIFMTieredPurchaseDetails = (
 } | null => {
 	if (
 		! purchase ||
-		isDIFMProduct( purchase ) ||
+		! isDIFMProduct( purchase ) ||
 		! purchase.priceTierList ||
 		! Array.isArray( purchase.priceTierList ) ||
 		purchase.priceTierList.length === 0
