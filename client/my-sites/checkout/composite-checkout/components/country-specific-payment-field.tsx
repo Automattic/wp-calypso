@@ -8,11 +8,6 @@ export interface CountrySpecificPaymentFieldProps< P > {
 	fieldName: string;
 
 	/**
-	 * If `fieldName` is not in this array, this component will render nothing.
-	 */
-	allowedFieldNames: string[];
-
-	/**
 	 * The React component to render.
 	 *
 	 * For example, `Input`, but it can be anything. When the component is
@@ -81,7 +76,6 @@ interface CreateFieldArgs< P > {
  */
 export function CountrySpecificPaymentField< P >( {
 	fieldName,
-	allowedFieldNames,
 	componentClass,
 	props,
 	disabled,
@@ -89,9 +83,6 @@ export function CountrySpecificPaymentField< P >( {
 	getFieldValue,
 	handleFieldChange,
 }: CountrySpecificPaymentFieldProps< P > ) {
-	if ( ! allowedFieldNames.includes( fieldName ) ) {
-		return null;
-	}
 	const errorMessages = getErrorMessages( fieldName );
 	return createField( {
 		fieldName,
