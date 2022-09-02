@@ -25,7 +25,6 @@ import {
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useLocale } from '@automattic/i18n-utils';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -773,7 +772,7 @@ export class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
-		const { isPlansPageQuickImprovements, flowName } = this.props;
+		const { isPlansPageQuickImprovements } = this.props;
 		const description = feature.getDescription
 			? feature.getDescription( undefined, this.props.domainName )
 			: null;
@@ -790,7 +789,6 @@ export class PlanFeatures extends Component {
 				hideGridicon={
 					isPlansPageQuickImprovements || ( this.props.isReskinned ? false : this.props.withScroll )
 				}
-				hideInfoPopover={ isNewsletterOrLinkInBioFlow( flowName ) }
 				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>
 				<span className={ classes }>
