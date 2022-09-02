@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useItemInfo } from '../hooks/use-item-info';
 import { ItemPrice } from '../item-price';
 import { FeaturedItemCardProps } from '../types';
 
@@ -16,9 +17,13 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	onClickMore,
 	onClickPurchase,
 	siteId,
+	purchase,
 } ) => {
 	const translate = useTranslate();
 	const { displayName: title, description } = item;
+
+	const { isNotPlanOwner } = useItemInfo( { purchase } );
+	const shouldDisableButton = isOwned && isNotPlanOwner;
 
 	return (
 		<div className="featured-item-card">
@@ -55,7 +60,12 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 					</div>
 				</div>
 				<div className="featured-item-card--footer">
-					<Button primary={ ctaAsPrimary } onClick={ onClickPurchase } href={ checkoutURL }>
+					<Button
+						primary={ ctaAsPrimary }
+						onClick={ onClickPurchase }
+						disabled={ shouldDisableButton }
+						href={ shouldDisableButton ? '#' : checkoutURL }
+					>
 						{ ctaLabel }
 					</Button>
 				</div>

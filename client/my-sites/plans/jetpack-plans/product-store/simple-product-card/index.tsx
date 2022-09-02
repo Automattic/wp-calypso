@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useItemInfo } from '../hooks/use-item-info';
 import { ItemPrice } from '../item-price';
 import { SimpleProductCardProps } from '../types';
 import getProductIcon from '../utils/get-product-icon';
@@ -16,12 +17,15 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	onClickMore,
 	onClickPurchase,
 	siteId,
+	purchase,
 } ) => {
 	const translate = useTranslate();
 
 	const { shortName: name } = item;
 	const productDescription = item?.shortDescription || item.description;
 
+	const { isNotPlanOwner } = useItemInfo( { purchase } );
+	const shouldDisableButton = isOwned && isNotPlanOwner;
 	return (
 		<div className="simple-product-card">
 			<div className="simple-product-card__icon">
@@ -42,7 +46,8 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 					<Button
 						className="simple-product-card__info-header-checkout"
 						onClick={ onClickPurchase }
-						href={ checkoutURL }
+						disabled={ shouldDisableButton }
+						href={ shouldDisableButton ? '#' : checkoutURL }
 						primary={ ctaAsPrimary }
 						compact
 					>

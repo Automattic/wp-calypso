@@ -124,6 +124,7 @@ export const useStoreItemInfo = ( {
 			isPlanFeature,
 			isSuperseded,
 			isUpgradeableToYearly,
+			getPurchase,
 			sitePlan,
 		} ),
 		[
@@ -135,6 +136,7 @@ export const useStoreItemInfo = ( {
 			isPlanFeature,
 			isSuperseded,
 			isUpgradeableToYearly,
+			getPurchase,
 			sitePlan,
 		]
 	);

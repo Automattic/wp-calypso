@@ -1,3 +1,4 @@
+import { Purchase } from 'calypso/lib/purchases/types';
 import type {
 	QueryArgs,
 	SelectorProduct,
@@ -65,6 +66,10 @@ export type UseStoreItemInfoProps = ProductStoreBaseProps & {
 	onClickPurchase?: PurchaseCallback;
 };
 
+export type UseItemInfoProps = {
+	purchase?: Purchase;
+};
+
 export type ItemPriceProps = ProductStoreBaseProps &
 	HeroImageProps & {
 		isOwned?: boolean;
@@ -77,6 +82,7 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 	ctaLabel: React.ReactNode;
 	hero: React.ReactNode;
 	item: SelectorProduct;
+	purchase?: Purchase;
 	onClickMore: VoidFunction;
 	onClickPurchase?: VoidFunction;
 };
