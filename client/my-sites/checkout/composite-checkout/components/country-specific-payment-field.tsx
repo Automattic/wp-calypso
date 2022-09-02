@@ -5,7 +5,7 @@ export type OnFieldChange = ( event: { target: { name: string; value: string } }
 
 export interface InteriorFieldProps {
 	value?: string;
-	additionalClasses?: string;
+	additionalClasses?: string[];
 	isError?: boolean;
 	errorMessage?: string;
 	name?: string;
