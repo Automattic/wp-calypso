@@ -13,17 +13,6 @@
 		margin: 0;
 	}
 
-	.header .formatted-header__title {
-		margin: 0 auto !important;
-		font-size: $font-title-large !important;
-		line-height: rem( 38px ) !important;
-
-		@include break-large {
-			font-size: $font-headline-small !important;
-			line-height: rem( 40px ) !important;
-		}
-	}
-
 	&__jetpack-free {
 		display: flex;
 		flex-direction: column;
@@ -406,5 +395,16 @@
 
 	@include break-medium {
 		grid-template-columns: repeat( 2, 1fr );
+	}
+}
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jetpack-product-store .header .header__main-title .formatted-header__title {
+	margin: 0 auto;
+	font-size: $font-title-large;
+	line-height: rem( 38px );
+
+	@include break-large {
+		font-size: $font-headline-small;
+		line-height: rem( 40px );
 	}
 }
