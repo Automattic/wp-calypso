@@ -219,6 +219,10 @@ export class SiteSelector extends Component {
 		this.onSiteSelect( event, ALL_SITES );
 	};
 
+	onManageSitesClick = () => {
+		this.props.recordTracksEvent( 'calypso_manage_sites_click' );
+	};
+
 	onSiteHover = ( event, siteId ) => {
 		if ( this.lastMouseHover !== siteId ) {
 			debug( `${ siteId } hovered` );
@@ -492,6 +496,7 @@ export class SiteSelector extends Component {
 				</div>
 				{ this.props.showManageSites && (
 					<Button
+						onClick={ this.onManageSitesClick }
 						href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
 						className="site-selector__manage-sites"
 						aria-label={ this.props.translate( 'Go to Sites' ) }
