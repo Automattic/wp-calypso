@@ -95,15 +95,11 @@
 		font-weight: 700;
 		line-height: rem( 29px );
 
-		@media only screen and ( min-width: 821px ) {
+		@include break-medium {
 			margin-bottom: rem( 32px );
 			font-size: $font-title-medium;
 			font-weight: 600;
 		}
-
-	&__most-popular--items {
-		display: flex;
-		justify-content: space-evenly;
 	}
 
 	&__most-popular--items {
@@ -132,6 +128,9 @@
 		}
 
 		.plan-price.is-original {
+			color: var( --studio-gray-100 );
+			font-weight: 600;
+
 			.plan-price__currency-symbol,
 			.plan-price__integer,
 			.plan-price__fraction {
@@ -139,18 +138,19 @@
 				margin: 0;
 			}
 		}
-		.plan-price.is-discounted, .plan-price.is-original {
+
+		.plan-price.is-discounted,
+		.plan-price.is-original {
 			margin-right: 0.1em;
 		}
+
 		.plan-price.is-discounted {
 			color: var( --studio-gray-100 );
 			font-weight: 700;
 		}
-		.plan-price.is-original {
-			color: var( --studio-gray-100 );
-			font-weight: semibold;
-		}
-		.plan-price.is-original::before, .is-placeholder .plan-price::after {
+
+		.plan-price.is-original::before,
+		.is-placeholder .plan-price::after {
 			display: none;
 		}
 
@@ -278,7 +278,7 @@
 		border-color: var( --studio-gray-5 );
 		border-radius: 8px; /* stylelint-disable-line */
 		color: var( --color-text );
-		margin: 0 auto 1em;
+		margin: 0 auto;
 		max-width: 21.4375em;
 
 		.segmented-control__item {
@@ -327,16 +327,16 @@
 	}
 }
 
-	.intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__content {
-		margin-bottom: 40px;
-		height: auto;
+.jetpack-product-store__pricing-banner {
+	height: 112px;
+	margin-bottom: 40px;
 
 	@include break-large {
 		height: 32px;
 	}
 }
 
-.jetpack-product-store__pricing-banner .intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__content {
+.jetpack-product-store__pricing-banner .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__content {
 	height: 112px;
 	gap: 12px;
 
@@ -346,7 +346,7 @@
 	}
 }
 
-.jetpack-product-store__pricing-banner .intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__item {
+.jetpack-product-store__pricing-banner .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__item {
 	max-height: 32px;
 	margin: 0;
 }
@@ -384,17 +384,13 @@
 	color: var( --color-neutral-100 );
 }
 
-.jetpack-product-store__products-list-all {
-	margin-bottom: 48px;
-}
-
 .jetpack-product-store__products-list-all-header {
 	margin-top: rem( 32px );
 	margin-bottom: rem( 24px );
 	font-size: $font-title-small;
 	font-weight: 700;
 
-	@media only screen and ( min-width: 821px ) {
+	@include break-medium {
 		margin-top: rem( 72px );
 		margin-bottom: rem( 48px );
 		font-size: $font-title-medium;
