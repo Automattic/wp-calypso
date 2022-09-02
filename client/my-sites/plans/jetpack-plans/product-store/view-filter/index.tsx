@@ -1,7 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs } from 'calypso/lib/route';
-import type { ViewFilterProps } from './types';
+import type { ViewFilterProps } from '../types';
+
+import './style.scss';
 
 export const ViewFilter: React.FC< ViewFilterProps > = ( { currentView, setCurrentView } ) => {
 	const translate = useTranslate();
