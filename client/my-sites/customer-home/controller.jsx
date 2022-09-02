@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { getQueryArg } from '@wordpress/url';
 import page from 'page';
 import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -30,7 +31,14 @@ export function maybeRedirect( context, next ) {
 
 	const siteId = getSelectedSiteId( state );
 	const options = getSiteOptions( state, siteId );
-	const shouldRedirectToLaunchpad = options?.launchpad_screen === 'full';
+
+	// Normally, checking the launchpad_screen option in redux state would be enough to decide whether
+	// or not to redirect to launchpad. The option, however, is loading stale data in horizon, and presumably,
+	// in production as well. The forceLoadLaunchpadData query param is a temporary patch to circumvent stale data, and
+	// will avoid a redirect.
+	const shouldRedirectToLaunchpad =
+		options?.launchpad_screen === 'full' &&
+		! getQueryArg( window.location.href, 'forceLoadLaunchpadData' );
 
 	if ( shouldRedirectToLaunchpad && isEnabled( 'signup/launchpad' ) ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
