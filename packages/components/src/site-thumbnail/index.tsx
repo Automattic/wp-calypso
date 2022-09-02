@@ -63,12 +63,13 @@ export const SiteThumbnail = ( {
 	);
 
 	const showLoader = mShotsUrl && ! isError;
+	const mshotsImgLoaded = imgProps.src && ! isError;
 
 	const blurSize = width > DEFAULT_SIZE.width ? 'medium' : 'small';
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
-			{ bgColorImgUrl && (
+			{ bgColorImgUrl && ! mshotsImgLoaded && (
 				<div
 					className={ `site-thumbnail__image-bg site-thumbnail__image-blur-${ blurSize }` }
 					style={ { backgroundImage: `url(${ bgColorImgUrl })` } }
@@ -81,7 +82,7 @@ export const SiteThumbnail = ( {
 					{ children }
 				</div>
 			) }
-			{ imgProps.src && ! isError && (
+			{ mshotsImgLoaded && (
 				<img
 					className={ classnames( 'site-thumbnail__image', {
 						'site-thumbnail__mshot_default_hidden': isLoading,
