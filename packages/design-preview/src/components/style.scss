@@ -121,6 +121,10 @@
 			h2 {
 				display: block;
 			}
+
+			&.design-preview__sidebar-description {
+				margin-top: 1rem;
+			}
 		}
 
 		.design-preview__sidebar-variations {
@@ -129,6 +133,7 @@
 				gap: 8px;
 				grid-template-columns: repeat( 2, 1fr );
 				margin: 0 -5px;
+				width: 100%;
 
 				.design-preview__style-variation {
 					width: 100%;

@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { Onboard, useStarterDesignsGet, useStarterDesignsQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignBySlug, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	useCategorization,
@@ -109,7 +109,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const staticDesigns = allDesigns?.static?.designs || [];
 
 	const { data: selectedDesignDetails, isLoading: isLoadingSelectedDesignDetails } =
-		useStarterDesignsGet( selectedDesign?.slug || '', {
+		useStarterDesignBySlug( selectedDesign?.slug || '', {
 			enabled:
 				isPreviewingDesign &&
 				selectedDesign &&

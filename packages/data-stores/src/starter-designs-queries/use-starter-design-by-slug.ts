@@ -6,18 +6,18 @@ interface Options extends QueryOptions< Design, unknown > {
 	enabled?: boolean;
 }
 
-export function useStarterDesignsGet(
+export function useStarterDesignBySlug(
 	slug: string,
 	queryOptions: Options = {}
 ): UseQueryResult< Design > {
-	return useQuery( [ 'starter-designs-get', slug ], () => fetchStarterDesignsGet( slug ), {
+	return useQuery( [ 'starter-designs-get', slug ], () => fetchStarterDesignBySlug( slug ), {
 		refetchOnMount: 'always',
 		staleTime: Infinity,
 		...queryOptions,
 	} );
 }
 
-function fetchStarterDesignsGet( slug: string ): Promise< Design > {
+function fetchStarterDesignBySlug( slug: string ): Promise< Design > {
 	return wpcomRequest< Design >( {
 		apiNamespace: 'wpcom/v2',
 		path: `/starter-designs/${ encodeURIComponent( slug ) }`,
