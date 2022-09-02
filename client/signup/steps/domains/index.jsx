@@ -20,7 +20,11 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { getDomainProductSlug } from 'calypso/lib/domains';
+import {
+	getDomainProductSlug,
+	getDomainSuggestionSearch,
+	getFixedDomainSearch,
+} from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -491,7 +495,9 @@ class DomainsStep extends Component {
 				initialState.searchResults = null;
 				initialState.subdomainSearchResults = null;
 				// If length is less than 2 it will not fetch any data.
-				initialState.loadingResults = initialQuery.length >= 2;
+				// filter before counting length
+				initialState.loadingResults =
+					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
 				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
