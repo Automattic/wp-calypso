@@ -18,7 +18,7 @@ export const COURSE_DETAILS = {
 		],
 	},
 	[ COURSE_SLUGS.PAYMENTS_FEATURES ]: {
-		headerTitle: i18n.translate( 'Add Payments Features' ),
+		headerTitle: i18n.translate( 'Make money from your website.' ),
 		headerSubtitle: i18n.translate( 'Make Money on Your Website' ),
 		headerSummary: [
 			i18n.translate( 'Accept one-time or recurring payments' ),
