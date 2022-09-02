@@ -1018,6 +1018,7 @@ const ConnectedPlanFeatures = connect(
 					isPlaceholder = true;
 				}
 
+				// Mobile view
 				if ( isInSignup ) {
 					const featureAccessor = getPlanFeatureAccessor( {
 						flowName,
