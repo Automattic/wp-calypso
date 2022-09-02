@@ -59,10 +59,12 @@ export class SiteSelector extends Component {
 		allSitesPath: PropTypes.string,
 		navigateToSite: PropTypes.func.isRequired,
 		isReskinned: PropTypes.bool,
+		showManageSitesButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		sites: {},
+		showManageSitesButton: false,
 		showAddNewSite: false,
 		showAllSites: false,
 		siteBasePath: false,
@@ -313,12 +315,12 @@ export class SiteSelector extends Component {
 		);
 
 		// Let's not display the all sites button if there is no multi-site context.
-		if ( this.props.showManageSites && ! multiSiteContext ) {
+		if ( this.props.showManageSitesButton && ! multiSiteContext ) {
 			return null;
 		}
 
 		// Let's not display the all sites button if we are already displaying a multi-site context page.
-		if ( this.props.showManageSites && ! this.props.selectedSite ) {
+		if ( this.props.showManageSitesButton && ! this.props.selectedSite ) {
 			return null;
 		}
 
@@ -494,7 +496,7 @@ export class SiteSelector extends Component {
 						</span>
 					) }
 				</div>
-				{ this.props.showManageSites && (
+				{ this.props.showManageSitesButton && (
 					<Button
 						onClick={ this.onManageSitesClick }
 						href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }

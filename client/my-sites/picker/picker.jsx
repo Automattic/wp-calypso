@@ -99,7 +99,7 @@ class SitePicker extends Component {
 			<div>
 				<CloseOnEscape onEscape={ this.closePicker } />
 				<SiteSelector
-					showManageSites
+					showManageSitesButton
 					isPlaceholder={ ! this.state.isRendered }
 					indicator={ true }
 					showAddNewSite={ true }
