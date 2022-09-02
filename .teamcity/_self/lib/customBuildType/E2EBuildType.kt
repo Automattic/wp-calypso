@@ -76,7 +76,6 @@ open class E2EBuildType(
 			logs.tgz => logs.tgz
 			screenshots => screenshots
 			trace => trace
-			allure-results => allure-results
 		""".trimIndent()
 
 		vcs {
@@ -106,7 +105,6 @@ open class E2EBuildType(
 					E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
 
 					# Build packages
-					yarn workspace @automattic/jest-circus-allure-reporter build
 					yarn workspace @automattic/calypso-e2e build
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
@@ -156,9 +154,6 @@ open class E2EBuildType(
 
 					mkdir -p trace
 					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-
-					mkdir -p allure-results
-					find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
 				""".trimIndent()
 				dockerImage = "%docker_image_e2e%"
 			}
