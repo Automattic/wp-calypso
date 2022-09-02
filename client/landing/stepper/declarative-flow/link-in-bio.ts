@@ -59,6 +59,10 @@ export const linkInBio: Flow = {
 				case 'processing': {
 					return navigate( providedDependencies?.destination as StepPath );
 				}
+
+				case 'launchpad': {
+					return navigate( 'processing' );
+				}
 			}
 			return providedDependencies;
 		}

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -38,6 +39,12 @@ class PeopleListSectionHeader extends Component {
 		return '/people/new/' + siteSlug;
 	}
 
+	getAddSubscriberLink() {
+		const siteSlug = get( this.props, 'site.slug' );
+
+		return '/people/add-subscribers/' + siteSlug;
+	}
+
 	getPopoverText() {
 		const { currentRoute, translate } = this.props;
 
@@ -52,10 +59,23 @@ class PeopleListSectionHeader extends Component {
 		return null;
 	}
 
+	isSubscribersTab() {
+		const { currentRoute } = this.props;
+
+		return startsWith( currentRoute, '/people/email-followers' );
+	}
+
 	render() {
 		const { label, count, children, translate } = this.props;
 		const siteLink = this.getAddLink();
+		const addSubscriberLink = this.getAddSubscriberLink();
 		const classes = classNames( this.props.className, 'people-list-section-header' );
+
+		const showInviteUserBtn =
+			( siteLink && ! this.isSubscribersTab() ) ||
+			( siteLink && ! isEnabled( 'subscriber-importer' ) );
+		const showAddSubscriberBtn =
+			addSubscriberLink && this.isSubscribersTab() && isEnabled( 'subscriber-importer' );
 
 		return (
 			<SectionHeader
@@ -66,12 +86,19 @@ class PeopleListSectionHeader extends Component {
 				popoverText={ this.getPopoverText() }
 			>
 				{ children }
-				{ siteLink && (
+				{ showInviteUserBtn && (
 					<Button compact href={ siteLink } className="people-list-section-header__add-button">
 						<Gridicon icon="user-add" />
 						<span>
-							{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
+							{ isEnabled( 'subscriber-importer' )
+								? translate( 'Add User', { context: 'Verb. Button to invite more users.' } )
+								: translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
 						</span>
+					</Button>
+				) }
+				{ showAddSubscriberBtn && (
+					<Button href={ addSubscriberLink } compact primary>
+						{ translate( 'Add Subscribers', { context: 'Verb. Button to add more subscribers.' } ) }
 					</Button>
 				) }
 			</SectionHeader>

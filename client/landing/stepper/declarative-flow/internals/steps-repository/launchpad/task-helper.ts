@@ -1,13 +1,18 @@
+import { dispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
+import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
 
 export function getEnhancedTasks(
-	tasks: Task[],
+	tasks: Task[] | null,
 	siteSlug: string | null,
-	site: SiteDetails | null
+	site: SiteDetails | null,
+	submit: NavigationControls[ 'submit' ]
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
@@ -67,6 +72,23 @@ export function getEnhancedTasks(
 						title: translate( 'Launch Link in bio' ),
 						isCompleted: linkInBioSiteLaunchCompleted,
 						dependencies: [ linkInBioLinksEditCompleted ],
+						actionDispatch: () => {
+							if ( site?.ID ) {
+								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
+								const { launchSite } = dispatch( SITE_STORE );
+
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Launching Link in bio' ) );
+									await launchSite( site.ID );
+
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									window.location.replace( `/home/${ siteSlug }?forceLoadLaunchpadData=true` );
+								} );
+
+								submit?.();
+							}
+						},
 					};
 					break;
 			}

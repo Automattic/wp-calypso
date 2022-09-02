@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import type {
 	QueryArgs,
 	SelectorProduct,
@@ -24,6 +25,7 @@ export interface ProductStoreProps {
 	createCheckoutURL?: PurchaseURLCallback;
 	onClickPurchase?: PurchaseCallback;
 	urlQueryArgs: ProductStoreQueryArgs;
+	header: ReactNode;
 }
 
 export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & ProductStoreBaseProps;
@@ -39,7 +41,8 @@ export interface ViewFilterProps {
 	setCurrentView: ( currentView: ViewType ) => void;
 }
 
-export type ProductsListProps = ProductStoreBaseProps & Omit< ProductStoreProps, 'urlQueryArgs' >;
+export type ProductsListProps = ProductStoreBaseProps &
+	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' >;
 
 export type BundlesListProps = ProductsListProps;
 
@@ -56,6 +59,8 @@ export type MostPopularProps = {
 export type HeroImageProps = {
 	item: SelectorProduct;
 };
+
+export type FeaturesListProps = HeroImageProps;
 
 export type UseStoreItemInfoProps = ProductStoreBaseProps & {
 	createCheckoutURL?: PurchaseURLCallback;

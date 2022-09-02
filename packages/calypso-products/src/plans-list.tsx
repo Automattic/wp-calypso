@@ -1271,6 +1271,10 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		translate(
 			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
 		),
+	getFeaturedText: () =>
+		translate(
+			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
+		),
 	getPlanCardFeatures: () => [
 		FEATURE_JETPACK_PRODUCT_BACKUP,
 		FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
@@ -1341,6 +1345,10 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 	getDescription: () =>
 		translate(
 			'Get the full power of Jetpack with all Security, Performance, Growth, and Design tools.'
+		),
+	getFeaturedText: () =>
+		translate(
+			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.'
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCardFeatures: () => [

@@ -223,17 +223,14 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				/>
 
 				{ isEnabled( 'jetpack/pricing-page-rework-v1' ) ? (
-					<>
-						{ header }
-
-						<ProductStore
-							createCheckoutURL={ createProductURL }
-							duration={ currentDuration }
-							enableUserLicensesDialog={ enableUserLicensesDialog }
-							onClickPurchase={ selectProduct }
-							urlQueryArgs={ urlQueryArgs }
-						/>
-					</>
+					<ProductStore
+						createCheckoutURL={ createProductURL }
+						duration={ currentDuration }
+						enableUserLicensesDialog={ enableUserLicensesDialog }
+						onClickPurchase={ selectProduct }
+						urlQueryArgs={ urlQueryArgs }
+						header={ header }
+					/>
 				) : (
 					<>
 						{ siteId && enableUserLicensesDialog && (
