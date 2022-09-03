@@ -206,22 +206,15 @@ function CountrySpecificPaymentFieldsUnstyled( {
 				<CountrySpecificPaymentField
 					fieldName="phone-number"
 					componentClass={ FormPhoneMediaInput }
-					getFieldValue={ getFieldValue }
+					getFieldValue={ ( key: string ) => ( {
+						value: getFieldValue( key ),
+						countryCode: phoneCountryCode || countryCode,
+					} ) }
 					getErrorMessages={ getErrorMessages }
-					handleFieldChange={ handleFieldChange }
+					handleFieldChange={ ( key, value ) => handlePhoneFieldChange( value ) }
 					disabled={ disableFields }
 					additionalProps={ {
-						// This is the same as what would be automatically provided by
-						// CountrySpecificPaymentField but is required here by TypeScript to
-						// validate the component props.
-						value: getFieldValue( 'phone-number' ),
-						// This will override the handleFieldChange prop.
-						onChange: handlePhoneFieldChange,
 						countriesList,
-						// If the user has manually selected a country for the phone
-						// number, use that, but otherwise default this to the same
-						// country as the billing address.
-						countryCode: phoneCountryCode || countryCode,
 						label: translate( 'Phone' ),
 					} }
 				/>
