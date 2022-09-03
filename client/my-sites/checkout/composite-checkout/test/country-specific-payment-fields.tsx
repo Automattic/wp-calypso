@@ -18,8 +18,8 @@ const defaultProps: CountrySpecificPaymentFieldsProps = {
 			has_postal_codes: true,
 		},
 	],
-	getErrorMessages: jest.fn(),
-	getFieldValue: jest.fn(),
+	getErrorMessages: jest.fn().mockReturnValue( [] ),
+	getFieldValue: jest.fn().mockReturnValue( '' ),
 	handleFieldChange: jest.fn(),
 };
 
@@ -31,7 +31,7 @@ describe( '<CountrySpecificPaymentFields />', () => {
 			const [ fields, setFields ] = useState( {} );
 
 			props.getFieldValue.mockImplementation( ( name ) => {
-				return fields[ name ];
+				return fields[ name ] ?? '';
 			} );
 
 			props.handleFieldChange.mockImplementation( ( name, value ) => {
