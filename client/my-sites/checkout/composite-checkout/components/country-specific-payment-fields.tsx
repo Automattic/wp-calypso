@@ -77,15 +77,11 @@ function getGenericFieldProps< Value, ChangeValue >( {
 	fieldName,
 	getErrorMessages,
 	getFieldValue,
-	disabled,
-	label,
 	onChange,
 }: {
 	fieldName: string;
 	getErrorMessages: ( fieldName: string ) => string[];
 	getFieldValue: ( fieldName: string ) => Value;
-	disabled?: boolean;
-	label: ReactNode;
 	onChange: ( eventOrValue: ChangeValue ) => void;
 } ) {
 	const errorMessages = getErrorMessages( fieldName );
@@ -94,15 +90,13 @@ function getGenericFieldProps< Value, ChangeValue >( {
 	return {
 		additionalClasses: 'checkout__checkout-field',
 		isError: errorMessage.length > 0,
-		errorMessage,
-		name: fieldName,
-		onBlur: onChange,
-		onChange,
-		value,
 		autoComplete: 'off',
 		labelClass: 'checkout__form-label',
-		disabled,
-		label,
+		name: fieldName,
+		onBlur: onChange,
+		errorMessage,
+		onChange,
+		value,
 	};
 }
 
@@ -133,12 +127,12 @@ function InputField( {
 		fieldName,
 		getErrorMessages,
 		getFieldValue,
-		disabled,
 		label,
 		onChange,
 	} );
 	const fieldProps = {
 		...genericProps,
+		disabled,
 		placeholder,
 		maxLength,
 		inputMode,
@@ -172,14 +166,13 @@ function HiddenInputField( {
 		fieldName,
 		getErrorMessages,
 		getFieldValue,
-		disabled,
-		label,
 		onChange,
 	} );
 	const fieldProps = {
 		...genericProps,
-		maxLength,
+		disabled,
 		label,
+		maxLength,
 		text,
 	};
 
@@ -209,13 +202,12 @@ function StateSelectField( {
 		fieldName,
 		getErrorMessages,
 		getFieldValue,
-		disabled,
-		label,
 		onChange,
 	} );
 	const fieldProps = {
 		...genericProps,
 		countryCode,
+		disabled,
 		label,
 	};
 
@@ -244,12 +236,11 @@ function PhoneInputField( {
 		fieldName,
 		getErrorMessages,
 		getFieldValue,
-		disabled,
-		label,
 		onChange,
 	} );
 	const fieldProps = {
 		...genericProps,
+		disabled,
 		label,
 		countriesList,
 	};
