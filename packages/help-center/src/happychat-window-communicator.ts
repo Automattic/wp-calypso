@@ -23,8 +23,13 @@ import type { WindowState } from './types';
  */
 export function useHCWindowCommunicator(
 	onStateChange: ( state: WindowState ) => void,
-	onUnreadChange: ( unreadCount: number ) => void
+	onUnreadChange: ( unreadCount: number ) => void,
+	isMinimized: boolean
 ) {
+	const chatWindow = (
+		document.querySelector( '.help-center-inline-chat__iframe' ) as HTMLIFrameElement
+	 )?.contentWindow;
+
 	const { selectedSite, subject, message, userDeclaredSite } = useSelect( ( select ) => {
 		return {
 			selectedSite: select( HELP_CENTER_STORE ).getSite(),
@@ -42,6 +47,14 @@ export function useHCWindowCommunicator(
 	const supportSite = selectedSite || userDeclaredSite || currentSite;
 	const { resetStore } = useDispatch( HELP_CENTER_STORE );
 	useHappychatAuth();
+
+	useEffect( () => {
+		if ( isMinimized ) {
+			chatWindow?.postMessage( { type: 'window-state-change', state: 'minimized' }, '*' );
+		} else {
+			chatWindow?.postMessage( { type: 'window-state-change', state: 'open' }, '*' );
+		}
+	}, [ chatWindow, isMinimized ] );
 
 	useEffect( () => {
 		const messageHandler = ( event: MessageEvent ) => {

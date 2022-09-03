@@ -46,7 +46,7 @@ const SupportModeTitle = (): ReactElement => {
 	}
 };
 const HelpCenterHeader: React.FC< Header > = ( {
-	isMinimized,
+	isMinimized = false,
 	onMinimize,
 	onMaximize,
 	onDismiss,
@@ -61,7 +61,11 @@ const HelpCenterHeader: React.FC< Header > = ( {
 		onMaximize?.();
 	}
 
-	useHCWindowCommunicator( setChatWindowStatus, setUnreadCount );
+	function requestMinimize() {
+		onMinimize?.();
+	}
+
+	useHCWindowCommunicator( setChatWindowStatus, setUnreadCount, isMinimized );
 
 	return (
 		<CardHeader className={ classNames }>
@@ -75,6 +79,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							<Route path="/contact-options">
 								{ __( 'Contact Options', __i18n_text_domain__ ) }
 							</Route>
+							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
 							<Route path="/contact-form" component={ SupportModeTitle }></Route>
 							<Route path="/post" component={ ArticleTitle }></Route>
 						</Switch>
@@ -100,7 +105,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
 							icon={ lineSolid }
 							tooltipPosition="top left"
-							onClick={ onMinimize }
+							onClick={ requestMinimize }
 						/>
 					) }
 

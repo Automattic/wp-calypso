@@ -38,6 +38,7 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 	const dispatch = useDispatch();
 	const [ blurredAt, setBlurredAt ] = useState( 0 );
 	const [ introMessage, setIntroMessage ] = useState( null );
+	const [ windowState, setWindowState ] = useState( 'open' );
 
 	// listen to messages from parent window
 	useEffect( () => {
@@ -47,10 +48,12 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 				case 'route':
 					dispatch( sendEvent( `Looking at ${ message.route }` ) );
 					break;
-				case 'happy-chat-introduction-data': {
+				case 'happy-chat-introduction-data':
 					setIntroMessage( message );
 					break;
-				}
+				case 'window-state-change':
+					setWindowState( message.state );
+					break;
 			}
 		}
 
@@ -97,6 +100,31 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 		}
 	}, [ chatStatus ] );
 
+	// handle window status
+	useEffect( () => {
+		if ( windowState === 'minimized' ) {
+			setBlurredAt( Date.now() );
+			dispatch( sendEvent( `Minimized HelpCenter` ) );
+			parentTarget?.postMessage(
+				{
+					type: 'window-state-change',
+					state: 'minimized',
+				},
+				'*'
+			);
+		} else {
+			setBlurredAt( 0 );
+			dispatch( sendEvent( `Maximized HelpCenter` ) );
+			parentTarget?.postMessage(
+				{
+					type: 'window-state-change',
+					state: windowState,
+				},
+				'*'
+			);
+		}
+	}, [ dispatch, windowState ] );
+
 	useEffect( () => {
 		function visibilityHandler() {
 			if ( document.visibilityState === 'hidden' ) {
@@ -104,13 +132,7 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 			} else {
 				setBlurredAt( 0 );
 			}
-			parentTarget?.postMessage(
-				{
-					type: 'window-state-change',
-					state: document.visibilityState === 'visible' ? 'open' : 'blurred',
-				},
-				'*'
-			);
+			setWindowState( 'hidden' );
 		}
 		window.addEventListener( 'visibilitychange', visibilityHandler );
 
@@ -124,15 +146,6 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 			);
 		}
 		window.addEventListener( 'beforeunload', closeHandler );
-
-		// send open state on load
-		parentTarget?.postMessage(
-			{
-				type: 'window-state-change',
-				state: 'open',
-			},
-			'*'
-		);
 
 		// request intro data
 		parentTarget?.postMessage(
