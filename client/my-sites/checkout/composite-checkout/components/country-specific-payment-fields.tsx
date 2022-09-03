@@ -248,7 +248,7 @@ function PhoneInputField( {
 	return <FormPhoneMediaInput { ...fieldProps } />;
 }
 
-function CountrySpecificPaymentFieldsUnstyled( {
+export function CountrySpecificPaymentFieldsUnstyled( {
 	countriesList,
 	countryCode,
 	disableFields,
