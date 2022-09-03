@@ -73,6 +73,39 @@ function OnlyAllowedField( {
 	return <>{ children }</>;
 }
 
+function getGenericFieldProps< Value, ChangeValue >( {
+	fieldName,
+	getErrorMessages,
+	getFieldValue,
+	disabled,
+	label,
+	onChange,
+}: {
+	fieldName: string;
+	getErrorMessages: ( fieldName: string ) => string[];
+	getFieldValue: ( fieldName: string ) => Value;
+	disabled?: boolean;
+	label: ReactNode;
+	onChange: ( eventOrValue: ChangeValue ) => void;
+} ) {
+	const errorMessages = getErrorMessages( fieldName );
+	const errorMessage = errorMessages.length > 0 ? errorMessages[ 0 ] : '';
+	const value = getFieldValue( fieldName );
+	return {
+		additionalClasses: 'checkout__checkout-field',
+		isError: errorMessage.length > 0,
+		errorMessage,
+		name: fieldName,
+		onBlur: onChange,
+		onChange,
+		value,
+		autoComplete: 'off',
+		labelClass: 'checkout__form-label',
+		disabled,
+		label,
+	};
+}
+
 function InputField( {
 	fieldName,
 	handleFieldChange,
@@ -94,23 +127,18 @@ function InputField( {
 	maxLength?: number;
 	inputMode?: string;
 } ) {
-	const errorMessages = getErrorMessages( fieldName );
-	const errorMessage = errorMessages.length > 0 ? errorMessages[ 0 ] : '';
-	const value = getFieldValue( fieldName );
 	const onChange = ( event: { target: { value: string } } ) =>
 		handleFieldChange( fieldName, event.target.value );
-	const fieldProps = {
-		additionalClasses: 'checkout__checkout-field',
-		isError: errorMessage.length > 0,
-		errorMessage,
-		name: fieldName,
-		onBlur: onChange,
-		onChange,
-		value,
-		autoComplete: 'off',
-		labelClass: 'checkout__form-label',
+	const genericProps = getGenericFieldProps( {
+		fieldName,
+		getErrorMessages,
+		getFieldValue,
 		disabled,
 		label,
+		onChange,
+	} );
+	const fieldProps = {
+		...genericProps,
 		placeholder,
 		maxLength,
 		inputMode,
@@ -138,22 +166,18 @@ function HiddenInputField( {
 	label: string;
 	text: string;
 } ) {
-	const errorMessages = getErrorMessages( fieldName );
-	const errorMessage = errorMessages.length > 0 ? errorMessages[ 0 ] : '';
-	const value = getFieldValue( fieldName );
 	const onChange = ( event: { target: { value: string } } ) =>
 		handleFieldChange( fieldName, event.target.value );
-	const fieldProps = {
-		additionalClasses: 'checkout__checkout-field',
-		isError: errorMessage.length > 0,
-		errorMessage,
-		name: fieldName,
-		onBlur: onChange,
-		onChange,
-		value,
-		autoComplete: 'off',
-		labelClass: 'checkout__form-label',
+	const genericProps = getGenericFieldProps( {
+		fieldName,
+		getErrorMessages,
+		getFieldValue,
 		disabled,
+		label,
+		onChange,
+	} );
+	const fieldProps = {
+		...genericProps,
 		maxLength,
 		label,
 		text,
@@ -179,22 +203,18 @@ function StateSelectField( {
 	countryCode: string;
 	label: string;
 } ) {
-	const errorMessages = getErrorMessages( fieldName );
-	const errorMessage = errorMessages.length > 0 ? errorMessages[ 0 ] : '';
-	const value = getFieldValue( fieldName );
 	const onChange = ( event: { target: { value: string } } ) =>
 		handleFieldChange( fieldName, event.target.value );
-	const fieldProps = {
-		additionalClasses: 'checkout__checkout-field',
-		isError: errorMessage.length > 0,
-		errorMessage,
-		name: fieldName,
-		onBlur: onChange,
-		onChange,
-		value,
-		autoComplete: 'off',
-		labelClass: 'checkout__form-label',
+	const genericProps = getGenericFieldProps( {
+		fieldName,
+		getErrorMessages,
+		getFieldValue,
 		disabled,
+		label,
+		onChange,
+	} );
+	const fieldProps = {
+		...genericProps,
 		countryCode,
 		label,
 	};
@@ -219,21 +239,17 @@ function PhoneInputField( {
 	label: string;
 	countriesList: CountryListItem[];
 } ) {
-	const errorMessages = getErrorMessages( fieldName );
-	const errorMessage = errorMessages.length > 0 ? errorMessages[ 0 ] : '';
-	const value = getFieldValue( fieldName );
 	const onChange = ( newValue: PhoneInputValue ) => handleFieldChange( fieldName, newValue );
-	const fieldProps = {
-		additionalClasses: 'checkout__checkout-field',
-		isError: errorMessage.length > 0,
-		errorMessage,
-		name: fieldName,
-		onBlur: onChange,
-		onChange,
-		value,
-		autoComplete: 'off',
-		labelClass: 'checkout__form-label',
+	const genericProps = getGenericFieldProps( {
+		fieldName,
+		getErrorMessages,
+		getFieldValue,
 		disabled,
+		label,
+		onChange,
+	} );
+	const fieldProps = {
+		...genericProps,
 		label,
 		countriesList,
 	};
