@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { createElement, useState } from 'react';
+import { useState } from 'react';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import InfoPopover from 'calypso/components/info-popover';
 import { paymentMethodName } from 'calypso/lib/cart-values';
