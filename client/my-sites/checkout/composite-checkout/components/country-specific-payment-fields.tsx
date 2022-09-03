@@ -7,9 +7,9 @@ import InfoPopover from 'calypso/components/info-popover';
 import { paymentMethodName } from 'calypso/lib/cart-values';
 import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
 import { StateSelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
-import { CountrySpecificPaymentField } from './country-specific-payment-field';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
-import type { PropsWithChildren } from 'react';
+import type { PhoneInputValue } from 'calypso/components/phone-input';
+import type { PropsWithChildren, ReactNode } from 'react';
 
 export type CountrySpecificPaymentFieldsProps = {
 	countriesList: CountryListItem[];
@@ -73,6 +73,174 @@ function OnlyAllowedField( {
 	return <>{ children }</>;
 }
 
+function InputField( {
+	fieldName,
+	handleFieldChange,
+	getErrorMessages,
+	getFieldValue,
+	disabled,
+	label,
+	placeholder,
+	maxLength,
+	inputMode,
+}: {
+	fieldName: string;
+	handleFieldChange: ( fieldName: string, newValue: string ) => void;
+	getErrorMessages: ( fieldName: string ) => string[];
+	getFieldValue: ( fieldName: string ) => string;
+	disabled?: boolean;
+	label: ReactNode;
+	placeholder?: string;
+	maxLength?: number;
+	inputMode?: string;
+} ) {
+	const errorMessages = getErrorMessages( fieldName );
+	const errorMessage = errorMessages.length > 0 ? errorMessages[ 0 ] : '';
+	const value = getFieldValue( fieldName );
+	const onChange = ( event: { target: { value: string } } ) =>
+		handleFieldChange( fieldName, event.target.value );
+	const fieldProps = {
+		additionalClasses: 'checkout__checkout-field',
+		isError: errorMessage.length > 0,
+		errorMessage,
+		name: fieldName,
+		onBlur: onChange,
+		onChange,
+		value,
+		autoComplete: 'off',
+		labelClass: 'checkout__form-label',
+		disabled,
+		label,
+		placeholder,
+		maxLength,
+		inputMode,
+	};
+
+	return <Input { ...fieldProps } />;
+}
+
+function HiddenInputField( {
+	fieldName,
+	handleFieldChange,
+	getErrorMessages,
+	getFieldValue,
+	disabled,
+	maxLength,
+	label,
+	text,
+}: {
+	fieldName: string;
+	handleFieldChange: ( fieldName: string, newValue: string ) => void;
+	getErrorMessages: ( fieldName: string ) => string[];
+	getFieldValue: ( fieldName: string ) => string;
+	disabled?: boolean;
+	maxLength: number;
+	label: string;
+	text: string;
+} ) {
+	const errorMessages = getErrorMessages( fieldName );
+	const errorMessage = errorMessages.length > 0 ? errorMessages[ 0 ] : '';
+	const value = getFieldValue( fieldName );
+	const onChange = ( event: { target: { value: string } } ) =>
+		handleFieldChange( fieldName, event.target.value );
+	const fieldProps = {
+		additionalClasses: 'checkout__checkout-field',
+		isError: errorMessage.length > 0,
+		errorMessage,
+		name: fieldName,
+		onBlur: onChange,
+		onChange,
+		value,
+		autoComplete: 'off',
+		labelClass: 'checkout__form-label',
+		disabled,
+		maxLength,
+		label,
+		text,
+	};
+
+	return <HiddenInput { ...fieldProps } />;
+}
+
+function StateSelectField( {
+	fieldName,
+	handleFieldChange,
+	getErrorMessages,
+	getFieldValue,
+	disabled,
+	countryCode,
+	label,
+}: {
+	fieldName: string;
+	handleFieldChange: ( fieldName: string, newValue: string ) => void;
+	getErrorMessages: ( fieldName: string ) => string[];
+	getFieldValue: ( fieldName: string ) => string;
+	disabled?: boolean;
+	countryCode: string;
+	label: string;
+} ) {
+	const errorMessages = getErrorMessages( fieldName );
+	const errorMessage = errorMessages.length > 0 ? errorMessages[ 0 ] : '';
+	const value = getFieldValue( fieldName );
+	const onChange = ( event: { target: { value: string } } ) =>
+		handleFieldChange( fieldName, event.target.value );
+	const fieldProps = {
+		additionalClasses: 'checkout__checkout-field',
+		isError: errorMessage.length > 0,
+		errorMessage,
+		name: fieldName,
+		onBlur: onChange,
+		onChange,
+		value,
+		autoComplete: 'off',
+		labelClass: 'checkout__form-label',
+		disabled,
+		countryCode,
+		label,
+	};
+
+	return <StateSelect { ...fieldProps } />;
+}
+
+function PhoneInputField( {
+	fieldName,
+	handleFieldChange,
+	getErrorMessages,
+	getFieldValue,
+	disabled,
+	label,
+	countriesList,
+}: {
+	fieldName: string;
+	handleFieldChange: ( fieldName: string, newValue: PhoneInputValue ) => void;
+	getErrorMessages: ( fieldName: string ) => string[];
+	getFieldValue: ( fieldName: string ) => PhoneInputValue;
+	disabled?: boolean;
+	label: string;
+	countriesList: CountryListItem[];
+} ) {
+	const errorMessages = getErrorMessages( fieldName );
+	const errorMessage = errorMessages.length > 0 ? errorMessages[ 0 ] : '';
+	const value = getFieldValue( fieldName );
+	const onChange = ( newValue: PhoneInputValue ) => handleFieldChange( fieldName, newValue );
+	const fieldProps = {
+		additionalClasses: 'checkout__checkout-field',
+		isError: errorMessage.length > 0,
+		errorMessage,
+		name: fieldName,
+		onBlur: onChange,
+		onChange,
+		value,
+		autoComplete: 'off',
+		labelClass: 'checkout__form-label',
+		disabled,
+		label,
+		countriesList,
+	};
+
+	return <FormPhoneMediaInput { ...fieldProps } />;
+}
+
 function CountrySpecificPaymentFieldsUnstyled( {
 	countriesList,
 	countryCode,
@@ -131,81 +299,68 @@ function CountrySpecificPaymentFieldsUnstyled( {
 			</span>
 
 			<OnlyAllowedField fieldName="document" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<InputField
 					fieldName="document"
-					componentClass={ Input }
 					getFieldValue={ getFieldValue }
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					additionalProps={ {
-						label: translate( 'Taxpayer Identification Number', {
-							comment:
-								'Individual taxpayer registry identification required ' +
-								'for Brazilian payment methods on credit card form',
-						} ),
-					} }
+					label={ translate( 'Taxpayer Identification Number', {
+						comment:
+							'Individual taxpayer registry identification required ' +
+							'for Brazilian payment methods on credit card form',
+					} ) }
 				/>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="nik" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<InputField
 					fieldName="nik"
-					componentClass={ Input }
 					getFieldValue={ getFieldValue }
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					additionalProps={ {
-						label: translate( 'NIK - Indonesia Identity Card Number', {
-							comment:
-								'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
-						} ),
-					} }
+					label={ translate( 'NIK - Indonesia Identity Card Number', {
+						comment:
+							'NIK - Indonesia Identity Card Number required for Indonesian payment methods.',
+					} ) }
 				/>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="pan" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<InputField
 					fieldName="pan"
-					componentClass={ Input }
 					getFieldValue={ getFieldValue }
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					additionalProps={ {
-						placeholder: ' ',
-						label: translate( 'PAN Number {{panNumberPopover/}}', {
-							comment: 'India PAN number ',
-							components: {
-								panNumberPopover: getPanNumberPopover(),
-							},
-						} ),
-					} }
+					placeholder={ ' ' }
+					label={ translate( 'PAN Number {{panNumberPopover/}}', {
+						comment: 'India PAN number ',
+						components: {
+							panNumberPopover: getPanNumberPopover(),
+						},
+					} ) }
 				/>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="gstin" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<InputField
 					fieldName="gstin"
-					componentClass={ Input }
 					getFieldValue={ getFieldValue }
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					additionalProps={ {
-						placeholder: ' ',
-						label: translate( 'GSTIN (optional)', {
-							comment: 'India PAN number ',
-						} ),
-					} }
+					placeholder={ ' ' }
+					label={ translate( 'GSTIN (optional)', {
+						comment: 'India PAN number ',
+					} ) }
 				/>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="phone-number" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<PhoneInputField
 					fieldName="phone-number"
-					componentClass={ FormPhoneMediaInput }
 					getFieldValue={ ( key: string ) => ( {
 						value: getFieldValue( key ),
 						countryCode: phoneCountryCode || countryCode,
@@ -213,103 +368,83 @@ function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ ( key, value ) => handlePhoneFieldChange( value ) }
 					disabled={ disableFields }
-					additionalProps={ {
-						countriesList,
-						label: translate( 'Phone' ),
-					} }
+					countriesList={ countriesList }
+					label={ translate( 'Phone' ) }
 				/>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="address-1" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<InputField
 					fieldName="address-1"
-					componentClass={ Input }
 					getFieldValue={ getFieldValue }
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					additionalProps={ {
-						maxLength: 40,
-						label: translate( 'Address' ),
-					} }
+					maxLength={ 40 }
+					label={ translate( 'Address' ) }
 				/>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="street-number" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<InputField
 					fieldName="street-number"
-					componentClass={ Input }
 					getFieldValue={ getFieldValue }
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					additionalProps={ {
-						inputMode: 'numeric',
-						label: translate( 'Street Number', {
-							comment: 'Street number associated with address on credit card form',
-						} ),
-					} }
+					inputMode={ 'numeric' }
+					label={ translate( 'Street Number', {
+						comment: 'Street number associated with address on credit card form',
+					} ) }
 				/>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="address-2" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<HiddenInputField
 					fieldName="address-2"
-					componentClass={ HiddenInput }
 					getFieldValue={ getFieldValue }
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					additionalProps={ {
-						maxLength: 40,
-						label: translate( 'Address Line 2' ),
-						text: translate( '+ Add Address Line 2' ),
-					} }
+					maxLength={ 40 }
+					label={ translate( 'Address Line 2' ) }
+					text={ translate( '+ Add Address Line 2' ) }
 				/>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="city" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<InputField
 					fieldName="city"
-					componentClass={ Input }
 					getFieldValue={ getFieldValue }
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					additionalProps={ {
-						label: translate( 'City' ),
-					} }
+					label={ translate( 'City' ) }
 				/>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="state" allowedFieldNames={ fieldNames }>
 				<div className="checkout__form-state-field">
-					<CountrySpecificPaymentField
+					<StateSelectField
 						fieldName="state"
-						componentClass={ StateSelect }
 						getFieldValue={ getFieldValue }
 						getErrorMessages={ getErrorMessages }
 						handleFieldChange={ handleFieldChange }
 						disabled={ disableFields }
-						additionalProps={ {
-							countryCode,
-							label: translate( 'State' ),
-						} }
+						countryCode={ countryCode }
+						label={ translate( 'State' ) }
 					/>
 				</div>
 			</OnlyAllowedField>
 
 			<OnlyAllowedField fieldName="postal-code" allowedFieldNames={ fieldNames }>
-				<CountrySpecificPaymentField
+				<InputField
 					fieldName="postal-code"
-					componentClass={ Input }
 					getFieldValue={ getFieldValue }
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					additionalProps={ {
-						label: translate( 'Postal Code' ),
-					} }
+					label={ translate( 'Postal Code' ) }
 				/>
 			</OnlyAllowedField>
 		</div>
