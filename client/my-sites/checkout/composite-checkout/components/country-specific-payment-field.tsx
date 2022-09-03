@@ -3,7 +3,7 @@ import type { ComponentType } from 'react';
 
 export type FieldValue = unknown;
 export type FieldChangeEvent< V > = { target: { value: V } };
-export type OnFieldChange< V > = ( event: FieldChangeEvent< V > | V ) => void;
+export type OnFieldChange< V > = ( eventOrValue: FieldChangeEvent< V > | V ) => void;
 
 export interface InteriorFieldProps< V extends FieldValue > {
 	value?: V;
