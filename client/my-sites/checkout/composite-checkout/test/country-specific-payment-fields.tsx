@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
-import { CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
+import { CountrySpecificPaymentFieldsUnstyled as CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
 import type { CountrySpecificPaymentFieldsProps } from '../components/country-specific-payment-fields';
 
 const defaultProps: CountrySpecificPaymentFieldsProps = {
