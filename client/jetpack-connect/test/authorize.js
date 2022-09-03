@@ -68,6 +68,13 @@ const DEFAULT_PROPS = deepFreeze( {
 	userHasUnattachedLicenses: false,
 } );
 
+const APPROVE_SSO_CLIENT_ID = 99821;
+
+jest.mock( '../persistence-utils', () => ( {
+	...jest.requireActual( '../persistence-utils' ),
+	isSsoApproved: ( clientId ) => clientId === APPROVE_SSO_CLIENT_ID,
+} ) );
+
 function renderWithRedux( ui ) {
 	return renderWithProvider( ui, {
 		reducers: {
@@ -106,7 +113,7 @@ describe( 'JetpackAuthorize', () => {
 			const props = {
 				authQuery: {
 					from: 'sso',
-					clientId: queryDataSiteId,
+					clientId: APPROVE_SSO_CLIENT_ID,
 				},
 			};
 			expect( isSso( props ) ).toBe( true );
@@ -171,13 +178,32 @@ describe( 'JetpackAuthorize', () => {
 	} );
 
 	describe( 'shouldAutoAuthorize', () => {
-		test( 'should return true for sso', () => {
-			const renderableComponent = <JetpackAuthorize { ...DEFAULT_PROPS } />;
-			const component = shallow( renderableComponent );
-			component.instance().isSso = () => true;
-			const result = component.instance().shouldAutoAuthorize();
+		test( 'should authorize if isSso', () => {
+			const authorizeMock = jest.fn();
 
-			expect( result ).toBe( true );
+			const authQuery = {
+				from: 'sso',
+				clientId: APPROVE_SSO_CLIENT_ID,
+				homeUrl: 'https://foobar.com',
+				nonce: '12121212',
+				redirectUri: 'https://barfoo.com',
+				scope: 'foo',
+				secret: 'dontlook',
+				site: 'https://site.com',
+				state: 'oftrance',
+				siteName: 'coolio',
+				blogname: 'oilooc',
+			};
+
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authorize={ authorizeMock }
+					authQuery={ authQuery }
+				/>
+			);
+
+			expect( authorizeMock ).toHaveBeenCalled();
 		} );
 
 		test( 'should return true for woo services', () => {
