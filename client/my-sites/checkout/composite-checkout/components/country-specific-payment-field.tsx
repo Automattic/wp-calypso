@@ -3,10 +3,10 @@ import type { ComponentType } from 'react';
 
 export type FieldValue = unknown;
 export type FieldChangeEvent< V > = { target: { value: V } };
-export type OnFieldChange< V > = ( event: FieldChangeEvent< V > ) => void;
+export type OnFieldChange< V > = ( event: FieldChangeEvent< V > | V ) => void;
 
 export interface InteriorFieldProps< V extends FieldValue > {
-	value?: string;
+	value?: V;
 	additionalClasses?: string;
 	isError?: boolean;
 	errorMessage?: string;
@@ -132,6 +132,11 @@ export function CountrySpecificPaymentField<
 	} );
 }
 
+function isEvent< V >( value: FieldChangeEvent< V > | V ): value is FieldChangeEvent< V > {
+	const event = value as FieldChangeEvent< V >;
+	return typeof event?.target !== 'undefined';
+}
+
 function createField< P extends InteriorFieldProps< V >, V extends FieldValue >( {
 	fieldName,
 	componentClass,
@@ -142,7 +147,7 @@ function createField< P extends InteriorFieldProps< V >, V extends FieldValue >(
 	disabled,
 }: CreateFieldArgs< P, V > ) {
 	const onFieldChange: OnFieldChange< V > = ( event ) =>
-		handleFieldChange( fieldName, event.target.value );
+		handleFieldChange( fieldName, isEvent( event ) ? event.target.value : event );
 	const fieldProps = Object.assign(
 		{},
 		{
