@@ -127,11 +127,11 @@ function InputField( {
 		fieldName,
 		getErrorMessages,
 		getFieldValue,
-		label,
 		onChange,
 	} );
 	const fieldProps = {
 		...genericProps,
+		label,
 		disabled,
 		placeholder,
 		maxLength,
