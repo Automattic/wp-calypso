@@ -3,11 +3,13 @@ import { addQueryArgs } from '@wordpress/url';
 import { ComponentProps } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
-interface DialogSiteThumbnailProps extends ComponentProps< typeof SiteThumbnail > {
+import './style.scss';
+
+interface SiteScreenshotProps extends ComponentProps< typeof SiteThumbnail > {
 	site: SiteExcerptData;
 }
 
-export const DialogSiteThumbnail = ( { site, ...props }: DialogSiteThumbnailProps ) => {
+export const SiteScreenshot = ( { site, ...props }: SiteScreenshotProps ) => {
 	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
 
 	let siteUrl = site.URL;
@@ -25,12 +27,21 @@ export const DialogSiteThumbnail = ( { site, ...props }: DialogSiteThumbnailProp
 		} );
 	}
 
+	const MShotsOptions = {
+		vpw: 1602,
+		vph: 2120,
+		w: 365,
+		screen_height: 2120,
+	};
+
 	return (
 		<SiteThumbnail
 			{ ...props }
 			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
+			className={ `site-screenshot` }
 			alt={ site.name }
 			bgColorImgUrl={ site.icon?.img }
+			mshotsOption={ MShotsOptions }
 		>
 			<Spinner className="edit-gravatar__spinner" />
 		</SiteThumbnail>
