@@ -1,22 +1,20 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-
-.update-plugin__badge {
-	font-size: 0.75rem !important;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	@include break-xlarge() {
-		max-width: 70px;
-	}
-	@include break-huge() {
-		max-width: 80px;
-	}
+.update-plugin__plugin-update-wrapper {
+	display: flex;
+	align-items: center;
+	color: var( --studio-gray-60 );
 }
-a.button.update-plugin__plugin-update-button {
-	color: var( --color-primary-80 );
-	margin-left: 10px;
+
+.update-plugin__arrow-icon {
+	fill: var( --studio-gray-40 );
+	margin-inline-start: 40px;
+	margin-inline-end: 16px;
+}
+
+.update-plugin__new-version {
 	text-decoration: underline;
-	display: inline-flex;
+	font-weight: 600;
+
+	a {
+		display: inline !important;
+	}
 }

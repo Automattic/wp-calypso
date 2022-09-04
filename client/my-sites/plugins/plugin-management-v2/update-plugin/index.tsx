@@ -1,8 +1,7 @@
-import { Button } from '@automattic/components';
+import { Icon, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -62,19 +61,22 @@ export default function UpdatePlugin( {
 		content = <div>{ translate( 'Auto-managed on this site' ) }</div>;
 	} else if ( hasUpdate ) {
 		content = (
-			<>
-				<Badge className="update-plugin__badge" type="warning">
-					{ updated_versions[ 0 ] } { translate( 'Available' ) }
-				</Badge>
-				<Button
-					className="update-plugin__plugin-update-button"
-					borderless
-					compact
-					href={ `/plugins/${ plugin.slug }` }
-				>
-					{ translate( 'Update' ) }
-				</Button>
-			</>
+			<div className="update-plugin__plugin-update-wrapper">
+				<span className="update-plugin__current-version">{ plugin?.version }</span>
+				<span className="update-plugin__arrow-icon">
+					<Icon size={ 24 } icon={ arrowRight } />
+				</span>
+				<span className="update-plugin__new-version">
+					<a href={ `/plugins/${ plugin.slug }` }>
+						{ translate( '{{span}}Update to {{/span}} %s', {
+							components: {
+								span: <span />,
+							},
+							args: updated_versions[ 0 ],
+						} ) }
+					</a>
+				</span>
+			</div>
 		);
 	}
 	return content ? <div className={ classNames( className ) }>{ content }</div> : null;

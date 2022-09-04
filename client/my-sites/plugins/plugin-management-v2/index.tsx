@@ -90,9 +90,13 @@ export default function PluginManagementV2( {
 						smallColumn: true,
 					},
 					{
-						key: 'last-updated',
-						header: translate( 'Last updated' ),
+						key: 'update',
+						header: translate( 'Update available' ),
 						smallColumn: true,
+					},
+					{
+						key: 'last-updated',
+						header: null,
 					},
 			  ]
 			: [
@@ -101,11 +105,16 @@ export default function PluginManagementV2( {
 						header: translate( 'Sites' ),
 						smallColumn: true,
 					},
+					{
+						key: 'update',
+						header: translate( 'Update available' ),
+						smallColumn: true,
+					},
 			  ] ),
 		{
-			key: 'update',
+			key: 'bulk-actions',
 			header: renderBulkActionsHeader(),
-			colSpan: 2,
+			colSpan: 3,
 		},
 	];
 

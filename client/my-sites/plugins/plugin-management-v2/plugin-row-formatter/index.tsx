@@ -186,7 +186,7 @@ export default function PluginRowFormatter( {
 				)
 			);
 		case 'last-updated':
-			if ( item.last_updated ) {
+			if ( item?.update && item?.last_updated ) {
 				return isSmallScreen
 					? translate( 'Last updated %(ago)s', {
 							args: {
@@ -210,5 +210,7 @@ export default function PluginRowFormatter( {
 					/>
 				</div>
 			);
+		case 'bulk-actions':
+			return null;
 	}
 }
