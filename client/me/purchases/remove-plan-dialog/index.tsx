@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { DialogSiteThumbnail } from '../dialog-site-thumbnail';
+import { SiteScreenshot } from '../site-screenshot';
 
 interface RemovePlanDialogProps {
 	planName: string;
@@ -59,7 +59,7 @@ export const RemovePlanDialog = ( {
 				</FormSectionHeading>
 
 				{ shouldUseSiteThumbnail && (
-					<DialogSiteThumbnail
+					<SiteScreenshot
 						className="remove-plan-dialog__thumbnail"
 						site={ site }
 						size={ 'medium' }
