@@ -43,7 +43,7 @@ export const SiteScreenshot = ( { site, ...props }: SiteScreenshotProps ) => {
 			bgColorImgUrl={ site.icon?.img }
 			mshotsOption={ MShotsOptions }
 		>
-			<Spinner className="edit-gravatar__spinner" />
+			<Spinner className="site-screenshot__spinner" size={ 50 } />
 		</SiteThumbnail>
 	);
 };
