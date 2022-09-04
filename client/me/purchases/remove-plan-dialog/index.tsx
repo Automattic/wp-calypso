@@ -5,6 +5,8 @@ import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { SiteScreenshot } from '../site-screenshot';
 
+import './style.scss';
+
 interface RemovePlanDialogProps {
 	planName: string;
 	closeDialog: () => void;
@@ -60,7 +62,7 @@ export const RemovePlanDialog = ( {
 
 				{ shouldUseSiteThumbnail && (
 					<SiteScreenshot
-						className="remove-plan-dialog__thumbnail"
+						className="remove-plan-dialog__site-screenshot"
 						site={ site }
 						size={ 'medium' }
 					/>
