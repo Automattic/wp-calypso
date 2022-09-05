@@ -1,6 +1,9 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+// this is the breakpoint where sidebar menu collapses on WPCOM
+$wpcom-menu-collapse: 783px;
+
 // custom properties for Jetpack
 :root {
 	// border-radius
@@ -8,21 +11,14 @@
 	--jetpack-corners-soft: 4px;
 }
 
-.jetpack-product-store {
-
-	/**
-	 * Import Jetpack cloud styles but make them scoped to jetpack-product-store.
-     * Otherwise it will mess up Calypso Blue styles.
-	 */
-	/* stylelint-disable-next-line no-invalid-position-at-import-rule */
-	@import 'calypso/jetpack-cloud/style';
+.wpcom-site .jetpack-product-store {
 
 	h2 {
 		font-size: $font-title-small;
 		font-weight: 600;
 		line-height: 32px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include break-small {
 			font-size: $font-headline-small;
 			line-height: 40px;
 		}
@@ -33,9 +29,38 @@
 		font-weight: 600;
 		line-height: 23px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include break-small {
 			font-size: $font-title-small;
 			line-height: 23px;
+		}
+	}
+
+	// Start after the collapsible admin menu shows up
+	@media (min-width: $wpcom-menu-collapse) {
+		@media (max-width: $break-wide) {
+			// Ensure that price and term is shown in blocks/columns not in a single line
+			.item-price .display-price:not(.is-placeholder) {
+				display: block;
+				max-height: min-content;
+			}
+
+			// Break featured item cards into separate rows
+			.jetpack-product-store__most-popular--items {
+				grid-template-columns: 1fr;
+			}
+
+			// Move CTA button to next line
+			.simple-product-card__info-header {
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+		}
+
+		@media (max-width: $break-large) {
+			// Hide icon to save some real estate
+			.simple-product-card__icon {
+				display: none;
+			}
 		}
 	}
 }
