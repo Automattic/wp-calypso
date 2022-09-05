@@ -362,6 +362,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
+			FEATURE_VIDEO_UPLOADS,
 		] ),
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,

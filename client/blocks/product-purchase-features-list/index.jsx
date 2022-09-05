@@ -182,7 +182,7 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPersonalFeatures() {
-		const { isPlaceholder, isMonthlyPlan, selectedSite, planHasDomainCredit } = this.props;
+		const { isPlaceholder, isMonthlyPlan, selectedSite, planHasDomainCredit, plan } = this.props;
 
 		return (
 			<Fragment>
@@ -193,6 +193,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<AdvertisingRemoved isEligiblePlan selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
+				<VideoAudioPosts selectedSite={ selectedSite } plan={ plan } />
 			</Fragment>
 		);
 	}

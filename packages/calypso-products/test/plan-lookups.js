@@ -7,6 +7,7 @@ import {
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_T2_YEARLY,
 	FEATURE_VIDEO_UPLOADS,
+	FEATURE_SHIPPING_CARRIERS,
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 	PLAN_BUSINESS_MONTHLY,
@@ -1081,7 +1082,7 @@ describe( 'planHasFeature', () => {
 	} );
 
 	test( 'should return false when a plan does not have a feature', () => {
-		expect( planHasFeature( PLAN_PERSONAL, FEATURE_VIDEO_UPLOADS ) ).toBe( false );
+		expect( planHasFeature( PLAN_PERSONAL, FEATURE_SHIPPING_CARRIERS ) ).toBe( false );
 	} );
 } );
 
