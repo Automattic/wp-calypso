@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
+import PatternAssemblerPreview from './pattern-assembler-preview';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
 import './style.scss';
@@ -122,9 +123,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 					/>
 				) }
 			</div>
-			<div className="pattern-assembler__preview">
-				<h3> Web preview placeholder </h3>
-			</div>
+			<PatternAssemblerPreview header={ header } sections={ sections } footer={ footer } />
 		</div>
 	);
 

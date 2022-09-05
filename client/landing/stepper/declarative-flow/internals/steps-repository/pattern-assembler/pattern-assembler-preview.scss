@@ -1,0 +1,31 @@
+.pattern-assembler-preview {
+	flex: 1;
+	height: 100vh;
+	padding: 32px 0;
+	margin-top: -60px;
+	margin-inline-start: 32px;
+	box-sizing: border-box;
+
+	.preview-toolbar__browser-header,
+	.spinner-line {
+		display: none;
+	}
+
+	.web-preview__frame-wrapper {
+		background-color: transparent;
+	}
+
+	iframe {
+		padding: 12px;
+		border: none;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 20px;
+		box-shadow:
+			0 15px 20px rgba( 0 0 0 / 4% ),
+			0 13px 10px rgba( 0 0 0 / 3% ),
+			0 6px 6px rgba( 0 0 0 / 2% );
+		box-sizing: border-box;
+		background: #f8f8f8;
+		opacity: 1;
+	}
+}
