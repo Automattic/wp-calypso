@@ -6,19 +6,9 @@ interface PreviewProps {
 	title?: string;
 	description?: string;
 	variations?: StyleVariation[];
-	isLoading?: boolean;
 }
 
-const Preview: React.FC< PreviewProps > = ( {
-	title,
-	description,
-	variations = [],
-	isLoading = false,
-} ) => {
-	if ( isLoading ) {
-		return null;
-	}
-
+const Preview: React.FC< PreviewProps > = ( { title, description, variations = [] } ) => {
 	return (
 		<div className="design-preview">
 			<Sidebar title={ title } description={ description } variations={ variations } />

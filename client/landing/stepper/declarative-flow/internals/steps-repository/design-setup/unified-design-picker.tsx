@@ -113,10 +113,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		selectedDesign.design_type !== 'vertical' &&
 		isEnabled( 'signup/design-picker-style-selection' );
 
-	const { data: selectedDesignDetails, isLoading: isLoadingSelectedDesignDetails } =
-		useStarterDesignBySlug( selectedDesign?.slug || '', {
-			enabled: isPreviewingDesign && isEnabledStyleSelection,
-		} );
+	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
+		enabled: isPreviewingDesign && isEnabledStyleSelection,
+	} );
 
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
@@ -317,7 +316,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						title={ designTitle }
 						description={ selectedDesignDetails?.description }
 						variations={ selectedDesignDetails?.style_variations }
-						isLoading={ isLoadingSelectedDesignDetails }
 					/>
 				) : (
 					<WebPreview
