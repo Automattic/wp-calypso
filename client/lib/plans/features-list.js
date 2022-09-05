@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
 	FEATURE_13GB_STORAGE,
@@ -327,11 +327,30 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Premium themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
-			),
+		getTitle: () => {
+			const shouldShowNewString =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation( 'Unlimited premium themes' );
+
+			return shouldShowNewString
+				? i18n.translate( 'Unlimited premium themes' )
+				: i18n.translate( 'Premium themes' );
+		},
+		getDescription: () => {
+			const shouldShowNewString =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation(
+					'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				);
+
+			return shouldShowNewString
+				? i18n.translate(
+						'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				  )
+				: i18n.translate(
+						'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
+				  );
+		},
 	},
 
 	[ FEATURE_MONETISE ]: {
