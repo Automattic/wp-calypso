@@ -13,9 +13,9 @@ type Props = {
 };
 
 type ParsedMetaData = {
-	siteTitle?: string;
-	siteTagline?: string;
-	siteLogoUrl?: string;
+	site_title?: string;
+	site_tagline?: string;
+	site_logo_url?: string;
 };
 
 const parsePatternMetaData = ( patternMeta: PatternMeta ): ParsedMetaData => {
@@ -37,15 +37,15 @@ const parsePatternMetaData = ( patternMeta: PatternMeta ): ParsedMetaData => {
 		const siteLogoUrl = getPatternMetaValue( patternMetaKey, /^site_logo_url_/ );
 
 		if ( siteTitle ) {
-			result.siteTitle = siteTitle;
+			result.site_title = siteTitle;
 		}
 
 		if ( siteTagline ) {
-			result.siteTagline = siteTagline;
+			result.site_tagline = siteTagline;
 		}
 
 		if ( siteLogoUrl ) {
-			result.siteLogoUrl = siteLogoUrl;
+			result.site_logo_url = siteLogoUrl;
 		}
 	} );
 
@@ -57,21 +57,8 @@ const getPatternPreviewUrl = ( pattern: Pattern ): string => {
 		stylesheet: 'pub/lynx',
 		source_site: PATTERN_SOURCE_SITE_SLUG,
 		pattern_id: [ pattern.ID, pattern.site_id ].join( '-' ),
+		...parsePatternMetaData( pattern.pattern_meta ),
 	} );
-
-	const { siteTitle, siteTagline, siteLogoUrl } = parsePatternMetaData( pattern.pattern_meta );
-
-	if ( siteTitle ) {
-		params.set( 'site_title', siteTitle );
-	}
-
-	if ( siteTagline ) {
-		params.set( 'site_tagline', siteTagline );
-	}
-
-	if ( siteLogoUrl ) {
-		params.set( 'site_logo_url', siteLogoUrl );
-	}
 
 	return `https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?${ params }`;
 };
