@@ -447,3 +447,11 @@ export interface LaunchPadCheckListTasksStatuses {
 	links_edited?: boolean;
 	site_launched?: boolean;
 }
+
+export interface ThemeSetupOptions {
+	trim_content?: boolean;
+	vertical_id?: number;
+	pattern_ids?: number[];
+	header_pattern_ids?: number[];
+	footer_pattern_ids?: number[];
+}

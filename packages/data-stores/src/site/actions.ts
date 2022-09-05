@@ -26,6 +26,7 @@ import type {
 	AtomicSoftwareInstallError as AtomicSoftwareInstallErrorType,
 	AtomicSoftwareStatus,
 	SiteSettings,
+	ThemeSetupOptions,
 } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -309,18 +310,37 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		 */
 		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
 		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
+			const themeSetupOptions: ThemeSetupOptions = {
+				trim_content: true,
+			};
+
+			if (
+				selectedDesign.verticalizable &&
+				siteVerticalId &&
+				! isNaN( parseInt( siteVerticalId ) )
+			) {
+				themeSetupOptions.vertical_id = parseInt( siteVerticalId );
+			}
+
+			if ( recipe?.pattern_ids ) {
+				themeSetupOptions.pattern_ids = recipe?.pattern_ids;
+			}
+
+			if ( recipe?.header_pattern_ids ) {
+				themeSetupOptions.header_pattern_ids = recipe?.header_pattern_ids;
+			}
+
+			if ( recipe?.footer_pattern_ids ) {
+				themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
+			}
+
 			const response: { blog: string } = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
-				body: {
-					trim_content: true,
-					vertical_id: selectedDesign.verticalizable && siteVerticalId ? siteVerticalId : undefined,
-					pattern_ids: recipe?.pattern_ids,
-					header_pattern_ids: recipe?.header_pattern_ids || [],
-					footer_pattern_ids: recipe?.footer_pattern_ids || [],
-				},
+				body: themeSetupOptions,
 				method: 'POST',
 			} );
+
 			return response;
 		}
 	}
