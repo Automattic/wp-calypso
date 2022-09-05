@@ -314,12 +314,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				trim_content: true,
 			};
 
-			if (
-				selectedDesign.verticalizable &&
-				siteVerticalId &&
-				! isNaN( parseInt( siteVerticalId ) )
-			) {
-				themeSetupOptions.vertical_id = parseInt( siteVerticalId );
+			if ( selectedDesign.verticalizable && siteVerticalId ) {
+				themeSetupOptions.vertical_id = siteVerticalId;
 			}
 
 			if ( recipe?.pattern_ids ) {

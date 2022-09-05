@@ -484,7 +484,7 @@ describe( 'Site Actions', () => {
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
-					vertical_id: parseInt( mockedSiteVerticalId ),
+					vertical_id: mockedSiteVerticalId,
 				} )
 			);
 		} );
