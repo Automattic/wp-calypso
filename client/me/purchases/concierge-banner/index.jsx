@@ -52,7 +52,7 @@ class ConciergeBanner extends Component {
 		let description;
 		let buttonText;
 		let event;
-		let hasTranslations = locale === 'en';
+		let hasTranslations = locale.startsWith( 'en' );
 
 		switch ( bannerType ) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:
@@ -127,7 +127,7 @@ class ConciergeBanner extends Component {
 			<>
 				<TrackComponentView eventName="calypso_purchases_concierge_banner_view" />
 				<Banner
-					className={ 'concierge-banner' }
+					className="concierge-banner"
 					showIcon={ false }
 					primaryButton={ false }
 					callToAction={ buttonText }
@@ -135,7 +135,7 @@ class ConciergeBanner extends Component {
 					dismissPreferenceName={ `quick-start-banner-${ bannerType }` }
 					href={ `/me/quickstart/${ quickStartSiteSlug }` }
 					title={ title }
-					tracksClickName={ 'calypso_purchases_concierge_banner_click' }
+					tracksClickName="calypso_purchases_concierge_banner_click"
 					recordTracksEvent={ recordTracksEvent }
 					event={ event }
 					tracksClickProperties={ {
