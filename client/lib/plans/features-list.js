@@ -1619,7 +1619,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_UPLOAD_THEMES_V3 ]: {
 		getSlug: () => FEATURE_UPLOAD_THEMES_V3,
-		getTitle: () => 'Upload custom WordPress themes.',
+		getTitle: () => 'Upload custom WordPress themes',
 		getDescription: () => {},
 	},
 	[ FEATURE_EDGE_CACHING_V2 ]: {
