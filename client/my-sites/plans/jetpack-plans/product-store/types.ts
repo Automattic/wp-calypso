@@ -23,7 +23,6 @@ export interface ProductStoreProps {
 	duration: Duration;
 	createCheckoutURL?: PurchaseURLCallback;
 	onClickPurchase?: PurchaseCallback;
-	clickMoreHandlerFactory: ( item: SelectorProduct ) => VoidFunction | undefined;
 	urlQueryArgs: ProductStoreQueryArgs;
 	header: React.ReactNode;
 }
@@ -42,13 +41,15 @@ export interface ViewFilterProps {
 }
 
 export type ProductsListProps = ProductStoreBaseProps &
-	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' >;
-
-export type itemToDisplayProps = Omit< ProductsListProps, 'clickMoreHandlerFactory' >;
+	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' > & {
+		clickMoreHandlerFactory: ( item: SelectorProduct ) => VoidFunction | undefined;
+	};
 
 export type BundlesListProps = ProductsListProps;
 
-export interface ItemsListProps extends ProductsListProps {
+export type itemToDisplayProps = Omit< ProductsListProps, 'clickMoreHandlerFactory' >;
+
+export interface ItemsListProps extends itemToDisplayProps {
 	currentView: ViewType;
 }
 
