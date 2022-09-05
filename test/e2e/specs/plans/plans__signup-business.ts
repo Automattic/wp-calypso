@@ -11,7 +11,7 @@ import {
 	RestAPIClient,
 	CartCheckoutPage,
 	TestAccount,
-	DomainSearchComponent,
+	SignupDomainPage,
 	MediaPage,
 	NewSiteResponse,
 } from '@automattic/calypso-e2e';
@@ -23,7 +23,6 @@ declare const browser: Browser;
 describe(
 	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com Business site as exising user' ),
 	function () {
-		const blogName = DataHelper.getBlogName();
 		const planName = 'Business';
 
 		let testAccount: TestAccount;
@@ -50,9 +49,8 @@ describe(
 			} );
 
 			it( 'Select a .wordpres.com domain name', async function () {
-				const domainSearchComponent = new DomainSearchComponent( page );
-				await domainSearchComponent.search( blogName );
-				await domainSearchComponent.selectDomain( '.wordpress.com' );
+				const signupDomainPage = new SignupDomainPage( page );
+				await signupDomainPage.skipDomainSelection();
 			} );
 
 			it( `Select WordPress.com ${ planName } plan`, async function () {
