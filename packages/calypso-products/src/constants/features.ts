@@ -99,7 +99,6 @@ export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
 
 //condensed_plan_features_v1 test
 export const FEATURE_HOSTING_TEST = 'hosting-test';
-export const FEATURE_PREMIUM_THEMES_TEST = 'premium-themes-test';
 export const FEATURE_PRIORITY_SUPPORT_TEST = 'priority-support-test';
 export const FEATURE_PLUGINS_TEST = 'plugins-test';
 export const FEATURE_SFTP_DATABASE_TEST = 'sftp-database-test';

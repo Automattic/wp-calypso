@@ -175,7 +175,6 @@ import {
 	FEATURE_SFTP_DATABASE_TEST,
 	FEATURE_FREE_NEWSLETTER_V1,
 	FEATURE_PAID_NEWSLETTER_V1,
-	FEATURE_PREMIUM_THEMES_TEST,
 	FEATURE_REPUBLICIZE_V3,
 	FEATURE_MONETISE_V2,
 	FEATURE_EDGE_CACHING_V2,
@@ -1583,11 +1582,6 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Fully managed web hosting & CDN' ),
 		getDescription: () => {},
 	},
-	[ FEATURE_PREMIUM_THEMES_TEST ]: {
-		getSlug: () => FEATURE_PREMIUM_THEMES_TEST,
-		getTitle: () => 'Unlimited premium themes',
-		getDescription: () => {},
-	},
 	[ FEATURE_PRIORITY_SUPPORT_TEST ]: {
 		getSlug: () => FEATURE_PRIORITY_SUPPORT_TEST,
 		getTitle: () => '24/7 live chat support',
@@ -1635,7 +1629,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 ]: {
 		getSlug: () => FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		getTitle: () => i18n.translate( 'Advanced Search Engine Optimisation (SEO) tools' ),
+		getTitle: () => i18n.translate( 'Advances SEO tools' ),
 		getDescription: () => {},
 	},
 	[ FEATURE_SITE_STATS_V2 ]: {
