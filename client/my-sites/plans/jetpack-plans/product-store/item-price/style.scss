@@ -1,6 +1,9 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .item-price .display-price {
-	display: flex;
-	align-items: center;
+	display: block;
+	min-height: 48px;
 
 	.plan-price__currency-symbol,
 	.plan-price__integer,
@@ -29,11 +32,25 @@
 		display: none;
 	}
 
+	&__billing-time-frame {
+		margin-top: 0;
+
+		@include break-mobile {
+			margin-top: 3px;
+		}
+	}
+
 	&__billing-time-frame,
 	&__expiration-date {
 		color: var( --studio-gray-50 );
 		font-size: 0.75rem;
 		line-height: 24px;
+	}
+
+	@include break-mobile {
+		display: flex;
+		align-items: center;
+		min-height: 24px;
 	}
 }
 
