@@ -48,7 +48,7 @@
 	// set flex-direction to column to avoid cluttered UI
 	// due to long "Manage subscription" button
 	&:has(.item-price__is-owned) {
-		@media only screen and (max-width: $break-mobile) {
+		@media only screen and (max-width: $break-mobile), only screen and (min-width: $break-medium) and (max-width: $break-large) {
 			flex-direction: column;
 			gap: 1rem;
 		}
