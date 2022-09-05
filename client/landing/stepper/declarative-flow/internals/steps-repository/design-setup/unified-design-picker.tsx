@@ -314,7 +314,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						require="@automattic/design-preview"
 						placeholder={ null }
 						title={ designTitle }
-						description={ selectedDesignDetails?.description }
+						description={ selectedDesign.description }
 						variations={ selectedDesignDetails?.style_variations }
 					/>
 				) : (
