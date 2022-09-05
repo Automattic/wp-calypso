@@ -46,9 +46,11 @@ function LicensingPromptDialog( { siteId }: Props ) {
 		dispatch( recordTracksEvent( 'calypso_user_license_modal_view' ) );
 	}, [ dispatch ] );
 
-	let titleToRender = isEnabled( 'jetpack/pricing-page-rework-v1' )
-		? translate( 'Jetpack is successfully installed' )
-		: '';
+	let titleToRender =
+		isEnabled( 'jetpack/pricing-page-rework-v1' ) &&
+		window.location.pathname.startsWith( '/jetpack/connect/plans' )
+			? translate( 'Jetpack is successfully installed' )
+			: '';
 
 	if ( ! titleToRender ) {
 		if ( hasOneDetachedLicense ) {
