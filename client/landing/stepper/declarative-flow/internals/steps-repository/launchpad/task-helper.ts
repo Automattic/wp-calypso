@@ -42,6 +42,8 @@ export function getEnhancedTasks(
 				case 'subscribers_added':
 					taskData = {
 						title: translate( 'Add Subscribers' ),
+						keepActive: true,
+						actionUrl: `/setup/subscribers?flow=newsletter&complete-setup=true&siteSlug=${ siteSlug }`,
 					};
 					break;
 				case 'first_post_published':
@@ -114,11 +116,16 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 }
 
 // This function will determine whether we want to disable or enable a task on the checklist
+// If a task is set to keepActive, we keep it enabled. It allows a task to be revisited when completed
 // If a task is completed, we disable it
 // If a task is NOT completed AND the task contains dependencies, we want to check if all dependencies are set to true:
 //    ^ If all the dependencies are true, then the task is enabled
 //    ^ If at least one of the dependencies is false, then the task is disabled
 export function isTaskDisabled( task: Task ) {
+	if ( task.keepActive ) {
+		return false;
+	}
+
 	if ( task.isCompleted ) {
 		return task.isCompleted;
 	}
