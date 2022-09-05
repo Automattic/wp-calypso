@@ -5,10 +5,9 @@ import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
-import { setupSiteAfterCreation } from '@automattic/onboarding';
+import { setupSiteAfterCreation, isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-import { isTailoredSignupFlow } from 'calypso/../packages/onboarding/src';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
