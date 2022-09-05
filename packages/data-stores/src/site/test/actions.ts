@@ -465,7 +465,7 @@ describe( 'Site Actions', () => {
 			);
 		} );
 
-		it( 'should send vertical_id if the design is verticalizable and vertical id is not string', () => {
+		it( 'should send vertical_id if the design is verticalizable and vertical id exists', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
 			const mockedSiteVerticalId = '1';
 			const generator = setDesignOnSite(
