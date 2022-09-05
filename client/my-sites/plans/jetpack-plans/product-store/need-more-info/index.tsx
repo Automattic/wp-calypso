@@ -3,7 +3,9 @@ import {
 	PLAN_COMPARISON_PAGE,
 	AGENCIES_PAGE,
 } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import MoreInfoBox from '../more-info-box';
+import MoreInfoBox from '../../more-info-box';
+
+import './style.scss';
 
 export const NeedMoreInfo: React.FC = () => {
 	const translate = useTranslate();

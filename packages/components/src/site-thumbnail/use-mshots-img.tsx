@@ -96,8 +96,10 @@ export const useMshotsImg = (
 	}, [] );
 
 	useEffect( () => {
-		clearTimeout( timeout.current );
-	}, [ mshotUrl ] );
+		return () => {
+			clearTimeout( timeout.current );
+		};
+	}, [] );
 
 	return {
 		isLoading,

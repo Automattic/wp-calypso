@@ -3,13 +3,8 @@ import { BlankCanvas } from 'calypso/components/blank-canvas';
 import VideosUi from 'calypso/components/videos-ui';
 import ModalFooterBar from 'calypso/components/videos-ui/modal-footer-bar';
 import ModalHeaderBar from 'calypso/components/videos-ui/modal-header-bar';
-import { COURSE_SLUGS } from 'calypso/data/courses';
 
-import './style.scss';
-
-const BloggingQuickStartModal = ( props ) => {
-	const { isVisible = false, onClose = () => {} } = props;
-
+const VideoModal = ( { isVisible = false, onClose = () => {}, courseSlug } ) => {
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
 		if ( isVisible ) {
@@ -19,10 +14,10 @@ const BloggingQuickStartModal = ( props ) => {
 
 	return (
 		isVisible && (
-			<BlankCanvas className={ 'blogging-quick-start-modal' }>
+			<BlankCanvas className="videos-ui__modal">
 				<BlankCanvas.Content>
 					<VideosUi
-						courseSlug={ COURSE_SLUGS.BLOGGING_QUICK_START }
+						courseSlug={ courseSlug }
 						HeaderBar={ ( headerProps ) => (
 							<ModalHeaderBar onClose={ onClose } { ...headerProps } />
 						) }
@@ -37,4 +32,4 @@ const BloggingQuickStartModal = ( props ) => {
 	);
 };
 
-export default BloggingQuickStartModal;
+export default VideoModal;
