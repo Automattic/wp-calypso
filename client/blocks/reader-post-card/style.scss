@@ -624,10 +624,27 @@
 }
 
 .reader-post-card__gallery-image {
-	height: 100px;
+	height: 300px;
+}
 
-	@include breakpoint-deprecated( '>960px' ) {
-		height: 130px;
+.reader-post-card__gallery-circles {
+	width: 100%;
+	justify-content: center;
+	display: flex;
+}
+
+.reader-post-card__gallery-circle {
+	border-radius: 50%;
+	width: 5px;
+	height: 5px;
+	background: var( --color-neutral-30 );
+	border: 0;
+	position: relative;
+	float: left;
+	margin-right: 5px;
+
+	&.is-selected {
+		background: var( --color-neutral-70 );
 	}
 }
 
