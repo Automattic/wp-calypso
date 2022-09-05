@@ -3,7 +3,6 @@ import { reloadAndRetry } from '../../element-helper';
 
 const selectors = {
 	searchInput: `.search-component__input`,
-	resultPlaceholder: `.is-placeholder`,
 	resultItem: ( keyword: string ) => `.domain-suggestion__content:has-text("${ keyword }")`,
 };
 
