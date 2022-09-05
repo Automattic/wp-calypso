@@ -1,8 +1,65 @@
+.dialog__content.remove-plan-dialog {
+	padding: 0;
+}
+
 .remove-plan-dialog {
-	max-width: 500px;
+	background: #f0f0f0;
 	
 	.remove-plan-dialog__site-screenshot {
 		width: 365px;
 		height: 483px;
+
+		&.site-thumbnail-loading {
+			background-color: transparent;
+			border: none;
+
+		}
 	}
+
+	.remove-plan-dialog__grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		vertical-align: middle;
+		text-align: center;
+
+		.remove-plan-dialog__grid-colmn1 {
+			padding: 24px 48px;
+		}
+
+		.remove-plan-dialog__grid-colmn2 {
+			text-align: left;
+			background: #ffffff;
+			padding: 48px;
+
+			.formatted-header__title {
+				font-size: 1.5rem;
+				font-weight: inherit;
+			}
+		}
+	}
+}
+
+.remove-plan-dialog + .dialog__action-buttons {
+	&::before {
+		background: none;
+	}
+
+	width: calc( 50% - 48px );
+	margin-left: 50%;
+	margin-top: -72px;
+	border: none;
+    background: transparent;
+	text-align: left;
+}
+
+.remove-plan-dialog__item-cross-small {
+	color: #e65054;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+
+.remove-plan-dialog__list-plan-features {
+	list-style-type: none;
+	margin: 0;
+	text-align: left;
 }
