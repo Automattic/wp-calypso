@@ -158,6 +158,9 @@ const TitanSetUpThankYou = ( {
 						<FullWidthButton
 							href={ addQueryArgs( { siteId: selectedSite?.ID }, '/setup' ) }
 							primary
+							// The section "/setup" is not defined as a page.js routing path, so we
+							// force a non-pushState navigation with rel=external.
+							rel="external"
 						>
 							{ translate( 'Set up site' ) }
 						</FullWidthButton>
