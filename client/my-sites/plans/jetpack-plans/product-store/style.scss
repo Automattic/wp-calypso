@@ -19,7 +19,7 @@
 		font-weight: 600;
 	}
 
-	.button.is-external {
+	.button:not([disabled], :disabled, .is-primary) {
 		color: var( --color-neutral-100 );
 		border: 1px solid var( --color-neutral-100 );
 	}
