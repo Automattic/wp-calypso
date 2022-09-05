@@ -34,18 +34,22 @@ interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
-	flowName?: 'link-in-bio';
+	flowName?: 'link-in-bio' | 'newsletter';
 }
 type DomainSuggestionsVendor =
 	| 'variation2_front'
 	| 'variation4_front'
 	| 'variation8_front'
-	| 'link-in-bio';
+	| 'link-in-bio'
+	| 'newsletter';
 
 export function getDomainSuggestionsVendor(
 	options: DomainSuggestionsVendorOptions = {}
 ): DomainSuggestionsVendor {
 	if ( options.flowName === 'link-in-bio' ) {
+		return options.flowName;
+	}
+	if ( options.flowName === 'newsletter' ) {
 		return options.flowName;
 	}
 	if ( options.isSignup && ! options.isDomainOnly ) {
