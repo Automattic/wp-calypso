@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import { getSitePlan, getSiteProducts } from 'calypso/state/sites/selectors';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
@@ -24,6 +25,7 @@ export const useStoreItemInfo = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 
 	// Determine whether product is owned.
 	const isOwned = useCallback(
@@ -113,10 +115,19 @@ export const useStoreItemInfo = ( {
 		[ getPurchase, isUpgradeableToYearly, onClickPurchase ]
 	);
 
+	const isUserPurchaseOwner = useCallback(
+		( item: SelectorProduct ) => {
+			const purchase = getPurchase( item );
+			return isCurrentUserPurchaseOwner( purchase );
+		},
+		[ getPurchase, isCurrentUserPurchaseOwner ]
+	);
+
 	return useMemo(
 		() => ( {
 			getCheckoutURL,
 			getOnClickPurchase,
+			getPurchase,
 			isDeprecated,
 			isIncludedInPlan,
 			isIncludedInPlanOrSuperseded,
@@ -124,19 +135,20 @@ export const useStoreItemInfo = ( {
 			isPlanFeature,
 			isSuperseded,
 			isUpgradeableToYearly,
-			getPurchase,
+			isUserPurchaseOwner,
 			sitePlan,
 		} ),
 		[
 			getCheckoutURL,
 			getOnClickPurchase,
+			getPurchase,
 			isIncludedInPlan,
 			isIncludedInPlanOrSuperseded,
 			isOwned,
 			isPlanFeature,
 			isSuperseded,
 			isUpgradeableToYearly,
-			getPurchase,
+			isUserPurchaseOwner,
 			sitePlan,
 		]
 	);
