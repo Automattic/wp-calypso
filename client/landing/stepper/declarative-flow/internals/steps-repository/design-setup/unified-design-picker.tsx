@@ -320,7 +320,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						placeholder={ null }
 						title={ designTitle }
 						description={ selectedDesignDetails?.description }
-						features={ selectedDesignDetails?.theme_features }
 						variations={ selectedDesignDetails?.style_variations }
 						isLoading={ isLoadingSelectedDesignDetails }
 					/>
