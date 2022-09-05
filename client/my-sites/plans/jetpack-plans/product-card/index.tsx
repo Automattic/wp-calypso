@@ -206,7 +206,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		<>
 			{ buttonLabel }
 			&nbsp;
-			<OwnerInfo purchaseId={ purchase?.id } />
+			<OwnerInfo purchase={ purchase } />
 		</>
 	) : (
 		buttonLabel
