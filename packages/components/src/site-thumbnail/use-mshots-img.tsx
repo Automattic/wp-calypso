@@ -67,12 +67,18 @@ export const useMshotsImg = (
 				return;
 			}
 
+			setIsLoading( true );
+			// Loaded image natural width should conform to sizes passed in.
+			const hasExpectedImageDimensions = sizes.some(
+				( size ) => size.width === event.currentTarget.naturalWidth
+			);
 			// MShot Loading image is 400x300px.
 			// MShot 404 image is 748×561px
-			setIsLoading( true );
-			const hasLoadingImgDimensions =
+			const hasMshotLoadingImageDimensions =
 				event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300;
-			if ( ! hasLoadingImgDimensions ) {
+			const loading = ! hasExpectedImageDimensions || hasMshotLoadingImageDimensions;
+
+			if ( ! loading ) {
 				setIsLoading( false );
 			} else if ( retryCount < MAXTRIES ) {
 				// Only refresh 10 times
@@ -82,7 +88,7 @@ export const useMshotsImg = (
 				);
 			}
 		},
-		[ retryCount, mshotUrl.length ]
+		[ retryCount, mshotUrl.length, sizes ]
 	);
 
 	const onError = useCallback( () => {
@@ -99,8 +105,8 @@ export const useMshotsImg = (
 		imgProps: {
 			onLoad,
 			onError,
+			srcSet,
 			src: mshotUrl,
-			srcSet: ! isLoading ? srcSet : '',
 			loading: 'lazy',
 		},
 	};
