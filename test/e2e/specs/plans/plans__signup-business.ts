@@ -48,7 +48,7 @@ describe(
 				await page.goto( DataHelper.getCalypsoURL( 'start' ) );
 			} );
 
-			it( 'Select a .wordpres.com domain name', async function () {
+			it( 'Skip domain selection', async function () {
 				const signupDomainPage = new SignupDomainPage( page );
 				await signupDomainPage.skipDomainSelection();
 			} );
