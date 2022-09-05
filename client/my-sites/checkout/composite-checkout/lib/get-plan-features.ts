@@ -27,6 +27,7 @@ export default function getPlanFeatures(
 	}
 
 	const isMonthlyPlan = isMonthly( productSlug );
+	const emailSupport = String( translate( 'Customer support via email' ) );
 	const liveChatSupport = String( translate( 'Live chat support' ) );
 	const freeOneYearDomain = showFreeDomainFeature
 		? String( translate( 'Free domain for one year' ) )
@@ -36,6 +37,7 @@ export default function getPlanFeatures(
 	if ( isWpComPersonalPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
+			emailSupport,
 			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
 		].filter( isValueTruthy );
@@ -44,6 +46,7 @@ export default function getPlanFeatures(
 	if ( isStarterPlan( productSlug ) ) {
 		return [
 			freeOneYearDomain,
+			emailSupport,
 			String( translate( 'Best-in-class hosting' ) ),
 			String( translate( 'Dozens of Free Themes' ) ),
 			String( translate( 'Track your stats with Google Analytics' ) ),
@@ -53,6 +56,7 @@ export default function getPlanFeatures(
 	if ( isWpComPremiumPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
+			isMonthlyPlan && emailSupport,
 			! isMonthlyPlan && liveChatSupport,
 			isEnabled( 'themes/premium' )
 				? String( translate( 'Unlimited access to our library of Premium Themes' ) )
@@ -67,6 +71,7 @@ export default function getPlanFeatures(
 	if ( isWpComBusinessPlan( productSlug ) || isWpComProPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
+			isMonthlyPlan && emailSupport,
 			! isMonthlyPlan && liveChatSupport,
 			String( translate( 'Install custom plugins and themes' ) ),
 			String( translate( 'Drive traffic to your site with our advanced SEO tools' ) ),
@@ -78,6 +83,7 @@ export default function getPlanFeatures(
 	if ( isWpComEcommercePlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
+			isMonthlyPlan && emailSupport,
 			! isMonthlyPlan && liveChatSupport,
 			String( translate( 'Install custom plugins and themes' ) ),
 			String( translate( 'Accept payments in 60+ countries' ) ),
