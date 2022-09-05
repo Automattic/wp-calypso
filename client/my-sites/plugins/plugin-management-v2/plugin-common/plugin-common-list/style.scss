@@ -17,3 +17,9 @@
 		height: 100%;
 	}
 }
+.plugin-common-multi-site-table {
+	.plugin-common-table__table td:nth-child(1) {
+		max-width: fit-content;
+	}
+
+}

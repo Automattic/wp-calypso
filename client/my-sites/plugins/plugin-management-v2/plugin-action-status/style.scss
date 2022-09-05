@@ -1,0 +1,37 @@
+@import '@wordpress/base-styles/_breakpoints.scss';
+@import '@wordpress/base-styles/_mixins.scss';
+
+.plugin-action-status-container {
+	margin-top: -8px;
+	white-space: pre;
+}
+.plugin-action-status {
+	position: relative;
+	top: 1px;
+	height: 20px;
+	padding: 0px 8px;
+	border-radius: 2px;
+	font-size: 0.75rem;
+	width: fit-content;
+	&:not(:last-child) {
+		margin-inline-end: 5px;
+	}
+	display: block;
+	margin-block-start: 5px;
+	@include break-xlarge() {
+		display: inline;
+		margin-block-start: unset;
+	}
+}
+.inProgress {
+	background: #F6F7F7;
+	color: #50575E;
+}
+.completed {
+	background: #B8E6BF;
+	color: #00450C;
+}
+.error{
+	background: #FACFD2;
+	color: #691C1C;
+}
