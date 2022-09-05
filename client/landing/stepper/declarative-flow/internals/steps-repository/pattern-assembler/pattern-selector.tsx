@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
 
@@ -12,19 +11,10 @@ type PatternSelectorProps = {
 };
 
 const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorProps ) => {
-	const [ selectedPattern, setSelectedPattern ] = useState< Pattern | null >( null );
 	const translate = useTranslate();
-
-	const handleContinueClick = () => {
-		onSelect( selectedPattern );
-	};
 
 	const handleBackClick = () => {
 		onSelect( null );
-	};
-
-	const handleSelectedPattern = ( item: Pattern ) => {
-		setSelectedPattern( item );
 	};
 
 	return (
@@ -41,8 +31,8 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 							tabIndex={ 0 }
 							role="option"
 							aria-selected={ false }
-							onClick={ () => handleSelectedPattern( item ) }
-							onKeyUp={ handleKeyboard( () => setSelectedPattern( item ) ) }
+							onClick={ () => onSelect( item ) }
+							onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
 						>
 							<iframe
 								title={ item.name }
@@ -59,11 +49,6 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 				<Button className="pattern-assembler__button" onClick={ handleBackClick }>
 					{ translate( 'Back' ) }
 				</Button>
-				{ selectedPattern && (
-					<Button className="pattern-assembler__button" onClick={ handleContinueClick } primary>
-						{ translate( 'Choose' ) }
-					</Button>
-				) }
 			</div>
 		</div>
 	);
