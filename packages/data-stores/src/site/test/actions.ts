@@ -391,4 +391,184 @@ describe( 'Site Actions', () => {
 			} );
 		} );
 	} );
+
+	describe( 'Design Actions', () => {
+		const mockedRecipe = { stylesheet: 'pub/zoologist' };
+		const mockedDesign = {
+			title: 'Zoologist',
+			slug: 'zoologist',
+			template: 'zoologist',
+			theme: 'zoologist',
+			categories: [ { slug: 'featured', name: 'Featured' } ],
+			is_premium: false,
+			features: [],
+			recipe: mockedRecipe,
+		};
+
+		const mockedThemeSwitchApiRequest = {
+			type: 'WPCOM_REQUEST',
+			request: {
+				path: `/sites/${ siteSlug }/themes/mine`,
+				apiVersion: '1.1',
+				body: { theme: 'zoologist', dont_change_homepage: true },
+				method: 'POST',
+			},
+		};
+
+		const createMockedThemeSetupApiRequest = ( payload ) => ( {
+			type: 'WPCOM_REQUEST',
+			request: {
+				path: `/sites/${ siteSlug }/theme-setup`,
+				apiNamespace: 'wpcom/v2',
+				body: payload,
+				method: 'POST',
+			},
+		} );
+
+		it( 'should not send vertical_id if the design is not verticalizable', () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const generator = setDesignOnSite( siteSlug, {
+				...mockedDesign,
+				verticalizable: false,
+			} );
+
+			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual( mockedThemeSwitchApiRequest );
+
+			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
+			expect( generator.next().value ).toEqual(
+				createMockedThemeSetupApiRequest( {
+					trim_content: true,
+				} )
+			);
+		} );
+
+		it( 'should not send vertical_id if the design is verticalizable but vertical id is empty string', () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const generator = setDesignOnSite(
+				siteSlug,
+				{
+					...mockedDesign,
+					verticalizable: true,
+				},
+				''
+			);
+
+			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual( mockedThemeSwitchApiRequest );
+
+			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
+			expect( generator.next().value ).toEqual(
+				createMockedThemeSetupApiRequest( {
+					trim_content: true,
+				} )
+			);
+		} );
+
+		it( 'should send vertical_id if the design is verticalizable and vertical id is not string', () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const mockedSiteVerticalId = '1';
+			const generator = setDesignOnSite(
+				siteSlug,
+				{
+					...mockedDesign,
+					verticalizable: true,
+				},
+				mockedSiteVerticalId
+			);
+
+			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual( mockedThemeSwitchApiRequest );
+
+			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
+			expect( generator.next().value ).toEqual(
+				createMockedThemeSetupApiRequest( {
+					trim_content: true,
+					vertical_id: parseInt( mockedSiteVerticalId ),
+				} )
+			);
+		} );
+
+		it( 'should send pattern_ids if the recipe of the design has this property', () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const patternIds = [ 1, 2, 3 ];
+			const generator = setDesignOnSite( siteSlug, {
+				...mockedDesign,
+				recipe: {
+					...mockedRecipe,
+					pattern_ids: patternIds,
+				},
+			} );
+
+			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual( mockedThemeSwitchApiRequest );
+
+			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
+			expect( generator.next().value ).toEqual(
+				createMockedThemeSetupApiRequest( {
+					trim_content: true,
+					pattern_ids: patternIds,
+				} )
+			);
+		} );
+
+		it( 'should send header_pattern_ids if the recipe of the design has this property', () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const headerPatternIds = [ 1, 2, 3 ];
+			const generator = setDesignOnSite( siteSlug, {
+				...mockedDesign,
+				recipe: {
+					...mockedRecipe,
+					header_pattern_ids: headerPatternIds,
+				},
+			} );
+
+			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual( mockedThemeSwitchApiRequest );
+
+			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
+			expect( generator.next().value ).toEqual(
+				createMockedThemeSetupApiRequest( {
+					trim_content: true,
+					header_pattern_ids: headerPatternIds,
+				} )
+			);
+		} );
+
+		it( 'should send footer_pattern_ids if the recipe of the design has this property', () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const footerPatternIds = [ 1, 2, 3 ];
+			const generator = setDesignOnSite( siteSlug, {
+				...mockedDesign,
+				recipe: {
+					...mockedRecipe,
+					footer_pattern_ids: footerPatternIds,
+				},
+			} );
+
+			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual( mockedThemeSwitchApiRequest );
+
+			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
+			expect( generator.next().value ).toEqual(
+				createMockedThemeSetupApiRequest( {
+					trim_content: true,
+					footer_pattern_ids: footerPatternIds,
+				} )
+			);
+		} );
+
+		it( 'should not call theme-setup api if the design is any of the anchor designs', () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const generator = setDesignOnSite( siteSlug, {
+				...mockedDesign,
+				template: 'hannah',
+			} );
+
+			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual( mockedThemeSwitchApiRequest );
+
+			expect( generator.next().done ).toEqual( true );
+		} );
+	} );
 } );
