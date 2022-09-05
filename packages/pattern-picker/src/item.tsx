@@ -3,7 +3,7 @@ import './styles.scss';
 import { MShotsImage } from '@automattic/onboarding';
 import cx from 'classnames';
 import { PATTERN_SOURCE_SITE_SLUG } from './constants';
-import { Pattern } from './types';
+import type { Pattern, PatternMeta } from './types';
 
 type Props = {
 	className?: string;
@@ -12,13 +12,44 @@ type Props = {
 	pattern: Pattern;
 };
 
-const getPatternMetaValue = ( patternMeta: string, regexp: RegExp ) => {
-	const [ , value ] = patternMeta.split( regexp );
-	if ( value ) {
-		return value.replace( /%2C/g, ',' );
-	}
+type ParsedMetaData = {
+	siteTitle?: string;
+	siteTagline?: string;
+	siteLogoUrl?: string;
+};
 
-	return null;
+const parsePatternMetaData = ( patternMeta: PatternMeta ): ParsedMetaData => {
+	const result: ParsedMetaData = {};
+
+	const getPatternMetaValue = ( patternMetaKey: string, regexp: RegExp ) => {
+		const [ , value ] = patternMetaKey.split( regexp );
+		if ( value ) {
+			// We have to unescape `,` because the pattern meta is separated with commas and we store the escaped value
+			return value.replace( /%2C/g, ',' );
+		}
+
+		return null;
+	};
+
+	Object.keys( patternMeta ).forEach( ( patternMetaKey ) => {
+		const siteTitle = getPatternMetaValue( patternMetaKey, /^site_title_/ );
+		const siteTagline = getPatternMetaValue( patternMetaKey, /^site_tagline_/ );
+		const siteLogoUrl = getPatternMetaValue( patternMetaKey, /^site_logo_url_/ );
+
+		if ( siteTitle ) {
+			result.siteTitle = siteTitle;
+		}
+
+		if ( siteTagline ) {
+			result.siteTagline = siteTagline;
+		}
+
+		if ( siteLogoUrl ) {
+			result.siteLogoUrl = siteLogoUrl;
+		}
+	} );
+
+	return result;
 };
 
 const getPatternPreviewUrl = ( pattern: Pattern ): string => {
@@ -28,23 +59,19 @@ const getPatternPreviewUrl = ( pattern: Pattern ): string => {
 		pattern_id: [ pattern.ID, pattern.site_id ].join( '-' ),
 	} );
 
-	Object.keys( pattern.pattern_meta ).forEach( ( patternMeta ) => {
-		const siteTitle = getPatternMetaValue( patternMeta, /^site_title_/ );
-		const siteTagline = getPatternMetaValue( patternMeta, /^site_tagline_/ );
-		const siteLogoUrl = getPatternMetaValue( patternMeta, /^site_logo_url_/ );
+	const { siteTitle, siteTagline, siteLogoUrl } = parsePatternMetaData( pattern.pattern_meta );
 
-		if ( siteTitle ) {
-			params.set( 'site_title', siteTitle );
-		}
+	if ( siteTitle ) {
+		params.set( 'site_title', siteTitle );
+	}
 
-		if ( siteTagline ) {
-			params.set( 'site_tagline', siteTagline );
-		}
+	if ( siteTagline ) {
+		params.set( 'site_tagline', siteTagline );
+	}
 
-		if ( siteLogoUrl ) {
-			params.set( 'site_logo_url', siteLogoUrl );
-		}
-	} );
+	if ( siteLogoUrl ) {
+		params.set( 'site_logo_url', siteLogoUrl );
+	}
 
 	return `https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?${ params }`;
 };
