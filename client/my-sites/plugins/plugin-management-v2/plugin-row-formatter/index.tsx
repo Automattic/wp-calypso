@@ -187,13 +187,18 @@ export default function PluginRowFormatter( {
 			);
 		case 'last-updated':
 			if ( item?.update && item?.last_updated ) {
-				return isSmallScreen
-					? translate( 'Last updated %(ago)s', {
+				return (
+					<span className="plugin-row-formatter__last-updated">
+						{ translate( '{{span}}Updated{{/span}} %(ago)s', {
+							components: {
+								span: <span />,
+							},
 							args: {
 								ago: ago( item.last_updated ),
 							},
-					  } )
-					: ago( item.last_updated );
+						} ) }
+					</span>
+				);
 			}
 			return null;
 		case 'update':

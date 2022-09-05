@@ -1,9 +1,10 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .plugin-row-formatter__row-container {
 	position: relative;
 }
+
 .plugin-row-formatter__plugin-icon {
 	min-width: 32px;
 	max-width: 32px;
@@ -11,6 +12,7 @@
 	vertical-align: middle;
 	margin-inline-end: 16px;
 }
+
 .row-data-common-style {
 	display: inline-block;
 	font-weight: 500;
@@ -29,15 +31,19 @@ a.button.plugin-row-formatter__plugin-name {
 	@extend .row-data-common-style;
 	width: 100%;
 }
+
 a.button.plugin-row-formatter__plugin-name-card {
 	@extend .row-data-common-style;
+
 	width: calc( 100% - 10px );
 }
+
 .plugin-row-formatter__site-name {
 	@extend .row-data-common-style;
 	display: inline-block;
 	width: 100%;
 }
+
 .plugin-row-formatter__overlay {
 	display: block;
 	position: absolute;
@@ -51,6 +57,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 	inset-block-start: 0;
 	inset-inline-end: 0;
 }
+
 .plugin-row-formatter__sites-count-button {
 	&:hover {
 		text-decoration: underline;
@@ -82,6 +89,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 		}
 	}
 }
+
 .plugin-row-formatter__install-plugin {
 	@include break-xlarge() {
 		display: flex;
@@ -91,6 +99,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 		}
 	}
 }
+
 .plugin-row-formatter__plugin-details {
 	display: flex;
 	align-items: center;
@@ -112,5 +121,22 @@ a.button.plugin-row-formatter__plugin-name-card {
 		left: -19px;
 		width: 56px;
 		height: 55px;
+	}
+}
+
+.plugin-row-formatter__last-updated {
+	display: none;
+
+	@include break-wide() {
+		display: inline;
+	}
+
+	// Cut off the "Updated on" part when there's no enough space.
+	> span {
+		display: none;
+
+		@include break-huge() {
+			display: inline;
+		}
 	}
 }
