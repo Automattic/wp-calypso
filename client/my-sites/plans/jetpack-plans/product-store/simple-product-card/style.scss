@@ -72,3 +72,21 @@
 	text-decoration: underline;
 	margin-top: 4px;
 }
+
+.simple-product-card .display-price {
+	display: block;
+	min-height: 48px;
+
+	@include break-mobile {
+		display: flex;
+		min-height: 24px;
+	}
+}
+
+.simple-product-card .item-price .display-price .display-price__billing-time-frame {
+	margin-top: 0;
+
+	@include break-mobile {
+		margin-top: 3px;
+	}
+}
