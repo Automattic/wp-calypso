@@ -7,6 +7,7 @@
 	}
 }
 .sites-overview__container {
+	height: 100vh;
 	padding: 16px 0;
 	@include break-large() {
 		padding: 6px 0;
@@ -33,7 +34,7 @@
 	// but our element is inside a limited-width parent.
 	margin: 0 -32px;
 	padding: 8px 48px;
-	min-height: 100vh;
+	height: 100%;
 	@include breakpoint-deprecated( '>660px' ) {
     	padding: 16px 48px;
 		background: rgba( 255, 255, 255, 0.5 );
