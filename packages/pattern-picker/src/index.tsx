@@ -14,7 +14,7 @@ function width( el: HTMLDivElement | null ) {
 	return Math.floor( el?.getBoundingClientRect().width ?? 1 );
 }
 
-type Props = { onPick: ( pattern: number ) => void };
+type Props = { onPick: ( pattern: Pattern ) => void };
 
 export function PatternPicker( { onPick }: Props ) {
 	const [ index, setIndex ] = React.useState( 0 );
@@ -94,7 +94,7 @@ export function PatternPicker( { onPick }: Props ) {
 				<Button
 					className="pattern-picker__select"
 					isPrimary
-					onClick={ () => onPick( patterns[ index ].id ) }
+					onClick={ () => onPick( patterns[ index ] ) }
 				>
 					<span>{ __( 'Continue' ) }</span>
 					<Gridicon icon="heart" size={ 18 } />

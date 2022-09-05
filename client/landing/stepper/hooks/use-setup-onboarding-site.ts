@@ -102,7 +102,15 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 
 	return useMemo( () => {
 		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site && flow ) {
-			return Promise.all< void, SetSiteLogoResponse | void, void, void, void >( [
+			return Promise.all<
+				[
+					Promise< void >,
+					Promise< SetSiteLogoResponse | void >,
+					Promise< void >,
+					Promise< void >,
+					Promise< void >
+				]
+			>( [
 				postSiteSettings( site, state ),
 				postSiteLogo( state ),
 				setPattern( site, flow ),
