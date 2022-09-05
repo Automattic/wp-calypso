@@ -1,12 +1,10 @@
-import { SiteDetails, useSiteLogoMutation } from '@automattic/data-stores';
+import { SiteDetails, useSiteLogoMutation, SetSiteLogoResponse } from '@automattic/data-stores';
 import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
-import { patterns } from '@automattic/pattern-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import type { Pattern } from '@automattic/pattern-picker';
 
 const base64ImageToBlob = ( base64String: string ) => {
 	// extract content type and base64 payload from original string
@@ -46,13 +44,13 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 	const { ignoreUrl, site, flow } = options;
 	const siteIsLoaded = !! site;
 
-	const { getState, getPatternId } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getState, getPatternContent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
 	const state = getState();
 	const { saveSiteSettings, setIntentOnSite, setStaticHomepageOnSite } = useDispatch( SITE_STORE );
 
 	const { mutateAsync: setSiteLogo } = useSiteLogoMutation( site?.ID );
 
-	const selectedPatternId = getPatternId();
+	const selectedPatternContent = getPatternContent();
 
 	const postSiteSettings = ( site: SiteDetails, state: OnboardingSite ) => {
 		const siteSettings = {
@@ -88,14 +86,13 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 
 	const setPattern = async ( site: SiteDetails, flow: string ) => {
 		if ( flow === LINK_IN_BIO_FLOW ) {
-			const pattern = patterns.find( ( pattern: Pattern ) => pattern.id === selectedPatternId );
-			if ( pattern ) {
+			if ( selectedPatternContent ) {
 				await wpcomRequest( {
 					// since this is a new site, its safe to assume that homepage ID is 2
 					path: `/sites/${ site.ID }/pages/2`,
 					method: 'POST',
 					apiNamespace: 'wp/v2',
-					body: { content: pattern.content, template: 'blank' },
+					body: { content: selectedPatternContent, template: 'blank' },
 				} );
 
 				return setStaticHomepageOnSite( site.ID, 2 );
@@ -105,9 +102,9 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 
 	return useMemo( () => {
 		if ( ( ignoreUrl || shouldSetupOnboardingSite() ) && site && flow ) {
-			return Promise.all( [
+			return Promise.all< void, SetSiteLogoResponse | void, void, void, void >( [
 				postSiteSettings( site, state ),
-				postSiteLogo( state ).then( () => Promise.resolve() ),
+				postSiteLogo( state ),
 				setPattern( site, flow ),
 				setIntent( site, flow ),
 				setLaunchpadScreen( site, flow ),

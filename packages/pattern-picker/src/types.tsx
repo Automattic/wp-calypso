@@ -1,9 +1,8 @@
 export type Pattern = {
-	id: number;
+	ID: number;
 	name: string;
 	title: string;
 	content: string;
-	siteLogoUrl?: string;
-	siteTitle?: string;
-	siteTagline?: string;
+	pattern_meta: { [ key: string ]: boolean };
+	site_id: number;
 };

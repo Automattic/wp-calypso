@@ -2,6 +2,7 @@
 import './styles.scss';
 import { MShotsImage } from '@automattic/onboarding';
 import cx from 'classnames';
+import { PATTERN_SOURCE_SITE_SLUG } from './constants';
 import { Pattern } from './types';
 
 type Props = {
@@ -11,23 +12,39 @@ type Props = {
 	pattern: Pattern;
 };
 
+const getPatternMetaValue = ( patternMeta: string, regexp: RegExp ) => {
+	const [ , value ] = patternMeta.split( regexp );
+	if ( value ) {
+		return value.replace( /%2C/g, ',' );
+	}
+
+	return null;
+};
+
 const getPatternPreviewUrl = ( pattern: Pattern ): string => {
-	const params = new URLSearchParams();
+	const params = new URLSearchParams( {
+		stylesheet: 'pub/lynx',
+		source_site: PATTERN_SOURCE_SITE_SLUG,
+		pattern_id: [ pattern.ID, pattern.site_id ].join( '-' ),
+	} );
 
-	params.set( 'stylesheet', 'pub/lynx' );
-	params.set( 'pattern_id', pattern.name );
+	Object.keys( pattern.pattern_meta ).forEach( ( patternMeta ) => {
+		const siteTitle = getPatternMetaValue( patternMeta, /^site_title_/ );
+		const siteTagline = getPatternMetaValue( patternMeta, /^site_tagline_/ );
+		const siteLogoUrl = getPatternMetaValue( patternMeta, /^site_logo_url_/ );
 
-	if ( pattern.siteTitle ) {
-		params.set( 'site_title', pattern.siteTitle );
-	}
+		if ( siteTitle ) {
+			params.set( 'site_title', siteTitle );
+		}
 
-	if ( pattern.siteTagline ) {
-		params.set( 'site_tagline', pattern.siteTagline );
-	}
+		if ( siteTagline ) {
+			params.set( 'site_tagline', siteTagline );
+		}
 
-	if ( pattern.siteLogoUrl ) {
-		params.set( 'site_logo_url', pattern.siteLogoUrl );
-	}
+		if ( siteLogoUrl ) {
+			params.set( 'site_logo_url', siteLogoUrl );
+		}
+	} );
 
 	return `https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?${ params }`;
 };
