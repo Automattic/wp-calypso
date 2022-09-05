@@ -108,14 +108,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const generatedDesigns = allDesigns?.generated?.designs || [];
 	const staticDesigns = allDesigns?.static?.designs || [];
 
+	const isEnabledStyleSelection =
+		selectedDesign &&
+		selectedDesign.design_type !== 'vertical' &&
+		isEnabled( 'signup/design-picker-style-selection' );
+
 	const { data: selectedDesignDetails, isLoading: isLoadingSelectedDesignDetails } =
 		useStarterDesignBySlug( selectedDesign?.slug || '', {
-			enabled:
-				isPreviewingDesign &&
-				selectedDesign &&
-				selectedDesign.slug !== '' &&
-				selectedDesign.design_type !== 'vertical' &&
-				isEnabled( 'signup/design-picker-style-selection' ),
+			enabled: isPreviewingDesign && isEnabledStyleSelection,
 		} );
 
 	const hasTrackedView = useRef( false );
@@ -301,10 +301,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					? siteVerticalId
 					: undefined,
 		} );
-
-		const isEnabledStyleSelection =
-			selectedDesign.design_type !== 'vertical' &&
-			isEnabled( 'signup/design-picker-style-selection' );
 
 		const stepContent = (
 			<>

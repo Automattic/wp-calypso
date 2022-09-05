@@ -17,16 +17,28 @@ const GLOBAL_STYLES_SUPPORTS: {
 	{ style: 'text', infix: 'color', mapTo: 'foreground' },
 ];
 
-export function getPreviewStylesFromVariation(
-	variation: StyleVariation,
-	coreColors?: StyleVariationPreviewColorPalette
-): StyleVariationPreview {
-	const globalColors = {
-		...getValueFromVariationStylesColor( variation ),
-		...coreColors,
-	};
+function parsePresetDeclaration( preset: string, infix: string ): string | undefined {
+	return preset.match( `--wp--preset--${ infix }--([a-z]+)` )?.[ 1 ];
+}
 
+function getValueFromVariationStylesColor(
+	variation: StyleVariation
+): StyleVariationStylesColor | undefined {
+	return variation.styles?.color;
+}
+
+function getValueFromVariationSettingColorPalette(
+	variation: StyleVariation,
+	name: string
+): string | undefined {
+	const palette = variation.settings?.color?.palette?.theme || [];
+	return palette.find( ( item: StyleVariationSettingsColorPalette ) => item.slug === name )?.color;
+}
+
+export function getPreviewStylesFromVariation( variation: StyleVariation ): StyleVariationPreview {
+	const globalColors = getValueFromVariationStylesColor( variation );
 	let color: StyleVariationPreviewColorPalette = {};
+
 	for ( const key of COLOR_PALETTE_SUPPORTS ) {
 		const value = getValueFromVariationSettingColorPalette( variation, key );
 		color = { ...color, ...( value && { [ key ]: value } ) };
@@ -47,22 +59,4 @@ export function getPreviewStylesFromVariation(
 	}
 
 	return { color };
-}
-
-export function parsePresetDeclaration( preset: string, infix: string ): string | undefined {
-	return preset.match( `--wp--preset--${ infix }--([a-z]+)` )?.[ 1 ];
-}
-
-export function getValueFromVariationStylesColor(
-	variation: StyleVariation
-): StyleVariationStylesColor | undefined {
-	return variation.styles?.color;
-}
-
-export function getValueFromVariationSettingColorPalette(
-	variation: StyleVariation,
-	name: string
-): string | undefined {
-	const palette = variation.settings?.color?.palette?.theme || [];
-	return palette.find( ( item: StyleVariationSettingsColorPalette ) => item.slug === name )?.color;
 }

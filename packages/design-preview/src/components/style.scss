@@ -76,34 +76,6 @@
 		}
 	}
 
-	.design-preview__sidebar-support {
-		p {
-			color: var( --studio-gray-80 );
-			font-size: $font-body-small;
-		}
-	}
-
-	.design-preview__sidebar-features {
-		.design-preview__sidebar-features-list {
-			align-items: flex-start;
-			border-radius: 4px;
-			display: flex;
-			flex-wrap: wrap;
-			gap: 12px 4px;
-
-			> div {
-				background-color: var( --studio-gray-5 );
-				border-radius: 4px;
-				color: var( --studio-gray-80 );
-				font-size: 0.75rem;
-				font-weight: 500;
-				line-height: 1.25rem;
-				padding: 0 10px;
-				text-align: center;
-			}
-		}
-	}
-
 	@include break-small {
 		border: 0;
 		box-shadow: none;
