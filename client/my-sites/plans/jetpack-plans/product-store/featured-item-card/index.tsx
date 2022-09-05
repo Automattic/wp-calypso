@@ -40,18 +40,21 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 						<p>
 							<span>{ featuredDescription }</span>
 							<br />
-							<Button
-								className="featured-item-card--learn-more"
-								onClick={ onClickMore }
-								href="#"
-								plain
-							>
-								{ translate( 'More about %(product)s', {
-									args: {
-										product: title,
-									},
-								} ) }
-							</Button>
+
+							{ onClickMore && (
+								<Button
+									className="featured-item-card--learn-more"
+									onClick={ onClickMore }
+									href="#"
+									plain
+								>
+									{ translate( 'More about %(product)s', {
+										args: {
+											product: title,
+										},
+									} ) }
+								</Button>
+							) }
 						</p>
 					</div>
 				</div>

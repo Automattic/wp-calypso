@@ -80,7 +80,7 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
 	item: SelectorProduct;
-	onClickMore: VoidFunction;
+	onClickMore?: VoidFunction;
 	onClickPurchase?: VoidFunction;
 };
 
