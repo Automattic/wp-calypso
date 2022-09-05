@@ -1,12 +1,11 @@
 import Sidebar from './sidebar';
-import type { StyleVariation, ThemeFeature } from '@automattic/design-picker';
+import type { StyleVariation } from '@automattic/design-picker';
 import './style.scss';
 
 interface PreviewProps {
 	title?: string;
 	description?: string;
 	variations?: StyleVariation[];
-	features?: ThemeFeature[];
 	isLoading?: boolean;
 }
 
@@ -14,7 +13,6 @@ const Preview: React.FC< PreviewProps > = ( {
 	title,
 	description,
 	variations = [],
-	features,
 	isLoading = false,
 } ) => {
 	if ( isLoading ) {
@@ -23,12 +21,7 @@ const Preview: React.FC< PreviewProps > = ( {
 
 	return (
 		<div className="design-preview">
-			<Sidebar
-				title={ title }
-				description={ description }
-				variations={ variations }
-				features={ features }
-			/>
+			<Sidebar title={ title } description={ description } variations={ variations } />
 		</div>
 	);
 };

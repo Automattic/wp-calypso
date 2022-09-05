@@ -52,11 +52,6 @@ export interface StyleVariationStylesColor {
 	text?: string;
 }
 
-export interface ThemeFeature {
-	slug: string;
-	name: string;
-}
-
 export interface DesignRecipe {
 	stylesheet?: string;
 	pattern_ids?: number[];
@@ -88,7 +83,6 @@ export interface Design {
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
 	preview?: 'static';
 	design_type?: DesignType;
-	theme_features?: ThemeFeature[];
 	style_variations?: StyleVariation[];
 	price?: string;
 
