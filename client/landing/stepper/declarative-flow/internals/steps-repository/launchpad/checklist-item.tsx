@@ -18,7 +18,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				{ ...action }
 			>
 				{ isCompleted && ( taskDisabled || keepActive ) && (
-					// show checkmark for completed tasks that regardless if they are disabled or kept active
+					// show checkmark for completed tasks regardless if they are disabled or kept active
 					<div className="launchpad__checklist-item-status">
 						<Gridicon
 							aria-label={ translate( 'Task complete' ) }
