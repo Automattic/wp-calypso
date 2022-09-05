@@ -1,4 +1,5 @@
-import { __ } from '@wordpress/i18n';
+import { __ as defaultTranslationFn } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -33,7 +34,10 @@ export const ALLOWED_CATEGORIES = [
 	'paid',
 ];
 
-export function getCategories( allowed = ALLOWED_CATEGORIES ): Record< string, Category > {
+export function getCategories(
+	allowed = ALLOWED_CATEGORIES,
+	__ = defaultTranslationFn
+): Record< string, Category > {
 	const categories = {
 		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
 		paid: {
@@ -214,6 +218,7 @@ export function getCategories( allowed = ALLOWED_CATEGORIES ): Record< string, C
 export function useCategories(
 	allowedCategories = ALLOWED_CATEGORIES
 ): Record< string, Category > {
+	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	const isJetpack = useSelector(
@@ -228,5 +233,5 @@ export function useCategories(
 		allowed.splice( allowed.indexOf( 'paid' ), 1 );
 	}
 
-	return getCategories( allowed );
+	return getCategories( allowed, __ );
 }
