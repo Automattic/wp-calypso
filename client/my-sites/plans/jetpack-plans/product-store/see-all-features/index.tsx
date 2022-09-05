@@ -9,12 +9,13 @@ export const SeeAllFeatures: React.FC = () => {
 	const translate = useTranslate();
 
 	return (
-		<div className="jetpack-product-store__see-all-features">
+		<div className="jetpack-product-store__see-all-features is-external">
 			<Button
 				onClick={ () => recordTracksEvent( 'calypso_product_see_all_features_click' ) }
 				href={ PLAN_COMPARISON_PAGE }
 				target="_blank"
-				rel="noreferrer"
+				rel="noreferrer noopener"
+				className="is-external"
 			>
 				{ translate( 'See all features' ) }
 			</Button>
