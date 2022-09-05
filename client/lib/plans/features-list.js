@@ -1629,7 +1629,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 ]: {
 		getSlug: () => FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		getTitle: () => i18n.translate( 'Advances SEO tools' ),
+		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
 		getDescription: () => {},
 	},
 	[ FEATURE_SITE_STATS_V2 ]: {
