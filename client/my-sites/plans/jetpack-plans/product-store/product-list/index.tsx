@@ -28,6 +28,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	const {
 		getCheckoutURL,
 		getOnClickPurchase,
+		isIncludedInPlan,
 		isIncludedInPlanOrSuperseded,
 		isOwned,
 		isPlanFeature,
@@ -88,13 +89,16 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 
 		const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
 
+		const isCtaDisabled =
+			( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
+
 		return (
 			<FeaturedItemCard
 				checkoutURL={ getCheckoutURL( item ) }
 				ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 				ctaLabel={ ctaLabel }
 				hero={ <HeroImage item={ item } /> }
-				isCtaDisabled={ isItemOwned && ! isUserPurchaseOwner( item ) }
+				isCtaDisabled={ isCtaDisabled }
 				isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
 				isOwned={ isItemOwned }
 				item={ item }
@@ -131,13 +135,16 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 						const isItemSuperseded = isSuperseded( item );
 						const purchase = getPurchase( item );
 
+						const isCtaDisabled =
+							( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
+
 						const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
 						return (
 							<SimpleProductCard
 								checkoutURL={ getCheckoutURL( item ) }
 								ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 								ctaLabel={ ctaLabel }
-								isCtaDisabled={ isItemOwned && ! isUserPurchaseOwner( item ) }
+								isCtaDisabled={ isCtaDisabled }
 								isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
 								isOwned={ isItemOwned }
 								item={ item }
