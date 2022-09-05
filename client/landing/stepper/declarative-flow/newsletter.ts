@@ -17,14 +17,7 @@ export const newsletter: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [
-			'intro',
-			'newsletterSetup',
-			'completingPurchase',
-			'processing',
-			'subscribers',
-			'launchpad',
-		] as StepPath[];
+		return [ 'intro', 'newsletterSetup', 'processing', 'subscribers', 'launchpad' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -57,9 +50,6 @@ export const newsletter: Flow = {
 								? `&siteAccentColor=${ encodeURIComponent( providedDependencies.siteAccentColor ) }`
 								: '' )
 					);
-
-				case 'completingPurchase':
-					return navigate( 'processing' );
 
 				case 'processing': {
 					return navigate( providedDependencies?.destination as StepPath );
