@@ -55,7 +55,7 @@ const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
 		async () => {
 			const { results: campaigns } = await requestDSP< { results: Campaign[] } >(
 				siteId,
-				'/campaigns/full'
+				`/campaigns/site/${ siteId }/full`
 			);
 			return campaigns;
 		},
