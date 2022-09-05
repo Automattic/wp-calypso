@@ -1,4 +1,4 @@
-.jetpack-product-store .jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control {
+.jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control {
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
@@ -12,7 +12,7 @@
 	max-width: 21.4375em;
 }
 
-.jetpack-product-store .jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item {
+.jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item {
 	padding: 2px;
 	border-radius: 4px;
 	border-color: var( --studio-gray-5 );
@@ -24,7 +24,8 @@
 	}
 }
 
-.jetpack-product-store .jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item .segmented-control__link {
+.jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item .segmented-control__link,
+.jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item:not(:hover) .segmented-control__link {
 	color: var( --color-text );
 	padding: 6px 11px;
 	border: 1px solid #f2f2f2;
@@ -42,7 +43,7 @@
 	}
 }
 
-.jetpack-product-store .jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item.is-selected .segmented-control__link {
+.jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item.is-selected .segmented-control__link {
 	background-color: var( --studio-white );
 	border-color: var( --studio-white );
 	color: var( --color-text );
