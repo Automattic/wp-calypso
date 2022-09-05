@@ -621,8 +621,8 @@ class DomainsStep extends Component {
 					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
 					<span
 						role="button"
-						class="tailored-flow-subtitle__cta-text"
-						onClick={ this.handleSkip }
+						className="tailored-flow-subtitle__cta-text"
+						onClick={ () => this.handleSkip() }
 					/>
 				),
 			};
