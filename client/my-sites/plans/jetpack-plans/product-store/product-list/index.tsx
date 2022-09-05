@@ -1,18 +1,18 @@
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Purchase } from 'calypso/lib/purchases/types';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
-import productButtonLabel from '../product-card/product-button-label';
-import { SelectorProduct } from '../types';
-import { FeaturedItemCard } from './featured-item-card';
-import { HeroImage } from './hero-image';
-import { useProductsToDisplay } from './hooks/use-products-to-display';
-import { useStoreItemInfo } from './hooks/use-store-item-info';
-import { MostPopular } from './most-popular';
-import SimpleProductCard from './simple-product-card';
-import { getSortedDisplayableProducts } from './utils/get-sorted-displayable-products';
-import type { ProductsListProps } from './types';
+import productButtonLabel from '../../product-card/product-button-label';
+import { SelectorProduct } from '../../types';
+import { FeaturedItemCard } from '../featured-item-card';
+import { HeroImage } from '../hero-image';
+import { useProductsToDisplay } from '../hooks/use-products-to-display';
+import { useStoreItemInfo } from '../hooks/use-store-item-info';
+import { MostPopular } from '../most-popular';
+import SimpleProductCard from '../simple-product-card';
+import { getSortedDisplayableProducts } from '../utils/get-sorted-displayable-products';
+import type { ProductsListProps } from '../types';
 
 import './style.scss';
 
@@ -34,6 +34,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 		isSuperseded,
 		isDeprecated,
 		isUpgradeableToYearly,
+		isUserPurchaseOwner,
 		getPurchase,
 		sitePlan,
 	} = useStoreItemInfo( {
@@ -43,41 +44,49 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 		siteId,
 	} );
 
-	const getButtonLabel = (
-		item: SelectorProduct,
-		isItemOwned: boolean,
-		isItemSuperseded: boolean,
-		purchase?: Purchase
-	) => {
-		const ctaLabel = productButtonLabel( {
-			product: item,
-			isOwned: isItemOwned,
-			isUpgradeableToYearly: isUpgradeableToYearly( item ),
-			isDeprecated: isDeprecated( item ),
-			isSuperseded: isItemSuperseded,
-			currentPlan: sitePlan,
-			fallbackLabel: translate( 'Get' ),
-		} );
+	const getCtaLabel = useCallback(
+		( {
+			item,
+			isItemOwned,
+			isItemSuperseded,
+			purchase,
+		}: {
+			item: SelectorProduct;
+			isItemOwned: boolean;
+			isItemSuperseded: boolean;
+			purchase?: Purchase;
+		} ) => {
+			const ctaLabel = productButtonLabel( {
+				product: item,
+				isOwned: isItemOwned,
+				isUpgradeableToYearly: isUpgradeableToYearly( item ),
+				isDeprecated: isDeprecated( item ),
+				isSuperseded: isItemSuperseded,
+				currentPlan: sitePlan,
+				fallbackLabel: translate( 'Get' ),
+			} );
 
-		return (
-			<>
-				{ ctaLabel }
-				{ purchase && (
-					<>
-						&nbsp;
-						<OwnerInfo purchaseId={ purchase?.id } />
-					</>
-				) }
-			</>
-		);
-	};
+			return (
+				<>
+					{ ctaLabel }
+					{ purchase && (
+						<>
+							&nbsp;
+							<OwnerInfo purchase={ purchase } />
+						</>
+					) }
+				</>
+			);
+		},
+		[ isDeprecated, isUpgradeableToYearly, sitePlan, translate ]
+	);
 
 	const mostPopularItems = popularItems.map( ( item ) => {
 		const isItemOwned = isOwned( item );
 		const isItemSuperseded = isSuperseded( item );
 		const purchase = getPurchase( item );
 
-		const ctaLabel = getButtonLabel( item, isItemOwned, isItemSuperseded, purchase );
+		const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
 
 		return (
 			<FeaturedItemCard
@@ -85,6 +94,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 				ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 				ctaLabel={ ctaLabel }
 				hero={ <HeroImage item={ item } /> }
+				isCtaDisabled={ isItemOwned && ! isUserPurchaseOwner( item ) }
 				isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
 				isOwned={ isItemOwned }
 				item={ item }
@@ -97,7 +107,6 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 				} }
 				onClickPurchase={ getOnClickPurchase( item ) }
 				siteId={ siteId }
-				purchase={ purchase }
 			/>
 		);
 	} );
@@ -122,12 +131,13 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 						const isItemSuperseded = isSuperseded( item );
 						const purchase = getPurchase( item );
 
-						const ctaLabel = getButtonLabel( item, isItemOwned, isItemSuperseded, purchase );
+						const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
 						return (
 							<SimpleProductCard
 								checkoutURL={ getCheckoutURL( item ) }
 								ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 								ctaLabel={ ctaLabel }
+								isCtaDisabled={ isItemOwned && ! isUserPurchaseOwner( item ) }
 								isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
 								isOwned={ isItemOwned }
 								item={ item }
@@ -140,7 +150,6 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 								} }
 								onClickPurchase={ getOnClickPurchase( item ) }
 								siteId={ siteId }
-								purchase={ purchase }
 							/>
 						);
 					} ) }

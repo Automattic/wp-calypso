@@ -30,6 +30,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 		isPlanFeature,
 		isSuperseded,
 		isUpgradeableToYearly,
+		isUserPurchaseOwner,
 		sitePlan,
 	} = useStoreItemInfo( {
 		createCheckoutURL,
@@ -59,6 +60,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 					ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 					ctaLabel={ ctaLabel }
 					hero={ <HeroImage item={ item } /> }
+					isCtaDisabled={ isItemOwned && ! isUserPurchaseOwner( item ) }
 					isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
 					isOwned={ isItemOwned }
 					item={ item }
