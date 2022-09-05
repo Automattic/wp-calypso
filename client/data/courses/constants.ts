@@ -1,10 +1,10 @@
 import i18n from 'i18n-calypso';
-import type { CourseSlug } from './types';
 
-export const COURSE_SLUGS: { [ key: string ]: CourseSlug } = Object.freeze( {
-	BLOGGING_QUICK_START: 'blogging-quick-start',
-	PAYMENTS_FEATURES: 'payments-features',
-} );
+export const COURSE_SLUGS: Readonly< { PAYMENTS_FEATURES: string; BLOGGING_QUICK_START: string } > =
+	Object.freeze( {
+		BLOGGING_QUICK_START: 'blogging-quick-start',
+		PAYMENTS_FEATURES: 'payments-features',
+	} );
 
 export const COURSE_DETAILS = {
 	[ COURSE_SLUGS.BLOGGING_QUICK_START ]: {
