@@ -113,6 +113,7 @@ export const FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 = 'seo-v2';
 export const FEATURE_SITE_STATS_V2 = 'site-stats-v2';
 export const FEATURE_COLLECT_PAYMENTS_V3 = 'collect-payments-v3';
 export const FEATURE_FREE_THEMES_V2 = 'free-themes-v2';
+export const FEATURE_VIDEO_UPLOADS_V2 = 'video-upload-v2';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';

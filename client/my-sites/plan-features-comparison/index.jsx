@@ -315,12 +315,16 @@ export class PlanFeaturesComparison extends Component {
 
 			if ( currentFeature.isUniqueFeature ) {
 				return (
-					<li className={ classes }>{ this.renderFeatureItem( currentFeature, mapIndex ) }</li>
+					<li key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
+						{ this.renderFeatureItem( currentFeature, mapIndex ) }
+					</li>
 				);
 			}
 
 			return (
-				<div className={ classes }>{ this.renderFeatureItem( currentFeature, mapIndex ) }</div>
+				<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
+					{ this.renderFeatureItem( currentFeature, mapIndex ) }
+				</div>
 			);
 		} );
 	}

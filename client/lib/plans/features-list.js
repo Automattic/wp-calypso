@@ -184,6 +184,7 @@ import {
 	FEATURE_SITE_STATS_V2,
 	FEATURE_COLLECT_PAYMENTS_V3,
 	FEATURE_FREE_THEMES_V2,
+	FEATURE_VIDEO_UPLOADS_V2,
 	/* END - condensed_plan_features_v1 test */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -1668,6 +1669,16 @@ export const FEATURES_LIST = {
 				'Access to a wide range of professional themes ' +
 					"so you can find a design that's just right for your site."
 			),
+	},
+	[ FEATURE_VIDEO_UPLOADS_V2 ]: {
+		getSlug: () => FEATURE_VIDEO_UPLOADS,
+		getTitle: () => i18n.translate( 'High-quality video hosting with VideoPress' ),
+		getDescription: () =>
+			i18n.translate(
+				'The easiest way to upload videos to your website and display them ' +
+					'using a fast, unbranded, customizable player with rich stats.'
+			),
+		getStoreSlug: () => 'videopress',
 	},
 	/* END - condensed_plan_features_v1 test */
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {

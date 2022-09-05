@@ -236,6 +236,7 @@ import {
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
 	FEATURE_COLLECT_PAYMENTS_V3,
 	FEATURE_FREE_THEMES_V2,
+	FEATURE_VIDEO_UPLOADS_V2,
 	/* END - condensed_plan_features_v1 test */
 } from './constants';
 import type {
