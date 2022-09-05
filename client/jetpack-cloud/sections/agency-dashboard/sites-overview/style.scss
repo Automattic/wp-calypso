@@ -7,7 +7,8 @@
 	}
 }
 .sites-overview__container {
-	height: 100vh;
+	// The -123px is to undo the padding of .layout__content (79px + 32px) and .sites-overview_container ( 8px + 8px )
+	height: calc( 100vh - 123px );
 	padding: 16px 0;
 	@include break-large() {
 		padding: 6px 0;
