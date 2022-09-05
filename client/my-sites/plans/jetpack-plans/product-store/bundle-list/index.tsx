@@ -1,14 +1,16 @@
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import productButtonLabel from '../product-card/product-button-label';
-import { FeaturedItemCard } from './featured-item-card';
-import { FeaturesList } from './features-list';
-import { HeroImage } from './hero-image';
-import { useBundlesToDisplay } from './hooks/use-bundles-to-display';
-import { useStoreItemInfo } from './hooks/use-store-item-info';
-import { MostPopular } from './most-popular';
-import { SeeAllFeatures } from './see-all-features';
-import type { BundlesListProps } from './types';
+import productButtonLabel from '../../product-card/product-button-label';
+import { FeaturedItemCard } from '../featured-item-card';
+import { FeaturesList } from '../features-list';
+import { HeroImage } from '../hero-image';
+import { useBundlesToDisplay } from '../hooks/use-bundles-to-display';
+import { useStoreItemInfo } from '../hooks/use-store-item-info';
+import { MostPopular } from '../most-popular';
+import { SeeAllFeatures } from '../see-all-features';
+import type { BundlesListProps } from '../types';
+
+import './style.scss';
 
 export const BundlesList: React.FC< BundlesListProps > = ( {
 	createCheckoutURL,
