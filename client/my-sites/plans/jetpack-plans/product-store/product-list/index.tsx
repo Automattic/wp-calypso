@@ -14,6 +14,8 @@ import SimpleProductCard from './simple-product-card';
 import { getSortedDisplayableProducts } from './utils/get-sorted-displayable-products';
 import type { ProductsListProps } from './types';
 
+import './style.scss';
+
 export const ProductsList: React.FC< ProductsListProps > = ( {
 	createCheckoutURL,
 	duration,
@@ -110,7 +112,9 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 			<MostPopular heading={ translate( 'Most popular products' ) } items={ mostPopularItems } />
 
 			<div className="jetpack-product-store__products-list-all">
-				<h3>{ translate( 'All products' ) }</h3>
+				<h3 className="jetpack-product-store__products-list-all-header">
+					{ translate( 'All products' ) }
+				</h3>
 
 				<div className="jetpack-product-store__products-list-all-grid">
 					{ allItems.map( ( item ) => {

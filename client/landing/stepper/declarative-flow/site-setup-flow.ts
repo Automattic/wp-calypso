@@ -9,6 +9,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -93,6 +94,7 @@ export const siteSetupFlow: Flow = {
 		const isEnglishLocale = useIsEnglishLocale();
 		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
+		const isPluginBundleEligible = useIsPluginBundleEligible();
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -219,6 +221,7 @@ export const siteSetupFlow: Flow = {
 						isEnabled( 'themes/plugin-bundling' ) &&
 						theme_software_set &&
 						theme_software_set.length > 0 &&
+						isPluginBundleEligible &&
 						siteSlug
 					) {
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );

@@ -20,7 +20,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	purchase,
 } ) => {
 	const translate = useTranslate();
-	const { displayName: title, description } = item;
+	const { displayName: title, featuredDescription } = item;
 
 	const { isNotPlanOwner } = useItemInfo( { purchase } );
 	const shouldDisableButton = isOwned && isNotPlanOwner;
@@ -42,7 +42,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 					</div>
 					<div className="featured-item-card--desc">
 						<p>
-							<span>{ description }</span>
+							<span>{ featuredDescription }</span>
 							<br />
 							<Button
 								className="featured-item-card--learn-more"

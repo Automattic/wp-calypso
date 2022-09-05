@@ -1,5 +1,7 @@
 import classNames from 'classnames';
-import { MostPopularProps } from './types';
+import { MostPopularProps } from '../types';
+
+import './style.scss';
 
 export const MostPopular: React.FC< MostPopularProps > = ( { className, heading, items } ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );

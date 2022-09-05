@@ -96,6 +96,12 @@ export const useMshotsImg = (
 	return {
 		isLoading,
 		isError,
-		imgProps: { onLoad, onError, src: mshotUrl, srcSet, loading: 'lazy' },
+		imgProps: {
+			onLoad,
+			onError,
+			src: mshotUrl,
+			srcSet: ! isLoading ? srcSet : '',
+			loading: 'lazy',
+		},
 	};
 };

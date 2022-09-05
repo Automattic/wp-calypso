@@ -121,6 +121,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	displayFrom?: boolean;
 	belowPriceText?: TranslateResult;
 	categories?: JetpackProductCategory[];
+	featuredDescription?: TranslateResult | string;
 }
 
 export type SiteProduct = {

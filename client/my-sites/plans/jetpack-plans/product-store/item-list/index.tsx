@@ -1,6 +1,8 @@
-import { BundlesList } from './bundles-list';
-import { ProductsList } from './products-list';
-import type { ItemsListProps } from './types';
+import { BundlesList } from '../bundle-list';
+import { ProductsList } from '../product-list';
+import type { ItemsListProps } from '../types';
+
+import './style.scss';
 
 export const ItemsList: React.FC< ItemsListProps > = ( {
 	createCheckoutURL,

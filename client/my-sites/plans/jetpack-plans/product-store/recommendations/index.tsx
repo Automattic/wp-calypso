@@ -4,6 +4,8 @@ import DreamHostLogo from 'calypso/assets/images/illustrations/dreamhost-logo.sv
 import HostGatorLogo from 'calypso/assets/images/illustrations/hostgator-logo.svg';
 import WordpressDotComLogo from 'calypso/assets/images/illustrations/wordpress.com-logo.svg';
 
+import './style.scss';
+
 const details = [
 	{
 		logo: WordpressDotComLogo,
