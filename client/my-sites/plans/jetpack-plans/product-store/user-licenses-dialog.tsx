@@ -11,7 +11,9 @@ export const UserLicensesDialog: React.FC< ProductStoreBaseProps > = ( { siteId 
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( successNotice( translate( 'Jetpack is successfully installed' ) ) );
+		if ( window.location.pathname.startsWith( '/jetpack/connect/plans' ) ) {
+			dispatch( successNotice( translate( 'Jetpack is successfully installed' ) ) );
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
