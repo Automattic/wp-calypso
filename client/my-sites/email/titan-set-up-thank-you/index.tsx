@@ -156,10 +156,7 @@ const TitanSetUpThankYou = ( {
 					stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
 					stepCta: (
 						<FullWidthButton
-							href={ addQueryArgs(
-								{ siteId: selectedSite?.ID, siteSlug: selectedSiteSlug },
-								'/start/setup-site'
-							) }
+							href={ addQueryArgs( { siteId: selectedSite?.ID }, '/setup' ) }
 							primary
 						>
 							{ translate( 'Set up site' ) }
