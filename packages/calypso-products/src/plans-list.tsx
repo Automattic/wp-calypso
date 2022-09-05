@@ -234,6 +234,8 @@ import {
 	FEATURE_EDGE_CACHING_V2,
 	FEATURE_UPLOAD_THEMES_V3,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
+	FEATURE_COLLECT_PAYMENTS_V3,
+	FEATURE_FREE_THEMES_V2,
 	/* END - condensed_plan_features_v1 test */
 } from './constants';
 import type {

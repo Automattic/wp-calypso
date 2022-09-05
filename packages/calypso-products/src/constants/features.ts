@@ -110,6 +110,9 @@ export const FEATURE_REPUBLICIZE_V3 = 'republicize-v3';
 export const FEATURE_UPLOAD_THEMES_V3 = 'upload-themes-v3';
 export const FEATURE_EDGE_CACHING_V2 = 'edge-caching-v2';
 export const FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 = 'seo-v2';
+export const FEATURE_SITE_STATS_V2 = 'site-stats-v2';
+export const FEATURE_COLLECT_PAYMENTS_V3 = 'collect-payments-v3';
+export const FEATURE_FREE_THEMES_V2 = 'free-themes-v2';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';

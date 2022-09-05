@@ -166,6 +166,8 @@ import {
 	FEATURE_TRACK_VIEWS_CLICKS,
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
+	FEATURE_UNLIMITED_TRAFFIC,
+	FEATURE_MANAGED_HOSTING,
 	/* START - condensed_plan_features_v1 test */
 	FEATURE_HOSTING_TEST,
 	FEATURE_PRIORITY_SUPPORT_TEST,
@@ -179,6 +181,9 @@ import {
 	FEATURE_EDGE_CACHING_V2,
 	FEATURE_UPLOAD_THEMES_V3,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
+	FEATURE_SITE_STATS_V2,
+	FEATURE_COLLECT_PAYMENTS_V3,
+	FEATURE_FREE_THEMES_V2,
 	/* END - condensed_plan_features_v1 test */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -1632,7 +1637,55 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Advanced Search Engine Optimisation (SEO) tools' ),
 		getDescription: () => {},
 	},
+	[ FEATURE_SITE_STATS_V2 ]: {
+		getSlug: () => FEATURE_SITE_STATS,
+		getTitle: () => i18n.translate( 'Built-in site stats' ),
+		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
+	},
+	[ FEATURE_COLLECT_PAYMENTS_V3 ]: {
+		getSlug: () => FEATURE_COLLECT_PAYMENTS_V2,
+		getTitle: () => i18n.translate( 'Collect payments and donations' ),
+		getDescription: () =>
+			i18n.translate(
+				'Accept payments from credit or debit cards via Stripe. Sell products, collect donations, and set up recurring payments for subscriptions or memberships. {{link}}Learn more{{/link}}.',
+				{
+					components: {
+						link: (
+							<ExternalLink
+								icon
+								href="https://jetpack.com/support/jetpack-blocks/payments-block/"
+							/>
+						),
+					},
+				}
+			),
+	},
+	[ FEATURE_FREE_THEMES_V2 ]: {
+		getSlug: () => FEATURE_FREE_THEMES,
+		getTitle: () => i18n.translate( 'Dozens of free themes and design patterns' ),
+		getDescription: () =>
+			i18n.translate(
+				'Access to a wide range of professional themes ' +
+					"so you can find a design that's just right for your site."
+			),
+	},
 	/* END - condensed_plan_features_v1 test */
+	[ FEATURE_UNLIMITED_TRAFFIC ]: {
+		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
+		getTitle: () => i18n.translate( 'Unlimited traffic' ),
+		getDescription: () =>
+			i18n.translate(
+				'All WordPress.com plans include unlimited traffic so you never have to worry about surprise charges.'
+			),
+	},
+	[ FEATURE_MANAGED_HOSTING ]: {
+		getSlug: () => FEATURE_MANAGED_HOSTING,
+		getTitle: () => i18n.translate( 'Managed hosting' ),
+		getDescription: () =>
+			i18n.translate(
+				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
+			),
+	},
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
