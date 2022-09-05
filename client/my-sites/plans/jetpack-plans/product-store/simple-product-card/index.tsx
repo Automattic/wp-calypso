@@ -44,6 +44,7 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 						onClick={ onClickPurchase }
 						href={ checkoutURL }
 						primary={ ctaAsPrimary }
+						compact
 					>
 						{ ctaLabel }
 					</Button>

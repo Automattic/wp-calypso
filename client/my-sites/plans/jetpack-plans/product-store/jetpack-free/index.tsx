@@ -18,7 +18,7 @@ export const JetpackFree: React.FC< JetpackFreeProps > = ( { urlQueryArgs, siteI
 			<p className="jetpack-product-store__jetpack-free--info">
 				{ translate( 'Start with the free version and try out the premium plugins later.' ) }
 			</p>
-			<Button onClick={ onClick } href={ href } className="is-external">
+			<Button onClick={ onClick } href={ href }>
 				{ translate( 'Start with %(productName)s', {
 					args: {
 						productName: translate( 'Jetpack Free' ),

@@ -19,13 +19,11 @@ export const NeedMoreInfo: React.FC = () => {
 				<MoreInfoBox
 					buttonLabel={ translate( 'Compare all product bundles' ) }
 					buttonLink={ PLAN_COMPARISON_PAGE }
-					className="is-external"
 					trackEventName="calypso_plans_comparison_table_link_click"
 				/>
 				<MoreInfoBox
 					buttonLabel={ translate( 'Explore Jetpack for Agencies' ) }
 					buttonLink={ AGENCIES_PAGE }
-					className="is-external"
 					trackEventName="calypso_jpcom_agencies_page_more_info_button_link_click"
 				/>
 			</div>
