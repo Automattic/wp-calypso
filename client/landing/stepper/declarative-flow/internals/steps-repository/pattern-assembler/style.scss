@@ -2,21 +2,21 @@
     font-family: Inter;
     font-weight: 500;
     font-display: swap;
-    src: url( 'https://s0.wp.com/i/fonts/inter/Inter.var.woff2?v=3.19' ) format( 'woff2' );
+    src: url( 'https://s0.wp.com/i/fonts/inter/Inter-Medium.woff2?v=3.19' ) format( 'woff2' );
 }
 
 $font-family: 'SF Pro Text', $sans;
 
 .pattern-assembler {
-    background-color: #fdfdfd;
     display: flex;
     height: calc( 100vh - 60px );
     width: 100%;
     justify-content: center;
     
     .pattern-assembler__button {
-        width: 279px;
+        width: 100%;
         height: 40px;
+        border-radius: 4px;
 
         &:last-child {
             margin-top: 8px;
@@ -26,6 +26,7 @@ $font-family: 'SF Pro Text', $sans;
     .step-container__content {
         display: flex;
         width: 100%;
+        margin: 0 32px;
     }
 
     .pattern-assembler__wrapper {
@@ -35,7 +36,7 @@ $font-family: 'SF Pro Text', $sans;
     }
     
     .pattern-assembler__sidebar {
-        width: 343px;
+        min-width: 280px;
         margin-bottom: 0;
         box-sizing: border-box;
         margin-top: 50px;
@@ -67,8 +68,8 @@ $font-family: 'SF Pro Text', $sans;
                 font-size: $font-title-large;
                 line-height: 40px;
                 letter-spacing: -0.32px;
-                color: #101517;    
-                margin-bottom: 8px;            
+                color: #101517;
+                margin-bottom: 8px;
             }
 
             p {
@@ -125,9 +126,13 @@ $font-family: 'SF Pro Text', $sans;
                     margin-top: auto;
                 }
 
-                &.--action-color {
+                button {
+                    display: flex;
+                    align-items: center;
+                    border: 0;
+                    padding: 0;
+                    font-family: inherit;
                     color: #0675c4;
-                    cursor: pointer;
                 }
             }
 
@@ -185,8 +190,8 @@ $font-family: 'SF Pro Text', $sans;
             margin: 32px 0;
             padding: 2px;
             max-height: calc( 100vh - 298px );
-            overflow-y: scroll; 
-            scrollbar-width: none; 
+            overflow-y: scroll;
+            scrollbar-width: none;
 
             &::-webkit-scrollbar {
                 display: none;
@@ -244,27 +249,24 @@ $font-family: 'SF Pro Text', $sans;
 
         .pattern-action-bar__block {
             flex-direction: column;
-            padding: 0 3px;
             display: flex;
             align-items: center;
         }
 
         .pattern-action-bar__action {
-            cursor: pointer;
+            padding: 0;
+            min-width: 30px;
+            max-width: 30px;
             
             svg {
                 fill: #2c3338;
             }
 
-            &:hover svg {
+            &:not( :disabled ):hover svg {
                 fill: #0675c4;
             }
 
-            &.--disabled svg {
-                fill: #c4c4c4;
-            }
-
-            &.--action-order-up, &.--action-order-down {
+            &.--action-move-up, &.--action-move-down {
                 height: 13px;
                 display: flex;
                 align-items: center;

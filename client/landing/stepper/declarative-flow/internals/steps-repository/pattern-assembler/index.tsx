@@ -1,5 +1,5 @@
+import { StepContainer } from '@automattic/onboarding';
 import { useState } from 'react';
-import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
@@ -28,28 +28,27 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		}
 	};
 
-	const removeSection = ( section: Pattern ) => {
-		const sectionIndex = sections.findIndex( ( { id } ) => id === section.id );
-		setSections( [ ...sections.slice( 0, sectionIndex ), ...sections.slice( sectionIndex + 1 ) ] );
+	const deleteSection = ( position: number ) => {
+		setSections( [ ...sections.slice( 0, position ), ...sections.slice( position + 1 ) ] );
 	};
 
-	const orderDownSection = ( section: Pattern ) => {
-		const sectionIndex = sections.findIndex( ( { id } ) => id === section.id );
+	const moveDownSection = ( position: number ) => {
+		const section = sections[ position ];
 		setSections( [
-			...sections.slice( 0, sectionIndex ),
-			...sections.slice( sectionIndex + 1, sectionIndex + 2 ),
+			...sections.slice( 0, position ),
+			...sections.slice( position + 1, position + 2 ),
 			section,
-			...sections.slice( sectionIndex + 2 ),
+			...sections.slice( position + 2 ),
 		] );
 	};
 
-	const orderUpSection = ( section: Pattern ) => {
-		const sectionIndex = sections.findIndex( ( { id } ) => id === section.id );
+	const moveUpSection = ( position: number ) => {
+		const section = sections[ position ];
 		setSections( [
-			...sections.slice( 0, sectionIndex - 1 ),
+			...sections.slice( 0, position - 1 ),
 			section,
-			...sections.slice( sectionIndex - 1, sectionIndex ),
-			...sections.slice( sectionIndex + 1 ),
+			...sections.slice( position - 1, position ),
+			...sections.slice( position + 1 ),
 		] );
 	};
 
@@ -66,7 +65,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		if ( pattern ) {
 			if ( 'header' === showPatternSelectorType ) setHeader( null );
 			if ( 'footer' === showPatternSelectorType ) setFooter( null );
-			if ( 'section' === showPatternSelectorType ) removeSection( pattern );
+			// if ( 'section' === showPatternSelectorType ) deleteSection( pattern );
 		}
 
 		setShowPatternSelectorType( null );
@@ -103,14 +102,14 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							setSection( pattern );
 							setShowPatternSelectorType( 'section' );
 						} }
-						onDeleteSection={ ( pattern: Pattern ) => {
-							removeSection( pattern );
+						onDeleteSection={ ( position: number ) => {
+							deleteSection( position );
 						} }
-						onOrderUpSection={ ( pattern: Pattern ) => {
-							orderUpSection( pattern );
+						onMoveUpSection={ ( position: number ) => {
+							moveUpSection( position );
 						} }
-						onOrderDownSection={ ( pattern: Pattern ) => {
-							orderDownSection( pattern );
+						onMoveDownSection={ ( position: number ) => {
+							moveDownSection( position );
 						} }
 						onSelectFooter={ () => {
 							setShowPatternSelectorType( 'footer' );

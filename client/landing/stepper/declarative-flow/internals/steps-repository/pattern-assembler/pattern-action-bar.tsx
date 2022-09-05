@@ -1,75 +1,71 @@
-import { Icon, reusableBlock, chevronUp, chevronDown, closeSmall } from '@wordpress/icons';
-import classNames from 'classnames';
+import { Button } from '@wordpress/components';
+import { reusableBlock, chevronUp, chevronDown, closeSmall } from '@wordpress/icons';
+import { useTranslate } from 'i18n-calypso';
 
 type PatternActionBarProps = {
 	onReplace: () => void;
 	onDelete: () => void;
-	onOrderUp?: () => void;
-	onOrderDown?: () => void;
-	disableOrderUp?: boolean;
-	disableOrderDown?: boolean;
-	enableOrdering?: boolean;
+	onMoveUp?: () => void;
+	onMoveDown?: () => void;
+	disableMoveUp?: boolean;
+	disableMoveDown?: boolean;
+	enableMoving?: boolean;
 };
 
 const PatternActionBar = ( {
 	onReplace,
 	onDelete,
-	onOrderUp,
-	onOrderDown,
-	disableOrderUp,
-	disableOrderDown,
-	enableOrdering,
+	onMoveUp,
+	onMoveDown,
+	disableMoveUp,
+	disableMoveDown,
+	enableMoving,
 }: PatternActionBarProps ) => {
+	const translate = useTranslate();
 	return (
-		<div className="pattern-action-bar" role="menubar" aria-label="Pattern Actions">
-			{ enableOrdering && (
+		<div
+			className="pattern-action-bar"
+			role="menubar"
+			aria-label={ translate( 'Pattern actions' ) }
+		>
+			{ enableMoving && (
 				<div className="pattern-action-bar__block">
-					<div
-						className={ classNames( 'pattern-action-bar__action --action-order-up', {
-							'--disabled': disableOrderUp,
-						} ) }
+					<Button
+						className="pattern-action-bar__action --action-move-up"
+						disabled={ disableMoveUp }
 						role="menuitem"
-						aria-label="Order Up"
-						title="Order Up"
-						tabIndex={ 0 }
-						onClick={ onOrderUp }
-					>
-						<Icon icon={ chevronUp } size={ 23 } />
-					</div>
-					<div
-						className={ classNames( 'pattern-action-bar__action --action-order-down', {
-							'--disabled': disableOrderDown,
-						} ) }
+						label={ translate( 'Move up' ) }
+						onClick={ onMoveUp }
+						icon={ chevronUp }
+						iconSize={ 23 }
+					/>
+					<Button
+						className="pattern-action-bar__action --action-move-down"
+						disabled={ disableMoveDown }
 						role="menuitem"
-						aria-label="Order Down"
-						title="Order Down"
-						tabIndex={ 0 }
-						onClick={ onOrderDown }
-					>
-						<Icon icon={ chevronDown } size={ 23 } />
-					</div>
+						label={ translate( 'Move down' ) }
+						onClick={ onMoveDown }
+						icon={ chevronDown }
+						iconSize={ 23 }
+					/>
 				</div>
 			) }
-			<div
+			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				aria-label="Replace"
-				title="Replace"
-				tabIndex={ 0 }
+				label="Replace"
 				onClick={ onReplace }
-			>
-				<Icon icon={ reusableBlock } size={ 23 } />
-			</div>
-			<div
+				icon={ reusableBlock }
+				iconSize={ 23 }
+			/>
+			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				aria-label="Delete"
-				title="Delete"
-				tabIndex={ 0 }
+				label="Delete"
 				onClick={ onDelete }
-			>
-				<Icon icon={ closeSmall } size={ 23 } />
-			</div>
+				icon={ closeSmall }
+				iconSize={ 23 }
+			/>
 		</div>
 	);
 };
