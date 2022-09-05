@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { SiteThumbnail } from '..';
 
 const MSHOTS_URL = 'https://fakeUrl';
@@ -65,5 +65,53 @@ describe( 'SiteThumbnail', () => {
 		alternativeDimensions.forEach( ( dimension ) => {
 			expect( srcset ).toMatch( ` ${ dimension.width }w` );
 		} );
+	} );
+
+	test( 'empty URL will show no image cause an error', () => {
+		const { rerender } = render( <SiteThumbnail mShotsUrl="" alt={ IMG_ALT } /> );
+		expect( screen.queryByAltText( IMG_ALT ) ).toBeNull();
+
+		rerender( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } /> );
+		expect( screen.queryByAltText( IMG_ALT ) ).not.toBeNull();
+
+		rerender( <SiteThumbnail mShotsUrl="" alt={ IMG_ALT } /> );
+		expect( screen.queryByAltText( IMG_ALT ) ).toBeNull();
+	} );
+
+	describe( 'Unmounting', () => {
+		/* eslint-disable no-console */
+
+		let originalErrorLog;
+		beforeEach( () => {
+			jest.useFakeTimers();
+			originalErrorLog = console.error;
+			console.error = jest.fn( ( ...args ) => originalErrorLog( ...args ) );
+		} );
+		afterEach( () => {
+			console.error = originalErrorLog;
+		} );
+
+		test( 'image load completes after component has already unmounted', async () => {
+			const { unmount } = render( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } /> );
+			const img = screen.getByAltText( IMG_ALT );
+
+			fireEvent.load( img, {
+				target: {
+					a8cIsLoading: true,
+				},
+			} );
+
+			unmount();
+
+			jest.advanceTimersByTime( 2000 );
+
+			expect( console.error ).not.toHaveBeenCalledWith(
+				expect.stringMatching( "Can't perform a React state update on an unmounted component" ),
+				expect.anything(),
+				expect.anything()
+			);
+		} );
+
+		/* eslint-enable no-console */
 	} );
 } );

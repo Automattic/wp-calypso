@@ -67,11 +67,19 @@ export const useMshotsImg = (
 				return;
 			}
 
-			// MShot Loading image is 400x300px.
-			// MShot 404 image is 748×561px
 			setIsLoading( true );
+
+			// mShot Loading image is 400x300px.
+			// mShot 404 image is 748×561px
+			// So we use the image dimensions to determine whether mShot is still
+			// generating an image.
+			// JSDOM environment doesn't have a real rendering engine and so can't
+			// simulate image dimensions. The `a8cIsLoading` hack is only there
+			// for unit testing purposes.
 			const hasLoadingImgDimensions =
-				event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300;
+				( event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300 ) ||
+				'a8cIsLoading' in event.currentTarget;
+
 			if ( ! hasLoadingImgDimensions ) {
 				setIsLoading( false );
 			} else if ( retryCount < MAXTRIES ) {
@@ -90,8 +98,10 @@ export const useMshotsImg = (
 	}, [] );
 
 	useEffect( () => {
-		clearTimeout( timeout.current );
-	}, [ mshotUrl ] );
+		return () => {
+			clearTimeout( timeout.current );
+		};
+	}, [] );
 
 	return {
 		isLoading,
