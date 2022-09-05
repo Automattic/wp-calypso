@@ -47,6 +47,8 @@ export type Campaign = {
 	spent_budget_cents: number;
 	deliver_margin_multiplier: number;
 	audience_list: AudienceList;
+	display_name: string;
+	avatar_url: string;
 };
 
 const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
