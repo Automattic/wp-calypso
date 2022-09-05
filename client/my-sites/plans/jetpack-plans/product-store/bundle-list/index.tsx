@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import productButtonLabel from '../../product-card/product-button-label';
 import { FeaturedItemCard } from '../featured-item-card';
@@ -17,6 +16,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 	createCheckoutURL,
 	duration,
 	onClickPurchase,
+	clickMoreHandlerFactory,
 	siteId,
 } ) => {
 	const [ popularItems ] = useBundlesToDisplay( { duration, siteId } );
@@ -79,12 +79,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 					isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
 					isOwned={ isItemOwned }
 					item={ item }
-					onClickMore={ () => {
-						recordTracksEvent( 'calypso_product_more_about_product_click', {
-							product: item.productSlug,
-						} );
-						// TODO: Open modal
-					} }
+					onClickMore={ clickMoreHandlerFactory( item ) }
 					onClickPurchase={ getOnClickPurchase( item ) }
 					siteId={ siteId }
 				/>

@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Purchase } from 'calypso/lib/purchases/types';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import productButtonLabel from '../../product-card/product-button-label';
@@ -20,6 +19,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	createCheckoutURL,
 	duration,
 	onClickPurchase,
+	clickMoreHandlerFactory,
 	siteId,
 } ) => {
 	const [ popularItems, otherItems ] = useProductsToDisplay( { duration, siteId } );
@@ -103,12 +103,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 				isOwned={ isItemOwned }
 				item={ item }
 				key={ item.productSlug }
-				onClickMore={ () => {
-					recordTracksEvent( 'calypso_product_more_about_product_click', {
-						product: item.productSlug,
-					} );
-					// TODO: Open modal
-				} }
+				onClickMore={ clickMoreHandlerFactory( item ) }
 				onClickPurchase={ getOnClickPurchase( item ) }
 				siteId={ siteId }
 			/>
@@ -149,12 +144,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 								isOwned={ isItemOwned }
 								item={ item }
 								key={ item.productSlug }
-								onClickMore={ () => {
-									recordTracksEvent( 'calypso_product_more_about_product_click', {
-										product: item.productSlug,
-									} );
-									// TODO: Open modal
-								} }
+								onClickMore={ clickMoreHandlerFactory( item ) }
 								onClickPurchase={ getOnClickPurchase( item ) }
 								siteId={ siteId }
 							/>
