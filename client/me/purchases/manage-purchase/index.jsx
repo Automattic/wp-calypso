@@ -657,10 +657,13 @@ class ManagePurchase extends Component {
 				return (
 					<>
 						{ translate(
-							'A professionally built %(numberOfIncludedPages)d page website in 4 business days or less',
+							'A professionally built %(numberOfIncludedPages)s page website in 4 business days or less.',
+							'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.',
 							{
+								count: numberOfIncludedPages,
 								args: {
-									numberOfIncludedPages: numberOfIncludedPages,
+									numberOfIncludedPages:
+										numberOfIncludedPages === 1 ? 'single' : `${ numberOfIncludedPages }`,
 								},
 							}
 						) }{ ' ' }
