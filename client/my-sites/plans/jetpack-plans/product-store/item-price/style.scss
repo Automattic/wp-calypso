@@ -38,6 +38,8 @@
 }
 
 .item-price .display-price:not(.is-placeholder) {
+	max-height: 24px;
+
 	.plan-price.is-original {
 		color: var( --studio-gray-50 );
 		text-decoration: line-through;
@@ -49,6 +51,19 @@
 		font-weight: 700;
 	}
 }
+
+.item-price .display-price.is-placeholder {
+	max-height: 24px;
+
+	.plan-price {
+		max-height: 40px;
+	}
+
+	.display-price__billing-time-frame {
+		line-height: 20px;
+	}
+}
+
 
 .item-price__is-owned {
 	font-size: $font-body-extra-small;
