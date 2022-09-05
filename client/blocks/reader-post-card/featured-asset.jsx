@@ -1,13 +1,15 @@
 import PropTypes from 'prop-types';
-import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
+import ReaderFeaturedImages from 'calypso/blocks/reader-post-card/featured-images';
 
 const FeaturedAsset = ( {
+	post,
 	canonicalMedia,
 	postUrl,
 	allowVideoPlaying,
 	onVideoThumbnailClick,
 	isVideoExpanded,
+	isDiscover,
 } ) => {
 	if ( ! canonicalMedia ) {
 		return null;
@@ -26,15 +28,17 @@ const FeaturedAsset = ( {
 	}
 
 	return (
-		<ReaderFeaturedImage
-			imageUrl={ canonicalMedia.src }
-			href={ postUrl }
-			fetched={ canonicalMedia.fetched }
+		<ReaderFeaturedImages
+			post={ post }
+			isDiscover={ isDiscover }
+			postUrl={ postUrl }
+			canonicalMedia={ canonicalMedia }
 		/>
 	);
 };
 
 FeaturedAsset.propTypes = {
+	post: PropTypes.object,
 	canonicalMedia: PropTypes.object,
 	postUrl: PropTypes.string,
 	allowVideoPlaying: PropTypes.bool,

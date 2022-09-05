@@ -1,5 +1,5 @@
 // Adds a top border to first card in the Site Stream
-.is-reader-page .is-site-stream .reader-post-card.card:nth-child( 2 ) {
+.is-reader-page .is-site-stream .reader-post-card.card:nth-child(2) {
 	border-top: 1px solid var( --color-neutral-10 );
 }
 
@@ -7,6 +7,7 @@
 	.ellipsis-menu__toggle {
 		padding: 0;
 		height: 24px;
+
 		.ellipsis-menu__toggle-icon {
 			top: -1px;
 		}
@@ -47,21 +48,11 @@
 
 	&.has-thumbnail {
 		.reader-featured-image {
-			flex-basis: auto;
-			flex-grow: 1;
-			margin-right: 20px;
-			max-width: 190px;
 			box-sizing: border-box;
+		}
 
-			@include breakpoint-deprecated( '>960px' ) {
-				max-width: 250px;
-			}
-
-			@include breakpoint-deprecated( '<480px' ) {
-				height: 100px;
-				margin: 0 0 15px;
-				max-width: 100%;
-			}
+		.reader-post-card__post-details {
+			margin-top: 15px;
 		}
 
 		&.is-photo {
@@ -408,7 +399,7 @@
 .reader-post-card__post {
 	clear: both;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	margin-top: 14px;
 
 	@include breakpoint-deprecated( '<480px' ) {
@@ -416,7 +407,7 @@
 	}
 
 	.reader-post-card__post-details {
-		flex: 1 auto;
+		//flex: 1 auto;
 		width: 100%;
 	}
 }
@@ -658,4 +649,27 @@
 // For these borderless cards to look more presentable on Devdocs
 .is-section-devdocs .reader-post-card.card {
 	padding: 16px;
+}
+
+.reader-post-card__featured-images {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 0;
+	margin: 0;
+	flex-direction: row;
+
+	&.column {
+		flex-direction: column;
+	}
+}
+
+/* Create four equal columns that sits next to each other */
+.reader-post-card__featured-images-item {
+	padding: 0;
+	cursor: pointer;
+	list-style-type: none;
+}
+
+.reader-post-card__featured-images-img {
+	vertical-align: middle;
 }
