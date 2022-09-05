@@ -11,7 +11,6 @@ import { UserLicensesDialog } from './user-licenses-dialog';
 import { ViewFilter } from './view-filter';
 import type { ViewType, ProductStoreProps } from './types';
 
-import './wpcom-styles.scss';
 import './style.scss';
 
 const ProductStore: React.FC< ProductStoreProps > = ( {
