@@ -1,6 +1,8 @@
+import { isGoogleWorkspace } from '@automattic/calypso-products';
 import { translate as originalTranslate, useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
+import { hasIntroductoryOffer } from 'calypso/lib/emails';
 import { isUserOnTitanFreeTrial } from 'calypso/lib/titan';
 import type { EmailCost, ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -43,38 +45,61 @@ function getNoticeMessage(
 }
 
 function getPriceMessage( {
+	hasGoogleWorkspaceOffer,
 	mailboxPurchaseCost,
 	translate,
 }: {
+	hasGoogleWorkspaceOffer: boolean;
 	mailboxPurchaseCost: EmailCost | null;
 	translate: typeof originalTranslate;
 } ): TranslateResult {
 	if ( mailboxPurchaseCost === null ) {
 		return '';
 	}
-	return isUserOnTitanFreeTrial( mailboxPurchaseCost )
-		? translate( 'You can add new mailboxes for free until the end of your trial period.' )
-		: translate(
-				'You can purchase new mailboxes at the prorated price of {{strong}}%(proratedPrice)s{{/strong}} per mailbox.',
-				{
-					args: {
-						proratedPrice: mailboxPurchaseCost.text,
-					},
-					components: {
-						strong: <strong />,
-					},
-					comment:
-						'%(proratedPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
-				}
-		  );
+
+	if ( isUserOnTitanFreeTrial( mailboxPurchaseCost ) ) {
+		return translate( 'You can add new mailboxes for free until the end of your trial period.' );
+	}
+
+	if ( hasGoogleWorkspaceOffer ) {
+		return translate(
+			'You can purchase new mailboxes at the discounted price of {{strong}}%(discountedPrice)s{{/strong}} per mailbox.',
+			{
+				args: {
+					discountedPrice: mailboxPurchaseCost.text,
+				},
+				components: {
+					strong: <strong />,
+				},
+				comment:
+					'%(discountedPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
+			}
+		);
+	}
+
+	return translate(
+		'You can purchase new mailboxes at the prorated price of {{strong}}%(proratedPrice)s{{/strong}} per mailbox.',
+		{
+			args: {
+				proratedPrice: mailboxPurchaseCost.text,
+			},
+			components: {
+				strong: <strong />,
+			},
+			comment:
+				'%(proratedPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
+		}
+	);
 }
 
 function getPriceMessageExplanation( {
+	hasGoogleWorkspaceOffer,
 	isMonthlyBilling,
 	mailboxPurchaseCost,
 	mailboxRenewalCost,
 	translate,
 }: {
+	hasGoogleWorkspaceOffer: boolean;
 	isMonthlyBilling: boolean;
 	mailboxPurchaseCost: EmailCost | null;
 	mailboxRenewalCost: EmailCost | null;
@@ -90,6 +115,10 @@ function getPriceMessageExplanation( {
 	}
 
 	if ( mailboxPurchaseCost.amount < mailboxRenewalCost.amount ) {
+		if ( hasGoogleWorkspaceOffer ) {
+			return '';
+		}
+
 		return isMonthlyBilling
 			? translate(
 					'This is less than the regular price because you are only charged for the remainder of the current month.'
@@ -110,15 +139,33 @@ function getPriceMessageExplanation( {
 
 function getPriceMessageRenewal( {
 	expiryDate,
+	hasGoogleWorkspaceOffer,
 	mailboxRenewalCost,
 	translate,
 }: {
 	expiryDate: string;
+	hasGoogleWorkspaceOffer: boolean;
 	mailboxRenewalCost: EmailCost | null;
 	translate: typeof originalTranslate;
 } ): TranslateResult {
 	if ( mailboxRenewalCost === null ) {
 		return '';
+	}
+
+	if ( hasGoogleWorkspaceOffer ) {
+		return translate(
+			'All of your mailboxes are due to renew at the regular price of {{strong}}%(fullPrice)s{{/strong}} per mailbox after the first year',
+			{
+				args: {
+					fullPrice: mailboxRenewalCost.text,
+				},
+				components: {
+					strong: <strong />,
+				},
+				comment:
+					'%(fullPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
+			}
+		);
 	}
 
 	return translate(
@@ -170,8 +217,15 @@ const EmailPricingNotice = ( {
 		);
 	}
 
-	const priceMessage = getPriceMessage( { mailboxPurchaseCost, translate } );
+	const hasGoogleWorkspaceOffer = isGoogleWorkspace( product ) && hasIntroductoryOffer( product );
+
+	const priceMessage = getPriceMessage( {
+		hasGoogleWorkspaceOffer,
+		mailboxPurchaseCost,
+		translate,
+	} );
 	const priceMessageExplanation = getPriceMessageExplanation( {
+		hasGoogleWorkspaceOffer,
 		isMonthlyBilling,
 		mailboxPurchaseCost,
 		mailboxRenewalCost,
@@ -179,6 +233,7 @@ const EmailPricingNotice = ( {
 	} );
 	const priceMessageRenewal = getPriceMessageRenewal( {
 		expiryDate: moment( expiryDate ).format( 'LL' ),
+		hasGoogleWorkspaceOffer,
 		mailboxRenewalCost,
 		translate,
 	} );
