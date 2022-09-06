@@ -188,17 +188,18 @@
 
 .site-selector__manage-sites {
 	background: transparent;
-	border-color: var( --color-surface );
+	border-color: var( --color-sidebar-text );
 	margin: 8px;
 
 	&,
 	&:visited {
-		color: var( --color-surface );
+		color: var( --color-sidebar-text );
 	}
 
 	&:hover {
-		border-color: var( --color-neutral-20 );
-		color: var( --color-neutral-20 );
+		border-color: var( --color-sidebar-menu-hover-text );
+		color: var( --color-sidebar-menu-hover-text );
+		background: var( --color-sidebar-menu-hover-background );
 	}
 }
 
