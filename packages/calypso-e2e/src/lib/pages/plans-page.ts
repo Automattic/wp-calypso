@@ -145,7 +145,6 @@ export class PlansPage {
 		// on Desktop viewports.
 		// See https://github.com/Automattic/wp-calypso/issues/64389
 		// and https://github.com/Automattic/wp-calypso/pull/64421#discussion_r892589761.
-		this.page.request.get;
 		await Promise.all( [
 			this.page.waitForLoadState( 'networkidle' ),
 			// don't wait for the response if it's already done in the past
