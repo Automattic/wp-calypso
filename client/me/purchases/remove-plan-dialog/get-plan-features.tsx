@@ -1,102 +1,257 @@
-/*
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	isMonthly,
-	isWpComProPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
-	isStarterPlan,
 } from '@automattic/calypso-products';
-import { isValueTruthy } from '@automattic/wpcom-checkout';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
-*/
-
 import { useTranslate } from 'i18n-calypso';
 
-export default function getPlanFeatures /*plan: ResponseCartProduct | undefined,*/(
-	translate: ReturnType< typeof useTranslate > /*,
-	hasDomainsInCart: boolean,
-	hasRenewalInCart: boolean,
-	nextDomainIsFree: boolean*/
+export default function getPlanFeatures(
+	productSlug: string | undefined,
+	translate: ReturnType< typeof useTranslate >,
+	withinFirstYear: boolean,
+	hasDomain: boolean,
+	domainSlug: string
 ): string[] {
-	/*
-	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
-	const productSlug = plan?.product_slug;
-
 	if ( ! productSlug ) {
 		return [];
 	}
 
 	const isMonthlyPlan = isMonthly( productSlug );
-	const liveChatSupport = String( translate( 'Live chat support' ) );
-	const freeOneYearDomain = showFreeDomainFeature
-		? String( translate( 'Free domain for one year' ) )
-		: undefined;
-	const googleAnalytics = String( translate( 'Track your stats with Google Analytics' ) );
 
+	/**
+	 * Define feature labels.
+	 */
+	const freeDomainFirstYear = String( translate( 'Your free domain for the first year' ) );
+	const freeDomain = String(
+		translate( 'Your free domain www.%(slug)s', {
+			args: { slug: domainSlug },
+		} )
+	);
+	const bestInClassHosting = String( translate( 'Best-in-class hosting' ) );
+	const addFreeSite = String( translate( 'An add-free site' ) );
+	const collectPayments = String( translate( 'The ability to collect payments' ) );
+	const emailCustomerSupport = String( translate( 'Unlimited customer support via email' ) );
+	const liveChat = String( translate( 'Access to live chat support' ) );
+	const earnAndRevenue = String( translate( 'The ability to earn and revenue' ) );
+	const premiumThemes = String( translate( 'Access to premium themes' ) );
+	const analyticsIntegration = String( translate( 'Google Analytics integration' ) );
+	const accessPlugins = String( translate( 'Access to more than 50,000 plugins' ) );
+	const seoTools = String( translate( 'Advanced SEO tools' ) );
+	const automatedBackups = String( translate( 'Automated site backupsand one-click restore' ) );
+	const sftpAndDatabase = String( translate( 'SFTP and Database access' ) );
+	const acceptPayments = String( translate( 'Accept payments in 60+ countries' ) );
+	const shippingCarriers = String( translate( 'Integration with top shipping carriers' ) );
+	const premiumDesign = String(
+		translate( 'Premium design options customized for online stores' )
+	);
+	const more = String( translate( 'and more' ) );
+
+	/**
+	 * Personal plan
+	 */
 	if ( isWpComPersonalPlan( productSlug ) ) {
-		return [
-			! isMonthlyPlan && freeOneYearDomain,
-			String( translate( 'Best-in-class hosting' ) ),
-			String( translate( 'Dozens of Free Themes' ) ),
-		].filter( isValueTruthy );
+		// Yearly plan
+		if ( ! isMonthlyPlan ) {
+			// Without domain
+			if ( ! hasDomain ) {
+				return [
+					freeDomainFirstYear,
+					bestInClassHosting,
+					addFreeSite,
+					collectPayments,
+					emailCustomerSupport,
+				];
+			}
+
+			// With domain within first year
+			if ( withinFirstYear ) {
+				return [
+					freeDomain,
+					bestInClassHosting,
+					addFreeSite,
+					collectPayments,
+					emailCustomerSupport,
+				];
+			}
+
+			// With domain post first year
+			return [ bestInClassHosting, addFreeSite, collectPayments, emailCustomerSupport ];
+		}
+
+		// Monthly plan
+		return [ bestInClassHosting, addFreeSite, collectPayments, emailCustomerSupport ];
 	}
 
-	if ( isStarterPlan( productSlug ) ) {
-		return [
-			freeOneYearDomain,
-			String( translate( 'Best-in-class hosting' ) ),
-			String( translate( 'Dozens of Free Themes' ) ),
-			String( translate( 'Track your stats with Google Analytics' ) ),
-		].filter( isValueTruthy );
-	}
-
+	/**
+	 * Premium plan
+	 */
 	if ( isWpComPremiumPlan( productSlug ) ) {
+		// Yearly plan
+		if ( ! isMonthlyPlan ) {
+			// Without domain
+			if ( ! hasDomain ) {
+				return [
+					freeDomainFirstYear,
+					liveChat,
+					earnAndRevenue,
+					premiumThemes,
+					analyticsIntegration,
+					bestInClassHosting,
+					addFreeSite,
+				];
+			}
+
+			// With domain within first year
+			if ( withinFirstYear ) {
+				return [
+					freeDomain,
+					liveChat,
+					earnAndRevenue,
+					premiumThemes,
+					analyticsIntegration,
+					bestInClassHosting,
+					addFreeSite,
+					collectPayments,
+				];
+			}
+
+			// With domain post first year
+			return [
+				liveChat,
+				earnAndRevenue,
+				premiumThemes,
+				analyticsIntegration,
+				bestInClassHosting,
+				addFreeSite,
+				collectPayments,
+			];
+		}
+
+		// Monthly plan
 		return [
-			! isMonthlyPlan && freeOneYearDomain,
-			! isMonthlyPlan && liveChatSupport,
-			isEnabled( 'themes/premium' )
-				? String( translate( 'Unlimited access to our library of Premium Themes' ) )
-				: null,
-			isEnabled( 'earn/pay-with-paypal' )
-				? String( translate( 'Subscriber-only content and Pay with PayPal buttons' ) )
-				: String( translate( 'Subscriber-only content and payment buttons' ) ),
-			googleAnalytics,
-		].filter( isValueTruthy );
+			earnAndRevenue,
+			premiumThemes,
+			analyticsIntegration,
+			bestInClassHosting,
+			addFreeSite,
+			collectPayments,
+			emailCustomerSupport,
+		];
 	}
 
-	if ( isWpComBusinessPlan( productSlug ) || isWpComProPlan( productSlug ) ) {
+	/**
+	 * Business plan
+	 */
+	if ( isWpComBusinessPlan( productSlug ) ) {
+		// Yearly plan
+		if ( ! isMonthlyPlan ) {
+			// Without domain
+			if ( ! hasDomain ) {
+				return [
+					freeDomainFirstYear,
+					accessPlugins,
+					seoTools,
+					automatedBackups,
+					sftpAndDatabase,
+					liveChat,
+					more,
+				];
+			}
+
+			// With domain within first year
+			if ( withinFirstYear ) {
+				return [
+					freeDomain,
+					accessPlugins,
+					seoTools,
+					automatedBackups,
+					sftpAndDatabase,
+					liveChat,
+					more,
+				];
+			}
+
+			// With domain post first year
+			return [
+				accessPlugins,
+				seoTools,
+				automatedBackups,
+				sftpAndDatabase,
+				bestInClassHosting,
+				liveChat,
+				more,
+			];
+		}
+
+		// Monthly plan
 		return [
-			! isMonthlyPlan && freeOneYearDomain,
-			! isMonthlyPlan && liveChatSupport,
-			String( translate( 'Install custom plugins and themes' ) ),
-			String( translate( 'Drive traffic to your site with our advanced SEO tools' ) ),
-			String( translate( 'Track your stats with Google Analytics' ) ),
-			String( translate( 'Real-time backups and activity logs' ) ),
-		].filter( isValueTruthy );
+			accessPlugins,
+			seoTools,
+			automatedBackups,
+			sftpAndDatabase,
+			bestInClassHosting,
+			liveChat,
+			more,
+		];
 	}
 
+	/**
+	 * eCommerce plan
+	 */
 	if ( isWpComEcommercePlan( productSlug ) ) {
+		// Yearly plan
+		if ( ! isMonthlyPlan ) {
+			// Without domain
+			if ( ! hasDomain ) {
+				return [
+					freeDomainFirstYear,
+					acceptPayments,
+					shippingCarriers,
+					accessPlugins,
+					seoTools,
+					liveChat,
+					more,
+				];
+			}
+
+			// With domain within first year
+			if ( withinFirstYear ) {
+				return [
+					freeDomain,
+					acceptPayments,
+					shippingCarriers,
+					accessPlugins,
+					seoTools,
+					liveChat,
+					more,
+				];
+			}
+
+			// With domain post first year
+			return [
+				acceptPayments,
+				shippingCarriers,
+				premiumDesign,
+				accessPlugins,
+				seoTools,
+				liveChat,
+				more,
+			];
+		}
+
+		// Monthly plan
 		return [
-			! isMonthlyPlan && freeOneYearDomain,
-			! isMonthlyPlan && liveChatSupport,
-			String( translate( 'Install custom plugins and themes' ) ),
-			String( translate( 'Accept payments in 60+ countries' ) ),
-			String( translate( 'Integrations with top shipping carriers' ) ),
-			String( translate( 'Unlimited products or services for your online store' ) ),
-			String( translate( 'eCommerce marketing tools for emails and social networks' ) ),
-		].filter( isValueTruthy );
+			acceptPayments,
+			shippingCarriers,
+			premiumDesign,
+			accessPlugins,
+			seoTools,
+			bestInClassHosting,
+			more,
+		];
 	}
 
 	return [];
-	*/
-	return [
-		String( translate( 'Your free domain www.thisismylongdomainname.live' ) ),
-		String( translate( '2 Accept payments in 60+ countries' ) ),
-		String( translate( '3 Integrations with top shipping carriers' ) ),
-		String( translate( '4 Unlimited products or services for your online store' ) ),
-		String( translate( 'Unlimited customer support via email' ) ),
-	];
 }

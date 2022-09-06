@@ -9,7 +9,6 @@ import getPlanFeatures from './get-plan-features';
 import './style.scss';
 
 interface RemovePlanDialogProps {
-	planName: string;
 	closeDialog: () => void;
 	removePlan: () => void;
 	isDialogVisible: boolean;
@@ -18,7 +17,6 @@ interface RemovePlanDialogProps {
 }
 
 export const RemovePlanDialog = ( {
-	planName,
 	closeDialog,
 	removePlan,
 	isDialogVisible,
@@ -26,6 +24,9 @@ export const RemovePlanDialog = ( {
 }: RemovePlanDialogProps ) => {
 	const translate = useTranslate();
 
+	/**
+	 * Dialog buttons
+	 */
 	const buttons = [
 		{
 			action: 'cancel',
@@ -44,12 +45,29 @@ export const RemovePlanDialog = ( {
 	];
 
 	/**
-	 * Istantiate plan variables.
+	 * Determine if site date is within the first year
 	 */
-	const planLabel = planName.replace( 'WordPress.com ', '' );
+	const dateWithinLastYear = ( siteDate: string ) => {
+		const years =
+			new Date( new Date().getTime() - new Date( siteDate ).getTime() ).getFullYear() - 1970;
+
+		return years > 0 ? false : true;
+	};
+
+	/**
+	 * Istantiate site's plan variables.
+	 */
+	const productSlug = site.plan?.product_slug;
+	const planLabel = site.plan?.product_name_short;
 	const isComingSoon = site.is_coming_soon;
 	const isPrivate = site.is_private;
-	const shouldUseSiteThumbnail = isComingSoon === false && isPrivate === false;
+	const launchedStatus = site.launch_status === 'launched' ? true : false;
+	const shouldUseSiteThumbnail =
+		isComingSoon === false && isPrivate === false && launchedStatus === true;
+	const withinFirstYear =
+		site.options.created_at !== undefined ? dateWithinLastYear( site.options.created_at ) : false;
+	const hasDomain = site.URL !== undefined && site.URL === site.options.unmapped_url ? false : true;
+	const domainSlug = site.slug;
 
 	/**
 	 * Return the list of features that the user will lose by canceling their plan.
@@ -58,11 +76,11 @@ export const RemovePlanDialog = ( {
 	 */
 	const FeaturesList = () => {
 		const planFeatures = getPlanFeatures(
-			/*planInCart,*/
-			translate /*,
-			hasDomainsInCart,
-			hasRenewalInCart,
-			nextDomainIsFree*/
+			productSlug,
+			translate,
+			withinFirstYear,
+			hasDomain,
+			domainSlug
 		);
 
 		return (
