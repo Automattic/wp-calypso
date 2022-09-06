@@ -50,6 +50,10 @@ export class PluginsListHeader extends PureComponent {
 		setSelectionState: PropTypes.func.isRequired,
 		unsetAutoupdateSelected: PropTypes.func.isRequired,
 		removePluginNotice: PropTypes.func.isRequired,
+		activatePluginNotice: PropTypes.func.isRequired,
+		deactivatePluginNotice: PropTypes.func.isRequired,
+		autoupdateEnablePluginNotice: PropTypes.func.isRequired,
+		autoupdateDisablePluginNotice: PropTypes.func.isRequired,
 		haveActiveSelected: PropTypes.bool,
 		haveInactiveSelected: PropTypes.bool,
 		plugins: PropTypes.array.isRequired,
@@ -178,7 +182,7 @@ export class PluginsListHeader extends PureComponent {
 				<Button
 					key="plugin-list-header__buttons-activate"
 					disabled={ ! this.props.haveInactiveSelected }
-					onClick={ this.props.activateSelected }
+					onClick={ this.props.activatePluginNotice }
 					compact
 				>
 					{ translate( 'Activate' ) }
@@ -193,7 +197,7 @@ export class PluginsListHeader extends PureComponent {
 					onClick={
 						isJetpackSelected
 							? this.props.deactiveAndDisconnectSelected
-							: this.props.deactivateSelected
+							: this.props.deactivatePluginNotice
 					}
 				>
 					{ translate( 'Deactivate' ) }
@@ -213,7 +217,7 @@ export class PluginsListHeader extends PureComponent {
 					key="plugin-list-header__buttons-autoupdate-on"
 					disabled={ ! this.canUpdatePlugins() }
 					compact
-					onClick={ this.props.setAutoupdateSelected }
+					onClick={ this.props.autoupdateEnablePluginNotice }
 				>
 					{ translate( 'Autoupdate' ) }
 				</Button>
@@ -223,7 +227,7 @@ export class PluginsListHeader extends PureComponent {
 					key="plugin-list-header__buttons-autoupdate-off"
 					disabled={ ! this.canUpdatePlugins() }
 					compact
-					onClick={ this.props.unsetAutoupdateSelected }
+					onClick={ this.props.autoupdateDisablePluginNotice }
 				>
 					{ ! isWpcom ? translate( 'Disable' ) : translate( 'Disable Autoupdates' ) }
 				</Button>
