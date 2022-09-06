@@ -10,6 +10,7 @@ import {
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -50,6 +51,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 			.frameLocator( '.calypsoify.is-iframe iframe.is-loaded' )
 			.frameLocator( 'iframe[name="editor-canvas"]' )
 			.locator( 'text=Home' );
-		await locator.waitFor( { timeout: 90 * 1000 } );
+
+		const editorLoadedClosure = async () => {
+			await locator.waitFor( { timeout: 90 * 1000 } );
+		};
+
+		await ElementHelper.reloadAndRetry( page, editorLoadedClosure );
 	} );
 } );
