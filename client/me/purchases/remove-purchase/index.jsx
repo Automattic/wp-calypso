@@ -228,13 +228,12 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanWarningDialog() {
-		const { purchase, site } = this.props;
+		const { site } = this.props;
 		return (
 			<RemovePlanDialog
 				isDialogVisible={ this.state.isShowingRemovePlanWarning }
 				closeDialog={ this.closeDialog }
 				removePlan={ this.showRemovePlanDialog }
-				planName={ getName( purchase ) }
 				site={ site }
 			/>
 		);
