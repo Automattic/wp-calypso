@@ -69,18 +69,27 @@ export const useMshotsImg = (
 
 			setIsLoading( true );
 
+			// Loaded image natural width should conform to sizes passed in.
+			const hasExpectedImageDimensions = sizes.some(
+				( size ) => size.width === event.currentTarget.naturalWidth
+			);
+
 			// mShot Loading image is 400x300px.
 			// mShot 404 image is 748×561px
 			// So we use the image dimensions to determine whether mShot is still
 			// generating an image.
+			const hasMshotLoadingImageDimensions =
+				event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300;
+
 			// JSDOM environment doesn't have a real rendering engine and so can't
 			// simulate image dimensions. The `a8cIsLoading` hack is only there
 			// for unit testing purposes.
-			const hasLoadingImgDimensions =
-				( event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300 ) ||
+			const loading =
+				( sizes.length && ! hasExpectedImageDimensions ) ||
+				hasMshotLoadingImageDimensions ||
 				'a8cIsLoading' in event.currentTarget;
 
-			if ( ! hasLoadingImgDimensions ) {
+			if ( ! loading ) {
 				setIsLoading( false );
 			} else if ( retryCount < MAXTRIES ) {
 				// Only refresh 10 times
@@ -90,7 +99,7 @@ export const useMshotsImg = (
 				);
 			}
 		},
-		[ retryCount, mshotUrl.length ]
+		[ retryCount, mshotUrl.length, sizes ]
 	);
 
 	const onError = useCallback( () => {
@@ -109,8 +118,8 @@ export const useMshotsImg = (
 		imgProps: {
 			onLoad,
 			onError,
+			srcSet,
 			src: mshotUrl,
-			srcSet: ! isLoading ? srcSet : '',
 			loading: 'lazy',
 		},
 	};
