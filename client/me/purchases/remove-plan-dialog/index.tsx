@@ -106,17 +106,17 @@ export const RemovePlanDialog = ( {
 	/**
 	 * Dialog classname
 	 */
-	const gridClassName = shouldUseSiteThumbnail
-		? 'remove-plan-dialog__grid --with-screenshot'
-		: 'remove-plan-dialog__grid';
+	const dialogClassName = shouldUseSiteThumbnail
+		? 'remove-plan-dialog --with-screenshot'
+		: 'remove-plan-dialog';
 
 	/**
-	 * Plan cancellation dialog
+	 * Plan cancellation dialog.
 	 */
 	return (
 		<Dialog
 			buttons={ buttons }
-			className="remove-plan-dialog"
+			className={ dialogClassName }
 			isVisible={ isDialogVisible }
 			onClose={ closeDialog }
 		>
@@ -128,7 +128,7 @@ export const RemovePlanDialog = ( {
 						icon="cross-small"
 					/>
 				</button>
-				<div className={ gridClassName }>
+				<div className="remove-plan-dialog__grid">
 					{ shouldUseSiteThumbnail && (
 						<div className="remove-plan-dialog__grid-colmn">
 							<SiteScreenshot
