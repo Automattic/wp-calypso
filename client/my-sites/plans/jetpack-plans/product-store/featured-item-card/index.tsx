@@ -10,6 +10,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	ctaAsPrimary,
 	ctaLabel,
 	hero,
+	hideMoreInfoLink,
 	isCtaDisabled,
 	isIncludedInPlan,
 	isOwned,
@@ -40,18 +41,21 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 						<p>
 							<span>{ featuredDescription }</span>
 							<br />
-							<Button
-								className="featured-item-card--learn-more"
-								onClick={ onClickMore }
-								href="#"
-								plain
-							>
-								{ translate( 'More about %(product)s', {
-									args: {
-										product: title,
-									},
-								} ) }
-							</Button>
+
+							{ ! hideMoreInfoLink && (
+								<Button
+									className="featured-item-card--learn-more"
+									onClick={ onClickMore }
+									href="#"
+									plain
+								>
+									{ translate( 'More about %(product)s', {
+										args: {
+											product: title,
+										},
+									} ) }
+								</Button>
+							) }
 						</p>
 					</div>
 				</div>
