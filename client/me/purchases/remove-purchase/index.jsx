@@ -380,6 +380,21 @@ class RemovePurchase extends Component {
 
 		const wrapperClassName = classNames( 'remove-purchase__card', className );
 		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
+		const getWarningDialog = () => {
+			if ( this.shouldShowPlanWarning() ) {
+				return this.renderPlanWarningDialog();
+			}
+
+			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+				return this.renderNonPrimaryDomainWarningDialog();
+			}
+
+			if ( this.shouldHandleMarketplaceSubscriptions() ) {
+				return this.renderMarketplaceSubscriptionsDialog();
+			}
+
+			return null;
+		};
 
 		return (
 			<>
@@ -387,10 +402,7 @@ class RemovePurchase extends Component {
 					{ this.props.children ? this.props.children : defaultContent }
 					<Gridicon className="card__link-indicator" icon="trash" />
 				</Wrapper>
-				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
-				{ this.shouldShowPlanWarning() && this.renderPlanWarningDialog() }
-				{ this.shouldHandleMarketplaceSubscriptions() &&
-					this.renderMarketplaceSubscriptionsDialog() }
+				{ getWarningDialog() }
 				{ this.renderDialog() }
 			</>
 		);
