@@ -103,8 +103,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			} )
 			.filter( ( x ) => !! x ) as string[];
 
-		// validEmails.length && addSubscribers( siteId, validEmails );
-		selectedFile && importCsvSubscribers( siteId, selectedFile );
+		( validEmails.length || selectedFile ) &&
+			importCsvSubscribers( siteId, selectedFile, validEmails );
 
 		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
 	}

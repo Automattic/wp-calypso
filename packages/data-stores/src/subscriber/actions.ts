@@ -34,7 +34,7 @@ export function createActions() {
 		job,
 	} );
 
-	function* importCsvSubscribers( siteId: number, file: File ) {
+	function* importCsvSubscribers( siteId: number, file?: File, emails: string[] = [] ) {
 		yield importCsvSubscribersStart( siteId );
 
 		try {
@@ -44,7 +44,8 @@ export function createActions() {
 				apiNamespace: 'wpcom/v2',
 				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 				// @ts-ignore
-				formData: [ [ 'import', file, file.name ] ],
+				formData: file && [ [ 'import', file, file.name ] ],
+				body: { emails },
 			} );
 
 			yield importCsvSubscribersStartSuccess( siteId, data.upload_id );
