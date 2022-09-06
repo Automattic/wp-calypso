@@ -277,7 +277,7 @@ export class Theme extends Component {
 		const isUsableBundledTheme =
 			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
 
-		if ( didPurchaseTheme && ! hasPremiumThemesFeature ) {
+		if ( didPurchaseTheme && ! isUsablePremiumTheme && ! isUsableBundledTheme ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
 		} else if ( isUsablePremiumTheme ) {
 			return translate( 'The premium theme is included in your plan.' );
