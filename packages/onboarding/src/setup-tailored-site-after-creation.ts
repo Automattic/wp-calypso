@@ -94,6 +94,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 
 			return setStaticHomepageOnSite( siteId, 2 );
 		}
+		return Promise.resolve();
 	};
 
 	if ( siteId && flowName ) {

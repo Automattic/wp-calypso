@@ -16,6 +16,7 @@ export async function uploadAndSetSiteLogo( siteId: string | number | undefined,
 		formData,
 		method: 'POST',
 	} );
+
 	// then update the site settings to the uploaded image
 	if ( uploadResult.media?.length ) {
 		const imageID = uploadResult.media[ 0 ].ID;
@@ -25,12 +26,10 @@ export async function uploadAndSetSiteLogo( siteId: string | number | undefined,
 		} >( {
 			path: `/sites/${ encodeURIComponent( siteId as string ) }/settings`,
 			apiVersion: '1.4',
-			apiNamespace: 'rest/v1.4',
 			// we know the site doesn't have a logo nor an icon, let's set both
-			body: { site_logo: imageID, set_logo: imageID },
+			body: { site_logo: imageID, site_icon: imageID },
 			method: 'POST',
 		} );
-
 		return { logoResult, uploadResult };
 	}
 	throw new Error( 'No image ID returned' );
