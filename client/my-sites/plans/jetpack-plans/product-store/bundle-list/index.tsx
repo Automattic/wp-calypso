@@ -1,6 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
-import productButtonLabel from '../../product-card/product-button-label';
 import { FeaturedItemCard } from '../featured-item-card';
 import { FeaturesList } from '../features-list';
 import { HeroImage } from '../hero-image';
@@ -24,16 +22,14 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 
 	const {
 		getCheckoutURL,
+		getCtaLabel,
 		getOnClickPurchase,
 		isDeprecated,
 		isIncludedInPlanOrSuperseded,
 		isOwned,
 		isPlanFeature,
 		isSuperseded,
-		isUpgradeableToYearly,
 		isUserPurchaseOwner,
-		getPurchase,
-		sitePlan,
 	} = useStoreItemInfo( {
 		createCheckoutURL,
 		onClickPurchase,
@@ -46,29 +42,8 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 		const isItemSuperseded = isSuperseded( item );
 		const isItemDeprecated = isDeprecated( item );
 		const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
-		const purchase = getPurchase( item );
 
-		const buttonLabelOptions = {
-			product: item,
-			isOwned: isItemOwned,
-			isUpgradeableToYearly: isUpgradeableToYearly( item ),
-			isDeprecated: isItemDeprecated,
-			isSuperseded: isItemSuperseded,
-			currentPlan: sitePlan,
-			fallbackLabel: translate( 'Get' ),
-		};
-
-		const ctaLabel = (
-			<>
-				{ productButtonLabel( buttonLabelOptions ) }
-				{ purchase && (
-					<>
-						&nbsp;
-						<OwnerInfo purchase={ purchase } />
-					</>
-				) }
-			</>
-		);
+		const ctaLabel = getCtaLabel( item );
 
 		const hideMoreInfoLink = isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
 

@@ -1,9 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
-import { Purchase } from 'calypso/lib/purchases/types';
-import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
-import productButtonLabel from '../../product-card/product-button-label';
-import { SelectorProduct } from '../../types';
+import { useMemo } from 'react';
 import { FeaturedItemCard } from '../featured-item-card';
 import { HeroImage } from '../hero-image';
 import { useProductsToDisplay } from '../hooks/use-products-to-display';
@@ -27,6 +23,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 
 	const {
 		getCheckoutURL,
+		getCtaLabel,
 		getOnClickPurchase,
 		isIncludedInPlan,
 		isIncludedInPlanOrSuperseded,
@@ -34,10 +31,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 		isPlanFeature,
 		isSuperseded,
 		isDeprecated,
-		isUpgradeableToYearly,
 		isUserPurchaseOwner,
-		getPurchase,
-		sitePlan,
 	} = useStoreItemInfo( {
 		createCheckoutURL,
 		onClickPurchase,
@@ -45,51 +39,13 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 		siteId,
 	} );
 
-	const getCtaLabel = useCallback(
-		( {
-			item,
-			isItemOwned,
-			isItemSuperseded,
-			purchase,
-		}: {
-			item: SelectorProduct;
-			isItemOwned: boolean;
-			isItemSuperseded: boolean;
-			purchase?: Purchase;
-		} ) => {
-			const ctaLabel = productButtonLabel( {
-				product: item,
-				isOwned: isItemOwned,
-				isUpgradeableToYearly: isUpgradeableToYearly( item ),
-				isDeprecated: isDeprecated( item ),
-				isSuperseded: isItemSuperseded,
-				currentPlan: sitePlan,
-				fallbackLabel: translate( 'Get' ),
-			} );
-
-			return (
-				<>
-					{ ctaLabel }
-					{ purchase && (
-						<>
-							&nbsp;
-							<OwnerInfo purchase={ purchase } />
-						</>
-					) }
-				</>
-			);
-		},
-		[ isDeprecated, isUpgradeableToYearly, sitePlan, translate ]
-	);
-
 	const mostPopularItems = popularItems.map( ( item ) => {
 		const isItemOwned = isOwned( item );
 		const isItemSuperseded = isSuperseded( item );
 		const isItemDeprecated = isDeprecated( item );
 		const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
-		const purchase = getPurchase( item );
 
-		const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
+		const ctaLabel = getCtaLabel( item );
 
 		const isCtaDisabled =
 			( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
@@ -135,12 +91,11 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 						const isItemSuperseded = isSuperseded( item );
 						const isItemDeprecated = isDeprecated( item );
 						const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
-						const purchase = getPurchase( item );
 
 						const isCtaDisabled =
 							( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
 
-						const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
+						const ctaLabel = getCtaLabel( item );
 
 						const hideMoreInfoLink =
 							isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
