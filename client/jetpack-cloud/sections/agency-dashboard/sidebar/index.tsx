@@ -36,13 +36,7 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 
 	return (
 		<div>
-			<SiteSelector
-				className="site-selector__jetpack-cloud"
-				showAddNewSite
-				showAllSites
-				allSitesPath={ path }
-				siteBasePath="/backup"
-			/>
+			<SiteSelector showAddNewSite showAllSites allSitesPath={ path } siteBasePath="/backup" />
 			<Sidebar className="sidebar__jetpack-cloud">
 				<SidebarRegion>
 					<CurrentSite
