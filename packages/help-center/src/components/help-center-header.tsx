@@ -57,12 +57,16 @@ const HelpCenterHeader: React.FC< Header > = ( {
 	const [ unreadCount, setUnreadCount ] = useState< number >( 0 );
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
-	function requestMaximize() {
+	function maximizeHandler() {
 		onMaximize?.();
 	}
 
-	function requestMinimize() {
+	function minimizeHandler() {
 		onMinimize?.();
+	}
+
+	function closeHandler() {
+		onDismiss?.();
 	}
 
 	useHCWindowCommunicator( setChatWindowStatus, setUnreadCount, isMinimized );
@@ -97,7 +101,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 							icon={ chevronUp }
 							tooltipPosition="top left"
-							onClick={ requestMaximize }
+							onClick={ maximizeHandler }
 						/>
 					) : (
 						<Button
@@ -105,7 +109,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
 							icon={ lineSolid }
 							tooltipPosition="top left"
-							onClick={ requestMinimize }
+							onClick={ minimizeHandler }
 						/>
 					) }
 
@@ -114,7 +118,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
 						tooltipPosition="top left"
 						icon={ closeSmall }
-						onClick={ onDismiss }
+						onClick={ closeHandler }
 					/>
 				</div>
 			</Flex>

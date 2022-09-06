@@ -26,21 +26,19 @@ export function useHCWindowCommunicator(
 	onUnreadChange: ( unreadCount: number ) => void,
 	isMinimized: boolean
 ) {
-	const chatWindow = (
-		document.querySelector( '.help-center-inline-chat__iframe' ) as HTMLIFrameElement
-	 )?.contentWindow;
-
-	const { selectedSite, subject, message, userDeclaredSite } = useSelect( ( select ) => {
+	const { selectedSite, subject, message, userDeclaredSite, iframe } = useSelect( ( select ) => {
 		return {
 			selectedSite: select( HELP_CENTER_STORE ).getSite(),
 			userDeclaredSite: select( HELP_CENTER_STORE ).getUserDeclaredSite(),
 			subject: select( HELP_CENTER_STORE ).getSubject(),
 			message: select( HELP_CENTER_STORE ).getMessage(),
+			iframe: select( HELP_CENTER_STORE ).getIframe(),
 		};
 	} );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ), [ siteId ] );
+	const chatWindow = iframe?.contentWindow;
 
 	const queryClient = useQueryClient();
 
@@ -52,7 +50,7 @@ export function useHCWindowCommunicator(
 		if ( isMinimized ) {
 			chatWindow?.postMessage( { type: 'window-state-change', state: 'minimized' }, '*' );
 		} else {
-			chatWindow?.postMessage( { type: 'window-state-change', state: 'open' }, '*' );
+			chatWindow?.postMessage( { type: 'window-state-change', state: 'maximized' }, '*' );
 		}
 	}, [ chatWindow, isMinimized ] );
 

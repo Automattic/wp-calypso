@@ -20,12 +20,12 @@ import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-
 import getCurrentMessage from 'calypso/state/happychat/selectors/get-happychat-current-message';
 import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
 import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
-import { setCurrentMessage } from 'calypso/state/happychat/ui/actions';
+import { setCurrentMessage, closeChat } from 'calypso/state/happychat/ui/actions';
 import { getUserInfo } from './getUserInfo';
 
 import './happychat.scss';
 
-const parentTarget = window.opener || window.parent;
+const parentTarget = window.parent;
 
 function getReceivedMessagesOlderThan( timestamp, messages ) {
 	if ( ! timestamp ) {
@@ -38,7 +38,7 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 	const dispatch = useDispatch();
 	const [ blurredAt, setBlurredAt ] = useState( 0 );
 	const [ introMessage, setIntroMessage ] = useState( null );
-	const [ windowState, setWindowState ] = useState( 'open' );
+	const [ windowState, setWindowState ] = useState();
 
 	// listen to messages from parent window
 	useEffect( () => {
@@ -49,7 +49,9 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 					dispatch( sendEvent( `Looking at ${ message.route }` ) );
 					break;
 				case 'happy-chat-introduction-data':
-					setIntroMessage( message );
+					if ( ! introMessage ) {
+						setIntroMessage( message );
+					}
 					break;
 				case 'window-state-change':
 					setWindowState( message.state );
@@ -59,7 +61,7 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 
 		window.addEventListener( 'message', onMessage );
 		return () => window.removeEventListener( 'message', onMessage );
-	}, [ dispatch ] );
+	}, [ dispatch, introMessage ] );
 
 	useEffect( () => {
 		if ( connectionStatus === 'connected' && introMessage ) {
@@ -102,45 +104,39 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 
 	// handle window status
 	useEffect( () => {
-		if ( windowState === 'minimized' ) {
-			setBlurredAt( Date.now() );
-			dispatch( sendEvent( `Minimized HelpCenter` ) );
-			parentTarget?.postMessage(
-				{
-					type: 'window-state-change',
-					state: 'minimized',
-				},
-				'*'
-			);
-		} else {
-			setBlurredAt( 0 );
-			dispatch( sendEvent( `Maximized HelpCenter` ) );
-			parentTarget?.postMessage(
-				{
-					type: 'window-state-change',
-					state: windowState,
-				},
-				'*'
-			);
+		switch ( windowState ) {
+			case 'minimized':
+				setBlurredAt( Date.now() );
+				dispatch( sendEvent( 'Minimized HelpCenter' ) );
+				break;
+
+			case 'maximized':
+				setBlurredAt( 0 );
+				dispatch( sendEvent( 'Maximized HelpCenter' ) );
+				break;
+
+			case 'hidden':
+				setBlurredAt( Date.now() );
+				dispatch( sendEvent( 'Stopped looking at HelpCenter' ) );
+				break;
+
+			case 'open':
+				setBlurredAt( 0 );
+				dispatch( sendEvent( 'Started looking at HelpCenter' ) );
+				break;
+
+			case 'closed':
+				dispatch( sendEvent( 'Closed HelpCenter' ) );
+				dispatch( closeChat() );
 		}
 	}, [ dispatch, windowState ] );
 
 	useEffect( () => {
-		function visibilityHandler() {
-			if ( document.visibilityState === 'hidden' ) {
-				setBlurredAt( Date.now() );
-			} else {
-				setBlurredAt( 0 );
-			}
-			setWindowState( 'hidden' );
-		}
-		window.addEventListener( 'visibilitychange', visibilityHandler );
-
 		function closeHandler() {
 			parentTarget?.postMessage(
 				{
 					type: 'window-state-change',
-					state: 'blurred',
+					state: 'closed',
 				},
 				'*'
 			);
@@ -154,10 +150,6 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 			},
 			'*'
 		);
-
-		return () => {
-			window.removeEventListener( 'visibilitychange', visibilityHandler );
-		};
 	}, [ dispatch ] );
 
 	useEffect( () => {
@@ -170,14 +162,6 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 			'*'
 		);
 	}, [ blurredAt, timeline ] );
-
-	useEffect( () => {
-		dispatch( sendEvent( `Started looking at Happychat` ) );
-
-		return () => {
-			dispatch( sendEvent( `Stopped looking at Happychat` ) );
-		};
-	}, [ dispatch ] );
 
 	return null;
 }
