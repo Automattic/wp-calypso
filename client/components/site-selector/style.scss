@@ -210,14 +210,14 @@
 }
 
 .site-selector .site-selector__add-new-site {
-	background: var( --color-primary );
-	border-color: var( --color-primary );
-	color: var( --color-surface );
+	background: var( --color-sidebar-button-background );
+	border-color: var( --color-sidebar-button-border );
+	color: var( --color-sidebar-button-text );
 
 	&:hover {
-		background: var( --color-primary-60 );
-		border-color: var( --color-primary-60 );
-		color: var( --color-surface );
+		background: var( --color-sidebar-button-hover-background );
+		border-color: var( --color-sidebar-button-hover-border );
+		color: var( --color-sidebar-button-hover-text );
 	}
 }
 
