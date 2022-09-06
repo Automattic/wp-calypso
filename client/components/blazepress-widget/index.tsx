@@ -76,7 +76,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				<BlankCanvas className={ 'blazepress-widget' }>
 					<div className={ 'blazepress-widget__header-bar' }>
 						<WordPressLogo />
-						<h2>Promote</h2>
+						<h2>Advertising</h2>
 						<span
 							role="button"
 							className={ 'blazepress-widget__cancel' }

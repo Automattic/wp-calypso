@@ -155,7 +155,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__reach-value">
-								${ impressions_total || 0 }
+								{ impressions_total || 0 }
 							</div>
 						</div>
 						<div className="campaign-item__column campaign-item__clicks">
