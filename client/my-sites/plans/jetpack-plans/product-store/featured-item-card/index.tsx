@@ -10,6 +10,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	ctaAsPrimary,
 	ctaLabel,
 	hero,
+	isCtaDisabled,
 	isIncludedInPlan,
 	isOwned,
 	item,
@@ -55,7 +56,12 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 					</div>
 				</div>
 				<div className="featured-item-card--footer">
-					<Button primary={ ctaAsPrimary } onClick={ onClickPurchase } href={ checkoutURL }>
+					<Button
+						primary={ ctaAsPrimary }
+						onClick={ onClickPurchase }
+						disabled={ isCtaDisabled }
+						href={ isCtaDisabled ? '#' : checkoutURL }
+					>
 						{ ctaLabel }
 					</Button>
 				</div>

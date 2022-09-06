@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import type {
 	QueryArgs,
 	SelectorProduct,
@@ -25,7 +24,7 @@ export interface ProductStoreProps {
 	createCheckoutURL?: PurchaseURLCallback;
 	onClickPurchase?: PurchaseCallback;
 	urlQueryArgs: ProductStoreQueryArgs;
-	header: ReactNode;
+	header: React.ReactNode;
 }
 
 export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & ProductStoreBaseProps;
@@ -79,6 +78,7 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 	ctaAsPrimary?: boolean;
 	ctaLabel: React.ReactNode;
 	hero: React.ReactNode;
+	isCtaDisabled?: boolean;
 	item: SelectorProduct;
 	onClickMore: VoidFunction;
 	onClickPurchase?: VoidFunction;

@@ -12,6 +12,7 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	ctaLabel,
 	isIncludedInPlan,
 	isOwned,
+	isCtaDisabled,
 	item,
 	onClickMore,
 	onClickPurchase,
@@ -42,7 +43,8 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 					<Button
 						className="simple-product-card__info-header-checkout"
 						onClick={ onClickPurchase }
-						href={ checkoutURL }
+						disabled={ isCtaDisabled }
+						href={ isCtaDisabled ? '#' : checkoutURL }
 						primary={ ctaAsPrimary }
 					>
 						{ ctaLabel }
