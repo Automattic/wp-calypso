@@ -3,6 +3,7 @@ import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -48,7 +49,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 
 	let titleToRender =
 		isEnabled( 'jetpack/pricing-page-rework-v1' ) &&
-		window.location.pathname.startsWith( '/jetpack/connect/plans' )
+		window.location.pathname.startsWith( JPC_PATH_PLANS )
 			? translate( 'Jetpack is successfully installed' )
 			: '';
 
