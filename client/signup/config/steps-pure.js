@@ -429,9 +429,12 @@ export function generateSteps( {
 			props: {
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 				get headerText() {
-					return i18n.translate( 'Choose a domain for your Professional Email' );
+					return i18n.hasTranslation( 'Choose a domain for your Professional Email' )
+						? i18n.translate( 'Choose a domain for your Professional Email' )
+						: '';
 				},
 				includeWordPressDotCom: false,
+				isDomainOnly: false,
 			},
 			delayApiRequestUntilComplete: true,
 		},
