@@ -301,10 +301,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
-		const isEnabledStyleSelection =
-			selectedDesign.design_type !== 'vertical' &&
-			isEnabled( 'signup/design-picker-style-selection' );
-
 		const stepContent = (
 			<>
 				<UpgradeModal
