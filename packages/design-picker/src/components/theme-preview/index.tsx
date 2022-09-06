@@ -2,7 +2,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { ReactChild, useEffect, useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { DEVICE_TYPE } from '../../constants';
 import Toolbar from './toolbar';
