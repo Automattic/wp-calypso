@@ -9,6 +9,11 @@ interface SiteScreenshotProps extends ComponentProps< typeof SiteThumbnail > {
 	site: SiteExcerptData;
 }
 
+/**
+ * Create a site screenshot using mShots.
+ *
+ * @returns SiteThumbnail
+ */
 export const SiteScreenshot = ( { site, ...props }: SiteScreenshotProps ) => {
 	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
 
@@ -27,6 +32,7 @@ export const SiteScreenshot = ( { site, ...props }: SiteScreenshotProps ) => {
 		} );
 	}
 
+	// mShots screenshot options.
 	const MShotsOptions = {
 		vpw: 1602,
 		vph: 2120,
