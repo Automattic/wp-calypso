@@ -1,9 +1,28 @@
+$modal-breakpoint-tablet: 1070px;
+$modal-breakpoint-mobile: 480px;
+
 .dialog__content.remove-plan-dialog {
 	padding: 0;
+	max-width: 960px;
+
+	@media ( max-width: $modal-breakpoint-tablet ) {
+		max-width: 500px;
+	}
 }
 
 .remove-plan-dialog {
-	background: #f0f0f0;
+	background: #ffffff;
+
+	.remove-plan-dialog__close-button {
+		cursor: pointer;
+		position: absolute;
+		right: 0;
+		top: 9px;
+
+		.gridicon {
+			color: #000;
+		}
+	}
 	
 	.remove-plan-dialog__site-screenshot {
 		width: 365px;
@@ -22,19 +41,38 @@
 		vertical-align: middle;
 		text-align: center;
 
-		.remove-plan-dialog__grid-colmn1 {
-			padding: 24px 48px;
-		}
-
-		.remove-plan-dialog__grid-colmn2 {
+		.remove-plan-dialog__grid-colmn {
 			text-align: left;
-			background: #ffffff;
 			padding: 48px;
 
 			.formatted-header__title {
 				font-size: 1.5rem;
 				font-weight: inherit;
+				margin-bottom: 0.75em;
 			}
+
+			.formatted-header.is-left-align, .formatted-header.is-right-align {
+				margin: 0;
+			}
+
+			@media ( max-width: $modal-breakpoint-mobile ) {
+				padding: 48px 24px;
+			}
+		}
+
+		&.--with-screenshot {
+			.remove-plan-dialog__grid-colmn:first-child {
+				padding: 24px 48px 0;
+				background: #f0f0f0;
+			
+				@media ( max-width: $modal-breakpoint-tablet ) {
+					display: none;
+				}
+			}
+		}
+
+		@media ( max-width: $modal-breakpoint-tablet ) {
+			display: block;
 		}
 	}
 }
@@ -44,12 +82,31 @@
 		background: none;
 	}
 
-	width: calc( 50% - 48px );
-	margin-left: 50%;
-	margin-top: -72px;
+	margin-left: calc( 50% + 48px );
+	margin-top: -92px;
+	margin-bottom: 52px;
 	border: none;
     background: transparent;
 	text-align: left;
+	padding: 0;
+
+	&::before {
+		content:none;
+	}
+
+	button:first-child {
+		margin-left: 0;
+	}
+
+	@media ( max-width: $modal-breakpoint-tablet ) {
+		margin-left: 48px;
+		margin-top: 0;
+		margin-bottom: 32px;
+	}
+
+	@media ( max-width: $modal-breakpoint-mobile ) {
+		margin-right: 48px;
+	}
 }
 
 .remove-plan-dialog__item-cross-small {
@@ -62,4 +119,10 @@
 	list-style-type: none;
 	margin: 0;
 	text-align: left;
+
+	li {
+		display: grid;
+		grid-template-columns: 32px 1fr;
+		margin-bottom: 5px;
+	}
 }
