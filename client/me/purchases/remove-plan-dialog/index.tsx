@@ -103,10 +103,16 @@ export const RemovePlanDialog = ( {
 		);
 	};
 
+	/**
+	 * Dialog classname
+	 */
 	const gridClassName = shouldUseSiteThumbnail
 		? 'remove-plan-dialog__grid --with-screenshot'
 		: 'remove-plan-dialog__grid';
 
+	/**
+	 * Plan cancellation dialog
+	 */
 	return (
 		<Dialog
 			buttons={ buttons }
