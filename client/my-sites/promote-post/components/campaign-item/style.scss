@@ -94,7 +94,8 @@
 		margin-bottom: 10px;
 	}
 
-	.campaign-item__target-value {
+	.campaign-item__target-value a {
 		word-break: break-all;
+		color: var( --color-text );
 	}
 }
