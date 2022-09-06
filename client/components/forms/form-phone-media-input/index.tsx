@@ -3,23 +3,19 @@ import classnames from 'classnames';
 import FormLabel from 'calypso/components/forms/form-label';
 import PhoneInput from 'calypso/components/phone-input';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { PhoneInputValue } from 'calypso/components/phone-input';
 import type { FC, MutableRefObject } from 'react';
-
-export type FormPhoneMediaValue = {
-	value: string;
-	countryCode: string;
-};
 
 export type FormPhoneMediaInputProps = {
 	additionalClasses?: string;
 	label: string;
 	name?: string;
-	value: FormPhoneMediaValue;
+	value: PhoneInputValue;
 	className?: string;
 	disabled?: boolean;
 	errorMessage?: string;
 	isError?: boolean;
-	onChange: ( newValueAndCountry: FormPhoneMediaValue ) => void;
+	onChange: ( newValueAndCountry: PhoneInputValue ) => void;
 	countriesList: CountryListItem[];
 	enableStickyCountry?: boolean;
 	inputRef?: MutableRefObject< HTMLInputElement | undefined >;
@@ -48,7 +44,7 @@ const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
 					inputRef={ inputRef }
 					name={ name }
 					onChange={ onChange }
-					value={ { value: value.value, countryCode: value.countryCode.toUpperCase() } }
+					value={ { phoneNumber: value.phoneNumber, countryCode: value.countryCode.toUpperCase() } }
 					countriesList={ countriesList }
 					enableStickyCountry={ enableStickyCountry }
 					className={ className }

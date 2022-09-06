@@ -22,7 +22,7 @@ import './style.scss';
 const debug = debugFactory( 'calypso:phone-input' );
 
 export type PhoneInputValue = {
-	value: string;
+	phoneNumber: string;
 	countryCode: string;
 };
 
@@ -61,7 +61,7 @@ const PhoneInput: FC< PhoneInputProps > = ( {
 	const translate = useTranslate();
 	const [ freezeSelection, setFreezeSelection ] = useState( enableStickyCountry );
 	const [ phoneNumberState, setPhoneNumberState ] = usePhoneNumberState(
-		value.value,
+		value.phoneNumber,
 		value.countryCode,
 		countriesList,
 		freezeSelection
@@ -241,7 +241,7 @@ function getPhoneNumberStatesFromProp(
 	countryCode: string,
 	freezeSelection: boolean
 ) {
-	const { value: displayValue } = calculateInputAndCountryCode(
+	const { phoneNumber: displayValue } = calculateInputAndCountryCode(
 		rawValue,
 		countryCode,
 		freezeSelection
@@ -261,7 +261,7 @@ function getInputHandler(
 		const rawValue = event.target.value;
 		recordCursorPosition( oldCursorPosition, event.target.selectionStart );
 
-		const { countryCode, value: displayValue } = calculateInputAndCountryCode(
+		const { countryCode, phoneNumber: displayValue } = calculateInputAndCountryCode(
 			rawValue,
 			countryCodeValue,
 			freezeSelection
@@ -272,7 +272,7 @@ function getInputHandler(
 			return { rawValue, displayValue };
 		} );
 
-		onChange( { value: displayValue, countryCode } );
+		onChange( { phoneNumber: displayValue, countryCode } );
 	};
 }
 
@@ -301,7 +301,7 @@ function calculateInputAndCountryCode(
 	const calculatedValue = format( value, calculatedCountry.isoCode );
 	const calculatedCountryCode = calculatedCountry.isoCode;
 
-	return { value: calculatedValue, countryCode: calculatedCountryCode };
+	return { phoneNumber: calculatedValue, countryCode: calculatedCountryCode };
 }
 
 /**
@@ -404,7 +404,7 @@ function getCountrySelectionHandler(
 		}
 		onChange( {
 			countryCode: newCountryCode,
-			value: format( inputValue, newCountryCode ),
+			phoneNumber: format( inputValue, newCountryCode ),
 		} );
 		debug( 'setting freeze to', enableStickyCountry );
 		setFreezeSelection( enableStickyCountry );
