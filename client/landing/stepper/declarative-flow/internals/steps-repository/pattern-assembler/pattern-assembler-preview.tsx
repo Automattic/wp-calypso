@@ -1,7 +1,11 @@
 import { getDesignPreviewUrl } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
@@ -18,30 +22,66 @@ interface Props {
 	footer?: Pattern;
 }
 
-const PatternAssemblerPreview = ( { header, sections, footer }: Props ) => {
+const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const site = useSite();
+	const [ webPreviewFrameContainer, setWebPreviewFrameContainer ] = useState< Element | null >(
+		null
+	);
+
+	const hasSelectedPatterns = header || sections.length > 0 || footer;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+
 	const mergedDesign = {
 		...selectedDesign,
 		recipe: {
 			...selectedDesign?.recipe,
-			pattern_ids: sections ? sections.map( ( pattern ) => encodePatternId( pattern.id ) ) : [],
+			pattern_ids: sections.map( ( pattern ) => encodePatternId( pattern.id ) ),
 			header_pattern_ids: header ? [ encodePatternId( header.id ) ] : undefined,
 			footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
 		},
 	} as Design;
 
+	useEffect( () => {
+		setWebPreviewFrameContainer( document.querySelector( '.web-preview__frame-wrapper' ) );
+	}, [] );
+
 	return (
-		<div className="pattern-assembler-preview">
+		<div
+			className={ classnames( 'pattern-assembler-preview', {
+				'pattern-assembler-preview--has-selected-patterns': hasSelectedPatterns,
+			} ) }
+		>
+			{ webPreviewFrameContainer &&
+				ReactDOM.createPortal(
+					<div
+						className={ classnames(
+							'pattern-assembler-preview__placeholder',
+							'web-preview__frame'
+						) }
+					>
+						{ ! hasSelectedPatterns && (
+							<span>{ translate( 'Your page is blank. Start adding content on the left' ) }</span>
+						) }
+					</div>,
+					webPreviewFrameContainer
+				) }
 			<WebPreview
 				showPreview
 				showClose={ false }
 				showEdit={ false }
-				previewUrl={ getDesignPreviewUrl( mergedDesign, {
-					language: locale,
-				} ) }
+				previewUrl={
+					hasSelectedPatterns
+						? getDesignPreviewUrl( mergedDesign, {
+								language: locale,
+						  } )
+						: 'about:blank'
+				}
+				loadingMessage={
+					// @ts-expect-error The `className` property doesn't listed on the type definition
+					<Spinner className="pattern-assembler-preview__spinner" />
+				}
 				toolbarComponent={ PreviewToolbar }
 				siteId={ site?.ID }
 				url={ site?.URL }
