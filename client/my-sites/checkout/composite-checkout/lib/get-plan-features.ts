@@ -44,8 +44,9 @@ export default function getPlanFeatures(
 	if ( isStarterPlan( productSlug ) ) {
 		return [
 			freeOneYearDomain,
-			String( translate( 'Best-in-class hosting' ) ),
-			String( translate( 'Dozens of Free Themes' ) ),
+			String( translate( 'Collect Payments' ) ),
+			String( translate( '6GB of Storage' ) ),
+			String( translate( 'Free Professional Email for 3 months' ) ),
 			String( translate( 'Track your stats with Google Analytics' ) ),
 		].filter( isValueTruthy );
 	}
@@ -64,7 +65,18 @@ export default function getPlanFeatures(
 		].filter( isValueTruthy );
 	}
 
-	if ( isWpComBusinessPlan( productSlug ) || isWpComProPlan( productSlug ) ) {
+	if ( isWpComProPlan( productSlug ) ) {
+		return [
+			! isMonthlyPlan && freeOneYearDomain,
+			! isMonthlyPlan && liveChatSupport,
+			String( translate( 'Install custom plugins and themes' ) ),
+			String( translate( 'Sell products with WooCommerce' ) ),
+			String( translate( '50GB of Storage' ) ),
+			String( translate( 'Free Professional Email for 3 months' ) ),
+		].filter( isValueTruthy );
+	}
+
+	if ( isWpComBusinessPlan( productSlug ) ) {
 		return [
 			! isMonthlyPlan && freeOneYearDomain,
 			! isMonthlyPlan && liveChatSupport,
