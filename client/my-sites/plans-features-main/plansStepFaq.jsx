@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
@@ -16,19 +15,15 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 `;
 
 export default function PlanFAQ() {
-	const translate = useTranslate();
-
 	return (
 		<>
-			<FAQHeader className="wp-brand-font">
-				{ translate( 'Frequently Asked Questions' ) }{ ' ' }
-			</FAQHeader>
+			<FAQHeader className="wp-brand-font">{ 'Frequently Asked Questions' }</FAQHeader>
 			<FoldableFAQ
 				id="faq-1"
 				question={ 'What domains are available? Can I use one I already own?' }
 				expanded={ true }
 			>
-				On WordPress.com, you can register new domains and choose from more than 300 different
+				On WordPress.com, you can register new domains and can choose from more than 300 different
 				extensions such as .com, .org, .services etc. Domains registered elsewhere can be used on
 				WordPress.com using Domain Mapping or transferred to us to manage everything in one place.
 				The annual and biannual plans come included with a free domain for one year.
