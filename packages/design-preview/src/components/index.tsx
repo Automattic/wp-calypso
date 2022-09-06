@@ -1,4 +1,4 @@
-import { useEffect } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
@@ -13,6 +13,9 @@ interface PreviewProps {
 	onSelectVariation: ( variation: StyleVariation ) => void;
 }
 
+const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
+	variations.find( ( variation ) => variation.slug === slug );
+
 const Preview: React.FC< PreviewProps > = ( {
 	previewUrl,
 	title,
@@ -21,11 +24,16 @@ const Preview: React.FC< PreviewProps > = ( {
 	selectedVariation,
 	onSelectVariation,
 } ) => {
-	useEffect( () => {
-		if ( variations.length > 0 && ! selectedVariation ) {
-			onSelectVariation( variations[ 0 ] );
+	const sitePreviewInlineCss = useMemo( () => {
+		if ( selectedVariation ) {
+			return (
+				selectedVariation.inline_css ??
+				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' )
+			);
 		}
-	}, [ variations, selectedVariation, onSelectVariation ] );
+
+		return '';
+	}, [ variations, selectedVariation ] );
 
 	return (
 		<div className="design-preview">
@@ -36,7 +44,7 @@ const Preview: React.FC< PreviewProps > = ( {
 				selectedVariation={ selectedVariation }
 				onSelectVariation={ onSelectVariation }
 			/>
-			<SitePreview url={ previewUrl } inlineCss={ selectedVariation?.inline_css || '' } />
+			<SitePreview url={ previewUrl } inlineCss={ sitePreviewInlineCss } />
 		</div>
 	);
 };

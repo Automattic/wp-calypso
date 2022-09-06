@@ -35,7 +35,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 					<div className="design-preview__sidebar-variations-grid">
 						<StyleVariationPreviews
 							variations={ variations }
-							activeVariation={ selectedVariation }
+							selectedVariation={ selectedVariation }
 							onClick={ onSelectVariation }
 						/>
 					</div>

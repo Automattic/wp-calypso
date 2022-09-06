@@ -35,7 +35,7 @@ import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './util/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
-import type { Design } from '@automattic/design-picker';
+import type { Design, StyleVariation } from '@automattic/design-picker';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -442,7 +442,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelect={ pickDesign }
-			onPreview={ previewDesign }
+			onPreview={ ( design: Design, variation?: StyleVariation ) => {
+				setSelectedStyleVariation( variation );
+				previewDesign( design );
+			} }
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
 			heading={ heading }
