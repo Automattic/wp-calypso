@@ -97,7 +97,7 @@ function getPriceMessageExplanation( {
 		if ( hasGoogleWorkspaceOffer ) {
 			return isMonthlyBilling
 				? translate(
-						'This is less than the first month discounted price because you are only charged for the remainder of the current month.'
+						'This is less than the first year discounted price because you are only charged for the remainder of the current month.'
 				  )
 				: translate(
 						'This is less than the first year discounted price because you are only charged for the remainder of the current year.'
