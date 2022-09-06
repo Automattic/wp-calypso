@@ -12,16 +12,15 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const [ header, setHeader ] = useState< Pattern | null >( null );
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
 	const [ sections, setSections ] = useState< Pattern[] >( [] );
-	const [ section, setSection ] = useState< Pattern | null >( null );
+	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const { goNext, goBack } = navigation;
 
 	const addSection = ( pattern: Pattern ) => {
-		if ( section ) {
-			const sectionIndex = sections.findIndex( ( { id } ) => id === section.id );
+		if ( sectionPosition ) {
 			setSections( [
-				...sections.slice( 0, sectionIndex ),
+				...sections.slice( 0, sectionPosition ),
 				pattern,
-				...sections.slice( sectionIndex + 1 ),
+				...sections.slice( sectionPosition + 1 ),
 			] );
 		} else {
 			setSections( [ ...( sections as Pattern[] ), pattern ] );
@@ -74,7 +73,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const getPatternSelected = (): Pattern | null => {
 		if ( 'header' === showPatternSelectorType ) return header;
 		if ( 'footer' === showPatternSelectorType ) return footer;
-		if ( 'section' === showPatternSelectorType ) return section;
+		// if ( 'section' === showPatternSelectorType ) return section;
 		return null;
 	};
 
@@ -98,8 +97,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						onDeleteHeader={ () => {
 							setHeader( null );
 						} }
-						onSelectSection={ ( pattern ) => {
-							setSection( pattern );
+						onSelectSection={ ( position: number | null ) => {
+							setSectionPosition( position );
 							setShowPatternSelectorType( 'section' );
 						} }
 						onDeleteSection={ ( position: number ) => {

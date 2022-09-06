@@ -31,7 +31,7 @@ const PatternActionBar = ( {
 			{ enableMoving && (
 				<div className="pattern-action-bar__block">
 					<Button
-						className="pattern-action-bar__action --action-move-up"
+						className="pattern-action-bar__action pattern-action-bar__action--move-up"
 						disabled={ disableMoveUp }
 						role="menuitem"
 						label={ translate( 'Move up' ) }
@@ -40,7 +40,7 @@ const PatternActionBar = ( {
 						iconSize={ 23 }
 					/>
 					<Button
-						className="pattern-action-bar__action --action-move-down"
+						className="pattern-action-bar__action pattern-action-bar__action--move-down"
 						disabled={ disableMoveDown }
 						role="menuitem"
 						label={ translate( 'Move down' ) }

@@ -9,7 +9,7 @@ type PatternLayoutProps = {
 	footer: Pattern | null;
 	onSelectHeader: () => void;
 	onDeleteHeader: () => void;
-	onSelectSection: ( pattern: Pattern | null ) => void;
+	onSelectSection: ( position: number | null ) => void;
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
@@ -43,14 +43,14 @@ const PatternLayout = ( {
 			<div className="pattern-layout__body">
 				<ul>
 					{ header ? (
-						<li className="pattern-layout__list-item --type-header-icon">
+						<li className="pattern-layout__list-item pattern-layout__list-item--header">
 							<span className="pattern-layout__list-item-text" title={ header.name }>
 								{ header.name }
 							</span>
 							<PatternActionBar onReplace={ onSelectHeader } onDelete={ onDeleteHeader } />
 						</li>
 					) : (
-						<li className="pattern-layout__list-item --type-header-icon">
+						<li className="pattern-layout__list-item pattern-layout__list-item--header">
 							<Button onClick={ onSelectHeader }>
 								<span className="pattern-layout__add-icon">+</span>{ ' ' }
 								{ translate( 'Choose a header' ) }
@@ -62,13 +62,13 @@ const PatternLayout = ( {
 						return (
 							<li
 								key={ `${ index }-${ id }` }
-								className="pattern-layout__list-item --type-section-icon"
+								className="pattern-layout__list-item pattern-layout__list-item--section"
 							>
 								<span className="pattern-layout__list-item-text" title={ name }>
 									{ name }
 								</span>
 								<PatternActionBar
-									onReplace={ () => onSelectSection( section ) }
+									onReplace={ () => onSelectSection( index ) }
 									onDelete={ () => onDeleteSection( index ) }
 									onMoveUp={ () => onMoveUpSection( index ) }
 									onMoveDown={ () => onMoveDownSection( index ) }
@@ -79,7 +79,7 @@ const PatternLayout = ( {
 							</li>
 						);
 					} ) }
-					<li className="pattern-layout__list-item --type-section-icon">
+					<li className="pattern-layout__list-item pattern-layout__list-item--section">
 						<Button onClick={ () => onSelectSection( null ) }>
 							<span className="pattern-layout__add-icon">+</span>{ ' ' }
 							{ sections?.length
@@ -88,14 +88,14 @@ const PatternLayout = ( {
 						</Button>
 					</li>
 					{ footer ? (
-						<li className="pattern-layout__list-item --type-footer-icon">
+						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
 							<span className="pattern-layout__list-item-text" title={ footer.name }>
 								{ footer.name }
 							</span>
 							<PatternActionBar onReplace={ onSelectFooter } onDelete={ onDeleteFooter } />
 						</li>
 					) : (
-						<li className="pattern-layout__list-item --type-footer-icon">
+						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
 							<Button onClick={ onSelectFooter }>
 								<span className="pattern-layout__add-icon">+</span>{ ' ' }
 								{ translate( 'Choose a footer' ) }

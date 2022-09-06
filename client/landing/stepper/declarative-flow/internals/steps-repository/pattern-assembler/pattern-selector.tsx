@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
 
-type PatternsSelectorProps = {
+type PatternSelectorProps = {
 	patterns: Pattern[] | null;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onDeselect: ( selectedPattern: Pattern | null ) => void;
@@ -14,14 +14,14 @@ type PatternsSelectorProps = {
 	show: boolean;
 };
 
-const PatternsSelector = ( {
+const PatternSelector = ( {
 	patterns,
 	onSelect,
 	onDeselect,
 	title,
 	pattern,
 	show,
-}: PatternsSelectorProps ) => {
+}: PatternSelectorProps ) => {
 	const [ selectedPattern, setSelectedPattern ] = useState< Pattern | null >( null );
 	const translate = useTranslate();
 
@@ -98,4 +98,4 @@ const PatternsSelector = ( {
 	);
 };
 
-export default PatternsSelector;
+export default PatternSelector;
