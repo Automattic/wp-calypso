@@ -9,7 +9,7 @@ const EmailProductPrice = ( { isLoading, price } ) => {
 	const moment = useLocalizedMoment();
 	const startDate = moment().add( 3, 'months' ).format( 'LL' );
 	const message = translate( 'Free for the first three months' );
-	const priceText = translate( '%(price)s /user /month starting %(startDate)s', {
+	const priceText = translate( '%(price)s /year /mailbox starting %(startDate)s', {
 		args: {
 			price,
 			startDate,

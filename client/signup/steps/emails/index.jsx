@@ -4,7 +4,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-card';
 import EmailStepSideBar from 'calypso/components/emails/email-step-side-bar';
-import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
+import { titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -21,16 +21,15 @@ class EmailsStep extends Component {
 		const { flowName, signupDependencies, stepName } = this.props;
 		const { domainItem } = signupDependencies;
 
-		const emailItem =
-			domainItem && domainItem.meta
-				? titanMailMonthly( {
-						domain: domainItem.meta,
-						quantity: 1,
-						extra: {
-							new_quantity: 1,
-						},
-				  } )
-				: undefined;
+		const emailItem = domainItem?.meta
+			? titanMailYearly( {
+					domain: domainItem.meta,
+					quantity: 1,
+					extra: {
+						new_quantity: 1,
+					},
+			  } )
+			: undefined;
 
 		// It may be cleaner to call handleSkip() if emailItem is undefined.
 		this.props.recordTracksEvent( 'calypso_signup_email_add', {

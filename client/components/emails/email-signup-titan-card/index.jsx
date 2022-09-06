@@ -1,4 +1,4 @@
-import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
+import { TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -33,7 +33,7 @@ class EmailSignupTitanCard extends Component {
 	};
 
 	renderEmailSuggestion( customDomainName ) {
-		const { salePrice, titanMonthlyRenewalCost, translate } = this.props;
+		const { salePrice, titanYearlyRenewalCost, translate } = this.props;
 
 		return (
 			<div className="email-signup-titan-card__suggestion-content">
@@ -45,7 +45,7 @@ class EmailSignupTitanCard extends Component {
 					} ) }
 				</h3>
 				<EmailProductPrice
-					price={ titanMonthlyRenewalCost }
+					price={ titanYearlyRenewalCost }
 					salePrice={ salePrice }
 					isSignupStep={ true }
 					showStrikedOutPrice={ false }
@@ -125,9 +125,9 @@ class EmailSignupTitanCard extends Component {
 
 export default connect( ( state ) => {
 	const signupDependencies = getSignupDependencyStore( state );
-	const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
+	const titanYearlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_YEARLY_SLUG );
 	return {
 		signupDependencies,
-		titanMonthlyRenewalCost,
+		titanYearlyRenewalCost,
 	};
 } )( localize( EmailSignupTitanCard ) );
