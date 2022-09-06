@@ -45,7 +45,7 @@ describe( 'PluginsList', () => {
 			render( <PluginsList { ...props } /> );
 			await user.click( screen.getByRole( 'button', { name: 'Edit All' } ) );
 			// Jetpack is auto-managed on Atomic sites, therefore there's only 2 checkboxes here
-			const pluginCheckboxes = screen.queryAllByRole( 'checkbox', { checked: true } );
+			const pluginCheckboxes = screen.getAllByRole( 'checkbox', { checked: true } );
 			expect( pluginCheckboxes ).toHaveLength( 2 );
 			expect( pluginCheckboxes[ 0 ] ).toHaveAttribute( 'title', 'Hello Dolly' );
 		} );
@@ -65,7 +65,7 @@ describe( 'PluginsList', () => {
 		test( 'should always reset to all selected when toggled on', async () => {
 			const querySelectedPluginBoxes = () =>
 				pluginsList
-					.map( ( { name } ) => screen.queryByRole( 'checkbox', { name, checked: true } ) )
+					.map( ( { name } ) => screen.getByRole( 'checkbox', { name, checked: true } ) )
 					.filter( ( i ) => i );
 
 			const user = userEvent.setup();
@@ -79,7 +79,7 @@ describe( 'PluginsList', () => {
 			await user.click( helloDollyCheckbox );
 
 			expect( querySelectedPluginBoxes() ).toHaveLength( 1 );
-			expect( screen.queryByRole( 'checkbox', { name: 'Hello Dolly' } ) ).not.toBeChecked();
+			expect( screen.getByRole( 'checkbox', { name: 'Hello Dolly' } ) ).not.toBeChecked();
 
 			await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 			await user.click( screen.getByRole( 'button', { name: 'Edit All' } ) );
