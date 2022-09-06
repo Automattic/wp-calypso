@@ -3,11 +3,25 @@
 
 .plugin-details-v2 {
 	padding: 0 16px;
-	max-width: 1500px;
-	margin: auto;
 
 	p {
 		font-size: inherit;
+	}
+
+	.plugin-details-v2__top-container {
+		max-width: 1500px;
+		margin: auto;
+	}
+
+	.plugin-details-v2__body-container {
+		padding-block-start: 0;
+		background: var( --color-surface );
+		margin: 32px -180px -32px;
+		padding: 0 180px;
+
+		@include break-xlarge {
+			margin-top: 72px;
+		}
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
@@ -84,10 +98,9 @@
 	}
 
 	.plugin-details__body {
-		padding-block-start: 0;
-		background: var( --color-surface );
-		margin: 72px -180px -32px;
-		padding: 0 180px;
+		padding-top: 0;
+		max-width: 1500px;
+		margin: auto;
 
 		.section-nav-tabs__list {
 			box-shadow: none;
@@ -98,7 +111,11 @@
 		}
 
 		.plugin-details__layout-col-left {
-			padding-block-start: 48px;
+			padding-block-start: 12px;
+
+			@include break-xlarge {
+				padding-block-start: 48px;
+			}
 
 			.section-nav__mobile-header {
 				padding: 10px 0;
