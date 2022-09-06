@@ -58,7 +58,7 @@ export class CountrySpecificPaymentFields extends Component {
 			// country as the billing address.
 			const phoneCountryCode = this.state.userSelectedPhoneCountryCode || this.props.countryCode;
 			value = {
-				value: baseValue,
+				phoneNumber: baseValue,
 				countryCode: phoneCountryCode,
 			};
 		}
@@ -85,8 +85,8 @@ export class CountrySpecificPaymentFields extends Component {
 			: null;
 	};
 
-	handlePhoneFieldChange = ( { value, countryCode } ) => {
-		this.props.handleFieldChange( 'phone-number', value );
+	handlePhoneFieldChange = ( { phoneNumber, countryCode } ) => {
+		this.props.handleFieldChange( 'phone-number', phoneNumber );
 		this.setState( { userSelectedPhoneCountryCode: countryCode } );
 	};
 
