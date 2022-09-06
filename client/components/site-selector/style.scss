@@ -209,18 +209,6 @@
 	}
 }
 
-.site-selector .site-selector__add-new-site {
-	background: var( --color-sidebar-button-background );
-	border-color: var( --color-sidebar-button-border );
-	color: var( --color-sidebar-button-text );
-
-	&:hover {
-		background: var( --color-sidebar-button-hover-background );
-		border-color: var( --color-sidebar-button-hover-border );
-		color: var( --color-sidebar-button-hover-text );
-	}
-}
-
 // Containers in the list of sites are larger
 .site-selector .site-action {
 	padding-top: 15px;

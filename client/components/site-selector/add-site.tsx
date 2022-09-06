@@ -20,7 +20,7 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 
 	return (
 		<Button
-			className="site-selector__add-new-site"
+			primary
 			href={ `${ onboardingUrl() }?ref=calypso-selector` }
 			onClick={ recordAddNewSite }
 		>

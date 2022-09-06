@@ -323,17 +323,6 @@ html {
 	.site-selector__actions {
 		padding: 16px;
 	}
-	.site-selector__add-new-site {
-		border-color: var( --color-sidebar-text );
-		border-radius: 2px;
-		background-color: var( --color-sidebar-background );
-		color: var( --color-sidebar-text );
-		&:hover {
-			background-color: var( --color-sidebar-background );
-			color: var( --studio-jetpack-green-50 );
-			border-color: var( --studio-jetpack-green-50 );
-		}
-	}
 }
 
 // Dropdown menu styles
