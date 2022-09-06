@@ -59,6 +59,20 @@ export default function PromotedPosts( { tab }: Props ) {
 				<CampaignsList isLoading={ campaignsIsLoading } campaigns={ campaignsData } />
 			) }
 			{ selectedTab === 'posts' && <PostsList /> }
+
+			<div className="promote-post__footer">
+				<p>
+					By promoting your post you agree to{ ' ' }
+					<a href="https://wordpress.com/tos/" target={ '_blank' } rel="noreferrer">
+						WordPress.com Terms
+					</a>{ ' ' }
+					and{ ' ' }
+					<a href="https://automattic.com/privacy/" target={ 'blank' }>
+						Advertising Terms
+					</a>
+					.
+				</p>
+			</div>
 		</Main>
 	);
 }

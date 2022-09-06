@@ -20,6 +20,7 @@ declare global {
 				urn: string;
 				onLoaded?: () => void;
 				onClose?: () => void;
+				translateFn?: ( value: string, options?: any ) => string;
 				showDialog?: boolean;
 			} ) => void;
 		};
@@ -41,6 +42,7 @@ export async function showDSP(
 	siteId: number | string,
 	postId: number | string,
 	onClose: () => void,
+	translateFn: ( value: string, options?: any ) => string,
 	domNodeOrId?: HTMLElement | string | null
 ) {
 	await loadDSPWidgetJS();
@@ -58,6 +60,7 @@ export async function showDSP(
 				template: 'article',
 				onLoaded: () => resolve( true ),
 				onClose: onClose,
+				translateFn: translateFn,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 			} );
 		} else {

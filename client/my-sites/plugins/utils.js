@@ -28,3 +28,9 @@ export function useLocalizedPlugins() {
 
 	return { localizePath };
 }
+
+export function useServerEffect( fn ) {
+	if ( 'undefined' === typeof window ) {
+		fn();
+	}
+}
