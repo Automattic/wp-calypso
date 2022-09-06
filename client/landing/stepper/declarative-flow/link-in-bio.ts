@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -32,15 +33,17 @@ export const linkInBio: Flow = {
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const urlLocale = useLocale();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			const localeRoute = urlLocale ? `/${ urlLocale }/` : '';
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
 						return navigate( 'patterns' );
 					}
 					return window.location.replace(
-						`/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
+						`/start/account/user${ localeRoute }?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
 					);
 
 				case 'patterns':

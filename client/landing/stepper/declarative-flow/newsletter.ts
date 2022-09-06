@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -34,17 +35,18 @@ export const newsletter: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: this.name } );
 		setStepProgress( flowProgress );
+		const urlLocale = useLocale();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', _currentStep );
-
+			const localeRoute = urlLocale ? `/${ urlLocale }/` : '';
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
 						return navigate( 'newsletterSetup' );
 					}
 					return window.location.replace(
-						`/start/account/user?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`
+						`/start/account/user${ localeRoute }?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`
 					);
 
 				case 'newsletterSetup':

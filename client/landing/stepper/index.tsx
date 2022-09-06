@@ -38,7 +38,6 @@ import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
 import { useQuery } from './hooks/use-query';
-import { StepperUrlLocaleContext } from './stepper-locale';
 import { USER_STORE } from './stores';
 import type { Flow } from './declarative-flow/internals/types';
 
@@ -137,9 +136,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<StepperUrlLocaleContext>
-							<FlowSwitch user={ user as UserStore.CurrentUser } />
-						</StepperUrlLocaleContext>
+						<FlowSwitch user={ user as UserStore.CurrentUser } />
 					</BrowserRouter>
 					{ config.isEnabled( 'signup/inline-help' ) && (
 						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
