@@ -471,6 +471,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 									<ThemePreview
 										url={ previewUrl }
 										viewportWidth={ isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH }
+										isFitHeight
 									/>
 								</span>
 							</button>

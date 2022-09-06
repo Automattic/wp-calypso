@@ -313,6 +313,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					<AsyncLoad
 						require="@automattic/design-preview"
 						placeholder={ null }
+						previewUrl={ previewUrl }
 						title={ designTitle }
 						description={ selectedDesign.description }
 						variations={ selectedDesignDetails?.style_variations }
