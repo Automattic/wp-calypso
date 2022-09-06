@@ -167,6 +167,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/manage-purchases/',
 		post_id: 111349,
 	},
+	refund_purchase: {
+		link: 'https://wordpress.com/support/manage-purchases/#refund-policy',
+		post_id: 111349,
+	},
 	'reusable-blocks': {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/reusable-block/',
 		post_id: 157539,

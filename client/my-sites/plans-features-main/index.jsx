@@ -60,6 +60,7 @@ import {
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
 import PlanTypeSelector from './plan-type-selector';
+import PlanFAQ from './plansStepFaq';
 import WpcomFAQ from './wpcom-faq';
 
 import './style.scss';
@@ -440,7 +441,8 @@ export class PlansFeaturesMain extends Component {
 		const { isInSignup } = this.props;
 
 		if ( isInSignup ) {
-			return null;
+			// return null;
+			return <PlanFAQ />;
 		}
 
 		return <WpcomFAQ />;

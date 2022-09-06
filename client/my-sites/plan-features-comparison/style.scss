@@ -357,6 +357,7 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-comparison__content {
 		margin: -16px 0 0;
 		padding-top: $plan-features-header-banner-height;
+		border-bottom: solid 1px var( --color-neutral-5 )
 	}
 }
 
