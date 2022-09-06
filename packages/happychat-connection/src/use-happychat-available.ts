@@ -1,26 +1,49 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 import { buildConnectionForCheckingAvailability } from './connection';
+import { HappychatAuth } from './types';
 import useHappychatAuth from './use-happychat-auth';
 
+const key = Date.now();
+
+type HCAvailability = { available?: boolean; status?: string };
+
+function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
+	return new Promise< HCAvailability >( ( resolve ) => {
+		const result: HCAvailability = {};
+		const connection = buildConnectionForCheckingAvailability( {
+			receiveAccept: ( receivedAvailability ) => {
+				result.available = receivedAvailability;
+
+				if ( Object.keys( result ).length === 2 ) {
+					resolve( result );
+				}
+			},
+			receiveStatus( status ) {
+				result.status = status;
+
+				if ( Object.keys( result ).length === 2 ) {
+					resolve( result );
+				}
+			},
+			receiveUnauthorized: () => {
+				resolve( { available: false, status: 'new' } );
+			},
+		} );
+		connection.init( ( value: unknown ) => value, Promise.resolve( dataAuth ) );
+	} );
+}
+
 export function useHappychatAvailable() {
-	const [ available, setIsAvailable ] = useState< boolean | undefined >( undefined );
 	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth();
 
-	useEffect( () => {
-		if ( ! isLoadingAuth && dataAuth ) {
-			const connection = buildConnectionForCheckingAvailability( {
-				receiveAccept: ( receivedAvailability ) => {
-					setIsAvailable( receivedAvailability );
-				},
-				receiveUnauthorized: () => {
-					setIsAvailable( false );
-				},
-			} );
-			connection.init( ( value: unknown ) => value, Promise.resolve( dataAuth ) );
+	return useQuery(
+		'happychat-available' + key,
+		() => getHCAvailabilityAndStatus( dataAuth as HappychatAuth ),
+		{
+			enabled: ! isLoadingAuth && !! dataAuth,
+			staleTime: Infinity,
 		}
-	}, [ dataAuth, isLoadingAuth ] );
-
-	return { available: Boolean( available ), isLoading: available === undefined };
+	);
 }
 
 export default useHappychatAvailable;

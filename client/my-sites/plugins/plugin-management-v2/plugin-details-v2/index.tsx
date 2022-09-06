@@ -84,35 +84,39 @@ export default function PluginDetailsV2( {
 				sites={ sitesWithPlugins }
 				plugins={ [ fullPlugin ] }
 			/>
-			<div className="plugin-details__page legacy">
-				<div className="plugin-details__layout plugin-details__top-section">
-					<div className="plugin-details__layout-col-left">
-						<PluginDetailsHeader
-							isJetpackCloud
-							plugin={ fullPlugin }
-							isPlaceholder={ showPlaceholder }
-						/>
+			<div className="plugin-details-v2__top-container">
+				<div className="plugin-details__page legacy">
+					<div className="plugin-details__layout plugin-details__top-section">
+						<div className="plugin-details__layout-col-left">
+							<PluginDetailsHeader
+								isJetpackCloud
+								plugin={ fullPlugin }
+								isPlaceholder={ showPlaceholder }
+							/>
+						</div>
 					</div>
 				</div>
-			</div>
-			<SitesWithInstalledPluginsList
-				sites={ sitesWithPlugin }
-				selectedSite={ selectedSite }
-				isLoading={ isLoading }
-				plugin={ fullPlugin }
-			/>
-			<PluginAvailableOnSitesList
-				sites={ sitesWithoutPlugin }
-				selectedSite={ selectedSite }
-				isLoading={ isLoading }
-				plugin={ fullPlugin }
-			/>
-			{ fullPlugin.fetched && (
-				<PluginDetailsBody
-					fullPlugin={ fullPlugin }
-					isMarketplaceProduct={ isMarketplaceProduct }
-					isWpcom={ isWpcom }
+				<SitesWithInstalledPluginsList
+					sites={ sitesWithPlugin }
+					selectedSite={ selectedSite }
+					isLoading={ isLoading }
+					plugin={ fullPlugin }
 				/>
+				<PluginAvailableOnSitesList
+					sites={ sitesWithoutPlugin }
+					selectedSite={ selectedSite }
+					isLoading={ isLoading }
+					plugin={ fullPlugin }
+				/>
+			</div>
+			{ fullPlugin.fetched && (
+				<div className="plugin-details-v2__body-container">
+					<PluginDetailsBody
+						fullPlugin={ fullPlugin }
+						isMarketplaceProduct={ isMarketplaceProduct }
+						isWpcom={ isWpcom }
+					/>
+				</div>
 			) }
 		</div>
 	);

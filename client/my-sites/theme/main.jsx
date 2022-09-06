@@ -658,6 +658,7 @@ class ThemeSheet extends Component {
 			hasUnlimitedPremiumThemes,
 			isAtomic,
 			isPremium,
+			isBundledSoftwareSet,
 			isJetpack,
 			isWpcomTheme,
 			isVip,
@@ -711,13 +712,22 @@ class ThemeSheet extends Component {
 
 		// Show theme upsell banner on Simple sites.
 		const hasWpComThemeUpsellBanner =
-			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
+			! isJetpack &&
+			isPremium &&
+			! isBundledSoftwareSet &&
+			! hasUnlimitedPremiumThemes &&
+			! isVip &&
+			! retired;
 		// Show theme upsell banner on Jetpack sites.
 		const hasWpOrgThemeUpsellBanner =
 			! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
 		// Show theme upsell banner on Atomic sites.
 		const hasThemeUpsellBannerAtomic =
-			isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
+			isAtomic &&
+			isPremium &&
+			! isBundledSoftwareSet &&
+			! canUserUploadThemes &&
+			! hasUnlimitedPremiumThemes;
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;

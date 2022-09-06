@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	planHasFeature,
 	TERM_MONTHLY,
@@ -26,7 +25,6 @@ import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import PlanRenewalMessage from '../plan-renewal-message';
-import ProductLightbox from '../product-lightbox';
 import useItemPrice from '../use-item-price';
 import productAboveButtonText from './product-above-button-text';
 import productButtonLabel from './product-button-label';
@@ -210,56 +208,39 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		buttonLabel
 	);
 
-	const [ isDialogVisible, setDialogVisible ] = React.useState( false );
-
 	return (
-		<>
-			{ isEnabled( 'jetpack/pricing-page-product-lightbox' ) && (
-				<ProductLightbox
-					product={ item }
-					isVisible={ isDialogVisible }
-					onClose={ () => {
-						setDialogVisible( false );
-					} }
-				/>
-			) }
-
-			<JetpackProductCard
-				item={ item }
-				headerLevel={ 3 }
-				description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
-				originalPrice={ originalPrice }
-				discountedPrice={ discountedPrice }
-				buttonLabel={ buttonLabel }
-				buttonPrimary={ ! ( isOwned || isItemPlanFeature || isSuperseded ) }
-				onButtonClick={ () => {
-					onClick( item, isUpgradeableToYearly, purchase );
-				} }
-				buttonURL={
-					createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
-				}
-				buttonDisabled={ isDisabled || buttonDisabled || isLoadingUpsellPageExperiment }
-				expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
-				isFeatured={ isFeatured }
-				isOwned={ isOwned }
-				isIncludedInPlan={ isIncludedInPlan || isSuperseded }
-				isDeprecated={ isDeprecated }
-				isAligned={ isAligned }
-				displayFrom={ ! siteId && priceTierList.length > 0 }
-				tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
-				aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
-				isDisabled={ isDisabled }
-				disabledMessage={ disabledMessage }
-				featuredLabel={ featuredLabel }
-				hideSavingLabel={ hideSavingLabel }
-				scrollCardIntoView={ scrollCardIntoView }
-				collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
-				pricesAreFetching={ pricesAreFetching }
-				onLearnMoreClick={ () => {
-					setDialogVisible( true );
-				} }
-			/>
-		</>
+		<JetpackProductCard
+			item={ item }
+			headerLevel={ 3 }
+			description={ showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description }
+			originalPrice={ originalPrice }
+			discountedPrice={ discountedPrice }
+			buttonLabel={ buttonLabel }
+			buttonPrimary={ ! ( isOwned || isItemPlanFeature || isSuperseded ) }
+			onButtonClick={ () => {
+				onClick( item, isUpgradeableToYearly, purchase );
+			} }
+			buttonURL={
+				createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
+			}
+			buttonDisabled={ isDisabled || buttonDisabled || isLoadingUpsellPageExperiment }
+			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
+			isFeatured={ isFeatured }
+			isOwned={ isOwned }
+			isIncludedInPlan={ isIncludedInPlan || isSuperseded }
+			isDeprecated={ isDeprecated }
+			isAligned={ isAligned }
+			displayFrom={ ! siteId && priceTierList.length > 0 }
+			tooltipText={ priceTierList.length > 0 && productTooltip( item, priceTierList ) }
+			aboveButtonText={ productAboveButtonText( item, siteProduct, isOwned, isItemPlanFeature ) }
+			isDisabled={ isDisabled }
+			disabledMessage={ disabledMessage }
+			featuredLabel={ featuredLabel }
+			hideSavingLabel={ hideSavingLabel }
+			scrollCardIntoView={ scrollCardIntoView }
+			collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
+			pricesAreFetching={ pricesAreFetching }
+		/>
 	);
 };
 

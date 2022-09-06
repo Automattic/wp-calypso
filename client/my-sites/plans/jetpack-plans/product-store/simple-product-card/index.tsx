@@ -14,6 +14,7 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	isOwned,
 	isCtaDisabled,
 	item,
+	hideMoreInfoLink,
 	onClickMore,
 	onClickPurchase,
 	siteId,
@@ -52,14 +53,16 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 				</div>
 				<div className="simple-product-card__info-content">
 					{ productDescription }
-					<Button
-						className="simple-product-card__info-more-link"
-						onClick={ onClickMore }
-						href="#"
-						plain
-					>
-						{ translate( 'More about %(name)s', { args: { name } } ) }
-					</Button>
+					{ ! hideMoreInfoLink && (
+						<Button
+							className="simple-product-card__info-more-link"
+							onClick={ onClickMore }
+							href="#"
+							plain
+						>
+							{ translate( 'More about %(name)s', { args: { name } } ) }
+						</Button>
+					) }
 				</div>
 			</div>
 		</div>

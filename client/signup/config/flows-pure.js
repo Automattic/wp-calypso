@@ -114,11 +114,8 @@ export function generateFlows( {
 		{
 			name: 'newsletter',
 			steps: [ 'domains', 'plans-newsletter' ],
-			destination: ( dependencies, localeSlug, goesThroughCheckout ) => {
-				return goesThroughCheckout
-					? `/setup/completingPurchase?flow=newsletter&siteSlug=${ dependencies.siteSlug }`
-					: `/setup/subscribers?flow=newsletter&complete-setup=true&siteSlug=${ dependencies.siteSlug }`;
-			},
+			destination: ( dependencies ) =>
+				`/setup/subscribers?flow=newsletter&siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a newsletter',
 			lastModified: '2022-08-15',
 			showRecaptcha: true,
@@ -130,7 +127,7 @@ export function generateFlows( {
 			name: 'link-in-bio',
 			steps: [ 'domains', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
-				`/setup/completingPurchase?flow=link-in-bio&siteSlug=${ encodeURIComponent(
+				`/setup/launchpad?flow=link-in-bio&siteSlug=${ encodeURIComponent(
 					dependencies.siteSlug
 				) }`,
 			description: 'Beginning of the flow to create a link in bio',

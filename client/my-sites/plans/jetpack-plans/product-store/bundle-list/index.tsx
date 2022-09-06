@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import productButtonLabel from '../../product-card/product-button-label';
 import { FeaturedItemCard } from '../featured-item-card';
@@ -17,6 +16,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 	createCheckoutURL,
 	duration,
 	onClickPurchase,
+	onClickMoreInfoFactory,
 	siteId,
 } ) => {
 	const [ popularItems ] = useBundlesToDisplay( { duration, siteId } );
@@ -44,13 +44,15 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 	const mostPopularItems = popularItems.map( ( item ) => {
 		const isItemOwned = isOwned( item );
 		const isItemSuperseded = isSuperseded( item );
+		const isItemDeprecated = isDeprecated( item );
+		const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
 		const purchase = getPurchase( item );
 
 		const buttonLabelOptions = {
 			product: item,
 			isOwned: isItemOwned,
 			isUpgradeableToYearly: isUpgradeableToYearly( item ),
-			isDeprecated: isDeprecated( item ),
+			isDeprecated: isItemDeprecated,
 			isSuperseded: isItemSuperseded,
 			currentPlan: sitePlan,
 			fallbackLabel: translate( 'Get' ),
@@ -68,6 +70,8 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 			</>
 		);
 
+		const hideMoreInfoLink = isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
+
 		return (
 			<div key={ item.productSlug } className="jetpack-product-store__bundles-list--featured-item">
 				<FeaturedItemCard
@@ -76,15 +80,11 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 					ctaLabel={ ctaLabel }
 					hero={ <HeroImage item={ item } /> }
 					isCtaDisabled={ isItemOwned && ! isUserPurchaseOwner( item ) }
-					isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
+					isIncludedInPlan={ isItemIncludedInPlanOrSuperseded }
+					hideMoreInfoLink={ hideMoreInfoLink }
 					isOwned={ isItemOwned }
 					item={ item }
-					onClickMore={ () => {
-						recordTracksEvent( 'calypso_product_more_about_product_click', {
-							product: item.productSlug,
-						} );
-						// TODO: Open modal
-					} }
+					onClickMore={ onClickMoreInfoFactory( item ) }
 					onClickPurchase={ getOnClickPurchase( item ) }
 					siteId={ siteId }
 				/>

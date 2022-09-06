@@ -1,3 +1,4 @@
+import { FEATURE_WOOP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon, ScreenReaderText } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -9,6 +10,7 @@ import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customiz
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
@@ -60,8 +62,8 @@ class ThanksModal extends Component {
 			this.props.requestSite( this.props.siteId );
 
 			// Redirect to plugin-bundle flow for themes including software (like woocommerce)
-			const { siteSlug, doesCurrentThemeBundleSoftware } = this.props;
-			if ( doesCurrentThemeBundleSoftware ) {
+			const { siteSlug, doesThemeBundleUsableSoftware } = this.props;
+			if ( doesThemeBundleUsableSoftware ) {
 				const dest = `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle`;
 				window.location.replace( dest );
 			}
@@ -240,7 +242,7 @@ class ThanksModal extends Component {
 			shouldEditHomepageWithGutenberg,
 			hasActivated,
 			isFSEActive,
-			doesCurrentThemeBundleSoftware,
+			doesThemeBundleUsableSoftware,
 		} = this.props;
 
 		const firstButton = shouldEditHomepageWithGutenberg
@@ -261,13 +263,13 @@ class ThanksModal extends Component {
 		return [
 			{
 				...firstButton,
-				disabled: ! hasActivated || doesCurrentThemeBundleSoftware,
+				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
 			},
 			{
 				action: 'customizeSite',
 				label: this.getEditSiteLabel(),
 				isPrimary: true,
-				disabled: ! hasActivated || doesCurrentThemeBundleSoftware,
+				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
 				onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
 				href: this.props.customizeUrl,
 				target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
@@ -276,9 +278,9 @@ class ThanksModal extends Component {
 	};
 
 	render() {
-		const { currentTheme, hasActivated, isActivating, doesCurrentThemeBundleSoftware } = this.props;
+		const { currentTheme, hasActivated, isActivating, doesThemeBundleUsableSoftware } = this.props;
 
-		const shouldDisplayContent = hasActivated && currentTheme && ! doesCurrentThemeBundleSoftware;
+		const shouldDisplayContent = hasActivated && currentTheme && ! doesThemeBundleUsableSoftware;
 
 		return (
 			<Dialog
@@ -317,12 +319,21 @@ const ConnectedThanksModal = connect(
 				  )
 				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive );
 
+		// Does the theme have sofware bundled?
+		const doesThemeBundleSoftware = doesThemeBundleSoftwareSet( state, currentThemeId );
+		// Are we allowed to use bundled software if it exists?
+		const isEligibleForBundledSoftware =
+			siteHasFeature( state, siteId, FEATURE_WOOP ) &&
+			siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
+		// Check both conditions before redirecting for bundled software.
+		const doesThemeBundleUsableSoftware = doesThemeBundleSoftware && isEligibleForBundledSoftware;
+
 		return {
 			siteId,
 			siteUrl,
 			siteSlug: getSiteSlug( state, siteId ),
 			currentTheme,
-			doesCurrentThemeBundleSoftware: doesThemeBundleSoftwareSet( state, currentThemeId ),
+			doesThemeBundleUsableSoftware,
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,

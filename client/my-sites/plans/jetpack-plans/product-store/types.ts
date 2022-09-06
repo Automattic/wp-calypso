@@ -41,11 +41,15 @@ export interface ViewFilterProps {
 }
 
 export type ProductsListProps = ProductStoreBaseProps &
-	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' >;
+	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' > & {
+		onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
+	};
 
 export type BundlesListProps = ProductsListProps;
 
-export interface ItemsListProps extends ProductsListProps {
+export type ItemToDisplayProps = Omit< ProductsListProps, 'onClickMoreInfoFactory' >;
+
+export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
 }
 
@@ -80,7 +84,8 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
 	item: SelectorProduct;
-	onClickMore: VoidFunction;
+	hideMoreInfoLink?: boolean;
+	onClickMore?: VoidFunction;
 	onClickPurchase?: VoidFunction;
 };
 

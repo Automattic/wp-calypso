@@ -1084,6 +1084,7 @@ __metadata:
     tslib: ^2.3.0
     typescript: ^4.7.4
     webpack: ^5.63.0
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/i18n": ^4.7.0
     react: ^17.0.2
