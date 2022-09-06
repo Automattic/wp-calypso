@@ -1,9 +1,9 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
-import PatternAssemblerPreview from './pattern-assembler-preview';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
 import './style.scss';

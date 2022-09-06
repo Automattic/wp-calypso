@@ -17,9 +17,9 @@ import type { Design } from '@automattic/design-picker';
 import './pattern-assembler-preview.scss';
 
 interface Props {
-	header?: Pattern;
+	header: Pattern | null;
 	sections?: Pattern[];
-	footer?: Pattern;
+	footer: Pattern | null;
 }
 
 const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => {
