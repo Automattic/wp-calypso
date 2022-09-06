@@ -1,4 +1,5 @@
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
+import { Button } from '@automattic/components';
 import SearchRestyled from '@automattic/search';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -15,6 +16,8 @@ import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { addQueryArgs } from 'calypso/lib/url';
+import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -56,10 +59,12 @@ export class SiteSelector extends Component {
 		allSitesPath: PropTypes.string,
 		navigateToSite: PropTypes.func.isRequired,
 		isReskinned: PropTypes.bool,
+		showManageSitesButton: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		sites: {},
+		showManageSitesButton: false,
 		showAddNewSite: false,
 		showAllSites: false,
 		siteBasePath: false,
@@ -222,9 +227,13 @@ export class SiteSelector extends Component {
 		}
 	};
 
-	onAllSitesSelect = ( event ) => {
-		this.props.recordTracksEvent( 'calypso_all_my_sites_click' );
+	onAllSitesSelect = ( event, properties ) => {
+		this.props.recordTracksEvent( 'calypso_all_my_sites_click', properties );
 		this.onSiteSelect( event, ALL_SITES );
+	};
+
+	onManageSitesClick = () => {
+		this.props.recordTracksEvent( 'calypso_manage_sites_click' );
 	};
 
 	onSiteHover = ( event, siteId ) => {
@@ -312,6 +321,20 @@ export class SiteSelector extends Component {
 			return null;
 		}
 
+		const multiSiteContext = allSitesMenu().find(
+			( menu ) => menu.url === this.props.allSitesPath.replace( '/posts/my', '/posts' )
+		);
+
+		// Let's not display the all sites button if there is no multi-site context.
+		if ( this.props.showManageSitesButton && ! multiSiteContext ) {
+			return null;
+		}
+
+		// Let's not display the all sites button if we are already displaying a multi-site context page.
+		if ( this.props.showManageSitesButton && ! this.props.selectedSite ) {
+			return null;
+		}
+
 		this.visibleSites.push( ALL_SITES );
 
 		const isHighlighted = this.isHighlighted( ALL_SITES );
@@ -320,10 +343,20 @@ export class SiteSelector extends Component {
 			<AllSites
 				key="selector-all-sites"
 				sites={ this.props.sites }
-				onSelect={ this.onAllSitesSelect }
+				onSelect={ ( event ) =>
+					this.onAllSitesSelect(
+						event,
+						multiSiteContext
+							? {
+									multi_site_context_slug: multiSiteContext.slug,
+							  }
+							: undefined
+					)
+				}
 				onMouseEnter={ this.onAllSitesHover }
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( ALL_SITES ) }
+				title={ multiSiteContext && multiSiteContext.navigationLabel }
 			/>
 		);
 	}
@@ -466,6 +499,15 @@ export class SiteSelector extends Component {
 						</span>
 					) }
 				</div>
+				{ this.props.showManageSitesButton && (
+					<Button
+						onClick={ this.onManageSitesClick }
+						href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
+						className="site-selector__manage-sites"
+					>
+						{ this.props.translate( 'Manage sites' ) }
+					</Button>
+				) }
 				{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
 			</div>
 		);

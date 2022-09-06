@@ -254,7 +254,7 @@ class Layout extends Component {
 		return (
 			<div className={ sectionClass }>
 				<HelpCenterLoader sectionName={ this.props.sectioName } loadHelpCenter={ loadHelpCenter } />
-				<SidebarScrollSynchronizer />
+				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
