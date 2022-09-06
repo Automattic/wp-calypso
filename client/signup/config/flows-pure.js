@@ -115,7 +115,7 @@ export function generateFlows( {
 			name: 'newsletter',
 			steps: [ 'domains', 'plans-newsletter' ],
 			destination: ( dependencies ) =>
-				`/setup/subscribers?flow=newsletter&complete-setup=true&siteSlug=${ dependencies.siteSlug }`,
+				`/setup/subscribers?flow=newsletter&siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a newsletter',
 			lastModified: '2022-08-15',
 			showRecaptcha: true,
