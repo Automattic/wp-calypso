@@ -10,6 +10,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { AUTOMOMANAGED_PLUGINS_ECOM } from '../constants';
 
 const autoUpdateActions = [ ENABLE_AUTOUPDATE_PLUGIN, DISABLE_AUTOUPDATE_PLUGIN ];
 
@@ -56,13 +57,13 @@ export class PluginAutoUpdateToggle extends Component {
 	};
 
 	getDisabledInfo() {
-		const { site, wporg, translate, isMarketplaceProduct } = this.props;
+		const { site, wporg, translate, isMarketplaceProduct, plugin } = this.props;
 		if ( ! site ) {
 			// we don't have enough info
 			return null;
 		}
 
-		if ( isMarketplaceProduct ) {
+		if ( isMarketplaceProduct || AUTOMOMANAGED_PLUGINS_ECOM.includes( plugin.slug ) ) {
 			return translate(
 				'This plugin is auto managed and therefore will auto update to the latest stable version.'
 			);

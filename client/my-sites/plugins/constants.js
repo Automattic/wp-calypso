@@ -24,3 +24,5 @@ export const PREINSTALLED_PREMIUM_PLUGINS = {
 		},
 	},
 };
+
+export const AUTOMOMANAGED_PLUGINS_ECOM = [ 'woocommerce' ];
