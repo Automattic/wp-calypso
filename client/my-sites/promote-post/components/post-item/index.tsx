@@ -59,9 +59,13 @@ export default function PostItem( { post }: Props ) {
 				<div className="post-item__body">
 					<div className="post-item__title">{ post.title }</div>
 					<div className="post-item__subtitle">
-						<PostRelativeTimeStatus showPublishedStatus={ false } post={ post } />
+						<PostRelativeTimeStatus
+							showPublishedStatus={ false }
+							post={ post }
+							gridiconSize={ 12 }
+						/>
 						<span className="post-item__posttype">{ getPostType( post.type ) }</span>
-						<Button isLink href={ post.URL }>
+						<Button className="post-item__view-link" isLink href={ post.URL } size={ 12 }>
 							{ __( 'View' ) }
 						</Button>
 					</div>

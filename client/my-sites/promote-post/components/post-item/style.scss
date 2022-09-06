@@ -1,4 +1,3 @@
-
 .post-item__card {
 	display: flex;
 	align-items: center;
@@ -32,9 +31,16 @@
 			font-size: 1.25rem;
 		}
 
-		.post-item__subtitle, .post-item__posttype {
+		.post-item__subtitle,
+		.post-item__posttype {
 			color: var( --color-neutral-50 );
-			font-size: 0.875rem;
+			font-size: 0.75rem;
+			display: flex;
+			align-items: center;
+		}
+
+		.post-item__view-link {
+			font-size: 0.75rem;
 		}
 
 		.post-item__posttype {
@@ -42,5 +48,3 @@
 		}
 	}
 }
-
-
