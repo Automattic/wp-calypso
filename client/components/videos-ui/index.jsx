@@ -127,7 +127,7 @@ const VideosUi = ( {
 						<ul>
 							{ headerSummary.map( ( text ) => {
 								return (
-									<li>
+									<li key={ text }>
 										<Gridicon icon="checkmark" size={ 18 } /> { text }
 									</li>
 								);
