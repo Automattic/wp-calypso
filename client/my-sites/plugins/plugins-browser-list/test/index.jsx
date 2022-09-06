@@ -37,21 +37,21 @@ const queryPlaceholders = () => {
 describe( 'PluginsBrowserList basic tests', () => {
 	test( 'should render the section header with title', () => {
 		render( <PluginsBrowserList { ...props } /> );
-		const header = screen.queryByText( props.title );
+		const header = screen.getByText( props.title );
 		expect( header ).toBeVisible();
 		expect( header ).toHaveClass( 'plugins-browser-list__title' );
 	} );
 
 	test( 'should render the section header with subtitle', () => {
 		render( <PluginsBrowserList { ...props } /> );
-		const subtitle = screen.queryByText( props.subtitle );
+		const subtitle = screen.getByText( props.subtitle );
 		expect( subtitle ).toBeVisible();
 		expect( subtitle ).toHaveClass( 'plugins-browser-list__subtitle' );
 	} );
 
 	test( 'should render a given number of list items when the size prop is set', () => {
 		render( <PluginsBrowserList { ...props } size={ 2 } /> );
-		expect( screen.queryAllByRole( 'listitem' ) ).toHaveLength( 2 );
+		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 2 );
 	} );
 } );
 
@@ -68,7 +68,7 @@ describe( 'InfiniteScroll variant', () => {
 
 	test( 'should append placeholders if there are plugins and `showPlaceholders` is set', () => {
 		render( <PluginsBrowserList { ...infiniteScrollProps } showPlaceholders /> );
-		const listItems = screen.queryAllByRole( 'listitem' );
+		const listItems = screen.getAllByRole( 'listitem' );
 		expect( listItems ).toHaveLength( 9 );
 		expect( queryPlaceholders() ).toHaveLength( 6 );
 	} );
