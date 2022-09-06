@@ -48,7 +48,7 @@ export function PatternPicker( { onPick }: Props ) {
 					setIndex( index );
 					setTimeoutRef( 0 );
 				}
-			}, 100 )
+			}, 300 )
 		);
 	}
 

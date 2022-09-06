@@ -23,6 +23,10 @@
 		color: var( --color-neutral-100 );
 		border: 1px solid var( --color-neutral-100 );
 	}
+
+	.info-popover.owner-info__pop-over {
+		line-height: inherit;
+	}
 }
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jetpack-product-store .header .header__main-title .formatted-header__title {

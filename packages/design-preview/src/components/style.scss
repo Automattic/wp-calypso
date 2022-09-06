@@ -3,11 +3,13 @@
 @import '@automattic/typography/styles/fonts';
 
 .design-preview {
-	display: block;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 
 	@include break-small {
-		display: flex;
 		flex-direction: row;
+		margin: 0;
 		gap: 32px;
 	}
 }
@@ -108,6 +110,7 @@
 				width: 100%;
 
 				.design-preview__style-variation {
+					box-sizing: border-box;
 					width: 100%;
 				}
 			}
@@ -121,7 +124,8 @@
 	padding: 3px;
 	transition: border-color 0.15s ease-in-out;
 
-	&:hover {
+	&:hover,
+	&--is-active {
 		border-color: var( --studio-blue-50 );
 	}
 
@@ -133,4 +137,9 @@
 		max-width: 100%;
 		overflow: hidden;
 	}
+}
+
+.design-preview__site-preview {
+	flex-grow: 1;
+	position: relative;
 }

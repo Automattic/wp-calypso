@@ -1,7 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useCallback, useMemo } from 'react';
+import { Purchase } from 'calypso/lib/purchases/types';
+import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import productButtonLabel from '../../product-card/product-button-label';
+import { SelectorProduct } from '../../types';
 import { FeaturedItemCard } from '../featured-item-card';
 import { HeroImage } from '../hero-image';
 import { useProductsToDisplay } from '../hooks/use-products-to-display';
@@ -17,6 +19,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	createCheckoutURL,
 	duration,
 	onClickPurchase,
+	onClickMoreInfoFactory,
 	siteId,
 } ) => {
 	const [ popularItems, otherItems ] = useProductsToDisplay( { duration, siteId } );
@@ -25,12 +28,15 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	const {
 		getCheckoutURL,
 		getOnClickPurchase,
+		isIncludedInPlan,
 		isIncludedInPlanOrSuperseded,
 		isOwned,
 		isPlanFeature,
 		isSuperseded,
 		isDeprecated,
 		isUpgradeableToYearly,
+		isUserPurchaseOwner,
+		getPurchase,
 		sitePlan,
 	} = useStoreItemInfo( {
 		createCheckoutURL,
@@ -39,19 +45,56 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 		siteId,
 	} );
 
+	const getCtaLabel = useCallback(
+		( {
+			item,
+			isItemOwned,
+			isItemSuperseded,
+			purchase,
+		}: {
+			item: SelectorProduct;
+			isItemOwned: boolean;
+			isItemSuperseded: boolean;
+			purchase?: Purchase;
+		} ) => {
+			const ctaLabel = productButtonLabel( {
+				product: item,
+				isOwned: isItemOwned,
+				isUpgradeableToYearly: isUpgradeableToYearly( item ),
+				isDeprecated: isDeprecated( item ),
+				isSuperseded: isItemSuperseded,
+				currentPlan: sitePlan,
+				fallbackLabel: translate( 'Get' ),
+			} );
+
+			return (
+				<>
+					{ ctaLabel }
+					{ purchase && (
+						<>
+							&nbsp;
+							<OwnerInfo purchase={ purchase } />
+						</>
+					) }
+				</>
+			);
+		},
+		[ isDeprecated, isUpgradeableToYearly, sitePlan, translate ]
+	);
+
 	const mostPopularItems = popularItems.map( ( item ) => {
 		const isItemOwned = isOwned( item );
 		const isItemSuperseded = isSuperseded( item );
+		const isItemDeprecated = isDeprecated( item );
+		const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
+		const purchase = getPurchase( item );
 
-		const ctaLabel = productButtonLabel( {
-			product: item,
-			isOwned: isItemOwned,
-			isUpgradeableToYearly: isUpgradeableToYearly( item ),
-			isDeprecated: isDeprecated( item ),
-			isSuperseded: isItemSuperseded,
-			currentPlan: sitePlan,
-			fallbackLabel: translate( 'Get' ),
-		} );
+		const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
+
+		const isCtaDisabled =
+			( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
+
+		const hideMoreInfoLink = isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
 
 		return (
 			<FeaturedItemCard
@@ -59,16 +102,13 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 				ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 				ctaLabel={ ctaLabel }
 				hero={ <HeroImage item={ item } /> }
-				isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
+				hideMoreInfoLink={ hideMoreInfoLink }
+				isCtaDisabled={ isCtaDisabled }
+				isIncludedInPlan={ isItemIncludedInPlanOrSuperseded }
 				isOwned={ isItemOwned }
 				item={ item }
 				key={ item.productSlug }
-				onClickMore={ () => {
-					recordTracksEvent( 'calypso_product_more_about_product_click', {
-						product: item.productSlug,
-					} );
-					// TODO: Open modal
-				} }
+				onClickMore={ onClickMoreInfoFactory( item ) }
 				onClickPurchase={ getOnClickPurchase( item ) }
 				siteId={ siteId }
 			/>
@@ -93,31 +133,30 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 					{ allItems.map( ( item ) => {
 						const isItemOwned = isOwned( item );
 						const isItemSuperseded = isSuperseded( item );
+						const isItemDeprecated = isDeprecated( item );
+						const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
+						const purchase = getPurchase( item );
 
-						const ctaLabel = productButtonLabel( {
-							product: item,
-							isOwned: isItemOwned,
-							isUpgradeableToYearly: isUpgradeableToYearly( item ),
-							isDeprecated: isDeprecated( item ),
-							isSuperseded: isItemSuperseded,
-							currentPlan: sitePlan,
-							fallbackLabel: translate( 'Get' ),
-						} );
+						const isCtaDisabled =
+							( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
+
+						const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
+
+						const hideMoreInfoLink =
+							isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
+
 						return (
 							<SimpleProductCard
 								checkoutURL={ getCheckoutURL( item ) }
 								ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 								ctaLabel={ ctaLabel }
-								isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
+								isCtaDisabled={ isCtaDisabled }
+								isIncludedInPlan={ isItemIncludedInPlanOrSuperseded }
+								hideMoreInfoLink={ hideMoreInfoLink }
 								isOwned={ isItemOwned }
 								item={ item }
 								key={ item.productSlug }
-								onClickMore={ () => {
-									recordTracksEvent( 'calypso_product_more_about_product_click', {
-										product: item.productSlug,
-									} );
-									// TODO: Open modal
-								} }
+								onClickMore={ onClickMoreInfoFactory( item ) }
 								onClickPurchase={ getOnClickPurchase( item ) }
 								siteId={ siteId }
 							/>

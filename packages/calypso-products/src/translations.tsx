@@ -452,13 +452,13 @@ export const getJetpackProductsFeaturedText = (): Record< string, TranslateResul
 		'Protect your site or store. Save every change with real-time cloud backups, and restore in one click.'
 	);
 	const videoPressFeaturedText = translate(
-		'Own your content. High-quality, ad-free video build specifically for WordPress.'
+		'Own your content. High-quality, ad-free video built specifically for WordPress.'
 	);
 	const antiSpamFeaturedText = translate(
 		'Stop spam in comments and forms. Save time through automation and get rid of annoying CAPTCHAs.'
 	);
 	const scanFeaturedText = translate(
-		'Stay ahead of security threats. Automattic scanning and one-click fixes give you and your customers peace of mind.'
+		'Stay ahead of security threats. Automatic scanning and one-click fixes give you and your customers peace of mind.'
 	);
 	const searchFeaturedText = translate(
 		'Instant search helps your visitors actually find what they need and improves conversion.'

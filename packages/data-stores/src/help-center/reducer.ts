@@ -70,18 +70,6 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const popup: Reducer< Window | undefined, HelpCenterAction > = ( state, action ) => {
-	if ( action.type === 'HELP_CENTER_SET_POPUP' ) {
-		return action.popup;
-	} else if (
-		action.type === 'HELP_CENTER_RESET_POPUP' ||
-		action.type === 'HELP_CENTER_RESET_STORE'
-	) {
-		return undefined;
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	directlyData,
 	showHelpCenter,
@@ -90,7 +78,6 @@ const reducer = combineReducers( {
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
-	popup,
 } );
 
 export type State = ReturnType< typeof reducer >;
