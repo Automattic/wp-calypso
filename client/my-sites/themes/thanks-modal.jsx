@@ -1,4 +1,3 @@
-import { FEATURE_WOOP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon, ScreenReaderText } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -10,13 +9,12 @@ import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customiz
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
-	doesThemeBundleSoftwareSet,
+	doesThemeBundleUsableSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeDetailsUrl,
@@ -319,21 +317,16 @@ const ConnectedThanksModal = connect(
 				  )
 				: getCustomizeOrEditFrontPageUrl( state, currentThemeId, siteId, isFSEActive );
 
-		// Does the theme have sofware bundled?
-		const doesThemeBundleSoftware = doesThemeBundleSoftwareSet( state, currentThemeId );
-		// Are we allowed to use bundled software if it exists?
-		const isEligibleForBundledSoftware =
-			siteHasFeature( state, siteId, FEATURE_WOOP ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
-		// Check both conditions before redirecting for bundled software.
-		const doesThemeBundleUsableSoftware = doesThemeBundleSoftware && isEligibleForBundledSoftware;
-
 		return {
 			siteId,
 			siteUrl,
 			siteSlug: getSiteSlug( state, siteId ),
 			currentTheme,
-			doesThemeBundleUsableSoftware,
+			doesThemeBundleUsableSoftware: doesThemeBundleUsableSoftwareSet(
+				state,
+				currentThemeId,
+				siteId
+			),
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,
