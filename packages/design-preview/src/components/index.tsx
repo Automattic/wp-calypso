@@ -18,9 +18,6 @@ const Preview: React.FC< PreviewProps > = ( {
 	variations = [],
 } ) => {
 	const [ activeVariation, setActiveVariation ] = useState< StyleVariation | undefined >();
-	const handleVariationClick = ( variation: StyleVariation ) => {
-		setActiveVariation( variation );
-	};
 
 	useEffect( () => {
 		if ( ! activeVariation ) {
@@ -35,7 +32,7 @@ const Preview: React.FC< PreviewProps > = ( {
 				description={ description }
 				variations={ variations }
 				activeVariation={ activeVariation }
-				onVariationClick={ handleVariationClick }
+				onVariationClick={ setActiveVariation }
 			/>
 			<SitePreview url={ previewUrl } inlineCss={ activeVariation?.inline_css || '' } />
 		</div>

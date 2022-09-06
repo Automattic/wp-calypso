@@ -87,10 +87,6 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 		);
 	}, [ inlineCss ] );
 
-	const handleDeviceClick = ( device: Device ) => {
-		setDevice( device );
-	};
-
 	return (
 		<div
 			className={ classnames( 'theme-preview__container', {
@@ -102,7 +98,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			} ) }
 		>
 			{ containerResizeListener }
-			{ isShowDeviceSwitcher && <Toolbar device={ device } onDeviceClick={ handleDeviceClick } /> }
+			{ isShowDeviceSwitcher && <Toolbar device={ device } onDeviceClick={ setDevice } /> }
 			<div className="theme-preview__frame-wrapper">
 				{ ! isLoaded && loadingMessage && (
 					<div className="theme-preview__frame-message">{ loadingMessage }</div>

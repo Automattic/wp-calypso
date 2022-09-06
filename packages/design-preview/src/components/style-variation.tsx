@@ -10,15 +10,15 @@ const SPACE_BAR_KEYCODE = 32;
 
 interface StyleVariationPreviewProps {
 	variation: StyleVariation;
+	isActive: boolean;
 	base?: StyleVariation;
-	isActive?: boolean;
 	onClick?: ( variation: StyleVariation ) => void;
 }
 
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	variation,
-	base = {},
 	isActive,
+	base = {},
 	onClick,
 } ) => {
 	const context = useMemo( () => {

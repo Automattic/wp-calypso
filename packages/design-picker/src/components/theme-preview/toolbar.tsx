@@ -23,14 +23,14 @@ const Toolbar = ( { device: currentDevice, onDeviceClick }: ToolbarProps ) => {
 	return (
 		<div className="theme-preview__toolbar">
 			<div className="theme-preview__toolbar-devices">
-				{ DEVICES_SUPPORTED.map( ( device, i ) => (
+				{ DEVICES_SUPPORTED.map( ( device ) => (
 					<Button
-						key={ i }
+						key={ device }
 						aria-label={ devices.current[ device ].title }
 						className={ classnames( {
 							'is-selected': device === currentDevice,
 						} ) }
-						onClick={ () => onDeviceClick?.( device ) }
+						onClick={ () => onDeviceClick( device ) }
 					>
 						<Icon
 							icon={ devices.current[ device ].icon }
