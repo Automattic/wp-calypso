@@ -12,6 +12,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import accept from 'calypso/lib/accept';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
@@ -128,7 +129,9 @@ class Followers extends Component {
 							>
 								<AddSubscriberForm
 									siteId={ this.props.site.ID }
+									flowName={ 'people' }
 									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+									recordTracksEvent={ recordTracksEvent }
 									onImportFinished={ () => {
 										page.redirect( `/people/invites/${ this.props.site.slug }` );
 									} }
