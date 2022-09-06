@@ -4,6 +4,7 @@ import {
 	getJetpackProductCallToAction,
 	getJetpackProductDescription,
 	getJetpackProductShortDescription,
+	getJetpackProductFeaturedText,
 	getJetpackProductDisclaimer,
 	getJetpackProductShortName,
 	getMonthlyPlanByYearly,
@@ -30,6 +31,8 @@ import {
 	EXTERNAL_PRODUCTS_SLUG_MAP,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
+	MOST_POPULAR_PRODUCTS,
+	MOST_POPULAR_BUNDLES,
 } from './constants';
 import { getForCurrentCROIteration } from './iterations';
 import objectIsPlan from './object-is-plan';
@@ -93,6 +96,21 @@ function getDisclaimerLink() {
 		: `https://cloud.jetpack.com/pricing#${ backupStorageFaqId }`;
 }
 
+function getFeaturedProductText( item: Product ) {
+	if ( ! MOST_POPULAR_PRODUCTS.includes( item.product_slug ) ) {
+		return '';
+	}
+
+	return getJetpackProductFeaturedText( item ) ?? '';
+}
+
+function getFeaturedPlanText( item: Plan, productSlug: string ) {
+	if ( ! MOST_POPULAR_BUNDLES.includes( productSlug ) || ! item.getFeaturedText ) {
+		return '';
+	}
+
+	return getForCurrentCROIteration( item.getFeaturedText ) ?? '';
+}
 /**
  * Converts data from a product, plan, or selector product to selector product.
  *
@@ -139,6 +157,7 @@ function itemToSelectorProduct(
 			tagline: getJetpackProductTagline( item ) ?? '',
 			description: getJetpackProductDescription( item ),
 			shortDescription: getJetpackProductShortDescription( item ),
+			featuredDescription: getFeaturedProductText( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
 			monthlyProductSlug,
 			term: item.term,
@@ -174,6 +193,7 @@ function itemToSelectorProduct(
 			shortName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
+			featuredDescription: getFeaturedPlanText( item, productSlug ),
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {

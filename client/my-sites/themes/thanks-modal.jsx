@@ -11,14 +11,16 @@ import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import shouldCustomizeHomepageWithGutenberg from 'calypso/state/selectors/should-customize-homepage-with-gutenberg';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
+	doesThemeBundleSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeDetailsUrl,
 	getThemeForumUrl,
-	isActivatingTheme,
 	hasActivatedTheme,
+	isActivatingTheme,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
 import { themeHasAutoLoadingHomepage } from 'calypso/state/themes/selectors/theme-has-auto-loading-homepage';
@@ -52,9 +54,17 @@ class ThanksModal extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		// re-fetch the site to ensure we have the right cusotmizer link for FSE or not
+		// When the theme has finished activating...
 		if ( prevProps.hasActivated === false && this.props.hasActivated === true ) {
+			// re-fetch the site to ensure we have the right cusotmizer link for FSE or not
 			this.props.requestSite( this.props.siteId );
+
+			// Redirect to plugin-bundle flow for themes including software (like woocommerce)
+			const { siteSlug, doesCurrentThemeBundleSoftware } = this.props;
+			if ( doesCurrentThemeBundleSoftware ) {
+				const dest = `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle`;
+				window.location.replace( dest );
+			}
 		}
 	}
 
@@ -226,7 +236,12 @@ class ThanksModal extends Component {
 	);
 
 	getButtons = () => {
-		const { shouldEditHomepageWithGutenberg, hasActivated, isFSEActive } = this.props;
+		const {
+			shouldEditHomepageWithGutenberg,
+			hasActivated,
+			isFSEActive,
+			doesCurrentThemeBundleSoftware,
+		} = this.props;
 
 		const firstButton = shouldEditHomepageWithGutenberg
 			? {
@@ -246,13 +261,13 @@ class ThanksModal extends Component {
 		return [
 			{
 				...firstButton,
-				disabled: ! hasActivated,
+				disabled: ! hasActivated || doesCurrentThemeBundleSoftware,
 			},
 			{
 				action: 'customizeSite',
 				label: this.getEditSiteLabel(),
 				isPrimary: true,
-				disabled: ! hasActivated,
+				disabled: ! hasActivated || doesCurrentThemeBundleSoftware,
 				onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
 				href: this.props.customizeUrl,
 				target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
@@ -261,9 +276,9 @@ class ThanksModal extends Component {
 	};
 
 	render() {
-		const { currentTheme, hasActivated, isActivating } = this.props;
+		const { currentTheme, hasActivated, isActivating, doesCurrentThemeBundleSoftware } = this.props;
 
-		const shouldDisplayContent = hasActivated && currentTheme;
+		const shouldDisplayContent = hasActivated && currentTheme && ! doesCurrentThemeBundleSoftware;
 
 		return (
 			<Dialog
@@ -305,7 +320,9 @@ const ConnectedThanksModal = connect(
 		return {
 			siteId,
 			siteUrl,
+			siteSlug: getSiteSlug( state, siteId ),
 			currentTheme,
+			doesCurrentThemeBundleSoftware: doesThemeBundleSoftwareSet( state, currentThemeId ),
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,

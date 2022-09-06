@@ -33,6 +33,7 @@ const Promote: React.FC< Props > = () => {
 				siteIdParam,
 				postIdParam,
 				() => null,
+				( value: string ) => value,
 				widgetWrapperRef.current
 			);
 			setIsLoading( false );

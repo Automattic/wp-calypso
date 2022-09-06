@@ -25,7 +25,7 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 
 	useEffect( () => {
 		if ( launchpadScreenOption === 'off' ) {
-			window.location.replace( `/home/${ siteSlug }` );
+			window.location.replace( `/home/${ siteSlug }/?forceLoadLaunchpadData=true` );
 		}
 	}, [ launchpadScreenOption, siteSlug ] );
 
@@ -39,7 +39,13 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 				skipLabelText={ translate( 'Go to Admin' ) }
 				skipButtonAlign={ 'bottom' }
 				hideBack={ true }
-				stepContent={ <StepContent siteSlug={ siteSlug } submit={ navigation.submit } /> }
+				stepContent={
+					<StepContent
+						siteSlug={ siteSlug }
+						submit={ navigation.submit }
+						goNext={ navigation.goNext }
+					/>
+				}
 				formattedHeader={
 					<FormattedHeader
 						id={ 'launchpad-header' }

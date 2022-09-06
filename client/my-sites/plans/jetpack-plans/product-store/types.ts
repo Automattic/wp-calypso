@@ -24,6 +24,7 @@ export interface ProductStoreProps {
 	createCheckoutURL?: PurchaseURLCallback;
 	onClickPurchase?: PurchaseCallback;
 	urlQueryArgs: ProductStoreQueryArgs;
+	header: React.ReactNode;
 }
 
 export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & ProductStoreBaseProps;
@@ -39,7 +40,8 @@ export interface ViewFilterProps {
 	setCurrentView: ( currentView: ViewType ) => void;
 }
 
-export type ProductsListProps = ProductStoreBaseProps & Omit< ProductStoreProps, 'urlQueryArgs' >;
+export type ProductsListProps = ProductStoreBaseProps &
+	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' >;
 
 export type BundlesListProps = ProductsListProps;
 
@@ -76,6 +78,7 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 	ctaAsPrimary?: boolean;
 	ctaLabel: React.ReactNode;
 	hero: React.ReactNode;
+	isCtaDisabled?: boolean;
 	item: SelectorProduct;
 	onClickMore: VoidFunction;
 	onClickPurchase?: VoidFunction;

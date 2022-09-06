@@ -1,5 +1,9 @@
 import { IncompleteWPcomPlan } from '@automattic/calypso-products';
-import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import {
+	NEWSLETTER_FLOW,
+	LINK_IN_BIO_FLOW,
+	isNewsletterOrLinkInBioFlow,
+} from '@automattic/onboarding';
 
 const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return flowName === NEWSLETTER_FLOW && plan.getNewsletterSignupFeatures;
@@ -9,28 +13,33 @@ const linkInBioFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return flowName === LINK_IN_BIO_FLOW && plan.getLinkInBioSignupFeatures;
 };
 
-const blogFeatures = ( siteType: string, plan: IncompleteWPcomPlan ) => {
-	return siteType === 'blog' && plan.getBlogSignupFeatures;
-};
+const signupFlowDefaultFeatures = (
+	flowName: string,
+	plan: IncompleteWPcomPlan,
+	isInVerticalScrollingPlansExperiment: boolean
+) => {
+	if ( ! flowName || isNewsletterOrLinkInBioFlow( flowName ) ) {
+		return;
+	}
 
-const portfolioFeatures = ( siteType: string, plan: IncompleteWPcomPlan ) => {
-	return siteType === 'grid' && plan.getPortfolioSignupFeatures;
+	return isInVerticalScrollingPlansExperiment
+		? plan.getSignupFeatures
+		: plan.getSignupCompareAvailableFeatures;
 };
 
 export const getPlanFeatureAccessor = ( {
 	flowName = '',
-	siteType = '',
+	isInVerticalScrollingPlansExperiment = false,
 	plan,
 }: {
 	flowName?: string;
-	siteType?: string;
+	isInVerticalScrollingPlansExperiment: boolean;
 	plan: IncompleteWPcomPlan;
 } ) => {
 	return [
 		newsletterFeatures( flowName, plan ),
 		linkInBioFeatures( flowName, plan ),
-		blogFeatures( siteType, plan ),
-		portfolioFeatures( siteType, plan ),
+		signupFlowDefaultFeatures( flowName, plan, isInVerticalScrollingPlansExperiment ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
 	} );

@@ -25,6 +25,7 @@ import {
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
+	NOT_CONNECTED_USER,
 } from './connection-notice-types';
 
 export class JetpackConnectNotices extends Component {
@@ -55,6 +56,7 @@ export class JetpackConnectNotices extends Component {
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 			XMLRPC_ERROR,
+			NOT_CONNECTED_USER,
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
