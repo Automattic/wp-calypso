@@ -99,12 +99,12 @@ describe( 'Search view', () => {
 
 	test( 'should show NoResults when there are no results', () => {
 		render( <PluginsBrowser { ...myProps } /> );
-		expect( screen.queryByText( /no plugins match your search/i ) ).toBeVisible();
+		expect( screen.getByText( /no plugins match your search/i ) ).toBeVisible();
 	} );
 	test( 'should show plugin list when there are results', () => {
 		mockPlugins = [ {} ];
 		render( <PluginsBrowser { ...myProps } /> );
-		expect( screen.queryByText( /found 0 plugins for/i ) ).toBeVisible();
+		expect( screen.getByText( /found 0 plugins for/i ) ).toBeVisible();
 	} );
 } );
 
@@ -114,7 +114,7 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 		( product_slug ) => {
 			const initialState = { sites: { items: { 1: { jetpack: false, plan: { product_slug } } } } };
 			render( <PluginsBrowser />, { initialState } );
-			const nudge = screen.queryByTestId( 'upsell-nudge' );
+			const nudge = screen.getByTestId( 'upsell-nudge' );
 			expect( nudge ).toBeVisible();
 			expect( nudge ).toHaveTextContent( PLAN_BUSINESS );
 		}
@@ -127,7 +127,7 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 				sites: { items: { 1: { jetpack: false, plan: { product_slug } } } },
 			};
 			render( <PluginsBrowser />, { initialState } );
-			const nudge = screen.queryByTestId( 'upsell-nudge' );
+			const nudge = screen.getByTestId( 'upsell-nudge' );
 			expect( nudge ).toBeVisible();
 			expect( nudge ).toHaveTextContent( PLAN_BUSINESS_2_YEARS );
 		}
@@ -137,14 +137,13 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 describe( 'PluginsBrowser basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
 		render( <PluginsBrowser /> );
-		const main = screen.queryByRole( 'main' );
+		const main = screen.getByRole( 'main' );
 		expect( main ).toBeVisible();
-		expect( main ).toHaveClass( 'main' );
 	} );
 
 	test( 'should show upsell nudge when appropriate', () => {
 		render( <PluginsBrowser /> );
-		expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
+		expect( screen.getByTestId( 'upsell-nudge' ) ).toBeVisible();
 	} );
 
 	test( 'should not show upsell nudge if no site is selected', () => {
@@ -187,6 +186,6 @@ describe( 'PluginsBrowser basic tests', () => {
 			},
 		};
 		render( <PluginsBrowser />, { initialState } );
-		expect( screen.queryByText( 'I’d like to fix this now' ) ).toBeVisible();
+		expect( screen.getByText( 'I’d like to fix this now' ) ).toBeVisible();
 	} );
 } );
