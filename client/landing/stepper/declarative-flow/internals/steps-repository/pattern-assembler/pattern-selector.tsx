@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
 
@@ -25,23 +26,24 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 			<div className="pattern-selector__body">
 				<div className="pattern-selector__block-list" role="listbox">
 					{ patterns?.map( ( item: Pattern ) => (
-						<div
-							key={ item.id }
-							aria-label={ item.name }
-							tabIndex={ 0 }
-							role="option"
-							aria-selected={ false }
-							onClick={ () => onSelect( item ) }
-							onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
-						>
-							<iframe
-								title={ item.name }
-								src={ getPatternPreviewUrl( item.id ) }
-								frameBorder="0"
-								aria-hidden
-								tabIndex={ -1 }
-							></iframe>
-						</div>
+						<PatternPreviewAutoHeight key={ item.id } patternId={ item.id }>
+							<div
+								aria-label={ item.name }
+								tabIndex={ 0 }
+								role="option"
+								aria-selected={ false }
+								onClick={ () => onSelect( item ) }
+								onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
+							>
+								<iframe
+									title={ item.name }
+									src={ getPatternPreviewUrl( item.id ) }
+									frameBorder="0"
+									aria-hidden
+									tabIndex={ -1 }
+								></iframe>
+							</div>
+						</PatternPreviewAutoHeight>
 					) ) }
 				</div>
 			</div>
