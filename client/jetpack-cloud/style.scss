@@ -328,6 +328,11 @@ html {
 		border-radius: 2px;
 		background-color: var( --color-sidebar-background );
 		color: var( --color-sidebar-text );
+		&:hover {
+			background-color: var( --color-sidebar-background );
+			color: var( --studio-jetpack-green-50 );
+			border-color: var( --studio-jetpack-green-50 );
+		}
 	}
 }
 
