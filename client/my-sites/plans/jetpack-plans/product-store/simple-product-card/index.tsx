@@ -13,8 +13,8 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	isIncludedInPlan,
 	isOwned,
 	isCtaDisabled,
-	isDeprecated,
 	item,
+	hideMoreInfoLink,
 	onClickMore,
 	onClickPurchase,
 	siteId,
@@ -23,7 +23,6 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 
 	const { shortName: name } = item;
 	const productDescription = item?.shortDescription || item.description;
-	const hasMoreInfoLink = ! isDeprecated && ! isOwned && ! isIncludedInPlan;
 
 	return (
 		<div className="simple-product-card">
@@ -54,7 +53,7 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 				</div>
 				<div className="simple-product-card__info-content">
 					{ productDescription }
-					{ hasMoreInfoLink && (
+					{ ! hideMoreInfoLink && (
 						<Button
 							className="simple-product-card__info-more-link"
 							onClick={ onClickMore }

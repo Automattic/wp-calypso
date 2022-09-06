@@ -85,6 +85,8 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	const mostPopularItems = popularItems.map( ( item ) => {
 		const isItemOwned = isOwned( item );
 		const isItemSuperseded = isSuperseded( item );
+		const isItemDeprecated = isDeprecated( item );
+		const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
 		const purchase = getPurchase( item );
 
 		const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
@@ -92,14 +94,17 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 		const isCtaDisabled =
 			( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
 
+		const hideMoreInfoLink = isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
+
 		return (
 			<FeaturedItemCard
 				checkoutURL={ getCheckoutURL( item ) }
 				ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 				ctaLabel={ ctaLabel }
 				hero={ <HeroImage item={ item } /> }
+				hideMoreInfoLink={ hideMoreInfoLink }
 				isCtaDisabled={ isCtaDisabled }
-				isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
+				isIncludedInPlan={ isItemIncludedInPlanOrSuperseded }
 				isOwned={ isItemOwned }
 				item={ item }
 				key={ item.productSlug }
@@ -128,19 +133,26 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 					{ allItems.map( ( item ) => {
 						const isItemOwned = isOwned( item );
 						const isItemSuperseded = isSuperseded( item );
+						const isItemDeprecated = isDeprecated( item );
+						const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
 						const purchase = getPurchase( item );
 
 						const isCtaDisabled =
 							( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
 
 						const ctaLabel = getCtaLabel( { item, isItemOwned, isItemSuperseded, purchase } );
+
+						const hideMoreInfoLink =
+							isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
+
 						return (
 							<SimpleProductCard
 								checkoutURL={ getCheckoutURL( item ) }
 								ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 								ctaLabel={ ctaLabel }
 								isCtaDisabled={ isCtaDisabled }
-								isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
+								isIncludedInPlan={ isItemIncludedInPlanOrSuperseded }
+								hideMoreInfoLink={ hideMoreInfoLink }
 								isOwned={ isItemOwned }
 								item={ item }
 								key={ item.productSlug }

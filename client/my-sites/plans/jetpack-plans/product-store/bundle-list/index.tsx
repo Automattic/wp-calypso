@@ -44,13 +44,15 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 	const mostPopularItems = popularItems.map( ( item ) => {
 		const isItemOwned = isOwned( item );
 		const isItemSuperseded = isSuperseded( item );
+		const isItemDeprecated = isDeprecated( item );
+		const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
 		const purchase = getPurchase( item );
 
 		const buttonLabelOptions = {
 			product: item,
 			isOwned: isItemOwned,
 			isUpgradeableToYearly: isUpgradeableToYearly( item ),
-			isDeprecated: isDeprecated( item ),
+			isDeprecated: isItemDeprecated,
 			isSuperseded: isItemSuperseded,
 			currentPlan: sitePlan,
 			fallbackLabel: translate( 'Get' ),
@@ -68,6 +70,8 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 			</>
 		);
 
+		const hideMoreInfoLink = isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
+
 		return (
 			<div key={ item.productSlug } className="jetpack-product-store__bundles-list--featured-item">
 				<FeaturedItemCard
@@ -76,7 +80,8 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 					ctaLabel={ ctaLabel }
 					hero={ <HeroImage item={ item } /> }
 					isCtaDisabled={ isItemOwned && ! isUserPurchaseOwner( item ) }
-					isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
+					isIncludedInPlan={ isItemIncludedInPlanOrSuperseded }
+					hideMoreInfoLink={ hideMoreInfoLink }
 					isOwned={ isItemOwned }
 					item={ item }
 					onClickMore={ onClickMoreInfoFactory( item ) }

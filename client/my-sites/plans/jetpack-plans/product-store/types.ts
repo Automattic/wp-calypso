@@ -74,7 +74,6 @@ export type UseStoreItemInfoProps = ProductStoreBaseProps & {
 export type ItemPriceProps = ProductStoreBaseProps &
 	HeroImageProps & {
 		isOwned?: boolean;
-		isDeprecated?: boolean;
 		isIncludedInPlan?: boolean;
 	};
 
@@ -85,6 +84,7 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
 	item: SelectorProduct;
+	hideMoreInfoLink?: boolean;
 	onClickMore?: VoidFunction;
 	onClickPurchase?: VoidFunction;
 };
