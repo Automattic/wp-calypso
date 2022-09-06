@@ -118,7 +118,11 @@ const GoogleFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 
 			{ googleFormFields.alternativeEmail && (
 				<MailboxField
-					{ ...getCommonFieldProps( googleFormFields.alternativeEmail, onFieldValueChanged, mailbox ) }
+					{ ...getCommonFieldProps(
+						googleFormFields.alternativeEmail,
+						onFieldValueChanged,
+						mailbox
+					) }
 				/>
 			) }
 		</>
