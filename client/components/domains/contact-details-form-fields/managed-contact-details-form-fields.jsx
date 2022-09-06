@@ -110,7 +110,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		this.updateParentState( form, phoneCountryCode );
 	};
 
-	handlePhoneChange = ( { value, countryCode } ) => {
+	handlePhoneChange = ( { phoneNumber, countryCode } ) => {
 		let form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -122,7 +122,7 @@ export class ManagedContactDetailsFormFields extends Component {
 			this.setState( { phoneCountryCode } );
 		}
 
-		form = updateFormWithContactChange( form, 'phone', value );
+		form = updateFormWithContactChange( form, 'phone', phoneNumber );
 		this.updateParentState( form, phoneCountryCode );
 		return;
 	};
@@ -138,7 +138,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		const basicValue = form[ camelName ]?.value ?? '';
 		let value = basicValue;
 		if ( name === 'phone' ) {
-			value = { value: basicValue, countryCode: this.state.phoneCountryCode };
+			value = { phoneNumber: basicValue, countryCode: this.state.phoneCountryCode };
 		}
 
 		return {
