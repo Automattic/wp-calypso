@@ -17,7 +17,6 @@ const GLOBAL_STYLES_SUPPORTS: {
 	{ style: 'text', infix: 'color', mapTo: 'foreground' },
 ];
 
-<<<<<<< HEAD
 function parsePresetDeclaration( preset: string, infix: string ): string | undefined {
 	return preset.match( `--wp--preset--${ infix }--([a-z]+)` )?.[ 1 ];
 }
