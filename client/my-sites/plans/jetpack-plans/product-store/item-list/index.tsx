@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import ProductLightbox from '../../product-lightbox';
 import { BundlesList } from '../bundle-list';
 import { useItemLightbox } from '../hooks/use-item-lightbox';
@@ -18,7 +17,7 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 
 	return (
 		<div className="jetpack-product-store__items-list">
-			{ isEnabled( 'jetpack/pricing-page-product-lightbox' ) && currentItem && (
+			{ currentItem && (
 				<ProductLightbox
 					product={ currentItem }
 					isVisible={ !! currentItem }
