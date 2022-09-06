@@ -17,17 +17,18 @@ const ReaderFeaturedImage = ( {
 	onClick,
 	className,
 	fetched,
+	imageUrl,
 	imageWidth,
 	imageHeight,
 } ) => {
-	const imageUrl = canonicalMedia.src;
-	if ( imageUrl === undefined ) {
+	const mediaUrl = imageUrl || canonicalMedia.src;
+	if ( mediaUrl === undefined ) {
 		return null;
 	}
 
 	const resizedImageUrl = fetched
-		? imageUrl
-		: resizeImageUrl( imageUrl, { w: imageWidth || READER_CONTENT_WIDTH } );
+		? mediaUrl
+		: resizeImageUrl( mediaUrl, { w: imageWidth || READER_CONTENT_WIDTH } );
 	const safeCssUrl = cssSafeUrl( resizedImageUrl );
 	let featuredImageStyle = { background: 'none' };
 	if ( safeCssUrl ) {
@@ -38,13 +39,6 @@ const ReaderFeaturedImage = ( {
 			backgroundRepeat: 'no-repeat',
 		};
 	}
-
-	// const imageSize = {
-	// 	height: post.canonical_media.height,
-	// 	width: post.canonical_media.width,
-	// };
-	//const { width: naturalWidth, height: naturalHeight } = imageSize;
-	//const newHeight = ( naturalHeight / naturalWidth ) * imageWidth;
 	const newHeight = imageHeight || READER_FEATURED_MAX_IMAGE_HEIGHT;
 
 	featuredImageStyle.height = newHeight;
