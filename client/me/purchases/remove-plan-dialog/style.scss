@@ -3,10 +3,14 @@ $modal-breakpoint-mobile: 480px;
 
 .dialog__content.remove-plan-dialog {
 	padding: 0;
-	max-width: 960px;
+	max-width: 500px;
 
-	@media ( max-width: $modal-breakpoint-tablet ) {
-		max-width: 500px;
+	&.--with-screenshot {
+		max-width: 960px;
+
+		@media ( max-width: $modal-breakpoint-tablet ) {
+			max-width: 500px;
+		}
 	}
 }
 
@@ -27,6 +31,7 @@ $modal-breakpoint-mobile: 480px;
 	.remove-plan-dialog__site-screenshot {
 		width: 365px;
 		height: 483px;
+		padding: 48px 24px;
 
 		&.site-thumbnail-loading {
 			background-color: transparent;
@@ -35,77 +40,92 @@ $modal-breakpoint-mobile: 480px;
 		}
 	}
 
-	.remove-plan-dialog__grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		vertical-align: middle;
-		text-align: center;
-
-		.remove-plan-dialog__grid-colmn {
-			text-align: left;
-			padding: 48px;
-
-			.formatted-header__title {
-				font-size: 1.5rem;
-				font-weight: inherit;
-				margin-bottom: 0.75em;
-			}
-
-			.formatted-header.is-left-align, .formatted-header.is-right-align {
-				margin: 0;
-			}
-
-			@media ( max-width: $modal-breakpoint-mobile ) {
-				padding: 48px 24px;
-			}
+	& + .dialog__action-buttons {
+		&::before {
+			background: none;
 		}
 
-		&.--with-screenshot {
-			.remove-plan-dialog__grid-colmn:first-child {
-				padding: 24px 48px 0;
-				background: #f0f0f0;
-			
-				@media ( max-width: $modal-breakpoint-tablet ) {
-					display: none;
-				}
-			}
-		}
-
-		@media ( max-width: $modal-breakpoint-tablet ) {
-			display: block;
-		}
-	}
-}
-
-.remove-plan-dialog + .dialog__action-buttons {
-	&::before {
-		background: none;
-	}
-
-	margin-left: calc( 50% + 48px );
-	margin-top: -92px;
-	margin-bottom: 52px;
-	border: none;
-    background: transparent;
-	text-align: left;
-	padding: 0;
-
-	&::before {
-		content:none;
-	}
-
-	button:first-child {
-		margin-left: 0;
-	}
-
-	@media ( max-width: $modal-breakpoint-tablet ) {
 		margin-left: 48px;
-		margin-top: 0;
-		margin-bottom: 32px;
+		margin-top: 32px;
+		margin-bottom: 24px;
+		border: none;
+		background: transparent;
+		text-align: left;
+		padding: 0;
+
+		@media ( max-width: $modal-breakpoint-mobile ) {
+			margin-right: 48px;
+		}
 	}
 
-	@media ( max-width: $modal-breakpoint-mobile ) {
-		margin-right: 48px;
+	.remove-plan-dialog__grid-colmn {
+		text-align: left;
+		padding: 24px 48px 0;
+
+		.formatted-header__title {
+			font-size: 1.5rem;
+			font-weight: inherit;
+			margin-bottom: 0.75em;
+		}
+
+		.formatted-header.is-left-align, .formatted-header.is-right-align {
+			margin: 0;
+		}
+
+		@media ( max-width: $modal-breakpoint-mobile ) {
+			padding: 48px 24px;
+		}
+	}
+
+	&.--with-screenshot {
+		.remove-plan-dialog__grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			vertical-align: middle;
+			text-align: center;
+
+	
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				display: block;
+			}
+		}
+
+		.remove-plan-dialog__grid-colmn:first-child {
+			background: #f0f0f0;
+			padding-bottom: 0;
+		
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				display: none;
+			}
+		}
+
+		& + .dialog__action-buttons {
+			margin-left: calc( 50% + 48px );
+			margin-top: -92px;
+			margin-bottom: 52px;
+			border: none;
+			background: transparent;
+			text-align: left;
+			padding: 0;
+	
+			&::before {
+				content:none;
+			}
+	
+			button:first-child {
+				margin-left: 0;
+			}
+	
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				margin-left: 48px;
+				margin-top: 0;
+				margin-bottom: 32px;
+			}
+	
+			@media ( max-width: $modal-breakpoint-mobile ) {
+				margin-right: 48px;
+			}
+		}
 	}
 }
 
