@@ -47,8 +47,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		onImportFinished,
 	} = props;
 
-	const { addSubscribers, importCsvSubscribers, getSubscribersImports } =
-		useDispatch( SUBSCRIBER_STORE );
+	const { importCsvSubscribers, getSubscribersImports } = useDispatch( SUBSCRIBER_STORE );
 
 	/**
 	 * ↓ Fields
@@ -104,7 +103,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			} )
 			.filter( ( x ) => !! x ) as string[];
 
-		validEmails.length && addSubscribers( siteId, validEmails );
+		// validEmails.length && addSubscribers( siteId, validEmails );
 		selectedFile && importCsvSubscribers( siteId, selectedFile );
 
 		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();

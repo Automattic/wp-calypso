@@ -4,9 +4,8 @@ import { IMPORT_PROGRESS_SIMULATION_DURATION } from '../config';
 import { SUBSCRIBER_STORE } from '../store';
 
 export function useInProgressState( simulationDuration = IMPORT_PROGRESS_SIMULATION_DURATION ) {
-	const addSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getAddSubscribersSelector() );
 	const importSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getImportSubscribersSelector() );
-	const IN_PROGRESS = addSelector?.inProgress || importSelector?.inProgress;
+	const IN_PROGRESS = importSelector?.inProgress;
 	const [ inProgress, setInProgress ] = useState( IN_PROGRESS );
 
 	useEffect( () => {

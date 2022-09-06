@@ -2,10 +2,6 @@ import * as actions from './actions';
 import type { DispatchFromMap } from '../mapped-types';
 
 export interface SubscriberState {
-	add?: {
-		inProgress: boolean;
-		response: AddSubscribersResponse;
-	};
 	import?: {
 		inProgress: boolean;
 		job?: ImportJob;
@@ -31,11 +27,6 @@ export type GenericError = {
 };
 
 export type AddSubscriberError = { email: string } | GenericError;
-
-export type AddSubscribersResponse = {
-	subscribed: number;
-	errors: AddSubscriberError[];
-};
 
 export type ImportSubscribersError = Record< string, unknown > | GenericError;
 

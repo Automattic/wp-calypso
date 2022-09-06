@@ -51,26 +51,6 @@ export const subscriber: Reducer< SubscriberState, Action > = ( state = {}, acti
 	}
 
 	/**
-	 * ↓ Add subscribers
-	 */
-	if ( action.type === 'ADD_SUBSCRIBERS_START' ) {
-		return Object.assign( {}, state, {
-			add: { inProgress: true },
-		} );
-	} else if ( action.type === 'ADD_SUBSCRIBERS_SUCCESS' ) {
-		return Object.assign( {}, state, {
-			add: {
-				inProgress: false,
-				response: action.response,
-			},
-		} );
-	} else if ( action.type === 'ADD_SUBSCRIBERS_FAILED' ) {
-		return Object.assign( {}, state, {
-			add: { inProgress: false },
-		} );
-	}
-
-	/**
 	 * ↓ Get import
 	 */
 	if ( action.type === 'GET_SUBSCRIBERS_IMPORT_SUCCESS' ) {

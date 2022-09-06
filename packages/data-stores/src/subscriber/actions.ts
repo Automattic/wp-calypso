@@ -1,6 +1,5 @@
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
-	AddSubscribersResponse,
 	GetSubscribersImportResponse,
 	GetSubscribersImportsResponse,
 	ImportJob,
@@ -55,47 +54,6 @@ export function createActions() {
 	}
 
 	/**
-	 * ↓ Add subscribers
-	 */
-	const addSubscribersStart = ( siteId: number ) => ( {
-		type: 'ADD_SUBSCRIBERS_START' as const,
-		siteId,
-	} );
-
-	const addSubscribersSuccess = ( siteId: number, response: AddSubscribersResponse ) => ( {
-		type: 'ADD_SUBSCRIBERS_SUCCESS' as const,
-		siteId,
-		response,
-	} );
-
-	const addSubscribersFailed = ( siteId: number ) => ( {
-		type: 'ADD_SUBSCRIBERS_FAILED' as const,
-		siteId,
-	} );
-
-	function* addSubscribers( siteId: number, emails: string[] ) {
-		yield addSubscribersStart( siteId );
-
-		try {
-			const data: AddSubscribersResponse = yield wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteId ) }/invites/new`,
-				method: 'POST',
-				apiNamespace: 'rest/v1.1',
-				body: {
-					invitees: emails,
-					role: 'follower',
-					source: 'calypso',
-					is_external: false,
-				},
-			} );
-
-			yield addSubscribersSuccess( siteId, data );
-		} catch ( err ) {
-			yield addSubscribersFailed( siteId );
-		}
-	}
-
-	/**
 	 * ↓ Get import
 	 */
 	const getSubscribersImportSuccess = ( siteId: number, importJob: ImportJob ) => ( {
@@ -145,10 +103,6 @@ export function createActions() {
 		importCsvSubscribersStartFailed,
 		importCsvSubscribersUpdate,
 		importCsvSubscribers,
-		addSubscribersStart,
-		addSubscribersSuccess,
-		addSubscribersFailed,
-		addSubscribers,
 		getSubscribersImport,
 		getSubscribersImportSuccess,
 		getSubscribersImports,
@@ -163,9 +117,6 @@ export type Action = ReturnType<
 	| ActionCreators[ 'importCsvSubscribersStartSuccess' ]
 	| ActionCreators[ 'importCsvSubscribersStartFailed' ]
 	| ActionCreators[ 'importCsvSubscribersUpdate' ]
-	| ActionCreators[ 'addSubscribersStart' ]
-	| ActionCreators[ 'addSubscribersSuccess' ]
-	| ActionCreators[ 'addSubscribersFailed' ]
 	| ActionCreators[ 'getSubscribersImportSuccess' ]
 	| ActionCreators[ 'getSubscribersImportsSuccess' ]
 >;
