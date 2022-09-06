@@ -1059,7 +1059,6 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/pattern-picker": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/react": ^12.1.3
     "@wordpress/base-styles": ^4.5.0
