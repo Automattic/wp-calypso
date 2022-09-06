@@ -89,6 +89,12 @@ const blockLinks: { [ key: string ]: string } = {
 
 	'core/gallery': 'https://wordpress.com/support/wordpress-editor/blocks/gallery-block/',
 
+	'core/post-content':
+		'https://wordpress.com/support/full-site-editing/theme-blocks/post-content-block/',
+
+	'core/table-of-contents':
+		'https://wordpress.com/support/wordpress-editor/table-of-contents-block/',
+
 	/**
 	 * A8C and CO Blocks
 	 */
