@@ -13,6 +13,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	isCtaDisabled,
 	isIncludedInPlan,
 	isOwned,
+	isDeprecated,
 	item,
 	onClickMore,
 	onClickPurchase,
@@ -20,6 +21,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const { displayName: title, featuredDescription } = item;
+	const hasMoreInfoLink = ! isDeprecated && ! isOwned && ! isIncludedInPlan;
 
 	return (
 		<div className="featured-item-card">
@@ -41,7 +43,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 							<span>{ featuredDescription }</span>
 							<br />
 
-							{ onClickMore && (
+							{ hasMoreInfoLink && (
 								<Button
 									className="featured-item-card--learn-more"
 									onClick={ onClickMore }

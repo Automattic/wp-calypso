@@ -74,6 +74,7 @@ export type UseStoreItemInfoProps = ProductStoreBaseProps & {
 export type ItemPriceProps = ProductStoreBaseProps &
 	HeroImageProps & {
 		isOwned?: boolean;
+		isDeprecated?: boolean;
 		isIncludedInPlan?: boolean;
 	};
 
