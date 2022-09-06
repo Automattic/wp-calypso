@@ -345,15 +345,7 @@ export class SiteSelector extends Component {
 				onMouseEnter={ this.onAllSitesHover }
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( ALL_SITES ) }
-				title={
-					multiSiteContext &&
-					/* translators: multiSiteContextTitle is an entity from client/my-sites/sidebar/static-data/all-sites-menu.js */
-					this.props.translate( 'View %(multiSiteContextTitle)s for all sites', {
-						args: {
-							multiSiteContextTitle: multiSiteContext.title.toLocaleLowerCase(),
-						},
-					} )
-				}
+				title={ multiSiteContext && multiSiteContext.navigationLabel }
 			/>
 		);
 	}
