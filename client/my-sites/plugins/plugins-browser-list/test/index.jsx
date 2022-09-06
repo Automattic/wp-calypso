@@ -31,7 +31,7 @@ const props = {
 
 const queryPlaceholders = () => {
 	const listItems = screen.queryAllByRole( 'listitem' );
-	return listItems.filter( ( item ) => Array.from( item.classList ).includes( 'is-placeholder' ) );
+	return listItems.filter( ( item ) => item.classList.contains( 'is-placeholder' ) );
 };
 
 describe( 'PluginsBrowserList basic tests', () => {
