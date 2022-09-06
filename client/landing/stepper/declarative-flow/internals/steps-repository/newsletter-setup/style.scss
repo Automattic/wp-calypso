@@ -72,6 +72,16 @@ $border-radius: 4px;
 			}
 		}
 
+		.newsletter-setup__contrast-warning {
+			display: flex;
+			font-size: $font-body-small;
+			margin-bottom: 32px;
+
+			.newsletter-setup__contrast-warning-icon-container {
+				margin-top: 4px;
+			}
+		}
+
 		.newsletter-setup__submit-button {
 			border-radius: $border-radius;
 		}

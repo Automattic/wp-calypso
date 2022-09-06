@@ -3,6 +3,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
+import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
@@ -14,10 +15,17 @@ import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { warning } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
+import { RGB, hasMinContrast } from './utils';
 import type { Step } from '../../types';
-
 import './style.scss';
+
+type AccentColor = {
+	hex: string;
+	rgb: RGB;
+	default?: boolean;
+};
 
 /**
  * Generates an inline SVG for the color picker swatch
@@ -51,8 +59,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
-	const [ accentColor, setAccentColor ] = React.useState< { color: string; default?: boolean } >( {
-		color: '#0675C4',
+	const [ accentColor, setAccentColor ] = React.useState< AccentColor >( {
+		hex: '#0675C4',
+		rgb: { r: 6, g: 117, b: 196 },
 		default: true,
 	} );
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
@@ -88,7 +97,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
-		setSiteAccentColor( accentColor.color );
+		setSiteAccentColor( accentColor.hex );
 
 		if ( selectedFile && base64Image ) {
 			try {
@@ -99,7 +108,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.color } );
+			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex } );
 		}
 	};
 
@@ -110,8 +119,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 				return setComponentSiteTitle( event.currentTarget.value );
 			case 'tagline':
 				return setTagline( event.currentTarget.value );
-			case 'accentColor':
-				return setAccentColor( { color: event.currentTarget.value } );
 		}
 	};
 
@@ -120,81 +127,93 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	};
 
 	const stepContent = (
-		<>
-			<form className="newsletter-setup__form" onSubmit={ onSubmit }>
-				<SiteIconWithPicker
-					site={ site }
-					disabled={ usesSite ? ! site : false }
-					onSelect={ ( file ) => {
-						setSelectedFile( file );
-						imageFileToBase64( file );
-					} }
-					selectedFile={ selectedFile }
+		<form className="newsletter-setup__form" onSubmit={ onSubmit }>
+			<SiteIconWithPicker
+				site={ site }
+				disabled={ usesSite ? ! site : false }
+				onSelect={ ( file ) => {
+					setSelectedFile( file );
+					imageFileToBase64( file );
+				} }
+				selectedFile={ selectedFile }
+			/>
+			<Popover
+				isVisible={ colorPickerOpen }
+				context={ accentColorRef.current }
+				position="top left"
+				onClose={ () => setColorPickerOpen( false ) }
+			>
+				<ColorPicker
+					disableAlpha
+					color={ accentColor.hex }
+					onChangeComplete={ ( { hex, rgb } ) =>
+						setAccentColor( { hex, rgb: rgb as unknown as RGB } )
+					}
 				/>
-				<Popover
-					isVisible={ colorPickerOpen }
-					context={ accentColorRef.current }
-					position="top left"
-					onClose={ () => setColorPickerOpen( false ) }
-				>
-					<ColorPicker
-						disableAlpha
-						color={ accentColor.color }
-						onChangeComplete={ ( { hex } ) => setAccentColor( { color: hex } ) }
-					/>
-				</Popover>
-				<FormFieldset>
-					<FormLabel htmlFor="siteTitle">{ __( 'Site name' ) }</FormLabel>
-					<FormInput
-						value={ siteTitle }
-						placeholder={ __( 'My newsletter' ) }
-						name="siteTitle"
-						id="siteTitle"
-						style={ {
-							backgroundImage: getBackgroundImage( siteTitle ),
-						} }
-						isError={ !! siteTitleError }
-						onChange={ onChange }
-					/>
-					{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
-					<FormInput
-						value={ tagline }
-						placeholder={ __( 'Describe your Newsletter in a line or two' ) }
-						name="tagline"
-						id="tagline"
-						style={ {
-							backgroundImage: getBackgroundImage( tagline ),
-						} }
-						onChange={ onChange }
-					/>
-				</FormFieldset>
-				<FormFieldset>
-					<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
-					<FormInput
-						inputRef={ accentColorRef }
-						className="newsletter-setup__accent-color"
-						style={ {
-							backgroundImage: [
-								generateSwatchSVG( accentColor.color ),
-								...( ! accentColor.default ? [ getBackgroundImage( accentColor.color ) ] : [] ),
-							].join( ', ' ),
-							...( accentColor.default && { color: 'var( --studio-gray-30 )' } ),
-						} }
-						name="accentColor"
-						id="accentColor"
-						onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
-						readOnly
-						value={ accentColor.color }
-					/>
-				</FormFieldset>
-				<Button className="newsletter-setup__submit-button" type="submit" primary>
-					{ __( 'Continue' ) }
-				</Button>
-			</form>
-		</>
+			</Popover>
+			<FormFieldset>
+				<FormLabel htmlFor="siteTitle">{ __( 'Site name' ) }</FormLabel>
+				<FormInput
+					value={ siteTitle }
+					placeholder={ __( 'My newsletter' ) }
+					name="siteTitle"
+					id="siteTitle"
+					style={ {
+						backgroundImage: getBackgroundImage( siteTitle ),
+					} }
+					isError={ !! siteTitleError }
+					onChange={ onChange }
+				/>
+				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
+				<FormInput
+					value={ tagline }
+					placeholder={ __( 'Describe your Newsletter in a line or two' ) }
+					name="tagline"
+					id="tagline"
+					style={ {
+						backgroundImage: getBackgroundImage( tagline ),
+					} }
+					onChange={ onChange }
+				/>
+			</FormFieldset>
+			<FormFieldset>
+				<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
+				<FormInput
+					inputRef={ accentColorRef }
+					className="newsletter-setup__accent-color"
+					style={ {
+						backgroundImage: [
+							generateSwatchSVG( accentColor.hex ),
+							...( ! accentColor.default ? [ getBackgroundImage( accentColor.hex ) ] : [] ),
+						].join( ', ' ),
+						...( accentColor.default && { color: 'var( --studio-gray-30 )' } ),
+					} }
+					name="accentColor"
+					id="accentColor"
+					onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
+					readOnly
+					value={ accentColor.hex }
+				/>
+			</FormFieldset>
+			{ ! hasMinContrast( accentColor.rgb ) && (
+				<div className="newsletter-setup__contrast-warning" style={ { display: 'flex' } }>
+					<div className="newsletter-setup__contrast-warning-icon-container">
+						<Icon icon={ warning } size={ 20 } />
+					</div>
+					<div>
+						{ __(
+							'The accent color chosen may make your buttons and links illegible. Consider picking a darker color.'
+						) }
+					</div>
+				</div>
+			) }
+			<Button className="newsletter-setup__submit-button" type="submit" primary>
+				{ __( 'Continue' ) }
+			</Button>
+		</form>
 	);
 
 	return (
