@@ -346,7 +346,8 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			props: {
 				get headerText() {
-					return i18n.hasTranslation( 'Empower your online presence' )
+					return 'en' === i18n.getLocaleSlug() ||
+						i18n.hasTranslation( 'Empower your online presence' )
 						? i18n.translate( 'Empower your online presence' )
 						: '';
 				},
