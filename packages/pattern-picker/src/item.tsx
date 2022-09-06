@@ -74,7 +74,7 @@ export function Item( { style, onClick, pattern, className }: Props ) {
 				<div className="pattern-picker__item-iframe-wrapper">
 					<MShotsImage
 						url={ getPatternPreviewUrl( pattern ) }
-						options={ { w: 512, vpw: 512, vph: 1120 } }
+						options={ { w: 764, vpw: 764, vph: 1614 } }
 						alt={ pattern.title }
 						aria-labelledby=""
 					/>
