@@ -249,7 +249,7 @@ describe( 'ContactDetailsFormFields', () => {
 
 			expect( FormPhoneMediaInput ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					value: { countryCode: 'JP', value: defaultProps.contactDetails.phone },
+					value: { countryCode: 'JP', phoneNumber: defaultProps.contactDetails.phone },
 				} ),
 				expect.anything()
 			);
@@ -265,7 +265,7 @@ describe( 'ContactDetailsFormFields', () => {
 
 			expect( FormPhoneMediaInput ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					value: { countryCode: 'FR', value: defaultProps.contactDetails.phone },
+					value: { countryCode: 'FR', phoneNumber: defaultProps.contactDetails.phone },
 				} ),
 				expect.anything()
 			);
@@ -278,7 +278,7 @@ describe( 'ContactDetailsFormFields', () => {
 
 			expect( FormPhoneMediaInput ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					value: { countryCode: 'US', value: defaultProps.contactDetails.phone },
+					value: { countryCode: 'US', phoneNumber: defaultProps.contactDetails.phone },
 				} ),
 				expect.anything()
 			);
