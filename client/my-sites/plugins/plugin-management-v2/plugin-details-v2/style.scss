@@ -2,11 +2,13 @@
 @import '@wordpress/base-styles/mixins';
 
 .plugin-details-v2 {
+	padding: 0 16px;
+	max-width: 1500px;
+	margin: auto;
+
 	p {
 		font-size: inherit;
 	}
-
-	padding: 0 16px;
 
 	@include breakpoint-deprecated( '>660px' ) {
 		padding: 0;
@@ -84,15 +86,19 @@
 	.plugin-details__body {
 		padding-block-start: 0;
 		background: var( --color-surface );
-		margin: 16px -72px -32px;
-		padding: 0 72px;
+		margin: 72px -180px -32px;
+		padding: 0 180px;
 
 		.section-nav-tabs__list {
 			box-shadow: none;
 		}
 
+		.plugin-details__plugins-sections .card {
+			padding-top: 24px;
+		}
+
 		.plugin-details__layout-col-left {
-			padding-block-start: 10px;
+			padding-block-start: 48px;
 
 			.section-nav__mobile-header {
 				padding: 10px 0;
@@ -141,6 +147,11 @@
 
 	@include break-xlarge {
 		padding-inline-start: 70px !important;
+
+		> div {
+			max-width: 1530px;
+			margin: auto;
+		}
 	}
 }
 
