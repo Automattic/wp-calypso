@@ -493,8 +493,6 @@ export class SiteSelector extends Component {
 						onClick={ this.onManageSitesClick }
 						href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
 						className="site-selector__manage-sites"
-						aria-label={ this.props.translate( 'Go to Sites' ) }
-						title={ this.props.translate( 'Go to Sites' ) }
 					>
 						{ this.props.translate( 'Manage sites' ) }
 					</Button>
