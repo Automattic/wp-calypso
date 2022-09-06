@@ -43,7 +43,7 @@ const selectors = {
  */
 export class PlansPage {
 	private page: Page;
-	public receivedActivePromotions = false;
+	private receivedActivePromotions = false;
 
 	/**
 	 * Constructs an instance of the Plans POM.
