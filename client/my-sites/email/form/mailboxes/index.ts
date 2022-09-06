@@ -135,6 +135,7 @@ class MailboxForm< T extends EmailProvider > {
 					...commonFields,
 					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
 					lastname: this.getFieldValue< string >( FIELD_LASTNAME ),
+					recoveryEmail: this.getFieldValue< string >( FIELD_ALTERNATIVE_EMAIL ),
 			  }
 			: {
 					...commonFields,

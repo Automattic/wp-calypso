@@ -17,6 +17,7 @@ import {
 } from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/provider-card-props';
 import { getProductByProviderAndInterval } from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/selectors/get-product-by-provider-and-interval';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
+import { FIELD_ALTERNATIVE_EMAIL } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -112,6 +113,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
 			isInitialMailboxPurchase
+			hiddenFieldNames={ [ FIELD_ALTERNATIVE_EMAIL ] }
 			onSubmit={ handleSubmit }
 			provider={ provider }
 			selectedDomainName={ selectedDomainName }

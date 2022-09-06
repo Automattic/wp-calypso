@@ -119,6 +119,7 @@ abstract class MailboxFormFields implements IBaseMailboxFormFields {
 class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailboxFormFields {
 	firstName? = new TextMailboxFormField( FIELD_FIRSTNAME );
 	lastName? = new TextMailboxFormField( FIELD_LASTNAME );
+	alternativeEmail? = new TextMailboxFormField( FIELD_ALTERNATIVE_EMAIL );
 }
 
 class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {
