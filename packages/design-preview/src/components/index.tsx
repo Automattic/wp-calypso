@@ -1,7 +1,7 @@
 import { useEffect, useState } from '@wordpress/element';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
-import type { StyleVariation, ThemeFeature } from '@automattic/design-picker/src/types';
+import type { StyleVariation } from '@automattic/design-picker/src/types';
 import './style.scss';
 
 interface PreviewProps {
