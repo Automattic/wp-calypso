@@ -4,7 +4,7 @@ import { ReactElement, ReactChild } from 'react';
 import { useSelector } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { INSTALL_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
@@ -12,11 +12,11 @@ import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-p
 import {
 	isPluginActionInProgress,
 	getPluginOnSite,
-	getPluginStatusesByType,
 } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
+import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { MomentInput } from 'moment';
@@ -78,13 +78,11 @@ export default function PluginRowFormatter( {
 
 	const siteCount = item?.sites && Object.keys( item.sites ).length;
 
-	const inProgressStatuses = getPluginStatusesByType( state, 'inProgress' );
-	const completedStatuses = getPluginStatusesByType( state, 'completed' );
-	const errorStatuses = getPluginStatusesByType( state, 'error' );
+	const allStatuses = getPluginActionStatuses( state );
 
-	const allStatuses = [ ...inProgressStatuses, ...completedStatuses, ...errorStatuses ];
-
-	const currentSiteStatuses = allStatuses.filter( ( status ) => status.pluginId === item.id );
+	const currentSiteStatuses = allStatuses.filter(
+		( status ) => status.pluginId === item.id && status.action !== UPDATE_PLUGIN
+	);
 
 	const pluginActionStatus =
 		currentSiteStatuses.length > 0 ? (

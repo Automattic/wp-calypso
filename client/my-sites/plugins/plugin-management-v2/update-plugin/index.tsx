@@ -2,10 +2,13 @@ import { Icon, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
+import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
+import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ReactElement } from 'react';
@@ -57,8 +60,24 @@ export default function UpdatePlugin( {
 
 	let content;
 
+	const allStatuses = getPluginActionStatuses( state );
+
+	const updateStatuses = allStatuses.filter(
+		( status ) => status.pluginId === plugin.id && status.action === UPDATE_PLUGIN
+	);
+
 	if ( ! allowedActions?.autoupdate ) {
 		content = <div>{ translate( 'Auto-managed on this site' ) }</div>;
+	} else if ( updateStatuses.length > 0 ) {
+		content = (
+			<div className="update-plugin__plugin-action-status">
+				<PluginActionStatus
+					showMultipleStatuses={ false }
+					currentSiteStatuses={ updateStatuses }
+					selectedSite={ selectedSite }
+				/>
+			</div>
+		);
 	} else if ( hasUpdate ) {
 		content = (
 			<div className="update-plugin__plugin-update-wrapper">

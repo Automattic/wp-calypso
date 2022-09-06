@@ -13,7 +13,7 @@
 	margin-inline-end: 16px;
 }
 
-.row-data-common-style {
+%row-data-common-style {
 	display: inline-block;
 	font-weight: 500;
 	white-space: nowrap;
@@ -24,22 +24,26 @@
 	font-size: 0.875rem;
 	text-align: left;
 }
+
 .has-active-status {
 	margin-top: -20px;
 }
+
 a.button.plugin-row-formatter__plugin-name {
-	@extend .row-data-common-style;
+	@extend %row-data-common-style;
+
 	width: 100%;
 }
 
 a.button.plugin-row-formatter__plugin-name-card {
-	@extend .row-data-common-style;
+	@extend %row-data-common-style;
 
 	width: calc( 100% - 10px );
 }
 
 .plugin-row-formatter__site-name {
-	@extend .row-data-common-style;
+	@extend %row-data-common-style;
+
 	display: inline-block;
 	width: 100%;
 }
@@ -49,11 +53,12 @@ a.button.plugin-row-formatter__plugin-name-card {
 	position: absolute;
 	height: 25px;
 	width: 25px;
-	background: linear-gradient(
-		to right,
-		rgba( 255, 255, 255, 0.8 ) 30%,
-		rgba( 255, 255, 255, 1 ) 100%
-	);
+	background:
+		linear-gradient(
+			to right,
+			rgb( 255 255 255 / 80% ) 30%,
+			rgb( 255 255 255 / 100% ) 100%
+		);
 	inset-block-start: 0;
 	inset-inline-end: 0;
 }
@@ -63,27 +68,33 @@ a.button.plugin-row-formatter__plugin-name-card {
 		text-decoration: underline;
 	}
 }
+
 .plugin-row-formatter__plugin-name-container {
 	width: calc( 100% - 55px );
 	position: relative;
 }
+
 .has-bulk-management-active {
 	.plugin-row-formatter__plugin-name-container {
 		width: calc( 100% - 75px );
 	}
 }
+
 .plugin-row-formatter__toggle {
 	.plugin-action .components-toggle-control .components-base-control__field {
 		flex-direction: row-reverse;
-		@include break-xlarge() {
+
+		@include break-xlarge {
 			margin: auto 0;
 			flex-direction: unset;
 		}
 	}
+
 	.components-form-toggle {
 		position: absolute;
 		inset-inline-start: 200px;
-		@include break-xlarge() {
+
+		@include break-xlarge {
 			position: relative;
 			inset-inline-start: unset;
 		}
@@ -91,9 +102,11 @@ a.button.plugin-row-formatter__plugin-name-card {
 }
 
 .plugin-row-formatter__install-plugin {
-	@include break-xlarge() {
+
+	@include break-xlarge {
 		display: flex;
 		justify-content: end;
+
 		.plugin-install-button__install.embed {
 			margin: 0;
 		}
@@ -110,7 +123,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 	margin-inline-end: 16px;
 
 	&:checked::before {
-		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
+		content: url( /calypso/images/checkbox-icons/checkmark-jetpack.svg );
 	}
 
 	&::after {
@@ -125,17 +138,20 @@ a.button.plugin-row-formatter__plugin-name-card {
 }
 
 .plugin-row-formatter__last-updated {
-	display: none;
-
-	@include break-wide() {
-		display: inline;
+	@include break-xlarge {
+		// Align right when there's no enough space.
+		text-align: right;
+		width: 100%;
+		display: inline-block;
 	}
 
 	// Cut off the "Updated on" part when there's no enough space.
 	> span {
-		display: none;
+		@include break-xlarge {
+			display: none;
+		}
 
-		@include break-huge() {
+		@include break-huge {
 			display: inline;
 		}
 	}

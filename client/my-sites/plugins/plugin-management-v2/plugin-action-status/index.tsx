@@ -1,5 +1,8 @@
 import { ReactElement } from 'react';
-import { PLUGIN_INSTALLATION_IN_PROGRESS } from 'calypso/state/plugins/installed/status/constants';
+import {
+	PLUGIN_INSTALLATION_IN_PROGRESS,
+	PLUGIN_INSTALLATION_ERROR,
+} from 'calypso/state/plugins/installed/status/constants';
 import { CurrentSiteStatus } from '../types';
 import RenderStatusMessage from './render-status-message';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -9,11 +12,13 @@ import './style.scss';
 interface Props {
 	currentSiteStatuses: Array< CurrentSiteStatus | any >;
 	selectedSite?: SiteDetails;
+	showMultipleStatuses?: boolean;
 }
 
 export default function PluginActionStatus( {
 	currentSiteStatuses,
 	selectedSite,
+	showMultipleStatuses = true,
 }: Props ): ReactElement | null {
 	// Group statuses by status type(completed, error, inProgress)
 	const groupedStatues = currentSiteStatuses.reduce( ( group, plugin ) => {
@@ -31,6 +36,12 @@ export default function PluginActionStatus( {
 	if ( groupedStatusKeys.includes( PLUGIN_INSTALLATION_IN_PROGRESS ) ) {
 		filteredStatuses = groupedStatusKeys.filter(
 			( status ) => status === PLUGIN_INSTALLATION_IN_PROGRESS
+		);
+	}
+
+	if ( ! showMultipleStatuses && groupedStatusKeys.includes( PLUGIN_INSTALLATION_ERROR ) ) {
+		filteredStatuses = groupedStatusKeys.filter(
+			( status ) => status === PLUGIN_INSTALLATION_ERROR
 		);
 	}
 

@@ -1,20 +1,52 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .update-plugin__plugin-update-wrapper {
 	display: flex;
 	align-items: center;
 	color: var( --studio-gray-60 );
+	font-size: 0.75rem;
+	position: relative;
+	margin-block-start: 16px;
+
+	@include break-xlarge {
+		margin-block-start: 0;
+	}
 }
 
 .update-plugin__arrow-icon {
+	display: flex;
+	position: absolute;
+	left: 50px;
 	fill: var( --studio-gray-40 );
-	margin-inline-start: 40px;
-	margin-inline-end: 16px;
 }
 
 .update-plugin__new-version {
 	text-decoration: underline;
 	font-weight: 600;
+	position: absolute;
+	left: 100px;
 
 	a {
 		display: inline !important;
+	}
+}
+
+.update-plugin__plugin-action-status {
+	position: relative;
+
+	.plugin-action-status {
+		margin-block-start: 20px;
+	}
+
+	.plugin-action-status-container {
+		margin-top: 12px;
+		transform: translateY( -50% );
+
+		@include break-xlarge {
+			margin-top: 0;
+			top: 50%;
+			position: absolute;
+		}
 	}
 }
