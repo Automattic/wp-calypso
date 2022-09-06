@@ -20,7 +20,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
-import { doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors';
+import {
+	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
+	isSiteEligibleForBundledSoftware as getIsSiteEligibleForBundledSoftware,
+} from 'calypso/state/themes/selectors';
 import { isThemePremium as getIsThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
@@ -265,12 +268,21 @@ export class Theme extends Component {
 			didPurchaseTheme,
 			translate,
 			doesThemeBundleSoftwareSet,
+			isSiteEligibleForBundledSoftware,
 		} = this.props;
+
+		// Premium themes (non-bundled): Only require premium themes feature (Premium or higher plans)
+		// Bundled themes: Require premium themes, atomic, and woop features (Business or higher plans)
+		const isUsablePremiumTheme = ! doesThemeBundleSoftwareSet && hasPremiumThemesFeature;
+		const isUsableBundledTheme =
+			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
 
 		if ( didPurchaseTheme && ! hasPremiumThemesFeature ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
-		} else if ( hasPremiumThemesFeature ) {
+		} else if ( isUsablePremiumTheme ) {
 			return translate( 'The premium theme is included in your plan.' );
+		} else if ( isUsableBundledTheme ) {
+			return translate( 'The WooCommerce theme is included in your plan.' );
 		} else if ( doesThemeBundleSoftwareSet ) {
 			return createInterpolateElement(
 				translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
@@ -491,6 +503,7 @@ export default connect(
 				hasPremiumThemesFeature?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			doesThemeBundleSoftwareSet: getDoesThemeBundleSoftwareSet( state, theme.id ),
+			isSiteEligibleForBundledSoftware: getIsSiteEligibleForBundledSoftware( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
 		};
