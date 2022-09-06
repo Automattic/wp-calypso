@@ -47,9 +47,9 @@ export type ProductsListProps = ProductStoreBaseProps &
 
 export type BundlesListProps = ProductsListProps;
 
-export type itemToDisplayProps = Omit< ProductsListProps, 'clickMoreHandlerFactory' >;
+export type ItemToDisplayProps = Omit< ProductsListProps, 'clickMoreHandlerFactory' >;
 
-export interface ItemsListProps extends itemToDisplayProps {
+export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
 }
 
