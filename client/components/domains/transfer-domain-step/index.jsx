@@ -580,6 +580,14 @@ class TransferDomainStep extends Component {
 							} );
 							break;
 						}
+						case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
+							this.setState( {
+								notice: this.props.translate(
+									"This domain can't be transferred because it was registered less than 60 days ago"
+								),
+								noticeSeverity: 'info',
+							} );
+							break;
 						case domainAvailability.UNKNOWN: {
 							const mappableStatus = get( result, 'mappable', error );
 

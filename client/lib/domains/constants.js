@@ -47,6 +47,7 @@ export const domainAvailability = {
 	NOT_AVAILABLE: 'not_available',
 	NOT_REGISTRABLE: 'available_but_not_registrable',
 	PURCHASES_DISABLED: 'domain_registration_unavailable',
+	RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE: 'recent_registration_lock_not_transferrable',
 	RECENTLY_UNMAPPED: 'recently_mapped',
 	RECENTLY_EXPIRED: 'recently_expired',
 	REGISTERED: 'registered_domain',

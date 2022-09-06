@@ -400,6 +400,18 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
+		case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
+			message = translate(
+				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred because it was registered less than 60 days ago and it also cannot be mapped.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
 		case 'blocked':
 			const supportURL = 'https://wordpress.com/error-report/?url=496@' + ( site?.slug || '' );
 			message = translate(
