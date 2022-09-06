@@ -34,7 +34,7 @@ function getReceivedMessagesOlderThan( timestamp, messages ) {
 	return messages.filter( ( m ) => m.timestamp >= timestamp && m.source !== 'customer' );
 }
 
-function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation } ) {
+function ParentConnection( { chatStatus, timeline, geoLocation } ) {
 	const dispatch = useDispatch();
 	const [ blurredAt, setBlurredAt ] = useState( 0 );
 	const [ introMessage, setIntroMessage ] = useState( null );
@@ -45,51 +45,41 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 		function onMessage( e ) {
 			const message = e.data;
 			switch ( message.type ) {
-				case 'route':
-					dispatch( sendEvent( `Looking at ${ message.route }` ) );
-					break;
 				case 'happy-chat-introduction-data':
-					if ( ! introMessage ) {
+					if ( ! introMessage && message !== introMessage ) {
+						dispatch(
+							setChatCustomFields( {
+								calypsoSectionName: 'gutenberg-editor',
+								wpcomSiteId: message.siteId?.toString(),
+								wpcomSitePlan: message.planSlug,
+							} )
+						);
+						dispatch(
+							sendUserInfo(
+								getUserInfo(
+									message.message,
+									message.siteUrl,
+									message.siteId?.toString(),
+									geoLocation
+								)
+							)
+						);
+						dispatch( sendMessage( message.message, { includeInSummary: true } ) );
 						setIntroMessage( message );
 					}
 					break;
+
 				case 'window-state-change':
 					setWindowState( message.state );
 					break;
 			}
 		}
-
 		window.addEventListener( 'message', onMessage );
+
 		return () => window.removeEventListener( 'message', onMessage );
-	}, [ dispatch, introMessage ] );
+	}, [ dispatch, introMessage, geoLocation ] );
 
-	useEffect( () => {
-		if ( connectionStatus === 'connected' && introMessage ) {
-			dispatch(
-				setChatCustomFields( {
-					calypsoSectionName: 'gutenberg-editor',
-					wpcomSiteId: introMessage.siteId?.toString(),
-					wpcomSitePlan: introMessage.planSlug,
-				} )
-			);
-			// forward the message from the form
-			if ( introMessage.message ) {
-				dispatch(
-					sendUserInfo(
-						getUserInfo(
-							introMessage.message,
-							introMessage.siteUrl,
-							introMessage.siteId?.toString(),
-							geoLocation
-						)
-					)
-				);
-				dispatch( sendMessage( introMessage.message, { includeInSummary: true } ) );
-			}
-		}
-	}, [ connectionStatus, introMessage, dispatch, geoLocation ] );
-
-	// notify parent window about chat status changes
+	// notify parent window about chat closing
 	useEffect( () => {
 		if ( chatStatus === 'closed' ) {
 			parentTarget?.postMessage(
@@ -107,43 +97,23 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 		switch ( windowState ) {
 			case 'minimized':
 				setBlurredAt( Date.now() );
-				dispatch( sendEvent( 'Minimized HelpCenter' ) );
+				dispatch( sendEvent( 'User minimized HelpCenter' ) );
 				break;
 
 			case 'maximized':
 				setBlurredAt( 0 );
-				dispatch( sendEvent( 'Maximized HelpCenter' ) );
-				break;
-
-			case 'hidden':
-				setBlurredAt( Date.now() );
-				dispatch( sendEvent( 'Stopped looking at HelpCenter' ) );
-				break;
-
-			case 'open':
-				setBlurredAt( 0 );
-				dispatch( sendEvent( 'Started looking at HelpCenter' ) );
+				dispatch( sendEvent( 'User maximized HelpCenter' ) );
 				break;
 
 			case 'closed':
-				dispatch( sendEvent( 'Closed HelpCenter' ) );
+				dispatch( sendEvent( 'User closed HelpCenter' ) );
 				dispatch( closeChat() );
+				break;
 		}
 	}, [ dispatch, windowState ] );
 
+	// request intro data
 	useEffect( () => {
-		function closeHandler() {
-			parentTarget?.postMessage(
-				{
-					type: 'window-state-change',
-					state: 'closed',
-				},
-				'*'
-			);
-		}
-		window.addEventListener( 'beforeunload', closeHandler );
-
-		// request intro data
 		parentTarget?.postMessage(
 			{
 				type: 'happy-chat-introduction-data',
