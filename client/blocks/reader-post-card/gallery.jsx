@@ -1,4 +1,6 @@
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
+import { Component } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
@@ -6,16 +8,23 @@ import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { imageIsBigEnoughForGallery } from 'calypso/state/reader/posts/normalization-rules';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
-import { Component } from 'react';
-import classnames from 'classnames';
 
 const noop = () => {};
 
 class PostGallery extends Component {
+	state = {
+		itemSelected: 0,
+		listItems: null,
+	};
+
 	handleClick = ( event ) => {
 		event.preventDefault();
-		//event.stopPropagation();
-		console.log( event );
+		let updateItemSelected;
+		updateItemSelected = this.state.itemSelected + 1;
+		if ( updateItemSelected >= this.state.listItems.length ) {
+			updateItemSelected = 0;
+		}
+		this.setState( { itemSelected: updateItemSelected } );
 	};
 
 	getGalleryWorthyImages = ( post ) => {
@@ -32,7 +41,7 @@ class PostGallery extends Component {
 	render() {
 		const { post, children, isDiscover } = this.props;
 		const imagesToDisplay = this.getGalleryWorthyImages( post );
-		const listItems = imagesToDisplay.map( ( image, index ) => {
+		this.state.listItems = imagesToDisplay.map( ( image, index ) => {
 			const imageUrl = resizeImageUrl( image.src, {
 				w: READER_CONTENT_WIDTH,
 			} );
@@ -49,8 +58,8 @@ class PostGallery extends Component {
 
 			const classes = classnames( {
 				'reader-post-card__gallery-item': true,
-				hide: index > 0,
-				show: index === 0,
+				hide: index !== this.state.itemSelected,
+				show: index === this.state.itemSelected,
 			} );
 
 			return (
@@ -59,20 +68,21 @@ class PostGallery extends Component {
 						className="reader-post-card__gallery-image"
 						style={ imageStyle }
 						onClick={ this.handleClick }
+						role="presentation"
 					/>
 				</li>
 			);
 		} );
-		const circles = listItems.map( ( value, index ) => {
+		const circles = this.state.listItems.map( ( value, index ) => {
 			const classes = classnames( {
 				'reader-post-card__gallery-circle': true,
-				'is-selected': index === 0,
+				'is-selected': index === this.state.itemSelected,
 			} );
 			return <div className={ classes }></div>;
 		} );
 		return (
 			<div className="reader-post-card__post">
-				<ul className="reader-post-card__gallery">{ listItems }</ul>
+				<ul className="reader-post-card__gallery">{ this.state.listItems }</ul>
 				<div className="reader-post-card__gallery-circles">{ circles }</div>
 				<div className="reader-post-card__post-details">
 					<AutoDirection>
