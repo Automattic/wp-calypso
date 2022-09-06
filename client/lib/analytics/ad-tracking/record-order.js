@@ -510,7 +510,7 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
 		fireEcommercePurchaseGA4(
 			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
-			Ga4PropertyGtag.WPCOM
+			Ga4PropertyGtag.JETPACK
 		);
 
 		const jetpackParams = [
