@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import megaphoneIllustration from 'calypso/assets/images/customer-home/illustration--megaphone.svg';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
-import ListEnd from 'calypso/components/list-end';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PostItem, { Post } from 'calypso/my-sites/promote-post/components/post-item';
 import './style.scss';
@@ -57,7 +56,6 @@ export default function PostsList() {
 					{ posts.map( function ( post: Post ) {
 						return <PostItem key={ post.ID } post={ post } />;
 					} ) }
-					<ListEnd />
 				</>
 			) }
 		</>

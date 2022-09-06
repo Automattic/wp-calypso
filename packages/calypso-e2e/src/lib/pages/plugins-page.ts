@@ -22,7 +22,7 @@ const selectors = {
 	browseFirstCategory: 'button:has-text("Search Engine Optimization")',
 	categoryButton: ( section: string ) =>
 		`button:has-text("${ section }"),a:has-text("${ section }")`,
-	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
+	breadcrumb: ( section: string ) => `.fixed-navigation-header__header a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
 	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
@@ -45,6 +45,10 @@ const selectors = {
 
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
+
+	// Plugin details view
+	pluginDetailsHeaderTitle: ( section: string ) =>
+		`.plugin-details-header__name:text("${ section }")`,
 };
 
 /**
@@ -69,7 +73,7 @@ export class PluginsPage {
 	 * @param {string} site Optional site URL.
 	 */
 	async visit( site = '' ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `plugins/${ site }` ) );
+		await this.page.goto( getCalypsoURL( `plugins/${ site }` ), { waitUntil: 'networkidle' } );
 	}
 
 	/**
@@ -111,6 +115,13 @@ export class PluginsPage {
 	 */
 	async validateHasHeaderTitle( section: string ): Promise< void > {
 		await this.page.waitForSelector( selectors.headerTitle( section ) );
+	}
+
+	/**
+	 * Validate plugin details page has a header title containing text
+	 */
+	async validatePluginDetailsHasHeaderTitle( section: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.pluginDetailsHeaderTitle( section ) );
 	}
 
 	/**
@@ -170,17 +181,24 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Click the Back breadcrumb
+	 * Click the "Back" breadcrumb
 	 */
 	async clickBackBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Back' ) );
 	}
 
 	/**
-	 * Click the Plugins breadcrumb
+	 * Click the "Plugins" breadcrumb
 	 */
 	async clickPluginsBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Plugins' ) );
+	}
+
+	/**
+	 * Click the "Search Results" breadcrumb
+	 */
+	async clickSearchResultsBreadcrumb(): Promise< void > {
+		await this.page.click( selectors.breadcrumb( 'Search Results' ) );
 	}
 
 	/**

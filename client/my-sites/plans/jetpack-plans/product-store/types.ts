@@ -24,6 +24,7 @@ export interface ProductStoreProps {
 	createCheckoutURL?: PurchaseURLCallback;
 	onClickPurchase?: PurchaseCallback;
 	urlQueryArgs: ProductStoreQueryArgs;
+	header: React.ReactNode;
 }
 
 export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & ProductStoreBaseProps;
@@ -39,11 +40,16 @@ export interface ViewFilterProps {
 	setCurrentView: ( currentView: ViewType ) => void;
 }
 
-export type ProductsListProps = ProductStoreBaseProps & Omit< ProductStoreProps, 'urlQueryArgs' >;
+export type ProductsListProps = ProductStoreBaseProps &
+	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' > & {
+		onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
+	};
 
 export type BundlesListProps = ProductsListProps;
 
-export interface ItemsListProps extends ProductsListProps {
+export type ItemToDisplayProps = Omit< ProductsListProps, 'onClickMoreInfoFactory' >;
+
+export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
 }
 
@@ -56,6 +62,8 @@ export type MostPopularProps = {
 export type HeroImageProps = {
 	item: SelectorProduct;
 };
+
+export type FeaturesListProps = HeroImageProps;
 
 export type UseStoreItemInfoProps = ProductStoreBaseProps & {
 	createCheckoutURL?: PurchaseURLCallback;
@@ -74,8 +82,10 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 	ctaAsPrimary?: boolean;
 	ctaLabel: React.ReactNode;
 	hero: React.ReactNode;
+	isCtaDisabled?: boolean;
 	item: SelectorProduct;
-	onClickMore: VoidFunction;
+	hideMoreInfoLink?: boolean;
+	onClickMore?: VoidFunction;
 	onClickPurchase?: VoidFunction;
 };
 

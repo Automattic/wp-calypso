@@ -16,7 +16,9 @@ export function useActiveJobRecognition( siteId: number ) {
 	const jobs = imports.filter( ( x: ImportJob ) => ACTIVE_STATE.includes( x.status ) );
 	const activeJob = jobs.length ? jobs[ 0 ] : undefined;
 
-	importCsvSubscribersUpdate( activeJob );
+	useEffect( () => {
+		importCsvSubscribersUpdate( activeJob );
+	}, [ activeJob?.status ] );
 
 	useEffect( () => {
 		const interval = setInterval(

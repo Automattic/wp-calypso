@@ -4,5 +4,12 @@ import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import { promotedPosts } from './controller';
 
 export default () => {
-	page( '/advertising/:site?', siteSelection, navigation, promotedPosts, makeLayout, clientRender );
+	page(
+		'/advertising/:site?/:tab?',
+		siteSelection,
+		navigation,
+		promotedPosts,
+		makeLayout,
+		clientRender
+	);
 };

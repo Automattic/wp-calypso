@@ -63,7 +63,6 @@ import Notice from 'calypso/components/notice';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
-	getFixedDomainSearch,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
 	getTld,
@@ -180,13 +179,13 @@ class RegisterDomainStep extends Component {
 
 			// If there's a domain name as a query parameter suggestion, we always search for it first when the page loads
 			if ( props.suggestion ) {
-				this.state.lastQuery = getFixedDomainSearch( props.suggestion );
+				this.state.lastQuery = getDomainSuggestionSearch( props.suggestion, MIN_QUERY_LENGTH );
 			}
 		}
 	}
 
 	getState( props ) {
-		const suggestion = props.suggestion ? getFixedDomainSearch( props.suggestion ) : '';
+		const suggestion = getDomainSuggestionSearch( props.suggestion, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( suggestion );
 
 		return {

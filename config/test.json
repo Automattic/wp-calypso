@@ -69,7 +69,7 @@
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
-		"plugins/plugin-details-layout": false,
+		"plugins/plugin-details-layout": true,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,

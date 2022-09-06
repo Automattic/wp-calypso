@@ -1,0 +1,32 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.jetpack-product-store__most-popular {
+	margin-top: 3em;
+}
+
+.jetpack-product-store__most-popular--heading {
+	margin-bottom: rem( 24px );
+	font-size: $font-title-small;
+	font-weight: 700;
+	line-height: rem( 29px );
+
+	@include break-medium {
+		margin-bottom: rem( 32px );
+		font-size: $font-title-medium;
+		font-weight: 600;
+	}
+}
+
+.jetpack-product-store__most-popular--items {
+	list-style-type: none;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-gap: 24px;
+
+	@include break-medium {
+		grid-template-columns: 1fr 1fr;
+		margin: 32px auto 0;
+		gap: 24px;
+	}
+}

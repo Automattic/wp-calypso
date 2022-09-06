@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -24,7 +23,7 @@ export const newsletter: Flow = {
 			'completingPurchase',
 			'processing',
 			'subscribers',
-			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
+			'launchpad',
 		] as StepPath[];
 	},
 
