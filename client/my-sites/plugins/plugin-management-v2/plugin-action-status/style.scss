@@ -1,37 +1,42 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .plugin-action-status-container {
 	margin-top: -8px;
 	white-space: pre;
 }
+
 .plugin-action-status {
 	position: relative;
-	top: 1px;
 	height: 20px;
-	padding: 0px 8px;
+	padding: 0 8px;
 	border-radius: 2px;
 	font-size: 0.75rem;
 	width: fit-content;
+	display: block;
+	margin-block-start: 5px;
+
 	&:not(:last-child) {
 		margin-inline-end: 5px;
 	}
-	display: block;
-	margin-block-start: 5px;
-	@include break-xlarge() {
+
+	@include break-xlarge {
 		display: inline;
-		margin-block-start: unset;
+		top: 1px;
 	}
 }
-.inProgress {
-	background: #F6F7F7;
-	color: #50575E;
+
+.plugin-action-status-inProgress {
+	background: #f6f7f7;
+	color: #50575e;
 }
-.completed {
-	background: #B8E6BF;
-	color: #00450C;
+
+.plugin-action-status-completed {
+	background: #b8e6bf;
+	color: #00450c;
 }
-.error{
-	background: #FACFD2;
-	color: #691C1C;
+
+.plugin-action-status-error {
+	background: #facfd2;
+	color: #691c1c;
 }

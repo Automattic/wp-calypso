@@ -15,6 +15,7 @@ export default function PluginActionStatus( {
 	currentSiteStatuses,
 	selectedSite,
 }: Props ): ReactElement | null {
+	// Group statuses by status type(completed, error, inProgress)
 	const groupedStatues = currentSiteStatuses.reduce( ( group, plugin ) => {
 		const { status } = plugin;
 		group[ status ] = group[ status ] ?? [];
@@ -24,11 +25,14 @@ export default function PluginActionStatus( {
 
 	const groupedStatusKeys = Object.keys( groupedStatues );
 
-	const filteredStatuses = groupedStatusKeys.filter( ( status ) =>
-		groupedStatusKeys.includes( PLUGIN_INSTALLATION_IN_PROGRESS )
-			? status === PLUGIN_INSTALLATION_IN_PROGRESS
-			: true
-	);
+	let filteredStatuses = groupedStatusKeys;
+
+	// Filter only inProgress statuses if there is any in-progress action.
+	if ( groupedStatusKeys.includes( PLUGIN_INSTALLATION_IN_PROGRESS ) ) {
+		filteredStatuses = groupedStatusKeys.filter(
+			( status ) => status === PLUGIN_INSTALLATION_IN_PROGRESS
+		);
+	}
 
 	const hasOneStatus = filteredStatuses.length === 1;
 
@@ -37,7 +41,7 @@ export default function PluginActionStatus( {
 			{ filteredStatuses.map( ( groupKey: any ) => (
 				<RenderStatusMessage
 					key={ groupKey }
-					groupKey={ groupKey }
+					currentStatus={ groupKey }
 					selectedSite={ selectedSite }
 					groupedStatues={ groupedStatues }
 					hasOneStatus={ hasOneStatus }
