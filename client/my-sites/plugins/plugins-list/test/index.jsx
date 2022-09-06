@@ -43,33 +43,29 @@ describe( 'PluginsList', () => {
 		test( 'should select all plugins when toggled on (site is Atomic)', async () => {
 			const user = userEvent.setup();
 			render( <PluginsList { ...props } /> );
-			const toggleBtn = screen.queryByRole( 'button', { name: 'Edit All' } );
-			await user.click( toggleBtn );
-			// Jetpack is auto-managed on Atomic sites, therefore there's only 'Hello Dolly' in here
-			const boxes = screen.queryAllByRole( 'checkbox', { checked: true } );
-			expect( boxes ).toHaveLength( 2 );
-			expect( boxes[ 0 ] ).toHaveAttribute( 'title', 'Hello Dolly' );
+			await user.click( screen.getByRole( 'button', { name: 'Edit All' } ) );
+			// Jetpack is auto-managed on Atomic sites, therefore there's only 2 checkboxes here
+			const pluginCheckboxes = screen.queryAllByRole( 'checkbox', { checked: true } );
+			expect( pluginCheckboxes ).toHaveLength( 2 );
+			expect( pluginCheckboxes[ 0 ] ).toHaveAttribute( 'title', 'Hello Dolly' );
 		} );
 
 		test( 'should select all plugins when toggled on (site is Jetpack)', async () => {
 			const user = userEvent.setup();
 			render( <PluginsList { ...props } siteIsAtomic={ false } siteIsJetpack /> );
-			const toggleBtn = screen.queryByRole( 'button', { name: 'Edit All' } );
-			await user.click( toggleBtn );
+			await user.click( screen.getByRole( 'button', { name: 'Edit All' } ) );
 
 			pluginsList.forEach( ( plugin ) => {
-				const box = screen.queryByRole( 'checkbox', { name: plugin.name } );
-				expect( box ).toBeVisible();
-				expect( box ).toBeChecked();
+				const pluginCheckbox = screen.getByRole( 'checkbox', { name: plugin.name } );
+				expect( pluginCheckbox ).toBeVisible();
+				expect( pluginCheckbox ).toBeChecked();
 			} );
 		} );
 
 		test( 'should always reset to all selected when toggled on', async () => {
-			const getSelectedPluginBoxes = () =>
+			const querySelectedPluginBoxes = () =>
 				pluginsList
-					.map( ( plugin ) =>
-						screen.queryByRole( 'checkbox', { name: plugin.name, checked: true } )
-					)
+					.map( ( { name } ) => screen.queryByRole( 'checkbox', { name, checked: true } ) )
 					.filter( ( i ) => i );
 
 			const user = userEvent.setup();
@@ -77,18 +73,18 @@ describe( 'PluginsList', () => {
 
 			await user.click( screen.getByRole( 'button', { name: 'Edit All' } ) );
 
-			expect( getSelectedPluginBoxes() ).toHaveLength( 2 );
+			expect( querySelectedPluginBoxes() ).toHaveLength( 2 );
 
-			const dollyBox = screen.queryByRole( 'checkbox', { name: 'Hello Dolly' } );
-			await user.click( dollyBox );
+			const helloDollyCheckbox = screen.getByRole( 'checkbox', { name: 'Hello Dolly' } );
+			await user.click( helloDollyCheckbox );
 
-			expect( getSelectedPluginBoxes() ).toHaveLength( 1 );
+			expect( querySelectedPluginBoxes() ).toHaveLength( 1 );
 			expect( screen.queryByRole( 'checkbox', { name: 'Hello Dolly' } ) ).not.toBeChecked();
 
 			await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 			await user.click( screen.getByRole( 'button', { name: 'Edit All' } ) );
 
-			expect( getSelectedPluginBoxes() ).toHaveLength( 2 );
+			expect( querySelectedPluginBoxes() ).toHaveLength( 2 );
 		} );
 	} );
 } );
