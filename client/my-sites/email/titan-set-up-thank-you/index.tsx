@@ -162,14 +162,14 @@ const TitanSetUpThankYou = ( {
 							// force a non-pushState navigation with rel=external.
 							rel="external"
 						>
-							{ translate( 'Set up site' ) }
+							{ translate( 'Set up your site' ) }
 						</FullWidthButton>
 					),
 				} );
 			} else {
 				nextSteps.push( {
 					stepKey: 'titan_whats_next_go_home',
-					stepTitle: translate( 'Configure your site' ),
+					stepTitle: translate( 'Set up your site' ),
 					stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
 					stepCta: (
 						<FullWidthButton href={ `/home/${ selectedSiteSlug }` }>
