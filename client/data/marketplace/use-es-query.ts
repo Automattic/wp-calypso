@@ -1,7 +1,17 @@
 import languages, { LanguageSlug } from '@automattic/languages';
-import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 'react-query';
+import {
+	UseQueryResult,
+	UseQueryOptions,
+	useInfiniteQuery,
+	InfiniteData,
+	QueryKey,
+	QueryFunction,
+} from 'react-query';
 import { useSelector } from 'react-redux';
-import { extractSearchInformation } from 'calypso/lib/plugins/utils';
+import {
+	extractSearchInformation,
+	getPreinstalledPremiumPluginsVariations,
+} from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
 import { search } from './search-api';
@@ -62,7 +72,7 @@ const mapStarRatingToPercent = ( starRating?: number ) => ( ( starRating ?? 0 ) 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	if ( ! results ) return [];
 	return results.map( ( { fields: hit, railcar } ) => {
-		const plugin = {
+		const plugin: Plugin = {
 			name: hit.plugin.title, // TODO: add localization
 			slug: hit.slug,
 			version: hit[ 'plugin.stable_tag' ],
@@ -80,6 +90,9 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			icon: createIconUrl( hit.slug, hit.plugin.icons ),
 			railcar,
 		};
+
+		plugin.variations = getPreinstalledPremiumPluginsVariations( plugin );
+
 		return plugin;
 	} );
 };
@@ -95,39 +108,45 @@ const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
 	return languages.find( ( l ) => l.langSlug === slug )?.wpLocale || defaultLanguage;
 };
 
+export const getFetchESPluginsInfinite = (
+	options: PluginQueryOptions,
+	locale: string
+): [ QueryKey, QueryFunction< ESResponse, QueryKey > ] => {
+	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
+	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
+	const cacheKey = getPluginsListKey( 'DEBUG-new-site-seach', options, true );
+
+	const fetchFn = ( { pageParam = 1 } ) =>
+		search( {
+			query: searchTerm,
+			author,
+			groupId: 'wporg',
+			pageHandle: pageParam + '',
+			pageSize,
+			locale: getWpLocaleBySlug( ( options.locale || locale ) as LanguageSlug ),
+		} );
+	return [ cacheKey, fetchFn ];
+};
+
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
-	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 
-	return useInfiniteQuery(
-		getPluginsListKey( 'DEBUG-new-site-seach', options, true ),
-		( { pageParam } ) =>
-			search( {
-				query: searchTerm,
-				author,
-				groupId: 'wporg',
-				pageHandle: pageParam,
-				pageSize,
-				locale: getWpLocaleBySlug( options.locale || locale ),
-			} ),
-		{
-			select: ( data: InfiniteData< ESResponse > ) => {
-				return {
-					...data,
-					plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
-					pagination: { results: data.pages[ 0 ]?.data?.total },
-				};
-			},
-			getNextPageParam: ( lastPage ) => {
-				return lastPage.data.page_handle || undefined;
-			},
-			enabled,
-			staleTime,
-			refetchOnMount,
-		}
-	);
+	return useInfiniteQuery( ...getFetchESPluginsInfinite( options, locale ), {
+		select: ( data: InfiniteData< ESResponse > ) => {
+			return {
+				...data,
+				plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
+				pagination: { results: data.pages[ 0 ]?.data?.total },
+			};
+		},
+		getNextPageParam: ( lastPage ) => {
+			return lastPage.data.page_handle || undefined;
+		},
+		enabled,
+		staleTime,
+		refetchOnMount,
+	} );
 };

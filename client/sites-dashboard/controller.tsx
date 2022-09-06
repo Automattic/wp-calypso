@@ -4,6 +4,7 @@ import {
 } from '@automattic/components';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from 'page';
@@ -64,6 +65,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
 			<Global styles={ globalStyles } />
+			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<SitesDashboard
 				queryParams={ {
 					search: context.query.search,

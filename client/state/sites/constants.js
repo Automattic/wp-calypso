@@ -72,4 +72,5 @@ export const SITE_REQUEST_OPTIONS = [
 	'difm_lite_site_options',
 	'site_intent',
 	'launchpad_screen',
+	'launchpad_checklist_tasks_statuses',
 ].join();

@@ -323,7 +323,15 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
 	const extra = buildDIFMCartExtrasObject( dependencies );
-	const cartItem = { product_slug: WPCOM_DIFM_LITE, extra };
+	const cartItem = {
+		product_slug: WPCOM_DIFM_LITE,
+		extra,
+	};
+
+	if ( config.isEnabled( 'difm/allow-extra-pages' ) ) {
+		cartItem.quantity = dependencies.selectedPageTitles.length;
+	}
+
 	const providedDependencies = {
 		selectedDesign,
 		selectedSiteCategory,
@@ -683,6 +691,12 @@ export function createAccount(
 	const SIGNUP_TYPE_SOCIAL = 'social';
 	const SIGNUP_TYPE_DEFAULT = 'default';
 
+	const params = new URLSearchParams( window.location.search );
+	const flowNameTracking =
+		null === params.get( 'variationName' )
+			? flowName
+			: `${ flowName }-${ params.get( 'variationName' ) }`;
+
 	const responseHandler = ( signupType ) => ( error, response ) => {
 		const emailInError =
 			signupType === SIGNUP_TYPE_SOCIAL ? { email: get( error, 'data.email', undefined ) } : {};
@@ -746,7 +760,7 @@ export function createAccount(
 		if ( newAccountCreated ) {
 			recordRegistration( {
 				userData: registrationUserData,
-				flow: flowName,
+				flow: flowNameTracking,
 				type: signupType,
 			} );
 		}
@@ -776,7 +790,7 @@ export function createAccount(
 				service,
 				access_token,
 				id_token,
-				signup_flow_name: flowName,
+				signup_flow_name: flowNameTracking,
 				locale: getLocaleSlug(),
 				client_id: config( 'wpcom_signup_id' ),
 				client_secret: config( 'wpcom_signup_key' ),
@@ -793,7 +807,7 @@ export function createAccount(
 				userData,
 				{
 					validate: false,
-					signup_flow_name: flowName,
+					signup_flow_name: flowNameTracking,
 					// url sent in the confirmation email
 					jetpack_redirect: queryArgs.jetpack_redirect,
 					locale: getLocaleSlug(),

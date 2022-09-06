@@ -208,6 +208,8 @@ class EditUserForm extends Component {
 						onChange={ this.handleChange }
 						onFocus={ this.recordFieldFocus( fieldKeys.roles ) }
 						disabled={ isDisabled }
+						includeFollower={ this.state.roles === 'follower' }
+						includeSubscriber={ this.state.roles === 'subscriber' }
 					/>
 				);
 				break;

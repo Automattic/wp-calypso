@@ -82,6 +82,8 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Anti-spam' ),
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: translate( 'VideoPress' ),
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: translate( 'VideoPress' ),
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social' ),
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: translate( 'Social' ),
 	};
 };
 
@@ -116,6 +118,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	const videoPress = translate( 'VideoPress' );
 	const antiSpam = translate( 'Anti-spam' );
 	const boost = translate( 'Boost' );
+	const social = translate( 'Social' );
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -140,6 +143,8 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: social,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: social,
 	};
 };
 
@@ -165,6 +170,7 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 	const videoPress = translate( 'Get VideoPress' );
 	const antiSpam = translate( 'Get Anti-spam' );
 	const boost = translate( 'Get Boost' );
+	const social = translate( 'Get Social' );
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -185,6 +191,8 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPress,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpam,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: social,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: social,
 	};
 };
 
@@ -202,6 +210,9 @@ export const getJetpackProductsTaglines = (): Record<
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
 	const antiSpamTagline = translate( 'Block spam automatically' );
 	const videoPressTagLine = translate( 'High-quality, ad-free video for WordPress' );
+	const socialTagLine = translate(
+		'Easily share your website content on your social media channels'
+	);
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -261,6 +272,8 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: { default: antiSpamTagline },
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: { default: videoPressTagLine },
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: { default: videoPressTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: { default: socialTagLine },
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: { default: socialTagLine },
 	};
 };
 
@@ -353,6 +366,10 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		'Save time and get better responses by automatically blocking spam from your comments and forms.'
 	);
 
+	const socialDescription = translate(
+		'Easily share your website content on your social media channels from one place.'
+	);
+
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyDescription,
@@ -374,6 +391,8 @@ export const getJetpackProductsDescriptions = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamDescription,
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamDescription,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialDescription,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialDescription,
 	};
 };
 
@@ -425,6 +444,57 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	};
 };
 
+export const getJetpackProductsFeaturedText = (): Record< string, TranslateResult > => {
+	const backupDailyFeaturedText = translate(
+		'Never lose a word, image, page, or time worrying about your site with automated daily backups & one-click restores.'
+	);
+	const backupFeaturedText = translate(
+		'Protect your site or store. Save every change with real-time cloud backups, and restore in one click.'
+	);
+	const videoPressFeaturedText = translate(
+		'Own your content. High-quality, ad-free video built specifically for WordPress.'
+	);
+	const antiSpamFeaturedText = translate(
+		'Stop spam in comments and forms. Save time through automation and get rid of annoying CAPTCHAs.'
+	);
+	const scanFeaturedText = translate(
+		'Stay ahead of security threats. Automatic scanning and one-click fixes give you and your customers peace of mind.'
+	);
+	const searchFeaturedText = translate(
+		'Instant search helps your visitors actually find what they need and improves conversion.'
+	);
+	const boostFeaturedText = translate(
+		'Instant speed and SEO boost. Get the same advantages as the top sites, no developer required.'
+	);
+	const socialFeaturedText = translate(
+		'Write once, post everywhere. Easily share your content on social media from WordPress.'
+	);
+
+	return {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFeaturedText,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressFeaturedText,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressFeaturedText,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamFeaturedText,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamFeaturedText,
+		[ PRODUCT_JETPACK_SCAN ]: scanFeaturedText,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanFeaturedText,
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanFeaturedText,
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanFeaturedText,
+		[ PRODUCT_JETPACK_SEARCH ]: searchFeaturedText,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchFeaturedText,
+		[ PRODUCT_JETPACK_BOOST ]: boostFeaturedText,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialFeaturedText,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialFeaturedText,
+	};
+};
 export const useJetpack10GbStorageAmountText = (): TranslateResult => {
 	const _translate = useTranslate();
 

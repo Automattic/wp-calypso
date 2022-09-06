@@ -26,7 +26,7 @@ import {
 	getUrlParts,
 	getUrlFromParts,
 } from '@automattic/calypso-url';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import {
 	getGoogleApps,
@@ -287,7 +287,7 @@ export default function getThankYouPageUrl( {
 	}
 
 	// disable upsell for tailored signup users
-	const isTailoredSignup = isNewsletterOrLinkInBioFlow( signupFlowName );
+	const isTailoredSignup = isTailoredSignupFlow( signupFlowName );
 
 	const redirectUrlForPostCheckoutUpsell =
 		! isTailoredSignup && receiptIdOrPlaceholder

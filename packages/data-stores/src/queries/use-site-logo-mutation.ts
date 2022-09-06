@@ -1,6 +1,25 @@
 import { useMutation } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
+interface UploadMediaResponse {
+	media?: [
+		{
+			ID: number;
+			URL: string;
+		}
+	];
+}
+
+interface UpdateSiteLogoResponse {
+	id: number;
+	url: string;
+}
+
+export interface SetSiteLogoResponse {
+	logoResult: UpdateSiteLogoResponse;
+	uploadResult: UploadMediaResponse;
+}
+
 export function useSiteLogoMutation( siteId: string | number | undefined ) {
 	return useMutation( async ( file: File ) => {
 		const formData = [ [ 'media[]', file ] ];
@@ -28,7 +47,8 @@ export function useSiteLogoMutation( siteId: string | number | undefined ) {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/settings`,
 				apiVersion: '1.4',
 				apiNamespace: 'rest/v1.4',
-				body: { site_icon: imageID },
+				// we know the site doesn't have a logo nor an icon, let's set both
+				body: { site_logo: imageID, set_logo: imageID },
 				method: 'POST',
 			} );
 

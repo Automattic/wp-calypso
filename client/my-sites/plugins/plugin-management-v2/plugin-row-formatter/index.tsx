@@ -142,6 +142,7 @@ export default function PluginRowFormatter( {
 							hideLabel={ ! isSmallScreen }
 							plugin={ pluginOnSite }
 							site={ selectedSite }
+							disabled={ !! item?.isSelectable }
 						/>
 					</div>
 				)
@@ -151,11 +152,11 @@ export default function PluginRowFormatter( {
 				canUpdate && (
 					<div className="plugin-row-formatter__toggle">
 						<PluginAutoupdateToggle
-							hideLabel={ ! isSmallScreen }
 							plugin={ pluginOnSite }
 							site={ selectedSite }
 							wporg={ !! item.wporg }
 							isMarketplaceProduct={ isMarketplaceProduct( state, item?.slug ) }
+							disabled={ !! item?.isSelectable }
 						/>
 					</div>
 				)

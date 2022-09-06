@@ -7,7 +7,11 @@ import './style.scss';
 
 export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	checkoutURL,
+	ctaAsPrimary,
+	ctaLabel,
 	hero,
+	isCtaDisabled,
+	isIncludedInPlan,
 	isOwned,
 	item,
 	onClickMore,
@@ -15,7 +19,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	siteId,
 } ) => {
 	const translate = useTranslate();
-	const { displayName: title, description } = item;
+	const { displayName: title, featuredDescription } = item;
 
 	return (
 		<div className="featured-item-card">
@@ -25,11 +29,16 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 				<div>
 					<h2 className="featured-item-card--title">{ title }</h2>
 					<div className="featured-item-card--price">
-						<ItemPrice isOwned={ isOwned } item={ item } siteId={ siteId } />
+						<ItemPrice
+							isIncludedInPlan={ isIncludedInPlan }
+							isOwned={ isOwned }
+							item={ item }
+							siteId={ siteId }
+						/>
 					</div>
 					<div className="featured-item-card--desc">
 						<p>
-							<span>{ description }</span>
+							<span>{ featuredDescription }</span>
 							<br />
 							<Button
 								className="featured-item-card--learn-more"
@@ -47,8 +56,13 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 					</div>
 				</div>
 				<div className="featured-item-card--footer">
-					<Button primary onClick={ onClickPurchase } href={ checkoutURL }>
-						{ translate( 'Get' ) }
+					<Button
+						primary={ ctaAsPrimary }
+						onClick={ onClickPurchase }
+						disabled={ isCtaDisabled }
+						href={ isCtaDisabled ? '#' : checkoutURL }
+					>
+						{ ctaLabel }
 					</Button>
 				</div>
 			</div>

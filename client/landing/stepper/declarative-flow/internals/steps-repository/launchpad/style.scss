@@ -16,13 +16,6 @@
 		margin: 0;
 		max-width: none;
 		min-height: 100vh;
-		.step-container__navigation.action-buttons {
-			top: auto;
-			inset-inline-start: 40px;
-			.step-container__skip-wrapper {
-				margin-inline-start: 0;
-			}
-		}
 	}
 
 	.step-container__buttons {
@@ -31,8 +24,7 @@
 		text-align: center;
 
 		@include break-large {
-			text-align: left;
-			padding: 0 0 40px 40px;
+			display: none;
 		}
 	}
 }
@@ -49,17 +41,21 @@
 
 .launchpad__sidebar {
 	max-width: 100%;
-	margin: 24px 16px 16px;
+	margin: 24px 16px 32px;
+	display: flex;
+	flex-direction: column;
 
 	@include break-large {
 		max-width: 440px;
 		margin: 24px 20px 24px 40px;
+		height: 95vh;
 	}
 }
 
 .launchpad__sidebar-content-container {
 	margin-left: 0;
 	margin-top: 100px;
+	flex-grow: 1;
 
 	@include break-large {
 		margin-left: 16px;
@@ -112,8 +108,21 @@
 	margin: 32px 0;
 	padding: 0 20px;
 }
+
 .launchpad__url-box-top-level-domain {
 	font-weight: 500;
+}
+
+.launchpad__sidebar-admin-link {
+	padding: 80px 20px 10px;
+	display: none;
+	button {
+		text-decoration: underline;
+	}
+
+	@include break-large {
+		display: block;
+	}
 }
 
 // Launchpad - Progress Bar
@@ -236,12 +245,10 @@
 
 .launchpad__site-preview-wrapper {
 	margin: 16px;
-	height: 850px;
 	flex-grow: 1;
 
 	@include break-large {
 		margin: 73px 40px 12px 20px;
-		height: 900px;
 	}
 
 	.preview-toolbar__toolbar {
@@ -249,6 +256,11 @@
 		@include break-large {
 			display: block;
 		}
+	}
+
+	.web-preview__placeholder {
+		overflow-y: visible;
+		min-height: 720px;
 	}
 
 	.preview-toolbar__devices {
@@ -263,7 +275,6 @@
 				0 30px 20px rgba( 0, 0, 0, 0.03 ), 0 15px 13px rgba( 0, 0, 0, 0.02 ),
 				0 6px 5px rgba( 0, 0, 0, 0.02 ), 0 2px 3px rgba( 0, 0, 0, 0.01 );
 			max-width: 340px;
-			height: 680px;
 			border-radius: 40px; /* stylelint-disable-line scales/radii */
 		}
 	}
@@ -279,6 +290,7 @@
 		border-radius: 40px; /* stylelint-disable-line scales/radii */
 		box-sizing: border-box;
 		height: 780px;
+		height: 680px;
 		max-width: 95%;
 		box-shadow: 0 5px 15px rgba( 0, 0, 0, 0.07 ), 0 3px 10px rgba( 0, 0, 0, 0.04 );
 

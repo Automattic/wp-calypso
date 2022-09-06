@@ -20,7 +20,11 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { getDomainProductSlug } from 'calypso/lib/domains';
+import {
+	getDomainProductSlug,
+	getDomainSuggestionSearch,
+	getFixedDomainSearch,
+} from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -490,7 +494,10 @@ class DomainsStep extends Component {
 			if ( initialState ) {
 				initialState.searchResults = null;
 				initialState.subdomainSearchResults = null;
-				initialState.loadingResults = true;
+				// If length is less than 2 it will not fetch any data.
+				// filter before counting length
+				initialState.loadingResults =
+					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
 				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
@@ -754,7 +761,7 @@ class DomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned, hideBackButton } = this.props;
+		const { isAllDomains, translate, isReskinned } = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
@@ -817,7 +824,6 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				hideBack={ hideBackButton }
 				stepContent={
 					<div>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }

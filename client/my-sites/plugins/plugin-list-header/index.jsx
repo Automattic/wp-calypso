@@ -115,6 +115,10 @@ export class PluginsListHeader extends PureComponent {
 		return this.props.selected.length && this.canUpdatePlugins();
 	}
 
+	hasSelectedPlugins() {
+		return this.props.selected.length > 0;
+	}
+
 	renderCurrentActionButtons() {
 		const { hasManagePluginsFeature, isWpcom, isWpComAtomic, translate, siteId } = this.props;
 		const buttons = [];
@@ -158,7 +162,7 @@ export class PluginsListHeader extends PureComponent {
 				<Button
 					key="plugin-list-header__buttons-update"
 					compact
-					disabled={ ! this.props.haveUpdatesSelected }
+					disabled={ isWpcom ? ! this.props.haveUpdatesSelected : ! this.hasSelectedPlugins() }
 					primary={ isWpcom }
 					onClick={ this.props.updateSelected }
 				>
@@ -177,7 +181,7 @@ export class PluginsListHeader extends PureComponent {
 			activateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-activate"
-					disabled={ ! this.props.haveInactiveSelected }
+					disabled={ isWpcom ? ! this.props.haveInactiveSelected : ! this.hasSelectedPlugins() }
 					onClick={ this.props.activateSelected }
 					compact
 				>
@@ -189,7 +193,7 @@ export class PluginsListHeader extends PureComponent {
 				<Button
 					compact
 					key="plugin-list-header__buttons-deactivate"
-					disabled={ ! this.props.haveActiveSelected }
+					disabled={ isWpcom ? ! this.props.haveActiveSelected : ! this.hasSelectedPlugins() }
 					onClick={
 						isJetpackSelected
 							? this.props.deactiveAndDisconnectSelected
@@ -211,7 +215,7 @@ export class PluginsListHeader extends PureComponent {
 			autoupdateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-autoupdate-on"
-					disabled={ ! this.canUpdatePlugins() }
+					disabled={ isWpcom ? ! this.canUpdatePlugins() : ! this.hasSelectedPlugins() }
 					compact
 					onClick={ this.props.setAutoupdateSelected }
 				>
@@ -221,7 +225,7 @@ export class PluginsListHeader extends PureComponent {
 			autoupdateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-autoupdate-off"
-					disabled={ ! this.canUpdatePlugins() }
+					disabled={ isWpcom ? ! this.canUpdatePlugins() : ! this.hasSelectedPlugins() }
 					compact
 					onClick={ this.props.unsetAutoupdateSelected }
 				>
@@ -234,12 +238,21 @@ export class PluginsListHeader extends PureComponent {
 					{ autoupdateButtons }
 				</ButtonGroup>
 			);
+
+			if ( ! isWpcom ) {
+				leftSideButtons.push(
+					<ButtonGroup key="plugin-list-header__buttons-update-button">
+						{ updateButton }
+					</ButtonGroup>
+				);
+			}
+
 			leftSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-remove-button">
 					<Button
 						compact
 						scary
-						disabled={ ! needsRemoveButton }
+						disabled={ isWpcom ? ! needsRemoveButton : ! this.hasSelectedPlugins() }
 						onClick={ this.props.removePluginNotice }
 					>
 						{ translate( 'Remove' ) }
@@ -302,7 +315,7 @@ export class PluginsListHeader extends PureComponent {
 				<SelectDropdown.Separator />
 
 				<SelectDropdown.Item
-					disabled={ ! this.props.haveUpdatesSelected }
+					disabled={ isWpcom ? ! this.props.haveUpdatesSelected : ! this.hasSelectedPlugins() }
 					onClick={ this.props.updateSelected }
 				>
 					{ ! isWpcom ? translate( 'Update Plugins' ) : translate( 'Update' ) }
@@ -311,7 +324,7 @@ export class PluginsListHeader extends PureComponent {
 				<SelectDropdown.Separator />
 				{ isJetpackOnlySelected && (
 					<SelectDropdown.Item
-						disabled={ ! this.props.haveInactiveSelected }
+						disabled={ isWpcom ? ! this.props.haveInactiveSelected : ! this.hasSelectedPlugins() }
 						onClick={ this.props.activateSelected }
 					>
 						{ translate( 'Activate' ) }
@@ -319,7 +332,7 @@ export class PluginsListHeader extends PureComponent {
 				) }
 				{ isJetpackOnlySelected && (
 					<SelectDropdown.Item
-						disabled={ ! this.props.haveActiveSelected }
+						disabled={ isWpcom ? ! this.props.haveActiveSelected : ! this.hasSelectedPlugins() }
 						onClick={
 							isJetpackSelected
 								? this.props.deactiveAndDisconnectSelected
@@ -333,14 +346,14 @@ export class PluginsListHeader extends PureComponent {
 				<SelectDropdown.Separator />
 
 				<SelectDropdown.Item
-					disabled={ ! this.canUpdatePlugins() }
+					disabled={ isWpcom ? ! this.canUpdatePlugins() : ! this.hasSelectedPlugins() }
 					onClick={ this.props.setAutoupdateSelected }
 				>
 					{ translate( 'Autoupdate' ) }
 				</SelectDropdown.Item>
 
 				<SelectDropdown.Item
-					disabled={ ! this.canUpdatePlugins() }
+					disabled={ isWpcom ? ! this.canUpdatePlugins() : ! this.hasSelectedPlugins() }
 					onClick={ this.props.unsetAutoupdateSelected }
 				>
 					{ ! isWpcom ? translate( 'Disable' ) : translate( 'Disable Autoupdates' ) }
@@ -349,7 +362,7 @@ export class PluginsListHeader extends PureComponent {
 				<SelectDropdown.Separator />
 				<SelectDropdown.Item
 					className="plugin-list-header__actions-remove-item"
-					disabled={ ! needsRemoveButton }
+					disabled={ isWpcom ? ! needsRemoveButton : ! this.hasSelectedPlugins() }
 					onClick={ this.props.removePluginNotice }
 				>
 					{ translate( 'Remove' ) }

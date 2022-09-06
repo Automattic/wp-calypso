@@ -7,12 +7,16 @@ import getProductIcon from '../utils/get-product-icon';
 import './style.scss';
 
 const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
-	item,
+	checkoutURL,
+	ctaAsPrimary,
+	ctaLabel,
+	isIncludedInPlan,
 	isOwned,
-	siteId,
+	isCtaDisabled,
+	item,
 	onClickMore,
 	onClickPurchase,
-	checkoutURL,
+	siteId,
 } ) => {
 	const translate = useTranslate();
 
@@ -29,16 +33,21 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 					<div className="simple-product-card__info-header-content">
 						<h3 className="simple-product-card__info-header-text">{ name }</h3>
 
-						<ItemPrice isOwned={ isOwned } item={ item } siteId={ siteId } />
+						<ItemPrice
+							isIncludedInPlan={ isIncludedInPlan }
+							isOwned={ isOwned }
+							item={ item }
+							siteId={ siteId }
+						/>
 					</div>
 					<Button
 						className="simple-product-card__info-header-checkout"
 						onClick={ onClickPurchase }
-						href={ checkoutURL }
-						primary
-						compact
+						disabled={ isCtaDisabled }
+						href={ isCtaDisabled ? '#' : checkoutURL }
+						primary={ ctaAsPrimary }
 					>
-						{ translate( 'Get' ) }
+						{ ctaLabel }
 					</Button>
 				</div>
 				<div className="simple-product-card__info-content">

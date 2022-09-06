@@ -23,19 +23,39 @@ export type MShotsOptions = {
 	requeue?: boolean;
 };
 
+function getRetinaSize( multiply: number, { w, h }: MShotsOptions ) {
+	return {
+		width: w * multiply,
+		height: ( h || w ) * multiply,
+	};
+}
+
 export const useMshotsImg = (
 	src: string,
-	options: MShotsOptions
+	options: MShotsOptions,
+	sizes: Array< {
+		width: number;
+		height?: number;
+	} > = []
 ): {
 	isLoading: boolean;
 	isError: boolean;
 	imgProps: Partial< React.ImgHTMLAttributes< HTMLImageElement > >;
 } => {
 	const [ retryCount, setRetryCount ] = useState( 0 );
-	const mshotUrl = useMemo(
-		() => mshotsUrl( src, options, retryCount ),
-		[ src, options, retryCount ]
-	);
+	const { mshotUrl, srcSet } = useMemo( () => {
+		const mshotUrl = mshotsUrl( src, options, retryCount );
+
+		// Add retina sizes 2x and 3x.
+		const srcSet = [ ...sizes, getRetinaSize( 2, options ), getRetinaSize( 3, options ) ]
+			.map( ( { width, height } ) => {
+				const resizedUrl = mshotsUrl( src, { ...options, w: width, h: height }, retryCount );
+				return `${ resizedUrl } ${ width }w`;
+			} )
+			.join( ', ' );
+		return { mshotUrl, srcSet };
+	}, [ src, options, retryCount, sizes ] );
+
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isError, setIsError ] = useState( false );
 
@@ -47,11 +67,19 @@ export const useMshotsImg = (
 				return;
 			}
 
-			// MShot Loading image is 400x300px.
-			// MShot 404 image is 748×561px
 			setIsLoading( true );
+
+			// mShot Loading image is 400x300px.
+			// mShot 404 image is 748×561px
+			// So we use the image dimensions to determine whether mShot is still
+			// generating an image.
+			// JSDOM environment doesn't have a real rendering engine and so can't
+			// simulate image dimensions. The `a8cIsLoading` hack is only there
+			// for unit testing purposes.
 			const hasLoadingImgDimensions =
-				event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300;
+				( event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300 ) ||
+				'a8cIsLoading' in event.currentTarget;
+
 			if ( ! hasLoadingImgDimensions ) {
 				setIsLoading( false );
 			} else if ( retryCount < MAXTRIES ) {
@@ -70,12 +98,20 @@ export const useMshotsImg = (
 	}, [] );
 
 	useEffect( () => {
-		clearTimeout( timeout.current );
-	}, [ mshotUrl ] );
+		return () => {
+			clearTimeout( timeout.current );
+		};
+	}, [] );
 
 	return {
 		isLoading,
 		isError,
-		imgProps: { onLoad, onError, src: mshotUrl, loading: 'lazy' },
+		imgProps: {
+			onLoad,
+			onError,
+			src: mshotUrl,
+			srcSet: ! isLoading ? srcSet : '',
+			loading: 'lazy',
+		},
 	};
 };

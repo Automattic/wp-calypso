@@ -34,27 +34,25 @@ $plan-features-sidebar-width: 272px;
 .plan-features-comparison__table-item.is-top-buttons {
 	padding-top: 8px;
 }
-.plan-features-comparison__table-item.is-dash {
-	text-align: center;
 
-	&::after {
-		content: '-';
+.plan-features-comparison__table-item.plan-features-comparison__unique-features {
+	padding-bottom: 0.5rem;
+	ul {
+		margin-bottom: 0;
 	}
-}
-.plan-features-comparison__table-item.is-blank {
-	height: 35px;
-}
 
-.plan-features-comparison__table-item.is-plans-quick-improvements .info-popover .gridicon {
-	color: #a7aaad;
+	& .is-last-feature {
+		.plan-features-comparison__item {
+			padding-bottom: 0;
+			
+			margin-left: 0;
+			padding-left: 0;
 
-	&:hover {
-		color: #3c434a;
+			svg {
+				display: none;
+			}
+		}
 	}
-}
-
-.plan-features--signup .plan-features-comparison__table-item.is-plans-quick-improvements .plan-features-comparison__item.plan-features-comparison__item-available .plan-features-comparison__item-annual-plan-container {
-	margin-left: 6px;
 }
 
 .plan-features-comparison__header {
@@ -148,7 +146,7 @@ $plan-features-sidebar-width: 272px;
 		background-color: var( --color-surface );
 		position: relative;
 
-		&.is-bold {
+		.is-bold, &.is-bold {
 			font-weight: bold;
 		}
 	}
@@ -211,7 +209,6 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-features-comparison__header-annual-discount {
 		color: var( --studio-green-60 );
-		padding: 0 7px;
 		&-is-loading {
 			@include placeholder();
 		}
@@ -292,6 +289,7 @@ $plan-features-sidebar-width: 272px;
 		&.plan-features-comparison__item-available {
 			display: flex;
 			flex-direction: column;
+			position: relative;
 
 			& .plan-features-comparison__item-annual-plan-container {
 				display: flex;
@@ -309,7 +307,6 @@ $plan-features-sidebar-width: 272px;
 
 			& .plan-features-comparison__item-info-container {
 				display: flex;
-				align-items: flex-start;
 
 				&.plan-features-comparison__item-info-annual-only {
 					margin-top: 10px;
@@ -328,6 +325,10 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-features-comparison__item-cross {
 			fill: #a7aaad;
+		}
+
+		&.is-bold {
+			font-weight: bold;
 		}
 	}
 }

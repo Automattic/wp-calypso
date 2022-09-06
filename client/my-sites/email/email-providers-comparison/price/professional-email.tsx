@@ -47,7 +47,7 @@ const ProfessionalEmailPrice = ( {
 		<PriceWithInterval
 			currencyCode={ currencyCode ?? '' }
 			intervalLength={ intervalLength }
-			isEligibleForFreeTrial={ isEligibleForFreeTrial }
+			isEligibleForIntroductoryOffer={ isEligibleForFreeTrial }
 			product={ product }
 		/>
 	);
@@ -61,7 +61,13 @@ const ProfessionalEmailPrice = ( {
 			) }
 
 			<PriceBadge
-				priceInformation={ <PriceInformation domain={ domain } product={ product } /> }
+				priceInformation={
+					<PriceInformation
+						domain={ domain }
+						isDomainInCart={ isDomainInCart }
+						product={ product }
+					/>
+				}
 				price={ priceWithInterval }
 			/>
 		</>

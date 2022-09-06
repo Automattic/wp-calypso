@@ -1,17 +1,28 @@
+import { dispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
+import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
 
 export function getEnhancedTasks(
-	tasks: Task[],
+	tasks: Task[] | null,
 	siteSlug: string | null,
-	site: SiteDetails | null
+	site: SiteDetails | null,
+	submit: NavigationControls[ 'submit' ]
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
+
+	const linkInBioLinksEditCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
+
+	const linkInBioSiteLaunchCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -53,11 +64,31 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Add links' ),
 						actionUrl: `/site-editor/${ siteSlug }`,
+						isCompleted: linkInBioLinksEditCompleted,
 					};
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
 						title: translate( 'Launch Link in bio' ),
+						isCompleted: linkInBioSiteLaunchCompleted,
+						dependencies: [ linkInBioLinksEditCompleted ],
+						actionDispatch: () => {
+							if ( site?.ID ) {
+								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
+								const { launchSite } = dispatch( SITE_STORE );
+
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Launching Link in bio' ) );
+									await launchSite( site.ID );
+
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									window.location.replace( `/home/${ siteSlug }?forceLoadLaunchpadData=true` );
+								} );
+
+								submit?.();
+							}
+						},
 					};
 					break;
 			}
@@ -80,4 +111,19 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 			return accumulator;
 		}, [] as Task[] )
 	);
+}
+
+// This function will determine whether we want to disable or enable a task on the checklist
+// If a task is completed, we disable it
+// If a task is NOT completed AND the task contains dependencies, we want to check if all dependencies are set to true:
+//    ^ If all the dependencies are true, then the task is enabled
+//    ^ If at least one of the dependencies is false, then the task is disabled
+export function isTaskDisabled( task: Task ) {
+	if ( task.isCompleted ) {
+		return task.isCompleted;
+	}
+
+	if ( task.dependencies ) {
+		return task.dependencies.some( ( dependency: boolean ) => dependency === false );
+	}
 }
