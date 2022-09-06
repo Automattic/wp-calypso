@@ -443,15 +443,16 @@ describe( 'Site Actions', () => {
 			);
 		} );
 
-		it( 'should not send vertical_id if the design is verticalizable but vertical id is empty string', () => {
+		it( 'should send vertical_id if the design is verticalizable but the vertical id is empty string', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const mockedSiteVerticalId = '1';
 			const generator = setDesignOnSite(
 				siteSlug,
 				{
 					...mockedDesign,
 					verticalizable: true,
 				},
-				''
+				mockedSiteVerticalId
 			);
 
 			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
@@ -461,11 +462,12 @@ describe( 'Site Actions', () => {
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSetupApiRequest( {
 					trim_content: true,
+					vertical_id: mockedSiteVerticalId,
 				} )
 			);
 		} );
 
-		it( 'should send vertical_id if the design is verticalizable and vertical id exists', () => {
+		it( 'should send vertical_id if the design is verticalizable and vertical id is not empty string', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
 			const mockedSiteVerticalId = '1';
 			const generator = setDesignOnSite(
@@ -568,6 +570,7 @@ describe( 'Site Actions', () => {
 			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
 			expect( generator.next().value ).toEqual( mockedThemeSwitchApiRequest );
 
+			// Second iteration: Complete the cycle
 			expect( generator.next().done ).toEqual( true );
 		} );
 	} );

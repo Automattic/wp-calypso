@@ -314,7 +314,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				trim_content: true,
 			};
 
-			if ( selectedDesign.verticalizable && siteVerticalId ) {
+			if ( selectedDesign.verticalizable ) {
 				themeSetupOptions.vertical_id = siteVerticalId;
 			}
 
