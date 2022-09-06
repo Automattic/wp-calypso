@@ -320,6 +320,15 @@ html {
 
 .site-selector {
 	display: block;
+	.site-selector__actions {
+		padding: 16px;
+	}
+	.site-selector__add-new-site {
+		border-color: var( --color-sidebar-text );
+		border-radius: 2px;
+		background-color: var( --color-sidebar-background );
+		color: var( --color-sidebar-text );
+	}
 }
 
 // Dropdown menu styles
