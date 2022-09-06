@@ -43,6 +43,8 @@ export class TestAccount {
 			this.log( 'Logging in via Login Page' );
 			await this.logInViaLoginPage( page );
 		}
+
+		console.log( await browserContext.cookies() );
 	}
 
 	/**
