@@ -1,4 +1,4 @@
-import { colors } from '@automattic/color-studio';
+import colors from '@automattic/color-studio';
 import { Path, SVG, Rect } from '@wordpress/components';
 import type { ReactElement } from 'react';
 
