@@ -72,11 +72,13 @@ function getPriceMessage( {
 }
 
 function getPriceMessageExplanation( {
+	hasGoogleWorkspaceOffer,
 	isMonthlyBilling,
 	mailboxPurchaseCost,
 	mailboxRenewalCost,
 	translate,
 }: {
+	hasGoogleWorkspaceOffer: boolean;
 	isMonthlyBilling: boolean;
 	mailboxPurchaseCost: EmailCost | null;
 	mailboxRenewalCost: EmailCost | null;
@@ -92,6 +94,16 @@ function getPriceMessageExplanation( {
 	}
 
 	if ( mailboxPurchaseCost.amount < mailboxRenewalCost.amount ) {
+		if ( hasGoogleWorkspaceOffer ) {
+			return isMonthlyBilling
+				? translate(
+						'This is less than the first month discounted price because you are only charged for the remainder of the current month.'
+				  )
+				: translate(
+						'This is less than the first year discounted price because you are only charged for the remainder of the current year.'
+				  );
+		}
+
 		return isMonthlyBilling
 			? translate(
 					'This is less than the regular price because you are only charged for the remainder of the current month.'
@@ -112,33 +124,15 @@ function getPriceMessageExplanation( {
 
 function getPriceMessageRenewal( {
 	expiryDate,
-	hasGoogleWorkspaceOffer,
 	mailboxRenewalCost,
 	translate,
 }: {
 	expiryDate: string;
-	hasGoogleWorkspaceOffer: boolean;
 	mailboxRenewalCost: EmailCost | null;
 	translate: typeof originalTranslate;
 } ): TranslateResult {
 	if ( mailboxRenewalCost === null ) {
 		return '';
-	}
-
-	if ( hasGoogleWorkspaceOffer ) {
-		return translate(
-			'All of your mailboxes are due to renew at the regular price of {{strong}}%(fullPrice)s{{/strong}} per mailbox after the first year',
-			{
-				args: {
-					fullPrice: mailboxRenewalCost.text,
-				},
-				components: {
-					strong: <strong />,
-				},
-				comment:
-					'%(fullPrice)s is a formatted price for an email subscription (e.g. $3.50, €3.75, or PLN 4.50)',
-			}
-		);
 	}
 
 	return translate(
@@ -197,6 +191,7 @@ const EmailPricingNotice = ( {
 		translate,
 	} );
 	const priceMessageExplanation = getPriceMessageExplanation( {
+		hasGoogleWorkspaceOffer,
 		isMonthlyBilling,
 		mailboxPurchaseCost,
 		mailboxRenewalCost,
@@ -207,13 +202,11 @@ const EmailPricingNotice = ( {
 		hasGoogleWorkspaceOffer && isMonthlyBilling
 			? moment( expiryDate )
 					.add( product?.introductory_offer?.transition_after_renewal_count, 'M' )
-					.endOf( 'month' )
 					.format( 'LL' )
 			: moment( expiryDate ).format( 'LL' );
 
 	const priceMessageRenewal = getPriceMessageRenewal( {
 		expiryDate: nextExpiryDate,
-		hasGoogleWorkspaceOffer,
 		mailboxRenewalCost,
 		translate,
 	} );
