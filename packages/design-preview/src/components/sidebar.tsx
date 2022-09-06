@@ -5,9 +5,9 @@ import type { StyleVariation } from '@automattic/design-picker/src/types';
 interface SidebarProps {
 	title?: string;
 	description?: string;
-	variations?: StyleVariation[];
+	variations: StyleVariation[];
 	activeVariation?: StyleVariation;
-	onVariationClick?: ( variation: StyleVariation ) => void;
+	onVariationClick: ( variation: StyleVariation ) => void;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {

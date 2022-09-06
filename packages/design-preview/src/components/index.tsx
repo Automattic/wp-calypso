@@ -20,7 +20,7 @@ const Preview: React.FC< PreviewProps > = ( {
 	const [ activeVariation, setActiveVariation ] = useState< StyleVariation | undefined >();
 
 	useEffect( () => {
-		if ( ! activeVariation ) {
+		if ( variations.length > 0 && ! activeVariation ) {
 			setActiveVariation( variations[ 0 ] );
 		}
 	}, [ variations, activeVariation ] );
