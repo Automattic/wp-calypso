@@ -304,10 +304,10 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	handlePhoneChange = ( { value, countryCode } ) => {
+	handlePhoneChange = ( { phoneNumber, countryCode } ) => {
 		this.formStateController.handleFieldChange( {
 			name: 'phone',
-			value,
+			value: phoneNumber,
 		} );
 
 		if ( ! countries[ countryCode ] ) {
@@ -329,7 +329,7 @@ export class ContactDetailsFormFields extends Component {
 		const basicValue = formState.getFieldValue( form, name ) || '';
 		let value = basicValue;
 		if ( name === 'phone' ) {
-			value = { value: basicValue, countryCode: this.state.phoneCountryCode };
+			value = { phoneNumber: basicValue, countryCode: this.state.phoneCountryCode };
 		}
 
 		return {
