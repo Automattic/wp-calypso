@@ -1,5 +1,5 @@
 import { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
-import { isSiteEligibleForBundledSoftare } from 'calypso/state/themes/selectors/is-site-eligible-for-bundled-software';
+import { isSiteEligibleForBundledSoftware } from 'calypso/state/themes/selectors/is-site-eligible-for-bundled-software';
 
 import 'calypso/state/themes/init';
 
@@ -14,6 +14,7 @@ import 'calypso/state/themes/init';
  */
 export function doesThemeBundleUsableSoftwareSet( state, themeId, siteId ) {
 	return (
-		doesThemeBundleSoftwareSet( state, themeId ) && isSiteEligibleForBundledSoftare( state, siteId )
+		doesThemeBundleSoftwareSet( state, themeId ) &&
+		isSiteEligibleForBundledSoftware( state, siteId )
 	);
 }

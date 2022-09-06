@@ -11,7 +11,7 @@ import 'calypso/state/themes/init';
  * @param {number} siteId Site ID
  * @returns {boolean} True if the site is able to used bundled software.
  */
-export function isSiteEligibleForBundledSoftare( state, siteId ) {
+export function isSiteEligibleForBundledSoftware( state, siteId ) {
 	return (
 		siteHasFeature( state, siteId, FEATURE_WOOP ) &&
 		siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
