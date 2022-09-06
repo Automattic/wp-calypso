@@ -16,9 +16,11 @@ export function cartToGaPurchase(
 	cart: ResponseCart,
 	cartInfo: WpcomJetpackCartInfo
 ): GaPurchase {
-	const value = cartInfo.containsWpcomProducts ? cartInfo.wpcomCostUSD : cartInfo.jetpackCostUSD;
+	const value = cartInfo.containsWpcomProducts
+		? cartInfo.wpcomCostUSD + cartInfo.jetpackCostUSD
+		: cartInfo.jetpackCostUSD;
 	const cartItems = cartInfo.containsWpcomProducts
-		? cartInfo.wpcomProducts
+		? [ ...cartInfo.wpcomProducts, ...cartInfo.jetpackProducts ]
 		: cartInfo.jetpackProducts;
 	return {
 		transaction_id: orderId,
