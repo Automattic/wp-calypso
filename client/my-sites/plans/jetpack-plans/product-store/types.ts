@@ -42,12 +42,12 @@ export interface ViewFilterProps {
 
 export type ProductsListProps = ProductStoreBaseProps &
 	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' > & {
-		clickMoreHandlerFactory: ( item: SelectorProduct ) => VoidFunction | undefined;
+		onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
 	};
 
 export type BundlesListProps = ProductsListProps;
 
-export type ItemToDisplayProps = Omit< ProductsListProps, 'clickMoreHandlerFactory' >;
+export type ItemToDisplayProps = Omit< ProductsListProps, 'onClickMoreInfoFactory' >;
 
 export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;

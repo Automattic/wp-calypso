@@ -19,7 +19,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	createCheckoutURL,
 	duration,
 	onClickPurchase,
-	clickMoreHandlerFactory,
+	onClickMoreInfoFactory,
 	siteId,
 } ) => {
 	const [ popularItems, otherItems ] = useProductsToDisplay( { duration, siteId } );
@@ -103,7 +103,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 				isOwned={ isItemOwned }
 				item={ item }
 				key={ item.productSlug }
-				onClickMore={ clickMoreHandlerFactory( item ) }
+				onClickMore={ onClickMoreInfoFactory( item ) }
 				onClickPurchase={ getOnClickPurchase( item ) }
 				siteId={ siteId }
 			/>
@@ -144,7 +144,7 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 								isOwned={ isItemOwned }
 								item={ item }
 								key={ item.productSlug }
-								onClickMore={ clickMoreHandlerFactory( item ) }
+								onClickMore={ onClickMoreInfoFactory( item ) }
 								onClickPurchase={ getOnClickPurchase( item ) }
 								siteId={ siteId }
 							/>

@@ -13,7 +13,7 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 	onClickPurchase,
 	siteId,
 } ) => {
-	const { currentItem, setCurrentItem, clickMoreHandlerFactory } = useItemLightbox();
+	const { currentItem, setCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
 
 	return (
 		<div className="jetpack-product-store__items-list">
@@ -33,7 +33,7 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 					siteId={ siteId }
 					createCheckoutURL={ createCheckoutURL }
 					onClickPurchase={ onClickPurchase }
-					clickMoreHandlerFactory={ clickMoreHandlerFactory }
+					onClickMoreInfoFactory={ onClickMoreInfoFactory }
 				/>
 			) }
 			{ currentView === 'bundles' && (
@@ -42,7 +42,7 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 					siteId={ siteId }
 					createCheckoutURL={ createCheckoutURL }
 					onClickPurchase={ onClickPurchase }
-					clickMoreHandlerFactory={ clickMoreHandlerFactory }
+					onClickMoreInfoFactory={ onClickMoreInfoFactory }
 				/>
 			) }
 		</div>

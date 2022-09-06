@@ -16,7 +16,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 	createCheckoutURL,
 	duration,
 	onClickPurchase,
-	clickMoreHandlerFactory,
+	onClickMoreInfoFactory,
 	siteId,
 } ) => {
 	const [ popularItems ] = useBundlesToDisplay( { duration, siteId } );
@@ -79,7 +79,7 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 					isIncludedInPlan={ isIncludedInPlanOrSuperseded( item ) }
 					isOwned={ isItemOwned }
 					item={ item }
-					onClickMore={ clickMoreHandlerFactory( item ) }
+					onClickMore={ onClickMoreInfoFactory( item ) }
 					onClickPurchase={ getOnClickPurchase( item ) }
 					siteId={ siteId }
 				/>
