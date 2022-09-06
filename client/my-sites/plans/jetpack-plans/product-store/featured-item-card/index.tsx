@@ -49,9 +49,9 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 									href="#"
 									plain
 								>
-									{ translate( 'More about %(product)s', {
-										args: {
-											product: title,
+									{ translate( 'More about {{productName/}}', {
+										components: {
+											productName: <>{ title }</>,
 										},
 									} ) }
 								</Button>
