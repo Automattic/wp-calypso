@@ -33,18 +33,23 @@ export const linkInBio: Flow = {
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const urlLocale = useLocale();
+		const locale = useLocale();
+
+		const getStartUrl = () => {
+			return locale && locale !== 'en'
+				? `/start/account/user/${ locale }?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
+				: `/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`;
+		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const localeRoute = urlLocale ? `/${ urlLocale }/` : '';
+			const logInUrl = getStartUrl();
+
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
 						return navigate( 'patterns' );
 					}
-					return window.location.replace(
-						`/start/account/user${ localeRoute }?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
-					);
+					return window.location.replace( logInUrl );
 
 				case 'patterns':
 					return navigate( 'linkInBioSetup' );
