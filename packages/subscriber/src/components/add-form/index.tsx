@@ -3,7 +3,7 @@ import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -59,7 +59,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		__( 'parents@example.com' ),
 		__( 'friend@example.com' ),
 	];
-	const inProgress = useInProgressState();
+	const inProgress = useInProgressState( 0 );
 	const prevInProgress = useRef( inProgress );
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
@@ -67,6 +67,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
+	const importSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getImportSubscribersSelector() );
 	const [ formFileUploadElement ] = useState(
 		createElement( FormFileUpload, {
 			name: 'import',
@@ -78,9 +79,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	/**
 	 * ↓ Effects
 	 */
-	useEffect( () => {
-		prevInProgress.current = inProgress;
-	}, [ inProgress ] );
 	// get initial list of jobs
 	useEffect( () => {
 		getSubscribersImports( siteId );
@@ -88,8 +86,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	// run active job recognition process which updates state
 	useActiveJobRecognition( siteId );
 	useEffect( extendEmailFormControls, [ emails ] );
+	useEffect( importFinishedRecognition );
 
-	! inProgress && prevInProgress.current && onImportFinished?.();
+	useEffect( () => {
+		prevInProgress.current = inProgress;
+	}, [ inProgress ] );
 
 	/**
 	 * ↓ Functions
@@ -166,6 +167,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
+	function importFinishedRecognition() {
+		! importSelector?.error && prevInProgress.current && ! inProgress && onImportFinished?.();
+	}
+
 	/**
 	 * ↓ Templates
 	 */
@@ -179,6 +184,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			<div className={ 'add-subscriber__form--container' }>
 				{ inProgress && (
 					<Notice isDismissible={ false }>{ __( 'Your email list is being uploaded' ) }...</Notice>
+				) }
+
+				{ importSelector?.error && (
+					<Notice isDismissible={ false } status={ 'error' }>
+						{ importSelector.error.message as string }
+					</Notice>
 				) }
 
 				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>

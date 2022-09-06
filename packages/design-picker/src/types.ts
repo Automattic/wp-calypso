@@ -14,28 +14,49 @@ export interface Category {
 	name: string;
 }
 
+export interface StyleVariation {
+	slug: string;
+	title?: string;
+	settings: {
+		color: {
+			palette: {
+				theme: StyleVariationSettingsColorPalette[];
+			};
+		};
+	};
+	styles: {
+		color: StyleVariationStylesColor;
+	};
+}
+
+export interface StyleVariationSettingsColorPalette {
+	color: string;
+	name: string;
+	slug: string;
+}
+
+export interface StyleVariationPreview {
+	color: StyleVariationPreviewColorPalette;
+}
+
+export interface StyleVariationPreviewColorPalette {
+	background?: string;
+	foreground?: string;
+	primary?: string;
+	secondary?: string;
+	tertiary?: string;
+}
+
+export interface StyleVariationStylesColor {
+	background?: string;
+	text?: string;
+}
+
 export interface DesignRecipe {
 	stylesheet?: string;
 	pattern_ids?: number[];
 	header_pattern_ids?: number[];
 	footer_pattern_ids?: number[];
-}
-
-export interface ThemeStyleVariation {
-	slug: string;
-	settings: {
-		color: {
-			palette: {
-				theme: ThemeStyleVariationSettingsColorPalette[];
-			};
-		};
-	};
-}
-
-export interface ThemeStyleVariationSettingsColorPalette {
-	color: string;
-	name: string;
-	slug: string;
 }
 
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
@@ -53,6 +74,7 @@ export type DesignType =
 export interface Design {
 	slug: string;
 	title: string;
+	description?: string;
 	recipe?: DesignRecipe;
 	is_premium: boolean;
 	categories: Category[];
@@ -61,7 +83,7 @@ export interface Design {
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
 	preview?: 'static';
 	design_type?: DesignType;
-	style_variations?: ThemeStyleVariation[];
+	style_variations?: StyleVariation[];
 	price?: string;
 	verticalizable?: boolean;
 

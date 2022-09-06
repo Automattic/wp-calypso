@@ -75,6 +75,8 @@ import {
 	isSsoApproved,
 	retrieveMobileRedirect,
 	retrievePlan,
+	retrieveSource,
+	clearSource,
 } from './persistence-utils';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
@@ -220,7 +222,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	redirect() {
-		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups } = this.props;
+		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups, fromSource } = this.props;
 		const { from, homeUrl, redirectAfterAuth, scope, closeWindowAfterAuthorize } =
 			this.props.authQuery;
 		const { isRedirecting } = this.state;
@@ -240,6 +242,12 @@ export class JetpackAuthorize extends Component {
 			// In these cases, we'll want to automatically close the window when the authorization
 			// step is complete, and have the window opener detect this and re-check user authorization status.
 			debug( 'Closing window after authorize' );
+			window.close();
+		}
+
+		if ( fromSource === 'import' ) {
+			clearSource();
+			debug( 'Closing window after authorize - from migration flow' );
 			window.close();
 		}
 
@@ -935,6 +943,7 @@ const connectComponent = connect(
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
 		const selectedPlanSlug = retrievePlan();
+		const fromSource = retrieveSource();
 
 		return {
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
@@ -958,6 +967,7 @@ const connectComponent = connect(
 			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
+			fromSource,
 		};
 	},
 	{

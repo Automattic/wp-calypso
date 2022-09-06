@@ -8,7 +8,6 @@ import {
 	JETPACK_SCAN_PRODUCTS,
 	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
-import { Dialog } from '@automattic/components';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import * as React from 'react';
@@ -216,15 +215,13 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	return (
 		<>
 			{ isEnabled( 'jetpack/pricing-page-product-lightbox' ) && (
-				<Dialog
+				<ProductLightbox
+					product={ item }
 					isVisible={ isDialogVisible }
-					buttons={ [] }
 					onClose={ () => {
 						setDialogVisible( false );
 					} }
-				>
-					<ProductLightbox product={ item } />
-				</Dialog>
+				/>
 			) }
 
 			<JetpackProductCard

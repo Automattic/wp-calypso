@@ -1,6 +1,9 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .item-price .display-price {
-	display: flex;
-	align-items: center;
+	display: block;
+	min-height: 48px;
 
 	.plan-price__currency-symbol,
 	.plan-price__integer,
@@ -29,15 +32,31 @@
 		display: none;
 	}
 
+	&__billing-time-frame {
+		margin-top: 0;
+
+		@include break-mobile {
+			margin-top: 3px;
+		}
+	}
+
 	&__billing-time-frame,
 	&__expiration-date {
 		color: var( --studio-gray-50 );
 		font-size: 0.75rem;
 		line-height: 24px;
 	}
+
+	@include break-mobile {
+		display: flex;
+		align-items: center;
+		min-height: 24px;
+	}
 }
 
 .item-price .display-price:not(.is-placeholder) {
+	max-height: 24px;
+
 	.plan-price.is-original {
 		color: var( --studio-gray-50 );
 		text-decoration: line-through;
@@ -48,7 +67,24 @@
 		color: var( --studio-gray-100 );
 		font-weight: 700;
 	}
+
+	.display-price__billing-time-frame {
+		margin-top: 3px;
+	}
 }
+
+.item-price .display-price.is-placeholder {
+	max-height: 24px;
+
+	.plan-price {
+		max-height: 40px;
+	}
+
+	.display-price__billing-time-frame {
+		line-height: 20px;
+	}
+}
+
 
 .item-price__is-owned {
 	font-size: $font-body-extra-small;

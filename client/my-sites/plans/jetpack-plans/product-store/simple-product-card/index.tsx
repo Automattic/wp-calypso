@@ -46,7 +46,6 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 						disabled={ isCtaDisabled }
 						href={ isCtaDisabled ? '#' : checkoutURL }
 						primary={ ctaAsPrimary }
-						compact
 					>
 						{ ctaLabel }
 					</Button>

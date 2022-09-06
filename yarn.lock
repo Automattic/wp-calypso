@@ -518,6 +518,31 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/design-preview@workspace:^, @automattic/design-preview@workspace:packages/design-preview":
+  version: 0.0.0-use.local
+  resolution: "@automattic/design-preview@workspace:packages/design-preview"
+  dependencies:
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
+    "@wordpress/components": ^19.15.0
+    "@wordpress/edit-site": ^4.6.0
+    "@wordpress/react-i18n": ^3.7.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    tslib: ^2.3.0
+    typescript: ^4.7.4
+  peerDependencies:
+    "@wordpress/element": ^4.5.0
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/domain-picker@workspace:^, @automattic/domain-picker@workspace:packages/domain-picker":
   version: 0.0.0-use.local
   resolution: "@automattic/domain-picker@workspace:packages/domain-picker"
@@ -1095,16 +1120,19 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     classnames: ^2.3.1
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-query: ^3.32.1
     redux: ^4.1.2
     tslib: ^2.3.0
     typescript: ^4.7.4
     utility-types: ^3.10.0
     webpack: ^5.68.0
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^6.7.0
     "@wordpress/element": ^4.5.0
@@ -12496,6 +12524,7 @@ __metadata:
     "@automattic/create-calypso-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-picker": "workspace:^"
+    "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
     "@automattic/domain-utils": "workspace:^"
     "@automattic/explat-client": "workspace:^"

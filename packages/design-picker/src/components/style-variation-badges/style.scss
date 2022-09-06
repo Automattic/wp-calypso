@@ -1,5 +1,5 @@
-.theme-style-variations-more-wrapper,
-.theme-style-variation-wrapper {
+.style-variation__badge-more-wrapper,
+.style-variation__badge-wrapper {
 	display: inline-block;
 	height: 24px;
 	vertical-align: top;
@@ -22,7 +22,7 @@
 	}
 }
 
-.theme-style-variations-more-wrapper {
+.style-variations-more-wrapper {
 	> * {
 		box-shadow: none;
 	}
