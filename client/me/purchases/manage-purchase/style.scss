@@ -1,5 +1,5 @@
-.purchases.manage-purchase > button.card,
-.purchases.manage-purchase > a.card {
+.manage-purchase > button.card,
+.manage-purchase > a.card {
 	--icon-size: 16px;
 
 	padding-inline-start: calc( var( --icon-size ) * 2.5 );
@@ -25,7 +25,7 @@
 	}
 }
 
-.purchases.manage-purchase > button.remove-purchase__card {
+.manage-purchase > button.remove-purchase__card {
 	color: var( --studio-red-50 );
 }
 
@@ -330,6 +330,7 @@
 		display: flex;
 		align-items: center;
 		gap: 4px;
+
 		svg {
 			flex-shrink: 0;
 			fill: var(--color-warning-30);
@@ -423,7 +424,6 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 16px;
-
 		box-shadow: none;
 	}
 
