@@ -1,22 +1,36 @@
 .purchases.manage-purchase > button.card,
 .purchases.manage-purchase > a.card {
-	padding-inline-start: 16px;
-	padding-inline-end: 16px;
+	--icon-size: 16px;
 
-	color: var(--color-link);
+	padding-inline-start: calc( var( --icon-size ) * 2.5 );
+	padding-inline-end: var( --icon-size );
+
+	@include breakpoint-deprecated( '>660px' ) {
+		--icon-size: 24px;
+	}
+
+	color: var( --color-text-subtle );
+
+	.card__icon {
+		position: absolute;
+		left: var( --icon-size );
+		top: 0;
+		width: var( --icon-size );
+		height: 100%;
+		fill: currentcolor;
+	}
 
 	.card__link-indicator {
-		right: 16px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			right: 24px;
-		}
+		right: var( --icon-size );
 	}
+}
 
-	@include breakpoint-deprecated( ">660px" ) {
-		padding-inline-start: 24px;
-		padding-inline-end: 24px;
-	}
+.purchases.manage-purchase > button.remove-purchase__card {
+	color: var( --studio-red-50 );
+}
+
+.purchases.manage-purchase > button.remove-purchase__card {
+	color: var( --studio-red-50 );
 }
 
 .manage-purchase__info {
@@ -242,9 +256,11 @@
 			&:first-child {
 				padding-left: 0;
 			}
+
 			&:last-child {
 				padding-right: 0;
 			}
+
 			&:first-child:nth-last-child(4),
 			&:first-child:nth-last-child(4) ~ li {
 				max-width: 25%;
@@ -399,7 +415,6 @@
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
-
 	margin-bottom: 0;
 
 	@include breakpoint-deprecated( ">480px" ) {
@@ -419,16 +434,12 @@
 
 .manage-purchase__jetpack-user-license-clipboard {
 	display: flex;
-
 	margin-top: 16px;
 
 	input.form-text-input.manage-purchase__jetpack-user-license-input {
 		font-size: $font-body-small;
-
 		margin-right: 16px;
-
-		background-color: var(--studio-gray-0);
-
+		background-color: var( --studio-gray-0 );
 		border: none;
 
 		@include breakpoint-deprecated( ">480px" ) {

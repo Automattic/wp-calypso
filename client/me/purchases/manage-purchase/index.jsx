@@ -45,6 +45,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
+import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
@@ -286,6 +287,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<CompactCard tagName="button" displayAsLink onClick={ onClick }>
+				<MaterialIcon icon="autorenew" className="card__icon" />
 				{ content }
 			</CompactCard>
 		);
@@ -293,7 +295,7 @@ class ManagePurchase extends Component {
 
 	renderRenewNowNavItem() {
 		const { translate } = this.props;
-		return this.renderRenewalNavItem( translate( 'Renew Now' ), this.handleRenew );
+		return this.renderRenewalNavItem( translate( 'Renew now' ), this.handleRenew );
 	}
 
 	renderRenewAnnuallyNavItem() {
@@ -368,7 +370,7 @@ class ManagePurchase extends Component {
 				? translate( 'Pick Another Plan' )
 				: translate( 'Pick Another Product' );
 		} else {
-			buttonText = translate( 'Upgrade' );
+			buttonText = translate( 'Upgrade plan' );
 		}
 
 		const upgradeUrl = this.getUpgradeUrl();
@@ -380,6 +382,7 @@ class ManagePurchase extends Component {
 				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
+				<MaterialIcon icon="upload" className="card__icon" />
 				{ buttonText }
 			</CompactCard>
 		);
@@ -411,6 +414,7 @@ class ManagePurchase extends Component {
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
+					<MaterialIcon icon="credit_card" className="card__icon" />
 					{ addPaymentMethodLinkText( { purchase, translate } ) }
 				</CompactCard>
 			);
@@ -427,6 +431,7 @@ class ManagePurchase extends Component {
 			site,
 			purchase,
 			purchaseListUrl,
+			translate,
 		} = this.props;
 
 		return (
@@ -439,7 +444,11 @@ class ManagePurchase extends Component {
 				site={ site }
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl }
-			/>
+				linkIcon={ 'chevron-right' }
+			>
+				<MaterialIcon icon="delete" className="card__icon" />
+				{ translate( 'Cancel subscription' ) }
+			</RemovePurchase>
 		);
 	}
 
@@ -967,9 +976,9 @@ function addPaymentMethodLinkText( { purchase, translate } ) {
 	let linkText = null;
 	// TODO: we need a "hasRechargeablePaymentMethod" function here
 	if ( hasPaymentMethod( purchase ) && ! isPaidWithCredits( purchase ) ) {
-		linkText = translate( 'Change Payment Method' );
+		linkText = translate( 'Change payment method' );
 	} else {
-		linkText = translate( 'Add Payment Method' );
+		linkText = translate( 'Add payment method' );
 	}
 	return linkText;
 }
