@@ -140,7 +140,7 @@ const TitanSetUpThankYou = ( {
 				stepCta: (
 					<FullWidthButton
 						href={ emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domainName ) }
-						primary={ ! siteNeedsSetup && ! isEnabled( 'signup/stepper-flow' ) }
+						primary={ siteNeedsSetup ? ! isEnabled( 'signup/stepper-flow' ) : true }
 					>
 						{ translate( 'Set up email' ) }
 					</FullWidthButton>
