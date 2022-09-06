@@ -30,11 +30,15 @@ export default function RenderStatusMessage( {
 
 	const currentStatusMessage = statusMessages?.[ currentStatusAction ]?.[ currentStatus ];
 
-	return currentStatusMessage ? (
+	if ( ! currentStatusMessage ) {
+		return null;
+	}
+
+	return (
 		<span
 			className={ classNames( 'plugin-action-status', `plugin-action-status-${ currentStatus }` ) }
 		>
 			{ currentStatusMessage }
 		</span>
-	) : null;
+	);
 }
