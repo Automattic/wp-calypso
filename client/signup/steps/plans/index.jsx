@@ -339,33 +339,18 @@ export class PlansStep extends Component {
 		}
 
 		if ( useEmailOnboardingSubheader ) {
-			if ( this.state.isDesktop ) {
-				return 'en' === locale ||
-					i18n.hasTranslation(
-						"Pick a plan that's right for you and unlock features that help you grow. Or {{link}}continue with setting up your Professional Email{{/link}}."
-					)
-					? translate(
-							"Pick a plan that's right for you and unlock features that help you grow. Or {{link}}continue with setting up your Professional Email{{/link}}.",
-							{ components: { link: freePlanButton } }
-					  )
-					: translate(
-							"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
-							{ components: { link: freePlanButton } }
-					  );
-			}
-
 			return 'en' === locale ||
 				i18n.hasTranslation(
-					'Choose a plan or {{link}}continue with setting up your Professional Email{{/link}}'
+					'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.'
 				)
 				? translate(
-						// There is no trailing dot, because it renders as an "orphan" on mobile
-						'Choose a plan or {{link}}continue with setting up your Professional Email{{/link}}',
+						'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
 						{ components: { link: freePlanButton } }
 				  )
-				: translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
-						components: { link: freePlanButton },
-				  } );
+				: translate(
+						"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
+						{ components: { link: freePlanButton } }
+				  );
 		}
 
 		if ( ! hideFreePlan ) {

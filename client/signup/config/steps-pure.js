@@ -346,7 +346,9 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			props: {
 				get headerText() {
-					return i18n.translate( 'Want a website to expand your online presence?' );
+					return i18n.hasTranslation( 'Empower your online presence' )
+						? i18n.translate( 'Empower your online presence' )
+						: '';
 				},
 				useEmailOnboardingSubheader: true,
 			},
