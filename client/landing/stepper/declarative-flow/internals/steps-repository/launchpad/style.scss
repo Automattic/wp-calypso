@@ -197,7 +197,6 @@
 
 	.launchpad__checklist-item-checkmark {
 		top: 2px;
-		fill: var( --studio-gray-50 );
 		vertical-align: text-bottom;
 	}
 }
@@ -209,36 +208,30 @@
 	line-height: 20px;
 	text-align: left;
 	font-weight: 600;
-	// this line overrides the hover state so it needs to be set to inherit
-	color: var( --studio-gray-50 );
-
-	&:hover {
-		color: inherit;
-	}
 }
 
-// specific completed styles
+// completed tasks
 .launchpad__task.is-completed {
 	.launchpad__checklist-item-text {
+		color: var( --studio-gray-50 );
 		font-weight: 400;
+	}
+
+	.launchpad__checklist-item-chevron,
+	.launchpad__checklist-item-checkmark {
+		fill: var( --studio-gray-50 );
 	}
 }
 
-// specific keep active styles
-.launchpad__task.keep-active {
-	// this line overrides the hover state so it needs to be set to inherit
-	.launchpad__checklist-item-chevron {
-		fill: var( --studio-gray-50 );
+// completed tasks that are kept active
+.launchpad__task.keep-active:hover {
+	.launchpad__checklist-item-text {
+		color: var( --studio-blue-50 );
 	}
 
-	&:hover {
-		.launchpad__checklist-item-checkmark {
-			fill: var( --studio-blue-50 );
-		}
-
-		.launchpad__checklist-item-chevron {
-			fill: inherit;
-		}
+	.launchpad__checklist-item-chevron,
+	.launchpad__checklist-item-checkmark {
+		fill: var( --studio-blue-50 );
 	}
 }
 
