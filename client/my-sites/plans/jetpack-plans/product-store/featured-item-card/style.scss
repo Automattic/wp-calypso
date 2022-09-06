@@ -30,7 +30,7 @@
 		width: 33.6%;
 	}
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		width: auto;
 	}
 }
@@ -47,7 +47,7 @@
 		width: 66.6%;
 	}
 
-	@media ( max-width: $break-mobile ) {
+	@media (max-width: $break-mobile) {
 		width: auto;
 	}
 }
@@ -97,9 +97,6 @@
 	display: flex;
 	justify-content: flex-start;
 	margin-top: 24px;
-	.info-popover.owner-info__pop-over .gridicon {
-		color: var( --color-accent );
-	}
 }
 
 
