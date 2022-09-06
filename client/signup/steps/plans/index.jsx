@@ -293,24 +293,28 @@ export class PlansStep extends Component {
 			this.props;
 
 		if ( flowName === NEWSLETTER_FLOW ) {
-			return translate(
-				`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
-				{
-					components: {
-						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-					},
-				}
-			);
+			return hideFreePlan
+				? translate( 'Unlock a powerful bundle of features for your Newsletter.' )
+				: translate(
+						`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
+						{
+							components: {
+								link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+							},
+						}
+				  );
 		}
 		if ( flowName === LINK_IN_BIO_FLOW ) {
-			return translate(
-				`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
-				{
-					components: {
-						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-					},
-				}
-			);
+			return hideFreePlan
+				? translate( 'Unlock a powerful bundle of features for your Link in Bio.' )
+				: translate(
+						`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
+						{
+							components: {
+								link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+							},
+						}
+				  );
 		}
 
 		if ( eligibleForProPlan ) {

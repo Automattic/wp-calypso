@@ -1,12 +1,14 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { ReactElement, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import PluginsList from './plugins-list';
 import type { Plugin } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -33,6 +35,13 @@ export default function PluginManagementV2( {
 	removePluginNotice,
 }: Props ): ReactElement {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		return () => {
+			dispatch( resetPluginStatuses() );
+		};
+	}, [ dispatch ] );
 
 	const renderBulkActionsHeader = () => {
 		if ( isLoading ) {
