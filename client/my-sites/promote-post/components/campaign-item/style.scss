@@ -25,32 +25,19 @@
 			flex-direction: column;
 			justify-content: space-around;
 
-			.campaign-item__post-type {
+			.campaign-item__display-name {
 				color: var( --color-neutral-50 );
-				font-size: 0.875rem;
+				font-size: 0.75rem;
 			}
 
 			.campaign-item__header-title {
 				font-weight: 500;
+				font-size: 1.25rem;
+				margin: 4px 0;
 			}
 
-			.campaign-item__header-status {
-				display: flex;
-				align-items: center;
-
-				.campaign-item__display-name {
-					font-size: 0.875rem;
-					margin: 0 5px;
-				}
-
-				.campaign-item__user-avatar {
-					width: 28px;
-					height: 28px;
-
-					img {
-						border-radius: 28px;
-					}
-				}
+			.campaign-item__header-status .badge {
+				font-size: 0.75rem;
 			}
 		}
 	}

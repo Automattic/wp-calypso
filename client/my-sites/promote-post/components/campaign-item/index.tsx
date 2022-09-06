@@ -51,7 +51,6 @@ export default function CampaignItem( { campaign }: Props ) {
 		impressions_estimated_total,
 		deliver_margin_multiplier,
 		display_name,
-		avatar_url,
 	} = campaign;
 
 	const overallSpending = useMemo(
@@ -88,18 +87,12 @@ export default function CampaignItem( { campaign }: Props ) {
 	const header = (
 		<div className="campaign-item__header">
 			<div className="campaign-item__header-content">
-				<div className="campaign-item__post-type">{ getPostType( type ) }</div>
+				<div className="campaign-item__display-name">{ display_name }</div>
 				<div className="campaign-item__header-title">{ content_config.title }</div>
 				<div className="campaign-item__header-status">
 					<Badge type={ getCampaignStatusBadgeColor( campaignStatus ) }>
 						{ getCampaignStatus( campaignStatus ) }
 					</Badge>
-					<div className="campaign-item__display-name">{ display_name }</div>
-					{ avatar_url && (
-						<div className="campaign-item__user-avatar">
-							<img src={ avatar_url } alt="" />
-						</div>
-					) }
 				</div>
 			</div>
 			{ adCreativeUrl && (
@@ -218,7 +211,7 @@ export default function CampaignItem( { campaign }: Props ) {
 
 						<div className="campaign-item__column campaign-item__target">
 							<div className="campaign-item__block_label campaign-item__target-label">
-								{ __( 'Ad destination' ) }
+								{ __( 'Ad destination' ) } ({ getPostType( type ) })
 							</div>
 							<div className="campaign-item__block_value campaign-item__target-value">
 								{ target_url ? (
