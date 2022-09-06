@@ -44,6 +44,7 @@ export interface ConnectionProps {
 export interface AvailabilityConnectionProps {
 	receiveAccept?: ( accept: boolean ) => void;
 	receiveUnauthorized?: ( message: string ) => void;
+	receiveStatus?: ( status: string ) => void;
 }
 
 export interface HappychatAuth {
