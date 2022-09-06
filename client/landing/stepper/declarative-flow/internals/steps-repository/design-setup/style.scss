@@ -570,3 +570,22 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 	}
 }
+
+
+.design-setup__preview__has-more-info {
+	&.step-container {
+		.step-container__header {
+			display: none;
+		}
+
+		@include break-small {
+			max-width: none;
+			padding-inline-start: 32px;
+			padding-inline-end: 32px;
+
+			.step-container__content {
+				margin-top: 40px;
+			}
+		}
+	}
+}
