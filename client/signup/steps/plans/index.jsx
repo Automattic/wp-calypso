@@ -349,7 +349,8 @@ export class PlansStep extends Component {
 							{ components: { link: freePlanButton } }
 					  )
 					: translate(
-							"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}."
+							"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
+							{ components: { link: freePlanButton } }
 					  );
 			}
 
