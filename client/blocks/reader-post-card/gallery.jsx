@@ -4,7 +4,6 @@ import { Component } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
-import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { imageIsBigEnoughForGallery } from 'calypso/state/reader/posts/normalization-rules';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
@@ -28,14 +27,13 @@ class PostGallery extends Component {
 	};
 
 	getGalleryWorthyImages = ( post ) => {
-		const numberOfImagesToDisplay = 4;
+		const numberOfImagesToDisplay = 10;
 		const images = ( post.images && [ ...post.images ] ) || [];
-		const indexToRemove = isFeaturedImageInContent( post );
-		if ( indexToRemove ) {
-			images.splice( indexToRemove, 1 );
-		}
 
-		return images.filter( imageIsBigEnoughForGallery ).slice( 0, numberOfImagesToDisplay );
+		return images
+			.sort( ( a, b ) => ( a.width > b.width ? 1 : -1 ) )
+			.filter( imageIsBigEnoughForGallery )
+			.slice( 0, numberOfImagesToDisplay );
 	};
 
 	render() {

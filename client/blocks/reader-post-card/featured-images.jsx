@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
-import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import { imageIsBigEnoughForGallery } from 'calypso/state/reader/posts/normalization-rules';
 import {
 	READER_CONTENT_WIDTH,
@@ -10,12 +9,11 @@ import {
 function getGalleryWorthyImages( post ) {
 	const numberOfImagesToDisplay = 4;
 	const images = ( post.images && [ ...post.images ] ) || [];
-	const indexToRemove = isFeaturedImageInContent( post );
-	if ( indexToRemove ) {
-		images.splice( indexToRemove, 1 );
-	}
 
-	return images.filter( imageIsBigEnoughForGallery ).slice( 0, numberOfImagesToDisplay );
+	return images
+		.sort( ( a, b ) => ( a.width > b.width ? 1 : -1 ) )
+		.filter( imageIsBigEnoughForGallery )
+		.slice( 0, numberOfImagesToDisplay );
 }
 
 const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
