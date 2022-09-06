@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { SelectorProduct } from '../../types';
 
@@ -16,9 +16,12 @@ export const useItemLightbox = () => {
 		[]
 	);
 
-	return {
-		currentItem,
-		setCurrentItem,
-		clickMoreHandlerFactory,
-	};
+	return useMemo(
+		() => ( {
+			currentItem,
+			setCurrentItem,
+			clickMoreHandlerFactory,
+		} ),
+		[ currentItem, clickMoreHandlerFactory ]
+	);
 };
