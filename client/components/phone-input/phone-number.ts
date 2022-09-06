@@ -1,5 +1,4 @@
 import debugFactory from 'debug';
-import { flatten, map, startsWith } from 'lodash';
 import {
 	countries as countriesRaw,
 	dialCodeMap as dialCodeMapRaw,
@@ -27,11 +26,10 @@ const dialCodeMap: Record< string, string[] > = dialCodeMapRaw;
 export const stripNonDigits = ( inputNumber: string ): string => inputNumber.replace( /\D/g, '' );
 
 function prefixSearch( prefixQuery: string ) {
-	return flatten(
-		Object.keys( dialCodeMap )
-			.filter( ( dialCode ) => startsWith( prefixQuery, dialCode ) )
-			.map( ( dialCode ) => dialCodeMap[ dialCode ] )
-	);
+	return Object.keys( dialCodeMap )
+		.filter( ( dialCode ) => prefixQuery.startsWith( dialCode ) )
+		.map( ( dialCode ) => dialCodeMap[ dialCode ] )
+		.flat();
 }
 
 export function findCountryFromNumber( inputNumber: string ) {
@@ -53,7 +51,7 @@ export function findCountryFromNumber( inputNumber: string ) {
 
 		if ( ! prefixMatch.length && lastExactMatch ) {
 			// the one with high priority
-			return map( lastExactMatch, ( key ) => countries[ key as keyof typeof countries ] )[ 0 ];
+			return lastExactMatch.map( ( key ) => countries[ key as keyof typeof countries ] )[ 0 ];
 		}
 
 		if ( prefixMatch.length === 1 ) {
@@ -63,7 +61,7 @@ export function findCountryFromNumber( inputNumber: string ) {
 	}
 
 	if ( lastExactMatch ) {
-		return map( lastExactMatch, ( key ) => countries[ key as keyof typeof countries ] )[ 0 ];
+		return lastExactMatch.map( ( key ) => countries[ key as keyof typeof countries ] )[ 0 ];
 	}
 
 	return null;
