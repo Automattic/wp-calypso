@@ -65,7 +65,7 @@ describe( 'PluginsList', () => {
 		test( 'should always reset to all selected when toggled on', async () => {
 			const querySelectedPluginBoxes = () =>
 				pluginsList
-					.map( ( { name } ) => screen.getByRole( 'checkbox', { name, checked: true } ) )
+					.map( ( { name } ) => screen.queryByRole( 'checkbox', { name, checked: true } ) )
 					.filter( ( i ) => i );
 
 			const user = userEvent.setup();
