@@ -12,7 +12,7 @@ interface StyleVariationPreviewProps {
 	variation: StyleVariation;
 	isActive: boolean;
 	base?: StyleVariation;
-	onClick?: ( variation: StyleVariation ) => void;
+	onClick: ( variation: StyleVariation ) => void;
 }
 
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
@@ -50,9 +50,9 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 };
 
 interface StyleVariationPreviewsProps {
-	variations?: StyleVariation[];
+	variations: StyleVariation[];
 	activeVariation?: StyleVariation;
-	onClick?: ( variation: StyleVariation ) => void;
+	onClick: ( variation: StyleVariation ) => void;
 }
 
 const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
