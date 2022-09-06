@@ -51,7 +51,10 @@ import './style.scss';
 
 function SidebarScrollSynchronizer( { layoutFocus } ) {
 	const isNarrow = useBreakpoint( '<660px' );
-	const active = ! isNarrow && ! config.isEnabled( 'jetpack-cloud' ) && layoutFocus !== 'sites'; // Jetpack cloud hasn't yet aligned with WPCOM.
+	const active =
+		! isNarrow &&
+		! config.isEnabled( 'jetpack-cloud' ) && // Jetpack cloud hasn't yet aligned with WPCOM.
+		layoutFocus !== 'sites';
 
 	useEffect( () => {
 		if ( active ) {
