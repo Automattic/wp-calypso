@@ -1,5 +1,6 @@
 import { Dialog } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
+import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
@@ -16,6 +17,8 @@ export type BlazePressPromotionProps = {
 	onClose: () => void;
 };
 
+type BlazePressTranslatable = ( original: string, extra?: TranslateOptionsText ) => string;
+
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
 	const { isVisible = false, onClose = () => {} } = props;
@@ -23,6 +26,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate() as BlazePressTranslatable;
 
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
@@ -43,6 +47,16 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					props.siteId,
 					props.postId,
 					onClose,
+					( original: string, options?: TranslateOptionsText ): string => {
+						if ( options ) {
+							// This is a special case where we re-use the translate in another application
+							// that is mounted inside calypso
+							// eslint-disable-next-line wpcalypso/i18n-no-variables
+							return translate( original, options );
+						}
+						// eslint-disable-next-line wpcalypso/i18n-no-variables
+						return translate( original );
+					},
 					widgetContainer.current
 				);
 				setIsLoading( false );
