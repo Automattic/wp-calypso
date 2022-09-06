@@ -85,7 +85,7 @@ export const useMshotsImg = (
 			// simulate image dimensions. The `a8cIsLoading` hack is only there
 			// for unit testing purposes.
 			const loading =
-				! hasExpectedImageDimensions ||
+				( sizes.length && ! hasExpectedImageDimensions ) ||
 				hasMshotLoadingImageDimensions ||
 				'a8cIsLoading' in event.currentTarget;
 
