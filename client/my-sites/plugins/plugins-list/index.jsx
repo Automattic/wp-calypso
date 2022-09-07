@@ -301,19 +301,21 @@ export class PluginsList extends Component {
 		}
 	};
 
-	deactiveAndDisconnectSelected = () => {
-		let waitForDeactivate = false;
+	deactiveAndDisconnectSelected = ( accepted ) => {
+		if ( accepted ) {
+			let waitForDeactivate = false;
 
-		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
-			waitForDeactivate = true;
-			this.props.deactivatePlugin( site, plugin );
-		} );
+			this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
+				waitForDeactivate = true;
+				this.props.deactivatePlugin( site, plugin );
+			} );
 
-		if ( waitForDeactivate && this.props.selectedSite ) {
-			this.setState( { disconnectJetpackNotice: true } );
+			if ( waitForDeactivate && this.props.selectedSite ) {
+				this.setState( { disconnectJetpackNotice: true } );
+			}
+
+			this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
 		}
-
-		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
 	};
 
 	setAutoupdateSelected = ( accepted ) => {
@@ -433,6 +435,7 @@ export class PluginsList extends Component {
 		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
 		const pluginsCount = selectedPlugins.length;
 		const pluginsSize = pluginsCount === 1 ? 'plugin' : 'plugins';
+		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
 		switch ( actionName ) {
 			case 'activate':
@@ -454,7 +457,9 @@ export class PluginsList extends Component {
 					<div>
 						<span>{ this.getConfirmationText( selectedPlugins, 'deactivate', 'on' ) }</span>
 					</div>,
-					( accepted ) => this.deactivateSelected( accepted ),
+					isJetpackIncluded
+						? ( accepted ) => this.deactiveAndDisconnectSelected( accepted )
+						: ( accepted ) => this.deactivateSelected( accepted ),
 					translate( 'Deactivate %(numberOfPlugins)d %(plugins)s', {
 						args: {
 							numberOfPlugins: pluginsCount,

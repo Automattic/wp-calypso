@@ -199,11 +199,7 @@ export class PluginsListHeader extends PureComponent {
 					compact
 					key="plugin-list-header__buttons-deactivate"
 					disabled={ isWpcom ? ! this.props.haveActiveSelected : ! this.hasSelectedPlugins() }
-					onClick={
-						isJetpackSelected
-							? this.props.deactiveAndDisconnectSelected
-							: this.props.deactivatePluginNotice
-					}
+					onClick={ this.props.deactivatePluginNotice }
 				>
 					{ translate( 'Deactivate' ) }
 				</Button>
@@ -338,11 +334,7 @@ export class PluginsListHeader extends PureComponent {
 				{ isJetpackOnlySelected && (
 					<SelectDropdown.Item
 						disabled={ isWpcom ? ! this.props.haveActiveSelected : ! this.hasSelectedPlugins() }
-						onClick={
-							isJetpackSelected
-								? this.props.deactiveAndDisconnectSelected
-								: this.props.deactivatePluginNotice
-						}
+						onClick={ this.props.deactivatePluginNotice }
 					>
 						{ translate( 'Deactivate' ) }
 					</SelectDropdown.Item>
