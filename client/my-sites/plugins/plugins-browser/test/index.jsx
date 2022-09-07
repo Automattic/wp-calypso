@@ -15,10 +15,6 @@ jest.mock( 'calypso/blocks/upsell-nudge', () => ( { plan } ) => (
 let mockPlugins = [];
 jest.mock( 'calypso/data/marketplace/use-wporg-plugin-query', () => ( {
 	useWPORGPlugins: jest.fn( () => ( { data: { plugins: mockPlugins } } ) ),
-	useWPORGInfinitePlugins: jest.fn( () => ( {
-		data: { plugins: mockPlugins },
-		fetchNextPage: jest.fn(),
-	} ) ),
 } ) );
 
 jest.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
@@ -28,6 +24,10 @@ jest.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
 
 jest.mock( 'calypso/data/marketplace/use-es-query', () => ( {
 	useSiteSearchPlugins: jest.fn( () => ( {
+		data: { plugins: mockPlugins },
+		fetchNextPage: jest.fn(),
+	} ) ),
+	useESPluginsInfinite: jest.fn( () => ( {
 		data: { plugins: mockPlugins },
 		fetchNextPage: jest.fn(),
 	} ) ),
