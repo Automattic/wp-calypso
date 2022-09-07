@@ -186,10 +186,9 @@ export const SftpCard = ( {
 					checked={ isSshAccessEnabled }
 					onChange={ () => toggleSshAccess() }
 					label={ translate(
-						'Enable SSH access for this site. {{em}}This feature is currently in beta.{{/em}} For more information see {{supportLink}}SSH on WordPress.com{{/supportLink}}.',
+						'Enable SSH access for this site. For more information see {{supportLink}}Connect to SSH on WordPress.com{{/supportLink}}.',
 						{
 							components: {
-								em: <em />,
 								supportLink: (
 									<ExternalLink
 										icon
@@ -289,7 +288,7 @@ export const SftpCard = ( {
 						<PanelBody title={ translate( 'What is SSH?' ) } initialOpen={ false }>
 							{ translate(
 								'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. ' +
-									'For more information see {{supportLink}}SSH on WordPress.com{{/supportLink}}. {{em}}This feature is currently in beta.{{/em}}',
+									'For more information see {{supportLink}}Connect to SSH on WordPress.com{{/supportLink}}.',
 								{
 									components: {
 										supportLink: (
@@ -301,7 +300,6 @@ export const SftpCard = ( {
 												) }
 											/>
 										),
-										em: <em />,
 									},
 								}
 							) }
