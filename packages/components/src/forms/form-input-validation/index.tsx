@@ -39,7 +39,11 @@ const FormInputValidation: React.FC< Props > = ( {
 	return (
 		<div className={ classes } role="alert">
 			<span id={ id }>
-				{ icon ? <Gridicon size={ 24 } icon={ icon } /> : <Icon icon={ defaultIcon } /> }
+				{ icon ? (
+					<Gridicon size={ 24 } icon={ icon } />
+				) : (
+					<Icon size={ 24 } icon={ defaultIcon } />
+				) }
 				{ text }
 				{ children }
 			</span>
