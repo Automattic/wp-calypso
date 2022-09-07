@@ -12,9 +12,8 @@
  */
 body,
 button {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
-		'Cantarell', 'Helvetica Neue', sans-serif;
-	text-rendering: optimizeLegibility;
+	font-family: $sans;
+	text-rendering: optimizelegibility;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
 
@@ -26,8 +25,7 @@ button {
 	h2,
 	h3,
 	p {
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
-			'Cantarell', 'Helvetica Neue', sans-serif;
+		font-family: $sans;
 		font-weight: 400;
 		margin: 0;
 	}
@@ -59,8 +57,8 @@ button {
 .completing-purchase,
 .anchor-fm,
 .subscribers,
-.blazepress {
-	position: relative;
+.blazepress,
+.intro {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -71,16 +69,6 @@ button {
 
 	&.courses {
 		padding: 0;
-
-		.signup-header {
-			z-index: 1;
-			color: #fff;
-
-			svg path {
-				fill: #fff;
-				stroke: #fff;
-			}
-		}
 	}
 
 	.flow-progress {
@@ -108,12 +96,13 @@ button {
  	 * Signup Header
  	 */
 	.signup-header {
+		z-index: 1;
+
 		.wordpress-logo {
 			position: absolute;
-			inset-inline-start: 20px;
 			inset-block-start: 20px;
+			inset-inline-start: 24px;
 			fill: var( --color-text );
-			stroke: var( --color-text );
 			transform-origin: 0 0;
 		}
 
@@ -126,6 +115,15 @@ button {
 				/* stylelint-disable-line */
 				font-size: 0.875rem;
 				color: var( --studio-gray-30 );
+			}
+		}
+
+		// Courses has a dark background
+		@at-root .courses#{&} {
+			color: var( --color-text-inverted );
+
+			.wordpress-logo {
+				fill: var( --color-text-inverted );
 			}
 		}
 
