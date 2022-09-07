@@ -1,12 +1,11 @@
 import { Button, FormInputValidation, Popover } from '@automattic/components';
-import { hasMinContrast, StepContainer, RGB } from '@automattic/onboarding';
+import { hasMinContrast, StepContainer, RGB, base64ImageToBlob } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
-import { base64ImageToBlob } from 'calypso/../packages/onboarding/src/setup-tailored-site-after-creation';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';

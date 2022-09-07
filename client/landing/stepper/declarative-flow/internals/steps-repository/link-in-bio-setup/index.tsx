@@ -1,12 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button, FormInputValidation } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
-import { base64ImageToBlob } from 'calypso/../packages/onboarding/src/setup-tailored-site-after-creation';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
