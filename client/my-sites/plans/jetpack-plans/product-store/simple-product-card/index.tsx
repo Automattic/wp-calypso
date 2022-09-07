@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import { ItemPrice } from '../item-price';
+import { MoreInfoLink } from '../more-info-link';
 import { SimpleProductCardProps } from '../types';
 import getProductIcon from '../utils/get-product-icon';
 
@@ -19,8 +19,6 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	onClickPurchase,
 	siteId,
 } ) => {
-	const translate = useTranslate();
-
 	const { shortName: name } = item;
 	const productDescription = item?.shortDescription || item.description;
 
@@ -52,21 +50,8 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 					</Button>
 				</div>
 				<div className="simple-product-card__info-content">
-					{ productDescription }
-					{ ! hideMoreInfoLink && (
-						<Button
-							className="simple-product-card__info-more-link"
-							onClick={ onClickMore }
-							href="#"
-							plain
-						>
-							{ translate( 'More about {{productName/}}', {
-								components: {
-									productName: <>{ name }</>,
-								},
-							} ) }
-						</Button>
-					) }
+					{ productDescription } <br />
+					{ ! hideMoreInfoLink && <MoreInfoLink onClickMore={ onClickMore } item={ item } /> }
 				</div>
 			</div>
 		</div>

@@ -81,17 +81,6 @@
 	}
 }
 
-.featured-item-card--learn-more {
-	color: var( --gray-100 );
-	display: inline-block;
-	margin-top: 4px;
-	text-decoration-line: underline;
-
-	@include break-medium {
-		padding-bottom: 0;
-	}
-}
-
 .featured-item-card--footer {
 	align-items: center;
 	display: flex;

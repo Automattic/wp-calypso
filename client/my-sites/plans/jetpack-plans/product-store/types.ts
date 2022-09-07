@@ -90,3 +90,5 @@ export type FeaturedItemCardProps = ItemPriceProps & {
 };
 
 export type SimpleProductCardProps = Omit< FeaturedItemCardProps, 'hero' >;
+
+export type MoreInfoLinkProps = Pick< FeaturedItemCardProps, 'item' | 'onClickMore' >;

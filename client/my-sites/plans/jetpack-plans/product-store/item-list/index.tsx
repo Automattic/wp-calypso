@@ -18,7 +18,7 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 	onClickPurchase,
 	siteId,
 } ) => {
-	const { currentItem, setCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
+	const { currentItem, clearCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
 	const Component = components[ currentView ];
 
 	if ( ! Component ) {
@@ -31,9 +31,7 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 				<ProductLightbox
 					product={ currentItem }
 					isVisible={ !! currentItem }
-					onClose={ () => {
-						setCurrentItem( null );
-					} }
+					onClose={ clearCurrentItem }
 				/>
 			) }
 

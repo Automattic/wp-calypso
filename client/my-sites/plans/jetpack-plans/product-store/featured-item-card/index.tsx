@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import { ItemPrice } from '../item-price';
+import { MoreInfoLink } from '../more-info-link';
 import { FeaturedItemCardProps } from '../types';
 
 import './style.scss';
@@ -19,7 +19,6 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	onClickPurchase,
 	siteId,
 } ) => {
-	const translate = useTranslate();
 	const { displayName: title, featuredDescription } = item;
 
 	return (
@@ -42,20 +41,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 							<span>{ featuredDescription }</span>
 							<br />
 
-							{ ! hideMoreInfoLink && (
-								<Button
-									className="featured-item-card--learn-more"
-									onClick={ onClickMore }
-									href="#"
-									plain
-								>
-									{ translate( 'More about {{productName/}}', {
-										components: {
-											productName: <>{ title }</>,
-										},
-									} ) }
-								</Button>
-							) }
+							{ ! hideMoreInfoLink && <MoreInfoLink item={ item } onClickMore={ onClickMore } /> }
 						</p>
 					</div>
 				</div>
