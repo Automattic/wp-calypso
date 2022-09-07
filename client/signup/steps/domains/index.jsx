@@ -619,7 +619,7 @@ class DomainsStep extends Component {
 					<span
 						role="button"
 						className="tailored-flow-subtitle__cta-text"
-						onClick={ () => this.handleSkip() }
+						onClick={ this.handleDomainExplainerClick }
 					/>
 				),
 			};
