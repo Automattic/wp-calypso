@@ -14,7 +14,7 @@ const IframeAutoHeight = ( {
 	const [ height, setHeight ] = useState( 300 );
 
 	useEffect( () => {
-		window.addEventListener( 'message', ( { data, origin } ) => {
+		const handleMessage = ( { data, origin }: MessageEvent ) => {
 			if (
 				publicApiUrl === origin &&
 				'preview-auto-height' === data?.source &&
@@ -22,7 +22,11 @@ const IframeAutoHeight = ( {
 			) {
 				setHeight( data.height );
 			}
-		} );
+		};
+
+		window.addEventListener( 'message', handleMessage );
+
+		return () => window.removeEventListener( 'message', handleMessage );
 	}, [ patternId ] );
 
 	const iframe = cloneElement( children.props.children, { style: { height } } );
