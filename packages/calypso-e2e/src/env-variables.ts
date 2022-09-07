@@ -20,7 +20,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	TEST_ON_JETPACK: false,
 	CALYPSO_BASE_URL: 'https://wordpress.com',
 	BROWSER_NAME: 'chromium',
-	ALLURE_RESULTS_PATH: path.join( process.cwd(), 'allure-results' ),
+	ALLURE_RESULTS_PATH: '',
 };
 
 const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue => {

@@ -32,6 +32,15 @@ const supportedBrowsers = [ chromium, firefox ];
  * setting up our global Browser instance to handling failure and teardown
  * hooks.
  *
+ * Our custom Jest environment adds new behavior and extends existing behavior:
+ * 	- determineBrowser: allows the ability to define a custom browser in the test docblock.
+ * 	- initializeAllureReporter: set up an instance of Allure reporter if requested.
+ * 	- setup: launches an instance of the requested Playwright browser and makes it available under global namespace.
+ * 	-
+ *
+ * This environment also extends teh default event handler to run actions and/or mark statuses.
+ * For more information, see the `handleTestEvent` method below.
+ *
  * @see {@link https://github.com/facebook/jest/tree/main/packages/jest-circus}
  */
 class JestEnvironmentPlaywright extends NodeEnvironment {
@@ -42,7 +51,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		type: 'hook' | 'test';
 		name: string;
 	};
-	private allure: AllureReporter;
+	private allure: AllureReporter | undefined;
 
 	/**
 	 * Constructs the instance of the JestEnvironmentNode.
@@ -60,12 +69,18 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	}
 
 	/**
-	 * Initializes the Allure reporter.
+	 * Initializes the Allure reporter if required.
+	 *
+	 * The Allure reporter is initialized only if the `ALLURE_RESULTS_PATH` environment
+	 * variable is set to a non-empty string.
 	 *
 	 * @param {Config.ProjectConfig} config Jest configuration.
-	 * @returns {AllureReporter} Instance of an Allure reporter.
+	 * @returns {AllureReporter|undefined} Instance of an Allure reporter if required.
 	 */
-	private initializeAllureReporter( config: Config.ProjectConfig ): AllureReporter {
+	private initializeAllureReporter( config: Config.ProjectConfig ): AllureReporter | undefined {
+		if ( ! env.ALLURE_RESULTS_PATH ) {
+			return undefined;
+		}
 		const allureConfig: AllureConfig = {
 			resultsDir: env.ALLURE_RESULTS_PATH,
 		};
@@ -213,7 +228,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	async handleTestEvent( event: Circus.Event, state: Circus.State ) {
 		switch ( event.name ) {
 			case 'run_start':
-				this.allure.startTestFile( this.testFilename );
+				this.allure?.startTestFile( this.testFilename );
 				break;
 			case 'run_describe_start': {
 				// If failure has been noted in a prior step/describe block, skip
@@ -221,24 +236,24 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				if ( this.failure ) {
 					event.describeBlock.mode = 'skip';
 				}
-				this.allure.startSuite( event.describeBlock.name );
+				this.allure?.startSuite( event.describeBlock.name );
 				break;
 			}
 			case 'hook_start':
-				this.allure.startHook( event.hook.type );
+				this.allure?.startHook( event.hook.type );
 				break;
 			case 'hook_success':
-				this.allure.endHook();
+				this.allure?.endHook();
 				break;
 			case 'hook_failure':
-				this.allure.endHook( event.error ?? event.hook.asyncError );
+				this.allure?.endHook( event.error ?? event.hook.asyncError );
 				this.failure = { type: 'hook', name: event.hook.type };
 				break;
 			case 'test_fn_start': {
 				// Use `test_fn_start` event instead of `test_start` to filter
 				// out hooks.
 				// See https://github.com/facebook/jest/blob/main/packages/jest-types/src/Circus.ts#L132-L133
-				this.allure.startTestStep( event.test, state, this.testFilePath );
+				this.allure?.startTestStep( event.test, state, this.testFilePath );
 				// If a test has failed, skip rest of the steps.
 				if ( this.failure?.type === 'test' ) {
 					event.test.mode = 'skip';
@@ -246,21 +261,21 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				break;
 			}
 			case 'test_skip':
-				this.allure.startTestStep( event.test, state, this.testFilePath );
-				this.allure.pendingTestStep( event.test );
+				this.allure?.startTestStep( event.test, state, this.testFilePath );
+				this.allure?.pendingTestStep( event.test );
 				break;
 			case 'test_fn_success': {
-				this.allure.passTestStep();
+				this.allure?.passTestStep();
 				break;
 			}
 			case 'test_fn_failure': {
 				this.failure = { type: 'test', name: event.test.name };
-				this.allure.failTestStep( event.error );
+				this.allure?.failTestStep( event.error );
 				break;
 			}
 			case 'test_done': {
-				// This event will capture events from hooks as well.
-				this.allure.endTestStep();
+				// This will capture events from hooks as well.
+				this.allure?.endTestStep();
 			}
 			case 'run_describe_finish': {
 				break;
@@ -320,7 +335,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			}
 			case 'run_finish':
 				// Wrap up the Allure report for the file.
-				this.allure.endTestFile();
+				this.allure?.endTestFile();
 				break;
 		}
 	}
