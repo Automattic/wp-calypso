@@ -15,6 +15,7 @@ import {
 } from 'calypso/state/media/actions';
 import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
 import { errorNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 
 /**
@@ -59,12 +60,12 @@ export const requestMediaSuccess =
 	( { siteId, query }, data ) =>
 	( dispatch, getState ) => {
 		if (
+			getCurrentRoute( getState() ).startsWith( '/media/' ) &&
 			! isEqual(
 				omit( query, 'page_handle' ),
 				omit( getNextPageQuery( getState(), siteId ), 'page_handle' )
 			)
 		) {
-			dispatch( receiveMedia( siteId, data.media, data.found, query ) ); // maybe, maybe not what I want but it does propogate data
 			dispatch( successMediaRequest( siteId, query ) );
 			return;
 		}
