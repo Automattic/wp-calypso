@@ -11,6 +11,10 @@
 		display: none;
 	}
 
+	.web-preview__placeholder {
+		overflow-y: unset;
+	}
+
 	.web-preview__frame-wrapper {
 		background-color: transparent;
 	}
