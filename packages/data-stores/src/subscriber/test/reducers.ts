@@ -59,43 +59,6 @@ describe( 'Subscriber reducer', () => {
 	} );
 
 	/**
-	 * ↓ Add subscribers
-	 */
-	it( 'manually add subscribers start', () => {
-		const state = subscriber( EMPTY_STATE, {
-			type: 'ADD_SUBSCRIBERS_START',
-			siteId: 1,
-		} );
-
-		const expectedState = { add: { inProgress: true } };
-
-		expect( state ).toEqual( expectedState );
-	} );
-
-	it( 'manually add subscribers start success', () => {
-		const state = subscriber( EMPTY_STATE, {
-			type: 'ADD_SUBSCRIBERS_SUCCESS',
-			siteId: 1,
-			response: {
-				subscribed: 2,
-				errors: [],
-			},
-		} );
-
-		const expectedState = {
-			add: {
-				inProgress: false,
-				response: {
-					subscribed: 2,
-					errors: [],
-				},
-			},
-		};
-
-		expect( state ).toEqual( expectedState );
-	} );
-
-	/**
 	 * ↓ Get import
 	 */
 	it( 'get import job, add to `imports` array', () => {
