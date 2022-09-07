@@ -50,14 +50,16 @@ export default function UpdatePlugin( {
 
 	const currentVersions = sites
 		.map( ( site ) => {
-			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+			const siteId = selectedSite ? selectedSite.ID : site.ID;
+			const sitePlugin = pluginsOnSites?.sites[ siteId ];
 			return sitePlugin?.version;
 		} )
 		.filter( ( version ) => version );
 
 	const updatedVersions = sites
 		.map( ( site ) => {
-			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+			const siteId = selectedSite ? selectedSite.ID : site.ID;
+			const sitePlugin = pluginsOnSites?.sites[ siteId ];
 			return sitePlugin?.update?.new_version;
 		} )
 		.filter( ( version ) => version );
@@ -85,7 +87,8 @@ export default function UpdatePlugin( {
 	}, [ currentVersions ] );
 
 	const hasUpdate = sites.some( ( site ) => {
-		const sitePlugin = pluginsOnSites?.sites[ selectedSite ? selectedSite.ID : site.ID ];
+		const siteId = selectedSite ? selectedSite.ID : site.ID;
+		const sitePlugin = pluginsOnSites?.sites[ siteId ];
 		return sitePlugin?.update?.new_version && site.canUpdateFiles;
 	} );
 
@@ -131,7 +134,8 @@ export default function UpdatePlugin( {
 		content = (
 			<div className="update-plugin__plugin-update-wrapper">
 				<span className="update-plugin__current-version">
-					{ currentVersionsRange?.min } { currentVersionsRange?.max && currentVersionsRange.max }
+					{ currentVersionsRange?.min }
+					{ currentVersionsRange?.max && ` - ${ currentVersionsRange.max }` }
 				</span>
 				<span className="update-plugin__arrow-icon">
 					<Icon size={ 24 } icon={ arrowRight } />

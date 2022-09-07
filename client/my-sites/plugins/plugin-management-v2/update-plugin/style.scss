@@ -16,8 +16,8 @@
 
 .update-plugin__arrow-icon {
 	display: flex;
-	position: absolute;
-	inset-inline-start: 50px;
+	position: relative;
+	inset-inline-start: 10px;
 	fill: var( --studio-gray-40 );
 }
 
@@ -25,8 +25,8 @@ button.update-plugin__new-version {
 	color: var( --studio-jetpack-green-50 ) !important;
 	text-decoration: underline;
 	font-weight: 600;
-	position: absolute;
-	inset-inline-start: 100px;
+	position: relative;
+	inset-inline-start: 20px;
 
 	a {
 		display: inline !important;

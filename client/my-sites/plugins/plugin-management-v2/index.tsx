@@ -94,7 +94,6 @@ export default function PluginManagementV2( {
 					{
 						key: 'update',
 						header: translate( 'Update available' ),
-						smallColumn: true,
 					},
 					{
 						key: 'last-updated',
