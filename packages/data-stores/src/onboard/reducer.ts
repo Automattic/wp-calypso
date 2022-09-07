@@ -17,9 +17,9 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	return state;
 };
 
-const patternId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_SITE_PATTERN_ID' ) {
-		return action.patternId;
+const patternContent: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_SITE_PATTERN_CONTENT' ) {
+		return action.patternContent;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -202,7 +202,7 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
-const siteAccentColor: Reducer< string | undefined, OnboardAction > = ( state = '', action ) => {
+const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
 		return action.siteAccentColor;
 	}
@@ -369,7 +369,7 @@ const reducer = combineReducers( {
 	anchorEpisodeId,
 	anchorSpotifyUrl,
 	domain,
-	patternId,
+	patternContent,
 	domainSearch,
 	domainCategory,
 	isRedirecting,

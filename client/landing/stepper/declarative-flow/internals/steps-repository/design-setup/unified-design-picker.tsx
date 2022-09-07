@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { Onboard, useStarterDesignsQuery } from '@automattic/data-stores';
+import { Onboard, useStarterDesignBySlug, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
 	useCategorization,
@@ -14,6 +14,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
 import WebPreview from 'calypso/components/web-preview/content';
@@ -106,6 +107,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const generatedDesigns = allDesigns?.generated?.designs || [];
 	const staticDesigns = allDesigns?.static?.designs || [];
+
+	const isEnabledStyleSelection =
+		selectedDesign &&
+		selectedDesign.design_type !== 'vertical' &&
+		isEnabled( 'signup/design-picker-style-selection' );
+
+	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
+		enabled: isPreviewingDesign && isEnabledStyleSelection,
+	} );
 
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
@@ -299,25 +309,36 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					closeModal={ closeUpgradeModal }
 					checkout={ goToCheckout }
 				/>
-				<WebPreview
-					showPreview
-					showClose={ false }
-					showEdit={ false }
-					externalUrl={ siteSlug }
-					showExternal={ true }
-					previewUrl={ previewUrl }
-					loadingMessage={ translate(
-						'{{strong}}One moment, please…{{/strong}} loading your site.',
-						{
-							components: { strong: <strong /> },
-						}
-					) }
-					toolbarComponent={ PreviewToolbar }
-					siteId={ site?.ID }
-					url={ site?.URL }
-					translate={ translate }
-					recordTracksEvent={ recordTracksEvent }
-				/>
+				{ isEnabledStyleSelection ? (
+					<AsyncLoad
+						require="@automattic/design-preview"
+						placeholder={ null }
+						previewUrl={ previewUrl }
+						title={ designTitle }
+						description={ selectedDesign.description }
+						variations={ selectedDesignDetails?.style_variations }
+					/>
+				) : (
+					<WebPreview
+						showPreview
+						showClose={ false }
+						showEdit={ false }
+						externalUrl={ siteSlug }
+						showExternal={ true }
+						previewUrl={ previewUrl }
+						loadingMessage={ translate(
+							'{{strong}}One moment, please…{{/strong}} loading your site.',
+							{
+								components: { strong: <strong /> },
+							}
+						) }
+						toolbarComponent={ PreviewToolbar }
+						siteId={ site?.ID }
+						url={ site?.URL }
+						translate={ translate }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
 			</>
 		);
 
@@ -340,7 +361,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</div>
 		);
 
-		return (
+		return isEnabledStyleSelection ? (
+			<StepContainer
+				stepName={ STEP_NAME }
+				stepContent={ stepContent }
+				hideSkip
+				className="design-setup__preview design-setup__preview__has-more-info"
+				goBack={ handleBackClick }
+				recordTracksEvent={ recordStepContainerTracksEvent }
+			/>
+		) : (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
@@ -361,6 +391,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			/>
 		);
 	}
+
 	const heading = (
 		<FormattedHeader
 			id={ 'step-header' }

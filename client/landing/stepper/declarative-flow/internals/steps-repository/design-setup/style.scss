@@ -570,3 +570,42 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 	}
 }
+
+
+.design-setup__preview__has-more-info {
+	&.step-container {
+		padding-inline-start: 0;
+		padding-inline-end: 0;
+
+		.step-container__header {
+			display: none;
+		}
+
+		.step-container__content {
+			// 156px = .design-preview__sidebar + step-container__navigation.action-buttons
+			height: calc( 100vh - 156px );
+			margin-top: 36px;
+		}
+
+		@include break-small {
+			max-width: none;
+			padding-inline-start: 32px;
+			padding-inline-end: 32px;
+
+			.step-container__content {
+				$preview-padding-top: 24px;
+
+				box-sizing: border-box;
+				height: calc( 100vh - $preview-padding-top );
+				// 60px = .site-setup
+				margin-top: - ( 60px - $preview-padding-top );
+				max-height: none;
+				padding-bottom: 32px;
+			}
+
+			.design-preview__sidebar {
+				margin-top: 72px;
+			}
+		}
+	}
+}

@@ -14,6 +14,7 @@ export const transform = ( response ) => {
 		nextAppointment,
 		scheduleId: response.schedule_id,
 		isUserBlocked: response.is_blocked,
+		availableSessions: response.available_sessions,
 	};
 };
 

@@ -213,6 +213,6 @@ export class Connection {
 // Used by the Help Center, it closes the socket after receiving 'accept' or 'unauthorized'
 export const buildConnectionForCheckingAvailability = (
 	connectionProps: AvailabilityConnectionProps
-) => new Connection( connectionProps, true );
+) => new Connection( connectionProps, false );
 
 export default ( connectionProps: ConnectionProps ) => new Connection( connectionProps );

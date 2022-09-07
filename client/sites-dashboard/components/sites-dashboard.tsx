@@ -1,9 +1,16 @@
-import { Button, useSitesTableFiltering, useSitesTableSorting } from '@automattic/components';
+import {
+	Button,
+	Gridicon,
+	useSitesTableFiltering,
+	useSitesTableSorting,
+	useScrollToTop,
+} from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useCallback, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { MEDIA_QUERIES } from '../utils';
@@ -90,6 +97,28 @@ const HiddenSitesMessage = styled.div( {
 	marginBlockEnd: '1em',
 } );
 
+const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== 'visible' } )< {
+	visible: boolean;
+} >`
+	position: fixed;
+	display: flex;
+	opacity: ${ ( props ) => ( props.visible ? 1 : 0 ) };
+	align-items: center;
+	justify-content: center;
+	inset-block-end: 24px;
+	inset-inline-start: 24px;
+	height: 42px;
+	width: 42px;
+	background-color: #000;
+	color: #fff;
+	border-radius: 4px;
+	transition: opacity 0.3s ease-in-out;
+	.gridicon {
+		top: initial;
+		margin-top: initial;
+	}
+`;
+
 export function SitesDashboard( {
 	queryParams: { search, showHidden, status = 'all' },
 }: SitesDashboardProps ) {
@@ -111,6 +140,20 @@ export function SitesDashboard( {
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
+
+	const elementRef = useRef( window );
+
+	const isBelowThreshold = useCallback( ( containerNode: Window ) => {
+		const SCROLL_THRESHOLD = containerNode.innerHeight;
+
+		return containerNode.scrollY > SCROLL_THRESHOLD;
+	}, [] );
+
+	const { isButtonVisible, scrollToTop } = useScrollToTop( {
+		scrollTargetRef: elementRef,
+		isBelowThreshold,
+		smoothScrolling: true,
+	} );
 
 	return (
 		<main>
@@ -179,6 +222,14 @@ export function SitesDashboard( {
 					) }
 				</>
 			</PageBodyWrapper>
+			<ScrollButton
+				onClick={ scrollToTop }
+				visible={ isButtonVisible }
+				title={ __( 'Scroll to top' ) }
+				aria-label={ __( 'Scroll to top' ) }
+			>
+				<Gridicon icon={ 'arrow-up' } size={ 18 } />
+			</ScrollButton>
 		</main>
 	);
 }

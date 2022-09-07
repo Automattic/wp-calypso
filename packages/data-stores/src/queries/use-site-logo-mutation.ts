@@ -1,6 +1,25 @@
 import { useMutation } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
+interface UploadMediaResponse {
+	media?: [
+		{
+			ID: number;
+			URL: string;
+		}
+	];
+}
+
+interface UpdateSiteLogoResponse {
+	id: number;
+	url: string;
+}
+
+export interface SetSiteLogoResponse {
+	logoResult: UpdateSiteLogoResponse;
+	uploadResult: UploadMediaResponse;
+}
+
 export function useSiteLogoMutation( siteId: string | number | undefined ) {
 	return useMutation( async ( file: File ) => {
 		const formData = [ [ 'media[]', file ] ];

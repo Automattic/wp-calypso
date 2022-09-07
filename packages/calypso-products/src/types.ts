@@ -34,6 +34,12 @@ export interface WPComPlan extends Plan {
 	getSignupFeatures?: () => Feature[];
 	getBlogSignupFeatures?: () => Feature[];
 	getPortfolioSignupFeatures?: () => Feature[];
+	getNewsletterDescription?: () => string;
+	getNewsletterSignupFeatures?: () => Feature[];
+	getNewsletterHighlightedFeatures?: () => Feature[];
+	getLinkInBioDescription?: () => string;
+	getLinkInBioSignupFeatures?: () => Feature[];
+	getLinkInBioHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
@@ -108,6 +114,8 @@ export type Plan = BillingTerm & {
 	type: string;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
+	getCondensedExperimentFeatures?: () => string[];
+	getCondensedExperimentUniqueFeatures?: () => string[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
@@ -133,6 +141,7 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
+	getFeaturedText?: () => TranslateResult;
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

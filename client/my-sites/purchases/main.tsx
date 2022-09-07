@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial/index';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -15,9 +16,13 @@ import CancelPurchase from 'calypso/me/purchases/cancel-purchase';
 import ConfirmCancelDomain from 'calypso/me/purchases/confirm-cancel-domain';
 import ManagePurchase from 'calypso/me/purchases/manage-purchase';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
+import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import titles from 'calypso/me/purchases/titles';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getAvailableConciergeSessions from 'calypso/state/selectors/get-available-concierge-sessions';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
+import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import {
 	getPurchaseListUrlFor,
 	getCancelPurchaseUrlFor,
@@ -50,9 +55,14 @@ export function Purchases() {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const logPurchasesError = useLogPurchasesError( 'site level purchases load error' );
+	const nextConciergeAppointment = useSelector( getConciergeNextAppointment );
+	const isConciergeUserBlocked = useSelector( getConciergeUserBlocked );
+	const availableConciergeSessions = useSelector( getAvailableConciergeSessions );
+	const siteId = useSelector( getSelectedSiteId );
 
 	return (
 		<Main wideLayout className="purchases">
+			<QueryConciergeInitial />
 			{ isJetpackCloud() && <SidebarNavigation /> }
 			<DocumentHead title={ titles.sectionTitle } />
 			{ ! isJetpackCloud() && (
@@ -75,7 +85,12 @@ export function Purchases() {
 				section={ isJetpackCloud() ? 'myPlan' : 'activeUpgrades' }
 				siteSlug={ siteSlug }
 			/>
-
+			<PurchaseListConciergeBanner
+				availableSessions={ availableConciergeSessions }
+				isUserBlocked={ isConciergeUserBlocked }
+				nextAppointment={ nextConciergeAppointment }
+				siteId={ siteId ?? undefined }
+			/>
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }

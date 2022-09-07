@@ -20,7 +20,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import pluginBundleSteps from './plugin-bundle-data';
+import pluginBundleData from './plugin-bundle-data';
 import type { StepPath } from './internals/steps-repository';
 import type { BundledPlugin } from './plugin-bundle-data';
 
@@ -40,11 +40,19 @@ export const pluginBundleFlow: Flow = {
 			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
-		if ( ! pluginSlug || ! pluginBundleSteps.hasOwnProperty( pluginSlug ) ) {
-			window.location.replace( `/home/${ siteSlugParam }` );
-		}
+		// FIXME - Need to not redirect when getCurrentThemeSoftwareSets is still running
+		//
+		// if ( ! pluginSlug || ! pluginBundleData.hasOwnProperty( pluginSlug ) ) {
+		// 	window.location.replace( `/home/${ siteSlugParam }` );
+		// }
 
-		return pluginBundleSteps[ pluginSlug ] as StepPath[];
+		const steps: StepPath[] = [ 'getCurrentThemeSoftwareSets' ];
+		let bundlePluginSteps: StepPath[] = [];
+
+		if ( pluginSlug && pluginBundleData.hasOwnProperty( pluginSlug ) ) {
+			bundlePluginSteps = pluginBundleData[ pluginSlug ] as StepPath[];
+		}
+		return steps.concat( bundlePluginSteps );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );

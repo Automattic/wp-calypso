@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import { ItemPrice } from '../item-price';
+import { MoreInfoLink } from '../more-info-link';
 import { FeaturedItemCardProps } from '../types';
 
 import './style.scss';
@@ -10,6 +10,8 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	ctaAsPrimary,
 	ctaLabel,
 	hero,
+	hideMoreInfoLink,
+	isCtaDisabled,
 	isIncludedInPlan,
 	isOwned,
 	item,
@@ -17,8 +19,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	onClickPurchase,
 	siteId,
 } ) => {
-	const translate = useTranslate();
-	const { displayName: title, description } = item;
+	const { displayName: title, featuredDescription } = item;
 
 	return (
 		<div className="featured-item-card">
@@ -37,25 +38,20 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 					</div>
 					<div className="featured-item-card--desc">
 						<p>
-							<span>{ description }</span>
+							<span>{ featuredDescription }</span>
 							<br />
-							<Button
-								className="featured-item-card--learn-more"
-								onClick={ onClickMore }
-								href="#"
-								plain
-							>
-								{ translate( 'More about %(product)s', {
-									args: {
-										product: title,
-									},
-								} ) }
-							</Button>
+
+							{ ! hideMoreInfoLink && <MoreInfoLink item={ item } onClickMore={ onClickMore } /> }
 						</p>
 					</div>
 				</div>
 				<div className="featured-item-card--footer">
-					<Button primary={ ctaAsPrimary } onClick={ onClickPurchase } href={ checkoutURL }>
+					<Button
+						primary={ ctaAsPrimary }
+						onClick={ onClickPurchase }
+						disabled={ isCtaDisabled }
+						href={ isCtaDisabled ? '#' : checkoutURL }
+					>
 						{ ctaLabel }
 					</Button>
 				</div>

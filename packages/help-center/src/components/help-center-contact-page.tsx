@@ -110,7 +110,7 @@ export const HelpCenterContactPage: React.FC = () => {
 
 export const HelpCenterContactButton: React.FC = () => {
 	const { __ } = useI18n();
-	const url = useStillNeedHelpURL();
+	const { url, isLoading } = useStillNeedHelpURL();
 	const sectionName = useSelector( getSectionName );
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
@@ -121,9 +121,15 @@ export const HelpCenterContactButton: React.FC = () => {
 		} );
 	};
 
+	let to = redirectToWpcom ? { pathname: url } : url;
+
+	if ( isLoading ) {
+		to = '';
+	}
+
 	return (
 		<Link
-			to={ redirectToWpcom ? { pathname: url } : url }
+			to={ to }
 			target={ redirectToWpcom ? '_blank' : '_self' }
 			onClick={ trackContactButtonClicked }
 			className="button help-center-contact-page__button"

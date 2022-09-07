@@ -51,7 +51,7 @@ const DialogButton = styled( Button )`
 	}
 `;
 
-const Subtitle = styled.p`
+const Subtitle = styled.div`
 	color: var( --color-neutral-50 );
 	font-size: 0.875rem;
 `;

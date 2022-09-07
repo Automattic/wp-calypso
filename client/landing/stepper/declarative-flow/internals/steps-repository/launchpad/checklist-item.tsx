@@ -1,13 +1,15 @@
 import { Button, Gridicon } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import { translate, useRtl } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
 import { isTaskDisabled } from './task-helper';
 import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
-	const { id, isCompleted, actionUrl, title } = task;
-
+	const isRtl = useRtl();
+	const { id, isCompleted, actionUrl, title, actionDispatch } = task;
+	const action = actionDispatch ? { onClick: actionDispatch } : { href: actionUrl };
 	const taskDisabled = isTaskDisabled( task );
+
 	return (
 		<li className={ `launchpad__task-${ id }` }>
 			<Button
@@ -15,6 +17,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				disabled={ taskDisabled }
 				href={ actionUrl }
 				data-task={ id }
+				{ ...action }
 			>
 				{ isCompleted && taskDisabled && (
 					<div className="launchpad__checklist-item-status">
@@ -35,7 +38,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				{ ! taskDisabled && (
 					<Gridicon
 						className="launchpad__checklist-item-chevron"
-						icon="chevron-right"
+						icon={ `chevron-${ isRtl ? 'left' : 'right' }` }
 						size={ 18 }
 					/>
 				) }

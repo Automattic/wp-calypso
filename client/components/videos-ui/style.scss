@@ -413,3 +413,9 @@
 .blank-canvas .videos-ui {
 	min-height: 100vh;
 }
+
+.videos-ui__modal {
+	.blank-canvas__content {
+		padding: 0;
+	}
+}

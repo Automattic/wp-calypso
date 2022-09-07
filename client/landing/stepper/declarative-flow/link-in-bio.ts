@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -16,14 +15,7 @@ export const linkInBio: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [
-			'intro',
-			'linkInBioSetup',
-			'patterns',
-			'completingPurchase',
-			'processing',
-			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
-		] as StepPath[];
+		return [ 'intro', 'linkInBioSetup', 'patterns', 'processing', 'launchpad' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -54,11 +46,8 @@ export const linkInBio: Flow = {
 						) }&search=yes&hide_initial_query=yes`
 					);
 
-				case 'completingPurchase':
+				case 'launchpad': {
 					return navigate( 'processing' );
-
-				case 'processing': {
-					return navigate( providedDependencies?.destination as StepPath );
 				}
 			}
 			return providedDependencies;

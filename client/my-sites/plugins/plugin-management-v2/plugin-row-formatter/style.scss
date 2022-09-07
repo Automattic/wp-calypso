@@ -5,8 +5,9 @@
 	position: relative;
 }
 .plugin-row-formatter__plugin-icon {
-	width: 24px;
-	height: 24px;
+	min-width: 32px;
+	max-width: 32px;
+	height: 32px;
 	vertical-align: middle;
 	margin-inline-end: 16px;
 }
@@ -21,10 +22,12 @@
 	font-size: 0.875rem;
 	text-align: left;
 }
-
+.has-active-status {
+	margin-top: -20px;
+}
 a.button.plugin-row-formatter__plugin-name {
 	@extend .row-data-common-style;
-	width: calc( 100% - 55px );
+	width: 100%;
 }
 a.button.plugin-row-formatter__plugin-name-card {
 	@extend .row-data-common-style;
@@ -32,19 +35,20 @@ a.button.plugin-row-formatter__plugin-name-card {
 }
 .plugin-row-formatter__site-name {
 	@extend .row-data-common-style;
+	display: inline-block;
 	width: 100%;
 }
 .plugin-row-formatter__overlay {
 	display: block;
 	position: absolute;
-	height: 48px;
-	width: 20px;
+	height: 25px;
+	width: 25px;
 	background: linear-gradient(
 		to right,
 		rgba( 255, 255, 255, 0.8 ) 30%,
 		rgba( 255, 255, 255, 1 ) 100%
 	);
-	inset-block-start: -10px;
+	inset-block-start: 0;
 	inset-inline-end: 0;
 }
 .plugin-row-formatter__sites-count-button {
@@ -52,7 +56,15 @@ a.button.plugin-row-formatter__plugin-name-card {
 		text-decoration: underline;
 	}
 }
-
+.plugin-row-formatter__plugin-name-container {
+	width: calc( 100% - 55px );
+	position: relative;
+}
+.has-bulk-management-active {
+	.plugin-row-formatter__plugin-name-container {
+		width: calc( 100% - 75px );
+	}
+}
 .plugin-row-formatter__toggle {
 	.plugin-action .components-toggle-control .components-base-control__field {
 		flex-direction: row-reverse;

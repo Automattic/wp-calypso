@@ -35,12 +35,12 @@ export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
 export { default as linkInBioSetup } from './link-in-bio-setup';
-export { default as completingPurchase } from './completing-purchase';
 export { default as chooseADomain } from './choose-a-domain';
 export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
 export { default as promote } from './promote';
+export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 
 export type StepPath =
 	| 'courses'
@@ -81,8 +81,8 @@ export type StepPath =
 	| 'chooseADomain'
 	| 'linkInBioSetup'
 	| 'newsletterSetup'
-	| 'completingPurchase'
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'
-	| 'promote';
+	| 'promote'
+	| 'getCurrentThemeSoftwareSets';
