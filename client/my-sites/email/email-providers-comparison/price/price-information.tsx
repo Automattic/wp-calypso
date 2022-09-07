@@ -60,11 +60,9 @@ const DiscountPriceInformation = ( {
 	);
 };
 
-export const FreeTrialPriceInformation = ( {
-	className = 'price-information__free-trial',
+const FreeTrialPriceInformation = ( {
 	product,
 }: {
-	className?: string;
 	product: ProductListItem;
 } ): ReactElement | null => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -81,7 +79,7 @@ export const FreeTrialPriceInformation = ( {
 
 	if ( isGoogleWorkspace( product ) || ! isTitanMonthlyProduct( product ) ) {
 		return (
-			<div className={ className }>
+			<div className="price-information__free-trial">
 				{ translate(
 					'Try free today - first renewal at %(firstRenewalPrice)s after trial, regular price %(standardPrice)s per year',
 					translateArguments
@@ -92,7 +90,7 @@ export const FreeTrialPriceInformation = ( {
 
 	if ( isTitanMonthlyProduct( product ) ) {
 		return (
-			<div className={ className }>
+			<div className="price-information__free-trial">
 				{ translate(
 					'Try free today - renews at %(standardPrice)s after trial',
 					translateArguments

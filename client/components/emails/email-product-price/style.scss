@@ -8,14 +8,35 @@
 	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 1;
+	text-align: right;
 
 	> div {
-		line-height: 1.5;
+		line-height: 1.5em;
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
-		align-items: flex-start;
+		align-items: flex-end;
 		font-size: $font-body;
+
+		&.email-product-price__email-step-signup-flow {
+			align-items: flex-start;
+		}
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		display: inline-block;
+		font-size: $font-body-small;
+		text-align: left;
+
+		.is-white-signup &.email-product-price__email-step-signup-flow {
+			display: flex;
+			flex-direction: column-reverse;
+			margin-top: 4px;
+
+			> div {
+				margin-top: 4px;
+			}
+		}
 	}
 
 	.email-product-price__free-price {

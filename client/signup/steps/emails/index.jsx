@@ -4,7 +4,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmailSignupTitanCard from 'calypso/components/emails/email-signup-titan-card';
 import EmailStepSideBar from 'calypso/components/emails/email-step-side-bar';
-import { titanMailYearly } from 'calypso/lib/cart-values/cart-items';
+import { titanMailMonthly } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -21,15 +21,16 @@ class EmailsStep extends Component {
 		const { flowName, signupDependencies, stepName } = this.props;
 		const { domainItem } = signupDependencies;
 
-		const emailItem = domainItem?.meta
-			? titanMailYearly( {
-					domain: domainItem.meta,
-					quantity: 1,
-					extra: {
-						new_quantity: 1,
-					},
-			  } )
-			: undefined;
+		const emailItem =
+			domainItem && domainItem.meta
+				? titanMailMonthly( {
+						domain: domainItem.meta,
+						quantity: 1,
+						extra: {
+							new_quantity: 1,
+						},
+				  } )
+				: undefined;
 
 		// It may be cleaner to call handleSkip() if emailItem is undefined.
 		this.props.recordTracksEvent( 'calypso_signup_email_add', {
@@ -85,7 +86,7 @@ class EmailsStep extends Component {
 	};
 
 	renderContent() {
-		const { hideSkip, signupDependencies, step, stepSectionName, translate } = this.props;
+		const { signupDependencies, step, stepSectionName, translate } = this.props;
 
 		const content = (
 			<div className="emails__register-email-step">
@@ -94,7 +95,6 @@ class EmailsStep extends Component {
 						siteUrl={ signupDependencies.domainItem?.meta }
 						addButtonTitle={ translate( 'Add' ) }
 						skipButtonTitle={ translate( 'Skip' ) }
-						hideSkip={ hideSkip }
 						onAddButtonClick={ this.handleAddEmail }
 						onSkipButtonClick={ this.handleSkip }
 					/>
@@ -118,15 +118,8 @@ class EmailsStep extends Component {
 	}
 
 	render() {
-		const {
-			backUrl = 'domains/',
-			flowName,
-			hideSkip = false,
-			positionInFlow,
-			signupDependencies,
-			stepName,
-			translate,
-		} = this.props;
+		const { flowName, translate, stepName, positionInFlow, signupDependencies } = this.props;
+		const backUrl = 'start/domains/';
 		const headerText = translate( 'Add Professional Email' );
 		const domainName = signupDependencies.domainItem?.meta;
 		const subHeaderText = translate(
@@ -151,7 +144,7 @@ class EmailsStep extends Component {
 				stepContent={ this.renderContent() }
 				allowBackFirstStep={ !! backUrl }
 				backLabelText={ translate( 'Back' ) }
-				hideSkip={ hideSkip }
+				hideSkip={ false }
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Buy an email later' ) }

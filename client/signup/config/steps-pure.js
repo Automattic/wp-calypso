@@ -368,16 +368,6 @@ export function generateSteps( {
 				isDomainOnly: false,
 			},
 		},
-		mailbox: {
-			stepName: 'mailbox',
-			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'domainItem', 'emailItem' ],
-			props: {
-				backUrl: 'mailbox-domain/',
-				hideSkip: true,
-				isDomainOnly: false,
-			},
-		},
 		'domain-only': {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
