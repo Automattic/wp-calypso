@@ -25,7 +25,8 @@ export async function uploadAndSetSiteLogo( siteId: string | number | undefined,
 			url: string;
 		} >( {
 			path: `/sites/${ encodeURIComponent( siteId as string ) }/settings`,
-			apiVersion: '1.4',
+			apiVersion: 'v2',
+			apiNamespace: 'wp/v2',
 			// we know the site doesn't have a logo nor an icon, let's set both
 			body: { site_logo: imageID, site_icon: imageID },
 			method: 'POST',
