@@ -72,7 +72,7 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 
 			const list = state.plugins.installed.plugins[ siteId ] || [];
 			list.forEach( ( item ) => {
-				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
+				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update', 'version' ] );
 
 				memo[ item.slug ] = {
 					...memo[ item.slug ],
