@@ -18,6 +18,7 @@ import {
 } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import JetpackBenefitsScanHistory from 'calypso/blocks/jetpack-benefits/scan-history';
 import JetpackBenefitsSiteBackups from 'calypso/blocks/jetpack-benefits/site-backups';
+import JetpackBenefitsVideoPress from 'calypso/blocks/jetpack-benefits/videopress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 
@@ -87,13 +88,7 @@ const JetpackBenefits: React.FC< Props > = ( { siteId, productSlug } ) => {
 					) }
 				/>
 			) }
-			{ productHasVideoPress( productSlug ) && (
-				<JetpackBenefitsCard
-					headline={ translate( 'Video Hosting' ) }
-					description={ translate( 'Videos hosted with VideoPress' ) }
-					stat={ 28 }
-				/>
-			) }
+			{ productHasVideoPress( productSlug ) && <JetpackBenefitsVideoPress siteId={ siteId } /> }
 		</React.Fragment>
 	);
 };
