@@ -19,7 +19,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteOptions: Step = function SiteOptions( { navigation, flow, data } ) {
+const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( ( data?.siteTitle ?? '' ) as string );
 	const [ tagline, setTagline ] = React.useState( ( data?.tagline ?? '' ) as string );
