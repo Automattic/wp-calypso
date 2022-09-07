@@ -32,8 +32,8 @@ export const newsletter: Flow = {
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
-				: `/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`;
+				? `/start/account/user/${ locale }?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`
+				: `/start/account/user?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`;
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
