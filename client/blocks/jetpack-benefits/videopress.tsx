@@ -22,7 +22,8 @@ export default function JetpackBenefitsCardVideoPress( props: Props ) {
 			<JetpackBenefitsCard
 				headline={ translate( 'Video Hosting' ) }
 				description={ translate( 'Videos hosted with VideoPress' ) }
-				stat={ mediaFound ? mediaFound : 0 }
+				stat={ mediaFound }
+				placeholder={ ! mediaFound }
 			/>
 		</>
 	);
