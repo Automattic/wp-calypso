@@ -60,7 +60,11 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 							href="#"
 							plain
 						>
-							{ translate( 'More about %(name)s', { args: { name } } ) }
+							{ translate( 'More about {{productName/}}', {
+								components: {
+									productName: <>{ name }</>,
+								},
+							} ) }
 						</Button>
 					) }
 				</div>

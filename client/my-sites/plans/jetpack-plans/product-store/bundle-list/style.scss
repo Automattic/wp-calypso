@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
 .jetpack-product-store__bundles-list--featured-item {
 	display: flex;
 	flex-direction: column;
@@ -22,4 +25,15 @@
 	font-size: $font-body;
 	line-height: 24px;
 	font-weight: 600;
+}
+
+
+.jetpack-product-store__bundles-list-all-grid {
+	display: grid;
+	column-gap: 80px;
+	row-gap: 32px;
+
+	@include break-medium {
+		grid-template-columns: repeat( 2, 1fr );
+	}
 }
