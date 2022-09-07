@@ -366,7 +366,6 @@ export class PluginsList extends Component {
 					{
 						components: {
 							em: <em />,
-							p: <p />,
 						},
 						args: {
 							actionText: actionText,
@@ -383,7 +382,6 @@ export class PluginsList extends Component {
 					{
 						components: {
 							em: <em />,
-							p: <p />,
 						},
 						args: {
 							actionText: actionText,
@@ -400,7 +398,6 @@ export class PluginsList extends Component {
 					{
 						components: {
 							em: <em />,
-							p: <p />,
 						},
 						args: {
 							actionText: actionText,
@@ -417,7 +414,6 @@ export class PluginsList extends Component {
 					{
 						components: {
 							em: <em />,
-							p: <p />,
 						},
 						args: {
 							actionText: actionText,
@@ -434,8 +430,13 @@ export class PluginsList extends Component {
 		const { plugins, translate } = this.props;
 		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
 		const pluginsCount = selectedPlugins.length;
-		const pluginsSize = pluginsCount === 1 ? 'plugin' : 'plugins';
+
 		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
+
+		const translationArgs = {
+			args: { pluginsCount },
+			count: pluginsCount,
+		};
 
 		switch ( actionName ) {
 			case 'activate':
@@ -444,12 +445,11 @@ export class PluginsList extends Component {
 						<span>{ this.getConfirmationText( selectedPlugins, 'activate', 'on' ) }</span>
 					</div>,
 					( accepted ) => this.activateSelected( accepted ),
-					translate( 'Activate %(numberOfPlugins)d %(plugins)s', {
-						args: {
-							numberOfPlugins: pluginsCount,
-							plugins: pluginsSize,
-						},
-					} )
+					translate(
+						'Activate %(pluginsCount)d plugin',
+						'Activate %(pluginsCount)d plugins',
+						translationArgs
+					)
 				);
 				break;
 			case 'deactivate':
@@ -460,12 +460,11 @@ export class PluginsList extends Component {
 					isJetpackIncluded
 						? ( accepted ) => this.deactiveAndDisconnectSelected( accepted )
 						: ( accepted ) => this.deactivateSelected( accepted ),
-					translate( 'Deactivate %(numberOfPlugins)d %(plugins)s', {
-						args: {
-							numberOfPlugins: pluginsCount,
-							plugins: pluginsSize,
-						},
-					} )
+					translate(
+						'Deactivate %(pluginsCount)d plugin',
+						'Deactivate %(pluginsCount)d plugins',
+						translationArgs
+					)
 				);
 				break;
 			case 'enableAutoupdates':
@@ -476,12 +475,11 @@ export class PluginsList extends Component {
 						</span>
 					</div>,
 					( accepted ) => this.setAutoupdateSelected( accepted ),
-					translate( 'Enable autoupdates for %(numberOfPlugins)d %(plugins)s', {
-						args: {
-							numberOfPlugins: pluginsCount,
-							plugins: pluginsSize,
-						},
-					} )
+					translate(
+						'Enable autoupdates for %(pluginsCount)d plugin',
+						'Enable autoupdates for %(pluginsCount)d plugins',
+						translationArgs
+					)
 				);
 				break;
 			case 'disableAutoupdates':
@@ -492,12 +490,11 @@ export class PluginsList extends Component {
 						</span>
 					</div>,
 					( accepted ) => this.unsetAutoupdateSelected( accepted ),
-					translate( 'Disable autoupdates for %(numberOfPlugins)d %(plugins)s', {
-						args: {
-							numberOfPlugins: pluginsCount,
-							plugins: pluginsSize,
-						},
-					} )
+					translate(
+						'Disable autoupdates for %(pluginsCount)d plugin',
+						'Disable autoupdates for %(pluginsCount)d plugins',
+						translationArgs
+					)
 				);
 				break;
 			case 'update':
@@ -506,12 +503,11 @@ export class PluginsList extends Component {
 						<span>{ this.getConfirmationText( selectedPlugins, 'update', 'on' ) }</span>
 					</div>,
 					( accepted ) => this.updateSelected( accepted ),
-					translate( 'Update %(numberOfPlugins)d %(plugins)s', {
-						args: {
-							numberOfPlugins: pluginsCount,
-							plugins: pluginsSize,
-						},
-					} )
+					translate(
+						'Update %(pluginsCount)d plugin',
+						'Update %(pluginsCount)d plugins',
+						translationArgs
+					)
 				);
 		}
 	};
