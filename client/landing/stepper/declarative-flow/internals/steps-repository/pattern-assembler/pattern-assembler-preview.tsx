@@ -37,8 +37,11 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 		...selectedDesign,
 		recipe: {
 			...selectedDesign?.recipe,
-			pattern_ids: sections.map( ( pattern ) => encodePatternId( pattern.id ) ),
-			header_pattern_ids: header ? [ encodePatternId( header.id ) ] : undefined,
+			// The blank canvas blocks demo site doesn't have the header, so we inject the header into the first pattern
+			// of the content.
+			pattern_ids: [ header, ...sections ]
+				.filter( Boolean )
+				.map( ( pattern ) => encodePatternId( pattern!.id ) ),
 			footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
 		},
 	} as Design;
