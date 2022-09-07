@@ -1,11 +1,20 @@
 import { StepContainer } from '@automattic/onboarding';
+import { useDispatch } from '@wordpress/data';
 import { useState } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { requestActiveTheme } from 'calypso/state/themes/actions';
+import { useSite } from '../../../../hooks/use-site';
+import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
+import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
+import { STYLE_SHEET } from './constants';
 import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
+import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
 const PatternAssembler: Step = ( { navigation } ) => {
@@ -14,7 +23,27 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
 	const [ sections, setSections ] = useState< Pattern[] >( [] );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
-	const { goNext, goBack } = navigation;
+	const { goBack, goNext, submit } = navigation;
+	const { setDesignOnSite } = useDispatch( SITE_STORE );
+	const reduxDispatch = useReduxDispatch();
+	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const site = useSite();
+	const siteSlug = useSiteSlugParam();
+	const siteId = useSiteIdParam();
+	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+
+	const getDesign = () =>
+		( {
+			recipe: {
+				stylesheet: STYLE_SHEET,
+				header_pattern_ids: [ header?.id ],
+				pattern_ids: sections.map( ( { id } ) => id ),
+				footer_pattern_ids: [ footer?.id ],
+			} as DesignRecipe,
+			slug: 'blank-canvas-blocks',
+			title: 'Blank Canvas',
+			verticalizable: false,
+		} as Design );
 
 	const addSection = ( pattern: Pattern ) => {
 		if ( sectionPosition ) {
@@ -107,7 +136,18 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							setFooter( null );
 						} }
 						onContinueClick={ () => {
-							// TODO
+							if ( siteSlugOrId ) {
+								const design = getDesign();
+								setSelectedDesign( design );
+
+								setPendingAction( () =>
+									setDesignOnSite( siteSlugOrId, design ).then( () =>
+										reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
+									)
+								);
+
+								submit?.( { selectedDesign: design } );
+							}
 						} }
 					/>
 				) }

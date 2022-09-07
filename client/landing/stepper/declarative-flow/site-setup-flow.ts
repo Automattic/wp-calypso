@@ -185,6 +185,9 @@ export const siteSetupFlow: Flow = {
 
 					return navigate( 'processing' );
 
+				case 'patternAssembler':
+					return navigate( 'processing' );
+
 				case 'processing': {
 					const processingResult = params[ 0 ] as ProcessingResult;
 
