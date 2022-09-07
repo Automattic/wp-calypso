@@ -2,8 +2,8 @@
  * @jest-environment jsdom
  */
 import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from '../task-helper';
-import { Task } from '../types';
 import { tasks, launchpadFlowTasks } from '../tasks';
+import { Task } from '../types';
 
 function getTask( taskData = {} ) {
 	const task: Task = {
@@ -20,12 +20,13 @@ function getTask( taskData = {} ) {
 describe( 'Task Helpers', () => {
 	describe( 'getEnhancedTasks', () => {
 		describe( 'when a task should not be enhanced', () => {
-			it( 'it is not enhanced', () => {
+			it( 'then it is not enhanced', () => {
 				const fakeTasks = [
 					getTask( { id: 'fake-task-1' } ),
 					getTask( { id: 'fake-task-2' } ),
 					getTask( { id: 'fake-task-3' } ),
 				];
+				// eslint-disable-next-line @typescript-eslint/no-empty-function
 				expect( getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} ) ).toEqual(
 					fakeTasks
 				);
@@ -35,19 +36,19 @@ describe( 'Task Helpers', () => {
 
 	describe( 'getArrayOfFilteredTasks', () => {
 		describe( 'when no flow is provided', () => {
-			it( 'no tasks are found', () => {
+			it( 'then no tasks are found', () => {
 				expect( getArrayOfFilteredTasks( tasks, null ) ).toBe( null );
 			} );
 		} );
 
-		describe( 'when a non-existing flow is provided ', () => {
-			it( 'no tasks are found', () => {
+		describe( 'when a non-existing flow is provided', () => {
+			it( 'then no tasks are found', () => {
 				expect( getArrayOfFilteredTasks( tasks, 'custom-flow' ) ).toBe( undefined );
 			} );
 		} );
 
-		describe( 'when an existing flow is provided ', () => {
-			it( 'returns found tasks', () => {
+		describe( 'when an existing flow is provided', () => {
+			it( 'then it returns found tasks', () => {
 				expect( getArrayOfFilteredTasks( tasks, 'newsletter' ) ).toEqual(
 					tasks.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
 				);
@@ -56,21 +57,21 @@ describe( 'Task Helpers', () => {
 	} );
 	describe( 'isTaskDisabled', () => {
 		describe( 'when a task is complete', () => {
-			it( 'the task is disabled', () => {
+			it( 'then the task is disabled', () => {
 				const task = getTask( { isCompleted: true } );
 				expect( isTaskDisabled( task ) ).toBe( true );
 			} );
 		} );
 		describe( 'when a given task has other, dependent tasks that should be completed first', () => {
 			describe( 'and the other tasks are incomplete', () => {
-				it( 'the given task is disabled', () => {
+				it( 'then the given task is disabled', () => {
 					const dependencies = [ true, false ];
 					const task = getTask( { dependencies, isCompleted: false } );
 					expect( isTaskDisabled( task ) ).toBe( true );
 				} );
 			} );
 			describe( 'and the other tasks are complete', () => {
-				it( 'the given task is enabled', () => {
+				it( 'then the given task is enabled', () => {
 					const dependencies = [ true, true ];
 					const task = getTask( { dependencies, isCompleted: false } );
 					expect( isTaskDisabled( task ) ).toBe( false );
