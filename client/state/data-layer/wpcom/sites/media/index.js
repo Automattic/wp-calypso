@@ -64,6 +64,7 @@ export const requestMediaSuccess =
 				omit( getNextPageQuery( getState(), siteId ), 'page_handle' )
 			)
 		) {
+			dispatch( receiveMedia( siteId, data.media, data.found, query ) ); // maybe, maybe not what I want but it does propogate data
 			dispatch( successMediaRequest( siteId, query ) );
 			return;
 		}
