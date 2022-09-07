@@ -7,6 +7,7 @@ import {
 	isPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import {
 	SUPPORT_HAPPYCHAT,
 	SUPPORT_FORUM,
@@ -16,6 +17,7 @@ import {
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
@@ -29,16 +31,23 @@ import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presal
 import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
-import { setHelpCenterVisible } from 'calypso/state/ui/help-center-visible/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import type { Theme } from '@automattic/composite-checkout';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 type StyledProps = {
 	theme?: Theme;
 };
 
-const HappychatButton = styled( HappychatButtonUnstyled )`
+type HappychatButtonProps = {
+	onClick: () => void;
+	theme?: Theme;
+	openHelpCenter: boolean;
+};
+
+const HappychatButton: React.FC< HappychatButtonProps > = styled( HappychatButtonUnstyled )`
 	margin: 0;
 	padding: 0;
 
@@ -78,8 +87,10 @@ export function PaymentChatButton( {
 
 	return (
 		<HappychatButton onClick={ chatButtonClicked } openHelpCenter={ openHelpCenter }>
-			<Gridicon icon="chat" />
-			{ translate( 'Need help? Chat with us.' ) }
+			<>
+				<Gridicon icon="chat" />
+				{ translate( 'Need help? Chat with us.' ) }
+			</>
 		</HappychatButton>
 	);
 }
@@ -145,6 +156,7 @@ export default function CheckoutHelpLink() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const {
 		happyChatAvailable,
@@ -173,9 +185,7 @@ export default function CheckoutHelpLink() {
 	);
 
 	const handleHelpButtonClicked = () => {
-		reduxDispatch(
-			userAllowedToHelpCenter ? setHelpCenterVisible( true ) : showInlineHelpPopover()
-		);
+		reduxDispatch( userAllowedToHelpCenter ? setShowHelpCenter( true ) : showInlineHelpPopover() );
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_composite_summary_help_click', {
 				location: userAllowedToHelpCenter ? 'help-center' : 'inline-help-popover',

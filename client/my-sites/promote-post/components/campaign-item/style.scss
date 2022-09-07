@@ -33,6 +33,25 @@
 			.campaign-item__header-title {
 				font-weight: 500;
 			}
+
+			.campaign-item__header-status {
+				display: flex;
+				align-items: center;
+
+				.campaign-item__display-name {
+					font-size: 0.875rem;
+					margin: 0 5px;
+				}
+
+				.campaign-item__user-avatar {
+					width: 28px;
+					height: 28px;
+
+					img {
+						border-radius: 28px;
+					}
+				}
+			}
 		}
 	}
 
@@ -41,8 +60,7 @@
 
 		.campaign-item__row {
 			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
+			flex-flow: row wrap;
 			width: 100%;
 			margin-top: 20px;
 			margin-bottom: 20px;
@@ -60,7 +78,8 @@
 					font-size: 1rem;
 				}
 
-				.campaign-item__reach-value, .campaign-item__clicks-value {
+				.campaign-item__reach-value,
+				.campaign-item__clicks-value {
 					font-size: 1.5rem;
 					font-weight: 600;
 				}

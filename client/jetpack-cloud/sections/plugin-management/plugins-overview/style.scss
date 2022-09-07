@@ -4,8 +4,13 @@
 .plugins-overview__container {
 	.current-section {
 		padding: 0 16px;
+
+		button {
+			padding: 12px 8px;
+		}
 	}
 }
+
 .plugins-overview__logo {
 	fill: var( --color-neutral-10 );
 	color: var( --color-neutral-10 );

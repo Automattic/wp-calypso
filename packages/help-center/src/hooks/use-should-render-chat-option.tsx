@@ -9,8 +9,7 @@ type Result = {
 
 export function useShouldRenderChatOption(): Result {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { available, isLoading } = useHappychatAvailable();
-
+	const { data, isLoading } = useHappychatAvailable();
 	if ( ! chatStatus?.is_user_eligible ) {
 		return {
 			render: false,
@@ -22,7 +21,7 @@ export function useShouldRenderChatOption(): Result {
 			state: 'CLOSED',
 			isLoading,
 		};
-	} else if ( available ) {
+	} else if ( data?.available ) {
 		return {
 			render: true,
 			state: 'AVAILABLE',

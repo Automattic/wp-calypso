@@ -50,6 +50,8 @@ export default function CampaignItem( { campaign }: Props ) {
 		audience_list,
 		impressions_estimated_total,
 		deliver_margin_multiplier,
+		display_name,
+		avatar_url,
 	} = campaign;
 
 	const overallSpending = useMemo(
@@ -92,6 +94,12 @@ export default function CampaignItem( { campaign }: Props ) {
 					<Badge type={ getCampaignStatusBadgeColor( campaignStatus ) }>
 						{ getCampaignStatus( campaignStatus ) }
 					</Badge>
+					<div className="campaign-item__display-name">{ display_name }</div>
+					{ avatar_url && (
+						<div className="campaign-item__user-avatar">
+							<img src={ avatar_url } alt="" />
+						</div>
+					) }
 				</div>
 			</div>
 			{ adCreativeUrl && (
@@ -147,7 +155,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__reach-value">
-								${ impressions_total || 0 }
+								{ impressions_total || 0 }
 							</div>
 						</div>
 						<div className="campaign-item__column campaign-item__clicks">

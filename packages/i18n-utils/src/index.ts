@@ -1,4 +1,9 @@
-export { localizeUrl, useLocalizeUrl, withLocalizeUrl } from './localize-url';
+export {
+	localizeUrl,
+	useLocalizeUrl,
+	withLocalizeUrl,
+	urlLocalizationMapping,
+} from './localize-url';
 export { LocaleProvider, useLocale, withLocale, useIsEnglishLocale } from './locale-context';
 export * from './locales';
 export { default as guessTimezone } from './guess-timezone';

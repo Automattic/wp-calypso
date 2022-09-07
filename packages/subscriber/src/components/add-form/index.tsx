@@ -3,7 +3,7 @@ import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
@@ -29,6 +29,7 @@ interface Props {
 	showSkipBtn?: boolean;
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
+	allowEmptyFormSubmit?: boolean;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
 }
@@ -41,6 +42,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showSkipBtn,
 		showCsvUpload,
 		submitBtnName,
+		allowEmptyFormSubmit,
 		onSkipBtnClick,
 		onImportFinished,
 	} = props;
@@ -57,7 +59,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		__( 'parents@example.com' ),
 		__( 'friend@example.com' ),
 	];
-	const inProgress = useInProgressState();
+	const inProgress = useInProgressState( 0 );
 	const prevInProgress = useRef( inProgress );
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
@@ -65,6 +67,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
+	const importSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getImportSubscribersSelector() );
 	const [ formFileUploadElement ] = useState(
 		createElement( FormFileUpload, {
 			name: 'import',
@@ -76,9 +79,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	/**
 	 * ↓ Effects
 	 */
-	useEffect( () => {
-		prevInProgress.current = inProgress;
-	}, [ inProgress ] );
 	// get initial list of jobs
 	useEffect( () => {
 		getSubscribersImports( siteId );
@@ -86,8 +86,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	// run active job recognition process which updates state
 	useActiveJobRecognition( siteId );
 	useEffect( extendEmailFormControls, [ emails ] );
+	useEffect( importFinishedRecognition );
 
-	! inProgress && prevInProgress.current && onImportFinished?.();
+	useEffect( () => {
+		prevInProgress.current = inProgress;
+	}, [ inProgress ] );
 
 	/**
 	 * ↓ Functions
@@ -104,7 +107,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		validEmails.length && addSubscribers( siteId, validEmails );
 		selectedFile && importCsvSubscribers( siteId, selectedFile );
 
-		! validEmails.length && ! selectedFile && onImportFinished?.();
+		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
 	}
 
 	function onEmailChange( value: string, index: number ) {
@@ -164,6 +167,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
+	function importFinishedRecognition() {
+		! importSelector?.error && prevInProgress.current && ! inProgress && onImportFinished?.();
+	}
+
 	/**
 	 * ↓ Templates
 	 */
@@ -177,6 +184,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			<div className={ 'add-subscriber__form--container' }>
 				{ inProgress && (
 					<Notice isDismissible={ false }>{ __( 'Your email list is being uploaded' ) }...</Notice>
+				) }
+
+				{ importSelector?.error && (
+					<Notice isDismissible={ false } status={ 'error' }>
+						{ importSelector.error.message as string }
+					</Notice>
 				) }
 
 				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>
@@ -218,9 +231,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						<FormInputValidation isError={ true } text={ '' }>
 							{ createInterpolateElement(
 								__(
-									'Sorry, you can only upload CSV files right now. ' +
-										'Most providers will let you export this from your settings. ' +
-										'<uploadBtn>Select another file</uploadBtn>'
+									'Sorry, you can only upload CSV files right now. Most providers will let you export this from your settings. <uploadBtn>Select another file</uploadBtn>'
 								),
 								{ uploadBtn: formFileUploadElement }
 							) }
@@ -264,8 +275,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						<p className={ 'add-subscriber__form--disclaimer' }>
 							{ createInterpolateElement(
 								__(
-									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to ' +
-										'email each person on your list. <Button>Learn more</Button>'
+									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to email each person on your list. <Button>Learn more</Button>'
 								),
 								{
 									Button: createElement( Button, {

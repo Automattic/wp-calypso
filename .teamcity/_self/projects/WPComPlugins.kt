@@ -192,6 +192,12 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 		name = "Upload Gutenberg Source Maps to Sentry";
 		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
 
+		// Only needed so that we can test the job in different branches.
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
 		params {
 			text(
 				name = "GUTENBERG_VERSION",

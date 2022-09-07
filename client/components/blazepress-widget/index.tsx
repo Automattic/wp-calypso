@@ -1,3 +1,6 @@
+import { Dialog } from '@automattic/components';
+import { __ } from '@wordpress/i18n';
+import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
@@ -14,12 +17,16 @@ export type BlazePressPromotionProps = {
 	onClose: () => void;
 };
 
+type BlazePressTranslatable = ( original: string, extra?: TranslateOptionsText ) => string;
+
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
 	const { isVisible = false, onClose = () => {} } = props;
 	const [ isLoading, setIsLoading ] = useState( true );
+	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate() as BlazePressTranslatable;
 
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
@@ -40,11 +47,37 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					props.siteId,
 					props.postId,
 					onClose,
+					( original: string, options?: TranslateOptionsText ): string => {
+						if ( options ) {
+							// This is a special case where we re-use the translate in another application
+							// that is mounted inside calypso
+							// eslint-disable-next-line wpcalypso/i18n-no-variables
+							return translate( original, options );
+						}
+						// eslint-disable-next-line wpcalypso/i18n-no-variables
+						return translate( original );
+					},
 					widgetContainer.current
 				);
 				setIsLoading( false );
 			} )();
-	}, [ isVisible, props.postId, props.siteId ] );
+	}, [ isVisible, props.postId, props.siteId, selectedSiteSlug ] );
+
+	const cancelDialogButtons = [
+		{
+			action: 'cancel',
+			label: __( 'No' ),
+		},
+		{
+			action: 'close',
+			isPrimary: true,
+			label: __( 'Yes, cancel' ),
+			onClick: async () => {
+				setShowCancelDialog( false );
+				onClose();
+			},
+		},
+	];
 
 	const promoteWidgetStatus = usePromoteWidget();
 	if ( promoteWidgetStatus === PromoteWidgetStatus.DISABLED ) {
@@ -57,13 +90,13 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				<BlankCanvas className={ 'blazepress-widget' }>
 					<div className={ 'blazepress-widget__header-bar' }>
 						<WordPressLogo />
-						<h2>Promote</h2>
+						<h2>Advertising</h2>
 						<span
 							role="button"
 							className={ 'blazepress-widget__cancel' }
-							onKeyDown={ onClose }
+							onKeyDown={ () => setShowCancelDialog( true ) }
 							tabIndex={ 0 }
-							onClick={ onClose }
+							onClick={ () => setShowCancelDialog( true ) }
 						>
 							Cancel
 						</span>
@@ -73,8 +106,20 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							isLoading ? 'blazepress-widget__content loading' : 'blazepress-widget__content'
 						}
 					>
+						<Dialog
+							isVisible={ showCancelDialog }
+							buttons={ cancelDialogButtons }
+							onClose={ () => setShowCancelDialog( false ) }
+						>
+							<h1>{ __( 'Cancel the campaign' ) }</h1>
+							<p>
+								{ __(
+									'If you cancel now, you will lose any progress you have made. Are you sure you want to cancel?'
+								) }
+							</p>
+						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
-						<div ref={ widgetContainer }></div>
+						<div className={ 'blazepress-widget__widget-container' } ref={ widgetContainer }></div>
 					</div>
 				</BlankCanvas>
 			) }

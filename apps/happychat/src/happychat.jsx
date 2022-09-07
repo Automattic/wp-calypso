@@ -20,7 +20,7 @@ import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-
 import getCurrentMessage from 'calypso/state/happychat/selectors/get-happychat-current-message';
 import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
 import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
-import { setCurrentMessage, closeChat } from 'calypso/state/happychat/ui/actions';
+import { setCurrentMessage } from 'calypso/state/happychat/ui/actions';
 import { getUserInfo } from './getUserInfo';
 
 import './happychat.scss';
@@ -36,7 +36,7 @@ function getReceivedMessagesOlderThan( timestamp, messages ) {
 
 function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation } ) {
 	const dispatch = useDispatch();
-	const [ blurredAt, setBlurredAt ] = useState( Date.now() );
+	const [ blurredAt, setBlurredAt ] = useState( 0 );
 	const [ introMessage, setIntroMessage ] = useState( null );
 
 	// listen to messages from parent window
@@ -86,7 +86,15 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 
 	// notify parent window about chat status changes
 	useEffect( () => {
-		window.parent.postMessage( { chatStatus }, '*' );
+		if ( chatStatus === 'closed' ) {
+			parentTarget?.postMessage(
+				{
+					type: 'window-state-change',
+					state: 'ended',
+				},
+				'*'
+			);
+		}
 	}, [ chatStatus ] );
 
 	useEffect( () => {
@@ -104,18 +112,17 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 				'*'
 			);
 		}
+		window.addEventListener( 'visibilitychange', visibilityHandler );
 
 		function closeHandler() {
 			parentTarget?.postMessage(
 				{
 					type: 'window-state-change',
-					state: 'ended',
+					state: 'blurred',
 				},
 				'*'
 			);
-			dispatch( closeChat() );
 		}
-		window.addEventListener( 'visibilitychange', visibilityHandler );
 		window.addEventListener( 'beforeunload', closeHandler );
 
 		// send open state on load
@@ -152,13 +159,12 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 	}, [ blurredAt, timeline ] );
 
 	useEffect( () => {
-		// blurredAt is 0 when the user is looking
-		if ( blurredAt ) {
+		dispatch( sendEvent( `Started looking at Happychat` ) );
+
+		return () => {
 			dispatch( sendEvent( `Stopped looking at Happychat` ) );
-		} else {
-			dispatch( sendEvent( `Started looking at Happychat` ) );
-		}
-	}, [ blurredAt, dispatch ] );
+		};
+	}, [ dispatch ] );
 
 	return null;
 }

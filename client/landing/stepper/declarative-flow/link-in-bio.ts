@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -16,14 +16,7 @@ export const linkInBio: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [
-			'intro',
-			'linkInBioSetup',
-			'patterns',
-			'completingPurchase',
-			'processing',
-			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
-		] as StepPath[];
+		return [ 'intro', 'linkInBioSetup', 'patterns', 'processing', 'launchpad' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -33,16 +26,23 @@ export const linkInBio: Flow = {
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const locale = useLocale();
+
+		const getStartUrl = () => {
+			return locale && locale !== 'en'
+				? `/start/account/user/${ locale }?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
+				: `/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`;
+		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			const logInUrl = getStartUrl();
+
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
 						return navigate( 'patterns' );
 					}
-					return window.location.assign(
-						`/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
-					);
+					return window.location.assign( logInUrl );
 
 				case 'patterns':
 					return navigate( 'linkInBioSetup' );
@@ -54,11 +54,8 @@ export const linkInBio: Flow = {
 						) }&search=yes&hide_initial_query=yes`
 					);
 
-				case 'completingPurchase':
+				case 'launchpad': {
 					return navigate( 'processing' );
-
-				case 'processing': {
-					return navigate( providedDependencies?.destination as StepPath );
 				}
 			}
 			return providedDependencies;

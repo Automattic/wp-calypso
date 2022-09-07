@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { IMPORT_PROGRESS_SIMULATION_DURATION } from '../config';
 import { SUBSCRIBER_STORE } from '../store';
 
-export function useInProgressState() {
+export function useInProgressState( simulationDuration = IMPORT_PROGRESS_SIMULATION_DURATION ) {
 	const addSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getAddSubscribersSelector() );
 	const importSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getImportSubscribersSelector() );
 	const IN_PROGRESS = addSelector?.inProgress || importSelector?.inProgress;
@@ -15,7 +15,7 @@ export function useInProgressState() {
 		if ( inProgress ) {
 			timer = setTimeout( () => {
 				setInProgress( false );
-			}, IMPORT_PROGRESS_SIMULATION_DURATION );
+			}, simulationDuration );
 		}
 
 		return () => clearTimeout( timer );

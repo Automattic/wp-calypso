@@ -23,10 +23,8 @@ For larger features, keeping branches small requires hiding work-in-progress (WI
 
 ## Keeping Your Branch Up To Date
 
-While it is tempting to merge from `trunk` into your branch frequently, this leads to a messy history because each merge creates a merge commit. When working by yourself, it is best to use `git pull --rebase trunk`, but if you're pushing to a shared repo, it is best to not do any merging or rebasing until the feature is ready for final testing, and then do a [rebase](https://github.com/edx/edx-platform/wiki/How-to-Rebase-a-Pull-Request) at the very end. This is one reason why it is important to open pull requests whenever you have working code.
+Feel free to use `git rebase trunk` or `git merge trunk` to keep your branch up to date. Each strategy has its own pros and cons (see some conversation in [Automattic/wp-calypso#66167](https://github.com/Automattic/wp-calypso/pull/66167)), so the developer can decide which they prefer. Because we "Squash and merge" when landing pull requests, history is collapsed to a single commit in both cases.
 
-If you have a Pull Request branch that cannot be merged into `trunk` due to a conflict (this can happen for long-running Pull Request discussions), it's still best to rebase the branch (rather than merge) and resolve any conflicts on your local copy.
-
-Once you have resolved any conflicts locally you can update the Pull Request with `git push --force-with-lease` (note: we prefer using `--force-with-lease` over `--force` to help protect remote commits).
+If you have a Pull Request branch that cannot be merged into `trunk` due to a conflict (this can happen for long-running Pull Request discussions), you can rebase the branch (rather than merge) and resolve any conflicts on your local copy. Once you have resolved any conflicts locally you can update the Pull Request with `git push --force-with-lease` (note: we prefer using `--force-with-lease` over `--force` to help protect remote commits).
 
 **Be aware** that a force-push will still **replace** (overwrite) any commits currently in your shared branch, so anyone who is also using that branch will be in trouble. Only use `git push --force-with-lease` if the Pull Request is ready to merge and no one else is using it (or if you have coordinated the force-push with the other developers working on the branch).

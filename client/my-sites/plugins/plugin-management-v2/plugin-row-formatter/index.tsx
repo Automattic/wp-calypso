@@ -1,9 +1,10 @@
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { ReactElement, ReactChild } from 'react';
 import { useSelector } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { INSTALL_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
@@ -13,11 +14,12 @@ import {
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
+import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
+import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { MomentInput } from 'moment';
-import type { ReactElement, ReactChild } from 'react';
 
 import './style.scss';
 
@@ -27,6 +29,7 @@ interface Props {
 	selectedSite?: SiteDetails;
 	isSmallScreen?: boolean;
 	className?: string;
+	updatePlugin?: ( plugin: Plugin ) => void;
 }
 
 export default function PluginRowFormatter( {
@@ -35,6 +38,7 @@ export default function PluginRowFormatter( {
 	selectedSite,
 	isSmallScreen,
 	className,
+	updatePlugin,
 }: Props ): ReactElement | any {
 	const translate = useTranslate();
 
@@ -76,6 +80,20 @@ export default function PluginRowFormatter( {
 
 	const siteCount = item?.sites && Object.keys( item.sites ).length;
 
+	const allStatuses = getPluginActionStatuses( state );
+
+	const currentSiteStatuses = allStatuses.filter(
+		( status ) => status.pluginId === item.id && status.action !== UPDATE_PLUGIN
+	);
+
+	const pluginActionStatus =
+		currentSiteStatuses.length > 0 ? (
+			<PluginActionStatus
+				currentSiteStatuses={ currentSiteStatuses }
+				selectedSite={ selectedSite }
+			/>
+		) : null;
+
 	switch ( columnKey ) {
 		case 'site-name':
 			return (
@@ -87,9 +105,12 @@ export default function PluginRowFormatter( {
 			);
 		case 'plugin':
 			return isSmallScreen ? (
-				<PluginDetailsButton className="plugin-row-formatter__plugin-name-card">
-					{ item.name }
-				</PluginDetailsButton>
+				<>
+					<PluginDetailsButton className="plugin-row-formatter__plugin-name-card">
+						{ item.name }
+					</PluginDetailsButton>
+					{ pluginActionStatus }
+				</>
 			) : (
 				<span className="plugin-row-formatter__row-container">
 					<span className="plugin-row-formatter__plugin-details">
@@ -111,11 +132,14 @@ export default function PluginRowFormatter( {
 						) : (
 							<Gridicon className="plugin-row-formatter__plugin-icon has-opacity" icon="plugins" />
 						) }
-						<PluginDetailsButton className="plugin-row-formatter__plugin-name">
-							{ item.name }
-						</PluginDetailsButton>
+						<div className="plugin-row-formatter__plugin-name-container">
+							<PluginDetailsButton className="plugin-row-formatter__plugin-name">
+								{ item.name }
+							</PluginDetailsButton>
+							<span className="plugin-row-formatter__overlay"></span>
+							{ pluginActionStatus }
+						</div>
 					</span>
-					<span className="plugin-row-formatter__overlay"></span>
 				</span>
 			);
 		case 'sites':
@@ -162,18 +186,30 @@ export default function PluginRowFormatter( {
 				)
 			);
 		case 'last-updated':
-			if ( item.last_updated ) {
-				return isSmallScreen
-					? translate( 'Last updated %(ago)s', {
+			if ( item?.update && item?.last_updated ) {
+				return (
+					<span className="plugin-row-formatter__last-updated">
+						{ translate( '{{span}}Updated{{/span}} %(ago)s', {
+							components: {
+								span: <span />,
+							},
 							args: {
 								ago: ago( item.last_updated ),
 							},
-					  } )
-					: ago( item.last_updated );
+						} ) }
+					</span>
+				);
 			}
 			return null;
 		case 'update':
-			return <UpdatePlugin plugin={ item } selectedSite={ selectedSite } className={ className } />;
+			return (
+				<UpdatePlugin
+					plugin={ item }
+					selectedSite={ selectedSite }
+					className={ className }
+					updatePlugin={ updatePlugin }
+				/>
+			);
 		case 'install':
 			return (
 				<div className="plugin-row-formatter__install-plugin">
@@ -186,5 +222,7 @@ export default function PluginRowFormatter( {
 					/>
 				</div>
 			);
+		case 'bulk-actions':
+			return null;
 	}
 }
