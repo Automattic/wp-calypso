@@ -10,9 +10,17 @@ import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { hasTitanMailWithUs, getTitanProductName } from 'calypso/lib/titan';
+import {
+	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
+	getTitanProductName,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import {
+	emailManagementPurchaseNewEmailAccount,
+	emailManagement,
+} from 'calypso/my-sites/email/paths';
 import TitanSetUpMailboxForm from 'calypso/my-sites/email/titan-set-up-mailbox/titan-set-up-mailbox-form';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -40,6 +48,10 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 
 	const hasTitanSubscription = hasTitanMailWithUs( selectedDomain );
 
+	const configuredMailboxCount = getConfiguredTitanMailboxCount( selectedDomain );
+	const maxMailboxCount = getMaxTitanMailboxCount( selectedDomain );
+	const hasUnconfiguredMailboxes = configuredMailboxCount < maxMailboxCount;
+
 	const handleBack = useCallback( () => {
 		page( previousRoute );
 	}, [ previousRoute ] );
@@ -57,11 +69,14 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 					source
 				)
 			);
+		} else if ( selectedDomain && ! hasUnconfiguredMailboxes ) {
+			page.redirect( emailManagement( selectedSiteSlug ?? '', selectedDomainName ) );
 		}
 	}, [
-		selectedDomain,
 		currentRoute,
 		hasTitanSubscription,
+		hasUnconfiguredMailboxes,
+		selectedDomain,
 		selectedDomainName,
 		selectedSiteSlug,
 		source,

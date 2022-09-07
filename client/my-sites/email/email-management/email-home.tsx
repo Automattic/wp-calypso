@@ -10,7 +10,11 @@ import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
+import {
+	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
@@ -180,8 +184,8 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	if ( isSingleDomainThatHasEmail ) {
 		if (
-			( domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount ?? 0 ) > 0 &&
-			domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
+			getMaxTitanMailboxCount( domainsWithEmail[ 0 ] ) > 0 &&
+			getConfiguredTitanMailboxCount( domainsWithEmail[ 0 ] ) === 0
 		) {
 			page.redirect(
 				emailManagementTitanSetUpMailbox( selectedSite.slug, domainsWithEmail[ 0 ].domain )
