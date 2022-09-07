@@ -11,16 +11,12 @@
 	text-align: right;
 
 	> div {
-		line-height: 1.5em;
+		line-height: 1.5;
 	}
 
 	@include breakpoint-deprecated( '>660px' ) {
-		align-items: flex-end;
+		align-items: flex-start;
 		font-size: $font-body;
-
-		&.email-product-price__email-step-signup-flow {
-			align-items: flex-start;
-		}
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
