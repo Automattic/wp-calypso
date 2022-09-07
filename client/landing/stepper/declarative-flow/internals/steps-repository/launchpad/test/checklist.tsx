@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import React from 'react';
-import { Task } from '../types';
-import Checklist from '../checklist';
 import { render } from '@testing-library/react';
+import React from 'react';
+import Checklist from '../checklist';
+import { Task } from '../types';
 
 function getTask( taskData = {} ) {
 	const task: Task = {
