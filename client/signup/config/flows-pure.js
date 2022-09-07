@@ -157,7 +157,7 @@ export function generateFlows( {
 			destination: getSignupDestination,
 			description:
 				'Copy of the onboarding flow that always includes an email step; the flow is used by the Professional Email landing page',
-			lastModified: '2022-08-26',
+			lastModified: '2022-09-07',
 			showRecaptcha: true,
 		},
 		{
