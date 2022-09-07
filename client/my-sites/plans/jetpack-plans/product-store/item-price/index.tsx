@@ -12,6 +12,7 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 	isOwned,
 	item,
 	siteId,
+	isMultiSiteIncompatible,
 } ) => {
 	const { originalPrice, discountedPrice, isFetching } = useItemPrice(
 		siteId,
@@ -21,15 +22,19 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const translate = useTranslate();
 
-	if ( isOwned || isIncludedInPlan ) {
-		return (
-			<div className="item-price__is-owned">
-				<span className="item-price__is-owned--dot"></span>
-				<span className="item-price__is-owned--text">
-					{ isOwned ? translate( 'Active on your site' ) : translate( 'Part of the current plan' ) }
-				</span>
-			</div>
-		);
+	const renderItemPriceAltInfo = ( altText: React.ReactChild ) => (
+		<div className="item-price__alt-info">
+			<span className="item-price__alt-info--dot"></span>
+			<span className="item-price__alt-info--text">{ altText }</span>
+		</div>
+	);
+
+	if ( isMultiSiteIncompatible ) {
+		return renderItemPriceAltInfo( translate( 'Not available for multisite WordPress installs' ) );
+	} else if ( isOwned ) {
+		return renderItemPriceAltInfo( translate( 'Active on your site' ) );
+	} else if ( isIncludedInPlan ) {
+		return renderItemPriceAltInfo( translate( 'Part of the current plan' ) );
 	}
 
 	return (

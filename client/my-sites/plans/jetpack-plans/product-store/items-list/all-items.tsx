@@ -24,6 +24,8 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		getOnClickPurchase,
 		isIncludedInPlan,
 		isIncludedInPlanOrSuperseded,
+		isMultisiteCompatible,
+		isMultisite,
 		isOwned,
 		isPlanFeature,
 		isSuperseded,
@@ -49,9 +51,11 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					const isItemDeprecated = isDeprecated( item );
 					const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
 					const isItemIncludedInPlan = isIncludedInPlan( item );
+					const isMultiSiteIncompatible = isMultisite && ! isMultisiteCompatible( item );
 
 					const isCtaDisabled =
-						( isItemOwned || isItemIncludedInPlan ) && ! isUserPurchaseOwner( item );
+						isMultiSiteIncompatible ||
+						( ( isItemOwned || isItemIncludedInPlan ) && ! isUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
 
@@ -60,6 +64,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 
 					const price = (
 						<ItemPrice
+							isMultiSiteIncompatible={ isMultiSiteIncompatible }
 							isIncludedInPlan={ isItemIncludedInPlan }
 							isOwned={ isItemOwned }
 							item={ item }
