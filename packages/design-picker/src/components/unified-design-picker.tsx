@@ -88,7 +88,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	// const theme = useThemeDetails( design.slug );
 	// const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
 	// Just for testing
-	const showBundledBadge = design.slug === 'baxter';
+	const showBundledBadge = isEnabled( 'themes/plugin-bundling' ) && design.slug === 'baxter';
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
