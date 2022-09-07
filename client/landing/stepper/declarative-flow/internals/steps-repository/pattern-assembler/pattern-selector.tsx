@@ -25,8 +25,8 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 			</div>
 			<div className="pattern-selector__body">
 				<div className="pattern-selector__block-list" role="listbox">
-					{ patterns?.map( ( item: Pattern ) => (
-						<PatternPreviewAutoHeight key={ item.id } patternId={ item.id }>
+					{ patterns?.map( ( item: Pattern, index: number ) => (
+						<PatternPreviewAutoHeight key={ `${ index }-${ item.id }` } patternId={ item.id }>
 							<div
 								aria-label={ item.name }
 								tabIndex={ 0 }

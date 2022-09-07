@@ -96,84 +96,8 @@ const sectionPatterns: Pattern[] = [
 		name: 'Contact',
 	},
 	{
-		id: 4691,
-		name: 'Payment Block Media and Text',
-	},
-	{
-		id: 3759,
-		name: 'Coming Soon',
-	},
-	{
-		id: 1400,
-		name: 'Contact',
-	},
-	{
-		id: 4691,
-		name: 'Payment Block Media and Text',
-	},
-	{
-		id: 3759,
-		name: 'Coming Soon',
-	},
-	{
-		id: 1400,
-		name: 'Contact',
-	},
-	{
 		id: 3856,
 		name: 'Organic Gallery With Intro Text',
-	},
-	{
-		id: 1930,
-		name: 'Intro Section With Text and Spot Images',
-	},
-	{
-		id: 3862,
-		name: 'Alternating Image and Text',
-	},
-	{
-		id: 1826,
-		name: 'Two Images, Text, and Buttons',
-	},
-	{
-		id: 5564,
-		name: 'Contact',
-	},
-	{
-		id: 1046,
-		name: 'Subscription',
-	},
-	{
-		id: 3856,
-		name: 'Organic Gallery With Intro Text',
-	},
-	{
-		id: 1930,
-		name: 'Intro Section With Text and Spot Images',
-	},
-	{
-		id: 3862,
-		name: 'Alternating Image and Text',
-	},
-	{
-		id: 1826,
-		name: 'Two Images, Text, and Buttons',
-	},
-	{
-		id: 5564,
-		name: 'Contact',
-	},
-	{
-		id: 1046,
-		name: 'Subscription',
-	},
-	{
-		id: 1593,
-		name: 'Header and Three Images',
-	},
-	{
-		id: 678,
-		name: 'Images with Titles',
 	},
 	{
 		id: 1930,
