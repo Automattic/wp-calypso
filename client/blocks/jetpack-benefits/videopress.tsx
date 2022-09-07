@@ -6,7 +6,6 @@ import getMediaFound from 'calypso/state/selectors/get-media-found';
 
 interface Props {
 	siteId: number;
-	isStandalone: boolean;
 }
 
 export default function JetpackBenefitsCardVideoPress( props: Props ) {
