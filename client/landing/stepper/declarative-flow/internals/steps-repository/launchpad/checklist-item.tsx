@@ -3,22 +3,20 @@ import { translate } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
 import { isTaskDisabled } from './task-helper';
 import { Task } from './types';
+import classnames from 'classnames';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
 	const { id, isCompleted, keepActive, actionUrl, title, actionDispatch } = task;
 	const action = actionDispatch ? { onClick: actionDispatch } : { href: actionUrl };
 	const taskDisabled = isTaskDisabled( task );
 
-	let taskStyle = '';
-	if ( isCompleted ) {
-		taskStyle = 'is-completed';
-		if ( keepActive ) {
-			taskStyle += ' keep-active';
-		}
-	}
-
 	return (
-		<li className={ `launchpad__task ${ taskStyle }` }>
+		<li
+			className={ classnames( 'launchpad__task', {
+				'keep-active': keepActive,
+				'is-completed': isCompleted,
+			} ) }
+		>
 			<Button
 				className="launchpad__checklist-item"
 				disabled={ taskDisabled }
