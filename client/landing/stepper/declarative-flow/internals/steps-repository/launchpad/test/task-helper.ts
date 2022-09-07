@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { getArrayOfFilteredTasks, isTaskDisabled } from '../task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from '../task-helper';
 import { Task } from '../types';
+import { tasks, launchpadFlowTasks } from '../tasks';
 
 function getTask( taskData = {} ) {
 	const task: Task = {
@@ -17,27 +18,41 @@ function getTask( taskData = {} ) {
 }
 
 describe( 'Task Helpers', () => {
-	// describe( 'getEnhancedTasks', () => {
-	// 	describe( 'when a task is complete', () => {
-	// 		it( 'the task is disabled', () => {
-	// 			expect( isTaskDisabled( task ) ).toBe( true );
-	// 		} );
-	// 	} );
-	// } );
+	describe( 'getEnhancedTasks', () => {
+		describe( 'when a task should not be enhanced', () => {
+			it( 'it is not enhanced', () => {
+				const fakeTasks = [
+					getTask( { id: 'fake-task-1' } ),
+					getTask( { id: 'fake-task-2' } ),
+					getTask( { id: 'fake-task-3' } ),
+				];
+				expect( getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} ) ).toEqual(
+					fakeTasks
+				);
+			} );
+		} );
+	} );
+
 	describe( 'getArrayOfFilteredTasks', () => {
-		const tasks = [
-			getTask( { id: 'foo_task' } ),
-			getTask( { id: 'bar_task' } ),
-			getTask( { id: 'baz_task' } ),
-		];
+		describe( 'when no flow is provided', () => {
+			it( 'no tasks are found', () => {
+				expect( getArrayOfFilteredTasks( tasks, null ) ).toBe( null );
+			} );
+		} );
 
-		const flow = 'newsletter';
+		describe( 'when a non-existing flow is provided ', () => {
+			it( 'no tasks are found', () => {
+				expect( getArrayOfFilteredTasks( tasks, 'custom-flow' ) ).toBe( undefined );
+			} );
+		} );
 
-		// describe( '', () => {
-		// 	it( 'the task is disabled', () => {
-		// 		expect( getArrayOfFilteredTasks( tasks, flow ) ).toBe( true );
-		// 	} );
-		// } );
+		describe( 'when an existing flow is provided ', () => {
+			it( 'returns found tasks', () => {
+				expect( getArrayOfFilteredTasks( tasks, 'newsletter' ) ).toEqual(
+					tasks.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
+				);
+			} );
+		} );
 	} );
 	describe( 'isTaskDisabled', () => {
 		describe( 'when a task is complete', () => {
