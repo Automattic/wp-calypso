@@ -433,7 +433,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: $font-body-extra-small;
 	line-height: 20px;
 	height: 20px;
-	border-radius: 10px; /* stylelint-disable-line */
+	border-radius: 10px; /* stylelint-disable-line scales/radii */
 	color: var( --color-text-inverted );
 	background: var( --color-success );
 	font-weight: 400;
@@ -1063,7 +1063,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	tr:last-child .plan-features__table-item {
-		border-radius: 0 0 5px 5px; /* stylelint-disable-line */
+		border-radius: 0 0 5px 5px; /* stylelint-disable-line scales/radii */
 	}
 
 	.plan-features__actions {
@@ -1135,7 +1135,7 @@ button.plan-features__scroll-button {
 	padding: 0;
 	background-color: var( --color-neutral );
 	border: 0;
-	border-radius: 15px; /* stylelint-disable-line */
+	border-radius: 15px; /* stylelint-disable-line scales/radii */
 	color: var( --color-text-inverted );
 	cursor: pointer;
 
@@ -1225,7 +1225,7 @@ button.plan-features__scroll-button {
 
 .plans-wrapper {
 	.plan-features__item-annual-plan {
-		font-size: 0.6rem; /* stylelint-disable-line */
+		font-size: 0.6rem; /* stylelint-disable-line scales/font-sizes */
 		text-transform: uppercase;
 	}
 

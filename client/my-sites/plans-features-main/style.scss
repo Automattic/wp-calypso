@@ -65,7 +65,7 @@
 
 .plans-features-main__heading {
 	margin: 0 0 12px;
-	font-size: 17px; /* stylelint-disable-line */
+	font-size: 17px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	line-height: 1;
 	font-weight: 600;
 	color: var( --color-text );
@@ -110,7 +110,7 @@ body.is-section-signup.is-white-signup {
 			padding: 20px;
 
 			.plan-features__header-title {
-				font-size: 18px; /* stylelint-disable-line */
+				font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			}
 
 			.plan-features__audience {
@@ -121,7 +121,7 @@ body.is-section-signup.is-white-signup {
 			.plan-pill {
 				background: var( --color-text );
 				color: var( --color-text-inverted );
-				font-size: 13px; /* stylelint-disable-line */
+				font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				top: unset;
 				bottom: -10px;
 				left: 20px;
@@ -173,20 +173,20 @@ body.is-section-signup.is-white-signup {
 
 					.plan-price {
 						text-align: left;
-						font-size: 32px; /* stylelint-disable-line */
+						font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 						color: var( --color-neutral-100 );
 						margin-top: 15px;
 
 						.plan-price__currency-symbol {
 							vertical-align: initial;
-							font-size: 32px; /* stylelint-disable-line */
+							font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 							color: var( --color-neutral-100 );
 						}
 					}
 
 					.plan-features__header-billing-info {
 						text-align: left;
-						font-size: 10px; /* stylelint-disable-line */
+						font-size: 10px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 						color: var( --color-neutral-50 );
 						font-weight: 400;
 					}
