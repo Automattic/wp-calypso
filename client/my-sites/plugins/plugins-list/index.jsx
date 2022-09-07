@@ -271,12 +271,18 @@ export class PluginsList extends Component {
 
 	updateAllPlugins = () => {
 		this.removePluginStatuses();
-		this.props.plugins.forEach( ( plugin ) => {
-			Object.keys( plugin.sites ).forEach( ( siteId ) => {
-				const sitePlugin = this.getSitePlugin( plugin, siteId );
-				return this.props.updatePlugin( siteId, sitePlugin );
+		this.props.plugins
+			// only consider plugins needing an update
+			.filter( ( plugin ) => plugin.update )
+			.forEach( ( plugin ) => {
+				Object.entries( plugin.sites )
+					// only consider the sites where the those plugins are installed
+					.filter( ( [ , sitePlugin ] ) => sitePlugin.update )
+					.forEach( ( [ siteId ] ) => {
+						const sitePlugin = this.getSitePlugin( plugin, siteId );
+						return this.props.updatePlugin( siteId, sitePlugin );
+					} );
 			} );
-		} );
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	};
 
