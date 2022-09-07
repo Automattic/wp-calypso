@@ -24,6 +24,7 @@ const stepNameToModuleName = {
 	'import-url': 'import-url-onboarding',
 	'intent-screen': 'intent-screen',
 	launch: 'launch-site',
+	'mailbox-plan': 'plans',
 	plans: 'plans',
 	'plans-new': 'plans',
 	'plans-business': 'plans',

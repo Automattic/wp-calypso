@@ -3,6 +3,8 @@ import { useStoreItemInfoContext } from '../context/store-item-context';
 import { FeaturedItemCard } from '../featured-item-card';
 import { FeaturesList } from '../features-list';
 import { HeroImage } from '../hero-image';
+import { ItemPrice } from '../item-price';
+import { MoreInfoLink } from '../more-info-link';
 import { MostPopularProps } from '../types';
 
 import './style-most-popular.scss';
@@ -38,31 +40,48 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 					const isItemSuperseded = isSuperseded( item );
 					const isItemDeprecated = isDeprecated( item );
 					const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
+					const isItemIncludedInPlan = isIncludedInPlan( item );
 
 					const ctaLabel = getCtaLabel( item );
 
 					const isCtaDisabled =
-						( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
+						( isItemOwned || isItemIncludedInPlan ) && ! isUserPurchaseOwner( item );
 
 					const hideMoreInfoLink =
 						isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
 
+					const price = (
+						<ItemPrice
+							isIncludedInPlan={ isItemIncludedInPlan }
+							isOwned={ isItemOwned }
+							item={ item }
+							siteId={ siteId }
+						/>
+					);
+
+					const description = (
+						<p>
+							<span>{ item.featuredDescription }</span>
+							<br />
+
+							{ ! hideMoreInfoLink && (
+								<MoreInfoLink item={ item } onClick={ onClickMoreInfoFactory( item ) } />
+							) }
+						</p>
+					);
+
 					return (
 						<div key={ item.productSlug } className="jetpack-product-store__most-popular--item">
 							<FeaturedItemCard
-								checkoutURL={ getCheckoutURL( item ) }
 								ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
+								ctaHref={ getCheckoutURL( item ) }
 								ctaLabel={ ctaLabel }
+								description={ description }
 								hero={ <HeroImage item={ item } /> }
-								hideMoreInfoLink={ hideMoreInfoLink }
 								isCtaDisabled={ isCtaDisabled }
-								isIncludedInPlan={ isItemIncludedInPlanOrSuperseded }
-								isOwned={ isItemOwned }
-								item={ item }
-								key={ item.productSlug }
-								onClickMore={ onClickMoreInfoFactory( item ) }
-								onClickPurchase={ getOnClickPurchase( item ) }
-								siteId={ siteId }
+								onClickCta={ getOnClickPurchase( item ) }
+								price={ price }
+								title={ item.displayName }
 							/>
 							<FeaturesList item={ item } />
 						</div>

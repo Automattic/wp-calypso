@@ -38,7 +38,7 @@ export default function SitesWithInstalledPluginsList( {
 			key: 'autoupdate',
 			header: translate( 'Autoupdate' ),
 			smallColumn: true,
-			colSpan: 3,
+			colSpan: 4,
 		},
 		{
 			key: 'update',

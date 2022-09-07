@@ -1,7 +1,10 @@
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-context';
-import SimpleProductCard from '../simple-product-card';
+import { ItemPrice } from '../item-price';
+import { MoreInfoLink } from '../more-info-link';
+import { SimpleItemCard } from '../simple-item-card';
 import { AllItemsProps } from '../types';
+import getProductIcon from '../utils/get-product-icon';
 
 import './style.scss';
 
@@ -37,29 +40,46 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					const isItemSuperseded = isSuperseded( item );
 					const isItemDeprecated = isDeprecated( item );
 					const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
+					const isItemIncludedInPlan = isIncludedInPlan( item );
 
 					const isCtaDisabled =
-						( isItemOwned || isIncludedInPlan( item ) ) && ! isUserPurchaseOwner( item );
+						( isItemOwned || isItemIncludedInPlan ) && ! isUserPurchaseOwner( item );
 
 					const ctaLabel = getCtaLabel( item );
 
 					const hideMoreInfoLink =
 						isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
 
-					return (
-						<SimpleProductCard
-							checkoutURL={ getCheckoutURL( item ) }
-							ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
-							ctaLabel={ ctaLabel }
-							isCtaDisabled={ isCtaDisabled }
-							isIncludedInPlan={ isItemIncludedInPlanOrSuperseded }
-							hideMoreInfoLink={ hideMoreInfoLink }
+					const price = (
+						<ItemPrice
+							isIncludedInPlan={ isItemIncludedInPlan }
 							isOwned={ isItemOwned }
 							item={ item }
-							key={ item.productSlug }
-							onClickMore={ onClickMoreInfoFactory( item ) }
-							onClickPurchase={ getOnClickPurchase( item ) }
 							siteId={ siteId }
+						/>
+					);
+
+					const description = (
+						<>
+							{ item?.shortDescription || item.description } <br />
+							{ ! hideMoreInfoLink && (
+								<MoreInfoLink onClick={ onClickMoreInfoFactory( item ) } item={ item } />
+							) }
+						</>
+					);
+
+					return (
+						<SimpleItemCard
+							ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
+							ctaHref={ getCheckoutURL( item ) }
+							ctaLabel={ ctaLabel }
+							description={ description }
+							icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
+							isCtaDisabled={ isCtaDisabled }
+							key={ item.productSlug }
+							onClickCta={ getOnClickPurchase( item ) }
+							price={ price }
+							title={ item.shortName }
 						/>
 					);
 				} ) }

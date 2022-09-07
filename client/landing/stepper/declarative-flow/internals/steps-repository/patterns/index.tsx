@@ -16,8 +16,8 @@ const Patterns: Step = function Patterns( { navigation } ) {
 	const { __ } = useI18n();
 
 	function handleSubmit( pattern: Pattern ) {
-		setPatternContent( pattern.content );
-		submit?.( { patternContent: pattern.content } );
+		setPatternContent( pattern.html );
+		submit?.( { patternContent: pattern.html } );
 	}
 
 	return (

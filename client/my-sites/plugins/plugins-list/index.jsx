@@ -287,6 +287,11 @@ export class PluginsList extends Component {
 		}
 	};
 
+	updatePlugin = ( selectedPlugin ) => {
+		this.doActionOverSelected( 'updating', this.props.updatePlugin, [ selectedPlugin ] );
+		this.recordEvent( 'Clicked Update Plugin(s)', true );
+	};
+
 	activateSelected = ( accepted ) => {
 		if ( accepted ) {
 			this.doActionOverSelected( 'activating', this.props.activatePlugin );
@@ -691,6 +696,7 @@ export class PluginsList extends Component {
 						toggleBulkManagement={ this.toggleBulkManagement }
 						updateAllPlugins={ this.updateAllPlugins }
 						removePluginNotice={ this.removePluginDialog }
+						updatePlugin={ this.updatePlugin }
 					/>
 				) : (
 					<>

@@ -5,7 +5,7 @@ import { MoreInfoLinkProps } from '../types';
 
 import './style.scss';
 
-export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClickMore } ) => {
+export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick } ) => {
 	const translate = useTranslate();
 
 	const isExternalProduct = EXTERNAL_PRODUCTS_LIST.includes( item.productSlug );
@@ -13,7 +13,7 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClickMore
 	const href = isExternalProduct && item.externalUrl ? item.externalUrl : `#${ item.productSlug }`;
 
 	return (
-		<Button className="more-info-link" onClick={ onClickMore } href={ href } plain>
+		<Button className="more-info-link" onClick={ onClick } href={ href } plain>
 			{ translate( 'More about {{productName/}}', {
 				components: { productName: <>{ item.shortName }</> },
 			} ) }

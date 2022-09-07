@@ -91,9 +91,11 @@ export default function TailoredFlowProcessingScreen( { flowName } ) {
 				/>
 			</div>
 
-			<div className="reskinned-processing-screen__jetpack-powered">
-				<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
-			</div>
+			{ flowName === NEWSLETTER_FLOW && (
+				<div className="reskinned-processing-screen__jetpack-powered">
+					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
+				</div>
+			) }
 		</div>
 	);
 }
