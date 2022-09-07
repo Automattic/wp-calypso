@@ -26,9 +26,7 @@ const ReaderFeaturedImage = ( {
 		return null;
 	}
 	// Don't resize image if it was already fetched.
-	const resizedUrl = fetched
-		? featuredImageUrl
-		: resizeImageUrl( featuredImageUrl, { w: imageWidth || READER_CONTENT_WIDTH } );
+	const resizedUrl = fetched ? featuredImageUrl : resizeImageUrl( featuredImageUrl, { w: imageWidth || READER_CONTENT_WIDTH } );
 	const safeCssUrl = cssSafeUrl( resizedUrl );
 
 	let featuredImageStyle = { background: 'none' };
