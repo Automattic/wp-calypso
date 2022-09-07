@@ -1,3 +1,6 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+
 $grey-header: #151b1e;
 
 .courses {
@@ -9,52 +12,54 @@ $grey-header: #151b1e;
 		}
 	}
 
-	.step-container__content {
-		padding-top: 60px;
-		background-color: $grey-header;
-	}
+	.step-container {
+		.step-container__navigation.action-buttons {
+			background-color: var( --studio-gray-100 );
+			border: 0;
+			box-shadow: 0 -1px 0 #2c3234;
 
-	.step-container .step-container__navigation.action-buttons {
-		background-color: var( --studio-gray-100 );
-		border: 0;
-		box-shadow: 0 -1px 0 #2c3234;
+			button.navigation-link.is-borderless {
+				color: #fff;
 
-		button.navigation-link.is-borderless {
-			color: #fff;
+				svg {
+					fill: #fff;
+				}
+			}
 
-			svg {
-				fill: #fff;
+			@include break-small {
+				background-color: $grey-header;
+				box-shadow: none;
 			}
 		}
 
-		@include break-small {
+		.step-container__content {
+			padding-top: 60px;
 			background-color: $grey-header;
-			box-shadow: none;
-		}
-	}
 
-	.videos-ui {
-		position: relative;
-		width: 100%;
-		min-height: calc( 100vh - 60px );
+			.videos-ui {
+				position: relative;
+				width: 100%;
+				min-height: calc( 100vh - 60px );
 
-		span,
-		p {
-			font-size: 0.875rem;
-		}
-
-		.videos-ui__header .videos-ui__header-content .videos-ui__summary svg {
-			fill: #fff9;
-		}
-
-		.videos-ui__body {
-			svg use {
-				fill: #fff;
-			}
-
-			.videos-ui__active-video-content {
+				span,
 				p {
-					padding-bottom: 1.5em;
+					font-size: 0.875rem;
+				}
+
+				.videos-ui__header .videos-ui__header-content .videos-ui__summary svg {
+					fill: #fff9;
+				}
+
+				.videos-ui__body {
+					svg use {
+						fill: #fff;
+					}
+
+					.videos-ui__active-video-content {
+						p {
+							padding-bottom: 1.5em;
+						}
+					}
 				}
 			}
 		}
