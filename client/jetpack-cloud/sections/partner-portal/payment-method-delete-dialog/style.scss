@@ -27,7 +27,7 @@
 	&__heading {
 		margin: -16px -16px 16px;
 		padding: 9px 16px;
-		font-size: 1.125rem; /* stylelint-disable */
+		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 		font-weight: 600;
 		line-height: 20px;
 		border-bottom: 1px solid var( --studio-gray-5 );
