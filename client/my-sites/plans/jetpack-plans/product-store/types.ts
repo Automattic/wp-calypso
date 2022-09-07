@@ -80,18 +80,23 @@ export type ItemPriceProps = ProductStoreBaseProps &
 		isIncludedInPlan?: boolean;
 	};
 
-export type FeaturedItemCardProps = ItemPriceProps & {
-	checkoutURL?: string;
+export type FeaturedItemCardProps = {
 	ctaAsPrimary?: boolean;
+	ctaHref?: string;
 	ctaLabel: React.ReactNode;
+	description: React.ReactNode;
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
-	item: SelectorProduct;
-	hideMoreInfoLink?: boolean;
-	onClickMore?: VoidFunction;
-	onClickPurchase?: VoidFunction;
+	onClickCta?: VoidFunction;
+	price: React.ReactNode;
+	title: React.ReactNode;
 };
 
-export type SimpleProductCardProps = Omit< FeaturedItemCardProps, 'hero' >;
+export type SimpleProductCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
+	icon?: React.ReactNode;
+};
 
-export type MoreInfoLinkProps = Pick< FeaturedItemCardProps, 'item' | 'onClickMore' >;
+export type MoreInfoLinkProps = {
+	item: SelectorProduct;
+	onClick?: VoidFunction;
+};

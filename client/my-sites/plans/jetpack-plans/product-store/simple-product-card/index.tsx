@@ -1,61 +1,40 @@
 import { Button } from '@automattic/components';
-import { ItemPrice } from '../item-price';
-import { MoreInfoLink } from '../more-info-link';
 import { SimpleProductCardProps } from '../types';
-import getProductIcon from '../utils/get-product-icon';
 
 import './style.scss';
 
-const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
-	checkoutURL,
+export const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	ctaAsPrimary,
+	ctaHref,
 	ctaLabel,
-	isIncludedInPlan,
-	isOwned,
+	description,
+	icon,
 	isCtaDisabled,
-	item,
-	hideMoreInfoLink,
-	onClickMore,
-	onClickPurchase,
-	siteId,
+	onClickCta,
+	price,
+	title,
 } ) => {
-	const { shortName: name } = item;
-	const productDescription = item?.shortDescription || item.description;
-
 	return (
 		<div className="simple-product-card">
-			<div className="simple-product-card__icon">
-				<img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } />
-			</div>
-			<div className="simple-product-card__info">
-				<div className="simple-product-card__info-header">
-					<div className="simple-product-card__info-header-content">
-						<h3 className="simple-product-card__info-header-text">{ name }</h3>
-
-						<ItemPrice
-							isIncludedInPlan={ isIncludedInPlan }
-							isOwned={ isOwned }
-							item={ item }
-							siteId={ siteId }
-						/>
+			{ icon ? <div className="simple-product-card__icon">{ icon }</div> : null }
+			<div className="simple-product-card__body">
+				<div className="simple-product-card__header">
+					<div>
+						<h3 className="simple-product-card__title">{ title }</h3>
+						<div className="simple-product-card__price">{ price }</div>
 					</div>
 					<Button
-						className="simple-product-card__info-header-checkout"
-						onClick={ onClickPurchase }
+						className="simple-product-card__cta"
+						onClick={ onClickCta }
 						disabled={ isCtaDisabled }
-						href={ isCtaDisabled ? '#' : checkoutURL }
+						href={ isCtaDisabled ? '#' : ctaHref }
 						primary={ ctaAsPrimary }
 					>
 						{ ctaLabel }
 					</Button>
 				</div>
-				<div className="simple-product-card__info-content">
-					{ productDescription } <br />
-					{ ! hideMoreInfoLink && <MoreInfoLink onClickMore={ onClickMore } item={ item } /> }
-				</div>
+				<div className="simple-product-card__footer">{ description }</div>
 			</div>
 		</div>
 	);
 };
-
-export default SimpleProductCard;
