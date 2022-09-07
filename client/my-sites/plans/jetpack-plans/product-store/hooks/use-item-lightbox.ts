@@ -9,10 +9,10 @@ export const useItemLightbox = () => {
 
 	const [ currentItem, setCurrentItem ] = useState< SelectorProduct | null >( item );
 
-	const clearCurrentItem = () => {
+	const clearCurrentItem = useCallback( () => {
 		setCurrentItem( null );
 		window.location.hash = '';
-	};
+	}, [] );
 
 	const onClickMoreInfoFactory = useCallback( ( item: SelectorProduct ): VoidFunction => {
 		return () => {
@@ -32,6 +32,6 @@ export const useItemLightbox = () => {
 			clearCurrentItem,
 			onClickMoreInfoFactory,
 		} ),
-		[ currentItem, onClickMoreInfoFactory ]
+		[ currentItem, onClickMoreInfoFactory, clearCurrentItem ]
 	);
 };
