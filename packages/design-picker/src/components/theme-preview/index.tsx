@@ -24,6 +24,8 @@ interface ThemePreviewProps {
 	isShowDeviceSwitcher?: boolean;
 }
 
+const MAX_HEIGHT = 2000;
+
 const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
 	loadingMessage,
@@ -41,6 +43,10 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => uuid(), [] );
 	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : 1;
+	const containerStyle = {
+		height: viewport ? viewport.height * scale : undefined,
+		maxHeight: MAX_HEIGHT,
+	};
 
 	useEffect( () => {
 		const handleMessage = ( event: MessageEvent ) => {
@@ -96,6 +102,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 				'theme-preview__container--is-tablet': device === 'tablet',
 				'theme-preview__container--is-phone': device === 'phone',
 			} ) }
+			style={ isFitHeight ? containerStyle : undefined }
 		>
 			{ containerResizeListener }
 			{ isShowDeviceSwitcher && <Toolbar device={ device } onDeviceClick={ setDevice } /> }
@@ -110,6 +117,9 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 					style={ {
 						width: viewportWidth,
 						height: viewport?.height,
+						// This is a catch-all max-height for patterns.
+						// See: https://github.com/WordPress/gutenberg/pull/38175.
+						maxHeight: MAX_HEIGHT,
 						transform: `scale(${ scale })`,
 					} }
 					src={ addQueryArgs( url, { calypso_token } ) }

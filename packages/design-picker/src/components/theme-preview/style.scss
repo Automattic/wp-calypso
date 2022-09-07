@@ -1,14 +1,9 @@
 @import '@automattic/onboarding/styles/mixins';
 
 .theme-preview__container {
-	bottom: 0;
 	display: flex;
 	flex-direction: column;
-	left: 0;
 	overflow: hidden;
-	position: absolute;
-	right: 0;
-	top: 0;
 
 	&--loading {
 		.theme-preview__frame-wrapper {
@@ -137,6 +132,11 @@
 	}
 
 	.theme-preview__frame {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
 		border: none;
 		height: 100%;
 		transform-origin: 0 0;

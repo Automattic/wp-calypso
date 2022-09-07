@@ -204,21 +204,12 @@ $font-family: 'SF Pro Text', $sans;
         }
         
         .pattern-selector__block-list {
-            iframe {
-                width: 1024px;
-                height: 665px;
-                transform: scale( 0.2705 );
-                transform-origin: top left;
-                position: absolute;
-                border-radius: 4px;
-                pointer-events: none;
-            }
+            display: relative;
 
-            div {
+            .pattern-selector__block-list-item {
                 margin-bottom: 16px;
                 border: 1px solid rgba( 0, 0, 0, 0.05 );
                 border-radius: 4px;
-                min-height: 140px;
                 transform: translateZ( 0 );
                 overflow: hidden;
                 user-select: none;
@@ -234,6 +225,10 @@ $font-family: 'SF Pro Text', $sans;
                 &.--pattern-selected {
                     outline: 2px solid #0675c4;
                 }
+            }
+
+            .theme-preview__container {
+                pointer-events: none;
             }
         }
     }

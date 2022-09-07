@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { ThemePreview, DEFAULT_VIEWPORT_WIDTH } from '@automattic/design-picker';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -64,17 +65,17 @@ const PatternSelector = ( {
 							tabIndex={ 0 }
 							role="option"
 							aria-selected={ isSelected( item.id ) }
-							className={ classNames( { '--pattern-selected': isSelected( item.id ) } ) }
+							className={ classNames( 'pattern-selector__block-list-item', {
+								'--pattern-selected': isSelected( item.id ),
+							} ) }
 							onClick={ () => handleSelectedPattern( item ) }
 							onKeyUp={ handleKeyboard( () => setSelectedPattern( item ) ) }
 						>
-							<iframe
-								title={ item.name }
-								src={ getPatternPreviewUrl( item.id ) }
-								frameBorder="0"
-								aria-hidden
-								tabIndex={ -1 }
-							></iframe>
+							<ThemePreview
+								url={ getPatternPreviewUrl( item.id ) }
+								viewportWidth={ DEFAULT_VIEWPORT_WIDTH }
+								isFitHeight
+							/>
 						</div>
 					) ) }
 				</div>
