@@ -85,8 +85,10 @@
 }
 
 .plugin-list-header-new {
+	height: 60px;
 	margin-block-start: 8px;
 	&.section-header.card {
+		align-items: center;
 		margin-inline-start: 0;
 		margin-inline-end: 0;
 		padding-inline-start: 16px;
@@ -170,5 +172,11 @@
 	}
 	.plugin-list-header__bulk-select-label {
 		margin-inline-end: 16px;
+	}
+
+	.plugin-list-header__action-buttons {
+		button.plugin-list-header__buttons-action-button {
+			color: var( --studio-gray-80 );
+		}
 	}
 }
