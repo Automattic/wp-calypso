@@ -36,6 +36,11 @@ button.update-plugin__new-version {
 button.update-plugin__retry-button {
 	text-decoration: underline;
 	margin-inline-start: 5px;
+	margin-block-start: 15px;
+
+	@include break-xlarge {
+		margin-block-start: 0;
+	}
 }
 
 .update-plugin__plugin-action-status {
@@ -48,11 +53,13 @@ button.update-plugin__retry-button {
 	.plugin-action-status-container {
 		margin-block-start: 12px;
 		transform: translateY( -50% );
+		display: flex;
 
 		@include break-xlarge {
 			margin-block-start: 0;
 			inset-block-start: 50%;
 			position: absolute;
+			display: inherit;
 		}
 	}
 }
