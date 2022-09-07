@@ -2,6 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
@@ -47,12 +48,41 @@ export default function UpdatePlugin( {
 	const siteIds = siteObjectsToSiteIds( sites );
 	const pluginsOnSites: any = getPluginOnSites( state, siteIds, plugin?.slug );
 
-	const updated_versions = sites
+	const currentVersions = sites
+		.map( ( site ) => {
+			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
+			return sitePlugin?.version;
+		} )
+		.filter( ( version ) => version );
+
+	const updatedVersions = sites
 		.map( ( site ) => {
 			const sitePlugin = pluginsOnSites?.sites[ site.ID ];
 			return sitePlugin?.update?.new_version;
 		} )
 		.filter( ( version ) => version );
+
+	const currentVersionsRange = useMemo( () => {
+		const versions = [
+			// We want to remove the duplicated versions in the array, because if multiple sites have
+			// the same plugin version, we don't want to display the range.
+			...new Set(
+				// Sort the plugin versions, respecting semantic version convention.
+				currentVersions.sort( ( a: string, b: string ): number =>
+					a.localeCompare( b, undefined, {
+						numeric: true,
+						sensitivity: 'case',
+						caseFirst: 'upper',
+					} )
+				)
+			),
+		];
+
+		return {
+			min: versions[ 0 ],
+			max: versions.length > 1 ? versions[ versions.length - 1 ] : null,
+		};
+	}, [ currentVersions ] );
 
 	const hasUpdate = sites.some( ( site ) => {
 		const sitePlugin = pluginsOnSites?.sites[ selectedSite ? selectedSite.ID : site.ID ];
@@ -100,7 +130,9 @@ export default function UpdatePlugin( {
 	} else if ( hasUpdate ) {
 		content = (
 			<div className="update-plugin__plugin-update-wrapper">
-				<span className="update-plugin__current-version">{ plugin?.version }</span>
+				<span className="update-plugin__current-version">
+					{ currentVersionsRange?.min } { currentVersionsRange?.max && currentVersionsRange.max }
+				</span>
 				<span className="update-plugin__arrow-icon">
 					<Icon size={ 24 } icon={ arrowRight } />
 				</span>
@@ -114,7 +146,7 @@ export default function UpdatePlugin( {
 						components: {
 							span: <span />,
 						},
-						args: updated_versions[ 0 ],
+						args: updatedVersions[ 0 ],
 					} ) }
 				</Button>
 			</div>
