@@ -126,14 +126,6 @@ export class PluginsList extends Component {
 		return !! this.state.selectedPlugins[ slug ];
 	};
 
-	isJetpackSelected = ( selectedPlugin ) => {
-		const { plugins } = this.props;
-
-		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
-
-		return selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
-	};
-
 	togglePlugin = ( plugin ) => {
 		const { slug } = plugin;
 		const { selectedPlugins } = this.state;
@@ -288,9 +280,11 @@ export class PluginsList extends Component {
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	};
 
-	updateSelected = () => {
-		this.doActionOverSelected( 'updating', this.props.updatePlugin );
-		this.recordEvent( 'Clicked Update Plugin(s)', true );
+	updateSelected = ( accepted ) => {
+		if ( accepted ) {
+			this.doActionOverSelected( 'updating', this.props.updatePlugin );
+			this.recordEvent( 'Clicked Update Plugin(s)', true );
+		}
 	};
 
 	activateSelected = ( accepted ) => {
@@ -336,7 +330,7 @@ export class PluginsList extends Component {
 		}
 	};
 
-	getConfirmationText( selectedPlugins, actionName ) {
+	getConfirmationText( selectedPlugins, actionText, actionPreposition ) {
 		const pluginsList = {};
 		const sitesList = {};
 		let pluginName;
@@ -366,14 +360,15 @@ export class PluginsList extends Component {
 		switch ( combination ) {
 			case '1 site 1 plugin':
 				return translate(
-					'You are about to %(actionName)s {{em}}%(plugin)s from %(site)s{{/em}}.',
+					'You are about to %(actionText)s {{em}}%(plugin)s %(actionPreposition)s %(site)s{{/em}}.',
 					{
 						components: {
 							em: <em />,
 							p: <p />,
 						},
 						args: {
-							actionName: actionName,
+							actionText: actionText,
+							actionPreposition: actionPreposition,
 							plugin: pluginName,
 							site: siteName,
 						},
@@ -382,14 +377,15 @@ export class PluginsList extends Component {
 
 			case '1 site n plugins':
 				return translate(
-					'You are about to %(actionName)s {{em}}%(numberOfPlugins)d plugins from %(site)s{{/em}}.',
+					'You are about to %(actionText)s {{em}}%(numberOfPlugins)d plugins %(actionPreposition)s %(site)s{{/em}}.',
 					{
 						components: {
 							em: <em />,
 							p: <p />,
 						},
 						args: {
-							actionName: actionName,
+							actionText: actionText,
+							actionPreposition: actionPreposition,
 							numberOfPlugins: pluginsListSize,
 							site: siteName,
 						},
@@ -398,14 +394,15 @@ export class PluginsList extends Component {
 
 			case 'n sites 1 plugin':
 				return translate(
-					'You are about to %(actionName)s {{em}}%(plugin)s from %(numberOfSites)d sites{{/em}}.',
+					'You are about to %(actionText)s {{em}}%(plugin)s %(actionPreposition)s %(numberOfSites)d sites{{/em}}.',
 					{
 						components: {
 							em: <em />,
 							p: <p />,
 						},
 						args: {
-							actionName: actionName,
+							actionText: actionText,
+							actionPreposition: actionPreposition,
 							plugin: pluginName,
 							numberOfSites: siteListSize,
 						},
@@ -414,14 +411,15 @@ export class PluginsList extends Component {
 
 			case 'n sites n plugins':
 				return translate(
-					'You are about to %(actionName)s {{em}}%(numberOfPlugins)d plugins from %(numberOfSites)d sites{{/em}}.',
+					'You are about to %(actionText)s {{em}}%(numberOfPlugins)d plugins %(actionPreposition)s %(numberOfSites)d sites{{/em}}.',
 					{
 						components: {
 							em: <em />,
 							p: <p />,
 						},
 						args: {
-							actionName: actionName,
+							actionText: actionText,
+							actionPreposition: actionPreposition,
 							numberOfPlugins: pluginsListSize,
 							numberOfSites: siteListSize,
 						},
@@ -433,20 +431,15 @@ export class PluginsList extends Component {
 	bulkActionDialog = ( actionName, selectedPlugin ) => {
 		const { plugins, translate } = this.props;
 		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
-
-		const message = (
-			<div>
-				<span>{ this.getConfirmationText( selectedPlugins, actionName ) }</span>
-			</div>
-		);
-
 		const pluginsCount = selectedPlugins.length;
 		const pluginsSize = pluginsCount === 1 ? 'plugin' : 'plugins';
 
 		switch ( actionName ) {
 			case 'activate':
 				acceptDialog(
-					message,
+					<div>
+						<span>{ this.getConfirmationText( selectedPlugins, 'activate', 'on' ) }</span>
+					</div>,
 					( accepted ) => this.activateSelected( accepted ),
 					translate( 'Activate %(numberOfPlugins)d %(plugins)s', {
 						args: {
@@ -458,7 +451,9 @@ export class PluginsList extends Component {
 				break;
 			case 'deactivate':
 				acceptDialog(
-					message,
+					<div>
+						<span>{ this.getConfirmationText( selectedPlugins, 'deactivate', 'on' ) }</span>
+					</div>,
 					( accepted ) => this.deactivateSelected( accepted ),
 					translate( 'Deactivate %(numberOfPlugins)d %(plugins)s', {
 						args: {
@@ -470,9 +465,13 @@ export class PluginsList extends Component {
 				break;
 			case 'enableAutoupdates':
 				acceptDialog(
-					message,
+					<div>
+						<span>
+							{ this.getConfirmationText( selectedPlugins, 'enable autoupdates for', 'on' ) }
+						</span>
+					</div>,
 					( accepted ) => this.setAutoupdateSelected( accepted ),
-					translate( 'Enable Autoupdates on %(numberOfPlugins)d %(plugins)s', {
+					translate( 'Enable autoupdates for %(numberOfPlugins)d %(plugins)s', {
 						args: {
 							numberOfPlugins: pluginsCount,
 							plugins: pluginsSize,
@@ -482,9 +481,27 @@ export class PluginsList extends Component {
 				break;
 			case 'disableAutoupdates':
 				acceptDialog(
-					message,
+					<div>
+						<span>
+							{ this.getConfirmationText( selectedPlugins, 'disable autoupdates for', 'on' ) }
+						</span>
+					</div>,
 					( accepted ) => this.unsetAutoupdateSelected( accepted ),
-					translate( 'Disable Autoupdates on %(numberOfPlugins)d %(plugins)s', {
+					translate( 'Disable autoupdates for %(numberOfPlugins)d %(plugins)s', {
+						args: {
+							numberOfPlugins: pluginsCount,
+							plugins: pluginsSize,
+						},
+					} )
+				);
+				break;
+			case 'update':
+				acceptDialog(
+					<div>
+						<span>{ this.getConfirmationText( selectedPlugins, 'update', 'on' ) }</span>
+					</div>,
+					( accepted ) => this.updateSelected( accepted ),
+					translate( 'Update %(numberOfPlugins)d %(plugins)s', {
 						args: {
 							numberOfPlugins: pluginsCount,
 							plugins: pluginsSize,
@@ -498,10 +515,11 @@ export class PluginsList extends Component {
 		const { plugins, translate } = this.props;
 
 		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
+		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
 		const message = (
 			<div>
-				<span>{ this.getConfirmationText( selectedPlugins, 'remove' ) }</span>
+				<span>{ this.getConfirmationText( selectedPlugins, 'remove', 'from' ) }</span>
 				<span>
 					{ translate(
 						'{{p}}This will deactivate the plugins and delete all associated files and data.{{/p}}',
@@ -518,7 +536,7 @@ export class PluginsList extends Component {
 
 		acceptDialog(
 			message,
-			this.isJetpackSelected
+			isJetpackIncluded
 				? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
 				: ( accepted ) => this.removeSelected( accepted, selectedPlugins ),
 			translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } )
@@ -652,6 +670,7 @@ export class PluginsList extends Component {
 					deactivatePluginNotice={ () => this.bulkActionDialog( 'deactivate' ) }
 					autoupdateEnablePluginNotice={ () => this.bulkActionDialog( 'enableAutoupdates' ) }
 					autoupdateDisablePluginNotice={ () => this.bulkActionDialog( 'disableAutoupdates' ) }
+					updatePluginNotice={ () => this.bulkActionDialog( 'update' ) }
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some(
 						this.filterSelection.inactive.bind( this )
