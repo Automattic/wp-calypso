@@ -154,7 +154,7 @@ const TitanSetUpThankYou = ( {
 			if ( isEnabled( 'signup/stepper-flow' ) ) {
 				nextSteps.unshift( {
 					stepKey: 'titan_whats_next_setup_site',
-					stepTitle: translate( 'Configure your site' ),
+					stepTitle: translate( 'Site setup' ),
 					stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
 					stepCta: (
 						<FullWidthButton
