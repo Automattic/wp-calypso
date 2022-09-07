@@ -50,7 +50,7 @@ $wpcom-menu-collapse: 783px;
 			}
 
 			// Move CTA button to next line
-			.simple-product-card__info-header {
+			.simple-item-card__header {
 				flex-direction: column;
 				gap: 0.5rem;
 			}
@@ -58,7 +58,7 @@ $wpcom-menu-collapse: 783px;
 
 		@media (max-width: $break-large) {
 			// Hide icon to save some real estate
-			.simple-product-card__icon {
+			.simple-item-card__icon {
 				display: none;
 			}
 		}

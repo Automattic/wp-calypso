@@ -14,6 +14,8 @@
 	position: static;
 	border: none;
 	z-index: z-index( 'root', '.site-selector' );
+	display: flex;
+	flex-direction: column;
 
 	&.is-large .search {
 		display: flex;
@@ -138,6 +140,7 @@
 .site-selector .search {
 	margin: 8px;
 	height: 33px;
+	max-height: 33px;
 	border: 1px solid var( --color-neutral-10 );
 	display: block;
 	opacity: 0;
@@ -167,6 +170,7 @@
 
 // The actual list of sites
 .site-selector__sites {
+	flex: 1;
 	max-height: calc( 100% - 93px );
 	overflow-y: auto;
 	background: var( --color-surface );
@@ -182,39 +186,27 @@
 	padding: 10px 20px;
 }
 
-.site-selector__add-new-site {
-	padding: 0;
-	border-top: 1px solid var( --color-neutral-5 );
-	margin: auto 0 0;
+.site-selector__actions {
 	display: flex;
-	flex-direction: row;
-	padding-left: 10px;
+	flex-direction: column;
+	gap: 8px;
+	padding: 8px;
+	margin-top: auto;
 }
 
-.site-selector__add-new-site .button {
-	box-sizing: border-box;
-	display: inline-block;
-	text-transform: uppercase;
-	font-size: $font-body-extra-small;
-	font-weight: 600;
-	padding: 8px;
-	color: var( --color-neutral-40 );
-	line-height: 2.1;
+.site-selector__manage-sites {
+	background: transparent;
+	border-color: var( --color-sidebar-text );
+
+	&,
+	&:visited {
+		color: var( --color-sidebar-text );
+	}
 
 	&:hover {
-		color: var( --color-neutral-70 );
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		padding: 16px;
-	}
-
-	.gridicon {
-		display: block;
-		float: left;
-		margin-right: 6px;
-		top: auto;
-		margin-top: auto;
+		border-color: var( --color-sidebar-menu-hover-text );
+		color: var( --color-sidebar-menu-hover-text );
+		background: var( --color-sidebar-menu-hover-background );
 	}
 }
 

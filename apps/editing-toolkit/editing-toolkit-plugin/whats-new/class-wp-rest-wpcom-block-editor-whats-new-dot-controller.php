@@ -15,8 +15,9 @@ class WP_REST_WPCOM_Block_Editor_Whats_New_Dot_Controller extends \WP_REST_Contr
 	 * WP_REST_WPCOM_Block_Editor_Whats_New_Dot_Controller constructor.
 	 */
 	public function __construct() {
-		$this->namespace = 'wpcom/v2';
-		$this->rest_base = 'block-editor/has-seen-whats-new-modal';
+		$this->namespace                       = 'wpcom/v2';
+		$this->rest_base                       = 'block-editor/has-seen-whats-new-modal';
+		$this->wpcom_is_site_specific_endpoint = false;
 	}
 
 	/**

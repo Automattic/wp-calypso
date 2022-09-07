@@ -46,7 +46,7 @@ const SITE_TAKEN_ERROR_CODES = [
 	'dotblog_subdomain_not_available',
 ];
 
-const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'video', 'tube' ];
+const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'video' ];
 
 /**
  * Module variables

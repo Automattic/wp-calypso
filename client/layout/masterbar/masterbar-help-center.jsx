@@ -1,12 +1,16 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
+import { useHasSeenWhatsNewModalQuery, HelpCenter } from '@automattic/data-stores';
 import { HelpIcon } from '@automattic/help-center';
+import {
+	useDispatch as useDataStoreDispatch,
+	useSelect as useDateStoreSelect,
+} from '@wordpress/data';
 import classnames from 'classnames';
-import { useDispatch, useSelector } from 'react-redux';
-import { setHelpCenterVisible } from 'calypso/state/ui/actions';
+import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';
 import Item from './item';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
 	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
@@ -14,8 +18,10 @@ const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
 
 	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
 
-	const helpCenterVisible = useSelector( isHelpCenterVisible );
-	const dispatch = useDispatch();
+	const helpCenterVisible = useDateStoreSelect( ( select ) =>
+		select( HELP_CENTER_STORE ).isHelpCenterShown()
+	);
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ helpCenterVisible ? 'close' : 'show' }`, {
@@ -23,7 +29,7 @@ const MasterbarHelpCenter = ( { siteId, tooltip } ) => {
 			section: sectionName,
 		} );
 
-		dispatch( setHelpCenterVisible( ! helpCenterVisible ) );
+		setShowHelpCenter( ! helpCenterVisible );
 	};
 
 	return (

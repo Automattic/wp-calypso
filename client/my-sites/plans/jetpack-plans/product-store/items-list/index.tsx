@@ -1,7 +1,7 @@
 import ProductLightbox from '../../product-lightbox';
-import { BundlesList } from '../bundle-list';
 import { useItemLightbox } from '../hooks/use-item-lightbox';
-import { ProductsList } from '../product-list';
+import { BundlesList } from './bundles-list';
+import { ProductsList } from './products-list';
 import type { ItemsListProps, ProductsListProps, ViewType } from '../types';
 
 import './style.scss';
@@ -18,7 +18,7 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 	onClickPurchase,
 	siteId,
 } ) => {
-	const { currentItem, setCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
+	const { currentItem, clearCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
 	const Component = components[ currentView ];
 
 	if ( ! Component ) {
@@ -31,9 +31,7 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 				<ProductLightbox
 					product={ currentItem }
 					isVisible={ !! currentItem }
-					onClose={ () => {
-						setCurrentItem( null );
-					} }
+					onClose={ clearCurrentItem }
 				/>
 			) }
 

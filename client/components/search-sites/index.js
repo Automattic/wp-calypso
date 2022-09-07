@@ -13,11 +13,11 @@ export default function searchSites( WrappedComponent ) {
 	class Searcher extends Component {
 		state = { term: null };
 
-		setSearchTerm = ( term ) => this.setState( { term } );
+		setSearchTerm = ( term ) => this.setState( { term: term?.toLowerCase() ?? '' } );
 
 		getSearchResults() {
 			return this.state.term
-				? searchCollection( this.props.sites, this.state.term.toLowerCase(), [ 'name', 'URL' ] )
+				? searchCollection( this.props.sites, this.state.term, [ 'name', 'URL' ] )
 				: null;
 		}
 
@@ -25,6 +25,7 @@ export default function searchSites( WrappedComponent ) {
 			return (
 				<WrappedComponent
 					{ ...this.props }
+					searchTerm={ this.state.term }
 					searchSites={ this.setSearchTerm }
 					sitesFound={ this.getSearchResults() }
 				/>

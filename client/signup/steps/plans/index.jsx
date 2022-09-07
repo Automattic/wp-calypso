@@ -275,6 +275,10 @@ export class PlansStep extends Component {
 	getHeaderText() {
 		const { headerText, translate, eligibleForProPlan, locale } = this.props;
 
+		if ( headerText ) {
+			return headerText;
+		}
+
 		if ( eligibleForProPlan ) {
 			return 'en' === locale || i18n.hasTranslation( 'Choose the right plan for you' )
 				? translate( 'Choose the right plan for you' )
@@ -285,32 +289,37 @@ export class PlansStep extends Component {
 			return translate( 'Choose a plan' );
 		}
 
-		return headerText || translate( "Pick a plan that's right for you." );
+		return translate( "Pick a plan that's right for you." );
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, subHeaderText, translate, eligibleForProPlan, locale, flowName } =
-			this.props;
+		const {
+			eligibleForProPlan,
+			flowName,
+			hideFreePlan,
+			locale,
+			subHeaderText,
+			translate,
+			useEmailOnboardingSubheader,
+		} = this.props;
+
+		const freePlanButton = <Button onClick={ this.handleFreePlanButtonClick } borderless />;
 
 		if ( flowName === NEWSLETTER_FLOW ) {
-			return translate(
-				`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
-				{
-					components: {
-						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-					},
-				}
-			);
+			return hideFreePlan
+				? translate( 'Unlock a powerful bundle of features for your Newsletter.' )
+				: translate(
+						`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
+						{ components: { link: freePlanButton } }
+				  );
 		}
 		if ( flowName === LINK_IN_BIO_FLOW ) {
-			return translate(
-				`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
-				{
-					components: {
-						link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-					},
-				}
-			);
+			return hideFreePlan
+				? translate( 'Unlock a powerful bundle of features for your Link in Bio.' )
+				: translate(
+						`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
+						{ components: { link: freePlanButton } }
+				  );
 		}
 
 		if ( eligibleForProPlan ) {
@@ -319,11 +328,7 @@ export class PlansStep extends Component {
 					? translate( 'Try risk-free with a 14-day money-back guarantee.' )
 					: translate(
 							'Try risk-free with a 14-day money-back guarantee or {{link}}start with a free site{{/link}}.',
-							{
-								components: {
-									link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-								},
-							}
+							{ components: { link: freePlanButton } }
 					  );
 			}
 
@@ -333,22 +338,31 @@ export class PlansStep extends Component {
 				: translate( 'The WordPress Pro plan comes with a 14-day full money back guarantee' );
 		}
 
+		if ( useEmailOnboardingSubheader ) {
+			return 'en' === locale ||
+				i18n.hasTranslation(
+					'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.'
+				)
+				? translate(
+						'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
+						{ components: { link: freePlanButton } }
+				  )
+				: translate(
+						"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
+						{ components: { link: freePlanButton } }
+				  );
+		}
+
 		if ( ! hideFreePlan ) {
 			if ( this.state.isDesktop ) {
 				return translate(
 					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
-					{
-						components: {
-							link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-						},
-					}
+					{ components: { link: freePlanButton } }
 				);
 			}
 
 			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
-				components: {
-					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
-				},
+				components: { link: freePlanButton },
 			} );
 		}
 

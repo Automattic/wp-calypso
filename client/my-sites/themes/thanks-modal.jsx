@@ -14,7 +14,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { clearActivated } from 'calypso/state/themes/actions';
 import {
-	doesThemeBundleSoftwareSet,
+	doesThemeBundleUsableSoftwareSet,
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeDetailsUrl,
@@ -60,8 +60,8 @@ class ThanksModal extends Component {
 			this.props.requestSite( this.props.siteId );
 
 			// Redirect to plugin-bundle flow for themes including software (like woocommerce)
-			const { siteSlug, doesCurrentThemeBundleSoftware } = this.props;
-			if ( doesCurrentThemeBundleSoftware ) {
+			const { siteSlug, doesThemeBundleUsableSoftware } = this.props;
+			if ( doesThemeBundleUsableSoftware ) {
 				const dest = `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle`;
 				window.location.replace( dest );
 			}
@@ -240,7 +240,7 @@ class ThanksModal extends Component {
 			shouldEditHomepageWithGutenberg,
 			hasActivated,
 			isFSEActive,
-			doesCurrentThemeBundleSoftware,
+			doesThemeBundleUsableSoftware,
 		} = this.props;
 
 		const firstButton = shouldEditHomepageWithGutenberg
@@ -261,13 +261,13 @@ class ThanksModal extends Component {
 		return [
 			{
 				...firstButton,
-				disabled: ! hasActivated || doesCurrentThemeBundleSoftware,
+				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
 			},
 			{
 				action: 'customizeSite',
 				label: this.getEditSiteLabel(),
 				isPrimary: true,
-				disabled: ! hasActivated || doesCurrentThemeBundleSoftware,
+				disabled: ! hasActivated || doesThemeBundleUsableSoftware,
 				onClick: isFSEActive ? this.goToSiteEditor : this.goToCustomizer,
 				href: this.props.customizeUrl,
 				target: shouldEditHomepageWithGutenberg || isFSEActive ? null : '_blank',
@@ -276,9 +276,9 @@ class ThanksModal extends Component {
 	};
 
 	render() {
-		const { currentTheme, hasActivated, isActivating, doesCurrentThemeBundleSoftware } = this.props;
+		const { currentTheme, hasActivated, isActivating, doesThemeBundleUsableSoftware } = this.props;
 
-		const shouldDisplayContent = hasActivated && currentTheme && ! doesCurrentThemeBundleSoftware;
+		const shouldDisplayContent = hasActivated && currentTheme && ! doesThemeBundleUsableSoftware;
 
 		return (
 			<Dialog
@@ -322,7 +322,11 @@ const ConnectedThanksModal = connect(
 			siteUrl,
 			siteSlug: getSiteSlug( state, siteId ),
 			currentTheme,
-			doesCurrentThemeBundleSoftware: doesThemeBundleSoftwareSet( state, currentThemeId ),
+			doesThemeBundleUsableSoftware: doesThemeBundleUsableSoftwareSet(
+				state,
+				currentThemeId,
+				siteId
+			),
 			shouldEditHomepageWithGutenberg,
 			detailsUrl: getThemeDetailsUrl( state, currentThemeId, siteId ),
 			customizeUrl,

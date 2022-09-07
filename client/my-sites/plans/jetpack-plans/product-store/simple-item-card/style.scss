@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.simple-product-card {
+.simple-item-card {
 	display: flex;
 	flex-direction: row;
 
@@ -10,7 +10,7 @@
 	}
 }
 
-.simple-product-card__icon {
+.simple-item-card__icon {
 	display: none;
 	box-sizing: border-box;
 	min-width: 52px;
@@ -25,44 +25,29 @@
 	}
 }
 
-.simple-product-card__icon > img {
-	width: 28px;
-	height: auto;
-}
-
-.simple-product-card__info {
+.simple-item-card__body {
 	display: flex;
 	flex-direction: column;
 	border-bottom: 1px solid var( --studio-gray-5 );
 	flex-grow: 1;
 }
 
-.simple-product-card__info-header {
+.simple-item-card__header {
 	display: flex;
 	flex-direction: row;
 	font-size: $font-body-small;
 	justify-content: space-between;
 	align-items: flex-start;
-
-	// on small screens, if the product is already owned,
-	// set flex-direction to column to avoid cluttered UI
-	// due to long "Manage subscription" button
-	&:has(.item-price__is-owned) {
-		@media only screen and (max-width: $break-mobile), only screen and (min-width: $break-medium) and (max-width: $break-large) {
-			flex-direction: column;
-			gap: 1rem;
-		}
-	}
 }
 
-.simple-product-card__info-header-text {
+.simple-item-card__title {
 	font-size: $font-title-medium;
 	line-height: rem( 29px );
 	margin-bottom: 0 !important;
 	color: var( --studio-gray-100 );
 }
 
-.simple-product-card__info-header-checkout {
+.simple-item-card__cta {
 	align-items: center;
 	justify-content: center;
 	font-size: $font-body;
@@ -70,15 +55,8 @@
 	display: flex;
 }
 
-.simple-product-card__info-content {
+.simple-item-card__footer {
 	font-size: $font-body-small;
 	line-height: rem( 24px );
 	padding: 8px 0 16px;
-}
-
-.simple-product-card__info-more-link {
-	display: block;
-	color: var( --color-neutral-100 ) !important;
-	text-decoration: underline;
-	margin-top: 4px;
 }

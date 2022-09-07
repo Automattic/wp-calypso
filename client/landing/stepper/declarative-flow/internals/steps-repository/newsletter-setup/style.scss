@@ -76,6 +76,21 @@ $border-radius: 4px;
 			}
 		}
 
+		.newsletter-setup__contrast-warning {
+			display: flex;
+			font-size: $font-body-small;
+			margin-bottom: 32px;
+
+			.newsletter-setup__contrast-warning-icon-container {
+				margin-top: 4px;
+				margin-right: 4px;
+
+				svg {
+					stroke: var( --studio-yellow-40 );
+				}
+			}
+		}
+
 		.newsletter-setup__submit-button {
 			border-radius: $border-radius;
 		}

@@ -3,6 +3,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
 import FoldableCard from 'calypso/components/foldable-card';
+import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { SelectorProduct } from '../types';
 import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
@@ -12,39 +13,6 @@ type Props = {
 	product: SelectorProduct;
 	isVisible: boolean;
 	onClose: () => void;
-};
-
-type Option = {
-	value: string;
-	label: string;
-	checked?: boolean;
-};
-type OptionProps = {
-	options: Option[];
-	onChange: ( value: string ) => void;
-};
-
-const Options: React.FC< OptionProps > = ( { options, onChange } ) => {
-	return (
-		<>
-			{ options.map( ( option ) => {
-				return (
-					<label key={ option.value } className="product-lightbox__variants-option-label">
-						<input
-							type="radio"
-							name="variant-select[]"
-							value={ option.value }
-							checked={ option.checked }
-							onChange={ ( el ) => {
-								onChange( el.target.value );
-							} }
-						/>
-						<span>{ option.label }</span>
-					</label>
-				);
-			} ) }
-		</>
-	);
 };
 
 const Includes = () => (
@@ -72,7 +40,7 @@ const Benefits = () => (
 const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 
-	const [ checked, setChecked ] = useState( '1' );
+	const [ checked, setChecked ] = useState( '10GB' );
 
 	const isMobile = useMobileBreakpoint();
 
@@ -145,14 +113,16 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 				</div>
 				<div className="product-lightbox__variants">
 					<div className="product-lightbox__variants-content">
-						<p>Choose a storage option:</p>
-						<div className="product-lightbox__variants-option">
-							<Options
-								options={ [
-									{ value: '1', label: '10GB', checked: checked === '1' },
-									{ value: '2', label: '1TB(1,000GB)', checked: checked === '2' },
+						<div className="product-lightbox__variants-options">
+							<MultipleChoiceQuestion
+								question="Choose a storage option:"
+								answers={ [
+									{ id: '10GB', answerText: '10GB' },
+									{ id: '1TB(1,000GB)', answerText: '1TB(1,000GB)' },
 								] }
-								onChange={ setChecked }
+								selectedAnswerId={ checked }
+								onAnswerChange={ setChecked }
+								shouldShuffleAnswers={ false }
 							/>
 						</div>
 

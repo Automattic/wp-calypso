@@ -1,12 +1,14 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { ReactElement, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import PluginsList from './plugins-list';
 import type { Plugin } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -20,6 +22,7 @@ interface Props {
 	toggleBulkManagement: () => void;
 	updateAllPlugins: () => void;
 	removePluginNotice: ( plugin: Plugin ) => void;
+	updatePlugin: ( plugin: Plugin ) => void;
 }
 export default function PluginManagementV2( {
 	plugins,
@@ -31,8 +34,16 @@ export default function PluginManagementV2( {
 	toggleBulkManagement,
 	updateAllPlugins,
 	removePluginNotice,
+	updatePlugin,
 }: Props ): ReactElement {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		return () => {
+			dispatch( resetPluginStatuses() );
+		};
+	}, [ dispatch ] );
 
 	const renderBulkActionsHeader = () => {
 		if ( isLoading ) {
@@ -81,9 +92,12 @@ export default function PluginManagementV2( {
 						smallColumn: true,
 					},
 					{
+						key: 'update',
+						header: translate( 'Update available' ),
+					},
+					{
 						key: 'last-updated',
-						header: translate( 'Last updated' ),
-						smallColumn: true,
+						header: null,
 					},
 			  ]
 			: [
@@ -92,11 +106,16 @@ export default function PluginManagementV2( {
 						header: translate( 'Sites' ),
 						smallColumn: true,
 					},
+					{
+						key: 'update',
+						header: translate( 'Update available' ),
+						smallColumn: true,
+					},
 			  ] ),
 		{
-			key: 'update',
+			key: 'bulk-actions',
 			header: renderBulkActionsHeader(),
-			colSpan: 2,
+			colSpan: 3,
 		},
 	];
 
@@ -123,6 +142,7 @@ export default function PluginManagementV2( {
 				} ) }
 				selectedSite={ selectedSite }
 				removePluginNotice={ removePluginNotice }
+				updatePlugin={ updatePlugin }
 			/>
 		</div>
 	);

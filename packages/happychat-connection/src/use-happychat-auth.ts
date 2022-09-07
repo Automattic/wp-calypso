@@ -4,6 +4,8 @@ import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { HappychatSession, HappychatUser, User, HappychatAuth } from './types';
 
+const key = Date.now();
+
 export async function requestHappyChatAuth() {
 	const user: User = await wpcomRequest( {
 		path: '/me',
@@ -42,7 +44,7 @@ export async function requestHappyChatAuth() {
 }
 
 export default function useHappychatAuth( enabled = true ) {
-	return useQuery< HappychatAuth >( 'getHappychatAuth', requestHappyChatAuth, {
+	return useQuery< HappychatAuth >( 'getHappychatAuth' + key, requestHappyChatAuth, {
 		staleTime: Infinity,
 		enabled,
 	} );

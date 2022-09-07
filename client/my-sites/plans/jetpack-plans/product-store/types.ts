@@ -53,11 +53,14 @@ export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
 }
 
-export type MostPopularProps = {
+export type MostPopularProps = UseStoreItemInfoProps & {
 	className?: string;
 	heading: string;
-	items: React.ReactNode;
+	items: Array< SelectorProduct >;
+	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
 };
+
+export type AllItemsProps = MostPopularProps;
 
 export type HeroImageProps = {
 	item: SelectorProduct;
@@ -77,16 +80,23 @@ export type ItemPriceProps = ProductStoreBaseProps &
 		isIncludedInPlan?: boolean;
 	};
 
-export type FeaturedItemCardProps = ItemPriceProps & {
-	checkoutURL?: string;
+export type FeaturedItemCardProps = {
 	ctaAsPrimary?: boolean;
+	ctaHref?: string;
 	ctaLabel: React.ReactNode;
+	description: React.ReactNode;
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
-	item: SelectorProduct;
-	hideMoreInfoLink?: boolean;
-	onClickMore?: VoidFunction;
-	onClickPurchase?: VoidFunction;
+	onClickCta?: VoidFunction;
+	price: React.ReactNode;
+	title: React.ReactNode;
 };
 
-export type SimpleProductCardProps = Omit< FeaturedItemCardProps, 'hero' >;
+export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
+	icon?: React.ReactNode;
+};
+
+export type MoreInfoLinkProps = {
+	item: SelectorProduct;
+	onClick?: VoidFunction;
+};

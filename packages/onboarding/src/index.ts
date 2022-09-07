@@ -7,6 +7,8 @@ export {
 	SkipButton,
 	ArrowButton,
 } from './action-buttons';
+export { setupSiteAfterCreation, base64ImageToBlob } from './setup-tailored-site-after-creation';
+export { uploadAndSetSiteLogo } from './upload-and-set-site-logo';
 export { default as FeatureIcon } from './feature-icon';
 export { default as ScrollToTop } from './scroll-to-top';
 export { default as Progress } from './progress';

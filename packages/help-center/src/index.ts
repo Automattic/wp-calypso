@@ -9,4 +9,4 @@ export { execute, checkAPIThenInitializeDirectly, askDirectlyQuestion } from './
 export { default as Mail } from './icons/mail';
 export { default as NewReleases } from './icons/new-releases';
 export * from './support-variations';
-export { shouldShowHelpCenterToUser, shouldTargetWpcom, shouldLoadInlineHelp } from './utils';
+export { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from './utils';
