@@ -12,6 +12,7 @@ import type { PhoneInputValue } from 'calypso/components/phone-input';
 import type { PropsWithChildren, ReactNode } from 'react';
 
 export type CountrySpecificPaymentFieldsProps = {
+	className?: string;
 	countriesList: CountryListItem[];
 	countryCode: string;
 	disableFields?: boolean;
@@ -249,6 +250,7 @@ function PhoneInputField( {
 }
 
 export function CountrySpecificPaymentFieldsUnstyled( {
+	className,
 	countriesList,
 	countryCode,
 	disableFields,
@@ -288,7 +290,8 @@ export function CountrySpecificPaymentFieldsUnstyled( {
 	const countryName = countryData && countryData.name ? countryData.name : '';
 	const containerClassName = classNames(
 		'checkout__country-payment-fields',
-		`checkout__country-${ countryCode.toLowerCase() }`
+		`checkout__country-${ countryCode.toLowerCase() }`,
+		className
 	);
 
 	return (
