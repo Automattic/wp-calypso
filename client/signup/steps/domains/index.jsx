@@ -507,10 +507,7 @@ class DomainsStep extends Component {
 			showExampleSuggestions = true;
 		}
 
-		let includeWordPressDotCom = this.props.includeWordPressDotCom;
-		if ( 'undefined' === typeof includeWordPressDotCom ) {
-			includeWordPressDotCom = ! this.props.isDomainOnly;
-		}
+		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -660,6 +657,14 @@ class DomainsStep extends Component {
 		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
 			this.props;
 
+		if ( stepSectionName === 'use-your-domain' ) {
+			return '';
+		}
+
+		if ( headerText ) {
+			return headerText;
+		}
+
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
 		}
@@ -670,7 +675,7 @@ class DomainsStep extends Component {
 
 		const headerPropertyName = 'signUpFlowDomainsStepHeader';
 
-		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName ) || headerText;
+		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName );
 	}
 
 	getAnalyticsSection() {

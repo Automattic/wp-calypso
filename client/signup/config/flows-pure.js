@@ -150,11 +150,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-with-email',
-			steps: getAddOnsStep( [ 'user', 'domains', 'emails', 'plans' ] ),
+			steps: getAddOnsStep( [ 'user', 'mailbox-domain', 'emails', 'plans' ] ),
 			destination: getSignupDestination,
 			description:
 				'Copy of the onboarding flow that always includes an email step; the flow is used by the Professional Email landing page',
-			lastModified: '2021-08-11',
+			lastModified: '2022-09-07',
 			showRecaptcha: true,
 		},
 		{
