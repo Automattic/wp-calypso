@@ -22,11 +22,14 @@
 		"scss/at-else-empty-line-before": null,
 		"scss/at-if-closing-brace-space-after": null,
 		"no-invalid-position-at-import-rule": null,
-		"declaration-property-unit-allowed-list": {
-			"/^font-size$|^font$/": [ "rem" ],
-			"line-height": [ "px" ],
-			"/radius$/": [ "px" ]
-		},
+		"declaration-property-unit-allowed-list": [
+			{
+				"/^font-size$|^font$/": [ "rem" ],
+				"line-height": [ "px" ],
+				"/radius$/": [ "px" ]
+			},
+			{ "ignore": [ "inside-function" ] }
+		],
 		"scales/font-weights": [ 400, 500, 600, 700 ],
 		"scales/font-sizes": [
 			{
