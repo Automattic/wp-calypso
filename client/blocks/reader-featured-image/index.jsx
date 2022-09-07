@@ -21,15 +21,16 @@ const ReaderFeaturedImage = ( {
 	imageWidth,
 	imageHeight,
 } ) => {
-	const mediaUrl = imageUrl || canonicalMedia.src;
-	if ( mediaUrl === undefined ) {
+	const featuredImageUrl = imageUrl || canonicalMedia.src;
+	if ( featuredImageUrl === undefined ) {
 		return null;
 	}
+	// Don't resize image if it was already fetched.
+	const resizedUrl = fetched
+		? featuredImageUrl
+		: resizeImageUrl( featuredImageUrl, { w: imageWidth || READER_CONTENT_WIDTH } );
+	const safeCssUrl = cssSafeUrl( resizedUrl );
 
-	const resizedImageUrl = fetched
-		? mediaUrl
-		: resizeImageUrl( mediaUrl, { w: imageWidth || READER_CONTENT_WIDTH } );
-	const safeCssUrl = cssSafeUrl( resizedImageUrl );
 	let featuredImageStyle = { background: 'none' };
 	if ( safeCssUrl ) {
 		featuredImageStyle = {

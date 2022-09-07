@@ -107,6 +107,7 @@ class ReaderFeaturedVideo extends Component {
 					onClick={ this.handleThumbnailClick }
 					className={ className }
 					href={ href }
+					fetched={ true }
 				>
 					{ allowPlaying && (
 						<img
