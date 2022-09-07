@@ -11,6 +11,7 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getDomainSignupFlowDestination = noop,
+	getEmailSignupFlowDestination = noop,
 	getChecklistThemeDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
@@ -150,8 +151,8 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-with-email',
-			steps: getAddOnsStep( [ 'user', 'mailbox-domain', 'mailbox', 'plans' ] ),
-			destination: getSignupDestination,
+			steps: getAddOnsStep( [ 'user', 'mailbox-domain', 'mailbox', 'mailbox-plan' ] ),
+			destination: getEmailSignupFlowDestination,
 			description:
 				'Copy of the onboarding flow that includes non-skippable domain and email steps; the flow is used by the Professional Email landing page',
 			lastModified: '2022-09-07',
