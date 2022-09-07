@@ -12,7 +12,8 @@ export function getEnhancedTasks(
 	tasks: Task[] | null,
 	siteSlug: string | null,
 	site: SiteDetails | null,
-	submit: NavigationControls[ 'submit' ]
+	submit: NavigationControls[ 'submit' ],
+	goToStep?: NavigationControls[ 'goToStep' ]
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
@@ -43,7 +44,11 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Add Subscribers' ),
 						keepActive: true,
-						actionUrl: `/setup/subscribers?flow=newsletter&complete-setup=true&siteSlug=${ siteSlug }`,
+						actionDispatch: () => {
+							if ( goToStep ) {
+								goToStep( 'subscribers' );
+							}
+						},
 					};
 					break;
 				case 'first_post_published':
