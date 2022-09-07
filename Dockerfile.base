@@ -2,7 +2,7 @@
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
 #### Note that yarn v3 cache lives in `/calypso/.yarn`
-FROM node:16.17.0-buster as cache
+FROM node:16.17.0-bullseye as cache
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -37,7 +37,7 @@ ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to uni test and build calypso.
-FROM node:16.17.0-buster as base
+FROM node:16.17.0-bullseye as base
 
 ARG node_memory=8192
 ARG user=calypso
@@ -76,7 +76,7 @@ ENTRYPOINT [ "/bin/bash" ]
 #### This image is used to run E2E tests.
 FROM base as ci-e2e
 
-ENV PUPPETEER_SKIP_DOWNLOAD=false
+ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
 ENV DISPLAY=:99
 
@@ -86,7 +86,6 @@ RUN apt update \
 		fonts-noto \
 		git-restore-mtime \
 		gtk2-engines-pixbuf \
-		libappindicator3-1 \
 		libasound2 \
 		libatk-bridge2.0-0 \
 		libatspi2.0-0 \
@@ -115,6 +114,8 @@ FROM base as ci-wpcom
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
+
+RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && dpkg -i libffi6_3.2.1-8_amd64.deb
 
 RUN apt update &&\
 	apt-get install -y apt-transport-https &&\
