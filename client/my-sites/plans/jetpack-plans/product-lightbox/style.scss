@@ -190,7 +190,7 @@
 		margin-bottom: 0;
 	}
 
-	.multiple-choice-answers-wrapper {
+	.multiple-choice-question__answers {
 		margin-top: 1rem;
 		margin-bottom: 1.5rem;
 		display: flex;
@@ -202,13 +202,13 @@
 		cursor: pointer;
 		display: inline-block;
 		position: relative;
-		padding-right: 3rem;
+		padding-inline-end: 3rem;
 	}
 
 	.form-label input[type='radio'] + span {
 		font-weight: 600;
 		font-size: 1rem;
-		margin-left: 1.75rem;
+		margin-inline-start: 1.75rem;
 	}
 
 	.form-radio {

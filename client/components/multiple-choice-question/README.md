@@ -160,4 +160,4 @@ The prompt to display in the text input referenced above.
 - **Required:** `no`
 - **Default:** `true`
 
-Prevents all answers from being shuffled
+Whether the answers should be shuffled.

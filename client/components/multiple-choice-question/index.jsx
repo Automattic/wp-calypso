@@ -32,7 +32,7 @@ const MultipleChoiceQuestion = ( {
 	return (
 		<FormFieldset className="multiple-choice-question">
 			<FormLegend>{ question }</FormLegend>
-			<div className="multiple-choice-answers-wrapper">
+			<div className="multiple-choice-question__answers">
 				{ shuffledAnswers.map( ( answer ) => (
 					<MultipleChoiceAnswer
 						key={ answer.id }
