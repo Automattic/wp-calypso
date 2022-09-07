@@ -55,7 +55,7 @@ function recordSubmitStep( stepName, providedDependencies, optionalProps ) {
 				propValue = otherProps;
 			}
 
-			if ( propName === 'email_item' && isTitanMail( propValue ) ) {
+			if ( propName === 'email_item' && propValue && isTitanMail( propValue ) ) {
 				const { extra, quantity, ...otherProps } = propValue;
 				propValue = otherProps;
 			}
