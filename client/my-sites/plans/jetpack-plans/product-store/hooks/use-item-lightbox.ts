@@ -6,9 +6,9 @@ import { SelectorProduct } from '../../types';
 import { sanitizeLocationHash } from '../utils/sanitize-location-hash';
 
 export const useItemLightbox = () => {
-	const item = slugToSelectorProduct( sanitizeLocationHash( window.location.hash ) );
-
-	const [ currentItem, setCurrentItem ] = useState< SelectorProduct | null >( item );
+	const [ currentItem, setCurrentItem ] = useState< SelectorProduct | null >( () =>
+		slugToSelectorProduct( sanitizeLocationHash( window.location.hash ) )
+	);
 
 	const clearCurrentItem = useCallback( () => {
 		setCurrentItem( null );
