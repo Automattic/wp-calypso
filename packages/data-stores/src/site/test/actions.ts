@@ -410,7 +410,7 @@ describe( 'Site Actions', () => {
 			request: {
 				path: `/sites/${ siteSlug }/themes/mine`,
 				apiVersion: '1.1',
-				body: { theme: 'zoologist', dont_change_homepage: true },
+				body: { theme: 'zoologist', style_variation_slug: 'default', dont_change_homepage: true },
 				method: 'POST',
 			},
 		};
@@ -452,6 +452,7 @@ describe( 'Site Actions', () => {
 					...mockedDesign,
 					verticalizable: true,
 				},
+				undefined,
 				mockedSiteVerticalId
 			);
 
@@ -476,6 +477,7 @@ describe( 'Site Actions', () => {
 					...mockedDesign,
 					verticalizable: true,
 				},
+				undefined,
 				mockedSiteVerticalId
 			);
 

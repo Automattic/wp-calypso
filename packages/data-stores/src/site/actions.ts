@@ -1,4 +1,4 @@
-import { Design } from '@automattic/design-picker/src/types';
+import { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
@@ -294,13 +294,22 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId?: string ) {
+	function* setDesignOnSite(
+		siteSlug: string,
+		selectedDesign: Design,
+		selectedStyleVariation?: StyleVariation,
+		siteVerticalId?: string
+	) {
 		const { theme, recipe } = selectedDesign;
 
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme, dont_change_homepage: true },
+			body: {
+				theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme,
+				style_variation_slug: selectedStyleVariation?.slug,
+				dont_change_homepage: true,
+			},
 			method: 'POST',
 		} );
 
