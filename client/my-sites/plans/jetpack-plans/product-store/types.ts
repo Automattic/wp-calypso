@@ -60,6 +60,8 @@ export type MostPopularProps = UseStoreItemInfoProps & {
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
 };
 
+export type AllItemsProps = MostPopularProps;
+
 export type HeroImageProps = {
 	item: SelectorProduct;
 };

@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import { useStoreItemInfo } from '../hooks/use-store-item-info';
 import SimpleProductCard from '../simple-product-card';
-import { MostPopularProps } from '../types';
+import { AllItemsProps } from '../types';
 
 import './style.scss';
 
-export const AllItems: React.FC< MostPopularProps > = ( {
+export const AllItems: React.FC< AllItemsProps > = ( {
 	className,
 	createCheckoutURL,
 	duration,
