@@ -2,7 +2,7 @@ import { useState } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { ItemsList } from './item-list';
+import { ItemsList } from './items-list';
 import { JetpackFree } from './jetpack-free';
 import { NeedMoreInfo } from './need-more-info';
 import { PricingBanner } from './pricing-banner';
