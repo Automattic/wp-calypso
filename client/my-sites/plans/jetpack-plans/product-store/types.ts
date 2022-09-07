@@ -22,9 +22,8 @@ export interface ProductStoreProps {
 	 */
 	enableUserLicensesDialog?: boolean;
 	duration: Duration;
-	createCheckoutURL?: PurchaseURLCallback;
-	onClickPurchase?: PurchaseCallback;
-	storeItemInfo: StoreItemInfo;
+	createCheckoutURL: PurchaseURLCallback;
+	onClickPurchase: PurchaseCallback;
 	urlQueryArgs: ProductStoreQueryArgs;
 	header: React.ReactNode;
 }
@@ -42,11 +41,11 @@ export interface ViewFilterProps {
 	setCurrentView: ( currentView: ViewType ) => void;
 }
 
-export type ProductsListProps = ProductStoreBaseProps &
-	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' > & {
-		onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
-		duration: Duration;
-	};
+export type ProductsListProps = ProductStoreBaseProps & {
+	storeItemInfo: StoreItemInfo;
+	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
+	duration: Duration;
+};
 
 export type BundlesListProps = ProductsListProps;
 
@@ -57,8 +56,8 @@ export type ItemToDisplayProps = {
 
 export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
-	createCheckoutURL: PurchaseURLCallback;
-	onClickPurchase: PurchaseCallback;
+	createCheckoutURL?: PurchaseURLCallback;
+	onClickPurchase?: PurchaseCallback;
 }
 
 export type MostPopularProps = {
