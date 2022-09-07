@@ -22,7 +22,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep flowName={ flow as string } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered
+			showJetpackPowered={ flow === 'newsletter' }
 		/>
 	);
 };
