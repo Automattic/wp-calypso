@@ -499,16 +499,20 @@ export class SiteSelector extends Component {
 						</span>
 					) }
 				</div>
-				{ this.props.showManageSitesButton && (
-					<Button
-						onClick={ this.onManageSitesClick }
-						href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
-						className="site-selector__manage-sites"
-					>
-						{ this.props.translate( 'Manage sites' ) }
-					</Button>
+				{ ( this.props.showManageSitesButton || this.props.showAddNewSite ) && (
+					<div className="site-selector__actions">
+						{ this.props.showManageSitesButton && (
+							<Button
+								onClick={ this.onManageSitesClick }
+								href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
+								className="site-selector__manage-sites"
+							>
+								{ this.props.translate( 'Manage sites' ) }
+							</Button>
+						) }
+						{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
+					</div>
 				) }
-				{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
 			</div>
 		);
 	}

@@ -186,10 +186,17 @@
 	padding: 10px 20px;
 }
 
+.site-selector__actions {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 8px;
+	margin-top: auto;
+}
+
 .site-selector__manage-sites {
 	background: transparent;
 	border-color: var( --color-sidebar-text );
-	margin: 8px;
 
 	&,
 	&:visited {
@@ -200,42 +207,6 @@
 		border-color: var( --color-sidebar-menu-hover-text );
 		color: var( --color-sidebar-menu-hover-text );
 		background: var( --color-sidebar-menu-hover-background );
-	}
-}
-
-.site-selector__add-new-site {
-	padding: 0;
-	border-top: 1px solid var( --color-neutral-5 );
-	margin: auto 0 0;
-	display: flex;
-	flex-direction: row;
-	padding-left: 10px;
-}
-
-.site-selector__add-new-site .button {
-	box-sizing: border-box;
-	display: inline-block;
-	text-transform: uppercase;
-	font-size: $font-body-extra-small;
-	font-weight: 600;
-	padding: 8px;
-	color: var( --color-neutral-40 );
-	line-height: 2.1;
-
-	&:hover {
-		color: var( --color-neutral-70 );
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		padding: 16px;
-	}
-
-	.gridicon {
-		display: block;
-		float: left;
-		margin-right: 6px;
-		top: auto;
-		margin-top: auto;
 	}
 }
 
