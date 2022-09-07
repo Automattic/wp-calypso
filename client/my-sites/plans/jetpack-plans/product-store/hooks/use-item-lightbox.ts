@@ -3,9 +3,10 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EXTERNAL_PRODUCTS_LIST } from '../../constants';
 import slugToSelectorProduct from '../../slug-to-selector-product';
 import { SelectorProduct } from '../../types';
+import { sanitizeLocationHash } from '../utils/sanitize-location-hash';
 
 export const useItemLightbox = () => {
-	const item = slugToSelectorProduct( window.location.hash.substring( 1 ) );
+	const item = slugToSelectorProduct( sanitizeLocationHash( window.location.hash ) );
 
 	const [ currentItem, setCurrentItem ] = useState< SelectorProduct | null >( item );
 
