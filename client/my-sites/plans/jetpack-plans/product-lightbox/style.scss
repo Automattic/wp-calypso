@@ -248,33 +248,55 @@
 	}
 }
 
-.product-lightbox__variants-plan-card {
-	background-color: #fff;
-	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	border: 1px solid #008710;
-	padding: 1rem;
+.product-lightbox__variants-plan {
+	&-alt-info {
+		font-size: $font-body-extra-small;
+		color: var( --studio-jetpack-green-50 );
+		font-weight: 600;
+		display: flex;
+		align-items: center;
+	}
+
+	&-alt-info--dot {
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		background: var( --studio-jetpack-green-50 );
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		border-radius: 50%;
+		margin-inline-end: 4px;
+	}
+
+	&-card {
+		background-color: #fff;
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		border: 1px solid #008710;
+		padding: 1rem;
+	}
+
+	&-card-price {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: #000;
+	}
+
+	&-card-old-price {
+		color: #101517;
+		text-decoration: line-through;
+		margin-right: 2px;
+	}
+
+	&-card-month-short {
+		display: none;
+	}
 }
 
-.product-lightbox__variants-plan-card-price {
-	font-size: 1.5rem;
-	font-weight: 700;
-	color: #000;
-}
 
 .product-lightbox__variants-grey-label {
 	font-size: 0.75rem;
 	color: #646970;
 }
 
-.product-lightbox__variants-plan-card-old-price {
-	color: #101517;
-	text-decoration: line-through;
-	margin-right: 2px;
-}
-
-.product-lightbox__variants-plan-card-month-short {
-	display: none;
-}
 
 @media screen and (max-width: 768px) and (orientation: portrait) {
 	.product-lightbox__modal {
