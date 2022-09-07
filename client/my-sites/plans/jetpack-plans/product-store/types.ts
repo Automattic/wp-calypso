@@ -42,7 +42,6 @@ export interface ViewFilterProps {
 }
 
 export type ProductsListProps = ProductStoreBaseProps & {
-	storeItemInfo: StoreItemInfo;
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
 	duration: Duration;
 };
@@ -56,7 +55,6 @@ export type ItemToDisplayProps = {
 
 export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
-	storeItemInfo: StoreItemInfo;
 }
 
 export type MostPopularProps = {
@@ -64,7 +62,6 @@ export type MostPopularProps = {
 	heading: string;
 	items: Array< SelectorProduct >;
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
-	storeItemInfo: StoreItemInfo;
 	siteId: number | null;
 };
 

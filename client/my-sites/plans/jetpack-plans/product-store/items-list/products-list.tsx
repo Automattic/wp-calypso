@@ -7,7 +7,6 @@ import { MostPopular } from './most-popular';
 import type { ProductsListProps } from '../types';
 
 export const ProductsList: React.FC< ProductsListProps > = ( {
-	storeItemInfo,
 	onClickMoreInfoFactory,
 	siteId,
 	duration,
@@ -27,7 +26,6 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 				items={ popularItems }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
 				siteId={ siteId }
-				storeItemInfo={ storeItemInfo }
 			/>
 
 			<AllItems
@@ -35,7 +33,6 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 				items={ allItems }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
 				siteId={ siteId }
-				storeItemInfo={ storeItemInfo }
 			/>
 		</div>
 	);

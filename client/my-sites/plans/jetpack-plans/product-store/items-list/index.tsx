@@ -11,12 +11,7 @@ const components: Record< ViewType, React.ComponentType< ProductsListProps > > =
 	bundles: BundlesList,
 };
 
-export const ItemsList: React.FC< ItemsListProps > = ( {
-	currentView,
-	storeItemInfo,
-	duration,
-	siteId,
-} ) => {
+export const ItemsList: React.FC< ItemsListProps > = ( { currentView, duration, siteId } ) => {
 	const { currentItem, clearCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
 	const Component = components[ currentView ];
 
@@ -31,7 +26,6 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 					product={ currentItem }
 					isVisible={ !! currentItem }
 					siteId={ siteId }
-					storeItemInfo={ storeItemInfo }
 					onClose={ clearCurrentItem }
 				/>
 			) }
@@ -39,7 +33,6 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 			<Component
 				siteId={ siteId }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
-				storeItemInfo={ storeItemInfo }
 				duration={ duration }
 			/>
 		</div>

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { useStoreItemInfoContext } from '../context/store-item-context';
 import { FeaturedItemCard } from '../featured-item-card';
 import { FeaturesList } from '../features-list';
 import { HeroImage } from '../hero-image';
@@ -11,7 +12,6 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 	heading,
 	items,
 	onClickMoreInfoFactory,
-	storeItemInfo,
 	siteId,
 } ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
@@ -27,7 +27,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 		isSuperseded,
 		isDeprecated,
 		isUserPurchaseOwner,
-	} = storeItemInfo;
+	} = useStoreItemInfoContext();
 
 	return (
 		<div className={ wrapperClassName }>
