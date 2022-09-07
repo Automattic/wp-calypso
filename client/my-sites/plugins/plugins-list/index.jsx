@@ -269,15 +269,17 @@ export class PluginsList extends Component {
 		} );
 	};
 
-	updateAllPlugins = () => {
-		this.removePluginStatuses();
-		this.props.plugins.forEach( ( plugin ) => {
-			Object.keys( plugin.sites ).forEach( ( siteId ) => {
-				const sitePlugin = this.getSitePlugin( plugin, siteId );
-				return this.props.updatePlugin( siteId, sitePlugin );
+	updateAllPlugins = ( accepted ) => {
+		if ( accepted ) {
+			this.removePluginStatuses();
+			this.props.plugins.forEach( ( plugin ) => {
+				Object.keys( plugin.sites ).forEach( ( siteId ) => {
+					const sitePlugin = this.getSitePlugin( plugin, siteId );
+					return this.props.updatePlugin( siteId, sitePlugin );
+				} );
 			} );
-		} );
-		this.recordEvent( 'Clicked Update all Plugins', true );
+			this.recordEvent( 'Clicked Update all Plugins', true );
+		}
 	};
 
 	updateSelected = ( accepted ) => {
@@ -514,6 +516,15 @@ export class PluginsList extends Component {
 						translationArgs
 					)
 				);
+				break;
+			case 'update_all':
+				acceptDialog(
+					<div>
+						<span>{ translate( 'You are about to update all plugins on all sites.' ) }</span>
+					</div>,
+					( accepted ) => this.updateAllPlugins( accepted ),
+					translate( 'Update all plugins' )
+				);
 		}
 	};
 
@@ -677,6 +688,7 @@ export class PluginsList extends Component {
 					autoupdateEnablePluginNotice={ () => this.bulkActionDialog( 'enableAutoupdates' ) }
 					autoupdateDisablePluginNotice={ () => this.bulkActionDialog( 'disableAutoupdates' ) }
 					updatePluginNotice={ () => this.bulkActionDialog( 'update' ) }
+					updateAllPluginsNotice={ () => this.bulkActionDialog( 'update_all' ) }
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some(
 						this.filterSelection.inactive.bind( this )
