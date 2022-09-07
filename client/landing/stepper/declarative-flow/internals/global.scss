@@ -118,15 +118,6 @@ button {
 			}
 		}
 
-		// Courses has a dark background
-		@at-root .courses#{&} {
-			color: var( --color-text-inverted );
-
-			.wordpress-logo {
-				fill: var( --color-text-inverted );
-			}
-		}
-
 		@include break-small {
 			.wordpress-logo {
 				inset-inline-start: 24px;

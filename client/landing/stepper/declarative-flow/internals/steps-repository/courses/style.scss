@@ -1,17 +1,21 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-
 $grey-header: #151b1e;
-$grey-footer: #101517;
 
 .courses {
+	.signup-header {
+		color: var( --color-text-inverted );
+
+		svg.wordpress-logo {
+			fill: var( --color-text-inverted );
+		}
+	}
+
 	.step-container__content {
 		padding-top: 60px;
 		background-color: $grey-header;
 	}
 
 	.step-container .step-container__navigation.action-buttons {
-		background-color: $grey-footer;
+		background-color: var( --studio-gray-100 );
 		border: 0;
 		box-shadow: 0 -1px 0 #2c3234;
 
@@ -66,6 +70,7 @@ $grey-footer: #101517;
 		box-shadow: 0 -1px 0 #2c3234;
 		background-color: var( --studio-gray-100 );
 		animation: appear 0.3s ease-in-out;
+
 		@include reduce-motion( 'animation' );
 
 		.courses__footer-content {
