@@ -11,7 +11,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
     Test Question One
   </legend>
   <div
-    className="multiple-choice-answers-wrapper"
+    className="multiple-choice-question__answers"
   >
     <label
       className="form-label"
