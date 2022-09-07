@@ -261,13 +261,10 @@ export function CountrySpecificPaymentFieldsUnstyled( {
 	const translate = useTranslate();
 
 	const handlePhoneFieldChange = ( {
-		value,
+		phoneNumber: newPhoneNumber,
 		countryCode: newPhoneCountryCode,
-	}: {
-		value: string;
-		countryCode: string;
-	} ) => {
-		handleFieldChange( 'phone-number', value );
+	}: PhoneInputValue ) => {
+		handleFieldChange( 'phone-number', newPhoneNumber );
 		setPhoneCountryCode( newPhoneCountryCode );
 	};
 
@@ -369,7 +366,7 @@ export function CountrySpecificPaymentFieldsUnstyled( {
 				<PhoneInputField
 					fieldName="phone-number"
 					getFieldValue={ ( key: string ) => ( {
-						value: getFieldValue( key ),
+						phoneNumber: getFieldValue( key ),
 						countryCode: phoneCountryCode || countryCode,
 					} ) }
 					getErrorMessages={ getErrorMessages }
