@@ -100,12 +100,6 @@ export function generateSteps( {
 				showExampleSuggestions: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
-				get headerText() {
-					return i18n.translate( 'Getting ready to launch, pick a domain' );
-				},
-				get subHeaderText() {
-					return i18n.translate( 'Select a domain name for your website' );
-				},
 			},
 			dependencies: [ 'siteSlug' ],
 		},
