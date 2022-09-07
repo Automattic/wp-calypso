@@ -85,13 +85,11 @@ body.app-banner-is-visible {
 }
 
 .app-banner__title {
-	/* stylelint-disable-next-line */
 	font-size: rem( 22px ); //typography-exception
 	font-family: $brand-serif;
 	line-height: 30px;
 
 	&.jetpack {
-		/* stylelint-disable-next-line */
 		font-size: rem( 28px ); //typography-exception
 		font-weight: bold;
 		max-width: 18em;
@@ -102,11 +100,9 @@ body.app-banner-is-visible {
 
 .app-banner__copy {
 	margin-top: 12px;
-	/* stylelint-disable-next-line */
 	font-size: rem( 15px ); //typography-exception
 
 	&.jetpack {
-		/* stylelint-disable-next-line */
 		font-size: rem( 16px ); //typography-exception
 		line-height: 21px;
 		max-width: 18em;
