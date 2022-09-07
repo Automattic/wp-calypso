@@ -539,7 +539,9 @@ export class PluginsList extends Component {
 		return (
 			<div className="plugins-list">
 				<QueryProductsList />
-				<PluginNotices sites={ this.getPluginsSites() } plugins={ this.props.plugins } />
+				{ ! this.props.isJetpackCloud && (
+					<PluginNotices sites={ this.getPluginsSites() } plugins={ this.props.plugins } />
+				) }
 				<PluginsListHeader
 					label={ this.props.header }
 					isBulkManagementActive={ this.state.bulkManagementActive }

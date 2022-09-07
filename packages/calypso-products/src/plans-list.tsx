@@ -206,30 +206,7 @@ import {
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_ANTISPAM,
 	WPCOM_FEATURES_BACKUPS,
-	/* WPCOM Plan grid features update experiment */
 	FEATURE_MANAGED_HOSTING,
-	FEATURE_FREE_NEWSLETTER,
-	FEATURE_PAID_NEWSLETTER,
-	FEATURE_BASIC_BACKUPS,
-	FEATURE_UNMETERED_BANDWIDTH,
-	FEATURE_EDGE_CACHING,
-	FEATURE_PREMIUM_THEMES_V2,
-	FEATURE_SEO_PREVIEW_TOOLS_V2,
-	FEATURE_VIDEO_UPLOADS_V2,
-	FEATURE_BASIC_DESIGN_V2,
-	FEATURE_ADVANCED_DESIGN_V2,
-	FEATURE_REPUBLICIZE_V2,
-	FEATURE_INSTALL_PLUGINS_V2,
-	FEATURE_UPLOAD_THEMES_V2,
-	FEATURE_WORDADS_INSTANT_V2,
-	FEATURE_FREE_THEMES_V2,
-	FEATURE_SFTP_DATABASE_V2,
-	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS_V2,
-	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2,
-	FEATURE_UNLIMITED_USERS_V2,
-	FEATURE_COLLECT_PAYMENTS_V3,
-	FEATURE_EMAIL_SUPPORT_V2,
-	FEATURE_ADVANCED_SEO_V2,
 	FEATURE_UNLIMITED_EMAILS,
 	FEATURE_UNLIMITED_SUBSCRIBERS,
 	FEATURE_IMPORT_SUBSCRIBERS,
@@ -237,14 +214,30 @@ import {
 	FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
 	FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
 	FEATURE_POST_BY_EMAIL,
-	FEATURE_REAL_TIME_ANALYTICS,
 	FEATURE_GOOGLE_ANALYTICS_V2,
 	FEATURE_ADD_UNLIMITED_LINKS,
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 	FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 	FEATURE_TRACK_VIEWS_CLICKS,
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
-	/* END - WPCOM Plan grid features update experiment */
+	FEATURE_REAL_TIME_ANALYTICS,
+	/* START - condensed_plan_features_v1 test */
+	FEATURE_HOSTING_TEST,
+	FEATURE_PRIORITY_SUPPORT_TEST,
+	FEATURE_PLUGINS_TEST,
+	FEATURE_SFTP_DATABASE_TEST,
+	FEATURE_FREE_NEWSLETTER_V1,
+	FEATURE_SITE_STATS_V2,
+	FEATURE_MONETISE_V2,
+	FEATURE_REPUBLICIZE_V3,
+	FEATURE_PAID_NEWSLETTER_V1,
+	FEATURE_EDGE_CACHING_V2,
+	FEATURE_UPLOAD_THEMES_V3,
+	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
+	FEATURE_COLLECT_PAYMENTS_V3,
+	FEATURE_FREE_THEMES_V2,
+	FEATURE_VIDEO_UPLOADS_V2,
+	/* END - condensed_plan_features_v1 test */
 } from './constants';
 import type {
 	BillingTerm,
@@ -289,6 +282,7 @@ const getDotcomPlanDetails = () => ( {
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+		FEATURE_PRIORITY_SUPPORT_TEST,
 	],
 } );
 
@@ -373,42 +367,20 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			'Boost your website with a custom domain name, and remove all WordPress.com advertising. ' +
 				'Unlock unlimited, expert customer support via email.'
 		),
-	getPlanCompareFeatures: ( experiment ) =>
-		compact(
-			experiment
-				? [
-						// pay attention to ordering, shared features should align on /plan page
-						FEATURE_CUSTOM_DOMAIN,
-						FEATURE_MANAGED_HOSTING,
-						FEATURE_UNMETERED_BANDWIDTH,
-						FEATURE_UNLIMITED_TRAFFIC,
-						FEATURE_UNLIMITED_USERS_V2,
-						FEATURE_EMAIL_SUPPORT_V2,
-						FEATURE_FREE_THEMES_V2,
-						FEATURE_COLLECT_PAYMENTS_V3,
-						FEATURE_BLANK,
-						FEATURE_6GB_STORAGE,
-						FEATURE_BASIC_DESIGN_V2,
-						FEATURE_SEO_PREVIEW_TOOLS_V2,
-						FEATURE_SOCIAL_MEDIA_TOOLS,
-						FEATURE_FREE_NEWSLETTER,
-						FEATURE_BASIC_BACKUPS,
-						FEATURE_BLANK,
-				  ]
-				: [
-						// pay attention to ordering, shared features should align on /plan page
-						FEATURE_CUSTOM_DOMAIN,
-						FEATURE_HOSTING,
-						FEATURE_JETPACK_ESSENTIAL,
-						FEATURE_EMAIL_SUPPORT,
-						FEATURE_FREE_THEMES,
-						FEATURE_BASIC_DESIGN,
-						FEATURE_6GB_STORAGE,
-						FEATURE_NO_ADS,
-						FEATURE_MEMBERSHIPS,
-						FEATURE_PREMIUM_CONTENT_BLOCK,
-				  ]
-		),
+	getPlanCompareFeatures: () =>
+		compact( [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_HOSTING,
+			FEATURE_JETPACK_ESSENTIAL,
+			FEATURE_EMAIL_SUPPORT,
+			FEATURE_FREE_THEMES,
+			FEATURE_BASIC_DESIGN,
+			FEATURE_6GB_STORAGE,
+			FEATURE_NO_ADS,
+			FEATURE_MEMBERSHIPS,
+			FEATURE_PREMIUM_CONTENT_BLOCK,
+		] ),
 	getSignupFeatures: () => [
 		FEATURE_FREE_DOMAIN,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -472,6 +444,18 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 		FEATURE_TRACK_VIEWS_CLICKS,
 	],
+	getCondensedExperimentFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_HOSTING_TEST,
+		FEATURE_UNLIMITED_TRAFFIC,
+		FEATURE_COLLECT_PAYMENTS_V3,
+		FEATURE_SITE_STATS_V2,
+		FEATURE_FREE_THEMES_V2,
+		FEATURE_FREE_NEWSLETTER_V1,
+		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_6GB_STORAGE,
+	],
+	getCondensedExperimentUniqueFeatures: () => [ FEATURE_6GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
@@ -504,80 +488,35 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Learn more about everything included with eCommerce and take advantage of its powerful marketplace features.'
 		),
-	getPlanCompareFeatures: ( experiment, { isLoggedInMonthlyPricing } = {} ) =>
-		compact(
-			experiment
-				? [
-						// pay attention to ordering, shared features should align on /plan page
-						FEATURE_CUSTOM_DOMAIN,
-						FEATURE_MANAGED_HOSTING,
-						FEATURE_UNMETERED_BANDWIDTH,
-						FEATURE_UNLIMITED_TRAFFIC,
-						FEATURE_UNLIMITED_USERS_V2,
-						FEATURE_EMAIL_SUPPORT_V2,
-						FEATURE_FREE_THEMES_V2,
-						FEATURE_COLLECT_PAYMENTS_V3,
-						FEATURE_BLANK,
-
-						FEATURE_200GB_STORAGE,
-						FEATURE_ADVANCED_DESIGN_V2,
-						FEATURE_ADVANCED_SEO_V2,
-						FEATURE_REPUBLICIZE_V2,
-						FEATURE_PAID_NEWSLETTER,
-						FEATURE_SITE_BACKUPS_AND_RESTORE,
-						FEATURE_BLANK,
-
-						FEATURE_VIDEO_UPLOADS_V2,
-						FEATURE_NO_ADS,
-						FEATURE_WORDADS_INSTANT_V2,
-						isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES_V2 : null,
-						FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2,
-						FEATURE_BLANK,
-
-						FEATURE_INSTALL_PLUGINS_V2,
-						FEATURE_UPLOAD_THEMES_V2,
-						FEATURE_SFTP_DATABASE_V2,
-						FEATURE_EDGE_CACHING,
-						FEATURE_BLANK,
-
-						FEATURE_ACCEPT_PAYMENTS,
-						FEATURE_SHIPPING_CARRIERS,
-						PREMIUM_DESIGN_FOR_STORES,
-						FEATURE_UNLIMITED_PRODUCTS_SERVICES,
-						FEATURE_ECOMMERCE_MARKETING,
-
-						FEATURE_BLANK,
-				  ]
-				: [
-						// pay attention to ordering, shared features should align on /plan page
-						FEATURE_CUSTOM_DOMAIN,
-						isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-						isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
-						FEATURE_HOSTING,
-						FEATURE_JETPACK_ADVANCED,
-						! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-						isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-						FEATURE_ADVANCED_DESIGN,
-						FEATURE_200GB_STORAGE,
-						FEATURE_NO_ADS,
-						FEATURE_MEMBERSHIPS,
-						FEATURE_PREMIUM_CONTENT_BLOCK,
-						FEATURE_SIMPLE_PAYMENTS,
-						FEATURE_GOOGLE_ANALYTICS,
-						FEATURE_REPUBLICIZE,
-						FEATURE_WORDADS_INSTANT,
-						FEATURE_VIDEO_UPLOADS,
-						FEATURE_ADVANCED_SEO,
-						FEATURE_UPLOAD_PLUGINS,
-						FEATURE_UPLOAD_THEMES,
-						FEATURE_NO_BRANDING,
-						FEATURE_ACCEPT_PAYMENTS,
-						FEATURE_SHIPPING_CARRIERS,
-						FEATURE_UNLIMITED_PRODUCTS_SERVICES,
-						FEATURE_ECOMMERCE_MARKETING,
-						FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
-				  ]
-		),
+	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+		compact( [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_HOSTING,
+			FEATURE_JETPACK_ADVANCED,
+			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_200GB_STORAGE,
+			FEATURE_NO_ADS,
+			FEATURE_MEMBERSHIPS,
+			FEATURE_PREMIUM_CONTENT_BLOCK,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_REPUBLICIZE,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_ADVANCED_SEO,
+			FEATURE_UPLOAD_PLUGINS,
+			FEATURE_UPLOAD_THEMES,
+			FEATURE_NO_BRANDING,
+			FEATURE_ACCEPT_PAYMENTS,
+			FEATURE_SHIPPING_CARRIERS,
+			FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+			FEATURE_ECOMMERCE_MARKETING,
+			FEATURE_PREMIUM_CUSTOMIZABE_THEMES,
+		] ),
 	getPromotedFeatures: () => [
 		FEATURE_200GB_STORAGE,
 		FEATURE_CUSTOM_DOMAIN,
@@ -618,6 +557,14 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SHIPPING_CARRIERS,
 			PREMIUM_DESIGN_FOR_STORES,
 		].filter( isValueTruthy ),
+	getCondensedExperimentFeatures: () => [
+		FEATURE_ACCEPT_PAYMENTS,
+		FEATURE_SHIPPING_CARRIERS,
+		PREMIUM_DESIGN_FOR_STORES,
+		FEATURE_ECOMMERCE_MARKETING,
+		FEATURE_200GB_STORAGE,
+	],
+	getCondensedExperimentUniqueFeatures: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -657,56 +604,26 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 				' Google Analytics support,' +
 				' and the ability to monetize your site with ads.'
 		),
-	getPlanCompareFeatures: ( experiment, { isLoggedInMonthlyPricing } = {} ) =>
-		compact(
-			experiment
-				? [
-						// pay attention to ordering, shared features should align on /plan page
-						FEATURE_CUSTOM_DOMAIN,
-						FEATURE_MANAGED_HOSTING,
-						FEATURE_UNMETERED_BANDWIDTH,
-						FEATURE_UNLIMITED_TRAFFIC,
-						FEATURE_UNLIMITED_USERS_V2,
-						FEATURE_EMAIL_SUPPORT_V2,
-						FEATURE_FREE_THEMES_V2,
-						FEATURE_COLLECT_PAYMENTS_V3,
-						FEATURE_BLANK,
-
-						FEATURE_13GB_STORAGE,
-						FEATURE_ADVANCED_DESIGN_V2,
-						FEATURE_SEO_PREVIEW_TOOLS_V2,
-						FEATURE_REPUBLICIZE_V2,
-						FEATURE_PAID_NEWSLETTER,
-						FEATURE_BASIC_BACKUPS,
-						FEATURE_BLANK,
-
-						FEATURE_VIDEO_UPLOADS_V2,
-						FEATURE_NO_ADS,
-						FEATURE_WORDADS_INSTANT_V2,
-						isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES_V2 : null,
-						FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS_V2,
-						FEATURE_BLANK,
-				  ]
-				: [
-						// pay attention to ordering, shared features should align on /plan page
-						FEATURE_CUSTOM_DOMAIN,
-						isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-						isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
-						FEATURE_HOSTING,
-						FEATURE_JETPACK_ESSENTIAL,
-						! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-						isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-						FEATURE_ADVANCED_DESIGN,
-						FEATURE_13GB_STORAGE,
-						FEATURE_NO_ADS,
-						FEATURE_MEMBERSHIPS,
-						FEATURE_PREMIUM_CONTENT_BLOCK,
-						FEATURE_SIMPLE_PAYMENTS,
-						FEATURE_REPUBLICIZE,
-						FEATURE_WORDADS_INSTANT,
-						FEATURE_VIDEO_UPLOADS,
-				  ]
-		),
+	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+		compact( [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_HOSTING,
+			FEATURE_JETPACK_ESSENTIAL,
+			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_13GB_STORAGE,
+			FEATURE_NO_ADS,
+			FEATURE_MEMBERSHIPS,
+			FEATURE_PREMIUM_CONTENT_BLOCK,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_REPUBLICIZE,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
+		] ),
 	getPromotedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
@@ -795,6 +712,18 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
+	getCondensedExperimentFeatures: () =>
+		[
+			FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_MONETISE_V2,
+			FEATURE_REPUBLICIZE_V3,
+			FEATURE_PAID_NEWSLETTER_V1,
+			FEATURE_NO_ADS,
+			FEATURE_VIDEO_UPLOADS_V2,
+			FEATURE_13GB_STORAGE,
+		].filter( isValueTruthy ),
+	getCondensedExperimentUniqueFeatures: () => [ FEATURE_13GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -831,67 +760,30 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate(
 			'Learn more about everything included with Business and take advantage of its professional features.'
 		),
-	getPlanCompareFeatures: ( experiment, { isLoggedInMonthlyPricing } = {} ) =>
-		compact(
-			experiment
-				? [
-						// pay attention to ordering, shared features should align on /plan page
-						FEATURE_CUSTOM_DOMAIN,
-						FEATURE_MANAGED_HOSTING,
-						FEATURE_UNMETERED_BANDWIDTH,
-						FEATURE_UNLIMITED_TRAFFIC,
-						FEATURE_UNLIMITED_USERS_V2,
-						FEATURE_EMAIL_SUPPORT_V2,
-						FEATURE_FREE_THEMES_V2,
-						FEATURE_COLLECT_PAYMENTS_V3,
-						FEATURE_BLANK,
-
-						FEATURE_200GB_STORAGE,
-						FEATURE_ADVANCED_DESIGN_V2,
-						FEATURE_ADVANCED_SEO_V2,
-						FEATURE_REPUBLICIZE_V2,
-						FEATURE_PAID_NEWSLETTER,
-						FEATURE_SITE_BACKUPS_AND_RESTORE,
-						FEATURE_BLANK,
-
-						FEATURE_VIDEO_UPLOADS_V2,
-						FEATURE_NO_ADS,
-						FEATURE_WORDADS_INSTANT_V2,
-						isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES_V2 : null,
-						FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2,
-						FEATURE_BLANK,
-
-						FEATURE_INSTALL_PLUGINS_V2,
-						FEATURE_UPLOAD_THEMES_V2,
-						FEATURE_SFTP_DATABASE_V2,
-						FEATURE_EDGE_CACHING,
-						FEATURE_BLANK,
-				  ]
-				: [
-						// pay attention to ordering, shared features should align on /plan page
-						FEATURE_CUSTOM_DOMAIN,
-						isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-						isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
-						FEATURE_HOSTING,
-						FEATURE_JETPACK_ADVANCED,
-						! isLoggedInMonthlyPricing && FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-						isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-						FEATURE_ADVANCED_DESIGN,
-						FEATURE_200GB_STORAGE,
-						FEATURE_NO_ADS,
-						FEATURE_MEMBERSHIPS,
-						FEATURE_PREMIUM_CONTENT_BLOCK,
-						FEATURE_SIMPLE_PAYMENTS,
-						FEATURE_GOOGLE_ANALYTICS,
-						FEATURE_REPUBLICIZE,
-						FEATURE_WORDADS_INSTANT,
-						FEATURE_VIDEO_UPLOADS,
-						FEATURE_ADVANCED_SEO,
-						FEATURE_UPLOAD_PLUGINS,
-						FEATURE_UPLOAD_THEMES,
-						FEATURE_NO_BRANDING,
-				  ]
-		),
+	getPlanCompareFeatures: ( _, { isLoggedInMonthlyPricing } = {} ) =>
+		compact( [
+			// pay attention to ordering, shared features should align on /plan page
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_HOSTING,
+			FEATURE_JETPACK_ADVANCED,
+			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
+			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_200GB_STORAGE,
+			FEATURE_NO_ADS,
+			FEATURE_MEMBERSHIPS,
+			FEATURE_PREMIUM_CONTENT_BLOCK,
+			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			FEATURE_SIMPLE_PAYMENTS,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_REPUBLICIZE,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_ADVANCED_SEO,
+			FEATURE_UPLOAD_PLUGINS,
+			FEATURE_UPLOAD_THEMES,
+			FEATURE_NO_BRANDING,
+		] ),
 	getPromotedFeatures: () => [
 		FEATURE_200GB_STORAGE,
 		FEATURE_CUSTOM_DOMAIN,
@@ -930,6 +822,18 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SITE_BACKUPS_AND_RESTORE,
 			FEATURE_SFTP_DATABASE,
 		].filter( isValueTruthy ),
+	getCondensedExperimentFeatures: () =>
+		[
+			FEATURE_PRIORITY_SUPPORT_TEST,
+			FEATURE_PLUGINS_TEST,
+			FEATURE_UPLOAD_THEMES_V3,
+			FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
+			FEATURE_SITE_BACKUPS_AND_RESTORE,
+			FEATURE_SFTP_DATABASE_TEST,
+			FEATURE_EDGE_CACHING_V2,
+			FEATURE_200GB_STORAGE,
+		].filter( isValueTruthy ),
+	getCondensedExperimentUniqueFeatures: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,

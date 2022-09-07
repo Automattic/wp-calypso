@@ -441,7 +441,7 @@ export const HelpCenterContactForm = () => {
 				<section>
 					<div className="help-center-contact-form__site-picker-hes-tray">
 						{ randomTwoFaces.map( ( f ) => (
-							<img src={ f } aria-hidden="true" alt=""></img>
+							<img key={ f } src={ f } aria-hidden="true" alt=""></img>
 						) ) }
 						<p className="help-center-contact-form__site-picker-hes-tray-text">
 							{ formTitles.trayText }

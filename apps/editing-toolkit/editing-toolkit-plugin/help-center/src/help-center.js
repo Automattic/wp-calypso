@@ -68,7 +68,7 @@ function HelpCenterContent() {
 					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
 				</>
 			) }
-			{ show && <HelpCenter handleClose={ () => setShowHelpCenter( false ) } /> }
+			<HelpCenter handleClose={ () => setShowHelpCenter( false ) } />
 		</>
 	);
 }

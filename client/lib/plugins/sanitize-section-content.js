@@ -2,6 +2,30 @@ import { addQueryArgs } from '@wordpress/url';
 import { filter } from 'lodash';
 import validUrl from 'valid-url';
 
+let root = 'undefined' !== typeof window && window;
+
+/**
+ * Replace global root object with compatible one
+ *
+ * This is need in order to sanitize the content on the server.
+ *
+ * @param {object} newRoot window-like object to use as root
+ */
+export function overrideSanitizeSectionRoot( newRoot ) {
+	root = newRoot;
+}
+
+/**
+ * Get the current root object
+ *
+ * This is need in order to sanitize the content on the server.
+ *
+ * @returns {object} window-like object used as root
+ */
+export function getSanitizeSectionRoot() {
+	return root;
+}
+
 /**
  * Determine if a given tag is allowed
  *
@@ -103,13 +127,18 @@ const isValidYoutubeEmbed = ( node ) => {
 		return false;
 	}
 
-	const link = document.createElement( 'a' );
+	const link = root.document.createElement( 'a' );
 	link.href = node.getAttribute( 'src' );
+	try {
+		const url = new URL( link.href );
 
-	return (
-		validUrl.isWebUri( node.getAttribute( 'src' ) ) &&
-		( link.hostname === 'youtube.com' || link.hostname === 'www.youtube.com' )
-	);
+		return (
+			validUrl.isWebUri( node.getAttribute( 'src' ) ) &&
+			( url.hostname === 'youtube.com' || url.hostname === 'www.youtube.com' )
+		);
+	} catch ( e ) {
+		return false;
+	}
 };
 
 const replacementFor = ( node ) => {
@@ -132,12 +161,12 @@ const replacementFor = ( node ) => {
  * @returns {string} sanitized HTML
  */
 export const sanitizeSectionContent = ( content ) => {
-	const parser = new DOMParser();
+	const parser = new root.DOMParser();
 	const doc = parser.parseFromString( content, 'text/html' );
 
 	// this will let us visit every single DOM node programmatically
 	// the third & fourth arguments are required by IE 11
-	const walker = doc.createTreeWalker( doc.body, NodeFilter.SHOW_ALL, null, false );
+	const walker = doc.createTreeWalker( doc.body, root.NodeFilter.SHOW_ALL, null, false );
 
 	/**
 	 * we don't want to remove nodes while walking the tree
@@ -169,7 +198,7 @@ export const sanitizeSectionContent = ( content ) => {
 
 		const replacement = replacementFor( node );
 		if ( replacement ) {
-			replacements.push( [ node, document.createElement( replacement ) ] );
+			replacements.push( [ node, root.document.createElement( replacement ) ] );
 		}
 
 		// strip out anything not explicitly allowed

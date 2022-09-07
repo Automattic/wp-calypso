@@ -1,5 +1,6 @@
 import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { ReactElement, ReactChild } from 'react';
 import { useSelector } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -11,13 +12,14 @@ import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-p
 import {
 	isPluginActionInProgress,
 	getPluginOnSite,
+	getPluginStatusesByType,
 } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
+import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { MomentInput } from 'moment';
-import type { ReactElement, ReactChild } from 'react';
 
 import './style.scss';
 
@@ -76,6 +78,22 @@ export default function PluginRowFormatter( {
 
 	const siteCount = item?.sites && Object.keys( item.sites ).length;
 
+	const inProgressStatuses = getPluginStatusesByType( state, 'inProgress' );
+	const completedStatuses = getPluginStatusesByType( state, 'completed' );
+	const errorStatuses = getPluginStatusesByType( state, 'error' );
+
+	const allStatuses = [ ...inProgressStatuses, ...completedStatuses, ...errorStatuses ];
+
+	const currentSiteStatuses = allStatuses.filter( ( status ) => status.pluginId === item.id );
+
+	const pluginActionStatus =
+		currentSiteStatuses.length > 0 ? (
+			<PluginActionStatus
+				currentSiteStatuses={ currentSiteStatuses }
+				selectedSite={ selectedSite }
+			/>
+		) : null;
+
 	switch ( columnKey ) {
 		case 'site-name':
 			return (
@@ -87,9 +105,12 @@ export default function PluginRowFormatter( {
 			);
 		case 'plugin':
 			return isSmallScreen ? (
-				<PluginDetailsButton className="plugin-row-formatter__plugin-name-card">
-					{ item.name }
-				</PluginDetailsButton>
+				<>
+					<PluginDetailsButton className="plugin-row-formatter__plugin-name-card">
+						{ item.name }
+					</PluginDetailsButton>
+					{ pluginActionStatus }
+				</>
 			) : (
 				<span className="plugin-row-formatter__row-container">
 					<span className="plugin-row-formatter__plugin-details">
@@ -111,11 +132,14 @@ export default function PluginRowFormatter( {
 						) : (
 							<Gridicon className="plugin-row-formatter__plugin-icon has-opacity" icon="plugins" />
 						) }
-						<PluginDetailsButton className="plugin-row-formatter__plugin-name">
-							{ item.name }
-						</PluginDetailsButton>
+						<div className="plugin-row-formatter__plugin-name-container">
+							<PluginDetailsButton className="plugin-row-formatter__plugin-name">
+								{ item.name }
+							</PluginDetailsButton>
+							<span className="plugin-row-formatter__overlay"></span>
+							{ pluginActionStatus }
+						</div>
 					</span>
-					<span className="plugin-row-formatter__overlay"></span>
 				</span>
 			);
 		case 'sites':

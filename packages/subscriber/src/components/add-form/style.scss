@@ -100,6 +100,7 @@
 
 	.components-text-control__input {
 		border-color: var( --studio-gray-10 );
+		border-radius: 4px;
 		box-sizing: border-box;
 		font-size: 0.875rem;
 		padding: 0.875rem 1rem;
@@ -169,7 +170,8 @@
 		color: var( --studio-gray-50 );
 		margin-bottom: 1.5rem;
 
-		a, button {
+		a,
+		button {
 			color: var( --studio-gray-100 );
 			text-decoration: underline;
 		}

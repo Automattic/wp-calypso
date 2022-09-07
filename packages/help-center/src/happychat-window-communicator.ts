@@ -64,18 +64,24 @@ export function useHCWindowCommunicator(
 						}
 						break;
 					case 'happy-chat-introduction-data': {
-						event.source?.postMessage(
-							{
-								type: 'happy-chat-introduction-data',
-								siteId: supportSite?.ID.toString(),
-								subject,
-								message,
-								planSlug: supportSite?.plan?.product_slug,
-								siteUrl: supportSite?.URL,
-							},
-							{ targetOrigin: event.origin }
-						);
-
+						// if message is undefined, we don't want to send anything to Happychat
+						// Happychat requests introduction data on load,
+						// so sometimes it requests it after the user navigates away from the page and comes back
+						if ( message ) {
+							event.source?.postMessage(
+								{
+									type: 'happy-chat-introduction-data',
+									siteId: supportSite?.ID.toString(),
+									subject,
+									message,
+									planSlug: supportSite?.plan?.product_slug,
+									siteUrl: supportSite?.URL,
+								},
+								{ targetOrigin: event.origin }
+							);
+						}
+						// now clear the store, since we sent everything
+						resetStore();
 						break;
 					}
 					case 'happy-chat-authentication-data': {

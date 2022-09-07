@@ -179,7 +179,7 @@ function HelpSearchResults( {
 		onSelect( event, result );
 	};
 
-	const renderHelpLink = ( result: SearchResult, type: string ) => {
+	const renderHelpLink = ( result: SearchResult, type: string, index: number ) => {
 		const { link, title, icon } = result;
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
@@ -197,7 +197,7 @@ function HelpSearchResults( {
 		};
 
 		return (
-			<Fragment key={ link ?? title }>
+			<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
 				<li className="help-center-search-results__item">
 					<div className="help-center-search-results__cell">
 						<a
@@ -238,7 +238,7 @@ function HelpSearchResults( {
 					</h3>
 				) : null }
 				<ul className="help-center-search-results__list" aria-labelledby={ title ? id : undefined }>
-					{ results.map( ( result ) => renderHelpLink( result, type ) ) }
+					{ results.map( ( result, index ) => renderHelpLink( result, type, index ) ) }
 				</ul>
 			</Fragment>
 		) : null;

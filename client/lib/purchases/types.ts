@@ -61,6 +61,7 @@ export interface Purchase {
 	totalRefundAmount: number;
 	totalRefundText: string;
 	userId: number;
+	userIsOwner?: boolean;
 	partnerKeyId: number | undefined;
 	tagLine: string;
 	taxAmount: number | string | undefined;

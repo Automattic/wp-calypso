@@ -42,6 +42,17 @@
 	flex-direction: row;
 	font-size: $font-body-small;
 	justify-content: space-between;
+	align-items: flex-start;
+
+	// on small screens, if the product is already owned,
+	// set flex-direction to column to avoid cluttered UI
+	// due to long "Manage subscription" button
+	&:has(.item-price__is-owned) {
+		@media only screen and (max-width: $break-mobile), only screen and (min-width: $break-medium) and (max-width: $break-large) {
+			flex-direction: column;
+			gap: 1rem;
+		}
+	}
 }
 
 .simple-product-card__info-header-text {
@@ -56,7 +67,6 @@
 	justify-content: center;
 	font-size: $font-body;
 	min-width: 91px;
-	max-height: 40px;
 	display: flex;
 }
 
@@ -64,11 +74,4 @@
 	font-size: $font-body-small;
 	line-height: rem( 24px );
 	padding: 8px 0 16px;
-}
-
-.simple-product-card__info-more-link {
-	display: block;
-	color: var( --color-neutral-100 ) !important;
-	text-decoration: underline;
-	margin-top: 4px;
 }

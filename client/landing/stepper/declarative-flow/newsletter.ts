@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -18,14 +17,7 @@ export const newsletter: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [
-			'intro',
-			'newsletterSetup',
-			'completingPurchase',
-			'processing',
-			'subscribers',
-			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
-		] as StepPath[];
+		return [ 'intro', 'newsletterSetup', 'subscribers', 'launchpad' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -58,13 +50,6 @@ export const newsletter: Flow = {
 								? `&siteAccentColor=${ encodeURIComponent( providedDependencies.siteAccentColor ) }`
 								: '' )
 					);
-
-				case 'completingPurchase':
-					return navigate( 'processing' );
-
-				case 'processing': {
-					return navigate( providedDependencies?.destination as StepPath );
-				}
 
 				case 'subscribers':
 					return navigate( 'launchpad' );

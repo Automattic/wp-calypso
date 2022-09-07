@@ -5,21 +5,23 @@ import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { useEffect } from 'react';
+import { PATTERN_SOURCE_SITE_SLUG } from './constants';
 import { Item } from './item';
-import { patterns } from './patterns';
-import { Pattern } from './types';
+import useQueryPatterns from './use-query-patterns';
+import type { Pattern } from './types';
 
 function width( el: HTMLDivElement | null ) {
 	return Math.floor( el?.getBoundingClientRect().width ?? 1 );
 }
 
-type Props = { onPick: ( pattern: number ) => void };
+type Props = { onPick: ( pattern: Pattern ) => void };
 
 export function PatternPicker( { onPick }: Props ) {
 	const [ index, setIndex ] = React.useState( 0 );
 	const [ currentRef, setRef ] = React.useState< HTMLDivElement >();
 	const [ timeoutRef, setTimeoutRef ] = React.useState( 0 );
 	const { __ } = useI18n();
+	const { data: patterns } = useQueryPatterns( PATTERN_SOURCE_SITE_SLUG );
 
 	useEffect( () => {
 		if ( currentRef ) {
@@ -46,8 +48,12 @@ export function PatternPicker( { onPick }: Props ) {
 					setIndex( index );
 					setTimeoutRef( 0 );
 				}
-			}, 100 )
+			}, 300 )
 		);
+	}
+
+	if ( ! patterns ) {
+		return null;
 	}
 
 	return (
@@ -60,7 +66,7 @@ export function PatternPicker( { onPick }: Props ) {
 				{ patterns.map( ( pattern, i ) => (
 					<Item
 						className={ classNames( { 'is-active': index === i } ) }
-						key={ pattern.id }
+						key={ pattern.ID }
 						onClick={ () => {
 							setIndex( i );
 						} }
@@ -88,7 +94,7 @@ export function PatternPicker( { onPick }: Props ) {
 				<Button
 					className="pattern-picker__select"
 					isPrimary
-					onClick={ () => onPick( patterns[ index ].id ) }
+					onClick={ () => onPick( patterns[ index ] ) }
 				>
 					<span>{ __( 'Continue' ) }</span>
 					<Gridicon icon="heart" size={ 18 } />
@@ -99,4 +105,3 @@ export function PatternPicker( { onPick }: Props ) {
 }
 
 export type { Pattern };
-export { patterns };

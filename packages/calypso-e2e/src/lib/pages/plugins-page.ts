@@ -73,7 +73,7 @@ export class PluginsPage {
 	 * @param {string} site Optional site URL.
 	 */
 	async visit( site = '' ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `plugins/${ site }` ) );
+		await this.page.goto( getCalypsoURL( `plugins/${ site }` ), { waitUntil: 'networkidle' } );
 	}
 
 	/**

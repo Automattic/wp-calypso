@@ -113,6 +113,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
+			isCondensedFeaturesExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -153,6 +154,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					isCondensedFeaturesExperiment={ isCondensedFeaturesExperiment }
 				/>
 			</div>
 		);
@@ -183,6 +185,7 @@ export class PlansFeaturesMain extends Component {
 			domainAndPlanPackage,
 			translate,
 			locale,
+			flowName,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -247,6 +250,7 @@ export class PlansFeaturesMain extends Component {
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ getPopularPlanSpec( {
+						flowName,
 						customerType,
 						isJetpack,
 						availablePlans: visiblePlans,

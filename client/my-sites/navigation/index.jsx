@@ -19,10 +19,13 @@ class MySitesNavigation extends Component {
 		};
 
 		let asyncSidebar = null;
+		let showManageSitesButton = null;
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			asyncSidebar = <AsyncLoad require="calypso/components/jetpack/sidebar" { ...asyncProps } />;
+			showManageSitesButton = false;
 		} else {
 			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
+			showManageSitesButton = true;
 		}
 
 		return (
@@ -31,6 +34,7 @@ class MySitesNavigation extends Component {
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }
 					onClose={ this.preventPickerDefault }
+					showManageSitesButton={ showManageSitesButton }
 				/>
 				{ asyncSidebar }
 			</div>

@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import { ItemPrice } from '../item-price';
+import { MoreInfoLink } from '../more-info-link';
 import { SimpleProductCardProps } from '../types';
 import getProductIcon from '../utils/get-product-icon';
 
@@ -12,13 +12,13 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 	ctaLabel,
 	isIncludedInPlan,
 	isOwned,
+	isCtaDisabled,
 	item,
+	hideMoreInfoLink,
 	onClickMore,
 	onClickPurchase,
 	siteId,
 } ) => {
-	const translate = useTranslate();
-
 	const { shortName: name } = item;
 	const productDescription = item?.shortDescription || item.description;
 
@@ -42,23 +42,16 @@ const SimpleProductCard: React.FC< SimpleProductCardProps > = ( {
 					<Button
 						className="simple-product-card__info-header-checkout"
 						onClick={ onClickPurchase }
-						href={ checkoutURL }
+						disabled={ isCtaDisabled }
+						href={ isCtaDisabled ? '#' : checkoutURL }
 						primary={ ctaAsPrimary }
-						compact
 					>
 						{ ctaLabel }
 					</Button>
 				</div>
 				<div className="simple-product-card__info-content">
-					{ productDescription }
-					<Button
-						className="simple-product-card__info-more-link"
-						onClick={ onClickMore }
-						href="#"
-						plain
-					>
-						{ translate( 'More about %(name)s', { args: { name } } ) }
-					</Button>
+					{ productDescription } <br />
+					{ ! hideMoreInfoLink && <MoreInfoLink onClickMore={ onClickMore } item={ item } /> }
 				</div>
 			</div>
 		</div>

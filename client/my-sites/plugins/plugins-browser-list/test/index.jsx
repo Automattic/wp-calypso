@@ -1,20 +1,15 @@
 /** @jest-environment jsdom */
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( c ) => c,
-	translate: ( s ) => s,
-} ) );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn().mockImplementation( () => {} ),
-} ) );
-
 import { PLAN_FREE } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import productsList from 'calypso/state/products-list/reducer';
+import { reducer as ui } from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PluginsBrowserList from '../';
 import { PluginsBrowserListVariant } from '../types';
+
+const render = ( el, options ) =>
+	renderWithProvider( el, { ...options, reducers: { ui, productsList } } );
 
 const plugins = [
 	{ name: 'woocommerce', slug: 'woocommerce' },
@@ -25,29 +20,38 @@ const plugins = [
 const props = {
 	plugins,
 	variant: PluginsBrowserListVariant.Fixed,
-	listName: 'woocommerce',
-	title: 'woocommerce',
-	subtitle: '100 plugins',
+	listName: 'arbitrary-plugin-list-name',
+	title: 'arbitrary-plugin-list-title',
+	subtitle: 'arbitrary-plugin-list-subtitle',
 	site: {
 		plan: PLAN_FREE,
 	},
 	size: 6,
 };
 
+const queryPlaceholders = () => {
+	const listItems = screen.queryAllByRole( 'listitem' );
+	return listItems.filter( ( item ) => item.classList.contains( 'is-placeholder' ) );
+};
+
 describe( 'PluginsBrowserList basic tests', () => {
 	test( 'should render the section header with title', () => {
-		const comp = shallow( <PluginsBrowserList { ...props } /> );
-		expect( comp.find( '.plugins-browser-list__title' ).text() ).toBe( 'woocommerce' );
+		render( <PluginsBrowserList { ...props } /> );
+		const header = screen.getByText( props.title );
+		expect( header ).toBeVisible();
+		expect( header ).toHaveClass( 'plugins-browser-list__title' );
 	} );
 
 	test( 'should render the section header with subtitle', () => {
-		const comp = shallow( <PluginsBrowserList { ...props } /> );
-		expect( comp.find( '.plugins-browser-list__subtitle' ).text() ).toBe( '100 plugins' );
+		render( <PluginsBrowserList { ...props } /> );
+		const subtitle = screen.getByText( props.subtitle );
+		expect( subtitle ).toBeVisible();
+		expect( subtitle ).toHaveClass( 'plugins-browser-list__subtitle' );
 	} );
 
 	test( 'should render a given number of list items when the size prop is set', () => {
-		const comp = shallow( <PluginsBrowserList { ...props } size={ 2 } /> );
-		expect( comp.find( 'PluginsBrowserListElement' ).length ).toBe( 2 );
+		render( <PluginsBrowserList { ...props } size={ 2 } /> );
+		expect( screen.getAllByRole( 'listitem' ) ).toHaveLength( 2 );
 	} );
 } );
 
@@ -58,20 +62,20 @@ describe( 'InfiniteScroll variant', () => {
 	};
 
 	test( 'should show placeholders if there are no plugins', () => {
-		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } plugins={ [] } /> );
-		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
+		render( <PluginsBrowserList { ...infiniteScrollProps } plugins={ [] } /> );
+		expect( queryPlaceholders() ).toHaveLength( 6 );
 	} );
 
 	test( 'should append placeholders if there are plugins and `showPlaceholders` is set', () => {
-		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } showPlaceholders /> );
-		expect( comp.find( 'PluginsBrowserListElement' ).length ).toBe( 9 );
-		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
+		render( <PluginsBrowserList { ...infiniteScrollProps } showPlaceholders /> );
+		const listItems = screen.getAllByRole( 'listitem' );
+		expect( listItems ).toHaveLength( 9 );
+		expect( queryPlaceholders() ).toHaveLength( 6 );
 	} );
 
 	test( 'should not show placeholders if there are plugins and the `showPlaceholders` is not set', () => {
-		const comp = shallow( <PluginsBrowserList { ...infiniteScrollProps } /> );
-		expect( comp.find( 'PluginsBrowserListElement' ).length ).toBe( 3 );
-		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 0 );
+		render( <PluginsBrowserList { ...infiniteScrollProps } /> );
+		expect( queryPlaceholders() ).toHaveLength( 0 );
 	} );
 } );
 
@@ -82,19 +86,18 @@ describe( 'Paginated variant', () => {
 	};
 
 	test( 'should show placeholders if there are no plugins', () => {
-		const comp = shallow( <PluginsBrowserList { ...paginatedProps } plugins={ [] } /> );
-		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
+		render( <PluginsBrowserList { ...paginatedProps } plugins={ [] } /> );
+		expect( queryPlaceholders() ).toHaveLength( 6 );
 	} );
 
 	test( 'should show placeholders if there are plugins and `showPlaceholders` is set', () => {
-		const comp = shallow( <PluginsBrowserList { ...paginatedProps } showPlaceholders /> );
-		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
+		render( <PluginsBrowserList { ...paginatedProps } showPlaceholders /> );
+		expect( queryPlaceholders() ).toHaveLength( 6 );
 	} );
 
 	test( 'should not show placeholders if there are plugins and the `showPlaceholders` is not set', () => {
-		const comp = shallow( <PluginsBrowserList { ...paginatedProps } /> );
-		expect( comp.find( 'PluginsBrowserListElement' ).length ).toBe( 3 );
-		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 0 );
+		render( <PluginsBrowserList { ...paginatedProps } /> );
+		expect( queryPlaceholders() ).toHaveLength( 0 );
 	} );
 } );
 
@@ -105,15 +108,18 @@ describe( 'Fixed variant', () => {
 	};
 
 	test( 'should show placeholders if there are no plugins', () => {
-		const comp = shallow( <PluginsBrowserList { ...fixedProps } plugins={ [] } /> );
-		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 6 );
+		render( <PluginsBrowserList { ...fixedProps } plugins={ [] } /> );
+		expect( queryPlaceholders() ).toHaveLength( 6 );
 	} );
 
-	test( 'should not show placeholders regardless of the `showPlaceholders` prop', () => {
-		let comp = shallow( <PluginsBrowserList { ...fixedProps } showPlaceholders /> );
-		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 0 );
-
-		comp = shallow( <PluginsBrowserList { ...fixedProps } /> );
-		expect( comp.find( 'PluginsBrowserListElement[isPlaceholder]' ).length ).toBe( 0 );
+	describe( 'should not show placeholders regardless of the `showPlaceholders` prop', () => {
+		test( 'with `showPlaceholdersProp`', () => {
+			render( <PluginsBrowserList { ...fixedProps } showPlaceholders /> );
+			expect( queryPlaceholders() ).toHaveLength( 0 );
+		} );
+		test( 'without `showPlaceholdersProp`', () => {
+			render( <PluginsBrowserList { ...fixedProps } /> );
+			expect( queryPlaceholders() ).toHaveLength( 0 );
+		} );
 	} );
 } );
