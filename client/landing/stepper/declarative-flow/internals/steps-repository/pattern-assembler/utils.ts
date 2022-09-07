@@ -1,6 +1,6 @@
 const sourceSiteId = 174455321; // dotcompatterns
 const patternPreviewUrl =
-	'https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?stylesheet=pub/blank-canvas&pattern_id=';
+	'https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?stylesheet=pub/blank-canvas-blocks&pattern_id=';
 
 const getPatternPreviewUrl = ( id: number ) => `${ patternPreviewUrl }${ id }-${ sourceSiteId }`;
 
