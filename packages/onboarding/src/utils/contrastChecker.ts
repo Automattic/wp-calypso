@@ -1,13 +1,13 @@
-// Default background color of Lettre theme
-const LETTRE_THEME_SITE_BACKGROUND_COLOR_RGB = { r: 255, g: 255, b: 255 };
-// Minimum contrast ratio as per WCAG standards "at least 4.5:1 for normal text"
-const MIN_CONTRAST_RATIO = 1 / 4.5;
-
 export type RGB = {
 	r: number;
 	g: number;
 	b: number;
 };
+
+// Default background color of Lettre theme
+const LETTRE_THEME_SITE_BACKGROUND_COLOR_RGB = { r: 255, g: 255, b: 255 };
+// Minimum contrast ratio as per WCAG standards "at least 4.5:1 for normal text"
+const MIN_CONTRAST_RATIO = 1 / 4.5;
 
 const luminance = ( { r, g, b }: RGB ) => {
 	const a = [ r, g, b ].map( function ( v ) {
@@ -22,10 +22,13 @@ const colorContrastRatio = ( color1luminance: number, color2luminance: number ) 
 		? ( color2luminance + 0.05 ) / ( color1luminance + 0.05 )
 		: ( color1luminance + 0.05 ) / ( color2luminance + 0.05 );
 
-const lettreThemeBgColorLuminance = luminance( LETTRE_THEME_SITE_BACKGROUND_COLOR_RGB );
-
-export const hasMinContrast = ( textColorRgb: RGB ): boolean => {
+export const hasMinContrast = (
+	textColorRgb: RGB,
+	bgColorRgb = LETTRE_THEME_SITE_BACKGROUND_COLOR_RGB,
+	minContrastRatio = MIN_CONTRAST_RATIO
+): boolean => {
 	const textColorLuminance = luminance( textColorRgb );
-	const contrast = colorContrastRatio( textColorLuminance, lettreThemeBgColorLuminance );
-	return contrast <= MIN_CONTRAST_RATIO;
+	const bgColorLuminance = luminance( bgColorRgb );
+	const contrast = colorContrastRatio( textColorLuminance, bgColorLuminance );
+	return contrast <= minContrastRatio;
 };

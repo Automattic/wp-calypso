@@ -1,5 +1,5 @@
 import { Button, FormInputValidation, Popover } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { hasMinContrast, StepContainer, RGB } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -15,9 +15,8 @@ import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { warning } from 'calypso/signup/icons';
+import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
-import { RGB, hasMinContrast } from './utils';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -201,7 +200,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			{ ! hasMinContrast( accentColor.rgb ) && (
 				<div className="newsletter-setup__contrast-warning" style={ { display: 'flex' } }>
 					<div className="newsletter-setup__contrast-warning-icon-container">
-						<Icon icon={ warning } size={ 20 } />
+						<Icon icon={ tip } size={ 20 } />
 					</div>
 					<div>
 						{ __(
