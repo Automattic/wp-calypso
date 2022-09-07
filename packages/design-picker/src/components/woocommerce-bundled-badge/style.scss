@@ -1,0 +1,29 @@
+.woocommerce-bundled-badge {
+	display: inline-flex;
+	align-items: center;
+	height: 20px;
+	line-height: 20px;
+	padding: 0 10px 0 9px;
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+	margin-left: 10px;
+	box-sizing: border-box;
+	font-size: 0.75rem;
+	color: var( --studio-white );
+	background: #9b5c8f;
+	z-index: 1;
+
+	img {
+		height: 20px;
+		margin-right: 5px;
+	}
+
+	.design-picker .design-picker__option-meta & {
+		min-height: 0;
+	}
+
+	.woocommerce-bundled-badge__logo {
+		margin-top: -1px;
+		margin-right: 3px;
+		fill: currentcolor;
+	}
+}
