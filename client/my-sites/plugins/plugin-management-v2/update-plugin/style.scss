@@ -17,19 +17,25 @@
 .update-plugin__arrow-icon {
 	display: flex;
 	position: absolute;
-	left: 50px;
+	inset-inline-start: 50px;
 	fill: var( --studio-gray-40 );
 }
 
-.update-plugin__new-version {
+button.update-plugin__new-version {
+	color: var( --studio-jetpack-green-50 ) !important;
 	text-decoration: underline;
 	font-weight: 600;
 	position: absolute;
-	left: 100px;
+	inset-inline-start: 100px;
 
 	a {
 		display: inline !important;
 	}
+}
+
+button.update-plugin__retry-button {
+	text-decoration: underline;
+	margin-inline-start: 5px;
 }
 
 .update-plugin__plugin-action-status {
@@ -40,12 +46,12 @@
 	}
 
 	.plugin-action-status-container {
-		margin-top: 12px;
+		margin-block-start: 12px;
 		transform: translateY( -50% );
 
 		@include break-xlarge {
-			margin-top: 0;
-			top: 50%;
+			margin-block-start: 0;
+			inset-block-start: 50%;
 			position: absolute;
 		}
 	}

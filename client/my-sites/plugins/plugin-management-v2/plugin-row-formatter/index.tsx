@@ -29,6 +29,7 @@ interface Props {
 	selectedSite?: SiteDetails;
 	isSmallScreen?: boolean;
 	className?: string;
+	updatePlugin?: ( plugin: Plugin ) => void;
 }
 
 export default function PluginRowFormatter( {
@@ -37,6 +38,7 @@ export default function PluginRowFormatter( {
 	selectedSite,
 	isSmallScreen,
 	className,
+	updatePlugin,
 }: Props ): ReactElement | any {
 	const translate = useTranslate();
 
@@ -200,7 +202,14 @@ export default function PluginRowFormatter( {
 			}
 			return null;
 		case 'update':
-			return <UpdatePlugin plugin={ item } selectedSite={ selectedSite } className={ className } />;
+			return (
+				<UpdatePlugin
+					plugin={ item }
+					selectedSite={ selectedSite }
+					className={ className }
+					updatePlugin={ updatePlugin }
+				/>
+			);
 		case 'install':
 			return (
 				<div className="plugin-row-formatter__install-plugin">

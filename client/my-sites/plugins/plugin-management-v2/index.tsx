@@ -22,6 +22,7 @@ interface Props {
 	toggleBulkManagement: () => void;
 	updateAllPlugins: () => void;
 	removePluginNotice: ( plugin: Plugin ) => void;
+	updatePlugin: ( plugin: Plugin ) => void;
 }
 export default function PluginManagementV2( {
 	plugins,
@@ -33,6 +34,7 @@ export default function PluginManagementV2( {
 	toggleBulkManagement,
 	updateAllPlugins,
 	removePluginNotice,
+	updatePlugin,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -141,6 +143,7 @@ export default function PluginManagementV2( {
 				} ) }
 				selectedSite={ selectedSite }
 				removePluginNotice={ removePluginNotice }
+				updatePlugin={ updatePlugin }
 			/>
 		</div>
 	);

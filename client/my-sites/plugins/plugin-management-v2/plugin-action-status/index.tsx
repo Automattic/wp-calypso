@@ -13,12 +13,14 @@ interface Props {
 	currentSiteStatuses: Array< CurrentSiteStatus | any >;
 	selectedSite?: SiteDetails;
 	showMultipleStatuses?: boolean;
+	retryButton?: ReactElement;
 }
 
 export default function PluginActionStatus( {
 	currentSiteStatuses,
 	selectedSite,
 	showMultipleStatuses = true,
+	retryButton,
 }: Props ): ReactElement | null {
 	// Group statuses by status type(completed, error, inProgress)
 	const groupedStatues = currentSiteStatuses.reduce( ( group, plugin ) => {
@@ -39,7 +41,9 @@ export default function PluginActionStatus( {
 		);
 	}
 
-	if ( ! showMultipleStatuses && groupedStatusKeys.includes( PLUGIN_INSTALLATION_ERROR ) ) {
+	const hasFailedStatus = groupedStatusKeys.includes( PLUGIN_INSTALLATION_ERROR );
+
+	if ( ! showMultipleStatuses && hasFailedStatus ) {
 		filteredStatuses = groupedStatusKeys.filter(
 			( status ) => status === PLUGIN_INSTALLATION_ERROR
 		);
@@ -58,6 +62,7 @@ export default function PluginActionStatus( {
 					hasOneStatus={ hasOneStatus }
 				/>
 			) ) }
+			{ hasFailedStatus && retryButton }
 		</div>
 	);
 }
