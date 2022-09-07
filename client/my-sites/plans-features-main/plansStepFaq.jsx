@@ -15,7 +15,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 
 export default function PlanFAQ() {
 	return (
-		<>
+		<div className="plan-faq">
 			<FAQHeader className="wp-brand-font">{ 'Frequently Asked Questions' }</FAQHeader>
 			<FoldableFAQ
 				id="faq-1"
@@ -69,6 +69,6 @@ export default function PlanFAQ() {
 				content with your subscribers. You can also publish sponsored posts or use affiliate links
 				in your content, and apply to join WordAds, our advertising program.
 			</FoldableFAQ>
-		</>
+		</div>
 	);
 }

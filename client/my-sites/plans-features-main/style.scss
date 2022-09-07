@@ -89,6 +89,12 @@
  */
 body.is-section-signup.is-white-signup {
 	.plans-features-main {
+		.plan-faq {
+			h1 {
+				margin-top: 10px;
+				margin-bottom: 30px;
+			}
+		}
 		.plans-features-main__banner-content {
 			box-shadow: none;
 			display: flex;

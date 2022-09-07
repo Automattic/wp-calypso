@@ -67,6 +67,8 @@ export class PlanFeaturesComparison extends Component {
 			'plans-wrapper': isInSignup,
 		} );
 
+		const isFaqTest = true;
+
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
@@ -80,7 +82,7 @@ export class PlanFeaturesComparison extends Component {
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
-									{ isCondensedFeaturesExperiment
+									{ isCondensedFeaturesExperiment || isFaqTest
 										? this.renderPlanFeatureRowsTest()
 										: this.renderPlanFeatureRows() }
 								</tbody>
@@ -443,6 +445,7 @@ export default connect(
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
 				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
+				const isFaqTest = true;
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
@@ -459,7 +462,10 @@ export default connect(
 					planFeatures = getPlanFeaturesObject( featureAccessor() );
 				}
 
-				if ( isCondensedFeaturesExperiment && planConstantObj.getCondensedExperimentFeatures ) {
+				if (
+					( isCondensedFeaturesExperiment || isFaqTest ) &&
+					planConstantObj.getCondensedExperimentFeatures
+				) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getCondensedExperimentFeatures() );
 				}
 

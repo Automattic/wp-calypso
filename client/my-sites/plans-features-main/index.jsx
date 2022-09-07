@@ -441,7 +441,6 @@ export class PlansFeaturesMain extends Component {
 		const { isInSignup } = this.props;
 
 		if ( isInSignup ) {
-			// return null;
 			return <PlanFAQ />;
 		}
 
