@@ -1,7 +1,7 @@
 import ProductLightbox from '../../product-lightbox';
-import { BundlesList } from '../bundle-list';
 import { useItemLightbox } from '../hooks/use-item-lightbox';
-import { ProductsList } from '../product-list';
+import { BundlesList } from './bundles-list';
+import { ProductsList } from './products-list';
 import type { ItemsListProps, ProductsListProps, ViewType } from '../types';
 
 import './style.scss';

@@ -53,11 +53,14 @@ export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
 }
 
-export type MostPopularProps = {
+export type MostPopularProps = UseStoreItemInfoProps & {
 	className?: string;
 	heading: string;
-	items: React.ReactNode;
+	items: Array< SelectorProduct >;
+	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
 };
+
+export type AllItemsProps = MostPopularProps;
 
 export type HeroImageProps = {
 	item: SelectorProduct;
