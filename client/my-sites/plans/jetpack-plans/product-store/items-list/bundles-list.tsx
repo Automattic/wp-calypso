@@ -7,11 +7,10 @@ import { MostPopular } from './most-popular';
 import type { BundlesListProps } from '../types';
 
 export const BundlesList: React.FC< BundlesListProps > = ( {
-	createCheckoutURL,
-	duration,
-	onClickPurchase,
+	storeItemInfo,
 	onClickMoreInfoFactory,
 	siteId,
+	duration,
 } ) => {
 	const [ popularItems, otherItems ] = useBundlesToDisplay( { duration, siteId } );
 	const translate = useTranslate();
@@ -24,12 +23,10 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 	return (
 		<div className="jetpack-product-store__bundles-list">
 			<MostPopular
-				createCheckoutURL={ createCheckoutURL }
-				duration={ duration }
 				heading={ translate( 'Most popular bundles' ) }
 				items={ popularItems }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
-				onClickPurchase={ onClickPurchase }
+				storeItemInfo={ storeItemInfo }
 				siteId={ siteId }
 			/>
 
@@ -38,12 +35,10 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 			{ /* Show All items only if there is something in otherItems */ }
 			{ otherItems.length ? (
 				<AllItems
-					createCheckoutURL={ createCheckoutURL }
-					duration={ duration }
 					heading={ translate( 'All bundles' ) }
 					items={ allItems }
 					onClickMoreInfoFactory={ onClickMoreInfoFactory }
-					onClickPurchase={ onClickPurchase }
+					storeItemInfo={ storeItemInfo }
 					siteId={ siteId }
 				/>
 			) : null }

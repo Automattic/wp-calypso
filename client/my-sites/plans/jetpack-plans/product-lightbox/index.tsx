@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
 import FoldableCard from 'calypso/components/foldable-card';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
+import { StoreItemInfo } from '../product-store/types';
 import { SelectorProduct } from '../types';
 import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
@@ -12,7 +13,9 @@ import './style.scss';
 type Props = {
 	product: SelectorProduct;
 	isVisible: boolean;
+	storeItemInfo: StoreItemInfo;
 	onClose: () => void;
+	siteId: number | null;
 };
 
 const Includes = () => (

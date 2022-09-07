@@ -2,19 +2,16 @@ import classNames from 'classnames';
 import { FeaturedItemCard } from '../featured-item-card';
 import { FeaturesList } from '../features-list';
 import { HeroImage } from '../hero-image';
-import { useStoreItemInfo } from '../hooks/use-store-item-info';
 import { MostPopularProps } from '../types';
 
 import './style-most-popular.scss';
 
 export const MostPopular: React.FC< MostPopularProps > = ( {
 	className,
-	createCheckoutURL,
-	duration,
 	heading,
 	items,
 	onClickMoreInfoFactory,
-	onClickPurchase,
+	storeItemInfo,
 	siteId,
 } ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
@@ -30,12 +27,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 		isSuperseded,
 		isDeprecated,
 		isUserPurchaseOwner,
-	} = useStoreItemInfo( {
-		createCheckoutURL,
-		onClickPurchase,
-		duration,
-		siteId,
-	} );
+	} = storeItemInfo;
 
 	return (
 		<div className={ wrapperClassName }>

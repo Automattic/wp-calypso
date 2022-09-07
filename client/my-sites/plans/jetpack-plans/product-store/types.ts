@@ -1,3 +1,4 @@
+import { useStoreItemInfo } from './hooks/use-store-item-info';
 import type {
 	QueryArgs,
 	SelectorProduct,
@@ -23,6 +24,7 @@ export interface ProductStoreProps {
 	duration: Duration;
 	createCheckoutURL?: PurchaseURLCallback;
 	onClickPurchase?: PurchaseCallback;
+	storeItemInfo: StoreItemInfo;
 	urlQueryArgs: ProductStoreQueryArgs;
 	header: React.ReactNode;
 }
@@ -43,21 +45,29 @@ export interface ViewFilterProps {
 export type ProductsListProps = ProductStoreBaseProps &
 	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' > & {
 		onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
+		duration: Duration;
 	};
 
 export type BundlesListProps = ProductsListProps;
 
-export type ItemToDisplayProps = Omit< ProductsListProps, 'onClickMoreInfoFactory' >;
+export type ItemToDisplayProps = {
+	siteId: number | null;
+	duration: Duration;
+};
 
 export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
+	createCheckoutURL: PurchaseURLCallback;
+	onClickPurchase: PurchaseCallback;
 }
 
-export type MostPopularProps = UseStoreItemInfoProps & {
+export type MostPopularProps = {
 	className?: string;
 	heading: string;
 	items: Array< SelectorProduct >;
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
+	storeItemInfo: StoreItemInfo;
+	siteId: number | null;
 };
 
 export type AllItemsProps = MostPopularProps;
@@ -73,6 +83,8 @@ export type UseStoreItemInfoProps = ProductStoreBaseProps & {
 	duration: Duration;
 	onClickPurchase?: PurchaseCallback;
 };
+
+export type StoreItemInfo = ReturnType< typeof useStoreItemInfo >;
 
 export type ItemPriceProps = ProductStoreBaseProps &
 	HeroImageProps & {

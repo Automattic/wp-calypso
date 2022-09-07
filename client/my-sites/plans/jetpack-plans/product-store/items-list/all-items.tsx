@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { useStoreItemInfo } from '../hooks/use-store-item-info';
 import SimpleProductCard from '../simple-product-card';
 import { AllItemsProps } from '../types';
 
@@ -7,12 +6,10 @@ import './style.scss';
 
 export const AllItems: React.FC< AllItemsProps > = ( {
 	className,
-	createCheckoutURL,
-	duration,
 	heading,
 	items,
 	onClickMoreInfoFactory,
-	onClickPurchase,
+	storeItemInfo,
 	siteId,
 } ) => {
 	const {
@@ -26,12 +23,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		isSuperseded,
 		isDeprecated,
 		isUserPurchaseOwner,
-	} = useStoreItemInfo( {
-		createCheckoutURL,
-		onClickPurchase,
-		duration,
-		siteId,
-	} );
+	} = storeItemInfo;
 
 	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
 
