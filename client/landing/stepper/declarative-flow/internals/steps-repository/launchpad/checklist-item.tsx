@@ -1,9 +1,9 @@
 import { Button, Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
 import { isTaskDisabled } from './task-helper';
 import { Task } from './types';
-import classnames from 'classnames';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
 	const { id, isCompleted, keepActive, actionUrl, title, actionDispatch } = task;
