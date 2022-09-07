@@ -135,14 +135,16 @@ const TitanSetUpThankYou = ( {
 		nextSteps = [
 			{
 				stepKey: 'titan_whats_next_setup_mailbox',
-				stepTitle: translate( 'Set up your email' ),
-				stepDescription: translate( 'Complete the setup by choosing your email address.' ),
+				stepTitle: translate( 'Set up your Professional Email' ),
+				stepDescription: translate(
+					'Complete your Professional Email setup to start sending and receiving emails from your custom domain today.'
+				),
 				stepCta: (
 					<FullWidthButton
 						href={ emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domainName ) }
 						primary={ siteNeedsSetup ? ! isEnabled( 'signup/stepper-flow' ) : true }
 					>
-						{ translate( 'Set up email' ) }
+						{ translate( 'Set up mailbox' ) }
 					</FullWidthButton>
 				),
 			},
