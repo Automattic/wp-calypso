@@ -56,8 +56,7 @@ export type ItemToDisplayProps = {
 
 export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
-	createCheckoutURL?: PurchaseURLCallback;
-	onClickPurchase?: PurchaseCallback;
+	storeItemInfo: StoreItemInfo;
 }
 
 export type MostPopularProps = {
