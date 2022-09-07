@@ -1,8 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button, FormInputValidation } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { StepContainer, base64ImageToBlob } from '@automattic/onboarding';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
@@ -34,6 +34,18 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const { setSiteTitle, setSiteDescription, setSiteLogo } = useDispatch( ONBOARD_STORE );
 
 	const siteTitleError = formTouched && ! siteTitle.trim();
+
+	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+
+	useEffect( () => {
+		const { siteTitle, siteDescription, siteLogo } = state;
+		setTagline( siteDescription );
+		setComponentSiteTitle( siteTitle );
+		if ( siteLogo ) {
+			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
+			setSelectedFile( file );
+		}
+	}, [ state ] );
 
 	useEffect( () => {
 		if ( ! site ) {
@@ -161,7 +173,6 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered
 		/>
 	);
 };

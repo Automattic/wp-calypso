@@ -23,6 +23,7 @@ import { updateThemes } from 'calypso/state/themes/actions/theme-update';
 import {
 	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
 	isSiteEligibleForBundledSoftware as getIsSiteEligibleForBundledSoftware,
+	isPremiumThemeAvailable as getIsPremiumThemeAvailable,
 } from 'calypso/state/themes/selectors';
 import { isThemePremium as getIsThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
@@ -319,6 +320,7 @@ export class Theme extends Component {
 			isPremiumTheme,
 			didPurchaseTheme,
 			doesThemeBundleSoftwareSet,
+			isPremiumThemeAvailable,
 		} = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
@@ -340,7 +342,7 @@ export class Theme extends Component {
 		 * Only show the Premium badge if we're not already showing the price
 		 * and the theme isn't the active theme.
 		 */
-		const showPremiumBadge = isPremiumTheme && ! themeNeedsPurchase && ! active;
+		const showPremiumBadge = isPremiumTheme && isPremiumThemeAvailable && ! active;
 
 		const themeDescription = decodeEntities( description );
 
@@ -392,7 +394,7 @@ export class Theme extends Component {
 						! isEnabled( 'signup/seller-upgrade-modal' )
 							? 'theme__upsell-icon'
 							: 'theme__upsell-popover',
-						hasPremiumThemesFeature || showPremiumBadge ? 'active' : null
+						isPremiumThemeAvailable || showPremiumBadge ? 'active' : null
 					) }
 					position={ ! isEnabled( 'signup/seller-upgrade-modal' ) ? 'top left' : 'top' }
 				>
@@ -506,6 +508,7 @@ export default connect(
 			isSiteEligibleForBundledSoftware: getIsSiteEligibleForBundledSoftware( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
+			isPremiumThemeAvailable: getIsPremiumThemeAvailable( state, theme.id, siteId ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }

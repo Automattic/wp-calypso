@@ -1,3 +1,4 @@
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import cx from 'classnames';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -15,14 +16,14 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 	return (
 		<StepContainer
 			stepName={ 'intro' }
-			className={ cx( { 'is-newsletter': flow === 'newsletter' } ) }
+			className={ cx( { 'is-newsletter': flow === NEWSLETTER_FLOW } ) }
 			goBack={ goBack }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep flowName={ flow as string } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered
+			showJetpackPowered={ flow === NEWSLETTER_FLOW }
 		/>
 	);
 };

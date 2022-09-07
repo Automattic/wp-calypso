@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
@@ -27,21 +28,27 @@ export const newsletter: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: this.name } );
 		setStepProgress( flowProgress );
+		const locale = useLocale();
+
+		const getStartUrl = () => {
+			return locale && locale !== 'en'
+				? `/start/account/user/${ locale }?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
+				: `/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`;
+		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', _currentStep );
+			const logInUrl = getStartUrl();
 
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
 						return navigate( 'newsletterSetup' );
 					}
-					return window.location.replace(
-						`/start/account/user?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`
-					);
+					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
-					return window.location.replace(
+					return window.location.assign(
 						`/start/${ name }/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes` +
@@ -63,7 +70,7 @@ export const newsletter: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.replace( `/view/${ siteSlug }` );
+					return window.location.assign( `/view/${ siteSlug }` );
 
 				default:
 					return navigate( 'intro' );

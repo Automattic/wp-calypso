@@ -202,7 +202,7 @@ export const setSiteLogo = ( siteLogo: string | null ) => ( {
 	siteLogo,
 } );
 
-export const setSiteAccentColor = ( siteAccentColor: string | undefined ) => ( {
+export const setSiteAccentColor = ( siteAccentColor: string ) => ( {
 	type: 'SET_SITE_ACCENT_COLOR' as const,
 	siteAccentColor,
 } );

@@ -157,7 +157,11 @@ export class PluginsListHeader extends PureComponent {
 			}
 			rightSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-bulk-management">
-					<Button compact onClick={ this.toggleBulkManagement }>
+					<Button
+						className="plugin-list-header__buttons-action-button"
+						compact
+						onClick={ this.toggleBulkManagement }
+					>
 						{ translate( 'Edit All', { context: 'button label' } ) }
 					</Button>
 				</ButtonGroup>
@@ -166,6 +170,7 @@ export class PluginsListHeader extends PureComponent {
 			const updateButton = (
 				<Button
 					key="plugin-list-header__buttons-update"
+					className="plugin-list-header__buttons-action-button"
 					compact
 					disabled={ isWpcom ? ! this.props.haveUpdatesSelected : ! this.hasSelectedPlugins() }
 					primary={ isWpcom }
@@ -186,6 +191,7 @@ export class PluginsListHeader extends PureComponent {
 			activateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-activate"
+					className="plugin-list-header__buttons-action-button"
 					disabled={ isWpcom ? ! this.props.haveInactiveSelected : ! this.hasSelectedPlugins() }
 					onClick={ this.props.activatePluginNotice }
 					compact
@@ -198,6 +204,7 @@ export class PluginsListHeader extends PureComponent {
 				<Button
 					compact
 					key="plugin-list-header__buttons-deactivate"
+					className="plugin-list-header__buttons-action-button"
 					disabled={ isWpcom ? ! this.props.haveActiveSelected : ! this.hasSelectedPlugins() }
 					onClick={ this.props.deactivatePluginNotice }
 				>
@@ -216,6 +223,7 @@ export class PluginsListHeader extends PureComponent {
 			autoupdateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-autoupdate-on"
+					className="plugin-list-header__buttons-action-button"
 					disabled={ isWpcom ? ! this.canUpdatePlugins() : ! this.hasSelectedPlugins() }
 					compact
 					onClick={ this.props.autoupdateEnablePluginNotice }
@@ -226,6 +234,7 @@ export class PluginsListHeader extends PureComponent {
 			autoupdateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-autoupdate-off"
+					className="plugin-list-header__buttons-action-button"
 					disabled={ isWpcom ? ! this.canUpdatePlugins() : ! this.hasSelectedPlugins() }
 					compact
 					onClick={ this.props.autoupdateDisablePluginNotice }

@@ -6,6 +6,7 @@ import {
 	DISABLE_AUTOUPDATE_PLUGIN,
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
+	UPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import {
 	PLUGIN_INSTALLATION_COMPLETED,
@@ -149,6 +150,13 @@ export const getPluginActionStatusMessages = (
 						'Failed to remove plugin from %(count)s sites',
 						translationArgs
 				  ),
+		},
+		[ UPDATE_PLUGIN ]: {
+			[ PLUGIN_INSTALLATION_IN_PROGRESS ]: translate( 'Updating' ),
+			[ PLUGIN_INSTALLATION_COMPLETED ]: translate( 'Update successful' ),
+			[ PLUGIN_INSTALLATION_ERROR ]: selectedSite
+				? translate( 'Failed' )
+				: translate( 'Failed on %(count)s site', 'Failed on %(count)s sites', translationArgs ),
 		},
 	};
 };

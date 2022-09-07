@@ -60,12 +60,19 @@ export default function PluginCommonTable( {
 						return (
 							<tr key={ `table-row-${ id }` } className="plugin-common-table__table-row">
 								{ columns.map( ( column ) => {
+									if ( column.key === 'bulk-actions' ) {
+										// We don't want to render an empty table cell for the bulk actions.
+										return null;
+									}
 									return (
 										<td
 											className={ classNames(
 												column.smallColumn && 'plugin-common-table__small-column'
 											) }
 											key={ `table-data-${ column.key }-${ id }` }
+											// As we don't render the bulk actions cell, we can
+											// expand the update column a bit further.
+											colSpan={ column.key === 'update' ? 2 : undefined }
 										>
 											{ rowFormatter( { columnKey: column.key, item } ) }
 										</td>

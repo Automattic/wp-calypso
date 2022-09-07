@@ -22,6 +22,7 @@ interface Props {
 	toggleBulkManagement: () => void;
 	updateAllPlugins: () => void;
 	removePluginNotice: ( plugin: Plugin ) => void;
+	updatePlugin: ( plugin: Plugin ) => void;
 }
 export default function PluginManagementV2( {
 	plugins,
@@ -33,6 +34,7 @@ export default function PluginManagementV2( {
 	toggleBulkManagement,
 	updateAllPlugins,
 	removePluginNotice,
+	updatePlugin,
 }: Props ): ReactElement {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -90,9 +92,12 @@ export default function PluginManagementV2( {
 						smallColumn: true,
 					},
 					{
+						key: 'update',
+						header: translate( 'Update available' ),
+					},
+					{
 						key: 'last-updated',
-						header: translate( 'Last updated' ),
-						smallColumn: true,
+						header: null,
 					},
 			  ]
 			: [
@@ -101,11 +106,16 @@ export default function PluginManagementV2( {
 						header: translate( 'Sites' ),
 						smallColumn: true,
 					},
+					{
+						key: 'update',
+						header: translate( 'Update available' ),
+						smallColumn: true,
+					},
 			  ] ),
 		{
-			key: 'update',
+			key: 'bulk-actions',
 			header: renderBulkActionsHeader(),
-			colSpan: 2,
+			colSpan: 3,
 		},
 	];
 
@@ -132,6 +142,7 @@ export default function PluginManagementV2( {
 				} ) }
 				selectedSite={ selectedSite }
 				removePluginNotice={ removePluginNotice }
+				updatePlugin={ updatePlugin }
 			/>
 		</div>
 	);
