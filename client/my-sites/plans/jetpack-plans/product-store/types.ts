@@ -92,7 +92,7 @@ export type FeaturedItemCardProps = {
 	title: React.ReactNode;
 };
 
-export type SimpleProductCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
+export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
 	icon?: React.ReactNode;
 };
 
