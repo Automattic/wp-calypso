@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.simple-product-card {
+.simple-item-card {
 	display: flex;
 	flex-direction: row;
 
@@ -10,7 +10,7 @@
 	}
 }
 
-.simple-product-card__icon {
+.simple-item-card__icon {
 	display: none;
 	box-sizing: border-box;
 	min-width: 52px;
@@ -25,14 +25,14 @@
 	}
 }
 
-.simple-product-card__body {
+.simple-item-card__body {
 	display: flex;
 	flex-direction: column;
 	border-bottom: 1px solid var( --studio-gray-5 );
 	flex-grow: 1;
 }
 
-.simple-product-card__header {
+.simple-item-card__header {
 	display: flex;
 	flex-direction: row;
 	font-size: $font-body-small;
@@ -40,14 +40,14 @@
 	align-items: flex-start;
 }
 
-.simple-product-card__title {
+.simple-item-card__title {
 	font-size: $font-title-medium;
 	line-height: rem( 29px );
 	margin-bottom: 0 !important;
 	color: var( --studio-gray-100 );
 }
 
-.simple-product-card__cta {
+.simple-item-card__cta {
 	align-items: center;
 	justify-content: center;
 	font-size: $font-body;
@@ -55,7 +55,7 @@
 	display: flex;
 }
 
-.simple-product-card__footer {
+.simple-item-card__footer {
 	font-size: $font-body-small;
 	line-height: rem( 24px );
 	padding: 8px 0 16px;

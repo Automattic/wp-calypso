@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { useStoreItemInfo } from '../hooks/use-store-item-info';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
-import { SimpleProductCard } from '../simple-product-card';
+import { SimpleItemCard } from '../simple-item-card';
 import { AllItemsProps } from '../types';
 import getProductIcon from '../utils/get-product-icon';
 
@@ -77,7 +77,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					);
 
 					return (
-						<SimpleProductCard
+						<SimpleItemCard
 							ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
 							ctaHref={ getCheckoutURL( item ) }
 							ctaLabel={ ctaLabel }

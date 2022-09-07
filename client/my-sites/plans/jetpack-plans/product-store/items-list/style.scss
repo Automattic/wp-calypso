@@ -22,7 +22,7 @@
 	margin-bottom: 48px;
 
 
-	.simple-product-card__icon > img {
+	.simple-item-card__icon > img {
 		width: 28px;
 		height: auto;
 	}
@@ -32,7 +32,7 @@
 	* set flex-direction to column to avoid cluttered UI
 	* due to long "Manage subscription" button
 	*/
-	.simple-product-card__header:has(.item-price__is-owned) {
+	.simple-item-card__header:has(.item-price__is-owned) {
 		@media only screen and (max-width: $break-mobile), only screen and (min-width: $break-medium) and (max-width: $break-large) {
 			flex-direction: column;
 			gap: 1rem;
