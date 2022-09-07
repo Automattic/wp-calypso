@@ -17,6 +17,7 @@ export const videopress: Flow = {
 
 		return [
 			'intro',
+			'options',
 			// 'videopressSetup',
 			// 'patterns',
 			'completingPurchase',
@@ -37,11 +38,13 @@ export const videopress: Flow = {
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
-						return navigate( 'patterns' );
+						return navigate( 'options' );
 					}
 					return window.location.replace(
-						`/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
+						`/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/options?flow=${ name }`
 					);
+				case 'options':
+					return navigate( 'patterns' );
 
 				case 'completingPurchase':
 					return navigate( 'processing' );

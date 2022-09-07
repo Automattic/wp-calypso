@@ -19,7 +19,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteOptions: Step = function SiteOptions( { navigation } ) {
+const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
@@ -71,6 +71,16 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 		}
 	};
 
+	const getTextsForVideoPressFlow = () => {
+		return {
+			headerText: translate( 'Set up your video site' ),
+			headerImage: undefined,
+			siteTitleLabel: translate( 'Site name' ),
+			taglineLabel: translate( 'Brief description' ),
+			taglineExplanation: translate( 'Add a short description of your video site here.' ),
+		};
+	};
+
 	const getTextsFromIntent = ( intent: string ) => {
 		switch ( intent ) {
 			case 'sell':
@@ -78,6 +88,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 					headerText: translate( "First, let's give your store a name" ),
 					headerImage: storeImageUrl,
 					siteTitleLabel: translate( 'Store name' ),
+					taglineLabel: translate( 'Tagline' ),
 					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
 				};
 			case 'write':
@@ -86,6 +97,7 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 					headerText: translate( "First, let's give your blog a name" ),
 					headerImage: siteOptionsUrl,
 					siteTitleLabel: translate( 'Blog name' ),
+					taglineLabel: translate( 'Tagline' ),
 					taglineExplanation: translate( 'In a few words, explain what your blog is about.' ),
 				};
 		}
@@ -96,12 +108,19 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 	const siteTitleError = null;
 	const taglineError = null;
 
-	const { headerText, headerImage, siteTitleLabel, taglineExplanation } =
-		getTextsFromIntent( intent );
+	const isVideoPressFlow = 'videopress' === flow;
+	const textsForFlow = isVideoPressFlow
+		? getTextsForVideoPressFlow()
+		: getTextsFromIntent( intent );
+
+	const { headerText, headerImage, siteTitleLabel, taglineLabel, taglineExplanation } =
+		textsForFlow;
+
+	const isFormDisabled = ! isVideoPressFlow && ! site;
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>
-			<FormFieldset disabled={ ! site } className="site-options__form-fieldset">
+			<FormFieldset disabled={ isFormDisabled } className="site-options__form-fieldset">
 				<FormLabel htmlFor="siteTitle" optional={ ! isSiteTitleRequired }>
 					{ siteTitleLabel }
 				</FormLabel>
@@ -114,9 +133,9 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 			</FormFieldset>
-			<FormFieldset disabled={ ! site } className="site-options__form-fieldset">
+			<FormFieldset disabled={ isFormDisabled } className="site-options__form-fieldset">
 				<FormLabel htmlFor="tagline" optional={ ! isTaglineRequired }>
-					{ translate( 'Tagline' ) }
+					{ taglineLabel }
 				</FormLabel>
 				<FormInput
 					name="tagline"
@@ -124,14 +143,22 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 					value={ tagline }
 					isError={ taglineError }
 					onChange={ onChange }
+					placeholder={ isVideoPressFlow ? taglineExplanation : null }
 				/>
 				{ taglineError && <FormInputValidation isError text={ taglineError } /> }
-				<FormSettingExplanation>
-					<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
-					{ taglineExplanation }
-				</FormSettingExplanation>
+				{ ! isVideoPressFlow && (
+					<FormSettingExplanation>
+						<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
+						{ taglineExplanation }
+					</FormSettingExplanation>
+				) }
 			</FormFieldset>
-			<Button disabled={ ! site } className="site-options__submit-button" type="submit" primary>
+			<Button
+				disabled={ isFormDisabled }
+				className="site-options__submit-button"
+				type="submit"
+				primary
+			>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>
@@ -139,13 +166,14 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 
 	return (
 		<StepContainer
+			shouldHideNavButtons={ isVideoPressFlow }
 			stepName={ 'site-options' }
 			className={ `is-step-${ intent }` }
 			headerImageUrl={ headerImage }
 			skipButtonAlign={ 'top' }
 			goBack={ goBack }
 			goNext={ goNext }
-			isHorizontalLayout={ true }
+			isHorizontalLayout={ ! isVideoPressFlow }
 			formattedHeader={
 				<FormattedHeader id={ 'site-options-header' } headerText={ headerText } align={ 'left' } />
 			}
