@@ -53,7 +53,7 @@ export default function UpdatePlugin( {
 
 	const hasUpdate = sites.some( ( site ) => {
 		const sitePlugin = pluginsOnSites?.sites[ site.ID ];
-		return sitePlugin?.update && site.canUpdateFiles;
+		return sitePlugin?.update?.new_version && site.canUpdateFiles;
 	} );
 
 	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
