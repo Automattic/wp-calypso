@@ -60,7 +60,7 @@ export const requestMediaSuccess =
 	( { siteId, query }, data ) =>
 	( dispatch, getState ) => {
 		if (
-			getCurrentRoute( getState() ).startsWith( '/media/' ) &&
+			getCurrentRoute( getState() )?.startsWith( '/media/' ) &&
 			! isEqual(
 				omit( query, 'page_handle' ),
 				omit( getNextPageQuery( getState(), siteId ), 'page_handle' )
