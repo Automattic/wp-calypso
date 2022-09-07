@@ -186,7 +186,7 @@ export const SftpCard = ( {
 					checked={ isSshAccessEnabled }
 					onChange={ () => toggleSshAccess() }
 					label={ translate(
-						'Enable SSH access for this site. For more information see {{supportLink}}Connect to SSH on WordPress.com{{/supportLink}}.',
+						'Enable SSH access for this site. {{supportLink}}Learn more{{/supportLink}}.',
 						{
 							components: {
 								supportLink: (
