@@ -56,8 +56,8 @@ export default function PlanFAQ() {
 				methods in select countries.
 			</FoldableFAQ>
 			<FoldableFAQ id="faq-7" question={ 'Is monthly billing available for plans?' }>
-				Yes! During checkout, you can select the monthly option to pay for your plan in monthly
-				billing cycles.
+				Yes! Click on the "Pay monthly" tab above or select the monthly option during checkout to
+				pay for your plan in monthly billing cycles.
 			</FoldableFAQ>
 			<FoldableFAQ id="faq-8" question={ 'Can I create a blog in another language?' }>
 				Absolutely. You can change your blog language, which is how your readers will experience
