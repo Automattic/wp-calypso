@@ -12,8 +12,7 @@ export function getEnhancedTasks(
 	tasks: Task[] | null,
 	siteSlug: string | null,
 	site: SiteDetails | null,
-	submit: NavigationControls[ 'submit' ],
-	goToStep?: NavigationControls[ 'goToStep' ]
+	navigation: NavigationControls
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
@@ -32,6 +31,10 @@ export function getEnhancedTasks(
 				case 'setup_newsletter':
 					taskData = {
 						title: translate( 'Set up Newsletter' ),
+						actionDispatch: () =>
+							navigation.goToStep?.(
+								`newsletterSetup?flow=newsletter&siteSlug=${ siteSlug }&backToStep=launchpad`
+							),
 					};
 					break;
 				case 'plan_selected':
@@ -45,8 +48,8 @@ export function getEnhancedTasks(
 						title: translate( 'Add Subscribers' ),
 						keepActive: true,
 						actionDispatch: () => {
-							if ( goToStep ) {
-								goToStep( 'subscribers' );
+							if ( navigation.goToStep ) {
+								navigation.goToStep( 'subscribers' );
 							}
 						},
 					};
@@ -69,6 +72,10 @@ export function getEnhancedTasks(
 							[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
 								? translate( 'Set up Link in Bio' )
 								: translate( 'Setup your Link in Bio' ),
+						actionDispatch: () =>
+							navigation.goToStep?.(
+								`linkInBioSetup?flow=link-in-bio&siteSlug=${ siteSlug }&backToStep=launchpad`
+							),
 					};
 					break;
 				case 'links_added':
@@ -97,7 +104,7 @@ export function getEnhancedTasks(
 									window.location.replace( `/home/${ siteSlug }?forceLoadLaunchpadData=true` );
 								} );
 
-								submit?.();
+								navigation.submit?.();
 							}
 						},
 					};
