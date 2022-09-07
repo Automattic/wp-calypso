@@ -20,7 +20,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 		>
 			<Button
 				className="launchpad__checklist-item"
-				disabled={ taskDisabled }
+				disabled={ taskDisabled && ! task.id.includes( 'setup' ) }
 				href={ actionUrl }
 				data-task={ id }
 				{ ...action }
