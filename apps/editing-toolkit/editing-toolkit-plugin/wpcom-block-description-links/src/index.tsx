@@ -1,8 +1,15 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { ReactElement, JSXElementConstructor } from 'react';
 import blockLinks from './block-links-map';
 import DescriptionSupportLink from './inline-support-link';
+
+declare global {
+	interface Window {
+		wpcomBlockDescriptionLinksLocale: string;
+	}
+}
 
 const addBlockSupportLinks = (
 	settings: {
@@ -15,9 +22,13 @@ const addBlockSupportLinks = (
 	const blockName = isChild ? settings[ 'parent' ].toString() : name;
 
 	if ( blockLinks[ blockName ] ) {
+		const localizedUrl = localizeUrl(
+			blockLinks[ blockName ],
+			window.wpcomBlockDescriptionLinksLocale
+		);
 		const descriptionWithLink = createInterpolateElement( '<InlineSupportLink />', {
 			InlineSupportLink: (
-				<DescriptionSupportLink title={ String( settings.title ) } url={ blockLinks[ blockName ] }>
+				<DescriptionSupportLink title={ String( settings.title ) } url={ localizedUrl }>
 					{ settings.description }
 				</DescriptionSupportLink>
 			),
