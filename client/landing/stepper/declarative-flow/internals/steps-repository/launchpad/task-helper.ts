@@ -80,6 +80,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Add links' ),
 						actionUrl: `/site-editor/${ siteSlug }`,
+						keepActive: true,
 						isCompleted: linkInBioLinksEditCompleted,
 					};
 					break;
