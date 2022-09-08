@@ -67,6 +67,10 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 
 		// compensate for the item border to avoid cropping the image's top.
 		margin-top: 10px;
+
+		@media (max-height: 375px) {
+			margin-top: 16px;
+		}
 	}
 }
 
