@@ -10,6 +10,7 @@ import {
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -45,11 +46,15 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	it( 'Editor content loads', async function () {
 		// Because this is a temporary smoke test, adding the needed FSE selectors here instead of
 		// spinning up a POM class that we will later needed to redo.
-		// This should ensure the editor hasn't done a WSOD.
-		const locator = page
-			.frameLocator( '.calypsoify.is-iframe iframe.is-loaded' )
-			.frameLocator( 'iframe[name="editor-canvas"]' )
-			.locator( 'text=Home' );
-		await locator.waitFor( { timeout: 90 * 1000 } );
+		// This should ensure the editor hasn't done a WSoD.
+		const editorLoadedClosure = async () => {
+			const locator = page
+				.frameLocator( '.calypsoify.is-iframe iframe.is-loaded' )
+				.frameLocator( 'iframe[name="editor-canvas"]' )
+				.locator( '[aria-label="Block: Post Title"]:has-text("Home"):visible' );
+			await locator.waitFor( { timeout: 90 * 1000 } );
+		};
+
+		await ElementHelper.reloadAndRetry( page, editorLoadedClosure );
 	} );
 } );

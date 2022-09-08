@@ -86,7 +86,7 @@
 }
 
 
-.item-price__is-owned {
+.item-price__message {
 	font-size: $font-body-extra-small;
 	color: var( --studio-jetpack-green-50 );
 	font-weight: 600;
@@ -94,7 +94,7 @@
 	align-items: center;
 }
 
-.item-price__is-owned--dot {
+.item-price__message--dot {
 	display: inline-block;
 	width: 8px;
 	height: 8px;

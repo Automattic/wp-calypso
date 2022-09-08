@@ -85,6 +85,7 @@ export type ItemPriceProps = ProductStoreBaseProps &
 	HeroImageProps & {
 		isOwned?: boolean;
 		isIncludedInPlan?: boolean;
+		isMultiSiteIncompatible?: boolean;
 	};
 
 export type FeaturedItemCardProps = {

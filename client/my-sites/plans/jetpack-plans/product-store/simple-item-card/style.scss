@@ -48,11 +48,12 @@
 }
 
 .simple-item-card__cta {
+	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-size: $font-body;
-	min-width: 91px;
-	display: flex;
+	min-width: 5.7rem;
+	border-width: 0;
 }
 
 .simple-item-card__footer {

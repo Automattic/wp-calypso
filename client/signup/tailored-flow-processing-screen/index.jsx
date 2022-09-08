@@ -19,7 +19,6 @@ const useSteps = ( flowName ) => {
 				{ title: __( 'Great choices. Nearly there!' ) },
 				{ title: __( 'Shining and polishing your Bio' ) },
 				{ title: __( 'Mounting it on a marble pedestal' ) },
-				{ title: __( 'Looking good. Time for checkout!' ) },
 			];
 			break;
 		case NEWSLETTER_FLOW:
@@ -27,7 +26,6 @@ const useSteps = ( flowName ) => {
 				{ title: __( 'Excellent choices. Nearly there!' ) },
 				{ title: __( 'Smoothing down the stationery' ) },
 				{ title: __( 'Embossing all the envelopes' ) },
-				{ title: __( 'Let’s head to the checkout' ) },
 			];
 			break;
 		default:

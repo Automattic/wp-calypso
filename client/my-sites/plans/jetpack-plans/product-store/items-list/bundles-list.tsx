@@ -6,6 +6,8 @@ import { AllItems } from './all-items';
 import { MostPopular } from './most-popular';
 import type { BundlesListProps } from '../types';
 
+import './style-bundle-list.scss';
+
 export const BundlesList: React.FC< BundlesListProps > = ( {
 	onClickMoreInfoFactory,
 	siteId,
