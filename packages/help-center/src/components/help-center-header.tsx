@@ -89,7 +89,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
 					) }
-					{ isMinimized && unreadCount && (
+					{ isMinimized && unreadCount > 0 && (
 						<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
 					) }
 				</p>
