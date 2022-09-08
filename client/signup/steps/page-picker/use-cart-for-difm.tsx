@@ -1,8 +1,14 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_PREMIUM, PLAN_WPCOM_PRO, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import {
+	PLAN_PREMIUM,
+	PLAN_WPCOM_PRO,
+	WPCOM_DIFM_LITE,
+	getDIFMTieredPriceDetails,
+	Product,
+} from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { LocalizeProps, useTranslate } from 'i18n-calypso';
+import { LocalizeProps, useTranslate, TranslateResult } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
@@ -15,26 +21,22 @@ import { getSite } from 'calypso/state/sites/selectors';
 import { debounce } from 'calypso/utils';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import type { TranslateResult } from 'i18n-calypso';
 
 export type CartItem = {
 	nameOverride?: TranslateResult;
 	productSlug: string;
 	productOriginalName: string;
 	productCost: number;
-	meta?: TranslateResult;
+	meta?: JSX.Element | TranslateResult;
 	productCount?: number;
 	itemSubTotal: number;
 };
-
-const FREE_PAGES = 5;
 
 type DummyCartParams = {
 	selectedPages: string[];
 	currencyCode: string;
 	activePlanScheme: ProductListItem;
 	difmLiteProduct: ProductListItem;
-	extraPageProduct: ProductListItem;
 	translate: LocalizeProps[ 'translate' ];
 };
 
@@ -43,12 +45,15 @@ function getDummyCartProducts( {
 	currencyCode,
 	activePlanScheme,
 	difmLiteProduct,
-	extraPageProduct,
 	translate,
 }: DummyCartParams ): CartItem[] {
-	const extraPageCount = Math.max( 0, selectedPages.length - FREE_PAGES );
+	// const extraPageCount = Math.max( 0, selectedPages.length - FREE_PAGES );
+	// const difmPriceDetail = getDIFMTieredPriceDetails(
+	// 	difmLiteProduct as unknown as Product,
+	// 	selectedPages.length
+	// );
 	let displayedCartItems: CartItem[] = [];
-	if ( difmLiteProduct && activePlanScheme && extraPageProduct ) {
+	if ( difmLiteProduct && activePlanScheme ) {
 		displayedCartItems = [
 			{
 				productSlug: difmLiteProduct.product_slug,
@@ -56,7 +61,7 @@ function getDummyCartProducts( {
 				productOriginalName: difmLiteProduct.product_name,
 				itemSubTotal: difmLiteProduct.cost,
 				productCost: difmLiteProduct.cost,
-				meta: translate( 'One-time fee' ),
+				meta: translate( 'One-time fee' + selectedPages.length ),
 			},
 			{
 				productSlug: activePlanScheme.product_slug,
@@ -69,22 +74,6 @@ function getDummyCartProducts( {
 					},
 				} ),
 			},
-			{
-				productSlug: extraPageProduct.product_slug,
-				nameOverride: translate( '%(numberOfPages)d Extra Page', '%(numberOfPages)d Extra Pages', {
-					count: extraPageCount,
-					args: { numberOfPages: extraPageCount },
-				} ),
-				productOriginalName: extraPageProduct.product_name,
-				productCost: extraPageProduct.cost,
-				meta: translate( '%(perPageCost)s Per Page', {
-					args: {
-						perPageCost: formatCurrency( extraPageProduct.cost, currencyCode, { precision: 0 } ),
-					},
-				} ),
-				itemSubTotal: extraPageProduct.cost * extraPageCount,
-				productCount: extraPageCount,
-			},
 		];
 	}
 
@@ -93,12 +82,10 @@ function getDummyCartProducts( {
 
 function getSiteCartProducts( {
 	responseCart,
-	extraPageProduct,
 	translate,
 	currencyCode,
 }: {
 	responseCart: ResponseCart;
-	extraPageProduct: ProductListItem;
 	translate: LocalizeProps[ 'translate' ];
 	currencyCode: string;
 } ): CartItem[] {
@@ -115,34 +102,48 @@ function getSiteCartProducts( {
 						args: { planPrice: product.product_cost_display },
 					} ),
 				};
-			case WPCOM_DIFM_LITE:
+			case WPCOM_DIFM_LITE: {
+				const difmTieredPrices = getDIFMTieredPriceDetails(
+					product as unknown as Product,
+					product.quantity ?? 1
+				);
+				let meta: JSX.Element = <>{ translate( 'one-time fee' ) }</>;
+				if ( difmTieredPrices ) {
+					const { extraPageCount, extraPagesPrice } = difmTieredPrices;
+					if ( extraPageCount && extraPageCount > 0 ) {
+						meta = (
+							<>
+								{ translate( 'Service: %(productCost)s one-time fee', {
+									args: {
+										productCost: product.item_original_cost_for_quantity_one_display,
+									},
+								} ) }
+								<br></br>
+								{ translate(
+									'%(numberOfExtraPages)d Extra Page: %(costOfExtraPages)s one-time fee',
+									'%(numberOfExtraPages)d Extra Pages: %(costOfExtraPages)s one-time fee',
+									{
+										args: {
+											numberOfExtraPages: extraPageCount,
+											costOfExtraPages: extraPagesPrice,
+										},
+										count: extraPageCount,
+									}
+								) }
+							</>
+						);
+					}
+				}
+
 				return {
 					productSlug: product.product_slug,
 					nameOverride: translate( 'Website Design Service' ),
 					productOriginalName: product.product_name,
 					itemSubTotal: product.cost,
 					productCost: product.cost,
-					meta: translate( 'One-time fee' ),
+					meta,
 				};
-			case WPCOM_DIFM_EXTRA_PAGE:
-				return {
-					productSlug: product.product_slug,
-					nameOverride: translate(
-						'%(numberOfPages)d Extra Page',
-						'%(numberOfPages)d Extra Pages',
-						{
-							count: product.quantity ?? 0,
-							args: { numberOfPages: product.quantity },
-						}
-					),
-					productOriginalName: product.product_name,
-					itemSubTotal: product.cost,
-					productCost: product.cost,
-					meta: translate( '%(perPageCost)s Per Page', {
-						args: { perPageCost: product.item_original_cost_for_quantity_one_display },
-					} ),
-				};
-
+			}
 			default:
 				return {
 					productSlug: product.product_slug,
@@ -154,23 +155,6 @@ function getSiteCartProducts( {
 				};
 		}
 	} );
-
-	// Add a 0 line item product if there is no extra page in the cart
-	if ( ! cartItems.some( ( c ) => c.productSlug === WPCOM_DIFM_EXTRA_PAGE ) ) {
-		cartItems.push( {
-			productSlug: extraPageProduct.product_slug,
-			productOriginalName: extraPageProduct.product_name,
-			itemSubTotal: 0,
-			// The 0 selection product cost should be shown as 0
-			productCost: 0,
-			nameOverride: translate( '0 Extra Pages' ),
-			meta: translate( '%(perPageCost)s Per Page', {
-				args: {
-					perPageCost: formatCurrency( extraPageProduct.cost, currencyCode, { precision: 0 } ),
-				},
-			} ),
-		} );
-	}
 	return cartItems;
 }
 
@@ -196,9 +180,6 @@ export function useCartForDIFM( selectedPages: string[] ): {
 	const { newOrExistingSiteChoice, siteId, siteSlug } = signupDependencies;
 	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
 	const isProductsLoading = useSelector( isProductsListFetching );
-	const extraPageProduct = useSelector( ( state ) =>
-		getProductBySlug( state, WPCOM_DIFM_EXTRA_PAGE )
-	);
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode );
 	const site = useSelector( ( state ) => getSite( state, siteSlug ?? siteId ) );
@@ -223,6 +204,7 @@ export function useCartForDIFM( selectedPages: string[] ): {
 					...signupDependencies,
 					selectedPageTitles: selectedPages,
 				} ),
+				quantity: selectedPages.length,
 			};
 		}
 		return null;
@@ -230,10 +212,10 @@ export function useCartForDIFM( selectedPages: string[] ): {
 
 	// [Effect] Loads required initial data
 	useEffect( () => {
-		if ( ! difmLiteProduct || ! extraPageProduct || ! userCurrencyCode ) {
+		if ( ! difmLiteProduct || ! userCurrencyCode ) {
 			dispatch( requestProductsList() );
 		}
-	}, [ dispatch, difmLiteProduct, extraPageProduct ] );
+	}, [ dispatch, difmLiteProduct ] );
 
 	// [Effect] Updates flag to show loading feedback to the user on page selection change
 	useEffect( () => {
@@ -265,12 +247,11 @@ export function useCartForDIFM( selectedPages: string[] ): {
 	const effectiveCurrencyCode = getEffectiveCurrencyCode();
 	let displayedCartItems: CartItem[] = [];
 	let totalCostFormatted = null;
-	if ( extraPageProduct && difmLiteProduct && activePremiumPlanScheme && effectiveCurrencyCode ) {
+	if ( difmLiteProduct && activePremiumPlanScheme && effectiveCurrencyCode ) {
 		if ( isExistingSite ) {
 			displayedCartItems = getSiteCartProducts( {
 				responseCart,
 				translate,
-				extraPageProduct,
 				currencyCode: effectiveCurrencyCode,
 			} );
 		} else {
@@ -280,7 +261,6 @@ export function useCartForDIFM( selectedPages: string[] ): {
 				translate,
 				activePlanScheme: activePremiumPlanScheme,
 				difmLiteProduct,
-				extraPageProduct,
 			} );
 		}
 

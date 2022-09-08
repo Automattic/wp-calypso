@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -25,7 +24,6 @@ import {
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
@@ -247,16 +245,12 @@ function DIFMPagePicker( props: StepProps ) {
 	] );
 	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
 
-	const extraPageProduct = useSelector( ( state ) =>
-		getProductBySlug( state, WPCOM_DIFM_EXTRA_PAGE )
-	);
 	const { replaceProductsInCart } = useShoppingCart( cartKey ?? undefined );
 	const {
 		isCartLoading,
 		isCartPendingUpdate,
 		isCartUpdateStarted,
 		isProductsLoading,
-		effectiveCurrencyCode,
 		isFormattedCurrencyLoading,
 	} = useCartForDIFM( selectedPages );
 
@@ -289,10 +283,7 @@ function DIFMPagePicker( props: StepProps ) {
 			},
 			args: {
 				freePageCount: 5,
-				extraPagePrice:
-					extraPageProduct && effectiveCurrencyCode
-						? formatCurrency( extraPageProduct.cost, effectiveCurrencyCode, { precision: 0 } )
-						: ' ',
+				extraPagePrice: 1,
 			},
 		}
 	);
