@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
+import { login } from 'calypso/lib/paths';
+import { isWpccFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import SocialSignupToS from './social-signup-tos';
@@ -18,6 +20,8 @@ class SocialSignupForm extends Component {
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
 		disableTosText: PropTypes.bool,
+		flowName: PropTypes.string,
+		redirectToAfterLoginUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -49,10 +53,15 @@ class SocialSignupForm extends Component {
 		this.props.handleResponse( 'google', tokens.access_token, tokens.id_token );
 	};
 
-	trackSocialSignup = ( service ) => {
+	trackAndPossiblyRememberSocialSignup = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
 		} );
+
+		if ( isWpccFlow( this.props.flowName ) && this.props.redirectToAfterLoginUrl ) {
+			// Persist the redirect URL for the redirect flow so that we can redirect the user back to woocommerce.com after login. See ./client/blocks/login for more details.
+			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectToAfterLoginUrl );
+		}
 	};
 
 	shouldUseRedirectFlow() {
@@ -71,10 +80,17 @@ class SocialSignupForm extends Component {
 		return isPopup;
 	}
 
+	getRedirectUri = ( socialService ) => {
+		const host = typeof window !== 'undefined' && window.location.host;
+
+		// If the user is in the WPCC flow, we want to redirect user to login callback so that we can automatically log them in.
+		return isWpccFlow( this.props.flowName )
+			? `https://${ host + login( { socialService } ) }`
+			: `https://${ host }/start/user`;
+	};
+
 	render() {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
-		const host = typeof window !== 'undefined' && window.location.host;
-		const redirectUri = `https://${ host }/start/user`;
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
 		return (
@@ -94,8 +110,8 @@ class SocialSignupForm extends Component {
 							clientId={ config( 'google_oauth_client_id' ) }
 							responseHandler={ this.handleGoogleResponse }
 							uxMode={ uxMode }
-							redirectUri={ redirectUri }
-							onClick={ () => this.trackSocialSignup( 'google' ) }
+							redirectUri={ this.getRedirectUri( 'google' ) }
+							onClick={ () => this.trackAndPossiblyRememberSocialSignup( 'google' ) }
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
@@ -107,8 +123,10 @@ class SocialSignupForm extends Component {
 							clientId={ config( 'apple_oauth_client_id' ) }
 							responseHandler={ this.handleAppleResponse }
 							uxMode={ uxModeApple }
-							redirectUri={ redirectUri }
-							onClick={ () => this.trackSocialSignup( 'apple' ) }
+							redirectUri={ this.getRedirectUri( 'apple' ) }
+							onClick={ () => {
+								this.trackAndPossiblyRememberSocialSignup( 'apple' );
+							} }
 							socialServiceResponse={
 								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 							}
