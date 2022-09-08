@@ -10,7 +10,7 @@ export type RecordTrackEvents = (
 
 export function useRecordAddFormEvents( recordTracksEvent?: RecordTrackEvents, flowName?: string ) {
 	const trackEventPrefix = 'calypso_subscriber_add_form';
-	const inProgress = useInProgressState( 0 );
+	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
 	const addSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getAddSubscribersSelector() );
 	const importSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getImportSubscribersSelector() );
