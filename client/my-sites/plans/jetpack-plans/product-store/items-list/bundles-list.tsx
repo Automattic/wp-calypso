@@ -7,7 +7,6 @@ import { MostPopular } from './most-popular';
 import type { BundlesListProps } from '../types';
 
 export const BundlesList: React.FC< BundlesListProps > = ( {
-	storeItemInfo,
 	onClickMoreInfoFactory,
 	siteId,
 	duration,
@@ -26,7 +25,6 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 				heading={ translate( 'Most popular bundles' ) }
 				items={ popularItems }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
-				storeItemInfo={ storeItemInfo }
 				siteId={ siteId }
 			/>
 
@@ -38,7 +36,6 @@ export const BundlesList: React.FC< BundlesListProps > = ( {
 					heading={ translate( 'All bundles' ) }
 					items={ allItems }
 					onClickMoreInfoFactory={ onClickMoreInfoFactory }
-					storeItemInfo={ storeItemInfo }
 					siteId={ siteId }
 				/>
 			) : null }
