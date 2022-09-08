@@ -269,14 +269,24 @@ export class PluginsList extends Component {
 		} );
 	};
 
-	updateAllPlugins = () => {
+	handleUpdatePlugins = ( plugins ) => {
 		this.removePluginStatuses();
-		this.props.plugins.forEach( ( plugin ) => {
-			Object.keys( plugin.sites ).forEach( ( siteId ) => {
-				const sitePlugin = this.getSitePlugin( plugin, siteId );
-				return this.props.updatePlugin( siteId, sitePlugin );
+		plugins
+			// only consider plugins needing an update
+			.filter( ( plugin ) => plugin.update )
+			.forEach( ( plugin ) => {
+				Object.entries( plugin.sites )
+					// only consider the sites where the those plugins are installed
+					.filter( ( [ , sitePlugin ] ) => sitePlugin.update?.new_version )
+					.forEach( ( [ siteId ] ) => {
+						const sitePlugin = this.getSitePlugin( plugin, siteId );
+						return this.props.updatePlugin( siteId, sitePlugin );
+					} );
 			} );
-		} );
+	};
+
+	updateAllPlugins = () => {
+		this.handleUpdatePlugins( this.props.plugins );
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	};
 
@@ -288,7 +298,7 @@ export class PluginsList extends Component {
 	};
 
 	updatePlugin = ( selectedPlugin ) => {
-		this.doActionOverSelected( 'updating', this.props.updatePlugin, [ selectedPlugin ] );
+		this.handleUpdatePlugins( [ selectedPlugin ] );
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	};
 
