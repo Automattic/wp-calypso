@@ -3,6 +3,10 @@
 
 .features-list {
 	padding: 1.5rem;
+	/* stylelint-disable scales/radii */
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	/* stylelint-enable scales/radii */
 
 	@include break-mobile {
 		padding-bottom: 2.5rem;
