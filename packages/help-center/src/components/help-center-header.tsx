@@ -2,8 +2,7 @@ import { CardHeader, Button, Flex } from '@wordpress/components';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect } from 'react';
-import { Route, Switch, useLocation, useHistory } from 'react-router-dom';
+import { Route, Switch, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import type { Header } from '../types';
 import type { ReactElement } from 'react';
@@ -51,17 +50,10 @@ const HelpCenterHeader: React.FC< Header > = ( {
 	onMaximize,
 	onDismiss,
 } ) => {
-	const { push } = useHistory();
-	const { unreadCount, chatStatus, closeChat } = useHCWindowCommunicator( isMinimized );
+	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized );
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
-
-	useEffect( () => {
-		if ( chatStatus === 'ended' ) {
-			push( '/' );
-		}
-	}, [ chatStatus, push ] );
 
 	const handleClose = () => {
 		closeChat();

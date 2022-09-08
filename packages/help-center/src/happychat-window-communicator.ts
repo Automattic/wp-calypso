@@ -13,6 +13,15 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  */
 import { HELP_CENTER_STORE, SITE_STORE } from './stores';
 
+/**
+ * This hook is the bridge between HappyChat and Help Center.
+ * It attaches an event listener for messages that com from https://widgets.wp.com and sends messages to the iframe that holds the HappyChat window.
+ * This helps us manage window state, chat status, and unread count.
+ *
+ * @param {boolean} isMinimized if Help Center is minimized this is true
+ * @returns {{unreadCount: number, chatStatus: string, closeChat: Function}}
+ */
+
 export function useHCWindowCommunicator( isMinimized: boolean ) {
 	const { selectedSite, subject, message, userDeclaredSite, iframe } = useSelect( ( select ) => {
 		return {
@@ -51,6 +60,9 @@ export function useHCWindowCommunicator( isMinimized: boolean ) {
 
 	useEffect( () => {
 		const messageHandler = ( event: MessageEvent ) => {
+			// please be careful about changing this check
+			// sometimes we send sensitive information to this event's origin,
+			// and changing this to something untrusted is a serious security risk.
 			if ( event.origin === 'https://widgets.wp.com' ) {
 				const { data } = event;
 				switch ( data.type ) {
