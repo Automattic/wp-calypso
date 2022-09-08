@@ -41,6 +41,16 @@ $font-size: rem( 14px );
 	}
 }
 
+.sidebar__actions {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-end;
+	margin-top: auto;
+	padding: 8px;
+	min-height: 80px;
+}
+
 .theme-default {
 	// client/layout/style.scss
 	.layout__content {
@@ -57,10 +67,6 @@ $font-size: rem( 14px );
 
 		.sidebar__separator {
 			margin: 0 0 11px;
-		}
-
-		.sidebar__separator.sidebar__separator--add-site {
-			margin-top: auto;
 		}
 
 		.site__content {
@@ -666,10 +672,6 @@ $font-size: rem( 14px );
 
 			.sidebar__separator {
 				margin: 0 0 11px;
-			}
-
-			.sidebar__separator.sidebar__separator--add-site {
-				margin-top: auto;
 			}
 
 			.sidebar__heading,

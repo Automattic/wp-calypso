@@ -141,11 +141,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 					title={ translate( 'Collapse menu' ) }
 					icon="dashicons-admin-collapse"
 				/>
-				<AddNewSite
-					key="add-new-site"
-					title={ translate( 'Add new site' ) }
-					icon="dashicons-plus-alt"
-				/>
+				<AddNewSite key="add-new-site" title={ translate( 'Add new site' ) } />
 			</Sidebar>
 			<AsyncLoad
 				require="calypso/my-sites/sidebar/external-link-dialog"
