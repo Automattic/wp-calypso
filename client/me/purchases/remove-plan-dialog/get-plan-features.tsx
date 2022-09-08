@@ -30,17 +30,17 @@ export default function getPlanFeatures(
 		} )
 	);
 	const bestInClassHosting = String( translate( 'Best-in-class hosting' ) );
-	const addFreeSite = String( translate( 'An add-free site' ) );
+	const addFreeSite = String( translate( 'An ad-free site' ) );
 	const collectPayments = String( translate( 'The ability to collect payments' ) );
 	const emailCustomerSupport = String( translate( 'Unlimited customer support via email' ) );
 	const liveChat = String( translate( 'Access to live chat support' ) );
-	const earnAndRevenue = String( translate( 'The ability to earn and revenue' ) );
+	const earnAdRevenue = String( translate( 'The ability to earn ad revenue' ) );
 	const premiumThemes = String( translate( 'Access to premium themes' ) );
 	const analyticsIntegration = String( translate( 'Google Analytics integration' ) );
 	const accessPlugins = String( translate( 'Access to more than 50,000 plugins' ) );
 	const seoTools = String( translate( 'Advanced SEO tools' ) );
-	const automatedBackups = String( translate( 'Automated site backupsand one-click restore' ) );
-	const sftpAndDatabase = String( translate( 'SFTP and Database access' ) );
+	const automatedBackups = String( translate( 'Automated site backups and one-click restore' ) );
+	const sftpAndDatabase = String( translate( 'SFTP and database access' ) );
 	const acceptPayments = String( translate( 'Accept payments in 60+ countries' ) );
 	const shippingCarriers = String( translate( 'Integration with top shipping carriers' ) );
 	const premiumDesign = String(
@@ -95,7 +95,7 @@ export default function getPlanFeatures(
 				return [
 					freeDomainFirstYear,
 					liveChat,
-					earnAndRevenue,
+					earnAdRevenue,
 					premiumThemes,
 					analyticsIntegration,
 					bestInClassHosting,
@@ -108,7 +108,7 @@ export default function getPlanFeatures(
 				return [
 					freeDomain,
 					liveChat,
-					earnAndRevenue,
+					earnAdRevenue,
 					premiumThemes,
 					analyticsIntegration,
 					bestInClassHosting,
@@ -120,7 +120,7 @@ export default function getPlanFeatures(
 			// With domain post first year
 			return [
 				liveChat,
-				earnAndRevenue,
+				earnAdRevenue,
 				premiumThemes,
 				analyticsIntegration,
 				bestInClassHosting,
@@ -131,7 +131,7 @@ export default function getPlanFeatures(
 
 		// Monthly plan
 		return [
-			earnAndRevenue,
+			earnAdRevenue,
 			premiumThemes,
 			analyticsIntegration,
 			bestInClassHosting,
@@ -186,15 +186,7 @@ export default function getPlanFeatures(
 		}
 
 		// Monthly plan
-		return [
-			accessPlugins,
-			seoTools,
-			automatedBackups,
-			sftpAndDatabase,
-			bestInClassHosting,
-			liveChat,
-			more,
-		];
+		return [ accessPlugins, seoTools, automatedBackups, sftpAndDatabase, bestInClassHosting, more ];
 	}
 
 	/**
