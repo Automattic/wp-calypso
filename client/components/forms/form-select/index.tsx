@@ -1,9 +1,18 @@
 import classNames from 'classnames';
 import { Component } from 'react';
+import type { LegacyRef, HTMLProps } from 'react';
 
 import './style.scss';
 
-class FormSelect extends Component {
+interface FormSelectProps {
+	inputRef?: LegacyRef< HTMLSelectElement >;
+	className?: string;
+	isError?: boolean;
+}
+
+class FormSelect extends Component<
+	FormSelectProps & Omit< HTMLProps< HTMLSelectElement >, 'ref' >
+> {
 	static defaultProps = {
 		isError: false,
 	};
