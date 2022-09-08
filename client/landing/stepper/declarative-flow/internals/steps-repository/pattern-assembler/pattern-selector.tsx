@@ -32,6 +32,7 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 							key={ `${ index }-${ item.id }` }
 							url={ getPatternPreviewUrl( item.id, locale ) }
 							patternId={ item.id }
+							patternName={ item.name }
 						>
 							<div
 								aria-label={ item.name }
@@ -40,9 +41,7 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 								aria-selected={ false }
 								onClick={ () => onSelect( item ) }
 								onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
-							>
-								<iframe title={ item.name } frameBorder="0" aria-hidden tabIndex={ -1 }></iframe>
-							</div>
+							/>
 						</PatternPreviewAutoHeight>
 					) ) }
 				</div>

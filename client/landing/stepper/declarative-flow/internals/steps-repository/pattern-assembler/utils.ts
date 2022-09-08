@@ -11,7 +11,6 @@ export const encodePatternId = ( patternId: number ) =>
 export const getPatternPreviewUrl = ( id: number, language: string ) => {
 	return addQueryArgs( patternPreviewUrl, {
 		stylesheet,
-		preview_auto_height: true,
 		pattern_id: encodePatternId( id ),
 		language,
 	} );

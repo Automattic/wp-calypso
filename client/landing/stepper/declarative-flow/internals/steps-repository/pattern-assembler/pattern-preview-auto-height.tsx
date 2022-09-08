@@ -4,13 +4,15 @@ import { cloneElement, ReactElement, useEffect, useState } from 'react';
 // Same ratio as in the CSS transform in .pattern-selector__block-list iframe
 const iframeScaleRatio = 0.2705;
 
-const IframeAutoHeight = ( {
+const PatternPreviewAutoHeight = ( {
 	children,
 	url,
+	patternName,
 	patternId,
 }: {
 	children: ReactElement;
 	url: string;
+	patternName: string;
 	patternId: number;
 } ) => {
 	const [ height, setHeight ] = useState( 300 );
@@ -39,17 +41,20 @@ const IframeAutoHeight = ( {
 		return () => window.removeEventListener( 'message', handleMessage );
 	}, [ calypso_token ] );
 
-	const iframe = cloneElement( children.props.children, {
-		style: { height },
-		src: addQueryArgs( url, { calypso_token } ),
-	} );
 	const wrapper = cloneElement(
 		children,
 		{ style: { minHeight: height * iframeScaleRatio } },
-		iframe
+		<iframe
+			title={ patternName }
+			frameBorder="0"
+			aria-hidden
+			tabIndex={ -1 }
+			style={ { height } }
+			src={ addQueryArgs( url, { calypso_token } ) }
+		/>
 	);
 
 	return wrapper;
 };
 
-export default IframeAutoHeight;
+export default PatternPreviewAutoHeight;
