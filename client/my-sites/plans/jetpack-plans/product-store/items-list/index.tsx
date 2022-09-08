@@ -11,13 +11,7 @@ const components: Record< ViewType, React.ComponentType< ProductsListProps > > =
 	bundles: BundlesList,
 };
 
-export const ItemsList: React.FC< ItemsListProps > = ( {
-	createCheckoutURL,
-	currentView,
-	duration,
-	onClickPurchase,
-	siteId,
-} ) => {
+export const ItemsList: React.FC< ItemsListProps > = ( { currentView, duration, siteId } ) => {
 	const { currentItem, clearCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
 	const Component = components[ currentView ];
 
@@ -38,11 +32,9 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 			) }
 
 			<Component
-				duration={ duration }
 				siteId={ siteId }
-				createCheckoutURL={ createCheckoutURL }
-				onClickPurchase={ onClickPurchase }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
+				duration={ duration }
 			/>
 		</div>
 	);

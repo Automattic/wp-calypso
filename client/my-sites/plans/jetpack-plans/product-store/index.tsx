@@ -2,6 +2,8 @@ import { useState } from '@wordpress/element';
 import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StoreItemInfoContext from './context/store-item-info-context';
+import { useStoreItemInfo } from './hooks/use-store-item-info';
 import { ItemsList } from './items-list';
 import { JetpackFree } from './jetpack-free';
 import { NeedMoreInfo } from './need-more-info';
@@ -30,6 +32,13 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			: 'products';
 	} );
 
+	const storeItemInfo = useStoreItemInfo( {
+		createCheckoutURL,
+		onClickPurchase,
+		duration,
+		siteId,
+	} );
+
 	return (
 		<div className="jetpack-product-store">
 			{ header }
@@ -39,13 +48,9 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			<PricingBanner siteId={ siteId } duration={ duration } />
 
 			<ViewFilter currentView={ currentView } setCurrentView={ setCurrentView } />
-			<ItemsList
-				currentView={ currentView }
-				duration={ duration }
-				siteId={ siteId }
-				createCheckoutURL={ createCheckoutURL }
-				onClickPurchase={ onClickPurchase }
-			/>
+			<StoreItemInfoContext.Provider value={ storeItemInfo }>
+				<ItemsList currentView={ currentView } duration={ duration } siteId={ siteId } />
+			</StoreItemInfoContext.Provider>
 			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
 
 			<Recommendations />

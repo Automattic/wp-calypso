@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
 import FoldableCard from 'calypso/components/foldable-card';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
+import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
 import { useStoreItemInfo } from '../product-store/hooks/use-store-item-info';
 import { ProductStoreBaseProps } from '../product-store/types';
 import { Duration, SelectorProduct } from '../types';
@@ -17,6 +18,7 @@ type Props = ProductStoreBaseProps & {
 	isVisible: boolean;
 	duration: Duration;
 	onClose: () => void;
+	siteId: number | null;
 };
 
 const Includes = () => (
@@ -51,6 +53,8 @@ const ProductLightbox: React.FC< Props > = ( {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 
 	const [ checked, setChecked ] = useState( '10GB' );
+
+	const { getCheckoutURL } = useStoreItemInfoContext();
 
 	const isMobile = useMobileBreakpoint();
 	const { isMultisiteCompatible, isMultisite } = useStoreItemInfo( {
@@ -145,7 +149,7 @@ const ProductLightbox: React.FC< Props > = ( {
 						<Button
 							primary
 							className="jetpack-product-card__button product-lightbox__checkout-button"
-							href={ isMultiSiteIncompatible ? '#' : 'https://automattic.com' }
+							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
 							disabled={ isMultiSiteIncompatible }
 						>
 							{ 'Checkout' }
