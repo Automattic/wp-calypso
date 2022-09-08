@@ -33,6 +33,13 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 			),
 			buttonText: __( 'Get started' ),
 		},
+		videopress: {
+			title: createInterpolateElement(
+				__( 'You’re 3 minutes away from<br />a stand-out Video site.<br />Ready? ' ),
+				{ br: <br /> }
+			),
+			buttonText: __( 'Setup your Video Site' ),
+		},
 	};
 
 	return (
