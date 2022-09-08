@@ -308,6 +308,8 @@
 .button.is-transparent {
 	background: transparent;
 	border-color: var( --color-sidebar-text );
+	display: flex;
+    justify-content: center;
 
 	&,
 	&:visited {

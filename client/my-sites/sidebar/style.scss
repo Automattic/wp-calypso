@@ -51,6 +51,10 @@ $font-size: rem( 14px );
 	min-height: 80px;
 }
 
+.sidebar__action--collapsed {
+	display: none;
+}
+
 .theme-default {
 	// client/layout/style.scss
 	.layout__content {
@@ -381,6 +385,22 @@ $font-size: rem( 14px );
 		.layout:not( .focus-sites ) {
 			--sidebar-width-max: 36px;
 			--sidebar-width-min: 36px;
+		}
+
+		.sidebar__actions {
+			padding-left: 0;
+			padding-right: 0;
+			span {
+				display: none;
+			}
+
+			span.sidebar__action--collapsed {
+				display: block;
+			}
+
+			.button {
+				border: none;
+			}
 		}
 
 		.layout__primary .main,
