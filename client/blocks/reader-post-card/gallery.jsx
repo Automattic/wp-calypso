@@ -8,8 +8,6 @@ import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
-const noop = () => {};
-
 class PostGallery extends Component {
 	state = {
 		itemSelected: 0,
@@ -51,12 +49,7 @@ class PostGallery extends Component {
 
 			return (
 				<li key={ `post-${ post.ID }-image-${ index }` } className={ classes }>
-					<div
-						className="reader-post-card__gallery-image"
-						style={ imageStyle }
-						onClick={ this.handleClick }
-						role="presentation"
-					/>
+					<div className="reader-post-card__gallery-image" style={ imageStyle } />
 				</li>
 			);
 		} );
@@ -69,8 +62,14 @@ class PostGallery extends Component {
 		} );
 		return (
 			<div className="reader-post-card__post">
-				<ul className="reader-post-card__gallery">{ this.state.listItems }</ul>
-				<div className="reader-post-card__gallery-circles">{ circles }</div>
+				<div
+					className="reader-post-card__gallery-container"
+					onClick={ this.handleClick }
+					role="presentation"
+				>
+					<ul className="reader-post-card__gallery">{ this.state.listItems }</ul>
+					<div className="reader-post-card__gallery-circles">{ circles }</div>
+				</div>
 				<div className="reader-post-card__post-details">
 					<AutoDirection>
 						<h2 className="reader-post-card__title">
@@ -91,10 +90,6 @@ PostGallery.propTypes = {
 	post: PropTypes.object.isRequired,
 	isDiscover: PropTypes.bool,
 	onClick: PropTypes.func,
-};
-
-PostGallery.defaultProps = {
-	onClick: noop,
 };
 
 export default PostGallery;
