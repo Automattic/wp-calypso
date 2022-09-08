@@ -37,13 +37,17 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 		background-position 1s ease-in-out,
 		transform 0.2s ease-in-out,
 		opacity 0.1s ease-in-out;
-	border: 5px solid #fff;
+	border: 0.6vh solid #fff;
 	margin: 20px 0;
 	cursor: pointer;
 	padding: 0;
 	overflow: hidden;
 	min-height: calc( 65vh - 50px );
 	outline: none;
+
+	@media (max-height: 375px) {
+		aspect-ratio: 0.5;
+	}
 
 	// needed for iOS Safari. iOS has
 	@supports ( min-height: 65svh ) {
