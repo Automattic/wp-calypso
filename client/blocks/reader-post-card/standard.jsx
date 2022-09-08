@@ -17,7 +17,6 @@ const StandardPost = ( { post, children, isDiscover, expandCard, postKey, isExpa
 				postUrl={ post.URL }
 				onVideoThumbnailClick={ onVideoThumbnailClick }
 				isVideoExpanded={ isExpanded }
-				isDiscover={ isDiscover }
 			/>
 			<div className="reader-post-card__post-details">
 				<AutoDirection>

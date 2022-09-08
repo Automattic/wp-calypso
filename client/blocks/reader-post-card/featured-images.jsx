@@ -72,7 +72,6 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
 
 ReaderFeaturedImages.propTypes = {
 	post: PropTypes.object.isRequired,
-	isDiscover: PropTypes.bool,
 };
 
 export default ReaderFeaturedImages;
