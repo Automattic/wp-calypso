@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
 import FoldableCard from 'calypso/components/foldable-card';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
-import { useStoreItemInfoContext } from '../product-store/context/store-item-context';
+import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
 import { SelectorProduct } from '../types';
 import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';

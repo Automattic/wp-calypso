@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useStoreItemInfoContext } from '../context/store-item-context';
+import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
 import { SimpleItemCard } from '../simple-item-card';
