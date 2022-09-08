@@ -35,6 +35,11 @@ $wpcom-menu-collapse: 783px;
 		}
 	}
 
+
+	:is(.featured-item-card--cta, .simple-item-card__cta):not(.is-primary) {
+		border-width: 1px;
+	}
+
 	// Start after the collapsible admin menu shows up
 	@media (min-width: $wpcom-menu-collapse) {
 		@media (max-width: $break-wide) {

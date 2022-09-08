@@ -1,12 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.jetpack-product-store__items-list .button.is-primary {
-	color: var( --color-text-inverted );
-	min-width: 5.7em;
-	border: none;
-}
-
 .jetpack-product-store__all-items--grid {
 	display: grid;
 	column-gap: 80px;

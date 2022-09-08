@@ -81,9 +81,12 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						</>
 					);
 
+					const ctaAsPrimary =
+						! isCtaDisabled && ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded );
+
 					return (
 						<SimpleItemCard
-							ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
+							ctaAsPrimary={ ctaAsPrimary }
 							ctaHref={ getCheckoutURL( item ) }
 							ctaLabel={ ctaLabel }
 							description={ description }
