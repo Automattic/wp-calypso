@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
+import { COURSE_SLUGS } from 'calypso/data/courses';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -93,6 +94,7 @@ interface State {
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isCheckoutModalVisible: boolean;
+	isPaymentsFeaturesVideoModalVisible: boolean;
 	multiple?: any;
 	postUrl?: T.URL;
 	checkoutModalOptions?: CheckoutModalOptions;
@@ -108,6 +110,7 @@ enum EditorActions {
 	GoToAllPosts = 'goToAllPosts', // Unused action in favor of CloseEditor. Maintained here to support cached scripts.
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
+	OpenPaymentsFeaturesVideoModal = 'openPaymentsFeaturesVideoModal',
 	OpenCheckoutModal = 'openCheckoutModal',
 	GetCheckoutModalStatus = 'getCheckoutModalStatus',
 	OpenRevisions = 'openRevisions',
@@ -135,6 +138,7 @@ type ComponentProps = Props &
 class CalypsoifyIframe extends Component< ComponentProps, State > {
 	state: State = {
 		isMediaModalVisible: false,
+		isPaymentsFeaturesVideoModalVisible: false,
 		isCheckoutModalVisible: false,
 		isIframeLoaded: false,
 		currentIFrameUrl: '',
@@ -583,6 +587,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		this.setState( { isCheckoutModalVisible: false } );
 	};
 
+	closePaymetnsFeaturesVideoModal = () => {
+		this.setState( { isPaymentsFeaturesVideoModalVisible: false } );
+	};
+
 	/* eslint-disable @typescript-eslint/ban-types */
 	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
 		let { customizerUrl } = this.props;
@@ -675,6 +683,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
+			isPaymentsFeaturesVideoModalVisible,
 			isCheckoutModalVisible,
 			allowedTypes,
 			multiple,
@@ -757,6 +766,12 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					require="calypso/post-editor/editor-revisions/dialog"
 					placeholder={ null }
 					loadRevision={ this.loadRevision }
+				/>
+				<AsyncLoad
+					require="calypso/post-editor/video-course-modal"
+					placeholder={ null }
+					isVisible={ isPaymentsFeaturesVideoModalVisible }
+					courseSlug={ COURSE_SLUGS.PAYMENTS_FEATURES }
 				/>
 			</Fragment>
 		);
