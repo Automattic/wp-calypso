@@ -31,6 +31,7 @@ export function getEnhancedTasks(
 				case 'setup_newsletter':
 					taskData = {
 						title: translate( 'Set up Newsletter' ),
+						keepActive: true,
 						actionDispatch: () =>
 							navigation.goToStep?.(
 								`newsletterSetup?flow=newsletter&siteSlug=${ siteSlug }&backToStep=launchpad`
@@ -68,6 +69,7 @@ export function getEnhancedTasks(
 				case 'setup_link_in_bio':
 					taskData = {
 						title: translate( 'Setup Link in bio' ),
+						keepActive: true,
 						actionDispatch: () =>
 							navigation.goToStep?.(
 								`linkInBioSetup?flow=link-in-bio&siteSlug=${ siteSlug }&backToStep=launchpad`
