@@ -1,4 +1,3 @@
-import { __ as defaultTranslationFn } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -34,10 +33,24 @@ export const ALLOWED_CATEGORIES = [
 	'paid',
 ];
 
-export function getCategories(
-	allowed = ALLOWED_CATEGORIES,
-	__ = defaultTranslationFn
+export function useCategories(
+	allowedCategories = ALLOWED_CATEGORIES
 ): Record< string, Category > {
+	const { __ } = useI18n();
+	const siteId = useSelector( getSelectedSiteId ) as number;
+
+	const isJetpack = useSelector(
+		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+	);
+
+	// Only showing these top level categories for now
+	const allowed = allowedCategories.slice();
+
+	// Jetpack sites shouldn't see paid plugins
+	if ( isJetpack && allowed.indexOf( 'paid' ) >= 0 ) {
+		allowed.splice( allowed.indexOf( 'paid' ), 1 );
+	}
+
 	const categories = {
 		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
 		paid: {
@@ -213,25 +226,4 @@ export function getCategories(
 	return Object.fromEntries(
 		Object.entries( categories ).filter( ( [ key ] ) => allowed.includes( key ) )
 	);
-}
-
-export function useCategories(
-	allowedCategories = ALLOWED_CATEGORIES
-): Record< string, Category > {
-	const { __ } = useI18n();
-	const siteId = useSelector( getSelectedSiteId ) as number;
-
-	const isJetpack = useSelector(
-		( state ) => isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
-	);
-
-	// Only showing these top level categories for now
-	const allowed = allowedCategories.slice();
-
-	// Jetpack sites shouldn't see paid plugins
-	if ( isJetpack && allowed.indexOf( 'paid' ) >= 0 ) {
-		allowed.splice( allowed.indexOf( 'paid' ), 1 );
-	}
-
-	return getCategories( allowed, __ );
 }

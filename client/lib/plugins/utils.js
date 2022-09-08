@@ -136,10 +136,6 @@ export function extractAuthorUrl( authorElementSource ) {
 }
 
 export function extractScreenshots( screenshotsHtml ) {
-	if ( 'undefined' === typeof window ) {
-		return null;
-	}
-
 	const screenshotsDom = parseHtml( screenshotsHtml );
 
 	const list = screenshotsDom && screenshotsDom.querySelectorAll( 'li' );
