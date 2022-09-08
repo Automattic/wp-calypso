@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import cx from 'classnames';
@@ -24,7 +24,15 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				buttonText: __( 'Get started' ),
 			};
 		}
-
+		if ( flowName === VIDEOPRESS_FLOW ) {
+			return {
+				title: createInterpolateElement(
+					__( 'You’re 3 minutes away from<br />a stand-out Video site.<br />Ready? ' ),
+					{ br: <br /> }
+				),
+				buttonText: __( 'Setup your Video Site' ),
+			};
+		}
 		if (
 			locale === 'en' ||
 			[

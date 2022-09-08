@@ -13,6 +13,8 @@ export interface IntroContent {
 }
 
 const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
+	const { __ } = useI18n();
+
 	return (
 		<>
 			<div className="intro__content">
