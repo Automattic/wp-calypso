@@ -37,6 +37,7 @@ import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/compone
 import {
 	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_NAME,
+	FIELD_RECOVERY_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
@@ -78,6 +79,7 @@ interface AddMailboxesAdditionalProps {
 }
 
 const isTitan = ( provider: EmailProvider ): boolean => provider === EmailProvider.Titan;
+const isGoogle = ( provider: EmailProvider ): boolean => provider === EmailProvider.Google;
 
 const useAdditionalProps = ( {
 	provider = EmailProvider.Titan,
@@ -239,10 +241,16 @@ const MailboxesForm = ( {
 	const [ isAddingToCart, setIsAddingToCart ] = useState( false );
 	const [ isValidating, setIsValidating ] = useState( false );
 
-	const isAlternateEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
+	const isAlternateOrRecoveryEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test(
+		userEmail
+	);
 	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
-	if ( isAlternateEmailValid ) {
+	if ( isAlternateOrRecoveryEmailValid && isTitan( provider ) ) {
 		defaultHiddenFields.push( FIELD_ALTERNATIVE_EMAIL );
+	}
+
+	if ( isAlternateOrRecoveryEmailValid && isGoogle( provider ) ) {
+		defaultHiddenFields.push( FIELD_RECOVERY_EMAIL );
 	}
 
 	const [ hiddenFieldNames, setHiddenFieldNames ] =
@@ -315,6 +323,14 @@ const MailboxesForm = ( {
 			} );
 	};
 
+	const recoveryOrAlternateEmailDefaultValue = isTitan( provider )
+		? {
+				[ FIELD_ALTERNATIVE_EMAIL ]: isAlternateOrRecoveryEmailValid ? userEmail : '',
+		  }
+		: {
+				[ FIELD_RECOVERY_EMAIL ]: isAlternateOrRecoveryEmailValid ? userEmail : '',
+		  };
+
 	return (
 		<>
 			<SectionHeader label={ translate( 'Add New Mailboxes' ) } />
@@ -323,9 +339,7 @@ const MailboxesForm = ( {
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
 					hiddenFieldNames={ hiddenFieldNames }
-					initialFieldValues={ {
-						[ FIELD_ALTERNATIVE_EMAIL ]: isAlternateEmailValid ? userEmail : '',
-					} }
+					initialFieldValues={ recoveryOrAlternateEmailDefaultValue }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }
@@ -334,7 +348,8 @@ const MailboxesForm = ( {
 					showCancelButton
 					submitActionText={ translate( 'Continue' ) }
 				>
-					{ hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) && (
+					{ ( hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) ||
+						hiddenFieldNames.includes( FIELD_RECOVERY_EMAIL ) ) && (
 						<PasswordResetTipField tipClickHandler={ showAlternateEmailField } />
 					) }
 				</NewMailBoxList>

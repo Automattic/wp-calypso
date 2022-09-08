@@ -127,9 +127,9 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 	professionalEmail.formFields = (
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
-			hiddenFieldNames={ hiddenFieldNames }
 			initialFieldValues={ { [ FIELD_ALTERNATIVE_EMAIL ]: userEmail } }
 			isInitialMailboxPurchase
+			hiddenFieldNames={ hiddenFieldNames }
 			onSubmit={ handleSubmit }
 			provider={ provider }
 			selectedDomainName={ selectedDomainName }
