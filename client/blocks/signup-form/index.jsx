@@ -1143,6 +1143,8 @@ class SignupForm extends Component {
 						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
 						isReskinned={ this.props.isReskinned }
+						flowName={ this.props.flowName }
+						redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 					/>
 				) }
 
