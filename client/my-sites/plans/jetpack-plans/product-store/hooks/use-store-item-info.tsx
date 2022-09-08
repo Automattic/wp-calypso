@@ -26,6 +26,18 @@ import { UseStoreItemInfoProps } from '../types';
 
 const isDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
 
+const isMultisiteCompatible = ( item: SelectorProduct ) => {
+	if ( isJetpackPlanSlug( item.productSlug ) ) {
+		// plans containing Jetpack Backup and/or Jetpack Scan are incompatible with multisite installs
+		return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].filter( ( productSlug ) =>
+			planHasFeature( item.productSlug, productSlug )
+		).length;
+	}
+	return ! (
+		[ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ] as ReadonlyArray< string >
+	 ).includes( item.productSlug );
+};
+
 export const useStoreItemInfo = ( {
 	createCheckoutURL,
 	duration: selectedTerm,
@@ -167,18 +179,6 @@ export const useStoreItemInfo = ( {
 		[ getPurchase, isOwned, isSuperseded, isUpgradeableToYearly, sitePlan, translate ]
 	);
 
-	const isMultisiteCompatible = useCallback( ( item: SelectorProduct ) => {
-		if ( isJetpackPlanSlug( item.productSlug ) ) {
-			// plans containing Jetpack Backup and/or Jetpack Scan are incompatible with multisite installs
-			return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].filter( ( productSlug ) =>
-				planHasFeature( item.productSlug, productSlug )
-			).length;
-		}
-		return ! (
-			[ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ] as ReadonlyArray< string >
-		 ).includes( item.productSlug );
-	}, [] );
-
 	return useMemo(
 		() => ( {
 			getCheckoutURL,
@@ -209,7 +209,6 @@ export const useStoreItemInfo = ( {
 			isSuperseded,
 			isUpgradeableToYearly,
 			isUserPurchaseOwner,
-			isMultisiteCompatible,
 			isMultisite,
 			sitePlan,
 		]
