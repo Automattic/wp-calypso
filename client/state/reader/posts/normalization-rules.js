@@ -56,6 +56,19 @@ export function imageWithCorrectRatio( image ) {
 	return imageRatio >= minRatio && imageRatio <= maxRatio;
 }
 
+export function getImagesFromPostToDisplay( post, numberOfImagesToDisplay ) {
+	const images = ( post.images && [ ...post.images ] ) || [];
+
+	//Remove duplicates, small images and images that are outside ideal aspect ratio
+	return images
+		.filter(
+			( element, index ) => index === images.findIndex( ( elem ) => elem.src === element.src )
+		)
+		.filter( imageIsBigEnoughForGallery )
+		.filter( imageWithCorrectRatio )
+		.slice( 0, numberOfImagesToDisplay );
+}
+
 const hasShortContent = ( post ) => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
 
 /**

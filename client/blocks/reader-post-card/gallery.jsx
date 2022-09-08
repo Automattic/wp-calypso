@@ -5,10 +5,7 @@ import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
-import {
-	imageIsBigEnoughForGallery,
-	imageWithCorrectRatio,
-} from 'calypso/state/reader/posts/normalization-rules';
+import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
 const noop = () => {};
@@ -28,19 +25,9 @@ class PostGallery extends Component {
 		this.setState( { itemSelected: updateItemSelected } );
 	};
 
-	getGalleryWorthyImages = ( post ) => {
-		const numberOfImagesToDisplay = 10;
-		const images = ( post.images && [ ...post.images ] ) || [];
-
-		return images
-			.filter( imageIsBigEnoughForGallery )
-			.filter( imageWithCorrectRatio )
-			.slice( 0, numberOfImagesToDisplay );
-	};
-
 	render() {
 		const { post, children, isDiscover } = this.props;
-		const imagesToDisplay = this.getGalleryWorthyImages( post );
+		const imagesToDisplay = getImagesFromPostToDisplay( post, 10 );
 		this.state.listItems = imagesToDisplay.map( ( image, index ) => {
 			const imageUrl = resizeImageUrl( image.src, {
 				w: READER_CONTENT_WIDTH,

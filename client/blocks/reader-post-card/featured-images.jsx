@@ -1,27 +1,13 @@
 import PropTypes from 'prop-types';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
-import {
-	imageIsBigEnoughForGallery,
-	imageWithCorrectRatio,
-} from 'calypso/state/reader/posts/normalization-rules';
+import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
 import {
 	READER_CONTENT_WIDTH,
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
 } from 'calypso/state/reader/posts/sizes';
 
-function getGalleryWorthyImages( post ) {
-	const numberOfImagesToDisplay = 4;
-	const images = ( post.images && [ ...post.images ] ) || [];
-
-	return images
-		.filter( imageIsBigEnoughForGallery )
-		.filter( imageWithCorrectRatio )
-		.slice( 0, numberOfImagesToDisplay );
-}
-
 const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
-	const imagesToDisplay = getGalleryWorthyImages( post );
-
+	const imagesToDisplay = getImagesFromPostToDisplay( post, 4 );
 	if ( imagesToDisplay.length === 0 ) {
 		return (
 			<ReaderFeaturedImage
