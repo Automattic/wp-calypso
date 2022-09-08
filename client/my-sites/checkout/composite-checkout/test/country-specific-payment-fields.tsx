@@ -6,21 +6,21 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
-import { CountrySpecificPaymentFields } from '../country-specific-payment-fields';
+import { CountrySpecificPaymentFieldsUnstyled as CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
+import type { CountrySpecificPaymentFieldsProps } from '../components/country-specific-payment-fields';
 
-const defaultProps = {
+const defaultProps: CountrySpecificPaymentFieldsProps = {
 	countryCode: 'BR',
 	countriesList: [
 		{
 			code: 'BR',
 			name: 'Brazil',
+			has_postal_codes: true,
 		},
 	],
-	getErrorMessage: jest.fn(),
-	getFieldValue: jest.fn(),
+	getErrorMessages: jest.fn().mockReturnValue( [] ),
+	getFieldValue: jest.fn().mockReturnValue( '' ),
 	handleFieldChange: jest.fn(),
-	fieldClassName: 'country-brazil',
-	translate: ( string ) => string,
 };
 
 describe( '<CountrySpecificPaymentFields />', () => {
@@ -31,7 +31,7 @@ describe( '<CountrySpecificPaymentFields />', () => {
 			const [ fields, setFields ] = useState( {} );
 
 			props.getFieldValue.mockImplementation( ( name ) => {
-				return fields[ name ];
+				return fields[ name ] ?? '';
 			} );
 
 			props.handleFieldChange.mockImplementation( ( name, value ) => {
