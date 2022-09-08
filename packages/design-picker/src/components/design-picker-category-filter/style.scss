@@ -31,7 +31,7 @@ $design-picker-category-filter-text-color-active: var( --studio-gray-100 );
 		&.is-pressed {
 			.design-picker-category-filter__item-name {
 				text-decoration: underline;
-				font-weight: 500;
+				font-weight: 500; /* stylelint-disable-line scales/font-weights */
 				color: $design-picker-category-filter-text-color-active;
 
 				&:hover:not( :disabled ) {

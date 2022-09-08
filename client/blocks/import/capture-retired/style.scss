@@ -65,7 +65,7 @@ $placeholder-color: #909398;
 		}
 
 		@include break-medium {
-			font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
+			font-size: 2.75rem; /* stylelint-disable-line */
 		}
 
 		&::placeholder {

@@ -35,13 +35,13 @@
 		@include onboarding-font-recoleta;
 		color: var( --studio-gray-100 );
 		letter-spacing: 0.2px;
-		font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
+		font-size: 2.15rem; /* stylelint-disable-line */
 		font-weight: 400;
 		padding: 0;
 		margin: 0;
 
 		@include break-xlarge {
-			font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
+			font-size: 2.75rem; /* stylelint-disable-line */
 		}
 	}
 

@@ -22,7 +22,7 @@
 .facebook-share-preview__title {
 	color: #1d2129;
 	font-family: Georgia, serif;
-	font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-size: 18px; /* stylelint-disable-line */
 	font-weight: 600;
 	line-height: 22px;
 	max-height: 100px;
@@ -161,7 +161,7 @@
 .twitter-share-preview__body {
 	padding: 0.75em;
 	text-decoration: none;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-size: $font-body-small;
 	color: black;
 	text-align: left;

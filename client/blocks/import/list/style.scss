@@ -41,7 +41,7 @@ html[dir='rtl'] {
 		}
 
 		h3 {
-			font-size: 1.125em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: 1.125em; /* stylelint-disable-line */
 			color: var( --studio-gray-90 );
 			margin-bottom: 1em;
 		}
@@ -65,8 +65,8 @@ html[dir='rtl'] {
 
 			a, button {
 				padding: 0;
-				font-size: 0.875em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-				font-weight: 500;
+				font-size: 0.875em; /* stylelint-disable-line */
+				font-weight: 500; /* stylelint-disable-line */
 				line-height: 20px;
 				text-decoration: underline;
 				color: var( --studio-gray-100 );
@@ -79,7 +79,7 @@ html[dir='rtl'] {
 			margin-top: 10px;
 			margin-right: 0;
 			margin-inline-end: 1.5em !important;
-			border-radius: 4px;
+			border-radius: 4px; /* stylelint-disable-line */
 		}
 
 		.list__importers-primary {

@@ -137,7 +137,7 @@
 	width: 100%;
 	background-color: var( --p2-color-link );
 	border: none;
-	border-radius: 50px; /* stylelint-disable-line scales/radii*/
+	border-radius: 50px; /* stylelint-disable-line */
 	font-weight: normal;
 	font-size: var( --p2-font-size-form-s );
 	color: var( --p2-color-white );
@@ -160,7 +160,7 @@
 
 .videopress-site__form .form-label {
 	color: var( --videopress-color-text );
-	font-weight: 500;
+	font-weight: 500; /* stylelint-disable-line */
 	font-size: var( --p2-font-size-form-xxs );
 	letter-spacing: -0.01em;
 	margin-bottom: 8px;

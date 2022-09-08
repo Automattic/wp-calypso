@@ -48,8 +48,8 @@ body.connect-domain-setup__body-white {
 			justify-content: center;
 			align-items: center;
 			margin: 16px 0 0 8px;
-			border-radius: 4px;
-			font-weight: 500;
+			border-radius: 4px; /* stylelint-disable-line */
+			font-weight: 500; /* stylelint-disable-line */
 			font-size: $font-body-extra-small;
 			background: rgba( 220, 220, 222, 0.6 );
 			color: var( --studio-gray-80 );
@@ -62,13 +62,13 @@ body.connect-domain-setup__body-white {
 
 	& &__heading {
 		font-size: $font-title-medium;
-		font-weight: 500;
+		font-weight: 500; /* stylelint-disable-line */
 		margin: 0 0 16px;
 	}
 
 	& &__sub-heading {
 		font-size: $font-title-small;
-		font-weight: 500;
+		font-weight: 500; /* stylelint-disable-line */
 
 		&-icon {
 			fill: var( --color-text );
@@ -148,7 +148,7 @@ body.connect-domain-setup__body-white {
 			font-size: $font-body-small;
 			color: var( --color-text-subtle );
 			box-sizing: border-box;
-			border-radius: 50%;
+			border-radius: 50%; /* stylelint-disable-line */
 			flex-shrink: 0;
 
 			&.current-step {
@@ -171,7 +171,7 @@ body.connect-domain-setup__body-white {
 
 		&-step-name {
 			font-size: $font-body-small;
-			font-weight: 500;
+			font-weight: 500; /* stylelint-disable-line */
 			color: var( --color-text-subtle );
 			margin-left: 8px;
 			position: relative;

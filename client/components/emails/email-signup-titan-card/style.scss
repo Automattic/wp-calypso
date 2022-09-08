@@ -32,7 +32,7 @@
 }
 
 .email-signup-titan-card__title {
-	font-size: 1.375rem; /* stylelint-disable-line scales/font-sizes */
+	font-size: 1.375rem; /* stylelint-disable-line */
 	line-height: 30px;
 	max-width: 100%;
 	padding-right: 0.2em;
@@ -40,7 +40,7 @@
 	word-break: break-all;
 
 	@include break-mobile {
-		font-size: 1.625rem; /* stylelint-disable-line scales/font-sizes */
+		font-size: 1.625rem; /* stylelint-disable-line */
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
@@ -85,7 +85,7 @@ body.is-section-signup.is-white-signup {
 
 		@include break-mobile {
 			border: 1px solid #e2e4e7;
-			border-radius: 4px;
+			border-radius: 4px; /* stylelint-disable-line */
 			margin: 0 20px;
 		}
 
@@ -113,10 +113,10 @@ body.is-section-signup.is-white-signup {
 
 		.email-signup-titan-card__suggestion-action {
 			border: 1px solid #c3c4c7;
-			border-radius: 4px;
+			border-radius: 4px; /* stylelint-disable-line */
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
 			font-size: 0.875rem;
-			font-weight: 500;
+			font-weight: 500; /* stylelint-disable-line */
 			padding: 0.57em 1.17em;
 			width: 100%;
 

@@ -38,7 +38,7 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
-		font-weight: 500;
+		font-weight: 500; /* stylelint-disable-line */
 	}
 
 	.plugin-action {

@@ -25,7 +25,7 @@
 
 	.form-label {
 		font-size: var( --p2-font-size-form-xxs );
-		font-weight: 500;
+		font-weight: 500; /* stylelint-disable-line */
 		margin-bottom: 0.5em;
 	}
 

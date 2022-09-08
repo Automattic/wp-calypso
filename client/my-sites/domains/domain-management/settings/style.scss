@@ -56,8 +56,8 @@
 				justify-content: center;
 				align-items: center;
 				font-size: $font-body-extra-small;
-				border-radius: 4px;
-				font-weight: 500;
+				border-radius: 4px; /* stylelint-disable-line */
+				font-weight: 500; /* stylelint-disable-line */
 
 				.settings-header__badge-indicator {
 					display: flex;

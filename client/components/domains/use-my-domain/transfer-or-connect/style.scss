@@ -48,14 +48,14 @@
 				}
 
 				h2 {
-					font-weight: 500;
+					font-weight: 500; /* stylelint-disable-line */
 					font-size: $font-title-small;
 				}
 
 				.badge {
-					border-radius: 4px;
+					border-radius: 4px; /* stylelint-disable-line */
 					font-size: $font-body-extra-small;
-					font-weight: 500;
+					font-weight: 500; /* stylelint-disable-line */
 					margin-top: 8px;
 
 					@include break-mobile {
@@ -109,7 +109,7 @@
 					font-size: $font-body-small;
 
 					&-text {
-						font-weight: 500;
+						font-weight: 500; /* stylelint-disable-line */
 						color: var( --color-text );
 
 						&.is-free {
@@ -131,8 +131,8 @@
 
 							.badge {
 								font-size: $font-body-extra-small;
-								font-weight: 500;
-								border-radius: 4px;
+								font-weight: 500; /* stylelint-disable-line */
+								border-radius: 4px; /* stylelint-disable-line */
 								margin: 0 0 0 4px;
 							}
 						}

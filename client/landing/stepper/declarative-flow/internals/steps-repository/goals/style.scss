@@ -181,7 +181,7 @@
 		background: none;
 		color: #101517;
 		text-decoration: underline;
-		font-weight: 500;
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 		text-align: start;
 
 		@include break-small {

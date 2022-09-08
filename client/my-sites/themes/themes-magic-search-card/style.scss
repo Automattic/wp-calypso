@@ -122,6 +122,7 @@
  */
 .themes-magic-search-card__token {
 	/* These are required to make token alignment work */
+	/* stylelint-disable-next-line */
 	font: inherit;
 	pointer-events: none;
 	position: relative;
@@ -168,6 +169,7 @@
 
 .themes-magic-search-card__search-text {
 	/* These are required to make token alignment work */
+	/* stylelint-disable-next-line */
 	font: inherit;
 	pointer-events: none;
 	color: transparent;
@@ -175,6 +177,7 @@
 
 .themes-magic-search-card__search-white-space {
 	/* These are required to make token alignment work */
+	/* stylelint-disable-next-line */
 	font: inherit;
 	pointer-events: none;
 	white-space: pre;

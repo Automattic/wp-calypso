@@ -64,7 +64,7 @@
 	.segmented-control__text {
 		font-family: $default-font;
 		font-size: $font-body-small;
-		font-weight: 500;
+		font-weight: 500; /* stylelint-disable-line scales/font-weight */
 		letter-spacing: 0.16px;
 		color: var( --studio-gray-90 );
 	}

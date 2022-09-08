@@ -14,7 +14,7 @@
 
 	.onboarding-title {
 		color: var( --studio-gray-100 );
-		font-size: 2rem;
+		font-size: 2rem; /* stylelint-disable-line */
 		line-height: 1em;
 		margin-bottom: 1.5rem;
 	}

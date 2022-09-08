@@ -74,7 +74,7 @@
 
 	.domain-product-price__free-price {
 		color: var( --studio-green-60 );
-		font-weight: 500;
+		font-weight: 500; /* stylelint-disable-line scales/font-weights */
 		font-size: $font-body-small;
 	}
 

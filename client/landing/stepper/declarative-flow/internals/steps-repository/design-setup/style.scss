@@ -66,14 +66,14 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				@include onboarding-font-recoleta;
 				color: $gray-100;
 				letter-spacing: 0.2px;
-				font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
+				font-size: 2.15rem; /* stylelint-disable-line */
 				font-weight: 400;
 				padding: 0;
 				text-align: start;
 				margin: 0;
 
 				@include break-xlarge {
-					font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
+					font-size: 2.75rem; /* stylelint-disable-line */
 				}
 			}
 

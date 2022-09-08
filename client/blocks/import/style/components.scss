@@ -24,7 +24,7 @@
 
 	.action-card__main p {
 		color: var( --studio-gray-40 );
-		font-size: 0.875em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-size: 0.875em; /* stylelint-disable-line */
 		margin-bottom: 0;
 	}
 
@@ -48,21 +48,21 @@
 
 // Modal component
 .components-modal__frame.components-modal-new__frame {
-	border-radius: 4px;
+	border-radius: 4px; /* stylelint-disable-line */
 
 	p {
-		font-size: 1rem;
+		font-size: 1rem; /* stylelint-disable-line */
 		color: var( --studio-gray-70 );
 		margin-bottom: 1em;
 
 		@include break-small {
-			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+			font-size: 1.125rem; /* stylelint-disable-line */
 			line-height: 1.4444em;
 		}
 	}
 
 	strong {
-		font-weight: 500;
+		font-weight: 500; /* stylelint-disable-line */
 	}
 
 	.components-modal__content {

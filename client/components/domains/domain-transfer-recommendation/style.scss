@@ -21,9 +21,9 @@
 
 	.badge {
 		margin-left: 0.8em;
-		border-radius: 4px;
+		border-radius: 4px; /* stylelint-disable-line */
 		font-size: $font-body-extra-small;
-		font-weight: 500;
+		font-weight: 500; /* stylelint-disable-line */
 		position: relative;
 		bottom: 2px;
 	}
