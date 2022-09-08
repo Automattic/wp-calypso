@@ -100,9 +100,14 @@
 		box-shadow: none;
 	}
 
-	.login__social-tos a {
-		color: var( --studio-gray-60 );
-		text-decoration: underline;
+	.login__social-tos {
+		margin: 1.5em auto;
+		max-width: 330px;
+
+		a {
+			color: var( --color-accent );
+			text-decoration: underline;
+		}
 	}
 
 	.jetpack-header__partner-logo-plus svg {
@@ -325,10 +330,6 @@
 		padding: 0;
 		margin-bottom: 2em;
 		box-shadow: none;
-	}
-
-	.login__form-userdata {
-		margin-bottom: 2em;
 	}
 
 	.login__form label {

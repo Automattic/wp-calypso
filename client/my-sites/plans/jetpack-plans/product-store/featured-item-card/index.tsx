@@ -26,6 +26,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 				</div>
 				<div className="featured-item-card--footer">
 					<Button
+						className="featured-item-card--cta"
 						primary={ ctaAsPrimary }
 						onClick={ onClickCta }
 						disabled={ isCtaDisabled }

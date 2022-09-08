@@ -125,4 +125,7 @@ RUN apt update &&\
 	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose &&\
 	composer install
 
+# Install sentry-cli.
+RUN wget -O - https://sentry.io/get-cli/ | bash
+
 ENTRYPOINT [ "/bin/bash" ]

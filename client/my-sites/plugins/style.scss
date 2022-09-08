@@ -390,10 +390,11 @@ body.is-section-plugins header .select-dropdown__item {
 	// but our element is inside a limited-width parent.
 	margin: 0 -32px;
 	padding: 0 48px;
-	min-height: 100vh;
+	flex: 1 1 100%;
 	@include breakpoint-deprecated( '>660px' ) {
     	padding: 16px 48px;
 		background: rgba( 255, 255, 255, 0.5 );
+		margin-bottom: -32px; 
 	}
 }
 .plugins__search {

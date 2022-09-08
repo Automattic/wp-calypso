@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useStoreItemInfo } from '../hooks/use-store-item-info';
+import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
 import { SimpleItemCard } from '../simple-item-card';
@@ -10,12 +10,9 @@ import './style.scss';
 
 export const AllItems: React.FC< AllItemsProps > = ( {
 	className,
-	createCheckoutURL,
-	duration,
 	heading,
 	items,
 	onClickMoreInfoFactory,
-	onClickPurchase,
 	siteId,
 } ) => {
 	const {
@@ -24,17 +21,14 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		getOnClickPurchase,
 		isIncludedInPlan,
 		isIncludedInPlanOrSuperseded,
+		isMultisiteCompatible,
+		isMultisite,
 		isOwned,
 		isPlanFeature,
 		isSuperseded,
 		isDeprecated,
 		isUserPurchaseOwner,
-	} = useStoreItemInfo( {
-		createCheckoutURL,
-		onClickPurchase,
-		duration,
-		siteId,
-	} );
+	} = useStoreItemInfoContext();
 
 	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
 
@@ -49,9 +43,11 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					const isItemDeprecated = isDeprecated( item );
 					const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
 					const isItemIncludedInPlan = isIncludedInPlan( item );
+					const isMultiSiteIncompatible = isMultisite && ! isMultisiteCompatible( item );
 
 					const isCtaDisabled =
-						( isItemOwned || isItemIncludedInPlan ) && ! isUserPurchaseOwner( item );
+						isMultiSiteIncompatible ||
+						( ( isItemOwned || isItemIncludedInPlan ) && ! isUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
 
@@ -60,6 +56,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 
 					const price = (
 						<ItemPrice
+							isMultiSiteIncompatible={ isMultiSiteIncompatible }
 							isIncludedInPlan={ isItemIncludedInPlan }
 							isOwned={ isItemOwned }
 							item={ item }
@@ -76,9 +73,11 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						</>
 					);
 
+					const ctaAsPrimary = ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded );
+
 					return (
 						<SimpleItemCard
-							ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
+							ctaAsPrimary={ ctaAsPrimary }
 							ctaHref={ getCheckoutURL( item ) }
 							ctaLabel={ ctaLabel }
 							description={ description }

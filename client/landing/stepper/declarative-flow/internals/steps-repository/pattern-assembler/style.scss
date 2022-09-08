@@ -8,6 +8,10 @@
 $font-family: 'SF Pro Text', $sans;
 
 .pattern-assembler {
+    .step-container {
+        max-width: 1440px;
+    }
+
     display: flex;
     height: calc( 100vh - 60px );
     width: 100%;
@@ -36,23 +40,10 @@ $font-family: 'SF Pro Text', $sans;
     }
     
     .pattern-assembler__sidebar {
-        min-width: 280px;
+        width: 280px;
         margin-bottom: 0;
         box-sizing: border-box;
         margin-top: 50px;
-    }
-    
-    .pattern-assembler__preview {
-        flex-basis: 100%;
-        margin-inline-start: 32px;
-        background: #f6f6f6;
-        box-shadow: 0 0 2px rgba( 0, 0, 0, 0.1 );
-        border-radius: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 32px;
-        margin-top: -25px;
     }
 
     .pattern-layout {

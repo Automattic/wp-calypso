@@ -4,15 +4,21 @@ import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
 import FoldableCard from 'calypso/components/foldable-card';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
-import { SelectorProduct } from '../types';
+import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
+import { useStoreItemInfo } from '../product-store/hooks/use-store-item-info';
+import { ProductStoreBaseProps } from '../product-store/types';
+import { Duration, SelectorProduct } from '../types';
 import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
+import PaymentPlan from './payment-plan';
 import './style.scss';
 
-type Props = {
+type Props = ProductStoreBaseProps & {
 	product: SelectorProduct;
 	isVisible: boolean;
+	duration: Duration;
 	onClose: () => void;
+	siteId: number | null;
 };
 
 const Includes = () => (
@@ -37,12 +43,26 @@ const Benefits = () => (
 	</ul>
 );
 
-const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) => {
+const ProductLightbox: React.FC< Props > = ( {
+	product,
+	isVisible,
+	siteId,
+	duration,
+	onClose,
+} ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 
 	const [ checked, setChecked ] = useState( '10GB' );
 
+	const { getCheckoutURL } = useStoreItemInfoContext();
+
 	const isMobile = useMobileBreakpoint();
+	const { isMultisiteCompatible, isMultisite } = useStoreItemInfo( {
+		siteId,
+		duration,
+	} );
+
+	const isMultiSiteIncompatible = isMultisite && ! isMultisiteCompatible( product );
 
 	return (
 		<Modal
@@ -125,26 +145,12 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose } ) =
 								shouldShuffleAnswers={ false }
 							/>
 						</div>
-
-						<p>Payment plan:</p>
-
-						<div className="product-lightbox__variants-plan-card">
-							<div className="product-lightbox__variants-grey-label">
-								<span className="product-lightbox__variants-plan-card-price">{ '$4.95' }</span>
-								<span className="product-lightbox__variants-plan-card-month-short">/mo</span>
-								<span className="product-lightbox__variants-plan-card-month-long">/month</span>,
-								billed yearly
-							</div>
-							<div className="product-lightbox__variants-grey-label">
-								<span className="product-lightbox__variants-plan-card-old-price">{ '$9.95' }</span>
-								59% off the first year
-							</div>
-						</div>
-
+						<PaymentPlan isMultiSiteIncompatible={ isMultiSiteIncompatible } />
 						<Button
 							primary
 							className="jetpack-product-card__button product-lightbox__checkout-button"
-							href={ 'https://automattic.com' }
+							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
+							disabled={ isMultiSiteIncompatible }
 						>
 							{ 'Checkout' }
 						</Button>

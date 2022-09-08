@@ -39,7 +39,7 @@ export function PatternPicker( { onPick }: Props ) {
 		clearTimeout( timeoutRef );
 		// we're only interested in this event after snapping animation is done
 		setTimeoutRef(
-			setTimeout( () => {
+			window.setTimeout( () => {
 				if ( timeoutRef ) {
 					const itemWidth = width( currentTarget.firstChild as HTMLDivElement );
 					const itemWidthWithGap = itemWidth + 20;
