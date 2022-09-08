@@ -1,6 +1,6 @@
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
@@ -18,6 +18,7 @@ export const videopress: Flow = {
 		return [
 			'intro',
 			'options',
+			'chooseADomain',
 			// 'videopressSetup',
 			// 'patterns',
 			'completingPurchase',
@@ -33,6 +34,8 @@ export const videopress: Flow = {
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const [ _siteTitle, setSiteTitle ] = useState( '' );
+		const [ _tagline, setTagline ] = useState( '' );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
@@ -43,8 +46,16 @@ export const videopress: Flow = {
 					return window.location.replace(
 						`/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/options?flow=${ name }`
 					);
-				case 'options':
-					return navigate( 'patterns' );
+
+				case 'options': {
+					const { siteTitle, tagline } = providedDependencies;
+					setSiteTitle( siteTitle as string );
+					setTagline( tagline as string );
+					return navigate( 'chooseADomain' );
+				}
+
+				case 'chooseADomain':
+					return navigate( 'completingPurchase' );
 
 				case 'completingPurchase':
 					return navigate( 'processing' );

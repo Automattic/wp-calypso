@@ -27,6 +27,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const translate = useTranslate();
 	const site = useSite();
+	const isVideoPressFlow = 'videopress' === flow;
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
@@ -50,6 +51,9 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 				blogname: siteTitle,
 				blogdescription: tagline,
 			} );
+		}
+
+		if ( isVideoPressFlow || site ) {
 			recordTracksEvent( 'calypso_signup_site_options_submit', {
 				has_site_title: !! siteTitle,
 				has_tagline: !! tagline,
@@ -59,7 +63,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 		}
 	};
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		if ( site ) {
+		if ( isVideoPressFlow || site ) {
 			setFormTouched( true );
 
 			switch ( event.currentTarget.name ) {
@@ -108,7 +112,6 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	const siteTitleError = null;
 	const taglineError = null;
 
-	const isVideoPressFlow = 'videopress' === flow;
 	const textsForFlow = isVideoPressFlow
 		? getTextsForVideoPressFlow()
 		: getTextsFromIntent( intent );
