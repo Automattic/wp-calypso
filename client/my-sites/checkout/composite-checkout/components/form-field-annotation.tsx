@@ -49,7 +49,7 @@ type FormFieldAnnotationProps = {
 	// Semantic props
 	labelText: string;
 	normalDescription?: string;
-	errorDescription: string;
+	errorDescription?: string;
 
 	// Functional props
 	isError?: boolean; // default false
