@@ -7,7 +7,6 @@ import { get, pick } from 'lodash';
 import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
-import { dehydrate } from 'react-query';
 import superagent from 'superagent';
 import {
 	getLanguageFileUrl,
@@ -233,14 +232,12 @@ export function serverRender( req, res ) {
 	if ( context.store ) {
 		attachHead( context );
 
-		const isomorphicSubtrees = context.section?.isomorphic
-			? [ 'themes', 'ui', 'productsList' ]
-			: [];
+		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
 		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
 		context.initialReduxState = pick( context.store.getState(), initialClientStateTrees );
-		context.dehydratedReactQueryState = dehydrate( context.queryClient );
+
 		/**
 		 * Cache redux state to speedup future renders. For example, some network
 		 * requests are skipped if the data is already in the store. Note that
@@ -253,12 +250,8 @@ export function serverRender( req, res ) {
 		 * (like /es/themes), that applies to every user.
 		 */
 		if ( cacheKey ) {
-			const { documentHead, themes, productsList } = context.store.getState();
-			const serverState = serialize( context.store.getCurrentReducer(), {
-				documentHead,
-				themes,
-				productsList,
-			} );
+			const { documentHead, themes } = context.store.getState();
+			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
 			stateCache.set( cacheKey, serverState.get() );
 		}
 	}

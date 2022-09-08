@@ -43,7 +43,7 @@ function renderPluginList( context, basePath ) {
 
 // The plugin browser can be rendered by the `/plugins/:plugin/:site_id?` route. In that case,
 // the `:plugin` param is actually the side ID or category.
-export function getCategoryForPluginsBrowser( context ) {
+function getCategoryForPluginsBrowser( context ) {
 	if ( context.params.plugin && includes( ALLOWED_CATEGORIES, context.params.plugin ) ) {
 		return context.params.plugin;
 	}

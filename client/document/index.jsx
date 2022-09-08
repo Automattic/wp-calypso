@@ -30,7 +30,6 @@ class Document extends Component {
 			head,
 			i18nLocaleScript,
 			initialReduxState,
-			dehydratedReactQueryState,
 			entrypoint,
 			manifests,
 			lang,
@@ -72,11 +71,6 @@ class Document extends Component {
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
-				: '' ) +
-			( dehydratedReactQueryState
-				? `var dehydratedReactQueryState = ${ jsonStringifyForHtml(
-						dehydratedReactQueryState
-				  ) };\n`
 				: '' ) +
 			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' ) +
 			( languageRevisions
