@@ -48,10 +48,6 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 
 	const hasTitanSubscription = hasTitanMailWithUs( selectedDomain );
 
-	const configuredMailboxCount = getConfiguredTitanMailboxCount( selectedDomain );
-	const maxMailboxCount = getMaxTitanMailboxCount( selectedDomain );
-	const hasUnconfiguredMailboxes = configuredMailboxCount < maxMailboxCount;
-
 	const handleBack = useCallback( () => {
 		page( previousRoute );
 	}, [ previousRoute ] );
@@ -69,13 +65,19 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 					source
 				)
 			);
-		} else if ( selectedDomain && ! hasUnconfiguredMailboxes ) {
-			page.redirect( emailManagement( selectedSiteSlug ?? '', selectedDomainName ) );
+		}
+
+		if ( selectedDomain && hasTitanSubscription ) {
+			const configuredMailboxCount = getConfiguredTitanMailboxCount( selectedDomain );
+			const maxMailboxCount = getMaxTitanMailboxCount( selectedDomain );
+
+			if ( configuredMailboxCount < maxMailboxCount ) {
+				page.redirect( emailManagement( selectedSiteSlug ?? '', selectedDomainName ) );
+			}
 		}
 	}, [
 		currentRoute,
 		hasTitanSubscription,
-		hasUnconfiguredMailboxes,
 		selectedDomain,
 		selectedDomainName,
 		selectedSiteSlug,
