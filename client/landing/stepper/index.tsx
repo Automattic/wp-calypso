@@ -35,6 +35,7 @@ import { newsletter } from './declarative-flow/newsletter';
 import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
+import { videopress } from './declarative-flow/videopress';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
 import { useQuery } from './hooks/use-query';
@@ -63,6 +64,7 @@ interface configurableFlows {
 
 const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
+	{ flowName: 'videopress', pathToFlow: videopress },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'blazepress', pathToFlow: blazePressFlow },
@@ -90,6 +92,8 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 	const { receiveCurrentUser } = useDispatch( USER_STORE );
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
+	// console.log(flow);
+	// return;
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
