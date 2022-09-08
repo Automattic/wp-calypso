@@ -28,7 +28,11 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 			<div className="pattern-selector__body">
 				<div className="pattern-selector__block-list" role="listbox">
 					{ patterns?.map( ( item: Pattern, index: number ) => (
-						<PatternPreviewAutoHeight key={ `${ index }-${ item.id }` } patternId={ item.id }>
+						<PatternPreviewAutoHeight
+							key={ `${ index }-${ item.id }` }
+							url={ getPatternPreviewUrl( item.id, locale ) }
+							patternId={ item.id }
+						>
 							<div
 								aria-label={ item.name }
 								tabIndex={ 0 }
@@ -37,13 +41,7 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 								onClick={ () => onSelect( item ) }
 								onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
 							>
-								<iframe
-									title={ item.name }
-									src={ getPatternPreviewUrl( item.id, locale ) }
-									frameBorder="0"
-									aria-hidden
-									tabIndex={ -1 }
-								></iframe>
+								<iframe title={ item.name } frameBorder="0" aria-hidden tabIndex={ -1 }></iframe>
 							</div>
 						</PatternPreviewAutoHeight>
 					) ) }
