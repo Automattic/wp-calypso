@@ -19,6 +19,8 @@ path-to-project/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserFetcher.js:
             throw new Error();
 ```
 
+#### Solution
+
 You may need to manually install `Chromium`. There are instructons on how to do that via `Homebrew` here: <https://linguinecode.com/post/how-to-fix-m1-mac-puppeteer-chromium-arm64-bug>
 
 ### EMFILE - too many open files
