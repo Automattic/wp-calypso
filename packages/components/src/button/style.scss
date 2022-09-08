@@ -305,6 +305,23 @@
 	vertical-align: baseline;
 }
 
+.button.is-transparent {
+	background: transparent;
+	border-color: var( --color-sidebar-text );
+
+	&,
+	&:visited {
+		color: var( --color-sidebar-text );
+	}
+
+	&:hover {
+		border-color: var( --color-sidebar-menu-hover-text );
+		color: var( --color-sidebar-menu-hover-text );
+		background: transparent;
+	}
+}
+
+
 // ==========================================================================
 // Deprecated styles
 // ==========================================================================

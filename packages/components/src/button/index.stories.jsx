@@ -1,5 +1,8 @@
 import { action } from '@storybook/addon-actions';
 import Button from '.';
+// Provide theme-default CSS variables from the Sidebar styles
+// eslint-disable-next-line no-restricted-imports
+import 'calypso/my-sites/sidebar/style.scss';
 
 export default { title: 'Button' };
 
@@ -25,3 +28,25 @@ export const Borderless = () => <ButtonVariations borderless />;
 export const Disabled = () => <ButtonVariations disabled />;
 export const Link = () => <ButtonVariations href="https://www.google.com/" target="_blank" />;
 export const Plain = () => <ButtonVariations plain />;
+export const Transparent = () => {
+	const wrapperStyle = { padding: '3em' };
+	const sidebarStyle = {
+		...wrapperStyle,
+		gap: '1em',
+		backgroundColor: 'var( --color-sidebar-background )',
+	};
+	return (
+		<>
+			<div style={ wrapperStyle }>
+				<Button transparent onClick={ handleClick }>
+					{ helloWorld }
+				</Button>
+			</div>
+			<div className="theme-default" style={ sidebarStyle }>
+				<Button transparent onClick={ handleClick }>
+					{ helloWorld }
+				</Button>
+			</div>
+		</>
+	);
+};
