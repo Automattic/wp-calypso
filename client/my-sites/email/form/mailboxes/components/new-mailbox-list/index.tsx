@@ -17,8 +17,9 @@ import {
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
-	FIELD_PASSWORD, FIELD_RECOVERY_EMAIL
-} from "calypso/my-sites/email/form/mailboxes/constants";
+	FIELD_PASSWORD,
+	FIELD_RECOVERY_EMAIL,
+} from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	EmailProvider,
 	FormFieldNames,
