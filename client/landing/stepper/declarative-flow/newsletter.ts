@@ -48,6 +48,10 @@ export const newsletter: Flow = {
 					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
+					if ( 'launchpad' === providedDependencies.backToStep ) {
+						return navigate( 'launchpad' );
+					}
+
 					return window.location.assign(
 						`/start/${ name }/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string

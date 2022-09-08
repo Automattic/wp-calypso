@@ -48,6 +48,10 @@ export const linkInBio: Flow = {
 					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
+					if ( 'launchpad' === providedDependencies.backToStep ) {
+						return navigate( 'launchpad' );
+					}
+
 					return window.location.assign(
 						`/start/${ name }/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
