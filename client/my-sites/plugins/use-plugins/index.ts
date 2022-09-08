@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Plugin } from 'calypso/data/marketplace/types';
@@ -6,7 +7,10 @@ import {
 	useWPCOMFeaturedPlugins,
 	useWPCOMPlugins,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { useWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query';
+import {
+	useWPORGInfinitePlugins,
+	useWPORGPlugins,
+} from 'calypso/data/marketplace/use-wporg-plugin-query';
 import { useCategories } from '../categories/use-categories';
 
 interface WPORGResponse {
@@ -70,6 +74,11 @@ const usePlugins = ( {
 	const categoryTags = categories[ category || '' ]?.tags || [ category ];
 	const tag = categoryTags.join( ',' );
 
+	const searchHook =
+		isEnabled( 'marketplace-jetpack-plugin-search' ) && search
+			? useESPluginsInfinite
+			: useWPORGInfinitePlugins;
+
 	const { localeSlug = '' } = useTranslate();
 	const wporgPluginsOptions = {
 		locale: locale || localeSlug,
@@ -93,7 +102,7 @@ const usePlugins = ( {
 		isLoading: isFetchingWPORGInfinite,
 		fetchNextPage,
 		hasNextPage,
-	} = useESPluginsInfinite( wporgPluginsOptions, {
+	} = searchHook( wporgPluginsOptions, {
 		enabled:
 			infinite &&
 			!! ( search || ! WPORG_CATEGORIES_BLOCKLIST.includes( category || '' ) ) &&
