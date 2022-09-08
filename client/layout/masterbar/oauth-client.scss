@@ -95,11 +95,6 @@
 		background: var( --studio-gray-0 );
 	}
 
-	a,
-	a:visited {
-		color: inherit;
-	}
-
 	.button {
 		background-color: var( --studio-gray-0 );
 		border-radius: 2px;
@@ -997,15 +992,13 @@
 	}
 
 	.login__form-terms {
-		font-size: $font-body-small;
-		line-height: 24px;
-		margin-top: 8px;
+		font-size: $font-body-extra-small;
+		margin-bottom: 1em;
 	}
 
 	.login__form-signup-link {
 		font-size: $font-body;
 		line-height: 24px;
-		padding-top: 0;
 	}
 
 	.login__divider {
@@ -1093,10 +1086,10 @@
 			.login__form-userdata {
 				order: 1;
 			}
-			.login__form-action {
+			.login__form-terms {
 				order: 2;
 			}
-			.login__form-terms {
+			.login__form-action {
 				order: 3;
 			}
 			.login__form-signup-link {
