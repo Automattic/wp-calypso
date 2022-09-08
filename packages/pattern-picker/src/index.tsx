@@ -19,49 +19,68 @@ type Props = { onPick: ( pattern: Pattern ) => void };
 export function PatternPicker( { onPick }: Props ) {
 	const [ index, setIndex ] = React.useState( 0 );
 	const [ currentRef, setRef ] = React.useState< HTMLDivElement >();
-	const [ timeoutRef, setTimeoutRef ] = React.useState( 0 );
 	const { __ } = useI18n();
 	const { data: patterns } = useQueryPatterns( PATTERN_SOURCE_SITE_SLUG );
+	const [ offsetX, setOffsetX ] = React.useState( 0 );
+	const [ dragStartX, setDragStartX ] = React.useState( 0 );
+	const [ scrollTicks, setScrollTicks ] = React.useState( 0 );
 
 	useEffect( () => {
 		if ( currentRef ) {
 			const itemWidth = width( currentRef?.firstChild as HTMLDivElement );
 			const itemWidthWithGap = itemWidth + 20;
-			const scrollLeft = itemWidth / 2 + itemWidthWithGap * index;
-			if ( currentRef.scrollLeft !== scrollLeft ) {
-				currentRef.scrollLeft = scrollLeft;
+			const offsetX = itemWidth / 2 + itemWidthWithGap * index;
+			if ( currentRef.scrollLeft !== offsetX ) {
+				setOffsetX( -offsetX );
 			}
 		}
 	}, [ index, currentRef ] );
-
-	function onScroll( event: React.UIEvent< HTMLDivElement > ) {
-		const { currentTarget } = event;
-		clearTimeout( timeoutRef );
-		// we're only interested in this event after snapping animation is done
-		setTimeoutRef(
-			window.setTimeout( () => {
-				if ( timeoutRef ) {
-					const itemWidth = width( currentTarget.firstChild as HTMLDivElement );
-					const itemWidthWithGap = itemWidth + 20;
-					const scrollLeft = currentTarget.scrollLeft;
-					const index = Math.floor( ( scrollLeft - itemWidth / 2 ) / itemWidthWithGap );
-					setIndex( index );
-					setTimeoutRef( 0 );
-				}
-			}, 300 )
-		);
-	}
 
 	if ( ! patterns ) {
 		return null;
 	}
 
+	const onWheel = ( event: React.WheelEvent< HTMLDivElement > ) => {
+		const { deltaY } = event;
+		// consider every 4 ticks as a single scroll
+		if ( scrollTicks % 4 === 0 && Math.abs( deltaY ) > 2 ) {
+			if ( event.deltaY < 1 ) {
+				if ( index > 0 ) {
+					setIndex( index - 1 );
+				}
+			} else if ( event.deltaY > 1 && index < patterns.length - 1 ) {
+				setIndex( ( index + 1 ) % 400 );
+			}
+		}
+		setScrollTicks( ( ticks ) => ticks + 1 );
+	};
+
+	const onSwipe = ( event: React.TouchEvent< HTMLDivElement > ) => {
+		const currentX = event.changedTouches[ 0 ].clientX;
+		const traveledX = currentX - dragStartX;
+		// detect swipes
+		if ( Math.abs( traveledX ) > 50 ) {
+			if ( traveledX < 0 ) {
+				if ( index < patterns.length - 1 ) {
+					setIndex( index + 1 );
+				}
+			} else if ( index > 0 ) {
+				setIndex( index - 1 );
+			}
+		}
+	};
+
 	return (
-		<div className="pattern-picker">
+		<div
+			className="pattern-picker"
+			onTouchStart={ ( event ) => setDragStartX( event.touches[ 0 ].clientX ) }
+			onScroll={ onWheel }
+			onTouchEnd={ onSwipe }
+			onWheel={ onWheel }
+		>
 			<div
 				ref={ ( ref ) => ref && ref !== currentRef && setRef( ref ) }
 				className="pattern-picker__carousel"
-				onScroll={ onScroll }
 			>
 				{ patterns.map( ( pattern, i ) => (
 					<Item
@@ -71,6 +90,7 @@ export function PatternPicker( { onPick }: Props ) {
 							setIndex( i );
 						} }
 						pattern={ pattern }
+						style={ { transform: `translateX(${ offsetX }px)` } }
 					/>
 				) ) }
 			</div>
