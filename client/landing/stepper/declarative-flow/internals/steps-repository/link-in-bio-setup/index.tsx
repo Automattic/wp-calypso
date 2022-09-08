@@ -12,6 +12,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -24,6 +25,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
+	const urlQueryParams = useQuery();
 
 	const usesSite = !! useSiteSlugParam();
 	const [ formTouched, setFormTouched ] = React.useState( false );
@@ -92,7 +94,8 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 		}
 
 		if ( siteTitle.trim().length ) {
-			submit?.( { siteTitle, tagline } );
+			const backToStep = urlQueryParams.get( 'backToStep' );
+			submit?.( { siteTitle, tagline, backToStep } );
 		}
 	};
 
