@@ -260,7 +260,7 @@ const SiteSetupDesignPicker: Step = ( { navigation, flow } ) => {
 				: -1;
 
 			setPendingAction( () =>
-				setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ).then( () =>
+				setDesignOnSite( siteSlugOrId, _selectedDesign, undefined, siteVerticalId ).then( () =>
 					reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
 				)
 			);
