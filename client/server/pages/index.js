@@ -3,7 +3,12 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import config from '@automattic/calypso-config';
-import { filterLanguageRevisions, isTranslatedIncompletely } from '@automattic/i18n-utils';
+import {
+	filterLanguageRevisions,
+	isTranslatedIncompletely,
+	isDefaultLocale,
+	getLanguageSlugs,
+} from '@automattic/i18n-utils';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
@@ -13,7 +18,6 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -805,8 +809,18 @@ export default function pages() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/new', 'entry-gutenboarding' );
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
+
+	// Redirect legacy `/new` routes to the corresponding `/start`
+	app.get( [ '/new', '/new/*' ], ( req, res ) => {
+		const lastPathSegment = req.path.substr( req.path.lastIndexOf( '/' ) + 1 );
+		const languageSlugs = getLanguageSlugs();
+		if ( languageSlugs.includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment ) ) {
+			res.redirect( 301, `/start/${ lastPathSegment }` );
+		} else {
+			res.redirect( 301, '/start' );
+		}
+	} );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

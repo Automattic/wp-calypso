@@ -109,16 +109,6 @@ jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/gutenboarding/section', () => ( {
-	GUTENBOARDING_SECTION_DEFINITION: {
-		name: 'gutenboarding',
-		paths: [ '/new' ],
-		module: 'gutenboarding',
-		group: 'gutenboarding',
-		enableLoggedOut: true,
-	},
-} ) );
-
 /**
  * Builds an app for an specific environment.
  *
