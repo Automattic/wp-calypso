@@ -11,22 +11,22 @@ import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 class PostGallery extends Component {
 	state = {
 		itemSelected: 0,
+		imagesToDisplay: [],
 		listItems: null,
 	};
 
 	handleClick = ( event ) => {
 		event.preventDefault();
 		let updateItemSelected = this.state.itemSelected + 1;
-		if ( updateItemSelected >= this.state.listItems.length ) {
+		if ( updateItemSelected >= this.state.imagesToDisplay.length ) {
 			updateItemSelected = 0;
 		}
 		this.setState( { itemSelected: updateItemSelected } );
 	};
 
-	render() {
-		const { post, children, isDiscover } = this.props;
-		const imagesToDisplay = getImagesFromPostToDisplay( post, 10 );
-		this.state.listItems = imagesToDisplay.map( ( image, index ) => {
+	renderGallery = () => {
+		const { post } = this.props;
+		const listItems = this.state.imagesToDisplay.map( ( image, index ) => {
 			const imageUrl = resizeImageUrl( image.src, {
 				w: READER_CONTENT_WIDTH,
 			} );
@@ -53,7 +53,7 @@ class PostGallery extends Component {
 				</li>
 			);
 		} );
-		const circles = this.state.listItems.map( ( value, index ) => {
+		const circles = listItems.map( ( value, index ) => {
 			const classes = classnames( {
 				'reader-post-card__gallery-circle': true,
 				'is-selected': index === this.state.itemSelected,
@@ -61,15 +61,30 @@ class PostGallery extends Component {
 			return <div key={ `post-${ post.ID }-circle-${ index }` } className={ classes } />;
 		} );
 		return (
+			<div
+				className="reader-post-card__gallery-container"
+				onClick={ this.handleClick }
+				role="presentation"
+			>
+				<ul className="reader-post-card__gallery">{ listItems }</ul>
+				<div className="reader-post-card__gallery-circles">{ circles }</div>
+			</div>
+		);
+	};
+
+	componentDidUpdate() {
+		{
+			this.renderGallery();
+		}
+	}
+
+	render() {
+		const { post, children, isDiscover } = this.props;
+		this.state.imagesToDisplay = getImagesFromPostToDisplay( post, 10 );
+		const gallery = this.renderGallery();
+		return (
 			<div className="reader-post-card__post">
-				<div
-					className="reader-post-card__gallery-container"
-					onClick={ this.handleClick }
-					role="presentation"
-				>
-					<ul className="reader-post-card__gallery">{ this.state.listItems }</ul>
-					<div className="reader-post-card__gallery-circles">{ circles }</div>
-				</div>
+				{ gallery }
 				<div className="reader-post-card__post-details">
 					<AutoDirection>
 						<h2 className="reader-post-card__title">
