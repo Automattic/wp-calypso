@@ -5,7 +5,9 @@ import PreviewToolbar from 'calypso/signup/steps/design-picker/preview-toolbar';
 
 const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const translate = useTranslate();
-	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
+	const previewUrl = siteSlug
+		? `https://public-api.wordpress.com/wpcom/v2/web-previews/site/${ siteSlug }`
+		: null;
 	const defaultDevice = 'phone';
 
 	function formatPreviewUrl() {
@@ -13,14 +15,11 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 			return null;
 		}
 
-		return addQueryArgs(
-			`https://public-api.wordpress.com/rest/v1/site-preview/demo/${ siteSlug }`,
-			{
-				iframe: true,
-				// hide the "Create your website with WordPress.com" banner
-				hide_banners: true,
-			}
-		);
+		return addQueryArgs( previewUrl, {
+			iframe: true,
+			// hide the "Create your website with WordPress.com" banner
+			hide_banners: true,
+		} );
 	}
 
 	return (
