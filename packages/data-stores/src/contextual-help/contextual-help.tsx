@@ -1896,7 +1896,7 @@ export const videosForSection = {
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/watch?v=NcCe0ozmqFM',
 			get title() {
-				return __( 'Connect Your Blog to Facebook Using Publicize', __i18n_text_domain__ );
+				return __( 'Connect Your Blog to Facebook Using Jetpack Social', __i18n_text_domain__ );
 			},
 			get description() {
 				return __(
