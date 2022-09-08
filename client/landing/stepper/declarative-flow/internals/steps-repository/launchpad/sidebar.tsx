@@ -15,6 +15,7 @@ type SidebarProps = {
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
+	goToStep?: NavigationControls[ 'goToStep' ];
 };
 
 function getUrlInfo( url: string ) {
@@ -40,7 +41,7 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
 }
 
-const Sidebar = ( { siteSlug, submit, goNext }: SidebarProps ) => {
+const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	const flow = useFlowParam();
@@ -48,7 +49,8 @@ const Sidebar = ( { siteSlug, submit, goNext }: SidebarProps ) => {
 	const site = useSite();
 	const translatedStrings = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
-	const enhancedTasks = site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit );
+	const enhancedTasks =
+		site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit, goToStep );
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 
