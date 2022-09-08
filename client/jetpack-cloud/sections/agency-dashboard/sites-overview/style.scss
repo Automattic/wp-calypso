@@ -228,7 +228,7 @@
 	inset-inline-end: 42px;
 	inset-block-start: 50%;
 	transform: translateY( -50% );
-	border-radius: 50%; /* stylelint-disable-line */
+	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	border-width: 2px;
 	border-style: solid;
 	width: 24px;

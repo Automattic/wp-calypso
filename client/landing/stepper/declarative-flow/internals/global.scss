@@ -112,7 +112,6 @@ button {
 
 			.flow-progress-indicator {
 				font-weight: 500;
-				/* stylelint-disable-line */
 				font-size: 0.875rem;
 				color: var( --studio-gray-30 );
 			}
@@ -154,7 +153,7 @@ button {
 			border-radius: 4px;
 
 			&.site-icon-with-picker__upload-button {
-				border-radius: 50%; /* stylelint-disable-line */
+				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				font-family: 'SF Pro Text', $sans;
 				transition: ease 300ms;
 				border: 1px solid var( --studio-gray-10 );

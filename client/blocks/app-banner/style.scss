@@ -41,7 +41,7 @@ body.app-banner-is-visible {
 .app-banner__circle {
 	position: absolute;
 	border: 2px solid;
-	border-radius: 50%; /* stylelint-disable-line */
+	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	z-index: z-index( 'root', '.app-banner__circle' );
 
 	&.is-blue {
@@ -85,13 +85,11 @@ body.app-banner-is-visible {
 }
 
 .app-banner__title {
-	/* stylelint-disable-next-line */
 	font-size: rem( 22px ); //typography-exception
 	font-family: $brand-serif;
 	line-height: 30px;
 
 	&.jetpack {
-		/* stylelint-disable-next-line */
 		font-size: rem( 28px ); //typography-exception
 		font-weight: bold;
 		max-width: 18em;
@@ -102,11 +100,9 @@ body.app-banner-is-visible {
 
 .app-banner__copy {
 	margin-top: 12px;
-	/* stylelint-disable-next-line */
 	font-size: rem( 15px ); //typography-exception
 
 	&.jetpack {
-		/* stylelint-disable-next-line */
 		font-size: rem( 16px ); //typography-exception
 		line-height: 21px;
 		max-width: 18em;
@@ -123,7 +119,7 @@ body.app-banner-is-visible {
 .button.app-banner__open-button {
 	background-color: var( --color-accent-40 );
 	border: 0;
-	border-radius: 4px; /* stylelint-disable-line */
+	border-radius: 4px;
 	margin-right: 10px;
 
 	&.jetpack {

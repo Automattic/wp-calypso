@@ -327,10 +327,10 @@ $image-height: 47px;
 		background-color: #117ac9;
 		border-color: #0e64a5;
 		color: var( --color-text-inverted );
-		font-weight: 500; /* stylelint-disable-line */
+		font-weight: 500;
 		box-shadow: none;
 		border: 0;
-		font-weight: 500; /* stylelint-disable-line */
+		font-weight: 500;
 		letter-spacing: 0.32px;
 		line-height: 17px;
 		min-width: 100%;
@@ -362,7 +362,7 @@ $image-height: 47px;
 		button {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
 			height: 44px;
-			border-radius: 4px; /* stylelint-disable-line */
+			border-radius: 4px;
 			border: 1px solid var( --studio-gray-10 );
 			font-size: $font-body-small;
 
@@ -401,14 +401,14 @@ $image-height: 47px;
 		text-overflow: ellipsis;
 		text-decoration: none;
 		box-sizing: border-box;
-		font-size: 14px; /* stylelint-disable-line */
+		font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		-webkit-appearance: none;
 		-moz-appearance: none;
 		appearance: none;
 		background-color: var( --color-surface );
 		color: var( --color-neutral-70 );
 		border: 1px solid var( --color-neutral-10 );
-		border-radius: 4px; /* stylelint-disable-line */
+		border-radius: 4px;
 		letter-spacing: 0.32px;
 		line-height: 17px;
 		height: 44px;

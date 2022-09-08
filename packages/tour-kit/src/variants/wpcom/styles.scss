@@ -34,7 +34,7 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 }
 
 .wpcom-tour-kit-step-card__heading {
-	font-size: 1.125rem; /* stylelint-disable-line */
+	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 	margin: 0.5rem 0;
 }
 
@@ -67,7 +67,7 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 
 	&.components-card {
 		border: none;
-		border-radius: 4px; /* stylelint-disable-line */
+		border-radius: 4px;
 		box-shadow: none;
 	}
 
@@ -90,7 +90,7 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 
 		.wpcom-tour-kit-rating__end-icon.components-button.has-icon {
 			background-color: #f6f7f7;
-			border-radius: 50%; /* stylelint-disable-line */
+			border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			color: $gray-600;
 			margin-left: 8px;
 
