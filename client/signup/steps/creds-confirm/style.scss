@@ -16,7 +16,7 @@
 .creds-confirm__description {
 	color: var( --color-text-subtle );
 	font-size: rem( 13.5px );
-	font-weight: 100;
+	font-weight: 100; /* stylelint-disable-line scales/font-weights */
 	line-height: rem( 25px );
 }
 

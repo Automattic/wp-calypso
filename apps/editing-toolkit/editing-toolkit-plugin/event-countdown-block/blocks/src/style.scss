@@ -21,7 +21,7 @@
 
 	.event-countdown__day {
 		line-height: 1;
-		font-weight: 900;
+		font-weight: 900; /* stylelint-disable-line scales/font-weights */
 		display: block;
 	}
 
