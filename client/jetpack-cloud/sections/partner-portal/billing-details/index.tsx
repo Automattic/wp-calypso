@@ -154,7 +154,7 @@ export default function BillingDetails(): ReactElement {
 				</div>
 			</Card>
 
-			{ billing.isSuccess && useDailyPrices && (
+			{ billing.isSuccess && useDailyPrices && billing.data.products.length > 0 && (
 				<Card compact className="billing-details__footer">
 					<small>
 						* Estimate of the combined number of full days each license will be active for by the
