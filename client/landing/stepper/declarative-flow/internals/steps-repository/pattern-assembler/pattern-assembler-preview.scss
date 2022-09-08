@@ -12,6 +12,7 @@
 	}
 
 	.web-preview__placeholder {
+		margin-top: -15px;
 		overflow-y: unset;
 	}
 
@@ -44,12 +45,14 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
+	padding: 0 16px;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 20px;
 	box-shadow:
 		0 15px 20px rgba( 0 0 0 / 4% ),
 		0 13px 10px rgba( 0 0 0 / 3% ),
 		0 6px 6px rgba( 0 0 0 / 2% );
+	box-sizing: border-box;
 	color: var( --studio-gray-60 );
 	background-color: #f8f8f8;
 	opacity: 1;
