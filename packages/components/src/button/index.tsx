@@ -17,6 +17,7 @@ export interface OwnProps {
 	busy?: boolean;
 	borderless?: boolean;
 	plain?: boolean;
+	renderAs?: Extract< React.ElementType, 'a' | 'button' >;
 }
 
 type AnchorElementProps = AnchorHTMLAttributes< HTMLAnchorElement >;
@@ -40,6 +41,7 @@ const cleanAnchorProps = ( {
 	primary,
 	scary,
 	plain,
+	renderAs,
 	...anchorProps
 }: ButtonProps | AnchorProps ): AnchorProps => anchorProps as AnchorProps;
 
@@ -52,6 +54,7 @@ const cleanButtonProps = ( {
 	primary,
 	scary,
 	plain,
+	renderAs,
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore Clean incorrect usage of the component
 	rel,
@@ -78,7 +81,7 @@ const Button: ForwardRefRenderFunction<
 				'is-borderless': props.borderless,
 		  } );
 
-	if ( isAnchor( props ) ) {
+	if ( isAnchor( props ) || props.renderAs === 'a' ) {
 		const anchorProps = cleanAnchorProps( props );
 		// block referrers when external link
 		const rel: string | undefined = anchorProps.target

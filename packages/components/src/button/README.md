@@ -18,15 +18,16 @@ export default function RockOnButton() {
 
 ### Props
 
-| Name         | Type     | Default | Description                                                                        |
-| ------------ | -------- | ------- | ---------------------------------------------------------------------------------- |
-| `plain`      | `bool`   | false   | Renders a button with no user-agent styles                                         |
-| `compact`    | `bool`   | false   | Decreases the size of the button                                                   |
-| `primary`    | `bool`   | false   | Provides extra visual weight and identifies the primary action in a set of buttons |
-| `borderless` | `bool`   | false   | Renders a button without borders                                                   |
-| `scary`      | `bool`   | false   | Indicates a dangerous or potentially negative action                               |
-| `busy`       | `bool`   | false   | Indicates activity while a background action is being performed                    |
-| `href`       | `string` | null    | If provided, renders `a` instead of `button`                                       |
+| Name         | Type              | Default   | Description                                                                                 |
+| ------------ | ----------------- | --------- | ------------------------------------------------------------------------------------------- |
+| `plain`      | `bool`            | false     | Renders a button with no user-agent styles                                                  |
+| `compact`    | `bool`            | false     | Decreases the size of the button                                                            |
+| `primary`    | `bool`            | false     | Provides extra visual weight and identifies the primary action in a set of buttons          |
+| `borderless` | `bool`            | false     | Renders a button without borders                                                            |
+| `scary`      | `bool`            | false     | Indicates a dangerous or potentially negative action                                        |
+| `busy`       | `bool`            | false     | Indicates activity while a background action is being performed                             |
+| `href`       | `string`          | null      | If provided, renders `a` instead of `button`                                                |
+| `renderAs`   | `'a' \| 'button'` | undefined | If provided, renders as the given type. Useful if you want to render as `a` with empty href |
 
 ### Button types
 
