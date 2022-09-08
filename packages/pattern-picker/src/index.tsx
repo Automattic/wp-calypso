@@ -24,17 +24,25 @@ export function PatternPicker( { onPick }: Props ) {
 	const [ offsetX, setOffsetX ] = React.useState( 0 );
 	const [ dragStartX, setDragStartX ] = React.useState( 0 );
 	const [ scrollTicks, setScrollTicks ] = React.useState( 0 );
+	const [ windowSizeChanges, setWindowSizeChanges ] = React.useState( 0 );
+
+	// to recalculate after window resize
+	useEffect( () => {
+		const handleResize = () => {
+			setWindowSizeChanges( ( c ) => c + 1 );
+		};
+		window.addEventListener( 'resize', handleResize );
+		return () => window.removeEventListener( 'resize', handleResize );
+	} );
 
 	useEffect( () => {
 		if ( currentRef ) {
 			const itemWidth = width( currentRef?.firstChild as HTMLDivElement );
 			const itemWidthWithGap = itemWidth + 20;
 			const offsetX = itemWidth / 2 + itemWidthWithGap * index;
-			if ( currentRef.scrollLeft !== offsetX ) {
-				setOffsetX( -offsetX );
-			}
+			setOffsetX( -offsetX );
 		}
-	}, [ index, currentRef ] );
+	}, [ index, currentRef, windowSizeChanges ] );
 
 	if ( ! patterns ) {
 		return null;
