@@ -36,7 +36,6 @@ export const videopress: Flow = {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const [ _siteTitle, setSiteTitle ] = useState( '' );
 		const [ _tagline, setTagline ] = useState( '' );
-		const [ _domainName, setDomainName ] = useState( '' );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
@@ -52,14 +51,11 @@ export const videopress: Flow = {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
 					setTagline( tagline as string );
-					return navigate( 'chooseADomain', { siteTitle: siteTitle } );
+					return navigate( 'chooseADomain' );
 				}
 
-				case 'chooseADomain': {
-					const { domainName } = providedDependencies;
-					setDomainName( domainName as string );
+				case 'chooseADomain':
 					return navigate( 'completingPurchase' );
-				}
 
 				case 'completingPurchase':
 					return navigate( 'processing' );
