@@ -13,6 +13,12 @@ $wpcom-menu-collapse: 783px;
 
 :is(.is-group-sites.is-section-plans, .is-section-jetpack-connect) .jetpack-product-store {
 
+	.button[disabled],
+	.button:disabled,
+	.button.disabled {
+		background-color: var( --studio-gray-5 );
+	}
+
 	h2 {
 		font-size: $font-title-small;
 		font-weight: 600;
@@ -33,11 +39,6 @@ $wpcom-menu-collapse: 783px;
 			font-size: $font-title-small;
 			line-height: 23px;
 		}
-	}
-
-
-	:is(.featured-item-card--cta, .simple-item-card__cta):not(.is-primary) {
-		border-width: 1px;
 	}
 
 	// Start after the collapsible admin menu shows up

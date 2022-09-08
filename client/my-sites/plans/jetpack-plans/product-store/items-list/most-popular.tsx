@@ -83,8 +83,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						</p>
 					);
 
-					const ctaAsPrimary =
-						! isCtaDisabled && ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded );
+					const ctaAsPrimary = ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded );
 
 					return (
 						<div key={ item.productSlug } className="jetpack-product-store__most-popular--item">

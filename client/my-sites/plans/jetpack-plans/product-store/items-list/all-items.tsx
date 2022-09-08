@@ -81,8 +81,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						</>
 					);
 
-					const ctaAsPrimary =
-						! isCtaDisabled && ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded );
+					const ctaAsPrimary = ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded );
 
 					return (
 						<SimpleItemCard
