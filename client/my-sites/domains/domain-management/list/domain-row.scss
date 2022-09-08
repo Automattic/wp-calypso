@@ -18,8 +18,8 @@
 	/* div. for increased specificity */
 	div.domain-row__primary-badge {
 		font-size: $font-body-extra-small;
-		border-radius: 4px; /* stylelint-disable-line */
-		font-weight: 500; /* stylelint-disable-line */
+		border-radius: 4px;
+		font-weight: 500;
 		margin: 4px 0;
 
 		@include break-mobile {
@@ -50,7 +50,7 @@
 		width: 8px;
 		height: 8px;
 		margin-right: 8px;
-		border-radius: 50%; /* stylelint-disable-line */
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		background-color: var( --studio-green-50 );
 	}
 
@@ -198,7 +198,7 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		font-size: $font-body;
-		font-weight: 500; /* stylelint-disable-line */
+		font-weight: 500;
 
 		button {
 			color: var( --studio-gray-90 );

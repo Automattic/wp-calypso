@@ -20,7 +20,7 @@
 	.onboarding-title {
 		font-family: var( --font-base, var( --font-base-default ) );
 		color: var( --studio-gray-100 );
-		font-size: 1.25rem; /* stylelint-disable-line */
+		font-size: 1.25rem;
 		line-height: 1.5rem;
 		margin-bottom: 1.5rem;
 	}
@@ -118,7 +118,7 @@
 
 		.plan-title {
 			font-weight: 500;
-			font-size: 1.25em; /* stylelint-disable-line */
+			font-size: 1.25em;
 			line-height: 1.25em;
 			color: var( --studio-gray-60 );
 		}
@@ -138,7 +138,7 @@
 		}
 
 		.plan-time-frame {
-			font-size: 0.75em; /* stylelint-disable-line */
+			font-size: 0.75em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			color: var( --studio-gray-40 );
 		}
 	}

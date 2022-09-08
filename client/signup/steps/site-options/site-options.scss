@@ -13,9 +13,9 @@
 
 	.form-label {
 		margin-bottom: 8px;
-		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		font-weight: 500;
 		color: $gray-60;
-		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		border-radius: 4px;
 
 		.form-label__optional {
 			font-size: inherit;
@@ -39,7 +39,7 @@
 	input.form-text-input {
 		height: 44px;
 		line-height: 44px;
-		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		border-radius: 4px;
 
 		&:focus,
 		&:focus:hover {
@@ -71,8 +71,8 @@
 
 .button.site-options__submit-button.is-primary {
 	padding: 9px 48px;
-	border-radius: 4px; /* stylelint-disable-line scales/radii */
-	font-weight: 500; /* stylelint-disable-line scales/font-weights */
+	border-radius: 4px;
+	font-weight: 500;
 
 	// override unnecessary super specificity added by another class
 	box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;

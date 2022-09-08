@@ -62,7 +62,7 @@
 	width: 20px;
 	height: 20px;
 	border: 2px solid var( --studio-black );
-	border-radius: 12px; /* stylelint-disable-line */
+	border-radius: 12px; /* stylelint-disable-line scales/radii */
 	text-align: center;
 
 	@include license-product-card-block__radio;
