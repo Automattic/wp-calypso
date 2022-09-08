@@ -1,3 +1,4 @@
+const path = require( 'path' );
 module.exports = {
 	env: {
 		browser: true,
@@ -14,6 +15,17 @@ module.exports = {
 			files: [ '**/docs/example.jsx', '*.md.js', '*.md.jsx' ],
 			rules: {
 				'no-restricted-imports': 'off',
+			},
+		},
+		{
+			files: [ '**/*.stories.*' ],
+			rules: {
+				'import/no-extraneous-dependencies': [
+					'error',
+					{
+						packageDir: [ path.join( __dirname, '..', 'calypso-storybook' ) ],
+					},
+				],
 			},
 		},
 	],
