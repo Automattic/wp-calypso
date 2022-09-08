@@ -27,7 +27,6 @@ export const ItemsList: React.FC< ItemsListProps > = ( { currentView, duration, 
 					duration={ duration }
 					product={ currentItem }
 					isVisible={ !! currentItem }
-					siteId={ siteId }
 					onClose={ clearCurrentItem }
 				/>
 			) }
