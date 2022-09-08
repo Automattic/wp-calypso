@@ -222,7 +222,7 @@ const EmailProvidersStackedComparison = ( {
 				backUrl={
 					isDomainInCart
 						? domainAddNew( selectedSite?.slug )
-						: emailManagement( selectedSite?.slug )
+						: emailManagement( selectedSite?.slug, null )
 				}
 				skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
 			/>
