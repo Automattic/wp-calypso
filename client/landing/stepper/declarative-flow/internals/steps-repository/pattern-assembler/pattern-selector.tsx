@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
@@ -13,6 +14,7 @@ type PatternSelectorProps = {
 
 const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorProps ) => {
 	const translate = useTranslate();
+	const locale = useLocale();
 
 	const handleBackClick = () => {
 		onSelect( null );
@@ -37,7 +39,7 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 							>
 								<iframe
 									title={ item.name }
-									src={ getPatternPreviewUrl( item.id ) }
+									src={ getPatternPreviewUrl( item.id, locale ) }
 									frameBorder="0"
 									aria-hidden
 									tabIndex={ -1 }

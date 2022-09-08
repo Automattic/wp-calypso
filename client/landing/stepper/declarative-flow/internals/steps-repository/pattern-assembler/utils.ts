@@ -8,11 +8,12 @@ const patternPreviewUrl = publicApiUrl + '/wpcom/v2/block-previews/pattern';
 export const encodePatternId = ( patternId: number ) =>
 	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
 
-export const getPatternPreviewUrl = ( id: number ) => {
+export const getPatternPreviewUrl = ( id: number, language: string ) => {
 	return addQueryArgs( patternPreviewUrl, {
 		stylesheet,
 		preview_auto_height: true,
 		pattern_id: encodePatternId( id ),
+		language,
 	} );
 };
 
