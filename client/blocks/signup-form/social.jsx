@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
+import { login } from 'calypso/lib/paths';
+import { isWpccFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import SocialSignupToS from './social-signup-tos';
@@ -18,6 +20,7 @@ class SocialSignupForm extends Component {
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
 		disableTosText: PropTypes.bool,
+		flowName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -71,10 +74,17 @@ class SocialSignupForm extends Component {
 		return isPopup;
 	}
 
+	getRedirectUri = ( socialService ) => {
+		const host = typeof window !== 'undefined' && window.location.host;
+
+		// If the user is in the WPCC flow, we want to redirect user to login callback so that we can automatically log them in.
+		return isWpccFlow( this.props.flowName )
+			? `https://${ host + login( { socialService } ) }`
+			: `https://${ host }/start/user`;
+	};
+
 	render() {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
-		const host = typeof window !== 'undefined' && window.location.host;
-		const redirectUri = `https://${ host }/start/user`;
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
 		return (
@@ -94,7 +104,7 @@ class SocialSignupForm extends Component {
 							clientId={ config( 'google_oauth_client_id' ) }
 							responseHandler={ this.handleGoogleResponse }
 							uxMode={ uxMode }
-							redirectUri={ redirectUri }
+							redirectUri={ this.getRedirectUri( 'google' ) }
 							onClick={ () => this.trackSocialSignup( 'google' ) }
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
@@ -107,7 +117,7 @@ class SocialSignupForm extends Component {
 							clientId={ config( 'apple_oauth_client_id' ) }
 							responseHandler={ this.handleAppleResponse }
 							uxMode={ uxModeApple }
-							redirectUri={ redirectUri }
+							redirectUri={ this.getRedirectUri( 'apple' ) }
 							onClick={ () => this.trackSocialSignup( 'apple' ) }
 							socialServiceResponse={
 								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
