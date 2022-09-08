@@ -264,6 +264,7 @@ export const WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE = 'videopress-unlimited
 export const WPCOM_FEATURES_VIDEO_HOSTING = 'video-hosting';
 export const WPCOM_FEATURES_WORDADS = 'wordads';
 export const WPCOM_FEATURES_CUSTOM_DESIGN = 'custom-design';
+export const WPCOM_FEATURES_GLOBAL_STYLES = 'global-styles';
 
 // Signup flow related features
 export const FEATURE_UNLIMITED_EMAILS = 'unlimited-emails';
