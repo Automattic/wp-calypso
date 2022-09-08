@@ -56,9 +56,9 @@ export interface StyleVariationStylesColor {
 
 export interface DesignRecipe {
 	stylesheet?: string;
-	pattern_ids?: number[];
-	header_pattern_ids?: number[];
-	footer_pattern_ids?: number[];
+	pattern_ids?: number[] | string[];
+	header_pattern_ids?: number[] | string[];
+	footer_pattern_ids?: number[] | string[];
 }
 
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'

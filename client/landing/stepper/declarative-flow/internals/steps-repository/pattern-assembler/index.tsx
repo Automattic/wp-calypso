@@ -1,6 +1,7 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
 import type { Step } from '../../types';
@@ -122,9 +123,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 					/>
 				) }
 			</div>
-			<div className="pattern-assembler__preview">
-				<h3> Web preview placeholder </h3>
-			</div>
+			<PatternAssemblerPreview header={ header } sections={ sections } footer={ footer } />
 		</div>
 	);
 
