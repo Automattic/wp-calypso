@@ -24,7 +24,7 @@
 	grid-template-columns: 1fr;
 	grid-gap: 24px;
 
-	@include break-medium {
+	@media only screen and (min-width: 821px) {
 		grid-template-columns: 1fr 1fr;
 		margin: 32px auto 0;
 		gap: 24px;
