@@ -168,7 +168,7 @@ body.is-section-signup .layout.gravatar {
 			background: var( --color-surface );
 			padding-bottom: 16px;
 			margin-bottom: 24px;
-			border-radius: 6px; /* stylelint-disable-line */
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
 			@include elevation( 3dp );
 		}
 
@@ -339,7 +339,6 @@ body.is-section-signup .layout.gravatar .formatted-header {
 
 	.signup-form__terms-of-service-link a,
 	.signup-form__social-buttons-tos a {
-		color: var( --studio-gray-50 );
 		text-decoration: underline;
 	}
 
@@ -398,7 +397,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			inset-inline-end: 20px;
 
 			.flow-progress-indicator {
-				font-weight: 500; /* stylelint-disable-line */
+				font-weight: 500;
 				font-size: 0.875rem;
 				color: var( --studio-gray-30 );
 			}
@@ -466,10 +465,10 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 2.15rem; /* stylelint-disable-line */
+			font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
 
 			@include break-xlarge {
-				font-size: 2.75rem; /* stylelint-disable-line */
+				font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
 			}
 		}
 
@@ -516,7 +515,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 				@include break-small {
 					max-width: inherit;
-					font-size: 3.25rem; /* stylelint-disable-line */
+					font-size: 3.25rem; /* stylelint-disable-line scales/font-sizes */
 					line-height: 3.5rem;
 				}
 			}
@@ -533,7 +532,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 				@include break-small {
 					max-width: inherit;
-					font-size: 1.125rem; /* stylelint-disable-line */
+					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 					line-height: 1.625rem;
 					letter-spacing: 0.24px;
 				}
@@ -548,11 +547,11 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 
 		button.signup-form__submit {
-			border-radius: 4px; /* stylelint-disable-line */
+			border-radius: 4px;
 			max-width: 408px;
 			height: 44px;
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
-			font-weight: 500; /* stylelint-disable-line */
+			font-weight: 500;
 			letter-spacing: 0.32px;
 			line-height: 17px;
 		}
@@ -697,7 +696,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				margin-bottom: 16px;
 				height: 44px;
 				max-width: 408px;
-				border-radius: 4px; /* stylelint-disable-line */
+				border-radius: 4px;
 				border: 1px solid var( --studio-gray-10 );
 			}
 
@@ -784,16 +783,18 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.signup__step.is-domains,
 	.signup__step.is-mailbox-domain,
 	.signup__step.is-emails,
+	.signup__step.is-mailbox,
 	.signup__step.is-plans-newsletter,
 	.signup__step.is-plans-link-in-bio,
+	.signup__step.is-mailbox-plan,
 	.signup__step.is-plans {
 		.formatted-header {
 			.formatted-header__title {
-				font-size: 2.25rem; /* stylelint-disable-line */
+				font-size: 2.25rem;
 				line-height: 2.5rem;
 
 				@include break-mobile {
-					font-size: 2.75rem; /* stylelint-disable-line */
+					font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
 					line-height: 3rem;
 				}
 			}
@@ -803,6 +804,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	.signup__step.is-domains,
 	.signup__step.is-mailbox-domain,
 	.signup__step.is-emails,
+	.signup__step.is-mailbox,
 	.is-domain-only {
 		@include break-large {
 			margin: 0 0 0 20px;
@@ -826,13 +828,14 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 	.signup__step.is-plans-link-in-bio,
 	.signup__step.is-plans-newsletter,
+	.signup__step.is-mailbox-plan,
 	.signup__step.is-plans {
 		.formatted-header__title {
-			font-weight: 500; /* stylelint-disable-line */
+			font-weight: 500;
 		}
 
 		.formatted-header__subtitle button.is-borderless {
-			font-weight: 500; /* stylelint-disable-line */
+			font-weight: 500;
 			color: var( --studio-gray-90 );
 		}
 	}
@@ -850,7 +853,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			margin-top: 40px;
 
 			.formatted-header__title {
-				font-size: 2rem; /* stylelint-disable-line */
+				font-size: 2rem;
 			}
 
 			@include break-mobile {
@@ -878,6 +881,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 body.is-section-signup.is-white-signup {
 	.signup__step.is-plans-link-in-bio .step-wrapper__navigation,
 	.signup__step.is-plans-newsletter .step-wrapper__navigation,
+	.signup__step.is-mailbox-plan .step-wrapper__navigation,
 	.signup__step.is-plans .step-wrapper__navigation,
 	.signup__step.is-domains .step-wrapper__navigation,
 	.signup__step.is-mailbox-domain .step-wrapper__navigation {

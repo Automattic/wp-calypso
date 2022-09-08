@@ -100,9 +100,14 @@
 		box-shadow: none;
 	}
 
-	.login__social-tos a {
-		color: var( --studio-gray-60 );
-		text-decoration: underline;
+	.login__social-tos {
+		margin: 1.5em auto;
+		max-width: 330px;
+
+		a {
+			color: var( --color-accent );
+			text-decoration: underline;
+		}
 	}
 
 	.jetpack-header__partner-logo-plus svg {
@@ -327,14 +332,10 @@
 		box-shadow: none;
 	}
 
-	.login__form-userdata {
-		margin-bottom: 2em;
-	}
-
 	.login__form label {
 		font-size: var( --p2-font-size-form-xxs );
 		color: var( --p2-color-text );
-		font-weight: 500; /* stylelint-disable-line */
+		font-weight: 500;
 		margin-bottom: 0.5em;
 		line-height: 1.8;
 	}
@@ -355,7 +356,7 @@
 	.login__form-header {
 		color: var( --p2-color-text );
 		font-size: var( --p2-font-size-form-xxl );
-		font-weight: 900; /* stylelint-disable-line */
+		font-weight: 900; /* stylelint-disable-line scales/font-weights */
 		text-align: center;
 		line-height: 1.3;
 		margin-top: 0;

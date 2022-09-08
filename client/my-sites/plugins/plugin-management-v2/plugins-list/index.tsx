@@ -17,17 +17,25 @@ interface Props {
 	columns: Columns;
 	className?: string;
 	removePluginNotice: ( plugin: Plugin ) => void;
+	updatePlugin: ( plugin: Plugin ) => void;
 }
 
 export default function PluginsList( {
 	selectedSite,
 	removePluginNotice,
+	updatePlugin,
 	...rest
 }: Props ): ReactElement {
 	const translate = useTranslate();
 
 	const rowFormatter = ( props: PluginRowFormatterArgs ) => {
-		return <PluginRowFormatter { ...props } selectedSite={ selectedSite } />;
+		return (
+			<PluginRowFormatter
+				{ ...props }
+				selectedSite={ selectedSite }
+				updatePlugin={ updatePlugin }
+			/>
+		);
 	};
 
 	const renderActions = ( plugin: Plugin ) => {

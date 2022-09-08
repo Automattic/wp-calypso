@@ -433,7 +433,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: $font-body-extra-small;
 	line-height: 20px;
 	height: 20px;
-	border-radius: 10px; /* stylelint-disable-line */
+	border-radius: 10px; /* stylelint-disable-line scales/radii */
 	color: var( --color-text-inverted );
 	background: var( --color-success );
 	font-weight: 400;
@@ -683,7 +683,6 @@ $plan-features-sidebar-width: 272px;
 // The #primary id is included to increase specificity
 // and override some of the segmented-control styles.
 // This UI should really use buttons instead.
-/* stylelint-disable selector-max-id */
 body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	margin: 0 auto 16px;
 	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ), 0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
@@ -727,7 +726,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 	}
 }
-/* stylelint-enable */
 
 .plans-wrapper {
 	margin: 0 auto;
@@ -1063,7 +1061,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	tr:last-child .plan-features__table-item {
-		border-radius: 0 0 5px 5px; /* stylelint-disable-line */
+		border-radius: 0 0 5px 5px; /* stylelint-disable-line scales/radii */
 	}
 
 	.plan-features__actions {
@@ -1135,7 +1133,7 @@ button.plan-features__scroll-button {
 	padding: 0;
 	background-color: var( --color-neutral );
 	border: 0;
-	border-radius: 15px; /* stylelint-disable-line */
+	border-radius: 15px; /* stylelint-disable-line scales/radii */
 	color: var( --color-text-inverted );
 	cursor: pointer;
 
@@ -1225,7 +1223,7 @@ button.plan-features__scroll-button {
 
 .plans-wrapper {
 	.plan-features__item-annual-plan {
-		font-size: 0.6rem; /* stylelint-disable-line */
+		font-size: 0.6rem; /* stylelint-disable-line scales/font-sizes */
 		text-transform: uppercase;
 	}
 

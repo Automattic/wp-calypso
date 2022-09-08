@@ -18,11 +18,13 @@ const stepNameToModuleName = {
 	'domains-theme-preselected': 'domains',
 	'mailbox-domain': 'domains',
 	emails: 'emails',
+	mailbox: 'emails',
 	'from-url': 'import-url',
 	/* import-url will eventually replace from-url step. Forgive temporary naming. */
 	'import-url': 'import-url-onboarding',
 	'intent-screen': 'intent-screen',
 	launch: 'launch-site',
+	'mailbox-plan': 'plans',
 	plans: 'plans',
 	'plans-new': 'plans',
 	'plans-business': 'plans',

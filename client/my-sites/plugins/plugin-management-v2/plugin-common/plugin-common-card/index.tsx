@@ -76,6 +76,12 @@ export default function PluginCommonCard( {
 							<span className="plugin-common-card__overlay"></span>
 						</div>
 					) }
+					{ columnKeys[ 'update' ] &&
+						rowFormatter( {
+							columnKey: 'update',
+							item,
+							isSmallScreen: true,
+						} ) }
 					{ columnKeys[ 'last-updated' ] && (
 						<div className="plugin-common-card__site-data">
 							{ rowFormatter( {
@@ -118,13 +124,6 @@ export default function PluginCommonCard( {
 							} ) }
 						</div>
 					) }
-					{ columnKeys[ 'update' ] &&
-						rowFormatter( {
-							columnKey: 'update',
-							item,
-							isSmallScreen: true,
-							className: 'plugin-common-card__update-plugin',
-						} ) }
 					{ columnKeys[ 'install' ] && (
 						<div className="plugin-common-card__install-button">
 							{ rowFormatter( {

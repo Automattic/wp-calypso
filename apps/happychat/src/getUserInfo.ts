@@ -1,6 +1,4 @@
 type UserInfo = {
-	howCanWeHelp: string;
-	howYouFeel: string;
 	siteUrl: string;
 	siteId: number;
 	localDateTime: string;
@@ -28,9 +26,6 @@ export function getUserInfo(
 	geoLocation: UserInfo[ 'geoLocation' ]
 ) {
 	const info: UserInfo = {
-		howCanWeHelp: message,
-		// this must be a non-empty string for the intro message to work
-		howYouFeel: 'not provided',
 		siteId,
 		siteUrl,
 		localDateTime: `${ new Date().toLocaleDateString() } ${ new Date().toLocaleTimeString() }`,

@@ -451,7 +451,7 @@ export interface LaunchPadCheckListTasksStatuses {
 export interface ThemeSetupOptions {
 	trim_content?: boolean;
 	vertical_id?: string;
-	pattern_ids?: number[];
-	header_pattern_ids?: number[];
-	footer_pattern_ids?: number[];
+	pattern_ids?: number[] | string[];
+	header_pattern_ids?: number[] | string[];
+	footer_pattern_ids?: number[] | string[];
 }

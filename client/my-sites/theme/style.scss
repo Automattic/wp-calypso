@@ -116,9 +116,7 @@
 
 .theme__sheet-action-bar-cost-upgrade {
 	text-transform: uppercase;
-	/* stylelint-disable declaration-property-unit-allowed-list */
-	font-size: 90%;
-	/*stylelint-enable declaration-property-unit-allowed-list */
+	font-size: 90%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 }
 
 .theme__sheet-screenshot {

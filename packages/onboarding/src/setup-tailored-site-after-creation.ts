@@ -8,7 +8,7 @@ import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from './utils';
 const ONBOARD_STORE = Onboard.register();
 const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 
-const base64ImageToBlob = ( base64String: string ) => {
+export const base64ImageToBlob = ( base64String: string ) => {
 	// extract content type and base64 payload from original string
 	const pos = base64String.indexOf( ';base64,' );
 	const type = base64String.substring( 5, pos );

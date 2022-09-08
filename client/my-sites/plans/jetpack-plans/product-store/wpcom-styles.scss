@@ -11,7 +11,13 @@ $wpcom-menu-collapse: 783px;
 	--jetpack-corners-soft: 4px;
 }
 
-.is-group-sites.is-section-plans .jetpack-product-store {
+:is(.is-group-sites.is-section-plans, .is-section-jetpack-connect) .jetpack-product-store {
+
+	.button[disabled],
+	.button:disabled,
+	.button.disabled {
+		background-color: var( --studio-gray-5 );
+	}
 
 	h2 {
 		font-size: $font-title-small;
@@ -50,7 +56,7 @@ $wpcom-menu-collapse: 783px;
 			}
 
 			// Move CTA button to next line
-			.simple-product-card__info-header {
+			.simple-item-card__header {
 				flex-direction: column;
 				gap: 0.5rem;
 			}
@@ -58,7 +64,7 @@ $wpcom-menu-collapse: 783px;
 
 		@media (max-width: $break-large) {
 			// Hide icon to save some real estate
-			.simple-product-card__icon {
+			.simple-item-card__icon {
 				display: none;
 			}
 		}

@@ -62,7 +62,7 @@
 
 	.invite-accept-header__join-site-title {
 		font-size: var( --p2-font-size-form-xl );
-		font-weight: 900; /* stylelint-disable-line */
+		font-weight: 900; /* stylelint-disable-line scales/font-weights */
 		margin: 0 0 1rem;
 		letter-spacing: -0.02em;
 		line-height: 1.35;

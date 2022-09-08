@@ -4,6 +4,7 @@ import {
 	DISABLE_AUTOUPDATE_PLUGIN,
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
+	UPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import {
 	PLUGIN_INSTALLATION_COMPLETED,
@@ -56,7 +57,8 @@ export type PluginActionTypes =
 	| typeof DEACTIVATE_PLUGIN
 	| typeof DISABLE_AUTOUPDATE_PLUGIN
 	| typeof ENABLE_AUTOUPDATE_PLUGIN
-	| typeof REMOVE_PLUGIN;
+	| typeof REMOVE_PLUGIN
+	| typeof UPDATE_PLUGIN;
 
 export type PluginActionStatus =
 	| typeof PLUGIN_INSTALLATION_IN_PROGRESS
