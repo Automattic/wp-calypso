@@ -74,7 +74,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 
 		it( 'View pending invites', async function () {
 			peoplePage = new PeoplePage( page );
-			await peoplePage.clickTab( 'Invites' );
+			await peoplePage.clickTab( 'User Invites' );
 		} );
 
 		it( 'Revoke the invite for test user', async function () {

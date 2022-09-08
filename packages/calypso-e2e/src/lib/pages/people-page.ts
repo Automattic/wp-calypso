@@ -2,7 +2,7 @@ import { Page } from 'playwright';
 import { clickNavTab, reloadAndRetry } from '../../element-helper';
 import { NoticeComponent } from '../components';
 
-export type PeoplePageTabs = 'Team' | 'Followers' | 'Email Followers' | 'Invites';
+export type PeoplePageTabs = 'Team' | 'Followers' | 'Email Followers' | 'User Invites';
 
 const selectors = {
 	// Navigation tabs
@@ -54,7 +54,7 @@ export class PeoplePage {
 	 */
 	async clickTab( name: PeoplePageTabs ): Promise< void > {
 		// For Invites tab, wait for the full request to be completed.
-		if ( name === 'Invites' ) {
+		if ( name === 'User Invites' ) {
 			await Promise.all( [
 				this.page.waitForNavigation( { url: '**/people/invites/**', waitUntil: 'networkidle' } ),
 				clickNavTab( this.page, name ),
