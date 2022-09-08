@@ -5,7 +5,10 @@ import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
-import { imageIsBigEnoughForGallery } from 'calypso/state/reader/posts/normalization-rules';
+import {
+	imageIsBigEnoughForGallery,
+	imageWithCorrectRatio,
+} from 'calypso/state/reader/posts/normalization-rules';
 import { READER_CONTENT_WIDTH } from 'calypso/state/reader/posts/sizes';
 
 const noop = () => {};
@@ -18,8 +21,7 @@ class PostGallery extends Component {
 
 	handleClick = ( event ) => {
 		event.preventDefault();
-		let updateItemSelected;
-		updateItemSelected = this.state.itemSelected + 1;
+		let updateItemSelected = this.state.itemSelected + 1;
 		if ( updateItemSelected >= this.state.listItems.length ) {
 			updateItemSelected = 0;
 		}
@@ -31,8 +33,8 @@ class PostGallery extends Component {
 		const images = ( post.images && [ ...post.images ] ) || [];
 
 		return images
-			.sort( ( a, b ) => ( a.width > b.width ? 1 : -1 ) )
 			.filter( imageIsBigEnoughForGallery )
+			.filter( imageWithCorrectRatio )
 			.slice( 0, numberOfImagesToDisplay );
 	};
 
@@ -76,7 +78,7 @@ class PostGallery extends Component {
 				'reader-post-card__gallery-circle': true,
 				'is-selected': index === this.state.itemSelected,
 			} );
-			return <div className={ classes }></div>;
+			return <div key={ `post-${ post.ID }-circle-${ index }` } className={ classes } />;
 		} );
 		return (
 			<div className="reader-post-card__post">

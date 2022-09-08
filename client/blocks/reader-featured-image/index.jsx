@@ -21,7 +21,7 @@ const ReaderFeaturedImage = ( {
 	imageWidth,
 	imageHeight,
 } ) => {
-	const featuredImageUrl = imageUrl || canonicalMedia.src;
+	const featuredImageUrl = imageUrl || canonicalMedia?.src;
 	if ( featuredImageUrl === undefined ) {
 		return null;
 	}
@@ -45,15 +45,12 @@ const ReaderFeaturedImage = ( {
 	featuredImageStyle.height = newHeight;
 	featuredImageStyle.width = imageWidth || READER_CONTENT_WIDTH;
 
-	const divStyle = { height: newHeight };
 	const classNames = classnames( className, 'reader-featured-image' );
 
 	return (
-		<div style={ divStyle }>
-			<a className={ classNames } href={ href } style={ featuredImageStyle } onClick={ onClick }>
-				{ children }
-			</a>
-		</div>
+		<a className={ classNames } href={ href } style={ featuredImageStyle } onClick={ onClick }>
+			{ children }
+		</a>
 	);
 };
 

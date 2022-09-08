@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
-import { imageIsBigEnoughForGallery } from 'calypso/state/reader/posts/normalization-rules';
+import {
+	imageIsBigEnoughForGallery,
+	imageWithCorrectRatio,
+} from 'calypso/state/reader/posts/normalization-rules';
 import {
 	READER_CONTENT_WIDTH,
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
@@ -11,8 +14,8 @@ function getGalleryWorthyImages( post ) {
 	const images = ( post.images && [ ...post.images ] ) || [];
 
 	return images
-		.sort( ( a, b ) => ( a.width > b.width ? 1 : -1 ) )
 		.filter( imageIsBigEnoughForGallery )
+		.filter( imageWithCorrectRatio )
 		.slice( 0, numberOfImagesToDisplay );
 }
 

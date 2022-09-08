@@ -49,6 +49,13 @@ export function imageIsBigEnoughForGallery( image ) {
 	return image.width >= GALLERY_MIN_IMAGE_WIDTH && image.height >= MIN_IMAGE_HEIGHT;
 }
 
+export function imageWithCorrectRatio( image ) {
+	const imageRatio = image.height / image.width;
+	const minRatio = 9 / 17;
+	const maxRatio = 17 / 9;
+	return imageRatio >= minRatio && imageRatio <= maxRatio;
+}
+
 const hasShortContent = ( post ) => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
 
 /**
