@@ -29,6 +29,8 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 		<div className="jetpack-product-store__items-list">
 			{ currentItem && (
 				<ProductLightbox
+					siteId={ siteId }
+					duration={ duration }
 					product={ currentItem }
 					isVisible={ !! currentItem }
 					onClose={ clearCurrentItem }
