@@ -379,7 +379,7 @@ function getCountrySelectionHandler(
 	setFreezeSelection: ( shouldFreeze: boolean ) => void,
 	enableStickyCountry: boolean
 ) {
-	return function handleCountrySelection( event: ChangeEvent< HTMLInputElement > ) {
+	return function handleCountrySelection( event: ChangeEvent< HTMLSelectElement > ) {
 		const newCountryCode = event.target.value;
 		if ( newCountryCode === countryCode ) {
 			return;
