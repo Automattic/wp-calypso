@@ -17,11 +17,11 @@
 		font-size: 0.75rem;
 		color: var( --studio-gray-50 );
 		font-weight: 400;
-		height: 50px;
+		height: 60px;
 	}
 	td {
 		font-size: 0.875rem;
-		height: 50px;
+		height: 60px;
 		width: 175px;
 		box-sizing: border-box;
 		&:nth-child( 1 ) {
@@ -104,6 +104,7 @@ td.plugin-common-table__actions {
 			margin-inline-end: 8px;
 		}
 		button {
+			color: var( --studio-gray-80 );
 			&:first-child,
 			&:last-child {
 				border-radius: 4px;

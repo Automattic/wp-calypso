@@ -294,6 +294,7 @@ class PluginItem extends Component {
 					<FormInputCheckbox
 						className="plugin-item__checkbox"
 						id={ plugin.slug }
+						title={ plugin.name }
 						onClick={ this.props.onClick }
 						checked={ this.props.isSelected }
 						readOnly={ true }

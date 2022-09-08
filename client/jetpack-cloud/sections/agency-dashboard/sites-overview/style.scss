@@ -7,6 +7,10 @@
 	}
 }
 .sites-overview__container {
+	display: flex;
+	flex-direction: column;
+	// The -123px is to undo the padding of .layout__content (79px + 32px) and .sites-overview_container ( 8px + 8px )
+	min-height: calc( 100vh - 123px );
 	padding: 16px 0;
 	@include break-large() {
 		padding: 6px 0;
@@ -31,12 +35,13 @@
 .sites-overview__content {
 	// We need these negative margin values because we want to make the container full-width,
 	// but our element is inside a limited-width parent.
-	margin: 0 -32px;
+	margin: 0 -32px -32px;
 	padding: 8px 48px;
-	min-height: 100vh;
+	flex: 1 1 100%;
 	@include breakpoint-deprecated( '>660px' ) {
-    	padding: 16px 48px;
+		padding: 16px 48px;
 		background: rgba( 255, 255, 255, 0.5 );
+		margin: 0 -32px -38px;
 	}
 }
 .sites-overview__page-title-container {

@@ -5,9 +5,8 @@ function SocialSignupToS( props ) {
 	return (
 		<p className="signup-form__social-buttons-tos">
 			{ props.translate(
-				"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-					' are creating an account, you agree to our' +
-					' {{tosLink}}Terms of Service{{/tosLink}}, and acknowledge that you have' +
+				'If you continue with Google or Apple, you agree to our' +
+					' {{tosLink}}Terms of Service{{/tosLink}}, and have' +
 					' read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 				{
 					components: {

@@ -1,7 +1,7 @@
 import ProductLightbox from '../../product-lightbox';
-import { BundlesList } from '../bundle-list';
 import { useItemLightbox } from '../hooks/use-item-lightbox';
-import { ProductsList } from '../product-list';
+import { BundlesList } from './bundles-list';
+import { ProductsList } from './products-list';
 import type { ItemsListProps, ProductsListProps, ViewType } from '../types';
 
 import './style.scss';
@@ -11,14 +11,8 @@ const components: Record< ViewType, React.ComponentType< ProductsListProps > > =
 	bundles: BundlesList,
 };
 
-export const ItemsList: React.FC< ItemsListProps > = ( {
-	createCheckoutURL,
-	currentView,
-	duration,
-	onClickPurchase,
-	siteId,
-} ) => {
-	const { currentItem, setCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
+export const ItemsList: React.FC< ItemsListProps > = ( { currentView, duration, siteId } ) => {
+	const { currentItem, clearCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
 	const Component = components[ currentView ];
 
 	if ( ! Component ) {
@@ -29,20 +23,18 @@ export const ItemsList: React.FC< ItemsListProps > = ( {
 		<div className="jetpack-product-store__items-list">
 			{ currentItem && (
 				<ProductLightbox
+					siteId={ siteId }
+					duration={ duration }
 					product={ currentItem }
 					isVisible={ !! currentItem }
-					onClose={ () => {
-						setCurrentItem( null );
-					} }
+					onClose={ clearCurrentItem }
 				/>
 			) }
 
 			<Component
-				duration={ duration }
 				siteId={ siteId }
-				createCheckoutURL={ createCheckoutURL }
-				onClickPurchase={ onClickPurchase }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
+				duration={ duration }
 			/>
 		</div>
 	);

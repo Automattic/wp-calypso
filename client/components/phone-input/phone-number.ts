@@ -1,6 +1,9 @@
 import debugFactory from 'debug';
-import { find, flatten, includes, map, startsWith } from 'lodash';
-import { countries, dialCodeMap } from 'calypso/components/phone-input/data';
+import {
+	countries as countriesRaw,
+	dialCodeMap as dialCodeMapRaw,
+} from 'calypso/components/phone-input/data';
+import type { PhoneNumberPattern, CountryData } from './types';
 
 const debug = debugFactory( 'phone-input:metadata' );
 
@@ -11,23 +14,25 @@ const LONGEST_NUMBER = '999999999999999';
 const LONGEST_NUMBER_MATCH = /9/g;
 export const MIN_LENGTH_TO_FORMAT = 3;
 
+const countries: Record< string, CountryData > = countriesRaw;
+const dialCodeMap: Record< string, string[] > = dialCodeMapRaw;
+
 /**
  * Removes non digit characters from the string
  *
  * @param {string} inputNumber - Text to remove non-digits from
  * @returns {string} - Text with non-digits removed
  */
-export const stripNonDigits = ( inputNumber ) => inputNumber.replace( /\D/g, '' );
+export const stripNonDigits = ( inputNumber: string ): string => inputNumber.replace( /\D/g, '' );
 
-function prefixSearch( prefixQuery ) {
-	return flatten(
-		Object.keys( dialCodeMap )
-			.filter( ( dialCode ) => startsWith( prefixQuery, dialCode ) )
-			.map( ( dialCode ) => dialCodeMap[ dialCode ] )
-	);
+function prefixSearch( prefixQuery: string ) {
+	return Object.keys( dialCodeMap )
+		.filter( ( dialCode ) => prefixQuery.startsWith( dialCode ) )
+		.map( ( dialCode ) => dialCodeMap[ dialCode ] )
+		.flat();
 }
 
-export function findCountryFromNumber( inputNumber ) {
+export function findCountryFromNumber( inputNumber: string ) {
 	let lastExactMatch;
 
 	for ( let i = 1; i <= 6; i++ ) {
@@ -35,7 +40,7 @@ export function findCountryFromNumber( inputNumber ) {
 		if ( Object.prototype.hasOwnProperty.call( dialCodeMap, query ) ) {
 			const exactMatch = dialCodeMap[ query ];
 			if ( exactMatch.length === 1 ) {
-				return countries[ exactMatch[ 0 ] ];
+				return countries[ exactMatch[ 0 ] as keyof typeof countries ];
 			}
 			if ( exactMatch.length > 1 ) {
 				lastExactMatch = exactMatch;
@@ -46,24 +51,24 @@ export function findCountryFromNumber( inputNumber ) {
 
 		if ( ! prefixMatch.length && lastExactMatch ) {
 			// the one with high priority
-			return map( lastExactMatch, ( key ) => countries[ key ] )[ 0 ];
+			return lastExactMatch.map( ( key ) => countries[ key as keyof typeof countries ] )[ 0 ];
 		}
 
 		if ( prefixMatch.length === 1 ) {
 			// not an exact match, but there is only one option with this prefix
-			return countries[ prefixMatch[ 0 ] ];
+			return countries[ prefixMatch[ 0 ] as keyof typeof countries ];
 		}
 	}
 
 	if ( lastExactMatch ) {
-		return map( lastExactMatch, ( key ) => countries[ key ] )[ 0 ];
+		return lastExactMatch.map( ( key ) => countries[ key as keyof typeof countries ] )[ 0 ];
 	}
 
 	return null;
 }
 
-export const findPattern = ( inputNumber, patterns ) =>
-	find( patterns, ( { match, leadingDigitPattern } ) => {
+export const findPattern = ( inputNumber: string, patterns: PhoneNumberPattern[] ) =>
+	patterns.find( ( { match, leadingDigitPattern } ) => {
 		if ( leadingDigitPattern && inputNumber.search( leadingDigitPattern ) !== 0 ) {
 			return false;
 		}
@@ -79,11 +84,8 @@ export const findPattern = ( inputNumber, patterns ) =>
  * @param {Array} patterns - The list of patterns
  * @returns {string} The template string
  */
-export function makeTemplate( phoneNumber, patterns ) {
-	const selectedPattern = find( patterns, ( pattern ) => {
-		if ( includes( pattern.format, '|' ) ) {
-			return false;
-		}
+export function makeTemplate( phoneNumber: string, patterns: PhoneNumberPattern[] ): string {
+	const selectedPattern = patterns.find( ( pattern ) => {
 		if ( pattern.leadingDigitPattern && phoneNumber.search( pattern.leadingDigitPattern ) !== 0 ) {
 			return false;
 		}
@@ -91,7 +93,7 @@ export function makeTemplate( phoneNumber, patterns ) {
 		const match = pattern.match
 			.replace( CHARACTER_CLASS_PATTERN, '\\d' )
 			.replace( STANDALONE_DIGIT_PATTERN, '\\d' );
-		const matchingNumber = LONGEST_NUMBER.match( new RegExp( match ) )[ 0 ];
+		const matchingNumber = LONGEST_NUMBER.match( new RegExp( match ) )?.[ 0 ] ?? '';
 
 		return matchingNumber.length >= phoneNumber.length;
 	} );
@@ -104,7 +106,7 @@ export function makeTemplate( phoneNumber, patterns ) {
 		.replace( CHARACTER_CLASS_PATTERN, '\\d' )
 		.replace( STANDALONE_DIGIT_PATTERN, '\\d' );
 
-	const matchingNumber = LONGEST_NUMBER.match( new RegExp( selectedPatternMatch ) )[ 0 ];
+	const matchingNumber = LONGEST_NUMBER.match( new RegExp( selectedPatternMatch ) )?.[ 0 ] ?? '';
 	const template = matchingNumber.replace(
 		new RegExp( selectedPatternMatch, 'g' ),
 		selectedPattern.replace
@@ -121,7 +123,11 @@ export function makeTemplate( phoneNumber, patterns ) {
  *   position. The function will update the pos property to the match the new position after applying the template.
  * @returns {string} The formatted number
  */
-export function applyTemplate( phoneNumber, template, positionTracking = { pos: 0 } ) {
+export function applyTemplate(
+	phoneNumber: string,
+	template: string,
+	positionTracking: { pos: number } = { pos: 0 }
+): string {
 	let res = '';
 	let phoneNumberIndex = 0;
 
@@ -154,7 +160,10 @@ export function applyTemplate( phoneNumber, template, positionTracking = { pos: 
  * @returns {{nationalNumber: string, prefix: string}} - Phone is the national phone number and prefix is to be
  *   shown before the phone number
  */
-export function processNumber( inputNumber, numberRegion ) {
+export function processNumber(
+	inputNumber: string,
+	numberRegion: CountryData
+): { nationalNumber: string; prefix: string } {
 	let prefix = numberRegion.nationalPrefix || '';
 
 	let nationalNumber = stripNonDigits( inputNumber );
@@ -212,7 +221,7 @@ export function processNumber( inputNumber, numberRegion ) {
  * @param {object} country - The region for which we are formatting
  * @returns {string} - Formatted number
  */
-export function formatNumber( inputNumber, country ) {
+export function formatNumber( inputNumber: string, country: CountryData ): string {
 	const digitCount = stripNonDigits( inputNumber ).length;
 	if ( digitCount < MIN_LENGTH_TO_FORMAT || digitCount < ( country.dialCode || '' ).length ) {
 		if ( inputNumber[ 0 ] === '+' ) {
@@ -252,12 +261,12 @@ export function formatNumber( inputNumber, country ) {
 	return inputNumber;
 }
 
-export function toE164( inputNumber, country ) {
+export function toE164( inputNumber: string, country: CountryData ) {
 	const { nationalNumber } = processNumber( inputNumber, country );
 	return '+' + country.dialCode + nationalNumber;
 }
 
-export function toIcannFormat( inputNumber, country ) {
+export function toIcannFormat( inputNumber: string, country: CountryData ) {
 	if ( ! country ) {
 		return inputNumber;
 	}
@@ -294,9 +303,13 @@ export function toIcannFormat( inputNumber, country ) {
  * @param {number} oldCursorPosition Index of the cursor in oldValue
  * @returns {number} The new cursor position
  */
-export function getUpdatedCursorPosition( oldValue, newValue, oldCursorPosition ) {
-	const toList = ( str ) => str.split( '' );
-	const unmask = ( list ) => list.filter( ( char ) => /\d/.test( char ) );
+export function getUpdatedCursorPosition(
+	oldValue: string,
+	newValue: string,
+	oldCursorPosition: number
+): number {
+	const toList = ( str: string ) => str.split( '' );
+	const unmask = ( list: string[] ) => list.filter( ( char ) => /\d/.test( char ) );
 
 	if ( newValue.match( /^\+$/ ) ) {
 		return 1;
@@ -355,7 +368,7 @@ export function getUpdatedCursorPosition( oldValue, newValue, oldCursorPosition 
  * @returns [number, number] Index of the longest common suffix
  *   in each argument
  */
-export function indexOfLongestCommonSuffix( array1, array2 ) {
+export function indexOfLongestCommonSuffix< A >( array1: A[], array2: A[] ): [ number, number ] {
 	if ( array1.length === 0 || array2.length === 0 ) {
 		return [ array1.length, array2.length ];
 	}
@@ -398,8 +411,8 @@ export function indexOfLongestCommonSuffix( array1, array2 ) {
  * @returns [number, array] Index after the last array1 item in
  *   array2, as well as the remainder of array2
  */
-export function indexOfStrictSubsequenceEnd( array1, array2 ) {
-	const accumulate = ( a1, a2, offset ) => {
+export function indexOfStrictSubsequenceEnd< A >( array1: A[], array2: A[] ): [ number, A[] ] {
+	const accumulate = ( a1: A[], a2: A[], offset: number ): [ number, A[] ] => {
 		if ( a1.length === 0 ) {
 			return [ offset, a2 ];
 		}
@@ -409,7 +422,7 @@ export function indexOfStrictSubsequenceEnd( array1, array2 ) {
 		}
 		const c1 = a1.shift(); // mutate!
 		const c2 = a2.shift(); // mutate!
-		if ( c1 !== c2 ) {
+		if ( c1 !== c2 && c1 ) {
 			a1.unshift( c1 );
 		}
 		return accumulate( a1, a2, 1 + offset );
@@ -425,13 +438,13 @@ export function indexOfStrictSubsequenceEnd( array1, array2 ) {
  * @param array An array of characters
  * @returns number Number of non-digit characters appearing at the start
  */
-export function nonDigitsAtStart( array ) {
-	const accumulate = ( a, offset ) => {
+export function nonDigitsAtStart( array: string[] ): number {
+	const accumulate = ( a: string[], offset: number ): number => {
 		if ( a.length === 0 ) {
 			return offset;
 		}
 		const c = a.shift(); // mutate!
-		if ( /\d/.test( c ) ) {
+		if ( c && /\d/.test( c ) ) {
 			return offset;
 		}
 		return accumulate( a, 1 + offset );
@@ -447,6 +460,6 @@ export function nonDigitsAtStart( array ) {
  * @param array An array
  * @param index Index at which to cut off the count
  */
-export function numDigitsBeforeIndex( array, index ) {
+export function numDigitsBeforeIndex( array: string[], index: number ) {
 	return array.slice( 0, index ).filter( ( x ) => /\d/.test( x ) ).length;
 }

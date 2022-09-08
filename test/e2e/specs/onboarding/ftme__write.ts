@@ -38,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 			await page.goto( DataHelper.getCalypsoURL( 'start' ) );
 		} );
 
-		it( 'Select a .wordpres.com domain name', async function () {
+		it( 'Select a .wordpress.com domain name', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
 			await domainSearchComponent.selectDomain( '.wordpress.com' );

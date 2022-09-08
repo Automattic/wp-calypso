@@ -7,7 +7,10 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 .upgrade-modal {
 	display: flex;
 	flex-direction: column;
-	padding: 0;
+
+	&.dialog__content {
+		padding: 0;
+	}
 
 	&.loading {
 		display: flex;

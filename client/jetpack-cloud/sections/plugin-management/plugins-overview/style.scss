@@ -2,6 +2,11 @@
 @import '@wordpress/base-styles/mixins';
 
 .plugins-overview__container {
+	display: flex;
+	flex-direction: column;
+	// The -111px is to undo the padding of .layout__content (79px + 32px)
+	min-height: calc( 100vh - 111px );
+
 	.current-section {
 		padding: 0 16px;
 

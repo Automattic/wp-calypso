@@ -1,20 +1,42 @@
 import {
+	isJetpackPlanSlug,
 	JetpackPurchasableItemSlug,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
 	planHasFeature,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import isSupersedingJetpackItem from 'calypso/../packages/calypso-products/src/is-superseding-jetpack-item';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
-import { getSitePlan, getSiteProducts } from 'calypso/state/sites/selectors';
+import {
+	getSitePlan,
+	getSiteProducts,
+	isJetpackSiteMultiSite,
+} from 'calypso/state/sites/selectors';
+import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
 
 const isDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
+
+const isMultisiteCompatible = ( item: SelectorProduct ) => {
+	if ( isJetpackPlanSlug( item.productSlug ) ) {
+		// plans containing Jetpack Backup and/or Jetpack Scan are incompatible with multisite installs
+		return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].filter( ( productSlug ) =>
+			planHasFeature( item.productSlug, productSlug )
+		).length;
+	}
+	return ! (
+		[ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ] as ReadonlyArray< string >
+	 ).includes( item.productSlug );
+};
 
 export const useStoreItemInfo = ( {
 	createCheckoutURL,
@@ -25,7 +47,12 @@ export const useStoreItemInfo = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const isMultisite = useSelector(
+		( state ) => !! ( siteId && isJetpackSiteMultiSite( state, siteId ) )
+	);
+
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
+	const translate = useTranslate();
 
 	// Determine whether product is owned.
 	const isOwned = useCallback(
@@ -123,9 +150,39 @@ export const useStoreItemInfo = ( {
 		[ getPurchase, isCurrentUserPurchaseOwner ]
 	);
 
+	const getCtaLabel = useCallback(
+		( item: SelectorProduct ) => {
+			const ctaLabel = productButtonLabel( {
+				product: item,
+				isOwned: isOwned( item ),
+				isUpgradeableToYearly: isUpgradeableToYearly( item ),
+				isDeprecated: isDeprecated( item ),
+				isSuperseded: isSuperseded( item ),
+				currentPlan: sitePlan,
+				fallbackLabel: translate( 'Get' ),
+			} );
+
+			const purchase = getPurchase( item );
+
+			if ( ! purchase ) {
+				return ctaLabel;
+			}
+
+			return (
+				<>
+					{ ctaLabel }
+					&nbsp;
+					<OwnerInfo purchase={ purchase } />
+				</>
+			);
+		},
+		[ getPurchase, isOwned, isSuperseded, isUpgradeableToYearly, sitePlan, translate ]
+	);
+
 	return useMemo(
 		() => ( {
 			getCheckoutURL,
+			getCtaLabel,
 			getOnClickPurchase,
 			getPurchase,
 			isDeprecated,
@@ -136,10 +193,13 @@ export const useStoreItemInfo = ( {
 			isSuperseded,
 			isUpgradeableToYearly,
 			isUserPurchaseOwner,
+			isMultisiteCompatible,
+			isMultisite,
 			sitePlan,
 		} ),
 		[
 			getCheckoutURL,
+			getCtaLabel,
 			getOnClickPurchase,
 			getPurchase,
 			isIncludedInPlan,
@@ -149,6 +209,7 @@ export const useStoreItemInfo = ( {
 			isSuperseded,
 			isUpgradeableToYearly,
 			isUserPurchaseOwner,
+			isMultisite,
 			sitePlan,
 		]
 	);

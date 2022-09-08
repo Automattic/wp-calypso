@@ -2,6 +2,7 @@
 	"extends": [ "stylelint-config-standard-scss", "@wordpress/stylelint-config/scss" ],
 	"plugins": [ "@signal-noise/stylelint-scales" ],
 	"rules": {
+		"media-feature-parentheses-space-inside": "always",
 		"at-rule-empty-line-before": [
 			"always",
 			{
@@ -26,7 +27,7 @@
 		"scales/font-weights": [ 400, 500, 600, 700 ],
 		"scales/font-sizes": [
 			{
-				"scale": [ 0.75, 0.875, 1, 1.25, 1.5, 2, 2.25, 3, 3.375 ],
+				"scale": [ 0.75, 0.875, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.75, 3, 3.375 ],
 				"units": [ "rem" ]
 			}
 		],
