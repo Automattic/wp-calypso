@@ -223,8 +223,8 @@ class RemovePurchase extends Component {
 	}
 
 	shouldShowPlanWarning() {
-		const { isAtomicSite, purchase } = this.props;
-		return isPlan( purchase ) && ! isAtomicSite;
+		const { purchase } = this.props;
+		return isPlan( purchase );
 	}
 
 	renderPlanWarningDialog() {
