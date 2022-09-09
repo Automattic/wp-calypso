@@ -105,7 +105,7 @@
 		width: 100%;
 		padding: 2rem 0;
 		color: #101517;
-		font-size: 1.125rem;
+		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 		transition: background 0.1s;
 	}
 	@media ( max-width: 900px ) {
@@ -809,7 +809,7 @@
 
 	.header__submenu-category {
 		margin-bottom: 3rem;
-		font-size: 2.625rem;
+		font-size: 2.625rem; /* stylelint-disable-line scales/font-sizes */
 	}
 	@media ( max-width: 900px ) {
 		.header__submenu-category {
@@ -826,7 +826,7 @@
 		}
 	}
 	.header__submenu-category .header__submenu-tagline {
-		font-size: 1.125rem;
+		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 	}
 
 	.header__more.js {
@@ -1113,7 +1113,7 @@
 		.user-menu__tooltip a {
 			transition: none;
 			position: relative;
-			font-size: 1.125rem;
+			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 		}
 		.user-menu__tooltip a:focus-visible {
 			border-radius: 2px;

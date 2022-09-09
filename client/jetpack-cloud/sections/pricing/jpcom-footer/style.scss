@@ -144,7 +144,7 @@
 @media ( max-width: 600px ) {
 	.sitemap__category-label {
 		margin-block-end: 0.75rem;
-		font-size: 0.8125rem;
+		font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
 	}
 }
 
@@ -158,7 +158,7 @@
 }
 @media ( max-width: 600px ) {
 	.sitemap__link-list {
-		font-size: 0.8125rem;
+		font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
 	}
 }
 .sitemap__link-list > li {
@@ -250,7 +250,7 @@
 }
 @media ( max-width: 600px ) {
 	.a8c-footer__link-list > li {
-		font-size: 0.8125rem;
+		font-size: 0.8125rem; /* stylelint-disable-line scales/font-sizes */
 	}
 }
 .a8c-footer__link-list :any-link {
@@ -266,7 +266,7 @@
 }
 @media ( max-width: 600px ) {
 	.a8c-footer__link-list .a8c-footer__home-link {
-		font-size: 0.6875rem;
+		font-size: 0.6875rem; /* stylelint-disable-line scales/font-sizes */
 	}
 }
 

@@ -34,7 +34,7 @@ button.foldable-faq__question {
 
 .foldable-faq__question-text {
 	padding-left: 16px;
-	font-size: 1.125rem;
+	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 	font-weight: 600;
 	text-align: left;
 	color: var( --studio-gray-80 );
