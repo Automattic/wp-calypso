@@ -133,10 +133,6 @@ const NewMailBoxList = (
 	}, [ mailboxes ] );
 
 	useEffect( () => {
-		if ( hiddenFieldNames.length < 1 ) {
-			return;
-		}
-
 		setMailboxes( ( mailboxes ) => {
 			setFieldsVisibilities( mailboxes, hiddenFieldNames );
 			return [ ...mailboxes ];

@@ -8,6 +8,7 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_RECOVERY_EMAIL,
 	FIELD_UUID,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
@@ -74,6 +75,8 @@ class MailboxForm< T extends EmailProvider > {
 			],
 			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
 			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
+			[ FIELD_RECOVERY_EMAIL, new RequiredValidator< string >() ],
+			[ FIELD_RECOVERY_EMAIL, new AlternateEmailValidator( domainName ) ],
 			[ FIELD_UUID, new RequiredValidator< string >() ],
 		];
 	}
@@ -135,7 +138,7 @@ class MailboxForm< T extends EmailProvider > {
 					...commonFields,
 					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
 					lastname: this.getFieldValue< string >( FIELD_LASTNAME ),
-					recoveryEmail: this.getFieldValue< string >( FIELD_ALTERNATIVE_EMAIL ),
+					recoveryEmail: this.getFieldValue< string >( FIELD_RECOVERY_EMAIL ),
 			  }
 			: {
 					...commonFields,
