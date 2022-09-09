@@ -1,16 +1,12 @@
 import { addQueryArgs } from '@wordpress/url';
-import { PATTERN_SOURCE_SITE_ID } from './constants';
-
-const stylesheet = 'pub/blank-canvas';
-const publicApiUrl = 'https://public-api.wordpress.com';
-const patternPreviewUrl = publicApiUrl + '/wpcom/v2/block-previews/pattern';
+import { PATTERN_SOURCE_SITE_ID, PREVIEW_PATTERN_URL, STYLE_SHEET } from './constants';
 
 export const encodePatternId = ( patternId: number ) =>
 	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
 
 export const getPatternPreviewUrl = ( id: number, language: string ) => {
-	return addQueryArgs( patternPreviewUrl, {
-		stylesheet,
+	return addQueryArgs( PREVIEW_PATTERN_URL, {
+		stylesheet: STYLE_SHEET,
 		pattern_id: encodePatternId( id ),
 		language,
 	} );
