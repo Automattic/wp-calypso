@@ -149,7 +149,7 @@ const Total = styled.div`
 function DummyLineItem( {
 	productCost,
 	productOriginalName,
-	meta,
+	subLabel,
 	productCount,
 	nameOverride,
 	currencyCode,
@@ -162,7 +162,7 @@ function DummyLineItem( {
 					? formatCurrency( productCost * productCount, currencyCode, { precision: 0 } )
 					: formatCurrency( productCost, currencyCode, { precision: 0 } ) }
 			</div>
-			{ meta && <div className="page-picker__meta">{ meta }</div> }
+			{ subLabel && <div className="page-picker__meta">{ subLabel }</div> }
 		</DummyLineItemContainer>
 	);
 }

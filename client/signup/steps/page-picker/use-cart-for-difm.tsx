@@ -4,7 +4,6 @@ import {
 	PLAN_WPCOM_PRO,
 	WPCOM_DIFM_LITE,
 	getDIFMTieredPriceDetails,
-	Product,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -27,7 +26,7 @@ export type CartItem = {
 	productSlug: string;
 	productOriginalName: string;
 	productCost: number;
-	meta?: JSX.Element | TranslateResult;
+	subLabel?: TranslateResult;
 	productCount?: number;
 	itemSubTotal: number;
 };
@@ -40,6 +39,59 @@ type DummyCartParams = {
 	translate: LocalizeProps[ 'translate' ];
 };
 
+function getDIFMPriceBreakdownSubLabel( {
+	product,
+	noOfPages,
+	currencyCode,
+	translate,
+}: {
+	product: ProductListItem;
+	noOfPages: number | null;
+	currencyCode: string;
+	translate: LocalizeProps[ 'translate' ];
+} ) {
+	let subLabel: JSX.Element = <>{ translate( 'one-time fee' ) }</>;
+	if ( noOfPages == null ) {
+		return subLabel;
+	}
+
+	const difmTieredPrices = getDIFMTieredPriceDetails( product, noOfPages );
+	if ( difmTieredPrices ) {
+		const { extraPageCount, extraPagesPrice, formattedOneTimeFee } = difmTieredPrices;
+		if (
+			typeof extraPagesPrice === 'number' &&
+			typeof extraPageCount === 'number' &&
+			extraPageCount > 0
+		) {
+			subLabel = (
+				<>
+					{ translate( 'Service: %(productCost)s one-time fee', {
+						args: {
+							productCost: formattedOneTimeFee,
+						},
+					} ) }
+					<br></br>
+					{ translate(
+						'%(numberOfExtraPages)d Extra Page: %(costOfExtraPages)s one-time fee',
+						'%(numberOfExtraPages)d Extra Pages: %(costOfExtraPages)s one-time fee',
+						{
+							args: {
+								numberOfExtraPages: extraPageCount,
+								costOfExtraPages: formatCurrency( extraPagesPrice, currencyCode, {
+									stripZeros: true,
+									isSmallestUnit: true,
+								} ),
+							},
+							count: extraPageCount,
+						}
+					) }
+				</>
+			);
+		}
+	}
+	return subLabel;
+}
+
 function getDummyCartProducts( {
 	selectedPages,
 	currencyCode,
@@ -47,28 +99,40 @@ function getDummyCartProducts( {
 	difmLiteProduct,
 	translate,
 }: DummyCartParams ): CartItem[] {
-	// const extraPageCount = Math.max( 0, selectedPages.length - FREE_PAGES );
-	// const difmPriceDetail = getDIFMTieredPriceDetails(
-	// 	difmLiteProduct as unknown as Product,
-	// 	selectedPages.length
-	// );
 	let displayedCartItems: CartItem[] = [];
 	if ( difmLiteProduct && activePlanScheme ) {
+		let difmLiteItemPrice = difmLiteProduct.cost;
+		const difmPriceDetals = getDIFMTieredPriceDetails(
+			difmLiteProduct,
+			selectedPages.length,
+			currencyCode
+		);
+		if ( difmPriceDetals ) {
+			const { oneTimeFeeNormalUnits, extraPagesPriceNormalUnits } = difmPriceDetals;
+			if ( extraPagesPriceNormalUnits ) {
+				difmLiteItemPrice = oneTimeFeeNormalUnits + extraPagesPriceNormalUnits;
+			}
+		}
 		displayedCartItems = [
 			{
 				productSlug: difmLiteProduct.product_slug,
 				nameOverride: translate( 'Website Design Service' ),
 				productOriginalName: difmLiteProduct.product_name,
-				itemSubTotal: difmLiteProduct.cost,
-				productCost: difmLiteProduct.cost,
-				meta: translate( 'One-time fee' + selectedPages.length ),
+				itemSubTotal: difmLiteItemPrice,
+				productCost: difmLiteItemPrice,
+				subLabel: getDIFMPriceBreakdownSubLabel( {
+					product: difmLiteProduct,
+					noOfPages: selectedPages.length,
+					currencyCode,
+					translate,
+				} ),
 			},
 			{
 				productSlug: activePlanScheme.product_slug,
 				productOriginalName: activePlanScheme.product_name,
 				itemSubTotal: activePlanScheme.cost,
 				productCost: activePlanScheme.cost,
-				meta: translate( 'Plan Subscription: %(planPrice)s per year', {
+				subLabel: translate( 'Plan Subscription: %(planPrice)s per year', {
 					args: {
 						planPrice: formatCurrency( activePlanScheme.cost, currencyCode, { precision: 0 } ),
 					},
@@ -83,11 +147,11 @@ function getDummyCartProducts( {
 function getSiteCartProducts( {
 	responseCart,
 	translate,
-	currencyCode,
+	difmLiteProduct,
 }: {
 	responseCart: ResponseCart;
 	translate: LocalizeProps[ 'translate' ];
-	currencyCode: string;
+	difmLiteProduct: ProductListItem;
 } ): CartItem[] {
 	const cartItems: CartItem[] = responseCart.products.map( ( product ) => {
 		switch ( product.product_slug ) {
@@ -98,50 +162,23 @@ function getSiteCartProducts( {
 					productOriginalName: product.product_name,
 					itemSubTotal: product.cost,
 					productCost: product.cost,
-					meta: translate( 'Plan Subscription: %(planPrice)s per year', {
+					subLabel: translate( 'Plan Subscription: %(planPrice)s per year', {
 						args: { planPrice: product.product_cost_display },
 					} ),
 				};
 			case WPCOM_DIFM_LITE: {
-				const difmTieredPrices = getDIFMTieredPriceDetails(
-					product as unknown as Product,
-					product.quantity ?? 1
-				);
-				let meta: JSX.Element = <>{ translate( 'one-time fee' ) }</>;
-				if ( difmTieredPrices ) {
-					const { extraPageCount, extraPagesPrice } = difmTieredPrices;
-					if ( extraPageCount && extraPageCount > 0 ) {
-						meta = (
-							<>
-								{ translate( 'Service: %(productCost)s one-time fee', {
-									args: {
-										productCost: product.item_original_cost_for_quantity_one_display,
-									},
-								} ) }
-								<br></br>
-								{ translate(
-									'%(numberOfExtraPages)d Extra Page: %(costOfExtraPages)s one-time fee',
-									'%(numberOfExtraPages)d Extra Pages: %(costOfExtraPages)s one-time fee',
-									{
-										args: {
-											numberOfExtraPages: extraPageCount,
-											costOfExtraPages: extraPagesPrice,
-										},
-										count: extraPageCount,
-									}
-								) }
-							</>
-						);
-					}
-				}
-
 				return {
 					productSlug: product.product_slug,
 					nameOverride: translate( 'Website Design Service' ),
 					productOriginalName: product.product_name,
 					itemSubTotal: product.cost,
 					productCost: product.cost,
-					meta,
+					subLabel: getDIFMPriceBreakdownSubLabel( {
+						product: difmLiteProduct,
+						noOfPages: product.quantity,
+						currencyCode: responseCart.currency,
+						translate,
+					} ),
 				};
 			}
 			default:
@@ -151,7 +188,7 @@ function getSiteCartProducts( {
 					productOriginalName: product.product_name,
 					itemSubTotal: product.cost,
 					productCost: product.cost,
-					meta: translate( 'One-time fee' ),
+					subLabel: translate( 'One-time fee' ),
 				};
 		}
 	} );
@@ -252,7 +289,7 @@ export function useCartForDIFM( selectedPages: string[] ): {
 			displayedCartItems = getSiteCartProducts( {
 				responseCart,
 				translate,
-				currencyCode: effectiveCurrencyCode,
+				difmLiteProduct,
 			} );
 		} else {
 			displayedCartItems = getDummyCartProducts( {
