@@ -22,13 +22,13 @@ export function PatternPicker( { onPick }: Props ) {
 	 * Interim index is the index of the element in focus during dragging only.
 	 */
 	const [ interimIndex, setInterimIndex ] = React.useState( 0 );
-	const [ currentRef, setRef ] = React.useState< HTMLDivElement >();
+	const [ containerRef, setRef ] = React.useState< HTMLDivElement >();
 	const { __ } = useI18n();
 	const { data: patterns } = useQueryPatterns( PATTERN_SOURCE_SITE_SLUG );
 	const [ offsetX, setOffsetX ] = React.useState( 0 );
 	const [ dragStartX, setDragStartX ] = React.useState( 0 );
+	const [ touchOffset, setTouchOffset ] = React.useState( 0 );
 	const [ scrollOffset, setScrollOffset ] = React.useState( 0 );
-	const [ scrollTicks, setScrollTicks ] = React.useState( 0 );
 	const [ windowSizeChanges, setWindowSizeChanges ] = React.useState( 0 );
 
 	// to recalculate after window resize
@@ -41,32 +41,27 @@ export function PatternPicker( { onPick }: Props ) {
 	} );
 
 	useEffect( () => {
-		if ( currentRef ) {
-			const itemWidth = width( currentRef?.firstChild as HTMLDivElement );
+		if ( containerRef ) {
+			const itemWidth = width( containerRef?.firstChild as HTMLDivElement );
 			const itemWidthWithGap = itemWidth + 20;
 			const offsetX = itemWidth / 2 + itemWidthWithGap * index;
 			setOffsetX( -offsetX );
+			setScrollOffset( itemWidthWithGap * index );
 		}
-	}, [ index, currentRef, windowSizeChanges ] );
+	}, [ index, containerRef, windowSizeChanges ] );
 
 	if ( ! patterns ) {
 		return null;
 	}
 
 	const onWheel = ( event: React.WheelEvent< HTMLDivElement > ) => {
-		const { deltaY } = event;
-		// consider every 20 ticks as a single scroll
-		if ( scrollTicks > 20 && Math.abs( deltaY ) > 0 ) {
-			if ( deltaY < 1 ) {
-				if ( index > 0 ) {
-					setIndex( index - 1 );
-				}
-			} else if ( deltaY > 1 && index < patterns.length - 1 ) {
-				setIndex( index + 1 );
-			}
-			setScrollTicks( 0 );
-		}
-		setScrollTicks( ( ticks ) => ticks + Math.abs( deltaY ) );
+		const { deltaX } = event;
+		const newTicks = scrollOffset + deltaX;
+		const itemWidth = width( event.currentTarget.firstChild as HTMLDivElement );
+		const itemWidthWithGap = itemWidth + 20;
+		const newIndex = Math.round( newTicks / itemWidthWithGap );
+		setIndex( Math.min( patterns.length - 1, Math.max( 0, newIndex ) ) );
+		setScrollOffset( newTicks );
 	};
 
 	const onTouchEnd = ( event: React.TouchEvent< HTMLDivElement > ) => {
@@ -78,12 +73,12 @@ export function PatternPicker( { onPick }: Props ) {
 		const newIndex = index + indicesTraveled;
 		setIndex( Math.min( patterns.length - 1, Math.max( 0, newIndex ) ) );
 		setInterimIndex( -1 );
-		setScrollOffset( 0 );
+		setTouchOffset( 0 );
 	};
 
 	const onTouchMove = ( event: React.TouchEvent< HTMLDivElement > ) => {
 		const currentX = event.changedTouches[ 0 ].clientX;
-		setScrollOffset( currentX - dragStartX );
+		setTouchOffset( currentX - dragStartX );
 		const traveledX = currentX - dragStartX;
 		const itemWidth = width( event.currentTarget.firstChild as HTMLDivElement );
 		const itemWidthWithGap = itemWidth + 20;
@@ -95,9 +90,9 @@ export function PatternPicker( { onPick }: Props ) {
 	return (
 		<div className="pattern-picker">
 			<div
-				ref={ ( ref ) => ref && ref !== currentRef && setRef( ref ) }
+				ref={ ( ref ) => ref && ref !== containerRef && setRef( ref ) }
 				className={ classNames( 'pattern-picker__carousel', {
-					'is-dragging': scrollOffset !== 0,
+					'is-dragging': touchOffset !== 0,
 				} ) }
 				onTouchStart={ ( event ) => setDragStartX( event.touches[ 0 ].clientX ) }
 				onScroll={ onWheel }
@@ -113,7 +108,7 @@ export function PatternPicker( { onPick }: Props ) {
 							setIndex( i );
 						} }
 						pattern={ pattern }
-						style={ { transform: `translateX(${ offsetX + scrollOffset }px)` } }
+						style={ { transform: `translateX(${ offsetX + touchOffset }px)` } }
 					/>
 				) ) }
 			</div>
