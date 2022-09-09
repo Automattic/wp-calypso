@@ -61,7 +61,10 @@ export function PatternPicker( { onPick }: Props ) {
 		const itemWidthWithGap = itemWidth + 20;
 		const newIndex = Math.round( newTicks / itemWidthWithGap );
 		setIndex( Math.min( patterns.length - 1, Math.max( 0, newIndex ) ) );
-		setScrollOffset( newTicks );
+		// to avoid buffering scrolling ticks beyond the limits, forcing the user to unscroll their way back
+		setScrollOffset(
+			Math.min( ( patterns.length - 1 ) * itemWidthWithGap, Math.max( 0, newTicks ) )
+		);
 	};
 
 	const onTouchEnd = ( event: React.TouchEvent< HTMLDivElement > ) => {
