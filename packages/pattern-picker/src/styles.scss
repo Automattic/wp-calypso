@@ -5,22 +5,6 @@
 $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "purple", "yellow",
 	"biba", "chloe-currie", "emily", "luis-carvelleda", "mesh-gradient", "paul-nyberg", "tengfai";
 
-.pattern-picker__carousel {
-	display: flex;
-	gap: 20px;
-	box-sizing: border-box;
-	padding-left: 50%;
-	padding-right: 50%;
-	overflow: hidden;
-
-	// transform transitions during dragging make it laggy
-	&.is-dragging {
-		.pattern-picker__item {
-			transition: opacity 0.3s ease-in-out;
-		}
-	}
-}
-
 .pattern-picker__item {
 	flex: 1;
 
@@ -65,6 +49,22 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 
 		@media ( max-height: 375px ) {
 			margin-top: 16px;
+		}
+	}
+}
+
+.pattern-picker__carousel {
+	display: flex;
+	gap: 20px;
+	box-sizing: border-box;
+	padding-left: 50%;
+	padding-right: 50%;
+	overflow: hidden;
+
+	// transform transitions during dragging make it laggy
+	&.is-dragging {
+		.pattern-picker__item {
+			transition: opacity 0.3s ease-in-out;
 		}
 	}
 }
