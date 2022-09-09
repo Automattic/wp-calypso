@@ -44,6 +44,7 @@ import './style.scss';
 export type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
 	comparisonContext: string;
+	hideNavigation?: boolean;
 	isDomainInCart?: boolean;
 	selectedDomainName: string;
 	selectedEmailProviderSlug?: string;
@@ -53,6 +54,7 @@ export type EmailProvidersStackedComparisonProps = {
 
 const EmailProvidersStackedComparison = ( {
 	comparisonContext,
+	hideNavigation = false,
 	isDomainInCart = false,
 	selectedDomainName,
 	selectedEmailProviderSlug,
@@ -218,14 +220,16 @@ const EmailProvidersStackedComparison = ( {
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			<EmailUpsellNavigation
-				backUrl={
-					isDomainInCart
-						? domainAddNew( selectedSite?.slug )
-						: emailManagement( selectedSite?.slug, null )
-				}
-				skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
-			/>
+			{ ! hideNavigation && (
+				<EmailUpsellNavigation
+					backUrl={
+						isDomainInCart
+							? domainAddNew( selectedSite?.slug )
+							: emailManagement( selectedSite?.slug, null )
+					}
+					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
+				/>
+			) }
 
 			<h1 className="email-providers-stacked-comparison__header">
 				{ isDomainInCart

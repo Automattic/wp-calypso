@@ -170,6 +170,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		return (
 			<EmailProvidersStackedComparisonPage
 				comparisonContext="email-home-single-domain"
+				hideNavigation
 				selectedDomainName={ domainsWithNoEmail[ 0 ].name }
 				selectedEmailProviderSlug={ selectedEmailProviderSlug }
 				selectedIntervalLength={ selectedIntervalLength }
