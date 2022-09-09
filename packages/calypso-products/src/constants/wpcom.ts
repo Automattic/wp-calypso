@@ -1,3 +1,5 @@
+import { TITAN_MAIL_SLUGS } from './titan';
+
 export const GROUP_WPCOM = 'GROUP_WPCOM';
 
 // Products
@@ -9,7 +11,7 @@ export const PRODUCT_WPCOM_CUSTOM_DESIGN = 'custom-design';
 
 export const WPCOM_SEARCH_PRODUCTS = <const>[ PRODUCT_WPCOM_SEARCH, PRODUCT_WPCOM_SEARCH_MONTHLY ];
 
-export const WPCOM_PRODUCTS = <const>[ ...WPCOM_SEARCH_PRODUCTS ];
+export const WPCOM_PRODUCTS = <const>[ ...WPCOM_SEARCH_PRODUCTS, ...TITAN_MAIL_SLUGS ];
 
 // Plans
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';

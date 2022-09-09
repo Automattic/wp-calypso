@@ -1,6 +1,8 @@
 // Adapts route paths to also include wildcard
 // subroutes under the root level section.
-export function pathToRegExp( path ) {
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function pathToRegExp( path: any ) {
 	// Prevents root level double dash urls from being validated.
 	if ( path === '/' ) {
 		return path;
