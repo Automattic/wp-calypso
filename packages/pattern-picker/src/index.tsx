@@ -18,11 +18,16 @@ type Props = { onPick: ( pattern: Pattern ) => void };
 
 export function PatternPicker( { onPick }: Props ) {
 	const [ index, setIndex ] = React.useState( 0 );
+	/**
+	 * Interim index is the index of the element in focus during dragging only.
+	 */
+	const [ interimIndex, setInterimIndex ] = React.useState( 0 );
 	const [ currentRef, setRef ] = React.useState< HTMLDivElement >();
 	const { __ } = useI18n();
 	const { data: patterns } = useQueryPatterns( PATTERN_SOURCE_SITE_SLUG );
 	const [ offsetX, setOffsetX ] = React.useState( 0 );
 	const [ dragStartX, setDragStartX ] = React.useState( 0 );
+	const [ scrollOffset, setScrollOffset ] = React.useState( 0 );
 	const [ scrollTicks, setScrollTicks ] = React.useState( 0 );
 	const [ windowSizeChanges, setWindowSizeChanges ] = React.useState( 0 );
 
@@ -50,55 +55,65 @@ export function PatternPicker( { onPick }: Props ) {
 
 	const onWheel = ( event: React.WheelEvent< HTMLDivElement > ) => {
 		const { deltaY } = event;
-		// consider every 4 ticks as a single scroll
-		if ( scrollTicks % 4 === 0 && Math.abs( deltaY ) > 2 ) {
-			if ( event.deltaY < 1 ) {
+		// consider every 20 ticks as a single scroll
+		if ( scrollTicks > 20 && Math.abs( deltaY ) > 0 ) {
+			if ( deltaY < 1 ) {
 				if ( index > 0 ) {
 					setIndex( index - 1 );
 				}
-			} else if ( event.deltaY > 1 && index < patterns.length - 1 ) {
-				setIndex( ( index + 1 ) % 400 );
+			} else if ( deltaY > 1 && index < patterns.length - 1 ) {
+				setIndex( index + 1 );
 			}
+			setScrollTicks( 0 );
 		}
-		setScrollTicks( ( ticks ) => ticks + 1 );
+		setScrollTicks( ( ticks ) => ticks + Math.abs( deltaY ) );
 	};
 
-	const onSwipe = ( event: React.TouchEvent< HTMLDivElement > ) => {
+	const onTouchEnd = ( event: React.TouchEvent< HTMLDivElement > ) => {
 		const currentX = event.changedTouches[ 0 ].clientX;
 		const traveledX = currentX - dragStartX;
-		// detect swipes
-		if ( Math.abs( traveledX ) > 50 ) {
-			if ( traveledX < 0 ) {
-				if ( index < patterns.length - 1 ) {
-					setIndex( index + 1 );
-				}
-			} else if ( index > 0 ) {
-				setIndex( index - 1 );
-			}
-		}
+		const itemWidth = width( event.currentTarget.firstChild as HTMLDivElement );
+		const itemWidthWithGap = itemWidth + 20;
+		const indicesTraveled = -Math.round( traveledX / itemWidthWithGap );
+		const newIndex = index + indicesTraveled;
+		setIndex( Math.min( patterns.length - 1, Math.max( 0, newIndex ) ) );
+		setInterimIndex( -1 );
+		setScrollOffset( 0 );
+	};
+
+	const onTouchMove = ( event: React.TouchEvent< HTMLDivElement > ) => {
+		const currentX = event.changedTouches[ 0 ].clientX;
+		setScrollOffset( currentX - dragStartX );
+		const traveledX = currentX - dragStartX;
+		const itemWidth = width( event.currentTarget.firstChild as HTMLDivElement );
+		const itemWidthWithGap = itemWidth + 20;
+		const indicesTraveled = -Math.round( traveledX / itemWidthWithGap );
+		const newIndex = index + indicesTraveled;
+		setInterimIndex( Math.min( patterns.length - 1, Math.max( 0, newIndex ) ) );
 	};
 
 	return (
-		<div
-			className="pattern-picker"
-			onTouchStart={ ( event ) => setDragStartX( event.touches[ 0 ].clientX ) }
-			onScroll={ onWheel }
-			onTouchEnd={ onSwipe }
-			onWheel={ onWheel }
-		>
+		<div className="pattern-picker">
 			<div
 				ref={ ( ref ) => ref && ref !== currentRef && setRef( ref ) }
-				className="pattern-picker__carousel"
+				className={ classNames( 'pattern-picker__carousel', {
+					'is-dragging': scrollOffset !== 0,
+				} ) }
+				onTouchStart={ ( event ) => setDragStartX( event.touches[ 0 ].clientX ) }
+				onScroll={ onWheel }
+				onTouchEnd={ onTouchEnd }
+				onTouchMove={ onTouchMove }
+				onWheel={ onWheel }
 			>
 				{ patterns.map( ( pattern, i ) => (
 					<Item
-						className={ classNames( { 'is-active': index === i } ) }
+						className={ classNames( { 'is-active': index === i || interimIndex === i } ) }
 						key={ pattern.ID }
 						onClick={ () => {
 							setIndex( i );
 						} }
 						pattern={ pattern }
-						style={ { transform: `translateX(${ offsetX }px)` } }
+						style={ { transform: `translateX(${ offsetX + scrollOffset }px)` } }
 					/>
 				) ) }
 			</div>
