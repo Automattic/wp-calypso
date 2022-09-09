@@ -37,6 +37,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow, data } )
 					showAlreadyOwnADomain={ false }
 					onAddDomain={ onAddDomain }
 					onSkip={ onSkip }
+					promoTlds={ [ 'video', 'studio', 'productions', 'com' ] }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
