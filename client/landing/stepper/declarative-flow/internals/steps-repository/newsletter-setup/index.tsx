@@ -94,6 +94,12 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setTagline( site.description );
 	}, [ site ] );
 
+	useEffect( () => {
+		if ( siteTitle.trim().length && invalidSiteTitle ) {
+			setInvalidSiteTitle( false );
+		}
+	}, [ siteTitle, invalidSiteTitle ] );
+
 	const imageFileToBase64 = ( file: Blob ) => {
 		const reader = new FileReader();
 		reader.readAsDataURL( file );

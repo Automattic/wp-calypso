@@ -54,6 +54,12 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 		setTagline( site.description );
 	}, [ site ] );
 
+	useEffect( () => {
+		if ( siteTitle.trim().length && invalidSiteTitle ) {
+			setInvalidSiteTitle( false );
+		}
+	}, [ siteTitle, invalidSiteTitle ] );
+
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
 		switch ( event.currentTarget.name ) {
 			case 'link-in-bio-input-name':
