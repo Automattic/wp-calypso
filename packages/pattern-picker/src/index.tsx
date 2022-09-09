@@ -100,7 +100,6 @@ export function PatternPicker( { onPick }: Props ) {
 					'is-dragging': touchOffset !== 0,
 				} ) }
 				onTouchStart={ ( event ) => setDragStartX( event.touches[ 0 ].clientX ) }
-				onScroll={ onWheel }
 				onTouchEnd={ onTouchEnd }
 				onTouchMove={ onTouchMove }
 				onWheel={ onWheel }
