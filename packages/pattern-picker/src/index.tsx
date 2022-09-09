@@ -14,6 +14,10 @@ function width( el: HTMLDivElement | null ) {
 	return Math.floor( el?.getBoundingClientRect().width ?? 1 );
 }
 
+function within( value: number, min: number, max: number ) {
+	return Math.min( Math.max( value, min ), max );
+}
+
 type Props = { onPick: ( pattern: Pattern ) => void };
 
 export function PatternPicker( { onPick }: Props ) {
@@ -60,11 +64,9 @@ export function PatternPicker( { onPick }: Props ) {
 		const itemWidth = width( event.currentTarget.firstChild as HTMLDivElement );
 		const itemWidthWithGap = itemWidth + 20;
 		const newIndex = Math.round( newTicks / itemWidthWithGap );
-		setIndex( Math.min( patterns.length - 1, Math.max( 0, newIndex ) ) );
+		setIndex( within( newIndex, 0, patterns.length - 1 ) );
 		// to avoid buffering scrolling ticks beyond the limits, forcing the user to unscroll their way back
-		setScrollOffset(
-			Math.min( ( patterns.length - 1 ) * itemWidthWithGap, Math.max( 0, newTicks ) )
-		);
+		setScrollOffset( within( newTicks, 0, ( patterns.length - 1 ) * itemWidthWithGap ) );
 	};
 
 	const onTouchEnd = ( event: React.TouchEvent< HTMLDivElement > ) => {
@@ -74,7 +76,7 @@ export function PatternPicker( { onPick }: Props ) {
 		const itemWidthWithGap = itemWidth + 20;
 		const indicesTraveled = -Math.round( traveledX / itemWidthWithGap );
 		const newIndex = index + indicesTraveled;
-		setIndex( Math.min( patterns.length - 1, Math.max( 0, newIndex ) ) );
+		setIndex( within( newIndex, 0, patterns.length - 1 ) );
 		setInterimIndex( -1 );
 		setTouchOffset( 0 );
 	};
@@ -87,7 +89,7 @@ export function PatternPicker( { onPick }: Props ) {
 		const itemWidthWithGap = itemWidth + 20;
 		const indicesTraveled = -Math.round( traveledX / itemWidthWithGap );
 		const newIndex = index + indicesTraveled;
-		setInterimIndex( Math.min( patterns.length - 1, Math.max( 0, newIndex ) ) );
+		setInterimIndex( within( newIndex, 0, patterns.length - 1 ) );
 	};
 
 	return (
