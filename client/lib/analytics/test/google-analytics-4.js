@@ -10,7 +10,6 @@ jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 describe( 'Google Analytics 4 implementation', () => {
 	beforeEach( () => {
 		jest.spyOn( window, 'gtag' ).mockImplementation( () => [] );
-		// window.gtag = jest.fn( () => [] );
 	} );
 
 	afterEach( () => {
@@ -45,6 +44,12 @@ describe( 'Google Analytics 4 implementation', () => {
 			expect( window.gtag ).toHaveBeenCalledWith(
 				'config',
 				TRACKING_IDS.wpcomGoogleGA4Gtag,
+				params
+			);
+
+			expect( window.gtag ).not.toHaveBeenCalledWith(
+				'config',
+				TRACKING_IDS.jetpackGoogleGA4Gtag,
 				params
 			);
 		} );
