@@ -1,19 +1,19 @@
-@import '@wordpress/edit-post/build-style/style';
+@import "@wordpress/edit-post/build-style/style";
 
 .is-group-gutenberg.layout {
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 }
 
 .is-group-gutenberg::before {
-	content: '';
+	content: "";
 	position: fixed;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	pointer-events: none;
-	z-index: z-index( 'root', '.is-group-gutenberg::before' );
+	z-index: z-index("root", ".is-group-gutenberg::before");
 }
 
 // Placeholder styles
@@ -84,10 +84,10 @@ html.is-iframe {
 }
 
 .main.calypsoify.is-iframe {
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	margin: 0;
 	padding: 0;
-	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
+	z-index: z-index("root", ".main.calypsoify.is-iframe");
 	-webkit-overflow-scrolling: touch;
 	min-height: 0;
 	position: fixed;

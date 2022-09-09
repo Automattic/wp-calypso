@@ -1,5 +1,5 @@
-@use '../variables';
-@import '@automattic/color-studio/dist/color-variables';
+@use "../variables";
+@import "@automattic/color-studio/dist/color-variables";
 
 .plugins-browser-item {
 	background-color: $studio-white;
@@ -35,7 +35,7 @@
 	.plugins-browser-item__last-updated {
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		margin-left: calc( 60px + 16px ); // icon width + margin
+		margin-left: calc(60px + 16px); // icon width + margin
 	}
 
 	.plugins-browser-item__description {
@@ -47,15 +47,15 @@
 
 	&.compact {
 		.plugins-browser-item__description {
-			margin: 5px 0 0 calc( 60px + 16px ); // icon width + margin
+			margin: 5px 0 0 calc(60px + 16px); // icon width + margin
 		}
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
-		width: calc( 50% - 10px ); // 2 column grid with 20px gutter
+	@include breakpoint-deprecated( ">960px" ) {
+		width: calc(50% - 10px); // 2 column grid with 20px gutter
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		width: 100%;
 	}
 
@@ -67,7 +67,7 @@
 				color: $studio-blue-40;
 			}
 
-			*:not( .plugins-browser-item__incompatible ) {
+			*:not(.plugins-browser-item__incompatible) {
 				opacity: 0.6;
 			}
 		}
@@ -84,12 +84,12 @@
 	height: 100%;
 	padding: 30px;
 	box-sizing: border-box;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var(--studio-gray-5);
 	border-radius: 5px; /* stylelint-disable-line scales/radii */
 
 	&:focus,
 	&:hover {
-		border-color: var( --studio-gray-30 );
+		border-color: var(--studio-gray-30);
 	}
 }
 
@@ -100,20 +100,20 @@
 
 	.is-placeholder & {
 		color: transparent;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
 .plugins-browser-item__title {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-weight: 600;
 	font-size: $font-body;
 	margin-top: -3px;
 }
 
 .plugins-browser-item__author {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 }
 
@@ -124,14 +124,14 @@
 .plugins-browser-item__last-updated,
 .plugins-browser-item__rating-value,
 .plugins-browser-item__active-installs {
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 	font-size: $font-body-extra-small;
 }
 
 .plugins-browser-item__untested-notice {
 	display: flex;
-	color: var( --studio-gray-60 );
-	fill: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
+	fill: var(--studio-gray-60);
 	font-size: $font-body-small;
 	margin-bottom: 16px;
 
@@ -165,15 +165,15 @@
 	}
 
 	.badge--success {
-		color: var( --studio-celadon-80 );
+		color: var(--studio-celadon-80);
 		font-weight: 600;
 		background-color: #abe8bc; // TODO: add this color somewhere
 	}
 
 	.badge--info {
-		color: var( --color-neutral-80 );
+		color: var(--color-neutral-80);
 		font-weight: 600;
-		background-color: var( --color-neutral-10 );
+		background-color: var(--color-neutral-10);
 	}
 }
 
@@ -194,13 +194,13 @@
 	}
 
 	.gridicon.checkmark--active {
-		color: var( --studio-green-30 );
-		border: 2px solid var( --studio-green-30 );
+		color: var(--studio-green-30);
+		border: 2px solid var(--studio-green-30);
 	}
 
 	.gridicon.checkmark--inactive {
-		color: var( --studio-gray-60 );
-		border: 2px solid var( --studio-gray-60 );
+		color: var(--studio-gray-60);
+		border: 2px solid var(--studio-gray-60);
 	}
 }
 
@@ -212,7 +212,7 @@
 
 .plugins-browser-item__period,
 .plugins-browser-item__requires-plan-upgrade {
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 	font-size: $font-body-extra-small;
 }
 

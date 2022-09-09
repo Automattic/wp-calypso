@@ -4,11 +4,11 @@
 }
 
 .main.customize.is-iframe {
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	margin: 0;
 	overflow-y: scroll;
 	padding: 0;
-	z-index: z-index( 'root', '.main.customize.is-iframe' );
+	z-index: z-index("root", ".main.customize.is-iframe");
 	-webkit-overflow-scrolling: touch;
 	min-height: 0;
 	position: fixed;

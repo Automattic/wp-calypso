@@ -13,25 +13,25 @@
 	}
 
 	.onboarding-title {
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		font-size: 2rem;
 		line-height: 1em;
 		margin-bottom: 1.5rem;
 	}
 
 	.onboarding-subtitle {
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 		font-size: 0.875rem;
 		line-height: 1.5rem;
 
 		span {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 		}
 	}
 
 	.progress-bar {
 		margin-bottom: 1.5em;
-		background: var( --studio-gray-5 );
+		background: var(--studio-gray-5);
 		border-radius: 0;
 
 		.progress-bar__progress {

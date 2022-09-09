@@ -1,12 +1,12 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .domain-transfer-recommendation {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	background-color: var( --studio-gray-0 );
+	background-color: var(--studio-gray-0);
 	box-shadow: none;
 
 	@include break-mobile {
@@ -30,7 +30,7 @@
 
 	&__message {
 		font-size: $font-body-small;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		max-width: 660px;
 	}
 

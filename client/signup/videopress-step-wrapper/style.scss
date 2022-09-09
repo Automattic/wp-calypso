@@ -1,14 +1,14 @@
-@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap' );
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import 'calypso/assets/stylesheets/_videopress-extends.scss';
-@import '@automattic/typography/styles/variables';
+@import url( "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap" );
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/_videopress-extends.scss";
+@import "@automattic/typography/styles/variables";
 
 :root {
-	--videopress-color-text: #ffffff;
-	--videopress-color-text-light: #ffffff;
+	--videopress-color-text: #fff;
+	--videopress-color-text-light: #fff;
 
-	--videopress-color-white: #ffffff;
+	--videopress-color-white: #fff;
 
 	--videopress-color-link: #fffc1b;
 	--videopress-color-link-dark: #004cbf;
@@ -28,10 +28,20 @@
 	--videopress-color-background-dark: #121212;
 	--videopress-color-hover-dark: #061925;
 	--videopress-color-separator-light: #4d5860;
-	--videopress-color-background-button: linear-gradient( 116.82deg, #fffc1b 0%, #ffe61c 0.01%, #ffc700 100% );
+	--videopress-color-background-button: linear-gradient(116.82deg, #fffc1b 0%, #ffe61c 0.01%, #ffc700 100%);
 
-	--videopress-font-inter: 'Inter', -apple-system, system-ui, blinkmacsystemfont, 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	--videopress-font-inter:
+		"Inter",
+		-apple-system,
+		system-ui,
+		blinkmacsystemfont,
+		"Segoe UI",
+		"Roboto",
+		"Oxygen-Sans",
+		"Ubuntu",
+		"Cantarell",
+		"Helvetica Neue",
+		sans-serif;
 
 	--videopress-font-size-form-xxs: 14px;
 	--videopress-font-size-form-xs: 15px;
@@ -45,7 +55,7 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
-	font-family: var( --videopress-font-inter );
+	font-family: var(--videopress-font-inter);
 }
 
 .videopress-step-wrapper__top {
@@ -54,8 +64,8 @@
 	justify-content: center;
 	height: 70px;
 	min-height: 70px;
-	color: var( --videopress-color-background-dark );
-	background: var( --videopress-color-text );
+	color: var(--videopress-color-background-dark);
+	background: var(--videopress-color-text);
 }
 
 .videopress-step-wrapper__middle {
@@ -66,11 +76,11 @@
 		flex: 1;
 	}
 
-	background: var( --videopress-color-background-dark );
-	color: var( --videopress-color-text );
+	background: var(--videopress-color-background-dark);
+	color: var(--videopress-color-text);
 	box-sizing: border-box;
 	margin: 0 auto;
-	height: calc( 100vh - 70px );
+	height: calc(100vh - 70px);
 	line-height: 1.8;
 	padding: 96px 1.5em 24px;
 
@@ -79,24 +89,24 @@
 	}
 
 	& .card {
-		background: var( --videopress-color-background-dark );
-		color: var( --videopress-color-text );
+		background: var(--videopress-color-background-dark);
+		color: var(--videopress-color-text);
 		border: none;
 		box-shadow: none;
 	}
 
 	input {
-		font-family: var( --vidoepress-font-inter );
-	background: var( --videopress-color-background-dark );
-	color: var( --videopress-color-text );
+		font-family: var(--vidoepress-font-inter);
+		background: var(--videopress-color-background-dark);
+		color: var(--videopress-color-text);
 	}
 
 	a {
-		color: var( --videopress-color-link );
+		color: var(--videopress-color-link);
 		text-decoration: none;
 
 		&:hover {
-			color: var( --videopress-color-link );
+			color: var(--videopress-color-link);
 		}
 	}
 
@@ -105,9 +115,9 @@
 	}
 
 	& .signup-form__social-buttons button {
-		background: rgba( 255, 255, 255, 0.2 );
+		background: rgba(255, 255, 255, 0.2);
 		border-radius: 2px;
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 	}
 }
 
@@ -115,14 +125,14 @@
 	display: flex;
 	justify-content: center;
 	margin-bottom: 18px;
-	color: var( --videopress-color-background-dark );
-	background: var( --videopress-color-text );
+	color: var(--videopress-color-background-dark);
+	background: var(--videopress-color-text);
 }
 
 .videopress-step-wrapper__header-text {
 	margin-bottom: 0.5em;
-	background: var( --videopress-color-background-dark );
-	color: var( --videopress-color-text );
+	background: var(--videopress-color-background-dark);
+	color: var(--videopress-color-text);
 }
 
 .videopress-step-wrapper__header-logo {
@@ -131,10 +141,10 @@
 	justify-content: center;
 
 	svg path {
-		fill: var( --videopress-color-background-dark );
+		fill: var(--videopress-color-background-dark);
 	}
 	span {
-	    @extend .wp-brand-font;
+		@extend .wp-brand-font;
 		margin-left: 4px;
 		font-weight: 600;
 	}
@@ -148,7 +158,7 @@
 }
 
 .videopress-step-wrapper__header-step-indicator {
-	color: var( --videopress-color-background-dark );
+	color: var(--videopress-color-background-dark);
 	font-weight: 500;
 }
 
@@ -158,7 +168,7 @@
 
 .videopress-step-wrapper button.is-primary {
 	@extend %videopress-form-button;
-	background: var( --videopress-color-background-button );
+	background: var(--videopress-color-background-button);
 	color: #070707;
 	border-radius: 0;
 
@@ -168,14 +178,14 @@
 }
 
 .videopress-step-wrapper__header-text {
-	font-size: var( --videopress-font-size-form-xxl );
+	font-size: var(--videopress-font-size-form-xxl);
 	font-weight: 900; /* stylelint-disable-line scales/font-weights */
 	text-align: center;
 	line-height: 1.3;
 }
 
 .videopress-step-wrapper__subheader-text {
-	font-size: var( --videopress-font-size-form-xxs );
+	font-size: var(--videopress-font-size-form-xxs);
 	text-align: center;
 	margin-bottom: 32px;
 }
@@ -204,7 +214,7 @@
 }
 
 .videopress-step-wrapper__footer-text {
-	font-size: var( --videopress-font-size-form-xxs );
+	font-size: var(--videopress-font-size-form-xxs);
 }
 
 /* Step-specific overrides */

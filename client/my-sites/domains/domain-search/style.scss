@@ -1,4 +1,4 @@
-@import '@automattic/onboarding/styles/mixins';
+@import "@automattic/onboarding/styles/mixins";
 // domain search
 
 .domain-search__content {
@@ -10,7 +10,7 @@
 		&.is-link {
 			@include onboarding-medium-text;
 			text-decoration: none;
-			color: var( --studio-gray-50 );
+			color: var(--studio-gray-50);
 		}
 	}
 }
@@ -21,11 +21,11 @@
 }
 
 .domain-search-page-wrapper h3 {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body;
 	word-wrap: break-word;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: 17px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	}
 }

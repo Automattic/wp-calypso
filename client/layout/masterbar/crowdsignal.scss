@@ -1,35 +1,35 @@
 .crowdsignal {
 	// Crowdsignal color palette
 
-	--color-crowdsignal: var( --studio-wordpress-blue-90 );
+	--color-crowdsignal: var(--studio-wordpress-blue-90);
 
-	--color-primary: var( --studio-wordpress-blue-90 );
-	--color-primary-dark: var( --studio-wordpress-blue-100 );
-	--color-accent: var( --studio-pink-50 );
-	--color-accent-dark: var( --studio-pink-70 );
+	--color-primary: var(--studio-wordpress-blue-90);
+	--color-primary-dark: var(--studio-wordpress-blue-100);
+	--color-accent: var(--studio-pink-50);
+	--color-accent-dark: var(--studio-pink-70);
 
-	--color-border: var( --studio-gray-5 );
-	--color-surface: var( --studio-white );
+	--color-border: var(--studio-gray-5);
+	--color-surface: var(--studio-white);
 
-	--color-text: var( --studio-gray-100 );
-	--color-text-subtle: var( --studio-gray-50 );
-	--color-text-inverted: var( --studio-white );
+	--color-text: var(--studio-gray-100);
+	--color-text-subtle: var(--studio-gray-50);
+	--color-text-inverted: var(--studio-white);
 	--color-link: inherit;
 }
 
 .masterbar.masterbar__crowdsignal {
-	background-color: var( --color-crowdsignal );
+	background-color: var(--color-crowdsignal);
 	border: 0;
 	box-sizing: border-box;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	height: 64px;
 	padding: 8px 20px;
 	position: absolute;
-		left: 0;
-		right: 0;
-		top: 0;
+	left: 0;
+	right: 0;
+	top: 0;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		height: 88px;
 		padding: 20px 25px;
 	}
@@ -71,7 +71,7 @@
 	text-transform: uppercase;
 	width: 100%;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-body-extra-small;
 	}
 }
@@ -79,7 +79,7 @@
 .masterbar__crowdsignal-wide-screen-only {
 	display: none;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: inline;
 	}
 }
@@ -91,5 +91,5 @@
 }
 
 .masterbar__crowdsignal-wordpress-logo {
-	fill: var( --color-text-inverted );
+	fill: var(--color-text-inverted);
 }

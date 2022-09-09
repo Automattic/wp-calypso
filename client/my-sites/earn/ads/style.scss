@@ -22,7 +22,7 @@
 
 .ads__earnings-breakdown-list {
 	margin: 0;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 }
 
 .ads__earnings-breakdown-item {
@@ -31,15 +31,15 @@
 	padding: 5px 0 10px;
 	list-style-type: none;
 	text-align: center;
-	border-left: 1px solid var( --color-neutral-0 );
+	border-left: 1px solid var(--color-neutral-0);
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: auto;
 		float: none;
 		padding: 10px 24px;
 		text-align: left;
 		border: 0;
-		border-top: 1px solid var( --color-neutral-0 );
+		border-top: 1px solid var(--color-neutral-0);
 	}
 
 	&:first-child {
@@ -48,13 +48,13 @@
 }
 
 .ads__earnings-breakdown-label {
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 	font-size: $font-body-extra-small;
 	letter-spacing: 0.1em;
 	line-height: 1.6;
 	text-transform: uppercase;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body-small;
 		line-height: 1.8;
 	}
@@ -65,14 +65,15 @@
 	display: block;
 	font-size: $font-title-medium;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: auto;
 		float: right;
 		font-size: $font-body;
 	}
 }
 
-.payments_history, .earnings_history {
+.payments_history,
+.earnings_history {
 	padding: 0;
 
 	ul.module-header-actions .toggle-info {
@@ -87,7 +88,7 @@
 	}
 
 	table {
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			overflow: scroll;
 			white-space: nowrap;
 			max-width: fit-content;
@@ -96,7 +97,7 @@
 	}
 
 	tbody tr:hover {
-		background-color: var( --color-neutral-5 );
+		background-color: var(--color-neutral-5);
 	}
 }
 
@@ -113,9 +114,10 @@
 	text-align: left;
 }
 
-.ads__payments-history-header, .ads__earnings-history-header {
-	color: var( --color-neutral-light );
-	border: 1px solid var( --color-neutral-0 );
+.ads__payments-history-header,
+.ads__earnings-history-header {
+	color: var(--color-neutral-light);
+	border: 1px solid var(--color-neutral-0);
 	border-left: none;
 	border-right: none;
 	font-size: $font-body-extra-small;
@@ -124,16 +126,17 @@
 	text-transform: uppercase;
 	text-align: center;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding: 0 15px;
 	}
 }
 
-.ads__payments-history-value, .ads__earnings-history-value {
+.ads__payments-history-value,
+.ads__earnings-history-value {
 	line-height: 40px;
 	text-align: center;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding: 0 15px;
 		font-size: $font-body-extra-small;
 
@@ -151,7 +154,7 @@
 	text-transform: uppercase;
 }
 
-@include breakpoint-deprecated( '<480px' ) {
+@include breakpoint-deprecated( "<480px" ) {
 	.ads__settings-state {
 		max-width: 75%;
 	}
@@ -180,7 +183,7 @@
 }
 
 .ads__activate-description {
-	border-top: 1px solid var( --color-border-subtle );
+	border-top: 1px solid var(--color-border-subtle);
 	padding: 24px;
 }
 

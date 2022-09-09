@@ -1,7 +1,7 @@
-@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap' );
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import 'calypso/assets/stylesheets/_p2-extends.scss';
+@import url( "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap" );
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/_p2-extends.scss";
 
 .p2-step-wrapper {
 	box-sizing: border-box;
@@ -10,7 +10,7 @@
 	display: flex;
 	flex-direction: column;
 	padding: 24px 1.5em 0;
-	font-family: var( --p2-font-inter );
+	font-family: var(--p2-font-inter);
 	line-height: 1.8;
 
 	@include break-mobile {
@@ -27,7 +27,7 @@
 	}
 
 	input {
-		font-family: var( --p2-font-inter );
+		font-family: var(--p2-font-inter);
 	}
 
 	a {
@@ -50,7 +50,7 @@
 }
 
 .p2-step-wrapper__header-text {
-	font-size: var( --p2-font-size-form-s );
+	font-size: var(--p2-font-size-form-s);
 }
 
 .p2-step-wrapper__header-logo {
@@ -76,7 +76,7 @@
 }
 
 .p2-step-wrapper__footer-text {
-	font-size: var( --p2-font-size-form-xxs );
+	font-size: var(--p2-font-size-form-xxs);
 }
 
 .p2-step-wrapper button {
@@ -103,7 +103,7 @@
 	}
 
 	.p2-step-wrapper__header-text {
-		font-size: var( --p2-font-size-form-xxl );
+		font-size: var(--p2-font-size-form-xxl);
 		font-weight: 900; /* stylelint-disable-line scales/font-weights */
 		text-align: center;
 		line-height: 1.3;

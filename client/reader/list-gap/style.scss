@@ -1,31 +1,32 @@
 .reader-list-gap {
-	border-bottom: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var(--color-neutral-10);
 	cursor: pointer;
 	margin-bottom: 16px;
 	padding: 30px 0;
 	position: relative;
 	text-align: center;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0 15px;
 	}
 
 	&.is-selected {
-		box-shadow: 0 0 0 1px var( --color-neutral-light ),
-					0 2px 4px var( --color-neutral-10 );
+		box-shadow:
+			0 0 0 1px var(--color-neutral-light),
+			0 2px 4px var(--color-neutral-10);
 	}
 
 	&::before,
 	&::after {
-		content: '';
+		content: "";
 		display: block;
 		position: absolute;
-			left: 0;
-  			right: 0;
+		left: 0;
+		right: 0;
 	}
 
 	&::before {
-		background: linear-gradient( -135deg, var( --color-neutral-0 ) 8px, rgba( var( --color-neutral-0-rgb ), 0 ) 0 ) 0 8px, linear-gradient( 135deg, var( --color-neutral-0 ) 8px, rgba( var( --color-neutral-0-rgb ), 0 ) 0 ) 0 8px;
+		background: linear-gradient(-135deg, var(--color-neutral-0) 8px, rgba(var(--color-neutral-0-rgb), 0) 0) 0 8px, linear-gradient(135deg, var(--color-neutral-0) 8px, rgba(var(--color-neutral-0-rgb), 0) 0) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
@@ -34,7 +35,7 @@
 	}
 
 	&::after {
-		background: linear-gradient( -135deg, var( --color-surface ) 8px, rgba( var( --color-surface-rgb ), 0 ) 0 ) 0 8px, linear-gradient( 135deg, var( --color-surface ) 8px, rgba( var( --color-surface-rgb ), 0 ) 0 ) 0 8px;
+		background: linear-gradient(-135deg, var(--color-surface) 8px, rgba(var(--color-surface-rgb), 0) 0) 0 8px, linear-gradient(135deg, var(--color-surface) 8px, rgba(var(--color-surface-rgb), 0) 0) 0 8px;
 		background-position: top left;
 		background-repeat: repeat-x;
 		background-size: 16px 16px;
@@ -45,12 +46,12 @@
 
 .reader-list-gap__button {
 	border: none;
-	background: var( --color-neutral-light );
-	color: var( --color-text-inverted );
+	background: var(--color-neutral-light);
+	color: var(--color-text-inverted);
 	position: relative;
-	z-index: z-index( 'root', '.reader-list-gap__button' );
+	z-index: z-index("root", ".reader-list-gap__button");
 
 	&:hover {
-		color: rgba( var( --color-surface-rgb ), 0.8 );
+		color: rgba(var(--color-surface-rgb), 0.8);
 	}
 }

@@ -1,6 +1,6 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .site-options {
 	@include break-small {
@@ -41,20 +41,20 @@
 				line-height: 1.5;
 				margin-bottom: 8px;
 				font-weight: 500;
-				color: var( --studio-gray-60 );
+				color: var(--studio-gray-60);
 				border-radius: 4px;
 
 				.form-label__optional {
 					font-size: inherit;
-					color: var( --studio-gray-40 );
+					color: var(--studio-gray-40);
 					text-transform: lowercase;
 
 					&::before {
-						content: '(';
+						content: "(";
 					}
 
 					&::after {
-						content: ')';
+						content: ")";
 					}
 				}
 
@@ -70,7 +70,7 @@
 
 				&:focus,
 				&:focus:hover {
-					border-color: var( --studio-gray-50 );
+					border-color: var(--studio-gray-50);
 					box-shadow: 0 0 0 2px #e2eaf1;
 				}
 			}
@@ -81,7 +81,7 @@
 				align-items: center;
 				margin: 16px 0;
 				font-style: normal;
-				color: var( --studio-gray-40 );
+				color: var(--studio-gray-40);
 
 				.site-options__form-icon {
 					margin-right: 8px;
@@ -104,11 +104,11 @@
 		font-weight: 500;
 
 		// override unnecessary super specificity added by another class
-		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 
 		&:disabled {
 			color: #fff;
-			background-color: var( --studio-gray-5 );
+			background-color: var(--studio-gray-5);
 		}
 	}
 }

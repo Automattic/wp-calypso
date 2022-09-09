@@ -3,7 +3,7 @@
 	flex-direction: row;
 	padding: 11px 24px; // standard padding
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		max-height: 300px;
 	}
 }
@@ -33,7 +33,7 @@
 	margin: 20px 0;
 
 	.button {
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			width: 100%;
 			text-align: center;
 		}
@@ -44,7 +44,7 @@
 	display: none;
 	padding: 25px 0 25px 50px;
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		display: flex;
 		min-width: 300px;
 	}
@@ -57,36 +57,36 @@
 
 .business-tools__feature-list {
 	position: relative;
-	left: calc( -0.5em );
+	left: calc(-0.5em);
 	display: flex;
 	flex-wrap: wrap;
 	// margins of the items will "hang off the side" invisibly
-	width: calc( 100% + 1em );
+	width: calc(100% + 1em);
 }
 
 .business-tools__feature-list-item {
 	display: flex;
 	flex-direction: column;
 	margin: 0.5em;
-	width: calc( 100% - 1em );
+	width: calc(100% - 1em);
 
 	// Reduce top margin of GMB logo
-	&:nth-child( 3 ) .business-tools__feature-list-item-body-image {
+	&:nth-child(3) .business-tools__feature-list-item-body-image {
 		margin-top: 18px;
 	}
 
 	// Reduce top margin of Upwork logo
-	&:nth-child( 5 ) .business-tools__feature-list-item-body-image {
+	&:nth-child(5) .business-tools__feature-list-item-body-image {
 		margin-top: 20px;
 	}
 
-	@include breakpoint-deprecated( '>1040px' ) {
-		width: calc( 50% - 1em );
+	@include breakpoint-deprecated( ">1040px" ) {
+		width: calc(50% - 1em);
 	}
 }
 
 .business-tools__feature-list-item-disclaimer {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-style: italic;
 }
 
@@ -100,12 +100,12 @@
 	width: 100%;
 
 	> p {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 		margin-bottom: 0;
 	}
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		width: 75%;
 	}
 }
@@ -115,11 +115,11 @@
 	max-width: 150px;
 	width: 16%;
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		display: flex;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: none;
 	}
 }
@@ -132,7 +132,7 @@
 
 	.button {
 		margin: 0;
-		margin-left: calc( 15% + 20px );
+		margin-left: calc(15% + 20px);
 		text-align: center;
 		width: auto;
 	}
@@ -141,7 +141,7 @@
 		margin-top: 1em;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-direction: row;
 		justify-content: flex-start;
 
@@ -150,7 +150,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		.purchase-detail__button {
 			float: right;
 		}

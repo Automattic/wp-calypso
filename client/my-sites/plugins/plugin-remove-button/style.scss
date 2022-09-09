@@ -1,5 +1,5 @@
 .plugin-remove-button__remove {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	font-size: $font-body-extra-small;
 	line-height: 16px;
 	margin-right: 10px;
@@ -21,7 +21,7 @@
 }
 
 .plugin-remove-button__remove-button {
-	color: var( --studio-gray-80 );
+	color: var(--studio-gray-80);
 	font-size: $font-body-small;
 }
 
@@ -30,6 +30,6 @@
 }
 
 .plugin-remove-button__remove-link.is-disabled .plugin-remove-button__remove-icon .gridicons-trash {
-	color: var( --color-neutral-0 );
+	color: var(--color-neutral-0);
 	cursor: default;
 }

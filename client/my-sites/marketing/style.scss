@@ -12,42 +12,42 @@
 	&.facebook {
 		h2,
 		.sharing-service__logo {
-			color: var( --color-facebook );
+			color: var(--color-facebook);
 		}
 	}
 
 	&.twitter {
 		h2,
 		.sharing-service__logo {
-			color: var( --color-twitter );
+			color: var(--color-twitter);
 		}
 	}
 
 	&.google_plus {
 		h2,
 		.sharing-service__logo {
-			color: var( --color-google-plus );
+			color: var(--color-google-plus);
 		}
 	}
 
 	&.linkedin {
 		h2,
 		.sharing-service__logo {
-			color: var( --color-linkedin );
+			color: var(--color-linkedin);
 		}
 	}
 
 	&.tumblr {
 		h2,
 		.sharing-service__logo {
-			color: var( --color-tumblr );
+			color: var(--color-tumblr);
 		}
 	}
 
 	&.instagram-basic-display {
 		h2,
 		.sharing-service__logo {
-			color: var( --color-instagram );
+			color: var(--color-instagram);
 		}
 	}
 
@@ -55,7 +55,7 @@
 		float: left;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		.sharing-service__name {
 			margin-top: 12px;
 		}
@@ -65,11 +65,11 @@
 		margin-left: 56px;
 		width: 100%;
 
-		@include breakpoint-deprecated( '<800px' ) {
+		@include breakpoint-deprecated( "<800px" ) {
 			margin-left: 0;
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin-left: 6px;
 		}
 	}
@@ -87,7 +87,7 @@
 		font-size: $font-title-small;
 	}
 
-	input[type='number'] {
+	input[type="number"] {
 		width: 50px;
 		height: 20px;
 		padding: 0 0 1px 2px;
@@ -98,13 +98,13 @@
 		margin-bottom: 0.5em;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding: 0 0.25em;
 	}
 }
 
 .connections__sharing-settings.connections__sharing-connections {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding: 16px 0;
 	}
 
@@ -113,7 +113,7 @@
 		vertical-align: top;
 		width: 48%;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			display: block;
 			width: 100%;
 			margin: 20px 0;
@@ -123,12 +123,12 @@
 		&:first-child {
 			padding-right: 4%;
 
-			@include breakpoint-deprecated( '<660px' ) {
-				border-bottom: 1px solid var( --color-neutral-0 );
+			@include breakpoint-deprecated( "<660px" ) {
+				border-bottom: 1px solid var(--color-neutral-0);
 				padding-bottom: 10px;
 			}
 
-			@include breakpoint-deprecated( '<480px' ) {
+			@include breakpoint-deprecated( "<480px" ) {
 				margin-bottom: 16px;
 				padding: 0 0 16px;
 			}
@@ -140,7 +140,7 @@
 	}
 
 	.service-example__screenshot {
-		border: 1px solid var( --color-neutral-0 );
+		border: 1px solid var(--color-neutral-0);
 
 		img {
 			vertical-align: top;
@@ -154,7 +154,7 @@
 	.connections__sharing-service-tip {
 		margin-top: 16px;
 		font-size: $font-body-small;
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 
 		.gridicons-info {
 			margin-right: 3px;
@@ -169,7 +169,7 @@
 	.sharing-service {
 		position: relative;
 		overflow: hidden;
-		background: var( --color-surface );
+		background: var(--color-surface);
 
 		&.not-connected .sharing-service-examples {
 			display: block;
@@ -192,7 +192,7 @@
 
 		.new-account {
 			padding-bottom: 0.48em;
-			background: var( --color-surface );
+			background: var(--color-surface);
 			// stylelint-disable-next-line selector-max-id
 			#content & {
 				font-size: 0.875rem;
@@ -219,13 +219,13 @@
 	}
 
 	&.is-placeholder::before {
-		content: '';
+		content: "";
 		position: absolute;
 		top: 16px;
 		right: 16px;
 		bottom: 16px;
 		left: 16px;
-		background-color: var( --color-neutral-10 );
+		background-color: var(--color-neutral-10);
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -241,7 +241,7 @@
 }
 
 .sharing-service__overview:hover .sharing-service__content-toggle {
-	color: var( --color-accent );
+	color: var(--color-accent);
 }
 
 .sharing-service__icon {
@@ -253,7 +253,7 @@
 	width: 50px;
 	border-radius: 2px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		height: 21px;
 		padding-top: 5px;
 		margin: 2px 8px 0 32px;
@@ -272,16 +272,16 @@
 
 	.sharing-connection__account-avatar.is-fallback.#{ $name } {
 		background-color: $color;
-		color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
 	}
 }
 
-@include sharing-service( 'facebook', var( --color-facebook ) );
-@include sharing-service( 'twitter', var( --color-twitter ) );
-@include sharing-service( 'google_plus', var( --color-google-plus ) );
-@include sharing-service( 'tumblr', var( --color-tumblr ) );
-@include sharing-service( 'linkedin', var( --color-linkedin ) );
-@include sharing-service( 'instagram-basic-display', var( --color-instagram ) );
+@include sharing-service( "facebook", var( --color-facebook ) );
+@include sharing-service( "twitter", var( --color-twitter ) );
+@include sharing-service( "google_plus", var( --color-google-plus ) );
+@include sharing-service( "tumblr", var( --color-tumblr ) );
+@include sharing-service( "linkedin", var( --color-linkedin ) );
+@include sharing-service( "instagram-basic-display", var( --color-instagram ) );
 
 .sharing-service__name {
 	clear: none;
@@ -289,10 +289,10 @@
 
 .sharing-service__description {
 	margin: 0;
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	font-size: $font-body-small;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: none;
 	}
 }
@@ -313,7 +313,7 @@
 	font-size: $font-title-small;
 	color: #aeb8be;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		left: 14px;
 		top: 20px;
 	}
@@ -322,8 +322,8 @@
 .sharing-service.is-placeholder .gridicons-share,
 .sharing-service.is-placeholder .sharing-service__name,
 .sharing-service.is-placeholder .sharing-service__description {
-	background-color: var( --color-neutral-0 );
-	color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
+	color: var(--color-neutral-0);
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
@@ -335,7 +335,7 @@
 	position: absolute;
 	left: 80px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		width: 30%;
 	}
 }
@@ -369,7 +369,7 @@
 	top: 8px;
 	height: 36px;
 	width: 36px;
-	border: 1px solid var( --color-neutral-0 );
+	border: 1px solid var(--color-neutral-0);
 	text-align: center;
 }
 
@@ -381,7 +381,7 @@
 		padding-bottom: 0;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding-right: 0;
 	}
 }
@@ -389,7 +389,7 @@
 .sharing-service.reconnect .sharing-connection__account-status {
 	padding-right: 200px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding-right: 0;
 	}
 }
@@ -404,7 +404,7 @@
 	font-size: $font-body-extra-small;
 	font-weight: 600;
 	text-transform: uppercase;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 }
 
 .sharing-connection__account-sitewide-connection.form-label {
@@ -413,7 +413,7 @@
 	font-size: 1rem;
 }
 
-.sharing-connection__account-sitewide-connection input[type='checkbox'] {
+.sharing-connection__account-sitewide-connection input[type="checkbox"] {
 	margin-top: 3px;
 }
 
@@ -428,7 +428,7 @@
 	top: 50%;
 	margin-top: -16px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		position: static;
 		margin-top: 4px;
 		text-align: right;
@@ -444,7 +444,7 @@
 
 .sharing-connection__account-action.reconnect,
 .sharing-connection__account-action.must-disconnect {
-	color: var( --color-warning );
+	color: var(--color-warning);
 
 	.gridicon {
 		margin-right: 4px;
@@ -462,7 +462,7 @@
 
 .buttons__sharing-settings.buttons__sharing-buttons {
 	.sharing-button-styles {
-		box-shadow: 0 -2px 0 var( --color-neutral-0 ) inset;
+		box-shadow: 0 -2px 0 var(--color-neutral-0) inset;
 		padding-bottom: 0.5em;
 	}
 
@@ -490,24 +490,24 @@
 
 .sharing-buttons-tray__buttons {
 	@include clear-fix;
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-right: -16px;
 	}
 }
 
 .sharing-buttons-preview-buttons__more {
 	position: absolute;
-	z-index: z-index( 'root', '.sharing-buttons-preview-buttons__more' );
+	z-index: z-index("root", ".sharing-buttons-preview-buttons__more");
 	max-width: 400px;
 	margin-top: -4px;
 	padding-top: 12px;
-	transform: scaleY( 0 );
+	transform: scaleY(0);
 	transform-origin: 50% 6px;
 	transition: transform 0.2s ease-out;
 
 	&.is-visible {
 		transition-timing-function: ease-in;
-		transform: scaleY( 1 );
+		transform: scaleY(1);
 	}
 }
 
@@ -517,8 +517,8 @@
 	padding: 10px 0 2px 8px;
 	border: 1px solid #ccc;
 	border-radius: 2px;
-	background-color: var( --color-surface );
-	box-shadow: 0 5px 20px rgba( 0, 0, 0, 0.2 );
+	background-color: var(--color-surface);
+	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
 .sharing-buttons-preview-buttons__more-inner .sharing-buttons-preview-button,
@@ -528,17 +528,17 @@
 }
 
 .sharing-buttons-preview-buttons__more::before {
-	content: '';
+	content: "";
 	position: absolute;
 	top: 8px;
-	left: 20px #{'/*rtl:ignore*/'};
+	left: 20px #{"/*rtl:ignore*/"};
 	display: block;
 	width: 8px;
 	height: 8px;
-	transform: rotate( 45deg );
-	background-color: var( --color-surface );
+	transform: rotate(45deg);
+	background-color: var(--color-surface);
 	border-top: 1px solid #ccc;
-	border-left: 1px solid #ccc #{'/*rtl:ignore*/'};
+	border-left: 1px solid #ccc #{"/*rtl:ignore*/"};
 }
 
 .sharing-buttons__panel {
@@ -546,16 +546,17 @@
 	position: relative;
 	margin-bottom: 20px;
 	padding: 20px 24px;
-	background: var( --color-surface );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
+	background: var(--color-surface);
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 1px 2px var(--color-neutral-0);
 }
 
 .sharing-buttons__fieldset-group {
 	@include clear-fix;
 	margin: 0 -3%;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0;
 	}
 }
@@ -567,19 +568,19 @@
 	padding: 0 3%;
 	clear: none;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
 		padding: 0;
 	}
 }
 
-.sharing-buttons__fieldset input[type='radio'],
-.sharing-buttons__fieldset input[type='checkbox'] {
+.sharing-buttons__fieldset input[type="radio"],
+.sharing-buttons__fieldset input[type="checkbox"] {
 	margin-right: 8px;
 }
 
-.sharing-buttons__fieldset input[type='radio'] + span,
-.sharing-buttons__fieldset input[type='checkbox'] + span {
+.sharing-buttons__fieldset input[type="radio"] + span,
+.sharing-buttons__fieldset input[type="checkbox"] + span {
 	margin-left: 0;
 }
 
@@ -605,7 +606,7 @@
 	margin: 5px 0;
 	font-size: $font-body-small;
 	font-style: italic;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .sharing-buttons-preview {
@@ -639,11 +640,11 @@
 .sharing-buttons-preview__like .gridicon {
 	vertical-align: top;
 	margin: 3px 4px 0 0;
-	fill: var( --color-accent );
+	fill: var(--color-accent);
 }
 
 .sharing-buttons-preview__fake-user {
-	border: 1px solid var( --color-neutral-10 );
+	border: 1px solid var(--color-neutral-10);
 	display: inline-block;
 	height: 24px;
 	width: 24px;
@@ -652,7 +653,7 @@
 }
 
 .sharing-buttons-preview__fake-like {
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 	font-size: $font-body-extra-small;
 }
 
@@ -667,18 +668,18 @@
 	align-items: center;
 	padding: 8px;
 	cursor: pointer;
-	border: 1px solid var( --color-neutral-10 );
+	border: 1px solid var(--color-neutral-10);
 	border-radius: 2px;
-	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
-	background-color: var( --color-surface );
-	color: var( --color-primary );
+	box-shadow: 0 0 8px rgba(var(--color-neutral-70-rgb), 0.04);
+	background-color: var(--color-surface);
+	color: var(--color-primary);
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding-right: 0;
 	}
 
 	&:hover {
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 
 	&.is-active {
@@ -687,25 +688,25 @@
 
 	&:disabled {
 		cursor: default;
-		border-color: var( --color-neutral-0 );
-		color: var( --color-neutral-0 );
+		border-color: var(--color-neutral-0);
+		color: var(--color-neutral-0);
 	}
 
 	&.is-top::after,
 	&.is-bottom::after {
-		content: '';
+		content: "";
 		position: absolute;
 		display: block;
 		width: 12px;
 		height: 12px;
-		border: 1px solid var( --color-neutral-10 );
-		background-color: var( --color-surface );
-		transform: rotate( 45deg );
+		border: 1px solid var(--color-neutral-10);
+		background-color: var(--color-surface);
+		transform: rotate(45deg);
 	}
 
 	&:disabled.is-top::after,
 	&:disabled.is-bottom::after {
-		border-color: var( --color-neutral-0 );
+		border-color: var(--color-neutral-0);
 	}
 
 	&.is-top {
@@ -714,7 +715,7 @@
 
 	&.is-bottom {
 		margin-top: 14px;
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			margin: 14px 1% 0;
 		}
 	}
@@ -745,7 +746,7 @@
 }
 
 .sharing-buttons-preview__button-tray-actions {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin: 0 -6%;
 	}
 }
@@ -753,24 +754,24 @@
 .sharing-buttons-preview-action + .sharing-buttons-preview-action {
 	margin-left: 8px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-left: 1%;
 	}
 }
 
 .sharing-buttons-preview-action:last-child {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 46%;
 	}
 }
 
 .sharing-buttons-preview-action {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 50%;
 	}
 
 	&::before {
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			float: left;
 			margin: 6px 6px 0 0;
 		}
@@ -779,28 +780,28 @@
 
 .sharing-buttons-preview__display {
 	padding: 10px 20px;
-	border: 1px solid var( --color-neutral-0 );
-	box-shadow: 0 3px 6px -3px rgba( 0, 0, 0, 0.05 );
+	border: 1px solid var(--color-neutral-0);
+	box-shadow: 0 3px 6px -3px rgba(0, 0, 0, 0.05);
 }
 
 .sharing-buttons-preview__heading {
 	margin: 0;
 	padding: 8px 0;
-	background-color: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
+	border: 1px solid var(--color-neutral-0);
 	border-bottom: 0;
 	font-size: $font-body-extra-small;
 	line-height: 1;
 	font-weight: 600;
 	text-transform: uppercase;
 	text-align: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .sharing-buttons-preview.is-placeholder .sharing-buttons-preview__label,
 .sharing-buttons-preview.is-placeholder .sharing-buttons-preview__buttons {
 	display: block;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
@@ -838,7 +839,7 @@
 	color: #777;
 	background: #f8f8f8;
 	border: 1px solid #ccc;
-	box-shadow: 0 1px 0 rgba( 0, 0, 0, 0.08 );
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
 	line-height: 23px;
 	padding: 1px 8px 0 5px;
 
@@ -893,7 +894,7 @@
 
 .sharing-buttons-preview-button.style-icon .social-logo {
 	top: 0;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 }
 
 .sharing-buttons-preview-button.style-icon.share-email .social-logo,
@@ -921,42 +922,42 @@
 	}
 }
 
-@include sharing-button-service( 'facebook', var( --color-facebook ) );
-@include sharing-button-service( 'twitter', var( --color-twitter ) );
-@include sharing-button-service( 'press-this', var( --color-wordpress-com ) );
-@include sharing-button-service( 'google-plus-1', var( --color-google-plus ) );
-@include sharing-button-service( 'instagram-basic-display', var( --color-instagram ) );
-@include sharing-button-service( 'linkedin', var( --color-linkedin ) );
-@include sharing-button-service( 'stumbleupon', var( --color-stumbleupon ) );
-@include sharing-button-service( 'tumblr', var( --color-tumblr ) );
-@include sharing-button-service( 'reddit', var( --color-reddit ) );
-@include sharing-button-service( 'pinterest', var( --color-pinterest ) );
-@include sharing-button-service( 'pocket', var( --color-pocket ) );
-@include sharing-button-service( 'email', var( --color-email ) );
-@include sharing-button-service( 'print', var( --color-print ) );
-@include sharing-button-service( 'skype', var( --color-skype ) );
-@include sharing-button-service( 'telegram', var( --color-telegram ) );
-@include sharing-button-service( 'jetpack-whatsapp', var( --color-whatsapp ) );
+@include sharing-button-service( "facebook", var( --color-facebook ) );
+@include sharing-button-service( "twitter", var( --color-twitter ) );
+@include sharing-button-service( "press-this", var( --color-wordpress-com ) );
+@include sharing-button-service( "google-plus-1", var( --color-google-plus ) );
+@include sharing-button-service( "instagram-basic-display", var( --color-instagram ) );
+@include sharing-button-service( "linkedin", var( --color-linkedin ) );
+@include sharing-button-service( "stumbleupon", var( --color-stumbleupon ) );
+@include sharing-button-service( "tumblr", var( --color-tumblr ) );
+@include sharing-button-service( "reddit", var( --color-reddit ) );
+@include sharing-button-service( "pinterest", var( --color-pinterest ) );
+@include sharing-button-service( "pocket", var( --color-pocket ) );
+@include sharing-button-service( "email", var( --color-email ) );
+@include sharing-button-service( "print", var( --color-print ) );
+@include sharing-button-service( "skype", var( --color-skype ) );
+@include sharing-button-service( "telegram", var( --color-telegram ) );
+@include sharing-button-service( "jetpack-whatsapp", var( --color-whatsapp ) );
 
 .sharing-buttons-preview__panel {
 	position: relative;
 	display: none;
-	background: var( --color-surface );
-	border: 1px solid var( --color-neutral-10 );
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-10);
 	border-radius: 2px;
-	box-shadow: 0 0 8px rgba( var( --color-neutral-70-rgb ), 0.04 );
+	box-shadow: 0 0 8px rgba(var(--color-neutral-70-rgb), 0.04);
 
 	&::before {
-		content: '';
+		content: "";
 		position: absolute;
-		border: 1px solid var( --color-neutral-10 );
-		border-right-width: 0 #{'/*rtl:ignore*/'};
+		border: 1px solid var(--color-neutral-10);
+		border-right-width: 0 #{"/*rtl:ignore*/"};
 		border-bottom-width: 0;
-		background: var( --color-surface );
+		background: var(--color-surface);
 		display: block;
 		width: 12px;
 		height: 12px;
-		transform: rotate( 45deg );
+		transform: rotate(45deg);
 	}
 
 	&.is-top {
@@ -966,7 +967,7 @@
 	&.is-top::before {
 		bottom: -7px;
 		left: 30px;
-		border-width: 0 1px 1px 0 #{'/*rtl:ignore*/'};
+		border-width: 0 1px 1px 0 #{"/*rtl:ignore*/"};
 	}
 
 	&.is-bottom {
@@ -981,24 +982,24 @@
 			border-radius: 2px;
 			padding: 7px;
 			float: left;
-			color: var( --color-neutral-5 );
-			background-color: var( --color-surface );
-			border-color: var( --color-neutral-5 );
+			color: var(--color-neutral-5);
+			background-color: var(--color-surface);
+			border-color: var(--color-neutral-5);
 			&:hover {
-				border-color: var( --color-neutral-10 );
-				color: var( --color-neutral-10 );
+				border-color: var(--color-neutral-10);
+				color: var(--color-neutral-10);
 			}
 			&:active {
 				border-width: 1px;
 			}
 
 			&.is-enabled {
-				color: var( --color-text-subtle );
-				background-color: var( --color-surface );
-				border-color: var( --color-neutral-10 );
+				color: var(--color-text-subtle);
+				background-color: var(--color-surface);
+				border-color: var(--color-neutral-10);
 				&:hover {
-					border-color: var( --color-neutral-20 );
-					color: var( --color-neutral-70 );
+					border-color: var(--color-neutral-20);
+					color: var(--color-neutral-70);
 				}
 			}
 
@@ -1008,7 +1009,7 @@
 			}
 		}
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			margin: 15px -8px 0;
 		}
 	}
@@ -1034,12 +1035,12 @@
 .sharing-buttons-preview__panel-heading {
 	font-size: $font-title-small;
 	font-weight: normal;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 }
 
 .sharing-buttons-preview__panel-instructions {
 	display: block;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	margin: 8px 0;
 }
 
@@ -1078,21 +1079,21 @@
 .sharing-buttons-preview__panel-content .sharing-buttons-preview-button {
 	margin-top: 8px;
 	cursor: pointer;
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin: 18px 18px 0 0;
 	}
 }
 
 .sharing-buttons-preview__panel.is-reordering
-	.sortable-list__item.is-draggable.is-active
-	.sharing-buttons-preview-button {
+.sortable-list__item.is-draggable.is-active
+.sharing-buttons-preview-button {
 	margin: 0;
 }
 
 .sharing-buttons-preview__panel-actions {
 	padding: 10px 16px;
 	text-align: right;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 }
 
 .sharing-buttons-preview__panel-action {

@@ -9,28 +9,28 @@
 	// Success!
 	&.is-success {
 		.activity-log-banner__icon {
-			background-color: var( --color-success );
+			background-color: var(--color-success);
 		}
 	}
 
 	// Warning
 	&.is-warning {
 		.activity-log-banner__icon {
-			background-color: var( --color-warning );
+			background-color: var(--color-warning);
 		}
 	}
 
 	// Error! OHNO!
 	&.is-error {
 		.activity-log-banner__icon {
-			background-color: var( --color-error );
+			background-color: var(--color-error);
 		}
 	}
 
 	// General notice
 	&.is-info {
 		.activity-log-banner__icon {
-			background-color: var( --color-primary );
+			background-color: var(--color-primary);
 		}
 	}
 }
@@ -42,9 +42,9 @@
 	margin-left: -5px;
 	margin-right: 16px;
 	border-radius: 50%;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 
-	background-color: var( --color-neutral-30 );
+	background-color: var(--color-neutral-30);
 }
 
 .activity-log-banner__content {
@@ -58,7 +58,7 @@
 }
 
 .activity-log-banner__controls {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: flex;
 		flex-wrap: wrap;
 
@@ -73,7 +73,7 @@
 }
 
 .activity-log-banner__dismiss {
-	color: var( --color-neutral-30 );
+	color: var(--color-neutral-30);
 	cursor: pointer;
 	margin-top: -8px;
 	margin-right: -8px;
@@ -81,7 +81,7 @@
 
 // HappyChat button in success/error banner
 .activity-log-banner__happychat-button {
-	color: var( --color-neutral-30 );
+	color: var(--color-neutral-30);
 	padding: 8px 8px 0 0;
 	margin-left: 16px;
 	display: inline-block;

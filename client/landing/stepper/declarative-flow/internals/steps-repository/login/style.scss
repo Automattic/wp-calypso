@@ -1,9 +1,9 @@
-@import '@automattic/onboarding/styles/variables';
-@import '@automattic/calypso-color-schemes/src/calypso-color-schemes';
-@import '@automattic/onboarding/styles/mixins';
+@import "@automattic/onboarding/styles/variables";
+@import "@automattic/calypso-color-schemes/src/calypso-color-schemes";
+@import "@automattic/onboarding/styles/mixins";
 
-$design-button-primary-color: var( --color-primary );
-$design-button-primary-hover-color: var( --color-primary-60 );
+$design-button-primary-color: var(--color-primary);
+$design-button-primary-hover-color: var(--color-primary-60);
 
 .step-container.login-step {
 	.components-text-control__input {
@@ -18,7 +18,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 		padding: 9px 48px;
 		border-radius: 4px;
 		font-weight: 500;
-		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 
 		&:hover,
 		&:focus {
@@ -48,7 +48,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 			left: 50%;
 			width: 100%;
 			max-width: 540px;
-			transform: translateX( -50% );
+			transform: translateX(-50%);
 		}
 	}
 
@@ -57,7 +57,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
 		& > p {
 			@include onboarding-large-text;
-			color: var( --studio-gray-40 );
+			color: var(--studio-gray-40);
 		}
 	}
 
@@ -74,7 +74,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 		font-size: $font-body;
 		line-height: 17px;
 		border-radius: 0;
-		border: 1px solid var( --studio-gray-10 );
+		border: 1px solid var(--studio-gray-10);
 		box-sizing: border-box;
 		width: 100%;
 		max-width: 100%;
@@ -101,11 +101,11 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	.login__login-link {
 		@include onboarding-medium-text;
 		margin: 4px 0 29px;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 
 		.login__link {
 			@include onboarding-medium-text;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 		}
 
 		a {
@@ -116,7 +116,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	.login__link,
 	.login__link a {
 		@include onboarding-medium-text;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 
 	.login__link a {
@@ -126,7 +126,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	.login__terms-of-service-link {
 		@include onboarding-medium-text;
 		text-align: center;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		margin: 15px auto 20px;
 		max-width: 400px;
 
@@ -165,7 +165,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 			left: 50%;
 			width: 100%;
 			max-width: 1024px;
-			transform: translateX( -50% );
+			transform: translateX(-50%);
 		}
 	}
 
@@ -175,7 +175,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
 		& > p {
 			@include onboarding-large-text;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 		}
 	}
 
@@ -205,7 +205,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 
 	// Thin line between Flexbox Cols
 	.login__anchor-separator {
-		background: var( --studio-gray-5 );
+		background: var(--studio-gray-5);
 		width: 0;
 
 		@include break-medium {
@@ -261,7 +261,7 @@ $design-button-primary-hover-color: var( --color-primary-60 );
 	// UL with Right bullet points
 	ul.login__anchor-list {
 		list-style: disc inside;
-		color: var( --studio-gray-70 );
+		color: var(--studio-gray-70);
 		font-size: 0.875rem;
 
 		& > li {

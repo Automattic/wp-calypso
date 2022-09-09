@@ -1,14 +1,14 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-.register-domain-step:not( .register-domain-step__signup ) {
+.register-domain-step:not(.register-domain-step__signup) {
 	display: block;
 	position: relative;
 	margin: 0 auto 10px;
 	padding: 16px;
 	box-sizing: border-box;
-	background: var( --color-surface );
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 
 	@include break-mobile {
 		padding: 24px;
@@ -31,7 +31,7 @@
 	.card {
 		background: none;
 		box-shadow: none;
-		border-bottom: 1px solid var( --color-border-subtle );
+		border-bottom: 1px solid var(--color-border-subtle);
 		padding-left: 0;
 		padding-right: 0;
 	}
@@ -59,7 +59,7 @@
 	}
 
 	.search-component {
-		border: 1px solid var( --color-border-subtle );
+		border: 1px solid var(--color-border-subtle);
 		border-radius: 4px;
 	}
 
@@ -71,30 +71,30 @@
 
 	.search-component.is-open.has-focus {
 		border-color: #646970;
-		background: var( --color-surface );
+		background: var(--color-surface);
 		box-shadow: none;
 
 		.search-component__input {
-			background: var( --color-surface );
+			background: var(--color-surface);
 		}
 	}
 
 	.card.register-domain-step__search-card {
-		background-color: var( --color-surface );
+		background-color: var(--color-surface);
 	}
 }
 
 .register-domain-step__search {
 	padding-bottom: 12px;
 
-	&.register-domain-step__search-domain-step:not( .is-sticky ) {
+	&.register-domain-step__search-domain-step:not(.is-sticky) {
 		padding-bottom: 24px;
 
 		.is-white-signup & {
 			padding-bottom: 16px;
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding-top: 18px;
 
 			.is-white-signup & {
@@ -116,7 +116,7 @@
 
 		&.is-refocused {
 			animation: shake 0.5s both;
-			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
+			box-shadow: 0 0 0 1px var(--color-neutral-light), 0 2px 4px var(--color-neutral-10);
 		}
 	}
 
@@ -138,7 +138,7 @@
 .register-domain-step__example-prompt {
 	font-size: 0.875rem;
 	line-height: 20px;
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
 	display: flex;
 	align-items: center;
 	margin: 0;
@@ -164,21 +164,21 @@
 @keyframes shake {
 	0%,
 	100% {
-		transform: translate3d( 0, 0, 0 );
+		transform: translate3d(0, 0, 0);
 	}
 
 	10%,
 	60% {
-		transform: translate3d( -5px, 0, 0 );
+		transform: translate3d(-5px, 0, 0);
 	}
 
 	30% {
-		transform: translate3d( 5px, 0, 0 );
+		transform: translate3d(5px, 0, 0);
 	}
 }
 
 .register-domain-step__filter-reset-notice {
-	color: var( --color-primary );
+	color: var(--color-primary);
 	font-weight: 600;
 	width: 100%;
 	position: relative;
@@ -188,30 +188,31 @@
 	border-radius: 0;
 
 	// from components/card/style.scss
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 1px 2px var(--color-neutral-0);
 
 	// from components/domains/domain-suggestion/style
 	// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-	transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
+	transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
 
 	&:hover {
-		color: var( --color-primary );
+		color: var(--color-primary);
 
 		// from components/domains/domain-suggestion/style
-		box-shadow: 0 0 0 1px var( --color-neutral-light );
+		box-shadow: 0 0 0 1px var(--color-neutral-light);
 	}
 }
 
 .register-domain-step__next-page {
-	color: var( --color-link );
+	color: var(--color-link);
 	display: flex;
 	justify-content: center;
 }
 
 .register-domain-step {
 	.button.is-active {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 	}
 }
 
@@ -223,14 +224,14 @@ button.register-domain-step__next-page-button {
 body.is-section-domains {
 	.register-domain-step {
 		button.register-domain-step__next-page-button {
-			color: var( --color-link );
+			color: var(--color-link);
 			border: none;
 			box-shadow: none;
 		}
 	}
 }
 
-body.is-section-signup:not( .is-white-signup ) {
+body.is-section-signup:not(.is-white-signup) {
 	.register-domain-step__search-card {
 		background: none;
 		box-shadow: none;
@@ -264,7 +265,7 @@ body.is-section-signup.is-white-signup {
 			letter-spacing: 0.32px;
 			line-height: 1.25rem;
 
-			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
 			@include break-mobile {
 				padding: 0.65em 2.8em;
@@ -275,7 +276,7 @@ body.is-section-signup.is-white-signup {
 
 .already-own-a-domain {
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: flex;
 	align-items: center;
 	margin-top: 26px;
@@ -283,14 +284,14 @@ body.is-section-signup.is-white-signup {
 		align-self: flex-start;
 		width: 16px;
 		height: 16px;
-		fill: var( --color-text-subtle );
+		fill: var(--color-text-subtle);
 		margin: 3px 8px 0;
 		@include break-mobile {
 			margin-left: 0;
 		}
 	}
 	.button-plain {
-		color: var( --color-link );
+		color: var(--color-link);
 	}
 }
 .register-domain-step__placeholder {
@@ -316,10 +317,10 @@ body.is-section-signup.is-white-signup {
 	}
 
 	&::after {
-		content: '';
+		content: "";
 		width: auto;
 		height: 20px;
-		background-color:  #f5f5f5;
+		background-color: #f5f5f5;
 		position: absolute;
 		border-top-right-radius: 4px;
 		border-top-left-radius: 4px;

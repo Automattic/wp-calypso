@@ -13,7 +13,7 @@
 }
 
 .security-2fa-enable__app-options {
-	font-color: var( --color-neutral-0 );
+	font-color: var(--color-neutral-0);
 	font-size: $font-body-small;
 	font-style: italic;
 	margin-top: 10px;
@@ -27,7 +27,7 @@
 .security-2fa-enable__toggle {
 	cursor: pointer;
 	display: block;
-	color: var( --color-link );
+	color: var(--color-link);
 	font-size: 1rem;
 }
 

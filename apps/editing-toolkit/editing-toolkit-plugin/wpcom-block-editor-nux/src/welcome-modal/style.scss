@@ -1,8 +1,8 @@
 // @TODO: remove the ignore rule and replace font sizes accordingly
 /* stylelint-disable scales/font-size */
 
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/onboarding/styles/mixins';
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
 
 $wpcom-modal-breakpoint: 660px;
 
@@ -17,7 +17,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	&.components-modal__frame {
 		overflow: visible;
 		height: 65vh;
-		top: calc( 17.5vh - #{$wpcom-modal-footer-height * 0.5} );
+		top: calc(17.5vh - #{$wpcom-modal-footer-height * 0.5});
 
 		@media ( max-width: $wpcom-modal-breakpoint ) {
 			width: 90vw;
@@ -29,7 +29,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			width: 720px;
 			height: $wpcom-modal-content-min-height;
-			top: calc( 50% - #{$wpcom-modal-footer-height * 0.5} );
+			top: calc(50% - #{$wpcom-modal-footer-height * 0.5});
 		}
 	}
 
@@ -86,7 +86,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 		&::before {
 			display: inline-block;
-			content: '';
+			content: "";
 			height: $wpcom-modal-footer-height;
 			vertical-align: middle;
 		}

@@ -1,5 +1,5 @@
-@import '@automattic/typography/styles/variables';
-@import '../../../assets/stylesheets/shared/_extends-forms';
+@import "@automattic/typography/styles/variables";
+@import "../../../assets/stylesheets/shared/_extends-forms";
 
 .form-checkbox {
 	@extend %form-field !optional;
@@ -21,7 +21,7 @@
 	border-radius: 2px;
 
 	&:checked::before {
-		content: url( '/calypso/images/checkbox-icons/checkmark-primary.svg' );
+		content: url("/calypso/images/checkbox-icons/checkmark-primary.svg");
 		width: 12px;
 		height: 12px;
 		margin: 1px auto;
@@ -30,7 +30,7 @@
 	}
 
 	&:disabled:checked::before {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 	}
 
 	& + span {

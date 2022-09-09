@@ -1,6 +1,6 @@
 .jetpack-search-upsell__content {
 	.jetpack-product-card__description {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			min-height: 55px;
 		}
 	}
@@ -9,5 +9,4 @@
 		margin-block-end: 1rem;
 	}
 }
-
 

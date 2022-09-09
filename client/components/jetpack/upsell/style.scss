@@ -1,11 +1,11 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .upsell {
 	padding: 16px;
 	box-sizing: border-box;
-	background: var( --color-surface );
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 
 	@include break-mobile {
 		margin-bottom: 16px;
@@ -16,7 +16,7 @@
 		margin-bottom: 16px;
 	}
 
-	& > *:not( :first-child ):not( :last-child ) {
+	& > *:not(:first-child):not(:last-child) {
 		margin-bottom: 24px;
 	}
 
@@ -33,18 +33,18 @@
 	text-align: center;
 	width: 100%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		text-align: auto;
 		width: auto;
 	}
 }
 
-.upsell__button:not( .is-primary ) {
+.upsell__button:not(.is-primary) {
 	margin-left: 0;
 
-	border-color: var( --color-neutral-10 );
+	border-color: var(--color-neutral-10);
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-left: 16px;
 	}
 }

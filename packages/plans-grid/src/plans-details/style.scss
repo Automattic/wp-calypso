@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/typography/styles/variables';
-@import '../variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "../variables";
 
 // Used to "counter" the negative margin set on the container, while allowing the
 // table to scroll horizontally in case it doesn't fit in the viewport.
@@ -49,7 +49,7 @@
 			}
 		}
 
-		&:not( :first-child ) {
+		&:not(:first-child) {
 			white-space: nowrap;
 		}
 	}
@@ -66,7 +66,7 @@
 		font-size: $font-body-small;
 		line-height: 20px;
 		text-transform: uppercase;
-		color: var( --studio-gray-20 );
+		color: var(--studio-gray-20);
 		padding-top: 5px;
 		padding-bottom: 5px;
 		border-bottom: 1px solid #eaeaeb;
@@ -74,7 +74,7 @@
 	}
 
 	thead & {
-		th:not( :first-child ) {
+		th:not(:first-child) {
 			text-align: center;
 		}
 	}
@@ -134,11 +134,11 @@
 	margin-bottom: 6px;
 
 	.plans-details__feature-row--enabled & {
-		color: var( --studio-green-60 );
+		color: var(--studio-green-60);
 	}
 
 	.plans-details__feature-row--disabled & {
-		color: var( --studio-orange-40 );
+		color: var(--studio-orange-40);
 	}
 
 	.plans-details__feature-row--disabled & + span {

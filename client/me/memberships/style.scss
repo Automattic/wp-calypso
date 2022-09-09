@@ -3,7 +3,7 @@
 	display: flex;
 
 	.memberships__icon {
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 		display: inline-block;
 		height: 32px;
 		width: 32px;
@@ -18,7 +18,7 @@
 		flex: 0 0 auto;
 
 		.gridicon {
-			color: var( --color-surface );
+			color: var(--color-surface);
 		}
 	}
 
@@ -34,7 +34,7 @@
 	}
 
 	.memberships__title {
-		color: var( --color-text );
+		color: var(--color-text);
 		display: block;
 		font-size: 0.875rem;
 		font-weight: 400;
@@ -42,7 +42,7 @@
 	}
 
 	.memberships__domain {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		display: block;
 		max-width: 95%;
 		font-size: 0.75rem;

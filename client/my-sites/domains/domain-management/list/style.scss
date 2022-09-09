@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .breadcrumbs {
 	svg.options-domain-button__add.gridicon {
@@ -36,14 +36,14 @@
 
 .domain-management-list-item__title {
 	display: block;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body-small;
 	font-weight: 600;
 	white-space: pre;
 	text-align: inherit;
 	line-height: normal;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-title-small;
 		font-weight: 600;
 		max-width: none;
@@ -53,13 +53,13 @@
 
 .domain-management-list-item__meta {
 	font-size: $font-body-extra-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	min-height: 20px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	line-height: normal;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		text-transform: uppercase;
 	}
 }
@@ -81,7 +81,7 @@
 	}
 }
 
-.empty-domains-list-card:not( .has-non-wpcom-domains ) {
+.empty-domains-list-card:not(.has-non-wpcom-domains) {
 	box-shadow: none;
 }
 
@@ -124,13 +124,13 @@
 
 	h2 {
 		@extend .wp-brand-font;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		font-size: $font-title-large;
 		margin-top: 24px;
 	}
 
 	h3 {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		font-size: $font-body;
 	}
 
@@ -206,11 +206,11 @@
 	padding: 8px 0;
 	font-size: $font-body-small;
 	font-weight: 600;
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 
-	border-bottom: 1px solid var( --color-neutral-5 );
+	border-bottom: 1px solid var(--color-neutral-5);
 	@include break-mobile {
-		border-bottom: 1px solid var( --color-neutral-20 );
+		border-bottom: 1px solid var(--color-neutral-20);
 	}
 
 	.button-plain {
@@ -229,10 +229,10 @@
 		}
 		&.is-sorted-by > svg,
 		&.is-sorted-by:hover > svg {
-			fill: var( --color-neutral-50 );
+			fill: var(--color-neutral-50);
 		}
 		&:hover > svg {
-			fill: var( --color-neutral-30 );
+			fill: var(--color-neutral-30);
 		}
 	}
 
@@ -282,7 +282,7 @@
 		border-radius: 16px; /* stylelint-disable-line scales/radii */
 		justify-content: center;
 		align-items: center;
-		color: #ffffff;
+		color: #fff;
 		font-size: $font-body-extra-small;
 		height: 18px;
 		margin: 0 4px;
@@ -303,7 +303,7 @@
 }
 
 .domain-only-upsell-carousel {
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 	padding: 24px;
 	margin-top: 32px;
 	.button.is-borderless .gridicon {

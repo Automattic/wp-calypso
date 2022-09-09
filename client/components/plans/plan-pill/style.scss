@@ -2,16 +2,16 @@
 	position: absolute;
 	bottom: -10px;
 	left: 14px;
-	z-index: z-index( 'root', '.plan-pill' );
+	z-index: z-index("root", ".plan-pill");
 
 	padding: 4px;
 	border-radius: 2px;
-	background: var( --color-accent );
+	background: var(--color-accent);
 
 	font-size: $font-body-extra-small;
 	text-align: center;
 	line-height: 1;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	text-transform: uppercase;
 
 	white-space: nowrap;
@@ -25,5 +25,5 @@
 	text-transform: none;
 	padding: 4px 10px;
 	border-radius: 10px; /* stylelint-disable-line scales/radii */
-	background-color: var( --color-neutral-100 );
+	background-color: var(--color-neutral-100);
 }

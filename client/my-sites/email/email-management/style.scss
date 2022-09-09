@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .email-management {
 	.empty-content__illustration {
@@ -15,19 +15,20 @@
 
 .email-list-active {
 	> .card {
-		color: var( --color-text );
+		color: var(--color-text);
 		display: flex;
 	}
 
 	> .card.is-card-link:hover {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 }
 
 .email-list-active__item-icon {
 	align-self: center;
 
-	> img, svg {
+	> img,
+	svg {
 		display: block;
 		height: 36px;
 		margin-right: 16px;
@@ -41,7 +42,7 @@
 	}
 
 	> .gridicon.gridicons-my-sites {
-		fill: var( --color-wordpress-com );
+		fill: var(--color-wordpress-com);
 	}
 }
 
@@ -52,7 +53,7 @@
 
 	span {
 		font-size: $font-body-small;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 }
 
@@ -100,21 +101,21 @@
 
 	&.error {
 		> span {
-			color: var( --color-error );
+			color: var(--color-error);
 		}
 
 		> svg {
-			fill: var( --color-error );
+			fill: var(--color-error);
 		}
 	}
 
 	&.warning {
 		> span {
-			color: var( --color-warning );
+			color: var(--color-warning);
 		}
 
 		> svg {
-			fill: var( --color-warning );
+			fill: var(--color-warning);
 		}
 	}
 }
@@ -209,14 +210,15 @@
 }
 
 .email-plan-header__icon {
-	> img, svg {
+	> img,
+	svg {
 		height: 36px;
 		width: 36px;
 		margin-right: 20px;
 	}
 
 	> .gridicon.gridicons-my-sites {
-		fill: var( --color-wordpress-com );
+		fill: var(--color-wordpress-com);
 	}
 }
 
@@ -260,7 +262,7 @@
 	&:hover,
 	&:focus {
 		> img {
-			filter: grayscale( 100% ) brightness( 0.2 ) invert( 1 );
+			filter: grayscale(100%) brightness(0.2) invert(1);
 		}
 
 		> svg {
@@ -295,7 +297,7 @@
 	}
 
 	&.is-error {
-		border-left-color: var( --color-error-50 );
+		border-left-color: var(--color-error-50);
 	}
 
 	.email-plan-mailboxes-list__mailbox-list-item-main {
@@ -312,7 +314,7 @@
 			padding-right: 0;
 		}
 
-		> div:not( :first-child ) {
+		> div:not(:first-child) {
 			margin-top: 0.5em;
 		}
 	}
@@ -324,13 +326,13 @@
 	}
 
 	&.no-emails > span {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-style: italic;
 	}
 
 	> svg,
 	.email-plan-mailboxes-list__mailbox-list-item-main svg {
-		fill: var( --studio-gray-40 );
+		fill: var(--studio-gray-40);
 		margin-right: 10px;
 		vertical-align: middle;
 	}
@@ -352,8 +354,8 @@
 	}
 
 	.email-mailbox-warnings__warning {
-		border-top: 1px solid var( --color-neutral-5 );
-		color: var( --color-error );
+		border-top: 1px solid var(--color-neutral-5);
+		color: var(--color-error);
 		font-size: $font-body-small;
 		line-height: 24px;
 		margin-top: 18px;
@@ -436,7 +438,7 @@
 }
 
 .email-plan-subscription__expired {
-	color: var( --color-error-50 );
+	color: var(--color-error-50);
 }
 
 .email-plan-warnings__container {

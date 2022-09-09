@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@automattic/typography/styles/fonts';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/fonts";
 
 .design-preview {
 	display: flex;
@@ -16,9 +16,9 @@
 
 .design-preview__sidebar {
 	align-items: center;
-	background: #ffffff;
-	border-bottom: 1px solid rgba( 0, 0, 0, 0.05 );
-	box-shadow: -4px 0 8px rgba( 0, 0, 0, 0.07 );
+	background: #fff;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+	box-shadow: -4px 0 8px rgba(0, 0, 0, 0.07);
 	box-sizing: border-box;
 	display: flex;
 	height: 96px;
@@ -28,7 +28,7 @@
 	padding: 8px 24px 0;
 	position: fixed;
 	top: 0;
-	z-index: z-index( '.is-section-stepper', '.design-preview__sticky-variations' );
+	z-index: z-index(".is-section-stepper", ".design-preview__sticky-variations");
 
 	> div {
 		display: none;
@@ -38,7 +38,7 @@
 		}
 
 		h2 {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 			display: none;
 			font-size: $font-body-small;
 			font-weight: 500;
@@ -48,7 +48,7 @@
 
 	.design-preview__sidebar-title {
 		h1 {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 			font-family: $brand-serif;
 			font-weight: 400;
 			letter-spacing: -0.4px;
@@ -58,7 +58,7 @@
 
 	.design-preview__sidebar-description {
 		p {
-			color: var( --studio-gray-80 );
+			color: var(--studio-gray-80);
 			font-size: 0.875rem;
 			line-height: 1.25rem;
 		}
@@ -91,7 +91,7 @@
 		> div {
 			display: block;
 			margin: 2rem 0 0;
-	
+
 			h2 {
 				display: block;
 			}
@@ -105,7 +105,7 @@
 			.design-preview__sidebar-variations-grid {
 				display: grid;
 				gap: 8px;
-				grid-template-columns: repeat( 2, 1fr );
+				grid-template-columns: repeat(2, 1fr);
 				margin: 0 -5px;
 				width: 100%;
 
@@ -126,12 +126,12 @@
 
 	&:hover,
 	&--is-active {
-		border-color: var( --studio-blue-50 );
+		border-color: var(--studio-blue-50);
 	}
 
 	.edit-site-global-styles-preview__iframe {
 		border-radius: 3px; /* stylelint-disable-line scales/radii */
-		box-shadow: 0 0 1px rgba( 0, 0, 0, 0.25 );
+		box-shadow: 0 0 1px rgba(0, 0, 0, 0.25);
 		border: 0;
 		display: block;
 		max-width: 100%;

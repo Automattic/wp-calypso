@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .email-product-price {
-	color: var( --color-text );
+	color: var(--color-text);
 	display: flex;
 	flex-direction: column;
 	font-size: $font-body-small;
@@ -13,18 +13,18 @@
 		line-height: 1.5;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		align-items: flex-start;
 		font-size: $font-body;
 	}
 
 	.email-product-price__free-price {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 	}
 
 	.email-product-price__free-text {
-		color: var( --studio-green-60 );
+		color: var(--studio-green-60);
 
 		@include break-mobile {
 			font-weight: 500;
@@ -32,13 +32,13 @@
 	}
 
 	.is-placeholder & {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			display: none;
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			color: transparent;
 		}
 	}

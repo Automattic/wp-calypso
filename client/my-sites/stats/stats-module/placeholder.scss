@@ -6,7 +6,7 @@
 
 	// Block placeholder, primarily for SVGs and similar
 	&.is-block {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 	}
 
 	// Spinner placeholder, to be used in Summary views, where we already have some data
@@ -63,7 +63,7 @@
 	.module-header-title,
 	ul.module-content-tabs li:hover .label,
 	ul.module-content-tabs li.module-tab.is-selected:hover .label {
-		color: rgba( var( --color-surface-rgb ), 0 );
+		color: rgba(var(--color-surface-rgb), 0);
 	}
 }
 

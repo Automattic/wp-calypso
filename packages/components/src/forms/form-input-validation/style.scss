@@ -1,7 +1,7 @@
-@import '@automattic/typography/styles/fonts';
+@import "@automattic/typography/styles/fonts";
 
 .form-input-validation {
-	color: var( --color-success );
+	color: var(--color-success);
 	position: relative;
 	padding: 6px 24px 11px 34px;
 	border-radius: 2px;
@@ -11,11 +11,11 @@
 	font-weight: 400;
 
 	&.is-error {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 
 	&.is-warning {
-		color: var( --color-warning );
+		color: var(--color-warning);
 	}
 
 	&.is-hidden {

@@ -1,5 +1,5 @@
-@import '@automattic/typography/styles/variables';
-@import '../variables';
+@import "@automattic/typography/styles/variables";
+@import "../variables";
 
 .plans-interval-toggle {
 	display: flex;
@@ -38,7 +38,7 @@
 	// Link in the non-selected <li>
 	// The double .segmented-control__item class is a CSS hack to increase
 	// specificity and override the default component's styles
-	.segmented-control__item.segmented-control__item:not( .is-selected ) .segmented-control__link {
+	.segmented-control__item.segmented-control__item:not(.is-selected) .segmented-control__link {
 		background-color: transparent;
 		border: 0.5px solid transparent;
 		box-shadow: none;
@@ -46,18 +46,18 @@
 
 	// Link in the selected <li>
 	.segmented-control__item.is-selected .segmented-control__link {
-		background-color: var( --studio-white );
+		background-color: var(--studio-white);
 		border: 0.5px solid #f5f5f5;
-		box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
+		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
 	}
 
 	// Link in all <li>s
 	// (CSS selector specificity is required to override original component's styles)
-	.segmented-control__item:not( .is-selected ) .segmented-control__link,
+	.segmented-control__item:not(.is-selected) .segmented-control__link,
 	.segmented-control__item.is-selected .segmented-control__link {
 		&:focus,
 		&:hover {
-			border-color: var( --studio-gray-10 );
+			border-color: var(--studio-gray-10);
 		}
 	}
 
@@ -66,7 +66,7 @@
 		font-size: $font-body-small;
 		font-weight: 500;
 		letter-spacing: 0.16px;
-		color: var( --studio-gray-90 );
+		color: var(--studio-gray-90);
 	}
 
 	&__label {
@@ -90,7 +90,7 @@
 	}
 
 	// `data-y-axis` needed to override original popover styles
-	&--desktop[data-y-axis='middle'] {
+	&--desktop[data-y-axis="middle"] {
 		display: none;
 
 		// when `data-y-axis='middle'`, the default `display` value is `flex` instead of `block`
@@ -106,9 +106,9 @@
 		width: 210px + 2 * ( 10px + 1px );
 		box-sizing: border-box;
 
-		background-color: var( --studio-gray-100 );
-		border-color: var( --studio-gray-100 );
-		color: var( --studio-white );
+		background-color: var(--studio-gray-100);
+		border-color: var(--studio-gray-100);
+		color: var(--studio-white);
 
 		font-family: $default-font;
 		font-size: $font-body-extra-small;
@@ -121,14 +121,14 @@
 
 	// All following code is needed to override the popover's arrow fill color
 	// While still keeping it in the shape of a triangle (hence the transparent borders)
-	&:not( .is-without-arrow ) {
+	&:not(.is-without-arrow) {
 		&::before,
 		&::after {
-			border-color: var( --studio-gray-100 );
+			border-color: var(--studio-gray-100);
 		}
 
-		&[data-y-axis='top'],
-		&[data-y-axis='bottom'] {
+		&[data-y-axis="top"],
+		&[data-y-axis="bottom"] {
 			&::before,
 			&::after {
 				border-left-color: transparent;
@@ -136,7 +136,7 @@
 			}
 		}
 
-		&[data-y-axis='middle'] {
+		&[data-y-axis="middle"] {
 			&::before,
 			&::after {
 				border-bottom-color: transparent;

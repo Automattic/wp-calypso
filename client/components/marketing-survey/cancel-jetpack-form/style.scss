@@ -1,12 +1,12 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .cancel-jetpack-form__dialog {
 	// dialog panel
 
 	.formatted-header__title {
 		font-size: 1.5rem;
-		color: #000000;
+		color: #000;
 		line-height: 1.11;
 		margin-bottom: 1.5rem;
 		text-align: center;
@@ -15,7 +15,7 @@
 
 	.formatted-header__subtitle {
 		font-size: 1.25rem;
-		color: #000000;
+		color: #000;
 		line-height: 1.25;
 		margin-bottom: 2rem;
 	}
@@ -53,19 +53,19 @@
 		padding: 1rem;
 		width: 100%;
 		font-weight: 600;
-		color: var( --studio-black );
-		border: 1px solid var( --studio-white );
+		color: var(--studio-black);
+		border: 1px solid var(--studio-white);
 		transition: border 0.2s ease-in-out;
 		font-size: 1rem;
 
 		&:hover,
 		&:focus {
-			box-shadow: 0 0 0 1px var( --studio-gray-50 );
+			box-shadow: 0 0 0 1px var(--studio-gray-50);
 		}
 
 		&.is-selected {
-			box-shadow: 0 0 0 1px var( --studio-black );
-			border: 1px solid var( --studio-black );
+			box-shadow: 0 0 0 1px var(--studio-black);
+			border: 1px solid var(--studio-black);
 		}
 
 		& > svg {
@@ -85,7 +85,7 @@
 	}
 }
 
-input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text-input {
+input[type="text"].form-text-input.jetpack-cancellation-survey__choice-item-text-input {
 	border: none;
 	padding: 0;
 	margin-left: 1rem;
@@ -94,9 +94,9 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 // Cancellation offer step
 .jetpack-cancellation-offer {
 	&__card {
-		background: var( --studio-white );
+		background: var(--studio-white);
 		padding: 2rem;
-		box-shadow: 0 10px 40px rgb( 0 0 0 / 8% );
+		box-shadow: 0 10px 40px rgb(0 0 0 / 8%);
 		border-radius: 4px;
 	}
 
@@ -106,7 +106,7 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 
 	&__headline {
 		font-size: 1.5rem;
-		color: var( --studio-jetpack-green-60 );
+		color: var(--studio-jetpack-green-60);
 		font-weight: 700;
 		line-height: 1.15;
 		margin-bottom: 1rem;
@@ -120,23 +120,23 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 	&__accept-cta {
 		padding: 0.5rem 1.25rem;
 		font-size: 1rem;
-		background-color: var( --studio-gray-100 ) !important;
+		background-color: var(--studio-gray-100) !important;
 		border: none !important;
 		margin-bottom: 1rem;
 
 		&:hover,
 		&:active {
-			background-color: var( --studio-gray-80 ) !important;
+			background-color: var(--studio-gray-80) !important;
 		}
 
 		&:focus {
 			box-shadow: none !important;
-			outline: solid 2px var( --studio-gray-100 );
+			outline: solid 2px var(--studio-gray-100);
 			outline-offset: 2px;
 		}
 
 		&.is-busy {
-			background-image: linear-gradient( -45deg, var( --studio-gray-60 ) 28%, var( --studio-gray-100 ) 28%, var( --studio-gray-100 ) 72%, var( --studio-gray-60 ) 72% ) !important;
+			background-image: linear-gradient(-45deg, var(--studio-gray-60) 28%, var(--studio-gray-100) 28%, var(--studio-gray-100) 72%, var(--studio-gray-60) 72%) !important;
 		}
 	}
 
@@ -144,18 +144,18 @@ input[type='text'].form-text-input.jetpack-cancellation-survey__choice-item-text
 		a {
 			font-weight: 600;
 			text-decoration: underline;
-			color: var( --studio-jetpack-green-60 );
+			color: var(--studio-jetpack-green-60);
 
 			&:hover,
 			&:focus {
 				text-decoration-thickness: 3px;
-				color: var( --studio-jetpack-green-70 );
+				color: var(--studio-jetpack-green-70);
 			}
 		}
 	}
 
 	&__error-text {
-		color: var( --studio-red-0 );
+		color: var(--studio-red-0);
 		font-weight: 700;
 	}
 }

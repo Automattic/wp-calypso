@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .courses {
 	// Not good but this way can easily change the background color for courses step
 	&::before {
-		content: '';
+		content: "";
 		position: fixed;
 		left: 0;
 		right: 0;
@@ -56,7 +56,7 @@
 	.videos-ui {
 		position: relative;
 		width: 100%;
-		min-height: calc( 100vh - 60px );
+		min-height: calc(100vh - 60px);
 		margin-top: 12px;
 	}
 
@@ -70,7 +70,7 @@
 		box-shadow: 0 -1px 0 #2c3234;
 		background-color: #101517;
 		animation: appear 0.3s ease-in-out;
-		@include reduce-motion( 'animation' );
+		@include reduce-motion( "animation" );
 
 		.courses__footer-content {
 			display: flex;

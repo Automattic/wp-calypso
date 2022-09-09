@@ -1,6 +1,6 @@
 .loading-placeholder {
 	button.form-button,
-	input[type='text'].form-text-input,
+	input[type="text"].form-text-input,
 	select.form-select {
 		@include placeholder( --color-neutral-10 );
 		cursor: default;

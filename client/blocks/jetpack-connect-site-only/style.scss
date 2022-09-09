@@ -12,12 +12,13 @@
 		margin-bottom: 24px;
 	}
 
-	p, a {
+	p,
+	a {
 		font-size: $font-body-small;
 	}
 
 	a {
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 
 	a.jetpack-connect-site-only__continue-link {

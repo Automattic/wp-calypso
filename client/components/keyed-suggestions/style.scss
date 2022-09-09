@@ -6,7 +6,7 @@
 	margin-left: -1px;
 	overflow-y: auto;
 	max-height: 50vh;
-	border: 1px solid var( --color-neutral-10 );
+	border: 1px solid var(--color-neutral-10);
 	border-top: 0;
 }
 
@@ -16,9 +16,9 @@
 }
 
 .keyed-suggestions__category {
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	border: 0;
-	border-bottom: 1px solid var( --color-neutral-5 );
+	border-bottom: 1px solid var(--color-neutral-5);
 	padding: 4px 8px;
 	font-size: $font-body-small;
 	display: flex;
@@ -26,13 +26,13 @@
 
 	.keyed-suggestions__category-name {
 		text-transform: uppercase;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	.keyed-suggestions__category-counter {
 		margin-left: 6px;
 		text-transform: uppercase;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		flex: 1;
 	}
 
@@ -45,18 +45,18 @@
 .keyed-suggestions__value {
 	display: flex;
 	padding: 10px;
-	background: var( --color-surface );
+	background: var(--color-surface);
 	border: 0;
-	border-bottom: 1px solid var( --color-neutral-5 );
+	border-bottom: 1px solid var(--color-neutral-5);
 	font-size: $font-body;
 	cursor: pointer;
 
 	&.is-selected {
-		background-color: var( --color-primary );
-		color: var( --color-text-inverted );
+		background-color: var(--color-primary);
+		color: var(--color-text-inverted);
 
 		.keyed-suggestions__value-description {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 }
@@ -85,7 +85,7 @@
 	flex: 1 1 auto;
 	margin-left: 0.5em;
 	padding-top: 3px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	height: 19px; /* font-size + 2*padding */
 	overflow: hidden;

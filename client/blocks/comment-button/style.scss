@@ -1,7 +1,7 @@
 .comment-button {
 	align-items: center;
 	box-sizing: border-box;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
@@ -10,7 +10,7 @@
 
 	&:hover,
 	&:active {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 
 	.comment-button__label-count {
@@ -18,7 +18,7 @@
 	}
 
 	.comment-button__label-status {
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
 		}
 	}

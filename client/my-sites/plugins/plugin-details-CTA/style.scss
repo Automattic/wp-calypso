@@ -1,4 +1,4 @@
-@use '../variables';
+@use "../variables";
 
 .plugin-details-cta__container {
 	@extend %plugin-header;
@@ -9,7 +9,7 @@
 }
 
 .plugin-details-cta__modal-overlay.dialog__backdrop {
-	background-color: rgba( var( --color-neutral-100-rgb ), 0.7 );
+	background-color: rgba(var(--color-neutral-100-rgb), 0.7);
 }
 
 .plugin-details-cta__dialog-content {
@@ -25,7 +25,7 @@
 .plugin-details-cta__price {
 	font-family: $brand-serif;
 	font-size: $font-title-large;
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 	margin-bottom: 16px;
 	min-height: 48px;
 	display: flex;
@@ -46,14 +46,14 @@
 .plugin-details-cta__period {
 	font-family: $sans;
 	font-size: $font-body-extra-small;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 	padding-left: 3px;
 }
 
 .plugin-details-cta__uprade-required {
 	width: 100%;
 	font-size: $font-body-extra-small;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 }
 
 .plugin-details-cta__preinstalled {
@@ -72,19 +72,19 @@
 
 .plugin-details-cta__t-and-c {
 	font-size: $font-body-extra-small;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 	margin-bottom: 16px;
 }
 
 .plugin-details-cta__not-available {
 	.plugin-details-cta__not-available-text {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 		margin: 16px 0;
 		font-size: $font-body-small;
 	}
 
 	.plugin-details-cta__follow-toggle label {
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 	}
 }
 
@@ -92,12 +92,12 @@
 	display: flex;
 
 	.plugin-details-cta__upgrade-required-icon {
-		color: var( --studio-orange-40 );
+		color: var(--studio-orange-40);
 		padding-top: 3px;
 	}
 
 	.plugin-details-cta__upgrade-required-text {
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 		font-size: $font-body-small;
 		margin-left: 16px;
 	}
@@ -113,20 +113,20 @@
 }
 
 .plugin-details-cta__installed-text {
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 	font-size: $font-body;
 	height: 40px;
 
 	.plugin-details-cta__installed-text-quantity {
-		color: var( --studio-green-50 );
+		color: var(--studio-green-50);
 	}
 
 	.plugin-details-cta__installed-text-active {
-		color: var( --studio-green-60 );
+		color: var(--studio-green-60);
 	}
 
 	.plugin-details-cta__installed-text-inactive {
-		color: var( --studio-red-60 );
+		color: var(--studio-red-60);
 	}
 }
 
@@ -134,11 +134,11 @@
 	font-size: $font-body-extra-small;
 
 	.plugin-details-cta__autoupdate-text-main {
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 	}
 
 	.plugin-details-cta__autoupdate-text-version {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 	}
 }
 

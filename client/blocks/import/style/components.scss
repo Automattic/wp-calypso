@@ -5,7 +5,7 @@
 
 // ActionCard component
 .card.action-card {
-	box-shadow: 0 1px 0 var( --studio-gray-5 );
+	box-shadow: 0 1px 0 var(--studio-gray-5);
 
 	&.is-compact {
 		display: flex;
@@ -19,11 +19,11 @@
 	.action-card__heading {
 		margin: 0 0 2px;
 		line-height: 1.2em;
-		color: 0 1px 0 var( --studio-gray-100 );
+		color: 0 1px 0 var(--studio-gray-100);
 	}
 
 	.action-card__main p {
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 		font-size: 0.875em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		margin-bottom: 0;
 	}
@@ -42,7 +42,7 @@
 
 	.action-card__button-container a svg,
 	.action-card__button-container button svg {
-		fill: var( --studio-gray-30 );
+		fill: var(--studio-gray-30);
 	}
 }
 
@@ -52,7 +52,7 @@
 
 	p {
 		font-size: 1rem;
-		color: var( --studio-gray-70 );
+		color: var(--studio-gray-70);
 		margin-bottom: 1em;
 
 		@include break-small {
@@ -114,7 +114,7 @@
 		text-align: right;
 		margin-top: 2.5rem;
 
-		& > button:not( :last-child ) {
+		& > button:not(:last-child) {
 			margin-right: 1rem;
 		}
 
@@ -124,7 +124,7 @@
 		}
 
 		.action-buttons__cancel {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 		}
 
 		.action-buttons__next.is-primary {

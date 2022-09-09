@@ -1,5 +1,5 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '../variables.scss';
+@import "@automattic/onboarding/styles/mixins";
+@import "../variables.scss";
 
 .plans-feature-list {
 	margin-top: 16px;
@@ -27,7 +27,7 @@ ul.plans-feature-list__item-group {
 		@media ( min-width: $break-mobile ) {
 			@supports ( display: grid ) {
 				display: grid;
-				grid-template-columns: repeat( auto-fill, minmax( 300px, 1fr ) );
+				grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 			}
 		}
 	}
@@ -76,16 +76,16 @@ ul.plans-feature-list__item-group {
 	margin-right: 6px;
 	margin-top: 1px;
 
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 
 	.plans-accordion & {
-		color: var( --studio-green-60 );
+		color: var(--studio-green-60);
 	}
 
 	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable &,
 	.plans-feature-list__item--disabled-message &,
 	.plans-feature-list__item--requires-annual-disabled & {
-		color: var( --studio-orange-40 );
+		color: var(--studio-orange-40);
 	}
 
 	&,
@@ -113,11 +113,11 @@ ul.plans-feature-list__item-group {
 	padding-left: 24px;
 
 	.plans-feature-list__item--requires-annual-enabled & {
-		color: var( --studio-green-60 );
+		color: var(--studio-green-60);
 	}
 
 	.plans-feature-list__item--requires-annual-disabled & {
-		color: var( --studio-orange-40 );
+		color: var(--studio-orange-40);
 	}
 }
 
@@ -132,7 +132,7 @@ ul.plans-feature-list__item-group {
 	line-height: 1.35;
 	letter-spacing: 0.2px;
 	font-weight: 400;
-	color: var( --studio-gray-70 );
+	color: var(--studio-gray-70);
 
 	// Text is bold when it's a button,
 	// or when it's a disabled feature (e.g. custom domain on a free plan)
@@ -143,28 +143,28 @@ ul.plans-feature-list__item-group {
 
 	// When it's a button (e.g. custom domain), the text color is blue (including
 	// hover/focus), unless the plans grid variation is "accordion"
-	.plans-feature-list__item-content-wrapper--domain-button:not( .is-unavailable ) & {
-		color: var( --studio-blue-40 );
+	.plans-feature-list__item-content-wrapper--domain-button:not(.is-unavailable) & {
+		color: var(--studio-blue-40);
 
 		&:hover,
 		&:focus {
-			color: var( --studio-blue-30 );
+			color: var(--studio-blue-30);
 		}
 	}
 
 	// When it's the accordion variation, the feature button has grey text.
 	.plans-accordion
-		.plans-feature-list__item-content-wrapper--domain-button:not( .is-unavailable )
-		& {
-		color: var( --studio-gray-70 );
+	.plans-feature-list__item-content-wrapper--domain-button:not(.is-unavailable)
+	& {
+		color: var(--studio-gray-70);
 
 		&.is-cta {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 		}
 
 		&:hover,
 		&:focus {
-			color: var( --studio-gray-50 );
+			color: var(--studio-gray-50);
 		}
 	}
 
@@ -172,14 +172,14 @@ ul.plans-feature-list__item-group {
 	// or disabled (in case of custom domain on a free plan), text color is orange
 	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable &,
 	.plans-feature-list__item--disabled-message & {
-		color: var( --studio-orange-40 );
+		color: var(--studio-orange-40);
 	}
 
 	// In case the feature is unavailable as a button, also add hover/focus orange
 	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable & {
 		&:hover,
 		&:focus {
-			color: var( --studio-orange-30 );
+			color: var(--studio-orange-30);
 		}
 	}
 
@@ -195,12 +195,12 @@ ul.plans-feature-list__item-group {
 	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable &,
 	.plans-feature-list__item--requires-annual-disabled &,
 	.plans-feature-list__item--requires-annual-disabled
-		.plans-feature-list__item-content-wrapper--domain-button.is-cta
-		&,
+	.plans-feature-list__item-content-wrapper--domain-button.is-cta
+	&,
 	.plans-feature-list__item--disabled-message &,
 	.plans-feature-list__item--disabled-message
-		.plans-feature-list__item-content-wrapper--domain-button.is-cta
-		& {
+	.plans-feature-list__item-content-wrapper--domain-button.is-cta
+	& {
 		text-decoration: line-through;
 	}
 }

@@ -1,9 +1,9 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .more-info-link {
 	display: inline-block;
-	color: var( --color-neutral-100 ) !important;
+	color: var(--color-neutral-100) !important;
 	text-decoration: underline;
 	margin-top: 4px;
 

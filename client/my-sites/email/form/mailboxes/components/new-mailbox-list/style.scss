@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .new-mailbox-list__main {
 	border: none;
@@ -20,7 +20,7 @@
 		margin-top: 1.5em;
 	}
 
-	> .button:not( :last-child ) {
+	> .button:not(:last-child) {
 		margin-top: 1em;
 
 		@include break-mobile {
@@ -39,7 +39,7 @@
 		flex-direction: row;
 	}
 
-	> .button:not( :first-child ) {
+	> .button:not(:first-child) {
 		margin-top: 1em;
 
 		@include break-mobile {
@@ -72,7 +72,7 @@
 }
 
 .new-mailbox-list__numbered-heading.card-heading {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	line-height: 2;
 	margin-top: 16px;
 	margin-bottom: 16px;

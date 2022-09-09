@@ -3,15 +3,15 @@
 	bottom: 0;
 	margin: 0;
 	width: 100%;
-	z-index: z-index( 'root', '.legal-updates-banner' );
+	z-index: z-index("root", ".legal-updates-banner");
 	padding: 1rem;
-	background-color: var( --color-neutral-80 );
-	color: var( --color-text-inverted );
+	background-color: var(--color-neutral-80);
+	color: var(--color-text-inverted);
 	display: flex;
 	flex-direction: column;
 
 	a {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 		text-decoration: underline;
 	}
 
@@ -24,7 +24,7 @@
 		width: 100%;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding: 1rem 1.5rem;
 		flex-direction: row;
 		align-items: center;
@@ -36,7 +36,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		padding: 1rem 2rem;
 
 		.legal-updates-banner__content {

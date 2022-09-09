@@ -8,12 +8,12 @@
 
 	.onboarding-title {
 		font-size: 3rem;
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		margin-bottom: 0.75rem;
 	}
 
 	.onboarding-subtitle {
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		margin-bottom: 1.5em;
 	}
 
@@ -25,13 +25,13 @@
 
 .onboarding-hooray__animate {
 	.onboarding-title {
-		animation: hooray-fade 0.9s ease-in-out, hooray-jump 0.8s cubic-bezier( 0.21, 0.19, 0.24, 0.99 );
+		animation: hooray-fade 0.9s ease-in-out, hooray-jump 0.8s cubic-bezier(0.21, 0.19, 0.24, 0.99);
 	}
 
 	.onboarding-subtitle,
 	.components-button.action-buttons__next.is-primary {
 		opacity: 0;
-		animation: hooray-fade 0.9s ease-in-out 0.8s forwards, hooray-jump 0.8s cubic-bezier( 0.21, 0.19, 0.24, 0.99 ) 0.8s forwards;
+		animation: hooray-fade 0.9s ease-in-out 0.8s forwards, hooray-jump 0.8s cubic-bezier(0.21, 0.19, 0.24, 0.99) 0.8s forwards;
 	}
 }
 
@@ -48,7 +48,7 @@
 
 @keyframes hooray-jump {
 	from {
-		transform: translateY( 20px );
+		transform: translateY(20px);
 	}
 
 	to {

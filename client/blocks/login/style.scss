@@ -1,20 +1,20 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import 'calypso/assets/stylesheets/_p2-extends.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/_p2-extends.scss";
 
-.layout:not( .is-jetpack-woocommerce-flow ):not( .is-jetpack-woo-dna-flow ):not( .is-wccom-oauth-flow ) {
+.layout:not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow) {
 	.login.is-jetpack {
 		.button.is-primary {
-			background-color: var( --studio-jetpack-green-50 );
-			border-color: var( --studio-jetpack-green-70 );
+			background-color: var(--studio-jetpack-green-50);
+			border-color: var(--studio-jetpack-green-70);
 
 			&:hover,
 			&:focus {
-				background-color: var( --studio-jetpack-green-60 );
+				background-color: var(--studio-jetpack-green-60);
 			}
 
 			.accessible-focus &:focus {
-				box-shadow: 0 0 0 2px var( --studio-jetpack-green-30 );
+				box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
 			}
 		}
 	}
@@ -40,7 +40,7 @@
 	.login__jetpack-logo,
 	.login__woocommerce-logo {
 		text-align: center;
-		border-bottom: 1px solid var( --color-neutral-5 );
+		border-bottom: 1px solid var(--color-neutral-5);
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -48,13 +48,13 @@
 		height: 56px;
 
 		svg > g {
-			transform: translateX( 25% );
+			transform: translateX(25%);
 		}
 	}
 
 	.login__woocommerce-wrapper {
 		svg > g {
-			transform: translateX( 50% );
+			transform: translateX(50%);
 		}
 	}
 
@@ -67,7 +67,7 @@
 		padding-left: 0;
 		display: block;
 		height: 56px;
-		border-bottom: 1px solid var( --color-woocommerce-header-border );
+		border-bottom: 1px solid var(--color-woocommerce-header-border);
 		background: #fff;
 
 		svg {
@@ -80,7 +80,7 @@
 	}
 
 	.login__header-subtitle {
-		color: var( --color-primary-10 );
+		color: var(--color-primary-10);
 		margin-top: 1em;
 		font-size: $font-body;
 		line-height: 24px;
@@ -88,11 +88,11 @@
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: var( --color-neutral-80 );
+		fill: var(--color-neutral-80);
 	}
 
 	.jetpack-logo__icon-triangle {
-		fill: var( --color-neutral-0 );
+		fill: var(--color-neutral-0);
 	}
 
 	.login__form-action .form-button {
@@ -105,17 +105,17 @@
 		max-width: 330px;
 
 		a {
-			color: var( --color-accent );
+			color: var(--color-accent);
 			text-decoration: underline;
 		}
 	}
 
 	.jetpack-header__partner-logo-plus svg {
-		stroke: var( --color-neutral-80 );
+		stroke: var(--color-neutral-80);
 	}
 
 	.jetpack-header__partner-logo-plus .gridicon {
-		color: var( --color-neutral-80 );
+		color: var(--color-neutral-80);
 	}
 }
 
@@ -125,7 +125,7 @@
 
 .login__form .login__form-userdata {
 	label {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		display: block;
 		font-size: $font-body-small;
 		line-height: 1.5;
@@ -148,14 +148,14 @@
 }
 
 .login__form-change-username {
-	color: var( --color-link );
+	color: var(--color-link);
 	font-weight: inherit;
 	cursor: pointer;
 
 	&:hover,
 	&:focus,
 	&:active {
-		color: var( --color-link-dark );
+		color: var(--color-link-dark);
 	}
 
 	.gridicon {
@@ -182,7 +182,7 @@
 	text-align: center;
 
 	.gridicon {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 
 	.visit-site {
@@ -197,7 +197,7 @@
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 }
 
@@ -220,7 +220,7 @@
 		a,
 		a:hover {
 			pointer-events: none;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 		}
 	}
 }
@@ -237,7 +237,7 @@
 }
 
 .login__jetpack-logo {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-top: 20px;
 	}
 }
@@ -272,9 +272,9 @@
 }
 
 .layout.is-p2-login {
-	background: var( --p2-color-white );
-	font-family: var( --p2-font-inter );
-	color: var( --p2-color-text );
+	background: var(--p2-color-white);
+	font-family: var(--p2-font-inter);
+	color: var(--p2-color-text);
 	letter-spacing: -0.01em;
 	min-height: 100%;
 	display: flex;
@@ -333,8 +333,8 @@
 	}
 
 	.login__form label {
-		font-size: var( --p2-font-size-form-xxs );
-		color: var( --p2-color-text );
+		font-size: var(--p2-font-size-form-xxs);
+		color: var(--p2-color-text);
 		font-weight: 500;
 		margin-bottom: 0.5em;
 		line-height: 1.8;
@@ -354,8 +354,8 @@
 	}
 
 	.login__form-header {
-		color: var( --p2-color-text );
-		font-size: var( --p2-font-size-form-xxl );
+		color: var(--p2-color-text);
+		font-size: var(--p2-font-size-form-xxl);
 		font-weight: 900; /* stylelint-disable-line scales/font-weights */
 		text-align: center;
 		line-height: 1.3;
@@ -365,13 +365,13 @@
 
 	.login__header-subtitle {
 		line-height: 1.8;
-		color: var( --p2-color-text );
+		color: var(--p2-color-text);
 		margin-bottom: 0;
 	}
 
 	.login__form-terms {
 		margin-bottom: 1rem;
-		color: var( --p2-color-text );
+		color: var(--p2-color-text);
 	}
 
 	.login__form-action {
@@ -387,7 +387,7 @@
 	}
 
 	.login__social-tos {
-		color: var( --p2-color-text );
+		color: var(--p2-color-text);
 		margin: 1em 0 0;
 	}
 
@@ -396,15 +396,15 @@
 
 		&.login__form-change-username {
 			background: none;
-			color: var( --p2-color-link );
-			font-size: var( --p2-font-size-form-xs );
+			color: var(--p2-color-link);
+			font-size: var(--p2-font-size-form-xs);
 			padding: 12px 0;
 			width: auto;
 		}
 
-		&.login__form-change-username:hover:not( :disabled ):not( .disabled ) {
+		&.login__form-change-username:hover:not(:disabled):not(.disabled) {
 			background: none;
-			color: var( --p2-color-link-dark );
+			color: var(--p2-color-link-dark);
 		}
 	}
 
@@ -417,7 +417,7 @@
 		a {
 			@extend %p2-link;
 			border-bottom: 1px solid currentColor;
-			font-size: var( --p2-font-size-form-xs );
+			font-size: var(--p2-font-size-form-xs);
 			font-weight: 400;
 			margin: 0 0 0.8em;
 			padding: 0;
@@ -428,8 +428,8 @@
 	}
 
 	.login__divider {
-		color: var( --p2-color-border );
-		font-size: var( --p2-font-size-form-xs );
+		color: var(--p2-color-border);
+		font-size: var(--p2-font-size-form-xs);
 		margin: 0 auto 2rem;
 		max-width: 400px;
 		overflow: hidden;
@@ -439,8 +439,8 @@
 
 		&::before,
 		&::after {
-			background-color: var( --p2-color-border );
-			content: '';
+			background-color: var(--p2-color-border);
+			content: "";
 			display: inline-block;
 			height: 1px;
 			position: relative;

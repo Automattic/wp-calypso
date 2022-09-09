@@ -1,21 +1,21 @@
 
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .plugin-common-table__table {
 	display: none;
 	@include break-xlarge() {
 		display: table;
 	}
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var(--studio-gray-5);
 	border-collapse: collapse;
 	tr {
 		height: 1px;
-		background: var( --studio-white );
+		background: var(--studio-white);
 	}
 	th {
 		font-size: 0.75rem;
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		font-weight: 400;
 		height: 60px;
 	}
@@ -24,7 +24,7 @@
 		height: 60px;
 		width: 175px;
 		box-sizing: border-box;
-		&:nth-child( 1 ) {
+		&:nth-child(1) {
 			max-width: 250px;
 			@include break-wide() {
 				max-width: 300px;
@@ -34,8 +34,9 @@
 			display: flex;
 		}
 	}
-	td, th {
-		border-bottom: 1px solid var( --studio-gray-5 );
+	td,
+	th {
+		border-bottom: 1px solid var(--studio-gray-5);
 		text-align: left;
 		border-collapse: collapse;
 		vertical-align: middle;
@@ -65,16 +66,16 @@ td.plugin-common-table__actions {
 }
 .plugin-common-table__table-row {
 	&:hover {
-		background: var( --studio-gray-0 );
+		background: var(--studio-gray-0);
 		.plugin-row-formatter__overlay {
-			background: linear-gradient( to right, rgba( 246, 247, 247, 0.8 ) 30%, rgba( 246, 247, 247, 1 ) 100% );
+			background: linear-gradient(to right, rgba(246, 247, 247, 0.8) 30%, rgba(246, 247, 247, 1) 100%);
 		}
 	}
 }
 .plugin-common-table__all-actions {
 	vertical-align: middle;
 	display: inline-flex;
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
 	margin: 0 0.1em;
 	height: 100%;
 }
@@ -88,7 +89,7 @@ td.plugin-common-table__actions {
 	}
 }
 .components-form-toggle.is-checked .components-form-toggle__track {
-	background-color: var( --studio-jetpack-green-50 );
+	background-color: var(--studio-jetpack-green-50);
 }
 .plugin-common-table__plugin-icon {
 	width: 32px;
@@ -100,11 +101,11 @@ td.plugin-common-table__actions {
 	display: flex;
 	justify-content: end;
 	.button-group {
-		&:not( :last-child ) {
+		&:not(:last-child) {
 			margin-inline-end: 8px;
 		}
 		button {
-			color: var( --studio-gray-80 );
+			color: var(--studio-gray-80);
 			&:first-child,
 			&:last-child {
 				border-radius: 4px;

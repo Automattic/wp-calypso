@@ -2,7 +2,7 @@
 	display: inline-flex;
 	align-items: center;
 	box-sizing: border-box;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	cursor: pointer;
 	list-style-type: none;
 	padding: 4px;
@@ -13,23 +13,23 @@
 	&:active {
 
 		.gridicon {
-			fill: var( --color-accent );
+			fill: var(--color-accent);
 		}
 
 		.post-edit-button__label {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 	}
 
 	.gridicon {
-		fill: var( --color-neutral-light );
+		fill: var(--color-neutral-light);
 		top: -1px;
 	}
 
 	.post-edit-button__label {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
 		}
 	}
@@ -39,7 +39,7 @@
 	font-size: $font-body-small;
 	margin-left: 4px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: none;
 	}
 }

@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .emails__step-section-wrapper {
 	margin: 0 auto;
@@ -68,7 +68,7 @@ body.is-section-signup.is-white-signup {
 
 		.emails__email-side-content {
 			border-bottom: 1px solid;
-			border-bottom-color: var( --studio-gray-5 );
+			border-bottom-color: var(--studio-gray-5);
 			padding: 20px 0;
 			margin: 0 20px;
 

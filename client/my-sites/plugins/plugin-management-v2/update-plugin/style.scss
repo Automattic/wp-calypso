@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .update-plugin__plugin-update-wrapper {
 	display: flex;
 	align-items: center;
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 	font-size: 0.75rem;
 	position: relative;
 	margin-block-start: 16px;
@@ -18,11 +18,11 @@
 	display: flex;
 	position: relative;
 	inset-inline-start: 10px;
-	fill: var( --studio-gray-40 );
+	fill: var(--studio-gray-40);
 }
 
 button.update-plugin__new-version {
-	color: var( --studio-jetpack-green-50 ) !important;
+	color: var(--studio-jetpack-green-50) !important;
 	text-decoration: underline;
 	font-weight: 600;
 	position: relative;
@@ -52,7 +52,7 @@ button.update-plugin__retry-button {
 
 	.plugin-action-status-container {
 		margin-block-start: 12px;
-		transform: translateY( -50% );
+		transform: translateY(-50%);
 		display: flex;
 
 		@include break-xlarge {

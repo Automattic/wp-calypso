@@ -1,5 +1,5 @@
 .domain-product-price {
-	color: var( --color-text );
+	color: var(--color-text);
 	font-weight: 400;
 	font-size: $font-body-small;
 	line-height: 1;
@@ -7,7 +7,7 @@
 	flex-direction: column;
 	text-align: right;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		align-items: flex-end;
 		font-size: $font-body;
 
@@ -17,7 +17,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		display: inline-block;
 		font-size: $font-body-small;
 		text-align: left;
@@ -29,21 +29,21 @@
 		}
 	}
 
-	.is-section-signup &:not( .domain-product-price__domain-step-signup-flow ) {
-		@include breakpoint-deprecated( '>660px' ) {
+	.is-section-signup &:not(.domain-product-price__domain-step-signup-flow) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding-right: 1em;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			padding-left: 1em;
 			padding-right: 1em;
 		}
 	}
 
 	small {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 
 	.domain-product-price__premium-text {
@@ -52,28 +52,28 @@
 
 	.domain-product-price__free-text,
 	.domain-product-price__sale-price {
-		color: var( --color-neutral-60 );
+		color: var(--color-neutral-60);
 		display: block;
 	}
 
 	.domain-product-price__sale-price {
-		color: var( --studio-orange-50 );
+		color: var(--studio-orange-50);
 		font-weight: 600;
 		small {
-			color: var( --studio-orange-50 );
+			color: var(--studio-orange-50);
 			font-size: $font-body-small;
 		}
 	}
 
 	&.no-price .domain-product-price__free-text,
 	&.no-price .domain-product-price__sale-price {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-left: 0;
 		}
 	}
 
 	.domain-product-price__free-price {
-		color: var( --studio-green-60 );
+		color: var(--studio-green-60);
 		font-weight: 500;
 		font-size: $font-body-small;
 	}
@@ -99,7 +99,7 @@
 		.domain-product-price__price,
 		.domain-product-price__renewal-price {
 			font-size: $font-body-small;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 		}
 
 		.domain-product-price__renewal-price {
@@ -110,20 +110,20 @@
 			}
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			line-height: 1.5;
 			margin-top: 0;
 		}
 	}
 
 	.is-placeholder & {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			display: none;
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			color: transparent;
 		}
 	}

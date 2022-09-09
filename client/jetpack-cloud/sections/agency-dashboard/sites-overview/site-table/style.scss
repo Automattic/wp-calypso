@@ -1,21 +1,21 @@
 
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .site-table__table {
 	display: none;
 	@include break-large() {
 		display: table;
 	}
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var(--studio-gray-5);
 	border-collapse: collapse;
 	tr {
 		height: 1px;
-		background: var( --studio-white );
+		background: var(--studio-white);
 	}
 	th {
 		font-size: 0.75rem;
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		font-weight: 400;
 		height: 40px;
 	}
@@ -43,8 +43,9 @@
 			display: flex;
 		}
 	}
-	td, th {
-		border-bottom: 1px solid var( --studio-gray-5 );
+	td,
+	th {
+		border-bottom: 1px solid var(--studio-gray-5);
 		text-align: left;
 		border-collapse: collapse;
 		vertical-align: middle;
@@ -70,12 +71,12 @@ td.site-table__td-with-error {
 }
 .site-table__table-row {
 	&:hover {
-		background: var( --studio-gray-0 );
+		background: var(--studio-gray-0);
 		+ .site-table__connection-error {
-			background: var( --studio-gray-0 );
+			background: var(--studio-gray-0);
 		}
 		.sites-overview__overlay {
-			background: linear-gradient( to right, rgba( 246, 247, 247, 0.8 ) 30%, rgba( 246, 247, 247, 1 ) 100% );
+			background: linear-gradient(to right, rgba(246, 247, 247, 0.8) 30%, rgba(246, 247, 247, 1) 100%);
 		}
 		.site-set-favorite__favorite-icon {
 			visibility: visible;
@@ -83,7 +84,7 @@ td.site-table__td-with-error {
 	}
 }
 .site-table__table-body-favorite::after {
-	content: '';
+	content: "";
 	display: block;
 	height: 15px;
 }

@@ -1,7 +1,7 @@
-@import url( 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap' );
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import 'calypso/assets/stylesheets/_p2-extends.scss';
+@import url( "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap" );
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "calypso/assets/stylesheets/_p2-extends.scss";
 
 .p2-step-wrapper {
 	box-sizing: border-box;
@@ -9,7 +9,7 @@
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	font-family: var( --p2-font-inter );
+	font-family: var(--p2-font-inter);
 	line-height: 1.8;
 	padding: 96px 1.5em 24px;
 
@@ -18,7 +18,7 @@
 	}
 
 	input {
-		font-family: var( --p2-font-inter );
+		font-family: var(--p2-font-inter);
 	}
 
 	a {
@@ -55,7 +55,7 @@
 }
 
 .p2-step-wrapper__header-step-indicator {
-	color: var( --p2-color-text-light );
+	color: var(--p2-color-text-light);
 	font-weight: 500;
 }
 
@@ -68,7 +68,7 @@
 }
 
 .p2-step-wrapper__header-text {
-	font-size: var( --p2-font-size-form-xxl );
+	font-size: var(--p2-font-size-form-xxl);
 	font-weight: 900; /* stylelint-disable-line scales/font-weights */
 	text-align: center;
 	line-height: 1.3;
@@ -103,7 +103,7 @@
 }
 
 .p2-step-wrapper__footer-text {
-	font-size: var( --p2-font-size-form-xxs );
+	font-size: var(--p2-font-size-form-xxs);
 }
 
 /* Step-specific overrides */

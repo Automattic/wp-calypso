@@ -1,16 +1,16 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@automattic/typography/styles/fonts';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/fonts";
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
-	--color-accent: var( --studio-jetpack-green-50 );
-	--color-primary: var( --studio-jetpack-green-50 );
+	--color-accent: var(--studio-jetpack-green-50);
+	--color-primary: var(--studio-jetpack-green-50);
 
-	--color-accent-60: var( --studio-jetpack-green-70 );
+	--color-accent-60: var(--studio-jetpack-green-70);
 
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 
-	font-family: 'Inter', $sans;
+	font-family: Inter, $sans;
 
 	h2 {
 		line-height: inherit;
@@ -32,14 +32,14 @@
 		.formatted-header__title {
 			margin: 0 0 36px;
 
-			color: var( --color-text );
+			color: var(--color-text);
 
-			font-size: rem( 21px ); /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: rem(21px); /* stylelint-disable-line declaration-property-unit-allowed-list */
 
 			@include break-medium {
 				margin: 1.5rem 0 40px;
 
-				font-size: rem( 35px );
+				font-size: rem(35px);
 			}
 		}
 	}
@@ -49,7 +49,7 @@
 	}
 
 	.foldable-card {
-		font-size: rem( 13px );
+		font-size: rem(13px);
 	}
 
 	.faq {
@@ -64,14 +64,14 @@
 
 			color: #2e4453;
 
-			font-size: rem( 26px );
+			font-size: rem(26px);
 			font-weight: 400;
 			text-align: center;
 
 			@include break-medium {
 				margin: 64px 0;
 
-				font-size: rem( 35px );
+				font-size: rem(35px);
 			}
 		}
 	}
@@ -80,11 +80,11 @@
 	// the featured product card, with --studio-pink-50.
 	.jetpack-product-card.is-featured {
 		.jetpack-product-card__header {
-			background-color: var( --studio-pink-50 );
+			background-color: var(--studio-pink-50);
 		}
 
 		.jetpack-product-card__body {
-			border: solid 2px var( --studio-pink-50 );
+			border: solid 2px var(--studio-pink-50);
 		}
 	}
 }

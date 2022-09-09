@@ -10,7 +10,7 @@ $date-picker_nav_button_size: 20px;
 
 .date-picker__division {
 	margin: 8px 0;
-	background: var( --color-neutral-5 );
+	background: var(--color-neutral-5);
 }
 
 /*
@@ -60,7 +60,7 @@ $date-picker_nav_button_size: 20px;
 	height: 26px;
 	text-align: center;
 	top: 11px;
-	z-index: z-index( '.popover', '.date-picker__nav-bar' );
+	z-index: z-index(".popover", ".date-picker__nav-bar");
 }
 
 .date-picker__previous-month,
@@ -74,7 +74,7 @@ $date-picker_nav_button_size: 20px;
 	border-width: 1px;
 
 	&:hover {
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 
 	&:focus {
@@ -140,7 +140,7 @@ $date-picker_nav_button_size: 20px;
 
 .DayPicker-Weekdays {
 	margin-top: 10px;
-	border-top: 1px solid var( --color-neutral-5 );
+	border-top: 1px solid var(--color-neutral-5);
 	display: table-header-group;
 }
 
@@ -154,7 +154,7 @@ $date-picker_nav_button_size: 20px;
 	font-size: $font-body-extra-small;
 	text-align: center;
 	font-weight: 600;
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	text-transform: uppercase;
 
 	abbr {
@@ -178,7 +178,7 @@ $date-picker_nav_button_size: 20px;
 .date-picker .DayPicker-Day.DayPicker-Day--selected,
 .date-picker .DayPicker-Day.DayPicker-Day--today,
 .date-picker
-	.DayPicker-Day--selected:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
 	background-color: transparent;
 }
 
@@ -200,83 +200,83 @@ $date-picker_nav_button_size: 20px;
 
 // base styles of the cell child element
 .DayPicker-Day .date-picker__day {
-	content: ' ';
+	content: " ";
 	display: block;
 	height: 24px;
 	width: 24px;
 	line-height: 24px;
 	border-radius: 50%;
 	cursor: pointer;
-	border: 1px solid rgba( var( --color-surface-rgb ), 0 );
-	color: var( --color-neutral-70 );
+	border: 1px solid rgba(var(--color-surface-rgb), 0);
+	color: var(--color-neutral-70);
 	text-align: center;
 	margin: 0 auto;
 
 	&:hover,
 	&:focus {
-		background-color: var( --color-neutral-5 );
+		background-color: var(--color-neutral-5);
 	}
 }
 
 // `today` day
 .DayPicker-Day--today .date-picker__day {
-	color: var( --color-text-inverted );
-	background-color: var( --color-neutral-70 );
+	color: var(--color-text-inverted);
+	background-color: var(--color-neutral-70);
 
 	&:hover {
-		background-color: var( --color-neutral-50 );
+		background-color: var(--color-neutral-50);
 	}
 }
 
 // `outside` day
 .DayPicker-Day--outside .date-picker__day {
 	font-weight: normal;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 }
 
 // `disabled` day
-.DayPicker-Day--disabled:not( .DayPicker-Day--outside ) .date-picker__day {
-	color: var( --color-neutral-10 );
+.DayPicker-Day--disabled:not(.DayPicker-Day--outside) .date-picker__day {
+	color: var(--color-neutral-10);
 	cursor: default;
 }
 
 // `is-selected` day (not today -> adds animation)
-.DayPicker-Day.DayPicker-Day--is-selected:not( .DayPicker-Day--today ):not( .DayPicker-Day--events )
-	.date-picker__day {
-	color: var( --color-text-inverted );
+.DayPicker-Day.DayPicker-Day--is-selected:not(.DayPicker-Day--today):not(.DayPicker-Day--events)
+.date-picker__day {
+	color: var(--color-text-inverted);
 	animation: isSelectedDay 125ms ease-out;
-	background-color: var( --color-accent );
+	background-color: var(--color-accent);
 }
 
 // `is-selected` day (today -> no animation)
 .DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--today .date-picker__day,
 .DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--events .date-picker__day {
-	color: var( --color-text-inverted );
-	background-color: var( --color-accent );
+	color: var(--color-text-inverted);
+	background-color: var(--color-accent);
 }
 
 // `Sunday` day
 .DayPicker-Day--sunday .date-picker__day {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 }
 
 // `event` day
-.DayPicker-Day--events:not( .DayPicker-Day--is-selected ) .date-picker__day {
-	border-color: var( --color-neutral-light );
+.DayPicker-Day--events:not(.DayPicker-Day--is-selected) .date-picker__day {
+	border-color: var(--color-neutral-light);
 }
 
-.DayPicker-Day--events.DayPicker-Day--disabled:not( .DayPicker-Day--is-selected )
-	.date-picker__day {
-	border-color: var( --color-neutral-10 );
+.DayPicker-Day--events.DayPicker-Day--disabled:not(.DayPicker-Day--is-selected)
+.date-picker__day {
+	border-color: var(--color-neutral-10);
 }
 
 @keyframes isSelectedDay {
 	0% {
-		transform: scale( 0 );
+		transform: scale(0);
 		opacity: 0;
 	}
 	100% {
-		transform: scale( 1 );
+		transform: scale(1);
 		opacity: 1;
 	}
 }

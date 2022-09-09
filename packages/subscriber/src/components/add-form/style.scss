@@ -4,7 +4,7 @@
 	}
 
 	.components-notice.is-info {
-		background: var( --studio-gray-0 );
+		background: var(--studio-gray-0);
 	}
 }
 
@@ -64,11 +64,11 @@
 		height: auto;
 		padding: 0;
 		font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		color: var( --color-text );
+		color: var(--color-text);
 		text-decoration: underline;
 
 		&:hover {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 		}
 	}
 }
@@ -91,7 +91,7 @@
 	}
 
 	.components-base-control.is-error input {
-		border-color: var( --color-error );
+		border-color: var(--color-error);
 	}
 
 	.components-base-control__field {
@@ -99,18 +99,18 @@
 	}
 
 	.components-text-control__input {
-		border-color: var( --studio-gray-10 );
+		border-color: var(--studio-gray-10);
 		border-radius: 4px;
 		box-sizing: border-box;
 		font-size: 0.875rem;
 		padding: 0.875rem 1rem;
 
 		&::placeholder {
-			color: var( --studio-gray-20 );
+			color: var(--studio-gray-20);
 		}
 
 		&[disabled] {
-			background: var( --studio-gray-5 );
+			background: var(--studio-gray-5);
 		}
 	}
 
@@ -144,7 +144,7 @@
 		right: 10px;
 
 		svg {
-			fill: var( --color-success-50 );
+			fill: var(--color-success-50);
 		}
 	}
 
@@ -160,19 +160,19 @@
 		}
 
 		&.is-warning {
-			color: var( --studio-gray-40 );
+			color: var(--studio-gray-40);
 		}
 	}
 
 	.add-subscriber__form--disclaimer {
 		font-size: 0.875rem;
 		line-height: 1.25rem;
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		margin-bottom: 1.5rem;
 
 		a,
 		button {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 			text-decoration: underline;
 		}
 	}

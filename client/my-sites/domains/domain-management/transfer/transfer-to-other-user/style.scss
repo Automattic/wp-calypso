@@ -1,27 +1,27 @@
-@import '../../../../customer-home/grid-mixins.scss';
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/colors.native';
+@import "../../../../customer-home/grid-mixins.scss";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/colors.native";
 
 .transfer-to-other-user__select {
 	margin-top: 20px;
 	width: 100%;
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: 300px;
 	}
 }
 .transfer-to-other-user__confirmation-dialog {
 	width: 90%;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		max-width: 500px;
 	}
 }
 
 body.transfer-to-other-user.theme-default.color-scheme {
-	--color-surface-backdrop: var( --studio-white );
+	--color-surface-backdrop: var(--studio-white);
 }
 
 body.transfer-to-other-user {
