@@ -19,6 +19,7 @@ export function getDIFMTieredPriceDetails(
 	extraPagesPrice: number | null | undefined;
 	extraPagesPriceNormalUnits: number | null | undefined;
 	numberOfIncludedPages: number | null | undefined;
+	perExtraPagePriceNormalUnits: number;
 } {
 	if (
 		! product ||
@@ -56,6 +57,7 @@ export function getDIFMTieredPriceDetails(
 				oneTimeFee,
 				oneTimeFeeNormalUnits,
 				formattedOneTimeFee,
+				perExtraPagePriceNormalUnits,
 			};
 		}
 		extraPageCount = noOfPages - numberOfIncludedPages;
@@ -71,5 +73,6 @@ export function getDIFMTieredPriceDetails(
 		oneTimeFee,
 		oneTimeFeeNormalUnits,
 		formattedOneTimeFee,
+		perExtraPagePriceNormalUnits,
 	};
 }

@@ -1,5 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -24,6 +26,7 @@ import {
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
@@ -252,7 +255,14 @@ function DIFMPagePicker( props: StepProps ) {
 		isCartUpdateStarted,
 		isProductsLoading,
 		isFormattedCurrencyLoading,
+		effectiveCurrencyCode,
 	} = useCartForDIFM( selectedPages );
+
+	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
+	let difmTieredPriceDetails = null;
+	if ( difmLiteProduct ) {
+		difmTieredPriceDetails = getDIFMTieredPriceDetails( difmLiteProduct, selectedPages.length );
+	}
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
@@ -279,11 +289,22 @@ function DIFMPagePicker( props: StepProps ) {
 		{
 			components: {
 				br: <br />,
-				PriceWrapper: isFormattedCurrencyLoading ? <Placeholder /> : <span />,
+				PriceWrapper:
+					isFormattedCurrencyLoading && ! difmTieredPriceDetails && effectiveCurrencyCode ? (
+						<Placeholder />
+					) : (
+						<span />
+					),
 			},
 			args: {
-				freePageCount: 5,
-				extraPagePrice: 1,
+				freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+				extraPagePrice: formatCurrency(
+					difmTieredPriceDetails?.perExtraPagePriceNormalUnits ?? 0,
+					effectiveCurrencyCode ?? '',
+					{
+						stripZeros: true,
+					}
+				),
 			},
 		}
 	);
