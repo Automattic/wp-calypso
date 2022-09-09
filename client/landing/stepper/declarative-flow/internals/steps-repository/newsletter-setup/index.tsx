@@ -7,6 +7,7 @@ import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
+import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -188,15 +189,20 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			</FormFieldset>
 			<FormFieldset>
 				<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
-				<FormInput
-					value={ tagline }
-					placeholder={ __( 'Describe your Newsletter in a line or two' ) }
+				<ForwardedAutoresizingFormTextarea
 					name="tagline"
 					id="tagline"
+					value={ tagline }
+					placeholder={ __( 'Describe your Newsletter in a line or two' ) }
+					enableAutoFocus={ false }
+					onChange={ onChange }
 					style={ {
 						backgroundImage: getBackgroundImage( tagline ),
+						backgroundRepeat: 'no-repeat',
+						backgroundPosition: '95%',
+						paddingRight: ' 40px',
+						paddingLeft: '14px',
 					} }
-					onChange={ onChange }
 				/>
 			</FormFieldset>
 			<FormFieldset>

@@ -45,13 +45,19 @@ $font-family: "SF Pro Text", $sans;
 		}
 
 		label,
-		input {
+		input,
+		textarea {
 			font-family: $font-family;
 			font-weight: 400;
 		}
 
-		input {
+		input,
+		textarea,
+		pre {
 			height: 44px;
+			line-height: 1.5;
+			padding-top: 7px;
+			padding-bottom: 7px;
 		}
 	}
 
