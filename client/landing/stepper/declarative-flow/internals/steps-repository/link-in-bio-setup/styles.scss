@@ -49,6 +49,10 @@ $font-family: "SF Pro Text", $sans;
 			font-family: $font-family;
 			font-weight: 400;
 		}
+
+		input {
+			height: 44px;
+		}
 	}
 
 	.link-in-bio-setup-form__submit {
