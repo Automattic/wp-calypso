@@ -32,7 +32,7 @@
 			img {
 				height: 30px;
 				width: 30px;
-				border-radius: 15px;
+				border-radius: 15px; /* stylelint-disable-line scales/radii */
 				object-fit: cover;
 			}
 		}
@@ -71,7 +71,7 @@
 		}
 
 		.twitter-preview__media {
-			border-radius: 15px;
+			border-radius: 15px; /* stylelint-disable-line scales/radii */
 			overflow: hidden;
 			display: grid;
 			grid-gap: 2px;
@@ -132,7 +132,7 @@
 			margin-top: 10px;
 			overflow: hidden;
 			border: 1px solid #e1e8ed;
-			border-radius: 12px;
+			border-radius: 12px; /* stylelint-disable-line scales/radii */
 
 			.twitter-preview__card-summary {
 				display: grid;

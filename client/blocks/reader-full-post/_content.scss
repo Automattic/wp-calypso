@@ -104,8 +104,7 @@
     display: block;
     width: 36px;
     height: 36px;
-    /* stylelint-disable-next-line scales/radii */
-    border-radius: 36px;
+    border-radius: 36px; /* stylelint-disable-line scales/radii */
     margin-right: 8px;
     transition: transform 0.1s ease;
 }

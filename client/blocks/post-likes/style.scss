@@ -51,7 +51,7 @@
 		vertical-align: top;
 		margin: 6px 8px 4px 4px;
 		line-height: 14px;
-		border-radius: 12px;
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
 		display: inline-block;
 		border: solid 1px var( --color-neutral-light );
 		color: var( --color-text-subtle );

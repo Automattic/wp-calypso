@@ -61,7 +61,7 @@
 			.components-form-toggle__track {
 				width: 42px;
 				height: 22px;
-				border-radius: 11px;
+				border-radius: 11px; /* stylelint-disable-line scales/radii */
 			}
 
 			.components-form-toggle__thumb {

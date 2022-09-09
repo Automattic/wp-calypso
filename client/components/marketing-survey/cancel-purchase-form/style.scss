@@ -8,7 +8,6 @@
 	padding: 0.25rem 0.75rem;
 	font-size: 0.75rem;
 	font-weight: 600;
-	/* stylelint-disable-next-line scales/radii */
 	border-radius: 4px;
 	max-width: calc( 100vw - 250px );
 	text-overflow: ellipsis;
@@ -58,16 +57,14 @@
 	strong.is-highlighted {
 		background-color: var( --studio-yellow-5 );
 		padding: 0.25rem 0.5rem;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 5px;
+		border-radius: 5px; /* stylelint-disable-line scales/radii */
 		color: var( --stugio-gray-80 );
 	}
 
 	.components-base-control__field {
 		background-color: var( --studio-white );
 		padding: 0.8125rem 1.25rem;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 5px;
+		border-radius: 5px; /* stylelint-disable-line scales/radii */
 		box-shadow: 0 1px 2px rgb( 0 0 0 / 5% );
 		border: 1px solid var( --studio-gray-5 );
 		display: flex;
@@ -112,8 +109,7 @@
 .cancel-purchase-form__backups {
 	background-color: var( --studio-blue-0 );
 	border: 1px solid var( --studio-blue-5 );
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 5px;
+	border-radius: 5px; /* stylelint-disable-line scales/radii */
 	padding: 1.25rem;
 	margin-top: 2rem;
 	font-size: 0.875rem;
@@ -167,7 +163,6 @@
 	.components-button {
 		margin-right: 1rem;
 		padding: 0.625rem 1rem;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 4px;
 
 		@include break-small {
@@ -208,8 +203,7 @@
 	padding: 1.5rem;
 	background-color: var( --studio-green-0 );
 	border: 1px solid var( --studio-green-5 );
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 5px;
+	border-radius: 5px; /* stylelint-disable-line scales/radii */
 	display: flex;
 
 	.cancel-purchase-form__upsell-image {
@@ -247,7 +241,6 @@
 	.components-button {
 		margin-top: 1rem;
 		padding: 0.625rem 2rem;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 4px;
 
 		&:not( .is-primary ) {

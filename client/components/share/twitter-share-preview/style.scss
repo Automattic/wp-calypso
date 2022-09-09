@@ -66,6 +66,6 @@
 
 .twitter-share-preview__image {
 	border: 1px solid #c4cfd6;
-	border-radius: 16px;
+	border-radius: 16px; /* stylelint-disable-line scales/radii */
 	display: block;
 }

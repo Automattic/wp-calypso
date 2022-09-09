@@ -250,21 +250,21 @@
 	.DayPicker-Day--start,
 	.DayPicker-Day--end {
 		&:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
-			border-radius: 200px;
+			border-radius: 200px; /* stylelint-disable-line scales/radii */
 		}
 	}
 
 	&.date-picker--range-selected {
 		.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
-			border-top-left-radius: 200px;
+			border-top-left-radius: 200px; /* stylelint-disable-line scales/radii */
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
-			border-bottom-left-radius: 200px;
+			border-bottom-left-radius: 200px; /* stylelint-disable-line scales/radii */
 		}
 
 		.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
-			border-top-right-radius: 200px;
-			border-bottom-right-radius: 200px;
+			border-top-right-radius: 200px; /* stylelint-disable-line scales/radii */
+			border-bottom-right-radius: 200px; /* stylelint-disable-line scales/radii */
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
 		}

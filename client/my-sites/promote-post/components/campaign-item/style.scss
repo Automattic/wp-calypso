@@ -48,7 +48,7 @@
 					height: 28px;
 
 					img {
-						border-radius: 28px;
+						border-radius: 28px; /* stylelint-disable-line scales/radii */
 					}
 				}
 			}

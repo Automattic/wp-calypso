@@ -289,7 +289,7 @@
 
 	b {
 		display: inline-block;
-		border-radius: 12px;
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
 		padding: 0;
 		line-height: 12px;
 		font-size: $font-body-small;

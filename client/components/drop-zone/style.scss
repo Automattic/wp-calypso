@@ -13,7 +13,7 @@
 	transition: 0.3s opacity, 0.3s background-color, 0s visibility 0.3s;
 
 	border: 6px solid var( --color-primary-dark );
-	border-radius: 6px;
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
 
 	background-color: rgba( var( --color-primary-rgb ), 0.8 );
 

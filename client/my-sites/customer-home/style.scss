@@ -157,8 +157,7 @@ body.is-section-home.theme-default.color-scheme {
 	box-shadow: none;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 3px;
+		border-radius: 3px; /* stylelint-disable-line scales/radii */
 		box-shadow: 0 0 0 1px var( --color-border-subtle );
 		border-bottom: none;
 		padding: 16px 24px;

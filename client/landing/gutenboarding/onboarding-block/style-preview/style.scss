@@ -263,7 +263,7 @@
 
 		box-shadow: 0 0 0 1px var( --studio-gray-5 ), 0 4px 14px rgba( 0, 0, 0, 0.14 ),
 			inset 0 0 0 1px var( --studio-gray-5 );
-		border-radius: 31px;
+		border-radius: 31px; /* stylelint-disable-line scales/radii */
 	}
 
 	.is-viewport-tablet & {

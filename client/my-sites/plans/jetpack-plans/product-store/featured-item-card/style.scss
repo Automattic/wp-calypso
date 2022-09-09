@@ -3,8 +3,7 @@
 
 .featured-item-card {
 	background: linear-gradient( 159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53% );
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 8px;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	color: var( --gray-100 );
 	display: flex;
 	flex-direction: column;

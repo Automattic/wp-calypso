@@ -284,7 +284,7 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 10px;
 	background: var( --color-primary );
 	display: inline-block;
-	border-radius: 1px;
+	border-radius: 1px; /* stylelint-disable-line scales/radii */
 	vertical-align: top;
 	margin: 3px 5px 3px 8px; // 1
 }

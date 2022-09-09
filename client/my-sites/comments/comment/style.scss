@@ -192,7 +192,7 @@
 	}
 
 	.comment__status-label {
-		border-radius: 9px;
+		border-radius: 9px; /* stylelint-disable-line scales/radii */
 		float: right;
 		font-size: $font-body-extra-small;
 		margin-left: 8px;

@@ -48,7 +48,7 @@
 	}
 
 	::-webkit-scrollbar-thumb {
-		border-radius: 10px;
+		border-radius: 10px; /* stylelint-disable-line scales/radii */
 		background-color: var( --color-neutral-20 );
 		border: 3px solid transparent;
 		background-clip: padding-box;

@@ -7,7 +7,6 @@
 	border: 2px solid var( --studio-gray-5 );
 	padding: 10px 14px;
 	min-height: 64px;
-	/* stylelint-disable-next-line scales/radii */
 	border-radius: 4px;
 	display: flex;
 	justify-content: space-between;
@@ -31,7 +30,6 @@
 		background-color: var( --studio-green-5 );
 		color: var( --studio-green-80 );
 		padding: 0 10px;
-		/* stylelint-disable-next-line scales/radii */
 		border-radius: 4px;
 	}
 

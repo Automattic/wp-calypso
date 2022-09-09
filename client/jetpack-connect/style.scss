@@ -300,8 +300,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .example-components__browser-chrome {
 	padding: 8px;
 	background-color: var( --color-neutral-0 );
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 8px 8px 0 0;
+	border-radius: 8px 8px 0 0; /* stylelint-disable-line scales/radii */
 }
 
 .example-components__browser-chrome-dots {
@@ -825,8 +824,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		background-color: var( --color-surface );
 		background-size: 84%;
 		background-position: 50% 45%;
-		/* stylelint-disable-next-line scales/radii */
-		border-radius: 1px;
+		border-radius: 1px; /* stylelint-disable-line scales/radii */
 	}
 
 	.payment-logo.is-apple-pay {

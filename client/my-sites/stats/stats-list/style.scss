@@ -284,7 +284,7 @@
 	}
 
 	.avatar-user {
-		border-radius: 12px;
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
 	}
 
 	.user-selectable & {
@@ -718,7 +718,7 @@ ul.module-content-list-legend {
 	> .stats-list__module-content-list-item-wrapper
 		.stats-list__module-content-list-item-label
 		.avatar-user {
-		border-radius: 16px;
+		border-radius: 16px; /* stylelint-disable-line scales/radii */
 	}
 }
 

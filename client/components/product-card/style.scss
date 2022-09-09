@@ -317,7 +317,7 @@
 .product-card__promo-nudge-text {
 	width: 100%;
 	padding: 7px 24px;
-	border-radius: 16px;
+	border-radius: 16px; /* stylelint-disable-line scales/radii */
 	background-color: var( --color-neutral-0 );
 	color: var( --color-text-subtle );
 	font-size: $font-body-extra-small;

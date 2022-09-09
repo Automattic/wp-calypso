@@ -68,7 +68,7 @@
 	font-weight: 600;
 
 	.gravatar {
-		border-radius: 48px;
+		border-radius: 48px; /* stylelint-disable-line scales/radii */
 		position: absolute;
 		top: 8px;
 		left: -41px;

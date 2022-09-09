@@ -2,7 +2,7 @@
 	position: fixed;
 	bottom: 66px;
 	right: 24px;
-	border-radius: 27px;
+	border-radius: 27px; /* stylelint-disable-line scales/radii */
 	background: var( --color-primary );
 	cursor: pointer;
 	padding: 4px;

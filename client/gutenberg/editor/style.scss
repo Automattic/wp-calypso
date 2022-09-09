@@ -22,7 +22,7 @@
 	.placeholder {
 		@include placeholder();
 		height: 16px;
-		border-radius: 8px;
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
 	}
 
 	.placeholder-site {
@@ -36,7 +36,7 @@
 
 	.placeholder-title {
 		height: 40px;
-		border-radius: 20px;
+		border-radius: 20px; /* stylelint-disable-line scales/radii */
 		margin: 18px;
 	}
 }

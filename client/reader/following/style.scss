@@ -129,7 +129,7 @@
 
 	.following__intro-close-icon-bg {
 		background-color: #5ca8a6;
-		border-radius: 10px;
+		border-radius: 10px; /* stylelint-disable-line scales/radii */
 		display: block;
 		height: 20px;
 		position: absolute;

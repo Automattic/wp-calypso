@@ -34,7 +34,7 @@
 .happychat__submit.button {
 	align-self: flex-start;
 	flex: 0 0 auto;
-	border-radius: 8px;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	padding: 4px 8px;
 	margin: 8px 12px 0 0;
 	cursor: pointer;
