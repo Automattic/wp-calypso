@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { ReactChild, ReactElement } from 'react';
 import ActionButtons from '../action-buttons';
 import StepNavigationLink from '../step-navigation-link';
+import VideoPressLogo from '../videopress-logo';
 import './style.scss';
 
 interface Props {
@@ -39,7 +40,7 @@ interface Props {
 	intent?: string;
 	stepProgress?: { count: number; progress: number };
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
-	showJetpackPowered?: boolean;
+	showPoweredBy?: boolean;
 }
 
 const StepContainer: React.FC< Props > = ( {
@@ -73,7 +74,7 @@ const StepContainer: React.FC< Props > = ( {
 	intent,
 	stepSectionName,
 	recordTracksEvent,
-	showJetpackPowered,
+	showPoweredBy,
 } ) => {
 	const translate = useTranslate();
 
@@ -196,9 +197,17 @@ const StepContainer: React.FC< Props > = ( {
 					{ <SkipButton /> }
 				</div>
 			) }
-			{ showJetpackPowered && (
-				<div className="step-container__jetpack-powered">
-					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
+			{ showPoweredBy && (
+				<div className="step-container__powered-by">
+					{ 'videopress' === flowName ? (
+						<>
+							<VideoPressLogo /> <span>Powered by VideoPress</span>
+						</>
+					) : (
+						<>
+							<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
+						</>
+					) }
 				</div>
 			) }
 		</div>

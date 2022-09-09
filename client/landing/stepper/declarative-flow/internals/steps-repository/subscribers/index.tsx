@@ -26,7 +26,7 @@ const Subscribers: Step = function ( { navigation, flow } ): ReactElement | null
 			stepName={ 'subscribers' }
 			flowName={ 'newsletter' }
 			isHorizontalLayout={ false }
-			showJetpackPowered={ true }
+			showPoweredBy={ true }
 			stepContent={
 				<div className={ 'subscribers' }>
 					{ site?.ID && (

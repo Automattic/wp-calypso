@@ -35,6 +35,38 @@
 		}
 	}
 
+	&.videopress {
+		background-color: #414141;
+		color: #FFFFFF;
+		background-image: url( 'calypso/assets/images/onboarding/videopress-intro-left.png' ),
+		url( 'calypso/assets/images/onboarding/videopress-intro-right.png' );
+		background-position-y: 20%, 20%;
+		background-position-x: 0, 100%;
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 15%, auto 15%;
+
+		@include break-medium {
+			background-size: auto 50%, auto 50%;
+			background-position-y: 50%, 50%;
+		}
+
+		.signup-header {
+			h1 {
+				color: #FFFFFF;
+			}
+
+			svg {
+				fill: #FFFFFF;
+			}
+		}
+
+		.button.is-primary {
+			background-color: #FFE61C;
+			color: #000000;
+		}
+	}
+
 	min-height: 100%;
 	min-width: 100%;
 	width: 100%;
@@ -81,7 +113,7 @@
 			margin-bottom: 0;
 		}
 	
-		.step-container__jetpack-powered {
+		.step-container__powered-by {
 			margin: 20px 0 60px;
 		}
 	}

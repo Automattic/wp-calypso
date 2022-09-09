@@ -14,6 +14,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 	};
 	return (
 		<StepContainer
+			flowName={ flow as string }
 			stepName={ 'intro' }
 			className={ cx( { 'is-newsletter': flow === 'newsletter' } ) }
 			goBack={ goBack }
@@ -22,7 +23,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep flowName={ flow as string } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered
+			showPoweredBy
 		/>
 	);
 };
