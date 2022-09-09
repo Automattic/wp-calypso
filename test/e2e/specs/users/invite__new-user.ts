@@ -60,7 +60,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 
 		it( 'Confirm invite is pending', async function () {
 			await sidebarComponent.navigate( 'Users', 'All Users' );
-			await peoplePage.clickTab( 'Invites' );
+			await peoplePage.clickTab( 'User Invites' );
 			await peoplePage.selectInvitedUser( testUser.email );
 		} );
 	} );
