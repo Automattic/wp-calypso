@@ -79,7 +79,7 @@ export const RemovePlanDialog = ( {
 		if ( planFeatures.length > 0 ) {
 			return (
 				<Fragment>
-					<p>{ translate( 'If you cancel your plan, you will lose:' ) }</p>
+					<p>{ translate( 'If you cancel your plan, once it expires, you will lose:' ) }</p>
 					<ul className="remove-plan-dialog__list-plan-features">
 						{ planFeatures.map( ( feature, index ) => {
 							return (
