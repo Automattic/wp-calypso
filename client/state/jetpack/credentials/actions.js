@@ -3,11 +3,13 @@ import {
 	JETPACK_CREDENTIALS_AUTOCONFIGURE,
 	JETPACK_CREDENTIALS_DELETE,
 	JETPACK_CREDENTIALS_UPDATE,
+	JETPACK_CREDENTIALS_TEST,
 } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/activity-log/get-credentials';
 import { success as removeCredentialsFromState } from 'calypso/state/data-layer/wpcom/activity-log/delete-credentials';
 import 'calypso/state/data-layer/wpcom/activity-log/update-credentials';
 import 'calypso/state/data-layer/wpcom/activity-log/rewind/activate';
+import 'calypso/state/data-layer/wpcom/sites/rewind/credentials';
 import 'calypso/state/jetpack/init';
 
 export const getCredentials = ( siteId ) => ( {
@@ -48,3 +50,9 @@ export const deleteCredentials = ( siteId, role ) => ( dispatch ) => {
 		role,
 	} );
 };
+
+export const testCredentials = ( siteId, role ) => ( {
+	type: JETPACK_CREDENTIALS_TEST,
+	siteId,
+	role,
+} );
