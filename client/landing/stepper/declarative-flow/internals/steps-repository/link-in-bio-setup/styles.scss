@@ -11,6 +11,7 @@ $font-family: 'SF Pro Text', $sans;
 		display: flex;
 		justify-content: center;
 		margin-bottom: 30px;
+		min-height: unset;
 	}
 
 	.link-in-bio-setup .step-container__header {
