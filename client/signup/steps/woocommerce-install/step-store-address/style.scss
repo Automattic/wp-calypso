@@ -1,4 +1,4 @@
-@import '../style';
+@import "../style";
 
 body.is-section-signup .is-woocommerce-install .signup__step.is-store-address {
 	@include woocommerce-install-two-column-layout;
@@ -35,16 +35,16 @@ body.is-section-signup .is-woocommerce-install .signup__step.is-store-address {
 			margin-bottom: $grid-unit;
 
 			.components-text-control__input {
-				border-color: var( --color-error );
+				border-color: var(--color-error);
 
 				&:focus {
-					box-shadow: 0 0 0 0 var( --color-error );
+					box-shadow: 0 0 0 0 var(--color-error);
 				}
 			}
 
 			.components-combobox-control__suggestions-container {
-				border-color: var( --color-error );
-				box-shadow: 0 0 0 0 var( --color-error );
+				border-color: var(--color-error);
+				box-shadow: 0 0 0 0 var(--color-error);
 			}
 
 			.components-base-control__field {

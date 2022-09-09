@@ -14,6 +14,7 @@ import {
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -25,6 +26,7 @@ export default ( { path } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const isAgency = useSelector( isAgencyUser );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
@@ -62,7 +64,7 @@ export default ( { path } ) => {
 					socialClicked: 'calypso_jetpack_sidebar_social_clicked',
 				} }
 			/>
-			{ isPluginManagementEnabled && (
+			{ isPluginManagementEnabled && isAgency && (
 				<SidebarItem
 					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					customIcon={ <Icon className="sidebar__menu-icon" size={ 28 } icon={ plugins } /> }

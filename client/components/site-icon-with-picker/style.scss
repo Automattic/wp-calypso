@@ -26,7 +26,7 @@ button.components-button.site-icon-with-picker__upload-button {
 	padding: 0;
 	border-radius: $icon-border-radius;
 	position: relative;
-	border: 1px dashed var( --studio-gray-60 );
+	border: 1px dashed var(--studio-gray-60);
 	background-size: contain;
 	margin-bottom: 30px;
 
@@ -55,7 +55,7 @@ button.components-button.site-icon-with-picker__upload-button {
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translate( -50%, -50% );
+		transform: translate(-50%, -50%);
 	}
 	span {
 		position: absolute;
@@ -96,11 +96,11 @@ button.components-button.site-icon-with-picker__upload-button {
 				transform: none;
 
 				.drop-zone__content-icon {
-					transform: translateX( -50% ) scale( 1.05 );
+					transform: translateX(-50%) scale(1.05);
 
 					svg {
-						transform: translate( -50%, -50% ) scale( 1.3 );
-				 	}
+						transform: translate(-50%, -50%) scale(1.3);
+					}
 				}
 			}
 		}
@@ -110,9 +110,9 @@ button.components-button.site-icon-with-picker__upload-button {
 		position: absolute;
 		top: 0;
 		left: 50%;
-		transform: translateX( -50% );
-		background-color: rgba( var( --color-primary-rgb ) );
-		border: 1px solid var( --studio-gray-10 );
+		transform: translateX(-50%);
+		background-color: rgba(var(--color-primary-rgb));
+		border: 1px solid var(--studio-gray-10);
 		border-radius: $icon-border-radius;
 		transition: ease 1s;
 		width: $icon-size;
@@ -122,7 +122,7 @@ button.components-button.site-icon-with-picker__upload-button {
 			position: absolute;
 			top: 50%;
 			left: 50%;
-			transform: translate( -50%, -50% );
+			transform: translate(-50%, -50%);
 			fill: #fff;
 			transition: ease 1s;
 		}

@@ -1,6 +1,6 @@
-@import '../style';
+@import "../style";
 
-$font-family: 'SF Pro Text', $sans;
+$font-family: "SF Pro Text", $sans;
 $input-height: 44px;
 $border-radius: 4px;
 
@@ -51,12 +51,12 @@ $border-radius: 4px;
 		}
 
 		label {
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 			font-size: $font-body;
 		}
 
 		input {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 			font-size: $font-body-small;
 			padding: 12px 16px;
 			height: $input-height;
@@ -73,6 +73,21 @@ $border-radius: 4px;
 				/* Overwrites the transition value set by FormInput component.
 				It was the cause of the https://github.com/Automattic/wp-calypso/issues/67326 */
 				transition: none;
+			}
+		}
+
+		.newsletter-setup__contrast-warning {
+			display: flex;
+			font-size: $font-body-small;
+			margin-bottom: 32px;
+
+			.newsletter-setup__contrast-warning-icon-container {
+				margin-top: 4px;
+				margin-right: 4px;
+
+				svg {
+					stroke: var(--studio-yellow-40);
+				}
 			}
 		}
 

@@ -18,15 +18,15 @@
 
 	.section-header__label-text,
 	.eligibility-warnings__message {
-		color: var( --color-neutral-0 );
-		background-color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
+		background-color: var(--color-neutral-0);
 	}
 	.eligibility-warnings__message {
 		height: 24px;
 	}
 
 	.eligibility-warnings__hold .gridicon {
-		color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
 	}
 
 	.button,
@@ -66,11 +66,11 @@
 }
 
 .eligibility-warnings__hold .gridicon {
-	color: var( --color-neutral-10 );
+	color: var(--color-neutral-10);
 }
 
 .eligibility-warnings__warning .gridicon {
-	color: var( --color-warning-10 );
+	color: var(--color-warning-10);
 }
 
 .eligibility-warnings__message {
@@ -83,17 +83,17 @@
 	}
 
 	.eligibility-warnings__message-description {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 }
 
 .eligibility-warnings__action a,
 .eligibility-warnings__hold-action a {
 	.gridicons-help-outline {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 	&:hover .gridicons-help-outline {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 }
 
@@ -106,7 +106,7 @@
 	display: flex;
 
 	.gridicon {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		flex-shrink: 0;
 	}
 	span {

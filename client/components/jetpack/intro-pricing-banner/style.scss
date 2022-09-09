@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .intro-pricing-banner {
 	display: flex;
@@ -9,8 +9,8 @@
 		position: fixed;
 		width: 100%;
 		left: 0;
-		top: var( --masterbar-height );
-		background-color: var( --color-surface );
+		top: var(--masterbar-height);
+		background-color: var(--color-surface);
 		box-shadow: 0 4px 4px 0 #00000014;
 		z-index: 2;
 		height: 74px;
@@ -35,7 +35,7 @@
 	}
 }
 
-.intro-pricing-banner:not( .is-sticky ) .intro-pricing-banner__content {
+.intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__content {
 	height: 120px;
 	margin-bottom: 2rem;
 	gap: 1.25rem;
@@ -62,7 +62,7 @@
 	align-items: center;
 	font-size: $font-body;
 
-	&:not( :last-child ) {
+	&:not(:last-child) {
 		margin-right: 16px;
 	}
 }
@@ -73,7 +73,7 @@
 }
 
 .intro-pricing-banner__item-label.is-link {
-	color: var( --color-primary-100 );
+	color: var(--color-primary-100);
 	text-decoration: underline;
 	// This works in all major browsers except for Firefox for Android. It is also not imperative that this works
 	text-underline-offset: 3px;
@@ -87,14 +87,14 @@
 // target Calypso pricing filter bar, not jetpack cloud
 .is-group-sites.is-section-plans .intro-pricing-banner.is-sticky {
 	// At this screen size, the left sidebar is 228px;
-	@include breakpoint-deprecated( '>660px' ) {
-		width: calc( 100% - 228px );
+	@include breakpoint-deprecated( ">660px" ) {
+		width: calc(100% - 228px);
 		left: 228px;
 	}
 
 	// At this screen size, the lft sidebar is 272px;
-	@include breakpoint-deprecated( '>960px' ) {
-		width: calc( 100% - 272px );
+	@include breakpoint-deprecated( ">960px" ) {
+		width: calc(100% - 272px);
 		left: 272px;
 	}
 }

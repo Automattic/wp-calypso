@@ -2,7 +2,7 @@
 	--p2-color-text: #00101c;
 	--p2-color-text-light: #767676;
 
-	--p2-color-white: #ffffff;
+	--p2-color-white: #fff;
 
 	--p2-color-link: #0267ff;
 	--p2-color-link-dark: #004cbf;
@@ -23,8 +23,18 @@
 	--p2-color-hover-dark: #061925;
 	--p2-color-separator-light: #4d5860;
 
-	--p2-font-inter: 'Inter', -apple-system, system-ui, blinkmacsystemfont, 'Segoe UI', 'Roboto',
-		'Oxygen-Sans', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+	--p2-font-inter:
+		"Inter",
+		-apple-system,
+		system-ui,
+		blinkmacsystemfont,
+		"Segoe UI",
+		"Roboto",
+		"Oxygen-Sans",
+		"Ubuntu",
+		"Cantarell",
+		"Helvetica Neue",
+		sans-serif;
 
 	--p2-font-size-form-xxs: 14px;
 	--p2-font-size-form-xs: 15px;

@@ -1,5 +1,5 @@
-@import '@automattic/calypso-color-schemes';
-@import '@automattic/typography/styles/variables';
+@import "@automattic/calypso-color-schemes";
+@import "@automattic/typography/styles/variables";
 
 .price-badge {
 	.price__cost > span {
@@ -8,6 +8,6 @@
 
 	.price__discount {
 		text-decoration: line-through;
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 	}
 }

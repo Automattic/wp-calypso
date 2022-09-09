@@ -22,6 +22,7 @@ import {
 } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
@@ -30,7 +31,7 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -43,6 +44,7 @@ import './style.scss';
 export type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
 	comparisonContext: string;
+	hideNavigation?: boolean;
 	isDomainInCart?: boolean;
 	selectedDomainName: string;
 	selectedEmailProviderSlug?: string;
@@ -52,6 +54,7 @@ export type EmailProvidersStackedComparisonProps = {
 
 const EmailProvidersStackedComparison = ( {
 	comparisonContext,
+	hideNavigation = false,
 	isDomainInCart = false,
 	selectedDomainName,
 	selectedEmailProviderSlug,
@@ -216,7 +219,17 @@ const EmailProvidersStackedComparison = ( {
 			<QueryProductsList />
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
-			{ isDomainInCart && <EmailUpsellNavigation siteSlug={ selectedSite?.slug ?? '' } /> }
+
+			{ ! hideNavigation && (
+				<EmailUpsellNavigation
+					backUrl={
+						isDomainInCart
+							? domainAddNew( selectedSite?.slug )
+							: emailManagement( selectedSite?.slug, null )
+					}
+					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
+				/>
+			) }
 
 			<h1 className="email-providers-stacked-comparison__header">
 				{ isDomainInCart

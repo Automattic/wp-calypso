@@ -1,7 +1,7 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import '@wordpress/base-styles/colors';
-@import '../../mixins';
-@import '../../variables.scss';
+@import "assets/stylesheets/gutenberg-base-styles";
+@import "@wordpress/base-styles/colors";
+@import "../../mixins";
+@import "../../variables.scss";
 
 .gutenboarding-page.features {
 	padding-bottom: $onboarding-footer-height + 28px;
@@ -26,9 +26,9 @@
 }
 
 .features__items > button.features__item.components-button.is-tertiary {
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var(--studio-gray-5);
 	border-radius: 2px;
-	width: calc( 100% - 24px );
+	width: calc(100% - 24px);
 	height: auto;
 	min-height: 96px;
 	margin: 12px;
@@ -37,31 +37,31 @@
 	padding: 16px;
 	align-items: start;
 	white-space: normal;
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 	transition: all 0.1s ease-in-out;
 
-	&:hover:not( :disabled ) {
+	&:hover:not(:disabled) {
 		box-shadow: none;
-		border-color: var( --studio-gray-100 );
-		color: var( --studio-gray-100 );
+		border-color: var(--studio-gray-100);
+		color: var(--studio-gray-100);
 	}
 
 	&.is-selected,
-	&.is-selected:hover:not( :disabled ) {
-		border-color: var( --studio-blue-40 );
-		color: var( --studio-blue-40 );
+	&.is-selected:hover:not(:disabled) {
+		border-color: var(--studio-blue-40);
+		color: var(--studio-blue-40);
 
 		.features__item-description {
-			color: var( --studio-blue-40 );
+			color: var(--studio-blue-40);
 		}
 	}
 
 	@include break-small {
-		width: calc( 50% - 24px );
+		width: calc(50% - 24px);
 	}
 
 	@include break-xlarge {
-		width: calc( 25% - 24px );
+		width: calc(25% - 24px);
 	}
 }
 
@@ -82,6 +82,6 @@
 .features__item-description {
 	font-size: $font-body-small;
 	line-height: 1.3;
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
 	margin: 4px 0;
 }

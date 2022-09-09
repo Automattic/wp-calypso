@@ -1,6 +1,6 @@
 .storage-tier-upgrade {
 	display: grid;
-	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	gap: 24px 16px;
 
 	margin-top: 48px;
@@ -45,7 +45,7 @@
 			font-weight: 700;
 
 			&::before {
-				content: url( '/calypso/images/jetpack/star-green.svg' );
+				content: url("/calypso/images/jetpack/star-green.svg");
 				position: relative;
 				top: 6px;
 				padding-inline-end: 6px;

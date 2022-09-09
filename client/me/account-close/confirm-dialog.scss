@@ -10,7 +10,7 @@ h1.account-close__confirm-dialog-header {
 	font-size: $font-title-small;
 	font-weight: 400;
 	line-height: 24px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 }
 
 .account-close__confirm-dialog-alternative {
@@ -36,10 +36,10 @@ h1.account-close__confirm-dialog-header {
 .account-close__confirm-dialog-label {
 	margin-bottom: 8px;
 	line-height: 24px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-weight: normal;
 }
 
 .account-close__confirm-dialog-target-username {
-	color: var( --color-error );
+	color: var(--color-error);
 }

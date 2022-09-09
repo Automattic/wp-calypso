@@ -2,16 +2,16 @@
 	position: relative;
 	padding: 24px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		max-width: 300px;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-top: 2em;
 		max-width: 500px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 17px;
 		max-width: 800px;
 	}
@@ -22,7 +22,7 @@
 		font-size: 14px;
 		padding: 0 20px;
 		text-align: center;
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 	}
 }
 
@@ -61,15 +61,15 @@
 	}
 
 	.disconnect-site__confirm-icon {
-		color: var( --color-primary-40 );
+		color: var(--color-primary-40);
 	}
 
 	.disconnect-site__troubleshoot-icon {
-		color: var( --color-jetpack );
+		color: var(--color-jetpack);
 	}
 
 	.disconnect-site__disconnect-icon {
-		color: var( --color-error-40 );
+		color: var(--color-error-40);
 	}
 }
 
@@ -84,7 +84,7 @@
 	display: flex;
 	white-space: nowrap;
 
-	input[type='text'].form-text-input {
+	input[type="text"].form-text-input {
 		line-height: 1em;
 		margin-left: 8px;
 	}

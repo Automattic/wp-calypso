@@ -1,5 +1,5 @@
 .comment-navigation {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		.section-nav__mobile-header::after {
 			padding-left: 8px;
 		}
@@ -20,13 +20,13 @@
 .comment-navigation.is-bulk-edit {
 	padding-right: 0;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		.section-nav__mobile-header {
 			display: none;
 		}
 
 		.comment-navigation__bulk-count {
-			width: calc( 100% - 70px );
+			width: calc(100% - 70px);
 		}
 
 		.comment-navigation__close-bulk {
@@ -78,7 +78,7 @@
 	overflow: visible;
 
 	&.is-sticky .header-cake {
-		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 56px rgba(0, 0, 0, 0.075);
 	}
 }
 
@@ -100,7 +100,7 @@
 	white-space: nowrap;
 }
 
-@include breakpoint-deprecated( '<480px' ) {
+@include breakpoint-deprecated( "<480px" ) {
 	.comment-list__header .header-cake__back.button.is-borderless.is-compact .gridicons-visible {
 		display: block;
 		margin: 0 auto;

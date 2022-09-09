@@ -13,11 +13,11 @@
 		min-width: 0;
 		padding-right: 0;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			padding-bottom: 5px;
 		}
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			float: right;
 			margin: 0;
 		}
@@ -33,7 +33,7 @@
 	}
 
 	.domain-suggestion.card {
-		border-left: 3px solid var( --color-success );
+		border-left: 3px solid var(--color-success);
 	}
 }
 
@@ -41,7 +41,7 @@
 	font-size: 1em;
 	font-weight: 600;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		max-width: 75%;
 		float: left;
 		margin-bottom: 20px;
@@ -53,7 +53,7 @@
 	flex-flow: column;
 	width: 100%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-flow: row;
 	}
 }
@@ -67,7 +67,7 @@
 	flex: inherit;
 }
 
-input[type='text'].form-text-input.map-domain-step__external-domain {
+input[type="text"].form-text-input.map-domain-step__external-domain {
 	flex-grow: 1;
 	width: auto;
 }
@@ -81,7 +81,7 @@ input[type='text'].form-text-input.map-domain-step__external-domain {
 	flex-grow: 1;
 	margin: 10px 0 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		min-width: 80px;
 		flex-grow: 0;
 		margin: 0 0 0 10px;

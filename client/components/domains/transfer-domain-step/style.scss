@@ -13,7 +13,7 @@
 		flex-direction: column;
 		margin-bottom: 20px;
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			flex-direction: row;
 		}
 	}
@@ -27,13 +27,13 @@
 			font-size: 90%;
 		}
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			text-align: right;
 		}
 	}
 
 	.transfer-domain-step__free-with-plan {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		font-weight: 400;
 		font-size: 0.9em;
 		line-height: 25px;
@@ -48,7 +48,7 @@
 	}
 
 	.domain-suggestion.card {
-		border-left: 3px solid var( --color-success );
+		border-left: 3px solid var(--color-success);
 	}
 }
 
@@ -73,15 +73,15 @@
 		margin-left: 20px;
 		max-width: 140px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			display: block;
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			display: none;
 		}
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			display: block;
 		}
 	}
@@ -96,7 +96,7 @@
 	flex-grow: 1;
 	margin: 10px 0 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		min-width: 100px;
 		flex-grow: 0;
 		margin: 0 0 0 10px;
@@ -114,17 +114,17 @@
 	flex-flow: column;
 	width: 100%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-flow: row;
 	}
 }
 
 .transfer-domain-step__map-option {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 }
 
 .transfer-domain-step__map-help {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	position: relative;
 	top: 2px;
 }
@@ -134,9 +134,9 @@
 	height: 28px;
 	line-height: 28px;
 	border-radius: 50%;
-	border: 1px solid var( --color-neutral-10 );
-	background-color: var( --color-neutral-0 );
-	color: var( --color-neutral-50 );
+	border: 1px solid var(--color-neutral-10);
+	background-color: var(--color-neutral-0);
+	color: var(--color-neutral-50);
 	font-size: $font-title-small;
 	text-align: center;
 	margin-right: 15px;
@@ -153,7 +153,7 @@
 	}
 
 	.transfer-domain-step__section-heading {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		align-items: center;
 		display: flex;
 		font-size: $font-body;
@@ -161,7 +161,7 @@
 	}
 
 	.transfer-domain-step__section-callout {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		margin: 14px 0;
 	}
 
@@ -169,7 +169,7 @@
 		align-items: flex-start;
 
 		.transfer-domain-step__section-heading {
-			color: var( --color-neutral-70 );
+			color: var(--color-neutral-70);
 		}
 	}
 
@@ -177,7 +177,7 @@
 		.transfer-domain-step__section-heading-number {
 			background: none;
 			border: none;
-			color: var( --color-success );
+			color: var(--color-success);
 
 			.gridicon {
 				margin-left: -4px;
@@ -208,24 +208,24 @@
 	}
 
 	&.transfer-domain-step__checking {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 
 	&.transfer-domain-step__unlocked,
 	&.transfer-domain-step__auth-code-valid {
-		color: var( --color-success );
+		color: var(--color-success);
 	}
 
 	&.transfer-domain-step__locked {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 
 	&.transfer-domain-step__unknown {
-		color: var( --color-warning );
+		color: var(--color-warning);
 	}
 
 	&.transfer-domain-step__refresh {
-		color: var( --color-primary );
+		color: var(--color-primary);
 		cursor: pointer;
 	}
 }
@@ -243,12 +243,12 @@
 	flex-grow: 1;
 
 	p {
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 		font-size: $font-body-small;
 	}
 }
 
-input[type='text'].form-text-input {
+input[type="text"].form-text-input {
 	&.transfer-domain-step__auth-code-input {
 		width: 200px;
 		margin-top: 15px;
@@ -267,7 +267,7 @@ input[type='text'].form-text-input {
 		width: 100%;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-direction: row;
 
 		button {
@@ -279,17 +279,17 @@ input[type='text'].form-text-input {
 
 .transfer-domain-step__options {
 	label {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 	}
 
 	legend {
 		small {
 			font-size: $font-body-small;
 			padding-left: 10px;
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		margin-bottom: 0;
 		font-size: $font-body;
 	}

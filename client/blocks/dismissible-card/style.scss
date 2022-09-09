@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .dismissible-card__close-button {
 	position: absolute;
@@ -7,7 +7,7 @@
 	height: 18px;
 	top: 16px;
 	right: 16px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	cursor: pointer;
 
 	@include break-small {

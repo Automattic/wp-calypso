@@ -13,15 +13,15 @@
 
 	&.is-warning {
 		.plugin-action__label {
-			color: var( --color-error );
+			color: var(--color-error);
 		}
 	}
 
 	.plugin-action__label {
 		display: flex;
 		align-items: center;
-		@include breakpoint-deprecated( '<480px' ) {
-			color: var( --color-neutral-70 );
+		@include breakpoint-deprecated( "<480px" ) {
+			color: var(--color-neutral-70);
 		}
 	}
 
@@ -56,7 +56,7 @@
 	}
 
 	.is-disabled & {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 		cursor: default;
 	}
 

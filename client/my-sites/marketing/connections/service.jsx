@@ -536,7 +536,7 @@ export class SharingService extends Component {
 				{ 'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } ) && (
 					<Notice isCompact status="is-error" className="sharing-service__notice">
 						{ this.props.translate(
-							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Publicize ' +
+							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Jetpack Social ' +
 								'by disconnecting and reconnecting your account.'
 						) }
 					</Notice>

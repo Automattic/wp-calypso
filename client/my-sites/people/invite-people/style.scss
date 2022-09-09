@@ -36,7 +36,7 @@
 			margin-right: 16px;
 		}
 		.invite-people__link-selector-copy {
-			color: var( --color-neutral-70 );
+			color: var(--color-neutral-70);
 			flex: 1 0 auto;
 			font-size: inherit;
 			min-width: 100px;
@@ -45,17 +45,17 @@
 	}
 
 	.invite-people__link-footer {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: 12px;
 		font-style: italic;
 		margin-top: 8px;
 
 		.invite-people__link-expiry {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 		}
 
 		.invite-people__link-disable {
-			color: var( --color-error );
+			color: var(--color-error);
 			cursor: pointer;
 			font-size: inherit;
 			font-style: inherit;

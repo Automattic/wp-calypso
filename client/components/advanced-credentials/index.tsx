@@ -115,12 +115,12 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			return StatusState.Loading;
 		}
 
-		if ( testCredentialsResult ) {
+		if ( hasCredentials && testCredentialsResult ) {
 			return StatusState.Connected;
 		}
 
 		return StatusState.Disconnected;
-	}, [ testCredentialsResult, isRequestingCredentials ] );
+	}, [ hasCredentials, testCredentialsResult, isRequestingCredentials ] );
 
 	const currentStep = useMemo( (): Step => {
 		if ( 'unsubmitted' !== formSubmissionStatus ) {

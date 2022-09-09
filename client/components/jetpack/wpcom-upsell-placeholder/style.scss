@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .wpcom-upsell-placeholder {
 	display: flex;
@@ -10,8 +10,8 @@
 	margin: 0 auto 10px;
 	padding: 16px;
 	box-sizing: border-box;
-	background: var( --color-surface );
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 
 	@include break-mobile {
 		flex-direction: row;
@@ -54,7 +54,7 @@
 
 	.wpcom-upsell-placeholder__body {
 		h2 {
-			font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 			font-size: 1.5rem;
 			line-height: 32px;
 			margin-bottom: 8px;

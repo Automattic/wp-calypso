@@ -1,7 +1,7 @@
 .main {
 	margin: auto;
 	max-width: 720px;
-	z-index: z-index( 'root', '.main' );
+	z-index: z-index("root", ".main");
 
 	&.is-full-width-layout {
 		max-width: 100%;

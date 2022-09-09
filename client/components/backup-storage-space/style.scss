@@ -30,7 +30,7 @@
 
 	.progress-bar {
 		height: 100%;
-		border-radius: 12px;
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
 		background-color: var( --studio-gray-0 );
 
 		.progress-bar__progress {
@@ -73,7 +73,7 @@
 			.progress-bar__progress {
 				max-width: initial;
 				background-color: var( --studio-red-40 );
-				border-radius: 12px;
+				border-radius: 12px; /* stylelint-disable-line scales/radii */
 			}
 		}
 	}

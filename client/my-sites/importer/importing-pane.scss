@@ -8,17 +8,17 @@
 	}
 
 	.progress-bar__progress {
-		background-color: var( --color-accent );
+		background-color: var(--color-accent);
 	}
 
 	&.is-complete .progress-bar__progress {
-		background-color: var( --color-success );
+		background-color: var(--color-success);
 	}
 }
 
 .importer__import-progress-message {
 	text-align: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .importer__start {
@@ -28,11 +28,11 @@
 .importer__import-spinner {
 	position: absolute;
 	left: 50%;
-	transform: translateX( -50% );
+	transform: translateX(-50%);
 }
 
 .importer__status-message {
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	text-align: center;
 }

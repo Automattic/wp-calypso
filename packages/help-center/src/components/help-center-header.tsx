@@ -75,13 +75,14 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
 							<Route path="/contact-form" component={ SupportModeTitle }></Route>
 							<Route path="/post" component={ ArticleTitle }></Route>
+							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
 						</Switch>
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
 					) }
-					{ isMinimized && unreadCount ? (
+					{ isMinimized && unreadCount > 0 && (
 						<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
-					) : null }
+					) }
 				</p>
 				<div>
 					{ isMinimized ? (

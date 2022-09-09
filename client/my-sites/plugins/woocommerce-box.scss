@@ -5,7 +5,7 @@ $woo-lilac: #96588a;
 $woo-green: #73ae39;
 $woo-gray-background: #e6e6e6;
 $woo-gray-light: #f7f7f7;
-$woo-text-gray: #333333;
+$woo-text-gray: #333;
 
 // Woo colors
 $c-woocommerce-purple-0: #f7edf7 !default;
@@ -126,21 +126,21 @@ $c-gray-100: #101517 !default;
 	}
 
 	&.download {
-		background: lighten( $c-gray-70, 60% );
-		border-color: lighten( $c-gray-70, 50% );
+		background: lighten($c-gray-70, 60%);
+		border-color: lighten($c-gray-70, 50%);
 	}
 
 	&.note {
-		background: lighten( #f1d413, 40% );
-		border-color: lighten( #f1d413, 13% );
+		background: lighten(#f1d413, 40%);
+		border-color: lighten(#f1d413, 13%);
 
 		a {
-			color: darken( #f1d413, 20% );
+			color: darken(#f1d413, 20%);
 		}
 	}
 
 	&:hover {
-		box-shadow: inset 0 0 0 1px rgba( 255, 255, 255, 1 ), 0 0 10px 0 rgba( 0, 0, 0, 0.05 );
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 1), 0 0 10px 0 rgba(0, 0, 0, 0.05);
 		transition: all ease-in-out 0.2s;
 	}
 

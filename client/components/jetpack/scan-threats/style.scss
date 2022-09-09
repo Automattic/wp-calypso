@@ -2,7 +2,7 @@
 	display: flex;
 	justify-content: center;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		justify-content: start;
 	}
 
@@ -24,7 +24,7 @@
 		padding-bottom: 8px;
 		justify-content: center;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			justify-content: start;
 		}
 	}
@@ -56,7 +56,7 @@
 		text-align: center;
 		font-size: $font-body-small;
 		line-height: 20px;
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 		margin-top: 24px;
 	}
 
@@ -65,7 +65,7 @@
 		display: flex;
 		flex-direction: column;
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			flex-direction: row;
 		}
 
@@ -74,7 +74,7 @@
 			line-height: 21px;
 			font-style: normal;
 			font-weight: normal;
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 			text-align: center;
 			letter-spacing: -0.01em;
 			max-width: 576px;
@@ -82,7 +82,7 @@
 			margin-left: 72px;
 			margin-right: 72px;
 
-			@include breakpoint-deprecated( '>800px' ) {
+			@include breakpoint-deprecated( ">800px" ) {
 				margin-bottom: 0;
 			}
 		}
@@ -91,7 +91,7 @@
 			flex: 1 1 40%;
 			padding: 10px 30px;
 
-			@include breakpoint-deprecated( '>800px' ) {
+			@include breakpoint-deprecated( ">800px" ) {
 				flex: 0 0 170px;
 				margin-left: 8px;
 			}
@@ -109,7 +109,7 @@
 		&:active,
 		&:focus {
 			background: initial;
-			color: var( --color-link-dark );
+			color: var(--color-link-dark);
 		}
 
 		&:hover,
@@ -126,13 +126,13 @@
 
 	&__buttons {
 		display: flex;
-		border-top: 1px solid var( --studio-gray-5 );
+		border-top: 1px solid var(--studio-gray-5);
 		padding-top: 32px;
 		flex-direction: space-between;
 		flex-wrap: wrap;
 		align-items: center;
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			flex-direction: row;
 		}
 
@@ -144,7 +144,7 @@
 			margin: 0 !important;
 			// line-height: 24px;
 
-			@include breakpoint-deprecated( '<960px' ) {
+			@include breakpoint-deprecated( "<960px" ) {
 				font-size: $font-body;
 				font-weight: normal;
 				width: 100%;
@@ -159,14 +159,14 @@
 		height: 40px;
 		border-radius: 2px;
 		font-weight: 600;
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			flex-grow: 1;
 		}
 	}
 
 	&__scan-secondary-button {
 		margin-left: 10px;
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			flex-grow: 1;
 		}
 	}

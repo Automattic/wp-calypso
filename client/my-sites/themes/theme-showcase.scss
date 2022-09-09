@@ -1,22 +1,22 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .themes__upload-button {
 	float: right;
 
 	&.is-compact {
 		margin-top: 23px;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		.gridicon {
 			padding-right: 4px;
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin-top: 24px;
 			margin-right: 15px;
 		}
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			font-size: 0;
 			.gridicon {
 				padding: 0;
@@ -28,8 +28,8 @@
 
 .themes__content {
 	min-height: 100vh;
-	
-	@include breakpoint-deprecated( '<660px' ) {
+
+	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0 16px;
 	}
 }
@@ -37,7 +37,7 @@
 .is-section-themes.has-no-sidebar .themes__content {
 	padding: 0 0 32px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 32px;
 	}
 }
@@ -66,10 +66,10 @@
 
 .section-nav.themes__section-nav {
 	box-shadow: none;
-	border: 1px solid var( --color-border-subtle );
+	border: 1px solid var(--color-border-subtle);
 	border-top: 0;
 	.section-nav-tab__link {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			height: 60px;
 			line-height: 36px;
 			padding: 12px;
@@ -87,7 +87,7 @@
 	margin-left: 16px;
 	margin-right: 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-left: 0;
 		margin-right: 0;
 	}

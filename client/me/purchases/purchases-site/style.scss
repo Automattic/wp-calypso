@@ -3,19 +3,19 @@
 		text-align: left;
 		margin-bottom: 0;
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			text-align: center;
 		}
 	}
 
 	& .action-card__illustration {
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			margin: 5px -20px 0;
 		}
 	}
 
 	&.card {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			align-items: flex-start;
 		}
 	}

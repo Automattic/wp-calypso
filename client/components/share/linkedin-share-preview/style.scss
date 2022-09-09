@@ -1,7 +1,7 @@
 .linkedin-share-preview {
-	background: var( --color-surface );
-	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.1 ), 0 2px 3px rgba( 0, 0, 0, 0.2 );
-	font-family: Source Sans Pro, Helvetica, Arial, sans-serif, Hiragino Kaku Gothic Pro, Meiryo, Hiragino Sans GB W3, Noto Naskh Arabic, Droid Arabic Naskh, Geeza Pro, Simplified Arabic, Noto Sans Thai, Thonburi, Dokchampa, Droid Sans Thai, Droid Sans Fallback, -apple-system, '.SFNSDisplay-Regular', Heiti SC, Microsoft Yahei, Segoe UI;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 2px 3px rgba(0, 0, 0, 0.2);
+	font-family: "Source Sans Pro", Helvetica, Arial, sans-serif, "Hiragino Kaku Gothic Pro", Meiryo, "Hiragino Sans GB W3", "Noto Naskh Arabic", "Droid Arabic Naskh", "Geeza Pro Arabic""ified Arabic", "Noto Sans Thai", Thonburi, Dokchampa, "Droid Sans Thai", "Droid Sans Fallback", -apple-system, ".SFNSDisplay-Regular", "Heiti SC", "Microsoft Yahei", "Segoe UI";
 	margin: 0 auto;
 	max-width: 552px;
 	padding: 16px;
@@ -32,20 +32,20 @@
 }
 
 .linkedin-share-preview__profile-name {
-	color: rgba( 0, 0, 0, 0.85 );
+	color: rgba(0, 0, 0, 0.85);
 	font-weight: 600;
 }
 
 .linkedin-share-preview__meta-line {
-	color: rgba( 0, 0, 0, 0.55 );
-    font-size: $font-body-small;
-    line-height: 16px;
+	color: rgba(0, 0, 0, 0.55);
+	font-size: $font-body-small;
+	line-height: 16px;
 }
 
 .linkedin-share-preview__body {
 	align-items: center;
 	border-radius: 2px;
-	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.1 );
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 	display: flex;
 	margin-top: 16px;
 	padding: 8px;
@@ -63,14 +63,14 @@
 .linkedin-share-preview__image {
 	position: absolute;
 	top: 50%;
-	transform: translateY( -50% );
+	transform: translateY(-50%);
 }
 
 .linkedin-share-preview__message-link {
 	text-decoration: none;
 }
 .linkedin-share-preview__message {
-	color: rgba( 0, 0, 0, 0.85 );
+	color: rgba(0, 0, 0, 0.85);
 	display: -webkit-box;
 	font-size: $font-body;
 	font-weight: 600;
@@ -83,7 +83,7 @@
 }
 
 .linkedin-share-preview__site-url {
-	color: rgba( 0, 0, 0, 0.55 );
+	color: rgba(0, 0, 0, 0.55);
 	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 16px;

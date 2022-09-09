@@ -1,15 +1,23 @@
 import { Button, Gridicon } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import classnames from 'classnames';
+import { translate, useRtl } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
 import { isTaskDisabled } from './task-helper';
 import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
-	const { id, isCompleted, actionUrl, title, actionDispatch } = task;
+	const isRtl = useRtl();
+	const { id, isCompleted, keepActive, actionUrl, title, actionDispatch } = task;
 	const action = actionDispatch ? { onClick: actionDispatch } : { href: actionUrl };
 	const taskDisabled = isTaskDisabled( task );
+
 	return (
-		<li className={ `launchpad__task-${ id }` }>
+		<li
+			className={ classnames( 'launchpad__task', {
+				'keep-active': keepActive,
+				'is-completed': isCompleted,
+			} ) }
+		>
 			<Button
 				className="launchpad__checklist-item"
 				disabled={ taskDisabled }
@@ -17,26 +25,25 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				data-task={ id }
 				{ ...action }
 			>
-				{ isCompleted && taskDisabled && (
-					<div className="launchpad__checklist-item-status">
+				{ isCompleted && (
+					// show checkmark for completed tasks regardless if they are disabled or kept active
+					<div className="launchpad__checklist-item-checkmark-container">
 						<Gridicon
 							aria-label={ translate( 'Task complete' ) }
-							className="launchpad__checklist-item-status-complete"
+							className="launchpad__checklist-item-checkmark"
 							icon="checkmark"
 							size={ 18 }
 						/>
 					</div>
 				) }
-				<p className={ `launchpad__checklist-item-text ${ taskDisabled && 'is-complete' }` }>
-					{ title }
-				</p>
+				<p className={ `launchpad__checklist-item-text` }>{ title }</p>
 				{ task.displayBadge && task.badgeText ? (
 					<Badge type="info-blue">{ task.badgeText }</Badge>
 				) : null }
 				{ ! taskDisabled && (
 					<Gridicon
 						className="launchpad__checklist-item-chevron"
-						icon="chevron-right"
+						icon={ `chevron-${ isRtl ? 'left' : 'right' }` }
 						size={ 18 }
 					/>
 				) }

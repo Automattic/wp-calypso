@@ -12,15 +12,15 @@
 	margin: 40px 24px;
 	padding-left: 40px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding-top: 8px;
 		padding-left: 80px;
 	}
 
 	.gridicon {
 		position: absolute;
-			top: 0;
-			left: 0;
+		top: 0;
+		left: 0;
 
 		&.gridicons-cross {
 			top: 32px;
@@ -28,9 +28,9 @@
 		}
 
 		&.gridicons-mail {
-			fill: var( --color-neutral-50 );
+			fill: var(--color-neutral-50);
 
-			@include breakpoint-deprecated( '<480px' ) {
+			@include breakpoint-deprecated( "<480px" ) {
 				height: 24px;
 				width: 24px;
 			}
@@ -38,11 +38,11 @@
 
 		&.gridicons-cross {
 			fill: white;
-			background: var( --color-neutral-70 );
+			background: var(--color-neutral-70);
 			border-radius: 100%;
-			box-shadow: 0 0 0 3px var( --color-neutral-0 );
+			box-shadow: 0 0 0 3px var(--color-neutral-0);
 
-			@include breakpoint-deprecated( '<480px' ) {
+			@include breakpoint-deprecated( "<480px" ) {
 				height: 16px;
 				width: 16px;
 				top: 16px;
@@ -54,15 +54,15 @@
 	h1 {
 		font-size: $font-title-medium;
 		line-height: 1.2;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			font-size: $font-title-large;
 		}
 	}
 
 	p {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		margin: 0;
 	}
 }
@@ -71,32 +71,32 @@
 	padding: 24px;
 	min-height: 88px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding-right: 154px;
 	}
 
 	h4 {
 		font-weight: 600;
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		font-size: $font-body;
 	}
 
 	p {
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 		margin: 0;
 		font-size: $font-body;
 	}
 
 	.button {
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			margin-top: 24px;
 			box-sizing: border-box;
 			width: 100%;
 		}
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			position: absolute;
-				top: 24px;
-				right: 24px;
+			top: 24px;
+			right: 24px;
 		}
 	}
 }

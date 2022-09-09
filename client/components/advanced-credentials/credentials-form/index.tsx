@@ -42,7 +42,9 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	const [ interactions, setFormInteractions ] = useState( INITIAL_FORM_INTERACTION );
 	const hostInfo = getHostInfoFromId( host );
 
-	const handleFormChange: FormEventHandler< HTMLInputElement > = ( { currentTarget } ) => {
+	const handleFormChange: FormEventHandler< HTMLInputElement | HTMLSelectElement > = ( {
+		currentTarget,
+	} ) => {
 		switch ( currentTarget.name ) {
 			case 'protocol':
 				onFormStateChange( {

@@ -9,12 +9,12 @@
 
 	&::after {
 		margin: 0 4px;
-		content: '•';
+		content: "•";
 	}
 
 	&:last-child {
 		&::after {
-			content: '';
+			content: "";
 		}
 	}
 }
@@ -22,7 +22,7 @@
 .post-action-counts li a,
 .post-action-counts li a:active,
 .post-action-counts li a:visited {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	&:hover {
 		text-decoration: underline;

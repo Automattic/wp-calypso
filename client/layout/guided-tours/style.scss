@@ -1,11 +1,12 @@
 .card.guided-tours__step {
 	position: fixed;
-	width: calc( 100% - 10px );
+	width: calc(100% - 10px);
 	max-width: 410px;
-	z-index: z-index( 'root', '.guided-tours__step' );
-	background: var( --color-neutral-90 );
-	box-shadow: 0 0 0 1px rgbs( 255, 255, 255, 0.6 ),
-		0 2px 24px 0 rgba( var( --color-neutral-80-rgb ), 0.5 );
+	z-index: z-index("root", ".guided-tours__step");
+	background: var(--color-neutral-90);
+	box-shadow:
+		0 0 0 1px rgbs(255, 255, 255, 0.6),
+		0 2px 24px 0 rgba(var(--color-neutral-80-rgb), 0.5);
 	border-radius: 2px;
 	padding-top: 19px;
 	margin-left: 5px;
@@ -16,7 +17,7 @@
 	animation-timing-function: ease-in-out;
 
 	a {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 		text-decoration: underline;
 
 		&:hover {
@@ -29,11 +30,11 @@
 	}
 
 	p {
-		color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
 		margin-bottom: 16px;
 
 		strong {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 
 		&:last-child {
@@ -46,21 +47,21 @@
 		margin-top: -4px;
 	}
 
-	.gridicon[height='18'] {
+	.gridicon[height="18"] {
 		position: relative;
 		top: 0;
 	}
 
 	.tours__title {
 		font-size: 140%;
-	    display: flex;
-	    align-items: center;
-	    color: var( --color-text-inverted );
-	    margin-bottom: 10px;
+		display: flex;
+		align-items: center;
+		color: var(--color-text-inverted);
+		margin-bottom: 10px;
 	}
 
 	.tours__completed-icon-wrapper {
-		background: var( --color-success );
+		background: var(--color-success);
 		border-radius: 100%;
 		display: inline-block;
 		margin-right: 10px;
@@ -88,11 +89,11 @@
 @keyframes guided-tours__step-fadein {
 	0% {
 		opacity: 0;
-		transform: translateY( 20px ) scale( 0.98 );
+		transform: translateY(20px) scale(0.98);
 	}
 	100% {
 		opacity: 1;
-		transform: translateY( 0 ) scale( 1 );
+		transform: translateY(0) scale(1);
 	}
 }
 
@@ -100,17 +101,17 @@
 	0% {
 		opacity: 0;
 		pointer-events: none;
-		transform: translateX( 100% );
+		transform: translateX(100%);
 	}
 
 	80% {
-		transform: translateX( -16px );
+		transform: translateX(-16px);
 	}
 
 	100% {
 		opacity: 1;
 		pointer-events: auto;
-		transform: translateX( 0 );
+		transform: translateX(0);
 	}
 }
 
@@ -129,9 +130,9 @@
 	}
 	.guided-tours__quit-button,
 	a.button {
-		color: var( --color-neutral-10 );
+		color: var(--color-neutral-10);
 		background: none;
-		border: 1px rgba( var( --color-surface-rgb ), 0.2 ) solid;
+		border: 1px rgba(var(--color-surface-rgb), 0.2) solid;
 	}
 
 	a.button {
@@ -140,7 +141,7 @@
 
 		&:hover,
 		&:focus {
-			border-color: rgba( var( --color-surface-rgb ), 0.3 );
+			border-color: rgba(var(--color-surface-rgb), 0.3);
 		}
 
 		.gridicon {
@@ -152,20 +153,20 @@
 
 a.config-elements__text-link,
 .config-elements__text-link {
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 
 	&:hover {
 		text-decoration: none;
 	}
 
 	&:visited {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 }
 
 .guided-tours__external-link,
 .guided-tours__actionstep-instructions {
-	color: var( --color-neutral-20 );
+	color: var(--color-neutral-20);
 	margin-bottom: 0;
 	font-style: italic;
 	line-height: 1.3em;
@@ -173,8 +174,8 @@ a.config-elements__text-link,
 
 	.external-link {
 		font-style: normal;
-		color: var( --color-text-inverted );
-		border-top: 1px solid var( --color-neutral-70 );
+		color: var(--color-text-inverted);
+		border-top: 1px solid var(--color-neutral-70);
 		display: block;
 		padding-top: 12px;
 		margin-top: 16px;
@@ -184,7 +185,7 @@ a.config-elements__text-link,
 // style the pure text representation of the actionstep icon
 .guided-tours__actionstep-text {
 	position: relative;
-		top: 3px;
+	top: 3px;
 	font-style: normal;
 	font-size: 190%;
 	line-height: 0;
@@ -193,10 +194,10 @@ a.config-elements__text-link,
 // arrow if we have a target
 .guided-tours__step-pointing::before {
 	position: absolute;
-	border: var( --color-neutral-90 );
-	content: ' ';
+	border: var(--color-neutral-90);
+	content: " ";
 	pointer-events: none;
-	background: var( --color-neutral-90 );
+	background: var(--color-neutral-90);
 	width: 12px;
 	height: 12px;
 }
@@ -209,89 +210,89 @@ a.config-elements__text-link,
 .guided-tours__step-pointing.guided-tours__step-pointing-top-left::before {
 	top: -5.5px;
 	left: 12px;
-	transform: rotate( 45deg );
+	transform: rotate(45deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-top-center::before {
 	top: -5.5px;
 	left: 49%;
-	transform: rotate( 45deg );
+	transform: rotate(45deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-top-right::before {
 	top: -5.5px;
 	right: 12px;
-	transform: rotate( 45deg );
+	transform: rotate(45deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-right-top::before {
 	top: 15px;
 	right: -5.5px;
-	transform: rotate( 135deg );
+	transform: rotate(135deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-right-middle::before {
 	top: 42%;
 	right: -5.5px;
-	transform: rotate( 135deg );
+	transform: rotate(135deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-right-bottom::before {
 	bottom: 12px;
 	right: -5.5px;
-	transform: rotate( 135deg );
+	transform: rotate(135deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-bottom-right::before {
 	bottom: -5.5px;
 	right: 12px;
-	transform: rotate( 225deg );
+	transform: rotate(225deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-bottom-center::before {
 	bottom: -5.5px;
 	left: 49%;
-	transform: rotate( 225deg );
+	transform: rotate(225deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-bottom-left::before {
 	bottom: -5.5px;
 	left: 12px;
-	transform: rotate( 225deg );
+	transform: rotate(225deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-left-bottom::before {
 	bottom: 12px;
 	left: -5.5px;
-	transform: rotate( -45deg );
+	transform: rotate(-45deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-left-middle::before {
 	top: 42%;
 	left: -5.5px;
-	transform: rotate( -45deg );
+	transform: rotate(-45deg);
 }
 
 .guided-tours__step-pointing.guided-tours__step-pointing-left-top::before {
 	top: 12px;
 	left: -5.5px;
-	transform: rotate( -45deg );
+	transform: rotate(-45deg);
 }
 
 
 $guided-tour-step_border: 2px solid white;
 
 .guided-tours__step-dark {
-    border: $guided-tour-step_border;
+	border: $guided-tour-step_border;
 }
 
 .guided-tours__step-dark::before {
-    border-left: $guided-tour-step_border;
-    border-top: $guided-tour-step_border;
+	border-left: $guided-tour-step_border;
+	border-top: $guided-tour-step_border;
 }
 
 .guided-tours__step-dark.guided-tours__step-pointing-top-left::before {
-    top: -8.5px;
+	top: -8.5px;
 }
 
 .guided-tours__step-dark.guided-tours__step-pointing-top-center::before {

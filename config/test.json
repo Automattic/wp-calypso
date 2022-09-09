@@ -60,7 +60,7 @@
 		"layout/support-article-dialog": true,
 		"legal-updates-banner": true,
 		"mailchimp": true,
-		"marketplace-jetpack-plugin-search": false,
+		"marketplace-jetpack-plugin-search": true,
 		"marketplace-personal-premium": false,
 		"me/account-close": true,
 		"me/vat-details": true,

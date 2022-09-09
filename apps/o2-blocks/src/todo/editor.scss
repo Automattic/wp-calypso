@@ -1,4 +1,4 @@
-@import '@wordpress/base-styles/colors';
+@import "@wordpress/base-styles/colors";
 
 $color-accent-green: #31843f;
 $color-move-button-icon: #555d66; // dark-gray-500
@@ -26,7 +26,7 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 	// Status.
 	.item-status {
 		display: inline-block;
-		content: '';
+		content: "";
 		border: 1px solid $gray-200;
 		border-radius: 50%;
 		margin: 7px 8px 0 0;
@@ -50,7 +50,7 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 		}
 
 		.item-status .dashicon {
-			fill: var( --color-text-inverted );
+			fill: var(--color-text-inverted);
 			position: absolute;
 			top: -2px;
 			left: -2px;
@@ -97,7 +97,7 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 			margin: 0;
 			height: 33px;
 			line-height: 32px;
-			border-radius: 3px;
+			border-radius: 3px; /* stylelint-disable-line scales/radii */
 			padding: 0 12px 2px;
 			white-space: nowrap;
 
@@ -123,7 +123,7 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 }
 
 // P2-specific styling.
-body:not( .wp-admin ) .gutenberg {
+body:not(.wp-admin) .gutenberg {
 	.wp-block-a8c-todo .wp-block-a8c-todo__item {
 		padding: 10px 0 4px;
 	}
