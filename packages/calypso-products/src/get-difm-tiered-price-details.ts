@@ -5,11 +5,15 @@ import type { Product } from './types';
  * Returns meaningful DIFM purchase details related to tiered difm prices if available
  * Returns null if this is not a DIFM purchase or the proper related price tier information is not available.
  *
- * @param { Product } product  product to get details from
+ * @param { Product | any } product  product to get details from
+ * @param { number } noOfPages  the number of pages required
  * @returns {object} with the relevent tier details
  */
 export function getDIFMTieredPriceDetails(
-	product: Product,
+	// Any is allowed here because the ProductListItem in (client/state/products-list/selectors/get-products-list.ts) is not compatible with the Product object
+	// And that type cannot be imported into an external module
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	product: Product | any,
 	noOfPages: number
 ): null | {
 	extraPageCount: number | null;

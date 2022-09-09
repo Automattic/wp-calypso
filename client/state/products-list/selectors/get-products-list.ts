@@ -1,4 +1,4 @@
-import type { PriceTierEntry, Product, ProductSlug } from '@automattic/calypso-products';
+import type { PriceTierEntry } from '@automattic/calypso-products';
 import type { AppState } from 'calypso/types';
 import 'calypso/state/products-list/init';
 
@@ -13,10 +13,10 @@ export interface ProductIntroductoryOffer {
 	usage_limit: number | null;
 }
 
-export interface ProductListItem extends Product {
+export interface ProductListItem {
 	product_id: number;
 	product_name: string;
-	product_slug: ProductSlug;
+	product_slug: string;
 	description: string;
 	product_type: string;
 	available: boolean;
