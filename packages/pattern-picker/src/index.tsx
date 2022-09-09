@@ -32,17 +32,30 @@ export function PatternPicker( { onPick }: Props ) {
 	const [ offsetX, setOffsetX ] = React.useState( 0 );
 	const [ dragStartX, setDragStartX ] = React.useState( 0 );
 	const [ touchOffset, setTouchOffset ] = React.useState( 0 );
-	const [ scrollOffset, setScrollOffset ] = React.useState( 0 );
 	const [ windowSizeChanges, setWindowSizeChanges ] = React.useState( 0 );
 
-	// to recalculate after window resize
 	useEffect( () => {
 		const handleResize = () => {
-			setWindowSizeChanges( ( c ) => c + 1 );
+			setWindowSizeChanges( ( c ) => c + ( 1 % 100 ) );
 		};
+
+		function handleArrows( event: KeyboardEvent ) {
+			if ( patterns ) {
+				if ( event.key === 'ArrowLeft' ) {
+					setIndex( within( index - 1, 0, patterns.length - 1 ) );
+				} else if ( event.key === 'ArrowRight' ) {
+					setIndex( within( index + 1, 0, patterns.length - 1 ) );
+				}
+			}
+		}
+
 		window.addEventListener( 'resize', handleResize );
-		return () => window.removeEventListener( 'resize', handleResize );
-	} );
+		window.addEventListener( 'keydown', handleArrows );
+		return () => {
+			window.removeEventListener( 'resize', handleResize );
+			window.removeEventListener( 'keydown', handleArrows );
+		};
+	}, [ setIndex, index, patterns ] );
 
 	useEffect( () => {
 		if ( containerRef ) {
@@ -50,7 +63,6 @@ export function PatternPicker( { onPick }: Props ) {
 			const itemWidthWithGap = itemWidth + 20;
 			const offsetX = itemWidth / 2 + itemWidthWithGap * index;
 			setOffsetX( -offsetX );
-			setScrollOffset( itemWidthWithGap * index );
 		}
 	}, [ index, containerRef, windowSizeChanges ] );
 
@@ -58,6 +70,8 @@ export function PatternPicker( { onPick }: Props ) {
 		return null;
 	}
 
+	/*
+	keep for future improvement
 	const onWheel = ( event: React.WheelEvent< HTMLDivElement > ) => {
 		const { deltaX } = event;
 		const newTicks = scrollOffset + deltaX;
@@ -68,6 +82,7 @@ export function PatternPicker( { onPick }: Props ) {
 		// to avoid buffering scrolling ticks beyond the limits, forcing the user to unscroll their way back
 		setScrollOffset( within( newTicks, 0, ( patterns.length - 1 ) * itemWidthWithGap ) );
 	};
+	*/
 
 	const onTouchEnd = ( event: React.TouchEvent< HTMLDivElement > ) => {
 		const currentX = event.changedTouches[ 0 ].clientX;
@@ -102,7 +117,6 @@ export function PatternPicker( { onPick }: Props ) {
 				onTouchStart={ ( event ) => setDragStartX( event.touches[ 0 ].clientX ) }
 				onTouchEnd={ onTouchEnd }
 				onTouchMove={ onTouchMove }
-				onWheel={ onWheel }
 			>
 				{ patterns.map( ( pattern, i ) => (
 					<Item
