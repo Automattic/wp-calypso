@@ -46,7 +46,7 @@
 	font-weight: 600;
 	margin: 16px 0 24px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-headline-small;
 		margin: 32px 0;
 	}

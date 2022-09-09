@@ -1,12 +1,12 @@
-@import '@automattic/color-studio/dist/color-variables';
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/variables';
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/variables";
 
 @mixin screen-reader-text() {
 	border: 0;
-	clip: rect( 1px, 1px, 1px, 1px );
-	clip-path: inset( 50% );
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
 	height: 1px;
 	margin: -1px;
 	overflow: hidden;
@@ -19,9 +19,9 @@
 $pattern-selector-border-color: $studio-gray-5;
 $pattern-selector-hover-border-color: $studio-gray-50;
 $pattern-selector-empty-background: $studio-white;
-$pattern-selector-focus-color: var( --wp-admin-theme-color );
+$pattern-selector-focus-color: var(--wp-admin-theme-color);
 $pattern-selector-link-text: $studio-gray-60;
-$pattern-selector-link-hover-text: var( --color-text );
+$pattern-selector-link-hover-text: var(--color-text);
 
 // Breakpoints
 $breakpoint-mobile: 600px;
@@ -40,7 +40,7 @@ $sidebar-width-desktop: 324px;
 	}
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
-		width: calc( 100% - 32px );
+		width: calc(100% - 32px);
 		height: 90vh;
 		// prevents a 1px strip of content being visible after scrolling
 		overflow-y: hidden;
@@ -51,7 +51,7 @@ $sidebar-width-desktop: 324px;
 	}
 
 	@media screen and ( min-width: $breakpoint-desktop ) {
-		width: calc( 100% - 64px );
+		width: calc(100% - 64px);
 	}
 
 	.components-modal__content {
@@ -121,23 +121,14 @@ $sidebar-width-desktop: 324px;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		margin-top: 0;
-		grid-template-columns: repeat(
-			auto-fill,
-			minmax( 280px, 1fr )
-		); // allow grid to take over number of cols on large screens
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); // allow grid to take over number of cols on large screens
 	}
 
 	@media screen and ( min-width: $breakpoint-huge ) {
-		grid-template-columns: repeat(
-			auto-fill,
-			minmax( 350px, 1fr )
-		);
+		grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
 	}
 	@media screen and ( min-width: $breakpoint-xhuge ) {
-		grid-template-columns: repeat(
-			auto-fill,
-			minmax( 500px, 1fr )
-		);
+		grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
 	}
 }
 
@@ -152,11 +143,12 @@ $sidebar-width-desktop: 324px;
 	overflow: hidden;
 	background-color: $pattern-selector-empty-background;
 	position: relative;
-	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (1/2).
+	transform: translateZ(0); // Fix for Safari rounded border overflow (1/2).
 	color: $pattern-selector-link-text;
 
 	&:focus {
-		box-shadow: 0 0 0 1px $pattern-selector-empty-background,
+		box-shadow:
+			0 0 0 1px $pattern-selector-empty-background,
 			0 0 0 3px $pattern-selector-focus-color;
 		// Windows High Contrast mode will show this outline, but not the box-shadow.
 		outline: 2px solid transparent;
@@ -183,7 +175,7 @@ $sidebar-width-desktop: 324px;
 	padding-top: 65%;
 	position: relative;
 	opacity: 1;
-	transform: translateZ( 0 ); // Fix for Safari rounded border overflow (2/2).
+	transform: translateZ(0); // Fix for Safari rounded border overflow (2/2).
 	border: solid 1px $pattern-selector-border-color;
 	margin-bottom: 1em;
 
@@ -195,10 +187,10 @@ $sidebar-width-desktop: 324px;
 // Correct position for child elements inside preview-wrap
 .pattern-selector-item__preview-wrap-inner-position {
 	position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
 
 .pattern-selector-item__media {
@@ -261,17 +253,17 @@ $sidebar-width-desktop: 324px;
 		padding: 6px 12px;
 		box-shadow: none;
 
-		&.is-tertiary:not( :disabled ):hover {
+		&.is-tertiary:not(:disabled):hover {
 			box-shadow: none;
 			color: $pattern-selector-link-hover-text !important;
 		}
 
-		&.is-tertiary:not( :disabled ):active {
+		&.is-tertiary:not(:disabled):active {
 			background: transparent;
 		}
 
-		&.is-tertiary:not( :disabled ):focus {
-			box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $pattern-selector-focus-color;
+		&.is-tertiary:not(:disabled):focus {
+			box-shadow: 0 0 0 var(--wp-admin-border-width-focus) $pattern-selector-focus-color;
 		}
 	}
 
@@ -280,7 +272,7 @@ $sidebar-width-desktop: 324px;
 		padding-bottom: 2px;
 	}
 
-	.components-menu-item__button:not( :disabled )[aria-selected='true'] {
+	.components-menu-item__button:not(:disabled)[aria-selected="true"] {
 		color: $pattern-selector-link-hover-text;
 		font-weight: 600;
 
@@ -304,23 +296,23 @@ $sidebar-width-desktop: 324px;
 .components-button.page-pattern-modal__blank-button {
 	min-height: 40px;
 	box-shadow: inset 0 0 0 1px $pattern-selector-border-color;
-	color: var( --color-text );
+	color: var(--color-text);
 
 	&:active {
-		color: var( --color-text );
+		color: var(--color-text);
 	}
 
-	&.is-secondary:hover:not( :disabled ) {
+	&.is-secondary:hover:not(:disabled) {
 		box-shadow: inset 0 0 0 1px $pattern-selector-hover-border-color;
-		color: var( --color-text );
+		color: var(--color-text);
 	}
 
-	&.is-secondary:focus:not( :disabled ) {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $pattern-selector-focus-color;
+	&.is-secondary:focus:not(:disabled) {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) $pattern-selector-focus-color;
 	}
 
-	&.is-secondary:hover:focus:not( :disabled ) {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus ) $pattern-selector-focus-color;
+	&.is-secondary:hover:focus:not(:disabled) {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) $pattern-selector-focus-color;
 		outline: 3px solid transparent;
 	}
 }

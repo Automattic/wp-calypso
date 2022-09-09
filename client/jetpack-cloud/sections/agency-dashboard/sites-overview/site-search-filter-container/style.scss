@@ -1,9 +1,9 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .site-search-filter-container {
 	margin: 0 0 8px;
-	background: #ffffff;
+	background: #fff;
 	position: relative;
 	@include break-large() {
 		position: static;
@@ -11,13 +11,13 @@
 		flex-wrap: wrap;
 		flex-direction: row;
 		height: 51px;
-		box-shadow: 0 0 0 1px var( --color-neutral-5 );
+		box-shadow: 0 0 0 1px var(--color-neutral-5);
 	}
 }
 
 .site-search-filter-container__search {
 	height: 52px;
-	box-shadow: 0 0 0 1px var( --color-neutral-5 );
+	box-shadow: 0 0 0 1px var(--color-neutral-5);
 	@include break-large() {
 		width: 40%;
 		height: auto;
@@ -35,7 +35,7 @@
 }
 
 .site-search-filter-container__filter-bar {
-	box-shadow: 0 0 0 1px var( --color-neutral-5 );
+	box-shadow: 0 0 0 1px var(--color-neutral-5);
 	@include break-large() {
 		z-index: 99;
 		width: 60%;

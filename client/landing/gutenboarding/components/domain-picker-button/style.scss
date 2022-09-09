@@ -1,6 +1,6 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import '../../mixins.scss';
-@import '../../variables.scss';
+@import "assets/stylesheets/gutenberg-base-styles";
+@import "../../mixins.scss";
+@import "../../variables.scss";
 
 @keyframes domain-picker-button-slide-in {
 	from {
@@ -31,14 +31,14 @@
 		animation-duration: 4s;
 		animation-name: domain-picker-button-slide-in;
 		max-width: 1500px;
-		@include reduce-motion( 'animation' );
+		@include reduce-motion( "animation" );
 	}
 
 	.components-button {
 		@include onboarding-medium-text;
-		background: var( --studio-blue-0 );
+		background: var(--studio-blue-0);
 		border-radius: $radius-block-ui;
-		color: var( --studio-blue-40 );
+		color: var(--studio-blue-40);
 		max-width: 100%;
 		height: auto; // prevent clipping when there are 2 lines
 		padding: 5px 12px;
@@ -46,13 +46,13 @@
 
 		&:focus,
 		&:hover[type] {
-			box-shadow: 0 0 0 1px var( --studio-blue-40 );
+			box-shadow: 0 0 0 1px var(--studio-blue-40);
 			outline: 0;
 		}
 
-		&:not( [aria-disabled='true'] ):active {
-			box-shadow: 0 0 0 1px var( --studio-blue-60 );
-			color: var( --studio-blue-60 );
+		&:not([aria-disabled="true"]):active {
+			box-shadow: 0 0 0 1px var(--studio-blue-60);
+			color: var(--studio-blue-60);
 		}
 	}
 
@@ -70,6 +70,6 @@
 
 // Remove focus styling from clicking a button
 // Keep keyboard-focused focus style
-html:not( .accessible-focus ) .domain-picker-button:focus:not( :disabled ):not( :hover ) {
+html:not(.accessible-focus) .domain-picker-button:focus:not(:disabled):not(:hover) {
 	box-shadow: none;
 }

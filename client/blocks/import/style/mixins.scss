@@ -1,11 +1,11 @@
-@import '@automattic/onboarding/styles/mixins.scss';
+@import "@automattic/onboarding/styles/mixins.scss";
 
 @mixin onboarding-import-heading-text {
 	@include onboarding-font-recoleta;
 	font-size: 2.25rem; // 36px
 	line-height: 1.0833em; /* stylelint-disable-line declaration-property-unit-allowed-list */ // 52px
 	letter-spacing: 0.2px;
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 
 	@include break-small {
 		font-size: 3rem; // 48px

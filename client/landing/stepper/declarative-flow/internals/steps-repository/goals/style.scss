@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-@import '@automattic/typography/styles/fonts';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
+@import "@automattic/typography/styles/fonts";
 
 .goals__container {
 	padding: 0 20px;
@@ -35,7 +35,7 @@
 			padding-top: 16px;
 
 			@include break-small {
-				grid-template-columns: repeat( 2, 1fr );
+				grid-template-columns: repeat(2, 1fr);
 			}
 		}
 
@@ -58,10 +58,10 @@
 	}
 
 	.select-goals__cards-container {
-		font-family: 'Inter', $sans;
+		font-family: Inter, $sans;
 		display: grid;
 		gap: 16px;
-		grid-template-columns: repeat( 1, 1fr );
+		grid-template-columns: repeat(1, 1fr);
 
 		.select-goals__goal-title {
 			margin-right: 14px;
@@ -70,7 +70,7 @@
 		.select-goals__premium-badge {
 			display: inline-block;
 			background: #101517;
-			color: #ffffff;
+			color: #fff;
 			border-radius: 4px;
 			font-weight: 500;
 			font-size: 0.75rem;
@@ -79,7 +79,7 @@
 		}
 
 		@include break-small {
-			grid-template-columns: repeat( 1, 1fr );
+			grid-template-columns: repeat(1, 1fr);
 		}
 	}
 
@@ -93,7 +93,7 @@
 			width: 130px;
 			height: 44px;
 			border-radius: 4px;
-			box-shadow: 0 1px 2px rgb( 0 0 0 / 5% ) !important;
+			box-shadow: 0 1px 2px rgb(0 0 0 / 5%) !important;
 		}
 
 		@include break-small {
@@ -123,11 +123,7 @@
 
 	&.selected {
 		border: 2px solid #0675c4;
-		background: linear-gradient(
-			180deg,
-			rgba( 6, 117, 196, 0.2 ) -44.3%,
-			rgba( 255, 255, 255, 0 ) 100%
-		);
+		background: linear-gradient(180deg, rgba(6, 117, 196, 0.2) -44.3%, rgba(255, 255, 255, 0) 100%);
 		padding: 16px 24px;
 	}
 
@@ -135,7 +131,7 @@
 		margin-bottom: 0;
 	}
 
-	.components-checkbox-control__input[type='checkbox'] {
+	.components-checkbox-control__input[type="checkbox"] {
 		border-color: #a7aaad;
 	}
 }
@@ -189,12 +185,12 @@
 			text-align: end;
 		}
 
-		&:not( [disabled] ):hover {
-			color: var( --color-neutral-70 );
+		&:not([disabled]):hover {
+			color: var(--color-neutral-70);
 		}
 	}
 
 	&__disabled-info svg {
-		fill: var( --color-neutral-20 );
+		fill: var(--color-neutral-20);
 	}
 }

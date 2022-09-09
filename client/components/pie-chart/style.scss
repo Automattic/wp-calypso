@@ -18,21 +18,21 @@
 
 .pie-chart__chart-section-0,
 .pie-chart__legend-sample-0 {
-	fill: var( --color-primary-dark );
+	fill: var(--color-primary-dark);
 }
 
 .pie-chart__chart-section-1,
 .pie-chart__legend-sample-1 {
-	fill: var( --color-accent );
+	fill: var(--color-accent);
 }
 
 .pie-chart__chart-section-2,
 .pie-chart__legend-sample-2 {
-	fill: var( --color-primary-light );
+	fill: var(--color-primary-light);
 }
 
 .pie-chart__chart-drawing-empty {
-	fill: var( --color-neutral-light );
+	fill: var(--color-neutral-light);
 }
 
 .pie-chart__legend {
@@ -40,7 +40,7 @@
 	flex-direction: column;
 	align-items: flex-start;
 
-	.legend-item:not( :first-child ) {
+	.legend-item:not(:first-child) {
 		margin-top: 20px;
 	}
 }
@@ -50,7 +50,7 @@
 	flex-direction: column;
 	align-items: flex-start;
 
-	.legend-item__placeholder:not( :first-child ) {
+	.legend-item__placeholder:not(:first-child) {
 		margin-top: 20px;
 	}
 }
@@ -67,5 +67,5 @@
 
 .pie-chart__placeholder-drawing-element {
 	@include placeholder();
-	fill: var( --color-neutral-0 );
+	fill: var(--color-neutral-0);
 }

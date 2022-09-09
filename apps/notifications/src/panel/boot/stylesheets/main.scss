@@ -3,14 +3,14 @@
 }
 
 .wpnc__main {
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 
 	font: {
 		family: $sans;
 		size: $wpnc__font-size;
 	}
 	line-height: $wpnc__line-height;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	// Fixes font anti-aliasing in iframes: andrewmoreton.co.uk/typekit-iframes-safari-weird-antialiasing/
 	-webkit-font-smoothing: subpixel-antialiased;
 
@@ -24,10 +24,10 @@
 	}
 
 	@media only screen and ( max-width: 799px ) {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 	@media only screen and ( min-width: 409px ) and ( max-width: 430px ) {
-		background-color: var( --color-surface );
+		background-color: var(--color-surface);
 	}
 
 	// Text elements
@@ -39,20 +39,20 @@
 	// Links
 	a,
 	a:visited {
-		color: var( --color-primary );
+		color: var(--color-primary);
 		text-decoration: none;
 	}
 
 	a:hover,
 	a:focus,
 	a:active {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 
 	button {
 		background-color: transparent;
 		border: none;
-		color: var( --color-primary );
+		color: var(--color-primary);
 		cursor: pointer;
 		font-size: inherit;
 		outline: none;
@@ -60,15 +60,15 @@
 		padding: 0;
 
 		&[disabled] {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 			cursor: default;
 		}
 	}
 
 	header {
-		border-bottom: 1px solid var( --color-neutral-5 );
+		border-bottom: 1px solid var(--color-neutral-5);
 		box-sizing: border-box;
-		background-color: var( --color-surface );
+		background-color: var(--color-surface);
 		font-size: $wpnc__capital-font-size;
 		height: $wpnc__title-bar-height + 1px;
 		line-height: $wpnc__title-bar-height;
@@ -87,7 +87,7 @@
 
 		h1 {
 			@extend %headertext;
-			color: var( --color-neutral-40 );
+			color: var(--color-neutral-40);
 			display: inline;
 		}
 
@@ -129,7 +129,7 @@
 	.wpnc__list-view.wpnc__current {
 		display: none;
 	}
-	.wpnc__single-view:not( .wpnc__current ) {
+	.wpnc__single-view:not(.wpnc__current) {
 		display: none;
 	}
 
@@ -141,20 +141,20 @@
 	span.wpnc__user {
 		font-weight: 600;
 		a.wpnc__user__home {
-			color: var( --color-neutral-70 );
+			color: var(--color-neutral-70);
 		}
 	}
 
 	.wpnc__header a.wpnc__user {
 		font-weight: 600;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	.wpnc__header a.wpnc__post {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 
 		&:hover {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 	}
 
@@ -170,15 +170,15 @@
 	}
 
 	.rtl header .back::after {
-		transform: rotate( 90deg );
+		transform: rotate(90deg);
 	}
 
 	.wpnc__filter {
 		width: 100%;
-		background-color: var( --color-surface );
-		color: var( --color-text-subtle );
-		border-bottom: 1px solid var( --color-neutral-5 );
-		border-left: 1px solid var( --color-border-inverted );
+		background-color: var(--color-surface);
+		color: var(--color-text-subtle);
+		border-bottom: 1px solid var(--color-neutral-5);
+		border-left: 1px solid var(--color-border-inverted);
 		text-align: center; // Center filter in IE 9
 		height: $wpnc__filter-height;
 		box-sizing: border-box;
@@ -186,8 +186,8 @@
 		display: table; //fallback for browsers not supporting flexbox
 	}
 
-	.wpnc__note-list:not( .is-note-open ) .wpnc__filter {
-		border-left: 1px solid var( --color-neutral-0 );
+	.wpnc__note-list:not(.is-note-open) .wpnc__filter {
+		border-left: 1px solid var(--color-neutral-0);
 	}
 
 	.wpnc__filter__segmented-control {
@@ -196,13 +196,13 @@
 		padding: 6px 8px;
 
 		&:focus {
-			box-shadow: 0 0 0 2px var( --color-primary-light );
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
 
 	.wpnc__filter__segmented-control-item {
-		background: var( --color-surface );
-		border: 1px solid var( --color-neutral-light );
+		background: var(--color-surface);
+		border: 1px solid var(--color-neutral-light);
 		border-right: none;
 		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		height: 26px;
@@ -219,7 +219,7 @@
 		flex: auto; // Fill horizontal space
 
 		&:hover {
-			color: var( --color-neutral-70 );
+			color: var(--color-neutral-70);
 		}
 
 		&:first-of-type {
@@ -228,31 +228,29 @@
 		}
 
 		&:last-of-type {
-			border-right: 1px solid var( --color-neutral-light );
+			border-right: 1px solid var(--color-neutral-light);
 			border-top-right-radius: 4px; /* stylelint-disable-line scales/radii */
 			border-bottom-right-radius: 4px; /* stylelint-disable-line scales/radii */
 
 			&.selected {
-				border-right-color: var( --color-primary );
+				border-right-color: var(--color-primary);
 			}
 		}
 
 		&.selected {
-			background: var( --color-primary );
-			border-color: var( --color-primary );
-			color: var( --color-text-inverted );
+			background: var(--color-primary);
+			border-color: var(--color-primary);
+			color: var(--color-text-inverted);
 
 			+ .segmented-control-item {
-				border-left-color: var(
-					--color-primary
-				); // Color left border on adjacent item to match active filter
+				border-left-color: var(--color-primary); // Color left border on adjacent item to match active filter
 			}
 		}
 	}
 
 	.wpnc__list-view .wpnc__notes,
 	.error {
-		background-color: var( --color-surface );
+		background-color: var(--color-surface);
 	}
 
 	.wpnc__note {
@@ -261,7 +259,7 @@
 		font-weight: normal;
 		position: relative;
 		clear: both;
-		border-bottom: 1px solid var( --color-neutral-5 );
+		border-bottom: 1px solid var(--color-neutral-5);
 
 		div.wpnc__body > p,
 		div.wpnc__preface p {
@@ -299,15 +297,15 @@
 	}
 
 	.wpnc__done-message {
-		background: var( --color-neutral-0 );
-		color: var( --color-text-subtle );
+		background: var(--color-neutral-0);
+		color: var(--color-text-subtle);
 		text-align: center;
 		line-height: 50px;
 		font-style: italic;
 	}
 
 	.wpnc__empty-notes-container {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 
 	.wpnc__empty-notes {
@@ -315,7 +313,7 @@
 		position: relative;
 		top: 50%;
 		padding: 0 32px;
-		transform: translateY( -50% );
+		transform: translateY(-50%);
 
 		h2 {
 			font: 400 21px/24px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
@@ -329,7 +327,7 @@
 
 	.wpnc__loading-indicator {
 		display: block;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		height: 90px;
 	}
 
@@ -342,17 +340,17 @@
 		left: 0;
 		bottom: 0;
 		overflow: hidden;
-		&:not( .is-note-open ) {
-			box-shadow: -3px 1px 10px -2px rgba( var( --color-neutral-70-rgb ), 0.075 );
+		&:not(.is-note-open) {
+			box-shadow: -3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
 		}
 	}
 
 	.wpnc__list-view {
 		height: 100%;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		overflow-y: scroll;
 		-webkit-overflow-scrolling: touch;
-		border-left: 1px solid var( --color-neutral-0 );
+		border-left: 1px solid var(--color-neutral-0);
 
 		&.is-empty-list {
 			overflow-y: hidden;
@@ -374,8 +372,8 @@
 			position: absolute;
 			bottom: -5px;
 			right: -8px;
-			background-color: var( --color-neutral-20 );
-			border-color: var( --color-border-inverted );
+			background-color: var(--color-neutral-20);
+			border-color: var(--color-border-inverted);
 		}
 
 		.wpnc__note .wpnc__note-icon img {
@@ -383,36 +381,33 @@
 		}
 
 		.unread .wpnc__note-icon .wpnc__gridicon {
-			background: var( --color-primary );
-			border-color: var( --color-neutral-0 );
+			background: var(--color-primary);
+			border-color: var(--color-neutral-0);
 		}
 
 		.wpnc__comment-unapproved .wpnc__note-icon .wpnc__gridicon {
-			background: var( --color-warning );
-			border-color: var( --color-warning-0 );
+			background: var(--color-warning);
+			border-color: var(--color-warning-0);
 		}
 
 		.unread {
-			background: rgba(
-				var( --color-primary-rgb ),
-				0.1
-			); // rgba is used to meet AA contrast standard
+			background: rgba(var(--color-primary-rgb), 0.1); // rgba is used to meet AA contrast standard
 		}
 
 		.wpnc__traffic_surge .wpnc__note-icon img {
 			width: 32px;
 			height: 32px;
-			background: var( --color-primary );
-			border-color: var( --color-primary );
+			background: var(--color-primary);
+			border-color: var(--color-primary);
 			border-width: 4px;
 			border-style: solid;
 		}
 
 		.wpnc__selected-note {
-			box-shadow: inset 4px 0 0 var( --color-primary );
+			box-shadow: inset 4px 0 0 var(--color-primary);
 
 			&.wpnc__comment-unapproved {
-				box-shadow: inset 4px 0 0 var( --color-warning );
+				box-shadow: inset 4px 0 0 var(--color-warning);
 			}
 		}
 
@@ -433,7 +428,7 @@
 			.wpnc__subject .wpnc__gridicon {
 				line-height: 1;
 				vertical-align: -3px;
-				color: var( --color-neutral-light );
+				color: var(--color-neutral-light);
 				padding: 2px 5px 0 0;
 			}
 
@@ -453,7 +448,7 @@
 				max-height: 3em;
 				-webkit-line-clamp: 2;
 				@extend %ellipsy-box;
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 				font-size: $wpnc__font-size;
 				letter-spacing: 0.25px;
 				padding-top: 2px;
@@ -463,10 +458,10 @@
 		.wpnc__time-group-title {
 			display: flex;
 			@extend %headertext;
-			color: var( --color-neutral-40 );
+			color: var(--color-neutral-40);
 			padding: 6px 0;
-			background: rgba( 255, 255, 255, 0.95 );
-			border-bottom: 1px solid var( --color-neutral-5 );
+			background: rgba(255, 255, 255, 0.95);
+			border-bottom: 1px solid var(--color-neutral-5);
 
 			.gridicons-time {
 				align-self: center;
@@ -497,8 +492,8 @@
 	}
 
 	.wpnc__undo-item {
-		background: var( --color-error );
-		color: var( --color-text-inverted );
+		background: var(--color-error);
+		color: var(--color-text-inverted);
 
 		p {
 			padding-top: 1em;
@@ -508,7 +503,7 @@
 		.wpnc__undo-link {
 			margin-left: 1em;
 			text-transform: uppercase;
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 
 		.wpnc__undo-message {
@@ -517,7 +512,7 @@
 	}
 
 	.wpnc__close-link {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 		position: absolute;
 		right: 10px;
 		cursor: pointer;
@@ -537,13 +532,13 @@
 		height: 100%;
 		left: 0;
 		right: 0;
-		box-shadow: -3px 1px 10px -2px rgba( var( --color-neutral-70-rgb ), 0.075 );
+		box-shadow: -3px 1px 10px -2px rgba(var(--color-neutral-70-rgb), 0.075);
 
 		@media only screen and ( min-width: 480px ) {
-			border-left: 1px solid var( --color-neutral-0 );
+			border-left: 1px solid var(--color-neutral-0);
 		}
 
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		ol {
 			height: 100%;
 			overflow-y: auto;
@@ -571,7 +566,7 @@
 			}
 
 			.wpnc__user__meta {
-				&:not( .wpnc__user__bulleted ) {
+				&:not(.wpnc__user__bulleted) {
 					.wpnc__user__site {
 						-webkit-line-clamp: 1;
 						@extend %ellipsy-box;
@@ -591,7 +586,7 @@
 			}
 
 			.wpnc__excerpt {
-				color: var( --color-secondary );
+				color: var(--color-secondary);
 				-webkit-line-clamp: 1;
 				@extend %ellipsy-box;
 				white-space: nowrap;
@@ -604,15 +599,15 @@
 		}
 
 		.wpnc__comment .wpnc__user p.wpnc__excerpt {
-			color: var( --color-secondary );
+			color: var(--color-secondary);
 			max-height: 1.5em;
 			font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 
 		.wpnc__reply {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			padding: $wpnc__padding-medium 0;
-			border-bottom: 1px solid var( --color-neutral-5 );
+			border-bottom: 1px solid var(--color-neutral-5);
 
 			.wpnc__gridicon {
 				padding: 0 10px;
@@ -624,28 +619,28 @@
 
 			a {
 				font-weight: 600;
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 				text-decoration: underline;
 			}
 		}
 
-		.wpnc__note:not( .wpnc__current ) {
+		.wpnc__note:not(.wpnc__current) {
 			display: none;
 		}
 
 		.wpnc__note {
-			background-color: var( --color-surface );
+			background-color: var(--color-surface);
 			border: none;
 		}
 
 		.wpnc__note-icon .wpnc__gridicon {
 			font-size: 2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-			background-color: var( --color-neutral-10 );
-			border-color: var( --color-neutral-10 );
+			background-color: var(--color-neutral-10);
+			border-color: var(--color-neutral-10);
 		}
 
 		.wpnc__summary {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 
 			p {
 				@extend %ellipsy-box;
@@ -663,7 +658,7 @@
 			display: inline;
 
 			&::after {
-				content: ' ';
+				content: " ";
 			}
 
 			&:first-of-type {
@@ -691,7 +686,7 @@
 
 	.time-notification {
 		float: right;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		margin-left: 0.25em;
 		line-height: 1em;
 		margin-top: 0.2em;
@@ -715,7 +710,7 @@
 				display: inline-block;
 				margin-left: 2em;
 				br {
-					content: ' ';
+					content: " ";
 					display: block;
 				}
 			}
@@ -725,8 +720,8 @@
 			}
 
 			pre {
-				background: var( --color-neutral-0 );
-				border: 1px solid var( --color-neutral-10 );
+				background: var(--color-neutral-0);
+				border: 1px solid var(--color-neutral-10);
 				border-radius: 3px; /* stylelint-disable-line scales/radii */
 				padding: 4px;
 
@@ -739,9 +734,9 @@
 			code {
 				font-family: $code;
 				font-size: 90%; /* stylelint-disable-line declaration-property-unit-allowed-list */
-				color: var( --color-neutral-50 );
-				background: var( --color-neutral-0 );
-				border: 1px solid var( --color-neutral-10 );
+				color: var(--color-neutral-50);
+				background: var(--color-neutral-0);
+				border: 1px solid var(--color-neutral-10);
 				border-radius: 3px; /* stylelint-disable-line scales/radii */
 				padding: 0 2px;
 			}
@@ -774,18 +769,18 @@
 			list-style: none;
 
 			.wpnc__todo-done::before {
-				content: '◉ ';
+				content: "◉ ";
 			}
 
 			.wpnc__todo-not-done::before {
-				content: '◎ ';
+				content: "◎ ";
 			}
 		}
 
 		blockquote {
 			margin: 0 $wpnc__padding-medium $wpnc__padding-medium;
 			font-style: italic;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			background: transparent;
 		}
 	}
@@ -822,12 +817,12 @@
 	.wpnc__comment .wpnc__body .wpnc__body-content,
 	.wpnc__new_post .wpnc__body .wpnc__body-content,
 	.wpnc__automattcher .wpnc__body .wpnc__body-content {
-		border-bottom: 1px solid var( --color-neutral-5 );
+		border-bottom: 1px solid var(--color-neutral-5);
 		padding-top: $wpnc__padding-small;
 	}
 
 	.wpnc__comment .wpnc__body .wpnc__body-content {
-		box-shadow: inset 4px 0 0 var( --color-neutral-0 );
+		box-shadow: inset 4px 0 0 var(--color-neutral-0);
 		margin: 0 0 0 $wpnc__padding-medium;
 	}
 
@@ -837,7 +832,7 @@
 
 	.wpnc__comment-unapproved .wpnc__body {
 		.wpnc__body-content {
-			box-shadow: inset 4px 0 0 var( --color-warning );
+			box-shadow: inset 4px 0 0 var(--color-warning);
 		}
 
 		.blockquote {
@@ -899,7 +894,7 @@
 				margin-top: 0;
 			}
 
-			-webkit-transform: translate3d( 0, 0, 0 ); // fix for getting scrollbar in right z-index
+			-webkit-transform: translate3d(0, 0, 0); // fix for getting scrollbar in right z-index
 		}
 
 		.wpnc__single-view {
@@ -913,21 +908,21 @@
 
 	@keyframes wpnc__slideIn {
 		from {
-			-webkit-transform: translateX( 100% );
-			transform: translateX( 100% );
+			-webkit-transform: translateX(100%);
+			transform: translateX(100%);
 		}
 		to {
-			-webkit-transform: translateX( 0% );
-			transform: translateX( 0% );
+			-webkit-transform: translateX(0%);
+			transform: translateX(0%);
 		}
 	}
 
 	@keyframes wpnc__selectIn {
 		from {
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 		}
 		to {
-			background-color: var( --color-surface );
+			background-color: var(--color-surface);
 		}
 	}
 }

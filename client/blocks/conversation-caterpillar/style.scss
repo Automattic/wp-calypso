@@ -5,7 +5,7 @@
 .conversation-caterpillar__count {
 	align-items: center;
 	cursor: pointer;
-	color: var( --color-primary );
+	color: var(--color-primary);
 	display: flex;
 	margin-left: 8px;
 	flex: 1 1 auto;
@@ -16,7 +16,7 @@
 	white-space: nowrap;
 
 	&:hover {
-		color: var( --color-primary-light );
+		color: var(--color-primary-light);
 	}
 
 	&::after {
@@ -26,7 +26,7 @@
 		z-index: 1;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		padding: 0;
 		text-align: left;
 	}

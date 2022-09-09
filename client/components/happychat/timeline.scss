@@ -1,4 +1,4 @@
-@import '@automattic/typography/styles/variables';
+@import "@automattic/typography/styles/variables";
 
 .happychat__conversation {
 	flex: 1 1 auto;
@@ -9,7 +9,7 @@
 	padding-bottom: 6px;
 
 	&::before {
-		content: '';
+		content: "";
 		flex: 1 1 auto;
 	}
 }
@@ -17,7 +17,7 @@
 .happychat__welcome {
 	flex: 1 auto;
 	padding: 16px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
@@ -32,8 +32,8 @@
 	flex: 1;
 	padding: 8px 12px;
 	border-radius: 8px 8px 8px 0; /* stylelint-disable-line scales/radii */
-	color: var( --color-neutral-70 );
-	background: var( --color-surface );
+	color: var(--color-neutral-70);
+	background: var(--color-surface);
 	position: relative;
 
 	overflow-wrap: break-word;
@@ -54,7 +54,7 @@
 	}
 
 	&::after {
-		content: '';
+		content: "";
 		display: block;
 		position: absolute;
 		bottom: 0;
@@ -63,13 +63,13 @@
 		// draw a triangle
 		width: 0;
 		height: 0;
-		border-bottom: 8px solid var( --color-border-inverted );
+		border-bottom: 8px solid var(--color-border-inverted);
 		border-left: 8px solid transparent;
 	}
 
 	.is-user-message & {
-		color: var( --color-primary-dark );
-		background: var( --color-primary-5 );
+		color: var(--color-primary-dark);
+		background: var(--color-primary-5);
 		border-radius: 8px 8px 0; /* stylelint-disable-line scales/radii */
 
 		&::after {
@@ -79,7 +79,7 @@
 			// draw a triangle
 			width: 0;
 			height: 0;
-			border-bottom: 8px solid var( --color-primary-5 );
+			border-bottom: 8px solid var(--color-primary-5);
 			border-left: none;
 			border-right: 8px solid transparent;
 		}
@@ -87,12 +87,12 @@
 }
 
 .happychat__message-edited-flag {
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 	font-size: $font-body-extra-small;
 	vertical-align: text-bottom;
 	white-space: nowrap;
 	&::before {
-		content: '  ';
+		content: "  ";
 	}
 }
 
@@ -107,7 +107,7 @@
 	margin-left: 0;
 
 	a {
-		color: var( --color-accent );
+		color: var(--color-accent);
 		text-decoration: underline;
 	}
 
@@ -121,7 +121,7 @@
 		margin-right: 0;
 
 		a {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 	}
 }
@@ -136,7 +136,7 @@
 	position: absolute;
 	bottom: 10px;
 	left: 50%;
-	transform: translateX( -50% );
+	transform: translateX(-50%);
 	border-radius: 4px;
 	padding: 0.5em;
 	max-width: 100%;

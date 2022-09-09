@@ -1,50 +1,50 @@
 // Actions for Individual Comments
 .comments__comment-actions {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	list-style: none;
 	margin-top: -6px;
-	
+
 	.components-button {
 		display: inline-block;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		padding: 4px;
 		height: auto;
 		margin-right: 8px;
 		cursor: pointer;
 		font-size: $font-body-small;
 		font-weight: 400;
-		
+
 		.is-compact.gridicon,
 		.gridicon {
 			position: relative;
 			top: 4px;
 			margin-right: 4px;
 		}
-		
+
 		.gridicons-star,
 		.gridicons-star-outline {
 			top: 3px;
 		}
-		
+
 		.like-button__like-icons {
 			margin-right: 18px;
 		}
-		
+
 		&.comments__comment-actions-reply {
 			margin-left: -7px;
 		}
-		
+
 		&.like-button {
 			.gridicon {
 				position: absolute;
 			}
 		}
-		
+
 		&:hover {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
-		
+
 		&.comments__comment-actions-cancel-reply {
 			float: right;
 			margin-top: 4px;
@@ -53,23 +53,23 @@
 		}
 
 		&.comments__comment-actions-read-more {
-			color: var( --color-primary );
+			color: var(--color-primary);
 			margin: 0 10px 0 -3px;
 			padding-left: 0;
-			
+
 			.comments__comment-actions-read-more-icon {
-				fill: var( --color-primary );
+				fill: var(--color-primary);
 			}
 		}
 	}
-	
+
 	// Aligns Like icon to comment text when it's by itself
 	> :only-child {
 		left: -3px;
 		top: 3px;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		.like-button .like-button__label-status {
 			display: inline;
 		}

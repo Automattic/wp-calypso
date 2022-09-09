@@ -3,7 +3,7 @@
 	display: inline-block;
 	position: relative;
 	height: 9px;
-	background-color: var( --color-neutral-10 );
+	background-color: var(--color-neutral-10);
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 4.5px;
 
@@ -18,7 +18,7 @@
 	top: 0;
 	left: 0;
 	height: 100%;
-	background-color: var( --studio-blue-50 );
+	background-color: var(--studio-blue-50);
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 4.5px;
 	transition: width 200ms;
@@ -42,14 +42,7 @@
 .progress-bar.is-pulsing .progress-bar__progress {
 	animation: progress-bar-animation 3300ms infinite linear;
 	background-size: 50px 100%;
-	background-image:
-		linear-gradient(
-			-45deg,
-			var( --studio-blue-50 ) 28%,
-			var( --studio-blue-30 ) 28%,
-			var( --studio-blue-30 ) 72%,
-			var( --studio-blue-50 ) 72%
-		);
+	background-image: linear-gradient(-45deg, var(--studio-blue-50) 28%, var(--studio-blue-30) 28%, var(--studio-blue-30) 72%, var(--studio-blue-50) 72%);
 
 	@media (prefers-reduced-motion: reduce) {
 		animation: none;

@@ -1,4 +1,4 @@
-@import '@automattic/typography/styles/variables';
+@import "@automattic/typography/styles/variables";
 
 .credit-card-fields {
 	display: none;
@@ -19,15 +19,15 @@
 			padding: 11px 16px;
 			line-height: 0.7;
 			font-size: $font-body-small;
-			color: var( --studio-gray-80 );
+			color: var(--studio-gray-80);
 		}
 	}
 
 	&__set-as-primary-field {
 		.components-checkbox-control__input {
 			&:checked {
-				background: var( --color-accent );
-				border-color: var( --color-accent );
+				background: var(--color-accent);
+				border-color: var(--color-accent);
 			}
 
 			&:disabled {
@@ -55,13 +55,13 @@
 		margin-bottom: 0.5rem;
 		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 		font-weight: 400;
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 	}
 
 	&__stripe-error {
 		display: block;
 		margin-top: 0.5rem;
-		color: var( --color-scary-50 );
+		color: var(--color-scary-50);
 		font-size: $font-body-small;
 		font-style: italic;
 		font-weight: 400;
@@ -76,22 +76,22 @@
 			width: 100%;
 			font-size: 0.875rem;
 			box-sizing: border-box;
-			border: 1px solid var( --color-accent-10 );
-			color: var( --studio-gray-80 );
+			border: 1px solid var(--color-accent-10);
+			color: var(--studio-gray-80);
 			padding: 11px 16px;
 			line-height: 0.7;
 		}
 
 		&--has-error .StripeElement {
-			border-color: var( --color-scary-50 );
+			border-color: var(--color-scary-50);
 		}
 
 		& .StripeElement--focus {
-			outline: var( --studio-blue-30 ) solid 2px;
+			outline: var(--studio-blue-30) solid 2px;
 		}
 
 		& .StripeElement--focus.StripeElement--invalid {
-			outline: var( --color-scary-50 ) solid 2px;
+			outline: var(--color-scary-50) solid 2px;
 		}
 	}
 
@@ -106,7 +106,7 @@
 		}
 
 		&::before {
-			content: '';
+			content: "";
 			width: 30%;
 			height: 25px;
 			@include placeholder( --color-neutral-10 );

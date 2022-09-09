@@ -30,15 +30,15 @@
 
 .stats-insights__nonperiodic {
 	&.has-no-recent {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 
 		p {
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				margin-left: 24px;
 				margin-right: 24px;
 			}
 
-			@include breakpoint-deprecated( '<480px' ) {
+			@include breakpoint-deprecated( "<480px" ) {
 				text-align: center;
 			}
 		}
@@ -48,19 +48,19 @@
 // Section title
 @keyframes stats-date-picker__spin {
 	100% {
-		transform: rotate( 360deg );
+		transform: rotate(360deg);
 	}
 }
 
 .stats-section-title {
 	@include heading;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-left: 24px;
 		margin-right: 24px;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		text-align: center;
 	}
 }
@@ -72,7 +72,7 @@
 	line-height: 40px;
 	display: block;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		line-height: 48px;
 	}
 
@@ -83,27 +83,27 @@
 
 	a {
 		@extend %mobile-link-element;
-		border-top: 1px solid var( --color-border-subtle );
+		border-top: 1px solid var(--color-border-subtle);
 		display: block;
 		font-size: $font-body-small;
 		padding: 0 24px;
 		position: relative;
 
 		// Hover state
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			&:hover {
-				background: var( --color-neutral-0 );
-				border-top-color: var( --color-border-inverted );
+				background: var(--color-neutral-0);
+				border-top-color: var(--color-border-inverted);
 			}
 		}
 
 		// Focus state
 		&:focus {
-			background: var( --color-neutral-0 );
-			border-top-color: var( --color-border-inverted );
+			background: var(--color-neutral-0);
+			border-top-color: var(--color-border-inverted);
 		}
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			.stats__module-list & {
 				font-size: $font-body-extra-small;
 			}
@@ -111,7 +111,7 @@
 	}
 
 	.right {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 		position: absolute;
 		right: 24px;
 		top: 0;
@@ -121,7 +121,7 @@
 // Module Header
 
 .module-header {
-	background: var( --color-surface );
+	background: var(--color-surface);
 	height: 40px;
 	line-height: 40px;
 	padding-left: 24px;
@@ -144,7 +144,7 @@
 	@extend %mobile-interface-element;
 	@extend %placeholder;
 
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-weight: 600;
 	height: 40px; // 1
 	overflow: hidden; // 1
@@ -156,7 +156,7 @@
 // 2: So the focus outline isn't covered by the fading pseudo-element
 
 ul.module-header-actions {
-	background: var( --color-surface );
+	background: var(--color-surface);
 	height: 40px;
 	list-style: none;
 	margin: 0;
@@ -195,21 +195,21 @@ ul.module-header-actions {
 		.stats-module.is-loading &::before,
 		.stats-module.is-loading &:hover,
 		.stats-module.is-loading & {
-			color: var( --color-neutral-0 );
-			fill: var( --color-neutral-0 );
+			color: var(--color-neutral-0);
+			fill: var(--color-neutral-0);
 		}
 	}
 
 	.module-header-action-link {
 		@extend %mobile-interface-element;
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 		display: inline-block;
 		height: 40px;
 		line-height: 40px;
 		min-width: 40px;
 		position: relative; // 2
 		text-align: center;
-		z-index: z-index( 'root', 'ul.module-header-actions .module-header-action-link' ); // 2
+		z-index: z-index("root", "ul.module-header-actions .module-header-action-link"); // 2
 
 		.stats-module.is-loading & {
 			cursor: default;
@@ -217,19 +217,19 @@ ul.module-header-actions {
 	}
 
 	// Hover state
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		.stats-module:hover & .module-header-action-link {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 
 		.module-header & .module-header-action-link:hover {
-			color: var( --color-link-dark );
+			color: var(--color-link-dark);
 		}
 	}
 
 	// Focus state
 	.module-header & .module-header-action-link:focus {
-		color: var( --color-link-dark );
+		color: var(--color-link-dark);
 	}
 
 	// Info button
@@ -247,11 +247,11 @@ ul.module-header-actions {
 	// Toggle
 	.toggle-services .gridicon {
 		transition: 0.2s transform ease-out;
-		transform: translate3d( 0, 0, 0 );
+		transform: translate3d(0, 0, 0);
 	}
 
 	.stats-module.is-expanded & .toggle-services .gridicon {
-		transform: rotate( 180deg );
+		transform: rotate(180deg);
 	}
 }
 
@@ -263,7 +263,7 @@ ul.module-header-actions {
 
 .module-content-text {
 	box-sizing: border-box;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body-small;
 	padding: 16px 16px 0;
 	min-height: 1em;
@@ -273,12 +273,12 @@ ul.module-header-actions {
 	a {
 		display: block;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			display: inline;
 		}
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {
 			font-size: $font-body-extra-small;
 		}
@@ -292,9 +292,9 @@ ul.module-header-actions {
 
 	// Hidden info box
 	&-info {
-		background: var( --color-neutral-0 );
-		box-shadow: inset 0 1px 0 var( --color-neutral-0 );
-		color: var( --color-neutral-70 );
+		background: var(--color-neutral-0);
+		box-shadow: inset 0 1px 0 var(--color-neutral-0);
+		color: var(--color-neutral-70);
 		display: none;
 		position: relative;
 
@@ -314,12 +314,12 @@ ul.module-header-actions {
 
 	// Representation of what the published status looks like within a list of posts and pages
 	.legend.published {
-		border-left: 4px solid var( --color-primary );
+		border-left: 4px solid var(--color-primary);
 		padding-left: 12px;
 	}
 
 	.legend.achievement {
-		color: var( --color-warning );
+		color: var(--color-warning);
 	}
 
 	// Hide legends if there is no data
@@ -340,14 +340,14 @@ ul.module-header-actions {
 			font-size: $font-body-small;
 			line-height: 2em;
 
-			@include breakpoint-deprecated( '>960px' ) {
+			@include breakpoint-deprecated( ">960px" ) {
 				.stats__module-list & {
 					font-size: $font-body-extra-small;
 				}
 			}
 
-			@include breakpoint-deprecated( '<480px' ) {
-				border-bottom: 1px solid var( --color-border-subtle );
+			@include breakpoint-deprecated( "<480px" ) {
+				border-bottom: 1px solid var(--color-border-subtle);
 
 				&:last-child {
 					border: 0;
@@ -362,7 +362,7 @@ ul.module-header-actions {
 			position: relative;
 			padding: 6px 0;
 
-			@include breakpoint-deprecated( '<480px' ) {
+			@include breakpoint-deprecated( "<480px" ) {
 				padding-top: 12px;
 				padding-bottom: 12px;
 			}
@@ -397,8 +397,8 @@ ul.module-header-actions {
 	// 2: Make right padding much greater to accommodate for increased gradient
 	td,
 	th {
-		border-bottom: 1px solid var( --color-border-subtle );
-		border-right: 1px solid var( --color-border-subtle );
+		border-bottom: 1px solid var(--color-border-subtle);
+		border-right: 1px solid var(--color-border-subtle);
 		font-size: $font-body-extra-small;
 		padding: 8px 12px;
 		white-space: nowrap; // 1
@@ -419,9 +419,9 @@ ul.module-header-actions {
 	}
 
 	tbody th:first-child {
-		background: var( --color-surface );
+		background: var(--color-surface);
 		position: absolute;
-		z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
+		z-index: z-index("root", ".module-content-table tbody th:first-child");
 	}
 
 	&.is-fixed-row-header {
@@ -430,10 +430,10 @@ ul.module-header-actions {
 		 */
 		th:first-child {
 			width: 34px; // 24 (margin-left) + 12 (margin-right) + 1 (border) + 34 = 70
-			background: var( --color-surface );
+			background: var(--color-surface);
 			position: sticky;
 			left: 0;
-			z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
+			z-index: z-index("root", ".module-content-table tbody th:first-child");
 		}
 
 		th,
@@ -445,22 +445,22 @@ ul.module-header-actions {
 	// Left this modifier as-is because these tables are likely going to change
 	// a lot or otherwise be removed, and at least it's directly dependent on
 	// being associated with a td in this structure
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		.stats-module & td.has-no-data:hover, // 1
 		tbody tr:hover td,
 		tbody tr:hover th {
-			background: var( --color-neutral-0 );
+			background: var(--color-neutral-0);
 		}
 
 		.stats-module & td.highest-count:hover,
 		tbody tr td:hover {
-			background: var( --color-neutral-0 );
-			color: var( --color-neutral-70 );
+			background: var(--color-neutral-0);
+			color: var(--color-neutral-70);
 		}
 	}
 
 	.stats-module & td.highest-count {
-		color: var( --color-warning );
+		color: var(--color-warning);
 		position: relative;
 	}
 
@@ -478,15 +478,15 @@ ul.module-header-actions {
 		font-size: $font-body-extra-small;
 
 		&.is-rising {
-			color: var( --color-success );
+			color: var(--color-success);
 		}
 
 		&.is-falling {
-			color: var( --color-error );
+			color: var(--color-error);
 		}
 
 		&.is-same {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 		}
 
 		&.is-rising,
@@ -503,7 +503,7 @@ ul.module-header-actions {
 
 	thead th,
 	.stats-detail-weeks__date {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 
 	.stats-detail-weeks__date {
@@ -518,14 +518,14 @@ ul.module-header-actions {
 	// 2: Much wider to show horizontal scrolling better (since the window loads scrolled to the left)
 	&::before,
 	&::after {
-		content: '';
+		content: "";
 		display: block;
 		position: absolute;
 		bottom: 16px; // 1
 		left: 0;
 		top: 0;
 		width: 20px;
-		z-index: z-index( 'root', '.module-content-table::after' );
+		z-index: z-index("root", ".module-content-table::after");
 	}
 
 	&::after {
@@ -549,15 +549,15 @@ ul.module-header-actions {
 	align-items: center;
 
 	.button.stats-download-csv {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 
 		&[disabled],
 		&.disabled {
-			color: var( --color-neutral-20 );
+			color: var(--color-neutral-20);
 		}
 
-		&:hover:not( [disabled] ) {
-			color: var( --color-text );
+		&:hover:not([disabled]) {
+			color: var(--color-text);
 		}
 	}
 }
@@ -571,7 +571,7 @@ ul.module-header-actions {
 	display: flex;
 
 	.gridicon {
-		fill: var( --color-text-subtle );
+		fill: var(--color-text-subtle);
 	}
 }
 
@@ -579,7 +579,7 @@ ul.module-header-actions {
 	font-size: $font-body-small;
 	margin-left: 8px;
 	margin-bottom: 0;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .stats__module-list .stats-module__availability-warning-message {

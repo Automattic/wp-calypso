@@ -1,6 +1,6 @@
-@import '../style';
+@import "../style";
 
-$font-family: 'SF Pro Text', $sans;
+$font-family: "SF Pro Text", $sans;
 
 .link-in-bio-setup {
 	form {
@@ -11,6 +11,7 @@ $font-family: 'SF Pro Text', $sans;
 		display: flex;
 		justify-content: center;
 		margin-bottom: 30px;
+		min-height: unset;
 	}
 
 	.link-in-bio-setup .step-container__header {
@@ -51,8 +52,8 @@ $font-family: 'SF Pro Text', $sans;
 	}
 
 	.link-in-bio-setup-form__submit {
-		color: var( --color-surface );
-		background-color: var( --studio-blue-50 );
+		color: var(--color-surface);
+		background-color: var(--studio-blue-50);
 		border-radius: 4px;
 		font-weight: 500;
 		border: none;
@@ -60,7 +61,7 @@ $font-family: 'SF Pro Text', $sans;
 		height: 40px;
 
 		&:hover {
-			background-color: var( --wp-admin-theme-color-darker-10 );
+			background-color: var(--wp-admin-theme-color-darker-10);
 		}
 	}
 }

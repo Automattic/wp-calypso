@@ -5,16 +5,16 @@
 }
 
 .badge--info-green + .google-workspace-price__discount-badge.badge--info-green {
-	background-color: rgba( 184, 230, 191, 0.24 );
-	border: solid 1px var( --studio-green-30 );
-	color: var( --studio-green-50 );
+	background-color: rgba(184, 230, 191, 0.24);
+	border: solid 1px var(--studio-green-30);
+	color: var(--studio-green-50);
 	margin-left: 5px;
 	padding: 1px 10px;
 }
 
 .price-information__discount,
 .price-information__free-trial {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: none;
 	margin-bottom: 12px;
 	margin-top: 8px;

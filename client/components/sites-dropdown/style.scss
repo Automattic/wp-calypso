@@ -1,26 +1,26 @@
-@import '../../assets/stylesheets/shared/mixins/_breakpoints';
+@import "../../assets/stylesheets/shared/mixins/_breakpoints";
 
 .sites-dropdown {
 	&.is-open {
 		height: 69px;
 		.gridicons-chevron-down {
-			transform: rotate( 180deg );
+			transform: rotate(180deg);
 		}
 	}
 
 	.gridicons-chevron-down {
 		align-self: center;
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 		flex-grow: 0;
 		flex-shrink: 0;
 		margin-right: 16px;
-		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 }
 
 .sites-dropdown__wrapper {
-	background: var( --color-surface );
-	border: 1px solid var( --color-neutral-10 );
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-10);
 	border-width: 1px;
 	border-radius: 2px;
 	margin: 0;
@@ -30,19 +30,19 @@
 	transition: all 0.2s ease-in;
 	z-index: 1;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
 	}
 
 	.has-multiple-sites &:hover {
-		border-color: var( --color-neutral-20 );
-		box-shadow: 0 1px var( --color-neutral-20 );
+		border-color: var(--color-neutral-20);
+		box-shadow: 0 1px var(--color-neutral-20);
 	}
 }
 
 .sites-dropdown.is-open .sites-dropdown__wrapper {
 	position: relative;
-	z-index: z-index( 'root', '.sites-dropdown.is-open .sites-dropdown__wrapper' );
+	z-index: z-index("root", ".sites-dropdown.is-open .sites-dropdown__wrapper");
 	margin: 0;
 }
 
@@ -54,13 +54,13 @@
 	}
 
 	.is-open & {
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var(--color-neutral-0);
 	}
 
 	&:hover {
 		.gridicons-chevron-down,
 		.gridicons-chevron-up {
-			color: var( --color-neutral-50 );
+			color: var(--color-neutral-50);
 		}
 	}
 }
@@ -78,7 +78,7 @@
 
 .sites-dropdown .site-selector .search input {
 	margin: 0;
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 }
 
 .sites-dropdown .site-selector .site {

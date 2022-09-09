@@ -8,19 +8,19 @@
 	flex-direction: row;
 	align-items: center;
 	box-sizing: border-box;
-	color: var( --color-neutral-70 );
-	background: var( --color-surface );
-	border-bottom: 1px solid var( --color-neutral-10 );
+	color: var(--color-neutral-70);
+	background: var(--color-surface);
+	border-bottom: 1px solid var(--color-neutral-10);
 	position: fixed;
-	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-	top: var( --masterbar-height );
+	z-index: z-index("root", ".sticky-panel.is-sticky .sticky-panel__content");
+	top: var(--masterbar-height);
 	left: 0;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 8px 24px 8px 0;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding: 5px 16px;
 		padding-left: 0;
 		margin: 0;
@@ -44,7 +44,7 @@
 	display: flex;
 	justify-content: flex-start;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-left: -32px;
 	}
 
@@ -54,12 +54,12 @@
 
 	.action-header__site-title {
 		font-size: $font-body-extra-small;
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 		margin: 2px 0 -3px;
 
 		a,
 		a:hover {
-			color: var( --color-neutral-40 );
+			color: var(--color-neutral-40);
 		}
 	}
 
@@ -71,8 +71,8 @@
 		}
 
 		span + span::before {
-			content: ' / ';
-			color: var( --color-neutral-light );
+			content: " / ";
+			color: var(--color-neutral-light);
 			margin: 0 2px 0 4px;
 		}
 	}
@@ -85,7 +85,7 @@
 	overflow: hidden;
 	text-align: right;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-right: 40px;
 	}
 
@@ -144,17 +144,17 @@
 
 	&.is-scary {
 		.gridicon {
-			color: var( --color-error );
+			color: var(--color-error);
 		}
 
 		&.is-selected,
 		&:hover,
 		&:focus {
-			background: var( --color-error );
-			color: var( --color-text-inverted );
+			background: var(--color-error);
+			color: var(--color-text-inverted);
 
 			.gridicon {
-				color: var( --color-text-inverted );
+				color: var(--color-text-inverted);
 			}
 		}
 	}

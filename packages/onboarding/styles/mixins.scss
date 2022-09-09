@@ -1,5 +1,5 @@
-@import './base-styles';
-@import './variables';
+@import "./base-styles";
+@import "./variables";
 
 @mixin onboarding-font-recoleta {
 	font-family: $brand-serif;
@@ -27,7 +27,7 @@
 
 @mixin onboarding-heading-title {
 	@include onboarding-heading-text-mobile;
-	color: var( --mainColor );
+	color: var(--mainColor);
 
 	@include break-mobile {
 		@include onboarding-heading-text-tablet;
@@ -143,10 +143,10 @@
 	// than the viewport height, it will expand taller
 	// than the provided min-height, triggering
 	// the appearance of the <body> element's scrollbar.
-	min-height: calc( 100vh - #{$onboarding-header-height} );
+	min-height: calc(100vh - #{$onboarding-header-height});
 	width: 100%;
 
-	background: var( --studio-white );
+	background: var(--studio-white);
 }
 
 @mixin onboarding-block-edge2edge {
@@ -219,7 +219,7 @@
 	color: transparent;
 
 	&::after {
-		content: '\00a0';
+		content: "\00a0";
 	}
 }
 
@@ -249,7 +249,7 @@
 	padding: 0;
 	margin: -1px;
 	overflow: hidden;
-	clip: rect( 0, 0, 0, 0 );
+	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border-width: 0;
 }

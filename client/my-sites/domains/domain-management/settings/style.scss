@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .settings-header__children {
 	white-space: nowrap;
@@ -39,7 +39,7 @@
 				}
 			}
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				margin: 0 16px 24px;
 			}
 		}
@@ -73,44 +73,44 @@
 				}
 
 				&--success {
-					background: rgba( 184, 230, 191, 0.6 );
-					color: var( --studio-green-80 );
+					background: rgba(184, 230, 191, 0.6);
+					color: var(--studio-green-80);
 
 					svg {
-						fill: var( --studio-green-80 );
+						fill: var(--studio-green-80);
 					}
 
 					.settings-header__badge-indicator svg {
-						fill: var( --studio-green-50 );
+						fill: var(--studio-green-50);
 					}
 				}
 
 				&--warning {
-					background: var( --studio-orange-0 );
-					color: var( --studio-yellow-80 );
+					background: var(--studio-orange-0);
+					color: var(--studio-yellow-80);
 
 					svg {
-						fill: var( --studio-orange-40 );
+						fill: var(--studio-orange-40);
 					}
 				}
 
 				&--premium {
-					background: var( --studio-yellow-10 );
-					color: var( --studio-yellow-80 );
+					background: var(--studio-yellow-10);
+					color: var(--studio-yellow-80);
 
 					svg {
-						fill: var( --studio-yellow-80 );
+						fill: var(--studio-yellow-80);
 						margin-right: 0;
 						margin-left: 4px;
 					}
 				}
 
 				&--neutral {
-					background: rgba( 220, 220, 222, 0.6 );
-					color: var( --studio-gray-80 );
+					background: rgba(220, 220, 222, 0.6);
+					color: var(--studio-gray-80);
 
 					svg {
-						fill: var( --studio-gray-80 );
+						fill: var(--studio-gray-80);
 					}
 				}
 			}
@@ -119,7 +119,7 @@
 
 	&__domain-notice {
 		flex-basis: 100%;
-		background-color: var( --studio-gray-0 );
+		background-color: var(--studio-gray-0);
 		display: flex;
 		align-items: center;
 		padding: 5px;
@@ -137,30 +137,30 @@
 		min-width: 18px;
 		position: relative;
 		top: 2px;
-		fill: var( --studio-green-50 );
+		fill: var(--studio-green-50);
 
 		&--error {
-			fill: var( --studio-orange-40 );
+			fill: var(--studio-orange-40);
 		}
 	}
 
 	&__domain-notice-icon--rotated {
-		transform: rotate( 180deg );
+		transform: rotate(180deg);
 	}
 
 	&__domain-notice-message {
 		font-weight: 400;
 		font-size: $font-body-small;
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 
 		button.button-plain {
 			cursor: pointer;
-			color: var( --color-link );
+			color: var(--color-link);
 
 			&:hover,
 			&:focus,
 			&:active {
-				color: var( --color-link-dark );
+				color: var(--color-link-dark);
 			}
 		}
 	}

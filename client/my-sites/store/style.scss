@@ -1,22 +1,22 @@
 .woocommerce {
-	@import 'app/dashboard/style';
-	@import 'app/store-stats/store-stats-chart/style';
-	@import 'app/store-stats/store-stats-orders-chart/style';
-	@import 'app/store-stats/store-stats-module/style';
-	@import 'app/store-stats/store-stats-widget-list/style';
-	@import 'app/store-stats/style';
+	@import "app/dashboard/style";
+	@import "app/store-stats/store-stats-chart/style";
+	@import "app/store-stats/store-stats-orders-chart/style";
+	@import "app/store-stats/store-stats-module/style";
+	@import "app/store-stats/store-stats-widget-list/style";
+	@import "app/store-stats/style";
 
-	@import 'components/action-header/style';
-	@import 'components/d3/base/style';
-	@import 'components/d3/sparkline/style';
-	@import 'components/delta/style';
-	@import 'components/table/style';
-	@import 'components/woocommerce-colophon/style';
+	@import "components/action-header/style";
+	@import "components/d3/base/style";
+	@import "components/d3/sparkline/style";
+	@import "components/delta/style";
+	@import "components/table/style";
+	@import "components/woocommerce-colophon/style";
 
 	.main {
 		padding-top: 72px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding-top: 35px;
 		}
 	}
@@ -24,7 +24,7 @@
 	.woocommerce__placeholder {
 		padding-top: 16px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding-top: 32px;
 		}
 	}
@@ -34,7 +34,7 @@
 		height: 70vh;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		&.store-stats {
 			.stats-navigation .section-nav {
 				margin-top: 0;
@@ -46,9 +46,9 @@
 .is-section-woocommerce {
 	// overwrite notice styles due to sticky bar
 	.global-notices {
-		z-index: z-index( 'root', '.is-section-woocommerce .global-notices' );
+		z-index: z-index("root", ".is-section-woocommerce .global-notices");
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			top: 115px;
 		}
 	}
@@ -57,7 +57,7 @@
 		margin: 35px 200px 0 0;
 		max-width: initial;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin: 0;
 		}
 	}
@@ -72,7 +72,7 @@
 
 	.store-sidebar__ground-control {
 		align-items: center;
-		background-color: var( --color-surface );
+		background-color: var(--color-surface);
 		display: flex;
 		width: 100%;
 	}
@@ -93,7 +93,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 47px;
 		padding-top: 4px;
 
@@ -105,16 +105,16 @@
 			padding-left: 7px;
 			position: fixed;
 			width: 100%;
-			top: var( --masterbar-height );
+			top: var(--masterbar-height);
 			left: 0;
 			min-height: 46px;
-			z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-			background: var( --color-surface );
-			border-bottom: 1px solid var( --color-neutral-10 );
+			z-index: z-index("root", ".sticky-panel.is-sticky .sticky-panel__content");
+			background: var(--color-surface);
+			border-bottom: 1px solid var(--color-neutral-10);
 		}
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		.site__title {
 			margin-top: 8px;
 		}
@@ -126,11 +126,11 @@
 	.sidebar__menu {
 		margin-top: 0;
 
-		@include breakpoint-deprecated( '<660px' ) {
-			border-top: 1px solid var( --color-sidebar-border );
+		@include breakpoint-deprecated( "<660px" ) {
+			border-top: 1px solid var(--color-sidebar-border);
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-top: -4px;
 		}
 
@@ -145,28 +145,28 @@
 		.count {
 			line-height: 18px;
 			border: 0;
-			background-color: var( --color-primary );
-			color: var( --color-text-inverted );
+			background-color: var(--color-primary);
+			color: var(--color-text-inverted);
 			min-width: 20px;
 		}
 
 		&.selected {
 			.count,
 			&:hover .count {
-				color: var( --color-neutral-70 );
-				background-color: var( --color-surface );
+				color: var(--color-neutral-70);
+				background-color: var(--color-surface);
 			}
 		}
 
 		&:hover .count {
-			background-color: var( --color-primary );
-			color: var( --color-text-inverted );
+			background-color: var(--color-primary);
+			color: var(--color-text-inverted);
 		}
 	}
 }
 
 .is-section-woocommerce.focus-sidebar {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		.products__form {
 			display: none;
 		}

@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .billing-interval-toggle {
 	align-content: space-between;
@@ -24,7 +24,7 @@
 }
 
 .emails-save-paying-annually__popover {
-	z-index: z-index( 'root', '.masterbar' ) - 1;
+	z-index: z-index("root", ".masterbar") - 1;
 
 	.popover__inner {
 		padding: 10px;

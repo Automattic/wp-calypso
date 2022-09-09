@@ -8,7 +8,7 @@
 	font-size: $font-title-medium;
 	font-weight: 400;
 	margin-bottom: 8px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 }
 
 .account-dialog__connected-accounts {
@@ -23,16 +23,16 @@
 	padding: 2px 0;
 	font-size: $font-body-extra-small;
 	text-transform: uppercase;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 
 	&::after {
-		content: '';
+		content: "";
 		position: absolute;
 		top: 8px;
 		display: inline-block;
 		width: 100%;
 		margin-left: 10px;
-		border-top: 1px solid var( --color-neutral-10 );
+		border-top: 1px solid var(--color-neutral-10);
 	}
 }
 
@@ -40,7 +40,7 @@
 	max-height: 300px;
 	max-height: 40vh;
 	overflow-y: auto;
-	margin: 0 0 1em calc( 0.5rem + 2px );
+	margin: 0 0 1em calc(0.5rem + 2px);
 }
 
 .account-dialog.single-account .account-dialog__accounts {

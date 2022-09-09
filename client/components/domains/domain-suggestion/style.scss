@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .domain-suggestion {
 	flex-direction: column;
@@ -17,11 +17,11 @@
 		cursor: pointer;
 
 		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
-		transition: box-shadow 0.25s cubic-bezier( 0.19, 1, 0.22, 1 );
+		transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
 
 		&:hover {
-			box-shadow: 0 0 0 1px var( --color-neutral-light );
-			z-index: z-index( 'root', '.domain-suggestion.is-clickable:hover' );
+			box-shadow: 0 0 0 1px var(--color-neutral-light);
+			z-index: z-index("root", ".domain-suggestion.is-clickable:hover");
 		}
 	}
 
@@ -29,12 +29,12 @@
 		font-size: $font-body;
 
 		.domain-registration-suggestion__domain-title-name {
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 		}
 
 		.domain-registration-suggestion__domain-title-tld {
 			font-weight: 500;
-			color: var( --studio-gray-90 );
+			color: var(--studio-gray-90);
 		}
 	}
 
@@ -46,12 +46,12 @@
 		margin-right: 4px;
 
 		&.badge--warning {
-			background-color: var( --color-warning-10 );
+			background-color: var(--color-warning-10);
 		}
 	}
 }
 
-.domain-suggestion:not( .featured-domain-suggestion ) {
+.domain-suggestion:not(.featured-domain-suggestion) {
 	display: flex;
 	flex-direction: column;
 
@@ -62,26 +62,26 @@
 	}
 
 	.is-section-signup & {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			flex-direction: row;
 			align-items: center;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			flex-direction: row;
 			align-items: center;
 		}
 	}
 
 	&.is-added {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 
 		.domain-suggestion__content {
 			h3,
 			.domain-product-price {
-				color: var( --color-neutral );
+				color: var(--color-neutral);
 			}
 		}
 	}
@@ -92,7 +92,7 @@
 		.domain-suggestion__content {
 			h3,
 			.domain-product-price {
-				color: var( --color-neutral );
+				color: var(--color-neutral);
 			}
 		}
 	}
@@ -102,25 +102,25 @@
 	width: 100%;
 	min-height: 32px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		justify-content: space-between;
 	}
 
 	.notice.is-compact {
 		margin: 0 0 0 8px;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 
 		&.is-success {
-			background: var( --color-success );
+			background: var(--color-success);
 		}
 
 		&.is-info {
-			background: var( --color-primary );
+			background: var(--color-primary);
 		}
 
 		&.is-warning {
-			background: var( --color-warning );
+			background: var(--color-warning);
 		}
 
 		.notice__content {
@@ -134,22 +134,22 @@
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		color: transparent;
 		min-height: 44px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		.is-placeholder & {
 			margin-right: 50%;
 			min-height: 22px;
 		}
 
-		.is-placeholder:nth-of-type( 2n + 1 ) & {
+		.is-placeholder:nth-of-type(2n + 1) & {
 			margin-right: 52%;
 		}
 
-		.is-placeholder:nth-of-type( 1 ) & {
+		.is-placeholder:nth-of-type(1) & {
 			margin-right: 40%;
 		}
 	}
@@ -157,7 +157,7 @@
 	> h3 {
 		word-break: break-all;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			flex-grow: 2;
 		}
 	}
@@ -179,13 +179,13 @@
 	}
 
 	&.domain-registration-suggestion__title-domain {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			max-width: 50%;
 			min-width: 50%;
 			margin-right: 1em;
 		}
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			max-width: 55%;
 			min-width: 55%;
 			margin-right: 1em;
@@ -210,7 +210,7 @@
 		margin-left: 4px;
 	}
 
-	body.is-section-signup .layout:not( .dops ) & {
+	body.is-section-signup .layout:not(.dops) & {
 		.domain-registration-suggestion__hsts-tooltip {
 			padding: 0;
 		}
@@ -221,7 +221,7 @@
 	font-size: $font-body;
 	word-break: break-all;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		align-self: center;
 		padding-right: 2em;
 	}
@@ -263,7 +263,7 @@
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		border: none;
 		border-radius: 0;
 		color: transparent;
@@ -272,7 +272,7 @@
 	}
 
 	&.is-borderless {
-		color: var( --color-primary );
+		color: var(--color-primary);
 		margin-top: 0;
 		padding: 0;
 	}
@@ -282,21 +282,21 @@
 	display: none;
 	margin-left: 10px;
 	flex: 1 0 auto;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
 	}
 
 	.is-section-signup & {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			display: block;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			display: block;
 		}
 	}
@@ -366,7 +366,7 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.domain-product-price__free-text {
-			color: var( --color-neutral-60 );
+			color: var(--color-neutral-60);
 			font-size: $font-body;
 		}
 
@@ -374,8 +374,8 @@ body.is-section-signup.is-white-signup {
 			font-size: $font-body-small;
 			font-weight: initial;
 
-			&:not( .domain-product-price__free-price ) {
-				color: var( --color-neutral-40 );
+			&:not(.domain-product-price__free-price) {
+				color: var(--color-neutral-40);
 			}
 		}
 
@@ -399,13 +399,13 @@ body.is-section-signup.is-white-signup {
 		}
 
 		& .domain-registration-suggestion__domain-title {
-			color: var( --studio-gray-90 );
+			color: var(--studio-gray-90);
 		}
 
 		& .domain-product-price__free-price {
 			font-size: $font-body-small;
 			font-weight: initial;
-			color: var( --studio-green-60 );
+			color: var(--studio-green-60);
 			line-height: 20px;
 			letter-spacing: 0.2px;
 
@@ -414,9 +414,9 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		&:not( .featured-domain-suggestion ) {
+		&:not(.featured-domain-suggestion) {
 			background: none;
-			border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
+			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 			border-top: 1px solid #fff; //This white border is to prevent jumpiness while showing borders on hover
 			padding: 16px 20px;
 
@@ -426,7 +426,7 @@ body.is-section-signup.is-white-signup {
 
 			.domain-registration-suggestion__domain-title {
 				.domain-registration-suggestion__domain-title-name {
-					color: var( --studio-gray-60 );
+					color: var(--studio-gray-60);
 				}
 
 				.domain-registration-suggestion__domain-title-tld {
@@ -442,18 +442,18 @@ body.is-section-signup.is-white-signup {
 				}
 			}
 
-			.domain-product-price__price:not( .domain-product-price__free-price ) {
+			.domain-product-price__price:not(.domain-product-price__free-price) {
 				font-size: $font-body-small;
 			}
 
-			.domain-suggestion__action:not( .is-borderless ) {
+			.domain-suggestion__action:not(.is-borderless) {
 				width: 100%;
 				height: auto;
 				line-height: 20px;
 				padding: 0.57em 1.17em;
 				font-weight: 500;
 				border-radius: 4px;
-				box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 				border: 1px solid #c3c4c7;
 				letter-spacing: 0.32px;
 				font-size: 0.875rem;
@@ -496,7 +496,7 @@ body.is-section-signup.is-white-signup {
 
 .domain-suggestion__price-placeholder {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	color: transparent;
 	height: 16px;
 	margin: auto 0;

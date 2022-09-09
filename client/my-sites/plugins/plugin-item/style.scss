@@ -15,7 +15,7 @@
 		margin-right: 8px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding: 0;
 	}
 
@@ -31,7 +31,7 @@
 
 	&.disabled {
 		opacity: 0.5;
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 	}
 }
 
@@ -48,14 +48,14 @@
 }
 
 // Checkbox for multiselect purposes
-.plugin-item__checkbox[type='checkbox'] {
+.plugin-item__checkbox[type="checkbox"] {
 	position: absolute;
 	top: 50%;
 	margin-top: -8px;
 
 	&::after {
 		// Making tap area larger
-		content: '';
+		content: "";
 		position: absolute;
 		top: -20px;
 		left: -19px;
@@ -71,7 +71,7 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: z-index( 'root', '.plugin-item__label' );
+	z-index: z-index("root", ".plugin-item__label");
 	cursor: pointer;
 }
 
@@ -83,7 +83,7 @@
 
 // Plugin title
 .plugin-item__title {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	display: block;
 	font-size: $font-body;
 	font-weight: 600;
@@ -115,7 +115,7 @@
 .plugin-item__count {
 	font-size: $font-body-extra-small;
 	line-height: 18px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .plugin-item__count .count {
@@ -127,7 +127,7 @@
 .plugin-item .plugin-item__actions {
 	display: none;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		align-self: center;
 		display: flex;
 		flex-direction: column;
@@ -140,7 +140,7 @@
 }
 
 .plugin-item__last-updated {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -155,19 +155,19 @@
 }
 
 .plugin-item .plugin-action {
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		margin-top: 6px;
 	}
 
 	&:first-child {
-		@include breakpoint-deprecated( '<1040px' ) {
+		@include breakpoint-deprecated( "<1040px" ) {
 			margin-top: 0;
 		}
 	}
 }
 
 .plugin-item .plugin-action__label {
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		flex-direction: row;
 		margin-right: 0;
 		margin-left: 8px;
@@ -175,24 +175,24 @@
 }
 
 .plugin-item .plugin-activate-toggle__disabled {
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		flex-direction: row;
 	}
 }
 
 .plugin-item .plugin-activate-toggle__link {
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		flex-direction: row-reverse;
 	}
 }
 
 .plugin-item .plugin-activate-toggle__label {
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		margin-right: 8px;
 	}
 }
 
 .plugin-item {
 	box-sizing: border-box;
-	border: 0 solid var( --color-neutral-0 );
+	border: 0 solid var(--color-neutral-0);
 }

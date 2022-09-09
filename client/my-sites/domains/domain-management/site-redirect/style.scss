@@ -1,11 +1,11 @@
 .site-redirect-card {
-	form label + input[type='text'] {
+	form label + input[type="text"] {
 		margin-bottom: 10px;
 	}
 
-	&.fetching input[type='text'] {
+	&.fetching input[type="text"] {
 		animation: pulse-light 0.8s ease-in-out infinite;
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 	}
 }
 
@@ -15,7 +15,7 @@
 	margin-bottom: 0;
 	font-size: $font-body-small;
 	font-style: italic;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	a {
 		white-space: nowrap;

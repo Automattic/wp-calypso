@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/colors';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/colors";
 
 /*
 	Screen Options Tab
@@ -11,15 +11,15 @@ $screen-options-icon-border-y: 7px;
 
 .screen-options-tab {
 	position: fixed;
-	top: var( --masterbar-height );
+	top: var(--masterbar-height);
 	right: 32px;
-	z-index: z-index( 'root', '.screen-options-tab' );
+	z-index: z-index("root", ".screen-options-tab");
 }
 
 .screen-options-tab__button {
-	border: 1px solid var( --color-neutral-5 );
+	border: 1px solid var(--color-neutral-5);
 	border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
-	background-color: #ffffff;
+	background-color: #fff;
 	font-size: $default-font-size;
 	padding: 3px 16px;
 	color: $gray-700;
@@ -28,17 +28,17 @@ $screen-options-icon-border-y: 7px;
 
 	&:hover,
 	&:focus-visible {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 
 		.screen-options-tab__icon {
-			border-top-color: var( --color-neutral-70 );
-			border-bottom-color: var( --color-neutral-70 );
+			border-top-color: var(--color-neutral-70);
+			border-bottom-color: var(--color-neutral-70);
 		}
 	}
 
 	&:focus-visible {
-		border-color: var( --color-primary-light );
-		box-shadow: 0 0 3px var( --color-primary-light );
+		border-color: var(--color-primary-light);
+		box-shadow: 0 0 3px var(--color-primary-light);
 	}
 }
 
@@ -73,9 +73,9 @@ $screen-options-icon-border-y: 7px;
 	top: 5px;
 	right: 0;
 	padding: 3px;
-	border: 1px solid var( --color-neutral-5 );
-	background-color: #ffffff;
-	box-shadow: 0 4px 10px rgba( 0, 0, 0, 0.1 );
+	border: 1px solid var(--color-neutral-5);
+	background-color: #fff;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 	width: 215px;
 	border-radius: 4px;
 }
@@ -84,13 +84,13 @@ $screen-options-icon-border-y: 7px;
 	Screen Switcher
  */
 
-.screen-switcher:not( :hover ) {
+.screen-switcher:not(:hover) {
 	// When the user isn't hover over one of the buttons let's highlight the first
 	// because it is the Calypso option and its safe to assume they're in Calypso
 	// if they are seeing this component.
 	.screen-switcher__button:first-child {
 		> strong {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 	}
 }
@@ -104,14 +104,14 @@ a.screen-switcher__button {
 	border: 1px solid transparent;
 	display: inline-block;
 	font-size: $font-body-extra-small;
-	color: var( --color-text );
+	color: var(--color-text);
 	line-height: normal;
 
 	// When the user sees this component they are going to be in Calypso
 	// so it's safe to assume the Calypso option is always going to be active.
 	&:first-child {
 		margin-bottom: 4px;
-		border-color: var( --color-accent );
+		border-color: var(--color-accent);
 	}
 
 	&:last-child {
@@ -127,7 +127,7 @@ a.screen-switcher__button {
 	&:hover,
 	&:focus {
 		> strong {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 	}
 }

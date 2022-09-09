@@ -1,29 +1,35 @@
 {
-	"extends": [ "stylelint-config-standard-scss", "@wordpress/stylelint-config/scss" ],
+	"extends": [ "@wordpress/stylelint-config/scss" ],
 	"plugins": [ "@signal-noise/stylelint-scales" ],
 	"rules": {
-		"media-feature-parentheses-space-inside": "always",
-		"at-rule-empty-line-before": [
-			"always",
+		"at-rule-empty-line-before": null,
+		"at-rule-no-unknown": null,
+		"comment-empty-line-before": null,
+		"font-weight-notation": null,
+		"max-line-length": null,
+		"no-descending-specificity": null,
+		"rule-empty-line-before": null,
+		"selector-class-pattern": null,
+		"value-keyword-case": null,
+		"scss/operator-no-unspaced": null,
+		"scss/selector-no-redundant-nesting-selector": null,
+		"scss/at-import-partial-extension": null,
+		"scss/no-global-function-names": null,
+		"scss/comment-no-empty": null,
+		"scss/at-extend-no-missing-placeholder": null,
+		"scss/operator-no-newline-after": null,
+		"scss/at-if-closing-brace-newline-after": null,
+		"scss/at-else-empty-line-before": null,
+		"scss/at-if-closing-brace-space-after": null,
+		"no-invalid-position-at-import-rule": null,
+		"declaration-property-unit-allowed-list": [
 			{
-				"except": [ "blockless-after-blockless" ],
-				"ignore": [ "after-comment", "first-nested" ]
-			}
+				"/^font-size$|^font$/": [ "rem" ],
+				"line-height": [ "px" ],
+				"/radius$/": [ "px" ]
+			},
+			{ "ignore": [ "inside-function" ] }
 		],
-		"declaration-property-unit-allowed-list": {
-			"/^font-size$|^font$/": [ "rem" ],
-			"line-height": [ "px" ],
-			"/radius$/": [ "px" ]
-		},
-		"function-comma-space-after": "always-single-line",
-		"function-parentheses-space-inside": "always-single-line",
-		"no-descending-specificity": [
-			true,
-			{
-				"severity": "warning"
-			}
-		],
-		"rule-empty-line-before": [ "always", { "ignore": [ "after-comment", "first-nested" ] } ],
 		"scales/font-weights": [ 400, 500, 600, 700 ],
 		"scales/font-sizes": [
 			{
@@ -37,9 +43,6 @@
 				"units": [ "px" ]
 			}
 		],
-		"selector-class-pattern": "",
-		"selector-max-id": [ 0 ],
-		"string-quotes": "single",
 		"unit-allowed-list": [ "%", "deg", "em", "fr", "ms", "px", "rem", "s", "vh", "vw", "svh" ]
 	}
 }

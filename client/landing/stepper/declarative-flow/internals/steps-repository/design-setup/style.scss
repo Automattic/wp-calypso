@@ -1,11 +1,11 @@
-@import '@wordpress/components/build-style/style';
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/components/build-style/style";
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 $gray-100: #101517;
 $gray-60: #50575e;
-$design-button-primary-color: rgb( 17, 122, 201 );
+$design-button-primary-color: rgb(17, 122, 201);
 
 .design-setup {
 	.step-container {
@@ -121,13 +121,13 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 
 			.featured-picks-buttons__button.is-secondary {
-				background-color: var( --color-surface );
-				color: var( --color-neutral-70 );
-				box-shadow: inset 0 0 0 1px var( --color-neutral-10 );
+				background-color: var(--color-surface);
+				color: var(--color-neutral-70);
+				box-shadow: inset 0 0 0 1px var(--color-neutral-10);
 
 				&:hover {
-					box-shadow: inset 0 0 0 1px var( --color-neutral-20 );
-					color: var( --color-neutral-70 );
+					box-shadow: inset 0 0 0 1px var(--color-neutral-20);
+					color: var(--color-neutral-70);
 				}
 			}
 		}
@@ -175,10 +175,10 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				border: none;
 			}
 
-			.design-button-cover__button:not( .is-primary ) {
+			.design-button-cover__button:not(.is-primary) {
 				border: 1px solid #c3c4c7;
-				background: #ffffff;
-				color: var( --color-neutral-70 );
+				background: #fff;
+				color: var(--color-neutral-70);
 			}
 
 			.premium-badge__logo {
@@ -214,17 +214,17 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 			@include break-mobile {
 				margin: 16px 0 24px;
-				transform: translateY( -58px );
+				transform: translateY(-58px);
 				min-height: 42px;
 			}
 		}
 
 		.step-container__content {
-			height: calc( 100vh - 245px );
+			height: calc(100vh - 245px);
 			margin-top: 74px;
 
 			@include break-mobile {
-				height: calc( 100vh - 225px );
+				height: calc(100vh - 225px);
 				margin-top: 32px;
 			}
 
@@ -233,11 +233,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 
 			@include break-medium {
-				height: calc( 100vh - 148px );
+				height: calc(100vh - 148px);
 			}
 
 			.web-preview__inner {
-				transform: translateY( -48px );
+				transform: translateY(-48px);
 			}
 
 			.web-preview__frame-wrapper.is-resizable {
@@ -247,7 +247,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			}
 
 			.web-preview__frame {
-				border: 1px solid rgba( 0, 0, 0, 0.12 );
+				border: 1px solid rgba(0, 0, 0, 0.12);
 				border-top-width: 0;
 				/* stylelint-disable-next-line scales/radii */
 				border-radius: 0 0 6px 6px;
@@ -256,7 +256,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 			.web-preview__inner .spinner-line {
 				width: 100%;
-				width: calc( 100% - 1px );
+				width: calc(100% - 1px);
 				top: unset;
 				left: unset;
 				transform: unset;
@@ -281,7 +281,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	}
 
 	.design-setup__info-popover {
-		background-color: var( --studio-gray-100 );
+		background-color: var(--studio-gray-100);
 		padding: 8px 8px 3px;
 		border-radius: 2px;
 		margin-right: 10px;
@@ -349,7 +349,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 
 		.generated-design-picker__previews {
-			min-height: calc( 100vh - 172px );
+			min-height: calc(100vh - 172px);
 			margin-bottom: 84px;
 
 			.web-preview__inner {
@@ -368,7 +368,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 		}
 
 		.step-container__content {
-			height: calc( 100vh - 172px );
+			height: calc(100vh - 172px);
 			margin-top: 32px;
 			overflow: scroll;
 			padding: 0 24px;
@@ -391,11 +391,11 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 						rx: 3px;
 						width: 6px;
 
-						&:nth-child( 2 ) {
+						&:nth-child(2) {
 							x: 12px;
 						}
 
-						&:nth-child( 3 ) {
+						&:nth-child(3) {
 							x: 24px;
 						}
 					}
@@ -412,7 +412,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			padding: 9px 48px;
 
 			// Override unnecessary super specificity added by another class.
-			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 		}
 	}
 
@@ -448,7 +448,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 			display: flex;
 			align-items: center;
 			justify-content: flex-end;
-			background-color: #ffffff;
+			background-color: #fff;
 			opacity: 0;
 			pointer-events: none;
 			transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
@@ -464,7 +464,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 			&.is-visible .design-setup__footer-content {
 				opacity: 1;
-				transform: translateY( -100% );
+				transform: translateY(-100%);
 				pointer-events: auto;
 			}
 		}
@@ -551,7 +551,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 	.step-container__content {
 		.web-preview__inner {
 			.web-preview__placeholder {
-				border: 1px solid rgba( 0, 0, 0, 0.12 );
+				border: 1px solid rgba(0, 0, 0, 0.12);
 				/* stylelint-disable-next-line scales/radii */
 				border-radius: 0 0 6px 6px;
 				border-width: 0 1px 1px;
@@ -583,7 +583,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 
 		.step-container__content {
 			// 156px = .design-preview__sidebar + step-container__navigation.action-buttons
-			height: calc( 100vh - 156px );
+			height: calc(100vh - 156px);
 			margin-top: 36px;
 		}
 
@@ -596,7 +596,7 @@ $design-button-primary-color: rgb( 17, 122, 201 );
 				$preview-padding-top: 24px;
 
 				box-sizing: border-box;
-				height: calc( 100vh - $preview-padding-top );
+				height: calc(100vh - $preview-padding-top);
 				// 60px = .site-setup
 				margin-top: - ( 60px - $preview-padding-top );
 				max-height: none;

@@ -4,11 +4,11 @@
 	width: 100%;
 	top: 0;
 	left: 0;
-	background: rgba( var( --studio-black-rgb ), 0.6 );
+	background: rgba(var(--studio-black-rgb), 0.6);
 	touch-action: none;
-	
+
 	/* Needed for banner to appear in front of notifications panel. */
-	z-index: z-index( 'root', '.app-banner' );
+	z-index: z-index("root", ".app-banner");
 }
 
 /* Prevent the body from scrolling when the app banner is visible */
@@ -24,15 +24,15 @@ body.app-banner-is-visible {
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	background-color: var( --color-surface );
-	color: var( --color-primary-80 );
+	background-color: var(--color-surface);
+	color: var(--color-primary-80);
 	padding: 20px;
 	margin-bottom: 0;
-	box-shadow: 3px -2px 24px 4px rgba( 0, 0, 0, 0.29 );
+	box-shadow: 3px -2px 24px 4px rgba(0, 0, 0, 0.29);
 	overflow: hidden;
 
 	&.jetpack {
-		color: var( --color-neutral-100 );
+		color: var(--color-neutral-100);
 		padding: 30px 24px;
 		text-align: center;
 	}
@@ -42,10 +42,10 @@ body.app-banner-is-visible {
 	position: absolute;
 	border: 2px solid;
 	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
-	z-index: z-index( 'root', '.app-banner__circle' );
+	z-index: z-index("root", ".app-banner__circle");
 
 	&.is-blue {
-		border-color: var( --studio-blue-10 );
+		border-color: var(--studio-blue-10);
 		height: 102px;
 		width: 102px;
 		right: -60px;
@@ -53,7 +53,7 @@ body.app-banner-is-visible {
 	}
 
 	&.is-red {
-		border-color: var( --studio-red-10 );
+		border-color: var(--studio-red-10);
 		height: 91px;
 		width: 91px;
 		right: 25px;
@@ -61,7 +61,7 @@ body.app-banner-is-visible {
 	}
 
 	&.is-yellow {
-		border-color: var( --studio-yellow-10 );
+		border-color: var(--studio-yellow-10);
 		height: 48px;
 		width: 48px;
 		left: -24px;
@@ -85,12 +85,12 @@ body.app-banner-is-visible {
 }
 
 .app-banner__title {
-	font-size: rem( 22px ); //typography-exception
+	font-size: rem(22px); //typography-exception
 	font-family: $brand-serif;
 	line-height: 30px;
 
 	&.jetpack {
-		font-size: rem( 28px ); //typography-exception
+		font-size: rem(28px); //typography-exception
 		font-weight: bold;
 		max-width: 18em;
 		margin-left: auto;
@@ -100,10 +100,10 @@ body.app-banner-is-visible {
 
 .app-banner__copy {
 	margin-top: 12px;
-	font-size: rem( 15px ); //typography-exception
+	font-size: rem(15px); //typography-exception
 
 	&.jetpack {
-		font-size: rem( 16px ); //typography-exception
+		font-size: rem(16px); //typography-exception
 		line-height: 21px;
 		max-width: 18em;
 		margin-left: auto;
@@ -117,23 +117,23 @@ body.app-banner-is-visible {
 }
 
 .button.app-banner__open-button {
-	background-color: var( --color-accent-40 );
+	background-color: var(--color-accent-40);
 	border: 0;
 	border-radius: 4px;
 	margin-right: 10px;
 
 	&.jetpack {
-		background-color: var( --color-jetpack );
+		background-color: var(--color-jetpack);
 	}
 }
 
 .button.app-banner__no-thanks-button {
 	background: none;
 	border: 0;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	&.jetpack {
-		color: var( --color-text );
+		color: var(--color-text);
 	}
 }
 

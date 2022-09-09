@@ -9,12 +9,12 @@
  * @blame: dmsnell
 */
 
-@import '../variables.scss';
+@import "../variables.scss";
 
 /* stylelint-disable scales/font-size */
 
 .search-preview__display {
-	border: 1px solid var( --color-neutral-0 );
+	border: 1px solid var(--color-neutral-0);
 	font-family: arial, sans-serif;
 	padding: 10px 20px;
 	word-wrap: break-word;

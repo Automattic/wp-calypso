@@ -17,10 +17,10 @@
 			}
 
 			&.disabled svg {
-				fill: var( --color-error );
+				fill: var(--color-error);
 			}
 			&.active svg {
-				fill: var( --color-success );
+				fill: var(--color-success);
 			}
 		}
 	}

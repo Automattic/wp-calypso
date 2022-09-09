@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .details-card {
 	.details-card__section {
@@ -34,7 +34,7 @@
 		.details-card__date-label,
 		.details-card__autorenew-text {
 			font-size: $font-body-small;
-			color: var( --studio-gray-50 );
+			color: var(--studio-gray-50);
 		}
 
 		.details-card__autorenew-placeholder {
@@ -43,10 +43,10 @@
 			@include placeholder();
 		}
 
-		& .button:not( .is-primary ) {
-			color: var( --studio-gray-80 );
+		& .button:not(.is-primary) {
+			color: var(--studio-gray-80);
 		}
-		& .button:not( :first-child ) {
+		& .button:not(:first-child) {
 			margin-left: 16px;
 		}
 	}
@@ -87,14 +87,14 @@
 	}
 
 	.name-servers__custom-nameservers-subtitle {
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 	}
 }
 
 // TODO: This should be extracted into a new component
 .custom-name-servers-notice {
 	flex-basis: 100%;
-	background-color: var( --studio-gray-0 );
+	background-color: var(--studio-gray-0);
 	display: flex;
 	align-items: center;
 	padding: 8px;
@@ -103,13 +103,13 @@
 
 	&__icon.gridicon {
 		min-width: 18px;
-		fill: var( --studio-orange-40 );
+		fill: var(--studio-orange-40);
 	}
 
 	&__message {
 		font-weight: 400;
 		font-size: $font-body-small;
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 	}
 }
 
@@ -119,7 +119,7 @@
 	margin-bottom: 0;
 	font-size: $font-body-small;
 	font-style: italic;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	a {
 		white-space: nowrap;

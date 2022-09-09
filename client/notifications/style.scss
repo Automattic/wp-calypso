@@ -4,12 +4,12 @@
 
 #wpnc-panel {
 	position: fixed;
-	top: var( --masterbar-height );
+	top: var(--masterbar-height);
 	right: 0;
 	bottom: 0;
 	min-width: 400px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
 		min-width: 0;
 	}
@@ -46,18 +46,18 @@
 		text-transform: uppercase;
 	}
 
-	.has-drop-cap:not( :focus )::first-letter {
+	.has-drop-cap:not(:focus)::first-letter {
 		font-weight: bold;
 		line-height: 0.66;
 		text-transform: uppercase;
 		font-style: normal;
 		float: left;
-		font-size: calc( 2 * 2.25rem );
+		font-size: calc(2 * 2.25rem);
 		margin: 0.05em 0.1em 0 0;
 	}
 
-	.has-drop-cap:not( :focus )::after {
-		content: '';
+	.has-drop-cap:not(:focus)::after {
+		content: "";
 		display: table;
 		clear: both;
 		padding-top: 14px;
@@ -88,7 +88,7 @@
 
 	&.wpnt-open {
 		right: 0;
-		transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
+		transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 		opacity: 1;
 		pointer-events: auto;
 		visibility: visible;
@@ -99,7 +99,7 @@
 		right: -400px;
 		opacity: 0;
 		pointer-events: none;
-		transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
+		transition: all 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 	}
 
 	&.wpnc__main .wpnc__time-group-title.fixed {
@@ -110,13 +110,13 @@
 		left: inherit;
 		width: 400px;
 
-		@include breakpoint-deprecated( '<800px' ) {
+		@include breakpoint-deprecated( "<800px" ) {
 			left: 0;
 			width: auto;
 		}
 	}
 
-	@include breakpoint-deprecated( '<800px' ) {
+	@include breakpoint-deprecated( "<800px" ) {
 		&.wpnc__main header {
 			top: 47px;
 		}
@@ -126,8 +126,8 @@
 		blockquote {
 			padding: 0 24px 0 32px;
 			margin: 16px 0 32px;
-			border-left: 3px solid var( --color-neutral-0 );
-			color: var( --color-neutral-50 );
+			border-left: 3px solid var(--color-neutral-0);
+			color: var(--color-neutral-50);
 			font-weight: 400;
 			background: transparent;
 		}

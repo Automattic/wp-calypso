@@ -1,8 +1,8 @@
 .twitter-share-preview {
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	border: 1px solid #e6ecf0;
 	color: #14171a;
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: $font-body-small;
 	line-height: 1.375;
 	margin: 0 auto;
@@ -66,6 +66,6 @@
 
 .twitter-share-preview__image {
 	border: 1px solid #c4cfd6;
-	border-radius: 16px;
+	border-radius: 16px; /* stylelint-disable-line scales/radii */
 	display: block;
 }

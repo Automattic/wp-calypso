@@ -2,18 +2,21 @@
 	display: flex;
 	padding: 1.5rem;
 	background: transparent;
-	border: 1px solid var( --studio-gray-5 );
-	border-radius: var( --jetpack-corners-soft );
+	border: 1px solid var(--studio-gray-5);
+	border-radius: var(--jetpack-corners-soft);
 	box-shadow: none;
 
-	&, & .button {
+	&,
+	& .button {
 		transition: all 0.2s ease-in-out;
 	}
 
-	&:hover, &:active, &:focus {
-		background-color: var( --studio-white );
-		border-color: var( --studio-white );
-		box-shadow: 0 0 40px rgba( 0, 0, 0, 0.08 );
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: var(--studio-white);
+		border-color: var(--studio-white);
+		box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
 	}
 	&:focus {
 		outline: none;
@@ -32,7 +35,7 @@
 	display: flex;
 	align-items: center;
 	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 
 	span {
 		margin-left: 1rem;

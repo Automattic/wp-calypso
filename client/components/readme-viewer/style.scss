@@ -2,25 +2,27 @@
 .readme-viewer__wrapper {
 	break-inside: avoid;
 
-	p, li {
-		font-size: rem( 15px );
+	p,
+	li {
+		font-size: rem(15px);
 	}
 
 	p {
-		margin-bottom: rem( 5px );
+		margin-bottom: rem(5px);
 	}
 
 	table {
 		border-collapse: collapse;
 		border-spacing: 0;
 
-		th, td {
-			border-bottom: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
+		th,
+		td {
+			border-bottom: 1px solid rgba(var(--color-neutral-10-rgb), 0.5);
 			text-align: left;
 		}
 
 		th {
-			color: var( --color-primary-dark );
+			color: var(--color-primary-dark);
 			font-size: 0.75em;
 			padding: 0.25em 3em 0.25em 0;
 		}
@@ -31,7 +33,12 @@
 		}
 	}
 
-	h1, h2, h3, h4, h5, h6 {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
 		display: block;
 		margin-bottom: 0.5em;
 		margin-left: 0;
@@ -65,5 +72,5 @@
 .readme-viewer__not-available {
 	font-family: $sans;
 	text-align: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }

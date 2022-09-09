@@ -1,43 +1,43 @@
 .threat-severity-badge {
 
-  &__wrapper {
-    align-items: center;
-    display: flex;
-  }
+	&__wrapper {
+		align-items: center;
+		display: flex;
+	}
 
-  &__content {
-    position: relative;
-    padding: 4px;
-    border-radius: 32px; /* stylelint-disable-line scales/radii */
-    margin-right: 24px;
-    margin-left: 8px;
-    width: 60px;
-    height: 16px;
-    line-height: 16px;
-    flex-shrink: 0;
-    text-align: center;
-    font-style: normal;
-    font-weight: 600;
-    font-size: $font-body-extra-small;
+	&__content {
+		position: relative;
+		padding: 4px;
+		border-radius: 32px; /* stylelint-disable-line scales/radii */
+		margin-right: 24px;
+		margin-left: 8px;
+		width: 60px;
+		height: 16px;
+		line-height: 16px;
+		flex-shrink: 0;
+		text-align: center;
+		font-style: normal;
+		font-weight: 600;
+		font-size: $font-body-extra-small;
 
-    @include breakpoint-deprecated( '<960px' ) {
-      margin-bottom: 16px;
-  		margin-left: 0;
-  	}
-  }
+		@include breakpoint-deprecated( "<960px" ) {
+			margin-bottom: 16px;
+			margin-left: 0;
+		}
+	}
 
-  &__content.is-critical {
-    background: #facfd2;
-    color: #b32d2e;
-  }
+	&__content.is-critical {
+		background: #facfd2;
+		color: #b32d2e;
+	}
 
-  &__content.is-high {
-    background: #f5e6b3;
-    color: #7d5600;
-  }
+	&__content.is-high {
+		background: #f5e6b3;
+		color: #7d5600;
+	}
 
-  &__content.is-low {
-    background: #f6f7f7;
-    color: #646970;
-  }
+	&__content.is-low {
+		background: #f6f7f7;
+		color: #646970;
+	}
 }

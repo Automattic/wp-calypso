@@ -57,12 +57,12 @@ const ProductLightbox: React.FC< Props > = ( {
 	const { getCheckoutURL } = useStoreItemInfoContext();
 
 	const isMobile = useMobileBreakpoint();
-	const { isMultisiteCompatible, isMultisite } = useStoreItemInfo( {
+	const { getIsMultisiteCompatible, isMultisite } = useStoreItemInfo( {
 		siteId,
 		duration,
 	} );
 
-	const isMultiSiteIncompatible = isMultisite && ! isMultisiteCompatible( product );
+	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
 	return (
 		<Modal

@@ -1,5 +1,5 @@
 .reader-share__button.button {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	padding: 4px;
 	position: relative;
 	display: inline-flex;
@@ -9,7 +9,7 @@
 
 	&:hover,
 	&:active {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 
 	&:focus {
@@ -25,14 +25,14 @@
 	}
 
 	.gridicon {
-		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	}
 
 	&.is-active {
-		color: var( --color-primary );
+		color: var(--color-primary);
 
 		.gridicon {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 	}
 }
@@ -41,13 +41,13 @@
 	margin-left: 6px;
 	font-weight: normal;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		@include hide-content-accessibly();
 	}
 }
 
 .reader-share__popover {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 152px;
 		padding-right: 2px;
 	}
@@ -59,7 +59,7 @@
 		line-height: 24px;
 		margin-left: 34px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			margin-left: 27px;
 		}
 	}
@@ -72,30 +72,30 @@
 		top: 8px;
 		left: 18px;
 		padding: 0;
-		fill: var( --color-neutral-light );
+		fill: var(--color-neutral-light);
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			left: 11px;
 		}
 	}
 
 	.gridicons-my-sites {
-		fill: var( --color-primary );
+		fill: var(--color-primary);
 	}
 
 	.social-logo.twitter {
-		fill: var( --color-twitter );
+		fill: var(--color-twitter);
 	}
 
 	.social-logo.facebook {
-		fill: var( --color-facebook );
+		fill: var(--color-facebook);
 	}
 
 	&:hover,
 	&:focus {
 		.gridicon,
 		.social-logo {
-			fill: var( --color-text-inverted );
+			fill: var(--color-text-inverted);
 		}
 	}
 }
@@ -105,7 +105,7 @@
 }
 
 .reader-share__site-selector.site-selector {
-	border-top: 1px solid var( --color-neutral-10 );
+	border-top: 1px solid var(--color-neutral-10);
 }
 
 .reader-share__site-selector .site-selector__sites {

@@ -1,12 +1,12 @@
 .purchase-detail__info {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	font-style: italic;
 	font-weight: 400;
 	margin-left: 8px;
 	margin-top: 8px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 0;
 	}
 }

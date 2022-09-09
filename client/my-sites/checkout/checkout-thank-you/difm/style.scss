@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .checkout-thank-you {
 	&.main {
@@ -13,7 +13,7 @@
 
 	.difm-lite-thank-you__header {
 		position: relative;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		padding: 12px 24px 48px;
 		text-align: center;
 
@@ -66,12 +66,12 @@
 			}
 		}
 		h3 {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			clear: none;
 			font-size: 1.25rem;
 		}
 		p {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			margin-bottom: 16px;
 			margin-top: 16px;
 		}

@@ -5,12 +5,12 @@
 .activity-card__toolbar,
 .activity-card__toolbar--reverse {
 	align-items: center;
-	border-top: 1px solid var( --color-neutral-5 );
+	border-top: 1px solid var(--color-neutral-5);
 	display: flex;
 	justify-content: space-between;
 	padding-top: 0.7rem;
 	// balance top and bottom against the 8px overall card padding
-	padding-bottom: calc( 0.7rem - 8px );
+	padding-bottom: calc(0.7rem - 8px);
 	position: relative;
 	top: 0.5rem;
 
@@ -20,7 +20,7 @@
 		font-size: $font-body-extra-small;
 		display: flex;
 		align-items: center;
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			font-size: $font-body;
 		}
 
@@ -93,6 +93,6 @@
 }
 
 .toolbar__credentials-warning-text a.external-link {
-	color: var( --color-text );
+	color: var(--color-text);
 	text-decoration: underline;
 }

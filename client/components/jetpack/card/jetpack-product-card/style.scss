@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .jetpack-product-card {
 	position: relative;
@@ -7,11 +7,10 @@
 	box-sizing: border-box;
 	height: 100%;
 
-	background: var( --color-surface );
-	border: 1px solid var( --color-border-subtle );
+	background: var(--color-surface);
+	border: 1px solid var(--color-border-subtle);
 	border-radius: ( 2px * 4 );
-	border-radius: ( 2px * 4 );
-	box-shadow: 0 4px 24px rgba( 0, 0, 0, 0.05 );
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
 
 	&.is-featured.is-aligned {
 		position: relative;
@@ -42,10 +41,10 @@
 	width: 100%;
 	padding: 8px;
 
-	background-color: var( --color-primary );
+	background-color: var(--color-primary);
 	border-top-left-radius: inherit;
 	border-top-right-radius: inherit;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 
 	font-size: 0.875rem;
 	font-weight: 700;
@@ -65,7 +64,7 @@
 	padding: 24px 32px;
 
 	.is-featured & {
-		border: solid 2px var( --color-primary );
+		border: solid 2px var(--color-primary);
 		border-top: none;
 		border-bottom-left-radius: inherit;
 		border-bottom-right-radius: inherit;
@@ -73,7 +72,7 @@
 
 	.is-featured.is-aligned & {
 		box-sizing: border-box;
-		height: calc( 100% + 8px );
+		height: calc(100% + 8px);
 
 		background-color: inherit;
 	}
@@ -86,9 +85,9 @@
 .jetpack-product-card__product-name {
 	margin-right: 8px;
 
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 
-	font-family: 'Inter', $sans;
+	font-family: Inter, $sans;
 	font-size: 2rem;
 	font-weight: 700;
 	line-height: 1.2;
@@ -106,9 +105,9 @@
 .jetpack-product-card__product-subheader {
 	margin: 12px 0 20px;
 
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 
-	font-family: 'Inter', $sans;
+	font-family: Inter, $sans;
 	font-size: 1rem;
 	font-weight: 700;
 	line-height: 1.2;
@@ -123,11 +122,11 @@
 }
 
 .jetpack-product-card__description {
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 
 	font-size: inherit;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		min-height: 108px;
 	}
 
@@ -139,15 +138,15 @@
 .jetpack-product-card__above-button {
 	position: relative;
 	top: 4px;
-	margin-bottom: calc( -0.875rem * 1.2 );
+	margin-bottom: calc(-0.875rem * 1.2);
 
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
 	font-size: 0.875rem;
 	line-height: 1.2;
 }
 
 .jetpack-product-card__disabled-message {
-	color: var( --color-accent );
+	color: var(--color-accent);
 	font-weight: 600;
 	margin-block-start: 32px;
 	margin-block-end: 0;
@@ -168,7 +167,7 @@
 	}
 	.info-popover.owner-info__pop-over {
 		> .gridicon {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 	}
 }
@@ -187,7 +186,7 @@
 
 	margin-bottom: 1rem;
 
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	font-family: inherit;
 	font-size: 1rem;
@@ -232,7 +231,7 @@
 .jetpack-product-card__features-item {
 	margin: 12px 0;
 	padding-inline-start: 8px;
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 
 	&.is-highlighted {
 		font-weight: 700;
@@ -245,7 +244,7 @@
 
 .jetpack-product-card__disclaimer {
 	a {
-		color: var( --studio-jetpack-green-30 );
+		color: var(--studio-jetpack-green-30);
 		text-decoration: underline;
 	}
 }

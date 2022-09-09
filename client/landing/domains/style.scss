@@ -1,11 +1,11 @@
 .domains-landing.layout__content {
 	padding: 32px;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		padding: 24px;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		padding: 0;
 	}
 }

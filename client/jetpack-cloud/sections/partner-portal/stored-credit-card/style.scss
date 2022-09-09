@@ -7,7 +7,7 @@
 	flex-wrap: wrap;
 	width: 270px;
 	height: 150px;
-	background: var( --studio-white );
+	background: var(--studio-white);
 	border-radius: 2px;
 	padding: 1rem;
 }
@@ -37,10 +37,10 @@
 .stored-credit-card__primary {
 	padding: 2px 4px;
 	line-height: 1.25rem;
-	background: var( --studio-gray-80 );
-	color: var( --studio-white );
+	background: var(--studio-gray-80);
+	color: var(--studio-white);
 	font-size: $font-body-small;
-	border-radius: var( --jetpack-corners-soft );
+	border-radius: var(--jetpack-corners-soft);
 	font-weight: 400;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .stored-credit-card__payment-logo svg {
-	filter: grayscale( 100% );
+	filter: grayscale(100%);
 }
 
 .stored-credit-card__footer {
@@ -89,12 +89,12 @@
 
 .stored-credit-card__name {
 	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
-	color: var( --studio-gray-80 );
+	color: var(--studio-gray-80);
 	margin-bottom: 1rem;
 }
 
 .stored-credit-card__number,
 .stored-credit-card__expiry {
 	font-size: $font-body-small;
-	color: var( --studio-gray-80 );
+	color: var(--studio-gray-80);
 }

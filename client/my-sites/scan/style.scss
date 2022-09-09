@@ -1,7 +1,7 @@
 .scan .formatted-header.is-left-align {
 	margin-top: 20px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 4px;
 		margin-bottom: 18px;
 	}
@@ -17,7 +17,7 @@
 	margin-bottom: 16px;
 	line-height: 24px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-bottom: 24px;
 	}
 }
@@ -44,7 +44,7 @@
 	// To align vertically with .backup-upsell__icon-header
 	padding: 9px 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 0;
 	}
 }
@@ -58,7 +58,7 @@
 	// To align vertically with .backup-upsell__icon-header
 	padding: 9px 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 0;
 	}
 }
@@ -71,19 +71,19 @@
 	}
 
 	.progress-bar__progress {
-		background-color: var( --color-primary );
-		box-shadow: 0 2px 6px rgba( var( --color-primary-rgb ), 0.25 );
+		background-color: var(--color-primary);
+		box-shadow: 0 2px 6px rgba(var(--color-primary-rgb), 0.25);
 	}
 }
 
 .scan__header {
-	color: var( --studio-black );
+	color: var(--studio-black);
 	font-size: $font-title-medium;
 	font-weight: 600;
 	line-height: 1;
 	margin: 32px 0 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-headline-small;
 		margin: 32px 0 24px;
 	}
@@ -100,7 +100,7 @@
 	@extend .wp-brand-font;
 	font-size: $font-title-small;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 36px 0 4px;
 	}
 }
@@ -116,7 +116,7 @@
 	width: 100%;
 	text-align: center;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		width: auto;
 		text-align: left;
 	}
@@ -125,7 +125,7 @@
 .scan__retry-bottom {
 	margin: 0 0 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 16px 0 16px 20px;
 	}
 }
@@ -138,7 +138,7 @@
 	.what-is-jetpack {
 		margin-top: 32px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-top: 64px;
 		}
 	}
@@ -165,7 +165,7 @@
 .scan.is_jetpackcom .section-nav {
 	margin-top: 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 0;
 	}
 }

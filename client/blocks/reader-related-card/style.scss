@@ -1,5 +1,5 @@
 .reader-related-card__heading {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	font-weight: 600;
 	margin-bottom: 20px;
@@ -19,16 +19,16 @@
 
 .reader-related-card__link,
 .reader-related-card__link:visited {
-	color: var( --color-primary );
+	color: var(--color-primary);
 	font-family: $sans;
 
 	&:hover,
 	&:active {
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 
 	&:focus {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 }
 
@@ -38,7 +38,7 @@
 	margin: 0;
 	padding: 0;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-direction: row;
 	}
 }
@@ -52,7 +52,7 @@
 	&:first-child {
 		margin-right: 10px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin-right: 10px;
 		}
 	}
@@ -60,14 +60,14 @@
 	&:last-child {
 		margin-left: 10px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin-left: 10px;
 		}
 	}
 
 	&:first-child,
 	&:last-child {
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			margin: 0 0 20px;
 		}
 	}
@@ -83,21 +83,21 @@
 	flex: 1 1 auto;
 	padding: 0;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: flex;
 		flex-direction: column;
 	}
 }
 
 .reader-related-card.card {
-	z-index: z-index( 'root', '.reader-related-card.card' );
+	z-index: z-index("root", ".reader-related-card.card");
 
 	.reader-related-card__meta {
 		display: flex;
 		height: 38px;
 		justify-content: flex-start;
 		margin-bottom: 13px;
-		z-index: z-index( '.reader-related-card.card', '.reader-related-card__meta' );
+		z-index: z-index(".reader-related-card.card", ".reader-related-card__meta");
 		width: 100%;
 
 		&:last-child {
@@ -139,10 +139,10 @@
 }
 
 .reader-related-card__blocks {
-	border-top: 1px solid var( --color-neutral-10 );
+	border-top: 1px solid var(--color-neutral-10);
 	margin-top: 30px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-top: 0;
 	}
 
@@ -172,7 +172,7 @@
 		.reader-related-card__post {
 			max-height: 17px * 1.6 * 4;
 
-			@include breakpoint-deprecated( '>480px' ) {
+			@include breakpoint-deprecated( ">480px" ) {
 				max-height: 17px * 1.6 * 7.5;
 			}
 		}
@@ -191,7 +191,7 @@
 
 // Wrapper for entire recommended block
 .reader-related-card__blocks {
-	border-top: 1px solid var( --color-neutral-10 );
+	border-top: 1px solid var(--color-neutral-10);
 	padding-top: 11px;
 
 	// Wrapper for site title and excerpt
@@ -234,7 +234,7 @@
 
 .reader-related-card__byline-author,
 .reader-related-card__byline-site {
-	color: var( --color-accent );
+	color: var(--color-accent);
 	display: flex;
 	font-weight: 600;
 	max-height: 14px * 1.75;
@@ -250,17 +250,17 @@
 }
 
 .reader-related-card__featured-image {
-	border: 1px solid var( --color-neutral-0 );
+	border: 1px solid var(--color-neutral-0);
 	min-height: 78px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		min-height: 153px;
 	}
 }
 
 .reader-related-card__title,
 .reader-related-card__excerpt {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-family: $serif;
 }
 
@@ -283,7 +283,7 @@
 	}
 
 	// Clamp to 3 lines on larger viewports
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		overflow: hidden;
 		max-height: 17px * 1.48 * 3;
 		word-wrap: break-word;
@@ -323,32 +323,32 @@
 	min-width: 70px;
 	position: relative;
 	padding: 0;
-	z-index: z-index( '.reader-related-card__meta', '.follow-button' );
+	z-index: z-index(".reader-related-card__meta", ".follow-button");
 
 	.gridicons-reader-follow {
-		fill: var( --color-primary );
+		fill: var(--color-primary);
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		min-width: 20px;
 	}
 
 	.follow-button__label {
-		color: var( --color-primary );
+		color: var(--color-primary);
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			display: none;
 		}
 	}
 
 	.gridicon {
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			padding-right: 0;
 		}
 	}
 
 	&.is-following .follow-button__label {
-		color: var( --color-success );
+		color: var(--color-success);
 	}
 }
 

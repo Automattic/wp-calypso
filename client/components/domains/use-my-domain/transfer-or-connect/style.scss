@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .domain-transfer-or-connect {
 	& header.domain-transfer-or-connect__page-heading {
@@ -14,7 +14,7 @@
 
 		.option-content {
 			+ .option-content {
-				border-top: 1px solid var( --studio-gray-5 );
+				border-top: 1px solid var(--studio-gray-5);
 			}
 
 			display: flex;
@@ -37,7 +37,7 @@
 				flex-direction: column;
 				align-items: flex-start;
 				margin-bottom: 8px;
-				color: var( --color-text );
+				color: var(--color-text);
 
 				@include break-mobile {
 					flex-direction: row;
@@ -66,13 +66,13 @@
 			}
 
 			&__top-text {
-				color: var( --color-text );
+				color: var(--color-text);
 			}
 
 			&__main {
 				flex-grow: 1;
 				margin-bottom: 24px;
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 
 				@include break-mobile {
 					max-width: 625px;
@@ -92,7 +92,7 @@
 
 						.gridicon {
 							margin-right: 8px;
-							fill: var( --studio-green-50 );
+							fill: var(--studio-green-50);
 							position: relative;
 							bottom: -3px;
 							flex-shrink: 0;
@@ -110,10 +110,10 @@
 
 					&-text {
 						font-weight: 500;
-						color: var( --color-text );
+						color: var(--color-text);
 
 						&.is-free {
-							color: var( --studio-green-60 );
+							color: var(--studio-green-60);
 						}
 					}
 
@@ -121,7 +121,7 @@
 						font-weight: 400;
 
 						&.is-sale-price {
-							color: var( --studio-orange-50 );
+							color: var(--studio-orange-50);
 							font-weight: 600;
 							font-size: $font-body;
 
@@ -146,7 +146,7 @@
 
 			&__message {
 				font-size: $font-body;
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 
 				&-list,
 				&-link {
@@ -171,7 +171,10 @@
 
 			&.is-placeholder {
 				.option-content {
-					&__illustration, &__header, &__top-text, &__learn-more {
+					&__illustration,
+					&__header,
+					&__top-text,
+					&__learn-more {
 						@include placeholder( --color-neutral-10 );
 						color: transparent;
 					}
@@ -187,7 +190,7 @@
 
 	&__support-link {
 		font-size: $font-body-small;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		margin: 0 0 24px;
 
 		@include break-mobile {

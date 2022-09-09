@@ -1,9 +1,9 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .dialog__backdrop,
 .dialog__backdrop.card {
-	background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
+	background-color: rgba(var(--color-neutral-0-rgb), 0.8);
 	align-items: center;
 	bottom: 0;
 	left: 0;
@@ -11,12 +11,9 @@
 	justify-content: center;
 	position: fixed;
 	right: 0;
-	top: var( --masterbar-height );
+	top: var(--masterbar-height);
 	transition: background-color 0.2s ease-in;
-	z-index: z-index(
-		'root',
-		'.dialog__backdrop'
-	); // try to ensure that dialogs are on top of everything else
+	z-index: z-index("root", ".dialog__backdrop"); // try to ensure that dialogs are on top of everything else
 
 	// covers the masterbar as well
 	&.is-full-screen {
@@ -53,7 +50,7 @@
 	}
 
 	h1 {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		/* stylelint-disable-next-line scales/font-size */
 		font-size: 1.375em;
 		font-weight: 600;
@@ -67,12 +64,12 @@
 
 .dialog__action-buttons {
 	position: relative;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 	padding: 16px;
 	margin: 0;
 	text-align: right;
 	flex-shrink: 0;
-	background-color: rgba( 255, 255, 255, 1 );
+	background-color: rgba(255, 255, 255, 1);
 	@include break-mobile {
 		padding-left: 24px;
 		padding-right: 24px;
@@ -84,18 +81,14 @@
 	}
 
 	&::before {
-		content: '';
+		content: "";
 		display: block;
 		position: absolute;
 		bottom: 100%;
 		left: 16px;
 		right: 16px;
 		height: 24px;
-		background: linear-gradient(
-			to bottom,
-			rgba( 255, 255, 255, 0 ) 0%,
-			rgba( 255, 255, 255, 1 ) 100%
-		);
+		background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
 		margin-bottom: 1px;
 	}
 }

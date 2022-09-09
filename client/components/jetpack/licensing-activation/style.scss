@@ -1,26 +1,26 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 @mixin jetpack-primary-button() {
 	// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
-	background-color: var( --studio-jetpack-green-50 );
-	border-color: var( --studio-jetpack-green-50 );
-	color: var( --color-text-inverted );
+	background-color: var(--studio-jetpack-green-50);
+	border-color: var(--studio-jetpack-green-50);
+	color: var(--color-text-inverted);
 
 	&:hover,
 	&:focus {
-		background-color: var( --studio-jetpack-green-60 );
-		border-color: var( --studio-jetpack-green-60 );
-		color: var( --color-text-inverted );
+		background-color: var(--studio-jetpack-green-60);
+		border-color: var(--studio-jetpack-green-60);
+		color: var(--color-text-inverted);
 	}
 
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: var( --color-neutral-20 );
-		background-color: var( --color-surface );
-		border-color: var( --color-neutral-5 );
+		color: var(--color-neutral-20);
+		background-color: var(--color-surface);
+		border-color: var(--color-neutral-5);
 	}
 }
 
@@ -37,18 +37,12 @@
 	@include jetpack-primary-button;
 
 	&.is-busy {
-		background-image: linear-gradient(
-			-45deg,
-			var( --studio-jetpack-green-40 ) 28%,
-			var( --studio-jetpack-green-50 ) 28%,
-			var( --studio-jetpack-green-50 ) 72%,
-			var( --studio-jetpack-green-40 ) 72%
-		);
+		background-image: linear-gradient(-45deg, var(--studio-jetpack-green-40) 28%, var(--studio-jetpack-green-50) 28%, var(--studio-jetpack-green-50) 72%, var(--studio-jetpack-green-40) 72%);
 	}
 	&[disabled] {
 		color: white;
-		background-color: var( --color-neutral-10 );
-		border-color: var( --color-neutral-10 );
+		background-color: var(--color-neutral-10);
+		border-color: var(--color-neutral-10);
 	}
 }
 
@@ -73,9 +67,9 @@
 	}
 }
 
-.licensing-activation__card a:not( .button ) {
+.licensing-activation__card a:not(.button) {
 	text-decoration: underline;
-	color: var( --color-studio-black );
+	color: var(--color-studio-black);
 	&:hover {
 		text-decoration: none;
 	}
@@ -108,7 +102,7 @@
 	width: 60px;
 
 	.progress-bar__progress {
-		background-color: var( --studio-jetpack-green-40 );
+		background-color: var(--studio-jetpack-green-40);
 	}
 }
 
@@ -145,8 +139,8 @@
 	text-align: center;
 	left: 0;
 	bottom: 7%;
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 	> a {
-		color: var( --color-neutral-60 );
+		color: var(--color-neutral-60);
 	}
 }

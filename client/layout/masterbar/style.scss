@@ -4,9 +4,9 @@ $masterbar-mobile-font-size: 14px;
 $masterbar-color-primary: #23282d;
 $masterbar-color-secondary: #101517;
 
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import 'client/assets/stylesheets/shared/_animation.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "client/assets/stylesheets/shared/_animation.scss";
 
 // Hide the masterbar on WP Mobile App views.
 .is-mobile-app-view {
@@ -17,19 +17,19 @@ $masterbar-color-secondary: #101517;
 
 // The WordPress.com Masterbar
 .masterbar {
-	background: var( --color-masterbar-background );
-	border-bottom: 1px solid var( --color-masterbar-border );
-	color: var( --color-masterbar-text );
+	background: var(--color-masterbar-background);
+	border-bottom: 1px solid var(--color-masterbar-border);
+	color: var(--color-masterbar-text);
 	font-size: $masterbar-font-size;
 	display: flex;
-	height: var( --masterbar-height );
+	height: var(--masterbar-height);
 	margin: 0;
 	position: fixed;
 	left: 0;
 	top: 0;
 	width: 100%;
 	max-width: 100vw;
-	z-index: z-index( 'root', '.masterbar' );
+	z-index: z-index("root", ".masterbar");
 	-webkit-font-smoothing: subpixel-antialiased;
 	transition: transform 0.2s ease-out;
 	box-sizing: border-box;
@@ -37,14 +37,14 @@ $masterbar-color-secondary: #101517;
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
-		background: var( --studio-orange );
-		border-bottom: 1px solid var( --studio-orange-60 );
+		background: var(--studio-orange);
+		border-bottom: 1px solid var(--studio-orange-60);
 	}
 
 	&.masterbar--is-checkout.masterbar--is-jetpack {
-		background-color: var( --color-jetpack-masterbar-background );
-		border-bottom: 1px solid var( --color-jetpack-masterbar-border );
-		color: var( --color-jetpack-masterbar-text );
+		background-color: var(--color-jetpack-masterbar-background);
+		border-bottom: 1px solid var(--color-jetpack-masterbar-border);
+		color: var(--color-jetpack-masterbar-text);
 	}
 
 	// stylelint-disable-next-line unit-allowed-list
@@ -59,7 +59,7 @@ $masterbar-color-secondary: #101517;
 		position: fixed;
 		top: 0;
 		left: 0;
-		height: calc( 100% - var( --masterbar-height ) );
+		height: calc(100% - var(--masterbar-height));
 		width: 100%;
 	}
 	.masterbar__mobile-menu-inner {
@@ -71,7 +71,7 @@ $masterbar-color-secondary: #101517;
 		padding: 10px;
 		box-sizing: border-box;
 		animation: appear 200ms ease-out forwards;
-		margin-top: var( --masterbar-height );
+		margin-top: var(--masterbar-height);
 
 		.masterbar__item {
 			width: 100%;
@@ -148,7 +148,7 @@ $masterbar-color-secondary: #101517;
 		justify-content: flex-end;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex: 2;
 		.masterbar__item {
 			flex: 0 0 auto;
@@ -160,13 +160,13 @@ $masterbar-color-secondary: #101517;
 	flex: 1;
 	justify-content: center;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex: 0 0 auto;
 	}
 }
 
 .masterbar__section--right {
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-grow: 0;
 	}
 }
@@ -180,10 +180,10 @@ $masterbar-color-secondary: #101517;
 	display: flex;
 	align-items: center;
 	position: relative;
-	color: var( --color-masterbar-text );
+	color: var(--color-masterbar-text);
 	font-size: $masterbar-font-size;
-	height: var( --masterbar-height );
-	line-height: var( --masterbar-height );
+	height: var(--masterbar-height);
+	line-height: var(--masterbar-height);
 	padding: 0 8px;
 	text-decoration: none;
 	cursor: default;
@@ -191,7 +191,7 @@ $masterbar-color-secondary: #101517;
 	justify-content: center;
 
 	&:visited {
-		color: var( --color-masterbar-text );
+		color: var(--color-masterbar-text);
 	}
 
 	&[href] {
@@ -200,14 +200,14 @@ $masterbar-color-secondary: #101517;
 
 	.masterbar__item-content {
 		white-space: nowrap;
-		color: var( --color-masterbar-text );
+		color: var(--color-masterbar-text);
 	}
 
 	.gridicon {
-		fill: var( --color-masterbar-text ); // only because safari gets currentColor wrong
+		fill: var(--color-masterbar-text); // only because safari gets currentColor wrong
 
 		.masterbar--is-checkout.masterbar--is-jetpack & {
-			fill: var( --color-jetpack-masterbar-text );
+			fill: var(--color-jetpack-masterbar-text);
 		}
 	}
 
@@ -216,13 +216,13 @@ $masterbar-color-secondary: #101517;
 	}
 
 	&:hover {
-		@include breakpoint-deprecated( '>480px' ) {
-			background: var( --color-masterbar-item-hover-background );
-			color: var( --color-masterbar-text );
+		@include breakpoint-deprecated( ">480px" ) {
+			background: var(--color-masterbar-item-hover-background);
+			color: var(--color-masterbar-text);
 
 			.masterbar--is-checkout.masterbar--is-jetpack & {
-				background: var( --color-jetpack-masterbar-item-hover-background );
-				color: var( --color-jetpack-masterbar-text );
+				background: var(--color-jetpack-masterbar-item-hover-background);
+				color: var(--color-jetpack-masterbar-text);
 			}
 		}
 	}
@@ -231,27 +231,27 @@ $masterbar-color-secondary: #101517;
 		outline: none;
 
 		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
-			color: var( --color-masterbar-text );
+			box-shadow: inset 0 0 0 2px var(--color-primary-light);
+			color: var(--color-masterbar-text);
 		}
 
 		.masterbar--is-checkout.masterbar--is-jetpack & {
-			box-shadow: inset 0 0 0 2px var( --color-jetpack-masterbar-item-hover-background );
-			color: var( --color-jetpack-masterbar-text );
+			box-shadow: inset 0 0 0 2px var(--color-jetpack-masterbar-item-hover-background);
+			color: var(--color-jetpack-masterbar-text);
 		}
 	}
 
 	&.is-active {
-		background: var( --color-masterbar-item-active-background );
+		background: var(--color-masterbar-item-active-background);
 	}
 
 	&:hover .masterbar__item-bubble {
-		border-color: var( --color-masterbar-item-hover-background );
+		border-color: var(--color-masterbar-item-hover-background);
 	}
 
 	&.has-unseen .masterbar__item-bubble {
 		display: block;
-		background: var( --color-masterbar-unread-dot-background );
+		background: var(--color-masterbar-unread-dot-background);
 	}
 
 	&.is-active .masterbar__item-bubble {
@@ -263,12 +263,12 @@ $masterbar-color-secondary: #101517;
 	}
 
 	&.masterbar__close-button {
-		border-right: 1px solid var( --color-masterbar-border );
+		border-right: 1px solid var(--color-masterbar-border);
 		margin-right: 15px;
 		cursor: pointer;
 
 		.masterbar--is-checkout.masterbar--is-jetpack & {
-			border-right: 1px solid var( --color-jetpack-masterbar-border );
+			border-right: 1px solid var(--color-jetpack-masterbar-border);
 		}
 
 		.masterbar__item-content {
@@ -282,14 +282,14 @@ $masterbar-color-secondary: #101517;
 	}
 
 	.is-support-session &.is-active {
-		background: var( --studio-orange-70 );
+		background: var(--studio-orange-70);
 	}
 
 	@media only screen and ( max-width: 782px ) {
 		font-size: $masterbar-mobile-font-size;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 48px;
 		// reset flex value on mobile
 		flex: 0 1 auto;
@@ -319,7 +319,7 @@ $masterbar-color-secondary: #101517;
 		margin: 0 5px;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		& {
 			padding-right: 14px;
 		}
@@ -329,7 +329,7 @@ $masterbar-color-secondary: #101517;
 			height: 24px;
 			width: 24px;
 			margin-left: 5px;
-			fill: var( --color-text-inverted );
+			fill: var(--color-text-inverted);
 		}
 
 		.masterbar__wpcom-wordmark {
@@ -351,7 +351,7 @@ $masterbar-color-secondary: #101517;
 	.masterbar__item-content {
 		display: block;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			margin-top: 3px; /*Align with logo*/
 		}
 	}
@@ -368,42 +368,42 @@ $masterbar-color-secondary: #101517;
 
 	cursor: pointer;
 	border: 1px solid;
-	border-color: var( --color-border );
+	border-color: var(--color-border);
 	border-radius: 2px;
 	height: 23px;
 	margin-top: 3px;
-	background: var( --color-masterbar-background );
-	color: var( --color-text-inverted );
+	background: var(--color-masterbar-background);
+	color: var(--color-text-inverted);
 
 	.masterbar__item-content {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	.gridicon {
-		fill: var( --color-text-inverted );
+		fill: var(--color-text-inverted);
 	}
 
 	&:active {
-		background: var( --color-masterbar-background );
-		color: var( --color-text-inverted );
+		background: var(--color-masterbar-background);
+		color: var(--color-text-inverted);
 		.masterbar__item-content {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 
 		.gridicon {
-			fill: var( --color-text-inverted );
+			fill: var(--color-text-inverted);
 		}
 	}
 
 	&:hover {
-		border-color: var( --color-border-inverted );
-		background: var( --color-masterbar-text );
+		border-color: var(--color-border-inverted);
+		background: var(--color-masterbar-text);
 		.masterbar__item-content {
-			color: var( --color-text );
+			color: var(--color-text);
 		}
 
 		.gridicon {
-			fill: var( --color-text );
+			fill: var(--color-text);
 		}
 	}
 }
@@ -422,11 +422,11 @@ $masterbar-color-secondary: #101517;
 		margin-right: 9px;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
-		background: var( --studio-white );
+	@include breakpoint-deprecated( ">480px" ) {
+		background: var(--studio-white);
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		height: 36px;
 		margin-top: 5px;
 		width: auto;
@@ -438,16 +438,16 @@ $masterbar-color-secondary: #101517;
 	}
 
 	&:visited {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 
 	&.is-active {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	&:hover {
-		background: var( --studio-white );
-		color: var( --color-primary );
+		background: var(--studio-white);
+		color: var(--color-primary);
 
 		// Dim button contents, not the button itself
 		> * {
@@ -459,9 +459,9 @@ $masterbar-color-secondary: #101517;
 		outline: none;
 
 		.accessible-focus & {
-			background: var( --color-surface );
-			color: var( --color-primary );
-			box-shadow: 0 0 0 2px var( --color-primary-light );
+			background: var(--color-surface);
+			color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 			z-index: 1;
 		}
 	}
@@ -471,17 +471,17 @@ $masterbar-color-secondary: #101517;
 		display: none;
 		font-weight: 500;
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			display: block;
 			margin-left: 2px;
 			margin-right: 4px;
 		}
 	}
 
-	svg:not( .gridicon ) {
+	svg:not(.gridicon) {
 		color: $masterbar-color-primary;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			color: #a2aab2;
 		}
 	}
@@ -490,26 +490,26 @@ $masterbar-color-secondary: #101517;
 	.is-support-session &:focus,
 	.is-support-session &:hover,
 	.is-support-session &:visited {
-		color: var( --studio-orange );
+		color: var(--studio-orange);
 	}
 
 	.is-support-session &.is-active {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	// active state when editing
 	.is-group-editor & {
-		background: var( --color-masterbar-item-new-editor-background );
-		color: var( --color-text-inverted );
+		background: var(--color-masterbar-item-new-editor-background);
+		color: var(--color-text-inverted);
 	}
 
 	.is-group-editor &:visited,
 	.is-group-editor & .masterbar__item-content {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	.is-group-editor &:hover {
-		background: var( --color-masterbar-item-new-editor-hover-background );
+		background: var(--color-masterbar-item-new-editor-hover-background);
 	}
 }
 
@@ -518,18 +518,18 @@ $masterbar-color-secondary: #101517;
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translate( -50%, -50% );
+		transform: translate(-50%, -50%);
 		width: 18px;
 		height: 18px;
 
-		border: 2px solid var( --color-border-inverted );
+		border: 2px solid var(--color-border-inverted);
 
 		@media only screen and ( max-width: 782px ) {
 			width: 22px;
 			height: 22px;
 		}
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			width: 19px;
 			height: 19px;
 		}
@@ -571,7 +571,7 @@ $masterbar-color-secondary: #101517;
 }
 
 .masterbar__reader {
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-right: auto;
 	}
 
@@ -589,7 +589,7 @@ $masterbar-color-secondary: #101517;
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		border-bottom: 1px solid #646970;
 	}
 
@@ -613,8 +613,8 @@ $masterbar-color-secondary: #101517;
 	font-size: $masterbar-font-size;
 
 	&:hover,
-	&[aria-expanded='true'] {
-		background: var( --studio-white );
+	&[aria-expanded="true"] {
+		background: var(--studio-white);
 	}
 
 	@media only screen and ( max-width: 782px ) {
@@ -624,14 +624,14 @@ $masterbar-color-secondary: #101517;
 		margin-left: -9px;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
-		border-left: 1px solid var( --studio-gray-5 );
+	@include breakpoint-deprecated( ">480px" ) {
+		border-left: 1px solid var(--studio-gray-5);
 		background: #fafafa;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		background: none;
-		color: var( --color-sidebar-text );
+		color: var(--color-sidebar-text);
 		width: auto;
 		height: 36px;
 		padding: 0 16px;
@@ -646,21 +646,21 @@ $masterbar-color-secondary: #101517;
 
 	.gridicon {
 		width: 14px;
-		color: var( --studio-gray-20 );
-		transform: translateY( -1px );
+		color: var(--studio-gray-20);
+		transform: translateY(-1px);
 
-		@include breakpoint-deprecated( '<480px' ) {
-			color: var( --color-sidebar-text );
+		@include breakpoint-deprecated( "<480px" ) {
+			color: var(--color-sidebar-text);
 		}
 	}
 
 	&:hover,
-	&[aria-expanded='true'] {
+	&[aria-expanded="true"] {
 		.gridicon {
 			color: $masterbar-color-primary;
 
-			@include breakpoint-deprecated( '<480px' ) {
-				color: var( --color-sidebar-text );
+			@include breakpoint-deprecated( "<480px" ) {
+				color: var(--color-sidebar-text);
 			}
 		}
 	}
@@ -674,20 +674,20 @@ $masterbar-color-secondary: #101517;
 .masterbar__toggle-drafts-lg-label {
 	display: none;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		display: inline;
 	}
 }
 
 .masterbar__toggle-drafts-sm-label {
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		display: none;
 	}
 }
 
 .masterbar__recent-drafts.popover {
 	width: 310px;
-	max-width: calc( 100vw - 20px );
+	max-width: calc(100vw - 20px);
 
 	.popover__inner {
 		text-align: left;
@@ -718,19 +718,19 @@ $masterbar-color-secondary: #101517;
 
 	&:hover use.border {
 		transition: all 150ms ease-in;
-		fill: var( --color-masterbar-item-active-background );
+		fill: var(--color-masterbar-item-active-background);
 	}
 }
 
 @keyframes bubble-unread-indication {
 	30% {
-		transform: scale3d( 1.5, 1.5, 1.5 );
+		transform: scale3d(1.5, 1.5, 1.5);
 	}
 	60% {
-		transform: scale3d( 0.85, 0.85, 0.85 );
+		transform: scale3d(0.85, 0.85, 0.85);
 	}
 	80% {
-		transform: scale3d( 1.15, 1.15, 1.15 );
+		transform: scale3d(1.15, 1.15, 1.15);
 	}
 }
 
@@ -746,8 +746,8 @@ $masterbar-color-secondary: #101517;
 	left: 0;
 	height: 46px;
 	line-height: 45px;
-	border-bottom: 1px solid var( --color-neutral-10 );
-	box-shadow: 0 1px 1px rgba( var( --color-neutral-light-rgb ), 0.1 );
+	border-bottom: 1px solid var(--color-neutral-10);
+	box-shadow: 0 1px 1px rgba(var(--color-neutral-light-rgb), 0.1);
 }
 
 .masterbar__recent-drafts-add-new {
@@ -759,8 +759,8 @@ $masterbar-color-secondary: #101517;
 .masterbar__recent-drafts-see-all.button.is-compact {
 	display: block;
 	padding: 8px 16px;
-	border-top: 1px solid var( --color-neutral-10 );
-	background: var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-10);
+	background: var(--color-neutral-0);
 	text-align: center;
 	position: absolute;
 	right: 0;
@@ -776,11 +776,11 @@ $masterbar-color-secondary: #101517;
 	}
 
 	&:hover {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 
 		.count {
-			color: var( --color-neutral-70 );
-			border-color: var( --color-neutral-70 );
+			color: var(--color-neutral-70);
+			border-color: var(--color-neutral-70);
 		}
 	}
 }
@@ -808,13 +808,13 @@ a.masterbar__quick-language-switcher {
 
 		.masterbar__item,
 		.masterbar__toggle-drafts {
-			transform: translateY( -48px );
+			transform: translateY(-48px);
 		}
 	}
 }
 
 .is-section-gutenberg-editor .main.calypsoify.is-iframe {
-	top: var( --masterbar-height );
+	top: var(--masterbar-height);
 
 	@include break-medium {
 		top: 0;
@@ -840,21 +840,21 @@ a.masterbar__quick-language-switcher {
 	}
 
 	.masterbar__secure-checkout-text {
-		color: var( --color-primary-5 );
-		transform: translateY( 1px );
+		color: var(--color-primary-5);
+		transform: translateY(1px);
 		line-height: 1.2em;
 		font-size: 0.75rem;
 		margin-left: 5px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			// stylelint-disable-next-line declaration-property-unit-allowed-list
 			font-size: 100%;
 			margin-left: 0;
 		}
 
 		.masterbar--is-jetpack & {
-			color: var( --color-jetpack-masterbar-text );
-			transform: translateY( -1px );
+			color: var(--color-jetpack-masterbar-text);
+			transform: translateY(-1px);
 		}
 	}
 }
@@ -863,7 +863,7 @@ a.masterbar__quick-language-switcher {
 	padding: 0 11px;
 
 	svg {
-		fill: var( --color-masterbar-text );
+		fill: var(--color-masterbar-text);
 	}
 
 	&.is-active {

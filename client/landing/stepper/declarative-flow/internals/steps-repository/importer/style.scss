@@ -2,7 +2,7 @@
  * Common importer integration styles
  */
 .site-setup {
-	.importer-wrapper:not( .importer-wrapper__wordpress ) {
+	.importer-wrapper:not(.importer-wrapper__wordpress) {
 		max-width: 700px;
 		margin: auto;
 	}
@@ -33,7 +33,7 @@
 
 	.formatted-header__title {
 		@include onboarding-font-recoleta;
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		letter-spacing: 0.2px;
 		font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
 		font-weight: 400;
@@ -48,7 +48,7 @@
 	.formatted-header__subtitle {
 		padding: 0;
 		text-align: left;
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 		font-size: 1rem;
 		margin-top: 16px;
 		line-height: 24px;
