@@ -26,7 +26,7 @@ export function setup( params: Gtag.ConfigParams ) {
 
 export function fireEcommercePurchase( purchase: GaPurchase, ga4PropertyGtag: Ga4PropertyGtag ) {
 	window.gtag( 'event', 'purchase', {
-		send_to: Ga4PropertyGtag[ ga4PropertyGtag ],
+		send_to: ga4Properties[ ga4PropertyGtag ],
 		...purchase,
 	} );
 }
