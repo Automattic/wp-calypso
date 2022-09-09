@@ -1,8 +1,6 @@
 import { action } from '@storybook/addon-actions';
 import Button from '.';
-// Provide theme-default CSS variables from the Sidebar styles
-// eslint-disable-next-line no-restricted-imports
-import 'calypso/my-sites/sidebar/style.scss';
+import './stories.scss';
 
 export default { title: 'Button' };
 
