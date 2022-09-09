@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-@import '@automattic/typography/styles/fonts';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
+@import "@automattic/typography/styles/fonts";
 
 .select-items-alt {
 	display: flex;
@@ -61,12 +61,12 @@
 			margin-top: 0;
 		}
 
-		&:not( [disabled] ):hover {
-			color: var( --color-neutral-70 );
+		&:not([disabled]):hover {
+			color: var(--color-neutral-70);
 		}
 	}
 
 	&-disabled-info svg {
-		fill: var( --color-neutral-20 );
+		fill: var(--color-neutral-20);
 	}
 }

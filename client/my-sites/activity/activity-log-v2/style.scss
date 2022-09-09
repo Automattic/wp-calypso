@@ -1,5 +1,5 @@
 main.activity-log-v2 {
-	&:not( .wordpressdotcom ) {
+	&:not(.wordpressdotcom) {
 		.activity-log-v2__header {
 			margin-top: 32px;
 		}
@@ -14,14 +14,14 @@ main.activity-log-v2 {
 	}
 
 	.activity-card-list__date-group-date {
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			font-size: $font-title-small;
 		}
 	}
 
 	.activity-card-list__date-group-content {
 		.activity-card:last-child {
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				margin-bottom: 48px;
 			}
 		}
@@ -30,13 +30,13 @@ main.activity-log-v2 {
 
 .activity-log-v2__header {
 	& > * {
-		&:not( :first-child ) {
+		&:not(:first-child) {
 			margin-top: 16px;
 		}
 	}
 
 	// use sub-section styling at mobile sizes
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		h2 {
 			font-size: $font-title-small;
 			font-weight: 600;

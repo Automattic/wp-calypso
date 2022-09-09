@@ -3,11 +3,11 @@
 .sparkline {
 	.sparkline__line {
 		fill: none;
-		stroke: var( --color-primary );
+		stroke: var(--color-primary);
 		stroke-width: 1;
 	}
 
 	.sparkline__highlight {
-		fill: var( --color-accent );
+		fill: var(--color-accent);
 	}
 }

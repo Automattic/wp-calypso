@@ -1,5 +1,5 @@
-@import '../../assets/stylesheets/shared/mixins/_breakpoints';
-@import '@automattic/typography/styles/variables';
+@import "../../assets/stylesheets/shared/mixins/_breakpoints";
+@import "@automattic/typography/styles/variables";
 
 @keyframes notice-loading-pulse {
 	0%,
@@ -18,55 +18,55 @@
 	margin-bottom: 12px;
 	box-sizing: border-box;
 	animation: appear 0.3s ease-in-out;
-	background: var( --color-neutral-80 );
-	color: var( --color-text-inverted );
+	background: var(--color-neutral-80);
+	color: var(--color-text-inverted);
 	line-height: 1.5;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-bottom: 24px;
 	}
 
 	// Success!
 	&.is-success {
 		.notice__icon-wrapper {
-			background: var( --color-success-40 );
+			background: var(--color-success-40);
 		}
 
 		.notice__icon-wrapper-drop {
-			background: var( --color-success );
+			background: var(--color-success);
 		}
 	}
 
 	// Warning
 	&.is-warning {
 		.notice__icon-wrapper {
-			background: var( --color-warning-30 );
+			background: var(--color-warning-30);
 		}
 
 		.notice__icon-wrapper-drop {
-			background: var( --color-warning );
+			background: var(--color-warning);
 		}
 	}
 
 	// Error! OHNO!
 	&.is-error {
 		.notice__icon-wrapper {
-			background: var( --color-error-40 );
+			background: var(--color-error-40);
 		}
 
 		.notice__icon-wrapper-drop {
-			background: var( --color-error );
+			background: var(--color-error);
 		}
 	}
 
 	// General notice
 	&.is-info {
 		.notice__icon-wrapper {
-			background: var( --color-accent-40 );
+			background: var(--color-accent-40);
 		}
 
 		.notice__icon-wrapper-drop {
-			background: var( --color-accent );
+			background: var(--color-accent);
 		}
 	}
 
@@ -92,8 +92,8 @@
 
 .notice__icon-wrapper {
 	position: relative;
-	background: var( --color-neutral-40 );
-	color: var( --color-text-inverted );
+	background: var(--color-neutral-40);
+	color: var(--color-text-inverted);
 	display: flex;
 	align-items: center;
 	width: 47px;
@@ -106,12 +106,12 @@
 // to emphasize the glyph inside
 .notice__icon-wrapper-drop {
 	position: absolute;
-	top: calc( 50% - 8px );
-	left: calc( 50% - 8px );
+	top: calc(50% - 8px);
+	left: calc(50% - 8px);
 	width: 16px;
 	height: 16px;
 	border-radius: 8px; /* stylelint-disable-line scales/radii */
-	background: var( --color-neutral );
+	background: var(--color-neutral);
 
 	& + .notice__icon {
 		position: relative;
@@ -128,11 +128,11 @@
 		a:visited,
 		button.is-link {
 			text-decoration: underline;
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 			line-height: inherit;
 
 			&:hover {
-				color: var( --color-text-inverted );
+				color: var(--color-text-inverted);
 				text-decoration: none;
 			}
 		}
@@ -157,7 +157,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-body-small;
 	}
 }
@@ -179,7 +179,7 @@
 		height: 18px;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 11px;
 
 		.gridicon {
@@ -189,11 +189,11 @@
 	}
 
 	.notice & {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 
 		&:hover,
 		&:focus {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 }
@@ -205,12 +205,12 @@ a.notice__action {
 	font-weight: 400;
 	text-decoration: none;
 	white-space: nowrap;
-	color: var( --color-neutral-20 );
+	color: var(--color-neutral-20);
 	padding: 13px;
 	display: flex;
 	align-items: center;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-shrink: 1;
 		flex-grow: 0;
 		align-items: center;
@@ -225,11 +225,11 @@ a.notice__action {
 	}
 
 	&:visited {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 	}
 
 	&:hover {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	.gridicon {
@@ -270,8 +270,8 @@ a.notice__action {
 	}
 
 	.notice__icon-wrapper-drop {
-		top: calc( 50% - 6px );
-		left: calc( 50% - 6px );
+		top: calc(50% - 6px);
+		left: calc(50% - 6px);
 		width: 12px;
 		height: 12px;
 	}

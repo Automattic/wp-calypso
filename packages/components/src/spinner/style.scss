@@ -1,6 +1,6 @@
 @keyframes rotate-spinner {
 	100% {
-		transform: rotate( 360deg );
+		transform: rotate(360deg);
 	}
 }
 
@@ -20,13 +20,13 @@
 }
 
 .spinner__outer {
-	border-top-color: var( --color-accent );
+	border-top-color: var(--color-accent);
 }
 
 .spinner__inner {
 	width: 100%;
 	height: 100%;
-	border-top-color: var( --color-accent );
-	border-right-color: var( --color-accent );
+	border-top-color: var(--color-accent);
+	border-right-color: var(--color-accent);
 	opacity: 0.4;
 }

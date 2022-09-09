@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 body.is-section-inbox.theme-default.color-scheme {
-	--color-surface-backdrop: var( --studio-white );
+	--color-surface-backdrop: var(--studio-white);
 }
 
 body.is-section-inbox .layout.is-section-inbox > .layout__content {
@@ -48,7 +48,7 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 			}
 
 			.formatted-header__subtitle {
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 				font-size: $font-body;
 				margin-bottom: 0;
 
@@ -141,7 +141,7 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 
 		.mailbox-selection-list__item {
 			align-items: center;
-			border-color: var( --p2-color-border-light );
+			border-color: var(--p2-color-border-light);
 			border-style: solid;
 			border-width: 1px 0 0;
 			box-shadow: none;
@@ -164,7 +164,7 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 				padding: 0;
 
 				h2 {
-					color: var( --studio-wordpress-blue-100 );
+					color: var(--studio-wordpress-blue-100);
 					font-family: $sans;
 					font-size: $font-body;
 					font-weight: 600;
@@ -184,7 +184,7 @@ body.is-section-inbox .layout.is-section-inbox > .layout__content {
 				align-items: center;
 				background: #3197a7;
 				border-radius: 999px; /* stylelint-disable-line scales/radii */
-				color: var( --studio-white );
+				color: var(--studio-white);
 				display: flex;
 				font-size: $font-title-small;
 				font-weight: bold;

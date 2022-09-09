@@ -1,12 +1,12 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 body.connect-domain-setup__body-white {
-	background: var( --studio-white );
+	background: var(--studio-white);
 	.sidebar .sidebar__heading::after,
 	.sidebar .sidebar__menu-link::after {
-		border-right-color: var( --studio-white );
+		border-right-color: var(--studio-white);
 	}
 }
 
@@ -14,7 +14,7 @@ body.connect-domain-setup__body-white {
 	padding: 0 16px;
 	margin-bottom: 32px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding: 0;
 	}
 
@@ -51,10 +51,10 @@ body.connect-domain-setup__body-white {
 			border-radius: 4px;
 			font-weight: 500;
 			font-size: $font-body-extra-small;
-			background: rgba( 220, 220, 222, 0.6 );
-			color: var( --studio-gray-80 );
+			background: rgba(220, 220, 222, 0.6);
+			color: var(--studio-gray-80);
 
-			@include breakpoint-deprecated( '>660px' ) {
+			@include breakpoint-deprecated( ">660px" ) {
 				margin: 0 0 0 16px;
 			}
 		}
@@ -71,7 +71,7 @@ body.connect-domain-setup__body-white {
 		font-weight: 500;
 
 		&-icon {
-			fill: var( --color-text );
+			fill: var(--color-text);
 			position: relative;
 			bottom: -4px;
 			margin-right: 8px;
@@ -79,7 +79,7 @@ body.connect-domain-setup__body-white {
 	}
 
 	& &__text {
-		color: var( --color-text );
+		color: var(--color-text);
 		max-width: 660px;
 	}
 
@@ -89,7 +89,7 @@ body.connect-domain-setup__body-white {
 		}
 
 		font-size: $font-body-small;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		padding: 0 16px;
 
 		@include break-mobile {
@@ -99,7 +99,7 @@ body.connect-domain-setup__body-white {
 		&-icon {
 			position: relative;
 			bottom: -3px;
-			fill: var( --studio-gray-50 );
+			fill: var(--studio-gray-50);
 			margin-right: 4px;
 		}
 	}
@@ -146,21 +146,21 @@ body.connect-domain-setup__body-white {
 			display: inline-block;
 			text-align: center;
 			font-size: $font-body-small;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			box-sizing: border-box;
 			border-radius: 50%;
 			flex-shrink: 0;
 
 			&.current-step {
-				background-color: var( --studio-blue-50 );
-				border: 1px solid var( --studio-blue-50 );
-				color: #ffffff;
+				background-color: var(--studio-blue-50);
+				border: 1px solid var(--studio-blue-50);
+				color: #fff;
 			}
 
 			&.completed-step {
-				background-color: var( --studio-green-50 );
-				border: 1px solid var( --studio-green-50 );
-				color: #ffffff;
+				background-color: var(--studio-green-50);
+				border: 1px solid var(--studio-green-50);
+				color: #fff;
 			}
 
 			&-checkmark {
@@ -172,13 +172,13 @@ body.connect-domain-setup__body-white {
 		&-step-name {
 			font-size: $font-body-small;
 			font-weight: 500;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			margin-left: 8px;
 			position: relative;
 			bottom: -1px;
 
 			&.current-step {
-				color: var( --color-text );
+				color: var(--color-text);
 			}
 		}
 	}
@@ -203,7 +203,7 @@ body.connect-domain-setup__body-white {
 
 		&-record-label,
 		&-record-item-label {
-			color: var( --studio-gray-50 );
+			color: var(--studio-gray-50);
 		}
 
 		&-record {
@@ -322,25 +322,25 @@ body.connect-domain-setup__body-white {
 		align-items: center;
 		width: 100%;
 		justify-content: space-between;
-		background-color: var( --studio-gray-0 );
+		background-color: var(--studio-gray-0);
 		padding: 8px;
 		max-height: 40px;
 
 		&:hover {
-			background-color: var( --studio-gray-0 );
+			background-color: var(--studio-gray-0);
 
 			.connect-domain-step__clipboard-button-blue {
-				color: var( --studio-blue-70 );
+				color: var(--studio-blue-70);
 			}
 		}
 
 		&-blue {
-			color: var( --studio-blue-50 );
+			color: var(--studio-blue-50);
 		}
 
 		&-text {
 			font-size: $font-body;
-			color: var( --color-text );
+			color: var(--color-text);
 			line-height: 24px;
 			white-space: nowrap;
 			overflow: hidden;
@@ -406,7 +406,7 @@ body.connect-domain-setup__body-white {
 			text-align: center;
 
 			&-checkmark {
-				fill: var( --studio-green-50 );
+				fill: var(--studio-green-50);
 				margin-right: 8px;
 				position: relative;
 				bottom: -3px;
@@ -418,7 +418,7 @@ body.connect-domain-setup__body-white {
 
 			&-text {
 				font-weight: 400;
-				color: var( --color-text );
+				color: var(--color-text);
 				font-size: $font-body;
 				text-align: center;
 
@@ -441,7 +441,7 @@ body.connect-domain-setup__body-white {
 }
 
 button.action_buttons__button.action-buttons__back.connect-domain-step__go-back {
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 0 0 18px;
 	}
 

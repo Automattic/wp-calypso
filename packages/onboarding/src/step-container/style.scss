@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-@import '../../styles/mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
+@import "../../styles/mixins.scss";
 
 /**
  *	General
@@ -49,7 +49,7 @@
 	}
 
 	.step-container__skip-hr {
-		background: var( --color-primary-light );
+		background: var(--color-primary-light);
 		max-width: 270px;
 		margin-bottom: 50px;
 		margin-top: -20px;
@@ -83,7 +83,7 @@
 
 			.formatted-header__title {
 				@include onboarding-font-recoleta;
-				color: var( --studio-gray-100 );
+				color: var(--studio-gray-100);
 				letter-spacing: 0.2px;
 				font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
 				font-weight: 400;
@@ -98,7 +98,7 @@
 			.formatted-header__subtitle {
 				padding: 0;
 				text-align: start;
-				color: var( --studio-gray-60 );
+				color: var(--studio-gray-60);
 				font-size: 1rem;
 				margin-top: 16px;
 				line-height: 24px;
@@ -176,7 +176,7 @@
 
 			&.button.is-primary {
 				border-radius: 4px;
-				box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 			}
 
 			&.has-underline {
@@ -184,7 +184,7 @@
 			}
 
 			&.has-skip-heading {
-				transform: translateY( -3px );
+				transform: translateY(-3px);
 				// override unessecary super specificity added by another class
 				padding-top: 0 !important;
 			}
@@ -196,7 +196,7 @@
 		}
 
 		.step-container__skip-heading {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 
 		.step-container__navigation-logo {
@@ -204,8 +204,8 @@
 			// Align with wordpress logo in signup-header
 			margin-top: 1px;
 			margin-inline-end: 24px;
-			fill: var( --color-text );
-			stroke: var( --color-text );
+			fill: var(--color-text);
+			stroke: var(--color-text);
 
 			@include break-small {
 				display: block;
@@ -247,7 +247,7 @@
 		min-height: 65vh;
 
 		@supports ( min-height: 65svh ) {
-			min-height: calc( 65svh - 50px );
+			min-height: calc(65svh - 50px);
 		}
 	}
 
@@ -259,7 +259,7 @@
 		justify-content: center;
 		width: 100%;
 		text-align: center;
-		font-family: 'SF Pro Text', $sans;
+		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-extra-small;
 		font-weight: 400;
 		line-height: 20px;

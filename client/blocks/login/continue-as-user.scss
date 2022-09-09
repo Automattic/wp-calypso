@@ -1,10 +1,10 @@
 .continue-as-user {
 	display: block;
 	animation: 1s appear 0s ease-in;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	text-align: center;
-	height: calc( 70vh - 80px ); /* The values here are set so that the Not-you line gets pushed to the bottom of the screen on mobile */
+	height: calc(70vh - 80px); /* The values here are set so that the Not-you line gets pushed to the bottom of the screen on mobile */
 	margin: 48px auto 0;
 	position: relative;
 	max-width: 400px;
@@ -24,7 +24,7 @@
 	}
 
 	.continue-as-user__gravatar-link {
-		color: var( --color-text );
+		color: var(--color-text);
 		margin: 0 auto;
 		line-height: 150%;
 
@@ -46,14 +46,14 @@
 	}
 
 	.continue-as-user__change-user-link {
-		color: var( --color-link );
+		color: var(--color-link);
 		cursor: pointer;
 		margin: auto;
 
 		&:hover,
 		&:focus,
 		&:active {
-			color: var( --color-link-dark );
+			color: var(--color-link-dark);
 		}
 	}
 

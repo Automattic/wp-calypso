@@ -1,4 +1,4 @@
-@use 'sass:math';
+@use "sass:math";
 
 .post-relative-time-status {
 	display: inline-block;
@@ -11,30 +11,30 @@
 
 	// Apply colors on /posts/* cards
 	.is-sticky {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 	.is-pending {
-		color: var( --color-warning );
+		color: var(--color-warning);
 	}
 	.is-scheduled {
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 	.is-trash {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 	.is-private {
-		color: var( --color-primary-dark );
+		color: var(--color-primary-dark);
 	}
 }
 
 a.post-relative-time-status__link {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .post-relative-time-status__time,
 .post-relative-time-status__status {
 	display: inline-block;
-	margin-right:  math.div( 11, 12 )  * 1em;
+	margin-right: math.div(11, 12)  * 1em;
 }
 
 .post-relative-time-status__time-text,

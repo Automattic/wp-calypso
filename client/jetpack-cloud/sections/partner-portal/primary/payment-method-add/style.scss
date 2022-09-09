@@ -1,12 +1,12 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .payment-method-add {
 	&__wrapper .card-heading {
 		display: inline-block;
 		margin-top: 1rem;
 		margin-bottom: 2rem;
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 	}
 
 	&__content {
@@ -73,7 +73,7 @@
 
 		button {
 			&.checkout-button {
-				border-radius: var( --jetpack-corners-soft );
+				border-radius: var(--jetpack-corners-soft);
 			}
 		}
 	}

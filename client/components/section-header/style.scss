@@ -8,11 +8,11 @@
 	position: relative;
 
 	&::after {
-		content: '';
+		content: "";
 	}
 
 	&.is-empty .section-header__label::after {
-		content: '\00a0';
+		content: "\00a0";
 	}
 }
 
@@ -25,7 +25,7 @@
 	position: relative;
 	overflow: hidden;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		line-height: 1.4;
 		margin: 4px 0;
 	}
@@ -51,7 +51,7 @@
 }
 
 .section-header__label {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body-small;
 }
 

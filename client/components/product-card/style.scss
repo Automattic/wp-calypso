@@ -1,7 +1,7 @@
 .product-card {
 	width: 100%;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		min-width: 460px;
 	}
 }
@@ -9,13 +9,13 @@
 .product-card__header {
 	margin: -16px -16px 16px;
 	padding: 16px 0;
-	border-bottom: solid 2px var( --color-jetpack );
+	border-bottom: solid 2px var(--color-jetpack);
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin: -24px -24px 24px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		flex-flow: row wrap;
 		align-items: baseline;
@@ -27,7 +27,7 @@
 	padding-left: 40px;
 	padding-right: 40px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-left: 16px;
 		padding-right: 16px;
 	}
@@ -37,11 +37,11 @@
 	display: flex;
 	justify-content: center;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-grow: 1;
 	}
 
-	.product-card:not( .has-secondary-header ) & {
+	.product-card:not(.has-secondary-header) & {
 		justify-content: center;
 	}
 
@@ -49,14 +49,14 @@
 		align-self: center;
 		margin: 0 8px 0 -26px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			width: 16px;
 			height: 16px;
 			margin-left: 0;
 		}
 	}
 	.gridicons-checkmark {
-		fill: var( --color-jetpack );
+		fill: var(--color-jetpack);
 	}
 }
 
@@ -80,7 +80,7 @@
 	font-size: $font-body-small;
 	line-height: 20px;
 	font-style: italic;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 // Price group
@@ -96,7 +96,7 @@
 
 		&,
 		& * {
-			@include breakpoint-deprecated( '>660px' ) {
+			@include breakpoint-deprecated( ">660px" ) {
 				font-size: $font-body-small;
 				vertical-align: baseline;
 			}
@@ -108,13 +108,13 @@
 	font-size: $font-body-small;
 	font-weight: 400;
 	line-height: 13px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		font-style: italic;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		font-size: $font-body-extra-small;
 	}
 }
@@ -123,7 +123,7 @@
 .product-card__header {
 	.plan-price,
 	.plan-price * {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			font-weight: 600;
 		}
 	}
@@ -131,7 +131,7 @@
 	.product-card__billing-timeframe {
 		width: 100%;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			width: auto;
 			font-size: $font-body-extra-small;
 			font-weight: 600;
@@ -147,7 +147,7 @@
 		font-weight: 400;
 		vertical-align: baseline;
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			font-size: $font-body-small;
 		}
 	}
@@ -158,7 +158,7 @@
 
 	.plan-price.is-discounted,
 	.plan-price.is-discounted .plan-price__currency-symbol {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 }
 
@@ -166,7 +166,7 @@
 .product-card__description {
 	font-size: $font-body-small;
 	line-height: 20px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	p:last-child {
 		margin: 0;
@@ -180,7 +180,7 @@
 	justify-content: space-around; // IE11 fallback.
 	justify-content: space-evenly;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-flow: row wrap;
 	}
 }
@@ -189,9 +189,9 @@
 	margin-top: 16px;
 	font-size: $font-body-small;
 	text-align: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		flex: 0 0 100%;
 	}
 
@@ -209,24 +209,24 @@
 	align-items: center;
 	margin: 16px 0 8px;
 	padding: 16px;
-	border: 1px solid var( --color-neutral-20 );
+	border: 1px solid var(--color-neutral-20);
 	border-radius: 2px;
 	cursor: pointer;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-direction: column;
 	}
 
 	&.is-selected {
 		// Matches the feature highlight on the plans tables
-		background-color: rgba( var( --color-primary-rgb ), 0.1 );
-		border-color: var( --color-primary );
+		background-color: rgba(var(--color-primary-rgb), 0.1);
+		border-color: var(--color-primary);
 	}
 
 	& + .product-card__option.form-label {
 		margin-top: 0;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			margin-top: 16px;
 			margin-left: 8px;
 		}
@@ -239,19 +239,19 @@
 	align-items: flex-start;
 	margin-left: 8px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		align-items: center;
 		margin-top: 6px;
 		margin-left: 0;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-top: 0;
 	}
 }
 
 .product-card__radio.form-radio {
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-bottom: 10px;
 	}
 }
@@ -274,7 +274,7 @@
 	margin-bottom: 12px;
 	font-size: $font-body-small;
 	font-weight: 600;
-	color: var( --color-neutral-90 );
+	color: var(--color-neutral-90);
 }
 
 .product-card__action-button {
@@ -304,9 +304,9 @@
 	width: 92px;
 	height: 92px;
 	padding: 12px 16px 16px;
-	transform: rotate( -10deg );
-	color: var( --studio-white );
-	background: url( '/calypso/images/illustrations/promo-star.svg' ) no-repeat center;
+	transform: rotate(-10deg);
+	color: var(--studio-white);
+	background: url("/calypso/images/illustrations/promo-star.svg") no-repeat center;
 	background-size: contain;
 	font-size: $font-body-small;
 	font-weight: 600;
@@ -317,9 +317,9 @@
 .product-card__promo-nudge-text {
 	width: 100%;
 	padding: 7px 24px;
-	border-radius: 16px;
-	background-color: var( --color-neutral-0 );
-	color: var( --color-text-subtle );
+	border-radius: 16px; /* stylelint-disable-line scales/radii */
+	background-color: var(--color-neutral-0);
+	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	line-height: 18px;
 	text-align: left;
@@ -327,7 +327,7 @@
 
 	strong {
 		display: block;
-		color: var( --color-text );
+		color: var(--color-text);
 		font-size: $font-body-small;
 		font-weight: 600;
 		text-transform: none;
@@ -343,26 +343,26 @@
 .product-card.is-placeholder .product-card__price-group {
 	&::before {
 		@include placeholder( --color-neutral-10 );
-		content: '\00a0';
+		content: "\00a0";
 		display: inline-block;
 		width: 150px;
 		height: 32px;
 		margin: 0 0 4px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			height: 18px;
 		}
 	}
 
 	.product-card__billing-timeframe {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			display: none;
 		}
 	}
 
 	.product-card__billing-timeframe::before {
 		@include placeholder( --color-neutral-10 );
-		content: '\00a0';
+		content: "\00a0";
 		display: inline-block;
 		width: 100px;
 		height: 11px;
@@ -375,7 +375,7 @@
 		height: 16px;
 		margin: 0;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin: 5px 0 0;
 		}
 	}

@@ -19,22 +19,22 @@
 	}
 
 	input::placeholder {
-		color: var( --color-neutral-10 ) !important;
+		color: var(--color-neutral-10) !important;
 	}
 }
 
 .button {
-	color: var( --color-accent );
-	background: var( --studio-white );
-	border: 1px solid var( --color-accent );
-	border-radius: var( --jetpack-corners-soft );
+	color: var(--color-accent);
+	background: var(--studio-white);
+	border: 1px solid var(--color-accent);
+	border-radius: var(--jetpack-corners-soft);
 	box-sizing: border-box;
 	font-weight: 500;
 	transition: background-color 0.1s;
 
 	&:hover {
-		background-color: var( --color-accent-0 );
-		border-color: var( --color-accent-80 );
+		background-color: var(--color-accent-0);
+		border-color: var(--color-accent-80);
 	}
 
 	&:focus {
@@ -42,131 +42,125 @@
 	}
 
 	&:active {
-		background: var( --color-accent-5 );
-		border-color: var( --color-accent-40 );
+		background: var(--color-accent-5);
+		border-color: var(--color-accent-40);
 		border-width: 1px;
 	}
 
 	&[disabled],
 	&:disabled {
-		background: var( --color-accent-5 );
-		color: var( --color-accent-20 );
-		border-color: var( --color-accent-5 );
+		background: var(--color-accent-5);
+		color: var(--color-accent-20);
+		border-color: var(--color-accent-5);
 	}
 }
 
 .button.is-primary {
-	background-color: var( --studio-jetpack-green-50 );
-	border-color: var( --studio-jetpack-green-50 );
+	background-color: var(--studio-jetpack-green-50);
+	border-color: var(--studio-jetpack-green-50);
 
 	&:hover {
-		background-color: var( --studio-jetpack-green-70 );
-		border-color: var( --studio-jetpack-green-70 );
+		background-color: var(--studio-jetpack-green-70);
+		border-color: var(--studio-jetpack-green-70);
 	}
 
 	&:focus {
-		background-color: var( --studio-jetpack-green-70 );
-		border-color: var( --studio-white );
-		box-shadow: 0 0 0 1px var( --studio-jetpack-green-70 );
+		background-color: var(--studio-jetpack-green-70);
+		border-color: var(--studio-white);
+		box-shadow: 0 0 0 1px var(--studio-jetpack-green-70);
 	}
 
 	&:active {
-		background: var( --studio-jetpack-green-70 );
-		border-color: var( --studio-jetpack-green-70 );
+		background: var(--studio-jetpack-green-70);
+		border-color: var(--studio-jetpack-green-70);
 	}
 
 	&[disabled],
 	&:disabled {
-		background: var( --color-accent-5 );
-		color: var( --color-accent-20 );
-		border-color: var( --color-accent-5 );
+		background: var(--color-accent-5);
+		color: var(--color-accent-20);
+		border-color: var(--color-accent-5);
 	}
 }
 
 .button.is-primary.is-busy {
-	background-image: linear-gradient(
-		-45deg,
-		var( --studio-jetpack-green-50 ) 28%,
-		var( --studio-jetpack-green-60 ) 28%,
-		var( --studio-jetpack-green-60 ) 72%,
-		var( --studio-jetpack-green-50 ) 72%
-	);
+	background-image: linear-gradient(-45deg, var(--studio-jetpack-green-50) 28%, var(--studio-jetpack-green-60) 28%, var(--studio-jetpack-green-60) 72%, var(--studio-jetpack-green-50) 72%);
 }
 
 .button.is-scary {
-	color: var( --color-scary-50 );
-	border-color: var( --color-scary-50 );
+	color: var(--color-scary-50);
+	border-color: var(--color-scary-50);
 
 	&:hover {
-		background-color: var( --color-scary-0 );
-		border-color: var( --color-scary-60 );
-		color: var( --color-scary-60 );
+		background-color: var(--color-scary-0);
+		border-color: var(--color-scary-60);
+		color: var(--color-scary-60);
 	}
 
 	&:focus {
-		background-color: var( --studio-white );
-		border-color: var( --color-scary-70 );
-		color: var( --color-scary-70 );
+		background-color: var(--studio-white);
+		border-color: var(--color-scary-70);
+		color: var(--color-scary-70);
 	}
 
 	&:active {
-		background: var( --color-scary-5 );
-		border-color: var( --color-scary-40 );
+		background: var(--color-scary-5);
+		border-color: var(--color-scary-40);
 	}
 
 	&[disabled],
 	&:disabled {
-		background: var( --color-accent-5 );
-		color: var( --color-accent-20 );
-		border-color: var( --color-accent-5 );
+		background: var(--color-accent-5);
+		color: var(--color-accent-20);
+		border-color: var(--color-accent-5);
 	}
 }
 
 .button.is-primary.is-scary {
-	color: var( --studio-white );
-	background: var( --color-scary-50 );
-	border-color: var( --color-scary-50 );
+	color: var(--studio-white);
+	background: var(--color-scary-50);
+	border-color: var(--color-scary-50);
 
 	&:hover {
-		background-color: var( --color-scary-60 );
-		border-color: var( --color-scary-60 );
+		background-color: var(--color-scary-60);
+		border-color: var(--color-scary-60);
 	}
 
 	&:focus {
-		background-color: var( --color-scary-70 );
-		border-color: var( --studio-white );
-		box-shadow: 0 0 0 1px var( --color-scary-70 );
+		background-color: var(--color-scary-70);
+		border-color: var(--studio-white);
+		box-shadow: 0 0 0 1px var(--color-scary-70);
 	}
 
 	&:active {
-		background: var( --color-scary-60 );
-		border-color: var( --color-scary-60 );
+		background: var(--color-scary-60);
+		border-color: var(--color-scary-60);
 	}
 
 	&[disabled],
 	&:disabled {
-		background: var( --color-accent-5 );
-		color: var( --color-accent-20 );
-		border-color: var( --color-accent-5 );
+		background: var(--color-accent-5);
+		color: var(--color-accent-20);
+		border-color: var(--color-accent-5);
 	}
 }
 
 .button.is-borderless {
 	border: none;
 	background: none;
-	color: var( --studio-gray-80 );
+	color: var(--studio-gray-80);
 	padding-left: 0;
 	padding-right: 0;
 
 	&:hover,
 	&:focus {
 		background: none;
-		color: var( --studio-gray-70 );
+		color: var(--studio-gray-70);
 	}
 
 	&[disabled],
 	&:disabled {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 		cursor: default;
 
 		&:active,
@@ -177,26 +171,26 @@
 }
 
 .button.is-borderless.is-primary {
-	color: var( --color-accent );
+	color: var(--color-accent);
 
 	&:hover,
 	&:focus {
-		color: var( --color-accent-30 );
+		color: var(--color-accent-30);
 	}
 
 	&:active {
-		color: var( --color-accent-50 );
+		color: var(--color-accent-50);
 	}
 
 	&[disabled],
 	&:disabled {
 		background: none;
-		color: var( --studio-gray-10 );
+		color: var(--studio-gray-10);
 	}
 }
 
 .button.is-borderless.is-scary {
-	color: var( --color-scary-50 );
+	color: var(--color-scary-50);
 
 	&[disabled],
 	&:disabled {
@@ -205,15 +199,15 @@
 }
 
 .button.is-borderless.is-primary.is-scary {
-	color: var( --color-scary-50 );
+	color: var(--color-scary-50);
 
 	&:hover,
 	&:focus {
-		color: var( --color-scary-40 );
+		color: var(--color-scary-40);
 	}
 
 	&:active {
-		color: var( --color-scary-60 );
+		color: var(--color-scary-60);
 	}
 
 	&[disabled],
@@ -230,7 +224,7 @@ html {
 		font-weight: 600;
 		line-height: 32px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			font-size: $font-headline-small;
 			line-height: 40px;
 		}
@@ -241,7 +235,7 @@ html {
 		font-weight: 600;
 		line-height: 23px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			font-size: $font-title-small;
 			line-height: 23px;
 		}
@@ -251,7 +245,7 @@ html {
 		font-size: $font-body;
 		line-height: 24px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			font-size: $font-title-small;
 			line-height: 24px;
 		}
@@ -260,16 +254,16 @@ html {
 
 .theme-jetpack-cloud .ReactModalPortal {
 	.dialog.card {
-		box-shadow: 0 0 0 1px var( --color-border-subtle ), 0 4px 12px var( --color-neutral-10 );
+		box-shadow: 0 0 0 1px var(--color-border-subtle), 0 4px 12px var(--color-neutral-10);
 	}
 
 	.dialog__action-buttons {
-		border-radius: 0 0 var( --jetpack-corners-soft ) var( --jetpack-corners-soft );
+		border-radius: 0 0 var(--jetpack-corners-soft) var(--jetpack-corners-soft);
 	}
 }
 
 .empty-content__illustration {
-	filter: hue-rotate( -80deg ) saturate( 1.5 );
+	filter: hue-rotate(-80deg) saturate(1.5);
 }
 
 .no-sites-message,
@@ -286,7 +280,7 @@ html {
 }
 
 .layout__secondary {
-	border-right: 1px solid var( --color-sidebar-border );
+	border-right: 1px solid var(--color-sidebar-border);
 }
 
 .layout.focus-content .layout__secondary {
@@ -300,19 +294,21 @@ html {
 	font-size: $font-body;
 }
 
-.sections__logo, .dashboard-overview__logo, .site-content__logo {
-	fill: var( --color-neutral-10 );
-	color: var( --color-neutral-10 );
+.sections__logo,
+.dashboard-overview__logo,
+.site-content__logo {
+	fill: var(--color-neutral-10);
+	color: var(--color-neutral-10);
 	position: fixed;
 	top: 50%;
 	left: 50%;
-	transform: translate( -50%, -50% );
+	transform: translate(-50%, -50%);
 
 	path {
-		fill: var( --color-neutral-10 );
+		fill: var(--color-neutral-10);
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		width: 100px;
 		height: 100px;
 	}
@@ -328,10 +324,10 @@ html {
 
 	.section-nav__panel {
 		padding-bottom: 0;
-		background: linear-gradient( to bottom, var( --color-neutral-0 ) 0, var( --color-surface ) 4px );
-		border: 1px solid var( --color-neutral-10 );
+		background: linear-gradient(to bottom, var(--color-neutral-0) 0, var(--color-surface) 4px);
+		border: 1px solid var(--color-neutral-10);
 		border-radius: 2px;
-		box-shadow: 0 2px 5px #0000001a, 0 0 56px rgb( 0 0 0 / 8% );
+		box-shadow: 0 2px 5px #0000001a, 0 0 56px rgb(0 0 0 / 8%);
 	}
 
 	.section-nav-group {

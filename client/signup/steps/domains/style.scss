@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .domains__step-section-wrapper {
 	margin: 0 auto;
@@ -44,7 +44,7 @@
 	.search-component.is-open.has-focus {
 		border: none;
 		border-radius: 2px;
-		box-shadow: 0 0 0 3px var( --color-accent-light );
+		box-shadow: 0 0 0 3px var(--color-accent-light);
 	}
 
 	.search-filters__dropdown-filters {
@@ -52,10 +52,10 @@
 	}
 
 	.search-filters__dropdown-filters.search-filters__dropdown-filters--is-open {
-		box-shadow: 0 0 0 3px var( --color-accent-light );
+		box-shadow: 0 0 0 3px var(--color-accent-light);
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		.register-domain-step__search-card,
 		.search-component.is-open.has-focus {
 			border-radius: 0;
@@ -81,11 +81,11 @@ body.is-section-signup.is-white-signup {
 
 		.search-component.is-open.has-focus {
 			border-color: #646970;
-			background: var( --color-surface );
+			background: var(--color-surface);
 			box-shadow: none;
 
 			.search-component__input {
-				background: var( --color-surface );
+				background: var(--color-surface);
 			}
 		}
 
@@ -133,7 +133,7 @@ body.is-section-signup.is-white-signup {
 
 		.domains__domain-side-content {
 			border-bottom: 1px solid;
-			border-bottom-color: var( --studio-gray-5 );
+			border-bottom-color: var(--studio-gray-5);
 			padding: 20px 0;
 			margin: 0;
 
@@ -164,7 +164,7 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.register-domain-step__search-card {
-			background: var( --color-surface );
+			background: var(--color-surface);
 			box-shadow: none;
 			border-radius: 4px;
 			margin: 20px 0 0;
@@ -190,18 +190,18 @@ body.is-section-signup.is-white-signup {
 			border-radius: 4px;
 
 			&::placeholder {
-				color: var( --color-neutral-50 );
+				color: var(--color-neutral-50);
 			}
 		}
 		.search-component.is-open .search-component__input-fade.ltr::before {
 			display: none;
 		}
 		.search-component__open-icon {
-			transform: scaleX( -1 );
+			transform: scaleX(-1);
 		}
 
-		.search-component__icon-navigation.components-button:focus:not( :disabled ) {
-			box-shadow: 0 0 0 1px var( --color-neutral-60 );
+		.search-component__icon-navigation.components-button:focus:not(:disabled) {
+			box-shadow: 0 0 0 1px var(--color-neutral-60);
 		}
 
 		.search-component__icon-search {
@@ -232,7 +232,7 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.search-filters__dropdown-filters-button-text {
-				color: var( --color-neutral-60 );
+				color: var(--color-neutral-60);
 			}
 		}
 	}
@@ -255,13 +255,13 @@ body.is-section-signup.is-white-signup {
 }
 
 // blue signup flow-specific styles
-body.is-section-signup:not( .is-white-signup ) {
+body.is-section-signup:not(.is-white-signup) {
 
 	.domains__step-content {
 
 		a {
 			text-decoration: underline;
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 
 		.domain-transfer-or-connect {
@@ -270,20 +270,26 @@ body.is-section-signup:not( .is-white-signup ) {
 
 				.option-content {
 
-					&__illustration, &__main, &__action, &__header, &__top-text, &__pricing-text {
-						color: var( --color-text-inverted );
+					&__illustration,
+					&__main,
+					&__action,
+					&__header,
+					&__top-text,
+					&__pricing-text {
+						color: var(--color-text-inverted);
 					}
 
-					&__benefits-item-text, &__pricing-cost {
-						filter: brightness( 0.9 );
+					&__benefits-item-text,
+					&__pricing-cost {
+						filter: brightness(0.9);
 					}
 
 					&__benefits-item .gridicon {
-						fill: var( --studio-green-20 );
+						fill: var(--studio-green-20);
 					}
 
 					& + .option-content {
-						border-color: var( --studio-gray-40 );
+						border-color: var(--studio-gray-40);
 					}
 
 				}
@@ -291,8 +297,8 @@ body.is-section-signup:not( .is-white-signup ) {
 			}
 
 			&__support-link {
-				color: var( --color-text-inverted );
-				filter: brightness( 0.9 );
+				color: var(--color-text-inverted);
+				filter: brightness(0.9);
 			}
 
 		}
@@ -300,7 +306,7 @@ body.is-section-signup:not( .is-white-signup ) {
 		.use-my-domain {
 
 			.form-input-validation.is-error {
-				color: var( --color-error-30 );
+				color: var(--color-error-30);
 			}
 
 		}

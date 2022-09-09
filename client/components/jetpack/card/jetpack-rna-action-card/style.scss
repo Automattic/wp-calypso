@@ -1,16 +1,16 @@
-@import '@automattic/typography/styles/variables';
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .jetpack-rna-action-card {
 	box-sizing: content-box;
-	background-color: var( --studio-white );
+	background-color: var(--studio-white);
 	background-repeat: no-repeat;
 	background-position: top right;
 	width: 100%;
 	max-width: 1010px;
 	margin-top: 15px;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var(--studio-gray-5);
 	border-radius: 4px;
 	display: flex;
 	flex-direction: column;

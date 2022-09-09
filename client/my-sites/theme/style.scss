@@ -3,7 +3,7 @@
 }
 
 .theme__sheet-bar {
-	background-color: var( --color-masterbar-item-hover-background );
+	background-color: var(--color-masterbar-item-hover-background);
 	color: white;
 	height: 180px;
 	padding: 0;
@@ -29,7 +29,7 @@
 .theme__sheet-bar-tag {
 	max-width: none;
 	display: block;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	font-size: $font-body;
 	font-weight: 400;
 	padding-top: 5px;
@@ -42,7 +42,7 @@
 	max-width: 1500px;
 	margin: 0 auto;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		flex-direction: column-reverse;
 	}
 }
@@ -53,7 +53,7 @@
 	width: 50%;
 	flex-direction: column;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		width: 100%;
 	}
 }
@@ -61,7 +61,7 @@
 .theme__sheet-action-bar {
 	height: 50px;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		&.card {
 			margin: 0 0 1px;
 		}
@@ -78,11 +78,11 @@
 	margin-right: 20px;
 
 	.theme__sheet-badge-beta {
-		background-color: var( --color-surface );
+		background-color: var(--color-surface);
 		margin-left: 10px;
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		margin-right: 0;
 		position: absolute;
 		top: 5px;
@@ -103,7 +103,7 @@
 .theme__sheet-preview-nav-item {
 	margin-left: auto;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		display: none;
 	}
 }
@@ -124,16 +124,17 @@
 	margin-top: -156px;
 	width: 98%;
 	z-index: 1;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-dark-rgb ), 0 ),
-		0 2px 8px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
-	background-color: transparentize( white, 0.5 );
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-dark-rgb), 0),
+		0 2px 8px 0 rgba(var(--color-neutral-dark-rgb), 0.5);
+	background-color: transparentize(white, 0.5);
 	transition: all 200ms ease-in-out;
 
 	// with width: 98%, gives 4:3 ratio before the image loads
 	// also x-browser issues, so it's smaller than 4:3 proper
 	min-height: 36.15vw; // 36.75vw would be correct, but Safari is slightly off
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		position: relative;
 		margin-top: 0;
 		top: 0;
@@ -143,26 +144,22 @@
 		box-shadow: none;
 
 		&::before {
-			content: '';
+			content: "";
 			display: block;
 			position: absolute;
 			bottom: 0;
 			width: 100%;
 			height: 30%;
-			background: linear-gradient(
-				to bottom,
-				transparent 0,
-				rgba( var( --color-neutral-0-rgb ), 0.5 ) 40%,
-				var( --color-neutral-0 ) 93%
-			);
+			background: linear-gradient(to bottom, transparent 0, rgba(var(--color-neutral-0-rgb), 0.5) 40%, var(--color-neutral-0) 93%);
 		}
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		&.is-active:hover {
 			cursor: pointer;
-			box-shadow: 0 0 0 1px var( --color-neutral-light ),
-				0 2px 10px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
+			box-shadow:
+				0 0 0 1px var(--color-neutral-light),
+				0 2px 10px 0 rgba(var(--color-neutral-dark-rgb), 0.5);
 		}
 	}
 }
@@ -177,20 +174,20 @@
 	position: absolute;
 	margin: 0 auto;
 	padding: 10px;
-	color: var( --color-primary );
+	color: var(--color-primary);
 	font-size: $font-body-small;
 	cursor: pointer;
 	transition: all ease-in-out 100ms;
 
 	&:hover {
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 
 	.theme__sheet-preview-link-text {
 		margin-top: 2px;
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		display: flex;
 		top: auto;
 		bottom: -10px;
@@ -200,12 +197,12 @@
 		.theme__sheet-preview-link-text {
 			margin: 0 auto;
 			padding: 2px 8px 3px;
-			background-color: var( --color-neutral-0 );
-			color: var( --color-text-subtle );
+			background-color: var(--color-neutral-0);
+			color: var(--color-text-subtle);
 			font-size: $font-body-extra-small;
 			font-weight: 600;
 			border-radius: 2px;
-			border: 1px solid var( --color-neutral-5 );
+			border: 1px solid var(--color-neutral-5);
 		}
 	}
 }
@@ -232,7 +229,7 @@
 			max-width: 100%;
 			display: block;
 			margin: 20px auto;
-			border: 1px solid var( --color-neutral-0 );
+			border: 1px solid var(--color-neutral-0);
 		}
 
 		&.alignright,
@@ -253,19 +250,19 @@
 	}
 
 	.wp-caption {
-		border: 1px solid var( --color-neutral-0 );
-		background-color: var( --color-neutral-0 );
+		border: 1px solid var(--color-neutral-0);
+		background-color: var(--color-neutral-0);
 		margin-bottom: 20px;
 	}
 
 	.wp-caption-text {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		font-size: $font-body-extra-small;
 		padding: 3px 8px 6px;
 	}
 
 	h2 {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 		font-size: $font-body-small;
 		font-weight: 400;
 
@@ -273,7 +270,7 @@
 		padding: 15px 20px;
 		border-bottom: 1px solid #dce5eb;
 
-		&:nth-child( n + 2 ) {
+		&:nth-child(n + 2) {
 			// Everything except the first
 			border-top: 1px solid #dce5eb;
 			margin: 20px -20px;
@@ -281,7 +278,7 @@
 
 			&::before {
 				// The "fake" Card separation
-				content: '';
+				content: "";
 				display: block;
 				height: 15px;
 				margin: -15px -21px 15px;
@@ -324,7 +321,7 @@
 
 	code {
 		font-size: $font-body-small;
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		padding: 1px 4px;
 		border-radius: 2px;
 	}
@@ -332,11 +329,11 @@
 	blockquote {
 		padding: 30px;
 		margin: 0 -20px;
-		border-left: 2px solid var( --color-neutral-light );
+		border-left: 2px solid var(--color-neutral-light);
 	}
 
 	.notes {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		margin: 40px -20px;
 		border-top: 1px solid #e9eff3;
 		border-bottom: 1px solid #e9eff3;
@@ -346,7 +343,7 @@
 		line-height: 21px;
 
 		& > p:first-child {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 			font-weight: 600;
 			margin: 0 0 14px;
 		}
@@ -357,7 +354,7 @@
 
 		code {
 			font-size: $font-body-extra-small;
-			background: #ffffff;
+			background: #fff;
 			padding: 2px 4px;
 			border-radius: 2px;
 		}
@@ -375,7 +372,7 @@
 
 .theme__sheet-placeholder {
 	color: transparent;
-	background-color: rgba( 255, 255, 255, 0.4 );
+	background-color: rgba(255, 255, 255, 0.4);
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
@@ -387,35 +384,35 @@
 	a {
 		display: inline-block;
 		position: relative;
-		background: var( --color-neutral-0 );
-		color: var( --color-neutral-70 );
+		background: var(--color-neutral-0);
+		color: var(--color-neutral-70);
 		margin: 4px;
 		padding: 2px 12px;
 		border-radius: 2px;
 		transition: all 100ms ease-in;
 
 		&::after {
-			content: '';
+			content: "";
 			pointer-events: none;
 			position: absolute;
 			width: 100%;
 			height: 100%;
 			border-radius: 2px;
-			background: var( --color-primary-dark );
+			background: var(--color-primary-dark);
 			top: 0;
 			left: 0;
 			padding: 0;
 			z-index: -1;
-			transform: scale( 0.9, 0.9 );
+			transform: scale(0.9, 0.9);
 			transition: transform 300ms, opacity 400ms;
 		}
 
 		&:hover {
-			color: var( --color-text-inverted );
-			background-color: var( --color-primary-dark );
+			color: var(--color-text-inverted);
+			background-color: var(--color-primary-dark);
 
 			&::after {
-				transform: scale( 1.07, 1.16 );
+				transform: scale(1.07, 1.16);
 			}
 		}
 	}
@@ -432,23 +429,23 @@
 	display: flex;
 	align-items: center;
 
-	&:not( :last-child ) {
+	&:not(:last-child) {
 		margin-bottom: 0;
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		flex-wrap: wrap;
 	}
 
 	.gridicon {
-		color: var( --color-neutral-10 );
+		color: var(--color-neutral-10);
 		flex: 0 0 auto;
 	}
 
 	.button {
 		flex: 0 0 auto;
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			flex: 1 1 100%;
 			margin-top: 20px;
 			text-align: center;
@@ -462,7 +459,7 @@
 
 	small {
 		display: block;
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 }
 
@@ -471,19 +468,19 @@
 	align-items: center;
 	margin-bottom: 40px;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		flex-wrap: wrap;
 	}
 
 	.gridicon {
-		color: var( --color-neutral-10 );
+		color: var(--color-neutral-10);
 		flex: 0 0 auto;
 	}
 
 	.button {
 		flex: 0 0 auto;
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			flex: 1 1 100%;
 			margin-top: 20px;
 			text-align: center;
@@ -507,14 +504,14 @@
 }
 
 .theme__sheet-footer-line {
-	color: var( --color-neutral-10 );
-	border-top: 1px solid var( --color-neutral-10 );
+	color: var(--color-neutral-10);
+	border-top: 1px solid var(--color-neutral-10);
 	margin: 32px 0 20px;
 
 	.gridicon {
 		display: block;
 		margin: -12px auto 0;
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 	}
 }
 
@@ -528,7 +525,7 @@
 	width: 50%;
 	margin: 0 0 10px;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		width: 100%;
 	}
 }

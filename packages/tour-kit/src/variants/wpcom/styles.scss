@@ -1,15 +1,17 @@
-@use 'sass:math';
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/z-index';
+@use "sass:math";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/z-index";
 
 $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $dark-gray-700. TODO: replace with standard color
 
 .wpcom-tour-kit-minimized {
 	border-radius: 2px;
-	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
-		0 1px 1px rgba( 0, 0, 0, 0.08 );
+	box-shadow:
+		0 2px 6px rgba(60, 66, 87, 0.08),
+		0 0 0 1px rgba(60, 66, 87, 0.16),
+		0 1px 1px rgba(0, 0, 0, 0.08);
 	background-color: $white;
 	color: $black;
 
@@ -62,7 +64,7 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 
 	&.wpcom-tour-kit-step-card.is-elevated {
 		box-shadow: none;
-		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
+		box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px, rgba(0, 0, 0, 0.1) 0 2px 4px 0;
 	}
 
 	&.components-card {
@@ -111,7 +113,7 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 
 	.components-card__media {
 		height: 0;
-		padding-top: math.percentage( math.div( math.ceil( math.div( 1, 1.53 ) * 100 ), 100 ) ); // img width:height ratio (1:1.53)
+		padding-top: math.percentage(math.div(math.ceil(math.div(1, 1.53) * 100), 100)); // img width:height ratio (1:1.53)
 		position: relative;
 		width: 100%;
 

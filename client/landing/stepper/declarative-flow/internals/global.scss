@@ -1,11 +1,11 @@
 /*
     Global styles for Stepper framework
 */
-@import '@wordpress/components/build-style/style';
-@import '@automattic/calypso-color-schemes';
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/onboarding/styles/variables';
+@import "@wordpress/components/build-style/style";
+@import "@automattic/calypso-color-schemes";
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/onboarding/styles/variables";
 
 /**
  * General onboarding styling
@@ -33,7 +33,7 @@ button {
 	a,
 	a:visited {
 		text-decoration: none;
-		color: var( --color-link );
+		color: var(--color-link);
 	}
 
 	button {
@@ -102,7 +102,7 @@ button {
 			position: absolute;
 			inset-block-start: 20px;
 			inset-inline-start: 24px;
-			fill: var( --color-text );
+			fill: var(--color-text);
 			transform-origin: 0 0;
 		}
 
@@ -113,7 +113,7 @@ button {
 			.flow-progress-indicator {
 				font-weight: 500;
 				font-size: 0.875rem;
-				color: var( --studio-gray-30 );
+				color: var(--studio-gray-30);
 			}
 		}
 
@@ -143,9 +143,9 @@ button {
 .newsletter,
 .link-in-bio {
 	button {
-		&[type='submit'] {
+		&[type="submit"] {
 			font-size: $font-body-small;
-			background-color: var( --studio-blue-50 );
+			background-color: var(--studio-blue-50);
 			font-weight: 500;
 		}
 
@@ -154,13 +154,13 @@ button {
 
 			&.site-icon-with-picker__upload-button {
 				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
-				font-family: 'SF Pro Text', $sans;
+				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
-				border: 1px solid var( --studio-gray-10 );
+				border: 1px solid var(--studio-gray-10);
 
 				svg {
 					transition: ease 300ms;
-					fill: var( --studio-blue-50 );
+					fill: var(--studio-blue-50);
 				}
 
 				span {
@@ -171,7 +171,7 @@ button {
 				&:focus {
 					box-shadow: none;
 					outline: none;
-					background-color: var( --studio-blue-50 );
+					background-color: var(--studio-blue-50);
 
 					svg {
 						fill: #fff;
@@ -179,7 +179,7 @@ button {
 
 					span {
 						font-size: $font-body-extra-small;
-						color: var( --studio-blue-50 );
+						color: var(--studio-blue-50);
 					}
 				}
 			}
@@ -189,13 +189,13 @@ button {
 	fieldset {
 		label {
 			font-size: $font-body;
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 		}
 
-		input[type='text'].form-text-input {
+		input[type="text"].form-text-input {
 			font-size: $font-body-small;
 			border-radius: 4px;
-			border: 1px solid var( --studio-gray-10 );
+			border: 1px solid var(--studio-gray-10);
 
 			&:focus {
 				box-shadow: 0 0 0 2px #e2eaf1;
@@ -215,17 +215,17 @@ button {
 	&.intro {
 		button.intro__button {
 			border-radius: 4px;
-			background-color: var( --studio-gray-100 );
+			background-color: var(--studio-gray-100);
 			transition: ease 300ms;
 
 			&:hover,
 			&:focus {
-				background-color: var( --studio-gray-70 );
+				background-color: var(--studio-gray-70);
 			}
 
 			&:focus {
 				border: none;
-				outline: solid 2px var( --studio-gray-70 );
+				outline: solid 2px var(--studio-gray-70);
 				outline-offset: 2px;
 				box-shadow: none;
 			}

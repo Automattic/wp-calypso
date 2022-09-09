@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '../../assets/stylesheets/shared/mixins/_long-content-fade';
-@import '../../assets/stylesheets/shared/mixins/_breakpoints';
+@import "@automattic/typography/styles/variables";
+@import "../../assets/stylesheets/shared/mixins/_long-content-fade";
+@import "../../assets/stylesheets/shared/mixins/_breakpoints";
 /**
  * Site
  *
@@ -16,10 +16,10 @@
 
 	&.is-reskinned {
 		.site-icon {
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			svg {
-				transform: scale( 0.65 );
-				fill: var( --color-neutral-50 );
+				transform: scale(0.65);
+				fill: var(--color-neutral-50);
 			}
 		}
 	}
@@ -29,13 +29,13 @@
 
 		.site-icon {
 			animation: pulse-light 1.8s ease-in-out infinite;
-			background-color: var( --color-neutral-10 );
+			background-color: var(--color-neutral-10);
 		}
 
 		.site__title,
 		.site__domain {
 			animation: pulse-light 1.8s ease-in-out infinite;
-			background-color: var( --color-neutral-10 );
+			background-color: var(--color-neutral-10);
 			color: transparent;
 			width: 95%;
 
@@ -93,7 +93,7 @@
 
 	.accessible-focus &:focus {
 		outline: none;
-		box-shadow: inset 0 0 0 2px var( --color-primary-light );
+		box-shadow: inset 0 0 0 2px var(--color-primary-light);
 
 		// Temporarily hides fade out effect on right
 		// which is there for extra long domains and titles
@@ -125,7 +125,7 @@
 }
 
 .site__title {
-	color: var( --color-text );
+	color: var(--color-text);
 	display: block;
 	font-size: $font-body-small;
 	font-weight: 400;
@@ -133,7 +133,7 @@
 }
 
 .site__domain {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: block;
 	max-width: 95%;
 	font-size: $font-body-extra-small;
@@ -160,7 +160,7 @@
 	overflow: initial;
 	opacity: 0;
 	transition: opacity 0.2s;
-	transform: translate3d( 0, 0, 0 );
+	transform: translate3d(0, 0, 0);
 	position: absolute;
 	left: 16px;
 	top: 16px;
@@ -170,7 +170,7 @@
 		vertical-align: middle;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
 }
@@ -180,8 +180,8 @@
 }
 
 .site__badge {
-	color: var( --color-neutral-60 );
-	background-color: var( --color-neutral-5 );
+	color: var(--color-neutral-60);
+	background-color: var(--color-neutral-5);
 	font-size: $font-body-extra-small;
 	border-radius: 12px; /* stylelint-disable-line scales/radii */
 	clear: both;
@@ -192,37 +192,37 @@
 
 	&.is-p2,
 	&.is-p2-workspace {
-		background: var( --p2-color-link );
-		color: var( --p2-color-white );
+		background: var(--p2-color-link);
+		color: var(--p2-color-white);
 	}
 }
 
 .current-site .site:hover .site__badge,
 .purchases-site .site:hover .site__badge {
-	background: var( --color-sidebar-menu-hover-background );
-	color: var( --color-sidebar-menu-hover-text );
+	background: var(--color-sidebar-menu-hover-background);
+	color: var(--color-sidebar-menu-hover-text);
 
 	&.is-p2,
 	&.is-p2-workspace {
-		background: var( --p2-color-link-dark );
-		color: var( --p2-color-white );
+		background: var(--p2-color-link-dark);
+		color: var(--p2-color-white);
 	}
 }
 
 .layout__secondary {
 	.site__home {
-		background: var( --color-sidebar-menu-selected-background );
-		color: var( --color-sidebar-menu-selected-text );
+		background: var(--color-sidebar-menu-selected-background);
+		color: var(--color-sidebar-menu-selected-text);
 	}
 
 	.site__badge {
-		background: var( --color-sidebar-menu-hover-background );
-		color: var( --color-sidebar-menu-hover-text );
+		background: var(--color-sidebar-menu-hover-background);
+		color: var(--color-sidebar-menu-hover-text);
 
 		&.is-p2,
 		&.is-p2-workspace {
-			background: var( --p2-color-link );
-			color: var( --p2-color-white );
+			background: var(--p2-color-link);
+			color: var(--p2-color-white);
 		}
 	}
 }

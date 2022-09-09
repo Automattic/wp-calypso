@@ -19,7 +19,7 @@
 	margin-left: auto;
 	margin-right: auto;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-left: 0;
 	}
 }

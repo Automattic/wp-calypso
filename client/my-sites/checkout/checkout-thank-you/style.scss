@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .layout__content {
 	overflow: visible;
@@ -11,7 +11,7 @@
 	text-align: center;
 	width: 100%;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		background: transparent;
 		padding: 14px;
 	}
@@ -44,7 +44,7 @@
 	}
 
 	&:last-child {
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var(--color-neutral-0);
 		border-radius: 0 0 2px 2px;
 	}
 }
@@ -81,7 +81,7 @@
 
 .checkout-thank-you__domain-mapping-details-nameservers,
 .checkout-thank-you__failed-purchases-details-list {
-	border-left: solid 5px var( --color-neutral-5 );
+	border-left: solid 5px var(--color-neutral-5);
 	list-style: none;
 	margin-left: 0;
 	padding-left: 15px;
@@ -89,13 +89,13 @@
 }
 
 .checkout-thank-you__features-header {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	font-size: $font-title-medium;
 	font-weight: 400;
 	line-height: 32px;
 	margin: 48px 48px 24px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		box-shadow: none;
 		margin-bottom: 0;
 	}
@@ -112,7 +112,7 @@
 .checkout-thank-you__purchase-details-list {
 	text-align: center;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 0 24px;
 		padding-bottom: 48px;
 	}
@@ -121,16 +121,16 @@
 // Header subcomponent styles
 .checkout-thank-you__header {
 	position: relative;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	padding: 12px 24px 48px;
 	text-align: center;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-bottom: 72px;
 	}
 }
 .checkout-thank-you__header::before {
-	content: '';
+	content: "";
 	position: absolute;
 	top: -1px;
 	left: 0;
@@ -175,7 +175,7 @@
 		position: relative;
 		flex: 24px 0 0;
 		top: 1px;
-		fill: var( --color-success );
+		fill: var(--color-success);
 		margin-right: 11px;
 	}
 }
@@ -189,7 +189,7 @@
 .checkout-thank-you__header-button {
 	margin: 2em 0;
 
-	button:nth-child( 2 ) {
+	button:nth-child(2) {
 		margin-left: 10px;
 	}
 
@@ -213,11 +213,11 @@
 }
 
 .checkout-thank-you__header.is-placeholder {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		padding-top: 170px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-left: 190px;
 	}
 
@@ -232,7 +232,7 @@
 
 		display: block;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin: 0 auto;
 		}
 	}
@@ -248,7 +248,7 @@
 		margin-top: 15px;
 		width: 90%;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-bottom: 18px;
 			margin-top: 18px;
 		}
@@ -264,7 +264,7 @@
 .checkout-thank-you__footer {
 	padding: 32px 20px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-body;
 		padding: 60px 24px;
 		text-align: left;
@@ -326,7 +326,7 @@
 }
 
 .checkout-thank-you__jetpack-error-explanation {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	font-style: italic;
 	font-weight: 400;
@@ -351,18 +351,19 @@
 		&.is-premium-plan,
 		&.is-business-plan {
 			.thank-you-card {
-				color: var( --color-text );
-				background-color: var( --color-surface );
-				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-					0 1px 2px var( --color-neutral-0 );
+				color: var(--color-text);
+				background-color: var(--color-surface);
+				box-shadow:
+					0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+					0 1px 2px var(--color-neutral-0);
 			}
 		}
 	}
 
 	.thank-you-card__header {
-		color: var( --color-text );
-		background-color: var( --color-surface );
-		box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 );
+		color: var(--color-text);
+		background-color: var(--color-surface);
+		box-shadow: 0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5);
 	}
 
 	.thank-you-card__description {
@@ -374,15 +375,15 @@
 @keyframes floating {
 	0% {
 		opacity: 0;
-		transform: scale( 0.8 ) translateY( 0 ) translateX( 0 ) rotate( 0 );
+		transform: scale(0.8) translateY(0) translateX(0) rotate(0);
 	}
 	70% {
 		opacity: 1;
-		transform: scale( 1 ) translateY( 30px ) translateX( 30px ) rotate( -20deg );
+		transform: scale(1) translateY(30px) translateX(30px) rotate(-20deg);
 	}
 	100% {
 		opacity: 0;
-		transform: scale( 0.8 ) translateY( 0 ) translateX( 0 ) rotate( 0 );
+		transform: scale(0.8) translateY(0) translateX(0) rotate(0);
 	}
 }
 
@@ -390,11 +391,11 @@
 	0%,
 	100% {
 		opacity: 0.1;
-		filter: blur( 1px );
+		filter: blur(1px);
 	}
 	70% {
 		opacity: 0.2;
-		filter: blur( 4px );
+		filter: blur(4px);
 	}
 }
 
@@ -404,46 +405,46 @@
 	top: 40px;
 	right: 0;
 	bottom: 0;
-	max-height: calc( 100vw - 30px );
+	max-height: calc(100vw - 30px);
 	opacity: 0.1;
 	animation: focus 5s infinite ease-in-out;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		left: 0;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
-		transform: scale( 0.8 );
+	@include breakpoint-deprecated( "<660px" ) {
+		transform: scale(0.8);
 		left: 130px;
 		top: -120px;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
-		transform: scale( 1.2 );
+	@include breakpoint-deprecated( ">960px" ) {
+		transform: scale(1.2);
 	}
 
-	@include breakpoint-deprecated( '>1040px' ) {
-		transform: scale( 1.5 );
+	@include breakpoint-deprecated( ">1040px" ) {
+		transform: scale(1.5);
 	}
 
 	.gridicon {
-		fill: var( --color-text-subtle );
+		fill: var(--color-text-subtle);
 		position: absolute;
 		height: auto;
 		width: auto;
 		opacity: 0;
-		transform: scale( 0.8 );
+		transform: scale(0.8);
 		animation: floating 10s infinite ease-in-out;
 	}
 	.gridicons-add {
 		top: 0;
-		left: calc( 50% - 320px );
+		left: calc(50% - 320px);
 		height: 150px;
 		width: 150px;
 	}
 	.gridicons-aside {
 		top: 150px;
-		left: calc( 50% + 310px );
+		left: calc(50% + 310px);
 		height: 70px;
 		width: 70px;
 		animation-delay: 6s;
@@ -452,128 +453,128 @@
 		height: 60px;
 		width: 60px;
 		top: 70px;
-		left: calc( 50% + 220px );
+		left: calc(50% + 220px);
 		animation-delay: 7s;
 	}
 	.gridicons-audio {
 		height: 80px;
 		width: 80px;
 		top: 170px;
-		left: calc( 50% - 220px );
-		transform: rotate( -30deg );
+		left: calc(50% - 220px);
+		transform: rotate(-30deg);
 		animation-delay: 6s;
 	}
 	.gridicons-bell {
 		height: 120px;
 		width: 120px;
 		top: 10px;
-		left: calc( 50% + 290px );
+		left: calc(50% + 290px);
 		animation-delay: 10s;
 	}
 	.gridicons-book {
 		top: 340px;
-		left: calc( 50% - 300px );
+		left: calc(50% - 300px);
 		height: 100px;
 		width: 100px;
 		animation-delay: 1s;
 	}
 	.gridicons-camera {
 		top: 300px;
-		left: calc( 50% + 200px );
+		left: calc(50% + 200px);
 		height: 160px;
 		width: 160px;
-		transform: rotate( -10deg );
+		transform: rotate(-10deg);
 		animation-delay: 3s;
 	}
 	.gridicons-comment {
-		left: calc( 50% + 130px );
+		left: calc(50% + 130px);
 		top: 167px;
 		height: 140px;
 		width: 140px;
-		transform: rotate( 12deg );
+		transform: rotate(12deg);
 	}
 	.gridicons-globe {
 		height: 100px;
 		width: 100px;
 		top: 220px;
-		left: calc( 50% - 330px );
+		left: calc(50% - 330px);
 		animation-delay: 3s;
 	}
 	.gridicons-pencil {
 		height: 220px;
 		width: 220px;
 		top: -110px;
-		left: calc( 50% + 110px );
+		left: calc(50% + 110px);
 		animation-delay: 1s;
 	}
 	.gridicons-phone {
 		height: 80px;
 		width: 80px;
 		top: 130px;
-		left: calc( 50% - 390px );
+		left: calc(50% - 390px);
 		animation-delay: 6s;
 	}
 	.gridicons-reader {
 		height: 130px;
 		width: 130px;
 		top: 360px;
-		left: calc( 50% - 170px );
-		transform: rotate( 12deg );
+		left: calc(50% - 170px);
+		transform: rotate(12deg);
 		animation-delay: 8s;
 	}
 	.gridicons-star {
 		height: 90px;
 		width: 90px;
 		top: 380px;
-		left: calc( 50% + 60px );
+		left: calc(50% + 60px);
 	}
 	.gridicons-video {
 		top: 245px;
-		left: calc( 50% - 160px );
+		left: calc(50% - 160px);
 		animation-delay: 3s;
 	}
 	.gridicons-align-image-right {
 		top: 280px;
-		left: calc( 50% + 90px );
+		left: calc(50% + 90px);
 		animation-delay: 7s;
 	}
 	.gridicons-bookmark {
 		top: 460px;
 		height: 110px;
 		width: 110px;
-		left: calc( 50% - 440px );
+		left: calc(50% - 440px);
 		animation-delay: 5s;
 	}
 	.gridicons-briefcase {
 		top: 320px;
 		height: 80px;
 		width: 80px;
-		left: calc( 50% - 450px );
+		left: calc(50% - 450px);
 		animation-delay: 1s;
 	}
 	.gridicons-calendar {
 		top: 460px;
-		left: calc( 50% + 300px );
+		left: calc(50% + 300px);
 		height: 80px;
 		width: 80px;
 		animation-delay: 2s;
 	}
 	.gridicons-clipboard {
 		top: 240px;
-		left: calc( 50% + 290px );
+		left: calc(50% + 290px);
 		height: 50px;
 		animation-delay: 6s;
 	}
 	.gridicons-cloud-upload {
 		top: 180px;
-		left: calc( 50% - 280px );
+		left: calc(50% - 280px);
 		height: 40px;
 		width: 40px;
 		animation-delay: 5s;
 	}
 	.gridicons-cog {
 		top: 110px;
-		left: calc( 50% + 160px );
+		left: calc(50% + 160px);
 		height: 40px;
 		width: 40px;
 		animation-delay: 1s;
@@ -582,46 +583,46 @@
 		top: 240px;
 		height: 40px;
 		width: 40px;
-		left: calc( 50% - 400px );
+		left: calc(50% - 400px);
 		animation-delay: 1s;
 	}
 	.gridicons-help {
 		top: 460px;
-		left: calc( 50% + 160px );
+		left: calc(50% + 160px);
 		height: 90px;
 		width: 90px;
 		animation-delay: 1s;
 	}
 	.gridicons-link {
 		top: 60px;
-		left: calc( 50% - 160px );
+		left: calc(50% - 160px);
 		height: 50px;
 		width: 50px;
-		transform: rotate( -45deg );
+		transform: rotate(-45deg);
 		animation-delay: 5s;
 	}
 	.gridicons-lock {
 		top: 60px;
-		left: calc( 50% - 400px );
+		left: calc(50% - 400px);
 		height: 50px;
 		width: 50px;
 		animation-delay: 6s;
 	}
 	.gridicons-pages {
 		top: 70px;
-		left: calc( 50% + 70px );
+		left: calc(50% + 70px);
 		height: 50px;
 		width: 50px;
 		animation-delay: 8s;
 	}
 	.gridicons-share {
 		top: 280px;
-		left: calc( 50% + 360px );
+		left: calc(50% + 360px);
 		animation-delay: 2s;
 	}
 	.gridicons-stats {
 		top: 470px;
-		left: calc( 50% - 270px );
+		left: calc(50% - 270px);
 		height: 80px;
 		width: 80px;
 		animation-delay: 9s;
@@ -634,17 +635,17 @@
 	max-width: 500px;
 	margin: 0 auto;
 	padding-bottom: 30px;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 }
 
 /* Title */
 @keyframes fade-in {
 	0% {
-		transform: translateY( 0 );
+		transform: translateY(0);
 		opacity: 0;
 	}
 	100% {
-		transform: translateY( -80px );
+		transform: translateY(-80px);
 		opacity: 1;
 	}
 }
@@ -664,37 +665,37 @@
 .checkout-thank-you__wordpress-logo {
 	height: 180px;
 	width: 180px;
-	fill: var( --color-wpcom );
+	fill: var(--color-wpcom);
 	margin: 0 auto;
 	display: block;
-	transition: transform 0.8s cubic-bezier( 0.075, 0.82, 0.165, 1 );
-	transform: scale( 0.13333 );
+	transition: transform 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
+	transform: scale(0.13333);
 	transform-origin: 50% 0;
 
 	&.is-large {
-		transform: scale( 1 );
+		transform: scale(1);
 	}
 }
 
 @mixin jetpack-primary-button() {
 	// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
-	background-color: var( --studio-jetpack-green-50 );
-	border-color: var( --studio-jetpack-green-50 );
-	color: var( --color-text-inverted );
+	background-color: var(--studio-jetpack-green-50);
+	border-color: var(--studio-jetpack-green-50);
+	color: var(--color-text-inverted);
 
 	&:hover,
 	&:focus {
-		background-color: var( --studio-jetpack-green-60 );
-		border-color: var( --studio-jetpack-green-60 );
-		color: var( --color-text-inverted );
+		background-color: var(--studio-jetpack-green-60);
+		border-color: var(--studio-jetpack-green-60);
+		color: var(--color-text-inverted);
 	}
 
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: var( --color-neutral-20 );
-		background-color: var( --color-surface );
-		border-color: var( --color-neutral-5 );
+		color: var(--color-neutral-20);
+		background-color: var(--color-surface);
+		border-color: var(--color-neutral-5);
 	}
 }
 
@@ -712,7 +713,7 @@
 		display: flex;
 		justify-content: space-between;
 		&.has-seperator {
-			border-top: 1px solid var( --color-neutral-10 );
+			border-top: 1px solid var(--color-neutral-10);
 		}
 		> span {
 			display: block;
@@ -726,7 +727,7 @@
 		padding: 0 16px;
 		text-decoration: none;
 		&:hover {
-			color: var( --studio-jetpack-green );
+			color: var(--studio-jetpack-green);
 		}
 		.select-dropdown__item-text {
 			display: block;
@@ -739,7 +740,7 @@
 			display: none;
 		}
 		&.is-selected {
-			background-color: var( --color-neutral-10 );
+			background-color: var(--color-neutral-10);
 		}
 	}
 }
@@ -755,7 +756,7 @@
 	text-align: center;
 	color: white;
 
-	background-color: var( --studio-jetpack-green-40 );
+	background-color: var(--studio-jetpack-green-40);
 
 	border-radius: 24px; /* stylelint-disable-line scales/radii */
 
@@ -779,7 +780,7 @@
 	.licensing-thank-you-manual-activation-license-key__input.form-text-input {
 		margin-right: 8px;
 
-		background-color: var( --studio-gray-0 );
+		background-color: var(--studio-gray-0);
 
 		border: none;
 	}
@@ -834,7 +835,7 @@
 
 		.jetpack-checkout-thank-you__button,
 		.jetpack-checkout-thank-you__button:visited {
-			border-radius: calc( 2px * 2 );
+			border-radius: calc(2px * 2);
 			@include jetpack-primary-button;
 		}
 	}

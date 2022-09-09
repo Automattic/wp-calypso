@@ -16,9 +16,9 @@
 	border-bottom-left-radius: 0;
 }
 .gridicon.split-button__toggle-icon {
-	transition: transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+	transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 	.split-button.is-menu-visible & {
-		transform: rotate( 180deg );
+		transform: rotate(180deg);
 	}
 }

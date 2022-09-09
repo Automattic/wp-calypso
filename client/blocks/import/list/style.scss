@@ -1,17 +1,18 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 /**
  * Right to Left support
  */
-html[dir='rtl'] {
+html[dir="rtl"] {
 	.import__onboarding-page {
 		.list__importer-action .action-card__button-container {
-			button, a {
+			button,
+			a {
 				text-align: left;
 
 				svg {
-					transform: rotate( 180deg );
+					transform: rotate(180deg);
 				}
 			}
 		}
@@ -42,7 +43,7 @@ html[dir='rtl'] {
 
 		h3 {
 			font-size: 1.125em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-			color: var( --studio-gray-90 );
+			color: var(--studio-gray-90);
 			margin-bottom: 1em;
 		}
 
@@ -63,13 +64,14 @@ html[dir='rtl'] {
 				line-height: 1.25em;
 			}
 
-			a, button {
+			a,
+			button {
 				padding: 0;
 				font-size: 0.875em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				font-weight: 500;
 				line-height: 20px;
 				text-decoration: underline;
-				color: var( --studio-gray-100 );
+				color: var(--studio-gray-100);
 			}
 		}
 

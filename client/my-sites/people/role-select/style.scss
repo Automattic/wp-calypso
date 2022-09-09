@@ -3,7 +3,7 @@
 	margin-bottom: 10px;
 	font-weight: 400;
 
-	input[type='radio'] {
+	input[type="radio"] {
 		margin-top: 3px;
 		margin-right: 8px;
 	}
@@ -13,5 +13,5 @@
 	font-style: italic;
 	font-weight: normal;
 	font-size: $font-body-extra-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }

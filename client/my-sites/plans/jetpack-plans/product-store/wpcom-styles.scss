@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 // this is the breakpoint where sidebar menu collapses on WPCOM
 $wpcom-menu-collapse: 783px;
@@ -16,7 +16,7 @@ $wpcom-menu-collapse: 783px;
 	.button[disabled],
 	.button:disabled,
 	.button.disabled {
-		background-color: var( --studio-gray-5 );
+		background-color: var(--studio-gray-5);
 	}
 
 	h2 {

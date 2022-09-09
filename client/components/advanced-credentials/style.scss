@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .advanced-credentials.main {
 	.step-progress {
@@ -9,21 +9,21 @@
 		font-style: bold;
 
 		.step-progress__element-number-complete {
-			background-color: var( --studio-jetpack-green-50 );
-			color: var( --studio-white );
+			background-color: var(--studio-jetpack-green-50);
+			color: var(--studio-white);
 		}
 		.step-progress__element-number-current {
-			background-color: var( --studio-white );
-			border: 3px solid var( --color-neutral-70 );
-			color: var( --color-neutral-7 );
+			background-color: var(--studio-white);
+			border: 3px solid var(--color-neutral-70);
+			color: var(--color-neutral-7);
 		}
 		.step-progress__element-number {
-			background-color: var( --color-neutral-10 );
+			background-color: var(--color-neutral-10);
 		}
 	}
 
 	// remove the margin for everything but the top section header at smaller widths
-	> :not( :first-child ) {
+	> :not(:first-child) {
 		margin-left: -16px;
 		margin-right: -16px;
 
@@ -65,7 +65,7 @@
 .connection-status__disconnected,
 .connection-status__loading {
 	display: flex;
-	*:not( first-child ) {
+	*:not(first-child) {
 		margin-left: 8px;
 	}
 	svg {
@@ -77,26 +77,26 @@
 
 .connection-status__failed,
 .connection-status__disconnected {
-	color: var( --color-error );
-	fill: var( --color-error );
+	color: var(--color-error);
+	fill: var(--color-error);
 }
 
 .connection-status__connecting {
-	color: var( --color-warning );
-	fill: var( --color-warning );
+	color: var(--color-warning);
+	fill: var(--color-warning);
 }
 
 .connection-status__connected {
-	color: var( --studio-jetpack-green-50 );
-	fill: var( --studio-jetpack-green-50 );
+	color: var(--studio-jetpack-green-50);
+	fill: var(--studio-jetpack-green-50);
 }
 
 .connection-status__loading {
 	circle {
 		@include placeholder();
-		fill: var( --color-neutral-5 );
+		fill: var(--color-neutral-5);
 	}
 	span {
-		color: var( --color-neutral-5 );
+		color: var(--color-neutral-5);
 	}
 }

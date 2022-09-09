@@ -1,23 +1,25 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-@import '@automattic/typography/styles/fonts';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
+@import "@automattic/typography/styles/fonts";
 
 @font-face {
-	font-family: 'Inter';
+	font-family: Inter;
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
-	src: url('https://s0.wp.com/i/fonts/inter/Inter-Regular.woff2?v=3.19') format('woff2'),
-		url('https://s0.wp.com/i/fonts/inter/Inter-Regular.woff?v=3.19') format('woff');
+	src:
+		url("https://s0.wp.com/i/fonts/inter/Inter-Regular.woff2?v=3.19") format("woff2"),
+		url("https://s0.wp.com/i/fonts/inter/Inter-Regular.woff?v=3.19") format("woff");
 }
 
 @font-face {
-		font-family: 'Inter';
-		font-style: normal;
-		font-weight: 500;
-		font-display: swap;
-		src: url('https://s0.wp.com/i/fonts/inter/Inter-Medium.woff2?v=3.19') format('woff2'),
-			url('https://s0.wp.com/i/fonts/inter/Inter-Medium.woff?v=3.19') format('woff');
+	font-family: Inter;
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src:
+		url("https://s0.wp.com/i/fonts/inter/Inter-Medium.woff2?v=3.19") format("woff2"),
+		url("https://s0.wp.com/i/fonts/inter/Inter-Medium.woff?v=3.19") format("woff");
 }
 
 .step-container .step-container__content .theme-info-popup,
@@ -31,7 +33,7 @@
 	min-height: 50vh;
 	padding: 32px;
 	background: #fff;
-	box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04);
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
 	border-radius: 4px;
 	z-index: 2;
 	font-style: normal;
@@ -39,7 +41,7 @@
 	font-size: 16px;
 	line-height: 24px;
 	letter-spacing: -0.1px;
-	color: #2C3338;
+	color: #2c3338;
 
 	@include break-medium {
 		top: 64px;
@@ -52,15 +54,16 @@
 	p,
 	p a,
 	a {
-		font-family: 'SF Pro Text', $sans !important;
+		font-family: "SF Pro Text", $sans !important;
 	}
 
 	a {
-		color: #0675C4;
+		color: #0675c4;
 	}
 
-	h1, h2 {
-		font-family: 'Inter', $sans !important;
+	h1,
+	h2 {
+		font-family: Inter, $sans !important;
 		font-weight: 500;
 		line-height: 24px;
 		margin: 0;
@@ -75,7 +78,7 @@
 		margin-bottom: 1rem;
 
 		a {
-			font-family: 'Inter', $sans !important;
+			font-family: Inter, $sans !important;
 			padding-left: 4px;
 		}
 	}
@@ -102,14 +105,14 @@
 			margin-top: 7px;
 			background: #dcdcde;
 			border-radius: 4px;
-			color: #2C3338;
+			color: #2c3338;
 			font-weight: 500;
 			font-size: 12px;
 			line-height: 20px;
 		}
 	}
 
-	&.loading{
+	&.loading {
 		display: flex;
 		align-items: center;
 		justify-content: center;

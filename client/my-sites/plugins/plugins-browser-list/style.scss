@@ -15,17 +15,17 @@
 			line-height: 28px;
 			/* stylelint-disable-next-line scales/font-weights */
 			font-weight: 500;
-			color: var( --studio-gray-80 );
+			color: var(--studio-gray-80);
 		}
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		padding: 0 16px;
 	}
 }
 
 .plugins-browser-list__header {
-	color: var( --color-gray-90 );
+	color: var(--color-gray-90);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -39,7 +39,7 @@
 			font-size: $font-title-small;
 			font-weight: 500;
 
-			&[class*='plugins-browser-list__search-for'] {
+			&[class*="plugins-browser-list__search-for"] {
 				font-weight: 400;
 			}
 		}

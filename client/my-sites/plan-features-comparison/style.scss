@@ -3,10 +3,10 @@ $plan-features-sidebar-width: 272px;
 
 .plan-pill.is-in-signup {
 	right: 52%;
-	transform: translate( 50% );
+	transform: translate(50%);
 	border-radius: 4px;
-	background-color: var( --studio-green-5 );
-	color: var( --studio-gray-80 );
+	background-color: var(--studio-green-5);
+	color: var(--studio-gray-80);
 	font-size: $font-body-small;
 }
 
@@ -28,7 +28,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features-comparison__table-item.has-border-top {
-	border-top: solid 1px var( --color-neutral-5 );
+	border-top: solid 1px var(--color-neutral-5);
 }
 
 .plan-features-comparison__table-item.is-top-buttons {
@@ -44,7 +44,7 @@ $plan-features-sidebar-width: 272px;
 	& .is-last-feature {
 		.plan-features-comparison__item {
 			padding-bottom: 0;
-			
+
 			margin-left: 0;
 			padding-left: 0;
 
@@ -60,7 +60,7 @@ $plan-features-sidebar-width: 272px;
 	display: flex;
 	align-items: flex-start;
 	padding: 12px 24px 12px 15px;
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	justify-content: center;
 	font-weight: 400;
 	margin-top: 30px;
@@ -82,7 +82,7 @@ $plan-features-sidebar-width: 272px;
 .plans-wrapper {
 	margin: 0 auto;
 	padding: 20px 0 10px;
-	transform: translateY( -20px );
+	transform: translateY(-20px);
 	overflow-x: auto;
 }
 
@@ -92,7 +92,7 @@ $plan-features-sidebar-width: 272px;
 	.signup__steps & {
 		width: auto;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			max-width: 1100px;
 		}
 	}
@@ -100,26 +100,26 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-comparison__table {
 		display: none;
 		font-size: $font-body-small;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		border-spacing: 16px 0;
 		margin-top: -16px;
 		table-layout: fixed;
 		width: 80%;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			display: table;
 			margin: 0 auto;
 			padding: 0 16px;
 		}
 
-		@include breakpoint-deprecated( '<1040px' ) {
+		@include breakpoint-deprecated( "<1040px" ) {
 			border-spacing: 0;
 			margin-left: 15px;
 			margin-right: 15px;
-			width: calc( 100% - 30px );
+			width: calc(100% - 30px);
 		}
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include breakpoint-deprecated( ">1040px" ) {
 			border-spacing: 0;
 			padding: 0;
 		}
@@ -129,31 +129,32 @@ $plan-features-sidebar-width: 272px;
 		margin-bottom: 5px;
 		font-size: $font-title-small;
 		line-height: 0.7;
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 		font-weight: 400;
 	}
 
 	.is-premium-plan .plan-features-comparison__header-title {
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		font-weight: 600;
 	}
 
 	.plan-features-comparison__table-item {
 		text-align: center;
 		transition: opacity 0.05s;
-		border-right: solid 1px var( --color-neutral-5 );
-		border-left: solid 1px var( --color-neutral-5 );
-		background-color: var( --color-surface );
+		border-right: solid 1px var(--color-neutral-5);
+		border-left: solid 1px var(--color-neutral-5);
+		background-color: var(--color-surface);
 		position: relative;
 
-		.is-bold, &.is-bold {
+		.is-bold,
+		&.is-bold {
 			font-weight: bold;
 		}
 	}
 
 	.plan-features-comparison__pricing,
 	.plan-price.is-discounted {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	.plan-features-comparison__pricing {
@@ -162,18 +163,18 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-price {
 			font-weight: 600;
-			color: var( --color-text );
+			color: var(--color-text);
 			margin-right: 10px;
 			font-size: $font-title-large;
 			line-height: $font-title-large;
 			padding-bottom: 12px;
-			font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+			font-family: "Helvetica Neue", helvetica, arial, sans-serif;
 		}
 
 		.plan-price__currency-symbol {
 			font-size: $font-title-large;
 			vertical-align: unset;
-			color: var( --color-text );
+			color: var(--color-text);
 		}
 
 		.plan-price__integer {
@@ -187,28 +188,28 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		.plan-features-comparison__header-billing-info {
-			color: var( --studio-gray-40 );
+			color: var(--studio-gray-40);
 			font-weight: 600;
 			font-size: $font-body-extra-small;
 			padding-bottom: 5px;
 		}
 
 		.plan-price.is-original {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 
 			&::before {
-				border-color: var( --color-success );
+				border-color: var(--color-success);
 			}
 
 			.plan-price__currency-symbol,
 			.plan-price__tax-amount {
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 			}
 		}
 	}
 
 	.plan-features-comparison__header-annual-discount {
-		color: var( --studio-green-60 );
+		color: var(--studio-green-60);
 		&-is-loading {
 			@include placeholder();
 		}
@@ -234,12 +235,12 @@ $plan-features-sidebar-width: 272px;
 			width: 100%;
 		}
 
-		&:not( .is-available ) {
-			color: var( --studio-gray-20 );
+		&:not(.is-available) {
+			color: var(--studio-gray-20);
 
 			.plan-features-comparison__item-title {
 				text-decoration: line-through;
-				color: var( --color-neutral-30 );
+				color: var(--color-neutral-30);
 			}
 		}
 	}
@@ -247,13 +248,13 @@ $plan-features-sidebar-width: 272px;
 	.plan-features-comparison__actions {
 		padding: 0 15px 15px;
 
-		@include breakpoint-deprecated( '<1040px' ) {
+		@include breakpoint-deprecated( "<1040px" ) {
 			padding: 0 12px 12px;
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			padding: 0 20px 20px;
-			border-bottom: solid 1px var( --color-neutral-0 );
+			border-bottom: solid 1px var(--color-neutral-0);
 		}
 	}
 
@@ -261,18 +262,18 @@ $plan-features-sidebar-width: 272px;
 		margin-top: 8px;
 		width: 100%;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin-top: 20px;
 		}
 
 		&.disabled,
 		&[disabled] {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 		}
 	}
 
 	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
-		border-bottom: solid 1px var( --color-neutral-5 );
+		border-bottom: solid 1px var(--color-neutral-5);
 
 		&.is-last-feature {
 			.plan-features-comparison__item-info {
@@ -299,7 +300,7 @@ $plan-features-sidebar-width: 272px;
 
 				& .plan-features-comparison__item-annual-plan {
 					font-weight: 600;
-					color: var( --color-error );
+					color: var(--color-error);
 					font-size: 0.6rem; /* stylelint-disable-line scales/font-sizes */
 					text-transform: uppercase;
 				}
@@ -316,7 +317,7 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-features-comparison__item-checkmark,
 		.plan-features-comparison__item-cross {
-			fill: var( --studio-green-50 );
+			fill: var(--studio-green-50);
 			width: 16px;
 			height: 16px;
 			margin-right: 0;
@@ -338,14 +339,14 @@ $plan-features-sidebar-width: 272px;
 
 	.is-section-signup & {
 		width: 100vw;
-		margin-left: calc( 50% - 50vw );
+		margin-left: calc(50% - 50vw);
 
 		@media ( min-width: 1600px ) {
 			max-width: 1600px;
 			margin-left: -280px;
 		}
 
-		@include breakpoint-deprecated( '<1040px' ) {
+		@include breakpoint-deprecated( "<1040px" ) {
 			padding-top: 12px;
 		}
 	}
@@ -362,23 +363,23 @@ $plan-features-sidebar-width: 272px;
 
 .notouch .signup__step .segmented-control.price-toggle,
 .notouch .plans .segmented-control.price-toggle {
-	background-color: var( --studio-gray-5 );
-	border-color: var( --studio-gray-5 );
+	background-color: var(--studio-gray-5);
+	border-color: var(--studio-gray-5);
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
-	color: var( --color-text );
+	color: var(--color-text);
 	margin-top: 16px;
 
 	.segmented-control__item {
 		border: 1px solid;
 		border-radius: 6px; /* stylelint-disable-line scales/radii */
-		border-color: var( --studio-gray-5 );
+		border-color: var(--studio-gray-5);
 
 		&.is-selected {
 			padding: 1px 0 0 1px;
 		}
 
-		&:hover:not( .is-selected ) {
-			border-color: var( --studio-gray-30 );
+		&:hover:not(.is-selected) {
+			border-color: var(--studio-gray-30);
 		}
 
 		&:first-child {
@@ -386,7 +387,7 @@ $plan-features-sidebar-width: 272px;
 		}
 
 		& .segmented-control__link {
-			color: var( --color-text );
+			color: var(--color-text);
 			padding: 10px 20px;
 
 			&:hover {
@@ -396,16 +397,18 @@ $plan-features-sidebar-width: 272px;
 
 		&.is-selected .segmented-control__link {
 			border-radius: 5px; /* stylelint-disable-line scales/radii */
-			background-color: var( --studio-white );
-			border-color: var( --studio-white );
-			box-shadow: 0 4px 4px rgba( 0, 0, 0, 0.25 ), 0 3px 8px rgba( 0, 0, 0, 0.12 ),
-				inset 0 0 0 rgba( 0, 0, 0, 0.2 );
-			border: 0.5px solid rgba( 0, 0, 0, 0.07 );
+			background-color: var(--studio-white);
+			border-color: var(--studio-white);
+			box-shadow:
+				0 4px 4px rgba(0, 0, 0, 0.25),
+				0 3px 8px rgba(0, 0, 0, 0.12),
+				inset 0 0 0 rgba(0, 0, 0, 0.2);
+			border: 0.5px solid rgba(0, 0, 0, 0.07);
 			padding: 11px 20px;
-			color: var( --color-text );
+			color: var(--color-text);
 
 			&:hover {
-				background-color: var( --studio-white );
+				background-color: var(--studio-white);
 			}
 		}
 	}
@@ -417,10 +420,10 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features-comparison__header-price-group {
 	display: inline;
-	width: calc( 100% + 20px );
+	width: calc(100% + 20px);
 
-	@include breakpoint-deprecated( '<960px' ) {
-		width: calc( 100% + 10px );
+	@include breakpoint-deprecated( "<960px" ) {
+		width: calc(100% + 10px);
 	}
 }
 
@@ -473,13 +476,13 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.plan-features-comparison__item-title {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 	}
 
 	.plan-features-comparison__item.plan-features-comparison__item-available {
 		.plan-features-comparison__item-annual-plan-container
-			.plan-features-comparison__item-annual-plan {
-			color: var( --studio-orange-40 );
+		.plan-features-comparison__item-annual-plan {
+			color: var(--studio-orange-40);
 		}
 	}
 }
@@ -500,20 +503,20 @@ body.is-section-signup.is-white-signup {
 		& .segmented-control__link {
 			border: 1px solid #f2f2f2;
 			&:hover {
-				border: 1px solid var( --studio-gray-10 );
+				border: 1px solid var(--studio-gray-10);
 				background-color: unset;
 				border-radius: 5px; /* stylelint-disable-line scales/radii */
 			}
 		}
 
 		&.is-selected .segmented-control__link {
-			border: 0.5px solid rgba( 0, 0, 0, 0.04 );
-			box-shadow: 0 3px 8px rgba( 0, 0, 0, 0.12 ), 0 3px 1px rgba( 0, 0, 0, 0.04 );
+			border: 0.5px solid rgba(0, 0, 0, 0.04);
+			box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
 			border-radius: 5px; /* stylelint-disable-line scales/radii */
 
 			&:hover {
 				background-color: #fff;
-				border-color: rgba( 0, 0, 0, 0.04 );
+				border-color: rgba(0, 0, 0, 0.04);
 			}
 		}
 	}

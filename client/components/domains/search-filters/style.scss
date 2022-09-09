@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .search-filters__dropdown-filters {
 	align-items: center;
 	height: 51px; // same as .search
-	z-index: z-index( 'root', '.search' );
+	z-index: z-index("root", ".search");
 	margin-left: 16px;
 
 	.button {
@@ -16,21 +16,21 @@
 		padding: 0 1em;
 		transition: 0.1s all linear;
 		width: 100%;
-		color: var( --color-text );
+		color: var(--color-text);
 
 		@include break-mobile {
 			min-width: 120px;
 		}
 
-		background-color: var( --studio-white );
+		background-color: var(--studio-white);
 
-		border: 1px solid var( --color-neutral-20 );
+		border: 1px solid var(--color-neutral-20);
 		border-radius: 4px;
 
 		&.is-borderless {
 			&:hover,
 			&:focus {
-				border-color: var( --color-neutral );
+				border-color: var(--color-neutral);
 			}
 		}
 
@@ -38,7 +38,7 @@
 			top: 0;
 			margin-right: 4px;
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				top: 2px;
 			}
 		}
@@ -50,7 +50,7 @@
 		.search-filters__dropdown-filters-button-text {
 			white-space: nowrap;
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				display: none;
 			}
 		}
@@ -58,7 +58,7 @@
 
 	&.search-filters__dropdown-filters--has-filter-values {
 		.material-icon {
-			fill: var( --color-accent );
+			fill: var(--color-accent);
 		}
 		@include break-mobile {
 			.material-icon {
@@ -73,7 +73,7 @@
 
 	// Use increased specificty to override default z-index for popovers
 	&.popover {
-		z-index: z-index( '.popover', '.search-filters__popover' );
+		z-index: z-index(".popover", ".search-filters__popover");
 	}
 
 	.popover__inner {
@@ -111,7 +111,7 @@
 
 		&.search-filters__button--is-placeholder {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			color: transparent;
 			height: 40px;
 		}
@@ -141,9 +141,9 @@
 	}
 	.token-field__token-text,
 	.token-field__remove-token {
-		background: var( --color-surface );
-		color: var( --color-neutral-50 );
-		border: 1px solid var( --color-neutral-10 );
+		background: var(--color-surface);
+		color: var(--color-neutral-50);
+		border: 1px solid var(--color-neutral-10);
 	}
 	.token-field__token-text {
 		border-right: none;
@@ -156,7 +156,7 @@
 		margin: 5px 5px 5px 16px;
 	}
 
-	input[type='text'].token-field__input {
+	input[type="text"].token-field__input {
 		margin-left: 0;
 		padding-left: 0;
 	}
@@ -173,9 +173,9 @@
 
 	.token-field__suggestion {
 		padding: 6px 8px 6px 16px;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		&.is-selected span {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 		&:first-child {
 			padding-top: 12px;
@@ -183,7 +183,7 @@
 	}
 }
 
-body.is-section-signup:not( .is-white-signup ) {
+body.is-section-signup:not(.is-white-signup) {
 	.search-filters__dropdown-filters > button:hover,
 	.search-filters__dropdown-filters > button:active {
 		background-color: #fdfdfd;
@@ -204,7 +204,7 @@ body.is-section-signup.is-white-signup {
 
 	.search-filters-extensions__popover {
 		@include break-medium {
-			transform: translateX( 65px );
+			transform: translateX(65px);
 		}
 	}
 
@@ -215,12 +215,12 @@ body.is-section-signup.is-white-signup {
 		border: 1px solid #d5d5d7;
 		border-radius: 4px;
 		font-weight: 500;
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 
 		&.is-active {
 			background: initial;
 			font-weight: 500;
-			border-color: var( --studio-gray-50 );
+			border-color: var(--studio-gray-50);
 			color: #2b2d2f;
 		}
 	}

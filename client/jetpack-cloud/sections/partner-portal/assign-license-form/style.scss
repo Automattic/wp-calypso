@@ -1,16 +1,16 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-@import '../mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
+@import "../mixins.scss";
 
 .main.assign-license {
 	// Make sure there's sufficient space for the floating action bar on mobile.
 	padding-bottom: 148px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-bottom: 88px;
 	}
 
-	@include breakpoint-deprecated( '>1400px' ) {
+	@include breakpoint-deprecated( ">1400px" ) {
 		padding-bottom: 0;
 	}
 }
@@ -52,7 +52,7 @@
 	justify-content: space-between;
 	align-items: center;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-wrap: wrap;
 	}
 }
@@ -67,7 +67,7 @@
 	flex-wrap: wrap;
 	flex-grow: 1;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-direction: row;
 		flex-grow: 1;
 		justify-content: flex-end;
@@ -126,7 +126,7 @@ p.assign-license-form__description {
 	text-decoration: underline;
 	white-space: nowrap;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-right: 1rem;
 	}
 }
@@ -139,7 +139,7 @@ p.assign-license-form__description {
 	border-width: 1.5px !important;
 	border-color: transparent;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-bottom: 0;
 	}
 }

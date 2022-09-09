@@ -3,29 +3,29 @@
 	bottom: 0;
 	width: 100%;
 	padding: 16px;
-	background-color: var( --color-neutral-70 );
-	color: var( --color-text-inverted );
-	z-index: z-index( 'root', '.gdpr-banner' );
+	background-color: var(--color-neutral-70);
+	color: var(--color-text-inverted);
+	z-index: z-index("root", ".gdpr-banner");
 
 	&.is-compact {
 		margin-bottom: 0;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		font-size: $font-body;
 		padding: 16px 24px;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		font-size: $font-body;
 		padding: 16px 32px;
 		max-width: 960px;
-		left: calc( 50% - 480px );
+		left: calc(50% - 480px);
 	}
 
 	a {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 		text-decoration: underline;
 		&:hover {
 			text-decoration: none;
@@ -36,7 +36,7 @@
 .card.gdpr-banner__hidden {
 	pointer-events: none;
 	opacity: 0;
-	transform: translateY( 100% );
+	transform: translateY(100%);
 }
 
 .card.gdpr-banner__hiding {
@@ -50,12 +50,12 @@
 @keyframes gdpr-banner__fadeout {
 	0% {
 		opacity: 1;
-		transform: translateY( 0 );
+		transform: translateY(0);
 	}
 
 	100% {
 		opacity: 0;
-		transform: translateY( 100% );
+		transform: translateY(100%);
 	}
 }
 
@@ -68,7 +68,7 @@
 .gdpr-banner__buttons {
 	margin-top: 14px;
 	text-align: center;
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex: 0 0 auto;
 		margin: 0 0 0 16px;
 		text-align: inherit;
@@ -78,7 +78,7 @@
 .gdpr-banner__acknowledge-button {
 	width: 100%;
 	text-align: center;
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		width: auto;
 	}
 }

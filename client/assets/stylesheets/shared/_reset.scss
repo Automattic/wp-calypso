@@ -103,11 +103,11 @@ blockquote::before,
 blockquote::after,
 q::before,
 q::after {
-	content: '';
+	content: "";
 }
 blockquote,
 q {
-	quotes: '' '';
+	quotes: "" "";
 }
 a:focus {
 	outline: thin dotted;
@@ -139,9 +139,9 @@ textarea {
 
 // Remove Firefox inner focus ring around button text (only FF on Windows shows that)
 button::-moz-focus-inner,
-input[type='reset']::-moz-focus-inner,
-input[type='button']::-moz-focus-inner,
-input[type='submit']::-moz-focus-inner {
+input[type="reset"]::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner {
 	border: 0;
 	padding: 0;
 }

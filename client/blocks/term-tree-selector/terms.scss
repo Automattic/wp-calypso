@@ -1,7 +1,7 @@
 .term-tree-selector {
 	position: relative;
-	background-color: var( --color-surface );
-	border: 1px solid var( --color-neutral-10 );
+	background-color: var(--color-surface);
+	border: 1px solid var(--color-neutral-10);
 
 	&.is-small {
 		background-color: transparent;
@@ -9,31 +9,31 @@
 	}
 
 	&.is-error {
-		border-color: var( --color-error );
+		border-color: var(--color-error);
 	}
 
-	&.is-compact .term-tree-selector__search input[type='search'] {
+	&.is-compact .term-tree-selector__search input[type="search"] {
 		font-size: $font-body-extra-small;
 	}
 }
 
-input[type='radio'].term-tree-selector__input,
-input[type='checkbox'].term-tree-selector__input {
+input[type="radio"].term-tree-selector__input,
+input[type="checkbox"].term-tree-selector__input {
 	margin-top: 4px;
 
 	& + label {
 		display: block;
 		margin-left: 24px;
 		transition: all 200ms ease-out;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 
 		&:hover {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 	}
 }
 
-input[type='checkbox'].term-tree-selector__input {
+input[type="checkbox"].term-tree-selector__input {
 	margin-right: 8px;
 }
 
@@ -77,7 +77,7 @@ input[type='checkbox'].term-tree-selector__input {
 
 	.term-tree-selector__list-item.is-placeholder & {
 		color: transparent;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 

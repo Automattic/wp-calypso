@@ -25,7 +25,8 @@ $plan-features-sidebar-width: 272px;
 			align-items: center;
 
 			@media ( min-width: 660px ) and ( max-width: 1040px ) {
-				.plan-features__summary, .plan-features__description {
+				.plan-features__summary,
+				.plan-features__description {
 					padding: 16px 33px;
 
 				}
@@ -44,37 +45,37 @@ $plan-features-sidebar-width: 272px;
 				padding-bottom: 12px;
 
 				&.is-blogger-plan {
-					border-color: var( --color-plan-blogger );
-					border-bottom: solid 2px var( --color-neutral-10 );
+					border-color: var(--color-plan-blogger);
+					border-bottom: solid 2px var(--color-neutral-10);
 				}
 
 				&.is-personal-plan {
-					border-color: var( --color-plan-personal );
-					border-bottom: solid 2px var( --color-neutral-10 );
+					border-color: var(--color-plan-personal);
+					border-bottom: solid 2px var(--color-neutral-10);
 				}
 
 				&.is-premium-plan {
-					border-color: var( --color-plan-premium );
-					border-bottom: solid 2px var( --color-neutral-10 );
+					border-color: var(--color-plan-premium);
+					border-bottom: solid 2px var(--color-neutral-10);
 				}
 
 				&.is-business-plan {
-					border-color: var( --color-plan-business );
-					border-bottom: solid 2px var( --color-neutral-10 );
+					border-color: var(--color-plan-business);
+					border-bottom: solid 2px var(--color-neutral-10);
 				}
 
 				&.is-ecommerce-plan {
-					border-color: var( --color-plan-ecommerce );
-					border-bottom: solid 2px var( --color-neutral-10 );
+					border-color: var(--color-plan-ecommerce);
+					border-bottom: solid 2px var(--color-neutral-10);
 				}
 			}
 
-			 .plan-price {
+			.plan-price {
 				font-weight: 600;
 				margin-right: 10px;
 				font-size: $font-headline-large;
 				text-align: center;
-				font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+				font-family: "Helvetica Neue", helvetica, arial, sans-serif;
 
 				.plan-price__currency-symbol {
 					vertical-align: super;
@@ -89,13 +90,13 @@ $plan-features-sidebar-width: 272px;
 
 			.plan-features__header-title {
 				font-size: 1.25rem;
-				color: var( --color-primary );
+				color: var(--color-primary);
 				line-height: 0.7;
 			}
 
 			.plan-features__header-billing-info {
 				margin-bottom: 1.4em;
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 				line-height: normal;
 				text-align: center;
 			}
@@ -134,10 +135,10 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__mobile {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	margin: 0 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: none;
 	}
 
@@ -160,7 +161,7 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-features__item {
-		border-bottom: solid 1px var( --color-neutral-5 );
+		border-bottom: solid 1px var(--color-neutral-5);
 		font-size: $font-body-small;
 	}
 
@@ -192,8 +193,8 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__mobile-plan {
 	font-size: $font-body-small;
-	border: solid 1px var( --color-neutral-5 );
-	background-color: var( --color-surface );
+	border: solid 1px var(--color-neutral-5);
+	background-color: var(--color-surface);
 	margin-bottom: 24px;
 }
 
@@ -206,38 +207,38 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__table {
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	border-spacing: 16px 0;
 	margin-top: -16px;
 	display: none;
 	table-layout: fixed;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: table;
 	}
 
-	@include breakpoint-deprecated( '<1040px' ) {
+	@include breakpoint-deprecated( "<1040px" ) {
 		border-spacing: 0;
 		margin-left: 15px;
 		margin-right: 15px;
-		width: calc( 100% - 30px );
+		width: calc(100% - 30px);
 	}
 }
 
 .plan-features__table-item {
-	border-right: solid 1px var( --color-neutral-5 );
-	border-left: solid 1px var( --color-neutral-5 );
-	background-color: var( --color-surface );
+	border-right: solid 1px var(--color-neutral-5);
+	border-left: solid 1px var(--color-neutral-5);
+	background-color: var(--color-surface);
 	position: relative;
 
 	&.is-highlighted {
-		border: 1px solid var( --color-primary );
-		background-color: rgba( var( --color-primary-rgb ), 0.1 );
+		border: 1px solid var(--color-primary);
+		background-color: rgba(var(--color-primary-rgb), 0.1);
 		position: relative;
 		top: -1px;
 
 		.plan-features__item-checkmark {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 
 		&.has-partial-border::after {
@@ -252,28 +253,28 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__table-item.has-partial-border {
 	&::after {
-		content: '';
+		content: "";
 		display: block;
 		height: 1px;
-		width: calc( 100% - 48px );
-		border-bottom: 1px solid var( --color-neutral-5 );
+		width: calc(100% - 48px);
+		border-bottom: 1px solid var(--color-neutral-5);
 		position: absolute;
 		bottom: 0;
 		margin: 0 24px;
 
-		@include breakpoint-deprecated( '<1040px' ) {
+		@include breakpoint-deprecated( "<1040px" ) {
 			margin: 0 12px;
-			width: calc( 100% - 24px );
+			width: calc(100% - 24px);
 		}
 	}
 }
 
 .plan-features__table-item.has-border-bottom {
-	border-bottom: solid 1px var( --color-neutral-5 );
+	border-bottom: solid 1px var(--color-neutral-5);
 }
 
 .plan-features__table-item.has-border-top {
-	border-top: solid 1px var( --color-neutral-5 );
+	border-top: solid 1px var(--color-neutral-5);
 }
 
 .plan-features__table-item.is-placeholder {
@@ -298,58 +299,58 @@ $plan-features-sidebar-width: 272px;
 	display: flex;
 	align-items: flex-start;
 	padding: 12px 24px 0 15px;
-	border-bottom: solid 2px var( --color-neutral-10 );
-	background-color: var( --color-surface );
+	border-bottom: solid 2px var(--color-neutral-10);
+	background-color: var(--color-surface);
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		padding: 12px 12px 0;
 	}
 
 	&.is-p2-free,
 	&.is-p2-plus {
 		padding-left: 12px;
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include breakpoint-deprecated( ">1040px" ) {
 			padding-left: 24px;
 		}
 	}
 
 	&.is-p2-plus {
-		border-bottom-color: var( --p2-color-link );
+		border-bottom-color: var(--p2-color-link);
 	}
 
 	.plans-features-main__group.is-wpcom & {
 		&.is-blogger-plan {
-			border-bottom: solid 2px var( --color-plan-blogger );
+			border-bottom: solid 2px var(--color-plan-blogger);
 		}
 
 		&.is-personal-plan {
-			border-bottom: solid 2px var( --color-plan-personal );
+			border-bottom: solid 2px var(--color-plan-personal);
 		}
 
 		&.is-premium-plan {
-			border-bottom: solid 2px var( --color-plan-premium );
+			border-bottom: solid 2px var(--color-plan-premium);
 		}
 
 		&.is-business-plan {
-			border-bottom: solid 2px var( --color-plan-business );
+			border-bottom: solid 2px var(--color-plan-business);
 		}
 
 		&.is-ecommerce-plan {
-			border-bottom: solid 2px var( --color-plan-ecommerce );
+			border-bottom: solid 2px var(--color-plan-ecommerce);
 		}
 	}
 
 	.plans-features-main__group.is-jetpack & {
 		&.is-personal-plan {
-			border-bottom: solid 2px var( --color-warning );
+			border-bottom: solid 2px var(--color-warning);
 		}
 
 		&.is-premium-plan {
-			border-bottom: solid 2px var( --color-success );
+			border-bottom: solid 2px var(--color-success);
 		}
 
 		&.is-business-plan {
-			border-bottom: solid 2px var( --color-plan-ecommerce );
+			border-bottom: solid 2px var(--color-plan-ecommerce);
 		}
 	}
 }
@@ -362,7 +363,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .is-section-plans .plan-features__header-figure {
-	@include breakpoint-deprecated( '<1280px' ) {
+	@include breakpoint-deprecated( "<1280px" ) {
 		width: 24px;
 		height: 24px;
 		margin-right: 10px;
@@ -372,7 +373,7 @@ $plan-features-sidebar-width: 272px;
 .plan-features__header-figure,
 .plan-features__table.has-1-cols .plan-features__header-figure,
 .plan-features__table.has-2-cols .plan-features__header-figure {
-	@include breakpoint-deprecated( '<1040px' ) {
+	@include breakpoint-deprecated( "<1040px" ) {
 		display: none;
 	}
 }
@@ -384,13 +385,13 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-title {
 	font-size: $font-title-small;
-	color: var( --color-primary );
+	color: var(--color-primary);
 	line-height: 0.7;
 }
 
 .plan-features__audience {
 	display: block;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .plan-features__header-price-group,
@@ -401,29 +402,29 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__header-price-group {
-	width: calc( 100% + 20px );
+	width: calc(100% + 20px);
 
-	@include breakpoint-deprecated( '<960px' ) {
-		width: calc( 100% + 10px );
+	@include breakpoint-deprecated( "<960px" ) {
+		width: calc(100% + 10px);
 	}
 }
 
 .plan-features__header-price-group-prices {
-	max-width: calc( 100% - 20px );
+	max-width: calc(100% - 20px);
 
-	@include breakpoint-deprecated( '<960px' ) {
-		max-width: calc( 100% - 10px );
+	@include breakpoint-deprecated( "<960px" ) {
+		max-width: calc(100% - 10px);
 	}
 
 	.plan-price.is-discounted {
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			margin-right: 0;
 		}
 	}
 }
 
 .plan-features__header-discounted-info {
-	color: var( --studio-green-60 );
+	color: var(--studio-green-60);
 	font-weight: 600;
 	margin-top: -16px;
 	margin-bottom: 12px;
@@ -434,17 +435,17 @@ $plan-features-sidebar-width: 272px;
 	line-height: 20px;
 	height: 20px;
 	border-radius: 10px; /* stylelint-disable-line scales/radii */
-	color: var( --color-text-inverted );
-	background: var( --color-success );
+	color: var(--color-text-inverted);
+	background: var(--color-success);
 	font-weight: 400;
 	vertical-align: middle;
 	padding: 0 8px;
 	margin-bottom: 4px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-left: 4px;
 	}
-	@include breakpoint-deprecated( '>1280px' ) {
+	@include breakpoint-deprecated( ">1280px" ) {
 		margin-left: 8px;
 	}
 }
@@ -454,7 +455,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: $font-body-extra-small;
 	font-style: italic;
 	font-weight: 400;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	line-height: normal;
 	display: flex;
 	align-items: baseline;
@@ -464,7 +465,7 @@ $plan-features-sidebar-width: 272px;
 		height: 12px;
 		margin-bottom: 15px;
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			margin-bottom: 9px;
 		}
 	}
@@ -478,10 +479,10 @@ $plan-features-sidebar-width: 272px;
 	font-size: 1.5rem;
 	line-height: 1.5;
 	font-weight: 400;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	padding-bottom: 8px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		font-size: 2rem;
 	}
 	@media ( min-width: $plan-features-sidebar-width + 480px ) {
@@ -493,7 +494,7 @@ $plan-features-sidebar-width: 272px;
 	max-width: 520px;
 	margin: 8px auto 16px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		flex-wrap: wrap;
 		border-radius: 0;
 
@@ -529,7 +530,7 @@ $plan-features-sidebar-width: 272px;
 		margin-top: 5px;
 		margin-bottom: 5px;
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			height: 26px;
 		}
 	}
@@ -541,14 +542,14 @@ $plan-features-sidebar-width: 272px;
 	left: -1px;
 	right: -1px;
 	top: 0;
-	transform: translateY( -21px );
+	transform: translateY(-21px);
 	padding: 0 8px;
-	background: var( --color-neutral-70 );
+	background: var(--color-neutral-70);
 	font-size: $font-body-extra-small;
 	line-height: $plan-features-header-banner-height;
 	text-align: center;
 	text-transform: uppercase;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -559,18 +560,18 @@ $plan-features-sidebar-width: 272px;
 	margin: 0;
 	padding: 24px 24px 0;
 
-	@include breakpoint-deprecated( '<1040px' ) {
+	@include breakpoint-deprecated( "<1040px" ) {
 		padding: 12px 12px 0;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		padding: 20px 20px 0;
 	}
 }
 
 .plan-features__targeted-description-heading {
 	display: block;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .plan-features__item {
@@ -578,13 +579,13 @@ $plan-features-sidebar-width: 272px;
 	margin: 0 24px;
 	padding: 12px 0;
 	font-size: $font-body-small;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		font-size: $font-body-extra-small;
 	}
 
-	@include breakpoint-deprecated( '<1040px' ) {
+	@include breakpoint-deprecated( "<1040px" ) {
 		margin: 0 12px;
 	}
 }
@@ -596,15 +597,15 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__item-checkmark {
 	flex: 0 1 auto;
-	fill: var( --color-primary );
+	fill: var(--color-primary);
 	margin-right: 10px;
 }
 
 .plan-features__item-unavailable {
 	flex: 0 1 auto;
-	fill: var( --color-neutral-30 );
+	fill: var(--color-neutral-30);
 	margin-right: 10px;
-	transform: translate( 0, 2px );
+	transform: translate(0, 2px);
 }
 
 .plan-features__item-tip-info {
@@ -620,13 +621,13 @@ $plan-features-sidebar-width: 272px;
 .plan-features__actions {
 	padding: 0 24px 24px;
 
-	@include breakpoint-deprecated( '<1040px' ) {
+	@include breakpoint-deprecated( "<1040px" ) {
 		padding: 0 12px 12px;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		padding: 0 20px 20px;
-		border-bottom: solid 1px var( --color-neutral-0 );
+		border-bottom: solid 1px var(--color-neutral-0);
 	}
 }
 
@@ -638,7 +639,7 @@ $plan-features-sidebar-width: 272px;
 	width: 100%;
 	margin-top: 8px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-top: 20px;
 	}
 }
@@ -653,10 +654,10 @@ $plan-features-sidebar-width: 272px;
 		font-weight: bold;
 	}
 
-	&.is-annual-plan-feature:not( .is-available ) {
+	&.is-annual-plan-feature:not(.is-available) {
 		.plan-features__item-title {
 			text-decoration: line-through;
-			color: var( --color-neutral-30 );
+			color: var(--color-neutral-30);
 		}
 	}
 }
@@ -685,8 +686,10 @@ $plan-features-sidebar-width: 272px;
 // This UI should really use buttons instead.
 body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	margin: 0 auto 16px;
-	box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ), 0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
-		0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
+	box-shadow:
+		0 1px 1px 0 rgba(0, 0, 0, 0.14),
+		0 2px 1px -1px rgba(0, 0, 0, 0.12),
+		0 1px 3px 0 rgba(0, 0, 0, 0.2);
 
 	.segmented-control__item a {
 		text-decoration: underline;
@@ -699,30 +702,30 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		// This adds a little pointer arrow to the bottom
 		// of the selected segment item. It relies on the
 		// relative positioning above.
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			&::after {
 				display: block;
-				content: '';
+				content: "";
 				width: 0;
 				height: 0;
 				border-left: 10px solid transparent;
 				border-right: 10px solid transparent;
-				border-top: 10px solid var( --color-primary-70 );
+				border-top: 10px solid var(--color-primary-70);
 				position: absolute;
 				bottom: -10px;
-				left: calc( 50% - 10px );
+				left: calc(50% - 10px);
 			}
 		}
 
 		a,
 		a:hover,
 		a:focus {
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				flex-wrap: wrap;
 			}
 			cursor: default;
 			text-decoration: none;
-			background-color: var( --color-primary-70 );
+			background-color: var(--color-primary-70);
 		}
 	}
 }
@@ -730,7 +733,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 .plans-wrapper {
 	margin: 0 auto;
 	padding: 20px 0 10px;
-	transform: translateY( -20px );
+	transform: translateY(-20px);
 	overflow-x: auto;
 }
 
@@ -740,7 +743,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.signup__steps & {
 		width: auto;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			max-width: 1100px;
 		}
 	}
@@ -748,14 +751,14 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__table {
 		display: none;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			display: table;
 			width: 100%;
 			margin: 0 auto;
 			padding: 0 16px;
 		}
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include breakpoint-deprecated( ">1040px" ) {
 			border-spacing: 15px 0;
 			padding: 0;
 		}
@@ -770,7 +773,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__header-title {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		margin-bottom: 5px;
 	}
 
@@ -789,7 +792,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		height: 50px;
 		margin: 16px 20px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			float: none;
 			width: 100px;
 			height: 100px;
@@ -799,7 +802,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__pricing,
 	.plan-price.is-discounted {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	.plan-features__pricing {
@@ -807,7 +810,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		padding: 0;
 		text-align: center;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-bottom: 0;
 			padding: 0 12px;
 		}
@@ -840,12 +843,12 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 		&.disabled,
 		&[disabled] {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 		}
 	}
 
 	.plan-price.is-original::before {
-		border-color: var( --color-success );
+		border-color: var(--color-success);
 	}
 
 	.plan-price,
@@ -858,7 +861,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__row:last-of-type .plan-features__table-item {
-		border-bottom: solid 1px var( --color-neutral-5 );
+		border-bottom: solid 1px var(--color-neutral-5);
 	}
 
 	.plan-features__header-price-group-prices {
@@ -871,24 +874,24 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.is-section-signup & {
 		width: 100vw;
-		margin-left: calc( 50% - 50vw );
+		margin-left: calc(50% - 50vw);
 
 		@media ( min-width: 1600px ) {
 			max-width: 1600px;
 			margin-left: -280px;
 		}
 
-		@include breakpoint-deprecated( '<1040px' ) {
+		@include breakpoint-deprecated( "<1040px" ) {
 			padding-top: 12px;
 		}
 	}
 
 	.is-section-plans & {
 		overflow: hidden;
-		width: calc( 100vw - 278px );
-		margin-left: calc( 50% - 50vw + 138px );
+		width: calc(100vw - 278px);
+		margin-left: calc(50% - 50vw + 138px);
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin-left: 0;
 			width: 100%;
 		}
@@ -959,23 +962,23 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 
 		&.is-blogger-plan {
-			border-color: var( --color-plan-blogger );
+			border-color: var(--color-plan-blogger);
 		}
 
 		&.is-personal-plan {
-			border-color: var( --color-plan-personal );
+			border-color: var(--color-plan-personal);
 		}
 
 		&.is-premium-plan {
-			border-color: var( --color-plan-premium );
+			border-color: var(--color-plan-premium);
 		}
 
 		&.is-business-plan {
-			border-color: var( --color-plan-business );
+			border-color: var(--color-plan-business);
 		}
 
 		&.is-ecommerce-plan {
-			border-color: var( --color-plan-ecommerce );
+			border-color: var(--color-plan-ecommerce);
 		}
 
 		/* scroll stops */
@@ -985,7 +988,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__header-title {
-		color: var( --color-text );
+		color: var(--color-text);
 		font-weight: 600;
 		font-size: $font-title-medium;
 		margin-bottom: 6px;
@@ -993,7 +996,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__header-billing-info {
 		display: block;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		align-items: center;
 		text-align: center;
 	}
@@ -1001,13 +1004,13 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	.plan-features__pricing {
 		padding: 8px 16px;
 		margin: 0;
-		border-top: solid 1px var( --color-neutral-10 );
+		border-top: solid 1px var(--color-neutral-10);
 
 		.plan-price {
 			font-weight: 600;
 			margin-right: 10px;
 			font-size: $font-headline-large;
-			font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
+			font-family: "Helvetica Neue", helvetica, arial, sans-serif;
 		}
 
 		.plan-price__currency-symbol {
@@ -1021,7 +1024,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__table-item {
-		border-top: solid 1px var( --color-neutral-5 );
+		border-top: solid 1px var(--color-neutral-5);
 		vertical-align: middle;
 		padding: 7px 0;
 
@@ -1052,7 +1055,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		}
 
 		&.is-last-feature {
-			border-bottom: solid 1px var( --color-neutral-5 );
+			border-bottom: solid 1px var(--color-neutral-5);
 		}
 	}
 
@@ -1091,7 +1094,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	.plan-features__row:last-child .plan-features__table-item {
-		border-bottom: solid 1px var( --color-neutral-5 );
+		border-bottom: solid 1px var(--color-neutral-5);
 	}
 }
 
@@ -1131,16 +1134,16 @@ button.plan-features__scroll-button {
 	width: 30px;
 	height: 30px;
 	padding: 0;
-	background-color: var( --color-neutral );
+	background-color: var(--color-neutral);
 	border: 0;
 	border-radius: 15px; /* stylelint-disable-line scales/radii */
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	cursor: pointer;
 
 	&:hover,
 	&:active,
 	&:focus {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	.gridicon {
@@ -1149,27 +1152,27 @@ button.plan-features__scroll-button {
 	}
 
 	:root body.is-section-signup .plan-features__scroller-container & {
-		background-color: var( --color-surface );
-		color: var( --color-primary );
+		background-color: var(--color-surface);
+		color: var(--color-primary);
 		padding: 0;
 	}
 
 	&:disabled,
 	&[disabled] {
-		background-color: rgba( var( --color-neutral-rgb ), 0.5 );
-		color: var( --color-neutral-5 );
+		background-color: rgba(var(--color-neutral-rgb), 0.5);
+		color: var(--color-neutral-5);
 	}
 
 	:root body.is-section-signup &:disabled,
 	.is-section-signup &[disabled] {
-		background-color: rgba( var( --color-surface-rgb ), 0.5 );
-		color: var( --color-primary );
+		background-color: rgba(var(--color-surface-rgb), 0.5);
+		color: var(--color-primary);
 	}
 
 	.plan-features__scroll-right & {
 		margin-left: 20px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			margin-left: 5px;
 		}
 	}
@@ -1177,7 +1180,7 @@ button.plan-features__scroll-button {
 	.plan-features__scroll-left & {
 		margin-right: 20px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			margin-right: 5px;
 		}
 	}
@@ -1188,7 +1191,7 @@ button.plan-features__scroll-button {
 	width: auto;
 	bottom: 0;
 	left: 50%;
-	transform: translateX( -50% );
+	transform: translateX(-50%);
 	white-space: nowrap;
 
 	.is-section-plans & {
@@ -1198,7 +1201,7 @@ button.plan-features__scroll-button {
 
 .plan-features__scroll-indicator-dot {
 	display: inline-block;
-	background: var( --color-neutral-dark );
+	background: var(--color-neutral-dark);
 	opacity: 0.3;
 	width: 8px;
 	height: 8px;
@@ -1206,7 +1209,7 @@ button.plan-features__scroll-button {
 	border-radius: 2px;
 
 	.is-section-signup & {
-		background: var( --color-surface );
+		background: var(--color-surface);
 		opacity: 0.5;
 	}
 
@@ -1215,7 +1218,7 @@ button.plan-features__scroll-button {
 	}
 }
 
-@include breakpoint-deprecated( '<480px' ) {
+@include breakpoint-deprecated( "<480px" ) {
 	.plan-features__upgrade-launch-dialog .dialog__content p {
 		padding: 0 20px;
 	}
@@ -1230,29 +1233,32 @@ button.plan-features__scroll-button {
 	.plan-features__item-info.is-annual-plan-feature {
 		&.is-available {
 			.plan-features__item-annual-plan {
-				color: var( --color-success );
+				color: var(--color-success);
 			}
 		}
 
-		&:not( .is-available ) {
+		&:not(.is-available) {
 			.plan-features__item-annual-plan {
-				color: var( --color-error );
+				color: var(--color-error);
 			}
 			.plan-features__item-title {
 				text-decoration: line-through;
-				color: var( --color-neutral-30 );
+				color: var(--color-neutral-30);
 			}
 		}
 	}
 }
 
 .plan-features__mobile-disabled {
-	.plan-features__header, .plan-features__pricing, .plan-features__description, .foldable-card {
+	.plan-features__header,
+	.plan-features__pricing,
+	.plan-features__description,
+	.foldable-card {
 		opacity: 0.4;
 	}
 
 	.plan-features__not-available {
-		color: var( --studio-orange-40 );
+		color: var(--studio-orange-40);
 		font-weight: 600;
 		margin: auto;
 		padding-top: 10px;
@@ -1261,9 +1267,9 @@ button.plan-features__scroll-button {
 }
 
 .plan-features__header-annual-discount {
-	color: var( --color-accent );
+	color: var(--color-accent);
 	font-size: 0.75rem;
-    line-height: normal;
+	line-height: normal;
 	margin-bottom: 0.75rem;
 
 	&-is-loading {

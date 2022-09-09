@@ -1,8 +1,8 @@
 // Module container
-@include breakpoint-deprecated( '>960px' ) {
+@include breakpoint-deprecated( ">960px" ) {
 	.stats__module-column {
 		float: right;
-		width: calc( 50% - 4px );
+		width: calc(50% - 4px);
 
 		&:first-child {
 			float: left;
@@ -14,9 +14,9 @@
 	}
 }
 
-@include breakpoint-deprecated( '>1280px' ) {
+@include breakpoint-deprecated( ">1280px" ) {
 	.stats__module-column {
-		width: calc( 33% - 3px );
+		width: calc(33% - 3px);
 
 		&:last-child {
 			clear: none;
@@ -32,7 +32,7 @@
 }
 
 .is-section-stats .followers-count .button {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: none;
 	}
 }
@@ -40,14 +40,14 @@
 .stats-navigation__control {
 	margin-right: 16px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-right: 0;
 	}
 }
 
 .stats__sticky-navigation.is-sticky .sticky-panel__content {
 	background: white;
-	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 56px rgba(0, 0, 0, 0.075);
 
 	.stats-period-navigation {
 		margin: 9px 0;
@@ -60,8 +60,8 @@
 
 .stats__card {
 	display: flex;
-	background: var( --color-surface );
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 	position: relative;
 	margin-bottom: 24px;
 
@@ -70,7 +70,7 @@
 		box-sizing: border-box;
 		padding: 24px;
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include breakpoint-deprecated( ">1040px" ) {
 			padding: 32px;
 		}
 	}
@@ -94,7 +94,7 @@
 		line-height: 36px;
 		margin-bottom: 4px;
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			line-height: 40px;
 		}
 	}
@@ -103,9 +103,9 @@
 		margin-bottom: 24px;
 		font-size: $font-body;
 		line-height: 24px;
-		color: var( --color-text );
+		color: var(--color-text);
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			line-height: 28px;
 			margin-bottom: 32px;
 		}
@@ -128,7 +128,7 @@
 		.banner__action {
 			margin-top: 14px;
 			margin-right: 0;
-			@include breakpoint-deprecated( '>480px' ) {
+			@include breakpoint-deprecated( ">480px" ) {
 				margin-right: 40px;
 				margin-top: 0;
 
@@ -141,10 +141,10 @@
 	}
 
 	.dismissible-card__close-button {
-		transform: translateY( -50% );
-		-webkit-transform: translateY( -50% );
+		transform: translateY(-50%);
+		-webkit-transform: translateY(-50%);
 		top: 50%;
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			top: unset;
 			transform: unset;
 			-webkit-transform: unset;
@@ -173,7 +173,7 @@
 	padding: 30px;
 	margin-top: 16px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		flex-direction: row;
 		align-items: center;
 	}
@@ -194,8 +194,8 @@
 	}
 
 	p {
-		color: var( --color-text-subtle );
-		@include breakpoint-deprecated( '>960px' ) {
+		color: var(--color-text-subtle);
+		@include breakpoint-deprecated( ">960px" ) {
 			margin-bottom: 0;
 		}
 	}
@@ -204,7 +204,7 @@
 		margin-left: auto;
 		justify-self: flex-end;
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			margin-left: 30px;
 		}
 	}

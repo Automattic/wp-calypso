@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .site-picker__wrapper.card {
 	padding: 0;
@@ -29,22 +29,22 @@ body.is-section-signup.is-white-signup {
 		}
 		.search-component.is-open.has-focus {
 			border-color: #646970;
-			background: var( --color-surface );
+			background: var(--color-surface);
 			box-shadow: none;
 			.search-component__input {
-				background: var( --color-surface );
+				background: var(--color-surface);
 			}
 		}
 		.search-component.is-open .search-component__input-fade.ltr::before {
 			display: none;
 		}
 		.search-component__open-icon {
-			transform: scaleX( -1 );
+			transform: scaleX(-1);
 		}
-		.search-component__icon-navigation.components-button:focus:not( :disabled ) {
-			box-shadow: 0 0 0 1px var( --color-neutral-60 );
+		.search-component__icon-navigation.components-button:focus:not(:disabled) {
+			box-shadow: 0 0 0 1px var(--color-neutral-60);
 		}
-		.search-component input.search-component__input[type='search'] {
+		.search-component input.search-component__input[type="search"] {
 			background: none;
 		}
 		.search-component.is-open .search-component__input-fade::before {
@@ -68,7 +68,7 @@ body.is-section-signup.is-white-signup {
 		}
 		.site-selector {
 			.site {
-				border: solid 1px var( --color-neutral-5 );
+				border: solid 1px var(--color-neutral-5);
 				border-radius: 4px;
 				margin-bottom: 16px;
 			}
@@ -88,11 +88,11 @@ body.is-section-signup.is-white-signup {
 			.site__title {
 				font-size: $font-title-medium;
 				margin-right: 6px;
-				color: var( --color-neutral-100 );
+				color: var(--color-neutral-100);
 			}
 			.site__domain {
 				width: 100%;
-				color: var( --color-neutral-60 );
+				color: var(--color-neutral-60);
 			}
 			.site__badge {
 				border-radius: 4px;

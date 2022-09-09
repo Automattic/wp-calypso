@@ -1,11 +1,11 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/colors.native';
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/colors.native";
 
 .dns__form {
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 	overflow: visible;
 	padding-top: 20px;
 
@@ -20,10 +20,10 @@
 }
 
 body.dns__body-white {
-	background: var( --studio-white );
+	background: var(--studio-white);
 	.sidebar .sidebar__heading::after,
 	.sidebar .sidebar__menu-link::after {
-		border-right-color: var( --studio-white );
+		border-right-color: var(--studio-white);
 	}
 }
 
@@ -45,7 +45,7 @@ body.dns__body-white {
 	}
 
 	.dns__details {
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		font-size: $font-body-small;
 		margin: 4px 16px;
 		@include break-mobile {
@@ -185,19 +185,19 @@ body.dns__body-white {
 
 .dns-records-list-item__action-menu-popover {
 	.popover__menu-item {
-		color: var( --studio-gray-90 );
+		color: var(--studio-gray-90);
 
 		svg {
-			fill: var( --studio-gray-90 );
+			fill: var(--studio-gray-90);
 		}
 
 		&:disabled,
 		&:disabled:hover,
 		&.is-selected:disabled,
 		&:focus:disabled {
-			color: var( --studio-gray-20 );
+			color: var(--studio-gray-20);
 			svg {
-				fill: var( --color-neutral-20 );
+				fill: var(--color-neutral-20);
 			}
 		}
 	}
@@ -205,10 +205,10 @@ body.dns__body-white {
 	.popover__menu-item.is-selected,
 	.popover__menu-item:hover,
 	.popover__menu-item:focus {
-		color: var( --studio-white );
-		background-color: var( --color-primary );
+		color: var(--studio-white);
+		background-color: var(--color-primary);
 		svg {
-			fill: var( --studio-white );
+			fill: var(--studio-white);
 		}
 	}
 }
@@ -239,13 +239,13 @@ a.dns__breadcrumb-button {
 }
 
 .dns__breadcrumb-button {
-	color: var( --color-neutral-80 );
-	fill: var( --color-neutral-80 );
+	color: var(--color-neutral-80);
+	fill: var(--color-neutral-80);
 	height: 40px;
 
 	.popover__menu-item[disabled] {
 		svg.gridicon {
-			fill: var( --color-neutral-20 );
+			fill: var(--color-neutral-20);
 		}
 	}
 
@@ -255,7 +255,7 @@ a.dns__breadcrumb-button {
 		svg.gridicon {
 			top: 0;
 			margin-top: 0;
-			fill: var( --color-neutral-80 );
+			fill: var(--color-neutral-80);
 		}
 	}
 }

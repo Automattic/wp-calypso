@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .jetpack-search .formatted-header.is-left-align {
 	margin-top: 20px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 4px;
 		margin-bottom: 18px;
 	}
@@ -37,7 +37,7 @@
 .jetpack-search__logo {
 	text-align: center;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		text-align: left;
 	}
 
@@ -52,7 +52,7 @@
 	font-size: $font-title-small;
 	margin: 16px 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-title-medium;
 		margin: 20px 0 24px;
 	}
@@ -66,7 +66,7 @@
 		margin-bottom: 16px;
 		line-height: 24px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-bottom: 24px;
 		}
 	}
@@ -77,7 +77,7 @@
 	width: 100%;
 	text-align: center;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		width: auto;
 		text-align: left;
 	}

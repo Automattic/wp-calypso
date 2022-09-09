@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .email-step-side-bar {
 	width: 100%;
@@ -8,11 +8,11 @@
 		font-size: 1.25rem;
 		letter-spacing: 0.2px;
 		line-height: 1.3;
-		color: var( --studio-gray-90 );
+		color: var(--studio-gray-90);
 	}
 
 	.email-step-side-bar__contents {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 		line-height: 1.425;
 		letter-spacing: -0.16px;
 		padding-top: 12px;

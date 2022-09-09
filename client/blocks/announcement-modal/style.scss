@@ -1,9 +1,9 @@
 // @TODO: remove the ignore rule and replace font sizes accordingly
 /* stylelint-disable declaration-property-unit-allowed-list */
 
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 $modal-breakpoint: 600px;
 $modal-breakpoint-phone-height: 415px;
@@ -90,7 +90,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .announcement-modal__headline {
 	font-size: 10px;
 	font-weight: 700;
-	color: var( --studio-blue-40 );
+	color: var(--studio-blue-40);
 }
 
 .announcement-modal__text,
@@ -118,7 +118,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 	height: 95%;
 	align-items: center;
 	justify-content: center;
-	background: var( --studio-blue-5 );
+	background: var(--studio-blue-5);
 	display: flex;
 	text-align: center;
 	overflow: hidden;
@@ -140,7 +140,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 
 .announcement-modal__heading {
 	@include onboarding-font-recoleta;
-	color: var( --studio-gray-90 );
+	color: var(--studio-gray-90);
 	font-size: 24px;
 	line-height: 1.19;
 	margin: 12px 0;
@@ -153,7 +153,7 @@ $modal-footer-height: 30px + ( $modal-footer-padding-v * 2 );
 .announcement-modal__description p {
 	font-size: 15px;
 	line-height: 22px;
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 
 	@media ( min-width: $modal-breakpoint ) {
 		font-size: 17px;

@@ -17,10 +17,10 @@
 	.stats-period-navigation__previous,
 	.stats-period-navigation__next {
 		cursor: pointer;
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 
 		&:hover {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 
 		&.is-disabled {

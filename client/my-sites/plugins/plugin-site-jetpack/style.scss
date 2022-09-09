@@ -28,8 +28,8 @@
 .plugin-site-jetpack__container {
 	display: flex;
 	align-items: center;
-	background: var( --studio-white );
-	border: 1px solid var( --studio-gray-5 );
+	background: var(--studio-white);
+	border: 1px solid var(--studio-gray-5);
 	border-top: 0;
 	padding: 16px 24px;
 
@@ -45,7 +45,7 @@
 		display: flex;
 		flex: 1 1 0;
 		margin-top: 0;
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 	}
 
 	.last-actions {
@@ -64,7 +64,7 @@
 	}
 
 	.plugin-site-jetpack__automanage-notice {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 		font-size: $font-body-extra-small;
 		line-height: 1;
 	}
@@ -79,7 +79,7 @@
 
 	@media screen and ( max-width: 1040px ) {
 		flex-wrap: wrap;
-		border-top: 1px solid var( --studio-gray-5 );
+		border-top: 1px solid var(--studio-gray-5);
 		padding: 0 12px;
 
 		.plugin-site-jetpack__domain {

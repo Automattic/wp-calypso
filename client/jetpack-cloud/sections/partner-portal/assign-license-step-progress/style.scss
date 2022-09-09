@@ -1,78 +1,78 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .assign-license-step-progress {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 40px;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin-bottom: 40px;
 
-    &__step {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
+	&__step {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
 
-    &__step-separator {
-        border: 1px solid var( --studio-gray-80 );
-        width: 20px;
-        height: 0;
-        margin: 0 0.75rem;
+	&__step-separator {
+		border: 1px solid var(--studio-gray-80);
+		width: 20px;
+		height: 0;
+		margin: 0 0.75rem;
 
-        @include break-medium {
-            width: 40px;
-            margin: 0 1.25rem;
-        }
-    }
+		@include break-medium {
+			width: 40px;
+			margin: 0 1.25rem;
+		}
+	}
 
-    &__step-circle {
-        width: 20px;
-        height: 20px;
-        display: flex;
-        border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
-        justify-content: center;
-        align-content: center;
-        align-items: center;
-        font-size: 0.75rem;
-    }
+	&__step-circle {
+		width: 20px;
+		height: 20px;
+		display: flex;
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		justify-content: center;
+		align-content: center;
+		align-items: center;
+		font-size: 0.75rem;
+	}
 
-    &__step-name {
-        margin-left: 0.5rem;
-        white-space: nowrap;
-    }
+	&__step-name {
+		margin-left: 0.5rem;
+		white-space: nowrap;
+	}
 
-    &__step.step-current > &__step-circle {
-        background-color: var( --studio-gray-60 );
-        border: 2px solid var( --studio-gray-60 );
-        color: var( --studio-white );
-    }
+	&__step.step-current > &__step-circle {
+		background-color: var(--studio-gray-60);
+		border: 2px solid var(--studio-gray-60);
+		color: var(--studio-white);
+	}
 
-    &__step.step-next > &__step-circle {
-        border: 2px solid var( --studio-gray-60 );
-        color: var( --studio-gray-80 );
-    }
+	&__step.step-next > &__step-circle {
+		border: 2px solid var(--studio-gray-60);
+		color: var(--studio-gray-80);
+	}
 
-    &__step.step-complete > &__step-circle {
-        background-color: var( --studio-jetpack-green-50 );
-        border: 2px solid var( --studio-jetpack-green-50 );
-        color: var( --studio-white );
-    }
+	&__step.step-complete > &__step-circle {
+		background-color: var(--studio-jetpack-green-50);
+		border: 2px solid var(--studio-jetpack-green-50);
+		color: var(--studio-white);
+	}
 
-    &__step.step-next > &__step-name {
-        display: none;
+	&__step.step-next > &__step-name {
+		display: none;
 
-        @include break-medium {
-            display: flex;
-        }
-    }
+		@include break-medium {
+			display: flex;
+		}
+	}
 
-    &__step.step-complete > &__step-name,
-    &__step.step-complete > &__step-circle,
-    &__step.step-complete + &__step-separator {
-        display: none;
+	&__step.step-complete > &__step-name,
+	&__step.step-complete > &__step-circle,
+	&__step.step-complete + &__step-separator {
+		display: none;
 
-        @include break-medium {
-            display: flex;
-        }
-    }
+		@include break-medium {
+			display: flex;
+		}
+	}
 }

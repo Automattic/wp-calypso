@@ -1,7 +1,7 @@
-@import '../../variables.scss';
-@import '@automattic/calypso-color-schemes/src/calypso-color-schemes';
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import '../../mixins';
+@import "../../variables.scss";
+@import "@automattic/calypso-color-schemes/src/calypso-color-schemes";
+@import "assets/stylesheets/gutenberg-base-styles";
+@import "../../mixins";
 
 .signup-form__overlay.components-modal__screen-overlay {
 	background-color: $white;
@@ -19,7 +19,7 @@
 	height: 100%;
 	max-width: 100%;
 	max-height: 100%;
-	transform: translate( 0%, 0% );
+	transform: translate(0%, 0%);
 	overflow-x: hidden; // prevent fixed reCAPTCHA badge from creating a horizontal scrollbar
 
 	.components-modal__header {
@@ -51,7 +51,7 @@
 			left: 50%;
 			width: 100%;
 			max-width: 540px;
-			transform: translateX( -50% );
+			transform: translateX(-50%);
 		}
 	}
 	.signup-form__legend {
@@ -59,7 +59,7 @@
 
 		& > p {
 			@include onboarding-large-text;
-			color: var( --studio-gray-40 );
+			color: var(--studio-gray-40);
 		}
 	}
 
@@ -76,7 +76,7 @@
 		font-size: $font-body;
 		line-height: 17px;
 		border-radius: 0;
-		border: 1px solid var( --studio-gray-10 );
+		border: 1px solid var(--studio-gray-10);
 		width: 100%;
 		max-width: 100%;
 
@@ -102,24 +102,24 @@
 	.signup-form__login-link {
 		@include onboarding-medium-text;
 		margin: 4px 0 29px;
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 
 		.signup-form__link {
 			@include onboarding-medium-text;
-			color: var( --studio-gray-40 );
+			color: var(--studio-gray-40);
 		}
 	}
 
 	.signup-form__link,
 	.signup-form__link a {
 		@include onboarding-medium-text;
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 	}
 
 	.signup-form__terms-of-service-link {
 		@include onboarding-medium-text;
 		text-align: center;
-		color: var( --studio-gray-30 );
+		color: var(--studio-gray-30);
 		margin: 15px auto 20px;
 		max-width: 400px;
 	}
@@ -181,7 +181,7 @@
 	}
 
 	.signup-form__header-wp-logo {
-		color: var( --studio-blue-90 );
+		color: var(--studio-blue-90);
 		display: flex;
 	}
 
@@ -208,7 +208,7 @@
 			left: 50%;
 			width: 100%;
 			max-width: 1024px;
-			transform: translateX( -50% );
+			transform: translateX(-50%);
 		}
 	}
 
@@ -218,7 +218,7 @@
 
 		& > p {
 			@include onboarding-large-text;
-			color: var( --studio-gray-40 );
+			color: var(--studio-gray-40);
 		}
 	}
 
@@ -248,7 +248,7 @@
 
 	// Thin line between Flexbox Cols
 	.signup-form__anchor-separator {
-		background: var( --studio-gray-5 );
+		background: var(--studio-gray-5);
 		width: 0;
 		@include break-medium {
 			width: 1px;
@@ -298,7 +298,7 @@
 	// UL with Right bullet points
 	ul.signup-form__anchor-list {
 		list-style: disc inside;
-		color: var( --studio-gray-70 );
+		color: var(--studio-gray-70);
 		font-size: 0.875rem;
 		& > li {
 			margin-bottom: 0.5rem;

@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .email-providers-in-depth-comparison__header,
 .email-providers-in-depth-comparison__sub-header {
@@ -40,7 +40,7 @@
 	}
 
 	.professional-email-logo {
-		color: var( --color-wordpress-com );
+		color: var(--color-wordpress-com);
 		height: 48px;
 		min-width: 48px;
 		width: 48px;
@@ -87,7 +87,7 @@
 		}
 
 		.gridicon {
-			fill: var( --studio-gray-20 );
+			fill: var(--studio-gray-20);
 		}
 	}
 }
@@ -117,7 +117,7 @@ $table-padding: 15px;
 			white-space: nowrap;
 		}
 
-		&:nth-child( n + 2 ) {
+		&:nth-child(n + 2) {
 			padding-left: 60px;
 		}
 
@@ -131,24 +131,24 @@ $table-padding: 15px;
 			width: 10%;
 		}
 
-		td:nth-child( n + 1 ) {
+		td:nth-child(n + 1) {
 			padding-left: 0;
 		}
 	}
 
-	tr:nth-child( 2 ) {
+	tr:nth-child(2) {
 		td {
 			vertical-align: bottom;
 		}
 	}
 
-	tr:nth-child( n + 3 ) {
+	tr:nth-child(n + 3) {
 		td {
 			vertical-align: middle;
 		}
 	}
 
-	tr:nth-child( 3 ) {
+	tr:nth-child(3) {
 		td {
 			padding-top: 30px;
 		}
@@ -160,14 +160,14 @@ $table-padding: 15px;
 }
 
 .email-providers-in-depth-comparison-table__feature {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-weight: 600;
 	text-align: right;
 }
 
 .email-providers-in-depth-comparison-table__separator {
 	td {
-		border-top-color: var( --color-neutral-10 );
+		border-top-color: var(--color-neutral-10);
 		border-top-width: 1px;
 		border-top-style: solid;
 	}

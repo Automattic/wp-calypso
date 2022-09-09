@@ -18,9 +18,9 @@
 	float: left;
 	text-align: center;
 	padding: 20px 0;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		width: 100%;
 
 		&:first-child {
@@ -36,7 +36,7 @@
 }
 
 .most-popular__percentage {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	display: block;
 	margin-top: -1em;
 	font-size: $font-body-small;
@@ -46,7 +46,7 @@
 .most-popular__day,
 .most-popular__hour {
 	display: block;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-title-small;
 	margin: 6px 0 22px;
 }
@@ -59,14 +59,14 @@
 	text-align: center;
 	line-height: 24px;
 	clear: both;
-	z-index: z-index( 'root', '.stats-popular__empty' );
+	z-index: z-index("root", ".stats-popular__empty");
 }
 
 .most-popular__notice {
 	top: 25px;
 	margin-bottom: 24px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		top: 10px;
 		margin: 0 5px;
 	}

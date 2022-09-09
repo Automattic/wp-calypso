@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 button {
 	&.options-domain-button {
@@ -38,7 +38,7 @@ button {
 
 		@include break-mobile {
 			&:hover {
-				color: var( --color-neutral-70 );
+				color: var(--color-neutral-70);
 			}
 		}
 	}
