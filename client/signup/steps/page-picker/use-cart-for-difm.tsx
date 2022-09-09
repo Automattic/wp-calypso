@@ -98,15 +98,11 @@ function getDummyCartProducts( {
 	activePlanScheme,
 	difmLiteProduct,
 	translate,
-}: DummyCartParams ): CartItem[] {
+}: DummyCartParams ): Array< CartItem > {
 	let displayedCartItems: CartItem[] = [];
 	if ( difmLiteProduct && activePlanScheme ) {
 		let difmLiteItemPrice = difmLiteProduct.cost;
-		const difmPriceDetals = getDIFMTieredPriceDetails(
-			difmLiteProduct,
-			selectedPages.length,
-			currencyCode
-		);
+		const difmPriceDetals = getDIFMTieredPriceDetails( difmLiteProduct, selectedPages.length );
 		if ( difmPriceDetals ) {
 			const { oneTimeFeeNormalUnits, extraPagesPriceNormalUnits } = difmPriceDetals;
 			if ( extraPagesPriceNormalUnits ) {
@@ -152,8 +148,8 @@ function getSiteCartProducts( {
 	responseCart: ResponseCart;
 	translate: LocalizeProps[ 'translate' ];
 	difmLiteProduct: ProductListItem;
-} ): CartItem[] {
-	const cartItems: CartItem[] = responseCart.products.map( ( product ) => {
+} ): Array< CartItem > {
+	const cartItems: Array< CartItem | null > = responseCart.products.map( ( product ) => {
 		switch ( product.product_slug ) {
 			case PLAN_WPCOM_PRO:
 			case PLAN_PREMIUM:
@@ -182,17 +178,23 @@ function getSiteCartProducts( {
 				};
 			}
 			default:
-				return {
-					productSlug: product.product_slug,
-					nameOverride: translate( 'Website Design Service' ),
-					productOriginalName: product.product_name,
-					itemSubTotal: product.cost,
-					productCost: product.cost,
-					subLabel: translate( 'One-time fee' ),
-				};
+				// We show only products relevent to the DIFM flow
+				return null;
 		}
 	} );
-	return cartItems;
+
+	// Enforce order of display to show the DIFM product first
+	const difmRelatedCartItems = cartItems.filter( ( e ) => e !== null );
+	const difmProduct = difmRelatedCartItems.find( ( e ) => e?.productSlug === WPCOM_DIFM_LITE );
+	const planProduct = difmRelatedCartItems.find(
+		( e ) => e?.productSlug === PLAN_WPCOM_PRO || e?.productSlug === PLAN_PREMIUM
+	);
+	if ( difmProduct && planProduct ) {
+		//Enforce order
+		return [ difmProduct, planProduct ];
+	}
+
+	return [];
 }
 
 export function useCartForDIFM( selectedPages: string[] ): {
