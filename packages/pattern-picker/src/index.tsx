@@ -130,22 +130,26 @@ export function PatternPicker( { onPick }: Props ) {
 					/>
 				) ) }
 			</div>
-			{ index > 0 && (
+			<div className="pattern-picker__controls">
 				<button
-					className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--back"
+					className={ classNames(
+						'pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--back',
+						{ 'is-hidden': index < 1 }
+					) }
 					onClick={ () => setIndex( index - 1 ) }
 				>
 					<Icon icon={ chevronLeft } />
 				</button>
-			) }
-			{ index < patterns.length - 1 && (
 				<button
-					className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--next"
+					className={ classNames(
+						'pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--next',
+						{ 'is-hidden': index >= patterns.length - 1 }
+					) }
 					onClick={ () => setIndex( index + 1 ) }
 				>
 					<Icon icon={ chevronRight } />
 				</button>
-			) }
+			</div>
 			<div className="pattern-picker__cta">
 				<Button
 					className="pattern-picker__select"
