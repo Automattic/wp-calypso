@@ -7,6 +7,10 @@
 		.signup-header {
 			z-index: 1;
 
+			h1 {
+				text-transform: capitalize;
+			}
+
 			.signup-header__right {
 				visibility: hidden;
 			}

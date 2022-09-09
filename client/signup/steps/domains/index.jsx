@@ -683,7 +683,7 @@ class DomainsStep extends Component {
 	}
 
 	isTailoredFlow() {
-		return [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName );
+		return isNewsletterOrLinkInBioFlow( this.props.flowName );
 	}
 
 	renderContent() {
@@ -829,6 +829,7 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
+				shouldHideNavButtons={ this.isTailoredFlow() }
 				stepContent={
 					<div>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }
