@@ -139,7 +139,7 @@ class ReaderPostCard extends Component {
 		if ( isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) ) {
 			isSeen = post?.is_seen;
 		}
-		const isPhotoPost = false; //!! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
+		const isPhotoPost = !! ( post.display_type & DisplayTypes.PHOTO_ONLY ) && ! compact;
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const isDiscover = post.is_discover;
