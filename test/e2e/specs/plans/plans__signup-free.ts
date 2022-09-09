@@ -87,11 +87,6 @@ describe(
 				const plan = await sidebarComponent.getCurrentPlanName();
 				expect( plan ).toBe( 'Free' );
 			} );
-
-			it( 'Site URL matches selected domain', async function () {
-				const url = page.url();
-				expect( url ).toContain( testUser.siteName );
-			} );
 		} );
 
 		afterAll( async function () {
