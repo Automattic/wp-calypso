@@ -71,7 +71,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 			const configuredMailboxCount = getConfiguredTitanMailboxCount( selectedDomain );
 			const maxMailboxCount = getMaxTitanMailboxCount( selectedDomain );
 
-			if ( configuredMailboxCount < maxMailboxCount ) {
+			if ( configuredMailboxCount === maxMailboxCount ) {
 				page.redirect( emailManagement( selectedSiteSlug ?? '', selectedDomainName ) );
 			}
 		}
