@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import {
@@ -121,10 +122,16 @@ export function resolveEmailPlanStatus(
 		text: isLoadingEmails ? translate( 'Loading details' ) : translate( 'Active' ),
 	};
 
-	const errorStatus = {
+	const actionRequiredStatus = {
 		statusClass: 'error',
 		icon: 'info',
 		text: translate( 'Action required' ),
+	};
+
+	const cannotManageStatus = {
+		statusClass: 'error',
+		icon: 'info',
+		text: translate( 'Can’t manage subscription' ),
 	};
 
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -133,7 +140,7 @@ export function resolveEmailPlanStatus(
 			isPendingGSuiteTOSAcceptance( domain ) ||
 			( emailAccount && hasGoogleAccountTOSWarning( emailAccount ) )
 		) {
-			return errorStatus;
+			return actionRequiredStatus;
 		}
 
 		// When users have registered a domain with us, we let them purchase Google Workspace
@@ -151,6 +158,10 @@ export function resolveEmailPlanStatus(
 			};
 		}
 
+		if ( ! canCurrentUserAddEmail( domain ) ) {
+			return cannotManageStatus;
+		}
+
 		return activeStatus;
 	}
 
@@ -164,13 +175,13 @@ export function resolveEmailPlanStatus(
 			startOfToday.setUTCHours( 0, 0, 0, 0 );
 
 			if ( titanExpiryDate < startOfToday ) {
-				return errorStatus;
+				return actionRequiredStatus;
 			}
 		}
 
 		// Check for unused mailboxes
 		if ( emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
-			return errorStatus;
+			return actionRequiredStatus;
 		}
 
 		// Fallback logic if we don't have an emailAccount - this will initially be the case for the email home page
@@ -179,14 +190,18 @@ export function resolveEmailPlanStatus(
 			! emailAccount &&
 			getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain )
 		) {
-			return errorStatus;
+			return actionRequiredStatus;
+		}
+
+		if ( ! canCurrentUserAddEmail( domain ) ) {
+			return cannotManageStatus;
 		}
 
 		return activeStatus;
 	}
 
 	if ( hasEmailForwards( domain ) && emailAccount && hasUnverifiedEmailForward( emailAccount ) ) {
-		return errorStatus;
+		return actionRequiredStatus;
 	}
 
 	return activeStatus;
