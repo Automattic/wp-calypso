@@ -12,6 +12,10 @@
 	p {
 		margin-bottom: 0.5rem;
 	}
+
+	:is(.button[disabled], .button:disabled, .button.disabled) {
+		background-color: var(--studio-gray-5);
+	}
 }
 
 .product-lightbox__modal-overlay {

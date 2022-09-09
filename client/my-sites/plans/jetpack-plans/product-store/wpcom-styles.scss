@@ -13,9 +13,7 @@ $wpcom-menu-collapse: 783px;
 
 :is(.is-group-sites.is-section-plans, .is-section-jetpack-connect) .jetpack-product-store {
 
-	.button[disabled],
-	.button:disabled,
-	.button.disabled {
+	:is(.button[disabled], .button:disabled, .button.disabled) {
 		background-color: var(--studio-gray-5);
 	}
 
