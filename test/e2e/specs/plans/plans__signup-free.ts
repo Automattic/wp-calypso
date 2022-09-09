@@ -28,6 +28,7 @@ describe(
 		let page: Page;
 		let userDetails: NewUserResponse;
 		let userCreatedFlag = false;
+		let selectedFreeDomain: string;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
@@ -56,7 +57,7 @@ describe(
 			it( 'Select a free .wordpress.com domain', async function () {
 				const domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.search( testUser.siteName );
-				await domainSearchComponent.selectDomain( '.wordpress.com' );
+				selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
 			} );
 
 			it( 'Select WordPress.com Free plan', async function () {
@@ -75,6 +76,11 @@ describe(
 
 		describe( 'Validate WordPress.com Free functionality', function () {
 			let sidebarComponent: SidebarComponent;
+
+			it( 'User has the selected free domain', async function () {
+				const urlRegex = `/home/${ selectedFreeDomain }`;
+				expect( page.url() ).toMatch( urlRegex );
+			} );
 
 			it( 'User is on WordPress.com Free plan', async function () {
 				sidebarComponent = new SidebarComponent( page );
