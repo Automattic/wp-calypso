@@ -1,5 +1,3 @@
-const SidebarSeparator = ( { extraClassName = '' } ) => (
-	<li className={ `sidebar__separator ${ extraClassName }` } />
-);
+const SidebarSeparator = () => <li className="sidebar__separator" />;
 
 export default SidebarSeparator;
