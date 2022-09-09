@@ -12,9 +12,7 @@ $modal-breakpoint-mobile: 480px;
 			max-width: 500px;
 		}
 	}
-}
 
-.remove-plan-dialog {
 	background: #ffffff;
 
 	.remove-plan-dialog__close-button {
@@ -60,7 +58,7 @@ $modal-breakpoint-mobile: 480px;
 
 	.remove-plan-dialog__grid-colmn {
 		text-align: left;
-		padding: 24px 48px 0;
+		padding: 48px 48px 0;
 
 		.formatted-header__title {
 			font-size: 1.5rem;
@@ -127,22 +125,23 @@ $modal-breakpoint-mobile: 480px;
 			}
 		}
 	}
-}
 
-.remove-plan-dialog__item-cross-small {
-	color: #e65054;
-	vertical-align: middle;
-	margin-right: 10px;
-}
 
-.remove-plan-dialog__list-plan-features {
-	list-style-type: none;
-	margin: 0;
-	text-align: left;
+	.remove-plan-dialog__item-cross-small {
+		color: #e65054;
+		vertical-align: middle;
+		margin-right: 10px;
+	}
 
-	li {
-		display: grid;
-		grid-template-columns: 32px 1fr;
-		margin-bottom: 5px;
+	.remove-plan-dialog__list-plan-features {
+		list-style-type: none;
+		margin: 0;
+		text-align: left;
+
+		li {
+			display: grid;
+			grid-template-columns: 32px 1fr;
+			margin-bottom: 5px;
+		}
 	}
 }
