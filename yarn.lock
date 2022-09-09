@@ -27568,7 +27568,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-scss@npm:^4.0.2, postcss-scss@npm:^4.0.4":
+"postcss-scss@npm:^4.0.2":
   version: 4.0.4
   resolution: "postcss-scss@npm:4.0.4"
   peerDependencies:
@@ -32722,57 +32722,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"stylelint-config-recommended-scss@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "stylelint-config-recommended-scss@npm:7.0.0"
-  dependencies:
-    postcss-scss: ^4.0.2
-    stylelint-config-recommended: ^8.0.0
-    stylelint-scss: ^4.0.0
-  peerDependencies:
-    stylelint: ^14.4.0
-  checksum: cf8287245f7bec91329b768bddc2a9b16c67df09e4de526c49ffc7beabb8ad3332122135d021342eae93eaf95490ab2222414abadb6096c2de390928529261b9
-  languageName: node
-  linkType: hard
-
 "stylelint-config-recommended@npm:^6.0.0":
   version: 6.0.0
   resolution: "stylelint-config-recommended@npm:6.0.0"
   peerDependencies:
     stylelint: ^14.0.0
   checksum: df3ca2e5ad8754ac461ae07d029fb7d0599fb2b2d90c5dde6982d031ae707b629b96a673d75f0040d89746713b564b14a0b3f65d348426f5e8943f65d461328c
-  languageName: node
-  linkType: hard
-
-"stylelint-config-recommended@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "stylelint-config-recommended@npm:8.0.0"
-  peerDependencies:
-    stylelint: ^14.8.0
-  checksum: 8b34c4d6a9b6401f363a6c78c32e63851a9f19da50c55d3bcacbf9672d827c8395a67b0cda6a0611745c3b7562576e27de958000b5fe7526b3ae5a59a6a68a8b
-  languageName: node
-  linkType: hard
-
-"stylelint-config-standard-scss@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "stylelint-config-standard-scss@npm:5.0.0"
-  dependencies:
-    stylelint-config-recommended-scss: ^7.0.0
-    stylelint-config-standard: ^26.0.0
-  peerDependencies:
-    stylelint: ^14.9.0
-  checksum: 3eb756635cc57c346c6a02e74bc4fb852f2e0cd4ff09e0858374f407df840ace08f50f043c81f9c982e68b807152dd64a2690a7954ba6779f539da5702a00af3
-  languageName: node
-  linkType: hard
-
-"stylelint-config-standard@npm:^26.0.0":
-  version: 26.0.0
-  resolution: "stylelint-config-standard@npm:26.0.0"
-  dependencies:
-    stylelint-config-recommended: ^8.0.0
-  peerDependencies:
-    stylelint: ^14.9.0
-  checksum: 3be795207a8051d313aa90bbfd27493b409fc25bfd76324f16ba4bea8bd290a92301bdb60adc4303ae7111ee5100f1af5d866687b64eb4b132938f8ab30fb3fb
   languageName: node
   linkType: hard
 
@@ -35814,7 +35769,6 @@ swiper@4.5.1:
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
-    postcss-scss: ^4.0.4
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -35831,7 +35785,6 @@ swiper@4.5.1:
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
     stylelint: ^14.11.0
-    stylelint-config-standard-scss: ^5.0.0
     tslib: ^2.3.0
     typescript: ^4.7.4
     v8-profiler-next: ^1.9.0
