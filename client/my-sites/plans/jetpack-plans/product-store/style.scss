@@ -26,7 +26,12 @@
 
 	.info-popover.owner-info__pop-over {
 		line-height: inherit;
+		pointer-events: all;
 	}
+}
+
+:is(.product-lightbox__modal, .jetpack-product-store) :is(.button[disabled], .button:disabled, .button.disabled) {
+	pointer-events: none;
 }
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jetpack-product-store .header .header__main-title .formatted-header__title {
