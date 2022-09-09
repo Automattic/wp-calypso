@@ -10,6 +10,7 @@ import {
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
 	JETPACK_CREDENTIALS_STORE,
+	JETPACK_CREDENTIALS_TEST_SUCCESS,
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -109,6 +110,14 @@ export const success = ( action, { rewind_state } ) =>
 				};
 			} catch ( e ) {}
 		} )(),
+		// The idea is to mark the credentials test as valid so
+		// it doesn't need to be tested again.
+		{
+			type: JETPACK_CREDENTIALS_TEST_SUCCESS,
+			siteId: action.siteId,
+			role: action.credentials.role,
+			testResult: true,
+		},
 	] );
 
 export const failure = ( action, error ) => ( dispatch, getState ) => {
