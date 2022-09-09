@@ -87,12 +87,12 @@ export function search( options: SearchParams ) {
 
 function getFilterbyAuthor( author: string ): {
 	bool: {
-		should: { term: object }[];
+		must: { term: object }[];
 	};
 } {
 	return {
 		bool: {
-			should: [ { term: { 'plugin.author.raw': author } }, { term: { 'plugin.author': author } } ],
+			must: [ { term: { 'plugin.author.raw': author } } ],
 		},
 	};
 }
