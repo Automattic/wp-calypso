@@ -402,7 +402,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 
 		case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
 			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred because it was registered less than 60 days ago and it also cannot be mapped.",
+				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred because it was registered less than 60 days ago.",
 				{
 					args: { domain },
 					components: {

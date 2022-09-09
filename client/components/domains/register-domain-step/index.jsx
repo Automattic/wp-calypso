@@ -1439,9 +1439,11 @@ class RegisterDomainStep extends Component {
 	};
 
 	showAvailabilityErrorMessage( domain, error, errorData ) {
-		const { DOTBLOG_SUBDOMAIN, TRANSFERRABLE } = domainAvailability;
+		const { DOTBLOG_SUBDOMAIN, TRANSFERRABLE, RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE } =
+			domainAvailability;
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
+			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
 			( this.props.isSignupStep && DOTBLOG_SUBDOMAIN === error )
 		) {
 			return;
@@ -1455,9 +1457,11 @@ class RegisterDomainStep extends Component {
 	}
 
 	showSuggestionErrorMessage( domain, error, errorData ) {
-		const { DOTBLOG_SUBDOMAIN, TRANSFERRABLE } = domainAvailability;
+		const { DOTBLOG_SUBDOMAIN, TRANSFERRABLE, RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE } =
+			domainAvailability;
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
+			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
 			( this.props.isSignupStep && DOTBLOG_SUBDOMAIN === error )
 		) {
 			return;

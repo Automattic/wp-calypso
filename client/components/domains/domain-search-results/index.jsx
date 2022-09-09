@@ -79,6 +79,7 @@ class DomainSearchResults extends Component {
 			TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
 			TLD_NOT_SUPPORTED_TEMPORARILY,
 			TRANSFERRABLE,
+			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
 			UNKNOWN,
 		} = domainAvailability;
 
@@ -97,6 +98,7 @@ class DomainSearchResults extends Component {
 				TLD_NOT_SUPPORTED,
 				TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE,
 				TLD_NOT_SUPPORTED_TEMPORARILY,
+				RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
 				UNKNOWN,
 			].includes( lastDomainStatus ) &&
 			get( this.props, 'products.domain_map', false )
