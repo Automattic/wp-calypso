@@ -13,6 +13,7 @@ function getTask( taskData = {} ) {
 		actionUrl: '#',
 		taskType: 'blog',
 		displayBadge: false,
+		title: 'Foo Task',
 	};
 
 	return { ...task, ...taskData };
@@ -27,29 +28,42 @@ describe( 'ChecklistItem', () => {
 		} );
 	} );
 
-	// describe( 'when the task depends on the completion of other tasks', () => {
-	// 	describe( 'and the other tasks are not completed', () => {
-	// 		it( 'disables the task', () => {
-	// 			const { getByText } = render(
-	// 				<ChecklistItem task={ getTask( { displayBadge: true } ) } />
-	// 			);
-	// 		} );
-	// 	} );
-	// 	describe( 'and the other tasks are completed', () => {
-	// 		it( 'enables the task', () => {
-	// 			const { getByText } = render(
-	// 				<ChecklistItem task={ getTask( { displayBadge: true } ) } />
-	// 			);
-	// 		} );
-	// 	} );
-	// } );
-	// describe( 'when the task is complete', () => {
-	// 	it( 'disables the task', () => {
-	// 		render( <ChecklistItem task={ getTask( { isCompleted: true } ) } /> );
-	// 		screen.debug();
-	// 		const checkmark = screen.queryByRole( 'svg' );
-	// 		console.log( { checkmark } );
-	// 		// expect( actual ).toBeFalsy();
-	// 	} );
-	// } );
+	describe( 'when the task is complete', () => {
+		it( 'shows the task complete icon', () => {
+			render( <ChecklistItem task={ getTask( { isCompleted: true } ) } /> );
+			const taskCompleteIcon = screen.queryByLabelText( 'Task complete' );
+			expect( taskCompleteIcon ).toBeTruthy();
+		} );
+		it( 'hides the task enabled icon', () => {
+			render( <ChecklistItem task={ getTask( { isCompleted: true } ) } /> );
+			const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
+			expect( taskEnabledIcon ).toBeFalsy();
+		} );
+		it( 'disables the task', () => {
+			render( <ChecklistItem task={ getTask( { isCompleted: true } ) } /> );
+			const taskButton = screen.queryByRole( 'link' );
+			expect( taskButton ).toHaveAttribute( 'disabled' );
+		} );
+	} );
+
+	describe( 'when the task depends on the completion of other tasks', () => {
+		describe( 'and some of the other tasks are not completed', () => {
+			it( 'disables the task', () => {
+				const otherTaskCompleted = true;
+
+				render( <ChecklistItem task={ getTask( { dependencies: [ ! otherTaskCompleted ] } ) } /> );
+				const taskButton = screen.queryByRole( 'link' );
+				expect( taskButton ).toHaveAttribute( 'disabled' );
+			} );
+		} );
+		describe( 'and the other tasks are completed', () => {
+			it( 'enables the task', () => {
+				const otherTaskCompleted = true;
+
+				render( <ChecklistItem task={ getTask( { dependencies: [ otherTaskCompleted ] } ) } /> );
+				const taskButton = screen.queryByRole( 'link' );
+				expect( taskButton ).not.toHaveAttribute( 'disabled' );
+			} );
+		} );
+	} );
 } );
