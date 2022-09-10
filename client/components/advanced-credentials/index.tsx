@@ -16,6 +16,7 @@ import {
 	deleteCredentials,
 	updateCredentials,
 	testCredentials,
+	markCredentialsAsInvalid,
 } from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsTestStatus from 'calypso/state/selectors/get-jetpack-credentials-test-status';
@@ -102,7 +103,11 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	);
 
 	useEffect( () => {
-		dispatch( testCredentials( siteId, role ) );
+		if ( hasCredentials ) {
+			dispatch( testCredentials( siteId, role ) );
+		} else {
+			dispatch( markCredentialsAsInvalid( siteId, role ) );
+		}
 	}, [ hasCredentials ] );
 
 	useEffect(
