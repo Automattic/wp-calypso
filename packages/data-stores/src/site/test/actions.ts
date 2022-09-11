@@ -440,7 +440,9 @@ describe( 'Site Actions', () => {
 
 		it( 'should send style_variation_slug to themes/mine API if the design has style variation', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
-			const generator = setDesignOnSite( siteSlug, mockedDesign, mockedStyleVariation );
+			const generator = setDesignOnSite( siteSlug, mockedDesign, {
+				styleVariation: mockedStyleVariation,
+			} );
 
 			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
 			expect( generator.next().value ).toEqual(
@@ -484,8 +486,7 @@ describe( 'Site Actions', () => {
 					...mockedDesign,
 					verticalizable: true,
 				},
-				undefined,
-				mockedSiteVerticalId
+				{ verticalId: mockedSiteVerticalId }
 			);
 
 			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired

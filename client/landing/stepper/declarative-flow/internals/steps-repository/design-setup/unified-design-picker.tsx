@@ -244,12 +244,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				);
 			}
 			setPendingAction( () =>
-				setDesignOnSite(
-					siteSlugOrId,
-					_selectedDesign,
-					selectedStyleVariation,
-					siteVerticalId
-				).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
+				setDesignOnSite( siteSlugOrId, _selectedDesign, {
+					styleVariation: selectedStyleVariation,
+					verticalId: siteVerticalId,
+				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 			);
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign ),

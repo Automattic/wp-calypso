@@ -105,6 +105,11 @@ export interface Design {
 	hide?: boolean;
 }
 
+export interface DesignOptions {
+	styleVariation?: StyleVariation;
+	verticalId?: string;
+}
+
 export interface DesignPreviewOptions {
 	language?: string;
 	vertical_id?: string;
