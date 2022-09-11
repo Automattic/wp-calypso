@@ -405,6 +405,7 @@ class InvitePeople extends Component {
 	renderInviteForm = () => {
 		const { site, translate, needsVerification, isJetpack, showSSONotice } = this.props;
 		let includeFollower;
+		const includeSubscriber = ! isEnabled( 'subscriber-importer' );
 
 		if ( ! isEnabled( 'subscriber-importer' ) ) {
 			// Atomic private sites don't support Viewers/Followers.
@@ -450,6 +451,7 @@ class InvitePeople extends Component {
 							value={ this.state.role }
 							disabled={ this.state.sendingInvites }
 							includeFollower={ includeFollower }
+							includeSubscriber={ includeSubscriber }
 							explanation={ this.renderRoleExplanation() }
 						/>
 
