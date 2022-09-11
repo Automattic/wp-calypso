@@ -1,9 +1,11 @@
 import {
 	isMonthly,
+	isStarterPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
+	isWpComProPlan,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 
@@ -11,8 +13,7 @@ export default function getPlanFeatures(
 	productSlug: string | undefined,
 	translate: ReturnType< typeof useTranslate >,
 	withinFirstYear: boolean,
-	hasDomain: boolean,
-	domainSlug: string
+	hasDomain: boolean
 ): string[] {
 	if ( ! productSlug ) {
 		return [];
@@ -23,14 +24,8 @@ export default function getPlanFeatures(
 	/**
 	 * Define feature labels.
 	 */
-	const freeDomainFirstYear = String( translate( 'Your free domain for the first year' ) );
-	const freeDomain = String(
-		translate( 'Your free domain www.%(slug)s', {
-			args: { slug: domainSlug },
-		} )
-	);
 	const bestInClassHosting = String( translate( 'Best-in-class hosting' ) );
-	const addFreeSite = String( translate( 'An ad-free site' ) );
+	const adFreeSite = String( translate( 'An ad-free site' ) );
 	const collectPayments = String( translate( 'The ability to collect payments' ) );
 	const emailCustomerSupport = String( translate( 'Unlimited customer support via email' ) );
 	const liveChat = String( translate( 'Access to live chat support' ) );
@@ -46,7 +41,9 @@ export default function getPlanFeatures(
 	const premiumDesign = String(
 		translate( 'Premium design options customized for online stores' )
 	);
-	const more = String( translate( 'and more' ) );
+	const highQualityVideo = String( translate( 'High quality videos' ) );
+	const managedHosting = String( translate( 'Access to managed hosting' ) );
+	const more = String( translate( 'and more…' ) );
 
 	/**
 	 * Personal plan
@@ -56,32 +53,20 @@ export default function getPlanFeatures(
 		if ( ! isMonthlyPlan ) {
 			// Without domain
 			if ( ! hasDomain ) {
-				return [
-					freeDomainFirstYear,
-					bestInClassHosting,
-					addFreeSite,
-					collectPayments,
-					emailCustomerSupport,
-				];
+				return [ bestInClassHosting, adFreeSite, collectPayments, emailCustomerSupport ];
 			}
 
 			// With domain within first year
 			if ( withinFirstYear ) {
-				return [
-					freeDomain,
-					bestInClassHosting,
-					addFreeSite,
-					collectPayments,
-					emailCustomerSupport,
-				];
+				return [ bestInClassHosting, adFreeSite, collectPayments, emailCustomerSupport ];
 			}
 
 			// With domain post first year
-			return [ bestInClassHosting, addFreeSite, collectPayments, emailCustomerSupport ];
+			return [ bestInClassHosting, adFreeSite, collectPayments, emailCustomerSupport ];
 		}
 
 		// Monthly plan
-		return [ bestInClassHosting, addFreeSite, collectPayments, emailCustomerSupport ];
+		return [ bestInClassHosting, adFreeSite, collectPayments, emailCustomerSupport ];
 	}
 
 	/**
@@ -93,26 +78,24 @@ export default function getPlanFeatures(
 			// Without domain
 			if ( ! hasDomain ) {
 				return [
-					freeDomainFirstYear,
 					liveChat,
 					earnAdRevenue,
 					premiumThemes,
 					analyticsIntegration,
 					bestInClassHosting,
-					addFreeSite,
+					adFreeSite,
 				];
 			}
 
 			// With domain within first year
 			if ( withinFirstYear ) {
 				return [
-					freeDomain,
 					liveChat,
 					earnAdRevenue,
 					premiumThemes,
 					analyticsIntegration,
 					bestInClassHosting,
-					addFreeSite,
+					adFreeSite,
 					collectPayments,
 				];
 			}
@@ -124,7 +107,7 @@ export default function getPlanFeatures(
 				premiumThemes,
 				analyticsIntegration,
 				bestInClassHosting,
-				addFreeSite,
+				adFreeSite,
 				collectPayments,
 			];
 		}
@@ -135,7 +118,7 @@ export default function getPlanFeatures(
 			premiumThemes,
 			analyticsIntegration,
 			bestInClassHosting,
-			addFreeSite,
+			adFreeSite,
 			collectPayments,
 			emailCustomerSupport,
 		];
@@ -149,28 +132,12 @@ export default function getPlanFeatures(
 		if ( ! isMonthlyPlan ) {
 			// Without domain
 			if ( ! hasDomain ) {
-				return [
-					freeDomainFirstYear,
-					accessPlugins,
-					seoTools,
-					automatedBackups,
-					sftpAndDatabase,
-					liveChat,
-					more,
-				];
+				return [ accessPlugins, seoTools, automatedBackups, sftpAndDatabase, liveChat, more ];
 			}
 
 			// With domain within first year
 			if ( withinFirstYear ) {
-				return [
-					freeDomain,
-					accessPlugins,
-					seoTools,
-					automatedBackups,
-					sftpAndDatabase,
-					liveChat,
-					more,
-				];
+				return [ accessPlugins, seoTools, automatedBackups, sftpAndDatabase, liveChat, more ];
 			}
 
 			// With domain post first year
@@ -197,28 +164,12 @@ export default function getPlanFeatures(
 		if ( ! isMonthlyPlan ) {
 			// Without domain
 			if ( ! hasDomain ) {
-				return [
-					freeDomainFirstYear,
-					acceptPayments,
-					shippingCarriers,
-					accessPlugins,
-					seoTools,
-					liveChat,
-					more,
-				];
+				return [ acceptPayments, shippingCarriers, accessPlugins, seoTools, liveChat, more ];
 			}
 
 			// With domain within first year
 			if ( withinFirstYear ) {
-				return [
-					freeDomain,
-					acceptPayments,
-					shippingCarriers,
-					accessPlugins,
-					seoTools,
-					liveChat,
-					more,
-				];
+				return [ acceptPayments, shippingCarriers, accessPlugins, seoTools, liveChat, more ];
 			}
 
 			// With domain post first year
@@ -241,6 +192,39 @@ export default function getPlanFeatures(
 			accessPlugins,
 			seoTools,
 			bestInClassHosting,
+			more,
+		];
+	}
+
+	/**
+	 * Starter plan
+	 */
+	if ( isStarterPlan( productSlug ) ) {
+		return [
+			managedHosting,
+			seoTools,
+			earnAdRevenue,
+			acceptPayments,
+			shippingCarriers,
+			premiumDesign,
+			accessPlugins,
+			seoTools,
+			bestInClassHosting,
+			more,
+		];
+	}
+
+	/**
+	 * Pro plan
+	 */
+	if ( isWpComProPlan( productSlug ) ) {
+		return [
+			accessPlugins,
+			premiumThemes,
+			earnAdRevenue,
+			highQualityVideo,
+			sftpAndDatabase,
+			automatedBackups,
 			more,
 		];
 	}
