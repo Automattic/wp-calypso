@@ -60,7 +60,7 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 export const getCampaignStatus = ( status: string ) => {
 	switch ( status ) {
 		case 'created': {
-			return __( 'Waiting moderation' );
+			return __( 'Pending review' );
 		}
 		case 'rejected': {
 			return __( 'Rejected' );
