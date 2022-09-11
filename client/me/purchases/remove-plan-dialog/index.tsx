@@ -29,18 +29,18 @@ export const RemovePlanDialog = ( {
 	 */
 	const buttons = [
 		{
-			action: 'cancel',
-			label: translate( 'Keep my plan' ),
-			onClick: closeDialog,
-		},
-		{
-			isPrimary: true,
 			action: 'removePlan',
 			label: translate( 'Cancel my plan', {
 				comment:
 					'This button removes the active plan and all active Marketplace subscriptions on the site',
 			} ),
 			onClick: removePlan,
+		},
+		{
+			action: 'cancel',
+			label: translate( 'Keep my plan' ),
+			onClick: closeDialog,
+			isPrimary: true,
 		},
 	];
 
@@ -79,7 +79,7 @@ export const RemovePlanDialog = ( {
 		if ( planFeatures.length > 0 ) {
 			return (
 				<Fragment>
-					<p>{ translate( 'If you cancel your plan, once it expires, you will lose:' ) }</p>
+					<p>{ translate( 'If you cancel your plan, you will lose:' ) }</p>
 					<ul className="remove-plan-dialog__list-plan-features">
 						{ planFeatures.map( ( feature, index ) => {
 							return (
