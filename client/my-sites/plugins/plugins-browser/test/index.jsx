@@ -31,6 +31,10 @@ jest.mock( 'calypso/data/marketplace/use-es-query', () => ( {
 		data: { plugins: mockPlugins },
 		fetchNextPage: jest.fn(),
 	} ) ),
+	useESPluginsInfinite: jest.fn( () => ( {
+		data: { plugins: mockPlugins },
+		fetchNextPage: jest.fn(),
+	} ) ),
 } ) );
 
 jest.mock( '@automattic/languages', () => [

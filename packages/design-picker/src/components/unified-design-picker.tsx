@@ -15,6 +15,7 @@ import {
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
+	SHOW_ALL_SLUG,
 } from '../constants';
 import {
 	getDesignPreviewUrl,
@@ -397,7 +398,10 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 
 		result.sort( sortDesigns );
 
-		if ( isEnabled( 'signup/design-picker-pattern-assembler' ) ) {
+		if (
+			isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+			categorization?.selection === SHOW_ALL_SLUG
+		) {
 			const blankCanvasDesign = {
 				recipe: {
 					stylesheet: 'pub/blank-canvas-blocks',

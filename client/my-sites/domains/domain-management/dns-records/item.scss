@@ -1,5 +1,5 @@
 .dns-records__list-item {
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 	display: flex;
 	justify-content: space-between;
 	overflow: auto;
@@ -10,9 +10,9 @@
 		min-width: 65px;
 
 		span {
-			background: var( --color-neutral-light );
+			background: var(--color-neutral-light);
 			border-radius: 2px;
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 			display: block;
 			font-size: $font-body-extra-small;
 			margin: 0 10px 0 0;
@@ -26,12 +26,12 @@
 		word-break: break-all;
 
 		strong {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			font-weight: normal;
 		}
 
 		em {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			display: block;
 			font-size: $font-body-extra-small;
 		}

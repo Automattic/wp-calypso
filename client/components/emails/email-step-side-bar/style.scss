@@ -1,38 +1,33 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .email-step-side-bar {
-    width: 100%;
+	width: 100%;
 
-    .email-step-side-bar__title {
-        font-size: 1.25rem;
-        letter-spacing: 0.2px;
-        line-height: 1.625rem;
-        color: var( --studio-gray-90 );
-    }
+	.email-step-side-bar__title {
+		font-size: 1.25rem;
+		letter-spacing: 0.2px;
+		line-height: 1.3;
+		color: var(--studio-gray-90);
+	}
 
-    .email-step-side-bar__contents {
-        color: var( --studio-gray-60 );
-        line-height: 1.25rem;
-        letter-spacing: -0.16px;
-        padding-top: 12px;
-        font-size: 0.875rem;
-		padding-left: 30px;
-		text-indent:-30px;
-    }
-}
+	.email-step-side-bar__contents {
+		color: var(--studio-gray-60);
+		line-height: 1.425;
+		letter-spacing: -0.16px;
+		padding-top: 12px;
+		font-size: 0.875rem;
+		padding-left: 1.25em;
+		text-indent: -1em;
+	}
 
-.gridicons-checkmark {
-	display: inline-flex;
-	align-self: center;
-	height: 1em;
-	width: 1em;
-	top: 0.125em;
-	position: relative;
-}
-
-svg {
-	padding-top: 4px;
-	fill: #1d2327;
-	margin-right: 13px;
+	.gridicons-checkmark {
+		display: inline-flex;
+		align-self: center;
+		height: 1em;
+		width: 1em;
+		top: 0.125em;
+		left: -0.25em;
+		position: relative;
+	}
 }

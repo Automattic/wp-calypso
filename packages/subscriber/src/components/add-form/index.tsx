@@ -111,8 +111,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function onEmailChange( value: string, index: number ) {
-		setEmail( value, index );
-		setIsValidEmail( value, index );
+		const _value = value.trim();
+		setEmail( _value, index );
+		setIsValidEmail( _value, index );
 	}
 
 	function setEmail( value: string, index: number ) {

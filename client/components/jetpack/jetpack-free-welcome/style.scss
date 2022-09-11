@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .jetpack-free-welcome {
 	.jetpack-free-welcome__features {
@@ -16,9 +16,9 @@
 		position: relative;
 		display: block;
 		padding: 16px 64px 16px 24px;
-		color: var( --color-studio-black );
-		border: 2px solid var( --studio-jetpack-green-40 );
-		border-radius: calc( 2px * 2 );
+		color: var(--color-studio-black);
+		border: 2px solid var(--studio-jetpack-green-40);
+		border-radius: calc(2px * 2);
 		text-decoration: none;
 
 		span {
@@ -39,19 +39,19 @@
 			}
 
 			&::after {
-				transform: translateY( -50% ) translateX( 8px );
+				transform: translateY(-50%) translateX(8px);
 			}
 		}
 
 		&::after {
-			content: '→';
+			content: "→";
 			position: absolute;
 			top: 50%;
 			right: 24px;
 			font-size: $font-title-medium;
 			font-weight: 600;
-			color: var( --studio-jetpack-green-40 );
-			transform: translateY( -50% );
+			color: var(--studio-jetpack-green-40);
+			transform: translateY(-50%);
 			transition: transform 0.15s ease-out;
 		}
 	}

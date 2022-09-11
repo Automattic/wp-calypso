@@ -1,4 +1,4 @@
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/mixins";
 
 .jetpack-upsell {
 	background-color: #f6f7f7;
@@ -14,21 +14,10 @@
 	padding: 2rem 5%;
 
 	// Green, blue, and yellow
-	background: radial-gradient(
-			circle at 70% 50%,
-			rgba( 6, 158, 8, 0.15 ) 0%,
-			rgba( 255, 255, 255, 0 ) 25%
-		),
-		radial-gradient(
-			circle at 28% 58%,
-			rgba( 206, 217, 242, 0.7 ) 0%,
-			rgba( 255, 255, 255, 0 ) 30%
-		),
-		radial-gradient(
-			circle at 50% 35%,
-			rgba( 245, 230, 179, 0.5 ) 0%,
-			rgba( 255, 255, 255, 0 ) 35%
-		);
+	background:
+		radial-gradient(circle at 70% 50%, rgba(6, 158, 8, 0.15) 0%, rgba(255, 255, 255, 0) 25%),
+		radial-gradient(circle at 28% 58%, rgba(206, 217, 242, 0.7) 0%, rgba(255, 255, 255, 0) 30%),
+		radial-gradient(circle at 50% 35%, rgba(245, 230, 179, 0.5) 0%, rgba(255, 255, 255, 0) 35%);
 }
 
 .jetpack-upsell__header {
@@ -48,10 +37,10 @@
 	max-width: 550px;
 	margin: 1.5rem 0;
 
-	background: var( --color-surface );
-	border: 1px solid var( --color-border-subtle );
-	border-radius: 8px;
-	box-shadow: 0 4px 24px rgba( 0, 0, 0, 0.05 );
+	background: var(--color-surface);
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
 }
 
 .jetpack-upsell__card-header {
@@ -60,7 +49,7 @@
 
 	padding: 0.75rem 7.5%;
 
-	background-color: var( --studio-jetpack-green-5 );
+	background-color: var(--studio-jetpack-green-5);
 
 	font-weight: 700;
 	line-height: 1;
@@ -82,7 +71,7 @@
 .jetpack-upsell__product-name {
 	margin-bottom: 1rem;
 
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 
 	font-size: 1.75rem;
 	font-weight: 700;
@@ -91,7 +80,7 @@
 .jetpack-upsell__features {
 	margin: 0 0 1.75rem;
 
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 	list-style-type: none;
 
 	font-weight: 400;
@@ -101,7 +90,7 @@
 
 		&.is-selected {
 			.gridicon {
-				fill: var( --studio-jetpack-green-40 );
+				fill: var(--studio-jetpack-green-40);
 			}
 		}
 	}
@@ -142,17 +131,17 @@
 
 	font-size: 1rem;
 
-	background-color: var( --studio-gray-100 ) !important;
+	background-color: var(--studio-gray-100) !important;
 	border: none !important;
 
 	&:hover,
 	&:active {
-		background-color: var( --studio-gray-80 ) !important;
+		background-color: var(--studio-gray-80) !important;
 	}
 
 	&:focus {
 		box-shadow: none !important;
-		outline: solid 2px var( --studio-gray-100 );
+		outline: solid 2px var(--studio-gray-100);
 		outline-offset: 2px;
 	}
 }
@@ -162,7 +151,7 @@
 	padding: 0 0.25rem;
 
 	border-radius: 4px;
-	color: var( --studio-gray-100 ) !important;
+	color: var(--studio-gray-100) !important;
 
 	font-weight: 600;
 	text-decoration: underline;
@@ -173,7 +162,7 @@
 	}
 
 	&:focus {
-		box-shadow: 0 0 0 1px var( --studio-gray-100 );
+		box-shadow: 0 0 0 1px var(--studio-gray-100);
 		outline: none;
 
 		text-decoration: none;
@@ -189,13 +178,13 @@
 	> div {
 		@include placeholder();
 
-		&:nth-child( 1 ) {
+		&:nth-child(1) {
 			width: 23.5rem;
 			height: 1.25rem;
 			margin-bottom: 1.25rem;
 		}
 
-		&:nth-child( 2 ) {
+		&:nth-child(2) {
 			width: 3.125rem;
 			height: 3.125rem;
 			margin-bottom: 1.25rem;
@@ -218,7 +207,7 @@
 }
 
 .jetpack-upsell__price {
-	color: var( --studio-gray-100 ) !important;
+	color: var(--studio-gray-100) !important;
 
 	line-height: 1 !important;
 
@@ -249,7 +238,7 @@
 	position: relative;
 	top: -0.125rem;
 
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 
 	font-weight: 500;
 }
@@ -277,5 +266,5 @@
 .jetpack-upsell__note {
 	margin: 0;
 
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 }

@@ -1,8 +1,8 @@
-@import '@automattic/typography/styles/variables';
-@import 'calypso/assets/stylesheets/shared/mixins/_breakpoints';
+@import "@automattic/typography/styles/variables";
+@import "calypso/assets/stylesheets/shared/mixins/_breakpoints";
 
 .help-center-article-content__story-content {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body;
 	line-height: 1.7;
 	margin: 0;
@@ -39,7 +39,8 @@
 		font-weight: 600;
 	}
 
-	p, > div {
+	p,
+	> div {
 		margin: 0 0 24px;
 
 		&:last-child {
@@ -50,14 +51,14 @@
 	blockquote {
 		padding: 0 24px 0 32px;
 		margin: 16px 0 32px;
-		border-left: 3px solid var( --color-neutral-0 );
-		color: var( --color-neutral-50 );
+		border-left: 3px solid var(--color-neutral-0);
+		color: var(--color-neutral-50);
 		font-weight: 400;
 		background: transparent;
 	}
 
 	hr {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		margin: 24px 0;
 	}
 
@@ -80,14 +81,14 @@
 		margin: 24px auto;
 	}
 
-	iframe[class^='twitter-'],
-	iframe[class^='instagram-'],
+	iframe[class^="twitter-"],
+	iframe[class^="instagram-"],
 	.fb_iframe_widget {
 		display: block;
 		margin: 24px auto !important;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		.alignleft {
 			max-width: 100%;
 			float: left;
@@ -105,7 +106,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		.alignleft,
 		.alignright {
 			clear: both;
@@ -144,7 +145,7 @@
 		&.alignleft {
 			max-width: 100%;
 
-			@include breakpoint-deprecated( '>660px' ) {
+			@include breakpoint-deprecated( ">660px" ) {
 				max-width: 50%;
 			}
 
@@ -168,7 +169,7 @@
 		margin: 0;
 		font-size: $font-body-small;
 		text-align: center;
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 	}
 
 	// placeholder for videopress videos
@@ -177,19 +178,20 @@
 		margin-bottom: 24px;
 		padding: 11px 24px;
 		border-radius: 2px;
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		box-sizing: border-box;
 		font-size: $font-body-small;
 		line-height: 1.4285;
 		animation: appear 0.3s ease-in-out;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding: 13px 48px;
 			font-size: inherit;
 		}
 	}
 
-	sup, sub {
+	sup,
+	sub {
 		vertical-align: baseline;
 		position: relative;
 		font-size: $font-body-extra-small;

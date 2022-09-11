@@ -1,6 +1,6 @@
-@import '../../assets/stylesheets/shared/mixins/_breakpoints';
-@import '../../assets/stylesheets/shared/mixins/_clear-fix';
-@import '@automattic/typography/styles/variables';
+@import "../../assets/stylesheets/shared/mixins/_breakpoints";
+@import "../../assets/stylesheets/shared/mixins/_clear-fix";
+@import "@automattic/typography/styles/variables";
 
 // Multisite
 .foldable-card.card {
@@ -35,7 +35,7 @@
 		}
 
 		.foldable-card__expand {
-			border-left: 1px var( --color-neutral-5 ) solid;
+			border-left: 1px var(--color-neutral-5) solid;
 		}
 	}
 }
@@ -83,13 +83,13 @@ button.foldable-card__action {
 }
 
 .foldable-card__main {
-	max-width: calc( 100% - 36px );
+	max-width: calc(100% - 36px);
 	display: flex;
 	align-items: center;
 	flex: 2 1;
 	margin-right: 5px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		flex: 1 1;
 	}
 }
@@ -100,7 +100,7 @@ button.foldable-card__action {
 	flex: 1 1;
 	justify-content: flex-end;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		flex: 0 1;
 	}
 }
@@ -109,26 +109,26 @@ button.foldable-card__action {
 	width: 48px;
 
 	.gridicon {
-		fill: var( --color-neutral-30 );
+		fill: var(--color-neutral-30);
 		display: flex;
 		align-items: center;
 		width: 100%;
 		vertical-align: middle;
 
-		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease-in;
 	}
 
 	.gridicon:hover {
-		fill: var( --color-neutral-30 );
+		fill: var(--color-neutral-30);
 	}
 
 	&:hover .gridicon {
-		fill: var( --color-neutral-50 );
+		fill: var(--color-neutral-50);
 	}
 }
 
 .foldable-card.is-expanded > .foldable-card__header .foldable-card__expand .gridicon {
-	transform: rotate( 180deg );
+	transform: rotate(180deg);
 }
 
 .foldable-card__content {
@@ -138,7 +138,7 @@ button.foldable-card__action {
 .foldable-card.is-expanded .foldable-card__content {
 	display: block;
 	padding: 16px;
-	border-top: 1px solid var( --color-neutral-5 );
+	border-top: 1px solid var(--color-neutral-5);
 }
 
 .foldable-card.is-compact .foldable-card.is-expanded .foldable-card__content {
@@ -148,12 +148,12 @@ button.foldable-card__action {
 .foldable-card__summary,
 .foldable-card__summary-expanded {
 	margin-right: 40px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	transition: opacity 0.2s linear;
 	display: inline-block;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: none;
 	}
 }

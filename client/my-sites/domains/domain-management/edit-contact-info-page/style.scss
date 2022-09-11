@@ -1,11 +1,11 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .edit-contact-info-page {
 	.contact-details-form-fields {
 		padding: 0 16px 24px;
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding: 0 0 24px;
 		}
 		@include break-xlarge {
@@ -15,7 +15,7 @@
 
 	&__sidebar {
 		padding: 24px;
-		background-color: var( --studio-gray-0 );
+		background-color: var(--studio-gray-0);
 		font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		line-height: 20px;
 		&-content {

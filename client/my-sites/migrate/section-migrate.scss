@@ -1,6 +1,6 @@
 .migrate__placeholder {
 	color: transparent;
-	background-color: var( --studio-gray-10 );
+	background-color: var(--studio-gray-10);
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
@@ -22,7 +22,7 @@
 .migrate__card {
 	.site__content,
 	.site-selector__hidden-sites-message {
-		border-bottom: 1px solid var( --color-neutral-10 );
+		border-bottom: 1px solid var(--color-neutral-10);
 		padding-left: 0;
 		padding-right: 0;
 	}
@@ -36,8 +36,8 @@
 	display: flex;
 	flex-direction: row-reverse;
 	flex-wrap: nowrap;
-	border-top: 1px solid var( --color-neutral-10 );
-	border-bottom: 1px solid var( --color-neutral-10 );
+	border-top: 1px solid var(--color-neutral-10);
+	border-bottom: 1px solid var(--color-neutral-10);
 	margin: 16px 0;
 	padding: 16px 0;
 }
@@ -76,7 +76,7 @@
 	flex-basis: 25%;
 }
 
-@include breakpoint-deprecated( '<800px' ) {
+@include breakpoint-deprecated( "<800px" ) {
 	.migrate__plan-upsell {
 		flex-wrap: wrap;
 		margin: 16px 0;
@@ -95,7 +95,7 @@
 
 	.migrate__plan-upsell-container {
 		display: flex;
-		border-top: 1px solid var( --color-neutral-10 );
+		border-top: 1px solid var(--color-neutral-10);
 
 		margin: 24px 0 0;
 		padding: 16px 0 0;
@@ -178,11 +178,11 @@
 }
 
 .migrate__card-footer {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 
 	a {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		text-decoration: underline;
 	}
 }
@@ -193,7 +193,7 @@
 }
 
 .migrate__card-footer-gridicon {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	vertical-align: middle;
 }
 
@@ -207,7 +207,7 @@
 }
 
 .migrate__checkmark {
-	color: var( --color-success );
+	color: var(--color-success);
 	margin-right: 16px;
 }
 
@@ -233,7 +233,7 @@
 .migrate__section-header {
 	.formatted-header__title {
 		font-size: $font-title-medium;
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			font-size: $font-title-large;
 		}
 	}
@@ -255,13 +255,13 @@
 
 .migrate__note {
 	text-align: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .migrate__start-time {
 	height: 1.5rem;
 	margin-bottom: 8px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 }
 
@@ -284,7 +284,7 @@
 
 .migrate__progress-item-icon-success {
 	width: 22px;
-	color: var( --color-success );
+	color: var(--color-success);
 }
 
 .migrate__progress-item-icon-todo {
@@ -302,7 +302,7 @@
 
 .migrate__token-label {
 	background-color: lightgrey;
-	border-radius: 10px;
+	border-radius: 10px; /* stylelint-disable-line scales/radii */
 	padding: 2px 5px;
 	font-size: $font-body-extra-small;
 	color: darkgray;

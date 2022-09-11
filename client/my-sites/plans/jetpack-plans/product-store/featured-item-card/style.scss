@@ -1,11 +1,10 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .featured-item-card {
-	background: linear-gradient( 159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53% );
-	border-start-end-radius: 4px;
-	border-start-start-radius: 4px;
-	color: var( --gray-100 );
+	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+	color: var(--gray-100);
 	display: flex;
 	flex-direction: column;
 	font-size: $font-body-small;
@@ -67,28 +66,17 @@
 }
 
 .featured-item-card--desc {
-	color: var( --gray-70 );
+	color: var(--gray-70);
 	line-height: 1.5;
 
 	p {
 		display: inline-block;
-		max-width: 55ch; // stylelint-disable unit-allowed-list
+		max-width: 55ch; // stylelint-disable-line unit-allowed-list
 		margin: 0;
 		font-style: normal;
 		font-weight: 400;
 		font-size: $font-body-small;
 		line-height: 24px;
-	}
-}
-
-.featured-item-card--learn-more {
-	color: var( --gray-100 );
-	display: inline-block;
-	margin-top: 4px;
-	text-decoration-line: underline;
-
-	@include break-medium {
-		padding-bottom: 0;
 	}
 }
 
@@ -99,16 +87,7 @@
 	margin-top: 24px;
 }
 
-
-.featured-item-card .display-price {
-	@media screen and (min-width: 320px) {
-		display: flex;
-		min-height: 24px;
-	}
-}
-
-.featured-item-card .item-price .display-price .display-price__billing-time-frame {
-	@media screen and (min-width: 320px) {
-		margin-top: 0;
-	}
+.featured-item-card--cta {
+	min-width: 5.7em;
+	border-width: 0;
 }

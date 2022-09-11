@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 /* Header */
 
@@ -31,7 +31,7 @@ $cloud-icon-height: 24px;
 
 	margin-bottom: 36px;
 
-	color: var( --color-primary-50 );
+	color: var(--color-primary-50);
 
 	font-weight: 700;
 	line-height: $cloud-icon-height;
@@ -43,26 +43,26 @@ $cloud-icon-height: 24px;
 	&.backup-card__title--preparing,
 	&.backup-card__title--scheduled,
 	&.backup-card__title--in-progress {
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 
 		img.backup-card__icon {
-			color: var( --studio-gray-30 );
+			color: var(--studio-gray-30);
 		}
 	}
 
 	&.backup-card__title--failed {
-		color: var( --p2-color-error );
+		color: var(--p2-color-error);
 
 		img.backup-card__icon {
-			color: var( --p2-color-error );
+			color: var(--p2-color-error);
 		}
 	}
 
 	&.backup-card__title--delayed {
-		color: var( --studio-orange-30 );
+		color: var(--studio-orange-30);
 
 		img.backup-card__icon {
-			color: var( --studio-orange-30 );
+			color: var(--studio-orange-30);
 		}
 	}
 
@@ -84,8 +84,8 @@ $cloud-icon-height: 24px;
 	margin-left: 1rem;
 
 	&.badge {
-		background-color: var( --color-primary-5 );
-		color: var( --color-text );
+		background-color: var(--color-primary-5);
+		color: var(--color-text);
 
 		font-size: 0.75rem;
 	}
@@ -147,7 +147,7 @@ $cloud-icon-height: 24px;
 	margin: 0 -16px -16px;
 	padding: 24px;
 
-	border-top: solid 1px var( --color-neutral-5 );
+	border-top: solid 1px var(--color-neutral-5);
 
 	@include break-mobile {
 		margin: 0 -24px -24px;
@@ -163,8 +163,8 @@ $cloud-icon-height: 24px;
 .backup-card__about-content {
 	padding: 20px;
 
-	background-color: var( --color-neutral-0 );
-	color: var( --color-neutral-40 );
+	background-color: var(--color-neutral-0);
+	color: var(--color-neutral-40);
 }
 
 .backup-card__about-list {
@@ -191,13 +191,13 @@ $cloud-icon-height: 24px;
 		display: block;
 	}
 	svg.backup-card__jetpack-logo-muted path.jetpack-logo__icon-circle {
-		fill: var( --studio-gray-30 );
+		fill: var(--studio-gray-30);
 	}
 	svg.backup-card__jetpack-logo-warning path.jetpack-logo__icon-circle {
-		fill: var( --studio-orange-30 );
+		fill: var(--studio-orange-30);
 	}
 	svg.backup-card__jetpack-logo-danger path.jetpack-logo__icon-circle {
-		fill: var( --p2-color-error );
+		fill: var(--p2-color-error);
 	}
 	&.backup-card__about-media--notice {
 		align-self: center;

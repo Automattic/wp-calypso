@@ -100,12 +100,6 @@ export function generateSteps( {
 				showExampleSuggestions: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
-				get headerText() {
-					return i18n.translate( 'Getting ready to launch, pick a domain' );
-				},
-				get subHeaderText() {
-					return i18n.translate( 'Select a domain name for your website' );
-				},
 			},
 			dependencies: [ 'siteSlug' ],
 		},
@@ -333,12 +327,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			props: {
-				get headerText() {
-					return i18n.translate( 'Getting ready to launch your website' );
-				},
-				get subHeaderText() {
-					return i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." );
-				},
 				isLaunchPage: true,
 			},
 		},
@@ -349,6 +337,24 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'domainItem' ],
 			providesDependencies: [ 'cartItem' ],
 		},
+
+		'mailbox-plan': {
+			stepName: 'mailbox-plan',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug', 'emailItem' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				get headerText() {
+					return i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation( 'Empower your online presence' )
+						? i18n.translate( 'Empower your online presence' )
+						: '';
+				},
+				useEmailOnboardingSubheader: true,
+			},
+		},
+
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
@@ -369,8 +375,18 @@ export function generateSteps( {
 		emails: {
 			stepName: 'emails',
 			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
+			providesDependencies: [ 'domainItem', 'emailItem' ],
 			props: {
+				isDomainOnly: false,
+			},
+		},
+		mailbox: {
+			stepName: 'mailbox',
+			dependencies: [ 'domainItem', 'siteSlug' ],
+			providesDependencies: [ 'domainItem', 'emailItem' ],
+			props: {
+				backUrl: 'mailbox-domain/',
+				hideSkip: true,
 				isDomainOnly: false,
 			},
 		},
@@ -417,6 +433,24 @@ export function generateSteps( {
 			],
 			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
 			props: {
+				isDomainOnly: false,
+			},
+			delayApiRequestUntilComplete: true,
+		},
+
+		'mailbox-domain': {
+			stepName: 'mailbox-domain',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			props: {
+				forceHideFreeDomainExplainerAndStrikeoutUi: true,
+				get headerText() {
+					return i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation( 'Choose a domain for your Professional Email' )
+						? i18n.translate( 'Choose a domain for your Professional Email' )
+						: '';
+				},
+				includeWordPressDotCom: false,
 				isDomainOnly: false,
 			},
 			delayApiRequestUntilComplete: true,

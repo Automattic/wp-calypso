@@ -4,20 +4,20 @@
 	text-align: center;
 
 	&::before {
-		content: '';
+		content: "";
 		display: block;
 		width: 80px;
-		background: rgba( var( --color-surface-rgb ), 0.3 );
+		background: rgba(var(--color-surface-rgb), 0.3);
 		height: 2px;
 		margin: 0 auto 8px;
 	}
 
 	.is-p2-invite.invite-accept &,
 	.is-p2-signup .signup__step.is-user & {
-		font-size: var( --p2-font-size-form-xs );
-		
+		font-size: var(--p2-font-size-form-xs);
+
 		.logged-out-form__link-item {
-			font-size: var( --p2-font-size-form-xs );
+			font-size: var(--p2-font-size-form-xs);
 			border-bottom: 1px solid currentColor;
 			line-height: 1.5;
 			margin-top: 2px;

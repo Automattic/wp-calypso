@@ -10,11 +10,11 @@
 	position: relative;
 	transition: opacity 0.15s ease-in-out;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 40px;
 		height: 40px;
 	}
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-right: 24px;
 	}
 
@@ -22,18 +22,18 @@
 		position: absolute;
 		top: 50%;
 		left: 50%;
-		transform: translate( -50%, -50% );
+		transform: translate(-50%, -50%);
 		width: 24px;
 		height: 24px;
-		fill: var( --color-text-inverted );
+		fill: var(--color-text-inverted);
 	}
 	&.is-placeholder {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 		opacity: 0.3;
 	}
 	&.is-fallback {
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 	}
 }
 

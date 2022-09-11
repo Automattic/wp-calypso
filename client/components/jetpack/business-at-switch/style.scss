@@ -9,7 +9,7 @@
 		height: 400px;
 		@include placeholder( --color-neutral-10 );
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			height: 250px;
 		}
 	}

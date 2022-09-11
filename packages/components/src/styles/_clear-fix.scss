@@ -5,7 +5,7 @@
 
 @mixin a8c-clear-fix {
 	&::after {
-		content: '.';
+		content: ".";
 		display: block;
 		height: 0;
 		width: 0;

@@ -5,9 +5,9 @@
 	text-align: center;
 	width: 100%;
 	max-width: 960px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		background: transparent;
 		padding: 14px;
 	}
@@ -18,7 +18,7 @@
 	padding: 12px 24px 48px;
 	text-align: center;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-bottom: 72px;
 	}
 }
@@ -46,7 +46,7 @@
 }
 
 .activity-log-switch__features-header {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	font-size: $font-title-medium;
 	line-height: 32px;
 	margin: 48px 48px 24px;
@@ -62,12 +62,12 @@
 }
 
 .activity-log-switch__feature-content {
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		flex-basis: 66%;
 		text-align: left;
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		order: 2;
 	}
 
@@ -77,12 +77,12 @@
 }
 
 .activity-log-switch__feature-heading {
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 	font-size: $font-title-small;
 	margin-bottom: 8px;
 	width: 100%;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		order: 1;
 	}
 }
@@ -92,7 +92,7 @@
 	max-height: 110px;
 	box-sizing: border-box;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		order: 0;
 		max-width: none;
 		height: 90px;

@@ -54,7 +54,7 @@
 }
 
 .list-item__img {
-	background: rgba( var( --color-surface-rgb ), 0 );
+	background: rgba(var(--color-surface-rgb), 0);
 }
 
 .list-item__info {
@@ -70,7 +70,7 @@
 }
 
 .list-item__title {
-	color: var( --color-text );
+	color: var(--color-text);
 	display: block;
 	font-size: 0.875rem;
 	font-weight: 400;
@@ -78,7 +78,7 @@
 }
 
 .list-item__domain {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: block;
 	max-width: 95%;
 	font-size: 0.75rem;

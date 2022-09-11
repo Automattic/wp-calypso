@@ -14,22 +14,22 @@
 }
 
 .tag-stream__header .follow-button {
-	z-index: z-index( '.tag-stream__header-follow', '.follow-button' );
+	z-index: z-index(".tag-stream__header-follow", ".follow-button");
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin: 12px 20px 0 15px;
 	}
 }
 
 .tag-stream__header .follow-button__label {
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		display: inline;
 	}
 }
 
 .tag-stream__header-image {
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: right center;
@@ -43,42 +43,42 @@
 	z-index: 0;
 
 	&::before {
-		content: '';
-		background: rgba( 0, 0, 0, 0.3 );
+		content: "";
+		background: rgba(0, 0, 0, 0.3);
 		height: 100%;
 		position: absolute;
-			bottom: 0;
-			left: 0;
+		bottom: 0;
+		left: 0;
 		width: 100%;
 		z-index: 1;
 	}
 }
 
 .tag-stream__header-image .gridicon.gridicons-tag {
-	fill: var( --color-text-inverted );
+	fill: var(--color-text-inverted);
 	position: relative;
-		right: 6px;
-		top: 3px;
+	right: 6px;
+	top: 3px;
 	z-index: 2;
 }
 
 .tag-stream__header-image-title {
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	font-size: $font-title-large;
 	line-height: 1.3;
 	margin-top: 42px;
 	text-align: center;
-	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
 	z-index: 2;
 }
 
 .tag-stream__header-image-byline {
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	font-size: $font-body-extra-small;
 	font-weight: 600;
 	padding-top: 24px;
 	text-align: right;
-	text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
+	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
 	z-index: 2;
 	-webkit-font-smoothing: antialiased;
 }
@@ -89,12 +89,12 @@
 
 .tag-stream__header-image-byline-link,
 .tag-stream__header-image-byline-link:visited {
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	opacity: 0.9;
 }
 
 .tag-stream__header-image-byline-link:hover {
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 }
 
 // Back button in Tag streams
@@ -103,15 +103,15 @@
 	box-shadow: none;
 	padding: 0;
 	position: relative;
-		left: -3px;
-		top: 8px;
+	left: -3px;
+	top: 8px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		left: 13px;
 		top: 20px;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		top: 14px;
 	}
 

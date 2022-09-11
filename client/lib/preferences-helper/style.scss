@@ -13,7 +13,7 @@
 }
 
 .preferences-helper__unset {
-	color: var( --color-accent );
+	color: var(--color-accent);
 	cursor: pointer;
 }
 
@@ -31,18 +31,18 @@
 }
 
 .preferences-helper__save-pref-button {
-	color: var( --color-accent );
+	color: var(--color-accent);
 	cursor: pointer;
 	&:disabled {
-		color: var( --color-neutral );
+		color: var(--color-neutral);
 	}
 }
 
 .preferences-helper__reset-pref-button {
-	color: var( --color-warning );
+	color: var(--color-warning);
 	cursor: pointer;
 	&:disabled {
-		color: var( --color-neutral );
+		color: var(--color-neutral);
 	}
 }
 
@@ -54,8 +54,8 @@
 
 .environment.is-prefs:hover .preferences-helper__current-preferences {
 	display: block;
-	background: var( --color-surface );
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 	padding: 16px;
 	max-height: 80vh;
 	overflow-y: scroll;

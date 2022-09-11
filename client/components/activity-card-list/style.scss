@@ -5,7 +5,7 @@
 }
 
 .activity-card-list__pagination-top {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: none;
 	}
 }
@@ -15,17 +15,17 @@
 }
 
 .activity-card-list__filterbar-ctn.is-sticky {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		position: fixed;
-		top: var( --masterbar-height );
+		top: var(--masterbar-height);
 		left: 0;
 		right: 0;
-		z-index: z-index( 'root', '.masterbar' );
+		z-index: z-index("root", ".masterbar");
 
 		padding: 0 16px;
 
-		background-color: var( --color-surface-backdrop );
-		border-bottom: 1px solid var( --color-neutral-10 );
+		background-color: var(--color-surface-backdrop);
+		border-bottom: 1px solid var(--color-neutral-10);
 
 		.filterbar {
 			margin-bottom: 0;
@@ -33,7 +33,7 @@
 	}
 }
 
-@include breakpoint-deprecated( '<660px' ) {
+@include breakpoint-deprecated( "<660px" ) {
 	.activity-card-list .filterbar__wrap.card {
 		background: transparent;
 		box-shadow: none;
@@ -48,7 +48,7 @@
 	font-weight: 600;
 	font-size: $font-body;
 	line-height: 23px;
-	border-bottom: 1px solid #000000;
+	border-bottom: 1px solid #000;
 }
 
 // draw vertical lines through each date "group"
@@ -56,8 +56,8 @@
 	position: relative;
 
 	&::before {
-		background: var( --color-neutral-5 );
-		content: '';
+		background: var(--color-neutral-5);
+		content: "";
 		height: 100%;
 		// center on the icons ( they render @ 16px, so half that )
 		left: 8px;
@@ -74,7 +74,7 @@
 		position: relative;
 		margin-bottom: 32px;
 		.activity-card__time {
-			background: var( --color-surface-backdrop );
+			background: var(--color-surface-backdrop);
 		}
 	}
 }
@@ -84,15 +84,15 @@
 .activity-card-list__primary-card-with-more {
 	> .card {
 		padding-left: 12px; // reduce standard 16px padding by 4
-		border-left: 4px solid var( --color-primary-40 );
+		border-left: 4px solid var(--color-primary-40);
 	}
 }
 
 .activity-card-list__primary-card-with-more {
 	// draw vertical line after the card
 	&::before {
-		background: var( --color-neutral-5 );
-		content: '';
+		background: var(--color-neutral-5);
+		content: "";
 		height: 16px;
 		// center on the icons ( they render @ 1.1rem, so half that )
 		left: 8px;
@@ -103,15 +103,15 @@
 	}
 	// draw ball on the end of the line
 	&::after {
-		background: var( --color-neutral-5 );
-		content: '';
+		background: var(--color-neutral-5);
+		content: "";
 		// make sure we stay in our element
 		height: 9px;
 		width: 9px;
-		left: calc( 8px - 4px );
+		left: calc(8px - 4px);
 		position: absolute;
 		// immediately after the existing horizontal line draw on over the top of it
-		top: calc( 100% + 16px );
+		top: calc(100% + 16px);
 		visibility: visible;
 		z-index: -1;
 		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
@@ -123,25 +123,25 @@
 .activity-card-list__secondary-card-with-more {
 	// this brings in the right side, otherwise the translated elements would look the same
 	// 32px to adjust for the scooch, 16px to make the card shorted than the primary one
-	width: calc( 100% - 32px - 16px );
+	width: calc(100% - 32px - 16px);
 
 	// scooch secondary card elements over
 	> .activity-card__header,
 	> .card {
-		transform: translateX( 32px );
+		transform: translateX(32px);
 	}
 
 	> .card {
 		// this draws the horizontal line
 		&::before {
 			// same as the left on the vertical line above
-			background: var( --color-neutral-5 );
-			content: '';
+			background: var(--color-neutral-5);
+			content: "";
 			height: 1px;
-			left: calc( 8px - 32px );
+			left: calc(8px - 32px);
 			position: absolute;
 			top: 50%;
-			width: calc( 32px - 8px );
+			width: calc(32px - 8px);
 			z-index: -2;
 		}
 	}
@@ -152,14 +152,14 @@
 	&:last-of-type {
 		> .card {
 			&::after {
-				background: var( --color-surface-backdrop );
-				content: '';
+				background: var(--color-surface-backdrop);
+				content: "";
 				// make sure we stay in our element
-				height: calc( 50% - 1px );
-				left: calc( 8px - 32px );
+				height: calc(50% - 1px);
+				left: calc(8px - 32px);
 				position: absolute;
 				// immediately after the existing horizontal line draw on over the top of it
-				top: calc( 50% + 1px );
+				top: calc(50% + 1px);
 				visibility: visible;
 				width: 1px;
 				z-index: -1;
@@ -173,15 +173,15 @@
 	&:last-of-type {
 		> .card {
 			&::after {
-				background: var( --color-neutral-5 );
-				content: '';
+				background: var(--color-neutral-5);
+				content: "";
 				// make sure we stay in our element
 				height: 9px;
 				width: 9px;
-				left: calc( 8px - 32px - 4px );
+				left: calc(8px - 32px - 4px);
 				position: absolute;
 				// immediately after the existing horizontal line draw on over the top of it
-				top: calc( 100% - 9px );
+				top: calc(100% - 9px);
 				visibility: visible;
 				z-index: -1;
 				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */

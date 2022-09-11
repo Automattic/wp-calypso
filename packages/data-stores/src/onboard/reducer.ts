@@ -202,7 +202,7 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
-const siteAccentColor: Reducer< string | undefined, OnboardAction > = ( state = '', action ) => {
+const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
 		return action.siteAccentColor;
 	}

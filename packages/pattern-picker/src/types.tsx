@@ -4,7 +4,7 @@ export type Pattern = {
 	ID: number;
 	name: string;
 	title: string;
-	content: string;
+	html: string;
 	pattern_meta: PatternMeta;
 	site_id: number;
 };

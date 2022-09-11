@@ -16,7 +16,7 @@
 	overflow: auto;
 
 	// Not sure this is needed.
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		-webkit-overflow-scrolling: touch;
 	}
 
@@ -41,9 +41,9 @@
 
 	.count {
 		margin-left: 8px;
-		background-color: var( --color-sidebar-menu-hover-background );
-		border-color: var( --color-sidebar-menu-hover-background );
-		color: var( --color-sidebar-menu-hover-text );
+		background-color: var(--color-sidebar-menu-hover-background);
+		border-color: var(--color-sidebar-menu-hover-background);
+		color: var(--color-sidebar-menu-hover-text);
 	}
 }
 
@@ -63,7 +63,7 @@
 // Sidebar Headings, used for both static headings
 // like in Reader, and for the expandable menus.
 .sidebar__heading {
-	color: var( --color-sidebar-text-alternative );
+	color: var(--color-sidebar-text-alternative);
 	font-size: $font-body;
 	font-weight: 600;
 	padding: 16px 8px 6px 16px;
@@ -73,14 +73,14 @@
 
 // Sidebar menu icons for main sections
 .sidebar__menu-icon {
-	fill: var( --color-sidebar-gridicon-fill );
+	fill: var(--color-sidebar-gridicon-fill);
 	margin-right: 11px;
 	flex-shrink: 0;
 }
 
 // Checklist progress
 .sidebar__menu .myhome .sidebar__menu-link-text {
-	max-width: calc( 100% - 80px );
+	max-width: calc(100% - 80px);
 	white-space: normal;
 	padding-right: 8px;
 }
@@ -97,18 +97,18 @@
 	}
 
 	.progress-bar {
-		background-color: rgba( var( --color-sidebar-text-rgb ), 0.4 );
+		background-color: rgba(var(--color-sidebar-text-rgb), 0.4);
 		height: 6px;
 
 		.selected & {
-			background-color: rgba( var( --color-sidebar-menu-selected-text-rgb ), 0.4 );
+			background-color: rgba(var(--color-sidebar-menu-selected-text-rgb), 0.4);
 		}
 
 		.progress-bar__progress {
-			background-color: var( --color-sidebar-text );
+			background-color: var(--color-sidebar-text);
 
 			.selected & {
-				background-color: var( --color-sidebar-menu-selected-text );
+				background-color: var(--color-sidebar-menu-selected-text);
 			}
 		}
 	}
@@ -128,23 +128,23 @@
 
 	&,
 	&:visited {
-		color: var( --color-sidebar-text );
+		color: var(--color-sidebar-text);
 	}
 
 	// I think this is some voodoo to change the color
 	// of a link when tapped on iOS.
-	-webkit-tap-highlight-color: rgba( var( --color-neutral-700-rgb ), 0.2 );
+	-webkit-tap-highlight-color: rgba(var(--color-neutral-700-rgb), 0.2);
 
 	&:hover {
-		background-color: var( --color-sidebar-menu-hover-background );
-		color: var( --color-sidebar-menu-hover-text );
+		background-color: var(--color-sidebar-menu-hover-background);
+		color: var(--color-sidebar-menu-hover-text);
 
 		.sidebar__menu-icon {
-			fill: var( --color-sidebar-menu-hover-text );
+			fill: var(--color-sidebar-menu-hover-text);
 		}
 
 		.count {
-			border-color: var( --color-sidebar-menu-hover-text );
+			border-color: var(--color-sidebar-menu-hover-text);
 		}
 	}
 
@@ -158,28 +158,28 @@
 
 	.sidebar__menu-link-badge {
 		margin-left: 8px;
-		color: var( --color-warning-light );
+		color: var(--color-warning-light);
 		padding: 1px 6px;
 		font-size: $font-body-extra-small;
 	}
 
 	.selected &,
 	.selected &:hover {
-		color: var( --color-sidebar-menu-selected-text );
-		background-color: var( --color-sidebar-menu-selected-background );
+		color: var(--color-sidebar-menu-selected-text);
+		background-color: var(--color-sidebar-menu-selected-background);
 
 		.stats-sparkline {
-			--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+			--color-stats-sparkline: var(--color-sidebar-menu-selected-text);
 		}
 
 		.sidebar__menu-icon {
-			fill: var( --color-sidebar-menu-selected-text );
+			fill: var(--color-sidebar-menu-selected-text);
 		}
 
 		.count {
 			background-color: transparent;
-			border-color: var( --color-sidebar-menu-selected-text );
-			color: var( --color-sidebar-menu-selected-text );
+			border-color: var(--color-sidebar-menu-selected-text);
+			color: var(--color-sidebar-menu-selected-text);
 		}
 	}
 
@@ -213,7 +213,7 @@
 	position: absolute;
 	right: 0;
 	z-index: 1;
-	color: var( --color-sidebar-text-alternative );
+	color: var(--color-sidebar-text-alternative);
 	padding: 4px 8px;
 
 	.selected &,
@@ -232,18 +232,18 @@
 		cursor: pointer;
 
 		&:hover {
-			background-color: var( --color-sidebar-menu-hover-background );
-			color: var( --color-sidebar-menu-hover-text );
+			background-color: var(--color-sidebar-menu-hover-background);
+			color: var(--color-sidebar-menu-hover-text);
 
 			.sidebar__menu-icon,
 			.sidebar__expandable-arrow {
-				fill: var( --color-sidebar-menu-hover-text );
+				fill: var(--color-sidebar-menu-hover-text);
 			}
 
 			.count {
 				background-color: transparent;
-				border-color: var( --color-sidebar-submenu-selected-text );
-				color: var( --color-sidebar-submenu-selected-text );
+				border-color: var(--color-sidebar-submenu-selected-text);
+				color: var(--color-sidebar-submenu-selected-text);
 			}
 		}
 	}
@@ -254,7 +254,7 @@
 
 	.sidebar__expandable-arrow {
 		transition: transform 0.1s linear;
-		fill: var( --color-sidebar-gridicon-fill );
+		fill: var(--color-sidebar-gridicon-fill);
 	}
 
 	.sidebar__menu-link {
@@ -263,12 +263,12 @@
 
 	&.is-toggle-open {
 		.sidebar__expandable-arrow {
-			transform: rotate( 180deg );
+			transform: rotate(180deg);
 		}
 		.count {
 			background-color: transparent;
-			border-color: var( --color-sidebar-submenu-selected-text );
-			color: var( --color-sidebar-submenu-selected-text );
+			border-color: var(--color-sidebar-submenu-selected-text);
+			color: var(--color-sidebar-submenu-selected-text);
 		}
 	}
 }
@@ -282,17 +282,17 @@
 }
 
 .sidebar__menu-wrapper {
-	border-top: 1px solid var( --color-sidebar-border );
+	border-top: 1px solid var(--color-sidebar-border);
 }
 
 .sidebar__menu-link-badge {
 	display: inline-block;
 	padding: 1px 6px;
-	border: solid 1px var( --color-warning );
-	border-radius: 12px;
+	border: solid 1px var(--color-warning);
+	border-radius: 12px; /* stylelint-disable-line scales/radii */
 	font-size: $font-body-extra-small;
 	line-height: 14px;
 	text-align: center;
-	color: var( --color-warning-light );
+	color: var(--color-warning-light);
 	margin-left: 8px;
 }

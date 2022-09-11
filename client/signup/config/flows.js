@@ -112,6 +112,13 @@ function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designT
 	return getThankYouNoSiteDestination();
 }
 
+function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
+	return addQueryArgs(
+		{ siteId },
+		`/checkout/thank-you/features/email-license/${ siteSlug }/:receiptId`
+	);
+}
+
 function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
@@ -163,6 +170,7 @@ const flows = generateFlows( {
 	getLaunchDestination,
 	getThankYouNoSiteDestination,
 	getDomainSignupFlowDestination,
+	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
 	getDestinationFromIntent,

@@ -5,14 +5,14 @@
 .security-2fa-backup-codes-list__print-agreement {
 	display: block;
 	margin-bottom: 1.5em;
-	
+
 	.form-label {
 		font-weight: normal;
 		display: inline-block;
 	}
 }
 
-@include breakpoint-deprecated( '<480px' ) {
+@include breakpoint-deprecated( "<480px" ) {
 	.security-2fa-backup-codes-list__btn-group .button {
 		display: inline-block;
 	}
@@ -27,15 +27,15 @@ button.security-2fa-backups-codes-list__generate-button {
 }
 
 .security-2fa-backup-codes-list__codes {
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	list-style-type: none;
 	padding: 20px;
 	margin-left: 0;
-	overflow:hidden;
+	overflow: hidden;
 }
 
 .security-2fa-backup-codes-list__codes li {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	float: left;
 	font-size: $font-title-small;
 	font-weight: 600;
@@ -44,18 +44,18 @@ button.security-2fa-backups-codes-list__generate-button {
 
 	&.is-placeholder span {
 		color: transparent;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 
 		&::before {
-			content: ' ';
+			content: " ";
 			display: inline-block;
 			width: 5em;
 		}
 	}
 
 	&::before {
-		color: var( --color-neutral-10 );
+		color: var(--color-neutral-10);
 		display: inline-block;
 		font-weight: normal;
 		margin-right: 10px;
@@ -64,43 +64,43 @@ button.security-2fa-backups-codes-list__generate-button {
 	}
 
 	&:first-child::before {
-		content: '1.';
+		content: "1.";
 	}
 
-	&:nth-of-type( 2 )::before {
-		content: '6.';
+	&:nth-of-type(2)::before {
+		content: "6.";
 	}
 
-	&:nth-of-type( 3 )::before {
-		content: '2.';
+	&:nth-of-type(3)::before {
+		content: "2.";
 	}
 
-	&:nth-of-type( 4 )::before {
-		content: '7.';
+	&:nth-of-type(4)::before {
+		content: "7.";
 	}
 
-	&:nth-of-type( 5 )::before {
-		content: '3.';
+	&:nth-of-type(5)::before {
+		content: "3.";
 	}
 
-	&:nth-of-type( 6 )::before {
-		content: '8.';
+	&:nth-of-type(6)::before {
+		content: "8.";
 	}
 
-	&:nth-of-type( 7 )::before {
-		content: '4.';
+	&:nth-of-type(7)::before {
+		content: "4.";
 	}
 
-	&:nth-of-type( 8 )::before {
-		content: '9.';
+	&:nth-of-type(8)::before {
+		content: "9.";
 	}
 
-	&:nth-of-type( 9 )::before {
-		content: '5.';
+	&:nth-of-type(9)::before {
+		content: "5.";
 	}
 
-	&:nth-of-type( 10 )::before {
-		content: '10.';
+	&:nth-of-type(10)::before {
+		content: "10.";
 	}
 }
 
@@ -108,7 +108,7 @@ button.security-2fa-backups-codes-list__generate-button {
 	font-size: 75%;
 
 	.gridicon {
-		fill: var( --color-error );
+		fill: var(--color-error);
 		margin-right: 8px;
 		vertical-align: middle;
 

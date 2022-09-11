@@ -3,11 +3,11 @@ $left-margin: 36px;
 @keyframes purchaseModalBackdropfadeIn {
 	0% {
 		opacity: 0;
-		transform: scale( 1.05 );
+		transform: scale(1.05);
 	}
 	100% {
 		opacity: 1;
-		transform: scale( 1 );
+		transform: scale(1);
 	}
 }
 
@@ -32,9 +32,9 @@ $left-margin: 36px;
 	}
 
 	> hr {
-		width: calc( 100% + var( --padding ) * -2 );
-		margin: 16px var( --padding );
-		background: var( --color-neutral-5 );
+		width: calc(100% + var(--padding) * -2);
+		margin: 16px var(--padding);
+		background: var(--color-neutral-5);
 
 		// stylelint-disable-next-line unit-allowed-list
 		@media screen, ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
@@ -95,7 +95,7 @@ $left-margin: 36px;
 }
 
 .purchase-modal__step-content {
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 	font-size: $font-body-small;
 
 	&.is-placeholder {
@@ -109,12 +109,12 @@ $left-margin: 36px;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 }
 
 .purchase-modal__product-offer {
 	&.is-discounted {
-		color: var( --color-success );
+		color: var(--color-success);
 	}
 }
 
@@ -170,7 +170,7 @@ $left-margin: 36px;
 
 .purchase-modal__tax {
 	font-weight: normal;
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 	font-size: $font-body-small;
 }
 

@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/typography/styles/variables';
-@import '../variables.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "../variables.scss";
 
 $plans-accordion-item-border-radius: 5px; /* stylelint-disable-line scales/radii */
-$plans-accordion-item-border-color: var( --studio-gray-5 );
+$plans-accordion-item-border-color: var(--studio-gray-5);
 
 .plans-accordion-item {
 	display: block;
@@ -13,7 +13,7 @@ $plans-accordion-item-border-color: var( --studio-gray-5 );
 	flex-direction: column;
 
 	&.is-disabled {
-		background-color: var( --studio-gray-5 );
+		background-color: var(--studio-gray-5);
 	}
 }
 
@@ -56,7 +56,7 @@ $plans-accordion-item-border-color: var( --studio-gray-5 );
 		}
 	}
 
-	.plans-accordion-item:not( .is-open ) & {
+	.plans-accordion-item:not(.is-open) & {
 		// Because .plans-accordion-item__header acts as a button
 		// to expand plan item, padding is applied there.
 		padding: 0;
@@ -72,7 +72,7 @@ $plans-accordion-item-border-color: var( --studio-gray-5 );
 		font-size: $font-title-medium;
 	}
 
-	.plans-accordion-item:not( .is-open ) & {
+	.plans-accordion-item:not(.is-open) & {
 		font-size: $font-body-small;
 
 		@include break-small {
@@ -91,11 +91,11 @@ $plans-accordion-item-border-color: var( --studio-gray-5 );
 
 .plans-accordion-item__description {
 	font-size: $font-body-small;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 	margin-top: 4px;
 	display: none;
 
-	.plans-accordion-item:not( .is-open ) & {
+	.plans-accordion-item:not(.is-open) & {
 		display: none;
 	}
 
@@ -175,7 +175,7 @@ ul.plans-accordion-item__feature-item-group {
 		display: none;
 		font-size: $font-body;
 		line-height: 1.2;
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 		position: relative;
 		top: -1px;
 		margin-left: 1px;
@@ -185,7 +185,7 @@ ul.plans-accordion-item__feature-item-group {
 		}
 	}
 
-	.plans-accordion-item:not( .is-open ) & {
+	.plans-accordion-item:not(.is-open) & {
 		font-size: $font-body-small;
 		line-height: 1.2;
 
@@ -200,7 +200,7 @@ ul.plans-accordion-item__feature-item-group {
 	width: 100%;
 	cursor: pointer;
 
-	.plans-accordion-item:not( .is-open ) & {
+	.plans-accordion-item:not(.is-open) & {
 		display: flex;
 		align-items: baseline;
 		padding: 16px 12px;
@@ -223,10 +223,10 @@ ul.plans-accordion-item__feature-item-group {
 .plans-accordion-item__price {
 	margin-top: 12px;
 
-	.plans-accordion-item:not( .is-open ) & {
+	.plans-accordion-item:not(.is-open) & {
 		margin-top: 0;
 		margin-left: 8px;
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 	}
 
 	@include break-small {
@@ -237,17 +237,17 @@ ul.plans-accordion-item__feature-item-group {
 
 .plans-accordion-item__disabled-label {
 	margin-left: 8px;
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
 }
 
 .plans-accordion-item__price-note {
 	display: block;
 	font-size: $font-body-extra-small;
 	line-height: 1.5;
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
 	margin-bottom: 8px;
 
-	.plans-accordion-item:not( .is-open ) & {
+	.plans-accordion-item:not(.is-open) & {
 		display: none;
 	}
 
@@ -264,14 +264,14 @@ ul.plans-accordion-item__feature-item-group {
 	line-height: 1.3;
 	letter-spacing: 0.2px;
 	text-transform: uppercase;
-	color: var( --studio-green-60 );
+	color: var(--studio-green-60);
 
 	&--disabled {
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 		text-decoration: line-through;
 	}
 
-	.plans-accordion-item:not( .is-open ) & {
+	.plans-accordion-item:not(.is-open) & {
 		display: none;
 	}
 

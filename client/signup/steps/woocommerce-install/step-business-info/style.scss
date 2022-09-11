@@ -1,9 +1,9 @@
-@import '../style';
+@import "../style";
 
 body.is-section-signup .is-woocommerce-install .signup__step.is-business-info {
 	@include woocommerce-install-two-column-layout;
 
-	.step-business-info__components-group .components-checkbox-control:not( :last-child ) {
+	.step-business-info__components-group .components-checkbox-control:not(:last-child) {
 		margin-bottom: $grid-unit;
 	}
 }

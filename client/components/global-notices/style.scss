@@ -2,29 +2,29 @@
 	text-align: right;
 	pointer-events: none;
 
-	z-index: z-index( 'root', '.global-notices' );
+	z-index: z-index("root", ".global-notices");
 	position: fixed;
-	top: var( --masterbar-height );
+	top: var(--masterbar-height);
 	right: 0;
 	bottom: auto;
 	left: 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
-		top: calc( var( --masterbar-height ) + 16px );
+	@include breakpoint-deprecated( ">660px" ) {
+		top: calc(var(--masterbar-height) + 16px);
 		right: 16px;
 		left: auto;
-		max-width: calc( 100% - 32px );
+		max-width: calc(100% - 32px);
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
-		top: calc( var( --masterbar-height ) + 24px );
+	@include breakpoint-deprecated( ">960px" ) {
+		top: calc(var(--masterbar-height) + 24px);
 		right: 24px;
-		max-width: calc( 100% - 48px );
+		max-width: calc(100% - 48px);
 	}
 
-	@include breakpoint-deprecated( '>1040px' ) {
+	@include breakpoint-deprecated( ">1040px" ) {
 		right: 32px;
-		max-width: calc( 100% - 64px );
+		max-width: calc(100% - 64px);
 	}
 }
 
@@ -34,21 +34,20 @@
 	text-align: left;
 	pointer-events: auto;
 	border-radius: 0;
-	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.2 );
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 
 	.notice__icon-wrapper {
 		border-radius: 0;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		overflow: hidden;
 		margin-bottom: 24px;
 		border-radius: 2px;
 
 		.notice__icon-wrapper {
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 2px 0 0 3px;
+			border-radius: 2px 0 0 3px; /* stylelint-disable-line scales/radii */
 		}
 	}
 }

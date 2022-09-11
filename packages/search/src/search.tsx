@@ -419,16 +419,11 @@ const InnerSearch = (
 			return renderReskinSearchIcon();
 		}
 
-		let focusHandler;
-		if ( 'undefined' !== typeof window ) {
-			focusHandler = window.focus;
-		}
-
 		return (
 			<Button
 				className="search-component__icon-navigation"
 				ref={ openIcon }
-				onClick={ enableOpenIcon ? openSearch : focusHandler }
+				onClick={ enableOpenIcon ? openSearch : focus }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? openListener : undefined }
 				aria-controls={ 'search-component-' + instanceId }

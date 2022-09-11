@@ -1,18 +1,18 @@
 .cancel-purchase__card {
 	h2 {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		font-size: $font-title-small;
 		font-weight: 400;
 		margin-bottom: 20px;
 	}
 
 	p {
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 		font-size: $font-body-small;
 	}
 
 	hr {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 	}
 }
 
@@ -20,12 +20,12 @@
 	margin: 0;
 	padding: 0 0 10px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		width: 55%;
 	}
 
 	p {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 		display: block;
 		font-size: $font-body-small;
 		line-height: 150%;
@@ -57,7 +57,7 @@
 }
 
 .cancel-purchase__section {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	margin: 0;
 }
 
@@ -74,19 +74,19 @@
 	justify-content: space-between;
 
 	&::after {
-		display:none;
+		display: none;
 	}
 }
 
 .cancel-purchase__refund-amount {
-	color: var( --color-success );
+	color: var(--color-success);
 	font-size: $font-body-small;
 	margin: 0;
 	padding: 0 10px 5px 0;
 }
 
 .cancel-purchase__button {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
 	}
 }

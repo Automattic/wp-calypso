@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .plans-filter-bar {
 	display: flex;
@@ -8,7 +8,7 @@
 	flex-direction: column;
 	flex: 0 0 250px;
 	padding: 16px 0;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 
 	box-sizing: border-box;
 
@@ -28,15 +28,15 @@
 		padding-bottom: 10px;
 
 		.plans-filter-bar__toggle-off-label {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 
 		&.checked {
 			.plans-filter-bar__toggle-on-label {
-				color: var( --color-primary );
+				color: var(--color-primary);
 			}
 			.plans-filter-bar__toggle-off-label {
-				color: var( --studio-gray-50 );
+				color: var(--studio-gray-50);
 			}
 		}
 
@@ -55,13 +55,13 @@
 		}
 		.components-form-toggle {
 			.components-form-toggle__input:focus + .components-form-toggle__track {
-				box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var( --color-primary );
+				box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--color-primary);
 			}
 
 			.components-form-toggle__track {
 				width: 42px;
 				height: 22px;
-				border-radius: 11px;
+				border-radius: 11px; /* stylelint-disable-line scales/radii */
 			}
 
 			.components-form-toggle__thumb {
@@ -71,11 +71,11 @@
 
 			&.is-checked {
 				.components-form-toggle__track {
-					background-color: var( --color-primary );
+					background-color: var(--color-primary);
 				}
 
 				.components-form-toggle__thumb {
-					transform: translateX( 20px );
+					transform: translateX(20px);
 				}
 			}
 		}
@@ -84,7 +84,7 @@
 
 .plans-filter-bar__discount-message {
 	padding-top: 2px;
-	color: var( --color-primary );
+	color: var(--color-primary);
 	white-space: nowrap;
 	text-align: center;
 	font-weight: 700;
@@ -94,7 +94,7 @@
 	@include break-medium {
 		padding-top: 0;
 		position: absolute;
-		left: calc( 100% + 12px );
+		left: calc(100% + 12px);
 		top: 0;
 	}
 
@@ -111,10 +111,10 @@
 	position: fixed;
 	width: 100%;
 	left: 0;
-	top: var( --masterbar-height );
+	top: var(--masterbar-height);
 
-	background-color: var( --color-surface );
-	box-shadow: 0 4px 24px rgba( 0, 0, 0, 0.05 ), inset 0 0 0 1px #dcdcde;
+	background-color: var(--color-surface);
+	box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05), inset 0 0 0 1px #dcdcde;
 
 	z-index: 2;
 }
@@ -128,14 +128,14 @@
 // target Calypso pricing filter bar, not jetpack cloud
 .is-group-sites.is-section-plans .plans-filter-bar.sticky {
 	// At this screen size, the left sidebar is 228px;
-	@include breakpoint-deprecated( '>660px' ) {
-		width: calc( 100% - 228px );
+	@include breakpoint-deprecated( ">660px" ) {
+		width: calc(100% - 228px);
 		left: 228px;
 	}
 
 	// At this screen size, the lft sidebar is 272px;
-	@include breakpoint-deprecated( '>960px' ) {
-		width: calc( 100% - 272px );
+	@include breakpoint-deprecated( ">960px" ) {
+		width: calc(100% - 272px);
 		left: 272px;
 	}
 }

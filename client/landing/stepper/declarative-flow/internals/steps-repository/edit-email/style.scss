@@ -1,4 +1,4 @@
-@import '../style';
+@import "../style";
 
 .step-container.edit-email {
 	.components-combobox-control__input {
@@ -6,7 +6,7 @@
 	}
 	.components-combobox-control__suggestions-container {
 		width: unset;
-		border-color: var( --color-neutral-10 );
+		border-color: var(--color-neutral-10);
 	}
 	.step-container__header {
 		flex: 1;
@@ -18,7 +18,7 @@
 		}
 	}
 
-	fieldset.edit-email__form-footer  {
+	fieldset.edit-email__form-footer {
 		position: relative;
 		padding-left: 19px;
 	}

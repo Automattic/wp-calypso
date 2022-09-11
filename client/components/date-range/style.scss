@@ -9,21 +9,21 @@
 
 	.toggle-visible & {
 		box-shadow: none;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 
 	.gridicons-chevron-down {
-		fill: var( --color-neutral-50 );
+		fill: var(--color-neutral-50);
 		margin: 0 0 0 5px;
 		flex-shrink: 0;
-		transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 		.is-disabled & {
-			fill: var( --color-neutral-5 );
+			fill: var(--color-neutral-5);
 		}
 
 		.toggle-visible & {
-			transform: rotate( -180deg );
+			transform: rotate(-180deg);
 		}
 	}
 }
@@ -37,7 +37,7 @@
 	// https://github.com/Automattic/wp-calypso/pull/29938
 	// https://github.com/Automattic/wp-calypso/pull/29938#pullrequestreview-194065929
 	min-width: 15em;
-    display: inline-block;
+	display: inline-block;
 }
 
 .date-range__popover-inner {
@@ -47,7 +47,7 @@
 	margin: 0 auto;
 	// max-width: 90%;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		max-width: 300px;
 	}
 }
@@ -58,7 +58,7 @@
 	justify-content: space-between;
 	align-items: center;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-direction: row;
 	}
 }
@@ -83,7 +83,7 @@
 	// https://stackoverflow.com/questions/39325039/css-flex-box-last-space-removed
 	white-space: pre-wrap;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-bottom: 0.5em;
 	}
 
@@ -94,15 +94,15 @@
 		padding: 0;
 		font-size: $font-body-extra-small;
 		font-weight: 600;
-    	line-height: 18px;
+		line-height: 18px;
 	}
 
 	.button {
-		color: var( --color-link );
+		color: var(--color-link);
 
 		&:hover,
 		&:focus {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 	}
 
@@ -115,7 +115,7 @@
 	.DayPicker {
 		order: 3;
 		margin-top: 12px;
-		border-top: 1px solid var( --color-neutral-5 );
+		border-top: 1px solid var(--color-neutral-5);
 	}
 
 	.DayPicker-wrapper,
@@ -188,7 +188,6 @@
 }
 
 
-
 .date-range__date-input--from {
 	margin-right: 1em;
 }
@@ -198,13 +197,11 @@
 }
 
 
-
-
 .date-range__picker {
 
 	.DayPicker-Day,
-	.DayPicker-Day:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
-	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+	.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
+	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
 		line-height: initial;
 		padding: 0.25em; // fix and allow target area
 		width: 24px; // fix and allow target area
@@ -215,8 +212,8 @@
 		.date-picker__day {
 			&:hover,
 			&:focus {
-				color: var( --color-text-inverted );
-				background-color: var( --color-primary );
+				color: var(--color-text-inverted);
+				background-color: var(--color-primary);
 			}
 		}
 	}
@@ -225,46 +222,46 @@
 	.DayPicker-Day--start,
 	.DayPicker-Day--end {
 		.date-picker__day {
-			color: var( --color-text-inverted );
-			background-color: var( --color-primary );
+			color: var(--color-text-inverted);
+			background-color: var(--color-primary);
 		}
 	}
 
-	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
-	.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
-	.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
-		background-color: var( --color-primary );
+	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
+	.DayPicker-Day--start:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
+	.DayPicker-Day--end:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+		background-color: var(--color-primary);
 	}
 
-	.DayPicker-Day--range:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
-	.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ),
-	.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
+	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
+	.DayPicker-Day--start:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
+	.DayPicker-Day--end:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
 		.date-picker__day {
 			&:hover,
 			&:focus {
-				background-color: var( --color-primary-light );
+				background-color: var(--color-primary-light);
 			}
 		}
 	}
 
 	.DayPicker-Day--start,
 	.DayPicker-Day--end {
-		&:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
-			border-radius: 200px;
+		&:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+			border-radius: 200px; /* stylelint-disable-line scales/radii */
 		}
 	}
 
 	&.date-picker--range-selected {
-		.DayPicker-Day--start:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
-			border-top-left-radius: 200px;
+		.DayPicker-Day--start:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+			border-top-left-radius: 200px; /* stylelint-disable-line scales/radii */
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
-			border-bottom-left-radius: 200px;
+			border-bottom-left-radius: 200px; /* stylelint-disable-line scales/radii */
 		}
 
-		.DayPicker-Day--end:not( .DayPicker-Day--disabled ):not( .DayPicker-Day--outside ) {
-			border-top-right-radius: 200px;
-			border-bottom-right-radius: 200px;
+		.DayPicker-Day--end:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+			border-top-right-radius: 200px; /* stylelint-disable-line scales/radii */
+			border-bottom-right-radius: 200px; /* stylelint-disable-line scales/radii */
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
 		}

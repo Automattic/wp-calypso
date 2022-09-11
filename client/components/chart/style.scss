@@ -4,7 +4,7 @@
 .chart {
 	position: relative;
 	box-sizing: border-box;
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	padding: 8px 0 8px 20px;
 }
 
@@ -24,18 +24,18 @@
 	top: 0;
 	width: 100%;
 	height: 1px;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 }
 
 // Y-axis marker lines inside each chart__bar
 // (This is needed so that bars overlap correctly)
 .chart__bar-marker {
-	z-index: z-index( 'root', '.chart__bar-marker' );
+	z-index: z-index("root", ".chart__bar-marker");
 	position: absolute;
 	top: 0;
 	width: 100%;
 	height: 1px;
-	border-top: 1px solid rgba( var( --color-neutral-0-rgb ), 0.1 );
+	border-top: 1px solid rgba(var(--color-neutral-0-rgb), 0.1);
 }
 
 .chart__bar-marker,
@@ -59,7 +59,7 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 200px;
 	padding: $y-axis-padding;
 	font-size: $font-body-extra-small;
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 	margin-bottom: 30px;
 }
 
@@ -72,7 +72,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 // For forcing the width of y-axis to the width of the label
 .chart__y-axis-width-fix {
-	color: rgba( var( --color-surface-rgb ), 0 );
+	color: rgba(var(--color-surface-rgb), 0);
 }
 
 // X-axis
@@ -83,7 +83,7 @@ $y-axis-padding: 0 20px 0 10px;
 	font-size: 0; // 1
 	padding: 5px 0;
 	min-height: 18px;
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 }
 
 .chart__x-axis-label {
@@ -98,7 +98,7 @@ $y-axis-padding: 0 20px 0 10px;
 // (vertical thin grey bar)
 
 .chart__x-axis-label::before {
-	content: '';
+	content: "";
 	display: block;
 	position: absolute;
 	top: -4px;
@@ -106,11 +106,11 @@ $y-axis-padding: 0 20px 0 10px;
 	margin-left: -0.5px;
 	width: 1px;
 	height: 5px;
-	background: var( --color-neutral-60 );
+	background: var(--color-neutral-60);
 }
 
 .chart__x-axis-width-spacer {
-	color: rgba( var( --color-surface-rgb ), 0 );
+	color: rgba(var(--color-surface-rgb), 0);
 	padding: $y-axis-padding;
 	right: 0;
 
@@ -145,28 +145,28 @@ $y-axis-padding: 0 20px 0 10px;
 	flex-grow: 1;
 	-ms-flex-shrink: 1;
 	flex-shrink: 1;
-	transform: scaleY( 0 );
+	transform: scaleY(0);
 	transform-origin: 0% 100%;
 	animation: growUpOnMounting 0.2s ease-in forwards; // 2
 
 	@keyframes growUpOnMounting {
 		100% {
-			transform: scaleY( 1 );
+			transform: scaleY(1);
 		}
 	}
 
 	&.is-weekend {
-		background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
+		background-color: rgba(var(--color-neutral-0-rgb), 0.5);
 	}
 
 	&:hover {
 		cursor: pointer;
-		background-color: rgba( var( --color-neutral-0-rgb ), 0.3 );
+		background-color: rgba(var(--color-neutral-0-rgb), 0.3);
 	}
 
 	&.is-selected {
 		cursor: default;
-		background-color: rgba( var( --color-accent-rgb ), 0.1 );
+		background-color: rgba(var(--color-accent-rgb), 0.1);
 	}
 }
 
@@ -178,35 +178,35 @@ $y-axis-padding: 0 20px 0 10px;
 
 .chart__bar-section {
 	display: inline-block;
-	background-color: var( --color-primary-40 );
+	background-color: var(--color-primary-40);
 	position: absolute;
 	right: 16%; // 1
 	bottom: 0; // 1
 	left: 16%; // 1
 	height: 100%;
-	transform: scaleY( 0 ); // 2
+	transform: scaleY(0); // 2
 	transition: transform 0.3s ease-in-out; // 3
 	transform-origin: 0% 100%; // 4
-	z-index: z-index( 'root', '.chart__bar-section' );
+	z-index: z-index("root", ".chart__bar-section");
 
 	.chart__bar:hover &.is-bar {
-		background-color: var( --color-primary-light );
+		background-color: var(--color-primary-light);
 	}
 
 	.chart__bar.is-selected &.is-bar {
-		background-color: var( --color-accent-40 );
+		background-color: var(--color-accent-40);
 	}
 }
 
 .chart__bar-section-inner {
-	background: var( --color-primary-dark );
+	background: var(--color-primary-dark);
 	position: absolute;
 	right: 23.33%;
 	bottom: 0;
 	left: 23.33%;
 
 	.chart__bar.is-selected & {
-		background-color: var( --color-accent-dark );
+		background-color: var(--color-accent-dark);
 	}
 }
 
@@ -222,14 +222,14 @@ $y-axis-padding: 0 20px 0 10px;
 
 .chart__legend .chart__legend-options {
 	float: right;
-	color: var( --color-neutral );
+	color: var(--color-neutral);
 	list-style-type: none;
 	margin: 0;
 	font-size: $font-body-extra-small;
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 100%;
 	}
 }
@@ -241,7 +241,7 @@ $y-axis-padding: 0 20px 0 10px;
 	text-align: left;
 
 	// Expand labels to create bigger touch targets
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 50%;
 		display: inline-block;
 	}
@@ -266,11 +266,11 @@ $y-axis-padding: 0 20px 0 10px;
 
 		&:focus,
 		&:hover {
-			color: var( --color-link-dark );
+			color: var(--color-link-dark);
 		}
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: block;
 	}
 }
@@ -282,21 +282,21 @@ $y-axis-padding: 0 20px 0 10px;
 .chart__legend-option .chart__legend-color {
 	width: 10px;
 	height: 10px;
-	background: var( --color-primary );
+	background: var(--color-primary);
 	display: inline-block;
-	border-radius: 1px;
+	border-radius: 1px; /* stylelint-disable-line scales/radii */
 	vertical-align: top;
 	margin: 3px 5px 3px 8px; // 1
 }
 
-@include breakpoint-deprecated( '<480px' ) {
+@include breakpoint-deprecated( "<480px" ) {
 	.chart__legend-option:first-child .chart__legend-color {
 		margin-left: 2px; // 2
 	}
 }
 
 .chart__legend-color.is-dark-blue {
-	background: var( --color-primary-dark );
+	background: var(--color-primary-dark);
 }
 
 // Chart legend checkbox
@@ -319,7 +319,7 @@ $y-axis-padding: 0 20px 0 10px;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: z-index( 'root', '.chart__empty' );
+	z-index: z-index("root", ".chart__empty");
 	padding: 0 50px;
 }
 
@@ -355,7 +355,7 @@ $y-axis-padding: 0 20px 0 10px;
 					text-align: right;
 					float: right;
 					min-width: 22px;
-					color: var( --color-neutral-10 );
+					color: var(--color-neutral-10);
 				}
 
 				.label {
@@ -407,7 +407,7 @@ $y-axis-padding: 0 20px 0 10px;
 		margin-bottom: 2px;
 		text-transform: uppercase;
 		font-weight: 600;
-		border-bottom: 1px solid var( --color-neutral-60 );
+		border-bottom: 1px solid var(--color-neutral-60);
 		padding-bottom: 2px;
 	}
 
@@ -416,7 +416,7 @@ $y-axis-padding: 0 20px 0 10px;
 
 		.label {
 			text-transform: none;
-			color: var( --color-neutral-10 );
+			color: var(--color-neutral-10);
 			overflow: hidden;
 			letter-spacing: 0;
 			height: 19px;
@@ -446,7 +446,7 @@ $y-axis-padding: 0 20px 0 10px;
 		background-color: transparent;
 
 		.chart__bar-section {
-			background-color: rgba( var( --color-neutral-0-rgb ), 0.5 );
+			background-color: rgba(var(--color-neutral-0-rgb), 0.5);
 		}
 	}
 }

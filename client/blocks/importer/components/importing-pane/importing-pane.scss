@@ -1,6 +1,6 @@
 .importing-pane__progress-message {
 	text-align: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .importer__start {
@@ -10,12 +10,12 @@
 .importing-pane__spinner {
 	position: absolute;
 	left: 50%;
-	transform: translateX( -50% );
+	transform: translateX(-50%);
 }
 
 .importer__status-message {
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	text-align: center;
 }
 
@@ -44,17 +44,18 @@
 
 	.importer__mapping-description {
 		font-size: $font-body;
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		margin-bottom: 40px;
 	}
 
 	.importer__mapping-header {
-		border-bottom: 1px solid var( --color-border-subtle );
+		border-bottom: 1px solid var(--color-border-subtle);
 	}
 
-	.importer__mapping-source-title, .importer__mapping-target-title {
+	.importer__mapping-source-title,
+	.importer__mapping-target-title {
 		font-size: $font-body-small;
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 		float: none;
 		width: 50%;
 	}
@@ -62,7 +63,7 @@
 	.importer-action-buttons__container {
 		padding-top: 40px;
 		margin-top: 0;
-		border-top: 1px solid var( --color-border-subtle );
+		border-top: 1px solid var(--color-border-subtle);
 
 		button {
 			display: none;

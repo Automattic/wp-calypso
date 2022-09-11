@@ -3,7 +3,7 @@
 	font-size: $font-title-small;
 	font-weight: 400;
 	line-height: 24px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 }
 
 .account-close__theme-list {
@@ -37,7 +37,7 @@
 }
 
 .is-hiding-other-sites .account-close__sites-item .gridicon {
-	transform: rotate( 180deg );
+	transform: rotate(180deg);
 }
 
 // Placeholders

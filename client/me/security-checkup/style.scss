@@ -13,22 +13,22 @@
 		display: flex;
 		align-items: center;
 		> .security-checkup__nav-item-icon {
-			fill: var( --color-neutral-90 );
+			fill: var(--color-neutral-90);
 			height: 32px;
 			margin-right: 16px;
 			min-width: 32px;
 
 			&.material-icon-check_circle {
-				fill: var( --color-success );
+				fill: var(--color-success);
 			}
 			&.material-icon-error {
-				fill: var( --color-warning-30 );
+				fill: var(--color-warning-30);
 			}
 		}
 		div {
-			color: var( --color-neutral-90 );
+			color: var(--color-neutral-90);
 			small {
-				color: var( --color-neutral-50 );
+				color: var(--color-neutral-50);
 				font-size: $font-body-small;
 			}
 		}

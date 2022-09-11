@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-@import '../mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
+@import "../mixins.scss";
 
 .issue-license-form {
 
@@ -56,7 +56,7 @@ p.issue-license-form__description {
 	font-size: 0.875rem;
 	color: #333;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 0 1rem 0 0;
 	}
 }

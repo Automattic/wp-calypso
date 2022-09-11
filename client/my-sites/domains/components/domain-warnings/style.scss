@@ -21,7 +21,7 @@
 	min-width: 400px;
 	max-width: 600px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		min-width: none;
 		max-width: none;
 	}

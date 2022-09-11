@@ -3,14 +3,14 @@
 }
 
 .people-invite-details__meta {
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 	padding-top: 24px;
 	margin-top: 24px;
 }
 
 .people-invite-details__meta-item {
 	margin-bottom: 12px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -19,7 +19,7 @@
 		display: inline-block;
 		width: 130px;
 		margin-right: 16px;
-		color: var( --color-text );
+		color: var(--color-text);
 		font-weight: 600;
 		text-align: right;
 	}
@@ -28,7 +28,7 @@
 		margin-right: 6px;
 		font-size: $font-body;
 		font-weight: 600;
-		color: var( --color-text );
+		color: var(--color-text);
 	}
 
 	.gravatar {

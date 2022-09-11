@@ -2,7 +2,7 @@
 	margin: auto;
 	max-width: 720px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin: 16px;
 	}
 }

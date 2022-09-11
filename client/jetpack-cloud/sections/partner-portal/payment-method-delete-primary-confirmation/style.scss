@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .payment-method-delete-primary-confirmation {
 	&__separator {
@@ -34,7 +34,7 @@
 
 			&-logo {
 				svg {
-					filter: grayscale( 100% );
+					filter: grayscale(100%);
 				}
 			}
 		}

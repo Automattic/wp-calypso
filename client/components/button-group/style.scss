@@ -6,7 +6,7 @@
 		&:focus {
 			// fixes focus styles in stacking context
 			position: relative;
-			z-index: z-index( 'button-group-parent', '.button-group .button:focus' );
+			z-index: z-index("button-group-parent", ".button-group .button:focus");
 		}
 	}
 
@@ -34,13 +34,7 @@
 	&.is-primary {
 		&.is-busy {
 			background-size: 120px 100%;
-			background-image: linear-gradient(
-				-45deg,
-				var( --color-accent ) 28%,
-				var( --color-accent-60 ) 28%,
-				var( --color-accent-60 ) 72%,
-				var( --color-accent ) 72%
-			);
+			background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
 		}
 	}
 
@@ -48,7 +42,7 @@
 		pointer-events: none;
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
-		background-image: linear-gradient( -45deg, var( --color-neutral-0 ) 28%, var( --color-surface ) 28%, var( --color-surface ) 72%, var( --color-neutral-0 ) 72% );
+		background-image: linear-gradient(-45deg, var(--color-neutral-0) 28%, var(--color-surface) 28%, var(--color-surface) 72%, var(--color-neutral-0) 72%);
 		display: inline-block;
 		border-radius: 2px;
 

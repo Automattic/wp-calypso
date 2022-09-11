@@ -4,7 +4,7 @@ import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/d
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import useItemPrice from '../../use-item-price';
 import { ItemPriceProps } from '../types';
-
+import ItemPriceMessage from './item-price-message';
 import './style.scss';
 
 export const ItemPrice: React.FC< ItemPriceProps > = ( {
@@ -12,6 +12,7 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 	isOwned,
 	item,
 	siteId,
+	isMultiSiteIncompatible,
 } ) => {
 	const { originalPrice, discountedPrice, isFetching } = useItemPrice(
 		siteId,
@@ -21,15 +22,14 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const translate = useTranslate();
 
-	if ( isOwned || isIncludedInPlan ) {
+	if ( isMultiSiteIncompatible ) {
 		return (
-			<div className="item-price__is-owned">
-				<span className="item-price__is-owned--dot"></span>
-				<span className="item-price__is-owned--text">
-					{ isOwned ? translate( 'Active on your site' ) : translate( 'Part of the current plan' ) }
-				</span>
-			</div>
+			<ItemPriceMessage message={ translate( 'Not available for multisite WordPress installs' ) } />
 		);
+	} else if ( isOwned ) {
+		return <ItemPriceMessage message={ translate( 'Active on your site' ) } />;
+	} else if ( isIncludedInPlan ) {
+		return <ItemPriceMessage message={ translate( 'Part of the current plan' ) } />;
 	}
 
 	return (

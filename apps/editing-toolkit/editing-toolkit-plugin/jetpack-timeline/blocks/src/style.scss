@@ -34,13 +34,13 @@ $timeline-border-width: 4px;
 			background-color: currentColor;
 			position: absolute;
 			top: 50%;
-			transform: translateY( -( $timeline-border-width * 0.5 ) );
+			transform: translateY(-($timeline-border-width * 0.5));
 			left: -$timeline-width;
 		}
 
 		// Draw the vertical timeline line.
 		.timeline-item::after {
-			content: '';
+			content: "";
 			display: block;
 			background: currentColor;
 			position: absolute;
@@ -52,12 +52,12 @@ $timeline-border-width: 4px;
 	}
 
 	// Add special timeline starting point and end point.
-	[data-type='jetpack/timeline-item']:first-child .timeline-item::after, // Editor
+	[data-type="jetpack/timeline-item"]:first-child .timeline-item::after,
 	& > li.wp-block-jetpack-timeline-item:first-child .timeline-item::after { // Frontend
 		top: 50%;
 	}
 
-	[data-type='jetpack/timeline-item']:nth-last-child( 2 )  .timeline-item::after, // Editor, is the 2nd last child here
+	[data-type="jetpack/timeline-item"]:nth-last-child(2)  .timeline-item::after,
 	& > li.wp-block-jetpack-timeline-item:last-child .timeline-item::after { // Frontend
 		bottom: 50%;
 	}
@@ -77,14 +77,14 @@ $timeline-border-width: 4px;
 
 		// Bubbles.
 		.wp-block-jetpack-timeline-item {
-			width: calc( 50% - #{ $timeline-width } + #{ $timeline-border-width * 0.5 } );
+			width: calc(50% - #{ $timeline-width } + #{ $timeline-border-width * 0.5 });
 			box-sizing: border-box;
 		}
 
 		// Left aligned.
-		.wp-block-jetpack-timeline-item.is-left.is-left.is-left, // Both, explicitly set. Needs specificity.
-		[data-type='jetpack/timeline-item']:nth-child( odd ) .wp-block-jetpack-timeline-item:not( .is-right ), // Editor
-		& > .wp-block-jetpack-timeline-item:nth-child( odd ):not( .is-right ) { // Frontend
+		.wp-block-jetpack-timeline-item.is-left.is-left.is-left,
+		[data-type="jetpack/timeline-item"]:nth-child(odd) .wp-block-jetpack-timeline-item:not(.is-right),
+		& > .wp-block-jetpack-timeline-item:nth-child(odd):not(.is-right) { // Frontend
 			margin-left: 0;
 			margin-right: auto;
 
@@ -102,9 +102,9 @@ $timeline-border-width: 4px;
 		}
 
 		// Right aligned.
-		.wp-block-jetpack-timeline-item.is-right.is-right.is-right, // Both, explicitly set. Needs specificity.
-		[data-type='jetpack/timeline-item']:nth-child( even ) .wp-block-jetpack-timeline-item:not( .is-left ), // Editor
-		.wp-block-jetpack-timeline-item:nth-child( even ):not( .is-left ) { // Frontend
+		.wp-block-jetpack-timeline-item.is-right.is-right.is-right,
+		[data-type="jetpack/timeline-item"]:nth-child(even) .wp-block-jetpack-timeline-item:not(.is-left),
+		.wp-block-jetpack-timeline-item:nth-child(even):not(.is-left) { // Frontend
 			margin-left: auto;
 			margin-right: 0;
 		}
