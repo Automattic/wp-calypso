@@ -201,7 +201,7 @@ function getSiteCartProducts( {
 		}
 	} );
 
-	// Enforce order of display to so that the DIFM product is visible first
+	// Enforce order of display, so that the DIFM product is visible first
 	const difmRelatedCartItems = cartItems.filter( ( e ) => e !== null );
 	const difmProduct = difmRelatedCartItems.find( ( e ) => e?.productSlug === WPCOM_DIFM_LITE );
 	const planProduct = difmRelatedCartItems.find(
