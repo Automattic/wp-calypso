@@ -136,16 +136,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		};
 	}
 
-	function previewDesign( _selectedDesign: Design, positionIndex?: number ) {
-		recordTracksEvent( 'calypso_signup_design_preview_select', {
-			...getEventPropsByDesign( _selectedDesign ),
-			...( positionIndex && { position_index: positionIndex } ),
-		} );
-
-		setSelectedDesign( _selectedDesign );
-		setIsPreviewingDesign( true );
-	}
-
 	// ********** Logic for selecting a style variation of the selected design
 
 	const isEnabledStyleSelection =
@@ -161,6 +151,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		select( ONBOARD_STORE ).getSelectedStyleVariation()
 	);
 	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
+
+	function previewDesign( _selectedDesign: Design, variation?: StyleVariation ) {
+		recordTracksEvent(
+			'calypso_signup_design_preview_select',
+			getEventPropsByDesign( _selectedDesign )
+		);
+
+		setSelectedDesign( _selectedDesign );
+		if ( variation ) {
+			setSelectedStyleVariation( variation );
+		}
+
+		setIsPreviewingDesign( true );
+	}
 
 	// ********** Logic for unlocking a selected premium design
 
@@ -442,10 +446,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelect={ pickDesign }
-			onPreview={ ( design: Design, variation?: StyleVariation ) => {
-				setSelectedStyleVariation( variation );
-				previewDesign( design );
-			} }
+			onPreview={ previewDesign }
 			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
 			heading={ heading }
