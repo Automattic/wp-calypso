@@ -75,12 +75,12 @@ class SocialSignupForm extends Component {
 	}
 
 	getRedirectUri = ( socialService ) => {
-		const host = typeof window !== 'undefined' && window.location.host;
+		const origin = typeof window !== 'undefined' && window.location.origin;
 
 		// If the user is in the WPCC flow, we want to redirect user to login callback so that we can automatically log them in.
 		return isWpccFlow( this.props.flowName )
-			? `https://${ host + login( { socialService } ) }`
-			: `https://${ host }/start/user`;
+			? `${ origin + login( { socialService } ) }`
+			: `${ origin }/start/user`;
 	};
 
 	render() {
