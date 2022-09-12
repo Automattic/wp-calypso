@@ -62,6 +62,27 @@ type SitesContentControlsProps = {
 	selectedStatus: Statuses[ number ];
 } & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher >;
 
+/**
+ * Updates a query param used by the sites dashboard, causing a page navigation.
+ * Param will be removed if it is empty or matches its default value.
+ *
+ * @param paramName name of the param being updated
+ * @param paramValue new value for the param
+ */
+export function handleQueryParamChange(
+	paramName: keyof SitesDashboardQueryParams,
+	paramValue: string | number | null
+) {
+	// Ensure we keep existing query params by appending `.search`
+	const pathWithQuery = window.location.pathname + window.location.search;
+
+	if ( paramValue ) {
+		page.replace( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
+	} else {
+		page.replace( removeQueryArgs( pathWithQuery, paramName ) );
+	}
+}
+
 export const SitesContentControls = ( {
 	initialSearch,
 	statuses,
@@ -102,24 +123,3 @@ export const SitesContentControls = ( {
 		</FilterBar>
 	);
 };
-
-/**
- * Updates a query param used by the sites dashboard, causing a page navigation.
- * Param will be removed if it is empty or matches its default value.
- *
- * @param paramName name of the param being updated
- * @param paramValue new value for the param
- */
-function handleQueryParamChange(
-	paramName: keyof SitesDashboardQueryParams,
-	paramValue: string | null
-) {
-	// Ensure we keep existing query params by appending `.search`
-	const pathWithQuery = window.location.pathname + window.location.search;
-
-	if ( paramValue ) {
-		page.replace( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
-	} else {
-		page.replace( removeQueryArgs( pathWithQuery, paramName ) );
-	}
-}
