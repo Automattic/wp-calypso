@@ -3,6 +3,7 @@ import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/compo
 import Preview from '@wordpress/edit-site/build-module/components/global-styles/preview';
 import { useMemo } from '@wordpress/element';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import './style.scss';
 
@@ -40,6 +41,10 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 			} ) }
 			tabIndex={ 0 }
 			role="button"
+			aria-label={ translate( 'Style: %s', {
+				comment: 'Aria label for style preview button',
+				args: variation.title,
+			} ) }
 			onClick={ () => onClick( variation ) }
 			onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
 		>

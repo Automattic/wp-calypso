@@ -1,3 +1,4 @@
+import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { getPreviewStylesFromVariation } from './utils';
 import type { StyleVariation } from '../../types';
@@ -11,6 +12,7 @@ interface BadgeProps {
 }
 
 const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
+	const { __ } = useI18n();
 	const styles = useMemo(
 		() => variation && getPreviewStylesFromVariation( variation ),
 		[ variation ]
@@ -25,12 +27,15 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 			className="style-variation__badge-wrapper"
 			tabIndex={ 0 }
 			role="button"
+			aria-label={ __( 'Preview with this style' ) }
 			onClick={ ( e ) => {
+				// Prevent the event from bubbling to the the parent button.
 				e.stopPropagation();
 				onClick?.( variation );
 			} }
 			onKeyDown={ ( e ) => {
 				if ( e.keyCode === SPACE_BAR_KEYCODE ) {
+					// Prevent the event from bubbling to the the parent button.
 					e.stopPropagation();
 					onClick?.( variation );
 				}
