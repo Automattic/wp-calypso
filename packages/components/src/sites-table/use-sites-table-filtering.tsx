@@ -51,7 +51,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 
 	const filterableSiteLaunchStatuses = useMemo( () => {
 		return {
-			all: __( 'All Sites' ),
+			all: __( 'All sites' ),
 			...translatedSiteLaunchStatuses,
 		};
 	}, [ __, translatedSiteLaunchStatuses ] );
