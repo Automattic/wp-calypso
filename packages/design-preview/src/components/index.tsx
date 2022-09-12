@@ -11,6 +11,7 @@ interface PreviewProps {
 	variations?: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
+	actionButtons: React.ReactNode;
 }
 
 const Preview: React.FC< PreviewProps > = ( {
@@ -20,6 +21,7 @@ const Preview: React.FC< PreviewProps > = ( {
 	variations = [],
 	selectedVariation,
 	onSelectVariation,
+	actionButtons,
 } ) => {
 	useEffect( () => {
 		if ( variations.length > 0 && ! selectedVariation ) {
@@ -35,6 +37,7 @@ const Preview: React.FC< PreviewProps > = ( {
 				variations={ variations }
 				selectedVariation={ selectedVariation }
 				onSelectVariation={ onSelectVariation }
+				actionButtons={ actionButtons }
 			/>
 			<SitePreview url={ previewUrl } inlineCss={ selectedVariation?.inline_css || '' } />
 		</div>

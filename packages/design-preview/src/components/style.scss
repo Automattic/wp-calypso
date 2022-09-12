@@ -78,6 +78,16 @@
 		}
 	}
 
+	.design-preview__sidebar-action-buttons {
+		position: absolute;
+		bottom: 0;
+
+		&,
+		button {
+			width: 100%;
+		}
+	}
+
 	@include break-small {
 		border: 0;
 		box-shadow: none;

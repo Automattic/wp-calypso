@@ -329,6 +329,25 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
+		const pickDesignText =
+			selectedDesign?.design_type === 'vertical' || isEnabledStyleSelection
+				? translate( 'Select and continue' )
+				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
+
+		const actionButtons = (
+			<div>
+				{ shouldUpgrade ? (
+					<Button primary borderless={ false } onClick={ upgradePlan }>
+						{ translate( 'Unlock theme' ) }
+					</Button>
+				) : (
+					<Button primary borderless={ false } onClick={ () => pickDesign() }>
+						{ pickDesignText }
+					</Button>
+				) }
+			</div>
+		);
+
 		const stepContent = (
 			<>
 				<UpgradeModal
@@ -347,6 +366,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						variations={ selectedDesignDetails?.style_variations }
 						selectedVariation={ selectedStyleVariation }
 						onSelectVariation={ setSelectedStyleVariation }
+						actionButtons={ actionButtons }
 					/>
 				) : (
 					<WebPreview
@@ -372,35 +392,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</>
 		);
 
-		const pickDesignText =
-			selectedDesign?.design_type === 'vertical' || isEnabledStyleSelection
-				? translate( 'Select and continue' )
-				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
-
-		const actionButtons = (
-			<div>
-				{ shouldUpgrade ? (
-					<Button primary borderless={ false } onClick={ upgradePlan }>
-						{ translate( 'Unlock theme' ) }
-					</Button>
-				) : (
-					<Button primary borderless={ false } onClick={ () => pickDesign() }>
-						{ pickDesignText }
-					</Button>
-				) }
-			</div>
-		);
-
 		return isEnabledStyleSelection ? (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
 				className="design-setup__preview design-setup__preview__has-more-info"
-				nextLabelText={ pickDesignText }
 				goBack={ handleBackClick }
-				goNext={ () => pickDesign() }
-				customizedActionButtons={ actionButtons }
+				customizedActionButtons={ isMobile ? actionButtons : undefined }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		) : (
