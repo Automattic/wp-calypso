@@ -19,18 +19,18 @@ type PatternLayoutProps = {
 };
 
 const PatternLayout = ( {
-	onContinueClick,
-	onSelectHeader,
-	onSelectSection,
-	onMoveUpSection,
-	onMoveDownSection,
-	onSelectFooter,
-	onDeleteHeader,
-	onDeleteFooter,
-	onDeleteSection,
 	header,
 	sections,
 	footer,
+	onSelectHeader,
+	onDeleteHeader,
+	onSelectSection,
+	onDeleteSection,
+	onMoveUpSection,
+	onMoveDownSection,
+	onSelectFooter,
+	onDeleteFooter,
+	onContinueClick,
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
 
