@@ -75,7 +75,7 @@ const DummyLineItemContainer = styled.div`
 	.page-picker__price {
 		font-weight: 500;
 	}
-	.page-picker__meta {
+	.page-picker__sub-label {
 		color: #646970;
 		font-size: 12px;
 		width: 100%;
@@ -86,6 +86,9 @@ const DummyLineItemContainer = styled.div`
 		flex-wrap: wrap;
 		gap: 2px 10px;
 	}
+	.page-picker__sub-label-mobile {
+		display: none;
+	}
 	span {
 		position: relative;
 	}
@@ -95,8 +98,13 @@ const DummyLineItemContainer = styled.div`
 		padding: 2px 0;
 		border: none;
 
-		.page-picker__meta {
+		.page-picker__sub-label {
 			display: none;
+		}
+		.page-picker__sub-label-mobile {
+			display: block;
+			padding: 3px 4px;
+			font-size: 0.75em;
 		}
 	}
 `;
@@ -150,19 +158,25 @@ function DummyLineItem( {
 	productCost,
 	productOriginalName,
 	subLabel,
+	mobileSubLabel,
 	productCount,
 	nameOverride,
 	currencyCode,
 }: CartItem & { currencyCode: string } ) {
 	return (
 		<DummyLineItemContainer>
-			<div className="page-picker__title">{ nameOverride ?? productOriginalName }</div>
+			<div className="page-picker__title">
+				<div className="page-picker__product-name">{ nameOverride ?? productOriginalName }</div>
+				{ mobileSubLabel && (
+					<div className="page-picker__sub-label-mobile"> { mobileSubLabel } </div>
+				) }
+			</div>
 			<div className="page-picker__price">
 				{ productCount !== undefined
 					? formatCurrency( productCost * productCount, currencyCode, { precision: 0 } )
 					: formatCurrency( productCost, currencyCode, { precision: 0 } ) }
 			</div>
-			{ subLabel && <div className="page-picker__meta">{ subLabel }</div> }
+			{ subLabel && <div className="page-picker__sub-label">{ subLabel }</div> }
 		</DummyLineItemContainer>
 	);
 }
@@ -175,7 +189,6 @@ export default function ShoppingCartForDIFM( { selectedPages }: { selectedPages:
 		<LoadingContainer>
 			<LoadingLine key="plan-placeholder" />
 			<LoadingLine key="difm-placeholder" />
-			<LoadingLine key="extra-page-placeholder" />
 			<LoadingLine key="total-placeholder" />
 		</LoadingContainer>
 	) : (
