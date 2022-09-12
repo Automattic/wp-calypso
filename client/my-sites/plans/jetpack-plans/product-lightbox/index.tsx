@@ -55,7 +55,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 	const onChangeOption = useCallback( ( productSlug: string ) => {
 		setCurrentProduct( slugToSelectorProduct( productSlug ) );
 	}, [] );
-	const { getCheckoutURL, isMultisiteCompatible, isMultisite } = useStoreItemInfoContext();
+	const { getCheckoutURL, getIsMultisiteCompatible, isMultisite } = useStoreItemInfoContext();
 	const isMobile = useMobileBreakpoint();
 
 	if ( currentProduct === null ) {
@@ -72,7 +72,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 
 	const shouldShowOptions = variants.length > 1;
 
-	const isMultiSiteIncompatible = isMultisite && ! isMultisiteCompatible( product );
+	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
 	return (
 		<Modal
