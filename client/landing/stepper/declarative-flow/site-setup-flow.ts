@@ -74,9 +74,10 @@ export const siteSetupFlow: Flow = {
 		] as StepPath[];
 	},
 	useSideEffect() {
+		// Prefetch designs for a smooth design picker UX.
+		// Except for Unified Design Picker which uses a separate API endpoint (wpcom/v2/starter-designs).
 		const site = useSite();
-		// prefetch designs for a smooth design picker UX
-		useDesignsBySite( site );
+		useDesignsBySite( site, { enabled: !! site && ! isEnabled( 'signup/design-picker-unified' ) } );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
