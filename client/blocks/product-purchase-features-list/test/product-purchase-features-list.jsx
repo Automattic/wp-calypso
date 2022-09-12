@@ -90,6 +90,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
+		screen.debug( container.firstChild );
 		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
@@ -318,7 +319,7 @@ describe( '<HappinessSupportCard isJetpackFreePlan', () => {
 	};
 	test( 'Should set isJetpackFreePlan for free plan', () => {
 		render( <ProductPurchaseFeaturesList { ...props } /> );
-		expect( screen.queryByRole( 'heading', { name: /support documentation/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: /support documentation/i } ) ).toBeVisible();
 	} );
 } );
 
@@ -337,6 +338,6 @@ describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
 			},
 		};
 		render( <ProductPurchaseFeaturesList { ...props } /> );
-		expect( screen.queryByRole( 'link', { name: /ask a question/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /ask a question/i } ) ).toBeVisible();
 	} );
 } );
