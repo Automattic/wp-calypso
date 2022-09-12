@@ -192,7 +192,8 @@ button {
 			color: var(--studio-gray-60);
 		}
 
-		input[type="text"].form-text-input {
+		input[type="text"].form-text-input,
+		textarea.form-textarea {
 			font-size: $font-body-small;
 			border-radius: 4px;
 			border: 1px solid var(--studio-gray-10);
