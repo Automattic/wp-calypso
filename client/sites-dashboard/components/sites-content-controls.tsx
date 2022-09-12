@@ -81,7 +81,8 @@ type SitesContentControlsProps = {
 	initialSearch?: string;
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
-} & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher >;
+} & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
+	ComponentPropsWithoutRef< typeof SitesListSortingDropdown >;
 
 export const SitesContentControls = ( {
 	initialSearch,
@@ -89,6 +90,8 @@ export const SitesContentControls = ( {
 	selectedStatus,
 	displayMode,
 	onDisplayModeChange,
+	sitesListSorting,
+	onSitesListSortingChange,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 
@@ -116,7 +119,10 @@ export const SitesContentControls = ( {
 					) ) }
 				</ControlsSelectDropdown>
 				<VisibilityControls>
-					<SitesListSortingDropdown />
+					<SitesListSortingDropdown
+						sitesListSorting={ sitesListSorting }
+						onSitesListSortingChange={ onSitesListSortingChange }
+					/>
 					<SitesDisplayModeSwitcher
 						displayMode={ displayMode }
 						onDisplayModeChange={ onDisplayModeChange }

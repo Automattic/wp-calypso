@@ -6,9 +6,12 @@ export interface SiteDetailsForSorting {
 	};
 }
 
+export type SitesTableSortKey = 'updated-at' | 'alphabetically';
+export type SitesTableSortOrder = 'asc' | 'desc';
+
 interface SitesTableSortOptions {
-	sortKey?: string;
-	sortOrder?: 'asc' | 'desc';
+	sortKey?: SitesTableSortKey;
+	sortOrder?: SitesTableSortOrder;
 }
 
 interface UseSitesTableSortingResult< T extends SiteDetailsForSorting > {
@@ -31,7 +34,7 @@ export function useSitesTableSorting< T extends SiteDetailsForSorting >(
 
 function sortSitesByLastPublish< T extends SiteDetailsForSorting >(
 	sites: T[],
-	sortOrder: string
+	sortOrder: SitesTableSortOrder
 ): T[] {
 	return [ ...sites ].sort( ( a, b ) => {
 		if ( ! a.options?.updated_at || ! b.options?.updated_at ) {

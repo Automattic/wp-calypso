@@ -18,6 +18,7 @@ import { NoSitesMessage } from './no-sites-message';
 import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
+import { useSitesListSorting } from './sites-list-sorting-dropdown';
 import { SitesTable } from './sites-table';
 
 interface SitesDashboardProps {
@@ -140,6 +141,7 @@ export function SitesDashboard( {
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
+	const [ sitesListSorting, onSitesListSortingChange ] = useSitesListSorting();
 
 	const elementRef = useRef( window );
 
@@ -175,6 +177,8 @@ export function SitesDashboard( {
 							selectedStatus={ selectedStatus }
 							displayMode={ displayMode }
 							onDisplayModeChange={ setDisplayMode }
+							sitesListSorting={ sitesListSorting }
+							onSitesListSortingChange={ onSitesListSortingChange }
 						/>
 					) }
 					{ filteredSites.length > 0 || isLoading ? (
