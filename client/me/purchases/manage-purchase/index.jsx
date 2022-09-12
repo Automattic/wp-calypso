@@ -74,6 +74,7 @@ import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
+import { RemovePlanDialog } from 'calypso/me/purchases/remove-plan-dialog';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -152,6 +153,7 @@ class ManagePurchase extends Component {
 
 	state = {
 		showNonPrimaryDomainWarningDialog: false,
+		showRemoveSubscriptionWarningDialog: false,
 		cancelLink: null,
 	};
 
@@ -444,6 +446,15 @@ class ManagePurchase extends Component {
 	showNonPrimaryDomainWarningDialog( cancelLink ) {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: true,
+			showRemoveSubscriptionWarningDialog: false,
+			cancelLink,
+		} );
+	}
+
+	showRemoveSubscriptionWarningDialog( cancelLink ) {
+		this.setState( {
+			showNonPrimaryDomainWarningDialog: false,
+			showRemoveSubscriptionWarningDialog: true,
 			cancelLink,
 		} );
 	}
@@ -451,6 +462,7 @@ class ManagePurchase extends Component {
 	closeDialog = () => {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
+			showRemoveSubscriptionWarningDialog: false,
 			cancelLink: null,
 		} );
 	};
@@ -478,6 +490,20 @@ class ManagePurchase extends Component {
 		return null;
 	}
 
+	renderRemoveSubscriptionWarningDialog( site ) {
+		if ( this.state.showRemoveSubscriptionWarningDialog ) {
+			return (
+				<RemovePlanDialog
+					isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
+					closeDialog={ this.closeDialog }
+					removePlan={ this.goToCancelLink }
+					site={ site }
+				/>
+			);
+		}
+
+		return null;
+	}
 	renderCancelPurchaseNavItem() {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
@@ -525,6 +551,11 @@ class ManagePurchase extends Component {
 			if ( this.shouldShowNonPrimaryDomainWarning() ) {
 				event.preventDefault();
 				this.showNonPrimaryDomainWarningDialog( link );
+			}
+
+			if ( isSubscription( purchase ) ) {
+				event.preventDefault();
+				this.showRemoveSubscriptionWarningDialog( link );
 			}
 		};
 
@@ -925,6 +956,7 @@ class ManagePurchase extends Component {
 				/>
 				{ this.renderPurchaseDetail( preventRenewal ) }
 				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
+				{ site && this.renderRemoveSubscriptionWarningDialog( site ) }
 			</Fragment>
 		);
 	}
