@@ -220,7 +220,7 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<ProvideExperimentData
-					name="calypso_signup_plans_step_optimize_202208_v1"
+					name="calypso_signup_plans_step_faq_202209_v1"
 					options={ {
 						isEligible:
 							[ 'en-gb', 'en' ].includes( locale ) &&
@@ -253,9 +253,7 @@ export class PlansStep extends Component {
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 								isReskinned={ isReskinned }
-								isCondensedFeaturesExperiment={
-									experimentAssignment?.variationName === 'treatment'
-								}
+								isFAQExperiment={ experimentAssignment?.variationName === 'treatment' }
 							/>
 						);
 					} }

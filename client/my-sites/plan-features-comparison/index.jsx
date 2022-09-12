@@ -55,7 +55,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate, isCondensedFeaturesExperiment } = this.props;
+		const { isInSignup, planProperties, translate, isFAQExperiment } = this.props;
 		const tableClasses = classNames(
 			'plan-features-comparison__table',
 			`has-${ planProperties.length }-cols`
@@ -66,8 +66,6 @@ export class PlanFeaturesComparison extends Component {
 		const planWrapperClasses = classNames( {
 			'plans-wrapper': isInSignup,
 		} );
-
-		const isFaqTest = true;
 
 		return (
 			<div className={ planWrapperClasses }>
@@ -82,7 +80,7 @@ export class PlanFeaturesComparison extends Component {
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
-									{ isCondensedFeaturesExperiment || isFaqTest
+									{ isFAQExperiment
 										? this.renderPlanFeatureRowsTest()
 										: this.renderPlanFeatureRows() }
 								</tbody>
@@ -426,7 +424,7 @@ export default connect(
 			siteId,
 			visiblePlans,
 			popularPlanSpec,
-			isCondensedFeaturesExperiment,
+			isFAQExperiment,
 		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
@@ -445,7 +443,6 @@ export default connect(
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
 				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
-				const isFaqTest = true;
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
@@ -462,10 +459,7 @@ export default connect(
 					planFeatures = getPlanFeaturesObject( featureAccessor() );
 				}
 
-				if (
-					( isCondensedFeaturesExperiment || isFaqTest ) &&
-					planConstantObj.getCondensedExperimentFeatures
-				) {
+				if ( isFAQExperiment && planConstantObj.getCondensedExperimentFeatures ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getCondensedExperimentFeatures() );
 				}
 
