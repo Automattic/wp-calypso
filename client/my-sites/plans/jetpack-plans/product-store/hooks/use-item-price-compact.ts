@@ -15,7 +15,9 @@ export const useItemPriceCompact = () => {
 
 		onResize();
 		window.addEventListener( 'resize', onResize );
-	}, [] );
+
+		return () => window.removeEventListener( 'resize', onResize );
+	}, [ containerRef ] );
 
 	return useMemo(
 		() => ( {
