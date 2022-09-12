@@ -133,6 +133,8 @@ a.button.plugin-row-formatter__plugin-name-card {
 }
 
 .plugin-row-formatter__last-updated {
+	color: var(--color-text-subtle);
+
 	@include break-xlarge {
 		// Align right when there's no enough space.
 		text-align: right;
