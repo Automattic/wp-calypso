@@ -88,7 +88,6 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		screen.debug( container.firstChild );
 		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
