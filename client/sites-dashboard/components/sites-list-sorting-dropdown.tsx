@@ -1,9 +1,11 @@
 import { Gridicon, SitesTableSortKey, SitesTableSortOrder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { useMediaQuery } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
+import { SMALL_MEDIA_QUERY } from '../utils';
 
 const SortingButton = styled( Button )( {
 	alignSelf: 'stretch',
@@ -53,6 +55,7 @@ export const SitesListSortingDropdown = ( {
 	onSitesListSortingChange,
 	sitesListSorting,
 }: SitesListSortingDropdownProps ) => {
+	const isSmallScreen = useMediaQuery( SMALL_MEDIA_QUERY );
 	const { __ } = useI18n();
 
 	const label = useMemo( () => {
@@ -78,7 +81,7 @@ export const SitesListSortingDropdown = ( {
 
 	return (
 		<Dropdown
-			position="bottom center"
+			position={ isSmallScreen ? 'bottom left' : 'bottom center' }
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<SortingButton
 					icon={ <SortingButtonIcon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
