@@ -20,13 +20,17 @@ const TimeFrame: React.FC< TimeFrameProps > = ( { expiryDate, billingTerm } ) =>
 		if ( billingTerm === TERM_MONTHLY ) {
 			return {
 				normal: translate( '/month, billed monthly' ),
-				compact: translate( '/mo, billed monthly' ),
+				compact: translate( '/mo, billed monthly', {
+					comment: '/mo should be as compact as possible',
+				} ),
 			};
 		}
 
 		return {
 			normal: translate( '/month, billed yearly' ),
-			compact: translate( '/mo, billed yearly' ),
+			compact: translate( '/mo, billed yearly', {
+				comment: '/mo should be as compact as possible',
+			} ),
 		};
 	}, [ billingTerm, translate ] );
 
