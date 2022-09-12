@@ -41,10 +41,10 @@ describe( 'useSitesTableSorting', () => {
 		expect( result.current.sortedSites[ 2 ].ID ).toBe( 3 );
 	} );
 
-	test( 'should sort sites by updated-at descending', () => {
+	test( 'should sort sites by updatedAt descending', () => {
 		const { result } = renderHook( () =>
 			useSitesTableSorting( filteredSites, {
-				sortKey: 'updated-at',
+				sortKey: 'updatedAt',
 				sortOrder: 'desc',
 			} )
 		);
@@ -55,10 +55,10 @@ describe( 'useSitesTableSorting', () => {
 		expect( result.current.sortedSites[ 2 ].ID ).toBe( 1 );
 	} );
 
-	test( 'should sort sites by updated-at ascending', () => {
+	test( 'should sort sites by updatedAt ascending', () => {
 		const { result } = renderHook( () =>
 			useSitesTableSorting( filteredSites, {
-				sortKey: 'updated-at',
+				sortKey: 'updatedAt',
 				sortOrder: 'asc',
 			} )
 		);
@@ -74,7 +74,7 @@ describe( 'useSitesTableSorting', () => {
 
 		const { result, rerender } = renderHook(
 			( { sortOrder } ) =>
-				useSitesTableSorting( filteredSites, { sortKey: 'updated-at', sortOrder } ),
+				useSitesTableSorting( filteredSites, { sortKey: 'updatedAt', sortOrder } ),
 			{ initialProps: { sortOrder: 'asc' } }
 		);
 
