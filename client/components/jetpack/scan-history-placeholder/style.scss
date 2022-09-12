@@ -10,7 +10,7 @@
 	font-size: $font-title-large;
 	line-height: 1;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 32px 0 24px;
 
 		font-size: $font-headline-small;

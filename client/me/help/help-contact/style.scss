@@ -1,20 +1,20 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/mixins';
-@import '../../../assets/stylesheets/shared/mixins/_placeholder';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "../../../assets/stylesheets/shared/mixins/_placeholder";
 
 .help-contact__placeholder {
 	color: transparent;
 
 	.help-contact__header {
 		@include placeholder();
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		height: 18px;
 		margin-bottom: 2px;
 		width: 150px;
 	}
 	.help-contact__textarea {
 		@include placeholder();
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		height: 50px;
 		margin-bottom: 32px;
 	}

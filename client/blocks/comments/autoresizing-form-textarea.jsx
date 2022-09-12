@@ -8,7 +8,18 @@ import withPasteToLink from 'calypso/lib/paste-to-link';
 import './autoresizing-form-textarea.scss';
 
 const AutoresizingFormTextarea = (
-	{ hasFocus, value, placeholder, onKeyUp, onKeyDown, onFocus, onBlur, onChange, enableAutoFocus },
+	{
+		hasFocus,
+		value,
+		placeholder,
+		onKeyUp,
+		onKeyDown,
+		onFocus,
+		onBlur,
+		onChange,
+		enableAutoFocus,
+		...otherProps
+	},
 	forwardedRef
 ) => {
 	const classes = classnames( 'expanding-area', { focused: hasFocus } );
@@ -21,6 +32,7 @@ const AutoresizingFormTextarea = (
 			</pre>
 			<AutoDirection>
 				<FormTextarea
+					{ ...otherProps }
 					value={ value }
 					placeholder={ placeholder }
 					onKeyUp={ onKeyUp }
@@ -37,4 +49,6 @@ const AutoresizingFormTextarea = (
 	);
 };
 
-export default withPasteToLink( withUserMentions( forwardRef( AutoresizingFormTextarea ) ) );
+export const ForwardedAutoresizingFormTextarea = forwardRef( AutoresizingFormTextarea );
+
+export default withPasteToLink( withUserMentions( ForwardedAutoresizingFormTextarea ) );

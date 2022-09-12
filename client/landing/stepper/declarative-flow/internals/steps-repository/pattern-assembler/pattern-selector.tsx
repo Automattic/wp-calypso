@@ -1,53 +1,23 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
 
 type PatternSelectorProps = {
 	patterns: Pattern[] | null;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
-	onDeselect: ( selectedPattern: Pattern | null ) => void;
 	title: string | null;
-	pattern: Pattern | null;
 	show: boolean;
 };
 
-const PatternSelector = ( {
-	patterns,
-	onSelect,
-	onDeselect,
-	title,
-	pattern,
-	show,
-}: PatternSelectorProps ) => {
-	const [ selectedPattern, setSelectedPattern ] = useState< Pattern | null >( null );
+const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorProps ) => {
 	const translate = useTranslate();
-
-	useEffect( () => {
-		setSelectedPattern( pattern );
-	}, [ pattern ] );
-
-	const handleContinueClick = () => {
-		onSelect( selectedPattern );
-	};
+	const locale = useLocale();
 
 	const handleBackClick = () => {
 		onSelect( null );
-		setSelectedPattern( null );
-	};
-
-	const handleDeleteClick = () => {
-		onDeselect( pattern );
-		setSelectedPattern( null );
-	};
-
-	const isSelected = ( id: number ) => id === selectedPattern?.id;
-
-	const handleSelectedPattern = ( item: Pattern ) => {
-		if ( isSelected( item.id ) ) return setSelectedPattern( null );
-		setSelectedPattern( item );
 	};
 
 	return (
@@ -57,25 +27,22 @@ const PatternSelector = ( {
 			</div>
 			<div className="pattern-selector__body">
 				<div className="pattern-selector__block-list" role="listbox">
-					{ patterns?.map( ( item: Pattern ) => (
-						<div
-							key={ item.id }
-							aria-label={ item.name }
-							tabIndex={ 0 }
-							role="option"
-							aria-selected={ isSelected( item.id ) }
-							className={ classNames( { '--pattern-selected': isSelected( item.id ) } ) }
-							onClick={ () => handleSelectedPattern( item ) }
-							onKeyUp={ handleKeyboard( () => setSelectedPattern( item ) ) }
+					{ patterns?.map( ( item: Pattern, index: number ) => (
+						<PatternPreviewAutoHeight
+							key={ `${ index }-${ item.id }` }
+							url={ getPatternPreviewUrl( item.id, locale ) }
+							patternId={ item.id }
+							patternName={ item.name }
 						>
-							<iframe
-								title={ item.name }
-								src={ getPatternPreviewUrl( item.id ) }
-								frameBorder="0"
-								aria-hidden
-								tabIndex={ -1 }
-							></iframe>
-						</div>
+							<div
+								aria-label={ item.name }
+								tabIndex={ 0 }
+								role="option"
+								aria-selected={ false }
+								onClick={ () => onSelect( item ) }
+								onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
+							/>
+						</PatternPreviewAutoHeight>
 					) ) }
 				</div>
 			</div>
@@ -83,16 +50,6 @@ const PatternSelector = ( {
 				<Button className="pattern-assembler__button" onClick={ handleBackClick }>
 					{ translate( 'Back' ) }
 				</Button>
-				{ selectedPattern && (
-					<Button className="pattern-assembler__button" onClick={ handleContinueClick } primary>
-						{ translate( 'Choose' ) }
-					</Button>
-				) }
-				{ ! selectedPattern && pattern && (
-					<Button className="pattern-assembler__button" onClick={ handleDeleteClick } primary>
-						{ translate( 'Delete' ) }
-					</Button>
-				) }
 			</div>
 		</div>
 	);

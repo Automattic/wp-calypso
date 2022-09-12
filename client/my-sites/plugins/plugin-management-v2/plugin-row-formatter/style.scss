@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .plugin-row-formatter__row-container {
 	position: relative;
@@ -20,7 +20,7 @@
 	overflow: hidden;
 	text-overflow: clip;
 	vertical-align: middle;
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 	font-size: 0.875rem;
 	text-align: left;
 }
@@ -38,7 +38,7 @@ a.button.plugin-row-formatter__plugin-name {
 a.button.plugin-row-formatter__plugin-name-card {
 	@extend %row-data-common-style;
 
-	width: calc( 100% - 10px );
+	width: calc(100% - 10px);
 }
 
 .plugin-row-formatter__site-name {
@@ -53,12 +53,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 	position: absolute;
 	height: 25px;
 	width: 25px;
-	background:
-		linear-gradient(
-			to right,
-			rgb( 255 255 255 / 80% ) 30%,
-			rgb( 255 255 255 / 100% ) 100%
-		);
+	background: linear-gradient(to right, rgb(255 255 255 / 80%) 30%, rgb(255 255 255 / 100%) 100%);
 	inset-block-start: 0;
 	inset-inline-end: 0;
 }
@@ -70,13 +65,13 @@ a.button.plugin-row-formatter__plugin-name-card {
 }
 
 .plugin-row-formatter__plugin-name-container {
-	width: calc( 100% - 55px );
+	width: calc(100% - 55px);
 	position: relative;
 }
 
 .has-bulk-management-active {
 	.plugin-row-formatter__plugin-name-container {
-		width: calc( 100% - 75px );
+		width: calc(100% - 75px);
 	}
 }
 
@@ -119,16 +114,16 @@ a.button.plugin-row-formatter__plugin-name-card {
 }
 
 // Checkbox for multiselect purposes
-.plugin-row-formatter__checkbox[type='checkbox'] {
+.plugin-row-formatter__checkbox[type="checkbox"] {
 	margin-inline-end: 16px;
 
 	&:checked::before {
-		content: url( /calypso/images/checkbox-icons/checkmark-jetpack.svg );
+		content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
 	}
 
 	&::after {
 		// Making tap area larger
-		content: '';
+		content: "";
 		position: absolute;
 		top: -20px;
 		left: -19px;

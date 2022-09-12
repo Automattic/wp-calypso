@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { useStoreItemInfo } from '../hooks/use-store-item-info';
+import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
 import { SimpleItemCard } from '../simple-item-card';
@@ -10,31 +10,25 @@ import './style.scss';
 
 export const AllItems: React.FC< AllItemsProps > = ( {
 	className,
-	createCheckoutURL,
-	duration,
 	heading,
 	items,
 	onClickMoreInfoFactory,
-	onClickPurchase,
 	siteId,
 } ) => {
 	const {
 		getCheckoutURL,
 		getCtaLabel,
+		getIsDeprecated,
+		getIsIncludedInPlan,
+		getIsIncludedInPlanOrSuperseded,
+		getIsMultisiteCompatible,
+		getIsOwned,
+		getIsPlanFeature,
+		getIsSuperseded,
+		getIsUserPurchaseOwner,
 		getOnClickPurchase,
-		isIncludedInPlan,
-		isIncludedInPlanOrSuperseded,
-		isOwned,
-		isPlanFeature,
-		isSuperseded,
-		isDeprecated,
-		isUserPurchaseOwner,
-	} = useStoreItemInfo( {
-		createCheckoutURL,
-		onClickPurchase,
-		duration,
-		siteId,
-	} );
+		isMultisite,
+	} = useStoreItemInfoContext();
 
 	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
 
@@ -44,24 +38,26 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 
 			<div className="jetpack-product-store__all-items--grid">
 				{ items.map( ( item ) => {
-					const isItemOwned = isOwned( item );
-					const isItemSuperseded = isSuperseded( item );
-					const isItemDeprecated = isDeprecated( item );
-					const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
-					const isItemIncludedInPlan = isIncludedInPlan( item );
+					const isOwned = getIsOwned( item );
+					const isSuperseded = getIsSuperseded( item );
+					const isDeprecated = getIsDeprecated( item );
+					const isIncludedInPlanOrSuperseded = getIsIncludedInPlanOrSuperseded( item );
+					const isIncludedInPlan = getIsIncludedInPlan( item );
+					const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( item );
 
 					const isCtaDisabled =
-						( isItemOwned || isItemIncludedInPlan ) && ! isUserPurchaseOwner( item );
+						isMultiSiteIncompatible ||
+						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
 
-					const hideMoreInfoLink =
-						isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
+					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
 					const price = (
 						<ItemPrice
-							isIncludedInPlan={ isItemIncludedInPlan }
-							isOwned={ isItemOwned }
+							isMultiSiteIncompatible={ isMultiSiteIncompatible }
+							isIncludedInPlan={ isIncludedInPlan }
+							isOwned={ isOwned }
 							item={ item }
 							siteId={ siteId }
 						/>
@@ -76,9 +72,11 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						</>
 					);
 
+					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
+
 					return (
 						<SimpleItemCard
-							ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
+							ctaAsPrimary={ ctaAsPrimary }
 							ctaHref={ getCheckoutURL( item ) }
 							ctaLabel={ ctaLabel }
 							description={ description }

@@ -126,7 +126,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	}, [ displayManageSitePluginsModal ] );
 
 	// If we cannot retrieve plugin status through jetpack ( ! isJetpack ) and plugin is preinstalled.
-	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) && isLoggedIn ) {
+	if ( ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug ) ) {
 		return (
 			<div className="plugin-details-cta__container">
 				<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
@@ -349,7 +349,6 @@ function LegacyPluginDetailsCTA( {
 } ) {
 	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
-	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const requestingPluginsForSites = useSelector( ( state ) =>
 		isRequestingForSites( state, siteIds )
@@ -403,7 +402,7 @@ function LegacyPluginDetailsCTA( {
 	}
 
 	// Check if user can manage plugins or no site is selected (all sites view).
-	if ( ( ! selectedSite || ! userCan( 'manage_options', selectedSite ) ) && isLoggedIn ) {
+	if ( ! selectedSite || ! userCan( 'manage_options', selectedSite ) ) {
 		if ( isMarketplaceProduct ) {
 			return (
 				<div className="plugin-details-cta__container">
@@ -465,19 +464,7 @@ function LegacyPluginDetailsCTA( {
 				</PluginPrice>
 			</div>
 			<div className="plugin-details-cta__install">
-				{ isLoggedIn ? (
-					<CTAButton plugin={ plugin } hasEligibilityMessages={ hasEligibilityMessages } />
-				) : (
-					<Button
-						type="a"
-						className="plugin-details-CTA__install-button"
-						primary
-						onClick={ ( e ) => e.stopPropagation() }
-						href={ localizeUrl( 'https://wordpress.com/pricing/' ) }
-					>
-						{ translate( 'View plans' ) }
-					</Button>
-				) }
+				<CTAButton plugin={ plugin } hasEligibilityMessages={ hasEligibilityMessages } />
 			</div>
 			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-cta__t-and-c">

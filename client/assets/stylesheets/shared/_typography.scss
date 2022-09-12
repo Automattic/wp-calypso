@@ -1,13 +1,13 @@
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/typography/styles/variables';
-@import './mixins/breakpoints';
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/typography/styles/variables";
+@import "./mixins/breakpoints";
 
-$signup-sans: 'Noto Sans', $sans;
+$signup-sans: "Noto Sans", $sans;
 
 %content-font {
 	font-family: $serif;
 	font-weight: 400;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	color: var( --color-text );
+	color: var(--color-text);
 }

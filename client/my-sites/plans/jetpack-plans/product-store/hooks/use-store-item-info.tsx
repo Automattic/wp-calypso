@@ -1,5 +1,8 @@
 import {
+	isJetpackPlanSlug,
 	JetpackPurchasableItemSlug,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_SCAN_PRODUCTS,
 	planHasFeature,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -12,12 +15,28 @@ import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
-import { getSitePlan, getSiteProducts } from 'calypso/state/sites/selectors';
+import {
+	getSitePlan,
+	getSiteProducts,
+	isJetpackSiteMultiSite,
+} from 'calypso/state/sites/selectors';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
 
-const isDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
+const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
+
+const getIsMultisiteCompatible = ( item: SelectorProduct ) => {
+	if ( isJetpackPlanSlug( item.productSlug ) ) {
+		// plans containing Jetpack Backup and/or Jetpack Scan are incompatible with multisite installs
+		return ! [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ].filter( ( productSlug ) =>
+			planHasFeature( item.productSlug, productSlug )
+		).length;
+	}
+	return ! (
+		[ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SCAN_PRODUCTS ] as ReadonlyArray< string >
+	 ).includes( item.productSlug );
+};
 
 export const useStoreItemInfo = ( {
 	createCheckoutURL,
@@ -28,11 +47,15 @@ export const useStoreItemInfo = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const isMultisite = useSelector(
+		( state ) => !! ( siteId && isJetpackSiteMultiSite( state, siteId ) )
+	);
+
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 	const translate = useTranslate();
 
 	// Determine whether product is owned.
-	const isOwned = useCallback(
+	const getIsOwned = useCallback(
 		( item: SelectorProduct ) => {
 			if ( sitePlan && sitePlan.product_slug === item.productSlug ) {
 				return true;
@@ -47,31 +70,31 @@ export const useStoreItemInfo = ( {
 		[ sitePlan, siteProducts ]
 	);
 
-	const isUpgradeableToYearly = useCallback(
+	const getIsUpgradeableToYearly = useCallback(
 		( item: SelectorProduct ) =>
-			isOwned( item ) && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY,
-		[ isOwned, selectedTerm ]
+			getIsOwned( item ) && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY,
+		[ getIsOwned, selectedTerm ]
 	);
 
-	const isPlanFeature = useCallback(
+	const getIsPlanFeature = useCallback(
 		( item: SelectorProduct ) =>
 			!! ( sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug ) ),
 		[ sitePlan ]
 	);
 
-	const isIncludedInPlan = useCallback(
+	const getIsIncludedInPlan = useCallback(
 		( item: SelectorProduct ) => {
-			return ! isOwned( item ) && isPlanFeature( item );
+			return ! getIsOwned( item ) && getIsPlanFeature( item );
 		},
-		[ isOwned, isPlanFeature ]
+		[ getIsOwned, getIsPlanFeature ]
 	);
 
-	const isSuperseded = useCallback(
+	const getIsSuperseded = useCallback(
 		( item: SelectorProduct ) => {
 			return !! (
-				! isDeprecated( item ) &&
-				! isOwned( item ) &&
-				! isIncludedInPlan( item ) &&
+				! getIsDeprecated( item ) &&
+				! getIsOwned( item ) &&
+				! getIsIncludedInPlan( item ) &&
 				sitePlan &&
 				item &&
 				isSupersedingJetpackItem(
@@ -80,46 +103,46 @@ export const useStoreItemInfo = ( {
 				)
 			);
 		},
-		[ isIncludedInPlan, isOwned, sitePlan ]
+		[ getIsIncludedInPlan, getIsOwned, sitePlan ]
 	);
 
-	const isIncludedInPlanOrSuperseded = useCallback(
-		( item: SelectorProduct ) => isIncludedInPlan( item ) || isSuperseded( item ),
-		[ isIncludedInPlan, isSuperseded ]
+	const getIsIncludedInPlanOrSuperseded = useCallback(
+		( item: SelectorProduct ) => getIsIncludedInPlan( item ) || getIsSuperseded( item ),
+		[ getIsIncludedInPlan, getIsSuperseded ]
 	);
 
 	const getPurchase = useCallback(
 		( item: SelectorProduct ) => {
-			const isItemPlanFeature = isPlanFeature( item );
+			const isPlanFeature = getIsPlanFeature( item );
 
-			const isItemSuperseded = isSuperseded( item );
+			const isSuperseded = getIsSuperseded( item );
 
 			// If item is a plan feature, use the plan purchase object.
 			const purchase =
-				isItemPlanFeature || isItemSuperseded
+				isPlanFeature || isSuperseded
 					? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
 					: getPurchaseByProductSlug( purchases, item.productSlug );
 
 			return purchase;
 		},
-		[ isPlanFeature, isSuperseded, purchases, sitePlan?.product_slug ]
+		[ getIsPlanFeature, getIsSuperseded, purchases, sitePlan?.product_slug ]
 	);
 
 	const getCheckoutURL = useCallback(
 		( item: SelectorProduct ) => {
-			return createCheckoutURL?.( item, isUpgradeableToYearly( item ), getPurchase( item ) );
+			return createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
-		[ createCheckoutURL, getPurchase, isUpgradeableToYearly ]
+		[ createCheckoutURL, getPurchase, getIsUpgradeableToYearly ]
 	);
 
 	const getOnClickPurchase = useCallback(
 		( item: SelectorProduct ) => () => {
-			return onClickPurchase?.( item, isUpgradeableToYearly( item ), getPurchase( item ) );
+			return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
-		[ getPurchase, isUpgradeableToYearly, onClickPurchase ]
+		[ getPurchase, getIsUpgradeableToYearly, onClickPurchase ]
 	);
 
-	const isUserPurchaseOwner = useCallback(
+	const getIsUserPurchaseOwner = useCallback(
 		( item: SelectorProduct ) => {
 			const purchase = getPurchase( item );
 			return isCurrentUserPurchaseOwner( purchase );
@@ -131,17 +154,17 @@ export const useStoreItemInfo = ( {
 		( item: SelectorProduct ) => {
 			const ctaLabel = productButtonLabel( {
 				product: item,
-				isOwned: isOwned( item ),
-				isUpgradeableToYearly: isUpgradeableToYearly( item ),
-				isDeprecated: isDeprecated( item ),
-				isSuperseded: isSuperseded( item ),
+				isOwned: getIsOwned( item ),
+				isUpgradeableToYearly: getIsUpgradeableToYearly( item ),
+				isDeprecated: getIsDeprecated( item ),
+				isSuperseded: getIsSuperseded( item ),
 				currentPlan: sitePlan,
 				fallbackLabel: translate( 'Get' ),
 			} );
 
 			const purchase = getPurchase( item );
 
-			if ( ! purchase ) {
+			if ( ! purchase || isCurrentUserPurchaseOwner( purchase ) ) {
 				return ctaLabel;
 			}
 
@@ -153,38 +176,47 @@ export const useStoreItemInfo = ( {
 				</>
 			);
 		},
-		[ getPurchase, isOwned, isSuperseded, isUpgradeableToYearly, sitePlan, translate ]
+		[
+			getIsOwned,
+			getIsUpgradeableToYearly,
+			getIsSuperseded,
+			sitePlan,
+			translate,
+			getPurchase,
+			isCurrentUserPurchaseOwner,
+		]
 	);
 
 	return useMemo(
 		() => ( {
 			getCheckoutURL,
 			getCtaLabel,
+			getIsDeprecated,
+			getIsIncludedInPlan,
+			getIsIncludedInPlanOrSuperseded,
+			getIsMultisiteCompatible,
+			getIsOwned,
+			getIsPlanFeature,
+			getIsSuperseded,
+			getIsUpgradeableToYearly,
+			getIsUserPurchaseOwner,
 			getOnClickPurchase,
 			getPurchase,
-			isDeprecated,
-			isIncludedInPlan,
-			isIncludedInPlanOrSuperseded,
-			isOwned,
-			isPlanFeature,
-			isSuperseded,
-			isUpgradeableToYearly,
-			isUserPurchaseOwner,
-			sitePlan,
+			isMultisite,
 		} ),
 		[
 			getCheckoutURL,
 			getCtaLabel,
+			getIsIncludedInPlan,
+			getIsIncludedInPlanOrSuperseded,
+			getIsOwned,
+			getIsPlanFeature,
+			getIsSuperseded,
+			getIsUpgradeableToYearly,
+			getIsUserPurchaseOwner,
 			getOnClickPurchase,
 			getPurchase,
-			isIncludedInPlan,
-			isIncludedInPlanOrSuperseded,
-			isOwned,
-			isPlanFeature,
-			isSuperseded,
-			isUpgradeableToYearly,
-			isUserPurchaseOwner,
-			sitePlan,
+			isMultisite,
 		]
 	);
 };

@@ -4,19 +4,19 @@
 
 .line-chart__line-color-0 {
 	fill: none;
-	stroke: var( --color-primary-dark );
+	stroke: var(--color-primary-dark);
 	stroke-width: 3px;
 }
 
 .line-chart__line-color-1 {
 	fill: none;
-	stroke: var( --color-accent );
+	stroke: var(--color-accent);
 	stroke-width: 3px;
 }
 
 .line-chart__line-color-2 {
 	fill: none;
-	stroke: var( --color-primary-light );
+	stroke: var(--color-primary-light);
 	stroke-width: 3px;
 }
 
@@ -24,41 +24,42 @@
 	stroke-width: 5px;
 }
 
-.line-chart__line-not-selected, .line-chart__area-not-selected {
+.line-chart__line-not-selected,
+.line-chart__area-not-selected {
 	opacity: 0.5;
 }
 
 .line-chart__area-color-0 {
-	fill: var( --color-primary-dark );
+	fill: var(--color-primary-dark);
 	opacity: 0.6;
 }
 
 .line-chart__area-color-1 {
-	fill: var( --color-accent );
+	fill: var(--color-accent);
 	opacity: 0.3;
 }
 
 .line-chart__area-color-2 {
-	fill: var( --color-primary-light );
+	fill: var(--color-primary-light);
 	opacity: 0.1;
 }
 
 .line-chart__line-point {
 	cursor: pointer;
-	fill: var( --color-text-inverted );
+	fill: var(--color-text-inverted);
 	stroke-width: 3px;
 }
 
 .line-chart__line-point-color-0 {
-	stroke: var( --color-primary-dark );
+	stroke: var(--color-primary-dark);
 }
 
 .line-chart__line-point-color-1 {
-	stroke: var( --color-accent );
+	stroke: var(--color-accent);
 }
 
 .line-chart__line-point-color-2 {
-	stroke: var( --color-primary-light );
+	stroke: var(--color-primary-light);
 }
 
 .line-chart__area-selected {
@@ -76,18 +77,18 @@
 }
 
 .line-chart__line-end-point-color-0 {
-	fill: var( --color-primary-dark );
-	stroke: var( --color-primary-dark );
+	fill: var(--color-primary-dark);
+	stroke: var(--color-primary-dark);
 }
 
 .line-chart__line-end-point-color-1 {
-	fill: var( --color-accent );
-	stroke: var( --color-accent );
+	fill: var(--color-accent);
+	stroke: var(--color-accent);
 }
 
 .line-chart__line-end-point-color-2 {
-	fill: var( --color-primary-light );
-	stroke: var( --color-primary-light );
+	fill: var(--color-primary-light);
+	stroke: var(--color-primary-light);
 }
 
 .line-chart__placeholder {
@@ -102,16 +103,16 @@
 
 	.domain,
 	line {
-		stroke: var( --color-neutral-0 );
+		stroke: var(--color-neutral-0);
 	}
 }
 
 .line-chart__x-axis text {
-	fill: var( --color-neutral-60 );
+	fill: var(--color-neutral-60);
 }
 
 .line-chart__y-axis text {
-	fill: var( --color-neutral-40 );
+	fill: var(--color-neutral-40);
 }
 
 .line-chart__legend {
@@ -124,37 +125,37 @@
 		cursor: pointer;
 	}
 
-	.legend-item:not( :first-child ) {
+	.legend-item:not(:first-child) {
 		margin-left: 20px;
 	}
 }
 
 .line-chart__legend-sample-0 {
-	fill: var( --color-primary-dark );
+	fill: var(--color-primary-dark);
 }
 
 .line-chart__legend-sample-1 {
-	fill: var( --color-accent );
+	fill: var(--color-accent);
 }
 
 .line-chart__legend-sample-2 {
-	fill: var( --color-primary-light );
+	fill: var(--color-primary-light);
 }
 
 .line-chart__legend-sample-0-fill {
-	fill: var( --color-primary-dark );
+	fill: var(--color-primary-dark);
 }
 
- .line-chart__legend-sample-1-fill {
-	fill: var( --color-accent );
+.line-chart__legend-sample-1-fill {
+	fill: var(--color-accent);
 }
 
 .line-chart__legend-sample-2-fill {
-	fill: var( --color-primary-light );
+	fill: var(--color-primary-light);
 }
 
 .line-chart__date-range-selected {
-	fill: var( --color-accent );
+	fill: var(--color-accent);
 	opacity: 0.1;
 }
 

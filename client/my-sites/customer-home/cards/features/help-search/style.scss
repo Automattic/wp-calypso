@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 $search_results_top_spacing: 24px;
 $card_padding_small: 16px;
 $card_padding_large: 24px;
@@ -13,7 +13,7 @@ $min_results_height: 180px;
 	.help-search__inner {
 		padding: 0 16px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding: 16px 24px 0;
 		}
 	}
@@ -29,7 +29,7 @@ $min_results_height: 180px;
 
 	.help-search__footer {
 		margin-bottom: 30px;
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-bottom: 6px;
 		}
 	}
@@ -38,7 +38,7 @@ $min_results_height: 180px;
 		display: flex;
 		align-items: center;
 		padding: 10px $card_padding_small;
-		color: var( --color-text );
+		color: var(--color-text);
 		line-height: 1;
 
 		@include break-mobile {
@@ -47,7 +47,7 @@ $min_results_height: 180px;
 
 		&:hover,
 		&:focus {
-			background: var( --color-neutral-0 );
+			background: var(--color-neutral-0);
 		}
 	}
 
@@ -58,9 +58,9 @@ $min_results_height: 180px;
 		margin-right: 12px;
 		position: relative;
 
-		background: var( --color-primary );
-		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
-		border: 1px solid var( --color-primary );
+		background: var(--color-primary);
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+		border: 1px solid var(--color-primary);
 		// Using percentage because we're drawing a circle in CSS
 		// stylelint-disable-next-line declaration-property-unit-allowed-list
 		border-radius: 100%;
@@ -72,23 +72,23 @@ $min_results_height: 180px;
 			position: absolute;
 			top: 4px;
 			left: 4px;
-			content: '';
-			background: var( --color-surface );
+			content: "";
+			background: var(--color-surface);
 			// Using percentage because we're drawing a circle in CSS
 			// stylelint-disable-next-line declaration-property-unit-allowed-list
 			border-radius: 100%;
 		}
 
 		.gridicon {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 			height: 28px;
 			width: 28px;
-			transform: translate( -2px, -2px );
+			transform: translate(-2px, -2px);
 		}
 	}
 
 	.help-search__go-icon {
-		fill: var( --color-neutral-20 );
+		fill: var(--color-neutral-20);
 		margin-left: auto; // push away from other cta content
 		margin-right: -6px; // visually pull arrow RHS to edge of card
 	}
@@ -163,7 +163,7 @@ $min_results_height: 180px;
 	.card.search-card {
 		margin: 0;
 		border-radius: 2px;
-		border-color: var( --color-border );
+		border-color: var(--color-border);
 
 		.search {
 			height: auto;
@@ -172,7 +172,7 @@ $min_results_height: 180px;
 			.search__input {
 				padding: 6px 0;
 				font-size: $font-body;
-				color: var( --color-text );
+				color: var(--color-text);
 
 				@include break-mobile {
 					padding: 11px 0;
@@ -181,7 +181,7 @@ $min_results_height: 180px;
 			}
 
 			.search__input::placeholder {
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 			}
 
 			.search__input-fade {
@@ -214,7 +214,7 @@ $min_results_height: 180px;
 		height: 15px;
 		margin: 20px $card_padding_large 0;
 		border-radius: 16px; /* stylelint-disable-line scales/radii */
-		background-color: var( --color-neutral-5 );
+		background-color: var(--color-neutral-5);
 
 		&:first-child {
 			margin-top: 12px;
@@ -224,7 +224,7 @@ $min_results_height: 180px;
 			margin-bottom: 12px;
 		}
 
-		&:nth-child( 4 ) {
+		&:nth-child(4) {
 			animation-delay: -5.1s;
 		}
 	}

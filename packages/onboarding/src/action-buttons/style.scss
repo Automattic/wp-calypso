@@ -1,6 +1,6 @@
-@import '../../styles/variables.scss';
-@import '../../styles/mixins.scss';
-@import '../../styles/z-index.scss';
+@import "../../styles/variables.scss";
+@import "../../styles/mixins.scss";
+@import "../../styles/z-index.scss";
 
 .action-buttons {
 	padding: 0 20px;
@@ -14,7 +14,7 @@
 	justify-content: space-between;
 	display: flex;
 	align-items: center;
-	z-index: onboarding-z-index( '.onboarding__footer' );
+	z-index: onboarding-z-index(".onboarding__footer");
 
 	@mixin unstick {
 		padding: 0;
@@ -31,7 +31,7 @@
 		}
 	}
 
-	&:not( .is-sticky ) {
+	&:not(.is-sticky) {
 		@include break-small {
 			@include unstick;
 		}
@@ -59,25 +59,25 @@ button.action_buttons__button.components-button {
 	}
 
 	&.action-buttons__back {
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		white-space: nowrap;
 		min-width: 0;
 		height: auto;
 	}
 
 	&.action-buttons__skip {
-		color: var( --studio-gray-50 );
-		box-shadow: inset 0 0 0 1px var( --studio-gray-50 );
+		color: var(--studio-gray-50);
+		box-shadow: inset 0 0 0 1px var(--studio-gray-50);
 
 		&:active,
 		&:hover {
-			color: var( --studio-gray-60 );
-			box-shadow: inset 0 0 0 1px var( --studio-gray-60 );
+			color: var(--studio-gray-60);
+			box-shadow: inset 0 0 0 1px var(--studio-gray-60);
 		}
 
 		&:focus {
-			color: var( --studio-gray-60 );
-			box-shadow: inset 0 0 0 1px #fff, 0 0 0 1.5px var( --highlightColor );
+			color: var(--studio-gray-60);
+			box-shadow: inset 0 0 0 1px #fff, 0 0 0 1.5px var(--highlightColor);
 		}
 	}
 
@@ -87,7 +87,7 @@ button.action_buttons__button.components-button {
 		text-decoration: underline;
 		// stylelint-disable-next-line scales/font-weight
 		font-weight: 600;
-		color: var( --mainColor );
+		color: var(--mainColor);
 
 		// @TODO: We have to revisit the ArrowButton's padding when we pick up #48568 (https://github.com/Automattic/wp-calypso/issues/48568)
 		padding: 0;

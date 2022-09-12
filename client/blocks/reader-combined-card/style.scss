@@ -18,7 +18,7 @@
 }
 
 .reader-combined-card__site-link {
-	color: var( --color-accent );
+	color: var(--color-accent);
 	line-height: 1.2em;
 	margin-bottom: 0;
 	top: 0;
@@ -26,7 +26,7 @@
 	font-weight: 600;
 
 	&:hover {
-		color: var( --color-primary-light );
+		color: var(--color-primary-light);
 	}
 
 	&::after {
@@ -36,7 +36,7 @@
 }
 
 .reader-combined-card__header-post-count {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	margin-bottom: 0;
 	line-height: 1em;
 	margin-top: 4px;
@@ -61,12 +61,12 @@
 
 .reader-combined-card__post-title-link,
 .reader-combined-card__post-title-link:visited {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	cursor: pointer;
 
 	&:hover,
 	&:focus {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 }
 
@@ -75,14 +75,14 @@
 	min-width: 64px;
 	margin-right: 15px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		min-width: 100px;
 	}
 }
 
 // Always indent the wrapper at larger breakpoints, asset or no asset
 .reader-combined-card__featured-asset-wrapper {
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		min-width: 100px;
 		margin-right: 15px;
 	}
@@ -111,15 +111,15 @@
 
 	&.is-selected {
 		&::before {
-			content: '';
+			content: "";
 			position: absolute;
 			top: -2px;
 			bottom: 2px;
 			left: -8px;
 			width: 2px;
-			background: var( --color-primary );
+			background: var(--color-primary);
 
-			@include breakpoint-deprecated( '>660px' ) {
+			@include breakpoint-deprecated( ">660px" ) {
 				left: -16px;
 			}
 		}
@@ -170,7 +170,7 @@
 
 .reader-combined-card__post-author-and-time {
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-family: $sans;
 	overflow: hidden;
 	max-height: 14px * 1.4 * 1;
@@ -178,7 +178,7 @@
 	position: relative;
 	margin-top: 3px;
 
-	&:not( .is-placeholder )::after {
+	&:not(.is-placeholder)::after {
 		@include long-content-fade( $size: 20% );
 	}
 }
@@ -191,18 +191,18 @@
 .reader-combined-card .reader-visit-link,
 .reader-combined-card .reader-author-link,
 .reader-combined-card__timestamp-link {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	cursor: pointer;
 
 	&:focus,
 	&:link,
 	&:visited {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 
 	&:hover,
 	&:active {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 }
 
@@ -216,7 +216,7 @@
 	margin-top: 4px;
 	white-space: nowrap;
 
-	&:not( .is-placeholder )::after {
+	&:not(.is-placeholder)::after {
 		@include long-content-fade( $size: 10% );
 	}
 }
@@ -225,24 +225,24 @@
 	&:focus,
 	&:link,
 	&:visited {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 
 	&:hover,
 	&:active {
-		color: var( --color-primary-light );
+		color: var(--color-primary-light);
 	}
 }
 
 // Override standard .card styles in stream
 .reader-combined-card.card {
-	border-bottom: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var(--color-neutral-10);
 	box-shadow: none;
 	margin: 0 15px;
 	padding: 18px 0 0;
 	position: relative;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 0;
 	}
 }
@@ -269,20 +269,20 @@
 	top: 13px;
 
 	.gridicon {
-		fill: var( --color-primary );
+		fill: var(--color-primary);
 	}
 
 	.follow-button__label {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 
 	&.is-following {
 		.gridicon {
-			fill: var( --color-success );
+			fill: var(--color-success);
 		}
 
 		.follow-button__label {
-			color: var( --color-success );
+			color: var(--color-success);
 		}
 	}
 
@@ -294,7 +294,7 @@
 		margin-bottom: 3px;
 
 		.follow-button__label {
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				display: inline;
 			}
 		}

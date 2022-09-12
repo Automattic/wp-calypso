@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .accordion {
 	.is-placeholder {
@@ -35,7 +35,7 @@
 				width: 74px;
 			}
 			.gridicon {
-				fill: var( --color-neutral-80 );
+				fill: var(--color-neutral-80);
 			}
 		}
 		.foldable__secondary {
@@ -51,11 +51,11 @@
 		margin-bottom: 0;
 		line-height: 1.5em;
 		font-weight: 600;
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 	}
 	&__subtitle {
 		font-size: $font-body-small;
 		margin-bottom: 0;
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 	}
 }

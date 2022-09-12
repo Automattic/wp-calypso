@@ -1,22 +1,22 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/mixins";
 
 .qr-code-login-page {
-    margin: 0 auto;
+	margin: 0 auto;
 	max-width: 780px;
-    text-align: center;
+	text-align: center;
 }
 
 .qr-code-login-page__heading {
-    font-size: $font-title-small;
+	font-size: $font-title-small;
 	margin-bottom: 32px;
 	margin-top: 16px;
 	text-align: center;
 }
 
 .qr-code-login-page__footer {
-    a {
-		color: var( --color-neutral-50 );
+	a {
+		color: var(--color-neutral-50);
 		display: block;
 		line-height: 4em;
 		font-size: $font-body-small;
@@ -26,7 +26,7 @@
 		text-decoration: none;
 
 		&:hover {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 	}
 	.gridicon {

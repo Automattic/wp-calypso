@@ -1,7 +1,7 @@
 .export-card__title,
 .export-media-card__title {
 	font-size: $font-title-small;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	margin-bottom: 16px;
 	clear: left;
 }
@@ -16,7 +16,7 @@
 .export-media-card__warning,
 .export-media-card__subtitle {
 	font-size: $font-body-small;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 }
 
 .export-media-card__warning {
@@ -44,7 +44,7 @@
 
 .export-card__advanced-settings-title {
 	font-size: $font-title-small;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	margin-bottom: 16px;
 }
 
@@ -55,7 +55,7 @@
 .export-card__advanced-settings-row {
 	margin-bottom: 1.5em;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		display: flex;
 		flex-wrap: wrap;
 	}
@@ -64,7 +64,7 @@
 .export-card__option-fieldset {
 	margin-top: 10px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-top: inherit;
 		flex: 1;
 	}
@@ -72,7 +72,7 @@
 
 .export-card__option-fieldset-description {
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	padding-left: 24px;
 	padding-right: 24px;
 }

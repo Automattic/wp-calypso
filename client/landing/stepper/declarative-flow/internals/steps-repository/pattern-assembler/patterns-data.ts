@@ -124,7 +124,7 @@ const sectionPatterns: Pattern[] = [
 		name: 'Header and Three Images',
 	},
 	{
-		id: 687,
+		id: 678,
 		name: 'Images with Titles',
 	},
 ];

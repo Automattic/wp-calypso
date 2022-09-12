@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .signup__step.is-design-setup-site,
 .signup__step.is-difm-design-setup-site {
@@ -9,7 +9,7 @@
 
 		// Ugly, but necessary to override the default max-width of the step wrapper
 		// without causing regressions to other parts of `/start`
-		body.is-section-signup .layout:not( .dops ) & {
+		body.is-section-signup .layout:not(.dops) & {
 			max-width: 1440px;
 		}
 
@@ -41,8 +41,8 @@
 
 	// Ugly, but necessary to cancel out some signup styles
 	// without causing regressions to other parts of `/start`
-	button:not( .is-primary ) {
-		body.is-section-signup .layout:not( .dops ) & {
+	button:not(.is-primary) {
+		body.is-section-signup .layout:not(.dops) & {
 			font-size: inherit;
 			padding-top: 0;
 			padding-bottom: 0;
@@ -69,25 +69,25 @@
 
 .design-picker__preview {
 	.step-wrapper__content {
-		height: calc( 100vh - 245px );
+		height: calc(100vh - 245px);
 
 		@include break-mobile {
-			height: calc( 100vh - 225px );
+			height: calc(100vh - 225px);
 		}
 
 		@include break-small {
-			height: calc( 100vh - 132px );
+			height: calc(100vh - 132px);
 		}
 
 		@include break-medium {
-			height: calc( 100vh - 148px );
+			height: calc(100vh - 148px);
 		}
 	}
 
 	@include break-small {
 		.step-wrapper__header,
 		.step-wrapper__content {
-			transform: translateY( -48px );
+			transform: translateY(-48px);
 		}
 
 		.step-wrapper__content {
@@ -102,7 +102,7 @@
 	}
 
 	.web-preview__frame {
-		border: 1px solid rgba( 0, 0, 0, 0.12 );
+		border: 1px solid rgba(0, 0, 0, 0.12);
 		border-top-width: 0;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 0 0 6px 6px;

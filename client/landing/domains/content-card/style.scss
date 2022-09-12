@@ -3,17 +3,17 @@
 	padding-bottom: 50px;
 
 	.content-card__title {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		font-size: 34px;
 		margin-bottom: 1em;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			font-size: $font-title-medium;
 		}
 	}
 
 	.content-card__message {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		font-size: $font-title-small;
 		font-weight: 400;
 		margin-bottom: 40px;
@@ -23,18 +23,18 @@
 			text-align: center;
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			font-size: $font-body;
 		}
 	}
 
 	.content-card__footer {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		font-size: $font-title-small;
 		font-weight: 400;
 		margin-bottom: 16px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			font-size: $font-body;
 		}
 	}
@@ -56,7 +56,7 @@
 			margin-left: auto;
 			margin-right: auto;
 
-			@include breakpoint-deprecated( '<480px' ) {
+			@include breakpoint-deprecated( "<480px" ) {
 				display: none;
 			}
 		}

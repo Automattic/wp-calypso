@@ -26,7 +26,7 @@ $user-mentions-avatar-margin: 10px;
 	margin-left: $user-mentions-avatar-size + $user-mentions-avatar-margin;
 	font-size: $font-body-extra-small;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		float: right;
 		clear: none;
 		margin-left: 0;
@@ -35,5 +35,5 @@ $user-mentions-avatar-margin: 10px;
 
 .user-mentions__highlight {
 	font-weight: 400;
-	background: rgba( var( --color-primary-light-rgb ), 0.25 );
+	background: rgba(var(--color-primary-light-rgb), 0.25);
 }

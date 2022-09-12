@@ -17,7 +17,7 @@
 	display: block;
 	min-height: 40px;
 	padding-top: 5px;
-	padding-left:0;
+	padding-left: 0;
 	font-weight: 400;
 	font-size: 1rem;
 	margin-bottom: 0;
@@ -29,7 +29,7 @@
 	position: relative;
 }
 .account-dialog-account__name {
-	margin-left:-4px;
+	margin-left: -4px;
 }
 
 .account-dialog.single-account .account-dialog-account__input {
@@ -41,20 +41,20 @@
 	left: 0;
 }
 .account-dialog.single-account .account-dialog-account__content {
-	 margin-left: 0;
+	margin-left: 0;
 }
 .account-dialog.single-account .account-dialog-account__name {
 	margin-left: 0;
 }
 
-.account-dialog-account:not( .is-connected ) .account-dialog-account__label {
+.account-dialog-account:not(.is-connected) .account-dialog-account__label {
 	cursor: pointer;
 }
 
 .account-dialog-account.is-conflict .gridicons-notice {
 	position: absolute;
 	left: -22px;
-	color: var( --color-warning );
+	color: var(--color-warning);
 }
 .account-dialog .gridicons-null {
 	display: none;
@@ -77,7 +77,7 @@
 	vertical-align: top;
 	margin-left: 1rem;
 	line-height: 34px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 }
 
 .account-dialog-account__description {

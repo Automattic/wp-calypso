@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .item-price .display-price {
 	display: block;
@@ -42,7 +42,7 @@
 
 	&__billing-time-frame,
 	&__expiration-date {
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		font-size: 0.75rem;
 		line-height: 24px;
 	}
@@ -58,13 +58,13 @@
 	max-height: 24px;
 
 	.plan-price.is-original {
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		text-decoration: line-through;
 		font-weight: 600;
 	}
 
 	.plan-price.is-discounted {
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		font-weight: 700;
 	}
 
@@ -86,19 +86,19 @@
 }
 
 
-.item-price__is-owned {
+.item-price__message {
 	font-size: $font-body-extra-small;
-	color: var( --studio-jetpack-green-50 );
+	color: var(--studio-jetpack-green-50);
 	font-weight: 600;
 	display: flex;
 	align-items: center;
 }
 
-.item-price__is-owned--dot {
+.item-price__message--dot {
 	display: inline-block;
 	width: 8px;
 	height: 8px;
-	background: var( --studio-jetpack-green-50 );
+	background: var(--studio-jetpack-green-50);
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	margin-inline-end: 4px;

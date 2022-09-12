@@ -1,12 +1,12 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .section-nav-tab .count {
 	margin-left: 8px;
 }
 
 .section-nav-tab {
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: auto;
 		flex: none;
 		border-bottom: 2px solid transparent;
@@ -14,11 +14,11 @@
 		text-align: center;
 
 		&.is-selected {
-			border-bottom-color: var( --color-neutral-70 );
+			border-bottom-color: var(--color-neutral-70);
 		}
 
-		&:hover:not( .is-selected ) {
-			border-bottom-color: var( --color-primary-0 );
+		&:hover:not(.is-selected) {
+			border-bottom-color: var(--color-primary-0);
 		}
 	}
 }
@@ -39,27 +39,27 @@
 	font-size: $font-body-small;
 	font-weight: 600;
 	line-height: 18px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	cursor: pointer;
 
 	&:visited {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	&[disabled],
 	.notouch &[disabled]:hover {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 		cursor: default;
 	}
 
 	.is-selected & {
-		color: var( --color-text-inverted );
-		background-color: var( --color-primary );
+		color: var(--color-text-inverted);
+		background-color: var(--color-primary);
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			.count {
-				color: var( --color-text-inverted );
-				border-color: var( --color-border-inverted );
+				color: var(--color-text-inverted);
+				border-color: var(--color-border-inverted);
 			}
 		}
 	}
@@ -68,7 +68,7 @@
 		outline: none;
 
 		.accessible-focus & {
-			box-shadow: inset 0 0 0 2px var( --color-primary-light );
+			box-shadow: inset 0 0 0 2px var(--color-primary-light);
 		}
 	}
 
@@ -81,30 +81,30 @@
 
 	.notouch & {
 		&:hover {
-			background-color: var( --color-primary-0 );
-			color: var( --color-primary );
+			background-color: var(--color-primary-0);
+			color: var(--color-primary);
 		}
 	}
 
 	.notouch .is-selected & {
 		&:hover {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px;
-		color: var( --color-primary );
+		color: var(--color-primary);
 		font-weight: 400;
 
 		&:visited {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 
 		.is-selected & {
-			color: var( --color-neutral-70 );
+			color: var(--color-neutral-70);
 			background-color: transparent;
 
 			&::after {
@@ -114,7 +114,7 @@
 
 		.notouch .is-selected & {
 			&:hover {
-				color: var( --color-neutral-70 );
+				color: var(--color-neutral-70);
 			}
 		}
 	}
@@ -126,7 +126,7 @@
 	width: 0;
 	color: inherit;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		display: inline;
 		flex: none;
 		width: auto;
@@ -134,7 +134,7 @@
 }
 .section-nav-updated.section-nav {
 	.is-selected.section-nav-tab .section-nav-tab__link .count {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 	.section-nav__mobile-header {
 		.count {
@@ -145,19 +145,19 @@
 		}
 	}
 	.count {
-		background: var( --color-primary-5 );
-		border-radius: 3px; // stylelint-disable-line scales/radii
+		background: var(--color-primary-5);
+		border-radius: 3px; /* stylelint-disable-line scales/radii */ // stylelint-disable-line scales/radii
 		border: none;
 		font-weight: normal;
 	}
 	margin-bottom: 0;
-	@include breakpoint-deprecated( '>660px' ) {
-		background: var( --color-primary-0 );
+	@include breakpoint-deprecated( ">660px" ) {
+		background: var(--color-primary-0);
 		box-shadow: none;
 	}
 }
 .is-jetpack-cloud {
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		.section-nav-tabs.is-dropdown {
 			margin: 8px 0;
 			z-index: 99;
@@ -167,7 +167,7 @@
 			}
 			.select-dropdown__item-count .count {
 				position: static;
-				color: var( --color-primary );
+				color: var(--color-primary);
 			}
 		}
 	}

@@ -32,14 +32,14 @@
 //
 // QUIT AND RESTART YOUR BROWSER NORMALLY WHEN YOU'RE DONE MAKING LOCAL CSS CHANGES.
 
-@import 'shared/utils';
+@import "shared/utils";
 
 * {
 	font-family: $sans;
 }
 
 body {
-	color: var( --color-text );
+	color: var(--color-text);
 	-webkit-font-smoothing: subpixel-antialiased;
 }
 
@@ -52,9 +52,9 @@ textarea {
 
 // Main button
 .btn {
-	background: var( --color-primary );
-	border: 1px solid var( --color-primary-40 );
-	color: var( --color-text-inverted );
+	background: var(--color-primary);
+	border: 1px solid var(--color-primary-40);
+	color: var(--color-text-inverted);
 	border-width: 1px 1px 2px;
 	cursor: pointer;
 	font-size: 14px;
@@ -67,34 +67,34 @@ textarea {
 	appearance: none;
 	width: auto;
 	&:hover {
-		border-color: var( --color-primary-dark );
+		border-color: var(--color-primary-dark);
 	}
 	&:active,
 	&:active:enabled {
 		outline: 0;
 		border-width: 2px 1px 1px;
 		padding: 7px 14px 9px;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 	&:focus {
-		border-color: var( --color-primary-dark );
-		box-shadow: 0 0 0 2px var( --color-primary-light );
+		border-color: var(--color-primary-dark);
+		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 }
 
 // Form inputs
-input[type='text'],
-input[type='password'],
-input[type='email'],
-input[type='tel'],
-input[type='number'],
-input[type='url'],
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="url"],
 textarea {
 	@extend %form-field;
 	-webkit-font-smoothing: subpixel-antialiased;
 
 	&::-webkit-input-placeholder {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 }
 textarea {
@@ -106,9 +106,9 @@ textarea {
 	background: #f2f6f8;
 }
 .minimized-view {
-	background: var( --color-surface );
-	box-shadow: 0 1px 10px rgba( 46, 68, 83, 0.1 );
-	border: 1px solid var( --color-neutral-5 );
+	background: var(--color-surface);
+	box-shadow: 0 1px 10px rgba(46, 68, 83, 0.1);
+	border: 1px solid var(--color-neutral-5);
 }
 .maximized-view.is-ask-view {
 	top: 0;
@@ -120,7 +120,7 @@ textarea {
 /* HEADER */
 
 .header-container {
-	border-bottom: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var(--color-neutral-0);
 	box-shadow: none;
 	flex: 0 0 32px;
 	height: 32px;
@@ -129,7 +129,7 @@ textarea {
 		text-transform: uppercase;
 		font-size: 11px;
 		font-weight: 700;
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 
 	// Left hamburger button
@@ -137,12 +137,12 @@ textarea {
 		border-right: none;
 		flex: 0 0 40px;
 		.svg-icon {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 		}
 		&.disabled {
 			background: transparent;
 			.svg-icon {
-				color: var( --color-neutral-5 );
+				color: var(--color-neutral-5);
 			}
 		}
 	}
@@ -152,7 +152,7 @@ textarea {
 		border-left: none;
 		flex: 0 0 40px;
 		.svg-icon {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 		}
 	}
 
@@ -170,26 +170,26 @@ textarea {
 		top: 32px;
 		.question-bar,
 		.question-bar.closed {
-			background: var( --color-neutral-light );
+			background: var(--color-neutral-light);
 			padding: 10px 14px;
 		}
 	}
 }
 
 .chat-list-view-item-container {
-	background: var( --color-neutral-0 );
-	border-bottom: 1px solid var( --color-neutral-5 );
-	color: var( --color-text );
+	background: var(--color-neutral-0);
+	border-bottom: 1px solid var(--color-neutral-5);
+	color: var(--color-text);
 	padding: 18px 10px 18px 24px;
 	.chat-list-item-title {
 		margin-bottom: 2px;
 		font-size: 16px;
 	}
 	.chat-list-item-meta {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 	.unread-message-dot {
-		background: var( --color-success );
+		background: var(--color-success);
 		left: 10px;
 		top: 25px;
 	}
@@ -201,7 +201,7 @@ textarea {
 		margin-top: 2px;
 	}
 	.svg-icon {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 }
 
@@ -238,14 +238,14 @@ textarea {
 
 .thread-view-container {
 	.expert-response-time {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 }
 
 // Message bubbles
 .message-container {
 	font-size: 14px;
-	border-radius: 8px;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
 
 	&.is-poster {
 		background: #14abdd;
@@ -258,7 +258,7 @@ textarea {
 			position: absolute;
 			top: 0;
 			right: -10px;
-			content: '';
+			content: "";
 			display: block;
 			width: 0;
 			height: 0;
@@ -270,7 +270,7 @@ textarea {
 
 	&.is-expert {
 		border: none;
-		border-radius: 8px;
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
 		border-top-left-radius: 0;
 		margin-right: inherit;
 		margin-left: 20px;
@@ -280,13 +280,13 @@ textarea {
 			position: absolute;
 			top: 0;
 			left: -10px;
-			content: '';
+			content: "";
 			display: block;
 			width: 0;
 			height: 0;
 			border-style: solid;
 			border-width: 0 10px 10px 0;
-			border-color: transparent var( --color-border-inverted ) transparent transparent;
+			border-color: transparent var(--color-border-inverted) transparent transparent;
 		}
 		.author img {
 			// Need to override inline styles with !importants
@@ -303,64 +303,64 @@ textarea {
 		font-weight: 500;
 	}
 	.profile .reputation {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 	}
 }
 .avatar {
-	background: var( --color-neutral-5 );
+	background: var(--color-neutral-5);
 }
 
 .system-message {
-	border: 1px solid var( --color-neutral-5 );
-	background: var( --color-neutral-0 );
+	border: 1px solid var(--color-neutral-5);
+	background: var(--color-neutral-0);
 	font-size: 14px;
 	margin-right: 0;
-	border-radius: 8px;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
 	&.has-sibling + .system-message {
-		border-top: 1px solid var( --color-neutral-5 );
+		border-top: 1px solid var(--color-neutral-5);
 	}
 
 	// Green border for success messages
 	&.success {
-		border-color: var( --color-success );
+		border-color: var(--color-success);
 		background: #dceee5;
 	}
 
 	// Green background for highlighted success messages
 	&.success.inverted {
 		border-color: transparent;
-		background: var( --color-success );
-		color: var( --color-text-inverted );
+		background: var(--color-success);
+		color: var(--color-text-inverted);
 		a {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 
 	// Yellow borders for warnings
 	&.warning {
-		background: var( --color-warning );
+		background: var(--color-warning);
 		border-color: transparent;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 		a {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 
 	// Placeholder displayed when the experts info is loading
 	&.alerting-experts {
 		.expert-name:empty {
-			background: var( --color-neutral-5 );
+			background: var(--color-neutral-5);
 		}
 		.expert-last-active-date {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 			&:empty {
-				background: var( --color-neutral-5 );
+				background: var(--color-neutral-5);
 			}
 		}
 	}
 
 	.icon-avatar {
-		background: var( --color-neutral-5 );
+		background: var(--color-neutral-5);
 	}
 
 	// Icons inside system messages
@@ -370,17 +370,17 @@ textarea {
 			background-color: #14abdd;
 		}
 		&.icon-success {
-			background-color: var( --color-surface );
-			color: var( --color-success );
+			background-color: var(--color-surface);
+			color: var(--color-success);
 		}
 		&.icon-warning {
-			background-color: var( --color-surface );
-			color: var( --color-warning );
+			background-color: var(--color-surface);
+			color: var(--color-warning);
 		}
 	}
 	&.inverted .icon.icon-success {
-		background-color: var( --color-surface );
-		color: var( --color-success );
+		background-color: var(--color-surface);
+		color: var(--color-success);
 	}
 }
 
@@ -391,21 +391,21 @@ textarea {
 
 // Reply box and other tools in the thread view footer
 .thread-view-footer {
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 	box-shadow: none;
-	background: var( --color-surface );
+	background: var(--color-surface);
 }
 
 // Bubble when the thread view is minimized
 .chat-view-minimized {
 	// When no expert has replied yet
 	.alerting {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 		.beacon {
-			background: var( --color-primary );
+			background: var(--color-primary);
 			margin: 5px auto;
 			&::after {
-				background: var( --color-primary );
+				background: var(--color-primary);
 			}
 		}
 	}
@@ -416,7 +416,7 @@ textarea {
 		width: 64px;
 	}
 	.notification {
-		background: var( --color-primary );
+		background: var(--color-primary);
 		font-size: 12px;
 		font-weight: 500;
 		min-width: 24px;
@@ -436,7 +436,7 @@ textarea {
 		box-shadow: none;
 	}
 	.submit-btn[disabled] {
-		background-color: var( --color-neutral-5 );
+		background-color: var(--color-neutral-5);
 		border: none;
 	}
 }
@@ -445,29 +445,29 @@ textarea {
 .toolbar-accepted-container,
 .toolbar-default-container,
 .toolbar-rate-container {
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 }
 .toolbar-container {
 	.tooltip-wrapper {
-		border-left: 1px solid var( --color-neutral-0 );
+		border-left: 1px solid var(--color-neutral-0);
 	}
 	.toolbar-btn {
-		color: var( --color-neutral-light );
-		border-left: 1px solid var( --color-neutral-0 );
+		color: var(--color-neutral-light);
+		border-left: 1px solid var(--color-neutral-0);
 		.svg-icon {
-			color: var( --color-success );
+			color: var(--color-success);
 		}
 	}
 	.rate-icon {
 		.dot {
 			&.dot-green {
-				background: var( --color-success );
+				background: var(--color-success);
 			}
 			&.dot-yellow {
-				background: var( --color-warning );
+				background: var(--color-warning);
 			}
 			&.dot-red {
-				background: var( --color-error );
+				background: var(--color-error);
 			}
 		}
 	}
@@ -475,7 +475,7 @@ textarea {
 
 // Displays when the user wants to accept the answer
 .ActionBar {
-	background: var( --color-surface );
+	background: var(--color-surface);
 }
 .ActionBar__button {
 	box-shadow: none;

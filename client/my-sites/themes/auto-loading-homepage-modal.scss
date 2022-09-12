@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .themes__auto-loading-homepage-modal {
 	position: relative;
@@ -68,7 +68,7 @@
 	}
 
 	@include break-medium {
-		border: 1px solid var( --color-border-subtle );
+		border: 1px solid var(--color-border-subtle);
 		border-radius: 2px;
 		width: 48%;
 		margin-left: 2%;
@@ -124,7 +124,7 @@
 		height: 357%;
 		width: 357%;
 		max-width: 357%;
-		transform: scale( 0.28 );
+		transform: scale(0.28);
 		transform-origin: top left;
 		position: absolute;
 		top: 0;

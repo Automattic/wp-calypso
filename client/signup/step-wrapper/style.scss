@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .step-wrapper__header {
 	display: flex;
@@ -10,36 +10,36 @@
 		flex-grow: 1;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		flex-wrap: wrap;
 	}
 }
 
 .step-wrapper__skip-hr {
-	background: var( --color-primary-light );
+	background: var(--color-primary-light);
 	max-width: 270px;
 	margin-bottom: 50px;
 	margin-top: -20px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin: 30px auto;
 	}
 }
 
 .step-wrapper__skip-heading {
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 }
 
 .is-large-skip-layout .step-wrapper__buttons {
 	margin-bottom: 34px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-bottom: 14px;
 	}
 }
 
 .step-wrapper__header-button {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		flex-basis: 100%;
 	}
 }
@@ -69,7 +69,7 @@
 		height: 36px;
 	}
 
-	&:not( .is-sticky ) {
+	&:not(.is-sticky) {
 		@include break-small {
 			@include unstick;
 		}
@@ -81,11 +81,11 @@
 
 		&.button.is-primary {
 			border-radius: 4px;
-			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
 			.signup__step.is-courses & {
 				color: #101517;
-				background-color: #ffffff;
+				background-color: #fff;
 				border-color: transparent;
 			}
 		}
@@ -95,7 +95,7 @@
 		}
 
 		&.has-skip-heading {
-			transform: translateY( -3px );
+			transform: translateY(-3px);
 			// override unessecary super specificity added by another class
 			padding-top: 0 !important;
 		}
@@ -116,7 +116,7 @@
 	}
 }
 
-.layout:not( .dops ) .step-wrapper {
+.layout:not(.dops) .step-wrapper {
 	max-width: 960px;
 	margin: 0 auto;
 
@@ -164,7 +164,7 @@
 		margin-top: 48px;
 		margin-bottom: 40px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin-top: 24px;
 		}
 	}
@@ -177,7 +177,7 @@
 
 	// On small screens remove the margin from the
 	// bottom of the cards.
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		.card {
 			margin-bottom: 0;
 		}

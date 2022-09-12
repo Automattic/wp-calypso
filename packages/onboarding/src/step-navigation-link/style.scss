@@ -16,7 +16,7 @@ $font-body-small: 14px !default;
 			margin-right: 2px;
 			fill: #101517;
 			.rtl & {
-				transform: scaleX( -1 );
+				transform: scaleX(-1);
 			}
 		}
 	}
@@ -27,10 +27,10 @@ $font-body-small: 14px !default;
 
 	&.is-primary {
 		border-radius: 4px;
-    	box-shadow: 0 1px 2px rgb( 0 0 0 / 5% );
+		box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
 		background-color: #117ac9;
 		border-color: #117ac9;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 		padding: 8px 14px;
 	}
 }
@@ -38,5 +38,5 @@ $font-body-small: 14px !default;
 .navigation-link--has-skip-heading {
 	//override unessecary super specificity added by another class
 	padding-top: 0 !important;
-	transform: translateY( -3px );
+	transform: translateY(-3px);
 }

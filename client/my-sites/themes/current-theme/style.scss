@@ -1,7 +1,7 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
-$current-theme-border: 1px solid var( --color-border-subtle );
+$current-theme-border: 1px solid var(--color-border-subtle);
 
 .current-theme {
 	padding: 0;
@@ -9,14 +9,14 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 	background: #fff;
 	border-radius: 4px;
 	box-shadow: none;
-	filter: drop-shadow( 0 1px 2px rgba( 0, 0, 0, 0.05 ) );
-	@include breakpoint-deprecated( '<660px' ) {
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05));
+	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0 16px 24px;
 	}
-	
+
 	@include break-medium {
 		border-radius: 0;
-		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		filter: none;
 	}
 }
@@ -32,7 +32,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		}
 
 		&::after {
-			content: '';
+			content: "";
 			display: block;
 			height: 48px;
 			width: 100%;
@@ -66,7 +66,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		height: 78px;
 		border-bottom: $current-theme-border;
 		max-height: none;
-		filter: drop-shadow( 0 3px 8px rgba( 0, 0, 0, 0.12 ) ) drop-shadow( 0 3px 1px rgba( 0, 0, 0, 0.04 ) );
+		filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.12)) drop-shadow(0 3px 1px rgba(0, 0, 0, 0.04));
 		border-radius: 4px;
 
 
@@ -88,11 +88,11 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 
 	.current-theme__img-placeholder {
 		color: transparent;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 		height: 100%;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			width: 150px;
 		}
 	}
@@ -139,20 +139,19 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		display: inline-block;
 		text-transform: uppercase;
 
-		color: var( --color-neutral-30 );
+		color: var(--color-neutral-30);
 
 		@include break-medium {
 			font-weight: normal;
 			text-transform: none;
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 			display: inline-block;
-			background: var( --color-neutral-dark );
+			background: var(--color-neutral-dark);
 			white-space: nowrap;
 			padding: 4px 12px;
-			/* stylelint-disable-next-line scales/radii */
-			border-radius: 120px;
+			border-radius: 120px; /* stylelint-disable-line scales/radii */
 			margin-right: 8px;
-		
+
 			align-self: center;
 			margin-bottom: 0;
 		}
@@ -172,14 +171,14 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 			font-size: $font-body;
 		}
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			font-size: $font-title-small;
 		}
 	}
 
 	.current-theme__content-wrapper {
 		display: none;
-		
+
 
 		@include break-medium {
 			display: flex;
@@ -190,7 +189,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 
 	.current-theme__placeholder {
 		color: transparent;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 
@@ -206,11 +205,11 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		}
 
 		p {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			margin-bottom: 0;
 		}
 	}
-	
+
 	.current-theme__more-info {
 		@include break-medium {
 			display: none;
@@ -223,7 +222,7 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		left: 0;
 		width: 100%;
 		padding: 12px 0;
-		color: var( --studio-neutral-100 );
+		color: var(--studio-neutral-100);
 		display: flex;
 
 		.gridicon {
@@ -232,25 +231,25 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		.gridicons-chevron-right {
 			position: absolute;
 			right: 8px;
-			color: var( --color-sidebar-gridicon-fil );
+			color: var(--color-sidebar-gridicon-fil);
 		}
 	}
-	
+
 	.current-theme__theme-description {
 		font-size: $font-body-small;
 		line-height: 20px;
 		padding: 0 16px 8px;
 		letter-spacing: 0.32px;
 
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		max-height: 2.2em;
 		overflow: hidden;
 		margin-bottom: 0;
 
 		span {
 			display: -webkit-box;
-  			-webkit-line-clamp: 2;
-  			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
 			position: relative;
 		}
 
@@ -260,9 +259,9 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		font-weight: 500;
 		font-size: $font-body-small;
 		line-height: 20px;
-		color: var( --studio-black );
+		color: var(--studio-black);
 		display: inline-block;
-		border-bottom: 1px solid var( --studio-black );
+		border-bottom: 1px solid var(--studio-black);
 		margin: 0 16px 16px;
 	}
 
@@ -294,8 +293,8 @@ $current-theme-border: 1px solid var( --color-border-subtle );
 		position: relative;
 		border-width: 1px;
 
-		&:not( .is-primary ) {
-			border: 1px solid var( --color-neutral-10 );
+		&:not(.is-primary) {
+			border: 1px solid var(--color-neutral-10);
 		}
 
 		&:last-child {

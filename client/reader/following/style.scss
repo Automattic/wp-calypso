@@ -5,13 +5,13 @@
 .following__search.card.is-compact {
 	padding: 0;
 	border-radius: 2px;
-	box-shadow: 0 0 0 2px var( --color-neutral-10 ), 0 1px 2px var( --color-neutral-10 );
-	z-index: z-index( 'root', '.reader-following-search' );
+	box-shadow: 0 0 0 2px var(--color-neutral-10), 0 1px 2px var(--color-neutral-10);
+	z-index: z-index("root", ".reader-following-search");
 }
 
 // Following intro
 .following__intro {
-	border: 1px solid var( --color-neutral-0 );
+	border: 1px solid var(--color-neutral-0);
 
 	.following__intro-copy {
 		color: #045182;
@@ -21,8 +21,8 @@
 			border-bottom: 1px #1785be solid;
 
 			&:hover {
-				color: var( --color-primary );
-				border-bottom: 1px solid var( --color-primary );
+				color: var(--color-primary);
+				border-bottom: 1px solid var(--color-primary);
 			}
 		}
 	}
@@ -38,12 +38,12 @@
 		background-position: 150px 20px;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		background-position: 120px 20px;
 	}
 
 	.following__intro-copy-hidden {
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			display: none;
 		}
 	}
@@ -78,15 +78,15 @@
 		margin-top: 20px;
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		font-size: $font-body;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		font-size: $font-title-small;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body;
 	}
 }
@@ -94,7 +94,7 @@
 .following__search {
 	margin-top: 8px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 30px;
 	}
 }
@@ -109,43 +109,43 @@
 
 	.following__intro-close-icon {
 		position: absolute;
-		z-index: z-index( 'root', '.following__intro-close-icon' );
-		fill: var( --color-text-inverted );
+		z-index: z-index("root", ".following__intro-close-icon");
+		fill: var(--color-text-inverted);
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
 		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
-		transform: scale( 1 );
+		transform: scale(1);
 
 		&:hover {
 			cursor: pointer;
-			fill: darken( #62a9a7, 15% );
+			fill: darken(#62a9a7, 15%);
 		}
 
 		&:hover + .following__intro-close-icon-bg {
-			background-color: lighten( #62a9a7, 50% );
-			box-shadow: 0 0 0 2px lighten( #62a9a7, 40% );
+			background-color: lighten(#62a9a7, 50%);
+			box-shadow: 0 0 0 2px lighten(#62a9a7, 40%);
 		}
 	}
 
 	.following__intro-close-icon-bg {
 		background-color: #5ca8a6;
-		border-radius: 10px;
+		border-radius: 10px; /* stylelint-disable-line scales/radii */
 		display: block;
 		height: 20px;
 		position: absolute;
 		left: 2px;
 		top: 2px;
-		z-index: z-index( 'root', '.following__intro-close-icon-bg' );
+		z-index: z-index("root", ".following__intro-close-icon-bg");
 		width: 20px;
 	}
 }
 
 .following__intro .following__intro-close {
 	.following__intro-close-icon {
-		fill: var( --color-neutral-20 );
+		fill: var(--color-neutral-20);
 	}
 
 	.following__intro-close-icon-bg {
-		background-color: var( --color-surface );
+		background-color: var(--color-surface);
 	}
 }

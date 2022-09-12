@@ -1,8 +1,8 @@
 import classNames from 'classnames';
+import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
 import { FeaturesList } from '../features-list';
 import { HeroImage } from '../hero-image';
-import { useStoreItemInfo } from '../hooks/use-store-item-info';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
 import { MostPopularProps } from '../types';
@@ -11,12 +11,9 @@ import './style-most-popular.scss';
 
 export const MostPopular: React.FC< MostPopularProps > = ( {
 	className,
-	createCheckoutURL,
-	duration,
 	heading,
 	items,
 	onClickMoreInfoFactory,
-	onClickPurchase,
 	siteId,
 } ) => {
 	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
@@ -24,44 +21,43 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 	const {
 		getCheckoutURL,
 		getCtaLabel,
+		getIsDeprecated,
+		getIsIncludedInPlan,
+		getIsIncludedInPlanOrSuperseded,
+		getIsMultisiteCompatible,
+		getIsOwned,
+		getIsPlanFeature,
+		getIsSuperseded,
+		getIsUserPurchaseOwner,
 		getOnClickPurchase,
-		isIncludedInPlan,
-		isIncludedInPlanOrSuperseded,
-		isOwned,
-		isPlanFeature,
-		isSuperseded,
-		isDeprecated,
-		isUserPurchaseOwner,
-	} = useStoreItemInfo( {
-		createCheckoutURL,
-		onClickPurchase,
-		duration,
-		siteId,
-	} );
+		isMultisite,
+	} = useStoreItemInfoContext();
 
 	return (
 		<div className={ wrapperClassName }>
 			<h3 className="jetpack-product-store__most-popular--heading">{ heading }</h3>
 			<div className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item ) => {
-					const isItemOwned = isOwned( item );
-					const isItemSuperseded = isSuperseded( item );
-					const isItemDeprecated = isDeprecated( item );
-					const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
-					const isItemIncludedInPlan = isIncludedInPlan( item );
+					const isOwned = getIsOwned( item );
+					const isSuperseded = getIsSuperseded( item );
+					const isDeprecated = getIsDeprecated( item );
+					const isIncludedInPlanOrSuperseded = getIsIncludedInPlanOrSuperseded( item );
+					const isIncludedInPlan = getIsIncludedInPlan( item );
+					const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( item );
+
+					const isCtaDisabled =
+						isMultiSiteIncompatible ||
+						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
 
-					const isCtaDisabled =
-						( isItemOwned || isItemIncludedInPlan ) && ! isUserPurchaseOwner( item );
-
-					const hideMoreInfoLink =
-						isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
+					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
 					const price = (
 						<ItemPrice
-							isIncludedInPlan={ isItemIncludedInPlan }
-							isOwned={ isItemOwned }
+							isMultiSiteIncompatible={ isMultiSiteIncompatible }
+							isIncludedInPlan={ isIncludedInPlan }
+							isOwned={ isOwned }
 							item={ item }
 							siteId={ siteId }
 						/>
@@ -78,10 +74,12 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						</p>
 					);
 
+					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
+
 					return (
 						<div key={ item.productSlug } className="jetpack-product-store__most-popular--item">
 							<FeaturedItemCard
-								ctaAsPrimary={ ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded ) }
+								ctaAsPrimary={ ctaAsPrimary }
 								ctaHref={ getCheckoutURL( item ) }
 								ctaLabel={ ctaLabel }
 								description={ description }

@@ -71,7 +71,7 @@
 		"login/magic-login": true,
 		"mailchimp": true,
 		"marketplace-domain-bundle": false,
-		"marketplace-jetpack-plugin-search": false,
+		"marketplace-jetpack-plugin-search": true,
 		"marketplace-personal-premium": false,
 		"marketplace-test": false,
 		"me/account-close": true,

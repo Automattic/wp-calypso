@@ -32,8 +32,8 @@ export const newsletter: Flow = {
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
-				: `/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`;
+				? `/start/account/user/${ locale }?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`
+				: `/start/account/user?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`;
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -45,10 +45,10 @@ export const newsletter: Flow = {
 					if ( userIsLoggedIn ) {
 						return navigate( 'newsletterSetup' );
 					}
-					return window.location.replace( logInUrl );
+					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
-					return window.location.replace(
+					return window.location.assign(
 						`/start/${ name }/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes` +
@@ -70,7 +70,7 @@ export const newsletter: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.replace( `/view/${ siteSlug }` );
+					return window.location.assign( `/view/${ siteSlug }` );
 
 				default:
 					return navigate( 'intro' );

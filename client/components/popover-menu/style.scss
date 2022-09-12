@@ -27,26 +27,26 @@
 
 	&,
 	&:visited {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	&.is-selected,
 	&:hover,
 	&:focus {
-		background-color: var( --color-primary );
+		background-color: var(--color-primary);
 		border: 0;
 		box-shadow: none;
 		color: white;
 
 		.gridicon {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 
 	&[disabled] {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 		.gridicon {
-			color: var( --color-neutral-0 );
+			color: var(--color-neutral-0);
 		}
 	}
 
@@ -66,7 +66,7 @@
 
 	// with gridicons
 	.gridicon {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		vertical-align: bottom;
 		margin-right: 8px;
 		position: static;
@@ -82,5 +82,5 @@
 
 .popover__menu-separator {
 	margin: 4px 0;
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 }

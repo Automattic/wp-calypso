@@ -8,7 +8,7 @@
 		display: block;
 		position: relative;
 		padding: $wpnc__padding-medium;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 
 		textarea {
 			@extend %wpnc-form-field;
@@ -29,7 +29,7 @@
 
 		button {
 			font-family: $sans;
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 			display: none;
 			position: absolute;
 			top: 26px;
@@ -40,7 +40,7 @@
 		}
 		button.active {
 			display: block;
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 		button.inactive {
 			cursor: default;
@@ -69,34 +69,34 @@
 	vertical-align: top;
 
 	&.active-action {
-		color: var( --color-primary );
+		color: var(--color-primary);
 
 		&:hover {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 
 			.gridicon {
-				fill: var( --color-neutral-light );
+				fill: var(--color-neutral-light);
 			}
 		}
 
 		.gridicon {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 	}
 
 	&.inactive-action {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 
 		&:hover {
-			color: var( --color-primary );
+			color: var(--color-primary);
 
 			.gridicon {
-				fill: var( --color-primary );
+				fill: var(--color-primary);
 			}
 		}
 
 		.gridicon {
-			fill: var( --color-neutral-light );
+			fill: var(--color-neutral-light);
 		}
 	}
 

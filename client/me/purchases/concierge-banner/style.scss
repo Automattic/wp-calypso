@@ -2,7 +2,7 @@
 	display: flex;
 	flex-direction: column;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		flex-direction: row;
 	}
 }
@@ -18,7 +18,7 @@
 
 	.is-placeholder {
 		animation: pulse-light 800ms ease-in-out infinite;
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 	}
 }
 
@@ -27,10 +27,10 @@
 
 	.is-placeholder {
 		animation: pulse-light 800ms ease-in-out infinite;
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin: auto;
 	}
 }
@@ -39,13 +39,13 @@
 	height: 30px;
 	width: 80px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		height: 30px;
 		margin: auto;
 		width: 80px;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 100%;
 	}
 }

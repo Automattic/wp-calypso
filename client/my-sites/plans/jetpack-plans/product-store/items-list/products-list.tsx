@@ -7,11 +7,9 @@ import { MostPopular } from './most-popular';
 import type { ProductsListProps } from '../types';
 
 export const ProductsList: React.FC< ProductsListProps > = ( {
-	createCheckoutURL,
-	duration,
-	onClickPurchase,
 	onClickMoreInfoFactory,
 	siteId,
+	duration,
 } ) => {
 	const [ popularItems, otherItems ] = useProductsToDisplay( { duration, siteId } );
 	const translate = useTranslate();
@@ -24,22 +22,16 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	return (
 		<div className="jetpack-product-store__products-list">
 			<MostPopular
-				createCheckoutURL={ createCheckoutURL }
-				duration={ duration }
 				heading={ translate( 'Most popular products' ) }
 				items={ popularItems }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
-				onClickPurchase={ onClickPurchase }
 				siteId={ siteId }
 			/>
 
 			<AllItems
-				createCheckoutURL={ createCheckoutURL }
-				duration={ duration }
 				heading={ translate( 'All products' ) }
 				items={ allItems }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
-				onClickPurchase={ onClickPurchase }
 				siteId={ siteId }
 			/>
 		</div>

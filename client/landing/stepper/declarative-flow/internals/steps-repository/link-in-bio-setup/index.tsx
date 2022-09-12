@@ -1,12 +1,13 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Button, FormInputValidation } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { StepContainer, base64ImageToBlob } from '@automattic/onboarding';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
+import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -26,29 +27,41 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const site = useSite();
 
 	const usesSite = !! useSiteSlugParam();
-	const [ formTouched, setFormTouched ] = React.useState( false );
+	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
 	const { setSiteTitle, setSiteDescription, setSiteLogo } = useDispatch( ONBOARD_STORE );
+	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
 
-	const siteTitleError = formTouched && ! siteTitle.trim();
+	useEffect( () => {
+		const { siteTitle, siteDescription, siteLogo } = state;
+		setTagline( siteDescription );
+		setComponentSiteTitle( siteTitle );
+
+		if ( siteLogo ) {
+			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
+			setSelectedFile( file );
+		}
+	}, [ state ] );
 
 	useEffect( () => {
 		if ( ! site ) {
 			return;
 		}
 
-		if ( formTouched ) {
-			return;
-		}
 		setComponentSiteTitle( site.name || '' );
 		setTagline( site.description );
-	}, [ site, formTouched ] );
+	}, [ site ] );
+
+	useEffect( () => {
+		if ( siteTitle.trim().length && invalidSiteTitle ) {
+			setInvalidSiteTitle( false );
+		}
+	}, [ siteTitle, invalidSiteTitle ] );
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		setFormTouched( true );
 		switch ( event.currentTarget.name ) {
 			case 'link-in-bio-input-name':
 				return setComponentSiteTitle( event.currentTarget.value );
@@ -66,7 +79,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		setFormTouched( true );
+		setInvalidSiteTitle( ! siteTitle.trim().length );
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
@@ -110,9 +123,9 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 						backgroundPosition: '95%',
 						paddingRight: ' 40px',
 					} }
-					isError={ siteTitleError }
+					isError={ invalidSiteTitle }
 				/>
-				{ siteTitleError && (
+				{ invalidSiteTitle && (
 					<FormInputValidation
 						isError
 						text={ __( `Oops. Looks like your Link in Bio doesn't have a name yet.` ) }
@@ -122,19 +135,20 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 
 			<FormFieldset>
 				<FormLabel htmlFor="link-in-bio-input-description">{ __( 'Brief description' ) }</FormLabel>
-				<FormInput
+				<ForwardedAutoresizingFormTextarea
 					name="link-in-bio-input-description"
 					id="link-in-bio-input-description"
 					value={ tagline }
-					onChange={ onChange }
 					placeholder={ __( 'Add a short biography here' ) }
+					enableAutoFocus={ false }
+					onChange={ onChange }
 					style={ {
 						backgroundImage: tagline.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
 						backgroundRepeat: 'no-repeat',
 						backgroundPosition: '95%',
 						paddingRight: ' 40px',
+						paddingLeft: '14px',
 					} }
-					isError={ false }
 				/>
 			</FormFieldset>
 

@@ -1,7 +1,7 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 @mixin woocommerce-install-two-column-layout {
 	min-height: 95vh;
@@ -73,7 +73,7 @@
 		.confirm__instructions-container {
 			font-size: 0.875rem;
 			letter-spacing: -0.16px;
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 			flex-direction: column;
 			max-width: 520px;
 			min-width: 380px;
@@ -102,7 +102,7 @@
 				.components-select-control__input,
 				.components-text-control__input,
 				.components-combobox-control__input {
-					color: var( --color-neutral-70 );
+					color: var(--color-neutral-70);
 				}
 
 				.components-combobox-control__suggestions-container,

@@ -790,7 +790,7 @@ class SignupForm extends Component {
 	termsOfServiceLink = () => {
 		const tosText = this.props.translate(
 			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
-				' acknowledge that you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				' have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			{
 				components: {
 					tosLink: (

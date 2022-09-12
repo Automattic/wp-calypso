@@ -1,12 +1,12 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .plugin-category-results-header {
 	position: relative;
 	top: 36px;
 	padding: 12px 16px 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-left: 0;
 		padding-right: 0;
 	}
@@ -18,12 +18,12 @@
 }
 
 .plugin-category-results-header__count {
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 	margin-top: 8px;
 }
 
 .plugin-category-results-header__subtitle {
-	color: var( --studio-gray-80 );
+	color: var(--studio-gray-80);
 	margin: 8px 0;
 
 	@include break-small {

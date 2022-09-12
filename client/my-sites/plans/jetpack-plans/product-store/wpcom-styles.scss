@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 // this is the breakpoint where sidebar menu collapses on WPCOM
 $wpcom-menu-collapse: 783px;
@@ -11,7 +11,11 @@ $wpcom-menu-collapse: 783px;
 	--jetpack-corners-soft: 4px;
 }
 
-.is-group-sites.is-section-plans .jetpack-product-store {
+:is(.is-group-sites.is-section-plans, .is-section-jetpack-connect) .jetpack-product-store {
+
+	:is(.button[disabled], .button:disabled, .button.disabled) {
+		background-color: var(--studio-gray-5);
+	}
 
 	h2 {
 		font-size: $font-title-small;

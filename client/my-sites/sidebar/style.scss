@@ -1,5 +1,5 @@
 // The following changes should be merged in their respective files before nav unification goes to production
-@import url( '//s1.wp.com/wp-includes/css/dashicons.css?v=20150727' );
+@import url( "//s1.wp.com/wp-includes/css/dashicons.css?v=20150727" );
 
 // Override Global Vars
 .theme-default {
@@ -10,11 +10,11 @@
 	--color-sidebar-background: #23282d;
 	--color-sidebar-background-rgb: 35, 40, 45;
 	--color-sidebar-menu-hover-background: #1a1e23;
-	--color-sidebar-menu-hover-background-rgb: rgb( var( --color-sidebar-menu-hover-background ) );
+	--color-sidebar-menu-hover-background-rgb: rgb(var(--color-sidebar-menu-hover-background));
 	--color-sidebar-menu-hover-text: #00b9eb;
 	--color-sidebar-menu-selected-background: #0073aa;
 	--color-sidebar-menu-selected-text: white;
-	--color-sidebar-border: #333333;
+	--color-sidebar-border: #333;
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-rgb: 238, 238, 238;
 	--color-sidebar-text-alternative: #a2aab2;
@@ -31,7 +31,7 @@
 
 // Local Vars
 $sidebar-item-padding: 8px 0;
-$font-size: rem( 14px );
+$font-size: rem(14px);
 
 .clear-secondary-layout-transitions {
 	// client/layout/style.scss | Workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/index.jsx).
@@ -39,6 +39,21 @@ $font-size: rem( 14px );
 		transition: none;
 		overflow: hidden;
 	}
+}
+
+.sidebar__actions {
+	--transparent-button-text-color: var( --color-sidebar-text );
+	--transparent-button-text-color-hover: var( --color-sidebar-menu-hover-text );
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-end;
+	margin-top: auto;
+	padding: 8px 8px 0 8px ;
+}
+
+.sidebar__action--collapsed {
+	display: none;
 }
 
 .theme-default {
@@ -50,9 +65,9 @@ $font-size: rem( 14px );
 	// client/layout/sidebar/style.scss
 	.sidebar {
 		position: relative;
-		background-color: var( --color-sidebar-background );
+		background-color: var(--color-sidebar-background);
 		padding-bottom: 12px;
-		min-height: calc( 100vh - var( --masterbar-height ) );
+		min-height: calc(100vh - var(--masterbar-height));
 		box-sizing: border-box;
 
 		.sidebar__separator {
@@ -75,11 +90,11 @@ $font-size: rem( 14px );
 			font-weight: 400;
 			line-height: 1.3;
 			padding: 0 0 0 8px;
-			color: var( --color-sidebar-text );
+			color: var(--color-sidebar-text);
 			align-items: center;
 
 			&::after {
-				content: ' ';
+				content: " ";
 				display: none;
 				z-index: 1;
 				position: absolute;
@@ -89,18 +104,18 @@ $font-size: rem( 14px );
 				height: 0;
 				margin-top: -8px;
 				border: solid 8px transparent;
-				border-right-color: var( --color-surface-backdrop );
+				border-right-color: var(--color-surface-backdrop);
 				pointer-events: none;
 			}
 		}
 
 		// Apply hover and focus effects only to tabbable items assuming they are links.
-		.sidebar__heading:not( [tabindex='-1'] ),
+		.sidebar__heading:not([tabindex="-1"]),
 		.sidebar__menu-link {
 			&:hover,
 			&:focus {
-				background-color: var( --color-sidebar-menu-hover-background );
-				color: var( --color-sidebar-menu-hover-text );
+				background-color: var(--color-sidebar-menu-hover-background);
+				color: var(--color-sidebar-menu-hover-text);
 				box-shadow: inset 4px 0 0 0 currentColor;
 				transition: box-shadow 0.1s linear;
 			}
@@ -120,27 +135,27 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__expandable-content {
-			background: var( --color-sidebar-submenu-background );
+			background: var(--color-sidebar-submenu-background);
 			padding: 7px 0 8px;
 
 			.sidebar__menu-link {
 				padding: 5px 12px;
 				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
-				font-size: rem( 13px );
+				font-size: rem(13px);
 				line-height: 1.4;
 				font-weight: 400;
-				color: var( --color-sidebar-submenu-text );
+				color: var(--color-sidebar-submenu-text);
 
 				&:hover,
 				&:focus {
-					background-color: var( --color-sidebar-submenu-hover-background );
-					color: var( --color-sidebar-submenu-hover-text );
+					background-color: var(--color-sidebar-submenu-hover-background);
+					color: var(--color-sidebar-submenu-hover-text);
 				}
 			}
 
 			.selected .sidebar__menu-link {
-				background-color: var( --color-sidebar-submenu-selected-background );
-				color: var( --color-sidebar-submenu-selected-text );
+				background-color: var(--color-sidebar-submenu-selected-background);
+				color: var(--color-sidebar-submenu-selected-text);
 				font-weight: 600;
 			}
 
@@ -153,13 +168,13 @@ $font-size: rem( 14px );
 			position: absolute;
 			right: 20px;
 			top: 50%;
-			transform: translateY( -50% );
+			transform: translateY(-50%);
 			opacity: 0.8;
 		}
 
 		.sidebar__menu-icon {
 			background-size: contain;
-			color: var( --color-sidebar-gridicon-fill );
+			color: var(--color-sidebar-gridicon-fill);
 			margin-right: 8px;
 		}
 
@@ -168,8 +183,8 @@ $font-size: rem( 14px );
 		}
 
 		.selected .sidebar__menu-link {
-			background: var( --color-sidebar-menu-selected-background );
-			color: var( --color-sidebar-menu-selected-text );
+			background: var(--color-sidebar-menu-selected-background);
+			color: var(--color-sidebar-menu-selected-text);
 
 			&::after {
 				display: block;
@@ -183,11 +198,11 @@ $font-size: rem( 14px );
 
 		.sidebar__menu-item-parent.selected .sidebar__menu-link {
 			.stats-sparkline {
-				--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+				--color-stats-sparkline: var(--color-sidebar-menu-selected-text);
 			}
 
 			.sidebar__menu-icon {
-				color: var( --color-sidebar-menu-selected-text );
+				color: var(--color-sidebar-menu-selected-text);
 			}
 
 			img.sidebar__menu-icon {
@@ -204,7 +219,7 @@ $font-size: rem( 14px );
 		.sidebar__menu-link {
 			&:hover {
 				.sidebar__menu-icon {
-					color: var( --color-sidebar-menu-hover-text );
+					color: var(--color-sidebar-menu-hover-text);
 				}
 				img.sidebar__menu-icon {
 					opacity: 1;
@@ -230,11 +245,11 @@ $font-size: rem( 14px );
 		// Is toggled open
 		.sidebar__menu.sidebar__menu--selected {
 			.sidebar__heading {
-				background: var( --color-sidebar-menu-hover-background );
+				background: var(--color-sidebar-menu-hover-background);
 
 				&:hover {
 					.sidebar__menu-icon {
-						color: var( --color-sidebar-menu-hover-text );
+						color: var(--color-sidebar-menu-hover-text);
 					}
 					img.sidebar__menu-icon {
 						opacity: 1;
@@ -250,15 +265,15 @@ $font-size: rem( 14px );
 			}
 			// Is toggled open and selected
 			&.sidebar__menu--selected .sidebar__heading {
-				background: var( --color-sidebar-menu-selected-background );
-				color: var( --color-sidebar-menu-selected-text );
+				background: var(--color-sidebar-menu-selected-background);
+				color: var(--color-sidebar-menu-selected-text);
 
 				.stats-sparkline {
-					--color-stats-sparkline: var( --color-sidebar-menu-selected-text );
+					--color-stats-sparkline: var(--color-sidebar-menu-selected-text);
 				}
 
 				.sidebar__menu-icon {
-					color: var( --color-sidebar-menu-selected-text );
+					color: var(--color-sidebar-menu-selected-text);
 				}
 				img.sidebar__menu-icon {
 					opacity: 1;
@@ -285,8 +300,8 @@ $font-size: rem( 14px );
 				width: 35px;
 
 				.notice__icon-wrapper-drop {
-					top: calc( 50% - 9px );
-					left: calc( 50% - 9px );
+					top: calc(50% - 9px);
+					left: calc(50% - 9px);
 					width: 18px;
 					height: 18px;
 					/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
@@ -309,16 +324,16 @@ $font-size: rem( 14px );
 
 	//client/components/site-selector/style.scss
 	.site-selector .site.is-highlighted {
-		background-color: var( --color-sidebar-submenu-background );
+		background-color: var(--color-sidebar-submenu-background);
 	}
 
 	.site-selector .site.is-highlighted .site__domain,
 	.site-selector .site.is-highlighted .site__title {
-		color: var( --color-sidebar-text );
+		color: var(--color-sidebar-text);
 	}
 
 	// client/blocks/upsell-nudge/style.scss
-	&:not( .is-classic-bright ):not( .is-contrast ) {
+	&:not(.is-classic-bright):not(.is-contrast) {
 		.upsell-nudge.banner.card.is-compact {
 			background-color: #fff;
 			color: #000;
@@ -341,16 +356,16 @@ $font-size: rem( 14px );
 	}
 
 	.upsell-nudge.banner.card.is-compact .dismissible-card__close-button {
-		fill: var( --color-text );
+		fill: var(--color-text);
 	}
 
 	// client/my-sites/current-site/style.scss
 	.current-site__switch-sites:hover .button.is-borderless:hover {
-		background-color: var( --color-sidebar-menu-hover-background );
+		background-color: var(--color-sidebar-menu-hover-background);
 	}
 
 	.current-site__switch-sites .button.is-borderless {
-		color: var( --color-sidebar-text-alternative );
+		color: var(--color-sidebar-text-alternative);
 		padding: 6px 8px 6px 36px;
 	}
 
@@ -368,9 +383,37 @@ $font-size: rem( 14px );
 	}
 
 	&.is-sidebar-collapsed {
-		.layout:not( .focus-sites ) {
+		.layout:not(.focus-sites) {
 			--sidebar-width-max: 36px;
 			--sidebar-width-min: 36px;
+		}
+
+		.sidebar__actions {
+			padding-left: 0;
+			padding-right: 0;
+
+			span {
+				display: flex;
+				flex-shrink: 0;
+			}
+
+			span.sidebar__action--collapsed {
+				display: block;
+				width: 20px;
+				margin-right: 8px;
+				margin-left: 8px;
+				color: var(--color-sidebar-gridicon-fill);
+			}
+
+			.button {
+				border: none;
+				padding: 0;
+				justify-content: flex-start;
+			}
+
+			.button:hover span.sidebar__action--collapsed {
+				color: var(--color-sidebar-menu-hover-text);
+			}
 		}
 
 		.layout__primary .main,
@@ -381,7 +424,7 @@ $font-size: rem( 14px );
 		}
 
 		.dashicons-admin-collapse::before {
-			transform: rotate( 180deg );
+			transform: rotate(180deg);
 		}
 
 		// client/my-sites/current-site/style.scss
@@ -430,8 +473,8 @@ $font-size: rem( 14px );
 
 		.current-site__notices > .banner {
 			&::before {
-				content: '\f534';
-				font-family: 'dashicons';
+				content: "\f534";
+				font-family: dashicons;
 				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: 20px;
 				line-height: 20px;
@@ -477,7 +520,7 @@ $font-size: rem( 14px );
 		.sidebar__menu {
 			// Is toggled open and selected
 			&.sidebar__menu--selected .sidebar__heading {
-				background: var( --color-sidebar-menu-selected-background );
+				background: var(--color-sidebar-menu-selected-background);
 				color: white;
 
 				.sidebar__menu-icon {
@@ -488,7 +531,7 @@ $font-size: rem( 14px );
 				}
 			}
 
-			&.is-togglable:not( .is-toggle-open ):hover .sidebar__heading::after {
+			&.is-togglable:not(.is-toggle-open):hover .sidebar__heading::after {
 				border-width: 4px;
 				margin-top: -4px;
 			}
@@ -498,9 +541,9 @@ $font-size: rem( 14px );
 	.collapse-sidebar__toggle {
 		.sidebar__menu-link {
 			cursor: pointer;
-			color: var( --color-sidebar-text-alternative );
+			color: var(--color-sidebar-text-alternative);
 			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
-			font-size: rem( 13px );
+			font-size: rem(13px);
 
 			&:hover,
 			&:focus {
@@ -530,31 +573,31 @@ $font-size: rem( 14px );
 	&.is-section-reader {
 		.sidebar__menu .count {
 			background: transparent;
-			color: var( --color-sidebar-menu-text );
-			border-color: var( --color-sidebar-menu-text );
+			color: var(--color-sidebar-menu-text);
+			border-color: var(--color-sidebar-menu-text);
 		}
 
 		.sidebar__menu-link:hover .count {
-			color: var( --color-sidebar-submenu-hover-text );
-			border-color: var( --color-sidebar-submenu-hover-text );
+			color: var(--color-sidebar-submenu-hover-text);
+			border-color: var(--color-sidebar-submenu-hover-text);
 		}
 
 		.selected .sidebar__menu-link .count {
-			color: var( --color-sidebar-submenu-selected-text );
-			border-color: var( --color-sidebar-submenu-selected-text );
+			color: var(--color-sidebar-submenu-selected-text);
+			border-color: var(--color-sidebar-submenu-selected-text);
 		}
 
 		.sidebar__menu.sidebar__menu--selected {
 			.sidebar__heading {
-				background: var( --color-sidebar-menu-selected-background );
-				color: var( --color-sidebar-menu-selected-text );
+				background: var(--color-sidebar-menu-selected-background);
+				color: var(--color-sidebar-menu-selected-text);
 
 				&::after {
 					display: block;
 				}
 
 				.sidebar__menu-icon {
-					fill: var( --color-sidebar-menu-selected-text );
+					fill: var(--color-sidebar-menu-selected-text);
 				}
 			}
 		}
@@ -568,7 +611,7 @@ $font-size: rem( 14px );
 		.focus-sites,
 		.focus-sidebar {
 			.sidebar {
-				z-index: z-index( 'root', '.layout__secondary' );
+				z-index: z-index("root", ".layout__secondary");
 			}
 		}
 
@@ -590,24 +633,24 @@ $font-size: rem( 14px );
 		&.is-sidebar-overflow {
 			.is-section-theme {
 				.layout__secondary {
-					transform: translateX( -100% );
+					transform: translateX(-100%);
 				}
 			}
 		}
 
-		.sidebar__menu.is-togglable:not( .is-toggle-open ).hovered {
+		.sidebar__menu.is-togglable:not(.is-toggle-open).hovered {
 			// .hovered is handled in client/layout/sidebar/expandable.jsx. Needed for repositioning and hover intent.
 			position: relative;
 
 			.sidebar__heading {
-				background-color: var( --color-sidebar-menu-hover-background );
-				color: var( --color-sidebar-menu-hover-text );
+				background-color: var(--color-sidebar-menu-hover-background);
+				color: var(--color-sidebar-menu-hover-text);
 			}
 
 			// indicator arrow
 			.sidebar__heading::after {
 				display: block;
-				border-right-color: var( --color-sidebar-submenu-background );
+				border-right-color: var(--color-sidebar-submenu-background);
 			}
 
 			// flyout content
@@ -616,10 +659,10 @@ $font-size: rem( 14px );
 				top: 0;
 				bottom: auto;
 				position: absolute;
-				left: var( --sidebar-width-max );
+				left: var(--sidebar-width-max);
 				min-width: 160px;
 				width: max-content;
-				box-shadow: 0 3px 5px rgba( 0, 0, 0, 0.2 );
+				box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 
 				> ul {
 					border-left: 5px solid transparent;

@@ -1,7 +1,7 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-@import 'jetpack-connect/colors.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "jetpack-connect/colors.scss";
 
 .is-section-jetpack-connect .licensing-prompt-dialog {
 	@include jetpack-connect-colors();
@@ -23,7 +23,7 @@
 .licensing-prompt-dialog {
 	// Add ".dialog__backdrop" to override the default dialog backdrop
 	&__backdrop.dialog__backdrop {
-		background-color: rgba( var( --color-neutral-100-rgb ), 0.6 );
+		background-color: rgba(var(--color-neutral-100-rgb), 0.6);
 	}
 }
 
@@ -65,8 +65,8 @@
 }
 
 .licensing-prompt-dialog__btn.is-primary {
-	--color-accent: var( --studio-jetpack-green-40 );
-	--color-primary: var( --studio-jetpack-green-40 );
+	--color-accent: var(--studio-jetpack-green-40);
+	--color-primary: var(--studio-jetpack-green-40);
 
 	@include break-mobile {
 		margin-right: 16px;

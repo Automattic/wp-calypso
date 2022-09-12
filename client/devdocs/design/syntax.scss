@@ -1,42 +1,44 @@
-code[class*='lang-'] {
-    color: #393a34;
-    direction: ltr;
-    text-align: left;
-    white-space: pre;
-    line-height: 1.2em;
+code[class*="lang-"] {
+	color: #393a34;
+	direction: ltr;
+	text-align: left;
+	white-space: pre;
+	line-height: 1.2em;
 
-    -moz-tab-size: 4;
-    -o-tab-size: 4;
-    tab-size: 4;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
 
-    -webkit-hyphens: none;
-    -moz-hyphens: none;
-    -ms-hyphens: none;
-    hyphens: none;
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
 }
 
-code[class*='lang-']::selection, code[class*='lang-'] ::selection,
-code[class*='lang-']::-moz-selection, code[class*='lang-'] ::-moz-selection {
-    background: #b3d4fc;
+code[class*="lang-"]::selection,
+code[class*="lang-"] ::selection,
+code[class*="lang-"]::-moz-selection,
+code[class*="lang-"] ::-moz-selection {
+	background: #b3d4fc;
 }
 
 .token.comment,
 .token.prolog,
 .token.doctype,
 .token.cdata {
-    color: #969896;
-    font-style: italic;
+	color: #969896;
+	font-style: italic;
 }
 
 .token.namespace {
-    opacity: 0.7;
+	opacity: 0.7;
 }
 
 .token.string {
-    color: #c397d8;
+	color: #c397d8;
 }
 .token.attr-value {
-    color: #b9ca4a;
+	color: #b9ca4a;
 }
 
 .token.url,
@@ -48,52 +50,52 @@ code[class*='lang-']::-moz-selection, code[class*='lang-'] ::-moz-selection {
 .token.regex,
 .token.variable,
 .token.inserted {
-    color: #0086b3;
-    font-weight: 600;
+	color: #0086b3;
+	font-weight: 600;
 }
 
 .token.atrule,
 .token.attr-name,
 .language-autohotkey .token.selector {
-    color: #7aa6da;
-    font-weight: normal;
+	color: #7aa6da;
+	font-weight: normal;
 }
 
 .token.function,
 .token.deleted,
 .language-autohotkey .token.tag {
-    color: #eaeaea;
+	color: #eaeaea;
 }
 
 .token.tag {
-    color: #e05600;
-    font-weight: 600;
+	color: #e05600;
+	font-weight: 600;
 }
 .token.selector {
-    color: green;
+	color: green;
 }
 .language-autohotkey .token.keyword {
-    color: #c397d8;
+	color: #c397d8;
 }
 
 .token.important,
 .token.function,
 .token.bold {
-    font-weight: 600;
+	font-weight: 600;
 }
 
 .token.italic {
-    font-style: italic;
+	font-style: italic;
 }
 
 .token.punctuation {
-    color: #868686;
+	color: #868686;
 }
 .token.operator {
-    color: #a2a2a2;
+	color: #a2a2a2;
 }
 .token.keyword {
-    color: #e7c547;
+	color: #e7c547;
 }
 
 .token.entity,

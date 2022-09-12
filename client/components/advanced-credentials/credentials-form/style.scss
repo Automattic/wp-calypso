@@ -19,7 +19,7 @@
 	}
 
 	.credentials-form__intro-text {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 	}
 
@@ -27,7 +27,7 @@
 		margin-bottom: 20px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		.credentials-form__intro-text {
 			font-size: $font-body;
 		}
@@ -43,7 +43,7 @@
 
 .credentials-form__btn {
 	width: 100%;
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: 200px;
 	}
 }
@@ -63,12 +63,12 @@
 
 		.is-selected {
 			a {
-				background-color: var( --color-neutral-70 );
-				color: var( --color-text-inverted );
+				background-color: var(--color-neutral-70);
+				color: var(--color-text-inverted);
 				&:hover,
 				&:focus {
-					background-color: var( --color-neutral-60 );
-					color: var( --color-text-inverted );
+					background-color: var(--color-neutral-60);
+					color: var(--color-text-inverted);
 				}
 			}
 		}
@@ -85,7 +85,7 @@
 	}
 }
 
-@include breakpoint-deprecated( '>960px' ) {
+@include breakpoint-deprecated( ">960px" ) {
 	.credentials-form__server-address,
 	.credentials-form__username,
 	.credentials-form__password {

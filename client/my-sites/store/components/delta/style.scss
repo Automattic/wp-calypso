@@ -7,36 +7,36 @@
 	&.is-favorable {
 		.delta__icon {
 			&.gridicon {
-				fill: var( --color-success );
+				fill: var(--color-success);
 			}
 		}
 		.delta__labels {
 			.delta__value {
-				color: var( --color-success );
+				color: var(--color-success);
 			}
 		}
 	}
 	&.is-unfavorable {
 		.delta__icon {
 			&.gridicon {
-				fill: var( --color-error );
+				fill: var(--color-error);
 			}
 		}
 		.delta__labels {
 			.delta__value {
-				color: var( --color-error );
+				color: var(--color-error);
 			}
 		}
 	}
 	&.is-neutral {
 		.delta__icon {
 			&.gridicon {
-				fill: var( --color-neutral-light );
+				fill: var(--color-neutral-light);
 			}
 		}
 		.delta__labels {
 			.delta__value {
-				color: var( --color-neutral-light );
+				color: var(--color-neutral-light);
 			}
 		}
 	}
@@ -62,7 +62,7 @@
 
 		.delta__suffix,
 		.delta__value {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 			display: inline-block;
 			font-size: $font-body-small;
 			font-weight: 400;

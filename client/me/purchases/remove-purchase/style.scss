@@ -1,14 +1,14 @@
 .remove-purchase__card {
 	margin: 10px auto;
 	width: 100%;
-	color: var( --color-link );
+	color: var(--color-link);
 	text-align: left;
 	font-size: 100%;
 
 	&:active,
 	&:focus,
 	&:hover {
-		color: var( --color-link-dark );
+		color: var(--color-link-dark);
 	}
 
 	.gridicons-trash {
@@ -22,7 +22,7 @@
 		column-gap: 7px;
 
 		> svg {
-			fill: var( --color-text-inverted );
+			fill: var(--color-text-inverted);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 // ==========================================================================
 // Buttons
 // ==========================================================================
-@import '../styles/typography.scss';
+@import "../styles/typography.scss";
 
 .button {
 	font-family: $a8c-font-family-sans;
@@ -39,7 +39,7 @@
 		width: 18px;
 		height: 18px;
 
-		&:not( :last-child ) {
+		&:not(:last-child) {
 			margin-right: 4px;
 		}
 	}
@@ -49,25 +49,25 @@
 		border-width: 1px;
 	}
 
-	background-color: var( --color-surface );
-	color: var( --color-neutral-70 );
-	border-color: var( --color-neutral-10 );
+	background-color: var(--color-surface);
+	color: var(--color-neutral-70);
+	border-color: var(--color-neutral-10);
 
 	&:hover {
-		border-color: var( --color-neutral-20 );
-		color: var( --color-neutral-70 );
+		border-color: var(--color-neutral-20);
+		color: var(--color-neutral-70);
 	}
 
 	&:visited {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: var( --color-neutral-20 );
-		background-color: var( --color-surface );
-		border-color: var( --color-neutral-5 );
+		color: var(--color-neutral-20);
+		background-color: var(--color-surface);
+		border-color: var(--color-neutral-5);
 		cursor: default;
 
 		&:active,
@@ -77,18 +77,18 @@
 	}
 
 	.accessible-focus &:focus {
-		border-color: var( --color-primary );
-		box-shadow: 0 0 0 2px var( --color-primary-light );
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 
 	&.is-compact {
 		padding: 7px;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body-extra-small;
 		line-height: 1;
 
 		&:disabled {
-			color: var( --color-neutral-20 );
+			color: var(--color-neutral-20);
 		}
 		.gridicon {
 			top: 5px;
@@ -112,117 +112,99 @@
 		pointer-events: none;
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
-		background-image: linear-gradient(
-			-45deg,
-			var( --color-neutral-0 ) 28%,
-			var( --color-surface ) 28%,
-			var( --color-surface ) 72%,
-			var( --color-neutral-0 ) 72%
-		);
+		background-image: linear-gradient(-45deg, var(--color-neutral-0) 28%, var(--color-surface) 28%, var(--color-surface) 72%, var(--color-neutral-0) 72%);
 	}
 }
 
 // Primary buttons
 .button.is-primary {
-	background-color: var( --color-accent );
-	border-color: var( --color-accent );
-	color: var( --color-text-inverted );
+	background-color: var(--color-accent);
+	border-color: var(--color-accent);
+	color: var(--color-text-inverted);
 
 	&:hover,
 	&:focus {
-		background-color: var( --color-accent-60 );
-		border-color: var( --color-accent-60 );
-		color: var( --color-text-inverted );
+		background-color: var(--color-accent-60);
+		border-color: var(--color-accent-60);
+		color: var(--color-text-inverted);
 	}
 
 	.accessible-focus &:focus {
-		box-shadow: 0 0 0 2px var( --color-accent-light );
+		box-shadow: 0 0 0 2px var(--color-accent-light);
 	}
 
 	&.is-compact {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	&[disabled],
 	&:disabled,
 	&.disabled {
-		color: var( --color-neutral-20 );
-		background-color: var( --color-surface );
-		border-color: var( --color-neutral-5 );
+		color: var(--color-neutral-20);
+		background-color: var(--color-surface);
+		border-color: var(--color-neutral-5);
 	}
 
 	&.is-busy {
-		background-image: linear-gradient(
-			-45deg,
-			var( --color-accent ) 28%,
-			var( --color-accent-60 ) 28%,
-			var( --color-accent-60 ) 72%,
-			var( --color-accent ) 72%
-		);
+		background-image: linear-gradient(-45deg, var(--color-accent) 28%, var(--color-accent-60) 28%, var(--color-accent-60) 72%, var(--color-accent) 72%);
 	}
 }
 
 // Scary buttons
 .button.is-scary {
-	color: var( --color-error );
+	color: var(--color-error);
 
 	&:hover,
 	&:focus {
-		border-color: var( --color-error );
+		border-color: var(--color-error);
 	}
 
 	.accessible-focus &:focus {
-		box-shadow: 0 0 0 2px var( --color-error-light );
+		box-shadow: 0 0 0 2px var(--color-error-light);
 	}
 
 	&[disabled],
 	&:disabled {
-		color: var( --color-neutral-20 );
-		background-color: var( --color-surface );
-		border-color: var( --color-neutral-5 );
+		color: var(--color-neutral-20);
+		background-color: var(--color-surface);
+		border-color: var(--color-neutral-5);
 	}
 }
 
 .button.is-primary.is-scary {
-	background-color: var( --color-error );
-	border-color: var( --color-error );
-	color: var( --color-text-inverted );
+	background-color: var(--color-error);
+	border-color: var(--color-error);
+	color: var(--color-text-inverted);
 
 	&:hover,
 	&:focus {
-		background-color: var( --color-error-60 );
-		border-color: var( --color-error-60 );
+		background-color: var(--color-error-60);
+		border-color: var(--color-error-60);
 	}
 
 	&[disabled],
 	&:disabled {
-		color: var( --color-neutral-20 );
-		background-color: var( --color-surface );
-		border-color: var( --color-neutral-5 );
+		color: var(--color-neutral-20);
+		background-color: var(--color-surface);
+		border-color: var(--color-neutral-5);
 	}
 
 	&.is-busy {
-		background-image: linear-gradient(
-			-45deg,
-			var( --color-error ) 28%,
-			var( --color-error-60 ) 28%,
-			var( --color-error-60 ) 72%,
-			var( --color-error ) 72%
-		);
+		background-image: linear-gradient(-45deg, var(--color-error) 28%, var(--color-error-60) 28%, var(--color-error-60) 72%, var(--color-error) 72%);
 	}
 }
 
 .button.is-borderless {
 	border: none;
 	background: none;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	padding-left: 0;
 	padding-right: 0;
 
 	&:hover,
 	&:focus {
 		background: none;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	.gridicon {
@@ -233,7 +215,7 @@
 
 	&[disabled],
 	&:disabled {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 		cursor: default;
 
 		&:active,
@@ -242,34 +224,34 @@
 		}
 	}
 	&.is-scary {
-		color: var( --color-error );
+		color: var(--color-error);
 
 		&:hover,
 		&:focus {
-			color: var( --color-error-60 );
+			color: var(--color-error-60);
 		}
 
 		&[disabled] {
-			color: var( --color-error-20 );
+			color: var(--color-error-20);
 		}
 	}
 
 	&.is-primary {
-		color: var( --color-accent );
+		color: var(--color-accent);
 
 		&:focus,
 		&:hover,
 		&:active,
 		&.is-active {
-			color: var( --color-accent-dark );
+			color: var(--color-accent-dark);
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 2px var( --color-accent-light );
+			box-shadow: 0 0 0 2px var(--color-accent-light);
 		}
 
 		&[disabled] {
-			color: var( --color-neutral-20 );
+			color: var(--color-neutral-20);
 		}
 	}
 
@@ -305,6 +287,25 @@
 	vertical-align: baseline;
 }
 
+.button.is-transparent {
+	background: transparent;
+	border-color: var( --transparent-button-text-color, currentcolor );
+	display: flex;
+    justify-content: center;
+
+	&,
+	&:visited {
+		color: var( --transparent-button-text-color, currentcolor );
+	}
+
+	&:hover {
+		border-color: var( --transparent-button-text-color-hover, var( --color-accent ) );
+		color: var( --transparent-button-text-color-hover, var( --color-accent ) );
+		background: transparent;
+	}
+}
+
+
 // ==========================================================================
 // Deprecated styles
 // ==========================================================================
@@ -314,7 +315,7 @@
 	border: none;
 	border-radius: 0;
 	padding: 0;
-	color: var( --color-link );
+	color: var(--color-link);
 	font-weight: 400;
 	font-size: inherit;
 	line-height: 1.65;
@@ -323,7 +324,7 @@
 	&:focus,
 	&:active,
 	&.is-active {
-		color: var( --color-link-dark );
+		color: var(--color-link-dark);
 		box-shadow: none;
 	}
 }

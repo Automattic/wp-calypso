@@ -1,5 +1,5 @@
-@import '../../../assets/stylesheets/shared/mixins/_breakpoints';
-@import '@automattic/typography/styles/variables';
+@import "../../../assets/stylesheets/shared/mixins/_breakpoints";
+@import "@automattic/typography/styles/variables";
 
 .help-contact-form {
 	.form-textarea {
@@ -30,7 +30,7 @@
 .help-contact-form__selection {
 	margin-bottom: 24px;
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-bottom: 32px;
 	}
 }
@@ -46,7 +46,7 @@
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.segmented-control {
 			// Show the segmented control when the browser is wider than 960px
 			display: flex;

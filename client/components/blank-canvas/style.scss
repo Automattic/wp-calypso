@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .blank-canvas {
 	--color-accent: #117ac9;
@@ -14,7 +14,7 @@
 	overflow: hidden;
 
 	// Hide masterbar behind.
-	z-index: z-index( 'root', '.masterbar' );
+	z-index: z-index("root", ".masterbar");
 
 	.formatted-header {
 		margin-top: 0;
@@ -26,7 +26,7 @@
 		}
 
 		.formatted-header__title {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 			font-size: 2.25rem;
 			padding: 0;
 			margin-top: 0;
@@ -34,7 +34,7 @@
 		}
 
 		.formatted-header__subtitle {
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 			font-size: 1rem;
 			padding: 0;
 			margin-bottom: 0;
@@ -53,7 +53,7 @@
 		.components-select-control__input,
 		.components-text-control__input,
 		.components-textarea-control__input {
-			background-color: var( --studio-white );
+			background-color: var(--studio-white);
 			padding: 0 1rem;
 			box-sizing: border-box;
 		}
@@ -69,14 +69,14 @@
 	}
 
 	.components-button.is-primary:disabled {
-		background-color: var( --color-accent );
-		border-color: var( --color-accent );
-		color: var( --color-text-inverted );
+		background-color: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-text-inverted);
 		opacity: 0.5;
 	}
 
 	.components-button.is-secondary:focus {
-		box-shadow: inset 0 0 0 1px var( --color-neutral-10 );
+		box-shadow: inset 0 0 0 1px var(--color-neutral-10);
 	}
 }
 
@@ -86,7 +86,7 @@
 	align-items: center;
 	padding: 0 1.5rem;
 	margin-bottom: 2.5rem;
-	box-shadow: 0 1px 0 rgba( 0, 0, 0, 0.05 );
+	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05);
 
 	@include break-small {
 		box-shadow: none;
@@ -95,7 +95,7 @@
 	.wordpress-logo {
 		width: 1.5rem;
 		height: 1.5rem;
-		fill: var( --color-text );
+		fill: var(--color-text);
 		margin: 0 1.5rem 0 0;
 	}
 }
@@ -111,7 +111,7 @@
 .blank-canvas__footer {
 	position: fixed;
 	bottom: 0;
-	box-shadow: 0 -1px 0 rgba( 0, 0, 0, 0.05 );
+	box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
 	padding: 0.75rem 1rem;
 	background: #fdfdfd;
 	width: 100%;
@@ -125,7 +125,7 @@
 }
 
 .blank-canvas__back {
-	color: var( --color-text );
+	color: var(--color-text);
 	font-size: 0;
 	padding: 0;
 
@@ -142,7 +142,7 @@
 	position: absolute;
 	right: 1rem;
 	font-size: 0.875rem;
-	color: var( --studio-gray-30 );
+	color: var(--studio-gray-30);
 	z-index: -1;
 
 	@include break-small {

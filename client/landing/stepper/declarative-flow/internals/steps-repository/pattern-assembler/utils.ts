@@ -1,14 +1,20 @@
-const sourceSiteId = 174455321; // dotcompatterns
-const patternPreviewUrl =
-	'https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?stylesheet=pub/blank-canvas&pattern_id=';
+import { addQueryArgs } from '@wordpress/url';
+import { PATTERN_SOURCE_SITE_ID, PREVIEW_PATTERN_URL, STYLE_SHEET } from './constants';
 
-const getPatternPreviewUrl = ( id: number ) => `${ patternPreviewUrl }${ id }-${ sourceSiteId }`;
+export const encodePatternId = ( patternId: number ) =>
+	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
 
-// Runs the callbakc if the keys Enter or Spacebar are in the keyboard event
-const handleKeyboard =
+export const getPatternPreviewUrl = ( id: number, language: string ) => {
+	return addQueryArgs( PREVIEW_PATTERN_URL, {
+		stylesheet: STYLE_SHEET,
+		pattern_id: encodePatternId( id ),
+		language,
+	} );
+};
+
+// Runs the callback if the keys Enter or Spacebar are in the keyboard event
+export const handleKeyboard =
 	( callback: () => void ) =>
 	( { key }: { key: string } ) => {
 		if ( key === 'Enter' || key === ' ' ) callback();
 	};
-
-export { getPatternPreviewUrl, handleKeyboard };

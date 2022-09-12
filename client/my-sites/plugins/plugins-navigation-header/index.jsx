@@ -7,10 +7,10 @@ import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Icon, upload } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import { useLocalizedPlugins, useServerEffect } from 'calypso/my-sites/plugins/utils';
+import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
@@ -81,7 +81,6 @@ const ManageButton = ( {
 const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category, search } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { localizePath } = useLocalizedPlugins();
 
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -97,6 +96,8 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, selectedSite?.ID ) );
 
+	const breadcrumbs = useSelector( getBreadcrumbs );
+
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 
 	const isMobile = useBreakpoint( '<960px' );
@@ -111,8 +112,9 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	const shouldShowManageButton = useMemo( () => {
 		return jetpackNonAtomic || ( isJetpack && ( hasInstallPurchasedPlugins || hasManagePlugins ) );
 	}, [ jetpackNonAtomic, isJetpack, hasInstallPurchasedPlugins, hasManagePlugins ] );
+	const { localizePath } = useLocalizedPlugins();
 
-	const setBreadcrumbs = useCallback( () => {
+	useEffect( () => {
 		const items = [
 			{
 				label: translate( 'Plugins' ),
@@ -141,16 +143,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 		}
 
 		dispatch( updateBreadcrumbs( items ) );
-	}, [ translate, localizePath, selectedSite?.slug, category, search, dispatch, categoryName ] );
-
-	useServerEffect( setBreadcrumbs );
-
-	// We need to get the breadcrumbs here, after initial update dispatch on server.
-	const breadcrumbs = useSelector( getBreadcrumbs );
-
-	useEffect( () => {
-		setBreadcrumbs();
-	}, [ setBreadcrumbs ] );
+	}, [ selectedSite?.slug, search, category, categoryName, dispatch, translate, localizePath ] );
 
 	return (
 		<FixedNavigationHeader

@@ -1,5 +1,5 @@
 .people-list-section-header__add-button.is-compact {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		font-size: 0;
 
 		.gridicon {

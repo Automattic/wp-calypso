@@ -1,11 +1,11 @@
 .people-list-item.card.is-compact {
-	border-bottom: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var(--color-neutral-0);
 	box-shadow: none;
 	display: flex;
 	overflow: hidden;
 	position: relative;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 24px;
 	}
 
@@ -14,8 +14,8 @@
 	}
 
 	&:focus {
-		outline: 2px solid var( --color-primary-light );
-		z-index: z-index( 'root', '.people-list-item.card.is-compact:focus' );
+		outline: 2px solid var(--color-primary-light);
+		z-index: z-index("root", ".people-list-item.card.is-compact:focus");
 	}
 }
 
@@ -33,18 +33,18 @@
 }
 
 .people-list-item .card__link-indicator {
-	z-index: z-index( 'root', '.people-list-item .card__link-indicator' );
+	z-index: z-index("root", ".people-list-item .card__link-indicator");
 }
 
 .people-list-item.is-invite .people-profile__username {
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-title-small;
 	}
 }
 
 .people-list-item.is-invite-details {
 	// Make extra space for invite status on small screens
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding-bottom: 34px;
 	}
 }
@@ -54,29 +54,29 @@
 	flex-shrink: 0;
 	margin-left: 12px;
 
-	&:not( .is-invite-details ) {
+	&:not(.is-invite-details) {
 		// Get out of the way of the link to the invite details page
 		margin-right: 30px;
 
 		// Hide on small screens
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
 		}
 	}
 
 	&.is-invite-details {
 		// Show below the name and role on small screens
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			position: absolute;
 			bottom: 4px;
 			margin-left: 80px;
 		}
 	}
 
-	color: var( --color-success );
+	color: var(--color-success);
 
 	&.is-pending {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 
 	.gridicon {
@@ -93,9 +93,9 @@
 	vertical-align: baseline;
 
 	&.is-success {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		border: 0;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		cursor: default;
 	}
 }

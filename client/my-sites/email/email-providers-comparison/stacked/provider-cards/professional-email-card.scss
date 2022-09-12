@@ -1,14 +1,14 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .professional-email-card__logo {
-	color: var( --color-wordpress-com );
+	color: var(--color-wordpress-com);
 	height: 48px;
 	margin-top: -2px;
 	min-width: 48px;
 	width: 48px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		padding-right: 12px;
 	}
 }
