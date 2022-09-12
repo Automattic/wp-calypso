@@ -8,8 +8,6 @@ import DomainConnectMapping from './domain-connect-mapping';
 import Edit from './edit';
 import EditContactInfo from './edit-contact-info';
 import EditContactInfoPage from './edit-contact-info-page';
-import SiteRedirect from './edit/site-redirect';
-import TransferIn from './edit/transfer-in';
 import ManageConsent from './manage-consent';
 import Security from './security';
 import Settings from './settings';
@@ -33,9 +31,7 @@ export default {
 	SiteDomains,
 	Security,
 	Settings,
-	SiteRedirect,
 	SiteRedirectSettings,
-	TransferIn,
 	TransferOut,
 	TransferPage,
 	TransferDomainToOtherSite,
