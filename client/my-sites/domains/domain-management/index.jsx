@@ -5,7 +5,6 @@ import AddDnsRecord from './dns/add-dns-record';
 import DnsRecords from './dns/dns-records';
 import DomainConnectMapping from './domain-connect-mapping';
 import Edit from './edit';
-import EditContactInfo from './edit-contact-info';
 import EditContactInfoPage from './edit-contact-info-page';
 import ManageConsent from './manage-consent';
 import Security from './security';
@@ -22,7 +21,6 @@ export default {
 	DnsRecords,
 	DomainConnectMapping,
 	Edit,
-	EditContactInfo,
 	EditContactInfoPage,
 	ManageConsent,
 	AllDomains,
