@@ -1,29 +1,40 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { useSelect, useDispatch } from '@wordpress/data';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
 
 import './style.scss';
 
-const ChooseADomain: Step = function ChooseADomain( { navigation, flow, data } ) {
+const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const isVideoPressFlow = 'videopress' === flow;
+	const [ siteTitle, domain ] = useSelect( ( select ) => {
+		return [
+			select( ONBOARD_STORE ).getSelectedSiteTitle(),
+			select( ONBOARD_STORE ).getSelectedDomain(),
+		];
+	} );
+	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const onSkip = () => {
-		submit?.( { domainName: '' } );
+		setDomain( domain );
+		submit?.( { domain: domain } );
 	};
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
 	const getVideoPressFlowStepContent = () => {
-		const onAddDomain = ( { domain_name }: any ) => {
-			submit?.( { domainName: domain_name } );
+		const onAddDomain = ( selectedDomain: any ) => {
+			setDomain( selectedDomain );
+			submit?.( { domain: selectedDomain } );
 		};
 
-		const domainSuggestion = data?.domainName ?? data?.siteTitle ?? '';
+		const domainSuggestion = domain ? domain.domain_name : siteTitle;
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -37,7 +48,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow, data } )
 					showAlreadyOwnADomain={ false }
 					onAddDomain={ onAddDomain }
 					onSkip={ onSkip }
-					promoTlds={ [ 'video', 'studio', 'productions', 'com' ] }
+					promoTlds={ [ 'video', 'studio', 'productions', 'film', 'tv', 'com' ] }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

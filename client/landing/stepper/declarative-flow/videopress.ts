@@ -1,6 +1,6 @@
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
@@ -27,13 +27,11 @@ export const videopress: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const name = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setSiteTitle, setSiteDescription } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const [ _siteTitle, setSiteTitle ] = useState( '' );
-		const [ _tagline, setTagline ] = useState( '' );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
@@ -48,13 +46,11 @@ export const videopress: Flow = {
 				case 'options': {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
-					setTagline( tagline as string );
+					setSiteDescription( tagline as string );
 					return navigate( 'chooseADomain' );
 				}
 
 				case 'chooseADomain': {
-					const { domainName } = providedDependencies;
-					setDomainName( domainName as string );
 					return navigate( 'chooseAPlan' );
 				}
 
@@ -75,7 +71,7 @@ export const videopress: Flow = {
 		const goBack = () => {
 			switch ( _currentStep ) {
 				case 'chooseADomain':
-					return navigate( 'options', { siteTitle: _siteTitle, tagline: _tagline } );
+					return navigate( 'options' );
 			}
 			return;
 		};
@@ -91,18 +87,7 @@ export const videopress: Flow = {
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
-			switch ( step ) {
-				case 'options':
-					return navigate( step, { siteTitle: _siteTitle, tagline: _tagline } );
-				case 'chooseADomain':
-					return navigate( step, {
-						siteTitle: _siteTitle,
-						tagline: _tagline,
-						domainName: _domainName,
-					} );
-				default:
-					return navigate( step );
-			}
+			return navigate( step );
 		};
 
 		return { goNext, goBack, goToStep, submit };

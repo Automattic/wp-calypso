@@ -25,13 +25,12 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow, data } ) {
 		return (
 			<CalypsoShoppingCartProvider>
 				<PlansGrid
-					header={ <h1>Test</h1> }
 					currentDomain={ undefined }
 					onPlanSelect={ onPlanSelect }
 					currentPlanProductId={ undefined }
 					onPickDomainClick={ undefined }
 					isAccordion={ false }
-					selectedFeatures={ undefined }
+					selectedFeatures={ [ 'video-storage' ] }
 					locale={ locale }
 					onBillingPeriodChange={ undefined }
 				/>
