@@ -18,7 +18,7 @@ import { NoSitesMessage } from './no-sites-message';
 import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
-import { useSitesListSorting } from './sites-list-sorting-dropdown';
+import { parseSorting, useSitesListSorting } from './sites-list-sorting-dropdown';
 import { SitesTable } from './sites-table';
 
 interface SitesDashboardProps {
@@ -127,21 +127,22 @@ export function SitesDashboard( {
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
-	const { sortedSites } = useSitesTableSorting( allSites, {
-		sortKey: 'updated-at',
-		sortOrder: 'desc',
-	} );
-
-	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
+	const { filteredSites, statuses } = useSitesTableFiltering( allSites, {
 		search,
 		showHidden: search ? true : showHidden,
 		status,
 	} );
 
+	const [ sitesListSorting, onSitesListSortingChange ] = useSitesListSorting();
+
+	const { sortedSites } = useSitesTableSorting(
+		sitesListSorting === 'none' ? [] : filteredSites,
+		parseSorting( sitesListSorting )
+	);
+
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
-	const [ sitesListSorting, onSitesListSortingChange ] = useSitesListSorting();
 
 	const elementRef = useRef( window );
 
@@ -181,19 +182,19 @@ export function SitesDashboard( {
 							onSitesListSortingChange={ onSitesListSortingChange }
 						/>
 					) }
-					{ filteredSites.length > 0 || isLoading ? (
+					{ sortedSites.length > 0 || isLoading ? (
 						<>
 							{ displayMode === 'list' && (
 								<SitesTable
 									isLoading={ isLoading }
-									sites={ filteredSites }
+									sites={ sortedSites }
 									className={ sitesMargin }
 								/>
 							) }
 							{ displayMode === 'tile' && (
 								<SitesGrid
 									isLoading={ isLoading }
-									sites={ filteredSites }
+									sites={ sortedSites }
 									className={ sitesMargin }
 								/>
 							) }

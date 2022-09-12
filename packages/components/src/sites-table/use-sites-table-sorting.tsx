@@ -7,7 +7,7 @@ export interface SiteDetailsForSorting {
 	};
 }
 
-export type SitesTableSortKey = 'updated-at' | 'alphabetically';
+export type SitesTableSortKey = 'updatedAt' | 'alphabetically';
 export type SitesTableSortOrder = 'asc' | 'desc';
 
 interface SitesTableSortOptions {
@@ -27,7 +27,7 @@ export function useSitesTableSorting< T extends SiteDetailsForSorting >(
 		switch ( sortKey ) {
 			case 'alphabetically':
 				return { sortedSites: sortSitesAlphabetically( allSites, sortOrder ) };
-			case 'updated-at':
+			case 'updatedAt':
 				return { sortedSites: sortSitesByLastPublish( allSites, sortOrder ) };
 			default:
 				return { sortedSites: allSites };

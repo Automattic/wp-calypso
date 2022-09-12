@@ -16,11 +16,31 @@ const SortingButtonIcon = styled( Gridicon )( {
 	marginRight: '0 !important',
 } );
 
-type SitesListSorting = `${ SitesTableSortKey }-${ SitesTableSortOrder }`;
+const SEPARATOR = '-' as const;
+
+type SitesListSorting = `${ SitesTableSortKey }${ typeof SEPARATOR }${ SitesTableSortOrder }`;
+
+const DEFAULT_LIST_SORTING = {
+	sortKey: 'updatedAt',
+	sortOrder: 'desc',
+} as const;
+
+export const parseSorting = ( sorting: SitesListSorting | 'none' ) => {
+	if ( sorting === 'none' ) {
+		return DEFAULT_LIST_SORTING;
+	}
+
+	const [ sortKey, sortOrder ] = sorting.split( SEPARATOR );
+
+	return {
+		sortKey: sortKey as SitesTableSortKey,
+		sortOrder: sortOrder as SitesTableSortOrder,
+	};
+};
 
 export const useSitesListSorting = () =>
 	useAsyncPreference< SitesListSorting >( {
-		defaultValue: 'updated-at-desc',
+		defaultValue: `${ DEFAULT_LIST_SORTING.sortKey }-${ DEFAULT_LIST_SORTING.sortOrder }`,
 		preferenceName: 'sites-list-sorting',
 	} );
 
@@ -41,17 +61,17 @@ export const SitesListSortingDropdown = ( {
 		}
 
 		switch ( sitesListSorting ) {
-			case 'alphabetically-asc':
+			case `alphabetically${ SEPARATOR }asc`:
 				return __( 'Sorted alphabetically (A-Z)' );
 
-			case 'alphabetically-desc':
+			case `alphabetically${ SEPARATOR }desc`:
 				return __( 'Sorted alphabetically (Z-A)' );
 
-			case 'updated-at-desc':
+			case `updatedAt${ SEPARATOR }desc`:
 				return __( 'Sorted by last publish date' );
 
 			default:
-				throw new Error( 'invalid sort key' );
+				throw new Error( `invalid sort value ${ sitesListSorting }` );
 		}
 	}, [ __, sitesListSorting ] );
 
@@ -76,7 +96,7 @@ export const SitesListSortingDropdown = ( {
 				<MenuGroup>
 					<MenuItem
 						onClick={ () => {
-							onSitesListSortingChange( 'alphabetically-asc' );
+							onSitesListSortingChange( `alphabetically${ SEPARATOR }asc` );
 							onClose();
 						} }
 					>
@@ -84,7 +104,7 @@ export const SitesListSortingDropdown = ( {
 					</MenuItem>
 					<MenuItem
 						onClick={ () => {
-							onSitesListSortingChange( 'alphabetically-desc' );
+							onSitesListSortingChange( `alphabetically${ SEPARATOR }desc` );
 							onClose();
 						} }
 					>
@@ -92,7 +112,7 @@ export const SitesListSortingDropdown = ( {
 					</MenuItem>
 					<MenuItem
 						onClick={ () => {
-							onSitesListSortingChange( 'updated-at-desc' );
+							onSitesListSortingChange( `updatedAt${ SEPARATOR }desc` );
 							onClose();
 						} }
 					>
