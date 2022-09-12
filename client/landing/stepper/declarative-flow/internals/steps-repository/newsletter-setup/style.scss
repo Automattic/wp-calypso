@@ -107,7 +107,8 @@ $border-radius: 4px;
 }
 
 .newsletter-setup__accent-color-popover {
-	&:focus {
+	&:focus,
+	&:focus-visible {
 		outline: none;
 	}
 }
