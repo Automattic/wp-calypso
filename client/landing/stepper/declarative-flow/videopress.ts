@@ -44,7 +44,7 @@ export const videopress: Flow = {
 						return navigate( 'options' );
 					}
 					return window.location.replace(
-						`/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/options?flow=${ name }`
+						`/start/account/user?variationName=${ name }&pageTitle=Video%20Portfolio&redirect_to=/setup/options?flow=${ name }`
 					);
 
 				case 'options': {
