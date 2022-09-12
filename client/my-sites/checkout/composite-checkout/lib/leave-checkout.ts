@@ -32,9 +32,8 @@ export const leaveCheckout = ( {
 	} );
 
 	const signupFlowName = getSignupCompleteFlowName();
-	const isTailoredSignup = isTailoredSignupFlow( signupFlowName );
 
-	if ( isTailoredSignup ) {
+	if ( isTailoredSignupFlow( signupFlowName ) ) {
 		const urlFromCookie = retrieveSignupDestination();
 		if ( urlFromCookie ) {
 			window.location.assign( urlFromCookie );
