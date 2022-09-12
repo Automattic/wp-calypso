@@ -14,7 +14,9 @@ export type SiteExcerptNetworkData = Pick<
 
 export type SiteExcerptData = Pick<
 	SiteDetails,
-	typeof SITE_EXCERPT_REQUEST_FIELDS[ number ] | typeof SITE_EXCERPT_COMPUTED_FIELDS[ number ]
+	| Exclude< typeof SITE_EXCERPT_REQUEST_FIELDS[ number ], 'name' >
+	| typeof SITE_EXCERPT_COMPUTED_FIELDS[ number ]
 > & {
+	name: string;
 	options?: Pick< SiteDetailsOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
 };
