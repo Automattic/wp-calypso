@@ -9,7 +9,7 @@
  * @blame: dmsnell
 */
 
-@import '../variables.scss';
+@import "../variables.scss";
 
 /* stylelint-disable scales/font-size */
 
@@ -39,7 +39,7 @@
 
 .facebook-preview__title {
 	color: #1d2129;
-	
+
 	font-size: 16px;
 	/* stylelint-disable-next-line scales/font-weight */
 	font-weight: 600;
@@ -126,11 +126,11 @@
 		}
 
 		&::after {
-			content: '';
+			content: "";
 			display: block;
 			height: 100%;
 			width: 100%;
-			background: #ffffff;
+			background: #fff;
 		}
 	}
 

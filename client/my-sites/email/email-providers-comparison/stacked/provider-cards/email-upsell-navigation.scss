@@ -1,15 +1,20 @@
-@import '@automattic/onboarding/styles/mixins';
+@import "@automattic/onboarding/styles/mixins";
 
 .email-upsell-navigation {
 	display: flex;
 	justify-content: space-between;
+	margin-bottom: 18px;
+
+	&.is-hiding-skip {
+		margin-bottom: 0;
+	}
 
 	.button {
 		@include onboarding-medium-text;
+
 		align-items: center;
 		display: inline-flex;
 		padding: 0;
-		margin-bottom: 18px;
 	}
 
 	.button.is-borderless .gridicon {

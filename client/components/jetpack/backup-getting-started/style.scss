@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 $card-height-desktop: 250px;
 $preview-max-width: 360px;
@@ -12,8 +12,8 @@ $content-max-width: 210px;
 
 	@include break-medium {
 		height: $card-height-desktop;
-		background-image: url( 'calypso/assets/images/jetpack/getting-started-backup-bg.svg' );
-		grid-template-columns: minmax( 0, $preview-max-width ) minmax( $content-max-width, 1fr );
+		background-image: url("calypso/assets/images/jetpack/getting-started-backup-bg.svg");
+		grid-template-columns: minmax(0, $preview-max-width) minmax($content-max-width, 1fr);
 		grid-column-gap: 1.5rem;
 	}
 }
@@ -24,21 +24,21 @@ $content-max-width: 210px;
 	position: relative;
 	margin: 0 0 2rem;
 	border-radius: 2 * 4px;
-	box-shadow: 0 5px 5px 0 rgb( #000, 0.01 ), 5px 5px 22px 0 rgb( #000, 0.25 );
+	box-shadow: 0 5px 5px 0 rgb(#000, 0.01), 5px 5px 22px 0 rgb(#000, 0.25);
 	overflow: hidden;
 
 	@include break-medium {
 		margin: 0;
 	}
 
-	&[data-hidden='mobile'] {
+	&[data-hidden="mobile"] {
 		display: none;
 
 		@include break-medium {
 			display: $display-mode;
 		}
 	}
-	&[data-hidden='desktop'] {
+	&[data-hidden="desktop"] {
 		display: $display-mode;
 
 		@include break-medium {
@@ -52,7 +52,7 @@ $content-max-width: 210px;
 	width: auto;
 	height: 100%;
 	object-fit: contain;
-	background-color: var( --studio-white );
+	background-color: var(--studio-white);
 }
 
 .backup-getting-started__time-length {
@@ -61,8 +61,8 @@ $content-max-width: 210px;
 	bottom: 0.75rem;
 	padding: 0.25rem 0.5rem;
 	border-radius: 4px;
-	background-color: var( --studio-gray-80 );
-	color: var( --studio-white );
+	background-color: var(--studio-gray-80);
+	color: var(--studio-white);
 	font-size: 1.25rem;
 	font-weight: 700;
 	line-height: 1;

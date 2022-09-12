@@ -4,8 +4,8 @@
 .features-list {
 	padding: 1.5rem;
 	/* stylelint-disable scales/radii */
-	border-end-start-radius: 8px;
-	border-end-end-radius: 8px;
+	border-end-start-radius: 8px; /* stylelint-disable-line scales/radii */
+	border-end-end-radius: 8px; /* stylelint-disable-line scales/radii */
 	/* stylelint-enable scales/radii */
 
 	@include break-mobile {

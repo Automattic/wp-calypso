@@ -1,22 +1,29 @@
 import classnames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { useTranslate, localize } from 'i18n-calypso';
 import { isEmpty, omit } from 'lodash';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { HTMLProps } from 'react';
 
 import './style.scss';
 
-export class FormCountrySelect extends Component {
-	static propTypes = {
-		countriesList: PropTypes.array.isRequired,
-		className: PropTypes.string,
-		disabled: PropTypes.bool,
-		onChange: PropTypes.func,
-		translate: PropTypes.func.isRequired,
-	};
+export interface FormCountrySelectProps {
+	countriesList: CountryListItem[];
+	translate: ReturnType< typeof useTranslate >;
+}
 
-	getOptions() {
+interface OptionObject {
+	key: string | number;
+	label: string;
+	code?: string;
+	disabled?: boolean;
+}
+
+export class FormCountrySelect extends Component<
+	FormCountrySelectProps & Omit< HTMLProps< HTMLSelectElement >, 'ref' >
+> {
+	getOptions(): OptionObject[] {
 		const { countriesList, translate } = this.props;
 
 		if ( isEmpty( countriesList ) ) {

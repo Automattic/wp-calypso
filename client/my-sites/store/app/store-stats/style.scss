@@ -8,19 +8,19 @@
 	width: 100%;
 }
 
-@include breakpoint-deprecated( '>960px' ) {
+@include breakpoint-deprecated( ">960px" ) {
 	.store-stats__widgets {
 		flex-direction: row;
 		flex-wrap: wrap;
 	}
 }
 
-@include breakpoint-deprecated( '>1280px' ) {
+@include breakpoint-deprecated( ">1280px" ) {
 	.store-stats__widgets-column {
-		width: calc( 33% - 3px );
+		width: calc(33% - 3px);
 
 		&.widgets {
-			width: calc( 50% - 6px );
+			width: calc(50% - 6px);
 		}
 	}
 }

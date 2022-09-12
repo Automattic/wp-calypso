@@ -1,53 +1,53 @@
 .threat-item-header {
-  &__card-container {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: auto;
-    margin-top: auto;
-    margin-right: auto;
-    padding-right: 24px;
-    width: 100%;
-    overflow: hidden;
+	&__card-container {
+		display: flex;
+		flex-wrap: wrap;
+		margin-bottom: auto;
+		margin-top: auto;
+		margin-right: auto;
+		padding-right: 24px;
+		width: 100%;
+		overflow: hidden;
 
-    @include breakpoint-deprecated( '>960px' ) {
-      flex-wrap: nowrap;
-    }
-  }
+		@include breakpoint-deprecated( ">960px" ) {
+			flex-wrap: nowrap;
+		}
+	}
 
-  &__titles {
-    overflow: hidden;
-  }
+	&__titles {
+		overflow: hidden;
+	}
 
-  &__autofix-container {
-    min-width: 18px;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-right: 36px;
-    margin-left: auto;
-  }
+	&__autofix-container {
+		min-width: 18px;
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: 36px;
+		margin-left: auto;
+	}
 
-  &__autofix_badge {
-    fill: #008710;
-  }
+	&__autofix_badge {
+		fill: #008710;
+	}
 
-  &__card-top {
-    font-style: normal;
-    font-weight: 600;
-    font-size: $font-body-large;
-    line-height: 24px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+	&__card-top {
+		font-style: normal;
+		font-weight: 600;
+		font-size: $font-body-large;
+		line-height: 24px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 
-  &__card-bottom {
-    font-style: normal;
-    font-weight: normal;
-    font-size: $font-body-small;
-    line-height: 21px;
-    color: #50575e;
+	&__card-bottom {
+		font-style: normal;
+		font-weight: normal;
+		font-size: $font-body-small;
+		line-height: 21px;
+		color: #50575e;
 
-    &.is-critical {
-      color: #d63638;
-    }
-  }
+		&.is-critical {
+			color: #d63638;
+		}
+	}
 }

@@ -1,5 +1,5 @@
-@import '../../../variables.scss';
-@import '../../../mixins';
+@import "../../../variables.scss";
+@import "../../../mixins";
 
 $placeholder-color: #ccd0d4; // former light-gray-700
 
@@ -15,8 +15,8 @@ $placeholder-color: #ccd0d4; // former light-gray-700
 	background: transparent;
 	border: none;
 	padding: 0;
-	color: var( --mainColor );
-	caret-color: var( --mainColor );
+	color: var(--mainColor);
+	caret-color: var(--mainColor);
 
 	&:focus {
 		box-shadow: none;
@@ -47,7 +47,7 @@ $placeholder-color: #ccd0d4; // former light-gray-700
 
 .acquire-intent-text-input__underline {
 	height: 2px;
-	background: var( --mainColor );
+	background: var(--mainColor);
 	margin-top: -5px;
 	max-width: 100%;
 
@@ -57,10 +57,6 @@ $placeholder-color: #ccd0d4; // former light-gray-700
 
 	&.is-empty {
 		max-width: 550px;
-		background: linear-gradient(
-			90deg,
-			$placeholder-color 0%,
-			lighten( $placeholder-color, 10% ) 100%
-		);
+		background: linear-gradient(90deg, $placeholder-color 0%, lighten($placeholder-color, 10%) 100%);
 	}
 }

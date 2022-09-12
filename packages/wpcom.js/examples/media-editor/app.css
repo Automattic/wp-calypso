@@ -4,7 +4,7 @@ body {
 	font-size: 12px;
 }
 
-input[type=text] {
+input[type="text"] {
 	width: 300px;
 	height: 12px;
 	line-height: 12px;
@@ -17,27 +17,27 @@ label {
 
 h3 {
 	text-align: center;
-    height: 40px;
-    line-height: 40px;
-    margin: -10px -10px 10px;
-    background: #aaa;
-    height: 24px;
-    line-height: 24px;
-    color: white;
-    font-size: 10px;
+	height: 40px;
+	line-height: 40px;
+	margin: -10px -10px 10px;
+	background: #aaa;
+	height: 24px;
+	line-height: 24px;
+	color: white;
+	font-size: 10px;
 	text-transform: uppercase;
 }
 
 .revision-history-container {
 	width: 200px;
-    float: left;
+	float: left;
 }
 
 .history-original {
 	margin: 0 10px 10px;
-    border: 1px solid #bbb;
-    padding: 10px;
-    font-size: 12px;
+	border: 1px solid #bbb;
+	padding: 10px;
+	font-size: 12px;
 	background-color: white;
 }
 
@@ -46,8 +46,8 @@ h3 {
 }
 
 #revision-history-wrapper {
-    border: 1px solid #aaa;
-    margin: 10px;
+	border: 1px solid #aaa;
+	margin: 10px;
 }
 
 #revision-history-wrapper h3 {
@@ -57,7 +57,7 @@ h3 {
 #revision-history .image-container {
 	margin: 5px 5%;
 	width: 90%;
-    box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 #revision-history {
@@ -83,8 +83,7 @@ h3 {
 	width: 300px;
 }
 
-.image-container .image-summary {
-}
+.image-container .image-summary {}
 
 .image-container .image-summary span {
 	display: block;
@@ -93,24 +92,24 @@ h3 {
 
 .image-container .image-summary span.image-revision-number {
 	font-size: 10px;
-    font-weight: bold;
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    background-color: white;
-    padding: 0 3px;
-    border: 1px solid #eee;
-    border-radius: 3px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
+	font-weight: bold;
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	background-color: white;
+	padding: 0 3px;
+	border: 1px solid #eee;
+	border-radius: 3px; /* stylelint-disable-line scales/radii */
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
 }
 
 #image-node {
 	border: 1px solid #f0f0f0;
 	background-position: 50% 50%;
 	width: 100%;
-    height: 300px;
+	height: 300px;
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-color: white;

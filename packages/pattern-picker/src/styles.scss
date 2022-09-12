@@ -1,65 +1,44 @@
 /* stylelint-disable scss/at-import-no-partial-leading-underscore */
-@import '@wordpress/base-styles/_breakpoints';
-@import '@wordpress/base-styles/_mixins';
+@import "@wordpress/base-styles/_breakpoints";
+@import "@wordpress/base-styles/_mixins";
 
-$patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', 'purple', 'yellow',
-	'biba', 'chloe-currie', 'emily', 'luis-carvelleda', 'mesh-gradient', 'paul-nyberg', 'tengfai';
-
-.pattern-picker__carousel {
-	scrollbar-width: none; /* Firefox */
-	display: flex;
-	gap: 20px;
-	box-sizing: border-box;
-	padding-left: 50%;
-	padding-right: 50%;
-	overflow-x: scroll;
-	scroll-snap-type: x mandatory;
-	scroll-behavior: smooth;
-
-	&::-webkit-scrollbar {
-		display: none;
-	}
-}
+$patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "purple", "yellow",
+	"biba", "chloe-currie", "emily", "luis-carvelleda", "mesh-gradient", "paul-nyberg", "tengfai";
 
 .pattern-picker__item {
 	flex: 1;
-	scroll-snap-align: center;
 
 	// iPhone aspect ratio
 	aspect-ratio: 0.48;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 20px;
-	box-shadow: 2px 2px 10px 0 rgb( 66 68 90 / 23% );
-	transition:
-		background-position 1s ease-in-out,
-		transform 0.2s ease-in-out,
-		opacity 0.1s ease-in-out;
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+	box-shadow: 2px 2px 10px 0 rgb(66 68 90 / 23%);
+	transition: transform 0.4s ease-in-out, opacity 0.3s ease-in-out;
 	border: 0.6vh solid #fff;
 	margin: 20px 0;
 	cursor: pointer;
 	padding: 0;
 	overflow: hidden;
-	min-height: calc( 65vh - 50px );
+	min-height: calc(65vh - 50px);
 	outline: none;
 
-	@media (max-height: 375px) {
+	@media ( max-height: 375px ) {
 		aspect-ratio: 0.5;
 	}
 
 	// needed for iOS Safari. iOS has
 	@supports ( min-height: 65svh ) {
-		min-height: calc( 65svh - 50px );
+		min-height: calc(65svh - 50px);
 	}
 
 	opacity: 0.5;
-	filter: blur( 3px );
+	filter: blur(3px);
 
 	&.is-active {
 		opacity: 1;
-		filter: blur( 0 );
+		filter: blur(0);
 	}
 
 	.mshots-image-visible {
@@ -68,8 +47,24 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 		// compensate for the item border to avoid cropping the image's top.
 		margin-top: 10px;
 
-		@media (max-height: 375px) {
+		@media ( max-height: 375px ) {
 			margin-top: 16px;
+		}
+	}
+}
+
+.pattern-picker__carousel {
+	display: flex;
+	gap: 20px;
+	box-sizing: border-box;
+	padding-left: 50%;
+	padding-right: 50%;
+	overflow: hidden;
+
+	// transform transitions during dragging make it laggy
+	&.is-dragging {
+		.pattern-picker__item {
+			transition: opacity 0.3s ease-in-out;
 		}
 	}
 }
@@ -86,7 +81,7 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 	opacity: 0.5;
 	position: absolute;
 	top: 50%;
-	box-shadow: 1px 1px 3px 0 rgb( 0 0 0 / 18% );
+	box-shadow: 1px 1px 3px 0 rgb(0 0 0 / 18%);
 	transition: opacity 0.3s ease-in-out;
 	display: none;
 	cursor: pointer;
@@ -101,7 +96,7 @@ $patterns: '17-2', 'black', 'ella-d', 'link-cloud', 'matt-smith', 'ose-maiko', '
 
 	&:hover {
 		opacity: 1;
-		fill: var( --studio-blue-50 );
+		fill: var(--studio-blue-50);
 	}
 
 	@include break-small {

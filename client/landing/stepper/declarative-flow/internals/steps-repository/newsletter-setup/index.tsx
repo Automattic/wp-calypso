@@ -7,6 +7,7 @@ import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
 import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
+import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -60,18 +61,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
 		useDispatch( ONBOARD_STORE );
 
-	const [ formTouched, setFormTouched ] = React.useState( false );
+	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
 	const [ accentColor, setAccentColor ] = React.useState< AccentColor >( defaultAccentColor );
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
-	const siteTitleError =
-		formTouched && ! siteTitle.trim()
-			? __( `Oops. Looks like your Newsletter doesn't have a name yet.` )
-			: '';
-
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
 
 	useEffect( () => {
@@ -95,13 +91,15 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			return;
 		}
 
-		if ( formTouched ) {
-			return;
-		}
-
 		setComponentSiteTitle( site.name || '' );
 		setTagline( site.description );
-	}, [ site, formTouched ] );
+	}, [ site ] );
+
+	useEffect( () => {
+		if ( siteTitle.trim().length && invalidSiteTitle ) {
+			setInvalidSiteTitle( false );
+		}
+	}, [ siteTitle, invalidSiteTitle ] );
 
 	const imageFileToBase64 = ( file: Blob ) => {
 		const reader = new FileReader();
@@ -112,7 +110,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		setFormTouched( true );
+		setInvalidSiteTitle( ! siteTitle.trim().length );
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
@@ -132,7 +130,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		setFormTouched( true );
 		switch ( event.currentTarget.name ) {
 			case 'siteTitle':
 				return setComponentSiteTitle( event.currentTarget.value );
@@ -180,22 +177,32 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					style={ {
 						backgroundImage: getBackgroundImage( siteTitle ),
 					} }
-					isError={ !! siteTitleError }
+					isError={ invalidSiteTitle }
 					onChange={ onChange }
 				/>
-				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
+				{ invalidSiteTitle && (
+					<FormInputValidation
+						isError
+						text={ __( `Oops. Looks like your Newsletter doesn't have a name yet.` ) }
+					/>
+				) }
 			</FormFieldset>
 			<FormFieldset>
 				<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
-				<FormInput
-					value={ tagline }
-					placeholder={ __( 'Describe your Newsletter in a line or two' ) }
+				<ForwardedAutoresizingFormTextarea
 					name="tagline"
 					id="tagline"
+					value={ tagline }
+					placeholder={ __( 'Describe your Newsletter in a line or two' ) }
+					enableAutoFocus={ false }
+					onChange={ onChange }
 					style={ {
 						backgroundImage: getBackgroundImage( tagline ),
+						backgroundRepeat: 'no-repeat',
+						backgroundPosition: '95%',
+						paddingRight: ' 40px',
+						paddingLeft: '14px',
 					} }
-					onChange={ onChange }
 				/>
 			</FormFieldset>
 			<FormFieldset>

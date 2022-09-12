@@ -1,18 +1,18 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .jetpack-product-store__most-popular {
 	margin-top: 3em;
 }
 
 .jetpack-product-store__most-popular--heading {
-	margin-bottom: rem( 24px );
+	margin-bottom: rem(24px);
 	font-size: $font-title-small;
 	font-weight: 700;
-	line-height: rem( 29px );
+	line-height: rem(29px);
 
 	@include break-medium {
-		margin-bottom: rem( 32px );
+		margin-bottom: rem(32px);
 		font-size: $font-title-medium;
 		font-weight: 600;
 	}
@@ -54,7 +54,7 @@
 	box-shadow: none;
 	width: 100%;
 	margin: 0;
-	border-bottom: 1px solid var( --studio-gray-5 );
+	border-bottom: 1px solid var(--studio-gray-5);
 }
 
 .jetpack-product-store__most-popular--item .foldable-card.is-expanded {

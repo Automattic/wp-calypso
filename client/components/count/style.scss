@@ -1,19 +1,19 @@
-@import '@automattic/typography/styles/variables';
+@import "@automattic/typography/styles/variables";
 
 .count {
 	display: inline-block;
 	padding: 1px 6px;
-	border: solid 1px var( --color-border );
+	border: solid 1px var(--color-border);
 	border-radius: 12px; /* stylelint-disable-line scales/radii */
 	font-size: $font-body-extra-small;
 	font-weight: 600;
 	line-height: 14px;
-	color: var( --color-text );
+	color: var(--color-text);
 	text-align: center;
 
 	&.is-primary {
-		color: var( --color-text-inverted );
-		border-color: var( --color-accent );
-		background-color: var( --color-accent );
+		color: var(--color-text-inverted);
+		border-color: var(--color-accent);
+		background-color: var(--color-accent);
 	}
 }

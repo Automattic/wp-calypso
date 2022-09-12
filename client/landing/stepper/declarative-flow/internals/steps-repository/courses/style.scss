@@ -1,20 +1,20 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 $grey-header: #151b1e;
 
 .courses {
 	.signup-header {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 
 		svg.wordpress-logo {
-			fill: var( --color-text-inverted );
+			fill: var(--color-text-inverted);
 		}
 	}
 
 	.step-container {
 		.step-container__navigation.action-buttons {
-			background-color: var( --studio-gray-100 );
+			background-color: var(--studio-gray-100);
 			border: 0;
 			box-shadow: 0 -1px 0 #2c3234;
 
@@ -39,7 +39,7 @@ $grey-header: #151b1e;
 			.videos-ui {
 				position: relative;
 				width: 100%;
-				min-height: calc( 100vh - 60px );
+				min-height: calc(100vh - 60px);
 
 				span,
 				p {
@@ -73,10 +73,10 @@ $grey-header: #151b1e;
 		right: 0;
 		padding: 0 20px;
 		box-shadow: 0 -1px 0 #2c3234;
-		background-color: var( --studio-gray-100 );
+		background-color: var(--studio-gray-100);
 		animation: appear 0.3s ease-in-out;
 
-		@include reduce-motion( 'animation' );
+		@include reduce-motion( "animation" );
 
 		.courses__footer-content {
 			display: flex;
@@ -93,7 +93,7 @@ $grey-header: #151b1e;
 			margin-left: 20px;
 			border-radius: 4px;
 			border-color: transparent;
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 			font-weight: 500;
 			transition: opacity 0.2s ease-out;
 

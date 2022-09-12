@@ -1,4 +1,4 @@
-@import '@automattic/onboarding/styles/mixins';
+@import "@automattic/onboarding/styles/mixins";
 
 .theme-preview__container {
 	bottom: 0;
@@ -21,7 +21,7 @@
 		}
 	}
 
-	&--loading:not( &--frame-bordered ) {
+	&--loading:not(&--frame-bordered) {
 		@include onboarding-placeholder();
 	}
 
@@ -43,19 +43,19 @@
 			@include break-small {
 				$frame-border-width: 10px;
 
-				border: $frame-border-width solid var( --color-print );
+				border: $frame-border-width solid var(--color-print);
 				border-radius: 40px; /* stylelint-disable-line scales/radii */
 				box-sizing: border-box;
-				box-shadow: 
-					0 5px 15px rgba( 0, 0, 0, 0.07 ),
-					0 3px 10px rgba( 0, 0, 0, 0.04 );
+				box-shadow:
+					0 5px 15px rgba(0, 0, 0, 0.07),
+					0 3px 10px rgba(0, 0, 0, 0.04);
 
 				@include break-large {
 					border-radius: 20px; /* stylelint-disable-line scales/radii */
-					box-shadow: 
-						0 15px 20px rgba( 0, 0, 0, 0.04 ), 
-						0 13px 10px rgba( 0, 0, 0, 0.03 ), 
-						0 6px 6px rgba( 0, 0, 0, 0.02 );
+					box-shadow:
+						0 15px 20px rgba(0, 0, 0, 0.04),
+						0 13px 10px rgba(0, 0, 0, 0.03),
+						0 6px 6px rgba(0, 0, 0, 0.02);
 					margin-top: 0;
 				}
 			}
@@ -85,7 +85,7 @@
 
 		> button {
 			border-radius: 2px;
-			color: var( --studio-gray-10 );
+			color: var(--studio-gray-10);
 			height: auto;
 			margin: 0 9px;
 			padding: 0;
@@ -95,11 +95,11 @@
 			&:hover,
 			&:focus {
 				box-shadow: none;
-				color: var( --studio-black );
+				color: var(--studio-black);
 			}
 
 			&:focus-visible {
-				box-shadow: inset 0 0 0 2px var( --color-primary-light );
+				box-shadow: inset 0 0 0 2px var(--color-primary-light);
 			}
 
 			svg {
@@ -112,14 +112,14 @@
 		display: block;
 	}
 }
-			
+
 .theme-preview__frame-wrapper {
 	flex-grow: 1;
 	position: relative;
 
 	.theme-preview__frame-message {
 		bottom: 0;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		display: none;
 		font-size: $font-body;
 		left: 0;
@@ -129,7 +129,7 @@
 		z-index: 1;
 
 		strong {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			display: block;
 			font-size: $font-title-medium;
 			margin-bottom: 5px;

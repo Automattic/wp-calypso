@@ -1,21 +1,21 @@
-@import 'calypso/components/text-control/style.scss';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "calypso/components/text-control/style.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;
 	transition: none;
 
 	&.is-error,
-	&[type='password'],
-	&[name='password'] {
+	&[type="password"],
+	&[name="password"] {
 		margin-bottom: 0;
 		text-align: left;
 		/*!rtl:ignore*/
 		direction: ltr;
 	}
 
-	&[name='username'] {
+	&[name="username"] {
 		text-align: left;
 		/*!rtl:ignore*/
 		direction: ltr;
@@ -28,7 +28,7 @@
 	text-align: center;
 
 	a {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			white-space: pre;
 		}
 	}
@@ -42,7 +42,7 @@
 
 	p {
 		font-size: $font-body-small;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 		margin: 0 0 12px;
 		text-align: center;
 
@@ -56,8 +56,10 @@
 	button {
 		display: block;
 		margin: 0 auto 15px;
-		box-shadow: 0 1px 1px 0 rgba( 0, 0, 0, 0.14 ), 0 2px 1px -1px rgba( 0, 0, 0, 0.12 ),
-			0 1px 3px 0 rgba( 0, 0, 0, 0.2 );
+		box-shadow:
+			0 1px 1px 0 rgba(0, 0, 0, 0.14),
+			0 2px 1px -1px rgba(0, 0, 0, 0.12),
+			0 1px 3px 0 rgba(0, 0, 0, 0.2);
 	}
 }
 
@@ -83,7 +85,7 @@
 	display: none;
 	padding: 20px 10px 10px;
 	font-size: $font-body-small;
-	color: var( --studio-blue-5 );
+	color: var(--studio-blue-5);
 	text-align: center;
 
 	p {
@@ -92,7 +94,7 @@
 	}
 
 	a {
-		color: var( --studio-blue-5 );
+		color: var(--studio-blue-5);
 		text-decoration: underline;
 	}
 }

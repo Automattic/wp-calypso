@@ -1,5 +1,5 @@
 .page-card-info {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	vertical-align: middle;
 }
@@ -9,9 +9,9 @@
 }
 
 .page-card-info__badge {
-	background: var( --color-neutral-0 );
-	border-radius: 12px;
-	color: var( --color-neutral );
+	background: var(--color-neutral-0);
+	border-radius: 12px; /* stylelint-disable-line scales/radii */
+	color: var(--color-neutral);
 	display: inline-block;
 	padding: 2px 10px;
 	vertical-align: middle;

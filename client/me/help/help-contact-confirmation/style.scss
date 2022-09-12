@@ -1,5 +1,5 @@
-@import '../../../assets/stylesheets/shared/mixins/_breakpoints';
-@import '@automattic/typography/styles/variables';
+@import "../../../assets/stylesheets/shared/mixins/_breakpoints";
+@import "@automattic/typography/styles/variables";
 
 .help-contact-confirmation {
 	text-align: center;
@@ -7,26 +7,26 @@
 	width: 100%;
 
 	.gridicon.gridicons-checkmark-circle {
-		color: var( --color-success );
+		color: var(--color-success);
 	}
 
 	.gridicon.gridicons-notice {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 
 	.form-section-heading {
 		margin: 13px 0 7px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin: 7px 0 3px;
 			font-size: $font-title-medium;
 			line-height: 32px;
 		}
 	}
 
-	min-height: calc( 100vh - 150px );
+	min-height: calc(100vh - 150px);
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		min-height: auto;
 		height: 556px;
 	}
@@ -36,7 +36,7 @@
 	display: table-cell;
 	vertical-align: middle;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: block;
 		margin-top: 100px;
 	}
@@ -46,7 +46,7 @@
 	display: none;
 }
 
-@include breakpoint-deprecated( '>660px' ) {
+@include breakpoint-deprecated( ">660px" ) {
 	.help-contact-confirmation__large-gridicon {
 		display: block;
 	}
@@ -58,7 +58,7 @@
 
 .help-contact-confirmation__message {
 	font: 14px/21px $sans; /* stylelint-disable-line declaration-property-unit-allowed-list */
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	max-width: 340px;
 	display: inline-block;
 	margin-bottom: 0;

@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 // Activity Log
 
@@ -9,12 +9,12 @@
 
 	&::before,
 	&::after {
-		content: '';
+		content: "";
 		position: absolute;
 		left: 35px;
 		width: 2px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			left: 27px;
 		}
 	}
@@ -23,18 +23,18 @@
 		top: 0;
 		height: 100%;
 		z-index: -2;
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 	}
 
 	&::after {
 		bottom: 0;
 		height: 16px;
 		z-index: -1;
-		background: var( --color-neutral-10 );
-		background: linear-gradient( var( --color-neutral-10 ), var( --color-surface-backdrop ) );
+		background: var(--color-neutral-10);
+		background: linear-gradient(var(--color-neutral-10), var(--color-surface-backdrop));
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-top: 2rem;
 	}
 }
@@ -42,10 +42,10 @@
 .activity-log__time-period {
 	margin: 8px 0;
 	padding: 6px 0 4px;
-	background: var( --color-surface-backdrop );
+	background: var(--color-surface-backdrop);
 	font-weight: 600;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-left: 10px;
 	}
 
@@ -54,7 +54,7 @@
 		height: 23px;
 		width: 100px;
 		margin: 3px 0;
-		background-color: var( --color-neutral-10 );
+		background-color: var(--color-neutral-10);
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
@@ -67,7 +67,7 @@
 	}
 
 	&.is-top-pagination {
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
 		}
 	}
@@ -78,18 +78,18 @@
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background: linear-gradient( to bottom, rgba( 243, 246, 248, 0.1 ), #f3f6f8 );
+	background: linear-gradient(to bottom, rgba(243, 246, 248, 0.1), #f3f6f8);
 	z-index: 179;
 	height: 15%;
 	pointer-events: none;
 }
 
 .activity-log__filterbar-ctn.is-sticky {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		position: fixed;
-		top: var( --masterbar-height );
+		top: var(--masterbar-height);
 		left: 0;
 		right: 0;
-		z-index: z-index( 'root', '.masterbar' );
+		z-index: z-index("root", ".masterbar");
 	}
 }

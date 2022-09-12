@@ -2,10 +2,9 @@ import { CardHeader, Button, Flex } from '@wordpress/components';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useState } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
-import type { Header, WindowState } from '../types';
+import type { Header } from '../types';
 import type { ReactElement } from 'react';
 
 export function ArticleTitle() {
@@ -46,22 +45,20 @@ const SupportModeTitle = (): ReactElement => {
 	}
 };
 const HelpCenterHeader: React.FC< Header > = ( {
-	isMinimized,
+	isMinimized = false,
 	onMinimize,
 	onMaximize,
 	onDismiss,
 } ) => {
+	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized );
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
-	const [ , setChatWindowStatus ] = useState< WindowState >( 'closed' );
-	const [ unreadCount, setUnreadCount ] = useState< number >( 0 );
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
-	function requestMaximize() {
-		onMaximize?.();
-	}
-
-	useHCWindowCommunicator( setChatWindowStatus, setUnreadCount );
+	const handleClose = () => {
+		closeChat();
+		onDismiss();
+	};
 
 	return (
 		<CardHeader className={ classNames }>
@@ -75,6 +72,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							<Route path="/contact-options">
 								{ __( 'Contact Options', __i18n_text_domain__ ) }
 							</Route>
+							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
 							<Route path="/contact-form" component={ SupportModeTitle }></Route>
 							<Route path="/post" component={ ArticleTitle }></Route>
 							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
@@ -93,7 +91,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 							icon={ chevronUp }
 							tooltipPosition="top left"
-							onClick={ requestMaximize }
+							onClick={ onMaximize }
 						/>
 					) : (
 						<Button
@@ -110,7 +108,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
 						tooltipPosition="top left"
 						icon={ closeSmall }
-						onClick={ onDismiss }
+						onClick={ handleClose }
 					/>
 				</div>
 			</Flex>

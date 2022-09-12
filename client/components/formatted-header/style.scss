@@ -4,12 +4,12 @@
 
 	&.has-screen-options {
 		// Titles that have long text (e.g. other languages) need extra margin to accommodate screen options on small devices.
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin: 32px 0 24px 16px;
 		}
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		margin-bottom: 35px;
 		margin-top: 16px;
 
@@ -24,12 +24,12 @@
 
 		&.has-screen-options {
 			// Titles that have long text (e.g. other languages) need extra margin to accommodate screen options on small devices.
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				margin: 32px 16px 16px 16px;
 			}
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin: 0 0 16px;
 		}
 	}
@@ -49,7 +49,7 @@
 	padding: 0 10px;
 	line-height: 1.2em;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-title-medium;
 		padding: 0;
 		margin: 0 0 5px;
@@ -63,11 +63,11 @@
 }
 
 .formatted-header__subtitle {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	font-size: $font-body-small;
 	padding: 0 20px 24px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 0;
 	}
 
@@ -79,13 +79,13 @@
 	.tailored-flow-subtitle__cta-text {
 		text-decoration: underline;
 		cursor: pointer;
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 	}
 }
 
 // Compact header on small screens
 .formatted-header.is-compact-on-mobile {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		text-align: start;
 
 		.formatted-header__title {

@@ -1,7 +1,7 @@
 // Podcasting section/link on Writing settings page
 
 .podcasting-details__link {
-	&:not( .is-enabled ) {
+	&:not(.is-enabled) {
 		.podcasting-details__link-button {
 			padding-left: 24px;
 			padding-right: 24px;
@@ -14,11 +14,11 @@
 
 		.podcasting-details__link-info {
 			flex-grow: 1;
-			color: var( --color-text );
+			color: var(--color-text);
 		}
 
 		.podcasting-details__link-button {
-			color: var( --color-neutral-50 );
+			color: var(--color-neutral-50);
 			font-weight: 600;
 			flex-shrink: 0;
 			margin-left: 12px;
@@ -41,7 +41,7 @@
 
 .podcasting-details__publish-notice {
 	position: relative;
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	border-radius: 2px;
 	align-self: stretch;
 	padding: 6px;
@@ -57,11 +57,11 @@
 	.gridicons-microphone {
 		flex-shrink: 0;
 		margin-right: 6px;
-		color: var( --color-podcasting );
+		color: var(--color-podcasting);
 	}
 
 	a {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		text-decoration: underline;
 	}
 
@@ -71,7 +71,7 @@
 }
 
 .podcasting-details__publish-button {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	font-weight: 600;
 	flex-shrink: 0;
 	margin-left: 12px;
@@ -85,7 +85,7 @@
 	}
 }
 
-@include breakpoint-deprecated( '<800px' ) {
+@include breakpoint-deprecated( "<800px" ) {
 	.podcasting-details__link.is-enabled .podcasting-details__link-action-container,
 	.podcasting-details__publish-wrapper {
 		display: block;
@@ -115,7 +115,7 @@
 }
 
 .podcasting-details__title-subtitle-wrapper {
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		float: left;
 		width: 75%;
 	}
@@ -128,25 +128,25 @@
 	}
 
 	.form-select {
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			width: 100%;
 		}
 	}
 
 	&.is-disabled {
-		background-color: var( --color-neutral-0 );
-		border-color: var( --color-neutral-10 );
+		background-color: var(--color-neutral-0);
+		border-color: var(--color-neutral-10);
 	}
 
 	&.is-disabled label,
 	&.is-disabled .form-setting-explanation {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 	}
 
 	&.is-disabled .form-text-input,
 	&.is-disabled .form-textarea {
-		color: var( --color-neutral-20 );
-		border-color: var( --color-neutral-10 );
+		color: var(--color-neutral-20);
+		border-color: var(--color-neutral-10);
 	}
 }
 
@@ -167,7 +167,7 @@
 }
 
 .podcasting-details__disable-podcasting {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	text-align: center;
 	width: 80%;
 	margin: 0 auto;

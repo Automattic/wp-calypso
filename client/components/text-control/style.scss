@@ -9,17 +9,17 @@
 	margin-top: 14px;
 	margin-bottom: 14px;
 
-	border: 1px solid var( --color-primary-20 );
+	border: 1px solid var(--color-primary-20);
 	box-shadow: none;
 	box-sizing: border-box;
 	border-radius: 2px;
-	background: var( --color-surface );
+	background: var(--color-surface);
 
 	.text-control__input {
 		width: 100%;
 		padding: 6px 8px;
 	}
-	
+
 	.text-control__label {
 		display: block;
 		margin-bottom: 5px;
@@ -36,12 +36,14 @@
 
 		font-size: $font-body-extra-small;
 		line-height: 16px;
-		color: var( --color-text );
+		color: var(--color-text);
 	}
- 
-	input[type='text'], input[type='email'], input[type='password'] {
+
+	input[type="text"],
+	input[type="email"],
+	input[type="password"] {
 		position: absolute;
-		width: calc( 100% - 18px - 20px );
+		width: calc(100% - 18px - 20px);
 		height: 24px;
 		right: 20px;
 		left: 18px;
@@ -54,39 +56,45 @@
 		line-height: 24px;
 	}
 
-	input[type='password'] {
+	input[type="password"] {
 		appearance: none;
 	}
 
-	input[type='text']:focus, input[type='email']:focus, input[type='password']:focus {
+	input[type="text"]:focus,
+	input[type="email"]:focus,
+	input[type="password"]:focus {
 		box-shadow: none;
 		border: 0;
 		outline: 0;
 	}
 
 	&.active {
-		box-shadow: 0 0 0 2px var( --color-accent );
+		box-shadow: 0 0 0 2px var(--color-accent);
 		border-color: transparent;
 
 		label {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 	}
- 
+
 	&.with-value {
-		input[type='text'], input[type='email'], input[type='password'] {
+		input[type="text"],
+		input[type="email"],
+		input[type="password"] {
 			top: 25px;
-			color: var( --color-text );
+			color: var(--color-text);
 		}
-	 }
- 
+	}
+
 	&.empty {
 		.text-control__label {
 			display: none;
 		}
-		input[type='text'], input[type='email'], input[type='password'] {
+		input[type="text"],
+		input[type="email"],
+		input[type="password"] {
 			top: 15px;
-			color: var( --color-primary-50 );
+			color: var(--color-primary-50);
 		}
 	}
 
@@ -94,11 +102,13 @@
 		label {
 			display: none;
 		}
-		input[type='text'], input[type='email'], input[type='password'] {
+		input[type="text"],
+		input[type="email"],
+		input[type="password"] {
 			top: 17px;
-			color: var( --color-primary-20 );
+			color: var(--color-primary-20);
 			&::placeholder {
-				color: var( --color-primary-20 );
+				color: var(--color-primary-20);
 				opacity: 1;
 			}
 		}

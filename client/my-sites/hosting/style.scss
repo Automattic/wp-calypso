@@ -14,7 +14,7 @@
 		line-height: 32px;
 	}
 
-	@include breakpoint-deprecated( '>1280px' ) {
+	@include breakpoint-deprecated( ">1280px" ) {
 		&__main-layout-col {
 			.card {
 				padding-left: 72px;
@@ -48,9 +48,9 @@
 
 @keyframes spinning-sync-icon {
 	from {
-		transform: rotate( 0deg );
+		transform: rotate(0deg);
 	}
 	to {
-		transform: rotate( 360deg );
+		transform: rotate(360deg);
 	}
 }

@@ -1,7 +1,7 @@
 .editor-media-modal__gallery-help {
 	position: absolute;
-		bottom: 8px;
-		right: 22px;
+	bottom: 8px;
+	right: 22px;
 }
 
 .editor-media-modal__gallery-help-content {
@@ -22,21 +22,21 @@
 	float: left;
 	margin: 4px 12px 12px 0;
 	border-radius: 50%;
-	background-color: var( --color-neutral-0 );
-	color: var( --color-neutral-70 );
+	background-color: var(--color-neutral-0);
+	color: var(--color-neutral-70);
 }
 
 .editor-media-modal__gallery-help-icon .gridicon {
 	position: absolute;
-		top: 50%;
-		left: 50%;
-	transform: translate( -50%, -50% );
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 .editor-media-modal__gallery-help-actions {
 	overflow-y: hidden;
 	padding: 8px 16px;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 }
 
 .editor-media-modal__gallery-help-remember-dismiss {
@@ -62,13 +62,13 @@
 
 .editor-media-modal__secondary-actions .gridicon {
 	position: absolute;
-		top: 50%;
-		left: 50%;
-	transform: translate( -50%, -50% );
-	fill: var( --color-neutral-70 );
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	fill: var(--color-neutral-70);
 
 	&:hover {
-		fill: var( --color-primary-light );
+		fill: var(--color-primary-light);
 	}
 }
 
@@ -76,14 +76,14 @@
 	&.is-mobile {
 		position: relative;
 		min-width: 60px;
-		transition: all 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+		transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	}
 
 	&.is-desktop {
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		&.is-mobile {
 			display: none;
 		}
@@ -94,35 +94,35 @@
 	}
 }
 
-.editor-media-modal__secondary-action:not( .is-mobile ).editor-media-modal__delete {
+.editor-media-modal__secondary-action:not(.is-mobile).editor-media-modal__delete {
 	line-height: 1;
-	color: var( --color-error );
+	color: var(--color-error);
 
 	&:hover {
-		color: var( --color-error-30 );
+		color: var(--color-error-30);
 	}
 
 	&:disabled {
 		cursor: default;
 		cursor: not-allowed;
-		color: var( --color-error-10 );
+		color: var(--color-error-10);
 	}
 }
 
 .editor-media-modal__secondary-action.is-active {
-	transform: rotate( 90deg );
+	transform: rotate(90deg);
 
 	.gridicon,
 	.gridicon:hover {
-		fill: var( --color-accent );
+		fill: var(--color-accent);
 	}
 }
 
 .editor-media-modal .dialog__action-buttons {
 	position: absolute;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	margin: 0;
 }
 
@@ -133,7 +133,7 @@
 .editor-media-modal__plan-storage {
 	display: none;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		display: inline-block;
 	}
 }

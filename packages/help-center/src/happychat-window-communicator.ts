@@ -4,7 +4,7 @@
  */
 import { useHappychatAuth } from '@automattic/happychat-connection';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
+import { useEffect, useState } from '@wordpress/element';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -12,36 +12,51 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * Internal Dependencies
  */
 import { HELP_CENTER_STORE, SITE_STORE } from './stores';
-import type { WindowState } from './types';
 
 /**
- * This hook attaches an event listener to the window to listen to Happychat messages that com from https://widgets.wp.com/calypso-happychat/
- * It collects information from the help-center store and forwards it to Happychat. It also forwards the unread count and the state changes (ended, blurred, closed, opened) to whoever uses the hook
+ * This hook is the bridge between HappyChat and Help Center.
+ * It attaches an event listener for messages that com from https://widgets.wp.com and sends messages to the iframe that holds the HappyChat window.
+ * This helps us manage window state, chat status, and unread count.
  *
- * @param onStateChange a callback that will be called whenever state changes
- * @param onUnreadChange a callback that will be called with the number of new unread messages
+ * @param {boolean} isMinimized if Help Center is minimized this is true
+ * @returns {{unreadCount: number, chatStatus: string, closeChat: Function}}
  */
-export function useHCWindowCommunicator(
-	onStateChange: ( state: WindowState ) => void,
-	onUnreadChange: ( unreadCount: number ) => void
-) {
-	const { selectedSite, subject, message, userDeclaredSite } = useSelect( ( select ) => {
+
+export function useHCWindowCommunicator( isMinimized: boolean ) {
+	const { selectedSite, subject, message, userDeclaredSite, iframe } = useSelect( ( select ) => {
 		return {
 			selectedSite: select( HELP_CENTER_STORE ).getSite(),
 			userDeclaredSite: select( HELP_CENTER_STORE ).getUserDeclaredSite(),
 			subject: select( HELP_CENTER_STORE ).getSubject(),
 			message: select( HELP_CENTER_STORE ).getMessage(),
+			iframe: select( HELP_CENTER_STORE ).getIframe(),
 		};
 	} );
-
+	const queryClient = useQueryClient();
+	const [ unreadCount, setUnreadCount ] = useState( 0 );
+	const [ chatStatus, setChatStatus ] = useState( '' );
 	const siteId = useSelector( getSelectedSiteId );
 	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ), [ siteId ] );
-
-	const queryClient = useQueryClient();
+	const chatWindow = iframe?.contentWindow;
+	function happyChatPostMessage( message: Record< string, string > ) {
+		chatWindow?.postMessage( message, '*' );
+	}
 
 	const supportSite = selectedSite || userDeclaredSite || currentSite;
 	const { resetStore } = useDispatch( HELP_CENTER_STORE );
 	useHappychatAuth();
+
+	useEffect( () => {
+		isMinimized
+			? happyChatPostMessage( { type: 'window-state-change', state: 'minimized' } )
+			: happyChatPostMessage( { type: 'window-state-change', state: 'maximized' } );
+	}, [ chatWindow, isMinimized ] );
+
+	const closeChat = () => {
+		setChatStatus( '' );
+		setUnreadCount( 0 );
+		happyChatPostMessage( { type: 'window-state-change', state: 'closed' } );
+	};
 
 	useEffect( () => {
 		const messageHandler = ( event: MessageEvent ) => {
@@ -52,21 +67,20 @@ export function useHCWindowCommunicator(
 				const { data } = event;
 				switch ( data.type ) {
 					case 'calypso-happy-chat-unread-messages':
-						onUnreadChange( data.state );
+						setUnreadCount( data.state );
 						break;
+
 					case 'window-state-change':
-						onStateChange( data.state );
+						setChatStatus( data.state );
 						if ( data.state === 'ended' ) {
-							// cleanup
+							setChatStatus( '' );
+							setUnreadCount( 0 );
 							window.removeEventListener( 'message', messageHandler );
-							// now clear the store, since we sent everything
 							resetStore();
 						}
 						break;
-					case 'happy-chat-introduction-data': {
-						// if message is undefined, we don't want to send anything to Happychat
-						// Happychat requests introduction data on load,
-						// so sometimes it requests it after the user navigates away from the page and comes back
+
+					case 'happy-chat-introduction-data':
 						if ( message ) {
 							event.source?.postMessage(
 								{
@@ -80,13 +94,10 @@ export function useHCWindowCommunicator(
 								{ targetOrigin: event.origin }
 							);
 						}
-						// now clear the store, since we sent everything
 						resetStore();
 						break;
-					}
-					case 'happy-chat-authentication-data': {
-						// this hooks up to the query initiated above (useHappychatAuth)
-						// and returns a promise. We wait for this promise to prevent a race-condition.
+
+					case 'happy-chat-authentication-data':
 						queryClient.fetchQuery( 'getHappychatAuth' ).then( ( auth ) => {
 							event.source?.postMessage(
 								{
@@ -97,7 +108,6 @@ export function useHCWindowCommunicator(
 							);
 						} );
 						break;
-					}
 				}
 			}
 		};
@@ -107,5 +117,7 @@ export function useHCWindowCommunicator(
 		return () => {
 			window.removeEventListener( 'message', messageHandler );
 		};
-	}, [ onStateChange, onUnreadChange, queryClient, supportSite, subject, message, resetStore ] );
+	}, [ queryClient, supportSite, subject, message, resetStore ] );
+
+	return { unreadCount, chatStatus, closeChat };
 }

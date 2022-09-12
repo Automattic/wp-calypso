@@ -1,4 +1,4 @@
-@import '@automattic/typography/styles/fonts';
+@import "@automattic/typography/styles/fonts";
 
 /**
  * "popover" theme for `component/tip`.
@@ -6,28 +6,28 @@
 
 .popover {
 	font-size: $font-body-extra-small;
-	z-index: z-index( 'root', '.popover' );
+	z-index: z-index("root", ".popover");
 	position: absolute;
 	top: 0;
-	left: 0 #{'/*rtl:ignore*/'};
-	right: auto #{'/*rtl:ignore*/'};
+	left: 0 #{"/*rtl:ignore*/"};
+	right: auto #{"/*rtl:ignore*/"};
 
 	.popover__inner {
-		background-color: var( --color-surface );
-		border: 1px solid var( --color-neutral-10 );
+		background-color: var(--color-surface);
+		border: 1px solid var(--color-neutral-10);
 		border-radius: 2px;
-		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
+		box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 56px rgba(0, 0, 0, 0.075);
 		text-align: center;
 		position: relative;
 	}
 
 	.popover__arrow {
-		border: 10px dashed var( --color-neutral-10 );
+		border: 10px dashed var(--color-neutral-10);
 		height: 0;
 		line-height: 0;
 		position: absolute;
 		width: 0;
-		z-index: z-index( '.popover', '.popover .popover__arrow' );
+		z-index: z-index(".popover", ".popover .popover__arrow");
 	}
 
 	&.fade {
@@ -35,57 +35,57 @@
 	}
 
 	@mixin popover__arrow( $side ) {
-		$cross-side: '';
-		$opposite-side: '';
-		$cross-opposite-side: '';
-		@if $side == 'top' {
-			$opposite-side: 'bottom';
-			$cross-side: 'left';
-			$cross-opposite-side: 'right';
-		} @else if $side == 'bottom' {
-			$opposite-side: 'top';
-			$cross-side: 'left';
-			$cross-opposite-side: 'right';
-		} @else if $side == 'left' {
-			$opposite-side: 'right';
-			$cross-side: 'top';
-			$cross-opposite-side: 'bottom';
-		} @else if $side == 'right' {
-			$opposite-side: 'left';
-			$cross-side: 'top';
-			$cross-opposite-side: 'bottom';
+		$cross-side: "";
+		$opposite-side: "";
+		$cross-opposite-side: "";
+		@if $side == "top" {
+			$opposite-side: "bottom";
+			$cross-side: "left";
+			$cross-opposite-side: "right";
+		} @else if $side == "bottom" {
+			$opposite-side: "top";
+			$cross-side: "left";
+			$cross-opposite-side: "right";
+		} @else if $side == "left" {
+			$opposite-side: "right";
+			$cross-side: "top";
+			$cross-opposite-side: "bottom";
+		} @else if $side == "right" {
+			$opposite-side: "left";
+			$cross-side: "top";
+			$cross-opposite-side: "bottom";
 		}
 
 		&.is-#{$side} .popover__arrow,
 		&.is-#{$side}-#{$cross-side} .popover__arrow,
 		&.is-#{$side}-#{$cross-opposite-side} .popover__arrow {
-			#{$opposite-side}: 0 #{'/*rtl:ignore*/'};
-			#{$cross-side}: 50% #{'/*rtl:ignore*/'};
-			margin-#{$cross-side}: -10px#{'/*rtl:ignore*/'};
-			border-#{$side}-style: solid#{'/*rtl:ignore*/'};
-			border-#{$opposite-side}: none#{'/*rtl:ignore*/'};
-			border-#{$cross-side}-color: transparent#{'/*rtl:ignore*/'};
-			border-#{$cross-opposite-side}-color: transparent#{'/*rtl:ignore*/'};
+			#{$opposite-side}: 0 #{"/*rtl:ignore*/"};
+			#{$cross-side}: 50% #{"/*rtl:ignore*/"};
+			margin-#{$cross-side}: -10px#{"/*rtl:ignore*/"};
+			border-#{$side}-style: solid#{"/*rtl:ignore*/"};
+			border-#{$opposite-side}: none#{"/*rtl:ignore*/"};
+			border-#{$cross-side}-color: transparent#{"/*rtl:ignore*/"};
+			border-#{$cross-opposite-side}-color: transparent#{"/*rtl:ignore*/"};
 
 			&::before {
-				#{$opposite-side}: 2px #{'/*rtl:ignore*/'};
-				border: 10px solid var( --color-border-inverted );
-				content: ' ';
+				#{$opposite-side}: 2px #{"/*rtl:ignore*/"};
+				border: 10px solid var(--color-border-inverted);
+				content: " ";
 				position: absolute;
-				#{$cross-side}: 50% #{'/*rtl:ignore*/'};
-				margin-#{$cross-side}: -10px#{'/*rtl:ignore*/'};
-				border-#{$side}-style: solid#{'/*rtl:ignore*/'};
-				border-#{$opposite-side}: none#{'/*rtl:ignore*/'};
-				border-#{$cross-side}-color: transparent#{'/*rtl:ignore*/'};
-				border-#{$cross-opposite-side}-color: transparent#{'/*rtl:ignore*/'};
+				#{$cross-side}: 50% #{"/*rtl:ignore*/"};
+				margin-#{$cross-side}: -10px#{"/*rtl:ignore*/"};
+				border-#{$side}-style: solid#{"/*rtl:ignore*/"};
+				border-#{$opposite-side}: none#{"/*rtl:ignore*/"};
+				border-#{$cross-side}-color: transparent#{"/*rtl:ignore*/"};
+				border-#{$cross-opposite-side}-color: transparent#{"/*rtl:ignore*/"};
 			}
 		}
 	}
 
-	@include popover__arrow( 'top' );
-	@include popover__arrow( 'bottom' );
-	@include popover__arrow( 'left' );
-	@include popover__arrow( 'right' );
+	@include popover__arrow( "top" );
+	@include popover__arrow( "bottom" );
+	@include popover__arrow( "left" );
+	@include popover__arrow( "right" );
 
 	&.is-top-left,
 	&.is-bottom-left,
@@ -97,41 +97,41 @@
 
 	&.is-top-left .popover__arrow,
 	&.is-bottom-left .popover__arrow {
-		left: auto #{'/*rtl:ignore*/'};
-		right: 5px #{'/*rtl:ignore*/'};
+		left: auto #{"/*rtl:ignore*/"};
+		right: 5px #{"/*rtl:ignore*/"};
 	}
 
 	&.is-top-right .popover__arrow,
 	&.is-bottom-right .popover__arrow {
-		left: 15px #{'/*rtl:ignore*/'};
+		left: 15px #{"/*rtl:ignore*/"};
 	}
 
 	// inner
 	&.is-top .popover__inner,
 	&.is-top-left .popover__inner,
 	&.is-top-right .popover__inner {
-		top: -10px #{'/*rtl:ignore*/'};
+		top: -10px #{"/*rtl:ignore*/"};
 	}
 
 	&.is-left .popover__inner,
 	&.is-top-right .popover__inner,
 	&.is-bottom-right .popover__inner {
-		left: -10px #{'/*rtl:ignore*/'};
+		left: -10px #{"/*rtl:ignore*/"};
 	}
 
 	&.is-bottom .popover__inner,
 	&.is-bottom-left .popover__inner,
 	&.is-bottom-right .popover__inner {
-		top: 10px #{'/*rtl:ignore*/'};
+		top: 10px #{"/*rtl:ignore*/"};
 	}
 
 	&.is-right .popover__inner,
 	&.is-top-left .popover__inner,
 	&.is-bottom-left .popover__inner {
-		left: 10px #{'/*rtl:ignore*/'};
+		left: 10px #{"/*rtl:ignore*/"};
 	}
 
 	&.is-dialog-visible {
-		z-index: z-index( 'root', 'popover.is-dialog-visible' ); /* Above .dialog */
+		z-index: z-index("root", "popover.is-dialog-visible"); /* Above .dialog */
 	}
 }

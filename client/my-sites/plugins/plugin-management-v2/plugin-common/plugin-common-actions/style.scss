@@ -1,11 +1,11 @@
 
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .plugin-common-actions__all-actions {
 	vertical-align: middle;
 	display: flex;
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
 	margin: 0 0.1em;
 	@include break-large() {
 		display: inline-flex;
@@ -15,12 +15,12 @@
 a.plugin-common-actions__menu-item {
 	margin: 0 -1px;
 	border-style: solid;
-	border-color:  var( --studio-gray-5 );
+	border-color: var(--studio-gray-5);
 	border-width: 0 0 1px;
 	font-size: 0.875rem;
 	height: 40px;
 	box-sizing: border-box;
-	color: var( --studio-black );
+	color: var(--studio-black);
 	display: flex;
 	align-items: center;
 	padding: 0 16px;
@@ -32,13 +32,14 @@ a.plugin-common-actions__menu-item {
 	&:first-child {
 		margin-block-start: 5px;
 	}
-	&:hover, &:focus {
+	&:hover,
+	&:focus {
 		border-style: solid;
-		border-color:  var( --studio-gray-5 );
+		border-color: var(--studio-gray-5);
 		border-width: 0 0 1px;
-		background: var( --studio-black );
+		background: var(--studio-black);
 		cursor: pointer;
-		color: var( --studio-white );
+		color: var(--studio-white);
 		&:last-child {
 			border-bottom-width: 0;
 		}

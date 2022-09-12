@@ -11,10 +11,10 @@
 	left: 0;
 	right: 0;
 	padding: 6px;
-	color: var( --color-text-inverted );
-	background: rgba( var( --color-neutral-70-rgb ), 0.8 );
+	color: var(--color-text-inverted);
+	background: rgba(var(--color-neutral-70-rgb), 0.8);
 	text-align: center;
-	z-index: z-index( 'root', '.wpcom-site__global-noscript' );
+	z-index: z-index("root", ".wpcom-site__global-noscript");
 }
 
 /* =Global
@@ -44,12 +44,12 @@ body,
 }
 
 * {
-	-webkit-tap-highlight-color: rgba( 0, 0, 0, 0 );
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 body {
-	background: var( --color-surface-backdrop );
-	color: var( --color-text );
+	background: var(--color-surface-backdrop);
+	color: var(--color-text);
 	font-size: $font-body;
 	line-height: 1.5;
 
@@ -57,7 +57,7 @@ body {
 
 	// This fixes an issue with the `click-outside` package not working on mobile.
 	// Specifically, this makes clicking outside a popover work on touch devices. -shaun
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		cursor: pointer;
 	}
 
@@ -71,8 +71,8 @@ body {
 }
 
 ::selection {
-	background: rgba( var( --color-primary-light-rgb ), 0.7 );
-	color: var( --color-text );
+	background: rgba(var(--color-primary-light-rgb), 0.7);
+	color: var(--color-text);
 }
 
 button {
@@ -103,14 +103,14 @@ body.rtl,
 }
 
 /*!rtl:ignore*/
-:lang( he ) body.rtl,
-:lang( he ) .rtl button,
-:lang( he ) .rtl input,
-:lang( he ) .rtl select,
-:lang( he ) .rtl textarea,
-:lang( he ) .rtl .button,
-:lang( he ) .rtl #footer,
-:lang( he ) .rtl #footer a.readmore {
+:lang(he) body.rtl,
+:lang(he) .rtl button,
+:lang(he) .rtl input,
+:lang(he) .rtl select,
+:lang(he) .rtl textarea,
+:lang(he) .rtl .button,
+:lang(he) .rtl #footer,
+:lang(he) .rtl #footer a.readmore {
 	font-family: $sans;
 }
 
@@ -123,7 +123,7 @@ body.rtl,
 		&.gridicons-arrow-right,
 		&.gridicons-external,
 		&.gridicons-cart {
-			transform: scaleX( -1 );
+			transform: scaleX(-1);
 		}
 	}
 }
@@ -148,7 +148,7 @@ h6 {
 	clear: both;
 }
 hr {
-	background: var( --color-neutral-10 );
+	background: var(--color-neutral-10);
 	border: 0;
 	height: 1px;
 	margin-bottom: 1.5em;
@@ -193,7 +193,7 @@ i {
 }
 blockquote {
 	margin: 10px 0 0;
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	padding: 10px 10px 1px;
 	border-radius: 2px;
 }
@@ -201,7 +201,7 @@ address {
 	margin: 0 0 1.5em;
 }
 pre {
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	font-family: $monospace;
 	font-size: $font-body;
 	line-height: 1.6;
@@ -219,14 +219,14 @@ var {
 }
 abbr,
 acronym {
-	border-bottom: 1px dotted var( --color-neutral-10 );
+	border-bottom: 1px dotted var(--color-neutral-10);
 	cursor: help;
 	// Prevent double underline in Chrome
 	text-decoration: none;
 }
 mark,
 ins {
-	background: var( --color-warning-light );
+	background: var(--color-warning-light);
 	text-decoration: none;
 }
 small {
@@ -258,13 +258,13 @@ a {
 
 a,
 a:visited {
-	color: var( --color-link );
+	color: var(--color-link);
 }
 
 a:hover,
 a:focus,
 a:active {
-	color: var( --color-link-dark );
+	color: var(--color-link-dark);
 }
 
 .link--caution,
@@ -275,7 +275,7 @@ a:active {
 	&:hover,
 	&:focus,
 	&:active {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 }
 

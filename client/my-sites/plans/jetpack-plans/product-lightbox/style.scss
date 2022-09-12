@@ -12,10 +12,14 @@
 	p {
 		margin-bottom: 0.5rem;
 	}
+
+	:is(.button[disabled], .button:disabled, .button.disabled) {
+		background-color: var(--studio-gray-5);
+	}
 }
 
 .product-lightbox__modal-overlay {
-	background-color: rgb( 0 0 0 / 70% );
+	background-color: rgb(0 0 0 / 70%);
 	align-items: center;
 	display: flex;
 	justify-content: center;
@@ -135,7 +139,7 @@
 	}
 
 	li {
-		background: url( ./icons/check.svg ) no-repeat 0 2px;
+		background: url(./icons/check.svg) no-repeat 0 2px;
 		padding-left: 20px;
 		font-weight: 400;
 		font-size: 0.875rem;
@@ -205,7 +209,7 @@
 		padding-inline-end: 3rem;
 	}
 
-	.form-label input[type='radio'] + span {
+	.form-label input[type="radio"] + span {
 		font-weight: 600;
 		font-size: 1rem;
 		margin-inline-start: 1.75rem;
@@ -214,7 +218,7 @@
 	.form-radio {
 		width: 1.2rem;
 		height: 1.2rem;
-		border: 2px solid var( --color-neutral-10 );
+		border: 2px solid var(--color-neutral-10);
 	}
 
 	.form-radio:checked::before {
@@ -224,7 +228,7 @@
 	}
 
 	.form-radio:checked {
-		border: 2px solid var( --color-primary );
+		border: 2px solid var(--color-primary);
 	}
 
 	.form-radio:focus {
@@ -251,7 +255,7 @@
 .product-lightbox__variants-plan {
 	&-alt-info {
 		font-size: $font-body-extra-small;
-		color: var( --studio-jetpack-green-50 );
+		color: var(--studio-jetpack-green-50);
 		font-weight: 600;
 		display: flex;
 		align-items: center;
@@ -261,7 +265,7 @@
 		display: inline-block;
 		width: 8px;
 		height: 8px;
-		background: var( --studio-jetpack-green-50 );
+		background: var(--studio-jetpack-green-50);
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		margin-inline-end: 4px;

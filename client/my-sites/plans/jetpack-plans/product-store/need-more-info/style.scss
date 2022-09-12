@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .jetpack-product-store__need-more-info {
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	padding: 5rem 0;
 	text-align: center;
 }
@@ -27,5 +27,5 @@
 }
 
 .jetpack-product-store__need-more-info-buttons .more-info-box__more-button.button {
-	color: var( --color-neutral-100 );
+	color: var(--color-neutral-100);
 }

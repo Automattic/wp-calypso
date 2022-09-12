@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .jetpack-product-store__all-items--grid {
 	display: grid;
@@ -7,7 +7,7 @@
 	row-gap: 32px;
 
 	@include break-medium {
-		grid-template-columns: repeat( 2, 1fr );
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
@@ -40,16 +40,16 @@
 }
 
 .jetpack-product-store__all-items--header {
-	margin-top: rem( 32px );
-	margin-bottom: rem( 24px );
+	margin-top: rem(32px);
+	margin-bottom: rem(24px);
 	font-size: $font-title-small;
 	font-weight: 700;
 
 	@include break-medium {
-		margin-top: rem( 72px );
-		margin-bottom: rem( 48px );
+		margin-top: rem(72px);
+		margin-bottom: rem(48px);
 		font-size: $font-title-medium;
-		line-height: rem( 29px );
+		line-height: rem(29px);
 		font-weight: 600;
 	}
 }

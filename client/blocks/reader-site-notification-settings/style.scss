@@ -1,5 +1,5 @@
 .reader-site-notification-settings__button {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	&:hover {
 		cursor: pointer;
@@ -9,19 +9,19 @@
 .reader-site-notification-settings__button-label {
 	font-size: $font-body-small;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
 }
 
 .reader-site-notification-settings .gridicons-cog {
-	fill: var( --color-neutral-20 );
+	fill: var(--color-neutral-20);
 	height: 18px;
 	position: relative;
 	top: 4px;
 	left: -4px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		left: -1px;
 	}
 }
@@ -29,7 +29,7 @@
 .reader-popover.popover.is-bottom .popover__arrow::before,
 .reader-popover.popover.is-bottom-left .popover__arrow::before,
 .reader-popover.popover.is-bottom-right .popover__arrow::before {
-	border: 10px solid var( --color-surface );
+	border: 10px solid var(--color-surface);
 	border-bottom-style: solid;
 	border-left-color: transparent;
 	border-right-color: transparent;
@@ -37,7 +37,7 @@
 }
 
 .reader-popover.popover .popover__inner {
-	background: var( --color-surface );
+	background: var(--color-surface);
 }
 
 .reader-popover__wrapper {
@@ -47,7 +47,7 @@
 	}
 
 	.segmented-control__link {
-		background: var( --color-surface );
+		background: var(--color-surface);
 
 		span {
 			font-size: $font-body-extra-small;
@@ -61,9 +61,9 @@
 		top: 1px;
 	}
 
-	.reader-site-notification-settings__popout-toggle:nth-child( 2 ),
-	.reader-site-notification-settings__popout-toggle:nth-child( 3 ),
-	.reader-site-notification-settings__popout-toggle:nth-child( 4 ) {
+	.reader-site-notification-settings__popout-toggle:nth-child(2),
+	.reader-site-notification-settings__popout-toggle:nth-child(3),
+	.reader-site-notification-settings__popout-toggle:nth-child(4) {
 		display: flex;
 	}
 
@@ -75,7 +75,7 @@
 
 .reader-site-notification-settings__popout-toggle,
 .reader-site-notification-settings__popout-instructions {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body-small;
 	padding: 10px 15px;
 	text-align: left;
@@ -91,7 +91,7 @@
 
 .reader-site-notification-settings__popout-hint,
 .reader-site-notification-settings__popout-instructions-hint {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	margin-bottom: -2px;
 	margin-top: 10px;

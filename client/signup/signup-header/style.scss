@@ -1,5 +1,5 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/typography/styles/fonts';
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/fonts";
 
 // A masterbar-like header just for
 // the signup flow.
@@ -10,11 +10,11 @@
 	inset-inline-start: 0;
 	inset-inline-end: 0;
 	z-index: -1;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 
 	// Hide the signup header on oauth
 	// flows like Crowdsignal
-	.layout:not( .dops ) {
+	.layout:not(.dops) {
 		display: none;
 		pointer-events: none;
 	}
@@ -33,22 +33,22 @@
 	.wordpress-logo {
 		height: 180px;
 		width: 180px;
-		fill: var( --color-text-inverted );
+		fill: var(--color-text-inverted);
 		margin: 0 auto;
 		display: block;
-		transition: transform 0.8s cubic-bezier( 0.075, 0.82, 0.165, 1 );
-		transform: scale( 0.13333 );
+		transition: transform 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
+		transform: scale(0.13333);
 		transform-origin: 50% 0;
 
 		&.is-large {
-			transform: scale( 1 ) translateY( 80px );
+			transform: scale(1) translateY(80px);
 		}
 	}
 
 	h1 {
 		@include onboarding-font-recoleta;
 		position: absolute;
-		color: var( --color-text );
+		color: var(--color-text);
 		top: 20px;
 		left: 56px;
 		font-size: $font-body-large;

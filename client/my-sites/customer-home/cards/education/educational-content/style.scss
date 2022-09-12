@@ -22,12 +22,12 @@
 		display: flex;
 
 		button {
-			color: var( --color-link );
+			color: var(--color-link);
 			font-size: 1rem;
 			cursor: pointer;
 
 			&:hover {
-				color: var( --color-link-dark );
+				color: var(--color-link-dark);
 			}
 		}
 
@@ -38,14 +38,14 @@
 		.gridicon,
 		.material-icon {
 			margin-right: 0.5rem;
-			fill: var( --color-neutral-60 );
+			fill: var(--color-neutral-60);
 		}
 
 		a,
 		button,
 		.inline-support-link {
 			&:focus-visible {
-				box-shadow: inset 0 0 0 2px var( --color-primary );
+				box-shadow: inset 0 0 0 2px var(--color-primary);
 				outline: none;
 			}
 		}

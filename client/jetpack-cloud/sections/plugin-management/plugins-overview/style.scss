@@ -1,11 +1,11 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .plugins-overview__container {
 	display: flex;
 	flex-direction: column;
 	// The -111px is to undo the padding of .layout__content (79px + 32px)
-	min-height: calc( 100vh - 111px );
+	min-height: calc(100vh - 111px);
 
 	.current-section {
 		padding: 0 16px;
@@ -17,18 +17,18 @@
 }
 
 .plugins-overview__logo {
-	fill: var( --color-neutral-10 );
-	color: var( --color-neutral-10 );
+	fill: var(--color-neutral-10);
+	color: var(--color-neutral-10);
 	position: fixed;
 	top: 50%;
 	left: 50%;
-	transform: translate( -50%, -50% );
+	transform: translate(-50%, -50%);
 
 	path {
-		fill: var( --color-neutral-10 );
+		fill: var(--color-neutral-10);
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		width: 100px;
 		height: 100px;
 	}

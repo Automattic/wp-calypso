@@ -14,5 +14,5 @@
 
 .sticky-panel.is-sticky .sticky-panel__content {
 	position: fixed;
-	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
+	z-index: z-index("root", ".sticky-panel.is-sticky .sticky-panel__content");
 }
