@@ -1,8 +1,7 @@
 // Adapts route paths to also include wildcard
 // subroutes under the root level section.
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function pathToRegExp( path: any ) {
+export function pathToRegExp( path: string ) {
 	// Prevents root level double dash urls from being validated.
 	if ( path === '/' ) {
 		return path;
@@ -11,10 +10,10 @@ export function pathToRegExp( path: any ) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function debounce( callback: ( ...args: any[] ) => any, timeout: number ) {
+export function debounce< T, U >( callback: ( ...args: T[] ) => U, timeout: number ) {
 	let timeoutId: number | undefined = undefined;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	return ( ...args: any[] ) => {
+	return ( ...args: T[] ) => {
 		window.clearTimeout( timeoutId );
 		timeoutId = window.setTimeout( () => {
 			callback( ...args );

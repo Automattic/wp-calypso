@@ -6,7 +6,7 @@ import {
 	getDIFMTieredPriceDetails,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
-import { useShoppingCart } from '@automattic/shopping-cart';
+import { MinimalRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { LocalizeProps, useTranslate, TranslateResult } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
