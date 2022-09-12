@@ -21,7 +21,7 @@ import {
 	NewMailBoxList,
 } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import PasswordResetTipField from 'calypso/my-sites/email/form/mailboxes/components/password-reset-tip-field';
-import { FIELD_RECOVERY_EMAIL } from 'calypso/my-sites/email/form/mailboxes/constants';
+import { FIELD_PASSWORD_RESET_EMAIL } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -91,10 +91,10 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
 	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
-		FIELD_RECOVERY_EMAIL,
+		FIELD_PASSWORD_RESET_EMAIL,
 	] );
 
-	const showRecoveryEmailField = ( event: MouseEvent< HTMLElement > ) => {
+	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
 		setHiddenFieldNames( [] );
 	};
@@ -128,7 +128,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 	googleWorkspace.formFields = ! isGSuiteSupported ? undefined : (
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
-			initialFieldValues={ { [ FIELD_RECOVERY_EMAIL ]: userEmail } }
+			initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
 			isInitialMailboxPurchase
 			hiddenFieldNames={ hiddenFieldNames }
 			onSubmit={ handleSubmit }
@@ -138,8 +138,8 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 			submitActionText={ translate( 'Purchase' ) }
 			{ ...getUpsellProps( { isDomainInCart, siteSlug } ) }
 		>
-			{ hiddenFieldNames.includes( FIELD_RECOVERY_EMAIL ) && (
-				<PasswordResetTipField tipClickHandler={ showRecoveryEmailField } />
+			{ hiddenFieldNames.includes( FIELD_PASSWORD_RESET_EMAIL ) && (
+				<PasswordResetTipField tipClickHandler={ showPasswordResetEmailField } />
 			) }
 		</NewMailBoxList>
 	);

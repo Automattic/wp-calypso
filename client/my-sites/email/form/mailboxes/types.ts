@@ -8,6 +8,7 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_PASSWORD_RESET_EMAIL,
 	FIELD_UUID,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import type { TranslateResult } from 'i18n-calypso';
@@ -97,7 +98,7 @@ interface IBaseMailboxFormFields {
 interface IGoogleMailboxFormFields extends IBaseMailboxFormFields {
 	firstName?: TextMailboxFormField;
 	lastName?: TextMailboxFormField;
-	recoveryEmail?: TextMailboxFormField;
+	passwordResetEmail?: TextMailboxFormField;
 }
 
 interface ITitanMailboxFormFields extends IBaseMailboxFormFields {
@@ -120,7 +121,7 @@ abstract class MailboxFormFields implements IBaseMailboxFormFields {
 class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailboxFormFields {
 	firstName? = new TextMailboxFormField( FIELD_FIRSTNAME );
 	lastName? = new TextMailboxFormField( FIELD_LASTNAME );
-	recoveryEmail? = new TextMailboxFormField( FIELD_ALTERNATIVE_EMAIL );
+	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
 }
 
 class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {
