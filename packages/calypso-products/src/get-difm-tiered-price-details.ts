@@ -1,5 +1,9 @@
 import { isDIFMProduct } from './is-difm-product';
-import type { Product } from './types';
+import type { Product, ProductSlug } from './types';
+
+export type DIFMPriceTierProduct = Pick< Product, 'price_tier_list' > & {
+	product_slug: string | ProductSlug;
+};
 
 /**
  * Returns meaningful DIFM purchase details related to tiered difm prices if available
@@ -10,10 +14,7 @@ import type { Product } from './types';
  * @returns {object} with the relevent tier details
  */
 export function getDIFMTieredPriceDetails(
-	// Any is allowed here because the ProductListItem in (client/state/products-list/selectors/get-products-list.ts) is not compatible with the Product object
-	// And that type cannot be imported into an external module
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	product: Product | any,
+	product: undefined | DIFMPriceTierProduct,
 	noOfPages: number
 ): null | {
 	extraPageCount: number | null;
