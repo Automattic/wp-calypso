@@ -107,7 +107,6 @@ class ThemeMoreButton extends Component {
 }
 
 ThemeMoreButton.propTypes = {
-	'aria-label': PropTypes.string,
 	themeId: PropTypes.string,
 	// Index of theme in results list
 	index: PropTypes.number,
