@@ -151,6 +151,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const isEnabledStyleSelection =
 		selectedDesign &&
 		selectedDesign.design_type !== 'vertical' &&
+		selectedDesign.style_variations &&
+		selectedDesign.style_variations.length > 0 &&
 		isEnabled( 'signup/design-picker-style-selection' );
 
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
