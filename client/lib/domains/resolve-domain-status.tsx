@@ -37,7 +37,6 @@ export type ResolveDomainStatusReturn =
 			status: ReactChild;
 			icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
 			listStatusText?: ReactChild | Array< ReactChild >;
-			listStatusClass?: 'alert' | 'warning' | 'verifying' | 'info' | 'premium' | 'transfer-warning';
 			listStatusWeight?: number;
 			noticeText?: ReactChild | Array< ReactChild > | null;
 	  }
@@ -141,7 +140,6 @@ export function resolveDomainStatus(
 					status: status,
 					icon: 'info',
 					listStatusText: expiresMessage,
-					listStatusClass: domain.autoRenewing ? 'info' : 'alert',
 					listStatusWeight: isExpiringSoon( domain, 7 ) ? 1000 : 800,
 					noticeText,
 				};
@@ -178,7 +176,6 @@ export function resolveDomainStatus(
 							"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
 							{ components: mappingSetupComponents }
 						),
-						listStatusClass: 'alert',
 						listStatusWeight: 1000,
 					};
 				}
@@ -204,7 +201,6 @@ export function resolveDomainStatus(
 							},
 						}
 					),
-					listStatusClass: 'verifying',
 					listStatusWeight: 600,
 				};
 			}
@@ -242,7 +238,6 @@ export function resolveDomainStatus(
 							},
 						}
 					),
-					listStatusClass: 'warning',
 					listStatusWeight: 400,
 				};
 			}
@@ -256,7 +251,6 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: pendingRenewalMessage,
 					noticeText: translate( 'Attempting to get it renewed for you.' ),
-					listStatusClass: 'warning',
 					listStatusWeight: 400,
 				};
 			}
@@ -415,7 +409,6 @@ export function resolveDomainStatus(
 							'timeSinceExpiry is of the form "[number] [time-period] ago" e.g. "3 days ago"',
 					} ),
 					noticeText,
-					listStatusClass: 'alert',
 					listStatusWeight: 1000,
 				};
 			}
@@ -456,7 +449,6 @@ export function resolveDomainStatus(
 						icon: 'info',
 						listStatusText: domainExpirationMessage,
 						noticeText: expiresMessage,
-						listStatusClass: 'alert',
 						listStatusWeight: 1000,
 					};
 				}
@@ -468,7 +460,6 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: expiresMessage,
 					noticeText: expiresMessage,
-					listStatusClass: 'warning',
 					listStatusWeight: 800,
 				};
 			}
@@ -510,7 +501,6 @@ export function resolveDomainStatus(
 					icon: 'cloud_upload',
 					listStatusText: translate( 'Activating' ),
 					noticeText,
-					listStatusClass: 'info',
 					listStatusWeight: 400,
 				};
 			}
@@ -530,7 +520,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-premium',
 					status: translate( 'Active' ),
 					icon: 'check_circle',
-					listStatusClass: 'premium',
 				};
 			}
 
@@ -563,7 +552,6 @@ export function resolveDomainStatus(
 							},
 						}
 					),
-					listStatusClass: 'transfer-warning',
 					listStatusWeight: 600,
 				};
 			}
@@ -589,7 +577,6 @@ export function resolveDomainStatus(
 					icon: 'info',
 					listStatusText: noticeText,
 					noticeText: noticeText,
-					listStatusClass: 'warning',
 					listStatusWeight: 400,
 				};
 			}
@@ -667,7 +654,6 @@ export function resolveDomainStatus(
 							},
 						}
 					),
-					listStatusClass: 'transfer-warning',
 					listStatusWeight: 600,
 				};
 			} else if ( domain.transferStatus === transferStatus.CANCELLED ) {
@@ -684,7 +670,6 @@ export function resolveDomainStatus(
 						'Transfer failed. Learn the possible {{a}}reasons why{{/a}}.',
 						transferOptions
 					),
-					listStatusClass: 'alert',
 					listStatusWeight: 1000,
 				};
 			} else if ( domain.transferStatus === transferStatus.PENDING_REGISTRY ) {
@@ -702,7 +687,6 @@ export function resolveDomainStatus(
 							'The transfer should complete by {{strong}}%(transferFinishDate)s{{/strong}}. We are waiting for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 							transferOptions
 						),
-						listStatusClass: 'verifying',
 						listStatusWeight: 200,
 					};
 				}
@@ -719,7 +703,6 @@ export function resolveDomainStatus(
 						'We are waiting for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 						transferOptions
 					),
-					listStatusClass: 'verifying',
 					listStatusWeight: 200,
 				};
 			}
@@ -739,7 +722,6 @@ export function resolveDomainStatus(
 							transferOptions
 					  )
 					: null,
-				listStatusClass: 'verifying',
 				listStatusWeight: 200,
 			};
 
