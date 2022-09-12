@@ -477,8 +477,7 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.plan-features-comparison__item.plan-features-comparison__item-available {
-		.plan-features-comparison__item-annual-plan-container,
-		.plan-features-comparison__item-annual-plan {
+		.plan-features-comparison__item-annual-plan-container .plan-features-comparison__item-annual-plan {
 			color: var(--studio-orange-40);
 		}
 	}
