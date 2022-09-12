@@ -1,8 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
-import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
