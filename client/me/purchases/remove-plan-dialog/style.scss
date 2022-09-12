@@ -45,7 +45,7 @@ $modal-breakpoint-mobile: 480px;
 
 		margin-left: 48px;
 		margin-top: 32px;
-		margin-bottom: 24px;
+		margin-bottom: 48px;
 		border: none;
 		background: transparent;
 		text-align: left;
@@ -124,27 +124,27 @@ $modal-breakpoint-mobile: 480px;
 				margin-right: 48px;
 			}
 		}
+	}
+}
 
-		.remove-plan-dialog__item-cross-small {
-			color: #e65054;
-			vertical-align: middle;
-			margin-right: 10px;
-		}
-	
-		.remove-plan-dialog__list-plan-features {
-			list-style-type: none;
-			margin: 0;
-			text-align: left;
+.remove-plan-dialog__item-cross-small {
+	color: #e65054;
+	vertical-align: middle;
+	margin-right: 10px;
+}
 
-			@media ( max-width: $modal-breakpoint-tablet ) {
-				margin-bottom: 48px;
-			}
-	
-			li {
-				display: grid;
-				grid-template-columns: 32px 1fr;
-				margin-bottom: 5px;
-			}
-		}
+.remove-plan-dialog__list-plan-features {
+	list-style-type: none;
+	margin: 0;
+	text-align: left;
+
+	@media ( max-width: $modal-breakpoint-tablet ) {
+		margin-bottom: 48px;
+	}
+
+	li {
+		display: grid;
+		grid-template-columns: 32px 1fr;
+		margin-bottom: 5px;
 	}
 }
