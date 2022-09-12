@@ -1251,12 +1251,15 @@ describe( 'main app', () => {
 		} );
 	} );
 
-	describe( `Route /new`, () => {
-		assertSection( {
-			url: '/new',
-			sectionName: 'gutenboarding',
-			sectionGroup: 'gutenboarding',
-			entry: 'entry-gutenboarding',
+	describe( `Route deprecated /new`, () => {
+		it( 'redirects to start flow', async () => {
+			const { response } = await app.run( { request: { url: '/new' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/start' );
+		} );
+
+		it( 'redirects to start flow with locale', async () => {
+			const { response } = await app.run( { request: { url: '/new/fr' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/start/fr' );
 		} );
 	} );
 
