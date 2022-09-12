@@ -1,5 +1,9 @@
+@import "@automattic/onboarding/styles/base-styles.scss";
+@import "@automattic/onboarding/styles/mixins.scss";
+
 .plugins-browser-list {
-	margin-bottom: 16px;
+	margin-bottom: 8px; // 32 + 8 = 40 gap
+	margin-top: 32px;
 
 	.feature-example & {
 		margin: 0;
@@ -33,10 +37,11 @@
 
 	padding-top: 32px;
 	.plugins-browser-list__titles {
-		padding-bottom: 10px;
+		margin-bottom: 4px; // +20 from elements = 24 gap
 
 		.plugins-browser-list__title {
-			font-size: $font-title-small;
+			@include onboarding-font-recoleta;
+			font-size: $font-title-medium;
 			font-weight: 500;
 
 			&[class*="plugins-browser-list__search-for"] {
@@ -53,9 +58,10 @@
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
+		margin-top: auto;
+		margin-bottom: 4px; // +20 from elements = 24 gap
 
 		> div {
-			padding-bottom: 10px;
 			flex-grow: 4;
 
 			.select-dropdown__container {
@@ -64,12 +70,10 @@
 		}
 
 		.plugins-browser-list__browse-all {
-			font-size: $font-body;
+			font-size: $font-body-small;
 			display: flex;
 			justify-content: flex-end;
 			align-items: center;
-			padding-bottom: 10px;
-			margin-left: 1.5rem;
 			flex-grow: 4;
 			svg {
 				margin-left: 2px;
