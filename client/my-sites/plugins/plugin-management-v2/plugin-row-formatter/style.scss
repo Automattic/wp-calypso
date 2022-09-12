@@ -133,6 +133,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 }
 
 .plugin-row-formatter__last-updated {
+	font-size: 0.75rem;
 	color: var(--color-text-subtle);
 
 	@include break-xlarge {
