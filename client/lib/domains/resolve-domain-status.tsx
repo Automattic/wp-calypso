@@ -36,7 +36,6 @@ export type ResolveDomainStatusReturn =
 				| 'status-premium';
 			status: ReactChild;
 			icon: 'info' | 'verifying' | 'check_circle' | 'cached' | 'cloud_upload' | 'download_done';
-			listStatusText?: ReactChild | Array< ReactChild >;
 			listStatusWeight?: number;
 			noticeText?: ReactChild | Array< ReactChild > | null;
 	  }
@@ -139,7 +138,6 @@ export function resolveDomainStatus(
 					statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
 					status: status,
 					icon: 'info',
-					listStatusText: expiresMessage,
 					listStatusWeight: isExpiringSoon( domain, 7 ) ? 1000 : 800,
 					noticeText,
 				};
@@ -154,24 +152,11 @@ export function resolveDomainStatus(
 					moment.utc().isAfter( registrationDatePlus3Days );
 
 				if ( hasMappingError ) {
-					let status;
-					if ( domain?.connectionMode === 'advanced' ) {
-						status = translate(
-							'{{strong}}Connection error:{{/strong}} The A records are incorrect. Please {{a}}try this step{{/a}} again.',
-							{ components: mappingSetupComponents }
-						);
-					} else {
-						status = translate(
-							'{{strong}}Connection error:{{/strong}} The name servers are incorrect. Please {{a}}try this step{{/a}} again.',
-							{ components: mappingSetupComponents }
-						);
-					}
 					return {
 						statusText: translate( 'Connection error' ),
 						statusClass: 'status-alert',
 						status: translate( 'Error' ),
 						icon: 'info',
-						listStatusText: status,
 						noticeText: translate(
 							"We noticed that something wasn't updated correctly. Please try {{a}}this setup{{/a}} again.",
 							{ components: mappingSetupComponents }
@@ -182,16 +167,11 @@ export function resolveDomainStatus(
 			}
 
 			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
-				const status = translate(
-					'{{strong}}Verifying connection:{{/strong}} You can continue to work on your site, but your domain won’t be reachable just yet. You can review the {{a}}setup instructions{{/a}} to ensure everything is correct.',
-					{ components: mappingSetupComponents }
-				);
 				return {
 					statusText: translate( 'Verifying' ),
 					statusClass: 'status-success',
 					status: translate( 'Verifying' ),
 					icon: 'verifying',
-					listStatusText: status,
 					noticeText: translate(
 						'It can take between a few minutes to 72 hours to verify the connection. You can continue to work on your site, but {{strong}}%(domainName)s{{/strong}} won’t be reachable just yet. You can review the {{a}}setup instructions{{/a}} to ensure everything is correct.',
 						{
@@ -249,7 +229,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-success',
 					status: translate( 'Renewing' ),
 					icon: 'info',
-					listStatusText: pendingRenewalMessage,
 					noticeText: translate( 'Attempting to get it renewed for you.' ),
 					listStatusWeight: 400,
 				};
@@ -401,13 +380,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Expired' ),
 					icon: 'info',
-					listStatusText: translate( 'Expired %(timeSinceExpiry)s', {
-						args: {
-							timeSinceExpiry: moment.utc( domain.expiry ).fromNow(),
-						},
-						comment:
-							'timeSinceExpiry is of the form "[number] [time-period] ago" e.g. "3 days ago"',
-					} ),
 					noticeText,
 					listStatusWeight: 1000,
 				};
@@ -447,7 +419,6 @@ export function resolveDomainStatus(
 						statusClass: 'status-error',
 						status: translate( 'Expiring soon' ),
 						icon: 'info',
-						listStatusText: domainExpirationMessage,
 						noticeText: expiresMessage,
 						listStatusWeight: 1000,
 					};
@@ -458,7 +429,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-warning',
 					status: translate( 'Expiring soon' ),
 					icon: 'info',
-					listStatusText: expiresMessage,
 					noticeText: expiresMessage,
 					listStatusWeight: 800,
 				};
@@ -499,7 +469,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-success',
 					status: translate( 'Activating' ),
 					icon: 'cloud_upload',
-					listStatusText: translate( 'Activating' ),
 					noticeText,
 					listStatusWeight: 400,
 				};
@@ -529,20 +498,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-success',
 					status: translate( 'Active' ),
 					icon: 'info',
-					listStatusText: translate(
-						'{{strong}}Point to WordPress.com:{{/strong}} To point this domain to your WordPress.com site, you need to update the name servers. {{a}}Update now{{/a}} or do this later.',
-						{
-							components: {
-								strong: <strong />,
-								a: (
-									<a
-										href={ domainManagementEdit( siteSlug as string, domain.domain ) }
-										onClick={ ( e ) => e.stopPropagation() }
-									/>
-								),
-							},
-						}
-					),
 					noticeText: translate(
 						'{{strong}}Transfer successful!{{/strong}} To make this domain work with your WordPress.com site you need {{a}}point it to WordPress.com name servers.{{/a}}',
 						{
@@ -575,7 +530,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-warning',
 					status: translate( 'Pending' ),
 					icon: 'info',
-					listStatusText: noticeText,
 					noticeText: noticeText,
 					listStatusWeight: 400,
 				};
@@ -621,25 +575,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-warning',
 					status: translate( 'Complete setup' ),
 					icon: 'info',
-					listStatusText: translate(
-						'{{strong}}Transfer waiting:{{/strong}} Follow {{a}}these steps{{/a}} by %(beginTransferUntilDate)s to start the transfer.',
-						{
-							components: {
-								strong: <strong />,
-								a: (
-									<a
-										href={ localizeUrl( INCOMING_DOMAIN_TRANSFER_STATUSES ) }
-										rel="noopener noreferrer"
-										target="_blank"
-										onClick={ ( e ) => e.stopPropagation() }
-									/>
-								),
-							},
-							args: {
-								beginTransferUntilDate: moment.utc( domain.beginTransferUntilDate ).format( 'LL' ),
-							},
-						}
-					),
 					noticeText: translate(
 						'Please follow {{a}}these instructions{{/a}} to start the transfer.',
 						{
@@ -662,10 +597,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-error',
 					status: translate( 'Failed' ),
 					icon: 'info',
-					listStatusText: translate(
-						'{{strong}}Transfer failed:{{/strong}} this transfer has failed. {{a}}Learn more{{/a}}',
-						transferOptions
-					),
 					noticeText: translate(
 						'Transfer failed. Learn the possible {{a}}reasons why{{/a}}.',
 						transferOptions
@@ -679,10 +610,6 @@ export function resolveDomainStatus(
 						statusClass: 'status-success',
 						status: translate( 'In progress' ),
 						icon: 'info',
-						listStatusText: translate(
-							'{{strong}}Transfer in progress:{{/strong}} the transfer should be completed by %(transferFinishDate)s. We are waiting for approval from your current domain provider to proceed. {{a}}Learn more{{/a}}',
-							transferOptions
-						),
 						noticeText: translate(
 							'The transfer should complete by {{strong}}%(transferFinishDate)s{{/strong}}. We are waiting for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 							transferOptions
@@ -695,10 +622,6 @@ export function resolveDomainStatus(
 					statusClass: 'status-success',
 					status: translate( 'In progress' ),
 					icon: 'info',
-					listStatusText: translate(
-						'{{strong}}Transfer in progress:{{/strong}} We are waiting for approval from your current domain provider to proceed. {{a}}Learn more{{/a}}',
-						transferOptions
-					),
 					noticeText: translate(
 						'We are waiting for authorization from your current domain provider to proceed. {{a}}Learn more{{/a}}',
 						transferOptions
@@ -712,10 +635,6 @@ export function resolveDomainStatus(
 				statusClass: 'status-success',
 				status: translate( 'In progress' ),
 				icon: 'cached',
-				listStatusText: translate(
-					'{{strong}}Transfer in progress.{{/strong}} {{a}}Learn more{{/a}}',
-					transferOptions
-				),
 				noticeText: domain.transferEndDate
 					? translate(
 							'The transfer should complete by {{strong}}%(transferFinishDate)s{{/strong}}. {{a}}Learn more{{/a}}',
