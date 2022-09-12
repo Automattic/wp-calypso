@@ -41,24 +41,36 @@ const DisplayControls = styled.div( {
 	alignItems: 'center',
 	alignSelf: 'stretch',
 	flex: 1,
+
+	[ MEDIA_QUERIES.small ]: {
+		flexDirection: 'column',
+	},
 } );
 
 const VisibilityControls = styled.div( {
 	display: 'flex',
 	gap: '10px',
-	marginInlineStart: 'auto',
 	flexShrink: 0,
 	alignItems: 'center',
+
+	[ MEDIA_QUERIES.small ]: {
+		width: '100%',
+		justifyContent: 'space-between',
+	},
+
+	[ MEDIA_QUERIES.mediumOrLarger ]: {
+		marginInlineStart: 'auto',
+	},
 } );
 
 const ControlsSelectDropdown = styled( SelectDropdown )( {
 	width: '100%',
 
 	'.select-dropdown__container': {
-		width: '100%',
+		minWidth: '100%',
 
 		[ MEDIA_QUERIES.mediumOrLarger ]: {
-			width: 'auto',
+			minWidth: 'fit-content',
 		},
 	},
 } );

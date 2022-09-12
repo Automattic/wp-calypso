@@ -7,6 +7,7 @@ const SortingButton = styled( Button )( {
 	alignSelf: 'stretch',
 	flexDirection: 'row-reverse',
 	gap: '4px',
+	whiteSpace: 'nowrap',
 } );
 
 const SortingButtonIcon = styled( Gridicon )( {
