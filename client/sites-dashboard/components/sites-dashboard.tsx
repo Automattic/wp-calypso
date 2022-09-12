@@ -12,6 +12,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
@@ -161,9 +163,15 @@ export function SitesDashboard( {
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
-					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
-						<span>{ __( 'Add new site' ) }</span>
-					</Button>
+					<SplitButton
+						primary
+						label={ __( 'Add new site' ) }
+						href="/start?source=sites-dashboard&ref=sites-dashboard"
+					>
+						<PopoverMenuItem href="/jetpack/connect" icon="arrow-down">
+							<span>{ __( 'Connect Jetpack site' ) }</span>
+						</PopoverMenuItem>
+					</SplitButton>
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
