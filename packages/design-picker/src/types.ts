@@ -86,7 +86,6 @@ export interface Design {
 	preview?: 'static';
 	design_type?: DesignType;
 	style_variations?: StyleVariation[];
-	active_style_variation_slug?: string;
 	price?: string;
 	verticalizable?: boolean;
 
