@@ -10,7 +10,7 @@ interface Props {
 
 export default function JetpackBenefitsCardVideoPress( props: Props ) {
 	const translate = useTranslate();
-	const mediaQuery = { mime_type: 'video/videopress' };
+	const mediaQuery = { mime_type: 'video/videopress', number: 1 }; // we only want the total count, no actual media items returned. Set to 1 to keep response size small (0 is not a valid value).
 	const mediaFound = useSelector( ( state ) =>
 		getMediaFound( state, String( props.siteId ), mediaQuery )
 	);
