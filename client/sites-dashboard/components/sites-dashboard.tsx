@@ -23,6 +23,7 @@ import {
 } from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
+import { parseSorting, useSitesListSorting } from './sites-list-sorting-dropdown';
 import { SitesTable } from './sites-table';
 
 interface SitesDashboardProps {
@@ -137,18 +138,20 @@ export function SitesDashboard( {
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
-	const { sortedSites } = useSitesTableSorting( allSites, {
-		sortKey: 'updated-at',
-		sortOrder: 'desc',
-	} );
-
-	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
+	const { filteredSites, statuses } = useSitesTableFiltering( allSites, {
 		search,
 		showHidden: search ? true : showHidden,
 		status,
 	} );
 
-	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
+	const [ sitesListSorting, onSitesListSortingChange ] = useSitesListSorting();
+
+	const { sortedSites } = useSitesTableSorting(
+		sitesListSorting === 'none' ? [] : filteredSites,
+		parseSorting( sitesListSorting )
+	);
+
+	const paginatedSites = sortedSites.slice( ( page - 1 ) * perPage, page * perPage );
 
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
@@ -188,6 +191,8 @@ export function SitesDashboard( {
 							selectedStatus={ selectedStatus }
 							displayMode={ displayMode }
 							onDisplayModeChange={ setDisplayMode }
+							sitesListSorting={ sitesListSorting }
+							onSitesListSortingChange={ onSitesListSortingChange }
 						/>
 					) }
 					{ paginatedSites.length > 0 || isLoading ? (
