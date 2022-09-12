@@ -19,9 +19,7 @@ export const videopress: Flow = {
 			'intro',
 			'options',
 			'chooseADomain',
-			// 'videopressSetup',
-			// 'patterns',
-			'completingPurchase',
+			'chooseAPlan',
 			'processing',
 			'launchpad',
 		] as StepPath[];
@@ -54,10 +52,13 @@ export const videopress: Flow = {
 					return navigate( 'chooseADomain' );
 				}
 
-				case 'chooseADomain':
-					return navigate( 'completingPurchase' );
+				case 'chooseADomain': {
+					const { domainName } = providedDependencies;
+					setDomainName( domainName as string );
+					return navigate( 'chooseAPlan' );
+				}
 
-				case 'completingPurchase':
+				case 'chooseAPlan':
 					return navigate( 'processing' );
 
 				case 'processing': {
