@@ -122,7 +122,7 @@ describe( 'HappinessSupport', () => {
 
 		test( 'should render translated content', () => {
 			render( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable /> );
-			expect( screen.queryByTestId( 'happychat-button' ) ).toHaveTextContent(
+			expect( screen.getByTestId( 'happychat-button' ) ).toHaveTextContent(
 				'Translated: Ask a question'
 			);
 		} );
