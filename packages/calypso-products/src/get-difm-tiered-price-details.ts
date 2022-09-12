@@ -39,12 +39,12 @@ export function getDIFMTieredPriceDetails(
 	const [ tier0, tier1 ] = product.price_tier_list;
 	const perExtraPagePrice = tier1.minimum_price - tier0.minimum_price;
 	const perExtraPagePriceNormalUnits =
-		tier1.minimum_price_normal_units - tier0.minimum_price_normal_units;
+		tier1.minimum_price_in_display_units - tier0.minimum_price_in_display_units;
 
 	const {
 		maximum_units: numberOfIncludedPages,
 		minimum_price: oneTimeFee,
-		minimum_price_normal_units: oneTimeFeeNormalUnits,
+		minimum_price_in_display_units: oneTimeFeeNormalUnits,
 		minimum_price_display: formattedOneTimeFee,
 	} = tier0;
 
