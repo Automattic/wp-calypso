@@ -54,7 +54,11 @@ class ThemeMoreButton extends Component {
 
 		return (
 			<span className={ classes }>
-				<button ref={ this.moreButtonRef } onClick={ this.togglePopover }>
+				<button
+					aria-label={ `More options for theme ${ this.props.themeName }` }
+					ref={ this.moreButtonRef }
+					onClick={ this.togglePopover }
+				>
 					<Gridicon icon="ellipsis" size={ 24 } />
 				</button>
 
@@ -103,6 +107,7 @@ class ThemeMoreButton extends Component {
 }
 
 ThemeMoreButton.propTypes = {
+	'aria-label': PropTypes.string,
 	themeId: PropTypes.string,
 	// Index of theme in results list
 	index: PropTypes.number,
