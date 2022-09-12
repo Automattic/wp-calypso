@@ -51,10 +51,11 @@ $font-family: "SF Pro Text", $sans;
 			font-weight: 400;
 		}
 
+
 		input,
 		textarea,
 		pre {
-			height: 44px;
+			min-height: 44px;
 			line-height: 1.5;
 			padding-top: 7px;
 			padding-bottom: 7px;
