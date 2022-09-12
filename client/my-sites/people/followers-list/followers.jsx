@@ -130,7 +130,7 @@ class Followers extends Component {
 									siteId={ this.props.site.ID }
 									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 									onImportFinished={ () => {
-										page.redirect( `/people/invites/${ this.props.site.slug }` );
+										page.redirect( `/people/email-followers/${ this.props.site.slug }` );
 									} }
 								/>
 							</EmailVerificationGate>
