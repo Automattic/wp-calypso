@@ -69,21 +69,139 @@ export default class extends Component {
 
 			case 'gridicons-reader-follow':
 				return (
-					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+					<svg
+						{ ...sharedProps }
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+					>
 						<title>Reader Follow</title>
 						<g>
-							<path d="M23 16v2h-3v3h-2v-3h-3v-2h3v-3h2v3h3zM20 2v9h-4v3h-3v4H4c-1.1 0-2-.9-2-2V2h18zM8 13v-1H4v1h4zm3-3H4v1h7v-1zm0-2H4v1h7V8zm7-4H4v2h14V4z" />
+							<path
+								clip-rule="evenodd"
+								d="m4 4.5h12v6.5h1.5v-6.5-1.5h-1.5-12-1.5v1.5 10.5c0 1.1046.89543 2 2 2h7v-1.5h-7c-.27614 0-.5-.2239-.5-.5zm10.5 2h-9v1.5h9zm-5 3h-4v1.5h4zm3.5 1.5h-1v1h1zm-1-1.5h-1.5v1.5 1 1.5h1.5 1 1.5v-1.5-1-1.5h-1.5zm-2.5 2.5h-4v1.5h4zm6.5 1.25h1.5v2.25h2.25v1.5h-2.25v2.25h-1.5v-2.25h-2.25v-1.5h2.25z"
+								fill="#606a73"
+								fill-rule="evenodd"
+							/>
 						</g>
 					</svg>
 				);
 
 			case 'gridicons-reader-following':
+				//TODO: This needs another svg
 				return (
-					<svg { ...sharedProps } xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+					<svg
+						{ ...sharedProps }
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+					>
 						<title>Reader Following</title>
 						<g>
-							<path d="M23 13.482L15.508 21 12 17.4l1.412-1.388 2.106 2.188 6.094-6.094L23 13.482zm-7.455 1.862L20 10.89V2H2v14c0 1.1.9 2 2 2h4.538l4.913-4.832 2.095 2.176zM8 13H4v-1h4v1zm3-2H4v-1h7v1zm0-2H4V8h7v1zm7-3H4V4h14v2z" />
+							<path
+								clip-rule="oddeven"
+								d="m4 4.5h12v6.5h1.5v-6.5-1.5h-1.5-12-1.5v1.5 10.5c0 1.1046.89543 2 2 2h7v-1.5h-7c-.27614 0-.5-.2239-.5-.5zm10.5 2h-9v1.5h9zm-5 3h-4v1.5h4zm3.5 1.5h-1v1h1zm-1-1.5h-1.5v1.5 1 1.5h1.5 1 1.5v-1.5-1-1.5h-1.5zm-2.5 2.5h-4v1.5h4zm6.5 1.25h1.5v2.25h2.25v1.5h-2.25v2.25h-1.5v-2.25h-2.25v-1.5h2.25z"
+								fill="#606a73"
+								fill-rule="oddeven"
+							/>
 						</g>
+					</svg>
+				);
+
+			case 'gridicons-reader-external':
+				return (
+					<svg
+						{ ...sharedProps }
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+					>
+						<title>Reader External</title>
+						<path d="m0 0h20v20h-20z" fill="#fff" />
+						<path
+							clip-rule="evenodd"
+							d="m11.3764 2.01611h.75 5.1075.75v.75 5.10749.75h-1.5v-.75-3.2968l-5.8701 5.8701-.5303.5303-1.0607-1.06062.53032-.53033 5.87008-5.87014h-3.2968-.75zm-6.3764 3.48389h4v-1.5h-4c-1.10457 0-2 .89543-2 2v9c0 1.1046.89543 2 2 2h9c1.1046 0 2-.8954 2-2v-4h-1.5v4c0 .2761-.2239.5-.5.5h-9c-.27614 0-.5-.2239-.5-.5v-9c0-.27614.22386-.5.5-.5z"
+							fill="#646970"
+							fill-rule="evenodd"
+						/>
+					</svg>
+				);
+
+			case 'gridicons-reader-share':
+				return (
+					<svg
+						{ ...sharedProps }
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+					>
+						<title>Reader Share</title>
+						<clipPath id="a">
+							<path d="m0 0h20v20h-20z" />
+						</clipPath>
+						<g clip-path="url(#a)">
+							<path
+								d="m11.8666 6.79996v-3.79996l6.8 6.64993-6.8 6.64997v-3.8s-10.19997-.8844-10.19997 4.5001c0-10.77003 10.19997-10.20004 10.19997-10.20004z"
+								stroke="#646970"
+								stroke-linecap="round"
+								stroke-width="1.5"
+							/>
+						</g>
+					</svg>
+				);
+
+			case 'gridicons-reader-comment':
+				return (
+					<svg
+						{ ...sharedProps }
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						fill="none"
+					>
+						<title>Reader Comment</title>
+						<path
+							d="m12.5278 14.5556v-.75h-.75-8.00002c-.56801 0-1.02778-.4598-1.02778-1.0278v-8.00002c0-.56801.45977-1.02778 1.02778-1.02778h12.44442c.568 0 1.0278.45977 1.0278 1.02778v7.94842c0 .9051-.4384 1.7561-1.1748 2.2822l-3.5474 2.5341z"
+							fill="#fff"
+							stroke="#646970"
+							stroke-width="1.5"
+						/>
+					</svg>
+				);
+
+			case 'gridicons-reader-star':
+				return (
+					<svg
+						fill="none"
+						height="20"
+						viewBox="0 0 20 20"
+						width="20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="m10.0001 2.5 2.4463 5.33517h5.4704l-4.5834 4.23893 1.5592 5.4259-4.8925-2.8125-4.8925 2.8125 1.55917-5.4259-4.58333-4.23893h2.7352 2.73521z"
+							stroke="#646970"
+							stroke-linecap="round"
+							stroke-width="1.5"
+						/>
+					</svg>
+				);
+
+			case 'gridicons-reader-star-outline':
+				//TODO: This needs another svg
+				return (
+					<svg
+						fill="none"
+						height="20"
+						viewBox="0 0 20 20"
+						width="20"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="m10.0001 2.5 2.4463 5.33517h5.4704l-4.5834 4.23893 1.5592 5.4259-4.8925-2.8125-4.8925 2.8125 1.55917-5.4259-4.58333-4.23893h2.7352 2.73521z"
+							stroke="#646970"
+							stroke-linecap="round"
+							stroke-width="1.5"
+						/>
 					</svg>
 				);
 
