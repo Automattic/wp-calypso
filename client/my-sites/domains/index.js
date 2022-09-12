@@ -133,14 +133,6 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementAllEditContactInfo(),
-		...getCommonHandlers( { noSitePath: false } ),
-		domainManagementController.domainManagementBulkEditContactInfo,
-		makeLayout,
-		clientRender
-	);
-
-	page(
 		paths.domainManagementList( ':site' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementList,

@@ -106,10 +106,6 @@ export function domainManagementEditContactInfo( siteName, domainName, relativeT
 	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
 }
 
-export function domainManagementAllEditContactInfo() {
-	return domainManagementAllRoot() + '/edit-contact-info';
-}
-
 /**
  * @param {string} siteName
  * @param {string} domainName
