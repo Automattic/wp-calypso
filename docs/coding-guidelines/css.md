@@ -63,6 +63,7 @@ These practices mean that a component will work anywhere it is included by defau
 
 Apart from the above structure, please adhere to these guidelines:
 
+- We use [Stylelint](https://stylelint.io/) to enforce a consistent code style. You can check for style lints by running `yarn lint:css`. Please see [IDE setup](#ide-setup-auto-formatting) section for more details.
 - Follow the [WordPress CSS Coding Standards](https://make.wordpress.org/core/handbook/coding-standards/css/), unless it contradicts something stated in this document.
 - Avoid `#` selectors for style purposes. Their specificity becomes troublesome to manage fairly quickly.
 - Don't use the `!important` declaration. If you think you need to do it, consider fixing the root cause.
@@ -70,6 +71,37 @@ Apart from the above structure, please adhere to these guidelines:
 - Use hyphens, not underscores or camelCase, when naming things like IDs, classes, variable names, mixins, placeholders. Good: `.site-title`, Bad: `.siteTitle` or `.site_title`.
 - The only exception is the `__` syntax to signal the relationship within a component.
 - Avoid using over-qualified selectors like `div.my-class`.
+
+## IDE setup (auto-formatting)
+
+In order to enable auto formatting of style files, please set up your IDE.
+
+### VS Code
+
+To get things set up in VS Code, do the following:
+
+- Run `yarn install`
+- Install the official Stylelint extension - [`stylelint.vscode-stylelint`](https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint)
+- Adjust the following settings in `settings.json` - (`Cmd + Shift + P` > `Preferences: Open Settings (JSON))`:
+
+```jsonc
+{
+	"stylelint.validate": [ "css", "scss", "sass" ],
+	"[css][scss][sass]": {
+		"editor.formatOnSave": false,
+		"editor.defaultFormatter": "stylelint.vscode-stylelint"
+	},
+	"editor.codeActionsOnSave": {
+		"source.fixAll.stylelint": true
+		// other actions go here
+	}
+}
+```
+
+- Reload VS Code: `Cmd + Shift + P` > `Developer: Reload Window`
+- Open a Sass file e.g. `client/me/security-2fa-initial-setup/style.scss`
+- Mess up the formatting (e.g. use spaces for indentation.)
+- Save the file and verify the problems are fixed.
 
 ## Classes
 
