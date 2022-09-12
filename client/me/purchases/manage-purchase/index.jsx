@@ -521,7 +521,7 @@ class ManagePurchase extends Component {
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'TODO remove this: DEBUG - Cancel Subscription and Refund' );
+				text = translate( 'Cancel Subscription and Refund' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
