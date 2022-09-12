@@ -3,7 +3,6 @@ import SiteDomains from 'calypso/my-sites/domains/domain-management/list/site-do
 import ContactsPrivacy from './contacts-privacy';
 import AddDnsRecord from './dns/add-dns-record';
 import DnsRecords from './dns/dns-records';
-import DnsRecordsList from './dns/dns-records-list';
 import DomainConnectMapping from './domain-connect-mapping';
 import Edit from './edit';
 import EditContactInfo from './edit-contact-info';
@@ -21,7 +20,6 @@ export default {
 	AddDnsRecord,
 	ContactsPrivacy,
 	DnsRecords,
-	DnsRecordsList,
 	DomainConnectMapping,
 	Edit,
 	EditContactInfo,
