@@ -41,9 +41,9 @@ $font-family: "SF Pro Text", $sans;
 
 	.pattern-assembler__sidebar {
 		width: 280px;
-		margin-bottom: 0;
 		box-sizing: border-box;
 		margin-top: 50px;
+		margin-bottom: 32px;
 	}
 
 	.pattern-layout {
@@ -179,20 +179,14 @@ $font-family: "SF Pro Text", $sans;
 		}
 
 		.pattern-selector__body {
-			margin: 32px 0;
+			margin-top: 32px;
 			padding: 2px;
-			max-height: calc(100vh - 298px);
 			overflow-y: scroll;
 			scrollbar-width: none;
 
 			&::-webkit-scrollbar {
 				display: none;
 			}
-		}
-
-		.pattern-selector__footer {
-			margin-top: auto;
-			margin-bottom: 32px;
 		}
 
 		.pattern-selector__block-list {
@@ -207,7 +201,6 @@ $font-family: "SF Pro Text", $sans;
 			}
 
 			div {
-				margin-bottom: 16px;
 				border: 1px solid rgba(0, 0, 0, 0.05);
 				border-radius: 4px;
 				min-height: 140px;
@@ -215,6 +208,10 @@ $font-family: "SF Pro Text", $sans;
 				overflow: hidden;
 				user-select: none;
 				cursor: pointer;
+
+				&:not(:last-child) {
+					margin-bottom: 16px;
+				}
 
 				&:focus,
 				&:hover {
