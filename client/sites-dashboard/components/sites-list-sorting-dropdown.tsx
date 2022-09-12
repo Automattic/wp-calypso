@@ -62,10 +62,7 @@ export const SitesListSortingDropdown = ( {
 
 		switch ( sitesListSorting ) {
 			case `alphabetically${ SEPARATOR }asc`:
-				return __( 'Sorting: alphabetically (A-Z)' );
-
-			case `alphabetically${ SEPARATOR }desc`:
-				return __( 'Sorting: alphabetically (Z-A)' );
+				return __( 'Sorting: alphabetically' );
 
 			case `updatedAt${ SEPARATOR }desc`:
 				return __( 'Sorting: last publish date' );
@@ -100,15 +97,7 @@ export const SitesListSortingDropdown = ( {
 							onClose();
 						} }
 					>
-						{ __( 'Alphabetically (A-Z)' ) }
-					</MenuItem>
-					<MenuItem
-						onClick={ () => {
-							onSitesListSortingChange( `alphabetically${ SEPARATOR }desc` );
-							onClose();
-						} }
-					>
-						{ __( 'Alphabetically (Z-A)' ) }
+						{ __( 'Alphabetically' ) }
 					</MenuItem>
 					<MenuItem
 						onClick={ () => {
