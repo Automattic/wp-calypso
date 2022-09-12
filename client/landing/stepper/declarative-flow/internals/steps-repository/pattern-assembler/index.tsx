@@ -1,5 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useState } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -12,6 +12,7 @@ import { STYLE_SHEET } from './constants';
 import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
+import { encodePatternId } from './utils';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
@@ -26,7 +27,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const { goBack, goNext, submit } = navigation;
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
-	const { setSelectedDesign, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
@@ -34,16 +36,24 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const getDesign = () =>
 		( {
+			...selectedDesign,
+			verticalizable: false,
 			recipe: {
 				stylesheet: STYLE_SHEET,
-				header_pattern_ids: [ header?.id ],
-				pattern_ids: sections.map( ( { id } ) => id ),
-				footer_pattern_ids: [ footer?.id ],
+				header_pattern_ids: header ? [ encodePatternId( header.id ) ] : undefined,
+				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.id ) ),
+				footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
 			} as DesignRecipe,
-			slug: 'blank-canvas-blocks',
-			title: 'Blank Canvas',
-			verticalizable: false,
 		} as Design );
+
+	const getPageTemplate = () => {
+		let pageTemplate = 'blank';
+
+		if ( ( header || footer ) && ! sections.length ) pageTemplate = 'header-footer-only';
+		if ( footer && ! header && ! sections.length ) pageTemplate = 'footer-only';
+
+		return pageTemplate;
+	};
 
 	const addSection = ( pattern: Pattern ) => {
 		if ( sectionPosition ) {
@@ -138,15 +148,15 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						onContinueClick={ () => {
 							if ( siteSlugOrId ) {
 								const design = getDesign();
-								setSelectedDesign( design );
+								const pageTemplate = getPageTemplate();
 
 								setPendingAction( () =>
-									setDesignOnSite( siteSlugOrId, design ).then( () =>
+									setDesignOnSite( siteSlugOrId, design, { pageTemplate } ).then( () =>
 										reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
 									)
 								);
 
-								submit?.( { selectedDesign: design } );
+								submit?.();
 							}
 						} }
 					/>

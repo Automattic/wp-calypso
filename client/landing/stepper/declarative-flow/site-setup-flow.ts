@@ -231,6 +231,14 @@ export const siteSetupFlow: Flow = {
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
 					}
 
+					// End of Pattern Assembler flow
+					if (
+						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+						( selectedDesign as Design )?.slug === 'blank-canvas-blocks'
+					) {
+						return exitFlow( `/site-editor/${ siteSlug }` );
+					}
+
 					return exitFlow( `/home/${ siteSlug }` );
 				}
 
