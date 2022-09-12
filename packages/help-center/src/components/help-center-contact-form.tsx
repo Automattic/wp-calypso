@@ -421,7 +421,7 @@ export const HelpCenterContactForm = () => {
 				</section>
 			) }
 
-			<section>
+			<section className="contact-form-submit">
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
