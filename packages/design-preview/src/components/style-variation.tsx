@@ -41,10 +41,12 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 			} ) }
 			tabIndex={ 0 }
 			role="button"
-			aria-label={ translate( 'Style: %s', {
-				comment: 'Aria label for style preview button',
-				args: variation.title,
-			} ) }
+			aria-label={
+				translate( 'Style: %s', {
+					comment: 'Aria label for style preview buttons',
+					args: variation.title,
+				} ) as string
+			}
 			onClick={ () => onClick( variation ) }
 			onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
 		>
