@@ -55,9 +55,7 @@ describe( 'HappinessSupport', () => {
 	} );
 
 	test( 'should render a support button with link to JETPACK_SUPPORT if it is for JetPack', () => {
-		render(
-			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
-		);
+		render( <HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack /> );
 		expect(
 			screen.getByRole( 'link', { name: 'Translated: Support documentation' } )
 		).toHaveAttribute( 'href', JETPACK_SUPPORT );
@@ -81,11 +79,7 @@ describe( 'HappinessSupport', () => {
 
 	test( 'should render a <HappychatConnection /> when showLiveChat prop is true', () => {
 		render(
-			<HappinessSupport
-				translate={ translate }
-				recordTracksEvent={ noop }
-				showLiveChatButton={ true }
-			/>
+			<HappinessSupport translate={ translate } recordTracksEvent={ noop } showLiveChatButton />
 		);
 		expect( screen.getByTestId( 'happychat-connection' ) ).toBeVisible();
 	} );
@@ -98,7 +92,7 @@ describe( 'HappinessSupport', () => {
 
 		test( 'should be rendered only when showLiveChatButton prop is true and LiveChat is available', () => {
 			const { rerender } = render(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
+				<HappinessSupport { ...props } showLiveChatButton liveChatAvailable />
 			);
 			// should be rendered here
 			expect( screen.getByTestId( 'happychat-button' ) ).toBeVisible();
@@ -127,9 +121,7 @@ describe( 'HappinessSupport', () => {
 		} );
 
 		test( 'should render translated content', () => {
-			render(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
-			);
+			render( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable /> );
 			expect( screen.queryByTestId( 'happychat-button' ) ).toHaveTextContent(
 				'Translated: Ask a question'
 			);
@@ -184,7 +176,7 @@ describe( 'HappinessSupport', () => {
 		test( 'should be rendered unless LiveChat button shows up', () => {
 			// should not be displayed here
 			const { rerender } = render(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
+				<HappinessSupport { ...props } showLiveChatButton liveChatAvailable />
 			);
 			expect( screen.queryByRole( 'link', { name: linkName } ) ).not.toBeInTheDocument();
 
@@ -217,7 +209,7 @@ describe( 'HappinessSupport', () => {
 		} );
 
 		test( 'should be rendered with link to JETPACK_CONTACT_SUPPORT if it is for Jetpack', () => {
-			render( <HappinessSupport { ...props } isJetpack={ true } /> );
+			render( <HappinessSupport { ...props } isJetpack /> );
 			expect( getContactLink() ).toHaveAttribute( 'href', JETPACK_CONTACT_SUPPORT );
 		} );
 	} );
