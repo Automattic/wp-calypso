@@ -255,14 +255,14 @@ export function useCartForDIFM( selectedPages: string[] ): {
 		if ( ! difmLiteProduct || ! userCurrencyCode ) {
 			dispatch( requestProductsList() );
 		}
-	}, [ dispatch, difmLiteProduct ] );
+	}, [ dispatch, difmLiteProduct, userCurrencyCode ] );
 
 	// [Effect] Updates flag to show loading feedback to the user on page selection change
 	useEffect( () => {
 		if ( isExistingSite ) {
 			setIsCartUpdateStarted( true );
 		}
-	}, [ setIsCartUpdateStarted, selectedPages ] );
+	}, [ isExistingSite, setIsCartUpdateStarted, selectedPages ] );
 
 	const debouncedReplaceProductsInCart = useMemo(
 		() =>
