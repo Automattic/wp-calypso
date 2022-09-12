@@ -1297,6 +1297,59 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 	],
 } );
 
+const JETPACK_INCLUDES_REAL_TIME_BACKUP = translate( 'Real-time backups as you edit' );
+
+const JETPACK_T1_INCLUDES_CLOUD_STORAGE = translate( '10GB of cloud storage' );
+const JETPACK_T2_INCLUDES_CLOUD_STORAGE = translate( '1TB (1,000GB) of cloud storage' );
+
+const JETPACK_MONTHLY_INCLUDES_LOG_ARCHIVE = translate( '30-day activity log archive' );
+const JETPACK_YEARLY_INCLUDES_LOG_ARCHIVE = translate( '1-year activity log archive' );
+
+const JETPACK_MONTHLY_INCLUDES_RESTORES = translate(
+	'Unlimited one-click restores from the last 30 days'
+);
+const JETPACK_YEARLY_INCLUDES_RESTORES = translate(
+	'Unlimited one-click restores from the last 1 year'
+);
+
+const JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING = translate(
+	'Real-time malware scanning and one-click fixes '
+);
+const JETPACK_COMPLETE_INCLUDES_ADDITIONAL = [
+	translate( 'VideoPress with 1TB of ad-free video hosting' ),
+	translate( 'Site Search up to 100k records' ),
+	translate( 'CRM Entrepreneur' ),
+];
+const JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION = translate(
+	'Comment and form spam protection (10k API calls/mo)'
+);
+const JETPACK_COMPLETE_INCLUDES_SPAM_PROTECTION = translate(
+	'Comment and form spam protection (60k API calls/mo)'
+);
+
+const JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT: TranslateResult = translate(
+	'Best-in-class support from WordPress experts'
+);
+const COMMON_JETPACK_PLAN_BENEFITS: Array< TranslateResult > = [
+	translate( 'Protect your revenue stream and content' ),
+	translate( 'Learn about issues before your customers are impacted' ),
+	translate( 'Restore your site in one click from desktop or mobile' ),
+	translate( 'Fix your site without a developer' ),
+	translate( 'Protect Woo order and customer data' ),
+	translate( 'Save time manually reviewing spam' ),
+];
+
+const JETPACK_COMPLETE_ADDITIONAL_BENEFITS: Array< TranslateResult > = [
+	translate( 'Grow your business with video, social, and CRM tools' ),
+];
+
+const COMMON_JETPACK_RECOMMENDED_FOR: Array< TranslateResult > = [
+	translate( 'WooCommerce stores' ),
+	translate( 'News organizations' ),
+	translate( 'Membership sites' ),
+	translate( 'Online forums' ),
+];
+
 // DO NOT import. Use `getPlan` instead.
 export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_FREE ]: {
@@ -1764,6 +1817,21 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE,
 		getPathSlug: () => 'complete',
 		getProductId: () => 2014,
+		getJetpackIncludesInfo: () => [
+			JETPACK_INCLUDES_REAL_TIME_BACKUP,
+			JETPACK_T2_INCLUDES_CLOUD_STORAGE,
+			JETPACK_YEARLY_INCLUDES_LOG_ARCHIVE,
+			JETPACK_YEARLY_INCLUDES_RESTORES,
+			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
+			JETPACK_COMPLETE_INCLUDES_SPAM_PROTECTION,
+			...JETPACK_COMPLETE_INCLUDES_ADDITIONAL,
+		],
+		getJetpackBenefits: () => [
+			...COMMON_JETPACK_PLAN_BENEFITS,
+			...JETPACK_COMPLETE_ADDITIONAL_BENEFITS,
+			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
+		],
+		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_COMPLETE_MONTHLY ]: {
@@ -1772,6 +1840,21 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
+		getJetpackIncludesInfo: () => [
+			JETPACK_INCLUDES_REAL_TIME_BACKUP,
+			JETPACK_T2_INCLUDES_CLOUD_STORAGE,
+			JETPACK_MONTHLY_INCLUDES_LOG_ARCHIVE,
+			JETPACK_MONTHLY_INCLUDES_RESTORES,
+			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
+			JETPACK_COMPLETE_INCLUDES_SPAM_PROTECTION,
+			...JETPACK_COMPLETE_INCLUDES_ADDITIONAL,
+		],
+		getJetpackBenefits: () => [
+			...COMMON_JETPACK_PLAN_BENEFITS,
+			...JETPACK_COMPLETE_ADDITIONAL_BENEFITS,
+			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
+		],
+		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
@@ -1780,6 +1863,19 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_YEARLY,
 		getPathSlug: () => 'security-20gb-yearly',
 		getProductId: () => 2016,
+		getJetpackIncludesInfo: () => [
+			JETPACK_INCLUDES_REAL_TIME_BACKUP,
+			JETPACK_T1_INCLUDES_CLOUD_STORAGE,
+			JETPACK_YEARLY_INCLUDES_LOG_ARCHIVE,
+			JETPACK_YEARLY_INCLUDES_RESTORES,
+			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
+			JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION,
+		],
+		getJetpackBenefits: () => [
+			...COMMON_JETPACK_PLAN_BENEFITS,
+			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
+		],
+		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
@@ -1788,6 +1884,20 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_MONTHLY,
 		getPathSlug: () => 'security-20gb-monthly',
 		getProductId: () => 2017,
+		getJetpackIncludesInfo: () => [
+			JETPACK_INCLUDES_REAL_TIME_BACKUP,
+			JETPACK_T1_INCLUDES_CLOUD_STORAGE,
+			JETPACK_MONTHLY_INCLUDES_LOG_ARCHIVE,
+			JETPACK_MONTHLY_INCLUDES_RESTORES,
+			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
+			JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION,
+		],
+		getJetpackBenefits: () => [
+			...COMMON_JETPACK_PLAN_BENEFITS,
+			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
+		],
+
+		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: {
@@ -1796,6 +1906,19 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_YEARLY,
 		getPathSlug: () => 'security-1tb-yearly',
 		getProductId: () => 2019,
+		getJetpackIncludesInfo: () => [
+			JETPACK_INCLUDES_REAL_TIME_BACKUP,
+			JETPACK_T2_INCLUDES_CLOUD_STORAGE,
+			JETPACK_YEARLY_INCLUDES_LOG_ARCHIVE,
+			JETPACK_YEARLY_INCLUDES_RESTORES,
+			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
+			JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION,
+		],
+		getJetpackBenefits: () => [
+			...COMMON_JETPACK_PLAN_BENEFITS,
+			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
+		],
+		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: {
@@ -1804,6 +1927,19 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_MONTHLY,
 		getPathSlug: () => 'security-1tb-monthly',
 		getProductId: () => 2020,
+		getJetpackIncludesInfo: () => [
+			JETPACK_INCLUDES_REAL_TIME_BACKUP,
+			JETPACK_T2_INCLUDES_CLOUD_STORAGE,
+			JETPACK_MONTHLY_INCLUDES_LOG_ARCHIVE,
+			JETPACK_MONTHLY_INCLUDES_RESTORES,
+			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
+			JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION,
+		],
+		getJetpackBenefits: () => [
+			...COMMON_JETPACK_PLAN_BENEFITS,
+			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
+		],
+		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_P2_PLUS ]: {
