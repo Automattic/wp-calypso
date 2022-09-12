@@ -108,7 +108,7 @@ export function PatternPicker( { onPick }: Props ) {
 	};
 
 	return (
-		<div className="pattern-picker">
+		<div className="pattern-picker" onTouchMove={ ( e ) => e.preventDefault() }>
 			<div
 				ref={ ( ref ) => ref && ref !== containerRef && setRef( ref ) }
 				className={ classNames( 'pattern-picker__carousel', {
