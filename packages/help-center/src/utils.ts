@@ -5,12 +5,9 @@ import { isWpMobileApp } from 'calypso/lib/mobile-app';
 // only a certain percentage of users.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function shouldShowHelpCenterToUser( userId: number ) {
-	return false;
-	/*
 	const currentSegment = 30; //percentage of users that will see the Help Center, not the FAB
 	const userSegment = userId % 100;
 	return userSegment < currentSegment;
-	*/
 }
 
 export function shouldLoadInlineHelp( sectionName: string, currentRoute: string ) {

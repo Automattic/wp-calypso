@@ -19,7 +19,7 @@
 		"ad-tracking": true,
 		"bilmur-script": true,
 		"build/sites-dashboard": true,
-		"calypso/help-center": false,
+		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": true,
