@@ -41,7 +41,7 @@ const Cart = styled.div`
 	position: initial;
 
 	@media ( max-width: 600px ) {
-		padding: 10px 15px 10px;
+		padding: 5px 15px 5px;
 		width: 100%;
 		border-top: 1px solid #dcdcde;
 	}
@@ -86,25 +86,15 @@ const DummyLineItemContainer = styled.div`
 		flex-wrap: wrap;
 		gap: 2px 10px;
 	}
-	.page-picker__sub-label-mobile {
-		display: none;
-	}
+
 	span {
 		position: relative;
 	}
 
 	@media ( max-width: 600px ) {
-		font-size: 0.9em;
-		padding: 2px 0;
-		border: none;
-
+		padding: 10px 0px 10px 0px;
+		border-bottom: 1px solid #eee;
 		.page-picker__sub-label {
-			display: none;
-		}
-		.page-picker__sub-label-mobile {
-			display: block;
-			padding: 3px 4px;
-			font-size: 0.75em;
 		}
 	}
 `;
@@ -149,7 +139,6 @@ const Total = styled.div`
 		font-size: 16px;
 		margin-top: 6px;
 		padding: 5px 0px;
-		border-top: 1px solid #eee;
 		border-bottom: 1px solid #eee;
 	}
 `;
@@ -158,7 +147,6 @@ function DummyLineItem( {
 	productCost,
 	productOriginalName,
 	subLabel,
-	mobileSubLabel,
 	productCount,
 	nameOverride,
 	currencyCode,
@@ -167,9 +155,6 @@ function DummyLineItem( {
 		<DummyLineItemContainer>
 			<div className="page-picker__title">
 				<div className="page-picker__product-name">{ nameOverride ?? productOriginalName }</div>
-				{ mobileSubLabel && (
-					<div className="page-picker__sub-label-mobile"> { mobileSubLabel } </div>
-				) }
 			</div>
 			<div className="page-picker__price">
 				{ productCount !== undefined

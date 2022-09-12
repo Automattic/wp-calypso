@@ -27,7 +27,6 @@ export type CartItem = {
 	productOriginalName: string;
 	productCost: number;
 	subLabel?: TranslateResult;
-	mobileSubLabel?: TranslateResult;
 	productCount?: number;
 	itemSubTotal: number;
 };
@@ -40,7 +39,7 @@ type DummyCartParams = {
 	translate: LocalizeProps[ 'translate' ];
 };
 
-function getDIFMPriceBreakdownSubLabels( {
+function getDIFMPriceBreakdownSubLabel( {
 	product,
 	noOfPages,
 	currencyCode,
@@ -50,12 +49,11 @@ function getDIFMPriceBreakdownSubLabels( {
 	noOfPages: number | null;
 	currencyCode: string;
 	translate: LocalizeProps[ 'translate' ];
-} ): { subLabel: TranslateResult; mobileSubLabel: TranslateResult } {
+} ): { subLabel: TranslateResult } {
 	let subLabel: TranslateResult = translate( 'one-time fee' );
-	let mobileSubLabel: TranslateResult = '';
 
 	if ( noOfPages == null ) {
-		return { subLabel, mobileSubLabel };
+		return { subLabel };
 	}
 
 	const difmTieredPrices = getDIFMTieredPriceDetails( product, noOfPages );
@@ -90,24 +88,9 @@ function getDIFMPriceBreakdownSubLabels( {
 					) }
 				</>
 			);
-
-			mobileSubLabel = translate(
-				'( %(numberOfExtraPages)d Extra Page @ %(costOfExtraPages)s )',
-				'( %(numberOfExtraPages)d Extra Pages @ %(costOfExtraPages)s )',
-				{
-					args: {
-						numberOfExtraPages: extraPageCount,
-						costOfExtraPages: formatCurrency( extraPagesPrice, currencyCode, {
-							stripZeros: true,
-							isSmallestUnit: true,
-						} ),
-					},
-					count: extraPageCount,
-				}
-			);
 		}
 	}
-	return { subLabel, mobileSubLabel };
+	return { subLabel };
 }
 
 function getDummyCartProducts( {
@@ -134,7 +117,7 @@ function getDummyCartProducts( {
 				productOriginalName: difmLiteProduct.product_name,
 				itemSubTotal: difmLiteItemPrice,
 				productCost: difmLiteItemPrice,
-				...getDIFMPriceBreakdownSubLabels( {
+				...getDIFMPriceBreakdownSubLabel( {
 					product: difmLiteProduct,
 					noOfPages: selectedPages.length,
 					currencyCode,
@@ -187,7 +170,7 @@ function getSiteCartProducts( {
 					productOriginalName: product.product_name,
 					itemSubTotal: product.cost,
 					productCost: product.cost,
-					...getDIFMPriceBreakdownSubLabels( {
+					...getDIFMPriceBreakdownSubLabel( {
 						product: difmLiteProduct,
 						noOfPages: product.quantity,
 						currencyCode: responseCart.currency,
