@@ -25,6 +25,7 @@ class SplitButton extends PureComponent {
 		onClick: PropTypes.func,
 		onToggle: PropTypes.func,
 		popoverClassName: PropTypes.string,
+		href: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -91,15 +92,19 @@ class SplitButton extends PureComponent {
 			'has-icon-text': label && icon,
 		} );
 
+		const isEmptyOnClick = this.props.onClick === noop;
+		const onClick = isEmptyOnClick ? undefined : this.handleMainClick;
+
 		return (
 			<span className={ classes }>
 				<Button
 					compact={ compact }
 					primary={ primary }
 					scary={ scary }
-					onClick={ this.handleMainClick }
 					disabled={ disabled || disableMain }
 					className="split-button__main"
+					onClick={ onClick }
+					href={ this.props.href }
 				>
 					{ icon && <Gridicon icon={ icon } /> }
 					{ label }
