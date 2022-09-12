@@ -5,7 +5,7 @@ import {
 	isDomainMapping,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -729,10 +729,9 @@ class Signup extends Component {
 	}
 
 	getPageTitle() {
-		if ( this.props.flowName.toLowerCase() === LINK_IN_BIO_FLOW ) {
-			return 'Link in Bio';
+		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
+			return this.props.pageTitle;
 		}
-		return this.props.flowName;
 	}
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
