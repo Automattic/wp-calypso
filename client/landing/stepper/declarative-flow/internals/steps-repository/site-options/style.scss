@@ -111,4 +111,27 @@
 			background-color: var(--studio-gray-5);
 		}
 	}
+
+	.videopress & {
+		max-width: 400px;
+
+		#site-options-header {
+			text-align: center;
+		}
+
+		input#siteTitle,
+		input#tagline {
+			border: solid 1px #c3c4c7;
+		}
+
+		input#tagline {
+			height: 64px;
+		}
+
+		.site-options__submit-button {
+			width: 100%;
+			background-color: #0675c4;
+			border: 0px none;
+		}
+	}
 }
