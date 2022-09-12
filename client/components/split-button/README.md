@@ -71,6 +71,14 @@ Whether the button has modified styling to warn users (delete, remove, etc).es
 
 Callback that will be invoked when menu button is clicked.
 Will be passed the click event.
+### `href`
+
+<table>
+	<tr><td>Type</td><td>string</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+String used to build a link `a` instead of a `button` element.
 
 ### `onToggle`
 
