@@ -5,7 +5,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 
 const container = css( {
-	marginInlineStart: 'auto',
 	display: 'flex',
 	gap: '10px',
 } );

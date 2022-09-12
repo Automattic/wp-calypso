@@ -7,6 +7,7 @@ import { ComponentPropsWithoutRef } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
+import { SitesListSortingDropdown } from './sites-list-sorting-dropdown';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 
@@ -40,6 +41,14 @@ const DisplayControls = styled.div( {
 	alignItems: 'center',
 	alignSelf: 'stretch',
 	flex: 1,
+} );
+
+const VisibilityControls = styled.div( {
+	display: 'flex',
+	gap: '10px',
+	marginInlineStart: 'auto',
+	flexShrink: 0,
+	alignItems: 'center',
 } );
 
 const ControlsSelectDropdown = styled( SelectDropdown )( {
@@ -94,10 +103,13 @@ export const SitesContentControls = ( {
 						</SelectDropdown.Item>
 					) ) }
 				</ControlsSelectDropdown>
-				<SitesDisplayModeSwitcher
-					displayMode={ displayMode }
-					onDisplayModeChange={ onDisplayModeChange }
-				/>
+				<VisibilityControls>
+					<SitesListSortingDropdown />
+					<SitesDisplayModeSwitcher
+						displayMode={ displayMode }
+						onDisplayModeChange={ onDisplayModeChange }
+					/>
+				</VisibilityControls>
 			</DisplayControls>
 		</FilterBar>
 	);
