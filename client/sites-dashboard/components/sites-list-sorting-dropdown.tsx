@@ -84,7 +84,7 @@ export const SitesListSortingDropdown = ( {
 			position="bottom center"
 			renderToggle={ ( { isOpen, onToggle } ) => (
 				<SortingButton
-					icon={ <SortingButtonIcon icon={ isOpen ? 'arrow-up' : 'arrow-down' } /> }
+					icon={ <SortingButtonIcon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
 					iconSize={ 16 }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
