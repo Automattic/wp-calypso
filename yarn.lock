@@ -388,6 +388,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@storybook/addon-actions": ^6.4.19
     "@storybook/react": ^6.4.18
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
@@ -811,6 +812,20 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@automattic/jest-circus-allure-reporter@workspace:^, @automattic/jest-circus-allure-reporter@workspace:packages/jest-circus-allure-reporter":
+  version: 0.0.0-use.local
+  resolution: "@automattic/jest-circus-allure-reporter@workspace:packages/jest-circus-allure-reporter"
+  dependencies:
+    "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@types/allure-js-commons": ^0.0.1
+    "@types/jest": ^27.4.0
+    "@types/node": ^16.11.26
+    allure-js-commons: 2.0.0-beta.9
+    typescript: ^4.7.4
   languageName: unknown
   linkType: soft
 
@@ -6555,6 +6570,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/allure-js-commons@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@types/allure-js-commons@npm:0.0.1"
+  checksum: 5f405c9cf7b4432e74a2085c21fa98cdc6eb20d1b059cfb0d4a735f8cb5144e9862a29f6a910c1f01b4183e9875211be9fb670ef2b6ee009cff409b8dff424ea
+  languageName: node
+  linkType: hard
+
 "@types/archiver@npm:^5.3.1":
   version: 5.3.1
   resolution: "@types/archiver@npm:5.3.1"
@@ -10448,6 +10470,17 @@ __metadata:
     require-from-string: ^2.0.2
     uri-js: ^4.2.2
   checksum: 45e52e708f1335486671a008629ed973e0d729e12f00e9ff6e2c5dcab4d207dc4d198440ee17f48a94649bd40f5dd50fc6ca133b3e7d04e7ea5b64dad93f95fc
+  languageName: node
+  linkType: hard
+
+"allure-js-commons@npm:2.0.0-beta.9":
+  version: 2.0.0-beta.9
+  resolution: "allure-js-commons@npm:2.0.0-beta.9"
+  dependencies:
+    mkdirp: ^1.0.4
+    properties: ^1.2.1
+    uuid: ^8.3.0
+  checksum: 434389a5aa2854d2336108d27abe572bdb13fb7b61dd9ce67e14e52504e97f31ef2f33ca40227fde44863645d447080be43ba3364fd82b8628f70ec4ee6ca241
   languageName: node
   linkType: hard
 
@@ -27998,6 +28031,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"properties@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "properties@npm:1.2.1"
+  checksum: c6ed008981dbe66e5d622064559166924d6bd56a0b9c4dcb41889457c47467683bda4091c69c348bf703051f95d8fa53cac4dc658172f9f752c00b8622dbc708
+  languageName: node
+  linkType: hard
+
 "property-information@npm:^5.0.0, property-information@npm:^5.3.0":
   version: 5.6.0
   resolution: "property-information@npm:5.6.0"
@@ -35812,6 +35852,7 @@ swiper@4.5.1:
     "@automattic/calypso-e2e": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/jest-circus-allure-reporter": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@babel/core": ^7.16.0
     "@types/archiver": ^5.3.1

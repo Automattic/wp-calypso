@@ -146,16 +146,23 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setIsPreviewingDesign( true );
 	}
 
-	// ********** Logic for fetching the details of a selected design with style variations
+	// ********** Logic for selecting a style variation of the selected design
 
 	const isEnabledStyleSelection =
 		selectedDesign &&
 		selectedDesign.design_type !== 'vertical' &&
+		selectedDesign.style_variations &&
+		selectedDesign.style_variations.length > 0 &&
 		isEnabled( 'signup/design-picker-style-selection' );
 
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && isEnabledStyleSelection,
 	} );
+
+	const selectedStyleVariation = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedStyleVariation()
+	);
+	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
 
 	// ********** Logic for unlocking a selected premium design
 
@@ -239,9 +246,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				);
 			}
 			setPendingAction( () =>
-				setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ).then( () =>
-					reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
-				)
+				setDesignOnSite( siteSlugOrId, _selectedDesign, {
+					styleVariation: selectedStyleVariation,
+					verticalId: siteVerticalId,
+				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 			);
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign ),
@@ -282,6 +290,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			);
 
 			setSelectedDesign( undefined );
+			setSelectedStyleVariation( undefined );
 			setIsPreviewingDesign( false );
 			return;
 		}
@@ -336,6 +345,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						title={ designTitle }
 						description={ selectedDesign.description }
 						variations={ selectedDesignDetails?.style_variations }
+						selectedVariation={ selectedStyleVariation }
+						onSelectVariation={ setSelectedStyleVariation }
 					/>
 				) : (
 					<WebPreview
@@ -362,7 +373,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		);
 
 		const pickDesignText =
-			selectedDesign?.design_type === 'vertical'
+			selectedDesign?.design_type === 'vertical' || isEnabledStyleSelection
 				? translate( 'Select and continue' )
 				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
@@ -386,7 +397,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				stepContent={ stepContent }
 				hideSkip
 				className="design-setup__preview design-setup__preview__has-more-info"
+				nextLabelText={ pickDesignText }
 				goBack={ handleBackClick }
+				goNext={ () => pickDesign() }
+				customizedActionButtons={ actionButtons }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		) : (

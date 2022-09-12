@@ -503,9 +503,9 @@ export class SiteSelector extends Component {
 					<div className="site-selector__actions">
 						{ this.props.showManageSitesButton && (
 							<Button
+								transparent
 								onClick={ this.onManageSitesClick }
 								href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
-								className="site-selector__manage-sites"
 							>
 								{ this.props.translate( 'Manage sites' ) }
 							</Button>

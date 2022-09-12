@@ -1,4 +1,4 @@
-import { Design } from '@automattic/design-picker/src/types';
+import { Design, DesignOptions } from '@automattic/design-picker/src/types';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
@@ -294,13 +294,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 	}
 
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId?: string ) {
+	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, options?: DesignOptions ) {
 		const { theme, recipe } = selectedDesign;
 
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme, dont_change_homepage: true },
+			body: {
+				theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme,
+				style_variation_slug: options?.styleVariation?.slug,
+				dont_change_homepage: true,
+			},
 			method: 'POST',
 		} );
 
@@ -315,7 +319,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			};
 
 			if ( selectedDesign.verticalizable ) {
-				themeSetupOptions.vertical_id = siteVerticalId;
+				themeSetupOptions.vertical_id = options?.verticalId;
 			}
 
 			if ( recipe?.pattern_ids ) {

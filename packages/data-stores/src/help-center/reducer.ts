@@ -70,6 +70,18 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
+const iframe: Reducer< HTMLIFrameElement | undefined | null, HelpCenterAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_IFRAME' ) {
+		return action.iframe;
+	} else if ( action.type === 'HELP_CENTER_RESET_IFRAME' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	directlyData,
 	showHelpCenter,
@@ -78,6 +90,7 @@ const reducer = combineReducers( {
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
+	iframe,
 } );
 
 export type State = ReturnType< typeof reducer >;
