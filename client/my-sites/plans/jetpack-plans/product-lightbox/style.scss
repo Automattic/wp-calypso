@@ -192,7 +192,7 @@
 
 	.multiple-choice-question__answers {
 		margin-top: 1rem;
-		margin-bottom: 1.5rem;
+		margin-bottom: 1rem;
 		display: flex;
 		flex-direction: row;
 	}
@@ -295,10 +295,25 @@
 .product-lightbox__variants-grey-label {
 	font-size: 0.75rem;
 	color: #646970;
+
+	div {
+		display: inline-block;
+	}
+
+	&.is-placeholder {
+		.product-lightbox__variants-plan-card-price {
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+
+	.display-price__billing-time-frame {
+		font-size: 0.75rem;
+		color: #646970;
+	}
 }
 
 
-@media screen and (max-width: 768px) and (orientation: portrait) {
+@media screen and ( max-width: 768px ) and ( orientation: portrait ) {
 	.product-lightbox__modal {
 		display: flex;
 		justify-content: center;
@@ -329,12 +344,11 @@
 	}
 
 	.product-lightbox__variants-options {
-		margin-top: 0;
-		margin-bottom: 1rem;
+		margin: 0;
 	}
 }
 
-@media screen and (max-height: 630px) and (orientation: landscape) {
+@media screen and ( max-height: 630px ) and ( orientation: landscape ) {
 	.product-lightbox__modal {
 		display: flex;
 		border-radius: 0;
@@ -349,7 +363,7 @@
 	}
 }
 
-@media screen and (max-height: 365px) and (orientation: landscape) {
+@media screen and ( max-height: 365px ) and ( orientation: landscape ) {
 	.product-lightbox__variants-options {
 		margin-top: 0.25rem;
 		margin-bottom: 0.5rem;

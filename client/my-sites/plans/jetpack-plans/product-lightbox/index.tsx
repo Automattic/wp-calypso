@@ -1,13 +1,16 @@
+import { JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
 import FoldableCard from 'calypso/components/foldable-card';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
-import { useStoreItemInfo } from '../product-store/hooks/use-store-item-info';
 import { ProductStoreBaseProps } from '../product-store/types';
+import slugToSelectorProduct from '../slug-to-selector-product';
 import { Duration, SelectorProduct } from '../types';
+import { PRODUCT_OPTIONS } from './constants';
 import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
 import PaymentPlan from './payment-plan';
@@ -43,24 +46,31 @@ const Benefits = () => (
 	</ul>
 );
 
-const ProductLightbox: React.FC< Props > = ( {
-	product,
-	isVisible,
-	siteId,
-	duration,
-	onClose,
-} ) => {
+const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, siteId } ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
+	const translate = useTranslate();
 
-	const [ checked, setChecked ] = useState( '10GB' );
+	const [ currentProduct, setCurrentProduct ] = useState< SelectorProduct | null >( product );
 
-	const { getCheckoutURL } = useStoreItemInfoContext();
-
+	const onChangeOption = useCallback( ( productSlug: string ) => {
+		setCurrentProduct( slugToSelectorProduct( productSlug ) );
+	}, [] );
+	const { getCheckoutURL, isMultisiteCompatible, isMultisite } = useStoreItemInfoContext();
 	const isMobile = useMobileBreakpoint();
-	const { isMultisiteCompatible, isMultisite } = useStoreItemInfo( {
-		siteId,
-		duration,
-	} );
+
+	if ( currentProduct === null ) {
+		// This shouldn't be the case. Maybe we would want to throw an error here?
+		return <></>;
+	}
+
+	const variants = JETPACK_RELATED_PRODUCTS_MAP[ currentProduct.productSlug ] || [];
+
+	const variantOptions = variants.map( ( itemSlug ) => ( {
+		id: itemSlug,
+		answerText: PRODUCT_OPTIONS[ itemSlug ],
+	} ) );
+
+	const shouldShowOptions = variants.length > 1;
 
 	const isMultiSiteIncompatible = isMultisite && ! isMultisiteCompatible( product );
 
@@ -133,23 +143,26 @@ const ProductLightbox: React.FC< Props > = ( {
 				</div>
 				<div className="product-lightbox__variants">
 					<div className="product-lightbox__variants-content">
-						<div className="product-lightbox__variants-options">
-							<MultipleChoiceQuestion
-								question="Choose a storage option:"
-								answers={ [
-									{ id: '10GB', answerText: '10GB' },
-									{ id: '1TB(1,000GB)', answerText: '1TB(1,000GB)' },
-								] }
-								selectedAnswerId={ checked }
-								onAnswerChange={ setChecked }
-								shouldShuffleAnswers={ false }
-							/>
-						</div>
-						<PaymentPlan isMultiSiteIncompatible={ isMultiSiteIncompatible } />
+						{ shouldShowOptions && (
+							<div className="product-lightbox__variants-options">
+								<MultipleChoiceQuestion
+									question={ `${ translate( 'Choose a storage option' ) }:` }
+									answers={ variantOptions }
+									selectedAnswerId={ currentProduct?.productSlug }
+									onAnswerChange={ onChangeOption }
+									shouldShuffleAnswers={ false }
+								/>
+							</div>
+						) }
+						<PaymentPlan
+							isMultiSiteIncompatible={ isMultiSiteIncompatible }
+							siteId={ siteId }
+							product={ currentProduct }
+						/>
 						<Button
 							primary
 							className="jetpack-product-card__button product-lightbox__checkout-button"
-							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
+							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( currentProduct ) }
 							disabled={ isMultiSiteIncompatible }
 						>
 							{ 'Checkout' }
