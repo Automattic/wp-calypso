@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { planHasFeature, FEATURE_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { SiteDetails } from '@automattic/data-stores/src/site';
 import { useMemo } from 'react';
-import { UseQueryOptions } from 'react-query';
 import { useThemeDesignsQuery } from './use-theme-designs-query';
 
 /**
@@ -10,7 +9,7 @@ import { useThemeDesignsQuery } from './use-theme-designs-query';
  *
  * @param site the site
  */
-export function useDesignsBySite( site: SiteDetails | null, queryOptions?: UseQueryOptions = {} ) {
+export function useDesignsBySite( site: SiteDetails | null, queryOptions = {} ) {
 	const sitePlanSlug = site?.plan?.product_slug;
 
 	const isPremiumThemeAvailable = Boolean(
