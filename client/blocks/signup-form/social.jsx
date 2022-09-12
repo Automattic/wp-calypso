@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -11,6 +12,8 @@ import { isWpccFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import SocialSignupToS from './social-signup-tos';
+
+const debug = debugFactory( 'calypso:signup:social' );
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -59,8 +62,12 @@ class SocialSignupForm extends Component {
 		} );
 
 		if ( isWpccFlow( this.props.flowName ) && this.props.redirectToAfterLoginUrl ) {
-			// Persist the redirect URL for the redirect flow so that we can redirect the user back to woocommerce.com after login. See ./client/blocks/login for more details.
-			window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectToAfterLoginUrl );
+			try {
+				// Persist the redirect URL for the redirect flow so that we can redirect the user back to woocommerce.com after login. See ./client/blocks/login for more details.
+				window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectToAfterLoginUrl );
+			} catch ( e ) {
+				debug( 'Set login_redirect_to session error', e );
+			}
 		}
 	};
 
