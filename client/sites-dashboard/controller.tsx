@@ -68,6 +68,10 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<SitesDashboard
 				queryParams={ {
+					page: context.query.page ? parseInt( context.query.page ) : undefined,
+					perPage: context.query[ 'per-page' ]
+						? parseInt( context.query[ 'per-page' ] )
+						: undefined,
 					search: context.query.search,
 					showHidden: context.query[ 'show-hidden' ] === 'true',
 					status: context.query.status,

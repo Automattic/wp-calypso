@@ -12,10 +12,15 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import Pagination from 'calypso/components/pagination';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
-import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
+import {
+	SitesDashboardQueryParams,
+	SitesContentControls,
+	handleQueryParamChange,
+} from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
 import { SitesTable } from './sites-table';
@@ -84,6 +89,12 @@ const sitesMargin = css( {
 	marginBlockEnd: '1.5em',
 } );
 
+const DashboardPagination = styled( Pagination )( {
+	color: 'var( --color-text-subtle )',
+	paddingBlockStart: '16px',
+	paddingBlockEnd: '24px',
+} );
+
 const HiddenSitesMessageContainer = styled.div( {
 	color: 'var( --color-text-subtle )',
 	fontSize: '14px',
@@ -120,7 +131,7 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 `;
 
 export function SitesDashboard( {
-	queryParams: { search, showHidden, status = 'all' },
+	queryParams: { page = 1, perPage = 96, search, showHidden, status = 'all' },
 }: SitesDashboardProps ) {
 	const { __, _n } = useI18n();
 
@@ -136,6 +147,8 @@ export function SitesDashboard( {
 		showHidden: search ? true : showHidden,
 		status,
 	} );
+
+	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
 
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
@@ -177,20 +190,30 @@ export function SitesDashboard( {
 							onDisplayModeChange={ setDisplayMode }
 						/>
 					) }
-					{ filteredSites.length > 0 || isLoading ? (
+					{ paginatedSites.length > 0 || isLoading ? (
 						<>
 							{ displayMode === 'list' && (
 								<SitesTable
 									isLoading={ isLoading }
-									sites={ filteredSites }
+									sites={ paginatedSites }
 									className={ sitesMargin }
 								/>
 							) }
 							{ displayMode === 'tile' && (
 								<SitesGrid
 									isLoading={ isLoading }
-									sites={ filteredSites }
+									sites={ paginatedSites }
 									className={ sitesMargin }
+								/>
+							) }
+							{ ( displayMode === 'list' || displayMode === 'tile' ) && (
+								<DashboardPagination
+									page={ page }
+									perPage={ perPage }
+									total={ filteredSites.length }
+									pageClick={ ( newPage ) => {
+										handleQueryParamChange( 'page', newPage );
+									} }
 								/>
 							) }
 							{ selectedStatus.hiddenCount > 0 && 'none' !== displayMode && (

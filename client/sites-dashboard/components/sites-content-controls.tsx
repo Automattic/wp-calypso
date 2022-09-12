@@ -11,6 +11,8 @@ import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 
 export interface SitesDashboardQueryParams {
+	page?: number;
+	perPage?: number;
 	search?: string;
 	showHidden?: boolean;
 	status: FilterableSiteLaunchStatuses;
