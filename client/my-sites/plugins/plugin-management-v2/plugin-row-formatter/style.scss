@@ -140,6 +140,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 		text-align: right;
 		width: 100%;
 		display: inline-block;
+		white-space: pre;
 	}
 
 	// Cut off the "Updated on" part when there's no enough space.
