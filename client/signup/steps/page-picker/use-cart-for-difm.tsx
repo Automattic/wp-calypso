@@ -266,7 +266,7 @@ export function useCartForDIFM( selectedPages: string[] ): {
 
 	const debouncedReplaceProductsInCart = useMemo(
 		() =>
-			debounce( async ( products ) => {
+			debounce( async ( products: MinimalRequestCartProduct[] ) => {
 				await replaceProductsInCart( products );
 				// Switch off loading feedback once basket is properly updated
 				setIsCartUpdateStarted( false );
