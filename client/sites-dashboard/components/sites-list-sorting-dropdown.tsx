@@ -65,10 +65,10 @@ export const SitesListSortingDropdown = ( {
 
 		switch ( sitesListSorting ) {
 			case `alphabetically${ SEPARATOR }asc`:
-				return __( 'Sorting: alphabetically' );
+				return __( 'Sorted alphabetically' );
 
 			case `updatedAt${ SEPARATOR }desc`:
-				return __( 'Sorting: last publish date' );
+				return __( 'Sorted by last published' );
 
 			default:
 				throw new Error( `invalid sort value ${ sitesListSorting }` );
