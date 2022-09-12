@@ -71,7 +71,7 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 
 	test( 'should not render features if is placeholder', () => {
 		const { container } = render(
-			<ProductPurchaseFeaturesList { ...props } isPlaceholder={ true } />
+			<ProductPurchaseFeaturesList { ...props } isPlaceholder />
 		);
 		expect( container.firstChild ).toBeEmptyDOMElement();
 	} );
