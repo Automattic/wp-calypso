@@ -113,7 +113,7 @@ const SearchBoxHeader = ( props ) => {
 
 	return (
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
-			<div className="search-box-header__header">{ title }</div>
+			<h1 className="search-box-header__header">{ title }</h1>
 			<div className="search-box-header__search">
 				<SearchBox
 					searchTerm={ searchTerm }
