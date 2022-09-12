@@ -137,7 +137,7 @@ const NewMailBoxList = (
 			setFieldsVisibilities( mailboxes, hiddenFieldNames );
 			return [ ...mailboxes ];
 		} );
-	}, [ ...hiddenFieldNames ] );
+	}, [ hiddenFieldNames ] );
 
 	const addMailbox = () => {
 		const newMailboxes = [ ...mailboxes, createNewMailbox() ];
