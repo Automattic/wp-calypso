@@ -10,13 +10,17 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const recordAddNewSite = useCallback( () => {
-		const event = isJetpackCloud()
-			? 'calypso_add_new_jetpack_click'
-			: 'calypso_add_new_wordpress_click';
+	const recordAddNewSite = useCallback(
+		( e ) => {
+			e.stopPropagation();
+			const event = isJetpackCloud()
+				? 'calypso_add_new_jetpack_click'
+				: 'calypso_add_new_wordpress_click';
 
-		dispatch( recordTracksEvent( event ) );
-	}, [ dispatch ] );
+			dispatch( recordTracksEvent( event ) );
+		},
+		[ dispatch ]
+	);
 
 	return (
 		<Button
