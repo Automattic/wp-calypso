@@ -98,7 +98,7 @@ interface IBaseMailboxFormFields {
 interface IGoogleMailboxFormFields extends IBaseMailboxFormFields {
 	firstName?: TextMailboxFormField;
 	lastName?: TextMailboxFormField;
-	passwordResetEmail?: TextMailboxFormField;
+	recoveryEmail?: TextMailboxFormField;
 }
 
 interface ITitanMailboxFormFields extends IBaseMailboxFormFields {
@@ -121,7 +121,7 @@ abstract class MailboxFormFields implements IBaseMailboxFormFields {
 class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailboxFormFields {
 	firstName? = new TextMailboxFormField( FIELD_FIRSTNAME );
 	lastName? = new TextMailboxFormField( FIELD_LASTNAME );
-	passwordResetEmail? = new TextMailboxFormField( FIELD_RECOVERY_EMAIL );
+	recoveryEmail? = new TextMailboxFormField( FIELD_RECOVERY_EMAIL );
 }
 
 class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {

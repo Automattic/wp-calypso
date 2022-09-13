@@ -27,7 +27,7 @@ export interface GSuiteProductUser {
 	lastname: string;
 	email: string;
 	password: string;
-	passwordResetEmail?: string;
+	recoveryEmail?: string;
 }
 
 /**

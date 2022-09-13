@@ -10,7 +10,7 @@ export const FIELD_IS_ADMIN = 'isAdmin';
 export const FIELD_MAILBOX = 'mailbox';
 export const FIELD_NAME = 'name';
 export const FIELD_PASSWORD = 'password';
-export const FIELD_RECOVERY_EMAIL = 'passwordResetEmail';
+export const FIELD_RECOVERY_EMAIL = 'recoveryEmail';
 export const FIELD_UUID = 'uuid';
 
 export type TitanMailboxFields = {

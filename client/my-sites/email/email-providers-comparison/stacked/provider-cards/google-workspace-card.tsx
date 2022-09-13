@@ -94,7 +94,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 		FIELD_RECOVERY_EMAIL,
 	] );
 
-	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
+	const showRecoveryEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
 		setHiddenFieldNames( [] );
 	};
@@ -139,7 +139,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 			{ ...getUpsellProps( { isDomainInCart, siteSlug } ) }
 		>
 			{ hiddenFieldNames.includes( FIELD_RECOVERY_EMAIL ) && (
-				<PasswordResetTipField tipClickHandler={ showPasswordResetEmailField } />
+				<PasswordResetTipField tipClickHandler={ showRecoveryEmailField } />
 			) }
 		</NewMailBoxList>
 	);

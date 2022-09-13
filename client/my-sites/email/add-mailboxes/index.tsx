@@ -323,7 +323,7 @@ const MailboxesForm = ( {
 			} );
 	};
 
-	const recoveryOrPasswordResetEmailDefaultValue = isTitan( provider )
+	const alternativeOrRecoveryEmailDefaultValue = isTitan( provider )
 		? {
 				[ FIELD_ALTERNATIVE_EMAIL ]: isAlternateOrRecoveryEmailValid ? userEmail : '',
 		  }
@@ -339,7 +339,7 @@ const MailboxesForm = ( {
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
 					hiddenFieldNames={ hiddenFieldNames }
-					initialFieldValues={ recoveryOrPasswordResetEmailDefaultValue }
+					initialFieldValues={ alternativeOrRecoveryEmailDefaultValue }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }

@@ -116,10 +116,10 @@ const GoogleFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 
 			{ renderUserFormFields( { ...props, isRtl } ) }
 
-			{ googleFormFields.passwordResetEmail && (
+			{ googleFormFields.recoveryEmail && (
 				<MailboxField
 					{ ...getCommonFieldProps(
-						googleFormFields.passwordResetEmail,
+						googleFormFields.recoveryEmail,
 						onFieldValueChanged,
 						mailbox
 					) }
