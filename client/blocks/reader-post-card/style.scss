@@ -1,12 +1,13 @@
 // Adds a top border to first card in the Site Stream
 .is-reader-page .is-site-stream .reader-post-card.card:nth-child(2) {
-	border-top: 1px solid var(--color-neutral-10);
+	border-top: 1px solid var( --color-neutral-10 );
 }
 
 .reader-post-options-menu__ellipsis-menu {
 	.ellipsis-menu__toggle {
 		padding: 0;
 		height: 24px;
+
 		.ellipsis-menu__toggle-icon {
 			top: -1px;
 		}
@@ -47,21 +48,11 @@
 
 	&.has-thumbnail {
 		.reader-featured-image {
-			flex-basis: auto;
-			flex-grow: 1;
-			margin-right: 20px;
-			max-width: 190px;
 			box-sizing: border-box;
+		}
 
-			@include breakpoint-deprecated( ">960px" ) {
-				max-width: 250px;
-			}
-
-			@include breakpoint-deprecated( "<480px" ) {
-				height: 100px;
-				margin: 0 0 15px;
-				max-width: 100%;
-			}
+		.reader-post-card__post-details {
+			margin-top: 15px;
 		}
 
 		&.is-photo {
@@ -188,7 +179,6 @@
 			height: auto;
 			margin-bottom: 0;
 			margin-right: 15px;
-			max-width: 100px;
 			min-width: 100px;
 		}
 
@@ -226,7 +216,7 @@
 	cursor: pointer;
 	position: relative;
 	top: 0;
-	height: 225px;
+	height: 300px;
 	margin-right: 0;
 	margin-bottom: 0;
 	max-width: 100%;
@@ -404,15 +394,10 @@
 .reader-post-card__post {
 	clear: both;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	margin-top: 14px;
 
-	@include breakpoint-deprecated( "<480px" ) {
-		flex-direction: column;
-	}
-
 	.reader-post-card__post-details {
-		flex: 1 auto;
 		width: 100%;
 	}
 }
@@ -586,22 +571,28 @@
 	display: flex;
 	margin: 0 0 17px;
 	padding: 0;
+	position: relative;
 }
 
 .reader-post-card__gallery-item {
 	border: 1px solid var(--color-neutral-0);
 	cursor: pointer;
 	flex: 1;
+	height: auto;
 	list-style-type: none;
+	opacity: 1;
+	position: relative;
+	transition: opacity 1s ease-out;
+	width: auto;
 
 	&:last-child {
 		margin-right: 0;
 	}
 
-	&:nth-last-of-type(-n + 2) {
-		@include breakpoint-deprecated( "<480px" ) {
-			display: none;
-		}
+	&.hide {
+		display: block;
+		opacity: 0;
+		position: absolute;
 	}
 }
 
@@ -610,10 +601,27 @@
 }
 
 .reader-post-card__gallery-image {
-	height: 100px;
+	height: 300px;
+}
 
-	@include breakpoint-deprecated( ">960px" ) {
-		height: 130px;
+.reader-post-card__gallery-circles {
+	width: 100%;
+	justify-content: center;
+	display: flex;
+}
+
+.reader-post-card__gallery-circle {
+	border-radius: 50%;
+	width: 5px;
+	height: 5px;
+	background: var( --color-neutral-30 );
+	border: 0;
+	position: relative;
+	float: left;
+	margin-right: 5px;
+
+	&.is-selected {
+		background: var( --color-neutral-70 );
 	}
 }
 
@@ -635,4 +643,26 @@
 // For these borderless cards to look more presentable on Devdocs
 .is-section-devdocs .reader-post-card.card {
 	padding: 16px;
+}
+
+.reader-post-card__featured-images {
+	display: flex;
+	flex-wrap: wrap;
+	padding: 0;
+	margin: 0;
+	flex-direction: row;
+
+	&.column {
+		flex-direction: column;
+	}
+}
+
+.reader-post-card__featured-images-item {
+	padding: 0;
+	cursor: pointer;
+	list-style-type: none;
+}
+
+.reader-post-card__featured-images-img {
+	vertical-align: middle;
 }

@@ -8,6 +8,7 @@ const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 	return (
 		<div className="reader-post-card__post" onClick={ onClick }>
 			<FeaturedAsset
+				post={ post }
 				canonicalMedia={ post.canonical_media }
 				postUrl={ post.URL }
 				allowVideoPlaying={ false }
