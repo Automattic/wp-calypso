@@ -30,7 +30,7 @@ import PremiumBadge from './premium-badge';
 import StyleVariationBadges from './style-variation-badges';
 import ThemePreview from './theme-preview';
 import type { Categorization } from '../hooks/use-categorization';
-import type { Design } from '../types';
+import type { Design, StyleVariation } from '../types';
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -68,7 +68,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 interface DesignButtonProps {
 	design: Design;
 	locale: string;
-	onSelect: ( design: Design ) => void;
+	onSelect: ( design: Design, variation?: StyleVariation ) => void;
 	highRes: boolean;
 	disabled?: boolean;
 	hideFullScreenPreview?: boolean;
@@ -206,7 +206,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						) }
 						{ isEnableThemeStyleVariations && style_variations.length > 0 && (
 							<div className="design-picker__options-style-variations">
-								<StyleVariationBadges variations={ style_variations } />
+								<StyleVariationBadges
+									variations={ style_variations }
+									onClick={ ( variation ) => onSelect( design, variation ) }
+								/>
 							</div>
 						) }
 					</span>
@@ -268,7 +271,7 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 interface DesignButtonContainerProps extends DesignButtonProps {
 	isPremiumThemeAvailable?: boolean;
 	hasPurchasedTheme?: boolean;
-	onPreview?: ( design: Design ) => void;
+	onPreview?: ( design: Design, variation?: StyleVariation ) => void;
 	onUpgrade?: () => void;
 	previewOnly?: boolean;
 }
@@ -340,7 +343,7 @@ export interface UnifiedDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
-	onPreview: ( design: Design ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onUpgrade?: () => void;
 	generatedDesigns: Design[];
 	staticDesigns: Design[];
@@ -357,7 +360,7 @@ interface StaticDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
-	onPreview: ( design: Design ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onUpgrade?: () => void;
 	designs: Design[];
 	categorization?: Categorization;
