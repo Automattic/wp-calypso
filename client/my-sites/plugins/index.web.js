@@ -90,7 +90,7 @@ export default function ( router ) {
 	);
 
 	router(
-		`/${ langParam }/plugins/plans/:site`,
+		'/plugins/plans/:site',
 		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
