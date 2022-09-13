@@ -160,6 +160,8 @@ export function SitesDashboard( {
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 
+	const userPreferencesLoaded = 'none' !== sitesListSorting && 'none' !== displayMode;
+
 	const elementRef = useRef( window );
 
 	const isBelowThreshold = useCallback( ( containerNode: Window ) => {
@@ -198,63 +200,68 @@ export function SitesDashboard( {
 							onSitesListSortingChange={ onSitesListSortingChange }
 						/>
 					) }
-					{ paginatedSites.length > 0 || isLoading ? (
+					{ userPreferencesLoaded && (
 						<>
-							{ displayMode === 'list' && (
-								<SitesTable
-									isLoading={ isLoading }
-									sites={ paginatedSites }
-									className={ sitesMargin }
-								/>
-							) }
-							{ displayMode === 'tile' && (
-								<SitesGrid
-									isLoading={ isLoading }
-									sites={ paginatedSites }
-									className={ sitesMargin }
-								/>
-							) }
-							{ ( selectedStatus.hiddenCount > 0 || filteredSites.length > perPage ) &&
-								'none' !== displayMode && (
-									<PageBodyBottomContainer>
-										<Pagination
-											page={ page }
-											perPage={ perPage }
-											total={ filteredSites.length }
-											pageClick={ ( newPage: number ) => {
-												handleQueryParamChange( { page: newPage } );
-											} }
+							{ paginatedSites.length > 0 || isLoading ? (
+								<>
+									{ displayMode === 'list' && (
+										<SitesTable
+											isLoading={ isLoading }
+											sites={ paginatedSites }
+											className={ sitesMargin }
 										/>
-										{ selectedStatus.hiddenCount > 0 && (
-											<HiddenSitesMessageContainer>
-												<HiddenSitesMessage>
-													{ sprintf(
-														/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
-														_n(
-															'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
-															'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
-															selectedStatus.hiddenCount
-														),
-														{
-															hiddenSitesCount: selectedStatus.hiddenCount,
-														}
-													) }
-												</HiddenSitesMessage>
-												<Button
-													href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }
-												>
-													{ __( 'Show all' ) }
-												</Button>
-											</HiddenSitesMessageContainer>
-										) }
-									</PageBodyBottomContainer>
-								) }
+									) }
+									{ displayMode === 'tile' && (
+										<SitesGrid
+											isLoading={ isLoading }
+											sites={ paginatedSites }
+											className={ sitesMargin }
+										/>
+									) }
+									{ ( selectedStatus.hiddenCount > 0 || filteredSites.length > perPage ) && (
+										<PageBodyBottomContainer>
+											<Pagination
+												page={ page }
+												perPage={ perPage }
+												total={ filteredSites.length }
+												pageClick={ ( newPage: number ) => {
+													handleQueryParamChange( { page: newPage } );
+												} }
+											/>
+											{ selectedStatus.hiddenCount > 0 && (
+												<HiddenSitesMessageContainer>
+													<HiddenSitesMessage>
+														{ sprintf(
+															/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
+															_n(
+																'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
+																'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
+																selectedStatus.hiddenCount
+															),
+															{
+																hiddenSitesCount: selectedStatus.hiddenCount,
+															}
+														) }
+													</HiddenSitesMessage>
+													<Button
+														href={ addQueryArgs( window.location.href, {
+															'show-hidden': 'true',
+														} ) }
+													>
+														{ __( 'Show all' ) }
+													</Button>
+												</HiddenSitesMessageContainer>
+											) }
+										</PageBodyBottomContainer>
+									) }
+								</>
+							) : (
+								<NoSitesMessage
+									status={ selectedStatus.name }
+									statusSiteCount={ selectedStatus.count }
+								/>
+							) }
 						</>
-					) : (
-						<NoSitesMessage
-							status={ selectedStatus.name }
-							statusSiteCount={ selectedStatus.count }
-						/>
 					) }
 				</>
 			</PageBodyWrapper>
