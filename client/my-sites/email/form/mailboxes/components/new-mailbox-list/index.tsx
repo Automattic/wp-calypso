@@ -17,7 +17,7 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
-	FIELD_PASSWORD_RESET_EMAIL,
+	FIELD_RECOVERY_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	EmailProvider,
@@ -40,7 +40,7 @@ const possibleHiddenFieldNames: HiddenFieldNames[] = [
 	FIELD_LASTNAME,
 	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_IS_ADMIN,
-	FIELD_PASSWORD_RESET_EMAIL,
+	FIELD_RECOVERY_EMAIL,
 ];
 
 const setFieldsVisibilities = (

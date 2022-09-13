@@ -11,7 +11,7 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
-	FIELD_PASSWORD_RESET_EMAIL,
+	FIELD_RECOVERY_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import {
@@ -90,7 +90,7 @@ const createTestDataForGoogle = ( overrides: GoogleTestDataType = {} ): GoogleTe
 			[ FIELD_LASTNAME ]: 'Last',
 			[ FIELD_MAILBOX ]: 'info',
 			[ FIELD_PASSWORD ]: 'some@password',
-			[ FIELD_PASSWORD_RESET_EMAIL ]: 'recovery@email-test.com',
+			[ FIELD_RECOVERY_EMAIL ]: 'recovery@email-test.com',
 		},
 		...overrides,
 	};
@@ -118,14 +118,14 @@ const finalTestDataForAllCases = [
 	),
 	provideGoogleTestData(
 		'Empty value for the recovery email field should fail validation',
-		createTestDataForGoogle( { [ FIELD_PASSWORD_RESET_EMAIL ]: null } ),
-		{ [ FIELD_PASSWORD_RESET_EMAIL ]: RequiredValidator.getRequiredFieldError() }
+		createTestDataForGoogle( { [ FIELD_RECOVERY_EMAIL ]: null } ),
+		{ [ FIELD_RECOVERY_EMAIL ]: RequiredValidator.getRequiredFieldError() }
 	),
 	provideGoogleTestData(
 		'Alternative email on the same domain should fail validation',
-		createTestDataForGoogle( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@example.com' } ),
+		createTestDataForGoogle( { [ FIELD_RECOVERY_EMAIL ]: 'email@example.com' } ),
 		{
-			[ FIELD_PASSWORD_RESET_EMAIL ]: AlternateEmailValidator.getSameDomainError( 'example.com' ),
+			[ FIELD_RECOVERY_EMAIL ]: AlternateEmailValidator.getSameDomainError( 'example.com' ),
 		}
 	),
 	provideTitanTestData(
