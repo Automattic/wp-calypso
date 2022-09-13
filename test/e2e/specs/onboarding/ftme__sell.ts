@@ -164,7 +164,11 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 			startSiteFlow = new StartSiteFlow( page );
 		} );
 
-		it( 'Continue with simple option', async function () {
+		// This step is only applicable if the flag themes/plugin-bundling
+		// is false.
+		// When the flag is turned on for all environments, delete this.
+		// -mreishus 2022-09-13
+		it.skip( 'Continue with simple option', async function () {
 			await page.waitForURL( /.*setup\/storeFeatures.*/ );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
