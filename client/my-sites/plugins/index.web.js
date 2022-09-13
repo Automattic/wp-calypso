@@ -5,12 +5,7 @@ import {
 	redirectWithoutLocaleParamIfLoggedIn,
 	render as clientRender,
 } from 'calypso/controller';
-import {
-	navigation,
-	siteSelection,
-	sites,
-	selectSiteIfLoggedIn,
-} from 'calypso/my-sites/controller';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	browsePlugins,
 	browsePluginsOrPlugin,
@@ -95,9 +90,8 @@ export default function ( router ) {
 	);
 
 	router(
-		`/${ langParam }/plugins/plans/:site?`,
+		`/${ langParam }/plugins/plans/:site`,
 		redirectLoggedOut,
-		selectSiteIfLoggedIn,
 		scrollTopIfNoHash,
 		siteSelection,
 		navigation,
