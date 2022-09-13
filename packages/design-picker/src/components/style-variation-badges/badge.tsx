@@ -29,8 +29,10 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 			tabIndex={ 0 }
 			role="button"
 			aria-label={
-				// translators: %(title)s - the style variation title.
-				sprintf( __( 'Style: %(title)s' ), { title: variation.title } )
+				variation.title
+					? // translators: %(title)s - the style variation title.
+					  sprintf( __( 'Style: %(title)s' ), { title: variation.title } )
+					: __( 'Preview with this style' )
 			}
 			onClick={ ( e ) => {
 				// Prevent the event from bubbling to the the parent button.
