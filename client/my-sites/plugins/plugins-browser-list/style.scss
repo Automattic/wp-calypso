@@ -1,6 +1,5 @@
 .plugins-browser-list {
 	margin-bottom: 16px;
-	margin-top: 32px;
 
 	.feature-example & {
 		margin: 0;
@@ -32,6 +31,7 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 
+	padding-top: 32px;
 	.plugins-browser-list__titles {
 		padding-bottom: 10px;
 
