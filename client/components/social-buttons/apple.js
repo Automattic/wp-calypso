@@ -88,6 +88,7 @@ class AppleLoginButton extends Component {
 			redirectURI: this.props.redirectUri,
 			state: JSON.stringify( {
 				oauth2State,
+				originalUrlPath: window.location.pathname,
 				// Attach the query string to the state so we can pass it back to the server to show the correct UI.
 				// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
 				queryString: window.location.search,
