@@ -193,7 +193,7 @@ export function SitesDashboard( {
 					>
 						<PopoverMenuItem href="/jetpack/connect">
 							<JetpackLogo className="gridicon" size={ 18 } />
-							<span>{ __( 'Connect Jetpack site' ) }</span>
+							<span>{ __( 'Connect a Jetpack site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
 				</HeaderControls>
