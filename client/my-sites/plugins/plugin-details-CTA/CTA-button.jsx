@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
@@ -156,6 +157,9 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						return setShowAddCustomDomain( true );
 					}
 					if ( hasEligibilityMessages ) {
+						if ( isEnabled( 'marketplace-plans-page' ) ) {
+							return page( `/plugins/plans/${ selectedSite?.slug }` );
+						}
 						return setShowEligibility( true );
 					}
 					onClickInstallPlugin( {
