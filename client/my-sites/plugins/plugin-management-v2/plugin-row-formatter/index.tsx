@@ -1,4 +1,5 @@
-import { Gridicon, Button } from '@automattic/components';
+import { Button } from '@automattic/components';
+import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, ReactChild } from 'react';
 import { useSelector } from 'react-redux';
@@ -130,7 +131,11 @@ export default function PluginRowFormatter( {
 								alt={ item.name }
 							/>
 						) : (
-							<Gridicon className="plugin-row-formatter__plugin-icon has-opacity" icon="plugins" />
+							<Icon
+								size={ 32 }
+								icon={ plugins }
+								className="plugin-row-formatter__plugin-icon plugin-default-icon"
+							/>
 						) }
 						<div className="plugin-row-formatter__plugin-name-container">
 							<PluginDetailsButton className="plugin-row-formatter__plugin-name">
