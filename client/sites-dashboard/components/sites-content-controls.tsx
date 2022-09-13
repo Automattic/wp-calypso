@@ -121,7 +121,7 @@ export const SitesContentControls = ( {
 		<FilterBar>
 			<SitesSearch
 				searchIcon={ <SitesSearchIcon /> }
-				onSearch={ ( term ) => handleQueryParamChange( { search: term?.trim(), page: null } ) }
+				onSearch={ ( term ) => handleQueryParamChange( { search: term?.trim(), page: undefined } ) }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
@@ -135,7 +135,10 @@ export const SitesContentControls = ( {
 							selected={ name === selectedStatus.name }
 							count={ count }
 							onClick={ () =>
-								handleQueryParamChange( { status: 'all' !== name ? name : '', page: null } )
+								handleQueryParamChange( {
+									status: 'all' !== name ? name : undefined,
+									page: undefined,
+								} )
 							}
 						>
 							{ title }
