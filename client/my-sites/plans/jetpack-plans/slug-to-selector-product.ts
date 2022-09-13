@@ -24,6 +24,9 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
+	getJetpackProductWhatIsIncluded,
+	getJetpackProductBenefits,
+	getJetpackProductRecommendedFor,
 } from '@automattic/calypso-products';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
@@ -159,6 +162,9 @@ function itemToSelectorProduct(
 			shortDescription: getJetpackProductShortDescription( item ),
 			featuredDescription: getFeaturedProductText( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
+			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
+			benefits: getJetpackProductBenefits( item ),
+			recommendedFor: getJetpackProductRecommendedFor( item ),
 			monthlyProductSlug,
 			term: item.term,
 			categories: item.categories,
@@ -194,6 +200,13 @@ function itemToSelectorProduct(
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
 			featuredDescription: getFeaturedPlanText( item, productSlug ),
+			whatIsIncluded: item.getWhatIsIncluded
+				? getForCurrentCROIteration( item.getWhatIsIncluded )
+				: [],
+			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
+			recommendedFor: item.getRecommendedFor
+				? getForCurrentCROIteration( item.getRecommendedFor )
+				: [],
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {

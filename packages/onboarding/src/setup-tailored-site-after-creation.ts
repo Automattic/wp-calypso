@@ -44,6 +44,7 @@ interface SetupOnboardingSiteOptions {
 export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSiteOptions ) {
 	const { getState, getPatternContent } = select( ONBOARD_STORE );
 	const state = getState();
+	const { resetOnboardStore } = dispatch( ONBOARD_STORE );
 	const { saveSiteSettings, setIntentOnSite, setStaticHomepageOnSite } = dispatch( SITE_STORE );
 	const selectedPatternContent = getPatternContent();
 
@@ -109,6 +110,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 				has_site_title: !! state.siteTitle,
 				has_tagline: !! state.siteDescription,
 			} );
+			resetOnboardStore();
 		} );
 	}
 }

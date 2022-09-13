@@ -122,6 +122,9 @@ export interface SelectorProduct extends SelectorProductCost {
 	belowPriceText?: TranslateResult;
 	categories?: JetpackProductCategory[];
 	featuredDescription?: TranslateResult | string;
+	whatIsIncluded?: Array< TranslateResult >;
+	benefits?: Array< TranslateResult >;
+	recommendedFor?: Array< TranslateResult >;
 }
 
 export type SiteProduct = {

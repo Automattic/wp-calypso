@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import SidebarCustomIcon from 'calypso/layout/sidebar/custom-icon';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import { toggleMySitesSidebarSection as toggleSection } from 'calypso/state/my-sites/sidebar/actions';
 import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
 import MySitesSidebarUnifiedItem from './item';
@@ -41,6 +42,8 @@ export const MySitesSidebarUnifiedMenu = ( {
 	const showAsExpanded =
 		( isMobile && ( childIsSelected || isExpanded ) ) || // For mobile breakpoints, we dont' care about the sidebar collapsed status.
 		( isDesktop && childIsSelected && ! sidebarCollapsed ); // For desktop breakpoints, a child should be selected and the sidebar being expanded.
+
+	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const onClick = ( event ) => {
 		// Block the navigation on mobile viewports and just toggle the section,
@@ -76,6 +79,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				{ ...props }
 			>
 				{ children.map( ( item ) => {
+					if ( ! shouldShowAdvertisingOption && item.title === 'Advertising' ) return;
 					const isSelected = selectedMenuItem?.url === item.url;
 					return (
 						<MySitesSidebarUnifiedItem

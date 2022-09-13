@@ -495,6 +495,276 @@ export const getJetpackProductsFeaturedText = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialFeaturedText,
 	};
 };
+
+export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< TranslateResult > > => {
+	const realTimeBackup = translate( 'Real-time backups as you edit' );
+
+	const orderBackups = translate( 'WooCommerce order and table backups' );
+	const cloudBackups = translate( 'Redundant cloud backups on our global network' );
+	const prioritySupport = translate( 'Priority support' );
+
+	const backupIncludesInfoT1Storage = translate( '10GB of cloud storage' );
+	const backupIncludesInfoT2Storage = translate( '1TB (1,000GB) of cloud storage' );
+
+	const backupIncludesInfoMonthlyLog = translate( '30-day activity log archive' );
+	const backupIncludesInfoYearlyLog = translate( '1 year activity log archive' );
+
+	const oneClickRestoreMonthly = translate( 'Unlimited one-click restores from the last 30 days' );
+	const oneClickRestoreYearly = translate( 'Unlimited one-click restores from the last 1 year' );
+
+	const otherIncludes = [ orderBackups, cloudBackups, prioritySupport ];
+	const backupIncludesInfoT1Monthly = [
+		realTimeBackup,
+		backupIncludesInfoT1Storage,
+		backupIncludesInfoMonthlyLog,
+		oneClickRestoreMonthly,
+		...otherIncludes,
+	];
+	const backupIncludesInfoT1Yearly = [
+		realTimeBackup,
+		backupIncludesInfoT1Storage,
+		backupIncludesInfoYearlyLog,
+		oneClickRestoreYearly,
+		...otherIncludes,
+	];
+	const backupIncludesInfoT2Monthly = [
+		realTimeBackup,
+		backupIncludesInfoT2Storage,
+		backupIncludesInfoMonthlyLog,
+		...otherIncludes,
+	];
+	const backupIncludesInfoT2Yearly = [
+		realTimeBackup,
+		backupIncludesInfoT1Storage,
+		backupIncludesInfoMonthlyLog,
+		...otherIncludes,
+	];
+
+	const videoPressIncludesInfo = [
+		translate( '1TB of cloud-hosted video' ),
+		translate( 'Customizable video player' ),
+		translate( 'Fast-motion video with 60 FPS and 4K resolution' ),
+		translate( 'Global CDN' ),
+		translate( 'Powerful and reliable hosting infrastructure' ),
+		translate( 'Video and story blocks' ),
+		translate( 'Unlimited logins for team members' ),
+	];
+	const antiSpamIncludesInfo = [
+		translate( 'Comment and form spam protection' ),
+		translate( '10K API calls per month' ),
+		translate( 'Akismet technology - 500B+ spam comments blocked to date' ),
+		translate( 'Flexible API that works with any type of site' ),
+	];
+	const scanIncludesInfo = [
+		translate( 'Automated daily scanning' ),
+		translate( 'One-click fixes for most issues' ),
+		translate( 'Instant email threat notifications' ),
+		translate( 'Priority support' ),
+	];
+	const searchIncludesInfo = [
+		translate( 'Instant search, filtering, and indexing' ),
+		translate( 'Highly relevant search results' ),
+		translate( 'Support for 29 languages' ),
+		translate( 'Quick and accurate spelling correction' ),
+	];
+	const boostIncludesInfo = [
+		translate( 'Site performance scores' ),
+		translate( 'One-click optimization' ),
+		translate( 'Defer non-essential JavaScript' ),
+		translate( 'Optimize CSS loading' ),
+		translate( 'Lazy image loading' ),
+		translate( 'Automated critical CSS (Paid feature)' ),
+	];
+	const socialIncludesInfo = [
+		translate( 'Automatically share your posts and products on social media' ),
+		translate( 'Post to multiple channels at once' ),
+		translate( 'Manage all of your channels from a single hub' ),
+		translate( 'Scheduled posts' ),
+		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+	];
+
+	return {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1Monthly,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupIncludesInfoT1Monthly,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupIncludesInfoT1Yearly,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupIncludesInfoT1Monthly,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupIncludesInfoT1Yearly,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupIncludesInfoT1Monthly,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupIncludesInfoT2Yearly,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupIncludesInfoT2Monthly,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressIncludesInfo,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressIncludesInfo,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamIncludesInfo,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamIncludesInfo,
+		[ PRODUCT_JETPACK_SCAN ]: scanIncludesInfo,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanIncludesInfo,
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanIncludesInfo,
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanIncludesInfo,
+		[ PRODUCT_JETPACK_SEARCH ]: searchIncludesInfo,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchIncludesInfo,
+		[ PRODUCT_JETPACK_BOOST ]: boostIncludesInfo,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialIncludesInfo,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialIncludesInfo,
+	};
+};
+
+export const getJetpackProductsBenefits = (): Record< string, Array< TranslateResult > > => {
+	const backupBenefits = [
+		translate( 'Protect your revenue stream and content' ),
+		translate( 'Restore your site in one click from desktop or mobile' ),
+		translate( 'Restore or clone offline sites' ),
+		translate( 'Fix your site without a developer' ),
+		translate( 'Protect Woo order and customer data' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	];
+
+	const scanBenefits = [
+		translate( 'Protect your revenue stream and content' ),
+		translate( 'Learn about issues before your customers are impacted' ),
+		translate( 'Fix most issues in one click from desktop or mobile' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	];
+	const antiSpamBenefits = [
+		translate( 'Set up in minutes without a developer' ),
+		translate( 'Save time manually reviewing spam' ),
+		translate( 'Increase engagement by removing CAPTCHAs' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	];
+	const videoPressBenefits = [
+		translate( 'Increase engagement and get your message across' ),
+		translate( 'Drag and drop videos through the WordPress editor' ),
+		translate( 'Manage videos in the WordPress media library' ),
+		translate( 'Remove distracting ads' ),
+		translate( 'Customizable colors to fit your brand and site' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	];
+
+	const searchBenefits = [
+		translate( "Customizable to fit your site's design" ),
+		translate( 'Increase conversion with accurate search results' ),
+		translate( 'Tiered pricing - pay for only what you need' ),
+		translate( 'No developer required' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	];
+
+	const boostBenefits = [
+		translate( 'Quickly test and improve your site speed' ),
+		translate( "Improve your site's SEO" ),
+		translate( 'Get faster FCP and LCP' ),
+		translate( 'No developer required' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	];
+
+	const socialBenefits = [
+		translate( 'Save time by sharing your posts automatically' ),
+		translate( 'Unlock your growth potential by building a following on social' ),
+		translate( 'Easy-to-use interface' ),
+		translate( 'No developer required' ),
+	];
+
+	return {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupBenefits,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressBenefits,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressBenefits,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamBenefits,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamBenefits,
+		[ PRODUCT_JETPACK_SCAN ]: scanBenefits,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanBenefits,
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanBenefits,
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanBenefits,
+		[ PRODUCT_JETPACK_SEARCH ]: searchBenefits,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchBenefits,
+		[ PRODUCT_JETPACK_BOOST ]: boostBenefits,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialBenefits,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
+	};
+};
+
+export const getJetpackProductsRecommendedFor = (): Record< string, Array< TranslateResult > > => {
+	const wooCommerceStores = translate( 'WooCommerce stores' );
+	const newsOrganizations = translate( 'News organizations' );
+	const membershipSites = translate( 'Membership sites' );
+	const onlineForums = translate( 'Online forums' );
+	const blogs = translate( 'Blogs' );
+	const videographers = translate( 'Videographers' );
+	const educators = translate( 'Educators' );
+	const bloggers = translate( 'Bloggers' );
+	const allSites = translate( 'All sites' );
+
+	const backupRecommendedFor = [
+		wooCommerceStores,
+		newsOrganizations,
+		membershipSites,
+		onlineForums,
+	];
+
+	const scanRecommendedFor = [
+		wooCommerceStores,
+		newsOrganizations,
+		membershipSites,
+		onlineForums,
+	];
+	const antiSpamBenefits = [
+		blogs,
+		newsOrganizations,
+		membershipSites,
+		onlineForums,
+		wooCommerceStores,
+	];
+	const videoPressRecommendedFor = [ wooCommerceStores, videographers, educators, bloggers ];
+
+	const searchRecommendedFor = [
+		wooCommerceStores,
+		newsOrganizations,
+		membershipSites,
+		onlineForums,
+	];
+
+	const boostRecommendedFor = [ allSites ];
+
+	const socialRecommendedFor = [
+		blogs,
+		newsOrganizations,
+		membershipSites,
+		onlineForums,
+		wooCommerceStores,
+	];
+
+	return {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupRecommendedFor,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupRecommendedFor,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRecommendedFor,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRecommendedFor,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupRecommendedFor,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupRecommendedFor,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupRecommendedFor,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupRecommendedFor,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressRecommendedFor,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressRecommendedFor,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamBenefits,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamBenefits,
+		[ PRODUCT_JETPACK_SCAN ]: scanRecommendedFor,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanRecommendedFor,
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRecommendedFor,
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRecommendedFor,
+		[ PRODUCT_JETPACK_SEARCH ]: searchRecommendedFor,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchRecommendedFor,
+		[ PRODUCT_JETPACK_BOOST ]: boostRecommendedFor,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostRecommendedFor,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialRecommendedFor,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialRecommendedFor,
+	};
+};
+
 export const useJetpack10GbStorageAmountText = (): TranslateResult => {
 	const _translate = useTranslate();
 
