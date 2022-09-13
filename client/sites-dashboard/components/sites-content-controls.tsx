@@ -1,7 +1,6 @@
 import { FilterableSiteLaunchStatuses, useSitesTableFiltering } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
 import { ComponentPropsWithoutRef } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
@@ -87,24 +86,24 @@ type SitesContentControlsProps = {
 	ComponentPropsWithoutRef< typeof SitesListSortingDropdown >;
 
 /**
- * Updates a query param used by the sites dashboard, causing a page navigation.
+ * Updates one or more query param used by the sites dashboard, causing a page navigation.
  * Param will be removed if it is empty or matches its default value.
  *
- * @param paramName name of the param being updated
- * @param paramValue new value for the param
+ * @param queryParams Query parameters to assign to the URL.
  */
-export function handleQueryParamChange(
-	paramName: keyof SitesDashboardQueryParams,
-	paramValue: string | number | null
-) {
-	// Ensure we keep existing query params by appending `.search`
-	const pathWithQuery = window.location.pathname + window.location.search;
+export function handleQueryParamChange( queryParams: SitesDashboardQueryParams ) {
+	const url = new URL( window.location.href );
+	Object.keys( queryParams ).forEach( ( key ) => {
+		const value = queryParams[ key as keyof SitesDashboardQueryParams ];
+		if ( value ) {
+			url.searchParams.set( key, value.toString() );
+		} else {
+			url.searchParams.delete( key );
+		}
+	} );
 
-	if ( paramValue ) {
-		page.replace( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
-	} else {
-		page.replace( removeQueryArgs( pathWithQuery, paramName ) );
-	}
+	// Use relative URL to avoid full page refresh.
+	page.replace( url.pathname + url.search );
 }
 
 export const SitesContentControls = ( {
@@ -122,7 +121,7 @@ export const SitesContentControls = ( {
 		<FilterBar>
 			<SitesSearch
 				searchIcon={ <SitesSearchIcon /> }
-				onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
+				onSearch={ ( term ) => handleQueryParamChange( { search: term?.trim(), page: null } ) }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
@@ -135,7 +134,9 @@ export const SitesContentControls = ( {
 							key={ name }
 							selected={ name === selectedStatus.name }
 							count={ count }
-							onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
+							onClick={ () =>
+								handleQueryParamChange( { status: 'all' !== name ? name : '', page: null } )
+							}
 						>
 							{ title }
 						</SelectDropdown.Item>

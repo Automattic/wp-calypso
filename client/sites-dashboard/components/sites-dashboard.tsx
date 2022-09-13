@@ -217,7 +217,7 @@ export function SitesDashboard( {
 									perPage={ perPage }
 									total={ filteredSites.length }
 									pageClick={ ( newPage ) => {
-										handleQueryParamChange( 'page', newPage );
+										handleQueryParamChange( { page: newPage } );
 									} }
 								/>
 							) }
