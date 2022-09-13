@@ -602,21 +602,15 @@
 	border: 1px solid var( --color-neutral-0 );
 	cursor: pointer;
 	flex: 1;
-	height: 300px;
+	height: auto;
 	list-style-type: none;
 	opacity: 1;
 	position: relative;
 	transition: opacity 1s ease-out;
-	width: 598px;
+	width: auto;
 
 	&:last-child {
 		margin-right: 0;
-	}
-
-	&:nth-last-of-type( -n + 2 ) {
-		@include breakpoint-deprecated( '<480px' ) {
-			display: none;
-		}
 	}
 
 	&.hide {
