@@ -15,6 +15,14 @@
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
 }
+.button.split-button__toggle--white-separator,
+.split-button__toggle--white-separator {
+	&,
+	&:hover,
+	&:focus {
+		border-left-color: var(--studio-white);
+	}
+}
 .gridicon.split-button__toggle-icon {
 	transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 

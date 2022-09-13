@@ -26,6 +26,7 @@ class SplitButton extends PureComponent {
 		onToggle: PropTypes.func,
 		popoverClassName: PropTypes.string,
 		href: PropTypes.string,
+		whiteSeparator: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -40,6 +41,7 @@ class SplitButton extends PureComponent {
 		compact: false,
 		primary: false,
 		scary: false,
+		whiteSeparator: false,
 	};
 
 	state = {
@@ -83,8 +85,12 @@ class SplitButton extends PureComponent {
 			disableMenu,
 			className,
 			popoverClassName,
+			whiteSeparator,
 		} = this.props;
 		const { isMenuVisible } = this.state;
+		const toggleClasses = classNames( 'split-button__toggle', {
+			'split-button__toggle--white-separator': whiteSeparator,
+		} );
 		const popoverClasses = classNames( 'split-button__menu', 'popover', popoverClassName );
 		const classes = classNames( 'split-button', className, {
 			'is-menu-visible': isMenuVisible,
@@ -117,7 +123,7 @@ class SplitButton extends PureComponent {
 					onClick={ this.handleMenuClick }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					disabled={ disabled || disableMenu }
-					className="split-button__toggle"
+					className={ toggleClasses }
 				>
 					<Gridicon icon="chevron-down" className="split-button__toggle-icon" />
 				</Button>

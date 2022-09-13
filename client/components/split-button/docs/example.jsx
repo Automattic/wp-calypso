@@ -41,6 +41,7 @@ class SplitButtonExample extends PureComponent {
 							[
 								{ label: 'Split Button', icon: 'history' },
 								{ label: 'Split Button', primary: true },
+								{ label: 'Split Button with whtie separator', primary: true, separatorWhite: true },
 								{ icon: 'globe' },
 							],
 							[
