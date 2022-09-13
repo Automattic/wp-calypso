@@ -35,10 +35,12 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 	let cta = null;
 
 	if ( hasUnusedMailboxWarning( emailAccount ) && isTitanMailAccount( emailAccount ) ) {
-		const setUpMailboxUrl = emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domain.name );
-
 		cta = (
-			<Button compact primary href={ setUpMailboxUrl }>
+			<Button
+				compact
+				primary
+				href={ emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domain.name ) }
+			>
 				{ translate( 'Set up mailbox' ) }
 			</Button>
 		);
@@ -69,7 +71,7 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 				</div>
 			) }
 
-			{ warning && (
+			{ canCurrentUserAddEmail( domain ) && warning && (
 				<div className="email-plan-warnings__warning">
 					<div className="email-plan-warnings__message">
 						<span>{ warning.message }</span>
