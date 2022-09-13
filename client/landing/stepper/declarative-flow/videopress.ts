@@ -36,6 +36,7 @@ export const videopress: Flow = {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const [ _siteTitle, setSiteTitle ] = useState( '' );
 		const [ _tagline, setTagline ] = useState( '' );
+		const [ _domainName, setDomainName ] = useState( '' );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
@@ -51,11 +52,14 @@ export const videopress: Flow = {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
 					setTagline( tagline as string );
-					return navigate( 'chooseADomain' );
+					return navigate( 'chooseADomain', { siteTitle: siteTitle } );
 				}
 
-				case 'chooseADomain':
+				case 'chooseADomain': {
+					const { domainName } = providedDependencies;
+					setDomainName( domainName as string );
 					return navigate( 'completingPurchase' );
+				}
 
 				case 'completingPurchase':
 					return navigate( 'processing' );
@@ -72,6 +76,10 @@ export const videopress: Flow = {
 		}
 
 		const goBack = () => {
+			switch ( _currentStep ) {
+				case 'chooseADomain':
+					return navigate( 'options', { siteTitle: _siteTitle, tagline: _tagline } );
+			}
 			return;
 		};
 
@@ -86,7 +94,18 @@ export const videopress: Flow = {
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
-			navigate( step );
+			switch ( step ) {
+				case 'options':
+					return navigate( step, { siteTitle: _siteTitle, tagline: _tagline } );
+				case 'chooseADomain':
+					return navigate( step, {
+						siteTitle: _siteTitle,
+						tagline: _tagline,
+						domainName: _domainName,
+					} );
+				default:
+					return navigate( step );
+			}
 		};
 
 		return { goNext, goBack, goToStep, submit };
