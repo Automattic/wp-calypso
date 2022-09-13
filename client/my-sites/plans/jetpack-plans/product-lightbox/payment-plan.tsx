@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { getCurrencyObject } from 'calypso/../packages/format-currency/src';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import ItemPriceMessage from '../product-store/item-price/item-price-message';
 import { SelectorProduct } from '../types';
 import useItemPrice from '../use-item-price';
 type PaymentPlanProps = {
@@ -27,10 +28,10 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	const currentPrice = discountedPrice ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 	const priceObject = getCurrencyObject( currentPrice, currencyCode );
-	const currentPriceValue = `${ priceObject?.symbol }${ currentPrice }`;
+	const currentPriceValue = `${ priceObject?.symbol }${ priceObject?.integer }${ priceObject?.fraction }`;
 
 	const originalPriceObject = getCurrencyObject( originalPrice, currencyCode );
-	const originalPriceValue = `${ originalPriceObject?.symbol }${ originalPrice }`;
+	const originalPriceValue = `${ originalPriceObject?.symbol }${ originalPriceObject?.integer }${ originalPriceObject?.fraction }`;
 
 	const labelClass = classNames(
 		'product-lightbox__variants-grey-label',
@@ -42,15 +43,12 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	return (
 		<div className="product-lightbox__variants-plan">
 			{ isMultiSiteIncompatible ? (
-				<div className="product-lightbox__variants-plan-alt-info">
-					<span className="product-lightbox__variants-plan-alt-info--dot"></span>
-					<span className="product-lightbox__variants-plan-alt-info--text">
-						{ translate( 'Not available for multisite WordPress installs' ) }
-					</span>
-				</div>
+				<ItemPriceMessage
+					message={ translate( 'Not available for multisite WordPress installs' ) }
+				/>
 			) : (
 				<>
-					<p>{ `${ translate( 'Payment plan' ) }:` }</p>
+					<p>{ translate( 'Payment plan:' ) }</p>
 
 					<div className="product-lightbox__variants-plan-card">
 						<div className={ labelClass }>
@@ -64,8 +62,8 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 								<span className="product-lightbox__variants-plan-card-old-price">
 									{ originalPriceValue }
 								</span>
-								{ Math.ceil( ( discountedPrice * 100 ) / originalPrice ) }%
-								{ ` ${ translate( 'off the first year' ) }` }
+								{ Math.ceil( ( discountedPrice * 100 ) / originalPrice ) }
+								{ `${ translate( '% off the first year' ) }` }
 							</div>
 						) }
 					</div>
