@@ -2238,13 +2238,13 @@ describe( 'themes selectors', () => {
 								ID: 1234567,
 								blog_id: 2916284,
 								meta: 'mood',
-								product_slug: 'premium_theme',
+								product_type: 'theme',
 							},
 							{
 								ID: 1234568,
 								blog_id: 2916284,
 								meta: 'skivers',
-								product_slug: 'premium_theme',
+								product_type: 'theme',
 							},
 						],
 					},
@@ -2273,13 +2273,13 @@ describe( 'themes selectors', () => {
 								ID: 1234567,
 								blog_id: 2916284,
 								meta: 'mood',
-								product_slug: 'premium_theme',
+								product_type: 'theme',
 							},
 							{
 								ID: 1234568,
 								blog_id: 2916284,
 								meta: 'skivers',
-								product_slug: 'premium_theme',
+								product_type: 'theme',
 							},
 						],
 					},
@@ -2302,7 +2302,7 @@ describe( 'themes selectors', () => {
 							ID: 1234567,
 							blog_id: 2916284,
 							meta: 'mood',
-							product_slug: 'premium_theme',
+							product_type: 'theme',
 						},
 					],
 				},
@@ -2323,7 +2323,7 @@ describe( 'themes selectors', () => {
 								ID: 1234567,
 								blog_id: 2916284,
 								meta: 'mood',
-								product_slug: 'premium_theme',
+								product_type: 'theme',
 							},
 						],
 					},
@@ -2332,6 +2332,46 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isAvailable ).toBe( false );
+		} );
+
+		test( 'given a theme that has been purchased on a given site, should return true', () => {
+			const isAvailable = isPremiumThemeAvailable(
+				{
+					sites: {
+						plans: {
+							2916284: {
+								data: [
+									{
+										currentPlan: true,
+										productSlug: PLAN_FREE,
+									},
+								],
+							},
+						},
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: { mood },
+							} ),
+						},
+					},
+					purchases: {
+						data: [
+							{
+								ID: 1234567,
+								blog_id: 2916284,
+								meta: 'mood',
+								product_type: 'theme',
+							},
+						],
+					},
+				},
+				'mood',
+				2916284
+			);
+
+			expect( isAvailable ).toBe( true );
 		} );
 
 		test( 'given a theme that has not been purchased on a given site, should return false', () => {
@@ -2362,7 +2402,7 @@ describe( 'themes selectors', () => {
 								ID: 1234567,
 								blog_id: 2916284,
 								meta: 'espresso',
-								product_slug: 'premium_theme',
+								product_type: 'theme',
 							},
 						],
 					},

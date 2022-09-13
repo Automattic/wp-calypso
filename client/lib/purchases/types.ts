@@ -46,6 +46,7 @@ export interface Purchase {
 	productId: number;
 	productName: string;
 	productSlug: string;
+	productType: string;
 	purchaseRenewalQuantity: number | null;
 	refundAmount: number;
 	refundOptions: RefundOptions | null;

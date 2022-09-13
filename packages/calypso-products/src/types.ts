@@ -160,9 +160,6 @@ export type Plan = BillingTerm & {
 export type WithSnakeCaseSlug = { product_slug: string };
 export type WithCamelCaseSlug = { productSlug: string };
 
-export type WithSnakeCaseProductType = { product_type: string };
-export type WithCamelCaseProductType = { productType: string };
-
 export interface PlanMatchesQuery {
 	term?: string;
 	group?: string;
