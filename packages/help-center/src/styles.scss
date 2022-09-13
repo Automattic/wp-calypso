@@ -138,11 +138,12 @@ $head-foot-height: 50px;
 		.help-center-header__unread-count {
 			display: inline-block;
 			margin-left: 8px;
-			padding: 2px 6px;
+			padding: 2px 8px;
 			background: var(--studio-pink-50);
-			border-radius: 20px; /* stylelint-disable-line scales/radii */
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			border-radius: 50%;
 			font-size: $font-body-extra-small;
-			color: #000;
+			color: #fff;
 		}
 
 		.help-center-header__a8c-only-badge {
