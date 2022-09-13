@@ -95,6 +95,8 @@ const PageBodyBottomContainer = styled.div( {
 	paddingBlockStart: '16px',
 	paddingBlockEnd: '24px',
 	gap: '24px',
+	display: 'flex',
+	flexDirection: 'column',
 	[ MEDIA_QUERIES.mediumOrSmaller ]: {
 		paddingBlockEnd: '48px',
 	},
