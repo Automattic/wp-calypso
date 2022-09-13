@@ -185,12 +185,12 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	}
 
 	function renderViewBillingAndPaymentSettingsNavItem() {
-		if ( ! hasSubscription ) {
-			return null;
-		}
-
-		if ( ! purchase ) {
-			return <VerticalNavItem isPlaceholder />;
+		if ( ! hasSubscription || ! purchase ) {
+			return (
+				<VerticalNavItem disabled>
+					{ translate( 'View billing and payment settings' ) }
+				</VerticalNavItem>
+			);
 		}
 
 		const managePurchaseUrl = getManagePurchaseUrlFor( selectedSite.slug, purchase.id );
@@ -233,7 +233,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		}
 
 		return (
-			<VerticalNavItem { ...manageAllNavItemProps }>
+			<VerticalNavItem { ...manageAllNavItemProps } disabled={ ! hasSubscription || ! purchase }>
 				{ translate( 'Manage all mailboxes', {
 					comment:
 						'This is the text for a link to manage all email accounts/mailboxes for a subscription',
@@ -252,11 +252,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		}
 
 		if ( hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) ) {
-			if ( ! purchase ) {
-				return <VerticalNavItem isPlaceholder />;
-			}
-
-			if ( isExpired( purchase ) ) {
+			if ( purchase && isExpired( purchase ) ) {
 				return (
 					<VerticalNavItem onClick={ handleRenew } path="#">
 						{ translate( 'Renew to add new mailboxes' ) }
