@@ -6,7 +6,11 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import {
+	LINK_IN_BIO_FLOW,
+	NEWSLETTER_FLOW,
+	isNewsletterOrLinkInBioFlow,
+} from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -371,7 +375,9 @@ export class PlansStep extends Component {
 
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 	}
-
+	isTailoredFlow() {
+		return isNewsletterOrLinkInBioFlow( this.props.flowName );
+	}
 	plansFeaturesSelection() {
 		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
 			this.props;
@@ -412,6 +418,7 @@ export class PlansStep extends Component {
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ headerText }
+					shouldHideNavButtons={ this.isTailoredFlow() }
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
