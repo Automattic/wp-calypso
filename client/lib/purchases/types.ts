@@ -137,6 +137,7 @@ export interface RawPurchase {
 	product_id: number | string;
 	product_name: string;
 	product_slug: string;
+	product_type: string;
 	product_display_price: string;
 	total_refund_amount: number | undefined;
 	total_refund_text: string;
