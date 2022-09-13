@@ -3,22 +3,24 @@ import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/compo
 import Preview from '@wordpress/edit-site/build-module/components/global-styles/preview';
 import { useMemo } from '@wordpress/element';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import './style.scss';
 
 const SPACE_BAR_KEYCODE = 32;
+const DEFAULT_VARIATION_SLUG = 'default';
 
 interface StyleVariationPreviewProps {
 	variation: StyleVariation;
-	isActive: boolean;
 	base?: StyleVariation;
+	isSelected: boolean;
 	onClick: ( variation: StyleVariation ) => void;
 }
 
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	variation,
-	isActive,
 	base = {},
+	isSelected,
 	onClick,
 } ) => {
 	const context = useMemo( () => {
@@ -35,12 +37,18 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	return (
 		<div
 			className={ classnames( 'design-preview__style-variation', {
-				'design-preview__style-variation--is-active': isActive,
+				'design-preview__style-variation--is-selected': isSelected,
 			} ) }
 			tabIndex={ 0 }
 			role="button"
-			onClick={ () => onClick?.( variation ) }
-			onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick?.( variation ) }
+			aria-label={
+				translate( 'Style: %s', {
+					comment: 'Aria label for style preview buttons',
+					args: variation.title,
+				} ) as string
+			}
+			onClick={ () => onClick( variation ) }
+			onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
 		>
 			<GlobalStylesContext.Provider value={ context }>
 				<Preview label={ variation.title } />
@@ -51,17 +59,18 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 
 interface StyleVariationPreviewsProps {
 	variations: StyleVariation[];
-	activeVariation?: StyleVariation;
+	selectedVariation?: StyleVariation;
 	onClick: ( variation: StyleVariation ) => void;
 }
 
 const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 	variations = [],
-	activeVariation,
+	selectedVariation,
 	onClick,
 } ) => {
+	const selectedVariationSlug = selectedVariation?.slug ?? DEFAULT_VARIATION_SLUG;
 	const base = useMemo(
-		() => variations.find( ( variation ) => variation.slug === 'default' ),
+		() => variations.find( ( variation ) => variation.slug === DEFAULT_VARIATION_SLUG ),
 		[ variations ]
 	);
 
@@ -72,7 +81,7 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 					key={ variation.slug }
 					variation={ variation }
 					base={ base }
-					isActive={ activeVariation?.slug === variation.slug }
+					isSelected={ variation.slug === selectedVariationSlug }
 					onClick={ onClick }
 				/>
 			) ) }

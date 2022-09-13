@@ -35,7 +35,7 @@ import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './util/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
-import type { Design } from '@automattic/design-picker';
+import type { Design, StyleVariation } from '@automattic/design-picker';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -136,16 +136,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		};
 	}
 
-	function previewDesign( _selectedDesign: Design, positionIndex?: number ) {
-		recordTracksEvent( 'calypso_signup_design_preview_select', {
-			...getEventPropsByDesign( _selectedDesign ),
-			...( positionIndex && { position_index: positionIndex } ),
-		} );
-
-		setSelectedDesign( _selectedDesign );
-		setIsPreviewingDesign( true );
-	}
-
 	// ********** Logic for selecting a style variation of the selected design
 
 	const isEnabledStyleSelection =
@@ -163,6 +153,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		select( ONBOARD_STORE ).getSelectedStyleVariation()
 	);
 	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
+
+	function previewDesign( _selectedDesign: Design, variation?: StyleVariation ) {
+		recordTracksEvent(
+			'calypso_signup_design_preview_select',
+			getEventPropsByDesign( _selectedDesign )
+		);
+
+		setSelectedDesign( _selectedDesign );
+		if ( variation ) {
+			setSelectedStyleVariation( variation );
+		}
+
+		setIsPreviewingDesign( true );
+	}
 
 	// ********** Logic for unlocking a selected premium design
 
@@ -329,6 +333,25 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
+		const pickDesignText =
+			selectedDesign?.design_type === 'vertical' || isEnabledStyleSelection
+				? translate( 'Select and continue' )
+				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
+
+		const actionButtons = (
+			<div>
+				{ shouldUpgrade ? (
+					<Button primary borderless={ false } onClick={ upgradePlan }>
+						{ translate( 'Unlock theme' ) }
+					</Button>
+				) : (
+					<Button primary borderless={ false } onClick={ () => pickDesign() }>
+						{ pickDesignText }
+					</Button>
+				) }
+			</div>
+		);
+
 		const stepContent = (
 			<>
 				<UpgradeModal
@@ -347,6 +370,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						variations={ selectedDesignDetails?.style_variations }
 						selectedVariation={ selectedStyleVariation }
 						onSelectVariation={ setSelectedStyleVariation }
+						actionButtons={ actionButtons }
 					/>
 				) : (
 					<WebPreview
@@ -372,35 +396,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</>
 		);
 
-		const pickDesignText =
-			selectedDesign?.design_type === 'vertical' || isEnabledStyleSelection
-				? translate( 'Select and continue' )
-				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
-
-		const actionButtons = (
-			<div>
-				{ shouldUpgrade ? (
-					<Button primary borderless={ false } onClick={ upgradePlan }>
-						{ translate( 'Unlock theme' ) }
-					</Button>
-				) : (
-					<Button primary borderless={ false } onClick={ () => pickDesign() }>
-						{ pickDesignText }
-					</Button>
-				) }
-			</div>
-		);
-
 		return isEnabledStyleSelection ? (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
 				className="design-setup__preview design-setup__preview__has-more-info"
-				nextLabelText={ pickDesignText }
 				goBack={ handleBackClick }
-				goNext={ () => pickDesign() }
-				customizedActionButtons={ actionButtons }
+				customizedActionButtons={ isMobile ? actionButtons : undefined }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		) : (

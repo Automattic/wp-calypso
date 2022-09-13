@@ -85,6 +85,13 @@
 	}
 }
 
+.item-price.is-compact .display-price .display-price__billing-time-frame .normal {
+	display: none;
+}
+
+.item-price.is-compact .display-price .display-price__billing-time-frame .compact {
+	display: inline-block;
+}
 
 .item-price__message {
 	font-size: $font-body-extra-small;

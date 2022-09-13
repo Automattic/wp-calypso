@@ -3,24 +3,31 @@
  */
 
 import { renderHook } from '@testing-library/react-hooks';
-import { useSitesTableSorting } from '../use-sites-table-sorting';
+import {
+	SitesTableSortKey,
+	SitesTableSortOrder,
+	useSitesTableSorting,
+} from '../use-sites-table-sorting';
 
 describe( 'useSitesTableSorting', () => {
 	const filteredSites = [
 		{
 			ID: 1,
+			name: 'B',
 			options: {
 				updated_at: '2022-05-27T07:19:20+00:00',
 			},
 		},
 		{
 			ID: 2,
+			name: 'A',
 			options: {
 				updated_at: '2022-07-13T17:17:12+00:00',
 			},
 		},
 		{
 			ID: 3,
+			name: 'C',
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
 			},
@@ -30,7 +37,7 @@ describe( 'useSitesTableSorting', () => {
 	test( 'should not sort sites if unsupported sortKey is provided', () => {
 		const { result } = renderHook( () =>
 			useSitesTableSorting( filteredSites, {
-				sortKey: 'sort-that-is-not-supported',
+				sortKey: 'sort-that-is-not-supported' as SitesTableSortKey,
 				sortOrder: 'asc',
 			} )
 		);
@@ -41,10 +48,38 @@ describe( 'useSitesTableSorting', () => {
 		expect( result.current.sortedSites[ 2 ].ID ).toBe( 3 );
 	} );
 
-	test( 'should sort sites by updated-at descending', () => {
+	test( 'should sort sites alphabetically ascending', () => {
 		const { result } = renderHook( () =>
 			useSitesTableSorting( filteredSites, {
-				sortKey: 'updated-at',
+				sortKey: 'alphabetically',
+				sortOrder: 'asc',
+			} )
+		);
+
+		expect( result.current.sortedSites.length ).toBe( 3 );
+		expect( result.current.sortedSites[ 0 ].name ).toBe( 'A' );
+		expect( result.current.sortedSites[ 1 ].name ).toBe( 'B' );
+		expect( result.current.sortedSites[ 2 ].name ).toBe( 'C' );
+	} );
+
+	test( 'should sort sites alphabetically descending', () => {
+		const { result } = renderHook( () =>
+			useSitesTableSorting( filteredSites, {
+				sortKey: 'alphabetically',
+				sortOrder: 'desc',
+			} )
+		);
+
+		expect( result.current.sortedSites.length ).toBe( 3 );
+		expect( result.current.sortedSites[ 0 ].name ).toBe( 'C' );
+		expect( result.current.sortedSites[ 1 ].name ).toBe( 'B' );
+		expect( result.current.sortedSites[ 2 ].name ).toBe( 'A' );
+	} );
+
+	test( 'should sort sites by updatedAt descending', () => {
+		const { result } = renderHook( () =>
+			useSitesTableSorting( filteredSites, {
+				sortKey: 'updatedAt',
 				sortOrder: 'desc',
 			} )
 		);
@@ -55,10 +90,10 @@ describe( 'useSitesTableSorting', () => {
 		expect( result.current.sortedSites[ 2 ].ID ).toBe( 1 );
 	} );
 
-	test( 'should sort sites by updated-at ascending', () => {
+	test( 'should sort sites by updatedAt ascending', () => {
 		const { result } = renderHook( () =>
 			useSitesTableSorting( filteredSites, {
-				sortKey: 'updated-at',
+				sortKey: 'updatedAt',
 				sortOrder: 'asc',
 			} )
 		);
@@ -74,8 +109,8 @@ describe( 'useSitesTableSorting', () => {
 
 		const { result, rerender } = renderHook(
 			( { sortOrder } ) =>
-				useSitesTableSorting( filteredSites, { sortKey: 'updated-at', sortOrder } ),
-			{ initialProps: { sortOrder: 'asc' } }
+				useSitesTableSorting( filteredSites, { sortKey: 'updatedAt', sortOrder } ),
+			{ initialProps: { sortOrder: 'asc' as SitesTableSortOrder } }
 		);
 
 		expect( result.current.sortedSites ).toHaveLength( 3 );

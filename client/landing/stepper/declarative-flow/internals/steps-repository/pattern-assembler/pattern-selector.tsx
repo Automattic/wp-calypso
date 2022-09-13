@@ -1,6 +1,4 @@
-import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
@@ -13,12 +11,7 @@ type PatternSelectorProps = {
 };
 
 const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorProps ) => {
-	const translate = useTranslate();
 	const locale = useLocale();
-
-	const handleBackClick = () => {
-		onSelect( null );
-	};
 
 	return (
 		<div className="pattern-selector" style={ show ? {} : { height: 0, overflow: 'hidden' } }>
@@ -45,11 +38,6 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 						</PatternPreviewAutoHeight>
 					) ) }
 				</div>
-			</div>
-			<div className="pattern-selector__footer">
-				<Button className="pattern-assembler__button" onClick={ handleBackClick }>
-					{ translate( 'Back' ) }
-				</Button>
 			</div>
 		</div>
 	);
