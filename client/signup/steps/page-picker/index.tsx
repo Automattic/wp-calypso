@@ -290,19 +290,20 @@ function DIFMPagePicker( props: StepProps ) {
 			components: {
 				br: <br />,
 				PriceWrapper:
-					isFormattedCurrencyLoading && ! difmTieredPriceDetails && effectiveCurrencyCode ? (
-						<Placeholder />
-					) : (
+					difmTieredPriceDetails?.perExtraPagePrice && effectiveCurrencyCode ? (
 						<span />
+					) : (
+						<Placeholder />
 					),
 			},
 			args: {
 				freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
 				extraPagePrice: formatCurrency(
-					difmTieredPriceDetails?.perExtraPagePriceNormalUnits ?? 0,
+					difmTieredPriceDetails?.perExtraPagePrice ?? 0,
 					effectiveCurrencyCode ?? '',
 					{
 						stripZeros: true,
+						isSmallestUnit: true,
 					}
 				),
 			},

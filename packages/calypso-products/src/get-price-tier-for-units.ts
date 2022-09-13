@@ -2,11 +2,9 @@ export interface PriceTierEntry {
 	minimum_units: number;
 	maximum_units?: undefined | null | number;
 	minimum_price: number;
-	minimum_price_in_display_units: number;
 	minimum_price_display: string;
 	minimum_price_monthly_display?: string | null | undefined;
 	maximum_price: number;
-	maximum_price_in_display_units: number | null | undefined;
 	maximum_price_display?: string | null | undefined;
 	maximum_price_monthly_display?: string | null | undefined;
 }

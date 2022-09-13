@@ -1,4 +1,3 @@
-import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import LoadingLine from './loading-content';
@@ -144,23 +143,17 @@ const Total = styled.div`
 `;
 
 function DummyLineItem( {
-	productCost,
+	productDisplayCost,
 	productOriginalName,
 	subLabel,
-	productCount,
 	nameOverride,
-	currencyCode,
 }: CartItem & { currencyCode: string } ) {
 	return (
 		<DummyLineItemContainer>
 			<div className="page-picker__title">
 				<div className="page-picker__product-name">{ nameOverride ?? productOriginalName }</div>
 			</div>
-			<div className="page-picker__price">
-				{ productCount !== undefined
-					? formatCurrency( productCost * productCount, currencyCode, { precision: 0 } )
-					: formatCurrency( productCost, currencyCode, { precision: 0 } ) }
-			</div>
+			<div className="page-picker__price">{ productDisplayCost }</div>
 			{ subLabel && <div className="page-picker__sub-label">{ subLabel }</div> }
 		</DummyLineItemContainer>
 	);

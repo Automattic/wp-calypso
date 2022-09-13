@@ -19,12 +19,10 @@ export function getDIFMTieredPriceDetails(
 ): null | {
 	extraPageCount: number | null;
 	oneTimeFee: number;
-	oneTimeFeeNormalUnits: number;
 	formattedOneTimeFee: string | null;
 	extraPagesPrice: number | null | undefined;
-	extraPagesPriceNormalUnits: number | null | undefined;
 	numberOfIncludedPages: number | null | undefined;
-	perExtraPagePriceNormalUnits: number;
+	perExtraPagePrice: number | null | undefined;
 } {
 	if (
 		! product ||
@@ -39,18 +37,14 @@ export function getDIFMTieredPriceDetails(
 
 	const [ tier0, tier1 ] = product.price_tier_list;
 	const perExtraPagePrice = tier1.minimum_price - tier0.minimum_price;
-	const perExtraPagePriceNormalUnits =
-		tier1.minimum_price_in_display_units - tier0.minimum_price_in_display_units;
 
 	const {
 		maximum_units: numberOfIncludedPages,
 		minimum_price: oneTimeFee,
-		minimum_price_in_display_units: oneTimeFeeNormalUnits,
 		minimum_price_display: formattedOneTimeFee,
 	} = tier0;
 
 	let extraPagesPrice: number | null = null;
-	let extraPagesPriceNormalUnits: number | null = null;
 	let extraPageCount: number | null = null;
 	if ( numberOfIncludedPages ) {
 		if ( noOfPages <= numberOfIncludedPages ) {
@@ -58,26 +52,21 @@ export function getDIFMTieredPriceDetails(
 				extraPageCount: 0,
 				numberOfIncludedPages,
 				extraPagesPrice: 0,
-				extraPagesPriceNormalUnits: 0,
 				oneTimeFee,
-				oneTimeFeeNormalUnits,
 				formattedOneTimeFee,
-				perExtraPagePriceNormalUnits,
+				perExtraPagePrice,
 			};
 		}
 		extraPageCount = noOfPages - numberOfIncludedPages;
 		extraPagesPrice = extraPageCount * perExtraPagePrice;
-		extraPagesPriceNormalUnits = extraPageCount * perExtraPagePriceNormalUnits;
 	}
 
 	return {
 		extraPageCount,
 		numberOfIncludedPages,
 		extraPagesPrice,
-		extraPagesPriceNormalUnits,
 		oneTimeFee,
-		oneTimeFeeNormalUnits,
 		formattedOneTimeFee,
-		perExtraPagePriceNormalUnits,
+		perExtraPagePrice,
 	};
 }

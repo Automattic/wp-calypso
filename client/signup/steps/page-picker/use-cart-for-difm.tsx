@@ -25,7 +25,7 @@ export type CartItem = {
 	nameOverride?: TranslateResult;
 	productSlug: string;
 	productOriginalName: string;
-	productCost: number;
+	productDisplayCost: string | null;
 	subLabel?: TranslateResult;
 	productCount?: number;
 	itemSubTotal: number;
@@ -102,12 +102,13 @@ function getDummyCartProducts( {
 }: DummyCartParams ): Array< CartItem > {
 	let displayedCartItems: CartItem[] = [];
 	if ( difmLiteProduct && activePlanScheme ) {
-		let difmLiteItemPrice = difmLiteProduct.cost;
+		//In case price tiers are not set fallback to default difm lite price
+		let difmLiteItemPrice = difmLiteProduct.cost_smallest_unit;
 		const difmPriceDetals = getDIFMTieredPriceDetails( difmLiteProduct, selectedPages.length );
 		if ( difmPriceDetals ) {
-			const { oneTimeFeeNormalUnits, extraPagesPriceNormalUnits } = difmPriceDetals;
-			if ( extraPagesPriceNormalUnits ) {
-				difmLiteItemPrice = oneTimeFeeNormalUnits + extraPagesPriceNormalUnits;
+			const { oneTimeFee, extraPagesPrice } = difmPriceDetals;
+			if ( extraPagesPrice ) {
+				difmLiteItemPrice = oneTimeFee + extraPagesPrice;
 			}
 		}
 		displayedCartItems = [
@@ -116,7 +117,10 @@ function getDummyCartProducts( {
 				nameOverride: translate( 'Website Design Service' ),
 				productOriginalName: difmLiteProduct.product_name,
 				itemSubTotal: difmLiteItemPrice,
-				productCost: difmLiteItemPrice,
+				productDisplayCost: formatCurrency( difmLiteItemPrice, currencyCode, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
 				...getDIFMPriceBreakdownSubLabel( {
 					product: difmLiteProduct,
 					noOfPages: selectedPages.length,
@@ -127,11 +131,17 @@ function getDummyCartProducts( {
 			{
 				productSlug: activePlanScheme.product_slug,
 				productOriginalName: activePlanScheme.product_name,
-				itemSubTotal: activePlanScheme.cost,
-				productCost: activePlanScheme.cost,
+				itemSubTotal: activePlanScheme.cost_smallest_unit,
+				productDisplayCost: formatCurrency( activePlanScheme.cost_smallest_unit, currencyCode, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ),
 				subLabel: translate( 'Plan Subscription: %(planPrice)s per year', {
 					args: {
-						planPrice: formatCurrency( activePlanScheme.cost, currencyCode, { precision: 0 } ),
+						planPrice: formatCurrency( activePlanScheme.cost_smallest_unit, currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
 					},
 				} ),
 			},
@@ -157,8 +167,15 @@ function getSiteCartProducts( {
 				return {
 					productSlug: product.product_slug,
 					productOriginalName: product.product_name,
-					itemSubTotal: product.cost,
-					productCost: product.cost,
+					itemSubTotal: product.item_subtotal_integer,
+					productDisplayCost: formatCurrency(
+						product.item_subtotal_integer,
+						responseCart.currency,
+						{
+							isSmallestUnit: true,
+							stripZeros: true,
+						}
+					),
 					subLabel: translate( 'Plan Subscription: %(planPrice)s per year', {
 						args: { planPrice: product.product_cost_display },
 					} ),
@@ -168,8 +185,15 @@ function getSiteCartProducts( {
 					productSlug: product.product_slug,
 					nameOverride: translate( 'Website Design Service' ),
 					productOriginalName: product.product_name,
-					itemSubTotal: product.cost,
-					productCost: product.cost,
+					itemSubTotal: product.item_subtotal_integer,
+					productDisplayCost: formatCurrency(
+						product.item_subtotal_integer,
+						responseCart.currency,
+						{
+							isSmallestUnit: true,
+							stripZeros: true,
+						}
+					),
 					...getDIFMPriceBreakdownSubLabel( {
 						product: difmLiteProduct,
 						noOfPages: product.quantity,
@@ -309,7 +333,8 @@ export function useCartForDIFM( selectedPages: string[] ): {
 			0
 		);
 		totalCostFormatted = formatCurrency( totalCost, effectiveCurrencyCode, {
-			precision: 0,
+			stripZeros: true,
+			isSmallestUnit: true,
 		} );
 	}
 	const isInitialBasketLoaded = displayedCartItems.length > 1;
