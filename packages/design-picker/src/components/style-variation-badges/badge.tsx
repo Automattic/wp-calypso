@@ -1,3 +1,4 @@
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { getPreviewStylesFromVariation } from './utils';
@@ -27,7 +28,10 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 			className="style-variation__badge-wrapper"
 			tabIndex={ 0 }
 			role="button"
-			aria-label={ __( 'Preview with this style' ) }
+			aria-label={
+				// translators: %(title)s - the style variation title.
+				sprintf( __( 'Style: %(title)s' ), { title: variation.title } )
+			}
 			onClick={ ( e ) => {
 				// Prevent the event from bubbling to the the parent button.
 				e.stopPropagation();
