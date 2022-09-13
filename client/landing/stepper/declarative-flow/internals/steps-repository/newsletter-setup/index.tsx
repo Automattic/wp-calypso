@@ -73,28 +73,20 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	useEffect( () => {
 		const { siteAccentColor, siteTitle, siteDescription, siteLogo } = state;
+		setComponentSiteTitle( site?.name || siteTitle );
+		setTagline( site?.description || siteDescription );
+
+		if ( siteLogo ) {
+			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
+			setSelectedFile( file );
+		}
+
 		if ( defaultAccentColor.hex === siteAccentColor ) {
 			setAccentColor( defaultAccentColor );
 		} else {
 			setAccentColor( { ...defaultAccentColor, hex: siteAccentColor } );
 		}
-
-		setTagline( siteDescription );
-		setComponentSiteTitle( siteTitle );
-		if ( siteLogo ) {
-			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
-			setSelectedFile( file );
-		}
-	}, [ state ] );
-
-	useEffect( () => {
-		if ( ! site ) {
-			return;
-		}
-
-		setComponentSiteTitle( site.name || '' );
-		setTagline( site.description );
-	}, [ site ] );
+	}, [ state, site ] );
 
 	useEffect( () => {
 		if ( siteTitle.trim().length && invalidSiteTitle ) {
