@@ -149,6 +149,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				isSearching={ isFetchingPluginsBySearchTerm }
 				title={ translate( 'Plugins you need to get your projects done' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+				renderTitleInH1={ ! category }
 			/>
 
 			{ ! search && <Categories selected={ category } /> }
