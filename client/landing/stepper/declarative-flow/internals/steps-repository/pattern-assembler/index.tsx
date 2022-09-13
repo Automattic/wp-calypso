@@ -47,7 +47,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		} as Design );
 
 	const getPageTemplate = () => {
-		return 'header-footer-only';
+		let pageTemplate = 'footer-only';
+
+		if ( header ) pageTemplate = 'header-footer-only';
+		if ( ! header && footer ) pageTemplate = 'footer-only';
+		if ( ! header && ! footer && sections.length ) pageTemplate = 'blank';
+
+		return pageTemplate;
 	};
 
 	const addSection = ( pattern: Pattern ) => {
