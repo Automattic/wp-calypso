@@ -1,15 +1,27 @@
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
+	getProductsList,
 } from 'calypso/state/products-list/selectors';
 
 export const PluginPrice = ( { plugin, billingPeriod, children } ) => {
 	const translate = useTranslate();
 	const variationPeriod = getPeriodVariationValue( billingPeriod );
-	const priceSlug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+	const productList = useSelector( getProductsList );
+
+	const priceSlug = useMemo( () => {
+		let productSlug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+		if ( productSlug ) return productSlug;
+
+		const variationProductId = plugin?.variations?.[ variationPeriod ]?.product_id;
+		productSlug = getProductSlugfromProductId( variationProductId, productList );
+		return productSlug;
+	}, [ plugin?.variations, productList, variationPeriod ] );
+
 	const price = useSelector( ( state ) => getProductDisplayCost( state, priceSlug ) );
 	const isFetching = useSelector( isProductsListFetching );
 
@@ -41,4 +53,13 @@ export function getPeriodVariationValue( billingPeriod ) {
 		default:
 			return '';
 	}
+}
+
+function getProductSlugfromProductId( productId, productList ) {
+	if ( productId === undefined ) return undefined;
+
+	const productSlug = Object.values( productList ).find(
+		( product ) => product.product_id === productId
+	)?.product_slug;
+	return productSlug;
 }
