@@ -5,6 +5,8 @@ import {
 	UseQueryOptions,
 	InfiniteData,
 	UseInfiniteQueryResult,
+	QueryKey,
+	QueryFunction,
 } from 'react-query';
 import { useSelector } from 'react-redux';
 import {
@@ -18,35 +20,41 @@ import { BASE_STALE_TIME, WPORG_CACHE_KEY } from './constants';
 import { Plugin, PluginQueryOptions } from './types';
 import { getPluginsListKey } from './utils';
 
+export const getFetchWPORGPlugins = (
+	options: PluginQueryOptions,
+	locale: string
+): [ QueryKey, QueryFunction< { plugins: Plugin[]; info: { page: number } }, QueryKey > ] => {
+	const cacheKey = getPluginsListKey( WPORG_CACHE_KEY, options );
+	const fetchFn = () => {
+		const [ search, author ] = extractSearchInformation( options.searchTerm );
+		return fetchPluginsList( {
+			pageSize: options.pageSize,
+			page: options.page,
+			category: options.category,
+			locale: options.locale || locale,
+			search,
+			author,
+			tag: options.tag && ! search ? options.tag : null,
+		} );
+	};
+	return [ cacheKey, fetchFn ];
+};
+
 export const useWPORGPlugins = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	const [ search, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 
-	return useQuery(
-		getPluginsListKey( WPORG_CACHE_KEY, options ),
-		() =>
-			fetchPluginsList( {
-				pageSize: options.pageSize,
-				page: options.page,
-				category: options.category,
-				locale: options.locale || locale,
-				search,
-				author,
-				tag: options.tag && ! search ? options.tag : null,
-			} ),
-		{
-			select: ( { plugins = [], info = {} } ) => ( {
-				plugins: normalizePluginsList( plugins ),
-				pagination: info,
-			} ),
-			enabled: enabled,
-			staleTime: staleTime,
-			refetchOnMount: refetchOnMount,
-		}
-	);
+	return useQuery( ...getFetchWPORGPlugins( options, locale ), {
+		select: ( { plugins = [], info = {} } ) => ( {
+			plugins: normalizePluginsList( plugins ),
+			pagination: info,
+		} ),
+		enabled: enabled,
+		staleTime: staleTime,
+		refetchOnMount: refetchOnMount,
+	} );
 };
 
 const extractPages = ( pages: Array< { plugins: Plugin[]; info: object } > = [] ) =>
