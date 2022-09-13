@@ -32,9 +32,9 @@ class SplitButtonExample extends PureComponent {
 		const compact = { compact: this.state.compactButtons };
 		return (
 			<div>
-				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>
+				<button className="docs__design-toggle button" onClick={ this.toggleButtons }>
 					{ this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons' }
-				</a>
+				</button>
 				<Card>
 					{ map(
 						[
