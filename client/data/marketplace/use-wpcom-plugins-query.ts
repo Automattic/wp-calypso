@@ -43,7 +43,7 @@ export const getFetchWPCOMPlugins = (
 	searchTerm?: string,
 	tag?: string
 ): [ QueryKey, QueryFunction< { results: Array< { [ plugin: string ]: Plugin } > } > ] => {
-	const cacheKey = getCacheKey( type + searchTerm + tag + `${ enabled ? 'enabled' : 'disabled' }` );
+	const cacheKey = getCacheKey( type + searchTerm + tag );
 	const fetchFn = () => fetchWPCOMPlugins( type, searchTerm, tag );
 	return [ cacheKey, fetchFn ];
 };

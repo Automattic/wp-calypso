@@ -17,13 +17,11 @@ function getProps( context ) {
 }
 
 function prefetchPluginsData( queryClient, fetchParams, infinite ) {
-	const queryType = infinite ? 'fetchInfiniteQuery' : 'fetchQuery';
+	const queryType = infinite ? 'prefetchInfiniteQuery' : 'prefetchQuery';
 
 	return queryClient[ queryType ]( ...fetchParams, {
-		enabled: true,
 		staleTime: BASE_STALE_TIME,
-		refetchOnMount: false,
-	} ).catch( () => {} );
+	} );
 }
 
 const prefetchPaidPlugins = ( queryClient, options ) =>
