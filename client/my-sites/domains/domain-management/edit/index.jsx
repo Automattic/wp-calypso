@@ -16,7 +16,6 @@ import Header from 'calypso/my-sites/domains/domain-management/components/header
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import MappedDomainType from './domain-types/mapped-domain-type';
 import RegisteredDomainType from './domain-types/registered-domain-type';
 
 import './style.scss';
@@ -54,9 +53,6 @@ class Edit extends Component {
 
 	getDetailsForType = ( type ) => {
 		switch ( type ) {
-			case domainTypes.MAPPED:
-				return MappedDomainType;
-
 			case domainTypes.REGISTERED:
 				return RegisteredDomainType;
 
