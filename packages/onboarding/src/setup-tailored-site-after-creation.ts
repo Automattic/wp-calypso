@@ -3,7 +3,7 @@ import { Site, Onboard } from '@automattic/data-stores';
 import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import { uploadAndSetSiteLogo } from './upload-and-set-site-logo';
-import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from './utils';
+import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from './utils';
 
 const ONBOARD_STORE = Onboard.register();
 const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
@@ -93,6 +93,29 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 		return Promise.resolve();
 	};
 
+	const removeInitialPost = async ( siteId: number, flowName: string ) => {
+		if ( flowName === NEWSLETTER_FLOW ) {
+			// We are deleting the initial "Hello World!" post for newsletter sites
+			// The id for the first post on a new site will be 3
+
+			// First request will move post to trash
+			await wpcomRequest( {
+				path: `/sites/${ siteId }/posts/3/delete?http_envelope=1`,
+				method: 'POST',
+				apiNamespace: 'rest/v1.1',
+			} );
+
+			// Second request will permanently delete the post
+			await wpcomRequest( {
+				path: `/sites/${ siteId }/posts/3/delete?http_envelope=1`,
+				method: 'POST',
+				apiNamespace: 'rest/v1.1',
+			} );
+		}
+
+		return Promise.resolve();
+	};
+
 	if ( siteId && flowName ) {
 		return Promise.all( [
 			postSiteSettings( siteId ),
@@ -100,6 +123,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			setPattern( siteId, flowName ),
 			setIntent( siteId, flowName ),
 			setLaunchpadScreen( siteId, flowName ),
+			removeInitialPost( siteId, flowName ),
 		] ).then( () => {
 			recordTracksEvent( 'calypso_signup_site_options_submit', {
 				has_site_title: !! siteTitle,
