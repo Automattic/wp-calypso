@@ -17,6 +17,7 @@ ENV BUILD_TRANSLATION_CHUNKS=true
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 
+RUN apk update && apk add --no-cache git
 RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
 	&& echo ". ${NVM_DIR}/nvm.sh" >> "${HOME}/.bashrc"
 
@@ -53,8 +54,8 @@ ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 
 # Add user calypso with uid 1003, give it sudo permissions
-RUN apt-get update \
-	&& apt-get install -y sudo zip jq \
+RUN apk update \
+	&& apk add sudo zip jq \
 	&& adduser --uid $UID --disabled-password $user \
 	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
 	&& chmod 0440 /etc/sudoers.d/$user \
@@ -80,31 +81,36 @@ ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
 ENV DISPLAY=:99
 
-RUN apt update \
-	&& apt-get install -y \
-		fonts-liberation \
-		fonts-noto \
-		git-restore-mtime \
-		gtk2-engines-pixbuf \
-		libasound2 \
-		libatk-bridge2.0-0 \
-		libatspi2.0-0 \
-		libdbus-glib-1-2 \
-		libgtk-3-0 \
-		libgbm-dev \
-		libnspr4 \
-		libnss3 \
-		libsecret-1-dev \
-		libx11-xcb1 \
-		libxss1 \
-		libxtst6 \
-		xdg-utils \
-		xfonts-100dpi \
-		xfonts-75dpi \
-		xfonts-base \
-		xfonts-cyrillic \
-		xfonts-scalable \
-		xvfb
+RUN apk update && apk upgrade --no-cache --available \
+	&& apk add --no-cache \
+		ttf-liberation \
+		font-noto \
+		# git-restore-mtime \
+		gdk-pixbuf \
+		alsa-lib-dev \
+		font-screen-cyrillic \
+		ttf-freefont \
+		font-noto-emoji \
+		# libatk-bridge2.0-0 \
+		# libatspi2.0-0 \
+		# libdbus-glib-1-2 \
+		# libgtk-3-0 \
+		# libgbm-dev \
+		# libnspr4 \
+		# libnss3 \
+		# libsecret-1-dev \
+		# libx11-xcb1 \
+		# libxss1 \
+		# libxtst6 \
+		# xdg-utils \
+		# xfonts-100dpi \
+		# xfonts-75dpi \
+		# xfonts-base \
+		# xfonts-cyrillic \
+		# xfonts-scalable \
+		xvfb && apk add --no-cache \
+      --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
+      font-wqy-zenhei
 
 ENTRYPOINT [ "/bin/bash" ]
 
