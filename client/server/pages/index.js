@@ -490,19 +490,13 @@ function setUpCSP( req, res, next ) {
 
 function setUpRoute( req, res, next ) {
 	if ( req.context.isRouteSetup === true ) {
-		try {
-			req.logger.warn(
-				{
-					isLoggedIn: req.context.isLoggedIn,
-					path: req.context.path,
-				},
-				'Route already set up. Ambiguous route definition likely.'
-			);
-		} catch ( err ) {
-			if ( process.env.NODE_ENV === 'development' ) {
-				console.warn( 'Route already set up. Ambiguous route definition likely.' );
-			}
-		}
+		req.logger.warn(
+			{
+				isLoggedIn: req.context.isLoggedIn,
+				path: req.context.path,
+			},
+			'Route already set up. Ambiguous route definition likely.'
+		);
 
 		return next();
 	}
