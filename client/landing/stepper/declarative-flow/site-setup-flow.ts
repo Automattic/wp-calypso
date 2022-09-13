@@ -195,6 +195,14 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'error' );
 					}
 
+					// End of Pattern Assembler flow
+					if (
+						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+						( selectedDesign as Design )?.slug === 'blank-canvas-blocks'
+					) {
+						return exitFlow( `/site-editor/${ siteSlug }` );
+					}
+
 					// If the user skips starting point, redirect them to the post editor
 					if ( intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
 						if ( startingPoint !== 'write' ) {
@@ -229,14 +237,6 @@ export const siteSetupFlow: Flow = {
 						siteSlug
 					) {
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
-					}
-
-					// End of Pattern Assembler flow
-					if (
-						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-						( selectedDesign as Design )?.slug === 'blank-canvas-blocks'
-					) {
-						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
 					return exitFlow( `/home/${ siteSlug }` );
