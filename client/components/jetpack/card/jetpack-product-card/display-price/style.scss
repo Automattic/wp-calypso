@@ -197,6 +197,10 @@
 		line-height: 1.2;
 	}
 
+	&__billing-time-frame .compact {
+		display: none;
+	}
+
 	&__expiration-date {
 		color: var(--studio-pink-50);
 	}
