@@ -43,6 +43,7 @@ import { createReduxStore } from 'calypso/state';
 import { LOCALE_SET } from 'calypso/state/action-types';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
@@ -95,7 +96,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
+async function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
 	const showGdprBanner = shouldSeeGdprBanner(
 		request.cookies.country_code || geoIPCountryCode,
@@ -130,6 +131,8 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	};
 	const reduxStore = createReduxStore( getCachedState( initialReducer, 'root' ) );
 	setStore( reduxStore, getCachedState );
+
+	const queryClient = await createQueryClient();
 
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
@@ -167,6 +170,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		featuresHelper,
 		devDocsURL: '/devdocs',
 		store: reduxStore,
+		queryClient,
 		target: 'evergreen',
 		useTranslationChunks:
 			config.isEnabled( 'use-translation-chunks' ) ||
@@ -227,8 +231,10 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 }
 
 const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
-	req.context = getDefaultContext( req, res, entrypoint );
-	next();
+	getDefaultContext( req, res, entrypoint ).then( ( context ) => {
+		req.context = context;
+		next();
+	} );
 };
 
 function setUpLocalLanguageRevisions( req ) {
