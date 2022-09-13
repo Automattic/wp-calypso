@@ -62,8 +62,11 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 								<span className="product-lightbox__variants-plan-card-old-price">
 									{ originalPriceValue }
 								</span>
-								{ Math.ceil( ( discountedPrice * 100 ) / originalPrice ) }
-								{ `${ translate( '% off the first year' ) }` }
+								{ translate( '%(percentOff)d% off the first year', {
+									args: { percentOff: Math.ceil( ( discountedPrice * 100 ) / originalPrice ) },
+									comment:
+										'Second "%" symbol is the literal percent. "%(percentOff)d" will be a number and the final string will be somethig like "20% off the first year"',
+								} ) }
 							</div>
 						) }
 					</div>
