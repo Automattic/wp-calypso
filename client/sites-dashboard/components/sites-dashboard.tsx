@@ -4,6 +4,7 @@ import {
 	useSitesTableFiltering,
 	useSitesTableSorting,
 	useScrollToTop,
+	JetpackLogo,
 } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -190,7 +191,8 @@ export function SitesDashboard( {
 						label={ __( 'Add new site' ) }
 						href="/start?source=sites-dashboard&ref=sites-dashboard"
 					>
-						<PopoverMenuItem href="/jetpack/connect" icon="arrow-down">
+						<PopoverMenuItem href="/jetpack/connect">
+							<JetpackLogo className="gridicon" size={ 18 } />
 							<span>{ __( 'Connect Jetpack site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
