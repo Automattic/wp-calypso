@@ -427,3 +427,11 @@ function load_tutorials() {
 	require_once __DIR__ . '/tutorials/tutorials.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tutorials' );
+
+/**
+ * Load WP.com Global Styles.
+ */
+function load_wpcom_global_styles() {
+	require_once __DIR__ . '/wpcom-global-styles/index.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
