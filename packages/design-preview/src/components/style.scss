@@ -78,6 +78,18 @@
 		}
 	}
 
+	.design-preview__sidebar-action-buttons {
+		position: absolute;
+		bottom: 0;
+		width: 100%;
+
+		button {
+			width: 100%;
+			border-radius: 4px;
+			box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+		}
+	}
+
 	@include break-small {
 		border: 0;
 		box-shadow: none;
