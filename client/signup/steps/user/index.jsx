@@ -439,18 +439,18 @@ export class UserStep extends Component {
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
-		const hashObject = this.props.initialContext && this.props.initialContext.hash;
-		if ( this.props.isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
-			const clientId = hashObject.client_id;
-			socialService = getSocialServiceFromClientId( clientId );
-
-			if ( socialService ) {
-				socialServiceResponse = hashObject;
-			}
-		}
 
 		if ( isWooOAuth2Client( oauth2Client ) && ( isWpccFlow( flowName ) || wccomFrom ) ) {
 			isSocialSignupEnabled = true;
+		}
+
+		const hashObject = this.props.initialContext && this.props.initialContext.hash;
+		if ( isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
+			const clientId = hashObject.client_id;
+			socialService = getSocialServiceFromClientId( clientId );
+			if ( socialService ) {
+				socialServiceResponse = hashObject;
+			}
 		}
 
 		return (
