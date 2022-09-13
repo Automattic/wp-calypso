@@ -155,6 +155,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			/>
 			<Popover
 				isVisible={ colorPickerOpen }
+				className="newsletter-setup__accent-color-popover"
 				context={ accentColorRef.current }
 				position="top left"
 				onClose={ () => setColorPickerOpen( false ) }

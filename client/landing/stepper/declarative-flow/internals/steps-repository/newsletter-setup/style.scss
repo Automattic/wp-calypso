@@ -105,3 +105,10 @@ $border-radius: 4px;
 		width: unset !important;
 	}
 }
+
+.newsletter-setup__accent-color-popover {
+	&:focus,
+	&:focus-visible {
+		outline: none;
+	}
+}
