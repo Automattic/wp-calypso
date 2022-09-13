@@ -271,7 +271,14 @@ const getMonthlyTimeframe = (): BillingTerm => ( {
 	term: TERM_MONTHLY,
 	getBillingTimeFrame: () => translate( 'per month, billed monthly' ),
 } );
-
+const getJetpackCommonPlanDetails = () => ( {
+	getRecommendedFor: () => [
+		translate( 'WooCommerce stores' ),
+		translate( 'News organizations' ),
+		translate( 'Membership sites' ),
+		translate( 'Online forums' ),
+	],
+} );
 const getDotcomPlanDetails = () => ( {
 	// Features only available for annual plans
 	getAnnualPlansOnlyFeatures: () => [
@@ -1167,6 +1174,7 @@ const getPlanJetpackSecurityRealtimeDetails = (): IncompleteJetpackPlan => ( {
 } );
 
 const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
+	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_T1,
 	getTitle: () => translate( 'Security' ),
@@ -1204,6 +1212,15 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_BACKUPS,
 	],
+	getBenefits: () => [
+		translate( 'Protect your revenue stream and content' ),
+		translate( 'Learn about issues before your customers are impacted' ),
+		translate( 'Restore your site in one click from desktop or mobile' ),
+		translate( 'Fix your site without a developer' ),
+		translate( 'Protect Woo order and customer data' ),
+		translate( 'Save time manually reviewing spam' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	],
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
@@ -1238,6 +1255,7 @@ const getPlanJetpackSecurityT2Details = (): IncompleteJetpackPlan => ( {
 } );
 
 const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
+	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_ALL,
 	getTitle: () =>
@@ -1295,60 +1313,17 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 		FEATURE_BACKUP_ARCHIVE_30,
 	],
+	getBenefits: () => [
+		translate( 'Protect your revenue stream and content' ),
+		translate( 'Learn about issues before your customers are impacted' ),
+		translate( 'Restore your site in one click from desktop or mobile' ),
+		translate( 'Fix your site without a developer' ),
+		translate( 'Protect Woo order and customer data' ),
+		translate( 'Save time manually reviewing spam' ),
+		translate( 'Grow your business with video, social, and CRM tools' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	],
 } );
-
-const JETPACK_INCLUDES_REAL_TIME_BACKUP = translate( 'Real-time backups as you edit' );
-
-const JETPACK_T1_INCLUDES_CLOUD_STORAGE = translate( '10GB of cloud storage' );
-const JETPACK_T2_INCLUDES_CLOUD_STORAGE = translate( '1TB (1,000GB) of cloud storage' );
-
-const JETPACK_MONTHLY_INCLUDES_LOG_ARCHIVE = translate( '30-day activity log archive' );
-const JETPACK_YEARLY_INCLUDES_LOG_ARCHIVE = translate( '1-year activity log archive' );
-
-const JETPACK_MONTHLY_INCLUDES_RESTORES = translate(
-	'Unlimited one-click restores from the last 30 days'
-);
-const JETPACK_YEARLY_INCLUDES_RESTORES = translate(
-	'Unlimited one-click restores from the last 1 year'
-);
-
-const JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING = translate(
-	'Real-time malware scanning and one-click fixes '
-);
-const JETPACK_COMPLETE_INCLUDES_ADDITIONAL = [
-	translate( 'VideoPress with 1TB of ad-free video hosting' ),
-	translate( 'Site Search up to 100k records' ),
-	translate( 'CRM Entrepreneur' ),
-];
-const JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION = translate(
-	'Comment and form spam protection (10k API calls/mo)'
-);
-const JETPACK_COMPLETE_INCLUDES_SPAM_PROTECTION = translate(
-	'Comment and form spam protection (60k API calls/mo)'
-);
-
-const JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT: TranslateResult = translate(
-	'Best-in-class support from WordPress experts'
-);
-const COMMON_JETPACK_PLAN_BENEFITS: Array< TranslateResult > = [
-	translate( 'Protect your revenue stream and content' ),
-	translate( 'Learn about issues before your customers are impacted' ),
-	translate( 'Restore your site in one click from desktop or mobile' ),
-	translate( 'Fix your site without a developer' ),
-	translate( 'Protect Woo order and customer data' ),
-	translate( 'Save time manually reviewing spam' ),
-];
-
-const JETPACK_COMPLETE_ADDITIONAL_BENEFITS: Array< TranslateResult > = [
-	translate( 'Grow your business with video, social, and CRM tools' ),
-];
-
-const COMMON_JETPACK_RECOMMENDED_FOR: Array< TranslateResult > = [
-	translate( 'WooCommerce stores' ),
-	translate( 'News organizations' ),
-	translate( 'Membership sites' ),
-	translate( 'Online forums' ),
-];
 
 // DO NOT import. Use `getPlan` instead.
 export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
@@ -1817,21 +1792,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE,
 		getPathSlug: () => 'complete',
 		getProductId: () => 2014,
-		getJetpackIncludesInfo: () => [
-			JETPACK_INCLUDES_REAL_TIME_BACKUP,
-			JETPACK_T2_INCLUDES_CLOUD_STORAGE,
-			JETPACK_YEARLY_INCLUDES_LOG_ARCHIVE,
-			JETPACK_YEARLY_INCLUDES_RESTORES,
-			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
-			JETPACK_COMPLETE_INCLUDES_SPAM_PROTECTION,
-			...JETPACK_COMPLETE_INCLUDES_ADDITIONAL,
+		getWhatIsIncluded: () => [
+			translate( 'Real-time backups as you edit' ),
+			translate( '1TB (1,000GB) of cloud storage' ),
+			translate( '1-year activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 1 year' ),
+			translate( 'Real-time malware scanning and one-click fixes ' ),
+			translate( 'Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'VideoPress with 1TB of ad-free video hosting' ),
+			translate( 'Site Search up to 100k records' ),
+			translate( 'CRM Entrepreneur' ),
 		],
-		getJetpackBenefits: () => [
-			...COMMON_JETPACK_PLAN_BENEFITS,
-			...JETPACK_COMPLETE_ADDITIONAL_BENEFITS,
-			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
-		],
-		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_COMPLETE_MONTHLY ]: {
@@ -1840,21 +1811,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_COMPLETE_MONTHLY,
 		getPathSlug: () => 'complete-monthly',
 		getProductId: () => 2015,
-		getJetpackIncludesInfo: () => [
-			JETPACK_INCLUDES_REAL_TIME_BACKUP,
-			JETPACK_T2_INCLUDES_CLOUD_STORAGE,
-			JETPACK_MONTHLY_INCLUDES_LOG_ARCHIVE,
-			JETPACK_MONTHLY_INCLUDES_RESTORES,
-			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
-			JETPACK_COMPLETE_INCLUDES_SPAM_PROTECTION,
-			...JETPACK_COMPLETE_INCLUDES_ADDITIONAL,
+		getWhatIsIncluded: () => [
+			translate( 'Real-time backups as you edit' ),
+			translate( '1TB (1,000GB) of cloud storage' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( 'Real-time malware scanning and one-click fixes ' ),
+			translate( 'Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'VideoPress with 1TB of ad-free video hosting' ),
+			translate( 'Site Search up to 100k records' ),
+			translate( 'CRM Entrepreneur' ),
 		],
-		getJetpackBenefits: () => [
-			...COMMON_JETPACK_PLAN_BENEFITS,
-			...JETPACK_COMPLETE_ADDITIONAL_BENEFITS,
-			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
-		],
-		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: {
@@ -1863,19 +1830,14 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_YEARLY,
 		getPathSlug: () => 'security-20gb-yearly',
 		getProductId: () => 2016,
-		getJetpackIncludesInfo: () => [
-			JETPACK_INCLUDES_REAL_TIME_BACKUP,
-			JETPACK_T1_INCLUDES_CLOUD_STORAGE,
-			JETPACK_YEARLY_INCLUDES_LOG_ARCHIVE,
-			JETPACK_YEARLY_INCLUDES_RESTORES,
-			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
-			JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION,
+		getWhatIsIncluded: () => [
+			translate( 'Real-time backups as you edit' ),
+			translate( '10GB of cloud storage' ),
+			translate( '1-year activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 1 year' ),
+			translate( 'Real-time malware scanning and one-click fixes ' ),
+			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],
-		getJetpackBenefits: () => [
-			...COMMON_JETPACK_PLAN_BENEFITS,
-			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
-		],
-		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: {
@@ -1884,20 +1846,14 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T1_MONTHLY,
 		getPathSlug: () => 'security-20gb-monthly',
 		getProductId: () => 2017,
-		getJetpackIncludesInfo: () => [
-			JETPACK_INCLUDES_REAL_TIME_BACKUP,
-			JETPACK_T1_INCLUDES_CLOUD_STORAGE,
-			JETPACK_MONTHLY_INCLUDES_LOG_ARCHIVE,
-			JETPACK_MONTHLY_INCLUDES_RESTORES,
-			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
-			JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION,
+		getWhatIsIncluded: () => [
+			translate( 'Real-time backups as you edit' ),
+			translate( '10GB of cloud storage' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( 'Real-time malware scanning and one-click fixes ' ),
+			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],
-		getJetpackBenefits: () => [
-			...COMMON_JETPACK_PLAN_BENEFITS,
-			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
-		],
-
-		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: {
@@ -1906,19 +1862,14 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_YEARLY,
 		getPathSlug: () => 'security-1tb-yearly',
 		getProductId: () => 2019,
-		getJetpackIncludesInfo: () => [
-			JETPACK_INCLUDES_REAL_TIME_BACKUP,
-			JETPACK_T2_INCLUDES_CLOUD_STORAGE,
-			JETPACK_YEARLY_INCLUDES_LOG_ARCHIVE,
-			JETPACK_YEARLY_INCLUDES_RESTORES,
-			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
-			JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION,
+		getWhatIsIncluded: () => [
+			translate( 'Real-time backups as you edit' ),
+			translate( '1TB (1,000GB) of cloud storage' ),
+			translate( '1-year activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 1 year' ),
+			translate( 'Real-time malware scanning and one-click fixes ' ),
+			translate( 'Comment and form spam protection (60k API calls/mo)' ),
 		],
-		getJetpackBenefits: () => [
-			...COMMON_JETPACK_PLAN_BENEFITS,
-			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
-		],
-		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: {
@@ -1927,19 +1878,14 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getStoreSlug: () => PLAN_JETPACK_SECURITY_T2_MONTHLY,
 		getPathSlug: () => 'security-1tb-monthly',
 		getProductId: () => 2020,
-		getJetpackIncludesInfo: () => [
-			JETPACK_INCLUDES_REAL_TIME_BACKUP,
-			JETPACK_T2_INCLUDES_CLOUD_STORAGE,
-			JETPACK_MONTHLY_INCLUDES_LOG_ARCHIVE,
-			JETPACK_MONTHLY_INCLUDES_RESTORES,
-			JETPACK_INCLUDES_REALTIME_MALWARE_SCANNING,
-			JETPACK_SECURITY_INCLUDES_SPAM_PROTECTION,
+		getWhatIsIncluded: () => [
+			translate( 'Real-time backups as you edit' ),
+			translate( '1TB (1,000GB) of cloud storage' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( 'Real-time malware scanning and one-click fixes ' ),
+			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],
-		getJetpackBenefits: () => [
-			...COMMON_JETPACK_PLAN_BENEFITS,
-			JETPACK_BENEFITS_BEST_IN_CLASS_SUPPORT,
-		],
-		getJetpackRecommendedFor: () => COMMON_JETPACK_RECOMMENDED_FOR,
 	},
 
 	[ PLAN_P2_PLUS ]: {

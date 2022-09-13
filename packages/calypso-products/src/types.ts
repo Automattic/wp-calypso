@@ -80,9 +80,9 @@ export interface JetpackPlan extends Plan {
 	getMonthlySlug?: () => JetpackPlanSlug;
 	getPlanCardFeatures?: () => Feature[];
 	getPathSlug: () => string;
-	getJetpackIncludesInfo: () => Array< TranslateResult >;
-	getJetpackBenefits: () => Array< TranslateResult >;
-	getJetpackRecommendedFor: () => Array< TranslateResult >;
+	getWhatIsIncluded: () => Array< TranslateResult >;
+	getBenefits: () => Array< TranslateResult >;
+	getRecommendedFor: () => Array< TranslateResult >;
 }
 
 export type IncompleteJetpackPlan = Partial< JetpackPlan > &
@@ -145,9 +145,9 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getFeaturedText?: () => TranslateResult;
-	getJetpackIncludesInfo?: () => Array< TranslateResult >;
-	getJetpackBenefits?: () => Array< TranslateResult >;
-	getJetpackRecommendedFor?: () => Array< TranslateResult >;
+	getWhatIsIncluded?: () => Array< TranslateResult >;
+	getBenefits?: () => Array< TranslateResult >;
+	getRecommendedFor?: () => Array< TranslateResult >;
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

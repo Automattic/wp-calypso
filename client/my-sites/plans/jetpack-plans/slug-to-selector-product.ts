@@ -162,7 +162,7 @@ function itemToSelectorProduct(
 			shortDescription: getJetpackProductShortDescription( item ),
 			featuredDescription: getFeaturedProductText( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
-			includesInfo: getJetpackProductIncludesInfo( item ),
+			whatIsIncluded: getJetpackProductIncludesInfo( item ),
 			benefits: getJetpackProductBenefits( item ),
 			recommendedFor: getJetpackProductRecommendedFor( item ),
 			monthlyProductSlug,
@@ -200,12 +200,12 @@ function itemToSelectorProduct(
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
 			featuredDescription: getFeaturedPlanText( item, productSlug ),
-			includesInfo: item.getJetpackIncludesInfo
-				? getForCurrentCROIteration( item.getJetpackIncludesInfo )
+			whatIsIncluded: item.getWhatIsIncluded
+				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],
-			benefits: item.getJetpackBenefits ? getForCurrentCROIteration( item.getJetpackBenefits ) : [],
-			recommendedFor: item.getJetpackRecommendedFor
-				? getForCurrentCROIteration( item.getJetpackRecommendedFor )
+			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
+			recommendedFor: item.getRecommendedFor
+				? getForCurrentCROIteration( item.getRecommendedFor )
 				: [],
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
