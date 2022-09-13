@@ -15,7 +15,7 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import type { Step } from '../../types';
@@ -35,6 +35,8 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
 	const { setSiteTitle, setSiteDescription, setSiteLogo } = useDispatch( ONBOARD_STORE );
+	const { saveSiteSettings } = useDispatch( SITE_STORE );
+
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
 
 	useEffect( () => {
@@ -76,6 +78,13 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
+
+		if ( site ) {
+			await saveSiteSettings( site.ID, {
+				blogname: siteTitle,
+				blogdescription: tagline,
+			} );
+		}
 
 		if ( selectedFile && base64Image ) {
 			try {

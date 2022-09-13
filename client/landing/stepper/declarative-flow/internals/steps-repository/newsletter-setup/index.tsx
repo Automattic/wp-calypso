@@ -15,7 +15,7 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
@@ -61,6 +61,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const urlQueryParams = useQuery();
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
 		useDispatch( ONBOARD_STORE );
+	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
@@ -108,6 +109,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
 		setSiteAccentColor( accentColor.hex );
+
+		if ( site ) {
+			await saveSiteSettings( site.ID, {
+				blogname: siteTitle,
+				blogdescription: tagline,
+			} );
+		}
 
 		if ( selectedFile && base64Image ) {
 			try {
