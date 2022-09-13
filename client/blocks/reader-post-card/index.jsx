@@ -250,7 +250,12 @@ class ReaderPostCard extends Component {
 			);
 		} else if ( isGalleryPost ) {
 			readerPostCard = (
-				<GalleryPost post={ post } title={ title } isDiscover={ isDiscover }>
+				<GalleryPost
+					post={ post }
+					title={ title }
+					onClick={ this.handleCardClick }
+					isDiscover={ isDiscover }
+				>
 					{ readerPostActions }
 				</GalleryPost>
 			);

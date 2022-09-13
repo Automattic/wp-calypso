@@ -88,6 +88,7 @@ class ReaderFeaturedVideo extends Component {
 
 	render() {
 		const {
+			videoEmbed,
 			thumbnailUrl,
 			autoplayIframe,
 			iframe,
@@ -101,10 +102,12 @@ class ReaderFeaturedVideo extends Component {
 		if ( ! isExpanded && thumbnailUrl ) {
 			return (
 				<ReaderFeaturedImage
+					canonicalMedia={ videoEmbed }
 					imageUrl={ thumbnailUrl }
 					onClick={ this.handleThumbnailClick }
 					className={ className }
 					href={ href }
+					fetched={ true }
 				>
 					{ allowPlaying && (
 						<img
