@@ -1,3 +1,4 @@
+/** @jest-environment jsdom */
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -18,13 +19,19 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
+import themes from 'calypso/state/themes/reducer';
+import { reducer as ui } from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ProductPurchaseFeaturesList } from '../index';
 
-jest.mock(
-	'calypso/blocks/product-purchase-features-list/video-audio-posts',
-	() => 'VideoAudioPosts'
-);
+const render = ( el, options ) =>
+	renderWithProvider( el, { ...options, reducers: { ui, themes } } );
+
+jest.mock( '../video-audio-posts', () => ( props ) => (
+	<div data-testid="video-audio-posts">{ JSON.stringify( props ) }</div>
+) );
+jest.mock( 'calypso/components/data/query-active-theme', () => () => 'QueryActiveTheme' );
 
 describe( 'ProductPurchaseFeaturesList basic tests', () => {
 	const props = {
@@ -36,8 +43,8 @@ describe( 'ProductPurchaseFeaturesList basic tests', () => {
 	};
 
 	test( 'should not blow up and have proper CSS class', () => {
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
-		expect( comp.find( '.product-purchase-features-list' ) ).toHaveLength( 1 );
+		const { container } = render( <ProductPurchaseFeaturesList { ...props } /> );
+		expect( container.firstChild ).toHaveClass( 'product-purchase-features-list' );
 	} );
 } );
 
@@ -63,205 +70,217 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should not render features if is placeholder', () => {
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } isPlaceholder={ true } /> );
-		expect( comp.find( '.product-purchase-features-list' ).children() ).toHaveLength( 0 );
+		const { container } = render( <ProductPurchaseFeaturesList { ...props } isPlaceholder /> );
+		expect( container.firstChild ).toBeEmptyDOMElement();
 	} );
 
 	test( 'should render no features for WP free plan', () => {
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_FREE } /> );
-		expect( comp.find( '.product-purchase-features-list' ).children() ).toHaveLength( 0 );
+		const { container } = render( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_FREE } /> );
+		expect( container.firstChild ).toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP blogger features for WP blogger plans - 1y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBloggerFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_BLOGGER } /> );
+		const { container } = render(
+			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BLOGGER } />
+		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP blogger features for WP blogger plans - 2y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBloggerFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BLOGGER_2_YEARS } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP personal features for WP personal plans - 1y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_PERSONAL } /> );
+		const { container } = render(
+			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_PERSONAL } />
+		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP personal features for WP personal plans - 2y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_PERSONAL_2_YEARS } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP premium features for WP premium plans - 1y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPremiumFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM } /> );
+		const { container } = render(
+			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM } />
+		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP premium features for WP premium plans - 2y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPremiumFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM_2_YEARS } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP business features for WP business plans - 1y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
 
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS } /> );
+		const { container } = render(
+			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS } />
+		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP business features for WP business plans - 2y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS_2_YEARS } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP ecommerce features for WP ecommerce plans - 1y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getEcommerceFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_ECOMMERCE } /> );
+		const { container } = render(
+			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_ECOMMERCE } />
+		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render WP ecommerce features for WP ecommerce plans - 2y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getEcommerceFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_ECOMMERCE_2_YEARS } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render Jetpack free features for jetpack free plans', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackFreeFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_FREE } /> );
+		const { container } = render(
+			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_FREE } />
+		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render Jetpack personal features for jetpack personal plans - 1y', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_PERSONAL } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render Jetpack personal features for jetpack personal plans - monthly', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_PERSONAL_MONTHLY } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render Jetpack premium features for jetpack premium plans - yearly', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPremiumFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_PREMIUM } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render Jetpack premium features for jetpack premium plans - monthly', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPremiumFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_PREMIUM_MONTHLY } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render Jetpack business features for jetpack business plans - yearly', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_BUSINESS } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 
 	test( 'should render Jetpack business features for jetpack business plans - monthly', () => {
 		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
 
-		const comp = shallow(
+		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_BUSINESS_MONTHLY } />
 		);
 		expect( spy ).toHaveBeenCalled();
 		expect( spyWrong ).not.toHaveBeenCalled();
-		expect( comp.find( '.product-purchase-features-list' ).children().length ).toBeGreaterThan( 0 );
+		expect( container.firstChild ).not.toBeEmptyDOMElement();
 	} );
 } );
 
@@ -274,43 +293,17 @@ describe( 'ProductPurchaseFeaturesList feature functions', () => {
 		},
 	};
 
-	test( 'getBusinessFeatures() should pass proper plan type to VideoAudioPosts child component', () => {
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS } /> );
-		const audioPosts = comp.find( 'VideoAudioPosts' );
-		expect( audioPosts ).toHaveLength( 1 );
-		expect( audioPosts.prop( 'plan' ) ).toBe( PLAN_BUSINESS );
-	} );
-
-	test( 'getBusinessFeatures() should pass proper plan type to VideoAudioPosts child component when 2-years plan is used', () => {
-		const comp = shallow(
-			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS_2_YEARS } />
-		);
-		const audioPosts = comp.find( 'VideoAudioPosts' );
-		expect( audioPosts ).toHaveLength( 1 );
-		expect( audioPosts.prop( 'plan' ) ).toBe( PLAN_BUSINESS_2_YEARS );
-	} );
-
-	test( 'getEcommerceFeatures() should pass proper plan type to VideoAudioPosts child component', () => {
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_ECOMMERCE } /> );
-		const audioPosts = comp.find( 'VideoAudioPosts' );
-		expect( audioPosts ).toHaveLength( 1 );
-		expect( audioPosts.prop( 'plan' ) ).toBe( PLAN_ECOMMERCE );
-	} );
-
-	test( 'getEcommerceFeatures() should pass proper plan type to VideoAudioPosts child component when 2-years plan is used', () => {
-		const comp = shallow(
-			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_ECOMMERCE_2_YEARS } />
-		);
-		const audioPosts = comp.find( 'VideoAudioPosts' );
-		expect( audioPosts ).toHaveLength( 1 );
-		expect( audioPosts.prop( 'plan' ) ).toBe( PLAN_ECOMMERCE_2_YEARS );
-	} );
-
-	test( 'getPremiumFeatures() should pass proper plan type to VideoAudioPosts child component', () => {
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM } /> );
-		const audioPosts = comp.find( 'VideoAudioPosts' );
-		expect( audioPosts ).toHaveLength( 1 );
-		expect( audioPosts.prop( 'plan' ) ).toBe( PLAN_PREMIUM );
+	test.each( [
+		PLAN_BUSINESS,
+		PLAN_BUSINESS_2_YEARS,
+		PLAN_ECOMMERCE,
+		PLAN_ECOMMERCE_2_YEARS,
+		PLAN_PREMIUM,
+	] )( `should pass proper plan type to VideoAudioPosts child component`, ( plan ) => {
+		render( <ProductPurchaseFeaturesList { ...props } plan={ plan } /> );
+		const audioPosts = screen.getByTestId( 'video-audio-posts' );
+		expect( audioPosts ).toBeVisible();
+		expect( JSON.parse( audioPosts.textContent ) ).toMatchObject( { plan } );
 	} );
 } );
 
@@ -322,19 +315,18 @@ describe( '<HappinessSupportCard isJetpackFreePlan', () => {
 		},
 	};
 	test( 'Should set isJetpackFreePlan for free plan', () => {
-		const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
-		const happinessSupport = comp.find( 'HappinessSupportCard' );
-		expect( happinessSupport.prop( 'isJetpackFreePlan' ) ).toBe( true );
+		render( <ProductPurchaseFeaturesList { ...props } /> );
+		expect( screen.getByRole( 'heading', { name: /support documentation/i } ) ).toBeVisible();
 	} );
 } );
 
 describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
-	[
+	test.each( [
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( ( plan ) => {
+	] )( `Should be eligible for live chat for %s`, ( plan ) => {
 		const props = {
 			plan: plan,
 			isPlaceholder: false,
@@ -342,10 +334,7 @@ describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
 				plan: { product_slug: plan },
 			},
 		};
-		test( `Should be eligible for live chat for ${ plan }`, () => {
-			const comp = shallow( <ProductPurchaseFeaturesList { ...props } /> );
-			const happinessSupport = comp.find( 'HappinessSupportCard' );
-			expect( happinessSupport.prop( 'showLiveChatButton' ) ).toBe( true );
-		} );
+		render( <ProductPurchaseFeaturesList { ...props } /> );
+		expect( screen.getByRole( 'link', { name: /ask a question/i } ) ).toBeVisible();
 	} );
 } );

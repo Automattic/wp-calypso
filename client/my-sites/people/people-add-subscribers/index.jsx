@@ -12,6 +12,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	isRequestingInvitesForSite,
 	getPendingInvitesForSite,
@@ -73,7 +74,9 @@ class PeopleInvites extends PureComponent {
 					>
 						<AddSubscriberForm
 							siteId={ this.props.site.ID }
+							flowName={ 'people' }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+							recordTracksEvent={ recordTracksEvent }
 							onImportFinished={ () => {
 								page.redirect( `/people/invites/${ this.props.site.slug }` );
 							} }

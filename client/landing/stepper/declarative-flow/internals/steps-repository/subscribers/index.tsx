@@ -29,10 +29,12 @@ const Subscribers: Step = function ( { navigation } ): ReactElement | null {
 					{ site?.ID && (
 						<AddSubscriberForm
 							siteId={ site.ID }
+							flowName={ 'onboarding_subscribers' }
 							submitBtnName={ __( 'Continue' ) }
 							onImportFinished={ handleSubmit }
 							allowEmptyFormSubmit={ true }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+							recordTracksEvent={ recordTracksEvent }
 						/>
 					) }
 				</div>

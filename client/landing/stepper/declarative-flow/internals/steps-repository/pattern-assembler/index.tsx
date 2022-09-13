@@ -61,6 +61,14 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		setShowPatternSelectorType( null );
 	};
 
+	const onBack = () => {
+		if ( showPatternSelectorType ) {
+			setShowPatternSelectorType( null );
+		} else {
+			goBack();
+		}
+	};
+
 	const stepContent = (
 		<div className="pattern-assembler__wrapper">
 			<div className="pattern-assembler__sidebar">
@@ -111,7 +119,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName={ 'pattern-assembler' }
-			goBack={ goBack }
+			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }

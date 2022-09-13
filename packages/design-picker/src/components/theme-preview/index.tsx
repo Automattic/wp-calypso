@@ -77,15 +77,17 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	}, [ setIsLoaded, setViewport ] );
 
 	useEffect( () => {
-		iframeRef.current?.contentWindow?.postMessage(
-			{
-				channel: `preview-${ calypso_token }`,
-				type: 'inline-css',
-				inline_css: inlineCss,
-			},
-			'*'
-		);
-	}, [ inlineCss ] );
+		if ( isLoaded ) {
+			iframeRef.current?.contentWindow?.postMessage(
+				{
+					channel: `preview-${ calypso_token }`,
+					type: 'inline-css',
+					inline_css: inlineCss,
+				},
+				'*'
+			);
+		}
+	}, [ inlineCss, isLoaded ] );
 
 	return (
 		<div
