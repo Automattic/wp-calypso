@@ -311,10 +311,12 @@ export class PluginsList extends Component {
 		} );
 	};
 
-	updateAllPlugins = () => {
-		this.handleUpdatePlugins( this.props.plugins );
-		this.recordEvent( 'Clicked Update all Plugins', true );
-		recordTracksEvent( 'calypso_plugins_update_all_click' );
+	updateAllPlugins = ( accepted ) => {
+		if ( accepted ) {
+			this.handleUpdatePlugins( this.props.plugins );
+			this.recordEvent( 'Clicked Update all Plugins', true );
+			recordTracksEvent( 'calypso_plugins_update_all_click' );
+		}
 	};
 
 	updateSelected = ( accepted ) => {
@@ -503,6 +505,26 @@ export class PluginsList extends Component {
 		}
 	};
 
+	updateAllPluginsDialog = () => {
+		const { translate } = this.props;
+
+		const siteDetails = this.props.selectedSiteSlug ? this.props.selectedSiteSlug : 'all sites';
+
+		acceptDialog(
+			<div>
+				<span>
+					{ translate( 'You are about to update all plugins on %(siteDetails)s', {
+						args: {
+							siteDetails: siteDetails,
+						},
+					} ) }
+				</span>
+			</div>,
+			( accepted ) => this.updateAllPlugins( accepted ),
+			translate( 'Update all plugins' )
+		);
+	};
+
 	removePluginDialog = ( selectedPlugin ) => {
 		this.bulkActionDialog( 'remove', selectedPlugin );
 	};
@@ -609,6 +631,7 @@ export class PluginsList extends Component {
 					autoupdateEnablePluginNotice={ () => this.bulkActionDialog( 'enableAutoupdates' ) }
 					autoupdateDisablePluginNotice={ () => this.bulkActionDialog( 'disableAutoupdates' ) }
 					updatePluginNotice={ () => this.bulkActionDialog( 'update' ) }
+					updateAllPluginsNotice={ () => this.updateAllPluginsDialog() }
 				/>
 				<PluginManagementV2
 					plugins={ this.getPlugins() }
@@ -619,6 +642,7 @@ export class PluginsList extends Component {
 					pluginUpdateCount={ this.props.pluginUpdateCount }
 					toggleBulkManagement={ this.toggleBulkManagement }
 					updateAllPlugins={ this.updateAllPlugins }
+					updateAllPluginsNotice={ this.updateAllPluginsDialog }
 					removePluginNotice={ this.removePluginDialog }
 					updatePlugin={ this.updatePlugin }
 				/>

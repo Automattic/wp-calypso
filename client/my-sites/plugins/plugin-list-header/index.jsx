@@ -125,7 +125,7 @@ export class PluginsListHeader extends PureComponent {
 			if ( 0 < this.props.pluginUpdateCount ) {
 				rightSideButtons.push(
 					<ButtonGroup key="plugin-list-header__buttons-update-all">
-						<Button compact primary onClick={ this.props.updateAllPlugins }>
+						<Button compact primary onClick={ this.props.updateAllPluginsNotice }>
 							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
 								context: 'button label',
 								count: this.props.pluginUpdateCount,

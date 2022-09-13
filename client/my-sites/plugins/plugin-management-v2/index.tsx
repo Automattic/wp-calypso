@@ -22,6 +22,7 @@ interface Props {
 	toggleBulkManagement: () => void;
 	updateAllPlugins: () => void;
 	removePluginNotice: ( plugin: Plugin ) => void;
+	updateAllPluginsNotice: () => void;
 	updatePlugin: ( plugin: Plugin ) => void;
 }
 export default function PluginManagementV2( {
@@ -32,8 +33,8 @@ export default function PluginManagementV2( {
 	isBulkManagementActive,
 	pluginUpdateCount,
 	toggleBulkManagement,
-	updateAllPlugins,
 	removePluginNotice,
+	updateAllPluginsNotice,
 	updatePlugin,
 }: Props ): ReactElement {
 	const translate = useTranslate();
@@ -54,7 +55,7 @@ export default function PluginManagementV2( {
 			<div className="plugin-common-table__bulk-actions">
 				{ !! pluginUpdateCount && (
 					<ButtonGroup className="plugin-management-v2__table-button-group">
-						<Button compact primary onClick={ updateAllPlugins }>
+						<Button compact primary onClick={ updateAllPluginsNotice }>
 							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
 								context: 'button label',
 								count: pluginUpdateCount,
