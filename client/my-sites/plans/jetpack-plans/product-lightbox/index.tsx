@@ -1,4 +1,4 @@
-import { JetpackTag } from '@automattic/calypso-products';
+import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
@@ -11,7 +11,7 @@ import { ProductStoreBaseProps } from '../product-store/types';
 import getProductIcon from '../product-store/utils/get-product-icon';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import { Duration, SelectorProduct } from '../types';
-import { JETPACK_RELATED_PRODUCTS_MAP, PRODUCT_OPTIONS } from './constants';
+import { PRODUCT_OPTIONS, PRODUCT_OPTIONS_HEADER } from './constants';
 import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
 import PaymentPlan from './payment-plan';
@@ -94,9 +94,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 						</div>
 						<h2>{ currentProduct.displayName }</h2>
 					</div>
-					<div className="product-lightbox__detail-desc">
-						{ currentProduct.featuredDescription }
-					</div>
+					<div className="product-lightbox__detail-desc">{ product.featuredDescription }</div>
 					<div className="product-lightbox__detail-tags">
 						<span className="product-lightbox__detail-tags-label">
 							{ translate( 'Great for:' ) }
@@ -135,7 +133,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 						{ shouldShowOptions && (
 							<div className="product-lightbox__variants-options">
 								<MultipleChoiceQuestion
-									question={ `${ translate( 'Choose a storage option' ) }:` }
+									question={ PRODUCT_OPTIONS_HEADER[ currentProduct?.productSlug ] }
 									answers={ variantOptions }
 									selectedAnswerId={ currentProduct?.productSlug }
 									onAnswerChange={ onChangeOption }
