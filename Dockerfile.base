@@ -18,17 +18,17 @@ ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 
 RUN apk update && apk add --no-cache git
-RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
-	&& echo ". ${NVM_DIR}/nvm.sh" >> "${HOME}/.bashrc"
+# RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
+# 	&& echo ". ${NVM_DIR}/nvm.sh" >> "${HOME}/.bashrc"
 
 COPY . .
 
 # Run nvm.sh in a different dir so it doesn't try to use the version specified in /calypso/.nvmrc.
 # If not, it will fail the image generation.
 RUN cd / \
-	&& . "$NVM_DIR/nvm.sh" \
+	# && . "$NVM_DIR/nvm.sh" \
 	&& cd $HOME \
-	&& nvm install \
+	# && nvm install \
 	# Prime yarn cache
 	&& yarn \
 	# Prime webpack caches, including sourcemaps.
