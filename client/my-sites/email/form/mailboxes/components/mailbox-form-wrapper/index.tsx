@@ -118,11 +118,7 @@ const GoogleFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 
 			{ googleFormFields.recoveryEmail && (
 				<MailboxField
-					{ ...getCommonFieldProps(
-						googleFormFields.recoveryEmail,
-						onFieldValueChanged,
-						mailbox
-					) }
+					{ ...getCommonFieldProps( googleFormFields.recoveryEmail, onFieldValueChanged, mailbox ) }
 				/>
 			) }
 		</>
