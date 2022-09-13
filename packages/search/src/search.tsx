@@ -419,6 +419,11 @@ const InnerSearch = (
 			return renderReskinSearchIcon();
 		}
 
+		let focusHandler;
+		if ( 'undefined' !== typeof window ) {
+			focusHandler = window.focus;
+		}
+
 		return (
 			<Button
 				className="search-component__icon-navigation"
