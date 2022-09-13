@@ -145,13 +145,15 @@ $font-family: "SF Pro Text", $sans;
 					white-space: nowrap;
 				}
 
-				&:hover {
+				&:hover,
+				&:focus,
+				&.is-focused {
 					.pattern-layout__list-item-text {
 						max-width: 154px;
 					}
 
 					.pattern-action-bar {
-						visibility: visible;
+						opacity: 1;
 					}
 				}
 
@@ -273,7 +275,7 @@ $font-family: "SF Pro Text", $sans;
 
 	.pattern-action-bar {
 		display: flex;
-		visibility: hidden;
+		opacity: 0;
 		align-items: center;
 		position: absolute;
 		background: #fff;

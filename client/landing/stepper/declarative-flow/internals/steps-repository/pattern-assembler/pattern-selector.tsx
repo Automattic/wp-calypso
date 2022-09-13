@@ -1,4 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
+import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
@@ -12,9 +15,28 @@ type PatternSelectorProps = {
 
 const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorProps ) => {
 	const locale = useLocale();
+	const translate = useTranslate();
+	const patternSelectorRef = useRef( null );
+
+	const handleBackClick = () => {
+		onSelect( null );
+	};
+
+	useEffect( () => {
+		show && patternSelectorRef.current?.focus();
+		show && patternSelectorRef.current?.removeAttribute( 'tabindex' );
+	}, [ show ] );
 
 	return (
-		<div className="pattern-selector" style={ show ? {} : { height: 0, overflow: 'hidden' } }>
+		<div
+			className={ classnames( 'pattern-selector', {
+				'pattern-selector--active': show,
+			} ) }
+			style={ show ? {} : { height: 0, overflow: 'hidden' } }
+			// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+			tabIndex={ show ? 0 : -1 }
+			ref={ patternSelectorRef }
+		>
 			<div className="pattern-selector__header">
 				<h1>{ title }</h1>
 			</div>
