@@ -63,7 +63,7 @@ export class Connection {
 
 		this.openSocket = new Promise( ( resolve, reject ) => {
 			auth
-				.then( ( { url, user: { signer_user_id, jwt, locale, groups, skills, geoLocation } } ) => {
+				.then( ( { url, user: { signer_user_id, jwt, groups, skills, geoLocation } } ) => {
 					const socket = buildConnection( url );
 					socket
 						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )
@@ -71,13 +71,11 @@ export class Connection {
 							'token',
 							( handler: ( happychatUser: HappychatUser & { jwt: string } ) => void ) => {
 								dispatch( this.receiveToken?.() );
-								handler( { signer_user_id, jwt, locale, groups, skills } );
+								handler( { signer_user_id, jwt, groups, skills } );
 							}
 						)
 						.on( 'init', () => {
-							dispatch(
-								this.receiveInit?.( { signer_user_id, locale, groups, skills, geoLocation } )
-							);
+							dispatch( this.receiveInit?.( { signer_user_id, groups, skills, geoLocation } ) );
 							dispatch( this.requestTranscript?.() );
 							resolve( socket );
 						} )
