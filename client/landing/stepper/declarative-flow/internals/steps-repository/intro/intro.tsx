@@ -25,7 +25,11 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 				__( 'You’re 3 minutes away from<br />a launch-ready Newsletter. ' ),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Setup your Newsletter' ),
+			buttonText:
+				hasTranslation( 'Set up your Newsletter' ) ||
+				[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
+					? __( 'Set up your Newsletter' )
+					: __( 'Setup your Newsletter' ),
 		},
 		'link-in-bio': {
 			title: createInterpolateElement(
