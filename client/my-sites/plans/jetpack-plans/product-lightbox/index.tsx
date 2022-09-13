@@ -1,3 +1,4 @@
+import { JetpackTag } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
@@ -35,6 +36,17 @@ const DescriptionList: React.FC< { items?: TranslateResult[] } > = ( { items } )
 		</ul>
 	);
 };
+
+const TagItems: React.FC< { tags: JetpackTag[] } > = ( { tags } ) => (
+	<>
+		{ tags.map( ( tag ) => (
+			<div className="product-lightbox__detail-tags-tag" key={ tag.tag }>
+				<span>{ Tags[ tag.tag ] }</span>
+				<p>{ tag.translation }</p>
+			</div>
+		) ) }
+	</>
+);
 
 const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, siteId } ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
@@ -89,22 +101,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 						<span className="product-lightbox__detail-tags-label">
 							{ translate( 'Great for:' ) }
 						</span>
-						<div className="product-lightbox__detail-tags-tag">
-							<span>{ Tags.woo.icon }</span>
-							<p>WooCommerce stores</p>
-						</div>
-						<div className="product-lightbox__detail-tags-tag">
-							<span>{ Tags.news.icon }</span>
-							<p>{ Tags.news.label }</p>
-						</div>
-						<div className="product-lightbox__detail-tags-tag">
-							<span>{ Tags.membership.icon }</span>
-							<p>{ Tags.membership.label }</p>
-						</div>
-						<div className="product-lightbox__detail-tags-tag">
-							<span>{ Tags.forum.icon }</span>
-							<p>{ Tags.forum.label }</p>
-						</div>
+						{ currentProduct.recommendedFor && <TagItems tags={ currentProduct.recommendedFor } /> }
 					</div>
 
 					<div className="product-lightbox__detail-list">

@@ -237,6 +237,10 @@ import {
 	FEATURE_COLLECT_PAYMENTS_V3,
 	FEATURE_FREE_THEMES_V2,
 	FEATURE_VIDEO_UPLOADS_V2,
+	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
+	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
+	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
+	JETPACK_TAG_FOR_ONLINE_FORUMS,
 	/* END - condensed_plan_features_v1 test */
 } from './constants';
 import type {
@@ -273,10 +277,10 @@ const getMonthlyTimeframe = (): BillingTerm => ( {
 } );
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
-		translate( 'WooCommerce stores' ),
-		translate( 'News organizations' ),
-		translate( 'Membership sites' ),
-		translate( 'Online forums' ),
+		{ tag: JETPACK_TAG_FOR_WOOCOMMERCE_STORES, translation: translate( 'WooCommerce stores' ) },
+		{ tag: JETPACK_TAG_FOR_NEWS_ORGANISATIONS, translation: translate( 'News organizations' ) },
+		{ tag: JETPACK_TAG_FOR_MEMBERSHIP_SITES, translation: translate( 'Membership sites' ) },
+		{ tag: JETPACK_TAG_FOR_ONLINE_FORUMS, translation: translate( 'Online forums' ) },
 	],
 } );
 const getDotcomPlanDetails = () => ( {

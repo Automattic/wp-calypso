@@ -75,6 +75,10 @@ export type SelectorProductFeaturesItem = {
 	isDifferentiator?: boolean;
 };
 
+export interface JetpackTag {
+	tag: string;
+	translation: TranslateResult;
+}
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
@@ -82,7 +86,7 @@ export interface JetpackPlan extends Plan {
 	getPathSlug: () => string;
 	getWhatIsIncluded: () => Array< TranslateResult >;
 	getBenefits: () => Array< TranslateResult >;
-	getRecommendedFor: () => Array< TranslateResult >;
+	getRecommendedFor: () => Array< JetpackTag >;
 }
 
 export type IncompleteJetpackPlan = Partial< JetpackPlan > &
@@ -147,7 +151,7 @@ export type Plan = BillingTerm & {
 	getFeaturedText?: () => TranslateResult;
 	getWhatIsIncluded?: () => Array< TranslateResult >;
 	getBenefits?: () => Array< TranslateResult >;
-	getRecommendedFor?: () => Array< TranslateResult >;
+	getRecommendedFor?: () => Array< JetpackTag >;
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };
