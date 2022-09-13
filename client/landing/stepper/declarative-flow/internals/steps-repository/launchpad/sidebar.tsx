@@ -13,9 +13,7 @@ import { Task } from './types';
 
 type SidebarProps = {
 	siteSlug: string | null;
-	submit: NavigationControls[ 'submit' ];
-	goNext: NavigationControls[ 'goNext' ];
-	goToStep?: NavigationControls[ 'goToStep' ];
+	navigation: NavigationControls;
 };
 
 function getUrlInfo( url: string ) {
@@ -41,7 +39,7 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
 }
 
-const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
+const Sidebar = ( { siteSlug, navigation }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	const flow = useFlowParam();
@@ -50,7 +48,7 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	const translatedStrings = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 	const enhancedTasks =
-		site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit, goToStep );
+		site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, navigation );
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 
@@ -88,7 +86,7 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink
 					direction="forward"
-					handleClick={ goNext }
+					handleClick={ navigation.goNext }
 					label={ translate( 'Go to Admin' ) }
 					borderless={ true }
 				/>

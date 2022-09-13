@@ -4,14 +4,12 @@ import Sidebar from './sidebar';
 
 type StepContentProps = {
 	siteSlug: string | null;
-	submit: NavigationControls[ 'submit' ];
-	goNext: NavigationControls[ 'goNext' ];
-	goToStep?: NavigationControls[ 'goToStep' ];
+	navigation: NavigationControls;
 };
 
-const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps ) => (
+const StepContent = ( { siteSlug, navigation }: StepContentProps ) => (
 	<div className="launchpad__content">
-		<Sidebar siteSlug={ siteSlug } submit={ submit } goNext={ goNext } goToStep={ goToStep } />
+		<Sidebar siteSlug={ siteSlug } navigation={ navigation } />
 		<LaunchpadSitePreview siteSlug={ siteSlug } />
 	</div>
 );
