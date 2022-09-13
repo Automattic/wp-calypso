@@ -150,6 +150,7 @@ export const FEATURE_SCAN_V2 = 'scan-v2';
 export const FEATURE_PRODUCT_SCAN_DAILY_V2 = 'product-scan-daily-v2';
 export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = 'product-scan-realtime-v2';
 export const FEATURE_ANTISPAM_V2 = 'antispam-v2';
+export const FEATURE_WAF = 'waf';
 export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = 'activity-log-1-year-v2';
 export const FEATURE_SEARCH_V2 = 'search-v2';
 export const FEATURE_PRODUCT_SEARCH_V2 = 'product-search-v2';
