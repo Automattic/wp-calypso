@@ -116,7 +116,7 @@ export default function PluginCommonCard( {
 						</div>
 					) }
 					{ columnKeys[ 'sites' ] && (
-						<div className="plugin-common-card__site-data">
+						<div className="plugin-common-card__site-data plugin-common-card__installed-on">
 							{ rowFormatter( {
 								columnKey: 'sites',
 								item,
