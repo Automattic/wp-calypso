@@ -51,7 +51,6 @@ export default function CampaignItem( { campaign }: Props ) {
 		impressions_estimated_total,
 		deliver_margin_multiplier,
 		display_name,
-		avatar_url,
 	} = campaign;
 
 	const overallSpending = useMemo(
@@ -88,18 +87,12 @@ export default function CampaignItem( { campaign }: Props ) {
 	const header = (
 		<div className="campaign-item__header">
 			<div className="campaign-item__header-content">
-				<div className="campaign-item__post-type">{ getPostType( type ) }</div>
+				<div className="campaign-item__display-name">{ display_name }</div>
 				<div className="campaign-item__header-title">{ content_config.title }</div>
 				<div className="campaign-item__header-status">
 					<Badge type={ getCampaignStatusBadgeColor( campaignStatus ) }>
 						{ getCampaignStatus( campaignStatus ) }
 					</Badge>
-					<div className="campaign-item__display-name">{ display_name }</div>
-					{ avatar_url && (
-						<div className="campaign-item__user-avatar">
-							<img src={ avatar_url } alt="" />
-						</div>
-					) }
 				</div>
 			</div>
 			{ adCreativeUrl && (
@@ -110,6 +103,19 @@ export default function CampaignItem( { campaign }: Props ) {
 		</div>
 	);
 
+	const cancelCampaignButtonText =
+		campaignStatus === 'active' ? __( 'Stop campaign' ) : __( 'Cancel campaign' );
+	const cancelCampaignConfirmButtonText =
+		campaignStatus === 'active' ? __( 'Yes, stop' ) : __( 'Yes, cancel' );
+	const cancelCampaignTitle =
+		campaignStatus === 'active' ? __( 'Stop the campaign' ) : __( 'Cancel the campaign' );
+	const cancelCampaignMessage =
+		campaignStatus === 'active'
+			? __( 'If you continue your campaign will immediately stop running.' )
+			: __(
+					"If you continue an approval request for your ad will be canceled, and the campaign won't start."
+			  );
+
 	const buttons = [
 		{
 			action: 'cancel',
@@ -118,7 +124,7 @@ export default function CampaignItem( { campaign }: Props ) {
 		{
 			action: 'remove',
 			isPrimary: true,
-			label: __( 'Yes, cancel' ),
+			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
 				cancelCampaign( siteId, campaign.campaign_id );
@@ -133,12 +139,8 @@ export default function CampaignItem( { campaign }: Props ) {
 				buttons={ buttons }
 				onClose={ () => setShowDeleteDialog( false ) }
 			>
-				<h1>{ __( 'Cancel the campaign' ) }</h1>
-				<p>
-					{ __(
-						"If you continue an approval request for your ad will be canceled, and the campaign won't start"
-					) }
-				</p>
+				<h1>{ cancelCampaignTitle }</h1>
+				<p>{ cancelCampaignMessage }</p>
 			</Dialog>
 
 			<FoldableCard header={ header } hideSummary={ true } className="campaign-item__foldable-card">
@@ -218,7 +220,7 @@ export default function CampaignItem( { campaign }: Props ) {
 
 						<div className="campaign-item__column campaign-item__target">
 							<div className="campaign-item__block_label campaign-item__target-label">
-								{ __( 'Ad destination' ) }
+								{ __( 'Ad destination' ) } ({ getPostType( type ) })
 							</div>
 							<div className="campaign-item__block_value campaign-item__target-value">
 								{ target_url ? (
@@ -246,7 +248,7 @@ export default function CampaignItem( { campaign }: Props ) {
 				<div className="campaign-item__payment-and-action">
 					{ canCancelCampaign( campaignStatus ) && (
 						<Button isLink isDestructive onClick={ () => setShowDeleteDialog( true ) }>
-							{ __( 'Cancel campaign' ) }
+							{ cancelCampaignButtonText }
 						</Button>
 					) }
 				</div>

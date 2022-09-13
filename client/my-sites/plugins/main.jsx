@@ -183,12 +183,17 @@ export class PluginsMain extends Component {
 	}
 
 	getPluginCount( filterId ) {
+		let count;
 		if ( 'updates' === filterId ) {
-			return this.props.pluginUpdateCount;
+			count = this.props.pluginUpdateCount;
 		}
 		if ( 'all' === filterId ) {
-			return this.props.allPluginsCount;
+			count = this.props.allPluginsCount;
 		}
+		if ( this.props.requestingPluginsForSites && ! count ) {
+			return undefined;
+		}
+		return count;
 	}
 
 	getSelectedText() {

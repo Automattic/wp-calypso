@@ -318,10 +318,6 @@ export class PluginsListHeader extends PureComponent {
 				className="plugin-list-header__actions-dropdown"
 				selectedText={ translate( 'Actions' ) }
 			>
-				<SelectDropdown.Item selected value="Actions">
-					{ translate( 'Actions' ) }
-				</SelectDropdown.Item>
-
 				<SelectDropdown.Separator />
 
 				<SelectDropdown.Item

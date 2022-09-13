@@ -135,27 +135,14 @@ export function resolveDomainStatus(
 						: translate( 'Expiring soon' );
 				}
 
-				if ( isExpiringSoon( domain, 7 ) ) {
-					return {
-						statusText: expiresMessage,
-						statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
-						status: status,
-						icon: 'info',
-						listStatusText: expiresMessage,
-						listStatusClass: domain.autoRenewing ? 'info' : 'alert',
-						listStatusWeight: 1000,
-						noticeText,
-					};
-				}
-
 				return {
 					statusText: expiresMessage,
-					statusClass: 'status-warning',
+					statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
 					status: status,
 					icon: 'info',
 					listStatusText: expiresMessage,
-					listStatusClass: 'warning',
-					listStatusWeight: 800,
+					listStatusClass: domain.autoRenewing ? 'info' : 'alert',
+					listStatusWeight: isExpiringSoon( domain, 7 ) ? 1000 : 800,
 					noticeText,
 				};
 			}
