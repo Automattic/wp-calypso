@@ -17,7 +17,7 @@ import {
 	navigationIfLoggedIn,
 	maybeRedirectLoggedOut,
 } from './controller';
-import { upload } from './controller-logged-in';
+import { plans, upload } from './controller-logged-in';
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
@@ -85,6 +85,18 @@ export default function ( router ) {
 		siteSelection,
 		navigationIfLoggedIn,
 		browsePlugins,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		`/${ langParam }/plugins/plans`,
+		redirectLoggedOut,
+		redirectWithoutLocaleParamIfLoggedIn,
+		scrollTopIfNoHash,
+		siteSelection,
+		navigation,
+		plans,
 		makeLayout,
 		clientRender
 	);
