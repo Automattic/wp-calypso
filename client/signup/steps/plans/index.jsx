@@ -253,7 +253,13 @@ export class PlansStep extends Component {
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 								isReskinned={ isReskinned }
-								isFAQExperiment={ experimentAssignment?.variationName === 'treatment' }
+								isFAQCondensedExperiment={
+									experimentAssignment?.variationName === 'treatment_condensed'
+								}
+								isFAQExperiment={
+									experimentAssignment?.variationName === 'treatment_expanded' ||
+									experimentAssignment?.variationName === 'treatment_condensed'
+								}
 							/>
 						);
 					} }
