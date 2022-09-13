@@ -45,16 +45,6 @@ export const RemovePlanDialog = ( {
 	];
 
 	/**
-	 * Determine if site date is within the first year
-	 */
-	const dateWithinLastYear = ( siteDate: string ) => {
-		const years =
-			new Date( new Date().getTime() - new Date( siteDate ).getTime() ).getFullYear() - 1970;
-
-		return years > 0 ? false : true;
-	};
-
-	/**
 	 * Istantiate site's plan variables.
 	 */
 	const productSlug = site.plan?.product_slug;
@@ -64,9 +54,6 @@ export const RemovePlanDialog = ( {
 	const launchedStatus = site.launch_status === 'launched' ? true : false;
 	const shouldUseSiteThumbnail =
 		isComingSoon === false && isPrivate === false && launchedStatus === true;
-	const withinFirstYear =
-		site.options.created_at !== undefined ? dateWithinLastYear( site.options.created_at ) : false;
-	const hasDomain = site.URL !== undefined && site.URL === site.options.unmapped_url ? false : true;
 
 	/**
 	 * Return the list of features that the user will lose by canceling their plan.
@@ -74,28 +61,30 @@ export const RemovePlanDialog = ( {
 	 * @returns Fragment
 	 */
 	const FeaturesList = () => {
-		const planFeatures = getPlanFeatures( productSlug, translate, withinFirstYear, hasDomain );
+		if ( typeof productSlug === 'string' ) {
+			const planFeatures = getPlanFeatures( productSlug );
 
-		if ( planFeatures.length > 0 ) {
-			return (
-				<Fragment>
-					<p>{ translate( 'If you cancel your plan, you will lose:' ) }</p>
-					<ul className="remove-plan-dialog__list-plan-features">
-						{ planFeatures.map( ( feature, index ) => {
-							return (
-								<li key={ index }>
-									<Gridicon
-										className="remove-plan-dialog__item-cross-small"
-										size={ 24 }
-										icon="cross-small"
-									/>
-									{ feature }
-								</li>
-							);
-						} ) }
-					</ul>
-				</Fragment>
-			);
+			if ( planFeatures.length > 0 ) {
+				return (
+					<Fragment>
+						<p>{ translate( 'If you cancel your plan, you will lose:' ) }</p>
+						<ul className="remove-plan-dialog__list-plan-features">
+							{ planFeatures.map( ( feature, index ) => {
+								return (
+									<li key={ index }>
+										<Gridicon
+											className="remove-plan-dialog__item-cross-small"
+											size={ 24 }
+											icon="cross-small"
+										/>
+										{ feature }
+									</li>
+								);
+							} ) }
+						</ul>
+					</Fragment>
+				);
+			}
 		}
 
 		return null;
