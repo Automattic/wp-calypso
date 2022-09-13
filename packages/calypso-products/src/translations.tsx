@@ -535,8 +535,9 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 	const backupIncludesInfoT2Yearly = [
 		realTimeBackup,
-		backupIncludesInfoT1Storage,
-		backupIncludesInfoMonthlyLog,
+		backupIncludesInfoT2Storage,
+		backupIncludesInfoYearlyLog,
+		oneClickRestoreYearly,
 		...otherIncludes,
 	];
 

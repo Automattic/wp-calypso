@@ -1,12 +1,13 @@
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import Modal from 'react-modal';
 import FoldableCard from 'calypso/components/foldable-card';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
 import { ProductStoreBaseProps } from '../product-store/types';
+import getProductIcon from '../product-store/utils/get-product-icon';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import { Duration, SelectorProduct } from '../types';
 import { JETPACK_RELATED_PRODUCTS_MAP, PRODUCT_OPTIONS } from './constants';
@@ -23,27 +24,17 @@ type Props = ProductStoreBaseProps & {
 	siteId: number | null;
 };
 
-const Includes = () => (
-	<ul>
-		<li>Real-time backups as you edit</li>
-		<li>10GB of cloud storage</li>
-		<li>30-day activity log archive</li>
-		<li>Unlimited one-click restores from the last 30 days</li>
-		<li>WooCommerce order and table backups</li>
-		<li>Redundant cloud backups on our global network</li>
-		<li>Priority support</li>
-	</ul>
-);
+const DescriptionList: React.FC< { items?: TranslateResult[] } > = ( { items } ) => {
+	if ( ! items || ! items.length ) return null;
 
-const Benefits = () => (
-	<ul>
-		<li>Restore your site in one click from desktop or mobile</li>
-		<li>Restore offline sites</li>
-		<li>No developer required</li>
-		<li>Protect Woo order and customer data</li>
-		<li>Best-in-class support from WordPress experts</li>
-	</ul>
-);
+	return (
+		<ul>
+			{ items.map( ( item ) => (
+				<li key={ item.toString() }>{ item }</li>
+			) ) }
+		</ul>
+	);
+};
 
 const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, siteId } ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
@@ -86,15 +77,18 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 				</Button>
 				<div className="product-lightbox__detail">
 					<div className="product-lightbox__detail-header">
-						{ Icons.backup }
-						<h2>{ product.displayName }</h2>
+						<div className="product-lightbox__product-icon">
+							<img alt="" src={ getProductIcon( { productSlug: product.productSlug } ) } />
+						</div>
+						<h2>{ currentProduct.displayName }</h2>
 					</div>
 					<div className="product-lightbox__detail-desc">
-						Protect your site or store. Save every change with real-time cloud backups, and restore
-						in one click from anywhere.
+						{ currentProduct.featuredDescription }
 					</div>
 					<div className="product-lightbox__detail-tags">
-						<span className="product-lightbox__detail-tags-label">Great for:</span>
+						<span className="product-lightbox__detail-tags-label">
+							{ translate( 'Great for:' ) }
+						</span>
 						<div className="product-lightbox__detail-tags-tag">
 							<span>{ Tags.woo.icon }</span>
 							<p>WooCommerce stores</p>
@@ -115,26 +109,26 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 
 					<div className="product-lightbox__detail-list">
 						{ isMobile ? (
-							<FoldableCard hideSummary header="Includes" expanded={ false }>
-								<Includes />
+							<FoldableCard hideSummary header={ translate( 'Includes' ) } expanded={ false }>
+								<DescriptionList items={ currentProduct.whatIsIncluded } />
 							</FoldableCard>
 						) : (
 							<>
-								<p>Includes</p>
-								<Includes />
+								<p>{ translate( 'Includes' ) }</p>
+								<DescriptionList items={ currentProduct.whatIsIncluded } />
 							</>
 						) }
 					</div>
 					<hr />
 					<div className="product-lightbox__detail-list">
 						{ isMobile ? (
-							<FoldableCard hideSummary header="Benefits" expanded={ false }>
-								<Benefits />
+							<FoldableCard hideSummary header={ translate( 'Benefits' ) } expanded={ false }>
+								<DescriptionList items={ currentProduct.benefits } />
 							</FoldableCard>
 						) : (
 							<>
-								<p>Benefits</p>
-								<Benefits />
+								<p>{ translate( 'Benefits' ) }</p>
+								<DescriptionList items={ currentProduct.benefits } />
 							</>
 						) }
 					</div>
@@ -163,7 +157,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( currentProduct ) }
 							disabled={ isMultiSiteIncompatible }
 						>
-							{ 'Checkout' }
+							{ translate( 'Checkout' ) }
 						</Button>
 					</div>
 				</div>
