@@ -61,7 +61,7 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	return (
 		<div className="email-plan-warnings__container">
-			{ ! canCurrentUserAddEmail( domain ) && (
+			{ cannotAddEmailMessage && (
 				<div className="email-plan-warnings__warning">
 					<div className="email-plan-warnings__message">
 						<span>{ cannotAddEmailMessage }</span>
