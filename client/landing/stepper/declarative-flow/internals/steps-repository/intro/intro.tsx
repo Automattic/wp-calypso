@@ -31,7 +31,7 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 				__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Setup your Link in Bio' ),
+			buttonText: __( 'Set up your Link in Bio' ),
 		},
 	};
 
