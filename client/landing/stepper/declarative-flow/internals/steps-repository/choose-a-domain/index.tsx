@@ -1,29 +1,61 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { useSelect, useDispatch } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
 
 import './style.scss';
 
-const ChooseADomain: Step = function ChooseADomain( { navigation, flow, data } ) {
+const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
+	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
+	const [ siteTitle, domain ] = useSelect( ( select ) => {
+		return [
+			select( ONBOARD_STORE ).getSelectedSiteTitle(),
+			select( ONBOARD_STORE ).getSelectedDomain(),
+		];
+	} );
+	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const onSkip = () => {
-		submit?.( { domainName: '' } );
+		setDomain( domain );
+		submit?.( { domain: domain } );
 	};
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
 	const getVideoPressFlowStepContent = () => {
-		const onAddDomain = ( { domain_name }: any ) => {
-			submit?.( { domainName: domain_name } );
+		const onAddDomain = ( selectedDomain: any ) => {
+			setDomain( selectedDomain );
+			submit?.( { domain: selectedDomain } );
 		};
 
-		const domainSuggestion = data?.domainName ?? data?.siteTitle ?? '';
+		const domainSuggestion = domain ? domain.domain_name : siteTitle;
+		const promoTlds = [
+			'video',
+			'tube',
+			'movie',
+			'live',
+			'network',
+			'news',
+			'show',
+			'watch',
+			'media',
+			'productions',
+			'digital',
+			'plus',
+			'online',
+			'film',
+			'tv',
+			'studio',
+			'com',
+		];
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -37,7 +69,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow, data } )
 					showAlreadyOwnADomain={ false }
 					onAddDomain={ onAddDomain }
 					onSkip={ onSkip }
-					promoTlds={ [ 'video', 'studio', 'productions', 'com' ] }
+					promoTlds={ promoTlds }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -54,12 +86,12 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow, data } )
 				headerText="Choose a domain"
 				subHeaderText={
 					<>
-						Make your video site shine with a custom domain. Not sure yet ?{ ' ' }
+						{ __( 'Make your video site shine with a custom domain. Not sure yet ?' ) }
 						<button
 							className="button navigation-link step-container__navigation-link has-underline is-borderless"
 							onClick={ onSkip }
 						>
-							Decide later.
+							{ __( 'Decide later.' ) }
 						</button>
 					</>
 				}

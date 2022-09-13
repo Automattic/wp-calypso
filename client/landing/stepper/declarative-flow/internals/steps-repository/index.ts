@@ -37,6 +37,7 @@ export { default as intro } from './intro';
 export { default as linkInBioSetup } from './link-in-bio-setup';
 export { default as completingPurchase } from './completing-purchase';
 export { default as chooseADomain } from './choose-a-domain';
+export { default as chooseAPlan } from './choose-a-plan';
 export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
@@ -87,4 +88,5 @@ export type StepPath =
 	| 'launchpad'
 	| 'subscribers'
 	| 'promote'
-	| 'getCurrentThemeSoftwareSets';
+	| 'getCurrentThemeSoftwareSets'
+	| 'chooseAPlan';
