@@ -8,7 +8,7 @@ export { getJetpackProductDisclaimer } from './get-jetpack-product-disclaimer';
 export { getJetpackProductDisplayName } from './get-jetpack-product-display-name';
 export { getJetpackProductShortName } from './get-jetpack-product-short-name';
 export { getJetpackProductTagline } from './get-jetpack-product-tagline';
-export { getJetpackProductIncludesInfo } from './get-jetpack-product-includes-info';
+export { getJetpackProductWhatIsIncluded } from './get-jetpack-product-what-is-included';
 export { getJetpackProductBenefits } from './get-jetpack-product-benefits';
 export { getJetpackProductRecommendedFor } from './get-jetpack-product-recommended-for';
 export { getProductClass } from './get-product-class';

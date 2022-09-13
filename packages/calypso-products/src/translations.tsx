@@ -496,7 +496,7 @@ export const getJetpackProductsFeaturedText = (): Record< string, TranslateResul
 	};
 };
 
-export const getJetpackProductsIncludesInfo = (): Record< string, Array< TranslateResult > > => {
+export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< TranslateResult > > => {
 	const realTimeBackup = translate( 'Real-time backups as you edit' );
 
 	const orderBackups = translate( 'WooCommerce order and table backups' );
@@ -558,7 +558,7 @@ export const getJetpackProductsIncludesInfo = (): Record< string, Array< Transla
 	const scanIncludesInfo = [
 		translate( 'Automated daily scanning' ),
 		translate( 'One-click fixes for most issues' ),
-		translate( 'Instant email threat notifications ' ),
+		translate( 'Instant email threat notifications' ),
 		translate( 'Priority support' ),
 	];
 	const searchIncludesInfo = [
@@ -610,84 +610,58 @@ export const getJetpackProductsIncludesInfo = (): Record< string, Array< Transla
 };
 
 export const getJetpackProductsBenefits = (): Record< string, Array< TranslateResult > > => {
-	const protectRevenue = translate( 'Protect your revenue stream and content' );
-	const oneClickRestore = translate( 'Restore your site in one click from desktop or mobile' );
-	const cloneOfflineSites = translate( 'Restore or clone offline sites' );
-	const fixYourSite = translate( 'Fix your site without a developer' );
-	const protectWooOrder = translate( 'Protect Woo order and customer data' );
-	const bestInClassSupport = translate( 'Best-in-class support from WordPress experts' );
-
-	const minuteSetup = translate( 'Set up in minutes without a developer' );
-	const saveTimeWithSpam = translate( 'Save time manually reviewing spam' );
-	const increaseEngagmentCaptcha = translate( 'Increase engagement by removing CAPTCHAs' );
-
-	const protectYourRevenue = translate( 'Protect your revenue stream and content' );
-	const learnIssues = translate( 'Learn about issues before your customers are impacted' );
-	const fixInOneClick = translate( 'Fix most issues in one click from desktop or mobile' );
-
-	const increaseEngagement = translate( 'Increase engagement and get your message across' );
-	const drageAndDropVideos = translate( 'Drag and drop videos through the WordPress editor' );
-	const manageVideos = translate( 'Manage videos in the WordPress media library' );
-	const removeAds = translate( 'Remove distracting ads' );
-	const customizeColors = translate( 'Customizable colors to fit your brand and site' );
-
-	const customizeToFitDesign = translate( "Customizable to fit your site's design" );
-	const increasceConversion = translate( 'Increase conversion with accurate search results' );
-	const tieredPricing = translate( 'Tiered pricing - pay for only what you need' );
-	const noDeveloperRequired = translate( 'No developer required' );
-
-	const improveSiteSpeed = translate( 'Quickly test and improve your site speed' );
-	const improveSitesSEO = translate( "Improve your site's SEO" );
-	const fasterFCP = translate( 'Get faster FCP and LCP' );
-
-	const saveTiime = translate( 'Save time by sharing your posts automatically' );
-	const buildFollowing = translate(
-		'Unlock your growth potential by building a following on social'
-	);
-	const easyToUseInterface = translate( 'Easy-to-use interface' );
-
 	const backupBenefits = [
-		protectRevenue,
-		oneClickRestore,
-		cloneOfflineSites,
-		fixYourSite,
-		protectWooOrder,
-		bestInClassSupport,
+		translate( 'Protect your revenue stream and content' ),
+		translate( 'Restore your site in one click from desktop or mobile' ),
+		translate( 'Restore or clone offline sites' ),
+		translate( 'Fix your site without a developer' ),
+		translate( 'Protect Woo order and customer data' ),
+		translate( 'Best-in-class support from WordPress experts' ),
 	];
 
-	const scanBenefits = [ protectYourRevenue, learnIssues, fixInOneClick, bestInClassSupport ];
+	const scanBenefits = [
+		translate( 'Protect your revenue stream and content' ),
+		translate( 'Learn about issues before your customers are impacted' ),
+		translate( 'Fix most issues in one click from desktop or mobile' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	];
 	const antiSpamBenefits = [
-		minuteSetup,
-		saveTimeWithSpam,
-		increaseEngagmentCaptcha,
-		bestInClassSupport,
+		translate( 'Set up in minutes without a developer' ),
+		translate( 'Save time manually reviewing spam' ),
+		translate( 'Increase engagement by removing CAPTCHAs' ),
+		translate( 'Best-in-class support from WordPress experts' ),
 	];
 	const videoPressBenefits = [
-		increaseEngagement,
-		drageAndDropVideos,
-		manageVideos,
-		removeAds,
-		customizeColors,
-		bestInClassSupport,
+		translate( 'Increase engagement and get your message across' ),
+		translate( 'Drag and drop videos through the WordPress editor' ),
+		translate( 'Manage videos in the WordPress media library' ),
+		translate( 'Remove distracting ads' ),
+		translate( 'Customizable colors to fit your brand and site' ),
+		translate( 'Best-in-class support from WordPress experts' ),
 	];
 
 	const searchBenefits = [
-		customizeToFitDesign,
-		increasceConversion,
-		tieredPricing,
-		noDeveloperRequired,
-		bestInClassSupport,
+		translate( "Customizable to fit your site's design" ),
+		translate( 'Increase conversion with accurate search results' ),
+		translate( 'Tiered pricing - pay for only what you need' ),
+		translate( 'No developer required' ),
+		translate( 'Best-in-class support from WordPress experts' ),
 	];
 
 	const boostBenefits = [
-		improveSiteSpeed,
-		improveSitesSEO,
-		fasterFCP,
-		noDeveloperRequired,
-		bestInClassSupport,
+		translate( 'Quickly test and improve your site speed' ),
+		translate( "Improve your site's SEO" ),
+		translate( 'Get faster FCP and LCP' ),
+		translate( 'No developer required' ),
+		translate( 'Best-in-class support from WordPress experts' ),
 	];
 
-	const socialBenefits = [ saveTiime, buildFollowing, easyToUseInterface, noDeveloperRequired ];
+	const socialBenefits = [
+		translate( 'Save time by sharing your posts automatically' ),
+		translate( 'Unlock your growth potential by building a following on social' ),
+		translate( 'Easy-to-use interface' ),
+		translate( 'No developer required' ),
+	];
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
@@ -716,9 +690,9 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 };
 
 export const getJetpackProductsRecommendedFor = (): Record< string, Array< TranslateResult > > => {
-	const wooCommerceStore = translate( 'WooCommerce stores' );
-	const newsOrganization = translate( 'News organizations' );
-	const membershipSite = translate( 'Membership sites' );
+	const wooCommerceStores = translate( 'WooCommerce stores' );
+	const newsOrganizations = translate( 'News organizations' );
+	const membershipSites = translate( 'Membership sites' );
 	const onlineForums = translate( 'Online forums' );
 	const blogs = translate( 'Blogs' );
 	const videographers = translate( 'Videographers' );
@@ -726,28 +700,43 @@ export const getJetpackProductsRecommendedFor = (): Record< string, Array< Trans
 	const bloggers = translate( 'Bloggers' );
 	const allSites = translate( 'All sites' );
 
-	const backupRecommendedFor = [ wooCommerceStore, newsOrganization, membershipSite, onlineForums ];
+	const backupRecommendedFor = [
+		wooCommerceStores,
+		newsOrganizations,
+		membershipSites,
+		onlineForums,
+	];
 
-	const scanRecommendedFor = [ wooCommerceStore, newsOrganization, membershipSite, onlineForums ];
+	const scanRecommendedFor = [
+		wooCommerceStores,
+		newsOrganizations,
+		membershipSites,
+		onlineForums,
+	];
 	const antiSpamBenefits = [
 		blogs,
-		newsOrganization,
-		membershipSite,
+		newsOrganizations,
+		membershipSites,
 		onlineForums,
-		wooCommerceStore,
+		wooCommerceStores,
 	];
-	const videoPressRecommendedFor = [ wooCommerceStore, videographers, educators, bloggers ];
+	const videoPressRecommendedFor = [ wooCommerceStores, videographers, educators, bloggers ];
 
-	const searchRecommendedFor = [ wooCommerceStore, newsOrganization, membershipSite, onlineForums ];
+	const searchRecommendedFor = [
+		wooCommerceStores,
+		newsOrganizations,
+		membershipSites,
+		onlineForums,
+	];
 
 	const boostRecommendedFor = [ allSites ];
 
 	const socialRecommendedFor = [
 		blogs,
-		newsOrganization,
-		membershipSite,
+		newsOrganizations,
+		membershipSites,
 		onlineForums,
-		wooCommerceStore,
+		wooCommerceStores,
 	];
 
 	return {
