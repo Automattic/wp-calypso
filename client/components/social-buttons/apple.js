@@ -26,6 +26,7 @@ class AppleLoginButton extends Component {
 		scope: PropTypes.string,
 		uxMode: PropTypes.oneOf( [ 'redirect', 'popup' ] ),
 		socialServiceResponse: PropTypes.object,
+		originalUrlPath: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -88,7 +89,7 @@ class AppleLoginButton extends Component {
 			redirectURI: this.props.redirectUri,
 			state: JSON.stringify( {
 				oauth2State,
-				originalUrlPath: window.location.pathname,
+				originalUrlPath: this.props.originalUrlPath,
 				// Attach the query string to the state so we can pass it back to the server to show the correct UI.
 				// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
 				queryString: window.location.search,

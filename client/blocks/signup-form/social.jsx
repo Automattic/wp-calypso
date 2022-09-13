@@ -137,6 +137,10 @@ class SocialSignupForm extends Component {
 							socialServiceResponse={
 								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 							}
+							originalUrlPath={
+								// Set the original URL path for wpcc flow so that we can redirect the user back to /start/wpcc after Apple callback.
+								isWpccFlow( this.props.flowName ) ? window.location.pathname : null
+							}
 						/>
 
 						{ ! this.props.disableTosText && <SocialSignupToS /> }
