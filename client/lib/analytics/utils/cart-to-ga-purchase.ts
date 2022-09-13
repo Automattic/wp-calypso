@@ -1,5 +1,5 @@
 import { ResponseCart } from '@automattic/shopping-cart';
-import { GaItem, jetpackProductToGaItem } from './jetpack-product-to-ga-item';
+import { GaItem, productToGaItem } from './product-to-ga-item';
 import { WpcomJetpackCartInfo } from './split-wpcom-jetpack-cart-info';
 
 export type GaPurchase = {
@@ -11,18 +11,22 @@ export type GaPurchase = {
 	items: GaItem[];
 };
 
-export function jetpackCartToGaPurchase(
+export function cartToGaPurchase(
 	orderId: string,
 	cart: ResponseCart,
 	cartInfo: WpcomJetpackCartInfo
 ): GaPurchase {
+	const value = cartInfo.containsWpcomProducts
+		? cartInfo.wpcomCostUSD + cartInfo.jetpackCostUSD
+		: cartInfo.jetpackCostUSD;
+	const cartItems = cartInfo.containsWpcomProducts
+		? [ ...cartInfo.wpcomProducts, ...cartInfo.jetpackProducts ]
+		: cartInfo.jetpackProducts;
 	return {
 		transaction_id: orderId,
 		coupon: cart.coupon,
 		currency: 'USD', // we track all prices in USD
-		value: cartInfo.jetpackCostUSD,
-		items: cartInfo.jetpackProducts.map( ( product ) =>
-			jetpackProductToGaItem( product, cart.currency )
-		),
+		value,
+		items: cartItems.map( ( product ) => productToGaItem( product, cart.currency ) ),
 	};
 }
