@@ -37,6 +37,8 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
+						keepActive: true,
+						actionUrl: `/plans/${ siteSlug }`,
 						badgeText: translatedPlanName,
 					};
 					break;
