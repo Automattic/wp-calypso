@@ -129,7 +129,7 @@ export function resolveEmailPlanStatus(
 	};
 
 	const cannotManageStatus = {
-		statusClass: 'error',
+		statusClass: 'warning',
 		icon: 'info',
 		text: translate( 'Can’t manage subscription' ),
 	};
