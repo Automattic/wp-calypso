@@ -1,39 +1,98 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useLocale } from '@automattic/i18n-utils';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import React from 'react';
+import { Plans } from 'calypso/../packages/data-stores/src';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
-import PlansGrid from 'calypso/../packages/plans-grid/src/plans-grid';
+import { PlansIntervalToggle } from 'calypso/../packages/plans-grid/src';
+import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
+import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { PLANS_STORE } from 'calypso/landing/gutenboarding/stores/plans';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
 
-const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow, data } ) {
+import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
+import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
+
+const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const isVideoPressFlow = 'videopress' === flow;
 	const { __ } = useI18n();
 	const locale = useLocale();
 
-	const onSkip = () => {};
+	const [ billingPeriod, setBillingPeriod ] =
+		React.useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
+	const [ selectedPlanProductId, setSelectedPlanProductId ] = React.useState< number | undefined >(
+		undefined
+	);
+	const [ allPlansExpanded, setAllPlansExpanded ] = React.useState( true );
+
+	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
+	const { supportedPlans, maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
 
 	const getDefaultStepContent = () => <h1>Choose a plan step</h1>;
 
 	const getVideoPressFlowStepContent = () => {
-		const domainName = data?.domainName ?? '';
-		const onPlanSelect = () => {};
+		const filteredPlans = supportedPlans.filter( ( plan ) => {
+			return (
+				plan && ( 'premium' === plan.periodAgnosticSlug || 'business' === plan.periodAgnosticSlug )
+			);
+		} );
+
+		const onPlanSelect = ( planId: number | undefined ) => {
+			setSelectedPlanProductId( planId );
+			submit?.( { planId } );
+		};
 
 		return (
 			<CalypsoShoppingCartProvider>
-				<PlansGrid
-					currentDomain={ undefined }
-					onPlanSelect={ onPlanSelect }
-					currentPlanProductId={ undefined }
-					onPickDomainClick={ undefined }
-					isAccordion={ false }
-					selectedFeatures={ [ 'video-storage' ] }
-					locale={ locale }
-					onBillingPeriodChange={ undefined }
-				/>
+				<div className="plans-grid">
+					<PlansIntervalToggle
+						intervalType={ billingPeriod }
+						onChange={ setBillingPeriod }
+						maxMonthlyDiscountPercentage={ maxAnnualDiscount }
+						className="plans-grid__toggle"
+					/>
+
+					<div className="plans-grid__table">
+						<div className="plans-grid__table-container">
+							<div className="plans-table">
+								{ filteredPlans
+									.filter( ( plan ) => !! plan )
+									.map( ( plan ) => (
+										<PlanItem
+											popularBadgeVariation={ 'ON_TOP' }
+											allPlansExpanded={ allPlansExpanded }
+											key={ plan.periodAgnosticSlug }
+											slug={ plan.periodAgnosticSlug }
+											domain={ domain }
+											tagline={ plan.description }
+											CTAVariation={ 'NORMAL' }
+											features={ plan.features ?? [] }
+											billingPeriod={ billingPeriod }
+											isPopular={ plan.isPopular }
+											isFree={ plan.isFree }
+											name={ plan?.title.toString() }
+											isSelected={
+												!! selectedPlanProductId &&
+												selectedPlanProductId ===
+													getPlanProduct( plan.periodAgnosticSlug, billingPeriod )?.productId
+											}
+											onSelect={ onPlanSelect }
+											onPickDomainClick={ undefined }
+											onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
+											disabledLabel={ undefined }
+										></PlanItem>
+									) ) }
+							</div>
+						</div>
+					</div>
+				</div>
 			</CalypsoShoppingCartProvider>
 		);
 	};
@@ -47,17 +106,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow, data } ) {
 			<FormattedHeader
 				id={ 'choose-a-plan-header' }
 				headerText="Choose a plan"
-				subHeaderText={
-					<>
-						{ __( 'Unlock a powerful bundle of features for your video site.' ) }
-						<button
-							className="button navigation-link step-container__navigation-link has-underline is-borderless"
-							onClick={ onSkip }
-						>
-							{ __( 'Or start with a free plan.' ) }
-						</button>
-					</>
-				}
+				subHeaderText={ __( 'Unlock a powerful bundle of features for your video site.' ) }
 				align={ 'center' }
 			/>
 		);
