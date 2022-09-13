@@ -103,6 +103,19 @@ export default function CampaignItem( { campaign }: Props ) {
 		</div>
 	);
 
+	const cancelCampaignButtonText =
+		campaignStatus === 'active' ? __( 'Stop campaign' ) : __( 'Cancel campaign' );
+	const cancelCampaignConfirmButtonText =
+		campaignStatus === 'active' ? __( 'Yes, stop' ) : __( 'Yes, cancel' );
+	const cancelCampaignTitle =
+		campaignStatus === 'active' ? __( 'Stop the campaign' ) : __( 'Cancel the campaign' );
+	const cancelCampaignMessage =
+		campaignStatus === 'active'
+			? __( 'If you continue your campaign will immediately stop running.' )
+			: __(
+					"If you continue an approval request for your ad will be canceled, and the campaign won't start."
+			  );
+
 	const buttons = [
 		{
 			action: 'cancel',
@@ -111,7 +124,7 @@ export default function CampaignItem( { campaign }: Props ) {
 		{
 			action: 'remove',
 			isPrimary: true,
-			label: __( 'Yes, cancel' ),
+			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
 				cancelCampaign( siteId, campaign.campaign_id );
@@ -126,12 +139,8 @@ export default function CampaignItem( { campaign }: Props ) {
 				buttons={ buttons }
 				onClose={ () => setShowDeleteDialog( false ) }
 			>
-				<h1>{ __( 'Cancel the campaign' ) }</h1>
-				<p>
-					{ __(
-						"If you continue an approval request for your ad will be canceled, and the campaign won't start"
-					) }
-				</p>
+				<h1>{ cancelCampaignTitle }</h1>
+				<p>{ cancelCampaignMessage }</p>
 			</Dialog>
 
 			<FoldableCard header={ header } hideSummary={ true } className="campaign-item__foldable-card">
@@ -239,7 +248,7 @@ export default function CampaignItem( { campaign }: Props ) {
 				<div className="campaign-item__payment-and-action">
 					{ canCancelCampaign( campaignStatus ) && (
 						<Button isLink isDestructive onClick={ () => setShowDeleteDialog( true ) }>
-							{ __( 'Cancel campaign' ) }
+							{ cancelCampaignButtonText }
 						</Button>
 					) }
 				</div>
