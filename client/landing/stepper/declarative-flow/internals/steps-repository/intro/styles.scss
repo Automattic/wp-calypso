@@ -13,7 +13,8 @@
 		background-position-y: 100%, 100px;
 		background-size: auto 30%, auto 50%;
 
-		@include break-large {
+
+		@include break-xlarge {
 			background-size: auto 55%, auto 80%;
 			background-position-y: 100%, 136px;
 		}
@@ -30,9 +31,12 @@
 		background-attachment: fixed;
 		background-size: auto 15%, auto 15%;
 
-		@include break-large {
+		@include break-xlarge {
 			background-size: auto 25%, auto 25%;
 			background-position-y: 85%, 10%;
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.png),
+				url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.png);
 		}
 	}
 

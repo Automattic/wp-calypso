@@ -355,6 +355,9 @@
 
 		@include break-large {
 			background-size: auto 50%, auto 50%;
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
 		}
 	}
 
