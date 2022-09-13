@@ -8,7 +8,7 @@ const Plans = () => {
 
 	return (
 		<MainComponent wideLayout>
-			<PageViewTracker path={ '/plugins/plans' } title={ translate( 'Plugins > Plan Upgrade' ) } />
+			<PageViewTracker path="/plugins/plans/:site" title="Plugins > Plan Upgrade" />
 			<DocumentHead title={ translate( 'Plugins > Plan Upgrade' ) } />
 		</MainComponent>
 	);
