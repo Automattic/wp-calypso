@@ -6,7 +6,6 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { englishLocales } from '@automattic/i18n-utils';
 import {
 	LINK_IN_BIO_FLOW,
 	NEWSLETTER_FLOW,
@@ -393,10 +392,7 @@ export class PlansStep extends Component {
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
-			backLabelText =
-				englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
-					? translate( 'Back to Sites' )
-					: translate( 'Back to My Sites' );
+			backLabelText = translate( 'Back to Sites' );
 		}
 
 		let queryParams;
