@@ -6,13 +6,14 @@ import {
 	UnifiedDesignPicker,
 	useCategorization,
 	getDesignPreviewUrl,
+	SHOW_ALL_SLUG,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
@@ -28,7 +29,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
-import { STEP_NAME } from './constants';
+import { STEP_NAME, BLANK_CANVAS_DESIGN } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
@@ -105,6 +106,21 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const categorizationOptions = getCategorizationOptions( intent, true );
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
+
+	// TODO: It might be better to return the blank canvas from the start-designs API by intent
+	// and we just need to filter it out or adjust the order.
+	const onFilterDesigns = useCallback( ( designs: Design[], categorySlug?: string | null ) => {
+		const shouldShowBlankCanvas =
+			isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+			categorySlug === SHOW_ALL_SLUG &&
+			( intent === SiteIntent.Build || intent === SiteIntent.Write );
+
+		if ( ! shouldShowBlankCanvas ) {
+			return designs;
+		}
+
+		return [ ...designs.slice( 0, 3 ), BLANK_CANVAS_DESIGN as Design, ...designs.slice( 3 ) ];
+	}, [] );
 
 	// ********** Logic for selecting a design
 
@@ -456,6 +472,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			previewOnly={ newDesignEnabled }
 			hasDesignOptionHeader={ ! newDesignEnabled }
 			purchasedThemes={ purchasedThemes }
+			onFilterDesigns={ onFilterDesigns }
 		/>
 	);
 

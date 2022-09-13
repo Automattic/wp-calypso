@@ -22,6 +22,7 @@ export {
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
 	STICKY_OFFSET_TOP,
+	SHOW_ALL_SLUG,
 } from './constants';
 export type {
 	FontPair,

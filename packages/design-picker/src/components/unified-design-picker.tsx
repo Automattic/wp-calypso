@@ -15,7 +15,6 @@ import {
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
-	SHOW_ALL_SLUG,
 } from '../constants';
 import {
 	getDesignPreviewUrl,
@@ -286,6 +285,10 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	const isDesktop = useViewportMatch( 'large' );
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
+	if ( isBlankCanvas ) {
+		return <PatternAssemblerCta onButtonClick={ () => props.onSelect( props.design ) } />;
+	}
+
 	if ( ! onPreview || props.hideFullScreenPreview ) {
 		return (
 			<div className="design-button-container design-button-container--without-preview">
@@ -307,8 +310,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 		);
 	}
 
-	// We don't need preview for blank canvas
-	return ! isBlankCanvas ? (
+	return (
 		<div className="design-button-container">
 			{ ! previewOnly && (
 				<DesignButtonCover
@@ -326,11 +328,6 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				disabled={ ! previewOnly }
 			/>
 		</div>
-	) : (
-		<PatternAssemblerCta
-			key={ props.design.slug }
-			onButtonClick={ () => props.onSelect( props.design ) }
-		/>
 	);
 };
 
@@ -354,6 +351,7 @@ export interface UnifiedDesignPickerProps {
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
 	purchasedThemes?: string[];
+	onFilterDesigns?: ( designs: Design[], categorySlug?: string | null ) => Design[];
 }
 
 interface StaticDesignPickerProps {
@@ -365,10 +363,12 @@ interface StaticDesignPickerProps {
 	designs: Design[];
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
+	/** If true, we won't show the select and preview action buttons when hovering on the design */
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
 	purchasedThemes?: string[];
+	onFilterDesigns?: ( designs: Design[], categorySlug?: string | null ) => Design[];
 }
 
 interface GeneratedDesignPickerProps {
@@ -391,32 +391,23 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	onCheckout,
 	verticalId,
 	purchasedThemes,
+	onFilterDesigns,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 
 	const filteredDesigns = useMemo( () => {
-		const result = categorization?.selection
+		let result = categorization?.selection
 			? filterDesignsByCategory( designs, categorization.selection )
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
 
-		if (
-			isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-			categorization?.selection === SHOW_ALL_SLUG
-		) {
-			const blankCanvasDesign = {
-				recipe: {
-					stylesheet: 'pub/blank-canvas-blocks',
-				},
-				slug: 'blank-canvas-blocks',
-				title: 'Blank Canvas',
-			} as Design;
-			result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
+		if ( onFilterDesigns ) {
+			result = onFilterDesigns( result, categorization?.selection );
 		}
 
 		return result;
-	}, [ designs, categorization?.selection ] );
+	}, [ designs, categorization?.selection, onFilterDesigns ] );
 
 	return (
 		<div>
@@ -505,6 +496,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	onCheckout,
 	purchasedThemes,
+	onFilterDesigns,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const translate = useTranslate();
@@ -560,6 +552,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					onCheckout={ onCheckout }
 					purchasedThemes={ purchasedThemes }
+					onFilterDesigns={ onFilterDesigns }
 				/>
 			</div>
 		</div>
