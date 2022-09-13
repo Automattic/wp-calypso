@@ -177,7 +177,12 @@ function getSiteCartProducts( {
 						}
 					),
 					subLabel: translate( 'Plan Subscription: %(planPrice)s per year', {
-						args: { planPrice: product.product_cost_display },
+						args: {
+							planPrice: formatCurrency( product.item_subtotal_integer, responseCart.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
 					} ),
 				};
 			case WPCOM_DIFM_LITE: {

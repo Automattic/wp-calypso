@@ -9,10 +9,8 @@ export function pathToRegExp( path: string ) {
 	return new RegExp( '^' + path + '(/.*)?$' );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function debounce< T, U >( callback: ( ...args: T[] ) => U, timeout: number ) {
 	let timeoutId: number | undefined = undefined;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	return ( ...args: T[] ) => {
 		window.clearTimeout( timeoutId );
 		timeoutId = window.setTimeout( () => {

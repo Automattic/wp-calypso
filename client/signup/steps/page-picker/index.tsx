@@ -290,7 +290,7 @@ function DIFMPagePicker( props: StepProps ) {
 			components: {
 				br: <br />,
 				PriceWrapper:
-					difmTieredPriceDetails?.perExtraPagePrice && effectiveCurrencyCode ? (
+					difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
 						<span />
 					) : (
 						<Placeholder />
