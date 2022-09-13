@@ -687,13 +687,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		bestInClassSupport,
 	];
 
-	const socialBenefits = [
-		saveTiime,
-		buildFollowing,
-		easyToUseInterface,
-		noDeveloperRequired,
-		bestInClassSupport,
-	];
+	const socialBenefits = [ saveTiime, buildFollowing, easyToUseInterface, noDeveloperRequired ];
 
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupBenefits,
