@@ -15,7 +15,7 @@ export interface SitesDashboardQueryParams {
 	perPage?: number;
 	search?: string;
 	showHidden?: boolean;
-	status: FilterableSiteLaunchStatuses;
+	status?: FilterableSiteLaunchStatuses;
 }
 
 const FilterBar = styled.div( {
