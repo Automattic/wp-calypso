@@ -88,7 +88,6 @@ export default class extends Component {
 				);
 
 			case 'gridicons-reader-following':
-				//TODO: This needs another svg
 				return (
 					<svg
 						{ ...sharedProps }
@@ -97,13 +96,24 @@ export default class extends Component {
 						fill="none"
 					>
 						<title>Reader Following</title>
-						<g>
+						<mask
+							id="mask0_372_400"
+							style="mask-type:alpha"
+							maskUnits="userSpaceOnUse"
+							x="3"
+							y="3"
+							width="21"
+							height="19"
+						>
 							<path
-								clip-rule="oddeven"
-								d="m4 4.5h12v6.5h1.5v-6.5-1.5h-1.5-12-1.5v1.5 10.5c0 1.1046.89543 2 2 2h7v-1.5h-7c-.27614 0-.5-.2239-.5-.5zm10.5 2h-9v1.5h9zm-5 3h-4v1.5h4zm3.5 1.5h-1v1h1zm-1-1.5h-1.5v1.5 1 1.5h1.5 1 1.5v-1.5-1-1.5h-1.5zm-2.5 2.5h-4v1.5h4zm6.5 1.25h1.5v2.25h2.25v1.5h-2.25v2.25h-1.5v-2.25h-2.25v-1.5h2.25z"
-								fill="#606a73"
-								fill-rule="oddeven"
+								fill-rule="evenodd"
+								clip-rule="evenodd"
+								d="M21 11.889L16.545 16.344L14.451 14.168L9.538 19H5C3.9 19 3 18.1 3 17V3H21V11.889ZM16.508 22L24 14.482L22.612 13.106L16.518 19.2L14.412 17.012L13 18.4L16.508 22ZM9 14H5V13H9V14ZM5 12H12V11H5V12ZM12 10H5V9H12V10ZM5 7H19V5H5V7Z"
+								fill="white"
 							/>
+						</mask>
+						<g mask="url(#mask0_372_400)">
+							<rect x="1" y="-1" width="24" height="24" fill="#3C8832" />
 						</g>
 					</svg>
 				);
@@ -177,6 +187,7 @@ export default class extends Component {
 						width="20"
 						xmlns="http://www.w3.org/2000/svg"
 					>
+						<title>Reader Star</title>
 						<path
 							d="m10.0001 2.5 2.4463 5.33517h5.4704l-4.5834 4.23893 1.5592 5.4259-4.8925-2.8125-4.8925 2.8125 1.55917-5.4259-4.58333-4.23893h2.7352 2.73521z"
 							stroke="#646970"
@@ -187,7 +198,6 @@ export default class extends Component {
 				);
 
 			case 'gridicons-reader-star-outline':
-				//TODO: This needs another svg
 				return (
 					<svg
 						fill="none"
@@ -196,11 +206,12 @@ export default class extends Component {
 						width="20"
 						xmlns="http://www.w3.org/2000/svg"
 					>
+						<title>Reader Star Outline</title>
 						<path
-							d="m10.0001 2.5 2.4463 5.33517h5.4704l-4.5834 4.23893 1.5592 5.4259-4.8925-2.8125-4.8925 2.8125 1.55917-5.4259-4.58333-4.23893h2.7352 2.73521z"
+							d="M12.0002 3L14.9357 9.40221H21.5002L16.0002 14.489L17.8712 21L12.0002 17.625L6.12924 21L8.00024 14.489L2.50024 9.40221H5.78249H9.06474L12.0002 3Z"
 							stroke="#646970"
-							stroke-linecap="round"
 							stroke-width="1.5"
+							stroke-linecap="round"
 						/>
 					</svg>
 				);
