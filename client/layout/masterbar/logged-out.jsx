@@ -10,6 +10,7 @@ import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
+import PluginNavbarHeader from 'calypso/my-sites/plugins/plugin-navbar-header';
 import Item from './item';
 import Masterbar from './masterbar';
 
@@ -135,7 +136,7 @@ class MasterbarLoggedOut extends Component {
 	}
 
 	render() {
-		const { title, isCheckout, isCheckoutPending } = this.props;
+		const { title, isCheckout, isCheckoutPending, currentRoute } = this.props;
 
 		if ( isCheckout || isCheckoutPending ) {
 			return (
@@ -149,17 +150,23 @@ class MasterbarLoggedOut extends Component {
 		}
 
 		return (
-			<Masterbar>
-				<Item className="masterbar__item-logo">
-					<WordPressLogo className="masterbar__wpcom-logo" />
-					<WordPressWordmark className="masterbar__wpcom-wordmark" />
-				</Item>
-				<Item className="masterbar__item-title">{ title }</Item>
-				<div className="masterbar__login-links">
-					{ this.renderSignupItem() }
-					{ this.renderLoginItem() }
-				</div>
-			</Masterbar>
+			<>
+				{ currentRoute.startsWith( '/plugins' ) ? (
+					<PluginNavbarHeader />
+				) : (
+					<Masterbar>
+						<Item className="masterbar__item-logo">
+							<WordPressLogo className="masterbar__wpcom-logo" />
+							<WordPressWordmark className="masterbar__wpcom-wordmark" />
+						</Item>
+						<Item className="masterbar__item-title">{ title }</Item>
+						<div className="masterbar__login-links">
+							{ this.renderSignupItem() }
+							{ this.renderLoginItem() }
+						</div>
+					</Masterbar>
+				) }
+			</>
 		);
 	}
 }
